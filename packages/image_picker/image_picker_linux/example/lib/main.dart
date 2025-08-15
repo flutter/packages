@@ -60,8 +60,9 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> _playVideo(XFile? file) async {
     if (file != null && mounted) {
       await _disposeVideoController();
-      final VideoPlayerController controller =
-          VideoPlayerController.file(File(file.path));
+      final VideoPlayerController controller = VideoPlayerController.file(
+        File(file.path),
+      );
       _controller = controller;
       await controller.setVolume(1.0);
       await controller.initialize();
@@ -83,31 +84,38 @@ class _MyHomePageState extends State<MyHomePage> {
     if (context.mounted) {
       if (_isVideo) {
         final XFile? file = await _picker.getVideo(
-            source: source, maxDuration: const Duration(seconds: 10));
+          source: source,
+          maxDuration: const Duration(seconds: 10),
+        );
         await _playVideo(file);
       } else if (isMultiImage) {
-        await _displayPickImageDialog(context,
-            (double? maxWidth, double? maxHeight, int? quality) async {
+        await _displayPickImageDialog(context, (
+          double? maxWidth,
+          double? maxHeight,
+          int? quality,
+        ) async {
           try {
-            final List<XFile> pickedFileList = isMedia
-                ? await _picker.getMedia(
-                    options: MediaOptions(
+            final List<XFile> pickedFileList =
+                isMedia
+                    ? await _picker.getMedia(
+                      options: MediaOptions(
                         allowMultiple: isMultiImage,
                         imageOptions: ImageOptions(
                           maxWidth: maxWidth,
                           maxHeight: maxHeight,
                           imageQuality: quality,
-                        )),
-                  )
-                : await _picker.getMultiImageWithOptions(
-                    options: MultiImagePickerOptions(
-                      imageOptions: ImageOptions(
-                        maxWidth: maxWidth,
-                        maxHeight: maxHeight,
-                        imageQuality: quality,
+                        ),
                       ),
-                    ),
-                  );
+                    )
+                    : await _picker.getMultiImageWithOptions(
+                      options: MultiImagePickerOptions(
+                        imageOptions: ImageOptions(
+                          maxWidth: maxWidth,
+                          maxHeight: maxHeight,
+                          imageQuality: quality,
+                        ),
+                      ),
+                    );
             setState(() {
               _mediaFileList = pickedFileList;
             });
@@ -118,19 +126,25 @@ class _MyHomePageState extends State<MyHomePage> {
           }
         });
       } else if (isMedia) {
-        await _displayPickImageDialog(context,
-            (double? maxWidth, double? maxHeight, int? quality) async {
+        await _displayPickImageDialog(context, (
+          double? maxWidth,
+          double? maxHeight,
+          int? quality,
+        ) async {
           try {
             final List<XFile> pickedFileList = <XFile>[];
-            final XFile? media = _firstOrNull(await _picker.getMedia(
-              options: MediaOptions(
+            final XFile? media = _firstOrNull(
+              await _picker.getMedia(
+                options: MediaOptions(
                   allowMultiple: isMultiImage,
                   imageOptions: ImageOptions(
                     maxWidth: maxWidth,
                     maxHeight: maxHeight,
                     imageQuality: quality,
-                  )),
-            ));
+                  ),
+                ),
+              ),
+            );
 
             if (media != null) {
               pickedFileList.add(media);
@@ -143,8 +157,11 @@ class _MyHomePageState extends State<MyHomePage> {
           }
         });
       } else {
-        await _displayPickImageDialog(context,
-            (double? maxWidth, double? maxHeight, int? quality) async {
+        await _displayPickImageDialog(context, (
+          double? maxWidth,
+          double? maxHeight,
+          int? quality,
+        ) async {
           try {
             final XFile? pickedFile = await _picker.getImageFromSource(
               source: source,
@@ -224,16 +241,21 @@ class _MyHomePageState extends State<MyHomePage> {
             final String? mime = lookupMimeType(_mediaFileList![index].path);
             return Semantics(
               label: 'image_picker_example_picked_image',
-              child: mime == null || mime.startsWith('image/')
-                  ? Image.file(
-                      File(_mediaFileList![index].path),
-                      errorBuilder: (BuildContext context, Object error,
-                          StackTrace? stackTrace) {
-                        return const Center(
-                            child: Text('This image type is not supported'));
-                      },
-                    )
-                  : _buildInlineVideoPlayer(index),
+              child:
+                  mime == null || mime.startsWith('image/')
+                      ? Image.file(
+                        File(_mediaFileList![index].path),
+                        errorBuilder: (
+                          BuildContext context,
+                          Object error,
+                          StackTrace? stackTrace,
+                        ) {
+                          return const Center(
+                            child: Text('This image type is not supported'),
+                          );
+                        },
+                      )
+                      : _buildInlineVideoPlayer(index),
             );
           },
           itemCount: _mediaFileList!.length,
@@ -253,8 +275,9 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget _buildInlineVideoPlayer(int index) {
-    final VideoPlayerController controller =
-        VideoPlayerController.file(File(_mediaFileList![index].path));
+    final VideoPlayerController controller = VideoPlayerController.file(
+      File(_mediaFileList![index].path),
+    );
     const double volume = 1.0;
     controller.setVolume(volume);
     controller.initialize();
@@ -274,13 +297,8 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title!),
-      ),
-      body: Align(
-        alignment: Alignment.topCenter,
-        child: _handlePreview(),
-      ),
+      appBar: AppBar(title: Text(widget.title!)),
+      body: Align(alignment: Alignment.topCenter, child: _handlePreview()),
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
@@ -408,66 +426,78 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> _displayPickImageDialog(
-      BuildContext context, OnPickImageCallback onPick) async {
+    BuildContext context,
+    OnPickImageCallback onPick,
+  ) async {
     return showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Add optional parameters'),
-            content: Column(
-              children: <Widget>[
-                TextField(
-                  controller: maxWidthController,
-                  keyboardType:
-                      const TextInputType.numberWithOptions(decimal: true),
-                  decoration: const InputDecoration(
-                      hintText: 'Enter maxWidth if desired'),
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Add optional parameters'),
+          content: Column(
+            children: <Widget>[
+              TextField(
+                controller: maxWidthController,
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
                 ),
-                TextField(
-                  controller: maxHeightController,
-                  keyboardType:
-                      const TextInputType.numberWithOptions(decimal: true),
-                  decoration: const InputDecoration(
-                      hintText: 'Enter maxHeight if desired'),
+                decoration: const InputDecoration(
+                  hintText: 'Enter maxWidth if desired',
                 ),
-                TextField(
-                  controller: qualityController,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                      hintText: 'Enter quality if desired'),
-                ),
-              ],
-            ),
-            actions: <Widget>[
-              TextButton(
-                child: const Text('CANCEL'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
               ),
-              TextButton(
-                  child: const Text('PICK'),
-                  onPressed: () {
-                    final double? width = maxWidthController.text.isNotEmpty
+              TextField(
+                controller: maxHeightController,
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
+                decoration: const InputDecoration(
+                  hintText: 'Enter maxHeight if desired',
+                ),
+              ),
+              TextField(
+                controller: qualityController,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(
+                  hintText: 'Enter quality if desired',
+                ),
+              ),
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('CANCEL'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('PICK'),
+              onPressed: () {
+                final double? width =
+                    maxWidthController.text.isNotEmpty
                         ? double.parse(maxWidthController.text)
                         : null;
-                    final double? height = maxHeightController.text.isNotEmpty
+                final double? height =
+                    maxHeightController.text.isNotEmpty
                         ? double.parse(maxHeightController.text)
                         : null;
-                    final int? quality = qualityController.text.isNotEmpty
+                final int? quality =
+                    qualityController.text.isNotEmpty
                         ? int.parse(qualityController.text)
                         : null;
-                    onPick(width, height, quality);
-                    Navigator.of(context).pop();
-                  }),
-            ],
-          );
-        });
+                onPick(width, height, quality);
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }
 
-typedef OnPickImageCallback = void Function(
-    double? maxWidth, double? maxHeight, int? quality);
+typedef OnPickImageCallback =
+    void Function(double? maxWidth, double? maxHeight, int? quality);
 
 class AspectRatioVideo extends StatefulWidget {
   const AspectRatioVideo(this.controller, {super.key});

@@ -79,12 +79,12 @@ class ImagePicker {
   }) {
     final ImagePickerOptions imagePickerOptions =
         ImagePickerOptions.createAndValidate(
-      maxWidth: maxWidth,
-      maxHeight: maxHeight,
-      imageQuality: imageQuality,
-      preferredCameraDevice: preferredCameraDevice,
-      requestFullMetadata: requestFullMetadata,
-    );
+          maxWidth: maxWidth,
+          maxHeight: maxHeight,
+          imageQuality: imageQuality,
+          preferredCameraDevice: preferredCameraDevice,
+          requestFullMetadata: requestFullMetadata,
+        );
 
     return platform.getImageFromSource(
       source: source,
