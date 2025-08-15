@@ -15,9 +15,8 @@ class App extends StatelessWidget {
   App({super.key});
 
   @override
-  Widget build(BuildContext context) => MaterialApp.router(
-        routerConfig: _router,
-      );
+  Widget build(BuildContext context) =>
+      MaterialApp.router(routerConfig: _router);
 
   final GoRouter _router = GoRouter(
     routes: $appRoutes,
@@ -29,9 +28,8 @@ class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: const Text('foo')),
-      );
+  Widget build(BuildContext context) =>
+      Scaffold(appBar: AppBar(title: const Text('foo')));
 }
 
 @TypedShellRoute<MyShellRouteData>(
@@ -44,11 +42,7 @@ class MyShellRouteData extends ShellRouteData {
   const MyShellRouteData();
 
   @override
-  Widget builder(
-    BuildContext context,
-    GoRouterState state,
-    Widget navigator,
-  ) {
+  Widget builder(BuildContext context, GoRouterState state, Widget navigator) {
     return MyShellRouteScreen(child: navigator);
   }
 }
@@ -92,14 +86,8 @@ class MyShellRouteScreen extends StatelessWidget {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentIndex,
         items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Foo',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.business),
-            label: 'Bar',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Foo'),
+          BottomNavigationBarItem(icon: Icon(Icons.business), label: 'Bar'),
         ],
         onTap: (int index) {
           switch (index) {

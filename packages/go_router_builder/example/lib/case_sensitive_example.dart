@@ -15,9 +15,8 @@ class CaseSensitivityApp extends StatelessWidget {
   CaseSensitivityApp({super.key});
 
   @override
-  Widget build(BuildContext context) => MaterialApp.router(
-        routerConfig: _router,
-      );
+  Widget build(BuildContext context) =>
+      MaterialApp.router(routerConfig: _router);
 
   final GoRouter _router = GoRouter(
     initialLocation: '/case-sensitive',
@@ -25,16 +24,13 @@ class CaseSensitivityApp extends StatelessWidget {
   );
 }
 
-@TypedGoRoute<CaseSensitiveRoute>(
-  path: '/case-sensitive',
-)
+@TypedGoRoute<CaseSensitiveRoute>(path: '/case-sensitive')
 class CaseSensitiveRoute extends GoRouteData with _$CaseSensitiveRoute {
   const CaseSensitiveRoute();
 
   @override
-  Widget build(BuildContext context, GoRouterState state) => const Screen(
-        title: 'Case Sensitive',
-      );
+  Widget build(BuildContext context, GoRouterState state) =>
+      const Screen(title: 'Case Sensitive');
 }
 
 @TypedGoRoute<NotCaseSensitiveRoute>(
@@ -45,9 +41,8 @@ class NotCaseSensitiveRoute extends GoRouteData with _$NotCaseSensitiveRoute {
   const NotCaseSensitiveRoute();
 
   @override
-  Widget build(BuildContext context, GoRouterState state) => const Screen(
-        title: 'Not Case Sensitive',
-      );
+  Widget build(BuildContext context, GoRouterState state) =>
+      const Screen(title: 'Not Case Sensitive');
 }
 
 class Screen extends StatelessWidget {
@@ -56,20 +51,18 @@ class Screen extends StatelessWidget {
   final String title;
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(
-          title: Text(title),
+    appBar: AppBar(title: Text(title)),
+    body: ListView(
+      children: <Widget>[
+        ListTile(
+          title: const Text('Case Sensitive'),
+          onTap: () => context.go('/case-sensitive'),
         ),
-        body: ListView(
-          children: <Widget>[
-            ListTile(
-              title: const Text('Case Sensitive'),
-              onTap: () => context.go('/case-sensitive'),
-            ),
-            ListTile(
-              title: const Text('Not Case Sensitive'),
-              onTap: () => context.go('/not-case-sensitive'),
-            ),
-          ],
+        ListTile(
+          title: const Text('Not Case Sensitive'),
+          onTap: () => context.go('/not-case-sensitive'),
         ),
-      );
+      ],
+    ),
+  );
 }

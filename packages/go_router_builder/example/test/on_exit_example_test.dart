@@ -7,8 +7,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router_builder_example/on_exit_example.dart';
 
 void main() {
-  testWidgets('It should trigger the on exit when leaving the route',
-      (WidgetTester tester) async {
+  testWidgets('It should trigger the on exit when leaving the route', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(App());
     expect(find.byType(HomeScreen), findsOne);
 
