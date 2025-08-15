@@ -225,10 +225,12 @@ void main() {
         reason: 'Button should be treated as link with excludeSemantics: true',
       );
 
-      expect(firstData.hasFlag(SemanticsFlag.isButton), isFalse,
-          reason:
-              'semantics should be excluded to prevent TAB navigation conflicts',
-          skip: true);
+      expect(
+        firstData.hasFlag(SemanticsFlag.isButton),
+        isFalse,
+        reason:
+            'semantics should be excluded to prevent TAB navigation conflicts',
+      );
 
       expect(firstData.linkUrl?.toString(), equals('https://dart.dev/xyz'));
       handle.dispose();
