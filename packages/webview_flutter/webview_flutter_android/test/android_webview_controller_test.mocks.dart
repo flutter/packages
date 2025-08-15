@@ -1018,6 +1018,29 @@ class MockAndroidWebViewController extends _i1.Mock
         returnValue: _i8.Future<void>.value(),
         returnValueForMissingStub: _i8.Future<void>.value(),
       ) as _i8.Future<void>);
+
+  @override
+  _i8.Future<bool> isWebViewFeatureSupported(
+          _i7.WebViewFeatureType? featureType) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #isWebViewFeatureSupported,
+          [featureType],
+        ),
+        returnValue: _i8.Future<bool>.value(false),
+        returnValueForMissingStub: _i8.Future<bool>.value(false),
+      ) as _i8.Future<bool>);
+
+  @override
+  _i8.Future<void> setPaymentRequestEnabled(bool? enabled) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setPaymentRequestEnabled,
+          [enabled],
+        ),
+        returnValue: _i8.Future<void>.value(),
+        returnValueForMissingStub: _i8.Future<void>.value(),
+      ) as _i8.Future<void>);
 }
 
 /// A class which mocks [AndroidWebViewProxy].
@@ -1829,6 +1852,36 @@ class MockAndroidWebViewProxy extends _i1.Mock
           Invocation.getter(#instanceWebStorage),
         ),
       ) as _i2.WebStorage Function());
+
+  @override
+  _i8.Future<bool> Function(String) get isWebViewFeatureSupported =>
+      (super.noSuchMethod(
+        Invocation.getter(#isWebViewFeatureSupported),
+        returnValue: (String __p0) => _i8.Future<bool>.value(false),
+        returnValueForMissingStub: (String __p0) =>
+            _i8.Future<bool>.value(false),
+      ) as _i8.Future<bool> Function(String));
+
+  @override
+  _i8.Future<void> Function(
+    _i2.WebSettings,
+    bool,
+  ) get setPaymentRequestEnabled => (super.noSuchMethod(
+        Invocation.getter(#setPaymentRequestEnabled),
+        returnValue: (
+          _i2.WebSettings __p0,
+          bool __p1,
+        ) =>
+            _i8.Future<void>.value(),
+        returnValueForMissingStub: (
+          _i2.WebSettings __p0,
+          bool __p1,
+        ) =>
+            _i8.Future<void>.value(),
+      ) as _i8.Future<void> Function(
+        _i2.WebSettings,
+        bool,
+      ));
 }
 
 /// A class which mocks [AndroidWebViewWidgetCreationParams].
