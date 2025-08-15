@@ -21,7 +21,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_plugin_android_lifecycle: ^2.0.1
-  image_picker_platform_interface: ^2.10.0
+  image_picker_platform_interface: ^2.11.0
 
 dev_dependencies:
   flutter_test:
@@ -34,7 +34,3 @@ topics:
   - image-picker
   - files
   - file-selection
-# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
-# See https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#changing-federated-plugins
-dependency_overrides:
-  image_picker_platform_interface: {path: ../../../packages/image_picker/image_picker_platform_interface}

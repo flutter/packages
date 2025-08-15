@@ -17,7 +17,7 @@ dependencies:
     # The example app is bundled with the plugin so we use a path dependency on
     # the parent directory to use the current plugin's version.
     path: ../
-  image_picker_platform_interface: ^2.10.0
+  image_picker_platform_interface: ^2.11.0
   mime: ^1.0.4
   video_player: ^2.7.0
 
@@ -39,5 +39,4 @@ dependency_overrides:
   image_picker_ios: {path: ../../../../packages/image_picker/image_picker_ios}
   image_picker_linux: {path: ../../../../packages/image_picker/image_picker_linux}
   image_picker_macos: {path: ../../../../packages/image_picker/image_picker_macos}
-  image_picker_platform_interface: {path: ../../../../packages/image_picker/image_picker_platform_interface}
   image_picker_windows: {path: ../../../../packages/image_picker/image_picker_windows}

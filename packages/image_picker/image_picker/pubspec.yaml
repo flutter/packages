@@ -33,7 +33,7 @@ dependencies:
   image_picker_ios: ^0.8.8
   image_picker_linux: ^0.2.1
   image_picker_macos: ^0.2.1
-  image_picker_platform_interface: ^2.10.0
+  image_picker_platform_interface: ^2.11.0
   image_picker_windows: ^0.2.1
 
 dev_dependencies:
@@ -57,5 +57,4 @@ dependency_overrides:
   image_picker_ios: {path: ../../../packages/image_picker/image_picker_ios}
   image_picker_linux: {path: ../../../packages/image_picker/image_picker_linux}
   image_picker_macos: {path: ../../../packages/image_picker/image_picker_macos}
-  image_picker_platform_interface: {path: ../../../packages/image_picker/image_picker_platform_interface}
   image_picker_windows: {path: ../../../packages/image_picker/image_picker_windows}
