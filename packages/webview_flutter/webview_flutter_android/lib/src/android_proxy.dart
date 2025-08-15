@@ -26,6 +26,8 @@ class AndroidWebViewProxy {
     this.instanceCookieManager = _instanceCookieManager,
     this.instanceFlutterAssetManager = _instanceFlutterAssetManager,
     this.instanceWebStorage = _instanceWebStorage,
+    this.isWebViewFeatureSupported = WebViewFeature.isFeatureSupported,
+    this.setPaymentRequestEnabled = WebSettingsCompat.setPaymentRequestEnabled,
   });
 
   /// Constructs [WebView].
@@ -167,6 +169,12 @@ class AndroidWebViewProxy {
 
   /// Calls to [WebStorage.instance].
   final WebStorage Function() instanceWebStorage;
+
+  /// Calls to [WebViewFeature.isFeatureSupported].
+  final Future<bool> Function(String) isWebViewFeatureSupported;
+
+  /// Calls to [WebSettingsCompat.setPaymentRequestEnabled].
+  final Future<void> Function(WebSettings, bool) setPaymentRequestEnabled;
 
   static CookieManager _instanceCookieManager() => CookieManager.instance;
 
