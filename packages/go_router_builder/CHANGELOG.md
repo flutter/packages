@@ -1,3 +1,7 @@
+## 3.2.1
+
+- Fixes warnings in generated code of iterable parameters.
+
 ## 3.2.0
 
 - Adds support for`extension type`.
