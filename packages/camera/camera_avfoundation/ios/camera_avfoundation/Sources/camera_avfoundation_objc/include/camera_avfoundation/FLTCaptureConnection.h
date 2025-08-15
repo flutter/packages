@@ -14,16 +14,22 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, getter=isVideoMirrored) BOOL videoMirrored;
 
 /// Corresponds to the `videoOrientation` property of `AVCaptureConnection`
-@property(nonatomic) AVCaptureVideoOrientation videoOrientation;
+@property(nonatomic) AVCaptureVideoOrientation videoOrientation API_DEPRECATED("Use -videoRotationAngle instead", macos(10.7, 14.0), ios(4.0, 17.0));
+
+/// Corresponds to the `videoRotationAngle` property of `AVCaptureConnection`
+@property(nonatomic) CGFloat videoRotationAngle API_AVAILABLE(macos(14.0), ios(17.0));
 
 /// Corresponds to the `inputPorts` property of `AVCaptureConnection`
 @property(nonatomic, readonly) NSArray<AVCaptureInputPort *> *inputPorts;
 
 /// Corresponds to the `supportsVideoMirroring` property of `AVCaptureConnection`
-@property(nonatomic, readonly, getter=isVideoMirroringSupported) BOOL supportsVideoMirroring;
+@property(nonatomic, readonly, getter=isVideoMirroringSupported) BOOL supportsVideoMirroring API_DEPRECATED("Use -isVideoRotationAngleSupported: instead", macos(10.7, 14.0), ios(4.0, 17.0));
 
 /// Corresponds to the `supportsVideoOrientation` property of `AVCaptureConnection`
-@property(nonatomic, readonly, getter=isVideoOrientationSupported) BOOL supportsVideoOrientation;
+@property(nonatomic, readonly, getter=isVideoOrientationSupported) BOOL supportsVideoOrientation API_DEPRECATED("Use -isVideoRotationAngleSupported: instead", macos(10.7, 14.0), ios(4.0, 17.0));
+
+/// Corresponds to the `isVideoRotationAngleSupported:` method `AVCaptureConnection`
+- (BOOL)isVideoRotationAngleSupported:(CGFloat)videoRotationAngle;
 
 @end
 

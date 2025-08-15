@@ -185,13 +185,20 @@ NSString *const errorMethod = @"error";
 
   NSObject<FLTCaptureConnection> *connection =
       [captureOutput connectionWithMediaType:AVMediaTypeVideo];
-  if (connection && connection.isVideoOrientationSupported) {
-    connection.videoOrientation = [self getVideoOrientationForDeviceOrientation:orientation];
+  if (@available(iOS 17.0, macos 14.0, *)) {
+    CGFloat videoRotationAngle = [self getVideoRotationAngleForDeviceOrientation:orientation];
+    if (connection && [connection isVideoRotationAngleSupported:videoRotationAngle]) {
+      connection.videoRotationAngle = videoRotationAngle;
+    }
+  } else {
+    if (connection && connection.isVideoOrientationSupported) {
+      connection.videoOrientation = [self getVideoOrientationForDeviceOrientation:orientation];
+    }
   }
 }
 
 - (AVCaptureVideoOrientation)getVideoOrientationForDeviceOrientation:
-    (UIDeviceOrientation)deviceOrientation {
+  (UIDeviceOrientation)deviceOrientation API_DEPRECATED("Use getVideoRotationAngleForDeviceOrientation instead", macos(10.7, 14.0), ios(4.0, 17.0)) {
   if (deviceOrientation == UIDeviceOrientationPortrait) {
     return AVCaptureVideoOrientationPortrait;
   } else if (deviceOrientation == UIDeviceOrientationLandscapeLeft) {
@@ -206,6 +213,27 @@ NSString *const errorMethod = @"error";
     return AVCaptureVideoOrientationPortraitUpsideDown;
   } else {
     return AVCaptureVideoOrientationPortrait;
+  }
+}
+
+- (CGFloat)getVideoRotationAngleForDeviceOrientation:
+(UIDeviceOrientation)deviceOrientation API_AVAILABLE(macos(14.0), ios(17.0)) {
+  switch (deviceOrientation) {
+    case UIDeviceOrientationPortrait:
+      return 90;
+    case UIDeviceOrientationLandscapeLeft:
+      // Note: device orientation is flipped compared to video orientation. When UIDeviceOrientation
+      // is landscape left the video orientation should be landscape right.
+      return 180;
+    case UIDeviceOrientationLandscapeRight:
+      // Note: device orientation is flipped compared to video orientation. When UIDeviceOrientation
+      // is landscape right the video orientation should be landscape left.
+      return 0;
+    case UIDeviceOrientationPortraitUpsideDown:
+      return 270;
+    default:
+      // Default to UIDeviceOrientationPortrait.
+      return 90;
   }
 }
 

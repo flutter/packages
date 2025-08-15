@@ -777,8 +777,14 @@ final class DefaultCamera: FLTCam, Camera {
     }
 
     // Keep the same orientation the old connections had.
-    if let oldConnection = oldConnection, newConnection.isVideoOrientationSupported {
-      newConnection.videoOrientation = oldConnection.videoOrientation
+    if #available(iOS 17.0, macos 14.0, *) {
+      if let oldConnection = oldConnection, newConnection.isVideoRotationAngleSupported(oldConnection.videoRotationAngle) {
+        newConnection.videoRotationAngle = oldConnection.videoRotationAngle
+      }
+    } else {
+      if let oldConnection = oldConnection, newConnection.isVideoOrientationSupported {
+        newConnection.videoOrientation = oldConnection.videoOrientation
+      }
     }
 
     // Add the new connections to the session.
