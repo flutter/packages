@@ -607,9 +607,9 @@ void main() {
                     )
                     .having(
                       (MultiImagePickerOptions options) =>
-                          options.imageOptions.maxWidth,
+                          options.imageOptions.maxHeight,
                       'maxHeight',
-                      equals(10.0),
+                      equals(20.0),
                     )
                     .having(
                       (MultiImagePickerOptions options) =>
@@ -631,9 +631,9 @@ void main() {
                     )
                     .having(
                       (MultiImagePickerOptions options) =>
-                          options.imageOptions.maxWidth,
+                          options.imageOptions.maxHeight,
                       'maxHeight',
-                      equals(10.0),
+                      equals(20.0),
                     )
                     .having(
                       (MultiImagePickerOptions options) =>
