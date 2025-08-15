@@ -709,4 +709,26 @@ class MockAndroidWebViewController extends _i1.Mock
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<bool> isWebViewFeatureSupported(
+          _i6.WebViewFeatureType? featureType) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #isWebViewFeatureSupported,
+          [featureType],
+        ),
+        returnValue: _i5.Future<bool>.value(false),
+      ) as _i5.Future<bool>);
+
+  @override
+  _i5.Future<void> setPaymentRequestEnabled(bool? enabled) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setPaymentRequestEnabled,
+          [enabled],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 }
