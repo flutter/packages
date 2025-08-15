@@ -121,6 +121,7 @@ class WebLinkDelegateState extends State<WebLinkDelegate> {
   Widget _buildChild(BuildContext context) {
     return Semantics(
       link: true,
+      excludeSemantics: true,
       identifier: _semanticsIdentifier,
       linkUrl: widget.link.uri,
       child: widget.link.builder(
