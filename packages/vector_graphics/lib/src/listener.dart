@@ -494,10 +494,10 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
   }
 
   /// Creates ImageShader for active pattern.
-  // TODO(stuartmorgan): Fix this violation, which predates enabling the lint
-  //  to catch it.
-  // ignore: library_private_types_in_public_api
   void onPatternFinished(
+    // TODO(stuartmorgan): Fix this violation, which predates enabling the lint
+    //  to catch it.
+    // ignore: library_private_types_in_public_api
     _PatternConfig? currentPattern,
     PictureRecorder? patternRecorder,
     Canvas canvas,
