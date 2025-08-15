@@ -5,7 +5,7 @@
 import 'package:analyzer/dart/analysis/results.dart';
 import 'package:analyzer/dart/analysis/session.dart';
 import 'package:analyzer/dart/ast/ast.dart';
-import 'package:analyzer/dart/element/element.dart';
+import 'package:analyzer/dart/element/element2.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:source_gen/source_gen.dart';
 import 'package:source_helper/source_helper.dart';
@@ -43,6 +43,7 @@ const List<_TypeHelper> _helpers = <_TypeHelper>[
   _TypeHelperDateTime(),
   _TypeHelperDouble(),
   _TypeHelperEnum(),
+  _TypeHelperExtensionType(),
   _TypeHelperInt(),
   _TypeHelperNum(),
   _TypeHelperString(),
@@ -53,7 +54,10 @@ const List<_TypeHelper> _helpers = <_TypeHelper>[
 /// Returns the decoded [String] value for [element], if its type is supported.
 ///
 /// Otherwise, throws an [InvalidGenerationSourceError].
-String decodeParameter(ParameterElement element, Set<String> pathParameters) {
+String decodeParameter(
+  FormalParameterElement element,
+  Set<String> pathParameters,
+) {
   if (element.isExtraField) {
     return 'state.${_stateValueAccess(element, pathParameters)}';
   }
@@ -82,11 +86,13 @@ String decodeParameter(ParameterElement element, Set<String> pathParameters) {
 /// Returns the encoded [String] value for [element], if its type is supported.
 ///
 /// Otherwise, throws an [InvalidGenerationSourceError].
-String encodeField(PropertyAccessorElement element) {
+String encodeField(PropertyAccessorElement2 element) {
   for (final _TypeHelper helper in _helpers) {
     if (helper._matchesType(element.returnType)) {
       return helper._encode(
-          '$selfFieldName.${element.name}', element.returnType);
+        '$selfFieldName.${element.displayName}',
+        element.returnType,
+      );
     }
   }
 
@@ -97,16 +103,17 @@ String encodeField(PropertyAccessorElement element) {
 }
 
 /// Returns an AstNode type from a InterfaceElement.
-T? getNodeDeclaration<T extends AstNode>(InterfaceElement element) {
+T? getNodeDeclaration<T extends AstNode>(InterfaceElement2 element) {
   final AnalysisSession? session = element.session;
   if (session == null) {
     return null;
   }
 
   final ParsedLibraryResult parsedLibrary =
-      session.getParsedLibraryByElement(element.library) as ParsedLibraryResult;
-  final ElementDeclarationResult? declaration =
-      parsedLibrary.getElementDeclaration(element);
+      session.getParsedLibraryByElement2(element.library2)
+          as ParsedLibraryResult;
+  final FragmentDeclarationResult? declaration = parsedLibrary
+      .getFragmentDeclaration(element.firstFragment);
   final AstNode? node = declaration?.node;
 
   return node is T ? node : null;
@@ -115,11 +122,17 @@ T? getNodeDeclaration<T extends AstNode>(InterfaceElement element) {
 /// Returns the comparison of a parameter with its default value.
 ///
 /// Otherwise, throws an [InvalidGenerationSourceError].
-String compareField(ParameterElement param, String value1, String value2) {
+String compareField(
+  FormalParameterElement param,
+  String value1,
+  String value2,
+) {
   for (final _TypeHelper helper in _helpers) {
     if (helper._matchesType(param.type)) {
       return helper._compare(
-          '$selfFieldName.${param.name}', param.defaultValueCode!);
+        '$selfFieldName.${param.displayName}',
+        param.defaultValueCode!,
+      );
     }
   }
 
@@ -132,7 +145,10 @@ String compareField(ParameterElement param, String value1, String value2) {
 /// Gets the name of the `const` map generated to help encode [Enum] types.
 String enumMapName(InterfaceType type) => '_\$${type.element.name}EnumMap';
 
-String _stateValueAccess(ParameterElement element, Set<String> pathParameters) {
+String _stateValueAccess(
+  FormalParameterElement element,
+  Set<String> pathParameters,
+) {
   if (element.isExtraField) {
     // ignore: avoid_redundant_argument_values
     return 'extra as ${element.type.getDisplayString()}';
@@ -141,11 +157,11 @@ String _stateValueAccess(ParameterElement element, Set<String> pathParameters) {
   late String access;
   final String suffix =
       !element.type.isNullableType && !element.hasDefaultValue ? '!' : '';
-  if (pathParameters.contains(element.name)) {
-    access = 'pathParameters[${escapeDartString(element.name)}]$suffix';
+  if (pathParameters.contains(element.displayName)) {
+    access = 'pathParameters[${escapeDartString(element.displayName)}]$suffix';
   } else {
     access =
-        'uri.queryParameters[${escapeDartString(element.name.kebab)}]$suffix';
+        'uri.queryParameters[${escapeDartString(element.displayName.kebab)}]$suffix';
   }
 
   return access;
@@ -165,7 +181,10 @@ abstract class _TypeHelper {
   const _TypeHelper();
 
   /// Decodes the value from its string representation in the URL.
-  String _decode(ParameterElement parameterElement, Set<String> pathParameters);
+  String _decode(
+    FormalParameterElement parameterElement,
+    Set<String> pathParameters,
+  );
 
   /// Encodes the value from its string representation in the URL.
   String _encode(String fieldName, DartType type);
@@ -263,6 +282,100 @@ class _TypeHelperEnum extends _TypeHelperWithHelper {
   bool _matchesType(DartType type) => type.isEnum;
 }
 
+/// A type helper for extension types.
+/// Supported extension types are:
+/// - [String]
+/// - [int]
+/// - [double]
+/// - [num]
+/// - [bool]
+/// - [Enum]
+/// - [BigInt]
+/// - [DateTime]
+/// - [Uri]
+class _TypeHelperExtensionType extends _TypeHelper {
+  const _TypeHelperExtensionType();
+
+  @override
+  String _decode(
+    FormalParameterElement parameterElement,
+    Set<String> pathParameters,
+  ) {
+    final DartType paramType = parameterElement.type;
+    if (paramType.isNullableType && parameterElement.hasDefaultValue) {
+      throw NullableDefaultValueError(parameterElement);
+    }
+
+    final String stateValue =
+        'state.${_stateValueAccess(parameterElement, pathParameters)}';
+    final String castType;
+    if (paramType.isNullableType || parameterElement.hasDefaultValue) {
+      castType = '$paramType${paramType.isNullableType ? '' : '?'}';
+    } else {
+      castType = '$paramType';
+    }
+
+    final DartType representationType = paramType.extensionTypeErasure;
+    if (representationType.isDartCoreString) {
+      return '$stateValue as $castType';
+    }
+
+    if (representationType.isEnum) {
+      return '${enumMapName(representationType as InterfaceType)}'
+          '.$enumExtensionHelperName($stateValue) as $castType';
+    }
+
+    final String representationTypeName = withoutNullability(
+      representationType.getDisplayString(),
+    );
+    if (paramType.isNullableType || parameterElement.hasDefaultValue) {
+      return "$representationTypeName.tryParse($stateValue ?? '') as $castType";
+    } else {
+      return '$representationTypeName.parse($stateValue) as $castType';
+    }
+  }
+
+  @override
+  String _encode(String fieldName, DartType type) {
+    final DartType representationType = type.extensionTypeErasure;
+    if (representationType.isDartCoreString) {
+      return '$fieldName${type.ensureNotNull} as String';
+    }
+
+    if (representationType.isEnum) {
+      return '${enumMapName(representationType as InterfaceType)}'
+          '[$fieldName${type.ensureNotNull} as ${withoutNullability(representationType.getDisplayString())}]!';
+    }
+
+    return '$fieldName${representationType.ensureNotNull}.toString()';
+  }
+
+  @override
+  bool _matchesType(DartType type) {
+    final DartType representationType = type.extensionTypeErasure;
+    if (type == representationType) {
+      // `type` is not an extension type.
+      return false;
+    }
+
+    return representationType.isDartCoreString ||
+        representationType.isDartCoreInt ||
+        representationType.isDartCoreDouble ||
+        representationType.isDartCoreNum ||
+        representationType.isDartCoreBool ||
+        representationType.isEnum ||
+        const TypeChecker.fromRuntime(
+          BigInt,
+        ).isAssignableFromType(representationType) ||
+        const TypeChecker.fromRuntime(
+          DateTime,
+        ).isAssignableFromType(representationType) ||
+        const TypeChecker.fromRuntime(
+          Uri,
+        ).isAssignableFromType(representationType);
+  }
+}
+
 class _TypeHelperInt extends _TypeHelperWithHelper {
   const _TypeHelperInt();
 
@@ -306,8 +419,9 @@ class _TypeHelperString extends _TypeHelper {
 
   @override
   String _decode(
-          ParameterElement parameterElement, Set<String> pathParameters) =>
-      'state.${_stateValueAccess(parameterElement, pathParameters)}';
+    FormalParameterElement parameterElement,
+    Set<String> pathParameters,
+  ) => 'state.${_stateValueAccess(parameterElement, pathParameters)}';
 
   @override
   String _encode(String fieldName, DartType type) => fieldName;
@@ -344,7 +458,9 @@ class _TypeHelperIterable extends _TypeHelperWithHelper {
 
   @override
   String _decode(
-      ParameterElement parameterElement, Set<String> pathParameters) {
+    FormalParameterElement parameterElement,
+    Set<String> pathParameters,
+  ) {
     if (parameterElement.type is ParameterizedType) {
       final DartType iterableType =
           (parameterElement.type as ParameterizedType).typeArguments.first;
@@ -378,15 +494,17 @@ class _TypeHelperIterable extends _TypeHelperWithHelper {
       // get correct type for iterable
       String iterableCaster = '';
       String fallBack = '';
-      if (const TypeChecker.fromRuntime(List)
-          .isAssignableFromType(parameterElement.type)) {
+      if (const TypeChecker.fromRuntime(
+        List,
+      ).isAssignableFromType(parameterElement.type)) {
         iterableCaster += '?.toList()';
         if (!parameterElement.type.isNullableType &&
             !parameterElement.hasDefaultValue) {
           fallBack = '?? const []';
         }
-      } else if (const TypeChecker.fromRuntime(Set)
-          .isAssignableFromType(parameterElement.type)) {
+      } else if (const TypeChecker.fromRuntime(
+        Set,
+      ).isAssignableFromType(parameterElement.type)) {
         iterableCaster += '?.toSet()';
         if (!parameterElement.type.isNullableType &&
             !parameterElement.hasDefaultValue) {
@@ -396,11 +514,11 @@ class _TypeHelperIterable extends _TypeHelperWithHelper {
 
       return '''
 (state.uri.queryParametersAll[
-        ${escapeDartString(parameterElement.name.kebab)}]
+        ${escapeDartString(parameterElement.displayName.kebab)}]
         ?.map($entriesTypeDecoder)$convertToNotNull)$iterableCaster$fallBack''';
     }
     return '''
-state.uri.queryParametersAll[${escapeDartString(parameterElement.name.kebab)}]''';
+state.uri.queryParametersAll[${escapeDartString(parameterElement.displayName.kebab)}]''';
   }
 
   @override
@@ -441,9 +559,11 @@ abstract class _TypeHelperWithHelper extends _TypeHelper {
 
   @override
   String _decode(
-      ParameterElement parameterElement, Set<String> pathParameters) {
+    FormalParameterElement parameterElement,
+    Set<String> pathParameters,
+  ) {
     final DartType paramType = parameterElement.type;
-    final String parameterName = parameterElement.name;
+    final String parameterName = parameterElement.displayName;
 
     if (!pathParameters.contains(parameterName) &&
         (paramType.isNullableType || parameterElement.hasDefaultValue)) {
@@ -463,23 +583,22 @@ extension DartTypeExtension on DartType {
   String get ensureNotNull => isNullableType ? '!' : '';
 }
 
-/// Extension helpers on [ParameterElement].
-extension ParameterElementExtension on ParameterElement {
+/// Extension helpers on [FormalParameterElement].
+extension FormalParameterElementExtension on FormalParameterElement {
   /// Convenient helper on top of [isRequiredPositional] and [isRequiredNamed].
   bool get isRequired => isRequiredPositional || isRequiredNamed;
 
   /// Returns `true` if `this` has a name that matches [extraFieldName];
-  bool get isExtraField => name == extraFieldName;
+  bool get isExtraField => displayName == extraFieldName;
 }
 
 /// An error thrown when a default value is used with a nullable type.
 class NullableDefaultValueError extends InvalidGenerationSourceError {
   /// An error thrown when a default value is used with a nullable type.
-  NullableDefaultValueError(
-    Element element,
-  ) : super(
-          'Default value used with a nullable type. Only non-nullable type can have a default value.',
-          todo: 'Remove the default value or make the type non-nullable.',
-          element: element,
-        );
+  NullableDefaultValueError(Element2 element)
+    : super(
+        'Default value used with a nullable type. Only non-nullable type can have a default value.',
+        todo: 'Remove the default value or make the type non-nullable.',
+        element: element,
+      );
 }

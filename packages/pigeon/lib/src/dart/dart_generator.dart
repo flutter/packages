@@ -20,11 +20,11 @@ const String _docCommentPrefix = '///';
 /// Name of the variable that contains the message channel suffix for APIs.
 const String _suffixVarName = '${varNamePrefix}messageChannelSuffix';
 
-/// Name of the `InstanceManager` variable for a ProxyApi class;
+/// Name of the `InstanceManager` variable for the Dart proxy class of a ProxyAPI.
 const String instanceManagerVarName = '${classMemberNamePrefix}instanceManager';
 
 /// Name of field used for host API codec.
-const String _pigeonChannelCodec = 'pigeonChannelCodec';
+const String pigeonChannelCodec = 'pigeonChannelCodec';
 
 /// Documentation comment spec.
 const DocumentCommentSpecification docCommentSpec =
@@ -39,7 +39,7 @@ const String _pigeonMethodChannelCodec = 'pigeonMethodCodec';
 const String _overflowClassName = '_PigeonCodecOverflow';
 
 /// Name of the overrides class for overriding constructors and static members
-/// of proxy APIs.
+/// of Dart proxy classes.
 const String proxyApiOverridesClassName = '${proxyApiClassNamePrefix}Overrides';
 
 /// Options that control how Dart code will be generated.
@@ -518,7 +518,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
             'static TestDefaultBinaryMessengerBinding? get _testBinaryMessengerBinding => TestDefaultBinaryMessengerBinding.instance;');
       }
       indent.writeln(
-          'static const MessageCodec<Object?> $_pigeonChannelCodec = $_pigeonMessageCodec();');
+          'static const MessageCodec<Object?> $pigeonChannelCodec = $_pigeonMessageCodec();');
       indent.newln();
       for (final Method func in api.methods) {
         addDocumentationComments(
@@ -540,7 +540,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
             r"messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';");
 
         for (final Method func in api.methods) {
-          _writeFlutterMethodMessageHandler(
+          writeFlutterMethodMessageHandler(
             indent,
             name: func.name,
             parameters: func.parameters,
@@ -598,7 +598,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
 ''');
 
       indent.writeln(
-          'static const MessageCodec<Object?> $_pigeonChannelCodec = $_pigeonMessageCodec();');
+          'static const MessageCodec<Object?> $pigeonChannelCodec = $_pigeonMessageCodec();');
       indent.newln();
       indent.writeln('final String $_suffixVarName;');
       indent.newln();
@@ -713,7 +713,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
             cb.Field(
               (cb.FieldBuilder builder) {
                 builder
-                  ..name = _pigeonChannelCodec
+                  ..name = pigeonChannelCodec
                   ..type = cb.refer('MessageCodec<Object?>')
                   ..static = true
                   ..modifier = cb.FieldModifier.constant
@@ -749,7 +749,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
                   cb.Block(
                     (cb.BlockBuilder builder) {
                       final StringBuffer messageHandlerSink = StringBuffer();
-                      _writeFlutterMethodMessageHandler(
+                      writeFlutterMethodMessageHandler(
                         Indent(messageHandlerSink),
                         name: 'removeStrongReferenceName',
                         parameters: <Parameter>[
@@ -804,7 +804,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
                   ..body = cb.Block(
                     (cb.BlockBuilder builder) {
                       final StringBuffer messageCallSink = StringBuffer();
-                      _writeHostMethodMessageCall(
+                      writeHostMethodMessageCall(
                         Indent(messageCallSink),
                         addSuffixVariable: false,
                         channelName: makeRemoveStrongReferenceChannelName(
@@ -841,7 +841,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
                   ..body = cb.Block(
                     (cb.BlockBuilder builder) {
                       final StringBuffer messageCallSink = StringBuffer();
-                      _writeHostMethodMessageCall(
+                      writeHostMethodMessageCall(
                         Indent(messageCallSink),
                         addSuffixVariable: false,
                         channelName: makeClearChannelName(dartPackageName),
@@ -904,7 +904,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
         ..docs.addAll(
           asDocumentationComments(api.documentationComments, docCommentSpec),
         )
-        ..constructors.addAll(_proxyApiConstructors(
+        ..constructors.addAll(proxy_api_helper.constructors(
           api.constructors,
           apiName: api.name,
           dartPackageName: dartPackageName,
@@ -919,7 +919,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
           declaredFlutterMethods: api.flutterMethods,
         ))
         ..constructors.add(
-          _proxyApiDetachedConstructor(
+          proxy_api_helper.detachedConstructor(
             apiName: api.name,
             superClassApi: api.superClass?.associatedProxyApi,
             unattachedFields: api.unattachedFields,
@@ -934,24 +934,32 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
           if (api.constructors.isNotEmpty ||
               api.attachedFields.any((ApiField field) => !field.isStatic) ||
               api.hostMethods.isNotEmpty)
-            _proxyApiCodecInstanceField(
+            proxy_api_helper.codecInstanceField(
               codecInstanceName: codecInstanceName,
               codecName: codecName,
             ),
         ])
-        ..fields.addAll(_proxyApiUnattachedFields(api.unattachedFields))
-        ..fields.addAll(_proxyApiFlutterMethodFields(
+        ..fields.addAll(
+          proxy_api_helper.unattachedFields(api.unattachedFields),
+        )
+        ..fields.addAll(proxy_api_helper.flutterMethodFields(
           api.flutterMethods,
           apiName: api.name,
         ))
-        ..fields.addAll(_proxyApiInterfaceApiFields(api.apisOfInterfaces()))
-        ..fields.addAll(_proxyApiAttachedFields(api.attachedFields))
+        ..fields.addAll(
+          proxy_api_helper.interfaceApiFields(
+            api.apisOfInterfaces(),
+          ),
+        )
+        ..fields.addAll(
+          proxy_api_helper.attachedFields(api.attachedFields),
+        )
         ..methods.addAll(proxy_api_helper.staticAttachedFieldsGetters(
           api.attachedFields.where((ApiField field) => field.isStatic),
           apiName: api.name,
         ))
         ..methods.add(
-          _proxyApiSetUpMessageHandlerMethod(
+          proxy_api_helper.setUpMessageHandlerMethod(
             flutterMethods: api.flutterMethods,
             apiName: api.name,
             dartPackageName: dartPackageName,
@@ -961,7 +969,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
           ),
         )
         ..methods.addAll(
-          _proxyApiAttachedFieldMethods(
+          proxy_api_helper.attachedFieldMethods(
             api.attachedFields,
             apiName: api.name,
             dartPackageName: dartPackageName,
@@ -969,7 +977,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
             codecName: codecName,
           ),
         )
-        ..methods.addAll(_proxyApiHostMethods(
+        ..methods.addAll(proxy_api_helper.hostMethods(
           api.hostMethods,
           apiName: api.name,
           dartPackageName: dartPackageName,
@@ -977,7 +985,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
           codecName: codecName,
         ))
         ..methods.add(
-          _proxyApiCopyMethod(
+          proxy_api_helper.copyMethod(
             apiName: api.name,
             unattachedFields: api.unattachedFields,
             flutterMethodsFromSuperClasses:
@@ -1215,7 +1223,7 @@ if (wrapped == null) {
       'Future<${addGenericTypesNullable(returnType)}> $name($argSignature) async ',
     );
     indent.addScoped('{', '}', () {
-      _writeHostMethodMessageCall(
+      writeHostMethodMessageCall(
         indent,
         channelName: channelName,
         parameters: parameters,
@@ -1225,7 +1233,8 @@ if (wrapped == null) {
     });
   }
 
-  void _writeHostMethodMessageCall(
+  /// Writes the message call to a host method to [indent].
+  static void writeHostMethodMessageCall(
     Indent indent, {
     required String channelName,
     required Iterable<Parameter> parameters,
@@ -1250,7 +1259,7 @@ if (wrapped == null) {
         'final BasicMessageChannel<Object?> ${varNamePrefix}channel = BasicMessageChannel<Object?>(',
         ');', () {
       indent.writeln('${varNamePrefix}channelName,');
-      indent.writeln('$_pigeonChannelCodec,');
+      indent.writeln('$pigeonChannelCodec,');
       indent.writeln('binaryMessenger: ${varNamePrefix}binaryMessenger,');
     });
     final String returnTypeName = _makeGenericTypeArguments(returnType);
@@ -1314,7 +1323,8 @@ if (${varNamePrefix}replyList == null) {
     }
   }
 
-  void _writeFlutterMethodMessageHandler(
+  /// Writes the message call handler for a Flutter method to [indent].
+  static void writeFlutterMethodMessageHandler(
     Indent indent, {
     required String name,
     required Iterable<Parameter> parameters,
@@ -1336,7 +1346,7 @@ if (${varNamePrefix}replyList == null) {
       indent.nest(2, () {
         final String channelSuffix =
             addSuffixVariable ? r'$messageChannelSuffix' : '';
-        indent.writeln("'$channelName$channelSuffix', $_pigeonChannelCodec,");
+        indent.writeln("'$channelName$channelSuffix', $pigeonChannelCodec,");
         indent.writeln(
           'binaryMessenger: binaryMessenger);',
         );
@@ -1434,830 +1444,6 @@ if (${varNamePrefix}replyList == null) {
     Iterable<String> safeArgumentNames,
   ) {
     return 'api.$methodName(${safeArgumentNames.join(', ')})';
-  }
-
-  /// Converts Constructors from the pigeon AST to `code_builder` Constructors
-  /// for a ProxyApi.
-  ///
-  /// Creates a factory constructor that can return an overrideable static
-  /// method for testing and a constructor that calls to the native
-  /// API implementation
-  Iterable<cb.Constructor> _proxyApiConstructors(
-    Iterable<Constructor> constructors, {
-    required String apiName,
-    required String dartPackageName,
-    required String codecName,
-    required String codecInstanceName,
-    required AstProxyApi? superClassApi,
-    required Iterable<ApiField> unattachedFields,
-    required Iterable<(Method, AstProxyApi)> flutterMethodsFromSuperClasses,
-    required Iterable<(Method, AstProxyApi)> flutterMethodsFromInterfaces,
-    required Iterable<Method> declaredFlutterMethods,
-  }) sync* {
-    final cb.Parameter binaryMessengerParameter = cb.Parameter(
-      (cb.ParameterBuilder builder) => builder
-        ..name = '${classMemberNamePrefix}binaryMessenger'
-        ..named = true
-        ..toSuper = true,
-    );
-
-    for (final Constructor constructor in constructors) {
-      final String? factoryConstructorName =
-          constructor.name.isNotEmpty ? constructor.name : null;
-      final String constructorName =
-          '$classMemberNamePrefix${constructor.name.isNotEmpty ? constructor.name : 'new'}';
-      final String overridesConstructorName = constructor.name.isNotEmpty
-          ? '${toLowerCamelCase(apiName)}_${constructor.name}'
-          : '${toLowerCamelCase(apiName)}_new';
-
-      // Factory constructor that forwards the parameters to the overrides class
-      // or to the constructor yielded below this one.
-      yield cb.Constructor(
-        (cb.ConstructorBuilder builder) {
-          final Iterable<cb.Parameter> parameters =
-              proxy_api_helper.asConstructorParameters(
-            apiName: apiName,
-            parameters: constructor.parameters,
-            unattachedFields: unattachedFields,
-            flutterMethodsFromSuperClasses: flutterMethodsFromSuperClasses,
-            flutterMethodsFromInterfaces: flutterMethodsFromInterfaces,
-            declaredFlutterMethods: declaredFlutterMethods,
-          );
-          final Iterable<cb.Parameter> parametersWithoutMessengerAndManager =
-              proxy_api_helper.asConstructorParameters(
-            apiName: apiName,
-            parameters: constructor.parameters,
-            unattachedFields: unattachedFields,
-            flutterMethodsFromSuperClasses: flutterMethodsFromSuperClasses,
-            flutterMethodsFromInterfaces: flutterMethodsFromInterfaces,
-            declaredFlutterMethods: declaredFlutterMethods,
-            includeBinaryMessengerAndInstanceManager: false,
-          );
-          builder
-            ..name = factoryConstructorName
-            ..factory = true
-            ..docs.addAll(asDocumentationComments(
-              constructor.documentationComments,
-              docCommentSpec,
-            ))
-            ..optionalParameters.addAll(parameters)
-            ..body = cb.Block(
-              (cb.BlockBuilder builder) {
-                final Map<String, cb.Expression> forwardedParams =
-                    <String, cb.Expression>{
-                  for (final cb.Parameter parameter in parameters)
-                    parameter.name: cb.refer(parameter.name)
-                };
-                final Map<String, cb.Expression>
-                    forwardedParamsWithoutMessengerAndManager =
-                    <String, cb.Expression>{
-                  for (final cb.Parameter parameter
-                      in parametersWithoutMessengerAndManager)
-                    parameter.name: cb.refer(parameter.name)
-                };
-
-                builder.statements.addAll(<cb.Code>[
-                  cb.Code(
-                      'if ($proxyApiOverridesClassName.$overridesConstructorName != null) {'),
-                  cb.CodeExpression(
-                    cb.Code(
-                        '$proxyApiOverridesClassName.$overridesConstructorName!'),
-                  )
-                      .call(
-                        <cb.Expression>[],
-                        forwardedParamsWithoutMessengerAndManager,
-                      )
-                      .returned
-                      .statement,
-                  const cb.Code('}'),
-                  cb.CodeExpression(cb.Code('$apiName.$constructorName'))
-                      .call(<cb.Expression>[], forwardedParams)
-                      .returned
-                      .statement,
-                ]);
-              },
-            );
-        },
-      );
-
-      yield cb.Constructor(
-        (cb.ConstructorBuilder builder) {
-          final String channelName = makeChannelNameWithStrings(
-            apiName: apiName,
-            methodName: constructor.name.isNotEmpty
-                ? constructor.name
-                : '${classMemberNamePrefix}defaultConstructor',
-            dartPackageName: dartPackageName,
-          );
-          builder
-            ..name = constructorName
-            ..annotations.add(cb.refer('protected'))
-            ..docs.addAll(asDocumentationComments(
-              constructor.documentationComments,
-              docCommentSpec,
-            ))
-            ..optionalParameters
-                .addAll(proxy_api_helper.asConstructorParameters(
-              apiName: apiName,
-              parameters: constructor.parameters,
-              unattachedFields: unattachedFields,
-              flutterMethodsFromSuperClasses: flutterMethodsFromSuperClasses,
-              flutterMethodsFromInterfaces: flutterMethodsFromInterfaces,
-              declaredFlutterMethods: declaredFlutterMethods,
-              defineType: false,
-            ))
-            ..initializers.addAll(
-              <cb.Code>[
-                if (superClassApi != null)
-                  const cb.Code('super.${classMemberNamePrefix}detached()')
-              ],
-            )
-            ..body = cb.Block(
-              (cb.BlockBuilder builder) {
-                final StringBuffer messageCallSink = StringBuffer();
-                _writeHostMethodMessageCall(
-                  Indent(messageCallSink),
-                  addSuffixVariable: false,
-                  channelName: channelName,
-                  insideAsyncMethod: false,
-                  parameters: <Parameter>[
-                    Parameter(
-                      name: '${varNamePrefix}instanceIdentifier',
-                      type: const TypeDeclaration(
-                        baseName: 'int',
-                        isNullable: false,
-                      ),
-                    ),
-                    ...unattachedFields.map(
-                      (ApiField field) => Parameter(
-                        name: field.name,
-                        type: field.type,
-                      ),
-                    ),
-                    ...constructor.parameters,
-                  ],
-                  returnType: const TypeDeclaration.voidDeclaration(),
-                );
-
-                builder.statements.addAll(<cb.Code>[
-                  const cb.Code(
-                    'final int ${varNamePrefix}instanceIdentifier = $instanceManagerVarName.addDartCreatedInstance(this);',
-                  ),
-                  cb.Code('final $codecName $_pigeonChannelCodec =\n'
-                      '    $codecInstanceName;'),
-                  cb.Code(
-                    'final BinaryMessenger? ${varNamePrefix}binaryMessenger = ${binaryMessengerParameter.name};',
-                  ),
-                  cb.Code(messageCallSink.toString()),
-                ]);
-              },
-            );
-        },
-      );
-    }
-  }
-
-  /// The detached constructor present for every ProxyApi.
-  ///
-  /// This constructor doesn't include a host method call to create a new native
-  /// class instance. It is mainly used when the native side wants to create a
-  /// Dart instance or when the `InstanceManager` wants to create a copy for
-  /// automatic garbage collection.
-  cb.Constructor _proxyApiDetachedConstructor({
-    required String apiName,
-    required AstProxyApi? superClassApi,
-    required Iterable<ApiField> unattachedFields,
-    required Iterable<(Method, AstProxyApi)> flutterMethodsFromSuperClasses,
-    required Iterable<(Method, AstProxyApi)> flutterMethodsFromInterfaces,
-    required Iterable<Method> declaredFlutterMethods,
-  }) {
-    return cb.Constructor(
-      (cb.ConstructorBuilder builder) => builder
-        ..name = '${classMemberNamePrefix}detached'
-        ..docs.addAll(<String>[
-          '/// Constructs [$apiName] without creating the associated native object.',
-          '///',
-          '/// This should only be used by subclasses created by this library or to',
-          '/// create copies for an [$dartInstanceManagerClassName].',
-        ])
-        ..annotations.add(cb.refer('protected'))
-        ..optionalParameters.addAll(proxy_api_helper.asConstructorParameters(
-          apiName: apiName,
-          parameters: <Parameter>[],
-          unattachedFields: unattachedFields,
-          flutterMethodsFromSuperClasses: flutterMethodsFromSuperClasses,
-          flutterMethodsFromInterfaces: flutterMethodsFromInterfaces,
-          declaredFlutterMethods: declaredFlutterMethods,
-          defineType: false,
-        ))
-        ..initializers.addAll(<cb.Code>[
-          if (superClassApi != null)
-            const cb.Code('super.${classMemberNamePrefix}detached()'),
-        ]),
-    );
-  }
-
-  /// A private Field of the base codec.
-  cb.Field _proxyApiCodecInstanceField({
-    required String codecInstanceName,
-    required String codecName,
-  }) {
-    return cb.Field(
-      (cb.FieldBuilder builder) => builder
-        ..name = codecInstanceName
-        ..type = cb.refer(codecName)
-        ..late = true
-        ..modifier = cb.FieldModifier.final$
-        ..assignment = cb.Code('$codecName($instanceManagerVarName)'),
-    );
-  }
-
-  /// Converts unattached fields from the pigeon AST to `code_builder`
-  /// Fields.
-  Iterable<cb.Field> _proxyApiUnattachedFields(
-    Iterable<ApiField> fields,
-  ) sync* {
-    for (final ApiField field in fields) {
-      yield cb.Field(
-        (cb.FieldBuilder builder) => builder
-          ..name = field.name
-          ..type = cb.refer(addGenericTypesNullable(field.type))
-          ..modifier = cb.FieldModifier.final$
-          ..docs.addAll(asDocumentationComments(
-            field.documentationComments,
-            docCommentSpec,
-          )),
-      );
-    }
-  }
-
-  /// Converts Flutter methods from the pigeon AST to `code_builder` Fields.
-  ///
-  /// Flutter methods of a ProxyApi are set as an anonymous function of a class
-  /// instance, so this converts methods to a `Function` type field instance.
-  Iterable<cb.Field> _proxyApiFlutterMethodFields(
-    Iterable<Method> methods, {
-    required String apiName,
-  }) sync* {
-    for (final Method method in methods) {
-      yield cb.Field(
-        (cb.FieldBuilder builder) => builder
-          ..name = method.name
-          ..modifier = cb.FieldModifier.final$
-          ..docs.addAll(asDocumentationComments(
-            <String>[
-              ...method.documentationComments,
-              ...<String>[
-                if (method.documentationComments.isEmpty) 'Callback method.',
-                '',
-                'For the associated Native object to be automatically garbage collected,',
-                "it is required that the implementation of this `Function` doesn't have a",
-                'strong reference to the encapsulating class instance. When this `Function`',
-                'references a non-local variable, it is strongly recommended to access it',
-                'with a `WeakReference`:',
-                '',
-                '```dart',
-                'final WeakReference weakMyVariable = WeakReference(myVariable);',
-                'final $apiName instance = $apiName(',
-                '  ${method.name}: ($apiName ${classMemberNamePrefix}instance, ...) {',
-                '    print(weakMyVariable?.target);',
-                '  },',
-                ');',
-                '```',
-                '',
-                'Alternatively, [$dartInstanceManagerClassName.removeWeakReference] can be used to',
-                'release the associated Native object manually.',
-              ],
-            ],
-            docCommentSpec,
-          ))
-          ..type =
-              proxy_api_helper.methodAsFunctionType(method, apiName: apiName),
-      );
-    }
-  }
-
-  /// Converts the Flutter methods from the pigeon AST to `code_builder` Fields.
-  ///
-  /// Flutter methods of a ProxyApi are set as an anonymous function of a class
-  /// instance, so this converts methods to a `Function` type field instance.
-  ///
-  /// This is similar to [_proxyApiFlutterMethodFields] except all the methods are
-  /// inherited from apis that are being implemented (following the `implements`
-  /// keyword).
-  Iterable<cb.Field> _proxyApiInterfaceApiFields(
-    Iterable<AstProxyApi> apisOfInterfaces,
-  ) sync* {
-    for (final AstProxyApi proxyApi in apisOfInterfaces) {
-      for (final Method method in proxyApi.methods) {
-        yield cb.Field(
-          (cb.FieldBuilder builder) => builder
-            ..name = method.name
-            ..modifier = cb.FieldModifier.final$
-            ..annotations.add(cb.refer('override'))
-            ..docs.addAll(asDocumentationComments(
-              method.documentationComments,
-              docCommentSpec,
-            ))
-            ..type = cb.FunctionType(
-              (cb.FunctionTypeBuilder builder) => builder
-                ..returnType = refer(
-                  method.returnType,
-                  asFuture: method.isAsynchronous,
-                )
-                ..isNullable = !method.isRequired
-                ..requiredParameters.addAll(<cb.Reference>[
-                  cb.refer(
-                    '${proxyApi.name} ${classMemberNamePrefix}instance',
-                  ),
-                  ...indexMap(
-                    method.parameters,
-                    (int index, NamedType parameter) {
-                      return cb.refer(
-                        '${addGenericTypesNullable(parameter.type)} ${getParameterName(index, parameter)}',
-                      );
-                    },
-                  ),
-                ]),
-            ),
-        );
-      }
-    }
-  }
-
-  /// Converts attached Fields from the pigeon AST to `code_builder` Field.
-  ///
-  /// Attached fields are set lazily by calling a private method that returns
-  /// it.
-  ///
-  /// Example Output:
-  ///
-  /// ```dart
-  /// final MyOtherProxyApiClass value = _pigeon_value();
-  /// ```
-  Iterable<cb.Field> _proxyApiAttachedFields(Iterable<ApiField> fields) sync* {
-    for (final ApiField field in fields) {
-      yield cb.Field(
-        (cb.FieldBuilder builder) => builder
-          ..name = '${field.isStatic ? '_' : ''}${field.name}'
-          ..type = cb.refer(addGenericTypesNullable(field.type))
-          ..modifier = cb.FieldModifier.final$
-          ..static = field.isStatic
-          ..late = !field.isStatic
-          ..docs.addAll(asDocumentationComments(
-            field.documentationComments,
-            docCommentSpec,
-          ))
-          ..assignment = cb.Code('$varNamePrefix${field.name}()'),
-      );
-    }
-  }
-
-  /// Creates the static `setUpMessageHandlers` method for a ProxyApi.
-  ///
-  /// This method handles setting the message handler for every un-inherited
-  /// Flutter method.
-  ///
-  /// This also adds a handler to receive a call from the platform to
-  /// instantiate a new Dart instance if [hasCallbackConstructor] is set to
-  /// true.
-  cb.Method _proxyApiSetUpMessageHandlerMethod({
-    required Iterable<Method> flutterMethods,
-    required String apiName,
-    required String dartPackageName,
-    required String codecName,
-    required Iterable<ApiField> unattachedFields,
-    required bool hasCallbackConstructor,
-  }) {
-    final bool hasAnyMessageHandlers =
-        hasCallbackConstructor || flutterMethods.isNotEmpty;
-    return cb.Method.returnsVoid(
-      (cb.MethodBuilder builder) => builder
-        ..name = '${classMemberNamePrefix}setUpMessageHandlers'
-        ..returns = cb.refer('void')
-        ..static = true
-        ..optionalParameters.addAll(<cb.Parameter>[
-          cb.Parameter(
-            (cb.ParameterBuilder builder) => builder
-              ..name = '${classMemberNamePrefix}clearHandlers'
-              ..type = cb.refer('bool')
-              ..named = true
-              ..defaultTo = const cb.Code('false'),
-          ),
-          cb.Parameter(
-            (cb.ParameterBuilder builder) => builder
-              ..name = '${classMemberNamePrefix}binaryMessenger'
-              ..named = true
-              ..type = cb.refer('BinaryMessenger?'),
-          ),
-          cb.Parameter(
-            (cb.ParameterBuilder builder) => builder
-              ..name = instanceManagerVarName
-              ..named = true
-              ..type = cb.refer('$dartInstanceManagerClassName?'),
-          ),
-          if (hasCallbackConstructor)
-            cb.Parameter(
-              (cb.ParameterBuilder builder) => builder
-                ..name = '${classMemberNamePrefix}newInstance'
-                ..named = true
-                ..type = cb.FunctionType(
-                  (cb.FunctionTypeBuilder builder) => builder
-                    ..returnType = cb.refer(apiName)
-                    ..isNullable = true
-                    ..requiredParameters.addAll(
-                      indexMap(
-                        unattachedFields,
-                        (int index, ApiField field) {
-                          return cb.refer(
-                            '${addGenericTypesNullable(field.type)} ${getParameterName(index, field)}',
-                          );
-                        },
-                      ),
-                    ),
-                ),
-            ),
-          for (final Method method in flutterMethods)
-            cb.Parameter(
-              (cb.ParameterBuilder builder) => builder
-                ..name = method.name
-                ..type = cb.FunctionType(
-                  (cb.FunctionTypeBuilder builder) => builder
-                    ..returnType = refer(
-                      method.returnType,
-                      asFuture: method.isAsynchronous,
-                    )
-                    ..isNullable = true
-                    ..requiredParameters.addAll(<cb.Reference>[
-                      cb.refer('$apiName ${classMemberNamePrefix}instance'),
-                      ...indexMap(
-                        method.parameters,
-                        (int index, NamedType parameter) {
-                          return cb.refer(
-                            '${addGenericTypesNullable(parameter.type)} ${getParameterName(index, parameter)}',
-                          );
-                        },
-                      ),
-                    ]),
-                ),
-            ),
-        ])
-        ..body = cb.Block.of(<cb.Code>[
-          if (hasAnyMessageHandlers) ...<cb.Code>[
-            cb.Code(
-              'final $codecName $_pigeonChannelCodec = $codecName($instanceManagerVarName ?? $dartInstanceManagerClassName.instance);',
-            ),
-            const cb.Code(
-              'final BinaryMessenger? binaryMessenger = ${classMemberNamePrefix}binaryMessenger;',
-            )
-          ],
-          if (hasCallbackConstructor)
-            ...cb.Block((cb.BlockBuilder builder) {
-              final StringBuffer messageHandlerSink = StringBuffer();
-              const String methodName = '${classMemberNamePrefix}newInstance';
-              _writeFlutterMethodMessageHandler(
-                Indent(messageHandlerSink),
-                name: methodName,
-                parameters: <Parameter>[
-                  Parameter(
-                    name: '${classMemberNamePrefix}instanceIdentifier',
-                    type: const TypeDeclaration(
-                      baseName: 'int',
-                      isNullable: false,
-                    ),
-                  ),
-                  ...unattachedFields.map(
-                    (ApiField field) {
-                      return Parameter(name: field.name, type: field.type);
-                    },
-                  ),
-                ],
-                returnType: const TypeDeclaration.voidDeclaration(),
-                channelName: makeChannelNameWithStrings(
-                  apiName: apiName,
-                  methodName: methodName,
-                  dartPackageName: dartPackageName,
-                ),
-                isMockHandler: false,
-                isAsynchronous: false,
-                nullHandlerExpression: '${classMemberNamePrefix}clearHandlers',
-                onCreateApiCall: (
-                  String methodName,
-                  Iterable<Parameter> parameters,
-                  Iterable<String> safeArgumentNames,
-                ) {
-                  final String argsAsNamedParams = map2(
-                    parameters,
-                    safeArgumentNames,
-                    (Parameter parameter, String safeArgName) {
-                      return '${parameter.name}: $safeArgName,\n';
-                    },
-                  ).skip(1).join();
-                  return '($instanceManagerVarName ?? $dartInstanceManagerClassName.instance)\n'
-                      '    .addHostCreatedInstance(\n'
-                      '  $methodName?.call(${safeArgumentNames.skip(1).join(',')}) ??\n'
-                      '      $apiName.${classMemberNamePrefix}detached('
-                      '        ${classMemberNamePrefix}binaryMessenger: ${classMemberNamePrefix}binaryMessenger,\n'
-                      '        $instanceManagerVarName: $instanceManagerVarName,\n'
-                      '        $argsAsNamedParams\n'
-                      '      ),\n'
-                      '  ${safeArgumentNames.first},\n'
-                      ')';
-                },
-              );
-              builder.statements.add(cb.Code(messageHandlerSink.toString()));
-            }).statements,
-          for (final Method method in flutterMethods)
-            ...cb.Block((cb.BlockBuilder builder) {
-              final StringBuffer messageHandlerSink = StringBuffer();
-              _writeFlutterMethodMessageHandler(
-                Indent(messageHandlerSink),
-                name: method.name,
-                parameters: <Parameter>[
-                  Parameter(
-                    name: '${classMemberNamePrefix}instance',
-                    type: TypeDeclaration(
-                      baseName: apiName,
-                      isNullable: false,
-                    ),
-                  ),
-                  ...method.parameters,
-                ],
-                returnType: TypeDeclaration(
-                  baseName: method.returnType.baseName,
-                  isNullable:
-                      !method.isRequired || method.returnType.isNullable,
-                  typeArguments: method.returnType.typeArguments,
-                  associatedEnum: method.returnType.associatedEnum,
-                  associatedClass: method.returnType.associatedClass,
-                  associatedProxyApi: method.returnType.associatedProxyApi,
-                ),
-                channelName: makeChannelNameWithStrings(
-                  apiName: apiName,
-                  methodName: method.name,
-                  dartPackageName: dartPackageName,
-                ),
-                isMockHandler: false,
-                isAsynchronous: method.isAsynchronous,
-                nullHandlerExpression: '${classMemberNamePrefix}clearHandlers',
-                onCreateApiCall: (
-                  String methodName,
-                  Iterable<Parameter> parameters,
-                  Iterable<String> safeArgumentNames,
-                ) {
-                  final String nullability = method.isRequired ? '' : '?';
-                  return '($methodName ?? ${safeArgumentNames.first}.$methodName)$nullability.call(${safeArgumentNames.join(',')})';
-                },
-              );
-              builder.statements.add(cb.Code(messageHandlerSink.toString()));
-            }).statements,
-        ]),
-    );
-  }
-
-  /// Converts attached fields from the pigeon AST to `code_builder` Methods.
-  ///
-  /// These private methods are used to lazily instantiate attached fields. The
-  /// instance is created and returned synchronously while the native instance
-  /// is created asynchronously. This is similar to how constructors work.
-  Iterable<cb.Method> _proxyApiAttachedFieldMethods(
-    Iterable<ApiField> fields, {
-    required String apiName,
-    required String dartPackageName,
-    required String codecInstanceName,
-    required String codecName,
-  }) sync* {
-    for (final ApiField field in fields) {
-      yield cb.Method(
-        (cb.MethodBuilder builder) {
-          final String type = addGenericTypesNullable(field.type);
-          const String instanceName = '${varNamePrefix}instance';
-          const String identifierInstanceName =
-              '${varNamePrefix}instanceIdentifier';
-          builder
-            ..name = '$varNamePrefix${field.name}'
-            ..static = field.isStatic
-            ..returns = cb.refer(type)
-            ..body = cb.Block(
-              (cb.BlockBuilder builder) {
-                final StringBuffer messageCallSink = StringBuffer();
-                _writeHostMethodMessageCall(
-                  Indent(messageCallSink),
-                  addSuffixVariable: false,
-                  channelName: makeChannelNameWithStrings(
-                    apiName: apiName,
-                    methodName: field.name,
-                    dartPackageName: dartPackageName,
-                  ),
-                  parameters: <Parameter>[
-                    if (!field.isStatic)
-                      Parameter(
-                        name: 'this',
-                        type: TypeDeclaration(
-                          baseName: apiName,
-                          isNullable: false,
-                        ),
-                      ),
-                    Parameter(
-                      name: identifierInstanceName,
-                      type: const TypeDeclaration(
-                        baseName: 'int',
-                        isNullable: false,
-                      ),
-                    ),
-                  ],
-                  returnType: const TypeDeclaration.voidDeclaration(),
-                );
-                builder.statements.addAll(<cb.Code>[
-                  if (!field.isStatic) ...<cb.Code>[
-                    cb.Code(
-                      'final $type $instanceName = $type.${classMemberNamePrefix}detached(\n'
-                      '  ${classMemberNamePrefix}binaryMessenger: ${classMemberNamePrefix}binaryMessenger,\n'
-                      '  ${classMemberNamePrefix}instanceManager: ${classMemberNamePrefix}instanceManager,\n'
-                      ');',
-                    ),
-                    cb.Code('final $codecName $_pigeonChannelCodec =\n'
-                        '    $codecInstanceName;'),
-                    const cb.Code(
-                      'final BinaryMessenger? ${varNamePrefix}binaryMessenger = ${classMemberNamePrefix}binaryMessenger;',
-                    ),
-                    const cb.Code(
-                      'final int $identifierInstanceName = $instanceManagerVarName.addDartCreatedInstance($instanceName);',
-                    ),
-                  ] else ...<cb.Code>[
-                    cb.Code(
-                      'final $type $instanceName = $type.${classMemberNamePrefix}detached();',
-                    ),
-                    cb.Code(
-                      'final $codecName $_pigeonChannelCodec = $codecName($dartInstanceManagerClassName.instance);',
-                    ),
-                    const cb.Code(
-                      'final BinaryMessenger ${varNamePrefix}binaryMessenger = ServicesBinding.instance.defaultBinaryMessenger;',
-                    ),
-                    const cb.Code(
-                      'final int $identifierInstanceName = $dartInstanceManagerClassName.instance.addDartCreatedInstance($instanceName);',
-                    ),
-                  ],
-                  const cb.Code('() async {'),
-                  cb.Code(messageCallSink.toString()),
-                  const cb.Code('}();'),
-                  const cb.Code('return $instanceName;'),
-                ]);
-              },
-            );
-        },
-      );
-    }
-  }
-
-  /// Converts host methods from pigeon AST to `code_builder` Methods.
-  ///
-  /// This creates methods like a HostApi except that it includes the calling
-  /// instance if the method is not static.
-  Iterable<cb.Method> _proxyApiHostMethods(
-    Iterable<Method> methods, {
-    required String apiName,
-    required String dartPackageName,
-    required String codecInstanceName,
-    required String codecName,
-  }) sync* {
-    for (final Method method in methods) {
-      assert(method.location == ApiLocation.host);
-      final Iterable<cb.Parameter> parameters = indexMap(
-        method.parameters,
-        (int index, NamedType parameter) => cb.Parameter(
-          (cb.ParameterBuilder builder) => builder
-            ..name = getParameterName(index, parameter)
-            ..type = cb.refer(
-              addGenericTypesNullable(parameter.type),
-            ),
-        ),
-      );
-      yield cb.Method(
-        (cb.MethodBuilder builder) => builder
-          ..name = method.name
-          ..static = method.isStatic
-          ..modifier = cb.MethodModifier.async
-          ..docs.addAll(asDocumentationComments(
-            method.documentationComments,
-            docCommentSpec,
-          ))
-          ..returns = refer(method.returnType, asFuture: true)
-          ..requiredParameters.addAll(parameters)
-          ..optionalParameters.addAll(<cb.Parameter>[
-            if (method.isStatic) ...<cb.Parameter>[
-              cb.Parameter(
-                (cb.ParameterBuilder builder) => builder
-                  ..name = '${classMemberNamePrefix}binaryMessenger'
-                  ..type = cb.refer('BinaryMessenger?')
-                  ..named = true,
-              ),
-              cb.Parameter(
-                (cb.ParameterBuilder builder) => builder
-                  ..name = instanceManagerVarName
-                  ..type = cb.refer('$dartInstanceManagerClassName?'),
-              ),
-            ],
-          ])
-          ..body = cb.Block(
-            (cb.BlockBuilder builder) {
-              final StringBuffer messageCallSink = StringBuffer();
-              _writeHostMethodMessageCall(
-                Indent(messageCallSink),
-                addSuffixVariable: false,
-                channelName: makeChannelNameWithStrings(
-                  apiName: apiName,
-                  methodName: method.name,
-                  dartPackageName: dartPackageName,
-                ),
-                parameters: <Parameter>[
-                  if (!method.isStatic)
-                    Parameter(
-                      name: 'this',
-                      type: TypeDeclaration(
-                        baseName: apiName,
-                        isNullable: false,
-                      ),
-                    ),
-                  ...method.parameters,
-                ],
-                returnType: method.returnType,
-              );
-              builder.statements.addAll(<cb.Code>[
-                if (method.isStatic) ...<cb.Code>[
-                  cb.Code(
-                    'if ($proxyApiOverridesClassName.${toLowerCamelCase(apiName)}_${method.name} != null) {',
-                  ),
-                  cb.CodeExpression(
-                    cb.Code(
-                      '$proxyApiOverridesClassName.${toLowerCamelCase(apiName)}_${method.name}!',
-                    ),
-                  )
-                      .call(parameters.map(
-                        (cb.Parameter parameter) => cb.refer(parameter.name),
-                      ))
-                      .returned
-                      .statement,
-                  const cb.Code('}'),
-                ],
-                if (!method.isStatic)
-                  cb.Code('final $codecName $_pigeonChannelCodec =\n'
-                      '    $codecInstanceName;')
-                else
-                  cb.Code(
-                    'final $codecName $_pigeonChannelCodec = $codecName($instanceManagerVarName ?? $dartInstanceManagerClassName.instance);',
-                  ),
-                const cb.Code(
-                  'final BinaryMessenger? ${varNamePrefix}binaryMessenger = ${classMemberNamePrefix}binaryMessenger;',
-                ),
-                cb.Code(messageCallSink.toString()),
-              ]);
-            },
-          ),
-      );
-    }
-  }
-
-  /// Creates the copy method for a ProxyApi.
-  ///
-  /// This method returns a copy of the instance with all the Flutter methods
-  /// and unattached fields passed to the new instance. This method is inherited
-  /// from the base ProxyApi class.
-  cb.Method _proxyApiCopyMethod({
-    required String apiName,
-    required Iterable<ApiField> unattachedFields,
-    required Iterable<(Method, AstProxyApi)> flutterMethodsFromSuperClasses,
-    required Iterable<(Method, AstProxyApi)> flutterMethodsFromInterfaces,
-    required Iterable<Method> declaredFlutterMethods,
-  }) {
-    final Iterable<cb.Parameter> parameters =
-        proxy_api_helper.asConstructorParameters(
-      apiName: apiName,
-      parameters: <Parameter>[],
-      unattachedFields: unattachedFields,
-      flutterMethodsFromSuperClasses: flutterMethodsFromSuperClasses,
-      flutterMethodsFromInterfaces: flutterMethodsFromInterfaces,
-      declaredFlutterMethods: declaredFlutterMethods,
-    );
-    return cb.Method(
-      (cb.MethodBuilder builder) => builder
-        ..name = '${classMemberNamePrefix}copy'
-        ..returns = cb.refer(apiName)
-        ..annotations.add(cb.refer('override'))
-        ..body = cb.Block.of(<cb.Code>[
-          cb
-              .refer('$apiName.${classMemberNamePrefix}detached')
-              .call(
-                <cb.Expression>[],
-                <String, cb.Expression>{
-                  for (final cb.Parameter parameter in parameters)
-                    parameter.name: cb.refer(parameter.name)
-                },
-              )
-              .returned
-              .statement,
-        ]),
-    );
   }
 }
 
