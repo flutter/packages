@@ -212,11 +212,10 @@ void main() {
       await tester.pumpAndSettle();
       final SemanticsHandle handle = tester.ensureSemantics();
 
-      final Finder firstButtonFinder = find.text('First Button');
-      expect(firstButtonFinder, findsOneWidget);
+      final Finder buttonFinder = find.text('First Button');
+      expect(buttonFinder, findsOneWidget);
 
-      final SemanticsNode firstSemantics =
-          tester.getSemantics(firstButtonFinder);
+      final SemanticsNode firstSemantics = tester.getSemantics(buttonFinder);
       final SemanticsData firstData = firstSemantics.getSemanticsData();
 
       expect(
