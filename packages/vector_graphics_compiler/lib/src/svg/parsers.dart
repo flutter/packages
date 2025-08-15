@@ -93,7 +93,7 @@ AffineMatrix _parseSvgMatrix(List<double> params, AffineMatrix current) {
   final double e = params[4];
   final double f = params[5];
 
-  return AffineMatrix(a, b, c, d, e, f).multiplied(current);
+  return AffineMatrix(a, b, c, d, e, f, 1.0).multiplied(current);
 }
 
 AffineMatrix _parseSvgSkewX(List<double> params, AffineMatrix current) {
