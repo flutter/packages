@@ -485,7 +485,7 @@ abstract class BaseManager {
 
 /// Event to notify publisher that an event occurred with an Ad.
 ///
-/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdEvent.html.
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/kotlin/com/google/ads/interactivemedia/v3/api/AdEvent.
 @ProxyApi(
   kotlinOptions: KotlinProxyApiOptions(
     fullClassName: 'com.google.ads.interactivemedia.v3.api.AdEvent',
@@ -497,6 +497,9 @@ abstract class AdEvent {
 
   /// A map containing any extra ad data for the event, if needed.
   late final Map<String, String>? adData;
+
+  /// The ad with which this event is associated.
+  late final Ad? ad;
 }
 
 /// Factory class for creating SDK objects.

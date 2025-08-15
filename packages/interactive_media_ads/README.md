@@ -14,8 +14,7 @@ a separate video player positioned on top of the app's content video player.
 | **Support** | SDK 21+ | 12.0+ |
 
 **NOTE:**
-* Companion ads, Background Audio ads and Google Dynamic Ad Insertion methods are currently not
-  supported.
+* Background Audio ads and Google Dynamic Ad Insertion methods are currently not supported.
 
 ## IMA client-side overview
 
