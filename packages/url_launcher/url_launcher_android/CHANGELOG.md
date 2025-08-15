@@ -1,3 +1,7 @@
+## 6.3.18
+
+* Bumps com.android.tools.build:gradle from 8.5.1 to 8.11.1.
+
 ## 6.3.17
 
 * Updates kotlin version to 2.2.0 to enable gradle 8.11 support.
