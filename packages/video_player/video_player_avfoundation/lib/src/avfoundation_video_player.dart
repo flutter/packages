@@ -52,9 +52,9 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
 
   @override
   Future<void> dispose(int playerId) async {
-    await _api.dispose(playerId);
+    final VideoPlayerInstanceApi? player = _players.remove(playerId);
+    await player?.dispose();
     playerViewStates.remove(playerId);
-    _players.remove(playerId);
   }
 
   @override
@@ -106,16 +106,21 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
     final CreationOptions pigeonCreationOptions = CreationOptions(
       uri: uri,
       httpHeaders: dataSource.httpHeaders,
-      viewType: _platformVideoViewTypeFromVideoViewType(viewType),
     );
 
-    final int playerId = await _api.create(pigeonCreationOptions);
-    playerViewStates[playerId] = switch (viewType) {
-      // playerId is also the textureId when using texture view.
-      VideoViewType.textureView =>
-        VideoPlayerTextureViewState(textureId: playerId),
-      VideoViewType.platformView => const VideoPlayerPlatformViewState(),
-    };
+    final int playerId;
+    final VideoPlayerViewState state;
+    switch (viewType) {
+      case VideoViewType.textureView:
+        final TexturePlayerIds ids =
+            await _api.createForTextureView(pigeonCreationOptions);
+        playerId = ids.playerId;
+        state = VideoPlayerTextureViewState(textureId: ids.textureId);
+      case VideoViewType.platformView:
+        playerId = await _api.createForPlatformView(pigeonCreationOptions);
+        state = const VideoPlayerPlatformViewState();
+    }
+    playerViewStates[playerId] = state;
     ensureApiInitialized(playerId);
 
     return playerId;
@@ -263,15 +268,6 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
       Duration(milliseconds: startMilliseconds + durationMilliseconds),
     );
   }
-}
-
-PlatformVideoViewType _platformVideoViewTypeFromVideoViewType(
-  VideoViewType viewType,
-) {
-  return switch (viewType) {
-    VideoViewType.textureView => PlatformVideoViewType.textureView,
-    VideoViewType.platformView => PlatformVideoViewType.platformView,
-  };
 }
 
 /// Base class representing the state of a video player view.

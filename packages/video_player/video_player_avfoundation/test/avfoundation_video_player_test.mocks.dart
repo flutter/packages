@@ -23,6 +23,17 @@ import 'package:video_player_avfoundation/src/messages.g.dart' as _i2;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
+class _FakeTexturePlayerIds_0 extends _i1.SmartFake
+    implements _i2.TexturePlayerIds {
+  _FakeTexturePlayerIds_0(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
 /// A class which mocks [AVFoundationVideoPlayerApi].
 ///
 /// See the documentation for Mockito's code generation for more information.
@@ -52,25 +63,41 @@ class MockAVFoundationVideoPlayerApi extends _i1.Mock
       ) as _i4.Future<void>);
 
   @override
-  _i4.Future<int> create(_i2.CreationOptions? creationOptions) =>
+  _i4.Future<int> createForPlatformView(_i2.CreationOptions? params) =>
       (super.noSuchMethod(
         Invocation.method(
-          #create,
-          [creationOptions],
+          #createForPlatformView,
+          [params],
         ),
         returnValue: _i4.Future<int>.value(0),
         returnValueForMissingStub: _i4.Future<int>.value(0),
       ) as _i4.Future<int>);
 
   @override
-  _i4.Future<void> dispose(int? playerId) => (super.noSuchMethod(
+  _i4.Future<_i2.TexturePlayerIds> createForTextureView(
+          _i2.CreationOptions? creationOptions) =>
+      (super.noSuchMethod(
         Invocation.method(
-          #dispose,
-          [playerId],
+          #createForTextureView,
+          [creationOptions],
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue:
+            _i4.Future<_i2.TexturePlayerIds>.value(_FakeTexturePlayerIds_0(
+          this,
+          Invocation.method(
+            #createForTextureView,
+            [creationOptions],
+          ),
+        )),
+        returnValueForMissingStub:
+            _i4.Future<_i2.TexturePlayerIds>.value(_FakeTexturePlayerIds_0(
+          this,
+          Invocation.method(
+            #createForTextureView,
+            [creationOptions],
+          ),
+        )),
+      ) as _i4.Future<_i2.TexturePlayerIds>);
 
   @override
   _i4.Future<void> setMixWithOthers(bool? mixWithOthers) => (super.noSuchMethod(
@@ -182,6 +209,16 @@ class MockVideoPlayerInstanceApi extends _i1.Mock
   _i4.Future<void> pause() => (super.noSuchMethod(
         Invocation.method(
           #pause,
+          [],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<void> dispose() => (super.noSuchMethod(
+        Invocation.method(
+          #dispose,
           [],
         ),
         returnValue: _i4.Future<void>.value(),
