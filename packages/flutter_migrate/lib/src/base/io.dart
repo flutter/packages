@@ -32,7 +32,8 @@
 // ignore_for_file: avoid_print
 
 import 'dart:async';
-import 'dart:io' as io
+import 'dart:io'
+    as io
     show
         IOSink,
         Process,
@@ -119,11 +120,9 @@ class Stdio {
   /// Tests can provide overrides to use instead of the stdout and stderr from
   /// dart:io.
   @visibleForTesting
-  Stdio.test({
-    required io.Stdout stdout,
-    required io.IOSink stderr,
-  })  : _stdoutOverride = stdout,
-        _stderrOverride = stderr;
+  Stdio.test({required io.Stdout stdout, required io.IOSink stderr})
+    : _stdoutOverride = stdout,
+      _stderrOverride = stderr;
 
   io.Stdout? _stdoutOverride;
   io.IOSink? _stderrOverride;
@@ -221,10 +220,10 @@ class Stdio {
     fallback == null
         ? print(message)
         : fallback(
-            message,
-            const io.StdoutException('stderr is done'),
-            StackTrace.current,
-          );
+          message,
+          const io.StdoutException('stderr is done'),
+          StackTrace.current,
+        );
   }
 
   /// Writes [message] to [stdout], falling back on [fallback] if the write
@@ -240,10 +239,10 @@ class Stdio {
     fallback == null
         ? print(message)
         : fallback(
-            message,
-            const io.StdoutException('stdout is done'),
-            StackTrace.current,
-          );
+          message,
+          const io.StdoutException('stdout is done'),
+          StackTrace.current,
+        );
   }
 
   // Helper for [stderrWrite] and [stdoutWrite].
@@ -252,15 +251,18 @@ class Stdio {
     String message, {
     void Function(String, dynamic, StackTrace)? fallback,
   }) {
-    asyncGuard<void>(() async {
-      sink.write(message);
-    }, onError: (Object error, StackTrace stackTrace) {
-      if (fallback == null) {
-        print(message);
-      } else {
-        fallback(message, error, stackTrace);
-      }
-    });
+    asyncGuard<void>(
+      () async {
+        sink.write(message);
+      },
+      onError: (Object error, StackTrace stackTrace) {
+        if (fallback == null) {
+          print(message);
+        } else {
+          fallback(message, error, stackTrace);
+        }
+      },
+    );
   }
 
   /// Adds [stream] to [stdout].
@@ -286,23 +288,27 @@ class ProcessSignal {
   @visibleForTesting
   const ProcessSignal(this._delegate);
 
-  static const ProcessSignal sigwinch =
-      PosixProcessSignal(io.ProcessSignal.sigwinch);
-  static const ProcessSignal sigterm =
-      PosixProcessSignal(io.ProcessSignal.sigterm);
-  static const ProcessSignal sigusr1 =
-      PosixProcessSignal(io.ProcessSignal.sigusr1);
-  static const ProcessSignal sigusr2 =
-      PosixProcessSignal(io.ProcessSignal.sigusr2);
+  static const ProcessSignal sigwinch = PosixProcessSignal(
+    io.ProcessSignal.sigwinch,
+  );
+  static const ProcessSignal sigterm = PosixProcessSignal(
+    io.ProcessSignal.sigterm,
+  );
+  static const ProcessSignal sigusr1 = PosixProcessSignal(
+    io.ProcessSignal.sigusr1,
+  );
+  static const ProcessSignal sigusr2 = PosixProcessSignal(
+    io.ProcessSignal.sigusr2,
+  );
   static const ProcessSignal sigint = ProcessSignal(io.ProcessSignal.sigint);
   static const ProcessSignal sigkill = ProcessSignal(io.ProcessSignal.sigkill);
 
   final io.ProcessSignal _delegate;
 
   Stream<ProcessSignal> watch() {
-    return _delegate
-        .watch()
-        .map<ProcessSignal>((io.ProcessSignal signal) => this);
+    return _delegate.watch().map<ProcessSignal>(
+      (io.ProcessSignal signal) => this,
+    );
   }
 
   /// Sends the signal to the given process (identified by pid).

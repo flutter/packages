@@ -12,9 +12,8 @@ import 'src/messages.g.dart';
 /// iOS implementation of [GoogleSignInPlatform].
 class GoogleSignInIOS extends GoogleSignInPlatform {
   /// Creates a new plugin implementation instance.
-  GoogleSignInIOS({
-    @visibleForTesting GoogleSignInApi? api,
-  }) : _api = api ?? GoogleSignInApi();
+  GoogleSignInIOS({@visibleForTesting GoogleSignInApi? api})
+    : _api = api ?? GoogleSignInApi();
 
   final GoogleSignInApi _api;
 
@@ -28,15 +27,19 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
   @override
   Future<void> init(InitParameters params) async {
     _nonce = params.nonce;
-    await _api.configure(PlatformConfigurationParams(
+    await _api.configure(
+      PlatformConfigurationParams(
         clientId: params.clientId,
         serverClientId: params.serverClientId,
-        hostedDomain: params.hostedDomain));
+        hostedDomain: params.hostedDomain,
+      ),
+    );
   }
 
   @override
   Future<AuthenticationResults?> attemptLightweightAuthentication(
-      AttemptLightweightAuthenticationParameters params) async {
+    AttemptLightweightAuthenticationParameters params,
+  ) async {
     final SignInResult result = await _api.restorePreviousSignIn();
 
     if (result.error?.type == GoogleSignInErrorCode.noAuthInKeychain) {
@@ -46,9 +49,10 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
     final SignInFailure? failure = result.error;
     if (failure != null) {
       throw GoogleSignInException(
-          code: _exceptionCodeForErrorPlatformErrorCode(failure.type),
-          description: failure.message,
-          details: failure.details);
+        code: _exceptionCodeForErrorPlatformErrorCode(failure.type),
+        description: failure.message,
+        details: failure.details,
+      );
     }
 
     // The native code must never return a null success and a null error.
@@ -64,23 +68,26 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
 
   @override
   Future<AuthenticationResults> authenticate(
-      AuthenticateParameters params) async {
+    AuthenticateParameters params,
+  ) async {
     final SignInResult result = await _api.signIn(params.scopeHint, _nonce);
 
     // This should never happen; the corresponding native error code is
     // documented as being specific to restorePreviousSignIn.
     if (result.error?.type == GoogleSignInErrorCode.noAuthInKeychain) {
       throw const GoogleSignInException(
-          code: GoogleSignInExceptionCode.unknownError,
-          description: 'No auth reported during interactive sign in.');
+        code: GoogleSignInExceptionCode.unknownError,
+        description: 'No auth reported during interactive sign in.',
+      );
     }
 
     final SignInFailure? failure = result.error;
     if (failure != null) {
       throw GoogleSignInException(
-          code: _exceptionCodeForErrorPlatformErrorCode(failure.type),
-          description: failure.message,
-          details: failure.details);
+        code: _exceptionCodeForErrorPlatformErrorCode(failure.type),
+        description: failure.message,
+        details: failure.details,
+      );
     }
 
     // The native code must never return a null success and a null error.
@@ -107,7 +114,8 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
 
   @override
   Future<ClientAuthorizationTokenData?> clientAuthorizationTokensForScopes(
-      ClientAuthorizationTokensForScopesParameters params) async {
+    ClientAuthorizationTokensForScopesParameters params,
+  ) async {
     final String? accessToken =
         (await _getAuthorizationTokens(params.request)).accessToken;
     return accessToken == null
@@ -117,7 +125,8 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
 
   @override
   Future<ServerAuthorizationTokenData?> serverAuthorizationTokensForScopes(
-      ServerAuthorizationTokensForScopesParameters params) async {
+    ServerAuthorizationTokensForScopesParameters params,
+  ) async {
     final String? serverAuthCode =
         (await _getAuthorizationTokens(params.request)).serverAuthCode;
     return serverAuthCode == null
@@ -126,7 +135,7 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
   }
 
   Future<({String? accessToken, String? serverAuthCode})>
-      _getAuthorizationTokens(AuthorizationRequestDetails request) async {
+  _getAuthorizationTokens(AuthorizationRequestDetails request) async {
     String? userId = request.userId;
 
     // The Google Sign In SDK requires authentication before authorization, so
@@ -155,9 +164,10 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
     }
 
     final bool useExistingAuthorization = !request.promptIfUnauthorized;
-    SignInResult result = useExistingAuthorization
-        ? await _api.getRefreshedAuthorizationTokens(userId)
-        : await _api.addScopes(request.scopes, userId);
+    SignInResult result =
+        useExistingAuthorization
+            ? await _api.getRefreshedAuthorizationTokens(userId)
+            : await _api.addScopes(request.scopes, userId);
     if (!useExistingAuthorization &&
         result.error?.type == GoogleSignInErrorCode.scopesAlreadyGranted) {
       // The Google Sign In SDK returns an error when requesting scopes that are
@@ -183,12 +193,14 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
       const Set<String> openIdConnectScopes = <String>{
         'email',
         'openid',
-        'profile'
+        'profile',
       };
       if (success != null) {
-        if (request.scopes.any((String scope) =>
-            !openIdConnectScopes.contains(scope) &&
-            !success.grantedScopes.contains(scope))) {
+        if (request.scopes.any(
+          (String scope) =>
+              !openIdConnectScopes.contains(scope) &&
+              !success.grantedScopes.contains(scope),
+        )) {
           return (accessToken: null, serverAuthCode: null);
         }
       }
@@ -198,42 +210,46 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
   }
 
   Future<({String? accessToken, String? serverAuthCode})>
-      _processAuthorizationResult(SignInResult result) async {
+  _processAuthorizationResult(SignInResult result) async {
     final SignInFailure? failure = result.error;
     if (failure != null) {
       throw GoogleSignInException(
-          code: _exceptionCodeForErrorPlatformErrorCode(failure.type),
-          description: failure.message,
-          details: failure.details);
+        code: _exceptionCodeForErrorPlatformErrorCode(failure.type),
+        description: failure.message,
+        details: failure.details,
+      );
     }
 
     return _authorizationTokenDataFromSignInSuccess(result.success);
   }
 
   AuthenticationResults _authenticationResultsFromSignInSuccess(
-      SignInSuccess result) {
+    SignInSuccess result,
+  ) {
     final UserData userData = result.user;
     final GoogleSignInUserData user = GoogleSignInUserData(
-        email: userData.email,
-        id: userData.userId,
-        displayName: userData.displayName,
-        photoUrl: userData.photoUrl);
+      email: userData.email,
+      id: userData.userId,
+      displayName: userData.displayName,
+      photoUrl: userData.photoUrl,
+    );
     return AuthenticationResults(
-        user: user,
-        authenticationTokens:
-            AuthenticationTokenData(idToken: userData.idToken));
+      user: user,
+      authenticationTokens: AuthenticationTokenData(idToken: userData.idToken),
+    );
   }
 
   ({String? accessToken, String? serverAuthCode})
-      _authorizationTokenDataFromSignInSuccess(SignInSuccess? result) {
+  _authorizationTokenDataFromSignInSuccess(SignInSuccess? result) {
     return (
       accessToken: result?.accessToken,
-      serverAuthCode: result?.serverAuthCode
+      serverAuthCode: result?.serverAuthCode,
     );
   }
 
   GoogleSignInExceptionCode _exceptionCodeForErrorPlatformErrorCode(
-      GoogleSignInErrorCode code) {
+    GoogleSignInErrorCode code,
+  ) {
     return switch (code) {
       GoogleSignInErrorCode.unknown => GoogleSignInExceptionCode.unknownError,
       GoogleSignInErrorCode.keychainError =>
@@ -245,10 +261,14 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
         GoogleSignInExceptionCode.userMismatch,
       // These should never be mapped to a GoogleSignInException; the caller
       // should handle them.
-      GoogleSignInErrorCode.noAuthInKeychain => throw StateError(
-          '_exceptionCodeForErrorPlatformErrorCode called with no auth.'),
-      GoogleSignInErrorCode.scopesAlreadyGranted => throw StateError(
-          '_exceptionCodeForErrorPlatformErrorCode called with scopes already granted.'),
+      GoogleSignInErrorCode.noAuthInKeychain =>
+        throw StateError(
+          '_exceptionCodeForErrorPlatformErrorCode called with no auth.',
+        ),
+      GoogleSignInErrorCode.scopesAlreadyGranted =>
+        throw StateError(
+          '_exceptionCodeForErrorPlatformErrorCode called with scopes already granted.',
+        ),
     };
   }
 }

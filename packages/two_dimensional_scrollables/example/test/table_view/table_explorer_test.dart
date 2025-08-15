@@ -10,8 +10,9 @@ import 'package:two_dimensional_examples/table_view/simple_table.dart';
 import 'package:two_dimensional_examples/table_view/table_explorer.dart';
 
 void main() {
-  testWidgets('Table explorer switches between samples',
-      (WidgetTester tester) async {
+  testWidgets('Table explorer switches between samples', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(const MaterialApp(home: TableExplorer()));
     await tester.pumpAndSettle();
     // The first example

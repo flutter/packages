@@ -18,8 +18,11 @@ PlatformException _createConnectionError(String channelName) {
   );
 }
 
-List<Object?> wrapResponse(
-    {Object? result, PlatformException? error, bool empty = false}) {
+List<Object?> wrapResponse({
+  Object? result,
+  PlatformException? error,
+  bool empty = false,
+}) {
   if (empty) {
     return <Object?>[];
   }
@@ -88,12 +91,7 @@ enum SKProductDiscountPaymentModeMessage {
   unspecified,
 }
 
-enum SKSubscriptionPeriodUnitMessage {
-  day,
-  week,
-  month,
-  year,
-}
+enum SKSubscriptionPeriodUnitMessage { day, week, month, year }
 
 class SKPaymentTransactionMessage {
   SKPaymentTransactionMessage({
@@ -188,11 +186,7 @@ class SKPaymentMessage {
 }
 
 class SKErrorMessage {
-  SKErrorMessage({
-    required this.code,
-    required this.domain,
-    this.userInfo,
-  });
+  SKErrorMessage({required this.code, required this.domain, this.userInfo});
 
   int code;
 
@@ -201,11 +195,7 @@ class SKErrorMessage {
   Map<String, Object>? userInfo;
 
   Object encode() {
-    return <Object?>[
-      code,
-      domain,
-      userInfo,
-    ];
+    return <Object?>[code, domain, userInfo];
   }
 
   static SKErrorMessage decode(Object result) {
@@ -238,13 +228,7 @@ class SKPaymentDiscountMessage {
   int timestamp;
 
   Object encode() {
-    return <Object?>[
-      identifier,
-      keyIdentifier,
-      nonce,
-      signature,
-      timestamp,
-    ];
+    return <Object?>[identifier, keyIdentifier, nonce, signature, timestamp];
   }
 
   static SKPaymentDiscountMessage decode(Object result) {
@@ -260,20 +244,14 @@ class SKPaymentDiscountMessage {
 }
 
 class SKStorefrontMessage {
-  SKStorefrontMessage({
-    required this.countryCode,
-    required this.identifier,
-  });
+  SKStorefrontMessage({required this.countryCode, required this.identifier});
 
   String countryCode;
 
   String identifier;
 
   Object encode() {
-    return <Object?>[
-      countryCode,
-      identifier,
-    ];
+    return <Object?>[countryCode, identifier];
   }
 
   static SKStorefrontMessage decode(Object result) {
@@ -286,20 +264,14 @@ class SKStorefrontMessage {
 }
 
 class SKProductsResponseMessage {
-  SKProductsResponseMessage({
-    this.products,
-    this.invalidProductIdentifiers,
-  });
+  SKProductsResponseMessage({this.products, this.invalidProductIdentifiers});
 
   List<SKProductMessage>? products;
 
   List<String>? invalidProductIdentifiers;
 
   Object encode() {
-    return <Object?>[
-      products,
-      invalidProductIdentifiers,
-    ];
+    return <Object?>[products, invalidProductIdentifiers];
   }
 
   static SKProductsResponseMessage decode(Object result) {
@@ -390,11 +362,7 @@ class SKPriceLocaleMessage {
   String countryCode;
 
   Object encode() {
-    return <Object?>[
-      currencySymbol,
-      currencyCode,
-      countryCode,
-    ];
+    return <Object?>[currencySymbol, currencyCode, countryCode];
   }
 
   static SKPriceLocaleMessage decode(Object result) {
@@ -469,10 +437,7 @@ class SKProductSubscriptionPeriodMessage {
   SKSubscriptionPeriodUnitMessage unit;
 
   Object encode() {
-    return <Object?>[
-      numberOfUnits,
-      unit,
-    ];
+    return <Object?>[numberOfUnits, unit];
   }
 
   static SKProductSubscriptionPeriodMessage decode(Object result) {
@@ -591,11 +556,12 @@ class InAppPurchaseAPI {
   /// Constructor for [InAppPurchaseAPI].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  InAppPurchaseAPI(
-      {BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
-      : pigeonVar_binaryMessenger = binaryMessenger,
-        pigeonVar_messageChannelSuffix =
-            messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+  InAppPurchaseAPI({
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) : pigeonVar_binaryMessenger = binaryMessenger,
+       pigeonVar_messageChannelSuffix =
+           messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -608,10 +574,10 @@ class InAppPurchaseAPI {
         'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.canMakePayments$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_channel.send(null) as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -637,10 +603,10 @@ class InAppPurchaseAPI {
         'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.transactions$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_channel.send(null) as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -667,10 +633,10 @@ class InAppPurchaseAPI {
         'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.storefront$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_channel.send(null) as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -696,10 +662,10 @@ class InAppPurchaseAPI {
         'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.addPayment$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_channel.send(<Object?>[paymentMap]) as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -716,17 +682,19 @@ class InAppPurchaseAPI {
   }
 
   Future<SKProductsResponseMessage> startProductRequest(
-      List<String> productIdentifiers) async {
+    List<String> productIdentifiers,
+  ) async {
     final String pigeonVar_channelName =
         'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.startProductRequest$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
-    final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
-        .send(<Object?>[productIdentifiers]) as List<Object?>?;
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_channel.send(<Object?>[productIdentifiers])
+            as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {
@@ -750,10 +718,10 @@ class InAppPurchaseAPI {
         'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.finishTransaction$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_channel.send(<Object?>[finishMap]) as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -774,12 +742,13 @@ class InAppPurchaseAPI {
         'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.restoreTransactions$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
-    final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
-        .send(<Object?>[applicationUserName]) as List<Object?>?;
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_channel.send(<Object?>[applicationUserName])
+            as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {
@@ -798,10 +767,10 @@ class InAppPurchaseAPI {
         'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.presentCodeRedemptionSheet$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_channel.send(null) as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -822,10 +791,10 @@ class InAppPurchaseAPI {
         'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.retrieveReceiptData$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_channel.send(null) as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -846,12 +815,13 @@ class InAppPurchaseAPI {
         'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.refreshReceipt$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
-    final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
-        .send(<Object?>[receiptProperties]) as List<Object?>?;
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_channel.send(<Object?>[receiptProperties])
+            as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {
@@ -870,10 +840,10 @@ class InAppPurchaseAPI {
         'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.startObservingPaymentQueue$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_channel.send(null) as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -894,10 +864,10 @@ class InAppPurchaseAPI {
         'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.stopObservingPaymentQueue$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_channel.send(null) as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -918,10 +888,10 @@ class InAppPurchaseAPI {
         'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.registerPaymentQueueDelegate$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_channel.send(null) as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -942,10 +912,10 @@ class InAppPurchaseAPI {
         'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.removePaymentQueueDelegate$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_channel.send(null) as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -966,10 +936,10 @@ class InAppPurchaseAPI {
         'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.showPriceConsentIfNeeded$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_channel.send(null) as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -990,10 +960,10 @@ class InAppPurchaseAPI {
         'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.supportsStoreKit2$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_channel.send(null) as List<Object?>?;
     if (pigeonVar_replyList == null) {

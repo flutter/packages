@@ -23,9 +23,8 @@ final AuthenticationTokenData _testAuthnToken = AuthenticationTokenData(
   // This is just real enough to test the id-from-idToken extraction logic, with
   // the middle (payload) section having an actual base-64 encoded JSON
   // dictionary with only the "sub":"id" entry needed by the plugin code.
-  idToken: 'header.${base64UrlEncode(JsonUtf8Encoder().convert(
-    <String, Object>{'sub': _testUser.id},
-  ))}.signatune',
+  idToken:
+      'header.${base64UrlEncode(JsonUtf8Encoder().convert(<String, Object>{'sub': _testUser.id}))}.signatune',
 );
 
 @GenerateNiceMocks(<MockSpec<Object>>[MockSpec<GoogleSignInApi>()])
@@ -39,10 +38,14 @@ void main() {
     mockApi = MockGoogleSignInApi();
     googleSignIn = GoogleSignInAndroid(api: mockApi);
 
-    provideDummy<GetCredentialResult>(GetCredentialSuccess(
-        credential: PlatformGoogleIdTokenCredential(id: '', idToken: '')));
+    provideDummy<GetCredentialResult>(
+      GetCredentialSuccess(
+        credential: PlatformGoogleIdTokenCredential(id: '', idToken: ''),
+      ),
+    );
     provideDummy<AuthorizeResult>(
-        PlatformAuthorizationResult(grantedScopes: <String>[]));
+      PlatformAuthorizationResult(grantedScopes: <String>[]),
+    );
   });
 
   test('registered instance', () {
@@ -64,14 +67,17 @@ void main() {
     test('passes explicit server client ID', () async {
       const String serverClientId = 'aServerClient';
 
-      await googleSignIn
-          .init(const InitParameters(serverClientId: serverClientId));
+      await googleSignIn.init(
+        const InitParameters(serverClientId: serverClientId),
+      );
       await googleSignIn.attemptLightweightAuthentication(
-          const AttemptLightweightAuthenticationParameters());
+        const AttemptLightweightAuthenticationParameters(),
+      );
 
       verifyNever(mockApi.getGoogleServicesJsonServerClientId());
-      final VerificationResult verification =
-          verify(mockApi.getCredential(captureAny));
+      final VerificationResult verification = verify(
+        mockApi.getCredential(captureAny),
+      );
       final GetCredentialRequestParams hostParams =
           verification.captured[0] as GetCredentialRequestParams;
       expect(hostParams.serverClientId, serverClientId);
@@ -79,18 +85,21 @@ void main() {
 
     test('passes JSON server client ID if not overridden', () async {
       const String serverClientId = 'aServerClient';
-      when(mockApi.getGoogleServicesJsonServerClientId())
-          .thenAnswer((_) async => serverClientId);
+      when(
+        mockApi.getGoogleServicesJsonServerClientId(),
+      ).thenAnswer((_) async => serverClientId);
 
       // Passing no server client ID should cause it to be queried via
       // getGoogleServicesJsonServerClientId().
       await googleSignIn.init(const InitParameters());
       await googleSignIn.attemptLightweightAuthentication(
-          const AttemptLightweightAuthenticationParameters());
+        const AttemptLightweightAuthenticationParameters(),
+      );
 
       verify(mockApi.getGoogleServicesJsonServerClientId());
-      final VerificationResult verification =
-          verify(mockApi.getCredential(captureAny));
+      final VerificationResult verification = verify(
+        mockApi.getCredential(captureAny),
+      );
       final GetCredentialRequestParams hostParams =
           verification.captured[0] as GetCredentialRequestParams;
       expect(hostParams.serverClientId, serverClientId);
@@ -99,44 +108,54 @@ void main() {
     test('passes nonce if provided', () async {
       const String nonce = 'nonce';
 
-      await googleSignIn
-          .init(const InitParameters(nonce: nonce, serverClientId: 'id'));
+      await googleSignIn.init(
+        const InitParameters(nonce: nonce, serverClientId: 'id'),
+      );
       await googleSignIn.attemptLightweightAuthentication(
-          const AttemptLightweightAuthenticationParameters());
+        const AttemptLightweightAuthenticationParameters(),
+      );
 
-      final VerificationResult verification =
-          verify(mockApi.getCredential(captureAny));
+      final VerificationResult verification = verify(
+        mockApi.getCredential(captureAny),
+      );
       final GetCredentialRequestParams hostParams =
           verification.captured[0] as GetCredentialRequestParams;
       expect(hostParams.nonce, nonce);
     });
 
     test('passes success data to caller', () async {
-      when(mockApi.getCredential(any)).thenAnswer((_) async =>
-          GetCredentialSuccess(
-              credential: PlatformGoogleIdTokenCredential(
-                  displayName: _testUser.displayName,
-                  profilePictureUri: _testUser.photoUrl,
-                  id: _testUser.email,
-                  idToken: _testAuthnToken.idToken!)));
+      when(mockApi.getCredential(any)).thenAnswer(
+        (_) async => GetCredentialSuccess(
+          credential: PlatformGoogleIdTokenCredential(
+            displayName: _testUser.displayName,
+            profilePictureUri: _testUser.photoUrl,
+            id: _testUser.email,
+            idToken: _testAuthnToken.idToken!,
+          ),
+        ),
+      );
 
       await googleSignIn.init(const InitParameters(serverClientId: 'id'));
-      final AuthenticationResults? result =
-          await googleSignIn.attemptLightweightAuthentication(
-              const AttemptLightweightAuthenticationParameters());
+      final AuthenticationResults? result = await googleSignIn
+          .attemptLightweightAuthentication(
+            const AttemptLightweightAuthenticationParameters(),
+          );
 
       expect(result?.user, _testUser);
       expect(result?.authenticationTokens, _testAuthnToken);
     });
 
     test('returns null for missing auth', () async {
-      when(mockApi.getCredential(any)).thenAnswer((_) async =>
-          GetCredentialFailure(type: GetCredentialFailureType.noCredential));
+      when(mockApi.getCredential(any)).thenAnswer(
+        (_) async =>
+            GetCredentialFailure(type: GetCredentialFailureType.noCredential),
+      );
 
       await googleSignIn.init(const InitParameters(serverClientId: 'id'));
-      final AuthenticationResults? result =
-          await googleSignIn.attemptLightweightAuthentication(
-              const AttemptLightweightAuthenticationParameters());
+      final AuthenticationResults? result = await googleSignIn
+          .attemptLightweightAuthentication(
+            const AttemptLightweightAuthenticationParameters(),
+          );
 
       expect(result, null);
     });
@@ -146,13 +165,15 @@ void main() {
     test('passes explicit server client ID', () async {
       const String serverClientId = 'aServerClient';
 
-      await googleSignIn
-          .init(const InitParameters(serverClientId: serverClientId));
+      await googleSignIn.init(
+        const InitParameters(serverClientId: serverClientId),
+      );
       await googleSignIn.authenticate(const AuthenticateParameters());
 
       verifyNever(mockApi.getGoogleServicesJsonServerClientId());
-      final VerificationResult verification =
-          verify(mockApi.getCredential(captureAny));
+      final VerificationResult verification = verify(
+        mockApi.getCredential(captureAny),
+      );
       final GetCredentialRequestParams hostParams =
           verification.captured[0] as GetCredentialRequestParams;
       expect(hostParams.serverClientId, serverClientId);
@@ -160,8 +181,9 @@ void main() {
 
     test('passes JSON server client ID if not overridden', () async {
       const String serverClientId = 'aServerClient';
-      when(mockApi.getGoogleServicesJsonServerClientId())
-          .thenAnswer((_) async => serverClientId);
+      when(
+        mockApi.getGoogleServicesJsonServerClientId(),
+      ).thenAnswer((_) async => serverClientId);
 
       // Passing no server client ID should cause it to be queried via
       // getGoogleServicesJsonServerClientId().
@@ -169,8 +191,9 @@ void main() {
       await googleSignIn.authenticate(const AuthenticateParameters());
 
       verify(mockApi.getGoogleServicesJsonServerClientId());
-      final VerificationResult verification =
-          verify(mockApi.getCredential(captureAny));
+      final VerificationResult verification = verify(
+        mockApi.getCredential(captureAny),
+      );
       final GetCredentialRequestParams hostParams =
           verification.captured[0] as GetCredentialRequestParams;
       expect(hostParams.serverClientId, serverClientId);
@@ -182,158 +205,235 @@ void main() {
       await googleSignIn.init(const InitParameters(nonce: nonce));
       await googleSignIn.authenticate(const AuthenticateParameters());
 
-      final VerificationResult verification =
-          verify(mockApi.getCredential(captureAny));
+      final VerificationResult verification = verify(
+        mockApi.getCredential(captureAny),
+      );
       final GetCredentialRequestParams hostParams =
           verification.captured[0] as GetCredentialRequestParams;
       expect(hostParams.nonce, nonce);
     });
 
     test('passes success data to caller', () async {
-      when(mockApi.getCredential(any)).thenAnswer((_) async =>
-          GetCredentialSuccess(
-              credential: PlatformGoogleIdTokenCredential(
-                  displayName: _testUser.displayName,
-                  profilePictureUri: _testUser.photoUrl,
-                  id: _testUser.email,
-                  idToken: _testAuthnToken.idToken!)));
+      when(mockApi.getCredential(any)).thenAnswer(
+        (_) async => GetCredentialSuccess(
+          credential: PlatformGoogleIdTokenCredential(
+            displayName: _testUser.displayName,
+            profilePictureUri: _testUser.photoUrl,
+            id: _testUser.email,
+            idToken: _testAuthnToken.idToken!,
+          ),
+        ),
+      );
 
       await googleSignIn.init(const InitParameters(serverClientId: 'id'));
-      final AuthenticationResults result =
-          await googleSignIn.authenticate(const AuthenticateParameters());
+      final AuthenticationResults result = await googleSignIn.authenticate(
+        const AuthenticateParameters(),
+      );
 
       expect(result.user, _testUser);
       expect(result.authenticationTokens, _testAuthnToken);
     });
 
     test('throws unknown for missing auth', () async {
-      when(mockApi.getCredential(any)).thenAnswer((_) async =>
-          GetCredentialFailure(type: GetCredentialFailureType.noCredential));
+      when(mockApi.getCredential(any)).thenAnswer(
+        (_) async =>
+            GetCredentialFailure(type: GetCredentialFailureType.noCredential),
+      );
 
       await googleSignIn.init(const InitParameters(serverClientId: 'id'));
       expect(
-          googleSignIn.authenticate(const AuthenticateParameters()),
-          throwsA(isInstanceOf<GoogleSignInException>().having(
-              (GoogleSignInException e) => e.code,
-              'code',
-              GoogleSignInExceptionCode.unknownError)));
-    });
-
-    test('throws client configuration error for missing server client ID',
-        () async {
-      when(mockApi.getGoogleServicesJsonServerClientId())
-          .thenAnswer((_) async => null);
-      when(mockApi.getCredential(any)).thenAnswer((_) async =>
-          GetCredentialFailure(
-              type: GetCredentialFailureType.missingServerClientId));
-
-      await googleSignIn.init(const InitParameters());
-      expect(
-          googleSignIn.authenticate(const AuthenticateParameters()),
-          throwsA(isInstanceOf<GoogleSignInException>()
-              .having((GoogleSignInException e) => e.code, 'code',
-                  GoogleSignInExceptionCode.clientConfigurationError)
-              .having((GoogleSignInException e) => e.description, 'description',
-                  contains('serverClientId must be provided'))));
-    });
-
-    test('throws provider configuration error for wrong credential type',
-        () async {
-      when(mockApi.getGoogleServicesJsonServerClientId())
-          .thenAnswer((_) async => null);
-      when(mockApi.getCredential(any)).thenAnswer((_) async =>
-          GetCredentialFailure(
-              type: GetCredentialFailureType.unexpectedCredentialType));
-
-      await googleSignIn.init(const InitParameters());
-      expect(
-          googleSignIn.authenticate(const AuthenticateParameters()),
-          throwsA(isInstanceOf<GoogleSignInException>()
-              .having((GoogleSignInException e) => e.code, 'code',
-                  GoogleSignInExceptionCode.providerConfigurationError)
-              .having((GoogleSignInException e) => e.description, 'description',
-                  contains('Unexpected credential type'))));
+        googleSignIn.authenticate(const AuthenticateParameters()),
+        throwsA(
+          isInstanceOf<GoogleSignInException>().having(
+            (GoogleSignInException e) => e.code,
+            'code',
+            GoogleSignInExceptionCode.unknownError,
+          ),
+        ),
+      );
     });
 
     test(
-        'throws provider configuration error if device does not '
+      'throws client configuration error for missing server client ID',
+      () async {
+        when(
+          mockApi.getGoogleServicesJsonServerClientId(),
+        ).thenAnswer((_) async => null);
+        when(mockApi.getCredential(any)).thenAnswer(
+          (_) async => GetCredentialFailure(
+            type: GetCredentialFailureType.missingServerClientId,
+          ),
+        );
+
+        await googleSignIn.init(const InitParameters());
+        expect(
+          googleSignIn.authenticate(const AuthenticateParameters()),
+          throwsA(
+            isInstanceOf<GoogleSignInException>()
+                .having(
+                  (GoogleSignInException e) => e.code,
+                  'code',
+                  GoogleSignInExceptionCode.clientConfigurationError,
+                )
+                .having(
+                  (GoogleSignInException e) => e.description,
+                  'description',
+                  contains('serverClientId must be provided'),
+                ),
+          ),
+        );
+      },
+    );
+
+    test(
+      'throws provider configuration error for wrong credential type',
+      () async {
+        when(
+          mockApi.getGoogleServicesJsonServerClientId(),
+        ).thenAnswer((_) async => null);
+        when(mockApi.getCredential(any)).thenAnswer(
+          (_) async => GetCredentialFailure(
+            type: GetCredentialFailureType.unexpectedCredentialType,
+          ),
+        );
+
+        await googleSignIn.init(const InitParameters());
+        expect(
+          googleSignIn.authenticate(const AuthenticateParameters()),
+          throwsA(
+            isInstanceOf<GoogleSignInException>()
+                .having(
+                  (GoogleSignInException e) => e.code,
+                  'code',
+                  GoogleSignInExceptionCode.providerConfigurationError,
+                )
+                .having(
+                  (GoogleSignInException e) => e.description,
+                  'description',
+                  contains('Unexpected credential type'),
+                ),
+          ),
+        );
+      },
+    );
+
+    test('throws provider configuration error if device does not '
         'support Credential Manager', () async {
-      when(mockApi.getGoogleServicesJsonServerClientId())
-          .thenAnswer((_) async => null);
-      when(mockApi.getCredential(any)).thenAnswer((_) async =>
-          GetCredentialFailure(type: GetCredentialFailureType.unsupported));
+      when(
+        mockApi.getGoogleServicesJsonServerClientId(),
+      ).thenAnswer((_) async => null);
+      when(mockApi.getCredential(any)).thenAnswer(
+        (_) async =>
+            GetCredentialFailure(type: GetCredentialFailureType.unsupported),
+      );
 
       await googleSignIn.init(const InitParameters());
       expect(
-          googleSignIn.authenticate(const AuthenticateParameters()),
-          throwsA(isInstanceOf<GoogleSignInException>()
-              .having((GoogleSignInException e) => e.code, 'code',
-                  GoogleSignInExceptionCode.providerConfigurationError)
-              .having((GoogleSignInException e) => e.description, 'description',
-                  contains('Credential Manager not supported'))));
+        googleSignIn.authenticate(const AuthenticateParameters()),
+        throwsA(
+          isInstanceOf<GoogleSignInException>()
+              .having(
+                (GoogleSignInException e) => e.code,
+                'code',
+                GoogleSignInExceptionCode.providerConfigurationError,
+              )
+              .having(
+                (GoogleSignInException e) => e.description,
+                'description',
+                contains('Credential Manager not supported'),
+              ),
+        ),
+      );
     });
 
-    test(
-        'throws provider configuration error for SDK-reported '
+    test('throws provider configuration error for SDK-reported '
         'provider configuration error', () async {
-      when(mockApi.getGoogleServicesJsonServerClientId())
-          .thenAnswer((_) async => null);
-      when(mockApi.getCredential(any)).thenAnswer((_) async =>
-          GetCredentialFailure(
-              type: GetCredentialFailureType.providerConfigurationIssue));
+      when(
+        mockApi.getGoogleServicesJsonServerClientId(),
+      ).thenAnswer((_) async => null);
+      when(mockApi.getCredential(any)).thenAnswer(
+        (_) async => GetCredentialFailure(
+          type: GetCredentialFailureType.providerConfigurationIssue,
+        ),
+      );
 
       await googleSignIn.init(const InitParameters());
       expect(
-          googleSignIn.authenticate(const AuthenticateParameters()),
-          throwsA(isInstanceOf<GoogleSignInException>().having(
-              (GoogleSignInException e) => e.code,
-              'code',
-              GoogleSignInExceptionCode.providerConfigurationError)));
+        googleSignIn.authenticate(const AuthenticateParameters()),
+        throwsA(
+          isInstanceOf<GoogleSignInException>().having(
+            (GoogleSignInException e) => e.code,
+            'code',
+            GoogleSignInExceptionCode.providerConfigurationError,
+          ),
+        ),
+      );
     });
 
     test('throws interrupted from SDK', () async {
-      when(mockApi.getGoogleServicesJsonServerClientId())
-          .thenAnswer((_) async => null);
-      when(mockApi.getCredential(any)).thenAnswer((_) async =>
-          GetCredentialFailure(type: GetCredentialFailureType.interrupted));
+      when(
+        mockApi.getGoogleServicesJsonServerClientId(),
+      ).thenAnswer((_) async => null);
+      when(mockApi.getCredential(any)).thenAnswer(
+        (_) async =>
+            GetCredentialFailure(type: GetCredentialFailureType.interrupted),
+      );
 
       await googleSignIn.init(const InitParameters());
       expect(
-          googleSignIn.authenticate(const AuthenticateParameters()),
-          throwsA(isInstanceOf<GoogleSignInException>().having(
-              (GoogleSignInException e) => e.code,
-              'code',
-              GoogleSignInExceptionCode.interrupted)));
+        googleSignIn.authenticate(const AuthenticateParameters()),
+        throwsA(
+          isInstanceOf<GoogleSignInException>().having(
+            (GoogleSignInException e) => e.code,
+            'code',
+            GoogleSignInExceptionCode.interrupted,
+          ),
+        ),
+      );
     });
 
     test('throws canceled from SDK', () async {
-      when(mockApi.getGoogleServicesJsonServerClientId())
-          .thenAnswer((_) async => null);
-      when(mockApi.getCredential(any)).thenAnswer((_) async =>
-          GetCredentialFailure(type: GetCredentialFailureType.canceled));
+      when(
+        mockApi.getGoogleServicesJsonServerClientId(),
+      ).thenAnswer((_) async => null);
+      when(mockApi.getCredential(any)).thenAnswer(
+        (_) async =>
+            GetCredentialFailure(type: GetCredentialFailureType.canceled),
+      );
 
       await googleSignIn.init(const InitParameters());
       expect(
-          googleSignIn.authenticate(const AuthenticateParameters()),
-          throwsA(isInstanceOf<GoogleSignInException>().having(
-              (GoogleSignInException e) => e.code,
-              'code',
-              GoogleSignInExceptionCode.canceled)));
+        googleSignIn.authenticate(const AuthenticateParameters()),
+        throwsA(
+          isInstanceOf<GoogleSignInException>().having(
+            (GoogleSignInException e) => e.code,
+            'code',
+            GoogleSignInExceptionCode.canceled,
+          ),
+        ),
+      );
     });
 
     test('throws unknown from SDK', () async {
-      when(mockApi.getGoogleServicesJsonServerClientId())
-          .thenAnswer((_) async => null);
-      when(mockApi.getCredential(any)).thenAnswer((_) async =>
-          GetCredentialFailure(type: GetCredentialFailureType.unknown));
+      when(
+        mockApi.getGoogleServicesJsonServerClientId(),
+      ).thenAnswer((_) async => null);
+      when(mockApi.getCredential(any)).thenAnswer(
+        (_) async =>
+            GetCredentialFailure(type: GetCredentialFailureType.unknown),
+      );
 
       await googleSignIn.init(const InitParameters());
       expect(
-          googleSignIn.authenticate(const AuthenticateParameters()),
-          throwsA(isInstanceOf<GoogleSignInException>().having(
-              (GoogleSignInException e) => e.code,
-              'code',
-              GoogleSignInExceptionCode.unknownError)));
+        googleSignIn.authenticate(const AuthenticateParameters()),
+        throwsA(
+          isInstanceOf<GoogleSignInException>().having(
+            (GoogleSignInException e) => e.code,
+            'code',
+            GoogleSignInExceptionCode.unknownError,
+          ),
+        ),
+      );
     });
   });
 
@@ -342,11 +442,11 @@ void main() {
     // the test.
     const AuthorizationRequestDetails defaultAuthRequest =
         AuthorizationRequestDetails(
-      scopes: <String>['a'],
-      userId: null,
-      email: null,
-      promptIfUnauthorized: false,
-    );
+          scopes: <String>['a'],
+          userId: null,
+          email: null,
+          promptIfUnauthorized: false,
+        );
 
     test('passes expected values', () async {
       const List<String> scopes = <String>['a', 'b'];
@@ -355,25 +455,32 @@ void main() {
       const bool promptIfUnauthorized = false;
       const String hostedDomain = 'example.com';
 
-      when(mockApi.authorize(any, promptIfUnauthorized: promptIfUnauthorized))
-          .thenAnswer((_) async =>
-              PlatformAuthorizationResult(grantedScopes: <String>[]));
+      when(
+        mockApi.authorize(any, promptIfUnauthorized: promptIfUnauthorized),
+      ).thenAnswer(
+        (_) async => PlatformAuthorizationResult(grantedScopes: <String>[]),
+      );
 
-      await googleSignIn.init(const InitParameters(
-        serverClientId: 'id',
-        hostedDomain: hostedDomain,
-      ));
+      await googleSignIn.init(
+        const InitParameters(serverClientId: 'id', hostedDomain: hostedDomain),
+      );
       await googleSignIn.clientAuthorizationTokensForScopes(
-          const ClientAuthorizationTokensForScopesParameters(
-              request: AuthorizationRequestDetails(
-        scopes: scopes,
-        userId: userId,
-        email: userEmail,
-        promptIfUnauthorized: promptIfUnauthorized,
-      )));
+        const ClientAuthorizationTokensForScopesParameters(
+          request: AuthorizationRequestDetails(
+            scopes: scopes,
+            userId: userId,
+            email: userEmail,
+            promptIfUnauthorized: promptIfUnauthorized,
+          ),
+        ),
+      );
 
-      final VerificationResult verification = verify(mockApi
-          .authorize(captureAny, promptIfUnauthorized: promptIfUnauthorized));
+      final VerificationResult verification = verify(
+        mockApi.authorize(
+          captureAny,
+          promptIfUnauthorized: promptIfUnauthorized,
+        ),
+      );
       final PlatformAuthorizationRequest hostParams =
           verification.captured[0] as PlatformAuthorizationRequest;
       expect(hostParams.scopes, scopes);
@@ -386,115 +493,160 @@ void main() {
       const List<String> scopes = <String>['a', 'b'];
       const bool promptIfUnauthorized = true;
 
-      when(mockApi.authorize(any, promptIfUnauthorized: promptIfUnauthorized))
-          .thenAnswer((_) async =>
-              PlatformAuthorizationResult(grantedScopes: <String>[]));
+      when(
+        mockApi.authorize(any, promptIfUnauthorized: promptIfUnauthorized),
+      ).thenAnswer(
+        (_) async => PlatformAuthorizationResult(grantedScopes: <String>[]),
+      );
 
       await googleSignIn.init(const InitParameters(serverClientId: 'id'));
       await googleSignIn.clientAuthorizationTokensForScopes(
-          const ClientAuthorizationTokensForScopesParameters(
-              request: AuthorizationRequestDetails(
-        scopes: scopes,
-        userId: null,
-        email: null,
-        promptIfUnauthorized: promptIfUnauthorized,
-      )));
+        const ClientAuthorizationTokensForScopesParameters(
+          request: AuthorizationRequestDetails(
+            scopes: scopes,
+            userId: null,
+            email: null,
+            promptIfUnauthorized: promptIfUnauthorized,
+          ),
+        ),
+      );
 
       verify(
-          mockApi.authorize(any, promptIfUnauthorized: promptIfUnauthorized));
+        mockApi.authorize(any, promptIfUnauthorized: promptIfUnauthorized),
+      );
     });
 
     test('passes success data to caller', () async {
       const String accessToken = 'token';
 
       when(mockApi.authorize(any, promptIfUnauthorized: false)).thenAnswer(
-          (_) async => PlatformAuthorizationResult(
-              grantedScopes: <String>[], accessToken: accessToken));
+        (_) async => PlatformAuthorizationResult(
+          grantedScopes: <String>[],
+          accessToken: accessToken,
+        ),
+      );
 
       await googleSignIn.init(const InitParameters(serverClientId: 'id'));
-      final ClientAuthorizationTokenData? result =
-          await googleSignIn.clientAuthorizationTokensForScopes(
-              const ClientAuthorizationTokensForScopesParameters(
-                  request: defaultAuthRequest));
+      final ClientAuthorizationTokenData? result = await googleSignIn
+          .clientAuthorizationTokensForScopes(
+            const ClientAuthorizationTokensForScopesParameters(
+              request: defaultAuthRequest,
+            ),
+          );
 
       expect(result?.accessToken, accessToken);
     });
 
     test('returns null when unauthorized', () async {
       when(mockApi.authorize(any, promptIfUnauthorized: false)).thenAnswer(
-          (_) async =>
-              AuthorizeFailure(type: AuthorizeFailureType.unauthorized));
+        (_) async => AuthorizeFailure(type: AuthorizeFailureType.unauthorized),
+      );
 
       await googleSignIn.init(const InitParameters(serverClientId: 'id'));
       expect(
-          await googleSignIn.clientAuthorizationTokensForScopes(
-              const ClientAuthorizationTokensForScopesParameters(
-                  request: defaultAuthRequest)),
-          null);
+        await googleSignIn.clientAuthorizationTokensForScopes(
+          const ClientAuthorizationTokensForScopesParameters(
+            request: defaultAuthRequest,
+          ),
+        ),
+        null,
+      );
     });
 
     test('thows canceled if pending intent fails', () async {
       when(mockApi.authorize(any, promptIfUnauthorized: false)).thenAnswer(
-          (_) async => AuthorizeFailure(
-              type: AuthorizeFailureType.pendingIntentException));
+        (_) async =>
+            AuthorizeFailure(type: AuthorizeFailureType.pendingIntentException),
+      );
 
       await googleSignIn.init(const InitParameters(serverClientId: 'id'));
       expect(
-          googleSignIn.clientAuthorizationTokensForScopes(
-              const ClientAuthorizationTokensForScopesParameters(
-                  request: defaultAuthRequest)),
-          throwsA(isInstanceOf<GoogleSignInException>().having(
-              (GoogleSignInException e) => e.code,
-              'code',
-              GoogleSignInExceptionCode.canceled)));
+        googleSignIn.clientAuthorizationTokensForScopes(
+          const ClientAuthorizationTokensForScopesParameters(
+            request: defaultAuthRequest,
+          ),
+        ),
+        throwsA(
+          isInstanceOf<GoogleSignInException>().having(
+            (GoogleSignInException e) => e.code,
+            'code',
+            GoogleSignInExceptionCode.canceled,
+          ),
+        ),
+      );
     });
 
     test('throws unknown if authorization fails', () async {
       when(mockApi.authorize(any, promptIfUnauthorized: false)).thenAnswer(
-          (_) async =>
-              AuthorizeFailure(type: AuthorizeFailureType.authorizeFailure));
+        (_) async =>
+            AuthorizeFailure(type: AuthorizeFailureType.authorizeFailure),
+      );
 
       await googleSignIn.init(const InitParameters(serverClientId: 'id'));
       expect(
-          googleSignIn.clientAuthorizationTokensForScopes(
-              const ClientAuthorizationTokensForScopesParameters(
-                  request: defaultAuthRequest)),
-          throwsA(isInstanceOf<GoogleSignInException>().having(
-              (GoogleSignInException e) => e.code,
-              'code',
-              GoogleSignInExceptionCode.unknownError)));
+        googleSignIn.clientAuthorizationTokensForScopes(
+          const ClientAuthorizationTokensForScopesParameters(
+            request: defaultAuthRequest,
+          ),
+        ),
+        throwsA(
+          isInstanceOf<GoogleSignInException>().having(
+            (GoogleSignInException e) => e.code,
+            'code',
+            GoogleSignInExceptionCode.unknownError,
+          ),
+        ),
+      );
     });
 
     test('throws unknown for API exception', () async {
       when(mockApi.authorize(any, promptIfUnauthorized: false)).thenAnswer(
-          (_) async =>
-              AuthorizeFailure(type: AuthorizeFailureType.apiException));
+        (_) async => AuthorizeFailure(type: AuthorizeFailureType.apiException),
+      );
 
       await googleSignIn.init(const InitParameters(serverClientId: 'id'));
       expect(
-          googleSignIn.clientAuthorizationTokensForScopes(
-              const ClientAuthorizationTokensForScopesParameters(
-                  request: defaultAuthRequest)),
-          throwsA(isInstanceOf<GoogleSignInException>()
-              .having((GoogleSignInException e) => e.code, 'code',
-                  GoogleSignInExceptionCode.unknownError)
-              .having((GoogleSignInException e) => e.description, 'description',
-                  contains('SDK reported an exception'))));
+        googleSignIn.clientAuthorizationTokensForScopes(
+          const ClientAuthorizationTokensForScopesParameters(
+            request: defaultAuthRequest,
+          ),
+        ),
+        throwsA(
+          isInstanceOf<GoogleSignInException>()
+              .having(
+                (GoogleSignInException e) => e.code,
+                'code',
+                GoogleSignInExceptionCode.unknownError,
+              )
+              .having(
+                (GoogleSignInException e) => e.description,
+                'description',
+                contains('SDK reported an exception'),
+              ),
+        ),
+      );
     });
 
     test('throws UI unavailable if there is no activity available', () async {
       when(mockApi.authorize(any, promptIfUnauthorized: false)).thenAnswer(
-          (_) async => AuthorizeFailure(type: AuthorizeFailureType.noActivity));
+        (_) async => AuthorizeFailure(type: AuthorizeFailureType.noActivity),
+      );
 
       await googleSignIn.init(const InitParameters(serverClientId: 'id'));
       expect(
-          googleSignIn.clientAuthorizationTokensForScopes(
-              const ClientAuthorizationTokensForScopesParameters(
-                  request: defaultAuthRequest)),
-          throwsA(isInstanceOf<GoogleSignInException>().having(
-              (GoogleSignInException e) => e.code,
-              'code',
-              GoogleSignInExceptionCode.uiUnavailable)));
+        googleSignIn.clientAuthorizationTokensForScopes(
+          const ClientAuthorizationTokensForScopesParameters(
+            request: defaultAuthRequest,
+          ),
+        ),
+        throwsA(
+          isInstanceOf<GoogleSignInException>().having(
+            (GoogleSignInException e) => e.code,
+            'code',
+            GoogleSignInExceptionCode.uiUnavailable,
+          ),
+        ),
+      );
     });
   });
 
@@ -503,11 +655,11 @@ void main() {
     // the test.
     const AuthorizationRequestDetails defaultAuthRequest =
         AuthorizationRequestDetails(
-      scopes: <String>['a'],
-      userId: null,
-      email: null,
-      promptIfUnauthorized: false,
-    );
+          scopes: <String>['a'],
+          userId: null,
+          email: null,
+          promptIfUnauthorized: false,
+        );
 
     test('serverAuthorizationTokensForScopes passes expected values', () async {
       const List<String> scopes = <String>['a', 'b'];
@@ -517,25 +669,35 @@ void main() {
       const String hostedDomain = 'example.com';
       const String serverClientId = 'serverClientId';
 
-      when(mockApi.authorize(any, promptIfUnauthorized: promptIfUnauthorized))
-          .thenAnswer((_) async =>
-              PlatformAuthorizationResult(grantedScopes: <String>[]));
+      when(
+        mockApi.authorize(any, promptIfUnauthorized: promptIfUnauthorized),
+      ).thenAnswer(
+        (_) async => PlatformAuthorizationResult(grantedScopes: <String>[]),
+      );
 
-      await googleSignIn.init(const InitParameters(
-        serverClientId: serverClientId,
-        hostedDomain: hostedDomain,
-      ));
+      await googleSignIn.init(
+        const InitParameters(
+          serverClientId: serverClientId,
+          hostedDomain: hostedDomain,
+        ),
+      );
       await googleSignIn.serverAuthorizationTokensForScopes(
-          const ServerAuthorizationTokensForScopesParameters(
-              request: AuthorizationRequestDetails(
-        scopes: scopes,
-        userId: userId,
-        email: userEmail,
-        promptIfUnauthorized: promptIfUnauthorized,
-      )));
+        const ServerAuthorizationTokensForScopesParameters(
+          request: AuthorizationRequestDetails(
+            scopes: scopes,
+            userId: userId,
+            email: userEmail,
+            promptIfUnauthorized: promptIfUnauthorized,
+          ),
+        ),
+      );
 
-      final VerificationResult verification = verify(mockApi
-          .authorize(captureAny, promptIfUnauthorized: promptIfUnauthorized));
+      final VerificationResult verification = verify(
+        mockApi.authorize(
+          captureAny,
+          promptIfUnauthorized: promptIfUnauthorized,
+        ),
+      );
       final PlatformAuthorizationRequest hostParams =
           verification.captured[0] as PlatformAuthorizationRequest;
       expect(hostParams.scopes, scopes);
@@ -545,130 +707,176 @@ void main() {
     });
 
     test(
-        'serverAuthorizationTokensForScopes passes true promptIfUnauthorized when requested',
-        () async {
-      const List<String> scopes = <String>['a', 'b'];
-      const bool promptIfUnauthorized = true;
+      'serverAuthorizationTokensForScopes passes true promptIfUnauthorized when requested',
+      () async {
+        const List<String> scopes = <String>['a', 'b'];
+        const bool promptIfUnauthorized = true;
 
-      when(mockApi.authorize(any, promptIfUnauthorized: promptIfUnauthorized))
-          .thenAnswer((_) async =>
-              PlatformAuthorizationResult(grantedScopes: <String>[]));
+        when(
+          mockApi.authorize(any, promptIfUnauthorized: promptIfUnauthorized),
+        ).thenAnswer(
+          (_) async => PlatformAuthorizationResult(grantedScopes: <String>[]),
+        );
 
-      await googleSignIn.init(const InitParameters(serverClientId: 'id'));
-      await googleSignIn.serverAuthorizationTokensForScopes(
+        await googleSignIn.init(const InitParameters(serverClientId: 'id'));
+        await googleSignIn.serverAuthorizationTokensForScopes(
           const ServerAuthorizationTokensForScopesParameters(
-              request: AuthorizationRequestDetails(
-        scopes: scopes,
-        userId: null,
-        email: null,
-        promptIfUnauthorized: promptIfUnauthorized,
-      )));
+            request: AuthorizationRequestDetails(
+              scopes: scopes,
+              userId: null,
+              email: null,
+              promptIfUnauthorized: promptIfUnauthorized,
+            ),
+          ),
+        );
 
-      verify(
-          mockApi.authorize(any, promptIfUnauthorized: promptIfUnauthorized));
-    });
+        verify(
+          mockApi.authorize(any, promptIfUnauthorized: promptIfUnauthorized),
+        );
+      },
+    );
 
-    test('serverAuthorizationTokensForScopes passes success data to caller',
-        () async {
-      const List<String> scopes = <String>['a', 'b'];
-      const String authCode = 'code';
+    test(
+      'serverAuthorizationTokensForScopes passes success data to caller',
+      () async {
+        const List<String> scopes = <String>['a', 'b'];
+        const String authCode = 'code';
 
-      when(mockApi.authorize(any, promptIfUnauthorized: false))
-          .thenAnswer((_) async => PlatformAuthorizationResult(
-                grantedScopes: <String>[],
-                accessToken: 'token',
-                serverAuthCode: authCode,
-              ));
+        when(mockApi.authorize(any, promptIfUnauthorized: false)).thenAnswer(
+          (_) async => PlatformAuthorizationResult(
+            grantedScopes: <String>[],
+            accessToken: 'token',
+            serverAuthCode: authCode,
+          ),
+        );
 
-      await googleSignIn.init(const InitParameters(serverClientId: 'id'));
-      final ServerAuthorizationTokenData? result =
-          await googleSignIn.serverAuthorizationTokensForScopes(
+        await googleSignIn.init(const InitParameters(serverClientId: 'id'));
+        final ServerAuthorizationTokenData? result = await googleSignIn
+            .serverAuthorizationTokensForScopes(
               const ServerAuthorizationTokensForScopesParameters(
-                  request: AuthorizationRequestDetails(
-        scopes: scopes,
-        userId: null,
-        email: null,
-        promptIfUnauthorized: false,
-      )));
+                request: AuthorizationRequestDetails(
+                  scopes: scopes,
+                  userId: null,
+                  email: null,
+                  promptIfUnauthorized: false,
+                ),
+              ),
+            );
 
-      expect(result?.serverAuthCode, authCode);
-    });
+        expect(result?.serverAuthCode, authCode);
+      },
+    );
 
     test('returns null when unauthorized', () async {
       when(mockApi.authorize(any, promptIfUnauthorized: false)).thenAnswer(
-          (_) async =>
-              AuthorizeFailure(type: AuthorizeFailureType.unauthorized));
+        (_) async => AuthorizeFailure(type: AuthorizeFailureType.unauthorized),
+      );
 
       await googleSignIn.init(const InitParameters(serverClientId: 'id'));
       expect(
-          await googleSignIn.serverAuthorizationTokensForScopes(
-              const ServerAuthorizationTokensForScopesParameters(
-                  request: defaultAuthRequest)),
-          null);
+        await googleSignIn.serverAuthorizationTokensForScopes(
+          const ServerAuthorizationTokensForScopesParameters(
+            request: defaultAuthRequest,
+          ),
+        ),
+        null,
+      );
     });
 
     test('thows canceled if pending intent fails', () async {
       when(mockApi.authorize(any, promptIfUnauthorized: false)).thenAnswer(
-          (_) async => AuthorizeFailure(
-              type: AuthorizeFailureType.pendingIntentException));
+        (_) async =>
+            AuthorizeFailure(type: AuthorizeFailureType.pendingIntentException),
+      );
 
       await googleSignIn.init(const InitParameters(serverClientId: 'id'));
       expect(
-          googleSignIn.serverAuthorizationTokensForScopes(
-              const ServerAuthorizationTokensForScopesParameters(
-                  request: defaultAuthRequest)),
-          throwsA(isInstanceOf<GoogleSignInException>().having(
-              (GoogleSignInException e) => e.code,
-              'code',
-              GoogleSignInExceptionCode.canceled)));
+        googleSignIn.serverAuthorizationTokensForScopes(
+          const ServerAuthorizationTokensForScopesParameters(
+            request: defaultAuthRequest,
+          ),
+        ),
+        throwsA(
+          isInstanceOf<GoogleSignInException>().having(
+            (GoogleSignInException e) => e.code,
+            'code',
+            GoogleSignInExceptionCode.canceled,
+          ),
+        ),
+      );
     });
 
     test('throws unknown if authorization fails', () async {
       when(mockApi.authorize(any, promptIfUnauthorized: false)).thenAnswer(
-          (_) async =>
-              AuthorizeFailure(type: AuthorizeFailureType.authorizeFailure));
+        (_) async =>
+            AuthorizeFailure(type: AuthorizeFailureType.authorizeFailure),
+      );
 
       await googleSignIn.init(const InitParameters(serverClientId: 'id'));
       expect(
-          googleSignIn.serverAuthorizationTokensForScopes(
-              const ServerAuthorizationTokensForScopesParameters(
-                  request: defaultAuthRequest)),
-          throwsA(isInstanceOf<GoogleSignInException>().having(
-              (GoogleSignInException e) => e.code,
-              'code',
-              GoogleSignInExceptionCode.unknownError)));
+        googleSignIn.serverAuthorizationTokensForScopes(
+          const ServerAuthorizationTokensForScopesParameters(
+            request: defaultAuthRequest,
+          ),
+        ),
+        throwsA(
+          isInstanceOf<GoogleSignInException>().having(
+            (GoogleSignInException e) => e.code,
+            'code',
+            GoogleSignInExceptionCode.unknownError,
+          ),
+        ),
+      );
     });
 
     test('throws unknown for API exception', () async {
       when(mockApi.authorize(any, promptIfUnauthorized: false)).thenAnswer(
-          (_) async =>
-              AuthorizeFailure(type: AuthorizeFailureType.apiException));
+        (_) async => AuthorizeFailure(type: AuthorizeFailureType.apiException),
+      );
 
       await googleSignIn.init(const InitParameters(serverClientId: 'id'));
       expect(
-          googleSignIn.serverAuthorizationTokensForScopes(
-              const ServerAuthorizationTokensForScopesParameters(
-                  request: defaultAuthRequest)),
-          throwsA(isInstanceOf<GoogleSignInException>()
-              .having((GoogleSignInException e) => e.code, 'code',
-                  GoogleSignInExceptionCode.unknownError)
-              .having((GoogleSignInException e) => e.description, 'description',
-                  contains('SDK reported an exception'))));
+        googleSignIn.serverAuthorizationTokensForScopes(
+          const ServerAuthorizationTokensForScopesParameters(
+            request: defaultAuthRequest,
+          ),
+        ),
+        throwsA(
+          isInstanceOf<GoogleSignInException>()
+              .having(
+                (GoogleSignInException e) => e.code,
+                'code',
+                GoogleSignInExceptionCode.unknownError,
+              )
+              .having(
+                (GoogleSignInException e) => e.description,
+                'description',
+                contains('SDK reported an exception'),
+              ),
+        ),
+      );
     });
 
     test('throws UI unavailable if there is no activity available', () async {
       when(mockApi.authorize(any, promptIfUnauthorized: false)).thenAnswer(
-          (_) async => AuthorizeFailure(type: AuthorizeFailureType.noActivity));
+        (_) async => AuthorizeFailure(type: AuthorizeFailureType.noActivity),
+      );
 
       await googleSignIn.init(const InitParameters(serverClientId: 'id'));
       expect(
-          googleSignIn.serverAuthorizationTokensForScopes(
-              const ServerAuthorizationTokensForScopesParameters(
-                  request: defaultAuthRequest)),
-          throwsA(isInstanceOf<GoogleSignInException>().having(
-              (GoogleSignInException e) => e.code,
-              'code',
-              GoogleSignInExceptionCode.uiUnavailable)));
+        googleSignIn.serverAuthorizationTokensForScopes(
+          const ServerAuthorizationTokensForScopesParameters(
+            request: defaultAuthRequest,
+          ),
+        ),
+        throwsA(
+          isInstanceOf<GoogleSignInException>().having(
+            (GoogleSignInException e) => e.code,
+            'code',
+            GoogleSignInExceptionCode.uiUnavailable,
+          ),
+        ),
+      );
     });
   });
 

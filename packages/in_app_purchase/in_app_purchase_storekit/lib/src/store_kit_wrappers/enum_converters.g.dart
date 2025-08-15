@@ -6,12 +6,17 @@ part of 'enum_converters.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_SerializedEnums _$SerializedEnumsFromJson(Map json) => _SerializedEnums()
-  ..response =
-      $enumDecode(_$SKPaymentTransactionStateWrapperEnumMap, json['response'])
-  ..unit = $enumDecode(_$SKSubscriptionPeriodUnitEnumMap, json['unit'])
-  ..discountPaymentMode = $enumDecode(
-      _$SKProductDiscountPaymentModeEnumMap, json['discountPaymentMode']);
+_SerializedEnums _$SerializedEnumsFromJson(Map json) =>
+    _SerializedEnums()
+      ..response = $enumDecode(
+        _$SKPaymentTransactionStateWrapperEnumMap,
+        json['response'],
+      )
+      ..unit = $enumDecode(_$SKSubscriptionPeriodUnitEnumMap, json['unit'])
+      ..discountPaymentMode = $enumDecode(
+        _$SKProductDiscountPaymentModeEnumMap,
+        json['discountPaymentMode'],
+      );
 
 const _$SKPaymentTransactionStateWrapperEnumMap = {
   SKPaymentTransactionStateWrapper.purchasing: 0,

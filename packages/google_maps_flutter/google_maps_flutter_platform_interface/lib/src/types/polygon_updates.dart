@@ -11,7 +11,7 @@ import 'types.dart';
 class PolygonUpdates extends MapsObjectUpdates<Polygon> {
   /// Computes [PolygonUpdates] given previous and current [Polygon]s.
   PolygonUpdates.from(super.previous, super.current)
-      : super.from(objectName: 'polygon');
+    : super.from(objectName: 'polygon');
 
   /// Set of Polygons to be added in this update.
   Set<Polygon> get polygonsToAdd => objectsToAdd;

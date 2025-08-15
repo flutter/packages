@@ -23,11 +23,9 @@ class OpenMultipleImagesPage extends StatelessWidget {
       extensions: <String>['png'],
       uniformTypeIdentifiers: <String>['public.png'],
     );
-    final List<XFile> files = await FileSelectorPlatform.instance
-        .openFiles(acceptedTypeGroups: <XTypeGroup>[
-      jpgsTypeGroup,
-      pngTypeGroup,
-    ]);
+    final List<XFile> files = await FileSelectorPlatform.instance.openFiles(
+      acceptedTypeGroups: <XTypeGroup>[jpgsTypeGroup, pngTypeGroup],
+    );
     if (files.isEmpty) {
       // Operation was canceled by the user.
       return;
@@ -48,9 +46,7 @@ class OpenMultipleImagesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Open multiple images'),
-      ),
+      appBar: AppBar(title: const Text('Open multiple images')),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -91,7 +87,7 @@ class MultipleImagesDisplay extends StatelessWidget {
               Flexible(
                 key: Key('result_image_name$i'),
                 child: Image.memory(fileBytes[i]),
-              )
+              ),
           ],
         ),
       ),

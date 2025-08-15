@@ -19,14 +19,10 @@ const String dartInstanceManagerApiClassName =
     '_${classNamePrefix}InstanceManagerApi';
 
 /// Creates the `InstanceManager` with the passed string values.
-String instanceManagerTemplate({
-  required Iterable<String> allProxyApiNames,
-}) {
-  final Iterable<String> apiHandlerSetUps = allProxyApiNames.map(
-    (String name) {
-      return '$name.${classMemberNamePrefix}setUpMessageHandlers(${classMemberNamePrefix}instanceManager: instanceManager);';
-    },
-  );
+String instanceManagerTemplate({required Iterable<String> allProxyApiNames}) {
+  final Iterable<String> apiHandlerSetUps = allProxyApiNames.map((String name) {
+    return '$name.${classMemberNamePrefix}setUpMessageHandlers(${classMemberNamePrefix}instanceManager: instanceManager);';
+  });
 
   return '''
 /// Maintains instances used to communicate with the native objects they

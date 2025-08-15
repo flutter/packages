@@ -10,10 +10,7 @@ import 'javascript_log_level.dart';
 @immutable
 class JavaScriptConsoleMessage {
   /// Creates a [JavaScriptConsoleMessage].
-  const JavaScriptConsoleMessage({
-    required this.level,
-    required this.message,
-  });
+  const JavaScriptConsoleMessage({required this.level, required this.message});
 
   /// The severity of a JavaScript log message.
   final JavaScriptLogLevel level;

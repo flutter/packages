@@ -8,7 +8,7 @@ import 'types.dart';
 class TileOverlayUpdates extends MapsObjectUpdates<TileOverlay> {
   /// Computes [TileOverlayUpdates] given previous and current [TileOverlay]s.
   TileOverlayUpdates.from(super.previous, super.current)
-      : super.from(objectName: 'tileOverlay');
+    : super.from(objectName: 'tileOverlay');
 
   /// Set of TileOverlays to be added in this update.
   Set<TileOverlay> get tileOverlaysToAdd => objectsToAdd;

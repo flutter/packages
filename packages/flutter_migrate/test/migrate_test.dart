@@ -36,10 +36,16 @@ void main() {
 
   Future<bool> hasFlutterEnvironment() async {
     final String flutterRoot = getFlutterRoot();
-    final String flutterExecutable = fileSystem.path
-        .join(flutterRoot, 'bin', 'flutter${isWindows ? '.bat' : ''}');
-    final ProcessResult result = await Process.run(
-        flutterExecutable, <String>['analyze', '--suggestions', '--machine']);
+    final String flutterExecutable = fileSystem.path.join(
+      flutterRoot,
+      'bin',
+      'flutter${isWindows ? '.bat' : ''}',
+    );
+    final ProcessResult result = await Process.run(flutterExecutable, <String>[
+      'analyze',
+      '--suggestions',
+      '--machine',
+    ]);
     if (result.exitCode != 0) {
       return false;
     }
@@ -47,21 +53,26 @@ void main() {
   }
 
   // Migrates a clean untouched app generated with flutter create
-  testUsingContext('vanilla migrate process succeeds', () async {
-    // This tool does not support old versions of flutter that dont include
-    // `flutter analyze --suggestions --machine` command
-    if (!await hasFlutterEnvironment()) {
-      return;
-    }
-    // Flutter Stable 1.22.6 hash: 9b2d32b605630f28625709ebd9d78ab3016b2bf6
-    await MigrateProject.installProject('version:1.22.6_stable', tempDir);
+  testUsingContext(
+    'vanilla migrate process succeeds',
+    () async {
+      // This tool does not support old versions of flutter that dont include
+      // `flutter analyze --suggestions --machine` command
+      if (!await hasFlutterEnvironment()) {
+        return;
+      }
+      // Flutter Stable 1.22.6 hash: 9b2d32b605630f28625709ebd9d78ab3016b2bf6
+      await MigrateProject.installProject('version:1.22.6_stable', tempDir);
 
-    ProcessResult result = await runMigrateCommand(<String>[
-      'start',
-      '--verbose',
-    ], workingDirectory: tempDir.path);
-    expect(result.stdout.toString(), contains('Staging directory created at'));
-    const String linesToMatch = '''
+      ProcessResult result = await runMigrateCommand(<String>[
+        'start',
+        '--verbose',
+      ], workingDirectory: tempDir.path);
+      expect(
+        result.stdout.toString(),
+        contains('Staging directory created at'),
+      );
+      const String linesToMatch = '''
 Added files:
   - android/app/src/main/res/values-night/styles.xml
   - android/app/src/main/res/drawable-v21/launch_background.xml
@@ -83,44 +94,52 @@ Modified files:
   - android/gradle/wrapper/gradle-wrapper.properties
   - android/.gitignore
   - android/build.gradle''';
-    for (final String line in linesToMatch.split('\n')) {
-      expect(result.stdout.toString(), contains(line));
-    }
+      for (final String line in linesToMatch.split('\n')) {
+        expect(result.stdout.toString(), contains(line));
+      }
 
-    result = await runMigrateCommand(<String>[
-      'apply',
-      '--verbose',
-    ], workingDirectory: tempDir.path);
-    logger.printStatus('${result.exitCode}', color: TerminalColor.blue);
-    logger.printStatus(result.stdout as String, color: TerminalColor.green);
-    logger.printStatus(result.stderr as String, color: TerminalColor.red);
-    expect(result.exitCode, 0);
-    expect(result.stdout.toString(), contains('Migration complete'));
+      result = await runMigrateCommand(<String>[
+        'apply',
+        '--verbose',
+      ], workingDirectory: tempDir.path);
+      logger.printStatus('${result.exitCode}', color: TerminalColor.blue);
+      logger.printStatus(result.stdout as String, color: TerminalColor.green);
+      logger.printStatus(result.stderr as String, color: TerminalColor.red);
+      expect(result.exitCode, 0);
+      expect(result.stdout.toString(), contains('Migration complete'));
 
-    expect(tempDir.childFile('.metadata').readAsStringSync(),
-        contains('migration:\n  platforms:\n    - platform: root\n'));
+      expect(
+        tempDir.childFile('.metadata').readAsStringSync(),
+        contains('migration:\n  platforms:\n    - platform: root\n'),
+      );
 
-    expect(
+      expect(
         tempDir
             .childFile('android/app/src/main/res/values-night/styles.xml')
             .existsSync(),
-        true);
-    expect(tempDir.childFile('analysis_options.yaml').existsSync(), true);
-  },
-      timeout: const Timeout(Duration(seconds: 500)),
-      // TODO(stuartmorgan): These should not be unit tests, see
-      // https://github.com/flutter/flutter/issues/121257.
-      skip: true);
+        true,
+      );
+      expect(tempDir.childFile('analysis_options.yaml').existsSync(), true);
+    },
+    timeout: const Timeout(Duration(seconds: 500)),
+    // TODO(stuartmorgan): These should not be unit tests, see
+    // https://github.com/flutter/flutter/issues/121257.
+    skip: true,
+  );
 
   // Migrates a clean untouched app generated with flutter create
-  testUsingContext('vanilla migrate builds', () async {
-    // This tool does not support old versions of flutter that dont include
-    // `flutter analyze --suggestions --machine` command
-    if (!await hasFlutterEnvironment()) {
-      return;
-    }
-    // Flutter Stable 2.0.0 hash: 60bd88df915880d23877bfc1602e8ddcf4c4dd2a
-    await MigrateProject.installProject('version:2.0.0_stable', tempDir,
+  testUsingContext(
+    'vanilla migrate builds',
+    () async {
+      // This tool does not support old versions of flutter that dont include
+      // `flutter analyze --suggestions --machine` command
+      if (!await hasFlutterEnvironment()) {
+        return;
+      }
+      // Flutter Stable 2.0.0 hash: 60bd88df915880d23877bfc1602e8ddcf4c4dd2a
+      await MigrateProject.installProject(
+        'version:2.0.0_stable',
+        tempDir,
         main: '''
 import 'package:flutter/material.dart';
 
@@ -143,118 +162,139 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-''');
-    ProcessResult result = await runMigrateCommand(<String>[
-      'start',
-      '--verbose',
-    ], workingDirectory: tempDir.path);
-    expect(result.stdout.toString(), contains('Staging directory created at'));
+''',
+      );
+      ProcessResult result = await runMigrateCommand(<String>[
+        'start',
+        '--verbose',
+      ], workingDirectory: tempDir.path);
+      expect(
+        result.stdout.toString(),
+        contains('Staging directory created at'),
+      );
 
-    result = await runMigrateCommand(<String>[
-      'apply',
-      '--verbose',
-    ], workingDirectory: tempDir.path);
-    logger.printStatus('${result.exitCode}', color: TerminalColor.blue);
-    logger.printStatus(result.stdout as String, color: TerminalColor.green);
-    logger.printStatus(result.stderr as String, color: TerminalColor.red);
-    expect(result.exitCode, 0);
-    expect(result.stdout.toString(), contains('Migration complete'));
+      result = await runMigrateCommand(<String>[
+        'apply',
+        '--verbose',
+      ], workingDirectory: tempDir.path);
+      logger.printStatus('${result.exitCode}', color: TerminalColor.blue);
+      logger.printStatus(result.stdout as String, color: TerminalColor.green);
+      logger.printStatus(result.stderr as String, color: TerminalColor.red);
+      expect(result.exitCode, 0);
+      expect(result.stdout.toString(), contains('Migration complete'));
 
-    result = await processManager.run(<String>[
-      'flutter',
-      'build',
-      'apk',
-      '--debug',
-    ], workingDirectory: tempDir.path);
-    expect(result.exitCode, 0);
-    expect(result.stdout.toString(), contains('app-debug.apk'));
-    // Skipped due to being flaky, the build completes successfully, but sometimes
-    // Gradle crashes due to resources on the bot. We should fine tune this to
-    // make it stable.
-  },
-      timeout: const Timeout(Duration(seconds: 900)),
-      // TODO(stuartmorgan): These should not be unit tests, see
-      // https://github.com/flutter/flutter/issues/121257.
-      skip: true);
+      result = await processManager.run(<String>[
+        'flutter',
+        'build',
+        'apk',
+        '--debug',
+      ], workingDirectory: tempDir.path);
+      expect(result.exitCode, 0);
+      expect(result.stdout.toString(), contains('app-debug.apk'));
+      // Skipped due to being flaky, the build completes successfully, but sometimes
+      // Gradle crashes due to resources on the bot. We should fine tune this to
+      // make it stable.
+    },
+    timeout: const Timeout(Duration(seconds: 900)),
+    // TODO(stuartmorgan): These should not be unit tests, see
+    // https://github.com/flutter/flutter/issues/121257.
+    skip: true,
+  );
 
-  testUsingContext('migrate abandon', () async {
-    // Abandon in an empty dir fails.
-    ProcessResult result = await runMigrateCommand(<String>[
-      'abandon',
-      '--verbose',
-    ], workingDirectory: tempDir.path);
-    expect(result.exitCode, 0);
-    expect(result.stderr.toString(),
-        contains('Error: No pubspec.yaml file found'));
-    expect(
+  testUsingContext(
+    'migrate abandon',
+    () async {
+      // Abandon in an empty dir fails.
+      ProcessResult result = await runMigrateCommand(<String>[
+        'abandon',
+        '--verbose',
+      ], workingDirectory: tempDir.path);
+      expect(result.exitCode, 0);
+      expect(
+        result.stderr.toString(),
+        contains('Error: No pubspec.yaml file found'),
+      );
+      expect(
         result.stderr.toString(),
         contains(
-            'This command should be run from the root of your Flutter project'));
+          'This command should be run from the root of your Flutter project',
+        ),
+      );
 
-    final File manifestFile =
-        tempDir.childFile('migrate_staging_dir/.migrate_manifest');
-    expect(manifestFile.existsSync(), false);
+      final File manifestFile = tempDir.childFile(
+        'migrate_staging_dir/.migrate_manifest',
+      );
+      expect(manifestFile.existsSync(), false);
 
-    // Flutter Stable 1.22.6 hash: 9b2d32b605630f28625709ebd9d78ab3016b2bf6
-    await MigrateProject.installProject('version:1.22.6_stable', tempDir);
+      // Flutter Stable 1.22.6 hash: 9b2d32b605630f28625709ebd9d78ab3016b2bf6
+      await MigrateProject.installProject('version:1.22.6_stable', tempDir);
 
-    // Initialized repo fails.
-    result = await runMigrateCommand(<String>[
-      'abandon',
-      '--verbose',
-    ], workingDirectory: tempDir.path);
-    expect(result.exitCode, 0);
-    expect(result.stdout.toString(), contains('No migration in progress'));
+      // Initialized repo fails.
+      result = await runMigrateCommand(<String>[
+        'abandon',
+        '--verbose',
+      ], workingDirectory: tempDir.path);
+      expect(result.exitCode, 0);
+      expect(result.stdout.toString(), contains('No migration in progress'));
 
-    // Create migration.
-    manifestFile.createSync(recursive: true);
+      // Create migration.
+      manifestFile.createSync(recursive: true);
 
-    // Directory with manifest_staging_dir succeeds.
-    result = await runMigrateCommand(<String>[
-      'abandon',
-      '--verbose',
-      '--force',
-    ], workingDirectory: tempDir.path);
-    expect(result.exitCode, 0);
-    expect(result.stdout.toString(), contains('Abandon complete'));
-  },
-      timeout: const Timeout(Duration(seconds: 300)),
-      // TODO(stuartmorgan): These should not be unit tests, see
-      // https://github.com/flutter/flutter/issues/121257.
-      skip: true);
+      // Directory with manifest_staging_dir succeeds.
+      result = await runMigrateCommand(<String>[
+        'abandon',
+        '--verbose',
+        '--force',
+      ], workingDirectory: tempDir.path);
+      expect(result.exitCode, 0);
+      expect(result.stdout.toString(), contains('Abandon complete'));
+    },
+    timeout: const Timeout(Duration(seconds: 300)),
+    // TODO(stuartmorgan): These should not be unit tests, see
+    // https://github.com/flutter/flutter/issues/121257.
+    skip: true,
+  );
 
   // Migrates a user-modified app
-  testUsingContext('modified migrate process succeeds', () async {
-    // This tool does not support old versions of flutter that dont include
-    // `flutter analyze --suggestions --machine` command
-    if (!await hasFlutterEnvironment()) {
-      return;
-    }
-    // Flutter Stable 1.22.6 hash: 9b2d32b605630f28625709ebd9d78ab3016b2bf6
-    await MigrateProject.installProject('version:1.22.6_stable', tempDir,
-        vanilla: false);
+  testUsingContext(
+    'modified migrate process succeeds',
+    () async {
+      // This tool does not support old versions of flutter that dont include
+      // `flutter analyze --suggestions --machine` command
+      if (!await hasFlutterEnvironment()) {
+        return;
+      }
+      // Flutter Stable 1.22.6 hash: 9b2d32b605630f28625709ebd9d78ab3016b2bf6
+      await MigrateProject.installProject(
+        'version:1.22.6_stable',
+        tempDir,
+        vanilla: false,
+      );
 
-    ProcessResult result = await runMigrateCommand(<String>[
-      'apply',
-      '--verbose',
-    ], workingDirectory: tempDir.path);
-    expect(result.exitCode, 0);
-    expect(result.stdout.toString(), contains('No migration'));
+      ProcessResult result = await runMigrateCommand(<String>[
+        'apply',
+        '--verbose',
+      ], workingDirectory: tempDir.path);
+      expect(result.exitCode, 0);
+      expect(result.stdout.toString(), contains('No migration'));
 
-    result = await runMigrateCommand(<String>[
-      'status',
-      '--verbose',
-    ], workingDirectory: tempDir.path);
-    expect(result.exitCode, 0);
-    expect(result.stdout.toString(), contains('No migration'));
+      result = await runMigrateCommand(<String>[
+        'status',
+        '--verbose',
+      ], workingDirectory: tempDir.path);
+      expect(result.exitCode, 0);
+      expect(result.stdout.toString(), contains('No migration'));
 
-    result = await runMigrateCommand(<String>[
-      'start',
-      '--verbose',
-    ], workingDirectory: tempDir.path);
-    expect(result.exitCode, 0);
-    expect(result.stdout.toString(), contains('Staging directory created at'));
-    const String linesToMatch = '''
+      result = await runMigrateCommand(<String>[
+        'start',
+        '--verbose',
+      ], workingDirectory: tempDir.path);
+      expect(result.exitCode, 0);
+      expect(
+        result.stdout.toString(),
+        contains('Staging directory created at'),
+      );
+      const String linesToMatch = '''
 Modified files:
   - .metadata
   - ios/Runner/Info.plist
@@ -273,35 +313,38 @@ Modified files:
   - android/build.gradle
 Merge conflicted files:
   - pubspec.yaml''';
-    for (final String line in linesToMatch.split('\n')) {
-      expect(result.stdout.toString(), contains(line));
-    }
+      for (final String line in linesToMatch.split('\n')) {
+        expect(result.stdout.toString(), contains(line));
+      }
 
-    // Call apply with conflicts remaining. Should fail.
-    result = await runMigrateCommand(<String>[
-      'apply',
-      '--verbose',
-    ], workingDirectory: tempDir.path);
-    expect(result.exitCode, 0);
-    expect(
+      // Call apply with conflicts remaining. Should fail.
+      result = await runMigrateCommand(<String>[
+        'apply',
+        '--verbose',
+      ], workingDirectory: tempDir.path);
+      expect(result.exitCode, 0);
+      expect(
         result.stdout.toString(),
         contains(
-            'Conflicting files found. Resolve these conflicts and try again.'));
-    expect(result.stdout.toString(), contains('- pubspec.yaml'));
+          'Conflicting files found. Resolve these conflicts and try again.',
+        ),
+      );
+      expect(result.stdout.toString(), contains('- pubspec.yaml'));
 
-    result = await runMigrateCommand(<String>[
-      'status',
-      '--verbose',
-    ], workingDirectory: tempDir.path);
-    expect(result.exitCode, 0);
-    expect(result.stdout.toString(), contains('Modified files'));
-    expect(result.stdout.toString(), contains('Merge conflicted files'));
+      result = await runMigrateCommand(<String>[
+        'status',
+        '--verbose',
+      ], workingDirectory: tempDir.path);
+      expect(result.exitCode, 0);
+      expect(result.stdout.toString(), contains('Modified files'));
+      expect(result.stdout.toString(), contains('Merge conflicted files'));
 
-    // Manually resolve conflics. The correct contents for resolution may change over time,
-    // but it shouldnt matter for this test.
-    final File metadataFile =
-        tempDir.childFile('migrate_staging_dir/.metadata');
-    metadataFile.writeAsStringSync('''
+      // Manually resolve conflics. The correct contents for resolution may change over time,
+      // but it shouldnt matter for this test.
+      final File metadataFile = tempDir.childFile(
+        'migrate_staging_dir/.metadata',
+      );
+      metadataFile.writeAsStringSync('''
 # This file tracks properties of this Flutter project.
 # Used by Flutter tool to assess capabilities and perform upgrades etc.
 #
@@ -314,9 +357,10 @@ version:
 project_type: app
 
 ''', flush: true);
-    final File pubspecYamlFile =
-        tempDir.childFile('migrate_staging_dir/pubspec.yaml');
-    pubspecYamlFile.writeAsStringSync('''
+      final File pubspecYamlFile = tempDir.childFile(
+        'migrate_staging_dir/pubspec.yaml',
+      );
+      pubspecYamlFile.writeAsStringSync('''
 name: vanilla_app_1_22_6_stable
 description: This is a modified description from the default.
 
@@ -409,48 +453,65 @@ flutter:
 
 ''', flush: true);
 
-    result = await runMigrateCommand(<String>[
-      'status',
-      '--verbose',
-    ], workingDirectory: tempDir.path);
-    expect(result.exitCode, 0);
-    expect(result.stdout.toString(), contains('Modified files'));
-    expect(result.stdout.toString(), contains('diff --git'));
-    expect(result.stdout.toString(), contains('@@'));
-    expect(result.stdout.toString(), isNot(contains('Merge conflicted files')));
+      result = await runMigrateCommand(<String>[
+        'status',
+        '--verbose',
+      ], workingDirectory: tempDir.path);
+      expect(result.exitCode, 0);
+      expect(result.stdout.toString(), contains('Modified files'));
+      expect(result.stdout.toString(), contains('diff --git'));
+      expect(result.stdout.toString(), contains('@@'));
+      expect(
+        result.stdout.toString(),
+        isNot(contains('Merge conflicted files')),
+      );
 
-    result = await runMigrateCommand(<String>[
-      'apply',
-      '--verbose',
-    ], workingDirectory: tempDir.path);
-    expect(result.exitCode, 0);
-    expect(result.stdout.toString(), contains('Migration complete'));
+      result = await runMigrateCommand(<String>[
+        'apply',
+        '--verbose',
+      ], workingDirectory: tempDir.path);
+      expect(result.exitCode, 0);
+      expect(result.stdout.toString(), contains('Migration complete'));
 
-    expect(tempDir.childFile('.metadata').readAsStringSync(),
-        contains('e96a72392696df66755ca246ff291dfc6ca6c4ad'));
-    expect(tempDir.childFile('pubspec.yaml').readAsStringSync(),
-        isNot(contains('">=2.6.0 <3.0.0"')));
-    expect(tempDir.childFile('pubspec.yaml').readAsStringSync(),
-        contains('">=2.17.0-79.0.dev <3.0.0"'));
-    expect(
+      expect(
+        tempDir.childFile('.metadata').readAsStringSync(),
+        contains('e96a72392696df66755ca246ff291dfc6ca6c4ad'),
+      );
+      expect(
+        tempDir.childFile('pubspec.yaml').readAsStringSync(),
+        isNot(contains('">=2.6.0 <3.0.0"')),
+      );
+      expect(
+        tempDir.childFile('pubspec.yaml').readAsStringSync(),
+        contains('">=2.17.0-79.0.dev <3.0.0"'),
+      );
+      expect(
         tempDir.childFile('pubspec.yaml').readAsStringSync(),
         contains(
-            'description: This is a modified description from the default.'));
-    expect(tempDir.childFile('lib/main.dart').readAsStringSync(),
-        contains('OtherWidget()'));
-    expect(tempDir.childFile('lib/other.dart').existsSync(), true);
-    expect(tempDir.childFile('lib/other.dart').readAsStringSync(),
-        contains('class OtherWidget'));
+          'description: This is a modified description from the default.',
+        ),
+      );
+      expect(
+        tempDir.childFile('lib/main.dart').readAsStringSync(),
+        contains('OtherWidget()'),
+      );
+      expect(tempDir.childFile('lib/other.dart').existsSync(), true);
+      expect(
+        tempDir.childFile('lib/other.dart').readAsStringSync(),
+        contains('class OtherWidget'),
+      );
 
-    expect(
+      expect(
         tempDir
             .childFile('android/app/src/main/res/values-night/styles.xml')
             .existsSync(),
-        true);
-    expect(tempDir.childFile('analysis_options.yaml').existsSync(), true);
-  },
-      timeout: const Timeout(Duration(seconds: 500)),
-      // TODO(stuartmorgan): These should not be unit tests, see
-      // https://github.com/flutter/flutter/issues/121257.
-      skip: true);
+        true,
+      );
+      expect(tempDir.childFile('analysis_options.yaml').existsSync(), true);
+    },
+    timeout: const Timeout(Duration(seconds: 500)),
+    // TODO(stuartmorgan): These should not be unit tests, see
+    // https://github.com/flutter/flutter/issues/121257.
+    skip: true,
+  );
 }

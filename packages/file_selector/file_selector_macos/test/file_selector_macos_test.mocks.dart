@@ -35,20 +35,16 @@ class MockTestFileSelectorApi extends _i1.Mock
   @override
   _i3.Future<List<String>> displayOpenPanel(_i4.OpenPanelOptions? options) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #displayOpenPanel,
-          [options],
-        ),
-        returnValue: _i3.Future<List<String>>.value(<String>[]),
-      ) as _i3.Future<List<String>>);
+            Invocation.method(#displayOpenPanel, [options]),
+            returnValue: _i3.Future<List<String>>.value(<String>[]),
+          )
+          as _i3.Future<List<String>>);
 
   @override
   _i3.Future<String?> displaySavePanel(_i4.SavePanelOptions? options) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #displaySavePanel,
-          [options],
-        ),
-        returnValue: _i3.Future<String?>.value(),
-      ) as _i3.Future<String?>);
+            Invocation.method(#displaySavePanel, [options]),
+            returnValue: _i3.Future<String?>.value(),
+          )
+          as _i3.Future<String?>);
 }

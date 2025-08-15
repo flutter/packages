@@ -16,8 +16,8 @@ final class AndroidContentProgressProviderCreationParams
   /// Constructs a [AndroidContentProgressProviderCreationParams].
   const AndroidContentProgressProviderCreationParams({
     @visibleForTesting InteractiveMediaAdsProxy? proxy,
-  })  : _proxy = proxy ?? const InteractiveMediaAdsProxy(),
-        super();
+  }) : _proxy = proxy ?? const InteractiveMediaAdsProxy(),
+       super();
 
   /// Creates a [AndroidContentProgressProviderCreationParams] from an instance of
   /// [PlatformContentProgressProviderCreationParams].
@@ -50,10 +50,9 @@ base class AndroidContentProgressProvider
   late final AndroidContentProgressProviderCreationParams _androidParams =
       params is AndroidContentProgressProviderCreationParams
           ? params as AndroidContentProgressProviderCreationParams
-          : AndroidContentProgressProviderCreationParams
-              .fromPlatformContentProgressProviderCreationParams(
-              params,
-            );
+          : AndroidContentProgressProviderCreationParams.fromPlatformContentProgressProviderCreationParams(
+            params,
+          );
 
   @override
   Future<void> setProgress({

@@ -33,10 +33,7 @@ class SK2SubscriptionOfferSignature {
 /// cryptographic signature.
 final class SK2PromotionalOffer {
   /// Creates a new [SK2PromotionalOffer] object.
-  SK2PromotionalOffer({
-    required this.offerId,
-    required this.signature,
-  });
+  SK2PromotionalOffer({required this.offerId, required this.signature});
 
   /// The promotional offer identifier.
   final String offerId;

@@ -14,14 +14,17 @@ import 'package:flutter/services.dart';
 bool _deepEquals(Object? a, Object? b) {
   if (a is List && b is List) {
     return a.length == b.length &&
-        a.indexed
-            .every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
+        a.indexed.every(
+          ((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]),
+        );
   }
   if (a is Map && b is Map) {
     return a.length == b.length &&
-        a.entries.every((MapEntry<Object?, Object?> entry) =>
-            (b as Map<Object?, Object?>).containsKey(entry.key) &&
-            _deepEquals(entry.value, b[entry.key]));
+        a.entries.every(
+          (MapEntry<Object?, Object?> entry) =>
+              (b as Map<Object?, Object?>).containsKey(entry.key) &&
+              _deepEquals(entry.value, b[entry.key]),
+        );
   }
   return a == b;
 }
@@ -29,16 +32,12 @@ bool _deepEquals(Object? a, Object? b) {
 sealed class PlatformEvent {}
 
 class IntEvent extends PlatformEvent {
-  IntEvent({
-    required this.data,
-  });
+  IntEvent({required this.data});
 
   int data;
 
   List<Object?> _toList() {
-    return <Object?>[
-      data,
-    ];
+    return <Object?>[data];
   }
 
   Object encode() {
@@ -47,9 +46,7 @@ class IntEvent extends PlatformEvent {
 
   static IntEvent decode(Object result) {
     result as List<Object?>;
-    return IntEvent(
-      data: result[0]! as int,
-    );
+    return IntEvent(data: result[0]! as int);
   }
 
   @override
@@ -70,16 +67,12 @@ class IntEvent extends PlatformEvent {
 }
 
 class StringEvent extends PlatformEvent {
-  StringEvent({
-    required this.data,
-  });
+  StringEvent({required this.data});
 
   String data;
 
   List<Object?> _toList() {
-    return <Object?>[
-      data,
-    ];
+    return <Object?>[data];
   }
 
   Object encode() {
@@ -88,9 +81,7 @@ class StringEvent extends PlatformEvent {
 
   static StringEvent decode(Object result) {
     result as List<Object?>;
-    return StringEvent(
-      data: result[0]! as String,
-    );
+    return StringEvent(data: result[0]! as String);
   }
 
   @override
@@ -141,16 +132,18 @@ class _PigeonCodec extends StandardMessageCodec {
   }
 }
 
-const StandardMethodCodec pigeonMethodCodec =
-    StandardMethodCodec(_PigeonCodec());
+const StandardMethodCodec pigeonMethodCodec = StandardMethodCodec(
+  _PigeonCodec(),
+);
 
 Stream<PlatformEvent> streamEvents({String instanceName = ''}) {
   if (instanceName.isNotEmpty) {
     instanceName = '.$instanceName';
   }
   final EventChannel streamEventsChannel = EventChannel(
-      'dev.flutter.pigeon.pigeon_example_package.EventChannelMethods.streamEvents$instanceName',
-      pigeonMethodCodec);
+    'dev.flutter.pigeon.pigeon_example_package.EventChannelMethods.streamEvents$instanceName',
+    pigeonMethodCodec,
+  );
   return streamEventsChannel.receiveBroadcastStream().map((dynamic event) {
     return event as PlatformEvent;
   });

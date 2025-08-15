@@ -123,13 +123,13 @@ class PricingPhaseWrapper {
 
   @override
   int get hashCode => Object.hash(
-        billingCycleCount,
-        billingPeriod,
-        formattedPrice,
-        priceAmountMicros,
-        priceCurrencyCode,
-        recurrenceMode,
-      );
+    billingCycleCount,
+    billingPeriod,
+    formattedPrice,
+    priceAmountMicros,
+    priceCurrencyCode,
+    recurrenceMode,
+  );
 }
 
 /// Represents additional details of an installment subscription plan.

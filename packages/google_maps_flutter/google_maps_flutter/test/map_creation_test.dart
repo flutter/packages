@@ -52,11 +52,11 @@ void main() {
   testWidgets('Calls platform.dispose when GoogleMap is disposed of', (
     WidgetTester tester,
   ) async {
-    await tester.pumpWidget(const GoogleMap(
-      initialCameraPosition: CameraPosition(
-        target: LatLng(43.3608, -5.8702),
+    await tester.pumpWidget(
+      const GoogleMap(
+        initialCameraPosition: CameraPosition(target: LatLng(43.3608, -5.8702)),
       ),
-    ));
+    );
 
     // Now dispose of the map...
     await tester.pumpWidget(Container());

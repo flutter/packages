@@ -20,8 +20,11 @@ PlatformException _createConnectionError(String channelName) {
   );
 }
 
-List<Object?> wrapResponse(
-    {Object? result, PlatformException? error, bool empty = false}) {
+List<Object?> wrapResponse({
+  Object? result,
+  PlatformException? error,
+  bool empty = false,
+}) {
   if (empty) {
     return <Object?>[];
   }
@@ -43,7 +46,7 @@ abstract class PigeonInternalProxyApiBaseClass {
     this.pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
   }) : pigeon_instanceManager =
-            pigeon_instanceManager ?? PigeonInstanceManager.instance;
+           pigeon_instanceManager ?? PigeonInstanceManager.instance;
 
   /// Sends and receives binary data across the Flutter platform barrier.
   ///
@@ -114,7 +117,7 @@ class PigeonInstanceManager {
   // HashMap).
   final Expando<int> _identifiers = Expando<int>();
   final Map<int, WeakReference<PigeonInternalProxyApiBaseClass>>
-      _weakInstances = <int, WeakReference<PigeonInternalProxyApiBaseClass>>{};
+  _weakInstances = <int, WeakReference<PigeonInternalProxyApiBaseClass>>{};
   final Map<int, PigeonInternalProxyApiBaseClass> _strongInstances =
       <int, PigeonInternalProxyApiBaseClass>{};
   late final Finalizer<int> _finalizer;
@@ -136,66 +139,96 @@ class PigeonInstanceManager {
       },
     );
     _PigeonInternalInstanceManagerApi.setUpMessageHandlers(
-        instanceManager: instanceManager);
+      instanceManager: instanceManager,
+    );
     WebResourceRequest.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
+      pigeon_instanceManager: instanceManager,
+    );
     WebResourceResponse.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
+      pigeon_instanceManager: instanceManager,
+    );
     WebResourceError.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
+      pigeon_instanceManager: instanceManager,
+    );
     WebResourceErrorCompat.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
+      pigeon_instanceManager: instanceManager,
+    );
     WebViewPoint.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
+      pigeon_instanceManager: instanceManager,
+    );
     ConsoleMessage.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
+      pigeon_instanceManager: instanceManager,
+    );
     CookieManager.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
+      pigeon_instanceManager: instanceManager,
+    );
     WebView.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
+      pigeon_instanceManager: instanceManager,
+    );
     WebSettings.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
+      pigeon_instanceManager: instanceManager,
+    );
     JavaScriptChannel.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
+      pigeon_instanceManager: instanceManager,
+    );
     WebViewClient.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
+      pigeon_instanceManager: instanceManager,
+    );
     DownloadListener.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
+      pigeon_instanceManager: instanceManager,
+    );
     WebChromeClient.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
+      pigeon_instanceManager: instanceManager,
+    );
     FlutterAssetManager.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
+      pigeon_instanceManager: instanceManager,
+    );
     WebStorage.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
+      pigeon_instanceManager: instanceManager,
+    );
     FileChooserParams.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
+      pigeon_instanceManager: instanceManager,
+    );
     PermissionRequest.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
+      pigeon_instanceManager: instanceManager,
+    );
     CustomViewCallback.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
+      pigeon_instanceManager: instanceManager,
+    );
     View.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     GeolocationPermissionsCallback.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
+      pigeon_instanceManager: instanceManager,
+    );
     HttpAuthHandler.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
+      pigeon_instanceManager: instanceManager,
+    );
     AndroidMessage.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
+      pigeon_instanceManager: instanceManager,
+    );
     ClientCertRequest.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
+      pigeon_instanceManager: instanceManager,
+    );
     PrivateKey.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
+      pigeon_instanceManager: instanceManager,
+    );
     X509Certificate.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
+      pigeon_instanceManager: instanceManager,
+    );
     SslErrorHandler.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
+      pigeon_instanceManager: instanceManager,
+    );
     SslError.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
+      pigeon_instanceManager: instanceManager,
+    );
     SslCertificateDName.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
+      pigeon_instanceManager: instanceManager,
+    );
     SslCertificate.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
+      pigeon_instanceManager: instanceManager,
+    );
     Certificate.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
+      pigeon_instanceManager: instanceManager,
+    );
     return instanceManager;
   }
 
@@ -212,8 +245,9 @@ class PigeonInstanceManager {
 
     final int identifier = _nextUniqueIdentifier();
     _identifiers[instance] = identifier;
-    _weakInstances[identifier] =
-        WeakReference<PigeonInternalProxyApiBaseClass>(instance);
+    _weakInstances[identifier] = WeakReference<PigeonInternalProxyApiBaseClass>(
+      instance,
+    );
     _finalizer.attach(instance, identifier, detach: instance);
 
     final PigeonInternalProxyApiBaseClass copy = instance.pigeon_copy();
@@ -275,7 +309,8 @@ class PigeonInstanceManager {
   /// This method also expects the host `InstanceManager` to have a strong
   /// reference to the instance the identifier is associated with.
   T? getInstanceWithWeakReference<T extends PigeonInternalProxyApiBaseClass>(
-      int identifier) {
+    int identifier,
+  ) {
     final PigeonInternalProxyApiBaseClass? weakInstance =
         _weakInstances[identifier]?.target;
 
@@ -310,7 +345,9 @@ class PigeonInstanceManager {
   /// Throws assertion error if the instance or its identifier has already been
   /// added.
   void addHostCreatedInstance(
-      PigeonInternalProxyApiBaseClass instance, int identifier) {
+    PigeonInternalProxyApiBaseClass instance,
+    int identifier,
+  ) {
     assert(!containsIdentifier(identifier));
     assert(getIdentifier(instance) == null);
     assert(identifier >= 0);
@@ -339,7 +376,7 @@ class PigeonInstanceManager {
 class _PigeonInternalInstanceManagerApi {
   /// Constructor for [_PigeonInternalInstanceManagerApi].
   _PigeonInternalInstanceManagerApi({BinaryMessenger? binaryMessenger})
-      : pigeonVar_binaryMessenger = binaryMessenger;
+    : pigeonVar_binaryMessenger = binaryMessenger;
 
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
@@ -351,31 +388,37 @@ class _PigeonInternalInstanceManagerApi {
     PigeonInstanceManager? instanceManager,
   }) {
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_android.PigeonInternalInstanceManager.removeStrongReference',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.PigeonInternalInstanceManager.removeStrongReference',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.PigeonInternalInstanceManager.removeStrongReference was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.PigeonInternalInstanceManager.removeStrongReference was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_identifier = (args[0] as int?);
-          assert(arg_identifier != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.PigeonInternalInstanceManager.removeStrongReference was null, expected non-null int.');
+          assert(
+            arg_identifier != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.PigeonInternalInstanceManager.removeStrongReference was null, expected non-null int.',
+          );
           try {
-            (instanceManager ?? PigeonInstanceManager.instance)
-                .remove(arg_identifier!);
+            (instanceManager ?? PigeonInstanceManager.instance).remove(
+              arg_identifier!,
+            );
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -387,12 +430,13 @@ class _PigeonInternalInstanceManagerApi {
         'dev.flutter.pigeon.webview_flutter_android.PigeonInternalInstanceManager.removeStrongReference';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[identifier],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[identifier]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -416,10 +460,10 @@ class _PigeonInternalInstanceManagerApi {
         'dev.flutter.pigeon.webview_flutter_android.PigeonInternalInstanceManager.clear';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
@@ -454,8 +498,9 @@ class _PigeonInternalProxyApiBaseCodec extends _PigeonCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case 128:
-        return instanceManager
-            .getInstanceWithWeakReference(readValue(buffer)! as int);
+        return instanceManager.getInstanceWithWeakReference(
+          readValue(buffer)! as int,
+        );
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -687,72 +732,88 @@ class WebResourceRequest extends PigeonInternalProxyApiBaseClass {
       bool hasGesture,
       String method,
       Map<String, String>? requestHeaders,
-    )? pigeon_newInstance,
+    )?
+    pigeon_newInstance,
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInstanceManager.instance);
+          pigeon_instanceManager ?? PigeonInstanceManager.instance,
+        );
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_android.WebResourceRequest.pigeon_newInstance',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.WebResourceRequest.pigeon_newInstance',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebResourceRequest.pigeon_newInstance was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebResourceRequest.pigeon_newInstance was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
-          assert(arg_pigeon_instanceIdentifier != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebResourceRequest.pigeon_newInstance was null, expected non-null int.');
+          assert(
+            arg_pigeon_instanceIdentifier != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebResourceRequest.pigeon_newInstance was null, expected non-null int.',
+          );
           final String? arg_url = (args[1] as String?);
-          assert(arg_url != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebResourceRequest.pigeon_newInstance was null, expected non-null String.');
+          assert(
+            arg_url != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebResourceRequest.pigeon_newInstance was null, expected non-null String.',
+          );
           final bool? arg_isForMainFrame = (args[2] as bool?);
-          assert(arg_isForMainFrame != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebResourceRequest.pigeon_newInstance was null, expected non-null bool.');
+          assert(
+            arg_isForMainFrame != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebResourceRequest.pigeon_newInstance was null, expected non-null bool.',
+          );
           final bool? arg_isRedirect = (args[3] as bool?);
           final bool? arg_hasGesture = (args[4] as bool?);
-          assert(arg_hasGesture != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebResourceRequest.pigeon_newInstance was null, expected non-null bool.');
+          assert(
+            arg_hasGesture != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebResourceRequest.pigeon_newInstance was null, expected non-null bool.',
+          );
           final String? arg_method = (args[5] as String?);
-          assert(arg_method != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebResourceRequest.pigeon_newInstance was null, expected non-null String.');
+          assert(
+            arg_method != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebResourceRequest.pigeon_newInstance was null, expected non-null String.',
+          );
           final Map<String, String>? arg_requestHeaders =
               (args[6] as Map<Object?, Object?>?)?.cast<String, String>();
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
-              pigeon_newInstance?.call(
-                      arg_url!,
-                      arg_isForMainFrame!,
-                      arg_isRedirect,
-                      arg_hasGesture!,
-                      arg_method!,
-                      arg_requestHeaders) ??
-                  WebResourceRequest.pigeon_detached(
-                    pigeon_binaryMessenger: pigeon_binaryMessenger,
-                    pigeon_instanceManager: pigeon_instanceManager,
-                    url: arg_url!,
-                    isForMainFrame: arg_isForMainFrame!,
-                    isRedirect: arg_isRedirect,
-                    hasGesture: arg_hasGesture!,
-                    method: arg_method!,
-                    requestHeaders: arg_requestHeaders,
-                  ),
-              arg_pigeon_instanceIdentifier!,
-            );
+                  pigeon_newInstance?.call(
+                        arg_url!,
+                        arg_isForMainFrame!,
+                        arg_isRedirect,
+                        arg_hasGesture!,
+                        arg_method!,
+                        arg_requestHeaders,
+                      ) ??
+                      WebResourceRequest.pigeon_detached(
+                        pigeon_binaryMessenger: pigeon_binaryMessenger,
+                        pigeon_instanceManager: pigeon_instanceManager,
+                        url: arg_url!,
+                        isForMainFrame: arg_isForMainFrame!,
+                        isRedirect: arg_isRedirect,
+                        hasGesture: arg_hasGesture!,
+                        method: arg_method!,
+                        requestHeaders: arg_requestHeaders,
+                      ),
+                  arg_pigeon_instanceIdentifier!,
+                );
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -800,45 +861,53 @@ class WebResourceResponse extends PigeonInternalProxyApiBaseClass {
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInstanceManager.instance);
+          pigeon_instanceManager ?? PigeonInstanceManager.instance,
+        );
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_android.WebResourceResponse.pigeon_newInstance',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.WebResourceResponse.pigeon_newInstance',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebResourceResponse.pigeon_newInstance was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebResourceResponse.pigeon_newInstance was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
-          assert(arg_pigeon_instanceIdentifier != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebResourceResponse.pigeon_newInstance was null, expected non-null int.');
+          assert(
+            arg_pigeon_instanceIdentifier != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebResourceResponse.pigeon_newInstance was null, expected non-null int.',
+          );
           final int? arg_statusCode = (args[1] as int?);
-          assert(arg_statusCode != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebResourceResponse.pigeon_newInstance was null, expected non-null int.');
+          assert(
+            arg_statusCode != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebResourceResponse.pigeon_newInstance was null, expected non-null int.',
+          );
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
-              pigeon_newInstance?.call(arg_statusCode!) ??
-                  WebResourceResponse.pigeon_detached(
-                    pigeon_binaryMessenger: pigeon_binaryMessenger,
-                    pigeon_instanceManager: pigeon_instanceManager,
-                    statusCode: arg_statusCode!,
-                  ),
-              arg_pigeon_instanceIdentifier!,
-            );
+                  pigeon_newInstance?.call(arg_statusCode!) ??
+                      WebResourceResponse.pigeon_detached(
+                        pigeon_binaryMessenger: pigeon_binaryMessenger,
+                        pigeon_instanceManager: pigeon_instanceManager,
+                        statusCode: arg_statusCode!,
+                      ),
+                  arg_pigeon_instanceIdentifier!,
+                );
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -882,56 +951,64 @@ class WebResourceError extends PigeonInternalProxyApiBaseClass {
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-    WebResourceError Function(
-      int errorCode,
-      String description,
-    )? pigeon_newInstance,
+    WebResourceError Function(int errorCode, String description)?
+    pigeon_newInstance,
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInstanceManager.instance);
+          pigeon_instanceManager ?? PigeonInstanceManager.instance,
+        );
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_android.WebResourceError.pigeon_newInstance',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.WebResourceError.pigeon_newInstance',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebResourceError.pigeon_newInstance was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebResourceError.pigeon_newInstance was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
-          assert(arg_pigeon_instanceIdentifier != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebResourceError.pigeon_newInstance was null, expected non-null int.');
+          assert(
+            arg_pigeon_instanceIdentifier != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebResourceError.pigeon_newInstance was null, expected non-null int.',
+          );
           final int? arg_errorCode = (args[1] as int?);
-          assert(arg_errorCode != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebResourceError.pigeon_newInstance was null, expected non-null int.');
+          assert(
+            arg_errorCode != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebResourceError.pigeon_newInstance was null, expected non-null int.',
+          );
           final String? arg_description = (args[2] as String?);
-          assert(arg_description != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebResourceError.pigeon_newInstance was null, expected non-null String.');
+          assert(
+            arg_description != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebResourceError.pigeon_newInstance was null, expected non-null String.',
+          );
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
-              pigeon_newInstance?.call(arg_errorCode!, arg_description!) ??
-                  WebResourceError.pigeon_detached(
-                    pigeon_binaryMessenger: pigeon_binaryMessenger,
-                    pigeon_instanceManager: pigeon_instanceManager,
-                    errorCode: arg_errorCode!,
-                    description: arg_description!,
-                  ),
-              arg_pigeon_instanceIdentifier!,
-            );
+                  pigeon_newInstance?.call(arg_errorCode!, arg_description!) ??
+                      WebResourceError.pigeon_detached(
+                        pigeon_binaryMessenger: pigeon_binaryMessenger,
+                        pigeon_instanceManager: pigeon_instanceManager,
+                        errorCode: arg_errorCode!,
+                        description: arg_description!,
+                      ),
+                  arg_pigeon_instanceIdentifier!,
+                );
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -976,56 +1053,64 @@ class WebResourceErrorCompat extends PigeonInternalProxyApiBaseClass {
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-    WebResourceErrorCompat Function(
-      int errorCode,
-      String description,
-    )? pigeon_newInstance,
+    WebResourceErrorCompat Function(int errorCode, String description)?
+    pigeon_newInstance,
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInstanceManager.instance);
+          pigeon_instanceManager ?? PigeonInstanceManager.instance,
+        );
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_android.WebResourceErrorCompat.pigeon_newInstance',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.WebResourceErrorCompat.pigeon_newInstance',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebResourceErrorCompat.pigeon_newInstance was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebResourceErrorCompat.pigeon_newInstance was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
-          assert(arg_pigeon_instanceIdentifier != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebResourceErrorCompat.pigeon_newInstance was null, expected non-null int.');
+          assert(
+            arg_pigeon_instanceIdentifier != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebResourceErrorCompat.pigeon_newInstance was null, expected non-null int.',
+          );
           final int? arg_errorCode = (args[1] as int?);
-          assert(arg_errorCode != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebResourceErrorCompat.pigeon_newInstance was null, expected non-null int.');
+          assert(
+            arg_errorCode != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebResourceErrorCompat.pigeon_newInstance was null, expected non-null int.',
+          );
           final String? arg_description = (args[2] as String?);
-          assert(arg_description != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebResourceErrorCompat.pigeon_newInstance was null, expected non-null String.');
+          assert(
+            arg_description != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebResourceErrorCompat.pigeon_newInstance was null, expected non-null String.',
+          );
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
-              pigeon_newInstance?.call(arg_errorCode!, arg_description!) ??
-                  WebResourceErrorCompat.pigeon_detached(
-                    pigeon_binaryMessenger: pigeon_binaryMessenger,
-                    pigeon_instanceManager: pigeon_instanceManager,
-                    errorCode: arg_errorCode!,
-                    description: arg_description!,
-                  ),
-              arg_pigeon_instanceIdentifier!,
-            );
+                  pigeon_newInstance?.call(arg_errorCode!, arg_description!) ??
+                      WebResourceErrorCompat.pigeon_detached(
+                        pigeon_binaryMessenger: pigeon_binaryMessenger,
+                        pigeon_instanceManager: pigeon_instanceManager,
+                        errorCode: arg_errorCode!,
+                        description: arg_description!,
+                      ),
+                  arg_pigeon_instanceIdentifier!,
+                );
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -1067,56 +1152,63 @@ class WebViewPoint extends PigeonInternalProxyApiBaseClass {
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-    WebViewPoint Function(
-      int x,
-      int y,
-    )? pigeon_newInstance,
+    WebViewPoint Function(int x, int y)? pigeon_newInstance,
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInstanceManager.instance);
+          pigeon_instanceManager ?? PigeonInstanceManager.instance,
+        );
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_android.WebViewPoint.pigeon_newInstance',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.WebViewPoint.pigeon_newInstance',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewPoint.pigeon_newInstance was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewPoint.pigeon_newInstance was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
-          assert(arg_pigeon_instanceIdentifier != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewPoint.pigeon_newInstance was null, expected non-null int.');
+          assert(
+            arg_pigeon_instanceIdentifier != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewPoint.pigeon_newInstance was null, expected non-null int.',
+          );
           final int? arg_x = (args[1] as int?);
-          assert(arg_x != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewPoint.pigeon_newInstance was null, expected non-null int.');
+          assert(
+            arg_x != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewPoint.pigeon_newInstance was null, expected non-null int.',
+          );
           final int? arg_y = (args[2] as int?);
-          assert(arg_y != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewPoint.pigeon_newInstance was null, expected non-null int.');
+          assert(
+            arg_y != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewPoint.pigeon_newInstance was null, expected non-null int.',
+          );
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
-              pigeon_newInstance?.call(arg_x!, arg_y!) ??
-                  WebViewPoint.pigeon_detached(
-                    pigeon_binaryMessenger: pigeon_binaryMessenger,
-                    pigeon_instanceManager: pigeon_instanceManager,
-                    x: arg_x!,
-                    y: arg_y!,
-                  ),
-              arg_pigeon_instanceIdentifier!,
-            );
+                  pigeon_newInstance?.call(arg_x!, arg_y!) ??
+                      WebViewPoint.pigeon_detached(
+                        pigeon_binaryMessenger: pigeon_binaryMessenger,
+                        pigeon_instanceManager: pigeon_instanceManager,
+                        x: arg_x!,
+                        y: arg_y!,
+                      ),
+                  arg_pigeon_instanceIdentifier!,
+                );
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -1169,63 +1261,82 @@ class ConsoleMessage extends PigeonInternalProxyApiBaseClass {
       String message,
       ConsoleMessageLevel level,
       String sourceId,
-    )? pigeon_newInstance,
+    )?
+    pigeon_newInstance,
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInstanceManager.instance);
+          pigeon_instanceManager ?? PigeonInstanceManager.instance,
+        );
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_android.ConsoleMessage.pigeon_newInstance',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.ConsoleMessage.pigeon_newInstance',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.ConsoleMessage.pigeon_newInstance was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.ConsoleMessage.pigeon_newInstance was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
-          assert(arg_pigeon_instanceIdentifier != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.ConsoleMessage.pigeon_newInstance was null, expected non-null int.');
+          assert(
+            arg_pigeon_instanceIdentifier != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.ConsoleMessage.pigeon_newInstance was null, expected non-null int.',
+          );
           final int? arg_lineNumber = (args[1] as int?);
-          assert(arg_lineNumber != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.ConsoleMessage.pigeon_newInstance was null, expected non-null int.');
+          assert(
+            arg_lineNumber != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.ConsoleMessage.pigeon_newInstance was null, expected non-null int.',
+          );
           final String? arg_message = (args[2] as String?);
-          assert(arg_message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.ConsoleMessage.pigeon_newInstance was null, expected non-null String.');
+          assert(
+            arg_message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.ConsoleMessage.pigeon_newInstance was null, expected non-null String.',
+          );
           final ConsoleMessageLevel? arg_level =
               (args[3] as ConsoleMessageLevel?);
-          assert(arg_level != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.ConsoleMessage.pigeon_newInstance was null, expected non-null ConsoleMessageLevel.');
+          assert(
+            arg_level != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.ConsoleMessage.pigeon_newInstance was null, expected non-null ConsoleMessageLevel.',
+          );
           final String? arg_sourceId = (args[4] as String?);
-          assert(arg_sourceId != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.ConsoleMessage.pigeon_newInstance was null, expected non-null String.');
+          assert(
+            arg_sourceId != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.ConsoleMessage.pigeon_newInstance was null, expected non-null String.',
+          );
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
-              pigeon_newInstance?.call(arg_lineNumber!, arg_message!,
-                      arg_level!, arg_sourceId!) ??
-                  ConsoleMessage.pigeon_detached(
-                    pigeon_binaryMessenger: pigeon_binaryMessenger,
-                    pigeon_instanceManager: pigeon_instanceManager,
-                    lineNumber: arg_lineNumber!,
-                    message: arg_message!,
-                    level: arg_level!,
-                    sourceId: arg_sourceId!,
-                  ),
-              arg_pigeon_instanceIdentifier!,
-            );
+                  pigeon_newInstance?.call(
+                        arg_lineNumber!,
+                        arg_message!,
+                        arg_level!,
+                        arg_sourceId!,
+                      ) ??
+                      ConsoleMessage.pigeon_detached(
+                        pigeon_binaryMessenger: pigeon_binaryMessenger,
+                        pigeon_instanceManager: pigeon_instanceManager,
+                        lineNumber: arg_lineNumber!,
+                        message: arg_message!,
+                        level: arg_level!,
+                        sourceId: arg_sourceId!,
+                      ),
+                  arg_pigeon_instanceIdentifier!,
+                );
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -1272,41 +1383,47 @@ class CookieManager extends PigeonInternalProxyApiBaseClass {
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInstanceManager.instance);
+          pigeon_instanceManager ?? PigeonInstanceManager.instance,
+        );
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_android.CookieManager.pigeon_newInstance',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.CookieManager.pigeon_newInstance',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.CookieManager.pigeon_newInstance was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.CookieManager.pigeon_newInstance was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
-          assert(arg_pigeon_instanceIdentifier != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.CookieManager.pigeon_newInstance was null, expected non-null int.');
+          assert(
+            arg_pigeon_instanceIdentifier != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.CookieManager.pigeon_newInstance was null, expected non-null int.',
+          );
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
-              pigeon_newInstance?.call() ??
-                  CookieManager.pigeon_detached(
-                    pigeon_binaryMessenger: pigeon_binaryMessenger,
-                    pigeon_instanceManager: pigeon_instanceManager,
-                  ),
-              arg_pigeon_instanceIdentifier!,
-            );
+                  pigeon_newInstance?.call() ??
+                      CookieManager.pigeon_detached(
+                        pigeon_binaryMessenger: pigeon_binaryMessenger,
+                        pigeon_instanceManager: pigeon_instanceManager,
+                      ),
+                  arg_pigeon_instanceIdentifier!,
+                );
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -1326,12 +1443,13 @@ class CookieManager extends PigeonInternalProxyApiBaseClass {
           'dev.flutter.pigeon.webview_flutter_android.CookieManager.instance';
       final BasicMessageChannel<Object?> pigeonVar_channel =
           BasicMessageChannel<Object?>(
-        pigeonVar_channelName,
-        pigeonChannelCodec,
-        binaryMessenger: pigeonVar_binaryMessenger,
+            pigeonVar_channelName,
+            pigeonChannelCodec,
+            binaryMessenger: pigeonVar_binaryMessenger,
+          );
+      final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+        <Object?>[pigeonVar_instanceIdentifier],
       );
-      final Future<Object?> pigeonVar_sendFuture =
-          pigeonVar_channel.send(<Object?>[pigeonVar_instanceIdentifier]);
       final List<Object?>? pigeonVar_replyList =
           await pigeonVar_sendFuture as List<Object?>?;
       if (pigeonVar_replyList == null) {
@@ -1350,10 +1468,7 @@ class CookieManager extends PigeonInternalProxyApiBaseClass {
   }
 
   /// Sets a single cookie (key-value pair) for the given URL.
-  Future<void> setCookie(
-    String url,
-    String value,
-  ) async {
+  Future<void> setCookie(String url, String value) async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecCookieManager;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
@@ -1361,12 +1476,13 @@ class CookieManager extends PigeonInternalProxyApiBaseClass {
         'dev.flutter.pigeon.webview_flutter_android.CookieManager.setCookie';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, url, value],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, url, value]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -1391,12 +1507,13 @@ class CookieManager extends PigeonInternalProxyApiBaseClass {
         'dev.flutter.pigeon.webview_flutter_android.CookieManager.removeAllCookies';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -1418,10 +1535,7 @@ class CookieManager extends PigeonInternalProxyApiBaseClass {
   }
 
   /// Sets whether the `WebView` should allow third party cookies to be set.
-  Future<void> setAcceptThirdPartyCookies(
-    WebView webView,
-    bool accept,
-  ) async {
+  Future<void> setAcceptThirdPartyCookies(WebView webView, bool accept) async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecCookieManager;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
@@ -1429,12 +1543,13 @@ class CookieManager extends PigeonInternalProxyApiBaseClass {
         'dev.flutter.pigeon.webview_flutter_android.CookieManager.setAcceptThirdPartyCookies';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, webView, accept],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, webView, accept]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -1468,8 +1583,8 @@ class WebView extends View {
     super.pigeon_instanceManager,
     this.onScrollChanged,
   }) : super.pigeon_detached() {
-    final int pigeonVar_instanceIdentifier =
-        pigeon_instanceManager.addDartCreatedInstance(this);
+    final int pigeonVar_instanceIdentifier = pigeon_instanceManager
+        .addDartCreatedInstance(this);
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecWebView;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
@@ -1477,12 +1592,13 @@ class WebView extends View {
         'dev.flutter.pigeon.webview_flutter_android.WebView.pigeon_defaultConstructor';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[pigeonVar_instanceIdentifier],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[pigeonVar_instanceIdentifier]);
     () async {
       final List<Object?>? pigeonVar_replyList =
           await pigeonVar_sendFuture as List<Object?>?;
@@ -1540,7 +1656,8 @@ class WebView extends View {
     int top,
     int oldLeft,
     int oldTop,
-  )? onScrollChanged;
+  )?
+  onScrollChanged;
 
   /// The WebSettings object used to control the settings for this WebView.
   late final WebSettings settings = pigeonVar_settings();
@@ -1556,92 +1673,113 @@ class WebView extends View {
       int top,
       int oldLeft,
       int oldTop,
-    )? onScrollChanged,
+    )?
+    onScrollChanged,
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInstanceManager.instance);
+          pigeon_instanceManager ?? PigeonInstanceManager.instance,
+        );
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_android.WebView.pigeon_newInstance',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.WebView.pigeon_newInstance',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebView.pigeon_newInstance was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebView.pigeon_newInstance was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
-          assert(arg_pigeon_instanceIdentifier != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebView.pigeon_newInstance was null, expected non-null int.');
+          assert(
+            arg_pigeon_instanceIdentifier != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebView.pigeon_newInstance was null, expected non-null int.',
+          );
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
-              pigeon_newInstance?.call() ??
-                  WebView.pigeon_detached(
-                    pigeon_binaryMessenger: pigeon_binaryMessenger,
-                    pigeon_instanceManager: pigeon_instanceManager,
-                  ),
-              arg_pigeon_instanceIdentifier!,
-            );
+                  pigeon_newInstance?.call() ??
+                      WebView.pigeon_detached(
+                        pigeon_binaryMessenger: pigeon_binaryMessenger,
+                        pigeon_instanceManager: pigeon_instanceManager,
+                      ),
+                  arg_pigeon_instanceIdentifier!,
+                );
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
     }
 
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_android.WebView.onScrollChanged',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.WebView.onScrollChanged',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebView.onScrollChanged was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebView.onScrollChanged was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final WebView? arg_pigeon_instance = (args[0] as WebView?);
-          assert(arg_pigeon_instance != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebView.onScrollChanged was null, expected non-null WebView.');
+          assert(
+            arg_pigeon_instance != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebView.onScrollChanged was null, expected non-null WebView.',
+          );
           final int? arg_left = (args[1] as int?);
-          assert(arg_left != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebView.onScrollChanged was null, expected non-null int.');
+          assert(
+            arg_left != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebView.onScrollChanged was null, expected non-null int.',
+          );
           final int? arg_top = (args[2] as int?);
-          assert(arg_top != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebView.onScrollChanged was null, expected non-null int.');
+          assert(
+            arg_top != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebView.onScrollChanged was null, expected non-null int.',
+          );
           final int? arg_oldLeft = (args[3] as int?);
-          assert(arg_oldLeft != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebView.onScrollChanged was null, expected non-null int.');
+          assert(
+            arg_oldLeft != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebView.onScrollChanged was null, expected non-null int.',
+          );
           final int? arg_oldTop = (args[4] as int?);
-          assert(arg_oldTop != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebView.onScrollChanged was null, expected non-null int.');
+          assert(
+            arg_oldTop != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebView.onScrollChanged was null, expected non-null int.',
+          );
           try {
             (onScrollChanged ?? arg_pigeon_instance!.onScrollChanged)?.call(
-                arg_pigeon_instance!,
-                arg_left!,
-                arg_top!,
-                arg_oldLeft!,
-                arg_oldTop!);
+              arg_pigeon_instance!,
+              arg_left!,
+              arg_top!,
+              arg_oldLeft!,
+              arg_oldTop!,
+            );
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -1656,19 +1794,20 @@ class WebView extends View {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecWebView;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    final int pigeonVar_instanceIdentifier =
-        pigeon_instanceManager.addDartCreatedInstance(pigeonVar_instance);
+    final int pigeonVar_instanceIdentifier = pigeon_instanceManager
+        .addDartCreatedInstance(pigeonVar_instance);
     () async {
       const String pigeonVar_channelName =
           'dev.flutter.pigeon.webview_flutter_android.WebView.settings';
       final BasicMessageChannel<Object?> pigeonVar_channel =
           BasicMessageChannel<Object?>(
-        pigeonVar_channelName,
-        pigeonChannelCodec,
-        binaryMessenger: pigeonVar_binaryMessenger,
+            pigeonVar_channelName,
+            pigeonChannelCodec,
+            binaryMessenger: pigeonVar_binaryMessenger,
+          );
+      final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+        <Object?>[this, pigeonVar_instanceIdentifier],
       );
-      final Future<Object?> pigeonVar_sendFuture =
-          pigeonVar_channel.send(<Object?>[this, pigeonVar_instanceIdentifier]);
       final List<Object?>? pigeonVar_replyList =
           await pigeonVar_sendFuture as List<Object?>?;
       if (pigeonVar_replyList == null) {
@@ -1687,11 +1826,7 @@ class WebView extends View {
   }
 
   /// Loads the given data into this WebView using a 'data' scheme URL.
-  Future<void> loadData(
-    String data,
-    String? mimeType,
-    String? encoding,
-  ) async {
+  Future<void> loadData(String data, String? mimeType, String? encoding) async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecWebView;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
@@ -1699,12 +1834,13 @@ class WebView extends View {
         'dev.flutter.pigeon.webview_flutter_android.WebView.loadData';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, data, mimeType, encoding],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, data, mimeType, encoding]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -1736,12 +1872,13 @@ class WebView extends View {
         'dev.flutter.pigeon.webview_flutter_android.WebView.loadDataWithBaseUrl';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, baseUrl, data, mimeType, encoding, historyUrl],
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel
-        .send(<Object?>[this, baseUrl, data, mimeType, encoding, historyUrl]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -1758,10 +1895,7 @@ class WebView extends View {
   }
 
   /// Loads the given URL.
-  Future<void> loadUrl(
-    String url,
-    Map<String, String> headers,
-  ) async {
+  Future<void> loadUrl(String url, Map<String, String> headers) async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecWebView;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
@@ -1769,12 +1903,13 @@ class WebView extends View {
         'dev.flutter.pigeon.webview_flutter_android.WebView.loadUrl';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, url, headers],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, url, headers]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -1791,10 +1926,7 @@ class WebView extends View {
   }
 
   /// Loads the URL with postData using "POST" method into this WebView.
-  Future<void> postUrl(
-    String url,
-    Uint8List data,
-  ) async {
+  Future<void> postUrl(String url, Uint8List data) async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecWebView;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
@@ -1802,12 +1934,13 @@ class WebView extends View {
         'dev.flutter.pigeon.webview_flutter_android.WebView.postUrl';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, url, data],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, url, data]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -1832,12 +1965,13 @@ class WebView extends View {
         'dev.flutter.pigeon.webview_flutter_android.WebView.getUrl';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -1862,12 +1996,13 @@ class WebView extends View {
         'dev.flutter.pigeon.webview_flutter_android.WebView.canGoBack';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -1897,12 +2032,13 @@ class WebView extends View {
         'dev.flutter.pigeon.webview_flutter_android.WebView.canGoForward';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -1932,12 +2068,13 @@ class WebView extends View {
         'dev.flutter.pigeon.webview_flutter_android.WebView.goBack';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -1962,12 +2099,13 @@ class WebView extends View {
         'dev.flutter.pigeon.webview_flutter_android.WebView.goForward';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -1992,12 +2130,13 @@ class WebView extends View {
         'dev.flutter.pigeon.webview_flutter_android.WebView.reload';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -2022,12 +2161,13 @@ class WebView extends View {
         'dev.flutter.pigeon.webview_flutter_android.WebView.clearCache';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, includeDiskFiles],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, includeDiskFiles]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -2053,12 +2193,13 @@ class WebView extends View {
         'dev.flutter.pigeon.webview_flutter_android.WebView.evaluateJavascript';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, javascriptString],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, javascriptString]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -2083,12 +2224,13 @@ class WebView extends View {
         'dev.flutter.pigeon.webview_flutter_android.WebView.getTitle';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -2113,18 +2255,20 @@ class WebView extends View {
   }) async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInstanceManager.instance);
+          pigeon_instanceManager ?? PigeonInstanceManager.instance,
+        );
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     const String pigeonVar_channelName =
         'dev.flutter.pigeon.webview_flutter_android.WebView.setWebContentsDebuggingEnabled';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[enabled],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[enabled]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -2150,12 +2294,13 @@ class WebView extends View {
         'dev.flutter.pigeon.webview_flutter_android.WebView.setWebViewClient';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, client],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, client]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -2180,12 +2325,13 @@ class WebView extends View {
         'dev.flutter.pigeon.webview_flutter_android.WebView.addJavaScriptChannel';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, channel],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, channel]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -2210,12 +2356,13 @@ class WebView extends View {
         'dev.flutter.pigeon.webview_flutter_android.WebView.removeJavaScriptChannel';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, name],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, name]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -2241,12 +2388,13 @@ class WebView extends View {
         'dev.flutter.pigeon.webview_flutter_android.WebView.setDownloadListener';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, listener],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, listener]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -2271,12 +2419,13 @@ class WebView extends View {
         'dev.flutter.pigeon.webview_flutter_android.WebView.setWebChromeClient';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, client],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, client]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -2301,12 +2450,13 @@ class WebView extends View {
         'dev.flutter.pigeon.webview_flutter_android.WebView.setBackgroundColor';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, color],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, color]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -2331,12 +2481,13 @@ class WebView extends View {
         'dev.flutter.pigeon.webview_flutter_android.WebView.destroy';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -2387,41 +2538,47 @@ class WebSettings extends PigeonInternalProxyApiBaseClass {
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInstanceManager.instance);
+          pigeon_instanceManager ?? PigeonInstanceManager.instance,
+        );
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_android.WebSettings.pigeon_newInstance',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.WebSettings.pigeon_newInstance',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebSettings.pigeon_newInstance was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebSettings.pigeon_newInstance was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
-          assert(arg_pigeon_instanceIdentifier != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebSettings.pigeon_newInstance was null, expected non-null int.');
+          assert(
+            arg_pigeon_instanceIdentifier != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebSettings.pigeon_newInstance was null, expected non-null int.',
+          );
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
-              pigeon_newInstance?.call() ??
-                  WebSettings.pigeon_detached(
-                    pigeon_binaryMessenger: pigeon_binaryMessenger,
-                    pigeon_instanceManager: pigeon_instanceManager,
-                  ),
-              arg_pigeon_instanceIdentifier!,
-            );
+                  pigeon_newInstance?.call() ??
+                      WebSettings.pigeon_detached(
+                        pigeon_binaryMessenger: pigeon_binaryMessenger,
+                        pigeon_instanceManager: pigeon_instanceManager,
+                      ),
+                  arg_pigeon_instanceIdentifier!,
+                );
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -2437,12 +2594,13 @@ class WebSettings extends PigeonInternalProxyApiBaseClass {
         'dev.flutter.pigeon.webview_flutter_android.WebSettings.setDomStorageEnabled';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, flag],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, flag]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -2467,12 +2625,13 @@ class WebSettings extends PigeonInternalProxyApiBaseClass {
         'dev.flutter.pigeon.webview_flutter_android.WebSettings.setJavaScriptCanOpenWindowsAutomatically';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, flag],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, flag]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -2497,12 +2656,13 @@ class WebSettings extends PigeonInternalProxyApiBaseClass {
         'dev.flutter.pigeon.webview_flutter_android.WebSettings.setSupportMultipleWindows';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, support],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, support]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -2527,12 +2687,13 @@ class WebSettings extends PigeonInternalProxyApiBaseClass {
         'dev.flutter.pigeon.webview_flutter_android.WebSettings.setJavaScriptEnabled';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, flag],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, flag]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -2557,12 +2718,13 @@ class WebSettings extends PigeonInternalProxyApiBaseClass {
         'dev.flutter.pigeon.webview_flutter_android.WebSettings.setUserAgentString';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, userAgentString],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, userAgentString]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -2587,12 +2749,13 @@ class WebSettings extends PigeonInternalProxyApiBaseClass {
         'dev.flutter.pigeon.webview_flutter_android.WebSettings.setMediaPlaybackRequiresUserGesture';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, require],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, require]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -2618,12 +2781,13 @@ class WebSettings extends PigeonInternalProxyApiBaseClass {
         'dev.flutter.pigeon.webview_flutter_android.WebSettings.setSupportZoom';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, support],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, support]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -2649,12 +2813,13 @@ class WebSettings extends PigeonInternalProxyApiBaseClass {
         'dev.flutter.pigeon.webview_flutter_android.WebSettings.setLoadWithOverviewMode';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, overview],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, overview]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -2680,12 +2845,13 @@ class WebSettings extends PigeonInternalProxyApiBaseClass {
         'dev.flutter.pigeon.webview_flutter_android.WebSettings.setUseWideViewPort';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, use],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, use]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -2711,12 +2877,13 @@ class WebSettings extends PigeonInternalProxyApiBaseClass {
         'dev.flutter.pigeon.webview_flutter_android.WebSettings.setDisplayZoomControls';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, enabled],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, enabled]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -2742,12 +2909,13 @@ class WebSettings extends PigeonInternalProxyApiBaseClass {
         'dev.flutter.pigeon.webview_flutter_android.WebSettings.setBuiltInZoomControls';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, enabled],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, enabled]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -2772,12 +2940,13 @@ class WebSettings extends PigeonInternalProxyApiBaseClass {
         'dev.flutter.pigeon.webview_flutter_android.WebSettings.setAllowFileAccess';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, enabled],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, enabled]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -2802,12 +2971,13 @@ class WebSettings extends PigeonInternalProxyApiBaseClass {
         'dev.flutter.pigeon.webview_flutter_android.WebSettings.setAllowContentAccess';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, enabled],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, enabled]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -2832,12 +3002,13 @@ class WebSettings extends PigeonInternalProxyApiBaseClass {
         'dev.flutter.pigeon.webview_flutter_android.WebSettings.setGeolocationEnabled';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, enabled],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, enabled]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -2862,12 +3033,13 @@ class WebSettings extends PigeonInternalProxyApiBaseClass {
         'dev.flutter.pigeon.webview_flutter_android.WebSettings.setTextZoom';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, textZoom],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, textZoom]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -2892,12 +3064,13 @@ class WebSettings extends PigeonInternalProxyApiBaseClass {
         'dev.flutter.pigeon.webview_flutter_android.WebSettings.getUserAgentString';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -2927,12 +3100,13 @@ class WebSettings extends PigeonInternalProxyApiBaseClass {
         'dev.flutter.pigeon.webview_flutter_android.WebSettings.setMixedContentMode';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, mode],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, mode]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -2968,8 +3142,8 @@ class JavaScriptChannel extends PigeonInternalProxyApiBaseClass {
     required this.channelName,
     required this.postMessage,
   }) {
-    final int pigeonVar_instanceIdentifier =
-        pigeon_instanceManager.addDartCreatedInstance(this);
+    final int pigeonVar_instanceIdentifier = pigeon_instanceManager
+        .addDartCreatedInstance(this);
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecJavaScriptChannel;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
@@ -2977,12 +3151,13 @@ class JavaScriptChannel extends PigeonInternalProxyApiBaseClass {
         'dev.flutter.pigeon.webview_flutter_android.JavaScriptChannel.pigeon_defaultConstructor';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[pigeonVar_instanceIdentifier, channelName],
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel
-        .send(<Object?>[pigeonVar_instanceIdentifier, channelName]);
     () async {
       final List<Object?>? pigeonVar_replyList =
           await pigeonVar_sendFuture as List<Object?>?;
@@ -3013,8 +3188,9 @@ class JavaScriptChannel extends PigeonInternalProxyApiBaseClass {
   });
 
   late final _PigeonInternalProxyApiBaseCodec
-      _pigeonVar_codecJavaScriptChannel =
-      _PigeonInternalProxyApiBaseCodec(pigeon_instanceManager);
+  _pigeonVar_codecJavaScriptChannel = _PigeonInternalProxyApiBaseCodec(
+    pigeon_instanceManager,
+  );
 
   final String channelName;
 
@@ -3037,54 +3213,60 @@ class JavaScriptChannel extends PigeonInternalProxyApiBaseClass {
   ///
   /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
-  final void Function(
-    JavaScriptChannel pigeon_instance,
-    String message,
-  ) postMessage;
+  final void Function(JavaScriptChannel pigeon_instance, String message)
+  postMessage;
 
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-    void Function(
-      JavaScriptChannel pigeon_instance,
-      String message,
-    )? postMessage,
+    void Function(JavaScriptChannel pigeon_instance, String message)?
+    postMessage,
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInstanceManager.instance);
+          pigeon_instanceManager ?? PigeonInstanceManager.instance,
+        );
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_android.JavaScriptChannel.postMessage',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.JavaScriptChannel.postMessage',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.JavaScriptChannel.postMessage was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.JavaScriptChannel.postMessage was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final JavaScriptChannel? arg_pigeon_instance =
               (args[0] as JavaScriptChannel?);
-          assert(arg_pigeon_instance != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.JavaScriptChannel.postMessage was null, expected non-null JavaScriptChannel.');
+          assert(
+            arg_pigeon_instance != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.JavaScriptChannel.postMessage was null, expected non-null JavaScriptChannel.',
+          );
           final String? arg_message = (args[1] as String?);
-          assert(arg_message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.JavaScriptChannel.postMessage was null, expected non-null String.');
+          assert(
+            arg_message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.JavaScriptChannel.postMessage was null, expected non-null String.',
+          );
           try {
-            (postMessage ?? arg_pigeon_instance!.postMessage)
-                .call(arg_pigeon_instance!, arg_message!);
+            (postMessage ?? arg_pigeon_instance!.postMessage).call(
+              arg_pigeon_instance!,
+              arg_message!,
+            );
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -3127,8 +3309,8 @@ class WebViewClient extends PigeonInternalProxyApiBaseClass {
     this.onReceivedSslError,
     this.onScaleChanged,
   }) {
-    final int pigeonVar_instanceIdentifier =
-        pigeon_instanceManager.addDartCreatedInstance(this);
+    final int pigeonVar_instanceIdentifier = pigeon_instanceManager
+        .addDartCreatedInstance(this);
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecWebViewClient;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
@@ -3136,12 +3318,13 @@ class WebViewClient extends PigeonInternalProxyApiBaseClass {
         'dev.flutter.pigeon.webview_flutter_android.WebViewClient.pigeon_defaultConstructor';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[pigeonVar_instanceIdentifier],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[pigeonVar_instanceIdentifier]);
     () async {
       final List<Object?>? pigeonVar_replyList =
           await pigeonVar_sendFuture as List<Object?>?;
@@ -3212,7 +3395,8 @@ class WebViewClient extends PigeonInternalProxyApiBaseClass {
     WebViewClient pigeon_instance,
     WebView webView,
     String url,
-  )? onPageStarted;
+  )?
+  onPageStarted;
 
   /// Notify the host application that a page has finished loading.
   ///
@@ -3237,7 +3421,8 @@ class WebViewClient extends PigeonInternalProxyApiBaseClass {
     WebViewClient pigeon_instance,
     WebView webView,
     String url,
-  )? onPageFinished;
+  )?
+  onPageFinished;
 
   /// Notify the host application that an HTTP error has been received from the
   /// server while loading a resource.
@@ -3264,7 +3449,8 @@ class WebViewClient extends PigeonInternalProxyApiBaseClass {
     WebView webView,
     WebResourceRequest request,
     WebResourceResponse response,
-  )? onReceivedHttpError;
+  )?
+  onReceivedHttpError;
 
   /// Report web resource loading error to the host application.
   ///
@@ -3290,7 +3476,8 @@ class WebViewClient extends PigeonInternalProxyApiBaseClass {
     WebView webView,
     WebResourceRequest request,
     WebResourceError error,
-  )? onReceivedRequestError;
+  )?
+  onReceivedRequestError;
 
   /// Report web resource loading error to the host application.
   ///
@@ -3316,7 +3503,8 @@ class WebViewClient extends PigeonInternalProxyApiBaseClass {
     WebView webView,
     WebResourceRequest request,
     WebResourceErrorCompat error,
-  )? onReceivedRequestErrorCompat;
+  )?
+  onReceivedRequestErrorCompat;
 
   /// Report an error to the host application.
   ///
@@ -3343,7 +3531,8 @@ class WebViewClient extends PigeonInternalProxyApiBaseClass {
     int errorCode,
     String description,
     String failingUrl,
-  )? onReceivedError;
+  )?
+  onReceivedError;
 
   /// Give the host application a chance to take control when a URL is about to
   /// be loaded in the current WebView.
@@ -3369,7 +3558,8 @@ class WebViewClient extends PigeonInternalProxyApiBaseClass {
     WebViewClient pigeon_instance,
     WebView webView,
     WebResourceRequest request,
-  )? requestLoading;
+  )?
+  requestLoading;
 
   /// Give the host application a chance to take control when a URL is about to
   /// be loaded in the current WebView.
@@ -3395,7 +3585,8 @@ class WebViewClient extends PigeonInternalProxyApiBaseClass {
     WebViewClient pigeon_instance,
     WebView webView,
     String url,
-  )? urlLoading;
+  )?
+  urlLoading;
 
   /// Notify the host application to update its visited links database.
   ///
@@ -3421,7 +3612,8 @@ class WebViewClient extends PigeonInternalProxyApiBaseClass {
     WebView webView,
     String url,
     bool isReload,
-  )? doUpdateVisitedHistory;
+  )?
+  doUpdateVisitedHistory;
 
   /// Notifies the host application that the WebView received an HTTP
   /// authentication request.
@@ -3449,7 +3641,8 @@ class WebViewClient extends PigeonInternalProxyApiBaseClass {
     HttpAuthHandler handler,
     String host,
     String realm,
-  )? onReceivedHttpAuthRequest;
+  )?
+  onReceivedHttpAuthRequest;
 
   /// Ask the host application if the browser should resend data as the
   /// requested page was a result of a POST.
@@ -3476,7 +3669,8 @@ class WebViewClient extends PigeonInternalProxyApiBaseClass {
     WebView view,
     AndroidMessage dontResend,
     AndroidMessage resend,
-  )? onFormResubmission;
+  )?
+  onFormResubmission;
 
   /// Notify the host application that the WebView will load the resource
   /// specified by the given url.
@@ -3498,11 +3692,8 @@ class WebViewClient extends PigeonInternalProxyApiBaseClass {
   ///
   /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
-  final void Function(
-    WebViewClient pigeon_instance,
-    WebView view,
-    String url,
-  )? onLoadResource;
+  final void Function(WebViewClient pigeon_instance, WebView view, String url)?
+  onLoadResource;
 
   /// Notify the host application that WebView content left over from previous
   /// page navigations will no longer be drawn.
@@ -3524,11 +3715,8 @@ class WebViewClient extends PigeonInternalProxyApiBaseClass {
   ///
   /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
-  final void Function(
-    WebViewClient pigeon_instance,
-    WebView view,
-    String url,
-  )? onPageCommitVisible;
+  final void Function(WebViewClient pigeon_instance, WebView view, String url)?
+  onPageCommitVisible;
 
   /// Notify the host application to handle a SSL client certificate request.
   ///
@@ -3553,7 +3741,8 @@ class WebViewClient extends PigeonInternalProxyApiBaseClass {
     WebViewClient pigeon_instance,
     WebView view,
     ClientCertRequest request,
-  )? onReceivedClientCertRequest;
+  )?
+  onReceivedClientCertRequest;
 
   /// Notify the host application that a request to automatically log in the
   /// user has been processed.
@@ -3581,7 +3770,8 @@ class WebViewClient extends PigeonInternalProxyApiBaseClass {
     String realm,
     String? account,
     String args,
-  )? onReceivedLoginRequest;
+  )?
+  onReceivedLoginRequest;
 
   /// Notifies the host application that an SSL error occurred while loading a
   /// resource.
@@ -3608,7 +3798,8 @@ class WebViewClient extends PigeonInternalProxyApiBaseClass {
     WebView view,
     SslErrorHandler handler,
     SslError error,
-  )? onReceivedSslError;
+  )?
+  onReceivedSslError;
 
   /// Notify the host application that the scale applied to the WebView has
   /// changed.
@@ -3635,681 +3826,860 @@ class WebViewClient extends PigeonInternalProxyApiBaseClass {
     WebView view,
     double oldScale,
     double newScale,
-  )? onScaleChanged;
+  )?
+  onScaleChanged;
 
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
     WebViewClient Function()? pigeon_newInstance,
-    void Function(
-      WebViewClient pigeon_instance,
-      WebView webView,
-      String url,
-    )? onPageStarted,
-    void Function(
-      WebViewClient pigeon_instance,
-      WebView webView,
-      String url,
-    )? onPageFinished,
+    void Function(WebViewClient pigeon_instance, WebView webView, String url)?
+    onPageStarted,
+    void Function(WebViewClient pigeon_instance, WebView webView, String url)?
+    onPageFinished,
     void Function(
       WebViewClient pigeon_instance,
       WebView webView,
       WebResourceRequest request,
       WebResourceResponse response,
-    )? onReceivedHttpError,
+    )?
+    onReceivedHttpError,
     void Function(
       WebViewClient pigeon_instance,
       WebView webView,
       WebResourceRequest request,
       WebResourceError error,
-    )? onReceivedRequestError,
+    )?
+    onReceivedRequestError,
     void Function(
       WebViewClient pigeon_instance,
       WebView webView,
       WebResourceRequest request,
       WebResourceErrorCompat error,
-    )? onReceivedRequestErrorCompat,
+    )?
+    onReceivedRequestErrorCompat,
     void Function(
       WebViewClient pigeon_instance,
       WebView webView,
       int errorCode,
       String description,
       String failingUrl,
-    )? onReceivedError,
+    )?
+    onReceivedError,
     void Function(
       WebViewClient pigeon_instance,
       WebView webView,
       WebResourceRequest request,
-    )? requestLoading,
-    void Function(
-      WebViewClient pigeon_instance,
-      WebView webView,
-      String url,
-    )? urlLoading,
+    )?
+    requestLoading,
+    void Function(WebViewClient pigeon_instance, WebView webView, String url)?
+    urlLoading,
     void Function(
       WebViewClient pigeon_instance,
       WebView webView,
       String url,
       bool isReload,
-    )? doUpdateVisitedHistory,
+    )?
+    doUpdateVisitedHistory,
     void Function(
       WebViewClient pigeon_instance,
       WebView webView,
       HttpAuthHandler handler,
       String host,
       String realm,
-    )? onReceivedHttpAuthRequest,
+    )?
+    onReceivedHttpAuthRequest,
     void Function(
       WebViewClient pigeon_instance,
       WebView view,
       AndroidMessage dontResend,
       AndroidMessage resend,
-    )? onFormResubmission,
-    void Function(
-      WebViewClient pigeon_instance,
-      WebView view,
-      String url,
-    )? onLoadResource,
-    void Function(
-      WebViewClient pigeon_instance,
-      WebView view,
-      String url,
-    )? onPageCommitVisible,
+    )?
+    onFormResubmission,
+    void Function(WebViewClient pigeon_instance, WebView view, String url)?
+    onLoadResource,
+    void Function(WebViewClient pigeon_instance, WebView view, String url)?
+    onPageCommitVisible,
     void Function(
       WebViewClient pigeon_instance,
       WebView view,
       ClientCertRequest request,
-    )? onReceivedClientCertRequest,
+    )?
+    onReceivedClientCertRequest,
     void Function(
       WebViewClient pigeon_instance,
       WebView view,
       String realm,
       String? account,
       String args,
-    )? onReceivedLoginRequest,
+    )?
+    onReceivedLoginRequest,
     void Function(
       WebViewClient pigeon_instance,
       WebView view,
       SslErrorHandler handler,
       SslError error,
-    )? onReceivedSslError,
+    )?
+    onReceivedSslError,
     void Function(
       WebViewClient pigeon_instance,
       WebView view,
       double oldScale,
       double newScale,
-    )? onScaleChanged,
+    )?
+    onScaleChanged,
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInstanceManager.instance);
+          pigeon_instanceManager ?? PigeonInstanceManager.instance,
+        );
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_android.WebViewClient.pigeon_newInstance',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.WebViewClient.pigeon_newInstance',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.pigeon_newInstance was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.pigeon_newInstance was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
-          assert(arg_pigeon_instanceIdentifier != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.pigeon_newInstance was null, expected non-null int.');
+          assert(
+            arg_pigeon_instanceIdentifier != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.pigeon_newInstance was null, expected non-null int.',
+          );
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
-              pigeon_newInstance?.call() ??
-                  WebViewClient.pigeon_detached(
-                    pigeon_binaryMessenger: pigeon_binaryMessenger,
-                    pigeon_instanceManager: pigeon_instanceManager,
-                  ),
-              arg_pigeon_instanceIdentifier!,
+                  pigeon_newInstance?.call() ??
+                      WebViewClient.pigeon_detached(
+                        pigeon_binaryMessenger: pigeon_binaryMessenger,
+                        pigeon_instanceManager: pigeon_instanceManager,
+                      ),
+                  arg_pigeon_instanceIdentifier!,
+                );
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
+          }
+        });
+      }
+    }
+
+    {
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.WebViewClient.onPageStarted',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
+      if (pigeon_clearHandlers) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onPageStarted was null.',
+          );
+          final List<Object?> args = (message as List<Object?>?)!;
+          final WebViewClient? arg_pigeon_instance =
+              (args[0] as WebViewClient?);
+          assert(
+            arg_pigeon_instance != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onPageStarted was null, expected non-null WebViewClient.',
+          );
+          final WebView? arg_webView = (args[1] as WebView?);
+          assert(
+            arg_webView != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onPageStarted was null, expected non-null WebView.',
+          );
+          final String? arg_url = (args[2] as String?);
+          assert(
+            arg_url != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onPageStarted was null, expected non-null String.',
+          );
+          try {
+            (onPageStarted ?? arg_pigeon_instance!.onPageStarted)?.call(
+              arg_pigeon_instance!,
+              arg_webView!,
+              arg_url!,
             );
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
     }
 
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_android.WebViewClient.onPageStarted',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.WebViewClient.onPageFinished',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onPageStarted was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onPageFinished was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final WebViewClient? arg_pigeon_instance =
               (args[0] as WebViewClient?);
-          assert(arg_pigeon_instance != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onPageStarted was null, expected non-null WebViewClient.');
+          assert(
+            arg_pigeon_instance != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onPageFinished was null, expected non-null WebViewClient.',
+          );
           final WebView? arg_webView = (args[1] as WebView?);
-          assert(arg_webView != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onPageStarted was null, expected non-null WebView.');
+          assert(
+            arg_webView != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onPageFinished was null, expected non-null WebView.',
+          );
           final String? arg_url = (args[2] as String?);
-          assert(arg_url != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onPageStarted was null, expected non-null String.');
+          assert(
+            arg_url != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onPageFinished was null, expected non-null String.',
+          );
           try {
-            (onPageStarted ?? arg_pigeon_instance!.onPageStarted)
-                ?.call(arg_pigeon_instance!, arg_webView!, arg_url!);
+            (onPageFinished ?? arg_pigeon_instance!.onPageFinished)?.call(
+              arg_pigeon_instance!,
+              arg_webView!,
+              arg_url!,
+            );
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
     }
 
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_android.WebViewClient.onPageFinished',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedHttpError',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onPageFinished was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedHttpError was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final WebViewClient? arg_pigeon_instance =
               (args[0] as WebViewClient?);
-          assert(arg_pigeon_instance != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onPageFinished was null, expected non-null WebViewClient.');
+          assert(
+            arg_pigeon_instance != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedHttpError was null, expected non-null WebViewClient.',
+          );
           final WebView? arg_webView = (args[1] as WebView?);
-          assert(arg_webView != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onPageFinished was null, expected non-null WebView.');
-          final String? arg_url = (args[2] as String?);
-          assert(arg_url != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onPageFinished was null, expected non-null String.');
-          try {
-            (onPageFinished ?? arg_pigeon_instance!.onPageFinished)
-                ?.call(arg_pigeon_instance!, arg_webView!, arg_url!);
-            return wrapResponse(empty: true);
-          } on PlatformException catch (e) {
-            return wrapResponse(error: e);
-          } catch (e) {
-            return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
-          }
-        });
-      }
-    }
-
-    {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedHttpError',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
-      if (pigeon_clearHandlers) {
-        pigeonVar_channel.setMessageHandler(null);
-      } else {
-        pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedHttpError was null.');
-          final List<Object?> args = (message as List<Object?>?)!;
-          final WebViewClient? arg_pigeon_instance =
-              (args[0] as WebViewClient?);
-          assert(arg_pigeon_instance != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedHttpError was null, expected non-null WebViewClient.');
-          final WebView? arg_webView = (args[1] as WebView?);
-          assert(arg_webView != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedHttpError was null, expected non-null WebView.');
+          assert(
+            arg_webView != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedHttpError was null, expected non-null WebView.',
+          );
           final WebResourceRequest? arg_request =
               (args[2] as WebResourceRequest?);
-          assert(arg_request != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedHttpError was null, expected non-null WebResourceRequest.');
+          assert(
+            arg_request != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedHttpError was null, expected non-null WebResourceRequest.',
+          );
           final WebResourceResponse? arg_response =
               (args[3] as WebResourceResponse?);
-          assert(arg_response != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedHttpError was null, expected non-null WebResourceResponse.');
+          assert(
+            arg_response != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedHttpError was null, expected non-null WebResourceResponse.',
+          );
           try {
             (onReceivedHttpError ?? arg_pigeon_instance!.onReceivedHttpError)
-                ?.call(arg_pigeon_instance!, arg_webView!, arg_request!,
-                    arg_response!);
+                ?.call(
+                  arg_pigeon_instance!,
+                  arg_webView!,
+                  arg_request!,
+                  arg_response!,
+                );
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
     }
 
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedRequestError',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedRequestError',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedRequestError was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedRequestError was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final WebViewClient? arg_pigeon_instance =
               (args[0] as WebViewClient?);
-          assert(arg_pigeon_instance != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedRequestError was null, expected non-null WebViewClient.');
+          assert(
+            arg_pigeon_instance != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedRequestError was null, expected non-null WebViewClient.',
+          );
           final WebView? arg_webView = (args[1] as WebView?);
-          assert(arg_webView != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedRequestError was null, expected non-null WebView.');
+          assert(
+            arg_webView != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedRequestError was null, expected non-null WebView.',
+          );
           final WebResourceRequest? arg_request =
               (args[2] as WebResourceRequest?);
-          assert(arg_request != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedRequestError was null, expected non-null WebResourceRequest.');
+          assert(
+            arg_request != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedRequestError was null, expected non-null WebResourceRequest.',
+          );
           final WebResourceError? arg_error = (args[3] as WebResourceError?);
-          assert(arg_error != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedRequestError was null, expected non-null WebResourceError.');
+          assert(
+            arg_error != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedRequestError was null, expected non-null WebResourceError.',
+          );
           try {
             (onReceivedRequestError ??
                     arg_pigeon_instance!.onReceivedRequestError)
-                ?.call(arg_pigeon_instance!, arg_webView!, arg_request!,
-                    arg_error!);
+                ?.call(
+                  arg_pigeon_instance!,
+                  arg_webView!,
+                  arg_request!,
+                  arg_error!,
+                );
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
     }
 
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedRequestErrorCompat',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedRequestErrorCompat',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedRequestErrorCompat was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedRequestErrorCompat was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final WebViewClient? arg_pigeon_instance =
               (args[0] as WebViewClient?);
-          assert(arg_pigeon_instance != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedRequestErrorCompat was null, expected non-null WebViewClient.');
+          assert(
+            arg_pigeon_instance != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedRequestErrorCompat was null, expected non-null WebViewClient.',
+          );
           final WebView? arg_webView = (args[1] as WebView?);
-          assert(arg_webView != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedRequestErrorCompat was null, expected non-null WebView.');
+          assert(
+            arg_webView != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedRequestErrorCompat was null, expected non-null WebView.',
+          );
           final WebResourceRequest? arg_request =
               (args[2] as WebResourceRequest?);
-          assert(arg_request != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedRequestErrorCompat was null, expected non-null WebResourceRequest.');
+          assert(
+            arg_request != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedRequestErrorCompat was null, expected non-null WebResourceRequest.',
+          );
           final WebResourceErrorCompat? arg_error =
               (args[3] as WebResourceErrorCompat?);
-          assert(arg_error != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedRequestErrorCompat was null, expected non-null WebResourceErrorCompat.');
+          assert(
+            arg_error != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedRequestErrorCompat was null, expected non-null WebResourceErrorCompat.',
+          );
           try {
             (onReceivedRequestErrorCompat ??
                     arg_pigeon_instance!.onReceivedRequestErrorCompat)
-                ?.call(arg_pigeon_instance!, arg_webView!, arg_request!,
-                    arg_error!);
+                ?.call(
+                  arg_pigeon_instance!,
+                  arg_webView!,
+                  arg_request!,
+                  arg_error!,
+                );
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
     }
 
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedError',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedError',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedError was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedError was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final WebViewClient? arg_pigeon_instance =
               (args[0] as WebViewClient?);
-          assert(arg_pigeon_instance != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedError was null, expected non-null WebViewClient.');
+          assert(
+            arg_pigeon_instance != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedError was null, expected non-null WebViewClient.',
+          );
           final WebView? arg_webView = (args[1] as WebView?);
-          assert(arg_webView != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedError was null, expected non-null WebView.');
+          assert(
+            arg_webView != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedError was null, expected non-null WebView.',
+          );
           final int? arg_errorCode = (args[2] as int?);
-          assert(arg_errorCode != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedError was null, expected non-null int.');
+          assert(
+            arg_errorCode != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedError was null, expected non-null int.',
+          );
           final String? arg_description = (args[3] as String?);
-          assert(arg_description != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedError was null, expected non-null String.');
+          assert(
+            arg_description != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedError was null, expected non-null String.',
+          );
           final String? arg_failingUrl = (args[4] as String?);
-          assert(arg_failingUrl != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedError was null, expected non-null String.');
+          assert(
+            arg_failingUrl != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedError was null, expected non-null String.',
+          );
           try {
             (onReceivedError ?? arg_pigeon_instance!.onReceivedError)?.call(
-                arg_pigeon_instance!,
-                arg_webView!,
-                arg_errorCode!,
-                arg_description!,
-                arg_failingUrl!);
+              arg_pigeon_instance!,
+              arg_webView!,
+              arg_errorCode!,
+              arg_description!,
+              arg_failingUrl!,
+            );
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
     }
 
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_android.WebViewClient.requestLoading',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.WebViewClient.requestLoading',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.requestLoading was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.requestLoading was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final WebViewClient? arg_pigeon_instance =
               (args[0] as WebViewClient?);
-          assert(arg_pigeon_instance != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.requestLoading was null, expected non-null WebViewClient.');
+          assert(
+            arg_pigeon_instance != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.requestLoading was null, expected non-null WebViewClient.',
+          );
           final WebView? arg_webView = (args[1] as WebView?);
-          assert(arg_webView != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.requestLoading was null, expected non-null WebView.');
+          assert(
+            arg_webView != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.requestLoading was null, expected non-null WebView.',
+          );
           final WebResourceRequest? arg_request =
               (args[2] as WebResourceRequest?);
-          assert(arg_request != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.requestLoading was null, expected non-null WebResourceRequest.');
+          assert(
+            arg_request != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.requestLoading was null, expected non-null WebResourceRequest.',
+          );
           try {
-            (requestLoading ?? arg_pigeon_instance!.requestLoading)
-                ?.call(arg_pigeon_instance!, arg_webView!, arg_request!);
+            (requestLoading ?? arg_pigeon_instance!.requestLoading)?.call(
+              arg_pigeon_instance!,
+              arg_webView!,
+              arg_request!,
+            );
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
     }
 
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_android.WebViewClient.urlLoading',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.WebViewClient.urlLoading',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.urlLoading was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.urlLoading was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final WebViewClient? arg_pigeon_instance =
               (args[0] as WebViewClient?);
-          assert(arg_pigeon_instance != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.urlLoading was null, expected non-null WebViewClient.');
+          assert(
+            arg_pigeon_instance != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.urlLoading was null, expected non-null WebViewClient.',
+          );
           final WebView? arg_webView = (args[1] as WebView?);
-          assert(arg_webView != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.urlLoading was null, expected non-null WebView.');
+          assert(
+            arg_webView != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.urlLoading was null, expected non-null WebView.',
+          );
           final String? arg_url = (args[2] as String?);
-          assert(arg_url != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.urlLoading was null, expected non-null String.');
+          assert(
+            arg_url != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.urlLoading was null, expected non-null String.',
+          );
           try {
-            (urlLoading ?? arg_pigeon_instance!.urlLoading)
-                ?.call(arg_pigeon_instance!, arg_webView!, arg_url!);
+            (urlLoading ?? arg_pigeon_instance!.urlLoading)?.call(
+              arg_pigeon_instance!,
+              arg_webView!,
+              arg_url!,
+            );
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
     }
 
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_android.WebViewClient.doUpdateVisitedHistory',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.WebViewClient.doUpdateVisitedHistory',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.doUpdateVisitedHistory was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.doUpdateVisitedHistory was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final WebViewClient? arg_pigeon_instance =
               (args[0] as WebViewClient?);
-          assert(arg_pigeon_instance != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.doUpdateVisitedHistory was null, expected non-null WebViewClient.');
+          assert(
+            arg_pigeon_instance != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.doUpdateVisitedHistory was null, expected non-null WebViewClient.',
+          );
           final WebView? arg_webView = (args[1] as WebView?);
-          assert(arg_webView != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.doUpdateVisitedHistory was null, expected non-null WebView.');
+          assert(
+            arg_webView != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.doUpdateVisitedHistory was null, expected non-null WebView.',
+          );
           final String? arg_url = (args[2] as String?);
-          assert(arg_url != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.doUpdateVisitedHistory was null, expected non-null String.');
+          assert(
+            arg_url != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.doUpdateVisitedHistory was null, expected non-null String.',
+          );
           final bool? arg_isReload = (args[3] as bool?);
-          assert(arg_isReload != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.doUpdateVisitedHistory was null, expected non-null bool.');
+          assert(
+            arg_isReload != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.doUpdateVisitedHistory was null, expected non-null bool.',
+          );
           try {
             (doUpdateVisitedHistory ??
                     arg_pigeon_instance!.doUpdateVisitedHistory)
-                ?.call(arg_pigeon_instance!, arg_webView!, arg_url!,
-                    arg_isReload!);
+                ?.call(
+                  arg_pigeon_instance!,
+                  arg_webView!,
+                  arg_url!,
+                  arg_isReload!,
+                );
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
     }
 
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedHttpAuthRequest',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedHttpAuthRequest',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedHttpAuthRequest was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedHttpAuthRequest was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final WebViewClient? arg_pigeon_instance =
               (args[0] as WebViewClient?);
-          assert(arg_pigeon_instance != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedHttpAuthRequest was null, expected non-null WebViewClient.');
+          assert(
+            arg_pigeon_instance != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedHttpAuthRequest was null, expected non-null WebViewClient.',
+          );
           final WebView? arg_webView = (args[1] as WebView?);
-          assert(arg_webView != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedHttpAuthRequest was null, expected non-null WebView.');
+          assert(
+            arg_webView != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedHttpAuthRequest was null, expected non-null WebView.',
+          );
           final HttpAuthHandler? arg_handler = (args[2] as HttpAuthHandler?);
-          assert(arg_handler != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedHttpAuthRequest was null, expected non-null HttpAuthHandler.');
+          assert(
+            arg_handler != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedHttpAuthRequest was null, expected non-null HttpAuthHandler.',
+          );
           final String? arg_host = (args[3] as String?);
-          assert(arg_host != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedHttpAuthRequest was null, expected non-null String.');
+          assert(
+            arg_host != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedHttpAuthRequest was null, expected non-null String.',
+          );
           final String? arg_realm = (args[4] as String?);
-          assert(arg_realm != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedHttpAuthRequest was null, expected non-null String.');
+          assert(
+            arg_realm != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedHttpAuthRequest was null, expected non-null String.',
+          );
           try {
             (onReceivedHttpAuthRequest ??
                     arg_pigeon_instance!.onReceivedHttpAuthRequest)
-                ?.call(arg_pigeon_instance!, arg_webView!, arg_handler!,
-                    arg_host!, arg_realm!);
+                ?.call(
+                  arg_pigeon_instance!,
+                  arg_webView!,
+                  arg_handler!,
+                  arg_host!,
+                  arg_realm!,
+                );
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
     }
 
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_android.WebViewClient.onFormResubmission',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.WebViewClient.onFormResubmission',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onFormResubmission was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onFormResubmission was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final WebViewClient? arg_pigeon_instance =
               (args[0] as WebViewClient?);
-          assert(arg_pigeon_instance != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onFormResubmission was null, expected non-null WebViewClient.');
+          assert(
+            arg_pigeon_instance != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onFormResubmission was null, expected non-null WebViewClient.',
+          );
           final WebView? arg_view = (args[1] as WebView?);
-          assert(arg_view != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onFormResubmission was null, expected non-null WebView.');
+          assert(
+            arg_view != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onFormResubmission was null, expected non-null WebView.',
+          );
           final AndroidMessage? arg_dontResend = (args[2] as AndroidMessage?);
-          assert(arg_dontResend != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onFormResubmission was null, expected non-null AndroidMessage.');
+          assert(
+            arg_dontResend != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onFormResubmission was null, expected non-null AndroidMessage.',
+          );
           final AndroidMessage? arg_resend = (args[3] as AndroidMessage?);
-          assert(arg_resend != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onFormResubmission was null, expected non-null AndroidMessage.');
+          assert(
+            arg_resend != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onFormResubmission was null, expected non-null AndroidMessage.',
+          );
           try {
             (onFormResubmission ?? arg_pigeon_instance!.onFormResubmission)
-                ?.call(arg_pigeon_instance!, arg_view!, arg_dontResend!,
-                    arg_resend!);
+                ?.call(
+                  arg_pigeon_instance!,
+                  arg_view!,
+                  arg_dontResend!,
+                  arg_resend!,
+                );
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
     }
 
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_android.WebViewClient.onLoadResource',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.WebViewClient.onLoadResource',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onLoadResource was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onLoadResource was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final WebViewClient? arg_pigeon_instance =
               (args[0] as WebViewClient?);
-          assert(arg_pigeon_instance != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onLoadResource was null, expected non-null WebViewClient.');
+          assert(
+            arg_pigeon_instance != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onLoadResource was null, expected non-null WebViewClient.',
+          );
           final WebView? arg_view = (args[1] as WebView?);
-          assert(arg_view != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onLoadResource was null, expected non-null WebView.');
+          assert(
+            arg_view != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onLoadResource was null, expected non-null WebView.',
+          );
           final String? arg_url = (args[2] as String?);
-          assert(arg_url != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onLoadResource was null, expected non-null String.');
+          assert(
+            arg_url != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onLoadResource was null, expected non-null String.',
+          );
           try {
-            (onLoadResource ?? arg_pigeon_instance!.onLoadResource)
-                ?.call(arg_pigeon_instance!, arg_view!, arg_url!);
+            (onLoadResource ?? arg_pigeon_instance!.onLoadResource)?.call(
+              arg_pigeon_instance!,
+              arg_view!,
+              arg_url!,
+            );
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
     }
 
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_android.WebViewClient.onPageCommitVisible',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.WebViewClient.onPageCommitVisible',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onPageCommitVisible was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onPageCommitVisible was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final WebViewClient? arg_pigeon_instance =
               (args[0] as WebViewClient?);
-          assert(arg_pigeon_instance != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onPageCommitVisible was null, expected non-null WebViewClient.');
+          assert(
+            arg_pigeon_instance != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onPageCommitVisible was null, expected non-null WebViewClient.',
+          );
           final WebView? arg_view = (args[1] as WebView?);
-          assert(arg_view != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onPageCommitVisible was null, expected non-null WebView.');
+          assert(
+            arg_view != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onPageCommitVisible was null, expected non-null WebView.',
+          );
           final String? arg_url = (args[2] as String?);
-          assert(arg_url != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onPageCommitVisible was null, expected non-null String.');
+          assert(
+            arg_url != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onPageCommitVisible was null, expected non-null String.',
+          );
           try {
             (onPageCommitVisible ?? arg_pigeon_instance!.onPageCommitVisible)
                 ?.call(arg_pigeon_instance!, arg_view!, arg_url!);
@@ -4318,37 +4688,46 @@ class WebViewClient extends PigeonInternalProxyApiBaseClass {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
     }
 
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedClientCertRequest',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedClientCertRequest',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedClientCertRequest was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedClientCertRequest was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final WebViewClient? arg_pigeon_instance =
               (args[0] as WebViewClient?);
-          assert(arg_pigeon_instance != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedClientCertRequest was null, expected non-null WebViewClient.');
+          assert(
+            arg_pigeon_instance != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedClientCertRequest was null, expected non-null WebViewClient.',
+          );
           final WebView? arg_view = (args[1] as WebView?);
-          assert(arg_view != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedClientCertRequest was null, expected non-null WebView.');
+          assert(
+            arg_view != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedClientCertRequest was null, expected non-null WebView.',
+          );
           final ClientCertRequest? arg_request =
               (args[2] as ClientCertRequest?);
-          assert(arg_request != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedClientCertRequest was null, expected non-null ClientCertRequest.');
+          assert(
+            arg_request != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedClientCertRequest was null, expected non-null ClientCertRequest.',
+          );
           try {
             (onReceivedClientCertRequest ??
                     arg_pigeon_instance!.onReceivedClientCertRequest)
@@ -4358,134 +4737,181 @@ class WebViewClient extends PigeonInternalProxyApiBaseClass {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
     }
 
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedLoginRequest',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedLoginRequest',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedLoginRequest was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedLoginRequest was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final WebViewClient? arg_pigeon_instance =
               (args[0] as WebViewClient?);
-          assert(arg_pigeon_instance != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedLoginRequest was null, expected non-null WebViewClient.');
+          assert(
+            arg_pigeon_instance != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedLoginRequest was null, expected non-null WebViewClient.',
+          );
           final WebView? arg_view = (args[1] as WebView?);
-          assert(arg_view != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedLoginRequest was null, expected non-null WebView.');
+          assert(
+            arg_view != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedLoginRequest was null, expected non-null WebView.',
+          );
           final String? arg_realm = (args[2] as String?);
-          assert(arg_realm != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedLoginRequest was null, expected non-null String.');
+          assert(
+            arg_realm != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedLoginRequest was null, expected non-null String.',
+          );
           final String? arg_account = (args[3] as String?);
           final String? arg_args = (args[4] as String?);
-          assert(arg_args != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedLoginRequest was null, expected non-null String.');
+          assert(
+            arg_args != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedLoginRequest was null, expected non-null String.',
+          );
           try {
             (onReceivedLoginRequest ??
                     arg_pigeon_instance!.onReceivedLoginRequest)
-                ?.call(arg_pigeon_instance!, arg_view!, arg_realm!, arg_account,
-                    arg_args!);
+                ?.call(
+                  arg_pigeon_instance!,
+                  arg_view!,
+                  arg_realm!,
+                  arg_account,
+                  arg_args!,
+                );
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
     }
 
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedSslError',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedSslError',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedSslError was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedSslError was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final WebViewClient? arg_pigeon_instance =
               (args[0] as WebViewClient?);
-          assert(arg_pigeon_instance != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedSslError was null, expected non-null WebViewClient.');
+          assert(
+            arg_pigeon_instance != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedSslError was null, expected non-null WebViewClient.',
+          );
           final WebView? arg_view = (args[1] as WebView?);
-          assert(arg_view != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedSslError was null, expected non-null WebView.');
+          assert(
+            arg_view != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedSslError was null, expected non-null WebView.',
+          );
           final SslErrorHandler? arg_handler = (args[2] as SslErrorHandler?);
-          assert(arg_handler != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedSslError was null, expected non-null SslErrorHandler.');
+          assert(
+            arg_handler != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedSslError was null, expected non-null SslErrorHandler.',
+          );
           final SslError? arg_error = (args[3] as SslError?);
-          assert(arg_error != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedSslError was null, expected non-null SslError.');
+          assert(
+            arg_error != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedSslError was null, expected non-null SslError.',
+          );
           try {
             (onReceivedSslError ?? arg_pigeon_instance!.onReceivedSslError)
                 ?.call(
-                    arg_pigeon_instance!, arg_view!, arg_handler!, arg_error!);
+                  arg_pigeon_instance!,
+                  arg_view!,
+                  arg_handler!,
+                  arg_error!,
+                );
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
     }
 
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_android.WebViewClient.onScaleChanged',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.WebViewClient.onScaleChanged',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onScaleChanged was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onScaleChanged was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final WebViewClient? arg_pigeon_instance =
               (args[0] as WebViewClient?);
-          assert(arg_pigeon_instance != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onScaleChanged was null, expected non-null WebViewClient.');
+          assert(
+            arg_pigeon_instance != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onScaleChanged was null, expected non-null WebViewClient.',
+          );
           final WebView? arg_view = (args[1] as WebView?);
-          assert(arg_view != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onScaleChanged was null, expected non-null WebView.');
+          assert(
+            arg_view != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onScaleChanged was null, expected non-null WebView.',
+          );
           final double? arg_oldScale = (args[2] as double?);
-          assert(arg_oldScale != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onScaleChanged was null, expected non-null double.');
+          assert(
+            arg_oldScale != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onScaleChanged was null, expected non-null double.',
+          );
           final double? arg_newScale = (args[3] as double?);
-          assert(arg_newScale != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onScaleChanged was null, expected non-null double.');
+          assert(
+            arg_newScale != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onScaleChanged was null, expected non-null double.',
+          );
           try {
             (onScaleChanged ?? arg_pigeon_instance!.onScaleChanged)?.call(
-                arg_pigeon_instance!, arg_view!, arg_oldScale!, arg_newScale!);
+              arg_pigeon_instance!,
+              arg_view!,
+              arg_oldScale!,
+              arg_newScale!,
+            );
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -4505,7 +4931,8 @@ class WebViewClient extends PigeonInternalProxyApiBaseClass {
   ///
   /// Defaults to false.
   Future<void> setSynchronousReturnValueForShouldOverrideUrlLoading(
-      bool value) async {
+    bool value,
+  ) async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecWebViewClient;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
@@ -4513,12 +4940,13 @@ class WebViewClient extends PigeonInternalProxyApiBaseClass {
         'dev.flutter.pigeon.webview_flutter_android.WebViewClient.setSynchronousReturnValueForShouldOverrideUrlLoading';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, value],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, value]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -4569,8 +4997,8 @@ class DownloadListener extends PigeonInternalProxyApiBaseClass {
     super.pigeon_instanceManager,
     required this.onDownloadStart,
   }) {
-    final int pigeonVar_instanceIdentifier =
-        pigeon_instanceManager.addDartCreatedInstance(this);
+    final int pigeonVar_instanceIdentifier = pigeon_instanceManager
+        .addDartCreatedInstance(this);
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecDownloadListener;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
@@ -4578,12 +5006,13 @@ class DownloadListener extends PigeonInternalProxyApiBaseClass {
         'dev.flutter.pigeon.webview_flutter_android.DownloadListener.pigeon_defaultConstructor';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[pigeonVar_instanceIdentifier],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[pigeonVar_instanceIdentifier]);
     () async {
       final List<Object?>? pigeonVar_replyList =
           await pigeonVar_sendFuture as List<Object?>?;
@@ -4641,7 +5070,8 @@ class DownloadListener extends PigeonInternalProxyApiBaseClass {
     String contentDisposition,
     String mimetype,
     int contentLength,
-  ) onDownloadStart;
+  )
+  onDownloadStart;
 
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
@@ -4654,59 +5084,77 @@ class DownloadListener extends PigeonInternalProxyApiBaseClass {
       String contentDisposition,
       String mimetype,
       int contentLength,
-    )? onDownloadStart,
+    )?
+    onDownloadStart,
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInstanceManager.instance);
+          pigeon_instanceManager ?? PigeonInstanceManager.instance,
+        );
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_android.DownloadListener.onDownloadStart',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.DownloadListener.onDownloadStart',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.DownloadListener.onDownloadStart was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.DownloadListener.onDownloadStart was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final DownloadListener? arg_pigeon_instance =
               (args[0] as DownloadListener?);
-          assert(arg_pigeon_instance != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.DownloadListener.onDownloadStart was null, expected non-null DownloadListener.');
+          assert(
+            arg_pigeon_instance != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.DownloadListener.onDownloadStart was null, expected non-null DownloadListener.',
+          );
           final String? arg_url = (args[1] as String?);
-          assert(arg_url != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.DownloadListener.onDownloadStart was null, expected non-null String.');
+          assert(
+            arg_url != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.DownloadListener.onDownloadStart was null, expected non-null String.',
+          );
           final String? arg_userAgent = (args[2] as String?);
-          assert(arg_userAgent != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.DownloadListener.onDownloadStart was null, expected non-null String.');
+          assert(
+            arg_userAgent != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.DownloadListener.onDownloadStart was null, expected non-null String.',
+          );
           final String? arg_contentDisposition = (args[3] as String?);
-          assert(arg_contentDisposition != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.DownloadListener.onDownloadStart was null, expected non-null String.');
+          assert(
+            arg_contentDisposition != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.DownloadListener.onDownloadStart was null, expected non-null String.',
+          );
           final String? arg_mimetype = (args[4] as String?);
-          assert(arg_mimetype != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.DownloadListener.onDownloadStart was null, expected non-null String.');
+          assert(
+            arg_mimetype != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.DownloadListener.onDownloadStart was null, expected non-null String.',
+          );
           final int? arg_contentLength = (args[5] as int?);
-          assert(arg_contentLength != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.DownloadListener.onDownloadStart was null, expected non-null int.');
+          assert(
+            arg_contentLength != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.DownloadListener.onDownloadStart was null, expected non-null int.',
+          );
           try {
             (onDownloadStart ?? arg_pigeon_instance!.onDownloadStart).call(
-                arg_pigeon_instance!,
-                arg_url!,
-                arg_userAgent!,
-                arg_contentDisposition!,
-                arg_mimetype!,
-                arg_contentLength!);
+              arg_pigeon_instance!,
+              arg_url!,
+              arg_userAgent!,
+              arg_contentDisposition!,
+              arg_mimetype!,
+              arg_contentLength!,
+            );
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -4743,8 +5191,8 @@ class WebChromeClient extends PigeonInternalProxyApiBaseClass {
     required this.onJsConfirm,
     this.onJsPrompt,
   }) {
-    final int pigeonVar_instanceIdentifier =
-        pigeon_instanceManager.addDartCreatedInstance(this);
+    final int pigeonVar_instanceIdentifier = pigeon_instanceManager
+        .addDartCreatedInstance(this);
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecWebChromeClient;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
@@ -4752,12 +5200,13 @@ class WebChromeClient extends PigeonInternalProxyApiBaseClass {
         'dev.flutter.pigeon.webview_flutter_android.WebChromeClient.pigeon_defaultConstructor';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[pigeonVar_instanceIdentifier],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[pigeonVar_instanceIdentifier]);
     () async {
       final List<Object?>? pigeonVar_replyList =
           await pigeonVar_sendFuture as List<Object?>?;
@@ -4822,7 +5271,8 @@ class WebChromeClient extends PigeonInternalProxyApiBaseClass {
     WebChromeClient pigeon_instance,
     WebView webView,
     int progress,
-  )? onProgressChanged;
+  )?
+  onProgressChanged;
 
   /// Tell the client to show a file chooser.
   ///
@@ -4847,7 +5297,8 @@ class WebChromeClient extends PigeonInternalProxyApiBaseClass {
     WebChromeClient pigeon_instance,
     WebView webView,
     FileChooserParams params,
-  ) onShowFileChooser;
+  )
+  onShowFileChooser;
 
   /// Notify the host application that web content is requesting permission to
   /// access the specified resources and the permission currently isn't granted
@@ -4873,7 +5324,8 @@ class WebChromeClient extends PigeonInternalProxyApiBaseClass {
   final void Function(
     WebChromeClient pigeon_instance,
     PermissionRequest request,
-  )? onPermissionRequest;
+  )?
+  onPermissionRequest;
 
   /// Callback to Dart function `WebChromeClient.onShowCustomView`.
   ///
@@ -4898,7 +5350,8 @@ class WebChromeClient extends PigeonInternalProxyApiBaseClass {
     WebChromeClient pigeon_instance,
     View view,
     CustomViewCallback callback,
-  )? onShowCustomView;
+  )?
+  onShowCustomView;
 
   /// Notify the host application that the current page has entered full screen
   /// mode.
@@ -4947,7 +5400,8 @@ class WebChromeClient extends PigeonInternalProxyApiBaseClass {
     WebChromeClient pigeon_instance,
     String origin,
     GeolocationPermissionsCallback callback,
-  )? onGeolocationPermissionsShowPrompt;
+  )?
+  onGeolocationPermissionsShowPrompt;
 
   /// Notify the host application that a request for Geolocation permissions,
   /// made with a previous call to `onGeolocationPermissionsShowPrompt` has been
@@ -4971,7 +5425,7 @@ class WebChromeClient extends PigeonInternalProxyApiBaseClass {
   /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final void Function(WebChromeClient pigeon_instance)?
-      onGeolocationPermissionsHidePrompt;
+  onGeolocationPermissionsHidePrompt;
 
   /// Report a JavaScript console message to the host application.
   ///
@@ -4992,10 +5446,8 @@ class WebChromeClient extends PigeonInternalProxyApiBaseClass {
   ///
   /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
-  final void Function(
-    WebChromeClient pigeon_instance,
-    ConsoleMessage message,
-  )? onConsoleMessage;
+  final void Function(WebChromeClient pigeon_instance, ConsoleMessage message)?
+  onConsoleMessage;
 
   /// Notify the host application that the web page wants to display a
   /// JavaScript `alert()` dialog.
@@ -5022,7 +5474,8 @@ class WebChromeClient extends PigeonInternalProxyApiBaseClass {
     WebView webView,
     String url,
     String message,
-  )? onJsAlert;
+  )?
+  onJsAlert;
 
   /// Notify the host application that the web page wants to display a
   /// JavaScript `confirm()` dialog.
@@ -5049,7 +5502,8 @@ class WebChromeClient extends PigeonInternalProxyApiBaseClass {
     WebView webView,
     String url,
     String message,
-  ) onJsConfirm;
+  )
+  onJsConfirm;
 
   /// Notify the host application that the web page wants to display a
   /// JavaScript `prompt()` dialog.
@@ -5077,7 +5531,8 @@ class WebChromeClient extends PigeonInternalProxyApiBaseClass {
     String url,
     String message,
     String defaultValue,
-  )? onJsPrompt;
+  )?
+  onJsPrompt;
 
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
@@ -5087,119 +5542,143 @@ class WebChromeClient extends PigeonInternalProxyApiBaseClass {
       WebChromeClient pigeon_instance,
       WebView webView,
       int progress,
-    )? onProgressChanged,
+    )?
+    onProgressChanged,
     Future<List<String>> Function(
       WebChromeClient pigeon_instance,
       WebView webView,
       FileChooserParams params,
-    )? onShowFileChooser,
-    void Function(
-      WebChromeClient pigeon_instance,
-      PermissionRequest request,
-    )? onPermissionRequest,
+    )?
+    onShowFileChooser,
+    void Function(WebChromeClient pigeon_instance, PermissionRequest request)?
+    onPermissionRequest,
     void Function(
       WebChromeClient pigeon_instance,
       View view,
       CustomViewCallback callback,
-    )? onShowCustomView,
+    )?
+    onShowCustomView,
     void Function(WebChromeClient pigeon_instance)? onHideCustomView,
     void Function(
       WebChromeClient pigeon_instance,
       String origin,
       GeolocationPermissionsCallback callback,
-    )? onGeolocationPermissionsShowPrompt,
+    )?
+    onGeolocationPermissionsShowPrompt,
     void Function(WebChromeClient pigeon_instance)?
-        onGeolocationPermissionsHidePrompt,
-    void Function(
-      WebChromeClient pigeon_instance,
-      ConsoleMessage message,
-    )? onConsoleMessage,
+    onGeolocationPermissionsHidePrompt,
+    void Function(WebChromeClient pigeon_instance, ConsoleMessage message)?
+    onConsoleMessage,
     Future<void> Function(
       WebChromeClient pigeon_instance,
       WebView webView,
       String url,
       String message,
-    )? onJsAlert,
+    )?
+    onJsAlert,
     Future<bool> Function(
       WebChromeClient pigeon_instance,
       WebView webView,
       String url,
       String message,
-    )? onJsConfirm,
+    )?
+    onJsConfirm,
     Future<String?> Function(
       WebChromeClient pigeon_instance,
       WebView webView,
       String url,
       String message,
       String defaultValue,
-    )? onJsPrompt,
+    )?
+    onJsPrompt,
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInstanceManager.instance);
+          pigeon_instanceManager ?? PigeonInstanceManager.instance,
+        );
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onProgressChanged',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onProgressChanged',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onProgressChanged was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onProgressChanged was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final WebChromeClient? arg_pigeon_instance =
               (args[0] as WebChromeClient?);
-          assert(arg_pigeon_instance != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onProgressChanged was null, expected non-null WebChromeClient.');
+          assert(
+            arg_pigeon_instance != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onProgressChanged was null, expected non-null WebChromeClient.',
+          );
           final WebView? arg_webView = (args[1] as WebView?);
-          assert(arg_webView != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onProgressChanged was null, expected non-null WebView.');
+          assert(
+            arg_webView != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onProgressChanged was null, expected non-null WebView.',
+          );
           final int? arg_progress = (args[2] as int?);
-          assert(arg_progress != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onProgressChanged was null, expected non-null int.');
+          assert(
+            arg_progress != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onProgressChanged was null, expected non-null int.',
+          );
           try {
-            (onProgressChanged ?? arg_pigeon_instance!.onProgressChanged)
-                ?.call(arg_pigeon_instance!, arg_webView!, arg_progress!);
+            (onProgressChanged ?? arg_pigeon_instance!.onProgressChanged)?.call(
+              arg_pigeon_instance!,
+              arg_webView!,
+              arg_progress!,
+            );
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
     }
 
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onShowFileChooser',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onShowFileChooser',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onShowFileChooser was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onShowFileChooser was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final WebChromeClient? arg_pigeon_instance =
               (args[0] as WebChromeClient?);
-          assert(arg_pigeon_instance != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onShowFileChooser was null, expected non-null WebChromeClient.');
+          assert(
+            arg_pigeon_instance != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onShowFileChooser was null, expected non-null WebChromeClient.',
+          );
           final WebView? arg_webView = (args[1] as WebView?);
-          assert(arg_webView != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onShowFileChooser was null, expected non-null WebView.');
+          assert(
+            arg_webView != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onShowFileChooser was null, expected non-null WebView.',
+          );
           final FileChooserParams? arg_params = (args[2] as FileChooserParams?);
-          assert(arg_params != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onShowFileChooser was null, expected non-null FileChooserParams.');
+          assert(
+            arg_params != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onShowFileChooser was null, expected non-null FileChooserParams.',
+          );
           try {
             final List<String> output = await (onShowFileChooser ??
                     arg_pigeon_instance!.onShowFileChooser)
@@ -5209,34 +5688,41 @@ class WebChromeClient extends PigeonInternalProxyApiBaseClass {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
     }
 
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onPermissionRequest',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onPermissionRequest',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onPermissionRequest was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onPermissionRequest was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final WebChromeClient? arg_pigeon_instance =
               (args[0] as WebChromeClient?);
-          assert(arg_pigeon_instance != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onPermissionRequest was null, expected non-null WebChromeClient.');
+          assert(
+            arg_pigeon_instance != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onPermissionRequest was null, expected non-null WebChromeClient.',
+          );
           final PermissionRequest? arg_request =
               (args[1] as PermissionRequest?);
-          assert(arg_request != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onPermissionRequest was null, expected non-null PermissionRequest.');
+          assert(
+            arg_request != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onPermissionRequest was null, expected non-null PermissionRequest.',
+          );
           try {
             (onPermissionRequest ?? arg_pigeon_instance!.onPermissionRequest)
                 ?.call(arg_pigeon_instance!, arg_request!);
@@ -5245,108 +5731,135 @@ class WebChromeClient extends PigeonInternalProxyApiBaseClass {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
     }
 
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onShowCustomView',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onShowCustomView',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onShowCustomView was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onShowCustomView was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final WebChromeClient? arg_pigeon_instance =
               (args[0] as WebChromeClient?);
-          assert(arg_pigeon_instance != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onShowCustomView was null, expected non-null WebChromeClient.');
+          assert(
+            arg_pigeon_instance != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onShowCustomView was null, expected non-null WebChromeClient.',
+          );
           final View? arg_view = (args[1] as View?);
-          assert(arg_view != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onShowCustomView was null, expected non-null View.');
+          assert(
+            arg_view != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onShowCustomView was null, expected non-null View.',
+          );
           final CustomViewCallback? arg_callback =
               (args[2] as CustomViewCallback?);
-          assert(arg_callback != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onShowCustomView was null, expected non-null CustomViewCallback.');
+          assert(
+            arg_callback != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onShowCustomView was null, expected non-null CustomViewCallback.',
+          );
           try {
-            (onShowCustomView ?? arg_pigeon_instance!.onShowCustomView)
-                ?.call(arg_pigeon_instance!, arg_view!, arg_callback!);
+            (onShowCustomView ?? arg_pigeon_instance!.onShowCustomView)?.call(
+              arg_pigeon_instance!,
+              arg_view!,
+              arg_callback!,
+            );
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
     }
 
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onHideCustomView',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onHideCustomView',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onHideCustomView was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onHideCustomView was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final WebChromeClient? arg_pigeon_instance =
               (args[0] as WebChromeClient?);
-          assert(arg_pigeon_instance != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onHideCustomView was null, expected non-null WebChromeClient.');
+          assert(
+            arg_pigeon_instance != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onHideCustomView was null, expected non-null WebChromeClient.',
+          );
           try {
-            (onHideCustomView ?? arg_pigeon_instance!.onHideCustomView)
-                ?.call(arg_pigeon_instance!);
+            (onHideCustomView ?? arg_pigeon_instance!.onHideCustomView)?.call(
+              arg_pigeon_instance!,
+            );
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
     }
 
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onGeolocationPermissionsShowPrompt',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onGeolocationPermissionsShowPrompt',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onGeolocationPermissionsShowPrompt was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onGeolocationPermissionsShowPrompt was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final WebChromeClient? arg_pigeon_instance =
               (args[0] as WebChromeClient?);
-          assert(arg_pigeon_instance != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onGeolocationPermissionsShowPrompt was null, expected non-null WebChromeClient.');
+          assert(
+            arg_pigeon_instance != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onGeolocationPermissionsShowPrompt was null, expected non-null WebChromeClient.',
+          );
           final String? arg_origin = (args[1] as String?);
-          assert(arg_origin != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onGeolocationPermissionsShowPrompt was null, expected non-null String.');
+          assert(
+            arg_origin != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onGeolocationPermissionsShowPrompt was null, expected non-null String.',
+          );
           final GeolocationPermissionsCallback? arg_callback =
               (args[2] as GeolocationPermissionsCallback?);
-          assert(arg_callback != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onGeolocationPermissionsShowPrompt was null, expected non-null GeolocationPermissionsCallback.');
+          assert(
+            arg_callback != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onGeolocationPermissionsShowPrompt was null, expected non-null GeolocationPermissionsCallback.',
+          );
           try {
             (onGeolocationPermissionsShowPrompt ??
                     arg_pigeon_instance!.onGeolocationPermissionsShowPrompt)
@@ -5356,30 +5869,35 @@ class WebChromeClient extends PigeonInternalProxyApiBaseClass {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
     }
 
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onGeolocationPermissionsHidePrompt',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onGeolocationPermissionsHidePrompt',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onGeolocationPermissionsHidePrompt was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onGeolocationPermissionsHidePrompt was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final WebChromeClient? arg_pigeon_instance =
               (args[0] as WebChromeClient?);
-          assert(arg_pigeon_instance != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onGeolocationPermissionsHidePrompt was null, expected non-null WebChromeClient.');
+          assert(
+            arg_pigeon_instance != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onGeolocationPermissionsHidePrompt was null, expected non-null WebChromeClient.',
+          );
           try {
             (onGeolocationPermissionsHidePrompt ??
                     arg_pigeon_instance!.onGeolocationPermissionsHidePrompt)
@@ -5389,174 +5907,228 @@ class WebChromeClient extends PigeonInternalProxyApiBaseClass {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
     }
 
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onConsoleMessage',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onConsoleMessage',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onConsoleMessage was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onConsoleMessage was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final WebChromeClient? arg_pigeon_instance =
               (args[0] as WebChromeClient?);
-          assert(arg_pigeon_instance != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onConsoleMessage was null, expected non-null WebChromeClient.');
+          assert(
+            arg_pigeon_instance != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onConsoleMessage was null, expected non-null WebChromeClient.',
+          );
           final ConsoleMessage? arg_message = (args[1] as ConsoleMessage?);
-          assert(arg_message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onConsoleMessage was null, expected non-null ConsoleMessage.');
+          assert(
+            arg_message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onConsoleMessage was null, expected non-null ConsoleMessage.',
+          );
           try {
-            (onConsoleMessage ?? arg_pigeon_instance!.onConsoleMessage)
-                ?.call(arg_pigeon_instance!, arg_message!);
+            (onConsoleMessage ?? arg_pigeon_instance!.onConsoleMessage)?.call(
+              arg_pigeon_instance!,
+              arg_message!,
+            );
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
     }
 
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onJsAlert',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onJsAlert',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onJsAlert was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onJsAlert was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final WebChromeClient? arg_pigeon_instance =
               (args[0] as WebChromeClient?);
-          assert(arg_pigeon_instance != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onJsAlert was null, expected non-null WebChromeClient.');
+          assert(
+            arg_pigeon_instance != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onJsAlert was null, expected non-null WebChromeClient.',
+          );
           final WebView? arg_webView = (args[1] as WebView?);
-          assert(arg_webView != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onJsAlert was null, expected non-null WebView.');
+          assert(
+            arg_webView != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onJsAlert was null, expected non-null WebView.',
+          );
           final String? arg_url = (args[2] as String?);
-          assert(arg_url != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onJsAlert was null, expected non-null String.');
+          assert(
+            arg_url != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onJsAlert was null, expected non-null String.',
+          );
           final String? arg_message = (args[3] as String?);
-          assert(arg_message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onJsAlert was null, expected non-null String.');
+          assert(
+            arg_message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onJsAlert was null, expected non-null String.',
+          );
           try {
             await (onJsAlert ?? arg_pigeon_instance!.onJsAlert)?.call(
-                arg_pigeon_instance!, arg_webView!, arg_url!, arg_message!);
+              arg_pigeon_instance!,
+              arg_webView!,
+              arg_url!,
+              arg_message!,
+            );
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
     }
 
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onJsConfirm',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onJsConfirm',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onJsConfirm was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onJsConfirm was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final WebChromeClient? arg_pigeon_instance =
               (args[0] as WebChromeClient?);
-          assert(arg_pigeon_instance != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onJsConfirm was null, expected non-null WebChromeClient.');
+          assert(
+            arg_pigeon_instance != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onJsConfirm was null, expected non-null WebChromeClient.',
+          );
           final WebView? arg_webView = (args[1] as WebView?);
-          assert(arg_webView != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onJsConfirm was null, expected non-null WebView.');
+          assert(
+            arg_webView != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onJsConfirm was null, expected non-null WebView.',
+          );
           final String? arg_url = (args[2] as String?);
-          assert(arg_url != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onJsConfirm was null, expected non-null String.');
+          assert(
+            arg_url != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onJsConfirm was null, expected non-null String.',
+          );
           final String? arg_message = (args[3] as String?);
-          assert(arg_message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onJsConfirm was null, expected non-null String.');
+          assert(
+            arg_message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onJsConfirm was null, expected non-null String.',
+          );
           try {
             final bool output =
                 await (onJsConfirm ?? arg_pigeon_instance!.onJsConfirm).call(
-                    arg_pigeon_instance!, arg_webView!, arg_url!, arg_message!);
+                  arg_pigeon_instance!,
+                  arg_webView!,
+                  arg_url!,
+                  arg_message!,
+                );
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
     }
 
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onJsPrompt',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onJsPrompt',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onJsPrompt was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onJsPrompt was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final WebChromeClient? arg_pigeon_instance =
               (args[0] as WebChromeClient?);
-          assert(arg_pigeon_instance != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onJsPrompt was null, expected non-null WebChromeClient.');
+          assert(
+            arg_pigeon_instance != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onJsPrompt was null, expected non-null WebChromeClient.',
+          );
           final WebView? arg_webView = (args[1] as WebView?);
-          assert(arg_webView != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onJsPrompt was null, expected non-null WebView.');
+          assert(
+            arg_webView != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onJsPrompt was null, expected non-null WebView.',
+          );
           final String? arg_url = (args[2] as String?);
-          assert(arg_url != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onJsPrompt was null, expected non-null String.');
+          assert(
+            arg_url != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onJsPrompt was null, expected non-null String.',
+          );
           final String? arg_message = (args[3] as String?);
-          assert(arg_message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onJsPrompt was null, expected non-null String.');
+          assert(
+            arg_message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onJsPrompt was null, expected non-null String.',
+          );
           final String? arg_defaultValue = (args[4] as String?);
-          assert(arg_defaultValue != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onJsPrompt was null, expected non-null String.');
+          assert(
+            arg_defaultValue != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onJsPrompt was null, expected non-null String.',
+          );
           try {
             final String? output =
                 await (onJsPrompt ?? arg_pigeon_instance!.onJsPrompt)?.call(
-                    arg_pigeon_instance!,
-                    arg_webView!,
-                    arg_url!,
-                    arg_message!,
-                    arg_defaultValue!);
+                  arg_pigeon_instance!,
+                  arg_webView!,
+                  arg_url!,
+                  arg_message!,
+                  arg_defaultValue!,
+                );
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -5586,12 +6158,13 @@ class WebChromeClient extends PigeonInternalProxyApiBaseClass {
         'dev.flutter.pigeon.webview_flutter_android.WebChromeClient.setSynchronousReturnValueForOnShowFileChooser';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, value],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, value]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -5628,12 +6201,13 @@ class WebChromeClient extends PigeonInternalProxyApiBaseClass {
         'dev.flutter.pigeon.webview_flutter_android.WebChromeClient.setSynchronousReturnValueForOnConsoleMessage';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, value],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, value]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -5670,12 +6244,13 @@ class WebChromeClient extends PigeonInternalProxyApiBaseClass {
         'dev.flutter.pigeon.webview_flutter_android.WebChromeClient.setSynchronousReturnValueForOnJsAlert';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, value],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, value]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -5712,12 +6287,13 @@ class WebChromeClient extends PigeonInternalProxyApiBaseClass {
         'dev.flutter.pigeon.webview_flutter_android.WebChromeClient.setSynchronousReturnValueForOnJsConfirm';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, value],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, value]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -5754,12 +6330,13 @@ class WebChromeClient extends PigeonInternalProxyApiBaseClass {
         'dev.flutter.pigeon.webview_flutter_android.WebChromeClient.setSynchronousReturnValueForOnJsPrompt';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, value],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, value]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -5810,8 +6387,9 @@ class FlutterAssetManager extends PigeonInternalProxyApiBaseClass {
   });
 
   late final _PigeonInternalProxyApiBaseCodec
-      _pigeonVar_codecFlutterAssetManager =
-      _PigeonInternalProxyApiBaseCodec(pigeon_instanceManager);
+  _pigeonVar_codecFlutterAssetManager = _PigeonInternalProxyApiBaseCodec(
+    pigeon_instanceManager,
+  );
 
   /// The global instance of the `FlutterAssetManager`.
   static final FlutterAssetManager instance = pigeonVar_instance();
@@ -5824,41 +6402,47 @@ class FlutterAssetManager extends PigeonInternalProxyApiBaseClass {
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInstanceManager.instance);
+          pigeon_instanceManager ?? PigeonInstanceManager.instance,
+        );
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_android.FlutterAssetManager.pigeon_newInstance',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.FlutterAssetManager.pigeon_newInstance',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.FlutterAssetManager.pigeon_newInstance was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.FlutterAssetManager.pigeon_newInstance was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
-          assert(arg_pigeon_instanceIdentifier != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.FlutterAssetManager.pigeon_newInstance was null, expected non-null int.');
+          assert(
+            arg_pigeon_instanceIdentifier != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.FlutterAssetManager.pigeon_newInstance was null, expected non-null int.',
+          );
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
-              pigeon_newInstance?.call() ??
-                  FlutterAssetManager.pigeon_detached(
-                    pigeon_binaryMessenger: pigeon_binaryMessenger,
-                    pigeon_instanceManager: pigeon_instanceManager,
-                  ),
-              arg_pigeon_instanceIdentifier!,
-            );
+                  pigeon_newInstance?.call() ??
+                      FlutterAssetManager.pigeon_detached(
+                        pigeon_binaryMessenger: pigeon_binaryMessenger,
+                        pigeon_instanceManager: pigeon_instanceManager,
+                      ),
+                  arg_pigeon_instanceIdentifier!,
+                );
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -5879,12 +6463,13 @@ class FlutterAssetManager extends PigeonInternalProxyApiBaseClass {
           'dev.flutter.pigeon.webview_flutter_android.FlutterAssetManager.instance';
       final BasicMessageChannel<Object?> pigeonVar_channel =
           BasicMessageChannel<Object?>(
-        pigeonVar_channelName,
-        pigeonChannelCodec,
-        binaryMessenger: pigeonVar_binaryMessenger,
+            pigeonVar_channelName,
+            pigeonChannelCodec,
+            binaryMessenger: pigeonVar_binaryMessenger,
+          );
+      final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+        <Object?>[pigeonVar_instanceIdentifier],
       );
-      final Future<Object?> pigeonVar_sendFuture =
-          pigeonVar_channel.send(<Object?>[pigeonVar_instanceIdentifier]);
       final List<Object?>? pigeonVar_replyList =
           await pigeonVar_sendFuture as List<Object?>?;
       if (pigeonVar_replyList == null) {
@@ -5913,12 +6498,13 @@ class FlutterAssetManager extends PigeonInternalProxyApiBaseClass {
         'dev.flutter.pigeon.webview_flutter_android.FlutterAssetManager.list';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, path],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, path]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -5954,12 +6540,13 @@ class FlutterAssetManager extends PigeonInternalProxyApiBaseClass {
         'dev.flutter.pigeon.webview_flutter_android.FlutterAssetManager.getAssetFilePathByName';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, name],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, name]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -6017,41 +6604,47 @@ class WebStorage extends PigeonInternalProxyApiBaseClass {
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInstanceManager.instance);
+          pigeon_instanceManager ?? PigeonInstanceManager.instance,
+        );
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_android.WebStorage.pigeon_newInstance',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.WebStorage.pigeon_newInstance',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebStorage.pigeon_newInstance was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebStorage.pigeon_newInstance was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
-          assert(arg_pigeon_instanceIdentifier != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebStorage.pigeon_newInstance was null, expected non-null int.');
+          assert(
+            arg_pigeon_instanceIdentifier != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebStorage.pigeon_newInstance was null, expected non-null int.',
+          );
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
-              pigeon_newInstance?.call() ??
-                  WebStorage.pigeon_detached(
-                    pigeon_binaryMessenger: pigeon_binaryMessenger,
-                    pigeon_instanceManager: pigeon_instanceManager,
-                  ),
-              arg_pigeon_instanceIdentifier!,
-            );
+                  pigeon_newInstance?.call() ??
+                      WebStorage.pigeon_detached(
+                        pigeon_binaryMessenger: pigeon_binaryMessenger,
+                        pigeon_instanceManager: pigeon_instanceManager,
+                      ),
+                  arg_pigeon_instanceIdentifier!,
+                );
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -6071,12 +6664,13 @@ class WebStorage extends PigeonInternalProxyApiBaseClass {
           'dev.flutter.pigeon.webview_flutter_android.WebStorage.instance';
       final BasicMessageChannel<Object?> pigeonVar_channel =
           BasicMessageChannel<Object?>(
-        pigeonVar_channelName,
-        pigeonChannelCodec,
-        binaryMessenger: pigeonVar_binaryMessenger,
+            pigeonVar_channelName,
+            pigeonChannelCodec,
+            binaryMessenger: pigeonVar_binaryMessenger,
+          );
+      final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+        <Object?>[pigeonVar_instanceIdentifier],
       );
-      final Future<Object?> pigeonVar_sendFuture =
-          pigeonVar_channel.send(<Object?>[pigeonVar_instanceIdentifier]);
       final List<Object?>? pigeonVar_replyList =
           await pigeonVar_sendFuture as List<Object?>?;
       if (pigeonVar_replyList == null) {
@@ -6103,12 +6697,13 @@ class WebStorage extends PigeonInternalProxyApiBaseClass {
         'dev.flutter.pigeon.webview_flutter_android.WebStorage.deleteAllData';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -6172,61 +6767,78 @@ class FileChooserParams extends PigeonInternalProxyApiBaseClass {
       List<String> acceptTypes,
       FileChooserMode mode,
       String? filenameHint,
-    )? pigeon_newInstance,
+    )?
+    pigeon_newInstance,
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInstanceManager.instance);
+          pigeon_instanceManager ?? PigeonInstanceManager.instance,
+        );
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_android.FileChooserParams.pigeon_newInstance',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.FileChooserParams.pigeon_newInstance',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.FileChooserParams.pigeon_newInstance was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.FileChooserParams.pigeon_newInstance was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
-          assert(arg_pigeon_instanceIdentifier != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.FileChooserParams.pigeon_newInstance was null, expected non-null int.');
+          assert(
+            arg_pigeon_instanceIdentifier != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.FileChooserParams.pigeon_newInstance was null, expected non-null int.',
+          );
           final bool? arg_isCaptureEnabled = (args[1] as bool?);
-          assert(arg_isCaptureEnabled != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.FileChooserParams.pigeon_newInstance was null, expected non-null bool.');
+          assert(
+            arg_isCaptureEnabled != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.FileChooserParams.pigeon_newInstance was null, expected non-null bool.',
+          );
           final List<String>? arg_acceptTypes =
               (args[2] as List<Object?>?)?.cast<String>();
-          assert(arg_acceptTypes != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.FileChooserParams.pigeon_newInstance was null, expected non-null List<String>.');
+          assert(
+            arg_acceptTypes != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.FileChooserParams.pigeon_newInstance was null, expected non-null List<String>.',
+          );
           final FileChooserMode? arg_mode = (args[3] as FileChooserMode?);
-          assert(arg_mode != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.FileChooserParams.pigeon_newInstance was null, expected non-null FileChooserMode.');
+          assert(
+            arg_mode != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.FileChooserParams.pigeon_newInstance was null, expected non-null FileChooserMode.',
+          );
           final String? arg_filenameHint = (args[4] as String?);
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
-              pigeon_newInstance?.call(arg_isCaptureEnabled!, arg_acceptTypes!,
-                      arg_mode!, arg_filenameHint) ??
-                  FileChooserParams.pigeon_detached(
-                    pigeon_binaryMessenger: pigeon_binaryMessenger,
-                    pigeon_instanceManager: pigeon_instanceManager,
-                    isCaptureEnabled: arg_isCaptureEnabled!,
-                    acceptTypes: arg_acceptTypes!,
-                    mode: arg_mode!,
-                    filenameHint: arg_filenameHint,
-                  ),
-              arg_pigeon_instanceIdentifier!,
-            );
+                  pigeon_newInstance?.call(
+                        arg_isCaptureEnabled!,
+                        arg_acceptTypes!,
+                        arg_mode!,
+                        arg_filenameHint,
+                      ) ??
+                      FileChooserParams.pigeon_detached(
+                        pigeon_binaryMessenger: pigeon_binaryMessenger,
+                        pigeon_instanceManager: pigeon_instanceManager,
+                        isCaptureEnabled: arg_isCaptureEnabled!,
+                        acceptTypes: arg_acceptTypes!,
+                        mode: arg_mode!,
+                        filenameHint: arg_filenameHint,
+                      ),
+                  arg_pigeon_instanceIdentifier!,
+                );
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -6263,8 +6875,9 @@ class PermissionRequest extends PigeonInternalProxyApiBaseClass {
   });
 
   late final _PigeonInternalProxyApiBaseCodec
-      _pigeonVar_codecPermissionRequest =
-      _PigeonInternalProxyApiBaseCodec(pigeon_instanceManager);
+  _pigeonVar_codecPermissionRequest = _PigeonInternalProxyApiBaseCodec(
+    pigeon_instanceManager,
+  );
 
   final List<String> resources;
 
@@ -6276,46 +6889,54 @@ class PermissionRequest extends PigeonInternalProxyApiBaseClass {
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInstanceManager.instance);
+          pigeon_instanceManager ?? PigeonInstanceManager.instance,
+        );
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_android.PermissionRequest.pigeon_newInstance',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.PermissionRequest.pigeon_newInstance',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.PermissionRequest.pigeon_newInstance was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.PermissionRequest.pigeon_newInstance was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
-          assert(arg_pigeon_instanceIdentifier != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.PermissionRequest.pigeon_newInstance was null, expected non-null int.');
+          assert(
+            arg_pigeon_instanceIdentifier != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.PermissionRequest.pigeon_newInstance was null, expected non-null int.',
+          );
           final List<String>? arg_resources =
               (args[1] as List<Object?>?)?.cast<String>();
-          assert(arg_resources != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.PermissionRequest.pigeon_newInstance was null, expected non-null List<String>.');
+          assert(
+            arg_resources != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.PermissionRequest.pigeon_newInstance was null, expected non-null List<String>.',
+          );
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
-              pigeon_newInstance?.call(arg_resources!) ??
-                  PermissionRequest.pigeon_detached(
-                    pigeon_binaryMessenger: pigeon_binaryMessenger,
-                    pigeon_instanceManager: pigeon_instanceManager,
-                    resources: arg_resources!,
-                  ),
-              arg_pigeon_instanceIdentifier!,
-            );
+                  pigeon_newInstance?.call(arg_resources!) ??
+                      PermissionRequest.pigeon_detached(
+                        pigeon_binaryMessenger: pigeon_binaryMessenger,
+                        pigeon_instanceManager: pigeon_instanceManager,
+                        resources: arg_resources!,
+                      ),
+                  arg_pigeon_instanceIdentifier!,
+                );
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -6332,12 +6953,13 @@ class PermissionRequest extends PigeonInternalProxyApiBaseClass {
         'dev.flutter.pigeon.webview_flutter_android.PermissionRequest.grant';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, resources],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, resources]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -6362,12 +6984,13 @@ class PermissionRequest extends PigeonInternalProxyApiBaseClass {
         'dev.flutter.pigeon.webview_flutter_android.PermissionRequest.deny';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -6409,8 +7032,9 @@ class CustomViewCallback extends PigeonInternalProxyApiBaseClass {
   });
 
   late final _PigeonInternalProxyApiBaseCodec
-      _pigeonVar_codecCustomViewCallback =
-      _PigeonInternalProxyApiBaseCodec(pigeon_instanceManager);
+  _pigeonVar_codecCustomViewCallback = _PigeonInternalProxyApiBaseCodec(
+    pigeon_instanceManager,
+  );
 
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
@@ -6420,41 +7044,47 @@ class CustomViewCallback extends PigeonInternalProxyApiBaseClass {
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInstanceManager.instance);
+          pigeon_instanceManager ?? PigeonInstanceManager.instance,
+        );
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_android.CustomViewCallback.pigeon_newInstance',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.CustomViewCallback.pigeon_newInstance',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.CustomViewCallback.pigeon_newInstance was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.CustomViewCallback.pigeon_newInstance was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
-          assert(arg_pigeon_instanceIdentifier != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.CustomViewCallback.pigeon_newInstance was null, expected non-null int.');
+          assert(
+            arg_pigeon_instanceIdentifier != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.CustomViewCallback.pigeon_newInstance was null, expected non-null int.',
+          );
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
-              pigeon_newInstance?.call() ??
-                  CustomViewCallback.pigeon_detached(
-                    pigeon_binaryMessenger: pigeon_binaryMessenger,
-                    pigeon_instanceManager: pigeon_instanceManager,
-                  ),
-              arg_pigeon_instanceIdentifier!,
-            );
+                  pigeon_newInstance?.call() ??
+                      CustomViewCallback.pigeon_detached(
+                        pigeon_binaryMessenger: pigeon_binaryMessenger,
+                        pigeon_instanceManager: pigeon_instanceManager,
+                      ),
+                  arg_pigeon_instanceIdentifier!,
+                );
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -6470,12 +7100,13 @@ class CustomViewCallback extends PigeonInternalProxyApiBaseClass {
         'dev.flutter.pigeon.webview_flutter_android.CustomViewCallback.onCustomViewHidden';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -6526,41 +7157,47 @@ class View extends PigeonInternalProxyApiBaseClass {
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInstanceManager.instance);
+          pigeon_instanceManager ?? PigeonInstanceManager.instance,
+        );
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_android.View.pigeon_newInstance',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.View.pigeon_newInstance',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.View.pigeon_newInstance was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.View.pigeon_newInstance was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
-          assert(arg_pigeon_instanceIdentifier != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.View.pigeon_newInstance was null, expected non-null int.');
+          assert(
+            arg_pigeon_instanceIdentifier != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.View.pigeon_newInstance was null, expected non-null int.',
+          );
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
-              pigeon_newInstance?.call() ??
-                  View.pigeon_detached(
-                    pigeon_binaryMessenger: pigeon_binaryMessenger,
-                    pigeon_instanceManager: pigeon_instanceManager,
-                  ),
-              arg_pigeon_instanceIdentifier!,
-            );
+                  pigeon_newInstance?.call() ??
+                      View.pigeon_detached(
+                        pigeon_binaryMessenger: pigeon_binaryMessenger,
+                        pigeon_instanceManager: pigeon_instanceManager,
+                      ),
+                  arg_pigeon_instanceIdentifier!,
+                );
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -6568,10 +7205,7 @@ class View extends PigeonInternalProxyApiBaseClass {
   }
 
   /// Set the scrolled position of your view.
-  Future<void> scrollTo(
-    int x,
-    int y,
-  ) async {
+  Future<void> scrollTo(int x, int y) async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecView;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
@@ -6579,12 +7213,13 @@ class View extends PigeonInternalProxyApiBaseClass {
         'dev.flutter.pigeon.webview_flutter_android.View.scrollTo';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, x, y],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, x, y]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -6601,10 +7236,7 @@ class View extends PigeonInternalProxyApiBaseClass {
   }
 
   /// Move the scrolled position of your view.
-  Future<void> scrollBy(
-    int x,
-    int y,
-  ) async {
+  Future<void> scrollBy(int x, int y) async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecView;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
@@ -6612,12 +7244,13 @@ class View extends PigeonInternalProxyApiBaseClass {
         'dev.flutter.pigeon.webview_flutter_android.View.scrollBy';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, x, y],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, x, y]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -6642,12 +7275,13 @@ class View extends PigeonInternalProxyApiBaseClass {
         'dev.flutter.pigeon.webview_flutter_android.View.getScrollPosition';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -6679,12 +7313,13 @@ class View extends PigeonInternalProxyApiBaseClass {
         'dev.flutter.pigeon.webview_flutter_android.View.setVerticalScrollBarEnabled';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, enabled],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, enabled]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -6711,12 +7346,13 @@ class View extends PigeonInternalProxyApiBaseClass {
         'dev.flutter.pigeon.webview_flutter_android.View.setHorizontalScrollBarEnabled';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, enabled],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, enabled]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -6741,12 +7377,13 @@ class View extends PigeonInternalProxyApiBaseClass {
         'dev.flutter.pigeon.webview_flutter_android.View.setOverScrollMode';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, mode],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, mode]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -6787,7 +7424,7 @@ class GeolocationPermissionsCallback extends PigeonInternalProxyApiBaseClass {
   });
 
   late final _PigeonInternalProxyApiBaseCodec
-      _pigeonVar_codecGeolocationPermissionsCallback =
+  _pigeonVar_codecGeolocationPermissionsCallback =
       _PigeonInternalProxyApiBaseCodec(pigeon_instanceManager);
 
   static void pigeon_setUpMessageHandlers({
@@ -6798,41 +7435,47 @@ class GeolocationPermissionsCallback extends PigeonInternalProxyApiBaseClass {
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInstanceManager.instance);
+          pigeon_instanceManager ?? PigeonInstanceManager.instance,
+        );
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_android.GeolocationPermissionsCallback.pigeon_newInstance',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.GeolocationPermissionsCallback.pigeon_newInstance',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.GeolocationPermissionsCallback.pigeon_newInstance was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.GeolocationPermissionsCallback.pigeon_newInstance was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
-          assert(arg_pigeon_instanceIdentifier != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.GeolocationPermissionsCallback.pigeon_newInstance was null, expected non-null int.');
+          assert(
+            arg_pigeon_instanceIdentifier != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.GeolocationPermissionsCallback.pigeon_newInstance was null, expected non-null int.',
+          );
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
-              pigeon_newInstance?.call() ??
-                  GeolocationPermissionsCallback.pigeon_detached(
-                    pigeon_binaryMessenger: pigeon_binaryMessenger,
-                    pigeon_instanceManager: pigeon_instanceManager,
-                  ),
-              arg_pigeon_instanceIdentifier!,
-            );
+                  pigeon_newInstance?.call() ??
+                      GeolocationPermissionsCallback.pigeon_detached(
+                        pigeon_binaryMessenger: pigeon_binaryMessenger,
+                        pigeon_instanceManager: pigeon_instanceManager,
+                      ),
+                  arg_pigeon_instanceIdentifier!,
+                );
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -6840,11 +7483,7 @@ class GeolocationPermissionsCallback extends PigeonInternalProxyApiBaseClass {
   }
 
   /// Sets the Geolocation permission state for the supplied origin.
-  Future<void> invoke(
-    String origin,
-    bool allow,
-    bool retain,
-  ) async {
+  Future<void> invoke(String origin, bool allow, bool retain) async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecGeolocationPermissionsCallback;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
@@ -6852,12 +7491,13 @@ class GeolocationPermissionsCallback extends PigeonInternalProxyApiBaseClass {
         'dev.flutter.pigeon.webview_flutter_android.GeolocationPermissionsCallback.invoke';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, origin, allow, retain],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, origin, allow, retain]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -6907,41 +7547,47 @@ class HttpAuthHandler extends PigeonInternalProxyApiBaseClass {
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInstanceManager.instance);
+          pigeon_instanceManager ?? PigeonInstanceManager.instance,
+        );
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_android.HttpAuthHandler.pigeon_newInstance',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.HttpAuthHandler.pigeon_newInstance',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.HttpAuthHandler.pigeon_newInstance was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.HttpAuthHandler.pigeon_newInstance was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
-          assert(arg_pigeon_instanceIdentifier != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.HttpAuthHandler.pigeon_newInstance was null, expected non-null int.');
+          assert(
+            arg_pigeon_instanceIdentifier != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.HttpAuthHandler.pigeon_newInstance was null, expected non-null int.',
+          );
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
-              pigeon_newInstance?.call() ??
-                  HttpAuthHandler.pigeon_detached(
-                    pigeon_binaryMessenger: pigeon_binaryMessenger,
-                    pigeon_instanceManager: pigeon_instanceManager,
-                  ),
-              arg_pigeon_instanceIdentifier!,
-            );
+                  pigeon_newInstance?.call() ??
+                      HttpAuthHandler.pigeon_detached(
+                        pigeon_binaryMessenger: pigeon_binaryMessenger,
+                        pigeon_instanceManager: pigeon_instanceManager,
+                      ),
+                  arg_pigeon_instanceIdentifier!,
+                );
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -6959,12 +7605,13 @@ class HttpAuthHandler extends PigeonInternalProxyApiBaseClass {
         'dev.flutter.pigeon.webview_flutter_android.HttpAuthHandler.useHttpAuthUsernamePassword';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -6994,12 +7641,13 @@ class HttpAuthHandler extends PigeonInternalProxyApiBaseClass {
         'dev.flutter.pigeon.webview_flutter_android.HttpAuthHandler.cancel';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -7017,10 +7665,7 @@ class HttpAuthHandler extends PigeonInternalProxyApiBaseClass {
 
   /// Instructs the WebView to proceed with the authentication with the given
   /// credentials.
-  Future<void> proceed(
-    String username,
-    String password,
-  ) async {
+  Future<void> proceed(String username, String password) async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecHttpAuthHandler;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
@@ -7028,12 +7673,13 @@ class HttpAuthHandler extends PigeonInternalProxyApiBaseClass {
         'dev.flutter.pigeon.webview_flutter_android.HttpAuthHandler.proceed';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, username, password],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, username, password]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -7084,41 +7730,47 @@ class AndroidMessage extends PigeonInternalProxyApiBaseClass {
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInstanceManager.instance);
+          pigeon_instanceManager ?? PigeonInstanceManager.instance,
+        );
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_android.AndroidMessage.pigeon_newInstance',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.AndroidMessage.pigeon_newInstance',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.AndroidMessage.pigeon_newInstance was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.AndroidMessage.pigeon_newInstance was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
-          assert(arg_pigeon_instanceIdentifier != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.AndroidMessage.pigeon_newInstance was null, expected non-null int.');
+          assert(
+            arg_pigeon_instanceIdentifier != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.AndroidMessage.pigeon_newInstance was null, expected non-null int.',
+          );
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
-              pigeon_newInstance?.call() ??
-                  AndroidMessage.pigeon_detached(
-                    pigeon_binaryMessenger: pigeon_binaryMessenger,
-                    pigeon_instanceManager: pigeon_instanceManager,
-                  ),
-              arg_pigeon_instanceIdentifier!,
-            );
+                  pigeon_newInstance?.call() ??
+                      AndroidMessage.pigeon_detached(
+                        pigeon_binaryMessenger: pigeon_binaryMessenger,
+                        pigeon_instanceManager: pigeon_instanceManager,
+                      ),
+                  arg_pigeon_instanceIdentifier!,
+                );
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -7137,12 +7789,13 @@ class AndroidMessage extends PigeonInternalProxyApiBaseClass {
         'dev.flutter.pigeon.webview_flutter_android.AndroidMessage.sendToTarget';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -7183,8 +7836,9 @@ class ClientCertRequest extends PigeonInternalProxyApiBaseClass {
   });
 
   late final _PigeonInternalProxyApiBaseCodec
-      _pigeonVar_codecClientCertRequest =
-      _PigeonInternalProxyApiBaseCodec(pigeon_instanceManager);
+  _pigeonVar_codecClientCertRequest = _PigeonInternalProxyApiBaseCodec(
+    pigeon_instanceManager,
+  );
 
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
@@ -7194,41 +7848,47 @@ class ClientCertRequest extends PigeonInternalProxyApiBaseClass {
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInstanceManager.instance);
+          pigeon_instanceManager ?? PigeonInstanceManager.instance,
+        );
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_android.ClientCertRequest.pigeon_newInstance',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.ClientCertRequest.pigeon_newInstance',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.ClientCertRequest.pigeon_newInstance was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.ClientCertRequest.pigeon_newInstance was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
-          assert(arg_pigeon_instanceIdentifier != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.ClientCertRequest.pigeon_newInstance was null, expected non-null int.');
+          assert(
+            arg_pigeon_instanceIdentifier != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.ClientCertRequest.pigeon_newInstance was null, expected non-null int.',
+          );
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
-              pigeon_newInstance?.call() ??
-                  ClientCertRequest.pigeon_detached(
-                    pigeon_binaryMessenger: pigeon_binaryMessenger,
-                    pigeon_instanceManager: pigeon_instanceManager,
-                  ),
-              arg_pigeon_instanceIdentifier!,
-            );
+                  pigeon_newInstance?.call() ??
+                      ClientCertRequest.pigeon_detached(
+                        pigeon_binaryMessenger: pigeon_binaryMessenger,
+                        pigeon_instanceManager: pigeon_instanceManager,
+                      ),
+                  arg_pigeon_instanceIdentifier!,
+                );
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -7244,12 +7904,13 @@ class ClientCertRequest extends PigeonInternalProxyApiBaseClass {
         'dev.flutter.pigeon.webview_flutter_android.ClientCertRequest.cancel';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -7274,12 +7935,13 @@ class ClientCertRequest extends PigeonInternalProxyApiBaseClass {
         'dev.flutter.pigeon.webview_flutter_android.ClientCertRequest.ignore';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -7307,12 +7969,13 @@ class ClientCertRequest extends PigeonInternalProxyApiBaseClass {
         'dev.flutter.pigeon.webview_flutter_android.ClientCertRequest.proceed';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, privateKey, chain],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, privateKey, chain]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -7362,41 +8025,47 @@ class PrivateKey extends PigeonInternalProxyApiBaseClass {
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInstanceManager.instance);
+          pigeon_instanceManager ?? PigeonInstanceManager.instance,
+        );
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_android.PrivateKey.pigeon_newInstance',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.PrivateKey.pigeon_newInstance',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.PrivateKey.pigeon_newInstance was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.PrivateKey.pigeon_newInstance was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
-          assert(arg_pigeon_instanceIdentifier != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.PrivateKey.pigeon_newInstance was null, expected non-null int.');
+          assert(
+            arg_pigeon_instanceIdentifier != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.PrivateKey.pigeon_newInstance was null, expected non-null int.',
+          );
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
-              pigeon_newInstance?.call() ??
-                  PrivateKey.pigeon_detached(
-                    pigeon_binaryMessenger: pigeon_binaryMessenger,
-                    pigeon_instanceManager: pigeon_instanceManager,
-                  ),
-              arg_pigeon_instanceIdentifier!,
-            );
+                  pigeon_newInstance?.call() ??
+                      PrivateKey.pigeon_detached(
+                        pigeon_binaryMessenger: pigeon_binaryMessenger,
+                        pigeon_instanceManager: pigeon_instanceManager,
+                      ),
+                  arg_pigeon_instanceIdentifier!,
+                );
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -7437,41 +8106,47 @@ class X509Certificate extends Certificate {
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInstanceManager.instance);
+          pigeon_instanceManager ?? PigeonInstanceManager.instance,
+        );
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_android.X509Certificate.pigeon_newInstance',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.X509Certificate.pigeon_newInstance',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.X509Certificate.pigeon_newInstance was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.X509Certificate.pigeon_newInstance was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
-          assert(arg_pigeon_instanceIdentifier != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.X509Certificate.pigeon_newInstance was null, expected non-null int.');
+          assert(
+            arg_pigeon_instanceIdentifier != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.X509Certificate.pigeon_newInstance was null, expected non-null int.',
+          );
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
-              pigeon_newInstance?.call() ??
-                  X509Certificate.pigeon_detached(
-                    pigeon_binaryMessenger: pigeon_binaryMessenger,
-                    pigeon_instanceManager: pigeon_instanceManager,
-                  ),
-              arg_pigeon_instanceIdentifier!,
-            );
+                  pigeon_newInstance?.call() ??
+                      X509Certificate.pigeon_detached(
+                        pigeon_binaryMessenger: pigeon_binaryMessenger,
+                        pigeon_instanceManager: pigeon_instanceManager,
+                      ),
+                  arg_pigeon_instanceIdentifier!,
+                );
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -7512,41 +8187,47 @@ class SslErrorHandler extends PigeonInternalProxyApiBaseClass {
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInstanceManager.instance);
+          pigeon_instanceManager ?? PigeonInstanceManager.instance,
+        );
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_android.SslErrorHandler.pigeon_newInstance',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.SslErrorHandler.pigeon_newInstance',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.SslErrorHandler.pigeon_newInstance was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.SslErrorHandler.pigeon_newInstance was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
-          assert(arg_pigeon_instanceIdentifier != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.SslErrorHandler.pigeon_newInstance was null, expected non-null int.');
+          assert(
+            arg_pigeon_instanceIdentifier != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.SslErrorHandler.pigeon_newInstance was null, expected non-null int.',
+          );
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
-              pigeon_newInstance?.call() ??
-                  SslErrorHandler.pigeon_detached(
-                    pigeon_binaryMessenger: pigeon_binaryMessenger,
-                    pigeon_instanceManager: pigeon_instanceManager,
-                  ),
-              arg_pigeon_instanceIdentifier!,
-            );
+                  pigeon_newInstance?.call() ??
+                      SslErrorHandler.pigeon_detached(
+                        pigeon_binaryMessenger: pigeon_binaryMessenger,
+                        pigeon_instanceManager: pigeon_instanceManager,
+                      ),
+                  arg_pigeon_instanceIdentifier!,
+                );
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -7563,12 +8244,13 @@ class SslErrorHandler extends PigeonInternalProxyApiBaseClass {
         'dev.flutter.pigeon.webview_flutter_android.SslErrorHandler.cancel';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -7594,12 +8276,13 @@ class SslErrorHandler extends PigeonInternalProxyApiBaseClass {
         'dev.flutter.pigeon.webview_flutter_android.SslErrorHandler.proceed';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -7654,56 +8337,64 @@ class SslError extends PigeonInternalProxyApiBaseClass {
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-    SslError Function(
-      SslCertificate certificate,
-      String url,
-    )? pigeon_newInstance,
+    SslError Function(SslCertificate certificate, String url)?
+    pigeon_newInstance,
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInstanceManager.instance);
+          pigeon_instanceManager ?? PigeonInstanceManager.instance,
+        );
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_android.SslError.pigeon_newInstance',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.SslError.pigeon_newInstance',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.SslError.pigeon_newInstance was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.SslError.pigeon_newInstance was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
-          assert(arg_pigeon_instanceIdentifier != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.SslError.pigeon_newInstance was null, expected non-null int.');
+          assert(
+            arg_pigeon_instanceIdentifier != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.SslError.pigeon_newInstance was null, expected non-null int.',
+          );
           final SslCertificate? arg_certificate = (args[1] as SslCertificate?);
-          assert(arg_certificate != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.SslError.pigeon_newInstance was null, expected non-null SslCertificate.');
+          assert(
+            arg_certificate != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.SslError.pigeon_newInstance was null, expected non-null SslCertificate.',
+          );
           final String? arg_url = (args[2] as String?);
-          assert(arg_url != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.SslError.pigeon_newInstance was null, expected non-null String.');
+          assert(
+            arg_url != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.SslError.pigeon_newInstance was null, expected non-null String.',
+          );
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
-              pigeon_newInstance?.call(arg_certificate!, arg_url!) ??
-                  SslError.pigeon_detached(
-                    pigeon_binaryMessenger: pigeon_binaryMessenger,
-                    pigeon_instanceManager: pigeon_instanceManager,
-                    certificate: arg_certificate!,
-                    url: arg_url!,
-                  ),
-              arg_pigeon_instanceIdentifier!,
-            );
+                  pigeon_newInstance?.call(arg_certificate!, arg_url!) ??
+                      SslError.pigeon_detached(
+                        pigeon_binaryMessenger: pigeon_binaryMessenger,
+                        pigeon_instanceManager: pigeon_instanceManager,
+                        certificate: arg_certificate!,
+                        url: arg_url!,
+                      ),
+                  arg_pigeon_instanceIdentifier!,
+                );
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -7719,12 +8410,13 @@ class SslError extends PigeonInternalProxyApiBaseClass {
         'dev.flutter.pigeon.webview_flutter_android.SslError.getPrimaryError';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -7754,12 +8446,13 @@ class SslError extends PigeonInternalProxyApiBaseClass {
         'dev.flutter.pigeon.webview_flutter_android.SslError.hasError';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, error],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, error]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -7809,8 +8502,9 @@ class SslCertificateDName extends PigeonInternalProxyApiBaseClass {
   });
 
   late final _PigeonInternalProxyApiBaseCodec
-      _pigeonVar_codecSslCertificateDName =
-      _PigeonInternalProxyApiBaseCodec(pigeon_instanceManager);
+  _pigeonVar_codecSslCertificateDName = _PigeonInternalProxyApiBaseCodec(
+    pigeon_instanceManager,
+  );
 
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
@@ -7820,41 +8514,47 @@ class SslCertificateDName extends PigeonInternalProxyApiBaseClass {
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInstanceManager.instance);
+          pigeon_instanceManager ?? PigeonInstanceManager.instance,
+        );
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_android.SslCertificateDName.pigeon_newInstance',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.SslCertificateDName.pigeon_newInstance',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.SslCertificateDName.pigeon_newInstance was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.SslCertificateDName.pigeon_newInstance was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
-          assert(arg_pigeon_instanceIdentifier != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.SslCertificateDName.pigeon_newInstance was null, expected non-null int.');
+          assert(
+            arg_pigeon_instanceIdentifier != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.SslCertificateDName.pigeon_newInstance was null, expected non-null int.',
+          );
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
-              pigeon_newInstance?.call() ??
-                  SslCertificateDName.pigeon_detached(
-                    pigeon_binaryMessenger: pigeon_binaryMessenger,
-                    pigeon_instanceManager: pigeon_instanceManager,
-                  ),
-              arg_pigeon_instanceIdentifier!,
-            );
+                  pigeon_newInstance?.call() ??
+                      SslCertificateDName.pigeon_detached(
+                        pigeon_binaryMessenger: pigeon_binaryMessenger,
+                        pigeon_instanceManager: pigeon_instanceManager,
+                      ),
+                  arg_pigeon_instanceIdentifier!,
+                );
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -7870,12 +8570,13 @@ class SslCertificateDName extends PigeonInternalProxyApiBaseClass {
         'dev.flutter.pigeon.webview_flutter_android.SslCertificateDName.getCName';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -7905,12 +8606,13 @@ class SslCertificateDName extends PigeonInternalProxyApiBaseClass {
         'dev.flutter.pigeon.webview_flutter_android.SslCertificateDName.getDName';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -7940,12 +8642,13 @@ class SslCertificateDName extends PigeonInternalProxyApiBaseClass {
         'dev.flutter.pigeon.webview_flutter_android.SslCertificateDName.getOName';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -7975,12 +8678,13 @@ class SslCertificateDName extends PigeonInternalProxyApiBaseClass {
         'dev.flutter.pigeon.webview_flutter_android.SslCertificateDName.getUName';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -8035,41 +8739,47 @@ class SslCertificate extends PigeonInternalProxyApiBaseClass {
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInstanceManager.instance);
+          pigeon_instanceManager ?? PigeonInstanceManager.instance,
+        );
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_android.SslCertificate.pigeon_newInstance',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.SslCertificate.pigeon_newInstance',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.SslCertificate.pigeon_newInstance was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.SslCertificate.pigeon_newInstance was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
-          assert(arg_pigeon_instanceIdentifier != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.SslCertificate.pigeon_newInstance was null, expected non-null int.');
+          assert(
+            arg_pigeon_instanceIdentifier != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.SslCertificate.pigeon_newInstance was null, expected non-null int.',
+          );
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
-              pigeon_newInstance?.call() ??
-                  SslCertificate.pigeon_detached(
-                    pigeon_binaryMessenger: pigeon_binaryMessenger,
-                    pigeon_instanceManager: pigeon_instanceManager,
-                  ),
-              arg_pigeon_instanceIdentifier!,
-            );
+                  pigeon_newInstance?.call() ??
+                      SslCertificate.pigeon_detached(
+                        pigeon_binaryMessenger: pigeon_binaryMessenger,
+                        pigeon_instanceManager: pigeon_instanceManager,
+                      ),
+                  arg_pigeon_instanceIdentifier!,
+                );
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -8085,12 +8795,13 @@ class SslCertificate extends PigeonInternalProxyApiBaseClass {
         'dev.flutter.pigeon.webview_flutter_android.SslCertificate.getIssuedBy';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -8115,12 +8826,13 @@ class SslCertificate extends PigeonInternalProxyApiBaseClass {
         'dev.flutter.pigeon.webview_flutter_android.SslCertificate.getIssuedTo';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -8146,12 +8858,13 @@ class SslCertificate extends PigeonInternalProxyApiBaseClass {
         'dev.flutter.pigeon.webview_flutter_android.SslCertificate.getValidNotAfterMsSinceEpoch';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -8177,12 +8890,13 @@ class SslCertificate extends PigeonInternalProxyApiBaseClass {
         'dev.flutter.pigeon.webview_flutter_android.SslCertificate.getValidNotBeforeMsSinceEpoch';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -8210,12 +8924,13 @@ class SslCertificate extends PigeonInternalProxyApiBaseClass {
         'dev.flutter.pigeon.webview_flutter_android.SslCertificate.getX509Certificate';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -8265,41 +8980,47 @@ class Certificate extends PigeonInternalProxyApiBaseClass {
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInstanceManager.instance);
+          pigeon_instanceManager ?? PigeonInstanceManager.instance,
+        );
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_android.Certificate.pigeon_newInstance',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.Certificate.pigeon_newInstance',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.Certificate.pigeon_newInstance was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.Certificate.pigeon_newInstance was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
-          assert(arg_pigeon_instanceIdentifier != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.Certificate.pigeon_newInstance was null, expected non-null int.');
+          assert(
+            arg_pigeon_instanceIdentifier != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.Certificate.pigeon_newInstance was null, expected non-null int.',
+          );
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
-              pigeon_newInstance?.call() ??
-                  Certificate.pigeon_detached(
-                    pigeon_binaryMessenger: pigeon_binaryMessenger,
-                    pigeon_instanceManager: pigeon_instanceManager,
-                  ),
-              arg_pigeon_instanceIdentifier!,
-            );
+                  pigeon_newInstance?.call() ??
+                      Certificate.pigeon_detached(
+                        pigeon_binaryMessenger: pigeon_binaryMessenger,
+                        pigeon_instanceManager: pigeon_instanceManager,
+                      ),
+                  arg_pigeon_instanceIdentifier!,
+                );
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -8315,12 +9036,13 @@ class Certificate extends PigeonInternalProxyApiBaseClass {
         'dev.flutter.pigeon.webview_flutter_android.Certificate.getEncoded';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {

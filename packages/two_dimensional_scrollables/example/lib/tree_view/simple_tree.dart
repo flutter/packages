@@ -53,9 +53,7 @@ class TreeExampleState extends State<TreeExample> {
                 TreeViewNode<String>(
                   'Um-dittle-ittl-um-dittle-I',
                   children: <TreeViewNode<String>>[
-                    TreeViewNode<String>(
-                      'Um-dittle-ittl-um-dittle-I',
-                    ),
+                    TreeViewNode<String>('Um-dittle-ittl-um-dittle-I'),
                   ],
                 ),
               ],
@@ -72,13 +70,14 @@ class TreeExampleState extends State<TreeExample> {
     return <Type, GestureRecognizerFactory>{
       TapGestureRecognizer:
           GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>(
-        () => TapGestureRecognizer(),
-        (TapGestureRecognizer t) => t.onTap = () {
-          setState(() {
-            _selectedNode = node;
-          });
-        },
-      ),
+            () => TapGestureRecognizer(),
+            (TapGestureRecognizer t) =>
+                t.onTap = () {
+                  setState(() {
+                    _selectedNode = node;
+                  });
+                },
+          ),
     };
   }
 
@@ -114,9 +113,9 @@ class TreeExampleState extends State<TreeExample> {
                   ),
                 );
               }
-              return TreeView.defaultTreeRowBuilder(node).copyWith(
-                recognizerFactories: _getTapRecognizer(node),
-              );
+              return TreeView.defaultTreeRowBuilder(
+                node,
+              ).copyWith(recognizerFactories: _getTapRecognizer(node));
             },
             // Exaggerated indentation to exceed viewport bounds.
             indentation: TreeViewIndentationType.custom(50.0),

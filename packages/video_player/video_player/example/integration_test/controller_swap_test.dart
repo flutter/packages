@@ -62,8 +62,10 @@ void main() {
       await another.pause();
 
       // Expect that `another` played.
-      expect(another.value.position,
-          (Duration position) => position > Duration.zero);
+      expect(
+        another.value.position,
+        (Duration position) => position > Duration.zero,
+      );
 
       await expectLater(started.future, completes);
       await expectLater(ended.future, completes);
@@ -75,12 +77,9 @@ void main() {
 
   // TODO(tarrinneal): Remove once other test is enabled,
   // https://github.com/flutter/flutter/issues/164651
-  testWidgets(
-    'no-op',
-    (WidgetTester tester) async {
-      expect(true, true);
-    },
-  );
+  testWidgets('no-op', (WidgetTester tester) async {
+    expect(true, true);
+  });
 }
 
 Widget renderVideoWidget(VideoPlayerController controller) {

@@ -64,9 +64,7 @@ class _MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: ThemeData(primarySwatch: Colors.blue),
       home: const _MyHomePage(title: 'Flutter SVG Demo'),
     );
   }
@@ -89,9 +87,7 @@ class _MyHomePageState extends State<_MyHomePage> {
     super.initState();
     _dimension = 203.0;
     for (final String assetName in _assetNames) {
-      _painters.add(
-        SvgPicture.asset(assetName),
-      );
+      _painters.add(SvgPicture.asset(assetName));
     }
 
     for (int i = 0; i < iconNames.length; i++) {
@@ -114,19 +110,22 @@ class _MyHomePageState extends State<_MyHomePage> {
       _painters.add(
         SvgPicture.network(
           uriName,
-          placeholderBuilder: (BuildContext context) => Container(
-            padding: const EdgeInsets.all(30.0),
-            child: const CircularProgressIndicator(),
-          ),
+          placeholderBuilder:
+              (BuildContext context) => Container(
+                padding: const EdgeInsets.all(30.0),
+                child: const CircularProgressIndicator(),
+              ),
         ),
       );
     }
     // Shows an example of an SVG image that will fetch a raster image from a URL.
-    _painters.add(SvgPicture.string('''
+    _painters.add(
+      SvgPicture.string('''
 <svg viewBox="0 0 200 200"
   xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
   <image xlink:href="https://mdn.mozillademos.org/files/6457/mdn_logo_only_color.png" height="200" width="200"/>
-</svg>'''));
+</svg>'''),
+    );
   }
 
   @override
@@ -135,29 +134,29 @@ class _MyHomePageState extends State<_MyHomePage> {
       _dimension = MediaQuery.of(context).size.width - 10.0;
     }
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Column(children: <Widget>[
-        Slider(
-          min: 5.0,
-          max: MediaQuery.of(context).size.width - 10.0,
-          value: _dimension,
-          onChanged: (double val) {
-            setState(() => _dimension = val);
-          },
-        ),
-        Expanded(
-          child: GridView.extent(
-            // shrinkWrap: true,
-            maxCrossAxisExtent: _dimension,
-            padding: const EdgeInsets.all(4.0),
-            mainAxisSpacing: 4.0,
-            crossAxisSpacing: 4.0,
-            children: _painters.toList(),
+      appBar: AppBar(title: Text(widget.title)),
+      body: Column(
+        children: <Widget>[
+          Slider(
+            min: 5.0,
+            max: MediaQuery.of(context).size.width - 10.0,
+            value: _dimension,
+            onChanged: (double val) {
+              setState(() => _dimension = val);
+            },
           ),
-        ),
-      ]),
+          Expanded(
+            child: GridView.extent(
+              // shrinkWrap: true,
+              maxCrossAxisExtent: _dimension,
+              padding: const EdgeInsets.all(4.0),
+              mainAxisSpacing: 4.0,
+              crossAxisSpacing: 4.0,
+              children: _painters.toList(),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

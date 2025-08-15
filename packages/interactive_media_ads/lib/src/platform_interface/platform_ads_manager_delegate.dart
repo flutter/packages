@@ -70,8 +70,9 @@ abstract base class PlatformAdsManagerDelegate {
       'your own test implementation.',
     );
     final PlatformAdsManagerDelegate implementation =
-        InteractiveMediaAdsPlatform.instance!
-            .createPlatformAdsManagerDelegate(params);
+        InteractiveMediaAdsPlatform.instance!.createPlatformAdsManagerDelegate(
+          params,
+        );
     return implementation;
   }
 

@@ -7,24 +7,19 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:two_dimensional_examples/tree_view/simple_tree.dart';
 
 void main() {
-  testWidgets('Example builds and can be interacted with',
-      (WidgetTester tester) async {
+  testWidgets('Example builds and can be interacted with', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(const MaterialApp(home: TreeExample()));
     await tester.pumpAndSettle();
     expect(
       find.text("It's supercalifragilisticexpialidocious"),
       findsOneWidget,
     );
-    expect(
-      find.text('Um-dittle-ittl-um-dittle-I'),
-      findsNothing,
-    );
+    expect(find.text('Um-dittle-ittl-um-dittle-I'), findsNothing);
     await tester.tap(find.byType(Icon).last);
     await tester.pumpAndSettle();
-    expect(
-      find.text('Um-dittle-ittl-um-dittle-I'),
-      findsOneWidget,
-    );
+    expect(find.text('Um-dittle-ittl-um-dittle-I'), findsOneWidget);
   });
 
   testWidgets('Can scroll ', (WidgetTester tester) async {
@@ -41,9 +36,8 @@ void main() {
 
     expect(horizontalPosition.maxScrollExtent, greaterThan(190));
     expect(horizontalPosition.pixels, 0.0);
-    final TreeExampleState state = tester.state(
-      find.byType(TreeExample),
-    ) as TreeExampleState;
+    final TreeExampleState state =
+        tester.state(find.byType(TreeExample)) as TreeExampleState;
 
     state.treeController.expandAll();
     await tester.pumpAndSettle();

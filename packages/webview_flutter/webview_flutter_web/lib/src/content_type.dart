@@ -9,8 +9,9 @@ class ContentType {
   /// See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Type
   /// See: https://httpwg.org/specs/rfc9110.html#media.type
   ContentType.parse(String header) {
-    final Iterable<String> chunks =
-        header.split(';').map((String e) => e.trim().toLowerCase());
+    final Iterable<String> chunks = header
+        .split(';')
+        .map((String e) => e.trim().toLowerCase());
 
     for (final String chunk in chunks) {
       if (!chunk.contains('=')) {

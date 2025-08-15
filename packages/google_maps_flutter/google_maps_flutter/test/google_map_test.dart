@@ -29,12 +29,15 @@ void main() {
 
     final PlatformMapStateRecorder map = platform.lastCreatedMap;
 
-    expect(map.widgetConfiguration.initialCameraPosition,
-        const CameraPosition(target: LatLng(10.0, 15.0)));
+    expect(
+      map.widgetConfiguration.initialCameraPosition,
+      const CameraPosition(target: LatLng(10.0, 15.0)),
+    );
   });
 
-  testWidgets('Initial camera position change is a no-op',
-      (WidgetTester tester) async {
+  testWidgets('Initial camera position change is a no-op', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(
       const Directionality(
         textDirection: TextDirection.ltr,
@@ -55,8 +58,10 @@ void main() {
 
     final PlatformMapStateRecorder map = platform.lastCreatedMap;
 
-    expect(map.widgetConfiguration.initialCameraPosition,
-        const CameraPosition(target: LatLng(10.0, 15.0)));
+    expect(
+      map.widgetConfiguration.initialCameraPosition,
+      const CameraPosition(target: LatLng(10.0, 15.0)),
+    );
   });
 
   testWidgets('Can update compassEnabled', (WidgetTester tester) async {
@@ -118,8 +123,9 @@ void main() {
       Directionality(
         textDirection: TextDirection.ltr,
         child: GoogleMap(
-          initialCameraPosition:
-              const CameraPosition(target: LatLng(10.0, 15.0)),
+          initialCameraPosition: const CameraPosition(
+            target: LatLng(10.0, 15.0),
+          ),
           cameraTargetBounds: CameraTargetBounds(
             LatLngBounds(
               southwest: const LatLng(10.0, 20.0),
@@ -133,20 +139,22 @@ void main() {
     final PlatformMapStateRecorder map = platform.lastCreatedMap;
 
     expect(
-        map.mapConfiguration.cameraTargetBounds,
-        CameraTargetBounds(
-          LatLngBounds(
-            southwest: const LatLng(10.0, 20.0),
-            northeast: const LatLng(30.0, 40.0),
-          ),
-        ));
+      map.mapConfiguration.cameraTargetBounds,
+      CameraTargetBounds(
+        LatLngBounds(
+          southwest: const LatLng(10.0, 20.0),
+          northeast: const LatLng(30.0, 40.0),
+        ),
+      ),
+    );
 
     await tester.pumpWidget(
       Directionality(
         textDirection: TextDirection.ltr,
         child: GoogleMap(
-          initialCameraPosition:
-              const CameraPosition(target: LatLng(10.0, 15.0)),
+          initialCameraPosition: const CameraPosition(
+            target: LatLng(10.0, 15.0),
+          ),
           cameraTargetBounds: CameraTargetBounds(
             LatLngBounds(
               southwest: const LatLng(16.0, 20.0),
@@ -158,13 +166,14 @@ void main() {
     );
 
     expect(
-        map.mapConfiguration.cameraTargetBounds,
-        CameraTargetBounds(
-          LatLngBounds(
-            southwest: const LatLng(16.0, 20.0),
-            northeast: const LatLng(30.0, 40.0),
-          ),
-        ));
+      map.mapConfiguration.cameraTargetBounds,
+      CameraTargetBounds(
+        LatLngBounds(
+          southwest: const LatLng(16.0, 20.0),
+          northeast: const LatLng(30.0, 40.0),
+        ),
+      ),
+    );
   });
 
   testWidgets('Can update mapType', (WidgetTester tester) async {
@@ -208,8 +217,10 @@ void main() {
 
     final PlatformMapStateRecorder map = platform.lastCreatedMap;
 
-    expect(map.mapConfiguration.minMaxZoomPreference,
-        const MinMaxZoomPreference(1.0, 3.0));
+    expect(
+      map.mapConfiguration.minMaxZoomPreference,
+      const MinMaxZoomPreference(1.0, 3.0),
+    );
 
     await tester.pumpWidget(
       const Directionality(
@@ -220,8 +231,10 @@ void main() {
       ),
     );
 
-    expect(map.mapConfiguration.minMaxZoomPreference,
-        MinMaxZoomPreference.unbounded);
+    expect(
+      map.mapConfiguration.minMaxZoomPreference,
+      MinMaxZoomPreference.unbounded,
+    );
   });
 
   testWidgets('Can update rotateGesturesEnabled', (WidgetTester tester) async {
@@ -323,8 +336,9 @@ void main() {
       Directionality(
         textDirection: TextDirection.ltr,
         child: GoogleMap(
-          initialCameraPosition:
-              const CameraPosition(target: LatLng(10.0, 15.0)),
+          initialCameraPosition: const CameraPosition(
+            target: LatLng(10.0, 15.0),
+          ),
           onCameraMove: (CameraPosition position) {},
         ),
       ),
@@ -414,8 +428,9 @@ void main() {
     expect(map.mapConfiguration.myLocationEnabled, true);
   });
 
-  testWidgets('Can update myLocationButtonEnabled',
-      (WidgetTester tester) async {
+  testWidgets('Can update myLocationButtonEnabled', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(
       const Directionality(
         textDirection: TextDirection.ltr,
@@ -481,8 +496,10 @@ void main() {
       ),
     );
 
-    expect(map.mapConfiguration.padding,
-        const EdgeInsets.fromLTRB(10, 20, 30, 40));
+    expect(
+      map.mapConfiguration.padding,
+      const EdgeInsets.fromLTRB(10, 20, 30, 40),
+    );
 
     await tester.pumpWidget(
       const Directionality(
@@ -494,8 +511,10 @@ void main() {
       ),
     );
 
-    expect(map.mapConfiguration.padding,
-        const EdgeInsets.fromLTRB(50, 60, 70, 80));
+    expect(
+      map.mapConfiguration.padding,
+      const EdgeInsets.fromLTRB(50, 60, 70, 80),
+    );
   });
 
   testWidgets('Can update traffic', (WidgetTester tester) async {

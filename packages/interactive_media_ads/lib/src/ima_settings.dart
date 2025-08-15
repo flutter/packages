@@ -33,9 +33,9 @@ import 'platform_interface/platform_interface.dart';
 class ImaSettings {
   /// Creates an [ImaSettings].
   ImaSettings({String? language})
-      : this.fromPlatformCreationParams(
-          PlatformImaSettingsCreationParams(language: language),
-        );
+    : this.fromPlatformCreationParams(
+        PlatformImaSettingsCreationParams(language: language),
+      );
 
   /// Constructs an [ImaSettings] from creation params for a specific platform.
   ///

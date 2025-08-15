@@ -35,9 +35,9 @@ class ContentProgressProvider {
   /// See [ContentProgressProvider.fromPlatformCreationParams] for setting
   /// parameters for a specific platform.
   ContentProgressProvider()
-      : this.fromPlatformCreationParams(
-          const PlatformContentProgressProviderCreationParams(),
-        );
+    : this.fromPlatformCreationParams(
+        const PlatformContentProgressProviderCreationParams(),
+      );
 
   /// Constructs an [ContentProgressProvider] from creation params for a
   /// specific platform.

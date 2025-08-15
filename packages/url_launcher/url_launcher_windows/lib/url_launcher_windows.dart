@@ -11,9 +11,8 @@ import 'src/messages.g.dart';
 /// An implementation of [UrlLauncherPlatform] for Windows.
 class UrlLauncherWindows extends UrlLauncherPlatform {
   /// Creates a new plugin implementation instance.
-  UrlLauncherWindows({
-    @visibleForTesting UrlLauncherApi? api,
-  }) : _hostApi = api ?? UrlLauncherApi();
+  UrlLauncherWindows({@visibleForTesting UrlLauncherApi? api})
+    : _hostApi = api ?? UrlLauncherApi();
 
   final UrlLauncherApi _hostApi;
 

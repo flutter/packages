@@ -16,10 +16,10 @@ class MarkerController {
     LatLngCallback? onDragEnd,
     VoidCallback? onTap,
     ClusterManagerId? clusterManagerId,
-  })  : _marker = marker,
-        _infoWindow = infoWindow,
-        _consumeTapEvents = consumeTapEvents,
-        _clusterManagerId = clusterManagerId {
+  }) : _marker = marker,
+       _infoWindow = infoWindow,
+       _consumeTapEvents = consumeTapEvents,
+       _clusterManagerId = clusterManagerId {
     if (onTap != null) {
       marker.onClick.listen((gmaps.MapMouseEvent event) {
         onTap.call();

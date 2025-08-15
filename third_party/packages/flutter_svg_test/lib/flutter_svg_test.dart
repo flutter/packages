@@ -79,16 +79,13 @@ class _SvgFinder extends MatchFinder {
 
   @override
   bool matches(Element candidate) {
-    return _getBytesLoader(
-      candidate,
-      (BytesLoader loader) => loader == _svg,
-    );
+    return _getBytesLoader(candidate, (BytesLoader loader) => loader == _svg);
   }
 }
 
 class _SvgAssetWithPathFinder extends MatchFinder {
   _SvgAssetWithPathFinder({required String svgPath, super.skipOffstage})
-      : _svgPath = svgPath;
+    : _svgPath = svgPath;
   final String _svgPath;
 
   @override
@@ -105,7 +102,7 @@ class _SvgAssetWithPathFinder extends MatchFinder {
 
 class _SvgNetworkWithUrlFinder extends MatchFinder {
   _SvgNetworkWithUrlFinder({required String url, super.skipOffstage})
-      : _url = url;
+    : _url = url;
   final String _url;
 
   @override
@@ -122,7 +119,7 @@ class _SvgNetworkWithUrlFinder extends MatchFinder {
 
 class _SvgFileWithPathFinder extends MatchFinder {
   _SvgFileWithPathFinder({required String path, super.skipOffstage})
-      : _path = path;
+    : _path = path;
   final String _path;
 
   @override
@@ -139,7 +136,7 @@ class _SvgFileWithPathFinder extends MatchFinder {
 
 class _SvgMemoryWithBytesFinder extends MatchFinder {
   _SvgMemoryWithBytesFinder({required Uint8List bytes, super.skipOffstage})
-      : _bytes = bytes;
+    : _bytes = bytes;
   final Uint8List _bytes;
 
   @override
@@ -154,10 +151,7 @@ class _SvgMemoryWithBytesFinder extends MatchFinder {
   }
 }
 
-bool _getBytesLoader<T>(
-  Element candidate,
-  bool Function(T loader) matcher,
-) {
+bool _getBytesLoader<T>(Element candidate, bool Function(T loader) matcher) {
   bool result = false;
   final Widget widget = candidate.widget;
   if (widget is SvgPicture) {

@@ -17,16 +17,16 @@ CommandRunner<void> createTestCommandRunner([MigrateCommand? command]) {
 
 class TestCommandRunner extends CommandRunner<void> {
   TestCommandRunner()
-      : super(
-          'flutter',
-          'Manage your Flutter app development.\n'
-              '\n'
-              'Common commands:\n'
-              '\n'
-              '  flutter create <output directory>\n'
-              '    Create a new Flutter project in the specified directory.\n'
-              '\n'
-              '  flutter run [options]\n'
-              '    Run your Flutter application on an attached device or in an emulator.',
-        );
+    : super(
+        'flutter',
+        'Manage your Flutter app development.\n'
+            '\n'
+            'Common commands:\n'
+            '\n'
+            '  flutter create <output directory>\n'
+            '    Create a new Flutter project in the specified directory.\n'
+            '\n'
+            '  flutter run [options]\n'
+            '    Run your Flutter application on an attached device or in an emulator.',
+      );
 }

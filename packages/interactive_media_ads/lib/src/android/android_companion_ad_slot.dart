@@ -22,10 +22,10 @@ final class AndroidCompanionAdSlotCreationParams
     super.onClicked,
     @visibleForTesting InteractiveMediaAdsProxy? proxy,
     @visibleForTesting PlatformViewsServiceProxy? platformViewsProxy,
-  })  : _proxy = proxy ?? const InteractiveMediaAdsProxy(),
-        _platformViewsProxy =
-            platformViewsProxy ?? const PlatformViewsServiceProxy(),
-        super();
+  }) : _proxy = proxy ?? const InteractiveMediaAdsProxy(),
+       _platformViewsProxy =
+           platformViewsProxy ?? const PlatformViewsServiceProxy(),
+       super();
 
   /// Creates a  [AndroidCompanionAdSlotCreationParams] from an instance of
   /// [PlatformCompanionAdSlotCreationParams].
@@ -81,20 +81,24 @@ base class AndroidCompanionAdSlot extends PlatformCompanionAdSlot {
       return params;
     }
 
-    return AndroidCompanionAdSlotCreationParams
-        .fromPlatformCompanionAdSlotCreationParamsSize(params);
+    return AndroidCompanionAdSlotCreationParams.fromPlatformCompanionAdSlotCreationParamsSize(
+      params,
+    );
   }
 
   Future<ima.CompanionAdSlot> _initCompanionAdSlot() async {
-    final ima.CompanionAdSlot adSlot = await _androidParams._proxy
-        .instanceImaSdkFactory()
-        .createCompanionAdSlot();
+    final ima.CompanionAdSlot adSlot =
+        await _androidParams._proxy
+            .instanceImaSdkFactory()
+            .createCompanionAdSlot();
 
     await Future.wait(<Future<void>>[
       adSlot.setContainer(_frameLayout),
       switch (params.size) {
-        final CompanionAdSlotSizeFixed size =>
-          adSlot.setSize(size.width, size.height),
+        final CompanionAdSlotSizeFixed size => adSlot.setSize(
+          size.width,
+          size.height,
+        ),
         CompanionAdSlotSizeFluid() => adSlot.setFluidSize(),
       },
       if (params.onClicked != null)
@@ -116,9 +120,9 @@ base class AndroidCompanionAdSlot extends PlatformCompanionAdSlot {
   ) {
     return weakThis.target!._androidParams._proxy
         .newCompanionAdSlotClickListener(
-      onCompanionAdClick: (_) {
-        weakThis.target?.params.onClicked!.call();
-      },
-    );
+          onCompanionAdClick: (_) {
+            weakThis.target?.params.onClicked!.call();
+          },
+        );
   }
 }

@@ -12,11 +12,10 @@ import 'package:standard_message_codec/standard_message_codec.dart';
 
 // #docregion Encoding
 void main() {
-  final ByteData? data =
-      const StandardMessageCodec().encodeMessage(<Object, Object>{
-    'foo': true,
-    3: 'fizz',
-  });
+  final ByteData? data = const StandardMessageCodec().encodeMessage(
+    <Object, Object>{'foo': true, 3: 'fizz'},
+  );
   print('The encoded message is $data');
 }
+
 // #enddocregion Encoding

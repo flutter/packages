@@ -7,7 +7,9 @@ import 'maps_object.dart';
 
 /// Converts an [Iterable] of Cluster Managers in a Map of ClusterManagerId -> Cluster.
 Map<ClusterManagerId, ClusterManager> keyByClusterManagerId(
-    Iterable<ClusterManager> clusterManagers) {
-  return keyByMapsObjectId<ClusterManager>(clusterManagers)
-      .cast<ClusterManagerId, ClusterManager>();
+  Iterable<ClusterManager> clusterManagers,
+) {
+  return keyByMapsObjectId<ClusterManager>(
+    clusterManagers,
+  ).cast<ClusterManagerId, ClusterManager>();
 }

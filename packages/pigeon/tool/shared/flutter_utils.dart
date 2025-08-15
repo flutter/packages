@@ -10,11 +10,10 @@ String getFlutterCommand() => Platform.isWindows ? 'flutter.bat' : 'flutter';
 /// Returns the first device listed by `flutter devices` that targets
 /// [platform], or null if there is no such device.
 Future<String?> getDeviceForPlatform(String platform) async {
-  final ProcessResult result = await Process.run(
-    getFlutterCommand(),
-    <String>['devices', '--machine'],
-    stdoutEncoding: utf8,
-  );
+  final ProcessResult result = await Process.run(getFlutterCommand(), <String>[
+    'devices',
+    '--machine',
+  ], stdoutEncoding: utf8);
   if (result.exitCode != 0) {
     return null;
   }

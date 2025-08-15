@@ -92,8 +92,9 @@ class Automator {
   }
 
   Future<void> _handleAppScroll() async {
-    final ScrollableState scrollable =
-        Scrollable.of(find.byKey(textKey).evaluate().single);
+    final ScrollableState scrollable = Scrollable.of(
+      find.byKey(textKey).evaluate().single,
+    );
     await scrollable.position.animateTo(
       30000,
       curve: Curves.linear,
@@ -120,8 +121,9 @@ class Automator {
   void _handleSimpleBenchmarkPathCheck() {
     // Record whether the URL contains the expected path so we can verify the
     // behavior of setting the `benchmarkPath` on the benchmark server.
-    final bool containsExpectedPath =
-        window.location.toString().contains(testBenchmarkPath);
+    final bool containsExpectedPath = window.location.toString().contains(
+      testBenchmarkPath,
+    );
     profile.extraData['expectedUrl'] = containsExpectedPath ? 1 : 0;
   }
 }

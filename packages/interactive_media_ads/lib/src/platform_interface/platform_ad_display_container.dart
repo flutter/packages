@@ -83,8 +83,9 @@ abstract base class PlatformAdDisplayContainer {
       'your own test implementation.',
     );
     final PlatformAdDisplayContainer implementation =
-        InteractiveMediaAdsPlatform.instance!
-            .createPlatformAdDisplayContainer(params);
+        InteractiveMediaAdsPlatform.instance!.createPlatformAdDisplayContainer(
+          params,
+        );
     return implementation;
   }
 

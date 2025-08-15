@@ -16,8 +16,8 @@ final class IOSContentProgressProviderCreationParams
   /// Constructs an [IOSContentProgressProviderCreationParams].
   const IOSContentProgressProviderCreationParams({
     @visibleForTesting InteractiveMediaAdsProxy? proxy,
-  })  : _proxy = proxy ?? const InteractiveMediaAdsProxy(),
-        super();
+  }) : _proxy = proxy ?? const InteractiveMediaAdsProxy(),
+       super();
 
   /// Creates a [IOSContentProgressProviderCreationParams] from an instance of
   /// [PlatformContentProgressProviderCreationParams].
@@ -49,10 +49,9 @@ base class IOSContentProgressProvider extends PlatformContentProgressProvider {
   late final IOSContentProgressProviderCreationParams _iosParams =
       params is IOSContentProgressProviderCreationParams
           ? params as IOSContentProgressProviderCreationParams
-          : IOSContentProgressProviderCreationParams
-              .fromPlatformContentProgressProviderCreationParams(
-              params,
-            );
+          : IOSContentProgressProviderCreationParams.fromPlatformContentProgressProviderCreationParams(
+            params,
+          );
 
   @override
   Future<void> setProgress({

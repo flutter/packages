@@ -110,16 +110,15 @@ String getEnumName(dynamic enumItem) {
 /// [onError] must have type `FutureOr<T> Function(Object error)` or
 /// `FutureOr<T> Function(Object error, StackTrace stackTrace)` otherwise an
 /// [ArgumentError] will be thrown synchronously.
-Future<T> asyncGuard<T>(
-  Future<T> Function() fn, {
-  Function? onError,
-}) {
+Future<T> asyncGuard<T>(Future<T> Function() fn, {Function? onError}) {
   if (onError != null &&
       onError is! _UnaryOnError<T> &&
       onError is! _BinaryOnError<T>) {
-    throw ArgumentError('onError must be a unary function accepting an Object, '
-        'or a binary function accepting an Object and '
-        'StackTrace. onError must return a T');
+    throw ArgumentError(
+      'onError must be a unary function accepting an Object, '
+      'or a binary function accepting an Object and '
+      'StackTrace. onError must return a T',
+    );
   }
   final Completer<T> completer = Completer<T>();
 
@@ -138,28 +137,31 @@ Future<T> asyncGuard<T>(
     }
   }
 
-  runZonedGuarded<void>(() async {
-    try {
-      final T result = await fn();
-      if (!completer.isCompleted) {
-        completer.complete(result);
+  runZonedGuarded<void>(
+    () async {
+      try {
+        final T result = await fn();
+        if (!completer.isCompleted) {
+          completer.complete(result);
+        }
+        // This catches all exceptions so that they can be propagated to the
+        // caller-supplied error handling or the completer.
+      } catch (e, s) {
+        // ignore: avoid_catches_without_on_clauses, forwards to Future
+        handleError(e, s);
       }
-      // This catches all exceptions so that they can be propagated to the
-      // caller-supplied error handling or the completer.
-    } catch (e, s) {
-      // ignore: avoid_catches_without_on_clauses, forwards to Future
+    },
+    (Object e, StackTrace s) {
       handleError(e, s);
-    }
-  }, (Object e, StackTrace s) {
-    handleError(e, s);
-  });
+    },
+  );
 
   return completer.future;
 }
 
 typedef _UnaryOnError<T> = FutureOr<T> Function(Object error);
-typedef _BinaryOnError<T> = FutureOr<T> Function(
-    Object error, StackTrace stackTrace);
+typedef _BinaryOnError<T> =
+    FutureOr<T> Function(Object error, StackTrace stackTrace);
 
 /// Whether the test is running in a web browser compiled to JavaScript.
 ///
@@ -235,9 +237,7 @@ String? flutterRoot;
 ///
 /// If an exception is thrown during any of these checks, an error message is
 /// printed and `.` is returned by default (6).
-String defaultFlutterRoot({
-  required FileSystem fileSystem,
-}) {
+String defaultFlutterRoot({required FileSystem fileSystem}) {
   const String kFlutterRootEnvironmentVariableName =
       'FLUTTER_ROOT'; // should point to //flutter/ (root of flutter/flutter repo)
   const String kSnapshotFileName =
@@ -250,7 +250,8 @@ String defaultFlutterRoot({
 
   if (Platform.environment.containsKey(kFlutterRootEnvironmentVariableName)) {
     return normalize(
-        Platform.environment[kFlutterRootEnvironmentVariableName]!);
+      Platform.environment[kFlutterRootEnvironmentVariableName]!,
+    );
   }
   try {
     if (Platform.script.scheme == 'data') {
@@ -259,17 +260,14 @@ String defaultFlutterRoot({
     final String Function(String) dirname = fileSystem.path.dirname;
 
     if (Platform.script.scheme == 'package') {
-      final String packageConfigPath =
-          Uri.parse(Platform.packageConfig!).toFilePath(
-        windows: isWindows,
-      );
+      final String packageConfigPath = Uri.parse(
+        Platform.packageConfig!,
+      ).toFilePath(windows: isWindows);
       return normalize(dirname(dirname(dirname(packageConfigPath))));
     }
 
     if (Platform.script.scheme == 'file') {
-      final String script = Platform.script.toFilePath(
-        windows: isWindows,
-      );
+      final String script = Platform.script.toFilePath(windows: isWindows);
       if (fileSystem.path.basename(script) == kSnapshotFileName) {
         return normalize(dirname(dirname(fileSystem.path.dirname(script))));
       }

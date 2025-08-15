@@ -8,9 +8,7 @@ void main() {
     await tester.pumpWidget(
       const Directionality(
         textDirection: TextDirection.ltr,
-        child: RepaintBoundary(
-          child: ColumnsAndRows(),
-        ),
+        child: RepaintBoundary(child: ColumnsAndRows()),
       ),
     );
     await tester.pumpAndSettle();
@@ -30,15 +28,8 @@ class ColumnsAndRows extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Column(
       children: <Widget>[
-        Row(children: <Widget>[
-          ImageWithText(),
-        ]),
-        Row(
-          children: <Widget>[
-            ImageWithText(),
-            ImageWithText(),
-          ],
-        ),
+        Row(children: <Widget>[ImageWithText()]),
+        Row(children: <Widget>[ImageWithText(), ImageWithText()]),
         Row(
           children: <Widget>[
             ImageWithText(),
@@ -80,20 +71,10 @@ class ImageWithText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Widget image = SvgPicture.string(circleSvg);
-    final Widget imageContainer = ColoredBox(
-      color: Colors.amber,
-      child: image,
-    );
+    final Widget imageContainer = ColoredBox(color: Colors.amber, child: image);
     const Widget text = Text('Hello');
-    final Widget column = Column(
-      children: <Widget>[
-        imageContainer,
-        text,
-      ],
-    );
-    return Expanded(
-      child: column,
-    );
+    final Widget column = Column(children: <Widget>[imageContainer, text]);
+    return Expanded(child: column);
   }
 }
 

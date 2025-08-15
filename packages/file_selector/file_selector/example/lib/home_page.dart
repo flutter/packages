@@ -19,9 +19,7 @@ class HomePage extends StatelessWidget {
       foregroundColor: Colors.white,
     );
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('File Selector Demo Home Page'),
-      ),
+      appBar: AppBar(title: const Text('File Selector Demo Home Page')),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -66,8 +64,8 @@ class HomePage extends StatelessWidget {
               ElevatedButton(
                 style: style,
                 child: const Text('Open a get multi directories dialog'),
-                onPressed: () =>
-                    Navigator.pushNamed(context, '/multi-directories'),
+                onPressed:
+                    () => Navigator.pushNamed(context, '/multi-directories'),
               ),
             ],
           ],

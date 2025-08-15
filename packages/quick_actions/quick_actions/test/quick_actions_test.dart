@@ -34,8 +34,9 @@ void main() {
       quickActions.setShortcutItems(<ShortcutItem>[]);
 
       verify(QuickActionsPlatform.instance.initialize(handler)).called(1);
-      verify(QuickActionsPlatform.instance.setShortcutItems(<ShortcutItem>[]))
-          .called(1);
+      verify(
+        QuickActionsPlatform.instance.setShortcutItems(<ShortcutItem>[]),
+      ).called(1);
     });
 
     test('clearShortcutItems() PlatformInterface', () {

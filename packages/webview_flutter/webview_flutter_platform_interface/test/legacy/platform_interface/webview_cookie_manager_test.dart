@@ -17,8 +17,11 @@ void main() {
   });
 
   test('setCookie should throw UnimplementedError', () {
-    const WebViewCookie cookie =
-        WebViewCookie(domain: 'flutter.dev', name: 'foo', value: 'bar');
+    const WebViewCookie cookie = WebViewCookie(
+      domain: 'flutter.dev',
+      name: 'foo',
+      value: 'bar',
+    );
     expect(() => cookieManager!.setCookie(cookie), throwsUnimplementedError);
   });
 }

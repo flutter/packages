@@ -45,8 +45,9 @@ void main() {
     }
   }
 
-  testWidgets('Camera allows to control video bitrate',
-      (WidgetTester tester) async {
+  testWidgets('Camera allows to control video bitrate', (
+    WidgetTester tester,
+  ) async {
     //const String supportedVideoType = 'video/webm';
     const String supportedVideoType = 'video/webm;codecs="vp9,opus"';
     bool isVideoTypeSupported(String type) => type == supportedVideoType;
@@ -65,49 +66,39 @@ void main() {
       mockWindow.navigator = navigator;
       mockNavigator.mediaDevices = mediaDevices;
 
-      final HTMLCanvasElement canvasElement = HTMLCanvasElement()
-        ..width = videoSize.width.toInt()
-        ..height = videoSize.height.toInt()
-        ..context2D.clearRect(0, 0, videoSize.width, videoSize.height);
+      final HTMLCanvasElement canvasElement =
+          HTMLCanvasElement()
+            ..width = videoSize.width.toInt()
+            ..height = videoSize.height.toInt()
+            ..context2D.clearRect(0, 0, videoSize.width, videoSize.height);
 
       final HTMLVideoElement videoElement = HTMLVideoElement();
 
       final MockCameraService cameraService = MockCameraService();
 
-      CameraPlatform.instance = CameraPlugin(
-        cameraService: cameraService,
-      )..window = window;
+      CameraPlatform.instance = CameraPlugin(cameraService: cameraService)
+        ..window = window;
 
       final CameraOptions options = CameraOptions(
         audio: const AudioConstraints(),
         video: VideoConstraints(
-          width: VideoSizeConstraint(
-            ideal: videoSize.width.toInt(),
-          ),
-          height: VideoSizeConstraint(
-            ideal: videoSize.height.toInt(),
-          ),
+          width: VideoSizeConstraint(ideal: videoSize.width.toInt()),
+          height: VideoSizeConstraint(ideal: videoSize.height.toInt()),
         ),
       );
 
       final int cameraId = videoBitrate;
 
       when(
-        cameraService.getMediaStreamForOptions(
-          options,
-          cameraId: cameraId,
-        ),
+        cameraService.getMediaStreamForOptions(options, cameraId: cameraId),
       ).thenAnswer((_) async => canvasElement.captureStream());
 
       final Camera camera = Camera(
-          textureId: cameraId,
-          cameraService: cameraService,
-          options: options,
-          recorderOptions: (
-            audioBitrate: null,
-            videoBitrate: videoBitrate,
-          ))
-        ..isVideoTypeSupported = isVideoTypeSupported;
+        textureId: cameraId,
+        cameraService: cameraService,
+        options: options,
+        recorderOptions: (audioBitrate: null, videoBitrate: videoBitrate),
+      )..isVideoTypeSupported = isVideoTypeSupported;
 
       await camera.initialize();
       await camera.play();

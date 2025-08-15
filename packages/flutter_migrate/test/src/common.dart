@@ -46,7 +46,8 @@ String getFlutterRoot() {
   }
 
   Error invalidScript() => StateError(
-      'Could not determine flutter_tools/ path from script URL (${io.Platform.script}); consider setting FLUTTER_ROOT explicitly.');
+    'Could not determine flutter_tools/ path from script URL (${io.Platform.script}); consider setting FLUTTER_ROOT explicitly.',
+  );
 
   Uri scriptUri;
   switch (io.Platform.script.scheme) {
@@ -54,10 +55,12 @@ String getFlutterRoot() {
       scriptUri = io.Platform.script;
     case 'data':
       final RegExp flutterTools = RegExp(
-          r'(file://[^"]*[/\\]flutter_tools[/\\][^"]+\.dart)',
-          multiLine: true);
-      final Match? match =
-          flutterTools.firstMatch(Uri.decodeFull(io.Platform.script.path));
+        r'(file://[^"]*[/\\]flutter_tools[/\\][^"]+\.dart)',
+        multiLine: true,
+      );
+      final Match? match = flutterTools.firstMatch(
+        Uri.decodeFull(io.Platform.script.path),
+      );
       if (match == null) {
         throw invalidScript();
       }
@@ -80,12 +83,17 @@ String getMigratePackageRoot() {
 }
 
 String getMigrateMain() {
-  return fileSystem.path
-      .join(getMigratePackageRoot(), 'bin', 'flutter_migrate.dart');
+  return fileSystem.path.join(
+    getMigratePackageRoot(),
+    'bin',
+    'flutter_migrate.dart',
+  );
 }
 
-Future<ProcessResult> runMigrateCommand(List<String> args,
-    {String? workingDirectory}) {
+Future<ProcessResult> runMigrateCommand(
+  List<String> args, {
+  String? workingDirectory,
+}) {
   final List<String> commandArgs = <String>['dart', 'run', getMigrateMain()];
   commandArgs.addAll(args);
   return processManager.run(commandArgs, workingDirectory: workingDirectory);
@@ -148,9 +156,10 @@ void testWithoutContext(
   return test(
     description,
     () async {
-      return runZoned(body, zoneValues: <Object, Object>{
-        contextKey: const _NoContext(),
-      });
+      return runZoned(
+        body,
+        zoneValues: <Object, Object>{contextKey: const _NoContext()},
+      );
     },
     skip: skip,
     tags: tags,
@@ -173,9 +182,11 @@ class _NoContext implements AppContext {
 
   @override
   T get<T>() {
-    throw UnsupportedError('context.get<$T> is not supported in test methods. '
-        'Use Testbed or testUsingContext if accessing Zone injected '
-        'values.');
+    throw UnsupportedError(
+      'context.get<$T> is not supported in test methods. '
+      'Use Testbed or testUsingContext if accessing Zone injected '
+      'values.',
+    );
   }
 
   @override

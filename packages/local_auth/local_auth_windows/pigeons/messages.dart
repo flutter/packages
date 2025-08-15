@@ -4,13 +4,15 @@
 
 import 'package:pigeon/pigeon.dart';
 
-@ConfigurePigeon(PigeonOptions(
-  dartOut: 'lib/src/messages.g.dart',
-  cppOptions: CppOptions(namespace: 'local_auth_windows'),
-  cppHeaderOut: 'windows/messages.g.h',
-  cppSourceOut: 'windows/messages.g.cpp',
-  copyrightHeader: 'pigeons/copyright.txt',
-))
+@ConfigurePigeon(
+  PigeonOptions(
+    dartOut: 'lib/src/messages.g.dart',
+    cppOptions: CppOptions(namespace: 'local_auth_windows'),
+    cppHeaderOut: 'windows/messages.g.h',
+    cppSourceOut: 'windows/messages.g.cpp',
+    copyrightHeader: 'pigeons/copyright.txt',
+  ),
+)
 @HostApi()
 abstract class LocalAuthApi {
   /// Returns true if this device supports authentication.

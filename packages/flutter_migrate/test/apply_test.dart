@@ -35,31 +35,38 @@ void main() {
     tryToDelete(appDir);
   });
 
-  testUsingContext('Apply produces all outputs', () async {
-    final ProcessResult result = await processManager
-        .run(<String>['flutter', '--version'], workingDirectory: appDir.path);
-    final String versionOutput = result.stdout as String;
-    final List<String> versionSplit = versionOutput.substring(8, 14).split('.');
-    expect(versionSplit.length >= 2, true);
-    if (!(int.parse(versionSplit[0]) > 3 ||
-        int.parse(versionSplit[0]) == 3 && int.parse(versionSplit[1]) > 3)) {
-      // Apply not supported on stable version 3.3 and below
-      return;
-    }
+  testUsingContext(
+    'Apply produces all outputs',
+    () async {
+      final ProcessResult result = await processManager.run(<String>[
+        'flutter',
+        '--version',
+      ], workingDirectory: appDir.path);
+      final String versionOutput = result.stdout as String;
+      final List<String> versionSplit = versionOutput
+          .substring(8, 14)
+          .split('.');
+      expect(versionSplit.length >= 2, true);
+      if (!(int.parse(versionSplit[0]) > 3 ||
+          int.parse(versionSplit[0]) == 3 && int.parse(versionSplit[1]) > 3)) {
+        // Apply not supported on stable version 3.3 and below
+        return;
+      }
 
-    final MigrateApplyCommand command = MigrateApplyCommand(
-      verbose: true,
-      logger: logger,
-      fileSystem: fileSystem,
-      terminal: terminal,
-      processManager: processManager,
-    );
-    final Directory workingDir =
-        appDir.childDirectory(kDefaultMigrateStagingDirectoryName);
-    appDir.childFile('lib/main.dart').createSync(recursive: true);
-    final File pubspecOriginal = appDir.childFile('pubspec.yaml');
-    pubspecOriginal.createSync();
-    pubspecOriginal.writeAsStringSync('''
+      final MigrateApplyCommand command = MigrateApplyCommand(
+        verbose: true,
+        logger: logger,
+        fileSystem: fileSystem,
+        terminal: terminal,
+        processManager: processManager,
+      );
+      final Directory workingDir = appDir.childDirectory(
+        kDefaultMigrateStagingDirectoryName,
+      );
+      appDir.childFile('lib/main.dart').createSync(recursive: true);
+      final File pubspecOriginal = appDir.childFile('pubspec.yaml');
+      pubspecOriginal.createSync();
+      pubspecOriginal.writeAsStringSync('''
 name: originalname
 description: A new Flutter project.
 version: 1.0.0+1
@@ -74,38 +81,44 @@ dev_dependencies:
 flutter:
   uses-material-design: true''', flush: true);
 
-    final File gitignore = appDir.childFile('.gitignore');
-    gitignore.createSync();
-    gitignore.writeAsStringSync(kDefaultMigrateStagingDirectoryName,
-        flush: true);
+      final File gitignore = appDir.childFile('.gitignore');
+      gitignore.createSync();
+      gitignore.writeAsStringSync(
+        kDefaultMigrateStagingDirectoryName,
+        flush: true,
+      );
 
-    logger.clear();
-    await createTestCommandRunner(command).run(<String>[
-      'apply',
-      '--staging-directory=${workingDir.path}',
-      '--project-directory=${appDir.path}',
-      '--flutter-subcommand',
-    ]);
-    expect(
+      logger.clear();
+      await createTestCommandRunner(command).run(<String>[
+        'apply',
+        '--staging-directory=${workingDir.path}',
+        '--project-directory=${appDir.path}',
+        '--flutter-subcommand',
+      ]);
+      expect(
         logger.statusText,
         contains(
-            'Project is not a git repo. Please initialize a git repo and try again.'));
+          'Project is not a git repo. Please initialize a git repo and try again.',
+        ),
+      );
 
-    await processManager
-        .run(<String>['git', 'init'], workingDirectory: appDir.path);
+      await processManager.run(<String>[
+        'git',
+        'init',
+      ], workingDirectory: appDir.path);
 
-    logger.clear();
-    await createTestCommandRunner(command).run(<String>[
-      'apply',
-      '--staging-directory=${workingDir.path}',
-      '--project-directory=${appDir.path}',
-      '--flutter-subcommand',
-    ]);
-    expect(logger.statusText, contains('No migration in progress'));
+      logger.clear();
+      await createTestCommandRunner(command).run(<String>[
+        'apply',
+        '--staging-directory=${workingDir.path}',
+        '--project-directory=${appDir.path}',
+        '--flutter-subcommand',
+      ]);
+      expect(logger.statusText, contains('No migration in progress'));
 
-    final File pubspecModified = workingDir.childFile('pubspec.yaml');
-    pubspecModified.createSync(recursive: true);
-    pubspecModified.writeAsStringSync('''
+      final File pubspecModified = workingDir.childFile('pubspec.yaml');
+      pubspecModified.createSync(recursive: true);
+      pubspecModified.writeAsStringSync('''
 name: newname
 description: new description of the test project
 version: 1.0.0+1
@@ -121,13 +134,13 @@ flutter:
   uses-material-design: false
   # EXTRALINE:''', flush: true);
 
-    final File addedFile = workingDir.childFile('added.file');
-    addedFile.createSync(recursive: true);
-    addedFile.writeAsStringSync('new file contents');
+      final File addedFile = workingDir.childFile('added.file');
+      addedFile.createSync(recursive: true);
+      addedFile.writeAsStringSync('new file contents');
 
-    final File manifestFile = workingDir.childFile('.migrate_manifest');
-    manifestFile.createSync(recursive: true);
-    manifestFile.writeAsStringSync('''
+      final File manifestFile = workingDir.childFile('.migrate_manifest');
+      manifestFile.createSync(recursive: true);
+      manifestFile.writeAsStringSync('''
 merged_files:
   - pubspec.yaml
 conflict_files:
@@ -137,11 +150,12 @@ added_files:
 deleted_files:
 ''');
 
-    // Add conflict file
-    final File conflictFile =
-        workingDir.childDirectory('conflict').childFile('conflict.file');
-    conflictFile.createSync(recursive: true);
-    conflictFile.writeAsStringSync('''
+      // Add conflict file
+      final File conflictFile = workingDir
+          .childDirectory('conflict')
+          .childFile('conflict.file');
+      conflictFile.createSync(recursive: true);
+      conflictFile.writeAsStringSync('''
 line1
 <<<<<<< /conflcit/conflict.file
 line2
@@ -151,23 +165,26 @@ linetwo
 line3
 ''', flush: true);
 
-    final File conflictFileOriginal =
-        appDir.childDirectory('conflict').childFile('conflict.file');
-    conflictFileOriginal.createSync(recursive: true);
-    conflictFileOriginal.writeAsStringSync('''
+      final File conflictFileOriginal = appDir
+          .childDirectory('conflict')
+          .childFile('conflict.file');
+      conflictFileOriginal.createSync(recursive: true);
+      conflictFileOriginal.writeAsStringSync('''
 line1
 line2
 line3
 ''', flush: true);
 
-    logger.clear();
-    await createTestCommandRunner(command).run(<String>[
-      'apply',
-      '--staging-directory=${workingDir.path}',
-      '--project-directory=${appDir.path}',
-      '--flutter-subcommand',
-    ]);
-    expect(logger.statusText, contains(r'''
+      logger.clear();
+      await createTestCommandRunner(command).run(<String>[
+        'apply',
+        '--staging-directory=${workingDir.path}',
+        '--project-directory=${appDir.path}',
+        '--flutter-subcommand',
+      ]);
+      expect(
+        logger.statusText,
+        contains(r'''
 Added files:
   - added.file
 Modified files:
@@ -177,39 +194,52 @@ Unable to apply migration. The following files in the migration working director
 Conflicting files found. Resolve these conflicts and try again.
 Guided conflict resolution wizard:
 
-    $ flutter migrate resolve-conflicts'''));
+    $ flutter migrate resolve-conflicts'''),
+      );
 
-    conflictFile.writeAsStringSync('''
+      conflictFile.writeAsStringSync('''
 line1
 linetwo
 line3
 ''', flush: true);
 
-    logger.clear();
-    await createTestCommandRunner(command).run(<String>[
-      'apply',
-      '--staging-directory=${workingDir.path}',
-      '--project-directory=${appDir.path}',
-      '--flutter-subcommand',
-    ]);
-    expect(
+      logger.clear();
+      await createTestCommandRunner(command).run(<String>[
+        'apply',
+        '--staging-directory=${workingDir.path}',
+        '--project-directory=${appDir.path}',
+        '--flutter-subcommand',
+      ]);
+      expect(
         logger.statusText,
         contains(
-            'There are uncommitted changes in your project. Please git commit, abandon, or stash your changes before trying again.'));
+          'There are uncommitted changes in your project. Please git commit, abandon, or stash your changes before trying again.',
+        ),
+      );
 
-    await processManager
-        .run(<String>['git', 'add', '.'], workingDirectory: appDir.path);
-    await processManager.run(<String>['git', 'commit', '-m', 'Initial commit'],
-        workingDirectory: appDir.path);
+      await processManager.run(<String>[
+        'git',
+        'add',
+        '.',
+      ], workingDirectory: appDir.path);
+      await processManager.run(<String>[
+        'git',
+        'commit',
+        '-m',
+        'Initial commit',
+      ], workingDirectory: appDir.path);
 
-    logger.clear();
-    await createTestCommandRunner(command).run(<String>[
-      'apply',
-      '--staging-directory=${workingDir.path}',
-      '--project-directory=${appDir.path}',
-      '--flutter-subcommand',
-    ]);
-    expect(logger.statusText, contains(r'''
+      logger.clear();
+      await createTestCommandRunner(command).run(<String>[
+        'apply',
+        '--staging-directory=${workingDir.path}',
+        '--project-directory=${appDir.path}',
+        '--flutter-subcommand',
+      ]);
+      expect(
+        logger.statusText,
+        contains(
+          r'''
 Added files:
   - added.file
 Modified files:
@@ -222,15 +252,21 @@ Writing pubspec.yaml
 Writing conflict/conflict.file
 Writing added.file
 Updating .migrate_configs
-Migration complete. You may use commands like `git status`, `git diff` and `git restore <file>` to continue working with the migrated files.'''));
+Migration complete. You may use commands like `git status`, `git diff` and `git restore <file>` to continue working with the migrated files.''',
+        ),
+      );
 
-    expect(pubspecOriginal.readAsStringSync(), contains('# EXTRALINE'));
-    expect(conflictFileOriginal.readAsStringSync(), contains('linetwo'));
-    expect(appDir.childFile('added.file').existsSync(), true);
-    expect(appDir.childFile('added.file').readAsStringSync(),
-        contains('new file contents'));
-  }, overrides: <Type, Generator>{
-    FileSystem: () => fileSystem,
-    ProcessManager: () => processManager,
-  });
+      expect(pubspecOriginal.readAsStringSync(), contains('# EXTRALINE'));
+      expect(conflictFileOriginal.readAsStringSync(), contains('linetwo'));
+      expect(appDir.childFile('added.file').existsSync(), true);
+      expect(
+        appDir.childFile('added.file').readAsStringSync(),
+        contains('new file contents'),
+      );
+    },
+    overrides: <Type, Generator>{
+      FileSystem: () => fileSystem,
+      ProcessManager: () => processManager,
+    },
+  );
 }

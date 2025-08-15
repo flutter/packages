@@ -19,7 +19,8 @@ class PlatformWebView {
       String? keyPath,
       NSObject? object,
       Map<KeyValueChangeKey, Object?>? change,
-    )? observeValue,
+    )?
+    observeValue,
   }) {
     switch (defaultTargetPlatform) {
       case TargetPlatform.iOS:
@@ -39,7 +40,7 @@ class PlatformWebView {
 
   /// Creates a [PlatformWebView] with the native WebView instance.
   PlatformWebView.fromNativeWebView(WKWebView webView)
-      : nativeWebView = webView;
+    : nativeWebView = webView;
 
   /// The underlying native WebView instance.
   late final WKWebView nativeWebView;
@@ -249,8 +250,13 @@ class PlatformWebView {
 
   /// Informs the observing object when the value at the specified key path
   /// relative to the observed object has changed.
-  void Function(NSObject pigeonInstance, String? keyPath, NSObject? object,
-      Map<KeyValueChangeKey, Object>? change)? get observeValue {
+  void Function(
+    NSObject pigeonInstance,
+    String? keyPath,
+    NSObject? object,
+    Map<KeyValueChangeKey, Object>? change,
+  )?
+  get observeValue {
     final WKWebView webView = nativeWebView;
     switch (webView) {
       case UIViewWKWebView():

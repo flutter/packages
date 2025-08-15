@@ -104,18 +104,23 @@ class GooglePlayProductDetails extends ProductDetails {
     if (productDetails.productType == ProductType.inapp) {
       return <GooglePlayProductDetails>[
         GooglePlayProductDetails._fromOneTimePurchaseProductDetails(
-            productDetails),
+          productDetails,
+        ),
       ];
     } else {
       final List<GooglePlayProductDetails> productDetailList =
           <GooglePlayProductDetails>[];
-      for (int subscriptionIndex = 0;
-          subscriptionIndex < productDetails.subscriptionOfferDetails!.length;
-          subscriptionIndex++) {
-        productDetailList.add(GooglePlayProductDetails._fromSubscription(
-          productDetails,
-          subscriptionIndex,
-        ));
+      for (
+        int subscriptionIndex = 0;
+        subscriptionIndex < productDetails.subscriptionOfferDetails!.length;
+        subscriptionIndex++
+      ) {
+        productDetailList.add(
+          GooglePlayProductDetails._fromSubscription(
+            productDetails,
+            subscriptionIndex,
+          ),
+        );
       }
 
       return productDetailList;
@@ -153,9 +158,11 @@ class GooglePlayProductDetails extends ProductDetails {
 
   /// The offerToken of the subscription this [GooglePlayProductDetails]
   /// object was contructed for, or `null` if it was not a subscription.
-  String? get offerToken => subscriptionIndex != null &&
-          productDetails.subscriptionOfferDetails != null
-      ? productDetails
-          .subscriptionOfferDetails![subscriptionIndex!].offerIdToken
-      : null;
+  String? get offerToken =>
+      subscriptionIndex != null &&
+              productDetails.subscriptionOfferDetails != null
+          ? productDetails
+              .subscriptionOfferDetails![subscriptionIndex!]
+              .offerIdToken
+          : null;
 }

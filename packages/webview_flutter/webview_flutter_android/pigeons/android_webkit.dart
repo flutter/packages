@@ -16,7 +16,6 @@ import 'package:pigeon/pigeon.dart';
     ),
   ),
 )
-
 /// Mode of how to select files for a file chooser.
 ///
 /// See https://developer.android.com/reference/android/webkit/WebChromeClient.FileChooserParams.
@@ -269,21 +268,15 @@ abstract class CookieManager {
 ///
 /// See https://developer.android.com/reference/android/webkit/WebView.
 @ProxyApi(
-  kotlinOptions: KotlinProxyApiOptions(
-    fullClassName: 'android.webkit.WebView',
-  ),
+  kotlinOptions: KotlinProxyApiOptions(fullClassName: 'android.webkit.WebView'),
 )
 abstract class WebView extends View {
   WebView();
 
   /// This is called in response to an internal scroll in this view (i.e., the
   /// view scrolled its own contents).
-  late void Function(
-    int left,
-    int top,
-    int oldLeft,
-    int oldTop,
-  )? onScrollChanged;
+  late void Function(int left, int top, int oldLeft, int oldTop)?
+  onScrollChanged;
 
   /// The WebSettings object used to control the settings for this WebView.
   @attached
@@ -470,21 +463,24 @@ abstract class WebViewClient {
     WebView webView,
     WebResourceRequest request,
     WebResourceResponse response,
-  )? onReceivedHttpError;
+  )?
+  onReceivedHttpError;
 
   /// Report web resource loading error to the host application.
   late void Function(
     WebView webView,
     WebResourceRequest request,
     WebResourceError error,
-  )? onReceivedRequestError;
+  )?
+  onReceivedRequestError;
 
   /// Report web resource loading error to the host application.
   late void Function(
     WebView webView,
     WebResourceRequest request,
     WebResourceErrorCompat error,
-  )? onReceivedRequestErrorCompat;
+  )?
+  onReceivedRequestErrorCompat;
 
   /// Report an error to the host application.
   late void Function(
@@ -492,25 +488,21 @@ abstract class WebViewClient {
     int errorCode,
     String description,
     String failingUrl,
-  )? onReceivedError;
+  )?
+  onReceivedError;
 
   /// Give the host application a chance to take control when a URL is about to
   /// be loaded in the current WebView.
-  late void Function(
-    WebView webView,
-    WebResourceRequest request,
-  )? requestLoading;
+  late void Function(WebView webView, WebResourceRequest request)?
+  requestLoading;
 
   /// Give the host application a chance to take control when a URL is about to
   /// be loaded in the current WebView.
   late void Function(WebView webView, String url)? urlLoading;
 
   /// Notify the host application to update its visited links database.
-  late void Function(
-    WebView webView,
-    String url,
-    bool isReload,
-  )? doUpdateVisitedHistory;
+  late void Function(WebView webView, String url, bool isReload)?
+  doUpdateVisitedHistory;
 
   /// Notifies the host application that the WebView received an HTTP
   /// authentication request.
@@ -519,15 +511,13 @@ abstract class WebViewClient {
     HttpAuthHandler handler,
     String host,
     String realm,
-  )? onReceivedHttpAuthRequest;
+  )?
+  onReceivedHttpAuthRequest;
 
   /// Ask the host application if the browser should resend data as the
   /// requested page was a result of a POST.
-  void Function(
-    WebView view,
-    AndroidMessage dontResend,
-    AndroidMessage resend,
-  )? onFormResubmission;
+  void Function(WebView view, AndroidMessage dontResend, AndroidMessage resend)?
+  onFormResubmission;
 
   /// Notify the host application that the WebView will load the resource
   /// specified by the given url.
@@ -538,27 +528,18 @@ abstract class WebViewClient {
   void Function(WebView view, String url)? onPageCommitVisible;
 
   /// Notify the host application to handle a SSL client certificate request.
-  void Function(
-    WebView view,
-    ClientCertRequest request,
-  )? onReceivedClientCertRequest;
+  void Function(WebView view, ClientCertRequest request)?
+  onReceivedClientCertRequest;
 
   /// Notify the host application that a request to automatically log in the
   /// user has been processed.
-  void Function(
-    WebView view,
-    String realm,
-    String? account,
-    String args,
-  )? onReceivedLoginRequest;
+  void Function(WebView view, String realm, String? account, String args)?
+  onReceivedLoginRequest;
 
   /// Notifies the host application that an SSL error occurred while loading a
   /// resource.
-  void Function(
-    WebView view,
-    SslErrorHandler handler,
-    SslError error,
-  )? onReceivedSslError;
+  void Function(WebView view, SslErrorHandler handler, SslError error)?
+  onReceivedSslError;
 
   /// Notify the host application that the scale applied to the WebView has
   /// changed.
@@ -597,7 +578,8 @@ abstract class DownloadListener {
     String contentDisposition,
     String mimetype,
     int contentLength,
-  ) onDownloadStart;
+  )
+  onDownloadStart;
 }
 
 /// Handles notification of JavaScript dialogs, favicons, titles, and the
@@ -618,10 +600,8 @@ abstract class WebChromeClient {
 
   /// Tell the client to show a file chooser.
   @async
-  late List<String> Function(
-    WebView webView,
-    FileChooserParams params,
-  ) onShowFileChooser;
+  late List<String> Function(WebView webView, FileChooserParams params)
+  onShowFileChooser;
 
   /// Notify the host application that web content is requesting permission to
   /// access the specified resources and the permission currently isn't granted
@@ -629,10 +609,7 @@ abstract class WebChromeClient {
   late void Function(PermissionRequest request)? onPermissionRequest;
 
   /// Callback to Dart function `WebChromeClient.onShowCustomView`.
-  late void Function(
-    View view,
-    CustomViewCallback callback,
-  )? onShowCustomView;
+  late void Function(View view, CustomViewCallback callback)? onShowCustomView;
 
   /// Notify the host application that the current page has entered full screen
   /// mode.
@@ -641,10 +618,8 @@ abstract class WebChromeClient {
   /// Notify the host application that web content from the specified origin is
   /// attempting to use the Geolocation API, but no permission state is
   /// currently set for that origin.
-  late void Function(
-    String origin,
-    GeolocationPermissionsCallback callback,
-  )? onGeolocationPermissionsShowPrompt;
+  late void Function(String origin, GeolocationPermissionsCallback callback)?
+  onGeolocationPermissionsShowPrompt;
 
   /// Notify the host application that a request for Geolocation permissions,
   /// made with a previous call to `onGeolocationPermissionsShowPrompt` has been
@@ -672,7 +647,8 @@ abstract class WebChromeClient {
     String url,
     String message,
     String defaultValue,
-  )? onJsPrompt;
+  )?
+  onJsPrompt;
 
   /// Sets the required synchronous return value for the Java method,
   /// `WebChromeClient.onShowFileChooser(...)`.
@@ -858,9 +834,7 @@ abstract class CustomViewCallback {
 ///
 /// See https://developer.android.com/reference/android/view/View.
 @ProxyApi(
-  kotlinOptions: KotlinProxyApiOptions(
-    fullClassName: 'android.view.View',
-  ),
+  kotlinOptions: KotlinProxyApiOptions(fullClassName: 'android.view.View'),
 )
 abstract class View {
   /// Set the scrolled position of your view.

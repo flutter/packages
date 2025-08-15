@@ -40,19 +40,19 @@ class AdDisplayContainer extends StatelessWidget {
     Iterable<CompanionAdSlot> companionSlots = const <CompanionAdSlot>[],
     TextDirection layoutDirection = TextDirection.ltr,
   }) : this.fromPlatformCreationParams(
-          key: key,
-          params: PlatformAdDisplayContainerCreationParams(
-            onContainerAdded: (PlatformAdDisplayContainer container) {
-              onContainerAdded(AdDisplayContainer.fromPlatform(
-                platform: container,
-              ));
-            },
-            companionSlots: companionSlots.map(
-              (CompanionAdSlot slot) => slot.platform,
-            ),
-            layoutDirection: layoutDirection,
-          ),
-        );
+         key: key,
+         params: PlatformAdDisplayContainerCreationParams(
+           onContainerAdded: (PlatformAdDisplayContainer container) {
+             onContainerAdded(
+               AdDisplayContainer.fromPlatform(platform: container),
+             );
+           },
+           companionSlots: companionSlots.map(
+             (CompanionAdSlot slot) => slot.platform,
+           ),
+           layoutDirection: layoutDirection,
+         ),
+       );
 
   /// Constructs an [AdDisplayContainer] from creation params for a specific platform.
   ///
@@ -85,9 +85,9 @@ class AdDisplayContainer extends StatelessWidget {
     Key? key,
     required PlatformAdDisplayContainerCreationParams params,
   }) : this.fromPlatform(
-          key: key,
-          platform: PlatformAdDisplayContainer(params),
-        );
+         key: key,
+         platform: PlatformAdDisplayContainer(params),
+       );
 
   /// Constructs an [AdDisplayContainer] from a specific platform
   /// implementation.

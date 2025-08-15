@@ -50,9 +50,9 @@ class WebViewRequest {
 
   /// Serializes the [WebViewRequest] to JSON.
   Map<String, dynamic> toJson() => <String, dynamic>{
-        'uri': uri.toString(),
-        'method': method.serialize(),
-        'headers': headers,
-        'body': body,
-      };
+    'uri': uri.toString(),
+    'method': method.serialize(),
+    'headers': headers,
+    'body': body,
+  };
 }

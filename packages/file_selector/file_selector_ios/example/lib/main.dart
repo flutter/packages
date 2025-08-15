@@ -30,8 +30,8 @@ class MyApp extends StatelessWidget {
       home: const HomePage(),
       routes: <String, WidgetBuilder>{
         '/open/image': (BuildContext context) => const OpenImagePage(),
-        '/open/images': (BuildContext context) =>
-            const OpenMultipleImagesPage(),
+        '/open/images':
+            (BuildContext context) => const OpenMultipleImagesPage(),
         '/open/text': (BuildContext context) => const OpenTextPage(),
         '/open/any': (BuildContext context) => const OpenAnyPage(),
       },

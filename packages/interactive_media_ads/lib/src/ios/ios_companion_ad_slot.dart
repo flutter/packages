@@ -20,8 +20,8 @@ final class IOSCompanionAdSlotCreationParams
     required super.size,
     super.onClicked,
     @visibleForTesting InteractiveMediaAdsProxy? proxy,
-  })  : _proxy = proxy ?? const InteractiveMediaAdsProxy(),
-        super();
+  }) : _proxy = proxy ?? const InteractiveMediaAdsProxy(),
+       super();
 
   /// Creates an [IOSCompanionAdSlotCreationParams] from an instance of
   /// [PlatformCompanionAdSlotCreationParams].
@@ -44,8 +44,9 @@ base class IOSCompanionAdSlot extends PlatformCompanionAdSlot {
   /// Constructs an [IOSCompanionAdSlot].
   IOSCompanionAdSlot(super.params) : super.implementation();
 
-  late final IOSCompanionAdSlotCreationParams _iosParams =
-      _initIOSParams(params);
+  late final IOSCompanionAdSlotCreationParams _iosParams = _initIOSParams(
+    params,
+  );
 
   // View used to display the Ad.
   late final UIView _view = _iosParams._proxy.newUIView();
@@ -76,20 +77,22 @@ base class IOSCompanionAdSlot extends PlatformCompanionAdSlot {
       return params;
     }
 
-    return IOSCompanionAdSlotCreationParams
-        .fromPlatformCompanionAdSlotCreationParamsSize(params);
+    return IOSCompanionAdSlotCreationParams.fromPlatformCompanionAdSlotCreationParamsSize(
+      params,
+    );
   }
 
   IMACompanionAdSlot _initCompanionAdSlot() {
     final IMACompanionAdSlot adSlot = switch (params.size) {
-      final CompanionAdSlotSizeFixed size =>
-        _iosParams._proxy.sizeIMACompanionAdSlot(
-          view: _view,
-          width: size.width,
-          height: size.height,
-        ),
-      CompanionAdSlotSizeFluid() =>
-        _iosParams._proxy.newIMACompanionAdSlot(view: _view),
+      final CompanionAdSlotSizeFixed size => _iosParams._proxy
+          .sizeIMACompanionAdSlot(
+            view: _view,
+            width: size.width,
+            height: size.height,
+          ),
+      CompanionAdSlotSizeFluid() => _iosParams._proxy.newIMACompanionAdSlot(
+        view: _view,
+      ),
     };
 
     if (params.onClicked != null) {

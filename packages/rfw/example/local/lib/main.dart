@@ -74,12 +74,15 @@ class _ExampleState extends State<Example> {
     // server, and decode it with [decodeLibraryBlob] rather than parsing the
     // text version using [parseLibraryFile]. However, to make it easier to
     // play with this sample, this uses the slower text format.
-    _runtime.update(remoteName, parseLibraryFile('''
+    _runtime.update(
+      remoteName,
+      parseLibraryFile('''
       import local;
       widget root = GreenBox(
         child: Hello(name: "World"),
       );
-    '''));
+    '''),
+    );
   }
 
   @override
@@ -94,4 +97,5 @@ class _ExampleState extends State<Example> {
     );
   }
 }
+
 // #enddocregion Example

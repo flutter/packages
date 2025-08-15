@@ -159,11 +159,10 @@ class InAppPurchase implements InAppPurchasePlatformAdditionProvider {
   Future<bool> buyConsumable({
     required PurchaseParam purchaseParam,
     bool autoConsume = true,
-  }) =>
-      InAppPurchasePlatform.instance.buyConsumable(
-        purchaseParam: purchaseParam,
-        autoConsume: autoConsume,
-      );
+  }) => InAppPurchasePlatform.instance.buyConsumable(
+    purchaseParam: purchaseParam,
+    autoConsume: autoConsume,
+  );
 
   /// Mark that purchased content has been delivered to the user.
   ///

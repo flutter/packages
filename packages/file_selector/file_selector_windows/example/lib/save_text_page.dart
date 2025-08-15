@@ -18,20 +18,14 @@ class SaveTextPage extends StatelessWidget {
 
   Future<void> _saveFile() async {
     final String fileName = _nameController.text;
-    final FileSaveLocation? result =
-        await FileSelectorPlatform.instance.getSaveLocation(
-      options: SaveDialogOptions(suggestedName: fileName),
-      acceptedTypeGroups: const <XTypeGroup>[
-        XTypeGroup(
-          label: 'Plain text',
-          extensions: <String>['txt'],
-        ),
-        XTypeGroup(
-          label: 'JSON',
-          extensions: <String>['json'],
-        ),
-      ],
-    );
+    final FileSaveLocation? result = await FileSelectorPlatform.instance
+        .getSaveLocation(
+          options: SaveDialogOptions(suggestedName: fileName),
+          acceptedTypeGroups: const <XTypeGroup>[
+            XTypeGroup(label: 'Plain text', extensions: <String>['txt']),
+            XTypeGroup(label: 'JSON', extensions: <String>['json']),
+          ],
+        );
     // Operation was canceled by the user.
     if (result == null) {
       return;
@@ -56,9 +50,7 @@ class SaveTextPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Save text into a file'),
-      ),
+      appBar: AppBar(title: const Text('Save text into a file')),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

@@ -27,20 +27,22 @@ class GooglePlayPurchaseDetails extends PurchaseDetails {
   ///
   /// The list contains one entry per product.
   static List<GooglePlayPurchaseDetails> fromPurchase(
-      PurchaseWrapper purchase) {
+    PurchaseWrapper purchase,
+  ) {
     return purchase.products.map((String productId) {
       final GooglePlayPurchaseDetails purchaseDetails =
           GooglePlayPurchaseDetails(
-        purchaseID: purchase.orderId,
-        productID: productId,
-        verificationData: PurchaseVerificationData(
-            localVerificationData: purchase.originalJson,
-            serverVerificationData: purchase.purchaseToken,
-            source: kIAPSource),
-        transactionDate: purchase.purchaseTime.toString(),
-        billingClientPurchase: purchase,
-        status: purchaseStatusFromWrapper(purchase.purchaseState),
-      );
+            purchaseID: purchase.orderId,
+            productID: productId,
+            verificationData: PurchaseVerificationData(
+              localVerificationData: purchase.originalJson,
+              serverVerificationData: purchase.purchaseToken,
+              source: kIAPSource,
+            ),
+            transactionDate: purchase.purchaseTime.toString(),
+            billingClientPurchase: purchase,
+            status: purchaseStatusFromWrapper(purchase.purchaseState),
+          );
 
       if (purchaseDetails.status == PurchaseStatus.error) {
         purchaseDetails.error = IAPError(

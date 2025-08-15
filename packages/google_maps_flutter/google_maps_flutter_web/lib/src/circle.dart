@@ -11,8 +11,8 @@ class CircleController {
     required gmaps.Circle circle,
     bool consumeTapEvents = false,
     VoidCallback? onTap,
-  })  : _circle = circle,
-        _consumeTapEvents = consumeTapEvents {
+  }) : _circle = circle,
+       _consumeTapEvents = consumeTapEvents {
     if (onTap != null) {
       circle.onClick.listen((_) {
         onTap.call();

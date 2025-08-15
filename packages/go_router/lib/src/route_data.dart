@@ -155,8 +155,8 @@ abstract class GoRouteData extends RouteData {
   void replace(BuildContext context) => throw _shouldBeGeneratedError;
 
   static UnimplementedError get _shouldBeGeneratedError => UnimplementedError(
-        'Should be generated using [Type-safe routing](https://pub.dev/documentation/go_router/latest/topics/Type-safe%20routes-topic.html).',
-      );
+    'Should be generated using [Type-safe routing](https://pub.dev/documentation/go_router/latest/topics/Type-safe%20routes-topic.html).',
+  );
 }
 
 /// A class to represent a [ShellRoute] in
@@ -172,15 +172,10 @@ abstract class ShellRouteData extends RouteData {
     BuildContext context,
     GoRouterState state,
     Widget navigator,
-  ) =>
-      const NoOpPage();
+  ) => const NoOpPage();
 
   /// [builder] is used to build the widget
-  Widget builder(
-    BuildContext context,
-    GoRouterState state,
-    Widget navigator,
-  ) =>
+  Widget builder(BuildContext context, GoRouterState state, Widget navigator) =>
       throw UnimplementedError(
         'One of `builder` or `pageBuilder` must be implemented.',
       );
@@ -215,23 +210,13 @@ abstract class ShellRouteData extends RouteData {
       BuildContext context,
       GoRouterState state,
       Widget navigator,
-    ) =>
-        factoryImpl(state).builder(
-          context,
-          state,
-          navigator,
-        );
+    ) => factoryImpl(state).builder(context, state, navigator);
 
     Page<void> pageBuilder(
       BuildContext context,
       GoRouterState state,
       Widget navigator,
-    ) =>
-        factoryImpl(state).pageBuilder(
-          context,
-          state,
-          navigator,
-        );
+    ) => factoryImpl(state).pageBuilder(context, state, navigator);
 
     return ShellRoute(
       builder: builder,
@@ -248,9 +233,7 @@ abstract class ShellRouteData extends RouteData {
   /// Used to cache [ShellRouteData] that corresponds to a given [GoRouterState]
   /// to minimize the number of times it has to be deserialized.
   static final Expando<ShellRouteData> _stateObjectExpando =
-      Expando<ShellRouteData>(
-    'GoRouteState to ShellRouteData expando',
-  );
+      Expando<ShellRouteData>('GoRouteState to ShellRouteData expando');
 }
 
 /// Base class for supporting
@@ -272,8 +255,7 @@ abstract class StatefulShellRouteData extends RouteData {
     BuildContext context,
     GoRouterState state,
     StatefulNavigationShell navigationShell,
-  ) =>
-      const NoOpPage();
+  ) => const NoOpPage();
 
   /// [builder] is used to build the widget
   Widget builder(
@@ -303,23 +285,13 @@ abstract class StatefulShellRouteData extends RouteData {
       BuildContext context,
       GoRouterState state,
       StatefulNavigationShell navigationShell,
-    ) =>
-        factoryImpl(state).builder(
-          context,
-          state,
-          navigationShell,
-        );
+    ) => factoryImpl(state).builder(context, state, navigationShell);
 
     Page<void> pageBuilder(
       BuildContext context,
       GoRouterState state,
       StatefulNavigationShell navigationShell,
-    ) =>
-        factoryImpl(state).pageBuilder(
-          context,
-          state,
-          navigationShell,
-        );
+    ) => factoryImpl(state).pageBuilder(context, state, navigationShell);
 
     FutureOr<String?> redirect(BuildContext context, GoRouterState state) =>
         factoryImpl(state).redirect(context, state);
@@ -349,8 +321,8 @@ abstract class StatefulShellRouteData extends RouteData {
   /// to minimize the number of times it has to be deserialized.
   static final Expando<StatefulShellRouteData> _stateObjectExpando =
       Expando<StatefulShellRouteData>(
-    'GoRouteState to StatefulShellRouteData expando',
-  );
+        'GoRouteState to StatefulShellRouteData expando',
+      );
 }
 
 /// Base class for supporting
@@ -434,9 +406,7 @@ class TypedGoRoute<T extends GoRouteData> extends TypedRoute<T> {
 @Target(<TargetKind>{TargetKind.library, TargetKind.classType})
 class TypedShellRoute<T extends ShellRouteData> extends TypedRoute<T> {
   /// Default const constructor
-  const TypedShellRoute({
-    this.routes = const <TypedRoute<RouteData>>[],
-  });
+  const TypedShellRoute({this.routes = const <TypedRoute<RouteData>>[]});
 
   /// Child route definitions.
   ///

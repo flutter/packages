@@ -59,4 +59,5 @@ void handleIntroductoryPricePeriod(ProductDetails productDetails) {
     }
   }
 }
+
 // #enddocregion subscription-introductory-price

@@ -5,9 +5,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-void main() => runApp(
-      const RootRestorationScope(restorationId: 'root', child: App()),
-    );
+void main() =>
+    runApp(const RootRestorationScope(restorationId: 'root', child: App()));
 
 /// The main app.
 class App extends StatefulWidget {
@@ -32,25 +31,25 @@ class _AppState extends State<App> with RestorationMixin {
 
   @override
   Widget build(BuildContext context) => MaterialApp.router(
-        routerConfig: _router,
-        title: App.title,
-        restorationScopeId: 'app',
-      );
+    routerConfig: _router,
+    title: App.title,
+    restorationScopeId: 'app',
+  );
 
   final GoRouter _router = GoRouter(
     routes: <GoRoute>[
       // restorationId set for the route automatically
       GoRoute(
         path: '/',
-        builder: (BuildContext context, GoRouterState state) =>
-            const Page1Screen(),
+        builder:
+            (BuildContext context, GoRouterState state) => const Page1Screen(),
       ),
 
       // restorationId set for the route automatically
       GoRoute(
         path: '/page2',
-        builder: (BuildContext context, GoRouterState state) =>
-            const Page2Screen(),
+        builder:
+            (BuildContext context, GoRouterState state) => const Page2Screen(),
       ),
     ],
     restorationScopeId: 'router',
@@ -64,19 +63,19 @@ class Page1Screen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: const Text(App.title)),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              ElevatedButton(
-                onPressed: () => context.go('/page2'),
-                child: const Text('Go to page 2'),
-              ),
-            ],
+    appBar: AppBar(title: const Text(App.title)),
+    body: Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          ElevatedButton(
+            onPressed: () => context.go('/page2'),
+            child: const Text('Go to page 2'),
           ),
-        ),
-      );
+        ],
+      ),
+    ),
+  );
 }
 
 /// The screen of the second page.
@@ -86,17 +85,17 @@ class Page2Screen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: const Text(App.title)),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              ElevatedButton(
-                onPressed: () => context.go('/'),
-                child: const Text('Go to home page'),
-              ),
-            ],
+    appBar: AppBar(title: const Text(App.title)),
+    body: Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          ElevatedButton(
+            onPressed: () => context.go('/'),
+            child: const Text('Go to home page'),
           ),
-        ),
-      );
+        ],
+      ),
+    ),
+  );
 }

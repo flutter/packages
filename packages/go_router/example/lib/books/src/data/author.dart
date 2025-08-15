@@ -7,10 +7,7 @@ import 'book.dart';
 /// Author data class.
 class Author {
   /// Creates an author data object.
-  Author({
-    required this.id,
-    required this.name,
-  });
+  Author({required this.id, required this.name});
 
   /// The id of the author.
   final int id;

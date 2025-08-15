@@ -8,7 +8,7 @@ import 'types.dart';
 class GroundOverlayUpdates extends MapsObjectUpdates<GroundOverlay> {
   /// Computes [GroundOverlayUpdates] given previous and current [GroundOverlay]s.
   GroundOverlayUpdates.from(super.previous, super.current)
-      : super.from(objectName: 'groundOverlay');
+    : super.from(objectName: 'groundOverlay');
 
   /// Set of GroundOverlays to be added in this update.
   Set<GroundOverlay> get groundOverlaysToAdd => objectsToAdd;

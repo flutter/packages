@@ -4,13 +4,15 @@
 
 import 'package:pigeon/pigeon.dart';
 
-@ConfigurePigeon(PigeonOptions(
-  dartOut: 'lib/src/messages.g.dart',
-  javaOptions: JavaOptions(package: 'io.flutter.plugins.urllauncher'),
-  javaOut: 'android/src/main/java/io/flutter/plugins/urllauncher/Messages.java',
-  copyrightHeader: 'pigeons/copyright.txt',
-))
-
+@ConfigurePigeon(
+  PigeonOptions(
+    dartOut: 'lib/src/messages.g.dart',
+    javaOptions: JavaOptions(package: 'io.flutter.plugins.urllauncher'),
+    javaOut:
+        'android/src/main/java/io/flutter/plugins/urllauncher/Messages.java',
+    copyrightHeader: 'pigeons/copyright.txt',
+  ),
+)
 /// Configuration options for an in-app WebView.
 class WebViewOptions {
   const WebViewOptions({

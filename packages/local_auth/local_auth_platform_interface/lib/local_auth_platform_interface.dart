@@ -80,7 +80,8 @@ abstract class LocalAuthPlatform extends PlatformInterface {
   /// - BiometricType.weak
   Future<List<BiometricType>> getEnrolledBiometrics() async {
     throw UnimplementedError(
-        'getAvailableBiometrics() has not been implemented.');
+      'getAvailableBiometrics() has not been implemented.',
+    );
   }
 
   /// Returns true if device is capable of checking biometrics or is able to
