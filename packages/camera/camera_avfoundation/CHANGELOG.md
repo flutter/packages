@@ -1,3 +1,8 @@
+## 0.9.21+2
+
+* Migrates `DefaultCamera` initialization to Swift.
+* Removes unused `textureId` field of `FLTCam` class.
+
 ## 0.9.21+1
 
 * Migrates `startImageStream` and `setUpCaptureSessionForAudioIfNeeded` methods to Swift.
