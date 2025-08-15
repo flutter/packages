@@ -57,7 +57,7 @@ import io.flutter.plugins.webviewflutter.WebViewFlutterAndroidExternalApi;
 The Payment Request API can be enabled by calling `AndroidWebViewController.setPaymentRequestEnabled` after
 checking `AndroidWebViewController.isWebViewFeatureSupported`.
 
-<?code-excerpt "example/lib/main.dart (payment_request_example)"?>
+<?code-excerpt "example/lib/readme_excerpts.dart (payment_request_example)"?>
 ```dart
 final bool paymentRequestEnabled = await androidController
     .isWebViewFeatureSupported(WebViewFeatureType.paymentRequest);
