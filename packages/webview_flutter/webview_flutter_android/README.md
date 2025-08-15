@@ -62,10 +62,12 @@ has entered fullscreen mode. This can be done by calling
 ```dart
 androidController.setCustomWidgetCallbacks(
   onShowCustomWidget: (Widget widget, OnHideCustomWidgetCallback callback) {
-    Navigator.of(context).push(MaterialPageRoute<void>(
-      builder: (BuildContext context) => widget,
-      fullscreenDialog: true,
-    ));
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (BuildContext context) => widget,
+        fullscreenDialog: true,
+      ),
+    );
   },
   onHideCustomWidget: () {
     Navigator.of(context).pop();

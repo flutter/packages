@@ -111,7 +111,9 @@ class _AdExampleWidgetState extends State<AdExampleWidget>
   Widget build(BuildContext context) {
     // ···
   }
+
 }
+
 ```
 
 ### 4. Add the Video Players
@@ -130,29 +132,31 @@ late final AdDisplayContainer _adDisplayContainer = AdDisplayContainer(
         final AdsManager manager = data.manager;
         _adsManager = data.manager;
 
-        manager.setAdsManagerDelegate(AdsManagerDelegate(
-          onAdEvent: (AdEvent event) {
-            debugPrint('OnAdEvent: ${event.type} => ${event.adData}');
-            switch (event.type) {
-              case AdEventType.loaded:
-                manager.start();
-              case AdEventType.contentPauseRequested:
-                _pauseContent();
-              case AdEventType.contentResumeRequested:
-                _resumeContent();
-              case AdEventType.allAdsCompleted:
-                manager.destroy();
-                _adsManager = null;
-              case AdEventType.clicked:
-              case AdEventType.complete:
-              case _:
-            }
-          },
-          onAdErrorEvent: (AdErrorEvent event) {
-            debugPrint('AdErrorEvent: ${event.error.message}');
-            _resumeContent();
-          },
-        ));
+        manager.setAdsManagerDelegate(
+          AdsManagerDelegate(
+            onAdEvent: (AdEvent event) {
+              debugPrint('OnAdEvent: ${event.type} => ${event.adData}');
+              switch (event.type) {
+                case AdEventType.loaded:
+                  manager.start();
+                case AdEventType.contentPauseRequested:
+                  _pauseContent();
+                case AdEventType.contentResumeRequested:
+                  _resumeContent();
+                case AdEventType.allAdsCompleted:
+                  manager.destroy();
+                  _adsManager = null;
+                case AdEventType.clicked:
+                case AdEventType.complete:
+                case _:
+              }
+            },
+            onAdErrorEvent: (AdErrorEvent event) {
+              debugPrint('AdErrorEvent: ${event.error.message}');
+              _resumeContent();
+            },
+          ),
+        );
 
         manager.init(settings: AdsRenderingSettings(enablePreloading: true));
       },
@@ -172,21 +176,22 @@ late final AdDisplayContainer _adDisplayContainer = AdDisplayContainer(
 void initState() {
   super.initState();
   // ···
-  _contentVideoController = VideoPlayerController.networkUrl(
-    Uri.parse(
-      'https://storage.googleapis.com/gvabox/media/samples/stock.mp4',
-    ),
-  )
-    ..addListener(() {
-      if (_contentVideoController.value.isCompleted) {
-        _adsLoader.contentComplete();
-      }
-      setState(() {});
-    })
-    ..initialize().then((_) {
-      // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
-      setState(() {});
-    });
+  _contentVideoController =
+      VideoPlayerController.networkUrl(
+          Uri.parse(
+            'https://storage.googleapis.com/gvabox/media/samples/stock.mp4',
+          ),
+        )
+        ..addListener(() {
+          if (_contentVideoController.value.isCompleted) {
+            _adsLoader.contentComplete();
+          }
+          setState(() {});
+        })
+        ..initialize().then((_) {
+          // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
+          setState(() {});
+        });
 }
 ```
 
@@ -202,42 +207,44 @@ Widget build(BuildContext context) {
     body: Center(
       child: SizedBox(
         width: 300,
-        child: !_contentVideoController.value.isInitialized
-            ? Container()
-            : AspectRatio(
-                aspectRatio: _contentVideoController.value.aspectRatio,
-                child: Stack(
-                  children: <Widget>[
-                    // The display container must be on screen before any Ads can be
-                    // loaded and can't be removed between ads. This handles clicks for
-                    // ads.
-                    _adDisplayContainer,
-                    if (_shouldShowContentVideo)
-                      VideoPlayer(_contentVideoController)
-                  ],
+        child:
+            !_contentVideoController.value.isInitialized
+                ? Container()
+                : AspectRatio(
+                  aspectRatio: _contentVideoController.value.aspectRatio,
+                  child: Stack(
+                    children: <Widget>[
+                      // The display container must be on screen before any Ads can be
+                      // loaded and can't be removed between ads. This handles clicks for
+                      // ads.
+                      _adDisplayContainer,
+                      if (_shouldShowContentVideo)
+                        VideoPlayer(_contentVideoController),
+                    ],
+                  ),
                 ),
-              ),
       ),
     ),
     floatingActionButton:
         _contentVideoController.value.isInitialized && _shouldShowContentVideo
             ? FloatingActionButton(
-                onPressed: () {
-                  setState(() {
-                    _contentVideoController.value.isPlaying
-                        ? _contentVideoController.pause()
-                        : _contentVideoController.play();
-                  });
-                },
-                child: Icon(
+              onPressed: () {
+                setState(() {
                   _contentVideoController.value.isPlaying
-                      ? Icons.pause
-                      : Icons.play_arrow,
-                ),
-              )
+                      ? _contentVideoController.pause()
+                      : _contentVideoController.play();
+                });
+              },
+              child: Icon(
+                _contentVideoController.value.isPlaying
+                    ? Icons.pause
+                    : Icons.play_arrow,
+              ),
+            )
             : null,
   );
 }
+
 ```
 
 ### 6. Request Ads
@@ -247,10 +254,12 @@ Handle requesting ads and add event listeners to handle when content should be d
 <?code-excerpt "example/lib/readme_example.dart (request_ads)"?>
 ```dart
 Future<void> _requestAds(AdDisplayContainer container) {
-  return _adsLoader.requestAds(AdsRequest(
-    adTagUrl: _adTagUrl,
-    contentProgressProvider: _contentProgressProvider,
-  ));
+  return _adsLoader.requestAds(
+    AdsRequest(
+      adTagUrl: _adTagUrl,
+      contentProgressProvider: _contentProgressProvider,
+    ),
+  );
 }
 
 Future<void> _resumeContent() async {

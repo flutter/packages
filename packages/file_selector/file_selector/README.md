@@ -39,8 +39,9 @@ const XTypeGroup typeGroup = XTypeGroup(
   label: 'images',
   extensions: <String>['jpg', 'png'],
 );
-final XFile? file =
-    await openFile(acceptedTypeGroups: <XTypeGroup>[typeGroup]);
+final XFile? file = await openFile(
+  acceptedTypeGroups: <XTypeGroup>[typeGroup],
+);
 ```
 
 #### Open multiple files at once
@@ -55,10 +56,9 @@ const XTypeGroup pngTypeGroup = XTypeGroup(
   label: 'PNGs',
   extensions: <String>['png'],
 );
-final List<XFile> files = await openFiles(acceptedTypeGroups: <XTypeGroup>[
-  jpgsTypeGroup,
-  pngTypeGroup,
-]);
+final List<XFile> files = await openFiles(
+  acceptedTypeGroups: <XTypeGroup>[jpgsTypeGroup, pngTypeGroup],
+);
 ```
 
 #### Save a file
@@ -66,8 +66,9 @@ final List<XFile> files = await openFiles(acceptedTypeGroups: <XTypeGroup>[
 <?code-excerpt "readme_standalone_excerpts.dart (Save)"?>
 ```dart
 const String fileName = 'suggested_name.txt';
-final FileSaveLocation? result =
-    await getSaveLocation(suggestedName: fileName);
+final FileSaveLocation? result = await getSaveLocation(
+  suggestedName: fileName,
+);
 if (result == null) {
   // Operation was canceled by the user.
   return;
@@ -75,8 +76,11 @@ if (result == null) {
 
 final Uint8List fileData = Uint8List.fromList('Hello World!'.codeUnits);
 const String mimeType = 'text/plain';
-final XFile textFile =
-    XFile.fromData(fileData, mimeType: mimeType, name: fileName);
+final XFile textFile = XFile.fromData(
+  fileData,
+  mimeType: mimeType,
+  name: fileName,
+);
 await textFile.saveTo(result.path);
 ```
 

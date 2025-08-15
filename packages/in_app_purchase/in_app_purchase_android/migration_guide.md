@@ -142,6 +142,7 @@ void handleIntroductoryPricePeriod(ProductDetails productDetails) {
     }
   }
 }
+
 ```
 
 ## Removal of `launchPriceChangeConfirmationFlow`
