@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
 ## 2.4.11
 
 * Updates kotlin version to 2.2.0 to enable gradle 8.11 support.

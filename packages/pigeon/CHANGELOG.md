@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
 ## 26.0.1
 
 * Improves documentation of `ProxyApi` annotation and internal Dart ProxyAPI helper functions.

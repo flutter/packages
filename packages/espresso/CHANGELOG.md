@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
 ## 0.4.0+7
 
 * Removes obsolete code related to supporting SDK <21.

@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
 ## 1.6.0
 
 *  Provides more specific error codes on iOS for authentication failures.
