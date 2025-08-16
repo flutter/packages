@@ -23,26 +23,25 @@ class CameraPreview extends StatelessWidget {
   Widget build(BuildContext context) {
     return controller.value.isInitialized
         ? ValueListenableBuilder<CameraValue>(
-            valueListenable: controller,
-            builder: (BuildContext context, Object? value, Widget? child) {
-              final double cameraAspectRatio =
-                  controller.value.previewSize!.width /
-                      controller.value.previewSize!.height;
-              return AspectRatio(
-                aspectRatio: _isLandscape()
-                    ? cameraAspectRatio
-                    : (1 / cameraAspectRatio),
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: <Widget>[
-                    _wrapInRotatedBox(child: controller.buildPreview()),
-                    child ?? Container(),
-                  ],
-                ),
-              );
-            },
-            child: child,
-          )
+          valueListenable: controller,
+          builder: (BuildContext context, Object? value, Widget? child) {
+            final double cameraAspectRatio =
+                controller.value.previewSize!.width /
+                controller.value.previewSize!.height;
+            return AspectRatio(
+              aspectRatio:
+                  _isLandscape() ? cameraAspectRatio : (1 / cameraAspectRatio),
+              child: Stack(
+                fit: StackFit.expand,
+                children: <Widget>[
+                  _wrapInRotatedBox(child: controller.buildPreview()),
+                  child ?? Container(),
+                ],
+              ),
+            );
+          },
+          child: child,
+        )
         : Container();
   }
 
@@ -51,16 +50,13 @@ class CameraPreview extends StatelessWidget {
       return child;
     }
 
-    return RotatedBox(
-      quarterTurns: _getQuarterTurns(),
-      child: child,
-    );
+    return RotatedBox(quarterTurns: _getQuarterTurns(), child: child);
   }
 
   bool _isLandscape() {
     return <DeviceOrientation>[
       DeviceOrientation.landscapeLeft,
-      DeviceOrientation.landscapeRight
+      DeviceOrientation.landscapeRight,
     ].contains(_getApplicableOrientation());
   }
 
