@@ -11,10 +11,7 @@ import '../types/http_auth_request.dart';
 @immutable
 class WebViewCredential {
   /// Creates a [WebViewCredential].
-  const WebViewCredential({
-    required this.user,
-    required this.password,
-  });
+  const WebViewCredential({required this.user, required this.password});
 
   /// The user name.
   final String user;
