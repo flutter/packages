@@ -103,11 +103,13 @@ class WebWebViewController extends PlatformWebViewController {
     final Completer<void> loading = Completer<void>();
 
     _webWebViewParams.iFrame.addEventListener(
-        'load',
-        () {
-          _webWebViewParams.iFrame.contentDocument?.write(html.toJS);
-          loading.complete();
-        }.toJS);
+      'load',
+      () {
+        _webWebViewParams.iFrame.contentDocument?.write(html.toJS);
+        loading.complete();
+      }.toJS,
+      AddEventListenerOptions(once: true),
+    );
     _webWebViewParams.iFrame.src = baseUrl ?? 'about:blank';
 
     return loading.future;
@@ -139,11 +141,14 @@ class WebWebViewController extends PlatformWebViewController {
         document.createElement('script') as web.HTMLScriptElement;
 
     script.addEventListener(
-        'load',
-        () {
-          body.removeChild(script);
-          run.complete();
-        }.toJS);
+      'load',
+      () {
+        body.removeChild(script);
+        run.complete();
+      }.toJS,
+      AddEventListenerOptions(once: true),
+    );
+
     script.src = Uri.dataFromString(
       javaScript,
       mimeType: 'text/javascript',
