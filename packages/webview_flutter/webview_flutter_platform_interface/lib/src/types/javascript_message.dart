@@ -40,9 +40,7 @@ import 'package:flutter/foundation.dart';
 @immutable
 class JavaScriptMessage {
   /// Creates a new JavaScript message object.
-  const JavaScriptMessage({
-    required this.message,
-  });
+  const JavaScriptMessage({required this.message});
 
   /// The contents of the message that was sent by the JavaScript code.
   final String message;

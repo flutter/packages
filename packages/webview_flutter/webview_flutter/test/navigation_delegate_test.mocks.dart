@@ -46,19 +46,19 @@ class _FakePlatformWebViewCookieManager_0 extends _i1.SmartFake
 class _FakePlatformNavigationDelegate_1 extends _i1.SmartFake
     implements _i3.PlatformNavigationDelegate {
   _FakePlatformNavigationDelegate_1(Object parent, Invocation parentInvocation)
-      : super(parent, parentInvocation);
+    : super(parent, parentInvocation);
 }
 
 class _FakePlatformWebViewController_2 extends _i1.SmartFake
     implements _i4.PlatformWebViewController {
   _FakePlatformWebViewController_2(Object parent, Invocation parentInvocation)
-      : super(parent, parentInvocation);
+    : super(parent, parentInvocation);
 }
 
 class _FakePlatformWebViewWidget_3 extends _i1.SmartFake
     implements _i5.PlatformWebViewWidget {
   _FakePlatformWebViewWidget_3(Object parent, Invocation parentInvocation)
-      : super(parent, parentInvocation);
+    : super(parent, parentInvocation);
 }
 
 class _FakePlatformNavigationDelegateCreationParams_4 extends _i1.SmartFake
@@ -82,48 +82,52 @@ class MockWebViewPlatform extends _i1.Mock implements _i7.WebViewPlatform {
     _i6.PlatformWebViewCookieManagerCreationParams? params,
   ) =>
       (super.noSuchMethod(
-        Invocation.method(#createPlatformCookieManager, [params]),
-        returnValue: _FakePlatformWebViewCookieManager_0(
-          this,
-          Invocation.method(#createPlatformCookieManager, [params]),
-        ),
-      ) as _i2.PlatformWebViewCookieManager);
+            Invocation.method(#createPlatformCookieManager, [params]),
+            returnValue: _FakePlatformWebViewCookieManager_0(
+              this,
+              Invocation.method(#createPlatformCookieManager, [params]),
+            ),
+          )
+          as _i2.PlatformWebViewCookieManager);
 
   @override
   _i3.PlatformNavigationDelegate createPlatformNavigationDelegate(
     _i6.PlatformNavigationDelegateCreationParams? params,
   ) =>
       (super.noSuchMethod(
-        Invocation.method(#createPlatformNavigationDelegate, [params]),
-        returnValue: _FakePlatformNavigationDelegate_1(
-          this,
-          Invocation.method(#createPlatformNavigationDelegate, [params]),
-        ),
-      ) as _i3.PlatformNavigationDelegate);
+            Invocation.method(#createPlatformNavigationDelegate, [params]),
+            returnValue: _FakePlatformNavigationDelegate_1(
+              this,
+              Invocation.method(#createPlatformNavigationDelegate, [params]),
+            ),
+          )
+          as _i3.PlatformNavigationDelegate);
 
   @override
   _i4.PlatformWebViewController createPlatformWebViewController(
     _i6.PlatformWebViewControllerCreationParams? params,
   ) =>
       (super.noSuchMethod(
-        Invocation.method(#createPlatformWebViewController, [params]),
-        returnValue: _FakePlatformWebViewController_2(
-          this,
-          Invocation.method(#createPlatformWebViewController, [params]),
-        ),
-      ) as _i4.PlatformWebViewController);
+            Invocation.method(#createPlatformWebViewController, [params]),
+            returnValue: _FakePlatformWebViewController_2(
+              this,
+              Invocation.method(#createPlatformWebViewController, [params]),
+            ),
+          )
+          as _i4.PlatformWebViewController);
 
   @override
   _i5.PlatformWebViewWidget createPlatformWebViewWidget(
     _i6.PlatformWebViewWidgetCreationParams? params,
   ) =>
       (super.noSuchMethod(
-        Invocation.method(#createPlatformWebViewWidget, [params]),
-        returnValue: _FakePlatformWebViewWidget_3(
-          this,
-          Invocation.method(#createPlatformWebViewWidget, [params]),
-        ),
-      ) as _i5.PlatformWebViewWidget);
+            Invocation.method(#createPlatformWebViewWidget, [params]),
+            returnValue: _FakePlatformWebViewWidget_3(
+              this,
+              Invocation.method(#createPlatformWebViewWidget, [params]),
+            ),
+          )
+          as _i5.PlatformWebViewWidget);
 }
 
 /// A class which mocks [PlatformNavigationDelegate].
@@ -138,92 +142,102 @@ class MockPlatformNavigationDelegate extends _i1.Mock
   @override
   _i6.PlatformNavigationDelegateCreationParams get params =>
       (super.noSuchMethod(
-        Invocation.getter(#params),
-        returnValue: _FakePlatformNavigationDelegateCreationParams_4(
-          this,
-          Invocation.getter(#params),
-        ),
-      ) as _i6.PlatformNavigationDelegateCreationParams);
+            Invocation.getter(#params),
+            returnValue: _FakePlatformNavigationDelegateCreationParams_4(
+              this,
+              Invocation.getter(#params),
+            ),
+          )
+          as _i6.PlatformNavigationDelegateCreationParams);
 
   @override
   _i8.Future<void> setOnNavigationRequest(
     _i3.NavigationRequestCallback? onNavigationRequest,
   ) =>
       (super.noSuchMethod(
-        Invocation.method(#setOnNavigationRequest, [onNavigationRequest]),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+            Invocation.method(#setOnNavigationRequest, [onNavigationRequest]),
+            returnValue: _i8.Future<void>.value(),
+            returnValueForMissingStub: _i8.Future<void>.value(),
+          )
+          as _i8.Future<void>);
 
   @override
   _i8.Future<void> setOnPageStarted(_i3.PageEventCallback? onPageStarted) =>
       (super.noSuchMethod(
-        Invocation.method(#setOnPageStarted, [onPageStarted]),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+            Invocation.method(#setOnPageStarted, [onPageStarted]),
+            returnValue: _i8.Future<void>.value(),
+            returnValueForMissingStub: _i8.Future<void>.value(),
+          )
+          as _i8.Future<void>);
 
   @override
   _i8.Future<void> setOnPageFinished(_i3.PageEventCallback? onPageFinished) =>
       (super.noSuchMethod(
-        Invocation.method(#setOnPageFinished, [onPageFinished]),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+            Invocation.method(#setOnPageFinished, [onPageFinished]),
+            returnValue: _i8.Future<void>.value(),
+            returnValueForMissingStub: _i8.Future<void>.value(),
+          )
+          as _i8.Future<void>);
 
   @override
   _i8.Future<void> setOnHttpError(_i3.HttpResponseErrorCallback? onHttpError) =>
       (super.noSuchMethod(
-        Invocation.method(#setOnHttpError, [onHttpError]),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+            Invocation.method(#setOnHttpError, [onHttpError]),
+            returnValue: _i8.Future<void>.value(),
+            returnValueForMissingStub: _i8.Future<void>.value(),
+          )
+          as _i8.Future<void>);
 
   @override
   _i8.Future<void> setOnProgress(_i3.ProgressCallback? onProgress) =>
       (super.noSuchMethod(
-        Invocation.method(#setOnProgress, [onProgress]),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+            Invocation.method(#setOnProgress, [onProgress]),
+            returnValue: _i8.Future<void>.value(),
+            returnValueForMissingStub: _i8.Future<void>.value(),
+          )
+          as _i8.Future<void>);
 
   @override
   _i8.Future<void> setOnWebResourceError(
     _i3.WebResourceErrorCallback? onWebResourceError,
   ) =>
       (super.noSuchMethod(
-        Invocation.method(#setOnWebResourceError, [onWebResourceError]),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+            Invocation.method(#setOnWebResourceError, [onWebResourceError]),
+            returnValue: _i8.Future<void>.value(),
+            returnValueForMissingStub: _i8.Future<void>.value(),
+          )
+          as _i8.Future<void>);
 
   @override
   _i8.Future<void> setOnUrlChange(_i3.UrlChangeCallback? onUrlChange) =>
       (super.noSuchMethod(
-        Invocation.method(#setOnUrlChange, [onUrlChange]),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+            Invocation.method(#setOnUrlChange, [onUrlChange]),
+            returnValue: _i8.Future<void>.value(),
+            returnValueForMissingStub: _i8.Future<void>.value(),
+          )
+          as _i8.Future<void>);
 
   @override
   _i8.Future<void> setOnHttpAuthRequest(
     _i3.HttpAuthRequestCallback? onHttpAuthRequest,
   ) =>
       (super.noSuchMethod(
-        Invocation.method(#setOnHttpAuthRequest, [onHttpAuthRequest]),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+            Invocation.method(#setOnHttpAuthRequest, [onHttpAuthRequest]),
+            returnValue: _i8.Future<void>.value(),
+            returnValueForMissingStub: _i8.Future<void>.value(),
+          )
+          as _i8.Future<void>);
 
   @override
   _i8.Future<void> setOnSSlAuthError(
     _i3.SslAuthErrorCallback? onSslAuthError,
   ) =>
       (super.noSuchMethod(
-        Invocation.method(#setOnSSlAuthError, [onSslAuthError]),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+            Invocation.method(#setOnSSlAuthError, [onSslAuthError]),
+            returnValue: _i8.Future<void>.value(),
+            returnValueForMissingStub: _i8.Future<void>.value(),
+          )
+          as _i8.Future<void>);
 }
 
 /// A class which mocks [PlatformSslAuthError].
@@ -236,25 +250,31 @@ class MockPlatformSslAuthError extends _i1.Mock
   }
 
   @override
-  String get description => (super.noSuchMethod(
-        Invocation.getter(#description),
-        returnValue: _i10.dummyValue<String>(
-          this,
-          Invocation.getter(#description),
-        ),
-      ) as String);
+  String get description =>
+      (super.noSuchMethod(
+            Invocation.getter(#description),
+            returnValue: _i10.dummyValue<String>(
+              this,
+              Invocation.getter(#description),
+            ),
+          )
+          as String);
 
   @override
-  _i8.Future<void> proceed() => (super.noSuchMethod(
-        Invocation.method(#proceed, []),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+  _i8.Future<void> proceed() =>
+      (super.noSuchMethod(
+            Invocation.method(#proceed, []),
+            returnValue: _i8.Future<void>.value(),
+            returnValueForMissingStub: _i8.Future<void>.value(),
+          )
+          as _i8.Future<void>);
 
   @override
-  _i8.Future<void> cancel() => (super.noSuchMethod(
-        Invocation.method(#cancel, []),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+  _i8.Future<void> cancel() =>
+      (super.noSuchMethod(
+            Invocation.method(#cancel, []),
+            returnValue: _i8.Future<void>.value(),
+            returnValueForMissingStub: _i8.Future<void>.value(),
+          )
+          as _i8.Future<void>);
 }

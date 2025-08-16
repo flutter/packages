@@ -55,7 +55,8 @@ class CupertinoWebView implements WebViewPlatform {
   Future<bool> clearCookies() {
     if (WebViewCookieManagerPlatform.instance == null) {
       throw Exception(
-          'Could not clear cookies as no implementation for WebViewCookieManagerPlatform has been registered.');
+        'Could not clear cookies as no implementation for WebViewCookieManagerPlatform has been registered.',
+      );
     }
     return WebViewCookieManagerPlatform.instance!.clearCookies();
   }

@@ -26,78 +26,43 @@ import 'package:webview_flutter_android/src/android_webkit.g.dart' as _i2;
 
 class _FakePigeonInstanceManager_0 extends _i1.SmartFake
     implements _i2.PigeonInstanceManager {
-  _FakePigeonInstanceManager_0(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakePigeonInstanceManager_0(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeHttpAuthHandler_1 extends _i1.SmartFake
     implements _i2.HttpAuthHandler {
-  _FakeHttpAuthHandler_1(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeHttpAuthHandler_1(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeDownloadListener_2 extends _i1.SmartFake
     implements _i2.DownloadListener {
-  _FakeDownloadListener_2(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeDownloadListener_2(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeSslCertificate_3 extends _i1.SmartFake
     implements _i2.SslCertificate {
-  _FakeSslCertificate_3(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeSslCertificate_3(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeSslError_4 extends _i1.SmartFake implements _i2.SslError {
-  _FakeSslError_4(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeSslError_4(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeSslErrorHandler_5 extends _i1.SmartFake
     implements _i2.SslErrorHandler {
-  _FakeSslErrorHandler_5(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeSslErrorHandler_5(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeX509Certificate_6 extends _i1.SmartFake
     implements _i2.X509Certificate {
-  _FakeX509Certificate_6(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeX509Certificate_6(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 /// A class which mocks [HttpAuthHandler].
@@ -109,64 +74,52 @@ class MockHttpAuthHandler extends _i1.Mock implements _i2.HttpAuthHandler {
   }
 
   @override
-  _i2.PigeonInstanceManager get pigeon_instanceManager => (super.noSuchMethod(
-        Invocation.getter(#pigeon_instanceManager),
-        returnValue: _FakePigeonInstanceManager_0(
-          this,
-          Invocation.getter(#pigeon_instanceManager),
-        ),
-      ) as _i2.PigeonInstanceManager);
-
-  @override
-  _i3.Future<bool> useHttpAuthUsernamePassword() => (super.noSuchMethod(
-        Invocation.method(
-          #useHttpAuthUsernamePassword,
-          [],
-        ),
-        returnValue: _i3.Future<bool>.value(false),
-      ) as _i3.Future<bool>);
-
-  @override
-  _i3.Future<void> cancel() => (super.noSuchMethod(
-        Invocation.method(
-          #cancel,
-          [],
-        ),
-        returnValue: _i3.Future<void>.value(),
-        returnValueForMissingStub: _i3.Future<void>.value(),
-      ) as _i3.Future<void>);
-
-  @override
-  _i3.Future<void> proceed(
-    String? username,
-    String? password,
-  ) =>
+  _i2.PigeonInstanceManager get pigeon_instanceManager =>
       (super.noSuchMethod(
-        Invocation.method(
-          #proceed,
-          [
-            username,
-            password,
-          ],
-        ),
-        returnValue: _i3.Future<void>.value(),
-        returnValueForMissingStub: _i3.Future<void>.value(),
-      ) as _i3.Future<void>);
+            Invocation.getter(#pigeon_instanceManager),
+            returnValue: _FakePigeonInstanceManager_0(
+              this,
+              Invocation.getter(#pigeon_instanceManager),
+            ),
+          )
+          as _i2.PigeonInstanceManager);
 
   @override
-  _i2.HttpAuthHandler pigeon_copy() => (super.noSuchMethod(
-        Invocation.method(
-          #pigeon_copy,
-          [],
-        ),
-        returnValue: _FakeHttpAuthHandler_1(
-          this,
-          Invocation.method(
-            #pigeon_copy,
-            [],
-          ),
-        ),
-      ) as _i2.HttpAuthHandler);
+  _i3.Future<bool> useHttpAuthUsernamePassword() =>
+      (super.noSuchMethod(
+            Invocation.method(#useHttpAuthUsernamePassword, []),
+            returnValue: _i3.Future<bool>.value(false),
+          )
+          as _i3.Future<bool>);
+
+  @override
+  _i3.Future<void> cancel() =>
+      (super.noSuchMethod(
+            Invocation.method(#cancel, []),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
+
+  @override
+  _i3.Future<void> proceed(String? username, String? password) =>
+      (super.noSuchMethod(
+            Invocation.method(#proceed, [username, password]),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
+
+  @override
+  _i2.HttpAuthHandler pigeon_copy() =>
+      (super.noSuchMethod(
+            Invocation.method(#pigeon_copy, []),
+            returnValue: _FakeHttpAuthHandler_1(
+              this,
+              Invocation.method(#pigeon_copy, []),
+            ),
+          )
+          as _i2.HttpAuthHandler);
 }
 
 /// A class which mocks [DownloadListener].
@@ -178,55 +131,50 @@ class MockDownloadListener extends _i1.Mock implements _i2.DownloadListener {
   }
 
   @override
-  void Function(
-    _i2.DownloadListener,
-    String,
-    String,
-    String,
-    String,
-    int,
-  ) get onDownloadStart => (super.noSuchMethod(
-        Invocation.getter(#onDownloadStart),
-        returnValue: (
-          _i2.DownloadListener pigeon_instance,
-          String url,
-          String userAgent,
-          String contentDisposition,
-          String mimetype,
-          int contentLength,
-        ) {},
-      ) as void Function(
-        _i2.DownloadListener,
-        String,
-        String,
-        String,
-        String,
-        int,
-      ));
+  void Function(_i2.DownloadListener, String, String, String, String, int)
+  get onDownloadStart =>
+      (super.noSuchMethod(
+            Invocation.getter(#onDownloadStart),
+            returnValue:
+                (
+                  _i2.DownloadListener pigeon_instance,
+                  String url,
+                  String userAgent,
+                  String contentDisposition,
+                  String mimetype,
+                  int contentLength,
+                ) {},
+          )
+          as void Function(
+            _i2.DownloadListener,
+            String,
+            String,
+            String,
+            String,
+            int,
+          ));
 
   @override
-  _i2.PigeonInstanceManager get pigeon_instanceManager => (super.noSuchMethod(
-        Invocation.getter(#pigeon_instanceManager),
-        returnValue: _FakePigeonInstanceManager_0(
-          this,
-          Invocation.getter(#pigeon_instanceManager),
-        ),
-      ) as _i2.PigeonInstanceManager);
+  _i2.PigeonInstanceManager get pigeon_instanceManager =>
+      (super.noSuchMethod(
+            Invocation.getter(#pigeon_instanceManager),
+            returnValue: _FakePigeonInstanceManager_0(
+              this,
+              Invocation.getter(#pigeon_instanceManager),
+            ),
+          )
+          as _i2.PigeonInstanceManager);
 
   @override
-  _i2.DownloadListener pigeon_copy() => (super.noSuchMethod(
-        Invocation.method(
-          #pigeon_copy,
-          [],
-        ),
-        returnValue: _FakeDownloadListener_2(
-          this,
-          Invocation.method(
-            #pigeon_copy,
-            [],
-          ),
-        ),
-      ) as _i2.DownloadListener);
+  _i2.DownloadListener pigeon_copy() =>
+      (super.noSuchMethod(
+            Invocation.method(#pigeon_copy, []),
+            returnValue: _FakeDownloadListener_2(
+              this,
+              Invocation.method(#pigeon_copy, []),
+            ),
+          )
+          as _i2.DownloadListener);
 }
 
 /// A class which mocks [SslCertificate].
@@ -238,73 +186,66 @@ class MockSslCertificate extends _i1.Mock implements _i2.SslCertificate {
   }
 
   @override
-  _i2.PigeonInstanceManager get pigeon_instanceManager => (super.noSuchMethod(
-        Invocation.getter(#pigeon_instanceManager),
-        returnValue: _FakePigeonInstanceManager_0(
-          this,
-          Invocation.getter(#pigeon_instanceManager),
-        ),
-      ) as _i2.PigeonInstanceManager);
+  _i2.PigeonInstanceManager get pigeon_instanceManager =>
+      (super.noSuchMethod(
+            Invocation.getter(#pigeon_instanceManager),
+            returnValue: _FakePigeonInstanceManager_0(
+              this,
+              Invocation.getter(#pigeon_instanceManager),
+            ),
+          )
+          as _i2.PigeonInstanceManager);
 
   @override
-  _i3.Future<_i2.SslCertificateDName?> getIssuedBy() => (super.noSuchMethod(
-        Invocation.method(
-          #getIssuedBy,
-          [],
-        ),
-        returnValue: _i3.Future<_i2.SslCertificateDName?>.value(),
-      ) as _i3.Future<_i2.SslCertificateDName?>);
+  _i3.Future<_i2.SslCertificateDName?> getIssuedBy() =>
+      (super.noSuchMethod(
+            Invocation.method(#getIssuedBy, []),
+            returnValue: _i3.Future<_i2.SslCertificateDName?>.value(),
+          )
+          as _i3.Future<_i2.SslCertificateDName?>);
 
   @override
-  _i3.Future<_i2.SslCertificateDName?> getIssuedTo() => (super.noSuchMethod(
-        Invocation.method(
-          #getIssuedTo,
-          [],
-        ),
-        returnValue: _i3.Future<_i2.SslCertificateDName?>.value(),
-      ) as _i3.Future<_i2.SslCertificateDName?>);
+  _i3.Future<_i2.SslCertificateDName?> getIssuedTo() =>
+      (super.noSuchMethod(
+            Invocation.method(#getIssuedTo, []),
+            returnValue: _i3.Future<_i2.SslCertificateDName?>.value(),
+          )
+          as _i3.Future<_i2.SslCertificateDName?>);
 
   @override
-  _i3.Future<int?> getValidNotAfterMsSinceEpoch() => (super.noSuchMethod(
-        Invocation.method(
-          #getValidNotAfterMsSinceEpoch,
-          [],
-        ),
-        returnValue: _i3.Future<int?>.value(),
-      ) as _i3.Future<int?>);
+  _i3.Future<int?> getValidNotAfterMsSinceEpoch() =>
+      (super.noSuchMethod(
+            Invocation.method(#getValidNotAfterMsSinceEpoch, []),
+            returnValue: _i3.Future<int?>.value(),
+          )
+          as _i3.Future<int?>);
 
   @override
-  _i3.Future<int?> getValidNotBeforeMsSinceEpoch() => (super.noSuchMethod(
-        Invocation.method(
-          #getValidNotBeforeMsSinceEpoch,
-          [],
-        ),
-        returnValue: _i3.Future<int?>.value(),
-      ) as _i3.Future<int?>);
+  _i3.Future<int?> getValidNotBeforeMsSinceEpoch() =>
+      (super.noSuchMethod(
+            Invocation.method(#getValidNotBeforeMsSinceEpoch, []),
+            returnValue: _i3.Future<int?>.value(),
+          )
+          as _i3.Future<int?>);
 
   @override
-  _i3.Future<_i2.X509Certificate?> getX509Certificate() => (super.noSuchMethod(
-        Invocation.method(
-          #getX509Certificate,
-          [],
-        ),
-        returnValue: _i3.Future<_i2.X509Certificate?>.value(),
-      ) as _i3.Future<_i2.X509Certificate?>);
+  _i3.Future<_i2.X509Certificate?> getX509Certificate() =>
+      (super.noSuchMethod(
+            Invocation.method(#getX509Certificate, []),
+            returnValue: _i3.Future<_i2.X509Certificate?>.value(),
+          )
+          as _i3.Future<_i2.X509Certificate?>);
 
   @override
-  _i2.SslCertificate pigeon_copy() => (super.noSuchMethod(
-        Invocation.method(
-          #pigeon_copy,
-          [],
-        ),
-        returnValue: _FakeSslCertificate_3(
-          this,
-          Invocation.method(
-            #pigeon_copy,
-            [],
-          ),
-        ),
-      ) as _i2.SslCertificate);
+  _i2.SslCertificate pigeon_copy() =>
+      (super.noSuchMethod(
+            Invocation.method(#pigeon_copy, []),
+            returnValue: _FakeSslCertificate_3(
+              this,
+              Invocation.method(#pigeon_copy, []),
+            ),
+          )
+          as _i2.SslCertificate);
 }
 
 /// A class which mocks [SslError].
@@ -316,65 +257,63 @@ class MockSslError extends _i1.Mock implements _i2.SslError {
   }
 
   @override
-  _i2.SslCertificate get certificate => (super.noSuchMethod(
-        Invocation.getter(#certificate),
-        returnValue: _FakeSslCertificate_3(
-          this,
-          Invocation.getter(#certificate),
-        ),
-      ) as _i2.SslCertificate);
+  _i2.SslCertificate get certificate =>
+      (super.noSuchMethod(
+            Invocation.getter(#certificate),
+            returnValue: _FakeSslCertificate_3(
+              this,
+              Invocation.getter(#certificate),
+            ),
+          )
+          as _i2.SslCertificate);
 
   @override
-  String get url => (super.noSuchMethod(
-        Invocation.getter(#url),
-        returnValue: _i4.dummyValue<String>(
-          this,
-          Invocation.getter(#url),
-        ),
-      ) as String);
+  String get url =>
+      (super.noSuchMethod(
+            Invocation.getter(#url),
+            returnValue: _i4.dummyValue<String>(this, Invocation.getter(#url)),
+          )
+          as String);
 
   @override
-  _i2.PigeonInstanceManager get pigeon_instanceManager => (super.noSuchMethod(
-        Invocation.getter(#pigeon_instanceManager),
-        returnValue: _FakePigeonInstanceManager_0(
-          this,
-          Invocation.getter(#pigeon_instanceManager),
-        ),
-      ) as _i2.PigeonInstanceManager);
+  _i2.PigeonInstanceManager get pigeon_instanceManager =>
+      (super.noSuchMethod(
+            Invocation.getter(#pigeon_instanceManager),
+            returnValue: _FakePigeonInstanceManager_0(
+              this,
+              Invocation.getter(#pigeon_instanceManager),
+            ),
+          )
+          as _i2.PigeonInstanceManager);
 
   @override
-  _i3.Future<_i2.SslErrorType> getPrimaryError() => (super.noSuchMethod(
-        Invocation.method(
-          #getPrimaryError,
-          [],
-        ),
-        returnValue:
-            _i3.Future<_i2.SslErrorType>.value(_i2.SslErrorType.dateInvalid),
-      ) as _i3.Future<_i2.SslErrorType>);
+  _i3.Future<_i2.SslErrorType> getPrimaryError() =>
+      (super.noSuchMethod(
+            Invocation.method(#getPrimaryError, []),
+            returnValue: _i3.Future<_i2.SslErrorType>.value(
+              _i2.SslErrorType.dateInvalid,
+            ),
+          )
+          as _i3.Future<_i2.SslErrorType>);
 
   @override
-  _i3.Future<bool> hasError(_i2.SslErrorType? error) => (super.noSuchMethod(
-        Invocation.method(
-          #hasError,
-          [error],
-        ),
-        returnValue: _i3.Future<bool>.value(false),
-      ) as _i3.Future<bool>);
+  _i3.Future<bool> hasError(_i2.SslErrorType? error) =>
+      (super.noSuchMethod(
+            Invocation.method(#hasError, [error]),
+            returnValue: _i3.Future<bool>.value(false),
+          )
+          as _i3.Future<bool>);
 
   @override
-  _i2.SslError pigeon_copy() => (super.noSuchMethod(
-        Invocation.method(
-          #pigeon_copy,
-          [],
-        ),
-        returnValue: _FakeSslError_4(
-          this,
-          Invocation.method(
-            #pigeon_copy,
-            [],
-          ),
-        ),
-      ) as _i2.SslError);
+  _i2.SslError pigeon_copy() =>
+      (super.noSuchMethod(
+            Invocation.method(#pigeon_copy, []),
+            returnValue: _FakeSslError_4(
+              this,
+              Invocation.method(#pigeon_copy, []),
+            ),
+          )
+          as _i2.SslError);
 }
 
 /// A class which mocks [SslErrorHandler].
@@ -386,48 +325,44 @@ class MockSslErrorHandler extends _i1.Mock implements _i2.SslErrorHandler {
   }
 
   @override
-  _i2.PigeonInstanceManager get pigeon_instanceManager => (super.noSuchMethod(
-        Invocation.getter(#pigeon_instanceManager),
-        returnValue: _FakePigeonInstanceManager_0(
-          this,
-          Invocation.getter(#pigeon_instanceManager),
-        ),
-      ) as _i2.PigeonInstanceManager);
+  _i2.PigeonInstanceManager get pigeon_instanceManager =>
+      (super.noSuchMethod(
+            Invocation.getter(#pigeon_instanceManager),
+            returnValue: _FakePigeonInstanceManager_0(
+              this,
+              Invocation.getter(#pigeon_instanceManager),
+            ),
+          )
+          as _i2.PigeonInstanceManager);
 
   @override
-  _i3.Future<void> cancel() => (super.noSuchMethod(
-        Invocation.method(
-          #cancel,
-          [],
-        ),
-        returnValue: _i3.Future<void>.value(),
-        returnValueForMissingStub: _i3.Future<void>.value(),
-      ) as _i3.Future<void>);
+  _i3.Future<void> cancel() =>
+      (super.noSuchMethod(
+            Invocation.method(#cancel, []),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
 
   @override
-  _i3.Future<void> proceed() => (super.noSuchMethod(
-        Invocation.method(
-          #proceed,
-          [],
-        ),
-        returnValue: _i3.Future<void>.value(),
-        returnValueForMissingStub: _i3.Future<void>.value(),
-      ) as _i3.Future<void>);
+  _i3.Future<void> proceed() =>
+      (super.noSuchMethod(
+            Invocation.method(#proceed, []),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
 
   @override
-  _i2.SslErrorHandler pigeon_copy() => (super.noSuchMethod(
-        Invocation.method(
-          #pigeon_copy,
-          [],
-        ),
-        returnValue: _FakeSslErrorHandler_5(
-          this,
-          Invocation.method(
-            #pigeon_copy,
-            [],
-          ),
-        ),
-      ) as _i2.SslErrorHandler);
+  _i2.SslErrorHandler pigeon_copy() =>
+      (super.noSuchMethod(
+            Invocation.method(#pigeon_copy, []),
+            returnValue: _FakeSslErrorHandler_5(
+              this,
+              Invocation.method(#pigeon_copy, []),
+            ),
+          )
+          as _i2.SslErrorHandler);
 }
 
 /// A class which mocks [X509Certificate].
@@ -439,35 +374,32 @@ class MockX509Certificate extends _i1.Mock implements _i2.X509Certificate {
   }
 
   @override
-  _i2.PigeonInstanceManager get pigeon_instanceManager => (super.noSuchMethod(
-        Invocation.getter(#pigeon_instanceManager),
-        returnValue: _FakePigeonInstanceManager_0(
-          this,
-          Invocation.getter(#pigeon_instanceManager),
-        ),
-      ) as _i2.PigeonInstanceManager);
+  _i2.PigeonInstanceManager get pigeon_instanceManager =>
+      (super.noSuchMethod(
+            Invocation.getter(#pigeon_instanceManager),
+            returnValue: _FakePigeonInstanceManager_0(
+              this,
+              Invocation.getter(#pigeon_instanceManager),
+            ),
+          )
+          as _i2.PigeonInstanceManager);
 
   @override
-  _i2.X509Certificate pigeon_copy() => (super.noSuchMethod(
-        Invocation.method(
-          #pigeon_copy,
-          [],
-        ),
-        returnValue: _FakeX509Certificate_6(
-          this,
-          Invocation.method(
-            #pigeon_copy,
-            [],
-          ),
-        ),
-      ) as _i2.X509Certificate);
+  _i2.X509Certificate pigeon_copy() =>
+      (super.noSuchMethod(
+            Invocation.method(#pigeon_copy, []),
+            returnValue: _FakeX509Certificate_6(
+              this,
+              Invocation.method(#pigeon_copy, []),
+            ),
+          )
+          as _i2.X509Certificate);
 
   @override
-  _i3.Future<_i5.Uint8List> getEncoded() => (super.noSuchMethod(
-        Invocation.method(
-          #getEncoded,
-          [],
-        ),
-        returnValue: _i3.Future<_i5.Uint8List>.value(_i5.Uint8List(0)),
-      ) as _i3.Future<_i5.Uint8List>);
+  _i3.Future<_i5.Uint8List> getEncoded() =>
+      (super.noSuchMethod(
+            Invocation.method(#getEncoded, []),
+            returnValue: _i3.Future<_i5.Uint8List>.value(_i5.Uint8List(0)),
+          )
+          as _i3.Future<_i5.Uint8List>);
 }

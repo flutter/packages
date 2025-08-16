@@ -79,13 +79,14 @@ class HttpRequestFactory {
     };
     return web.window
         .fetch(
-            url.toJS,
-            web.RequestInit(
-              method: method,
-              body: sendData?.toJS,
-              credentials: withCredentials ? 'include' : 'same-origin',
-              headers: headers.jsify()! as web.HeadersInit,
-            ))
+          url.toJS,
+          web.RequestInit(
+            method: method,
+            body: sendData?.toJS,
+            credentials: withCredentials ? 'include' : 'same-origin',
+            headers: headers.jsify()! as web.HeadersInit,
+          ),
+        )
         .toDart;
   }
 }
