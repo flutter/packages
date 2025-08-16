@@ -16,9 +16,7 @@ class HomePage extends StatelessWidget {
       backgroundColor: Colors.white,
     );
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('File Selector Demo Home Page'),
-      ),
+      appBar: AppBar(title: const Text('File Selector Demo Home Page')),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

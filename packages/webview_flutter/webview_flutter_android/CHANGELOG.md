@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
 ## 4.10.0
 
 * Adds support for the Payment Request API with `AndroidWebViewController.isWebViewFeatureSupported` and `AndroidWebViewController.setPaymentRequestEnabled`.

@@ -45,15 +45,15 @@ class AdsLoader {
     required void Function(AdsLoadErrorData data) onAdsLoadError,
     ImaSettings? settings,
   }) : this.fromPlatformCreationParams(
-          PlatformAdsLoaderCreationParams(
-            container: container.platform,
-            settings: settings?.platform ?? ImaSettings().platform,
-            onAdsLoaded: (PlatformOnAdsLoadedData data) {
-              onAdsLoaded(OnAdsLoadedData._(platform: data));
-            },
-            onAdsLoadError: onAdsLoadError,
-          ),
-        );
+         PlatformAdsLoaderCreationParams(
+           container: container.platform,
+           settings: settings?.platform ?? ImaSettings().platform,
+           onAdsLoaded: (PlatformOnAdsLoadedData data) {
+             onAdsLoaded(OnAdsLoadedData._(platform: data));
+           },
+           onAdsLoadError: onAdsLoadError,
+         ),
+       );
 
   /// Constructs an [AdsLoader] from creation params for a specific platform.
   ///
@@ -82,9 +82,8 @@ class AdsLoader {
   /// );
   /// ```
   /// {@endtemplate}
-  AdsLoader.fromPlatformCreationParams(
-    PlatformAdsLoaderCreationParams params,
-  ) : this.fromPlatform(PlatformAdsLoader(params));
+  AdsLoader.fromPlatformCreationParams(PlatformAdsLoaderCreationParams params)
+    : this.fromPlatform(PlatformAdsLoader(params));
 
   /// Constructs a [AdsLoader] from a specific platform implementation.
   AdsLoader.fromPlatform(this.platform);

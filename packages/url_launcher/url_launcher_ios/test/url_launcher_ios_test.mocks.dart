@@ -31,23 +31,25 @@ class MockUrlLauncherApi extends _i1.Mock implements _i2.UrlLauncherApi {
   }
 
   @override
-  String get pigeonVar_messageChannelSuffix => (super.noSuchMethod(
-        Invocation.getter(#pigeonVar_messageChannelSuffix),
-        returnValue: _i3.dummyValue<String>(
-          this,
-          Invocation.getter(#pigeonVar_messageChannelSuffix),
-        ),
-      ) as String);
+  String get pigeonVar_messageChannelSuffix =>
+      (super.noSuchMethod(
+            Invocation.getter(#pigeonVar_messageChannelSuffix),
+            returnValue: _i3.dummyValue<String>(
+              this,
+              Invocation.getter(#pigeonVar_messageChannelSuffix),
+            ),
+          )
+          as String);
 
   @override
-  _i4.Future<_i2.LaunchResult> canLaunchUrl(String? url) => (super.noSuchMethod(
-        Invocation.method(
-          #canLaunchUrl,
-          [url],
-        ),
-        returnValue:
-            _i4.Future<_i2.LaunchResult>.value(_i2.LaunchResult.success),
-      ) as _i4.Future<_i2.LaunchResult>);
+  _i4.Future<_i2.LaunchResult> canLaunchUrl(String? url) =>
+      (super.noSuchMethod(
+            Invocation.method(#canLaunchUrl, [url]),
+            returnValue: _i4.Future<_i2.LaunchResult>.value(
+              _i2.LaunchResult.success,
+            ),
+          )
+          as _i4.Future<_i2.LaunchResult>);
 
   @override
   _i4.Future<_i2.LaunchResult> launchUrl(
@@ -55,35 +57,29 @@ class MockUrlLauncherApi extends _i1.Mock implements _i2.UrlLauncherApi {
     bool? universalLinksOnly,
   ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #launchUrl,
-          [
-            url,
-            universalLinksOnly,
-          ],
-        ),
-        returnValue:
-            _i4.Future<_i2.LaunchResult>.value(_i2.LaunchResult.success),
-      ) as _i4.Future<_i2.LaunchResult>);
+            Invocation.method(#launchUrl, [url, universalLinksOnly]),
+            returnValue: _i4.Future<_i2.LaunchResult>.value(
+              _i2.LaunchResult.success,
+            ),
+          )
+          as _i4.Future<_i2.LaunchResult>);
 
   @override
   _i4.Future<_i2.InAppLoadResult> openUrlInSafariViewController(String? url) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #openUrlInSafariViewController,
-          [url],
-        ),
-        returnValue:
-            _i4.Future<_i2.InAppLoadResult>.value(_i2.InAppLoadResult.success),
-      ) as _i4.Future<_i2.InAppLoadResult>);
+            Invocation.method(#openUrlInSafariViewController, [url]),
+            returnValue: _i4.Future<_i2.InAppLoadResult>.value(
+              _i2.InAppLoadResult.success,
+            ),
+          )
+          as _i4.Future<_i2.InAppLoadResult>);
 
   @override
-  _i4.Future<void> closeSafariViewController() => (super.noSuchMethod(
-        Invocation.method(
-          #closeSafariViewController,
-          [],
-        ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+  _i4.Future<void> closeSafariViewController() =>
+      (super.noSuchMethod(
+            Invocation.method(#closeSafariViewController, []),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
 }

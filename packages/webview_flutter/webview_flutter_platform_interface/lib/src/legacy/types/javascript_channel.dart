@@ -14,10 +14,8 @@ class JavascriptChannel {
   /// Constructs a JavaScript channel.
   ///
   /// The parameters `name` and `onMessageReceived` must not be null.
-  JavascriptChannel({
-    required this.name,
-    required this.onMessageReceived,
-  }) : assert(_validChannelNames.hasMatch(name));
+  JavascriptChannel({required this.name, required this.onMessageReceived})
+    : assert(_validChannelNames.hasMatch(name));
 
   /// The channel's name.
   ///

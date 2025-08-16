@@ -11,19 +11,21 @@ import 'test_stubs.dart';
 void main() {
   test('passes params to platform instance', () async {
     InteractiveMediaAdsPlatform.instance = TestInteractiveMediaAdsPlatform(
-      onCreatePlatformAdsManagerDelegate:
-          (PlatformAdsManagerDelegateCreationParams params) {
+      onCreatePlatformAdsManagerDelegate: (
+        PlatformAdsManagerDelegateCreationParams params,
+      ) {
         return TestPlatformAdsManagerDelegate(params);
       },
       onCreatePlatformAdsLoader: (PlatformAdsLoaderCreationParams params) {
         throw UnimplementedError();
       },
-      onCreatePlatformAdDisplayContainer:
-          (PlatformAdDisplayContainerCreationParams params) {
+      onCreatePlatformAdDisplayContainer: (
+        PlatformAdDisplayContainerCreationParams params,
+      ) {
         throw UnimplementedError();
       },
-      onCreatePlatformContentProgressProvider: (_) =>
-          throw UnimplementedError(),
+      onCreatePlatformContentProgressProvider:
+          (_) => throw UnimplementedError(),
     );
 
     void onAdEvent(AdEvent event) {}

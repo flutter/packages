@@ -61,42 +61,52 @@ void main() {
     tryToDelete(appDir);
   });
 
-  testUsingContext('Environment initialization', () async {
-    final FlutterToolsEnvironment env =
-        await FlutterToolsEnvironment.initializeFlutterToolsEnvironment(
-            processManager, logger);
-    expect(env.getString('invalid key') == null, true);
-    expect(env.getBool('invalid key') == null, true);
+  testUsingContext(
+    'Environment initialization',
+    () async {
+      final FlutterToolsEnvironment env =
+          await FlutterToolsEnvironment.initializeFlutterToolsEnvironment(
+            processManager,
+            logger,
+          );
+      expect(env.getString('invalid key') == null, true);
+      expect(env.getBool('invalid key') == null, true);
 
-    expect(env.getString('FlutterProject.directory'), '/Users/test/flutter');
-    expect(env.getString('FlutterProject.metadataFile'),
-        '/Users/test/flutter/.metadata');
-    expect(env.getBool('FlutterProject.android.exists'), false);
-    expect(env.getBool('FlutterProject.ios.exists'), false);
-    expect(env.getBool('FlutterProject.web.exists'), false);
-    expect(env.getBool('FlutterProject.macos.exists'), false);
-    expect(env.getBool('FlutterProject.linux.exists'), false);
-    expect(env.getBool('FlutterProject.windows.exists'), false);
-    expect(env.getBool('FlutterProject.fuchsia.exists'), false);
-    expect(env.getBool('FlutterProject.android.isKotlin'), false);
-    expect(env.getBool('FlutterProject.ios.isSwift'), false);
-    expect(env.getBool('FlutterProject.isModule'), false);
-    expect(env.getBool('FlutterProject.isPlugin'), false);
-    expect(env.getString('FlutterProject.manifest.appname'), 'test_app_name');
-    expect(env.getString('FlutterVersion.frameworkRevision'),
-        '4e181f012c717777681862e4771af5a941774bb9');
-    expect(env.getString('Platform.operatingSystem'), 'macos');
-    expect(env.getBool('Platform.isAndroid'), true);
-    expect(env.getBool('Platform.isIOS'), false);
-    expect(env.getBool('Platform.isWindows'), isWindows);
-    expect(env.getBool('Platform.isMacOS'), isMacOS);
-    expect(env.getBool('Platform.isFuchsia'), false);
-    expect(env.getString('Platform.pathSeparator'), separator);
-    expect(env.getString('Cache.flutterRoot'), '/Users/test/flutter');
-  }, overrides: <Type, Generator>{
-    FileSystem: () => fileSystem,
-    ProcessManager: () => processManager,
-  });
+      expect(env.getString('FlutterProject.directory'), '/Users/test/flutter');
+      expect(
+        env.getString('FlutterProject.metadataFile'),
+        '/Users/test/flutter/.metadata',
+      );
+      expect(env.getBool('FlutterProject.android.exists'), false);
+      expect(env.getBool('FlutterProject.ios.exists'), false);
+      expect(env.getBool('FlutterProject.web.exists'), false);
+      expect(env.getBool('FlutterProject.macos.exists'), false);
+      expect(env.getBool('FlutterProject.linux.exists'), false);
+      expect(env.getBool('FlutterProject.windows.exists'), false);
+      expect(env.getBool('FlutterProject.fuchsia.exists'), false);
+      expect(env.getBool('FlutterProject.android.isKotlin'), false);
+      expect(env.getBool('FlutterProject.ios.isSwift'), false);
+      expect(env.getBool('FlutterProject.isModule'), false);
+      expect(env.getBool('FlutterProject.isPlugin'), false);
+      expect(env.getString('FlutterProject.manifest.appname'), 'test_app_name');
+      expect(
+        env.getString('FlutterVersion.frameworkRevision'),
+        '4e181f012c717777681862e4771af5a941774bb9',
+      );
+      expect(env.getString('Platform.operatingSystem'), 'macos');
+      expect(env.getBool('Platform.isAndroid'), true);
+      expect(env.getBool('Platform.isIOS'), false);
+      expect(env.getBool('Platform.isWindows'), isWindows);
+      expect(env.getBool('Platform.isMacOS'), isMacOS);
+      expect(env.getBool('Platform.isFuchsia'), false);
+      expect(env.getString('Platform.pathSeparator'), separator);
+      expect(env.getString('Cache.flutterRoot'), '/Users/test/flutter');
+    },
+    overrides: <Type, Generator>{
+      FileSystem: () => fileSystem,
+      ProcessManager: () => processManager,
+    },
+  );
 }
 
 class FakeProcessManager extends LocalProcessManager {
@@ -105,13 +115,15 @@ class FakeProcessManager extends LocalProcessManager {
   final String runResult;
 
   @override
-  Future<ProcessResult> run(List<Object> command,
-      {String? workingDirectory,
-      Map<String, String>? environment,
-      bool includeParentEnvironment = true,
-      bool runInShell = false,
-      covariant Encoding? stdoutEncoding = systemEncoding,
-      covariant Encoding? stderrEncoding = systemEncoding}) async {
+  Future<ProcessResult> run(
+    List<Object> command, {
+    String? workingDirectory,
+    Map<String, String>? environment,
+    bool includeParentEnvironment = true,
+    bool runInShell = false,
+    covariant Encoding? stdoutEncoding = systemEncoding,
+    covariant Encoding? stderrEncoding = systemEncoding,
+  }) async {
     return ProcessResult(0, 0, runResult, '');
   }
 }

@@ -15,7 +15,7 @@ void main() {
         ],
         'bar': <Map<String, Object?>>[
           <String, Object?>{'metric': 'bar.foo', 'value': 1.23},
-        ]
+        ],
       };
 
       final BenchmarkResults benchmarkResults = BenchmarkResults.parse(data);
