@@ -10,8 +10,9 @@ import 'package:integration_test/integration_test.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('Can create InAppPurchaseStoreKit instance',
-      (WidgetTester tester) async {
+  testWidgets('Can create InAppPurchaseStoreKit instance', (
+    WidgetTester tester,
+  ) async {
     InAppPurchaseStoreKitPlatform.registerPlatform();
     final InAppPurchasePlatform androidPlatform =
         InAppPurchasePlatform.instance;

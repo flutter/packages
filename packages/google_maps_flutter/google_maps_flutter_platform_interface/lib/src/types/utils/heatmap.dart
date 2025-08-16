@@ -7,9 +7,7 @@ import 'maps_object.dart';
 
 /// Converts an [Iterable] of Heatmaps in a Map of
 /// HeatmapId -> Heatmap.
-Map<HeatmapId, Heatmap> keyByHeatmapId(
-  Iterable<Heatmap> heatmaps,
-) {
+Map<HeatmapId, Heatmap> keyByHeatmapId(Iterable<Heatmap> heatmaps) {
   return keyByMapsObjectId<Heatmap>(heatmaps).cast<HeatmapId, Heatmap>();
 }
 
