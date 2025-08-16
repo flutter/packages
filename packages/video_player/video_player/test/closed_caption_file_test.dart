@@ -16,12 +16,13 @@ void main() {
       );
 
       expect(
-          caption.toString(),
-          'Caption('
-          'number: 1, '
-          'start: 0:00:01.000000, '
-          'end: 0:00:02.000000, '
-          'text: caption)');
+        caption.toString(),
+        'Caption('
+        'number: 1, '
+        'start: 0:00:01.000000, '
+        'end: 0:00:02.000000, '
+        'text: caption)',
+      );
     });
   });
 }

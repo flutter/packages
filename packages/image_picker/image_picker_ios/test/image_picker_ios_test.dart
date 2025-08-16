@@ -152,44 +152,6 @@ void main() {
         ],
       );
     });
-  });
-
-  group('#getMultiVideoWithOptions', () {
-    test('calls the method correctly', () async {
-      log.returnValue = <String>['/foo.mp4', 'bar.mp4'];
-      await picker.getMultiVideoWithOptions();
-
-      expect(
-        log.calls,
-        <_LoggedMethodCall>[
-          const _LoggedMethodCall('pickMultiVideo',
-              arguments: <String, dynamic>{
-                'maxDuration': null,
-                'limit': null,
-              }),
-        ],
-      );
-    });
-
-    test('passes the arguments correctly', () async {
-      log.returnValue = <String>[];
-      await picker.getMultiVideoWithOptions(
-          options: const MultiVideoPickerOptions(
-        maxDuration: Duration(seconds: 10),
-        limit: 5,
-      ));
-
-      expect(
-        log.calls,
-        <_LoggedMethodCall>[
-          const _LoggedMethodCall('pickMultiVideo',
-              arguments: <String, dynamic>{
-                'maxDuration': 10,
-                'limit': 5,
-              }),
-        ],
-      );
-    });
 
     test('passes the width and height arguments correctly', () async {
       await picker.pickImage(source: ImageSource.camera);
@@ -1335,6 +1297,44 @@ void main() {
             'maxDuration': null,
             'cameraDevice': SourceCamera.front,
           }),
+        ],
+      );
+    });
+  });
+
+  group('#getMultiVideoWithOptions', () {
+    test('calls the method correctly', () async {
+      log.returnValue = <String>['/foo.mp4', 'bar.mp4'];
+      await picker.getMultiVideoWithOptions();
+
+      expect(
+        log.calls,
+        <_LoggedMethodCall>[
+          const _LoggedMethodCall('pickMultiVideo',
+              arguments: <String, dynamic>{
+                'maxDuration': null,
+                'limit': null,
+              }),
+        ],
+      );
+    });
+
+    test('passes the arguments correctly', () async {
+      log.returnValue = <String>[];
+      await picker.getMultiVideoWithOptions(
+          options: const MultiVideoPickerOptions(
+        maxDuration: Duration(seconds: 10),
+        limit: 5,
+      ));
+
+      expect(
+        log.calls,
+        <_LoggedMethodCall>[
+          const _LoggedMethodCall('pickMultiVideo',
+              arguments: <String, dynamic>{
+                'maxDuration': 10,
+                'limit': 5,
+              }),
         ],
       );
     });

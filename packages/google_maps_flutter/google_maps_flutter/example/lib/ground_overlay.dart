@@ -14,7 +14,7 @@ enum _GroundOverlayPlacing { position, bounds }
 
 class GroundOverlayPage extends GoogleMapExampleAppPage {
   const GroundOverlayPage({Key? key})
-      : super(const Icon(Icons.map), 'Ground overlay', key: key);
+    : super(const Icon(Icons.map), 'Ground overlay', key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -48,11 +48,13 @@ class GroundOverlayBodyState extends State<GroundOverlayBody> {
   // Bounds for demonstranting placing ground overlays with bounds, and
   // changing bounds.
   final LatLngBounds _groundOverlayBounds1 = LatLngBounds(
-      southwest: const LatLng(37.42, -122.09),
-      northeast: const LatLng(37.423, -122.084));
+    southwest: const LatLng(37.42, -122.09),
+    northeast: const LatLng(37.423, -122.084),
+  );
   final LatLngBounds _groundOverlayBounds2 = LatLngBounds(
-      southwest: const LatLng(37.421, -122.091),
-      northeast: const LatLng(37.424, -122.08));
+    southwest: const LatLng(37.421, -122.091),
+    northeast: const LatLng(37.424, -122.08),
+  );
   late LatLngBounds _currentGroundOverlayBounds;
 
   Offset _anchor = const Offset(0.5, 0.5);
@@ -93,31 +95,32 @@ class GroundOverlayBodyState extends State<GroundOverlayBody> {
 
     _groundOverlayIndex += 1;
 
-    final GroundOverlayId id =
-        GroundOverlayId('ground_overlay_$_groundOverlayIndex');
+    final GroundOverlayId id = GroundOverlayId(
+      'ground_overlay_$_groundOverlayIndex',
+    );
 
     final GroundOverlay groundOverlay = switch (_placingType) {
       _GroundOverlayPlacing.position => GroundOverlay.fromPosition(
-          groundOverlayId: id,
-          image: assetMapBitmap,
-          position: _currentGroundOverlayPos,
-          width: _dimensions.dx, // Android only
-          height: _dimensions.dy, // Android only
-          zoomLevel: 14.0, // iOS only
-          anchor: _anchor,
-          onTap: () {
-            _onGroundOverlayTapped();
-          },
-        ),
+        groundOverlayId: id,
+        image: assetMapBitmap,
+        position: _currentGroundOverlayPos,
+        width: _dimensions.dx, // Android only
+        height: _dimensions.dy, // Android only
+        zoomLevel: 14.0, // iOS only
+        anchor: _anchor,
+        onTap: () {
+          _onGroundOverlayTapped();
+        },
+      ),
       _GroundOverlayPlacing.bounds => GroundOverlay.fromBounds(
-          groundOverlayId: id,
-          image: assetMapBitmap,
-          bounds: _currentGroundOverlayBounds,
-          anchor: _anchor,
-          onTap: () {
-            _onGroundOverlayTapped();
-          },
-        ),
+        groundOverlayId: id,
+        image: assetMapBitmap,
+        bounds: _currentGroundOverlayBounds,
+        anchor: _anchor,
+        onTap: () {
+          _onGroundOverlayTapped();
+        },
+      ),
     };
 
     setState(() {
@@ -133,9 +136,9 @@ class GroundOverlayBodyState extends State<GroundOverlayBody> {
     assert(_groundOverlay != null);
     setState(() {
       _groundOverlay = _groundOverlay!.copyWith(
-          bearingParam: _groundOverlay!.bearing >= 350
-              ? 0
-              : _groundOverlay!.bearing + 10);
+        bearingParam:
+            _groundOverlay!.bearing >= 350 ? 0 : _groundOverlay!.bearing + 10,
+      );
     });
   }
 
@@ -144,8 +147,9 @@ class GroundOverlayBodyState extends State<GroundOverlayBody> {
     setState(() {
       final double transparency =
           _groundOverlay!.transparency == 0.0 ? 0.5 : 0.0;
-      _groundOverlay =
-          _groundOverlay!.copyWith(transparencyParam: transparency);
+      _groundOverlay = _groundOverlay!.copyWith(
+        transparencyParam: transparency,
+      );
     });
   }
 
@@ -153,9 +157,10 @@ class GroundOverlayBodyState extends State<GroundOverlayBody> {
     assert(_groundOverlay != null);
     assert(_placingType == _GroundOverlayPlacing.position);
     setState(() {
-      _dimensions = _dimensions == const Offset(1000, 1000)
-          ? const Offset(1500, 500)
-          : const Offset(1000, 1000);
+      _dimensions =
+          _dimensions == const Offset(1000, 1000)
+              ? const Offset(1500, 500)
+              : const Offset(1000, 1000);
     });
 
     // Re-add the ground overlay to apply the new position, as the position
@@ -167,9 +172,10 @@ class GroundOverlayBodyState extends State<GroundOverlayBody> {
     assert(_groundOverlay != null);
     assert(_placingType == _GroundOverlayPlacing.position);
     setState(() {
-      _currentGroundOverlayPos = _currentGroundOverlayPos == _groundOverlayPos1
-          ? _groundOverlayPos2
-          : _groundOverlayPos1;
+      _currentGroundOverlayPos =
+          _currentGroundOverlayPos == _groundOverlayPos1
+              ? _groundOverlayPos2
+              : _groundOverlayPos1;
     });
 
     // Re-add the ground overlay to apply the new position, as the position
@@ -195,8 +201,9 @@ class GroundOverlayBodyState extends State<GroundOverlayBody> {
   void _toggleVisible() {
     assert(_groundOverlay != null);
     setState(() {
-      _groundOverlay =
-          _groundOverlay!.copyWith(visibleParam: !_groundOverlay!.visible);
+      _groundOverlay = _groundOverlay!.copyWith(
+        visibleParam: !_groundOverlay!.visible,
+      );
     });
   }
 
@@ -211,9 +218,10 @@ class GroundOverlayBodyState extends State<GroundOverlayBody> {
 
   Future<void> _changeType() async {
     setState(() {
-      _placingType = _placingType == _GroundOverlayPlacing.position
-          ? _GroundOverlayPlacing.bounds
-          : _GroundOverlayPlacing.position;
+      _placingType =
+          _placingType == _GroundOverlayPlacing.position
+              ? _GroundOverlayPlacing.bounds
+              : _GroundOverlayPlacing.position;
     });
 
     // Re-add the ground overlay to change the positioning type.
@@ -223,9 +231,10 @@ class GroundOverlayBodyState extends State<GroundOverlayBody> {
   Future<void> _changeAnchor() async {
     assert(_groundOverlay != null);
     setState(() {
-      _anchor = _groundOverlay!.anchor == const Offset(0.5, 0.5)
-          ? const Offset(1.0, 1.0)
-          : const Offset(0.5, 0.5);
+      _anchor =
+          _groundOverlay!.anchor == const Offset(0.5, 0.5)
+              ? const Offset(1.0, 1.0)
+              : const Offset(0.5, 0.5);
     });
 
     // Re-add the ground overlay to apply the new anchor as the anchor cannot be
@@ -298,31 +307,36 @@ class GroundOverlayBodyState extends State<GroundOverlayBody> {
             if (!kIsWeb)
               TextButton(
                 onPressed: _groundOverlay == null ? null : () => _changeType(),
-                child: Text(_placingType == _GroundOverlayPlacing.position
-                    ? 'use bounds'
-                    : 'use position'),
+                child: Text(
+                  _placingType == _GroundOverlayPlacing.position
+                      ? 'use bounds'
+                      : 'use position',
+                ),
               ),
             if (!kIsWeb)
               TextButton(
-                onPressed: _placingType != _GroundOverlayPlacing.position ||
-                        _groundOverlay == null
-                    ? null
-                    : () => _changePosition(),
+                onPressed:
+                    _placingType != _GroundOverlayPlacing.position ||
+                            _groundOverlay == null
+                        ? null
+                        : () => _changePosition(),
                 child: const Text('change position'),
               ),
             if (defaultTargetPlatform == TargetPlatform.android)
               TextButton(
-                onPressed: _placingType != _GroundOverlayPlacing.position ||
-                        _groundOverlay == null
-                    ? null
-                    : () => _changeDimensions(),
+                onPressed:
+                    _placingType != _GroundOverlayPlacing.position ||
+                            _groundOverlay == null
+                        ? null
+                        : () => _changeDimensions(),
                 child: const Text('change dimensions'),
               ),
             TextButton(
-              onPressed: _placingType != _GroundOverlayPlacing.bounds ||
-                      _groundOverlay == null
-                  ? null
-                  : () => _changeBounds(),
+              onPressed:
+                  _placingType != _GroundOverlayPlacing.bounds ||
+                          _groundOverlay == null
+                      ? null
+                      : () => _changeBounds(),
               child: const Text('change bounds'),
             ),
           ],

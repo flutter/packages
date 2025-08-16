@@ -1,7 +1,8 @@
 ## 0.8.13
 
-* Adds support for `getMultiVideo`.
+* Adds support for `getMultiVideoWithOptions`.
 * Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+* Adds photo to Photos library during test to support iOS 26.
 
 ## 0.8.12+2
 
