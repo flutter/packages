@@ -142,21 +142,25 @@ class MapConfiguration {
   /// that are different from [other].
   MapConfiguration diffFrom(MapConfiguration other) {
     return MapConfiguration(
-      webGestureHandling: webGestureHandling != other.webGestureHandling
-          ? webGestureHandling
-          : null,
+      webGestureHandling:
+          webGestureHandling != other.webGestureHandling
+              ? webGestureHandling
+              : null,
       compassEnabled:
           compassEnabled != other.compassEnabled ? compassEnabled : null,
-      mapToolbarEnabled: mapToolbarEnabled != other.mapToolbarEnabled
-          ? mapToolbarEnabled
-          : null,
-      cameraTargetBounds: cameraTargetBounds != other.cameraTargetBounds
-          ? cameraTargetBounds
-          : null,
+      mapToolbarEnabled:
+          mapToolbarEnabled != other.mapToolbarEnabled
+              ? mapToolbarEnabled
+              : null,
+      cameraTargetBounds:
+          cameraTargetBounds != other.cameraTargetBounds
+              ? cameraTargetBounds
+              : null,
       mapType: mapType != other.mapType ? mapType : null,
-      minMaxZoomPreference: minMaxZoomPreference != other.minMaxZoomPreference
-          ? minMaxZoomPreference
-          : null,
+      minMaxZoomPreference:
+          minMaxZoomPreference != other.minMaxZoomPreference
+              ? minMaxZoomPreference
+              : null,
       rotateGesturesEnabled:
           rotateGesturesEnabled != other.rotateGesturesEnabled
               ? rotateGesturesEnabled
@@ -165,35 +169,41 @@ class MapConfiguration {
           scrollGesturesEnabled != other.scrollGesturesEnabled
               ? scrollGesturesEnabled
               : null,
-      tiltGesturesEnabled: tiltGesturesEnabled != other.tiltGesturesEnabled
-          ? tiltGesturesEnabled
-          : null,
+      tiltGesturesEnabled:
+          tiltGesturesEnabled != other.tiltGesturesEnabled
+              ? tiltGesturesEnabled
+              : null,
       fortyFiveDegreeImageryEnabled:
           fortyFiveDegreeImageryEnabled != other.fortyFiveDegreeImageryEnabled
               ? fortyFiveDegreeImageryEnabled
               : null,
-      trackCameraPosition: trackCameraPosition != other.trackCameraPosition
-          ? trackCameraPosition
-          : null,
-      zoomControlsEnabled: zoomControlsEnabled != other.zoomControlsEnabled
-          ? zoomControlsEnabled
-          : null,
-      zoomGesturesEnabled: zoomGesturesEnabled != other.zoomGesturesEnabled
-          ? zoomGesturesEnabled
-          : null,
+      trackCameraPosition:
+          trackCameraPosition != other.trackCameraPosition
+              ? trackCameraPosition
+              : null,
+      zoomControlsEnabled:
+          zoomControlsEnabled != other.zoomControlsEnabled
+              ? zoomControlsEnabled
+              : null,
+      zoomGesturesEnabled:
+          zoomGesturesEnabled != other.zoomGesturesEnabled
+              ? zoomGesturesEnabled
+              : null,
       liteModeEnabled:
           liteModeEnabled != other.liteModeEnabled ? liteModeEnabled : null,
-      myLocationEnabled: myLocationEnabled != other.myLocationEnabled
-          ? myLocationEnabled
-          : null,
+      myLocationEnabled:
+          myLocationEnabled != other.myLocationEnabled
+              ? myLocationEnabled
+              : null,
       myLocationButtonEnabled:
           myLocationButtonEnabled != other.myLocationButtonEnabled
               ? myLocationButtonEnabled
               : null,
       padding: padding != other.padding ? padding : null,
-      indoorViewEnabled: indoorViewEnabled != other.indoorViewEnabled
-          ? indoorViewEnabled
-          : null,
+      indoorViewEnabled:
+          indoorViewEnabled != other.indoorViewEnabled
+              ? indoorViewEnabled
+              : null,
       trafficEnabled:
           trafficEnabled != other.trafficEnabled ? trafficEnabled : null,
       buildingsEnabled:
@@ -300,30 +310,30 @@ class MapConfiguration {
 
   @override
   int get hashCode => Object.hashAll(<Object?>[
-        webGestureHandling,
-        compassEnabled,
-        mapToolbarEnabled,
-        cameraTargetBounds,
-        mapType,
-        minMaxZoomPreference,
-        rotateGesturesEnabled,
-        scrollGesturesEnabled,
-        tiltGesturesEnabled,
-        fortyFiveDegreeImageryEnabled,
-        trackCameraPosition,
-        zoomControlsEnabled,
-        zoomGesturesEnabled,
-        liteModeEnabled,
-        myLocationEnabled,
-        myLocationButtonEnabled,
-        padding,
-        indoorViewEnabled,
-        trafficEnabled,
-        buildingsEnabled,
-        mapId,
-        style,
-        markerType,
-      ]);
+    webGestureHandling,
+    compassEnabled,
+    mapToolbarEnabled,
+    cameraTargetBounds,
+    mapType,
+    minMaxZoomPreference,
+    rotateGesturesEnabled,
+    scrollGesturesEnabled,
+    tiltGesturesEnabled,
+    fortyFiveDegreeImageryEnabled,
+    trackCameraPosition,
+    zoomControlsEnabled,
+    zoomGesturesEnabled,
+    liteModeEnabled,
+    myLocationEnabled,
+    myLocationButtonEnabled,
+    padding,
+    indoorViewEnabled,
+    trafficEnabled,
+    buildingsEnabled,
+    mapId,
+    style,
+    markerType,
+  ]);
 }
 
 /// Indicates the type of marker that the map should use.
