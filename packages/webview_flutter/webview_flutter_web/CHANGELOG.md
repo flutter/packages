@@ -1,5 +1,6 @@
-## NEXT
+## 0.3.0
 
+* Adds support for `baseUrl` parameter in `loadHtmlString`.
 * Adds `runJavaScript`.
 * Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
 
