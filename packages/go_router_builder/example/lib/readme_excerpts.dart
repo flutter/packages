@@ -57,6 +57,10 @@ void otherDoc(BuildContext context) {
   }
   // #enddocregion tapWithExtra
 
+  // #docregion goRelative
+  void onTapRelative() => const DetailsRoute().goRelative(context);
+  // #enddocregion goRelative
+
   final LoginInfo loginInfo = LoginInfo();
 
   final GoRouter routerWithRedirect = GoRouter(
@@ -396,3 +400,23 @@ class MyGoRouteData extends GoRouteData with _$MyGoRouteData {
 }
 
 // #enddocregion MyShellRouteData
+
+// #docregion relativeRoute
+@TypedRelativeGoRoute<DetailsRoute>(path: 'details')
+class DetailsRoute extends RelativeGoRouteData with _$DetailsRoute {
+  const DetailsRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const DetailsScreen();
+}
+// #enddocregion relativeRoute
+
+class DetailsScreen extends StatelessWidget {
+  const DetailsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container();
+  }
+}
