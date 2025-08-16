@@ -36,7 +36,10 @@ class LookupResolver {
 
   /// Adds a request and returns a [Stream] of [ResourceRecord] responses.
   Stream<T> addPendingRequest<T extends ResourceRecord>(
-      int type, String name, Duration timeout) {
+    int type,
+    String name,
+    Duration timeout,
+  ) {
     final StreamController<T> controller = StreamController<T>();
     final PendingRequest request = PendingRequest(type, name, controller);
     final Timer timer = Timer(timeout, () {

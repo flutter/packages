@@ -24,10 +24,10 @@ final class AndroidAdDisplayContainerCreationParams
     super.companionSlots,
     @visibleForTesting InteractiveMediaAdsProxy? imaProxy,
     @visibleForTesting PlatformViewsServiceProxy? platformViewsProxy,
-  })  : _imaProxy = imaProxy ?? const InteractiveMediaAdsProxy(),
-        _platformViewsProxy =
-            platformViewsProxy ?? const PlatformViewsServiceProxy(),
-        super();
+  }) : _imaProxy = imaProxy ?? const InteractiveMediaAdsProxy(),
+       _platformViewsProxy =
+           platformViewsProxy ?? const PlatformViewsServiceProxy(),
+       super();
 
   /// Creates a [AndroidAdDisplayContainerCreationParams] from an instance of
   /// [PlatformAdDisplayContainerCreationParams].
@@ -131,8 +131,9 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
   late final AndroidAdDisplayContainerCreationParams _androidParams =
       params is AndroidAdDisplayContainerCreationParams
           ? params as AndroidAdDisplayContainerCreationParams
-          : AndroidAdDisplayContainerCreationParams
-              .fromPlatformAdDisplayContainerCreationParams(params);
+          : AndroidAdDisplayContainerCreationParams.fromPlatformAdDisplayContainerCreationParams(
+            params,
+          );
 
   @override
   Widget build(BuildContext context) {
@@ -144,18 +145,16 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
       onPlatformViewCreated: () async {
         adDisplayContainer = await _androidParams._imaProxy
             .createAdDisplayContainerImaSdkFactory(
-          _frameLayout,
-          _videoAdPlayer,
-        );
+              _frameLayout,
+              _videoAdPlayer,
+            );
         final Iterable<ima.CompanionAdSlot> nativeCompanionSlots =
             await Future.wait(
-          _androidParams.companionSlots.map(
-            (PlatformCompanionAdSlot slot) {
-              return (slot as AndroidCompanionAdSlot)
-                  .getNativeCompanionAdSlot();
-            },
-          ),
-        );
+              _androidParams.companionSlots.map((PlatformCompanionAdSlot slot) {
+                return (slot as AndroidCompanionAdSlot)
+                    .getNativeCompanionAdSlot();
+              }),
+            );
         await adDisplayContainer!.setCompanionSlots(
           nativeCompanionSlots.toList(),
         );
@@ -183,24 +182,19 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
     _adProgressTimer = Timer.periodic(
       const Duration(milliseconds: _progressPollingMs),
       (Timer timer) async {
-        final ima.VideoProgressUpdate currentProgress =
-            _androidParams._imaProxy.newVideoProgressUpdate(
-          currentTimeMs: await _videoView.getCurrentPosition(),
-          durationMs: _adDuration!,
-        );
-        await Future.wait(
-          <Future<void>>[
-            _videoAdPlayer.setAdProgress(currentProgress),
-            ...videoAdPlayerCallbacks.map(
-              (ima.VideoAdPlayerCallback callback) async {
-                await callback.onAdProgress(
-                  _loadedAdMediaInfo!,
-                  currentProgress,
-                );
-              },
-            ),
-          ],
-        );
+        final ima.VideoProgressUpdate currentProgress = _androidParams._imaProxy
+            .newVideoProgressUpdate(
+              currentTimeMs: await _videoView.getCurrentPosition(),
+              durationMs: _adDuration!,
+            );
+        await Future.wait(<Future<void>>[
+          _videoAdPlayer.setAdProgress(currentProgress),
+          ...videoAdPlayerCallbacks.map((
+            ima.VideoAdPlayerCallback callback,
+          ) async {
+            await callback.onAdProgress(_loadedAdMediaInfo!, currentProgress);
+          }),
+        ]);
       },
     );
   }

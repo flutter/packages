@@ -83,17 +83,19 @@ class Indent {
   }) {
     final List<String> lines = input.split('\n');
 
-    final int indentationToRemove = !trimIndentation
-        ? 0
-        : lines
-            .where((String line) => line.trim().isNotEmpty)
-            .map((String line) => line.length - line.trimLeft().length)
-            .reduce(min);
+    final int indentationToRemove =
+        !trimIndentation
+            ? 0
+            : lines
+                .where((String line) => line.trim().isNotEmpty)
+                .map((String line) => line.length - line.trimLeft().length)
+                .reduce(min);
 
     for (int i = 0; i < lines.length; ++i) {
-      final String line = lines[i].length >= indentationToRemove
-          ? lines[i].substring(indentationToRemove)
-          : lines[i];
+      final String line =
+          lines[i].length >= indentationToRemove
+              ? lines[i].substring(indentationToRemove)
+              : lines[i];
 
       if (i == 0 && !leadingSpace) {
         add(line.replaceAll('\t', tab));
@@ -237,10 +239,16 @@ class HostDatatype {
 ///
 /// [customResolver] can modify the datatype of custom types.
 HostDatatype getFieldHostDatatype(
-    NamedType field, String? Function(TypeDeclaration) builtinResolver,
-    {String Function(String)? customResolver}) {
-  return _getHostDatatype(field.type, builtinResolver,
-      customResolver: customResolver, fieldName: field.name);
+  NamedType field,
+  String? Function(TypeDeclaration) builtinResolver, {
+  String Function(String)? customResolver,
+}) {
+  return _getHostDatatype(
+    field.type,
+    builtinResolver,
+    customResolver: customResolver,
+    fieldName: field.name,
+  );
 }
 
 /// Calculates the [HostDatatype] for the provided [TypeDeclaration].
@@ -251,21 +259,30 @@ HostDatatype getFieldHostDatatype(
 ///
 /// [customResolver] can modify the datatype of custom types.
 HostDatatype getHostDatatype(
-    TypeDeclaration type, String? Function(TypeDeclaration) builtinResolver,
-    {String Function(String)? customResolver}) {
-  return _getHostDatatype(type, builtinResolver,
-      customResolver: customResolver);
+  TypeDeclaration type,
+  String? Function(TypeDeclaration) builtinResolver, {
+  String Function(String)? customResolver,
+}) {
+  return _getHostDatatype(
+    type,
+    builtinResolver,
+    customResolver: customResolver,
+  );
 }
 
 HostDatatype _getHostDatatype(
-    TypeDeclaration type, String? Function(TypeDeclaration) builtinResolver,
-    {String Function(String)? customResolver, String? fieldName}) {
+  TypeDeclaration type,
+  String? Function(TypeDeclaration) builtinResolver, {
+  String Function(String)? customResolver,
+  String? fieldName,
+}) {
   final String? datatype = builtinResolver(type);
   if (datatype == null) {
     if (type.isClass) {
-      final String customName = customResolver != null
-          ? customResolver(type.baseName)
-          : type.baseName;
+      final String customName =
+          customResolver != null
+              ? customResolver(type.baseName)
+              : type.baseName;
       return HostDatatype(
         datatype: customName,
         isBuiltin: false,
@@ -273,9 +290,10 @@ HostDatatype _getHostDatatype(
         isEnum: false,
       );
     } else if (type.isEnum) {
-      final String customName = customResolver != null
-          ? customResolver(type.baseName)
-          : type.baseName;
+      final String customName =
+          customResolver != null
+              ? customResolver(type.baseName)
+              : type.baseName;
       return HostDatatype(
         datatype: customName,
         isBuiltin: false,
@@ -284,7 +302,8 @@ HostDatatype _getHostDatatype(
       );
     } else {
       throw Exception(
-          'unrecognized datatype ${fieldName == null ? '' : 'for field:"$fieldName" '}of type:"${type.baseName}"');
+        'unrecognized datatype ${fieldName == null ? '' : 'for field:"$fieldName" '}of type:"${type.baseName}"',
+      );
     }
   } else {
     return HostDatatype(
@@ -351,7 +370,7 @@ const List<String> disallowedPrefixes = <String>[
   hostProxyApiPrefix,
   proxyApiClassNamePrefix,
   varNamePrefix,
-  'pigeonChannelCodec'
+  'pigeonChannelCodec',
 ];
 
 /// Collection of keys used in dictionaries across generators.
@@ -399,8 +418,10 @@ Map<String, Object> mergeMaps(
       final Object entryValue = entry.value;
       if (entryValue is Map<String, Object>) {
         assert(base[entry.key] is Map<String, Object>);
-        result[entry.key] =
-            mergeMaps((base[entry.key] as Map<String, Object>?)!, entryValue);
+        result[entry.key] = mergeMaps(
+          (base[entry.key] as Map<String, Object>?)!,
+          entryValue,
+        );
       } else {
         result[entry.key] = entry.value;
       }
@@ -419,8 +440,13 @@ Map<String, Object> mergeMaps(
 /// A type name that is enumerated.
 class EnumeratedType {
   /// Constructor.
-  EnumeratedType(this.name, this.enumeration, this.type,
-      {this.associatedClass, this.associatedEnum});
+  EnumeratedType(
+    this.name,
+    this.enumeration,
+    this.type, {
+    this.associatedClass,
+    this.associatedEnum,
+  });
 
   /// The name of the type.
   final String name;
@@ -486,7 +512,9 @@ Iterable<TypeDeclaration> _getTypeArguments(TypeDeclaration type) sync* {
 }
 
 bool _isUnseenCustomType(
-    TypeDeclaration type, Set<String> referencedTypeNames) {
+  TypeDeclaration type,
+  Set<String> referencedTypeNames,
+) {
   return !referencedTypeNames.contains(type.baseName) &&
       !validTypes.contains(type.baseName);
 }
@@ -513,7 +541,9 @@ class _Bag<Key, Value> {
 /// Recurses into a list of [Api]s and produces a list of all referenced types
 /// and an associated [List] of the offsets where they are found.
 Map<TypeDeclaration, List<int>> getReferencedTypes(
-    List<Api> apis, List<Class> classes) {
+  List<Api> apis,
+  List<Class> classes,
+) {
   final _Bag<TypeDeclaration, int> references = _Bag<TypeDeclaration, int>();
   for (final Api api in apis) {
     for (final Method method in api.methods) {
@@ -542,8 +572,10 @@ Map<TypeDeclaration, List<int>> getReferencedTypes(
   final List<String> classesToCheck = List<String>.from(referencedTypeNames);
   while (classesToCheck.isNotEmpty) {
     final String next = classesToCheck.removeLast();
-    final Class aClass = classes.firstWhere((Class x) => x.name == next,
-        orElse: () => Class(name: '', fields: <NamedType>[]));
+    final Class aClass = classes.firstWhere(
+      (Class x) => x.name == next,
+      orElse: () => Class(name: '', fields: <NamedType>[]),
+    );
     for (final NamedType field in aClass.fields) {
       if (_isUnseenCustomType(field.type, referencedTypeNames)) {
         references.add(field.type, field.offset);
@@ -566,7 +598,7 @@ Map<TypeDeclaration, List<int>> getReferencedTypes(
 /// [T] depends on the language. For example, Android uses an int while iOS uses
 /// semantic versioning.
 ({TypeDeclaration type, T version})?
-    findHighestApiRequirement<T extends Object>(
+findHighestApiRequirement<T extends Object>(
   Iterable<TypeDeclaration> types, {
   required T? Function(TypeDeclaration) onGetApiRequirement,
   required Comparator<T> onCompare,
@@ -588,13 +620,14 @@ Map<TypeDeclaration, List<int>> getReferencedTypes(
     return null;
   }
 
-  final TypeDeclaration typeWithHighestRequirement = allReferencedTypes.reduce(
-    (TypeDeclaration one, TypeDeclaration two) {
-      return onCompare(onGetApiRequirement(one)!, onGetApiRequirement(two)!) > 0
-          ? one
-          : two;
-    },
-  );
+  final TypeDeclaration typeWithHighestRequirement = allReferencedTypes.reduce((
+    TypeDeclaration one,
+    TypeDeclaration two,
+  ) {
+    return onCompare(onGetApiRequirement(one)!, onGetApiRequirement(two)!) > 0
+        ? one
+        : two;
+  });
 
   return (
     type: typeWithHighestRequirement,
@@ -834,7 +867,9 @@ String toLowerCamelCase(String text) {
 String toScreamingSnakeCase(String string) {
   return string
       .replaceAllMapped(
-          RegExp(r'(?<=[a-z])[A-Z]'), (Match m) => '_${m.group(0)}')
+        RegExp(r'(?<=[a-z])[A-Z]'),
+        (Match m) => '_${m.group(0)}',
+      )
       .toUpperCase();
 }
 

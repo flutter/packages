@@ -7,14 +7,10 @@ import 'package:args/command_runner.dart';
 import 'logger.dart';
 import 'project.dart';
 
-enum ExitStatus {
-  success,
-  warning,
-  fail,
-  killed,
-}
+enum ExitStatus { success, warning, fail, killed }
 
-const String flutterNoPubspecMessage = 'Error: No pubspec.yaml file found.\n'
+const String flutterNoPubspecMessage =
+    'Error: No pubspec.yaml file found.\n'
     'This command should be run from the root of your Flutter project.';
 
 class CommandResult {

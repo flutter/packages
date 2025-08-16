@@ -12,9 +12,8 @@ import 'src/messages.g.dart';
 /// An implementation of [UrlLauncherPlatform] for Android.
 class UrlLauncherAndroid extends UrlLauncherPlatform {
   /// Creates a new plugin implementation instance.
-  UrlLauncherAndroid({
-    @visibleForTesting UrlLauncherApi? api,
-  }) : _hostApi = api ?? UrlLauncherApi();
+  UrlLauncherAndroid({@visibleForTesting UrlLauncherApi? api})
+    : _hostApi = api ?? UrlLauncherApi();
 
   final UrlLauncherApi _hostApi;
 
@@ -61,15 +60,19 @@ class UrlLauncherAndroid extends UrlLauncherPlatform {
     String? webOnlyWindowName,
   }) async {
     return launchUrl(
-        url,
-        LaunchOptions(
-            mode: useWebView
+      url,
+      LaunchOptions(
+        mode:
+            useWebView
                 ? PreferredLaunchMode.inAppWebView
                 : PreferredLaunchMode.externalApplication,
-            webViewConfiguration: InAppWebViewConfiguration(
-                enableDomStorage: enableDomStorage,
-                enableJavaScript: enableJavaScript,
-                headers: headers)));
+        webViewConfiguration: InAppWebViewConfiguration(
+          enableDomStorage: enableDomStorage,
+          enableJavaScript: enableJavaScript,
+          headers: headers,
+        ),
+      ),
+    );
   }
 
   @override
@@ -106,13 +109,13 @@ class UrlLauncherAndroid extends UrlLauncherPlatform {
           enableDomStorage: options.webViewConfiguration.enableDomStorage,
           headers: options.webViewConfiguration.headers,
         ),
-        BrowserOptions(
-          showTitle: options.browserConfiguration.showTitle,
-        ),
+        BrowserOptions(showTitle: options.browserConfiguration.showTitle),
       );
     } else {
-      succeeded =
-          await _hostApi.launchUrl(url, options.webViewConfiguration.headers);
+      succeeded = await _hostApi.launchUrl(
+        url,
+        options.webViewConfiguration.headers,
+      );
     }
 
     // TODO(stuartmorgan): Remove this special handling as part of a
@@ -120,8 +123,9 @@ class UrlLauncherAndroid extends UrlLauncherPlatform {
     // current behavior is backwards compatible with the previous Java error.
     if (!succeeded) {
       throw PlatformException(
-          code: 'ACTIVITY_NOT_FOUND',
-          message: 'No Activity found to handle intent { $url }');
+        code: 'ACTIVITY_NOT_FOUND',
+        message: 'No Activity found to handle intent { $url }',
+      );
     }
 
     return succeeded;

@@ -13,9 +13,8 @@ import 'src/messages.g.dart';
 /// Android implementation of [GoogleSignInPlatform].
 class GoogleSignInAndroid extends GoogleSignInPlatform {
   /// Creates a new plugin implementation instance.
-  GoogleSignInAndroid({
-    @visibleForTesting GoogleSignInApi? api,
-  }) : _hostApi = api ?? GoogleSignInApi();
+  GoogleSignInAndroid({@visibleForTesting GoogleSignInApi? api})
+    : _hostApi = api ?? GoogleSignInApi();
 
   final GoogleSignInApi _hostApi;
 
@@ -31,7 +30,8 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
   @override
   Future<void> init(InitParameters params) async {
     _hostedDomain = params.hostedDomain;
-    _serverClientId = params.serverClientId ??
+    _serverClientId =
+        params.serverClientId ??
         await _hostApi.getGoogleServicesJsonServerClientId();
     _nonce = params.nonce;
     // The clientId parameter is not supported on Android.
@@ -40,7 +40,8 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
 
   @override
   Future<AuthenticationResults?> attemptLightweightAuthentication(
-      AttemptLightweightAuthenticationParameters params) async {
+    AttemptLightweightAuthenticationParameters params,
+  ) async {
     // Attempt to auto-sign-in, for single-account or returning users.
     PlatformGoogleIdTokenCredential? credential = await _authenticate(
       useButtonFlow: false,
@@ -68,7 +69,8 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
 
   @override
   Future<AuthenticationResults> authenticate(
-      AuthenticateParameters params) async {
+    AuthenticateParameters params,
+  ) async {
     // Attempt to authorize with minimal interaction.
     final PlatformGoogleIdTokenCredential? credential = await _authenticate(
       useButtonFlow: true,
@@ -83,8 +85,9 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
     // no information is available
     if (credential == null) {
       throw const GoogleSignInException(
-          code: GoogleSignInExceptionCode.unknownError,
-          description: 'Authenticate returned no credential without an error');
+        code: GoogleSignInExceptionCode.unknownError,
+        description: 'Authenticate returned no credential without an error',
+      );
     }
     return _authenticationResultFromPlatformCredential(credential);
   }
@@ -108,9 +111,12 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
 
   @override
   Future<ClientAuthorizationTokenData?> clientAuthorizationTokensForScopes(
-      ClientAuthorizationTokensForScopesParameters params) async {
-    final (:String? accessToken, :String? serverAuthCode) =
-        await _authorize(params.request, requestOfflineAccess: false);
+    ClientAuthorizationTokensForScopesParameters params,
+  ) async {
+    final (:String? accessToken, :String? serverAuthCode) = await _authorize(
+      params.request,
+      requestOfflineAccess: false,
+    );
     return accessToken == null
         ? null
         : ClientAuthorizationTokenData(accessToken: accessToken);
@@ -118,9 +124,12 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
 
   @override
   Future<ServerAuthorizationTokenData?> serverAuthorizationTokensForScopes(
-      ServerAuthorizationTokensForScopesParameters params) async {
-    final (:String? accessToken, :String? serverAuthCode) =
-        await _authorize(params.request, requestOfflineAccess: true);
+    ServerAuthorizationTokensForScopesParameters params,
+  ) async {
+    final (:String? accessToken, :String? serverAuthCode) = await _authorize(
+      params.request,
+      requestOfflineAccess: true,
+    );
     return serverAuthCode == null
         ? null
         : ServerAuthorizationTokenData(serverAuthCode: serverAuthCode);
@@ -139,13 +148,16 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
     bool throwForNoAuth = false,
   }) async {
     final GetCredentialResult authnResult = await _hostApi.getCredential(
-        GetCredentialRequestParams(
-            useButtonFlow: useButtonFlow,
-            googleIdOptionParams: GetCredentialRequestGoogleIdOptionParams(
-                filterToAuthorized: nonButtonFlowOptions.filterToAuthorized,
-                autoSelectEnabled: nonButtonFlowOptions.autoSelectEnabled),
-            serverClientId: _serverClientId,
-            nonce: _nonce));
+      GetCredentialRequestParams(
+        useButtonFlow: useButtonFlow,
+        googleIdOptionParams: GetCredentialRequestGoogleIdOptionParams(
+          filterToAuthorized: nonButtonFlowOptions.filterToAuthorized,
+          autoSelectEnabled: nonButtonFlowOptions.autoSelectEnabled,
+        ),
+        serverClientId: _serverClientId,
+        nonce: _nonce,
+      ),
+    );
     switch (authnResult) {
       case GetCredentialFailure():
         String? message = authnResult.message;
@@ -182,23 +194,29 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
             code = GoogleSignInExceptionCode.unknownError;
         }
         throw GoogleSignInException(
-            code: code, description: message, details: authnResult.details);
+          code: code,
+          description: message,
+          details: authnResult.details,
+        );
       case GetCredentialSuccess():
         return authnResult.credential;
     }
   }
 
   Future<({String? accessToken, String? serverAuthCode})> _authorize(
-      AuthorizationRequestDetails request,
-      {required bool requestOfflineAccess}) async {
+    AuthorizationRequestDetails request, {
+    required bool requestOfflineAccess,
+  }) async {
     final AuthorizeResult result = await _hostApi.authorize(
-        PlatformAuthorizationRequest(
-            scopes: request.scopes,
-            accountEmail: request.email,
-            hostedDomain: _hostedDomain,
-            serverClientIdForForcedRefreshToken:
-                requestOfflineAccess ? _serverClientId : null),
-        promptIfUnauthorized: request.promptIfUnauthorized);
+      PlatformAuthorizationRequest(
+        scopes: request.scopes,
+        accountEmail: request.email,
+        hostedDomain: _hostedDomain,
+        serverClientIdForForcedRefreshToken:
+            requestOfflineAccess ? _serverClientId : null,
+      ),
+      promptIfUnauthorized: request.promptIfUnauthorized,
+    );
     switch (result) {
       case AuthorizeFailure():
         String? message = result.message;
@@ -220,7 +238,10 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
             code = GoogleSignInExceptionCode.uiUnavailable;
         }
         throw GoogleSignInException(
-            code: code, description: message, details: result.details);
+          code: code,
+          description: message,
+          details: result.details,
+        );
       case PlatformAuthorizationResult():
         final String? accessToken = result.accessToken;
         if (accessToken == null) {
@@ -234,7 +255,8 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
   }
 
   AuthenticationResults _authenticationResultFromPlatformCredential(
-      PlatformGoogleIdTokenCredential credential) {
+    PlatformGoogleIdTokenCredential credential,
+  ) {
     // GoogleIdTokenCredential's ID field is documented to return the
     // email address, not what the other platform SDKs call an ID.
     // The account ID returned by other platform SDKs and the legacy
@@ -249,12 +271,14 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
 
     return AuthenticationResults(
       user: GoogleSignInUserData(
-          email: email,
-          id: userId,
-          displayName: credential.displayName,
-          photoUrl: credential.profilePictureUri),
-      authenticationTokens:
-          AuthenticationTokenData(idToken: credential.idToken),
+        email: email,
+        id: userId,
+        displayName: credential.displayName,
+        photoUrl: credential.profilePictureUri,
+      ),
+      authenticationTokens: AuthenticationTokenData(
+        idToken: credential.idToken,
+      ),
     );
   }
 }
@@ -269,7 +293,8 @@ final Codec<Object?, String> _jwtCodec = json.fuse(utf8).fuse(base64);
 /// See https://stackoverflow.com/a/78064720
 String? _idFromIdToken(String idToken) {
   final RegExp jwtTokenRegexp = RegExp(
-      r'^(?<header>[^\.\s]+)\.(?<payload>[^\.\s]+)\.(?<signature>[^\.\s]+)$');
+    r'^(?<header>[^\.\s]+)\.(?<payload>[^\.\s]+)\.(?<signature>[^\.\s]+)$',
+  );
   final RegExpMatch? match = jwtTokenRegexp.firstMatch(idToken);
   final String? payload = match?.namedGroup('payload');
   if (payload != null) {

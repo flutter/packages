@@ -11,9 +11,7 @@ import 'package:mockito/mockito.dart';
 
 import 'ima_settings_test.mocks.dart';
 
-@GenerateNiceMocks(<MockSpec<Object>>[
-  MockSpec<IMASettings>(),
-])
+@GenerateNiceMocks(<MockSpec<Object>>[MockSpec<IMASettings>()])
 void main() {
   group('IOSImaSettings', () {
     setUp(() {

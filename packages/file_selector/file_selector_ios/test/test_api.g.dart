@@ -54,36 +54,45 @@ abstract class TestFileSelectorApi {
     messageChannelSuffix =
         messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.file_selector_ios.FileSelectorApi.openFile$messageChannelSuffix',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.file_selector_ios.FileSelectorApi.openFile$messageChannelSuffix',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (api == null) {
         _testBinaryMessengerBinding!.defaultBinaryMessenger
             .setMockDecodedMessageHandler<Object?>(pigeonVar_channel, null);
       } else {
         _testBinaryMessengerBinding!.defaultBinaryMessenger
-            .setMockDecodedMessageHandler<Object?>(pigeonVar_channel,
-                (Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.file_selector_ios.FileSelectorApi.openFile was null.');
-          final List<Object?> args = (message as List<Object?>?)!;
-          final FileSelectorConfig? arg_config =
-              (args[0] as FileSelectorConfig?);
-          assert(arg_config != null,
-              'Argument for dev.flutter.pigeon.file_selector_ios.FileSelectorApi.openFile was null, expected non-null FileSelectorConfig.');
-          try {
-            final List<String> output = await api.openFile(arg_config!);
-            return <Object?>[output];
-          } on PlatformException catch (e) {
-            return wrapResponse(error: e);
-          } catch (e) {
-            return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
-          }
-        });
+            .setMockDecodedMessageHandler<Object?>(pigeonVar_channel, (
+              Object? message,
+            ) async {
+              assert(
+                message != null,
+                'Argument for dev.flutter.pigeon.file_selector_ios.FileSelectorApi.openFile was null.',
+              );
+              final List<Object?> args = (message as List<Object?>?)!;
+              final FileSelectorConfig? arg_config =
+                  (args[0] as FileSelectorConfig?);
+              assert(
+                arg_config != null,
+                'Argument for dev.flutter.pigeon.file_selector_ios.FileSelectorApi.openFile was null, expected non-null FileSelectorConfig.',
+              );
+              try {
+                final List<String> output = await api.openFile(arg_config!);
+                return <Object?>[output];
+              } on PlatformException catch (e) {
+                return wrapResponse(error: e);
+              } catch (e) {
+                return wrapResponse(
+                  error: PlatformException(
+                    code: 'error',
+                    message: e.toString(),
+                  ),
+                );
+              }
+            });
       }
     }
   }

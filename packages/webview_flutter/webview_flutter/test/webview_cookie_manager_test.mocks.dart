@@ -44,23 +44,28 @@ class MockPlatformWebViewCookieManager extends _i1.Mock
   @override
   _i2.PlatformWebViewCookieManagerCreationParams get params =>
       (super.noSuchMethod(
-        Invocation.getter(#params),
-        returnValue: _FakePlatformWebViewCookieManagerCreationParams_0(
-          this,
-          Invocation.getter(#params),
-        ),
-      ) as _i2.PlatformWebViewCookieManagerCreationParams);
+            Invocation.getter(#params),
+            returnValue: _FakePlatformWebViewCookieManagerCreationParams_0(
+              this,
+              Invocation.getter(#params),
+            ),
+          )
+          as _i2.PlatformWebViewCookieManagerCreationParams);
 
   @override
-  _i4.Future<bool> clearCookies() => (super.noSuchMethod(
-        Invocation.method(#clearCookies, []),
-        returnValue: _i4.Future<bool>.value(false),
-      ) as _i4.Future<bool>);
+  _i4.Future<bool> clearCookies() =>
+      (super.noSuchMethod(
+            Invocation.method(#clearCookies, []),
+            returnValue: _i4.Future<bool>.value(false),
+          )
+          as _i4.Future<bool>);
 
   @override
-  _i4.Future<void> setCookie(_i2.WebViewCookie? cookie) => (super.noSuchMethod(
-        Invocation.method(#setCookie, [cookie]),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+  _i4.Future<void> setCookie(_i2.WebViewCookie? cookie) =>
+      (super.noSuchMethod(
+            Invocation.method(#setCookie, [cookie]),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
 }

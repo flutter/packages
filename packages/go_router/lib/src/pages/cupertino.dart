@@ -22,14 +22,13 @@ CupertinoPage<void> pageBuilderForCupertinoApp({
   required Object? arguments,
   required String restorationId,
   required Widget child,
-}) =>
-    CupertinoPage<void>(
-      name: name,
-      arguments: arguments,
-      key: key,
-      restorationId: restorationId,
-      child: child,
-    );
+}) => CupertinoPage<void>(
+  name: name,
+  arguments: arguments,
+  key: key,
+  restorationId: restorationId,
+  child: child,
+);
 
 /// Default error page implementation for Cupertino.
 class CupertinoErrorScreen extends StatelessWidget {
@@ -41,19 +40,18 @@ class CupertinoErrorScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => CupertinoPageScaffold(
-        navigationBar:
-            const CupertinoNavigationBar(middle: Text('Page Not Found')),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text(error?.toString() ?? 'page not found'),
-              CupertinoButton(
-                onPressed: () => context.go('/'),
-                child: const Text('Home'),
-              ),
-            ],
+    navigationBar: const CupertinoNavigationBar(middle: Text('Page Not Found')),
+    child: Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Text(error?.toString() ?? 'page not found'),
+          CupertinoButton(
+            onPressed: () => context.go('/'),
+            child: const Text('Home'),
           ),
-        ),
-      );
+        ],
+      ),
+    ),
+  );
 }

@@ -60,64 +60,85 @@ const String commandLineTests = 'command_line_tests';
 
 const Map<String, TestInfo> testSuites = <String, TestInfo>{
   windowsUnitTests: TestInfo(
-      function: _runWindowsUnitTests,
-      description: 'Unit tests on generated Windows C++ code.'),
+    function: _runWindowsUnitTests,
+    description: 'Unit tests on generated Windows C++ code.',
+  ),
   windowsIntegrationTests: TestInfo(
-      function: _runWindowsIntegrationTests,
-      description: 'Integration tests on generated Windows C++ code.'),
+    function: _runWindowsIntegrationTests,
+    description: 'Integration tests on generated Windows C++ code.',
+  ),
   androidJavaUnitTests: TestInfo(
-      function: _runAndroidJavaUnitTests,
-      description: 'Unit tests on generated Java code.'),
+    function: _runAndroidJavaUnitTests,
+    description: 'Unit tests on generated Java code.',
+  ),
   androidJavaIntegrationTests: TestInfo(
-      function: _runAndroidJavaIntegrationTests,
-      description: 'Integration tests on generated Java code.'),
+    function: _runAndroidJavaIntegrationTests,
+    description: 'Integration tests on generated Java code.',
+  ),
   androidJavaLint: TestInfo(
-      function: _runAndroidJavaLint, description: 'Lint generated Java code.'),
+    function: _runAndroidJavaLint,
+    description: 'Lint generated Java code.',
+  ),
   androidKotlinUnitTests: TestInfo(
-      function: _runAndroidKotlinUnitTests,
-      description: 'Unit tests on generated Kotlin code.'),
+    function: _runAndroidKotlinUnitTests,
+    description: 'Unit tests on generated Kotlin code.',
+  ),
   androidKotlinLint: TestInfo(
-      function: _runAndroidKotlinLint,
-      description: 'Lint generated Kotlin code.'),
+    function: _runAndroidKotlinLint,
+    description: 'Lint generated Kotlin code.',
+  ),
   androidKotlinIntegrationTests: TestInfo(
-      function: _runAndroidKotlinIntegrationTests,
-      description: 'Integration tests on generated Kotlin code.'),
+    function: _runAndroidKotlinIntegrationTests,
+    description: 'Integration tests on generated Kotlin code.',
+  ),
   dartUnitTests: TestInfo(
-      function: _runDartUnitTests,
-      description: "Unit tests on and analysis on Pigeon's implementation."),
+    function: _runDartUnitTests,
+    description: "Unit tests on and analysis on Pigeon's implementation.",
+  ),
   flutterUnitTests: TestInfo(
-      function: _runFlutterUnitTests,
-      description: 'Unit tests on generated Dart code.'),
+    function: _runFlutterUnitTests,
+    description: 'Unit tests on generated Dart code.',
+  ),
   iOSObjCUnitTests: TestInfo(
-      function: _runIOSObjCUnitTests,
-      description: 'Unit tests on generated Objective-C code.'),
+    function: _runIOSObjCUnitTests,
+    description: 'Unit tests on generated Objective-C code.',
+  ),
   iOSObjCIntegrationTests: TestInfo(
-      function: _runIOSObjCIntegrationTests,
-      description: 'Integration tests on generated Objective-C code.'),
+    function: _runIOSObjCIntegrationTests,
+    description: 'Integration tests on generated Objective-C code.',
+  ),
   iOSSwiftUnitTests: TestInfo(
-      function: _runIOSSwiftUnitTests,
-      description: 'Unit tests on generated Swift code.'),
+    function: _runIOSSwiftUnitTests,
+    description: 'Unit tests on generated Swift code.',
+  ),
   iOSSwiftIntegrationTests: TestInfo(
-      function: _runIOSSwiftIntegrationTests,
-      description: 'Integration tests on generated Swift code.'),
+    function: _runIOSSwiftIntegrationTests,
+    description: 'Integration tests on generated Swift code.',
+  ),
   linuxUnitTests: TestInfo(
-      function: _runLinuxUnitTests,
-      description: 'Unit tests on generated Linux C code.'),
+    function: _runLinuxUnitTests,
+    description: 'Unit tests on generated Linux C code.',
+  ),
   linuxIntegrationTests: TestInfo(
-      function: _runLinuxIntegrationTests,
-      description: 'Integration tests on generated Linux C code.'),
+    function: _runLinuxIntegrationTests,
+    description: 'Integration tests on generated Linux C code.',
+  ),
   macOSObjCIntegrationTests: TestInfo(
-      function: _runMacOSObjCIntegrationTests,
-      description: 'Integration tests on generated Objective-C code on macOS.'),
+    function: _runMacOSObjCIntegrationTests,
+    description: 'Integration tests on generated Objective-C code on macOS.',
+  ),
   macOSSwiftUnitTests: TestInfo(
-      function: _runMacOSSwiftUnitTests,
-      description: 'Unit tests on generated Swift code on macOS.'),
+    function: _runMacOSSwiftUnitTests,
+    description: 'Unit tests on generated Swift code on macOS.',
+  ),
   macOSSwiftIntegrationTests: TestInfo(
-      function: _runMacOSSwiftIntegrationTests,
-      description: 'Integration tests on generated Swift code on macOS.'),
+    function: _runMacOSSwiftIntegrationTests,
+    description: 'Integration tests on generated Swift code on macOS.',
+  ),
   commandLineTests: TestInfo(
-      function: _runCommandLineTests,
-      description: 'Tests running pigeon with various command-line options.'),
+    function: _runCommandLineTests,
+    description: 'Tests running pigeon with various command-line options.',
+  ),
 };
 
 Future<int> _runAndroidJavaUnitTests({bool ciMode = false}) async {
@@ -126,7 +147,9 @@ Future<int> _runAndroidJavaUnitTests({bool ciMode = false}) async {
 
 Future<int> _runAndroidJavaIntegrationTests({bool ciMode = false}) async {
   return _runMobileIntegrationTests(
-      'Android', _alternateLanguageTestPluginRelativePath);
+    'Android',
+    _alternateLanguageTestPluginRelativePath,
+  );
 }
 
 Future<int> _runAndroidJavaLint({bool ciMode = false}) async {
@@ -169,8 +192,11 @@ Future<int> _runAndroidLint({
   final String androidProjectPath = '$examplePath/android';
   final File gradleFile = File(p.join(androidProjectPath, 'gradlew'));
   if (!gradleFile.existsSync()) {
-    final int compileCode = await runFlutterBuild(examplePath, 'apk',
-        flags: <String>['--config-only']);
+    final int compileCode = await runFlutterBuild(
+      examplePath,
+      'apk',
+      flags: <String>['--config-only'],
+    );
     if (compileCode != 0) {
       return compileCode;
     }
@@ -184,20 +210,24 @@ Future<int> _runAndroidKotlinIntegrationTests({bool ciMode = false}) async {
 }
 
 Future<int> _runMobileIntegrationTests(
-    String platform, String testPluginPath) async {
+  String platform,
+  String testPluginPath,
+) async {
   final String? device = await getDeviceForPlatform(platform.toLowerCase());
   if (device == null) {
-    print('No $platform device available. Attach an $platform device or start '
-        'an emulator/simulator to run integration tests');
+    print(
+      'No $platform device available. Attach an $platform device or start '
+      'an emulator/simulator to run integration tests',
+    );
     return _noDeviceAvailableExitCode;
   }
 
   final String examplePath = './$testPluginPath/example';
-  return runFlutterCommand(
-    examplePath,
-    'test',
-    <String>[_integrationTestFileRelativePath, '-d', device],
-  );
+  return runFlutterCommand(examplePath, 'test', <String>[
+    _integrationTestFileRelativePath,
+    '-d',
+    device,
+  ]);
 }
 
 Future<int> _runDartUnitTests({bool ciMode = false}) async {
@@ -225,8 +255,11 @@ Future<int> _analyzeFlutterUnitTests(String flutterUnitTestsPath) async {
     return generateTestCode;
   }
 
-  final int analyzeCode =
-      await runFlutterCommand(flutterUnitTestsPath, 'analyze', <String>[]);
+  final int analyzeCode = await runFlutterCommand(
+    flutterUnitTestsPath,
+    'analyze',
+    <String>[],
+  );
   if (analyzeCode != 0) {
     return analyzeCode;
   }
@@ -244,8 +277,11 @@ Future<int> _runFlutterUnitTests({bool ciMode = false}) async {
     return analyzeCode;
   }
 
-  final int testCode =
-      await runFlutterCommand(flutterUnitTestsPath, 'test', <String>[]);
+  final int testCode = await runFlutterCommand(
+    flutterUnitTestsPath,
+    'test',
+    <String>[],
+  );
   if (testCode != 0) {
     return testCode;
   }
@@ -260,28 +296,30 @@ Future<int> _runIOSObjCUnitTests({bool ciMode = false}) async {
 Future<int> _runIOSObjCIntegrationTests({bool ciMode = false}) async {
   final String? device = await getDeviceForPlatform('ios');
   if (device == null) {
-    print('No iOS device available. Attach an iOS device or start '
-        'a simulator to run integration tests');
+    print(
+      'No iOS device available. Attach an iOS device or start '
+      'a simulator to run integration tests',
+    );
     return _noDeviceAvailableExitCode;
   }
 
   const String examplePath =
       './$_alternateLanguageTestPluginRelativePath/example';
-  return runFlutterCommand(
-    examplePath,
-    'test',
-    <String>[_integrationTestFileRelativePath, '-d', device],
-  );
+  return runFlutterCommand(examplePath, 'test', <String>[
+    _integrationTestFileRelativePath,
+    '-d',
+    device,
+  ]);
 }
 
 Future<int> _runMacOSObjCIntegrationTests({bool ciMode = false}) async {
   const String examplePath =
       './$_alternateLanguageTestPluginRelativePath/example';
-  return runFlutterCommand(
-    examplePath,
-    'test',
-    <String>[_integrationTestFileRelativePath, '-d', 'macos'],
-  );
+  return runFlutterCommand(examplePath, 'test', <String>[
+    _integrationTestFileRelativePath,
+    '-d',
+    'macos',
+  ]);
 }
 
 Future<int> _runMacOSSwiftUnitTests({bool ciMode = false}) async {
@@ -293,21 +331,17 @@ Future<int> _runMacOSSwiftUnitTests({bool ciMode = false}) async {
 
   return runXcodeBuild(
     '$examplePath/macos',
-    extraArguments: <String>[
-      '-configuration',
-      'Debug',
-      'test',
-    ],
+    extraArguments: <String>['-configuration', 'Debug', 'test'],
   );
 }
 
 Future<int> _runMacOSSwiftIntegrationTests({bool ciMode = false}) async {
   const String examplePath = './$_testPluginRelativePath/example';
-  return runFlutterCommand(
-    examplePath,
-    'test',
-    <String>[_integrationTestFileRelativePath, '-d', 'macos'],
-  );
+  return runFlutterCommand(examplePath, 'test', <String>[
+    _integrationTestFileRelativePath,
+    '-d',
+    'macos',
+  ]);
 }
 
 Future<int> _runIOSSwiftUnitTests({bool ciMode = false}) async {
@@ -352,28 +386,18 @@ Future<int> _createSimulator(
   }
   return runProcess(
     'xcrun',
-    <String>[
-      'simctl',
-      'create',
-      deviceName,
-      deviceType,
-      deviceRuntime,
-    ],
+    <String>['simctl', 'create', deviceName, deviceType, deviceRuntime],
     streamOutput: false,
     logFailure: true,
   );
 }
 
 Future<int> _deleteSimulator(String deviceName) async {
-  return runProcess(
-    'xcrun',
-    <String>[
-      'simctl',
-      'delete',
-      deviceName,
-    ],
-    streamOutput: false,
-  );
+  return runProcess('xcrun', <String>[
+    'simctl',
+    'delete',
+    deviceName,
+  ], streamOutput: false);
 }
 
 Future<int> _runIOSSwiftIntegrationTests({bool ciMode = false}) async {
@@ -448,11 +472,11 @@ Future<int> _runWindowsUnitTests({bool ciMode = false}) async {
 
 Future<int> _runWindowsIntegrationTests({bool ciMode = false}) async {
   const String examplePath = './$_testPluginRelativePath/example';
-  return runFlutterCommand(
-    examplePath,
-    'test',
-    <String>[_integrationTestFileRelativePath, '-d', 'windows'],
-  );
+  return runFlutterCommand(examplePath, 'test', <String>[
+    _integrationTestFileRelativePath,
+    '-d',
+    'windows',
+  ]);
 }
 
 Future<int> _runCommandLineTests({bool ciMode = false}) async {
@@ -465,7 +489,7 @@ Future<int> _runCommandLineTests({bool ciMode = false}) async {
   if (await runProcess('dart', <String>[
         '--snapshot-kind=kernel',
         '--snapshot=$snapshot',
-        pigeonScript
+        pigeonScript,
       ]) !=
       0) {
     print('Unable to generate $snapshot from $pigeonScript');
@@ -492,8 +516,12 @@ Future<int> _runCommandLineTests({bool ciMode = false}) async {
   int exitCode = 0;
   for (final List<String> arguments in testArguments) {
     print('Testing dart $pigeonScript ${arguments.join(', ')}');
-    exitCode = await runProcess('dart', <String>[snapshot, ...arguments],
-        streamOutput: false, logFailure: true);
+    exitCode = await runProcess(
+      'dart',
+      <String>[snapshot, ...arguments],
+      streamOutput: false,
+      logFailure: true,
+    );
     if (exitCode != 0) {
       break;
     }

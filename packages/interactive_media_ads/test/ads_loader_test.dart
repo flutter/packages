@@ -74,29 +74,29 @@ void main() {
     );
 
     final AdsLoader loader = AdsLoader.fromPlatform(adsLoader);
-    await loader.requestAds(AdsRequest(
-      adTagUrl: (platformRequest as PlatformAdsRequestWithAdTagUrl).adTagUrl,
-      adWillAutoPlay: platformRequest.adWillAutoPlay,
-      adWillPlayMuted: platformRequest.adWillPlayMuted,
-      continuousPlayback: platformRequest.continuousPlayback,
-      contentDuration: platformRequest.contentDuration,
-      contentKeywords: platformRequest.contentKeywords,
-      contentTitle: platformRequest.contentTitle,
-      liveStreamPrefetchMaxWaitTime:
-          platformRequest.liveStreamPrefetchMaxWaitTime,
-      vastLoadTimeout: platformRequest.vastLoadTimeout,
-      contentProgressProvider: ContentProgressProvider.fromPlatform(
-        platformRequest.contentProgressProvider!,
+    await loader.requestAds(
+      AdsRequest(
+        adTagUrl: (platformRequest as PlatformAdsRequestWithAdTagUrl).adTagUrl,
+        adWillAutoPlay: platformRequest.adWillAutoPlay,
+        adWillPlayMuted: platformRequest.adWillPlayMuted,
+        continuousPlayback: platformRequest.continuousPlayback,
+        contentDuration: platformRequest.contentDuration,
+        contentKeywords: platformRequest.contentKeywords,
+        contentTitle: platformRequest.contentTitle,
+        liveStreamPrefetchMaxWaitTime:
+            platformRequest.liveStreamPrefetchMaxWaitTime,
+        vastLoadTimeout: platformRequest.vastLoadTimeout,
+        contentProgressProvider: ContentProgressProvider.fromPlatform(
+          platformRequest.contentProgressProvider!,
+        ),
       ),
-    ));
+    );
   });
 }
 
 TestPlatformAdDisplayContainer createTestAdDisplayContainer() {
   return TestPlatformAdDisplayContainer(
-    PlatformAdDisplayContainerCreationParams(
-      onContainerAdded: (_) {},
-    ),
+    PlatformAdDisplayContainerCreationParams(onContainerAdded: (_) {}),
     onBuild: (_) => Container(),
   );
 }

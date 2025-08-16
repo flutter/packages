@@ -26,31 +26,41 @@ void main() {
     });
 
     test('serializeDeviceOrientation() should serialize correctly', () {
-      expect(serializeDeviceOrientation(DeviceOrientation.portraitUp),
-          PlatformDeviceOrientation.portraitUp);
-      expect(serializeDeviceOrientation(DeviceOrientation.portraitDown),
-          PlatformDeviceOrientation.portraitDown);
-      expect(serializeDeviceOrientation(DeviceOrientation.landscapeRight),
-          PlatformDeviceOrientation.landscapeRight);
-      expect(serializeDeviceOrientation(DeviceOrientation.landscapeLeft),
-          PlatformDeviceOrientation.landscapeLeft);
+      expect(
+        serializeDeviceOrientation(DeviceOrientation.portraitUp),
+        PlatformDeviceOrientation.portraitUp,
+      );
+      expect(
+        serializeDeviceOrientation(DeviceOrientation.portraitDown),
+        PlatformDeviceOrientation.portraitDown,
+      );
+      expect(
+        serializeDeviceOrientation(DeviceOrientation.landscapeRight),
+        PlatformDeviceOrientation.landscapeRight,
+      );
+      expect(
+        serializeDeviceOrientation(DeviceOrientation.landscapeLeft),
+        PlatformDeviceOrientation.landscapeLeft,
+      );
     });
 
     test('deviceOrientationFromPlatform() should convert correctly', () {
       expect(
-          deviceOrientationFromPlatform(PlatformDeviceOrientation.portraitUp),
-          DeviceOrientation.portraitUp);
+        deviceOrientationFromPlatform(PlatformDeviceOrientation.portraitUp),
+        DeviceOrientation.portraitUp,
+      );
       expect(
-          deviceOrientationFromPlatform(PlatformDeviceOrientation.portraitDown),
-          DeviceOrientation.portraitDown);
+        deviceOrientationFromPlatform(PlatformDeviceOrientation.portraitDown),
+        DeviceOrientation.portraitDown,
+      );
       expect(
-          deviceOrientationFromPlatform(
-              PlatformDeviceOrientation.landscapeRight),
-          DeviceOrientation.landscapeRight);
+        deviceOrientationFromPlatform(PlatformDeviceOrientation.landscapeRight),
+        DeviceOrientation.landscapeRight,
+      );
       expect(
-          deviceOrientationFromPlatform(
-              PlatformDeviceOrientation.landscapeLeft),
-          DeviceOrientation.landscapeLeft);
+        deviceOrientationFromPlatform(PlatformDeviceOrientation.landscapeLeft),
+        DeviceOrientation.landscapeLeft,
+      );
     });
   });
 }

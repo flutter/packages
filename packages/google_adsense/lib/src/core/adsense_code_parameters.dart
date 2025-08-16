@@ -45,18 +45,18 @@ class AdSenseCodeParameters {
     String? tagForUnderAgeOfConsent,
     String? adFrequencyHint,
   }) : _adSenseCodeParameters = <String, String>{
-          if (adHost != null) 'adHost': adHost,
-          if (admobInterstitialSlot != null)
-            'admobInterstitialSlot': admobInterstitialSlot,
-          if (admobRewardedSlot != null) 'admobRewardedSlot': admobRewardedSlot,
-          if (adChannel != null) 'adChannel': adChannel,
-          if (adbreakTest != null) 'adbreakTest': adbreakTest,
-          if (tagForChildDirectedTreatment != null)
-            'tagForChildDirectedTreatment': tagForChildDirectedTreatment,
-          if (tagForUnderAgeOfConsent != null)
-            'tagForUnderAgeOfConsent': tagForUnderAgeOfConsent,
-          if (adFrequencyHint != null) 'adFrequencyHint': adFrequencyHint,
-        };
+         if (adHost != null) 'adHost': adHost,
+         if (admobInterstitialSlot != null)
+           'admobInterstitialSlot': admobInterstitialSlot,
+         if (admobRewardedSlot != null) 'admobRewardedSlot': admobRewardedSlot,
+         if (adChannel != null) 'adChannel': adChannel,
+         if (adbreakTest != null) 'adbreakTest': adbreakTest,
+         if (tagForChildDirectedTreatment != null)
+           'tagForChildDirectedTreatment': tagForChildDirectedTreatment,
+         if (tagForUnderAgeOfConsent != null)
+           'tagForUnderAgeOfConsent': tagForUnderAgeOfConsent,
+         if (adFrequencyHint != null) 'adFrequencyHint': adFrequencyHint,
+       };
 
   final Map<String, String> _adSenseCodeParameters;
 

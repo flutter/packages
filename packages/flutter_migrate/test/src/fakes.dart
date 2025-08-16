@@ -12,9 +12,7 @@ import 'package:test/fake.dart';
 
 /// An IOSink that completes a future with the first line written to it.
 class CompleterIOSink extends MemoryIOSink {
-  CompleterIOSink({
-    this.throwOnAdd = false,
-  });
+  CompleterIOSink({this.throwOnAdd = false});
 
   final bool throwOnAdd;
 
@@ -116,8 +114,9 @@ class MemoryIOSink implements IOSink {
   }
 
   String getAndClear() {
-    final String result =
-        utf8.decode(writes.expand((List<int> l) => l).toList());
+    final String result = utf8.decode(
+      writes.expand((List<int> l) => l).toList(),
+    );
     clear();
     return result;
   }
@@ -276,12 +275,13 @@ class FakeStopwatch implements Stopwatch {
 }
 
 class FakeStopwatchFactory implements StopwatchFactory {
-  FakeStopwatchFactory(
-      {Stopwatch? stopwatch, Map<String, Stopwatch>? stopwatches})
-      : stopwatches = <String, Stopwatch>{
-          if (stopwatches != null) ...stopwatches,
-          if (stopwatch != null) '': stopwatch,
-        };
+  FakeStopwatchFactory({
+    Stopwatch? stopwatch,
+    Map<String, Stopwatch>? stopwatches,
+  }) : stopwatches = <String, Stopwatch>{
+         if (stopwatches != null) ...stopwatches,
+         if (stopwatch != null) '': stopwatch,
+       };
 
   Map<String, Stopwatch> stopwatches;
 

@@ -17,7 +17,6 @@ import 'package:pigeon/pigeon.dart';
     ),
   ),
 )
-
 /// The types of error that can be encountered.
 ///
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdError.AdErrorCode.html.
@@ -682,9 +681,7 @@ abstract class FrameLayout extends ViewGroup {
 ///
 /// See https://developer.android.com/reference/android/view/ViewGroup.
 @ProxyApi(
-  kotlinOptions: KotlinProxyApiOptions(
-    fullClassName: 'android.view.ViewGroup',
-  ),
+  kotlinOptions: KotlinProxyApiOptions(fullClassName: 'android.view.ViewGroup'),
 )
 abstract class ViewGroup extends View {
   /// Adds a child view.

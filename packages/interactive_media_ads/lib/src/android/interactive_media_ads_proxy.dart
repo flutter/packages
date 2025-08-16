@@ -39,7 +39,8 @@ class InteractiveMediaAdsProxy {
   final VideoProgressUpdate Function({
     required int currentTimeMs,
     required int durationMs,
-  }) newVideoProgressUpdate;
+  })
+  newVideoProgressUpdate;
 
   /// Constructs [FrameLayout].
   final FrameLayout Function() newFrameLayout;
@@ -49,7 +50,8 @@ class InteractiveMediaAdsProxy {
     required void Function(VideoView, MediaPlayer, int, int) onError,
     void Function(VideoView, MediaPlayer)? onPrepared,
     void Function(VideoView, MediaPlayer)? onCompletion,
-  }) newVideoView;
+  })
+  newVideoView;
 
   /// Constructs [VideoAdPlayer].
   final VideoAdPlayer Function({
@@ -60,32 +62,37 @@ class InteractiveMediaAdsProxy {
     required void Function(VideoAdPlayer) release,
     required void Function(VideoAdPlayer, VideoAdPlayerCallback) removeCallback,
     required void Function(VideoAdPlayer, AdMediaInfo) stopAd,
-  }) newVideoAdPlayer;
+  })
+  newVideoAdPlayer;
 
   /// Constructs [AdsLoadedListener].
   final AdsLoadedListener Function({
     required void Function(AdsLoadedListener, AdsManagerLoadedEvent)
-        onAdsManagerLoaded,
-  }) newAdsLoadedListener;
+    onAdsManagerLoaded,
+  })
+  newAdsLoadedListener;
 
   /// Constructs [AdErrorListener].
   final AdErrorListener Function({
     required void Function(AdErrorListener, AdErrorEvent) onAdError,
-  }) newAdErrorListener;
+  })
+  newAdErrorListener;
 
   /// Constructs [AdEventListener].
   final AdEventListener Function({
     required void Function(AdEventListener, AdEvent) onAdEvent,
-  }) newAdEventListener;
+  })
+  newAdEventListener;
 
   /// Constructs [CompanionAdSlotClickListener].
   final CompanionAdSlotClickListener Function({
     required void Function(CompanionAdSlotClickListener) onCompanionAdClick,
-  }) newCompanionAdSlotClickListener;
+  })
+  newCompanionAdSlotClickListener;
 
   /// Calls to [ImaSdkFactory.createAdDisplayContainer].
   final Future<AdDisplayContainer> Function(ViewGroup, VideoAdPlayer)
-      createAdDisplayContainerImaSdkFactory;
+  createAdDisplayContainerImaSdkFactory;
 
   /// Calls to [ImaSdkFactory.instance].
   final ImaSdkFactory Function() instanceImaSdkFactory;

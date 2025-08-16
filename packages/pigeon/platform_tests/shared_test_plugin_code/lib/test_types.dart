@@ -12,40 +12,15 @@ const int biggerThanBigInt = 3000000000;
 const int regularInt = 42;
 const double doublePi = 3.14159;
 
-final List<Object> nonNullList = <Object>[
-  'Thing 1',
-  2,
-  true,
-  3.14,
-];
+final List<Object> nonNullList = <Object>['Thing 1', 2, true, 3.14];
 
-final List<String> nonNullStringList = <String>[
-  'Thing 1',
-  '2',
-  'true',
-  '3.14',
-];
+final List<String> nonNullStringList = <String>['Thing 1', '2', 'true', '3.14'];
 
-final List<int> nonNullIntList = <int>[
-  1,
-  2,
-  3,
-  4,
-];
+final List<int> nonNullIntList = <int>[1, 2, 3, 4];
 
-final List<double> nonNullDoubleList = <double>[
-  1,
-  2.99999,
-  3,
-  3.14,
-];
+final List<double> nonNullDoubleList = <double>[1, 2.99999, 3, 3.14];
 
-final List<bool> nonNullBoolList = <bool>[
-  true,
-  false,
-  true,
-  false,
-];
+final List<bool> nonNullBoolList = <bool>[true, false, true, false];
 
 final List<AnEnum> nonNullEnumList = <AnEnum>[
   AnEnum.one,
@@ -78,12 +53,7 @@ final Map<String, String> nonNullStringMap = <String, String>{
   'd': 'false',
 };
 
-final Map<int, int> nonNullIntMap = <int, int>{
-  0: 0,
-  1: 1,
-  2: 3,
-  4: -1,
-};
+final Map<int, int> nonNullIntMap = <int, int>{0: 0, 1: 1, 2: 3, 4: -1};
 
 final Map<double, double> nonNullDoubleMap = <double, double>{
   0.0: 0,
@@ -92,11 +62,7 @@ final Map<double, double> nonNullDoubleMap = <double, double>{
   -.4: -0.2,
 };
 
-final Map<int, bool> nonNullBoolMap = <int, bool>{
-  0: true,
-  1: false,
-  2: true,
-};
+final Map<int, bool> nonNullBoolMap = <int, bool>{0: true, 1: false, 2: true};
 
 final Map<AnEnum, AnEnum> nonNullEnumMap = <AnEnum, AnEnum>{
   AnEnum.one: AnEnum.one,
@@ -132,13 +98,7 @@ final List<Map<Object, Object>> nonNullMapList = <Map<Object, Object>>[
   nonNullEnumMap,
 ];
 
-final List<Object?> list = <Object?>[
-  'Thing 1',
-  2,
-  true,
-  3.14,
-  null,
-];
+final List<Object?> list = <Object?>['Thing 1', 2, true, 3.14, null];
 
 final List<String?> stringList = <String?>[
   'Thing 1',
@@ -148,29 +108,11 @@ final List<String?> stringList = <String?>[
   null,
 ];
 
-final List<int?> intList = <int?>[
-  1,
-  2,
-  3,
-  4,
-  null,
-];
+final List<int?> intList = <int?>[1, 2, 3, 4, null];
 
-final List<double?> doubleList = <double?>[
-  1,
-  2.99999,
-  3,
-  3.14,
-  null,
-];
+final List<double?> doubleList = <double?>[1, 2.99999, 3, 3.14, null];
 
-final List<bool?> boolList = <bool?>[
-  true,
-  false,
-  true,
-  false,
-  null,
-];
+final List<bool?> boolList = <bool?>[true, false, true, false, null];
 
 final List<AnEnum?> enumList = <AnEnum?>[
   AnEnum.one,
@@ -178,7 +120,7 @@ final List<AnEnum?> enumList = <AnEnum?>[
   AnEnum.three,
   AnEnum.fortyTwo,
   AnEnum.fourHundredTwentyTwo,
-  null
+  null,
 ];
 
 final List<List<Object?>?> listList = <List<Object?>?>[
@@ -188,7 +130,7 @@ final List<List<Object?>?> listList = <List<Object?>?>[
   doubleList,
   boolList,
   enumList,
-  null
+  null,
 ];
 
 final Map<Object?, Object?> map = <Object?, Object?>{
@@ -196,7 +138,7 @@ final Map<Object?, Object?> map = <Object?, Object?>{
   'b': 2.0,
   'c': 'three',
   'd': false,
-  'e': null
+  'e': null,
 };
 
 final Map<String?, String?> stringMap = <String?, String?>{
@@ -205,23 +147,17 @@ final Map<String?, String?> stringMap = <String?, String?>{
   'c': 'three',
   'd': 'false',
   'e': 'null',
-  'f': null
+  'f': null,
 };
 
-final Map<int?, int?> intMap = <int?, int?>{
-  0: 0,
-  1: 1,
-  2: 3,
-  4: -1,
-  5: null,
-};
+final Map<int?, int?> intMap = <int?, int?>{0: 0, 1: 1, 2: 3, 4: -1, 5: null};
 
 final Map<double?, double?> doubleMap = <double?, double?>{
   0.0: 0,
   1.1: 2.0,
   3: 0.3,
   -.4: -0.2,
-  1111111111111111.11111111111111111111111111111111111111111111: null
+  1111111111111111.11111111111111111111111111111111111111111111: null,
 };
 
 final Map<int?, bool?> boolMap = <int?, bool?>{
@@ -246,7 +182,7 @@ final Map<int?, List<Object?>?> listMap = <int?, List<Object?>?>{
   4: intList,
   5: boolList,
   6: enumList,
-  7: null
+  7: null,
 };
 
 final Map<int?, Map<Object?, Object?>?> mapMap = <int?, Map<Object?, Object?>?>{
@@ -256,7 +192,7 @@ final Map<int?, Map<Object?, Object?>?> mapMap = <int?, Map<Object?, Object?>?>{
   4: intMap,
   5: boolMap,
   6: enumMap,
-  7: null
+  7: null,
 };
 
 final List<Map<Object?, Object?>?> mapList = <Map<Object?, Object?>?>[
@@ -266,55 +202,54 @@ final List<Map<Object?, Object?>?> mapList = <Map<Object?, Object?>?>[
   intMap,
   boolMap,
   enumMap,
-  null
+  null,
 ];
 
 final AllNullableTypesWithoutRecursion genericAllNullableTypesWithoutRecursion =
     AllNullableTypesWithoutRecursion(
-  aNullableBool: true,
-  aNullableInt: regularInt,
-  aNullableInt64: biggerThanBigInt,
-  aNullableDouble: doublePi,
-  aNullableString: 'Hello host!',
-  aNullableByteArray: Uint8List.fromList(<int>[1, 2, 3]),
-  aNullable4ByteArray: Int32List.fromList(<int>[4, 5, 6]),
-  aNullable8ByteArray: Int64List.fromList(<int>[7, 8, 9]),
-  aNullableFloatArray: Float64List.fromList(<double>[2.71828, doublePi]),
-  aNullableEnum: AnEnum.fourHundredTwentyTwo,
-  aNullableObject: 0,
-  list: list,
-  stringList: stringList,
-  intList: intList,
-  doubleList: doubleList,
-  boolList: boolList,
-  enumList: enumList,
-  objectList: list,
-  listList: listList,
-  mapList: mapList,
-  map: map,
-  stringMap: stringMap,
-  intMap: intMap,
-  enumMap: enumMap,
-  objectMap: map,
-  listMap: listMap,
-  mapMap: mapMap,
-);
+      aNullableBool: true,
+      aNullableInt: regularInt,
+      aNullableInt64: biggerThanBigInt,
+      aNullableDouble: doublePi,
+      aNullableString: 'Hello host!',
+      aNullableByteArray: Uint8List.fromList(<int>[1, 2, 3]),
+      aNullable4ByteArray: Int32List.fromList(<int>[4, 5, 6]),
+      aNullable8ByteArray: Int64List.fromList(<int>[7, 8, 9]),
+      aNullableFloatArray: Float64List.fromList(<double>[2.71828, doublePi]),
+      aNullableEnum: AnEnum.fourHundredTwentyTwo,
+      aNullableObject: 0,
+      list: list,
+      stringList: stringList,
+      intList: intList,
+      doubleList: doubleList,
+      boolList: boolList,
+      enumList: enumList,
+      objectList: list,
+      listList: listList,
+      mapList: mapList,
+      map: map,
+      stringMap: stringMap,
+      intMap: intMap,
+      enumMap: enumMap,
+      objectMap: map,
+      listMap: listMap,
+      mapMap: mapMap,
+    );
 
 final List<AllNullableTypesWithoutRecursion?>
-    allNullableTypesWithoutRecursionClassList =
-    <AllNullableTypesWithoutRecursion?>[
+allNullableTypesWithoutRecursionClassList = <AllNullableTypesWithoutRecursion?>[
   genericAllNullableTypesWithoutRecursion,
   AllNullableTypesWithoutRecursion(),
   null,
 ];
 
 final Map<int, AllNullableTypesWithoutRecursion?>
-    allNullableTypesWithoutRecursionClassMap =
+allNullableTypesWithoutRecursionClassMap =
     <int, AllNullableTypesWithoutRecursion?>{
-  0: genericAllNullableTypesWithoutRecursion,
-  1: AllNullableTypesWithoutRecursion(),
-  2: null,
-};
+      0: genericAllNullableTypesWithoutRecursion,
+      1: AllNullableTypesWithoutRecursion(),
+      2: null,
+    };
 
 final AllTypes genericAllTypes = AllTypes(
   aBool: true,
@@ -348,10 +283,7 @@ final AllTypes genericAllTypes = AllTypes(
   mapMap: nonNullMapMap,
 );
 
-final List<AllTypes?> allTypesClassList = <AllTypes?>[
-  genericAllTypes,
-  null,
-];
+final List<AllTypes?> allTypesClassList = <AllTypes?>[genericAllTypes, null];
 
 final Map<int, AllTypes?> allTypesClassMap = <int, AllTypes?>{
   0: genericAllTypes,
@@ -394,10 +326,7 @@ final List<AllNullableTypes> nonNullAllNullableTypesList = <AllNullableTypes>[
 ];
 
 final Map<int, AllNullableTypes> nonNullAllNullableTypesMap =
-    <int, AllNullableTypes>{
-  0: genericAllNullableTypes,
-  1: AllNullableTypes(),
-};
+    <int, AllNullableTypes>{0: genericAllNullableTypes, 1: AllNullableTypes()};
 
 final List<AllNullableTypes?> allNullableTypesList = <AllNullableTypes?>[
   genericAllNullableTypes,
@@ -407,10 +336,10 @@ final List<AllNullableTypes?> allNullableTypesList = <AllNullableTypes?>[
 
 final Map<int, AllNullableTypes?> allNullableTypesMap =
     <int, AllNullableTypes?>{
-  0: genericAllNullableTypes,
-  1: AllNullableTypes(),
-  2: null,
-};
+      0: genericAllNullableTypes,
+      1: AllNullableTypes(),
+      2: null,
+    };
 
 final AllNullableTypes recursiveAllNullableTypes = AllNullableTypes(
   aNullableBool: true,

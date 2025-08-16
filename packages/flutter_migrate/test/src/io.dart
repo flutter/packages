@@ -18,7 +18,7 @@ import 'package:flutter_migrate/src/base/file_system.dart';
 /// like the [MemoryFileSystem].
 final class FlutterIOOverrides extends io.IOOverrides {
   FlutterIOOverrides({FileSystem? fileSystem})
-      : _fileSystemDelegate = fileSystem;
+    : _fileSystemDelegate = fileSystem;
 
   final FileSystem? _fileSystemDelegate;
 

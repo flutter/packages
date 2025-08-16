@@ -22,32 +22,41 @@ class FlutterToolsEnvironment {
   /// Each key is the String URI-style description of a value in the Flutter tool
   /// and is mapped to a String or boolean value. The mapping should align with the
   /// JSON output of `flutter analyze --suggestions --machine`.
-  FlutterToolsEnvironment({
-    required Map<String, Object?> mapping,
-  }) : _mapping = mapping;
+  FlutterToolsEnvironment({required Map<String, Object?> mapping})
+    : _mapping = mapping;
 
   /// Creates a FlutterToolsEnvironment instance by calling `flutter analyze --suggestions --machine`
   /// and parsing its output.
   static Future<FlutterToolsEnvironment> initializeFlutterToolsEnvironment(
-      ProcessManager processManager, Logger logger) async {
-    final ProcessResult result = await processManager
-        .run(<String>['flutter', 'analyze', '--suggestions', '--machine']);
+    ProcessManager processManager,
+    Logger logger,
+  ) async {
+    final ProcessResult result = await processManager.run(<String>[
+      'flutter',
+      'analyze',
+      '--suggestions',
+      '--machine',
+    ]);
     if (result.exitCode != 0) {
       if ((result.stderr as String).contains(
-          'The "--machine" flag is only valid with the "--version" flag.')) {
+        'The "--machine" flag is only valid with the "--version" flag.',
+      )) {
         logger.printError(
-            'The migrate tool is only compatible with flutter tools 3.4.0 or newer (git hash: 21861423f25ad03c2fdb33854b53f195bc117cb3).');
+          'The migrate tool is only compatible with flutter tools 3.4.0 or newer (git hash: 21861423f25ad03c2fdb33854b53f195bc117cb3).',
+        );
       }
       throwToolExit(
-          'Flutter tool exited while running `flutter analyze --suggestions --machine` with: ${result.stderr}');
+        'Flutter tool exited while running `flutter analyze --suggestions --machine` with: ${result.stderr}',
+      );
     }
     String commandOutput = (result.stdout as String).trim();
     Map<String, Object?> mapping = <String, Object?>{};
     // minimally validate basic JSON format and trim away any accidental logging before.
     if (commandOutput.contains(RegExp(r'[\s\S]*{[\s\S]+}[\s\S]*'))) {
       commandOutput = commandOutput.substring(commandOutput.indexOf('{'));
-      mapping = jsonDecode(commandOutput.replaceAll(r'\', r'\\'))
-          as Map<String, Object?>;
+      mapping =
+          jsonDecode(commandOutput.replaceAll(r'\', r'\\'))
+              as Map<String, Object?>;
     }
     return FlutterToolsEnvironment(mapping: mapping);
   }

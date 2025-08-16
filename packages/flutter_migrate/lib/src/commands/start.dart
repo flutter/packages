@@ -22,12 +22,12 @@ class MigrateStartCommand extends MigrateCommand {
     required this.fileSystem,
     required this.processManager,
     this.standalone = false,
-  })  : _verbose = verbose,
-        migrateUtils = MigrateUtils(
-          logger: logger,
-          fileSystem: fileSystem,
-          processManager: processManager,
-        ) {
+  }) : _verbose = verbose,
+       migrateUtils = MigrateUtils(
+         logger: logger,
+         fileSystem: fileSystem,
+         processManager: processManager,
+       ) {
     argParser.addOption(
       'staging-directory',
       help:
@@ -131,18 +131,23 @@ class MigrateStartCommand extends MigrateCommand {
   Future<CommandResult> runCommand() async {
     final FlutterToolsEnvironment environment =
         await FlutterToolsEnvironment.initializeFlutterToolsEnvironment(
-            processManager, logger);
+          processManager,
+          logger,
+        );
     if (!_validateEnvironment(environment)) {
       return const CommandResult(ExitStatus.fail);
     }
-    final String? projectRootDirPath = stringArg('project-directory') ??
+    final String? projectRootDirPath =
+        stringArg('project-directory') ??
         environment.getString('FlutterProject.directory');
     final Directory projectRootDir = fileSystem.directory(projectRootDirPath);
     final FlutterProjectFactory flutterProjectFactory = FlutterProjectFactory();
-    final FlutterProject project = projectRootDirPath == null
-        ? FlutterProject.current(fileSystem)
-        : flutterProjectFactory
-            .fromDirectory(fileSystem.directory(projectRootDirPath));
+    final FlutterProject project =
+        projectRootDirPath == null
+            ? FlutterProject.current(fileSystem)
+            : flutterProjectFactory.fromDirectory(
+              fileSystem.directory(projectRootDirPath),
+            );
 
     if (!validateWorkingDirectory(project, logger)) {
       return CommandResult.fail();
@@ -154,7 +159,8 @@ class MigrateStartCommand extends MigrateCommand {
         environment.getBool('FlutterProject.isPlugin') ?? false;
     if (isModule || isPlugin) {
       logger.printError(
-          'Migrate tool only supports app projects. This project is a ${isModule ? 'module' : 'plugin'}');
+        'Migrate tool only supports app projects. This project is a ${isModule ? 'module' : 'plugin'}',
+      );
       return const CommandResult(ExitStatus.fail);
     }
     final bool isSubcommand = boolArg('flutter-subcommand') ?? !standalone;
@@ -163,32 +169,40 @@ class MigrateStartCommand extends MigrateCommand {
       return const CommandResult(ExitStatus.fail);
     }
 
-    Directory stagingDirectory =
-        project.directory.childDirectory(kDefaultMigrateStagingDirectoryName);
+    Directory stagingDirectory = project.directory.childDirectory(
+      kDefaultMigrateStagingDirectoryName,
+    );
     final String? customStagingDirectoryPath = stringArg('staging-directory');
     if (customStagingDirectoryPath != null) {
       if (fileSystem.path.isAbsolute(customStagingDirectoryPath)) {
         stagingDirectory = fileSystem.directory(customStagingDirectoryPath);
       } else {
-        stagingDirectory =
-            project.directory.childDirectory(customStagingDirectoryPath);
+        stagingDirectory = project.directory.childDirectory(
+          customStagingDirectoryPath,
+        );
       }
     }
     if (stagingDirectory.existsSync()) {
       logger.printStatus('Old migration already in progress.', emphasis: true);
       logger.printStatus(
-          'Pending migration files exist in `${stagingDirectory.path}/$kDefaultMigrateStagingDirectoryName`');
+        'Pending migration files exist in `${stagingDirectory.path}/$kDefaultMigrateStagingDirectoryName`',
+      );
       logger.printStatus(
-          'Resolve merge conflicts and accept changes with by running:');
+        'Resolve merge conflicts and accept changes with by running:',
+      );
       printCommandText('apply', logger, standalone: !isSubcommand);
       logger.printStatus(
-          'You may also abandon the existing migration and start a new one with:');
+        'You may also abandon the existing migration and start a new one with:',
+      );
       printCommandText('abandon', logger, standalone: !isSubcommand);
       return const CommandResult(ExitStatus.fail);
     }
 
     if (await hasUncommittedChanges(
-        project.directory.path, logger, migrateUtils)) {
+      project.directory.path,
+      logger,
+      migrateUtils,
+    )) {
       return const CommandResult(ExitStatus.fail);
     }
 
@@ -197,9 +211,12 @@ class MigrateStartCommand extends MigrateCommand {
       platforms = <SupportedPlatform>[];
       for (String platformString in stringArg('platforms')!.split(',')) {
         platformString = platformString.trim();
-        platforms.add(SupportedPlatform.values.firstWhere(
+        platforms.add(
+          SupportedPlatform.values.firstWhere(
             (SupportedPlatform val) =>
-                val.toString() == 'SupportedPlatform.$platformString'));
+                val.toString() == 'SupportedPlatform.$platformString',
+          ),
+        );
       }
     }
 
@@ -228,8 +245,12 @@ class MigrateStartCommand extends MigrateCommand {
       return const CommandResult(ExitStatus.fail);
     }
 
-    await writeStagingDir(migrateResult, logger,
-        verbose: _verbose, projectRootDir: projectRootDir);
+    await writeStagingDir(
+      migrateResult,
+      logger,
+      verbose: _verbose,
+      projectRootDir: projectRootDir,
+    );
 
     _deleteTempDirectories(
       paths: <String>[],
@@ -237,7 +258,8 @@ class MigrateStartCommand extends MigrateCommand {
     );
 
     logger.printStatus(
-        'The migrate tool has staged proposed changes in the migrate staging directory.\n');
+      'The migrate tool has staged proposed changes in the migrate staging directory.\n',
+    );
     logger.printStatus('Guided conflict resolution wizard:');
     printCommandText('resolve-conflicts', logger, standalone: !isSubcommand);
     logger.printStatus('Check the status and diffs of the migration with:');
@@ -245,22 +267,25 @@ class MigrateStartCommand extends MigrateCommand {
     logger.printStatus('Abandon the proposed migration with:');
     printCommandText('abandon', logger, standalone: !isSubcommand);
     logger.printStatus(
-        'Accept staged changes after resolving any merge conflicts with:');
+      'Accept staged changes after resolving any merge conflicts with:',
+    );
     printCommandText('apply', logger, standalone: !isSubcommand);
 
     return const CommandResult(ExitStatus.success);
   }
 
   /// Deletes the files or directories at the provided paths.
-  void _deleteTempDirectories(
-      {List<String> paths = const <String>[],
-      List<Directory> directories = const <Directory>[]}) {
+  void _deleteTempDirectories({
+    List<String> paths = const <String>[],
+    List<Directory> directories = const <Directory>[],
+  }) {
     for (final Directory d in directories) {
       try {
         d.deleteSync(recursive: true);
       } on FileSystemException catch (e) {
         logger.printError(
-            'Unabled to delete ${d.path} due to ${e.message}, please clean up manually.');
+          'Unabled to delete ${d.path} due to ${e.message}, please clean up manually.',
+        );
       }
     }
     for (final String p in paths) {
@@ -268,7 +293,8 @@ class MigrateStartCommand extends MigrateCommand {
         fileSystem.directory(p).deleteSync(recursive: true);
       } on FileSystemException catch (e) {
         logger.printError(
-            'Unabled to delete $p due to ${e.message}, please clean up manually.');
+          'Unabled to delete $p due to ${e.message}, please clean up manually.',
+        );
       }
     }
   }
@@ -276,7 +302,8 @@ class MigrateStartCommand extends MigrateCommand {
   bool _validateEnvironment(FlutterToolsEnvironment environment) {
     if (environment.getString('FlutterProject.directory') == null) {
       logger.printError(
-          'No valid flutter project found. This command must be run from a flutter project directory');
+        'No valid flutter project found. This command must be run from a flutter project directory',
+      );
       return false;
     }
     if (environment.getString('FlutterProject.manifest.appname') == null) {
@@ -286,26 +313,34 @@ class MigrateStartCommand extends MigrateCommand {
     if (!(environment.getBool('FlutterProject.android.exists') ?? false) &&
         environment['FlutterProject.android.isKotlin'] == null) {
       logger.printError(
-          'Could not detect if android project uses kotlin or java');
+        'Could not detect if android project uses kotlin or java',
+      );
       return false;
     }
     if (!(environment.getBool('FlutterProject.ios.exists') ?? false) &&
         environment['FlutterProject.ios.isSwift'] == null) {
       logger.printError(
-          'Could not detect if iosProject uses swift or objective-c');
+        'Could not detect if iosProject uses swift or objective-c',
+      );
       return false;
     }
     return true;
   }
 
   /// Writes the files into the working directory for the developer to review and resolve any conflicts.
-  Future<void> writeStagingDir(MigrateResult migrateResult, Logger logger,
-      {bool verbose = false, required Directory projectRootDir}) async {
-    final Directory stagingDir =
-        projectRootDir.childDirectory(kDefaultMigrateStagingDirectoryName);
+  Future<void> writeStagingDir(
+    MigrateResult migrateResult,
+    Logger logger, {
+    bool verbose = false,
+    required Directory projectRootDir,
+  }) async {
+    final Directory stagingDir = projectRootDir.childDirectory(
+      kDefaultMigrateStagingDirectoryName,
+    );
     if (verbose) {
       logger.printStatus(
-          'Writing migrate staging directory at `${stagingDir.path}`');
+        'Writing migrate staging directory at `${stagingDir.path}`',
+      );
     }
     // Write files in working dir
     for (final MergeResult result in migrateResult.mergeResults) {
@@ -314,8 +349,10 @@ class MigrateStartCommand extends MigrateCommand {
       if (result is StringMergeResult) {
         file.writeAsStringSync(result.mergedString, flush: true);
       } else {
-        file.writeAsBytesSync((result as BinaryMergeResult).mergedBytes,
-            flush: true);
+        file.writeAsBytesSync(
+          (result as BinaryMergeResult).mergedBytes,
+          flush: true,
+        );
       }
     }
 

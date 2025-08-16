@@ -19,8 +19,11 @@ PlatformException _createConnectionError(String channelName) {
   );
 }
 
-List<Object?> wrapResponse(
-    {Object? result, PlatformException? error, bool empty = false}) {
+List<Object?> wrapResponse({
+  Object? result,
+  PlatformException? error,
+  bool empty = false,
+}) {
   if (empty) {
     return <Object?>[];
   }
@@ -55,11 +58,12 @@ class MultipleArityHostApi {
   /// Constructor for [MultipleArityHostApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  MultipleArityHostApi(
-      {BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
-      : pigeonVar_binaryMessenger = binaryMessenger,
-        pigeonVar_messageChannelSuffix =
-            messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+  MultipleArityHostApi({
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) : pigeonVar_binaryMessenger = binaryMessenger,
+       pigeonVar_messageChannelSuffix =
+           messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -71,12 +75,13 @@ class MultipleArityHostApi {
         'dev.flutter.pigeon.pigeon_integration_tests.MultipleArityHostApi.subtract$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[x, y],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[x, y]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -111,25 +116,31 @@ abstract class MultipleArityFlutterApi {
     messageChannelSuffix =
         messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.MultipleArityFlutterApi.subtract$messageChannelSuffix',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.pigeon_integration_tests.MultipleArityFlutterApi.subtract$messageChannelSuffix',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.pigeon_integration_tests.MultipleArityFlutterApi.subtract was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.pigeon_integration_tests.MultipleArityFlutterApi.subtract was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_x = (args[0] as int?);
-          assert(arg_x != null,
-              'Argument for dev.flutter.pigeon.pigeon_integration_tests.MultipleArityFlutterApi.subtract was null, expected non-null int.');
+          assert(
+            arg_x != null,
+            'Argument for dev.flutter.pigeon.pigeon_integration_tests.MultipleArityFlutterApi.subtract was null, expected non-null int.',
+          );
           final int? arg_y = (args[1] as int?);
-          assert(arg_y != null,
-              'Argument for dev.flutter.pigeon.pigeon_integration_tests.MultipleArityFlutterApi.subtract was null, expected non-null int.');
+          assert(
+            arg_y != null,
+            'Argument for dev.flutter.pigeon.pigeon_integration_tests.MultipleArityFlutterApi.subtract was null, expected non-null int.',
+          );
           try {
             final int output = api.subtract(arg_x!, arg_y!);
             return wrapResponse(result: output);
@@ -137,7 +148,8 @@ abstract class MultipleArityFlutterApi {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }

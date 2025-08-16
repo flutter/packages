@@ -73,68 +73,89 @@ abstract class TestFileSelectorApi {
     messageChannelSuffix =
         messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.file_selector_macos.FileSelectorApi.displayOpenPanel$messageChannelSuffix',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.file_selector_macos.FileSelectorApi.displayOpenPanel$messageChannelSuffix',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (api == null) {
         _testBinaryMessengerBinding!.defaultBinaryMessenger
             .setMockDecodedMessageHandler<Object?>(pigeonVar_channel, null);
       } else {
         _testBinaryMessengerBinding!.defaultBinaryMessenger
-            .setMockDecodedMessageHandler<Object?>(pigeonVar_channel,
-                (Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.file_selector_macos.FileSelectorApi.displayOpenPanel was null.');
-          final List<Object?> args = (message as List<Object?>?)!;
-          final OpenPanelOptions? arg_options = (args[0] as OpenPanelOptions?);
-          assert(arg_options != null,
-              'Argument for dev.flutter.pigeon.file_selector_macos.FileSelectorApi.displayOpenPanel was null, expected non-null OpenPanelOptions.');
-          try {
-            final List<String> output =
-                await api.displayOpenPanel(arg_options!);
-            return <Object?>[output];
-          } on PlatformException catch (e) {
-            return wrapResponse(error: e);
-          } catch (e) {
-            return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
-          }
-        });
+            .setMockDecodedMessageHandler<Object?>(pigeonVar_channel, (
+              Object? message,
+            ) async {
+              assert(
+                message != null,
+                'Argument for dev.flutter.pigeon.file_selector_macos.FileSelectorApi.displayOpenPanel was null.',
+              );
+              final List<Object?> args = (message as List<Object?>?)!;
+              final OpenPanelOptions? arg_options =
+                  (args[0] as OpenPanelOptions?);
+              assert(
+                arg_options != null,
+                'Argument for dev.flutter.pigeon.file_selector_macos.FileSelectorApi.displayOpenPanel was null, expected non-null OpenPanelOptions.',
+              );
+              try {
+                final List<String> output = await api.displayOpenPanel(
+                  arg_options!,
+                );
+                return <Object?>[output];
+              } on PlatformException catch (e) {
+                return wrapResponse(error: e);
+              } catch (e) {
+                return wrapResponse(
+                  error: PlatformException(
+                    code: 'error',
+                    message: e.toString(),
+                  ),
+                );
+              }
+            });
       }
     }
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.file_selector_macos.FileSelectorApi.displaySavePanel$messageChannelSuffix',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.file_selector_macos.FileSelectorApi.displaySavePanel$messageChannelSuffix',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (api == null) {
         _testBinaryMessengerBinding!.defaultBinaryMessenger
             .setMockDecodedMessageHandler<Object?>(pigeonVar_channel, null);
       } else {
         _testBinaryMessengerBinding!.defaultBinaryMessenger
-            .setMockDecodedMessageHandler<Object?>(pigeonVar_channel,
-                (Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.file_selector_macos.FileSelectorApi.displaySavePanel was null.');
-          final List<Object?> args = (message as List<Object?>?)!;
-          final SavePanelOptions? arg_options = (args[0] as SavePanelOptions?);
-          assert(arg_options != null,
-              'Argument for dev.flutter.pigeon.file_selector_macos.FileSelectorApi.displaySavePanel was null, expected non-null SavePanelOptions.');
-          try {
-            final String? output = await api.displaySavePanel(arg_options!);
-            return <Object?>[output];
-          } on PlatformException catch (e) {
-            return wrapResponse(error: e);
-          } catch (e) {
-            return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
-          }
-        });
+            .setMockDecodedMessageHandler<Object?>(pigeonVar_channel, (
+              Object? message,
+            ) async {
+              assert(
+                message != null,
+                'Argument for dev.flutter.pigeon.file_selector_macos.FileSelectorApi.displaySavePanel was null.',
+              );
+              final List<Object?> args = (message as List<Object?>?)!;
+              final SavePanelOptions? arg_options =
+                  (args[0] as SavePanelOptions?);
+              assert(
+                arg_options != null,
+                'Argument for dev.flutter.pigeon.file_selector_macos.FileSelectorApi.displaySavePanel was null, expected non-null SavePanelOptions.',
+              );
+              try {
+                final String? output = await api.displaySavePanel(arg_options!);
+                return <Object?>[output];
+              } on PlatformException catch (e) {
+                return wrapResponse(error: e);
+              } catch (e) {
+                return wrapResponse(
+                  error: PlatformException(
+                    code: 'error',
+                    message: e.toString(),
+                  ),
+                );
+              }
+            });
       }
     }
   }

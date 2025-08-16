@@ -178,16 +178,18 @@ branches: <StatefulShellBranch>[
         // The screen to display as the root in the first tab of the
         // bottom navigation bar.
         path: '/a',
-        builder: (BuildContext context, GoRouterState state) =>
-            const RootScreen(label: 'A', detailsPath: '/a/details'),
+        builder:
+            (BuildContext context, GoRouterState state) =>
+                const RootScreen(label: 'A', detailsPath: '/a/details'),
         routes: <RouteBase>[
           // The details screen to display stacked on navigator of the
           // first tab. This will cover screen A but not the application
           // shell (bottom navigation bar).
           GoRoute(
             path: 'details',
-            builder: (BuildContext context, GoRouterState state) =>
-                const DetailsScreen(label: 'A'),
+            builder:
+                (BuildContext context, GoRouterState state) =>
+                    const DetailsScreen(label: 'A'),
           ),
         ],
       ),
@@ -205,8 +207,11 @@ which is passed as the last argument to the builder function. Example:
 <?code-excerpt "../example/lib/stateful_shell_route.dart (configuration-builder)"?>
 ```dart
 StatefulShellRoute.indexedStack(
-  builder: (BuildContext context, GoRouterState state,
-      StatefulNavigationShell navigationShell) {
+  builder: (
+    BuildContext context,
+    GoRouterState state,
+    StatefulNavigationShell navigationShell,
+  ) {
     // Return the widget that implements the custom shell (in this case
     // using a BottomNavigationBar). The StatefulNavigationShell is passed
     // to be able access the state of the shell and to navigate to other

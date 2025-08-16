@@ -15,10 +15,7 @@ class NullFieldsSearchRequest {
   int identifier;
 }
 
-enum NullFieldsSearchReplyType {
-  success,
-  failure,
-}
+enum NullFieldsSearchReplyType { success, failure }
 
 class NullFieldsSearchReply {
   NullFieldsSearchReply(

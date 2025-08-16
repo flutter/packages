@@ -11,5 +11,5 @@ enum BenchmarkName {
   appScroll,
   appTap,
   simpleBenchmarkPathCheck,
-  simpleCompilationCheck;
+  simpleCompilationCheck,
 }

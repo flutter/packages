@@ -22,8 +22,8 @@ final class IOSAdDisplayContainerCreationParams
     required super.onContainerAdded,
     super.companionSlots,
     @visibleForTesting InteractiveMediaAdsProxy? imaProxy,
-  })  : _imaProxy = imaProxy ?? const InteractiveMediaAdsProxy(),
-        super();
+  }) : _imaProxy = imaProxy ?? const InteractiveMediaAdsProxy(),
+       super();
 
   /// Creates a [IOSAdDisplayContainerCreationParams] from an instance of
   /// [PlatformAdDisplayContainerCreationParams].
@@ -63,8 +63,9 @@ base class IOSAdDisplayContainer extends PlatformAdDisplayContainer {
   late final IOSAdDisplayContainerCreationParams _iosParams =
       params is IOSAdDisplayContainerCreationParams
           ? params as IOSAdDisplayContainerCreationParams
-          : IOSAdDisplayContainerCreationParams
-              .fromPlatformAdDisplayContainerCreationParams(params);
+          : IOSAdDisplayContainerCreationParams.fromPlatformAdDisplayContainerCreationParams(
+            params,
+          );
 
   @override
   Widget build(BuildContext context) {
@@ -75,17 +76,19 @@ base class IOSAdDisplayContainer extends PlatformAdDisplayContainer {
         adDisplayContainer = _iosParams._imaProxy.newIMAAdDisplayContainer(
           adContainer: _controller.view,
           adContainerViewController: _controller,
-          companionSlots: _iosParams.companionSlots
-              .cast<IOSCompanionAdSlot>()
-              .map((IOSCompanionAdSlot slot) => slot.nativeCompanionAdSlot)
-              .toList(),
+          companionSlots:
+              _iosParams.companionSlots
+                  .cast<IOSCompanionAdSlot>()
+                  .map((IOSCompanionAdSlot slot) => slot.nativeCompanionAdSlot)
+                  .toList(),
         );
         await _viewDidAppearCompleter.future;
         params.onContainerAdded(this);
       },
       layoutDirection: params.layoutDirection,
-      creationParams: _controller.view.pigeon_instanceManager
-          .getIdentifier(_controller.view),
+      creationParams: _controller.view.pigeon_instanceManager.getIdentifier(
+        _controller.view,
+      ),
       creationParamsCodec: const StandardMessageCodec(),
     );
   }

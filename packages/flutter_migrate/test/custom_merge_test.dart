@@ -48,8 +48,8 @@ void main() {
       final StringMergeResult result =
           merger.merge(currentFile, baseFile, targetFile) as StringMergeResult;
       expect(
-          result.mergedString,
-          '''
+        result.mergedString,
+        '''
 # This file tracks properties of this Flutter project.
 # Used by Flutter tool to assess capabilities and perform upgrades etc.
 #
@@ -60,7 +60,7 @@ version:
   channel: null
 
 project_type: '''
-          '''
+        '''
 
 
 # Tracks metadata for the flutter migrate command
@@ -76,7 +76,8 @@ migration:
   unmanaged_files:
     - 'lib/main.dart'
     - 'ios/Runner.xcodeproj/project.pbxproj'
-''');
+''',
+      );
     });
 
     testWithoutContext('merge adds migration section', () async {

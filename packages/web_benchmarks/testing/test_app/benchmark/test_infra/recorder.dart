@@ -11,7 +11,7 @@ import 'common.dart';
 /// A recorder that measures frame building durations for the test app.
 class TestAppRecorder extends WidgetRecorder {
   TestAppRecorder({required this.benchmark})
-      : super(name: benchmark.name, useCustomWarmUp: true);
+    : super(name: benchmark.name, useCustomWarmUp: true);
 
   /// The name of the benchmark to be run.
   ///

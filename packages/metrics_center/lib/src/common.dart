@@ -12,10 +12,8 @@ import 'package:http/http.dart';
 /// Common format of a metric data point.
 class MetricPoint {
   /// Creates a new data point.
-  MetricPoint(
-    this.value,
-    Map<String, String?> tags,
-  ) : _tags = SplayTreeMap<String, String>.from(tags);
+  MetricPoint(this.value, Map<String, String?> tags)
+    : _tags = SplayTreeMap<String, String>.from(tags);
 
   /// Can store integer values.
   final double? value;
@@ -44,16 +42,25 @@ class MetricPoint {
 abstract class MetricDestination {
   /// Insert new data points or modify old ones with matching id.
   Future<void> update(
-      List<MetricPoint> points, DateTime commitTime, String taskName);
+    List<MetricPoint> points,
+    DateTime commitTime,
+    String taskName,
+  );
 }
 
 /// Create `AuthClient` in case we only have an access token without the full
 /// credentials json. It's currently the case for Chrmoium LUCI bots.
 AuthClient authClientFromAccessToken(String token, List<String> scopes) {
   final DateTime anHourLater = DateTime.now().add(const Duration(hours: 1));
-  final AccessToken accessToken =
-      AccessToken('Bearer', token, anHourLater.toUtc());
-  final AccessCredentials accessCredentials =
-      AccessCredentials(accessToken, null, scopes);
+  final AccessToken accessToken = AccessToken(
+    'Bearer',
+    token,
+    anHourLater.toUtc(),
+  );
+  final AccessCredentials accessCredentials = AccessCredentials(
+    accessToken,
+    null,
+    scopes,
+  );
   return authenticatedClient(Client(), accessCredentials);
 }

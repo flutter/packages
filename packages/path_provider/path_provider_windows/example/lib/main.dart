@@ -83,9 +83,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Path Provider example app'),
-        ),
+        appBar: AppBar(title: const Text('Path Provider example app')),
         body: Center(
           child: Column(
             children: <Widget>[

@@ -14,7 +14,6 @@ import 'package:pigeon/pigeon.dart';
         'ios/interactive_media_ads/Sources/interactive_media_ads/InteractiveMediaAdsLibrary.g.swift',
   ),
 )
-
 /// Possible error types while loading or playing ads.
 ///
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/ios/client-side/reference/Enums/IMAErrorType.html.
@@ -580,16 +579,15 @@ abstract class IMAAdsLoaderDelegate extends NSObject {
   IMAAdsLoaderDelegate();
 
   /// Called when ads are successfully loaded from the ad servers by the loader.
-  late final void Function(
-    IMAAdsLoader loader,
-    IMAAdsLoadedData adsLoadedData,
-  ) adLoaderLoadedWith;
+  late final void Function(IMAAdsLoader loader, IMAAdsLoadedData adsLoadedData)
+  adLoaderLoadedWith;
 
   /// Error reported by the ads loader when loading or requesting an ad fails.
   late final void Function(
     IMAAdsLoader loader,
     IMAAdLoadingErrorData adErrorData,
-  ) adsLoaderFailedWithErrorData;
+  )
+  adsLoaderFailedWithErrorData;
 }
 
 /// Ad data that is returned when the ads loader loads the ad.
@@ -666,16 +664,12 @@ abstract class IMAAdsManagerDelegate extends NSObject {
   IMAAdsManagerDelegate();
 
   /// Called when there is an IMAAdEvent.
-  late final void Function(
-    IMAAdsManager adsManager,
-    IMAAdEvent event,
-  ) didReceiveAdEvent;
+  late final void Function(IMAAdsManager adsManager, IMAAdEvent event)
+  didReceiveAdEvent;
 
   /// Called when there was an error playing the ad.
-  late final void Function(
-    IMAAdsManager adsManager,
-    IMAAdError error,
-  ) didReceiveAdError;
+  late final void Function(IMAAdsManager adsManager, IMAAdError error)
+  didReceiveAdError;
 
   /// Called when an ad is ready to play.
   late final void Function(IMAAdsManager adsManager) didRequestContentPause;
@@ -829,10 +823,8 @@ abstract class IMACompanionDelegate extends NSObject {
   IMACompanionDelegate();
 
   /// Called when the slot is either filled or not filled.
-  late void Function(
-    IMACompanionAdSlot slot,
-    bool filled,
-  )? companionAdSlotFilled;
+  late void Function(IMACompanionAdSlot slot, bool filled)?
+  companionAdSlotFilled;
 
   /// Called when the slot is clicked on by the user and will successfully
   /// navigate away.

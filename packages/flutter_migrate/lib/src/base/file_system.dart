@@ -86,27 +86,23 @@ class LocalFileSystem extends local_fs.LocalFileSystem {
     if (_systemTemp == null) {
       if (!superSystemTempDirectory.existsSync()) {
         throwToolExit(
-            'Your system temp directory (${superSystemTempDirectory.path}) does not exist. '
-            'Did you set an invalid override in your environment? See issue https://github.com/flutter/flutter/issues/74042 for more context.');
+          'Your system temp directory (${superSystemTempDirectory.path}) does not exist. '
+          'Did you set an invalid override in your environment? See issue https://github.com/flutter/flutter/issues/74042 for more context.',
+        );
       }
       _systemTemp = superSystemTempDirectory.createTempSync('flutter_tools.')
         ..createSync(recursive: true);
       // Make sure that the temporary directory is cleaned up if the tool is
       // killed by a signal.
       for (final ProcessSignal signal in _fatalSignals) {
-        final Object token = _signals.addHandler(
-          signal,
-          (ProcessSignal _) {
-            _tryToDeleteTemp();
-          },
-        );
+        final Object token = _signals.addHandler(signal, (ProcessSignal _) {
+          _tryToDeleteTemp();
+        });
         _signalTokens[signal] = token;
       }
       // Make sure that the temporary directory is cleaned up when the tool
       // exits normally.
-      shutdownHooks.addShutdownHook(
-        _tryToDeleteTemp,
-      );
+      shutdownHooks.addShutdownHook(_tryToDeleteTemp);
     }
     return _systemTemp!;
   }

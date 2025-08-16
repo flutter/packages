@@ -23,13 +23,8 @@ import 'test_api.g.dart' as _i3;
 
 class _FakeFileDialogResult_0 extends _i1.SmartFake
     implements _i2.FileDialogResult {
-  _FakeFileDialogResult_0(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeFileDialogResult_0(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 /// A class which mocks [TestFileSelectorApi].
@@ -48,26 +43,21 @@ class MockTestFileSelectorApi extends _i1.Mock
     String? confirmButtonText,
   ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #showOpenDialog,
-          [
-            options,
-            initialDirectory,
-            confirmButtonText,
-          ],
-        ),
-        returnValue: _FakeFileDialogResult_0(
-          this,
-          Invocation.method(
-            #showOpenDialog,
-            [
+            Invocation.method(#showOpenDialog, [
               options,
               initialDirectory,
               confirmButtonText,
-            ],
-          ),
-        ),
-      ) as _i2.FileDialogResult);
+            ]),
+            returnValue: _FakeFileDialogResult_0(
+              this,
+              Invocation.method(#showOpenDialog, [
+                options,
+                initialDirectory,
+                confirmButtonText,
+              ]),
+            ),
+          )
+          as _i2.FileDialogResult);
 
   @override
   _i2.FileDialogResult showSaveDialog(
@@ -77,26 +67,21 @@ class MockTestFileSelectorApi extends _i1.Mock
     String? confirmButtonText,
   ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #showSaveDialog,
-          [
-            options,
-            initialDirectory,
-            suggestedName,
-            confirmButtonText,
-          ],
-        ),
-        returnValue: _FakeFileDialogResult_0(
-          this,
-          Invocation.method(
-            #showSaveDialog,
-            [
+            Invocation.method(#showSaveDialog, [
               options,
               initialDirectory,
               suggestedName,
               confirmButtonText,
-            ],
-          ),
-        ),
-      ) as _i2.FileDialogResult);
+            ]),
+            returnValue: _FakeFileDialogResult_0(
+              this,
+              Invocation.method(#showSaveDialog, [
+                options,
+                initialDirectory,
+                suggestedName,
+                confirmButtonText,
+              ]),
+            ),
+          )
+          as _i2.FileDialogResult);
 }

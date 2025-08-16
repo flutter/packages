@@ -32,11 +32,11 @@ class XFile extends XFileBase {
     int? length,
     Uint8List? bytes,
     DateTime? lastModified,
-  })  : _mimeType = mimeType,
-        _file = File(path),
-        _bytes = null,
-        _lastModified = lastModified,
-        super(path);
+  }) : _mimeType = mimeType,
+       _file = File(path),
+       _bytes = null,
+       _lastModified = lastModified,
+       super(path);
 
   /// Construct an CrossFile from its data
   ///
@@ -49,12 +49,12 @@ class XFile extends XFileBase {
     String? name,
     int? length,
     DateTime? lastModified,
-  })  : _mimeType = mimeType,
-        _bytes = bytes,
-        _file = File(path ?? ''),
-        _length = length,
-        _lastModified = lastModified,
-        super(path) {
+  }) : _mimeType = mimeType,
+       _bytes = bytes,
+       _file = File(path ?? ''),
+       _length = length,
+       _lastModified = lastModified,
+       super(path) {
     if (length == null) {
       _length = bytes.length;
     }

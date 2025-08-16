@@ -19,6 +19,8 @@ void main() {
       icon: 'AppIcon',
     );
     expect(
-        quickActions.setShortcutItems(<ShortcutItem>[shortCutItem]), completes);
+      quickActions.setShortcutItems(<ShortcutItem>[shortCutItem]),
+      completes,
+    );
   });
 }

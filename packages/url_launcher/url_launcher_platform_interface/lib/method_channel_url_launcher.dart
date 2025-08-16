@@ -18,10 +18,9 @@ class MethodChannelUrlLauncher extends UrlLauncherPlatform {
 
   @override
   Future<bool> canLaunch(String url) {
-    return _channel.invokeMethod<bool>(
-      'canLaunch',
-      <String, Object>{'url': url},
-    ).then((bool? value) => value ?? false);
+    return _channel
+        .invokeMethod<bool>('canLaunch', <String, Object>{'url': url})
+        .then((bool? value) => value ?? false);
   }
 
   @override
@@ -40,17 +39,16 @@ class MethodChannelUrlLauncher extends UrlLauncherPlatform {
     required Map<String, String> headers,
     String? webOnlyWindowName,
   }) {
-    return _channel.invokeMethod<bool>(
-      'launch',
-      <String, Object>{
-        'url': url,
-        'useSafariVC': useSafariVC,
-        'useWebView': useWebView,
-        'enableJavaScript': enableJavaScript,
-        'enableDomStorage': enableDomStorage,
-        'universalLinksOnly': universalLinksOnly,
-        'headers': headers,
-      },
-    ).then((bool? value) => value ?? false);
+    return _channel
+        .invokeMethod<bool>('launch', <String, Object>{
+          'url': url,
+          'useSafariVC': useSafariVC,
+          'useWebView': useWebView,
+          'enableJavaScript': enableJavaScript,
+          'enableDomStorage': enableDomStorage,
+          'universalLinksOnly': universalLinksOnly,
+          'headers': headers,
+        })
+        .then((bool? value) => value ?? false);
   }
 }

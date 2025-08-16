@@ -4,11 +4,12 @@
 
 import 'package:pigeon/pigeon.dart';
 
-@ConfigurePigeon(PigeonOptions(
-  // This is here to test option merging.
-  objcOptions: ObjcOptions(prefix: 'ThisShouldntEndUpInTheOutput'),
-))
-
+@ConfigurePigeon(
+  PigeonOptions(
+    // This is here to test option merging.
+    objcOptions: ObjcOptions(prefix: 'ThisShouldntEndUpInTheOutput'),
+  ),
+)
 /// This comment is to test enum documentation comments.
 enum EnumState {
   /// This comment is to test enum member (Pending) documentation comments.
@@ -31,7 +32,6 @@ class DataWithEnum {
 }
 
 @HostApi()
-
 /// This comment is to test api documentation comments.
 abstract class EnumApi2Host {
   /// This comment is to test method documentation comments.
@@ -39,7 +39,6 @@ abstract class EnumApi2Host {
 }
 
 @FlutterApi()
-
 /// This comment is to test api documentation comments.
 abstract class EnumApi2Flutter {
   /// This comment is to test method documentation comments.

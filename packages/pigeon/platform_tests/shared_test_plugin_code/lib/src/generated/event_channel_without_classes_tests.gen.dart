@@ -33,16 +33,18 @@ class _PigeonCodec extends StandardMessageCodec {
   }
 }
 
-const StandardMethodCodec pigeonMethodCodec =
-    StandardMethodCodec(_PigeonCodec());
+const StandardMethodCodec pigeonMethodCodec = StandardMethodCodec(
+  _PigeonCodec(),
+);
 
 Stream<int> streamIntsAgain({String instanceName = ''}) {
   if (instanceName.isNotEmpty) {
     instanceName = '.$instanceName';
   }
   final EventChannel streamIntsAgainChannel = EventChannel(
-      'dev.flutter.pigeon.pigeon_integration_tests.EventChannelMethods.streamIntsAgain$instanceName',
-      pigeonMethodCodec);
+    'dev.flutter.pigeon.pigeon_integration_tests.EventChannelMethods.streamIntsAgain$instanceName',
+    pigeonMethodCodec,
+  );
   return streamIntsAgainChannel.receiveBroadcastStream().map((dynamic event) {
     return event as int;
   });

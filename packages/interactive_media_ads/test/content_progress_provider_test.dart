@@ -15,20 +15,18 @@ void main() {
 
     final TestContentProgressProvider platformProvider =
         TestContentProgressProvider(
-      const PlatformContentProgressProviderCreationParams(),
-      onSetProgress: ({
-        required Duration progress,
-        required Duration duration,
-      }) async {
-        callbackProgress = progress;
-        callbackDuration = duration;
-      },
-    );
+          const PlatformContentProgressProviderCreationParams(),
+          onSetProgress: ({
+            required Duration progress,
+            required Duration duration,
+          }) async {
+            callbackProgress = progress;
+            callbackDuration = duration;
+          },
+        );
 
     final ContentProgressProvider provider =
-        ContentProgressProvider.fromPlatform(
-      platformProvider,
-    );
+        ContentProgressProvider.fromPlatform(platformProvider);
 
     await provider.setProgress(
       progress: const Duration(seconds: 1),

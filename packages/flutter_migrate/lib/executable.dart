@@ -38,16 +38,18 @@ Future<void> main(List<String> args) async {
       processManager: baseDependencies.processManager,
     ),
     MigrateAbandonCommand(
-        logger: baseDependencies.logger,
-        fileSystem: baseDependencies.fileSystem,
-        terminal: baseDependencies.terminal,
-        processManager: baseDependencies.processManager),
+      logger: baseDependencies.logger,
+      fileSystem: baseDependencies.fileSystem,
+      terminal: baseDependencies.terminal,
+      processManager: baseDependencies.processManager,
+    ),
     MigrateApplyCommand(
-        verbose: verbose,
-        logger: baseDependencies.logger,
-        fileSystem: baseDependencies.fileSystem,
-        terminal: baseDependencies.terminal,
-        processManager: baseDependencies.processManager),
+      verbose: verbose,
+      logger: baseDependencies.logger,
+      fileSystem: baseDependencies.fileSystem,
+      terminal: baseDependencies.terminal,
+      processManager: baseDependencies.processManager,
+    ),
   ];
 
   final MigrateCommandRunner runner = MigrateCommandRunner();
@@ -55,22 +57,24 @@ Future<void> main(List<String> args) async {
   commands.forEach(runner.addCommand);
   await runner.run(args);
 
-  await _exit(0, baseDependencies,
-      shutdownHooks: baseDependencies.fileSystem.shutdownHooks);
+  await _exit(
+    0,
+    baseDependencies,
+    shutdownHooks: baseDependencies.fileSystem.shutdownHooks,
+  );
   await baseDependencies.fileSystem.dispose();
 }
 
 /// Simple extension of a CommandRunner to provide migrate specific global flags.
 class MigrateCommandRunner extends CommandRunner<void> {
   MigrateCommandRunner()
-      : super(
-          'flutter',
-          'Migrates legacy flutter projects to modern versions.',
-        ) {
-    argParser.addFlag('verbose',
-        abbr: 'v',
-        negatable: false,
-        help: 'Noisy logging, including all shell commands executed.');
+    : super('flutter', 'Migrates legacy flutter projects to modern versions.') {
+    argParser.addFlag(
+      'verbose',
+      abbr: 'v',
+      negatable: false,
+      help: 'Noisy logging, including all shell commands executed.',
+    );
   }
 
   @override
@@ -78,8 +82,11 @@ class MigrateCommandRunner extends CommandRunner<void> {
   final ArgParser _argParser = ArgParser();
 }
 
-Future<int> _exit(int code, MigrateBaseDependencies baseDependencies,
-    {required ShutdownHooks shutdownHooks}) async {
+Future<int> _exit(
+  int code,
+  MigrateBaseDependencies baseDependencies, {
+  required ShutdownHooks shutdownHooks,
+}) async {
   // Run shutdown hooks before flushing logs
   await shutdownHooks.runShutdownHooks(baseDependencies.logger);
 

@@ -37,21 +37,21 @@ bool _equalMaps(Map<String, Object> x, Map<String, Object> y) {
   return true;
 }
 
-final Class emptyClass = Class(name: 'className', fields: <NamedType>[
-  NamedType(
-    name: 'namedTypeName',
-    type: const TypeDeclaration(baseName: 'baseName', isNullable: false),
-  )
-]);
+final Class emptyClass = Class(
+  name: 'className',
+  fields: <NamedType>[
+    NamedType(
+      name: 'namedTypeName',
+      type: const TypeDeclaration(baseName: 'baseName', isNullable: false),
+    ),
+  ],
+);
 
 void main() {
   test('test merge maps', () {
     final Map<String, Object> source = <String, Object>{
       '1': '1',
-      '2': <String, Object>{
-        '1': '1',
-        '3': '3',
-      },
+      '2': <String, Object>{'1': '1', '3': '3'},
       '3': '3', // not modified
     };
     final Map<String, Object> modification = <String, Object>{
@@ -62,45 +62,50 @@ void main() {
     };
     final Map<String, Object> expected = <String, Object>{
       '1': '2',
-      '2': <String, Object>{
-        '1': '1',
-        '2': '2',
-        '3': '3',
-      },
+      '2': <String, Object>{'1': '1', '2': '2', '3': '3'},
       '3': '3',
     };
     expect(_equalMaps(expected, mergeMaps(source, modification)), isTrue);
   });
 
   test('get codec types from all classes and enums', () {
-    final Root root = Root(classes: <Class>[
-      Class(name: 'name', fields: <NamedType>[
-        NamedType(
-            name: 'name',
-            type: const TypeDeclaration(
-              baseName: 'name',
-              isNullable: true,
-            ))
-      ])
-    ], apis: <Api>[], enums: <Enum>[
-      Enum(name: 'enum', members: <EnumMember>[
-        EnumMember(name: 'enumMember'),
-      ])
-    ]);
+    final Root root = Root(
+      classes: <Class>[
+        Class(
+          name: 'name',
+          fields: <NamedType>[
+            NamedType(
+              name: 'name',
+              type: const TypeDeclaration(baseName: 'name', isNullable: true),
+            ),
+          ],
+        ),
+      ],
+      apis: <Api>[],
+      enums: <Enum>[
+        Enum(
+          name: 'enum',
+          members: <EnumMember>[EnumMember(name: 'enumMember')],
+        ),
+      ],
+    );
     final List<EnumeratedType> types = getEnumeratedTypes(root).toList();
     expect(types.length, 2);
   });
 
   test('getEnumeratedTypes:ed type arguments', () {
-    final Root root = Root(apis: <Api>[
-      AstFlutterApi(name: 'Api', methods: <Method>[
-        Method(
-          name: 'foo',
-          location: ApiLocation.flutter,
-          parameters: <Parameter>[
-            Parameter(
-                name: 'x',
-                type: TypeDeclaration(
+    final Root root = Root(
+      apis: <Api>[
+        AstFlutterApi(
+          name: 'Api',
+          methods: <Method>[
+            Method(
+              name: 'foo',
+              location: ApiLocation.flutter,
+              parameters: <Parameter>[
+                Parameter(
+                  name: 'x',
+                  type: TypeDeclaration(
                     isNullable: false,
                     baseName: 'List',
                     typeArguments: <TypeDeclaration>[
@@ -108,134 +113,170 @@ void main() {
                         baseName: 'Foo',
                         isNullable: true,
                         associatedClass: emptyClass,
-                      )
-                    ])),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+              returnType: const TypeDeclaration.voidDeclaration(),
+            ),
           ],
-          returnType: const TypeDeclaration.voidDeclaration(),
-        )
-      ])
-    ], classes: <Class>[
-      Class(name: 'Foo', fields: <NamedType>[
-        NamedType(
-            name: 'bar',
-            type: TypeDeclaration(
-              baseName: 'Bar',
-              isNullable: true,
-              associatedClass: emptyClass,
-            )),
-      ]),
-      Class(name: 'Bar', fields: <NamedType>[
-        NamedType(
-            name: 'value',
-            type: const TypeDeclaration(
-              baseName: 'int',
-              isNullable: true,
-            ))
-      ])
-    ], enums: <Enum>[]);
+        ),
+      ],
+      classes: <Class>[
+        Class(
+          name: 'Foo',
+          fields: <NamedType>[
+            NamedType(
+              name: 'bar',
+              type: TypeDeclaration(
+                baseName: 'Bar',
+                isNullable: true,
+                associatedClass: emptyClass,
+              ),
+            ),
+          ],
+        ),
+        Class(
+          name: 'Bar',
+          fields: <NamedType>[
+            NamedType(
+              name: 'value',
+              type: const TypeDeclaration(baseName: 'int', isNullable: true),
+            ),
+          ],
+        ),
+      ],
+      enums: <Enum>[],
+    );
     final List<EnumeratedType> classes = getEnumeratedTypes(root).toList();
     expect(classes.length, 2);
     expect(
-        classes.where((EnumeratedType element) => element.name == 'Foo').length,
-        1);
+      classes.where((EnumeratedType element) => element.name == 'Foo').length,
+      1,
+    );
     expect(
-        classes.where((EnumeratedType element) => element.name == 'Bar').length,
-        1);
+      classes.where((EnumeratedType element) => element.name == 'Bar').length,
+      1,
+    );
   });
 
   test('getEnumeratedTypes: Object', () {
-    final Root root = Root(apis: <Api>[
-      AstFlutterApi(
-        name: 'Api1',
-        methods: <Method>[
-          Method(
-            name: 'foo',
-            location: ApiLocation.flutter,
-            parameters: <Parameter>[
-              Parameter(
+    final Root root = Root(
+      apis: <Api>[
+        AstFlutterApi(
+          name: 'Api1',
+          methods: <Method>[
+            Method(
+              name: 'foo',
+              location: ApiLocation.flutter,
+              parameters: <Parameter>[
+                Parameter(
                   name: 'x',
                   type: const TypeDeclaration(
-                      isNullable: false,
-                      baseName: 'List',
-                      typeArguments: <TypeDeclaration>[
-                        TypeDeclaration(baseName: 'Object', isNullable: true)
-                      ])),
-            ],
-            returnType: const TypeDeclaration.voidDeclaration(),
-          )
-        ],
-      ),
-    ], classes: <Class>[
-      Class(name: 'Foo', fields: <NamedType>[
-        NamedType(
-            name: 'bar',
-            type: const TypeDeclaration(baseName: 'int', isNullable: true)),
-      ]),
-    ], enums: <Enum>[]);
+                    isNullable: false,
+                    baseName: 'List',
+                    typeArguments: <TypeDeclaration>[
+                      TypeDeclaration(baseName: 'Object', isNullable: true),
+                    ],
+                  ),
+                ),
+              ],
+              returnType: const TypeDeclaration.voidDeclaration(),
+            ),
+          ],
+        ),
+      ],
+      classes: <Class>[
+        Class(
+          name: 'Foo',
+          fields: <NamedType>[
+            NamedType(
+              name: 'bar',
+              type: const TypeDeclaration(baseName: 'int', isNullable: true),
+            ),
+          ],
+        ),
+      ],
+      enums: <Enum>[],
+    );
     final List<EnumeratedType> classes = getEnumeratedTypes(root).toList();
     expect(classes.length, 1);
     expect(
-        classes.where((EnumeratedType element) => element.name == 'Foo').length,
-        1);
+      classes.where((EnumeratedType element) => element.name == 'Foo').length,
+      1,
+    );
   });
 
   test('getEnumeratedTypes:ue entries', () {
-    final Root root = Root(apis: <Api>[
-      AstFlutterApi(
-        name: 'Api1',
-        methods: <Method>[
-          Method(
-            name: 'foo',
-            location: ApiLocation.flutter,
-            parameters: <Parameter>[
-              Parameter(
+    final Root root = Root(
+      apis: <Api>[
+        AstFlutterApi(
+          name: 'Api1',
+          methods: <Method>[
+            Method(
+              name: 'foo',
+              location: ApiLocation.flutter,
+              parameters: <Parameter>[
+                Parameter(
                   name: 'x',
                   type: TypeDeclaration(
                     isNullable: false,
                     baseName: 'Foo',
                     associatedClass: emptyClass,
-                  )),
-            ],
-            returnType: const TypeDeclaration.voidDeclaration(),
-          )
-        ],
-      ),
-      AstHostApi(
-        name: 'Api2',
-        methods: <Method>[
-          Method(
-            name: 'foo',
-            location: ApiLocation.host,
-            parameters: <Parameter>[
-              Parameter(
+                  ),
+                ),
+              ],
+              returnType: const TypeDeclaration.voidDeclaration(),
+            ),
+          ],
+        ),
+        AstHostApi(
+          name: 'Api2',
+          methods: <Method>[
+            Method(
+              name: 'foo',
+              location: ApiLocation.host,
+              parameters: <Parameter>[
+                Parameter(
                   name: 'x',
                   type: TypeDeclaration(
                     isNullable: false,
                     baseName: 'Foo',
                     associatedClass: emptyClass,
-                  )),
-            ],
-            returnType: const TypeDeclaration.voidDeclaration(),
-          )
-        ],
-      )
-    ], classes: <Class>[
-      Class(name: 'Foo', fields: <NamedType>[
-        NamedType(
-            name: 'bar',
-            type: const TypeDeclaration(baseName: 'int', isNullable: true)),
-      ]),
-    ], enums: <Enum>[]);
+                  ),
+                ),
+              ],
+              returnType: const TypeDeclaration.voidDeclaration(),
+            ),
+          ],
+        ),
+      ],
+      classes: <Class>[
+        Class(
+          name: 'Foo',
+          fields: <NamedType>[
+            NamedType(
+              name: 'bar',
+              type: const TypeDeclaration(baseName: 'int', isNullable: true),
+            ),
+          ],
+        ),
+      ],
+      enums: <Enum>[],
+    );
     final List<EnumeratedType> classes = getEnumeratedTypes(root).toList();
     expect(classes.length, 1);
     expect(
-        classes.where((EnumeratedType element) => element.name == 'Foo').length,
-        1);
+      classes.where((EnumeratedType element) => element.name == 'Foo').length,
+      1,
+    );
   });
 
   test('deduces package name successfully', () {
-    final String? dartPackageName =
-        deducePackageName('./pigeons/core_tests.dart');
+    final String? dartPackageName = deducePackageName(
+      './pigeons/core_tests.dart',
+    );
 
     expect(dartPackageName, 'pigeon');
   });
@@ -354,39 +395,52 @@ void main() {
   });
 
   test(
-      'recursiveFindAllInterfacesApis throws error if api recursively implements itself',
-      () {
-    final AstProxyApi a = AstProxyApi(
-      name: 'A',
-      methods: <Method>[],
-      constructors: <Constructor>[],
-      fields: <ApiField>[],
-    );
-    final AstProxyApi b = AstProxyApi(
-      name: 'B',
-      methods: <Method>[],
-      constructors: <Constructor>[],
-      fields: <ApiField>[],
-    );
-    final AstProxyApi c = AstProxyApi(
-      name: 'C',
-      methods: <Method>[],
-      constructors: <Constructor>[],
-      fields: <ApiField>[],
-    );
+    'recursiveFindAllInterfacesApis throws error if api recursively implements itself',
+    () {
+      final AstProxyApi a = AstProxyApi(
+        name: 'A',
+        methods: <Method>[],
+        constructors: <Constructor>[],
+        fields: <ApiField>[],
+      );
+      final AstProxyApi b = AstProxyApi(
+        name: 'B',
+        methods: <Method>[],
+        constructors: <Constructor>[],
+        fields: <ApiField>[],
+      );
+      final AstProxyApi c = AstProxyApi(
+        name: 'C',
+        methods: <Method>[],
+        constructors: <Constructor>[],
+        fields: <ApiField>[],
+      );
 
-    a.interfaces = <TypeDeclaration>{
-      TypeDeclaration(baseName: 'B', isNullable: false, associatedProxyApi: b),
-    };
-    b.interfaces = <TypeDeclaration>{
-      TypeDeclaration(baseName: 'C', isNullable: false, associatedProxyApi: c),
-    };
-    c.interfaces = <TypeDeclaration>{
-      TypeDeclaration(baseName: 'A', isNullable: false, associatedProxyApi: a),
-    };
+      a.interfaces = <TypeDeclaration>{
+        TypeDeclaration(
+          baseName: 'B',
+          isNullable: false,
+          associatedProxyApi: b,
+        ),
+      };
+      b.interfaces = <TypeDeclaration>{
+        TypeDeclaration(
+          baseName: 'C',
+          isNullable: false,
+          associatedProxyApi: c,
+        ),
+      };
+      c.interfaces = <TypeDeclaration>{
+        TypeDeclaration(
+          baseName: 'A',
+          isNullable: false,
+          associatedProxyApi: a,
+        ),
+      };
 
-    expect(() => a.apisOfInterfaces(), throwsArgumentError);
-  });
+      expect(() => a.apisOfInterfaces(), throwsArgumentError);
+    },
+  );
 
   test('findHighestApiRequirement', () {
     final TypeDeclaration typeWithoutMinApi = TypeDeclaration(
@@ -424,22 +478,22 @@ void main() {
 
     final ({TypeDeclaration type, int version})? result =
         findHighestApiRequirement(
-      <TypeDeclaration>[
-        typeWithoutMinApi,
-        typeWithMinApi,
-        typeWithHighestMinApi,
-      ],
-      onGetApiRequirement: (TypeDeclaration type) {
-        if (type == typeWithMinApi) {
-          return 1;
-        } else if (type == typeWithHighestMinApi) {
-          return 2;
-        }
+          <TypeDeclaration>[
+            typeWithoutMinApi,
+            typeWithMinApi,
+            typeWithHighestMinApi,
+          ],
+          onGetApiRequirement: (TypeDeclaration type) {
+            if (type == typeWithMinApi) {
+              return 1;
+            } else if (type == typeWithHighestMinApi) {
+              return 2;
+            }
 
-        return null;
-      },
-      onCompare: (int one, int two) => one.compareTo(two),
-    );
+            return null;
+          },
+          onCompare: (int one, int two) => one.compareTo(two),
+        );
 
     expect(result?.type, typeWithHighestMinApi);
     expect(result?.version, 2);
@@ -449,13 +503,11 @@ void main() {
     final StringBuffer buffer = StringBuffer();
     final Indent indent = Indent(buffer);
 
-    indent.format(
-      '''
+    indent.format('''
       void myMethod() {
 
         print('hello');
-      }''',
-    );
+      }''');
 
     expect(buffer.toString(), '''
 void myMethod() {

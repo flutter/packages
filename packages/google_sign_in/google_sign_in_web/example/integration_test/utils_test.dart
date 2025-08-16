@@ -52,18 +52,20 @@ void main() {
     });
 
     testWidgets('invalid payload -> null', (_) async {
-      final CredentialResponse response =
-          jsifyAs<CredentialResponse>(<String, Object?>{
-        'credential': 'some-bogus.thing-that-is-not.valid-jwt',
-      });
+      final CredentialResponse response = jsifyAs<CredentialResponse>(
+        <String, Object?>{
+          'credential': 'some-bogus.thing-that-is-not.valid-jwt',
+        },
+      );
       expect(gisResponsesToAuthenticationEvent(response), isNull);
     });
   });
 
   group('getCredentialResponseExpirationTimestamp', () {
     testWidgets('Good payload -> data', (_) async {
-      final DateTime? expiration =
-          getCredentialResponseExpirationTimestamp(expiredCredential);
+      final DateTime? expiration = getCredentialResponseExpirationTimestamp(
+        expiredCredential,
+      );
 
       expect(expiration, isNotNull);
       expect(expiration!.millisecondsSinceEpoch, 1430330400 * 1000);
@@ -71,14 +73,17 @@ void main() {
 
     testWidgets('No expiration -> null', (_) async {
       expect(
-          getCredentialResponseExpirationTimestamp(minimalCredential), isNull);
+        getCredentialResponseExpirationTimestamp(minimalCredential),
+        isNull,
+      );
     });
 
     testWidgets('Bad data -> null', (_) async {
-      final CredentialResponse bogus =
-          jsifyAs<CredentialResponse>(<String, Object?>{
-        'credential': 'some-bogus.thing-that-is-not.valid-jwt',
-      });
+      final CredentialResponse bogus = jsifyAs<CredentialResponse>(
+        <String, Object?>{
+          'credential': 'some-bogus.thing-that-is-not.valid-jwt',
+        },
+      );
 
       expect(getCredentialResponseExpirationTimestamp(bogus), isNull);
     });
@@ -93,11 +98,12 @@ void main() {
       expect(data, containsPair('email', 'adultman@example.com'));
       expect(data, containsPair('sub', '123456'));
       expect(
-          data,
-          containsPair(
-            'picture',
-            'https://thispersondoesnotexist.com/image?x=.jpg',
-          ));
+        data,
+        containsPair(
+          'picture',
+          'https://thispersondoesnotexist.com/image?x=.jpg',
+        ),
+      );
     });
 
     testWidgets('happy case (minimal) -> data', (_) async {
@@ -136,11 +142,12 @@ void main() {
       expect(data, containsPair('email', 'adultman@example.com'));
       expect(data, containsPair('sub', '123456'));
       expect(
-          data,
-          containsPair(
-            'picture',
-            'https://thispersondoesnotexist.com/image?x=.jpg',
-          ));
+        data,
+        containsPair(
+          'picture',
+          'https://thispersondoesnotexist.com/image?x=.jpg',
+        ),
+      );
     });
 
     testWidgets('Proper JSON payload -> data', (_) async {
