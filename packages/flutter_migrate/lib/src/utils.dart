@@ -92,7 +92,6 @@ class MigrateUtils {
     required String name,
     bool legacyNameParameter = false,
     required String androidLanguage,
-    required String iosLanguage,
     required String outputDirectory,
     String? createVersion,
     List<String> platforms = const <String>[],
@@ -110,7 +109,7 @@ class MigrateUtils {
       cmdArgs.add('--project-name=$name');
     }
     cmdArgs.add('--android-language=$androidLanguage');
-    cmdArgs.add('--ios-language=$iosLanguage');
+
     if (platforms.isNotEmpty) {
       String platformsArg = '--platforms=';
       for (int i = 0; i < platforms.length; i++) {
@@ -131,8 +130,6 @@ class MigrateUtils {
         await _runCommand(cmdArgs, workingDirectory: outputDirectory);
     final String error = result.stderr as String;
 
-    // Catch errors due to parameters not existing.
-
     // Old versions of the tool does not include the platforms option.
     if (error.contains('Could not find an option named "platforms".')) {
       return createFromTemplates(
@@ -140,9 +137,8 @@ class MigrateUtils {
         name: name,
         legacyNameParameter: legacyNameParameter,
         androidLanguage: androidLanguage,
-        iosLanguage: iosLanguage,
         outputDirectory: outputDirectory,
-        iterationsAllowed: iterationsAllowed--,
+        iterationsAllowed: iterationsAllowed - 1,
       );
     }
     // Old versions of the tool does not include the project-name option.
@@ -153,10 +149,9 @@ class MigrateUtils {
         name: name,
         legacyNameParameter: true,
         androidLanguage: androidLanguage,
-        iosLanguage: iosLanguage,
         outputDirectory: outputDirectory,
         platforms: platforms,
-        iterationsAllowed: iterationsAllowed--,
+        iterationsAllowed: iterationsAllowed - 1,
       );
     }
     if (error.contains('Multiple output directories specified.')) {
@@ -166,9 +161,8 @@ class MigrateUtils {
           name: name,
           legacyNameParameter: legacyNameParameter,
           androidLanguage: androidLanguage,
-          iosLanguage: iosLanguage,
           outputDirectory: outputDirectory,
-          iterationsAllowed: iterationsAllowed--,
+          iterationsAllowed: iterationsAllowed - 1,
         );
       }
     }
