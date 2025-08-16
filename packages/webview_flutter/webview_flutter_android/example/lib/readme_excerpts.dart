@@ -7,8 +7,9 @@ import 'package:webview_flutter_platform_interface/webview_flutter_platform_inte
 
 /// Example function for README demonstration of Payment Request API.
 Future<void> enablePaymentRequest() async {
-  final PlatformWebViewController controller =
-      PlatformWebViewController(AndroidWebViewControllerCreationParams());
+  final PlatformWebViewController controller = PlatformWebViewController(
+    AndroidWebViewControllerCreationParams(),
+  );
   final AndroidWebViewController androidController =
       controller as AndroidWebViewController;
   // #docregion payment_request_example

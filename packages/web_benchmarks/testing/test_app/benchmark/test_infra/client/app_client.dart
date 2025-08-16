@@ -8,14 +8,12 @@ import '../common.dart';
 import '../recorder.dart';
 
 Future<void> main() async {
-  await runBenchmarks(
-    <String, RecorderFactory>{
-      BenchmarkName.appNavigate.name: () =>
-          TestAppRecorder(benchmark: BenchmarkName.appNavigate),
-      BenchmarkName.appScroll.name: () =>
-          TestAppRecorder(benchmark: BenchmarkName.appScroll),
-      BenchmarkName.appTap.name: () =>
-          TestAppRecorder(benchmark: BenchmarkName.appTap),
-    },
-  );
+  await runBenchmarks(<String, RecorderFactory>{
+    BenchmarkName.appNavigate.name:
+        () => TestAppRecorder(benchmark: BenchmarkName.appNavigate),
+    BenchmarkName.appScroll.name:
+        () => TestAppRecorder(benchmark: BenchmarkName.appScroll),
+    BenchmarkName.appTap.name:
+        () => TestAppRecorder(benchmark: BenchmarkName.appTap),
+  });
 }
