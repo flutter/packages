@@ -20,25 +20,24 @@ void main() {
     test('instantiate CompanionAdSlot with size', () async {
       final MockIMACompanionAdSlot mockCompanionAdSlot =
           MockIMACompanionAdSlot();
+      PigeonOverrides.companionAdSlot_size = ({
+        required int width,
+        required int height,
+        required UIView view,
+      }) {
+        expect(width, 300);
+        expect(height, 400);
+        return mockCompanionAdSlot;
+      };
+      PigeonOverrides.view_new = () {
+        return UIView.pigeon_detached(
+          pigeon_instanceManager: _TestInstanceManager(),
+        );
+      };
+
       final IOSCompanionAdSlotCreationParams params =
           IOSCompanionAdSlotCreationParams(
         size: CompanionAdSlotSize.fixed(width: 300, height: 400),
-        proxy: InteractiveMediaAdsProxy(
-          sizeIMACompanionAdSlot: ({
-            required int width,
-            required int height,
-            required UIView view,
-          }) {
-            expect(width, 300);
-            expect(height, 400);
-            return mockCompanionAdSlot;
-          },
-          newUIView: () {
-            return UIView.pigeon_detached(
-              pigeon_instanceManager: _TestInstanceManager(),
-            );
-          },
-        ),
       );
 
       final IOSCompanionAdSlot adSlot = IOSCompanionAdSlot(params);
@@ -48,41 +47,40 @@ void main() {
     test('IOSCompanionAdSlot receives onClick', () async {
       final MockIMACompanionAdSlot mockCompanionAdSlot =
           MockIMACompanionAdSlot();
+      PigeonOverrides.companionAdSlot_size = ({
+        required int width,
+        required int height,
+        required UIView view,
+      }) {
+        return mockCompanionAdSlot;
+      };
+      PigeonOverrides.view_new = () {
+        return UIView.pigeon_detached(
+          pigeon_instanceManager: _TestInstanceManager(),
+        );
+      };
+      PigeonOverrides.companionDelegate_new = ({
+        void Function(
+          IMACompanionDelegate,
+          IMACompanionAdSlot,
+          bool,
+        )? companionAdSlotFilled,
+        void Function(
+          IMACompanionDelegate,
+          IMACompanionAdSlot,
+        )? companionSlotWasClicked,
+      }) {
+        return IMACompanionDelegate.pigeon_detached(
+          companionAdSlotFilled: companionAdSlotFilled,
+          companionSlotWasClicked: companionSlotWasClicked,
+          pigeon_instanceManager: _TestInstanceManager(),
+        );
+      };
+
       final IOSCompanionAdSlotCreationParams params =
           IOSCompanionAdSlotCreationParams(
         size: CompanionAdSlotSize.fixed(width: 300, height: 400),
         onClicked: expectAsync0(() {}),
-        proxy: InteractiveMediaAdsProxy(
-          sizeIMACompanionAdSlot: ({
-            required int width,
-            required int height,
-            required UIView view,
-          }) {
-            return mockCompanionAdSlot;
-          },
-          newUIView: () {
-            return UIView.pigeon_detached(
-              pigeon_instanceManager: _TestInstanceManager(),
-            );
-          },
-          newIMACompanionDelegate: ({
-            void Function(
-              IMACompanionDelegate,
-              IMACompanionAdSlot,
-              bool,
-            )? companionAdSlotFilled,
-            void Function(
-              IMACompanionDelegate,
-              IMACompanionAdSlot,
-            )? companionSlotWasClicked,
-          }) {
-            return IMACompanionDelegate.pigeon_detached(
-              companionAdSlotFilled: companionAdSlotFilled,
-              companionSlotWasClicked: companionSlotWasClicked,
-              pigeon_instanceManager: _TestInstanceManager(),
-            );
-          },
-        ),
       );
 
       final IOSCompanionAdSlot adSlot = IOSCompanionAdSlot(params);

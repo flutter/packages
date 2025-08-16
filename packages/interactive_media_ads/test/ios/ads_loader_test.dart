@@ -55,9 +55,8 @@ void main() {
       ima.PigeonOverrides.iMASettings_new = () => MockIMASettings();
 
       final MockIMAAdsLoader mockLoader = MockIMAAdsLoader();
-      final InteractiveMediaAdsProxy imaProxy = InteractiveMediaAdsProxy(
-        newIMAAdsLoader: ({ima.IMASettings? settings}) => mockLoader,
-      );
+      ima.PigeonOverrides.adsLoader_new =
+          ({ima.IMASettings? settings}) => mockLoader;
 
       final IOSAdsLoader loader = IOSAdsLoader(
         IOSAdsLoaderCreationParams(
@@ -65,7 +64,6 @@ void main() {
           settings: IOSImaSettings(const PlatformImaSettingsCreationParams()),
           onAdsLoaded: (PlatformOnAdsLoadedData data) {},
           onAdsLoadError: (AdsLoadErrorData data) {},
-          proxy: imaProxy,
         ),
       );
 
@@ -86,10 +84,9 @@ void main() {
       final ima.IMAContentPlayhead contentPlayheadInstance =
           ima.IMAContentPlayhead();
       final MockIMAAdsRequest mockRequest = MockIMAAdsRequest();
-      final InteractiveMediaAdsProxy imaProxy = InteractiveMediaAdsProxy(
-        newIMAAdsLoader: ({ima.IMASettings? settings}) => mockLoader,
-        newIMAContentPlayhead: () => contentPlayheadInstance,
-      );
+      ima.PigeonOverrides.adsLoader_new =
+          ({ima.IMASettings? settings}) => mockLoader;
+      ima.PigeonOverrides.contentPlayhead_new = () => contentPlayheadInstance;
 
       ima.PigeonOverrides.iMAAdsRequest_new = ({
         required String adTagUrl,
@@ -108,12 +105,11 @@ void main() {
           settings: IOSImaSettings(const PlatformImaSettingsCreationParams()),
           onAdsLoaded: (PlatformOnAdsLoadedData data) {},
           onAdsLoadError: (AdsLoadErrorData data) {},
-          proxy: imaProxy,
         ),
       );
 
       final IOSContentProgressProvider provider = IOSContentProgressProvider(
-        IOSContentProgressProviderCreationParams(proxy: imaProxy),
+        const IOSContentProgressProviderCreationParams(),
       );
 
       await loader.requestAds(PlatformAdsRequest.withAdTagUrl(

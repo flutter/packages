@@ -16,24 +16,18 @@ final class IOSAdsManagerDelegateCreationParams
   const IOSAdsManagerDelegateCreationParams({
     super.onAdEvent,
     super.onAdErrorEvent,
-    @visibleForTesting InteractiveMediaAdsProxy? proxy,
-  })  : _proxy = proxy ?? const InteractiveMediaAdsProxy(),
-        super();
+  }) : super();
 
   /// Creates an [IOSAdsManagerDelegateCreationParams] from an instance of
   /// [PlatformAdsManagerDelegateCreationParams].
   factory IOSAdsManagerDelegateCreationParams.fromPlatformAdsManagerDelegateCreationParams(
-    PlatformAdsManagerDelegateCreationParams params, {
-    @visibleForTesting InteractiveMediaAdsProxy? proxy,
-  }) {
+    PlatformAdsManagerDelegateCreationParams params,
+  ) {
     return IOSAdsManagerDelegateCreationParams(
       onAdEvent: params.onAdEvent,
       onAdErrorEvent: params.onAdErrorEvent,
-      proxy: proxy,
     );
   }
-
-  final InteractiveMediaAdsProxy _proxy;
 }
 
 /// Implementation of [PlatformAdsManagerDelegate] for iOS.
@@ -62,7 +56,7 @@ final class IOSAdsManagerDelegate extends PlatformAdsManagerDelegate {
   static ima.IMAAdsManagerDelegate _createAdsManagerDelegate(
     WeakReference<IOSAdsManagerDelegate> interfaceDelegate,
   ) {
-    return interfaceDelegate.target!._iosParams._proxy.newIMAAdsManagerDelegate(
+    return ima.IMAAdsManagerDelegate(
       didReceiveAdEvent: (_, __, ima.IMAAdEvent event) {
         interfaceDelegate.target?.params.onAdEvent?.call(
           AdEvent(

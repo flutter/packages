@@ -19,9 +19,7 @@ final class IOSAdsRenderingSettingsCreationParams
     super.mimeTypes,
     super.playAdsAfterTime,
     super.uiElements,
-    @visibleForTesting InteractiveMediaAdsProxy? proxy,
-  })  : _proxy = proxy ?? const InteractiveMediaAdsProxy(),
-        super();
+  }) : super();
 
   /// Creates a [IOSAdsRenderingSettingsCreationParams] from an instance of
   /// [PlatformAdsRenderingSettingsCreationParams].
@@ -37,8 +35,6 @@ final class IOSAdsRenderingSettingsCreationParams
       uiElements: params.uiElements,
     );
   }
-
-  final InteractiveMediaAdsProxy _proxy;
 }
 
 /// Implementation of [PlatformAdsRenderingSettings] for iOS.
@@ -80,8 +76,7 @@ base class IOSAdsRenderingSettings extends PlatformAdsRenderingSettings {
 
   /// The native iOS IMAAdsRenderingSettings.
   @internal
-  late final IMAAdsRenderingSettings nativeSettings =
-      _iosParams._proxy.newIMAAdsRenderingSettings();
+  late final IMAAdsRenderingSettings nativeSettings = IMAAdsRenderingSettings();
 
   late final IOSAdsRenderingSettingsCreationParams _iosParams =
       params is IOSAdsRenderingSettingsCreationParams

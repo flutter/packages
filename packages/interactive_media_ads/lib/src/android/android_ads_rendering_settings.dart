@@ -22,9 +22,7 @@ final class AndroidAdsRenderingSettingsCreationParams
     super.playAdsAfterTime,
     super.uiElements,
     this.enableCustomTabs = false,
-    @visibleForTesting InteractiveMediaAdsProxy? proxy,
-  })  : _proxy = proxy ?? const InteractiveMediaAdsProxy(),
-        super();
+  }) : super();
 
   /// Creates a [AndroidAdsRenderingSettingsCreationParams] from an instance of
   /// [PlatformAdsRenderingSettingsCreationParams].
@@ -43,8 +41,6 @@ final class AndroidAdsRenderingSettingsCreationParams
     );
   }
 
-  final InteractiveMediaAdsProxy _proxy;
-
   /// Notifies the SDK whether to launch the click-through URL using Custom Tabs
   /// feature.
   final bool enableCustomTabs;
@@ -58,8 +54,7 @@ base class AndroidAdsRenderingSettings extends PlatformAdsRenderingSettings {
         Completer<ima.AdsRenderingSettings>();
     nativeSettings = nativeSettingsCompleter.future;
 
-    _androidParams._proxy
-        .instanceImaSdkFactory()
+    ima.ImaSdkFactory.instance
         .createAdsRenderingSettings()
         .then((ima.AdsRenderingSettings nativeSettings) async {
       await Future.wait(<Future<void>>[

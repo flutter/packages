@@ -44,37 +44,34 @@ void main() {
 
     testWidgets('onContainerAdded is called', (WidgetTester tester) async {
       late final void Function(UIViewController, bool) viewDidAppearCallback;
-      final InteractiveMediaAdsProxy imaProxy = InteractiveMediaAdsProxy(
-        newUIViewController: ({
-          void Function(UIViewController, bool)? viewDidAppear,
-        }) {
-          viewDidAppearCallback = viewDidAppear!;
+      PigeonOverrides.viewController_new = ({
+        void Function(UIViewController, bool)? viewDidAppear,
+      }) {
+        viewDidAppearCallback = viewDidAppear!;
 
-          final PigeonInstanceManager instanceManager = PigeonInstanceManager(
-            onWeakReferenceRemoved: (_) {},
-          );
-          final UIView view =
-              UIView.pigeon_detached(pigeon_instanceManager: instanceManager);
-          instanceManager.addDartCreatedInstance(view);
+        final PigeonInstanceManager instanceManager = PigeonInstanceManager(
+          onWeakReferenceRemoved: (_) {},
+        );
+        final UIView view =
+            UIView.pigeon_detached(pigeon_instanceManager: instanceManager);
+        instanceManager.addDartCreatedInstance(view);
 
-          final MockUIViewController mockController = MockUIViewController();
-          when(mockController.view).thenReturn(view);
-          return mockController;
-        },
-        newIMAAdDisplayContainer: ({
-          required UIView adContainer,
-          UIViewController? adContainerViewController,
-          List<IMACompanionAdSlot>? companionSlots,
-        }) =>
-            MockIMAAdDisplayContainer(),
-      );
+        final MockUIViewController mockController = MockUIViewController();
+        when(mockController.view).thenReturn(view);
+        return mockController;
+      };
+      PigeonOverrides.adDisplayContainer_new = ({
+        required UIView adContainer,
+        UIViewController? adContainerViewController,
+        List<IMACompanionAdSlot>? companionSlots,
+      }) =>
+          MockIMAAdDisplayContainer();
 
       final Completer<void> onContainerAddedCompleter = Completer<void>();
 
       final IOSAdDisplayContainer container = IOSAdDisplayContainer(
         IOSAdDisplayContainerCreationParams(
           onContainerAdded: (_) => onContainerAddedCompleter.complete(),
-          imaProxy: imaProxy,
         ),
       );
 
@@ -106,43 +103,41 @@ void main() {
       late final void Function(UIViewController, bool) viewDidAppearCallback;
       final Completer<List<IMACompanionAdSlot>?> addedAdSlotsCompleter =
           Completer<List<IMACompanionAdSlot>?>();
-      final InteractiveMediaAdsProxy imaProxy = InteractiveMediaAdsProxy(
-        newUIViewController: ({
-          void Function(UIViewController, bool)? viewDidAppear,
-        }) {
-          viewDidAppearCallback = viewDidAppear!;
+      PigeonOverrides.viewController_new = ({
+        void Function(UIViewController, bool)? viewDidAppear,
+      }) {
+        viewDidAppearCallback = viewDidAppear!;
 
-          final UIView view =
-              UIView.pigeon_detached(pigeon_instanceManager: instanceManager);
-          instanceManager.addDartCreatedInstance(view);
+        final UIView view =
+            UIView.pigeon_detached(pigeon_instanceManager: instanceManager);
+        instanceManager.addDartCreatedInstance(view);
 
-          final MockUIViewController mockController = MockUIViewController();
-          when(mockController.view).thenReturn(view);
-          return mockController;
-        },
-        newIMAAdDisplayContainer: ({
-          required UIView adContainer,
-          UIViewController? adContainerViewController,
-          List<IMACompanionAdSlot>? companionSlots,
-        }) {
-          addedAdSlotsCompleter.complete(companionSlots);
-          return MockIMAAdDisplayContainer();
-        },
-        sizeIMACompanionAdSlot: ({
-          required int width,
-          required int height,
-          required UIView view,
-        }) {
-          expect(width, 300);
-          expect(height, 400);
-          return mockCompanionAdSlot;
-        },
-        newUIView: () {
-          return UIView.pigeon_detached(
-            pigeon_instanceManager: instanceManager,
-          );
-        },
-      );
+        final MockUIViewController mockController = MockUIViewController();
+        when(mockController.view).thenReturn(view);
+        return mockController;
+      };
+      PigeonOverrides.adDisplayContainer_new = ({
+        required UIView adContainer,
+        UIViewController? adContainerViewController,
+        List<IMACompanionAdSlot>? companionSlots,
+      }) {
+        addedAdSlotsCompleter.complete(companionSlots);
+        return MockIMAAdDisplayContainer();
+      };
+      PigeonOverrides.companionAdSlot_size = ({
+        required int width,
+        required int height,
+        required UIView view,
+      }) {
+        expect(width, 300);
+        expect(height, 400);
+        return mockCompanionAdSlot;
+      };
+      PigeonOverrides.view_new = () {
+        return UIView.pigeon_detached(
+          pigeon_instanceManager: instanceManager,
+        );
+      };
 
       final Completer<void> onContainerAddedCompleter = Completer<void>();
 
@@ -151,13 +146,11 @@ void main() {
           onContainerAdded: (_) => onContainerAddedCompleter.complete(),
           companionSlots: <PlatformCompanionAdSlot>[
             IOSCompanionAdSlot(
-              IOSCompanionAdSlotCreationParams(
+              const IOSCompanionAdSlotCreationParams(
                 size: CompanionAdSlotSize.fixed(width: 300, height: 400),
-                proxy: imaProxy,
               ),
             )
           ],
-          imaProxy: imaProxy,
         ),
       );
 
