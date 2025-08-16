@@ -26,6 +26,10 @@
   return self.connection.isVideoOrientationSupported;
 }
 
+- (BOOL)isVideoRotationAngleSupported:(CGFloat)videoRotationAngle {
+  return [self.connection isVideoRotationAngleSupported:videoRotationAngle];
+}
+
 - (void)setVideoMirrored:(BOOL)videoMirrored {
   self.connection.videoMirrored = videoMirrored;
 }
@@ -38,8 +42,16 @@
   self.connection.videoOrientation = videoOrientation;
 }
 
+- (void)setVideoRotationAngle:(CGFloat)videoRotationAngle {
+  self.connection.videoRotationAngle = videoRotationAngle;
+}
+
 - (AVCaptureVideoOrientation)videoOrientation {
   return self.connection.videoOrientation;
+}
+
+- (AVCaptureVideoOrientation)videoRotationAngle {
+  return self.connection.videoRotationAngle;
 }
 
 - (NSArray<AVCaptureInputPort *> *)inputPorts {

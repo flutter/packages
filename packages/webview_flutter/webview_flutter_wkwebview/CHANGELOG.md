@@ -1,3 +1,8 @@
+## 3.23.1
+
+* Removes specialization of 'map' to fix a Swift warning.
+* Formats Swift code for Xcode 26 compatibility.
+
 ## 3.23.0
 
 * Adds support for `PlatformWebViewController.loadFileWithParams`.

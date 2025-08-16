@@ -12,6 +12,7 @@ import camera_avfoundation
 /// A mock implementation of `FLTCaptureConnection` that allows injecting a custom implementation.
 final class MockCaptureConnection: NSObject, FLTCaptureConnection {
   var setVideoOrientationStub: ((AVCaptureVideoOrientation) -> Void)?
+  var setVideoRotationAngleStub: ((CGFloat) -> Void)?
 
   var connection: AVCaptureConnection {
     preconditionFailure("Attempted to access unimplemented property: connection")
@@ -23,7 +24,19 @@ final class MockCaptureConnection: NSObject, FLTCaptureConnection {
       setVideoOrientationStub?(newValue)
     }
   }
+  
+  var videoRotationAngle: CGFloat  {
+    get { 90 }
+    set {
+      setVideoRotationAngleStub?(newValue)
+    }
+  }
   var inputPorts: [AVCaptureInput.Port] = []
   var isVideoMirroringSupported = false
   var isVideoOrientationSupported = false
+  var isVideoRotationAngleSupported = false
+  
+  func isVideoRotationAngleSupported(_ videoRotationAngle: CGFloat) -> Bool {
+    isVideoRotationAngleSupported
+  }
 }
