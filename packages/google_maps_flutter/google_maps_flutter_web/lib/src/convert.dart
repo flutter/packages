@@ -582,7 +582,6 @@ gmaps.PolygonOptions _polygonOptionsFromPolygon(
     ..zIndex = polygon.zIndex
     ..geodesic = polygon.geodesic
     ..clickable = polygon.consumeTapEvents;
-
 }
 
 List<gmaps.LatLng> _ensureHoleHasReverseWinding(
