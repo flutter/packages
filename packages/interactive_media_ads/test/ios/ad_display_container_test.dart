@@ -34,9 +34,9 @@ void main() {
         ),
       );
 
-      await tester.pumpWidget(Builder(
-        builder: (BuildContext context) => container.build(context),
-      ));
+      await tester.pumpWidget(
+        Builder(builder: (BuildContext context) => container.build(context)),
+      );
 
       expect(find.byType(UiKitView), findsOneWidget);
       expect(find.byKey(const Key('testKey')), findsOneWidget);
@@ -53,20 +53,21 @@ void main() {
           final PigeonInstanceManager instanceManager = PigeonInstanceManager(
             onWeakReferenceRemoved: (_) {},
           );
-          final UIView view =
-              UIView.pigeon_detached(pigeon_instanceManager: instanceManager);
+          final UIView view = UIView.pigeon_detached(
+            pigeon_instanceManager: instanceManager,
+          );
           instanceManager.addDartCreatedInstance(view);
 
           final MockUIViewController mockController = MockUIViewController();
           when(mockController.view).thenReturn(view);
           return mockController;
         },
-        newIMAAdDisplayContainer: ({
-          required UIView adContainer,
-          UIViewController? adContainerViewController,
-          List<IMACompanionAdSlot>? companionSlots,
-        }) =>
-            MockIMAAdDisplayContainer(),
+        newIMAAdDisplayContainer:
+            ({
+              required UIView adContainer,
+              UIViewController? adContainerViewController,
+              List<IMACompanionAdSlot>? companionSlots,
+            }) => MockIMAAdDisplayContainer(),
       );
 
       final Completer<void> onContainerAddedCompleter = Completer<void>();
@@ -78,9 +79,9 @@ void main() {
         ),
       );
 
-      await tester.pumpWidget(Builder(
-        builder: (BuildContext context) => container.build(context),
-      ));
+      await tester.pumpWidget(
+        Builder(builder: (BuildContext context) => container.build(context)),
+      );
 
       final UiKitView view =
           find.byType(UiKitView).evaluate().single.widget as UiKitView;
@@ -95,8 +96,9 @@ void main() {
       expect(onContainerAddedCompleter.isCompleted, isTrue);
     });
 
-    testWidgets('AdDisplayContainer ads CompanionAdSlots',
-        (WidgetTester tester) async {
+    testWidgets('AdDisplayContainer ads CompanionAdSlots', (
+      WidgetTester tester,
+    ) async {
       final PigeonInstanceManager instanceManager = PigeonInstanceManager(
         onWeakReferenceRemoved: (_) {},
       );
@@ -112,8 +114,9 @@ void main() {
         }) {
           viewDidAppearCallback = viewDidAppear!;
 
-          final UIView view =
-              UIView.pigeon_detached(pigeon_instanceManager: instanceManager);
+          final UIView view = UIView.pigeon_detached(
+            pigeon_instanceManager: instanceManager,
+          );
           instanceManager.addDartCreatedInstance(view);
 
           final MockUIViewController mockController = MockUIViewController();
@@ -155,15 +158,15 @@ void main() {
                 size: CompanionAdSlotSize.fixed(width: 300, height: 400),
                 proxy: imaProxy,
               ),
-            )
+            ),
           ],
           imaProxy: imaProxy,
         ),
       );
 
-      await tester.pumpWidget(Builder(
-        builder: (BuildContext context) => container.build(context),
-      ));
+      await tester.pumpWidget(
+        Builder(builder: (BuildContext context) => container.build(context)),
+      );
 
       final UiKitView view =
           find.byType(UiKitView).evaluate().single.widget as UiKitView;
@@ -174,10 +177,9 @@ void main() {
 
       await onContainerAddedCompleter.future;
 
-      expect(
-        await addedAdSlotsCompleter.future,
-        <IMACompanionAdSlot>[mockCompanionAdSlot],
-      );
+      expect(await addedAdSlotsCompleter.future, <IMACompanionAdSlot>[
+        mockCompanionAdSlot,
+      ]);
     });
   });
 }

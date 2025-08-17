@@ -60,6 +60,9 @@ extension InAppPurchasePlugin: InAppPurchase2API {
         {
           purchaseOptions.insert(.appAccountToken(accountTokenUUID))
         }
+        if let quantity = options?.quantity {
+          purchaseOptions.insert(.quantity(Int(quantity)))
+        }
 
         if #available(iOS 17.4, macOS 14.4, *) {
           if let promotionalOffer = options?.promotionalOffer {

@@ -43,9 +43,7 @@ void main() async {
   );
 
   final OverridableTokenClientConfig overridableCfg =
-      OverridableTokenClientConfig(
-    scope: scopes + myConnectionsScopes,
-  );
+      OverridableTokenClientConfig(scope: scopes + myConnectionsScopes);
 
   final TokenClient client = oauth2.initTokenClient(config);
 
@@ -98,9 +96,12 @@ Future<void> onTokenResponse(TokenResponse token) async {
 /// Attempts to [jsonDecode] the result.
 Future<Object?> get(TokenResponse token, String url) async {
   final Uri uri = Uri.parse(url);
-  final http.Response response = await http.get(uri, headers: <String, String>{
-    'Authorization': '${token.token_type} ${token.access_token}',
-  });
+  final http.Response response = await http.get(
+    uri,
+    headers: <String, String>{
+      'Authorization': '${token.token_type} ${token.access_token}',
+    },
+  );
 
   if (response.statusCode != 200) {
     throw http.ClientException(response.body, uri);

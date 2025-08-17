@@ -69,10 +69,7 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
-              'Last click on: $_lastClick',
-              key: const Key('last-clicked'),
-            ),
+            Text('Last click on: $_lastClick', key: const Key('last-clicked')),
             Container(
               color: Colors.black,
               width: _videoWidth,
@@ -100,8 +97,9 @@ class _MyHomePageState extends State<MyHomePage> {
                         intercepting: false,
                         child: ElevatedButton(
                           key: const Key('wrapped-transparent-button'),
-                          child:
-                              const Text('Never calls onPressed transparent'),
+                          child: const Text(
+                            'Never calls onPressed transparent',
+                          ),
                           onPressed: () {
                             _clickedOn('wrapped-transparent-button');
                           },

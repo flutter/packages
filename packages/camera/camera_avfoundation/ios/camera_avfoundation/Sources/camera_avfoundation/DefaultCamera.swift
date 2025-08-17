@@ -92,6 +92,92 @@ final class DefaultCamera: FLTCam, Camera {
     return (captureVideoInput, captureVideoOutput, connection)
   }
 
+  func setUpCaptureSessionForAudioIfNeeded() {
+    // Don't setup audio twice or we will lose the audio.
+    guard !mediaSettings.enableAudio || !isAudioSetup else { return }
+
+    let audioDevice = audioCaptureDeviceFactory()
+    do {
+      // Create a device input with the device and add it to the session.
+      // Setup the audio input.
+      let audioInput = try captureDeviceInputFactory.deviceInput(with: audioDevice)
+
+      // Setup the audio output.
+      let audioOutput = AVCaptureAudioDataOutput()
+
+      let block = {
+        // Set up options implicit to AVAudioSessionCategoryPlayback to avoid conflicts with other
+        // plugins like video_player.
+        DefaultCamera.upgradeAudioSessionCategory(
+          requestedCategory: .playAndRecord,
+          options: [.defaultToSpeaker, .allowBluetoothA2DP, .allowAirPlay]
+        )
+      }
+
+      if !Thread.isMainThread {
+        DispatchQueue.main.sync(execute: block)
+      } else {
+        block()
+      }
+
+      if audioCaptureSession.canAddInput(audioInput) {
+        audioCaptureSession.addInput(audioInput)
+
+        if audioCaptureSession.canAddOutput(audioOutput) {
+          audioCaptureSession.addOutput(audioOutput)
+          audioOutput.setSampleBufferDelegate(self, queue: captureSessionQueue)
+          isAudioSetup = true
+        } else {
+          reportErrorMessage("Unable to add Audio input/output to session capture")
+          isAudioSetup = false
+        }
+      }
+    } catch let error as NSError {
+      reportErrorMessage(error.description)
+    }
+  }
+
+  // This function, although slightly modified, is also in video_player_avfoundation (in ObjC).
+  // Both need to do the same thing and run on the same thread (for example main thread).
+  // Configure application wide audio session manually to prevent overwriting flag
+  // MixWithOthers by capture session.
+  // Only change category if it is considered an upgrade which means it can only enable
+  // ability to play in silent mode or ability to record audio but never disables it,
+  // that could affect other plugins which depend on this global state. Only change
+  // category or options if there is change to prevent unnecessary lags and silence.
+  private static func upgradeAudioSessionCategory(
+    requestedCategory: AVAudioSession.Category,
+    options: AVAudioSession.CategoryOptions
+  ) {
+    let playCategories: Set<AVAudioSession.Category> = [.playback, .playAndRecord]
+    let recordCategories: Set<AVAudioSession.Category> = [.record, .playAndRecord]
+    let requiredCategories: Set<AVAudioSession.Category> = [
+      requestedCategory, AVAudioSession.sharedInstance().category,
+    ]
+
+    let requiresPlay = !requiredCategories.isDisjoint(with: playCategories)
+    let requiresRecord = !requiredCategories.isDisjoint(with: recordCategories)
+
+    var finalCategory = requestedCategory
+    if requiresPlay && requiresRecord {
+      finalCategory = .playAndRecord
+    } else if requiresPlay {
+      finalCategory = .playback
+    } else if requiresRecord {
+      finalCategory = .record
+    }
+
+    let finalOptions = AVAudioSession.sharedInstance().categoryOptions.union(options)
+
+    if finalCategory == AVAudioSession.sharedInstance().category
+      && finalOptions == AVAudioSession.sharedInstance().categoryOptions
+    {
+      return
+    }
+
+    try? AVAudioSession.sharedInstance().setCategory(finalCategory, options: finalOptions)
+  }
+
   func reportInitializationState() {
     // Get all the state on the current thread, not the main thread.
     let state = FCPPlatformCameraState.make(
@@ -257,7 +343,6 @@ final class DefaultCamera: FLTCam, Camera {
       newAudioWriterInput.expectsMediaDataInRealTime = true
       mediaSettingsAVWrapper.addInput(newAudioWriterInput, to: videoWriter)
       self.audioWriterInput = newAudioWriterInput
-      audioOutput.setSampleBufferDelegate(self, queue: captureSessionQueue)
     }
 
     if flashMode == .torch {
@@ -728,6 +813,53 @@ final class DefaultCamera: FLTCam, Camera {
     completion(nil)
   }
 
+  func startImageStream(
+    with messenger: any FlutterBinaryMessenger, completion: @escaping (FlutterError?) -> Void
+  ) {
+    startImageStream(
+      with: messenger,
+      imageStreamHandler: FLTImageStreamHandler(captureSessionQueue: captureSessionQueue),
+      completion: completion
+    )
+  }
+
+  func startImageStream(
+    with messenger: FlutterBinaryMessenger,
+    imageStreamHandler: FLTImageStreamHandler,
+    completion: @escaping (FlutterError?) -> Void
+  ) {
+    if isStreamingImages {
+      reportErrorMessage("Images from camera are already streaming!")
+      completion(nil)
+      return
+    }
+
+    let eventChannel = FlutterEventChannel(
+      name: "plugins.flutter.io/camera_avfoundation/imageStream",
+      binaryMessenger: messenger
+    )
+    let threadSafeEventChannel = FLTThreadSafeEventChannel(eventChannel: eventChannel)
+
+    self.imageStreamHandler = imageStreamHandler
+    threadSafeEventChannel.setStreamHandler(imageStreamHandler) { [weak self] in
+      guard let strongSelf = self else {
+        completion(nil)
+        return
+      }
+
+      strongSelf.captureSessionQueue.async { [weak self] in
+        guard let strongSelf = self else {
+          completion(nil)
+          return
+        }
+
+        strongSelf.isStreamingImages = true
+        strongSelf.streamingPendingFramesCount = 0
+        completion(nil)
+      }
+    }
+  }
+
   func stopImageStream() {
     if isStreamingImages {
       isStreamingImages = false
@@ -758,73 +890,7 @@ final class DefaultCamera: FLTCam, Camera {
       return
     }
 
-    if isStreamingImages {
-      if let eventSink = imageStreamHandler?.eventSink,
-        streamingPendingFramesCount < maxStreamingPendingFramesCount
-      {
-        streamingPendingFramesCount += 1
-
-        let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer)!
-        // Must lock base address before accessing the pixel data
-        CVPixelBufferLockBaseAddress(pixelBuffer, .readOnly)
-
-        let imageWidth = CVPixelBufferGetWidth(pixelBuffer)
-        let imageHeight = CVPixelBufferGetHeight(pixelBuffer)
-
-        var planes: [[String: Any]] = []
-
-        let isPlanar = CVPixelBufferIsPlanar(pixelBuffer)
-        let planeCount = isPlanar ? CVPixelBufferGetPlaneCount(pixelBuffer) : 1
-
-        for i in 0..<planeCount {
-          let planeAddress: UnsafeMutableRawPointer?
-          let bytesPerRow: Int
-          let height: Int
-          let width: Int
-
-          if isPlanar {
-            planeAddress = CVPixelBufferGetBaseAddressOfPlane(pixelBuffer, i)
-            bytesPerRow = CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, i)
-            height = CVPixelBufferGetHeightOfPlane(pixelBuffer, i)
-            width = CVPixelBufferGetWidthOfPlane(pixelBuffer, i)
-          } else {
-            planeAddress = CVPixelBufferGetBaseAddress(pixelBuffer)
-            bytesPerRow = CVPixelBufferGetBytesPerRow(pixelBuffer)
-            height = CVPixelBufferGetHeight(pixelBuffer)
-            width = CVPixelBufferGetWidth(pixelBuffer)
-          }
-
-          let length = bytesPerRow * height
-          let bytes = Data(bytes: planeAddress!, count: length)
-
-          let planeBuffer: [String: Any] = [
-            "bytesPerRow": bytesPerRow,
-            "width": width,
-            "height": height,
-            "bytes": FlutterStandardTypedData(bytes: bytes),
-          ]
-          planes.append(planeBuffer)
-        }
-
-        // Lock the base address before accessing pixel data, and unlock it afterwards.
-        // Done accessing the `pixelBuffer` at this point.
-        CVPixelBufferUnlockBaseAddress(pixelBuffer, .readOnly)
-
-        let imageBuffer: [String: Any] = [
-          "width": imageWidth,
-          "height": imageHeight,
-          "format": videoFormat,
-          "planes": planes,
-          "lensAperture": Double(captureDevice.lensAperture()),
-          "sensorExposureTime": Int(captureDevice.exposureDuration().seconds * 1_000_000_000),
-          "sensorSensitivity": Double(captureDevice.iso()),
-        ]
-
-        DispatchQueue.main.async {
-          eventSink(imageBuffer)
-        }
-      }
-    }
+    handleSampleBufferStreaming(sampleBuffer)
 
     if isRecording && !isRecordingPaused {
       if videoWriter?.status == .failed, let error = videoWriter?.error {
@@ -905,6 +971,81 @@ final class DefaultCamera: FLTCam, Camera {
     }
   }
 
+  private func handleSampleBufferStreaming(_ sampleBuffer: CMSampleBuffer) {
+    guard isStreamingImages,
+      let eventSink = imageStreamHandler?.eventSink,
+      streamingPendingFramesCount < maxStreamingPendingFramesCount
+    else {
+      return
+    }
+
+    // Non-pixel buffer samples, such as audio samples, are ignored for streaming
+    guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else {
+      return
+    }
+
+    streamingPendingFramesCount += 1
+
+    // Must lock base address before accessing the pixel data
+    CVPixelBufferLockBaseAddress(pixelBuffer, .readOnly)
+
+    let imageWidth = CVPixelBufferGetWidth(pixelBuffer)
+    let imageHeight = CVPixelBufferGetHeight(pixelBuffer)
+
+    var planes: [[String: Any]] = []
+
+    let isPlanar = CVPixelBufferIsPlanar(pixelBuffer)
+    let planeCount = isPlanar ? CVPixelBufferGetPlaneCount(pixelBuffer) : 1
+
+    for i in 0..<planeCount {
+      let planeAddress: UnsafeMutableRawPointer?
+      let bytesPerRow: Int
+      let height: Int
+      let width: Int
+
+      if isPlanar {
+        planeAddress = CVPixelBufferGetBaseAddressOfPlane(pixelBuffer, i)
+        bytesPerRow = CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, i)
+        height = CVPixelBufferGetHeightOfPlane(pixelBuffer, i)
+        width = CVPixelBufferGetWidthOfPlane(pixelBuffer, i)
+      } else {
+        planeAddress = CVPixelBufferGetBaseAddress(pixelBuffer)
+        bytesPerRow = CVPixelBufferGetBytesPerRow(pixelBuffer)
+        height = CVPixelBufferGetHeight(pixelBuffer)
+        width = CVPixelBufferGetWidth(pixelBuffer)
+      }
+
+      let length = bytesPerRow * height
+      let bytes = Data(bytes: planeAddress!, count: length)
+
+      let planeBuffer: [String: Any] = [
+        "bytesPerRow": bytesPerRow,
+        "width": width,
+        "height": height,
+        "bytes": FlutterStandardTypedData(bytes: bytes),
+      ]
+      planes.append(planeBuffer)
+    }
+
+    // Lock the base address before accessing pixel data, and unlock it afterwards.
+    // Done accessing the `pixelBuffer` at this point.
+    CVPixelBufferUnlockBaseAddress(pixelBuffer, .readOnly)
+
+    let imageBuffer: [String: Any] = [
+      "width": imageWidth,
+      "height": imageHeight,
+      "format": videoFormat,
+      "planes": planes,
+      "lensAperture": Double(captureDevice.lensAperture()),
+      "sensorExposureTime": Int(captureDevice.exposureDuration().seconds * 1_000_000_000),
+      "sensorSensitivity": Double(captureDevice.iso()),
+    ]
+
+    DispatchQueue.main.async {
+      eventSink(imageBuffer)
+    }
+  }
+
   private func copySampleBufferWithAdjustedTime(_ sample: CMSampleBuffer, by offset: CMTime)
     -> CMSampleBuffer?
   {
@@ -980,6 +1121,9 @@ final class DefaultCamera: FLTCam, Camera {
     }
   }
 
+  /// Reports the given error message to the Dart side of the plugin.
+  ///
+  /// Can be called from any thread.
   private func reportErrorMessage(_ errorMessage: String) {
     FLTEnsureToRunOnMainQueue { [weak self] in
       self?.dartAPI?.reportError(errorMessage) { _ in

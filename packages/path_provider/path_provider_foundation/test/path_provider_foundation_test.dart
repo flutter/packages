@@ -30,33 +30,41 @@ void main() {
     });
 
     test('getExternalCachePaths throws', () async {
-      final PathProviderFoundation pathProvider =
-          PathProviderFoundation(ffiLib: FakeFoundationFFI());
+      final PathProviderFoundation pathProvider = PathProviderFoundation(
+        ffiLib: FakeFoundationFFI(),
+      );
       expect(pathProvider.getExternalCachePaths(), throwsA(isUnsupportedError));
     });
 
     test('getExternalStoragePath throws', () async {
-      final PathProviderFoundation pathProvider =
-          PathProviderFoundation(ffiLib: FakeFoundationFFI());
+      final PathProviderFoundation pathProvider = PathProviderFoundation(
+        ffiLib: FakeFoundationFFI(),
+      );
       expect(
-          pathProvider.getExternalStoragePath(), throwsA(isUnsupportedError));
+        pathProvider.getExternalStoragePath(),
+        throwsA(isUnsupportedError),
+      );
     });
 
     test('getExternalStoragePaths throws', () async {
-      final PathProviderFoundation pathProvider =
-          PathProviderFoundation(ffiLib: FakeFoundationFFI());
+      final PathProviderFoundation pathProvider = PathProviderFoundation(
+        ffiLib: FakeFoundationFFI(),
+      );
       expect(
-          pathProvider.getExternalStoragePaths(), throwsA(isUnsupportedError));
+        pathProvider.getExternalStoragePaths(),
+        throwsA(isUnsupportedError),
+      );
     });
 
     test('getContainerPath throws on macOS', () async {
       final PathProviderFoundation pathProvider = PathProviderFoundation(
-          platform: FakePlatformProvider(isMacOS: true),
-          ffiLib: FakeFoundationFFI());
+        platform: FakePlatformProvider(isMacOS: true),
+        ffiLib: FakeFoundationFFI(),
+      );
       expect(
-          pathProvider.getContainerPath(
-              appGroupIdentifier: 'group.example.test'),
-          throwsA(isUnsupportedError));
+        pathProvider.getContainerPath(appGroupIdentifier: 'group.example.test'),
+        throwsA(isUnsupportedError),
+      );
     });
   });
 }
@@ -74,8 +82,11 @@ class FakePlatformProvider implements PathProviderPlatformProvider {
 class FakeFoundationFFI implements FoundationFFI {
   @override
   // ignore: non_constant_identifier_names
-  NSArray NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory directory,
-      NSSearchPathDomainMask domainMask, bool expandTilde) {
+  NSArray NSSearchPathForDirectoriesInDomains(
+    NSSearchPathDirectory directory,
+    NSSearchPathDomainMask domainMask,
+    bool expandTilde,
+  ) {
     throw UnimplementedError();
   }
 }

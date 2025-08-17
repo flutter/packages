@@ -27,55 +27,30 @@ import 'package:path_provider_foundation/src/path_provider_foundation_real.dart'
 // ignore_for_file: subtype_of_sealed_class
 
 class _FakeNSArray_0 extends _i1.SmartFake implements _i2.NSArray {
-  _FakeNSArray_0(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeNSArray_0(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeNSString_1 extends _i1.SmartFake implements _i2.NSString {
-  _FakeNSString_1(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeNSString_1(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeObjCObjectBase_2 extends _i1.SmartFake
     implements _i2.ObjCObjectBase {
-  _FakeObjCObjectBase_2(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeObjCObjectBase_2(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeNSObject_3 extends _i1.SmartFake implements _i2.NSObject {
-  _FakeNSObject_3(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeNSObject_3(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeNSMethodSignature_4 extends _i1.SmartFake
     implements _i2.NSMethodSignature {
-  _FakeNSMethodSignature_4(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeNSMethodSignature_4(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 /// A class which mocks [FoundationFFI].
@@ -89,37 +64,29 @@ class MockFoundationFFI extends _i1.Mock implements _i3.FoundationFFI {
     bool? expandTilde,
   ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #NSSearchPathForDirectoriesInDomains,
-          [
-            directory,
-            domainMask,
-            expandTilde,
-          ],
-        ),
-        returnValue: _FakeNSArray_0(
-          this,
-          Invocation.method(
-            #NSSearchPathForDirectoriesInDomains,
-            [
+            Invocation.method(#NSSearchPathForDirectoriesInDomains, [
               directory,
               domainMask,
               expandTilde,
-            ],
-          ),
-        ),
-        returnValueForMissingStub: _FakeNSArray_0(
-          this,
-          Invocation.method(
-            #NSSearchPathForDirectoriesInDomains,
-            [
-              directory,
-              domainMask,
-              expandTilde,
-            ],
-          ),
-        ),
-      ) as _i2.NSArray);
+            ]),
+            returnValue: _FakeNSArray_0(
+              this,
+              Invocation.method(#NSSearchPathForDirectoriesInDomains, [
+                directory,
+                domainMask,
+                expandTilde,
+              ]),
+            ),
+            returnValueForMissingStub: _FakeNSArray_0(
+              this,
+              Invocation.method(#NSSearchPathForDirectoriesInDomains, [
+                directory,
+                domainMask,
+                expandTilde,
+              ]),
+            ),
+          )
+          as _i2.NSArray);
 }
 
 /// A class which mocks [NSBundle].
@@ -127,346 +94,275 @@ class MockFoundationFFI extends _i1.Mock implements _i3.FoundationFFI {
 /// See the documentation for Mockito's code generation for more information.
 class MockNSBundle extends _i1.Mock implements _i3.NSBundle {
   @override
-  _i2.NSString get debugDescription$1 => (super.noSuchMethod(
-        Invocation.getter(#debugDescription$1),
-        returnValue: _FakeNSString_1(
-          this,
-          Invocation.getter(#debugDescription$1),
-        ),
-        returnValueForMissingStub: _FakeNSString_1(
-          this,
-          Invocation.getter(#debugDescription$1),
-        ),
-      ) as _i2.NSString);
+  _i2.NSString get debugDescription$1 =>
+      (super.noSuchMethod(
+            Invocation.getter(#debugDescription$1),
+            returnValue: _FakeNSString_1(
+              this,
+              Invocation.getter(#debugDescription$1),
+            ),
+            returnValueForMissingStub: _FakeNSString_1(
+              this,
+              Invocation.getter(#debugDescription$1),
+            ),
+          )
+          as _i2.NSString);
 
   @override
-  _i2.NSString get description$1 => (super.noSuchMethod(
-        Invocation.getter(#description$1),
-        returnValue: _FakeNSString_1(
-          this,
-          Invocation.getter(#description$1),
-        ),
-        returnValueForMissingStub: _FakeNSString_1(
-          this,
-          Invocation.getter(#description$1),
-        ),
-      ) as _i2.NSString);
+  _i2.NSString get description$1 =>
+      (super.noSuchMethod(
+            Invocation.getter(#description$1),
+            returnValue: _FakeNSString_1(
+              this,
+              Invocation.getter(#description$1),
+            ),
+            returnValueForMissingStub: _FakeNSString_1(
+              this,
+              Invocation.getter(#description$1),
+            ),
+          )
+          as _i2.NSString);
 
   @override
-  int get hash$1 => (super.noSuchMethod(
-        Invocation.getter(#hash$1),
-        returnValue: 0,
-        returnValueForMissingStub: 0,
-      ) as int);
+  int get hash$1 =>
+      (super.noSuchMethod(
+            Invocation.getter(#hash$1),
+            returnValue: 0,
+            returnValueForMissingStub: 0,
+          )
+          as int);
 
   @override
-  bool get isProxy => (super.noSuchMethod(
-        Invocation.getter(#isProxy),
-        returnValue: false,
-        returnValueForMissingStub: false,
-      ) as bool);
+  bool get isProxy =>
+      (super.noSuchMethod(
+            Invocation.getter(#isProxy),
+            returnValue: false,
+            returnValueForMissingStub: false,
+          )
+          as bool);
 
   @override
-  _i2.ObjCObjectBase get superclass$1 => (super.noSuchMethod(
-        Invocation.getter(#superclass$1),
-        returnValue: _FakeObjCObjectBase_2(
-          this,
-          Invocation.getter(#superclass$1),
-        ),
-        returnValueForMissingStub: _FakeObjCObjectBase_2(
-          this,
-          Invocation.getter(#superclass$1),
-        ),
-      ) as _i2.ObjCObjectBase);
+  _i2.ObjCObjectBase get superclass$1 =>
+      (super.noSuchMethod(
+            Invocation.getter(#superclass$1),
+            returnValue: _FakeObjCObjectBase_2(
+              this,
+              Invocation.getter(#superclass$1),
+            ),
+            returnValueForMissingStub: _FakeObjCObjectBase_2(
+              this,
+              Invocation.getter(#superclass$1),
+            ),
+          )
+          as _i2.ObjCObjectBase);
 
   @override
-  _i2.ObjCObjectRef get ref => (super.noSuchMethod(
-        Invocation.getter(#ref),
-        returnValue: _i4.dummyValue<_i2.ObjCObjectRef>(
-          this,
-          Invocation.getter(#ref),
-        ),
-        returnValueForMissingStub: _i4.dummyValue<_i2.ObjCObjectRef>(
-          this,
-          Invocation.getter(#ref),
-        ),
-      ) as _i2.ObjCObjectRef);
+  _i2.ObjCObjectRef get ref =>
+      (super.noSuchMethod(
+            Invocation.getter(#ref),
+            returnValue: _i4.dummyValue<_i2.ObjCObjectRef>(
+              this,
+              Invocation.getter(#ref),
+            ),
+            returnValueForMissingStub: _i4.dummyValue<_i2.ObjCObjectRef>(
+              this,
+              Invocation.getter(#ref),
+            ),
+          )
+          as _i2.ObjCObjectRef);
 
   @override
-  _i2.NSObject autorelease() => (super.noSuchMethod(
-        Invocation.method(
-          #autorelease,
-          [],
-        ),
-        returnValue: _FakeNSObject_3(
-          this,
-          Invocation.method(
-            #autorelease,
-            [],
-          ),
-        ),
-        returnValueForMissingStub: _FakeNSObject_3(
-          this,
-          Invocation.method(
-            #autorelease,
-            [],
-          ),
-        ),
-      ) as _i2.NSObject);
+  _i2.NSObject autorelease() =>
+      (super.noSuchMethod(
+            Invocation.method(#autorelease, []),
+            returnValue: _FakeNSObject_3(
+              this,
+              Invocation.method(#autorelease, []),
+            ),
+            returnValueForMissingStub: _FakeNSObject_3(
+              this,
+              Invocation.method(#autorelease, []),
+            ),
+          )
+          as _i2.NSObject);
 
   @override
-  _i2.ObjCObjectBase class$1() => (super.noSuchMethod(
-        Invocation.method(
-          #class$1,
-          [],
-        ),
-        returnValue: _FakeObjCObjectBase_2(
-          this,
-          Invocation.method(
-            #class$1,
-            [],
-          ),
-        ),
-        returnValueForMissingStub: _FakeObjCObjectBase_2(
-          this,
-          Invocation.method(
-            #class$1,
-            [],
-          ),
-        ),
-      ) as _i2.ObjCObjectBase);
+  _i2.ObjCObjectBase class$1() =>
+      (super.noSuchMethod(
+            Invocation.method(#class$1, []),
+            returnValue: _FakeObjCObjectBase_2(
+              this,
+              Invocation.method(#class$1, []),
+            ),
+            returnValueForMissingStub: _FakeObjCObjectBase_2(
+              this,
+              Invocation.method(#class$1, []),
+            ),
+          )
+          as _i2.ObjCObjectBase);
 
   @override
-  bool conformsToProtocol$1(_i2.Protocol? aProtocol) => (super.noSuchMethod(
-        Invocation.method(
-          #conformsToProtocol$1,
-          [aProtocol],
-        ),
-        returnValue: false,
-        returnValueForMissingStub: false,
-      ) as bool);
+  bool conformsToProtocol$1(_i2.Protocol? aProtocol) =>
+      (super.noSuchMethod(
+            Invocation.method(#conformsToProtocol$1, [aProtocol]),
+            returnValue: false,
+            returnValueForMissingStub: false,
+          )
+          as bool);
 
   @override
-  _i2.ObjCObjectBase copy() => (super.noSuchMethod(
-        Invocation.method(
-          #copy,
-          [],
-        ),
-        returnValue: _FakeObjCObjectBase_2(
-          this,
-          Invocation.method(
-            #copy,
-            [],
-          ),
-        ),
-        returnValueForMissingStub: _FakeObjCObjectBase_2(
-          this,
-          Invocation.method(
-            #copy,
-            [],
-          ),
-        ),
-      ) as _i2.ObjCObjectBase);
+  _i2.ObjCObjectBase copy() =>
+      (super.noSuchMethod(
+            Invocation.method(#copy, []),
+            returnValue: _FakeObjCObjectBase_2(
+              this,
+              Invocation.method(#copy, []),
+            ),
+            returnValueForMissingStub: _FakeObjCObjectBase_2(
+              this,
+              Invocation.method(#copy, []),
+            ),
+          )
+          as _i2.ObjCObjectBase);
 
   @override
   void dealloc() => super.noSuchMethod(
-        Invocation.method(
-          #dealloc,
-          [],
-        ),
-        returnValueForMissingStub: null,
-      );
+    Invocation.method(#dealloc, []),
+    returnValueForMissingStub: null,
+  );
 
   @override
   void doesNotRecognizeSelector(_i5.Pointer<_i2.ObjCSelector>? aSelector) =>
       super.noSuchMethod(
-        Invocation.method(
-          #doesNotRecognizeSelector,
-          [aSelector],
-        ),
+        Invocation.method(#doesNotRecognizeSelector, [aSelector]),
         returnValueForMissingStub: null,
       );
 
   @override
   void forwardInvocation(_i2.NSInvocation? anInvocation) => super.noSuchMethod(
-        Invocation.method(
-          #forwardInvocation,
-          [anInvocation],
-        ),
-        returnValueForMissingStub: null,
-      );
+    Invocation.method(#forwardInvocation, [anInvocation]),
+    returnValueForMissingStub: null,
+  );
 
   @override
   _i2.ObjCObjectBase forwardingTargetForSelector(
-          _i5.Pointer<_i2.ObjCSelector>? aSelector) =>
+    _i5.Pointer<_i2.ObjCSelector>? aSelector,
+  ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #forwardingTargetForSelector,
-          [aSelector],
-        ),
-        returnValue: _FakeObjCObjectBase_2(
-          this,
-          Invocation.method(
-            #forwardingTargetForSelector,
-            [aSelector],
-          ),
-        ),
-        returnValueForMissingStub: _FakeObjCObjectBase_2(
-          this,
-          Invocation.method(
-            #forwardingTargetForSelector,
-            [aSelector],
-          ),
-        ),
-      ) as _i2.ObjCObjectBase);
+            Invocation.method(#forwardingTargetForSelector, [aSelector]),
+            returnValue: _FakeObjCObjectBase_2(
+              this,
+              Invocation.method(#forwardingTargetForSelector, [aSelector]),
+            ),
+            returnValueForMissingStub: _FakeObjCObjectBase_2(
+              this,
+              Invocation.method(#forwardingTargetForSelector, [aSelector]),
+            ),
+          )
+          as _i2.ObjCObjectBase);
 
   @override
-  _i2.NSObject init() => (super.noSuchMethod(
-        Invocation.method(
-          #init,
-          [],
-        ),
-        returnValue: _FakeNSObject_3(
-          this,
-          Invocation.method(
-            #init,
-            [],
-          ),
-        ),
-        returnValueForMissingStub: _FakeNSObject_3(
-          this,
-          Invocation.method(
-            #init,
-            [],
-          ),
-        ),
-      ) as _i2.NSObject);
+  _i2.NSObject init() =>
+      (super.noSuchMethod(
+            Invocation.method(#init, []),
+            returnValue: _FakeNSObject_3(this, Invocation.method(#init, [])),
+            returnValueForMissingStub: _FakeNSObject_3(
+              this,
+              Invocation.method(#init, []),
+            ),
+          )
+          as _i2.NSObject);
 
   @override
-  bool isEqual(_i2.ObjCObjectBase? object) => (super.noSuchMethod(
-        Invocation.method(
-          #isEqual,
-          [object],
-        ),
-        returnValue: false,
-        returnValueForMissingStub: false,
-      ) as bool);
+  bool isEqual(_i2.ObjCObjectBase? object) =>
+      (super.noSuchMethod(
+            Invocation.method(#isEqual, [object]),
+            returnValue: false,
+            returnValueForMissingStub: false,
+          )
+          as bool);
 
   @override
-  bool isKindOfClass(_i2.ObjCObjectBase? aClass) => (super.noSuchMethod(
-        Invocation.method(
-          #isKindOfClass,
-          [aClass],
-        ),
-        returnValue: false,
-        returnValueForMissingStub: false,
-      ) as bool);
+  bool isKindOfClass(_i2.ObjCObjectBase? aClass) =>
+      (super.noSuchMethod(
+            Invocation.method(#isKindOfClass, [aClass]),
+            returnValue: false,
+            returnValueForMissingStub: false,
+          )
+          as bool);
 
   @override
-  bool isMemberOfClass(_i2.ObjCObjectBase? aClass) => (super.noSuchMethod(
-        Invocation.method(
-          #isMemberOfClass,
-          [aClass],
-        ),
-        returnValue: false,
-        returnValueForMissingStub: false,
-      ) as bool);
+  bool isMemberOfClass(_i2.ObjCObjectBase? aClass) =>
+      (super.noSuchMethod(
+            Invocation.method(#isMemberOfClass, [aClass]),
+            returnValue: false,
+            returnValueForMissingStub: false,
+          )
+          as bool);
 
   @override
   _i5.Pointer<_i5.NativeFunction<_i5.Void Function()>> methodForSelector(
-          _i5.Pointer<_i2.ObjCSelector>? aSelector) =>
+    _i5.Pointer<_i2.ObjCSelector>? aSelector,
+  ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #methodForSelector,
-          [aSelector],
-        ),
-        returnValue: _i4
-            .dummyValue<_i5.Pointer<_i5.NativeFunction<_i5.Void Function()>>>(
-          this,
-          Invocation.method(
-            #methodForSelector,
-            [aSelector],
-          ),
-        ),
-        returnValueForMissingStub: _i4
-            .dummyValue<_i5.Pointer<_i5.NativeFunction<_i5.Void Function()>>>(
-          this,
-          Invocation.method(
-            #methodForSelector,
-            [aSelector],
-          ),
-        ),
-      ) as _i5.Pointer<_i5.NativeFunction<_i5.Void Function()>>);
+            Invocation.method(#methodForSelector, [aSelector]),
+            returnValue: _i4.dummyValue<
+              _i5.Pointer<_i5.NativeFunction<_i5.Void Function()>>
+            >(this, Invocation.method(#methodForSelector, [aSelector])),
+            returnValueForMissingStub: _i4.dummyValue<
+              _i5.Pointer<_i5.NativeFunction<_i5.Void Function()>>
+            >(this, Invocation.method(#methodForSelector, [aSelector])),
+          )
+          as _i5.Pointer<_i5.NativeFunction<_i5.Void Function()>>);
 
   @override
   _i2.NSMethodSignature methodSignatureForSelector(
-          _i5.Pointer<_i2.ObjCSelector>? aSelector) =>
+    _i5.Pointer<_i2.ObjCSelector>? aSelector,
+  ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #methodSignatureForSelector,
-          [aSelector],
-        ),
-        returnValue: _FakeNSMethodSignature_4(
-          this,
-          Invocation.method(
-            #methodSignatureForSelector,
-            [aSelector],
-          ),
-        ),
-        returnValueForMissingStub: _FakeNSMethodSignature_4(
-          this,
-          Invocation.method(
-            #methodSignatureForSelector,
-            [aSelector],
-          ),
-        ),
-      ) as _i2.NSMethodSignature);
+            Invocation.method(#methodSignatureForSelector, [aSelector]),
+            returnValue: _FakeNSMethodSignature_4(
+              this,
+              Invocation.method(#methodSignatureForSelector, [aSelector]),
+            ),
+            returnValueForMissingStub: _FakeNSMethodSignature_4(
+              this,
+              Invocation.method(#methodSignatureForSelector, [aSelector]),
+            ),
+          )
+          as _i2.NSMethodSignature);
 
   @override
-  _i2.ObjCObjectBase mutableCopy() => (super.noSuchMethod(
-        Invocation.method(
-          #mutableCopy,
-          [],
-        ),
-        returnValue: _FakeObjCObjectBase_2(
-          this,
-          Invocation.method(
-            #mutableCopy,
-            [],
-          ),
-        ),
-        returnValueForMissingStub: _FakeObjCObjectBase_2(
-          this,
-          Invocation.method(
-            #mutableCopy,
-            [],
-          ),
-        ),
-      ) as _i2.ObjCObjectBase);
+  _i2.ObjCObjectBase mutableCopy() =>
+      (super.noSuchMethod(
+            Invocation.method(#mutableCopy, []),
+            returnValue: _FakeObjCObjectBase_2(
+              this,
+              Invocation.method(#mutableCopy, []),
+            ),
+            returnValueForMissingStub: _FakeObjCObjectBase_2(
+              this,
+              Invocation.method(#mutableCopy, []),
+            ),
+          )
+          as _i2.ObjCObjectBase);
 
   @override
   _i2.ObjCObjectBase performSelector(
-          _i5.Pointer<_i2.ObjCSelector>? aSelector) =>
+    _i5.Pointer<_i2.ObjCSelector>? aSelector,
+  ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #performSelector,
-          [aSelector],
-        ),
-        returnValue: _FakeObjCObjectBase_2(
-          this,
-          Invocation.method(
-            #performSelector,
-            [aSelector],
-          ),
-        ),
-        returnValueForMissingStub: _FakeObjCObjectBase_2(
-          this,
-          Invocation.method(
-            #performSelector,
-            [aSelector],
-          ),
-        ),
-      ) as _i2.ObjCObjectBase);
+            Invocation.method(#performSelector, [aSelector]),
+            returnValue: _FakeObjCObjectBase_2(
+              this,
+              Invocation.method(#performSelector, [aSelector]),
+            ),
+            returnValueForMissingStub: _FakeObjCObjectBase_2(
+              this,
+              Invocation.method(#performSelector, [aSelector]),
+            ),
+          )
+          as _i2.ObjCObjectBase);
 
   @override
   _i2.ObjCObjectBase performSelector$1(
@@ -474,28 +370,29 @@ class MockNSBundle extends _i1.Mock implements _i3.NSBundle {
     required _i2.ObjCObjectBase? withObject,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #performSelector$1,
-          [aSelector],
-          {#withObject: withObject},
-        ),
-        returnValue: _FakeObjCObjectBase_2(
-          this,
-          Invocation.method(
-            #performSelector$1,
-            [aSelector],
-            {#withObject: withObject},
-          ),
-        ),
-        returnValueForMissingStub: _FakeObjCObjectBase_2(
-          this,
-          Invocation.method(
-            #performSelector$1,
-            [aSelector],
-            {#withObject: withObject},
-          ),
-        ),
-      ) as _i2.ObjCObjectBase);
+            Invocation.method(
+              #performSelector$1,
+              [aSelector],
+              {#withObject: withObject},
+            ),
+            returnValue: _FakeObjCObjectBase_2(
+              this,
+              Invocation.method(
+                #performSelector$1,
+                [aSelector],
+                {#withObject: withObject},
+              ),
+            ),
+            returnValueForMissingStub: _FakeObjCObjectBase_2(
+              this,
+              Invocation.method(
+                #performSelector$1,
+                [aSelector],
+                {#withObject: withObject},
+              ),
+            ),
+          )
+          as _i2.ObjCObjectBase);
 
   @override
   _i2.ObjCObjectBase performSelector$2(
@@ -504,133 +401,92 @@ class MockNSBundle extends _i1.Mock implements _i3.NSBundle {
     required _i2.ObjCObjectBase? withObject$1,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #performSelector$2,
-          [aSelector],
-          {
-            #withObject: withObject,
-            #withObject$1: withObject$1,
-          },
-        ),
-        returnValue: _FakeObjCObjectBase_2(
-          this,
-          Invocation.method(
-            #performSelector$2,
-            [aSelector],
-            {
-              #withObject: withObject,
-              #withObject$1: withObject$1,
-            },
-          ),
-        ),
-        returnValueForMissingStub: _FakeObjCObjectBase_2(
-          this,
-          Invocation.method(
-            #performSelector$2,
-            [aSelector],
-            {
-              #withObject: withObject,
-              #withObject$1: withObject$1,
-            },
-          ),
-        ),
-      ) as _i2.ObjCObjectBase);
+            Invocation.method(
+              #performSelector$2,
+              [aSelector],
+              {#withObject: withObject, #withObject$1: withObject$1},
+            ),
+            returnValue: _FakeObjCObjectBase_2(
+              this,
+              Invocation.method(
+                #performSelector$2,
+                [aSelector],
+                {#withObject: withObject, #withObject$1: withObject$1},
+              ),
+            ),
+            returnValueForMissingStub: _FakeObjCObjectBase_2(
+              this,
+              Invocation.method(
+                #performSelector$2,
+                [aSelector],
+                {#withObject: withObject, #withObject$1: withObject$1},
+              ),
+            ),
+          )
+          as _i2.ObjCObjectBase);
 
   @override
   void release() => super.noSuchMethod(
-        Invocation.method(
-          #release,
-          [],
-        ),
-        returnValueForMissingStub: null,
-      );
+    Invocation.method(#release, []),
+    returnValueForMissingStub: null,
+  );
 
   @override
   bool respondsToSelector(_i5.Pointer<_i2.ObjCSelector>? aSelector) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #respondsToSelector,
-          [aSelector],
-        ),
-        returnValue: false,
-        returnValueForMissingStub: false,
-      ) as bool);
+            Invocation.method(#respondsToSelector, [aSelector]),
+            returnValue: false,
+            returnValueForMissingStub: false,
+          )
+          as bool);
 
   @override
-  _i2.NSObject retain() => (super.noSuchMethod(
-        Invocation.method(
-          #retain,
-          [],
-        ),
-        returnValue: _FakeNSObject_3(
-          this,
-          Invocation.method(
-            #retain,
-            [],
-          ),
-        ),
-        returnValueForMissingStub: _FakeNSObject_3(
-          this,
-          Invocation.method(
-            #retain,
-            [],
-          ),
-        ),
-      ) as _i2.NSObject);
+  _i2.NSObject retain() =>
+      (super.noSuchMethod(
+            Invocation.method(#retain, []),
+            returnValue: _FakeNSObject_3(this, Invocation.method(#retain, [])),
+            returnValueForMissingStub: _FakeNSObject_3(
+              this,
+              Invocation.method(#retain, []),
+            ),
+          )
+          as _i2.NSObject);
 
   @override
-  int retainCount() => (super.noSuchMethod(
-        Invocation.method(
-          #retainCount,
-          [],
-        ),
-        returnValue: 0,
-        returnValueForMissingStub: 0,
-      ) as int);
+  int retainCount() =>
+      (super.noSuchMethod(
+            Invocation.method(#retainCount, []),
+            returnValue: 0,
+            returnValueForMissingStub: 0,
+          )
+          as int);
 
   @override
-  _i2.NSObject self$1() => (super.noSuchMethod(
-        Invocation.method(
-          #self$1,
-          [],
-        ),
-        returnValue: _FakeNSObject_3(
-          this,
-          Invocation.method(
-            #self$1,
-            [],
-          ),
-        ),
-        returnValueForMissingStub: _FakeNSObject_3(
-          this,
-          Invocation.method(
-            #self$1,
-            [],
-          ),
-        ),
-      ) as _i2.NSObject);
+  _i2.NSObject self$1() =>
+      (super.noSuchMethod(
+            Invocation.method(#self$1, []),
+            returnValue: _FakeNSObject_3(this, Invocation.method(#self$1, [])),
+            returnValueForMissingStub: _FakeNSObject_3(
+              this,
+              Invocation.method(#self$1, []),
+            ),
+          )
+          as _i2.NSObject);
 
   @override
-  _i5.Pointer<_i2.NSZone> zone() => (super.noSuchMethod(
-        Invocation.method(
-          #zone,
-          [],
-        ),
-        returnValue: _i4.dummyValue<_i5.Pointer<_i2.NSZone>>(
-          this,
-          Invocation.method(
-            #zone,
-            [],
-          ),
-        ),
-        returnValueForMissingStub: _i4.dummyValue<_i5.Pointer<_i2.NSZone>>(
-          this,
-          Invocation.method(
-            #zone,
-            [],
-          ),
-        ),
-      ) as _i5.Pointer<_i2.NSZone>);
+  _i5.Pointer<_i2.NSZone> zone() =>
+      (super.noSuchMethod(
+            Invocation.method(#zone, []),
+            returnValue: _i4.dummyValue<_i5.Pointer<_i2.NSZone>>(
+              this,
+              Invocation.method(#zone, []),
+            ),
+            returnValueForMissingStub: _i4.dummyValue<_i5.Pointer<_i2.NSZone>>(
+              this,
+              Invocation.method(#zone, []),
+            ),
+          )
+          as _i5.Pointer<_i2.NSZone>);
 }
 
 /// A class which mocks [NSFileManager].
@@ -638,357 +494,288 @@ class MockNSBundle extends _i1.Mock implements _i3.NSBundle {
 /// See the documentation for Mockito's code generation for more information.
 class MockNSFileManager extends _i1.Mock implements _i3.NSFileManager {
   @override
-  _i2.NSString get debugDescription$1 => (super.noSuchMethod(
-        Invocation.getter(#debugDescription$1),
-        returnValue: _FakeNSString_1(
-          this,
-          Invocation.getter(#debugDescription$1),
-        ),
-        returnValueForMissingStub: _FakeNSString_1(
-          this,
-          Invocation.getter(#debugDescription$1),
-        ),
-      ) as _i2.NSString);
+  _i2.NSString get debugDescription$1 =>
+      (super.noSuchMethod(
+            Invocation.getter(#debugDescription$1),
+            returnValue: _FakeNSString_1(
+              this,
+              Invocation.getter(#debugDescription$1),
+            ),
+            returnValueForMissingStub: _FakeNSString_1(
+              this,
+              Invocation.getter(#debugDescription$1),
+            ),
+          )
+          as _i2.NSString);
 
   @override
-  _i2.NSString get description$1 => (super.noSuchMethod(
-        Invocation.getter(#description$1),
-        returnValue: _FakeNSString_1(
-          this,
-          Invocation.getter(#description$1),
-        ),
-        returnValueForMissingStub: _FakeNSString_1(
-          this,
-          Invocation.getter(#description$1),
-        ),
-      ) as _i2.NSString);
+  _i2.NSString get description$1 =>
+      (super.noSuchMethod(
+            Invocation.getter(#description$1),
+            returnValue: _FakeNSString_1(
+              this,
+              Invocation.getter(#description$1),
+            ),
+            returnValueForMissingStub: _FakeNSString_1(
+              this,
+              Invocation.getter(#description$1),
+            ),
+          )
+          as _i2.NSString);
 
   @override
-  int get hash$1 => (super.noSuchMethod(
-        Invocation.getter(#hash$1),
-        returnValue: 0,
-        returnValueForMissingStub: 0,
-      ) as int);
+  int get hash$1 =>
+      (super.noSuchMethod(
+            Invocation.getter(#hash$1),
+            returnValue: 0,
+            returnValueForMissingStub: 0,
+          )
+          as int);
 
   @override
-  bool get isProxy => (super.noSuchMethod(
-        Invocation.getter(#isProxy),
-        returnValue: false,
-        returnValueForMissingStub: false,
-      ) as bool);
+  bool get isProxy =>
+      (super.noSuchMethod(
+            Invocation.getter(#isProxy),
+            returnValue: false,
+            returnValueForMissingStub: false,
+          )
+          as bool);
 
   @override
-  _i2.ObjCObjectBase get superclass$1 => (super.noSuchMethod(
-        Invocation.getter(#superclass$1),
-        returnValue: _FakeObjCObjectBase_2(
-          this,
-          Invocation.getter(#superclass$1),
-        ),
-        returnValueForMissingStub: _FakeObjCObjectBase_2(
-          this,
-          Invocation.getter(#superclass$1),
-        ),
-      ) as _i2.ObjCObjectBase);
+  _i2.ObjCObjectBase get superclass$1 =>
+      (super.noSuchMethod(
+            Invocation.getter(#superclass$1),
+            returnValue: _FakeObjCObjectBase_2(
+              this,
+              Invocation.getter(#superclass$1),
+            ),
+            returnValueForMissingStub: _FakeObjCObjectBase_2(
+              this,
+              Invocation.getter(#superclass$1),
+            ),
+          )
+          as _i2.ObjCObjectBase);
 
   @override
-  _i2.ObjCObjectRef get ref => (super.noSuchMethod(
-        Invocation.getter(#ref),
-        returnValue: _i4.dummyValue<_i2.ObjCObjectRef>(
-          this,
-          Invocation.getter(#ref),
-        ),
-        returnValueForMissingStub: _i4.dummyValue<_i2.ObjCObjectRef>(
-          this,
-          Invocation.getter(#ref),
-        ),
-      ) as _i2.ObjCObjectRef);
+  _i2.ObjCObjectRef get ref =>
+      (super.noSuchMethod(
+            Invocation.getter(#ref),
+            returnValue: _i4.dummyValue<_i2.ObjCObjectRef>(
+              this,
+              Invocation.getter(#ref),
+            ),
+            returnValueForMissingStub: _i4.dummyValue<_i2.ObjCObjectRef>(
+              this,
+              Invocation.getter(#ref),
+            ),
+          )
+          as _i2.ObjCObjectRef);
 
   @override
   _i2.NSURL? containerURLForSecurityApplicationGroupIdentifier(
-          _i2.NSString? groupIdentifier) =>
+    _i2.NSString? groupIdentifier,
+  ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #containerURLForSecurityApplicationGroupIdentifier,
-          [groupIdentifier],
-        ),
-        returnValueForMissingStub: null,
-      ) as _i2.NSURL?);
+            Invocation.method(
+              #containerURLForSecurityApplicationGroupIdentifier,
+              [groupIdentifier],
+            ),
+            returnValueForMissingStub: null,
+          )
+          as _i2.NSURL?);
 
   @override
-  _i2.NSObject autorelease() => (super.noSuchMethod(
-        Invocation.method(
-          #autorelease,
-          [],
-        ),
-        returnValue: _FakeNSObject_3(
-          this,
-          Invocation.method(
-            #autorelease,
-            [],
-          ),
-        ),
-        returnValueForMissingStub: _FakeNSObject_3(
-          this,
-          Invocation.method(
-            #autorelease,
-            [],
-          ),
-        ),
-      ) as _i2.NSObject);
+  _i2.NSObject autorelease() =>
+      (super.noSuchMethod(
+            Invocation.method(#autorelease, []),
+            returnValue: _FakeNSObject_3(
+              this,
+              Invocation.method(#autorelease, []),
+            ),
+            returnValueForMissingStub: _FakeNSObject_3(
+              this,
+              Invocation.method(#autorelease, []),
+            ),
+          )
+          as _i2.NSObject);
 
   @override
-  _i2.ObjCObjectBase class$1() => (super.noSuchMethod(
-        Invocation.method(
-          #class$1,
-          [],
-        ),
-        returnValue: _FakeObjCObjectBase_2(
-          this,
-          Invocation.method(
-            #class$1,
-            [],
-          ),
-        ),
-        returnValueForMissingStub: _FakeObjCObjectBase_2(
-          this,
-          Invocation.method(
-            #class$1,
-            [],
-          ),
-        ),
-      ) as _i2.ObjCObjectBase);
+  _i2.ObjCObjectBase class$1() =>
+      (super.noSuchMethod(
+            Invocation.method(#class$1, []),
+            returnValue: _FakeObjCObjectBase_2(
+              this,
+              Invocation.method(#class$1, []),
+            ),
+            returnValueForMissingStub: _FakeObjCObjectBase_2(
+              this,
+              Invocation.method(#class$1, []),
+            ),
+          )
+          as _i2.ObjCObjectBase);
 
   @override
-  bool conformsToProtocol$1(_i2.Protocol? aProtocol) => (super.noSuchMethod(
-        Invocation.method(
-          #conformsToProtocol$1,
-          [aProtocol],
-        ),
-        returnValue: false,
-        returnValueForMissingStub: false,
-      ) as bool);
+  bool conformsToProtocol$1(_i2.Protocol? aProtocol) =>
+      (super.noSuchMethod(
+            Invocation.method(#conformsToProtocol$1, [aProtocol]),
+            returnValue: false,
+            returnValueForMissingStub: false,
+          )
+          as bool);
 
   @override
-  _i2.ObjCObjectBase copy() => (super.noSuchMethod(
-        Invocation.method(
-          #copy,
-          [],
-        ),
-        returnValue: _FakeObjCObjectBase_2(
-          this,
-          Invocation.method(
-            #copy,
-            [],
-          ),
-        ),
-        returnValueForMissingStub: _FakeObjCObjectBase_2(
-          this,
-          Invocation.method(
-            #copy,
-            [],
-          ),
-        ),
-      ) as _i2.ObjCObjectBase);
+  _i2.ObjCObjectBase copy() =>
+      (super.noSuchMethod(
+            Invocation.method(#copy, []),
+            returnValue: _FakeObjCObjectBase_2(
+              this,
+              Invocation.method(#copy, []),
+            ),
+            returnValueForMissingStub: _FakeObjCObjectBase_2(
+              this,
+              Invocation.method(#copy, []),
+            ),
+          )
+          as _i2.ObjCObjectBase);
 
   @override
   void dealloc() => super.noSuchMethod(
-        Invocation.method(
-          #dealloc,
-          [],
-        ),
-        returnValueForMissingStub: null,
-      );
+    Invocation.method(#dealloc, []),
+    returnValueForMissingStub: null,
+  );
 
   @override
   void doesNotRecognizeSelector(_i5.Pointer<_i2.ObjCSelector>? aSelector) =>
       super.noSuchMethod(
-        Invocation.method(
-          #doesNotRecognizeSelector,
-          [aSelector],
-        ),
+        Invocation.method(#doesNotRecognizeSelector, [aSelector]),
         returnValueForMissingStub: null,
       );
 
   @override
   void forwardInvocation(_i2.NSInvocation? anInvocation) => super.noSuchMethod(
-        Invocation.method(
-          #forwardInvocation,
-          [anInvocation],
-        ),
-        returnValueForMissingStub: null,
-      );
+    Invocation.method(#forwardInvocation, [anInvocation]),
+    returnValueForMissingStub: null,
+  );
 
   @override
   _i2.ObjCObjectBase forwardingTargetForSelector(
-          _i5.Pointer<_i2.ObjCSelector>? aSelector) =>
+    _i5.Pointer<_i2.ObjCSelector>? aSelector,
+  ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #forwardingTargetForSelector,
-          [aSelector],
-        ),
-        returnValue: _FakeObjCObjectBase_2(
-          this,
-          Invocation.method(
-            #forwardingTargetForSelector,
-            [aSelector],
-          ),
-        ),
-        returnValueForMissingStub: _FakeObjCObjectBase_2(
-          this,
-          Invocation.method(
-            #forwardingTargetForSelector,
-            [aSelector],
-          ),
-        ),
-      ) as _i2.ObjCObjectBase);
+            Invocation.method(#forwardingTargetForSelector, [aSelector]),
+            returnValue: _FakeObjCObjectBase_2(
+              this,
+              Invocation.method(#forwardingTargetForSelector, [aSelector]),
+            ),
+            returnValueForMissingStub: _FakeObjCObjectBase_2(
+              this,
+              Invocation.method(#forwardingTargetForSelector, [aSelector]),
+            ),
+          )
+          as _i2.ObjCObjectBase);
 
   @override
-  _i2.NSObject init() => (super.noSuchMethod(
-        Invocation.method(
-          #init,
-          [],
-        ),
-        returnValue: _FakeNSObject_3(
-          this,
-          Invocation.method(
-            #init,
-            [],
-          ),
-        ),
-        returnValueForMissingStub: _FakeNSObject_3(
-          this,
-          Invocation.method(
-            #init,
-            [],
-          ),
-        ),
-      ) as _i2.NSObject);
+  _i2.NSObject init() =>
+      (super.noSuchMethod(
+            Invocation.method(#init, []),
+            returnValue: _FakeNSObject_3(this, Invocation.method(#init, [])),
+            returnValueForMissingStub: _FakeNSObject_3(
+              this,
+              Invocation.method(#init, []),
+            ),
+          )
+          as _i2.NSObject);
 
   @override
-  bool isEqual(_i2.ObjCObjectBase? object) => (super.noSuchMethod(
-        Invocation.method(
-          #isEqual,
-          [object],
-        ),
-        returnValue: false,
-        returnValueForMissingStub: false,
-      ) as bool);
+  bool isEqual(_i2.ObjCObjectBase? object) =>
+      (super.noSuchMethod(
+            Invocation.method(#isEqual, [object]),
+            returnValue: false,
+            returnValueForMissingStub: false,
+          )
+          as bool);
 
   @override
-  bool isKindOfClass(_i2.ObjCObjectBase? aClass) => (super.noSuchMethod(
-        Invocation.method(
-          #isKindOfClass,
-          [aClass],
-        ),
-        returnValue: false,
-        returnValueForMissingStub: false,
-      ) as bool);
+  bool isKindOfClass(_i2.ObjCObjectBase? aClass) =>
+      (super.noSuchMethod(
+            Invocation.method(#isKindOfClass, [aClass]),
+            returnValue: false,
+            returnValueForMissingStub: false,
+          )
+          as bool);
 
   @override
-  bool isMemberOfClass(_i2.ObjCObjectBase? aClass) => (super.noSuchMethod(
-        Invocation.method(
-          #isMemberOfClass,
-          [aClass],
-        ),
-        returnValue: false,
-        returnValueForMissingStub: false,
-      ) as bool);
+  bool isMemberOfClass(_i2.ObjCObjectBase? aClass) =>
+      (super.noSuchMethod(
+            Invocation.method(#isMemberOfClass, [aClass]),
+            returnValue: false,
+            returnValueForMissingStub: false,
+          )
+          as bool);
 
   @override
   _i5.Pointer<_i5.NativeFunction<_i5.Void Function()>> methodForSelector(
-          _i5.Pointer<_i2.ObjCSelector>? aSelector) =>
+    _i5.Pointer<_i2.ObjCSelector>? aSelector,
+  ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #methodForSelector,
-          [aSelector],
-        ),
-        returnValue: _i4
-            .dummyValue<_i5.Pointer<_i5.NativeFunction<_i5.Void Function()>>>(
-          this,
-          Invocation.method(
-            #methodForSelector,
-            [aSelector],
-          ),
-        ),
-        returnValueForMissingStub: _i4
-            .dummyValue<_i5.Pointer<_i5.NativeFunction<_i5.Void Function()>>>(
-          this,
-          Invocation.method(
-            #methodForSelector,
-            [aSelector],
-          ),
-        ),
-      ) as _i5.Pointer<_i5.NativeFunction<_i5.Void Function()>>);
+            Invocation.method(#methodForSelector, [aSelector]),
+            returnValue: _i4.dummyValue<
+              _i5.Pointer<_i5.NativeFunction<_i5.Void Function()>>
+            >(this, Invocation.method(#methodForSelector, [aSelector])),
+            returnValueForMissingStub: _i4.dummyValue<
+              _i5.Pointer<_i5.NativeFunction<_i5.Void Function()>>
+            >(this, Invocation.method(#methodForSelector, [aSelector])),
+          )
+          as _i5.Pointer<_i5.NativeFunction<_i5.Void Function()>>);
 
   @override
   _i2.NSMethodSignature methodSignatureForSelector(
-          _i5.Pointer<_i2.ObjCSelector>? aSelector) =>
+    _i5.Pointer<_i2.ObjCSelector>? aSelector,
+  ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #methodSignatureForSelector,
-          [aSelector],
-        ),
-        returnValue: _FakeNSMethodSignature_4(
-          this,
-          Invocation.method(
-            #methodSignatureForSelector,
-            [aSelector],
-          ),
-        ),
-        returnValueForMissingStub: _FakeNSMethodSignature_4(
-          this,
-          Invocation.method(
-            #methodSignatureForSelector,
-            [aSelector],
-          ),
-        ),
-      ) as _i2.NSMethodSignature);
+            Invocation.method(#methodSignatureForSelector, [aSelector]),
+            returnValue: _FakeNSMethodSignature_4(
+              this,
+              Invocation.method(#methodSignatureForSelector, [aSelector]),
+            ),
+            returnValueForMissingStub: _FakeNSMethodSignature_4(
+              this,
+              Invocation.method(#methodSignatureForSelector, [aSelector]),
+            ),
+          )
+          as _i2.NSMethodSignature);
 
   @override
-  _i2.ObjCObjectBase mutableCopy() => (super.noSuchMethod(
-        Invocation.method(
-          #mutableCopy,
-          [],
-        ),
-        returnValue: _FakeObjCObjectBase_2(
-          this,
-          Invocation.method(
-            #mutableCopy,
-            [],
-          ),
-        ),
-        returnValueForMissingStub: _FakeObjCObjectBase_2(
-          this,
-          Invocation.method(
-            #mutableCopy,
-            [],
-          ),
-        ),
-      ) as _i2.ObjCObjectBase);
+  _i2.ObjCObjectBase mutableCopy() =>
+      (super.noSuchMethod(
+            Invocation.method(#mutableCopy, []),
+            returnValue: _FakeObjCObjectBase_2(
+              this,
+              Invocation.method(#mutableCopy, []),
+            ),
+            returnValueForMissingStub: _FakeObjCObjectBase_2(
+              this,
+              Invocation.method(#mutableCopy, []),
+            ),
+          )
+          as _i2.ObjCObjectBase);
 
   @override
   _i2.ObjCObjectBase performSelector(
-          _i5.Pointer<_i2.ObjCSelector>? aSelector) =>
+    _i5.Pointer<_i2.ObjCSelector>? aSelector,
+  ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #performSelector,
-          [aSelector],
-        ),
-        returnValue: _FakeObjCObjectBase_2(
-          this,
-          Invocation.method(
-            #performSelector,
-            [aSelector],
-          ),
-        ),
-        returnValueForMissingStub: _FakeObjCObjectBase_2(
-          this,
-          Invocation.method(
-            #performSelector,
-            [aSelector],
-          ),
-        ),
-      ) as _i2.ObjCObjectBase);
+            Invocation.method(#performSelector, [aSelector]),
+            returnValue: _FakeObjCObjectBase_2(
+              this,
+              Invocation.method(#performSelector, [aSelector]),
+            ),
+            returnValueForMissingStub: _FakeObjCObjectBase_2(
+              this,
+              Invocation.method(#performSelector, [aSelector]),
+            ),
+          )
+          as _i2.ObjCObjectBase);
 
   @override
   _i2.ObjCObjectBase performSelector$1(
@@ -996,28 +783,29 @@ class MockNSFileManager extends _i1.Mock implements _i3.NSFileManager {
     required _i2.ObjCObjectBase? withObject,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #performSelector$1,
-          [aSelector],
-          {#withObject: withObject},
-        ),
-        returnValue: _FakeObjCObjectBase_2(
-          this,
-          Invocation.method(
-            #performSelector$1,
-            [aSelector],
-            {#withObject: withObject},
-          ),
-        ),
-        returnValueForMissingStub: _FakeObjCObjectBase_2(
-          this,
-          Invocation.method(
-            #performSelector$1,
-            [aSelector],
-            {#withObject: withObject},
-          ),
-        ),
-      ) as _i2.ObjCObjectBase);
+            Invocation.method(
+              #performSelector$1,
+              [aSelector],
+              {#withObject: withObject},
+            ),
+            returnValue: _FakeObjCObjectBase_2(
+              this,
+              Invocation.method(
+                #performSelector$1,
+                [aSelector],
+                {#withObject: withObject},
+              ),
+            ),
+            returnValueForMissingStub: _FakeObjCObjectBase_2(
+              this,
+              Invocation.method(
+                #performSelector$1,
+                [aSelector],
+                {#withObject: withObject},
+              ),
+            ),
+          )
+          as _i2.ObjCObjectBase);
 
   @override
   _i2.ObjCObjectBase performSelector$2(
@@ -1026,133 +814,92 @@ class MockNSFileManager extends _i1.Mock implements _i3.NSFileManager {
     required _i2.ObjCObjectBase? withObject$1,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #performSelector$2,
-          [aSelector],
-          {
-            #withObject: withObject,
-            #withObject$1: withObject$1,
-          },
-        ),
-        returnValue: _FakeObjCObjectBase_2(
-          this,
-          Invocation.method(
-            #performSelector$2,
-            [aSelector],
-            {
-              #withObject: withObject,
-              #withObject$1: withObject$1,
-            },
-          ),
-        ),
-        returnValueForMissingStub: _FakeObjCObjectBase_2(
-          this,
-          Invocation.method(
-            #performSelector$2,
-            [aSelector],
-            {
-              #withObject: withObject,
-              #withObject$1: withObject$1,
-            },
-          ),
-        ),
-      ) as _i2.ObjCObjectBase);
+            Invocation.method(
+              #performSelector$2,
+              [aSelector],
+              {#withObject: withObject, #withObject$1: withObject$1},
+            ),
+            returnValue: _FakeObjCObjectBase_2(
+              this,
+              Invocation.method(
+                #performSelector$2,
+                [aSelector],
+                {#withObject: withObject, #withObject$1: withObject$1},
+              ),
+            ),
+            returnValueForMissingStub: _FakeObjCObjectBase_2(
+              this,
+              Invocation.method(
+                #performSelector$2,
+                [aSelector],
+                {#withObject: withObject, #withObject$1: withObject$1},
+              ),
+            ),
+          )
+          as _i2.ObjCObjectBase);
 
   @override
   void release() => super.noSuchMethod(
-        Invocation.method(
-          #release,
-          [],
-        ),
-        returnValueForMissingStub: null,
-      );
+    Invocation.method(#release, []),
+    returnValueForMissingStub: null,
+  );
 
   @override
   bool respondsToSelector(_i5.Pointer<_i2.ObjCSelector>? aSelector) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #respondsToSelector,
-          [aSelector],
-        ),
-        returnValue: false,
-        returnValueForMissingStub: false,
-      ) as bool);
+            Invocation.method(#respondsToSelector, [aSelector]),
+            returnValue: false,
+            returnValueForMissingStub: false,
+          )
+          as bool);
 
   @override
-  _i2.NSObject retain() => (super.noSuchMethod(
-        Invocation.method(
-          #retain,
-          [],
-        ),
-        returnValue: _FakeNSObject_3(
-          this,
-          Invocation.method(
-            #retain,
-            [],
-          ),
-        ),
-        returnValueForMissingStub: _FakeNSObject_3(
-          this,
-          Invocation.method(
-            #retain,
-            [],
-          ),
-        ),
-      ) as _i2.NSObject);
+  _i2.NSObject retain() =>
+      (super.noSuchMethod(
+            Invocation.method(#retain, []),
+            returnValue: _FakeNSObject_3(this, Invocation.method(#retain, [])),
+            returnValueForMissingStub: _FakeNSObject_3(
+              this,
+              Invocation.method(#retain, []),
+            ),
+          )
+          as _i2.NSObject);
 
   @override
-  int retainCount() => (super.noSuchMethod(
-        Invocation.method(
-          #retainCount,
-          [],
-        ),
-        returnValue: 0,
-        returnValueForMissingStub: 0,
-      ) as int);
+  int retainCount() =>
+      (super.noSuchMethod(
+            Invocation.method(#retainCount, []),
+            returnValue: 0,
+            returnValueForMissingStub: 0,
+          )
+          as int);
 
   @override
-  _i2.NSObject self$1() => (super.noSuchMethod(
-        Invocation.method(
-          #self$1,
-          [],
-        ),
-        returnValue: _FakeNSObject_3(
-          this,
-          Invocation.method(
-            #self$1,
-            [],
-          ),
-        ),
-        returnValueForMissingStub: _FakeNSObject_3(
-          this,
-          Invocation.method(
-            #self$1,
-            [],
-          ),
-        ),
-      ) as _i2.NSObject);
+  _i2.NSObject self$1() =>
+      (super.noSuchMethod(
+            Invocation.method(#self$1, []),
+            returnValue: _FakeNSObject_3(this, Invocation.method(#self$1, [])),
+            returnValueForMissingStub: _FakeNSObject_3(
+              this,
+              Invocation.method(#self$1, []),
+            ),
+          )
+          as _i2.NSObject);
 
   @override
-  _i5.Pointer<_i2.NSZone> zone() => (super.noSuchMethod(
-        Invocation.method(
-          #zone,
-          [],
-        ),
-        returnValue: _i4.dummyValue<_i5.Pointer<_i2.NSZone>>(
-          this,
-          Invocation.method(
-            #zone,
-            [],
-          ),
-        ),
-        returnValueForMissingStub: _i4.dummyValue<_i5.Pointer<_i2.NSZone>>(
-          this,
-          Invocation.method(
-            #zone,
-            [],
-          ),
-        ),
-      ) as _i5.Pointer<_i2.NSZone>);
+  _i5.Pointer<_i2.NSZone> zone() =>
+      (super.noSuchMethod(
+            Invocation.method(#zone, []),
+            returnValue: _i4.dummyValue<_i5.Pointer<_i2.NSZone>>(
+              this,
+              Invocation.method(#zone, []),
+            ),
+            returnValueForMissingStub: _i4.dummyValue<_i5.Pointer<_i2.NSZone>>(
+              this,
+              Invocation.method(#zone, []),
+            ),
+          )
+          as _i5.Pointer<_i2.NSZone>);
 }
 
 /// A class which mocks [PathProviderPlatformProvider].
@@ -1161,16 +908,20 @@ class MockNSFileManager extends _i1.Mock implements _i3.NSFileManager {
 class MockPathProviderPlatformProvider extends _i1.Mock
     implements _i6.PathProviderPlatformProvider {
   @override
-  bool get isIOS => (super.noSuchMethod(
-        Invocation.getter(#isIOS),
-        returnValue: false,
-        returnValueForMissingStub: false,
-      ) as bool);
+  bool get isIOS =>
+      (super.noSuchMethod(
+            Invocation.getter(#isIOS),
+            returnValue: false,
+            returnValueForMissingStub: false,
+          )
+          as bool);
 
   @override
-  bool get isMacOS => (super.noSuchMethod(
-        Invocation.getter(#isMacOS),
-        returnValue: false,
-        returnValueForMissingStub: false,
-      ) as bool);
+  bool get isMacOS =>
+      (super.noSuchMethod(
+            Invocation.getter(#isMacOS),
+            returnValue: false,
+            returnValueForMissingStub: false,
+          )
+          as bool);
 }

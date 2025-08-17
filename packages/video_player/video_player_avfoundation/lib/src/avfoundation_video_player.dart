@@ -23,8 +23,8 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
     @visibleForTesting AVFoundationVideoPlayerApi? pluginApi,
     @visibleForTesting
     VideoPlayerInstanceApi Function(int playerId)? playerProvider,
-  })  : _api = pluginApi ?? AVFoundationVideoPlayerApi(),
-        _playerProvider = playerProvider ?? _productionApiProvider;
+  }) : _api = pluginApi ?? AVFoundationVideoPlayerApi(),
+       _playerProvider = playerProvider ?? _productionApiProvider;
 
   final AVFoundationVideoPlayerApi _api;
   // A method to create VideoPlayerInstanceApi instances, which can be
@@ -52,9 +52,9 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
 
   @override
   Future<void> dispose(int playerId) async {
-    await _api.dispose(playerId);
+    final VideoPlayerInstanceApi? player = _players.remove(playerId);
+    await player?.dispose();
     playerViewStates.remove(playerId);
-    _players.remove(playerId);
   }
 
   @override
@@ -83,17 +83,14 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
             '"asset" must be non-null for an asset data source',
           );
         }
-        uri = await _api.getAssetUrl(
-          asset,
-          dataSource.package,
-        );
+        uri = await _api.getAssetUrl(asset, dataSource.package);
         if (uri == null) {
           // Throw a platform exception for compatibility with the previous
           // implementation, which threw on the native side.
           throw PlatformException(
-              code: 'video_player',
-              message:
-                  'Asset $asset not found in package ${dataSource.package}.');
+            code: 'video_player',
+            message: 'Asset $asset not found in package ${dataSource.package}.',
+          );
         }
       case DataSourceType.network:
       case DataSourceType.file:
@@ -106,16 +103,22 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
     final CreationOptions pigeonCreationOptions = CreationOptions(
       uri: uri,
       httpHeaders: dataSource.httpHeaders,
-      viewType: _platformVideoViewTypeFromVideoViewType(viewType),
     );
 
-    final int playerId = await _api.create(pigeonCreationOptions);
-    playerViewStates[playerId] = switch (viewType) {
-      // playerId is also the textureId when using texture view.
-      VideoViewType.textureView =>
-        VideoPlayerTextureViewState(textureId: playerId),
-      VideoViewType.platformView => const VideoPlayerPlatformViewState(),
-    };
+    final int playerId;
+    final VideoPlayerViewState state;
+    switch (viewType) {
+      case VideoViewType.textureView:
+        final TexturePlayerIds ids = await _api.createForTextureView(
+          pigeonCreationOptions,
+        );
+        playerId = ids.playerId;
+        state = VideoPlayerTextureViewState(textureId: ids.textureId);
+      case VideoViewType.platformView:
+        playerId = await _api.createForPlatformView(pigeonCreationOptions);
+        state = const VideoPlayerPlatformViewState();
+    }
+    playerViewStates[playerId] = state;
     ensureApiInitialized(playerId);
 
     return playerId;
@@ -170,35 +173,35 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
 
   @override
   Stream<VideoEvent> videoEventsFor(int playerId) {
-    return _eventChannelFor(playerId)
-        .receiveBroadcastStream()
-        .map((dynamic event) {
+    return _eventChannelFor(playerId).receiveBroadcastStream().map((
+      dynamic event,
+    ) {
       final Map<dynamic, dynamic> map = event as Map<dynamic, dynamic>;
       return switch (map['event']) {
         'initialized' => VideoEvent(
-            eventType: VideoEventType.initialized,
-            duration: Duration(milliseconds: map['duration'] as int),
-            size: Size(
-              (map['width'] as num?)?.toDouble() ?? 0.0,
-              (map['height'] as num?)?.toDouble() ?? 0.0,
-            ),
+          eventType: VideoEventType.initialized,
+          duration: Duration(milliseconds: map['duration'] as int),
+          size: Size(
+            (map['width'] as num?)?.toDouble() ?? 0.0,
+            (map['height'] as num?)?.toDouble() ?? 0.0,
           ),
-        'completed' => VideoEvent(
-            eventType: VideoEventType.completed,
-          ),
+        ),
+        'completed' => VideoEvent(eventType: VideoEventType.completed),
         'bufferingUpdate' => VideoEvent(
-            buffered: (map['values'] as List<dynamic>)
-                .map<DurationRange>(_toDurationRange)
-                .toList(),
-            eventType: VideoEventType.bufferingUpdate,
-          ),
-        'bufferingStart' =>
-          VideoEvent(eventType: VideoEventType.bufferingStart),
+          buffered:
+              (map['values'] as List<dynamic>)
+                  .map<DurationRange>(_toDurationRange)
+                  .toList(),
+          eventType: VideoEventType.bufferingUpdate,
+        ),
+        'bufferingStart' => VideoEvent(
+          eventType: VideoEventType.bufferingStart,
+        ),
         'bufferingEnd' => VideoEvent(eventType: VideoEventType.bufferingEnd),
         'isPlayingStateUpdate' => VideoEvent(
-            eventType: VideoEventType.isPlayingStateUpdate,
-            isPlaying: map['isPlaying'] as bool,
-          ),
+          eventType: VideoEventType.isPlayingStateUpdate,
+          isPlaying: map['isPlaying'] as bool,
+        ),
         _ => VideoEvent(eventType: VideoEventType.unknown),
       };
     });
@@ -211,9 +214,7 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
 
   @override
   Widget buildView(int playerId) {
-    return buildViewWithOptions(
-      VideoViewOptions(playerId: playerId),
-    );
+    return buildViewWithOptions(VideoViewOptions(playerId: playerId));
   }
 
   @override
@@ -222,10 +223,12 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
     final VideoPlayerViewState? viewState = playerViewStates[playerId];
 
     return switch (viewState) {
-      VideoPlayerTextureViewState(:final int textureId) =>
-        Texture(textureId: textureId),
+      VideoPlayerTextureViewState(:final int textureId) => Texture(
+        textureId: textureId,
+      ),
       VideoPlayerPlatformViewState() => _buildPlatformView(playerId),
-      null => throw Exception(
+      null =>
+        throw Exception(
           'Could not find corresponding view type for playerId: $playerId',
         ),
     };
@@ -265,15 +268,6 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   }
 }
 
-PlatformVideoViewType _platformVideoViewTypeFromVideoViewType(
-  VideoViewType viewType,
-) {
-  return switch (viewType) {
-    VideoViewType.textureView => PlatformVideoViewType.textureView,
-    VideoViewType.platformView => PlatformVideoViewType.platformView,
-  };
-}
-
 /// Base class representing the state of a video player view.
 @visibleForTesting
 @immutable
@@ -285,9 +279,7 @@ sealed class VideoPlayerViewState {
 @visibleForTesting
 final class VideoPlayerTextureViewState extends VideoPlayerViewState {
   /// Creates a new instance of [VideoPlayerTextureViewState].
-  const VideoPlayerTextureViewState({
-    required this.textureId,
-  });
+  const VideoPlayerTextureViewState({required this.textureId});
 
   /// The ID of the texture used by the video player.
   final int textureId;

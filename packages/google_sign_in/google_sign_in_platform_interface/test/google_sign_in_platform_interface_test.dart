@@ -72,13 +72,9 @@ void main() {
   group('ClientAuthorizationTokenData', () {
     test('can be compared by == operator', () {
       const ClientAuthorizationTokenData firstInstance =
-          ClientAuthorizationTokenData(
-        accessToken: 'accessToken',
-      );
+          ClientAuthorizationTokenData(accessToken: 'accessToken');
       const ClientAuthorizationTokenData secondInstance =
-          ClientAuthorizationTokenData(
-        accessToken: 'accessToken',
-      );
+          ClientAuthorizationTokenData(accessToken: 'accessToken');
       expect(firstInstance == secondInstance, isTrue);
     });
   });
@@ -86,13 +82,9 @@ void main() {
   group('ServerAuthorizationTokenData', () {
     test('can be compared by == operator', () {
       const ServerAuthorizationTokenData firstInstance =
-          ServerAuthorizationTokenData(
-        serverAuthCode: 'serverAuthCode',
-      );
+          ServerAuthorizationTokenData(serverAuthCode: 'serverAuthCode');
       const ServerAuthorizationTokenData secondInstance =
-          ServerAuthorizationTokenData(
-        serverAuthCode: 'serverAuthCode',
-      );
+          ServerAuthorizationTokenData(serverAuthCode: 'serverAuthCode');
       expect(firstInstance == secondInstance, isTrue);
     });
   });
@@ -108,7 +100,8 @@ class ImplementsGoogleSignInPlatform extends Mock
 class ExtendsGoogleSignInPlatform extends GoogleSignInPlatform {
   @override
   Future<AuthenticationResults?>? attemptLightweightAuthentication(
-      AttemptLightweightAuthenticationParameters params) async {
+    AttemptLightweightAuthenticationParameters params,
+  ) async {
     return null;
   }
 
@@ -125,7 +118,8 @@ class ExtendsGoogleSignInPlatform extends GoogleSignInPlatform {
 
   @override
   Future<ClientAuthorizationTokenData?> clientAuthorizationTokensForScopes(
-      ClientAuthorizationTokensForScopesParameters params) async {
+    ClientAuthorizationTokensForScopesParameters params,
+  ) async {
     return null;
   }
 
@@ -137,7 +131,8 @@ class ExtendsGoogleSignInPlatform extends GoogleSignInPlatform {
 
   @override
   Future<ServerAuthorizationTokenData?> serverAuthorizationTokensForScopes(
-      ServerAuthorizationTokensForScopesParameters params) async {
+    ServerAuthorizationTokensForScopesParameters params,
+  ) async {
     return null;
   }
 

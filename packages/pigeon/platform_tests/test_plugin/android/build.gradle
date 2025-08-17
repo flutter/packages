@@ -66,7 +66,7 @@ android {
 
     dependencies {
         testImplementation 'junit:junit:4.13.2'
-        testImplementation "io.mockk:mockk:1.13.16"
+        testImplementation "io.mockk:mockk:1.14.5"
         // org.jetbrains.kotlin:kotlin-bom artifact purpose is to align kotlin stdlib and related code versions.
         // See: https://youtrack.jetbrains.com/issue/KT-55297/kotlin-stdlib-should-declare-constraints-on-kotlin-stdlib-jdk8-and-kotlin-stdlib-jdk7
         implementation(platform("org.jetbrains.kotlin:kotlin-bom:2.0.21"))
