@@ -37,9 +37,21 @@ class _TableExampleState extends State<TableExample> {
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 50.0),
-        child: _selectionMode == _TableSelection.multiCell
-            ? SelectionArea(
-                child: TableView.builder(
+        child:
+            _selectionMode == _TableSelection.multiCell
+                ? SelectionArea(
+                  child: TableView.builder(
+                    verticalDetails: ScrollableDetails.vertical(
+                      controller: _verticalController,
+                    ),
+                    cellBuilder: _buildCell,
+                    columnCount: 20,
+                    columnBuilder: _buildColumnSpan,
+                    rowCount: _rowCount,
+                    rowBuilder: _buildRowSpan,
+                  ),
+                )
+                : TableView.builder(
                   verticalDetails: ScrollableDetails.vertical(
                     controller: _verticalController,
                   ),
@@ -49,17 +61,6 @@ class _TableExampleState extends State<TableExample> {
                   rowCount: _rowCount,
                   rowBuilder: _buildRowSpan,
                 ),
-              )
-            : TableView.builder(
-                verticalDetails: ScrollableDetails.vertical(
-                  controller: _verticalController,
-                ),
-                cellBuilder: _buildCell,
-                columnCount: 20,
-                columnBuilder: _buildColumnSpan,
-                rowCount: _rowCount,
-                rowBuilder: _buildRowSpan,
-              ),
       ),
       persistentFooterButtons: <Widget>[
         OverflowBar(
@@ -156,10 +157,10 @@ class _TableExampleState extends State<TableExample> {
           recognizerFactories: <Type, GestureRecognizerFactory>{
             TapGestureRecognizer:
                 GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>(
-              () => TapGestureRecognizer(),
-              (TapGestureRecognizer t) =>
-                  t.onTap = () => print('Tap column $index'),
-            ),
+                  () => TapGestureRecognizer(),
+                  (TapGestureRecognizer t) =>
+                      t.onTap = () => print('Tap column $index'),
+                ),
           },
         );
       case 1:
@@ -208,10 +209,10 @@ class _TableExampleState extends State<TableExample> {
           recognizerFactories: <Type, GestureRecognizerFactory>{
             TapGestureRecognizer:
                 GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>(
-              () => TapGestureRecognizer(),
-              (TapGestureRecognizer t) =>
-                  t.onTap = () => print('Tap row $index'),
-            ),
+                  () => TapGestureRecognizer(),
+                  (TapGestureRecognizer t) =>
+                      t.onTap = () => print('Tap row $index'),
+                ),
           },
         );
       case 1:

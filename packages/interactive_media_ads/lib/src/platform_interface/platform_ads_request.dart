@@ -30,19 +30,18 @@ sealed class PlatformAdsRequest {
     String? contentTitle,
     Duration? liveStreamPrefetchMaxWaitTime,
     Duration? vastLoadTimeout,
-  }) =>
-      PlatformAdsRequestWithAdTagUrl._(
-        adTagUrl: adTagUrl,
-        contentProgressProvider: contentProgressProvider,
-        adWillAutoPlay: adWillAutoPlay,
-        adWillPlayMuted: adWillPlayMuted,
-        continuousPlayback: continuousPlayback,
-        contentDuration: contentDuration,
-        contentKeywords: contentKeywords,
-        contentTitle: contentTitle,
-        liveStreamPrefetchMaxWaitTime: liveStreamPrefetchMaxWaitTime,
-        vastLoadTimeout: vastLoadTimeout,
-      );
+  }) => PlatformAdsRequestWithAdTagUrl._(
+    adTagUrl: adTagUrl,
+    contentProgressProvider: contentProgressProvider,
+    adWillAutoPlay: adWillAutoPlay,
+    adWillPlayMuted: adWillPlayMuted,
+    continuousPlayback: continuousPlayback,
+    contentDuration: contentDuration,
+    contentKeywords: contentKeywords,
+    contentTitle: contentTitle,
+    liveStreamPrefetchMaxWaitTime: liveStreamPrefetchMaxWaitTime,
+    vastLoadTimeout: vastLoadTimeout,
+  );
 
   /// Creates a [PlatformAdsRequest] with the given canned ads response.
   factory PlatformAdsRequest.withAdsResponse({
@@ -56,19 +55,18 @@ sealed class PlatformAdsRequest {
     String? contentTitle,
     Duration? liveStreamPrefetchMaxWaitTime,
     Duration? vastLoadTimeout,
-  }) =>
-      PlatformAdsRequestWithAdsResponse._(
-        adsResponse: adsResponse,
-        contentProgressProvider: contentProgressProvider,
-        adWillAutoPlay: adWillAutoPlay,
-        adWillPlayMuted: adWillPlayMuted,
-        continuousPlayback: continuousPlayback,
-        contentDuration: contentDuration,
-        contentKeywords: contentKeywords,
-        contentTitle: contentTitle,
-        liveStreamPrefetchMaxWaitTime: liveStreamPrefetchMaxWaitTime,
-        vastLoadTimeout: vastLoadTimeout,
-      );
+  }) => PlatformAdsRequestWithAdsResponse._(
+    adsResponse: adsResponse,
+    contentProgressProvider: contentProgressProvider,
+    adWillAutoPlay: adWillAutoPlay,
+    adWillPlayMuted: adWillPlayMuted,
+    continuousPlayback: continuousPlayback,
+    contentDuration: contentDuration,
+    contentKeywords: contentKeywords,
+    contentTitle: contentTitle,
+    liveStreamPrefetchMaxWaitTime: liveStreamPrefetchMaxWaitTime,
+    vastLoadTimeout: vastLoadTimeout,
+  );
 
   /// A [PlatformContentProgressProvider] instance to allow scheduling of ad
   /// breaks based on content progress (cue points).

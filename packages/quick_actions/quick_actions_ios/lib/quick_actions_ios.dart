@@ -14,9 +14,8 @@ late QuickActionHandler _handler;
 /// An implementation of [QuickActionsPlatform] for iOS.
 class QuickActionsIos extends QuickActionsPlatform {
   /// Creates a new plugin implementation instance.
-  QuickActionsIos({
-    @visibleForTesting IOSQuickActionsApi? api,
-  }) : _hostApi = api ?? IOSQuickActionsApi();
+  QuickActionsIos({@visibleForTesting IOSQuickActionsApi? api})
+    : _hostApi = api ?? IOSQuickActionsApi();
 
   final IOSQuickActionsApi _hostApi;
 

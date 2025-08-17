@@ -27,10 +27,17 @@ class MigrateProject extends Project {
 
   late String _appPath;
 
-  static Future<void> installProject(String verison, Directory dir,
-      {bool vanilla = true, String? main}) async {
-    final MigrateProject project =
-        MigrateProject(verison, vanilla: vanilla, main: main);
+  static Future<void> installProject(
+    String verison,
+    Directory dir, {
+    bool vanilla = true,
+    String? main,
+  }) async {
+    final MigrateProject project = MigrateProject(
+      verison,
+      vanilla: vanilla,
+      main: main,
+    );
     await project.setUpIn(dir);
 
     // Init a git repo to test uncommitted changes checks
@@ -68,11 +75,14 @@ class MigrateProject extends Project {
   }) async {
     this.dir = dir;
     _appPath = dir.path;
-    writeFile(fileSystem.path.join(dir.path, 'android', 'local.properties'),
-        androidLocalProperties);
+    writeFile(
+      fileSystem.path.join(dir.path, 'android', 'local.properties'),
+      androidLocalProperties,
+    );
     final Directory tempDir = createResolvedTempDirectorySync('cipd_dest.');
-    final Directory depotToolsDir =
-        createResolvedTempDirectorySync('depot_tools.');
+    final Directory depotToolsDir = createResolvedTempDirectorySync(
+      'depot_tools.',
+    );
 
     await processManager.run(<String>[
       'git',
@@ -81,8 +91,9 @@ class MigrateProject extends Project {
       depotToolsDir.path,
     ], workingDirectory: dir.path);
 
-    final File cipdFile =
-        depotToolsDir.childFile(Platform.isWindows ? 'cipd.bat' : 'cipd');
+    final File cipdFile = depotToolsDir.childFile(
+      Platform.isWindows ? 'cipd.bat' : 'cipd',
+    );
     await processManager.run(<String>[
       cipdFile.path,
       'init',
@@ -111,12 +122,7 @@ class MigrateProject extends Project {
       ]);
       // Robocopy exit code 1 means some files were copied. 0 means no files were copied.
       assert(res.exitCode == 1);
-      res = await processManager.run(<String>[
-        'takeown',
-        '/f',
-        dir.path,
-        '/r',
-      ]);
+      res = await processManager.run(<String>['takeown', '/f', dir.path, '/r']);
       res = await processManager.run(<String>[
         'takeown',
         '/f',
@@ -183,9 +189,10 @@ class MigrateProject extends Project {
 
   // Maintain the same pubspec as the configured app.
   @override
-  String get pubspec => fileSystem
-      .file(fileSystem.path.join(_appPath, 'pubspec.yaml'))
-      .readAsStringSync();
+  String get pubspec =>
+      fileSystem
+          .file(fileSystem.path.join(_appPath, 'pubspec.yaml'))
+          .readAsStringSync();
 
   String get androidLocalProperties => '''
   flutter.sdk=${getFlutterRoot()}

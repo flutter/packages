@@ -11,9 +11,7 @@ import 'package:mockito/mockito.dart';
 
 import 'content_progress_provider_test.mocks.dart';
 
-@GenerateNiceMocks(<MockSpec<Object>>[
-  MockSpec<IMAContentPlayhead>(),
-])
+@GenerateNiceMocks(<MockSpec<Object>>[MockSpec<IMAContentPlayhead>()])
 void main() {
   group('IOSContentProgressProvider', () {
     test('setProgress', () async {

@@ -21,26 +21,30 @@ class TestAppState extends State<TestApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        home: Scaffold(
-      body: const Text('Body'),
-      floatingActionButton: FloatingActionButton(
+      home: Scaffold(
+        body: const Text('Body'),
+        floatingActionButton: FloatingActionButton(
           onPressed: () {},
           child: PointerInterceptorIOS().buildWidget(
-              child: TextButton(
-            onPressed: () => setState(() {
-              _buttonText = 'Clicked';
-            }),
-            child: Text(_buttonText),
-          ))),
-    ));
+            child: TextButton(
+              onPressed:
+                  () => setState(() {
+                    _buttonText = 'Clicked';
+                  }),
+              child: Text(_buttonText),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
 
 void main() {
-  testWidgets(
-      'Button remains clickable and is added to '
-      'hierarchy after being wrapped in pointer interceptor',
-      (WidgetTester tester) async {
+  testWidgets('Button remains clickable and is added to '
+      'hierarchy after being wrapped in pointer interceptor', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(const TestApp());
     await tester.tap(find.text('Test Button'));
     await tester.pump();

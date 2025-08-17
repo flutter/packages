@@ -11,8 +11,8 @@ class PolygonController {
     required gmaps.Polygon polygon,
     bool consumeTapEvents = false,
     VoidCallback? onTap,
-  })  : _polygon = polygon,
-        _consumeTapEvents = consumeTapEvents {
+  }) : _polygon = polygon,
+       _consumeTapEvents = consumeTapEvents {
     if (onTap != null) {
       polygon.onClick.listen((gmaps.PolyMouseEvent event) {
         onTap.call();

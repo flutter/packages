@@ -11,7 +11,7 @@ import 'types.dart';
 class ClusterManagerUpdates extends MapsObjectUpdates<ClusterManager> {
   /// Computes [ClusterManagerUpdates] given previous and current [ClusterManager]s.
   ClusterManagerUpdates.from(super.previous, super.current)
-      : super.from(objectName: 'clusterManager');
+    : super.from(objectName: 'clusterManager');
 
   /// Set of Clusters to be added in this update.
   Set<ClusterManager> get clusterManagersToAdd => objectsToAdd;

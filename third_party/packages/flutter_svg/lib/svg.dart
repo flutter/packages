@@ -18,11 +18,8 @@ export 'src/loaders.dart';
 
 /// Builder function to create an error widget. This builder is called when
 /// the image failed loading.
-typedef SvgErrorWidgetBuilder = Widget Function(
-  BuildContext context,
-  Object error,
-  StackTrace stackTrace,
-);
+typedef SvgErrorWidgetBuilder =
+    Widget Function(BuildContext context, Object error, StackTrace stackTrace);
 
 /// Instance for [Svg]'s utility methods, which can produce a [DrawableRoot]
 /// or [PictureInfo] from [String] or [Uint8List].
@@ -96,8 +93,9 @@ class SvgPicture extends StatelessWidget {
     this.clipBehavior = Clip.hardEdge,
     this.errorBuilder,
     @Deprecated(
-        'No code should use this parameter. It never was implemented properly. '
-        'The SVG theme must be set on the bytesLoader.')
+      'No code should use this parameter. It never was implemented properly. '
+      'The SVG theme must be set on the bytesLoader.',
+    )
     SvgTheme? theme,
     @Deprecated('This no longer does anything.') bool cacheColorFilter = false,
     this.renderingStrategy = RenderingStrategy.picture,
@@ -203,14 +201,14 @@ class SvgPicture extends StatelessWidget {
     ui.BlendMode colorBlendMode = ui.BlendMode.srcIn,
     @Deprecated('This no longer does anything.') bool cacheColorFilter = false,
     this.renderingStrategy = RenderingStrategy.picture,
-  })  : bytesLoader = SvgAssetLoader(
-          assetName,
-          packageName: package,
-          assetBundle: bundle,
-          theme: theme,
-          colorMapper: colorMapper,
-        ),
-        colorFilter = colorFilter ?? _getColorFilter(color, colorBlendMode);
+  }) : bytesLoader = SvgAssetLoader(
+         assetName,
+         packageName: package,
+         assetBundle: bundle,
+         theme: theme,
+         colorMapper: colorMapper,
+       ),
+       colorFilter = colorFilter ?? _getColorFilter(color, colorBlendMode);
 
   /// Creates a widget that displays an SVG obtained from the network.
   ///
@@ -268,14 +266,14 @@ class SvgPicture extends StatelessWidget {
     ColorMapper? colorMapper,
     http.Client? httpClient,
     this.renderingStrategy = RenderingStrategy.picture,
-  })  : bytesLoader = SvgNetworkLoader(
-          url,
-          headers: headers,
-          theme: theme,
-          colorMapper: colorMapper,
-          httpClient: httpClient,
-        ),
-        colorFilter = colorFilter ?? _getColorFilter(color, colorBlendMode);
+  }) : bytesLoader = SvgNetworkLoader(
+         url,
+         headers: headers,
+         theme: theme,
+         colorMapper: colorMapper,
+         httpClient: httpClient,
+       ),
+       colorFilter = colorFilter ?? _getColorFilter(color, colorBlendMode);
 
   /// Creates a widget that displays an SVG obtained from a [File].
   ///
@@ -329,12 +327,12 @@ class SvgPicture extends StatelessWidget {
     ColorMapper? colorMapper,
     @Deprecated('This no longer does anything.') bool cacheColorFilter = false,
     this.renderingStrategy = RenderingStrategy.picture,
-  })  : bytesLoader = SvgFileLoader(
-          file,
-          theme: theme,
-          colorMapper: colorMapper,
-        ),
-        colorFilter = colorFilter ?? _getColorFilter(color, colorBlendMode);
+  }) : bytesLoader = SvgFileLoader(
+         file,
+         theme: theme,
+         colorMapper: colorMapper,
+       ),
+       colorFilter = colorFilter ?? _getColorFilter(color, colorBlendMode);
 
   /// Creates a widget that displays an SVG obtained from a [Uint8List].
   ///
@@ -385,12 +383,12 @@ class SvgPicture extends StatelessWidget {
     ColorMapper? colorMapper,
     @Deprecated('This no longer does anything.') bool cacheColorFilter = false,
     this.renderingStrategy = RenderingStrategy.picture,
-  })  : bytesLoader = SvgBytesLoader(
-          bytes,
-          theme: theme,
-          colorMapper: colorMapper,
-        ),
-        colorFilter = colorFilter ?? _getColorFilter(color, colorBlendMode);
+  }) : bytesLoader = SvgBytesLoader(
+         bytes,
+         theme: theme,
+         colorMapper: colorMapper,
+       ),
+       colorFilter = colorFilter ?? _getColorFilter(color, colorBlendMode);
 
   /// Creates a widget that displays an SVG obtained from a [String].
   ///
@@ -441,16 +439,17 @@ class SvgPicture extends StatelessWidget {
     ColorMapper? colorMapper,
     @Deprecated('This no longer does anything.') bool cacheColorFilter = false,
     this.renderingStrategy = RenderingStrategy.picture,
-  })  : bytesLoader = SvgStringLoader(
-          string,
-          theme: theme,
-          colorMapper: colorMapper,
-        ),
-        colorFilter = colorFilter ?? _getColorFilter(color, colorBlendMode);
+  }) : bytesLoader = SvgStringLoader(
+         string,
+         theme: theme,
+         colorMapper: colorMapper,
+       ),
+       colorFilter = colorFilter ?? _getColorFilter(color, colorBlendMode);
 
   static ColorFilter? _getColorFilter(
-          ui.Color? color, ui.BlendMode colorBlendMode) =>
-      color == null ? null : ui.ColorFilter.mode(color, colorBlendMode);
+    ui.Color? color,
+    ui.BlendMode colorBlendMode,
+  ) => color == null ? null : ui.ColorFilter.mode(color, colorBlendMode);
 
   /// The default placeholder for a SVG that may take time to parse or
   /// retrieve, e.g. from a network location.
@@ -565,57 +564,63 @@ class SvgPicture extends StatelessWidget {
     super.debugFillProperties(properties);
 
     properties
-      ..add(StringProperty(
-        'bytesLoader',
-        bytesLoader.toString(),
-        showName: false,
-      ))
+      ..add(
+        StringProperty('bytesLoader', bytesLoader.toString(), showName: false),
+      )
       ..add(DoubleProperty('width', width, defaultValue: null))
       ..add(DoubleProperty('height', height, defaultValue: null))
-      ..add(DiagnosticsProperty<AlignmentGeometry>(
-        'alignment',
-        alignment,
-        defaultValue: Alignment.center,
-      ))
-      ..add(DiagnosticsProperty<bool>(
-        'allowDrawingOutsideViewBox',
-        allowDrawingOutsideViewBox,
-        defaultValue: false,
-      ))
-      ..add(EnumProperty<Clip>(
-        'clipBehavior',
-        clipBehavior,
-        defaultValue: BoxFit.contain,
-      ))
-      ..add(StringProperty(
-        'colorFilter',
-        colorFilter.toString(),
-        defaultValue: null,
-      ))
-      ..add(EnumProperty<BoxFit>(
-        'fit',
-        fit,
-        defaultValue: BoxFit.contain,
-      ))
-      ..add(DiagnosticsProperty<Function>(
-        'placeholderBuilder',
-        placeholderBuilder,
-        defaultValue: null,
-      ))
-      ..add(DiagnosticsProperty<bool>(
-        'matchTextDirection',
-        matchTextDirection,
-        defaultValue: false,
-      ))
-      ..add(DiagnosticsProperty<bool>(
-        'excludeFromSemantics',
-        excludeFromSemantics,
-        defaultValue: false,
-      ))
-      ..add(StringProperty(
-        'semanticsLabel',
-        semanticsLabel,
-        defaultValue: null,
-      ));
+      ..add(
+        DiagnosticsProperty<AlignmentGeometry>(
+          'alignment',
+          alignment,
+          defaultValue: Alignment.center,
+        ),
+      )
+      ..add(
+        DiagnosticsProperty<bool>(
+          'allowDrawingOutsideViewBox',
+          allowDrawingOutsideViewBox,
+          defaultValue: false,
+        ),
+      )
+      ..add(
+        EnumProperty<Clip>(
+          'clipBehavior',
+          clipBehavior,
+          defaultValue: BoxFit.contain,
+        ),
+      )
+      ..add(
+        StringProperty(
+          'colorFilter',
+          colorFilter.toString(),
+          defaultValue: null,
+        ),
+      )
+      ..add(EnumProperty<BoxFit>('fit', fit, defaultValue: BoxFit.contain))
+      ..add(
+        DiagnosticsProperty<Function>(
+          'placeholderBuilder',
+          placeholderBuilder,
+          defaultValue: null,
+        ),
+      )
+      ..add(
+        DiagnosticsProperty<bool>(
+          'matchTextDirection',
+          matchTextDirection,
+          defaultValue: false,
+        ),
+      )
+      ..add(
+        DiagnosticsProperty<bool>(
+          'excludeFromSemantics',
+          excludeFromSemantics,
+          defaultValue: false,
+        ),
+      )
+      ..add(
+        StringProperty('semanticsLabel', semanticsLabel, defaultValue: null),
+      );
   }
 }
