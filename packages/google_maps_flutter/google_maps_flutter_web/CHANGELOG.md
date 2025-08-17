@@ -1,9 +1,6 @@
-## NEXT
-
-* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
-
 ## 0.5.12+3
 
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
 * Fixes `consumeTapEvents` for Circles and Polygons on web.
 
 ## 0.5.12+2
