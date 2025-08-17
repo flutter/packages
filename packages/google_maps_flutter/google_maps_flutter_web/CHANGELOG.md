@@ -1,6 +1,8 @@
 ## NEXT
 
 * Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+* Fix `consumeTapEvents` is now correctly respected for Circles and Polygons on web.
+  When set to `false`, tap events will propagate to `GoogleMap.onTap` instead of being consumed.
 
 ## 0.5.12+2
 
