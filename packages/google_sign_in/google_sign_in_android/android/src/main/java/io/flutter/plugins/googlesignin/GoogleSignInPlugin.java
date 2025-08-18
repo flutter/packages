@@ -220,7 +220,7 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
           return;
         }
 
-        // getCredentialAsync requires an acitivity context, not an application context, per
+        // getCredentialAsync requires an activity context, not an application context, per
         // the API docs.
         Activity activity = getActivity();
         if (activity == null) {
@@ -349,16 +349,12 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
       authorizationClientFactory
           .create(context)
           .clearToken(ClearTokenRequest.builder().setToken(token).build())
-          .addOnSuccessListener(
-              (Void) -> {
-                ResultUtilsKt.completeWithUnitSuccess(callback);
-              })
+          .addOnSuccessListener(unused -> ResultUtilsKt.completeWithUnitSuccess(callback))
           .addOnFailureListener(
-              (Exception e) -> {
-                ResultUtilsKt.completeWithUnitError(
-                    callback,
-                    new FlutterError("clearAuthorizationToken failed", e.getMessage(), null));
-              });
+              e ->
+                  ResultUtilsKt.completeWithUnitError(
+                      callback,
+                      new FlutterError("clearAuthorizationToken failed", e.getMessage(), null)));
     }
 
     @Override
