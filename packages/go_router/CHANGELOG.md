@@ -1,4 +1,4 @@
-## 16.1.1
+## 16.2.0
 
 - Adds `RelativeGoRouteData` and `TypedRelativeGoRoute`.
 - Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
