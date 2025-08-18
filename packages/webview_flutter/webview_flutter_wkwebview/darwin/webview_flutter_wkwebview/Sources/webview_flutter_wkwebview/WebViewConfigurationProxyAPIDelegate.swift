@@ -93,7 +93,6 @@ class WebViewConfigurationProxyAPIDelegate: PigeonApiDelegateWKWebViewConfigurat
     }
   }
 
-  @available(iOS 13.0, macOS 10.15, *)
   func getDefaultWebpagePreferences(
     pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration
   ) throws -> WKWebpagePreferences {

@@ -1,6 +1,7 @@
-## NEXT
+## 3.23.1
 
-* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+* Removes code for versions of iOS older than 13.0.
+* Updates minimum supported SDK version to Flutter 3.35.
 
 ## 3.23.0
 
