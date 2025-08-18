@@ -1110,15 +1110,18 @@ public class GoogleSignInTest {
         testToken,
         ResultCompat.asCompatCallback(
             reply -> {
-              // This test doesn't trigger the getCredentialsAsync callback that would call this,
-              // so if this is reached something has gone wrong.
-              fail();
               return null;
             }));
 
     ArgumentCaptor<ClearTokenRequest> authRequestCaptor =
         ArgumentCaptor.forClass(ClearTokenRequest.class);
     verify(mockAuthorizationClient).clearToken(authRequestCaptor.capture());
+
+    @SuppressWarnings("unchecked")
+    ArgumentCaptor<OnSuccessListener<Void>> callbackCaptor =
+        ArgumentCaptor.forClass(OnSuccessListener.class);
+    verify(mockClearTokenTask).addOnSuccessListener(callbackCaptor.capture());
+    callbackCaptor.getValue().onSuccess(null);
 
     ClearTokenRequest request = authRequestCaptor.getValue();
     assertEquals(testToken, request.getToken());
