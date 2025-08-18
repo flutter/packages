@@ -136,6 +136,9 @@ class GoogleSignInAuthorizationClient {
   ///
   /// If authorization would require user interaction, this returns null, in
   /// which case [authorizeScopes] should be used instead.
+  ///
+  /// In rare cases, this can return tokens that are no longer valid. See
+  /// [clearAuthorizationToken] for details.
   Future<GoogleSignInClientAuthorization?> authorizationForScopes(
     List<String> scopes,
   ) async {
@@ -150,6 +153,9 @@ class GoogleSignInAuthorizationClient {
   /// allowed (for example, while the app is foregrounded on mobile), and if
   /// [GoogleSignIn.authorizationRequiresUserInteraction] returns true this
   /// should only be called from an user interaction handler.
+  ///
+  /// In rare cases, this can return tokens that are no longer valid. See
+  /// [clearAuthorizationToken] for details.
   Future<GoogleSignInClientAuthorization> authorizeScopes(
     List<String> scopes,
   ) async {
@@ -173,8 +179,10 @@ class GoogleSignInAuthorizationClient {
   /// authorization headers, containing the access token for the given scopes.
   ///
   /// Returns null if the given scopes are not authorized, or there is no
-  /// currently valid authorization token available, and
-  /// [promptIfNecessary] is false.
+  /// unexpired authorization token available, and [promptIfNecessary] is false.
+  ///
+  /// In rare cases, this can return tokens that are no longer valid. See
+  /// [clearAuthorizationToken] for details.
   ///
   /// See also https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Authorization.
   Future<Map<String, String>?> authorizationHeaders(
@@ -207,6 +215,9 @@ class GoogleSignInAuthorizationClient {
   /// allowed (for example, while the app is foregrounded on mobile), and if
   /// [GoogleSignIn.authorizationRequiresUserInteraction] returns true this
   /// should only be called from an user interaction handler.
+  ///
+  /// In rare cases, this can return tokens that are no longer valid. See
+  /// [clearAuthorizationToken] for details.
   Future<GoogleSignInServerAuthorization?> authorizeServer(
     List<String> scopes,
   ) async {
@@ -227,6 +238,20 @@ class GoogleSignInAuthorizationClient {
         : GoogleSignInServerAuthorization(
           serverAuthCode: tokens.serverAuthCode,
         );
+  }
+
+  /// Removes the given [accessToken] from any local authorization caches.
+  ///
+  /// This should be called if using an access token results in an invalid token
+  /// response from the target API, followed by re-requsting authorization.
+  ///
+  /// A token can be invalidated by, for example, a user removing an
+  /// application's authorization from outside of the application:
+  /// https://support.google.com/accounts/answer/13533235.
+  Future<void> clearAuthorizationToken({required String accessToken}) {
+    return GoogleSignInPlatform.instance.clearAuthorizationToken(
+      token: accessToken,
+    );
   }
 
   Future<GoogleSignInClientAuthorization?> _authorizeClient(
@@ -574,18 +599,5 @@ class GoogleSignIn {
     //  structured. In practice, currently the plugin only fully supports a
     //  single user at a time, so the distinction is mostly theoretical for now.
     await GoogleSignInPlatform.instance.disconnect(const DisconnectParams());
-  }
-
-  /// Clears the authentication cache of the specified token.
-  ///
-  /// How this method works depends on the platform:
-  ///
-  /// - On Android, this will attempt to clear the token from the cache.
-  /// - On Web, this will remove any matching entry from the token cache.
-  ///
-  /// This should be called on any client that has received an access token that
-  /// is no longer valid.
-  Future<void> clearAuthorizationToken({required String token}) {
-    return GoogleSignInPlatform.instance.clearAuthorizationToken(token: token);
   }
 }
