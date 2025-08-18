@@ -863,11 +863,14 @@ class _VideoAppLifeCycleObserver extends Object with WidgetsBindingObserver {
 /// Widget that displays the video controlled by [controller].
 class VideoPlayer extends StatefulWidget {
   /// Uses the given [controller] for all video rendered in this widget.
-  const VideoPlayer(this.controller, {super.key});
+  const VideoPlayer(this.controller, {super.key, this.allow2xSpeed = false});
 
   /// The [VideoPlayerController] responsible for the video being rendered in
   /// this widget.
   final VideoPlayerController controller;
+
+  /// Whether to allow 2x speed playback when long pressing on the video player.
+  final bool allow2xSpeed;
 
   @override
   State<VideoPlayer> createState() => _VideoPlayerState();
@@ -985,28 +988,29 @@ class _VideoPlayerState extends State<VideoPlayer> {
               ),
             ),
             if (_is2xEnabled) x2Speed(),
-            LayoutBuilder(
-              builder: (BuildContext context, BoxConstraints constraints) {
-                final double width = constraints.maxWidth;
-                return SizedBox(
-                  height: constraints.maxHeight,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Container(
-                        color: Colors.transparent,
-                        width: width / 3,
-                      ).onTap(toggle2xSpeed),
-                      Container(color: Colors.transparent, width: width / 3),
-                      Container(
-                        color: Colors.transparent,
-                        width: width / 3,
-                      ).onTap(toggle2xSpeed),
-                    ],
-                  ),
-                );
-              },
-            ),
+            if (widget.allow2xSpeed)
+              LayoutBuilder(
+                builder: (BuildContext context, BoxConstraints constraints) {
+                  final double width = constraints.maxWidth;
+                  return SizedBox(
+                    height: constraints.maxHeight,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Container(
+                          color: Colors.transparent,
+                          width: width / 3,
+                        ).onTap(toggle2xSpeed),
+                        Container(color: Colors.transparent, width: width / 3),
+                        Container(
+                          color: Colors.transparent,
+                          width: width / 3,
+                        ).onTap(toggle2xSpeed),
+                      ],
+                    ),
+                  );
+                },
+              ),
           ],
         );
   }
