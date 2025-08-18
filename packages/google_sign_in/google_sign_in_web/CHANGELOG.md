@@ -1,6 +1,6 @@
-## 1.0.1
+## 1.1.0
 
-* feat(google_sign_in): Add `clearAuthCache` method to remove an access token from the cache.
+* Adds support for the `clearAuthorizationToken` method.
 * Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
 
 ## 1.0.0
