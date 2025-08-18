@@ -134,6 +134,11 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
         : ServerAuthorizationTokenData(serverAuthCode: serverAuthCode);
   }
 
+  @override
+  Future<void> clearAuthorizationToken({required String token}) async {
+    // No-op; the iOS SDK handles token invalidation internally.
+  }
+
   Future<({String? accessToken, String? serverAuthCode})>
   _getAuthorizationTokens(AuthorizationRequestDetails request) async {
     String? userId = request.userId;
