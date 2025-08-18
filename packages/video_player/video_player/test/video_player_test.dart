@@ -691,6 +691,20 @@ void main() {
         expect(controller.value.playbackSpeed, speed);
       });
 
+      test('supports 2x speed', () async {
+        final VideoPlayerController controller =
+            VideoPlayerController.networkUrl(_localhostUri);
+        addTearDown(controller.dispose);
+
+        await controller.initialize();
+        expect(controller.value.playbackSpeed, 1.0);
+
+        const double speed = 2.0;
+        await controller.setPlaybackSpeed(speed);
+
+        expect(controller.value.playbackSpeed, speed);
+      });
+
       test('rejects negative values', () async {
         final VideoPlayerController controller =
             VideoPlayerController.networkUrl(_localhostUri);

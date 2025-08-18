@@ -24,6 +24,17 @@ export 'package:video_player_platform_interface/video_player_platform_interface.
 
 export 'src/closed_caption_file.dart';
 
+extension _X2SpeedExtension on Widget {
+  GestureDetector onTap(void Function(bool) func) {
+    return GestureDetector(
+      onLongPressStart: (_) => func(true),
+      onLongPressUp: () => func(false),
+      onLongPressCancel: () => func(false),
+      child: this,
+    );
+  }
+}
+
 VideoPlayerPlatform? _lastVideoPlayerPlatform;
 
 VideoPlayerPlatform get _videoPlayerPlatform {
@@ -878,6 +889,29 @@ class _VideoPlayerState extends State<VideoPlayer> {
 
   late int _playerId;
 
+  bool _is2xEnabled = false;
+  double _originalSpeed = 1.0;
+
+  /// Toggles 2x speed when user taps and holds, returns to original speed when released.
+  Future<void> toggle2xSpeed(bool enable) async {
+    if (enable) {
+      _originalSpeed = widget.controller.value.playbackSpeed;
+      if (_originalSpeed != 2.0) {
+        await _videoPlayerPlatform.setPlaybackSpeed(_playerId, 2.0);
+        if (!_is2xEnabled) {
+          _is2xEnabled = true;
+          setState(() {});
+        }
+      }
+    } else if (_is2xEnabled) {
+      await _videoPlayerPlatform.setPlaybackSpeed(_playerId, _originalSpeed);
+      if (_is2xEnabled) {
+        _is2xEnabled = false;
+        setState(() {});
+      }
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -901,15 +935,79 @@ class _VideoPlayerState extends State<VideoPlayer> {
     widget.controller.removeListener(_listener);
   }
 
+  /// Returns a [Widget] that displays a "2x speed" indicator,
+  Widget x2Speed() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 10),
+        decoration: BoxDecoration(
+          color: Colors.black.withValues(alpha: .4),
+          borderRadius: const BorderRadius.all(Radius.circular(20)),
+        ),
+        child: Row(
+          spacing: 10,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Container(
+              decoration: const BoxDecoration(
+                color: Colors.grey,
+                shape: BoxShape.circle,
+              ),
+              padding: const EdgeInsets.all(3),
+              child: const Icon(
+                Icons.fast_forward_sharp,
+                size: 10,
+                color: Colors.white,
+              ),
+            ),
+            const Text(
+              'Speed: 2x',
+              style: TextStyle(fontSize: 10, color: Colors.white),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return _playerId == VideoPlayerController.kUninitializedPlayerId
         ? Container()
-        : _VideoPlayerWithRotation(
-          rotation: widget.controller.value.rotationCorrection,
-          child: _videoPlayerPlatform.buildViewWithOptions(
-            VideoViewOptions(playerId: _playerId),
-          ),
+        : Stack(
+          alignment: Alignment.bottomCenter,
+          children: <Widget>[
+            _VideoPlayerWithRotation(
+              rotation: widget.controller.value.rotationCorrection,
+              child: _videoPlayerPlatform.buildViewWithOptions(
+                VideoViewOptions(playerId: _playerId),
+              ),
+            ),
+            if (_is2xEnabled) x2Speed(),
+            LayoutBuilder(
+              builder: (BuildContext context, BoxConstraints constraints) {
+                final double width = constraints.maxWidth;
+                return SizedBox(
+                  height: constraints.maxHeight,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Container(
+                        color: Colors.transparent,
+                        width: width / 3,
+                      ).onTap(toggle2xSpeed),
+                      Container(color: Colors.transparent, width: width / 3),
+                      Container(
+                        color: Colors.transparent,
+                        width: width / 3,
+                      ).onTap(toggle2xSpeed),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ],
         );
   }
 }
