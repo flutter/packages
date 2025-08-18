@@ -23,8 +23,7 @@ dependencies:
   flutter_web_plugins:
     sdk: flutter
   google_identity_services_web: ^0.3.1
-  google_sign_in_platform_interface:
-    path: ../google_sign_in_platform_interface
+  google_sign_in_platform_interface: ^3.0.0
   http: ">=0.13.0 <2.0.0"
   web: ">=0.5.1 <2.0.0"
 
@@ -35,3 +34,7 @@ dev_dependencies:
 topics:
   - authentication
   - google-sign-in
+# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
+# See https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#changing-federated-plugins
+dependency_overrides:
+  google_sign_in_platform_interface: {path: ../../../packages/google_sign_in/google_sign_in_platform_interface}

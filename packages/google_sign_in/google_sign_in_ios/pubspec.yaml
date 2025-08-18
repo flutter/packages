@@ -24,8 +24,7 @@ flutter:
 dependencies:
   flutter:
     sdk: flutter
-  google_sign_in_platform_interface:
-    path: ../google_sign_in_platform_interface
+  google_sign_in_platform_interface: ^3.0.0
 
 dev_dependencies:
   build_runner: ^2.4.6
@@ -45,3 +44,7 @@ false_secrets:
   - /example/ios/Runner/Info.plist
   - /example/lib/main.dart
   - /example/macos/Runner/Info.plist
+# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
+# See https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#changing-federated-plugins
+dependency_overrides:
+  google_sign_in_platform_interface: {path: ../../../packages/google_sign_in/google_sign_in_platform_interface}
