@@ -8,7 +8,7 @@ To use `go_router_builder`, you need to have the following dependencies in
 ```yaml
 dependencies:
   # ...along with your other dependencies
-  go_router: ^16.0.0
+  go_router: ^16.2.0
 
 dev_dependencies:
   # ...along with your other dev-dependencies
@@ -462,9 +462,7 @@ Define a relative route by extending `RelativeGoRouteData`.
 
 <?code-excerpt "example/lib/readme_excerpts.dart (relativeRoute)"?>
 ```dart
-@TypedRelativeGoRoute<DetailsRoute>(
-  path: 'details',
-)
+@TypedRelativeGoRoute<DetailsRoute>(path: 'details')
 class DetailsRoute extends RelativeGoRouteData with _$DetailsRoute {
   const DetailsRoute();
 
