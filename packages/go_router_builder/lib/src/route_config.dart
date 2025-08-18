@@ -477,12 +477,11 @@ mixin $_mixinName on GoRouteData {
   String get factorConstructorParameters => 'factory: $_mixinName._fromState,';
 
   @override
-  String get routeConstructorParameters => '''
-    path: ${escapeDartString(path)},
-    ${name != null ? 'name: ${escapeDartString(name!)},' : ''}
-    ${caseSensitive ? '' : 'caseSensitive: $caseSensitive,'}
-    ${parentNavigatorKey == null ? '' : 'parentNavigatorKey: $parentNavigatorKey,'}
-''';
+  String get routeConstructorParameters =>
+      'path: ${escapeDartString(path)},'
+      '${name != null ? 'name: ${escapeDartString(name!)},' : ''}'
+      '${caseSensitive ? '' : 'caseSensitive: $caseSensitive,'}'
+      '${parentNavigatorKey == null ? '' : 'parentNavigatorKey: $parentNavigatorKey,'}';
 
   @override
   String get routeDataClassName => 'GoRouteData';
@@ -765,10 +764,7 @@ ${_generateChildrenGetterName(routeDataClassName)}: [${_children.map((RouteBaseC
 
     return '''
 $routeDataClassName.$dataConvertionFunctionName(
-    $routeConstructorParameters
-    $factorConstructorParameters
-    $routesBit
-  )
+    $routeConstructorParameters $factorConstructorParameters $routesBit)
 ''';
   }
 

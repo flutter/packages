@@ -21,13 +21,15 @@ void main() {
     try {
       // #docregion IDsInCode
       final GoogleSignInPlatform signIn = GoogleSignInPlatform.instance;
-      await signIn.init(const InitParameters(
-        // The OAuth client ID of your app. This is required.
-        clientId: 'Your Client ID',
-        // If you need to authenticate to a backend server, specify the server's
-        // OAuth client ID. This is optional.
-        serverClientId: 'Your Server ID',
-      ));
+      await signIn.init(
+        const InitParameters(
+          // The OAuth client ID of your app. This is required.
+          clientId: 'Your Client ID',
+          // If you need to authenticate to a backend server, specify the server's
+          // OAuth client ID. This is optional.
+          serverClientId: 'Your Server ID',
+        ),
+      );
       // #enddocregion IDsInCode
     } catch (e) {
       fail('Initialization should succeed');

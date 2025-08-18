@@ -15,10 +15,8 @@ class App extends StatelessWidget {
   App({super.key});
 
   @override
-  Widget build(BuildContext context) => MaterialApp.router(
-        routerConfig: _router,
-        title: _appTitle,
-      );
+  Widget build(BuildContext context) =>
+      MaterialApp.router(routerConfig: _router, title: _appTitle);
 
   final GoRouter _router = GoRouter(routes: $appRoutes);
 }
@@ -26,7 +24,7 @@ class App extends StatelessWidget {
 @TypedGoRoute<HomeRoute>(
   path: '/',
   routes: <TypedGoRoute<GoRouteData>>[
-    TypedGoRoute<SubRoute>(path: 'sub-route')
+    TypedGoRoute<SubRoute>(path: 'sub-route'),
   ],
 )
 class HomeRoute extends GoRouteData with _$HomeRoute {
@@ -43,19 +41,20 @@ class SubRoute extends GoRouteData with _$SubRoute {
   Future<bool> onExit(BuildContext context, GoRouterState state) async {
     final bool? confirmed = await showDialog<bool>(
       context: context,
-      builder: (_) => AlertDialog(
-        content: const Text('Are you sure to leave this page?'),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
+      builder:
+          (_) => AlertDialog(
+            content: const Text('Are you sure to leave this page?'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: const Text('Cancel'),
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: const Text('Confirm'),
+              ),
+            ],
           ),
-          ElevatedButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Confirm'),
-          ),
-        ],
-      ),
     );
     return confirmed ?? false;
   }
@@ -69,13 +68,14 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-      appBar: AppBar(title: const Text(_appTitle)),
-      body: Center(
-        child: ElevatedButton(
-          onPressed: () => const SubRoute().go(context),
-          child: const Text('Go to sub screen'),
-        ),
-      ));
+    appBar: AppBar(title: const Text(_appTitle)),
+    body: Center(
+      child: ElevatedButton(
+        onPressed: () => const SubRoute().go(context),
+        child: const Text('Go to sub screen'),
+      ),
+    ),
+  );
 }
 
 class SubScreen extends StatelessWidget {
@@ -83,14 +83,14 @@ class SubScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: const Text('$_appTitle Sub screen')),
-        body: Center(
-          child: ElevatedButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Go back'),
-          ),
-        ),
-      );
+    appBar: AppBar(title: const Text('$_appTitle Sub screen')),
+    body: Center(
+      child: ElevatedButton(
+        onPressed: () => Navigator.of(context).pop(),
+        child: const Text('Go back'),
+      ),
+    ),
+  );
 }
 
 const String _appTitle = 'GoRouter Example: builder';

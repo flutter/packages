@@ -11,10 +11,7 @@ import 'utils.dart';
 ///
 /// The `merge` method should be overridden to implement custom merging.
 abstract class CustomMerge {
-  CustomMerge({
-    required this.logger,
-    required this.localPath,
-  });
+  CustomMerge({required this.logger, required this.localPath});
 
   /// The local path (with the project root as the root directory) of the file to merge.
   final String localPath;
@@ -29,9 +26,7 @@ abstract class CustomMerge {
 ///
 /// See `FlutterProjectMetadata`.
 class MetadataCustomMerge extends CustomMerge {
-  MetadataCustomMerge({
-    required super.logger,
-  }) : super(localPath: '.metadata');
+  MetadataCustomMerge({required super.logger}) : super(localPath: '.metadata');
 
   @override
   MergeResult merge(File current, File base, File target) {
@@ -50,12 +45,14 @@ class MetadataCustomMerge extends CustomMerge {
   }
 
   FlutterProjectMetadata computeMerge(
-      FlutterProjectMetadata current,
-      FlutterProjectMetadata base,
-      FlutterProjectMetadata target,
-      Logger logger) {
+    FlutterProjectMetadata current,
+    FlutterProjectMetadata base,
+    FlutterProjectMetadata target,
+    Logger logger,
+  ) {
     // Prefer to update the version revision and channel to latest version.
-    final String? versionRevision = target.versionRevision ??
+    final String? versionRevision =
+        target.versionRevision ??
         current.versionRevision ??
         base.versionRevision;
     final String? versionChannel =
@@ -79,18 +76,21 @@ class MetadataCustomMerge extends CustomMerge {
   }
 
   MigrateConfig mergeMigrateConfig(
-      MigrateConfig current, MigrateConfig target) {
+    MigrateConfig current,
+    MigrateConfig target,
+  ) {
     // Create the superset of current and target platforms with baseRevision updated to be that of target.
     final Map<FlutterProjectComponent, MigratePlatformConfig>
-        projectComponentConfigs =
+    projectComponentConfigs =
         <FlutterProjectComponent, MigratePlatformConfig>{};
     for (final MapEntry<FlutterProjectComponent, MigratePlatformConfig> entry
         in current.platformConfigs.entries) {
       if (target.platformConfigs.containsKey(entry.key)) {
         projectComponentConfigs[entry.key] = MigratePlatformConfig(
-            component: entry.value.component,
-            createRevision: entry.value.createRevision,
-            baseRevision: target.platformConfigs[entry.key]?.baseRevision);
+          component: entry.value.component,
+          createRevision: entry.value.createRevision,
+          baseRevision: target.platformConfigs[entry.key]?.baseRevision,
+        );
       } else {
         projectComponentConfigs[entry.key] = entry.value;
       }
@@ -103,8 +103,9 @@ class MetadataCustomMerge extends CustomMerge {
     }
 
     // Ignore the base file list.
-    final List<String> unmanagedFiles =
-        List<String>.from(current.unmanagedFiles);
+    final List<String> unmanagedFiles = List<String>.from(
+      current.unmanagedFiles,
+    );
     for (final String path in target.unmanagedFiles) {
       if (!unmanagedFiles.contains(path) &&
           !MigrateConfig.kDefaultUnmanagedFiles.contains(path)) {

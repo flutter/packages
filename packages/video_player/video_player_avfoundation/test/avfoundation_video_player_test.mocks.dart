@@ -23,81 +23,88 @@ import 'package:video_player_avfoundation/src/messages.g.dart' as _i2;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
+class _FakeTexturePlayerIds_0 extends _i1.SmartFake
+    implements _i2.TexturePlayerIds {
+  _FakeTexturePlayerIds_0(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
 /// A class which mocks [AVFoundationVideoPlayerApi].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockAVFoundationVideoPlayerApi extends _i1.Mock
     implements _i2.AVFoundationVideoPlayerApi {
   @override
-  String get pigeonVar_messageChannelSuffix => (super.noSuchMethod(
-        Invocation.getter(#pigeonVar_messageChannelSuffix),
-        returnValue: _i3.dummyValue<String>(
-          this,
-          Invocation.getter(#pigeonVar_messageChannelSuffix),
-        ),
-        returnValueForMissingStub: _i3.dummyValue<String>(
-          this,
-          Invocation.getter(#pigeonVar_messageChannelSuffix),
-        ),
-      ) as String);
-
-  @override
-  _i4.Future<void> initialize() => (super.noSuchMethod(
-        Invocation.method(
-          #initialize,
-          [],
-        ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
-
-  @override
-  _i4.Future<int> create(_i2.CreationOptions? creationOptions) =>
+  String get pigeonVar_messageChannelSuffix =>
       (super.noSuchMethod(
-        Invocation.method(
-          #create,
-          [creationOptions],
-        ),
-        returnValue: _i4.Future<int>.value(0),
-        returnValueForMissingStub: _i4.Future<int>.value(0),
-      ) as _i4.Future<int>);
+            Invocation.getter(#pigeonVar_messageChannelSuffix),
+            returnValue: _i3.dummyValue<String>(
+              this,
+              Invocation.getter(#pigeonVar_messageChannelSuffix),
+            ),
+            returnValueForMissingStub: _i3.dummyValue<String>(
+              this,
+              Invocation.getter(#pigeonVar_messageChannelSuffix),
+            ),
+          )
+          as String);
 
   @override
-  _i4.Future<void> dispose(int? playerId) => (super.noSuchMethod(
-        Invocation.method(
-          #dispose,
-          [playerId],
-        ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+  _i4.Future<void> initialize() =>
+      (super.noSuchMethod(
+            Invocation.method(#initialize, []),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
 
   @override
-  _i4.Future<void> setMixWithOthers(bool? mixWithOthers) => (super.noSuchMethod(
-        Invocation.method(
-          #setMixWithOthers,
-          [mixWithOthers],
-        ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+  _i4.Future<int> createForPlatformView(_i2.CreationOptions? params) =>
+      (super.noSuchMethod(
+            Invocation.method(#createForPlatformView, [params]),
+            returnValue: _i4.Future<int>.value(0),
+            returnValueForMissingStub: _i4.Future<int>.value(0),
+          )
+          as _i4.Future<int>);
 
   @override
-  _i4.Future<String?> getAssetUrl(
-    String? asset,
-    String? package,
+  _i4.Future<_i2.TexturePlayerIds> createForTextureView(
+    _i2.CreationOptions? creationOptions,
   ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #getAssetUrl,
-          [
-            asset,
-            package,
-          ],
-        ),
-        returnValue: _i4.Future<String?>.value(),
-        returnValueForMissingStub: _i4.Future<String?>.value(),
-      ) as _i4.Future<String?>);
+            Invocation.method(#createForTextureView, [creationOptions]),
+            returnValue: _i4.Future<_i2.TexturePlayerIds>.value(
+              _FakeTexturePlayerIds_0(
+                this,
+                Invocation.method(#createForTextureView, [creationOptions]),
+              ),
+            ),
+            returnValueForMissingStub: _i4.Future<_i2.TexturePlayerIds>.value(
+              _FakeTexturePlayerIds_0(
+                this,
+                Invocation.method(#createForTextureView, [creationOptions]),
+              ),
+            ),
+          )
+          as _i4.Future<_i2.TexturePlayerIds>);
+
+  @override
+  _i4.Future<void> setMixWithOthers(bool? mixWithOthers) =>
+      (super.noSuchMethod(
+            Invocation.method(#setMixWithOthers, [mixWithOthers]),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
+
+  @override
+  _i4.Future<String?> getAssetUrl(String? asset, String? package) =>
+      (super.noSuchMethod(
+            Invocation.method(#getAssetUrl, [asset, package]),
+            returnValue: _i4.Future<String?>.value(),
+            returnValueForMissingStub: _i4.Future<String?>.value(),
+          )
+          as _i4.Future<String?>);
 }
 
 /// A class which mocks [VideoPlayerInstanceApi].
@@ -106,85 +113,89 @@ class MockAVFoundationVideoPlayerApi extends _i1.Mock
 class MockVideoPlayerInstanceApi extends _i1.Mock
     implements _i2.VideoPlayerInstanceApi {
   @override
-  String get pigeonVar_messageChannelSuffix => (super.noSuchMethod(
-        Invocation.getter(#pigeonVar_messageChannelSuffix),
-        returnValue: _i3.dummyValue<String>(
-          this,
-          Invocation.getter(#pigeonVar_messageChannelSuffix),
-        ),
-        returnValueForMissingStub: _i3.dummyValue<String>(
-          this,
-          Invocation.getter(#pigeonVar_messageChannelSuffix),
-        ),
-      ) as String);
+  String get pigeonVar_messageChannelSuffix =>
+      (super.noSuchMethod(
+            Invocation.getter(#pigeonVar_messageChannelSuffix),
+            returnValue: _i3.dummyValue<String>(
+              this,
+              Invocation.getter(#pigeonVar_messageChannelSuffix),
+            ),
+            returnValueForMissingStub: _i3.dummyValue<String>(
+              this,
+              Invocation.getter(#pigeonVar_messageChannelSuffix),
+            ),
+          )
+          as String);
 
   @override
-  _i4.Future<void> setLooping(bool? looping) => (super.noSuchMethod(
-        Invocation.method(
-          #setLooping,
-          [looping],
-        ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+  _i4.Future<void> setLooping(bool? looping) =>
+      (super.noSuchMethod(
+            Invocation.method(#setLooping, [looping]),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
 
   @override
-  _i4.Future<void> setVolume(double? volume) => (super.noSuchMethod(
-        Invocation.method(
-          #setVolume,
-          [volume],
-        ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+  _i4.Future<void> setVolume(double? volume) =>
+      (super.noSuchMethod(
+            Invocation.method(#setVolume, [volume]),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
 
   @override
-  _i4.Future<void> setPlaybackSpeed(double? speed) => (super.noSuchMethod(
-        Invocation.method(
-          #setPlaybackSpeed,
-          [speed],
-        ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+  _i4.Future<void> setPlaybackSpeed(double? speed) =>
+      (super.noSuchMethod(
+            Invocation.method(#setPlaybackSpeed, [speed]),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
 
   @override
-  _i4.Future<void> play() => (super.noSuchMethod(
-        Invocation.method(
-          #play,
-          [],
-        ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+  _i4.Future<void> play() =>
+      (super.noSuchMethod(
+            Invocation.method(#play, []),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
 
   @override
-  _i4.Future<int> getPosition() => (super.noSuchMethod(
-        Invocation.method(
-          #getPosition,
-          [],
-        ),
-        returnValue: _i4.Future<int>.value(0),
-        returnValueForMissingStub: _i4.Future<int>.value(0),
-      ) as _i4.Future<int>);
+  _i4.Future<int> getPosition() =>
+      (super.noSuchMethod(
+            Invocation.method(#getPosition, []),
+            returnValue: _i4.Future<int>.value(0),
+            returnValueForMissingStub: _i4.Future<int>.value(0),
+          )
+          as _i4.Future<int>);
 
   @override
-  _i4.Future<void> seekTo(int? position) => (super.noSuchMethod(
-        Invocation.method(
-          #seekTo,
-          [position],
-        ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+  _i4.Future<void> seekTo(int? position) =>
+      (super.noSuchMethod(
+            Invocation.method(#seekTo, [position]),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
 
   @override
-  _i4.Future<void> pause() => (super.noSuchMethod(
-        Invocation.method(
-          #pause,
-          [],
-        ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+  _i4.Future<void> pause() =>
+      (super.noSuchMethod(
+            Invocation.method(#pause, []),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
+
+  @override
+  _i4.Future<void> dispose() =>
+      (super.noSuchMethod(
+            Invocation.method(#dispose, []),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
 }

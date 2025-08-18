@@ -43,12 +43,13 @@ void main() {
     });
 
     test(
-        'createAndValidate throw error when allowMultiple is false and has limit',
-        () {
-      expect(
-        () => MediaOptions.createAndValidate(allowMultiple: false, limit: 2),
-        throwsArgumentError,
-      );
-    });
+      'createAndValidate throw error when allowMultiple is false and has limit',
+      () {
+        expect(
+          () => MediaOptions.createAndValidate(allowMultiple: false, limit: 2),
+          throwsArgumentError,
+        );
+      },
+    );
   });
 }

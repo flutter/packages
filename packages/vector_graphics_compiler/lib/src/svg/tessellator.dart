@@ -3,7 +3,8 @@
 // found in the LICENSE file.
 
 import '_tessellator_unsupported.dart'
-    if (dart.library.ffi) '_tessellator_ffi.dart' as impl;
+    if (dart.library.ffi) '_tessellator_ffi.dart'
+    as impl;
 import 'node.dart';
 import 'visitor.dart';
 

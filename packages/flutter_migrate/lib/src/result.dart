@@ -15,26 +15,27 @@ import 'utils.dart';
 /// so this must be done manually afterwards.
 class MigrateResult {
   /// Explicitly initialize the MigrateResult.
-  MigrateResult(
-      {required this.mergeResults,
-      required this.addedFiles,
-      required this.deletedFiles,
-      required this.tempDirectories,
-      required this.sdkDirs,
-      required this.mergeTypeMap,
-      required this.diffMap,
-      this.generatedBaseTemplateDirectory,
-      this.generatedTargetTemplateDirectory});
+  MigrateResult({
+    required this.mergeResults,
+    required this.addedFiles,
+    required this.deletedFiles,
+    required this.tempDirectories,
+    required this.sdkDirs,
+    required this.mergeTypeMap,
+    required this.diffMap,
+    this.generatedBaseTemplateDirectory,
+    this.generatedTargetTemplateDirectory,
+  });
 
   /// Creates a MigrateResult with all empty members.
   MigrateResult.empty()
-      : mergeResults = <MergeResult>[],
-        addedFiles = <FilePendingMigration>[],
-        deletedFiles = <FilePendingMigration>[],
-        tempDirectories = <Directory>[],
-        mergeTypeMap = <String, MergeType>{},
-        diffMap = <String, DiffResult>{},
-        sdkDirs = <String, Directory>{};
+    : mergeResults = <MergeResult>[],
+      addedFiles = <FilePendingMigration>[],
+      deletedFiles = <FilePendingMigration>[],
+      tempDirectories = <Directory>[],
+      mergeTypeMap = <String, MergeType>{},
+      diffMap = <String, DiffResult>{},
+      sdkDirs = <String, Directory>{};
 
   /// The results of merging existing files with the target files.
   final List<MergeResult> mergeResults;

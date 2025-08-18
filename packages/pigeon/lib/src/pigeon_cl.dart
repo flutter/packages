@@ -9,7 +9,10 @@ import 'pigeon_lib.dart';
 /// command line arguments and there is an optional [packageConfig] to
 /// accommodate users that want to integrate pigeon with other build systems.
 /// [sdkPath] for specifying an optional Dart SDK path.
-Future<int> runCommandLine(List<String> args,
-    {Uri? packageConfig, String? sdkPath}) async {
+Future<int> runCommandLine(
+  List<String> args, {
+  Uri? packageConfig,
+  String? sdkPath,
+}) async {
   return Pigeon.run(args, sdkPath: sdkPath);
 }

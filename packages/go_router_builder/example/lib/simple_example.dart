@@ -17,10 +17,8 @@ class App extends StatelessWidget {
   App({super.key});
 
   @override
-  Widget build(BuildContext context) => MaterialApp.router(
-        routerConfig: _router,
-        title: _appTitle,
-      );
+  Widget build(BuildContext context) =>
+      MaterialApp.router(routerConfig: _router, title: _appTitle);
 
   final GoRouter _router = GoRouter(routes: $appRoutes);
 }
@@ -29,7 +27,7 @@ class App extends StatelessWidget {
   path: '/',
   name: 'Home',
   routes: <TypedGoRoute<GoRouteData>>[
-    TypedGoRoute<FamilyRoute>(path: 'family/:familyId')
+    TypedGoRoute<FamilyRoute>(path: 'family/:familyId'),
   ],
 )
 class HomeRoute extends GoRouteData with _$HomeRoute {
@@ -55,17 +53,17 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: const Text(_appTitle)),
-        body: ListView(
-          children: <Widget>[
-            for (final Family family in familyData)
-              ListTile(
-                title: Text(family.name),
-                onTap: () => FamilyRoute(family.id).go(context),
-              )
-          ],
-        ),
-      );
+    appBar: AppBar(title: const Text(_appTitle)),
+    body: ListView(
+      children: <Widget>[
+        for (final Family family in familyData)
+          ListTile(
+            title: Text(family.name),
+            onTap: () => FamilyRoute(family.id).go(context),
+          ),
+      ],
+    ),
+  );
 }
 
 class FamilyScreen extends StatelessWidget {
@@ -74,16 +72,13 @@ class FamilyScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: Text(family.name)),
-        body: ListView(
-          children: <Widget>[
-            for (final Person p in family.people)
-              ListTile(
-                title: Text(p.name),
-              ),
-          ],
-        ),
-      );
+    appBar: AppBar(title: Text(family.name)),
+    body: ListView(
+      children: <Widget>[
+        for (final Person p in family.people) ListTile(title: Text(p.name)),
+      ],
+    ),
+  );
 }
 
 const String _appTitle = 'GoRouter Example: builder';
