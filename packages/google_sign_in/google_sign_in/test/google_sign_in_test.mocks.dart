@@ -129,9 +129,9 @@ class MockGoogleSignInPlatform extends _i1.Mock
           as _i4.Future<void>);
 
   @override
-  _i4.Future<void> clearAuthCache({required String? token}) =>
+  _i4.Future<void> clearAuthorizationToken({required String? token}) =>
       (super.noSuchMethod(
-            Invocation.method(#clearAuthCache, [], {#token: token}),
+            Invocation.method(#clearAuthorizationToken, [], {#token: token}),
             returnValue: _i4.Future<void>.value(),
             returnValueForMissingStub: _i4.Future<void>.value(),
           )

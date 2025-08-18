@@ -280,7 +280,7 @@ class GisSdkClient {
   }
 
   /// Clears the authorization cache for the given [token].
-  void clearAuthCache(String token) {
+  void clearAuthorizationToken(String token) {
     _lastClientAuthorizationByUser.removeWhere(
       (String? key, (TokenResponse tokenResponse, DateTime expiration) value) =>
           value.tokenResponse.access_token == token,

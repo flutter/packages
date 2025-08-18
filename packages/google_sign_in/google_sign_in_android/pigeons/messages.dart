@@ -196,7 +196,7 @@ abstract class GoogleSignInApi {
 
   /// Clears the authorization cache for the given token.
   @async
-  void clearAuthCache(String token);
+  void clearAuthorizationToken(String token);
 
   /// Requests authorization tokens via AuthorizationClient.
   @async

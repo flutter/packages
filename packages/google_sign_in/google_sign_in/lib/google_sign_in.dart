@@ -585,7 +585,7 @@ class GoogleSignIn {
   ///
   /// This should be called on any client that has received an access token that
   /// is no longer valid.
-  Future<void> clearAuthCache({required String token}) {
-    return GoogleSignInPlatform.instance.clearAuthCache(token: token);
+  Future<void> clearAuthorizationToken({required String token}) {
+    return GoogleSignInPlatform.instance.clearAuthorizationToken(token: token);
   }
 }

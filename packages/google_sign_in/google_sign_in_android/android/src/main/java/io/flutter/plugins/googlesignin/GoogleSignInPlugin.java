@@ -343,7 +343,7 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
     }
 
     @Override
-    public void clearAuthCache(
+    public void clearAuthorizationToken(
         @NonNull String token, @NonNull Function1<? super Result<Unit>, Unit> callback) {
       authorizationClientFactory
           .create(context)
@@ -355,7 +355,8 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
           .addOnFailureListener(
               (Exception e) -> {
                 ResultUtilsKt.completeWithFlutterError(
-                    callback, new FlutterError("clearAuthCacheFailed", e.getMessage(), null));
+                    callback,
+                    new FlutterError("clearAuthorizationToken failed", e.getMessage(), null));
               });
     }
 

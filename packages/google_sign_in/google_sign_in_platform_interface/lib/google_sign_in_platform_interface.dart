@@ -105,11 +105,13 @@ abstract class GoogleSignInPlatform extends PlatformInterface {
   /// them out.
   Future<void> disconnect(DisconnectParams params);
 
-  /// Clears the token cache for the given `token`.
+  /// Clears the token cache for the given access token.
   ///
   /// How this is implemented is up to the platform.
-  Future<void> clearAuthCache({required String token}) {
-    throw UnimplementedError('clearAuthCache() has not been implemented.');
+  Future<void> clearAuthorizationToken({required String token}) {
+    throw UnimplementedError(
+      'clearAuthorizationToken() has not been implemented.',
+    );
   }
 
   /// Returns a stream of authentication events.
@@ -186,7 +188,7 @@ class _PlaceholderImplementation extends GoogleSignInPlatform {
   }
 
   @override
-  Future<void> clearAuthCache({required String token}) {
+  Future<void> clearAuthorizationToken({required String token}) {
     throw UnimplementedError();
   }
 }

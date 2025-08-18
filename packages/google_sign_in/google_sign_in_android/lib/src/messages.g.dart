@@ -526,9 +526,9 @@ class GoogleSignInApi {
   }
 
   /// Clears the authorization cache for the given token.
-  Future<void> clearAuthCache(String token) async {
+  Future<void> clearAuthorizationToken(String token) async {
     final String pigeonVar_channelName =
-        'dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.clearAuthCache$pigeonVar_messageChannelSuffix';
+        'dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.clearAuthorizationToken$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,

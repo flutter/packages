@@ -83,9 +83,9 @@ class MockGoogleSignInApi extends _i1.Mock implements _i2.GoogleSignInApi {
           as _i4.Future<void>);
 
   @override
-  _i4.Future<void> clearAuthCache(String? token) =>
+  _i4.Future<void> clearAuthorizationToken(String? token) =>
       (super.noSuchMethod(
-            Invocation.method(#clearAuthCache, [token]),
+            Invocation.method(#clearAuthorizationToken, [token]),
             returnValue: _i4.Future<void>.value(),
             returnValueForMissingStub: _i4.Future<void>.value(),
           )

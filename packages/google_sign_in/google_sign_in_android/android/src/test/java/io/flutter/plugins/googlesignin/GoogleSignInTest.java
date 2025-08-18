@@ -1099,10 +1099,10 @@ public class GoogleSignInTest {
   }
 
   @Test
-  public void clearAuthCache_callsClient() {
+  public void clearAuthorizationToken_callsClient() {
     final Task<Void> mockTask = mock(Task.class);
     when(mockAuthorizationClient.clearToken(any())).thenReturn(mockTask);
-    plugin.clearAuthCache(
+    plugin.clearAuthorizationToken(
         "test_token",
         ResultCompat.asCompatCallback(
             reply -> {
