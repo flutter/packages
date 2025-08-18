@@ -1,6 +1,10 @@
-## 3.2.1
+## 3.2.2
 
 - Fixes warnings in generated code of iterable parameters.
+
+## 3.2.1
+
+- Changes generated whitespace for better compatibility with new Dart formatter.
 
 ## 3.2.0
 
