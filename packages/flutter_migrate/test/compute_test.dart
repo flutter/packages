@@ -51,11 +51,14 @@ void main() {
     );
     await MigrateProject.installProject('version:1.22.6_stable', currentDir);
     final FlutterProjectFactory flutterFactory = FlutterProjectFactory();
-    final FlutterProject flutterProject =
-        flutterFactory.fromDirectory(currentDir);
+    final FlutterProject flutterProject = flutterFactory.fromDirectory(
+      currentDir,
+    );
     result = MigrateResult.empty();
-    final MigrateLogger migrateLogger =
-        MigrateLogger(logger: logger, verbose: true);
+    final MigrateLogger migrateLogger = MigrateLogger(
+      logger: logger,
+      verbose: true,
+    );
     migrateLogger.start();
     separator = isWindows ? r'\\' : '/';
     envProcessManager = FakeProcessManager('''
@@ -87,7 +90,9 @@ void main() {
 ''');
     environment =
         await FlutterToolsEnvironment.initializeFlutterToolsEnvironment(
-            envProcessManager, logger);
+          envProcessManager,
+          logger,
+        );
     context = MigrateContext(
       flutterProject: flutterProject,
       skippedPrefixes: <String>{},
@@ -96,239 +101,295 @@ void main() {
       migrateUtils: utils,
       environment: environment,
     );
-    targetFlutterDirectory =
-        createResolvedTempDirectorySync('targetFlutterDir.');
-    newerTargetFlutterDirectory =
-        createResolvedTempDirectorySync('newerTargetFlutterDir.');
-    await context.migrateUtils
-        .cloneFlutter(oldSdkRevision, targetFlutterDirectory.absolute.path);
+    targetFlutterDirectory = createResolvedTempDirectorySync(
+      'targetFlutterDir.',
+    );
+    newerTargetFlutterDirectory = createResolvedTempDirectorySync(
+      'newerTargetFlutterDir.',
+    );
     await context.migrateUtils.cloneFlutter(
-        newSdkRevision, newerTargetFlutterDirectory.absolute.path);
+      oldSdkRevision,
+      targetFlutterDirectory.absolute.path,
+    );
+    await context.migrateUtils.cloneFlutter(
+      newSdkRevision,
+      newerTargetFlutterDirectory.absolute.path,
+    );
   }
 
-  group('MigrateFlutterProject', () {
-    setUp(() async {
-      await setUpFullEnv();
-    });
+  group(
+    'MigrateFlutterProject',
+    () {
+      setUp(() async {
+        await setUpFullEnv();
+      });
 
-    tearDown(() async {
-      tryToDelete(targetFlutterDirectory);
-      tryToDelete(newerTargetFlutterDirectory);
-    });
+      tearDown(() async {
+        tryToDelete(targetFlutterDirectory);
+        tryToDelete(newerTargetFlutterDirectory);
+      });
 
-    testUsingContext('MigrateTargetFlutterProject creates', () async {
-      final Directory workingDir =
-          createResolvedTempDirectorySync('migrate_working_dir.');
-      final Directory targetDir =
-          createResolvedTempDirectorySync('target_dir.');
-      result.generatedTargetTemplateDirectory = targetDir;
-      workingDir.createSync(recursive: true);
-      final MigrateTargetFlutterProject targetProject =
-          MigrateTargetFlutterProject(
-        path: null,
-        directory: targetDir,
-        name: 'base',
-        androidLanguage: 'java',
-        iosLanguage: 'objc',
-      );
-
-      await targetProject.createProject(
-        context,
-        result,
-        oldSdkRevision, //targetRevision
-        targetFlutterDirectory, //targetFlutterDirectory
-      );
-
-      expect(targetDir.childFile('pubspec.yaml').existsSync(), true);
-      expect(
-          targetDir
-              .childDirectory('android')
-              .childFile('build.gradle')
-              .existsSync(),
-          true);
-    }, timeout: const Timeout(Duration(seconds: 500)));
-
-    testUsingContext('MigrateBaseFlutterProject creates', () async {
-      final Directory workingDir =
-          createResolvedTempDirectorySync('migrate_working_dir.');
-      final Directory baseDir = createResolvedTempDirectorySync('base_dir.');
-      result.generatedBaseTemplateDirectory = baseDir;
-      workingDir.createSync(recursive: true);
-      final MigrateBaseFlutterProject baseProject = MigrateBaseFlutterProject(
-        path: null,
-        directory: baseDir,
-        name: 'base',
-        androidLanguage: 'java',
-        iosLanguage: 'objc',
-      );
-
-      await baseProject.createProject(
-        context,
-        result,
-        <String>[oldSdkRevision], //revisionsList
-        <String, List<MigratePlatformConfig>>{
-          oldSdkRevision: <MigratePlatformConfig>[
-            MigratePlatformConfig(component: FlutterProjectComponent.android),
-            MigratePlatformConfig(component: FlutterProjectComponent.ios)
-          ],
-        }, //revisionToConfigs
-        oldSdkRevision, //fallbackRevision
-        oldSdkRevision, //targetRevision
-        targetFlutterDirectory, //targetFlutterDirectory
-      );
-
-      expect(baseDir.childFile('pubspec.yaml').existsSync(), true);
-      expect(
-          baseDir
-              .childDirectory('android')
-              .childFile('build.gradle')
-              .existsSync(),
-          true);
-    }, timeout: const Timeout(Duration(seconds: 500)));
-
-    testUsingContext('Migrate___FlutterProject skips when path exists',
+      testUsingContext(
+        'MigrateTargetFlutterProject creates',
         () async {
-      final Directory workingDir =
-          createResolvedTempDirectorySync('migrate_working_dir.');
-      final Directory targetDir =
-          createResolvedTempDirectorySync('target_dir.');
-      final Directory baseDir = createResolvedTempDirectorySync('base_dir.');
-      result.generatedTargetTemplateDirectory = targetDir;
-      result.generatedBaseTemplateDirectory = baseDir;
-      workingDir.createSync(recursive: true);
+          final Directory workingDir = createResolvedTempDirectorySync(
+            'migrate_working_dir.',
+          );
+          final Directory targetDir = createResolvedTempDirectorySync(
+            'target_dir.',
+          );
+          result.generatedTargetTemplateDirectory = targetDir;
+          workingDir.createSync(recursive: true);
+          final MigrateTargetFlutterProject targetProject =
+              MigrateTargetFlutterProject(
+                path: null,
+                directory: targetDir,
+                name: 'base',
+                androidLanguage: 'java',
+                iosLanguage: 'objc',
+              );
 
-      final MigrateBaseFlutterProject baseProject = MigrateBaseFlutterProject(
-        path: 'some_existing_base_path',
-        directory: baseDir,
-        name: 'base',
-        androidLanguage: 'java',
-        iosLanguage: 'objc',
-      );
-      final MigrateTargetFlutterProject targetProject =
-          MigrateTargetFlutterProject(
-        path: 'some_existing_target_path',
-        directory: targetDir,
-        name: 'base',
-        androidLanguage: 'java',
-        iosLanguage: 'objc',
+          await targetProject.createProject(
+            context,
+            result,
+            oldSdkRevision, //targetRevision
+            targetFlutterDirectory, //targetFlutterDirectory
+          );
+
+          expect(targetDir.childFile('pubspec.yaml').existsSync(), true);
+          expect(
+            targetDir
+                .childDirectory('android')
+                .childFile('build.gradle')
+                .existsSync(),
+            true,
+          );
+        },
+        timeout: const Timeout(Duration(seconds: 500)),
       );
 
-      await baseProject.createProject(
-        context,
-        result,
-        <String>[oldSdkRevision], //revisionsList
-        <String, List<MigratePlatformConfig>>{
-          oldSdkRevision: <MigratePlatformConfig>[
-            MigratePlatformConfig(component: FlutterProjectComponent.android),
-            MigratePlatformConfig(component: FlutterProjectComponent.ios)
+      testUsingContext(
+        'MigrateBaseFlutterProject creates',
+        () async {
+          final Directory workingDir = createResolvedTempDirectorySync(
+            'migrate_working_dir.',
+          );
+          final Directory baseDir = createResolvedTempDirectorySync(
+            'base_dir.',
+          );
+          result.generatedBaseTemplateDirectory = baseDir;
+          workingDir.createSync(recursive: true);
+          final MigrateBaseFlutterProject baseProject =
+              MigrateBaseFlutterProject(
+                path: null,
+                directory: baseDir,
+                name: 'base',
+                androidLanguage: 'java',
+                iosLanguage: 'objc',
+              );
+
+          await baseProject.createProject(
+            context,
+            result,
+            <String>[oldSdkRevision], //revisionsList
+            <String, List<MigratePlatformConfig>>{
+              oldSdkRevision: <MigratePlatformConfig>[
+                MigratePlatformConfig(
+                  component: FlutterProjectComponent.android,
+                ),
+                MigratePlatformConfig(component: FlutterProjectComponent.ios),
+              ],
+            }, //revisionToConfigs
+            oldSdkRevision, //fallbackRevision
+            oldSdkRevision, //targetRevision
+            targetFlutterDirectory, //targetFlutterDirectory
+          );
+
+          expect(baseDir.childFile('pubspec.yaml').existsSync(), true);
+          expect(
+            baseDir
+                .childDirectory('android')
+                .childFile('build.gradle')
+                .existsSync(),
+            true,
+          );
+        },
+        timeout: const Timeout(Duration(seconds: 500)),
+      );
+
+      testUsingContext(
+        'Migrate___FlutterProject skips when path exists',
+        () async {
+          final Directory workingDir = createResolvedTempDirectorySync(
+            'migrate_working_dir.',
+          );
+          final Directory targetDir = createResolvedTempDirectorySync(
+            'target_dir.',
+          );
+          final Directory baseDir = createResolvedTempDirectorySync(
+            'base_dir.',
+          );
+          result.generatedTargetTemplateDirectory = targetDir;
+          result.generatedBaseTemplateDirectory = baseDir;
+          workingDir.createSync(recursive: true);
+
+          final MigrateBaseFlutterProject baseProject =
+              MigrateBaseFlutterProject(
+                path: 'some_existing_base_path',
+                directory: baseDir,
+                name: 'base',
+                androidLanguage: 'java',
+                iosLanguage: 'objc',
+              );
+          final MigrateTargetFlutterProject targetProject =
+              MigrateTargetFlutterProject(
+                path: 'some_existing_target_path',
+                directory: targetDir,
+                name: 'base',
+                androidLanguage: 'java',
+                iosLanguage: 'objc',
+              );
+
+          await baseProject.createProject(
+            context,
+            result,
+            <String>[oldSdkRevision], //revisionsList
+            <String, List<MigratePlatformConfig>>{
+              oldSdkRevision: <MigratePlatformConfig>[
+                MigratePlatformConfig(
+                  component: FlutterProjectComponent.android,
+                ),
+                MigratePlatformConfig(component: FlutterProjectComponent.ios),
+              ],
+            }, //revisionToConfigs
+            oldSdkRevision, //fallbackRevision
+            oldSdkRevision, //targetRevision
+            targetFlutterDirectory, //targetFlutterDirectory
+          );
+
+          expect(baseDir.childFile('pubspec.yaml').existsSync(), false);
+          expect(
+            baseDir
+                .childDirectory('android')
+                .childFile('build.gradle')
+                .existsSync(),
+            false,
+          );
+
+          await targetProject.createProject(
+            context,
+            result,
+            oldSdkRevision, //revisionsList
+            targetFlutterDirectory, //targetFlutterDirectory
+          );
+
+          expect(targetDir.childFile('pubspec.yaml').existsSync(), false);
+          expect(
+            targetDir
+                .childDirectory('android')
+                .childFile('build.gradle')
+                .existsSync(),
+            false,
+          );
+        },
+        timeout: const Timeout(Duration(seconds: 500)),
+      );
+    },
+    // TODO(stuartmorgan): These should not be unit tests, see
+    // https://github.com/flutter/flutter/issues/121257.
+    skip: 'TODO: Speed up, or move to another type of test',
+  );
+
+  group(
+    'MigrateRevisions',
+    () {
+      setUp(() async {
+        fileSystem = LocalFileSystem.test(signals: LocalSignals.instance);
+        currentDir = createResolvedTempDirectorySync('current_app.');
+        logger = BufferLogger.test();
+        utils = MigrateUtils(
+          logger: logger,
+          fileSystem: fileSystem,
+          processManager: const LocalProcessManager(),
+        );
+        await MigrateProject.installProject(
+          'version:1.22.6_stable',
+          currentDir,
+        );
+        final FlutterProjectFactory flutterFactory = FlutterProjectFactory();
+        final FlutterProject flutterProject = flutterFactory.fromDirectory(
+          currentDir,
+        );
+        result = MigrateResult.empty();
+        final MigrateLogger migrateLogger = MigrateLogger(
+          logger: logger,
+          verbose: true,
+        );
+        migrateLogger.start();
+        context = MigrateContext(
+          flutterProject: flutterProject,
+          skippedPrefixes: <String>{},
+          fileSystem: fileSystem,
+          migrateLogger: migrateLogger,
+          migrateUtils: utils,
+          environment: environment,
+        );
+      });
+
+      testUsingContext('extracts revisions underpopulated metadata', () async {
+        final MigrateRevisions revisions = MigrateRevisions(
+          context: context,
+          baseRevision: oldSdkRevision,
+          allowFallbackBaseRevision: true,
+          platforms: <SupportedPlatform>[
+            SupportedPlatform.android,
+            SupportedPlatform.ios,
           ],
-        }, //revisionToConfigs
-        oldSdkRevision, //fallbackRevision
-        oldSdkRevision, //targetRevision
-        targetFlutterDirectory, //targetFlutterDirectory
-      );
+          environment: environment,
+        );
 
-      expect(baseDir.childFile('pubspec.yaml').existsSync(), false);
-      expect(
-          baseDir
-              .childDirectory('android')
-              .childFile('build.gradle')
-              .existsSync(),
-          false);
+        expect(revisions.revisionsList, <String>[oldSdkRevision]);
+        expect(revisions.fallbackRevision, oldSdkRevision);
+        expect(
+          revisions.metadataRevision,
+          '9b2d32b605630f28625709ebd9d78ab3016b2bf6',
+        );
+        expect(revisions.config.unmanagedFiles.isEmpty, false);
+        expect(revisions.config.platformConfigs.isEmpty, false);
+        expect(revisions.config.platformConfigs.length, 3);
+        expect(
+          revisions.config.platformConfigs.containsKey(
+            FlutterProjectComponent.root,
+          ),
+          true,
+        );
+        expect(
+          revisions.config.platformConfigs.containsKey(
+            FlutterProjectComponent.android,
+          ),
+          true,
+        );
+        expect(
+          revisions.config.platformConfigs.containsKey(
+            FlutterProjectComponent.ios,
+          ),
+          true,
+        );
+      });
 
-      await targetProject.createProject(
-        context,
-        result,
-        oldSdkRevision, //revisionsList
-        targetFlutterDirectory, //targetFlutterDirectory
-      );
-
-      expect(targetDir.childFile('pubspec.yaml').existsSync(), false);
-      expect(
-          targetDir
-              .childDirectory('android')
-              .childFile('build.gradle')
-              .existsSync(),
-          false);
-    }, timeout: const Timeout(Duration(seconds: 500)));
-  },
-      // TODO(stuartmorgan): These should not be unit tests, see
-      // https://github.com/flutter/flutter/issues/121257.
-      skip: 'TODO: Speed up, or move to another type of test');
-
-  group('MigrateRevisions', () {
-    setUp(() async {
-      fileSystem = LocalFileSystem.test(signals: LocalSignals.instance);
-      currentDir = createResolvedTempDirectorySync('current_app.');
-      logger = BufferLogger.test();
-      utils = MigrateUtils(
-        logger: logger,
-        fileSystem: fileSystem,
-        processManager: const LocalProcessManager(),
-      );
-      await MigrateProject.installProject('version:1.22.6_stable', currentDir);
-      final FlutterProjectFactory flutterFactory = FlutterProjectFactory();
-      final FlutterProject flutterProject =
-          flutterFactory.fromDirectory(currentDir);
-      result = MigrateResult.empty();
-      final MigrateLogger migrateLogger =
-          MigrateLogger(logger: logger, verbose: true);
-      migrateLogger.start();
-      context = MigrateContext(
-        flutterProject: flutterProject,
-        skippedPrefixes: <String>{},
-        fileSystem: fileSystem,
-        migrateLogger: migrateLogger,
-        migrateUtils: utils,
-        environment: environment,
-      );
-    });
-
-    testUsingContext('extracts revisions underpopulated metadata', () async {
-      final MigrateRevisions revisions = MigrateRevisions(
-        context: context,
-        baseRevision: oldSdkRevision,
-        allowFallbackBaseRevision: true,
-        platforms: <SupportedPlatform>[
-          SupportedPlatform.android,
-          SupportedPlatform.ios
-        ],
-        environment: environment,
-      );
-
-      expect(revisions.revisionsList, <String>[oldSdkRevision]);
-      expect(revisions.fallbackRevision, oldSdkRevision);
-      expect(revisions.metadataRevision,
-          '9b2d32b605630f28625709ebd9d78ab3016b2bf6');
-      expect(revisions.config.unmanagedFiles.isEmpty, false);
-      expect(revisions.config.platformConfigs.isEmpty, false);
-      expect(revisions.config.platformConfigs.length, 3);
-      expect(
-          revisions.config.platformConfigs
-              .containsKey(FlutterProjectComponent.root),
-          true);
-      expect(
-          revisions.config.platformConfigs
-              .containsKey(FlutterProjectComponent.android),
-          true);
-      expect(
-          revisions.config.platformConfigs
-              .containsKey(FlutterProjectComponent.ios),
-          true);
-    });
-
-    testUsingContext('extracts revisions full metadata', () async {
-      final File metadataFile =
-          context.flutterProject.directory.childFile('.metadata');
-      if (metadataFile.existsSync()) {
-        if (!tryToDelete(metadataFile)) {
-          // TODO(garyq): Inaccessible .metadata on windows.
-          // Skip test for now. We should reneable.
-          return;
+      testUsingContext('extracts revisions full metadata', () async {
+        final File metadataFile = context.flutterProject.directory.childFile(
+          '.metadata',
+        );
+        if (metadataFile.existsSync()) {
+          if (!tryToDelete(metadataFile)) {
+            // TODO(garyq): Inaccessible .metadata on windows.
+            // Skip test for now. We should reneable.
+            return;
+          }
         }
-      }
-      metadataFile.createSync(recursive: true);
-      metadataFile.writeAsStringSync('''
+        metadataFile.createSync(recursive: true);
+        metadataFile.writeAsStringSync('''
 # This file tracks properties of this Flutter project.
 # Used by Flutter tool to assess capabilities and perform upgrades etc.
 #
@@ -377,279 +438,349 @@ migration:
     - 'ios/Runner.xcodeproj/project.pbxproj'
 ''', flush: true);
 
-      final MigrateRevisions revisions = MigrateRevisions(
-        context: context,
-        baseRevision: oldSdkRevision,
-        allowFallbackBaseRevision: true,
-        platforms: <SupportedPlatform>[
-          SupportedPlatform.android,
-          SupportedPlatform.ios
-        ],
-        environment: environment,
-      );
-
-      expect(revisions.revisionsList, <String>[oldSdkRevision]);
-      expect(revisions.fallbackRevision, oldSdkRevision);
-      expect(revisions.metadataRevision,
-          '9b2d32b605630f28625709ebd9d78ab3016b2bf6');
-      expect(revisions.config.unmanagedFiles.isEmpty, false);
-      expect(revisions.config.unmanagedFiles.length, 3);
-      expect(revisions.config.unmanagedFiles.contains('lib/main.dart'), true);
-      expect(revisions.config.unmanagedFiles.contains('blah.dart'), true);
-      expect(
-          revisions.config.unmanagedFiles
-              .contains('ios/Runner.xcodeproj/project.pbxproj'),
-          true);
-
-      expect(revisions.config.platformConfigs.length, 7);
-      expect(
-          revisions.config.platformConfigs
-              .containsKey(FlutterProjectComponent.root),
-          true);
-      expect(
-          revisions.config.platformConfigs
-              .containsKey(FlutterProjectComponent.android),
-          true);
-      expect(
-          revisions.config.platformConfigs
-              .containsKey(FlutterProjectComponent.ios),
-          true);
-      expect(
-          revisions.config.platformConfigs
-              .containsKey(FlutterProjectComponent.linux),
-          true);
-      expect(
-          revisions.config.platformConfigs
-              .containsKey(FlutterProjectComponent.macos),
-          true);
-      expect(
-          revisions.config.platformConfigs
-              .containsKey(FlutterProjectComponent.web),
-          true);
-      expect(
-          revisions.config.platformConfigs
-              .containsKey(FlutterProjectComponent.windows),
-          true);
-
-      expect(
-          revisions.config.platformConfigs[FlutterProjectComponent.root]!
-              .createRevision,
-          '9b2d32b605630f28625709ebd9d78ab3016b2bf6');
-      expect(
-          revisions.config.platformConfigs[FlutterProjectComponent.android]!
-              .createRevision,
-          '9b2d32b605630f28625709ebd9d78ab3016b2bf6');
-      expect(
-          revisions.config.platformConfigs[FlutterProjectComponent.ios]!
-              .createRevision,
-          '9b2d32b605630f28625709ebd9d78ab3016b2bf6');
-      expect(
-          revisions.config.platformConfigs[FlutterProjectComponent.linux]!
-              .createRevision,
-          '9b2d32b605630f28625709ebd9d78ab3016b2bf6');
-      expect(
-          revisions.config.platformConfigs[FlutterProjectComponent.macos]!
-              .createRevision,
-          '9b2d32b605630f28625709ebd9d78ab3016b2bf6');
-      expect(
-          revisions.config.platformConfigs[FlutterProjectComponent.web]!
-              .createRevision,
-          '9b2d32b605630f28625709ebd9d78ab3016b2bf6');
-      expect(
-          revisions.config.platformConfigs[FlutterProjectComponent.windows]!
-              .createRevision,
-          '36427af29421f406ac95ff55ea31d1dc49a45b5f');
-
-      expect(
-          revisions.config.platformConfigs[FlutterProjectComponent.root]!
-              .baseRevision,
-          '9b2d32b605630f28625709ebd9d78ab3016b2bf6');
-      expect(
-          revisions.config.platformConfigs[FlutterProjectComponent.android]!
-              .baseRevision,
-          '9b2d32b605630f28625709ebd9d78ab3016b2bf6');
-      expect(
-          revisions.config.platformConfigs[FlutterProjectComponent.ios]!
-              .baseRevision,
-          '9b2d32b605630f28625709ebd9d78ab3016b2bf6');
-      expect(
-          revisions.config.platformConfigs[FlutterProjectComponent.linux]!
-              .baseRevision,
-          '9b2d32b605630f28625709ebd9d78ab3016b2bf6');
-      expect(
-          revisions.config.platformConfigs[FlutterProjectComponent.macos]!
-              .baseRevision,
-          '9b2d32b605630f28625709ebd9d78ab3016b2bf6');
-      expect(
-          revisions.config.platformConfigs[FlutterProjectComponent.web]!
-              .baseRevision,
-          '9b2d32b605630f28625709ebd9d78ab3016b2bf6');
-      expect(
-          revisions.config.platformConfigs[FlutterProjectComponent.windows]!
-              .baseRevision,
-          '36427af29421f406ac95ff55ea31d1dc49a45b5f');
-    });
-  },
-      // TODO(stuartmorgan): These should not be unit tests, see
-      // https://github.com/flutter/flutter/issues/121257.
-      skip: 'TODO: Speed up, or move to another type of test');
-
-  group('project operations', () {
-    setUp(() async {
-      await setUpFullEnv();
-    });
-
-    tearDown(() async {
-      tryToDelete(targetFlutterDirectory);
-      tryToDelete(newerTargetFlutterDirectory);
-    });
-
-    testUsingContext('diff base and target', () async {
-      final Directory workingDir =
-          createResolvedTempDirectorySync('migrate_working_dir.');
-      final Directory targetDir =
-          createResolvedTempDirectorySync('target_dir.');
-      final Directory baseDir = createResolvedTempDirectorySync('base_dir.');
-      result.generatedTargetTemplateDirectory = targetDir;
-      result.generatedBaseTemplateDirectory = baseDir;
-      workingDir.createSync(recursive: true);
-
-      final MigrateBaseFlutterProject baseProject = MigrateBaseFlutterProject(
-        path: null,
-        directory: baseDir,
-        name: 'base',
-        androidLanguage: 'java',
-        iosLanguage: 'objc',
-      );
-      final MigrateTargetFlutterProject targetProject =
-          MigrateTargetFlutterProject(
-        path: null,
-        directory: targetDir,
-        name: 'base',
-        androidLanguage: 'java',
-        iosLanguage: 'objc',
-      );
-
-      await baseProject.createProject(
-        context,
-        result,
-        <String>[oldSdkRevision], //revisionsList
-        <String, List<MigratePlatformConfig>>{
-          oldSdkRevision: <MigratePlatformConfig>[
-            MigratePlatformConfig(component: FlutterProjectComponent.android),
-            MigratePlatformConfig(component: FlutterProjectComponent.ios)
+        final MigrateRevisions revisions = MigrateRevisions(
+          context: context,
+          baseRevision: oldSdkRevision,
+          allowFallbackBaseRevision: true,
+          platforms: <SupportedPlatform>[
+            SupportedPlatform.android,
+            SupportedPlatform.ios,
           ],
-        }, //revisionToConfigs
-        oldSdkRevision, //fallbackRevision
-        oldSdkRevision, //targetRevision
-        targetFlutterDirectory, //targetFlutterDirectory
-      );
+          environment: environment,
+        );
 
-      expect(baseDir.childFile('pubspec.yaml').existsSync(), true);
-      expect(
+        expect(revisions.revisionsList, <String>[oldSdkRevision]);
+        expect(revisions.fallbackRevision, oldSdkRevision);
+        expect(
+          revisions.metadataRevision,
+          '9b2d32b605630f28625709ebd9d78ab3016b2bf6',
+        );
+        expect(revisions.config.unmanagedFiles.isEmpty, false);
+        expect(revisions.config.unmanagedFiles.length, 3);
+        expect(revisions.config.unmanagedFiles.contains('lib/main.dart'), true);
+        expect(revisions.config.unmanagedFiles.contains('blah.dart'), true);
+        expect(
+          revisions.config.unmanagedFiles.contains(
+            'ios/Runner.xcodeproj/project.pbxproj',
+          ),
+          true,
+        );
+
+        expect(revisions.config.platformConfigs.length, 7);
+        expect(
+          revisions.config.platformConfigs.containsKey(
+            FlutterProjectComponent.root,
+          ),
+          true,
+        );
+        expect(
+          revisions.config.platformConfigs.containsKey(
+            FlutterProjectComponent.android,
+          ),
+          true,
+        );
+        expect(
+          revisions.config.platformConfigs.containsKey(
+            FlutterProjectComponent.ios,
+          ),
+          true,
+        );
+        expect(
+          revisions.config.platformConfigs.containsKey(
+            FlutterProjectComponent.linux,
+          ),
+          true,
+        );
+        expect(
+          revisions.config.platformConfigs.containsKey(
+            FlutterProjectComponent.macos,
+          ),
+          true,
+        );
+        expect(
+          revisions.config.platformConfigs.containsKey(
+            FlutterProjectComponent.web,
+          ),
+          true,
+        );
+        expect(
+          revisions.config.platformConfigs.containsKey(
+            FlutterProjectComponent.windows,
+          ),
+          true,
+        );
+
+        expect(
+          revisions
+              .config
+              .platformConfigs[FlutterProjectComponent.root]!
+              .createRevision,
+          '9b2d32b605630f28625709ebd9d78ab3016b2bf6',
+        );
+        expect(
+          revisions
+              .config
+              .platformConfigs[FlutterProjectComponent.android]!
+              .createRevision,
+          '9b2d32b605630f28625709ebd9d78ab3016b2bf6',
+        );
+        expect(
+          revisions
+              .config
+              .platformConfigs[FlutterProjectComponent.ios]!
+              .createRevision,
+          '9b2d32b605630f28625709ebd9d78ab3016b2bf6',
+        );
+        expect(
+          revisions
+              .config
+              .platformConfigs[FlutterProjectComponent.linux]!
+              .createRevision,
+          '9b2d32b605630f28625709ebd9d78ab3016b2bf6',
+        );
+        expect(
+          revisions
+              .config
+              .platformConfigs[FlutterProjectComponent.macos]!
+              .createRevision,
+          '9b2d32b605630f28625709ebd9d78ab3016b2bf6',
+        );
+        expect(
+          revisions
+              .config
+              .platformConfigs[FlutterProjectComponent.web]!
+              .createRevision,
+          '9b2d32b605630f28625709ebd9d78ab3016b2bf6',
+        );
+        expect(
+          revisions
+              .config
+              .platformConfigs[FlutterProjectComponent.windows]!
+              .createRevision,
+          '36427af29421f406ac95ff55ea31d1dc49a45b5f',
+        );
+
+        expect(
+          revisions
+              .config
+              .platformConfigs[FlutterProjectComponent.root]!
+              .baseRevision,
+          '9b2d32b605630f28625709ebd9d78ab3016b2bf6',
+        );
+        expect(
+          revisions
+              .config
+              .platformConfigs[FlutterProjectComponent.android]!
+              .baseRevision,
+          '9b2d32b605630f28625709ebd9d78ab3016b2bf6',
+        );
+        expect(
+          revisions
+              .config
+              .platformConfigs[FlutterProjectComponent.ios]!
+              .baseRevision,
+          '9b2d32b605630f28625709ebd9d78ab3016b2bf6',
+        );
+        expect(
+          revisions
+              .config
+              .platformConfigs[FlutterProjectComponent.linux]!
+              .baseRevision,
+          '9b2d32b605630f28625709ebd9d78ab3016b2bf6',
+        );
+        expect(
+          revisions
+              .config
+              .platformConfigs[FlutterProjectComponent.macos]!
+              .baseRevision,
+          '9b2d32b605630f28625709ebd9d78ab3016b2bf6',
+        );
+        expect(
+          revisions
+              .config
+              .platformConfigs[FlutterProjectComponent.web]!
+              .baseRevision,
+          '9b2d32b605630f28625709ebd9d78ab3016b2bf6',
+        );
+        expect(
+          revisions
+              .config
+              .platformConfigs[FlutterProjectComponent.windows]!
+              .baseRevision,
+          '36427af29421f406ac95ff55ea31d1dc49a45b5f',
+        );
+      });
+    },
+    // TODO(stuartmorgan): These should not be unit tests, see
+    // https://github.com/flutter/flutter/issues/121257.
+    skip: 'TODO: Speed up, or move to another type of test',
+  );
+
+  group(
+    'project operations',
+    () {
+      setUp(() async {
+        await setUpFullEnv();
+      });
+
+      tearDown(() async {
+        tryToDelete(targetFlutterDirectory);
+        tryToDelete(newerTargetFlutterDirectory);
+      });
+
+      testUsingContext('diff base and target', () async {
+        final Directory workingDir = createResolvedTempDirectorySync(
+          'migrate_working_dir.',
+        );
+        final Directory targetDir = createResolvedTempDirectorySync(
+          'target_dir.',
+        );
+        final Directory baseDir = createResolvedTempDirectorySync('base_dir.');
+        result.generatedTargetTemplateDirectory = targetDir;
+        result.generatedBaseTemplateDirectory = baseDir;
+        workingDir.createSync(recursive: true);
+
+        final MigrateBaseFlutterProject baseProject = MigrateBaseFlutterProject(
+          path: null,
+          directory: baseDir,
+          name: 'base',
+          androidLanguage: 'java',
+          iosLanguage: 'objc',
+        );
+        final MigrateTargetFlutterProject targetProject =
+            MigrateTargetFlutterProject(
+              path: null,
+              directory: targetDir,
+              name: 'base',
+              androidLanguage: 'java',
+              iosLanguage: 'objc',
+            );
+
+        await baseProject.createProject(
+          context,
+          result,
+          <String>[oldSdkRevision], //revisionsList
+          <String, List<MigratePlatformConfig>>{
+            oldSdkRevision: <MigratePlatformConfig>[
+              MigratePlatformConfig(component: FlutterProjectComponent.android),
+              MigratePlatformConfig(component: FlutterProjectComponent.ios),
+            ],
+          }, //revisionToConfigs
+          oldSdkRevision, //fallbackRevision
+          oldSdkRevision, //targetRevision
+          targetFlutterDirectory, //targetFlutterDirectory
+        );
+
+        expect(baseDir.childFile('pubspec.yaml').existsSync(), true);
+        expect(
           baseDir
               .childDirectory('android')
               .childFile('build.gradle')
               .existsSync(),
-          true);
+          true,
+        );
 
-      await targetProject.createProject(
-        context,
-        result,
-        newSdkRevision, //revisionsList
-        newerTargetFlutterDirectory, //targetFlutterDirectory
-      );
+        await targetProject.createProject(
+          context,
+          result,
+          newSdkRevision, //revisionsList
+          newerTargetFlutterDirectory, //targetFlutterDirectory
+        );
 
-      expect(targetDir.childFile('pubspec.yaml').existsSync(), true);
-      expect(
+        expect(targetDir.childFile('pubspec.yaml').existsSync(), true);
+        expect(
           targetDir
               .childDirectory('android')
               .childFile('build.gradle')
               .existsSync(),
-          true);
+          true,
+        );
 
-      final Map<String, DiffResult> diffResults =
-          await baseProject.diff(context, targetProject);
-      final Map<String, DiffResult> canonicalizedDiffResults =
-          <String, DiffResult>{};
-      for (final MapEntry<String, DiffResult> entry in diffResults.entries) {
-        canonicalizedDiffResults[canonicalize(entry.key)] = entry.value;
-      }
-      result.diffMap.addAll(diffResults);
+        final Map<String, DiffResult> diffResults = await baseProject.diff(
+          context,
+          targetProject,
+        );
+        final Map<String, DiffResult> canonicalizedDiffResults =
+            <String, DiffResult>{};
+        for (final MapEntry<String, DiffResult> entry in diffResults.entries) {
+          canonicalizedDiffResults[canonicalize(entry.key)] = entry.value;
+        }
+        result.diffMap.addAll(diffResults);
 
-      List<String> expectedFiles = <String>[
-        '.metadata',
-        'ios/Runner.xcworkspace/contents.xcworkspacedata',
-        'ios/Runner/AppDelegate.h',
-        'ios/Runner/Assets.xcassets/LaunchImage.imageset/LaunchImage@2x.png',
-        'ios/Runner/Assets.xcassets/LaunchImage.imageset/LaunchImage@3x.png',
-        'ios/Runner/Assets.xcassets/LaunchImage.imageset/README.md',
-        'ios/Runner/Assets.xcassets/LaunchImage.imageset/Contents.json',
-        'ios/Runner/Assets.xcassets/LaunchImage.imageset/LaunchImage.png',
-        'ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-76x76@2x.png',
-        'ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-29x29@1x.png',
-        'ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-40x40@1x.png',
-        'ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-20x20@1x.png',
-        'ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-1024x1024@1x.png',
-        'ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-83.5x83.5@2x.png',
-        'ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-20x20@3x.png',
-        'ios/Runner/Assets.xcassets/AppIcon.appiconset/Contents.json',
-        'ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-20x20@2x.png',
-        'ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-29x29@3x.png',
-        'ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-40x40@2x.png',
-        'ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-60x60@3x.png',
-        'ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-60x60@2x.png',
-        'ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-76x76@1x.png',
-        'ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-40x40@3x.png',
-        'ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-29x29@2x.png',
-        'ios/Runner/Base.lproj/LaunchScreen.storyboard',
-        'ios/Runner/Base.lproj/Main.storyboard',
-        'ios/Runner/main.m',
-        'ios/Runner/AppDelegate.m',
-        'ios/Runner/Info.plist',
-        'ios/Runner.xcodeproj/project.xcworkspace/contents.xcworkspacedata',
-        'ios/Runner.xcodeproj/xcshareddata/xcschemes/Runner.xcscheme',
-        'ios/Flutter/Debug.xcconfig',
-        'ios/Flutter/Release.xcconfig',
-        'ios/Flutter/AppFrameworkInfo.plist',
-        'pubspec.yaml',
-        '.gitignore',
-        'android/base_android.iml',
-        'android/app/build.gradle',
-        'android/app/src/main/res/mipmap-mdpi/ic_launcher.png',
-        'android/app/src/main/res/mipmap-hdpi/ic_launcher.png',
-        'android/app/src/main/res/drawable/launch_background.xml',
-        'android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png',
-        'android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png',
-        'android/app/src/main/res/values/styles.xml',
-        'android/app/src/main/res/mipmap-xhdpi/ic_launcher.png',
-        'android/app/src/main/AndroidManifest.xml',
-        'android/app/src/main/java/com/example/base/MainActivity.java',
-        'android/local.properties',
-        'android/gradle/wrapper/gradle-wrapper.jar',
-        'android/gradle/wrapper/gradle-wrapper.properties',
-        'android/gradlew',
-        'android/build.gradle',
-        'android/gradle.properties',
-        'android/gradlew.bat',
-        'android/settings.gradle',
-        'base.iml',
-        '.idea/runConfigurations/main_dart.xml',
-        '.idea/libraries/Dart_SDK.xml',
-        '.idea/libraries/KotlinJavaRuntime.xml',
-        '.idea/libraries/Flutter_for_Android.xml',
-        '.idea/workspace.xml',
-        '.idea/modules.xml',
-      ];
-      expectedFiles =
-          List<String>.from(expectedFiles.map((String e) => canonicalize(e)));
-      expect(diffResults.length, 62);
-      expect(expectedFiles.length, 62);
-      for (final String diffResultPath in canonicalizedDiffResults.keys) {
-        expect(expectedFiles.contains(diffResultPath), true);
-      }
-      // Spot check diffs on key files:
-      expect(
+        List<String> expectedFiles = <String>[
+          '.metadata',
+          'ios/Runner.xcworkspace/contents.xcworkspacedata',
+          'ios/Runner/AppDelegate.h',
+          'ios/Runner/Assets.xcassets/LaunchImage.imageset/LaunchImage@2x.png',
+          'ios/Runner/Assets.xcassets/LaunchImage.imageset/LaunchImage@3x.png',
+          'ios/Runner/Assets.xcassets/LaunchImage.imageset/README.md',
+          'ios/Runner/Assets.xcassets/LaunchImage.imageset/Contents.json',
+          'ios/Runner/Assets.xcassets/LaunchImage.imageset/LaunchImage.png',
+          'ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-76x76@2x.png',
+          'ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-29x29@1x.png',
+          'ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-40x40@1x.png',
+          'ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-20x20@1x.png',
+          'ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-1024x1024@1x.png',
+          'ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-83.5x83.5@2x.png',
+          'ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-20x20@3x.png',
+          'ios/Runner/Assets.xcassets/AppIcon.appiconset/Contents.json',
+          'ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-20x20@2x.png',
+          'ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-29x29@3x.png',
+          'ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-40x40@2x.png',
+          'ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-60x60@3x.png',
+          'ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-60x60@2x.png',
+          'ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-76x76@1x.png',
+          'ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-40x40@3x.png',
+          'ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-29x29@2x.png',
+          'ios/Runner/Base.lproj/LaunchScreen.storyboard',
+          'ios/Runner/Base.lproj/Main.storyboard',
+          'ios/Runner/main.m',
+          'ios/Runner/AppDelegate.m',
+          'ios/Runner/Info.plist',
+          'ios/Runner.xcodeproj/project.xcworkspace/contents.xcworkspacedata',
+          'ios/Runner.xcodeproj/xcshareddata/xcschemes/Runner.xcscheme',
+          'ios/Flutter/Debug.xcconfig',
+          'ios/Flutter/Release.xcconfig',
+          'ios/Flutter/AppFrameworkInfo.plist',
+          'pubspec.yaml',
+          '.gitignore',
+          'android/base_android.iml',
+          'android/app/build.gradle',
+          'android/app/src/main/res/mipmap-mdpi/ic_launcher.png',
+          'android/app/src/main/res/mipmap-hdpi/ic_launcher.png',
+          'android/app/src/main/res/drawable/launch_background.xml',
+          'android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png',
+          'android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png',
+          'android/app/src/main/res/values/styles.xml',
+          'android/app/src/main/res/mipmap-xhdpi/ic_launcher.png',
+          'android/app/src/main/AndroidManifest.xml',
+          'android/app/src/main/java/com/example/base/MainActivity.java',
+          'android/local.properties',
+          'android/gradle/wrapper/gradle-wrapper.jar',
+          'android/gradle/wrapper/gradle-wrapper.properties',
+          'android/gradlew',
+          'android/build.gradle',
+          'android/gradle.properties',
+          'android/gradlew.bat',
+          'android/settings.gradle',
+          'base.iml',
+          '.idea/runConfigurations/main_dart.xml',
+          '.idea/libraries/Dart_SDK.xml',
+          '.idea/libraries/KotlinJavaRuntime.xml',
+          '.idea/libraries/Flutter_for_Android.xml',
+          '.idea/workspace.xml',
+          '.idea/modules.xml',
+        ];
+        expectedFiles = List<String>.from(
+          expectedFiles.map((String e) => canonicalize(e)),
+        );
+        expect(diffResults.length, 62);
+        expect(expectedFiles.length, 62);
+        for (final String diffResultPath in canonicalizedDiffResults.keys) {
+          expect(expectedFiles.contains(diffResultPath), true);
+        }
+        // Spot check diffs on key files:
+        expect(
           canonicalizedDiffResults[canonicalize('android/build.gradle')]!.diff,
           contains(r'''
 @@ -1,18 +1,20 @@
@@ -659,8 +790,9 @@ migration:
          google()
 -        jcenter()
 +        mavenCentral()
-     }'''));
-      expect(
+     }'''),
+        );
+        expect(
           canonicalizedDiffResults[canonicalize('android/build.gradle')]!.diff,
           contains(r'''
      dependencies {
@@ -668,8 +800,9 @@ migration:
 +        classpath 'com.android.tools.build:gradle:7.1.2'
 +        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
      }
- }'''));
-      expect(
+ }'''),
+        );
+        expect(
           canonicalizedDiffResults[canonicalize('android/build.gradle')]!.diff,
           contains(r'''
  allprojects {
@@ -678,10 +811,12 @@ migration:
 -        jcenter()
 +        mavenCentral()
      }
- }'''));
-      expect(
-          canonicalizedDiffResults[
-                  canonicalize('android/app/src/main/AndroidManifest.xml')]!
+ }'''),
+        );
+        expect(
+          canonicalizedDiffResults[canonicalize(
+                'android/app/src/main/AndroidManifest.xml',
+              )]!
               .diff,
           contains(r'''
 @@ -1,39 +1,34 @@
@@ -739,140 +874,148 @@ migration:
 +            android:name="flutterEmbedding"
 +            android:value="2" />
      </application>
- </manifest>'''));
-    }, timeout: const Timeout(Duration(seconds: 500)));
+ </manifest>'''),
+        );
+      }, timeout: const Timeout(Duration(seconds: 500)));
 
-    testUsingContext('Merge succeeds', () async {
-      final Directory workingDir =
-          createResolvedTempDirectorySync('migrate_working_dir.');
-      final Directory targetDir =
-          createResolvedTempDirectorySync('target_dir.');
-      final Directory baseDir = createResolvedTempDirectorySync('base_dir.');
-      result.generatedTargetTemplateDirectory = targetDir;
-      result.generatedBaseTemplateDirectory = baseDir;
-      workingDir.createSync(recursive: true);
+      testUsingContext('Merge succeeds', () async {
+        final Directory workingDir = createResolvedTempDirectorySync(
+          'migrate_working_dir.',
+        );
+        final Directory targetDir = createResolvedTempDirectorySync(
+          'target_dir.',
+        );
+        final Directory baseDir = createResolvedTempDirectorySync('base_dir.');
+        result.generatedTargetTemplateDirectory = targetDir;
+        result.generatedBaseTemplateDirectory = baseDir;
+        workingDir.createSync(recursive: true);
 
-      final MigrateBaseFlutterProject baseProject = MigrateBaseFlutterProject(
-        path: null,
-        directory: baseDir,
-        name: 'base',
-        androidLanguage: 'java',
-        iosLanguage: 'objc',
-      );
-      final MigrateTargetFlutterProject targetProject =
-          MigrateTargetFlutterProject(
-        path: null,
-        directory: targetDir,
-        name: 'base',
-        androidLanguage: 'java',
-        iosLanguage: 'objc',
-      );
+        final MigrateBaseFlutterProject baseProject = MigrateBaseFlutterProject(
+          path: null,
+          directory: baseDir,
+          name: 'base',
+          androidLanguage: 'java',
+          iosLanguage: 'objc',
+        );
+        final MigrateTargetFlutterProject targetProject =
+            MigrateTargetFlutterProject(
+              path: null,
+              directory: targetDir,
+              name: 'base',
+              androidLanguage: 'java',
+              iosLanguage: 'objc',
+            );
 
-      await baseProject.createProject(
-        context,
-        result,
-        <String>[oldSdkRevision], //revisionsList
-        <String, List<MigratePlatformConfig>>{
-          oldSdkRevision: <MigratePlatformConfig>[
-            MigratePlatformConfig(component: FlutterProjectComponent.android),
-            MigratePlatformConfig(component: FlutterProjectComponent.ios)
-          ],
-        }, //revisionToConfigs
-        oldSdkRevision, //fallbackRevision
-        oldSdkRevision, //targetRevision
-        targetFlutterDirectory, //targetFlutterDirectory
-      );
+        await baseProject.createProject(
+          context,
+          result,
+          <String>[oldSdkRevision], //revisionsList
+          <String, List<MigratePlatformConfig>>{
+            oldSdkRevision: <MigratePlatformConfig>[
+              MigratePlatformConfig(component: FlutterProjectComponent.android),
+              MigratePlatformConfig(component: FlutterProjectComponent.ios),
+            ],
+          }, //revisionToConfigs
+          oldSdkRevision, //fallbackRevision
+          oldSdkRevision, //targetRevision
+          targetFlutterDirectory, //targetFlutterDirectory
+        );
 
-      expect(baseDir.childFile('pubspec.yaml').existsSync(), true);
-      expect(baseDir.childFile('.metadata').existsSync(), true);
-      expect(
+        expect(baseDir.childFile('pubspec.yaml').existsSync(), true);
+        expect(baseDir.childFile('.metadata').existsSync(), true);
+        expect(
           baseDir
               .childDirectory('android')
               .childFile('build.gradle')
               .existsSync(),
-          true);
+          true,
+        );
 
-      await targetProject.createProject(
-        context,
-        result,
-        newSdkRevision, //revisionsList
-        newerTargetFlutterDirectory, //targetFlutterDirectory
-      );
+        await targetProject.createProject(
+          context,
+          result,
+          newSdkRevision, //revisionsList
+          newerTargetFlutterDirectory, //targetFlutterDirectory
+        );
 
-      expect(targetDir.childFile('pubspec.yaml').existsSync(), true);
-      expect(targetDir.childFile('.metadata').existsSync(), true);
-      expect(
+        expect(targetDir.childFile('pubspec.yaml').existsSync(), true);
+        expect(targetDir.childFile('.metadata').existsSync(), true);
+        expect(
           targetDir
               .childDirectory('android')
               .childFile('build.gradle')
               .existsSync(),
-          true);
+          true,
+        );
 
-      result.diffMap.addAll(await baseProject.diff(context, targetProject));
+        result.diffMap.addAll(await baseProject.diff(context, targetProject));
 
-      await MigrateFlutterProject.merge(
-        context,
-        result,
-        baseProject,
-        targetProject,
-        <String>[], // unmanagedFiles
-        <String>[], // unmanagedDirectories
-        false, // preferTwoWayMerge
-      );
+        await MigrateFlutterProject.merge(
+          context,
+          result,
+          baseProject,
+          targetProject,
+          <String>[], // unmanagedFiles
+          <String>[], // unmanagedDirectories
+          false, // preferTwoWayMerge
+        );
 
-      List<String> expectedMergedPaths = <String>[
-        '.metadata',
-        'ios/Runner/Info.plist',
-        'ios/Runner.xcodeproj/project.xcworkspace/contents.xcworkspacedata',
-        'ios/Runner.xcodeproj/xcshareddata/xcschemes/Runner.xcscheme',
-        'ios/Flutter/AppFrameworkInfo.plist',
-        'pubspec.yaml',
-        '.gitignore',
-        'android/app/build.gradle',
-        'android/app/src/main/res/values/styles.xml',
-        'android/app/src/main/AndroidManifest.xml',
-        'android/gradle/wrapper/gradle-wrapper.properties',
-        'android/build.gradle',
-      ];
-      expectedMergedPaths = List<String>.from(
-          expectedMergedPaths.map((String e) => canonicalize(e)));
-      expect(result.mergeResults.length, 12);
-      expect(expectedMergedPaths.length, 12);
+        List<String> expectedMergedPaths = <String>[
+          '.metadata',
+          'ios/Runner/Info.plist',
+          'ios/Runner.xcodeproj/project.xcworkspace/contents.xcworkspacedata',
+          'ios/Runner.xcodeproj/xcshareddata/xcschemes/Runner.xcscheme',
+          'ios/Flutter/AppFrameworkInfo.plist',
+          'pubspec.yaml',
+          '.gitignore',
+          'android/app/build.gradle',
+          'android/app/src/main/res/values/styles.xml',
+          'android/app/src/main/AndroidManifest.xml',
+          'android/gradle/wrapper/gradle-wrapper.properties',
+          'android/build.gradle',
+        ];
+        expectedMergedPaths = List<String>.from(
+          expectedMergedPaths.map((String e) => canonicalize(e)),
+        );
+        expect(result.mergeResults.length, 12);
+        expect(expectedMergedPaths.length, 12);
 
-      for (final MergeResult mergeResult in result.mergeResults) {
-        expect(
+        for (final MergeResult mergeResult in result.mergeResults) {
+          expect(
             expectedMergedPaths.contains(canonicalize(mergeResult.localPath)),
-            true);
-      }
+            true,
+          );
+        }
 
-      expect(result.mergeResults[0].exitCode, 0);
-      expect(result.mergeResults[1].exitCode, 0);
-      expect(result.mergeResults[2].exitCode, 0);
-      expect(result.mergeResults[3].exitCode, 0);
-      expect(result.mergeResults[4].exitCode, 0);
-      expect(result.mergeResults[5].exitCode, 0);
-      expect(result.mergeResults[6].exitCode, 0);
-      expect(result.mergeResults[7].exitCode, 0);
-      expect(result.mergeResults[8].exitCode, 0);
-      expect(result.mergeResults[9].exitCode, 0);
-      expect(result.mergeResults[10].exitCode, 0);
-      expect(result.mergeResults[11].exitCode, 0);
+        expect(result.mergeResults[0].exitCode, 0);
+        expect(result.mergeResults[1].exitCode, 0);
+        expect(result.mergeResults[2].exitCode, 0);
+        expect(result.mergeResults[3].exitCode, 0);
+        expect(result.mergeResults[4].exitCode, 0);
+        expect(result.mergeResults[5].exitCode, 0);
+        expect(result.mergeResults[6].exitCode, 0);
+        expect(result.mergeResults[7].exitCode, 0);
+        expect(result.mergeResults[8].exitCode, 0);
+        expect(result.mergeResults[9].exitCode, 0);
+        expect(result.mergeResults[10].exitCode, 0);
+        expect(result.mergeResults[11].exitCode, 0);
 
-      expect(result.mergeResults[0].hasConflict, false);
-      expect(result.mergeResults[1].hasConflict, false);
-      expect(result.mergeResults[2].hasConflict, false);
-      expect(result.mergeResults[3].hasConflict, false);
-      expect(result.mergeResults[4].hasConflict, false);
-      expect(result.mergeResults[5].hasConflict, false);
-      expect(result.mergeResults[6].hasConflict, false);
-      expect(result.mergeResults[7].hasConflict, false);
-      expect(result.mergeResults[8].hasConflict, false);
-      expect(result.mergeResults[9].hasConflict, false);
-      expect(result.mergeResults[10].hasConflict, false);
-      expect(result.mergeResults[11].hasConflict, false);
-    }, timeout: const Timeout(Duration(seconds: 500)));
-  },
-      // TODO(stuartmorgan): These should not be unit tests, see
-      // https://github.com/flutter/flutter/issues/121257.
-      skip: 'TODO: Speed up, or move to another type of test');
+        expect(result.mergeResults[0].hasConflict, false);
+        expect(result.mergeResults[1].hasConflict, false);
+        expect(result.mergeResults[2].hasConflict, false);
+        expect(result.mergeResults[3].hasConflict, false);
+        expect(result.mergeResults[4].hasConflict, false);
+        expect(result.mergeResults[5].hasConflict, false);
+        expect(result.mergeResults[6].hasConflict, false);
+        expect(result.mergeResults[7].hasConflict, false);
+        expect(result.mergeResults[8].hasConflict, false);
+        expect(result.mergeResults[9].hasConflict, false);
+        expect(result.mergeResults[10].hasConflict, false);
+        expect(result.mergeResults[11].hasConflict, false);
+      }, timeout: const Timeout(Duration(seconds: 500)));
+    },
+    // TODO(stuartmorgan): These should not be unit tests, see
+    // https://github.com/flutter/flutter/issues/121257.
+    skip: 'TODO: Speed up, or move to another type of test',
+  );
 }

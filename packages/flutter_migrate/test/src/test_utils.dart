@@ -12,8 +12,9 @@ import 'package:process/process.dart';
 import 'common.dart';
 
 /// The [FileSystem] for the integration test environment.
-LocalFileSystem fileSystem =
-    LocalFileSystem.test(signals: LocalSignals.instance);
+LocalFileSystem fileSystem = LocalFileSystem.test(
+  signals: LocalSignals.instance,
+);
 
 /// The [ProcessManager] for the integration test environment.
 const ProcessManager processManager = LocalProcessManager();
@@ -23,16 +24,21 @@ const ProcessManager processManager = LocalProcessManager();
 /// https://github.com/flutter/flutter/pull/21741
 Directory createResolvedTempDirectorySync(String prefix) {
   assert(prefix.endsWith('.'));
-  final Directory tempDirectory =
-      fileSystem.systemTempDirectory.createTempSync('flutter_$prefix');
+  final Directory tempDirectory = fileSystem.systemTempDirectory.createTempSync(
+    'flutter_$prefix',
+  );
   return fileSystem.directory(tempDirectory.resolveSymbolicLinksSync());
 }
 
-void writeFile(String path, String content,
-    {bool writeFutureModifiedDate = false}) {
-  final File file = fileSystem.file(path)
-    ..createSync(recursive: true)
-    ..writeAsStringSync(content, flush: true);
+void writeFile(
+  String path,
+  String content, {
+  bool writeFutureModifiedDate = false,
+}) {
+  final File file =
+      fileSystem.file(path)
+        ..createSync(recursive: true)
+        ..writeAsStringSync(content, flush: true);
   // Some integration tests on Windows to not see this file as being modified
   // recently enough for the hot reload to pick this change up unless the
   // modified time is written in the future.
@@ -53,10 +59,13 @@ Future<void> getPackages(String folder) async {
     'pub',
     'get',
   ];
-  final ProcessResult result =
-      await processManager.run(command, workingDirectory: folder);
+  final ProcessResult result = await processManager.run(
+    command,
+    workingDirectory: folder,
+  );
   if (result.exitCode != 0) {
     throw Exception(
-        'flutter pub get failed: ${result.stderr}\n${result.stdout}');
+      'flutter pub get failed: ${result.stderr}\n${result.stdout}',
+    );
   }
 }

@@ -9,20 +9,17 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('camera', () {
-    test(
-      'ensure camera.dart exports classes from platform interface',
-      () {
-        main_file.CameraDescription;
-        main_file.CameraException;
-        main_file.CameraLensDirection;
-        main_file.CameraLensType;
-        main_file.ExposureMode;
-        main_file.FlashMode;
-        main_file.FocusMode;
-        main_file.ImageFormatGroup;
-        main_file.ResolutionPreset;
-        main_file.XFile;
-      },
-    );
+    test('ensure camera.dart exports classes from platform interface', () {
+      main_file.CameraDescription;
+      main_file.CameraException;
+      main_file.CameraLensDirection;
+      main_file.CameraLensType;
+      main_file.ExposureMode;
+      main_file.FlashMode;
+      main_file.FocusMode;
+      main_file.ImageFormatGroup;
+      main_file.ResolutionPreset;
+      main_file.XFile;
+    });
   });
 }

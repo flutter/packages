@@ -18,7 +18,10 @@ class MigrateBaseDependencies {
   MigrateBaseDependencies() {
     processManager = const LocalProcessManager();
     fileSystem = LocalFileSystem(
-        LocalSignals.instance, Signals.defaultExitSignals, ShutdownHooks());
+      LocalSignals.instance,
+      Signals.defaultExitSignals,
+      ShutdownHooks(),
+    );
 
     stdio = Stdio();
     terminal = AnsiTerminal(stdio: stdio);
@@ -32,9 +35,7 @@ class MigrateBaseDependencies {
       terminal: terminal,
       stdio: stdio,
     );
-    logger = loggerFactory.createLogger(
-      windows: isWindows,
-    );
+    logger = loggerFactory.createLogger(windows: isWindows);
   }
 
   late final ProcessManager processManager;
@@ -53,10 +54,10 @@ class LoggerFactory {
     required Stdio stdio,
     required OutputPreferences outputPreferences,
     StopwatchFactory stopwatchFactory = const StopwatchFactory(),
-  })  : _terminal = terminal,
-        _stdio = stdio,
-        _stopwatchFactory = stopwatchFactory,
-        _outputPreferences = outputPreferences;
+  }) : _terminal = terminal,
+       _stdio = stdio,
+       _stopwatchFactory = stopwatchFactory,
+       _outputPreferences = outputPreferences;
 
   final Terminal _terminal;
   final Stdio _stdio;
@@ -64,9 +65,7 @@ class LoggerFactory {
   final OutputPreferences _outputPreferences;
 
   /// Create the appropriate logger for the current platform and configuration.
-  Logger createLogger({
-    required bool windows,
-  }) {
+  Logger createLogger({required bool windows}) {
     Logger logger;
     if (windows) {
       logger = WindowsStdoutLogger(
@@ -77,10 +76,11 @@ class LoggerFactory {
       );
     } else {
       logger = StdoutLogger(
-          terminal: _terminal,
-          stdio: _stdio,
-          outputPreferences: _outputPreferences,
-          stopwatchFactory: _stopwatchFactory);
+        terminal: _terminal,
+        stdio: _stdio,
+        outputPreferences: _outputPreferences,
+        stopwatchFactory: _stopwatchFactory,
+      );
     }
     return logger;
   }

@@ -54,12 +54,8 @@ class _ExampleAppState extends State<ExampleApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Pigeon integration tests'),
-        ),
-        body: Center(
-          child: Text(status),
-        ),
+        appBar: AppBar(title: const Text('Pigeon integration tests')),
+        body: Center(child: Text(status)),
       ),
     );
   }

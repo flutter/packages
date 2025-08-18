@@ -37,9 +37,8 @@ class DefaultLocalAuthPlatform extends LocalAuthPlatform {
 
   @override
   Future<List<BiometricType>> getEnrolledBiometrics() async {
-    final List<String> result = (await _channel.invokeListMethod<String>(
-          'getAvailableBiometrics',
-        )) ??
+    final List<String> result =
+        (await _channel.invokeListMethod<String>('getAvailableBiometrics')) ??
         <String>[];
     final List<BiometricType> biometrics = <BiometricType>[];
     for (final String value in result) {
@@ -62,10 +61,8 @@ class DefaultLocalAuthPlatform extends LocalAuthPlatform {
   @override
   Future<bool> deviceSupportsBiometrics() async {
     final List<String> availableBiometrics =
-        (await _channel.invokeListMethod<String>(
-              'getAvailableBiometrics',
-            )) ??
-            <String>[];
+        (await _channel.invokeListMethod<String>('getAvailableBiometrics')) ??
+        <String>[];
     // If anything, including the 'undefined' sentinel, is returned, then there
     // is device support for biometrics.
     return availableBiometrics.isNotEmpty;

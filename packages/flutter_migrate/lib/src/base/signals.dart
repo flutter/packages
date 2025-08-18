@@ -19,8 +19,7 @@ abstract class Signals {
   @visibleForTesting
   factory Signals.test({
     List<ProcessSignal> exitSignals = defaultExitSignals,
-  }) =>
-      LocalSignals._(exitSignals);
+  }) => LocalSignals._(exitSignals);
 
   // The default list of signals that should cause the process to exit.
   static const List<ProcessSignal> defaultExitSignals = <ProcessSignal>[
@@ -54,9 +53,7 @@ abstract class Signals {
 class LocalSignals implements Signals {
   LocalSignals._(this.exitSignals);
 
-  static LocalSignals instance = LocalSignals._(
-    Signals.defaultExitSignals,
-  );
+  static LocalSignals instance = LocalSignals._(Signals.defaultExitSignals);
 
   final List<ProcessSignal> exitSignals;
 
@@ -71,8 +68,7 @@ class LocalSignals implements Signals {
 
   // A table mapping (signal) -> low-level signal event stream.
   final Map<ProcessSignal, StreamSubscription<ProcessSignal>>
-      _streamSubscriptions =
-      <ProcessSignal, StreamSubscription<ProcessSignal>>{};
+  _streamSubscriptions = <ProcessSignal, StreamSubscription<ProcessSignal>>{};
 
   // The stream controller for errors coming from signal handlers.
   final StreamController<Object> _errorStreamController =

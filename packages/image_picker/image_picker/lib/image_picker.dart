@@ -79,12 +79,12 @@ class ImagePicker {
   }) {
     final ImagePickerOptions imagePickerOptions =
         ImagePickerOptions.createAndValidate(
-      maxWidth: maxWidth,
-      maxHeight: maxHeight,
-      imageQuality: imageQuality,
-      preferredCameraDevice: preferredCameraDevice,
-      requestFullMetadata: requestFullMetadata,
-    );
+          maxWidth: maxWidth,
+          maxHeight: maxHeight,
+          imageQuality: imageQuality,
+          preferredCameraDevice: preferredCameraDevice,
+          requestFullMetadata: requestFullMetadata,
+        );
 
     return platform.getImageFromSource(
       source: source,
@@ -314,15 +314,9 @@ class ImagePicker {
   ///
   /// The method can throw a [PlatformException] if the video selection process
   /// fails.
-  Future<List<XFile>> pickMultiVideo({
-    Duration? maxDuration,
-    int? limit,
-  }) {
+  Future<List<XFile>> pickMultiVideo({Duration? maxDuration, int? limit}) {
     return platform.getMultiVideoWithOptions(
-      options: MultiVideoPickerOptions(
-        maxDuration: maxDuration,
-        limit: limit,
-      ),
+      options: MultiVideoPickerOptions(maxDuration: maxDuration, limit: limit),
     );
   }
 
