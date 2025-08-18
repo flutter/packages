@@ -355,13 +355,15 @@ void main() {
     });
 
     group('clearAuthorizationToken', () {
-      const String someToken = '50m3_4cc355_70k3n';
       setUp(() {
         plugin.init(options);
       });
 
       testWidgets('calls clearAuthorizationToken on GIS client', (_) async {
-        await plugin.clearAuthorizationToken(token: someToken);
+        const String someToken = 'someToken';
+        await plugin.clearAuthorizationToken(
+          const ClearAuthorizationTokensParams(accessToken: someToken),
+        );
 
         final List<Object?> arguments =
             mockito

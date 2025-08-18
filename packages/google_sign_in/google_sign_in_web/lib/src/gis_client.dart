@@ -283,7 +283,7 @@ class GisSdkClient {
   void clearAuthorizationToken(String token) {
     _lastClientAuthorizationByUser.removeWhere(
       (String? key, (TokenResponse tokenResponse, DateTime expiration) value) =>
-          value.tokenResponse.access_token == token,
+          value.$1.access_token == token,
     );
   }
 

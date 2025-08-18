@@ -1233,7 +1233,9 @@ void main() {
   });
 
   test('clearAuthorizationToken no-ops without error', () async {
-    await googleSignIn.clearAuthorizationToken(token: 'any token');
+    await googleSignIn.clearAuthorizationToken(
+      const ClearAuthorizationTokensParams(accessToken: 'any token'),
+    );
 
     verifyZeroInteractions(mockApi);
   });

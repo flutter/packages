@@ -135,7 +135,9 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
   }
 
   @override
-  Future<void> clearAuthorizationToken({required String token}) async {
+  Future<void> clearAuthorizationToken(
+    ClearAuthorizationTokensParams params,
+  ) async {
     // No-op; the iOS SDK handles token invalidation internally.
   }
 

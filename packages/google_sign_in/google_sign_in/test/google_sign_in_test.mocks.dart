@@ -111,6 +111,17 @@ class MockGoogleSignInPlatform extends _i1.Mock
           as _i4.Future<_i2.ServerAuthorizationTokenData?>);
 
   @override
+  _i4.Future<void> clearAuthorizationToken(
+    _i2.ClearAuthorizationTokensParams? params,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#clearAuthorizationToken, [params]),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
+
+  @override
   _i4.Future<void> signOut(_i2.SignOutParams? params) =>
       (super.noSuchMethod(
             Invocation.method(#signOut, [params]),
@@ -123,15 +134,6 @@ class MockGoogleSignInPlatform extends _i1.Mock
   _i4.Future<void> disconnect(_i2.DisconnectParams? params) =>
       (super.noSuchMethod(
             Invocation.method(#disconnect, [params]),
-            returnValue: _i4.Future<void>.value(),
-            returnValueForMissingStub: _i4.Future<void>.value(),
-          )
-          as _i4.Future<void>);
-
-  @override
-  _i4.Future<void> clearAuthorizationToken({required String? token}) =>
-      (super.noSuchMethod(
-            Invocation.method(#clearAuthorizationToken, [], {#token: token}),
             returnValue: _i4.Future<void>.value(),
             returnValueForMissingStub: _i4.Future<void>.value(),
           )
