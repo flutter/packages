@@ -32,6 +32,7 @@ import androidx.credentials.exceptions.NoCredentialException;
 import com.google.android.gms.auth.api.identity.AuthorizationClient;
 import com.google.android.gms.auth.api.identity.AuthorizationRequest;
 import com.google.android.gms.auth.api.identity.AuthorizationResult;
+import com.google.android.gms.auth.api.identity.ClearTokenRequest;
 import com.google.android.gms.auth.api.identity.Identity;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.Scope;
@@ -331,12 +332,12 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
           new CredentialManagerCallback<>() {
             @Override
             public void onResult(Void result) {
-              ResultUtilsKt.completeWithClearCredentialStateSuccess(callback);
+              ResultUtilsKt.completeWithUnitSuccess(callback);
             }
 
             @Override
             public void onError(@NonNull ClearCredentialException e) {
-              ResultUtilsKt.completeWithClearCredentialStateError(
+              ResultUtilsKt.completeWithUnitError(
                   callback, new FlutterError("Clear Failed", e.getMessage(), null));
             }
           });
@@ -347,14 +348,14 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
         @NonNull String token, @NonNull Function1<? super Result<Unit>, Unit> callback) {
       authorizationClientFactory
           .create(context)
-          .clearToken(token)
+          .clearToken(ClearTokenRequest.builder().setToken(token).build())
           .addOnSuccessListener(
               (Void) -> {
                 ResultUtilsKt.completeWithUnitSuccess(callback);
               })
           .addOnFailureListener(
               (Exception e) -> {
-                ResultUtilsKt.completeWithFlutterError(
+                ResultUtilsKt.completeWithUnitError(
                     callback,
                     new FlutterError("clearAuthorizationToken failed", e.getMessage(), null));
               });

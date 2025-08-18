@@ -40,6 +40,7 @@ import androidx.credentials.exceptions.NoCredentialException;
 import com.google.android.gms.auth.api.identity.AuthorizationClient;
 import com.google.android.gms.auth.api.identity.AuthorizationRequest;
 import com.google.android.gms.auth.api.identity.AuthorizationResult;
+import com.google.android.gms.auth.api.identity.ClearTokenRequest;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -71,6 +72,7 @@ public class GoogleSignInTest {
   @Mock CustomCredential mockGenericCredential;
   @Mock GoogleIdTokenCredential mockGoogleCredential;
   @Mock Task<AuthorizationResult> mockAuthorizationTask;
+  @Mock Task<Void> mockClearTokenTask;
 
   private GoogleSignInPlugin flutterPlugin;
   // Technically this is not the plugin, but in practice almost all of the functionality is in this
@@ -88,6 +90,8 @@ public class GoogleSignInTest {
         .thenReturn(GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL);
     when(mockAuthorizationTask.addOnSuccessListener(any())).thenReturn(mockAuthorizationTask);
     when(mockAuthorizationTask.addOnFailureListener(any())).thenReturn(mockAuthorizationTask);
+    when(mockClearTokenTask.addOnSuccessListener(any())).thenReturn(mockClearTokenTask);
+    when(mockClearTokenTask.addOnFailureListener(any())).thenReturn(mockClearTokenTask);
     when(mockAuthorizationIntent.getIntentSender()).thenReturn(mockAuthorizationIntentSender);
     when(mockActivityPluginBinding.getActivity()).thenReturn(mockActivity);
 
@@ -1100,10 +1104,10 @@ public class GoogleSignInTest {
 
   @Test
   public void clearAuthorizationToken_callsClient() {
-    final Task<Void> mockTask = mock(Task.class);
-    when(mockAuthorizationClient.clearToken(any())).thenReturn(mockTask);
+    final String testToken = "testToken";
+    when(mockAuthorizationClient.clearToken(any())).thenReturn(mockClearTokenTask);
     plugin.clearAuthorizationToken(
-        "test_token",
+        testToken,
         ResultCompat.asCompatCallback(
             reply -> {
               // This test doesn't trigger the getCredentialsAsync callback that would call this,
@@ -1112,6 +1116,11 @@ public class GoogleSignInTest {
               return null;
             }));
 
-    verify(mockAuthorizationClient).clearToken("test_token");
+    ArgumentCaptor<ClearTokenRequest> authRequestCaptor =
+        ArgumentCaptor.forClass(ClearTokenRequest.class);
+    verify(mockAuthorizationClient).clearToken(authRequestCaptor.capture());
+
+    ClearTokenRequest request = authRequestCaptor.getValue();
+    assertEquals(testToken, request.getToken());
   }
 }
