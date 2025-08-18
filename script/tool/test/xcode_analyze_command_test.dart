@@ -56,6 +56,36 @@ void main() {
       );
     });
 
+    test('temporarily disables Swift Package Manager', () async {
+      final RepositoryPackage plugin = createFakePlugin('plugin', packagesDir,
+          platformSupport: <String, PlatformDetails>{
+            platformIOS: const PlatformDetails(PlatformSupport.inline),
+          });
+
+      final RepositoryPackage example = plugin.getExamples().first;
+      final String originalPubspecContents =
+          example.pubspecFile.readAsStringSync();
+      String? buildTimePubspecContents;
+      processRunner.mockProcessesForExecutable['xcrun'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(), <String>[], () {
+          buildTimePubspecContents = example.pubspecFile.readAsStringSync();
+        })
+      ];
+
+      await runCapturingPrint(runner, <String>[
+        'xcode-analyze',
+        '--ios',
+      ]);
+
+      // Ensure that SwiftPM was disabled for the package.
+      expect(originalPubspecContents,
+          isNot(contains('enable-swift-package-manager: false')));
+      expect(buildTimePubspecContents,
+          contains('enable-swift-package-manager: false'));
+      // And that it was undone after.
+      expect(example.pubspecFile.readAsStringSync(), originalPubspecContents);
+    });
+
     group('iOS', () {
       test('skip if iOS is not supported', () async {
         createFakePlugin('plugin', packagesDir,
