@@ -20,7 +20,7 @@ For issues, file directly in the [main Flutter repo](https://github.com/flutter/
 
 # Icons
 
-[![icon gallery preview](gallery_preview_1.0.0.png)](https://api.flutter.dev/flutter/cupertino/CupertinoIcons-class.html)
+[![icon gallery preview](gallery_preview_1.0.1.png)](https://api.flutter.dev/flutter/cupertino/CupertinoIcons-class.html)
 
 For a list of all icons, see
 [`CupertinoIcons` class documentation constants](https://api.flutter.dev/flutter/cupertino/CupertinoIcons-class.html#constants).
