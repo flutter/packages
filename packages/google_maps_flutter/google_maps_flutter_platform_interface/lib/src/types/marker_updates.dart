@@ -11,7 +11,7 @@ import 'types.dart';
 class MarkerUpdates extends MapsObjectUpdates<Marker> {
   /// Computes [MarkerUpdates] given previous and current [Marker]s.
   MarkerUpdates.from(super.previous, super.current)
-      : super.from(objectName: 'marker');
+    : super.from(objectName: 'marker');
 
   /// Set of Markers to be added in this update.
   Set<Marker> get markersToAdd => objectsToAdd;

@@ -8,15 +8,7 @@ import 'file_system.dart';
 import 'logger.dart';
 
 /// Emum for each officially supported platform.
-enum SupportedPlatform {
-  android,
-  ios,
-  linux,
-  macos,
-  web,
-  windows,
-  fuchsia,
-}
+enum SupportedPlatform { android, ios, linux, macos, web, windows, fuchsia }
 
 class FlutterProjectFactory {
   FlutterProjectFactory();
@@ -44,8 +36,10 @@ class FlutterProject {
 
   /// Create a [FlutterProject] and bypass the project caching.
   @visibleForTesting
-  static FlutterProject fromDirectoryTest(Directory directory,
-      [Logger? logger]) {
+  static FlutterProject fromDirectoryTest(
+    Directory directory, [
+    Logger? logger,
+  ]) {
     logger ??= BufferLogger.test();
     return FlutterProject(directory);
   }

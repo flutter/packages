@@ -17,12 +17,7 @@ const List<String> _scopes = <String>[
 ];
 
 void main() {
-  runApp(
-    const MaterialApp(
-      title: 'Google Sign In',
-      home: SignInDemo(),
-    ),
-  );
+  runApp(const MaterialApp(title: 'Google Sign In', home: SignInDemo()));
 }
 
 class SignInDemo extends StatefulWidget {
@@ -47,11 +42,11 @@ class SignInDemoState extends State<SignInDemo> {
   }
 
   Future<void> _ensureInitialized() {
-    return _initialization ??=
-        GoogleSignInPlatform.instance.init(const InitParameters())
-          ..catchError((dynamic _) {
-            _initialization = null;
-          });
+    return _initialization ??= GoogleSignInPlatform.instance.init(
+      const InitParameters(),
+    )..catchError((dynamic _) {
+      _initialization = null;
+    });
   }
 
   void _setUser(GoogleSignInUserData? user) {
@@ -69,13 +64,15 @@ class SignInDemoState extends State<SignInDemo> {
     try {
       final AuthenticationResults? result = await GoogleSignInPlatform.instance
           .attemptLightweightAuthentication(
-              const AttemptLightweightAuthenticationParameters());
+            const AttemptLightweightAuthenticationParameters(),
+          );
       _setUser(result?.user);
     } on GoogleSignInException catch (e) {
       setState(() {
-        _errorMessage = e.code == GoogleSignInExceptionCode.canceled
-            ? ''
-            : 'GoogleSignInException ${e.code}: ${e.description}';
+        _errorMessage =
+            e.code == GoogleSignInExceptionCode.canceled
+                ? ''
+                : 'GoogleSignInException ${e.code}: ${e.description}';
       });
     }
   }
@@ -85,12 +82,15 @@ class SignInDemoState extends State<SignInDemo> {
       final ClientAuthorizationTokenData? tokens = await GoogleSignInPlatform
           .instance
           .clientAuthorizationTokensForScopes(
-              ClientAuthorizationTokensForScopesParameters(
-                  request: AuthorizationRequestDetails(
-                      scopes: _scopes,
-                      userId: user.id,
-                      email: user.email,
-                      promptIfUnauthorized: true)));
+            ClientAuthorizationTokensForScopesParameters(
+              request: AuthorizationRequestDetails(
+                scopes: _scopes,
+                userId: user.id,
+                email: user.email,
+                promptIfUnauthorized: true,
+              ),
+            ),
+          );
 
       setState(() {
         _isAuthorized = tokens != null;
@@ -107,15 +107,20 @@ class SignInDemoState extends State<SignInDemo> {
   }
 
   Future<Map<String, String>?> _getAuthHeaders(
-      GoogleSignInUserData user) async {
-    final ClientAuthorizationTokenData? tokens =
-        await GoogleSignInPlatform.instance.clientAuthorizationTokensForScopes(
-            ClientAuthorizationTokensForScopesParameters(
-                request: AuthorizationRequestDetails(
-                    scopes: _scopes,
-                    userId: user.id,
-                    email: user.email,
-                    promptIfUnauthorized: false)));
+    GoogleSignInUserData user,
+  ) async {
+    final ClientAuthorizationTokenData? tokens = await GoogleSignInPlatform
+        .instance
+        .clientAuthorizationTokensForScopes(
+          ClientAuthorizationTokensForScopesParameters(
+            request: AuthorizationRequestDetails(
+              scopes: _scopes,
+              userId: user.id,
+              email: user.email,
+              promptIfUnauthorized: false,
+            ),
+          ),
+        );
     if (tokens == null) {
       return null;
     }
@@ -140,13 +145,16 @@ class SignInDemoState extends State<SignInDemo> {
       return;
     }
     final http.Response response = await http.get(
-      Uri.parse('https://people.googleapis.com/v1/people/me/connections'
-          '?requestMask.includeField=person.names'),
+      Uri.parse(
+        'https://people.googleapis.com/v1/people/me/connections'
+        '?requestMask.includeField=person.names',
+      ),
       headers: headers,
     );
     if (response.statusCode != 200) {
       setState(() {
-        _contactText = 'People API gave a ${response.statusCode} '
+        _contactText =
+            'People API gave a ${response.statusCode} '
             'response. Check logs for details.';
       });
       print('People API ${response.statusCode} response: ${response.body}');
@@ -169,9 +177,10 @@ class SignInDemoState extends State<SignInDemo> {
       _setUser(result.user);
     } on GoogleSignInException catch (e) {
       setState(() {
-        _errorMessage = e.code == GoogleSignInExceptionCode.canceled
-            ? ''
-            : 'GoogleSignInException ${e.code}: ${e.description}';
+        _errorMessage =
+            e.code == GoogleSignInExceptionCode.canceled
+                ? ''
+                : 'GoogleSignInException ${e.code}: ${e.description}';
       });
     }
   }
@@ -226,12 +235,11 @@ class SignInDemoState extends State<SignInDemo> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Google Sign In'),
-        ),
-        body: ConstrainedBox(
-          constraints: const BoxConstraints.expand(),
-          child: _buildBody(),
-        ));
+      appBar: AppBar(title: const Text('Google Sign In')),
+      body: ConstrainedBox(
+        constraints: const BoxConstraints.expand(),
+        child: _buildBody(),
+      ),
+    );
   }
 }

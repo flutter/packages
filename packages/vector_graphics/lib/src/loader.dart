@@ -48,11 +48,7 @@ class AssetBytesLoader extends BytesLoader {
   /// A loader that retrieves bytes from an [AssetBundle].
   ///
   /// See [AssetBytesLoader].
-  const AssetBytesLoader(
-    this.assetName, {
-    this.packageName,
-    this.assetBundle,
-  });
+  const AssetBytesLoader(this.assetName, {this.packageName, this.assetBundle});
 
   /// The name of the asset to load.
   final String assetName;
@@ -113,7 +109,10 @@ class AssetBytesLoader extends BytesLoader {
 @immutable
 class _AssetByteLoaderCacheKey {
   const _AssetByteLoaderCacheKey(
-      this.assetName, this.packageName, this.assetBundle);
+    this.assetName,
+    this.packageName,
+    this.assetBundle,
+  );
 
   final String assetName;
   final String? packageName;
@@ -141,11 +140,8 @@ class _AssetByteLoaderCacheKey {
 /// This loader does not cache bytes requested from the network.
 class NetworkBytesLoader extends BytesLoader {
   /// Creates a new loading context for network bytes.
-  const NetworkBytesLoader(
-    this.url, {
-    this.headers,
-    http.Client? httpClient,
-  }) : _httpClient = httpClient;
+  const NetworkBytesLoader(this.url, {this.headers, http.Client? httpClient})
+    : _httpClient = httpClient;
 
   /// The HTTP headers to use for the network request.
   final Map<String, String>? headers;

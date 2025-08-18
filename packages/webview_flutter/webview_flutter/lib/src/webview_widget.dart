@@ -46,13 +46,13 @@ class WebViewWidget extends StatelessWidget {
     Set<Factory<OneSequenceGestureRecognizer>> gestureRecognizers =
         const <Factory<OneSequenceGestureRecognizer>>{},
   }) : this.fromPlatformCreationParams(
-          key: key,
-          params: PlatformWebViewWidgetCreationParams(
-            controller: controller.platform,
-            layoutDirection: layoutDirection,
-            gestureRecognizers: gestureRecognizers,
-          ),
-        );
+         key: key,
+         params: PlatformWebViewWidgetCreationParams(
+           controller: controller.platform,
+           layoutDirection: layoutDirection,
+           gestureRecognizers: gestureRecognizers,
+         ),
+       );
 
   /// Constructs a [WebViewWidget] from creation params for a specific platform.
   ///

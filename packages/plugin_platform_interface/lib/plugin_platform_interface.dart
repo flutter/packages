@@ -93,7 +93,8 @@ abstract class PlatformInterface {
       }());
       if (!assertionsEnabled) {
         throw AssertionError(
-            '`MockPlatformInterfaceMixin` is not intended for use in release builds.');
+          '`MockPlatformInterfaceMixin` is not intended for use in release builds.',
+        );
       }
       return;
     }
@@ -103,7 +104,8 @@ abstract class PlatformInterface {
     }
     if (!identical(token, _instanceTokens[instance])) {
       throw AssertionError(
-          'Platform interfaces must not be implemented with `implements`');
+        'Platform interfaces must not be implemented with `implements`',
+      );
     }
   }
 }

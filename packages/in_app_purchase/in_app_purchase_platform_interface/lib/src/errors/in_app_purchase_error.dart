@@ -11,11 +11,12 @@
 /// * [PurchaseDetails] for error happened in purchase.
 class IAPError {
   /// Creates a new IAP error object with the given error details.
-  IAPError(
-      {required this.source,
-      required this.code,
-      required this.message,
-      this.details});
+  IAPError({
+    required this.source,
+    required this.code,
+    required this.message,
+    this.details,
+  });
 
   /// Which source is the error on.
   final String source;

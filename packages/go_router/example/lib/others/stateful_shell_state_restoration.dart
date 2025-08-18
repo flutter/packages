@@ -19,11 +19,15 @@ class RestorableStatefulShellRouteExampleApp extends StatelessWidget {
     routes: <RouteBase>[
       StatefulShellRoute.indexedStack(
         restorationScopeId: 'shell1',
-        pageBuilder: (BuildContext context, GoRouterState state,
-            StatefulNavigationShell navigationShell) {
+        pageBuilder: (
+          BuildContext context,
+          GoRouterState state,
+          StatefulNavigationShell navigationShell,
+        ) {
           return MaterialPage<void>(
-              restorationId: 'shellWidget1',
-              child: ScaffoldWithNavBar(navigationShell: navigationShell));
+            restorationId: 'shellWidget1',
+            child: ScaffoldWithNavBar(navigationShell: navigationShell),
+          );
         },
         branches: <StatefulShellBranch>[
           // The route branch for the first tab of the bottom navigation bar.
@@ -34,21 +38,27 @@ class RestorableStatefulShellRouteExampleApp extends StatelessWidget {
                 // The screen to display as the root in the first tab of the
                 // bottom navigation bar.
                 path: '/a',
-                pageBuilder: (BuildContext context, GoRouterState state) =>
-                    const MaterialPage<void>(
-                        restorationId: 'screenA',
-                        child:
-                            RootScreen(label: 'A', detailsPath: '/a/details')),
+                pageBuilder:
+                    (BuildContext context, GoRouterState state) =>
+                        const MaterialPage<void>(
+                          restorationId: 'screenA',
+                          child: RootScreen(
+                            label: 'A',
+                            detailsPath: '/a/details',
+                          ),
+                        ),
                 routes: <RouteBase>[
                   // The details screen to display stacked on navigator of the
                   // first tab. This will cover screen A but not the application
                   // shell (bottom navigation bar).
                   GoRoute(
                     path: 'details',
-                    pageBuilder: (BuildContext context, GoRouterState state) =>
-                        const MaterialPage<void>(
-                            restorationId: 'screenADetail',
-                            child: DetailsScreen(label: 'A')),
+                    pageBuilder:
+                        (BuildContext context, GoRouterState state) =>
+                            const MaterialPage<void>(
+                              restorationId: 'screenADetail',
+                              child: DetailsScreen(label: 'A'),
+                            ),
                   ),
                 ],
               ),
@@ -62,21 +72,27 @@ class RestorableStatefulShellRouteExampleApp extends StatelessWidget {
                 // The screen to display as the root in the second tab of the
                 // bottom navigation bar.
                 path: '/b',
-                pageBuilder: (BuildContext context, GoRouterState state) =>
-                    const MaterialPage<void>(
-                        restorationId: 'screenB',
-                        child:
-                            RootScreen(label: 'B', detailsPath: '/b/details')),
+                pageBuilder:
+                    (BuildContext context, GoRouterState state) =>
+                        const MaterialPage<void>(
+                          restorationId: 'screenB',
+                          child: RootScreen(
+                            label: 'B',
+                            detailsPath: '/b/details',
+                          ),
+                        ),
                 routes: <RouteBase>[
                   // The details screen to display stacked on navigator of the
                   // first tab. This will cover screen A but not the application
                   // shell (bottom navigation bar).
                   GoRoute(
                     path: 'details',
-                    pageBuilder: (BuildContext context, GoRouterState state) =>
-                        const MaterialPage<void>(
-                            restorationId: 'screenBDetail',
-                            child: DetailsScreen(label: 'B')),
+                    pageBuilder:
+                        (BuildContext context, GoRouterState state) =>
+                            const MaterialPage<void>(
+                              restorationId: 'screenBDetail',
+                              child: DetailsScreen(label: 'B'),
+                            ),
                   ),
                 ],
               ),
@@ -92,9 +108,7 @@ class RestorableStatefulShellRouteExampleApp extends StatelessWidget {
     return MaterialApp.router(
       restorationScopeId: 'app',
       title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: ThemeData(primarySwatch: Colors.blue),
       routerConfig: _router,
     );
   }
@@ -104,10 +118,8 @@ class RestorableStatefulShellRouteExampleApp extends StatelessWidget {
 /// BottomNavigationBar, where [child] is placed in the body of the Scaffold.
 class ScaffoldWithNavBar extends StatelessWidget {
   /// Constructs an [ScaffoldWithNavBar].
-  const ScaffoldWithNavBar({
-    required this.navigationShell,
-    Key? key,
-  }) : super(key: key ?? const ValueKey<String>('ScaffoldWithNavBar'));
+  const ScaffoldWithNavBar({required this.navigationShell, Key? key})
+    : super(key: key ?? const ValueKey<String>('ScaffoldWithNavBar'));
 
   /// The navigation shell and container for the branch Navigators.
   final StatefulNavigationShell navigationShell;
@@ -131,11 +143,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
 /// Widget for the root/initial pages in the bottom navigation bar.
 class RootScreen extends StatelessWidget {
   /// Creates a RootScreen
-  const RootScreen({
-    required this.label,
-    required this.detailsPath,
-    super.key,
-  });
+  const RootScreen({required this.label, required this.detailsPath, super.key});
 
   /// The label
   final String label;
@@ -146,15 +154,15 @@ class RootScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Root of section $label'),
-      ),
+      appBar: AppBar(title: Text('Root of section $label')),
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Text('Screen $label',
-                style: Theme.of(context).textTheme.titleLarge),
+            Text(
+              'Screen $label',
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
             const Padding(padding: EdgeInsets.all(4)),
             TextButton(
               onPressed: () {
@@ -172,10 +180,7 @@ class RootScreen extends StatelessWidget {
 /// The details screen for either the A or B screen.
 class DetailsScreen extends StatefulWidget {
   /// Constructs a [DetailsScreen].
-  const DetailsScreen({
-    required this.label,
-    super.key,
-  });
+  const DetailsScreen({required this.label, super.key});
 
   /// The label to display in the center of the screen.
   final String label;
@@ -205,9 +210,7 @@ class DetailsScreenState extends State<DetailsScreen> with RestorationMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Details Screen - ${widget.label}'),
-      ),
+      appBar: AppBar(title: Text('Details Screen - ${widget.label}')),
       body: _build(context),
     );
   }
@@ -217,8 +220,10 @@ class DetailsScreenState extends State<DetailsScreen> with RestorationMixin {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Text('Details for ${widget.label} - Counter: ${_counter.value}',
-              style: Theme.of(context).textTheme.titleLarge),
+          Text(
+            'Details for ${widget.label} - Counter: ${_counter.value}',
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
           const Padding(padding: EdgeInsets.all(4)),
           TextButton(
             onPressed: () {

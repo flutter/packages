@@ -125,20 +125,23 @@ class DefaultLinkDelegate extends StatelessWidget {
     try {
       success = await launchUrl(
         url,
-        mode: _useWebView
-            ? LaunchMode.inAppBrowserView
-            : LaunchMode.externalApplication,
+        mode:
+            _useWebView
+                ? LaunchMode.inAppBrowserView
+                : LaunchMode.externalApplication,
       );
     } on PlatformException {
       success = false;
     }
     if (!success) {
-      FlutterError.reportError(FlutterErrorDetails(
-        exception: 'Could not launch link $url',
-        stack: StackTrace.current,
-        library: 'url_launcher',
-        context: ErrorDescription('during launching a link'),
-      ));
+      FlutterError.reportError(
+        FlutterErrorDetails(
+          exception: 'Could not launch link $url',
+          stack: StackTrace.current,
+          library: 'url_launcher',
+          context: ErrorDescription('during launching a link'),
+        ),
+      );
     }
   }
 
