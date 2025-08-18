@@ -353,6 +353,22 @@ void main() {
         );
       });
     });
+
+    group('clearAuthCache', () {
+      const String someToken = '50m3_4cc355_70k3n';
+      setUp(() {
+        plugin.init(options);
+      });
+
+      testWidgets('calls clearAuthCache on GIS client', (_) async {
+        await plugin.clearAuthCache(token: someToken);
+
+        final List<Object?> arguments =
+            mockito.verify(mockGis.clearAuthCache(mockito.captureAny)).captured;
+
+        expect(arguments.first, someToken);
+      });
+    });
   });
 
   group('userDataEvents', () {

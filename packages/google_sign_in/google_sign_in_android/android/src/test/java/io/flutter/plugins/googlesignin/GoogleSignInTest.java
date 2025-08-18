@@ -1097,4 +1097,21 @@ public class GoogleSignInTest {
 
     callbackCaptor.getValue().onError(mock(ClearCredentialException.class));
   }
+
+  @Test
+  public void clearAuthCache_callsClient() {
+    final Task<Void> mockTask = mock(Task.class);
+    when(mockAuthorizationClient.clearToken(any())).thenReturn(mockTask);
+    plugin.clearAuthCache(
+        "test_token",
+        ResultCompat.asCompatCallback(
+            reply -> {
+              // This test doesn't trigger the getCredentialsAsync callback that would call this,
+              // so if this is reached something has gone wrong.
+              fail();
+              return null;
+            }));
+
+    verify(mockAuthorizationClient).clearToken("test_token");
+  }
 }

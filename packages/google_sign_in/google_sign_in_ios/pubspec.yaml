@@ -24,7 +24,8 @@ flutter:
 dependencies:
   flutter:
     sdk: flutter
-  google_sign_in_platform_interface: ^3.0.0
+  google_sign_in_platform_interface:
+    path: ../google_sign_in_platform_interface
 
 dev_dependencies:
   build_runner: ^2.4.6

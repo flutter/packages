@@ -575,4 +575,17 @@ class GoogleSignIn {
     //  single user at a time, so the distinction is mostly theoretical for now.
     await GoogleSignInPlatform.instance.disconnect(const DisconnectParams());
   }
+
+  /// Clears the authentication cache of the specified token.
+  ///
+  /// How this method works depends on the platform:
+  ///
+  /// - On Android, this will attempt to clear the token from the cache.
+  /// - On Web, this will remove any matching entry from the token cache.
+  ///
+  /// This should be called on any client that has received an access token that
+  /// is no longer valid.
+  Future<void> clearAuthCache({required String token}) {
+    return GoogleSignInPlatform.instance.clearAuthCache(token: token);
+  }
 }

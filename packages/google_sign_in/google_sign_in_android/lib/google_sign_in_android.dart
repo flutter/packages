@@ -28,6 +28,11 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
   }
 
   @override
+  Future<void> clearAuthCache({required String token}) {
+    return _hostApi.clearAuthCache(token);
+  }
+
+  @override
   Future<void> init(InitParameters params) async {
     _hostedDomain = params.hostedDomain;
     _serverClientId =
