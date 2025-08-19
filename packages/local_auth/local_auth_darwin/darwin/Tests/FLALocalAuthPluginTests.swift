@@ -610,9 +610,7 @@ class LocalAuthPluginTests: XCTestCase {
       viewProvider: viewProvider)
 
     stubAuthContext.expectBiometrics = true
-    if #available(iOS 11, macOS 10.15, *) {
-      stubAuthContext.biometryType = .faceID
-    }
+    stubAuthContext.biometryType = .faceID
 
     let result = try plugin.getEnrolledBiometrics()
     XCTAssertEqual(result.count, 1)
