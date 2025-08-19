@@ -38,11 +38,6 @@
     - any-glob-to-any-file:
       - packages/flutter_lints/**/*
 
-'p: flutter_migrate':
-  - changed-files:
-    - any-glob-to-any-file:
-      - packages/flutter_migrate/**/*
-
 'p: flutter_plugin_android_lifecycle':
   - changed-files:
     - any-glob-to-any-file:

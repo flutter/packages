@@ -10,7 +10,6 @@ packages/cross_file/**                                   @ditman
 packages/extension_google_sign_in_as_googleapis_auth/**  @ditman
 packages/file_selector/**                                @stuartmorgan-g
 packages/flutter_lints/**                                @chunhtai
-packages/flutter_migrate/**                              @stuartmorgan-g
 packages/flutter_template_images/**                      @stuartmorgan-g
 packages/go_router/**                                    @chunhtai
 packages/go_router_builder/**                            @chunhtai
