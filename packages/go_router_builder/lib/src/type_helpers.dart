@@ -54,7 +54,7 @@ const List<_TypeHelper> _helpers = <_TypeHelper>[
   _TypeHelperJson(),
 ];
 
-/// Checks if has a function that converts string to string, like in encode and decode.
+/// Checks if has a function that converts string to string, such as encode and decode.
 bool _isStringToStringFunction(
   ExecutableElement2? executableElement,
   String name,
