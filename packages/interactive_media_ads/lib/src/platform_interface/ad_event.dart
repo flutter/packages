@@ -110,7 +110,7 @@ enum AdEventType {
 
 /// Simple data class used to transport ad playback information.
 @immutable
-class AdEvent {
+base class AdEvent {
   /// Creates an [AdEvent].
   const AdEvent({required this.type, this.adData = const <String, String>{}});
 
@@ -123,7 +123,7 @@ class AdEvent {
 
 /// An event raised when there is an error loading or playing ads.
 @immutable
-class AdErrorEvent {
+base class AdErrorEvent {
   /// Creates an [AdErrorEvent].
   const AdErrorEvent({required this.error});
 
