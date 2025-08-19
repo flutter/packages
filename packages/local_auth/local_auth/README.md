@@ -8,9 +8,9 @@ the user.
 On supported devices, this includes authentication with biometrics such as
 fingerprint or facial recognition.
 
-|             | Android   | iOS   | macOS  | Windows     |
-|-------------|-----------|-------|--------|-------------|
-| **Support** | SDK 21+\* | 12.0+ | 10.14+ | Windows 10+ |
+|             | Android | iOS   | macOS  | Windows     |
+|-------------|---------|-------|--------|-------------|
+| **Support** | SDK 24+ | 12.0+ | 10.14+ | Windows 10+ |
 
 ## Usage
 
@@ -203,12 +203,9 @@ app has not been updated to use Face ID.
 
 ## Android Integration
 
-\* The plugin will build and run on SDK 21+, but `isDeviceSupported()` will
-always return false before SDK 23 (Android 6.0).
-
 ### Activity Changes
 
-Note that `local_auth` requires the use of a `FragmentActivity` instead of an
+`local_auth` requires the use of a `FragmentActivity` instead of an
 `Activity`. To update your application:
 
 * If you are using `FlutterActivity` directly, change it to
