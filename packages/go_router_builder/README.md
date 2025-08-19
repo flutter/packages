@@ -8,12 +8,12 @@ To use `go_router_builder`, you need to have the following dependencies in
 ```yaml
 dependencies:
   # ...along with your other dependencies
-  go_router: ^16.0.0
+  go_router: ^16.2.0
 
 dev_dependencies:
   # ...along with your other dev-dependencies
   build_runner: ^2.6.0
-  go_router_builder: ^3.1.0
+  go_router_builder: ^3.3.0
 ```
 
 ### Source code
@@ -454,6 +454,32 @@ class MyGoRouteData extends GoRouteData with _$MyGoRouteData {
 ```
 
 An example is available [here](https://github.com/flutter/packages/blob/main/packages/go_router_builder/example/lib/shell_route_with_keys_example.dart).
+
+## Relative routes
+
+Relative routes allow reusing the same `RouteData` in different parts of the route tree.
+Define a relative route by extending `RelativeGoRouteData`.
+
+<?code-excerpt "example/lib/readme_excerpts.dart (relativeRoute)"?>
+```dart
+@TypedRelativeGoRoute<DetailsRoute>(path: 'details')
+class DetailsRoute extends RelativeGoRouteData with _$DetailsRoute {
+  const DetailsRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const DetailsScreen();
+}
+```
+
+Navigate using the `goRelative` or `pushRelative` methods provided by the code generator:
+
+<?code-excerpt "example/lib/readme_excerpts.dart (goRelative)"?>
+```dart
+void onTapRelative() => const DetailsRoute().goRelative(context);
+```
+
+Relative routing methods are not idempotent and will cause an error when the relative location does not match a route.
 
 ## Run tests
 
