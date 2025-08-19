@@ -4,7 +4,6 @@
 
 package io.flutter.plugins.webviewflutter;
 
-import android.os.Build;
 import android.webkit.WebResourceRequest;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -31,11 +30,7 @@ public class WebResourceRequestProxyApi extends PigeonApiWebResourceRequest {
   @Nullable
   @Override
   public Boolean isRedirect(@NonNull WebResourceRequest pigeon_instance) {
-    if (getPigeonRegistrar().sdkIsAtLeast(Build.VERSION_CODES.N)) {
-      return pigeon_instance.isRedirect();
-    }
-
-    return null;
+    return pigeon_instance.isRedirect();
   }
 
   @NonNull
