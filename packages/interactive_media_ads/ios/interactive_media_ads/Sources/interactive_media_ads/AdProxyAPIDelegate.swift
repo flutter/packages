@@ -39,29 +39,35 @@ class AdProxyAPIDelegate: PigeonApiDelegateIMAAd {
   }
 
   func uiElements(pigeonApi: PigeonApiIMAAd, pigeonInstance: IMAAd) throws -> [UIElementType] {
-    var uiElements: [UIElementType] = []
     let uiElementsArray = pigeonInstance.uiElements as NSArray
     // IMAAd.uiElements is expected to be NSArray<NSNumber *>, but is returning as
     // an NSArray<NSString *> and causing a crash when using Swift. This attempts
     // to handle both scenarios and returns UIElementType.unknown if the value
     // can't be handled.
-    for uiElement in uiElementsArray {
-      switch uiElement {
-      case let uiElement as String where uiElement == "adAttribution":
-        uiElements.append(UIElementType.adAttribution)
-      case let uiElement as NSNumber
-      where uiElement.intValue == IMAUiElementType.elements_AD_ATTRIBUTION.rawValue:
-        uiElements.append(UIElementType.adAttribution)
-      case let uiElement as String where uiElement == "countdown":
-        uiElements.append(UIElementType.countdown)
-      case let uiElement as NSNumber
-      where uiElement.intValue == IMAUiElementType.elements_COUNTDOWN.rawValue:
-        uiElements.append(UIElementType.countdown)
-      default:
-        uiElements.append(UIElementType.unknown)
+    return uiElementsArray.map { uiElement -> UIElementType in
+      if let stringValue = uiElement as? String {
+        switch stringValue {
+        case "adAttribution":
+          return .adAttribution
+        case "countdown":
+          return .countdown
+        default:
+          return .unknown
+        }
+      } else if let numberValue = uiElement as? NSNumber,
+        let type = IMAUiElementType(rawValue: numberValue.intValue)
+      {
+        switch type {
+        case .elements_AD_ATTRIBUTION:
+          return .adAttribution
+        case .elements_COUNTDOWN:
+          return .countdown
+        default:
+          return .unknown
+        }
       }
+      return .unknown
     }
-    return uiElements
   }
 
   func width(pigeonApi: PigeonApiIMAAd, pigeonInstance: IMAAd) throws -> Int64 {
