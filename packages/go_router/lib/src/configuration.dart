@@ -17,6 +17,7 @@ import 'route.dart';
 import 'router.dart';
 import 'state.dart';
 
+/// The signature of the redirect callback.
 typedef GoRouterRedirect =
     FutureOr<String?> Function(BuildContext context, GoRouterState state);
 
