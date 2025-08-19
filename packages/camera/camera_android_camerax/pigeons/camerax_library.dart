@@ -796,6 +796,8 @@ abstract class ImageAnalysis extends UseCase {
 
   late final ResolutionSelector? resolutionSelector;
 
+  late final int? outputImageFormat;
+
   /// Sets an analyzer to receive and analyze images.
   void setAnalyzer(Analyzer analyzer);
 
