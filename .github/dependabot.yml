@@ -117,6 +117,7 @@ updates:
       gradle-plugin:
         patterns:
           - "org.jetbrains.kotlin:kotlin-gradle-plugin"
+          - "com.android.tools.build:gradle"
       androidx:
         patterns:
           - "androidx.annotation:annotation"
