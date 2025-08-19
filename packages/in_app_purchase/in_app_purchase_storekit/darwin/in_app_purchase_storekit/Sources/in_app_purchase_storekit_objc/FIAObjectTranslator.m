@@ -25,9 +25,6 @@
     @"subscriptionPeriod" :
             [FIAObjectTranslator getMapFromSKProductSubscriptionPeriod:product.subscriptionPeriod]
         ?: [NSNull null],
-    // TODO(cyanglaz): NSLocale is a complex object, want to see the actual need of getting this
-    // expanded to a map. Matching android to only get the currencySymbol for now.
-    // https://github.com/flutter/flutter/issues/26610
     @"priceLocale" : [FIAObjectTranslator getMapFromNSLocale:product.priceLocale] ?: [NSNull null],
   };
 }
@@ -63,9 +60,6 @@
             [FIAObjectTranslator getMapFromSKProductSubscriptionPeriod:discount.subscriptionPeriod]
         ?: [NSNull null],
     @"type" : @(discount.type),
-    // TODO(cyanglaz): NSLocale is a complex object, want to see the actual need of getting this
-    // expanded to a map. Matching android to only get the currencySymbol for now.
-    // https://github.com/flutter/flutter/issues/26610
     @"priceLocale" : [FIAObjectTranslator getMapFromNSLocale:discount.priceLocale] ?: [NSNull null],
   };
 }
@@ -100,6 +94,8 @@
   };
 }
 
+// This intentionally only exposes fields that there has been a demonstrated
+// need for; see discussion in https://github.com/flutter/plugins/pull/3897.
 + (NSDictionary *)getMapFromNSLocale:(NSLocale *)locale {
   if (!locale) {
     return nil;
