@@ -119,7 +119,7 @@ class App extends StatelessWidget {
                   context, nextState.uri.queryParameters['token']!);
               return const Block(); // Prevent navigation
             }
-            return const Allow();
+            return const OnEnterResult.allow();
 
           case '/crash-test':
             // Deliberately throw an exception to demonstrate error handling
@@ -129,10 +129,11 @@ class App extends StatelessWidget {
             // Runtime type error to test different error types
             // ignore: unnecessary_cast
             nextState.uri as int;
-            return const Allow();
+            return const OnEnterResult.allow();
 
           default:
-            return const Allow(); // Allow navigation for all other routes
+            // Allow navigation for all other routes
+            return const OnEnterResult.allow();
         }
       },
       routes: <RouteBase>[

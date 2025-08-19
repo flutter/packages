@@ -17,6 +17,12 @@ import 'state.dart';
 sealed class OnEnterResult {
   /// Creates an [OnEnterResult].
   const OnEnterResult();
+
+  /// Creates an [Allow] result that allows navigation to proceed.
+  const factory OnEnterResult.allow() = Allow;
+
+  /// Creates a [Block] result that blocks navigation from proceeding.
+  const factory OnEnterResult.block() = Block;
 }
 
 /// Allows the navigation to proceed.
