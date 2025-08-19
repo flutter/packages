@@ -2,8 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter_migrate/executable.dart' as executable;
+import 'package:go_router/go_router.dart';
 
-void main(List<String> args) {
-  executable.main(args);
-}
+@TypedRelativeGoRoute<RelativeRoute>(path: 'path')
+class RelativeRoute extends RelativeGoRouteData {}

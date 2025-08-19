@@ -1,8 +1,10 @@
-## NEXT
+## 16.2.0
 
-* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+- Adds `RelativeGoRouteData` and `TypedRelativeGoRoute`.
+- Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
 
 ## 16.1.0
+
 - Adds annotation for go_router_builder that enable custom string encoder/decoder [#110781](https://github.com/flutter/flutter/issues/110781). **Requires go_router_builder >= 3.1.0**.
 
 ## 16.0.0
