@@ -25,10 +25,10 @@ class GisSdkClient {
     bool loggingEnabled = false,
     String? nonce,
     String? hostedDomain,
-  })  : _clientId = clientId,
-        _hostedDomain = hostedDomain,
-        _loggingEnabled = loggingEnabled,
-        _authenticationController = authenticationController {
+  }) : _clientId = clientId,
+       _hostedDomain = hostedDomain,
+       _loggingEnabled = loggingEnabled,
+       _authenticationController = authenticationController {
     if (_loggingEnabled) {
       id.setLogLevel('debug');
     }
@@ -47,8 +47,11 @@ class GisSdkClient {
 
   void _logIfEnabled(String message, [List<Object?>? more]) {
     if (_loggingEnabled) {
-      final String log =
-          <Object?>['[google_sign_in_web]', message, ...?more].join(' ');
+      final String log = <Object?>[
+        '[google_sign_in_web]',
+        message,
+        ...?more,
+      ].join(' ');
       web.console.info(log.toJS);
     }
   }
@@ -73,10 +76,14 @@ class GisSdkClient {
     if (error is GoogleSignInException) {
       _authenticationController.add(AuthenticationEventException(error));
     } else {
-      _authenticationController.add(AuthenticationEventException(
+      _authenticationController.add(
+        AuthenticationEventException(
           GoogleSignInException(
-              code: GoogleSignInExceptionCode.unknownError,
-              description: error.toString())));
+            code: GoogleSignInExceptionCode.unknownError,
+            description: error.toString(),
+          ),
+        ),
+      );
     }
   }
 
@@ -136,7 +143,7 @@ class GisSdkClient {
     return oauth2.initTokenClient(tokenConfig);
   }
 
-// Creates a `oauth2.CodeClient` used for authorization (scope) requests.
+  // Creates a `oauth2.CodeClient` used for authorization (scope) requests.
   CodeClient _initializeCodeClient({
     String? userHint,
     required List<String> scopes,
@@ -169,9 +176,7 @@ class GisSdkClient {
   // Handles "prompt moments" of the OneClick card UI.
   //
   // See: https://developers.google.com/identity/gsi/web/guides/receive-notifications-prompt-ui-status
-  Future<void> _onPromptMoment(
-    PromptMomentNotification moment,
-  ) async {
+  Future<void> _onPromptMoment(PromptMomentNotification moment) async {
     if (moment.isDismissedMoment()) {
       final MomentDismissedReason? reason = moment.getDismissedReason();
       switch (reason) {
@@ -179,16 +184,22 @@ class GisSdkClient {
           // Nothing to do here, as the success handler will run.
           break;
         case MomentDismissedReason.cancel_called:
-          _credentialResponses.addError(const GoogleSignInException(
-              code: GoogleSignInExceptionCode.canceled));
+          _credentialResponses.addError(
+            const GoogleSignInException(
+              code: GoogleSignInExceptionCode.canceled,
+            ),
+          );
         case MomentDismissedReason.flow_restarted:
           // Ignore, as this is not a final state.
           break;
         case MomentDismissedReason.unknown_reason:
         case null:
-          _credentialResponses.addError(GoogleSignInException(
+          _credentialResponses.addError(
+            GoogleSignInException(
               code: GoogleSignInExceptionCode.unknownError,
-              description: 'dismissed: $reason'));
+              description: 'dismissed: $reason',
+            ),
+          );
       }
       return;
     }
@@ -196,8 +207,9 @@ class GisSdkClient {
     if (moment.isSkippedMoment()) {
       // getSkippedReason is not used in the exception details here, per
       // https://developers.google.com/identity/gsi/web/guides/fedcm-migration
-      _credentialResponses.addError(const GoogleSignInException(
-          code: GoogleSignInExceptionCode.canceled));
+      _credentialResponses.addError(
+        const GoogleSignInException(code: GoogleSignInExceptionCode.canceled),
+      );
     }
 
     // isNotDisplayed is intentionally ignored, per
@@ -215,7 +227,8 @@ class GisSdkClient {
   /// Requests a server auth code per:
   /// https://developers.google.com/identity/oauth2/web/guides/use-code-model#initialize_a_code_client
   Future<String?> requestServerAuthCode(
-      AuthorizationRequestDetails request) async {
+    AuthorizationRequestDetails request,
+  ) async {
     final Completer<(String? code, Exception? e)> completer =
         Completer<(String? code, Exception? e)>();
     final CodeClient codeClient = _initializeCodeClient(
@@ -228,9 +241,10 @@ class GisSdkClient {
           completer.complete((
             null,
             GoogleSignInException(
-                code: GoogleSignInExceptionCode.unknownError,
-                description: response.error_description,
-                details: 'code: $error')
+              code: GoogleSignInExceptionCode.unknownError,
+              description: response.error_description,
+              details: 'code: $error',
+            ),
           ));
         }
       },
@@ -269,8 +283,11 @@ class GisSdkClient {
   /// authorization token if successful.
   ///
   /// Keeps the previously granted scopes.
-  Future<String?> requestScopes(List<String> scopes,
-      {required bool promptIfUnauthorized, String? userHint}) async {
+  Future<String?> requestScopes(
+    List<String> scopes, {
+    required bool promptIfUnauthorized,
+    String? userHint,
+  }) async {
     // If there's a usable cached token, return that.
     final (TokenResponse? cachedResponse, DateTime? cacheExpiration) =
         _lastClientAuthorizationByUser[userHint] ?? (null, null);
@@ -300,8 +317,9 @@ class GisSdkClient {
           if (token == null) {
             _lastClientAuthorizationByUser.remove(userHint);
           } else {
-            final DateTime expiration =
-                DateTime.now().add(Duration(seconds: response.expires_in!));
+            final DateTime expiration = DateTime.now().add(
+              Duration(seconds: response.expires_in!),
+            );
             _lastClientAuthorizationByUser[userHint] = (response, expiration);
           }
           completer.complete((response.access_token, null));
@@ -310,9 +328,10 @@ class GisSdkClient {
           completer.complete((
             null,
             GoogleSignInException(
-                code: GoogleSignInExceptionCode.unknownError,
-                description: response.error_description,
-                details: 'code: $error')
+              code: GoogleSignInExceptionCode.unknownError,
+              description: response.error_description,
+              details: 'code: $error',
+            ),
           ));
         }
       },
@@ -331,7 +350,8 @@ class GisSdkClient {
   }
 
   GoogleSignInException _exceptionForGisError(
-      GoogleIdentityServicesError? error) {
+    GoogleIdentityServicesError? error,
+  ) {
     final GoogleSignInExceptionCode code;
     switch (error?.type) {
       case GoogleIdentityServicesErrorType.missing_required_parameter:
@@ -345,8 +365,9 @@ class GisSdkClient {
         code = GoogleSignInExceptionCode.unknownError;
     }
     return GoogleSignInException(
-        code: code,
-        description: error?.message ?? 'SDK returned no error details');
+      code: code,
+      description: error?.message ?? 'SDK returned no error details',
+    );
   }
 
   final bool _loggingEnabled;
@@ -365,7 +386,7 @@ class GisSdkClient {
   // request that was not associated with a known user (i.e., no user ID hint
   // was provided with the request).
   final Map<String?, (TokenResponse tokenResponse, DateTime expiration)>
-      _lastClientAuthorizationByUser =
+  _lastClientAuthorizationByUser =
       <String?, (TokenResponse tokenResponse, DateTime expiration)>{};
 
   /// The StreamController onto which the GIS Client propagates user authentication events.

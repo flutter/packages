@@ -23,13 +23,8 @@ import 'package:webview_flutter_web/src/http_request_factory.dart' as _i2;
 // ignore_for_file: subtype_of_sealed_class
 
 class _FakeObject_0 extends _i1.SmartFake implements Object {
-  _FakeObject_0(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeObject_0(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 /// A class which mocks [HttpRequestFactory].
@@ -47,44 +42,49 @@ class MockHttpRequestFactory extends _i1.Mock
     _i4.Uint8List? sendData,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #request,
-          [url],
-          {
-            #method: method,
-            #withCredentials: withCredentials,
-            #mimeType: mimeType,
-            #requestHeaders: requestHeaders,
-            #sendData: sendData,
-          },
-        ),
-        returnValue: _i3.Future<Object>.value(_FakeObject_0(
-          this,
-          Invocation.method(
-            #request,
-            [url],
-            {
-              #method: method,
-              #withCredentials: withCredentials,
-              #mimeType: mimeType,
-              #requestHeaders: requestHeaders,
-              #sendData: sendData,
-            },
-          ),
-        )),
-        returnValueForMissingStub: _i3.Future<Object>.value(_FakeObject_0(
-          this,
-          Invocation.method(
-            #request,
-            [url],
-            {
-              #method: method,
-              #withCredentials: withCredentials,
-              #mimeType: mimeType,
-              #requestHeaders: requestHeaders,
-              #sendData: sendData,
-            },
-          ),
-        )),
-      ) as _i3.Future<Object>);
+            Invocation.method(
+              #request,
+              [url],
+              {
+                #method: method,
+                #withCredentials: withCredentials,
+                #mimeType: mimeType,
+                #requestHeaders: requestHeaders,
+                #sendData: sendData,
+              },
+            ),
+            returnValue: _i3.Future<Object>.value(
+              _FakeObject_0(
+                this,
+                Invocation.method(
+                  #request,
+                  [url],
+                  {
+                    #method: method,
+                    #withCredentials: withCredentials,
+                    #mimeType: mimeType,
+                    #requestHeaders: requestHeaders,
+                    #sendData: sendData,
+                  },
+                ),
+              ),
+            ),
+            returnValueForMissingStub: _i3.Future<Object>.value(
+              _FakeObject_0(
+                this,
+                Invocation.method(
+                  #request,
+                  [url],
+                  {
+                    #method: method,
+                    #withCredentials: withCredentials,
+                    #mimeType: mimeType,
+                    #requestHeaders: requestHeaders,
+                    #sendData: sendData,
+                  },
+                ),
+              ),
+            ),
+          )
+          as _i3.Future<Object>);
 }

@@ -33,7 +33,7 @@ const List<WeightedLatLng> _heatmapPoints = <WeightedLatLng>[
   WeightedLatLng(LatLng(37.785, -122.441)),
   WeightedLatLng(LatLng(37.785, -122.439)),
   WeightedLatLng(LatLng(37.785, -122.437)),
-  WeightedLatLng(LatLng(37.785, -122.435))
+  WeightedLatLng(LatLng(37.785, -122.435)),
 ];
 
 void main() {
@@ -101,7 +101,9 @@ void main() {
     final PlatformMapStateRecorder map = platform.lastCreatedMap;
     expect(map.heatmapUpdates.last.heatmapIdsToRemove.length, 1);
     expect(
-        map.heatmapUpdates.last.heatmapIdsToRemove.first, equals(h1.heatmapId));
+      map.heatmapUpdates.last.heatmapIdsToRemove.first,
+      equals(h1.heatmapId),
+    );
 
     expect(map.heatmapUpdates.last.heatmapsToChange.isEmpty, true);
     expect(map.heatmapUpdates.last.heatmapsToAdd.isEmpty, true);
@@ -226,7 +228,9 @@ void main() {
     expect(map.heatmapUpdates.last.heatmapsToChange.first, equals(h2));
     expect(map.heatmapUpdates.last.heatmapsToAdd.first, equals(h1));
     expect(
-        map.heatmapUpdates.last.heatmapIdsToRemove.first, equals(h3.heatmapId));
+      map.heatmapUpdates.last.heatmapIdsToRemove.first,
+      equals(h3.heatmapId),
+    );
   });
 
   testWidgets('Partial Update', (WidgetTester tester) async {

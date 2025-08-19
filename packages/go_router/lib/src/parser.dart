@@ -80,6 +80,9 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
     final Object infoState = routeInformation.state!;
     // Process legacy state if necessary.
     if (infoState is! RouteInformationState) {
+      // This is a result of browser backward/forward button or state
+      // restoration. In this case, the route match list is already stored in
+      // the state.
       final RouteMatchList matchList =
           _routeMatchListCodec.decode(infoState as Map<Object?, Object?>);
       return debugParserFuture =
@@ -153,8 +156,7 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
         if (matchList.isNotEmpty) {
           assert(
             !matchList.last.route.redirectOnly,
-            'Redirect-only route must redirect to a new location.\n'
-            'Offending route: ${matchList.last.route}',
+            'A redirect-only route must redirect to location different from itself.\n The offending route: ${matchList.last.route}',
           );
         }
         return true;
@@ -176,10 +178,12 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
 
   @override
   Future<RouteMatchList> parseRouteInformation(
-      RouteInformation routeInformation) {
+    RouteInformation routeInformation,
+  ) {
     // Not used in go_router; instruct users to use parseRouteInformationWithDependencies.
     throw UnimplementedError(
-        'Use parseRouteInformationWithDependencies instead');
+      'Use parseRouteInformationWithDependencies instead',
+    );
   }
 
   @override
@@ -212,16 +216,18 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
 
   /// Calls [configuration.redirect] and wraps the result in a synchronous future if needed.
   Future<RouteMatchList> _redirect(
-      BuildContext context, RouteMatchList matchList) {
-    final FutureOr<RouteMatchList> result = configuration.redirect(
+    BuildContext context,
+    RouteMatchList routeMatch,
+  ) {
+    final FutureOr<RouteMatchList> redirectedFuture = configuration.redirect(
       context,
-      matchList,
+      routeMatch,
       redirectHistory: <RouteMatchList>[],
     );
-    if (result is RouteMatchList) {
-      return SynchronousFuture<RouteMatchList>(result);
+    if (redirectedFuture is RouteMatchList) {
+      return SynchronousFuture<RouteMatchList>(redirectedFuture);
     }
-    return result;
+    return redirectedFuture;
   }
 
   /// Updates the route match list based on the navigation type (push, replace, etc.).

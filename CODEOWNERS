@@ -84,22 +84,22 @@ packages/webview_flutter/webview_flutter_android/**           @bparrishMines
 
 # - Darwin
 packages/camera/camera_avfoundation/**                        @hellohuanlin @vashworth
-packages/file_selector/file_selector_ios/**                   @vashworth @cbracken
-packages/file_selector/file_selector_macos/**                 @vashworth @cbracken
-packages/google_maps_flutter/google_maps_flutter_ios/**       @vashworth @cbracken
-packages/google_sign_in/google_sign_in_ios/**                 @LongCatIsLooong @cbracken
+packages/file_selector/file_selector_ios/**                   @vashworth
+packages/file_selector/file_selector_macos/**                 @vashworth
+packages/google_maps_flutter/google_maps_flutter_ios/**       @vashworth
+packages/google_sign_in/google_sign_in_ios/**                 @LongCatIsLooong
 packages/image_picker/image_picker_ios/**                     @vashworth @louisehsu
 packages/image_picker/image_picker_macos/**                   @vashworth @louisehsu
 packages/in_app_purchase/in_app_purchase_storekit/**          @louisehsu @LongCatIsLooong
-packages/local_auth/local_auth_darwin/**                      @cbracken @vashworth
-packages/path_provider/path_provider_foundation/**            @cbracken @vashworth
+packages/local_auth/local_auth_darwin/**                      @vashworth
+packages/path_provider/path_provider_foundation/**            @vashworth
 packages/pointer_interceptor/pointer_interceptor_ios/**       @louisehsu @hellohuanlin
 packages/quick_actions/quick_actions_ios/**                   @LongCatIsLooong @hellohuanlin
 packages/shared_preferences/shared_preferences_foundation/**  @tarrinneal
 packages/url_launcher/url_launcher_ios/**                     @hellohuanlin @LongCatIsLooong
 packages/url_launcher/url_launcher_macos/**                   @hellohuanlin @LongCatIsLooong
 packages/video_player/video_player_avfoundation/**            @LongCatIsLooong @hellohuanlin
-packages/webview_flutter/webview_flutter_wkwebview/**         @cbracken @louisehsu
+packages/webview_flutter/webview_flutter_wkwebview/**         @louisehsu
 
 # - Linux
 packages/file_selector/file_selector_linux/**                 @stuartmorgan-g

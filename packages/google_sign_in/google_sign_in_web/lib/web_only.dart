@@ -29,8 +29,10 @@ export 'src/button_configuration.dart'
 
 // Asserts that the instance of the platform is for the web.
 GoogleSignInPlugin get _plugin {
-  assert(GoogleSignInPlatform.instance is GoogleSignInPlugin,
-      'The current GoogleSignInPlatform instance is not for web.');
+  assert(
+    GoogleSignInPlatform.instance is GoogleSignInPlugin,
+    'The current GoogleSignInPlatform instance is not for web.',
+  );
 
   return GoogleSignInPlatform.instance as GoogleSignInPlugin;
 }

@@ -31,51 +31,49 @@ class MockLocalAuthApi extends _i1.Mock implements _i2.LocalAuthApi {
   }
 
   @override
-  String get pigeonVar_messageChannelSuffix => (super.noSuchMethod(
-        Invocation.getter(#pigeonVar_messageChannelSuffix),
-        returnValue: _i3.dummyValue<String>(
-          this,
-          Invocation.getter(#pigeonVar_messageChannelSuffix),
-        ),
-      ) as String);
+  String get pigeonVar_messageChannelSuffix =>
+      (super.noSuchMethod(
+            Invocation.getter(#pigeonVar_messageChannelSuffix),
+            returnValue: _i3.dummyValue<String>(
+              this,
+              Invocation.getter(#pigeonVar_messageChannelSuffix),
+            ),
+          )
+          as String);
 
   @override
-  _i4.Future<bool> isDeviceSupported() => (super.noSuchMethod(
-        Invocation.method(
-          #isDeviceSupported,
-          [],
-        ),
-        returnValue: _i4.Future<bool>.value(false),
-      ) as _i4.Future<bool>);
+  _i4.Future<bool> isDeviceSupported() =>
+      (super.noSuchMethod(
+            Invocation.method(#isDeviceSupported, []),
+            returnValue: _i4.Future<bool>.value(false),
+          )
+          as _i4.Future<bool>);
 
   @override
-  _i4.Future<bool> deviceCanSupportBiometrics() => (super.noSuchMethod(
-        Invocation.method(
-          #deviceCanSupportBiometrics,
-          [],
-        ),
-        returnValue: _i4.Future<bool>.value(false),
-      ) as _i4.Future<bool>);
+  _i4.Future<bool> deviceCanSupportBiometrics() =>
+      (super.noSuchMethod(
+            Invocation.method(#deviceCanSupportBiometrics, []),
+            returnValue: _i4.Future<bool>.value(false),
+          )
+          as _i4.Future<bool>);
 
   @override
-  _i4.Future<bool> stopAuthentication() => (super.noSuchMethod(
-        Invocation.method(
-          #stopAuthentication,
-          [],
-        ),
-        returnValue: _i4.Future<bool>.value(false),
-      ) as _i4.Future<bool>);
+  _i4.Future<bool> stopAuthentication() =>
+      (super.noSuchMethod(
+            Invocation.method(#stopAuthentication, []),
+            returnValue: _i4.Future<bool>.value(false),
+          )
+          as _i4.Future<bool>);
 
   @override
   _i4.Future<List<_i2.AuthClassification>> getEnrolledBiometrics() =>
       (super.noSuchMethod(
-        Invocation.method(
-          #getEnrolledBiometrics,
-          [],
-        ),
-        returnValue: _i4.Future<List<_i2.AuthClassification>>.value(
-            <_i2.AuthClassification>[]),
-      ) as _i4.Future<List<_i2.AuthClassification>>);
+            Invocation.method(#getEnrolledBiometrics, []),
+            returnValue: _i4.Future<List<_i2.AuthClassification>>.value(
+              <_i2.AuthClassification>[],
+            ),
+          )
+          as _i4.Future<List<_i2.AuthClassification>>);
 
   @override
   _i4.Future<_i2.AuthResult> authenticate(
@@ -83,13 +81,10 @@ class MockLocalAuthApi extends _i1.Mock implements _i2.LocalAuthApi {
     _i2.AuthStrings? strings,
   ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #authenticate,
-          [
-            options,
-            strings,
-          ],
-        ),
-        returnValue: _i4.Future<_i2.AuthResult>.value(_i2.AuthResult.success),
-      ) as _i4.Future<_i2.AuthResult>);
+            Invocation.method(#authenticate, [options, strings]),
+            returnValue: _i4.Future<_i2.AuthResult>.value(
+              _i2.AuthResult.success,
+            ),
+          )
+          as _i4.Future<_i2.AuthResult>);
 }

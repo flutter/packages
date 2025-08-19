@@ -173,10 +173,7 @@ class GetCredentialRequestGoogleIdOptionParams {
   bool autoSelectEnabled;
 
   Object encode() {
-    return <Object?>[
-      filterToAuthorized,
-      autoSelectEnabled,
-    ];
+    return <Object?>[filterToAuthorized, autoSelectEnabled];
   }
 
   static GetCredentialRequestGoogleIdOptionParams decode(Object result) {
@@ -245,11 +242,7 @@ sealed class GetCredentialResult {}
 
 /// An authentication failure.
 class GetCredentialFailure extends GetCredentialResult {
-  GetCredentialFailure({
-    required this.type,
-    this.message,
-    this.details,
-  });
+  GetCredentialFailure({required this.type, this.message, this.details});
 
   /// The type of failure.
   GetCredentialFailureType type;
@@ -261,11 +254,7 @@ class GetCredentialFailure extends GetCredentialResult {
   String? details;
 
   Object encode() {
-    return <Object?>[
-      type,
-      message,
-      details,
-    ];
+    return <Object?>[type, message, details];
   }
 
   static GetCredentialFailure decode(Object result) {
@@ -280,16 +269,12 @@ class GetCredentialFailure extends GetCredentialResult {
 
 /// A successful authentication result.
 class GetCredentialSuccess extends GetCredentialResult {
-  GetCredentialSuccess({
-    required this.credential,
-  });
+  GetCredentialSuccess({required this.credential});
 
   PlatformGoogleIdTokenCredential credential;
 
   Object encode() {
-    return <Object?>[
-      credential,
-    ];
+    return <Object?>[credential];
   }
 
   static GetCredentialSuccess decode(Object result) {
@@ -305,11 +290,7 @@ sealed class AuthorizeResult {}
 
 /// An authorization failure
 class AuthorizeFailure extends AuthorizeResult {
-  AuthorizeFailure({
-    required this.type,
-    this.message,
-    this.details,
-  });
+  AuthorizeFailure({required this.type, this.message, this.details});
 
   /// The type of failure.
   AuthorizeFailureType type;
@@ -321,11 +302,7 @@ class AuthorizeFailure extends AuthorizeResult {
   String? details;
 
   Object encode() {
-    return <Object?>[
-      type,
-      message,
-      details,
-    ];
+    return <Object?>[type, message, details];
   }
 
   static AuthorizeFailure decode(Object result) {
@@ -355,11 +332,7 @@ class PlatformAuthorizationResult extends AuthorizeResult {
   List<String> grantedScopes;
 
   Object encode() {
-    return <Object?>[
-      accessToken,
-      serverAuthCode,
-      grantedScopes,
-    ];
+    return <Object?>[accessToken, serverAuthCode, grantedScopes];
   }
 
   static PlatformAuthorizationResult decode(Object result) {
@@ -429,7 +402,8 @@ class _PigeonCodec extends StandardMessageCodec {
         return GetCredentialRequestParams.decode(readValue(buffer)!);
       case 133:
         return GetCredentialRequestGoogleIdOptionParams.decode(
-            readValue(buffer)!);
+          readValue(buffer)!,
+        );
       case 134:
         return PlatformGoogleIdTokenCredential.decode(readValue(buffer)!);
       case 135:
@@ -450,11 +424,12 @@ class GoogleSignInApi {
   /// Constructor for [GoogleSignInApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  GoogleSignInApi(
-      {BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
-      : pigeonVar_binaryMessenger = binaryMessenger,
-        pigeonVar_messageChannelSuffix =
-            messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+  GoogleSignInApi({
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) : pigeonVar_binaryMessenger = binaryMessenger,
+       pigeonVar_messageChannelSuffix =
+           messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -468,10 +443,10 @@ class GoogleSignInApi {
         'dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.getGoogleServicesJsonServerClientId$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
@@ -491,17 +466,19 @@ class GoogleSignInApi {
   /// Requests an authentication credential (sign in) via CredentialManager's
   /// getCredential.
   Future<GetCredentialResult> getCredential(
-      GetCredentialRequestParams params) async {
+    GetCredentialRequestParams params,
+  ) async {
     final String pigeonVar_channelName =
         'dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.getCredential$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[params],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[params]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -528,10 +505,10 @@ class GoogleSignInApi {
         'dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.clearCredentialState$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
@@ -549,18 +526,21 @@ class GoogleSignInApi {
   }
 
   /// Requests authorization tokens via AuthorizationClient.
-  Future<AuthorizeResult> authorize(PlatformAuthorizationRequest params,
-      {required bool promptIfUnauthorized}) async {
+  Future<AuthorizeResult> authorize(
+    PlatformAuthorizationRequest params, {
+    required bool promptIfUnauthorized,
+  }) async {
     final String pigeonVar_channelName =
         'dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.authorize$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[params, promptIfUnauthorized],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[params, promptIfUnauthorized]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {

@@ -381,6 +381,12 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi, @unch
         return
       }
       result = errorCode == .passcodeNotSet ? .errorPasscodeNotSet : .errorNotEnrolled
+    case .userCancel:
+      result = .errorUserCancelled
+    case .userFallback:
+      result = .errorUserFallback
+    case .biometryNotAvailable:
+      result = .errorBiometricNotAvailable
     case .biometryLockout:
       DispatchQueue.main.async { [weak self] in
         self?.showAlert(

@@ -34,19 +34,22 @@ void main() {
     tryToDelete(appDir);
   });
 
-  testUsingContext('abandon deletes staging directory', () async {
-    final MigrateAbandonCommand command = MigrateAbandonCommand(
-      logger: logger,
-      fileSystem: fileSystem,
-      terminal: terminal,
-      processManager: processManager,
-    );
-    final Directory stagingDir =
-        appDir.childDirectory(kDefaultMigrateStagingDirectoryName);
-    appDir.childFile('lib/main.dart').createSync(recursive: true);
-    final File pubspecOriginal = appDir.childFile('pubspec.yaml');
-    pubspecOriginal.createSync();
-    pubspecOriginal.writeAsStringSync('''
+  testUsingContext(
+    'abandon deletes staging directory',
+    () async {
+      final MigrateAbandonCommand command = MigrateAbandonCommand(
+        logger: logger,
+        fileSystem: fileSystem,
+        terminal: terminal,
+        processManager: processManager,
+      );
+      final Directory stagingDir = appDir.childDirectory(
+        kDefaultMigrateStagingDirectoryName,
+      );
+      appDir.childFile('lib/main.dart').createSync(recursive: true);
+      final File pubspecOriginal = appDir.childFile('pubspec.yaml');
+      pubspecOriginal.createSync();
+      pubspecOriginal.writeAsStringSync('''
 name: originalname
 description: A new Flutter project.
 version: 1.0.0+1
@@ -60,29 +63,33 @@ dev_dependencies:
     sdk: flutter
 flutter:
   uses-material-design: true''', flush: true);
-    expect(stagingDir.existsSync(), false);
-    await createTestCommandRunner(command).run(<String>[
-      'abandon',
-      '--staging-directory=${stagingDir.path}',
-      '--project-directory=${appDir.path}',
-      '--flutter-subcommand',
-    ]);
-    expect(logger.errorText, contains('Provided staging directory'));
-    expect(logger.errorText,
-        contains('migrate_staging_dir` does not exist or is not valid.'));
+      expect(stagingDir.existsSync(), false);
+      await createTestCommandRunner(command).run(<String>[
+        'abandon',
+        '--staging-directory=${stagingDir.path}',
+        '--project-directory=${appDir.path}',
+        '--flutter-subcommand',
+      ]);
+      expect(logger.errorText, contains('Provided staging directory'));
+      expect(
+        logger.errorText,
+        contains('migrate_staging_dir` does not exist or is not valid.'),
+      );
 
-    logger.clear();
-    await createTestCommandRunner(command).run(<String>[
-      'abandon',
-      '--project-directory=${appDir.path}',
-      '--flutter-subcommand',
-    ]);
-    expect(logger.statusText,
-        contains('No migration in progress. Start a new migration with:'));
+      logger.clear();
+      await createTestCommandRunner(command).run(<String>[
+        'abandon',
+        '--project-directory=${appDir.path}',
+        '--flutter-subcommand',
+      ]);
+      expect(
+        logger.statusText,
+        contains('No migration in progress. Start a new migration with:'),
+      );
 
-    final File pubspecModified = stagingDir.childFile('pubspec.yaml');
-    pubspecModified.createSync(recursive: true);
-    pubspecModified.writeAsStringSync('''
+      final File pubspecModified = stagingDir.childFile('pubspec.yaml');
+      pubspecModified.createSync(recursive: true);
+      pubspecModified.writeAsStringSync('''
 name: newname
 description: new description of the test project
 version: 1.0.0+1
@@ -98,13 +105,13 @@ flutter:
   uses-material-design: false
   EXTRALINE''', flush: true);
 
-    final File addedFile = stagingDir.childFile('added.file');
-    addedFile.createSync(recursive: true);
-    addedFile.writeAsStringSync('new file contents');
+      final File addedFile = stagingDir.childFile('added.file');
+      addedFile.createSync(recursive: true);
+      addedFile.writeAsStringSync('new file contents');
 
-    final File manifestFile = stagingDir.childFile('.migrate_manifest');
-    manifestFile.createSync(recursive: true);
-    manifestFile.writeAsStringSync('''
+      final File manifestFile = stagingDir.childFile('.migrate_manifest');
+      manifestFile.createSync(recursive: true);
+      manifestFile.writeAsStringSync('''
 merged_files:
   - pubspec.yaml
 conflict_files:
@@ -113,22 +120,26 @@ added_files:
 deleted_files:
 ''');
 
-    expect(appDir.childFile('lib/main.dart').existsSync(), true);
+      expect(appDir.childFile('lib/main.dart').existsSync(), true);
 
-    expect(stagingDir.existsSync(), true);
-    logger.clear();
-    await createTestCommandRunner(command).run(<String>[
-      'abandon',
-      '--staging-directory=${stagingDir.path}',
-      '--project-directory=${appDir.path}',
-      '--force',
-      '--flutter-subcommand',
-    ]);
-    expect(logger.statusText,
-        contains('Abandon complete. Start a new migration with:'));
-    expect(stagingDir.existsSync(), false);
-  }, overrides: <Type, Generator>{
-    FileSystem: () => fileSystem,
-    ProcessManager: () => processManager,
-  });
+      expect(stagingDir.existsSync(), true);
+      logger.clear();
+      await createTestCommandRunner(command).run(<String>[
+        'abandon',
+        '--staging-directory=${stagingDir.path}',
+        '--project-directory=${appDir.path}',
+        '--force',
+        '--flutter-subcommand',
+      ]);
+      expect(
+        logger.statusText,
+        contains('Abandon complete. Start a new migration with:'),
+      );
+      expect(stagingDir.existsSync(), false);
+    },
+    overrides: <Type, Generator>{
+      FileSystem: () => fileSystem,
+      ProcessManager: () => processManager,
+    },
+  );
 }

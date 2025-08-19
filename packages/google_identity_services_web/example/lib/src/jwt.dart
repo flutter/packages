@@ -17,7 +17,8 @@ final Codec<Object?, String> _jwtCodec = json.fuse(utf8).fuse(base64);
 ///
 /// More info: https://regexr.com/789qc
 final RegExp _jwtTokenRegexp = RegExp(
-    r'^(?<header>[^\.\s]+)\.(?<payload>[^\.\s]+)\.(?<signature>[^\.\s]+)$');
+  r'^(?<header>[^\.\s]+)\.(?<payload>[^\.\s]+)\.(?<signature>[^\.\s]+)$',
+);
 
 /// Decodes the `claims` of a JWT token and returns them as a Map.
 ///
