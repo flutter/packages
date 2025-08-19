@@ -43,9 +43,10 @@ final class Block extends OnEnterResult {
 /// the state being navigated to, and a reference to the [GoRouter] instance.
 /// It returns a [Future<OnEnterResult>] which should resolve to [Allow] if navigation
 /// is allowed, or [Block] to block navigation.
-typedef OnEnter = Future<OnEnterResult> Function(
-  BuildContext context,
-  GoRouterState currentState,
-  GoRouterState nextState,
-  GoRouter goRouter,
-);
+typedef OnEnter =
+    Future<OnEnterResult> Function(
+      BuildContext context,
+      GoRouterState currentState,
+      GoRouterState nextState,
+      GoRouter goRouter,
+    );

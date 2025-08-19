@@ -21,10 +21,11 @@ import 'match.dart';
 ///
 /// The returned [RouteMatchList] is used as parsed result for the
 /// [GoRouterDelegate].
-typedef ParserExceptionHandler = RouteMatchList Function(
-  BuildContext context,
-  RouteMatchList routeMatchList,
-);
+typedef ParserExceptionHandler =
+    RouteMatchList Function(
+      BuildContext context,
+      RouteMatchList routeMatchList,
+    );
 
 /// Converts between incoming URLs and a [RouteMatchList] using [RouteMatcher].
 ///
@@ -37,13 +38,13 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
     required String? initialLocation,
     required GoRouter router,
     required this.onParserException,
-  })  : _routeMatchListCodec = RouteMatchListCodec(configuration),
-        _initialLocation = initialLocation,
-        _onEnterHandler = _OnEnterHandler(
-          configuration: configuration,
-          router: router,
-          onParserException: onParserException,
-        );
+  }) : _routeMatchListCodec = RouteMatchListCodec(configuration),
+       _initialLocation = initialLocation,
+       _onEnterHandler = _OnEnterHandler(
+         configuration: configuration,
+         router: router,
+         onParserException: onParserException,
+       );
 
   /// The route configuration used for parsing [RouteInformation]s.
   final RouteConfiguration configuration;
@@ -83,10 +84,12 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
       // This is a result of browser backward/forward button or state
       // restoration. In this case, the route match list is already stored in
       // the state.
-      final RouteMatchList matchList =
-          _routeMatchListCodec.decode(infoState as Map<Object?, Object?>);
-      return debugParserFuture =
-          _redirect(context, matchList).then((RouteMatchList value) {
+      final RouteMatchList matchList = _routeMatchListCodec.decode(
+        infoState as Map<Object?, Object?>,
+      );
+      return debugParserFuture = _redirect(context, matchList).then((
+        RouteMatchList value,
+      ) {
         if (value.isError && onParserException != null) {
           return onParserException!(context, value);
         }
@@ -145,8 +148,9 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
     }
 
     // Process the deprecated redirect AFTER onEnter has allowed navigation
-    return debugParserFuture =
-        _redirect(context, initialMatches).then((RouteMatchList matchList) {
+    return debugParserFuture = _redirect(context, initialMatches).then((
+      RouteMatchList matchList,
+    ) {
       if (matchList.isError && onParserException != null) {
         return onParserException!(context, matchList);
       }
@@ -310,9 +314,9 @@ class _OnEnterHandler {
     required RouteConfiguration configuration,
     required GoRouter router,
     required ParserExceptionHandler? onParserException,
-  })  : _onParserException = onParserException,
-        _configuration = configuration,
-        _router = router;
+  }) : _onParserException = onParserException,
+       _configuration = configuration,
+       _router = router;
 
   /// The current route configuration.
   ///
@@ -380,15 +384,17 @@ class _OnEnterHandler {
     );
 
     // Build the next navigation state.
-    final GoRouterState nextState =
-        _buildTopLevelGoRouterState(incomingMatches);
+    final GoRouterState nextState = _buildTopLevelGoRouterState(
+      incomingMatches,
+    );
 
     // Get the current state from the router delegate.
     final RouteMatchList currentMatchList =
         _router.routerDelegate.currentConfiguration;
-    final GoRouterState currentState = currentMatchList.isNotEmpty
-        ? _buildTopLevelGoRouterState(currentMatchList)
-        : nextState;
+    final GoRouterState currentState =
+        currentMatchList.isNotEmpty
+            ? _buildTopLevelGoRouterState(currentMatchList)
+            : nextState;
 
     // Execute the onEnter callback in a try-catch to capture synchronous exceptions.
     Future<OnEnterResult> onEnterResultFuture;
@@ -408,9 +414,11 @@ class _OnEnterHandler {
 
       _resetRedirectionHistory();
 
-      return SynchronousFuture<RouteMatchList>(_onParserException != null
-          ? _onParserException(context, errorMatchList)
-          : errorMatchList);
+      return SynchronousFuture<RouteMatchList>(
+        _onParserException != null
+            ? _onParserException(context, errorMatchList)
+            : errorMatchList,
+      );
     }
 
     // Reset the redirection history after attempting the callback.
@@ -423,12 +431,15 @@ class _OnEnterHandler {
           return onCanEnter();
         } else if (result is Block) {
           // Add logging for blocked navigation
-          log('onEnter blocked navigation from ${currentState.uri} to ${nextState.uri}');
+          log(
+            'onEnter blocked navigation from ${currentState.uri} to ${nextState.uri}',
+          );
           return onCanNotEnter();
         } else {
           // This should never happen with a sealed class, but provide a fallback
           throw GoException(
-              'Invalid OnEnterResult type: ${result.runtimeType}');
+            'Invalid OnEnterResult type: ${result.runtimeType}',
+          );
         }
       },
       onError: (Object error, StackTrace stackTrace) {
@@ -509,8 +520,9 @@ class _OnEnterHandler {
   ) {
     _redirectionHistory.add(redirectedUri);
     if (_redirectionHistory.length > _configuration.redirectLimit) {
-      final String formattedHistory =
-          _formatOnEnterRedirectionHistory(_redirectionHistory);
+      final String formattedHistory = _formatOnEnterRedirectionHistory(
+        _redirectionHistory,
+      );
       final RouteMatchList errorMatchList = _errorRouteMatchList(
         redirectedUri,
         GoException('Too many onEnter calls detected: $formattedHistory'),

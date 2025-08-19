@@ -169,8 +169,9 @@ class GoRouter implements RouterConfig<RouteMatchList> {
     GoRouterPageBuilder? errorPageBuilder,
     GoRouterWidgetBuilder? errorBuilder,
     @Deprecated(
-        'Use onEnter for redirection. In the onEnter callback, call a navigation '
-        'method like router.go() and return const Block(). ')
+      'Use onEnter for redirection. In the onEnter callback, call a navigation '
+      'method like router.go() and return const Block(). ',
+    )
     GoRouterRedirect? redirect,
     int redirectLimit = 5,
     Listenable? refreshListenable,

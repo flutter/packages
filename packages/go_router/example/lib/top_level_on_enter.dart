@@ -36,10 +36,7 @@ class App extends StatelessWidget {
     return MaterialApp.router(
       routerConfig: _router(key),
       title: 'Top-level onEnter',
-      theme: ThemeData(
-        useMaterial3: true,
-        primarySwatch: Colors.blue,
-      ),
+      theme: ThemeData(useMaterial3: true, primarySwatch: Colors.blue),
     );
   }
 
@@ -51,8 +48,11 @@ class App extends StatelessWidget {
       debugLogDiagnostics: true,
 
       /// Exception handler to gracefully handle errors in navigation
-      onException:
-          (BuildContext context, GoRouterState state, GoRouter router) {
+      onException: (
+        BuildContext context,
+        GoRouterState state,
+        GoRouter router,
+      ) {
         // Show a user-friendly error message
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -116,7 +116,9 @@ class App extends StatelessWidget {
           case '/auth':
             if (nextState.uri.queryParameters['token'] != null) {
               _handleAuthToken(
-                  context, nextState.uri.queryParameters['token']!);
+                context,
+                nextState.uri.queryParameters['token']!,
+              );
               return const Block(); // Prevent navigation
             }
             return const OnEnterResult.allow();
@@ -143,39 +145,45 @@ class App extends StatelessWidget {
         ),
         GoRoute(
           path: '/login',
-          builder: (BuildContext context, GoRouterState state) =>
-              const LoginScreen(),
+          builder:
+              (BuildContext context, GoRouterState state) =>
+                  const LoginScreen(),
         ),
         GoRoute(
           path: '/home',
-          builder: (BuildContext context, GoRouterState state) =>
-              const HomeScreen(),
+          builder:
+              (BuildContext context, GoRouterState state) => const HomeScreen(),
         ),
         GoRoute(
           path: '/settings',
-          builder: (BuildContext context, GoRouterState state) =>
-              const SettingsScreen(),
+          builder:
+              (BuildContext context, GoRouterState state) =>
+                  const SettingsScreen(),
         ),
         // Add routes for demonstration purposes
         GoRoute(
           path: '/referral',
-          builder: (BuildContext context, GoRouterState state) =>
-              const SizedBox(), // Never reached
+          builder:
+              (BuildContext context, GoRouterState state) =>
+                  const SizedBox(), // Never reached
         ),
         GoRoute(
           path: '/crash-test',
-          builder: (BuildContext context, GoRouterState state) =>
-              const SizedBox(), // Never reached
+          builder:
+              (BuildContext context, GoRouterState state) =>
+                  const SizedBox(), // Never reached
         ),
         GoRoute(
           path: '/bad-route',
-          builder: (BuildContext context, GoRouterState state) =>
-              const SizedBox(), // Never reached
+          builder:
+              (BuildContext context, GoRouterState state) =>
+                  const SizedBox(), // Never reached
         ),
         GoRoute(
           path: '/error',
-          builder: (BuildContext context, GoRouterState state) =>
-              const ErrorScreen(),
+          builder:
+              (BuildContext context, GoRouterState state) =>
+                  const ErrorScreen(),
         ),
       ],
     );
@@ -190,7 +198,9 @@ class App extends StatelessWidget {
 
   /// Processes referral code in the background without blocking navigation
   Future<void> _processReferralCodeInBackground(
-      BuildContext context, String code) async {
+    BuildContext context,
+    String code,
+  ) async {
     try {
       final bool success = await ReferralService.processReferralCode(code);
 
@@ -214,10 +224,7 @@ class App extends StatelessWidget {
       }
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error: $error'),
-          backgroundColor: Colors.red,
-        ),
+        SnackBar(content: Text('Error: $error'), backgroundColor: Colors.red),
       );
     }
   }
@@ -243,11 +250,9 @@ class App extends StatelessWidget {
         return;
       }
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Auth token processed: $token'),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Auth token processed: $token')));
     });
   }
 }
@@ -282,8 +287,10 @@ class HomeScreen extends StatelessWidget {
             const SizedBox(height: 16),
 
             // Deep link examples
-            Text('Deep Link Tests',
-                style: Theme.of(context).textTheme.titleMedium),
+            Text(
+              'Deep Link Tests',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
             const SizedBox(height: 8),
             const _DeepLinkButton(
               label: 'Process Referral',
@@ -299,8 +306,10 @@ class HomeScreen extends StatelessWidget {
 
             // Exception Testing Section
             const SizedBox(height: 24),
-            Text('Exception Handling Tests',
-                style: Theme.of(context).textTheme.titleMedium),
+            Text(
+              'Exception Handling Tests',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
             const SizedBox(height: 8),
             const _DeepLinkButton(
               label: 'Trigger Exception',
@@ -339,10 +348,7 @@ class _DeepLinkButton extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          OutlinedButton(
-            onPressed: () => context.go(path),
-            child: Text(label),
-          ),
+          OutlinedButton(onPressed: () => context.go(path), child: Text(label)),
           Text(
             description,
             style: Theme.of(context).textTheme.bodySmall,
@@ -361,20 +367,20 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: const Text('Login')),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              ElevatedButton.icon(
-                onPressed: () => context.go('/home'),
-                icon: const Icon(Icons.home),
-                label: const Text('Go to Home'),
-              ),
-            ],
+    appBar: AppBar(title: const Text('Login')),
+    body: Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          ElevatedButton.icon(
+            onPressed: () => context.go('/home'),
+            icon: const Icon(Icons.home),
+            label: const Text('Go to Home'),
           ),
-        ),
-      );
+        ],
+      ),
+    ),
+  );
 }
 
 /// Settings screen implementation
@@ -384,23 +390,23 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: const Text('Settings')),
-        body: ListView(
-          padding: const EdgeInsets.all(16),
-          children: <Widget>[
-            ListTile(
-              title: const Text('Home'),
-              leading: const Icon(Icons.home),
-              onTap: () => context.go('/home'),
-            ),
-            ListTile(
-              title: const Text('Login'),
-              leading: const Icon(Icons.login),
-              onTap: () => context.go('/login'),
-            ),
-          ],
+    appBar: AppBar(title: const Text('Settings')),
+    body: ListView(
+      padding: const EdgeInsets.all(16),
+      children: <Widget>[
+        ListTile(
+          title: const Text('Home'),
+          leading: const Icon(Icons.home),
+          onTap: () => context.go('/home'),
         ),
-      );
+        ListTile(
+          title: const Text('Login'),
+          leading: const Icon(Icons.login),
+          onTap: () => context.go('/login'),
+        ),
+      ],
+    ),
+  );
 }
 
 /// Error screen implementation
@@ -410,32 +416,25 @@ class ErrorScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(
-          title: const Text('Error'),
-          backgroundColor: Colors.red,
-        ),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              const Icon(
-                Icons.error_outline,
-                color: Colors.red,
-                size: 60,
-              ),
-              const SizedBox(height: 16),
-              const Text(
-                'An error occurred during navigation',
-                style: TextStyle(fontSize: 18),
-              ),
-              const SizedBox(height: 24),
-              ElevatedButton.icon(
-                onPressed: () => context.go('/home'),
-                icon: const Icon(Icons.home),
-                label: const Text('Return to Home'),
-              ),
-            ],
+    appBar: AppBar(title: const Text('Error'), backgroundColor: Colors.red),
+    body: Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          const Icon(Icons.error_outline, color: Colors.red, size: 60),
+          const SizedBox(height: 16),
+          const Text(
+            'An error occurred during navigation',
+            style: TextStyle(fontSize: 18),
           ),
-        ),
-      );
+          const SizedBox(height: 24),
+          ElevatedButton.icon(
+            onPressed: () => context.go('/home'),
+            icon: const Icon(Icons.home),
+            label: const Text('Return to Home'),
+          ),
+        ],
+      ),
+    ),
+  );
 }

@@ -17,10 +17,8 @@ import 'route.dart';
 import 'router.dart';
 import 'state.dart';
 
-typedef GoRouterRedirect = FutureOr<String?> Function(
-  BuildContext context,
-  GoRouterState state,
-);
+typedef GoRouterRedirect =
+    FutureOr<String?> Function(BuildContext context, GoRouterState state);
 
 typedef _NamedPath = ({String path, bool caseSensitive});
 
