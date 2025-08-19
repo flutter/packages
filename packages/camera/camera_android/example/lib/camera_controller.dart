@@ -364,16 +364,12 @@ class CameraController extends ValueNotifier<CameraValue> {
   }
 
   /// Pause video recording.
-  ///
-  /// This feature is only available on iOS and Android sdk 24+.
   Future<void> pauseVideoRecording() async {
     await CameraPlatform.instance.pauseVideoRecording(_cameraId);
     value = value.copyWith(isRecordingPaused: true);
   }
 
   /// Resume video recording after pausing.
-  ///
-  /// This feature is only available on iOS and Android sdk 24+.
   Future<void> resumeVideoRecording() async {
     await CameraPlatform.instance.resumeVideoRecording(_cameraId);
     value = value.copyWith(isRecordingPaused: false);

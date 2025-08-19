@@ -1,6 +1,7 @@
-## NEXT
+## 0.10.10+6
 
-* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+* Updates minimum supported SDK version to Flutter 3.35.
+* Removes code for supporting API 21-23.
 
 ## 0.10.10+5
 
