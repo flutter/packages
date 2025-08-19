@@ -539,7 +539,7 @@ class SKProductWrapper {
   /// and their units and duration do not have to be matched.
   final SKProductDiscountWrapper? introductoryPrice;
 
-  /// An array of subscription offers available for the auto-renewable subscription (available on iOS 12.2 and higher).
+  /// An array of subscription offers available for the auto-renewable subscription.
   ///
   /// This property lists all promotional offers set up in App Store Connect. If
   /// no promotional offers have been set up, this field returns an empty list.
