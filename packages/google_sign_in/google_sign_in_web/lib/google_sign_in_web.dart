@@ -93,10 +93,8 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
   /// has finished running.
   @visibleForTesting
   Future<void> get initialized {
-    _assertIsInitCalled();
     return Future.wait<void>(<Future<void>>[
       _jsSdkLoadedFuture,
-      _initCalled!.future,
     ]);
   }
 
@@ -121,8 +119,6 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
 
     assert(params.serverClientId == null,
         'serverClientId is not supported on Web.');
-
-    _initCalled = Completer<void>();
 
     await _jsSdkLoadedFuture;
 
