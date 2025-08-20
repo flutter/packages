@@ -70,13 +70,10 @@ void main() {
     });
 
     gmaps.MapOptions? captured;
-    const MapConfiguration testMapConfigNoCloud = MapConfiguration(); // cloudMapId is null
-
     final GoogleMapController controller = GoogleMapController(
       mapId: 2, // Internal controller ID
       streamController: stream,
       widgetConfiguration: cfg(),
-      mapConfiguration: testMapConfigNoCloud,
     );
 
     controller.debugSetOverrides(
