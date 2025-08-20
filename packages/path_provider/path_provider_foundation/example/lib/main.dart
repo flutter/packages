@@ -78,7 +78,8 @@ class _MyAppState extends State<MyApp> {
 
     try {
       containerDirectory = await providerFoundation.getContainerPath(
-          appGroupIdentifier: 'group.flutter.appGroupTest');
+        appGroupIdentifier: 'group.flutter.appGroupTest',
+      );
     } catch (exception) {
       containerDirectory =
           'Failed to get app group container directory: $exception';
@@ -105,9 +106,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Path Provider example app'),
-        ),
+        appBar: AppBar(title: const Text('Path Provider example app')),
         body: Center(
           child: Column(
             children: <Widget>[

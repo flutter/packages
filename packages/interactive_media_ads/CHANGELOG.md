@@ -1,3 +1,23 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
+## 0.2.6+3
+
+* Updates `README` with information about enabling desugaring on Android.
+
+## 0.2.6+2
+
+* Updates kotlin version to 2.2.0 to enable gradle 8.11 support.
+
+## 0.2.6+1
+
+* Fixes passing ads response to Android native `AdsRequest`.
+
+## 0.2.6
+
+* Adds support to configure ad requests. See `AdsRequest`.
+
 ## 0.2.5+1
 
 * Adds remaining methods for internal wrapper of the Android native `AdsRequest`.

@@ -18,20 +18,6 @@ PlatformException _createConnectionError(String channelName) {
   );
 }
 
-List<Object?> wrapResponse({
-  Object? result,
-  PlatformException? error,
-  bool empty = false,
-}) {
-  if (empty) {
-    return <Object?>[];
-  }
-  if (error == null) {
-    return <Object?>[result];
-  }
-  return <Object?>[error.code, error.message, error.details];
-}
-
 bool _deepEquals(Object? a, Object? b) {
   if (a is List && b is List) {
     return a.length == b.length &&
@@ -52,6 +38,9 @@ bool _deepEquals(Object? a, Object? b) {
 
 /// Pigeon equivalent of VideoViewType.
 enum PlatformVideoViewType { textureView, platformView }
+
+/// Pigeon equivalent of video_platform_interface's VideoFormat.
+enum PlatformVideoFormat { dash, hls, ss }
 
 /// Information passed to the platform view creation.
 class PlatformVideoViewCreationParams {
@@ -92,35 +81,25 @@ class PlatformVideoViewCreationParams {
 
 class CreateMessage {
   CreateMessage({
-    this.asset,
-    this.uri,
-    this.packageName,
+    required this.uri,
     this.formatHint,
     required this.httpHeaders,
+    this.userAgent,
     this.viewType,
   });
 
-  String? asset;
+  String uri;
 
-  String? uri;
-
-  String? packageName;
-
-  String? formatHint;
+  PlatformVideoFormat? formatHint;
 
   Map<String, String> httpHeaders;
+
+  String? userAgent;
 
   PlatformVideoViewType? viewType;
 
   List<Object?> _toList() {
-    return <Object?>[
-      asset,
-      uri,
-      packageName,
-      formatHint,
-      httpHeaders,
-      viewType,
-    ];
+    return <Object?>[uri, formatHint, httpHeaders, userAgent, viewType];
   }
 
   Object encode() {
@@ -130,13 +109,12 @@ class CreateMessage {
   static CreateMessage decode(Object result) {
     result as List<Object?>;
     return CreateMessage(
-      asset: result[0] as String?,
-      uri: result[1] as String?,
-      packageName: result[2] as String?,
-      formatHint: result[3] as String?,
+      uri: result[0]! as String,
+      formatHint: result[1] as PlatformVideoFormat?,
       httpHeaders:
-          (result[4] as Map<Object?, Object?>?)!.cast<String, String>(),
-      viewType: result[5] as PlatformVideoViewType?,
+          (result[2] as Map<Object?, Object?>?)!.cast<String, String>(),
+      userAgent: result[3] as String?,
+      viewType: result[4] as PlatformVideoViewType?,
     );
   }
 
@@ -144,6 +122,48 @@ class CreateMessage {
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
     if (other is! CreateMessage || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
+}
+
+class PlaybackState {
+  PlaybackState({required this.playPosition, required this.bufferPosition});
+
+  /// The current playback position, in milliseconds.
+  int playPosition;
+
+  /// The current buffer position, in milliseconds.
+  int bufferPosition;
+
+  List<Object?> _toList() {
+    return <Object?>[playPosition, bufferPosition];
+  }
+
+  Object encode() {
+    return _toList();
+  }
+
+  static PlaybackState decode(Object result) {
+    result as List<Object?>;
+    return PlaybackState(
+      playPosition: result[0]! as int,
+      bufferPosition: result[1]! as int,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PlaybackState || other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -167,11 +187,17 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is PlatformVideoViewType) {
       buffer.putUint8(129);
       writeValue(buffer, value.index);
-    } else if (value is PlatformVideoViewCreationParams) {
+    } else if (value is PlatformVideoFormat) {
       buffer.putUint8(130);
+      writeValue(buffer, value.index);
+    } else if (value is PlatformVideoViewCreationParams) {
+      buffer.putUint8(131);
       writeValue(buffer, value.encode());
     } else if (value is CreateMessage) {
-      buffer.putUint8(131);
+      buffer.putUint8(132);
+      writeValue(buffer, value.encode());
+    } else if (value is PlaybackState) {
+      buffer.putUint8(133);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -185,9 +211,14 @@ class _PigeonCodec extends StandardMessageCodec {
         final int? value = readValue(buffer) as int?;
         return value == null ? null : PlatformVideoViewType.values[value];
       case 130:
-        return PlatformVideoViewCreationParams.decode(readValue(buffer)!);
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : PlatformVideoFormat.values[value];
       case 131:
+        return PlatformVideoViewCreationParams.decode(readValue(buffer)!);
+      case 132:
         return CreateMessage.decode(readValue(buffer)!);
+      case 133:
+        return PlaybackState.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -320,6 +351,38 @@ class AndroidVideoPlayerApi {
       return;
     }
   }
+
+  Future<String> getLookupKeyForAsset(String asset, String? packageName) async {
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.video_player_android.AndroidVideoPlayerApi.getLookupKeyForAsset$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[asset, packageName],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as String?)!;
+    }
+  }
 }
 
 class VideoPlayerInstanceApi {
@@ -338,6 +401,7 @@ class VideoPlayerInstanceApi {
 
   final String pigeonVar_messageChannelSuffix;
 
+  /// Sets whether to automatically loop playback of the video.
   Future<void> setLooping(bool looping) async {
     final String pigeonVar_channelName =
         'dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.setLooping$pigeonVar_messageChannelSuffix';
@@ -365,6 +429,7 @@ class VideoPlayerInstanceApi {
     }
   }
 
+  /// Sets the volume, with 0.0 being muted and 1.0 being full volume.
   Future<void> setVolume(double volume) async {
     final String pigeonVar_channelName =
         'dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.setVolume$pigeonVar_messageChannelSuffix';
@@ -392,6 +457,7 @@ class VideoPlayerInstanceApi {
     }
   }
 
+  /// Sets the playback speed as a multiple of normal speed.
   Future<void> setPlaybackSpeed(double speed) async {
     final String pigeonVar_channelName =
         'dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.setPlaybackSpeed$pigeonVar_messageChannelSuffix';
@@ -419,6 +485,7 @@ class VideoPlayerInstanceApi {
     }
   }
 
+  /// Begins playback if the video is not currently playing.
   Future<void> play() async {
     final String pigeonVar_channelName =
         'dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.play$pigeonVar_messageChannelSuffix';
@@ -444,9 +511,10 @@ class VideoPlayerInstanceApi {
     }
   }
 
-  Future<int> getPosition() async {
+  /// Pauses playback if the video is currently playing.
+  Future<void> pause() async {
     final String pigeonVar_channelName =
-        'dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.getPosition$pigeonVar_messageChannelSuffix';
+        'dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.pause$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
@@ -464,16 +532,12 @@ class VideoPlayerInstanceApi {
         message: pigeonVar_replyList[1] as String?,
         details: pigeonVar_replyList[2],
       );
-    } else if (pigeonVar_replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
     } else {
-      return (pigeonVar_replyList[0] as int?)!;
+      return;
     }
   }
 
+  /// Seeks to the given playback position, in milliseconds.
   Future<void> seekTo(int position) async {
     final String pigeonVar_channelName =
         'dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.seekTo$pigeonVar_messageChannelSuffix';
@@ -501,9 +565,13 @@ class VideoPlayerInstanceApi {
     }
   }
 
-  Future<void> pause() async {
+  /// Returns the current playback state.
+  ///
+  /// This is combined into a single call to minimize platform channel calls for
+  /// state that needs to be polled frequently.
+  Future<PlaybackState> getPlaybackState() async {
     final String pigeonVar_channelName =
-        'dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.pause$pigeonVar_messageChannelSuffix';
+        'dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.getPlaybackState$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
@@ -521,8 +589,13 @@ class VideoPlayerInstanceApi {
         message: pigeonVar_replyList[1] as String?,
         details: pigeonVar_replyList[2],
       );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
     } else {
-      return;
+      return (pigeonVar_replyList[0] as PlaybackState?)!;
     }
   }
 }

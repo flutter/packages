@@ -77,6 +77,19 @@ public class Messages {
     }
   }
 
+  /** Pigeon equivalent of video_platform_interface's VideoFormat. */
+  public enum PlatformVideoFormat {
+    DASH(0),
+    HLS(1),
+    SS(2);
+
+    final int index;
+
+    PlatformVideoFormat(final int index) {
+      this.index = index;
+    }
+  }
+
   /**
    * Information passed to the platform view creation.
    *
@@ -151,43 +164,26 @@ public class Messages {
 
   /** Generated class from Pigeon that represents data sent in messages. */
   public static final class CreateMessage {
-    private @Nullable String asset;
+    private @NonNull String uri;
 
-    public @Nullable String getAsset() {
-      return asset;
-    }
-
-    public void setAsset(@Nullable String setterArg) {
-      this.asset = setterArg;
-    }
-
-    private @Nullable String uri;
-
-    public @Nullable String getUri() {
+    public @NonNull String getUri() {
       return uri;
     }
 
-    public void setUri(@Nullable String setterArg) {
+    public void setUri(@NonNull String setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"uri\" is null.");
+      }
       this.uri = setterArg;
     }
 
-    private @Nullable String packageName;
+    private @Nullable PlatformVideoFormat formatHint;
 
-    public @Nullable String getPackageName() {
-      return packageName;
-    }
-
-    public void setPackageName(@Nullable String setterArg) {
-      this.packageName = setterArg;
-    }
-
-    private @Nullable String formatHint;
-
-    public @Nullable String getFormatHint() {
+    public @Nullable PlatformVideoFormat getFormatHint() {
       return formatHint;
     }
 
-    public void setFormatHint(@Nullable String setterArg) {
+    public void setFormatHint(@Nullable PlatformVideoFormat setterArg) {
       this.formatHint = setterArg;
     }
 
@@ -202,6 +198,16 @@ public class Messages {
         throw new IllegalStateException("Nonnull field \"httpHeaders\" is null.");
       }
       this.httpHeaders = setterArg;
+    }
+
+    private @Nullable String userAgent;
+
+    public @Nullable String getUserAgent() {
+      return userAgent;
+    }
+
+    public void setUserAgent(@Nullable String setterArg) {
+      this.userAgent = setterArg;
     }
 
     private @Nullable PlatformVideoViewType viewType;
@@ -226,49 +232,32 @@ public class Messages {
         return false;
       }
       CreateMessage that = (CreateMessage) o;
-      return Objects.equals(asset, that.asset)
-          && Objects.equals(uri, that.uri)
-          && Objects.equals(packageName, that.packageName)
+      return uri.equals(that.uri)
           && Objects.equals(formatHint, that.formatHint)
           && httpHeaders.equals(that.httpHeaders)
+          && Objects.equals(userAgent, that.userAgent)
           && Objects.equals(viewType, that.viewType);
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(asset, uri, packageName, formatHint, httpHeaders, viewType);
+      return Objects.hash(uri, formatHint, httpHeaders, userAgent, viewType);
     }
 
     public static final class Builder {
 
-      private @Nullable String asset;
-
-      @CanIgnoreReturnValue
-      public @NonNull Builder setAsset(@Nullable String setterArg) {
-        this.asset = setterArg;
-        return this;
-      }
-
       private @Nullable String uri;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setUri(@Nullable String setterArg) {
+      public @NonNull Builder setUri(@NonNull String setterArg) {
         this.uri = setterArg;
         return this;
       }
 
-      private @Nullable String packageName;
+      private @Nullable PlatformVideoFormat formatHint;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setPackageName(@Nullable String setterArg) {
-        this.packageName = setterArg;
-        return this;
-      }
-
-      private @Nullable String formatHint;
-
-      @CanIgnoreReturnValue
-      public @NonNull Builder setFormatHint(@Nullable String setterArg) {
+      public @NonNull Builder setFormatHint(@Nullable PlatformVideoFormat setterArg) {
         this.formatHint = setterArg;
         return this;
       }
@@ -278,6 +267,14 @@ public class Messages {
       @CanIgnoreReturnValue
       public @NonNull Builder setHttpHeaders(@NonNull Map<String, String> setterArg) {
         this.httpHeaders = setterArg;
+        return this;
+      }
+
+      private @Nullable String userAgent;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setUserAgent(@Nullable String setterArg) {
+        this.userAgent = setterArg;
         return this;
       }
 
@@ -291,11 +288,10 @@ public class Messages {
 
       public @NonNull CreateMessage build() {
         CreateMessage pigeonReturn = new CreateMessage();
-        pigeonReturn.setAsset(asset);
         pigeonReturn.setUri(uri);
-        pigeonReturn.setPackageName(packageName);
         pigeonReturn.setFormatHint(formatHint);
         pigeonReturn.setHttpHeaders(httpHeaders);
+        pigeonReturn.setUserAgent(userAgent);
         pigeonReturn.setViewType(viewType);
         return pigeonReturn;
       }
@@ -303,30 +299,121 @@ public class Messages {
 
     @NonNull
     ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<>(6);
-      toListResult.add(asset);
+      ArrayList<Object> toListResult = new ArrayList<>(5);
       toListResult.add(uri);
-      toListResult.add(packageName);
       toListResult.add(formatHint);
       toListResult.add(httpHeaders);
+      toListResult.add(userAgent);
       toListResult.add(viewType);
       return toListResult;
     }
 
     static @NonNull CreateMessage fromList(@NonNull ArrayList<Object> pigeonVar_list) {
       CreateMessage pigeonResult = new CreateMessage();
-      Object asset = pigeonVar_list.get(0);
-      pigeonResult.setAsset((String) asset);
-      Object uri = pigeonVar_list.get(1);
+      Object uri = pigeonVar_list.get(0);
       pigeonResult.setUri((String) uri);
-      Object packageName = pigeonVar_list.get(2);
-      pigeonResult.setPackageName((String) packageName);
-      Object formatHint = pigeonVar_list.get(3);
-      pigeonResult.setFormatHint((String) formatHint);
-      Object httpHeaders = pigeonVar_list.get(4);
+      Object formatHint = pigeonVar_list.get(1);
+      pigeonResult.setFormatHint((PlatformVideoFormat) formatHint);
+      Object httpHeaders = pigeonVar_list.get(2);
       pigeonResult.setHttpHeaders((Map<String, String>) httpHeaders);
-      Object viewType = pigeonVar_list.get(5);
+      Object userAgent = pigeonVar_list.get(3);
+      pigeonResult.setUserAgent((String) userAgent);
+      Object viewType = pigeonVar_list.get(4);
       pigeonResult.setViewType((PlatformVideoViewType) viewType);
+      return pigeonResult;
+    }
+  }
+
+  /** Generated class from Pigeon that represents data sent in messages. */
+  public static final class PlaybackState {
+    /** The current playback position, in milliseconds. */
+    private @NonNull Long playPosition;
+
+    public @NonNull Long getPlayPosition() {
+      return playPosition;
+    }
+
+    public void setPlayPosition(@NonNull Long setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"playPosition\" is null.");
+      }
+      this.playPosition = setterArg;
+    }
+
+    /** The current buffer position, in milliseconds. */
+    private @NonNull Long bufferPosition;
+
+    public @NonNull Long getBufferPosition() {
+      return bufferPosition;
+    }
+
+    public void setBufferPosition(@NonNull Long setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"bufferPosition\" is null.");
+      }
+      this.bufferPosition = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    PlaybackState() {}
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      PlaybackState that = (PlaybackState) o;
+      return playPosition.equals(that.playPosition) && bufferPosition.equals(that.bufferPosition);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(playPosition, bufferPosition);
+    }
+
+    public static final class Builder {
+
+      private @Nullable Long playPosition;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setPlayPosition(@NonNull Long setterArg) {
+        this.playPosition = setterArg;
+        return this;
+      }
+
+      private @Nullable Long bufferPosition;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setBufferPosition(@NonNull Long setterArg) {
+        this.bufferPosition = setterArg;
+        return this;
+      }
+
+      public @NonNull PlaybackState build() {
+        PlaybackState pigeonReturn = new PlaybackState();
+        pigeonReturn.setPlayPosition(playPosition);
+        pigeonReturn.setBufferPosition(bufferPosition);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<>(2);
+      toListResult.add(playPosition);
+      toListResult.add(bufferPosition);
+      return toListResult;
+    }
+
+    static @NonNull PlaybackState fromList(@NonNull ArrayList<Object> pigeonVar_list) {
+      PlaybackState pigeonResult = new PlaybackState();
+      Object playPosition = pigeonVar_list.get(0);
+      pigeonResult.setPlayPosition((Long) playPosition);
+      Object bufferPosition = pigeonVar_list.get(1);
+      pigeonResult.setBufferPosition((Long) bufferPosition);
       return pigeonResult;
     }
   }
@@ -345,9 +432,16 @@ public class Messages {
             return value == null ? null : PlatformVideoViewType.values()[((Long) value).intValue()];
           }
         case (byte) 130:
-          return PlatformVideoViewCreationParams.fromList((ArrayList<Object>) readValue(buffer));
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : PlatformVideoFormat.values()[((Long) value).intValue()];
+          }
         case (byte) 131:
+          return PlatformVideoViewCreationParams.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 132:
           return CreateMessage.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 133:
+          return PlaybackState.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
       }
@@ -358,12 +452,18 @@ public class Messages {
       if (value instanceof PlatformVideoViewType) {
         stream.write(129);
         writeValue(stream, value == null ? null : ((PlatformVideoViewType) value).index);
-      } else if (value instanceof PlatformVideoViewCreationParams) {
+      } else if (value instanceof PlatformVideoFormat) {
         stream.write(130);
+        writeValue(stream, value == null ? null : ((PlatformVideoFormat) value).index);
+      } else if (value instanceof PlatformVideoViewCreationParams) {
+        stream.write(131);
         writeValue(stream, ((PlatformVideoViewCreationParams) value).toList());
       } else if (value instanceof CreateMessage) {
-        stream.write(131);
+        stream.write(132);
         writeValue(stream, ((CreateMessage) value).toList());
+      } else if (value instanceof PlaybackState) {
+        stream.write(133);
+        writeValue(stream, ((PlaybackState) value).toList());
       } else {
         super.writeValue(stream, value);
       }
@@ -381,6 +481,9 @@ public class Messages {
     void dispose(@NonNull Long playerId);
 
     void setMixWithOthers(@NonNull Boolean mixWithOthers);
+
+    @NonNull
+    String getLookupKeyForAsset(@NonNull String asset, @Nullable String packageName);
 
     /** The codec used by AndroidVideoPlayerApi. */
     static @NonNull MessageCodec<Object> getCodec() {
@@ -498,25 +601,56 @@ public class Messages {
           channel.setMessageHandler(null);
         }
       }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.video_player_android.AndroidVideoPlayerApi.getLookupKeyForAsset"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                String assetArg = (String) args.get(0);
+                String packageNameArg = (String) args.get(1);
+                try {
+                  String output = api.getLookupKeyForAsset(assetArg, packageNameArg);
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  wrapped = wrapError(exception);
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
     }
   }
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface VideoPlayerInstanceApi {
-
+    /** Sets whether to automatically loop playback of the video. */
     void setLooping(@NonNull Boolean looping);
-
+    /** Sets the volume, with 0.0 being muted and 1.0 being full volume. */
     void setVolume(@NonNull Double volume);
-
+    /** Sets the playback speed as a multiple of normal speed. */
     void setPlaybackSpeed(@NonNull Double speed);
-
+    /** Begins playback if the video is not currently playing. */
     void play();
-
-    @NonNull
-    Long getPosition();
-
-    void seekTo(@NonNull Long position);
-
+    /** Pauses playback if the video is currently playing. */
     void pause();
+    /** Seeks to the given playback position, in milliseconds. */
+    void seekTo(@NonNull Long position);
+    /**
+     * Returns the current playback state.
+     *
+     * <p>This is combined into a single call to minimize platform channel calls for state that
+     * needs to be polled frequently.
+     */
+    @NonNull
+    PlaybackState getPlaybackState();
 
     /** The codec used by VideoPlayerInstanceApi. */
     static @NonNull MessageCodec<Object> getCodec() {
@@ -638,7 +772,7 @@ public class Messages {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.getPosition"
+                "dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.pause"
                     + messageChannelSuffix,
                 getCodec());
         if (api != null) {
@@ -646,8 +780,8 @@ public class Messages {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<>();
                 try {
-                  Long output = api.getPosition();
-                  wrapped.add(0, output);
+                  api.pause();
+                  wrapped.add(0, null);
                 } catch (Throwable exception) {
                   wrapped = wrapError(exception);
                 }
@@ -686,7 +820,7 @@ public class Messages {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.pause"
+                "dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.getPlaybackState"
                     + messageChannelSuffix,
                 getCodec());
         if (api != null) {
@@ -694,8 +828,8 @@ public class Messages {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<>();
                 try {
-                  api.pause();
-                  wrapped.add(0, null);
+                  PlaybackState output = api.getPlaybackState();
+                  wrapped.add(0, output);
                 } catch (Throwable exception) {
                   wrapped = wrapError(exception);
                 }

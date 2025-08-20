@@ -7,7 +7,9 @@ import 'maps_object.dart';
 
 /// Converts an [Iterable] of GroundOverlay to a Map of GroundOverlayId -> GroundOverlay.
 Map<GroundOverlayId, GroundOverlay> keyByGroundOverlayId(
-    Iterable<GroundOverlay> groundOverlays) {
-  return keyByMapsObjectId<GroundOverlay>(groundOverlays)
-      .cast<GroundOverlayId, GroundOverlay>();
+  Iterable<GroundOverlay> groundOverlays,
+) {
+  return keyByMapsObjectId<GroundOverlay>(
+    groundOverlays,
+  ).cast<GroundOverlayId, GroundOverlay>();
 }

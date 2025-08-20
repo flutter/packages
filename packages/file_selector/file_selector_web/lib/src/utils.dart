@@ -34,11 +34,13 @@ void _validateTypeGroup(XTypeGroup group) {
   if ((group.extensions?.isEmpty ?? true) &&
       (group.mimeTypes?.isEmpty ?? true) &&
       (group.webWildCards?.isEmpty ?? true)) {
-    throw ArgumentError('Provided type group $group does not allow '
-        'all files, but does not set any of the web-supported filter '
-        'categories. At least one of "extensions", "mimeTypes", or '
-        '"webWildCards" must be non-empty for web if anything is '
-        'non-empty.');
+    throw ArgumentError(
+      'Provided type group $group does not allow '
+      'all files, but does not set any of the web-supported filter '
+      'categories. At least one of "extensions", "mimeTypes", or '
+      '"webWildCards" must be non-empty for web if anything is '
+      'non-empty.',
+    );
   }
 }
 

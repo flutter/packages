@@ -25,8 +25,8 @@ final class AndroidAdsLoaderCreationParams
     required super.onAdsLoaded,
     required super.onAdsLoadError,
     @visibleForTesting InteractiveMediaAdsProxy? proxy,
-  })  : _proxy = proxy ?? const InteractiveMediaAdsProxy(),
-        super();
+  }) : _proxy = proxy ?? const InteractiveMediaAdsProxy(),
+       super();
 
   /// Creates a [AndroidAdsLoaderCreationParams] from an instance of
   /// [PlatformAdsLoaderCreationParams].
@@ -50,13 +50,13 @@ final class AndroidAdsLoaderCreationParams
 base class AndroidAdsLoader extends PlatformAdsLoader {
   /// Constructs an [AndroidAdsLoader].
   AndroidAdsLoader(super.params)
-      : assert(params.container is AndroidAdDisplayContainer),
-        assert(
-          (params.container as AndroidAdDisplayContainer).adDisplayContainer !=
-              null,
-          'Ensure the AdDisplayContainer has been added to the Widget tree before creating an AdsLoader.',
-        ),
-        super.implementation() {
+    : assert(params.container is AndroidAdDisplayContainer),
+      assert(
+        (params.container as AndroidAdDisplayContainer).adDisplayContainer !=
+            null,
+        'Ensure the AdDisplayContainer has been added to the Widget tree before creating an AdsLoader.',
+      ),
+      super.implementation() {
     _adsLoaderFuture = _createAdsLoader();
   }
 
@@ -68,8 +68,8 @@ base class AndroidAdsLoader extends PlatformAdsLoader {
       params is AndroidAdsLoaderCreationParams
           ? params as AndroidAdsLoaderCreationParams
           : AndroidAdsLoaderCreationParams.fromPlatformAdsLoaderCreationParams(
-              params,
-            );
+            params,
+          );
 
   @override
   Future<void> contentComplete() async {
@@ -89,10 +89,38 @@ base class AndroidAdsLoader extends PlatformAdsLoader {
     final ima.AdsRequest androidRequest = await _sdkFactory.createAdsRequest();
 
     await Future.wait(<Future<void>>[
-      androidRequest.setAdTagUrl(request.adTagUrl),
-      if (request.contentProgressProvider != null)
+      if (request case final PlatformAdsRequestWithAdTagUrl request)
+        androidRequest.setAdTagUrl(request.adTagUrl),
+      if (request case final PlatformAdsRequestWithAdsResponse request)
+        androidRequest.setAdsResponse(request.adsResponse),
+      if (request.adWillAutoPlay case final bool adWillAutoPlay)
+        androidRequest.setAdWillAutoPlay(adWillAutoPlay),
+      if (request.adWillPlayMuted case final bool adWillPlayMuted)
+        androidRequest.setAdWillPlayMuted(adWillPlayMuted),
+      if (request.continuousPlayback case final bool continuousPlayback)
+        androidRequest.setContinuousPlayback(continuousPlayback),
+      if (request.contentDuration case final Duration contentDuration)
+        androidRequest.setContentDuration(
+          contentDuration.inMilliseconds / Duration.millisecondsPerSecond,
+        ),
+      if (request.contentKeywords case final List<String> contentKeywords)
+        androidRequest.setContentKeywords(contentKeywords),
+      if (request.contentTitle case final String contentTitle)
+        androidRequest.setContentTitle(contentTitle),
+      if (request.liveStreamPrefetchMaxWaitTime
+          case final Duration liveStreamPrefetchMaxWaitTime)
+        androidRequest.setLiveStreamPrefetchSeconds(
+          liveStreamPrefetchMaxWaitTime.inMilliseconds /
+              Duration.millisecondsPerSecond,
+        ),
+      if (request.vastLoadTimeout case final Duration vastLoadTimeout)
+        androidRequest.setVastLoadTimeout(
+          vastLoadTimeout.inMilliseconds.toDouble(),
+        ),
+      if (request.contentProgressProvider
+          case final PlatformContentProgressProvider contentProgressProvider)
         androidRequest.setContentProgressProvider(
-          (request.contentProgressProvider! as AndroidContentProgressProvider)
+          (contentProgressProvider as AndroidContentProgressProvider)
               .progressProvider,
         ),
       adsLoader.requestAds(androidRequest),
@@ -125,30 +153,34 @@ base class AndroidAdsLoader extends PlatformAdsLoader {
     final InteractiveMediaAdsProxy proxy =
         weakThis.target!._androidParams._proxy;
     adsLoader
-      ..addAdsLoadedListener(proxy.newAdsLoadedListener(
-        onAdsManagerLoaded: (_, ima.AdsManagerLoadedEvent event) {
-          weakThis.target?.params.onAdsLoaded(
-            PlatformOnAdsLoadedData(
-              manager: AndroidAdsManager(
-                event.manager,
-                proxy: weakThis.target?._androidParams._proxy,
+      ..addAdsLoadedListener(
+        proxy.newAdsLoadedListener(
+          onAdsManagerLoaded: (_, ima.AdsManagerLoadedEvent event) {
+            weakThis.target?.params.onAdsLoaded(
+              PlatformOnAdsLoadedData(
+                manager: AndroidAdsManager(
+                  event.manager,
+                  proxy: weakThis.target?._androidParams._proxy,
+                ),
               ),
-            ),
-          );
-        },
-      ))
-      ..addAdErrorListener(proxy.newAdErrorListener(
-        onAdError: (_, ima.AdErrorEvent event) {
-          weakThis.target?.params.onAdsLoadError(
-            AdsLoadErrorData(
-              error: AdError(
-                type: toInterfaceErrorType(event.error.errorType),
-                code: toInterfaceErrorCode(event.error.errorCode),
-                message: event.error.message,
+            );
+          },
+        ),
+      )
+      ..addAdErrorListener(
+        proxy.newAdErrorListener(
+          onAdError: (_, ima.AdErrorEvent event) {
+            weakThis.target?.params.onAdsLoadError(
+              AdsLoadErrorData(
+                error: AdError(
+                  type: toInterfaceErrorType(event.error.errorType),
+                  code: toInterfaceErrorCode(event.error.errorCode),
+                  message: event.error.message,
+                ),
               ),
-            ),
-          );
-        },
-      ));
+            );
+          },
+        ),
+      );
   }
 }

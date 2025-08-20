@@ -13,6 +13,7 @@ bool isRepoLevelNonCodeImpactingFile(String path) {
         'CONTRIBUTING.md',
         'LICENSE',
         'README.md',
+        'AGENTS.md',
         // This deliberate lists specific files rather than excluding the whole
         // .github directory since it's better to have false negatives than to
         // accidentally skip tests if something is later added to the directory

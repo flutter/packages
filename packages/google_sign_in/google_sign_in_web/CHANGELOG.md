@@ -1,6 +1,6 @@
-## 1.0.1
+## NEXT
 
-* Fixes Bad state: Future already completed on the web.
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
 
 ## 1.0.0
 

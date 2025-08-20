@@ -8,11 +8,8 @@ import '../common.dart';
 import '../recorder.dart';
 
 Future<void> main() async {
-  await runBenchmarks(
-    <String, RecorderFactory>{
-      BenchmarkName.simpleCompilationCheck.name: () => TestAppRecorder(
-            benchmark: BenchmarkName.simpleCompilationCheck,
-          ),
-    },
-  );
+  await runBenchmarks(<String, RecorderFactory>{
+    BenchmarkName.simpleCompilationCheck.name:
+        () => TestAppRecorder(benchmark: BenchmarkName.simpleCompilationCheck),
+  });
 }

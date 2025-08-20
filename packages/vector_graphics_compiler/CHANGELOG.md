@@ -1,6 +1,11 @@
 ## NEXT
 
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
+## 1.1.18
+
 * Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+* Fixes SVG matrix parsing to explicitly set the Z scale value.
 
 ## 1.1.17
 

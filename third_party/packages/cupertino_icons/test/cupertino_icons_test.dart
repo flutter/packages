@@ -10,26 +10,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets(
-    'Cupertino Icon Test',
-    (WidgetTester tester) async {
-      // #docregion CupertinoIcon
-      const Icon icon = Icon(
-        CupertinoIcons.heart_fill,
-        color: Colors.pink,
-        size: 24.0,
-      );
-      // #enddocregion CupertinoIcon
+  testWidgets('Cupertino Icon Test', (WidgetTester tester) async {
+    // #docregion CupertinoIcon
+    const Icon icon = Icon(
+      CupertinoIcons.heart_fill,
+      color: Colors.pink,
+      size: 24.0,
+    );
+    // #enddocregion CupertinoIcon
 
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
-            body: icon,
-          ),
-        ),
-      );
+    await tester.pumpWidget(const MaterialApp(home: Scaffold(body: icon)));
 
-      expect(find.byType(Icon), findsOne);
-    },
-  );
+    expect(find.byType(Icon), findsOne);
+  });
 }

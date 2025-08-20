@@ -10,12 +10,14 @@ import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platf
 import 'example_google_map.dart';
 import 'page.dart';
 
-const CameraPosition _kInitialPosition =
-    CameraPosition(target: LatLng(-33.852, 151.211), zoom: 11.0);
+const CameraPosition _kInitialPosition = CameraPosition(
+  target: LatLng(-33.852, 151.211),
+  zoom: 11.0,
+);
 
 class LiteModePage extends GoogleMapExampleAppPage {
   const LiteModePage({Key? key})
-      : super(const Icon(Icons.map), 'Lite mode', key: key);
+    : super(const Icon(Icons.map), 'Lite mode', key: key);
 
   @override
   Widget build(BuildContext context) {

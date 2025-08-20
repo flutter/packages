@@ -103,7 +103,7 @@ public class PreviewTest {
         ArgumentCaptor.forClass(TextureRegistry.SurfaceProducer.Callback.class);
 
     when(mockSurfaceRequest.getResolution()).thenReturn(new Size(5, 6));
-    when(mockSurfaceProducer.getSurface()).thenReturn(mock(Surface.class));
+    when(mockSurfaceProducer.getForcedNewSurface()).thenReturn(mock(Surface.class));
 
     final Preview.SurfaceProvider previewSurfaceProvider =
         api.createSurfaceProvider(mockSurfaceProducer, mockSystemServicesManager);
@@ -155,7 +155,7 @@ public class PreviewTest {
 
     when(mockSurfaceRequest.getResolution())
         .thenReturn(new Size(resolutionWidth, resolutionHeight));
-    when(mockSurfaceProducer.getSurface()).thenReturn(mockSurface);
+    when(mockSurfaceProducer.getForcedNewSurface()).thenReturn(mockSurface);
 
     final ArgumentCaptor<Surface> surfaceCaptor = ArgumentCaptor.forClass(Surface.class);
     final ArgumentCaptor<Consumer<SurfaceRequest.Result>> consumerCaptor =
