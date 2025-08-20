@@ -44,6 +44,92 @@ void main() {
         throwsA(isA<ToolExit>()));
   });
 
+  group('result aggregation', () {
+    test('repeorts failure if any analysis fails', () async {
+      final RepositoryPackage plugin =
+          createFakePlugin('plugin1', packagesDir, extraFiles: <String>[
+        'example/android/gradlew',
+      ], platformSupport: <String, PlatformDetails>{
+        platformAndroid: const PlatformDetails(PlatformSupport.inline),
+        platformIOS: const PlatformDetails(PlatformSupport.inline),
+        platformMacOS: const PlatformDetails(PlatformSupport.inline),
+      });
+
+      // Simulate Android analysis failure only.
+      final String gradlewPath = plugin
+          .getExamples()
+          .first
+          .platformDirectory(FlutterPlatform.android)
+          .childFile('gradlew')
+          .path;
+      processRunner.mockProcessesForExecutable[gradlewPath] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(exitCode: 1)),
+      ];
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['analyze', '--android', '--ios', '--macos'],
+          errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+          output,
+          containsAllInOrder(
+            <Matcher>[
+              contains('The following packages had errors:'),
+            ],
+          ));
+    });
+
+    test('reports skip if everything is skipped', () async {
+      createFakePlugin('plugin', packagesDir);
+
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'analyze',
+        '--no-dart',
+        '--android',
+        '--ios',
+        '--macos',
+      ]);
+
+      expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('SKIPPING:'),
+          ]));
+
+      expect(processRunner.recordedCalls, orderedEquals(<ProcessCall>[]));
+    });
+
+    test('reports success for a mixture of skip and success', () async {
+      createFakePlugin('plugin', packagesDir,
+          platformSupport: <String, PlatformDetails>{
+            platformIOS: const PlatformDetails(PlatformSupport.inline)
+          });
+
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'analyze',
+        '--no-dart',
+        '--android',
+        '--ios',
+        '--macos',
+      ]);
+
+      expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('No issues found'),
+          ]));
+      expect(
+          output,
+          isNot(containsAllInOrder(<Matcher>[
+            contains('SKIPPING:'),
+          ])));
+    });
+  });
+
   group('dart analyze', () {
     test('analyzes all packages', () async {
       final RepositoryPackage package1 = createFakePackage('a', packagesDir);
@@ -1380,26 +1466,6 @@ packages/package_a/lib/foo.dart
                   ],
                   pluginExampleDirectory.path),
             ]));
-      });
-
-      test('skips when neither are supported', () async {
-        createFakePlugin('plugin', packagesDir);
-
-        final List<String> output = await runCapturingPrint(runner, <String>[
-          'analyze',
-          '--no-dart',
-          '--ios',
-          '--macos',
-        ]);
-
-        expect(
-            output,
-            containsAllInOrder(<Matcher>[
-              contains(
-                  'SKIPPING: iOS: Package does not contain native iOS plugin code, macOS: Package does not contain native macOS plugin code'),
-            ]));
-
-        expect(processRunner.recordedCalls, orderedEquals(<ProcessCall>[]));
       });
     });
 
