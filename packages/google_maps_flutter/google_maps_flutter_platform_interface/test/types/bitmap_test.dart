@@ -229,10 +229,10 @@ void main() {
             );
             final BitmapDescriptor scaled =
                 await BitmapDescriptor.fromAssetImage(
-                  imageConfiguration,
-                  'red_square.png',
-                  mipmaps: false,
-                );
+              imageConfiguration,
+              'red_square.png',
+              mipmaps: false,
+            );
 
             expect((mip.toJson() as List<dynamic>)[2], 1);
             expect((scaled.toJson() as List<dynamic>)[2], 3);

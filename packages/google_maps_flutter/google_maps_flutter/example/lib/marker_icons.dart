@@ -16,7 +16,7 @@ import 'page.dart';
 
 class MarkerIconsPage extends GoogleMapExampleAppPage {
   const MarkerIconsPage({Key? key})
-    : super(const Icon(Icons.image), 'Marker icons', key: key);
+      : super(const Icon(Icons.image), 'Marker icons', key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -111,15 +111,14 @@ class MarkerIconsBodyState extends State<MarkerIconsBody> {
                         });
                       }
                     },
-                    items:
-                        _MarkerSizeOption.values.map((
-                          _MarkerSizeOption option,
-                        ) {
-                          return DropdownMenuItem<_MarkerSizeOption>(
-                            value: option,
-                            child: Text(_getMarkerSizeOptionName(option)),
-                          );
-                        }).toList(),
+                    items: _MarkerSizeOption.values.map((
+                      _MarkerSizeOption option,
+                    ) {
+                      return DropdownMenuItem<_MarkerSizeOption>(
+                        value: option,
+                        child: Text(_getMarkerSizeOptionName(option)),
+                      );
+                    }).toList(),
                   ),
                 ],
               ),

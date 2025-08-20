@@ -11,8 +11,8 @@ class PolylineController {
     required gmaps.Polyline polyline,
     bool consumeTapEvents = false,
     VoidCallback? onTap,
-  }) : _polyline = polyline,
-       _consumeTapEvents = consumeTapEvents {
+  })  : _polyline = polyline,
+        _consumeTapEvents = consumeTapEvents {
     if (onTap != null) {
       polyline.onClick.listen((gmaps.PolyMouseEvent event) {
         onTap.call();

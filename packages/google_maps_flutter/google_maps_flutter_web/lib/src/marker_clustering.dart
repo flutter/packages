@@ -24,16 +24,16 @@ class ClusterManagersController extends GeometryController {
   /// emitting map events.
   ClusterManagersController({
     required StreamController<MapEvent<Object?>> stream,
-  }) : _streamController = stream,
-       _clusterManagerIdToMarkerClusterer =
-           <ClusterManagerId, MarkerClusterer>{};
+  })  : _streamController = stream,
+        _clusterManagerIdToMarkerClusterer =
+            <ClusterManagerId, MarkerClusterer>{};
 
   // The stream over which cluster managers broadcast their events
   final StreamController<MapEvent<Object?>> _streamController;
 
   // A cache of [MarkerClusterer]s indexed by their [ClusterManagerId].
   final Map<ClusterManagerId, MarkerClusterer>
-  _clusterManagerIdToMarkerClusterer;
+      _clusterManagerIdToMarkerClusterer;
 
   /// Adds a set of [ClusterManager] objects to the cache.
   void addClusterManagers(Set<ClusterManager> clusterManagersToAdd) {
@@ -137,13 +137,12 @@ class ClusterManagersController extends GeometryController {
       markerClustererCluster.bounds!,
     );
 
-    final List<MarkerId> markerIds =
-        markerClustererCluster.markers
-            .map<MarkerId>(
-              (gmaps.Marker marker) =>
-                  MarkerId((marker.get('markerId')! as JSString).toDart),
-            )
-            .toList();
+    final List<MarkerId> markerIds = markerClustererCluster.markers
+        .map<MarkerId>(
+          (gmaps.Marker marker) =>
+              MarkerId((marker.get('markerId')! as JSString).toDart),
+        )
+        .toList();
     return Cluster(
       clusterManagerId,
       markerIds,

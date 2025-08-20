@@ -1093,8 +1093,8 @@ void main() {
 
     final StreamQueue<GroundOverlayTapEvent> stream =
         StreamQueue<GroundOverlayTapEvent>(
-          maps.onGroundOverlayTap(mapId: mapId),
-        );
+      maps.onGroundOverlayTap(mapId: mapId),
+    );
 
     // Simulate message from the native side.
     callbackHandler.onGroundOverlayTap(objectId);
@@ -1352,29 +1352,29 @@ void main() {
 
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(SystemChannels.platform_views, (
-          MethodCall methodCall,
-        ) {
-          if (methodCall.method == 'create') {
-            final Map<String, dynamic> args = Map<String, dynamic>.from(
-              methodCall.arguments as Map<dynamic, dynamic>,
-            );
-            if (args.containsKey('params')) {
-              final Uint8List paramsUint8List = args['params'] as Uint8List;
-              final ByteData byteData = ByteData.sublistView(paramsUint8List);
-              final PlatformMapViewCreationParams? creationParams =
-                  MapsApi.pigeonChannelCodec.decodeMessage(byteData)
-                      as PlatformMapViewCreationParams?;
-              if (creationParams != null) {
-                final String? passedMapId =
-                    creationParams.mapConfiguration.cloudMapId;
-                if (passedMapId != null) {
-                  passedCloudMapIdCompleter.complete(passedMapId);
-                }
-              }
+      MethodCall methodCall,
+    ) {
+      if (methodCall.method == 'create') {
+        final Map<String, dynamic> args = Map<String, dynamic>.from(
+          methodCall.arguments as Map<dynamic, dynamic>,
+        );
+        if (args.containsKey('params')) {
+          final Uint8List paramsUint8List = args['params'] as Uint8List;
+          final ByteData byteData = ByteData.sublistView(paramsUint8List);
+          final PlatformMapViewCreationParams? creationParams =
+              MapsApi.pigeonChannelCodec.decodeMessage(byteData)
+                  as PlatformMapViewCreationParams?;
+          if (creationParams != null) {
+            final String? passedMapId =
+                creationParams.mapConfiguration.cloudMapId;
+            if (passedMapId != null) {
+              passedCloudMapIdCompleter.complete(passedMapId);
             }
           }
-          return null;
-        });
+        }
+      }
+      return null;
+    });
 
     final GoogleMapsFlutterIOS maps = GoogleMapsFlutterIOS();
 

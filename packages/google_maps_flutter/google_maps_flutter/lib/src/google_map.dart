@@ -387,8 +387,7 @@ class _GoogleMapState extends State<GoogleMap> {
       _mapId,
       onPlatformViewCreated,
       widgetConfiguration: MapWidgetConfiguration(
-        textDirection:
-            widget.layoutDirection ??
+        textDirection: widget.layoutDirection ??
             Directionality.maybeOf(context) ??
             TextDirection.ltr,
         initialCameraPosition: widget.initialCameraPosition,

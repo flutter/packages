@@ -10,9 +10,9 @@ class MarkersController extends GeometryController {
   MarkersController({
     required StreamController<MapEvent<Object?>> stream,
     required ClusterManagersController clusterManagersController,
-  }) : _streamController = stream,
-       _clusterManagersController = clusterManagersController,
-       _markerIdToController = <MarkerId, MarkerController>{};
+  })  : _streamController = stream,
+        _clusterManagersController = clusterManagersController,
+        _markerIdToController = <MarkerId, MarkerController>{};
 
   // A cache of [MarkerController]s indexed by their [MarkerId].
   final Map<MarkerId, MarkerController> _markerIdToController;
@@ -46,10 +46,9 @@ class MarkersController extends GeometryController {
           infoWindowOptions.content is HTMLElement) {
         final HTMLElement content = infoWindowOptions.content! as HTMLElement;
 
-        content.onclick =
-            (JSAny? _) {
-              _onInfoWindowTap(marker.markerId);
-            }.toJS;
+        content.onclick = (JSAny? _) {
+          _onInfoWindowTap(marker.markerId);
+        }.toJS;
       }
     }
 
@@ -201,11 +200,10 @@ class MarkersController extends GeometryController {
   void _hideAllMarkerInfoWindow() {
     _markerIdToController.values
         .where(
-          (MarkerController? controller) =>
-              controller?.infoWindowShown ?? false,
-        )
+      (MarkerController? controller) => controller?.infoWindowShown ?? false,
+    )
         .forEach((MarkerController controller) {
-          controller.hideInfoWindow();
-        });
+      controller.hideInfoWindow();
+    });
   }
 }

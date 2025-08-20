@@ -18,7 +18,7 @@ final LatLngBounds sydneyBounds = LatLngBounds(
 
 class MapUiPage extends GoogleMapExampleAppPage {
   const MapUiPage({Key? key})
-    : super(const Icon(Icons.map), 'User interface', key: key);
+      : super(const Icon(Icons.map), 'User interface', key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -103,10 +103,9 @@ class MapUiBodyState extends State<MapUiBody> {
       ),
       onPressed: () {
         setState(() {
-          _cameraTargetBounds =
-              _cameraTargetBounds.bounds == null
-                  ? CameraTargetBounds(sydneyBounds)
-                  : CameraTargetBounds.unbounded;
+          _cameraTargetBounds = _cameraTargetBounds.bounds == null
+              ? CameraTargetBounds(sydneyBounds)
+              : CameraTargetBounds.unbounded;
         });
       },
     );
@@ -119,10 +118,9 @@ class MapUiBodyState extends State<MapUiBody> {
       ),
       onPressed: () {
         setState(() {
-          _minMaxZoomPreference =
-              _minMaxZoomPreference.minZoom == null
-                  ? const MinMaxZoomPreference(12.0, 16.0)
-                  : MinMaxZoomPreference.unbounded;
+          _minMaxZoomPreference = _minMaxZoomPreference.minZoom == null
+              ? const MinMaxZoomPreference(12.0, 16.0)
+              : MinMaxZoomPreference.unbounded;
         });
       },
     );

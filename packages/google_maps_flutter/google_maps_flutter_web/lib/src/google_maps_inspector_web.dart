@@ -15,12 +15,12 @@ import 'marker_clustering.dart';
 typedef ConfigurationProvider = MapConfiguration Function(int mapId);
 
 /// Function that gets the [ClusterManagersController] for a given `mapId`.
-typedef ClusterManagersControllerProvider =
-    ClusterManagersController? Function(int mapId);
+typedef ClusterManagersControllerProvider = ClusterManagersController? Function(
+    int mapId);
 
 /// Function that gets the [GroundOverlaysController] for a given `mapId`.
-typedef GroundOverlaysControllerProvider =
-    GroundOverlaysController? Function(int mapId);
+typedef GroundOverlaysControllerProvider = GroundOverlaysController? Function(
+    int mapId);
 
 /// This platform implementation allows inspecting the running maps.
 class GoogleMapsInspectorWeb extends GoogleMapsInspectorPlatform {
@@ -29,9 +29,9 @@ class GoogleMapsInspectorWeb extends GoogleMapsInspectorPlatform {
     ConfigurationProvider configurationProvider,
     ClusterManagersControllerProvider clusterManagersControllerProvider,
     GroundOverlaysControllerProvider groundOverlaysControllerProvider,
-  ) : _configurationProvider = configurationProvider,
-      _clusterManagersControllerProvider = clusterManagersControllerProvider,
-      _groundOverlaysControllerProvider = groundOverlaysControllerProvider;
+  )   : _configurationProvider = configurationProvider,
+        _clusterManagersControllerProvider = clusterManagersControllerProvider,
+        _groundOverlaysControllerProvider = groundOverlaysControllerProvider;
 
   final ConfigurationProvider _configurationProvider;
   final ClusterManagersControllerProvider _clusterManagersControllerProvider;
@@ -93,8 +93,9 @@ class GoogleMapsInspectorWeb extends GoogleMapsInspectorPlatform {
   }) async {
     final gmaps.GroundOverlay? groundOverlay =
         _groundOverlaysControllerProvider(
-          mapId,
-        )!.getGroundOverlay(groundOverlayId);
+      mapId,
+    )!
+            .getGroundOverlay(groundOverlayId);
 
     if (groundOverlay == null) {
       return null;

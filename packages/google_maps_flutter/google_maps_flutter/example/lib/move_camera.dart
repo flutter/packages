@@ -11,7 +11,7 @@ import 'page.dart';
 
 class MoveCameraPage extends GoogleMapExampleAppPage {
   const MoveCameraPage({Key? key})
-    : super(const Icon(Icons.map), 'Camera control', key: key);
+      : super(const Icon(Icons.map), 'Camera control', key: key);
 
   @override
   Widget build(BuildContext context) {

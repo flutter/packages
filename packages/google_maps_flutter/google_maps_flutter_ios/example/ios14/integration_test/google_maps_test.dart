@@ -630,8 +630,8 @@ void main() {
     final int mapId = await mapIdCompleter.future;
     final GoogleMapsInspectorPlatform inspector =
         GoogleMapsInspectorPlatform.instance!;
-    final bool myLocationButtonEnabled = await inspector
-        .isMyLocationButtonEnabled(mapId: mapId);
+    final bool myLocationButtonEnabled =
+        await inspector.isMyLocationButtonEnabled(mapId: mapId);
     expect(myLocationButtonEnabled, false);
   });
 
@@ -657,8 +657,8 @@ void main() {
     final int mapId = await mapIdCompleter.future;
     final GoogleMapsInspectorPlatform inspector =
         GoogleMapsInspectorPlatform.instance!;
-    final bool myLocationButtonEnabled = await inspector
-        .isMyLocationButtonEnabled(mapId: mapId);
+    final bool myLocationButtonEnabled =
+        await inspector.isMyLocationButtonEnabled(mapId: mapId);
     expect(myLocationButtonEnabled, true);
   });
 
@@ -1090,16 +1090,14 @@ void main() {
     final GoogleMapsInspectorPlatform inspector =
         GoogleMapsInspectorPlatform.instance!;
 
-    final TileOverlay tileOverlayInfo1 =
-        (await inspector.getTileOverlayInfo(
-          tileOverlay1.mapsId,
-          mapId: mapId,
-        ))!;
-    final TileOverlay tileOverlayInfo2 =
-        (await inspector.getTileOverlayInfo(
-          tileOverlay2.mapsId,
-          mapId: mapId,
-        ))!;
+    final TileOverlay tileOverlayInfo1 = (await inspector.getTileOverlayInfo(
+      tileOverlay1.mapsId,
+      mapId: mapId,
+    ))!;
+    final TileOverlay tileOverlayInfo2 = (await inspector.getTileOverlayInfo(
+      tileOverlay2.mapsId,
+      mapId: mapId,
+    ))!;
 
     expect(tileOverlayInfo1.visible, isTrue);
     expect(tileOverlayInfo1.fadeIn, isTrue);
@@ -1177,11 +1175,10 @@ void main() {
 
     await tester.pumpAndSettle(const Duration(seconds: 3));
 
-    final TileOverlay tileOverlayInfo1 =
-        (await inspector.getTileOverlayInfo(
-          tileOverlay1.mapsId,
-          mapId: mapId,
-        ))!;
+    final TileOverlay tileOverlayInfo1 = (await inspector.getTileOverlayInfo(
+      tileOverlay1.mapsId,
+      mapId: mapId,
+    ))!;
     final TileOverlay? tileOverlayInfo2 = await inspector.getTileOverlayInfo(
       tileOverlay2.mapsId,
       mapId: mapId,
@@ -1318,14 +1315,13 @@ void main() {
     }
 
     // Move marker from the first cluster manager to the last.
-    final MarkerId markerIdToMove =
-        markers.entries
-            .firstWhere(
-              (MapEntry<MarkerId, Marker> entry) =>
-                  entry.value.clusterManagerId ==
-                  clusterManagers.first.clusterManagerId,
-            )
-            .key;
+    final MarkerId markerIdToMove = markers.entries
+        .firstWhere(
+          (MapEntry<MarkerId, Marker> entry) =>
+              entry.value.clusterManagerId ==
+              clusterManagers.first.clusterManagerId,
+        )
+        .key;
     markers[markerIdToMove] = _copyMarkerWithClusterManagerId(
       markers[markerIdToMove]!,
       clusterManagers.last.clusterManagerId,
@@ -1564,9 +1560,8 @@ void main() {
             target: LatLng(10.0, 15.0),
           ),
           markers: markers,
-          onMapCreated:
-              (ExampleGoogleMapController controller) =>
-                  controllerCompleter.complete(controller),
+          onMapCreated: (ExampleGoogleMapController controller) =>
+              controllerCompleter.complete(controller),
         ),
       ),
     );
@@ -1594,9 +1589,8 @@ void main() {
             target: LatLng(10.0, 15.0),
           ),
           markers: markers,
-          onMapCreated:
-              (ExampleGoogleMapController controller) =>
-                  controllerCompleter.complete(controller),
+          onMapCreated: (ExampleGoogleMapController controller) =>
+              controllerCompleter.complete(controller),
         ),
       ),
     );
@@ -1703,19 +1697,19 @@ void main() {
       if (inspector.supportsGettingGroundOverlayInfo()) {
         final GroundOverlay groundOverlayBoundsInfo1 =
             (await inspector.getGroundOverlayInfo(
-              groundOverlayBounds1.mapsId,
-              mapId: mapId,
-            ))!;
+          groundOverlayBounds1.mapsId,
+          mapId: mapId,
+        ))!;
         final GroundOverlay groundOverlayBoundsInfo2 =
             (await inspector.getGroundOverlayInfo(
-              groundOverlayBounds2.mapsId,
-              mapId: mapId,
-            ))!;
+          groundOverlayBounds2.mapsId,
+          mapId: mapId,
+        ))!;
         final GroundOverlay groundOverlayPositionInfo1 =
             (await inspector.getGroundOverlayInfo(
-              groundOverlayPosition1.mapsId,
-              mapId: mapId,
-            ))!;
+          groundOverlayPosition1.mapsId,
+          mapId: mapId,
+        ))!;
 
         expectGroundOverlayEquals(
           groundOverlayBounds1,
@@ -1759,23 +1753,23 @@ void main() {
       final GoogleMapsInspectorPlatform inspector =
           GoogleMapsInspectorPlatform.instance!;
 
-      final GroundOverlay groundOverlayBounds1New = groundOverlayBounds1
-          .copyWith(
-            bearingParam: 10,
-            clickableParam: false,
-            transparencyParam: 0.5,
-            visibleParam: false,
-            zIndexParam: 10,
-          );
+      final GroundOverlay groundOverlayBounds1New =
+          groundOverlayBounds1.copyWith(
+        bearingParam: 10,
+        clickableParam: false,
+        transparencyParam: 0.5,
+        visibleParam: false,
+        zIndexParam: 10,
+      );
 
-      final GroundOverlay groundOverlayPosition1New = groundOverlayPosition1
-          .copyWith(
-            bearingParam: 10,
-            clickableParam: false,
-            transparencyParam: 0.5,
-            visibleParam: false,
-            zIndexParam: 10,
-          );
+      final GroundOverlay groundOverlayPosition1New =
+          groundOverlayPosition1.copyWith(
+        bearingParam: 10,
+        clickableParam: false,
+        transparencyParam: 0.5,
+        visibleParam: false,
+        zIndexParam: 10,
+      );
 
       await tester.pumpWidget(
         Directionality(
@@ -1799,14 +1793,14 @@ void main() {
       if (inspector.supportsGettingGroundOverlayInfo()) {
         final GroundOverlay groundOverlayBounds1Info =
             (await inspector.getGroundOverlayInfo(
-              groundOverlayBounds1.mapsId,
-              mapId: mapId,
-            ))!;
+          groundOverlayBounds1.mapsId,
+          mapId: mapId,
+        ))!;
         final GroundOverlay groundOverlayPosition1Info =
             (await inspector.getGroundOverlayInfo(
-              groundOverlayPosition1.mapsId,
-              mapId: mapId,
-            ))!;
+          groundOverlayPosition1.mapsId,
+          mapId: mapId,
+        ))!;
 
         expectGroundOverlayEquals(
           groundOverlayBounds1New,
@@ -1925,8 +1919,8 @@ void main() {
       // Immediately after calling animateCamera, check that the camera hasn't
       // reached its final position. This relies on the assumption that the
       // camera move is animated and won't complete instantly.
-      final CameraPosition beforeFinishedPosition = await inspector
-          .getCameraPosition(mapId: controller.mapId);
+      final CameraPosition beforeFinishedPosition =
+          await inspector.getCameraPosition(mapId: controller.mapId);
 
       await _checkCameraUpdateByType(
         _cameraUpdateTypeVariants.currentValue!,
@@ -1941,8 +1935,8 @@ void main() {
       await cameraIdleCompleter.future;
 
       // After onCameraIdle event, the camera should be at the final position.
-      final CameraPosition afterFinishedPosition = await inspector
-          .getCameraPosition(mapId: controller.mapId);
+      final CameraPosition afterFinishedPosition =
+          await inspector.getCameraPosition(mapId: controller.mapId);
       await _checkCameraUpdateByType(
         _cameraUpdateTypeVariants.currentValue!,
         afterFinishedPosition,
@@ -2075,8 +2069,8 @@ void main() {
       // Immediately after calling animateCamera, check that the camera hasn't
       // reached its final position. This relies on the assumption that the
       // camera move is animated and won't complete instantly.
-      final CameraPosition beforeFinishedPosition = await inspector
-          .getCameraPosition(mapId: controller.mapId);
+      final CameraPosition beforeFinishedPosition =
+          await inspector.getCameraPosition(mapId: controller.mapId);
 
       await _checkCameraUpdateByType(
         _cameraUpdateTypeVariants.currentValue!,
@@ -2098,8 +2092,8 @@ void main() {
       );
 
       // Camera should be at the final position.
-      final CameraPosition afterFinishedPosition = await inspector
-          .getCameraPosition(mapId: controller.mapId);
+      final CameraPosition afterFinishedPosition =
+          await inspector.getCameraPosition(mapId: controller.mapId);
       await _checkCameraUpdateByType(
         _cameraUpdateTypeVariants.currentValue!,
         afterFinishedPosition,
@@ -2183,22 +2177,22 @@ Marker _copyMarkerWithClusterManagerId(
 CameraUpdate _getCameraUpdateForType(CameraUpdateType type) {
   return switch (type) {
     CameraUpdateType.newCameraPosition => CameraUpdate.newCameraPosition(
-      _kTestCameraPosition,
-    ),
+        _kTestCameraPosition,
+      ),
     CameraUpdateType.newLatLng => CameraUpdate.newLatLng(_kTestMapCenter),
     CameraUpdateType.newLatLngBounds => CameraUpdate.newLatLngBounds(
-      _testCameraBounds,
-      0,
-    ),
+        _testCameraBounds,
+        0,
+      ),
     CameraUpdateType.newLatLngZoom => CameraUpdate.newLatLngZoom(
-      _kTestMapCenter,
-      _kTestCameraZoomLevel,
-    ),
+        _kTestMapCenter,
+        _kTestCameraZoomLevel,
+      ),
     CameraUpdateType.scrollBy => CameraUpdate.scrollBy(10, 10),
     CameraUpdateType.zoomBy => CameraUpdate.zoomBy(
-      _kTestZoomByAmount,
-      const Offset(1, 1),
-    ),
+        _kTestZoomByAmount,
+        const Offset(1, 1),
+      ),
     CameraUpdateType.zoomTo => CameraUpdate.zoomTo(_kTestCameraZoomLevel),
     CameraUpdateType.zoomIn => CameraUpdate.zoomIn(),
     CameraUpdateType.zoomOut => CameraUpdate.zoomOut(),

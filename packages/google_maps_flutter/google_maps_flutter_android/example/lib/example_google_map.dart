@@ -45,9 +45,7 @@ class ExampleGoogleMapController {
           .listen((_) => _googleMapState.widget.onCameraMoveStarted!());
     }
     if (_googleMapState.widget.onCameraMove != null) {
-      GoogleMapsFlutterPlatform.instance
-          .onCameraMove(mapId: mapId)
-          .listen(
+      GoogleMapsFlutterPlatform.instance.onCameraMove(mapId: mapId).listen(
             (CameraMoveEvent e) =>
                 _googleMapState.widget.onCameraMove!(e.value),
           );
@@ -60,27 +58,19 @@ class ExampleGoogleMapController {
     GoogleMapsFlutterPlatform.instance
         .onMarkerTap(mapId: mapId)
         .listen((MarkerTapEvent e) => _googleMapState.onMarkerTap(e.value));
-    GoogleMapsFlutterPlatform.instance
-        .onMarkerDragStart(mapId: mapId)
-        .listen(
+    GoogleMapsFlutterPlatform.instance.onMarkerDragStart(mapId: mapId).listen(
           (MarkerDragStartEvent e) =>
               _googleMapState.onMarkerDragStart(e.value, e.position),
         );
-    GoogleMapsFlutterPlatform.instance
-        .onMarkerDrag(mapId: mapId)
-        .listen(
+    GoogleMapsFlutterPlatform.instance.onMarkerDrag(mapId: mapId).listen(
           (MarkerDragEvent e) =>
               _googleMapState.onMarkerDrag(e.value, e.position),
         );
-    GoogleMapsFlutterPlatform.instance
-        .onMarkerDragEnd(mapId: mapId)
-        .listen(
+    GoogleMapsFlutterPlatform.instance.onMarkerDragEnd(mapId: mapId).listen(
           (MarkerDragEndEvent e) =>
               _googleMapState.onMarkerDragEnd(e.value, e.position),
         );
-    GoogleMapsFlutterPlatform.instance
-        .onInfoWindowTap(mapId: mapId)
-        .listen(
+    GoogleMapsFlutterPlatform.instance.onInfoWindowTap(mapId: mapId).listen(
           (InfoWindowTapEvent e) => _googleMapState.onInfoWindowTap(e.value),
         );
     GoogleMapsFlutterPlatform.instance
@@ -92,18 +82,14 @@ class ExampleGoogleMapController {
     GoogleMapsFlutterPlatform.instance
         .onCircleTap(mapId: mapId)
         .listen((CircleTapEvent e) => _googleMapState.onCircleTap(e.value));
-    GoogleMapsFlutterPlatform.instance
-        .onGroundOverlayTap(mapId: mapId)
-        .listen(
+    GoogleMapsFlutterPlatform.instance.onGroundOverlayTap(mapId: mapId).listen(
           (GroundOverlayTapEvent e) =>
               _googleMapState.onGroundOverlayTap(e.value),
         );
     GoogleMapsFlutterPlatform.instance
         .onTap(mapId: mapId)
         .listen((MapTapEvent e) => _googleMapState.onTap(e.position));
-    GoogleMapsFlutterPlatform.instance
-        .onLongPress(mapId: mapId)
-        .listen(
+    GoogleMapsFlutterPlatform.instance.onLongPress(mapId: mapId).listen(
           (MapLongPressEvent e) => _googleMapState.onLongPress(e.position),
         );
     GoogleMapsFlutterPlatform.instance
@@ -462,8 +448,7 @@ class _ExampleGoogleMapState extends State<ExampleGoogleMap> {
       _mapId,
       onPlatformViewCreated,
       widgetConfiguration: MapWidgetConfiguration(
-        textDirection:
-            widget.layoutDirection ??
+        textDirection: widget.layoutDirection ??
             Directionality.maybeOf(context) ??
             TextDirection.ltr,
         initialCameraPosition: widget.initialCameraPosition,
@@ -599,10 +584,10 @@ class _ExampleGoogleMapState extends State<ExampleGoogleMap> {
   Future<void> onPlatformViewCreated(int id) async {
     final ExampleGoogleMapController controller =
         await ExampleGoogleMapController._init(
-          id,
-          widget.initialCameraPosition,
-          this,
-        );
+      id,
+      widget.initialCameraPosition,
+      this,
+    );
     _controller.complete(controller);
     unawaited(_updateTileOverlays());
     widget.onMapCreated?.call(controller);

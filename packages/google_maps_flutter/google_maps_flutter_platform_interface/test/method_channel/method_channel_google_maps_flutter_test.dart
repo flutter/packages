@@ -27,9 +27,9 @@ void main() {
       final MethodChannel channel = maps.ensureChannelInitialized(mapId);
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMethodCallHandler(channel, (MethodCall methodCall) {
-            log.add(methodCall.method);
-            return handler(methodCall);
-          });
+        log.add(methodCall.method);
+        return handler(methodCall);
+      });
     }
 
     Future<void> sendPlatformMessage(
@@ -42,10 +42,10 @@ void main() {
       );
       await TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .handlePlatformMessage(
-            'plugins.flutter.io/google_maps_$mapId',
-            byteData,
-            (ByteData? data) {},
-          );
+        'plugins.flutter.io/google_maps_$mapId',
+        byteData,
+        (ByteData? data) {},
+      );
     }
 
     // Calls each method that uses invokeMethod with a return type other than
@@ -110,8 +110,8 @@ void main() {
 
       final StreamQueue<MarkerDragStartEvent> markerDragStartStream =
           StreamQueue<MarkerDragStartEvent>(
-            maps.onMarkerDragStart(mapId: mapId),
-          );
+        maps.onMarkerDragStart(mapId: mapId),
+      );
       final StreamQueue<MarkerDragEvent> markerDragStream =
           StreamQueue<MarkerDragEvent>(maps.onMarkerDrag(mapId: mapId));
       final StreamQueue<MarkerDragEndEvent> markerDragEndStream =

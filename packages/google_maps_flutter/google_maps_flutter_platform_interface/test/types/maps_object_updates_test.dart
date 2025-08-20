@@ -11,7 +11,7 @@ import 'test_maps_object.dart';
 
 class TestMapsObjectUpdate extends MapsObjectUpdates<TestMapsObject> {
   TestMapsObjectUpdate.from(super.previous, super.current)
-    : super.from(objectName: 'testObject');
+      : super.from(objectName: 'testObject');
 }
 
 void main() {
@@ -48,8 +48,8 @@ void main() {
 
       final Set<MapsObjectId<TestMapsObject>> toRemove =
           <MapsObjectId<TestMapsObject>>{
-            const MapsObjectId<TestMapsObject>('id1'),
-          };
+        const MapsObjectId<TestMapsObject>('id1'),
+      };
       expect(updates.objectIdsToRemove, toRemove);
 
       final Set<TestMapsObject> toAdd = <TestMapsObject>{to4};
@@ -91,10 +91,9 @@ void main() {
       expect(json, <String, Object>{
         'testObjectsToAdd': serializeMapsObjectSet(updates.objectsToAdd),
         'testObjectsToChange': serializeMapsObjectSet(updates.objectsToChange),
-        'testObjectIdsToRemove':
-            updates.objectIdsToRemove
-                .map<String>((MapsObjectId<TestMapsObject> m) => m.value)
-                .toList(),
+        'testObjectIdsToRemove': updates.objectIdsToRemove
+            .map<String>((MapsObjectId<TestMapsObject> m) => m.value)
+            .toList(),
       });
     });
 

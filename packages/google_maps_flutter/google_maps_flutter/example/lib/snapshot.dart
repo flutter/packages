@@ -18,11 +18,11 @@ const CameraPosition _kInitialPosition = CameraPosition(
 
 class SnapshotPage extends GoogleMapExampleAppPage {
   const SnapshotPage({Key? key})
-    : super(
-        const Icon(Icons.camera_alt),
-        'Take a snapshot of the map',
-        key: key,
-      );
+      : super(
+          const Icon(Icons.camera_alt),
+          'Take a snapshot of the map',
+          key: key,
+        );
 
   @override
   Widget build(BuildContext context) {

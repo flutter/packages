@@ -14,7 +14,7 @@ import 'page.dart';
 
 class TileOverlayPage extends GoogleMapExampleAppPage {
   const TileOverlayPage({Key? key})
-    : super(const Icon(Icons.map), 'Tile overlay', key: key);
+      : super(const Icon(Icons.map), 'Tile overlay', key: key);
 
   @override
   Widget build(BuildContext context) {

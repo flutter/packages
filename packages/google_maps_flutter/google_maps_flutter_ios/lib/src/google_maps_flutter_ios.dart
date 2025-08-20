@@ -131,9 +131,9 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
       StreamController<MapEvent<Object?>>.broadcast();
 
   // Returns a filtered view of the events in the _controller, by mapId.
-  Stream<MapEvent<Object?>> _events(int mapId) => _mapEventStreamController
-      .stream
-      .where((MapEvent<Object?> event) => event.mapId == mapId);
+  Stream<MapEvent<Object?>> _events(int mapId) =>
+      _mapEventStreamController.stream
+          .where((MapEvent<Object?> event) => event.mapId == mapId);
 
   @override
   Stream<CameraMoveStartedEvent> onCameraMoveStarted({required int mapId}) {
@@ -307,10 +307,9 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
   }) {
     final Map<TileOverlayId, TileOverlay>? currentTileOverlays =
         _tileOverlays[mapId];
-    final Set<TileOverlay> previousSet =
-        currentTileOverlays != null
-            ? currentTileOverlays.values.toSet()
-            : <TileOverlay>{};
+    final Set<TileOverlay> previousSet = currentTileOverlays != null
+        ? currentTileOverlays.values.toSet()
+        : <TileOverlay>{};
     final _TileOverlayUpdates updates = _TileOverlayUpdates.from(
       previousSet,
       newTileOverlays,
@@ -497,33 +496,30 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
 
     final PlatformMapViewCreationParams creationParams =
         PlatformMapViewCreationParams(
-          initialCameraPosition: _platformCameraPositionFromCameraPosition(
-            widgetConfiguration.initialCameraPosition,
-          ),
-          mapConfiguration: mapConfiguration,
-          initialMarkers:
-              mapObjects.markers.map(_platformMarkerFromMarker).toList(),
-          initialPolygons:
-              mapObjects.polygons.map(_platformPolygonFromPolygon).toList(),
-          initialPolylines:
-              mapObjects.polylines.map(_platformPolylineFromPolyline).toList(),
-          initialCircles:
-              mapObjects.circles.map(_platformCircleFromCircle).toList(),
-          initialHeatmaps:
-              mapObjects.heatmaps.map(_platformHeatmapFromHeatmap).toList(),
-          initialTileOverlays:
-              mapObjects.tileOverlays
-                  .map(_platformTileOverlayFromTileOverlay)
-                  .toList(),
-          initialClusterManagers:
-              mapObjects.clusterManagers
-                  .map(_platformClusterManagerFromClusterManager)
-                  .toList(),
-          initialGroundOverlays:
-              mapObjects.groundOverlays
-                  .map(_platformGroundOverlayFromGroundOverlay)
-                  .toList(),
-        );
+      initialCameraPosition: _platformCameraPositionFromCameraPosition(
+        widgetConfiguration.initialCameraPosition,
+      ),
+      mapConfiguration: mapConfiguration,
+      initialMarkers:
+          mapObjects.markers.map(_platformMarkerFromMarker).toList(),
+      initialPolygons:
+          mapObjects.polygons.map(_platformPolygonFromPolygon).toList(),
+      initialPolylines:
+          mapObjects.polylines.map(_platformPolylineFromPolyline).toList(),
+      initialCircles:
+          mapObjects.circles.map(_platformCircleFromCircle).toList(),
+      initialHeatmaps:
+          mapObjects.heatmaps.map(_platformHeatmapFromHeatmap).toList(),
+      initialTileOverlays: mapObjects.tileOverlays
+          .map(_platformTileOverlayFromTileOverlay)
+          .toList(),
+      initialClusterManagers: mapObjects.clusterManagers
+          .map(_platformClusterManagerFromClusterManager)
+          .toList(),
+      initialGroundOverlays: mapObjects.groundOverlays
+          .map(_platformGroundOverlayFromGroundOverlay)
+          .toList(),
+    );
 
     return UiKitView(
       viewType: 'plugins.flutter.dev/google_maps_ios',
@@ -705,15 +701,13 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
   ) {
     return PlatformGroundOverlay(
       groundOverlayId: groundOverlay.groundOverlayId.value,
-      anchor:
-          groundOverlay.anchor != null
-              ? _platformPointFromOffset(groundOverlay.anchor!)
-              : null,
+      anchor: groundOverlay.anchor != null
+          ? _platformPointFromOffset(groundOverlay.anchor!)
+          : null,
       image: platformBitmapFromBitmapDescriptor(groundOverlay.image),
-      position:
-          groundOverlay.position != null
-              ? _platformLatLngFromLatLng(groundOverlay.position!)
-              : null,
+      position: groundOverlay.position != null
+          ? _platformLatLngFromLatLng(groundOverlay.position!)
+          : null,
       bounds: _platformLatLngBoundsFromLatLngBounds(groundOverlay.bounds),
       visible: groundOverlay.visible,
       zIndex: groundOverlay.zIndex,
@@ -729,8 +723,8 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
         polygon.points.map(_platformLatLngFromLatLng).toList();
     final List<List<PlatformLatLng>> holes =
         polygon.holes.map((List<LatLng> hole) {
-          return hole.map(_platformLatLngFromLatLng).toList();
-        }).toList();
+      return hole.map(_platformLatLngFromLatLng).toList();
+    }).toList();
     return PlatformPolygon(
       polygonId: polygon.polygonId.value,
       fillColor: polygon.fillColor.value,
@@ -983,14 +977,13 @@ class HostMapMessageHandler implements MapsCallbackApi {
       TileOverlayId(tileOverlayId),
     );
     final TileProvider? tileProvider = tileOverlay?.tileProvider;
-    final Tile tile =
-        tileProvider == null
-            ? TileProvider.noTile
-            : await tileProvider.getTile(
-              location.x.round(),
-              location.y.round(),
-              zoom,
-            );
+    final Tile tile = tileProvider == null
+        ? TileProvider.noTile
+        : await tileProvider.getTile(
+            location.x.round(),
+            location.y.round(),
+            zoom,
+          );
     return _platformTileFromTile(tile);
   }
 
@@ -1144,8 +1137,8 @@ PlatformCameraTargetBounds? _platformCameraTargetBoundsFromCameraTargetBounds(
   return bounds == null
       ? null
       : PlatformCameraTargetBounds(
-        bounds: _platformLatLngBoundsFromLatLngBounds(bounds.bounds),
-      );
+          bounds: _platformLatLngBoundsFromLatLngBounds(bounds.bounds),
+        );
 }
 
 PlatformTile _platformTileFromTile(Tile tile) {
@@ -1188,11 +1181,11 @@ PlatformEdgeInsets? _platformEdgeInsetsFromEdgeInsets(EdgeInsets? insets) {
   return insets == null
       ? null
       : PlatformEdgeInsets(
-        top: insets.top,
-        bottom: insets.bottom,
-        left: insets.left,
-        right: insets.right,
-      );
+          top: insets.top,
+          bottom: insets.bottom,
+          left: insets.left,
+          right: insets.right,
+        );
 }
 
 PlatformMapConfiguration _platformMapConfigurationFromMapConfiguration(
@@ -1249,15 +1242,14 @@ PlatformMapConfiguration _platformMapConfigurationFromOptionsJson(
     zoomGesturesEnabled: options['zoomGesturesEnabled'] as bool?,
     myLocationEnabled: options['myLocationEnabled'] as bool?,
     myLocationButtonEnabled: options['myLocationButtonEnabled'] as bool?,
-    padding:
-        padding == null
-            ? null
-            : PlatformEdgeInsets(
-              top: padding[0],
-              left: padding[1],
-              bottom: padding[2],
-              right: padding[3],
-            ),
+    padding: padding == null
+        ? null
+        : PlatformEdgeInsets(
+            top: padding[0],
+            left: padding[1],
+            bottom: padding[2],
+            right: padding[3],
+          ),
     indoorViewEnabled: options['indoorEnabled'] as bool?,
     trafficEnabled: options['trafficEnabled'] as bool?,
     buildingsEnabled: options['buildingsEnabled'] as bool?,
@@ -1311,7 +1303,7 @@ PlatformLatLngBounds? _platformLatLngBoundsFromLatLngBoundsJson(
 }
 
 PlatformCameraTargetBounds?
-_platformCameraTargetBoundsFromCameraTargetBoundsJson(Object? targetJson) {
+    _platformCameraTargetBoundsFromCameraTargetBoundsJson(Object? targetJson) {
   if (targetJson == null) {
     return null;
   }
@@ -1391,7 +1383,7 @@ PlatformPatternItem platformPatternItemFromPatternItem(PatternItem item) {
 class _TileOverlayUpdates extends MapsObjectUpdates<TileOverlay> {
   /// Computes [TileOverlayUpdates] given previous and current [TileOverlay]s.
   _TileOverlayUpdates.from(super.previous, super.current)
-    : super.from(objectName: 'tileOverlay');
+      : super.from(objectName: 'tileOverlay');
 
   /// Set of TileOverlays to be added in this update.
   Set<TileOverlay> get tileOverlaysToAdd => objectsToAdd;

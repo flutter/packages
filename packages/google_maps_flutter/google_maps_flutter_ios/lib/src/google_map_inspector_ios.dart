@@ -66,7 +66,8 @@ class GoogleMapsInspectorIOS extends GoogleMapsInspectorPlatform {
   }) async {
     final PlatformTileLayer? tileInfo = await _inspectorProvider(
       mapId,
-    )!.getTileOverlayInfo(tileOverlayId.value);
+    )!
+        .getTileOverlayInfo(tileOverlayId.value);
     if (tileInfo == null) {
       return null;
     }
@@ -89,7 +90,8 @@ class GoogleMapsInspectorIOS extends GoogleMapsInspectorPlatform {
   }) async {
     final PlatformHeatmap? heatmapInfo = await _inspectorProvider(
       mapId,
-    )!.getHeatmapInfo(heatmapId.value);
+    )!
+        .getHeatmapInfo(heatmapId.value);
     if (heatmapInfo == null) {
       return null;
     }
@@ -98,11 +100,10 @@ class GoogleMapsInspectorIOS extends GoogleMapsInspectorPlatform {
         (heatmapInfo.json as Map<Object?, Object?>).cast<String, Object?>();
     return Heatmap(
       heatmapId: heatmapId,
-      data:
-          (json['data']! as List<Object?>)
-              .map(deserializeWeightedLatLng)
-              .whereType<WeightedLatLng>()
-              .toList(),
+      data: (json['data']! as List<Object?>)
+          .map(deserializeWeightedLatLng)
+          .whereType<WeightedLatLng>()
+          .toList(),
       gradient: deserializeHeatmapGradient(json['gradient']),
       opacity: json['opacity']! as double,
       radius: HeatmapRadius.fromPixels(json['radius']! as int),
@@ -121,7 +122,8 @@ class GoogleMapsInspectorIOS extends GoogleMapsInspectorPlatform {
   }) async {
     final PlatformGroundOverlay? groundOverlayInfo = await _inspectorProvider(
       mapId,
-    )!.getGroundOverlayInfo(groundOverlayId.value);
+    )!
+        .getGroundOverlayInfo(groundOverlayId.value);
 
     if (groundOverlayInfo == null) {
       return null;
@@ -209,8 +211,9 @@ class GoogleMapsInspectorIOS extends GoogleMapsInspectorPlatform {
     required ClusterManagerId clusterManagerId,
   }) async {
     return (await _inspectorProvider(
-          mapId,
-        )!.getClusters(clusterManagerId.value))
+      mapId,
+    )!
+            .getClusters(clusterManagerId.value))
         .map(
           (PlatformCluster cluster) =>
               GoogleMapsFlutterIOS.clusterFromPlatformCluster(cluster),

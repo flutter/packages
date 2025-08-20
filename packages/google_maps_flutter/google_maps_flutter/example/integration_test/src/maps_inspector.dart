@@ -143,8 +143,8 @@ void runTests() {
     final GoogleMapController controller = await controllerCompleter.future;
 
     if (isIOS) {
-      final MinMaxZoomPreference zoomLevel = await inspector
-          .getMinMaxZoomLevels(mapId: controller.mapId);
+      final MinMaxZoomPreference zoomLevel =
+          await inspector.getMinMaxZoomLevels(mapId: controller.mapId);
       expect(zoomLevel, equals(initialZoomLevel));
     } else if (isAndroid) {
       await controller.moveCamera(CameraUpdate.zoomTo(15));
@@ -171,8 +171,8 @@ void runTests() {
     );
 
     if (isIOS) {
-      final MinMaxZoomPreference zoomLevel = await inspector
-          .getMinMaxZoomLevels(mapId: controller.mapId);
+      final MinMaxZoomPreference zoomLevel =
+          await inspector.getMinMaxZoomLevels(mapId: controller.mapId);
       expect(zoomLevel, equals(finalZoomLevel));
     } else {
       await controller.moveCamera(CameraUpdate.zoomTo(15));
@@ -534,8 +534,8 @@ void runTests() {
       );
       final int mapId = await mapIdCompleter.future;
 
-      final bool myLocationButtonEnabled = await inspector
-          .isMyLocationButtonEnabled(mapId: mapId);
+      final bool myLocationButtonEnabled =
+          await inspector.isMyLocationButtonEnabled(mapId: mapId);
       expect(myLocationButtonEnabled, false);
     });
 
@@ -557,8 +557,8 @@ void runTests() {
       );
       final int mapId = await mapIdCompleter.future;
 
-      final bool myLocationButtonEnabled = await inspector
-          .isMyLocationButtonEnabled(mapId: mapId);
+      final bool myLocationButtonEnabled =
+          await inspector.isMyLocationButtonEnabled(mapId: mapId);
       expect(myLocationButtonEnabled, true);
     });
   }, skip: !isIOS);
@@ -729,8 +729,8 @@ void runTests() {
       // has moved as expected.
       if (inspector.supportsGettingGameraPosition()) {
         // After onCameraIdle event, the camera should be at the final position.
-        final CameraPosition afterFinishedPosition = await inspector
-            .getCameraPosition(mapId: controller.mapId);
+        final CameraPosition afterFinishedPosition =
+            await inspector.getCameraPosition(mapId: controller.mapId);
         await _checkCameraUpdateByType(
           _cameraUpdateTypeVariants.currentValue!,
           afterFinishedPosition,
@@ -743,8 +743,7 @@ void runTests() {
     variant: _cameraUpdateTypeVariants,
     // TODO(stuartmorgan): Remove skip for Android platform once Maps API key is
     // available for LUCI, https://github.com/flutter/flutter/issues/131071
-    skip:
-        isAndroid ||
+    skip: isAndroid ||
         // Hanging in CI, https://github.com/flutter/flutter/issues/166139
         isIOS,
   );
@@ -897,8 +896,8 @@ void runTests() {
       // has moved as expected.
       if (inspector.supportsGettingGameraPosition()) {
         // Camera should be at the final position.
-        final CameraPosition afterFinishedPosition = await inspector
-            .getCameraPosition(mapId: controller.mapId);
+        final CameraPosition afterFinishedPosition =
+            await inspector.getCameraPosition(mapId: controller.mapId);
         await _checkCameraUpdateByType(
           _cameraUpdateTypeVariants.currentValue!,
           afterFinishedPosition,
@@ -911,8 +910,7 @@ void runTests() {
     variant: _cameraUpdateTypeVariants,
     // TODO(jokerttu): Remove skip once the web implementation is available,
     // https://github.com/flutter/flutter/issues/159265
-    skip:
-        kIsWeb ||
+    skip: kIsWeb ||
         // TODO(stuartmorgan): Remove skip for Android platform once Maps API key is
         // available for LUCI, https://github.com/flutter/flutter/issues/131071
         isAndroid ||
@@ -949,22 +947,22 @@ Marker _copyMarkerWithClusterManagerId(
 CameraUpdate _getCameraUpdateForType(CameraUpdateType type) {
   return switch (type) {
     CameraUpdateType.newCameraPosition => CameraUpdate.newCameraPosition(
-      _kTestCameraPosition,
-    ),
+        _kTestCameraPosition,
+      ),
     CameraUpdateType.newLatLng => CameraUpdate.newLatLng(_kTestMapCenter),
     CameraUpdateType.newLatLngBounds => CameraUpdate.newLatLngBounds(
-      _testCameraBounds,
-      0,
-    ),
+        _testCameraBounds,
+        0,
+      ),
     CameraUpdateType.newLatLngZoom => CameraUpdate.newLatLngZoom(
-      _kTestMapCenter,
-      _kTestCameraZoomLevel,
-    ),
+        _kTestMapCenter,
+        _kTestCameraZoomLevel,
+      ),
     CameraUpdateType.scrollBy => CameraUpdate.scrollBy(10, 10),
     CameraUpdateType.zoomBy => CameraUpdate.zoomBy(
-      _kTestZoomByAmount,
-      const Offset(1, 1),
-    ),
+        _kTestZoomByAmount,
+        const Offset(1, 1),
+      ),
     CameraUpdateType.zoomTo => CameraUpdate.zoomTo(_kTestCameraZoomLevel),
     CameraUpdateType.zoomIn => CameraUpdate.zoomIn(),
     CameraUpdateType.zoomOut => CameraUpdate.zoomOut(),

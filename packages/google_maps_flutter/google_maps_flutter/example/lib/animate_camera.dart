@@ -12,7 +12,7 @@ import 'page.dart';
 
 class AnimateCameraPage extends GoogleMapExampleAppPage {
   const AnimateCameraPage({Key? key})
-    : super(const Icon(Icons.map), 'Camera control, animated', key: key);
+      : super(const Icon(Icons.map), 'Camera control, animated', key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -40,10 +40,9 @@ class AnimateCameraState extends State<AnimateCamera> {
 
   void _toggleAnimationDuration() {
     setState(() {
-      _cameraUpdateAnimationDuration =
-          _cameraUpdateAnimationDuration != null
-              ? null
-              : const Duration(seconds: _durationSeconds);
+      _cameraUpdateAnimationDuration = _cameraUpdateAnimationDuration != null
+          ? null
+          : const Duration(seconds: _durationSeconds);
     });
   }
 
@@ -193,12 +192,11 @@ class AnimateCameraState extends State<AnimateCamera> {
             const SizedBox(width: 5),
             Switch(
               value: _cameraUpdateAnimationDuration != null,
-              onChanged:
-                  kIsWeb
-                      ? null
-                      : (bool value) {
-                        _toggleAnimationDuration();
-                      },
+              onChanged: kIsWeb
+                  ? null
+                  : (bool value) {
+                      _toggleAnimationDuration();
+                    },
             ),
           ],
         ),

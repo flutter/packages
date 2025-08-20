@@ -65,7 +65,8 @@ class GoogleMapsInspectorAndroid extends GoogleMapsInspectorPlatform {
   }) async {
     final PlatformTileLayer? tileInfo = await _inspectorProvider(
       mapId,
-    )!.getTileOverlayInfo(tileOverlayId.value);
+    )!
+        .getTileOverlayInfo(tileOverlayId.value);
     if (tileInfo == null) {
       return null;
     }
@@ -93,7 +94,8 @@ class GoogleMapsInspectorAndroid extends GoogleMapsInspectorPlatform {
   }) async {
     final PlatformGroundOverlay? groundOverlayInfo = await _inspectorProvider(
       mapId,
-    )!.getGroundOverlayInfo(groundOverlayId.value);
+    )!
+        .getGroundOverlayInfo(groundOverlayId.value);
 
     if (groundOverlayInfo == null) {
       return null;
@@ -181,8 +183,9 @@ class GoogleMapsInspectorAndroid extends GoogleMapsInspectorPlatform {
     required ClusterManagerId clusterManagerId,
   }) async {
     return (await _inspectorProvider(
-          mapId,
-        )!.getClusters(clusterManagerId.value))
+      mapId,
+    )!
+            .getClusters(clusterManagerId.value))
         // See comment in messages.dart for why the force unwrap is okay.
         .map(
           (PlatformCluster? cluster) =>

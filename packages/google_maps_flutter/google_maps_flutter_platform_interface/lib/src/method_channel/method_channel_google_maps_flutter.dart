@@ -99,9 +99,9 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
       StreamController<MapEvent<Object?>>.broadcast();
 
   // Returns a filtered view of the events in the _controller, by mapId.
-  Stream<MapEvent<Object?>> _events(int mapId) => _mapEventStreamController
-      .stream
-      .where((MapEvent<Object?> event) => event.mapId == mapId);
+  Stream<MapEvent<Object?>> _events(int mapId) =>
+      _mapEventStreamController.stream
+          .where((MapEvent<Object?> event) => event.mapId == mapId);
 
   @override
   Stream<CameraMoveStartedEvent> onCameraMoveStarted({required int mapId}) {
@@ -278,11 +278,11 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
 
         final Map<String, List<dynamic>> latLngData =
             (arguments['bounds']! as Map<dynamic, dynamic>).map(
-              (dynamic key, dynamic object) => MapEntry<String, List<dynamic>>(
-                key as String,
-                object as List<dynamic>,
-              ),
-            );
+          (dynamic key, dynamic object) => MapEntry<String, List<dynamic>>(
+            key as String,
+            object as List<dynamic>,
+          ),
+        );
 
         final LatLngBounds bounds = LatLngBounds(
           northeast: LatLng.fromJson(latLngData['northeast'])!,
@@ -386,10 +386,9 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
   }) {
     final Map<TileOverlayId, TileOverlay>? currentTileOverlays =
         _tileOverlays[mapId];
-    final Set<TileOverlay> previousSet =
-        currentTileOverlays != null
-            ? currentTileOverlays.values.toSet()
-            : <TileOverlay>{};
+    final Set<TileOverlay> previousSet = currentTileOverlays != null
+        ? currentTileOverlays.values.toSet()
+        : <TileOverlay>{};
     final TileOverlayUpdates updates = TileOverlayUpdates.from(
       previousSet,
       newTileOverlays,
@@ -438,10 +437,9 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
 
   @override
   Future<void> setMapStyle(String? mapStyle, {required int mapId}) async {
-    final List<dynamic> successAndError =
-        (await channel(
-          mapId,
-        ).invokeMethod<List<dynamic>>('map#setStyle', mapStyle))!;
+    final List<dynamic> successAndError = (await channel(
+      mapId,
+    ).invokeMethod<List<dynamic>>('map#setStyle', mapStyle))!;
     final bool success = successAndError[0] as bool;
     if (!success) {
       throw MapStyleException(successAndError[1] as String);
@@ -450,10 +448,9 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
 
   @override
   Future<LatLngBounds> getVisibleRegion({required int mapId}) async {
-    final Map<String, dynamic> latLngBounds =
-        (await channel(
-          mapId,
-        ).invokeMapMethod<String, dynamic>('map#getVisibleRegion'))!;
+    final Map<String, dynamic> latLngBounds = (await channel(
+      mapId,
+    ).invokeMapMethod<String, dynamic>('map#getVisibleRegion'))!;
     final LatLng southwest = LatLng.fromJson(latLngBounds['southwest'])!;
     final LatLng northeast = LatLng.fromJson(latLngBounds['northeast'])!;
 
@@ -467,9 +464,9 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
   }) async {
     final Map<String, int> point =
         (await channel(mapId).invokeMapMethod<String, int>(
-          'map#getScreenCoordinate',
-          latLng.toJson(),
-        ))!;
+      'map#getScreenCoordinate',
+      latLng.toJson(),
+    ))!;
 
     return ScreenCoordinate(x: point['x']!, y: point['y']!);
   }
@@ -481,9 +478,9 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
   }) async {
     final List<dynamic> latLng =
         (await channel(mapId).invokeMethod<List<dynamic>>(
-          'map#getLatLng',
-          screenCoordinate.toJson(),
-        ))!;
+      'map#getLatLng',
+      screenCoordinate.toJson(),
+    ))!;
     return LatLng(latLng[0] as double, latLng[1] as double);
   }
 
@@ -574,13 +571,13 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
           onCreatePlatformView: (PlatformViewCreationParams params) {
             final SurfaceAndroidViewController controller =
                 PlatformViewsService.initSurfaceAndroidView(
-                  id: params.id,
-                  viewType: 'plugins.flutter.io/google_maps',
-                  layoutDirection: widgetConfiguration.textDirection,
-                  creationParams: creationParams,
-                  creationParamsCodec: const StandardMessageCodec(),
-                  onFocus: () => params.onFocusChanged(true),
-                );
+              id: params.id,
+              viewType: 'plugins.flutter.io/google_maps',
+              layoutDirection: widgetConfiguration.textDirection,
+              creationParams: creationParams,
+              creationParamsCodec: const StandardMessageCodec(),
+              onFocus: () => params.onFocusChanged(true),
+            );
             controller.addOnPlatformViewCreatedListener(
               params.onPlatformViewCreated,
             );

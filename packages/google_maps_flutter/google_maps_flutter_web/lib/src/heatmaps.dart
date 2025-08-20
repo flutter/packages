@@ -8,7 +8,7 @@ part of '../google_maps_flutter_web.dart';
 class HeatmapsController extends GeometryController {
   /// Initialize the cache
   HeatmapsController()
-    : _heatmapIdToController = <HeatmapId, HeatmapController>{};
+      : _heatmapIdToController = <HeatmapId, HeatmapController>{};
 
   // A cache of [HeatmapController]s indexed by their [HeatmapId].
   final Map<HeatmapId, HeatmapController> _heatmapIdToController;

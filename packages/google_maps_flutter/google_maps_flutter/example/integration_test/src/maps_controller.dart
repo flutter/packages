@@ -76,8 +76,7 @@ void runTests() {
     // Android doesn't like the layout required for the web, so we skip web in this test.
     // The equivalent web test already exists here:
     // https://github.com/flutter/packages/blob/c43cc13498a1a1c4f3d1b8af2add9ce7c15bd6d0/packages/google_maps_flutter/google_maps_flutter_web/example/integration_test/projection_test.dart#L78
-    skip:
-        isWeb ||
+    skip: isWeb ||
         // TODO(stuartmorgan): Re-enable; see https://github.com/flutter/flutter/issues/139825
         isIOS ||
         // TODO(tarrinneal): Re-enable; see https://github.com/flutter/flutter/issues/160115
@@ -113,11 +112,11 @@ void runTests() {
       // Wait for the visible region to be non-zero.
       final LatLngBounds firstVisibleRegion =
           await waitForValueMatchingPredicate<LatLngBounds>(
-            tester,
-            () => mapController.getVisibleRegion(),
-            (LatLngBounds bounds) => bounds != zeroLatLngBounds,
-          ) ??
-          zeroLatLngBounds;
+                tester,
+                () => mapController.getVisibleRegion(),
+                (LatLngBounds bounds) => bounds != zeroLatLngBounds,
+              ) ??
+              zeroLatLngBounds;
       expect(firstVisibleRegion, isNot(zeroLatLngBounds));
       expect(firstVisibleRegion.contains(kInitialMapCenter), isTrue);
 
@@ -429,8 +428,7 @@ void runTests() {
     await controller.showMarkerInfoWindow(marker.markerId);
     // The Maps SDK doesn't always return true for whether it is shown
     // immediately after showing it, so wait for it to report as shown.
-    iwVisibleStatus =
-        await waitForValueMatchingPredicate<bool>(
+    iwVisibleStatus = await waitForValueMatchingPredicate<bool>(
           tester,
           () => controller.isMarkerInfoWindowShown(marker.markerId),
           (bool visible) => visible,

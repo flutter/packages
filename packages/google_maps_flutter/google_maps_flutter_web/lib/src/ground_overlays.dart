@@ -12,12 +12,12 @@ class GroundOverlaysController extends GeometryController {
   /// emitting ground overlay tap events.
   GroundOverlaysController({
     required StreamController<MapEvent<Object?>> stream,
-  }) : _streamController = stream,
-       _groundOverlayIdToController =
-           <GroundOverlayId, GroundOverlayController>{};
+  })  : _streamController = stream,
+        _groundOverlayIdToController =
+            <GroundOverlayId, GroundOverlayController>{};
 
   final Map<GroundOverlayId, GroundOverlayController>
-  _groundOverlayIdToController;
+      _groundOverlayIdToController;
 
   // The stream over which ground overlays broadcast their events
   final StreamController<MapEvent<Object?>> _streamController;
@@ -90,8 +90,8 @@ class GroundOverlaysController extends GeometryController {
   }
 
   void _removeGroundOverlay(GroundOverlayId groundOverlayId) {
-    final GroundOverlayController? controller = _groundOverlayIdToController
-        .remove(groundOverlayId);
+    final GroundOverlayController? controller =
+        _groundOverlayIdToController.remove(groundOverlayId);
     if (controller != null) {
       controller.remove();
     }
@@ -104,8 +104,8 @@ class GroundOverlaysController extends GeometryController {
   /// Returns the [GroundOverlay] with the given [GroundOverlayId].
   /// Only used for testing.
   gmaps.GroundOverlay? getGroundOverlay(GroundOverlayId groundOverlayId) {
-    final GroundOverlayController? controller = _groundOverlayIdToController
-        .remove(groundOverlayId);
+    final GroundOverlayController? controller =
+        _groundOverlayIdToController.remove(groundOverlayId);
     return controller?.groundOverlay;
   }
 }

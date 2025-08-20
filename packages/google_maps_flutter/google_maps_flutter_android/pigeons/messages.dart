@@ -13,6 +13,7 @@ import 'package:pigeon/pigeon.dart';
     copyrightHeader: 'pigeons/copyright.txt',
   ),
 )
+
 /// Pigeon equivalent of MapType
 enum PlatformMapType { none, normal, satellite, terrain, hybrid }
 

@@ -3,14 +3,20 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-import 'package:flutter/widgets.dart' show Directionality, SizedBox, TextDirection;
+import 'package:flutter/widgets.dart'
+    show Directionality, SizedBox, TextDirection;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_maps/google_maps.dart' as gmaps;
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart'
-    show CameraPosition, LatLng, MapConfiguration, MapEvent, MapWidgetConfiguration;
-import 'package:google_maps_flutter_web/google_maps_flutter_web.dart' show GoogleMapController;
+    show
+        CameraPosition,
+        LatLng,
+        MapConfiguration,
+        MapEvent,
+        MapWidgetConfiguration;
+import 'package:google_maps_flutter_web/google_maps_flutter_web.dart'
+    show GoogleMapController;
 import 'package:integration_test/integration_test.dart';
-
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -20,12 +26,19 @@ void main() {
     textDirection: TextDirection.ltr,
   );
 
-  testWidgets('cloudMapId present => mapId set & styles omitted', (WidgetTester tester) async {
-    const MapConfiguration testMapConfig = MapConfiguration(cloudMapId: 'test-cloud-map-id');
+  testWidgets('cloudMapId present => mapId set & styles omitted', (
+    WidgetTester tester,
+  ) async {
+    const MapConfiguration testMapConfig = MapConfiguration(
+      cloudMapId: 'test-cloud-map-id',
+    );
 
-    await tester.pumpWidget(const Directionality(textDirection: TextDirection.ltr, child: SizedBox()));
+    await tester.pumpWidget(
+      const Directionality(textDirection: TextDirection.ltr, child: SizedBox()),
+    );
 
-    final StreamController<MapEvent<Object?>> stream = StreamController<MapEvent<Object?>>();
+    final StreamController<MapEvent<Object?>> stream =
+        StreamController<MapEvent<Object?>>();
     addTearDown(() {
       // Stream is closed by controller.dispose()
     });
@@ -46,7 +59,9 @@ void main() {
     );
 
     final List<gmaps.MapTypeStyle> styles = <gmaps.MapTypeStyle>[
-      gmaps.MapTypeStyle()..featureType = 'road'..elementType = 'geometry',
+      gmaps.MapTypeStyle()
+        ..featureType = 'road'
+        ..elementType = 'geometry',
     ];
 
     controller.updateStyles(styles);
@@ -55,16 +70,22 @@ void main() {
 
     expect(captured, isNotNull);
     expect(captured!.mapId, testMapConfig.cloudMapId);
-    expect(captured!.styles == null || captured!.styles!.isEmpty, isTrue,
-        reason: 'When cloudMapId is set, styles must not be applied.');
+    expect(
+      captured!.styles == null || captured!.styles!.isEmpty,
+      isTrue,
+      reason: 'When cloudMapId is set, styles must not be applied.',
+    );
 
     controller.dispose();
   });
 
   testWidgets('no cloudMapId => styles applied', (WidgetTester tester) async {
-    await tester.pumpWidget(const Directionality(textDirection: TextDirection.ltr, child: SizedBox()));
+    await tester.pumpWidget(
+      const Directionality(textDirection: TextDirection.ltr, child: SizedBox()),
+    );
 
-    final StreamController<MapEvent<Object?>> stream = StreamController<MapEvent<Object?>>();
+    final StreamController<MapEvent<Object?>> stream =
+        StreamController<MapEvent<Object?>>();
     addTearDown(() {
       // Stream is closed by controller.dispose()
     });
@@ -83,7 +104,9 @@ void main() {
     );
 
     final List<gmaps.MapTypeStyle> styles = <gmaps.MapTypeStyle>[
-      gmaps.MapTypeStyle()..featureType = 'poi'..elementType = 'labels',
+      gmaps.MapTypeStyle()
+        ..featureType = 'poi'
+        ..elementType = 'labels',
     ];
 
     controller.updateStyles(styles);
@@ -91,11 +114,17 @@ void main() {
     await tester.pump();
 
     expect(captured, isNotNull);
-    expect(captured!.mapId, anyOf(isNull, isEmpty),
-        reason: 'mapId should be empty/null when no Cloud Map is used.');
+    expect(
+      captured!.mapId,
+      anyOf(isNull, isEmpty),
+      reason: 'mapId should be empty/null when no Cloud Map is used.',
+    );
     expect(captured!.styles, isNotNull);
-    expect(captured!.styles, isNotEmpty,
-        reason: 'When cloudMapId is null, styles should be applied.');
+    expect(
+      captured!.styles,
+      isNotEmpty,
+      reason: 'When cloudMapId is null, styles should be applied.',
+    );
 
     controller.dispose();
   });

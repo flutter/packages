@@ -16,9 +16,9 @@ Future<ByteData> createCustomMarkerIconImage({required Size size}) async {
   painter.paint(canvas, size);
 
   final ui.Image image = await recorder.endRecording().toImage(
-    size.width.floor(),
-    size.height.floor(),
-  );
+        size.width.floor(),
+        size.height.floor(),
+      );
 
   final ByteData? bytes = await image.toByteData(
     format: ui.ImageByteFormat.png,

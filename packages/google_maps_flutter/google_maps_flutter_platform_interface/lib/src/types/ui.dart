@@ -78,7 +78,7 @@ class MinMaxZoomPreference {
   ///
   /// [AssertionError] will be thrown if [minZoom] > [maxZoom].
   const MinMaxZoomPreference(this.minZoom, this.maxZoom)
-    : assert(minZoom == null || maxZoom == null || minZoom <= maxZoom);
+      : assert(minZoom == null || maxZoom == null || minZoom <= maxZoom);
 
   /// The preferred minimum zoom level or null, if unbounded from below.
   final double? minZoom;

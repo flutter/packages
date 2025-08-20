@@ -14,7 +14,7 @@ import 'page.dart';
 class ClusteringPage extends GoogleMapExampleAppPage {
   /// Default Constructor.
   const ClusteringPage({Key? key})
-    : super(const Icon(Icons.place), 'Manage clustering', key: key);
+      : super(const Icon(Icons.place), 'Manage clustering', key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -131,10 +131,9 @@ class ClusteringBodyState extends State<ClusteringBody> {
 
     final ClusterManager clusterManager = ClusterManager(
       clusterManagerId: clusterManagerId,
-      onClusterTap:
-          (Cluster cluster) => setState(() {
-            lastCluster = cluster;
-          }),
+      onClusterTap: (Cluster cluster) => setState(() {
+        lastCluster = cluster;
+      }),
     );
 
     setState(() {
@@ -163,8 +162,8 @@ class ClusteringBodyState extends State<ClusteringBody> {
       final MarkerId markerId = MarkerId(markerIdVal);
 
       final int clusterManagerIndex = clusterManagers.values.toList().indexOf(
-        clusterManager,
-      );
+            clusterManager,
+          );
 
       // Add additional offset to longitude for each cluster manager to space
       // out markers in different cluster managers.
@@ -203,10 +202,9 @@ class ClusteringBodyState extends State<ClusteringBody> {
       final Marker marker = markers[markerId]!;
       final double current = marker.alpha;
       markers[markerId] = marker.copyWith(
-        alphaParam:
-            current == _fullyVisibleAlpha
-                ? _halfVisibleAlpha
-                : _fullyVisibleAlpha,
+        alphaParam: current == _fullyVisibleAlpha
+            ? _halfVisibleAlpha
+            : _fullyVisibleAlpha,
       );
     }
     setState(() {});
@@ -231,18 +229,15 @@ class ClusteringBodyState extends State<ClusteringBody> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
             TextButton(
-              onPressed:
-                  clusterManagers.length >= _clusterManagerMaxCount
-                      ? null
-                      : () => _addClusterManager(),
+              onPressed: clusterManagers.length >= _clusterManagerMaxCount
+                  ? null
+                  : () => _addClusterManager(),
               child: const Text('Add cluster manager'),
             ),
             TextButton(
-              onPressed:
-                  clusterManagers.isEmpty
-                      ? null
-                      : () =>
-                          _removeClusterManager(clusterManagers.values.last),
+              onPressed: clusterManagers.isEmpty
+                  ? null
+                  : () => _removeClusterManager(clusterManagers.values.last),
               child: const Text('Remove cluster manager'),
             ),
           ],
@@ -262,15 +257,14 @@ class ClusteringBodyState extends State<ClusteringBody> {
           alignment: WrapAlignment.spaceEvenly,
           children: <Widget>[
             TextButton(
-              onPressed:
-                  selectedId == null
-                      ? null
-                      : () {
-                        _remove(selectedId);
-                        setState(() {
-                          selectedMarker = null;
-                        });
-                      },
+              onPressed: selectedId == null
+                  ? null
+                  : () {
+                      _remove(selectedId);
+                      setState(() {
+                        selectedMarker = null;
+                      });
+                    },
               child: const Text('Remove selected marker'),
             ),
             TextButton(

@@ -25,10 +25,9 @@ class TileOverlayController {
   /// [TileOverlay].
   void update(TileOverlay tileOverlay) {
     _tileOverlay = tileOverlay;
-    _gmMapType =
-        gmaps.MapType()
-          ..tileSize = gmaps.Size(logicalTileSize, logicalTileSize)
-          ..getTile = _getTile;
+    _gmMapType = gmaps.MapType()
+      ..tileSize = gmaps.Size(logicalTileSize, logicalTileSize)
+      ..getTile = _getTile;
   }
 
   /// Renders a Tile for gmaps; delegating to the configured [TileProvider].
@@ -50,20 +49,19 @@ class TileOverlayController {
     _tileOverlay.tileProvider!
         .getTile(tileCoord!.x.toInt(), tileCoord.y.toInt(), zoom?.toInt())
         .then((Tile tile) {
-          if (tile.data == null) {
-            return;
-          }
-          // Using img lets us take advantage of native decoding.
-          final String src = URL.createObjectURL(
-            Blob(<JSUint8Array>[tile.data!.toJS].toJS) as JSObject,
-          );
-          img.src = src;
-          img.onload =
-              (JSAny? _) {
-                img.hidden = false.toJS;
-                URL.revokeObjectURL(src);
-              }.toJS;
-        });
+      if (tile.data == null) {
+        return;
+      }
+      // Using img lets us take advantage of native decoding.
+      final String src = URL.createObjectURL(
+        Blob(<JSUint8Array>[tile.data!.toJS].toJS) as JSObject,
+      );
+      img.src = src;
+      img.onload = (JSAny? _) {
+        img.hidden = false.toJS;
+        URL.revokeObjectURL(src);
+      }.toJS;
+    });
 
     return img;
   }

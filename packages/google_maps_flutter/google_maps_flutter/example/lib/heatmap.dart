@@ -11,7 +11,7 @@ import 'page.dart';
 
 class HeatmapPage extends GoogleMapExampleAppPage {
   const HeatmapPage({Key? key})
-    : super(const Icon(Icons.map), 'Heatmaps', key: key);
+      : super(const Icon(Icons.map), 'Heatmaps', key: key);
 
   @override
   Widget build(BuildContext context) {

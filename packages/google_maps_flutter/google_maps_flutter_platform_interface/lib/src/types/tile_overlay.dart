@@ -147,12 +147,12 @@ class TileOverlay implements MapsObject<TileOverlay> {
 
   @override
   int get hashCode => Object.hash(
-    tileOverlayId,
-    fadeIn,
-    tileProvider,
-    transparency,
-    zIndex,
-    visible,
-    tileSize,
-  );
+        tileOverlayId,
+        fadeIn,
+        tileProvider,
+        transparency,
+        zIndex,
+        visible,
+        tileSize,
+      );
 }

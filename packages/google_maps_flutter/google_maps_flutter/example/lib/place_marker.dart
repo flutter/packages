@@ -16,7 +16,7 @@ import 'page.dart';
 
 class PlaceMarkerPage extends GoogleMapExampleAppPage {
   const PlaceMarkerPage({Key? key})
-    : super(const Icon(Icons.place), 'Place marker', key: key);
+      : super(const Icon(Icons.place), 'Place marker', key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -301,31 +301,27 @@ class PlaceMarkerBodyState extends State<PlaceMarkerBody> {
                   child: const Text('change info'),
                 ),
                 TextButton(
-                  onPressed:
-                      selectedId == null
-                          ? null
-                          : () => _changeInfoAnchor(selectedId),
+                  onPressed: selectedId == null
+                      ? null
+                      : () => _changeInfoAnchor(selectedId),
                   child: const Text('change info anchor'),
                 ),
                 TextButton(
-                  onPressed:
-                      selectedId == null
-                          ? null
-                          : () => _changeAlpha(selectedId),
+                  onPressed: selectedId == null
+                      ? null
+                      : () => _changeAlpha(selectedId),
                   child: const Text('change alpha'),
                 ),
                 TextButton(
-                  onPressed:
-                      selectedId == null
-                          ? null
-                          : () => _changeAnchor(selectedId),
+                  onPressed: selectedId == null
+                      ? null
+                      : () => _changeAnchor(selectedId),
                   child: const Text('change anchor'),
                 ),
                 TextButton(
-                  onPressed:
-                      selectedId == null
-                          ? null
-                          : () => _toggleDraggable(selectedId),
+                  onPressed: selectedId == null
+                      ? null
+                      : () => _toggleDraggable(selectedId),
                   child: const Text('toggle draggable'),
                 ),
                 TextButton(
@@ -334,44 +330,39 @@ class PlaceMarkerBodyState extends State<PlaceMarkerBody> {
                   child: const Text('toggle flat'),
                 ),
                 TextButton(
-                  onPressed:
-                      selectedId == null
-                          ? null
-                          : () => _changePosition(selectedId),
+                  onPressed: selectedId == null
+                      ? null
+                      : () => _changePosition(selectedId),
                   child: const Text('change position'),
                 ),
                 TextButton(
-                  onPressed:
-                      selectedId == null
-                          ? null
-                          : () => _changeRotation(selectedId),
+                  onPressed: selectedId == null
+                      ? null
+                      : () => _changeRotation(selectedId),
                   child: const Text('change rotation'),
                 ),
                 TextButton(
-                  onPressed:
-                      selectedId == null
-                          ? null
-                          : () => _toggleVisible(selectedId),
+                  onPressed: selectedId == null
+                      ? null
+                      : () => _toggleVisible(selectedId),
                   child: const Text('toggle visible'),
                 ),
                 TextButton(
-                  onPressed:
-                      selectedId == null
-                          ? null
-                          : () => _changeZIndex(selectedId),
+                  onPressed: selectedId == null
+                      ? null
+                      : () => _changeZIndex(selectedId),
                   child: const Text('change zIndex'),
                 ),
                 TextButton(
-                  onPressed:
-                      selectedId == null
-                          ? null
-                          : () {
-                            _getMarkerIcon(context).then((
-                              BitmapDescriptor icon,
-                            ) {
-                              _setMarkerIcon(selectedId, icon);
-                            });
-                          },
+                  onPressed: selectedId == null
+                      ? null
+                      : () {
+                          _getMarkerIcon(context).then((
+                            BitmapDescriptor icon,
+                          ) {
+                            _setMarkerIcon(selectedId, icon);
+                          });
+                        },
                   child: const Text('set marker icon'),
                 ),
               ],

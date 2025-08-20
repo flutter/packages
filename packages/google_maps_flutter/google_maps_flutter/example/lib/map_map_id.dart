@@ -15,7 +15,7 @@ import 'page.dart';
 
 class MapIdPage extends GoogleMapExampleAppPage {
   const MapIdPage({Key? key})
-    : super(const Icon(Icons.map), 'Cloud-based maps styling', key: key);
+      : super(const Icon(Icons.map), 'Cloud-based maps styling', key: key);
 
   @override
   Widget build(BuildContext context) {

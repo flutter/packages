@@ -6,8 +6,8 @@ part of '../google_maps_flutter_web.dart';
 
 /// Type used when passing an override to the _createMap function.
 @visibleForTesting
-typedef DebugCreateMapFunction =
-    gmaps.Map Function(HTMLElement div, gmaps.MapOptions options);
+typedef DebugCreateMapFunction = gmaps.Map Function(
+    HTMLElement div, gmaps.MapOptions options);
 
 /// Type used when passing an override to the _setOptions function.
 @visibleForTesting
@@ -22,18 +22,18 @@ class GoogleMapController {
     required MapWidgetConfiguration widgetConfiguration,
     MapObjects mapObjects = const MapObjects(),
     MapConfiguration mapConfiguration = const MapConfiguration(),
-  }) : _mapId = mapId,
-       _streamController = streamController,
-       _initialCameraPosition = widgetConfiguration.initialCameraPosition,
-       _markers = mapObjects.markers,
-       _polygons = mapObjects.polygons,
-       _polylines = mapObjects.polylines,
-       _circles = mapObjects.circles,
-       _clusterManagers = mapObjects.clusterManagers,
-       _heatmaps = mapObjects.heatmaps,
-       _groundOverlays = mapObjects.groundOverlays,
-       _tileOverlays = mapObjects.tileOverlays,
-       _lastMapConfiguration = mapConfiguration {
+  })  : _mapId = mapId,
+        _streamController = streamController,
+        _initialCameraPosition = widgetConfiguration.initialCameraPosition,
+        _markers = mapObjects.markers,
+        _polygons = mapObjects.polygons,
+        _polylines = mapObjects.polylines,
+        _circles = mapObjects.circles,
+        _clusterManagers = mapObjects.clusterManagers,
+        _heatmaps = mapObjects.heatmaps,
+        _groundOverlays = mapObjects.groundOverlays,
+        _tileOverlays = mapObjects.tileOverlays,
+        _lastMapConfiguration = mapConfiguration {
     _circlesController = CirclesController(stream: _streamController);
     _heatmapsController = HeatmapsController();
     _polygonsController = PolygonsController(stream: _streamController);
@@ -54,11 +54,10 @@ class GoogleMapController {
     // Register the view factory that will hold the `_div` that holds the map in the DOM.
     // The `_div` needs to be created outside of the ViewFactory (and cached!) so we can
     // use it to create the [gmaps.Map] in the `init()` method of this class.
-    _div =
-        createDivElement()
-          ..id = _getViewType(mapId)
-          ..style.width = '100%'
-          ..style.height = '100%';
+    _div = createDivElement()
+      ..id = _getViewType(mapId)
+      ..style.width = '100%'
+      ..style.height = '100%';
 
     ui_web.platformViewRegistry.registerViewFactory(
       _getViewType(mapId),
@@ -445,7 +444,7 @@ class GoogleMapController {
 
     final gmaps.LatLngBounds bounds =
         await Future<gmaps.LatLngBounds?>.value(_googleMap!.bounds) ??
-        _nullGmapsLatLngBounds;
+            _nullGmapsLatLngBounds;
 
     return gmLatLngBoundsTolatLngBounds(bounds);
   }
@@ -587,10 +586,10 @@ class GoogleMapController {
   void updateTileOverlays(Set<TileOverlay> newOverlays) {
     final MapsObjectUpdates<TileOverlay> updates =
         MapsObjectUpdates<TileOverlay>.from(
-          _tileOverlays,
-          newOverlays,
-          objectName: 'tileOverlay',
-        );
+      _tileOverlays,
+      newOverlays,
+      objectName: 'tileOverlay',
+    );
     assert(
       _tileOverlaysController != null,
       'Cannot update tile overlays after dispose().',

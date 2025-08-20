@@ -15,7 +15,7 @@ const LatLng _center = LatLng(32.080664, 34.9563837);
 
 class ScrollingMapPage extends GoogleMapExampleAppPage {
   const ScrollingMapPage({Key? key})
-    : super(const Icon(Icons.map), 'Scrolling map', key: key);
+      : super(const Icon(Icons.map), 'Scrolling map', key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -92,12 +92,12 @@ class ScrollingMapBody extends StatelessWidget {
                           ),
                         ),
                       },
-                      gestureRecognizers:
-                          <Factory<OneSequenceGestureRecognizer>>{
-                            Factory<OneSequenceGestureRecognizer>(
-                              () => ScaleGestureRecognizer(),
-                            ),
-                          },
+                      gestureRecognizers: <Factory<
+                          OneSequenceGestureRecognizer>>{
+                        Factory<OneSequenceGestureRecognizer>(
+                          () => ScaleGestureRecognizer(),
+                        ),
+                      },
                     ),
                   ),
                 ),

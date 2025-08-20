@@ -15,7 +15,7 @@ const CameraPosition _kInitialPosition = CameraPosition(
 
 class LiteModePage extends GoogleMapExampleAppPage {
   const LiteModePage({Key? key})
-    : super(const Icon(Icons.map), 'Lite mode', key: key);
+      : super(const Icon(Icons.map), 'Lite mode', key: key);
 
   @override
   Widget build(BuildContext context) {

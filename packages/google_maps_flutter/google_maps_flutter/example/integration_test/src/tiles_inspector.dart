@@ -62,16 +62,14 @@ void runTests() {
 
       final int mapId = await mapIdCompleter.future;
 
-      final TileOverlay tileOverlayInfo1 =
-          (await inspector.getTileOverlayInfo(
-            tileOverlay1.mapsId,
-            mapId: mapId,
-          ))!;
-      final TileOverlay tileOverlayInfo2 =
-          (await inspector.getTileOverlayInfo(
-            tileOverlay2.mapsId,
-            mapId: mapId,
-          ))!;
+      final TileOverlay tileOverlayInfo1 = (await inspector.getTileOverlayInfo(
+        tileOverlay1.mapsId,
+        mapId: mapId,
+      ))!;
+      final TileOverlay tileOverlayInfo2 = (await inspector.getTileOverlayInfo(
+        tileOverlay2.mapsId,
+        mapId: mapId,
+      ))!;
 
       expect(tileOverlayInfo1.visible, isTrue);
       expect(tileOverlayInfo1.fadeIn, isTrue);
@@ -147,11 +145,10 @@ void runTests() {
 
       await tester.pumpAndSettle(const Duration(seconds: 3));
 
-      final TileOverlay tileOverlayInfo1 =
-          (await inspector.getTileOverlayInfo(
-            tileOverlay1.mapsId,
-            mapId: mapId,
-          ))!;
+      final TileOverlay tileOverlayInfo1 = (await inspector.getTileOverlayInfo(
+        tileOverlay1.mapsId,
+        mapId: mapId,
+      ))!;
       final TileOverlay? tileOverlayInfo2 = await inspector.getTileOverlayInfo(
         tileOverlay2.mapsId,
         mapId: mapId,
@@ -603,14 +600,14 @@ void runTests() {
       if (inspector.supportsGettingGroundOverlayInfo()) {
         final GroundOverlay groundOverlayBoundsInfo1 =
             (await inspector.getGroundOverlayInfo(
-              groundOverlayBounds1.mapsId,
-              mapId: mapId,
-            ))!;
+          groundOverlayBounds1.mapsId,
+          mapId: mapId,
+        ))!;
         final GroundOverlay groundOverlayBoundsInfo2 =
             (await inspector.getGroundOverlayInfo(
-              groundOverlayBounds2.mapsId,
-              mapId: mapId,
-            ))!;
+          groundOverlayBounds2.mapsId,
+          mapId: mapId,
+        ))!;
 
         expectGroundOverlayEquals(
           groundOverlayBounds1,
@@ -625,9 +622,9 @@ void runTests() {
         if (!isWeb) {
           final GroundOverlay groundOverlayPositionInfo1 =
               (await inspector.getGroundOverlayInfo(
-                groundOverlayPosition1.mapsId,
-                mapId: mapId,
-              ))!;
+            groundOverlayPosition1.mapsId,
+            mapId: mapId,
+          ))!;
           expectGroundOverlayEquals(
             groundOverlayPosition1,
             groundOverlayPositionInfo1,
@@ -665,23 +662,23 @@ void runTests() {
       final GoogleMapsInspectorPlatform inspector =
           GoogleMapsInspectorPlatform.instance!;
 
-      final GroundOverlay groundOverlayBounds1New = groundOverlayBounds1
-          .copyWith(
-            bearingParam: 10,
-            clickableParam: false,
-            visibleParam: false,
-            transparencyParam: 0.5,
-            zIndexParam: 10,
-          );
+      final GroundOverlay groundOverlayBounds1New =
+          groundOverlayBounds1.copyWith(
+        bearingParam: 10,
+        clickableParam: false,
+        visibleParam: false,
+        transparencyParam: 0.5,
+        zIndexParam: 10,
+      );
 
-      final GroundOverlay groundOverlayPosition1New = groundOverlayPosition1
-          .copyWith(
-            bearingParam: 10,
-            clickableParam: false,
-            visibleParam: false,
-            transparencyParam: 0.5,
-            zIndexParam: 10,
-          );
+      final GroundOverlay groundOverlayPosition1New =
+          groundOverlayPosition1.copyWith(
+        bearingParam: 10,
+        clickableParam: false,
+        visibleParam: false,
+        transparencyParam: 0.5,
+        zIndexParam: 10,
+      );
 
       await tester.pumpWidget(
         Directionality(
@@ -706,9 +703,9 @@ void runTests() {
       if (inspector.supportsGettingGroundOverlayInfo()) {
         final GroundOverlay groundOverlayBounds1Info =
             (await inspector.getGroundOverlayInfo(
-              groundOverlayBounds1.mapsId,
-              mapId: mapId,
-            ))!;
+          groundOverlayBounds1.mapsId,
+          mapId: mapId,
+        ))!;
 
         expectGroundOverlayEquals(
           groundOverlayBounds1New,
@@ -719,9 +716,9 @@ void runTests() {
         if (!isWeb) {
           final GroundOverlay groundOverlayPosition1Info =
               (await inspector.getGroundOverlayInfo(
-                groundOverlayPosition1.mapsId,
-                mapId: mapId,
-              ))!;
+            groundOverlayPosition1.mapsId,
+            mapId: mapId,
+          ))!;
 
           expectGroundOverlayEquals(
             groundOverlayPosition1New,
@@ -782,11 +779,11 @@ void runTests() {
 
         // Web does not support position-based ground overlays.
         if (!isWeb) {
-          final GroundOverlay? groundOverlayPositionInfo = await inspector
-              .getGroundOverlayInfo(
-                groundOverlayPosition1.mapsId,
-                mapId: mapId,
-              );
+          final GroundOverlay? groundOverlayPositionInfo =
+              await inspector.getGroundOverlayInfo(
+            groundOverlayPosition1.mapsId,
+            mapId: mapId,
+          );
           expect(groundOverlayPositionInfo, isNull);
         }
       }
