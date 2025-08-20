@@ -262,7 +262,6 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
         }
       },
       onError: (_, __, ___, ____) {
-        print('APPLE: Error');
         final AndroidAdDisplayContainer? container = weakThis.target;
         if (container != null) {
           container._clearMediaPlayer();
