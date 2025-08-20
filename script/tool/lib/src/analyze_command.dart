@@ -173,7 +173,7 @@ class AnalyzeCommand extends PackageLoopingCommand {
     // For all succes, or a mix of success and skip, log any skips but mark as
     // success.
     for (final MapEntry<String, PackageResult> skip in skippedResults.entries) {
-      printSkip('Skipped ${skip.key}: ${skip.value.details.first}}');
+      printSkip('Skipped ${skip.key}: ${skip.value.details.first}');
     }
     return PackageResult.success();
   }
