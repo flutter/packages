@@ -435,7 +435,7 @@ void main() {
       verify(mockMediaPlayer.pause());
     });
 
-    test('pause ad handles null media player', () async {
+    test('pauseAd handles does not call pause on null media player', () async {
       late final void Function(ima.VideoAdPlayer) releaseCallback;
 
       late final void Function(
@@ -720,7 +720,7 @@ void main() {
       verify(mockFrameLayout.addView(mockVideoView2));
     });
 
-    test('release resets state and creates and sets a new VideoView', () async {
+    test('release resets state and sets a new VideoView', () async {
       late final void Function(ima.VideoAdPlayer) releaseCallback;
 
       final MockFrameLayout mockFrameLayout = MockFrameLayout();
