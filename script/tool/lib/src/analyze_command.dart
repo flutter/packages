@@ -141,9 +141,11 @@ class AnalyzeCommand extends PackageLoopingCommand {
   Future<PackageResult> runForPackage(RepositoryPackage package) async {
     final Map<String, PackageResult> subResults = <String, PackageResult>{};
     if (getBoolArg(_dartFlag)) {
+      _printSectionHeading('Running dart analyze.');
       subResults['Dart'] = await _runDartAnalysisForPackage(package);
     }
     if (getBoolArg(platformAndroid)) {
+      _printSectionHeading('Running gradle lint.');
       subResults['Android'] = await _runGradleLintForPackage(package);
     }
 
@@ -186,6 +188,11 @@ class AnalyzeCommand extends PackageLoopingCommand {
       printSkip('Skipped ${skip.key}: ${skip.value.details.first}');
     }
     return PackageResult.success();
+  }
+
+  void _printSectionHeading(String heading) {
+    print('\n$heading');
+    print('--------------------');
   }
 
   /// Runs Dart analysis for the given package, and returns the result that
