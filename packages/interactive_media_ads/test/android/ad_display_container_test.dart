@@ -435,7 +435,7 @@ void main() {
       verify(mockMediaPlayer.pause());
     });
 
-    test('pauseAd handles does not call pause on null media player', () async {
+    test('pauseAd does not call pause on null media player', () async {
       late final void Function(ima.VideoAdPlayer) releaseCallback;
 
       late final void Function(
