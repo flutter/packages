@@ -199,12 +199,12 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
     _adProgressTimer = Timer.periodic(
       const Duration(milliseconds: _progressPollingMs),
       (Timer timer) async {
-        final int videoDuration = await _videoView.getCurrentPosition();
+        final int videoCurrentPosition = await _videoView.getCurrentPosition();
         if (_adDuration case final int adDuration) {
           final ima.VideoProgressUpdate currentProgress = _androidParams
               ._imaProxy
               .newVideoProgressUpdate(
-                currentTimeMs: videoDuration,
+                currentTimeMs: videoCurrentPosition,
                 durationMs: adDuration,
               );
 
