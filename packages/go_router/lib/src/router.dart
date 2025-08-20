@@ -25,6 +25,20 @@ import 'state.dart';
 typedef GoExceptionHandler =
     void Function(BuildContext context, GoRouterState state, GoRouter router);
 
+/// The signature for the top-level [onEnter] callback.
+///
+/// This callback receives the [BuildContext], the current navigation state,
+/// the state being navigated to, and a reference to the [GoRouter] instance.
+/// It returns a [FutureOr<OnEnterResult>] which should resolve to [Allow] if navigation
+/// is allowed, or [Block] to block navigation.
+typedef OnEnter =
+    FutureOr<OnEnterResult> Function(
+      BuildContext context,
+      GoRouterState currentState,
+      GoRouterState nextState,
+      GoRouter goRouter,
+    );
+
 /// A set of parameters that defines routing in GoRouter.
 ///
 /// This is typically used with [GoRouter.routingConfig] to create a go router
@@ -84,27 +98,27 @@ class RoutingConfig {
   /// A callback invoked for every incoming route before it is processed.
   ///
   /// This callback allows you to control navigation by inspecting the incoming
-  /// route and conditionally preventing the navigation. If the callback returns
-  /// `true`, the GoRouter proceeds with the regular navigation and redirection
-  /// logic. If the callback returns `false`, the navigation is canceled.
+  /// route and conditionally preventing the navigation. Return [Allow] to proceed
+  /// with navigation or [Block] to cancel it. Both can optionally include an
+  /// `then` callback for deferred actions.
   ///
-  /// When a deep link opens the app and `onEnter` returns `false`,  GoRouter
-  /// will automatically redirect to the initial route or '/'.
+  /// When a deep link opens the app and `onEnter` returns [Block], GoRouter
+  /// will stay on the current route or redirect to the initial route.
   ///
   /// Example:
   /// ```dart
   /// final GoRouter router = GoRouter(
   ///   routes: [...],
-  ///   onEnter: (BuildContext context, Uri uri) {
-  ///     if (uri.path == '/login' && isUserLoggedIn()) {
-  ///       return false; // Prevent navigation to /login
+  ///   onEnter: (BuildContext context, GoRouterState current,
+  ///             GoRouterState next, GoRouter router) async {
+  ///     if (next.uri.path == '/login' && isUserLoggedIn()) {
+  ///       return const Block(); // Prevent navigation to /login
   ///     }
-  ///     if (uri.path == '/referral') {
-  ///       // Save the referral code and prevent navigation
-  ///       saveReferralCode(uri.queryParameters['code']);
-  ///       return false;
+  ///     if (next.uri.path == '/protected' && !isUserLoggedIn()) {
+  ///       // Block and redirect to login
+  ///       return Block(then: () => router.go('/login?from=${next.uri}'));
   ///     }
-  ///     return true; // Allow navigation
+  ///     return const Allow(); // Allow navigation
   ///   },
   /// );
   /// ```
@@ -122,7 +136,12 @@ class RoutingConfig {
 ///
 /// The [onEnter] callback allows intercepting navigation before routes are
 /// processed. Return [Allow] to proceed or [Block] to prevent navigation.
-/// This runs before the deprecated [redirect] callback.
+/// This runs **before** any deprecated top-level [redirect] logic (which is
+/// internally composed into `onEnter` for backward compatibility) and
+/// **before** any *route-level* redirects. Order of operations:
+/// 1) `onEnter` (your guard)
+/// 2) legacy top-level `redirect` (if provided; executed via `onEnter` composition)
+/// 3) route-level `GoRoute.redirect`
 ///
 /// The [redirect] callback allows the app to redirect to a new location.
 /// Alternatively, you can specify a redirect for an individual route using
@@ -426,7 +445,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
     Object? extra,
     String? fragment,
   }) =>
-  /// Construct location with optional fragment, using null-safe navigation
+  // Construct location with optional fragment
   go(
     namedLocation(
       name,

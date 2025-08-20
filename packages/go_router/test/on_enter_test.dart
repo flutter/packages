@@ -213,8 +213,7 @@ void main() {
             GoRouter goRouter,
           ) async {
             if (next.uri.path == '/recursive') {
-              goRouter.push('/recursive');
-              return const Block();
+              return Block(then: () => goRouter.push('/recursive'));
             }
             return const Allow();
           },
@@ -288,8 +287,7 @@ void main() {
           if (await isAuthenticated()) {
             return const Allow();
           }
-          router.go('/sign-in');
-          return const Block();
+          return Block(then: () => router.go('/sign-in'));
         },
         routes: <RouteBase>[
           GoRoute(
@@ -352,11 +350,15 @@ void main() {
           navigationAttempts.add(next.uri.path);
 
           if (next.uri.path == '/requires-auth') {
-            goRouter.goNamed(
-              'login-page',
-              queryParameters: <String, String>{'from': next.uri.toString()},
+            return Block(
+              then:
+                  () => goRouter.goNamed(
+                    'login-page',
+                    queryParameters: <String, String>{
+                      'from': next.uri.toString(),
+                    },
+                  ),
             );
-            return const Block();
           }
           return const Allow();
         },
@@ -832,10 +834,8 @@ void main() {
           if (targetPath == '/multi-step') {
             // Step 1: Go to a different route
             navigationChain.add('Step 1: Go to /step-one');
-            goRouter.go('/step-one');
-
-            // We're blocking the original navigation
-            return const Block();
+            // We're blocking the original navigation and deferring the go
+            return Block(then: () => goRouter.go('/step-one'));
           }
 
           // When we reach step-one, mark test as complete
@@ -1079,6 +1079,304 @@ void main() {
       expect(find.text('Protected'), findsNothing);
       expect(capturedCurrentPath, equals('/page2'));
       expect(capturedNextPath, equals('/protected'));
+    });
+
+    testWidgets('pop/restore does not call onEnter', (
+      WidgetTester tester,
+    ) async {
+      int onEnterCount = 0;
+
+      router = GoRouter(
+        initialLocation: '/a',
+        onEnter: (_, __, ___, ____) async {
+          onEnterCount++;
+          return const Allow();
+        },
+        routes: <RouteBase>[
+          GoRoute(
+            path: '/a',
+            builder: (_, __) => const Scaffold(body: Text('A')),
+            routes: <RouteBase>[
+              GoRoute(
+                path: 'b',
+                builder: (_, __) => const Scaffold(body: Text('B')),
+              ),
+            ],
+          ),
+        ],
+      );
+
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.pumpAndSettle();
+      expect(onEnterCount, 1); // initial navigation
+
+      router.go('/a/b');
+      await tester.pumpAndSettle();
+      expect(onEnterCount, 2); // forward nav is guarded
+
+      // Pop back to /a
+      router.pop();
+      await tester.pumpAndSettle();
+
+      // onEnter should NOT be called for restore
+      expect(onEnterCount, 2); // unchanged
+      expect(find.text('A'), findsOneWidget);
+    });
+
+    testWidgets(
+      'goNamed supports fragment (hash) and preserves it in state.uri',
+      (WidgetTester tester) async {
+        router = GoRouter(
+          initialLocation: '/',
+          routes: <RouteBase>[
+            GoRoute(
+              path: '/',
+              builder:
+                  (_, __) => const Scaffold(body: Center(child: Text('Root'))),
+            ),
+            GoRoute(
+              path: '/article/:id',
+              name: 'article',
+              builder: (_, GoRouterState state) {
+                return Scaffold(
+                  body: Center(
+                    child: Text(
+                      'article=${state.pathParameters['id']};frag=${state.uri.fragment}',
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
+        );
+
+        await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+        await tester.pumpAndSettle();
+
+        // Navigate with a fragment
+        router.goNamed(
+          'article',
+          pathParameters: <String, String>{'id': '42'},
+          fragment: 'section-2',
+        );
+        await tester.pumpAndSettle();
+
+        expect(router.state.uri.path, '/article/42');
+        expect(router.state.uri.fragment, 'section-2');
+        expect(find.text('article=42;frag=section-2'), findsOneWidget);
+      },
+    );
+
+    testWidgets('relative "./" navigation resolves against current location', (
+      WidgetTester tester,
+    ) async {
+      router = GoRouter(
+        initialLocation: '/parent',
+        routes: <RouteBase>[
+          GoRoute(
+            path: '/parent',
+            builder:
+                (_, __) => const Scaffold(body: Center(child: Text('Parent'))),
+            routes: <RouteBase>[
+              GoRoute(
+                path: 'child',
+                builder:
+                    (_, __) =>
+                        const Scaffold(body: Center(child: Text('Child'))),
+              ),
+            ],
+          ),
+        ],
+      );
+
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.pumpAndSettle();
+      expect(find.text('Parent'), findsOneWidget);
+
+      // Use a relative location. This exercises GoRouteInformationProvider._setValue
+      // and concatenateUris().
+      router.go('./child');
+      await tester.pumpAndSettle();
+
+      expect(router.state.uri.path, '/parent/child');
+      expect(find.text('Child'), findsOneWidget);
+    });
+
+    testWidgets('route-level redirect still runs after onEnter allows', (
+      WidgetTester tester,
+    ) async {
+      final List<String> seenNextPaths = <String>[];
+
+      router = GoRouter(
+        initialLocation: '/',
+        onEnter: (
+          BuildContext context,
+          GoRouterState current,
+          GoRouterState next,
+          GoRouter goRouter,
+        ) async {
+          seenNextPaths.add(next.uri.path);
+          return const Allow(); // don't block; let route-level redirect run
+        },
+        routes: <RouteBase>[
+          GoRoute(
+            path: '/',
+            builder:
+                (_, __) => const Scaffold(body: Center(child: Text('Root'))),
+          ),
+          GoRoute(
+            path: '/old',
+            builder: (_, __) => const SizedBox.shrink(),
+            // Route-level redirect: should run AFTER onEnter allows
+            redirect: (_, __) => '/new',
+          ),
+          GoRoute(
+            path: '/new',
+            builder:
+                (_, __) => const Scaffold(body: Center(child: Text('New'))),
+          ),
+        ],
+      );
+
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.pumpAndSettle();
+
+      // Trigger navigation that hits the redirecting route
+      router.go('/old');
+      await tester.pumpAndSettle();
+
+      // onEnter should have seen the original target ('/old')
+      expect(seenNextPaths, contains('/old'));
+
+      // Final destination should be the redirect target
+      expect(router.state.uri.path, '/new');
+      expect(find.text('New'), findsOneWidget);
+    });
+
+    testWidgets(
+      'Allow(then) error is reported but does not revert navigation',
+      (WidgetTester tester) async {
+        // Capture FlutterError.reportError calls
+        FlutterErrorDetails? reported;
+        final void Function(FlutterErrorDetails)? oldHandler =
+            FlutterError.onError;
+        FlutterError.onError = (FlutterErrorDetails details) {
+          reported = details;
+        };
+        addTearDown(() => FlutterError.onError = oldHandler);
+
+        router = GoRouter(
+          initialLocation: '/home',
+          onEnter: (_, __, GoRouterState next, ___) async {
+            if (next.uri.path == '/boom') {
+              // Allow, but run a failing "then" callback
+              return Allow(then: () => throw StateError('then blew up'));
+            }
+            return const Allow();
+          },
+          routes: <RouteBase>[
+            GoRoute(
+              path: '/home',
+              builder:
+                  (_, __) => const Scaffold(body: Center(child: Text('Home'))),
+            ),
+            GoRoute(
+              path: '/boom',
+              builder:
+                  (_, __) => const Scaffold(body: Center(child: Text('Boom'))),
+            ),
+          ],
+        );
+
+        await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+        await tester.pumpAndSettle();
+        expect(find.text('Home'), findsOneWidget);
+
+        router.go('/boom');
+        await tester.pumpAndSettle(); // commits nav + runs deferred microtask
+
+        // Navigation should be committed
+        expect(router.state.uri.path, equals('/boom'));
+        expect(find.text('Boom'), findsOneWidget);
+
+        // Error from deferred callback should be reported (but not crash)
+        expect(reported, isNotNull);
+        expect(reported!.exception.toString(), contains('then blew up'));
+      },
+    );
+
+    testWidgets('Hard-stop vs chaining resets onEnter history', (
+      WidgetTester tester,
+    ) async {
+      // With redirectLimit=1:
+      //  - Block() (no then) should reset history so repeated attempts don't hit the limit.
+      //  - Block(then: go(...)) keeps history and will exceed the limit.
+      int onExceptionCalls = 0;
+      final Completer<void> exceededCompleter = Completer<void>();
+
+      router = GoRouter(
+        initialLocation: '/start',
+        redirectLimit: 1,
+        onException: (_, __, ___) {
+          onExceptionCalls++;
+          if (!exceededCompleter.isCompleted) {
+            exceededCompleter.complete();
+          }
+        },
+        onEnter: (_, __, GoRouterState next, GoRouter goRouter) async {
+          if (next.uri.path == '/blocked-once') {
+            // Hard stop: no then -> history should reset
+            return const Block();
+          }
+          if (next.uri.path == '/chain') {
+            // Chaining block: keep history -> will exceed limit
+            return Block(then: () => goRouter.go('/chain'));
+          }
+          return const Allow();
+        },
+        routes: <RouteBase>[
+          GoRoute(
+            path: '/start',
+            builder:
+                (_, __) => const Scaffold(body: Center(child: Text('Start'))),
+          ),
+          GoRoute(
+            path: '/blocked-once',
+            builder:
+                (_, __) =>
+                    const Scaffold(body: Center(child: Text('BlockedOnce'))),
+          ),
+          GoRoute(
+            path: '/chain',
+            builder:
+                (_, __) => const Scaffold(body: Center(child: Text('Chain'))),
+          ),
+        ],
+      );
+
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.pumpAndSettle();
+      expect(router.state.uri.path, '/start');
+
+      // 1st attempt: hard-stop; should not trigger onException
+      router.go('/blocked-once');
+      await tester.pumpAndSettle();
+      expect(router.state.uri.path, '/start');
+      expect(onExceptionCalls, 0);
+
+      // 2nd attempt: history should have been reset; still no onException
+      router.go('/blocked-once');
+      await tester.pumpAndSettle();
+      expect(router.state.uri.path, '/start');
+      expect(onExceptionCalls, 0);
+
+      // Chaining case: should exceed limit and fire onException once
+      router.go('/chain');
+      await exceededCompleter.future;
+      await tester.pumpAndSettle();
+      expect(onExceptionCalls, 1);
+      // We're still on '/start' because the guarded nav never committed
+      expect(router.state.uri.path, '/start');
     });
   });
 }

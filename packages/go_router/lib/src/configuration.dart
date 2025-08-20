@@ -11,10 +11,9 @@ import 'package:flutter/widgets.dart';
 import 'logging.dart';
 import 'match.dart';
 import 'misc/errors.dart';
-import 'on_enter.dart';
 import 'path_utils.dart';
 import 'route.dart';
-import 'router.dart';
+import 'router.dart' show OnEnter, RoutingConfig;
 import 'state.dart';
 
 /// The signature of the redirect callback.
@@ -90,7 +89,7 @@ class RouteConfiguration {
       } else if (route is ShellRoute) {
         _debugCheckParentNavigatorKeys(
           route.routes,
-          <GlobalKey<NavigatorState>>[...allowedKeys..add(route.navigatorKey)],
+          <GlobalKey<NavigatorState>>[...allowedKeys, route.navigatorKey],
         );
       } else if (route is StatefulShellRoute) {
         for (final StatefulShellBranch branch in route.branches) {
@@ -142,16 +141,18 @@ class RouteConfiguration {
           if (branch.initialLocation == null) {
             // Recursively search for the first GoRoute descendant. Will
             // throw assertion error if not found.
-            final GoRoute? route = branch.defaultRoute;
+            final GoRoute? defaultGoRoute = branch.defaultRoute;
             final String? initialLocation =
-                route != null ? locationForRoute(route) : null;
+                defaultGoRoute != null
+                    ? locationForRoute(defaultGoRoute)
+                    : null;
             assert(
               initialLocation != null,
               'The default location of a StatefulShellBranch must be '
               'derivable from GoRoute descendant',
             );
             assert(
-              route!.pathParameters.isEmpty,
+              defaultGoRoute!.pathParameters.isEmpty,
               'The default location of a StatefulShellBranch cannot be '
               'a parameterized route',
             );

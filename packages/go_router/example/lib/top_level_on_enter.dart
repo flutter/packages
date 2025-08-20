@@ -1,6 +1,6 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
+// Copyright 2013 The Flutter Authors.
+// Use of this source code is governed by a BSD-style license.
+// ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -36,7 +36,6 @@ class App extends StatelessWidget {
     return MaterialApp.router(
       routerConfig: _router(key),
       title: 'Top-level onEnter',
-      theme: ThemeData(useMaterial3: true, primarySwatch: Colors.blue),
     );
   }
 
@@ -47,7 +46,8 @@ class App extends StatelessWidget {
       initialLocation: '/home',
       debugLogDiagnostics: true,
 
-      /// Exception handler to gracefully handle errors in navigation
+      // If anything goes sideways during parsing/guards/redirects,
+      // surface a friendly message and offer a one-tap “Go Home”.
       onException: (
         BuildContext context,
         GoRouterState state,
@@ -76,124 +76,128 @@ class App extends StatelessWidget {
         }
       },
 
-      /// Handles incoming routes before navigation occurs.
-      /// This callback can:
-      /// 1. Block navigation and perform actions (return Block())
-      /// 2. Allow navigation to proceed (return Allow())
-      /// 3. Show loading states during async operations
-      /// 4. Demonstrate exception handling
+      /// Top-level guard runs BEFORE legacy top-level redirects and route-level redirects.
+      /// Return:
+      ///  - `Allow()` to proceed (optionally with `then:` side-effects)
+      ///  - `Block()` to cancel navigation (optionally with `then:` to defer an action/redirect)
       onEnter: (
         BuildContext context,
-        GoRouterState currentState,
-        GoRouterState nextState,
-        GoRouter goRouter,
+        GoRouterState current,
+        GoRouterState next,
+        GoRouter router,
       ) async {
-        // Track analytics for deep links
-        if (nextState.uri.hasQuery || nextState.uri.hasFragment) {
-          _handleDeepLinkTracking(nextState.uri);
+        // Example: fire-and-forget analytics for deep links; never block the nav
+        if (next.uri.hasQuery || next.uri.hasFragment) {
+          await ReferralService.trackDeepLink(next.uri).catchError((
+            Object e,
+            __,
+          ) {
+            debugPrint('Failed to track deep link: $e');
+          });
         }
 
-        // Handle special routes
-        switch (nextState.uri.path) {
+        switch (next.uri.path) {
+          // Block deep-link routes that should never render a page
+          // (we stay on the current page and show a lightweight UI instead).
           case '/referral':
-            final String? code = nextState.uri.queryParameters['code'];
-            if (code != null) {
-              // Use SnackBar for feedback instead of dialog
-              if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Processing referral code...'),
-                    duration: Duration(seconds: 2),
-                  ),
-                );
+            {
+              final String? code = next.uri.queryParameters['code'];
+              if (code != null) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Processing referral code...'),
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                }
+                // Do the real work in the background; don’t keep the user waiting.
+                await _processReferralCodeInBackground(context, code);
               }
-
-              // Process code in background - don't block with complex UI
-              await _processReferralCodeInBackground(context, code);
+              return const Block(); // keep user where they are
             }
-            return const Block(); // Prevent navigation
 
+          // Simulate an OAuth callback: do background work + toast; never show a page at /auth
           case '/auth':
-            if (nextState.uri.queryParameters['token'] != null) {
-              _handleAuthToken(
-                context,
-                nextState.uri.queryParameters['token']!,
-              );
-              return const Block(); // Prevent navigation
+            {
+              final String? token = next.uri.queryParameters['token'];
+              if (token != null) {
+                _handleAuthToken(context, token);
+                return const Block(); // cancel showing any /auth page
+              }
+              return const Allow();
             }
-            return const OnEnterResult.allow();
 
+          // Demonstrate error reporting path
           case '/crash-test':
-            // Deliberately throw an exception to demonstrate error handling
             throw Exception('Simulated error in onEnter callback!');
 
-          case '/bad-route':
-            // Runtime type error to test different error types
-            // ignore: unnecessary_cast
-            nextState.uri as int;
-            return const OnEnterResult.allow();
+          case '/protected':
+            {
+              // ignore: prefer_final_locals
+              bool isLoggedIn = false; // pretend we’re not authenticated
+              if (!isLoggedIn) {
+                // Chaining block: cancel the original nav, then redirect to /login.
+                // This preserves redirection history to detect loops.
+                final String from = Uri.encodeComponent(next.uri.toString());
+                return Block(then: () => router.go('/login?from=$from'));
+              }
+              // ignore: dead_code
+              return const Allow();
+            }
 
           default:
-            // Allow navigation for all other routes
-            return const OnEnterResult.allow();
+            return const Allow();
         }
       },
+
       routes: <RouteBase>[
+        // Simple “root → home”
         GoRoute(
           path: '/',
-          redirect: (BuildContext context, GoRouterState state) => '/home',
+          redirect: (BuildContext _, GoRouterState __) => '/home',
         ),
-        GoRoute(
-          path: '/login',
-          builder:
-              (BuildContext context, GoRouterState state) =>
-                  const LoginScreen(),
-        ),
-        GoRoute(
-          path: '/home',
-          builder:
-              (BuildContext context, GoRouterState state) => const HomeScreen(),
-        ),
-        GoRoute(
-          path: '/settings',
-          builder:
-              (BuildContext context, GoRouterState state) =>
-                  const SettingsScreen(),
-        ),
-        // Add routes for demonstration purposes
-        GoRoute(
-          path: '/referral',
-          builder:
-              (BuildContext context, GoRouterState state) =>
-                  const SizedBox(), // Never reached
-        ),
+
+        // Auth + simple pages
+        GoRoute(path: '/login', builder: (_, __) => const LoginScreen()),
+        GoRoute(path: '/home', builder: (_, __) => const HomeScreen()),
+        GoRoute(path: '/settings', builder: (_, __) => const SettingsScreen()),
+
+        // The following routes will never render (we always Block in onEnter),
+        // but they exist so deep-links resolve safely.
+        GoRoute(path: '/referral', builder: (_, __) => const SizedBox.shrink()),
+        GoRoute(path: '/auth', builder: (_, __) => const SizedBox.shrink()),
         GoRoute(
           path: '/crash-test',
-          builder:
-              (BuildContext context, GoRouterState state) =>
-                  const SizedBox(), // Never reached
+          builder: (_, __) => const SizedBox.shrink(),
         ),
+
+        // Route-level redirect happens AFTER top-level onEnter allows.
         GoRoute(
-          path: '/bad-route',
-          builder:
-              (BuildContext context, GoRouterState state) =>
-                  const SizedBox(), // Never reached
+          path: '/old',
+          builder: (_, __) => const SizedBox.shrink(),
+          redirect: (_, __) => '/home?from=old',
         ),
+
+        // A page that shows fragments (#hash) via state.uri.fragment
         GoRoute(
-          path: '/error',
-          builder:
-              (BuildContext context, GoRouterState state) =>
-                  const ErrorScreen(),
+          path: '/article/:id',
+          name: 'article',
+          builder: (_, GoRouterState state) {
+            return Scaffold(
+              appBar: AppBar(title: const Text('Article')),
+              body: Center(
+                child: Text(
+                  'id=${state.pathParameters['id']}; fragment=${state.uri.fragment}',
+                ),
+              ),
+            );
+          },
         ),
+
+        GoRoute(path: '/error', builder: (_, __) => const ErrorScreen()),
       ],
     );
-  }
-
-  /// Handles tracking of deep links asynchronously
-  void _handleDeepLinkTracking(Uri uri) {
-    ReferralService.trackDeepLink(uri).catchError((dynamic error) {
-      debugPrint('Failed to track deep link: $error');
-    });
   }
 
   /// Processes referral code in the background without blocking navigation
@@ -202,8 +206,7 @@ class App extends StatelessWidget {
     String code,
   ) async {
     try {
-      final bool success = await ReferralService.processReferralCode(code);
-
+      final bool ok = await ReferralService.processReferralCode(code);
       if (!context.mounted) {
         return;
       }
@@ -212,19 +215,19 @@ class App extends StatelessWidget {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            success
+            ok
                 ? 'Referral code $code applied successfully!'
                 : 'Failed to apply referral code',
           ),
         ),
       );
-    } catch (error) {
+    } catch (e) {
       if (!context.mounted) {
         return;
       }
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $error'), backgroundColor: Colors.red),
+        SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
       );
     }
   }
@@ -242,8 +245,7 @@ class App extends StatelessWidget {
         duration: const Duration(seconds: 2),
       ),
     );
-
-    // Process in background
+    // background processing — keeps UI responsive and avoids re-entrancy
     Future<void>(() async {
       await Future<dynamic>.delayed(const Duration(seconds: 1));
       if (!context.mounted) {
@@ -264,6 +266,15 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    void goArticleWithFragment() {
+      context.goNamed(
+        'article',
+        pathParameters: <String, String>{'id': '42'},
+        // demonstrate fragment support (e.g., for in-page anchors)
+        fragment: 'section-2',
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Top-level onEnter'),
@@ -274,56 +285,68 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            // Navigation examples
-            ElevatedButton.icon(
-              onPressed: () => context.go('/login'),
-              icon: const Icon(Icons.login),
-              label: const Text('Go to Login'),
-            ),
-            const SizedBox(height: 16),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: <Widget>[
+          // Navigation examples
+          ElevatedButton.icon(
+            onPressed: () => context.go('/login'),
+            icon: const Icon(Icons.login),
+            label: const Text('Go to Login'),
+          ),
+          const SizedBox(height: 16),
 
-            // Deep link examples
-            Text(
-              'Deep Link Tests',
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            const SizedBox(height: 8),
-            const _DeepLinkButton(
-              label: 'Process Referral',
-              path: '/referral?code=TEST123',
-              description: 'Processes code without navigation',
-            ),
-            const SizedBox(height: 8),
-            const _DeepLinkButton(
-              label: 'Auth Callback',
-              path: '/auth?token=abc123',
-              description: 'Simulates OAuth callback',
-            ),
+          Text(
+            'Deep Link Tests',
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+          const SizedBox(height: 8),
+          const _DeepLinkButton(
+            label: 'Process Referral',
+            path: '/referral?code=TEST123',
+            description: 'Processes code without navigation',
+          ),
+          const SizedBox(height: 8),
+          const _DeepLinkButton(
+            label: 'Auth Callback',
+            path: '/auth?token=abc123',
+            description: 'Simulates OAuth callback',
+          ),
 
-            // Exception Testing Section
-            const SizedBox(height: 24),
-            Text(
-              'Exception Handling Tests',
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            const SizedBox(height: 8),
-            const _DeepLinkButton(
-              label: 'Trigger Exception',
-              path: '/crash-test',
-              description: 'Throws exception in onEnter callback',
-            ),
-            const SizedBox(height: 8),
-            const _DeepLinkButton(
-              label: 'Type Error Exception',
-              path: '/bad-route',
-              description: 'Triggers a runtime type error',
-            ),
-          ],
-        ),
+          const SizedBox(height: 24),
+          Text(
+            'Guards & Redirects',
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+          const SizedBox(height: 8),
+          const _DeepLinkButton(
+            label: 'Protected Route (redirects to login)',
+            path: '/protected',
+            description: 'Top-level onEnter returns Block(then: go(...))',
+          ),
+          const SizedBox(height: 8),
+          const _DeepLinkButton(
+            label: 'Legacy Route-level Redirect',
+            path: '/old',
+            description: 'Route-level redirect to /home?from=old',
+          ),
+
+          const SizedBox(height: 24),
+          Text(
+            'Fragments (hash)',
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+          const SizedBox(height: 8),
+          OutlinedButton(
+            onPressed: goArticleWithFragment,
+            child: const Text('Open Article #section-2'),
+          ),
+          Text(
+            "Uses goNamed(..., fragment: 'section-2') and reads state.uri.fragment",
+            style: Theme.of(context).textTheme.bodySmall,
+            textAlign: TextAlign.center,
+          ),
+        ],
       ),
     );
   }
@@ -343,19 +366,19 @@ class _DeepLinkButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          OutlinedButton(onPressed: () => context.go(path), child: Text(label)),
-          Text(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        OutlinedButton(onPressed: () => context.go(path), child: Text(label)),
+        Padding(
+          padding: const EdgeInsets.only(top: 4, bottom: 12),
+          child: Text(
             description,
             style: Theme.of(context).textTheme.bodySmall,
             textAlign: TextAlign.center,
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
