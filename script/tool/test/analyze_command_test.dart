@@ -35,6 +35,14 @@ void main() {
     runner.addCommand(analyzeCommand);
   });
 
+  test('throws if no analysis options are included', () async {
+    createFakePackage('a', packagesDir);
+
+    await expectLater(
+        () => runCapturingPrint(runner, <String>['analyze', '--no-dart']),
+        throwsA(isA<ToolExit>()));
+  });
+
   group('dart analyze', () {
     test('analyzes all packages', () async {
       final RepositoryPackage package1 = createFakePackage('a', packagesDir);
