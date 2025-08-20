@@ -758,7 +758,7 @@ packages/package_a/CHANGELOG.md
           containsAllInOrder(
             <Matcher>[
               contains(
-                  'SKIPPING: Plugin does not have an Android implementation.')
+                  'SKIPPING: Package does not contain native Android plugin code')
             ],
           ));
     });
@@ -777,7 +777,7 @@ packages/package_a/CHANGELOG.md
           containsAllInOrder(
             <Matcher>[
               contains(
-                  'SKIPPING: Plugin does not have an Android implementation.')
+                  'SKIPPING: Package does not contain native Android plugin code')
             ],
           ));
     });
@@ -881,8 +881,10 @@ packages/package_a/lib/foo.dart
 
         final List<String> output = await runCapturingPrint(
             runner, <String>['analyze', '--no-dart', '--ios']);
-        expect(output,
-            contains(contains('Not implemented for target platform(s).')));
+        expect(
+            output,
+            contains(
+                contains('Package does not contain native iOS plugin code')));
         expect(processRunner.recordedCalls, orderedEquals(<ProcessCall>[]));
       });
 
@@ -894,8 +896,10 @@ packages/package_a/lib/foo.dart
 
         final List<String> output = await runCapturingPrint(
             runner, <String>['analyze', '--no-dart', '--ios']);
-        expect(output,
-            contains(contains('Not implemented for target platform(s).')));
+        expect(
+            output,
+            contains(
+                contains('Package does not contain native iOS plugin code')));
         expect(processRunner.recordedCalls, orderedEquals(<ProcessCall>[]));
       });
 
@@ -1049,8 +1053,10 @@ packages/package_a/lib/foo.dart
 
         final List<String> output = await runCapturingPrint(
             runner, <String>['analyze', '--no-dart', '--macos']);
-        expect(output,
-            contains(contains('Not implemented for target platform(s).')));
+        expect(
+            output,
+            contains(
+                contains('Package does not contain native macOS plugin code')));
         expect(processRunner.recordedCalls, orderedEquals(<ProcessCall>[]));
       });
 
@@ -1062,8 +1068,10 @@ packages/package_a/lib/foo.dart
 
         final List<String> output = await runCapturingPrint(
             runner, <String>['analyze', '--no-dart', '--macos']);
-        expect(output,
-            contains(contains('Not implemented for target platform(s).')));
+        expect(
+            output,
+            contains(
+                contains('Package does not contain native macOS plugin code')));
         expect(processRunner.recordedCalls, orderedEquals(<ProcessCall>[]));
       });
 
@@ -1387,7 +1395,8 @@ packages/package_a/lib/foo.dart
         expect(
             output,
             containsAllInOrder(<Matcher>[
-              contains('SKIPPING: Not implemented for target platform(s).'),
+              contains(
+                  'SKIPPING: iOS: Package does not contain native iOS plugin code, macOS: Package does not contain native macOS plugin code'),
             ]));
 
         expect(processRunner.recordedCalls, orderedEquals(<ProcessCall>[]));

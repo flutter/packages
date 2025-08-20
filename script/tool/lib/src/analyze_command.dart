@@ -171,10 +171,31 @@ class AnalyzeCommand extends PackageLoopingCommand {
       _printSectionHeading('Running gradle lint.');
       subResults['Android'] = await _runGradleLintForPackage(package);
     }
-    // TODO(stuartmorgan): Separate these.
-    if (getBoolArg(platformIOS) || getBoolArg(platformMacOS)) {
-      _printSectionHeading('Running xcodebuild analyze.');
-      subResults['iOS/macOS'] = await _runXcodeAnalysisForPackage(package);
+    if (getBoolArg(platformIOS)) {
+      _printSectionHeading('Running iOS xcodebuild analyze.');
+      final String minIOSVersion = getStringArg(_minIOSVersionArg);
+      subResults['iOS'] = await _runXcodeAnalysisForPackage(
+        package,
+        FlutterPlatform.ios,
+        extraFlags: <String>[
+          '-destination',
+          'generic/platform=iOS Simulator',
+          if (minIOSVersion.isNotEmpty)
+            'IPHONEOS_DEPLOYMENT_TARGET=$minIOSVersion',
+        ],
+      );
+    }
+    if (getBoolArg(platformMacOS)) {
+      _printSectionHeading('Running macOS xcodebuild analyze.');
+      final String minMacOSVersion = getStringArg(_minMacOSVersionArg);
+      subResults['macOS'] = await _runXcodeAnalysisForPackage(
+        package,
+        FlutterPlatform.macos,
+        extraFlags: <String>[
+          if (minMacOSVersion.isNotEmpty)
+            'MACOSX_DEPLOYMENT_TARGET=$minMacOSVersion',
+        ],
+      );
     }
 
     // Make sure at least one analysis option was requested.
@@ -292,12 +313,14 @@ class AnalyzeCommand extends PackageLoopingCommand {
     return exitCode == 0;
   }
 
+  /// Runs Gradle lint analysis for the given package, and returns the result
+  /// that applies to that analysis.
   Future<PackageResult> _runGradleLintForPackage(
       RepositoryPackage package) async {
     if (!pluginSupportsPlatform(platformAndroid, package,
         requiredMode: PlatformSupport.inline)) {
       return PackageResult.skip(
-          'Plugin does not have an Android implementation.');
+          'Package does not contain native Android plugin code');
     }
 
     for (final RepositoryPackage example in package.getExamples()) {
@@ -331,64 +354,23 @@ class AnalyzeCommand extends PackageLoopingCommand {
     return PackageResult.success();
   }
 
+  /// Analyzes [plugin] for [targetPlatform].
   Future<PackageResult> _runXcodeAnalysisForPackage(
-      RepositoryPackage package) async {
-    final bool testIOS = getBoolArg(platformIOS) &&
-        pluginSupportsPlatform(platformIOS, package,
-            requiredMode: PlatformSupport.inline);
-    final bool testMacOS = getBoolArg(platformMacOS) &&
-        pluginSupportsPlatform(platformMacOS, package,
-            requiredMode: PlatformSupport.inline);
-
-    final bool multiplePlatformsRequested =
-        getBoolArg(platformIOS) && getBoolArg(platformMacOS);
-    if (!(testIOS || testMacOS)) {
-      return PackageResult.skip('Not implemented for target platform(s).');
-    }
-
-    final String minIOSVersion = getStringArg(_minIOSVersionArg);
-    final String minMacOSVersion = getStringArg(_minMacOSVersionArg);
-
-    final List<String> failures = <String>[];
-    if (testIOS &&
-        !await _runXcodeAnalysisForPlatform(package, FlutterPlatform.ios,
-            extraFlags: <String>[
-              '-destination',
-              'generic/platform=iOS Simulator',
-              if (minIOSVersion.isNotEmpty)
-                'IPHONEOS_DEPLOYMENT_TARGET=$minIOSVersion',
-            ])) {
-      failures.add('iOS');
-    }
-    if (testMacOS &&
-        !await _runXcodeAnalysisForPlatform(package, FlutterPlatform.macos,
-            extraFlags: <String>[
-              if (minMacOSVersion.isNotEmpty)
-                'MACOSX_DEPLOYMENT_TARGET=$minMacOSVersion',
-            ])) {
-      failures.add('macOS');
-    }
-
-    // Only provide the failing platform in the failure details if testing
-    // multiple platforms, otherwise it's just noise.
-    return failures.isEmpty
-        ? PackageResult.success()
-        : PackageResult.fail(
-            multiplePlatformsRequested ? failures : <String>[]);
-  }
-
-  /// Analyzes [plugin] for [targetPlatform], returning true if it passed analysis.
-  Future<bool> _runXcodeAnalysisForPlatform(
-    RepositoryPackage plugin,
+    RepositoryPackage package,
     FlutterPlatform targetPlatform, {
     List<String> extraFlags = const <String>[],
   }) async {
-    final Xcode xcode = Xcode(processRunner: processRunner, log: true);
-
     final String platformString =
         targetPlatform == FlutterPlatform.ios ? 'iOS' : 'macOS';
-    bool passing = true;
-    for (final RepositoryPackage example in plugin.getExamples()) {
+    if (!pluginSupportsPlatform(targetPlatform.name, package,
+        requiredMode: PlatformSupport.inline)) {
+      return PackageResult.skip(
+          'Package does not contain native $platformString plugin code');
+    }
+
+    final Xcode xcode = Xcode(processRunner: processRunner, log: true);
+    final List<String> errors = <String>[];
+    for (final RepositoryPackage example in package.getExamples()) {
       // See https://github.com/flutter/flutter/issues/172427 for discussion of
       // why this is currently necessary.
       print('Disabling Swift Package Manager...');
@@ -407,13 +389,14 @@ class AnalyzeCommand extends PackageLoopingCommand {
       );
       if (!buildSuccess) {
         printError('Unable to prepare native project files.');
-        passing = false;
+        errors.add(
+            'Unable to build ${getRelativePosixPath(example.directory, from: package.directory)}.');
         continue;
       }
 
       // Running tests and static analyzer.
       final String examplePath = getRelativePosixPath(example.directory,
-          from: plugin.directory.parent);
+          from: package.directory.parent);
       print('Running $platformString tests and analyzer for $examplePath...');
       final int exitCode = await xcode.runXcodeBuild(
         example.directory,
@@ -434,12 +417,15 @@ class AnalyzeCommand extends PackageLoopingCommand {
         printSuccess('$examplePath ($platformString) passed analysis.');
       } else {
         printError('$examplePath ($platformString) failed analysis.');
-        passing = false;
+        errors.add(
+            '${getRelativePosixPath(example.directory, from: package.directory)} failed analysis.');
       }
 
       print('Removing Swift Package Manager override...');
       setSwiftPackageManagerState(example, enabled: null);
     }
-    return passing;
+    return errors.isEmpty
+        ? PackageResult.success()
+        : PackageResult.fail(errors);
   }
 }
