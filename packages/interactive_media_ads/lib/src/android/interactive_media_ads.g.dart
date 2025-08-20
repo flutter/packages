@@ -2843,7 +2843,7 @@ class BaseManager extends PigeonInternalProxyApiBaseClass {
 
 /// Event to notify publisher that an event occurred with an Ad.
 ///
-/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdEvent.html.
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/kotlin/com/google/ads/interactivemedia/v3/api/AdEvent.
 class AdEvent extends PigeonInternalProxyApiBaseClass {
   /// Constructs [AdEvent] without creating the associated native object.
   ///
@@ -2855,6 +2855,7 @@ class AdEvent extends PigeonInternalProxyApiBaseClass {
     super.pigeon_instanceManager,
     required this.type,
     this.adData,
+    this.ad,
   });
 
   /// The type of event that occurred.
@@ -2863,11 +2864,14 @@ class AdEvent extends PigeonInternalProxyApiBaseClass {
   /// A map containing any extra ad data for the event, if needed.
   final Map<String, String>? adData;
 
+  /// The ad with which this event is associated.
+  final Ad? ad;
+
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-    AdEvent Function(AdEventType type, Map<String, String>? adData)?
+    AdEvent Function(AdEventType type, Map<String, String>? adData, Ad? ad)?
     pigeon_newInstance,
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
@@ -2903,15 +2907,17 @@ class AdEvent extends PigeonInternalProxyApiBaseClass {
           );
           final Map<String, String>? arg_adData =
               (args[2] as Map<Object?, Object?>?)?.cast<String, String>();
+          final Ad? arg_ad = (args[3] as Ad?);
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
-                  pigeon_newInstance?.call(arg_type!, arg_adData) ??
+                  pigeon_newInstance?.call(arg_type!, arg_adData, arg_ad) ??
                       AdEvent.pigeon_detached(
                         pigeon_binaryMessenger: pigeon_binaryMessenger,
                         pigeon_instanceManager: pigeon_instanceManager,
                         type: arg_type!,
                         adData: arg_adData,
+                        ad: arg_ad,
                       ),
                   arg_pigeon_instanceIdentifier!,
                 );
@@ -2935,6 +2941,7 @@ class AdEvent extends PigeonInternalProxyApiBaseClass {
       pigeon_instanceManager: pigeon_instanceManager,
       type: type,
       adData: adData,
+      ad: ad,
     );
   }
 }
