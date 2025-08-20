@@ -207,13 +207,15 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
                 currentTimeMs: videoDuration,
                 durationMs: adDuration,
               );
+
           await Future.wait(<Future<void>>[
             _videoAdPlayer.setAdProgress(currentProgress),
-            ...videoAdPlayerCallbacks.map((
-              ima.VideoAdPlayerCallback callback,
-            ) async {
-              await callback.onAdProgress(_loadedAdMediaInfo!, currentProgress);
-            }),
+
+            if (_loadedAdMediaInfo case final ima.AdMediaInfo loadedAdMediaInfo)
+              ...videoAdPlayerCallbacks.map(
+                (ima.VideoAdPlayerCallback callback) =>
+                    callback.onAdProgress(loadedAdMediaInfo, currentProgress),
+              ),
           ]);
         }
       },
