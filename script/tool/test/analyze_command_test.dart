@@ -925,7 +925,6 @@ packages/package_a/lib/foo.dart
     });
   });
 
-  // TODO(stuartmorgan): Separate iOS and macOS.
   group('Xcode analyze', () {
     test('temporarily disables Swift Package Manager', () async {
       final RepositoryPackage plugin = createFakePlugin('plugin', packagesDir,
