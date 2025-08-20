@@ -821,6 +821,7 @@ abstract class VideoAdPlayer {
   late final void Function(AdMediaInfo adMediaInfo, AdPodInfo adPodInfo) loadAd;
 
   /// Pauses playing the current ad.
+  @async
   late final void Function(AdMediaInfo adMediaInfo) pauseAd;
 
   /// Starts or resumes playing the video ad referenced by the AdMediaInfo,

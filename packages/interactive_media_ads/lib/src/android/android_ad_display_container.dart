@@ -171,6 +171,23 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
     _savedAdPosition = 0;
   }
 
+  // Clear state to before ad is loaded and replace current VideoView with a new
+  // one.
+  void _resetState() {
+    _stopAdProgressTracking();
+
+    _frameLayout.removeView(_videoView);
+    _videoView = _setUpVideoView(
+      WeakReference<AndroidAdDisplayContainer>(this),
+    );
+    _frameLayout.addView(_videoView);
+
+    _clearMediaPlayer();
+    _loadedAdMediaInfo = null;
+    _adDuration = null;
+    _startPlayerWhenVideoIsPrepared = true;
+  }
+
   // Starts periodically updating the IMA SDK the progress of the currently
   // playing ad.
   //
@@ -271,11 +288,12 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
       },
       pauseAd: (_, __) async {
         final AndroidAdDisplayContainer? container = weakThis.target;
-        if (container != null) {
+        final ima.MediaPlayer? player = container?._mediaPlayer;
+        if (container != null && player != null) {
           // Setting this to false ensures the ad doesn't start playing if an
           // app is returned to the foreground.
           container._startPlayerWhenVideoIsPrepared = false;
-          await container._mediaPlayer!.pause();
+          await player.pause();
           container._savedAdPosition =
               await container._videoView.getCurrentPosition();
           container._stopAdProgressTracking();
@@ -288,25 +306,8 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
           container._videoView.setVideoUri(adMediaInfo.url);
         }
       },
-      release: (_) {},
-      stopAd: (_, __) {
-        final AndroidAdDisplayContainer? container = weakThis.target;
-        if (container != null) {
-          // Clear and reset all state.
-          container._stopAdProgressTracking();
-
-          container._frameLayout.removeView(container._videoView);
-          container._videoView = _setUpVideoView(
-            WeakReference<AndroidAdDisplayContainer>(container),
-          );
-          container._frameLayout.addView(container._videoView);
-
-          container._clearMediaPlayer();
-          container._loadedAdMediaInfo = null;
-          container._adDuration = null;
-          container._startPlayerWhenVideoIsPrepared = true;
-        }
-      },
+      release: (_) => weakThis.target?._resetState(),
+      stopAd: (_, __) => weakThis.target?._resetState(),
     );
   }
 }
