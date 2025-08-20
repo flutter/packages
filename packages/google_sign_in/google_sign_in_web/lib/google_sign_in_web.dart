@@ -49,10 +49,9 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
     @visibleForTesting GisSdkClient? debugOverrideGisSdkClient,
     @visibleForTesting
     StreamController<AuthenticationEvent>? debugAuthenticationController,
-  }) : _gisSdkClient = debugOverrideGisSdkClient,
-       _authenticationController =
-           debugAuthenticationController ??
-           StreamController<AuthenticationEvent>.broadcast() {
+  })  : _gisSdkClient = debugOverrideGisSdkClient,
+        _authenticationController = debugAuthenticationController ??
+            StreamController<AuthenticationEvent>.broadcast() {
     autoDetectedClientId = web.document
         .querySelector(clientIdMetaSelector)
         ?.getAttribute(clientIdAttributeName);
