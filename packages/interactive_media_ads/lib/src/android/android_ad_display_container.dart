@@ -199,19 +199,23 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
     _adProgressTimer = Timer.periodic(
       const Duration(milliseconds: _progressPollingMs),
       (Timer timer) async {
-        final ima.VideoProgressUpdate currentProgress = _androidParams._imaProxy
-            .newVideoProgressUpdate(
-              currentTimeMs: await _videoView.getCurrentPosition(),
-              durationMs: _adDuration!,
-            );
-        await Future.wait(<Future<void>>[
-          _videoAdPlayer.setAdProgress(currentProgress),
-          ...videoAdPlayerCallbacks.map((
-            ima.VideoAdPlayerCallback callback,
-          ) async {
-            await callback.onAdProgress(_loadedAdMediaInfo!, currentProgress);
-          }),
-        ]);
+        final int videoDuration = await _videoView.getCurrentPosition();
+        if (_adDuration case final int adDuration) {
+          final ima.VideoProgressUpdate currentProgress = _androidParams
+              ._imaProxy
+              .newVideoProgressUpdate(
+                currentTimeMs: videoDuration,
+                durationMs: adDuration,
+              );
+          await Future.wait(<Future<void>>[
+            _videoAdPlayer.setAdProgress(currentProgress),
+            ...videoAdPlayerCallbacks.map((
+              ima.VideoAdPlayerCallback callback,
+            ) async {
+              await callback.onAdProgress(_loadedAdMediaInfo!, currentProgress);
+            }),
+          ]);
+        }
       },
     );
   }
@@ -256,6 +260,7 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
         }
       },
       onError: (_, __, ___, ____) {
+        print('APPLE: Error');
         final AndroidAdDisplayContainer? container = weakThis.target;
         if (container != null) {
           container._clearMediaPlayer();

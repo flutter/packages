@@ -2,6 +2,7 @@
 
 * Fixes Android `IllegalStateException` from `MediaPlayer` by releasing resources on
   `VideoAdPlayer.release`.
+* Fixes `_startAdProgressTracking` error caused by race condition.
 
 ## 0.2.6+4
 
