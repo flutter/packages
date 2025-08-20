@@ -6,6 +6,7 @@ import 'dart:io' as io;
 
 import 'package:file/file.dart';
 
+import 'common/core.dart';
 import 'common/file_filters.dart';
 import 'common/output_utils.dart';
 import 'common/package_looping_command.dart';
@@ -20,6 +21,9 @@ class AnalyzeCommand extends PackageLoopingCommand {
     super.platform,
     super.gitDir,
   }) {
+    // By default, only Dart analysis is run.
+    argParser.addFlag(_dartFlag, help: "Runs 'dart analyze'", defaultsTo: true);
+
     argParser.addMultiOption(_customAnalysisFlag,
         help:
             'Directories (comma separated) that are allowed to have their own '
@@ -44,6 +48,7 @@ class AnalyzeCommand extends PackageLoopingCommand {
         hide: true);
   }
 
+  static const String _dartFlag = 'dart';
   static const String _customAnalysisFlag = 'custom-analysis';
   static const String _downgradeFlag = 'downgrade';
   static const String _libOnlyFlag = 'lib-only';
@@ -60,9 +65,6 @@ class AnalyzeCommand extends PackageLoopingCommand {
   @override
   final String description = 'Analyzes all packages using dart analyze.\n\n'
       'This command requires "dart" and "flutter" to be in your path.';
-
-  @override
-  final bool hasLongOutput = false;
 
   /// Checks that there are no unexpected analysis_options.yaml files.
   bool _hasUnexpectedAnalysisOptions(RepositoryPackage package) {
@@ -95,9 +97,27 @@ class AnalyzeCommand extends PackageLoopingCommand {
 
   @override
   bool shouldIgnoreFile(String path) {
-    return isRepoLevelNonCodeImpactingFile(path) ||
-        isNativeCodeFile(path) ||
-        isPackageSupportFile(path);
+    // Support files don't affect any analysis.
+    if (isRepoLevelNonCodeImpactingFile(path) || isPackageSupportFile(path)) {
+      return true;
+    }
+
+    // Otherwise, it depends on the flags.
+    if (path.endsWith('.dart')) {
+      return !getBoolArg(_dartFlag);
+    }
+    // Currently this command doesn't analyze any other languages.
+    if (path.endsWith('.c') ||
+        path.endsWith('.cc') ||
+        path.endsWith('.cpp') ||
+        path.endsWith('.h') ||
+        path.endsWith('.m') ||
+        path.endsWith('.swift') ||
+        path.endsWith('.java') ||
+        path.endsWith('.kt')) {
+      return true;
+    }
+    return false;
   }
 
   @override
@@ -112,6 +132,56 @@ class AnalyzeCommand extends PackageLoopingCommand {
 
   @override
   Future<PackageResult> runForPackage(RepositoryPackage package) async {
+    final Map<String, PackageResult> subResults = <String, PackageResult>{};
+    if (getBoolArg(_dartFlag)) {
+      subResults['Dart'] = await _runDartAnalysisForPackage(package);
+    }
+
+    // Make sure at least one analysis option was requested.
+    if (subResults.isEmpty) {
+      printError('At least one analysis option flag must be provided.');
+      throw ToolExit(exitInvalidArguments);
+    }
+    // If only one analysis was requested, just return its result.
+    if (subResults.length == 1) {
+      return subResults.values.first;
+    }
+    // Otherwise, aggregate the messages, with the least positive status.
+    final Map<String, PackageResult> failedResults =
+        Map<String, PackageResult>.of(subResults)
+          ..removeWhere((String key, PackageResult value) =>
+              value.state != RunState.failed);
+    final Map<String, PackageResult> skippedResults =
+        Map<String, PackageResult>.of(subResults)
+          ..removeWhere((String key, PackageResult value) =>
+              value.state != RunState.skipped);
+    // If anything failed, collect all the failure messages, prefixed by type.
+    if (failedResults.isNotEmpty) {
+      return PackageResult.fail(<String>[
+        for (final MapEntry<String, PackageResult> entry
+            in failedResults.entries)
+          '${entry.key}${entry.value.details.isEmpty ? '' : ': ${entry.value.details.join(', ')}'}'
+      ]);
+    }
+    // If everything was skipped, mark as skipped with all of the explanations.
+    if (skippedResults.length == subResults.length) {
+      return PackageResult.skip(skippedResults.entries
+          .map((MapEntry<String, PackageResult> entry) =>
+              '${entry.key}: ${entry.value.details.first}')
+          .join(', '));
+    }
+    // For all succes, or a mix of success and skip, log any skips but mark as
+    // success.
+    for (final MapEntry<String, PackageResult> skip in skippedResults.entries) {
+      printSkip('Skipped ${skip.key}: ${skip.value.details.first}}');
+    }
+    return PackageResult.success();
+  }
+
+  /// Runs Dart analysis for the given package, and returns the result that
+  /// applies to that analysis.
+  Future<PackageResult> _runDartAnalysisForPackage(
+      RepositoryPackage package) async {
     final bool libOnly = getBoolArg(_libOnlyFlag);
 
     if (libOnly && !package.libDirectory.existsSync()) {
