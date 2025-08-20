@@ -23,7 +23,6 @@ import 'fix_command.dart';
 import 'format_command.dart';
 import 'gradle_check_command.dart';
 import 'license_check_command.dart';
-import 'lint_android_command.dart';
 import 'list_command.dart';
 import 'make_deps_path_based_command.dart';
 import 'native_test_command.dart';
@@ -73,7 +72,6 @@ void main(List<String> args) {
     ..addCommand(FormatCommand(packagesDir))
     ..addCommand(GradleCheckCommand(packagesDir))
     ..addCommand(LicenseCheckCommand(packagesDir))
-    ..addCommand(LintAndroidCommand(packagesDir))
     ..addCommand(PodspecCheckCommand(packagesDir))
     ..addCommand(ListCommand(packagesDir))
     ..addCommand(NativeTestCommand(packagesDir))

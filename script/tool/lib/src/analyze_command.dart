@@ -8,8 +8,11 @@ import 'package:file/file.dart';
 
 import 'common/core.dart';
 import 'common/file_filters.dart';
+import 'common/flutter_command_utils.dart';
+import 'common/gradle.dart';
 import 'common/output_utils.dart';
 import 'common/package_looping_command.dart';
+import 'common/plugin_utils.dart';
 import 'common/repository_package.dart';
 
 /// A command to run Dart analysis on packages.
@@ -23,6 +26,7 @@ class AnalyzeCommand extends PackageLoopingCommand {
   }) {
     // By default, only Dart analysis is run.
     argParser.addFlag(_dartFlag, help: "Runs 'dart analyze'", defaultsTo: true);
+    argParser.addFlag(platformAndroid, help: "Runs 'gradle lint'");
 
     argParser.addMultiOption(_customAnalysisFlag,
         help:
@@ -102,9 +106,13 @@ class AnalyzeCommand extends PackageLoopingCommand {
       return true;
     }
 
-    // Otherwise, it depends on the flags.
+    // For native code, it depends on the flags.
     if (path.endsWith('.dart')) {
       return !getBoolArg(_dartFlag);
+    }
+    // Currently this command doesn't analyze any other languages.
+    if (path.endsWith('.java') || path.endsWith('.kt')) {
+      return !getBoolArg(platformAndroid);
     }
     // Currently this command doesn't analyze any other languages.
     if (path.endsWith('.c') ||
@@ -112,11 +120,10 @@ class AnalyzeCommand extends PackageLoopingCommand {
         path.endsWith('.cpp') ||
         path.endsWith('.h') ||
         path.endsWith('.m') ||
-        path.endsWith('.swift') ||
-        path.endsWith('.java') ||
-        path.endsWith('.kt')) {
+        path.endsWith('.swift')) {
       return true;
     }
+
     return false;
   }
 
@@ -135,6 +142,9 @@ class AnalyzeCommand extends PackageLoopingCommand {
     final Map<String, PackageResult> subResults = <String, PackageResult>{};
     if (getBoolArg(_dartFlag)) {
       subResults['Dart'] = await _runDartAnalysisForPackage(package);
+    }
+    if (getBoolArg(platformAndroid)) {
+      subResults['Android'] = await _runGradleLintForPackage(package);
     }
 
     // Make sure at least one analysis option was requested.
@@ -245,5 +255,44 @@ class AnalyzeCommand extends PackageLoopingCommand {
         flutterCommand, <String>['pub', command],
         workingDir: package.directory);
     return exitCode == 0;
+  }
+
+  Future<PackageResult> _runGradleLintForPackage(
+      RepositoryPackage package) async {
+    if (!pluginSupportsPlatform(platformAndroid, package,
+        requiredMode: PlatformSupport.inline)) {
+      return PackageResult.skip(
+          'Plugin does not have an Android implementation.');
+    }
+
+    for (final RepositoryPackage example in package.getExamples()) {
+      final GradleProject project = GradleProject(example,
+          processRunner: processRunner, platform: platform);
+
+      if (!project.isConfigured()) {
+        final bool buildSuccess = await runConfigOnlyBuild(
+            example, processRunner, platform, FlutterPlatform.android);
+        if (!buildSuccess) {
+          printError('Unable to configure Gradle project.');
+          return PackageResult.fail(<String>['Unable to configure Gradle.']);
+        }
+      }
+
+      final String packageName = package.directory.basename;
+
+      // Only lint one build mode to avoid extra work.
+      // Only lint the plugin project itself, to avoid failing due to errors in
+      // dependencies.
+      //
+      // TODO(stuartmorgan): Consider adding an XML parser to read and summarize
+      //  all results. Currently, only the first three errors will be shown
+      //  inline, and the rest have to be checked via the CI-uploaded artifact.
+      final int exitCode = await project.runCommand('$packageName:lintDebug');
+      if (exitCode != 0) {
+        return PackageResult.fail();
+      }
+    }
+
+    return PackageResult.success();
   }
 }
