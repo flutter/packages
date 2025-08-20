@@ -4,6 +4,7 @@
 
 import 'dart:async';
 import 'dart:js_interop';
+import 'dart:js_util' as js_util;
 import 'dart:ui';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -122,25 +123,29 @@ void main() {
       );
     });
 
-    testWidgets('addCircles sets clickable according to consumeTapEvents', (WidgetTester tester) async {
+    testWidgets('addCircles sets clickable according to consumeTapEvents', (
+      WidgetTester tester,
+    ) async {
       final Set<Circle> circles = <Circle>{
         const Circle(circleId: CircleId('1'), consumeTapEvents: true),
-        const Circle(circleId: CircleId('2'), consumeTapEvents: false),
+        const Circle(circleId: CircleId('2')),
       };
 
       controller.addCircles(circles);
 
-      final CircleController? circle1Controller = controller.circles[const CircleId('1')];
-      final CircleController? circle2Controller = controller.circles[const CircleId('2')];
+      final CircleController? circle1Controller =
+          controller.circles[const CircleId('1')];
+      final CircleController? circle2Controller =
+          controller.circles[const CircleId('2')];
 
-      final bool circle1Clickable = circle1Controller?.circle?.get('clickable') as bool? ?? false;
-      final bool circle2Clickable = circle2Controller?.circle?.get('clickable') as bool? ?? false;
+      final bool circle1Clickable =
+          js_util.getProperty(circle1Controller!.circle!, 'clickable') as bool;
+      final bool circle2Clickable =
+          js_util.getProperty(circle2Controller!.circle!, 'clickable') as bool;
 
       expect(circle1Clickable, true);
       expect(circle2Clickable, false);
-
     });
-
   });
 
   group('PolygonsController', () {
@@ -325,25 +330,31 @@ void main() {
       expect(paths.getAt(1)?.getAt(2)?.lat, 27.339);
     });
 
-    testWidgets('addPolygons sets clickable according to consumeTapEvents', (WidgetTester tester) async {
+    testWidgets('addPolygons sets clickable according to consumeTapEvents', (
+      WidgetTester tester,
+    ) async {
       final Set<Polygon> polygons = <Polygon>{
         const Polygon(polygonId: PolygonId('1'), consumeTapEvents: true),
-        const Polygon(polygonId: PolygonId('2'), consumeTapEvents: false),
+        const Polygon(polygonId: PolygonId('2')),
       };
 
       controller.addPolygons(polygons);
 
-      final PolygonController? polygon1Controller = controller.polygons[const PolygonId('1')];
-      final PolygonController? polygon2Controller = controller.polygons[const PolygonId('2')];
+      final PolygonController? polygon1Controller =
+          controller.polygons[const PolygonId('1')];
+      final PolygonController? polygon2Controller =
+          controller.polygons[const PolygonId('2')];
 
-      final bool polygon1Clickable = polygon1Controller?.polygon?.get('clickable') as bool? ?? false;
-      final bool polygon2Clickable = polygon2Controller?.polygon?.get('clickable') as bool? ?? false;
+      final bool polygon1Clickable =
+          js_util.getProperty(polygon1Controller!.polygon!, 'clickable')
+              as bool;
+      final bool polygon2Clickable =
+          js_util.getProperty(polygon2Controller!.polygon!, 'clickable')
+              as bool;
 
       expect(polygon1Clickable, true);
       expect(polygon2Clickable, false);
     });
-
-
   });
 
   group('PolylinesController', () {
