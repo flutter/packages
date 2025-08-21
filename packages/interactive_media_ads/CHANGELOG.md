@@ -1,3 +1,7 @@
+## 0.2.6+5
+
+* Bumps com.android.tools.build:gradle to 8.12.1.
+
 ## 0.2.6+4
 
 * Adds internal wrappers for iOS native `IMAAd` and `IMAUniversalAdID`.
