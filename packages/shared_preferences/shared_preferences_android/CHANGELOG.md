@@ -1,6 +1,6 @@
 ## 2.4.12
 
-* Bumps com.android.tools.build:gradle to 8.12.1.
+* Bumps com.android.tools.build:gradle to 8.12.1 and kotlin_version to 2.2.10.
 * Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
 
 ## 2.4.11
