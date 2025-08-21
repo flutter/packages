@@ -1,6 +1,6 @@
 ## 0.6.20+2
 
-* Bumps com.android.tools.build:gradle to 8.12.1.
+* Bumps com.android.tools.build:gradle to 8.12.1 and kotlin_version to 2.2.10.
 
 ## 0.6.20+1
 
