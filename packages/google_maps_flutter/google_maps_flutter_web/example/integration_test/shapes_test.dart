@@ -4,7 +4,6 @@
 
 import 'dart:async';
 import 'dart:js_interop';
-import 'dart:js_util' as js_util;
 import 'dart:ui';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -21,6 +20,10 @@ import 'package:integration_test/integration_test.dart';
 // converting from a byte value to a double between 0 and 1.
 // (For Color opacity values, for example)
 const double _acceptableDelta = 0.01;
+
+extension GMapsProps on JSObject {
+  external bool get clickable;
+}
 
 /// Test Shapes (Circle, Polygon, Polyline)
 void main() {
@@ -139,9 +142,9 @@ void main() {
           controller.circles[const CircleId('2')];
 
       final bool circle1Clickable =
-          js_util.getProperty(circle1Controller!.circle!, 'clickable') as bool;
+          (circle1Controller!.circle! as JSObject).clickable;
       final bool circle2Clickable =
-          js_util.getProperty(circle2Controller!.circle!, 'clickable') as bool;
+          (circle2Controller!.circle! as JSObject).clickable;
 
       expect(circle1Clickable, true);
       expect(circle2Clickable, false);
@@ -346,11 +349,9 @@ void main() {
           controller.polygons[const PolygonId('2')];
 
       final bool polygon1Clickable =
-          js_util.getProperty(polygon1Controller!.polygon!, 'clickable')
-              as bool;
+          (polygon1Controller!.polygon! as JSObject).clickable;
       final bool polygon2Clickable =
-          js_util.getProperty(polygon2Controller!.polygon!, 'clickable')
-              as bool;
+          (polygon2Controller!.polygon! as JSObject).clickable;
 
       expect(polygon1Clickable, true);
       expect(polygon2Clickable, false);
@@ -437,6 +438,30 @@ void main() {
         (line.get('strokeOpacity')! as JSNumber).toDartDouble,
         closeTo(0.5, _acceptableDelta),
       );
+    });
+
+    testWidgets('addPolylines sets clickable according to consumeTapEvents', (
+      WidgetTester tester,
+    ) async {
+      final Set<Polyline> polylines = <Polyline>{
+        const Polyline(polylineId: PolylineId('1'), consumeTapEvents: true),
+        const Polyline(polylineId: PolylineId('2')),
+      };
+
+      controller.addPolylines(polylines);
+
+      final PolylineController? polyline1Controller =
+          controller.lines[const PolylineId('1')];
+      final PolylineController? polyline2Controller =
+          controller.lines[const PolylineId('2')];
+
+      final bool polyline1Clickable =
+          (polyline1Controller!.line! as JSObject).clickable;
+      final bool polyline2Clickable =
+          (polyline2Controller!.line! as JSObject).clickable;
+
+      expect(polyline1Clickable, true);
+      expect(polyline2Clickable, false);
     });
   });
 

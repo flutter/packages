@@ -643,7 +643,8 @@ gmaps.PolylineOptions _polylineOptionsFromPolyline(
     ..strokeOpacity = _getCssOpacity(polyline.color)
     ..visible = polyline.visible
     ..zIndex = polyline.zIndex
-    ..geodesic = polyline.geodesic;
+    ..geodesic = polyline.geodesic
+    ..clickable = polyline.consumeTapEvents;
   //  this.endCap = Cap.buttCap,
   //  this.jointType = JointType.mitered,
   //  this.patterns = const <PatternItem>[],
