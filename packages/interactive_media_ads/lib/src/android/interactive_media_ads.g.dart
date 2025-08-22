@@ -84,7 +84,7 @@ class PigeonOverrides {
       AdPodInfo adPodInfo,
     )
     loadAd,
-    required void Function(
+    required Future<void> Function(
       VideoAdPlayer pigeon_instance,
       AdMediaInfo adMediaInfo,
     )
@@ -5548,7 +5548,7 @@ class VideoAdPlayer extends PigeonInternalProxyApiBaseClass {
       AdPodInfo adPodInfo,
     )
     loadAd,
-    required void Function(
+    required Future<void> Function(
       VideoAdPlayer pigeon_instance,
       AdMediaInfo adMediaInfo,
     )
@@ -5729,7 +5729,10 @@ class VideoAdPlayer extends PigeonInternalProxyApiBaseClass {
   ///
   /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
-  final void Function(VideoAdPlayer pigeon_instance, AdMediaInfo adMediaInfo)
+  final Future<void> Function(
+    VideoAdPlayer pigeon_instance,
+    AdMediaInfo adMediaInfo,
+  )
   pauseAd;
 
   /// Starts or resumes playing the video ad referenced by the AdMediaInfo,
@@ -5838,7 +5841,10 @@ class VideoAdPlayer extends PigeonInternalProxyApiBaseClass {
       AdPodInfo adPodInfo,
     )?
     loadAd,
-    void Function(VideoAdPlayer pigeon_instance, AdMediaInfo adMediaInfo)?
+    Future<void> Function(
+      VideoAdPlayer pigeon_instance,
+      AdMediaInfo adMediaInfo,
+    )?
     pauseAd,
     void Function(VideoAdPlayer pigeon_instance, AdMediaInfo adMediaInfo)?
     playAd,
@@ -5979,7 +5985,7 @@ class VideoAdPlayer extends PigeonInternalProxyApiBaseClass {
             'Argument for dev.flutter.pigeon.interactive_media_ads.VideoAdPlayer.pauseAd was null, expected non-null AdMediaInfo.',
           );
           try {
-            (pauseAd ?? arg_pigeon_instance!.pauseAd).call(
+            await (pauseAd ?? arg_pigeon_instance!.pauseAd).call(
               arg_pigeon_instance!,
               arg_adMediaInfo!,
             );
