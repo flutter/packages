@@ -100,7 +100,7 @@ gmaps.MapOptions _configurationAndStyleToGmapsOptions(
   }
 
   // If using cloud map, do not set options.styles
-  if (configuration.mapId == null) {
+  if (configuration.cloudMapId == null) {
     options.styles = styles;
   }
 
