@@ -1,3 +1,7 @@
+## 16.2.3
+
+- Fix Android Cold Start deep link with empty path losing scheme and authority.
+
 ## 16.2.2
 
 - Fixes broken links in readme.
