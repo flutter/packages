@@ -1,5 +1,6 @@
 ## NEXT
 
+* Fixes a bug where using `cloudMapId` for cloud-based styling would fail if the `style` property was also present.
 * Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
 
 ## 0.5.12+2
