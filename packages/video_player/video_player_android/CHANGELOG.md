@@ -1,3 +1,7 @@
+## 2.8.13
+
+* Bumps com.android.tools.build:gradle to 8.12.1.
+
 ## 2.8.12
 
 * Moves buffer position update event generation to Dart.
