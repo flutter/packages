@@ -41,11 +41,9 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
   /// Creates a [GoRouteInformationParser].
   GoRouteInformationParser({
     required this.configuration,
-    required String? initialLocation,
     required GoRouter router,
     required this.onParserException,
   }) : _routeMatchListCodec = RouteMatchListCodec(configuration),
-       _initialLocation = initialLocation,
        _onEnterHandler = _OnEnterHandler(
          configuration: configuration,
          router: router,
@@ -59,8 +57,6 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
   final ParserExceptionHandler? onParserException;
 
   final RouteMatchListCodec _routeMatchListCodec;
-
-  final String? _initialLocation;
 
   /// Stores the last successful match list to enable "stay" on the same route.
   RouteMatchList? _lastMatchList;
