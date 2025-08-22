@@ -30,7 +30,7 @@ void main() {
     WidgetTester tester,
   ) async {
     const MapConfiguration testMapConfig = MapConfiguration(
-      cloudMapId: 'test-cloud-map-id',
+      mapId: 'test-cloud-map-id',
     );
 
     await tester.pumpWidget(
@@ -69,7 +69,7 @@ void main() {
     await tester.pump();
 
     expect(captured, isNotNull);
-    expect(captured!.mapId, testMapConfig.cloudMapId);
+    expect(captured!.mapId, testMapConfig.mapId);
     expect(
       captured!.styles == null || captured!.styles!.isEmpty,
       isTrue,
