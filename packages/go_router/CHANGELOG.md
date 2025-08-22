@@ -1,3 +1,7 @@
+## 16.2.2
+
+- Fix Android Cold Start deep link with empty path losing scheme and authority.
+
 ## 16.2.1
 
 - Adds state restoration topic to documentation.
