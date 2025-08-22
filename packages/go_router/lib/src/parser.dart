@@ -26,6 +26,12 @@ typedef ParserExceptionHandler =
       RouteMatchList routeMatchList,
     );
 
+/// The function signature for navigation callbacks in [_OnEnterHandler].
+typedef NavigationCallback = Future<RouteMatchList> Function();
+
+/// Type alias for route information state with dynamic type parameter.
+typedef RouteInfoState = RouteInformationState<dynamic>;
+
 /// Converts between incoming URLs and a [RouteMatchList] using [RouteMatcher].
 ///
 /// Also integrates the top-level `onEnter` guard and then performs legacy
@@ -121,17 +127,11 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
       infoState: infoState,
       onCanEnter: () => _navigate(routeInformation, context, infoState),
       onCanNotEnter: () {
-        // If navigation is blocked, return the last successful match or a fallback.
+        // If navigation is blocked, return the last successful match or empty.
         if (_lastMatchList != null) {
           return SynchronousFuture<RouteMatchList>(_lastMatchList!);
         } else {
-          final Uri defaultUri = Uri.parse(_initialLocation ?? '/');
-          final RouteMatchList fallbackMatches = configuration.findMatch(
-            defaultUri,
-            extra: infoState.extra,
-          );
-          _lastMatchList = fallbackMatches;
-          return SynchronousFuture<RouteMatchList>(fallbackMatches);
+          return SynchronousFuture<RouteMatchList>(RouteMatchList.empty);
         }
       },
     );
@@ -145,7 +145,7 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
   Future<RouteMatchList> _navigate(
     RouteInformation routeInformation,
     BuildContext context,
-    RouteInformationState<dynamic> infoState,
+    RouteInfoState infoState,
   ) {
     // Normalize the URI: ensure it has a valid path and remove trailing slashes.
     Uri uri = routeInformation.uri;
@@ -375,9 +375,9 @@ class _OnEnterHandler {
   Future<RouteMatchList> handleTopOnEnter({
     required BuildContext context,
     required RouteInformation routeInformation,
-    required RouteInformationState<dynamic> infoState,
-    required Future<RouteMatchList> Function() onCanEnter,
-    required Future<RouteMatchList> Function() onCanNotEnter,
+    required RouteInfoState infoState,
+    required NavigationCallback onCanEnter,
+    required NavigationCallback onCanNotEnter,
   }) {
     final OnEnter? topOnEnter = _configuration.topOnEnter;
     // If no onEnter is configured, allow navigation immediately.
@@ -577,7 +577,7 @@ class _OnEnterHandler {
   RouteMatchList? _redirectionErrorMatchList(
     BuildContext context,
     Uri redirectedUri,
-    RouteInformationState<dynamic> infoState,
+    RouteInfoState infoState,
   ) {
     _redirectionHistory.add(redirectedUri);
     if (_redirectionHistory.length > _configuration.redirectLimit) {

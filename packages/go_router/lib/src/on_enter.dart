@@ -7,24 +7,14 @@ import 'dart:async';
 /// The result of an onEnter callback.
 ///
 /// This sealed class represents the possible outcomes of navigation interception.
-/// Being sealed, it can only be extended within this library, ensuring a controlled
-/// set of result types while still allowing construction via factory constructors
-/// and the public concrete subtypes [Allow] and [Block].
+/// This class can't be extended. One must use one of its subtypes, [Allow] or
+/// [Block], to indicate the result.
 sealed class OnEnterResult {
   /// Creates an [OnEnterResult].
   const OnEnterResult({this.then});
 
-  /// Creates an [Allow] result that allows navigation to proceed.
-  ///
-  /// The [then] callback is executed after the navigation is allowed.
-  const factory OnEnterResult.allow({FutureOr<void> Function()? then}) = Allow;
-
-  /// Creates a [Block] result that blocks navigation from proceeding.
-  ///
-  /// The [then] callback is executed after the navigation is blocked.
-  const factory OnEnterResult.block({FutureOr<void> Function()? then}) = Block;
-
-  /// Executed after the decision is committed. Errors are reported and do not revert navigation.
+  /// Executed after the decision is committed.
+  /// Errors are reported and do not revert navigation.
   final FutureOr<void> Function()? then;
 }
 
