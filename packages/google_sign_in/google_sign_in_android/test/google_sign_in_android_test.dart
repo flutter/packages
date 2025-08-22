@@ -171,10 +171,12 @@ void main() {
         const AttemptLightweightAuthenticationParameters(),
       );
 
-      final List<VerificationResult> verifications = verifyInOrder([
-        mockApi.getCredential(captureAny),
-        mockApi.getCredential(captureAny),
-      ]);
+      final List<VerificationResult> verifications = verifyInOrder(
+        <Future<GetCredentialResult>>[
+          mockApi.getCredential(captureAny),
+          mockApi.getCredential(captureAny),
+        ],
+      );
       final GetCredentialRequestParams firstParams =
           verifications[0].captured[0] as GetCredentialRequestParams;
       final GetCredentialRequestParams secondParams =
