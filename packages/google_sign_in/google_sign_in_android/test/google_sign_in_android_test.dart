@@ -159,6 +159,63 @@ void main() {
 
       expect(result, null);
     });
+
+    test('calls with and without filterToAuthorized', () async {
+      when(mockApi.getCredential(any)).thenAnswer(
+        (_) async =>
+            GetCredentialFailure(type: GetCredentialFailureType.noCredential),
+      );
+
+      await googleSignIn.init(const InitParameters(serverClientId: 'id'));
+      await googleSignIn.attemptLightweightAuthentication(
+        const AttemptLightweightAuthenticationParameters(),
+      );
+
+      final List<VerificationResult> verifications = verifyInOrder([
+        mockApi.getCredential(captureAny),
+        mockApi.getCredential(captureAny),
+      ]);
+      final GetCredentialRequestParams firstParams =
+          verifications[0].captured[0] as GetCredentialRequestParams;
+      final GetCredentialRequestParams secondParams =
+          verifications[1].captured[0] as GetCredentialRequestParams;
+      expect(firstParams.useButtonFlow, isFalse);
+      expect(firstParams.googleIdOptionParams.filterToAuthorized, isTrue);
+      expect(firstParams.googleIdOptionParams.autoSelectEnabled, isTrue);
+      expect(secondParams.useButtonFlow, isFalse);
+      expect(secondParams.googleIdOptionParams.filterToAuthorized, isFalse);
+      expect(secondParams.googleIdOptionParams.autoSelectEnabled, isFalse);
+    });
+
+    test(
+      'only calls with filterToAuthorized if hosted domain is set',
+      () async {
+        when(mockApi.getCredential(any)).thenAnswer(
+          (_) async =>
+              GetCredentialFailure(type: GetCredentialFailureType.noCredential),
+        );
+
+        await googleSignIn.init(
+          const InitParameters(
+            serverClientId: 'id',
+            hostedDomain: 'example.com',
+          ),
+        );
+        await googleSignIn.attemptLightweightAuthentication(
+          const AttemptLightweightAuthenticationParameters(),
+        );
+
+        final VerificationResult verification = verify(
+          mockApi.getCredential(captureAny),
+        );
+        expect(verification.callCount, 1);
+        final GetCredentialRequestParams params =
+            verification.captured[0] as GetCredentialRequestParams;
+        expect(params.useButtonFlow, isFalse);
+        expect(params.googleIdOptionParams.filterToAuthorized, isTrue);
+        expect(params.googleIdOptionParams.autoSelectEnabled, isTrue);
+      },
+    );
   });
 
   group('authenticate', () {
@@ -197,6 +254,20 @@ void main() {
       final GetCredentialRequestParams hostParams =
           verification.captured[0] as GetCredentialRequestParams;
       expect(hostParams.serverClientId, serverClientId);
+    });
+
+    test('passes hosted domain if provided', () async {
+      const String hostedDomain = 'example.com';
+
+      await googleSignIn.init(const InitParameters(hostedDomain: hostedDomain));
+      await googleSignIn.authenticate(const AuthenticateParameters());
+
+      final VerificationResult verification = verify(
+        mockApi.getCredential(captureAny),
+      );
+      final GetCredentialRequestParams hostParams =
+          verification.captured[0] as GetCredentialRequestParams;
+      expect(hostParams.hostedDomain, hostedDomain);
     });
 
     test('passes nonce if provided', () async {
