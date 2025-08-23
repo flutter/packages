@@ -509,7 +509,8 @@ gmaps.CircleOptions _circleOptionsFromCircle(Circle circle) {
         ..center = gmaps.LatLng(circle.center.latitude, circle.center.longitude)
         ..radius = circle.radius
         ..visible = circle.visible
-        ..zIndex = circle.zIndex;
+        ..zIndex = circle.zIndex
+        ..clickable = circle.consumeTapEvents;
   return circleOptions;
 }
 
@@ -579,7 +580,8 @@ gmaps.PolygonOptions _polygonOptionsFromPolygon(
     ..fillOpacity = _getCssOpacity(polygon.fillColor)
     ..visible = polygon.visible
     ..zIndex = polygon.zIndex
-    ..geodesic = polygon.geodesic;
+    ..geodesic = polygon.geodesic
+    ..clickable = polygon.consumeTapEvents;
 }
 
 List<gmaps.LatLng> _ensureHoleHasReverseWinding(
@@ -641,7 +643,8 @@ gmaps.PolylineOptions _polylineOptionsFromPolyline(
     ..strokeOpacity = _getCssOpacity(polyline.color)
     ..visible = polyline.visible
     ..zIndex = polyline.zIndex
-    ..geodesic = polyline.geodesic;
+    ..geodesic = polyline.geodesic
+    ..clickable = polyline.consumeTapEvents;
   //  this.endCap = Cap.buttCap,
   //  this.jointType = JointType.mitered,
   //  this.patterns = const <PatternItem>[],
