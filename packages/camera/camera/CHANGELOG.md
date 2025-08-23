@@ -1,6 +1,7 @@
-## NEXT
+## 0.11.2+1
 
-* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+* Uses `RadioGroup` for `groupValue` and `onChanged`.
+* Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
 
 ## 0.11.2
 
