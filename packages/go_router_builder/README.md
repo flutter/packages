@@ -86,7 +86,7 @@ method.
 
 <?code-excerpt "example/lib/readme_excerpts.dart (HomeRoute)"?>
 ```dart
-class HomeRoute extends GoRouteData with _$HomeRoute {
+class HomeRoute extends GoRouteData with $HomeRoute {
   const HomeRoute();
 
   @override
@@ -106,7 +106,7 @@ The tree of routes is defined as an attribute on each of the top-level routes:
     TypedGoRoute<FamilyRoute>(path: 'family/:fid'),
   ],
 )
-class HomeRoute extends GoRouteData with _$HomeRoute {
+class HomeRoute extends GoRouteData with $HomeRoute {
   const HomeRoute();
 
   @override
@@ -122,7 +122,7 @@ class RedirectRoute extends GoRouteData {
 }
 
 @TypedGoRoute<LoginRoute>(path: '/login')
-class LoginRoute extends GoRouteData with _$LoginRoute {
+class LoginRoute extends GoRouteData with $LoginRoute {
   LoginRoute({this.from});
   final String? from;
 
@@ -210,7 +210,7 @@ Parameters (named or positional) not listed in the path of `TypedGoRoute` indica
 <?code-excerpt "example/lib/readme_excerpts.dart (login)"?>
 ```dart
 @TypedGoRoute<LoginRoute>(path: '/login')
-class LoginRoute extends GoRouteData with _$LoginRoute {
+class LoginRoute extends GoRouteData with $LoginRoute {
   LoginRoute({this.from});
   final String? from;
 
@@ -228,7 +228,7 @@ For query parameters with a **non-nullable** type, you can define a default valu
 <?code-excerpt "example/lib/readme_excerpts.dart (MyRoute)"?>
 ```dart
 @TypedGoRoute<MyRoute>(path: '/my-route')
-class MyRoute extends GoRouteData with _$MyRoute {
+class MyRoute extends GoRouteData with $MyRoute {
   MyRoute({this.queryParameter = 'defaultValue'});
   final String queryParameter;
 
@@ -249,7 +249,7 @@ parameter with the special name `$extra`:
 
 <?code-excerpt "example/lib/readme_excerpts.dart (PersonRouteWithExtra)"?>
 ```dart
-class PersonRouteWithExtra extends GoRouteData with _$PersonRouteWithExtra {
+class PersonRouteWithExtra extends GoRouteData with $PersonRouteWithExtra {
   PersonRouteWithExtra(this.$extra);
   final Person? $extra;
 
@@ -281,7 +281,7 @@ You can, of course, combine the use of path, query and $extra parameters:
 ```dart
 @TypedGoRoute<HotdogRouteWithEverything>(path: '/:ketchup')
 class HotdogRouteWithEverything extends GoRouteData
-    with _$HotdogRouteWithEverything {
+    with $HotdogRouteWithEverything {
   HotdogRouteWithEverything(this.ketchup, this.mustard, this.$extra);
   final bool ketchup; // A required path parameter.
   final String? mustard; // An optional query parameter.
@@ -341,7 +341,7 @@ The code generator can convert simple types like `int`, `enum`, and `extension t
 enum BookKind { all, popular, recent }
 
 @TypedGoRoute<BooksRoute>(path: '/books')
-class BooksRoute extends GoRouteData with _$BooksRoute {
+class BooksRoute extends GoRouteData with $BooksRoute {
   BooksRoute({this.kind = BookKind.popular});
   final BookKind kind;
 
@@ -370,7 +370,7 @@ method of the base class instead of the `build` method:
 
 <?code-excerpt "example/lib/readme_excerpts.dart (MyMaterialRouteWithKey)"?>
 ```dart
-class MyMaterialRouteWithKey extends GoRouteData with _$MyMaterialRouteWithKey {
+class MyMaterialRouteWithKey extends GoRouteData with $MyMaterialRouteWithKey {
   const MyMaterialRouteWithKey();
   static const LocalKey _key = ValueKey<String>('my-route-with-key');
   @override
@@ -386,7 +386,7 @@ Overriding the `buildPage` method is also useful for custom transitions:
 
 <?code-excerpt "example/lib/readme_excerpts.dart (FancyRoute)"?>
 ```dart
-class FancyRoute extends GoRouteData with _$FancyRoute {
+class FancyRoute extends GoRouteData with $FancyRoute {
   const FancyRoute();
   @override
   CustomTransitionPage<void> buildPage(
@@ -442,7 +442,7 @@ class MyShellRouteData extends ShellRouteData {
 }
 
 // For GoRoutes:
-class MyGoRouteData extends GoRouteData with _$MyGoRouteData {
+class MyGoRouteData extends GoRouteData with $MyGoRouteData {
   const MyGoRouteData();
 
   static final GlobalKey<NavigatorState> $parentNavigatorKey = rootNavigatorKey;
@@ -463,7 +463,7 @@ Define a relative route by extending `RelativeGoRouteData`.
 <?code-excerpt "example/lib/readme_excerpts.dart (relativeRoute)"?>
 ```dart
 @TypedRelativeGoRoute<DetailsRoute>(path: 'details')
-class DetailsRoute extends RelativeGoRouteData with _$DetailsRoute {
+class DetailsRoute extends RelativeGoRouteData with $DetailsRoute {
   const DetailsRoute();
 
   @override
