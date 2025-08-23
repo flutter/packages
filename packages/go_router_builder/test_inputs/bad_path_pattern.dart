@@ -4,7 +4,7 @@
 
 import 'package:go_router/go_router.dart';
 
-mixin _$BadPathParam {}
+mixin $BadPathParam {}
 
 @TypedGoRoute<BadPathParam>(path: 'bob/:id')
-class BadPathParam extends GoRouteData with _$BadPathParam {}
+class BadPathParam extends GoRouteData with $BadPathParam {}
