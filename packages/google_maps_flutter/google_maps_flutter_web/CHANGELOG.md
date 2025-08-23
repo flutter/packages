@@ -1,7 +1,11 @@
-## 0.5.12+3
+## NEXT
 
 * Fixes a bug where using `cloudMapId` for cloud-based styling would fail if the `style` property was also present.
+
+* # 0.5.13
+
 * Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+* Fixes `consumeTapEvents` for Circles, Polygons & Polyline on web.
 
 ## 0.5.12+2
 
