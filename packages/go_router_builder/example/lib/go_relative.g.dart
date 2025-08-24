@@ -20,12 +20,10 @@ RouteBase get $homeRoute => GoRouteData.$route(
       routes: [
         RelativeGoRouteData.$route(
           path: 'details/:detailId',
-
           factory: _$DetailsRoute._fromState,
           routes: [
             RelativeGoRouteData.$route(
               path: 'settings/:settingId',
-
               factory: _$SettingsRoute._fromState,
             ),
           ],
@@ -34,12 +32,10 @@ RouteBase get $homeRoute => GoRouteData.$route(
     ),
     RelativeGoRouteData.$route(
       path: 'details/:detailId',
-
       factory: _$DetailsRoute._fromState,
       routes: [
         RelativeGoRouteData.$route(
           path: 'settings/:settingId',
-
           factory: _$SettingsRoute._fromState,
         ),
       ],
