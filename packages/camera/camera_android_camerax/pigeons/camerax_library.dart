@@ -523,6 +523,17 @@ abstract class PendingRecording {
   /// Enables/disables audio to be recorded for this recording.
   PendingRecording withAudioEnabled(bool initialMuted);
 
+  /// Configures the recording to be a persistent recording.
+  ///
+  /// A persistent recording will only be stopped by explicitly calling [Recording.stop] or [Recording.close]
+  /// and will ignore events that would normally cause recording to stop, such as lifecycle events
+  /// or explicit unbinding of a [VideoCapture] use case that the recording's Recorder is attached to
+  ///
+  /// To switch to a different camera stream while a recording is in progress,
+  /// first create the recording as persistent recording,
+  /// then rebind the [VideoCapture] it's associated with to a different camera.
+  PendingRecording asPersistentRecording();
+
   /// Starts the recording, making it an active recording.
   Recording start(VideoRecordEventListener listener);
 }

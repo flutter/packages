@@ -909,12 +909,41 @@ class AndroidCameraCameraX extends CameraPlatform {
   }
 
   /// Sets the active camera while recording.
-  ///
-  /// Currently unsupported, so is a no-op.
   @override
-  Future<void> setDescriptionWhileRecording(CameraDescription description) {
-    // TODO(camsim99): Implement this feature, see https://github.com/flutter/flutter/issues/148013.
-    return Future<void>.value();
+  Future<void> setDescriptionWhileRecording(CameraDescription description) async{
+    if(recording == null) {
+      return;
+    }
+    final CameraInfo? chosenCameraInfo = _savedCameras[description.name];
+
+    // Save CameraSelector that matches cameraDescription.
+    final LensFacing cameraSelectorLensDirection = _getCameraSelectorLensDirection(description.lensDirection);
+    cameraIsFrontFacing = cameraSelectorLensDirection == LensFacing.front;
+    cameraSelector = proxy.newCameraSelector(
+      cameraInfoForFilter: chosenCameraInfo,
+    );
+
+    await processCameraProvider?.unbindAll();
+    await processCameraProvider?.bindToLifecycle(cameraSelector!, <UseCase>[preview!, videoCapture!]);
+
+    // Retrieve info required for correcting the rotation of the camera preview
+    // if necessary.
+    final Camera2CameraInfo camera2CameraInfo = proxy.fromCamera2CameraInfo(
+      cameraInfo: cameraInfo!,
+    );
+    sensorOrientationDegrees =
+        ((await camera2CameraInfo.getCameraCharacteristic(
+          proxy.sensorOrientationCameraCharacteristics(),
+        ))!
+        as int)
+            .toDouble();
+
+    sensorOrientationDegrees = description.sensorOrientation.toDouble();
+    _handlesCropAndRotation = await preview!.surfaceProducerHandlesCropAndRotation();
+    _initialDeviceOrientation = _deserializeDeviceOrientation(
+      await deviceOrientationManager.getUiOrientation(),
+    );
+    _initialDefaultDisplayRotation = await deviceOrientationManager.getDefaultDisplayRotation();
   }
 
   /// Resume the paused preview for the selected camera.
@@ -1122,6 +1151,10 @@ class AndroidCameraCameraX extends CameraPlatform {
       '.temp',
     );
     pendingRecording = await recorder!.prepareRecording(videoOutputPath!);
+
+    if(options.enableAndroidPersistentRecording){
+      pendingRecording = await pendingRecording?.asPersistentRecording();
+    }
 
     // Enable/disable recording audio as requested. If enabling audio is requested
     // and permission was not granted when the camera was created, then recording

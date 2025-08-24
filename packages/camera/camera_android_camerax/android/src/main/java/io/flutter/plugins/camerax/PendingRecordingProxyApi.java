@@ -29,6 +29,12 @@ class PendingRecordingProxyApi extends PigeonApiPendingRecording {
 
   @NonNull
   @Override
+  public PendingRecording asPersistentRecording(@NotNull PendingRecording pigeon_instance) {
+    return pigeon_instance.asPersistentRecording();
+  }
+
+  @NonNull
+  @Override
   public PendingRecording withAudioEnabled(PendingRecording pigeonInstance, boolean initialMuted) {
     if (!initialMuted
         && ContextCompat.checkSelfPermission(
