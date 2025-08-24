@@ -1,5 +1,6 @@
-## NEXT
+## 2.10.1
 
+* Fixes flutter/flutter#148013: setDescriptionWhileRecording with android camerax.
 * Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
 
 ## 2.10.0
