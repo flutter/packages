@@ -1,4 +1,4 @@
-## NEXT
+## 0.5.14
 
 * Fixes a bug where using `cloudMapId` for cloud-based styling would fail if the `style` property was also present.
 
