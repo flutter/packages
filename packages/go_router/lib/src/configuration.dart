@@ -13,7 +13,7 @@ import 'match.dart';
 import 'misc/errors.dart';
 import 'path_utils.dart';
 import 'route.dart';
-import 'router.dart';
+import 'router.dart' show OnEnter, RoutingConfig;
 import 'state.dart';
 
 /// The signature of the redirect callback.
@@ -89,7 +89,7 @@ class RouteConfiguration {
       } else if (route is ShellRoute) {
         _debugCheckParentNavigatorKeys(
           route.routes,
-          <GlobalKey<NavigatorState>>[...allowedKeys..add(route.navigatorKey)],
+          <GlobalKey<NavigatorState>>[...allowedKeys, route.navigatorKey],
         );
       } else if (route is StatefulShellRoute) {
         for (final StatefulShellBranch branch in route.branches) {
@@ -141,16 +141,18 @@ class RouteConfiguration {
           if (branch.initialLocation == null) {
             // Recursively search for the first GoRoute descendant. Will
             // throw assertion error if not found.
-            final GoRoute? route = branch.defaultRoute;
+            final GoRoute? defaultGoRoute = branch.defaultRoute;
             final String? initialLocation =
-                route != null ? locationForRoute(route) : null;
+                defaultGoRoute != null
+                    ? locationForRoute(defaultGoRoute)
+                    : null;
             assert(
               initialLocation != null,
               'The default location of a StatefulShellBranch must be '
               'derivable from GoRoute descendant',
             );
             assert(
-              route!.pathParameters.isEmpty,
+              defaultGoRoute!.pathParameters.isEmpty,
               'The default location of a StatefulShellBranch cannot be '
               'a parameterized route',
             );
@@ -234,6 +236,7 @@ class RouteConfiguration {
       extra: matchList.extra,
       pageKey: const ValueKey<String>('topLevel'),
       topRoute: matchList.lastOrNull?.route,
+      error: matchList.error,
     );
   }
 
@@ -245,6 +248,9 @@ class RouteConfiguration {
 
   /// Top level page redirect.
   GoRouterRedirect get topRedirect => _routingConfig.value.redirect;
+
+  /// Top level page on enter.
+  OnEnter? get topOnEnter => _routingConfig.value.onEnter;
 
   /// The limit for the number of consecutive redirects.
   int get redirectLimit => _routingConfig.value.redirectLimit;
@@ -263,6 +269,8 @@ class RouteConfiguration {
   ///    topic.
   ///  * [extra_codec](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/extra_codec.dart)
   ///    example.
+  ///  * [topOnEnter] for navigation interception.
+  ///  * [topRedirect] (deprecated) for legacy redirections.
   final Codec<Object?, Object?>? extraCodec;
 
   final Map<String, _NamedPath> _nameToPath = <String, _NamedPath>{};
