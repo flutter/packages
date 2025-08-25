@@ -207,6 +207,7 @@ class CameraXProxy {
   /// Constructs [ImageAnalysis].
   final ImageAnalysis Function({
     int? targetRotation,
+    int? outputImageFormat,
     ResolutionSelector? resolutionSelector,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,

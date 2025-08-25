@@ -250,6 +250,7 @@ void main() {
       newImageAnalysis:
           ({
             int? targetRotation,
+            int? outputImageFormat,
             ResolutionSelector? resolutionSelector,
             // ignore: non_constant_identifier_names
             BinaryMessenger? pigeon_binaryMessenger,
@@ -874,6 +875,7 @@ void main() {
         newImageAnalysis:
             ({
               int? targetRotation,
+              int? outputImageFormat,
               ResolutionSelector? resolutionSelector,
               // ignore: non_constant_identifier_names
               BinaryMessenger? pigeon_binaryMessenger,
@@ -1208,6 +1210,7 @@ void main() {
         newImageAnalysis:
             ({
               int? targetRotation,
+              int? outputImageFormat,
               ResolutionSelector? resolutionSelector,
               // ignore: non_constant_identifier_names
               BinaryMessenger? pigeon_binaryMessenger,
@@ -2166,6 +2169,7 @@ void main() {
         newImageAnalysis:
             ({
               int? targetRotation,
+              int? outputImageFormat,
               ResolutionSelector? resolutionSelector,
               // ignore: non_constant_identifier_names
               BinaryMessenger? pigeon_binaryMessenger,
@@ -2404,6 +2408,311 @@ void main() {
     },
   );
 
+  // TODO: test for binding use cases in initializeCamera instead of createCamera.
+  test(
+    'initializeCamera sets expected output image format for ImageAnalysis',
+    () async {
+      final AndroidCameraCameraX camera = AndroidCameraCameraX();
+
+      const int cameraId = 10;
+      const CameraLensDirection testLensDirection = CameraLensDirection.back;
+      const int testSensorOrientation = 90;
+      const CameraDescription testCameraDescription = CameraDescription(
+        name: 'cameraName',
+        lensDirection: testLensDirection,
+        sensorOrientation: testSensorOrientation,
+      );
+      const int resolutionWidth = 350;
+      const int resolutionHeight = 750;
+      final Camera mockCamera = MockCamera();
+      final PigeonInstanceManager testInstanceManager = PigeonInstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
+      final ResolutionInfo testResolutionInfo = ResolutionInfo.pigeon_detached(
+        resolution: CameraSize.pigeon_detached(
+          width: resolutionWidth,
+          height: resolutionHeight,
+          pigeon_instanceManager: testInstanceManager,
+        ),
+        pigeon_instanceManager: testInstanceManager,
+      );
+
+      // Mocks for (typically attached) objects created by createCamera.
+      final MockProcessCameraProvider mockProcessCameraProvider =
+          MockProcessCameraProvider();
+      final CameraInfo mockCameraInfo = MockCameraInfo();
+      final MockCameraSelector mockBackCameraSelector = MockCameraSelector();
+      final MockCameraSelector mockFrontCameraSelector = MockCameraSelector();
+      final MockPreview mockPreview = MockPreview();
+      final MockImageCapture mockImageCapture = MockImageCapture();
+      final MockImageAnalysis mockImageAnalysis = MockImageAnalysis();
+
+      // Tell plugin to create mock/detached objects for testing createCamera
+      // as needed.
+      camera.proxy = CameraXProxy(
+        getInstanceProcessCameraProvider:
+            ({
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) =>
+                Future<ProcessCameraProvider>.value(mockProcessCameraProvider),
+        newCameraSelector:
+            ({
+              LensFacing? requireLensFacing,
+              CameraInfo? cameraInfoForFilter,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              switch (requireLensFacing) {
+                case LensFacing.front:
+                  return mockFrontCameraSelector;
+                case _:
+                  return mockBackCameraSelector;
+              }
+            },
+        newPreview:
+            ({
+              int? targetRotation,
+              ResolutionSelector? resolutionSelector,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) => mockPreview,
+        newImageCapture:
+            ({
+              int? targetRotation,
+              CameraXFlashMode? flashMode,
+              ResolutionSelector? resolutionSelector,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) => mockImageCapture,
+        newRecorder:
+            ({
+              int? aspectRatio,
+              int? targetVideoEncodingBitRate,
+              QualitySelector? qualitySelector,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) => MockRecorder(),
+        withOutputVideoCapture:
+            ({
+              required VideoOutput videoOutput,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) => MockVideoCapture(),
+        // newImageAnalysis:
+        //     ({
+        //       int? targetRotation,
+        //       int? outputImageFormat,
+        //       ResolutionSelector? resolutionSelector,
+        //       // ignore: non_constant_identifier_names
+        //       BinaryMessenger? pigeon_binaryMessenger,
+        //       // ignore: non_constant_identifier_names
+        //       PigeonInstanceManager? pigeon_instanceManager,
+        //     }) => mockImageAnalysis,
+        newResolutionStrategy:
+            ({
+              required CameraSize boundSize,
+              required ResolutionStrategyFallbackRule fallbackRule,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) => MockResolutionStrategy(),
+        newResolutionSelector:
+            ({
+              AspectRatioStrategy? aspectRatioStrategy,
+              ResolutionStrategy? resolutionStrategy,
+              ResolutionFilter? resolutionFilter,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) => MockResolutionSelector(),
+        lowerQualityOrHigherThanFallbackStrategy:
+            ({
+              required VideoQuality quality,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) => MockFallbackStrategy(),
+        fromQualitySelector:
+            ({
+              required VideoQuality quality,
+              FallbackStrategy? fallbackStrategy,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) => MockQualitySelector(),
+        newObserver:
+            <T>({
+              required void Function(Observer<T>, T) onChanged,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return Observer<T>.detached(
+                onChanged: onChanged,
+                pigeon_instanceManager: PigeonInstanceManager(
+                  onWeakReferenceRemoved: (_) {},
+                ),
+              );
+            },
+        newSystemServicesManager:
+            ({
+              required void Function(SystemServicesManager, String)
+              onCameraError,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) => MockSystemServicesManager(),
+        newDeviceOrientationManager:
+            ({
+              required void Function(DeviceOrientationManager, String)
+              onDeviceOrientationChanged,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              final MockDeviceOrientationManager manager =
+                  MockDeviceOrientationManager();
+              when(manager.getUiOrientation()).thenAnswer((_) async {
+                return 'PORTRAIT_UP';
+              });
+              return manager;
+            },
+        newAspectRatioStrategy:
+            ({
+              required AspectRatio preferredAspectRatio,
+              required AspectRatioStrategyFallbackRule fallbackRule,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) => MockAspectRatioStrategy(),
+        createWithOnePreferredSizeResolutionFilter:
+            ({
+              required CameraSize preferredSize,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) => MockResolutionFilter(),
+        fromCamera2CameraInfo:
+            ({
+              required CameraInfo cameraInfo,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              final MockCamera2CameraInfo mockCamera2CameraInfo =
+                  MockCamera2CameraInfo();
+              when(
+                mockCamera2CameraInfo.getCameraCharacteristic(any),
+              ).thenAnswer((_) async => 90);
+              return mockCamera2CameraInfo;
+            },
+        newCameraSize:
+            ({
+              required int width,
+              required int height,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) => MockCameraSize(),
+        sensorOrientationCameraCharacteristics: () =>
+            MockCameraCharacteristicsKey(),
+      );
+
+      final CameraInitializedEvent testCameraInitializedEvent =
+          CameraInitializedEvent(
+            cameraId,
+            resolutionWidth.toDouble(),
+            resolutionHeight.toDouble(),
+            ExposureMode.auto,
+            true,
+            FocusMode.auto,
+            true,
+          );
+
+      // Call createCamera.
+      when(
+        mockPreview.setSurfaceProvider(any),
+      ).thenAnswer((_) async => cameraId);
+
+      when(
+        mockProcessCameraProvider.bindToLifecycle(
+          mockBackCameraSelector,
+          <UseCase>[mockPreview, mockImageCapture, mockImageAnalysis],
+        ),
+      ).thenAnswer((_) async => mockCamera);
+      when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
+      when(
+        mockCameraInfo.getCameraState(),
+      ).thenAnswer((_) async => MockLiveCameraState());
+      when(
+        mockPreview.getResolutionInfo(),
+      ).thenAnswer((_) async => testResolutionInfo);
+
+      await camera.createCameraWithSettings(
+        testCameraDescription,
+        const MediaSettings(
+          resolutionPreset: ResolutionPreset.medium,
+          fps: 15,
+          videoBitrate: 200000,
+          audioBitrate: 32000,
+          enableAudio: true,
+        ),
+      );
+
+      // Start listening to camera events stream to verify the proper CameraInitializedEvent is sent.
+      camera.cameraEventStreamController.stream.listen((CameraEvent event) {
+        expect(event, const TypeMatcher<CameraInitializedEvent>());
+        expect(event, equals(testCameraInitializedEvent));
+      });
+
+      for (final ImageFormatGroup imageFormatGroup in ImageFormatGroup.values) {
+        await camera.initializeCamera(
+          cameraId,
+          imageFormatGroup: imageFormatGroup,
+        );
+        final int? expectedOutputImageFormatConstant =
+            switch (imageFormatGroup) {
+              ImageFormatGroup.yuv420 =>
+                AndroidCameraCameraX.imageAnalysisOutputImageFormatYuv420_888,
+              ImageFormatGroup.nv21 =>
+                AndroidCameraCameraX.imageAnalysisOutputImageFormatNv21,
+              ImageFormatGroup.jpeg => null,
+              ImageFormatGroup.bgra8888 => null,
+              ImageFormatGroup.unknown => null,
+            };
+
+        expect(
+          camera.imageAnalysis!.outputImageFormat,
+          expectedOutputImageFormatConstant,
+        );
+      }
+    },
+  );
+
   test('initializeCamera sends expected CameraInitializedEvent', () async {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
 
@@ -2506,6 +2815,7 @@ void main() {
       newImageAnalysis:
           ({
             int? targetRotation,
+            int? outputImageFormat,
             ResolutionSelector? resolutionSelector,
             // ignore: non_constant_identifier_names
             BinaryMessenger? pigeon_binaryMessenger,

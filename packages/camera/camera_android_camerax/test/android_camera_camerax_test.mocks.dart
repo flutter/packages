@@ -1474,6 +1474,7 @@ class MockCameraXProxy extends _i1.Mock implements _i7.CameraXProxy {
 
   @override
   _i2.ImageAnalysis Function({
+    int? outputImageFormat,
     _i8.BinaryMessenger? pigeon_binaryMessenger,
     _i2.PigeonInstanceManager? pigeon_instanceManager,
     _i2.ResolutionSelector? resolutionSelector,
@@ -1484,6 +1485,7 @@ class MockCameraXProxy extends _i1.Mock implements _i7.CameraXProxy {
             Invocation.getter(#newImageAnalysis),
             returnValue:
                 ({
+                  int? outputImageFormat,
                   _i8.BinaryMessenger? pigeon_binaryMessenger,
                   _i2.PigeonInstanceManager? pigeon_instanceManager,
                   _i2.ResolutionSelector? resolutionSelector,
@@ -1494,6 +1496,7 @@ class MockCameraXProxy extends _i1.Mock implements _i7.CameraXProxy {
                 ),
             returnValueForMissingStub:
                 ({
+                  int? outputImageFormat,
                   _i8.BinaryMessenger? pigeon_binaryMessenger,
                   _i2.PigeonInstanceManager? pigeon_instanceManager,
                   _i2.ResolutionSelector? resolutionSelector,
@@ -1504,6 +1507,7 @@ class MockCameraXProxy extends _i1.Mock implements _i7.CameraXProxy {
                 ),
           )
           as _i2.ImageAnalysis Function({
+            int? outputImageFormat,
             _i8.BinaryMessenger? pigeon_binaryMessenger,
             _i2.PigeonInstanceManager? pigeon_instanceManager,
             _i2.ResolutionSelector? resolutionSelector,
