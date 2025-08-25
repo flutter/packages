@@ -712,8 +712,6 @@ class AndroidWebViewController extends PlatformWebViewController {
 
   /// Sets a callback that notifies the host application that web content is
   /// requesting permission to access the specified resources.
-  ///
-  /// Only invoked on Android versions 21+.
   @override
   Future<void> setOnPlatformPermissionRequest(
     void Function(PlatformWebViewPermissionRequest request) onPermissionRequest,
@@ -729,8 +727,7 @@ class AndroidWebViewController extends PlatformWebViewController {
   /// The host application should invoke the specified callback with the desired permission state.
   /// See GeolocationPermissions for details.
   ///
-  /// Note that for applications targeting Android N and later SDKs (API level > Build.VERSION_CODES.M)
-  /// this method is only called for requests originating from secure origins such as https.
+  /// This method is only called for requests originating from secure origins such as https.
   /// On non-secure origins geolocation requests are automatically denied.
   ///
   /// Param [onHidePrompt] notifies the host application that a request for Geolocation permissions,

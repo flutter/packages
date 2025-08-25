@@ -189,7 +189,6 @@ abstract class WebResourceResponse {
 @ProxyApi(
   kotlinOptions: KotlinProxyApiOptions(
     fullClassName: 'android.webkit.WebResourceError',
-    minAndroidApi: 23,
   ),
 )
 abstract class WebResourceError {
