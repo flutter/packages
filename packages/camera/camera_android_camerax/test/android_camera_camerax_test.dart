@@ -199,10 +199,15 @@ void main() {
             PigeonInstanceManager? pigeon_instanceManager,
           }) {
             final MockPreview mockPreview = MockPreview();
+            final ResolutionInfo testResolutionInfo =
+                ResolutionInfo.pigeon_detached(resolution: MockCameraSize());
             when(
               mockPreview.surfaceProducerHandlesCropAndRotation(),
             ).thenAnswer((_) async => false);
             when(mockPreview.resolutionSelector).thenReturn(resolutionSelector);
+            when(
+              mockPreview.getResolutionInfo(),
+            ).thenAnswer((_) async => testResolutionInfo);
             return mockPreview;
           },
       newImageCapture:
@@ -1084,22 +1089,465 @@ void main() {
 
       // Verify the camera's Preview instance has its surface provider set.
       verify(camera.preview!.setSurfaceProvider(mockSystemServicesManager));
-
-      // Verify the camera state observer is updated.
-      expect(
-        await testCameraClosingObserver(
-          camera,
-          testSurfaceTextureId,
-          verify(mockLiveCameraState.observe(captureAny)).captured.single
-              as Observer<CameraState>,
-        ),
-        isTrue,
-      );
     },
   );
 
   test(
-    'createCamera binds Preview and ImageCapture use cases to ProcessCameraProvider instance',
+    'createCamera and initializeCamera properly set preset resolution selection strategy for non-video capture use cases',
+    () async {
+      final AndroidCameraCameraX camera = AndroidCameraCameraX();
+      const CameraLensDirection testLensDirection = CameraLensDirection.back;
+      const int testSensorOrientation = 90;
+      const CameraDescription testCameraDescription = CameraDescription(
+        name: 'cameraName',
+        lensDirection: testLensDirection,
+        sensorOrientation: testSensorOrientation,
+      );
+      const bool enableAudio = true;
+      const int testCameraId = 10;
+      final MockCamera mockCamera = MockCamera();
+
+      // Mock/Detached objects for (typically attached) objects created by
+      // createCamera.
+      final MockProcessCameraProvider mockProcessCameraProvider =
+          MockProcessCameraProvider();
+      final MockCameraInfo mockCameraInfo = MockCameraInfo();
+
+      when(
+        mockProcessCameraProvider.bindToLifecycle(any, any),
+      ).thenAnswer((_) async => mockCamera);
+      when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
+      when(
+        mockCameraInfo.getCameraState(),
+      ).thenAnswer((_) async => MockLiveCameraState());
+      camera.processCameraProvider = mockProcessCameraProvider;
+
+      // Tell plugin to create mock/detached objects for testing createCamera
+      // as needed.
+      camera.proxy = getProxyForTestingResolutionPreset(
+        mockProcessCameraProvider,
+      );
+
+      // Test non-null resolution presets.
+      for (final ResolutionPreset resolutionPreset in ResolutionPreset.values) {
+        final int flutterSurfaceTextureId = await camera.createCamera(
+          testCameraDescription,
+          resolutionPreset,
+          enableAudio: enableAudio,
+        );
+        await camera.initializeCamera(flutterSurfaceTextureId);
+
+        late final CameraSize? expectedBoundSize;
+        final PigeonInstanceManager testInstanceManager = PigeonInstanceManager(
+          onWeakReferenceRemoved: (_) {},
+        );
+        switch (resolutionPreset) {
+          case ResolutionPreset.low:
+            expectedBoundSize = CameraSize.pigeon_detached(
+              width: 320,
+              height: 240,
+              pigeon_instanceManager: testInstanceManager,
+            );
+          case ResolutionPreset.medium:
+            expectedBoundSize = CameraSize.pigeon_detached(
+              width: 720,
+              height: 480,
+              pigeon_instanceManager: testInstanceManager,
+            );
+          case ResolutionPreset.high:
+            expectedBoundSize = CameraSize.pigeon_detached(
+              width: 1280,
+              height: 720,
+              pigeon_instanceManager: testInstanceManager,
+            );
+          case ResolutionPreset.veryHigh:
+            expectedBoundSize = CameraSize.pigeon_detached(
+              width: 1920,
+              height: 1080,
+              pigeon_instanceManager: testInstanceManager,
+            );
+          case ResolutionPreset.ultraHigh:
+            expectedBoundSize = CameraSize.pigeon_detached(
+              width: 3840,
+              height: 2160,
+              pigeon_instanceManager: testInstanceManager,
+            );
+          case ResolutionPreset.max:
+            continue;
+        }
+
+        final CameraSize? previewSize = await camera
+            .preview!
+            .resolutionSelector!
+            .resolutionStrategy!
+            .getBoundSize();
+        expect(previewSize?.width, equals(expectedBoundSize.width));
+        expect(previewSize?.height, equals(expectedBoundSize.height));
+        expect(
+          await camera.preview!.resolutionSelector!.resolutionStrategy!
+              .getFallbackRule(),
+          ResolutionStrategyFallbackRule.closestLowerThenHigher,
+        );
+
+        final CameraSize? imageCaptureSize = await camera
+            .imageCapture!
+            .resolutionSelector!
+            .resolutionStrategy!
+            .getBoundSize();
+        expect(imageCaptureSize?.width, equals(expectedBoundSize.width));
+        expect(imageCaptureSize?.height, equals(expectedBoundSize.height));
+        expect(
+          await camera.imageCapture!.resolutionSelector!.resolutionStrategy!
+              .getFallbackRule(),
+          ResolutionStrategyFallbackRule.closestLowerThenHigher,
+        );
+
+        final CameraSize? imageAnalysisSize = await camera
+            .imageAnalysis!
+            .resolutionSelector!
+            .resolutionStrategy!
+            .getBoundSize();
+        expect(imageAnalysisSize?.width, equals(expectedBoundSize.width));
+        expect(imageAnalysisSize?.height, equals(expectedBoundSize.height));
+        expect(
+          await camera.imageAnalysis!.resolutionSelector!.resolutionStrategy!
+              .getFallbackRule(),
+          ResolutionStrategyFallbackRule.closestLowerThenHigher,
+        );
+      }
+
+      // Test max case.
+      await camera.createCamera(
+        testCameraDescription,
+        ResolutionPreset.max,
+        enableAudio: true,
+      );
+
+      expect(
+        camera.preview!.resolutionSelector!.resolutionStrategy,
+        equals(camera.proxy.highestAvailableStrategyResolutionStrategy()),
+      );
+      expect(
+        camera.imageCapture!.resolutionSelector!.resolutionStrategy,
+        equals(camera.proxy.highestAvailableStrategyResolutionStrategy()),
+      );
+      expect(
+        camera.imageAnalysis!.resolutionSelector!.resolutionStrategy,
+        equals(camera.proxy.highestAvailableStrategyResolutionStrategy()),
+      );
+
+      // Test null case.
+      final int flutterSurfaceTextureId = await camera.createCamera(
+        testCameraDescription,
+        null,
+      );
+      await camera.initializeCamera(flutterSurfaceTextureId);
+
+      expect(camera.preview!.resolutionSelector, isNull);
+      expect(camera.imageCapture!.resolutionSelector, isNull);
+      expect(camera.imageAnalysis!.resolutionSelector, isNull);
+    },
+  );
+
+  test(
+    'createCamera and initializeCamera properly set filter for resolution preset for non-video capture use cases',
+    () async {
+      final AndroidCameraCameraX camera = AndroidCameraCameraX();
+      const CameraLensDirection testLensDirection = CameraLensDirection.front;
+      const int testSensorOrientation = 180;
+      const CameraDescription testCameraDescription = CameraDescription(
+        name: 'cameraName',
+        lensDirection: testLensDirection,
+        sensorOrientation: testSensorOrientation,
+      );
+      const bool enableAudio = true;
+      const int testCameraId = 11;
+      final MockCamera mockCamera = MockCamera();
+
+      // Mock/Detached objects for (typically attached) objects created by
+      // createCamera.
+      final MockProcessCameraProvider mockProcessCameraProvider =
+          MockProcessCameraProvider();
+      final MockCameraInfo mockCameraInfo = MockCameraInfo();
+
+      // Tell plugin to create mock/detached objects for testing createCamera
+      // as needed.
+      CameraSize? lastSetPreferredSize;
+      camera.proxy = getProxyForTestingResolutionPreset(
+        mockProcessCameraProvider,
+        createWithOnePreferredSizeResolutionFilter:
+            ({
+              required CameraSize preferredSize,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              lastSetPreferredSize = preferredSize;
+              return MockResolutionFilter();
+            },
+      );
+
+      when(
+        mockProcessCameraProvider.bindToLifecycle(any, any),
+      ).thenAnswer((_) async => mockCamera);
+      when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
+      when(
+        mockCameraInfo.getCameraState(),
+      ).thenAnswer((_) async => MockLiveCameraState());
+      camera.processCameraProvider = mockProcessCameraProvider;
+
+      // Test non-null resolution presets.
+      for (final ResolutionPreset resolutionPreset in ResolutionPreset.values) {
+        final int flutterSurfaceTextureId = await camera.createCamera(
+          testCameraDescription,
+          resolutionPreset,
+          enableAudio: enableAudio,
+        );
+        await camera.initializeCamera(flutterSurfaceTextureId);
+
+        CameraSize? expectedPreferredResolution;
+        final PigeonInstanceManager testInstanceManager = PigeonInstanceManager(
+          onWeakReferenceRemoved: (_) {},
+        );
+        switch (resolutionPreset) {
+          case ResolutionPreset.low:
+            expectedPreferredResolution = CameraSize.pigeon_detached(
+              width: 320,
+              height: 240,
+              pigeon_instanceManager: testInstanceManager,
+            );
+          case ResolutionPreset.medium:
+            expectedPreferredResolution = CameraSize.pigeon_detached(
+              width: 720,
+              height: 480,
+              pigeon_instanceManager: testInstanceManager,
+            );
+          case ResolutionPreset.high:
+            expectedPreferredResolution = CameraSize.pigeon_detached(
+              width: 1280,
+              height: 720,
+              pigeon_instanceManager: testInstanceManager,
+            );
+          case ResolutionPreset.veryHigh:
+            expectedPreferredResolution = CameraSize.pigeon_detached(
+              width: 1920,
+              height: 1080,
+              pigeon_instanceManager: testInstanceManager,
+            );
+          case ResolutionPreset.ultraHigh:
+            expectedPreferredResolution = CameraSize.pigeon_detached(
+              width: 3840,
+              height: 2160,
+              pigeon_instanceManager: testInstanceManager,
+            );
+          case ResolutionPreset.max:
+            expectedPreferredResolution = null;
+        }
+
+        if (expectedPreferredResolution == null) {
+          expect(camera.preview!.resolutionSelector!.resolutionFilter, isNull);
+          expect(
+            camera.imageCapture!.resolutionSelector!.resolutionFilter,
+            isNull,
+          );
+          expect(
+            camera.imageAnalysis!.resolutionSelector!.resolutionFilter,
+            isNull,
+          );
+          continue;
+        }
+
+        expect(
+          lastSetPreferredSize?.width,
+          equals(expectedPreferredResolution.width),
+        );
+        expect(
+          lastSetPreferredSize?.height,
+          equals(expectedPreferredResolution.height),
+        );
+
+        final CameraSize? imageCaptureSize = await camera
+            .imageCapture!
+            .resolutionSelector!
+            .resolutionStrategy!
+            .getBoundSize();
+        expect(
+          imageCaptureSize?.width,
+          equals(expectedPreferredResolution.width),
+        );
+        expect(
+          imageCaptureSize?.height,
+          equals(expectedPreferredResolution.height),
+        );
+
+        final CameraSize? imageAnalysisSize = await camera
+            .imageAnalysis!
+            .resolutionSelector!
+            .resolutionStrategy!
+            .getBoundSize();
+        expect(
+          imageAnalysisSize?.width,
+          equals(expectedPreferredResolution.width),
+        );
+        expect(
+          imageAnalysisSize?.height,
+          equals(expectedPreferredResolution.height),
+        );
+      }
+
+      // Test null case.
+      final int flutterSurfaceTextureId = await camera.createCamera(
+        testCameraDescription,
+        null,
+      );
+      await camera.initializeCamera(flutterSurfaceTextureId);
+
+      expect(camera.preview!.resolutionSelector, isNull);
+      expect(camera.imageCapture!.resolutionSelector, isNull);
+      expect(camera.imageAnalysis!.resolutionSelector, isNull);
+    },
+  );
+
+  test(
+    'createCamera and initializeCamera properly set aspect ratio based on preset resolution for non-video capture use cases',
+    () async {
+      final AndroidCameraCameraX camera = AndroidCameraCameraX();
+      const CameraLensDirection testLensDirection = CameraLensDirection.back;
+      const int testSensorOrientation = 90;
+      const CameraDescription testCameraDescription = CameraDescription(
+        name: 'cameraName',
+        lensDirection: testLensDirection,
+        sensorOrientation: testSensorOrientation,
+      );
+      const bool enableAudio = true;
+      const int testCameraId = 12;
+      final MockCamera mockCamera = MockCamera();
+
+      // Mock/Detached objects for (typically attached) objects created by
+      // createCamera.
+      final MockProcessCameraProvider mockProcessCameraProvider =
+          MockProcessCameraProvider();
+      final MockCameraInfo mockCameraInfo = MockCameraInfo();
+
+      // Tell plugin to create mock/detached objects for testing createCamera
+      // as needed.
+      camera.proxy = getProxyForTestingResolutionPreset(
+        mockProcessCameraProvider,
+      );
+      when(
+        mockProcessCameraProvider.bindToLifecycle(any, any),
+      ).thenAnswer((_) async => mockCamera);
+      when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
+      when(
+        mockCameraInfo.getCameraState(),
+      ).thenAnswer((_) async => MockLiveCameraState());
+      camera.processCameraProvider = mockProcessCameraProvider;
+
+      // Test non-null resolution presets.
+      for (final ResolutionPreset resolutionPreset in ResolutionPreset.values) {
+        final int flutterSurfaceTextureId = await camera.createCamera(
+          testCameraDescription,
+          resolutionPreset,
+          enableAudio: enableAudio,
+        );
+        await camera.initializeCamera(flutterSurfaceTextureId);
+
+        AspectRatio? expectedAspectRatio;
+        AspectRatioStrategyFallbackRule? expectedFallbackRule;
+        switch (resolutionPreset) {
+          case ResolutionPreset.low:
+            expectedAspectRatio = AspectRatio.ratio4To3;
+            expectedFallbackRule = AspectRatioStrategyFallbackRule.auto;
+          case ResolutionPreset.high:
+          case ResolutionPreset.veryHigh:
+          case ResolutionPreset.ultraHigh:
+            expectedAspectRatio = AspectRatio.ratio16To9;
+            expectedFallbackRule = AspectRatioStrategyFallbackRule.auto;
+          case ResolutionPreset.medium:
+          // Medium resolution preset uses aspect ratio 3:2 which is unsupported
+          // by CameraX.
+          case ResolutionPreset.max:
+        }
+
+        if (expectedAspectRatio == null) {
+          expect(
+            await camera.preview!.resolutionSelector!.getAspectRatioStrategy(),
+            equals(
+              camera.proxy.ratio_4_3FallbackAutoStrategyAspectRatioStrategy(),
+            ),
+          );
+          expect(
+            await camera.imageCapture!.resolutionSelector!
+                .getAspectRatioStrategy(),
+            equals(
+              camera.proxy.ratio_4_3FallbackAutoStrategyAspectRatioStrategy(),
+            ),
+          );
+          expect(
+            await camera.imageAnalysis!.resolutionSelector!
+                .getAspectRatioStrategy(),
+            equals(
+              camera.proxy.ratio_4_3FallbackAutoStrategyAspectRatioStrategy(),
+            ),
+          );
+          continue;
+        }
+
+        final AspectRatioStrategy previewStrategy = await camera
+            .preview!
+            .resolutionSelector!
+            .getAspectRatioStrategy();
+        final AspectRatioStrategy imageCaptureStrategy = await camera
+            .imageCapture!
+            .resolutionSelector!
+            .getAspectRatioStrategy();
+        final AspectRatioStrategy imageAnalysisStrategy = await camera
+            .imageCapture!
+            .resolutionSelector!
+            .getAspectRatioStrategy();
+
+        // Check aspect ratio.
+        expect(
+          await previewStrategy.getPreferredAspectRatio(),
+          equals(expectedAspectRatio),
+        );
+        expect(
+          await imageCaptureStrategy.getPreferredAspectRatio(),
+          equals(expectedAspectRatio),
+        );
+        expect(
+          await imageAnalysisStrategy.getPreferredAspectRatio(),
+          equals(expectedAspectRatio),
+        );
+
+        // Check fallback rule.
+        expect(
+          await previewStrategy.getFallbackRule(),
+          equals(expectedFallbackRule),
+        );
+        expect(
+          await imageCaptureStrategy.getFallbackRule(),
+          equals(expectedFallbackRule),
+        );
+        expect(
+          await imageAnalysisStrategy.getFallbackRule(),
+          equals(expectedFallbackRule),
+        );
+      }
+
+      // Test null case.
+      await camera.createCamera(testCameraDescription, null);
+      await camera.initializeCamera(testCameraId);
+
+      expect(camera.preview!.resolutionSelector, isNull);
+      expect(camera.imageCapture!.resolutionSelector, isNull);
+      expect(camera.imageAnalysis!.resolutionSelector, isNull);
+    },
+  );
+
+  test(
+    'createCamera and initializeCamera binds Preview, ImageCapture, and ImageAnalysis use cases to ProcessCameraProvider instance',
     () async {
       final AndroidCameraCameraX camera = AndroidCameraCameraX();
       const CameraLensDirection testLensDirection = CameraLensDirection.back;
@@ -1171,6 +1619,11 @@ void main() {
               // ignore: non_constant_identifier_names
               PigeonInstanceManager? pigeon_instanceManager,
             }) {
+              final ResolutionInfo testResolutionInfo =
+                  ResolutionInfo.pigeon_detached(resolution: MockCameraSize());
+              when(
+                mockPreview.getResolutionInfo(),
+              ).thenAnswer((_) async => testResolutionInfo);
               return mockPreview;
             },
         newImageCapture:
@@ -1371,7 +1824,7 @@ void main() {
 
       camera.processCameraProvider = mockProcessCameraProvider;
 
-      await camera.createCameraWithSettings(
+      final int flutterSurfaceTextureId = await camera.createCameraWithSettings(
         testCameraDescription,
         const MediaSettings(
           resolutionPreset: testResolutionPreset,
@@ -1381,6 +1834,7 @@ void main() {
           enableAudio: enableAudio,
         ),
       );
+      await camera.initializeCamera(flutterSurfaceTextureId);
 
       // Verify expected UseCases were bound.
       verify(
@@ -1399,442 +1853,6 @@ void main() {
       // Verify preview has been marked as bound to the camera lifecycle by
       // createCamera.
       expect(camera.previewInitiallyBound, isTrue);
-    },
-  );
-
-  test(
-    'createCamera properly sets preset resolution selection strategy for non-video capture use cases',
-    () async {
-      final AndroidCameraCameraX camera = AndroidCameraCameraX();
-      const CameraLensDirection testLensDirection = CameraLensDirection.back;
-      const int testSensorOrientation = 90;
-      const CameraDescription testCameraDescription = CameraDescription(
-        name: 'cameraName',
-        lensDirection: testLensDirection,
-        sensorOrientation: testSensorOrientation,
-      );
-      const bool enableAudio = true;
-      final MockCamera mockCamera = MockCamera();
-
-      // Mock/Detached objects for (typically attached) objects created by
-      // createCamera.
-      final MockProcessCameraProvider mockProcessCameraProvider =
-          MockProcessCameraProvider();
-      final MockCameraInfo mockCameraInfo = MockCameraInfo();
-
-      when(
-        mockProcessCameraProvider.bindToLifecycle(any, any),
-      ).thenAnswer((_) async => mockCamera);
-      when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
-      when(
-        mockCameraInfo.getCameraState(),
-      ).thenAnswer((_) async => MockLiveCameraState());
-      camera.processCameraProvider = mockProcessCameraProvider;
-
-      // Tell plugin to create mock/detached objects for testing createCamera
-      // as needed.
-      camera.proxy = getProxyForTestingResolutionPreset(
-        mockProcessCameraProvider,
-      );
-
-      // Test non-null resolution presets.
-      for (final ResolutionPreset resolutionPreset in ResolutionPreset.values) {
-        await camera.createCamera(
-          testCameraDescription,
-          resolutionPreset,
-          enableAudio: enableAudio,
-        );
-
-        late final CameraSize? expectedBoundSize;
-        final PigeonInstanceManager testInstanceManager = PigeonInstanceManager(
-          onWeakReferenceRemoved: (_) {},
-        );
-        switch (resolutionPreset) {
-          case ResolutionPreset.low:
-            expectedBoundSize = CameraSize.pigeon_detached(
-              width: 320,
-              height: 240,
-              pigeon_instanceManager: testInstanceManager,
-            );
-          case ResolutionPreset.medium:
-            expectedBoundSize = CameraSize.pigeon_detached(
-              width: 720,
-              height: 480,
-              pigeon_instanceManager: testInstanceManager,
-            );
-          case ResolutionPreset.high:
-            expectedBoundSize = CameraSize.pigeon_detached(
-              width: 1280,
-              height: 720,
-              pigeon_instanceManager: testInstanceManager,
-            );
-          case ResolutionPreset.veryHigh:
-            expectedBoundSize = CameraSize.pigeon_detached(
-              width: 1920,
-              height: 1080,
-              pigeon_instanceManager: testInstanceManager,
-            );
-          case ResolutionPreset.ultraHigh:
-            expectedBoundSize = CameraSize.pigeon_detached(
-              width: 3840,
-              height: 2160,
-              pigeon_instanceManager: testInstanceManager,
-            );
-          case ResolutionPreset.max:
-            continue;
-        }
-
-        final CameraSize? previewSize = await camera
-            .preview!
-            .resolutionSelector!
-            .resolutionStrategy!
-            .getBoundSize();
-        expect(previewSize?.width, equals(expectedBoundSize.width));
-        expect(previewSize?.height, equals(expectedBoundSize.height));
-        expect(
-          await camera.preview!.resolutionSelector!.resolutionStrategy!
-              .getFallbackRule(),
-          ResolutionStrategyFallbackRule.closestLowerThenHigher,
-        );
-
-        final CameraSize? imageCaptureSize = await camera
-            .imageCapture!
-            .resolutionSelector!
-            .resolutionStrategy!
-            .getBoundSize();
-        expect(imageCaptureSize?.width, equals(expectedBoundSize.width));
-        expect(imageCaptureSize?.height, equals(expectedBoundSize.height));
-        expect(
-          await camera.imageCapture!.resolutionSelector!.resolutionStrategy!
-              .getFallbackRule(),
-          ResolutionStrategyFallbackRule.closestLowerThenHigher,
-        );
-
-        final CameraSize? imageAnalysisSize = await camera
-            .imageAnalysis!
-            .resolutionSelector!
-            .resolutionStrategy!
-            .getBoundSize();
-        expect(imageAnalysisSize?.width, equals(expectedBoundSize.width));
-        expect(imageAnalysisSize?.height, equals(expectedBoundSize.height));
-        expect(
-          await camera.imageAnalysis!.resolutionSelector!.resolutionStrategy!
-              .getFallbackRule(),
-          ResolutionStrategyFallbackRule.closestLowerThenHigher,
-        );
-      }
-
-      // Test max case.
-      await camera.createCamera(
-        testCameraDescription,
-        ResolutionPreset.max,
-        enableAudio: true,
-      );
-
-      expect(
-        camera.preview!.resolutionSelector!.resolutionStrategy,
-        equals(camera.proxy.highestAvailableStrategyResolutionStrategy()),
-      );
-      expect(
-        camera.imageCapture!.resolutionSelector!.resolutionStrategy,
-        equals(camera.proxy.highestAvailableStrategyResolutionStrategy()),
-      );
-      expect(
-        camera.imageAnalysis!.resolutionSelector!.resolutionStrategy,
-        equals(camera.proxy.highestAvailableStrategyResolutionStrategy()),
-      );
-
-      // Test null case.
-      await camera.createCamera(testCameraDescription, null);
-      expect(camera.preview!.resolutionSelector, isNull);
-      expect(camera.imageCapture!.resolutionSelector, isNull);
-      expect(camera.imageAnalysis!.resolutionSelector, isNull);
-    },
-  );
-
-  test(
-    'createCamera properly sets filter for resolution preset for non-video capture use cases',
-    () async {
-      final AndroidCameraCameraX camera = AndroidCameraCameraX();
-      const CameraLensDirection testLensDirection = CameraLensDirection.front;
-      const int testSensorOrientation = 180;
-      const CameraDescription testCameraDescription = CameraDescription(
-        name: 'cameraName',
-        lensDirection: testLensDirection,
-        sensorOrientation: testSensorOrientation,
-      );
-      const bool enableAudio = true;
-      final MockCamera mockCamera = MockCamera();
-
-      // Mock/Detached objects for (typically attached) objects created by
-      // createCamera.
-      final MockProcessCameraProvider mockProcessCameraProvider =
-          MockProcessCameraProvider();
-      final MockCameraInfo mockCameraInfo = MockCameraInfo();
-
-      // Tell plugin to create mock/detached objects for testing createCamera
-      // as needed.
-      CameraSize? lastSetPreferredSize;
-      camera.proxy = getProxyForTestingResolutionPreset(
-        mockProcessCameraProvider,
-        createWithOnePreferredSizeResolutionFilter:
-            ({
-              required CameraSize preferredSize,
-              // ignore: non_constant_identifier_names
-              BinaryMessenger? pigeon_binaryMessenger,
-              // ignore: non_constant_identifier_names
-              PigeonInstanceManager? pigeon_instanceManager,
-            }) {
-              lastSetPreferredSize = preferredSize;
-              return MockResolutionFilter();
-            },
-      );
-
-      when(
-        mockProcessCameraProvider.bindToLifecycle(any, any),
-      ).thenAnswer((_) async => mockCamera);
-      when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
-      when(
-        mockCameraInfo.getCameraState(),
-      ).thenAnswer((_) async => MockLiveCameraState());
-      camera.processCameraProvider = mockProcessCameraProvider;
-
-      // Test non-null resolution presets.
-      for (final ResolutionPreset resolutionPreset in ResolutionPreset.values) {
-        await camera.createCamera(
-          testCameraDescription,
-          resolutionPreset,
-          enableAudio: enableAudio,
-        );
-
-        CameraSize? expectedPreferredResolution;
-        final PigeonInstanceManager testInstanceManager = PigeonInstanceManager(
-          onWeakReferenceRemoved: (_) {},
-        );
-        switch (resolutionPreset) {
-          case ResolutionPreset.low:
-            expectedPreferredResolution = CameraSize.pigeon_detached(
-              width: 320,
-              height: 240,
-              pigeon_instanceManager: testInstanceManager,
-            );
-          case ResolutionPreset.medium:
-            expectedPreferredResolution = CameraSize.pigeon_detached(
-              width: 720,
-              height: 480,
-              pigeon_instanceManager: testInstanceManager,
-            );
-          case ResolutionPreset.high:
-            expectedPreferredResolution = CameraSize.pigeon_detached(
-              width: 1280,
-              height: 720,
-              pigeon_instanceManager: testInstanceManager,
-            );
-          case ResolutionPreset.veryHigh:
-            expectedPreferredResolution = CameraSize.pigeon_detached(
-              width: 1920,
-              height: 1080,
-              pigeon_instanceManager: testInstanceManager,
-            );
-          case ResolutionPreset.ultraHigh:
-            expectedPreferredResolution = CameraSize.pigeon_detached(
-              width: 3840,
-              height: 2160,
-              pigeon_instanceManager: testInstanceManager,
-            );
-          case ResolutionPreset.max:
-            expectedPreferredResolution = null;
-        }
-
-        if (expectedPreferredResolution == null) {
-          expect(camera.preview!.resolutionSelector!.resolutionFilter, isNull);
-          expect(
-            camera.imageCapture!.resolutionSelector!.resolutionFilter,
-            isNull,
-          );
-          expect(
-            camera.imageAnalysis!.resolutionSelector!.resolutionFilter,
-            isNull,
-          );
-          continue;
-        }
-
-        expect(
-          lastSetPreferredSize?.width,
-          equals(expectedPreferredResolution.width),
-        );
-        expect(
-          lastSetPreferredSize?.height,
-          equals(expectedPreferredResolution.height),
-        );
-
-        final CameraSize? imageCaptureSize = await camera
-            .imageCapture!
-            .resolutionSelector!
-            .resolutionStrategy!
-            .getBoundSize();
-        expect(
-          imageCaptureSize?.width,
-          equals(expectedPreferredResolution.width),
-        );
-        expect(
-          imageCaptureSize?.height,
-          equals(expectedPreferredResolution.height),
-        );
-
-        final CameraSize? imageAnalysisSize = await camera
-            .imageAnalysis!
-            .resolutionSelector!
-            .resolutionStrategy!
-            .getBoundSize();
-        expect(
-          imageAnalysisSize?.width,
-          equals(expectedPreferredResolution.width),
-        );
-        expect(
-          imageAnalysisSize?.height,
-          equals(expectedPreferredResolution.height),
-        );
-      }
-
-      // Test null case.
-      await camera.createCamera(testCameraDescription, null);
-      expect(camera.preview!.resolutionSelector, isNull);
-      expect(camera.imageCapture!.resolutionSelector, isNull);
-      expect(camera.imageAnalysis!.resolutionSelector, isNull);
-    },
-  );
-
-  test(
-    'createCamera properly sets aspect ratio based on preset resolution for non-video capture use cases',
-    () async {
-      final AndroidCameraCameraX camera = AndroidCameraCameraX();
-      const CameraLensDirection testLensDirection = CameraLensDirection.back;
-      const int testSensorOrientation = 90;
-      const CameraDescription testCameraDescription = CameraDescription(
-        name: 'cameraName',
-        lensDirection: testLensDirection,
-        sensorOrientation: testSensorOrientation,
-      );
-      const bool enableAudio = true;
-      final MockCamera mockCamera = MockCamera();
-
-      // Mock/Detached objects for (typically attached) objects created by
-      // createCamera.
-      final MockProcessCameraProvider mockProcessCameraProvider =
-          MockProcessCameraProvider();
-      final MockCameraInfo mockCameraInfo = MockCameraInfo();
-
-      // Tell plugin to create mock/detached objects for testing createCamera
-      // as needed.
-      camera.proxy = getProxyForTestingResolutionPreset(
-        mockProcessCameraProvider,
-      );
-      when(
-        mockProcessCameraProvider.bindToLifecycle(any, any),
-      ).thenAnswer((_) async => mockCamera);
-      when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
-      when(
-        mockCameraInfo.getCameraState(),
-      ).thenAnswer((_) async => MockLiveCameraState());
-      camera.processCameraProvider = mockProcessCameraProvider;
-
-      // Test non-null resolution presets.
-      for (final ResolutionPreset resolutionPreset in ResolutionPreset.values) {
-        await camera.createCamera(
-          testCameraDescription,
-          resolutionPreset,
-          enableAudio: enableAudio,
-        );
-
-        AspectRatio? expectedAspectRatio;
-        AspectRatioStrategyFallbackRule? expectedFallbackRule;
-        switch (resolutionPreset) {
-          case ResolutionPreset.low:
-            expectedAspectRatio = AspectRatio.ratio4To3;
-            expectedFallbackRule = AspectRatioStrategyFallbackRule.auto;
-          case ResolutionPreset.high:
-          case ResolutionPreset.veryHigh:
-          case ResolutionPreset.ultraHigh:
-            expectedAspectRatio = AspectRatio.ratio16To9;
-            expectedFallbackRule = AspectRatioStrategyFallbackRule.auto;
-          case ResolutionPreset.medium:
-          // Medium resolution preset uses aspect ratio 3:2 which is unsupported
-          // by CameraX.
-          case ResolutionPreset.max:
-        }
-
-        if (expectedAspectRatio == null) {
-          expect(
-            await camera.preview!.resolutionSelector!.getAspectRatioStrategy(),
-            equals(
-              camera.proxy.ratio_4_3FallbackAutoStrategyAspectRatioStrategy(),
-            ),
-          );
-          expect(
-            await camera.imageCapture!.resolutionSelector!
-                .getAspectRatioStrategy(),
-            equals(
-              camera.proxy.ratio_4_3FallbackAutoStrategyAspectRatioStrategy(),
-            ),
-          );
-          expect(
-            await camera.imageAnalysis!.resolutionSelector!
-                .getAspectRatioStrategy(),
-            equals(
-              camera.proxy.ratio_4_3FallbackAutoStrategyAspectRatioStrategy(),
-            ),
-          );
-          continue;
-        }
-
-        final AspectRatioStrategy previewStrategy = await camera
-            .preview!
-            .resolutionSelector!
-            .getAspectRatioStrategy();
-        final AspectRatioStrategy imageCaptureStrategy = await camera
-            .imageCapture!
-            .resolutionSelector!
-            .getAspectRatioStrategy();
-        final AspectRatioStrategy imageAnalysisStrategy = await camera
-            .imageCapture!
-            .resolutionSelector!
-            .getAspectRatioStrategy();
-
-        // Check aspect ratio.
-        expect(
-          await previewStrategy.getPreferredAspectRatio(),
-          equals(expectedAspectRatio),
-        );
-        expect(
-          await imageCaptureStrategy.getPreferredAspectRatio(),
-          equals(expectedAspectRatio),
-        );
-        expect(
-          await imageAnalysisStrategy.getPreferredAspectRatio(),
-          equals(expectedAspectRatio),
-        );
-
-        // Check fallback rule.
-        expect(
-          await previewStrategy.getFallbackRule(),
-          equals(expectedFallbackRule),
-        );
-        expect(
-          await imageCaptureStrategy.getFallbackRule(),
-          equals(expectedFallbackRule),
-        );
-        expect(
-          await imageAnalysisStrategy.getFallbackRule(),
-          equals(expectedFallbackRule),
-        );
-      }
-
-      // Test null case.
-      await camera.createCamera(testCameraDescription, null);
-      expect(camera.preview!.resolutionSelector, isNull);
-      expect(camera.imageCapture!.resolutionSelector, isNull);
-      expect(camera.imageAnalysis!.resolutionSelector, isNull);
     },
   );
 
@@ -2408,310 +2426,78 @@ void main() {
     },
   );
 
-  // TODO: test for binding use cases in initializeCamera instead of createCamera.
-  test(
-    'initializeCamera sets expected output image format for ImageAnalysis',
-    () async {
-      final AndroidCameraCameraX camera = AndroidCameraCameraX();
+  test('initializeCamera sets camera state observer as expected', () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    const CameraLensDirection testLensDirection = CameraLensDirection.back;
+    const int testSensorOrientation = 90;
+    const CameraDescription testCameraDescription = CameraDescription(
+      name: 'cameraName',
+      lensDirection: testLensDirection,
+      sensorOrientation: testSensorOrientation,
+    );
+    const bool enableAudio = true;
+    final MockCamera mockCamera = MockCamera();
+    const int testSurfaceTextureId = 244;
 
-      const int cameraId = 10;
-      const CameraLensDirection testLensDirection = CameraLensDirection.back;
-      const int testSensorOrientation = 90;
-      const CameraDescription testCameraDescription = CameraDescription(
-        name: 'cameraName',
-        lensDirection: testLensDirection,
-        sensorOrientation: testSensorOrientation,
-      );
-      const int resolutionWidth = 350;
-      const int resolutionHeight = 750;
-      final Camera mockCamera = MockCamera();
-      final PigeonInstanceManager testInstanceManager = PigeonInstanceManager(
-        onWeakReferenceRemoved: (_) {},
-      );
-      final ResolutionInfo testResolutionInfo = ResolutionInfo.pigeon_detached(
-        resolution: CameraSize.pigeon_detached(
-          width: resolutionWidth,
-          height: resolutionHeight,
-          pigeon_instanceManager: testInstanceManager,
-        ),
-        pigeon_instanceManager: testInstanceManager,
-      );
+    // Mock/Detached objects for (typically attached) objects created by
+    // createCamera.
+    final MockProcessCameraProvider mockProcessCameraProvider =
+        MockProcessCameraProvider();
+    final MockCameraInfo mockCameraInfo = MockCameraInfo();
+    final MockLiveCameraState mockLiveCameraState = MockLiveCameraState();
+    final MockPreview mockPreview = MockPreview();
+    final ResolutionInfo testResolutionInfo = ResolutionInfo.pigeon_detached(
+      resolution: MockCameraSize(),
+    );
 
-      // Mocks for (typically attached) objects created by createCamera.
-      final MockProcessCameraProvider mockProcessCameraProvider =
-          MockProcessCameraProvider();
-      final CameraInfo mockCameraInfo = MockCameraInfo();
-      final MockCameraSelector mockBackCameraSelector = MockCameraSelector();
-      final MockCameraSelector mockFrontCameraSelector = MockCameraSelector();
-      final MockPreview mockPreview = MockPreview();
-      final MockImageCapture mockImageCapture = MockImageCapture();
-      final MockImageAnalysis mockImageAnalysis = MockImageAnalysis();
+    when(
+      mockProcessCameraProvider.bindToLifecycle(any, any),
+    ).thenAnswer((_) async => mockCamera);
+    when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
+    when(
+      mockCameraInfo.getCameraState(),
+    ).thenAnswer((_) async => mockLiveCameraState);
+    when(
+      mockPreview.getResolutionInfo(),
+    ).thenAnswer((_) async => testResolutionInfo);
+    when(
+      mockPreview.setSurfaceProvider(any),
+    ).thenAnswer((_) async => testSurfaceTextureId);
+    camera.processCameraProvider = mockProcessCameraProvider;
 
-      // Tell plugin to create mock/detached objects for testing createCamera
-      // as needed.
-      camera.proxy = CameraXProxy(
-        getInstanceProcessCameraProvider:
-            ({
-              // ignore: non_constant_identifier_names
-              BinaryMessenger? pigeon_binaryMessenger,
-              // ignore: non_constant_identifier_names
-              PigeonInstanceManager? pigeon_instanceManager,
-            }) =>
-                Future<ProcessCameraProvider>.value(mockProcessCameraProvider),
-        newCameraSelector:
-            ({
-              LensFacing? requireLensFacing,
-              CameraInfo? cameraInfoForFilter,
-              // ignore: non_constant_identifier_names
-              BinaryMessenger? pigeon_binaryMessenger,
-              // ignore: non_constant_identifier_names
-              PigeonInstanceManager? pigeon_instanceManager,
-            }) {
-              switch (requireLensFacing) {
-                case LensFacing.front:
-                  return mockFrontCameraSelector;
-                case _:
-                  return mockBackCameraSelector;
-              }
-            },
-        newPreview:
-            ({
-              int? targetRotation,
-              ResolutionSelector? resolutionSelector,
-              // ignore: non_constant_identifier_names
-              BinaryMessenger? pigeon_binaryMessenger,
-              // ignore: non_constant_identifier_names
-              PigeonInstanceManager? pigeon_instanceManager,
-            }) => mockPreview,
-        newImageCapture:
-            ({
-              int? targetRotation,
-              CameraXFlashMode? flashMode,
-              ResolutionSelector? resolutionSelector,
-              // ignore: non_constant_identifier_names
-              BinaryMessenger? pigeon_binaryMessenger,
-              // ignore: non_constant_identifier_names
-              PigeonInstanceManager? pigeon_instanceManager,
-            }) => mockImageCapture,
-        newRecorder:
-            ({
-              int? aspectRatio,
-              int? targetVideoEncodingBitRate,
-              QualitySelector? qualitySelector,
-              // ignore: non_constant_identifier_names
-              BinaryMessenger? pigeon_binaryMessenger,
-              // ignore: non_constant_identifier_names
-              PigeonInstanceManager? pigeon_instanceManager,
-            }) => MockRecorder(),
-        withOutputVideoCapture:
-            ({
-              required VideoOutput videoOutput,
-              // ignore: non_constant_identifier_names
-              BinaryMessenger? pigeon_binaryMessenger,
-              // ignore: non_constant_identifier_names
-              PigeonInstanceManager? pigeon_instanceManager,
-            }) => MockVideoCapture(),
-        // newImageAnalysis:
-        //     ({
-        //       int? targetRotation,
-        //       int? outputImageFormat,
-        //       ResolutionSelector? resolutionSelector,
-        //       // ignore: non_constant_identifier_names
-        //       BinaryMessenger? pigeon_binaryMessenger,
-        //       // ignore: non_constant_identifier_names
-        //       PigeonInstanceManager? pigeon_instanceManager,
-        //     }) => mockImageAnalysis,
-        newResolutionStrategy:
-            ({
-              required CameraSize boundSize,
-              required ResolutionStrategyFallbackRule fallbackRule,
-              // ignore: non_constant_identifier_names
-              BinaryMessenger? pigeon_binaryMessenger,
-              // ignore: non_constant_identifier_names
-              PigeonInstanceManager? pigeon_instanceManager,
-            }) => MockResolutionStrategy(),
-        newResolutionSelector:
-            ({
-              AspectRatioStrategy? aspectRatioStrategy,
-              ResolutionStrategy? resolutionStrategy,
-              ResolutionFilter? resolutionFilter,
-              // ignore: non_constant_identifier_names
-              BinaryMessenger? pigeon_binaryMessenger,
-              // ignore: non_constant_identifier_names
-              PigeonInstanceManager? pigeon_instanceManager,
-            }) => MockResolutionSelector(),
-        lowerQualityOrHigherThanFallbackStrategy:
-            ({
-              required VideoQuality quality,
-              // ignore: non_constant_identifier_names
-              BinaryMessenger? pigeon_binaryMessenger,
-              // ignore: non_constant_identifier_names
-              PigeonInstanceManager? pigeon_instanceManager,
-            }) => MockFallbackStrategy(),
-        fromQualitySelector:
-            ({
-              required VideoQuality quality,
-              FallbackStrategy? fallbackStrategy,
-              // ignore: non_constant_identifier_names
-              BinaryMessenger? pigeon_binaryMessenger,
-              // ignore: non_constant_identifier_names
-              PigeonInstanceManager? pigeon_instanceManager,
-            }) => MockQualitySelector(),
-        newObserver:
-            <T>({
-              required void Function(Observer<T>, T) onChanged,
-              // ignore: non_constant_identifier_names
-              BinaryMessenger? pigeon_binaryMessenger,
-              // ignore: non_constant_identifier_names
-              PigeonInstanceManager? pigeon_instanceManager,
-            }) {
-              return Observer<T>.detached(
-                onChanged: onChanged,
-                pigeon_instanceManager: PigeonInstanceManager(
-                  onWeakReferenceRemoved: (_) {},
-                ),
-              );
-            },
-        newSystemServicesManager:
-            ({
-              required void Function(SystemServicesManager, String)
-              onCameraError,
-              // ignore: non_constant_identifier_names
-              BinaryMessenger? pigeon_binaryMessenger,
-              // ignore: non_constant_identifier_names
-              PigeonInstanceManager? pigeon_instanceManager,
-            }) => MockSystemServicesManager(),
-        newDeviceOrientationManager:
-            ({
-              required void Function(DeviceOrientationManager, String)
-              onDeviceOrientationChanged,
-              // ignore: non_constant_identifier_names
-              BinaryMessenger? pigeon_binaryMessenger,
-              // ignore: non_constant_identifier_names
-              PigeonInstanceManager? pigeon_instanceManager,
-            }) {
-              final MockDeviceOrientationManager manager =
-                  MockDeviceOrientationManager();
-              when(manager.getUiOrientation()).thenAnswer((_) async {
-                return 'PORTRAIT_UP';
-              });
-              return manager;
-            },
-        newAspectRatioStrategy:
-            ({
-              required AspectRatio preferredAspectRatio,
-              required AspectRatioStrategyFallbackRule fallbackRule,
-              // ignore: non_constant_identifier_names
-              BinaryMessenger? pigeon_binaryMessenger,
-              // ignore: non_constant_identifier_names
-              PigeonInstanceManager? pigeon_instanceManager,
-            }) => MockAspectRatioStrategy(),
-        createWithOnePreferredSizeResolutionFilter:
-            ({
-              required CameraSize preferredSize,
-              // ignore: non_constant_identifier_names
-              BinaryMessenger? pigeon_binaryMessenger,
-              // ignore: non_constant_identifier_names
-              PigeonInstanceManager? pigeon_instanceManager,
-            }) => MockResolutionFilter(),
-        fromCamera2CameraInfo:
-            ({
-              required CameraInfo cameraInfo,
-              // ignore: non_constant_identifier_names
-              BinaryMessenger? pigeon_binaryMessenger,
-              // ignore: non_constant_identifier_names
-              PigeonInstanceManager? pigeon_instanceManager,
-            }) {
-              final MockCamera2CameraInfo mockCamera2CameraInfo =
-                  MockCamera2CameraInfo();
-              when(
-                mockCamera2CameraInfo.getCameraCharacteristic(any),
-              ).thenAnswer((_) async => 90);
-              return mockCamera2CameraInfo;
-            },
-        newCameraSize:
-            ({
-              required int width,
-              required int height,
-              // ignore: non_constant_identifier_names
-              BinaryMessenger? pigeon_binaryMessenger,
-              // ignore: non_constant_identifier_names
-              PigeonInstanceManager? pigeon_instanceManager,
-            }) => MockCameraSize(),
-        sensorOrientationCameraCharacteristics: () =>
-            MockCameraCharacteristicsKey(),
-      );
+    // Tell plugin to create mock/detached objects for testing createCamera
+    // as needed.
+    camera.proxy = getProxyForTestingResolutionPreset(
+      mockProcessCameraProvider,
+      newPreview:
+          ({
+            // ignore: non_constant_identifier_names
+            BinaryMessenger? pigeon_binaryMessenger,
+            // ignore: non_constant_identifier_names
+            PigeonInstanceManager? pigeon_instanceManager,
+            ResolutionSelector? resolutionSelector,
+            int? targetRotation,
+          }) => mockPreview,
+    );
 
-      final CameraInitializedEvent testCameraInitializedEvent =
-          CameraInitializedEvent(
-            cameraId,
-            resolutionWidth.toDouble(),
-            resolutionHeight.toDouble(),
-            ExposureMode.auto,
-            true,
-            FocusMode.auto,
-            true,
-          );
+    // Create and initialize camera.
+    await camera.createCameraWithSettings(
+      testCameraDescription,
+      const MediaSettings(enableAudio: enableAudio),
+    );
+    await camera.initializeCamera(testSurfaceTextureId);
 
-      // Call createCamera.
-      when(
-        mockPreview.setSurfaceProvider(any),
-      ).thenAnswer((_) async => cameraId);
-
-      when(
-        mockProcessCameraProvider.bindToLifecycle(
-          mockBackCameraSelector,
-          <UseCase>[mockPreview, mockImageCapture, mockImageAnalysis],
-        ),
-      ).thenAnswer((_) async => mockCamera);
-      when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
-      when(
-        mockCameraInfo.getCameraState(),
-      ).thenAnswer((_) async => MockLiveCameraState());
-      when(
-        mockPreview.getResolutionInfo(),
-      ).thenAnswer((_) async => testResolutionInfo);
-
-      await camera.createCameraWithSettings(
-        testCameraDescription,
-        const MediaSettings(
-          resolutionPreset: ResolutionPreset.medium,
-          fps: 15,
-          videoBitrate: 200000,
-          audioBitrate: 32000,
-          enableAudio: true,
-        ),
-      );
-
-      // Start listening to camera events stream to verify the proper CameraInitializedEvent is sent.
-      camera.cameraEventStreamController.stream.listen((CameraEvent event) {
-        expect(event, const TypeMatcher<CameraInitializedEvent>());
-        expect(event, equals(testCameraInitializedEvent));
-      });
-
-      for (final ImageFormatGroup imageFormatGroup in ImageFormatGroup.values) {
-        await camera.initializeCamera(
-          cameraId,
-          imageFormatGroup: imageFormatGroup,
-        );
-        final int? expectedOutputImageFormatConstant =
-            switch (imageFormatGroup) {
-              ImageFormatGroup.yuv420 =>
-                AndroidCameraCameraX.imageAnalysisOutputImageFormatYuv420_888,
-              ImageFormatGroup.nv21 =>
-                AndroidCameraCameraX.imageAnalysisOutputImageFormatNv21,
-              ImageFormatGroup.jpeg => null,
-              ImageFormatGroup.bgra8888 => null,
-              ImageFormatGroup.unknown => null,
-            };
-
-        expect(
-          camera.imageAnalysis!.outputImageFormat,
-          expectedOutputImageFormatConstant,
-        );
-      }
-    },
-  );
+    // Verify the camera state observer is updated.
+    expect(
+      await testCameraClosingObserver(
+        camera,
+        testSurfaceTextureId,
+        verify(mockLiveCameraState.observe(captureAny)).captured.single
+            as Observer<CameraState>,
+      ),
+      isTrue,
+    );
+  });
 
   test('initializeCamera sends expected CameraInitializedEvent', () async {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();

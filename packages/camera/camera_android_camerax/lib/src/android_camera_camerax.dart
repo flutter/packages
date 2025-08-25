@@ -457,6 +457,14 @@ class AndroidCameraCameraX extends CameraPlatform {
     int cameraId, {
     ImageFormatGroup imageFormatGroup = ImageFormatGroup.unknown,
   }) async {
+    // If preview has not been created, then no camera has been created, which signals that
+    // createCamera was not called before initializeCamera.
+    if (preview == null) {
+      throw CameraException(
+        'cameraNotFound',
+        "Camera not found. Please call the 'create' method before calling 'initialize'",
+      );
+    }
     // Configure ImageAnalysis instance.
     // Defaults to YUV_420_888 image format.
     imageAnalysis = proxy.newImageAnalysis(
@@ -480,15 +488,8 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     // Configure CameraInitializedEvent to send as representation of a
     // configured camera:
-    // Retrieve preview resolution.
-    if (preview == null) {
-      // No camera has been created; createCamera must be called before initializeCamera.
-      throw CameraException(
-        'cameraNotFound',
-        "Camera not found. Please call the 'create' method before calling 'initialize'",
-      );
-    }
 
+    // Retrieve preview resolution.
     final ResolutionInfo previewResolutionInfo = (await preview!
         .getResolutionInfo())!;
 
