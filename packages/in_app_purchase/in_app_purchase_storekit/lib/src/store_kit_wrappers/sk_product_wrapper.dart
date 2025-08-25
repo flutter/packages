@@ -539,7 +539,7 @@ class SKProductWrapper {
   /// and their units and duration do not have to be matched.
   final SKProductDiscountWrapper? introductoryPrice;
 
-  /// An array of subscription offers available for the auto-renewable subscription (available on iOS 12.2 and higher).
+  /// An array of subscription offers available for the auto-renewable subscription.
   ///
   /// This property lists all promotional offers set up in App Store Connect. If
   /// no promotional offers have been set up, this field returns an empty list.
@@ -650,9 +650,8 @@ class SKProductWrapper {
 /// Object that indicates the locale of the price
 ///
 /// It is a thin wrapper of [NSLocale](https://developer.apple.com/documentation/foundation/nslocale?language=objc).
-// TODO(cyanglaz): NSLocale is a complex object, want to see the actual need of getting this expanded.
-//                 Matching android to only get the currencySymbol for now.
-//                 https://github.com/flutter/flutter/issues/26610
+// This intentionally only exposes fields that there has been a demonstrated
+// need for; see discussion in https://github.com/flutter/plugins/pull/3897.
 @JsonSerializable()
 @immutable
 class SKPriceLocaleWrapper {
