@@ -588,9 +588,9 @@ class CameraController extends ValueNotifier<CameraValue> {
     try {
       await CameraPlatform.instance.startVideoCapturing(
         VideoCaptureOptions(
-            _cameraId,
-            streamCallback: streamCallback,
-            enableAndroidPersistentRecording: enableAndroidPersistentRecording
+          _cameraId,
+          streamCallback: streamCallback,
+          enableAndroidPersistentRecording: enableAndroidPersistentRecording,
         ),
       );
       value = value.copyWith(

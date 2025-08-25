@@ -527,7 +527,7 @@ abstract class PendingRecording {
   ///
   /// A persistent recording will only be stopped by explicitly calling [Recording.stop] or [Recording.close]
   /// and will ignore events that would normally cause recording to stop, such as lifecycle events
-  /// or explicit unbinding of a [VideoCapture] use case that the recording's Recorder is attached to
+  /// or explicit unbinding of a [VideoCapture] use case that the recording's Recorder is attached to.
   ///
   /// To switch to a different camera stream while a recording is in progress,
   /// first create the recording as persistent recording,

@@ -3906,10 +3906,11 @@ void main() {
 
     test(
       'setDescriptionWhileRecording changes the camera description',
-          () async {
+      () async {
         final AndroidCameraCameraX camera = AndroidCameraCameraX();
         final MockRecording mockRecording = MockRecording();
-        final MockPendingRecording mockPendingRecording = MockPendingRecording();
+        final MockPendingRecording mockPendingRecording =
+            MockPendingRecording();
         final MockRecorder mockRecorder = MockRecorder();
 
         const int testSensorOrientation = 90;
@@ -3926,7 +3927,8 @@ void main() {
 
         // Mock/Detached objects for (typically attached) objects created by
         // createCamera.
-        final MockProcessCameraProvider mockProcessCameraProvider = MockProcessCameraProvider();
+        final MockProcessCameraProvider mockProcessCameraProvider =
+            MockProcessCameraProvider();
         final MockPreview mockPreview = MockPreview();
         final MockVideoCapture mockVideoCapture = MockVideoCapture();
         final MockCameraSelector mockBackCameraSelector = MockCameraSelector();
@@ -3934,62 +3936,65 @@ void main() {
         final MockCameraInfo mockFrontCameraInfo = MockCameraInfo();
         final MockCameraInfo mockBackCameraInfo = MockCameraInfo();
         final MockCameraCharacteristicsKey mockCameraCharacteristicsKey =
-        MockCameraCharacteristicsKey();
+            MockCameraCharacteristicsKey();
 
         camera.proxy = CameraXProxy(
           newCameraSelector:
               ({
-            LensFacing? requireLensFacing,
-            CameraInfo? cameraInfoForFilter,
-            // ignore: non_constant_identifier_names
-            BinaryMessenger? pigeon_binaryMessenger,
-            // ignore: non_constant_identifier_names
-            PigeonInstanceManager? pigeon_instanceManager,
-          }) {
-            if(cameraInfoForFilter == mockFrontCameraInfo) {
-              return mockFrontCameraSelector;
-            }
-            return mockBackCameraSelector;
-          },
+                LensFacing? requireLensFacing,
+                CameraInfo? cameraInfoForFilter,
+                // ignore: non_constant_identifier_names
+                BinaryMessenger? pigeon_binaryMessenger,
+                // ignore: non_constant_identifier_names
+                PigeonInstanceManager? pigeon_instanceManager,
+              }) {
+                if (cameraInfoForFilter == mockFrontCameraInfo) {
+                  return mockFrontCameraSelector;
+                }
+                return mockBackCameraSelector;
+              },
           newDeviceOrientationManager:
               ({
-            required void Function(DeviceOrientationManager, String)
-            onDeviceOrientationChanged,
-            // ignore: non_constant_identifier_names
-            BinaryMessenger? pigeon_binaryMessenger,
-            // ignore: non_constant_identifier_names
-            PigeonInstanceManager? pigeon_instanceManager,
-          }) {
-            final MockDeviceOrientationManager manager =
-            MockDeviceOrientationManager();
-            when(manager.getUiOrientation()).thenAnswer((_) async {
-              return 'PORTRAIT_UP';
-            });
-            return manager;
-          },
+                required void Function(DeviceOrientationManager, String)
+                onDeviceOrientationChanged,
+                // ignore: non_constant_identifier_names
+                BinaryMessenger? pigeon_binaryMessenger,
+                // ignore: non_constant_identifier_names
+                PigeonInstanceManager? pigeon_instanceManager,
+              }) {
+                final MockDeviceOrientationManager manager =
+                    MockDeviceOrientationManager();
+                when(manager.getUiOrientation()).thenAnswer((_) async {
+                  return 'PORTRAIT_UP';
+                });
+                return manager;
+              },
           fromCamera2CameraInfo:
               ({
-            required CameraInfo cameraInfo,
-            // ignore: non_constant_identifier_names
-            BinaryMessenger? pigeon_binaryMessenger,
-            // ignore: non_constant_identifier_names
-            PigeonInstanceManager? pigeon_instanceManager,
-          }) {
-            final MockCamera2CameraInfo camera2cameraInfo =
-            MockCamera2CameraInfo();
-            when(
-              camera2cameraInfo.getCameraCharacteristic(
-                mockCameraCharacteristicsKey,
-              ),
-            ).thenAnswer((_) async => testSensorOrientation);
-            return camera2cameraInfo;
-          },
+                required CameraInfo cameraInfo,
+                // ignore: non_constant_identifier_names
+                BinaryMessenger? pigeon_binaryMessenger,
+                // ignore: non_constant_identifier_names
+                PigeonInstanceManager? pigeon_instanceManager,
+              }) {
+                final MockCamera2CameraInfo camera2cameraInfo =
+                    MockCamera2CameraInfo();
+                when(
+                  camera2cameraInfo.getCameraCharacteristic(
+                    mockCameraCharacteristicsKey,
+                  ),
+                ).thenAnswer((_) async => testSensorOrientation);
+                return camera2cameraInfo;
+              },
           sensorOrientationCameraCharacteristics: () {
             return mockCameraCharacteristicsKey;
           },
         );
         when(mockProcessCameraProvider.getAvailableCameraInfos()).thenAnswer(
-              (_) async => <MockCameraInfo>[mockBackCameraInfo, mockFrontCameraInfo],
+          (_) async => <MockCameraInfo>[
+            mockBackCameraInfo,
+            mockFrontCameraInfo,
+          ],
         );
         when(
           mockBackCameraSelector.filter(<MockCameraInfo>[mockBackCameraInfo]),
@@ -4020,11 +4025,21 @@ void main() {
 
         //verify front camera selected
         verify(camera.processCameraProvider?.unbindAll()).called(1);
-        verify(camera.processCameraProvider?.bindToLifecycle(mockFrontCameraSelector, <UseCase>[mockPreview, mockVideoCapture])).called(1);
+        verify(
+          camera.processCameraProvider?.bindToLifecycle(
+            mockFrontCameraSelector,
+            <UseCase>[mockPreview, mockVideoCapture],
+          ),
+        ).called(1);
 
         //verify back camera selected
         await camera.setDescriptionWhileRecording(testBackCameraDescription);
-        verify(camera.processCameraProvider?.bindToLifecycle(mockBackCameraSelector, <UseCase>[mockPreview, mockVideoCapture])).called(1);
+        verify(
+          camera.processCameraProvider?.bindToLifecycle(
+            mockBackCameraSelector,
+            <UseCase>[mockPreview, mockVideoCapture],
+          ),
+        ).called(1);
       },
     );
   });

@@ -655,9 +655,8 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
   }
 
   Future<void> _initializeCameraController(
-      CameraDescription cameraDescription,
-      ) async {
-
+    CameraDescription cameraDescription,
+  ) async {
     final CameraController cameraController = CameraController(
       cameraDescription,
       mediaSettings: MediaSettings(
@@ -897,7 +896,9 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
     });
   }
 
-  Future<void> startVideoRecording({bool enablePersistentRecording = false}) async {
+  Future<void> startVideoRecording({
+    bool enablePersistentRecording = false,
+  }) async {
     final CameraController? cameraController = controller;
 
     if (cameraController == null || !cameraController.value.isInitialized) {
@@ -911,7 +912,9 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
     }
 
     try {
-      await cameraController.startVideoRecording(enablePersistentRecording: enablePersistentRecording);
+      await cameraController.startVideoRecording(
+        enablePersistentRecording: enablePersistentRecording,
+      );
     } on CameraException catch (e) {
       _showCameraException(e);
       return;

@@ -1,6 +1,6 @@
-## 0.6.20+2
+## 0.6.21
 
-* Fixes flutter/flutter#148013: setDescriptionWhileRecording with android camerax.
+* Implements `setDescriptionWhileRecording`.
 
 ## 0.6.20+1
 

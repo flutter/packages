@@ -86,7 +86,7 @@ public class PendingRecordingTest {
   @Test
   public void asPersistentRecording_returnsPersistentRecordingInstance() {
     final PigeonApiPendingRecording api =
-            new TestProxyApiRegistrar().getPigeonApiPendingRecording();
+        new TestProxyApiRegistrar().getPigeonApiPendingRecording();
     final PendingRecording instance = mock(PendingRecording.class);
     final PendingRecording persistentInstance = mock(PendingRecording.class);
 

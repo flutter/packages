@@ -18,7 +18,7 @@ class VideoCaptureOptions {
     this.maxDuration,
     this.streamCallback,
     this.streamOptions,
-    this.enableAndroidPersistentRecording = false
+    this.enableAndroidPersistentRecording = false,
   }) : assert(
          streamOptions == null || streamCallback != null,
          'Must specify streamCallback if providing streamOptions.',
@@ -64,9 +64,15 @@ class VideoCaptureOptions {
           maxDuration == other.maxDuration &&
           streamCallback == other.streamCallback &&
           streamOptions == other.streamOptions &&
-          enableAndroidPersistentRecording == other.enableAndroidPersistentRecording;
+          enableAndroidPersistentRecording ==
+              other.enableAndroidPersistentRecording;
 
   @override
-  int get hashCode =>
-      Object.hash(cameraId, maxDuration, streamCallback, streamOptions, enableAndroidPersistentRecording);
+  int get hashCode => Object.hash(
+    cameraId,
+    maxDuration,
+    streamCallback,
+    streamOptions,
+    enableAndroidPersistentRecording,
+  );
 }

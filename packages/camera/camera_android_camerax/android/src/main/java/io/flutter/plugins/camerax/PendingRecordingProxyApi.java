@@ -7,6 +7,7 @@ package io.flutter.plugins.camerax;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import androidx.annotation.NonNull;
+import androidx.camera.video.ExperimentalPersistentRecording;
 import androidx.camera.video.PendingRecording;
 import androidx.camera.video.Recording;
 import androidx.core.content.ContextCompat;
@@ -27,6 +28,7 @@ class PendingRecordingProxyApi extends PigeonApiPendingRecording {
     return (ProxyApiRegistrar) super.getPigeonRegistrar();
   }
 
+  @ExperimentalPersistentRecording
   @NonNull
   @Override
   public PendingRecording asPersistentRecording(PendingRecording pigeonInstance) {

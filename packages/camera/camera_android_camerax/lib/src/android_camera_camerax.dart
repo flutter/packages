@@ -155,6 +155,9 @@ class AndroidCameraCameraX extends CameraPlatform {
   @visibleForTesting
   CameraSelector? cameraSelector;
 
+  /// The ID of the surface texture that a camera preview can be drawn to.
+  int? _flutterSurfaceTextureId;
+
   /// The controller we need to broadcast the different camera events.
   ///
   /// It is a `broadcast` because multiple controllers will connect to
@@ -394,7 +397,7 @@ class AndroidCameraCameraX extends CameraPlatform {
       resolutionSelector: presetResolutionSelector,
       /* use CameraX default target rotation */ targetRotation: null,
     );
-    final int flutterSurfaceTextureId = await preview!.setSurfaceProvider(
+    _flutterSurfaceTextureId = await preview!.setSurfaceProvider(
       systemServicesManager,
     );
 
@@ -423,7 +426,7 @@ class AndroidCameraCameraX extends CameraPlatform {
       cameraSelector!,
       <UseCase>[preview!, imageCapture!, imageAnalysis!],
     );
-    await _updateCameraInfoAndLiveCameraState(flutterSurfaceTextureId);
+    await _updateCameraInfoAndLiveCameraState(_flutterSurfaceTextureId!);
     previewInitiallyBound = true;
     _previewIsPaused = false;
 
@@ -449,7 +452,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     _initialDefaultDisplayRotation = await deviceOrientationManager
         .getDefaultDisplayRotation();
 
-    return flutterSurfaceTextureId;
+    return _flutterSurfaceTextureId!;
   }
 
   /// Initializes the camera on the device.
@@ -910,31 +913,44 @@ class AndroidCameraCameraX extends CameraPlatform {
 
   /// Sets the active camera while recording.
   @override
-  Future<void> setDescriptionWhileRecording(CameraDescription description) async{
-    if(recording == null) {
+  Future<void> setDescriptionWhileRecording(
+    CameraDescription description,
+  ) async {
+    if (recording == null) {
+      cameraErrorStreamController.add(
+        'Camera description not set. No active video recording.',
+      );
       return;
     }
     final CameraInfo? chosenCameraInfo = _savedCameras[description.name];
 
     // Save CameraSelector that matches cameraDescription.
-    final LensFacing cameraSelectorLensDirection = _getCameraSelectorLensDirection(description.lensDirection);
+    final LensFacing cameraSelectorLensDirection =
+        _getCameraSelectorLensDirection(description.lensDirection);
     cameraIsFrontFacing = cameraSelectorLensDirection == LensFacing.front;
     cameraSelector = proxy.newCameraSelector(
       cameraInfoForFilter: chosenCameraInfo,
     );
 
+    // unbind all use cases and rebind to new cameraSelector
+    final List<UseCase> useCases = <UseCase>[preview!, videoCapture!];
+    if (imageCapture != null &&
+        await processCameraProvider!.isBound(imageCapture!)) {
+      useCases.add(imageCapture!);
+    }
+    if (imageAnalysis != null &&
+        await processCameraProvider!.isBound(imageAnalysis!)) {
+      useCases.add(imageAnalysis!);
+    }
     await processCameraProvider?.unbindAll();
-    await processCameraProvider?.bindToLifecycle(cameraSelector!, <UseCase>[preview!, videoCapture!]);
+    await processCameraProvider?.bindToLifecycle(cameraSelector!, useCases);
 
     // Retrieve info required for correcting the rotation of the camera preview
-    // if necessary.
-
     sensorOrientationDegrees = description.sensorOrientation.toDouble();
-    _handlesCropAndRotation = await preview!.surfaceProducerHandlesCropAndRotation();
-    _initialDeviceOrientation = _deserializeDeviceOrientation(
-      await deviceOrientationManager.getUiOrientation(),
-    );
-    _initialDefaultDisplayRotation = await deviceOrientationManager.getDefaultDisplayRotation();
+
+    if (_flutterSurfaceTextureId != null) {
+      await _updateCameraInfoAndLiveCameraState(_flutterSurfaceTextureId!);
+    }
   }
 
   /// Resume the paused preview for the selected camera.
@@ -1143,7 +1159,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     );
     pendingRecording = await recorder!.prepareRecording(videoOutputPath!);
 
-    if(options.enableAndroidPersistentRecording){
+    if (options.enableAndroidPersistentRecording) {
       pendingRecording = await pendingRecording?.asPersistentRecording();
     }
 
