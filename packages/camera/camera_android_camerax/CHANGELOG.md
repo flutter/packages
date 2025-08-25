@@ -1,3 +1,7 @@
+## 0.6.21
+
+* Implements NV21 support for image streaming.
+
 ## 0.6.20+1
 
 * Updates kotlin version to 2.2.0 to enable gradle 8.11 support.
