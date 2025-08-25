@@ -38,8 +38,7 @@ public class ImageAnalysisTest {
 
     assertEquals(imageAnalysis.getResolutionSelector(), mockResolutionSelector);
     assertEquals(imageAnalysis.getTargetRotation(), Surface.ROTATION_0);
-    assertEquals(
-        imageAnalysis.getOutputImageFormat(), ImageAnalysis.OUTPUT_IMAGE_FORMAT_YUV_NV21);
+    assertEquals(imageAnalysis.getOutputImageFormat(), ImageAnalysis.OUTPUT_IMAGE_FORMAT_YUV_NV21);
   }
 
   @Test
