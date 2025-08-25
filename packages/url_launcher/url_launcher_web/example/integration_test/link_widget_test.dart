@@ -5,9 +5,12 @@
 import 'dart:js_interop';
 import 'dart:js_interop_unsafe';
 import 'dart:typed_data';
+import 'dart:ui' show SemanticsFlag;
 import 'dart:ui_web' as ui_web;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show SemanticsData, SemanticsNode;
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:url_launcher_platform_interface/link.dart';
@@ -207,6 +210,56 @@ void main() {
         800,
         maxScrolls: 1000,
       );
+    });
+
+    testWidgets(
+        'excludeSemantics: true ensures clean link semantics without conflicts',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: Column(
+            children: <Widget>[
+              WebLinkDelegate(
+                TestLinkInfo(
+                  uri: Uri.parse('https://dart.dev/xyz'),
+                  target: LinkTarget.blank,
+                  builder: (BuildContext context, FollowLink? followLink) {
+                    return ElevatedButton(
+                      onPressed: followLink,
+                      child: const Text('First Button'),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      ));
+
+      await tester.pumpAndSettle();
+      final SemanticsHandle handle = tester.ensureSemantics();
+
+      final Finder buttonFinder = find.text('First Button');
+      expect(buttonFinder, findsOneWidget);
+
+      final SemanticsNode firstSemantics = tester.getSemantics(buttonFinder);
+      final SemanticsData firstData = firstSemantics.getSemanticsData();
+
+      expect(
+        firstData.hasFlag(SemanticsFlag.isLink),
+        isTrue,
+        reason: 'Button should be treated as link with excludeSemantics: true',
+      );
+
+      expect(
+        firstData.hasFlag(SemanticsFlag.isButton),
+        isFalse,
+        reason:
+            'semantics should be excluded to prevent TAB navigation conflicts',
+      );
+
+      expect(firstData.linkUrl?.toString(), equals('https://dart.dev/xyz'));
+      handle.dispose();
     });
   });
 
