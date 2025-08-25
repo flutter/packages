@@ -156,6 +156,7 @@ void main() {
         ({
           int? targetRotation,
           ResolutionSelector? resolutionSelector,
+          int? outputImageFormat,
           // ignore: non_constant_identifier_names
           BinaryMessenger? pigeon_binaryMessenger,
           // ignore: non_constant_identifier_names

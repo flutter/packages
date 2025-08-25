@@ -152,6 +152,16 @@ void main() {
       PigeonInstanceManager? pigeon_instanceManager,
     })?
     newPreview,
+    ImageAnalysis Function({
+      // ignore: non_constant_identifier_names
+      BinaryMessenger? pigeon_binaryMessenger,
+      // ignore: non_constant_identifier_names
+      PigeonInstanceManager? pigeon_instanceManager,
+      ResolutionSelector? resolutionSelector,
+      int? outputImageFormat,
+      int? targetRotation,
+    })?
+    newImageAnalysis,
   }) {
     late final CameraXProxy proxy;
     final AspectRatioStrategy ratio_4_3FallbackAutoStrategyAspectRatioStrategy =
@@ -253,6 +263,7 @@ void main() {
             return MockVideoCapture();
           },
       newImageAnalysis:
+          newImageAnalysis ??
           ({
             int? targetRotation,
             int? outputImageFormat,
@@ -1104,7 +1115,6 @@ void main() {
         sensorOrientation: testSensorOrientation,
       );
       const bool enableAudio = true;
-      const int testCameraId = 10;
       final MockCamera mockCamera = MockCamera();
 
       // Mock/Detached objects for (typically attached) objects created by
@@ -1261,7 +1271,6 @@ void main() {
         sensorOrientation: testSensorOrientation,
       );
       const bool enableAudio = true;
-      const int testCameraId = 11;
       final MockCamera mockCamera = MockCamera();
 
       // Mock/Detached objects for (typically attached) objects created by
@@ -2498,6 +2507,101 @@ void main() {
       isTrue,
     );
   });
+
+  test(
+    'initializeCamera sets image format of ImageAnalysis use case as expected',
+    () async {
+      final AndroidCameraCameraX camera = AndroidCameraCameraX();
+      const CameraLensDirection testLensDirection = CameraLensDirection.back;
+      const int testSensorOrientation = 90;
+      const CameraDescription testCameraDescription = CameraDescription(
+        name: 'cameraName',
+        lensDirection: testLensDirection,
+        sensorOrientation: testSensorOrientation,
+      );
+      const bool enableAudio = true;
+      final MockCamera mockCamera = MockCamera();
+      const int testSurfaceTextureId = 244;
+
+      // Mock/Detached objects for (typically attached) objects created by
+      // createCamera.
+      final MockProcessCameraProvider mockProcessCameraProvider =
+          MockProcessCameraProvider();
+      final MockCameraInfo mockCameraInfo = MockCameraInfo();
+      final MockLiveCameraState mockLiveCameraState = MockLiveCameraState();
+      final MockPreview mockPreview = MockPreview();
+      final ResolutionInfo testResolutionInfo = ResolutionInfo.pigeon_detached(
+        resolution: MockCameraSize(),
+      );
+      final MockImageAnalysis mockImageAnalysis = MockImageAnalysis();
+
+      // Configure mocks for camera initialization.
+      when(
+        mockProcessCameraProvider.bindToLifecycle(any, any),
+      ).thenAnswer((_) async => mockCamera);
+      when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
+      when(
+        mockCameraInfo.getCameraState(),
+      ).thenAnswer((_) async => mockLiveCameraState);
+      when(
+        mockPreview.getResolutionInfo(),
+      ).thenAnswer((_) async => testResolutionInfo);
+      when(
+        mockPreview.setSurfaceProvider(any),
+      ).thenAnswer((_) async => testSurfaceTextureId);
+      camera.processCameraProvider = mockProcessCameraProvider;
+
+      for (final ImageFormatGroup imageFormatGroup in ImageFormatGroup.values) {
+        // Get CameraX image format constant for imageFormatGroup.
+        final int? cameraXImageFormat = switch (imageFormatGroup) {
+          ImageFormatGroup.yuv420 =>
+            AndroidCameraCameraX.imageAnalysisOutputImageFormatYuv420_888,
+          ImageFormatGroup.nv21 =>
+            AndroidCameraCameraX.imageAnalysisOutputImageFormatNv21,
+          _ => null,
+        };
+        // Tell plugin to create mock/detached objects for testing createCamera
+        // as needed.
+        camera.proxy = getProxyForTestingResolutionPreset(
+          mockProcessCameraProvider,
+          newImageAnalysis:
+              ({
+                // ignore: non_constant_identifier_names
+                BinaryMessenger? pigeon_binaryMessenger,
+                // ignore: non_constant_identifier_names
+                PigeonInstanceManager? pigeon_instanceManager,
+                ResolutionSelector? resolutionSelector,
+                int? targetRotation,
+                int? outputImageFormat,
+              }) {
+                when(
+                  mockImageAnalysis.outputImageFormat,
+                ).thenReturn(cameraXImageFormat);
+                return mockImageAnalysis;
+              },
+          newPreview:
+              ({
+                // ignore: non_constant_identifier_names
+                BinaryMessenger? pigeon_binaryMessenger,
+                // ignore: non_constant_identifier_names
+                PigeonInstanceManager? pigeon_instanceManager,
+                ResolutionSelector? resolutionSelector,
+                int? targetRotation,
+              }) => mockPreview,
+        );
+
+        // Create and initialize camera.
+        await camera.createCameraWithSettings(
+          testCameraDescription,
+          const MediaSettings(enableAudio: enableAudio),
+        );
+        await camera.initializeCamera(testSurfaceTextureId);
+
+        // Test image format group is set as expected.
+        expect(mockImageAnalysis.outputImageFormat, cameraXImageFormat);
+      }
+    },
+  );
 
   test('initializeCamera sends expected CameraInitializedEvent', () async {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
