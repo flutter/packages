@@ -120,6 +120,10 @@ void main() {
           when(
             preview.surfaceProducerHandlesCropAndRotation(),
           ).thenAnswer((_) async => handlesCropAndRotation);
+          when(preview.getResolutionInfo()).thenAnswer(
+            (_) async =>
+                ResolutionInfo.pigeon_detached(resolution: MockCameraSize()),
+          );
           return preview;
         },
     newImageCapture:
@@ -525,10 +529,12 @@ void main() {
           final List<CameraDescription> availableCameras = await camera
               .availableCameras();
           expect(availableCameras.length, 1);
-          await camera.createCameraWithSettings(
-            availableCameras.first,
-            testMediaSettings,
-          );
+          final int flutterSurfaceTextureId = await camera
+              .createCameraWithSettings(
+                availableCameras.first,
+                testMediaSettings,
+              );
+          await camera.initializeCamera(flutterSurfaceTextureId);
 
           // Put camera preview in widget tree and pump one frame so that Future to retrieve
           // the initial default display rotation completes.
@@ -578,10 +584,12 @@ void main() {
           final List<CameraDescription> availableCameras = await camera
               .availableCameras();
           expect(availableCameras.length, 1);
-          await camera.createCameraWithSettings(
-            availableCameras.first,
-            testMediaSettings,
-          );
+          final int flutterSurfaceTextureId = await camera
+              .createCameraWithSettings(
+                availableCameras.first,
+                testMediaSettings,
+              );
+          await camera.initializeCamera(flutterSurfaceTextureId);
 
           // Put camera preview in widget tree and pump one frame so that Future to retrieve
           // the initial default display rotation completes.
@@ -629,10 +637,12 @@ void main() {
           final List<CameraDescription> availableCameras = await camera
               .availableCameras();
           expect(availableCameras.length, 1);
-          await camera.createCameraWithSettings(
-            availableCameras.first,
-            testMediaSettings,
-          );
+          final int flutterSurfaceTextureId = await camera
+              .createCameraWithSettings(
+                availableCameras.first,
+                testMediaSettings,
+              );
+          await camera.initializeCamera(flutterSurfaceTextureId);
 
           // Put camera preview in widget tree and pump one frame so that Future to retrieve
           // the initial default display rotation completes.
@@ -680,10 +690,12 @@ void main() {
           final List<CameraDescription> availableCameras = await camera
               .availableCameras();
           expect(availableCameras.length, 1);
-          await camera.createCameraWithSettings(
-            availableCameras.first,
-            testMediaSettings,
-          );
+          final int flutterSurfaceTextureId = await camera
+              .createCameraWithSettings(
+                availableCameras.first,
+                testMediaSettings,
+              );
+          await camera.initializeCamera(flutterSurfaceTextureId);
 
           // Put camera preview in widget tree and pump one frame so that Future to retrieve
           // the initial default display rotation completes.
@@ -772,10 +784,12 @@ void main() {
           final List<CameraDescription> availableCameras = await camera
               .availableCameras();
           expect(availableCameras.length, 1);
-          await camera.createCameraWithSettings(
-            availableCameras.first,
-            testMediaSettings,
-          );
+          final int flutterSurfaceTextureId = await camera
+              .createCameraWithSettings(
+                availableCameras.first,
+                testMediaSettings,
+              );
+          await camera.initializeCamera(flutterSurfaceTextureId);
 
           // Put camera preview in widget tree and pump one frame so that Future to retrieve
           // the initial default display rotation completes.
@@ -823,10 +837,12 @@ void main() {
           final List<CameraDescription> availableCameras = await camera
               .availableCameras();
           expect(availableCameras.length, 1);
-          await camera.createCameraWithSettings(
-            availableCameras.first,
-            testMediaSettings,
-          );
+          final int flutterSurfaceTextureId = await camera
+              .createCameraWithSettings(
+                availableCameras.first,
+                testMediaSettings,
+              );
+          await camera.initializeCamera(flutterSurfaceTextureId);
 
           // Put camera preview in widget tree and pump one frame so that Future to retrieve
           // the initial default display rotation completes.
@@ -874,10 +890,12 @@ void main() {
           final List<CameraDescription> availableCameras = await camera
               .availableCameras();
           expect(availableCameras.length, 1);
-          await camera.createCameraWithSettings(
-            availableCameras.first,
-            testMediaSettings,
-          );
+          final int flutterSurfaceTextureId = await camera
+              .createCameraWithSettings(
+                availableCameras.first,
+                testMediaSettings,
+              );
+          await camera.initializeCamera(flutterSurfaceTextureId);
 
           // Put camera preview in widget tree and pump one frame so that Future to retrieve
           // the initial default display rotation completes.
@@ -925,10 +943,12 @@ void main() {
           final List<CameraDescription> availableCameras = await camera
               .availableCameras();
           expect(availableCameras.length, 1);
-          await camera.createCameraWithSettings(
-            availableCameras.first,
-            testMediaSettings,
-          );
+          final int flutterSurfaceTextureId = await camera
+              .createCameraWithSettings(
+                availableCameras.first,
+                testMediaSettings,
+              );
+          await camera.initializeCamera(flutterSurfaceTextureId);
 
           // Put camera preview in widget tree and pump one frame so that Future to retrieve
           // the initial default display rotation completes.
@@ -1014,10 +1034,12 @@ void main() {
         final List<CameraDescription> availableCameras = await camera
             .availableCameras();
         expect(availableCameras.length, 1);
-        await camera.createCameraWithSettings(
-          availableCameras.first,
-          testMediaSettings,
-        );
+        final int flutterSurfaceTextureId = await camera
+            .createCameraWithSettings(
+              availableCameras.first,
+              testMediaSettings,
+            );
+        await camera.initializeCamera(flutterSurfaceTextureId);
 
         // Calculated according to: counterClockwiseCurrentDefaultDisplayRotation - cameraPreviewPreAppliedRotation,
         // where the cameraPreviewPreAppliedRotation is the clockwise rotation applied by the CameraPreview widget
@@ -1115,10 +1137,12 @@ void main() {
         final List<CameraDescription> availableCameras = await camera
             .availableCameras();
         expect(availableCameras.length, 1);
-        await camera.createCameraWithSettings(
-          availableCameras.first,
-          testMediaSettings,
-        );
+        final int flutterSurfaceTextureId = await camera
+            .createCameraWithSettings(
+              availableCameras.first,
+              testMediaSettings,
+            );
+        await camera.initializeCamera(flutterSurfaceTextureId);
 
         // Calculated according to: counterClockwiseCurrentDefaultDisplayRotation - cameraPreviewPreAppliedRotation,
         // where the cameraPreviewPreAppliedRotation is the clockwise rotation applied by the CameraPreview widget
@@ -1229,10 +1253,12 @@ void main() {
             final List<CameraDescription> availableCameras = await camera
                 .availableCameras();
             expect(availableCameras.length, 1);
-            await camera.createCameraWithSettings(
-              availableCameras.first,
-              testMediaSettings,
-            );
+            final int flutterSurfaceTextureId = await camera
+                .createCameraWithSettings(
+                  availableCameras.first,
+                  testMediaSettings,
+                );
+            await camera.initializeCamera(flutterSurfaceTextureId);
 
             // Put camera preview in widget tree and pump one frame so that Future to retrieve
             // the initial default display rotation completes.
@@ -1288,10 +1314,12 @@ void main() {
             final List<CameraDescription> availableCameras = await camera
                 .availableCameras();
             expect(availableCameras.length, 1);
-            await camera.createCameraWithSettings(
-              availableCameras.first,
-              testMediaSettings,
-            );
+            final int flutterSurfaceTextureId = await camera
+                .createCameraWithSettings(
+                  availableCameras.first,
+                  testMediaSettings,
+                );
+            await camera.initializeCamera(flutterSurfaceTextureId);
 
             // Put camera preview in widget tree and pump one frame so that Future to retrieve
             // the initial default display rotation completes.
@@ -1347,10 +1375,12 @@ void main() {
             final List<CameraDescription> availableCameras = await camera
                 .availableCameras();
             expect(availableCameras.length, 1);
-            await camera.createCameraWithSettings(
-              availableCameras.first,
-              testMediaSettings,
-            );
+            final int flutterSurfaceTextureId = await camera
+                .createCameraWithSettings(
+                  availableCameras.first,
+                  testMediaSettings,
+                );
+            await camera.initializeCamera(flutterSurfaceTextureId);
 
             // Put camera preview in widget tree and pump one frame so that Future to retrieve
             // the initial default display rotation completes.
@@ -1406,10 +1436,12 @@ void main() {
             final List<CameraDescription> availableCameras = await camera
                 .availableCameras();
             expect(availableCameras.length, 1);
-            await camera.createCameraWithSettings(
-              availableCameras.first,
-              testMediaSettings,
-            );
+            final int flutterSurfaceTextureId = await camera
+                .createCameraWithSettings(
+                  availableCameras.first,
+                  testMediaSettings,
+                );
+            await camera.initializeCamera(flutterSurfaceTextureId);
 
             // Put camera preview in widget tree and pump one frame so that Future to retrieve
             // the initial default display rotation completes.
@@ -1509,10 +1541,12 @@ void main() {
             final List<CameraDescription> availableCameras = await camera
                 .availableCameras();
             expect(availableCameras.length, 1);
-            await camera.createCameraWithSettings(
-              availableCameras.first,
-              testMediaSettings,
-            );
+            final int flutterSurfaceTextureId = await camera
+                .createCameraWithSettings(
+                  availableCameras.first,
+                  testMediaSettings,
+                );
+            await camera.initializeCamera(flutterSurfaceTextureId);
 
             // Put camera preview in widget tree and pump one frame so that Future to retrieve
             // the initial default display rotation completes.
@@ -1568,10 +1602,12 @@ void main() {
             final List<CameraDescription> availableCameras = await camera
                 .availableCameras();
             expect(availableCameras.length, 1);
-            await camera.createCameraWithSettings(
-              availableCameras.first,
-              testMediaSettings,
-            );
+            final int flutterSurfaceTextureId = await camera
+                .createCameraWithSettings(
+                  availableCameras.first,
+                  testMediaSettings,
+                );
+            await camera.initializeCamera(flutterSurfaceTextureId);
 
             // Put camera preview in widget tree and pump one frame so that Future to retrieve
             // the initial default display rotation completes.
@@ -1631,10 +1667,12 @@ void main() {
             final List<CameraDescription> availableCameras = await camera
                 .availableCameras();
             expect(availableCameras.length, 1);
-            await camera.createCameraWithSettings(
-              availableCameras.first,
-              testMediaSettings,
-            );
+            final int flutterSurfaceTextureId = await camera
+                .createCameraWithSettings(
+                  availableCameras.first,
+                  testMediaSettings,
+                );
+            await camera.initializeCamera(flutterSurfaceTextureId);
 
             // Put camera preview in widget tree and pump one frame so that Future to retrieve
             // the initial default display rotation completes.
@@ -1692,10 +1730,12 @@ void main() {
             final List<CameraDescription> availableCameras = await camera
                 .availableCameras();
             expect(availableCameras.length, 1);
-            await camera.createCameraWithSettings(
-              availableCameras.first,
-              testMediaSettings,
-            );
+            final int flutterSurfaceTextureId = await camera
+                .createCameraWithSettings(
+                  availableCameras.first,
+                  testMediaSettings,
+                );
+            await camera.initializeCamera(flutterSurfaceTextureId);
 
             // Put camera preview in widget tree and pump one frame so that Future to retrieve
             // the initial default display rotation completes.
@@ -1792,10 +1832,12 @@ void main() {
         final List<CameraDescription> availableCameras = await camera
             .availableCameras();
         expect(availableCameras.length, 1);
-        await camera.createCameraWithSettings(
-          availableCameras.first,
-          testMediaSettings,
-        );
+        final int flutterSurfaceTextureId = await camera
+            .createCameraWithSettings(
+              availableCameras.first,
+              testMediaSettings,
+            );
+        await camera.initializeCamera(flutterSurfaceTextureId);
 
         // Calculated according to: ((270 - counterClockwiseDefaultDisplayRotation * 1 + 360) % 360) - 90.
         // 90 is used in this calculation for the CameraPreview pre-applied rotation because it is the
@@ -1907,10 +1949,12 @@ void main() {
         final List<CameraDescription> availableCameras = await camera
             .availableCameras();
         expect(availableCameras.length, 1);
-        await camera.createCameraWithSettings(
-          availableCameras.first,
-          testMediaSettings,
-        );
+        final int flutterSurfaceTextureId = await camera
+            .createCameraWithSettings(
+              availableCameras.first,
+              testMediaSettings,
+            );
+        await camera.initializeCamera(flutterSurfaceTextureId);
 
         // Calculated according to: ((90 - 270 * 1 + 360) % 360) - cameraPreviewPreAppliedRotation.
         // 270 is used in this calculation for the device orientation because it is the
@@ -2041,10 +2085,12 @@ void main() {
             final List<CameraDescription> availableCameras = await camera
                 .availableCameras();
             expect(availableCameras.length, 1);
-            await camera.createCameraWithSettings(
-              availableCameras.first,
-              testMediaSettings,
-            );
+            final int flutterSurfaceTextureId = await camera
+                .createCameraWithSettings(
+                  availableCameras.first,
+                  testMediaSettings,
+                );
+            await camera.initializeCamera(flutterSurfaceTextureId);
 
             // Put camera preview in widget tree and pump one frame so that Future to retrieve
             // the initial default display rotation completes.
@@ -2099,10 +2145,12 @@ void main() {
             final List<CameraDescription> availableCameras = await camera
                 .availableCameras();
             expect(availableCameras.length, 1);
-            await camera.createCameraWithSettings(
-              availableCameras.first,
-              testMediaSettings,
-            );
+            final int flutterSurfaceTextureId = await camera
+                .createCameraWithSettings(
+                  availableCameras.first,
+                  testMediaSettings,
+                );
+            await camera.initializeCamera(flutterSurfaceTextureId);
 
             // Put camera preview in widget tree and pump one frame so that Future to retrieve
             // the initial default display rotation completes.
@@ -2194,10 +2242,12 @@ void main() {
             final List<CameraDescription> availableCameras = await camera
                 .availableCameras();
             expect(availableCameras.length, 1);
-            await camera.createCameraWithSettings(
-              availableCameras.first,
-              testMediaSettings,
-            );
+            final int flutterSurfaceTextureId = await camera
+                .createCameraWithSettings(
+                  availableCameras.first,
+                  testMediaSettings,
+                );
+            await camera.initializeCamera(flutterSurfaceTextureId);
 
             // Put camera preview in widget tree and pump one frame so that Future to retrieve
             // the initial default display rotation completes.
@@ -2272,10 +2322,12 @@ void main() {
             final List<CameraDescription> availableCameras = await camera
                 .availableCameras();
             expect(availableCameras.length, 1);
-            await camera.createCameraWithSettings(
-              availableCameras.first,
-              testMediaSettings,
-            );
+            final int flutterSurfaceTextureId = await camera
+                .createCameraWithSettings(
+                  availableCameras.first,
+                  testMediaSettings,
+                );
+            await camera.initializeCamera(flutterSurfaceTextureId);
 
             // Put camera preview in widget tree and pump one frame so that Future to retrieve
             // the initial default display rotation completes.
