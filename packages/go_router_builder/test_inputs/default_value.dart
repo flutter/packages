@@ -4,10 +4,10 @@
 
 import 'package:go_router/go_router.dart';
 
-mixin _$DefaultValueRoute {}
+mixin $DefaultValueRoute {}
 
 @TypedGoRoute<DefaultValueRoute>(path: '/default-value-route')
-class DefaultValueRoute extends GoRouteData with _$DefaultValueRoute {
+class DefaultValueRoute extends GoRouteData with $DefaultValueRoute {
   DefaultValueRoute({this.param = 0});
   final int param;
 }
