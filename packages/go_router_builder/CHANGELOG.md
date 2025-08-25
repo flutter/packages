@@ -1,3 +1,7 @@
+## 3.3.1
+
+- Fixes unnecessary whitespace in generated `RelativeGoRouteData`. 
+
 ## 3.3.0
 
 - Adds support for `TypedRelativeGoRoute`.
