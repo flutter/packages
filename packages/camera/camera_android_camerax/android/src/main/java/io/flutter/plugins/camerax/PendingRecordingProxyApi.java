@@ -29,8 +29,8 @@ class PendingRecordingProxyApi extends PigeonApiPendingRecording {
 
   @NonNull
   @Override
-  public PendingRecording asPersistentRecording(@NotNull PendingRecording pigeon_instance) {
-    return pigeon_instance.asPersistentRecording();
+  public PendingRecording asPersistentRecording(PendingRecording pigeonInstance) {
+    return pigeonInstance.asPersistentRecording();
   }
 
   @NonNull

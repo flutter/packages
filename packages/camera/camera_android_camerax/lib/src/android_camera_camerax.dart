@@ -928,15 +928,6 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     // Retrieve info required for correcting the rotation of the camera preview
     // if necessary.
-    final Camera2CameraInfo camera2CameraInfo = proxy.fromCamera2CameraInfo(
-      cameraInfo: cameraInfo!,
-    );
-    sensorOrientationDegrees =
-        ((await camera2CameraInfo.getCameraCharacteristic(
-          proxy.sensorOrientationCameraCharacteristics(),
-        ))!
-        as int)
-            .toDouble();
 
     sensorOrientationDegrees = description.sensorOrientation.toDouble();
     _handlesCropAndRotation = await preview!.surfaceProducerHandlesCropAndRotation();
