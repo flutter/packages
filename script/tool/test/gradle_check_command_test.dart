@@ -1044,6 +1044,35 @@ dependencies {
       );
     });
 
+    test('fails if set to a number with Flutter >=3.27', () async {
+      const String packageName = 'a_package';
+      final RepositoryPackage package = createFakePackage(
+          packageName, packagesDir,
+          isFlutter: true, flutterConstraint: '>=3.27.0');
+      writeFakePluginBuildGradle(package,
+          includeLanguageVersion: true, compileSdk: '35');
+      writeFakeManifest(package);
+      final RepositoryPackage example = package.getExamples().first;
+      writeFakeExampleBuildGradles(example, pluginName: packageName);
+      writeFakeManifest(example, isApp: true);
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['gradle-check'], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains(
+              'Please use flutter.compileSdkVersion instead of a hardcoded '
+              'compileSdk version number'),
+        ]),
+      );
+    });
+
     test('fails if set to flutter.compileSdkVersion with Flutter <3.27',
         () async {
       const String packageName = 'a_package';
