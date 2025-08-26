@@ -7,18 +7,15 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
 void main() {
-  testWidgets('GoRouter does not request focus if requestFocus is false',
-      (WidgetTester tester) async {
+  testWidgets('GoRouter does not request focus if requestFocus is false', (
+    WidgetTester tester,
+  ) async {
     final GlobalKey innerKey = GlobalKey();
     final FocusScopeNode focusNode = FocusScopeNode();
     final GoRouter router = GoRouter(
       initialLocation: '/',
       routes: <GoRoute>[
-        GoRoute(
-          path: '/',
-          name: 'home',
-          builder: (_, __) => const Text('A'),
-        ),
+        GoRoute(path: '/', name: 'home', builder: (_, __) => const Text('A')),
         GoRoute(
           path: '/second',
           name: 'second',
@@ -28,16 +25,14 @@ void main() {
       requestFocus: false,
     );
 
-    await tester.pumpWidget(Column(
-      children: <Widget>[
-        FocusScope(node: focusNode, child: Container()),
-        Expanded(
-          child: MaterialApp.router(
-            routerConfig: router,
-          ),
-        ),
-      ],
-    ));
+    await tester.pumpWidget(
+      Column(
+        children: <Widget>[
+          FocusScope(node: focusNode, child: Container()),
+          Expanded(child: MaterialApp.router(routerConfig: router)),
+        ],
+      ),
+    );
 
     expect(find.text('A'), findsOneWidget);
     expect(find.text('B', skipOffstage: false), findsNothing);

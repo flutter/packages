@@ -1,3 +1,24 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
+## 4.10.0
+
+* Adds support for the Payment Request API with `AndroidWebViewController.isWebViewFeatureSupported` and `AndroidWebViewController.setPaymentRequestEnabled`.
+
+## 4.9.1
+
+* Updates kotlin version to 2.2.0 to enable gradle 8.11 support.
+
+## 4.9.0
+
+* Adds support for `PlatformWebViewController.loadFileWithParams`.
+* Introduces `AndroidLoadFileParams`, a platform-specific extension of `LoadFileParams` for Android that adds support for `headers`.
+
+## 4.8.2
+
+* Bumps gradle from 8.9.0 to 8.11.1.
+
 ## 4.8.1
 
 * Updates `androidx.webkit` to 1.14.0.

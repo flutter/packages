@@ -471,9 +471,7 @@ class _ExitTransition extends StatelessWidget {
 /// between 0.0 and 1.0.
 class _FlippedCurveTween extends CurveTween {
   /// Creates a vertically flipped [CurveTween].
-  _FlippedCurveTween({
-    required super.curve,
-  });
+  _FlippedCurveTween({required super.curve});
 
   @override
   double transform(double t) => 1.0 - super.transform(t);

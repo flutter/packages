@@ -1,3 +1,12 @@
+## 0.4.0+9
+
+* Bumps `androidx.test:*` from 1.6.1 to 1.7.0.
+
+## 0.4.0+8
+
+* Bumps `com.google.guava:guava` from 33.3.1 to 33.4.8.
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
 ## 0.4.0+7
 
 * Removes obsolete code related to supporting SDK <21.

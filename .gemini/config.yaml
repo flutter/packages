@@ -11,3 +11,6 @@ code_review:
     # These tend to be verbose, and since we expect PR authors to clearly
     # describe their PRs this would be at best duplicative.
     summary: false
+ignore_patterns:
+  - .ci/flutter_master.version
+  - .ci/flutter_stable.version

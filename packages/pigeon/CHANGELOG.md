@@ -1,3 +1,12 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
+## 26.0.1
+
+* Improves documentation of `ProxyApi` annotation and internal Dart ProxyAPI helper functions.
+* Moves helper functions for generating Dart portion of ProxyAPIs.
+
 ## 26.0.0
 
 * **Breaking Change** [dart] Changes name of constructors used to create subclasses of ProxyApis to

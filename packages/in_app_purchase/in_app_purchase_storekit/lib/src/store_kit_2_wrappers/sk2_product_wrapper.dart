@@ -155,9 +155,13 @@ extension on SK2SubscriptionInfoMessage {
   SK2SubscriptionInfo convertFromPigeon() {
     return SK2SubscriptionInfo(
       subscriptionGroupID: subscriptionGroupID,
-      promotionalOffers: promotionalOffers
-          .map((SK2SubscriptionOfferMessage offer) => offer.convertFromPigeon())
-          .toList(),
+      promotionalOffers:
+          promotionalOffers
+              .map(
+                (SK2SubscriptionOfferMessage offer) =>
+                    offer.convertFromPigeon(),
+              )
+              .toList(),
       subscriptionPeriod: subscriptionPeriod.convertFromPigeon(),
     );
   }

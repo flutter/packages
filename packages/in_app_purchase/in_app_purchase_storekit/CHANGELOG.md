@@ -1,8 +1,13 @@
-## 0.4.4
+## 0.4.5
 
 * Adds a new case `.unverified` to enum `SK2ProductPurchaseResult`
 * Fixes the StoreKit2 implementation throwing `PlatformException`s instead of returning the corresponding 
 `SK2ProductPurchaseResult` when a purchase is cancelled / unverified / pending.
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
+## 0.4.4
+
+* Added support for specifying quantity in `SK2ProductPurchaseOptions` (consumable purchases on iOS).
 
 ## 0.4.3
 

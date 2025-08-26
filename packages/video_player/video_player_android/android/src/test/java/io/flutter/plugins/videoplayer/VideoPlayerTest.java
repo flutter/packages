@@ -95,7 +95,7 @@ public final class VideoPlayerTest {
     verify(mockExoPlayer).prepare();
 
     verify(mockExoPlayer).setAudioAttributes(attributesCaptor.capture(), eq(true));
-    assertEquals(attributesCaptor.getValue().contentType, C.AUDIO_CONTENT_TYPE_MOVIE);
+    assertEquals(C.AUDIO_CONTENT_TYPE_MOVIE, attributesCaptor.getValue().contentType);
 
     videoPlayer.dispose();
   }
@@ -108,7 +108,7 @@ public final class VideoPlayerTest {
     VideoPlayer videoPlayer = createVideoPlayer(options);
 
     verify(mockExoPlayer).setAudioAttributes(attributesCaptor.capture(), eq(false));
-    assertEquals(attributesCaptor.getValue().contentType, C.AUDIO_CONTENT_TYPE_MOVIE);
+    assertEquals(C.AUDIO_CONTENT_TYPE_MOVIE, attributesCaptor.getValue().contentType);
 
     videoPlayer.dispose();
   }
@@ -122,17 +122,6 @@ public final class VideoPlayerTest {
 
     videoPlayer.pause();
     verify(mockExoPlayer).pause();
-
-    videoPlayer.dispose();
-  }
-
-  @Test
-  public void sendsBufferingUpdatesOnDemand() {
-    VideoPlayer videoPlayer = createVideoPlayer();
-
-    when(mockExoPlayer.getBufferedPosition()).thenReturn(10L);
-    videoPlayer.sendBufferingUpdate();
-    verify(mockEvents).onBufferingUpdate(10L);
 
     videoPlayer.dispose();
   }
@@ -177,14 +166,29 @@ public final class VideoPlayerTest {
   }
 
   @Test
-  public void seekAndGetPosition() {
+  public void seekTo() {
     VideoPlayer videoPlayer = createVideoPlayer();
 
-    videoPlayer.seekTo(10);
+    videoPlayer.seekTo(10L);
     verify(mockExoPlayer).seekTo(10);
 
-    when(mockExoPlayer.getCurrentPosition()).thenReturn(20L);
-    assertEquals(20L, videoPlayer.getPosition());
+    videoPlayer.dispose();
+  }
+
+  @Test
+  public void getPlaybackState() {
+    VideoPlayer videoPlayer = createVideoPlayer();
+
+    final long playbackPosition = 20L;
+    final long bufferedPosition = 10L;
+    when(mockExoPlayer.getCurrentPosition()).thenReturn(playbackPosition);
+    when(mockExoPlayer.getBufferedPosition()).thenReturn(bufferedPosition);
+
+    final Messages.PlaybackState state = videoPlayer.getPlaybackState();
+    assertEquals(playbackPosition, state.getPlayPosition().longValue());
+    assertEquals(bufferedPosition, state.getBufferPosition().longValue());
+
+    videoPlayer.dispose();
   }
 
   @Test
