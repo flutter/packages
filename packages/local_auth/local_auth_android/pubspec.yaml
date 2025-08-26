@@ -35,3 +35,7 @@ topics:
   - authentication
   - biometrics
   - local-auth
+# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
+# See https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#changing-federated-plugins
+dependency_overrides:
+  local_auth_platform_interface: {path: ../../../packages/local_auth/local_auth_platform_interface}
