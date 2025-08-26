@@ -1,5 +1,6 @@
-## NEXT
+## 0.4.0+8
 
+* Bumps `com.google.guava:guava` from 33.3.1 to 33.4.8.
 * Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
 
 ## 0.4.0+7
