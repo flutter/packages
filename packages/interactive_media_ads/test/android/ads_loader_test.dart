@@ -47,8 +47,9 @@ void main() {
     });
 
     testWidgets('instantiate AndroidAdsLoader', (WidgetTester tester) async {
-      final AndroidAdDisplayContainer container =
-          await _pumpAdDisplayContainer(tester);
+      final AndroidAdDisplayContainer container = await _pumpAdDisplayContainer(
+        tester,
+      );
 
       final MockImaSdkSettings mockImaSdkSettings = MockImaSdkSettings();
       final MockImaSdkFactory mockSdkFactory = _mockImaSdkFactoryInstance(
@@ -69,10 +70,12 @@ void main() {
       );
 
       expect(await settings.nativeSettingsFuture, mockImaSdkSettings);
-      verify(mockSdkFactory.createAdsLoader(
-        mockImaSdkSettings,
-        container.adDisplayContainer,
-      ));
+      verify(
+        mockSdkFactory.createAdsLoader(
+          mockImaSdkSettings,
+          container.adDisplayContainer,
+        ),
+      );
     });
 
     testWidgets('contentComplete', (WidgetTester tester) async {
@@ -101,8 +104,9 @@ void main() {
     });
 
     testWidgets('requestAds', (WidgetTester tester) async {
-      final AndroidAdDisplayContainer container =
-          await _pumpAdDisplayContainer(tester);
+      final AndroidAdDisplayContainer container = await _pumpAdDisplayContainer(
+        tester,
+      );
 
       final MockAdsLoader mockAdsLoader = MockAdsLoader();
       final MockAdsRequest mockAdsRequest = MockAdsRequest();
@@ -112,8 +116,8 @@ void main() {
       );
 
       final InteractiveMediaAdsProxy proxy = InteractiveMediaAdsProxy(
-        newContentProgressProvider: () =>
-            ima.ContentProgressProvider.pigeon_detached(),
+        newContentProgressProvider:
+            () => ima.ContentProgressProvider.pigeon_detached(),
       );
 
       final AndroidAdsLoader adsLoader = AndroidAdsLoader(
@@ -130,8 +134,8 @@ void main() {
 
       final AndroidContentProgressProvider progressProvider =
           AndroidContentProgressProvider(
-        AndroidContentProgressProviderCreationParams(proxy: proxy),
-      );
+            AndroidContentProgressProviderCreationParams(proxy: proxy),
+          );
       await adsLoader.requestAds(
         PlatformAdsRequest.withAdTagUrl(
           adTagUrl: 'url',
@@ -166,8 +170,9 @@ void main() {
     });
 
     testWidgets('requestAds with adsResponse', (WidgetTester tester) async {
-      final AndroidAdDisplayContainer container =
-          await _pumpAdDisplayContainer(tester);
+      final AndroidAdDisplayContainer container = await _pumpAdDisplayContainer(
+        tester,
+      );
 
       final MockAdsLoader mockAdsLoader = MockAdsLoader();
       final MockAdsRequest mockAdsRequest = MockAdsRequest();
@@ -177,8 +182,8 @@ void main() {
       );
 
       final InteractiveMediaAdsProxy proxy = InteractiveMediaAdsProxy(
-        newContentProgressProvider: () =>
-            ima.ContentProgressProvider.pigeon_detached(),
+        newContentProgressProvider:
+            () => ima.ContentProgressProvider.pigeon_detached(),
       );
 
       final AndroidAdsLoader adsLoader = AndroidAdsLoader(
@@ -195,8 +200,8 @@ void main() {
 
       final AndroidContentProgressProvider progressProvider =
           AndroidContentProgressProvider(
-        AndroidContentProgressProviderCreationParams(proxy: proxy),
-      );
+            AndroidContentProgressProviderCreationParams(proxy: proxy),
+          );
       await adsLoader.requestAds(
         PlatformAdsRequest.withAdsResponse(
           adsResponse: 'url',
@@ -231,8 +236,9 @@ void main() {
     });
 
     testWidgets('onAdsLoaded', (WidgetTester tester) async {
-      final AndroidAdDisplayContainer container =
-          await _pumpAdDisplayContainer(tester);
+      final AndroidAdDisplayContainer container = await _pumpAdDisplayContainer(
+        tester,
+      );
 
       final MockAdsLoader mockAdsLoader = MockAdsLoader();
       final Completer<void> addEventListenerCompleter = Completer<void>();
@@ -241,17 +247,16 @@ void main() {
       });
       _mockImaSdkFactoryInstance(adsLoader: mockAdsLoader);
 
-      late final void Function(
-        ima.AdsLoadedListener,
-        ima.AdsManagerLoadedEvent,
-      ) onAdsManagerLoadedCallback;
+      late final void Function(ima.AdsLoadedListener, ima.AdsManagerLoadedEvent)
+      onAdsManagerLoadedCallback;
 
       final InteractiveMediaAdsProxy proxy = InteractiveMediaAdsProxy(
         newAdsLoadedListener: ({
           required void Function(
             ima.AdsLoadedListener,
             ima.AdsManagerLoadedEvent,
-          ) onAdsManagerLoaded,
+          )
+          onAdsManagerLoaded,
         }) {
           onAdsManagerLoadedCallback = onAdsManagerLoaded;
           return MockAdsLoadedListener();
@@ -283,8 +288,9 @@ void main() {
     });
 
     testWidgets('onAdError', (WidgetTester tester) async {
-      final AndroidAdDisplayContainer container =
-          await _pumpAdDisplayContainer(tester);
+      final AndroidAdDisplayContainer container = await _pumpAdDisplayContainer(
+        tester,
+      );
 
       final MockAdsLoader mockAdsLoader = MockAdsLoader();
       final Completer<void> addErrorListenerCompleter = Completer<void>();
@@ -293,20 +299,16 @@ void main() {
       });
       _mockImaSdkFactoryInstance(adsLoader: mockAdsLoader);
 
-      late final void Function(
-        ima.AdErrorListener,
-        ima.AdErrorEvent,
-      ) onAdErrorCallback;
+      late final void Function(ima.AdErrorListener, ima.AdErrorEvent)
+      onAdErrorCallback;
 
       final InteractiveMediaAdsProxy proxy = InteractiveMediaAdsProxy(
         newAdsLoadedListener: ({required dynamic onAdsManagerLoaded}) {
           return MockAdsLoadedListener();
         },
         newAdErrorListener: ({
-          required void Function(
-            ima.AdErrorListener,
-            ima.AdErrorEvent,
-          ) onAdError,
+          required void Function(ima.AdErrorListener, ima.AdErrorEvent)
+          onAdError,
         }) {
           onAdErrorCallback = onAdError;
           return MockAdErrorListener();
@@ -328,8 +330,9 @@ void main() {
       final MockAdErrorEvent mockErrorEvent = MockAdErrorEvent();
       final MockAdError mockError = MockAdError();
       when(mockError.errorType).thenReturn(ima.AdErrorType.load);
-      when(mockError.errorCode)
-          .thenReturn(ima.AdErrorCode.adsRequestNetworkError);
+      when(
+        mockError.errorCode,
+      ).thenReturn(ima.AdErrorCode.adsRequestNetworkError);
       when(mockError.message).thenReturn('error message');
       when(mockErrorEvent.error).thenReturn(mockError);
 
@@ -365,23 +368,18 @@ Future<AndroidAdDisplayContainer> _pumpAdDisplayContainer(
 }) async {
   final InteractiveMediaAdsProxy imaProxy = InteractiveMediaAdsProxy(
     newFrameLayout: () => MockFrameLayout(),
-    newVideoView: ({
-      required dynamic onError,
-      dynamic onPrepared,
-      dynamic onCompletion,
-    }) =>
-        MockVideoView(),
-    createAdDisplayContainerImaSdkFactory: (
-      _,
-      __,
-    ) async {
+    newVideoView:
+        ({
+          required dynamic onError,
+          dynamic onPrepared,
+          dynamic onCompletion,
+        }) => MockVideoView(),
+    createAdDisplayContainerImaSdkFactory: (_, __) async {
       return MockAdDisplayContainer();
     },
     newVideoAdPlayer: ({
-      required void Function(
-        ima.VideoAdPlayer,
-        ima.VideoAdPlayerCallback,
-      ) addCallback,
+      required void Function(ima.VideoAdPlayer, ima.VideoAdPlayerCallback)
+      addCallback,
       required dynamic loadAd,
       required dynamic pauseAd,
       required dynamic playAd,
@@ -431,14 +429,17 @@ Future<AndroidAdDisplayContainer> _pumpAdDisplayContainer(
     ),
   );
 
-  await tester.pumpWidget(Builder(
-    builder: (BuildContext context) => container.build(context),
-  ));
+  await tester.pumpWidget(
+    Builder(builder: (BuildContext context) => container.build(context)),
+  );
 
-  final void Function(int) onPlatformCreatedCallback = verify(
-          mockAndroidViewController
-              .addOnPlatformViewCreatedListener(captureAny))
-      .captured[0] as void Function(int);
+  final void Function(int) onPlatformCreatedCallback =
+      verify(
+            mockAndroidViewController.addOnPlatformViewCreatedListener(
+              captureAny,
+            ),
+          ).captured[0]
+          as void Function(int);
 
   onPlatformCreatedCallback(platformViewId);
 

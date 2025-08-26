@@ -8,12 +8,12 @@ To use `go_router_builder`, you need to have the following dependencies in
 ```yaml
 dependencies:
   # ...along with your other dependencies
-  go_router: ^16.0.0
+  go_router: ^16.2.0
 
 dev_dependencies:
   # ...along with your other dev-dependencies
   build_runner: ^2.6.0
-  go_router_builder: ^3.1.0
+  go_router_builder: ^3.3.0
 ```
 
 ### Source code
@@ -103,9 +103,7 @@ The tree of routes is defined as an attribute on each of the top-level routes:
 @TypedGoRoute<HomeRoute>(
   path: '/',
   routes: <TypedGoRoute<GoRouteData>>[
-    TypedGoRoute<FamilyRoute>(
-      path: 'family/:fid',
-    ),
+    TypedGoRoute<FamilyRoute>(path: 'family/:fid'),
   ],
 )
 class HomeRoute extends GoRouteData with _$HomeRoute {
@@ -200,8 +198,9 @@ a return value. The generated routes also follow this functionality.
 
 <?code-excerpt "example/lib/readme_excerpts.dart (awaitPush)"?>
 ```dart
-final bool? result =
-    await const FamilyRoute(fid: 'John').push<bool>(context);
+final bool? result = await const FamilyRoute(
+  fid: 'John',
+).push<bool>(context);
 ```
 
 ## Query parameters
@@ -376,10 +375,7 @@ class MyMaterialRouteWithKey extends GoRouteData with _$MyMaterialRouteWithKey {
   static const LocalKey _key = ValueKey<String>('my-route-with-key');
   @override
   MaterialPage<void> buildPage(BuildContext context, GoRouterState state) {
-    return const MaterialPage<void>(
-      key: _key,
-      child: MyPage(),
-    );
+    return const MaterialPage<void>(key: _key, child: MyPage());
   }
 }
 ```
@@ -398,12 +394,17 @@ class FancyRoute extends GoRouteData with _$FancyRoute {
     GoRouterState state,
   ) {
     return CustomTransitionPage<void>(
-        key: state.pageKey,
-        child: const MyPage(),
-        transitionsBuilder: (BuildContext context, Animation<double> animation,
-            Animation<double> secondaryAnimation, Widget child) {
-          return RotationTransition(turns: animation, child: child);
-        });
+      key: state.pageKey,
+      child: const MyPage(),
+      transitionsBuilder: (
+        BuildContext context,
+        Animation<double> animation,
+        Animation<double> secondaryAnimation,
+        Widget child,
+      ) {
+        return RotationTransition(turns: animation, child: child);
+      },
+    );
   }
 }
 ```
@@ -449,9 +450,36 @@ class MyGoRouteData extends GoRouteData with _$MyGoRouteData {
   @override
   Widget build(BuildContext context, GoRouterState state) => const MyPage();
 }
+
 ```
 
 An example is available [here](https://github.com/flutter/packages/blob/main/packages/go_router_builder/example/lib/shell_route_with_keys_example.dart).
+
+## Relative routes
+
+Relative routes allow reusing the same `RouteData` in different parts of the route tree.
+Define a relative route by extending `RelativeGoRouteData`.
+
+<?code-excerpt "example/lib/readme_excerpts.dart (relativeRoute)"?>
+```dart
+@TypedRelativeGoRoute<DetailsRoute>(path: 'details')
+class DetailsRoute extends RelativeGoRouteData with _$DetailsRoute {
+  const DetailsRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const DetailsScreen();
+}
+```
+
+Navigate using the `goRelative` or `pushRelative` methods provided by the code generator:
+
+<?code-excerpt "example/lib/readme_excerpts.dart (goRelative)"?>
+```dart
+void onTapRelative() => const DetailsRoute().goRelative(context);
+```
+
+Relative routing methods are not idempotent and will cause an error when the relative location does not match a route.
 
 ## Run tests
 

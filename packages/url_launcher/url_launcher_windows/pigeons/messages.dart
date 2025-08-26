@@ -4,13 +4,15 @@
 
 import 'package:pigeon/pigeon.dart';
 
-@ConfigurePigeon(PigeonOptions(
-  dartOut: 'lib/src/messages.g.dart',
-  cppOptions: CppOptions(namespace: 'url_launcher_windows'),
-  cppHeaderOut: 'windows/messages.g.h',
-  cppSourceOut: 'windows/messages.g.cpp',
-  copyrightHeader: 'pigeons/copyright.txt',
-))
+@ConfigurePigeon(
+  PigeonOptions(
+    dartOut: 'lib/src/messages.g.dart',
+    cppOptions: CppOptions(namespace: 'url_launcher_windows'),
+    cppHeaderOut: 'windows/messages.g.h',
+    cppSourceOut: 'windows/messages.g.cpp',
+    copyrightHeader: 'pigeons/copyright.txt',
+  ),
+)
 @HostApi(dartHostTestHandler: 'TestUrlLauncherApi')
 abstract class UrlLauncherApi {
   bool canLaunchUrl(String url);

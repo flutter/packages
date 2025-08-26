@@ -1,3 +1,20 @@
+## 0.2.6+5
+
+* Fixes Android `IllegalStateException` from `MediaPlayer` by releasing resources on
+  `VideoAdPlayer.release`.
+* Fixes `_startAdProgressTracking` error caused by race condition.
+
+## 0.2.6+4
+
+* Adds internal wrappers for iOS native `IMAAd` and `IMAUniversalAdID`.
+* Updates internal wrapper for iOS native `IMAAdEvent`.
+* Updates internal wrapper for Android native `AdEvent`.
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
+## 0.2.6+3
+
+* Updates `README` with information about enabling desugaring on Android.
+
 ## 0.2.6+2
 
 * Updates kotlin version to 2.2.0 to enable gradle 8.11 support.

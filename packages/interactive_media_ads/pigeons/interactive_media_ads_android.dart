@@ -17,7 +17,6 @@ import 'package:pigeon/pigeon.dart';
     ),
   ),
 )
-
 /// The types of error that can be encountered.
 ///
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdError.AdErrorCode.html.
@@ -485,7 +484,7 @@ abstract class BaseManager {
 
 /// Event to notify publisher that an event occurred with an Ad.
 ///
-/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdEvent.html.
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/kotlin/com/google/ads/interactivemedia/v3/api/AdEvent.
 @ProxyApi(
   kotlinOptions: KotlinProxyApiOptions(
     fullClassName: 'com.google.ads.interactivemedia.v3.api.AdEvent',
@@ -497,6 +496,9 @@ abstract class AdEvent {
 
   /// A map containing any extra ad data for the event, if needed.
   late final Map<String, String>? adData;
+
+  /// The ad with which this event is associated.
+  late final Ad? ad;
 }
 
 /// Factory class for creating SDK objects.
@@ -682,9 +684,7 @@ abstract class FrameLayout extends ViewGroup {
 ///
 /// See https://developer.android.com/reference/android/view/ViewGroup.
 @ProxyApi(
-  kotlinOptions: KotlinProxyApiOptions(
-    fullClassName: 'android.view.ViewGroup',
-  ),
+  kotlinOptions: KotlinProxyApiOptions(fullClassName: 'android.view.ViewGroup'),
 )
 abstract class ViewGroup extends View {
   /// Adds a child view.
@@ -824,6 +824,7 @@ abstract class VideoAdPlayer {
   late final void Function(AdMediaInfo adMediaInfo, AdPodInfo adPodInfo) loadAd;
 
   /// Pauses playing the current ad.
+  @async
   late final void Function(AdMediaInfo adMediaInfo) pauseAd;
 
   /// Starts or resumes playing the video ad referenced by the AdMediaInfo,

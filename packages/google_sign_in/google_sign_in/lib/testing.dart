@@ -94,11 +94,11 @@ class FakeUser {
   final String? accessToken;
 
   Map<String, String?> get _asMap => <String, String?>{
-        'id': id,
-        'email': email,
-        'displayName': displayName,
-        'photoUrl': photoUrl,
-        'serverAuthCode': serverAuthCode,
-        'idToken': idToken,
-      };
+    'id': id,
+    'email': email,
+    'displayName': displayName,
+    'photoUrl': photoUrl,
+    'serverAuthCode': serverAuthCode,
+    'idToken': idToken,
+  };
 }

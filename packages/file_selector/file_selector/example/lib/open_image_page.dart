@@ -19,8 +19,9 @@ class OpenImagePage extends StatelessWidget {
       label: 'images',
       extensions: <String>['jpg', 'png'],
     );
-    final XFile? file =
-        await openFile(acceptedTypeGroups: <XTypeGroup>[typeGroup]);
+    final XFile? file = await openFile(
+      acceptedTypeGroups: <XTypeGroup>[typeGroup],
+    );
     // #enddocregion SingleOpen
     if (file == null) {
       // Operation was canceled by the user.
@@ -40,9 +41,7 @@ class OpenImagePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Open an image'),
-      ),
+      appBar: AppBar(title: const Text('Open an image')),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

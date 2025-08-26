@@ -109,12 +109,7 @@ abstract class StructuredGenerator<T extends InternalOptions>
       dartPackageName: dartPackageName,
     );
 
-    writeApis(
-      generatorOptions,
-      root,
-      indent,
-      dartPackageName: dartPackageName,
-    );
+    writeApis(generatorOptions, root, indent, dartPackageName: dartPackageName);
 
     writeCloseNamespace(
       generatorOptions,
@@ -352,11 +347,7 @@ abstract class StructuredGenerator<T extends InternalOptions>
   /// an `InstanceManager`. The write implementation should convert an instance
   /// to an identifier. The read implementation should covert the identifier
   /// to an instance.
-  void writeProxyApiBaseCodec(
-    T generatorOptions,
-    Root root,
-    Indent indent,
-  ) {}
+  void writeProxyApiBaseCodec(T generatorOptions, Root root, Indent indent) {}
 
   /// Writes a single Proxy Api to [indent].
   void writeProxyApi(

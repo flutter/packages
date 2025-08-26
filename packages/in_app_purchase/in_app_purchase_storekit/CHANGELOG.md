@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
 ## 0.4.4
 
 * Added support for specifying quantity in `SK2ProductPurchaseOptions` (consumable purchases on iOS).

@@ -54,45 +54,27 @@ class _BooksScreenState extends State<BooksScreen>
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(
-          title: const Text('Books'),
-          bottom: TabBar(
-            controller: _tabController,
-            onTap: _handleTabTapped,
-            tabs: const <Tab>[
-              Tab(
-                text: 'Popular',
-                icon: Icon(Icons.people),
-              ),
-              Tab(
-                text: 'New',
-                icon: Icon(Icons.new_releases),
-              ),
-              Tab(
-                text: 'All',
-                icon: Icon(Icons.list),
-              ),
-            ],
-          ),
-        ),
-        body: TabBarView(
-          controller: _tabController,
-          children: <Widget>[
-            BookList(
-              books: libraryInstance.popularBooks,
-              onTap: _handleBookTapped,
-            ),
-            BookList(
-              books: libraryInstance.newBooks,
-              onTap: _handleBookTapped,
-            ),
-            BookList(
-              books: libraryInstance.allBooks,
-              onTap: _handleBookTapped,
-            ),
-          ],
-        ),
-      );
+    appBar: AppBar(
+      title: const Text('Books'),
+      bottom: TabBar(
+        controller: _tabController,
+        onTap: _handleTabTapped,
+        tabs: const <Tab>[
+          Tab(text: 'Popular', icon: Icon(Icons.people)),
+          Tab(text: 'New', icon: Icon(Icons.new_releases)),
+          Tab(text: 'All', icon: Icon(Icons.list)),
+        ],
+      ),
+    ),
+    body: TabBarView(
+      controller: _tabController,
+      children: <Widget>[
+        BookList(books: libraryInstance.popularBooks, onTap: _handleBookTapped),
+        BookList(books: libraryInstance.newBooks, onTap: _handleBookTapped),
+        BookList(books: libraryInstance.allBooks, onTap: _handleBookTapped),
+      ],
+    ),
+  );
 
   void _handleBookTapped(Book book) {
     context.go('/book/${book.id}');

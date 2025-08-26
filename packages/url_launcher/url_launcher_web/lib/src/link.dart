@@ -111,9 +111,7 @@ class WebLinkDelegateState extends State<WebLinkDelegate> {
       fit: StackFit.passthrough,
       children: <Widget>[
         _buildChild(context),
-        Positioned.fill(
-          child: _buildPlatformView(context),
-        ),
+        Positioned.fill(child: _buildPlatformView(context)),
       ],
     );
   }
@@ -137,18 +135,22 @@ class WebLinkDelegateState extends State<WebLinkDelegate> {
         child: PlatformViewLink(
           viewType: linkViewType,
           onCreatePlatformView: (PlatformViewCreationParams params) {
-            _controller =
-                LinkViewController.fromParams(params, _semanticsIdentifier);
+            _controller = LinkViewController.fromParams(
+              params,
+              _semanticsIdentifier,
+            );
             return _controller
               ..setUri(widget.link.uri)
               ..setTarget(widget.link.target);
           },
-          surfaceFactory:
-              (BuildContext context, PlatformViewController controller) {
+          surfaceFactory: (
+            BuildContext context,
+            PlatformViewController controller,
+          ) {
             return PlatformViewSurface(
               controller: controller,
-              gestureRecognizers: const <Factory<
-                  OneSequenceGestureRecognizer>>{},
+              gestureRecognizers:
+                  const <Factory<OneSequenceGestureRecognizer>>{},
               hitTestBehavior: PlatformViewHitTestBehavior.transparent,
             );
           },
@@ -161,8 +163,8 @@ class WebLinkDelegateState extends State<WebLinkDelegate> {
 final JSAny _useCapture = <String, Object>{'capture': true}.jsify()!;
 
 /// Signature for the function that triggers a link.
-typedef TriggerLinkCallback = void Function(
-    int viewId, html.MouseEvent? mouseEvent);
+typedef TriggerLinkCallback =
+    void Function(int viewId, html.MouseEvent? mouseEvent);
 
 /// Keeps track of the signals required to trigger a link.
 ///
@@ -185,10 +187,7 @@ typedef TriggerLinkCallback = void Function(
 class LinkTriggerSignals {
   /// Creates a [LinkTriggerSignals] instance that calls [triggerLink] when all
   /// the signals are received within a [staleTimeout] duration.
-  LinkTriggerSignals({
-    required this.triggerLink,
-    required this.staleTimeout,
-  });
+  LinkTriggerSignals({required this.triggerLink, required this.staleTimeout});
 
   /// The function to be called when all signals have been received and the link
   /// is ready to be triggered.
@@ -350,8 +349,10 @@ class LinkViewController extends PlatformViewController {
     String semanticsIdentifier,
   ) {
     final int viewId = params.id;
-    final LinkViewController controller =
-        LinkViewController(viewId, semanticsIdentifier);
+    final LinkViewController controller = LinkViewController(
+      viewId,
+      semanticsIdentifier,
+    );
     controller._initialize().then((_) {
       /// Because _initialize is async, it can happen that [LinkViewController.dispose]
       /// may get called before this `then` callback.
@@ -465,10 +466,7 @@ class LinkViewController extends PlatformViewController {
   }
 
   static void _onGlobalClick(html.MouseEvent event) {
-    handleGlobalClick(
-      event: event,
-      target: event.target as html.Element?,
-    );
+    handleGlobalClick(event: event, target: event.target as html.Element?);
   }
 
   /// Global click handler that's called for every click event on the window.
@@ -492,10 +490,7 @@ class LinkViewController extends PlatformViewController {
       return;
     }
 
-    _triggerSignals.onMouseEvent(
-      viewId: viewIdFromTarget,
-      mouseEvent: event,
-    );
+    _triggerSignals.onMouseEvent(viewId: viewIdFromTarget, mouseEvent: event);
 
     _triggerSignals.triggerLinkIfReady();
   }
@@ -630,8 +625,9 @@ class LinkViewController extends PlatformViewController {
       return null;
     }
 
-    final String? semanticsIdentifier =
-        semanticsLink.getAttribute('flt-semantics-identifier');
+    final String? semanticsIdentifier = semanticsLink.getAttribute(
+      'flt-semantics-identifier',
+    );
     if (semanticsIdentifier == null) {
       return null;
     }

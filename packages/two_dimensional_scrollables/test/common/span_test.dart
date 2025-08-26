@@ -145,9 +145,7 @@ void main() {
   });
 
   test('SpanDecoration', () {
-    SpanDecoration decoration = const SpanDecoration(
-      color: Color(0xffff0000),
-    );
+    SpanDecoration decoration = const SpanDecoration(color: Color(0xffff0000));
     final TestCanvas canvas = TestCanvas();
     const Rect rect = Rect.fromLTWH(0, 0, 10, 10);
     final SpanDecorationPaintDetails details = SpanDecorationPaintDetails(
@@ -160,13 +158,8 @@ void main() {
     expect(canvas.rect, rect);
     expect(canvas.paint.color, const Color(0xffff0000));
     expect(canvas.paint.isAntiAlias, isFalse);
-    final TestSpanBorder border = TestSpanBorder(
-      leading: const BorderSide(),
-    );
-    decoration = SpanDecoration(
-      border: border,
-      borderRadius: radius,
-    );
+    final TestSpanBorder border = TestSpanBorder(leading: const BorderSide());
+    decoration = SpanDecoration(border: border, borderRadius: radius);
     decoration.paint(details);
     expect(border.details, details);
     expect(border.radius, radius);

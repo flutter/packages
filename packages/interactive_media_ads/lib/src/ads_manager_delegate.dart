@@ -36,11 +36,11 @@ class AdsManagerDelegate {
     void Function(AdEvent event)? onAdEvent,
     void Function(AdErrorEvent event)? onAdErrorEvent,
   }) : this.fromPlatformCreationParams(
-          PlatformAdsManagerDelegateCreationParams(
-            onAdEvent: onAdEvent,
-            onAdErrorEvent: onAdErrorEvent,
-          ),
-        );
+         PlatformAdsManagerDelegateCreationParams(
+           onAdEvent: onAdEvent,
+           onAdErrorEvent: onAdErrorEvent,
+         ),
+       );
 
   /// Constructs an [AdsManagerDelegate] from creation params for a specific platform.
   ///
