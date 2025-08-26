@@ -230,7 +230,7 @@ class _PigeonFfiCodec {
       return convertNSNumberWrapperToDart(
           ffi_bridge.NSNumberWrapper.castFrom(value));
     } else if (ffi_bridge.BasicClass.isInstance(value)) {
-      return BasicClass.fromFfi(value as ffi_bridge.BasicClass);
+      return BasicClass.fromFfi(ffi_bridge.BasicClass.castFrom(value));
     } else if (value is ffi_bridge.JniAnEnum) {
       return JniAnEnum.fromFfi(value as ffi_bridge.JniAnEnum);
     } else {
@@ -245,6 +245,9 @@ class _PigeonFfiCodec {
         value is double ||
         value is int ||
         value is Enum) {
+      if (T != NSNumber) {
+        return convertNSNumberWrapperToFfi(value) as T;
+      }
       if (value is bool) {
         return NSNumber.alloc().initWithLong(value ? 1 : 0) as T;
       }

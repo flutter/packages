@@ -2726,7 +2726,7 @@ class _PigeonFfiCodec {
       final _FfiType ffiType = _FfiType.fromClass(dataClass);
       return '''
       } else if (${ffiType.ffiName}.isInstance(value)) {
-        return ${ffiType.type.baseName}.fromFfi(value as ${ffiType.ffiName});
+        return ${ffiType.type.baseName}.fromFfi(${ffiType.ffiName}.castFrom(value));
         ''';
     }).join()}
     ${root.enums.map((Enum enumDefinition) {
@@ -2745,6 +2745,9 @@ class _PigeonFfiCodec {
     if (value == null) {
       return null as T;
     } else if (value is bool || value is double || value is int || value is Enum) {
+      if (T != NSNumber) {
+        return convertNSNumberWrapperToFfi(value) as T;
+      }
       if (value is bool) {
         return NSNumber.alloc().initWithLong(value ? 1 : 0) as T;
       }

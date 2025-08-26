@@ -400,6 +400,22 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       const Object sentInt = regularInt;
       final Object receivedInt = api.echoObject(sentInt);
       expect(receivedInt, sentInt);
+
+      const int sentBigInt = biggerThanBigInt;
+      final Object receivedBigInt = api.echoObject(sentBigInt);
+      expect(receivedBigInt, sentBigInt);
+
+      const double sentDouble = 2.0694;
+      final Object receivedDouble = api.echoObject(sentDouble);
+      expect(receivedDouble, sentDouble);
+
+      for (final bool sentBool in <bool>[true, false]) {
+        final Object receivedBool = api.echoObject(sentBool);
+        expect(receivedBool, sentBool);
+      }
+      final BasicClass basicClass = BasicClass(anInt: 1, aString: '1');
+      final Object receivedClass = api.echoObject(basicClass);
+      expect(receivedClass, basicClass);
     });
 
     // testWidgets('lists serialize and deserialize correctly',
