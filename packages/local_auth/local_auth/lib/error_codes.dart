@@ -28,8 +28,8 @@ const String permanentlyLockedOut = 'PermanentlyLockedOut';
 /// Indicates that the biometricOnly parameter can't be true on Windows
 const String biometricOnlyNotSupported = 'biometricOnlyNotSupported';
 
-/// Indicates that the user cancels the prompt on iOS.
+/// Indicates that the user cancels the prompt on iOS or macOS.
 const String userCancelled = 'UserCancelled';
 
-/// Indicates that the user selects the fallback option on iOS.
+/// Indicates that the user selects the fallback option on iOS or macOS.
 const String userFallback = 'UserFallback';
