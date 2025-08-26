@@ -77,7 +77,7 @@ dependencies {
     implementation "androidx.camera:camera-camera2:${camerax_version}"
     implementation "androidx.camera:camera-lifecycle:${camerax_version}"
     implementation "androidx.camera:camera-video:${camerax_version}"
-    implementation 'com.google.guava:guava:33.4.0-android'
+    implementation 'com.google.guava:guava:33.4.8-android'
     testImplementation 'junit:junit:4.13.2'
     testImplementation "org.mockito:mockito-core:5.19.0"
     testImplementation 'org.mockito:mockito-inline:5.2.0'
