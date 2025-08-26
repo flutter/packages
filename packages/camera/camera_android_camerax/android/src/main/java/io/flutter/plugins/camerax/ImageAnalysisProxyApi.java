@@ -33,7 +33,6 @@ class ImageAnalysisProxyApi extends PigeonApiImageAnalysis {
     }
 
     if (outputImageFormat != null) {
-      // This sets the output image format, if supported.
       builder.setOutputImageFormat(outputImageFormat.intValue());
     }
     return builder.build();

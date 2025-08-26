@@ -114,9 +114,9 @@ void main() {
     return cameraClosingEventSent && cameraErrorSent;
   }
 
-  /// CameraXProxy for testing functionality related to the camera resolution
-  /// preset (setting expected ResolutionSelectors, QualitySelectors, etc.).
-  CameraXProxy getProxyForTestingResolutionPreset(
+  /// CameraXProxy for testing functionality related to the configuration
+  /// of CameraX UseCases.
+  CameraXProxy getProxyForTestingUseCaseConfiguration(
     MockProcessCameraProvider mockProcessCameraProvider, {
     ResolutionFilter Function({
       required CameraSize preferredSize,
@@ -1134,7 +1134,7 @@ void main() {
 
       // Tell plugin to create mock/detached objects for testing createCamera
       // as needed.
-      camera.proxy = getProxyForTestingResolutionPreset(
+      camera.proxy = getProxyForTestingUseCaseConfiguration(
         mockProcessCameraProvider,
       );
 
@@ -1282,7 +1282,7 @@ void main() {
       // Tell plugin to create mock/detached objects for testing createCamera
       // as needed.
       CameraSize? lastSetPreferredSize;
-      camera.proxy = getProxyForTestingResolutionPreset(
+      camera.proxy = getProxyForTestingUseCaseConfiguration(
         mockProcessCameraProvider,
         createWithOnePreferredSizeResolutionFilter:
             ({
@@ -1441,7 +1441,7 @@ void main() {
 
       // Tell plugin to create mock/detached objects for testing createCamera
       // as needed.
-      camera.proxy = getProxyForTestingResolutionPreset(
+      camera.proxy = getProxyForTestingUseCaseConfiguration(
         mockProcessCameraProvider,
       );
       when(
@@ -1892,7 +1892,7 @@ void main() {
       FallbackStrategy? setFallbackStrategy;
       final MockFallbackStrategy mockFallbackStrategy = MockFallbackStrategy();
       final MockQualitySelector mockQualitySelector = MockQualitySelector();
-      camera.proxy = getProxyForTestingResolutionPreset(
+      camera.proxy = getProxyForTestingUseCaseConfiguration(
         mockProcessCameraProvider,
         lowerQualityOrHigherThanFallbackStrategy:
             ({
@@ -1998,7 +1998,7 @@ void main() {
       // The proxy needed for this test is the same as testing resolution
       // presets except for mocking the retrieval of the sensor and current
       // UI orientation.
-      camera.proxy = getProxyForTestingResolutionPreset(
+      camera.proxy = getProxyForTestingUseCaseConfiguration(
         mockProcessCameraProvider,
         newPreview:
             ({
@@ -2476,7 +2476,7 @@ void main() {
 
     // Tell plugin to create mock/detached objects for testing createCamera
     // as needed.
-    camera.proxy = getProxyForTestingResolutionPreset(
+    camera.proxy = getProxyForTestingUseCaseConfiguration(
       mockProcessCameraProvider,
       newPreview:
           ({
@@ -2562,7 +2562,7 @@ void main() {
         };
         // Tell plugin to create mock/detached objects for testing createCamera
         // as needed.
-        camera.proxy = getProxyForTestingResolutionPreset(
+        camera.proxy = getProxyForTestingUseCaseConfiguration(
           mockProcessCameraProvider,
           newImageAnalysis:
               ({
