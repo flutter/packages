@@ -55,7 +55,7 @@ android {
         testImplementation 'org.jetbrains.kotlin:kotlin-test'
         testImplementation "org.mockito.kotlin:mockito-kotlin:5.4.0"
         testImplementation 'org.mockito:mockito-inline:5.2.0'
-        testImplementation 'androidx.test:core:1.6.1'
+        testImplementation 'androidx.test:core:1.7.0'
     }
 
     lintOptions {
