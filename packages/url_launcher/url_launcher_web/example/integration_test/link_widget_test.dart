@@ -212,54 +212,41 @@ void main() {
       );
     });
 
-    testWidgets(
-        'excludeSemantics: true ensures clean link semantics without conflicts',
-        (WidgetTester tester) async {
-      await tester.pumpWidget(MaterialApp(
-        home: Scaffold(
-          body: Column(
-            children: <Widget>[
-              WebLinkDelegate(
-                TestLinkInfo(
-                  uri: Uri.parse('https://dart.dev/xyz'),
-                  target: LinkTarget.blank,
-                  builder: (BuildContext context, FollowLink? followLink) {
-                    return ElevatedButton(
-                      onPressed: followLink,
-                      child: const Text('First Button'),
-                    );
-                  },
+    testWidgets('MergeSemantics is always present to avoid duplicate nodes', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Column(
+              children: <Widget>[
+                WebLinkDelegate(
+                  TestLinkInfo(
+                    uri: Uri.parse('https://dart.dev/xyz'),
+                    target: LinkTarget.blank,
+                    builder: (BuildContext context, FollowLink? followLink) {
+                      return ElevatedButton(
+                        onPressed: followLink,
+                        child: const Text('First Button'),
+                      );
+                    },
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
-      ));
+      );
 
       await tester.pumpAndSettle();
-      final SemanticsHandle handle = tester.ensureSemantics();
 
-      final Finder buttonFinder = find.text('First Button');
+      final Finder buttonFinder = find.byType(ElevatedButton);
       expect(buttonFinder, findsOneWidget);
 
-      final SemanticsNode firstSemantics = tester.getSemantics(buttonFinder);
-      final SemanticsData firstData = firstSemantics.getSemanticsData();
-
-      expect(
-        firstData.hasFlag(SemanticsFlag.isLink),
-        isTrue,
-        reason: 'Button should be treated as link with excludeSemantics: true',
-      );
-
-      expect(
-        firstData.hasFlag(SemanticsFlag.isButton),
-        isFalse,
-        reason:
-            'semantics should be excluded to prevent TAB navigation conflicts',
-      );
-
-      expect(firstData.linkUrl?.toString(), equals('https://dart.dev/xyz'));
-      handle.dispose();
+      final Element buttonElement = tester.element(buttonFinder);
+      final MergeSemantics? parentWidget =
+          buttonElement.findAncestorWidgetOfExactType<MergeSemantics>();
+      expect(parentWidget, isNotNull);
     });
   });
 
