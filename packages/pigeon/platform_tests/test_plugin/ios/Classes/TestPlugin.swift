@@ -1216,7 +1216,6 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
 }
 
 class JniTestsClass: NSObject, JniHostIntegrationCoreApi {
-
   func noop() {
     return
   }
@@ -1243,6 +1242,9 @@ class JniTestsClass: NSObject, JniHostIntegrationCoreApi {
 
   func echoEnum(anEnum: JniAnEnum) throws -> JniAnEnum {
     return anEnum
+  }
+  func echoObject(anObject: Any) throws -> Any {
+    return anObject
   }
 
 }

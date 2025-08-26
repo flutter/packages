@@ -55,6 +55,7 @@ import 'package:swiftgen/swiftgen.dart';
     indent.writeScoped('Future<void> main() async {', '}', () {
       indent.writeScoped('final List<String> classes = <String>[', '];', () {
         indent.inc();
+        indent.writeln("'NSNumberWrapper',");
         for (final Api api in root.apis) {
           if (api is AstHostApi || api is AstFlutterApi) {
             indent.writeln("'${api.name}',");

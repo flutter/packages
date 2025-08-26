@@ -358,14 +358,14 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(receivedString, sentString);
     });
 
-    // testWidgets('basicClass serialize and deserialize correctly',
-    //     (WidgetTester _) async {
-    //   final JniHostIntegrationCoreApiForNativeInterop? api =
-    //       JniHostIntegrationCoreApiForNativeInterop.getInstance();
-    //   final BasicClass basicClass = BasicClass(anInt: 1, aString: '1');
-    //   final BasicClass receivedString = api!.echoBasicClass(basicClass);
-    //   expect(receivedString, basicClass);
-    // });
+    testWidgets('basicClass serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final JniHostIntegrationCoreApiForNativeInterop? api =
+          JniHostIntegrationCoreApiForNativeInterop.getInstance();
+      final BasicClass basicClass = BasicClass(anInt: 1, aString: '1');
+      final BasicClass receivedString = api!.echoBasicClass(basicClass);
+      expect(receivedString, basicClass);
+    });
 
 //     testWidgets('Uint8List serialize and deserialize correctly',
 //         (WidgetTester _) async {
@@ -388,19 +388,19 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 //       expect(receivedUint8List, sentUint8List);
 //     });
 
-    // testWidgets('generic Objects serialize and deserialize correctly',
-    //     (WidgetTester _) async {
-    //   final JniHostIntegrationCoreApiForNativeInterop? api =
-    //       JniHostIntegrationCoreApiForNativeInterop.getInstance();
-    //   const Object sentString = "I'm a computer";
-    //   final Object receivedString = api!.echoObject(sentString);
-    //   expect(receivedString, sentString);
+    testWidgets('generic Objects serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final JniHostIntegrationCoreApiForNativeInterop? api =
+          JniHostIntegrationCoreApiForNativeInterop.getInstance();
+      const Object sentString = "I'm a computer";
+      final Object receivedString = api!.echoObject(sentString);
+      expect(receivedString, sentString);
 
-    //   // Echo a second type as well to ensure the handling is generic.
-    //   const Object sentInt = regularInt;
-    //   final Object receivedInt = api.echoObject(sentInt);
-    //   expect(receivedInt, sentInt);
-    // });
+      // Echo a second type as well to ensure the handling is generic.
+      const Object sentInt = regularInt;
+      final Object receivedInt = api.echoObject(sentInt);
+      expect(receivedInt, sentInt);
+    });
 
     // testWidgets('lists serialize and deserialize correctly',
     //     (WidgetTester _) async {

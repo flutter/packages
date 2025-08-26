@@ -11,11 +11,11 @@ import Foundation
 @objc final class JniTestsError: NSObject, Error {
   @objc var code: String?
   @objc var message: String?
-  @objc var details: Sendable?
+  @objc var details: String?
 
   @objc override init() {}
 
-  @objc init(code: String?, message: String?, details: Sendable?) {
+  @objc init(code: String?, message: String?, details: String?) {
     self.code = code
     self.message = message
     self.details = details
@@ -24,6 +24,54 @@ import Foundation
   var localizedDescription: String {
     return
       "JniTestsError(code: \(code ?? "<nil>"), message: \(message ?? "<nil>"), details: \(details ?? "<nil>")"
+  }
+}
+
+@objc class NSNumberWrapper: NSObject {
+  @objc init(
+    number: NSNumber,
+    type: Int,
+  ) {
+    self.number = number
+    self.type = type
+  }
+  @objc var number: NSNumber
+  @objc var type: Int
+}
+
+private func wrapNumber(number: NSNumber, type: Int) -> NSNumberWrapper {
+  return NSNumberWrapper(number: number, type: type)
+}
+
+private func unwrapNumber<T>(wrappedNumber: NSNumberWrapper) -> T {
+  switch wrappedNumber.type {
+  case 1:
+    return wrappedNumber.number.intValue as! T
+  case 2:
+    return wrappedNumber.number.doubleValue as! T
+  case 3:
+    return wrappedNumber.number.boolValue as! T
+  case 4:
+    return JniAnEnum(rawValue: wrappedNumber.number.intValue) as! T
+  default:
+    return wrappedNumber.number.intValue as! T
+  }
+}
+
+private func numberCodec(number: Any) -> Int {
+  switch number {
+  case _ as Int:
+    return 1
+  case _ as Double:
+    return 2
+  case _ as Float:
+    return 2
+  case _ as Bool:
+    return 3
+  case _ as JniAnEnum:
+    return 4
+  default:
+    return 0
   }
 }
 
@@ -36,7 +84,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
   return value as! T?
 }
 
-enum JniAnEnum: Int {
+@objc enum JniAnEnum: Int {
   case one = 0
   case two = 1
   case three = 2
@@ -47,32 +95,188 @@ enum JniAnEnum: Int {
 /// Generated class from Pigeon that represents data sent in messages.
 @objc class BasicClass: NSObject {
   @objc init(
+    aBool: Bool,
     anInt: Int64,
+    anInt64: Int64,
+    aDouble: Double,
+    anEnum: JniAnEnum,
     aString: String
   ) {
+    self.aBool = aBool
     self.anInt = anInt
+    self.anInt64 = anInt64
+    self.aDouble = aDouble
+    self.anEnum = anEnum
     self.aString = aString
   }
+  @objc var aBool: Bool
   @objc var anInt: Int64
+  @objc var anInt64: Int64
+  @objc var aDouble: Double
+  @objc var anEnum: JniAnEnum
   @objc var aString: String
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> BasicClass? {
-    let anInt = pigeonVar_list[0] as! Int64
-    let aString = pigeonVar_list[1] as! String
+    let aBool = pigeonVar_list[0] as! Bool
+    let anInt = pigeonVar_list[1] as! Int64
+    let anInt64 = pigeonVar_list[2] as! Int64
+    let aDouble = pigeonVar_list[3] as! Double
+    let anEnum = pigeonVar_list[4] as! JniAnEnum
+    let aString = pigeonVar_list[5] as! String
 
     return BasicClass(
+      aBool: aBool,
       anInt: anInt,
+      anInt64: anInt64,
+      aDouble: aDouble,
+      anEnum: anEnum,
       aString: aString
     )
   }
   func toList() -> [Any?] {
     return [
+      aBool,
       anInt,
+      anInt64,
+      aDouble,
+      anEnum,
       aString,
     ]
   }
 }
+
+class _PigeonFfiCodec {
+  static func readValue(value: NSObject?, type: String?) -> Any? {
+    if isNullish(value) {
+      return nil
+    }
+    if value is NSNumber {
+      if type == "int" {
+        return (value as! NSNumber).intValue
+      } else if type == "double" {
+        return (value as! NSNumber).doubleValue
+      } else if type == "bool" {
+        return (value as! NSNumber) == 1
+      } else if type == "JniAnEnum" {
+        return JniAnEnum.init(rawValue: (value as! NSNumber).intValue)
+      }
+    }
+    // } else if (value.isA<NSByteArray>(NSByteArray.type)) {
+    //   final Uint8List list = Uint8List(value.as(NSByteArray.type).length)
+    //   for (int i = 0; i < value.as(NSByteArray.type).length; i++) {
+    //     list[i] = value.as(NSByteArray.type)[i]
+    //   }
+    //   return list
+    // } else if (value.isA<NSIntArray>(NSIntArray.type)) {
+    //   final Int32List list = Int32List(value.as(NSIntArray.type).length)
+    //   for (int i = 0; i < value.as(NSIntArray.type).length; i++) {
+    //     list[i] = value.as(NSIntArray.type)[i]
+    //   }
+    //   return list
+    //   // } else if (value.isA<NSLongArray>(NSLongArray.type)) {
+    //   final Int64List list = Int64List(value.as(NSLongArray.type).length)
+    //   //   for (int i = 0; i < value.as(NSLongArray.type).length; i++) {
+    //     list[i] = value.as(NSLongArray.type)[i]
+    //   //   }
+    //   return list
+    //   // } else if (value.isA<NSDoubleArray>(NSDoubleArray.type)) {
+    //   final Float64List list = Float64List(value.as(NSDoubleArray.type).length)
+    //   //   for (int i = 0; i < value.as(NSDoubleArray.type).length; i++) {
+    //     list[i] = value.as(NSDoubleArray.type)[i]
+    //   //   }
+    //   return list
+    if value is NSMutableArray {
+      var res: [Any?] = []
+      for i in 0..<(value as! NSMutableArray).count {
+        res.append(readValue(value: (value as! NSMutableArray)[i] as? NSObject, type: nil))
+      }
+      return res
+    }
+    if value is NSDictionary {
+      var res: [AnyHashable?: Any?] = Dictionary()
+      for (key, value) in (value as! NSDictionary) {
+        res[readValue(value: key as? NSObject, type: nil) as! AnyHashable?] = readValue(
+          value: value as? NSObject, type: nil)
+      }
+      return res
+    }
+    if value is NSNumberWrapper {
+      return unwrapNumber(wrappedNumber: value as! NSNumberWrapper)
+    }
+    if value is NSString {
+      return value as! NSString
+    }
+    return value
+  }
+
+  static func writeValue(value: Any?, isObject: Bool = false) -> Any? {
+    if isNullish(value) {
+      return nil
+    }
+    if value is Bool || value is Double || value is Int || value is JniAnEnum {
+      if isObject {
+        return wrapNumber(number: value as! NSNumber, type: numberCodec(number: value!))
+      }
+      if value is Bool {
+        return (value as! Bool) ? 1 : 0
+      } else if value is Double {
+        return value
+      } else if value is Int {
+        return value
+      } else if value is JniAnEnum {
+        return (value as! JniAnEnum).rawValue
+      }
+    }
+    // } else if (isTypeOrNullableType<NSByteArray>(T)) {
+    //   value as List<int>
+    //   final NSByteArray array = NSByteArray(value.length)
+    //   for (int i = 0; i < value.length; i++) {
+    //     array[i] = value[i]
+    //   }
+    //   return array
+    // } else if (isTypeOrNullableType<NSIntArray>(T)) {
+    //   value as List<int>
+    //   final NSIntArray array = NSIntArray(value.length)
+    //   for (int i = 0; i < value.length; i++) {
+    //     array[i] = value[i]
+    //   }
+    //   return array
+    // } else if (isTypeOrNullableType<NSLongArray>(T)) {
+    //   value as List<int>
+    //   final NSLongArray array = NSLongArray(value.length)
+    //   for (int i = 0; i < value.length; i++) {
+    //     array[i] = value[i]
+    //   }
+    //   return array
+    // } else if (isTypeOrNullableType<NSDoubleArray>(T)) {
+    //   value as List<double>
+    //   final NSDoubleArray array = NSDoubleArray(value.length)
+    //   for (int i = 0; i < value.length; i++) {
+    //     array[i] = value[i]
+    //   }
+    //   return array
+    if value is [Any] {
+      let res: NSMutableArray = NSMutableArray()
+      for i in 0..<(value as! NSMutableArray).count {
+        res.add(writeValue(value: (value as! NSMutableArray)[i])!)
+      }
+      return res
+    }
+    if value is [AnyHashable: Any] {
+      let res: NSMutableDictionary = NSMutableDictionary()
+      for (key, value) in (value as! NSDictionary) {
+        res.setObject(writeValue(value: value) as Any, forKey: writeValue(value: key) as! NSCopying)
+      }
+      return res
+    }
+    if value is String {
+      return value as! NSString
+    }
+    return value
+  }
+}
+
 let defaultInstanceName = "PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u"
 var instancesOfJniHostIntegrationCoreApi = [String: JniHostIntegrationCoreApiSetup?]()
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
@@ -84,6 +288,7 @@ protocol JniHostIntegrationCoreApi {
   func echoString(aString: String) throws -> String
   func echoBasicClass(aBasicClass: BasicClass) throws -> BasicClass
   func echoEnum(anEnum: JniAnEnum) throws -> JniAnEnum
+  func echoObject(anObject: Any) throws -> Any
 }
 
 /// Generated setup class from Pigeon to register implemented JniHostIntegrationCoreApi classes.
@@ -182,10 +387,26 @@ protocol JniHostIntegrationCoreApi {
     }
     return nil
   }
-  @objc func echoEnum(anEnum: NSNumber, wrappedError: JniTestsError) -> NSNumber? {
+  @objc func echoEnum(anEnum: JniAnEnum, wrappedError: JniTestsError) -> NSNumber? {
     do {
-      return try NSNumber(
-        value: api!.echoEnum(anEnum: JniAnEnum(rawValue: anEnum.intValue)!).rawValue)
+      return try NSNumber(value: api!.echoEnum(anEnum: anEnum).rawValue)
+    } catch let error as JniTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
+  @objc func echoObject(anObject: Any, wrappedError: JniTestsError) -> Any? {
+    do {
+      return try _PigeonFfiCodec.writeValue(
+        value: api!.echoObject(
+          anObject: _PigeonFfiCodec.readValue(value: anObject as? NSObject, type: nil) as Any),
+        isObject: true)
     } catch let error as JniTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message

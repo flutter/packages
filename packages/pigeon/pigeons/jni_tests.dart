@@ -278,13 +278,33 @@ enum JniAnEnum {
 // }
 
 class BasicClass {
-  BasicClass(
-    this.anInt,
-    this.aString,
-  );
+  BasicClass({
+    this.aBool = false,
+    this.anInt = 0,
+    this.anInt64 = 0,
+    this.aDouble = 0,
+    // required this.aByteArray,
+    // required this.a4ByteArray,
+    // required this.a8ByteArray,
+    // required this.aFloatArray,
+    this.anEnum = JniAnEnum.one,
+    // this.anotherEnum = JniAnotherEnum.justInCase,
+    this.aString = '',
+    // this.anObject = 0,
+  });
 
+  bool aBool;
   int anInt;
+  int anInt64;
+  double aDouble;
+  // Uint8List aByteArray;
+  // Int32List a4ByteArray;
+  // Int64List a8ByteArray;
+  // Float64List aFloatArray;
+  JniAnEnum anEnum;
+  // JniAnotherEnum anotherEnum;
   String aString;
+  // Object anObject;
 }
 
 @HostApi()
@@ -301,7 +321,7 @@ abstract class JniHostIntegrationCoreApi {
   // Int32List echoInt32List(Int32List aInt32List);
   // Int64List echoInt64List(Int64List aInt64List);
   // Float64List echoFloat64List(Float64List aFloat64List);
-  // Object echoObject(Object anObject);
+  Object echoObject(Object anObject);
   // List<Object?> echoList(List<Object?> list);
   // List<JniAnEnum?> echoEnumList(List<JniAnEnum?> enumList);
   // List<JniAllNullableTypes?> echoClassList(

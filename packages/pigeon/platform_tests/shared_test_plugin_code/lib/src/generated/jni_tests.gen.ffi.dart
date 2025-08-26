@@ -21,6 +21,26 @@ external ffi.Pointer<objc.ObjCObject> _test_plugin_protocolTrampoline_1mbt9g9(
   ffi.Pointer<ffi.Void> arg0,
 );
 
+enum JniAnEnum {
+  JniAnEnumOne(0),
+  JniAnEnumTwo(1),
+  JniAnEnumThree(2),
+  JniAnEnumFortyTwo(3),
+  JniAnEnumFourHundredTwentyTwo(4);
+
+  final int value;
+  const JniAnEnum(this.value);
+
+  static JniAnEnum fromValue(int value) => switch (value) {
+        0 => JniAnEnumOne,
+        1 => JniAnEnumTwo,
+        2 => JniAnEnumThree,
+        3 => JniAnEnumFortyTwo,
+        4 => JniAnEnumFourHundredTwentyTwo,
+        _ => throw ArgumentError('Unknown value for JniAnEnum: $value'),
+      };
+}
+
 late final _class_BasicClass = objc.getClass("test_plugin.BasicClass");
 late final _sel_isKindOfClass_ = objc.registerName("isKindOfClass:");
 final _objc_msgSend_19nvye5 = objc.msgSendPointer
@@ -35,22 +55,48 @@ final _objc_msgSend_19nvye5 = objc.msgSendPointer
             ffi.Pointer<objc.ObjCSelector>, ffi.Pointer<objc.ObjCObject>)>();
 typedef instancetype = ffi.Pointer<objc.ObjCObject>;
 typedef Dartinstancetype = objc.ObjCObjectBase;
-late final _sel_initWithAnInt_aString_ =
-    objc.registerName("initWithAnInt:aString:");
-final _objc_msgSend_1j962g9 = objc.msgSendPointer
+late final _sel_initWithABool_anInt_anInt64_aDouble_anEnum_aString_ =
+    objc.registerName("initWithABool:anInt:anInt64:aDouble:anEnum:aString:");
+final _objc_msgSend_1yspncn = objc.msgSendPointer
     .cast<
         ffi.NativeFunction<
             ffi.Pointer<objc.ObjCObject> Function(
                 ffi.Pointer<objc.ObjCObject>,
                 ffi.Pointer<objc.ObjCSelector>,
+                ffi.Bool,
                 ffi.Int64,
+                ffi.Int64,
+                ffi.Double,
+                ffi.Long,
                 ffi.Pointer<objc.ObjCObject>)>>()
     .asFunction<
         ffi.Pointer<objc.ObjCObject> Function(
             ffi.Pointer<objc.ObjCObject>,
             ffi.Pointer<objc.ObjCSelector>,
+            bool,
+            int,
+            int,
+            double,
             int,
             ffi.Pointer<objc.ObjCObject>)>();
+late final _sel_aBool = objc.registerName("aBool");
+final _objc_msgSend_91o635 = objc.msgSendPointer
+    .cast<
+        ffi.NativeFunction<
+            ffi.Bool Function(ffi.Pointer<objc.ObjCObject>,
+                ffi.Pointer<objc.ObjCSelector>)>>()
+    .asFunction<
+        bool Function(
+            ffi.Pointer<objc.ObjCObject>, ffi.Pointer<objc.ObjCSelector>)>();
+late final _sel_setABool_ = objc.registerName("setABool:");
+final _objc_msgSend_1s56lr9 = objc.msgSendPointer
+    .cast<
+        ffi.NativeFunction<
+            ffi.Void Function(ffi.Pointer<objc.ObjCObject>,
+                ffi.Pointer<objc.ObjCSelector>, ffi.Bool)>>()
+    .asFunction<
+        void Function(ffi.Pointer<objc.ObjCObject>,
+            ffi.Pointer<objc.ObjCSelector>, bool)>();
 late final _sel_anInt = objc.registerName("anInt");
 final _objc_msgSend_pysgoz = objc.msgSendPointer
     .cast<
@@ -66,6 +112,52 @@ final _objc_msgSend_17gvxvj = objc.msgSendPointer
         ffi.NativeFunction<
             ffi.Void Function(ffi.Pointer<objc.ObjCObject>,
                 ffi.Pointer<objc.ObjCSelector>, ffi.Int64)>>()
+    .asFunction<
+        void Function(ffi.Pointer<objc.ObjCObject>,
+            ffi.Pointer<objc.ObjCSelector>, int)>();
+late final _sel_anInt64 = objc.registerName("anInt64");
+late final _sel_setAnInt64_ = objc.registerName("setAnInt64:");
+late final _sel_aDouble = objc.registerName("aDouble");
+final _objc_msgSend_1ukqyt8 = objc.msgSendPointer
+    .cast<
+        ffi.NativeFunction<
+            ffi.Double Function(ffi.Pointer<objc.ObjCObject>,
+                ffi.Pointer<objc.ObjCSelector>)>>()
+    .asFunction<
+        double Function(
+            ffi.Pointer<objc.ObjCObject>, ffi.Pointer<objc.ObjCSelector>)>();
+final _objc_msgSend_1ukqyt8Fpret = objc.msgSendFpretPointer
+    .cast<
+        ffi.NativeFunction<
+            ffi.Double Function(ffi.Pointer<objc.ObjCObject>,
+                ffi.Pointer<objc.ObjCSelector>)>>()
+    .asFunction<
+        double Function(
+            ffi.Pointer<objc.ObjCObject>, ffi.Pointer<objc.ObjCSelector>)>();
+late final _sel_setADouble_ = objc.registerName("setADouble:");
+final _objc_msgSend_hwm8nu = objc.msgSendPointer
+    .cast<
+        ffi.NativeFunction<
+            ffi.Void Function(ffi.Pointer<objc.ObjCObject>,
+                ffi.Pointer<objc.ObjCSelector>, ffi.Double)>>()
+    .asFunction<
+        void Function(ffi.Pointer<objc.ObjCObject>,
+            ffi.Pointer<objc.ObjCSelector>, double)>();
+late final _sel_anEnum = objc.registerName("anEnum");
+final _objc_msgSend_1roris2 = objc.msgSendPointer
+    .cast<
+        ffi.NativeFunction<
+            ffi.Long Function(ffi.Pointer<objc.ObjCObject>,
+                ffi.Pointer<objc.ObjCSelector>)>>()
+    .asFunction<
+        int Function(
+            ffi.Pointer<objc.ObjCObject>, ffi.Pointer<objc.ObjCSelector>)>();
+late final _sel_setAnEnum_ = objc.registerName("setAnEnum:");
+final _objc_msgSend_fa2mw0 = objc.msgSendPointer
+    .cast<
+        ffi.NativeFunction<
+            ffi.Void Function(ffi.Pointer<objc.ObjCObject>,
+                ffi.Pointer<objc.ObjCSelector>, ffi.Long)>>()
     .asFunction<
         void Function(ffi.Pointer<objc.ObjCObject>,
             ffi.Pointer<objc.ObjCSelector>, int)>();
@@ -226,11 +318,33 @@ class BasicClass extends objc.NSObject {
         obj.ref.pointer, _sel_isKindOfClass_, _class_BasicClass);
   }
 
-  /// initWithAnInt:aString:
-  BasicClass initWithAnInt(int anInt, {required objc.NSString aString}) {
-    final _ret = _objc_msgSend_1j962g9(this.ref.retainAndReturnPointer(),
-        _sel_initWithAnInt_aString_, anInt, aString.ref.pointer);
+  /// initWithABool:anInt:anInt64:aDouble:anEnum:aString:
+  BasicClass initWithABool(bool aBool,
+      {required int anInt,
+      required int anInt64,
+      required double aDouble,
+      required JniAnEnum anEnum,
+      required objc.NSString aString}) {
+    final _ret = _objc_msgSend_1yspncn(
+        this.ref.retainAndReturnPointer(),
+        _sel_initWithABool_anInt_anInt64_aDouble_anEnum_aString_,
+        aBool,
+        anInt,
+        anInt64,
+        aDouble,
+        anEnum.value,
+        aString.ref.pointer);
     return BasicClass.castFromPointer(_ret, retain: false, release: true);
+  }
+
+  /// aBool
+  bool get aBool {
+    return _objc_msgSend_91o635(this.ref.pointer, _sel_aBool);
+  }
+
+  /// setABool:
+  set aBool(bool value) {
+    _objc_msgSend_1s56lr9(this.ref.pointer, _sel_setABool_, value);
   }
 
   /// anInt
@@ -241,6 +355,39 @@ class BasicClass extends objc.NSObject {
   /// setAnInt:
   set anInt(int value) {
     _objc_msgSend_17gvxvj(this.ref.pointer, _sel_setAnInt_, value);
+  }
+
+  /// anInt64
+  int get anInt64 {
+    return _objc_msgSend_pysgoz(this.ref.pointer, _sel_anInt64);
+  }
+
+  /// setAnInt64:
+  set anInt64(int value) {
+    _objc_msgSend_17gvxvj(this.ref.pointer, _sel_setAnInt64_, value);
+  }
+
+  /// aDouble
+  double get aDouble {
+    return objc.useMsgSendVariants
+        ? _objc_msgSend_1ukqyt8Fpret(this.ref.pointer, _sel_aDouble)
+        : _objc_msgSend_1ukqyt8(this.ref.pointer, _sel_aDouble);
+  }
+
+  /// setADouble:
+  set aDouble(double value) {
+    _objc_msgSend_hwm8nu(this.ref.pointer, _sel_setADouble_, value);
+  }
+
+  /// anEnum
+  JniAnEnum get anEnum {
+    final _ret = _objc_msgSend_1roris2(this.ref.pointer, _sel_anEnum);
+    return JniAnEnum.fromValue(_ret);
+  }
+
+  /// setAnEnum:
+  set anEnum(JniAnEnum value) {
+    _objc_msgSend_fa2mw0(this.ref.pointer, _sel_setAnEnum_, value.value);
   }
 
   /// aString
@@ -394,15 +541,15 @@ class JniTestsError extends objc.NSObject {
   }
 
   /// details
-  objc.ObjCObjectBase? get details {
+  objc.NSString? get details {
     final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_details);
     return _ret.address == 0
         ? null
-        : objc.ObjCObjectBase(_ret, retain: true, release: true);
+        : objc.NSString.castFromPointer(_ret, retain: true, release: true);
   }
 
   /// setDetails:
-  set details(objc.ObjCObjectBase? value) {
+  set details(objc.NSString? value) {
     _objc_msgSend_xtuoz7(
         this.ref.pointer, _sel_setDetails_, value?.ref.pointer ?? ffi.nullptr);
   }
@@ -418,7 +565,7 @@ class JniTestsError extends objc.NSObject {
 
   /// initWithCode:message:details:
   JniTestsError initWithCode(objc.NSString? code$1,
-      {objc.NSString? message$1, objc.ObjCObjectBase? details$1}) {
+      {objc.NSString? message$1, objc.NSString? details$1}) {
     final _ret = _objc_msgSend_11spmsz(
         this.ref.retainAndReturnPointer(),
         _sel_initWithCode_message_details_,
@@ -497,6 +644,22 @@ late final _sel_echoBasicClassWithABasicClass_wrappedError_ =
     objc.registerName("echoBasicClassWithABasicClass:wrappedError:");
 late final _sel_echoEnumWithAnEnum_wrappedError_ =
     objc.registerName("echoEnumWithAnEnum:wrappedError:");
+final _objc_msgSend_3tegfe = objc.msgSendPointer
+    .cast<
+        ffi.NativeFunction<
+            ffi.Pointer<objc.ObjCObject> Function(
+                ffi.Pointer<objc.ObjCObject>,
+                ffi.Pointer<objc.ObjCSelector>,
+                ffi.Long,
+                ffi.Pointer<objc.ObjCObject>)>>()
+    .asFunction<
+        ffi.Pointer<objc.ObjCObject> Function(
+            ffi.Pointer<objc.ObjCObject>,
+            ffi.Pointer<objc.ObjCSelector>,
+            int,
+            ffi.Pointer<objc.ObjCObject>)>();
+late final _sel_echoObjectWithAnObject_wrappedError_ =
+    objc.registerName("echoObjectWithAnObject:wrappedError:");
 
 /// Generated setup class from Pigeon to register implemented JniHostIntegrationCoreApi classes.
 class JniHostIntegrationCoreApiSetup extends objc.NSObject {
@@ -614,16 +777,29 @@ class JniHostIntegrationCoreApiSetup extends objc.NSObject {
   }
 
   /// echoEnumWithAnEnum:wrappedError:
-  objc.NSNumber? echoEnumWithAnEnum(objc.NSNumber anEnum,
+  objc.NSNumber? echoEnumWithAnEnum(JniAnEnum anEnum,
       {required JniTestsError wrappedError}) {
-    final _ret = _objc_msgSend_15qeuct(
+    final _ret = _objc_msgSend_3tegfe(
         this.ref.pointer,
         _sel_echoEnumWithAnEnum_wrappedError_,
-        anEnum.ref.pointer,
+        anEnum.value,
         wrappedError.ref.pointer);
     return _ret.address == 0
         ? null
         : objc.NSNumber.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// echoObjectWithAnObject:wrappedError:
+  objc.ObjCObjectBase? echoObjectWithAnObject(objc.ObjCObjectBase anObject,
+      {required JniTestsError wrappedError}) {
+    final _ret = _objc_msgSend_15qeuct(
+        this.ref.pointer,
+        _sel_echoObjectWithAnObject_wrappedError_,
+        anObject.ref.pointer,
+        wrappedError.ref.pointer);
+    return _ret.address == 0
+        ? null
+        : objc.ObjCObjectBase(_ret, retain: true, release: true);
   }
 
   /// new
@@ -674,4 +850,142 @@ class JniHostIntegrationCoreApiSetup extends objc.NSObject {
 
   /// Returns a new instance of JniHostIntegrationCoreApiSetup constructed with the default `new` method.
   factory JniHostIntegrationCoreApiSetup() => new$();
+}
+
+late final _class_NSNumberWrapper =
+    objc.getClass("test_plugin.NSNumberWrapper");
+late final _sel_initWithNumber_type_ =
+    objc.registerName("initWithNumber:type:");
+final _objc_msgSend_9slupp = objc.msgSendPointer
+    .cast<
+        ffi.NativeFunction<
+            ffi.Pointer<objc.ObjCObject> Function(
+                ffi.Pointer<objc.ObjCObject>,
+                ffi.Pointer<objc.ObjCSelector>,
+                ffi.Pointer<objc.ObjCObject>,
+                ffi.Long)>>()
+    .asFunction<
+        ffi.Pointer<objc.ObjCObject> Function(
+            ffi.Pointer<objc.ObjCObject>,
+            ffi.Pointer<objc.ObjCSelector>,
+            ffi.Pointer<objc.ObjCObject>,
+            int)>();
+late final _sel_number = objc.registerName("number");
+late final _sel_setNumber_ = objc.registerName("setNumber:");
+late final _sel_type = objc.registerName("type");
+final _objc_msgSend_1hz7y9r = objc.msgSendPointer
+    .cast<
+        ffi.NativeFunction<
+            ffi.Long Function(ffi.Pointer<objc.ObjCObject>,
+                ffi.Pointer<objc.ObjCSelector>)>>()
+    .asFunction<
+        int Function(
+            ffi.Pointer<objc.ObjCObject>, ffi.Pointer<objc.ObjCSelector>)>();
+late final _sel_setType_ = objc.registerName("setType:");
+final _objc_msgSend_4sp4xj = objc.msgSendPointer
+    .cast<
+        ffi.NativeFunction<
+            ffi.Void Function(ffi.Pointer<objc.ObjCObject>,
+                ffi.Pointer<objc.ObjCSelector>, ffi.Long)>>()
+    .asFunction<
+        void Function(ffi.Pointer<objc.ObjCObject>,
+            ffi.Pointer<objc.ObjCSelector>, int)>();
+
+/// NSNumberWrapper
+class NSNumberWrapper extends objc.NSObject {
+  NSNumberWrapper._(ffi.Pointer<objc.ObjCObject> pointer,
+      {bool retain = false, bool release = false})
+      : super.castFromPointer(pointer, retain: retain, release: release);
+
+  /// Constructs a [NSNumberWrapper] that points to the same underlying object as [other].
+  NSNumberWrapper.castFrom(objc.ObjCObjectBase other)
+      : this._(other.ref.pointer, retain: true, release: true);
+
+  /// Constructs a [NSNumberWrapper] that wraps the given raw object pointer.
+  NSNumberWrapper.castFromPointer(ffi.Pointer<objc.ObjCObject> other,
+      {bool retain = false, bool release = false})
+      : this._(other, retain: retain, release: release);
+
+  /// Returns whether [obj] is an instance of [NSNumberWrapper].
+  static bool isInstance(objc.ObjCObjectBase obj) {
+    return _objc_msgSend_19nvye5(
+        obj.ref.pointer, _sel_isKindOfClass_, _class_NSNumberWrapper);
+  }
+
+  /// initWithNumber:type:
+  NSNumberWrapper initWithNumber(objc.NSNumber number, {required int type}) {
+    final _ret = _objc_msgSend_9slupp(this.ref.retainAndReturnPointer(),
+        _sel_initWithNumber_type_, number.ref.pointer, type);
+    return NSNumberWrapper.castFromPointer(_ret, retain: false, release: true);
+  }
+
+  /// number
+  objc.NSNumber get number {
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_number);
+    return objc.NSNumber.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// setNumber:
+  set number(objc.NSNumber value) {
+    _objc_msgSend_xtuoz7(this.ref.pointer, _sel_setNumber_, value.ref.pointer);
+  }
+
+  /// type
+  int get type {
+    return _objc_msgSend_1hz7y9r(this.ref.pointer, _sel_type);
+  }
+
+  /// setType:
+  set type(int value) {
+    _objc_msgSend_4sp4xj(this.ref.pointer, _sel_setType_, value);
+  }
+
+  /// init
+  NSNumberWrapper init() {
+    objc.checkOsVersionInternal('NSNumberWrapper.init',
+        iOS: (false, (2, 0, 0)), macOS: (false, (10, 0, 0)));
+    final _ret =
+        _objc_msgSend_151sglz(this.ref.retainAndReturnPointer(), _sel_init);
+    return NSNumberWrapper.castFromPointer(_ret, retain: false, release: true);
+  }
+
+  /// new
+  static NSNumberWrapper new$() {
+    final _ret = _objc_msgSend_151sglz(_class_NSNumberWrapper, _sel_new);
+    return NSNumberWrapper.castFromPointer(_ret, retain: false, release: true);
+  }
+
+  /// allocWithZone:
+  static NSNumberWrapper allocWithZone(ffi.Pointer<objc.NSZone> zone) {
+    final _ret = _objc_msgSend_1cwp428(
+        _class_NSNumberWrapper, _sel_allocWithZone_, zone);
+    return NSNumberWrapper.castFromPointer(_ret, retain: false, release: true);
+  }
+
+  /// alloc
+  static NSNumberWrapper alloc() {
+    final _ret = _objc_msgSend_151sglz(_class_NSNumberWrapper, _sel_alloc);
+    return NSNumberWrapper.castFromPointer(_ret, retain: false, release: true);
+  }
+
+  /// self
+  NSNumberWrapper self$1() {
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_self);
+    return NSNumberWrapper.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// retain
+  NSNumberWrapper retain() {
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_retain);
+    return NSNumberWrapper.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// autorelease
+  NSNumberWrapper autorelease() {
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_autorelease);
+    return NSNumberWrapper.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// Returns a new instance of NSNumberWrapper constructed with the default `new` method.
+  factory NSNumberWrapper() => new$();
 }

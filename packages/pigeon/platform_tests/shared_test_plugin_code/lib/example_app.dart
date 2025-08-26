@@ -43,10 +43,27 @@ class _ExampleAppState extends State<ExampleApp> {
       // await api.noop();
       final JniHostIntegrationCoreApiForNativeInterop? api =
           JniHostIntegrationCoreApiForNativeInterop.getInstance();
-      print(api);
-      // const int sentInt = regularInt;
       api!.noop();
+      // final BasicClass basicClass = BasicClass(anInt: 1, aString: '1');
+      // final int receivedInt = api.echoInt(4);
       // print(receivedInt);
+      // // ignore: avoid_js_rounded_ints
+      // final int bigInt = api.echoInt(9999999999999999);
+      // print(bigInt);
+      // const double sentDouble = 2.0694;
+      // final double receivedDouble = api.echoDouble(sentDouble);
+      // print(receivedDouble);
+      // final bool receivedBool = api.echoBool(true);
+      // print(receivedBool);
+      const String sentString = 'default';
+      // final String sString = api.echoString(sentString);
+      // print(sString);
+      // final BasicClass receivedString = api.echoBasicClass(basicClass);
+      // print(receivedString);
+      final Object receString = api.echoObject(sentString);
+      print(receString);
+      final Object receivInt = api.echoObject(23);
+      print(receivInt);
     } catch (e) {
       setState(() {
         status = 'Failed: $e';

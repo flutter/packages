@@ -328,18 +328,35 @@ typedef unsigned int swift_uint4 __attribute__((__ext_vector_type__(4)));
 
 #if defined(__OBJC__)
 
+enum JniAnEnum : NSInteger;
 @class NSString;
 /// Generated class from Pigeon that represents data sent in messages.
 SWIFT_CLASS("_TtC11test_plugin10BasicClass")
 @interface BasicClass : NSObject
-- (nonnull instancetype)initWithAnInt:(int64_t)anInt
+- (nonnull instancetype)initWithABool:(BOOL)aBool
+                                anInt:(int64_t)anInt
+                              anInt64:(int64_t)anInt64
+                              aDouble:(double)aDouble
+                               anEnum:(enum JniAnEnum)anEnum
                               aString:(NSString *_Nonnull)aString
     OBJC_DESIGNATED_INITIALIZER;
+@property(nonatomic) BOOL aBool;
 @property(nonatomic) int64_t anInt;
+@property(nonatomic) int64_t anInt64;
+@property(nonatomic) double aDouble;
+@property(nonatomic) enum JniAnEnum anEnum;
 @property(nonatomic, copy) NSString *_Nonnull aString;
 - (nonnull instancetype)init SWIFT_UNAVAILABLE;
 + (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
 @end
+
+typedef SWIFT_ENUM(NSInteger, JniAnEnum, closed){
+    JniAnEnumOne = 0,
+    JniAnEnumTwo = 1,
+    JniAnEnumThree = 2,
+    JniAnEnumFortyTwo = 3,
+    JniAnEnumFourHundredTwentyTwo = 4,
+};
 
 @class JniTestsError;
 @class NSNumber;
@@ -369,8 +386,11 @@ SWIFT_CLASS("_TtC11test_plugin30JniHostIntegrationCoreApiSetup")
     echoBasicClassWithABasicClass:(BasicClass *_Nonnull)aBasicClass
                      wrappedError:(JniTestsError *_Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT;
-- (NSNumber *_Nullable)echoEnumWithAnEnum:(NSNumber *_Nonnull)anEnum
+- (NSNumber *_Nullable)echoEnumWithAnEnum:(enum JniAnEnum)anEnum
                              wrappedError:(JniTestsError *_Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+- (id _Nullable)echoObjectWithAnObject:(id _Nonnull)anObject
+                          wrappedError:(JniTestsError *_Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT;
 @end
 
@@ -379,12 +399,23 @@ SWIFT_CLASS("_TtC11test_plugin13JniTestsError")
 @interface JniTestsError : NSObject
 @property(nonatomic, copy) NSString *_Nullable code;
 @property(nonatomic, copy) NSString *_Nullable message;
-@property(nonatomic) id _Nullable details;
+@property(nonatomic, copy) NSString *_Nullable details;
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
 - (nonnull instancetype)initWithCode:(NSString *_Nullable)code
                              message:(NSString *_Nullable)message
-                             details:(id _Nullable)details
+                             details:(NSString *_Nullable)details
     OBJC_DESIGNATED_INITIALIZER;
+@end
+
+SWIFT_CLASS("_TtC11test_plugin15NSNumberWrapper")
+@interface NSNumberWrapper : NSObject
+- (nonnull instancetype)initWithNumber:(NSNumber *_Nonnull)number
+                                  type:(NSInteger)type
+    OBJC_DESIGNATED_INITIALIZER;
+@property(nonatomic, strong) NSNumber *_Nonnull number;
+@property(nonatomic) NSInteger type;
+- (nonnull instancetype)init SWIFT_UNAVAILABLE;
++ (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
 @end
 
 #endif

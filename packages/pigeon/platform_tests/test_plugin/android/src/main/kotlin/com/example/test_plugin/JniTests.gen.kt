@@ -38,18 +38,33 @@ enum class JniAnEnum(val raw: Int) {
 }
 
 /** Generated class from Pigeon that represents data sent in messages. */
-data class BasicClass(val anInt: Long, val aString: String) {
+data class BasicClass(
+    val aBool: Boolean,
+    val anInt: Long,
+    val anInt64: Long,
+    val aDouble: Double,
+    val anEnum: JniAnEnum,
+    val aString: String
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): BasicClass {
-      val anInt = pigeonVar_list[0] as Long
-      val aString = pigeonVar_list[1] as String
-      return BasicClass(anInt, aString)
+      val aBool = pigeonVar_list[0] as Boolean
+      val anInt = pigeonVar_list[1] as Long
+      val anInt64 = pigeonVar_list[2] as Long
+      val aDouble = pigeonVar_list[3] as Double
+      val anEnum = pigeonVar_list[4] as JniAnEnum
+      val aString = pigeonVar_list[5] as String
+      return BasicClass(aBool, anInt, anInt64, aDouble, anEnum, aString)
     }
   }
 
   fun toList(): List<Any?> {
     return listOf(
+        aBool,
         anInt,
+        anInt64,
+        aDouble,
+        anEnum,
         aString,
     )
   }
@@ -61,7 +76,12 @@ data class BasicClass(val anInt: Long, val aString: String) {
     if (this === other) {
       return true
     }
-    return anInt == other.anInt && aString == other.aString
+    return aBool == other.aBool &&
+        anInt == other.anInt &&
+        anInt64 == other.anInt64 &&
+        aDouble == other.aDouble &&
+        anEnum == other.anEnum &&
+        aString == other.aString
   }
 
   override fun hashCode(): Int = toList().hashCode()
@@ -85,6 +105,8 @@ abstract class JniHostIntegrationCoreApi {
   abstract fun echoBasicClass(aBasicClass: BasicClass): BasicClass
 
   abstract fun echoEnum(anEnum: JniAnEnum): JniAnEnum
+
+  abstract fun echoObject(anObject: Any): Any
 }
 
 @Keep
@@ -175,6 +197,17 @@ class JniHostIntegrationCoreApiRegistrar : JniHostIntegrationCoreApi() {
     api?.let {
       try {
         return api!!.echoEnum(anEnum)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+
+  override fun echoObject(anObject: Any): Any {
+    api?.let {
+      try {
+        return api!!.echoObject(anObject)
       } catch (e: Exception) {
         throw e
       }

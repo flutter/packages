@@ -269,7 +269,8 @@ class SwiftGenerator extends StructuredGenerator<InternalSwiftOptions> {
     addDocumentationComments(
         indent, anEnum.documentationComments, _docCommentSpec);
 
-    indent.write('enum ${anEnum.name}: Int ');
+    indent.write(
+        '${generatorOptions.useFfi ? '@objc ' : ''}enum ${anEnum.name}: Int ');
     indent.addScoped('{', '}', () {
       enumerate(anEnum.members, (int index, final EnumMember member) {
         addDocumentationComments(
@@ -277,6 +278,149 @@ class SwiftGenerator extends StructuredGenerator<InternalSwiftOptions> {
         indent.writeln('case ${_camelCase(member.name)} = $index');
       });
     });
+  }
+
+  void _writeFfiCodec(Indent indent, Root root) {
+    indent.newln();
+    indent.format('''
+class _PigeonFfiCodec {
+  static func readValue(value: NSObject?, type: String?) -> Any? {
+    if (isNullish(value)) {
+      return nil
+    }
+    if (value is NSNumber) {
+      if (type == "int") {
+        return (value as! NSNumber).intValue
+      } else if (type == "double") {
+        return (value as! NSNumber).doubleValue
+      } else if (type == "bool") {
+        return (value as! NSNumber) == 1
+      ${root.enums.map((Enum enumDefinition) {
+      return '''
+      } else if (type == "${enumDefinition.name}") {
+        return ${enumDefinition.name}.init(rawValue: (value as! NSNumber).intValue)
+      }''';
+    }).join()}
+    }
+      // } else if (value.isA<NSByteArray>(NSByteArray.type)) {
+      //   final Uint8List list = Uint8List(value.as(NSByteArray.type).length)
+      //   for (int i = 0; i < value.as(NSByteArray.type).length; i++) {
+      //     list[i] = value.as(NSByteArray.type)[i]
+      //   }
+      //   return list
+      // } else if (value.isA<NSIntArray>(NSIntArray.type)) {
+      //   final Int32List list = Int32List(value.as(NSIntArray.type).length)
+      //   for (int i = 0; i < value.as(NSIntArray.type).length; i++) {
+      //     list[i] = value.as(NSIntArray.type)[i]
+      //   }
+      //   return list
+      //   // } else if (value.isA<NSLongArray>(NSLongArray.type)) {
+      //   final Int64List list = Int64List(value.as(NSLongArray.type).length)
+      //   //   for (int i = 0; i < value.as(NSLongArray.type).length; i++) {
+      //     list[i] = value.as(NSLongArray.type)[i]
+      //   //   }
+      //   return list
+      //   // } else if (value.isA<NSDoubleArray>(NSDoubleArray.type)) {
+      //   final Float64List list = Float64List(value.as(NSDoubleArray.type).length)
+      //   //   for (int i = 0; i < value.as(NSDoubleArray.type).length; i++) {
+      //     list[i] = value.as(NSDoubleArray.type)[i]
+      //   //   }
+      //   return list
+    if (value is NSMutableArray) {
+      var res: Array<Any?> = []
+      for i in 0..<(value as! NSMutableArray).count {
+          res.append(readValue(value: (value as! NSMutableArray)[i] as? NSObject, type: nil))
+      }
+      return res
+    }
+    if (value is NSDictionary) {
+      var res: Dictionary<AnyHashable?, Any?> = Dictionary()
+      for (key, value) in (value as! NSDictionary) {
+          res[readValue(value: key as? NSObject, type: nil) as! AnyHashable?] = readValue(value: value as? NSObject, type: nil)
+      }
+      return res
+    } 
+    if (value is NSNumberWrapper) {
+      return unwrapNumber(wrappedNumber: value as! NSNumberWrapper)
+    }
+    if (value is NSString) {
+      return value as! NSString
+    }
+    return value
+  }
+
+  static func writeValue(value: Any?, isObject: Bool = false) -> Any? {
+    if (isNullish(value)) {
+      return nil
+    }
+    if (value is Bool || value is Double || value is Int${root.enums.map((Enum enumDefinition) {
+      return ' || value is ${enumDefinition.name}';
+    }).join()}) {
+      if (isObject) {
+        return wrapNumber(number: value as! NSNumber, type: numberCodec(number: value!))
+      }
+      if (value is Bool) {
+        return (value as! Bool) ? 1 : 0
+      } else if (value is Double) {
+        return value
+      } else if (value is Int) {
+        return value
+      ${root.enums.map((Enum enumDefinition) {
+      return '''
+      } else if (value is ${enumDefinition.name}) {
+        return (value as! ${enumDefinition.name}).rawValue
+      }''';
+    }).join()}
+    }
+    // } else if (isTypeOrNullableType<NSByteArray>(T)) {
+    //   value as List<int>
+    //   final NSByteArray array = NSByteArray(value.length)
+    //   for (int i = 0; i < value.length; i++) {
+    //     array[i] = value[i]
+    //   }
+    //   return array
+    // } else if (isTypeOrNullableType<NSIntArray>(T)) {
+    //   value as List<int>
+    //   final NSIntArray array = NSIntArray(value.length)
+    //   for (int i = 0; i < value.length; i++) {
+    //     array[i] = value[i]
+    //   }
+    //   return array
+    // } else if (isTypeOrNullableType<NSLongArray>(T)) {
+    //   value as List<int>
+    //   final NSLongArray array = NSLongArray(value.length)
+    //   for (int i = 0; i < value.length; i++) {
+    //     array[i] = value[i]
+    //   }
+    //   return array
+    // } else if (isTypeOrNullableType<NSDoubleArray>(T)) {
+    //   value as List<double>
+    //   final NSDoubleArray array = NSDoubleArray(value.length)
+    //   for (int i = 0; i < value.length; i++) {
+    //     array[i] = value[i]
+    //   }
+    //   return array
+    if (value is Array<Any>) {
+      let res: NSMutableArray = NSMutableArray()
+      for i in 0..<(value as! NSMutableArray).count {
+        res.add(writeValue(value: (value as! NSMutableArray)[i])!)
+      }
+      return res
+    }
+    if (value is Dictionary<AnyHashable, Any>) {
+      let res: NSMutableDictionary = NSMutableDictionary()
+      for (key, value) in (value as! NSDictionary) {
+         res.setObject(writeValue(value: value) as Any, forKey: writeValue(value: key) as! NSCopying)
+      }
+      return res
+    }
+    if (value is String) {
+      return value as! NSString
+    }
+    return value
+  }
+}
+    ''');
   }
 
   @override
@@ -289,6 +433,7 @@ class SwiftGenerator extends StructuredGenerator<InternalSwiftOptions> {
     if (generatorOptions.useFfi &&
         !root.containsEventChannel &&
         !root.containsProxyApi) {
+      _writeFfiCodec(indent, root);
       return;
     }
     final String codecName = _getMessageCodecName(generatorOptions);
@@ -1514,6 +1659,80 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
     });
   }
 
+  void _writeNumberWrapper(Root root, Indent indent) {
+    indent.newln();
+    indent.writeScoped('@objc class NSNumberWrapper: NSObject {', '}', () {
+      indent.writeScoped('@objc init(', ')', () {
+        indent.writeln('number: NSNumber,');
+        indent.writeln('type: Int,');
+      }, addTrailingNewline: false);
+      indent.writeScoped('{', '}', () {
+        indent.writeln('self.number = number');
+        indent.writeln('self.type = type');
+      });
+      indent.writeln('@objc var number: NSNumber');
+      indent.writeln('@objc var type: Int');
+    });
+    indent.newln();
+    indent.writeScoped(
+        'private func wrapNumber(number: NSNumber, type: Int) -> NSNumberWrapper {',
+        '}', () {
+      indent.writeln('return NSNumberWrapper(number: number, type: type)');
+    });
+    indent.newln();
+    indent.writeScoped(
+        'private func unwrapNumber<T>(wrappedNumber: NSNumberWrapper) -> T {',
+        '}', () {
+      indent.writeScoped('switch (wrappedNumber.type) {', '}', () {
+        int caseNum = 4;
+        indent.format('''
+    case 1:
+        return wrappedNumber.number.intValue as! T
+    case 2:
+        return wrappedNumber.number.doubleValue as! T
+    case 3:
+        return wrappedNumber.number.boolValue as! T''');
+        for (final Enum anEnum in root.enums) {
+          indent.writeln('case ${caseNum++}:');
+          indent.inc();
+          indent.writeln(
+              'return ${anEnum.name}(rawValue: wrappedNumber.number.intValue) as! T');
+          indent.dec();
+        }
+        indent.writeln('default:');
+        indent.inc();
+        indent.writeln('return wrappedNumber.number.intValue as! T');
+        indent.dec();
+      });
+    });
+    indent.newln();
+    indent.writeScoped('private func numberCodec(number: Any) -> Int {', '}',
+        () {
+      indent.writeScoped('switch number {', '}', () {
+        int caseNum = 4;
+        indent.format('''
+    case _ as Int:
+        return 1
+    case _ as Double:
+        return 2
+    case _ as Float:
+        return 2
+    case _ as Bool:
+        return 3''');
+        for (final Enum anEnum in root.enums) {
+          indent.writeln('case _ as ${anEnum.name}:');
+          indent.inc();
+          indent.writeln('return ${caseNum++}');
+          indent.dec();
+        }
+        indent.writeln('default:');
+        indent.inc();
+        indent.writeln('return 0');
+        indent.dec();
+      });
+    });
+  }
+
   @override
   void writeGeneralUtilities(
     InternalSwiftOptions generatorOptions,
@@ -1532,6 +1751,10 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
     }
     if (root.containsFlutterApi || root.containsProxyApi) {
       _writeCreateConnectionError(generatorOptions, indent);
+    }
+    if (generatorOptions.useFfi) {
+      //TODO: add check for use of Object
+      _writeNumberWrapper(root, indent);
     }
 
     _writeIsNullish(indent);
@@ -2706,14 +2929,15 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
       indent.writeln(
           '$declaration code: String${generatorOptions.useFfi ? '?' : ''}');
       indent.writeln('$declaration message: String?');
-      indent.writeln('$declaration details: Sendable?');
+      indent.writeln(
+          '$declaration details: ${generatorOptions.useFfi ? 'String' : 'Sendable'}?');
       if (generatorOptions.useFfi) {
         indent.newln();
         indent.writeln('@objc override init() {}');
       }
       indent.newln();
       indent.writeScoped(
-          '${objc}init(code: String${generatorOptions.useFfi ? '?' : ''}, message: String?, details: Sendable?) {',
+          '${objc}init(code: String${generatorOptions.useFfi ? '?' : ''}, message: String?, details: ${generatorOptions.useFfi ? 'String' : 'Sendable'}?) {',
           '}', () {
         indent.writeln('self.code = code');
         indent.writeln('self.message = message');
@@ -2973,6 +3197,7 @@ String? _swiftTypeForBuiltinDartType(
 String? _ffiTypeForBuiltinDartType(
   TypeDeclaration type, {
   bool collectionSubType = false,
+  bool forceNullable = false,
 }) {
   const Map<String, String> ffiTypeForDartTypeMap = <String, String>{
     'void': 'Void',
@@ -2993,8 +3218,8 @@ String? _ffiTypeForBuiltinDartType(
     return ffiTypeForDartTypeMap[type.baseName];
   } else if (type.baseName == 'List' || type.baseName == 'Map') {
     return _ffiTypeForBuiltinGenericDartType(type);
-  } else if (type.isEnum) {
-    return ffiTypeForDartTypeMap['int'];
+  } else if (type.isEnum && (type.isNullable || forceNullable)) {
+    return 'NSNumber';
   } else {
     return null;
   }
@@ -3016,9 +3241,12 @@ String _swiftTypeForDartType(TypeDeclaration type, {bool mapKey = false}) {
 }
 
 String _ffiTypeForDartType(TypeDeclaration type,
-    {bool collectionSubType = false}) {
-  return _ffiTypeForBuiltinDartType(type,
-          collectionSubType: collectionSubType) ??
+    {bool collectionSubType = false, bool forceNullable = false}) {
+  return _ffiTypeForBuiltinDartType(
+        type,
+        collectionSubType: collectionSubType,
+        forceNullable: forceNullable,
+      ) ??
       type.baseName;
 }
 
@@ -3032,12 +3260,15 @@ String _nullSafeSwiftTypeForDartType(
 
 String _nullSafeFfiTypeForDartType(TypeDeclaration type,
     {bool collectionSubType = false, bool forceNullable = false}) {
-  return '${_ffiTypeForDartType(type, collectionSubType: collectionSubType)}${forceNullable ? '?' : ''}';
+  return '${_ffiTypeForDartType(type, collectionSubType: collectionSubType, forceNullable: forceNullable)}${forceNullable ? '?' : ''}';
 }
 
 String _ffiToSwiftConversion(NamedType param) {
-  if (param.type.isEnum) {
+  if (param.type.isEnum && param.type.isNullable) {
     return '${param.type.baseName}(rawValue: ${param.name}.intValue)${param.type.isNullable ? '' : '!'}';
+  }
+  if (param.type.baseName == 'Object') {
+    return ' _PigeonFfiCodec.readValue(value: ${param.name} as? NSObject, type: nil) as Any';
   }
   return '${param.name}${_conversionToObjcRequired(param.type) ? '.${toLowerCamelCase(_swiftTypeForBuiltinDartType(param.type)!)}Value' : ''}';
 }
@@ -3045,6 +3276,8 @@ String _ffiToSwiftConversion(NamedType param) {
 String _swiftToFfiConversion(TypeDeclaration type, String toConvert) {
   if (type.isEnum) {
     return 'NSNumber(value: $toConvert.rawValue)';
+  } else if (type.baseName == 'Object') {
+    return '_PigeonFfiCodec.writeValue(value: $toConvert, isObject: true)';
   }
   return _conversionToObjcRequired(type)
       ? '$toConvert as ${_ffiTypeForBuiltinDartType(type)}'

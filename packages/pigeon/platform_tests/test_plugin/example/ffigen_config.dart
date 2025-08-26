@@ -5,6 +5,7 @@ import 'package:swiftgen/swiftgen.dart';
 
 Future<void> main() async {
   final List<String> classes = <String>[
+    'NSNumberWrapper',
     'JniHostIntegrationCoreApi',
     'JniHostIntegrationCoreApiSetup',
     'BasicClass',
