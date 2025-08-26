@@ -37,6 +37,21 @@ void main() {
       // this behavior, which could be implemented in the subclass.
       expect(ExtendsGoogleSignInPlatform().authenticationEvents, null);
     });
+
+    test(
+      'Default implementation of clearAuthorizationToken throws unimplemented error',
+      () {
+        final ExtendsGoogleSignInPlatform platform =
+            ExtendsGoogleSignInPlatform();
+
+        expect(
+          () => platform.clearAuthorizationToken(
+            const ClearAuthorizationTokensParams(accessToken: 'someToken'),
+          ),
+          throwsUnimplementedError,
+        );
+      },
+    );
   });
 
   group('GoogleSignInUserData', () {
