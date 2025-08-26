@@ -31,3 +31,10 @@ When providing a summary, the review agent must adhere to the following principl
   description, which may be outdated or inaccurate. A summary must reflect the actual changes in the code.
 - **Be Concise:** Generate summaries that are brief and to the point. Focus on the most significant changes,
   and avoid unnecessary details or verbose explanations. This ensures the feedback is easy to scan and understand.
+
+### Temporary dependency_overrides
+
+It is normal practice for PRs that affect multiple packages in a federated plugin to contain a temporary
+`dependency_overrides` section during initial review. The review agent should not comment about
+`dependency_overrides` sections in `pubspec.yaml` files that have a comment starting with:
+"FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE."
