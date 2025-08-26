@@ -41,6 +41,9 @@ dart run build_runner build
 Read more about using
 [`build_runner` on pub.dev](https://pub.dev/packages/build_runner).
 
+## Migration Guides
+- [Migrating to 4.0.0](https://flutter.dev/go/go-router-builder-v4-breaking-changes).
+
 ## Overview
 
 `go_router` fundamentally relies on the ability to match a string-based location
