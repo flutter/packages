@@ -87,7 +87,7 @@ void main() {
     expect(byteDataBar.lengthInBytes, 3);
 
     expect(loaderFoo.provideSvg(byteDataFoo), equals('foo'));
-    expect(loaderFoo.provideSvg(byteDataBar), equals('bar'));
+    expect(loaderBar.provideSvg(byteDataBar), equals('bar'));
   });
 
   test('SvgNetworkLoader closes internal client', () async {
