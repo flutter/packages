@@ -1,3 +1,7 @@
+## 0.4.0+11
+
+* Bumps androidx.test.ext:truth from 1.6.0 to 1.7.0.
+
 ## 0.4.0+10
 
 * Bumps com.android.tools.build:gradle to 8.12.1.
