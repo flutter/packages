@@ -174,32 +174,28 @@ List<gmaps.MapTypeStyle> _mapStyles(String? mapStyleJson) {
   List<gmaps.MapTypeStyle> styles = <gmaps.MapTypeStyle>[];
   if (mapStyleJson != null) {
     try {
-      styles =
-          (json.decode(
-                    mapStyleJson,
-                    reviver: (Object? key, Object? value) {
-                      if (value is Map &&
-                          _isJsonMapStyle(value as Map<String, Object?>)) {
-                        List<MapStyler> stylers = <MapStyler>[];
-                        if (value['stylers'] != null) {
-                          stylers =
-                              (value['stylers']! as List<Object?>)
-                                  .whereType<Map<String, Object?>>()
-                                  .map(MapStyler.fromJson)
-                                  .toList();
-                        }
-                        return gmaps.MapTypeStyle()
-                          ..elementType = value['elementType'] as String?
-                          ..featureType = value['featureType'] as String?
-                          ..stylers = stylers;
-                      }
-                      return value;
-                    },
-                  )
-                  as List<Object?>)
-              .where((Object? element) => element != null)
-              .cast<gmaps.MapTypeStyle>()
-              .toList();
+      styles = (json.decode(
+        mapStyleJson,
+        reviver: (Object? key, Object? value) {
+          if (value is Map && _isJsonMapStyle(value as Map<String, Object?>)) {
+            List<MapStyler> stylers = <MapStyler>[];
+            if (value['stylers'] != null) {
+              stylers = (value['stylers']! as List<Object?>)
+                  .whereType<Map<String, Object?>>()
+                  .map(MapStyler.fromJson)
+                  .toList();
+            }
+            return gmaps.MapTypeStyle()
+              ..elementType = value['elementType'] as String?
+              ..featureType = value['featureType'] as String?
+              ..stylers = stylers;
+          }
+          return value;
+        },
+      ) as List<Object?>)
+          .where((Object? element) => element != null)
+          .cast<gmaps.MapTypeStyle>()
+          .toList();
       // .toList calls are required so the JS API understands the underlying data structure.
     } on FormatException catch (e) {
       throw MapStyleException(e.message);
@@ -259,9 +255,8 @@ gmaps.InfoWindowOptions? _infoWindowOptionsFromMarker(Marker marker) {
 
   // Add an outer wrapper to the contents of the infowindow, we need it to listen
   // to click events...
-  final HTMLElement container =
-      createDivElement()
-        ..id = 'gmaps-marker-${marker.markerId.value}-infowindow';
+  final HTMLElement container = createDivElement()
+    ..id = 'gmaps-marker-${marker.markerId.value}-infowindow';
 
   if (markerTitle.isNotEmpty) {
     final HTMLHeadingElement title =
@@ -271,8 +266,8 @@ gmaps.InfoWindowOptions? _infoWindowOptionsFromMarker(Marker marker) {
     container.appendChild(title);
   }
   if (markerSnippet.isNotEmpty) {
-    final HTMLElement snippet =
-        createDivElement()..className = 'infowindow-snippet';
+    final HTMLElement snippet = createDivElement()
+      ..className = 'infowindow-snippet';
 
     // Firefox and Safari don't support Trusted Types yet.
     // See https://developer.mozilla.org/en-US/docs/Web/API/TrustedTypePolicyFactory#browser_compatibility
@@ -280,10 +275,9 @@ gmaps.InfoWindowOptions? _infoWindowOptionsFromMarker(Marker marker) {
       _gmapsTrustedTypePolicy ??= window.trustedTypes.createPolicy(
         'google_maps_flutter_sanitize',
         TrustedTypePolicyOptions(
-          createHTML:
-              (String html) {
-                return sanitizeHtml(html).toJS;
-              }.toJS,
+          createHTML: (String html) {
+            return sanitizeHtml(html).toJS;
+          }.toJS,
         ),
       );
 
@@ -448,9 +442,8 @@ Future<gmaps.Icon?> _gmIconFromBitmapDescriptor(
     assert(iconConfig.length >= 2);
     // iconConfig[2] contains the DPIs of the screen, but that information is
     // already encoded in the iconConfig[1]
-    icon =
-        gmaps.Icon()
-          ..url = ui_web.assetManager.getAssetUrl(iconConfig[1]! as String);
+    icon = gmaps.Icon()
+      ..url = ui_web.assetManager.getAssetUrl(iconConfig[1]! as String);
 
     final gmaps.Size? size = _gmSizeFromIconConfig(iconConfig, 3);
     if (size != null) {
@@ -509,18 +502,17 @@ Future<gmaps.MarkerOptions> _markerOptionsFromMarker(
 }
 
 gmaps.CircleOptions _circleOptionsFromCircle(Circle circle) {
-  final gmaps.CircleOptions circleOptions =
-      gmaps.CircleOptions()
-        ..strokeColor = _getCssColor(circle.strokeColor)
-        ..strokeOpacity = _getCssOpacity(circle.strokeColor)
-        ..strokeWeight = circle.strokeWidth
-        ..fillColor = _getCssColor(circle.fillColor)
-        ..fillOpacity = _getCssOpacity(circle.fillColor)
-        ..center = gmaps.LatLng(circle.center.latitude, circle.center.longitude)
-        ..radius = circle.radius
-        ..visible = circle.visible
-        ..zIndex = circle.zIndex
-        ..clickable = circle.consumeTapEvents;
+  final gmaps.CircleOptions circleOptions = gmaps.CircleOptions()
+    ..strokeColor = _getCssColor(circle.strokeColor)
+    ..strokeOpacity = _getCssOpacity(circle.strokeColor)
+    ..strokeWeight = circle.strokeWidth
+    ..fillColor = _getCssColor(circle.fillColor)
+    ..fillOpacity = _getCssOpacity(circle.fillColor)
+    ..center = gmaps.LatLng(circle.center.latitude, circle.center.longitude)
+    ..radius = circle.radius
+    ..visible = circle.visible
+    ..zIndex = circle.zIndex
+    ..clickable = circle.consumeTapEvents;
   return circleOptions;
 }
 
@@ -530,28 +522,25 @@ visualization.HeatmapLayerOptions _heatmapOptionsFromHeatmap(Heatmap heatmap) {
   );
   final visualization.HeatmapLayerOptions heatmapOptions =
       visualization.HeatmapLayerOptions()
-        ..data =
-            heatmap.data
-                .map(
-                  (WeightedLatLng e) =>
-                      visualization.WeightedLocation()
-                        ..location = gmaps.LatLng(
-                          e.point.latitude,
-                          e.point.longitude,
-                        )
-                        ..weight = e.weight,
+        ..data = heatmap.data
+            .map(
+              (WeightedLatLng e) => visualization.WeightedLocation()
+                ..location = gmaps.LatLng(
+                  e.point.latitude,
+                  e.point.longitude,
                 )
-                .toList()
-                .toJS
+                ..weight = e.weight,
+            )
+            .toList()
+            .toJS
         ..dissipating = heatmap.dissipating
-        ..gradient =
-            gradientColors == null
-                ? null
-                : <Color>[
-                  // Web needs a first color with 0 alpha
-                  gradientColors.first.withAlpha(0),
-                  ...gradientColors,
-                ].map(_getCssColorWithAlpha).toList()
+        ..gradient = gradientColors == null
+            ? null
+            : <Color>[
+                // Web needs a first color with 0 alpha
+                gradientColors.first.withAlpha(0),
+                ...gradientColors,
+              ].map(_getCssColorWithAlpha).toList()
         ..maxIntensity = heatmap.maxIntensity
         ..opacity = heatmap.opacity
         ..radius = heatmap.radius.radius;
@@ -631,8 +620,7 @@ List<gmaps.LatLng> _ensureHoleHasReverseWinding(
 bool _isPolygonClockwise(List<gmaps.LatLng> path) {
   double direction = 0.0;
   for (int i = 0; i < path.length; i++) {
-    direction =
-        direction +
+    direction = direction +
         ((path[(i + 1) % path.length].lat - path[i].lat) *
             (path[(i + 1) % path.length].lng + path[i].lng));
   }
@@ -744,19 +732,18 @@ void _applyCameraUpdate(gmaps.Map map, CameraUpdate update) {
 String urlFromMapBitmap(MapBitmap mapBitmap) {
   return switch (mapBitmap) {
     (final BytesMapBitmap bytesMapBitmap) => _bitmapBlobUrlCache.putIfAbsent(
-      bytesMapBitmap.byteData.hashCode,
-      () {
-        final Blob blob = Blob(
-          <JSUint8Array>[bytesMapBitmap.byteData.toJS].toJS,
-        );
-        return URL.createObjectURL(blob as JSObject);
-      },
-    ),
+        bytesMapBitmap.byteData.hashCode,
+        () {
+          final Blob blob = Blob(
+            <JSUint8Array>[bytesMapBitmap.byteData.toJS].toJS,
+          );
+          return URL.createObjectURL(blob as JSObject);
+        },
+      ),
     (final AssetMapBitmap assetMapBitmap) => ui_web.assetManager.getAssetUrl(
-      assetMapBitmap.assetName,
-    ),
-    _ =>
-      throw UnimplementedError(
+        assetMapBitmap.assetName,
+      ),
+    _ => throw UnimplementedError(
         'Only BytesMapBitmap and AssetMapBitmap are supported.',
       ),
   };
