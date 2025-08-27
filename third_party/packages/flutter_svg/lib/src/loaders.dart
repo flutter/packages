@@ -379,7 +379,7 @@ class SvgAssetLoader extends SvgLoader<ByteData> {
 
   @override
   String provideSvg(ByteData? message) =>
-      utf8.decode(Uint8List.sublistView(message!));
+      utf8.decode(Uint8List.sublistView(message!), allowMalformed: true);
 
   @override
   SvgCacheKey cacheKey(BuildContext? context) {
