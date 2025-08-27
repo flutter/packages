@@ -174,15 +174,30 @@ class AndroidCameraCameraX extends CameraPlatform {
   @visibleForTesting
   StreamController<CameraImageData>? cameraImageDataStreamController;
 
-  /// Constant representing the multi-plane Android YUV 420 image format.
+  /// Constant representing the multi-plane Android YUV 420 image format used by ImageProxy.
   ///
   /// See https://developer.android.com/reference/android/graphics/ImageFormat#YUV_420_888.
-  static const int imageFormatYuv420_888 = 35;
+  static const int imageProxyFormatYuv420_888 = 35;
 
-  /// Constant representing the compressed JPEG image format.
+  /// Constant representing the NV21 image format used by ImageProxy.
+  ///
+  /// See https://developer.android.com/reference/android/graphics/ImageFormat#NV21.
+  static const int imageProxyFormatNv21 = 17;
+
+  /// Constant representing the compressed JPEG image format used by ImageProxy.
   ///
   /// See https://developer.android.com/reference/android/graphics/ImageFormat#JPEG.
-  static const int imageFormatJpeg = 256;
+  static const int imageProxyFormatJpeg = 256;
+
+  /// Constant representing the YUV 420 image format used for configuring ImageAnalysis.
+  ///
+  /// See https://developer.android.com/reference/androidx/camera/core/ImageAnalysis#OUTPUT_IMAGE_FORMAT_YUV_420_888()
+  static const int imageAnalysisOutputImageFormatYuv420_888 = 1;
+
+  /// Constant representing the NV21 image format used for configuring ImageAnalysis.
+  ///
+  /// See https://developer.android.com/reference/androidx/camera/core/ImageAnalysis#OUTPUT_IMAGE_FORMAT_NV21().
+  static const int imageAnalysisOutputImageFormatNv21 = 3;
 
   /// Error code indicating a [ZoomState] was requested, but one has not been
   /// set for the camera in use.
@@ -268,6 +283,12 @@ class AndroidCameraCameraX extends CameraPlatform {
 
   /// A map to associate a [CameraInfo] with its camera name.
   final Map<String, CameraInfo> _savedCameras = <String, CameraInfo>{};
+
+  /// The preset resolution selector for the camera.
+  ResolutionSelector? _presetResolutionSelector;
+
+  /// The ID of the surface texture that the camera preview is drawn to.
+  late int _flutterSurfaceTextureId;
 
   /// Returns list of all available cameras and their descriptions.
   @override
@@ -380,8 +401,9 @@ class AndroidCameraCameraX extends CameraPlatform {
     );
     // Determine ResolutionSelector and QualitySelector based on
     // resolutionPreset for camera UseCases.
-    final ResolutionSelector? presetResolutionSelector =
-        _getResolutionSelectorFromPreset(mediaSettings?.resolutionPreset);
+    _presetResolutionSelector = _getResolutionSelectorFromPreset(
+      mediaSettings?.resolutionPreset,
+    );
     final QualitySelector? presetQualitySelector =
         _getQualitySelectorFromPreset(mediaSettings?.resolutionPreset);
 
@@ -391,55 +413,26 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     // Configure Preview instance.
     preview = proxy.newPreview(
-      resolutionSelector: presetResolutionSelector,
+      resolutionSelector: _presetResolutionSelector,
       /* use CameraX default target rotation */ targetRotation: null,
     );
-    final int flutterSurfaceTextureId = await preview!.setSurfaceProvider(
+    _flutterSurfaceTextureId = await preview!.setSurfaceProvider(
       systemServicesManager,
     );
 
     // Configure ImageCapture instance.
     imageCapture = proxy.newImageCapture(
-      resolutionSelector: presetResolutionSelector,
+      resolutionSelector: _presetResolutionSelector,
       /* use CameraX default target rotation */ targetRotation:
           await deviceOrientationManager.getDefaultDisplayRotation(),
-    );
-
-    // Configure ImageAnalysis instance.
-    // Defaults to YUV_420_888 image format.
-    imageAnalysis = proxy.newImageAnalysis(
-      resolutionSelector: presetResolutionSelector,
-      /* use CameraX default target rotation */ targetRotation: null,
     );
 
     // Configure VideoCapture and Recorder instances.
     recorder = proxy.newRecorder(qualitySelector: presetQualitySelector);
     videoCapture = proxy.withOutputVideoCapture(videoOutput: recorder!);
 
-    // Bind configured UseCases to ProcessCameraProvider instance & mark Preview
-    // instance as bound but not paused. Video capture is bound at first use
-    // instead of here.
-    camera = await processCameraProvider!.bindToLifecycle(
-      cameraSelector!,
-      <UseCase>[preview!, imageCapture!, imageAnalysis!],
-    );
-    await _updateCameraInfoAndLiveCameraState(flutterSurfaceTextureId);
-    previewInitiallyBound = true;
-    _previewIsPaused = false;
-
     // Retrieve info required for correcting the rotation of the camera preview
     // if necessary.
-
-    final Camera2CameraInfo camera2CameraInfo = proxy.fromCamera2CameraInfo(
-      cameraInfo: cameraInfo!,
-    );
-    sensorOrientationDegrees =
-        ((await camera2CameraInfo.getCameraCharacteristic(
-                  proxy.sensorOrientationCameraCharacteristics(),
-                ))!
-                as int)
-            .toDouble();
-
     sensorOrientationDegrees = cameraDescription.sensorOrientation.toDouble();
     _handlesCropAndRotation = await preview!
         .surfaceProducerHandlesCropAndRotation();
@@ -449,35 +442,59 @@ class AndroidCameraCameraX extends CameraPlatform {
     _initialDefaultDisplayRotation = await deviceOrientationManager
         .getDefaultDisplayRotation();
 
-    return flutterSurfaceTextureId;
+    return _flutterSurfaceTextureId;
   }
 
   /// Initializes the camera on the device.
   ///
-  /// Since initialization of a camera does not directly map as an operation to
-  /// the CameraX library, this method just retrieves information about the
-  /// camera and sends a [CameraInitializedEvent].
+  /// Specifically, this method:
+  ///  * Configures the [ImageAnalysis] instance according to the specified
+  ///   [imageFormatGroup]
+  ///  * Binds the configured [Preview], [ImageCapture], and [ImageAnalysis]
+  ///    instances to the [ProcessCameraProvider] instance.
+  ///  * Retrieves information about the camera and sends a [CameraInitializedEvent].
   ///
   /// [imageFormatGroup] is used to specify the image format used for image
-  /// streaming, but CameraX currently only supports YUV_420_888 (supported by
-  /// Flutter) and RGBA (not supported by Flutter). CameraX uses YUV_420_888
-  /// by default, so [imageFormatGroup] is not used.
+  /// streaming, but CameraX currently only supports YUV_420_888 (the CameraX default),
+  /// NV21, and RGBA (not supported by Flutter).
   @override
   Future<void> initializeCamera(
     int cameraId, {
     ImageFormatGroup imageFormatGroup = ImageFormatGroup.unknown,
   }) async {
-    // Configure CameraInitializedEvent to send as representation of a
-    // configured camera:
-    // Retrieve preview resolution.
+    // If preview has not been created, then no camera has been created, which signals that
+    // createCamera was not called before initializeCamera.
     if (preview == null) {
-      // No camera has been created; createCamera must be called before initializeCamera.
       throw CameraException(
         'cameraNotFound',
         "Camera not found. Please call the 'create' method before calling 'initialize'",
       );
     }
+    // Configure ImageAnalysis instance.
+    // Defaults to YUV_420_888 image format.
+    imageAnalysis = proxy.newImageAnalysis(
+      resolutionSelector: _presetResolutionSelector,
+      outputImageFormat: _imageAnalysisOutputFormatFromImageFormatGroup(
+        imageFormatGroup,
+      ),
+      /* use CameraX default target rotation */ targetRotation: null,
+    );
 
+    // Bind configured UseCases to ProcessCameraProvider instance & mark Preview
+    // instance as bound but not paused. Video capture is bound at first use
+    // instead of here.
+    camera = await processCameraProvider!.bindToLifecycle(
+      cameraSelector!,
+      <UseCase>[preview!, imageCapture!, imageAnalysis!],
+    );
+    await _updateCameraInfoAndLiveCameraState(_flutterSurfaceTextureId);
+    previewInitiallyBound = true;
+    _previewIsPaused = false;
+
+    // Configure CameraInitializedEvent to send as representation of a
+    // configured camera:
+
+    // Retrieve preview resolution.
     final ResolutionInfo previewResolutionInfo = (await preview!
         .getResolutionInfo())!;
 
@@ -1214,6 +1231,10 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// implementation using a broadcast [StreamController], which does not
   /// support those operations.
   ///
+  /// If the camera was initialized with [ImageFormatGroup.nv21], then the
+  /// streamed images will still have format [ImageFormatGroup.yuv420], but
+  /// their image data will be formatted in NV21.
+  ///
   /// [cameraId] and [options] are not used.
   @override
   Stream<CameraImageData> onStreamedFrameAvailable(
@@ -1326,14 +1347,30 @@ class AndroidCameraCameraX extends CameraPlatform {
     await imageAnalysis!.clearAnalyzer();
   }
 
-  /// Converts between Android ImageFormat constants and [ImageFormatGroup]s.
+  /// Converts [ImageFormatGroup]s to Android ImageAnalysis output format constants.
+  ///
+  /// See https://developer.android.com/reference/androidx/camera/core/ImageAnalysis.
+  int? _imageAnalysisOutputFormatFromImageFormatGroup(dynamic format) {
+    switch (format) {
+      case ImageFormatGroup.yuv420:
+        return imageAnalysisOutputImageFormatYuv420_888;
+      case ImageFormatGroup.nv21:
+        return imageAnalysisOutputImageFormatNv21;
+    }
+
+    return null;
+  }
+
+  /// Converts from Android ImageFormat constants to [ImageFormatGroup]s.
   ///
   /// See https://developer.android.com/reference/android/graphics/ImageFormat.
   ImageFormatGroup _imageFormatGroupFromPlatformData(dynamic data) {
     switch (data) {
-      case imageFormatYuv420_888: // android.graphics.ImageFormat.YUV_420_888
+      case imageProxyFormatYuv420_888: // android.graphics.ImageFormat.YUV_420_888
         return ImageFormatGroup.yuv420;
-      case imageFormatJpeg: // android.graphics.ImageFormat.JPEG
+      case imageProxyFormatNv21: // android.graphics.ImageFormat.NV21
+        return ImageFormatGroup.nv21;
+      case imageProxyFormatJpeg: // android.graphics.ImageFormat.JPEG
         return ImageFormatGroup.jpeg;
     }
 
