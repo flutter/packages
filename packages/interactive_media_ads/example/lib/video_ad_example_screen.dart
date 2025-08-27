@@ -170,6 +170,10 @@ class _VideoAdExampleScreenState extends State<VideoAdExampleScreen>
   }
 
   Future<void> _resumeContent() async {
+    if (!mounted) {
+      return;
+    }
+
     setState(() {
       _shouldShowContentVideo = true;
     });
