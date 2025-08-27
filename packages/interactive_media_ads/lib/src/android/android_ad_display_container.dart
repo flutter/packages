@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:collection';
 
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
@@ -110,8 +111,9 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
   @internal
   ima.AdDisplayContainer? adDisplayContainer;
 
-  // Currently loaded ad.
-  ima.AdMediaInfo? _loadedAdMediaInfo;
+  // Queue of loaded ads.
+  final Queue<ima.AdMediaInfo> _loadedAdMediaInfoQueue =
+      Queue<ima.AdMediaInfo>();
 
   // The saved ad position, used to resume ad playback following an ad
   // click-through.
@@ -171,9 +173,17 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
     _savedAdPosition = 0;
   }
 
+  // Reset state to before an ad is loaded and release references to all ads and
+  // callbacks.
+  void _release() {
+    _resetStateForNextAd();
+    _loadedAdMediaInfoQueue.clear();
+    videoAdPlayerCallbacks.clear();
+  }
+
   // Clear state to before ad is loaded and replace current VideoView with a new
   // one.
-  void _resetState() {
+  void _resetStateForNextAd() {
     _stopAdProgressTracking();
 
     _frameLayout.removeView(_videoView);
@@ -183,7 +193,7 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
     _frameLayout.addView(_videoView);
 
     _clearMediaPlayer();
-    _loadedAdMediaInfo = null;
+    _loadedAdMediaInfoQueue.removeFirst();
     _adDuration = null;
     _startPlayerWhenVideoIsPrepared = true;
   }
@@ -211,7 +221,8 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
           await Future.wait(<Future<void>>[
             _videoAdPlayer.setAdProgress(currentProgress),
 
-            if (_loadedAdMediaInfo case final ima.AdMediaInfo loadedAdMediaInfo)
+            if (_loadedAdMediaInfoQueue.firstOrNull
+                case final ima.AdMediaInfo loadedAdMediaInfo)
               ...videoAdPlayerCallbacks.map(
                 (ima.VideoAdPlayerCallback callback) =>
                     callback.onAdProgress(loadedAdMediaInfo, currentProgress),
@@ -242,7 +253,7 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
           container._stopAdProgressTracking();
           for (final ima.VideoAdPlayerCallback callback
               in container.videoAdPlayerCallbacks) {
-            callback.onEnded(container._loadedAdMediaInfo!);
+            callback.onEnded(container._loadedAdMediaInfoQueue.first);
           }
         }
       },
@@ -267,9 +278,9 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
           container._clearMediaPlayer();
           for (final ima.VideoAdPlayerCallback callback
               in container.videoAdPlayerCallbacks) {
-            callback.onError(container._loadedAdMediaInfo!);
+            callback.onError(container._loadedAdMediaInfoQueue.first);
           }
-          container._loadedAdMediaInfo = null;
+          container._loadedAdMediaInfoQueue.removeFirst();
           container._adDuration = null;
         }
       },
@@ -290,7 +301,7 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
         weakThis.target?.videoAdPlayerCallbacks.remove(callback);
       },
       loadAd: (_, ima.AdMediaInfo adMediaInfo, __) {
-        weakThis.target?._loadedAdMediaInfo = adMediaInfo;
+        weakThis.target?._loadedAdMediaInfoQueue.add(adMediaInfo);
       },
       pauseAd: (_, __) async {
         final AndroidAdDisplayContainer? container = weakThis.target;
@@ -312,8 +323,10 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
           container._videoView.setVideoUri(adMediaInfo.url);
         }
       },
-      release: (_) => weakThis.target?._resetState(),
-      stopAd: (_, __) => weakThis.target?._resetState(),
+      release: (_) {
+        weakThis.target?._release();
+      },
+      stopAd: (_, __) => weakThis.target?._resetStateForNextAd(),
     );
   }
 }
