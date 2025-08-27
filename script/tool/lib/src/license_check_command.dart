@@ -341,6 +341,7 @@ class LicenseCheckCommand extends PackageCommand {
     return (result.stdout as String)
         .trim()
         .split('\n')
+        .where((String path) => path.isNotEmpty)
         .map((String path) => repoRoot.childFile(path))
         // Filter out symbolic links to avoid checking files multiple times.
         .where((File f) => !repoRoot.fileSystem.isLinkSync(f.path));
