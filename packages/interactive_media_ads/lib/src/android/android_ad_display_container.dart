@@ -314,6 +314,11 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
           container._savedAdPosition =
               await container._videoView.getCurrentPosition();
           container._stopAdProgressTracking();
+          await Future.wait(<Future<void>>[
+            for (final ima.VideoAdPlayerCallback callback
+                in container.videoAdPlayerCallbacks)
+              callback.onPause(container._loadedAdMediaInfoQueue.first),
+          ]);
         }
       },
       playAd: (_, ima.AdMediaInfo adMediaInfo) {
@@ -321,6 +326,10 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
         if (container != null) {
           container._startPlayerWhenVideoIsPrepared = true;
           container._videoView.setVideoUri(adMediaInfo.url);
+          for (final ima.VideoAdPlayerCallback callback
+              in container.videoAdPlayerCallbacks) {
+            callback.onPlay(adMediaInfo);
+          }
         }
       },
       release: (_) {
