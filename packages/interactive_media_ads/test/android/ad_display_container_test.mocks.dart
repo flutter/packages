@@ -755,21 +755,21 @@ class MockVideoAdPlayer extends _i1.Mock implements _i2.VideoAdPlayer {
           as void Function(_i2.VideoAdPlayer, _i2.AdMediaInfo, _i2.AdPodInfo));
 
   @override
-  void Function(_i2.VideoAdPlayer, _i2.AdMediaInfo) get pauseAd =>
+  _i5.Future<void> Function(_i2.VideoAdPlayer, _i2.AdMediaInfo) get pauseAd =>
       (super.noSuchMethod(
             Invocation.getter(#pauseAd),
             returnValue:
                 (
                   _i2.VideoAdPlayer pigeon_instance,
                   _i2.AdMediaInfo adMediaInfo,
-                ) {},
+                ) => _i5.Future<void>.value(),
             returnValueForMissingStub:
                 (
                   _i2.VideoAdPlayer pigeon_instance,
                   _i2.AdMediaInfo adMediaInfo,
-                ) {},
+                ) => _i5.Future<void>.value(),
           )
-          as void Function(_i2.VideoAdPlayer, _i2.AdMediaInfo));
+          as _i5.Future<void> Function(_i2.VideoAdPlayer, _i2.AdMediaInfo));
 
   @override
   void Function(_i2.VideoAdPlayer, _i2.AdMediaInfo) get playAd =>

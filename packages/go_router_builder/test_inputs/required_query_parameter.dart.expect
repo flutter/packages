@@ -6,7 +6,7 @@ RouteBase get $nonNullableRequiredParamNotInPath => GoRouteData.$route(
 mixin _$NonNullableRequiredParamNotInPath on GoRouteData {
   static NonNullableRequiredParamNotInPath _fromState(GoRouterState state) =>
       NonNullableRequiredParamNotInPath(
-        id: int.parse(state.uri.queryParameters['id']!)!,
+        id: int.parse(state.uri.queryParameters['id']!),
       );
 
   NonNullableRequiredParamNotInPath get _self =>
