@@ -174,7 +174,7 @@ class LicenseCheckCommand extends PackageCommand {
       printError(
           'The following LICENSE files do not follow the expected format:');
       for (final File file in licenseFileFailures) {
-        printError('  ${file.path}');
+        printError('  ${_repoRelativePath(file)}');
       }
       printError('Please ensure that they use the exact format used in this '
           'repository".\n');
@@ -185,7 +185,7 @@ class LicenseCheckCommand extends PackageCommand {
       printError('The license block for these files is missing or incorrect:');
       for (final File file
           in codeFileFailures[_LicenseFailureType.incorrectFirstParty]!) {
-        printError('  ${file.path}');
+        printError('  ${_repoRelativePath(file)}');
       }
       printError(
           'If this third-party code, move it to a "third_party/" directory, '
@@ -199,7 +199,7 @@ class LicenseCheckCommand extends PackageCommand {
           'No recognized license was found for the following third-party files:');
       for (final File file
           in codeFileFailures[_LicenseFailureType.unknownThirdParty]!) {
-        printError('  ${file.path}');
+        printError('  ${_repoRelativePath(file)}');
       }
       print('Please check that they have a license at the top of the file. '
           'If they do, the license check needs to be updated to recognize '
@@ -241,7 +241,7 @@ class LicenseCheckCommand extends PackageCommand {
     };
 
     for (final File file in codeFiles) {
-      print('Checking ${file.path}');
+      print('Checking ${_repoRelativePath(file)}');
       // Some third-party directories have code that doesn't annotate each file,
       // so for those check the LICENSE file instead. This is done even though
       // it's redundant to re-check it for each file because it ensures that we
@@ -297,7 +297,7 @@ class LicenseCheckCommand extends PackageCommand {
     final List<File> incorrectLicenseFiles = <File>[];
 
     for (final File file in files) {
-      print('Checking ${file.path}');
+      print('Checking ${_repoRelativePath(file)}');
       // On Windows, git may auto-convert line endings on checkout; this should
       // still pass since they will be converted back on commit.
       final String contents = file.readAsStringSync().replaceAll('\r\n', '\n');
@@ -362,6 +362,10 @@ class LicenseCheckCommand extends PackageCommand {
       }
     }
     return submodulePaths;
+  }
+
+  String _repoRelativePath(File file) {
+    return p.relative(file.absolute.path, from: packagesDir.parent.path);
   }
 }
 
