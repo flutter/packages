@@ -326,9 +326,14 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
         if (container != null) {
           container._startPlayerWhenVideoIsPrepared = true;
           container._videoView.setVideoUri(adMediaInfo.url);
+
           for (final ima.VideoAdPlayerCallback callback
               in container.videoAdPlayerCallbacks) {
-            callback.onPlay(adMediaInfo);
+            if (container._savedAdPosition == 0) {
+              callback.onPlay(adMediaInfo);
+            } else {
+              callback.onResume(adMediaInfo);
+            }
           }
         }
       },
