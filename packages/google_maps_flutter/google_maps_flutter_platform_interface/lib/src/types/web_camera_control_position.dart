@@ -2,17 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Identifiers used to specify the placement of controls on the map.
-// Controls are positioned relative to other controls in the same layout position.
-// Controls that are added first are positioned closer to the edge of the map.
-// Usage of "logical values"
-// (see https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_logical_properties_and_values)
-// is recommended in order to be able to automatically support both
-// left-to-right (LTR) and right-to-left (RTL) layout contexts.
-
-// Elements in the top or bottom row flow towards the middle of the row.
-// Elements in the left or right column flow towards the middle of the column.
-
 /// This setting controls how the API handles camera control button on the map
 /// See https://developers.google.com/maps/documentation/javascript/reference/control#ControlPosition for more details.
 enum WebCameraControlPosition {
@@ -22,7 +11,7 @@ enum WebCameraControlPosition {
   /// Equivalent to BOTTOM_LEFT in LTR, or BOTTOM_RIGHT in RTL.
   blockEndInlineStart,
 
-  /// EEquivalent to TOP_RIGHT in LTR, or TOP_LEFT in RTL.
+  /// Equivalent to TOP_RIGHT in LTR, or TOP_LEFT in RTL.
   blockEndInlineEnd,
 
   /// Equivalent to TOP_CENTER in both LTR and RTL.
@@ -61,7 +50,6 @@ enum WebCameraControlPosition {
   inlineStartBlockCenter,
 
   /// Equivalent to LEFT_BOTTOM in LTR, or RIGHT_BOTTOM in RTL.
-
   inlineStartBlockEnd,
 
   /// Equivalent to LEFT_TOP in LTR, or RIGHT_TOP in RTL.
