@@ -17,6 +17,14 @@ class _GoRouteDataBuild extends GoRouteData {
       const SizedBox(key: Key('build'));
 }
 
+class _RelativeGoRouteDataBuild extends RelativeGoRouteData {
+  const _RelativeGoRouteDataBuild();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const SizedBox(key: Key('build'));
+}
+
 class _ShellRouteDataRedirectPage extends ShellRouteData {
   const _ShellRouteDataRedirectPage();
 
@@ -57,6 +65,11 @@ final GoRoute _goRouteDataBuild = GoRouteData.$route(
   factory: (GoRouterState state) => const _GoRouteDataBuild(),
 );
 
+final GoRoute _relativeGoRouteDataBuild = RelativeGoRouteData.$route(
+  path: 'build',
+  factory: (GoRouterState state) => const _RelativeGoRouteDataBuild(),
+);
+
 final ShellRoute _shellRouteDataBuilder = ShellRouteData.$route(
   factory: (GoRouterState state) => const _ShellRouteDataBuilder(),
   routes: <RouteBase>[
@@ -69,6 +82,14 @@ final ShellRoute _shellRouteDataBuilder = ShellRouteData.$route(
 
 class _GoRouteDataBuildPage extends GoRouteData {
   const _GoRouteDataBuildPage();
+
+  @override
+  Page<void> buildPage(BuildContext context, GoRouterState state) =>
+      const MaterialPage<void>(child: SizedBox(key: Key('buildPage')));
+}
+
+class _RelativeGoRouteDataBuildPage extends RelativeGoRouteData {
+  const _RelativeGoRouteDataBuildPage();
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) =>
@@ -99,6 +120,11 @@ class _StatefulShellRouteDataRedirectPage extends StatefulShellRouteData {
 final GoRoute _goRouteDataBuildPage = GoRouteData.$route(
   path: '/build-page',
   factory: (GoRouterState state) => const _GoRouteDataBuildPage(),
+);
+
+final GoRoute _relativeGoRouteDataBuildPage = RelativeGoRouteData.$route(
+  path: 'build-page',
+  factory: (GoRouterState state) => const _RelativeGoRouteDataBuildPage(),
 );
 
 final ShellRoute _shellRouteDataPageBuilder = ShellRouteData.$route(
@@ -189,9 +215,22 @@ class _GoRouteDataRedirectPage extends GoRouteData {
       '/build-page';
 }
 
+class _RelativeGoRouteDataRedirectPage extends RelativeGoRouteData {
+  const _RelativeGoRouteDataRedirectPage();
+
+  @override
+  FutureOr<String> redirect(BuildContext context, GoRouterState state) =>
+      '/build-page';
+}
+
 final GoRoute _goRouteDataRedirect = GoRouteData.$route(
   path: '/redirect',
   factory: (GoRouterState state) => const _GoRouteDataRedirectPage(),
+);
+
+final GoRoute _relativeGoRouteDataRedirect = RelativeGoRouteData.$route(
+  path: 'redirect',
+  factory: (GoRouterState state) => const _RelativeGoRouteDataRedirectPage(),
 );
 
 final List<GoRoute> _routes = <GoRoute>[
@@ -207,6 +246,18 @@ String fromBase64(String value) {
 String toBase64(String value) {
   return base64.encode(const Utf8Encoder().convert(value));
 }
+
+final List<GoRoute> _relativeRoutes = <GoRoute>[
+  GoRouteData.$route(
+    path: '/',
+    factory: (GoRouterState state) => const _GoRouteDataBuild(),
+    routes: <RouteBase>[
+      _relativeGoRouteDataBuild,
+      _relativeGoRouteDataBuildPage,
+      _relativeGoRouteDataRedirect,
+    ],
+  ),
+];
 
 void main() {
   group('GoRouteData', () {
@@ -262,7 +313,7 @@ void main() {
       },
     );
 
-    testWidgets('It should throw beacuase there is no code generated', (
+    testWidgets('It should throw because there is no code generated', (
       WidgetTester tester,
     ) async {
       final List<FlutterErrorDetails> errors = <FlutterErrorDetails>[];
@@ -272,61 +323,164 @@ void main() {
 
       const String errorText = 'Should be generated';
 
-      Widget buildWidget(void Function(BuildContext) onTap) {
-        return MaterialApp(
-          home: Builder(
-            builder:
-                (BuildContext context) => GestureDetector(
-                  child: const Text('Tap'),
-                  onTap: () => onTap(context),
-                ),
+      Future<void> expectUnimplementedError(
+        void Function(BuildContext) onTap,
+      ) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Builder(
+              builder:
+                  (BuildContext context) => GestureDetector(
+                    child: const Text('Tap'),
+                    onTap: () => onTap(context),
+                  ),
+            ),
           ),
         );
+        await tester.tap(find.text('Tap'));
+
+        expect(errors.first.exception, isA<UnimplementedError>());
+        expect(errors.first.exception.toString(), contains(errorText));
+
+        errors.clear();
       }
 
-      final Widget pushThrower = buildWidget((BuildContext context) {
+      await expectUnimplementedError((BuildContext context) {
+        const _GoRouteDataBuild().location;
+      });
+
+      await expectUnimplementedError((BuildContext context) {
         const _GoRouteDataBuild().push<void>(context);
       });
-      await tester.pumpWidget(pushThrower);
-      await tester.tap(find.text('Tap'));
 
-      expect(errors.first.exception, isA<UnimplementedError>());
-      expect(errors.first.exception.toString(), contains(errorText));
-
-      errors.clear();
-
-      final Widget goThrower = buildWidget((BuildContext context) {
+      await expectUnimplementedError((BuildContext context) {
         const _GoRouteDataBuild().go(context);
       });
-      await tester.pumpWidget(goThrower);
-      await tester.tap(find.text('Tap'));
 
-      expect(errors.first.exception, isA<UnimplementedError>());
-      expect(errors.first.exception.toString(), contains(errorText));
-
-      errors.clear();
-
-      final Widget pushReplacementThrower = buildWidget((BuildContext context) {
+      await expectUnimplementedError((BuildContext context) {
         const _GoRouteDataBuild().pushReplacement(context);
       });
-      await tester.pumpWidget(pushReplacementThrower);
-      await tester.tap(find.text('Tap'));
 
-      expect(errors.first.exception, isA<UnimplementedError>());
-      expect(errors.first.exception.toString(), contains(errorText));
-
-      errors.clear();
-
-      final Widget replaceThrower = buildWidget((BuildContext context) {
-        const _GoRouteDataBuild().pushReplacement(context);
+      await expectUnimplementedError((BuildContext context) {
+        const _GoRouteDataBuild().replace(context);
       });
-      await tester.pumpWidget(replaceThrower);
-      await tester.tap(find.text('Tap'));
 
-      expect(errors.first.exception, isA<UnimplementedError>());
-      expect(errors.first.exception.toString(), contains(errorText));
+      FlutterError.onError = FlutterError.dumpErrorToConsole;
+    });
+  });
 
-      errors.clear();
+  group('RelativeGoRouteData', () {
+    testWidgets('It should build the page from the overridden build method', (
+      WidgetTester tester,
+    ) async {
+      final GoRouter goRouter = GoRouter(
+        initialLocation: '/build',
+        routes: _relativeRoutes,
+      );
+      addTearDown(goRouter.dispose);
+      await tester.pumpWidget(MaterialApp.router(routerConfig: goRouter));
+      expect(find.byKey(const Key('build')), findsOneWidget);
+      expect(find.byKey(const Key('buildPage')), findsNothing);
+    });
+
+    testWidgets(
+      'It should build the page from the overridden buildPage method',
+      (WidgetTester tester) async {
+        final GoRouter goRouter = GoRouter(
+          initialLocation: '/build-page',
+          routes: _relativeRoutes,
+        );
+        addTearDown(goRouter.dispose);
+        await tester.pumpWidget(MaterialApp.router(routerConfig: goRouter));
+        expect(find.byKey(const Key('build')), findsNothing);
+        expect(find.byKey(const Key('buildPage')), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'It should build a go route with the default case sensitivity',
+      (WidgetTester tester) async {
+        final GoRoute routeWithDefaultCaseSensitivity =
+            RelativeGoRouteData.$route(
+              path: 'path',
+              factory:
+                  (GoRouterState state) => const _RelativeGoRouteDataBuild(),
+            );
+
+        expect(routeWithDefaultCaseSensitivity.caseSensitive, true);
+      },
+    );
+
+    testWidgets(
+      'It should build a go route with the overridden case sensitivity',
+      (WidgetTester tester) async {
+        final GoRoute routeWithDefaultCaseSensitivity =
+            RelativeGoRouteData.$route(
+              path: 'path',
+              caseSensitive: false,
+              factory:
+                  (GoRouterState state) => const _RelativeGoRouteDataBuild(),
+            );
+
+        expect(routeWithDefaultCaseSensitivity.caseSensitive, false);
+      },
+    );
+
+    testWidgets('It should throw because there is no code generated', (
+      WidgetTester tester,
+    ) async {
+      final List<FlutterErrorDetails> errors = <FlutterErrorDetails>[];
+
+      FlutterError.onError =
+          (FlutterErrorDetails details) => errors.add(details);
+
+      const String errorText = 'Should be generated';
+
+      Future<void> expectUnimplementedError(
+        void Function(BuildContext) onTap,
+      ) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Builder(
+              builder:
+                  (BuildContext context) => GestureDetector(
+                    child: const Text('Tap'),
+                    onTap: () => onTap(context),
+                  ),
+            ),
+          ),
+        );
+        await tester.tap(find.text('Tap'));
+
+        expect(errors.first.exception, isA<UnimplementedError>());
+        expect(errors.first.exception.toString(), contains(errorText));
+
+        errors.clear();
+      }
+
+      await expectUnimplementedError((BuildContext context) {
+        const _RelativeGoRouteDataBuild().subLocation;
+      });
+
+      await expectUnimplementedError((BuildContext context) {
+        const _RelativeGoRouteDataBuild().relativeLocation;
+      });
+
+      await expectUnimplementedError((BuildContext context) {
+        const _RelativeGoRouteDataBuild().pushRelative<void>(context);
+      });
+
+      await expectUnimplementedError((BuildContext context) {
+        const _RelativeGoRouteDataBuild().goRelative(context);
+      });
+
+      await expectUnimplementedError((BuildContext context) {
+        const _RelativeGoRouteDataBuild().pushReplacementRelative(context);
+      });
+
+      await expectUnimplementedError((BuildContext context) {
+        const _RelativeGoRouteDataBuild().replaceRelative(context);
+      });
 
       FlutterError.onError = FlutterError.dumpErrorToConsole;
     });
@@ -612,5 +766,47 @@ void main() {
 
     expect(customParameterCodec.encode, toBase64);
     expect(customParameterCodec.decode, fromBase64);
+  });
+
+  test('TypedRelativeGoRoute with default parameters', () {
+    const TypedRelativeGoRoute<RelativeGoRouteData> typedGoRoute =
+        TypedRelativeGoRoute<RelativeGoRouteData>(path: 'path');
+
+    expect(typedGoRoute.path, 'path');
+    expect(typedGoRoute.caseSensitive, true);
+    expect(typedGoRoute.routes, isEmpty);
+  });
+
+  test('TypedRelativeGoRoute with provided parameters', () {
+    const TypedRelativeGoRoute<RelativeGoRouteData> typedGoRoute =
+        TypedRelativeGoRoute<RelativeGoRouteData>(
+          path: 'path',
+          caseSensitive: false,
+          routes: <TypedRoute<RouteData>>[
+            TypedRelativeGoRoute<RelativeGoRouteData>(
+              path: 'sub-path',
+              caseSensitive: false,
+            ),
+          ],
+        );
+
+    expect(typedGoRoute.path, 'path');
+    expect(typedGoRoute.caseSensitive, false);
+    expect(typedGoRoute.routes, hasLength(1));
+    expect(
+      typedGoRoute.routes.single,
+      isA<TypedRelativeGoRoute<RelativeGoRouteData>>()
+          .having(
+            (TypedRelativeGoRoute<RelativeGoRouteData> route) => route.path,
+            'path',
+            'sub-path',
+          )
+          .having(
+            (TypedRelativeGoRoute<RelativeGoRouteData> route) =>
+                route.caseSensitive,
+            'caseSensitive',
+            false,
+          ),
+    );
   });
 }

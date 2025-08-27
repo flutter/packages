@@ -1,7 +1,12 @@
-## 4.10.1
+## 4.10.2
 
 * Updates minimum supported SDK version to Flutter 3.35.
 * Removes obsolete code related to supporting SDK <24.
+
+## 4.10.1
+
+* Bumps com.android.tools.build:gradle to 8.12.1 and kotlin_version to 2.2.10.
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
 
 ## 4.10.0
 

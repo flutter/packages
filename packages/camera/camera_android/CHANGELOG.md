@@ -1,7 +1,12 @@
-## 0.10.10+6
+## 0.10.10+7
 
 * Updates minimum supported SDK version to Flutter 3.35.
 * Removes code for supporting API 21-23.
+
+## 0.10.10+6
+
+* Bumps com.android.tools.build:gradle to 8.12.1.
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
 
 ## 0.10.10+5
 
