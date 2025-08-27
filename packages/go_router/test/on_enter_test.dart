@@ -1081,7 +1081,7 @@ void main() {
       expect(capturedNextPath, equals('/protected'));
     });
 
-    testWidgets('pop/restore does not call onEnter', (
+    testWidgets('pop does not call onEnter but restore does', (
       WidgetTester tester,
     ) async {
       int onEnterCount = 0;
@@ -1118,9 +1118,90 @@ void main() {
       router.pop();
       await tester.pumpAndSettle();
 
-      // onEnter should NOT be called for restore
-      expect(onEnterCount, 2); // unchanged
+      // Pop calls restore which now goes through onEnter
+      expect(onEnterCount, 3); // onEnter called for restore
       expect(find.text('A'), findsOneWidget);
+
+      // Explicit restore would call onEnter (tested separately in integration)
+    });
+
+    testWidgets('restore navigation calls onEnter for re-validation', (
+      WidgetTester tester,
+    ) async {
+      int onEnterCount = 0;
+      bool allowNavigation = true;
+
+      router = GoRouter(
+        initialLocation: '/home',
+        onEnter: (_, __, GoRouterState next, ____) async {
+          onEnterCount++;
+          // Simulate auth check - block protected route if not allowed
+          if (next.uri.path == '/protected' && !allowNavigation) {
+            return const Block();
+          }
+          return const Allow();
+        },
+        routes: <RouteBase>[
+          GoRoute(
+            path: '/home',
+            builder: (_, __) => const Scaffold(body: Text('Home')),
+          ),
+          GoRoute(
+            path: '/protected',
+            builder: (_, __) => const Scaffold(body: Text('Protected')),
+          ),
+        ],
+      );
+
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.pumpAndSettle();
+      expect(onEnterCount, 1); // initial navigation
+
+      // Navigate to protected route (allowed)
+      router.go('/protected');
+      await tester.pumpAndSettle();
+      expect(onEnterCount, 2);
+      expect(find.text('Protected'), findsOneWidget);
+
+      // Simulate state restoration by explicitly calling parser with restore type
+      final BuildContext context = tester.element(find.byType(Router<Object>));
+      final GoRouteInformationParser parser = router.routeInformationParser;
+
+      // Create a restore navigation to protected route
+      final RouteMatchList restoredMatch = await parser
+          .parseRouteInformationWithDependencies(
+            RouteInformation(
+              uri: Uri.parse('/protected'),
+              state: RouteInformationState<void>(
+                type: NavigatingType.restore,
+                baseRouteMatchList: router.routerDelegate.currentConfiguration,
+              ),
+            ),
+            context,
+          );
+
+      // onEnter should be called again for restore
+      expect(onEnterCount, 3);
+      expect(restoredMatch.uri.path, equals('/protected'));
+
+      // Now simulate session expired - block on restore
+      allowNavigation = false;
+      final RouteMatchList blockedRestore = await parser
+          .parseRouteInformationWithDependencies(
+            RouteInformation(
+              uri: Uri.parse('/protected'),
+              state: RouteInformationState<void>(
+                type: NavigatingType.restore,
+                baseRouteMatchList: router.routerDelegate.currentConfiguration,
+              ),
+            ),
+            context,
+          );
+
+      // onEnter called again but blocks this time
+      expect(onEnterCount, 4);
+      // Should stay on protected since we're blocking but not redirecting
+      expect(blockedRestore.uri.path, equals('/protected'));
     });
 
     testWidgets(
@@ -1377,6 +1458,82 @@ void main() {
       expect(onExceptionCalls, 1);
       // We're still on '/start' because the guarded nav never committed
       expect(router.state.uri.path, '/start');
+    });
+
+    testWidgets('restore runs onEnter -> legacy -> route-level redirect', (
+      WidgetTester tester,
+    ) async {
+      final List<String> calls = <String>[];
+
+      router = GoRouter(
+        initialLocation: '/home',
+        routes: <GoRoute>[
+          GoRoute(
+            path: '/home',
+            builder: (_, __) => const Scaffold(body: Text('Home')),
+          ),
+          GoRoute(
+            path: '/has-route-redirect',
+            builder: (_, __) => const Scaffold(body: Text('Never shown')),
+            redirect: (_, __) {
+              calls.add('route-level');
+              return '/redirected';
+            },
+          ),
+          GoRoute(
+            path: '/redirected',
+            builder: (_, __) => const Scaffold(body: Text('Redirected')),
+          ),
+        ],
+        onEnter: (_, __, ___, ____) {
+          calls.add('onEnter');
+          return const Allow();
+        },
+        // ignore: deprecated_member_use_from_same_package
+        redirect: (_, __) {
+          calls.add('legacy');
+          return null;
+        },
+      );
+
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.pumpAndSettle();
+
+      // Navigate to a route with route-level redirect
+      router.go('/has-route-redirect');
+      await tester.pumpAndSettle();
+
+      // Verify execution order: onEnter -> legacy -> route-level
+      expect(
+        calls,
+        containsAllInOrder(<String>['onEnter', 'legacy', 'route-level']),
+      );
+      expect(router.state.uri.path, '/redirected');
+      expect(find.text('Redirected'), findsOneWidget);
+
+      // Clear calls for restore test
+      calls.clear();
+
+      // Simulate restore by parsing with restore type
+      final BuildContext context = tester.element(find.byType(Router<Object>));
+      final GoRouteInformationParser parser = router.routeInformationParser;
+
+      await parser.parseRouteInformationWithDependencies(
+        RouteInformation(
+          uri: Uri.parse('/has-route-redirect'),
+          state: RouteInformationState<void>(
+            type: NavigatingType.restore,
+            baseRouteMatchList: router.routerDelegate.currentConfiguration,
+          ),
+        ),
+        context,
+      );
+
+      // Verify restore also follows same order
+      expect(
+        calls,
+        containsAllInOrder(<String>['onEnter', 'legacy', 'route-level']),
+      );
     });
   });
 }

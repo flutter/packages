@@ -136,11 +136,9 @@ class RoutingConfig {
 ///
 /// The [onEnter] callback allows intercepting navigation before routes are
 /// processed. Return [Allow] to proceed or [Block] to prevent navigation.
-/// This runs **before** any deprecated top-level [redirect] logic (which is
-/// internally composed into `onEnter` for backward compatibility) and
-/// **before** any *route-level* redirects. Order of operations:
-/// 1) `onEnter` (your guard)
-/// 2) legacy top-level `redirect` (if provided; executed via `onEnter` composition)
+/// Order of operations:
+/// 1) `onEnter` (your guard) - can block navigation
+/// 2) If allowed: legacy top-level `redirect` (deprecated) - runs in same navigation cycle
 /// 3) route-level `GoRoute.redirect`
 ///
 /// The [redirect] callback allows the app to redirect to a new location.

@@ -15,8 +15,7 @@ import 'match.dart';
 
 /// The function signature of [GoRouteInformationParser.onParserException].
 ///
-/// The `routeMatchList` parameter contains the exception explains the issue
-/// occurred.
+/// The `routeMatchList` parameter carries the exception describing the issue.
 ///
 /// The returned [RouteMatchList] is used as parsed result for the
 /// [GoRouterDelegate].
@@ -34,9 +33,9 @@ typedef RouteInfoState = RouteInformationState<dynamic>;
 
 /// Converts between incoming URLs and a [RouteMatchList] using [RouteMatcher].
 ///
-/// Also integrates the top-level `onEnter` guard and then performs legacy
-/// top-level redirect (if any) followed by route-level redirects. See order of
-/// operations in `GoRouter` docs.
+/// Integrates the top-level `onEnter` guard. Legacy top-level redirect is
+/// adapted and executed inside the parse pipeline after onEnter allows;
+/// the parser handles route-level redirects after that.
 class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
   /// Creates a [GoRouteInformationParser].
   GoRouteInformationParser({
@@ -75,60 +74,84 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
     RouteInformation routeInformation,
     BuildContext context,
   ) {
-    // Safety check: if no state is provided, return an empty match list.
-    if (routeInformation.state == null) {
-      return SynchronousFuture<RouteMatchList>(RouteMatchList.empty);
-    }
+    // Normalize inputs into a RouteInformationState so we ALWAYS go through onEnter.
+    final Object? raw = routeInformation.state;
+    late final RouteInfoState infoState;
+    late final RouteInformation effectiveRoute;
 
-    final Object infoState = routeInformation.state!;
-
-    // If we're restoring (pop/back or restoring a branch stack), skip onEnter
-    // but still run legacy + route-level redirects so state can be updated.
-    if (infoState is RouteInformationState &&
-        infoState.type == NavigatingType.restore) {
-      final RouteMatchList restored = infoState.baseRouteMatchList!;
-      return debugParserFuture = _redirect(context, restored).then((
-        RouteMatchList value,
-      ) {
-        if (value.isError && onParserException != null) {
-          return onParserException!(context, value);
-        }
-        _lastMatchList = value;
-        return value;
-      });
-    }
-
-    // Process legacy state if necessary.
-    if (infoState is! RouteInformationState) {
-      // This is a result of browser backward/forward button or state
-      // restoration. In this case, the route match list is already stored in
-      // the state. Run redirects to allow state updates.
-      final RouteMatchList matchList = _routeMatchListCodec.decode(
-        infoState as Map<Object?, Object?>,
+    if (raw == null) {
+      // Framework/browser provided no state — synthesize a standard "go" nav.
+      // This happens on initial app load and some framework calls.
+      infoState = RouteInformationState.go();
+      effectiveRoute = RouteInformation(
+        uri: routeInformation.uri,
+        state: infoState,
       );
-      return debugParserFuture = _redirect(context, matchList).then((
-        RouteMatchList value,
-      ) {
-        if (value.isError && onParserException != null) {
-          return onParserException!(context, value);
-        }
-        _lastMatchList = value;
-        return value;
-      });
+    } else if (raw is! RouteInformationState) {
+      // Restoration/back-forward: decode the stored match list and treat as restore.
+      final RouteMatchList decoded = _routeMatchListCodec.decode(
+        raw as Map<Object?, Object?>,
+      );
+      infoState = RouteInformationState.restore(base: decoded);
+      effectiveRoute = RouteInformation(uri: decoded.uri, state: infoState);
+    } else {
+      infoState = raw;
+      effectiveRoute = routeInformation;
     }
 
+    // ALL navigation types now go through onEnter, and if allowed,
+    // legacy top-level redirect runs, then route-level redirects.
     return _onEnterHandler.handleTopOnEnter(
       context: context,
-      routeInformation: routeInformation,
+      routeInformation: effectiveRoute,
       infoState: infoState,
-      onCanEnter: () => _navigate(routeInformation, context, infoState),
+      onCanEnter: () {
+        // Compose legacy top-level redirect here (one shared cycle/history)
+        final Uri uri = RouteConfiguration.normalizeUri(effectiveRoute.uri);
+        final RouteMatchList initialMatches = configuration.findMatch(
+          uri,
+          extra: infoState.extra,
+        );
+        final List<RouteMatchList> redirectHistory = <RouteMatchList>[];
+
+        final FutureOr<RouteMatchList> afterLegacy = configuration
+            .applyTopLegacyRedirect(
+              context,
+              initialMatches,
+              redirectHistory: redirectHistory,
+            );
+
+        if (afterLegacy is RouteMatchList) {
+          return _navigate(
+            effectiveRoute,
+            context,
+            infoState,
+            startingMatches: afterLegacy,
+            preSharedHistory: redirectHistory,
+          );
+        }
+        return afterLegacy.then((RouteMatchList ml) {
+          return _navigate(
+            effectiveRoute,
+            context,
+            infoState,
+            startingMatches: ml,
+            preSharedHistory: redirectHistory,
+          );
+        });
+      },
       onCanNotEnter: () {
-        // If navigation is blocked, return the last successful match or empty.
+        // If blocked, "stay" on last successful match if available.
         if (_lastMatchList != null) {
           return SynchronousFuture<RouteMatchList>(_lastMatchList!);
-        } else {
-          return SynchronousFuture<RouteMatchList>(RouteMatchList.empty);
         }
+        // Fall back to parsing the current URI so Router still paints something sensible.
+        final Uri uri = RouteConfiguration.normalizeUri(effectiveRoute.uri);
+        final RouteMatchList stay = configuration.findMatch(
+          uri,
+          extra: infoState.extra,
+        );
+        return SynchronousFuture<RouteMatchList>(stay);
       },
     );
   }
@@ -137,60 +160,77 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
   /// the route match list based on the navigation type.
   ///
   /// This method is called ONLY AFTER onEnter has allowed the navigation.
-  /// It includes the deprecated redirect logic.
   Future<RouteMatchList> _navigate(
     RouteInformation routeInformation,
     BuildContext context,
-    RouteInfoState infoState,
-  ) {
-    // Normalize the URI: ensure it has a valid path and remove trailing slashes.
-    Uri uri = routeInformation.uri;
-    if (uri.hasEmptyPath) {
-      uri = uri.replace(path: '/');
-    } else if (uri.path.length > 1 && uri.path.endsWith('/')) {
-      uri = uri.replace(path: uri.path.substring(0, uri.path.length - 1));
-    }
+    RouteInfoState infoState, {
+    FutureOr<RouteMatchList>? startingMatches,
+    List<RouteMatchList>? preSharedHistory,
+  }) {
+    // If we weren't given matches, compute them (normalized) here.
+    final FutureOr<RouteMatchList> baseMatches =
+        startingMatches ??
+        configuration.findMatch(
+          RouteConfiguration.normalizeUri(routeInformation.uri),
+          extra: infoState.extra,
+        );
 
-    // Find initial route matches.
-    final RouteMatchList initialMatches = configuration.findMatch(
-      uri,
-      extra: infoState.extra,
-    );
-    if (initialMatches.isError) {
-      log('No initial matches: ${routeInformation.uri.path}');
-    }
+    // History may be shared with the legacy step done in onEnter.
+    final List<RouteMatchList> redirectHistory =
+        preSharedHistory ?? <RouteMatchList>[];
 
-    // Process the deprecated redirect AFTER onEnter has allowed navigation
-    return debugParserFuture = _redirect(context, initialMatches).then((
-      RouteMatchList matchList,
-    ) {
-      if (matchList.isError && onParserException != null) {
-        return onParserException!(context, matchList);
+    FutureOr<RouteMatchList> afterRouteLevel(FutureOr<RouteMatchList> base) {
+      if (base is RouteMatchList) {
+        return configuration.redirect(
+          context,
+          base,
+          redirectHistory: redirectHistory,
+        );
       }
+      return base.then<RouteMatchList>((RouteMatchList ml) {
+        final FutureOr<RouteMatchList> step = configuration.redirect(
+          context,
+          ml,
+          redirectHistory: redirectHistory,
+        );
+        return step;
+      });
+    }
 
-      // Validate that redirect-only routes actually perform a redirection.
-      assert(() {
-        if (matchList.isNotEmpty) {
-          assert(
-            !matchList.last.route.redirectOnly,
-            'A redirect-only route must redirect to location different from itself.\n The offending route: ${matchList.last.route}',
+    // Only route-level redirects from here on out.
+    final FutureOr<RouteMatchList> redirected = afterRouteLevel(baseMatches);
+
+    return debugParserFuture = (redirected is RouteMatchList
+            ? SynchronousFuture<RouteMatchList>(redirected)
+            : redirected)
+        .then((RouteMatchList matchList) {
+          if (matchList.isError && onParserException != null) {
+            return onParserException!(context, matchList);
+          }
+
+          // Validate that redirect-only routes actually perform a redirection.
+          assert(() {
+            if (matchList.isNotEmpty) {
+              assert(
+                !matchList.last.route.redirectOnly,
+                'A redirect-only route must redirect to location different from itself.\n The offending route: ${matchList.last.route}',
+              );
+            }
+            return true;
+          }());
+
+          // Update the route match list based on the navigation type.
+          final RouteMatchList updated = _updateRouteMatchList(
+            matchList,
+            baseRouteMatchList: infoState.baseRouteMatchList,
+            completer: infoState.completer,
+            type: infoState.type,
           );
-        }
-        return true;
-      }());
 
-      // Update the route match list based on the navigation type.
-      final RouteMatchList updated = _updateRouteMatchList(
-        matchList,
-        baseRouteMatchList: infoState.baseRouteMatchList,
-        completer: infoState.completer,
-        type: infoState.type,
-      );
-
-      // Cache the successful match list.
-      _lastMatchList = updated;
-      return updated;
-    });
+          // Cache the successful match list.
+          _lastMatchList = updated;
+          return updated;
+        });
   }
 
   @override
@@ -229,22 +269,6 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
       uri: Uri.parse(location ?? configuration.uri.toString()),
       state: _routeMatchListCodec.encode(configuration),
     );
-  }
-
-  /// Calls [configuration.redirect] and wraps the result in a synchronous future if needed.
-  Future<RouteMatchList> _redirect(
-    BuildContext context,
-    RouteMatchList routeMatch,
-  ) {
-    final FutureOr<RouteMatchList> redirectedFuture = configuration.redirect(
-      context,
-      routeMatch,
-      redirectHistory: <RouteMatchList>[],
-    );
-    if (redirectedFuture is RouteMatchList) {
-      return SynchronousFuture<RouteMatchList>(redirectedFuture);
-    }
-    return redirectedFuture;
   }
 
   /// Updates the route match list based on the navigation type (push, replace, etc.).
@@ -375,22 +399,17 @@ class _OnEnterHandler {
     required NavigationCallback onCanEnter,
     required NavigationCallback onCanNotEnter,
   }) {
+    // Get the user-provided onEnter callback (legacy redirect is handled separately)
     final OnEnter? topOnEnter = _configuration.topOnEnter;
-    // If no onEnter is configured, allow navigation immediately.
+    // If no onEnter guard, allow navigation immediately.
     if (topOnEnter == null) {
       return onCanEnter();
     }
 
-    // Normalize the incoming URI (match what _navigate() does)
-    Uri normalizedUri = routeInformation.uri;
-    if (normalizedUri.hasEmptyPath) {
-      normalizedUri = normalizedUri.replace(path: '/');
-    } else if (normalizedUri.path.length > 1 &&
-        normalizedUri.path.endsWith('/')) {
-      normalizedUri = normalizedUri.replace(
-        path: normalizedUri.path.substring(0, normalizedUri.path.length - 1),
-      );
-    }
+    // Normalize the incoming URI
+    final Uri normalizedUri = RouteConfiguration.normalizeUri(
+      routeInformation.uri,
+    );
 
     // Check if the redirection history exceeds the configured limit.
     final RouteMatchList? redirectionErrorMatchList =
