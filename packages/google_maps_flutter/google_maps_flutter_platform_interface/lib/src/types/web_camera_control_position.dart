@@ -11,7 +11,7 @@ enum WebCameraControlPosition {
   /// Equivalent to BOTTOM_LEFT in LTR, or BOTTOM_RIGHT in RTL.
   blockEndInlineStart,
 
-  /// Equivalent to TOP_RIGHT in LTR, or TOP_LEFT in RTL.
+  /// Equivalent to BOTTOM_RIGHT in LTR, or BOTTOM_LEFT in RTL.
   blockEndInlineEnd,
 
   /// Equivalent to TOP_CENTER in both LTR and RTL.
