@@ -84,7 +84,7 @@ mixin _$FamilyRoute on GoRouteData {
 mixin _$PersonRoute on GoRouteData {
   static PersonRoute _fromState(GoRouterState state) => PersonRoute(
     state.pathParameters['fid']!,
-    int.parse(state.pathParameters['pid']!)!,
+    int.parse(state.pathParameters['pid']!),
   );
 
   PersonRoute get _self => this as PersonRoute;
@@ -112,7 +112,7 @@ mixin _$PersonDetailsRoute on GoRouteData {
   static PersonDetailsRoute _fromState(GoRouterState state) =>
       PersonDetailsRoute(
         state.pathParameters['fid']!,
-        int.parse(state.pathParameters['pid']!)!,
+        int.parse(state.pathParameters['pid']!),
         _$PersonDetailsEnumMap._$fromName(state.pathParameters['details']!)!,
         $extra: state.extra as int?,
       );
@@ -148,7 +148,7 @@ const _$PersonDetailsEnumMap = {
 
 mixin _$FamilyCountRoute on GoRouteData {
   static FamilyCountRoute _fromState(GoRouterState state) =>
-      FamilyCountRoute(int.parse(state.pathParameters['count']!)!);
+      FamilyCountRoute(int.parse(state.pathParameters['count']!));
 
   FamilyCountRoute get _self => this as FamilyCountRoute;
 
