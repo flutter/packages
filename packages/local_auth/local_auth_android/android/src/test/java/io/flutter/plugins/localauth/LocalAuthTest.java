@@ -32,6 +32,7 @@ import io.flutter.plugins.localauth.AuthenticationHelper.AuthCompletionHandler;
 import io.flutter.plugins.localauth.Messages.AuthClassification;
 import io.flutter.plugins.localauth.Messages.AuthOptions;
 import io.flutter.plugins.localauth.Messages.AuthResult;
+import io.flutter.plugins.localauth.Messages.AuthResultCode;
 import io.flutter.plugins.localauth.Messages.AuthStrings;
 import io.flutter.plugins.localauth.Messages.Result;
 import java.util.List;
@@ -74,7 +75,7 @@ public class LocalAuthTest {
     plugin.authenticate(defaultOptions, dummyStrings, mockResult);
     ArgumentCaptor<AuthResult> captor = ArgumentCaptor.forClass(AuthResult.class);
     verify(mockResult).success(captor.capture());
-    assertEquals(AuthResult.ERROR_ALREADY_IN_PROGRESS, captor.getValue());
+    assertEquals(AuthResultCode.ALREADY_IN_PROGRESS, captor.getValue().getCode());
   }
 
   @Test
@@ -86,7 +87,7 @@ public class LocalAuthTest {
     plugin.authenticate(defaultOptions, dummyStrings, mockResult);
     ArgumentCaptor<AuthResult> captor = ArgumentCaptor.forClass(AuthResult.class);
     verify(mockResult).success(captor.capture());
-    assertEquals(AuthResult.ERROR_NO_ACTIVITY, captor.getValue());
+    assertEquals(AuthResultCode.NO_ACTIVITY, captor.getValue().getCode());
   }
 
   @Test
@@ -98,7 +99,7 @@ public class LocalAuthTest {
     plugin.authenticate(defaultOptions, dummyStrings, mockResult);
     ArgumentCaptor<AuthResult> captor = ArgumentCaptor.forClass(AuthResult.class);
     verify(mockResult).success(captor.capture());
-    assertEquals(AuthResult.ERROR_NOT_FRAGMENT_ACTIVITY, captor.getValue());
+    assertEquals(AuthResultCode.NOT_FRAGMENT_ACTIVITY, captor.getValue().getCode());
   }
 
   @Test
@@ -111,7 +112,7 @@ public class LocalAuthTest {
     plugin.authenticate(defaultOptions, dummyStrings, mockResult);
     ArgumentCaptor<AuthResult> captor = ArgumentCaptor.forClass(AuthResult.class);
     verify(mockResult).success(captor.capture());
-    assertEquals(AuthResult.ERROR_NOT_AVAILABLE, captor.getValue());
+    assertEquals(AuthResultCode.NO_CREDENTIALS, captor.getValue().getCode());
   }
 
   @Test

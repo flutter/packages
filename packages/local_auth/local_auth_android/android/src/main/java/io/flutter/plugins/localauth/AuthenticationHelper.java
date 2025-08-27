@@ -25,6 +25,8 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.DefaultLifecycleObserver;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
+import io.flutter.plugins.localauth.Messages.AuthResult;
+import io.flutter.plugins.localauth.Messages.AuthResultCode;
 import java.util.concurrent.Executor;
 
 /**
@@ -38,10 +40,9 @@ class AuthenticationHelper extends BiometricPrompt.AuthenticationCallback
   /** The callback that handles the result of this authentication process. */
   interface AuthCompletionHandler {
     /** Called when authentication attempt is complete. */
-    void complete(Messages.AuthResult authResult);
+    void complete(AuthResult authResult);
   }
 
-  // This is null when not using v2 embedding;
   private final Lifecycle lifecycle;
   private final FragmentActivity activity;
   private final AuthCompletionHandler completionHandler;
@@ -120,7 +121,14 @@ class AuthenticationHelper extends BiometricPrompt.AuthenticationCallback
   @SuppressLint("SwitchIntDef")
   @Override
   public void onAuthenticationError(int errorCode, @NonNull CharSequence errString) {
+    AuthResultCode code;
     switch (errorCode) {
+      case BiometricPrompt.ERROR_USER_CANCELED:
+        code = AuthResultCode.USER_CANCELED;
+        break;
+      case BiometricPrompt.ERROR_NEGATIVE_BUTTON:
+        code = AuthResultCode.NEGATIVE_BUTTON;
+        break;
       case BiometricPrompt.ERROR_NO_DEVICE_CREDENTIAL:
         if (useErrorDialogs) {
           showGoToSettingsDialog(
@@ -128,50 +136,65 @@ class AuthenticationHelper extends BiometricPrompt.AuthenticationCallback
               strings.getDeviceCredentialsSetupDescription());
           return;
         }
-        completionHandler.complete(Messages.AuthResult.ERROR_NOT_AVAILABLE);
+        code = AuthResultCode.NO_CREDENTIALS;
         break;
-      case BiometricPrompt.ERROR_NO_SPACE:
       case BiometricPrompt.ERROR_NO_BIOMETRICS:
         if (useErrorDialogs) {
           showGoToSettingsDialog(
               strings.getBiometricRequiredTitle(), strings.getGoToSettingsDescription());
           return;
         }
-        completionHandler.complete(Messages.AuthResult.ERROR_NOT_ENROLLED);
+        code = AuthResultCode.NOT_ENROLLED;
         break;
       case BiometricPrompt.ERROR_HW_UNAVAILABLE:
+        code = AuthResultCode.HARDWARE_UNAVAILABLE;
+        break;
       case BiometricPrompt.ERROR_HW_NOT_PRESENT:
-        completionHandler.complete(Messages.AuthResult.ERROR_NOT_AVAILABLE);
+        code = AuthResultCode.NO_HARDWARE;
         break;
       case BiometricPrompt.ERROR_LOCKOUT:
-        completionHandler.complete(Messages.AuthResult.ERROR_LOCKED_OUT_TEMPORARILY);
+        code = AuthResultCode.LOCKED_OUT_TEMPORARILY;
         break;
       case BiometricPrompt.ERROR_LOCKOUT_PERMANENT:
-        completionHandler.complete(Messages.AuthResult.ERROR_LOCKED_OUT_PERMANENTLY);
+        code = AuthResultCode.LOCKED_OUT_PERMANENTLY;
         break;
       case BiometricPrompt.ERROR_CANCELED:
         // If we are doing sticky auth and the activity has been paused,
         // ignore this error. We will start listening again when resumed.
         if (activityPaused && isAuthSticky) {
           return;
-        } else {
-          completionHandler.complete(Messages.AuthResult.FAILURE);
         }
+        code = AuthResultCode.SYSTEM_CANCELED;
+        break;
+      case BiometricPrompt.ERROR_TIMEOUT:
+        code = AuthResultCode.TIMEOUT;
+        break;
+      case BiometricPrompt.ERROR_NO_SPACE:
+        code = AuthResultCode.NO_SPACE;
+        break;
+      case BiometricPrompt.ERROR_SECURITY_UPDATE_REQUIRED:
+        code = AuthResultCode.SECURITY_UPDATE_REQUIRED;
         break;
       default:
-        completionHandler.complete(Messages.AuthResult.FAILURE);
+        code = AuthResultCode.UNKNOWN_ERROR;
+        break;
     }
+    completionHandler.complete(
+        new AuthResult.Builder().setCode(code).setErrorMessage(errString.toString()).build());
     stop();
   }
 
   @Override
   public void onAuthenticationSucceeded(@NonNull BiometricPrompt.AuthenticationResult result) {
-    completionHandler.complete(Messages.AuthResult.SUCCESS);
+    completionHandler.complete(new AuthResult.Builder().setCode(AuthResultCode.SUCCESS).build());
     stop();
   }
 
   @Override
-  public void onAuthenticationFailed() {}
+  public void onAuthenticationFailed() {
+    // No-op; this is called for incremental failures. Wait for a final
+    // resolution via the success or error callbacks.
+  }
 
   /**
    * If the activity is paused, we keep track because biometric dialog simply returns "User
@@ -216,13 +239,15 @@ class AuthenticationHelper extends BiometricPrompt.AuthenticationCallback
     Context context = new ContextThemeWrapper(activity, R.style.AlertDialogCustom);
     OnClickListener goToSettingHandler =
         (dialog, which) -> {
-          completionHandler.complete(Messages.AuthResult.FAILURE);
+          completionHandler.complete(
+              new AuthResult.Builder().setCode(AuthResultCode.LAUNCHED_SETTINGS).build());
           stop();
           activity.startActivity(new Intent(Settings.ACTION_SECURITY_SETTINGS));
         };
     OnClickListener cancelHandler =
         (dialog, which) -> {
-          completionHandler.complete(Messages.AuthResult.FAILURE);
+          completionHandler.complete(
+              new AuthResult.Builder().setCode(AuthResultCode.NEGATIVE_BUTTON).build());
           stop();
         };
     new AlertDialog.Builder(context)

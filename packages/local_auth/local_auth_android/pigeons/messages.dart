@@ -43,34 +43,75 @@ class AuthStrings {
 }
 
 /// Possible outcomes of an authentication attempt.
-enum AuthResult {
+enum AuthResultCode {
   /// The user authenticated successfully.
   success,
 
-  /// The user failed to successfully authenticate.
-  failure,
+  /// The user launched the settings dialog.
+  launchedSettings,
+
+  /// The user pressed the negative button, which corresponds to
+  /// [AuthStrings.cancelButton].
+  negativeButton,
+
+  /// The user canceled authentication without pressing the negative button.
+  ///
+  /// This may be triggered by a swipe or a back button, for example.
+  userCanceled,
+
+  /// Authentication was caneceled by the system.
+  systemCanceled,
+
+  /// Authentication timed out.
+  timeout,
 
   /// An authentication was already in progress.
-  errorAlreadyInProgress,
+  alreadyInProgress,
 
   /// There is no foreground activity.
-  errorNoActivity,
+  noActivity,
 
   /// The foreground activity is not a FragmentActivity.
-  errorNotFragmentActivity,
+  notFragmentActivity,
 
-  /// The authentication system was not available.
-  errorNotAvailable,
+  /// The device does not have any credentials available.
+  noCredentials,
+
+  /// No biometric hardware is present.
+  noHardware,
+
+  /// The biometric is temporarily unavailable.
+  hardwareUnavailable,
 
   /// No biometrics are enrolled.
-  errorNotEnrolled,
+  notEnrolled,
 
   /// The user is locked out temporarily due to too many failed attempts.
-  errorLockedOutTemporarily,
+  lockedOutTemporarily,
 
   /// The user is locked out until they log in another way due to too many
   /// failed attempts.
-  errorLockedOutPermanently,
+  lockedOutPermanently,
+
+  /// The device does not have enough storage to complete authentication.
+  noSpace,
+
+  /// The hardware is unavailable until a security update is performed.
+  securityUpdateRequired,
+
+  /// Some unrecognized error case was encountered
+  unknownError,
+}
+
+/// The results of an authentication request.
+class AuthResult {
+  const AuthResult({required this.code, this.errorMessage});
+
+  /// The specific result returned from the SDK.
+  final AuthResultCode code;
+
+  /// The error message associated with the result, if any.
+  final String? errorMessage;
 }
 
 class AuthOptions {
