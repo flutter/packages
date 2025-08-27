@@ -1,6 +1,7 @@
-## NEXT
+## 3.23.1
 
 * Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+* Removes specialization of 'map' to fix a Swift warning.
 
 ## 3.23.0
 
