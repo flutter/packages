@@ -1,6 +1,7 @@
 ## 0.6.21
 
 * Implements `setDescriptionWhileRecording`.
+* Implements NV21 support for image streaming.
 
 ## 0.6.20+3
 

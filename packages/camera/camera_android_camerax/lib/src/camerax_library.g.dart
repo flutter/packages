@@ -5964,6 +5964,7 @@ class ImageAnalysis extends UseCase {
     super.pigeon_instanceManager,
     this.resolutionSelector,
     int? targetRotation,
+    int? outputImageFormat,
   }) : super.pigeon_detached() {
     final int pigeonVar_instanceIdentifier = pigeon_instanceManager
         .addDartCreatedInstance(this);
@@ -5978,13 +5979,13 @@ class ImageAnalysis extends UseCase {
           pigeonChannelCodec,
           binaryMessenger: pigeonVar_binaryMessenger,
         );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[
-        pigeonVar_instanceIdentifier,
-        resolutionSelector,
-        targetRotation,
-      ],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel
+        .send(<Object?>[
+          pigeonVar_instanceIdentifier,
+          resolutionSelector,
+          targetRotation,
+          outputImageFormat,
+        ]);
     () async {
       final List<Object?>? pigeonVar_replyList =
           await pigeonVar_sendFuture as List<Object?>?;

@@ -4799,7 +4799,8 @@ abstract class PigeonApiImageAnalysis(
 ) {
   abstract fun pigeon_defaultConstructor(
       resolutionSelector: androidx.camera.core.resolutionselector.ResolutionSelector?,
-      targetRotation: Long?
+      targetRotation: Long?,
+      outputImageFormat: Long?
   ): androidx.camera.core.ImageAnalysis
 
   abstract fun resolutionSelector(
@@ -4838,10 +4839,12 @@ abstract class PigeonApiImageAnalysis(
             val resolutionSelectorArg =
                 args[1] as androidx.camera.core.resolutionselector.ResolutionSelector?
             val targetRotationArg = args[2] as Long?
+            val outputImageFormatArg = args[3] as Long?
             val wrapped: List<Any?> =
                 try {
                   api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
-                      api.pigeon_defaultConstructor(resolutionSelectorArg, targetRotationArg),
+                      api.pigeon_defaultConstructor(
+                          resolutionSelectorArg, targetRotationArg, outputImageFormatArg),
                       pigeon_identifierArg)
                   listOf(null)
                 } catch (exception: Throwable) {

@@ -111,7 +111,7 @@ public class PendingRecordingTest {
           .when(() -> ContextCompat.getMainExecutor(any()))
           .thenAnswer((Answer<Executor>) invocation -> mock(Executor.class));
 
-      when(instance.start(any(), any())).thenReturn(value);
+      when(instance.start(any(Executor.class), any())).thenReturn(value);
 
       assertEquals(value, api.start(instance, listener));
     }

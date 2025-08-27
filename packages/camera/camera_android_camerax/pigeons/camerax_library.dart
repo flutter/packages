@@ -803,7 +803,7 @@ abstract class ZoomState {
   ),
 )
 abstract class ImageAnalysis extends UseCase {
-  ImageAnalysis(int? targetRotation);
+  ImageAnalysis(int? targetRotation, int? outputImageFormat);
 
   late final ResolutionSelector? resolutionSelector;
 
