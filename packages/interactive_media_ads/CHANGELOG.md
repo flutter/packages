@@ -1,3 +1,13 @@
+## 0.2.6+6
+
+* Bumps com.android.tools.build:gradle to 8.12.1 and kotlin_version to 2.2.10.
+
+## 0.2.6+5
+
+* Fixes Android `IllegalStateException` from `MediaPlayer` by releasing resources on
+  `VideoAdPlayer.release`.
+* Fixes `_startAdProgressTracking` error caused by race condition.
+
 ## 0.2.6+4
 
 * Adds internal wrappers for iOS native `IMAAd` and `IMAUniversalAdID`.

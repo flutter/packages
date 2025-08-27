@@ -1,6 +1,7 @@
 ## 0.10.10+6
 
-* Fixes flutter/flutter#148013: setDescriptionWhileRecording with android camerax.
+* Fixes flutter/flutter#148013: implement setDescriptionWhileRecording with camera_android_camerax.
+* Bumps com.android.tools.build:gradle to 8.12.1.
 * Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
 
 ## 0.10.10+5
