@@ -1,6 +1,6 @@
 ## 0.5.14
 
-* Adds support to camera control button.
+* Adds support for disabling or moving the camera control button on web.
 
 ## 0.5.13
 
