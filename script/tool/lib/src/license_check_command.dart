@@ -366,7 +366,8 @@ class LicenseCheckCommand extends PackageCommand {
   }
 
   String _repoRelativePath(File file) {
-    return p.relative(file.absolute.path, from: packagesDir.parent.path);
+    return p.posix.joinAll(path.split(
+        path.relative(file.absolute.path, from: packagesDir.parent.path)));
   }
 }
 
