@@ -887,8 +887,7 @@ void main() {
     });
 
     test('AdDisplayContainer handles preloaded ads', () async {
-      late void Function(ima.VideoView, ima.MediaPlayer)
-      onCompletionCallback;
+      late void Function(ima.VideoView, ima.MediaPlayer) onCompletionCallback;
 
       late final void Function(ima.VideoAdPlayer, ima.VideoAdPlayerCallback)
       addCallbackCallback;
@@ -898,7 +897,8 @@ void main() {
         ima.AdPodInfo,
       )
       loadAdCallback;
-      late final void Function(ima.VideoAdPlayer, ima.AdMediaInfo) stopAdCallback;
+      late final void Function(ima.VideoAdPlayer, ima.AdMediaInfo)
+      stopAdCallback;
 
       final MockVideoView mockVideoView = MockVideoView();
       final InteractiveMediaAdsProxy imaProxy = InteractiveMediaAdsProxy(
