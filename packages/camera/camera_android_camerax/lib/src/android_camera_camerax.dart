@@ -179,6 +179,11 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// See https://developer.android.com/reference/android/graphics/ImageFormat#YUV_420_888.
   static const int imageProxyFormatYuv420_888 = 35;
 
+  /// Constant representing the NV21 image format used by ImageProxy.
+  ///
+  /// See https://developer.android.com/reference/android/graphics/ImageFormat#NV21.
+  static const int imageProxyFormatNv21 = 17;
+
   /// Constant representing the compressed JPEG image format used by ImageProxy.
   ///
   /// See https://developer.android.com/reference/android/graphics/ImageFormat#JPEG.
@@ -469,10 +474,10 @@ class AndroidCameraCameraX extends CameraPlatform {
     // Defaults to YUV_420_888 image format.
     imageAnalysis = proxy.newImageAnalysis(
       resolutionSelector: _presetResolutionSelector,
-      /* use CameraX default target rotation */ targetRotation: null,
       outputImageFormat: _imageAnalysisOutputFormatFromImageFormatGroup(
         imageFormatGroup,
       ),
+      /* use CameraX default target rotation */ targetRotation: null,
     );
 
     // Bind configured UseCases to ProcessCameraProvider instance & mark Preview
@@ -1226,6 +1231,10 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// implementation using a broadcast [StreamController], which does not
   /// support those operations.
   ///
+  /// If the camera was initialized with [ImageFormatGroup.nv21], then the
+  /// streamed images will still have format [ImageFormatGroup.yuv420], but
+  /// their image data will be formattedin NV21.
+  ///
   /// [cameraId] and [options] are not used.
   @override
   Stream<CameraImageData> onStreamedFrameAvailable(
@@ -1359,6 +1368,8 @@ class AndroidCameraCameraX extends CameraPlatform {
     switch (data) {
       case imageProxyFormatYuv420_888: // android.graphics.ImageFormat.YUV_420_888
         return ImageFormatGroup.yuv420;
+      case imageProxyFormatNv21: // android.graphics.ImageFormat.NV21
+        return ImageFormatGroup.nv21;
       case imageProxyFormatJpeg: // android.graphics.ImageFormat.JPEG
         return ImageFormatGroup.jpeg;
     }

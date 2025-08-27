@@ -2562,6 +2562,7 @@ void main() {
         };
         // Tell plugin to create mock/detached objects for testing createCamera
         // as needed.
+        int? imageAnalysisOutputImageFormat;
         camera.proxy = getProxyForTestingUseCaseConfiguration(
           mockProcessCameraProvider,
           newImageAnalysis:
@@ -2574,9 +2575,7 @@ void main() {
                 int? targetRotation,
                 int? outputImageFormat,
               }) {
-                when(
-                  mockImageAnalysis.outputImageFormat,
-                ).thenReturn(cameraXImageFormat);
+                imageAnalysisOutputImageFormat = outputImageFormat;
                 return mockImageAnalysis;
               },
           newPreview:
@@ -2595,10 +2594,13 @@ void main() {
           testCameraDescription,
           const MediaSettings(enableAudio: enableAudio),
         );
-        await camera.initializeCamera(testSurfaceTextureId);
+        await camera.initializeCamera(
+          testSurfaceTextureId,
+          imageFormatGroup: imageFormatGroup,
+        );
 
         // Test image format group is set as expected.
-        expect(mockImageAnalysis.outputImageFormat, cameraXImageFormat);
+        expect(imageAnalysisOutputImageFormat, cameraXImageFormat);
       }
     },
   );

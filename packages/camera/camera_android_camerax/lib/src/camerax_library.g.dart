@@ -5919,8 +5919,8 @@ class ImageAnalysis extends UseCase {
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
     this.resolutionSelector,
-    this.outputImageFormat,
     int? targetRotation,
+    int? outputImageFormat,
   }) : super.pigeon_detached() {
     final int pigeonVar_instanceIdentifier = pigeon_instanceManager
         .addDartCreatedInstance(this);
@@ -5939,8 +5939,8 @@ class ImageAnalysis extends UseCase {
         .send(<Object?>[
           pigeonVar_instanceIdentifier,
           resolutionSelector,
-          outputImageFormat,
           targetRotation,
+          outputImageFormat,
         ]);
     () async {
       final List<Object?>? pigeonVar_replyList =
@@ -5968,7 +5968,6 @@ class ImageAnalysis extends UseCase {
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
     this.resolutionSelector,
-    this.outputImageFormat,
   }) : super.pigeon_detached();
 
   late final _PigeonInternalProxyApiBaseCodec _pigeonVar_codecImageAnalysis =
@@ -5976,16 +5975,11 @@ class ImageAnalysis extends UseCase {
 
   final ResolutionSelector? resolutionSelector;
 
-  final int? outputImageFormat;
-
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-    ImageAnalysis Function(
-      ResolutionSelector? resolutionSelector,
-      int? outputImageFormat,
-    )?
+    ImageAnalysis Function(ResolutionSelector? resolutionSelector)?
     pigeon_newInstance,
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
@@ -6016,19 +6010,14 @@ class ImageAnalysis extends UseCase {
           );
           final ResolutionSelector? arg_resolutionSelector =
               (args[1] as ResolutionSelector?);
-          final int? arg_outputImageFormat = (args[2] as int?);
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
-                  pigeon_newInstance?.call(
-                        arg_resolutionSelector,
-                        arg_outputImageFormat,
-                      ) ??
+                  pigeon_newInstance?.call(arg_resolutionSelector) ??
                       ImageAnalysis.pigeon_detached(
                         pigeon_binaryMessenger: pigeon_binaryMessenger,
                         pigeon_instanceManager: pigeon_instanceManager,
                         resolutionSelector: arg_resolutionSelector,
-                        outputImageFormat: arg_outputImageFormat,
                       ),
                   arg_pigeon_instanceIdentifier!,
                 );
@@ -6144,7 +6133,6 @@ class ImageAnalysis extends UseCase {
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,
       resolutionSelector: resolutionSelector,
-      outputImageFormat: outputImageFormat,
     );
   }
 }

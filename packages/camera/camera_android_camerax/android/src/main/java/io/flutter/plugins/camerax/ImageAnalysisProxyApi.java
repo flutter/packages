@@ -31,6 +31,7 @@ class ImageAnalysisProxyApi extends PigeonApiImageAnalysis {
     if (targetRotation != null) {
       builder.setTargetRotation(targetRotation.intValue());
     }
+
     if (outputImageFormat != null) {
       builder.setOutputImageFormat(outputImageFormat.intValue());
     }
@@ -78,9 +79,9 @@ class ImageAnalysisProxyApi extends PigeonApiImageAnalysis {
     return pigeonInstance.getResolutionSelector();
   }
 
-  @Nullable
-  @Override
-  public Long outputImageFormat(@NonNull ImageAnalysis pigeonInstance) {
-    return Long.valueOf(pigeonInstance.getOutputImageFormat());
-  }
+  // @Nullable
+  // @Override
+  // public Long outputImageFormat(@NonNull ImageAnalysis pigeonInstance) {
+  //   return Long.valueOf(pigeonInstance.getOutputImageFormat());
+  // }
 }
