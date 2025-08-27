@@ -41,7 +41,7 @@ android {
 
     defaultConfig {
         // CameraX APIs require API 23 or later.
-        minSdkVersion 23
+        minSdk = 23
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
