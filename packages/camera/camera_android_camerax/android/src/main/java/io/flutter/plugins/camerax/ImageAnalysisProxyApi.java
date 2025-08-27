@@ -78,10 +78,4 @@ class ImageAnalysisProxyApi extends PigeonApiImageAnalysis {
   public ResolutionSelector resolutionSelector(@NonNull ImageAnalysis pigeonInstance) {
     return pigeonInstance.getResolutionSelector();
   }
-
-  // @Nullable
-  // @Override
-  // public Long outputImageFormat(@NonNull ImageAnalysis pigeonInstance) {
-  //   return Long.valueOf(pigeonInstance.getOutputImageFormat());
-  // }
 }

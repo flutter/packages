@@ -1233,7 +1233,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   ///
   /// If the camera was initialized with [ImageFormatGroup.nv21], then the
   /// streamed images will still have format [ImageFormatGroup.yuv420], but
-  /// their image data will be formattedin NV21.
+  /// their image data will be formatted in NV21.
   ///
   /// [cameraId] and [options] are not used.
   @override
