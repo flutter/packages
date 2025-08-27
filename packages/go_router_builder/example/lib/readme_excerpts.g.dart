@@ -174,7 +174,7 @@ RouteBase get $hotdogRouteWithEverything => GoRouteData.$route(
 mixin _$HotdogRouteWithEverything on GoRouteData {
   static HotdogRouteWithEverything _fromState(GoRouterState state) =>
       HotdogRouteWithEverything(
-        _$boolConverter(state.pathParameters['ketchup']!)!,
+        _$boolConverter(state.pathParameters['ketchup']!),
         state.uri.queryParameters['mustard'],
         state.extra as Sauce,
       );
