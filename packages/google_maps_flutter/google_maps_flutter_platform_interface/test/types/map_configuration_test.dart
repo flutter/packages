@@ -521,6 +521,14 @@ void main() {
       expect(diff.isEmpty, false);
     });
 
+    test('is false with webCameraControlPosition', () async {
+      const MapConfiguration diff = MapConfiguration(
+        webCameraControlPosition: WebCameraControlPosition.blockEndInlineCenter,
+      );
+
+      expect(diff.isEmpty, false);
+    });
+
     test('is false with compassEnabled', () async {
       const MapConfiguration diff = MapConfiguration(compassEnabled: true);
 
