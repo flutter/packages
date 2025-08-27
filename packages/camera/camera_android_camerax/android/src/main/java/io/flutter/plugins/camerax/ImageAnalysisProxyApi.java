@@ -31,10 +31,10 @@ class ImageAnalysisProxyApi extends PigeonApiImageAnalysis {
     if (targetRotation != null) {
       builder.setTargetRotation(targetRotation.intValue());
     }
-
     if (outputImageFormat != null) {
       builder.setOutputImageFormat(outputImageFormat.intValue());
     }
+
     return builder.build();
   }
 
