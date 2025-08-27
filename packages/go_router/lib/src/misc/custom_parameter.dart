@@ -29,10 +29,7 @@ import 'package:meta/meta_meta.dart' show Target, TargetKind;
 final class CustomParameterCodec {
   /// create a custom parameter codec
   ///
-  const CustomParameterCodec({
-    required this.encode,
-    required this.decode,
-  });
+  const CustomParameterCodec({required this.encode, required this.decode});
 
   /// custom function to encode the field
   final String Function(String field) encode;

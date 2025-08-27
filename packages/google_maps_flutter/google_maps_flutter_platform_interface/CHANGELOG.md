@@ -1,6 +1,11 @@
 ## 2.13.0
 
 * Adds support for disabling or moving the camera control button on web.
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
+## 2.13.0
+
+* Adds Advanced marker support.
 
 ## 2.12.1
 

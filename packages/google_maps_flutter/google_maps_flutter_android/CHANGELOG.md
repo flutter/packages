@@ -1,3 +1,12 @@
+## 2.18.2
+
+* Bumps com.android.tools.build:gradle to 8.12.1.
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
+## 2.18.1
+
+* Updates kotlin version to 2.2.0 to enable gradle 8.11 support.
+
 ## 2.18.0
 
 * Adds support for warming up the Google Maps SDK 

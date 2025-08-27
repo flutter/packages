@@ -22,7 +22,12 @@ enum ReplyType { success, error }
 
 class NonNullFieldSearchReply {
   NonNullFieldSearchReply(
-      this.result, this.error, this.indices, this.extraData, this.type);
+    this.result,
+    this.error,
+    this.indices,
+    this.extraData,
+    this.type,
+  );
   String result;
   String error;
   List<int?> indices;

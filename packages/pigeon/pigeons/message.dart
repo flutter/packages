@@ -7,16 +7,15 @@
 
 import 'package:pigeon/pigeon.dart';
 
-@ConfigurePigeon(PigeonOptions(
-  javaOptions: JavaOptions(
-    className: 'MessagePigeon',
-    package: 'dev.flutter.aaclarke.pigeon',
+@ConfigurePigeon(
+  PigeonOptions(
+    javaOptions: JavaOptions(
+      className: 'MessagePigeon',
+      package: 'dev.flutter.aaclarke.pigeon',
+    ),
+    objcOptions: ObjcOptions(prefix: 'AC'),
   ),
-  objcOptions: ObjcOptions(
-    prefix: 'AC',
-  ),
-))
-
+)
 /// This comment is to test enum documentation comments.
 ///
 /// This comment also tests multiple line comments.
@@ -24,11 +23,7 @@ import 'package:pigeon/pigeon.dart';
 ///////////////////////////
 /// This comment also tests comments that start with '/'
 ///////////////////////////
-enum MessageRequestState {
-  pending,
-  success,
-  failure,
-}
+enum MessageRequestState { pending, success, failure }
 
 /// This comment is to test class documentation comments.
 ///
@@ -59,7 +54,6 @@ class MessageSearchReply {
 }
 
 @HostApi(dartHostTestHandler: 'TestHostApi')
-
 /// This comment is to test api documentation comments.
 ///
 /// This comment also tests multiple line comments.
@@ -80,7 +74,6 @@ class MessageNested {
 }
 
 @HostApi(dartHostTestHandler: 'TestNestedApi')
-
 /// This comment is to test api documentation comments.
 abstract class MessageNestedApi {
   /// This comment is to test method documentation comments.
@@ -90,7 +83,6 @@ abstract class MessageNestedApi {
 }
 
 @FlutterApi()
-
 /// This comment is to test api documentation comments.
 abstract class MessageFlutterSearchApi {
   /// This comment is to test method documentation comments.

@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 
-const String _kCloudMapId = '000000000000000'; // Dummy map ID.
+const String _kMapId = '000000000000000'; // Dummy map ID.
 
 void main() {
   group('diffs', () {
@@ -17,8 +17,12 @@ void main() {
       webGestureHandling: WebGestureHandling.auto,
       compassEnabled: false,
       mapToolbarEnabled: false,
-      cameraTargetBounds: CameraTargetBounds(LatLngBounds(
-          northeast: const LatLng(30, 20), southwest: const LatLng(10, 40))),
+      cameraTargetBounds: CameraTargetBounds(
+        LatLngBounds(
+          northeast: const LatLng(30, 20),
+          southwest: const LatLng(10, 40),
+        ),
+      ),
       mapType: MapType.normal,
       minMaxZoomPreference: const MinMaxZoomPreference(1.0, 10.0),
       rotateGesturesEnabled: false,
@@ -62,11 +66,13 @@ void main() {
       expect(updated.trafficEnabled, isNot(null));
       expect(updated.cloudMapId, null);
       expect(updated.webCameraControlPosition, isNot(null));
+      expect(updated.mapId, null);
     });
 
     test('handle webGestureHandling', () async {
-      const MapConfiguration diff =
-          MapConfiguration(webGestureHandling: WebGestureHandling.none);
+      const MapConfiguration diff = MapConfiguration(
+        webGestureHandling: WebGestureHandling.none,
+      );
 
       const MapConfiguration empty = MapConfiguration();
       final MapConfiguration updated = diffBase.applyDiff(diff);
@@ -94,15 +100,18 @@ void main() {
       // The diff from empty options should be the diff itself.
       expect(diff.diffFrom(empty), diff);
       // A diff applied to non-empty options should update that field.
-      expect(updated.webCameraControlPosition,
-          WebCameraControlPosition.blockEndInlineEnd);
+      expect(
+        updated.webCameraControlPosition,
+        WebCameraControlPosition.blockEndInlineEnd,
+      );
       // The hash code should change.
       expect(empty.hashCode, isNot(diff.hashCode));
     });
 
     test('handle webCameraControlEnabled', () async {
-      const MapConfiguration diff =
-          MapConfiguration(webCameraControlEnabled: true);
+      const MapConfiguration diff = MapConfiguration(
+        webCameraControlEnabled: true,
+      );
 
       const MapConfiguration empty = MapConfiguration();
       final MapConfiguration updated = diffBase.applyDiff(diff);
@@ -150,10 +159,15 @@ void main() {
     });
 
     test('handle cameraTargetBounds', () async {
-      final CameraTargetBounds newBounds = CameraTargetBounds(LatLngBounds(
-          northeast: const LatLng(55, 15), southwest: const LatLng(5, 15)));
-      final MapConfiguration diff =
-          MapConfiguration(cameraTargetBounds: newBounds);
+      final CameraTargetBounds newBounds = CameraTargetBounds(
+        LatLngBounds(
+          northeast: const LatLng(55, 15),
+          southwest: const LatLng(5, 15),
+        ),
+      );
+      final MapConfiguration diff = MapConfiguration(
+        cameraTargetBounds: newBounds,
+      );
 
       const MapConfiguration empty = MapConfiguration();
       final MapConfiguration updated = diffBase.applyDiff(diff);
@@ -169,8 +183,9 @@ void main() {
     });
 
     test('handle mapType', () async {
-      const MapConfiguration diff =
-          MapConfiguration(mapType: MapType.satellite);
+      const MapConfiguration diff = MapConfiguration(
+        mapType: MapType.satellite,
+      );
 
       const MapConfiguration empty = MapConfiguration();
       final MapConfiguration updated = diffBase.applyDiff(diff);
@@ -187,8 +202,9 @@ void main() {
 
     test('handle minMaxZoomPreference', () async {
       const MinMaxZoomPreference newZoomPref = MinMaxZoomPreference(3.3, 4.5);
-      const MapConfiguration diff =
-          MapConfiguration(minMaxZoomPreference: newZoomPref);
+      const MapConfiguration diff = MapConfiguration(
+        minMaxZoomPreference: newZoomPref,
+      );
 
       const MapConfiguration empty = MapConfiguration();
       final MapConfiguration updated = diffBase.applyDiff(diff);
@@ -204,8 +220,9 @@ void main() {
     });
 
     test('handle rotateGesturesEnabled', () async {
-      const MapConfiguration diff =
-          MapConfiguration(rotateGesturesEnabled: true);
+      const MapConfiguration diff = MapConfiguration(
+        rotateGesturesEnabled: true,
+      );
 
       const MapConfiguration empty = MapConfiguration();
       final MapConfiguration updated = diffBase.applyDiff(diff);
@@ -221,8 +238,9 @@ void main() {
     });
 
     test('handle scrollGesturesEnabled', () async {
-      const MapConfiguration diff =
-          MapConfiguration(scrollGesturesEnabled: true);
+      const MapConfiguration diff = MapConfiguration(
+        scrollGesturesEnabled: true,
+      );
 
       const MapConfiguration empty = MapConfiguration();
       final MapConfiguration updated = diffBase.applyDiff(diff);
@@ -254,8 +272,9 @@ void main() {
     });
 
     test('handle fortyFiveDegreeImageryEnabled', () async {
-      const MapConfiguration diff =
-          MapConfiguration(fortyFiveDegreeImageryEnabled: true);
+      const MapConfiguration diff = MapConfiguration(
+        fortyFiveDegreeImageryEnabled: true,
+      );
 
       const MapConfiguration empty = MapConfiguration();
       final MapConfiguration updated = diffBase.applyDiff(diff);
@@ -351,8 +370,9 @@ void main() {
     });
 
     test('handle myLocationButtonEnabled', () async {
-      const MapConfiguration diff =
-          MapConfiguration(myLocationButtonEnabled: true);
+      const MapConfiguration diff = MapConfiguration(
+        myLocationButtonEnabled: true,
+      );
 
       const MapConfiguration empty = MapConfiguration();
       final MapConfiguration updated = diffBase.applyDiff(diff);
@@ -368,8 +388,10 @@ void main() {
     });
 
     test('handle padding', () async {
-      const EdgeInsets newPadding =
-          EdgeInsets.symmetric(vertical: 1.0, horizontal: 3.0);
+      const EdgeInsets newPadding = EdgeInsets.symmetric(
+        vertical: 1.0,
+        horizontal: 3.0,
+      );
       const MapConfiguration diff = MapConfiguration(padding: newPadding);
 
       const MapConfiguration empty = MapConfiguration();
@@ -434,7 +456,7 @@ void main() {
     });
 
     test('handle cloudMapId', () async {
-      const MapConfiguration diff = MapConfiguration(cloudMapId: _kCloudMapId);
+      const MapConfiguration diff = MapConfiguration(cloudMapId: _kMapId);
 
       const MapConfiguration empty = MapConfiguration();
       final MapConfiguration updated = diffBase.applyDiff(diff);
@@ -444,7 +466,24 @@ void main() {
       // The diff from empty options should be the diff itself.
       expect(diff.diffFrom(empty), diff);
       // A diff applied to non-empty options should update that field.
-      expect(updated.cloudMapId, _kCloudMapId);
+      expect(updated.cloudMapId, _kMapId);
+      expect(updated.mapId, _kMapId);
+      // The hash code should change.
+      expect(empty.hashCode, isNot(diff.hashCode));
+    });
+
+    test('handle mapId', () async {
+      const MapConfiguration diff = MapConfiguration(mapId: _kMapId);
+
+      const MapConfiguration empty = MapConfiguration();
+      final MapConfiguration updated = diffBase.applyDiff(diff);
+
+      // A diff applied to empty options should be the diff itself.
+      expect(empty.applyDiff(diff), diff);
+      // The diff from empty options should be the diff itself.
+      expect(diff.diffFrom(empty), diff);
+      // A diff applied to non-empty options should update that field.
+      expect(updated.mapId, _kMapId);
       // The hash code should change.
       expect(empty.hashCode, isNot(diff.hashCode));
     });
@@ -475,8 +514,9 @@ void main() {
     });
 
     test('is false with webCameraControlEnabled', () async {
-      const MapConfiguration diff =
-          MapConfiguration(webCameraControlEnabled: true);
+      const MapConfiguration diff = MapConfiguration(
+        webCameraControlEnabled: true,
+      );
 
       expect(diff.isEmpty, false);
     });
@@ -494,39 +534,48 @@ void main() {
     });
 
     test('is false with cameraTargetBounds', () async {
-      final CameraTargetBounds newBounds = CameraTargetBounds(LatLngBounds(
-          northeast: const LatLng(55, 15), southwest: const LatLng(5, 15)));
-      final MapConfiguration diff =
-          MapConfiguration(cameraTargetBounds: newBounds);
+      final CameraTargetBounds newBounds = CameraTargetBounds(
+        LatLngBounds(
+          northeast: const LatLng(55, 15),
+          southwest: const LatLng(5, 15),
+        ),
+      );
+      final MapConfiguration diff = MapConfiguration(
+        cameraTargetBounds: newBounds,
+      );
 
       expect(diff.isEmpty, false);
     });
 
     test('is false with mapType', () async {
-      const MapConfiguration diff =
-          MapConfiguration(mapType: MapType.satellite);
+      const MapConfiguration diff = MapConfiguration(
+        mapType: MapType.satellite,
+      );
 
       expect(diff.isEmpty, false);
     });
 
     test('is false with minMaxZoomPreference', () async {
       const MinMaxZoomPreference newZoomPref = MinMaxZoomPreference(3.3, 4.5);
-      const MapConfiguration diff =
-          MapConfiguration(minMaxZoomPreference: newZoomPref);
+      const MapConfiguration diff = MapConfiguration(
+        minMaxZoomPreference: newZoomPref,
+      );
 
       expect(diff.isEmpty, false);
     });
 
     test('is false with rotateGesturesEnabled', () async {
-      const MapConfiguration diff =
-          MapConfiguration(rotateGesturesEnabled: true);
+      const MapConfiguration diff = MapConfiguration(
+        rotateGesturesEnabled: true,
+      );
 
       expect(diff.isEmpty, false);
     });
 
     test('is false with scrollGesturesEnabled', () async {
-      const MapConfiguration diff =
-          MapConfiguration(scrollGesturesEnabled: true);
+      const MapConfiguration diff = MapConfiguration(
+        scrollGesturesEnabled: true,
+      );
 
       expect(diff.isEmpty, false);
     });
@@ -568,15 +617,18 @@ void main() {
     });
 
     test('is false with myLocationButtonEnabled', () async {
-      const MapConfiguration diff =
-          MapConfiguration(myLocationButtonEnabled: true);
+      const MapConfiguration diff = MapConfiguration(
+        myLocationButtonEnabled: true,
+      );
 
       expect(diff.isEmpty, false);
     });
 
     test('is false with padding', () async {
-      const EdgeInsets newPadding =
-          EdgeInsets.symmetric(vertical: 1.0, horizontal: 3.0);
+      const EdgeInsets newPadding = EdgeInsets.symmetric(
+        vertical: 1.0,
+        horizontal: 3.0,
+      );
       const MapConfiguration diff = MapConfiguration(padding: newPadding);
 
       expect(diff.isEmpty, false);
@@ -601,7 +653,13 @@ void main() {
     });
 
     test('is false with cloudMapId', () async {
-      const MapConfiguration diff = MapConfiguration(cloudMapId: _kCloudMapId);
+      const MapConfiguration diff = MapConfiguration(mapId: _kMapId);
+
+      expect(diff.isEmpty, false);
+    });
+
+    test('is false with mapId', () async {
+      const MapConfiguration diff = MapConfiguration(mapId: _kMapId);
 
       expect(diff.isEmpty, false);
     });

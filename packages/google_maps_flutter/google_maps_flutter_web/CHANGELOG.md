@@ -1,6 +1,11 @@
-## 0.5.13
+## 0.5.14
 
 * Adds support to camera control button.
+
+## 0.5.13
+
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+* Fixes `consumeTapEvents` for Circles, Polygons & Polyline on web.
 
 ## 0.5.12+2
 

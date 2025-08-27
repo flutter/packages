@@ -118,17 +118,11 @@ class BuildExamplesCommand extends PackageLoopingCommand {
       'arguments.';
 
   /// Returns whether the Swift Package Manager feature should be enabled,
-  /// disabled, or left to the release channel's default value.
+  /// disabled, or left to the default value.
   bool? get _swiftPackageManagerFeatureConfig {
     final List<String> platformFlags = _platforms.keys.toList();
     if (!platformFlags.contains(platformIOS) &&
         !platformFlags.contains(platformMacOS)) {
-      return null;
-    }
-
-    // TODO(loic-sharma): Allow enabling on stable once Swift Package Manager
-    // feature is available on stable.
-    if (platform.environment['CHANNEL'] != 'master') {
       return null;
     }
 
@@ -149,23 +143,6 @@ class BuildExamplesCommand extends PackageLoopingCommand {
           'None of ${platformFlags.map((String platform) => '--$platform').join(', ')} '
           'were specified. At least one platform must be provided.');
       throw ToolExit(_exitNoPlatformFlags);
-    }
-
-    switch (_swiftPackageManagerFeatureConfig) {
-      case true:
-        await processRunner.runAndStream(
-          flutterCommand,
-          <String>['config', '--enable-swift-package-manager'],
-          exitOnError: true,
-        );
-      case false:
-        await processRunner.runAndStream(
-          flutterCommand,
-          <String>['config', '--no-enable-swift-package-manager'],
-          exitOnError: true,
-        );
-      case null:
-        break;
     }
   }
 
@@ -212,8 +189,20 @@ class BuildExamplesCommand extends PackageLoopingCommand {
     }
     print('');
 
+    final bool? swiftPackageManagerOverride =
+        isPlugin ? _swiftPackageManagerFeatureConfig : null;
+
     bool builtSomething = false;
     for (final RepositoryPackage example in package.getExamples()) {
+      // Rather than changing global config state, enable SwiftPM via a
+      // temporary package-level override.
+      if (swiftPackageManagerOverride != null) {
+        print('Overriding enable-swift-package-manager to '
+            '$swiftPackageManagerOverride');
+        setSwiftPackageManagerState(example,
+            enabled: swiftPackageManagerOverride);
+      }
+
       final String packageName =
           getRelativePosixPath(example.directory, from: packagesDir);
 
@@ -239,6 +228,12 @@ class BuildExamplesCommand extends PackageLoopingCommand {
             extraBuildFlags: platform.extraBuildFlags)) {
           errors.add('$packageName (${platform.label})');
         }
+      }
+
+      // If an override was added, remove it.
+      if (swiftPackageManagerOverride != null) {
+        print('Removing enable-swift-package-manager override');
+        setSwiftPackageManagerState(example, enabled: null);
       }
     }
 

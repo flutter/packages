@@ -1,3 +1,16 @@
+## 0.8.13+1
+
+* Bumps com.android.tools.build:gradle to 8.12.1.
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
+## 0.8.13
+
+* Adds support for `getMultiVideoWithOptions`.
+
+## 0.8.12+25
+
+* Updates kotlin version to 2.2.0 to enable gradle 8.11 support.
+
 ## 0.8.12+24
 
 * Updates `androidx.activity:activity` to 1.10.1.
