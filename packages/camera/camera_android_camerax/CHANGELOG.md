@@ -1,3 +1,7 @@
+## 0.6.21
+
+* Implements NV21 support for image streaming.
+
 ## 0.6.20+3
 
 * Bumps com.google.guava:guava from 33.4.0-android to 33.4.8-android.
