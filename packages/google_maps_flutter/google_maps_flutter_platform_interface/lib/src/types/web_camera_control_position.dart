@@ -2,8 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-/// This setting controls how the API handles camera control button on the map
-/// See https://developers.google.com/maps/documentation/javascript/reference/control#ControlPosition for more details.
+/// This setting controls how the API handles camera control button on the map.
+///
+/// See https://developers.google.com/maps/documentation/javascript/reference/control#ControlPosition
+/// for more details.
 enum WebCameraControlPosition {
   /// Equivalent to BOTTOM_CENTER in both LTR and RTL.
   blockEndInlineCenter,
@@ -24,16 +26,21 @@ enum WebCameraControlPosition {
   blockStartInlineEnd,
 
   /// Elements are positioned in the center of the bottom row.
+  ///
   /// Consider using BLOCK_END_INLINE_CENTER instead.
   bottomCenter,
 
   /// Elements are positioned in the bottom left and flow towards the middle.
+  ///
   /// Elements are positioned to the right of the Google logo.
+  ///
   /// Consider using BLOCK_END_INLINE_START instead.
   bottomLeft,
 
   /// Elements are positioned in the bottom right and flow towards the middle.
+  ///
   /// Elements are positioned to the left of the copyrights.
+  ///
   /// Consider using BLOCK_END_INLINE_END instead.
   bottomRight,
 
@@ -56,7 +63,9 @@ enum WebCameraControlPosition {
   inlineStartBlockStart,
 
   /// Elements are positioned on the left, above bottom-left elements,
-  /// and flow upwards. Consider using INLINE_START_BLOCK_END instead.
+  /// and flow upwards.
+  ///
+  /// Consider using INLINE_START_BLOCK_END instead.
   leftBottom,
 
   /// Elements are positioned in the center of the left side.
@@ -64,30 +73,40 @@ enum WebCameraControlPosition {
   leftCenter,
 
   /// Elements are positioned on the left, below top-left elements,
-  /// and flow downwards. Consider using INLINE_START_BLOCK_START instead.
+  /// and flow downwards.
+  ///
+  /// Consider using INLINE_START_BLOCK_START instead.
   leftTop,
 
   /// Elements are positioned on the right, above bottom-right elements,
-  /// and flow upwards. Consider using INLINE_END_BLOCK_END instead.
+  /// and flow upwards.
+  ///
+  /// Consider using INLINE_END_BLOCK_END instead.
   rightBottom,
 
   /// Elements are positioned in the center of the right side.
+  ///
   /// Consider using INLINE_END_BLOCK_CENTER instead.
   rightCenter,
 
   /// Elements are positioned on the right, below top-right elements,
-  /// and flow downwards. Consider using INLINE_END_BLOCK_START instead.
+  /// and flow downwards.
+  ///
+  /// Consider using INLINE_END_BLOCK_START instead.
   rightTop,
 
   /// Elements are positioned in the center of the top row.
+  ///
   /// Consider using BLOCK_START_INLINE_CENTER instead.
   topCenter,
 
   /// Elements are positioned in the top left and flow towards the middle.
+  ///
   /// Consider using BLOCK_START_INLINE_START instead.
   topLeft,
 
   /// Elements are positioned in the top right and flow towards the middle.
+  ///
   /// Consider using BLOCK_START_INLINE_END instead.
   topRight,
 }
