@@ -1,3 +1,7 @@
+## 0.6.20+3
+
+* Bumps com.google.guava:guava from 33.4.0-android to 33.4.8-android.
+
 ## 0.6.20+2
 
 * Bumps com.android.tools.build:gradle to 8.12.1 and kotlin_version to 2.2.10.
