@@ -72,6 +72,7 @@
 - googleapis
 - googleapis_auth
 - json_annotation
+- protobuf
 - quiver
 - sanitize_html
 - source_helper
