@@ -4,12 +4,13 @@
 
 import 'package:pigeon/pigeon.dart';
 
-@ConfigurePigeon(PigeonOptions(
-  dartOut: 'lib/src/messages.g.dart',
-  swiftOut: 'ios/url_launcher_ios/Sources/url_launcher_ios/messages.g.swift',
-  copyrightHeader: 'pigeons/copyright.txt',
-))
-
+@ConfigurePigeon(
+  PigeonOptions(
+    dartOut: 'lib/src/messages.g.dart',
+    swiftOut: 'ios/url_launcher_ios/Sources/url_launcher_ios/messages.g.swift',
+    copyrightHeader: 'pigeons/copyright.txt',
+  ),
+)
 /// Possible outcomes of launching a URL.
 enum LaunchResult {
   /// The URL was successfully launched (or could be, for `canLaunchUrl`).

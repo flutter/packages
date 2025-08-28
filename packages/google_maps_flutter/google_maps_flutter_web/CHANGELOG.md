@@ -1,6 +1,19 @@
-## 0.5.13
+## 0.5.14
 
 * Stop processing events and cancel subscriptions when controller is disposed.
+
+## 0.5.13
+
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+* Fixes `consumeTapEvents` for Circles, Polygons & Polyline on web.
+
+## 0.5.12+2
+
+* Fix broken cameraTargetBounds option on web.
+
+## 0.5.12+1
+
+* Deprecates `zIndex` parameter in Marker in favor of `zIndexInt`.
 * Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
 
 ## 0.5.12

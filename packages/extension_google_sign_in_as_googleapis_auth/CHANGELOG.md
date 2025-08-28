@@ -1,5 +1,15 @@
 ## NEXT
 
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
+## 3.0.0
+
+* **BREAKING CHANGES**:
+  * The extension method is now on `GoogleSignInClientAuthorization` instead of
+    `GoogleSignIn`, so it must be used after completing an authorization flow.
+  * The extension method has been renamed to `authClient`.
+  * The extension method now requires passing `scopes`, matching those used to
+    request the authorization.
 * Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
 
 ## 2.0.13

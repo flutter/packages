@@ -1,3 +1,20 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
+## 0.4.4
+
+* Added support for specifying quantity in `SK2ProductPurchaseOptions` (consumable purchases on iOS).
+
+## 0.4.3
+
+* Adds **Introductory Offer Eligibility** support for StoreKit2
+
+## 0.4.2
+
+* Add [jwsRepresentation](https://developer.apple.com/documentation/storekit/verificationresult/jwsrepresentation-21vgo) to `SK2PurchaseDetails` as `serverVerificationData` for secure server-side purchase verification. Use this JSON Web Signature (JWS) value to perform your own JWS verification on your server.
+* Add [jsonRepresentation](https://developer.apple.com/documentation/storekit/transaction/jsonrepresentation) to `SK2PurchaseDetails` as `localVerificationData` for local transaction debugging and verification.
+
 ## 0.4.1
 
 * Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.

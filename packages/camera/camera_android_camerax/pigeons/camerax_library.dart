@@ -290,7 +290,10 @@ enum LensFacing {
   ),
 )
 abstract class CameraSelector {
-  CameraSelector(LensFacing? requireLensFacing);
+  CameraSelector(
+    LensFacing? requireLensFacing,
+    CameraInfo? cameraInfoForFilter,
+  );
 
   /// A static `CameraSelector` that selects the default back facing camera.
   @static
@@ -789,7 +792,7 @@ abstract class ZoomState {
   ),
 )
 abstract class ImageAnalysis extends UseCase {
-  ImageAnalysis(int? targetRotation);
+  ImageAnalysis(int? targetRotation, int? outputImageFormat);
 
   late final ResolutionSelector? resolutionSelector;
 

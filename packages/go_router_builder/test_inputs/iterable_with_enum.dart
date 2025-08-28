@@ -13,8 +13,4 @@ class IterableWithEnumRoute extends GoRouteData with _$IterableWithEnumRoute {
   final Iterable<EnumOnlyUsedInIterable>? param;
 }
 
-enum EnumOnlyUsedInIterable {
-  a,
-  b,
-  c,
-}
+enum EnumOnlyUsedInIterable { a, b, c }

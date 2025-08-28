@@ -100,18 +100,26 @@ func sendEvents(_ eventListener: EventListener) {
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
     GeneratedPluginRegistrant.register(with: self)
+    return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+  }
+}
 
-    let controller = window?.rootViewController as! FlutterViewController
+// TODO(stuartmorgan): Once 3.33+ reaches stable, remove this subclass and move the setup to
+// AppDelegate.register(...). This approach is only used because this example needs to support
+// both stable and master, and 3.32 doesn't have FlutterPluginRegistrant, while 3.33+ can't use
+// the older application(didFinishLaunchingWithOptions) approach.
+@objc class ExampleViewController: FlutterViewController {
+  override func awakeFromNib() {
+    super.awakeFromNib()
+
     let api = PigeonApiImplementation()
-    ExampleHostApiSetup.setUp(binaryMessenger: controller.binaryMessenger, api: api)
+    ExampleHostApiSetup.setUp(binaryMessenger: binaryMessenger, api: api)
+    let controller = self
     // #docregion swift-init-event
     let eventListener = EventListener()
     StreamEventsStreamHandler.register(
       with: controller.binaryMessenger, streamHandler: eventListener)
     // #enddocregion swift-init-event
     sendEvents(eventListener)
-
-    return super.application(application, didFinishLaunchingWithOptions: launchOptions)
-
   }
 }

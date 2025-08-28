@@ -25,6 +25,9 @@ protocol Camera: FlutterTexture, AVCaptureVideoDataOutputSampleBufferDelegate,
   var videoFormat: FourCharCode { get set }
 
   var isPreviewPaused: Bool { get }
+  var isStreamingImages: Bool { get }
+
+  var deviceOrientation: UIDeviceOrientation { get set }
 
   var minimumAvailableZoomFactor: CGFloat { get }
   var maximumAvailableZoomFactor: CGFloat { get }
@@ -33,15 +36,23 @@ protocol Camera: FlutterTexture, AVCaptureVideoDataOutputSampleBufferDelegate,
 
   func setUpCaptureSessionForAudioIfNeeded()
 
+  /// Informs the Dart side of the plugin of the current camera state and capabilities.
   func reportInitializationState()
 
   /// Acknowledges the receipt of one image stream frame.
+  ///
+  /// This should be called each time a frame is received. Failing to call it may
+  /// cause later frames to be dropped instead of streamed.
   func receivedImageStreamData()
 
   func start()
   func stop()
 
   /// Starts recording a video with an optional streaming messenger.
+  /// If the messenger is non-nil then it will be called for each
+  /// captured frame, allowing streaming concurrently with recording.
+  ///
+  /// @param messenger Nullable messenger for capturing each frame.
   func startVideoRecording(
     completion: @escaping (_ error: FlutterError?) -> Void,
     messengerForStreaming: FlutterBinaryMessenger?
@@ -52,7 +63,6 @@ protocol Camera: FlutterTexture, AVCaptureVideoDataOutputSampleBufferDelegate,
 
   func captureToFile(completion: @escaping (_ path: String?, _ error: FlutterError?) -> Void)
 
-  func setDeviceOrientation(_ orientation: UIDeviceOrientation)
   func lockCaptureOrientation(_ orientation: FCPPlatformDeviceOrientation)
   func unlockCaptureOrientation()
 
@@ -60,12 +70,31 @@ protocol Camera: FlutterTexture, AVCaptureVideoDataOutputSampleBufferDelegate,
 
   func setExposureMode(_ mode: FCPPlatformExposureMode)
   func setExposureOffset(_ offset: Double)
+
+  /// Sets the exposure point, in a (0,1) coordinate system.
+  ///
+  /// If @c point is nil, the exposure point will reset to the center.
   func setExposurePoint(
     _ point: FCPPlatformPoint?,
     withCompletion: @escaping (_ error: FlutterError?) -> Void
   )
 
+  /// Sets FocusMode on the current AVCaptureDevice.
+  ///
+  /// If the @c focusMode is set to FocusModeAuto the AVCaptureDevice is configured to use
+  /// AVCaptureFocusModeContinuousModeAutoFocus when supported, otherwise it is set to
+  /// AVCaptureFocusModeAutoFocus. If neither AVCaptureFocusModeContinuousModeAutoFocus nor
+  /// AVCaptureFocusModeAutoFocus are supported focus mode will not be set.
+  /// If @c focusMode is set to FocusModeLocked the AVCaptureDevice is configured to use
+  /// AVCaptureFocusModeAutoFocus. If AVCaptureFocusModeAutoFocus is not supported focus mode will not
+  /// be set.
+  ///
+  /// @param mode The focus mode that should be applied.
   func setFocusMode(_ mode: FCPPlatformFocusMode)
+
+  /// Sets the focus point, in a (0,1) coordinate system.
+  ///
+  /// If @c point is nil, the focus point will reset to the center.
   func setFocusPoint(
     _ point: FCPPlatformPoint?,
     completion: @escaping (_ error: FlutterError?) -> Void
@@ -86,7 +115,8 @@ protocol Camera: FlutterTexture, AVCaptureVideoDataOutputSampleBufferDelegate,
     withCompletion: @escaping (_ error: FlutterError?) -> Void
   )
 
-  func startImageStream(with: FlutterBinaryMessenger)
+  func startImageStream(
+    with: FlutterBinaryMessenger, completion: @escaping (_ error: FlutterError?) -> Void)
   func stopImageStream()
 
   // Override to make `AVCaptureVideoDataOutputSampleBufferDelegate`/

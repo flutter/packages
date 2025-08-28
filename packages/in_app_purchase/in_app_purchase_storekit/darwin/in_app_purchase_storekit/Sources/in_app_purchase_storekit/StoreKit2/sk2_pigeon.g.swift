@@ -691,6 +691,8 @@ protocol InAppPurchase2API {
     completion: @escaping (Result<SK2ProductPurchaseResultMessage, Error>) -> Void)
   func isWinBackOfferEligible(
     productId: String, offerId: String, completion: @escaping (Result<Bool, Error>) -> Void)
+  func isIntroductoryOfferEligible(
+    productId: String, completion: @escaping (Result<Bool, Error>) -> Void)
   func transactions(completion: @escaping (Result<[SK2TransactionMessage], Error>) -> Void)
   func finish(id: Int64, completion: @escaping (Result<Void, Error>) -> Void)
   func startListeningToTransactions() throws
@@ -786,6 +788,26 @@ class InAppPurchase2APISetup {
       }
     } else {
       isWinBackOfferEligibleChannel.setMessageHandler(nil)
+    }
+    let isIntroductoryOfferEligibleChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.isIntroductoryOfferEligible\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      isIntroductoryOfferEligibleChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let productIdArg = args[0] as! String
+        api.isIntroductoryOfferEligible(productId: productIdArg) { result in
+          switch result {
+          case .success(let res):
+            reply(wrapResult(res))
+          case .failure(let error):
+            reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      isIntroductoryOfferEligibleChannel.setMessageHandler(nil)
     }
     let transactionsChannel = FlutterBasicMessageChannel(
       name:

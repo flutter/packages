@@ -63,14 +63,15 @@ class VideoPlayerValue {
 
   /// Returns an instance for a video that hasn't been loaded.
   const VideoPlayerValue.uninitialized()
-      : this(duration: Duration.zero, isInitialized: false);
+    : this(duration: Duration.zero, isInitialized: false);
 
   /// Returns an instance with the given [errorDescription].
   const VideoPlayerValue.erroneous(String errorDescription)
-      : this(
-            duration: Duration.zero,
-            isInitialized: false,
-            errorDescription: errorDescription);
+    : this(
+        duration: Duration.zero,
+        isInitialized: false,
+        errorDescription: errorDescription,
+      );
 
   /// This constant is just to indicate that parameter is not passed to [copyWith]
   /// workaround for this issue https://github.com/dart-lang/language/issues/2009
@@ -187,9 +188,10 @@ class VideoPlayerValue {
       volume: volume ?? this.volume,
       playbackSpeed: playbackSpeed ?? this.playbackSpeed,
       rotationCorrection: rotationCorrection ?? this.rotationCorrection,
-      errorDescription: errorDescription != _defaultErrorDescription
-          ? errorDescription
-          : this.errorDescription,
+      errorDescription:
+          errorDescription != _defaultErrorDescription
+              ? errorDescription
+              : this.errorDescription,
       isCompleted: isCompleted ?? this.isCompleted,
     );
   }
@@ -236,22 +238,22 @@ class VideoPlayerValue {
 
   @override
   int get hashCode => Object.hash(
-        duration,
-        position,
-        caption,
-        captionOffset,
-        buffered,
-        isPlaying,
-        isLooping,
-        isBuffering,
-        volume,
-        playbackSpeed,
-        errorDescription,
-        size,
-        rotationCorrection,
-        isInitialized,
-        isCompleted,
-      );
+    duration,
+    position,
+    caption,
+    captionOffset,
+    buffered,
+    isPlaying,
+    isLooping,
+    isBuffering,
+    volume,
+    playbackSpeed,
+    errorDescription,
+    size,
+    rotationCorrection,
+    isInitialized,
+    isCompleted,
+  );
 }
 
 /// Controls a platform video player, and provides updates when the state is
@@ -280,11 +282,11 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     Future<ClosedCaptionFile>? closedCaptionFile,
     this.videoPlayerOptions,
     this.viewType = VideoViewType.textureView,
-  })  : _closedCaptionFileFuture = closedCaptionFile,
-        dataSourceType = DataSourceType.asset,
-        formatHint = null,
-        httpHeaders = const <String, String>{},
-        super(const VideoPlayerValue(duration: Duration.zero));
+  }) : _closedCaptionFileFuture = closedCaptionFile,
+       dataSourceType = DataSourceType.asset,
+       formatHint = null,
+       httpHeaders = const <String, String>{},
+       super(const VideoPlayerValue(duration: Duration.zero));
 
   /// Constructs a [VideoPlayerController] playing a network video.
   ///
@@ -307,10 +309,10 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     this.videoPlayerOptions,
     this.httpHeaders = const <String, String>{},
     this.viewType = VideoViewType.textureView,
-  })  : _closedCaptionFileFuture = closedCaptionFile,
-        dataSourceType = DataSourceType.network,
-        package = null,
-        super(const VideoPlayerValue(duration: Duration.zero));
+  }) : _closedCaptionFileFuture = closedCaptionFile,
+       dataSourceType = DataSourceType.network,
+       package = null,
+       super(const VideoPlayerValue(duration: Duration.zero));
 
   /// Constructs a [VideoPlayerController] playing a network video.
   ///
@@ -328,11 +330,11 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     this.videoPlayerOptions,
     this.httpHeaders = const <String, String>{},
     this.viewType = VideoViewType.textureView,
-  })  : _closedCaptionFileFuture = closedCaptionFile,
-        dataSource = url.toString(),
-        dataSourceType = DataSourceType.network,
-        package = null,
-        super(const VideoPlayerValue(duration: Duration.zero));
+  }) : _closedCaptionFileFuture = closedCaptionFile,
+       dataSource = url.toString(),
+       dataSourceType = DataSourceType.network,
+       package = null,
+       super(const VideoPlayerValue(duration: Duration.zero));
 
   /// Constructs a [VideoPlayerController] playing a video from a file.
   ///
@@ -344,12 +346,12 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     this.videoPlayerOptions,
     this.httpHeaders = const <String, String>{},
     this.viewType = VideoViewType.textureView,
-  })  : _closedCaptionFileFuture = closedCaptionFile,
-        dataSource = Uri.file(file.absolute.path).toString(),
-        dataSourceType = DataSourceType.file,
-        package = null,
-        formatHint = null,
-        super(const VideoPlayerValue(duration: Duration.zero));
+  }) : _closedCaptionFileFuture = closedCaptionFile,
+       dataSource = Uri.file(file.absolute.path).toString(),
+       dataSourceType = DataSourceType.file,
+       package = null,
+       formatHint = null,
+       super(const VideoPlayerValue(duration: Duration.zero));
 
   /// Constructs a [VideoPlayerController] playing a video from a contentUri.
   ///
@@ -360,15 +362,17 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     Future<ClosedCaptionFile>? closedCaptionFile,
     this.videoPlayerOptions,
     this.viewType = VideoViewType.textureView,
-  })  : assert(defaultTargetPlatform == TargetPlatform.android,
-            'VideoPlayerController.contentUri is only supported on Android.'),
-        _closedCaptionFileFuture = closedCaptionFile,
-        dataSource = contentUri.toString(),
-        dataSourceType = DataSourceType.contentUri,
-        package = null,
-        formatHint = null,
-        httpHeaders = const <String, String>{},
-        super(const VideoPlayerValue(duration: Duration.zero));
+  }) : assert(
+         defaultTargetPlatform == TargetPlatform.android,
+         'VideoPlayerController.contentUri is only supported on Android.',
+       ),
+       _closedCaptionFileFuture = closedCaptionFile,
+       dataSource = contentUri.toString(),
+       dataSourceType = DataSourceType.contentUri,
+       package = null,
+       formatHint = null,
+       httpHeaders = const <String, String>{},
+       super(const VideoPlayerValue(duration: Duration.zero));
 
   /// The URI to the video file. This will be in different formats depending on
   /// the [DataSourceType] of the original video.
@@ -460,13 +464,14 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     );
 
     if (videoPlayerOptions?.mixWithOthers != null) {
-      await _videoPlayerPlatform
-          .setMixWithOthers(videoPlayerOptions!.mixWithOthers);
+      await _videoPlayerPlatform.setMixWithOthers(
+        videoPlayerOptions!.mixWithOthers,
+      );
     }
 
     _playerId =
         (await _videoPlayerPlatform.createWithOptions(creationOptions)) ??
-            kUninitializedPlayerId;
+        kUninitializedPlayerId;
     _creatingCompleter!.complete(null);
     final Completer<void> initializingCompleter = Completer<void>();
 
@@ -522,8 +527,10 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           value = value.copyWith(isBuffering: false);
         case VideoEventType.isPlayingStateUpdate:
           if (event.isPlaying ?? false) {
-            value =
-                value.copyWith(isPlaying: event.isPlaying, isCompleted: false);
+            value = value.copyWith(
+              isPlaying: event.isPlaying,
+              isCompleted: false,
+            );
           } else {
             value = value.copyWith(isPlaying: event.isPlaying);
           }
@@ -614,19 +621,18 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       await _videoPlayerPlatform.play(_playerId);
 
       _timer?.cancel();
-      _timer = Timer.periodic(
-        const Duration(milliseconds: 100),
-        (Timer timer) async {
-          if (_isDisposed) {
-            return;
-          }
-          final Duration? newPosition = await position;
-          if (newPosition == null) {
-            return;
-          }
-          _updatePosition(newPosition);
-        },
-      );
+      _timer = Timer.periodic(const Duration(milliseconds: 100), (
+        Timer timer,
+      ) async {
+        if (_isDisposed) {
+          return;
+        }
+        final Duration? newPosition = await position;
+        if (newPosition == null) {
+          return;
+        }
+        _updatePosition(newPosition);
+      });
 
       // This ensures that the correct playback speed is always applied when
       // playing back. This is necessary because we do not set playback speed
@@ -657,10 +663,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       return;
     }
 
-    await _videoPlayerPlatform.setPlaybackSpeed(
-      _playerId,
-      value.playbackSpeed,
-    );
+    await _videoPlayerPlatform.setPlaybackSpeed(_playerId, value.playbackSpeed);
   }
 
   /// The position in the current video.
@@ -903,17 +906,17 @@ class _VideoPlayerState extends State<VideoPlayer> {
     return _playerId == VideoPlayerController.kUninitializedPlayerId
         ? Container()
         : _VideoPlayerWithRotation(
-            rotation: widget.controller.value.rotationCorrection,
-            child: _videoPlayerPlatform.buildViewWithOptions(
-              VideoViewOptions(playerId: _playerId),
-            ),
-          );
+          rotation: widget.controller.value.rotationCorrection,
+          child: _videoPlayerPlatform.buildViewWithOptions(
+            VideoViewOptions(playerId: _playerId),
+          ),
+        );
   }
 }
 
 class _VideoPlayerWithRotation extends StatelessWidget {
   const _VideoPlayerWithRotation({required this.rotation, required this.child})
-      : assert(rotation % 90 == 0, 'Rotation must be a multiple of 90');
+    : assert(rotation % 90 == 0, 'Rotation must be a multiple of 90');
 
   final int rotation;
   final Widget child;
@@ -923,10 +926,7 @@ class _VideoPlayerWithRotation extends StatelessWidget {
     if (rotation == 0) {
       return child;
     }
-    return RotatedBox(
-      quarterTurns: rotation ~/ 90,
-      child: child,
-    );
+    return RotatedBox(quarterTurns: rotation ~/ 90, child: child);
   }
 }
 
@@ -1210,11 +1210,11 @@ class ClosedCaption extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
-    final TextStyle effectiveTextStyle = textStyle ??
-        DefaultTextStyle.of(context).style.copyWith(
-              fontSize: 36.0,
-              color: Colors.white,
-            );
+    final TextStyle effectiveTextStyle =
+        textStyle ??
+        DefaultTextStyle.of(
+          context,
+        ).style.copyWith(fontSize: 36.0, color: Colors.white);
 
     return Align(
       alignment: Alignment.bottomCenter,

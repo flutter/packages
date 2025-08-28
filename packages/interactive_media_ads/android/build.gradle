@@ -2,14 +2,14 @@ group 'dev.flutter.packages.interactive_media_ads'
 version '1.0-SNAPSHOT'
 
 buildscript {
-    ext.kotlin_version = '2.1.10'
+    ext.kotlin_version = '2.2.10'
     repositories {
         google()
         mavenCentral()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.9.0'
+        classpath 'com.android.tools.build:gradle:8.12.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -55,7 +55,7 @@ android {
         testImplementation 'org.jetbrains.kotlin:kotlin-test'
         testImplementation "org.mockito.kotlin:mockito-kotlin:5.4.0"
         testImplementation 'org.mockito:mockito-inline:5.2.0'
-        testImplementation 'androidx.test:core:1.6.1'
+        testImplementation 'androidx.test:core:1.7.0'
     }
 
     lintOptions {

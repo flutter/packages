@@ -25,7 +25,7 @@
 		978D90B42D5F630300CD817E /* StreamingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 978D90B32D5F630300CD817E /* StreamingTests.swift */; };
 		97922B0D2D6380C300A9B4CF /* SampleBufferTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97922B0C2D6380C300A9B4CF /* SampleBufferTests.swift */; };
 		979B3DFB2D5B6BC7009BDE1A /* ExceptionCatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 979B3DFA2D5B6BC7009BDE1A /* ExceptionCatcher.m */; };
-		979B3DFE2D5B985B009BDE1A /* CameraCaptureSessionQueueRaceConditionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 979B3DFD2D5B985B009BDE1A /* CameraCaptureSessionQueueRaceConditionTests.swift */; };
+		979B3DFE2D5B985B009BDE1A /* CameraInitRaceConditionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 979B3DFD2D5B985B009BDE1A /* CameraInitRaceConditionsTests.swift */; };
 		979B3E002D5B9E6C009BDE1A /* CameraMethodChannelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 979B3DFF2D5B9E6C009BDE1A /* CameraMethodChannelTests.swift */; };
 		979B3E022D5BA48F009BDE1A /* CameraOrientationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 979B3E012D5BA48F009BDE1A /* CameraOrientationTests.swift */; };
 		97BD4A0E2D5CC5AE00F857D5 /* CameraSettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97BD4A0D2D5CC5AE00F857D5 /* CameraSettingsTests.swift */; };
@@ -114,7 +114,7 @@
 		979B3DF92D5B6BA2009BDE1A /* ExceptionCatcher.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExceptionCatcher.h; sourceTree = "<group>"; };
 		979B3DFA2D5B6BC7009BDE1A /* ExceptionCatcher.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ExceptionCatcher.m; sourceTree = "<group>"; };
 		979B3DFC2D5B985B009BDE1A /* RunnerTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "RunnerTests-Bridging-Header.h"; sourceTree = "<group>"; };
-		979B3DFD2D5B985B009BDE1A /* CameraCaptureSessionQueueRaceConditionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraCaptureSessionQueueRaceConditionTests.swift; sourceTree = "<group>"; };
+		979B3DFD2D5B985B009BDE1A /* CameraInitRaceConditionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraInitRaceConditionsTests.swift; sourceTree = "<group>"; };
 		979B3DFF2D5B9E6C009BDE1A /* CameraMethodChannelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraMethodChannelTests.swift; sourceTree = "<group>"; };
 		979B3E012D5BA48F009BDE1A /* CameraOrientationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraOrientationTests.swift; sourceTree = "<group>"; };
 		97BD4A0D2D5CC5AE00F857D5 /* CameraSettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraSettingsTests.swift; sourceTree = "<group>"; };
@@ -191,7 +191,7 @@
 				979B3DF92D5B6BA2009BDE1A /* ExceptionCatcher.h */,
 				979B3DFA2D5B6BC7009BDE1A /* ExceptionCatcher.m */,
 				979B3DFC2D5B985B009BDE1A /* RunnerTests-Bridging-Header.h */,
-				979B3DFD2D5B985B009BDE1A /* CameraCaptureSessionQueueRaceConditionTests.swift */,
+				979B3DFD2D5B985B009BDE1A /* CameraInitRaceConditionsTests.swift */,
 				979B3DFF2D5B9E6C009BDE1A /* CameraMethodChannelTests.swift */,
 				979B3E012D5BA48F009BDE1A /* CameraOrientationTests.swift */,
 				97BD4A0D2D5CC5AE00F857D5 /* CameraSettingsTests.swift */,
@@ -552,7 +552,7 @@
 				E1ABED6D2D94392700AED9CC /* MockAssetWriterInput.swift in Sources */,
 				977A25242D5A511600931E34 /* CameraPermissionTests.swift in Sources */,
 				970ADABE2D6740A900EFDCD9 /* MockWritableData.swift in Sources */,
-				979B3DFE2D5B985B009BDE1A /* CameraCaptureSessionQueueRaceConditionTests.swift in Sources */,
+				979B3DFE2D5B985B009BDE1A /* CameraInitRaceConditionsTests.swift in Sources */,
 				E142F13A2D85940600824824 /* MockCapturePhotoOutput.swift in Sources */,
 				E12C4FF82D68E85500515E70 /* MockFLTCameraPermissionManager.swift in Sources */,
 				97922B0D2D6380C300A9B4CF /* SampleBufferTests.swift in Sources */,

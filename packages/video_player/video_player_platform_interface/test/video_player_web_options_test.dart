@@ -14,19 +14,27 @@ void main() {
     },
   );
 
-  test(
-    'VideoPlayerOptions allowContextMenu defaults to true',
-    () {
-      const VideoPlayerWebOptions options = VideoPlayerWebOptions();
-      expect(options.allowContextMenu, isTrue);
-    },
-  );
+  test('VideoPlayerOptions allowContextMenu defaults to true', () {
+    const VideoPlayerWebOptions options = VideoPlayerWebOptions();
+    expect(options.allowContextMenu, isTrue);
+  });
 
-  test(
-    'VideoPlayerOptions allowRemotePlayback defaults to true',
-    () {
+  test('VideoPlayerOptions allowRemotePlayback defaults to true', () {
+    const VideoPlayerWebOptions options = VideoPlayerWebOptions();
+    expect(options.allowRemotePlayback, isTrue);
+  });
+
+  group('VideoPlayerOptions poster', () {
+    test('defaults to null', () {
       const VideoPlayerWebOptions options = VideoPlayerWebOptions();
-      expect(options.allowRemotePlayback, isTrue);
-    },
-  );
+      expect(options.poster, null);
+    });
+
+    test('with a value', () {
+      final VideoPlayerWebOptions options = VideoPlayerWebOptions(
+        poster: Uri.parse('https://example.com/poster.jpg'),
+      );
+      expect(options.poster, Uri.parse('https://example.com/poster.jpg'));
+    });
+  });
 }

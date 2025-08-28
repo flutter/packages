@@ -17,6 +17,7 @@ widget Counter = Container(
   ),
 );
 
+// #docregion Button
 widget Button { down: false } = GestureDetector(
   onTap: args.onPressed,
   onTapDown: set state.down = true,
@@ -57,3 +58,4 @@ widget Button { down: false } = GestureDetector(
     ),
   ),
 );
+// #enddocregion Button

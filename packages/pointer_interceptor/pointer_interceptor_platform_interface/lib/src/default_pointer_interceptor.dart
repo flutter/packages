@@ -9,11 +9,7 @@ import 'pointer_interceptor_platform.dart';
 /// A default no-op implementation of [PointerInterceptorPlatform].
 class DefaultPointerInterceptor extends PointerInterceptorPlatform {
   @override
-  Widget buildWidget({
-    required Widget child,
-    bool debug = false,
-    Key? key,
-  }) {
+  Widget buildWidget({required Widget child, bool debug = false, Key? key}) {
     return child;
   }
 }

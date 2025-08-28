@@ -20,10 +20,7 @@ class SKStorefrontWrapper {
   // TODO(stuartmorgan): Temporarily ignore const warning in other parts of the
   // federated package, and remove this.
   // ignore: prefer_const_constructors_in_immutables
-  SKStorefrontWrapper({
-    required this.countryCode,
-    required this.identifier,
-  });
+  SKStorefrontWrapper({required this.countryCode, required this.identifier});
 
   /// Constructs an instance of the [SKStorefrontWrapper] from a key value map
   /// of data.
@@ -56,10 +53,7 @@ class SKStorefrontWrapper {
   }
 
   @override
-  int get hashCode => Object.hash(
-        countryCode,
-        identifier,
-      );
+  int get hashCode => Object.hash(countryCode, identifier);
 
   @override
   String toString() => _$SKStorefrontWrapperToJson(this).toString();
@@ -71,6 +65,8 @@ class SKStorefrontWrapper {
   /// Converts the pigeon equivalent to an instance of SKStorefrontWrapper
   static SKStorefrontWrapper convertFromPigeon(SKStorefrontMessage msg) {
     return SKStorefrontWrapper(
-        countryCode: msg.countryCode, identifier: msg.identifier);
+      countryCode: msg.countryCode,
+      identifier: msg.identifier,
+    );
   }
 }

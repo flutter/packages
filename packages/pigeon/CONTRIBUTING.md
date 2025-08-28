@@ -19,13 +19,14 @@ generators with that AST.
 ## Source Index
 
 * [ast.dart](./lib/src/ast.dart) - The data structure for representing the Abstract Syntax Tree.
-* [dart_generator.dart](./lib/src/dart_generator.dart) - The Dart code generator.
-* [java_generator.dart](./lib/src/java_generator.dart) - The Java code generator.
-* [kotlin_generator.dart](./lib/src/kotlin_generator.dart) - The Kotlin code generator.
-* [objc_generator.dart](./lib/src/objc_generator.dart) - The Objective-C code
+* [dart_generator.dart](./lib/src/dart/dart_generator.dart) - The Dart code generator.
+* [java_generator.dart](./lib/src/java/java_generator.dart) - The Java code generator.
+* [kotlin_generator.dart](./lib/src/kotlin/kotlin_generator.dart) - The Kotlin code generator.
+* [objc_generator.dart](./lib/src/objc/objc_generator.dart) - The Objective-C code
   generator (header and source files).
-* [swift_generator.dart](./lib/src/swift_generator.dart) - The Swift code generator.
-* [cpp_generator.dart](./lib/src/cpp_generator.dart) - The C++ code generator.
+* [swift_generator.dart](./lib/src/swift/swift_generator.dart) - The Swift code generator.
+* [cpp_generator.dart](./lib/src/cpp/cpp_generator.dart) - The C++ code generator.
+* [gobject_generator.dart](./lib/src/gobject/gobject_generator.dart) - The GObject code generator.
 * [generator_tools.dart](./lib/src/generator_tools.dart) - Shared code between generators.
 * [pigeon_cl.dart](./lib/src/pigeon_cl.dart) - The top-level function executed by
   the command line tool in [bin/][./bin].

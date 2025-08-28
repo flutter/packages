@@ -6,7 +6,9 @@ import 'platform_ad_display_container.dart';
 import 'platform_ads_loader.dart';
 import 'platform_ads_manager_delegate.dart';
 import 'platform_ads_rendering_settings.dart';
+import 'platform_companion_ad_slot.dart';
 import 'platform_content_progress_provider.dart';
+import 'platform_ima_settings.dart';
 
 /// Interface for a platform implementation of the Interactive Media Ads SDKs.
 abstract base class InteractiveMediaAdsPlatform {
@@ -40,5 +42,15 @@ abstract base class InteractiveMediaAdsPlatform {
   /// Creates a new [PlatformContentProgressProvider].
   PlatformAdsRenderingSettings createPlatformAdsRenderingSettings(
     PlatformAdsRenderingSettingsCreationParams params,
+  );
+
+  /// Creates a new [PlatformCompanionAdSlot].
+  PlatformCompanionAdSlot createPlatformCompanionAdSlot(
+    PlatformCompanionAdSlotCreationParams params,
+  );
+
+  /// Creates a new [PlatformImaSettings].
+  PlatformImaSettings createPlatformImaSettings(
+    PlatformImaSettingsCreationParams params,
   );
 }

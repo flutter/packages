@@ -166,4 +166,14 @@ public class WebSettingsTest {
 
     assertEquals(value, api.getUserAgentString(instance));
   }
+
+  @Test
+  public void setMixedContentMode() {
+    final PigeonApiWebSettings api = new TestProxyApiRegistrar().getPigeonApiWebSettings();
+
+    final WebSettings instance = mock(WebSettings.class);
+    api.setMixedContentMode(instance, MixedContentMode.COMPATIBILITY_MODE);
+
+    verify(instance).setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
+  }
 }

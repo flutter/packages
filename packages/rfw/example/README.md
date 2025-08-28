@@ -8,6 +8,3 @@ There are several examples.
 
 * `remote` is a proof-of-concept showing files being obtained from a
   remote server and rendered by the application at runtime.
-
-* `wasm` shows how package:rfw can be combined with package:wasm to
-  configure logic as well as the user interface at runtime.

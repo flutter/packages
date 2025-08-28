@@ -160,8 +160,9 @@ class StandardMessageCodec implements MessageCodec<Object?> {
     if (message == null) {
       return null;
     }
-    final WriteBuffer buffer =
-        WriteBuffer(startCapacity: _writeBufferStartCapacity);
+    final WriteBuffer buffer = WriteBuffer(
+      startCapacity: _writeBufferStartCapacity,
+    );
     writeValue(buffer, message);
     return buffer.done();
   }

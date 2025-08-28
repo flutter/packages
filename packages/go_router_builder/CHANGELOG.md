@@ -1,3 +1,31 @@
+## 3.3.1
+
+- Fixes warnings in generated code of iterable parameters.
+
+## 3.3.0
+
+- Adds support for `TypedRelativeGoRoute`.
+
+## 3.2.1
+
+- Changes generated whitespace for better compatibility with new Dart formatter.
+
+## 3.2.0
+
+- Adds support for`extension type`.
+
+## 3.1.0
+
+- Updates dependencies to use the latest `analyzer`, `build`, and `source_gen`.
+- Updates dev dependencies to use the latest `build_test`.
+- Migrates to the `element2` API.
+- Improves test code formatting consistency.
+- Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
+## 3.0.1
+
+- Updates README.md to use the mixin `with _$RouteName`.
+
 ## 3.0.0
 
 - Route classes now required to use a mixin `with _$RouteName`.
@@ -16,7 +44,7 @@
 
 ## 2.8.1
 
-- Fixes an issue when navigate to router with invalid params 
+- Fixes an issue when navigate to router with invalid params
 
 ## 2.8.0
 

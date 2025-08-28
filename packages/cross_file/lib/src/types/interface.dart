@@ -31,7 +31,8 @@ class XFile extends XFileBase {
     @visibleForTesting CrossFileTestOverrides? overrides,
   }) {
     throw UnimplementedError(
-        'CrossFile is not available in your current platform.');
+      'CrossFile is not available in your current platform.',
+    );
   }
 
   /// Construct a CrossFile object from its data
@@ -45,7 +46,8 @@ class XFile extends XFileBase {
     @visibleForTesting CrossFileTestOverrides? overrides,
   }) : super(path) {
     throw UnimplementedError(
-        'CrossFile is not available in your current platform.');
+      'CrossFile is not available in your current platform.',
+    );
   }
 }
 

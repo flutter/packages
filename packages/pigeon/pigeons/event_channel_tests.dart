@@ -4,19 +4,11 @@
 
 import 'package:pigeon/pigeon.dart';
 
-enum EventEnum {
-  one,
-  two,
-  three,
-  fortyTwo,
-  fourHundredTwentyTwo,
-}
+enum EventEnum { one, two, three, fortyTwo, fourHundredTwentyTwo }
 
 // Enums require special logic, having multiple ensures that the logic can be
 // replicated without collision.
-enum AnotherEventEnum {
-  justInCase,
-}
+enum AnotherEventEnum { justInCase }
 
 /// A class containing all supported nullable types.
 @SwiftClass()

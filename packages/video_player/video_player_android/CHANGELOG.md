@@ -1,3 +1,27 @@
+## 2.8.13
+
+* Bumps com.android.tools.build:gradle to 8.12.1.
+
+## 2.8.12
+
+* Moves buffer position update event generation to Dart.
+
+## 2.8.11
+
+* Updates kotlin version to 2.2.0 to enable gradle 8.11 support.
+
+## 2.8.10
+
+* Restructures internal logic to move more code to Dart.
+
+## 2.8.9
+
+* Restructures the communication between Dart and Java code.
+
+## 2.8.8
+
+* * Updates Media3-ExoPlayer to 1.5.1.
+
 ## 2.8.7
 
 * Adds note about known issue regarding platform views to the README.

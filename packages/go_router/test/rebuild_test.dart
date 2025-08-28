@@ -9,21 +9,25 @@ import 'package:go_router/go_router.dart';
 import 'test_helpers.dart';
 
 void main() {
-  testWidgets('GoRouter.push does not trigger unnecessary rebuilds',
-      (WidgetTester tester) async {
+  testWidgets('GoRouter.push does not trigger unnecessary rebuilds', (
+    WidgetTester tester,
+  ) async {
     final List<GoRoute> routes = <GoRoute>[
       GoRoute(
-          path: '/', builder: (BuildContext context, __) => const HomePage()),
+        path: '/',
+        builder: (BuildContext context, __) => const HomePage(),
+      ),
       GoRoute(
-          path: '/1',
-          builder: (BuildContext context, __) {
-            return ElevatedButton(
-              onPressed: () {
-                context.push('/1');
-              },
-              child: const Text('/1'),
-            );
-          }),
+        path: '/1',
+        builder: (BuildContext context, __) {
+          return ElevatedButton(
+            onPressed: () {
+              context.push('/1');
+            },
+            child: const Text('/1'),
+          );
+        },
+      ),
     ];
 
     await createRouter(routes, tester);

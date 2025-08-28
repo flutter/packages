@@ -73,7 +73,9 @@ in the merged Android manifest of your app, then take the following steps to rem
     tools:node="remove" />
 ```
 
-### Allowing image streaming in the background
+### Notes on image streaming
+
+#### Allowing image streaming in the background
 
 As of Android 14, to allow for background image streaming, you will need to specify the foreground
 [`TYPE_CAMERA`][12] foreground service permission in your app's manifest. Specifically, in
@@ -85,6 +87,12 @@ As of Android 14, to allow for background image streaming, you will need to spec
   ...
 </manifest>
 ```
+
+#### Configuring NV21 image format
+
+If you initialize a `CameraController` with `ImageFormatGroup.nv21`, then streamed images will
+still have the `ImageFormatGroup.yuv420` format, but their image data will be formatted in NV21.
+See https://developer.android.com/reference/kotlin/androidx/camera/core/ImageAnalysis#OUTPUT_IMAGE_FORMAT_NV21().
 
 ## Contributing
 

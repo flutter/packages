@@ -1,5 +1,10 @@
 ## NEXT
 
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
+## 2.2.0
+
+* Exposes `renderingStrategy` in `SvgPicture` constructors.
 * Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
 
 ## 2.1.0

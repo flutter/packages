@@ -57,6 +57,10 @@ void otherDoc(BuildContext context) {
   }
   // #enddocregion tapWithExtra
 
+  // #docregion goRelative
+  void onTapRelative() => const DetailsRoute().goRelative(context);
+  // #enddocregion goRelative
+
   final LoginInfo loginInfo = LoginInfo();
 
   final GoRouter routerWithRedirect = GoRouter(
@@ -81,9 +85,7 @@ void otherDoc(BuildContext context) {
 @TypedGoRoute<HomeRoute>(
   path: '/',
   routes: <TypedGoRoute<GoRouteData>>[
-    TypedGoRoute<FamilyRoute>(
-      path: 'family/:fid',
-    ),
+    TypedGoRoute<FamilyRoute>(path: 'family/:fid'),
   ],
 )
 // #docregion HomeRoute
@@ -125,14 +127,13 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('home'),
-      ),
+      appBar: AppBar(title: const Text('home')),
       body: TextButton(
         onPressed: () async {
           // #docregion awaitPush
-          final bool? result =
-              await const FamilyRoute(fid: 'John').push<bool>(context);
+          final bool? result = await const FamilyRoute(
+            fid: 'John',
+          ).push<bool>(context);
           // #enddocregion awaitPush
           print('result is $result');
         },
@@ -161,9 +162,7 @@ class FamilyScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('family'),
-      ),
+      appBar: AppBar(title: const Text('family')),
       body: TextButton(
         onPressed: () {
           context.pop(true);
@@ -194,9 +193,7 @@ class ErrorScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Error'),
-      ),
+      appBar: AppBar(title: const Text('Error')),
       body: Text(error.toString()),
     );
   }
@@ -208,11 +205,7 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Login'),
-      ),
-    );
+    return Scaffold(appBar: AppBar(title: const Text('Login')));
   }
 }
 
@@ -235,11 +228,7 @@ class MyScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('MyScreen'),
-      ),
-    );
+    return Scaffold(appBar: AppBar(title: const Text('MyScreen')));
   }
 }
 
@@ -262,11 +251,7 @@ class PersonScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('PersonScreen'),
-      ),
-    );
+    return Scaffold(appBar: AppBar(title: const Text('PersonScreen')));
   }
 }
 
@@ -296,18 +281,15 @@ class HotdogScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Hotdog'),
-      ),
-    );
+    return Scaffold(appBar: AppBar(title: const Text('Hotdog')));
   }
 }
 
 // #docregion BookKind
 enum BookKind { all, popular, recent }
 
-class BooksRoute extends GoRouteData {
+@TypedGoRoute<BooksRoute>(path: '/books')
+class BooksRoute extends GoRouteData with _$BooksRoute {
   BooksRoute({this.kind = BookKind.popular});
   final BookKind kind;
 
@@ -324,23 +306,18 @@ class BooksScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('BooksScreen'),
-      ),
-    );
+    return Scaffold(appBar: AppBar(title: const Text('BooksScreen')));
   }
 }
 
+@TypedGoRoute<MyMaterialRouteWithKey>(path: '/my-material-route-with-key')
 // #docregion MyMaterialRouteWithKey
-class MyMaterialRouteWithKey extends GoRouteData {
+class MyMaterialRouteWithKey extends GoRouteData with _$MyMaterialRouteWithKey {
+  const MyMaterialRouteWithKey();
   static const LocalKey _key = ValueKey<String>('my-route-with-key');
   @override
   MaterialPage<void> buildPage(BuildContext context, GoRouterState state) {
-    return const MaterialPage<void>(
-      key: _key,
-      child: MyPage(),
-    );
+    return const MaterialPage<void>(key: _key, child: MyPage());
   }
 }
 // #enddocregion MyMaterialRouteWithKey
@@ -350,11 +327,7 @@ class MyPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('MyPage'),
-      ),
-    );
+    return Scaffold(appBar: AppBar(title: const Text('MyPage')));
   }
 }
 
@@ -365,28 +338,33 @@ class MyShellRoutePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('MyShellRoutePage'),
-      ),
+      appBar: AppBar(title: const Text('MyShellRoutePage')),
       body: child,
     );
   }
 }
 
+@TypedGoRoute<FancyRoute>(path: '/fancy')
 // #docregion FancyRoute
-class FancyRoute extends GoRouteData {
+class FancyRoute extends GoRouteData with _$FancyRoute {
+  const FancyRoute();
   @override
   CustomTransitionPage<void> buildPage(
     BuildContext context,
     GoRouterState state,
   ) {
     return CustomTransitionPage<void>(
-        key: state.pageKey,
-        child: const MyPage(),
-        transitionsBuilder: (BuildContext context, Animation<double> animation,
-            Animation<double> secondaryAnimation, Widget child) {
-          return RotationTransition(turns: animation, child: child);
-        });
+      key: state.pageKey,
+      child: const MyPage(),
+      transitionsBuilder: (
+        BuildContext context,
+        Animation<double> animation,
+        Animation<double> secondaryAnimation,
+        Widget child,
+      ) {
+        return RotationTransition(turns: animation, child: child);
+      },
+    );
   }
 }
 // #enddocregion FancyRoute
@@ -395,6 +373,11 @@ class FancyRoute extends GoRouteData {
 final GlobalKey<NavigatorState> shellNavigatorKey = GlobalKey<NavigatorState>();
 final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
 
+@TypedShellRoute<MyShellRouteData>(
+  routes: <TypedRoute<RouteData>>[
+    TypedGoRoute<MyGoRouteData>(path: 'my-go-route'),
+  ],
+)
 class MyShellRouteData extends ShellRouteData {
   const MyShellRouteData();
 
@@ -407,7 +390,7 @@ class MyShellRouteData extends ShellRouteData {
 }
 
 // For GoRoutes:
-class MyGoRouteData extends GoRouteData {
+class MyGoRouteData extends GoRouteData with _$MyGoRouteData {
   const MyGoRouteData();
 
   static final GlobalKey<NavigatorState> $parentNavigatorKey = rootNavigatorKey;
@@ -415,4 +398,25 @@ class MyGoRouteData extends GoRouteData {
   @override
   Widget build(BuildContext context, GoRouterState state) => const MyPage();
 }
+
 // #enddocregion MyShellRouteData
+
+// #docregion relativeRoute
+@TypedRelativeGoRoute<DetailsRoute>(path: 'details')
+class DetailsRoute extends RelativeGoRouteData with _$DetailsRoute {
+  const DetailsRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const DetailsScreen();
+}
+// #enddocregion relativeRoute
+
+class DetailsScreen extends StatelessWidget {
+  const DetailsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container();
+  }
+}

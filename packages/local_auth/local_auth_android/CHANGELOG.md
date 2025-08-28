@@ -1,3 +1,16 @@
+## 1.0.52
+
+* Bumps com.android.tools.build:gradle to 8.12.1.
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
+## 1.0.51
+
+* Updates kotlin version to 2.2.0 to enable gradle 8.11 support.
+
+## 1.0.50
+
+* Updates `androidx.fragment:fragment` to 1.8.8.
+
 ## 1.0.49
 
 * Removes obsolete code related to supporting SDK <21.

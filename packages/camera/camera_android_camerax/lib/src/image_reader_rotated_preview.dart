@@ -78,8 +78,9 @@ final class _ImageReaderRotatedPreviewState
   late StreamSubscription<DeviceOrientation> deviceOrientationSubscription;
 
   Future<int> _getCurrentDefaultDisplayRotationDegrees() async {
-    final int currentDefaultDisplayRotationQuarterTurns =
-        await widget.deviceOrientationManager.getDefaultDisplayRotation();
+    final int currentDefaultDisplayRotationQuarterTurns = await widget
+        .deviceOrientationManager
+        .getDefaultDisplayRotation();
     return getQuarterTurnsFromSurfaceRotationConstant(
           currentDefaultDisplayRotationQuarterTurns,
         ) *
@@ -157,9 +158,22 @@ final class _ImageReaderRotatedPreviewState
             sign: widget.facingSign,
           );
 
+          // If the camera is front facing (widget.facingSign is 1 for front
+          // cameras, -1 for back cameras), mirror the camera preview
+          // according to the current device orientation.
+          Widget cameraPreview = widget.child;
+          if (widget.facingSign == 1) {
+            if (deviceOrientation == DeviceOrientation.portraitDown ||
+                deviceOrientation == DeviceOrientation.portraitUp) {
+              cameraPreview = Transform.scale(scaleY: -1, child: cameraPreview);
+            } else {
+              cameraPreview = Transform.scale(scaleX: -1, child: cameraPreview);
+            }
+          }
+
           return RotatedBox(
             quarterTurns: rotationDegrees ~/ 90,
-            child: widget.child,
+            child: cameraPreview,
           );
         } else {
           return const SizedBox.shrink();

@@ -1,3 +1,11 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
+## 0.9.4+4
+
+* Updates to Pigeon 25.5.0.
+
 ## 0.9.4+3
 
 * Updates configuration to not set `nameFieldStringValue` for `NSOpenPanel`.

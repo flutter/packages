@@ -8,11 +8,13 @@ import 'package:web_benchmarks/src/computations.dart';
 void main() {
   group('computations', () {
     test('computePercentiles', () {
-      final Map<double, double> computed = computePercentiles(
-        'test',
-        <double>[0.0, 0.5, 0.9, 0.95, 1.0],
-        List<double>.generate(100, (int i) => i.toDouble()),
-      );
+      final Map<double, double> computed = computePercentiles('test', <double>[
+        0.0,
+        0.5,
+        0.9,
+        0.95,
+        1.0,
+      ], List<double>.generate(100, (int i) => i.toDouble()));
       expect(computed.length, 5);
       expect(computed[0.0], 0.0);
       expect(computed[0.5], 50.0);

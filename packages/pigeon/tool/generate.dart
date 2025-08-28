@@ -28,33 +28,40 @@ const String _overflowFiller = 'overflow';
 const List<String> _fileGroups = <String>[_test, _example];
 
 Future<void> main(List<String> args) async {
-  final ArgParser parser = ArgParser()
-    ..addFlag(
-      _formatFlag,
-      abbr: 'f',
-      help:
-          'Autoformat after generation. This flag is no longer needed, as this behavior is the default',
-      defaultsTo: true,
-      hide: true,
-    )
-    ..addFlag(
-      _noFormatFlag,
-      abbr: 'n',
-      help: 'Do not autoformat after generation.',
-    )
-    ..addFlag(_helpFlag,
-        negatable: false, abbr: 'h', help: 'Print this reference.')
-    ..addFlag(
-      _overflowFiller,
-      abbr: 'o',
-      help:
-          'Injects 120 Enums into the pigeon ast, used for testing overflow utilities.',
-      hide: true,
-    )
-    ..addMultiOption(_files,
-        help:
-            'Select specific groups of files to generate; $_test or $_example. Defaults to both.',
-        allowed: _fileGroups);
+  final ArgParser parser =
+      ArgParser()
+        ..addFlag(
+          _formatFlag,
+          abbr: 'f',
+          help:
+              'Autoformat after generation. This flag is no longer needed, as this behavior is the default',
+          defaultsTo: true,
+          hide: true,
+        )
+        ..addFlag(
+          _noFormatFlag,
+          abbr: 'n',
+          help: 'Do not autoformat after generation.',
+        )
+        ..addFlag(
+          _helpFlag,
+          negatable: false,
+          abbr: 'h',
+          help: 'Print this reference.',
+        )
+        ..addFlag(
+          _overflowFiller,
+          abbr: 'o',
+          help:
+              'Injects 120 Enums into the pigeon ast, used for testing overflow utilities.',
+          hide: true,
+        )
+        ..addMultiOption(
+          _files,
+          help:
+              'Select specific groups of files to generate; $_test or $_example. Defaults to both.',
+          allowed: _fileGroups,
+        );
 
   final ArgResults argResults = parser.parse(args);
   if (argResults.wasParsed(_helpFlag)) {
@@ -69,14 +76,17 @@ ${parser.usage}''');
 
   final bool includeOverflow = argResults.wasParsed(_overflowFiller);
 
-  final List<String> toGenerate = argResults.wasParsed(_files)
-      ? argResults[_files] as List<String>
-      : _fileGroups;
+  final List<String> toGenerate =
+      argResults.wasParsed(_files)
+          ? argResults[_files] as List<String>
+          : _fileGroups;
 
   if (toGenerate.contains(_test)) {
     print('Generating platform_test/ output...');
     final int generateExitCode = await generateTestPigeons(
-        baseDir: baseDir, includeOverflow: includeOverflow);
+      baseDir: baseDir,
+      includeOverflow: includeOverflow,
+    );
     if (generateExitCode == 0) {
       print('Generation complete!');
     } else {
@@ -98,8 +108,9 @@ ${parser.usage}''');
 
   if (!argResults.wasParsed(_noFormatFlag)) {
     print('Formatting generated output...');
-    final int formatExitCode =
-        await formatAllFiles(repositoryRoot: p.dirname(p.dirname(baseDir)));
+    final int formatExitCode = await formatAllFiles(
+      repositoryRoot: p.dirname(p.dirname(baseDir)),
+    );
     if (formatExitCode != 0) {
       print('Formatting failed; see above for errors.');
       exit(formatExitCode);
