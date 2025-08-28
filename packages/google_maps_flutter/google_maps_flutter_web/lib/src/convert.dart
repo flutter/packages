@@ -100,9 +100,15 @@ gmaps.MapOptions _configurationAndStyleToGmapsOptions(
   }
 
   if (configuration.webCameraControlPosition != null) {
-    options.cameraControlOptions = gmaps.CameraControlOptions(
-      position: _toControlPosition(configuration.webCameraControlPosition!),
+    final gmaps.ControlPosition? controlPosition = _toControlPosition(
+      configuration.webCameraControlPosition!,
     );
+
+    if (controlPosition != null) {
+      options.cameraControlOptions = gmaps.CameraControlOptions(
+        position: controlPosition,
+      );
+    }
   }
 
   if (configuration.fortyFiveDegreeImageryEnabled != null) {
@@ -799,7 +805,7 @@ gmaps.LatLng _pixelToLatLng(gmaps.Map map, int x, int y) {
 }
 
 /// Converts a [WebCameraControlPosition] to [gmaps.ControlPosition].
-gmaps.ControlPosition _toControlPosition(
+gmaps.ControlPosition? _toControlPosition(
   WebCameraControlPosition webCameraControlPosition,
 ) {
   switch (webCameraControlPosition) {
