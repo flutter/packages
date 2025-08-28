@@ -328,8 +328,8 @@ class PigeonInstanceManager {
       final PigeonInternalProxyApiBaseClass? strongInstance =
           _strongInstances[identifier];
       if (strongInstance != null) {
-        final PigeonInternalProxyApiBaseClass copy =
-            strongInstance.pigeon_copy();
+        final PigeonInternalProxyApiBaseClass copy = strongInstance
+            .pigeon_copy();
         _identifiers[copy] = identifier;
         _weakInstances[identifier] =
             WeakReference<PigeonInternalProxyApiBaseClass>(copy);
@@ -3306,7 +3306,6 @@ class WebViewClient extends PigeonInternalProxyApiBaseClass {
     this.onReceivedHttpError,
     this.onReceivedRequestError,
     this.onReceivedRequestErrorCompat,
-    this.onReceivedError,
     this.requestLoading,
     this.urlLoading,
     this.doUpdateVisitedHistory,
@@ -3365,7 +3364,6 @@ class WebViewClient extends PigeonInternalProxyApiBaseClass {
     this.onReceivedHttpError,
     this.onReceivedRequestError,
     this.onReceivedRequestErrorCompat,
-    this.onReceivedError,
     this.requestLoading,
     this.urlLoading,
     this.doUpdateVisitedHistory,
@@ -3515,34 +3513,6 @@ class WebViewClient extends PigeonInternalProxyApiBaseClass {
     WebResourceErrorCompat error,
   )?
   onReceivedRequestErrorCompat;
-
-  /// Report an error to the host application.
-  ///
-  /// For the associated Native object to be automatically garbage collected,
-  /// it is required that the implementation of this `Function` doesn't have a
-  /// strong reference to the encapsulating class instance. When this `Function`
-  /// references a non-local variable, it is strongly recommended to access it
-  /// with a `WeakReference`:
-  ///
-  /// ```dart
-  /// final WeakReference weakMyVariable = WeakReference(myVariable);
-  /// final WebViewClient instance = WebViewClient(
-  ///  onReceivedError: (WebViewClient pigeon_instance, ...) {
-  ///    print(weakMyVariable?.target);
-  ///  },
-  /// );
-  /// ```
-  ///
-  /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
-  /// release the associated Native object manually.
-  final void Function(
-    WebViewClient pigeon_instance,
-    WebView webView,
-    int errorCode,
-    String description,
-    String failingUrl,
-  )?
-  onReceivedError;
 
   /// Give the host application a chance to take control when a URL is about to
   /// be loaded in the current WebView.
@@ -3869,14 +3839,6 @@ class WebViewClient extends PigeonInternalProxyApiBaseClass {
       WebResourceErrorCompat error,
     )?
     onReceivedRequestErrorCompat,
-    void Function(
-      WebViewClient pigeon_instance,
-      WebView webView,
-      int errorCode,
-      String description,
-      String failingUrl,
-    )?
-    onReceivedError,
     void Function(
       WebViewClient pigeon_instance,
       WebView webView,
@@ -4254,68 +4216,6 @@ class WebViewClient extends PigeonInternalProxyApiBaseClass {
                   arg_request!,
                   arg_error!,
                 );
-            return wrapResponse(empty: true);
-          } on PlatformException catch (e) {
-            return wrapResponse(error: e);
-          } catch (e) {
-            return wrapResponse(
-              error: PlatformException(code: 'error', message: e.toString()),
-            );
-          }
-        });
-      }
-    }
-
-    {
-      final BasicMessageChannel<Object?>
-      pigeonVar_channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedError',
-        pigeonChannelCodec,
-        binaryMessenger: binaryMessenger,
-      );
-      if (pigeon_clearHandlers) {
-        pigeonVar_channel.setMessageHandler(null);
-      } else {
-        pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedError was null.',
-          );
-          final List<Object?> args = (message as List<Object?>?)!;
-          final WebViewClient? arg_pigeon_instance =
-              (args[0] as WebViewClient?);
-          assert(
-            arg_pigeon_instance != null,
-            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedError was null, expected non-null WebViewClient.',
-          );
-          final WebView? arg_webView = (args[1] as WebView?);
-          assert(
-            arg_webView != null,
-            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedError was null, expected non-null WebView.',
-          );
-          final int? arg_errorCode = (args[2] as int?);
-          assert(
-            arg_errorCode != null,
-            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedError was null, expected non-null int.',
-          );
-          final String? arg_description = (args[3] as String?);
-          assert(
-            arg_description != null,
-            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedError was null, expected non-null String.',
-          );
-          final String? arg_failingUrl = (args[4] as String?);
-          assert(
-            arg_failingUrl != null,
-            'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedError was null, expected non-null String.',
-          );
-          try {
-            (onReceivedError ?? arg_pigeon_instance!.onReceivedError)?.call(
-              arg_pigeon_instance!,
-              arg_webView!,
-              arg_errorCode!,
-              arg_description!,
-              arg_failingUrl!,
-            );
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -4982,7 +4882,6 @@ class WebViewClient extends PigeonInternalProxyApiBaseClass {
       onReceivedHttpError: onReceivedHttpError,
       onReceivedRequestError: onReceivedRequestError,
       onReceivedRequestErrorCompat: onReceivedRequestErrorCompat,
-      onReceivedError: onReceivedError,
       requestLoading: requestLoading,
       urlLoading: urlLoading,
       doUpdateVisitedHistory: doUpdateVisitedHistory,
@@ -5690,9 +5589,10 @@ class WebChromeClient extends PigeonInternalProxyApiBaseClass {
             'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onShowFileChooser was null, expected non-null FileChooserParams.',
           );
           try {
-            final List<String> output = await (onShowFileChooser ??
-                    arg_pigeon_instance!.onShowFileChooser)
-                .call(arg_pigeon_instance!, arg_webView!, arg_params!);
+            final List<String> output =
+                await (onShowFileChooser ??
+                        arg_pigeon_instance!.onShowFileChooser)
+                    .call(arg_pigeon_instance!, arg_webView!, arg_params!);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -6811,8 +6711,8 @@ class FileChooserParams extends PigeonInternalProxyApiBaseClass {
             arg_isCaptureEnabled != null,
             'Argument for dev.flutter.pigeon.webview_flutter_android.FileChooserParams.pigeon_newInstance was null, expected non-null bool.',
           );
-          final List<String>? arg_acceptTypes =
-              (args[2] as List<Object?>?)?.cast<String>();
+          final List<String>? arg_acceptTypes = (args[2] as List<Object?>?)
+              ?.cast<String>();
           assert(
             arg_acceptTypes != null,
             'Argument for dev.flutter.pigeon.webview_flutter_android.FileChooserParams.pigeon_newInstance was null, expected non-null List<String>.',
@@ -6923,8 +6823,8 @@ class PermissionRequest extends PigeonInternalProxyApiBaseClass {
             arg_pigeon_instanceIdentifier != null,
             'Argument for dev.flutter.pigeon.webview_flutter_android.PermissionRequest.pigeon_newInstance was null, expected non-null int.',
           );
-          final List<String>? arg_resources =
-              (args[1] as List<Object?>?)?.cast<String>();
+          final List<String>? arg_resources = (args[1] as List<Object?>?)
+              ?.cast<String>();
           assert(
             arg_resources != null,
             'Argument for dev.flutter.pigeon.webview_flutter_android.PermissionRequest.pigeon_newInstance was null, expected non-null List<String>.',

@@ -3172,42 +3172,6 @@ abstract class PigeonApiWebViewClient(
     }
   }
 
-  /** Report an error to the host application. */
-  fun onReceivedError(
-      pigeon_instanceArg: android.webkit.WebViewClient,
-      webViewArg: android.webkit.WebView,
-      errorCodeArg: Long,
-      descriptionArg: String,
-      failingUrlArg: String,
-      callback: (Result<Unit>) -> Unit
-  ) {
-    if (pigeonRegistrar.ignoreCallsToDart) {
-      callback(
-          Result.failure(
-              AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
-      return
-    }
-    val binaryMessenger = pigeonRegistrar.binaryMessenger
-    val codec = pigeonRegistrar.codec
-    val channelName = "dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedError"
-    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
-    channel.send(
-        listOf(pigeon_instanceArg, webViewArg, errorCodeArg, descriptionArg, failingUrlArg)) {
-          if (it is List<*>) {
-            if (it.size > 1) {
-              callback(
-                  Result.failure(
-                      AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
-            } else {
-              callback(Result.success(Unit))
-            }
-          } else {
-            callback(
-                Result.failure(AndroidWebkitLibraryPigeonUtils.createConnectionError(channelName)))
-          }
-        }
-  }
-
   /**
    * Give the host application a chance to take control when a URL is about to be loaded in the
    * current WebView.
