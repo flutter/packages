@@ -84,7 +84,7 @@ class TestFlutterPluginRegistrar: NSObject, FlutterPluginRegistrar {
 
   #if os(iOS)
     var viewController: UIViewController?
-  
+
     func messenger() -> FlutterBinaryMessenger {
       return TestBinaryMessenger()
     }
@@ -105,7 +105,7 @@ class TestFlutterPluginRegistrar: NSObject, FlutterPluginRegistrar {
   #elseif os(macOS)
     var view: NSView?
     var viewController: NSViewController?
-  
+
     var messenger: FlutterBinaryMessenger {
       return TestBinaryMessenger()
     }
