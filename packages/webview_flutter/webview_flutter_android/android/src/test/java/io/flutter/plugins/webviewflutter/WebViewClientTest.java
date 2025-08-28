@@ -48,7 +48,8 @@ public class WebViewClientTest {
     final android.webkit.WebResourceError error = mock(WebResourceError.class);
     instance.onReceivedError(webView, request, error);
 
-    verify(mockApi).onReceivedError(eq(instance), eq(webView), eq(request), eq(error), any());
+    verify(mockApi)
+        .onReceivedRequestError(eq(instance), eq(webView), eq(request), eq(error), any());
   }
 
   @Test
