@@ -131,7 +131,7 @@ extension CameraPlugin: FCPCameraApi {
     captureSessionQueue.async { [weak self] in
       guard let strongSelf = self else { return }
 
-      var discoveryDevices: [AVCaptureDevice.DeviceType] = [
+      let discoveryDevices: [AVCaptureDevice.DeviceType] = [
         .builtInWideAngleCamera,
         .builtInTelephotoCamera,
         .builtInUltraWideCamera,
