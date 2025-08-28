@@ -547,7 +547,7 @@ void main() {
           expect(capturedOptions!.cameraControl, isTrue);
         });
 
-        testWidgets('translates webCameraControlEnabled option', (
+        testWidgets('translates webCameraControlPosition option', (
           WidgetTester tester,
         ) async {
           gmaps.MapOptions? capturedOptions;
