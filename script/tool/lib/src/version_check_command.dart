@@ -547,11 +547,14 @@ ${indentation}The first version listed in CHANGELOG.md is $fromChangeLog.
       return null;
     }
 
+    bool missingVersionChange = false;
+    bool missingChangelogChange = false;
     if (state.needsVersionChange) {
       if (_prLabels.contains(_missingVersionChangeOverrideLabel)) {
         logWarning('Ignoring lack of version change due to the '
             '"$_missingVersionChangeOverrideLabel" label.');
       } else {
+        missingVersionChange = true;
         printError(
             'No version change found, but the change to this package could '
             'not be verified to be exempt\n'
@@ -559,8 +562,7 @@ ${indentation}The first version listed in CHANGELOG.md is $fromChangeLog.
             'If this is a false positive, please comment in '
             'the PR to explain why the PR\n'
             'is exempt, and add (or ask your reviewer to add) the '
-            '"$_missingVersionChangeOverrideLabel" label.');
-        return 'Missing version change';
+            '"$_missingVersionChangeOverrideLabel" label.\n');
       }
     }
 
@@ -569,6 +571,7 @@ ${indentation}The first version listed in CHANGELOG.md is $fromChangeLog.
         logWarning('Ignoring lack of CHANGELOG update due to the '
             '"$_missingChangelogChangeOverrideLabel" label.');
       } else {
+        missingChangelogChange = true;
         printError('No CHANGELOG change found.\n'
             'If this PR needs an exemption from the standard policy of listing '
             'all changes in the CHANGELOG,\n'
@@ -576,9 +579,23 @@ ${indentation}The first version listed in CHANGELOG.md is $fromChangeLog.
             'ask your reviewer to add) the\n'
             '"$_missingChangelogChangeOverrideLabel" label.\n'
             'Otherwise, please add a NEXT entry in the CHANGELOG as described in '
-            'the contributing guide.');
-        return 'Missing CHANGELOG change';
+            'the contributing guide.\n');
       }
+    }
+
+    if (missingVersionChange && missingChangelogChange) {
+      printError('If this PR is not exempt, you may update the version and '
+          'CHANGELOG with the "update-release-info" command. Example:\n'
+          '\$ dart run script/tool/bin/flutter_plugin_tools.dart update-release-info \\\n'
+          '\t--version=minimal \\\n'
+          '\t--base-branch=upstream/main \\\n'
+          '\t--changelog="Description of the change."');
+    }
+    if (missingVersionChange) {
+      return 'Missing version change';
+    }
+    if (missingChangelogChange) {
+      return 'Missing CHANGELOG change';
     }
 
     return null;
