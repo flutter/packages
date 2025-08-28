@@ -11,11 +11,11 @@ tasks:
     args: ["build-examples", "--macos", "--swift-package-manager"]
   - name: xcode analyze
     script: .ci/scripts/tool_runner.sh
-    args: ["xcode-analyze", "--macos", "--exclude=script/configs/xcode_warnings_exceptions.yaml"]
+    args: ["analyze", "--no-dart", "--macos", "--exclude=script/configs/xcode_warnings_exceptions.yaml"]
   - name: xcode analyze deprecation
     # Ensure we don't accidentally introduce deprecated code.
     script: .ci/scripts/tool_runner.sh
-    args: ["xcode-analyze", "--macos", "--macos-min-version=14.0", "--exclude=script/configs/exclude_xcode_deprecation.yaml,script/configs/xcode_warnings_exceptions.yaml"]
+    args: ["analyze", "--no-dart", "--macos", "--macos-min-version=14.0", "--exclude=script/configs/exclude_xcode_deprecation.yaml,script/configs/xcode_warnings_exceptions.yaml"]
   - name: native test
     script: .ci/scripts/tool_runner.sh
     args: ["native-test", "--macos", "--xcode-warnings-exceptions=script/configs/xcode_warnings_exceptions.yaml"]

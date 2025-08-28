@@ -23,7 +23,6 @@ import 'fix_command.dart';
 import 'format_command.dart';
 import 'gradle_check_command.dart';
 import 'license_check_command.dart';
-import 'lint_android_command.dart';
 import 'list_command.dart';
 import 'make_deps_path_based_command.dart';
 import 'native_test_command.dart';
@@ -39,7 +38,6 @@ import 'update_excerpts_command.dart';
 import 'update_min_sdk_command.dart';
 import 'update_release_info_command.dart';
 import 'version_check_command.dart';
-import 'xcode_analyze_command.dart';
 
 void main(List<String> args) {
   const FileSystem fileSystem = LocalFileSystem();
@@ -73,7 +71,6 @@ void main(List<String> args) {
     ..addCommand(FormatCommand(packagesDir))
     ..addCommand(GradleCheckCommand(packagesDir))
     ..addCommand(LicenseCheckCommand(packagesDir))
-    ..addCommand(LintAndroidCommand(packagesDir))
     ..addCommand(PodspecCheckCommand(packagesDir))
     ..addCommand(ListCommand(packagesDir))
     ..addCommand(NativeTestCommand(packagesDir))
@@ -89,8 +86,7 @@ void main(List<String> args) {
     ..addCommand(UpdateExcerptsCommand(packagesDir))
     ..addCommand(UpdateMinSdkCommand(packagesDir))
     ..addCommand(UpdateReleaseInfoCommand(packagesDir))
-    ..addCommand(VersionCheckCommand(packagesDir))
-    ..addCommand(XcodeAnalyzeCommand(packagesDir));
+    ..addCommand(VersionCheckCommand(packagesDir));
 
   commandRunner.run(args).catchError((Object e) {
     final ToolExit toolExit = e as ToolExit;

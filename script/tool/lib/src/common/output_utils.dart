@@ -37,6 +37,11 @@ void printError(String message) {
   print(_colorizeIfAppropriate(message, Styles.RED));
 }
 
+/// Prints [message] in dark grey, if the environment supports color.
+void printSkip(String message) {
+  print(_colorizeIfAppropriate(message, Styles.DARK_GRAY));
+}
+
 /// Returns [message] with escapes to print it in [color], if the environment
 /// supports color.
 String colorizeString(String message, Styles color) {
