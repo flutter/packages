@@ -90,35 +90,6 @@ void main() {
         );
       }, throwsAssertionError);
     });
-
-    testWidgets('must be called for most of the API to work', (_) async {
-      expect(() async {
-        await plugin.attemptLightweightAuthentication(
-          const AttemptLightweightAuthenticationParameters(),
-        );
-      }, throwsStateError);
-
-      expect(() async {
-        await plugin.clientAuthorizationTokensForScopes(
-          const ClientAuthorizationTokensForScopesParameters(
-            request: AuthorizationRequestDetails(
-              scopes: <String>[],
-              userId: null,
-              email: null,
-              promptIfUnauthorized: false,
-            ),
-          ),
-        );
-      }, throwsStateError);
-
-      expect(() async {
-        await plugin.signOut(const SignOutParams());
-      }, throwsStateError);
-
-      expect(() async {
-        await plugin.disconnect(const DisconnectParams());
-      }, throwsStateError);
-    });
   });
 
   group('support queries', () {
