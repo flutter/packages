@@ -67,8 +67,8 @@ class AndroidCamera extends CameraPlatform {
   @override
   Future<List<CameraDescription>> availableCameras() async {
     try {
-      final List<PlatformCameraDescription> cameraDescriptions =
-          await _hostApi.getAvailableCameras();
+      final List<PlatformCameraDescription> cameraDescriptions = await _hostApi
+          .getAvailableCameras();
       return cameraDescriptions.map((
         PlatformCameraDescription cameraDescription,
       ) {
