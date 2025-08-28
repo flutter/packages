@@ -84,6 +84,7 @@ class TestFlutterPluginRegistrar: NSObject, FlutterPluginRegistrar {
 
   #if os(iOS)
     var viewController: UIViewController?
+  
     func messenger() -> FlutterBinaryMessenger {
       return TestBinaryMessenger()
     }
