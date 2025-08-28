@@ -160,6 +160,7 @@ API_AVAILABLE(ios(13.0), macos(10.15))
 @interface FlutterPluginRegistrarStub : NSObject <FlutterPluginRegistrar>
 
 // Stubs
+@property(nonatomic, weak, nullable) UIViewController* viewController;
 @property(nonatomic, copy, nullable) void (^addApplicationDelegateStub)(NSObject<FlutterPlugin> *);
 @property(nonatomic, copy, nullable) void (^addMethodCallDelegateStub)
     (NSObject<FlutterPlugin> *, FlutterMethodChannel *);
