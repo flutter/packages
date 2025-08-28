@@ -51,14 +51,24 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
       ),
     );
     // If no auto-sign-in is available, potentially prompt for an account via
-    // the bottom sheet flow.
-    credential ??= await _authenticate(
-      useButtonFlow: false,
-      nonButtonFlowOptions: _LightweightAuthenticationOptions(
-        filterToAuthorized: false,
-        autoSelectEnabled: false,
-      ),
-    );
+    // the bottom sheet flow. This is skipped if a hosted domain is set because
+    // the one-tap (non-button) flow does not support hosted domain filterss, so
+    // could result in authorizing with an account that doesn't match the
+    // filter. (The previous should be safe even without a hosted domain filter
+    // because filterToAuthorized will only allow accounts that have previously
+    // signed in to the app, and an app that uses a hosted domain filter is
+    // unlikely to change that filter dynamically.)
+    // TODO(stuartmorgan): Remove this check if the SDK adds support for
+    //  setHostedDomainFilter for one-tap.
+    if (_hostedDomain == null) {
+      credential ??= await _authenticate(
+        useButtonFlow: false,
+        nonButtonFlowOptions: _LightweightAuthenticationOptions(
+          filterToAuthorized: false,
+          autoSelectEnabled: false,
+        ),
+      );
+    }
     return credential == null
         ? null
         : _authenticationResultFromPlatformCredential(credential);
@@ -155,6 +165,7 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
           autoSelectEnabled: nonButtonFlowOptions.autoSelectEnabled,
         ),
         serverClientId: _serverClientId,
+        hostedDomain: _hostedDomain,
         nonce: _nonce,
       ),
     );
