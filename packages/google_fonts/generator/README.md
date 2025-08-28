@@ -1,10 +1,10 @@
-If you notice fonts that are on [fonts.google.com](https://fonts.google.com) that do not appear in
-this package, it means that the generator needs to be run. The generator will
-check [fonts.google.com](https://fonts.google.com) for new fonts, validate each URL, and
-regenerate most dart code (e.g. `GoogleFonts` class), and [families_supported](./families_supported).
+The generator will check [fonts.google.com](https://fonts.google.com) for new fonts, validate each URL, and
+regenerate most Dart code (e.g. `GoogleFonts` class), and [families_supported](./families_supported).
+
+Note: Googlers only, pending b/280786655, there is an additional prerequisite step required of the Google Fonts team
 
 1. Navigate to the root directory of this project ([packages/google_fonts](..)).
 2. `dart generator/generator.dart`
 
 After generation, see [families_diff](families_diff) for a summary of changes, which is useful when
-generating CHANGELOG.md entries.
+generating `CHANGELOG.md` entries.
