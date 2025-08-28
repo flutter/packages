@@ -1,3 +1,11 @@
+## 3.3.1
+
+- Fixes warnings in generated code of iterable parameters.
+
+## 3.3.0
+
+- Adds support for `TypedRelativeGoRoute`.
+
 ## 3.2.1
 
 - Changes generated whitespace for better compatibility with new Dart formatter.

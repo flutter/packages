@@ -72,4 +72,8 @@ class AdEventProxyAPIDelegate: PigeonApiDelegateIMAAdEvent {
   func typeString(pigeonApi: PigeonApiIMAAdEvent, pigeonInstance: IMAAdEvent) throws -> String {
     return pigeonInstance.typeString
   }
+
+  func ad(pigeonApi: PigeonApiIMAAdEvent, pigeonInstance: IMAAdEvent) throws -> IMAAd? {
+    return pigeonInstance.ad
+  }
 }

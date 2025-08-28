@@ -69,7 +69,7 @@ public class Camera2CameraInfoTest {
     assertEquals(value, api.getCameraCharacteristic(instance, key));
   }
 
-  @Config(minSdk = 21)
+  @Config(minSdk = 23)
   @SuppressWarnings("unchecked")
   @Test
   public void getCameraCharacteristic_returnsExpectedCameraHardwareLevelWhenRequested() {
