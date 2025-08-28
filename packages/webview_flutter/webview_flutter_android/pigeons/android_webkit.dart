@@ -189,7 +189,6 @@ abstract class WebResourceResponse {
 @ProxyApi(
   kotlinOptions: KotlinProxyApiOptions(
     fullClassName: 'android.webkit.WebResourceError',
-    minAndroidApi: 23,
   ),
 )
 abstract class WebResourceError {
@@ -481,15 +480,6 @@ abstract class WebViewClient {
     WebResourceErrorCompat error,
   )?
   onReceivedRequestErrorCompat;
-
-  /// Report an error to the host application.
-  late void Function(
-    WebView webView,
-    int errorCode,
-    String description,
-    String failingUrl,
-  )?
-  onReceivedError;
 
   /// Give the host application a chance to take control when a URL is about to
   /// be loaded in the current WebView.
