@@ -60,12 +60,11 @@ void main() {
         WebKitWebViewCookieManagerCreationParams(
           webKitProxy: WebKitProxy(
             defaultDataStoreWKWebsiteDataStore: () => mockWKWebsiteDataStore,
-            newHTTPCookie: ({
-              required Map<HttpCookiePropertyKey, Object> properties,
-            }) {
-              cookieProperties = properties;
-              return cookie;
-            },
+            newHTTPCookie:
+                ({required Map<HttpCookiePropertyKey, Object> properties}) {
+                  cookieProperties = properties;
+                  return cookie;
+                },
           ),
         ),
       );

@@ -161,8 +161,9 @@ abstract class TestInAppPurchaseApi {
     BinaryMessenger? binaryMessenger,
     String messageChannelSuffix = '',
   }) {
-    messageChannelSuffix =
-        messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+    messageChannelSuffix = messageChannelSuffix.isNotEmpty
+        ? '.$messageChannelSuffix'
+        : '';
     {
       final BasicMessageChannel<Object?>
       pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -210,8 +211,8 @@ abstract class TestInAppPurchaseApi {
               Object? message,
             ) async {
               try {
-                final List<SKPaymentTransactionMessage> output =
-                    api.transactions();
+                final List<SKPaymentTransactionMessage> output = api
+                    .transactions();
                 return <Object?>[output];
               } on PlatformException catch (e) {
                 return wrapResponse(error: e);

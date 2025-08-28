@@ -76,12 +76,9 @@ class SkProductResponseWrapper {
     SKProductsResponseMessage msg,
   ) {
     return SkProductResponseWrapper(
-      products:
-          msg.products!
-              .map(
-                (SKProductMessage e) => SKProductWrapper.convertFromPigeon(e),
-              )
-              .toList(),
+      products: msg.products!
+          .map((SKProductMessage e) => SKProductWrapper.convertFromPigeon(e))
+          .toList(),
       invalidProductIdentifiers: msg.invalidProductIdentifiers ?? <String>[],
     );
   }
@@ -92,10 +89,9 @@ class SkProductResponseWrapper {
     SkProductResponseWrapper wrapper,
   ) {
     return SKProductsResponseMessage(
-      products:
-          wrapper.products
-              .map((SKProductWrapper e) => SKProductWrapper.convertToPigeon(e))
-              .toList(),
+      products: wrapper.products
+          .map((SKProductWrapper e) => SKProductWrapper.convertToPigeon(e))
+          .toList(),
       invalidProductIdentifiers: wrapper.invalidProductIdentifiers,
     );
   }
@@ -591,27 +587,22 @@ class SKProductWrapper {
       priceLocale: SKPriceLocaleWrapper.convertFromPigeon(msg.priceLocale),
       price: msg.price,
       subscriptionGroupIdentifier: msg.subscriptionGroupIdentifier,
-      subscriptionPeriod:
-          msg.subscriptionPeriod != null
-              ? SKProductSubscriptionPeriodWrapper.convertFromPigeon(
-                msg.subscriptionPeriod!,
-              )
-              : null,
-      introductoryPrice:
-          msg.introductoryPrice != null
-              ? SKProductDiscountWrapper.convertFromPigeon(
-                msg.introductoryPrice!,
-              )
-              : null,
-      discounts:
-          msg.discounts != null
-              ? msg.discounts!
-                  .map(
-                    (SKProductDiscountMessage e) =>
-                        SKProductDiscountWrapper.convertFromPigeon(e),
-                  )
-                  .toList()
-              : <SKProductDiscountWrapper>[],
+      subscriptionPeriod: msg.subscriptionPeriod != null
+          ? SKProductSubscriptionPeriodWrapper.convertFromPigeon(
+              msg.subscriptionPeriod!,
+            )
+          : null,
+      introductoryPrice: msg.introductoryPrice != null
+          ? SKProductDiscountWrapper.convertFromPigeon(msg.introductoryPrice!)
+          : null,
+      discounts: msg.discounts != null
+          ? msg.discounts!
+                .map(
+                  (SKProductDiscountMessage e) =>
+                      SKProductDiscountWrapper.convertFromPigeon(e),
+                )
+                .toList()
+          : <SKProductDiscountWrapper>[],
     );
   }
 
@@ -624,25 +615,20 @@ class SKProductWrapper {
       priceLocale: SKPriceLocaleWrapper.convertToPigeon(wrapper.priceLocale),
       price: wrapper.price,
       subscriptionGroupIdentifier: wrapper.subscriptionGroupIdentifier,
-      subscriptionPeriod:
-          wrapper.subscriptionPeriod != null
-              ? SKProductSubscriptionPeriodWrapper.convertToPigeon(
-                wrapper.subscriptionPeriod!,
-              )
-              : null,
-      introductoryPrice:
-          wrapper.introductoryPrice != null
-              ? SKProductDiscountWrapper.convertToPigeon(
-                wrapper.introductoryPrice!,
-              )
-              : null,
-      discounts:
-          wrapper.discounts
-              .map(
-                (SKProductDiscountWrapper e) =>
-                    SKProductDiscountWrapper.convertToPigeon(e),
-              )
-              .toList(),
+      subscriptionPeriod: wrapper.subscriptionPeriod != null
+          ? SKProductSubscriptionPeriodWrapper.convertToPigeon(
+              wrapper.subscriptionPeriod!,
+            )
+          : null,
+      introductoryPrice: wrapper.introductoryPrice != null
+          ? SKProductDiscountWrapper.convertToPigeon(wrapper.introductoryPrice!)
+          : null,
+      discounts: wrapper.discounts
+          .map(
+            (SKProductDiscountWrapper e) =>
+                SKProductDiscountWrapper.convertToPigeon(e),
+          )
+          .toList(),
     );
   }
 }

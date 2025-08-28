@@ -335,8 +335,8 @@ class PigeonInstanceManager {
       final PigeonInternalProxyApiBaseClass? strongInstance =
           _strongInstances[identifier];
       if (strongInstance != null) {
-        final PigeonInternalProxyApiBaseClass copy =
-            strongInstance.pigeon_copy();
+        final PigeonInternalProxyApiBaseClass copy = strongInstance
+            .pigeon_copy();
         _identifiers[copy] = identifier;
         _weakInstances[identifier] =
             WeakReference<PigeonInternalProxyApiBaseClass>(copy);
@@ -7717,14 +7717,15 @@ class WKUIDelegate extends NSObject {
             'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegate.runJavaScriptConfirmPanel was null, expected non-null WKFrameInfo.',
           );
           try {
-            final bool output = await (runJavaScriptConfirmPanel ??
-                    arg_pigeon_instance!.runJavaScriptConfirmPanel)
-                .call(
-                  arg_pigeon_instance!,
-                  arg_webView!,
-                  arg_message!,
-                  arg_frame!,
-                );
+            final bool output =
+                await (runJavaScriptConfirmPanel ??
+                        arg_pigeon_instance!.runJavaScriptConfirmPanel)
+                    .call(
+                      arg_pigeon_instance!,
+                      arg_webView!,
+                      arg_message!,
+                      arg_frame!,
+                    );
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -7775,15 +7776,16 @@ class WKUIDelegate extends NSObject {
             'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegate.runJavaScriptTextInputPanel was null, expected non-null WKFrameInfo.',
           );
           try {
-            final String? output = await (runJavaScriptTextInputPanel ??
-                    arg_pigeon_instance!.runJavaScriptTextInputPanel)
-                ?.call(
-                  arg_pigeon_instance!,
-                  arg_webView!,
-                  arg_prompt!,
-                  arg_defaultText,
-                  arg_frame!,
-                );
+            final String? output =
+                await (runJavaScriptTextInputPanel ??
+                        arg_pigeon_instance!.runJavaScriptTextInputPanel)
+                    ?.call(
+                      arg_pigeon_instance!,
+                      arg_webView!,
+                      arg_prompt!,
+                      arg_defaultText,
+                      arg_frame!,
+                    );
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
