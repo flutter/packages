@@ -162,13 +162,14 @@
   } else if ([value isKindOfClass:[NSString class]]) {
     return value;
   } else if ([value isKindOfClass:[NSArray class]]) {
-    NSMutableArray *errors = [NSMutableArray arrayWithCapacity:value.count];
+    NSMutableArray *errors = [NSMutableArray arrayWithCapacity:((NSArray *)value).count];
     for (id error in value) {
       [errors addObject:[FIAObjectTranslator encodeNSErrorUserInfo:error]];
     }
     return errors;
   } else if ([value isKindOfClass:[NSDictionary class]]) {
-    NSMutableDictionary *errors = [NSMutableDictionary dictionaryWithCapacity:value.count];
+    NSMutableDictionary *errors =
+        [NSMutableDictionary dictionaryWithCapacity:((NSDictionary *)value).count];
     for (id key in value) {
       errors[key] = [FIAObjectTranslator encodeNSErrorUserInfo:value[key]];
     }
