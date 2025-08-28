@@ -155,9 +155,6 @@ class AndroidCameraCameraX extends CameraPlatform {
   @visibleForTesting
   CameraSelector? cameraSelector;
 
-  /// The ID of the surface texture that a camera preview can be drawn to.
-  int? _flutterSurfaceTextureId;
-
   /// The controller we need to broadcast the different camera events.
   ///
   /// It is a `broadcast` because multiple controllers will connect to
@@ -291,7 +288,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   ResolutionSelector? _presetResolutionSelector;
 
   /// The ID of the surface texture that the camera preview is drawn to.
-  late int _flutterSurfaceTextureId;
+  int? _flutterSurfaceTextureId;
 
   /// Returns list of all available cameras and their descriptions.
   @override
@@ -434,17 +431,6 @@ class AndroidCameraCameraX extends CameraPlatform {
     recorder = proxy.newRecorder(qualitySelector: presetQualitySelector);
     videoCapture = proxy.withOutputVideoCapture(videoOutput: recorder!);
 
-    // Bind configured UseCases to ProcessCameraProvider instance & mark Preview
-    // instance as bound but not paused. Video capture is bound at first use
-    // instead of here.
-    camera = await processCameraProvider!.bindToLifecycle(
-      cameraSelector!,
-      <UseCase>[preview!, imageCapture!, imageAnalysis!],
-    );
-    await _updateCameraInfoAndLiveCameraState(_flutterSurfaceTextureId!);
-    previewInitiallyBound = true;
-    _previewIsPaused = false;
-
     // Retrieve info required for correcting the rotation of the camera preview
     // if necessary.
     sensorOrientationDegrees = cameraDescription.sensorOrientation.toDouble();
@@ -501,7 +487,7 @@ class AndroidCameraCameraX extends CameraPlatform {
       cameraSelector!,
       <UseCase>[preview!, imageCapture!, imageAnalysis!],
     );
-    await _updateCameraInfoAndLiveCameraState(_flutterSurfaceTextureId);
+    await _updateCameraInfoAndLiveCameraState(_flutterSurfaceTextureId!);
     previewInitiallyBound = true;
     _previewIsPaused = false;
 
