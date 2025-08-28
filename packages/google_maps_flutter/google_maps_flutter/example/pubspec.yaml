@@ -19,13 +19,12 @@ dependencies:
     # the parent directory to use the current plugin's version.
     path: ../
   google_maps_flutter_android: ^2.16.1
-  google_maps_flutter_platform_interface: ^2.12.1
+  google_maps_flutter_platform_interface: ^2.14.0
 
 
 # FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
 # See https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#changing-federated-plugins
 dependency_overrides:
-  google_maps_flutter_platform_interface: {path: ../../../../packages/google_maps_flutter/google_maps_flutter_platform_interface}
   google_maps_flutter_web: {path: ../../../../packages/google_maps_flutter/google_maps_flutter_web}
 
 dev_dependencies:
