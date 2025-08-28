@@ -524,6 +524,57 @@ void main() {
           expect(capturedOptions!.gestureHandling, 'greedy');
         });
 
+        testWidgets('translates webCameraControlEnabled option', (
+          WidgetTester tester,
+        ) async {
+          gmaps.MapOptions? capturedOptions;
+          controller = createController(
+            mapConfiguration: const MapConfiguration(
+              zoomGesturesEnabled: false,
+              webCameraControlEnabled: true,
+            ),
+          );
+          controller.debugSetOverrides(
+            createMap: (_, gmaps.MapOptions options) {
+              capturedOptions = options;
+              return map;
+            },
+          );
+
+          controller.init();
+
+          expect(capturedOptions, isNotNull);
+          expect(capturedOptions!.cameraControl, isTrue);
+        });
+
+        testWidgets('translates webCameraControlEnabled option', (
+          WidgetTester tester,
+        ) async {
+          gmaps.MapOptions? capturedOptions;
+          controller = createController(
+            mapConfiguration: const MapConfiguration(
+              zoomGesturesEnabled: false,
+              webCameraControlEnabled: true,
+              webCameraControlPosition: WebCameraControlPosition.bottomLeft,
+            ),
+          );
+          controller.debugSetOverrides(
+            createMap: (_, gmaps.MapOptions options) {
+              capturedOptions = options;
+              return map;
+            },
+          );
+
+          controller.init();
+
+          expect(capturedOptions, isNotNull);
+          expect(capturedOptions!.cameraControl, isTrue);
+          expect(
+            capturedOptions!.cameraControlOptions?.position,
+            gmaps.ControlPosition.BOTTOM_LEFT,
+          );
+        });
+
         testWidgets('translates cameraTargetBounds option', (
           WidgetTester tester,
         ) async {
