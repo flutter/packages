@@ -30,8 +30,8 @@ class WebKitWebViewCookieManagerCreationParams
   final WebKitProxy webKitProxy;
 
   /// Manages stored data for [WKWebView]s.
-  late final WKWebsiteDataStore _websiteDataStore =
-      webKitProxy.defaultDataStoreWKWebsiteDataStore();
+  late final WKWebsiteDataStore _websiteDataStore = webKitProxy
+      .defaultDataStoreWKWebsiteDataStore();
 }
 
 /// An implementation of [PlatformWebViewCookieManager] with the WebKit api.
@@ -42,8 +42,8 @@ class WebKitWebViewCookieManager extends PlatformWebViewCookieManager {
         params is WebKitWebViewCookieManagerCreationParams
             ? params
             : WebKitWebViewCookieManagerCreationParams.fromPlatformWebViewCookieManagerCreationParams(
-              params,
-            ),
+                params,
+              ),
       );
 
   WebKitWebViewCookieManagerCreationParams get _webkitParams =>

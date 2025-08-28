@@ -131,14 +131,11 @@ extension CameraPlugin: FCPCameraApi {
     captureSessionQueue.async { [weak self] in
       guard let strongSelf = self else { return }
 
-      var discoveryDevices: [AVCaptureDevice.DeviceType] = [
+      let discoveryDevices: [AVCaptureDevice.DeviceType] = [
         .builtInWideAngleCamera,
         .builtInTelephotoCamera,
+        .builtInUltraWideCamera,
       ]
-
-      if #available(iOS 13.0, *) {
-        discoveryDevices.append(.builtInUltraWideCamera)
-      }
 
       let devices = strongSelf.deviceDiscoverer.discoverySession(
         withDeviceTypes: discoveryDevices,

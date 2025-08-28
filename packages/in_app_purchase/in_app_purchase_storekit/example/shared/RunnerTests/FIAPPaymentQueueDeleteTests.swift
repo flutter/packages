@@ -8,7 +8,6 @@ import XCTest
 
 @testable import in_app_purchase_storekit
 
-@available(iOS 13.0, *)
 final class FIAPPaymentQueueDelegateTests: XCTestCase {
   var transaction: SKPaymentTransaction!
   var storefront: SKStorefront!
