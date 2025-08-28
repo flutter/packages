@@ -6,5 +6,5 @@ regenerate most dart code (e.g. `GoogleFonts` class), and [families_supported](.
 1. Navigate to the root directory of this project ([packages/google_fonts](..)).
 2. `dart generator/generator.dart`
 
-After generation, see [generator/families_diff](generator/families_diff) for a summary of changes, which is useful when
+After generation, see [families_diff](families_diff) for a summary of changes, which is useful when
 generating CHANGELOG.md entries.
