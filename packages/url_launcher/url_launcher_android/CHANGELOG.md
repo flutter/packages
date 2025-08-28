@@ -1,3 +1,7 @@
+## 6.3.19
+
+* Bumps androidx.core:core from 1.13.1 to 1.17.0.
+
 ## 6.3.18
 
 * Bumps com.android.tools.build:gradle to 8.12.1.
