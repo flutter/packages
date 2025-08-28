@@ -8,7 +8,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.7.2'
+        classpath 'com.android.tools.build:gradle:8.12.1'
     }
 }
 
@@ -75,7 +75,7 @@ dependencies {
 
     // Assertions
     api 'androidx.test.ext:junit:1.2.1'
-    api 'androidx.test.ext:truth:1.6.0'
+    api 'androidx.test.ext:truth:1.7.0'
     api 'com.google.truth:truth:1.4.4'
 
     // Espresso dependencies
