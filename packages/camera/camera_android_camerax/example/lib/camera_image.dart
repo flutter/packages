@@ -83,6 +83,9 @@ ImageFormatGroup _asImageFormatGroup(dynamic rawFormat) {
       // android.graphics.ImageFormat.YUV_420_888
       case 35:
         return ImageFormatGroup.yuv420;
+      // android.graphics.ImageFormat.NV21
+      case 17:
+        return ImageFormatGroup.nv21;
       // android.graphics.ImageFormat.JPEG
       case 256:
         return ImageFormatGroup.jpeg;

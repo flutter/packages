@@ -57,7 +57,7 @@ class InteractiveMediaAdsProxy {
   final VideoAdPlayer Function({
     required void Function(VideoAdPlayer, VideoAdPlayerCallback) addCallback,
     required void Function(VideoAdPlayer, AdMediaInfo, AdPodInfo) loadAd,
-    required void Function(VideoAdPlayer, AdMediaInfo) pauseAd,
+    required Future<void> Function(VideoAdPlayer, AdMediaInfo) pauseAd,
     required void Function(VideoAdPlayer, AdMediaInfo) playAd,
     required void Function(VideoAdPlayer) release,
     required void Function(VideoAdPlayer, VideoAdPlayerCallback) removeCallback,

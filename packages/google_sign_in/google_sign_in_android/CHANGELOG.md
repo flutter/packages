@@ -1,12 +1,16 @@
-## 7.0.4
+## 7.0.5
 
 * Adds support for `hostedDomain` when authenticating.
+
+## 7.0.4
+
+* Bumps com.android.tools.build:gradle to 8.12.1 and kotlin_version to 2.2.10.
 * Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
-* Updates kotlin version to 2.2.0 to enable gradle 8.11 support.
 
 ## 7.0.3
 
-* Add more details and troubleshooting for `serverClientId` configuration
+* Updates kotlin version to 2.2.0 to enable gradle 8.11 support.
+* Adds more details and troubleshooting for `serverClientId` configuration
   via Firebase.
 
 ## 7.0.2
