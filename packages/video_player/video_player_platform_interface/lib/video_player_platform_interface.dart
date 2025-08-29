@@ -121,6 +121,16 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
   Future<void> setWebOptions(int playerId, VideoPlayerWebOptions options) {
     throw UnimplementedError('setWebOptions() has not been implemented.');
   }
+
+  /// Gets the available audio tracks for the video.
+  Future<List<VideoAudioTrack>> getAudioTracks(int playerId) {
+    throw UnimplementedError('getAudioTracks() has not been implemented.');
+  }
+
+  /// Selects an audio track by its ID.
+  Future<void> selectAudioTrack(int playerId, String trackId) {
+    throw UnimplementedError('selectAudioTrack() has not been implemented.');
+  }
 }
 
 class _PlaceholderImplementation extends VideoPlayerPlatform {}
@@ -286,13 +296,13 @@ class VideoEvent {
 
   @override
   int get hashCode => Object.hash(
-    eventType,
-    duration,
-    size,
-    rotationCorrection,
-    buffered,
-    isPlaying,
-  );
+        eventType,
+        duration,
+        size,
+        rotationCorrection,
+        buffered,
+        isPlaying,
+      );
 }
 
 /// Type of the event.
@@ -458,11 +468,11 @@ class VideoPlayerWebOptionsControls {
 
   /// Disables control options. Default behavior.
   const VideoPlayerWebOptionsControls.disabled()
-    : enabled = false,
-      allowDownload = false,
-      allowFullscreen = false,
-      allowPlaybackRate = false,
-      allowPictureInPicture = false;
+      : enabled = false,
+        allowDownload = false,
+        allowFullscreen = false,
+        allowPlaybackRate = false,
+        allowPictureInPicture = false;
 
   /// Whether native controls are enabled
   final bool enabled;
@@ -528,4 +538,86 @@ class VideoCreationOptions {
 
   /// The type of view to be used for displaying the video player
   final VideoViewType viewType;
+}
+
+/// Represents an audio track in a video with its metadata.
+@immutable
+class VideoAudioTrack {
+  /// Constructs an instance of [VideoAudioTrack].
+  const VideoAudioTrack({
+    required this.id,
+    required this.label,
+    required this.language,
+    required this.isSelected,
+    this.bitrate,
+    this.sampleRate,
+    this.channelCount,
+    this.codec,
+  });
+
+  /// Unique identifier for the audio track.
+  final String id;
+
+  /// Human-readable label for the track.
+  final String label;
+
+  /// Language code of the audio track (e.g., 'en', 'es', 'und').
+  final String language;
+
+  /// Whether this track is currently selected.
+  final bool isSelected;
+
+  /// Bitrate of the audio track in bits per second.
+  /// May be null if not available from the platform.
+  final int? bitrate;
+
+  /// Sample rate of the audio track in Hz.
+  /// May be null if not available from the platform.
+  final int? sampleRate;
+
+  /// Number of audio channels.
+  /// May be null if not available from the platform.
+  final int? channelCount;
+
+  /// Audio codec used (e.g., 'aac', 'mp3', 'ac3').
+  /// May be null if not available from the platform.
+  final String? codec;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        other is VideoAudioTrack &&
+            runtimeType == other.runtimeType &&
+            id == other.id &&
+            label == other.label &&
+            language == other.language &&
+            isSelected == other.isSelected &&
+            bitrate == other.bitrate &&
+            sampleRate == other.sampleRate &&
+            channelCount == other.channelCount &&
+            codec == other.codec;
+  }
+
+  @override
+  int get hashCode => Object.hash(
+        id,
+        label,
+        language,
+        isSelected,
+        bitrate,
+        sampleRate,
+        channelCount,
+        codec,
+      );
+
+  @override
+  String toString() => 'VideoAudioTrack('
+      'id: $id, '
+      'label: $label, '
+      'language: $language, '
+      'isSelected: $isSelected, '
+      'bitrate: $bitrate, '
+      'sampleRate: $sampleRate, '
+      'channelCount: $channelCount, '
+      'codec: $codec)';
 }

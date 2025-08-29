@@ -213,6 +213,35 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
     return _api.setMixWithOthers(mixWithOthers);
   }
 
+  @override
+  Future<List<VideoAudioTrack>> getAudioTracks(int playerId) async {
+    final NativeAudioTrackData nativeData = await _playerWith(id: playerId).getAudioTracks();
+    final List<VideoAudioTrack> tracks = <VideoAudioTrack>[];
+    
+    // Convert ExoPlayer tracks to VideoAudioTrack
+    if (nativeData.exoPlayerTracks != null) {
+      for (final ExoPlayerAudioTrackData track in nativeData.exoPlayerTracks!) {
+        tracks.add(VideoAudioTrack(
+          id: track.trackId!,
+          label: track.label!,
+          language: track.language!,
+          isSelected: track.isSelected!,
+          bitrate: track.bitrate,
+          sampleRate: track.sampleRate,
+          channelCount: track.channelCount,
+          codec: track.codec,
+        ));
+      }
+    }
+    
+    return tracks;
+  }
+
+  @override
+  Future<void> selectAudioTrack(int playerId, String trackId) {
+    return _playerWith(id: playerId).selectAudioTrack(trackId);
+  }
+
   _PlayerInstance _playerWith({required int id}) {
     final _PlayerInstance? player = _players[id];
     return player ?? (throw StateError('No active player with ID $id.'));
@@ -310,6 +339,14 @@ class _PlayerInstance {
 
   Stream<VideoEvent> videoEvents() {
     return _eventStreamController.stream;
+  }
+
+  Future<NativeAudioTrackData> getAudioTracks() {
+    return _api.getAudioTracks();
+  }
+
+  Future<void> selectAudioTrack(String trackId) {
+    return _api.selectAudioTrack(trackId);
   }
 
   Future<void> dispose() async {

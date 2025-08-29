@@ -16,6 +16,7 @@ export 'package:video_player_platform_interface/video_player_platform_interface.
     show
         DataSourceType,
         DurationRange,
+        VideoAudioTrack,
         VideoFormat,
         VideoPlayerOptions,
         VideoPlayerWebOptions,
@@ -817,6 +818,37 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     if (!_isDisposed) {
       super.removeListener(listener);
     }
+  }
+
+  /// Gets the available audio tracks for the video.
+  ///
+  /// Returns a list of [VideoAudioTrack] objects containing metadata about
+  /// each available audio track. The list may be empty if no audio tracks
+  /// are available or if the video is not initialized.
+  ///
+  /// Throws an exception if the video player is disposed.
+  Future<List<VideoAudioTrack>> getAudioTracks() async {
+    if (_isDisposed) {
+      throw Exception('VideoPlayerController is disposed');
+    }
+    if (!value.isInitialized) {
+      return <VideoAudioTrack>[];
+    }
+    return _videoPlayerPlatform.getAudioTracks(_playerId);
+  }
+
+  /// Selects an audio track by its ID.
+  ///
+  /// The [trackId] should match the ID of one of the tracks returned by
+  /// [getAudioTracks]. If the track ID is not found or invalid, the
+  /// platform may ignore the request or throw an exception.
+  ///
+  /// Throws an exception if the video player is disposed or not initialized.
+  Future<void> selectAudioTrack(String trackId) async {
+    if (_isDisposedOrNotInitialized) {
+      throw Exception('VideoPlayerController is disposed or not initialized');
+    }
+    await _videoPlayerPlatform.selectAudioTrack(_playerId, trackId);
   }
 
   bool get _isDisposedOrNotInitialized => _isDisposed || !value.isInitialized;

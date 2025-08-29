@@ -11,10 +11,20 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.media3.common.AudioAttributes;
 import androidx.media3.common.C;
+import androidx.media3.common.Format;
 import androidx.media3.common.MediaItem;
 import androidx.media3.common.PlaybackParameters;
+import androidx.media3.common.TrackGroup;
+import androidx.media3.common.TrackSelectionOverride;
+import androidx.media3.common.Tracks;
+import androidx.media3.common.util.UnstableApi;
 import androidx.media3.exoplayer.ExoPlayer;
+import androidx.media3.exoplayer.source.TrackGroupArray;
+import androidx.media3.exoplayer.trackselection.DefaultTrackSelector;
+import androidx.media3.exoplayer.trackselection.MappingTrackSelector;
 import io.flutter.view.TextureRegistry.SurfaceProducer;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A class responsible for managing video playback using {@link ExoPlayer}.
@@ -26,6 +36,7 @@ public abstract class VideoPlayer implements Messages.VideoPlayerInstanceApi {
   @Nullable protected final SurfaceProducer surfaceProducer;
   @Nullable private DisposeHandler disposeHandler;
   @NonNull protected ExoPlayer exoPlayer;
+  @Nullable protected DefaultTrackSelector trackSelector;
 
   /** A closure-compatible signature since {@link java.util.function.Supplier} is API level 24. */
   public interface ExoPlayerProvider {
@@ -119,6 +130,55 @@ public abstract class VideoPlayer implements Messages.VideoPlayerInstanceApi {
   public ExoPlayer getExoPlayer() {
     return exoPlayer;
   }
+
+  @UnstableApi @Override
+  public @NonNull Messages.NativeAudioTrackData getAudioTracks() {
+    List<Messages.ExoPlayerAudioTrackData> audioTracks = new ArrayList<>();
+
+    // Get the current tracks from ExoPlayer
+    Tracks tracks = exoPlayer.getCurrentTracks();
+
+    // Iterate through all track groups
+    for (int groupIndex = 0; groupIndex < tracks.getGroups().size(); groupIndex++) {
+      Tracks.Group group = tracks.getGroups().get(groupIndex);
+
+      // Only process audio tracks
+      if (group.getType() == C.TRACK_TYPE_AUDIO) {
+        for (int trackIndex = 0; trackIndex < group.length; trackIndex++) {
+          Format format = group.getTrackFormat(trackIndex);
+          boolean isSelected = group.isTrackSelected(trackIndex);
+
+          // Create AudioTrackMessage with metadata
+          Messages.ExoPlayerAudioTrackData audioTrack =
+                  new Messages.ExoPlayerAudioTrackData.Builder()
+                          .setTrackId(groupIndex + "_" + trackIndex)
+                          .setLabel(format.label != null ? format.label : "Audio Track " + (trackIndex + 1))
+                          .setLanguage(format.language != null ? format.language : "und")
+                          .setIsSelected(isSelected)
+                          .setBitrate(format.bitrate != Format.NO_VALUE ? (long) format.bitrate : null)
+                          .setSampleRate(
+                                  format.sampleRate != Format.NO_VALUE ? (long) format.sampleRate : null)
+                          .setChannelCount(
+                                  format.channelCount != Format.NO_VALUE ? (long) format.channelCount : null)
+                          .setCodec(format.codecs != null ? format.codecs : null)
+                          .build();
+
+          audioTracks.add(audioTrack);
+        }
+      }
+    }
+
+    return new Messages.NativeAudioTrackData.Builder()
+        .setExoPlayerTracks(audioTracks)
+        .build();
+  }
+
+  @UnstableApi @Override
+  public void selectAudioTrack(@NonNull String trackId) {
+   // TODO implement 
+  }
+
+  
 
   public void dispose() {
     if (disposeHandler != null) {

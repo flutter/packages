@@ -45,6 +45,62 @@ class PlaybackState {
   final int bufferPosition;
 }
 
+/// Represents an audio track in a video.
+class AudioTrackMessage {
+  AudioTrackMessage({
+    required this.id,
+    required this.label,
+    required this.language,
+    required this.isSelected,
+    this.bitrate,
+    this.sampleRate,
+    this.channelCount,
+    this.codec,
+  });
+
+  String id;
+  String label;
+  String language;
+  bool isSelected;
+  int? bitrate;
+  int? sampleRate;
+  int? channelCount;
+  String? codec;
+}
+
+/// Raw audio track data from ExoPlayer Format objects.
+class ExoPlayerAudioTrackData {
+  ExoPlayerAudioTrackData({
+    required this.trackId,
+    this.label,
+    this.language,
+    required this.isSelected,
+    this.bitrate,
+    this.sampleRate,
+    this.channelCount,
+    this.codec,
+  });
+
+  String trackId;
+  String? label;
+  String? language;
+  bool isSelected;
+  int? bitrate;
+  int? sampleRate;
+  int? channelCount;
+  String? codec;
+}
+
+/// Container for raw audio track data from Android ExoPlayer.
+class NativeAudioTrackData {
+  NativeAudioTrackData({
+    this.exoPlayerTracks,
+  });
+
+  /// ExoPlayer-based tracks
+  List<ExoPlayerAudioTrackData>? exoPlayerTracks;
+}
+
 @HostApi()
 abstract class AndroidVideoPlayerApi {
   void initialize();
@@ -79,4 +135,10 @@ abstract class VideoPlayerInstanceApi {
   /// This is combined into a single call to minimize platform channel calls for
   /// state that needs to be polled frequently.
   PlaybackState getPlaybackState();
+
+  /// Gets the available audio tracks for the video.
+  NativeAudioTrackData getAudioTracks();
+
+  /// Selects an audio track by its ID.
+  void selectAudioTrack(String trackId);
 }

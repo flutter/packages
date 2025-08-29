@@ -21,8 +21,7 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   /// Creates a new AVFoundation-based video player implementation instance.
   AVFoundationVideoPlayer({
     @visibleForTesting AVFoundationVideoPlayerApi? pluginApi,
-    @visibleForTesting
-    VideoPlayerInstanceApi Function(int playerId)? playerProvider,
+    @visibleForTesting VideoPlayerInstanceApi Function(int playerId)? playerProvider,
   }) : _api = pluginApi ?? AVFoundationVideoPlayerApi(),
        _playerProvider = playerProvider ?? _productionApiProvider;
 
@@ -34,11 +33,9 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   /// A map that associates player ID with a view state.
   /// This is used to determine which view type to use when building a view.
   @visibleForTesting
-  final Map<int, VideoPlayerViewState> playerViewStates =
-      <int, VideoPlayerViewState>{};
+  final Map<int, VideoPlayerViewState> playerViewStates = <int, VideoPlayerViewState>{};
 
-  final Map<int, VideoPlayerInstanceApi> _players =
-      <int, VideoPlayerInstanceApi>{};
+  final Map<int, VideoPlayerInstanceApi> _players = <int, VideoPlayerInstanceApi>{};
 
   /// Registers this class as the default instance of [VideoPlayerPlatform].
   static void registerWith() {
@@ -79,9 +76,7 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
       case DataSourceType.asset:
         final String? asset = dataSource.asset;
         if (asset == null) {
-          throw ArgumentError(
-            '"asset" must be non-null for an asset data source',
-          );
+          throw ArgumentError('"asset" must be non-null for an asset data source');
         }
         uri = await _api.getAssetUrl(asset, dataSource.package);
         if (uri == null) {
@@ -173,9 +168,7 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
 
   @override
   Stream<VideoEvent> videoEventsFor(int playerId) {
-    return _eventChannelFor(playerId).receiveBroadcastStream().map((
-      dynamic event,
-    ) {
+    return _eventChannelFor(playerId).receiveBroadcastStream().map((dynamic event) {
       final Map<dynamic, dynamic> map = event as Map<dynamic, dynamic>;
       return switch (map['event']) {
         'initialized' => VideoEvent(
@@ -194,9 +187,7 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
                   .toList(),
           eventType: VideoEventType.bufferingUpdate,
         ),
-        'bufferingStart' => VideoEvent(
-          eventType: VideoEventType.bufferingStart,
-        ),
+        'bufferingStart' => VideoEvent(eventType: VideoEventType.bufferingStart),
         'bufferingEnd' => VideoEvent(eventType: VideoEventType.bufferingEnd),
         'isPlayingStateUpdate' => VideoEvent(
           eventType: VideoEventType.isPlayingStateUpdate,
@@ -213,6 +204,58 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
+  Future<List<VideoAudioTrack>> getAudioTracks(int playerId) async {
+    final NativeAudioTrackData nativeData =
+        await _playerWith(id: playerId).getAudioTracks();
+    final List<VideoAudioTrack> tracks = <VideoAudioTrack>[];
+
+    // Convert asset tracks to VideoAudioTrack
+    if (nativeData.assetTracks != null) {
+      for (final AssetAudioTrackData track in nativeData.assetTracks!) {
+        tracks.add(
+          VideoAudioTrack(
+            id: track.trackId!.toString(),
+            label: track.label!,
+            language: track.language!,
+            isSelected: track.isSelected!,
+            bitrate: track.bitrate,
+            sampleRate: track.sampleRate,
+            channelCount: track.channelCount,
+            codec: track.codec,
+          ),
+        );
+      }
+    }
+
+    // Convert media selection tracks to VideoAudioTrack (for HLS streams)
+    if (nativeData.mediaSelectionTracks != null) {
+      for (final MediaSelectionAudioTrackData track in nativeData.mediaSelectionTracks!) {
+        final String trackId = 'media_selection_${track.index}';
+        final String label = track.commonMetadataTitle ?? track.displayName!;
+        tracks.add(
+          VideoAudioTrack(
+            id: trackId,
+            label: label,
+            language: track.languageCode!,
+            isSelected: track.isSelected!,
+            bitrate: null, // Not available for media selection tracks
+            sampleRate: null,
+            channelCount: null,
+            codec: null,
+          ),
+        );
+      }
+    }
+
+    return tracks;
+  }
+
+  @override
+  Future<void> selectAudioTrack(int playerId, String trackId) {
+    return _playerWith(id: playerId).selectAudioTrack(trackId);
+  }
+
+  @override
   Widget buildView(int playerId) {
     return buildViewWithOptions(VideoViewOptions(playerId: playerId));
   }
@@ -223,14 +266,10 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
     final VideoPlayerViewState? viewState = playerViewStates[playerId];
 
     return switch (viewState) {
-      VideoPlayerTextureViewState(:final int textureId) => Texture(
-        textureId: textureId,
-      ),
+      VideoPlayerTextureViewState(:final int textureId) => Texture(textureId: textureId),
       VideoPlayerPlatformViewState() => _buildPlatformView(playerId),
       null =>
-        throw Exception(
-          'Could not find corresponding view type for playerId: $playerId',
-        ),
+        throw Exception('Could not find corresponding view type for playerId: $playerId'),
     };
   }
 
