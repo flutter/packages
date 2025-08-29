@@ -99,7 +99,7 @@ abstract class GoogleSignInPlatform extends PlatformInterface {
   );
 
   /// Clears any token cache for the given access token.
-  Future<void> clearAuthorizationToken(ClearAuthorizationTokensParams params) {
+  Future<void> clearAuthorizationToken(ClearAuthorizationTokenParams params) {
     throw UnimplementedError(
       'clearAuthorizationToken() has not been implemented.',
     );
@@ -176,7 +176,7 @@ class _PlaceholderImplementation extends GoogleSignInPlatform {
   }
 
   @override
-  Future<void> clearAuthorizationToken(ClearAuthorizationTokensParams params) {
+  Future<void> clearAuthorizationToken(ClearAuthorizationTokenParams params) {
     throw UnimplementedError();
   }
 

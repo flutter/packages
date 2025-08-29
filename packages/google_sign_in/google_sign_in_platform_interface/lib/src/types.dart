@@ -363,12 +363,12 @@ class AuthenticationResults {
   final AuthenticationTokenData authenticationTokens;
 }
 
-/// Parameters for the clearAuthorizationTokens method.
+/// Parameters for the clearAuthorizationToken method.
 @immutable
-class ClearAuthorizationTokensParams {
-  /// Creates new parameters for clearAuthorizationTokens with the given
+class ClearAuthorizationTokenParams {
+  /// Creates new parameters for clearAuthorizationToken with the given
   /// [accessToken]
-  const ClearAuthorizationTokensParams({required this.accessToken});
+  const ClearAuthorizationTokenParams({required this.accessToken});
 
   /// The OAuth2 access token to clear.
   final String accessToken;
@@ -381,7 +381,7 @@ class ClearAuthorizationTokensParams {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is ClearAuthorizationTokensParams &&
+    return other is ClearAuthorizationTokenParams &&
         other.accessToken == accessToken;
   }
 }
