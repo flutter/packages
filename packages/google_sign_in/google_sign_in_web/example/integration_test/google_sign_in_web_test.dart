@@ -353,26 +353,6 @@ void main() {
         );
       });
     });
-
-    group('clearAuthorizationToken', () {
-      setUp(() {
-        plugin.init(options);
-      });
-
-      testWidgets('calls clearAuthorizationToken on GIS client', (_) async {
-        const String someToken = 'someToken';
-        await plugin.clearAuthorizationToken(
-          const ClearAuthorizationTokensParams(accessToken: someToken),
-        );
-
-        final List<Object?> arguments =
-            mockito
-                .verify(mockGis.clearAuthorizationToken(mockito.captureAny))
-                .captured;
-
-        expect(arguments.first, someToken);
-      });
-    });
   });
 
   group('userDataEvents', () {

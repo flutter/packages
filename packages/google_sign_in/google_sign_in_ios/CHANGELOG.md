@@ -1,6 +1,5 @@
-## 6.2.0
+## NEXT
 
-* Adds support for the `clearAuthorizationToken` method.
 * Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
 
 ## 6.1.0

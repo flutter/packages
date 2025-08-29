@@ -3,7 +3,7 @@ description: Flutter plugin for Google Sign-In, a secure authentication system
   for signing in with a Google account on Android, iOS and Web.
 repository: https://github.com/flutter/packages/tree/main/packages/google_sign_in/google_sign_in_web
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+google_sign_in%22
-version: 1.1.0
+version: 1.0.0
 
 environment:
   sdk: ^3.7.0
@@ -34,7 +34,3 @@ dev_dependencies:
 topics:
   - authentication
   - google-sign-in
-# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
-# See https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#changing-federated-plugins
-dependency_overrides:
-  google_sign_in_platform_interface: {path: ../../../packages/google_sign_in/google_sign_in_platform_interface}

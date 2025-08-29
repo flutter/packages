@@ -279,14 +279,6 @@ class GisSdkClient {
     await signOut();
   }
 
-  /// Clears the authorization cache for the given [token].
-  void clearAuthorizationToken(String token) {
-    _lastClientAuthorizationByUser.removeWhere(
-      (String? key, (TokenResponse tokenResponse, DateTime expiration) value) =>
-          value.$1.access_token == token,
-    );
-  }
-
   /// Requests the given list of [scopes], and returns the resulting
   /// authorization token if successful.
   ///

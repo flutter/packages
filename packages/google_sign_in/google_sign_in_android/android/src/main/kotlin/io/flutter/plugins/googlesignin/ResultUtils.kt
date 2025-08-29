@@ -18,11 +18,11 @@ fun completeWithGetCredentialFailure(
   callback(Result.success(failure))
 }
 
-fun completeWithUnitSuccess(callback: (Result<Unit>) -> Unit) {
+fun completeWithClearCredentialStateSuccess(callback: (Result<Unit>) -> Unit) {
   callback(Result.success(Unit))
 }
 
-fun completeWithUnitError(callback: (Result<Unit>) -> Unit, failure: FlutterError) {
+fun completeWithClearCredentialStateError(callback: (Result<Unit>) -> Unit, failure: FlutterError) {
   callback(Result.failure(failure))
 }
 

@@ -1232,14 +1232,6 @@ void main() {
     verifyInOrder(<Future<void>>[mockApi.disconnect(), mockApi.signOut()]);
   });
 
-  test('clearAuthorizationToken no-ops without error', () async {
-    await googleSignIn.clearAuthorizationToken(
-      const ClearAuthorizationTokensParams(accessToken: 'any token'),
-    );
-
-    verifyZeroInteractions(mockApi);
-  });
-
   // Returning null triggers the app-facing package to create stream events,
   // per GoogleSignInPlatform docs, so it's important that this returns null
   // unless the platform implementation is changed to create all necessary
