@@ -9,7 +9,7 @@ import CoreMotion
   import camera_avfoundation_objc
 #endif
 
-final class DefaultCamera: FLTCam, Camera {
+final class DefaultCamera: NSObject, Camera {
   var dartAPI: FCPCameraEventApi?
   var onFrameAvailable: (() -> Void)?
 
@@ -22,16 +22,6 @@ final class DefaultCamera: FLTCam, Camera {
   }
 
   private(set) var isPreviewPaused = false
-
-  override var deviceOrientation: UIDeviceOrientation {
-    get { super.deviceOrientation }
-    set {
-      guard newValue != super.deviceOrientation else { return }
-
-      super.deviceOrientation = newValue
-      updateOrientation()
-    }
-  }
 
   var minimumExposureOffset: CGFloat { CGFloat(captureDevice.minExposureTargetBias) }
   var maximumExposureOffset: CGFloat { CGFloat(captureDevice.maxExposureTargetBias) }
@@ -53,6 +43,9 @@ final class DefaultCamera: FLTCam, Camera {
   private let mediaSettings: FCPPlatformMediaSettings
   private let mediaSettingsAVWrapper: FLTCamMediaSettingsAVWrapper
 
+  private let videoCaptureSession: FLTCaptureSession
+  private let audioCaptureSession: FLTCaptureSession
+
   /// A wrapper for AVCaptureDevice creation to allow for dependency injection in tests.
   private let captureDeviceFactory: CaptureDeviceFactory
   private let audioCaptureDeviceFactory: AudioCaptureDeviceFactory
@@ -60,11 +53,24 @@ final class DefaultCamera: FLTCam, Camera {
   private let assetWriterFactory: AssetWriterFactory
   private let inputPixelBufferAdaptorFactory: InputPixelBufferAdaptorFactory
 
+  /// A wrapper for CMVideoFormatDescriptionGetDimensions.
+  /// Allows for alternate implementations in tests.
+  private let videoDimensionsForFormat: VideoDimensionsForFormat
+
   private let deviceOrientationProvider: FLTDeviceOrientationProviding
+  private let motionManager = CMMotionManager()
+
+  private(set) var captureDevice: FLTCaptureDevice
+  // Setter exposed for tests.
+  var captureVideoOutput: FLTCaptureVideoDataOutput
+  // Setter exposed for tests.
+  var capturePhotoOutput: FLTCapturePhotoOutput
+  private var captureVideoInput: FLTCaptureInput
 
   private var videoWriter: FLTAssetWriter?
   private var videoWriterInput: FLTAssetWriterInput?
   private var audioWriterInput: FLTAssetWriterInput?
+  private var assetWriterPixelBufferAdaptor: FLTAssetWriterInputPixelBufferAdaptor?
   private var videoAdaptor: FLTAssetWriterInputPixelBufferAdaptor?
 
   /// A dictionary to retain all in-progress FLTSavePhotoDelegates. The key of the dictionary is the
@@ -76,11 +82,20 @@ final class DefaultCamera: FLTCam, Camera {
 
   private var imageStreamHandler: FLTImageStreamHandler?
 
+  private var previewSize: CGSize?
+  var deviceOrientation: UIDeviceOrientation {
+    didSet {
+      guard deviceOrientation != oldValue else { return }
+      updateOrientation()
+    }
+  }
+
   /// Tracks the latest pixel buffer sent from AVFoundation's sample buffer delegate callback.
   /// Used to deliver the latest pixel buffer to the flutter engine via the `copyPixelBuffer` API.
   private var latestPixelBuffer: CVPixelBuffer?
 
   private var videoRecordingPath: String?
+  private var isRecording = false
   private var isRecordingPaused = false
   private var isFirstVideoSample = false
   private var videoIsDisconnected = false
@@ -103,6 +118,8 @@ final class DefaultCamera: FLTCam, Camera {
   /// https://github.com/flutter/plugins/pull/4520#discussion_r766335637
   private var maxStreamingPendingFramesCount = 4
 
+  private var fileFormat = FCPPlatformImageFileFormat.jpeg
+  private var lockedCaptureOrientation = UIDeviceOrientation.unknown
   private var exposureMode = FCPPlatformExposureMode.auto
   private var focusMode = FCPPlatformFocusMode.auto
   private var flashMode: FCPPlatformFlashMode
@@ -126,7 +143,7 @@ final class DefaultCamera: FLTCam, Camera {
     let captureVideoOutput = FLTDefaultCaptureVideoDataOutput(
       captureVideoOutput: AVCaptureVideoDataOutput())
     captureVideoOutput.videoSettings = [
-      kCVPixelBufferPixelFormatTypeKey as String: videoFormat
+      kCVPixelBufferPixelFormatTypeKey as String: videoFormat as Any
     ]
     captureVideoOutput.alwaysDiscardsLateVideoFrames = true
 
@@ -146,23 +163,18 @@ final class DefaultCamera: FLTCam, Camera {
     captureSessionQueue = configuration.captureSessionQueue
     mediaSettings = configuration.mediaSettings
     mediaSettingsAVWrapper = configuration.mediaSettingsWrapper
+    videoCaptureSession = configuration.videoCaptureSession
+    audioCaptureSession = configuration.audioCaptureSession
     captureDeviceFactory = configuration.captureDeviceFactory
     audioCaptureDeviceFactory = configuration.audioCaptureDeviceFactory
     captureDeviceInputFactory = configuration.captureDeviceInputFactory
     assetWriterFactory = configuration.assetWriterFactory
     inputPixelBufferAdaptorFactory = configuration.inputPixelBufferAdaptorFactory
+    videoDimensionsForFormat = configuration.videoDimensionsForFormat
     deviceOrientationProvider = configuration.deviceOrientationProvider
 
-    let captureDevice = captureDeviceFactory(configuration.initialCameraName)
+    captureDevice = captureDeviceFactory(configuration.initialCameraName)
     flashMode = captureDevice.hasFlash ? .auto : .off
-
-    super.init()
-
-    videoCaptureSession = configuration.videoCaptureSession
-    audioCaptureSession = configuration.audioCaptureSession
-    videoDimensionsForFormat = configuration.videoDimensionsForFormat
-
-    self.captureDevice = captureDevice
 
     capturePhotoOutput = FLTDefaultCapturePhotoOutput(photoOutput: AVCapturePhotoOutput())
     capturePhotoOutput.highResolutionCaptureEnabled = true
@@ -177,6 +189,8 @@ final class DefaultCamera: FLTCam, Camera {
       captureDevice: captureDevice,
       videoFormat: videoFormat,
       captureDeviceInputFactory: configuration.captureDeviceInputFactory)
+
+    super.init()
 
     captureVideoOutput.setSampleBufferDelegate(self, queue: captureSessionQueue)
 
@@ -413,8 +427,8 @@ final class DefaultCamera: FLTCam, Camera {
     // Get all the state on the current thread, not the main thread.
     let state = FCPPlatformCameraState.make(
       withPreviewSize: FCPPlatformSize.make(
-        withWidth: Double(previewSize.width),
-        height: Double(previewSize.height)
+        withWidth: Double(previewSize!.width),
+        height: Double(previewSize!.height)
       ),
       exposureMode: exposureMode,
       focusMode: focusMode,
