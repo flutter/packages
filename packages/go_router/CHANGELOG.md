@@ -1,3 +1,7 @@
+## 16.2.1
+
+* Fix Android Cold Start deep link with empty path losing scheme and authority.
+
 ## 16.2.0
 
 - Adds `RelativeGoRouteData` and `TypedRelativeGoRoute`.
