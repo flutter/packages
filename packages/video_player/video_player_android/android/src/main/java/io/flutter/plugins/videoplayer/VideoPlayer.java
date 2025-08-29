@@ -63,6 +63,12 @@ public abstract class VideoPlayer implements Messages.VideoPlayerInstanceApi {
     this.videoPlayerEvents = events;
     this.surfaceProducer = surfaceProducer;
     exoPlayer = exoPlayerProvider.get();
+    
+    // Try to get the track selector from the ExoPlayer if it was built with one
+    if (exoPlayer.getTrackSelector() instanceof DefaultTrackSelector) {
+      trackSelector = (DefaultTrackSelector) exoPlayer.getTrackSelector();
+    }
+    
     exoPlayer.setMediaItem(mediaItem);
     exoPlayer.prepare();
     exoPlayer.addListener(createExoPlayerEventListener(exoPlayer, surfaceProducer));
@@ -175,7 +181,47 @@ public abstract class VideoPlayer implements Messages.VideoPlayerInstanceApi {
 
   @UnstableApi @Override
   public void selectAudioTrack(@NonNull String trackId) {
-   // TODO implement 
+    if (trackSelector == null) {
+      return;
+    }
+
+    try {
+      // Parse the trackId (format: "groupIndex_trackIndex")
+      String[] parts = trackId.split("_");
+      if (parts.length != 2) {
+        return;
+      }
+
+      int groupIndex = Integer.parseInt(parts[0]);
+      int trackIndex = Integer.parseInt(parts[1]);
+
+      // Get current tracks
+      Tracks tracks = exoPlayer.getCurrentTracks();
+      
+      if (groupIndex >= tracks.getGroups().size()) {
+        return;
+      }
+
+      Tracks.Group group = tracks.getGroups().get(groupIndex);
+      
+      // Verify it's an audio track and the track index is valid
+      if (group.getType() != C.TRACK_TYPE_AUDIO || trackIndex >= group.length) {
+        return;
+      }
+
+      // Get the track group and create a selection override
+      TrackGroup trackGroup = group.getMediaTrackGroup();
+      TrackSelectionOverride override = new TrackSelectionOverride(trackGroup, trackIndex);
+
+      // Apply the track selection override
+      trackSelector.setParameters(
+          trackSelector.buildUponParameters()
+              .setOverrideForType(override)
+              .build());
+
+    } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
+      // Invalid trackId format, ignore
+    }
   }
 
   
