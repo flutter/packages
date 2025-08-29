@@ -40,8 +40,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, copy) VideoDimensionsForFormat videoDimensionsForFormat;
 
 // Methods exposed for the Swift DefaultCamera subclass
-- (void)updateOrientation;
-
 - (BOOL)setCaptureSessionPreset:(FCPPlatformResolutionPreset)resolutionPreset
                       withError:(NSError **)error;
 
