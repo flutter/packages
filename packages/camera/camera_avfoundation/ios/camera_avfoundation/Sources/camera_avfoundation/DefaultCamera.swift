@@ -621,6 +621,45 @@ final class DefaultCamera: FLTCam, Camera {
     return file
   }
 
+  private func updateOrientation() {
+    guard !isRecording else { return }
+
+    let orientation: UIDeviceOrientation =
+      (lockedCaptureOrientation != .unknown)
+      ? lockedCaptureOrientation
+      : deviceOrientation
+
+    updateOrientation(orientation, forCaptureOutput: capturePhotoOutput)
+    updateOrientation(orientation, forCaptureOutput: captureVideoOutput)
+  }
+
+  private func updateOrientation(
+    _ orientation: UIDeviceOrientation, forCaptureOutput captureOutput: FLTCaptureOutput
+  ) {
+    if let connection = captureOutput.connection(withMediaType: .video),
+      connection.isVideoOrientationSupported
+    {
+      connection.videoOrientation = getVideoOrientation(forDeviceOrientation: orientation)
+    }
+  }
+
+  private func getVideoOrientation(forDeviceOrientation deviceOrientation: UIDeviceOrientation)
+    -> AVCaptureVideoOrientation
+  {
+    switch deviceOrientation {
+    case .portrait:
+      return .portrait
+    case .landscapeLeft:
+      return .landscapeRight
+    case .landscapeRight:
+      return .landscapeLeft
+    case .portraitUpsideDown:
+      return .portraitUpsideDown
+    default:
+      return .portrait
+    }
+  }
+
   func lockCaptureOrientation(_ pigeonOrientation: FCPPlatformDeviceOrientation) {
     let orientation = FCPGetUIDeviceOrientationForPigeonDeviceOrientation(pigeonOrientation)
     if lockedCaptureOrientation != orientation {

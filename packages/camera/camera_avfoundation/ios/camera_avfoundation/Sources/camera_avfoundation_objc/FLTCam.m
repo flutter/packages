@@ -23,51 +23,6 @@
 @end
 
 @implementation FLTCam
-- (void)updateOrientation {
-  if (_isRecording) {
-    return;
-  }
-
-  UIDeviceOrientation orientation = (_lockedCaptureOrientation != UIDeviceOrientationUnknown)
-                                        ? _lockedCaptureOrientation
-                                        : _deviceOrientation;
-
-  [self updateOrientation:orientation forCaptureOutput:_capturePhotoOutput];
-  [self updateOrientation:orientation forCaptureOutput:_captureVideoOutput];
-}
-
-- (void)updateOrientation:(UIDeviceOrientation)orientation
-         forCaptureOutput:(NSObject<FLTCaptureOutput> *)captureOutput {
-  if (!captureOutput) {
-    return;
-  }
-
-  NSObject<FLTCaptureConnection> *connection =
-      [captureOutput connectionWithMediaType:AVMediaTypeVideo];
-  if (connection && connection.isVideoOrientationSupported) {
-    connection.videoOrientation = [self getVideoOrientationForDeviceOrientation:orientation];
-  }
-}
-
-- (AVCaptureVideoOrientation)getVideoOrientationForDeviceOrientation:
-    (UIDeviceOrientation)deviceOrientation {
-  if (deviceOrientation == UIDeviceOrientationPortrait) {
-    return AVCaptureVideoOrientationPortrait;
-  } else if (deviceOrientation == UIDeviceOrientationLandscapeLeft) {
-    // Note: device orientation is flipped compared to video orientation. When UIDeviceOrientation
-    // is landscape left the video orientation should be landscape right.
-    return AVCaptureVideoOrientationLandscapeRight;
-  } else if (deviceOrientation == UIDeviceOrientationLandscapeRight) {
-    // Note: device orientation is flipped compared to video orientation. When UIDeviceOrientation
-    // is landscape right the video orientation should be landscape left.
-    return AVCaptureVideoOrientationLandscapeLeft;
-  } else if (deviceOrientation == UIDeviceOrientationPortraitUpsideDown) {
-    return AVCaptureVideoOrientationPortraitUpsideDown;
-  } else {
-    return AVCaptureVideoOrientationPortrait;
-  }
-}
-
 - (BOOL)setCaptureSessionPreset:(FCPPlatformResolutionPreset)resolutionPreset
                       withError:(NSError **)error {
   switch (resolutionPreset) {
