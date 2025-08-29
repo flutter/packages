@@ -1,4 +1,9 @@
-# CHANGELOG
+## 2.0.1
+
+* Transfers the package source from https://github.com/jonahwilliams/mustache
+  to https://github.com/flutter/packages.
+* Updates minimum supported SDK version to Dart 3.7.
+* Updates code for new analysis options.
 
 ## 2.0.0
 
@@ -11,18 +16,18 @@
 
 ## 1.0.0
 
- * Forked from original repo. Support for mirrors removed.
+* Forked from original repo. Support for mirrors removed.
 
 ## Fork
 
 ## 1.1.1
 
- * Fixed error "boolean expression must not be null". Thanks Nico.
+* Fixed error "boolean expression must not be null". Thanks Nico.
 
 ## 1.1.0
 
- * Better support for class members in sections. Thanks to Janice Collins.
- * Set the SDK constraint to Dart 2+.
+* Better support for class members in sections. Thanks to Janice Collins.
+* Set the SDK constraint to Dart 2+.
 
 ## 1.0.2
   Set the max SDK constraint to <3.0.0.
@@ -64,4 +69,3 @@
 * Implemented change delimiter tag.
 * Add template name parameter, and show this in error messages.
 * Allow whitespace at begining of tags. #10
-

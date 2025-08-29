@@ -16,22 +16,30 @@ abstract class Template {
     String delimiters,
   }) = t.Template.fromSource;
 
+  /// An optional name used to identify the template in error logging.
   String? get name;
+
+  /// The template that should be filled when calling [render] or
+  /// [renderString].
   String get source;
 
   /// [values] can be a combination of Map, List, String. Any non-String object
   /// will be converted using toString(). Null values will cause a
   /// [TemplateException], unless lenient module is enabled.
-  String renderString(values);
+  String renderString(Object? values);
 
   /// [values] can be a combination of Map, List, String. Any non-String object
   /// will be converted using toString(). Null values will cause a
   /// [TemplateException], unless lenient module is enabled.
-  void render(values, StringSink sink);
+  void render(Object? values, StringSink sink);
 }
 
+// TODO(stuartmorgan): Remove this. See https://github.com/flutter/flutter/issues/174722.
+// ignore: public_member_api_docs
 typedef PartialResolver = Template? Function(String);
 
+// TODO(stuartmorgan): Remove this. See https://github.com/flutter/flutter/issues/174722.
+// ignore: public_member_api_docs
 typedef LambdaFunction = Object Function(LambdaContext context);
 
 /// Passed as an argument to a mustache lambda function. The methods on

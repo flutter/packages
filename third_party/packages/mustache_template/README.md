@@ -8,7 +8,7 @@ This library passes all [mustache specification](https://github.com/mustache/spe
 
 ## Example usage
 ```dart
-import 'package:mustache/mustache.dart';
+import 'package:mustache_template/mustache_template.dart';
 
 main() {
 	var source = '''
@@ -21,7 +21,7 @@ main() {
 	  {{! I am a comment. }}
 	''';
 
-	var template = new Template(source, name: 'template-filename.html');
+	var template = Template(source, name: 'template-filename.html');
 
 	var output = template.renderString({'names': [
 		{'firstname': 'Greg', 'lastname': 'Lowe'},
@@ -54,7 +54,7 @@ By default all output from `{{variable}}` tags is html escaped, this behaviour c
 ## Nested paths
 
 ```dart
-  var t = new Template('{{ author.name }}');
+  var t = Template('{{ author.name }}');
   var output = template.renderString({'author': {'name': 'Greg Lowe'}});
 ```
 
@@ -62,7 +62,7 @@ By default all output from `{{variable}}` tags is html escaped, this behaviour c
 
 ```dart
 
-var partial = new Template('{{ foo }}', name: 'partial');
+var partial = Template('{{ foo }}', name: 'partial');
 
 var resolver = (String name) {
    if (name == 'partial-name') { // Name of partial tag.
@@ -70,7 +70,7 @@ var resolver = (String name) {
    }
 };
 
-var t = new Template('{{> partial-name }}', partialResolver: resolver);
+var t = Template('{{> partial-name }}', partialResolver: resolver);
 
 var output = t.renderString({'foo': 'bar'}); // bar
 
@@ -79,31 +79,31 @@ var output = t.renderString({'foo': 'bar'}); // bar
 ## Lambdas - example usage
 
 ```dart
-var t = new Template('{{# foo }}');
+var t = Template('{{# foo }}');
 var lambda = (_) => 'bar';
 t.renderString({'foo': lambda}); // bar
 ```
 
 ```dart
-var t = new Template('{{# foo }}hidden{{/ foo }}');
-var lambda = (_) => 'shown'};
-t.renderString({'foo': lambda); // shown
+var t = Template('{{# foo }}hidden{{/ foo }}');
+var lambda = (_) => 'shown';
+t.renderString('foo': lambda); // shown
 ```
 
 ```dart
-var t = new Template('{{# foo }}oi{{/ foo }}');
+var t = Template('{{# foo }}oi{{/ foo }}');
 var lambda = (LambdaContext ctx) => '<b>${ctx.renderString().toUpperCase()}</b>';
 t.renderString({'foo': lambda}); // <b>OI</b>
 ```
 
 ```dart
-var t = new Template('{{# foo }}{{bar}}{{/ foo }}');
+var t = Template('{{# foo }}{{bar}}{{/ foo }}');
 var lambda = (LambdaContext ctx) => '<b>${ctx.renderString().toUpperCase()}</b>';
 t.renderString({'foo': lambda, 'bar': 'pub'}); // <b>PUB</b>
 ```
 
 ```dart
-var t = new Template('{{# foo }}{{bar}}{{/ foo }}');
+var t = Template('{{# foo }}{{bar}}{{/ foo }}');
 var lambda = (LambdaContext ctx) => '<b>${ctx.renderString().toUpperCase()}</b>';
 t.renderString({'foo': lambda, 'bar': 'pub'}); // <b>PUB</b>
 ```
@@ -111,7 +111,7 @@ t.renderString({'foo': lambda, 'bar': 'pub'}); // <b>PUB</b>
 In the following example `LambdaContext.renderSource(source)` re-parses the source string in the current context, this is the default behaviour in many mustache implementations. Since re-parsing the content is slow, and often not required, this library makes this step optional.
 
 ```dart
-var t = new Template('{{# foo }}{{bar}}{{/ foo }}');
-var lambda = (LambdaContext ctx) => ctx.renderSource(ctx.source + ' {{cmd}}')};
+var t = Template('{{# foo }}{{bar}}{{/ foo }}');
+var lambda = (LambdaContext ctx) => ctx.renderSource(ctx.source + ' {{cmd}}');
 t.renderString({'foo': lambda, 'bar': 'pub', 'cmd': 'build'}); // pub build
 ```

@@ -1,3 +1,6 @@
+// TODO(stuartmorgan): Remove this. See https://github.com/flutter/flutter/issues/174722.
+// ignore_for_file: public_member_api_docs
+
 class TokenType {
   const TokenType(this.name);
 
@@ -31,5 +34,5 @@ class Token {
   final int end;
 
   @override
-  String toString() => '(Token ${type.name} \"$value\" $start $end)';
+  String toString() => '(Token ${type.name} "$value" $start $end)';
 }

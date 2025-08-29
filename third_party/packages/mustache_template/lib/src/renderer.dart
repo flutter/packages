@@ -1,4 +1,7 @@
-import 'package:mustache_template/mustache.dart' as m;
+// TODO(stuartmorgan): Remove this. See https://github.com/flutter/flutter/issues/174722.
+// ignore_for_file: public_member_api_docs
+
+import '../mustache.dart' as m;
 import 'lambda_context.dart';
 import 'node.dart';
 import 'template.dart';
@@ -10,14 +13,14 @@ final RegExp _integerTag = RegExp(r'^[0-9]+$');
 class Renderer extends Visitor {
   Renderer(
     this.sink,
-    List stack,
+    List<Object?> stack,
     this.lenient,
     this.htmlEscapeValues,
     this.partialResolver,
     this.templateName,
     this.indent,
     this.source,
-  ) : _stack = List.from(stack);
+  ) : _stack = List<Object?>.from(stack);
 
   Renderer.partial(Renderer ctx, Template partial, String indent)
     : this(
@@ -43,13 +46,8 @@ class Renderer extends Visitor {
         ctx.source,
       );
 
-  Renderer.lambda(
-    Renderer ctx,
-    String source,
-    String indent,
-    StringSink sink,
-    String delimiters,
-  ) : this(
+  Renderer.lambda(Renderer ctx, String source, String indent, StringSink sink)
+    : this(
         sink,
         ctx._stack,
         ctx.lenient,
@@ -61,7 +59,7 @@ class Renderer extends Visitor {
       );
 
   final StringSink sink;
-  final List _stack;
+  final List<Object?> _stack;
   final bool lenient;
   final bool htmlEscapeValues;
   final m.PartialResolver? partialResolver;
@@ -69,23 +67,25 @@ class Renderer extends Visitor {
   final String indent;
   final String source;
 
-  void push(value) => _stack.add(value);
+  void push(Object? value) => _stack.add(value);
 
-  Object pop() => _stack.removeLast();
+  Object? pop() => _stack.removeLast();
 
   void write(Object output) => sink.write(output.toString());
 
   void render(List<Node> nodes) {
     if (indent == '') {
-      nodes.forEach((n) => n.accept(this));
+      for (final Node n in nodes) {
+        n.accept(this);
+      }
     } else if (nodes.isNotEmpty) {
       // Special case to make sure there is not an extra indent after the last
       // line in the partial file.
       write(indent);
 
-      nodes.take(nodes.length - 1).forEach((n) => n.accept(this));
+      nodes.take(nodes.length - 1).forEach((Node n) => n.accept(this));
 
-      var node = nodes.last;
+      final Node node = nodes.last;
       if (node is TextNode) {
         visitText(node, lastNode: true);
       } else {
@@ -96,26 +96,31 @@ class Renderer extends Visitor {
 
   @override
   void visitText(TextNode node, {bool lastNode = false}) {
-    if (node.text == '') return;
+    if (node.text == '') {
+      return;
+    }
     if (indent == '') {
       write(node.text);
     } else if (lastNode && node.text.runes.last == _NEWLINE) {
       // Don't indent after the last line in a template.
-      var s = node.text.substring(0, node.text.length - 1);
-      write(s.replaceAll('\n', '\n${indent}'));
+      final String s = node.text.substring(0, node.text.length - 1);
+      write(s.replaceAll('\n', '\n$indent'));
       write('\n');
     } else {
-      write(node.text.replaceAll('\n', '\n${indent}'));
+      write(node.text.replaceAll('\n', '\n$indent'));
     }
   }
 
   @override
   void visitVariable(VariableNode node) {
-    var value = resolveValue(node.name);
+    Object? value = resolveValue(node.name);
 
     if (value is Function) {
-      var context = LambdaContext(node, this);
-      var valueFunction = value;
+      final LambdaContext context = LambdaContext(node, this);
+      final Function valueFunction = value;
+      // TODO(stuartmorgan): Add function typing in a way that doesn't break
+      //  backward compatibility.
+      // ignore: avoid_dynamic_calls
       value = valueFunction(context);
       context.close();
     }
@@ -125,8 +130,8 @@ class Renderer extends Visitor {
         throw error('Value was missing for variable tag: ${node.name}.', node);
       }
     } else {
-      var valueString = (value == null) ? '' : value.toString();
-      var output =
+      final String valueString = (value == null) ? '' : value.toString();
+      final String output =
           !node.escape || !htmlEscapeValues
               ? valueString
               : _htmlEscape(valueString);
@@ -143,14 +148,15 @@ class Renderer extends Visitor {
     }
   }
 
-  //TODO can probably combine Inv and Normal to shorten.
   void _renderSection(SectionNode node) {
-    var value = resolveValue(node.name);
+    final Object? value = resolveValue(node.name);
 
     if (value == null) {
       // Do nothing.
     } else if (value is Iterable) {
-      value.forEach((v) => _renderWithValue(node, v));
+      for (final Object? v in value) {
+        _renderWithValue(node, v);
+      }
     } else if (value is Map) {
       _renderWithValue(node, value);
     } else if (value == true) {
@@ -162,10 +168,15 @@ class Renderer extends Visitor {
         throw error('Value was missing for section tag: ${node.name}.', node);
       }
     } else if (value is Function) {
-      var context = LambdaContext(node, this);
-      var output = value(context);
+      final LambdaContext context = LambdaContext(node, this);
+      // TODO(stuartmorgan): Add function typing in a way that doesn't break
+      //  backward compatibility.
+      // ignore: avoid_dynamic_calls
+      final Object? output = value(context);
       context.close();
-      if (output != null) write(output);
+      if (output != null) {
+        write(output);
+      }
     } else {
       // Assume the value might have accessible member values via mirrors.
       _renderWithValue(node, value);
@@ -173,7 +184,7 @@ class Renderer extends Visitor {
   }
 
   void _renderInvSection(SectionNode node) {
-    var value = resolveValue(node.name);
+    final Object? value = resolveValue(node.name);
 
     if (value == null) {
       _renderWithValue(node, null);
@@ -192,7 +203,8 @@ class Renderer extends Visitor {
       }
     } else if (value is Function) {
       // Do nothing.
-      //TODO in strict mode should this be an error?
+      // TODO(stuartmorgan): Determine whether this should be an error in
+      //  strict mode (per comment in initial source import).
     } else if (lenient) {
       // We consider all other values as 'true' in lenient mode. Since this
       // is an inverted section, we do nothing.
@@ -206,7 +218,7 @@ class Renderer extends Visitor {
     }
   }
 
-  void _renderWithValue(SectionNode node, value) {
+  void _renderWithValue(SectionNode node, Object? value) {
     push(value);
     node.visitChildren(this);
     pop();
@@ -214,14 +226,14 @@ class Renderer extends Visitor {
 
   @override
   void visitPartial(PartialNode node) {
-    var partialName = node.name;
-    var template =
+    final String partialName = node.name;
+    final Template? template =
         partialResolver == null
             ? null
             : (partialResolver!(partialName) as Template?);
     if (template != null) {
-      var renderer = Renderer.partial(this, template, node.indent);
-      var nodes = getTemplateNodes(template);
+      final Renderer renderer = Renderer.partial(this, template, node.indent);
+      final List<Node> nodes = getTemplateNodes(template);
       renderer.render(nodes);
     } else if (lenient) {
       // do nothing
@@ -236,15 +248,15 @@ class Renderer extends Visitor {
     if (name == '.') {
       return _stack.last;
     }
-    var parts = name.split('.');
+    final List<String> parts = name.split('.');
     Object? object = noSuchProperty;
-    for (var o in _stack.reversed) {
+    for (final Object? o in _stack.reversed) {
       object = _getNamedProperty(o, parts[0]);
       if (object != noSuchProperty) {
         break;
       }
     }
-    for (var i = 1; i < parts.length; i++) {
+    for (int i = 1; i < parts.length; i++) {
       if (object == noSuchProperty) {
         return noSuchProperty;
       }
@@ -257,11 +269,13 @@ class Renderer extends Visitor {
   // which contains the key name, this is object[name]. For other
   // objects, this is object.name or object.name(). If no property
   // by the given name exists, this method returns noSuchProperty.
-  Object? _getNamedProperty(dynamic object, dynamic name) {
-    if (object is Map && object.containsKey(name)) return object[name];
+  Object? _getNamedProperty(dynamic object, String name) {
+    if (object is Map && object.containsKey(name)) {
+      return object[name];
+    }
 
     if (object is List && _integerTag.hasMatch(name)) {
-      var index = int.parse(name);
+      final int index = int.parse(name);
       if (object.length > index) {
         return object[index];
       }
@@ -272,7 +286,7 @@ class Renderer extends Visitor {
   m.TemplateException error(String message, Node node) =>
       TemplateException(message, templateName, source, node.start);
 
-  static const Map<int, String> _htmlEscapeMap = {
+  static const Map<int, String> _htmlEscapeMap = <int, String>{
     _AMP: '&amp;',
     _LT: '&lt;',
     _GT: '&gt;',
@@ -282,10 +296,10 @@ class Renderer extends Visitor {
   };
 
   String _htmlEscape(String s) {
-    var buffer = StringBuffer();
-    var startIndex = 0;
-    var i = 0;
-    for (var c in s.runes) {
+    final StringBuffer buffer = StringBuffer();
+    int startIndex = 0;
+    int i = 0;
+    for (final int c in s.runes) {
       if (c == _AMP ||
           c == _LT ||
           c == _GT ||

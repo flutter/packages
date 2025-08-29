@@ -1,3 +1,6 @@
+// TODO(stuartmorgan): Remove this. See https://github.com/flutter/flutter/issues/174722.
+// ignore_for_file: public_member_api_docs
+
 abstract class Node {
   Node(this.start, this.end);
 
@@ -27,8 +30,8 @@ class TextNode extends Node {
   String toString() => '(TextNode "$_debugText" $start $end)';
 
   String get _debugText {
-    var t = text.replaceAll('\n', '\\n');
-    return t.length < 50 ? t : t.substring(0, 48) + '...';
+    final String t = text.replaceAll('\n', r'\n');
+    return t.length < 50 ? t : '${t.substring(0, 48)}...';
   }
 
   @override
@@ -71,7 +74,9 @@ class SectionNode extends Node {
 
   @override
   void visitChildren(Visitor visitor) {
-    children.forEach((node) => node.accept(visitor));
+    for (final Node node in children) {
+      node.accept(visitor);
+    }
   }
 
   @override

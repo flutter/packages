@@ -1,3 +1,6 @@
+// TODO(stuartmorgan): Remove this. See https://github.com/flutter/flutter/issues/174722.
+// ignore_for_file: public_member_api_docs
+
 import 'node.dart';
 import 'scanner.dart';
 import 'template_exception.dart';
@@ -9,7 +12,12 @@ List<Node> parse(
   String? templateName,
   String delimiters,
 ) {
-  var parser = Parser(source, templateName, delimiters, lenient: lenient);
+  final Parser parser = Parser(
+    source,
+    templateName,
+    delimiters,
+    lenient: lenient,
+  );
   return parser.parse();
 }
 
@@ -41,7 +49,7 @@ class Parser {
     String source,
     String? templateName,
     String delimiters, {
-    lenient = false,
+    bool lenient = false,
   }) : _source = source,
        _templateName = templateName,
        _delimiters = delimiters,
@@ -55,7 +63,7 @@ class Parser {
   final Scanner _scanner;
   final List<SectionNode> _stack = <SectionNode>[];
   late List<Token> _tokens;
-  String? _currentDelimiters;
+  late String _currentDelimiters;
   int _offset = 0;
 
   List<Node> parse() {
@@ -66,35 +74,36 @@ class Parser {
 
     // Handle a standalone tag on first line, including special case where the
     // first line is empty.
-    var lineEnd = _readIf(TokenType.lineEnd, eofOk: true);
-    if (lineEnd != null) _appendTextToken(lineEnd);
+    final Token? lineEnd = _readIf(TokenType.lineEnd, eofOk: true);
+    if (lineEnd != null) {
+      _appendTextToken(lineEnd);
+    }
     _parseLine();
 
-    for (var token = _peek(); token != null; token = _peek()) {
+    for (Token? token = _peek(); token != null; token = _peek()) {
       switch (token.type) {
         case TokenType.text:
         case TokenType.whitespace:
           _read();
           _appendTextToken(token);
-          break;
 
         case TokenType.openDelimiter:
-          var tag = _readTag();
-          var node = _createNodeFromTag(tag);
-          if (tag != null) _appendTag(tag, node);
-          break;
+          final Tag? tag = _readTag();
+          final Node? node = _createNodeFromTag(tag);
+          if (tag != null) {
+            _appendTag(tag, node);
+          }
 
         case TokenType.changeDelimiter:
           _read();
           _currentDelimiters = token.value;
-          break;
 
         case TokenType.lineEnd:
           _appendTextToken(_read()!);
           _parseLine();
-          break;
 
         default:
+          // TODO(stuartmorgan): Convert to StateError.
           throw Exception('Unreachable code.');
       }
     }
@@ -125,17 +134,21 @@ class Parser {
   }
 
   Token _expect(TokenType type) {
-    var token = _read();
-    if (token == null) throw _errorEof();
+    final Token? token = _read();
+    if (token == null) {
+      throw _errorEof();
+    }
     if (token.type != type) {
-      throw _error('Expected: ${type} found: ${token.type}.', _offset);
+      throw _error('Expected: $type found: ${token.type}.', _offset);
     }
     return token;
   }
 
-  Token? _readIf(TokenType type, {eofOk = false}) {
-    var token = _peek();
-    if (!eofOk && token == null) throw _errorEof();
+  Token? _readIf(TokenType type, {bool eofOk = false}) {
+    final Token? token = _peek();
+    if (!eofOk && token == null) {
+      throw _errorEof();
+    }
     return token != null && token.type == type ? _read() : null;
   }
 
@@ -149,18 +162,22 @@ class Parser {
   // text nodes together.
   void _appendTextToken(Token token) {
     assert(
-      const [
+      const <TokenType>[
         TokenType.text,
         TokenType.lineEnd,
         TokenType.whitespace,
       ].contains(token.type),
     );
-    var children = _stack.last.children;
+    final List<Node> children = _stack.last.children;
     if (children.isEmpty || children.last is! TextNode) {
       children.add(TextNode(token.value, token.start, token.end));
     } else {
-      var last = children.removeLast() as TextNode;
-      var node = TextNode(last.text + token.value, last.start, token.end);
+      final TextNode last = children.removeLast() as TextNode;
+      final TextNode node = TextNode(
+        last.text + token.value,
+        last.start,
+        token.end,
+      );
       children.add(node);
     }
   }
@@ -174,7 +191,6 @@ class Parser {
       case TagType.openInverseSection:
         _stack.last.children.add(node!);
         _stack.add(node as SectionNode);
-        break;
 
       // {{/...}}
       case TagType.closeSection:
@@ -187,17 +203,17 @@ class Parser {
             tag.start,
           );
         }
-        var node = _stack.removeLast();
+        final SectionNode node = _stack.removeLast();
         node.contentEnd = tag.start;
-        break;
 
       // {{...}} {{&...}} {{{...}}}
       case TagType.variable:
       case TagType.unescapedVariable:
       case TagType.tripleMustache:
       case TagType.partial:
-        if (node != null) _stack.last.children.add(node);
-        break;
+        if (node != null) {
+          _stack.last.children.add(node);
+        }
 
       case TagType.comment:
       case TagType.changeDelimiter:
@@ -205,6 +221,7 @@ class Parser {
         break;
 
       default:
+        // TODO(stuartmorgan): Convert to StateError.
         throw Exception('Unreachable code.');
     }
   }
@@ -222,20 +239,29 @@ class Parser {
   // Where lineEnd can also mean start/end of the source.
   void _parseLine() {
     // If first token is a newline append it.
-    var t = _peek();
-    if (t != null && t.type == TokenType.lineEnd) _appendTextToken(t);
+    final Token? t = _peek();
+    if (t != null && t.type == TokenType.lineEnd) {
+      _appendTextToken(t);
+    }
 
     // Continue parsing standalone lines until we find one than isn't a
     // standalone line.
     while (_peek() != null) {
       _readIf(TokenType.lineEnd, eofOk: true);
-      var precedingWhitespace = _readIf(TokenType.whitespace, eofOk: true);
-      var indent = precedingWhitespace == null ? '' : precedingWhitespace.value;
-      var tag = _readTag();
-      var tagNode = _createNodeFromTag(tag, partialIndent: indent);
-      var followingWhitespace = _readIf(TokenType.whitespace, eofOk: true);
+      final Token? precedingWhitespace = _readIf(
+        TokenType.whitespace,
+        eofOk: true,
+      );
+      final String indent =
+          precedingWhitespace == null ? '' : precedingWhitespace.value;
+      final Tag? tag = _readTag();
+      final Node? tagNode = _createNodeFromTag(tag, partialIndent: indent);
+      final Token? followingWhitespace = _readIf(
+        TokenType.whitespace,
+        eofOk: true,
+      );
 
-      const standaloneTypes = [
+      const List<TagType> standaloneTypes = <TagType>[
         TagType.openSection,
         TagType.closeSection,
         TagType.openInverseSection,
@@ -253,9 +279,15 @@ class Parser {
         // Now continue to loop and parse the next line.
       } else {
         // This is not a standalone line so add the whitespace to the ast.
-        if (precedingWhitespace != null) _appendTextToken(precedingWhitespace);
-        if (tag != null) _appendTag(tag, tagNode);
-        if (followingWhitespace != null) _appendTextToken(followingWhitespace);
+        if (precedingWhitespace != null) {
+          _appendTextToken(precedingWhitespace);
+        }
+        if (tag != null) {
+          _appendTag(tag, tagNode);
+        }
+        if (followingWhitespace != null) {
+          _appendTextToken(followingWhitespace);
+        }
         // Done parsing standalone lines. Exit the loop.
         break;
       }
@@ -264,7 +296,7 @@ class Parser {
 
   final RegExp _validIdentifier = RegExp(r'^[0-9a-zA-Z\_\-\.]+$');
 
-  static const _tagTypeMap = {
+  static const Map<String, TagType> _tagTypeMap = <String, TagType>{
     '#': TagType.openSection,
     '^': TagType.openInverseSection,
     '/': TagType.closeSection,
@@ -276,7 +308,7 @@ class Parser {
   // If open delimiter, or change delimiter token then return a tag.
   // If EOF or any another token then return null.
   Tag? _readTag() {
-    var t = _peek();
+    final Token? t = _peek();
     if (t == null ||
         (t.type != TokenType.changeDelimiter &&
             t.type != TokenType.openDelimiter)) {
@@ -293,7 +325,7 @@ class Parser {
 
     // Start parsing a typical tag.
 
-    var open = _expect(TokenType.openDelimiter);
+    final Token open = _expect(TokenType.openDelimiter);
 
     _readIf(TokenType.whitespace);
 
@@ -305,31 +337,35 @@ class Parser {
     if (open.value == '{{{') {
       tagType = TagType.tripleMustache;
     } else {
-      var sigil = _readIf(TokenType.sigil);
+      final Token? sigil = _readIf(TokenType.sigil);
       tagType = sigil == null ? TagType.variable : _tagTypeMap[sigil.value];
     }
 
     _readIf(TokenType.whitespace);
 
-    // TODO split up names here instead of during render.
+    // TODOsplit up names here instead of during render.
     // Also check that they are valid token types.
-    // TODO split up names here instead of during render.
+    // TODOsplit up names here instead of during render.
     // Also check that they are valid token types.
-    var list = <Token>[];
+    final List<Token> list = <Token>[];
     for (
-      var t = _peek();
+      Token? t = _peek();
       t != null && t.type != TokenType.closeDelimiter;
       t = _peek()
     ) {
       _read();
       list.add(t);
     }
-    var name = list.map((t) => t.value).join().trim();
-    if (_peek() == null) throw _errorEof();
+    final String name = list.map((Token t) => t.value).join().trim();
+    if (_peek() == null) {
+      throw _errorEof();
+    }
 
     // Check to see if the tag name is valid.
     if (tagType != TagType.comment) {
-      if (name == '') throw _error('Empty tag name.', open.start);
+      if (name == '') {
+        throw _error('Empty tag name.', open.start);
+      }
       if (!_lenient) {
         if (name.contains('\t') || name.contains('\n') || name.contains('\r')) {
           throw _error('Tags may not contain newlines or tabs.', open.start);
@@ -345,7 +381,7 @@ class Parser {
       }
     }
 
-    var close = _expect(TokenType.closeDelimiter);
+    final Token close = _expect(TokenType.closeDelimiter);
 
     return Tag(tagType!, name, open.start, close.end);
   }
@@ -360,34 +396,31 @@ class Parser {
     switch (tag.type) {
       case TagType.openSection:
       case TagType.openInverseSection:
-        var inverse = tag.type == TagType.openInverseSection;
+        final bool inverse = tag.type == TagType.openInverseSection;
         node = SectionNode(
           tag.name,
           tag.start,
           tag.end,
-          _currentDelimiters!,
+          _currentDelimiters,
           inverse: inverse,
         );
-        break;
 
       case TagType.variable:
       case TagType.unescapedVariable:
       case TagType.tripleMustache:
-        var escape = tag.type == TagType.variable;
+        final bool escape = tag.type == TagType.variable;
         node = VariableNode(tag.name, tag.start, tag.end, escape: escape);
-        break;
 
       case TagType.partial:
         node = PartialNode(tag.name, tag.start, tag.end, partialIndent);
-        break;
 
       case TagType.closeSection:
       case TagType.comment:
       case TagType.changeDelimiter:
         node = null;
-        break;
 
       default:
+        // TODO(stuartmorgan): Convert to StateError.
         throw Exception('Unreachable code');
     }
     return node;

@@ -1,10 +1,14 @@
 name: mustache_template
-version: 2.0.0
-description: A mustache template library that supports dart2js and dart2native
-homepage: https://github.com/jonahwilliams/mustache
+description: A templating library that implements the Mustache template specification
+repository: https://github.com/flutter/packages/tree/main/third_party/packages/mustache_template
+issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+mustache_template%22
+version: 2.0.1
 
 environment:
   sdk: ^3.7.0
 
 dev_dependencies:
-  test: '^1.16.5'
+  test: ^1.16.5
+
+topics:
+  - template

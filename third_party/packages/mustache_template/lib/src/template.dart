@@ -1,18 +1,20 @@
-import 'package:mustache_template/mustache.dart' as m;
+// TODO(stuartmorgan): Remove this. See https://github.com/flutter/flutter/issues/174722.
+// ignore_for_file: public_member_api_docs
+
+import '../mustache.dart' as m;
 import 'node.dart';
 import 'parser.dart' as parser;
 import 'renderer.dart';
 
 class Template implements m.Template {
   Template.fromSource(
-    String source, {
+    this.source, {
     bool lenient = false,
     bool htmlEscapeValues = true,
     String? name,
     m.PartialResolver? partialResolver,
     String delimiters = '{{ }}',
-  }) : source = source,
-       _nodes = parser.parse(source, lenient, name, delimiters),
+  }) : _nodes = parser.parse(source, lenient, name, delimiters),
        _lenient = lenient,
        _htmlEscapeValues = htmlEscapeValues,
        _name = name,
@@ -30,17 +32,17 @@ class Template implements m.Template {
   String? get name => _name;
 
   @override
-  String renderString(values) {
-    var buf = StringBuffer();
+  String renderString(Object? values) {
+    final StringBuffer buf = StringBuffer();
     render(values, buf);
     return buf.toString();
   }
 
   @override
-  void render(values, StringSink sink) {
-    var renderer = Renderer(
+  void render(Object? values, StringSink sink) {
+    final Renderer renderer = Renderer(
       sink,
-      [values],
+      <dynamic>[values],
       _lenient,
       _htmlEscapeValues,
       _partialResolver,
