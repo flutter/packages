@@ -19,9 +19,7 @@ import androidx.media3.common.TrackSelectionOverride;
 import androidx.media3.common.Tracks;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.exoplayer.ExoPlayer;
-import androidx.media3.exoplayer.source.TrackGroupArray;
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector;
-import androidx.media3.exoplayer.trackselection.MappingTrackSelector;
 import io.flutter.view.TextureRegistry.SurfaceProducer;
 import java.util.ArrayList;
 import java.util.List;
@@ -63,12 +61,12 @@ public abstract class VideoPlayer implements Messages.VideoPlayerInstanceApi {
     this.videoPlayerEvents = events;
     this.surfaceProducer = surfaceProducer;
     exoPlayer = exoPlayerProvider.get();
-    
+
     // Try to get the track selector from the ExoPlayer if it was built with one
     if (exoPlayer.getTrackSelector() instanceof DefaultTrackSelector) {
       trackSelector = (DefaultTrackSelector) exoPlayer.getTrackSelector();
     }
-    
+
     exoPlayer.setMediaItem(mediaItem);
     exoPlayer.prepare();
     exoPlayer.addListener(createExoPlayerEventListener(exoPlayer, surfaceProducer));
@@ -137,7 +135,8 @@ public abstract class VideoPlayer implements Messages.VideoPlayerInstanceApi {
     return exoPlayer;
   }
 
-  @UnstableApi @Override
+  @UnstableApi
+  @Override
   public @NonNull Messages.NativeAudioTrackData getAudioTracks() {
     List<Messages.ExoPlayerAudioTrackData> audioTracks = new ArrayList<>();
 
@@ -156,30 +155,29 @@ public abstract class VideoPlayer implements Messages.VideoPlayerInstanceApi {
 
           // Create AudioTrackMessage with metadata
           Messages.ExoPlayerAudioTrackData audioTrack =
-                  new Messages.ExoPlayerAudioTrackData.Builder()
-                          .setTrackId(groupIndex + "_" + trackIndex)
-                          .setLabel(format.label != null ? format.label : "Audio Track " + (trackIndex + 1))
-                          .setLanguage(format.language != null ? format.language : "und")
-                          .setIsSelected(isSelected)
-                          .setBitrate(format.bitrate != Format.NO_VALUE ? (long) format.bitrate : null)
-                          .setSampleRate(
-                                  format.sampleRate != Format.NO_VALUE ? (long) format.sampleRate : null)
-                          .setChannelCount(
-                                  format.channelCount != Format.NO_VALUE ? (long) format.channelCount : null)
-                          .setCodec(format.codecs != null ? format.codecs : null)
-                          .build();
+              new Messages.ExoPlayerAudioTrackData.Builder()
+                  .setTrackId(groupIndex + "_" + trackIndex)
+                  .setLabel(format.label != null ? format.label : "Audio Track " + (trackIndex + 1))
+                  .setLanguage(format.language != null ? format.language : "und")
+                  .setIsSelected(isSelected)
+                  .setBitrate(format.bitrate != Format.NO_VALUE ? (long) format.bitrate : null)
+                  .setSampleRate(
+                      format.sampleRate != Format.NO_VALUE ? (long) format.sampleRate : null)
+                  .setChannelCount(
+                      format.channelCount != Format.NO_VALUE ? (long) format.channelCount : null)
+                  .setCodec(format.codecs != null ? format.codecs : null)
+                  .build();
 
           audioTracks.add(audioTrack);
         }
       }
     }
 
-    return new Messages.NativeAudioTrackData.Builder()
-        .setExoPlayerTracks(audioTracks)
-        .build();
+    return new Messages.NativeAudioTrackData.Builder().setExoPlayerTracks(audioTracks).build();
   }
 
-  @UnstableApi @Override
+  @UnstableApi
+  @Override
   public void selectAudioTrack(@NonNull String trackId) {
     if (trackSelector == null) {
       return;
@@ -197,13 +195,13 @@ public abstract class VideoPlayer implements Messages.VideoPlayerInstanceApi {
 
       // Get current tracks
       Tracks tracks = exoPlayer.getCurrentTracks();
-      
+
       if (groupIndex >= tracks.getGroups().size()) {
         return;
       }
 
       Tracks.Group group = tracks.getGroups().get(groupIndex);
-      
+
       // Verify it's an audio track and the track index is valid
       if (group.getType() != C.TRACK_TYPE_AUDIO || trackIndex >= group.length) {
         return;
@@ -215,16 +213,12 @@ public abstract class VideoPlayer implements Messages.VideoPlayerInstanceApi {
 
       // Apply the track selection override
       trackSelector.setParameters(
-          trackSelector.buildUponParameters()
-              .setOverrideForType(override)
-              .build());
+          trackSelector.buildUponParameters().setOverrideForType(override).build());
 
     } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
       // Invalid trackId format, ignore
     }
   }
-
-  
 
   public void dispose() {
     if (disposeHandler != null) {

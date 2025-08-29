@@ -21,9 +21,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -41,8 +38,7 @@ public class Messages {
     /** The error details. Must be a datatype supported by the api codec. */
     public final Object details;
 
-    public FlutterError(@NonNull String code, @Nullable String message, @Nullable Object details) 
-    {
+    public FlutterError(@NonNull String code, @Nullable String message, @Nullable Object details) {
       super(message);
       this.code = code;
       this.details = details;
@@ -61,7 +57,7 @@ public class Messages {
       errorList.add(exception.toString());
       errorList.add(exception.getClass().getSimpleName());
       errorList.add(
-        "Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
+          "Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
     }
     return errorList;
   }
@@ -98,7 +94,7 @@ public class Messages {
   /**
    * Information passed to the platform view creation.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformVideoViewCreationParams {
     private @NonNull Long playerId;
@@ -119,8 +115,12 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       PlatformVideoViewCreationParams that = (PlatformVideoViewCreationParams) o;
       return playerId.equals(that.playerId);
     }
@@ -154,7 +154,8 @@ public class Messages {
       return toListResult;
     }
 
-    static @NonNull PlatformVideoViewCreationParams fromList(@NonNull ArrayList<Object> pigeonVar_list) {
+    static @NonNull PlatformVideoViewCreationParams fromList(
+        @NonNull ArrayList<Object> pigeonVar_list) {
       PlatformVideoViewCreationParams pigeonResult = new PlatformVideoViewCreationParams();
       Object playerId = pigeonVar_list.get(0);
       pigeonResult.setPlayerId((Long) playerId);
@@ -225,10 +226,18 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       CreateMessage that = (CreateMessage) o;
-      return uri.equals(that.uri) && Objects.equals(formatHint, that.formatHint) && httpHeaders.equals(that.httpHeaders) && Objects.equals(userAgent, that.userAgent) && Objects.equals(viewType, that.viewType);
+      return uri.equals(that.uri)
+          && Objects.equals(formatHint, that.formatHint)
+          && httpHeaders.equals(that.httpHeaders)
+          && Objects.equals(userAgent, that.userAgent)
+          && Objects.equals(viewType, that.viewType);
     }
 
     @Override
@@ -351,8 +360,12 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       PlaybackState that = (PlaybackState) o;
       return playPosition.equals(that.playPosition) && bufferPosition.equals(that.bufferPosition);
     }
@@ -409,7 +422,7 @@ public class Messages {
   /**
    * Represents an audio track in a video.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class AudioTrackMessage {
     private @NonNull String id;
@@ -509,15 +522,27 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       AudioTrackMessage that = (AudioTrackMessage) o;
-      return id.equals(that.id) && label.equals(that.label) && language.equals(that.language) && isSelected.equals(that.isSelected) && Objects.equals(bitrate, that.bitrate) && Objects.equals(sampleRate, that.sampleRate) && Objects.equals(channelCount, that.channelCount) && Objects.equals(codec, that.codec);
+      return id.equals(that.id)
+          && label.equals(that.label)
+          && language.equals(that.language)
+          && isSelected.equals(that.isSelected)
+          && Objects.equals(bitrate, that.bitrate)
+          && Objects.equals(sampleRate, that.sampleRate)
+          && Objects.equals(channelCount, that.channelCount)
+          && Objects.equals(codec, that.codec);
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(id, label, language, isSelected, bitrate, sampleRate, channelCount, codec);
+      return Objects.hash(
+          id, label, language, isSelected, bitrate, sampleRate, channelCount, codec);
     }
 
     public static final class Builder {
@@ -639,7 +664,7 @@ public class Messages {
   /**
    * Raw audio track data from ExoPlayer Format objects.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class ExoPlayerAudioTrackData {
     private @NonNull String trackId;
@@ -733,15 +758,27 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       ExoPlayerAudioTrackData that = (ExoPlayerAudioTrackData) o;
-      return trackId.equals(that.trackId) && Objects.equals(label, that.label) && Objects.equals(language, that.language) && isSelected.equals(that.isSelected) && Objects.equals(bitrate, that.bitrate) && Objects.equals(sampleRate, that.sampleRate) && Objects.equals(channelCount, that.channelCount) && Objects.equals(codec, that.codec);
+      return trackId.equals(that.trackId)
+          && Objects.equals(label, that.label)
+          && Objects.equals(language, that.language)
+          && isSelected.equals(that.isSelected)
+          && Objects.equals(bitrate, that.bitrate)
+          && Objects.equals(sampleRate, that.sampleRate)
+          && Objects.equals(channelCount, that.channelCount)
+          && Objects.equals(codec, that.codec);
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(trackId, label, language, isSelected, bitrate, sampleRate, channelCount, codec);
+      return Objects.hash(
+          trackId, label, language, isSelected, bitrate, sampleRate, channelCount, codec);
     }
 
     public static final class Builder {
@@ -863,7 +900,7 @@ public class Messages {
   /**
    * Container for raw audio track data from Android ExoPlayer.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class NativeAudioTrackData {
     /** ExoPlayer-based tracks */
@@ -879,8 +916,12 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       NativeAudioTrackData that = (NativeAudioTrackData) o;
       return Objects.equals(exoPlayerTracks, that.exoPlayerTracks);
     }
@@ -895,7 +936,8 @@ public class Messages {
       private @Nullable List<ExoPlayerAudioTrackData> exoPlayerTracks;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setExoPlayerTracks(@Nullable List<ExoPlayerAudioTrackData> setterArg) {
+      public @NonNull Builder setExoPlayerTracks(
+          @Nullable List<ExoPlayerAudioTrackData> setterArg) {
         this.exoPlayerTracks = setterArg;
         return this;
       }
@@ -930,14 +972,16 @@ public class Messages {
     @Override
     protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {
       switch (type) {
-        case (byte) 129: {
-          Object value = readValue(buffer);
-          return value == null ? null : PlatformVideoViewType.values()[((Long) value).intValue()];
-        }
-        case (byte) 130: {
-          Object value = readValue(buffer);
-          return value == null ? null : PlatformVideoFormat.values()[((Long) value).intValue()];
-        }
+        case (byte) 129:
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : PlatformVideoViewType.values()[((Long) value).intValue()];
+          }
+        case (byte) 130:
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : PlatformVideoFormat.values()[((Long) value).intValue()];
+          }
         case (byte) 131:
           return PlatformVideoViewCreationParams.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 132:
@@ -992,30 +1036,41 @@ public class Messages {
 
     void initialize();
 
-    @NonNull 
+    @NonNull
     Long create(@NonNull CreateMessage msg);
 
     void dispose(@NonNull Long playerId);
 
     void setMixWithOthers(@NonNull Boolean mixWithOthers);
 
-    @NonNull 
+    @NonNull
     String getLookupKeyForAsset(@NonNull String asset, @Nullable String packageName);
 
     /** The codec used by AndroidVideoPlayerApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return PigeonCodec.INSTANCE;
     }
-    /**Sets up an instance of `AndroidVideoPlayerApi` to handle messages through the `binaryMessenger`. */
-    static void setUp(@NonNull BinaryMessenger binaryMessenger, @Nullable AndroidVideoPlayerApi api) {
+    /**
+     * Sets up an instance of `AndroidVideoPlayerApi` to handle messages through the
+     * `binaryMessenger`.
+     */
+    static void setUp(
+        @NonNull BinaryMessenger binaryMessenger, @Nullable AndroidVideoPlayerApi api) {
       setUp(binaryMessenger, "", api);
     }
-    static void setUp(@NonNull BinaryMessenger binaryMessenger, @NonNull String messageChannelSuffix, @Nullable AndroidVideoPlayerApi api) {
+
+    static void setUp(
+        @NonNull BinaryMessenger binaryMessenger,
+        @NonNull String messageChannelSuffix,
+        @Nullable AndroidVideoPlayerApi api) {
       messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.video_player_android.AndroidVideoPlayerApi.initialize" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.video_player_android.AndroidVideoPlayerApi.initialize"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -1023,8 +1078,7 @@ public class Messages {
                 try {
                   api.initialize();
                   wrapped.add(0, null);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
@@ -1036,7 +1090,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.video_player_android.AndroidVideoPlayerApi.create" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.video_player_android.AndroidVideoPlayerApi.create"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -1046,8 +1103,7 @@ public class Messages {
                 try {
                   Long output = api.create(msgArg);
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
@@ -1059,7 +1115,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.video_player_android.AndroidVideoPlayerApi.dispose" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.video_player_android.AndroidVideoPlayerApi.dispose"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -1069,8 +1128,7 @@ public class Messages {
                 try {
                   api.dispose(playerIdArg);
                   wrapped.add(0, null);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
@@ -1082,7 +1140,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.video_player_android.AndroidVideoPlayerApi.setMixWithOthers" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.video_player_android.AndroidVideoPlayerApi.setMixWithOthers"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -1092,8 +1153,7 @@ public class Messages {
                 try {
                   api.setMixWithOthers(mixWithOthersArg);
                   wrapped.add(0, null);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
@@ -1105,7 +1165,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.video_player_android.AndroidVideoPlayerApi.getLookupKeyForAsset" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.video_player_android.AndroidVideoPlayerApi.getLookupKeyForAsset"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -1116,8 +1179,7 @@ public class Messages {
                 try {
                   String output = api.getLookupKeyForAsset(assetArg, packageNameArg);
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
@@ -1145,13 +1207,13 @@ public class Messages {
     /**
      * Returns the current playback state.
      *
-     * This is combined into a single call to minimize platform channel calls for
-     * state that needs to be polled frequently.
+     * <p>This is combined into a single call to minimize platform channel calls for state that
+     * needs to be polled frequently.
      */
-    @NonNull 
+    @NonNull
     PlaybackState getPlaybackState();
     /** Gets the available audio tracks for the video. */
-    @NonNull 
+    @NonNull
     NativeAudioTrackData getAudioTracks();
     /** Selects an audio track by its ID. */
     void selectAudioTrack(@NonNull String trackId);
@@ -1160,16 +1222,27 @@ public class Messages {
     static @NonNull MessageCodec<Object> getCodec() {
       return PigeonCodec.INSTANCE;
     }
-    /**Sets up an instance of `VideoPlayerInstanceApi` to handle messages through the `binaryMessenger`. */
-    static void setUp(@NonNull BinaryMessenger binaryMessenger, @Nullable VideoPlayerInstanceApi api) {
+    /**
+     * Sets up an instance of `VideoPlayerInstanceApi` to handle messages through the
+     * `binaryMessenger`.
+     */
+    static void setUp(
+        @NonNull BinaryMessenger binaryMessenger, @Nullable VideoPlayerInstanceApi api) {
       setUp(binaryMessenger, "", api);
     }
-    static void setUp(@NonNull BinaryMessenger binaryMessenger, @NonNull String messageChannelSuffix, @Nullable VideoPlayerInstanceApi api) {
+
+    static void setUp(
+        @NonNull BinaryMessenger binaryMessenger,
+        @NonNull String messageChannelSuffix,
+        @Nullable VideoPlayerInstanceApi api) {
       messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.setLooping" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.setLooping"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -1179,8 +1252,7 @@ public class Messages {
                 try {
                   api.setLooping(loopingArg);
                   wrapped.add(0, null);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
@@ -1192,7 +1264,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.setVolume" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.setVolume"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -1202,8 +1277,7 @@ public class Messages {
                 try {
                   api.setVolume(volumeArg);
                   wrapped.add(0, null);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
@@ -1215,7 +1289,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.setPlaybackSpeed" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.setPlaybackSpeed"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -1225,8 +1302,7 @@ public class Messages {
                 try {
                   api.setPlaybackSpeed(speedArg);
                   wrapped.add(0, null);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
@@ -1238,7 +1314,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.play" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.play"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -1246,8 +1325,7 @@ public class Messages {
                 try {
                   api.play();
                   wrapped.add(0, null);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
@@ -1259,7 +1337,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.pause" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.pause"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -1267,8 +1348,7 @@ public class Messages {
                 try {
                   api.pause();
                   wrapped.add(0, null);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
@@ -1280,7 +1360,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.seekTo" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.seekTo"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -1290,8 +1373,7 @@ public class Messages {
                 try {
                   api.seekTo(positionArg);
                   wrapped.add(0, null);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
@@ -1303,7 +1385,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.getPlaybackState" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.getPlaybackState"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -1311,8 +1396,7 @@ public class Messages {
                 try {
                   PlaybackState output = api.getPlaybackState();
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
@@ -1324,7 +1408,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.getAudioTracks" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.getAudioTracks"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -1332,8 +1419,7 @@ public class Messages {
                 try {
                   NativeAudioTrackData output = api.getAudioTracks();
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
@@ -1345,7 +1431,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.selectAudioTrack" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.selectAudioTrack"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -1355,8 +1444,7 @@ public class Messages {
                 try {
                   api.selectAudioTrack(trackIdArg);
                   wrapped.add(0, null);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);

@@ -215,25 +215,28 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
 
   @override
   Future<List<VideoAudioTrack>> getAudioTracks(int playerId) async {
-    final NativeAudioTrackData nativeData = await _playerWith(id: playerId).getAudioTracks();
+    final NativeAudioTrackData nativeData =
+        await _playerWith(id: playerId).getAudioTracks();
     final List<VideoAudioTrack> tracks = <VideoAudioTrack>[];
-    
+
     // Convert ExoPlayer tracks to VideoAudioTrack
     if (nativeData.exoPlayerTracks != null) {
       for (final ExoPlayerAudioTrackData track in nativeData.exoPlayerTracks!) {
-        tracks.add(VideoAudioTrack(
-          id: track.trackId!,
-          label: track.label!,
-          language: track.language!,
-          isSelected: track.isSelected!,
-          bitrate: track.bitrate,
-          sampleRate: track.sampleRate,
-          channelCount: track.channelCount,
-          codec: track.codec,
-        ));
+        tracks.add(
+          VideoAudioTrack(
+            id: track.trackId!,
+            label: track.label!,
+            language: track.language!,
+            isSelected: track.isSelected!,
+            bitrate: track.bitrate,
+            sampleRate: track.sampleRate,
+            channelCount: track.channelCount,
+            codec: track.codec,
+          ),
+        );
       }
     }
-    
+
     return tracks;
   }
 

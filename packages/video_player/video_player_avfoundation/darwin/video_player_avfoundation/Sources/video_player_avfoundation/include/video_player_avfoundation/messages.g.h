@@ -25,26 +25,25 @@ NS_ASSUME_NONNULL_BEGIN
 @interface FVPPlatformVideoViewCreationParams : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithPlayerId:(NSInteger )playerId;
-@property(nonatomic, assign) NSInteger  playerId;
++ (instancetype)makeWithPlayerId:(NSInteger)playerId;
+@property(nonatomic, assign) NSInteger playerId;
 @end
 
 @interface FVPCreationOptions : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithUri:(NSString *)uri
-    httpHeaders:(NSDictionary<NSString *, NSString *> *)httpHeaders;
-@property(nonatomic, copy) NSString * uri;
-@property(nonatomic, copy) NSDictionary<NSString *, NSString *> * httpHeaders;
+                httpHeaders:(NSDictionary<NSString *, NSString *> *)httpHeaders;
+@property(nonatomic, copy) NSString *uri;
+@property(nonatomic, copy) NSDictionary<NSString *, NSString *> *httpHeaders;
 @end
 
 @interface FVPTexturePlayerIds : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithPlayerId:(NSInteger )playerId
-    textureId:(NSInteger )textureId;
-@property(nonatomic, assign) NSInteger  playerId;
-@property(nonatomic, assign) NSInteger  textureId;
++ (instancetype)makeWithPlayerId:(NSInteger)playerId textureId:(NSInteger)textureId;
+@property(nonatomic, assign) NSInteger playerId;
+@property(nonatomic, assign) NSInteger textureId;
 @end
 
 /// Represents an audio track in a video.
@@ -52,69 +51,71 @@ NS_ASSUME_NONNULL_BEGIN
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithId:(NSString *)id
-    label:(NSString *)label
-    language:(NSString *)language
-    isSelected:(BOOL )isSelected
-    bitrate:(nullable NSNumber *)bitrate
-    sampleRate:(nullable NSNumber *)sampleRate
-    channelCount:(nullable NSNumber *)channelCount
-    codec:(nullable NSString *)codec;
-@property(nonatomic, copy) NSString * id;
-@property(nonatomic, copy) NSString * label;
-@property(nonatomic, copy) NSString * language;
-@property(nonatomic, assign) BOOL  isSelected;
-@property(nonatomic, strong, nullable) NSNumber * bitrate;
-@property(nonatomic, strong, nullable) NSNumber * sampleRate;
-@property(nonatomic, strong, nullable) NSNumber * channelCount;
-@property(nonatomic, copy, nullable) NSString * codec;
+                     label:(NSString *)label
+                  language:(NSString *)language
+                isSelected:(BOOL)isSelected
+                   bitrate:(nullable NSNumber *)bitrate
+                sampleRate:(nullable NSNumber *)sampleRate
+              channelCount:(nullable NSNumber *)channelCount
+                     codec:(nullable NSString *)codec;
+@property(nonatomic, copy) NSString *id;
+@property(nonatomic, copy) NSString *label;
+@property(nonatomic, copy) NSString *language;
+@property(nonatomic, assign) BOOL isSelected;
+@property(nonatomic, strong, nullable) NSNumber *bitrate;
+@property(nonatomic, strong, nullable) NSNumber *sampleRate;
+@property(nonatomic, strong, nullable) NSNumber *channelCount;
+@property(nonatomic, copy, nullable) NSString *codec;
 @end
 
 /// Raw audio track data from AVAssetTrack (for regular assets).
 @interface FVPAssetAudioTrackData : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithTrackId:(NSInteger )trackId
-    label:(nullable NSString *)label
-    language:(nullable NSString *)language
-    isSelected:(BOOL )isSelected
-    bitrate:(nullable NSNumber *)bitrate
-    sampleRate:(nullable NSNumber *)sampleRate
-    channelCount:(nullable NSNumber *)channelCount
-    codec:(nullable NSString *)codec;
-@property(nonatomic, assign) NSInteger  trackId;
-@property(nonatomic, copy, nullable) NSString * label;
-@property(nonatomic, copy, nullable) NSString * language;
-@property(nonatomic, assign) BOOL  isSelected;
-@property(nonatomic, strong, nullable) NSNumber * bitrate;
-@property(nonatomic, strong, nullable) NSNumber * sampleRate;
-@property(nonatomic, strong, nullable) NSNumber * channelCount;
-@property(nonatomic, copy, nullable) NSString * codec;
++ (instancetype)makeWithTrackId:(NSInteger)trackId
+                          label:(nullable NSString *)label
+                       language:(nullable NSString *)language
+                     isSelected:(BOOL)isSelected
+                        bitrate:(nullable NSNumber *)bitrate
+                     sampleRate:(nullable NSNumber *)sampleRate
+                   channelCount:(nullable NSNumber *)channelCount
+                          codec:(nullable NSString *)codec;
+@property(nonatomic, assign) NSInteger trackId;
+@property(nonatomic, copy, nullable) NSString *label;
+@property(nonatomic, copy, nullable) NSString *language;
+@property(nonatomic, assign) BOOL isSelected;
+@property(nonatomic, strong, nullable) NSNumber *bitrate;
+@property(nonatomic, strong, nullable) NSNumber *sampleRate;
+@property(nonatomic, strong, nullable) NSNumber *channelCount;
+@property(nonatomic, copy, nullable) NSString *codec;
 @end
 
 /// Raw audio track data from AVMediaSelectionOption (for HLS streams).
 @interface FVPMediaSelectionAudioTrackData : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithIndex:(NSInteger )index
-    displayName:(nullable NSString *)displayName
-    languageCode:(nullable NSString *)languageCode
-    isSelected:(BOOL )isSelected
-    commonMetadataTitle:(nullable NSString *)commonMetadataTitle;
-@property(nonatomic, assign) NSInteger  index;
-@property(nonatomic, copy, nullable) NSString * displayName;
-@property(nonatomic, copy, nullable) NSString * languageCode;
-@property(nonatomic, assign) BOOL  isSelected;
-@property(nonatomic, copy, nullable) NSString * commonMetadataTitle;
++ (instancetype)makeWithIndex:(NSInteger)index
+                  displayName:(nullable NSString *)displayName
+                 languageCode:(nullable NSString *)languageCode
+                   isSelected:(BOOL)isSelected
+          commonMetadataTitle:(nullable NSString *)commonMetadataTitle;
+@property(nonatomic, assign) NSInteger index;
+@property(nonatomic, copy, nullable) NSString *displayName;
+@property(nonatomic, copy, nullable) NSString *languageCode;
+@property(nonatomic, assign) BOOL isSelected;
+@property(nonatomic, copy, nullable) NSString *commonMetadataTitle;
 @end
 
 /// Container for raw audio track data from native platforms.
 @interface FVPNativeAudioTrackData : NSObject
 + (instancetype)makeWithAssetTracks:(nullable NSArray<FVPAssetAudioTrackData *> *)assetTracks
-    mediaSelectionTracks:(nullable NSArray<FVPMediaSelectionAudioTrackData *> *)mediaSelectionTracks;
+               mediaSelectionTracks:
+                   (nullable NSArray<FVPMediaSelectionAudioTrackData *> *)mediaSelectionTracks;
 /// Asset-based tracks (for regular video files)
-@property(nonatomic, copy, nullable) NSArray<FVPAssetAudioTrackData *> * assetTracks;
+@property(nonatomic, copy, nullable) NSArray<FVPAssetAudioTrackData *> *assetTracks;
 /// Media selection-based tracks (for HLS streams)
-@property(nonatomic, copy, nullable) NSArray<FVPMediaSelectionAudioTrackData *> * mediaSelectionTracks;
+@property(nonatomic, copy, nullable)
+    NSArray<FVPMediaSelectionAudioTrackData *> *mediaSelectionTracks;
 @end
 
 /// The codec used by all APIs.
@@ -123,17 +124,25 @@ NSObject<FlutterMessageCodec> *FVPGetMessagesCodec(void);
 @protocol FVPAVFoundationVideoPlayerApi
 - (void)initialize:(FlutterError *_Nullable *_Nonnull)error;
 /// @return `nil` only when `error != nil`.
-- (nullable NSNumber *)createPlatformViewPlayerWithOptions:(FVPCreationOptions *)params error:(FlutterError *_Nullable *_Nonnull)error;
+- (nullable NSNumber *)createPlatformViewPlayerWithOptions:(FVPCreationOptions *)params
+                                                     error:(FlutterError *_Nullable *_Nonnull)error;
 /// @return `nil` only when `error != nil`.
-- (nullable FVPTexturePlayerIds *)createTexturePlayerWithOptions:(FVPCreationOptions *)creationOptions error:(FlutterError *_Nullable *_Nonnull)error;
+- (nullable FVPTexturePlayerIds *)
+    createTexturePlayerWithOptions:(FVPCreationOptions *)creationOptions
+                             error:(FlutterError *_Nullable *_Nonnull)error;
 - (void)setMixWithOthers:(BOOL)mixWithOthers error:(FlutterError *_Nullable *_Nonnull)error;
-- (nullable NSString *)fileURLForAssetWithName:(NSString *)asset package:(nullable NSString *)package error:(FlutterError *_Nullable *_Nonnull)error;
+- (nullable NSString *)fileURLForAssetWithName:(NSString *)asset
+                                       package:(nullable NSString *)package
+                                         error:(FlutterError *_Nullable *_Nonnull)error;
 @end
 
-extern void SetUpFVPAVFoundationVideoPlayerApi(id<FlutterBinaryMessenger> binaryMessenger, NSObject<FVPAVFoundationVideoPlayerApi> *_Nullable api);
+extern void SetUpFVPAVFoundationVideoPlayerApi(
+    id<FlutterBinaryMessenger> binaryMessenger,
+    NSObject<FVPAVFoundationVideoPlayerApi> *_Nullable api);
 
-extern void SetUpFVPAVFoundationVideoPlayerApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger, NSObject<FVPAVFoundationVideoPlayerApi> *_Nullable api, NSString *messageChannelSuffix);
-
+extern void SetUpFVPAVFoundationVideoPlayerApiWithSuffix(
+    id<FlutterBinaryMessenger> binaryMessenger,
+    NSObject<FVPAVFoundationVideoPlayerApi> *_Nullable api, NSString *messageChannelSuffix);
 
 @protocol FVPVideoPlayerInstanceApi
 - (void)setLooping:(BOOL)looping error:(FlutterError *_Nullable *_Nonnull)error;
@@ -150,8 +159,11 @@ extern void SetUpFVPAVFoundationVideoPlayerApiWithSuffix(id<FlutterBinaryMesseng
 - (void)selectAudioTrack:(NSString *)trackId error:(FlutterError *_Nullable *_Nonnull)error;
 @end
 
-extern void SetUpFVPVideoPlayerInstanceApi(id<FlutterBinaryMessenger> binaryMessenger, NSObject<FVPVideoPlayerInstanceApi> *_Nullable api);
+extern void SetUpFVPVideoPlayerInstanceApi(id<FlutterBinaryMessenger> binaryMessenger,
+                                           NSObject<FVPVideoPlayerInstanceApi> *_Nullable api);
 
-extern void SetUpFVPVideoPlayerInstanceApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger, NSObject<FVPVideoPlayerInstanceApi> *_Nullable api, NSString *messageChannelSuffix);
+extern void SetUpFVPVideoPlayerInstanceApiWithSuffix(
+    id<FlutterBinaryMessenger> binaryMessenger, NSObject<FVPVideoPlayerInstanceApi> *_Nullable api,
+    NSString *messageChannelSuffix);
 
 NS_ASSUME_NONNULL_END

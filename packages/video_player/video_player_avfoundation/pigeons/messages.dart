@@ -104,10 +104,7 @@ class MediaSelectionAudioTrackData {
 
 /// Container for raw audio track data from native platforms.
 class NativeAudioTrackData {
-  NativeAudioTrackData({
-    this.assetTracks,
-    this.mediaSelectionTracks,
-  });
+  NativeAudioTrackData({this.assetTracks, this.mediaSelectionTracks});
 
   /// Asset-based tracks (for regular video files)
   List<AssetAudioTrackData>? assetTracks;

@@ -93,9 +93,7 @@ class ExoPlayerAudioTrackData {
 
 /// Container for raw audio track data from Android ExoPlayer.
 class NativeAudioTrackData {
-  NativeAudioTrackData({
-    this.exoPlayerTracks,
-  });
+  NativeAudioTrackData({this.exoPlayerTracks});
 
   /// ExoPlayer-based tracks
   List<ExoPlayerAudioTrackData>? exoPlayerTracks;

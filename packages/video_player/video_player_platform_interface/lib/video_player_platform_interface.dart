@@ -296,13 +296,13 @@ class VideoEvent {
 
   @override
   int get hashCode => Object.hash(
-        eventType,
-        duration,
-        size,
-        rotationCorrection,
-        buffered,
-        isPlaying,
-      );
+    eventType,
+    duration,
+    size,
+    rotationCorrection,
+    buffered,
+    isPlaying,
+  );
 }
 
 /// Type of the event.
@@ -468,11 +468,11 @@ class VideoPlayerWebOptionsControls {
 
   /// Disables control options. Default behavior.
   const VideoPlayerWebOptionsControls.disabled()
-      : enabled = false,
-        allowDownload = false,
-        allowFullscreen = false,
-        allowPlaybackRate = false,
-        allowPictureInPicture = false;
+    : enabled = false,
+      allowDownload = false,
+      allowFullscreen = false,
+      allowPlaybackRate = false,
+      allowPictureInPicture = false;
 
   /// Whether native controls are enabled
   final bool enabled;
@@ -600,18 +600,19 @@ class VideoAudioTrack {
 
   @override
   int get hashCode => Object.hash(
-        id,
-        label,
-        language,
-        isSelected,
-        bitrate,
-        sampleRate,
-        channelCount,
-        codec,
-      );
+    id,
+    label,
+    language,
+    isSelected,
+    bitrate,
+    sampleRate,
+    channelCount,
+    codec,
+  );
 
   @override
-  String toString() => 'VideoAudioTrack('
+  String toString() =>
+      'VideoAudioTrack('
       'id: $id, '
       'label: $label, '
       'language: $language, '

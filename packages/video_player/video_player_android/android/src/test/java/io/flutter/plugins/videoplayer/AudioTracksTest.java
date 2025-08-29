@@ -36,37 +36,36 @@ public class AudioTracksTest {
   @Before
   public void setUp() {
     MockitoAnnotations.openMocks(this);
-    
+
     // Create a concrete VideoPlayer implementation for testing
-    videoPlayer = new VideoPlayer(
-        mockVideoPlayerCallbacks,
-        mockSurfaceProducer,
-        () -> mockExoPlayer
-    ) {};
+    videoPlayer =
+        new VideoPlayer(mockVideoPlayerCallbacks, mockSurfaceProducer, () -> mockExoPlayer) {};
   }
 
   @Test
   public void testGetAudioTracks_withMultipleAudioTracks() {
     // Create mock formats for audio tracks
-    Format audioFormat1 = new Format.Builder()
-        .setId("audio_track_1")
-        .setLabel("English")
-        .setLanguage("en")
-        .setBitrate(128000)
-        .setSampleRate(48000)
-        .setChannelCount(2)
-        .setCodecs("mp4a.40.2")
-        .build();
+    Format audioFormat1 =
+        new Format.Builder()
+            .setId("audio_track_1")
+            .setLabel("English")
+            .setLanguage("en")
+            .setBitrate(128000)
+            .setSampleRate(48000)
+            .setChannelCount(2)
+            .setCodecs("mp4a.40.2")
+            .build();
 
-    Format audioFormat2 = new Format.Builder()
-        .setId("audio_track_2")
-        .setLabel("Español")
-        .setLanguage("es")
-        .setBitrate(96000)
-        .setSampleRate(44100)
-        .setChannelCount(2)
-        .setCodecs("mp4a.40.2")
-        .build();
+    Format audioFormat2 =
+        new Format.Builder()
+            .setId("audio_track_2")
+            .setLabel("Español")
+            .setLanguage("es")
+            .setBitrate(96000)
+            .setSampleRate(44100)
+            .setChannelCount(2)
+            .setCodecs("mp4a.40.2")
+            .build();
 
     // Mock audio groups
     when(mockAudioGroup1.getType()).thenReturn(C.TRACK_TYPE_AUDIO);
@@ -137,15 +136,16 @@ public class AudioTracksTest {
   @Test
   public void testGetAudioTracks_withNullValues() {
     // Create format with null/missing values
-    Format audioFormat = new Format.Builder()
-        .setId("audio_track_null")
-        .setLabel(null) // Null label
-        .setLanguage(null) // Null language
-        .setBitrate(Format.NO_VALUE) // No bitrate
-        .setSampleRate(Format.NO_VALUE) // No sample rate
-        .setChannelCount(Format.NO_VALUE) // No channel count
-        .setCodecs(null) // Null codec
-        .build();
+    Format audioFormat =
+        new Format.Builder()
+            .setId("audio_track_null")
+            .setLabel(null) // Null label
+            .setLanguage(null) // Null language
+            .setBitrate(Format.NO_VALUE) // No bitrate
+            .setSampleRate(Format.NO_VALUE) // No sample rate
+            .setChannelCount(Format.NO_VALUE) // No channel count
+            .setCodecs(null) // Null codec
+            .build();
 
     // Mock audio group
     when(mockAudioGroup1.getType()).thenReturn(C.TRACK_TYPE_AUDIO);
@@ -178,19 +178,21 @@ public class AudioTracksTest {
   @Test
   public void testGetAudioTracks_withMultipleTracksInSameGroup() {
     // Create format for group with multiple tracks
-    Format audioFormat1 = new Format.Builder()
-        .setId("audio_track_1")
-        .setLabel("Track 1")
-        .setLanguage("en")
-        .setBitrate(128000)
-        .build();
+    Format audioFormat1 =
+        new Format.Builder()
+            .setId("audio_track_1")
+            .setLabel("Track 1")
+            .setLanguage("en")
+            .setBitrate(128000)
+            .build();
 
-    Format audioFormat2 = new Format.Builder()
-        .setId("audio_track_2")
-        .setLabel("Track 2")
-        .setLanguage("en")
-        .setBitrate(192000)
-        .build();
+    Format audioFormat2 =
+        new Format.Builder()
+            .setId("audio_track_2")
+            .setLabel("Track 2")
+            .setLanguage("en")
+            .setBitrate(192000)
+            .build();
 
     // Mock audio group with multiple tracks
     when(mockAudioGroup1.getType()).thenReturn(C.TRACK_TYPE_AUDIO);
@@ -222,20 +224,11 @@ public class AudioTracksTest {
   @Test
   public void testGetAudioTracks_withDifferentCodecs() {
     // Test various codec formats
-    Format aacFormat = new Format.Builder()
-        .setCodecs("mp4a.40.2")
-        .setLabel("AAC Track")
-        .build();
+    Format aacFormat = new Format.Builder().setCodecs("mp4a.40.2").setLabel("AAC Track").build();
 
-    Format ac3Format = new Format.Builder()
-        .setCodecs("ac-3")
-        .setLabel("AC3 Track")
-        .build();
+    Format ac3Format = new Format.Builder().setCodecs("ac-3").setLabel("AC3 Track").build();
 
-    Format eac3Format = new Format.Builder()
-        .setCodecs("ec-3")
-        .setLabel("EAC3 Track")
-        .build();
+    Format eac3Format = new Format.Builder().setCodecs("ec-3").setLabel("EAC3 Track").build();
 
     // Mock audio groups
     when(mockAudioGroup1.getType()).thenReturn(C.TRACK_TYPE_AUDIO);
@@ -264,13 +257,14 @@ public class AudioTracksTest {
   @Test
   public void testGetAudioTracks_withHighBitrateValues() {
     // Test with high bitrate values
-    Format highBitrateFormat = new Format.Builder()
-        .setId("high_bitrate_track")
-        .setLabel("High Quality")
-        .setBitrate(1536000) // 1.5 Mbps
-        .setSampleRate(96000) // 96 kHz
-        .setChannelCount(8) // 7.1 surround
-        .build();
+    Format highBitrateFormat =
+        new Format.Builder()
+            .setId("high_bitrate_track")
+            .setLabel("High Quality")
+            .setBitrate(1536000) // 1.5 Mbps
+            .setSampleRate(96000) // 96 kHz
+            .setChannelCount(8) // 7.1 surround
+            .build();
 
     when(mockAudioGroup1.getType()).thenReturn(C.TRACK_TYPE_AUDIO);
     when(mockAudioGroup1.length()).thenReturn(1);
@@ -304,16 +298,13 @@ public class AudioTracksTest {
       Tracks.Group mockGroup = mock(Tracks.Group.class);
       when(mockGroup.getType()).thenReturn(C.TRACK_TYPE_AUDIO);
       when(mockGroup.length()).thenReturn(1);
-      
-      Format format = new Format.Builder()
-          .setId("track_" + i)
-          .setLabel("Track " + i)
-          .setLanguage("en")
-          .build();
-      
+
+      Format format =
+          new Format.Builder().setId("track_" + i).setLabel("Track " + i).setLanguage("en").build();
+
       when(mockGroup.getTrackFormat(0)).thenReturn(format);
       when(mockGroup.isTrackSelected(0)).thenReturn(i == 0); // Only first track selected
-      
+
       groups.add(mockGroup);
     }
 
@@ -328,9 +319,10 @@ public class AudioTracksTest {
     // Verify results
     assertNotNull(result);
     assertEquals(numGroups, result.size());
-    
+
     // Should complete within reasonable time (1 second for 50 tracks)
-    assertTrue("getAudioTracks took too long: " + (endTime - startTime) + "ms", 
-               (endTime - startTime) < 1000);
+    assertTrue(
+        "getAudioTracks took too long: " + (endTime - startTime) + "ms",
+        (endTime - startTime) < 1000);
   }
 }
