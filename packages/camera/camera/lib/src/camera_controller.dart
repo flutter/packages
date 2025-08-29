@@ -439,11 +439,9 @@ class CameraController extends ValueNotifier<CameraValue> {
 
   /// Sets the description of the camera.
   ///
-  /// By default, if a video recording is in progress, calling this method will cancel the current recording on Android.
-  ///
-  /// To keep recording active while switching cameras on Android, start the
-  /// recording with [startVideoRecording] and set
-  /// `enableAndroidPersistentRecording` to `true`.
+  /// On Android, calling this method will normally cancel any active recording.
+  /// To avoid this, start the recording with [startVideoRecording]
+  /// and set `enablePersistentRecording` to `true`.
   ///
   /// Throws a [CameraException] if setting the description fails.
   Future<void> setDescription(CameraDescription description) async {
@@ -561,14 +559,14 @@ class CameraController extends ValueNotifier<CameraValue> {
   /// The video is returned as a [XFile] after calling [stopVideoRecording].
   /// Throws a [CameraException] if the capture fails.
   ///
-  /// The [enableAndroidPersistentRecording] parameter is only available on Android.
-  /// If set to true, configures the recording to be a persistent recording.
+  /// If [enablePersistentRecording] parameter is set to true, configures the recording to be a persistent recording.
   /// A persistent recording will only be stopped by explicitly calling [stopVideoRecording]
   /// and will ignore events that would normally cause recording to stop,
   /// such as lifecycle events or explicit calls to [setDescription] while recording is in progress.
+  /// Currently a no-op on platforms other than Android.
   Future<void> startVideoRecording({
     onLatestImageAvailable? onAvailable,
-    bool enableAndroidPersistentRecording = false,
+    bool enablePersistentRecording = false,
   }) async {
     _throwIfNotInitialized('startVideoRecording');
     if (value.isRecordingVideo) {
@@ -590,7 +588,7 @@ class CameraController extends ValueNotifier<CameraValue> {
         VideoCaptureOptions(
           _cameraId,
           streamCallback: streamCallback,
-          enableAndroidPersistentRecording: enableAndroidPersistentRecording,
+          enablePersistentRecording: enablePersistentRecording,
         ),
       );
       value = value.copyWith(

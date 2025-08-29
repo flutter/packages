@@ -34,6 +34,10 @@ use cases, the plugin behaves according to the following:
     video recording and image streaming is supported, but concurrent video recording, image
     streaming, and image capture is not supported.
 
+### setDescriptionWhileRecording
+`setDescriptionWhileRecording`, used to switch cameras while recording video. Calling this method will normally cancel any active recording. 
+To avoid this, start the recording with `startVideoCapturing` and set `enablePersistentRecording` of `VideoCaptureOptions` to `true`.
+
 ### 240p resolution configuration for video recording
 
 240p resolution configuration for video recording is unsupported by CameraX, and thus,

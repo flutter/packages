@@ -18,7 +18,7 @@ class VideoCaptureOptions {
     this.maxDuration,
     this.streamCallback,
     this.streamOptions,
-    this.enableAndroidPersistentRecording = false,
+    this.enablePersistentRecording = false,
   }) : assert(
          streamOptions == null || streamCallback != null,
          'Must specify streamCallback if providing streamOptions.',
@@ -44,16 +44,16 @@ class VideoCaptureOptions {
   /// Should only be set if a streamCallback is also present.
   final CameraImageStreamOptions? streamOptions;
 
-  /// **Android only.**
-  ///
   /// When `true`, configures the recording to be a persistent recording.
   ///
-  /// A persistent recording will only be stopped by explicitly calling [CameraController.stopVideoRecording] and will ignore events that would normally cause recording to stop, such as
-  /// * lifecycle events
-  /// * calling [CameraController.setDescription] while a recording is in progress
+  /// A persistent recording will only be stopped by explicitly calling [CameraController.stopVideoRecording]
+  /// and will ignore events that would normally cause recording to stop, such as lifecycle events.
+  ///
+  /// **Note:** On Android, calling [CameraController.setDescription] will normally cancel any active recording.
+  /// To avoid this, set this parameter to `true`.
   ///
   /// Defaults to `false`.
-  final bool enableAndroidPersistentRecording;
+  final bool enablePersistentRecording;
 
   @override
   bool operator ==(Object other) =>
@@ -64,8 +64,7 @@ class VideoCaptureOptions {
           maxDuration == other.maxDuration &&
           streamCallback == other.streamCallback &&
           streamOptions == other.streamOptions &&
-          enableAndroidPersistentRecording ==
-              other.enableAndroidPersistentRecording;
+          enablePersistentRecording == other.enablePersistentRecording;
 
   @override
   int get hashCode => Object.hash(
@@ -73,6 +72,6 @@ class VideoCaptureOptions {
     maxDuration,
     streamCallback,
     streamOptions,
-    enableAndroidPersistentRecording,
+    enablePersistentRecording,
   );
 }

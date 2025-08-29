@@ -288,7 +288,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   ResolutionSelector? _presetResolutionSelector;
 
   /// The ID of the surface texture that the camera preview is drawn to.
-  int? _flutterSurfaceTextureId;
+  late int _flutterSurfaceTextureId;
 
   /// Returns list of all available cameras and their descriptions.
   @override
@@ -442,7 +442,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     _initialDefaultDisplayRotation = await deviceOrientationManager
         .getDefaultDisplayRotation();
 
-    return _flutterSurfaceTextureId!;
+    return _flutterSurfaceTextureId;
   }
 
   /// Initializes the camera on the device.
@@ -487,7 +487,7 @@ class AndroidCameraCameraX extends CameraPlatform {
       cameraSelector!,
       <UseCase>[preview!, imageCapture!, imageAnalysis!],
     );
-    await _updateCameraInfoAndLiveCameraState(_flutterSurfaceTextureId!);
+    await _updateCameraInfoAndLiveCameraState(_flutterSurfaceTextureId);
     previewInitiallyBound = true;
     _previewIsPaused = false;
 
@@ -926,6 +926,10 @@ class AndroidCameraCameraX extends CameraPlatform {
   }
 
   /// Sets the active camera while recording.
+  ///
+  /// Calling this method will normally cancel any active recording.
+  /// To avoid this, start the recording with [startVideoCapturing]
+  /// and set `enablePersistentRecording` of [VideoCaptureOptions] to `true`.
   @override
   Future<void> setDescriptionWhileRecording(
     CameraDescription description,
@@ -962,9 +966,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     // Retrieve info required for correcting the rotation of the camera preview
     sensorOrientationDegrees = description.sensorOrientation.toDouble();
 
-    if (_flutterSurfaceTextureId != null) {
-      await _updateCameraInfoAndLiveCameraState(_flutterSurfaceTextureId!);
-    }
+    await _updateCameraInfoAndLiveCameraState(_flutterSurfaceTextureId);
   }
 
   /// Resume the paused preview for the selected camera.
@@ -1173,7 +1175,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     );
     pendingRecording = await recorder!.prepareRecording(videoOutputPath!);
 
-    if (options.enableAndroidPersistentRecording) {
+    if (options.enablePersistentRecording) {
       pendingRecording = await pendingRecording?.asPersistentRecording();
     }
 

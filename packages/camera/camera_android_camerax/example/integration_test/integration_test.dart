@@ -227,11 +227,11 @@ void main() {
     expect(duration, lessThan(recordingTime - timePaused));
   }, skip: skipFor157181);
 
-  testWidgets('Switch camera while recording captures full video', (
+  testWidgets('Set description while recording captures full video', (
     WidgetTester tester,
   ) async {
     final List<CameraDescription> cameras = await availableCameras();
-    if (cameras.isEmpty) {
+    if (cameras.length < 2) {
       return;
     }
 
@@ -239,34 +239,25 @@ void main() {
       cameras[0],
       mediaSettings: const MediaSettings(
         resolutionPreset: ResolutionPreset.medium,
+        enableAudio: true,
       ),
     );
     await controller.initialize();
     await controller.prepareForVideoRecording();
 
-    await controller.startVideoRecording(enablePersistentRecording: true);
+    if (Platform.isAndroid) {
+      await controller.startVideoRecording(enablePersistentRecording: true);
+    } else {
+      await controller.startVideoRecording();
+    }
 
-    sleep(const Duration(seconds: 2));
+    await controller.setDescription(cameras[1]);
 
-    await controller.setDescription(
-      cameras.firstWhere(
-        (CameraDescription description) =>
-            description != controller.description,
-        orElse: () => cameras.first,
-      ),
-    );
+    await tester.pumpAndSettle(const Duration(seconds: 4));
 
-    sleep(const Duration(seconds: 1));
+    await controller.setDescription(cameras[0]);
 
-    await controller.setDescription(
-      cameras.firstWhere(
-        (CameraDescription description) =>
-            description != controller.description,
-        orElse: () => cameras.first,
-      ),
-    );
-
-    sleep(const Duration(seconds: 1));
+    await tester.pumpAndSettle(const Duration(seconds: 1));
 
     final XFile file = await controller.stopVideoRecording();
 
@@ -283,5 +274,5 @@ void main() {
       greaterThanOrEqualTo(const Duration(seconds: 4).inMilliseconds),
     );
     await controller.dispose();
-  }, skip: skipFor157181);
+  });
 }
