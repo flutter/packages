@@ -232,16 +232,22 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
         }
 
         String nonce = params.getNonce();
+        String hostedDomain = params.getHostedDomain();
         GetCredentialRequest.Builder requestBuilder = new GetCredentialRequest.Builder();
         if (params.getUseButtonFlow()) {
           GetSignInWithGoogleOption.Builder optionBuilder =
               new GetSignInWithGoogleOption.Builder(serverClientId);
+          if (hostedDomain != null) {
+            optionBuilder.setHostedDomainFilter(hostedDomain);
+          }
           if (nonce != null) {
             optionBuilder.setNonce(nonce);
           }
           requestBuilder.addCredentialOption(optionBuilder.build());
         } else {
           GetCredentialRequestGoogleIdOptionParams optionParams = params.getGoogleIdOptionParams();
+          // TODO(stuartmorgan): Add a hosted domain filter here if hosted
+          // domain support is added to GetGoogleIdOption in the future.
           GetGoogleIdOption.Builder optionBuilder =
               new GetGoogleIdOption.Builder()
                   .setFilterByAuthorizedAccounts(optionParams.getFilterToAuthorized())

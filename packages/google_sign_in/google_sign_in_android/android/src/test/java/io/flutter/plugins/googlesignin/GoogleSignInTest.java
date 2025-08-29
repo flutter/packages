@@ -181,6 +181,7 @@ public class GoogleSignInTest {
             false,
             new GetCredentialRequestGoogleIdOptionParams(false, false),
             "serverClientId",
+            null,
             null);
 
     final String displayName = "Jane User";
@@ -236,6 +237,7 @@ public class GoogleSignInTest {
             true,
             new GetCredentialRequestGoogleIdOptionParams(false, false),
             "serverClientId",
+            null,
             null);
 
     plugin.setActivity(mockActivity);
@@ -265,6 +267,7 @@ public class GoogleSignInTest {
             false,
             new GetCredentialRequestGoogleIdOptionParams(false, false),
             "serverClientId",
+            null,
             null);
 
     plugin.setActivity(mockActivity);
@@ -288,6 +291,40 @@ public class GoogleSignInTest {
   }
 
   @Test
+  public void getCredential_passesHostedDomainInButtonFlow() {
+    final String hostedDomain = "example.com";
+    GetCredentialRequestParams params =
+        new GetCredentialRequestParams(
+            true,
+            new GetCredentialRequestGoogleIdOptionParams(false, false),
+            "serverClientId",
+            hostedDomain,
+            null);
+
+    plugin.setActivity(mockActivity);
+    plugin.getCredential(
+        params,
+        ResultCompat.asCompatCallback(
+            reply -> {
+              // This test doesn't trigger the getCredentialsAsync callback that would call this,
+              // so if this is reached something has gone wrong.
+              fail();
+              return null;
+            }));
+
+    ArgumentCaptor<GetCredentialRequest> captor =
+        ArgumentCaptor.forClass(GetCredentialRequest.class);
+    verify(mockCredentialManager)
+        .getCredentialAsync(eq(mockActivity), captor.capture(), any(), any(), any());
+
+    assertEquals(1, captor.getValue().getCredentialOptions().size());
+    assertEquals(
+        hostedDomain,
+        ((GetSignInWithGoogleOption) captor.getValue().getCredentialOptions().get(0))
+            .getHostedDomainFilter());
+  }
+
+  @Test
   public void getCredential_passesNonceInButtonFlow() {
     final String nonce = "nonce";
     GetCredentialRequestParams params =
@@ -295,6 +332,7 @@ public class GoogleSignInTest {
             true,
             new GetCredentialRequestGoogleIdOptionParams(false, false),
             "serverClientId",
+            null,
             nonce);
 
     plugin.setActivity(mockActivity);
@@ -327,6 +365,7 @@ public class GoogleSignInTest {
             false,
             new GetCredentialRequestGoogleIdOptionParams(false, false),
             "serverClientId",
+            null,
             nonce);
 
     plugin.setActivity(mockActivity);
@@ -357,6 +396,7 @@ public class GoogleSignInTest {
             false,
             new GetCredentialRequestGoogleIdOptionParams(false, false),
             "serverClientId",
+            null,
             null);
 
     final Boolean[] callbackCalled = new Boolean[1];
@@ -381,7 +421,7 @@ public class GoogleSignInTest {
   public void getCredential_reportsMissingServerClientId() {
     GetCredentialRequestParams params =
         new GetCredentialRequestParams(
-            false, new GetCredentialRequestGoogleIdOptionParams(false, false), null, null);
+            false, new GetCredentialRequestGoogleIdOptionParams(false, false), null, null, null);
 
     final Boolean[] callbackCalled = new Boolean[1];
     plugin.setActivity(mockActivity);
@@ -408,6 +448,7 @@ public class GoogleSignInTest {
             false,
             new GetCredentialRequestGoogleIdOptionParams(false, false),
             "serverClientId",
+            null,
             null);
 
     final Boolean[] callbackCalled = new Boolean[1];
@@ -452,6 +493,7 @@ public class GoogleSignInTest {
             false,
             new GetCredentialRequestGoogleIdOptionParams(false, false),
             "serverClientId",
+            null,
             null);
 
     final Boolean[] callbackCalled = new Boolean[1];
@@ -492,6 +534,7 @@ public class GoogleSignInTest {
             false,
             new GetCredentialRequestGoogleIdOptionParams(false, false),
             "serverClientId",
+            null,
             null);
 
     final Boolean[] callbackCalled = new Boolean[1];
@@ -532,6 +575,7 @@ public class GoogleSignInTest {
             false,
             new GetCredentialRequestGoogleIdOptionParams(false, false),
             "serverClientId",
+            null,
             null);
 
     final Boolean[] callbackCalled = new Boolean[1];
@@ -573,6 +617,7 @@ public class GoogleSignInTest {
             false,
             new GetCredentialRequestGoogleIdOptionParams(false, false),
             "serverClientId",
+            null,
             null);
 
     final Boolean[] callbackCalled = new Boolean[1];
@@ -613,6 +658,7 @@ public class GoogleSignInTest {
             false,
             new GetCredentialRequestGoogleIdOptionParams(false, false),
             "serverClientId",
+            null,
             null);
 
     final Boolean[] callbackCalled = new Boolean[1];
@@ -653,6 +699,7 @@ public class GoogleSignInTest {
             false,
             new GetCredentialRequestGoogleIdOptionParams(false, false),
             "serverClientId",
+            null,
             null);
 
     final Boolean[] callbackCalled = new Boolean[1];

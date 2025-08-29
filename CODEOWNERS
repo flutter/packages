@@ -10,12 +10,12 @@ packages/cross_file/**                                   @ditman
 packages/extension_google_sign_in_as_googleapis_auth/**  @ditman
 packages/file_selector/**                                @stuartmorgan-g
 packages/flutter_lints/**                                @chunhtai
-packages/flutter_migrate/**                              @stuartmorgan-g
 packages/flutter_template_images/**                      @stuartmorgan-g
 packages/go_router/**                                    @chunhtai
 packages/go_router_builder/**                            @chunhtai
 packages/google_adsense/**                               @sokoloff06 @ditman
 packages/google_identity_services_web/**                 @ditman
+packages/google_fonts/**                                 @Piinks
 packages/google_maps_flutter/**                          @stuartmorgan-g
 packages/google_sign_in/**                               @stuartmorgan-g
 packages/image_picker/**                                 @tarrinneal

@@ -21,6 +21,10 @@ import 'package:integration_test/integration_test.dart';
 // (For Color opacity values, for example)
 const double _acceptableDelta = 0.01;
 
+extension GMapsProps on JSObject {
+  external bool get clickable;
+}
+
 /// Test Shapes (Circle, Polygon, Polyline)
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -120,6 +124,30 @@ void main() {
         (circle.get('strokeOpacity')! as JSNumber).toDartDouble,
         closeTo(1, _acceptableDelta),
       );
+    });
+
+    testWidgets('addCircles sets clickable according to consumeTapEvents', (
+      WidgetTester tester,
+    ) async {
+      final Set<Circle> circles = <Circle>{
+        const Circle(circleId: CircleId('1'), consumeTapEvents: true),
+        const Circle(circleId: CircleId('2')),
+      };
+
+      controller.addCircles(circles);
+
+      final CircleController? circle1Controller =
+          controller.circles[const CircleId('1')];
+      final CircleController? circle2Controller =
+          controller.circles[const CircleId('2')];
+
+      final bool circle1Clickable =
+          (circle1Controller!.circle! as JSObject).clickable;
+      final bool circle2Clickable =
+          (circle2Controller!.circle! as JSObject).clickable;
+
+      expect(circle1Clickable, true);
+      expect(circle2Clickable, false);
     });
   });
 
@@ -304,6 +332,30 @@ void main() {
       expect(paths.getAt(1)?.getAt(1)?.lat, 29.57);
       expect(paths.getAt(1)?.getAt(2)?.lat, 27.339);
     });
+
+    testWidgets('addPolygons sets clickable according to consumeTapEvents', (
+      WidgetTester tester,
+    ) async {
+      final Set<Polygon> polygons = <Polygon>{
+        const Polygon(polygonId: PolygonId('1'), consumeTapEvents: true),
+        const Polygon(polygonId: PolygonId('2')),
+      };
+
+      controller.addPolygons(polygons);
+
+      final PolygonController? polygon1Controller =
+          controller.polygons[const PolygonId('1')];
+      final PolygonController? polygon2Controller =
+          controller.polygons[const PolygonId('2')];
+
+      final bool polygon1Clickable =
+          (polygon1Controller!.polygon! as JSObject).clickable;
+      final bool polygon2Clickable =
+          (polygon2Controller!.polygon! as JSObject).clickable;
+
+      expect(polygon1Clickable, true);
+      expect(polygon2Clickable, false);
+    });
   });
 
   group('PolylinesController', () {
@@ -386,6 +438,30 @@ void main() {
         (line.get('strokeOpacity')! as JSNumber).toDartDouble,
         closeTo(0.5, _acceptableDelta),
       );
+    });
+
+    testWidgets('addPolylines sets clickable according to consumeTapEvents', (
+      WidgetTester tester,
+    ) async {
+      final Set<Polyline> polylines = <Polyline>{
+        const Polyline(polylineId: PolylineId('1'), consumeTapEvents: true),
+        const Polyline(polylineId: PolylineId('2')),
+      };
+
+      controller.addPolylines(polylines);
+
+      final PolylineController? polyline1Controller =
+          controller.lines[const PolylineId('1')];
+      final PolylineController? polyline2Controller =
+          controller.lines[const PolylineId('2')];
+
+      final bool polyline1Clickable =
+          (polyline1Controller!.line! as JSObject).clickable;
+      final bool polyline2Clickable =
+          (polyline2Controller!.line! as JSObject).clickable;
+
+      expect(polyline1Clickable, true);
+      expect(polyline2Clickable, false);
     });
   });
 
