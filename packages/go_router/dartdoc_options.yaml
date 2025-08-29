@@ -33,6 +33,9 @@ dartdoc:
     "Error handling":
       markdown: doc/error-handling.md
       name: Error handling
+    "State restoration":
+      markdown: doc/state-restoration.md
+      name: State restoration
   categoryOrder:
     - "Get started"
     - "Upgrading"
@@ -45,6 +48,7 @@ dartdoc:
     - "Type-safe routes"
     - "Named routes"
     - "Error handling"
+    - "State restoration"
   showUndocumentedCategories: true
   ignore:
     - broken-link
