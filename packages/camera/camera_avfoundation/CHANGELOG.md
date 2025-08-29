@@ -1,3 +1,7 @@
+## 0.9.21+3
+
+* Migrates `updateOrientation` method to Swift.
+
 ## 0.9.21+2
 
 * Migrates `DefaultCamera` initialization to Swift.
