@@ -191,20 +191,17 @@ final class DefaultCamera: FLTCam, Camera {
     if mediaSettings.framesPerSecond != nil {
       // The frame rate can be changed only on a locked for configuration device.
       try mediaSettingsAVWrapper.lockDevice(captureDevice)
+      defer { mediaSettingsAVWrapper.unlockDevice(captureDevice) }
+
       mediaSettingsAVWrapper.beginConfiguration(for: videoCaptureSession)
+      defer { mediaSettingsAVWrapper.commitConfiguration(for: videoCaptureSession) }
 
       // Possible values for presets are hard-coded in FLT interface having
       // corresponding AVCaptureSessionPreset counterparts.
       // If _resolutionPreset is not supported by camera there is
       // fallback to lower resolution presets.
       // If none can be selected there is error condition.
-      do {
-        try setCaptureSessionPreset(mediaSettings.resolutionPreset)
-      } catch {
-        videoCaptureSession.commitConfiguration()
-        captureDevice.unlockForConfiguration()
-        throw error
-      }
+      try setCaptureSessionPreset(mediaSettings.resolutionPreset)
 
       FLTSelectBestFormatForRequestedFrameRate(
         captureDevice,
@@ -219,9 +216,6 @@ final class DefaultCamera: FLTCam, Camera {
         mediaSettingsAVWrapper.setMinFrameDuration(duration, on: captureDevice)
         mediaSettingsAVWrapper.setMaxFrameDuration(duration, on: captureDevice)
       }
-
-      mediaSettingsAVWrapper.commitConfiguration(for: videoCaptureSession)
-      mediaSettingsAVWrapper.unlockDevice(captureDevice)
     } else {
       // If the frame rate is not important fall to a less restrictive
       // behavior (no configuration locking).
@@ -582,9 +576,7 @@ final class DefaultCamera: FLTCam, Camera {
         guard let strongSelf = self else { return }
 
         strongSelf.captureSessionQueue.async { [weak self] in
-          self?.inProgressSavePhotoDelegates.removeValue(
-            forKey:
-              settings.uniqueID)
+          self?.inProgressSavePhotoDelegates.removeValue(forKey: settings.uniqueID)
         }
 
         if let error = error {
