@@ -1,3 +1,7 @@
+## 0.5.14
+
+* Stop processing events and cancel subscriptions when controller is disposed.
+
 ## 0.5.13
 
 * Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
