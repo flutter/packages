@@ -112,7 +112,7 @@ class MockGoogleSignInPlatform extends _i1.Mock
 
   @override
   _i4.Future<void> clearAuthorizationToken(
-    _i2.ClearAuthorizationTokensParams? params,
+    _i2.ClearAuthorizationTokenParams? params,
   ) =>
       (super.noSuchMethod(
             Invocation.method(#clearAuthorizationToken, [params]),

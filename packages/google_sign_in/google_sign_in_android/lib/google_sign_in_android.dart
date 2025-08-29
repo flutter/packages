@@ -28,7 +28,7 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
   }
 
   @override
-  Future<void> clearAuthorizationToken(ClearAuthorizationTokensParams params) {
+  Future<void> clearAuthorizationToken(ClearAuthorizationTokenParams params) {
     return _hostApi.clearAuthorizationToken(params.accessToken);
   }
 

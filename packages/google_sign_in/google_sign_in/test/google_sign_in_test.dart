@@ -773,8 +773,8 @@ void main() {
       final VerificationResult verification = verify(
         mockPlatform.clearAuthorizationToken(captureAny),
       );
-      final ClearAuthorizationTokensParams params =
-          verification.captured[0] as ClearAuthorizationTokensParams;
+      final ClearAuthorizationTokenParams params =
+          verification.captured[0] as ClearAuthorizationTokenParams;
       expect(params.accessToken, token);
     });
   });

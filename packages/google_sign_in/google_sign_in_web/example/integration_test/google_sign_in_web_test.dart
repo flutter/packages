@@ -362,7 +362,7 @@ void main() {
       testWidgets('calls clearAuthorizationToken on GIS client', (_) async {
         const String someToken = 'someToken';
         await plugin.clearAuthorizationToken(
-          const ClearAuthorizationTokensParams(accessToken: someToken),
+          const ClearAuthorizationTokenParams(accessToken: someToken),
         );
 
         final List<Object?> arguments =

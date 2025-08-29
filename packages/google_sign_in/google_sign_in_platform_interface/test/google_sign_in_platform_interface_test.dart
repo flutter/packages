@@ -46,7 +46,7 @@ void main() {
 
         expect(
           () => platform.clearAuthorizationToken(
-            const ClearAuthorizationTokensParams(accessToken: 'someToken'),
+            const ClearAuthorizationTokenParams(accessToken: 'someToken'),
           ),
           throwsUnimplementedError,
         );

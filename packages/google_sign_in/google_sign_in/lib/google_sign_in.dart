@@ -250,7 +250,7 @@ class GoogleSignInAuthorizationClient {
   /// https://support.google.com/accounts/answer/13533235.
   Future<void> clearAuthorizationToken({required String accessToken}) {
     return GoogleSignInPlatform.instance.clearAuthorizationToken(
-      ClearAuthorizationTokensParams(accessToken: accessToken),
+      ClearAuthorizationTokenParams(accessToken: accessToken),
     );
   }
 
