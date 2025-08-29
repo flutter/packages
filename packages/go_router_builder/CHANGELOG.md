@@ -1,3 +1,7 @@
+## 4.0.1
+
+- Fixes unnecessary whitespace in generated `RelativeGoRouteData`. 
+
 ## 4.0.0
 
 - Make Route mixins public.
