@@ -225,6 +225,104 @@ final class DefaultCamera: FLTCam, Camera {
     updateOrientation()
   }
 
+  private func setCaptureSessionPreset(
+    _ resolutionPreset: FCPPlatformResolutionPreset
+  ) throws {
+    switch resolutionPreset {
+    case .max:
+      if let bestFormat = highestResolutionFormat(forCaptureDevice: captureDevice) {
+        videoCaptureSession.sessionPreset = .inputPriority
+        if (try? captureDevice.lockForConfiguration()) != nil {
+          // Set the best device format found and finish the device configuration.
+          captureDevice.activeFormat = bestFormat
+          captureDevice.unlockForConfiguration()
+          break
+        }
+      }
+      fallthrough
+    case .ultraHigh:
+      if videoCaptureSession.canSetSessionPreset(.hd4K3840x2160) {
+        videoCaptureSession.sessionPreset = .hd4K3840x2160
+        break
+      }
+      if videoCaptureSession.canSetSessionPreset(.high) {
+        videoCaptureSession.sessionPreset = .high
+        break
+      }
+      fallthrough
+    case .veryHigh:
+      if videoCaptureSession.canSetSessionPreset(.hd1920x1080) {
+        videoCaptureSession.sessionPreset = .hd1920x1080
+        break
+      }
+      fallthrough
+    case .high:
+      if videoCaptureSession.canSetSessionPreset(.hd1280x720) {
+        videoCaptureSession.sessionPreset = .hd1280x720
+        break
+      }
+      fallthrough
+    case .medium:
+      if videoCaptureSession.canSetSessionPreset(.vga640x480) {
+        videoCaptureSession.sessionPreset = .vga640x480
+        break
+      }
+      fallthrough
+    case .low:
+      if videoCaptureSession.canSetSessionPreset(.cif352x288) {
+        videoCaptureSession.sessionPreset = .cif352x288
+        break
+      }
+      fallthrough
+    default:
+      if videoCaptureSession.canSetSessionPreset(.low) {
+        videoCaptureSession.sessionPreset = .low
+      } else {
+        throw NSError(
+          domain: NSCocoaErrorDomain,
+          code: URLError.unknown.rawValue,
+          userInfo: [
+            NSLocalizedDescriptionKey: "No capture session available for current capture session."
+          ])
+      }
+    }
+
+    let size = videoDimensionsForFormat(captureDevice.activeFormat)
+    previewSize = CGSize(width: CGFloat(size.width), height: CGFloat(size.height))
+    audioCaptureSession.sessionPreset = videoCaptureSession.sessionPreset
+  }
+
+  /// Finds the highest available resolution in terms of pixel count for the given device.
+  /// Preferred are formats with the same subtype as current activeFormat.
+  private func highestResolutionFormat(forCaptureDevice captureDevice: FLTCaptureDevice)
+    -> FLTCaptureDeviceFormat?
+  {
+    let preferredSubType = CMFormatDescriptionGetMediaSubType(
+      captureDevice.activeFormat.formatDescription)
+    var bestFormat: FLTCaptureDeviceFormat? = nil
+    var maxPixelCount: UInt = 0
+    var isBestSubTypePreferred = false
+
+    for format in captureDevice.formats {
+      let resolution = videoDimensionsForFormat(format)
+      let height = UInt(resolution.height)
+      let width = UInt(resolution.width)
+      let pixelCount = height * width
+      let subType = CMFormatDescriptionGetMediaSubType(format.formatDescription)
+      let isSubTypePreferred = subType == preferredSubType
+
+      if pixelCount > maxPixelCount
+        || (pixelCount == maxPixelCount && isSubTypePreferred && !isBestSubTypePreferred)
+      {
+        bestFormat = format
+        maxPixelCount = pixelCount
+        isBestSubTypePreferred = isSubTypePreferred
+      }
+    }
+
+    return bestFormat
+  }
+
   func setUpCaptureSessionForAudioIfNeeded() {
     // Don't setup audio twice or we will lose the audio.
     guard !mediaSettings.enableAudio || !isAudioSetup else { return }

@@ -1,6 +1,6 @@
 ## 0.9.21+4
 
-* Migrates `updateOrientation` method to Swift.
+* Migrates `updateOrientation` and `setCaptureSessionPreset` methods to Swift.
 
 ## 0.9.21+3
 

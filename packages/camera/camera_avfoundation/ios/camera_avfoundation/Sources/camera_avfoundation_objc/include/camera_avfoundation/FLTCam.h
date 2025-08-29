@@ -22,7 +22,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 // captureDevice is assignable for the Swift DefaultCamera subclass
 @property(strong, nonatomic) NSObject<FLTCaptureDevice> *captureDevice;
-@property(readonly, nonatomic) CGSize previewSize;
+// videoCaptureSession is assignable for the Swift DefaultCamera subclass
+@property(assign, nonatomic) CGSize previewSize;
 @property(assign, nonatomic) FCPPlatformImageFileFormat fileFormat;
 
 // Properties exposed for the Swift DefaultCamera subclass
@@ -38,10 +39,6 @@ NS_ASSUME_NONNULL_BEGIN
 /// A wrapper for CMVideoFormatDescriptionGetDimensions.
 /// Allows for alternate implementations in tests.
 @property(nonatomic, copy) VideoDimensionsForFormat videoDimensionsForFormat;
-
-// Methods exposed for the Swift DefaultCamera subclass
-- (BOOL)setCaptureSessionPreset:(FCPPlatformResolutionPreset)resolutionPreset
-                      withError:(NSError **)error;
 
 @end
 
