@@ -226,7 +226,7 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
             id: track.trackId!.toString(),
             label: track.label!,
             language: track.language!,
-            isSelected: track.isSelected!,
+            isSelected: track.isSelected,
             bitrate: track.bitrate,
             sampleRate: track.sampleRate,
             channelCount: track.channelCount,
@@ -247,11 +247,7 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
             id: trackId,
             label: label,
             language: track.languageCode!,
-            isSelected: track.isSelected!,
-            bitrate: null, // Not available for media selection tracks
-            sampleRate: null,
-            channelCount: null,
-            codec: null,
+            isSelected: track.isSelected,
           ),
         );
       }
