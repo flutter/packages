@@ -927,11 +927,46 @@ class AndroidCameraCameraX extends CameraPlatform {
 
   /// Sets the active camera while recording.
   ///
-  /// Currently unsupported, so is a no-op.
+  /// Calling this method will normally cancel any active recording.
+  /// To avoid this, start the recording with [startVideoCapturing]
+  /// and set `enablePersistentRecording` of [VideoCaptureOptions] to `true`.
   @override
-  Future<void> setDescriptionWhileRecording(CameraDescription description) {
-    // TODO(camsim99): Implement this feature, see https://github.com/flutter/flutter/issues/148013.
-    return Future<void>.value();
+  Future<void> setDescriptionWhileRecording(
+    CameraDescription description,
+  ) async {
+    if (recording == null) {
+      cameraErrorStreamController.add(
+        'Camera description not set. No active video recording.',
+      );
+      return;
+    }
+    final CameraInfo? chosenCameraInfo = _savedCameras[description.name];
+
+    // Save CameraSelector that matches cameraDescription.
+    final LensFacing cameraSelectorLensDirection =
+        _getCameraSelectorLensDirection(description.lensDirection);
+    cameraIsFrontFacing = cameraSelectorLensDirection == LensFacing.front;
+    cameraSelector = proxy.newCameraSelector(
+      cameraInfoForFilter: chosenCameraInfo,
+    );
+
+    // unbind all use cases and rebind to new cameraSelector
+    final List<UseCase> useCases = <UseCase>[preview!, videoCapture!];
+    if (imageCapture != null &&
+        await processCameraProvider!.isBound(imageCapture!)) {
+      useCases.add(imageCapture!);
+    }
+    if (imageAnalysis != null &&
+        await processCameraProvider!.isBound(imageAnalysis!)) {
+      useCases.add(imageAnalysis!);
+    }
+    await processCameraProvider?.unbindAll();
+    await processCameraProvider?.bindToLifecycle(cameraSelector!, useCases);
+
+    // Retrieve info required for correcting the rotation of the camera preview
+    sensorOrientationDegrees = description.sensorOrientation.toDouble();
+
+    await _updateCameraInfoAndLiveCameraState(_flutterSurfaceTextureId);
   }
 
   /// Resume the paused preview for the selected camera.
@@ -1139,6 +1174,10 @@ class AndroidCameraCameraX extends CameraPlatform {
       '.temp',
     );
     pendingRecording = await recorder!.prepareRecording(videoOutputPath!);
+
+    if (options.enablePersistentRecording) {
+      pendingRecording = await pendingRecording?.asPersistentRecording();
+    }
 
     // Enable/disable recording audio as requested. If enabling audio is requested
     // and permission was not granted when the camera was created, then recording

@@ -18,6 +18,7 @@ class VideoCaptureOptions {
     this.maxDuration,
     this.streamCallback,
     this.streamOptions,
+    this.enablePersistentRecording = false,
   }) : assert(
          streamOptions == null || streamCallback != null,
          'Must specify streamCallback if providing streamOptions.',
@@ -43,6 +44,17 @@ class VideoCaptureOptions {
   /// Should only be set if a streamCallback is also present.
   final CameraImageStreamOptions? streamOptions;
 
+  /// When `true`, configures the recording to be a persistent recording.
+  ///
+  /// A persistent recording will only be stopped by explicitly calling [CameraController.stopVideoRecording]
+  /// and will ignore events that would normally cause recording to stop, such as lifecycle events.
+  ///
+  /// **Note:** On Android, calling [CameraController.setDescription] will normally cancel any active recording.
+  /// To avoid this, set this parameter to `true`.
+  ///
+  /// Defaults to `false`.
+  final bool enablePersistentRecording;
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -51,9 +63,15 @@ class VideoCaptureOptions {
           cameraId == other.cameraId &&
           maxDuration == other.maxDuration &&
           streamCallback == other.streamCallback &&
-          streamOptions == other.streamOptions;
+          streamOptions == other.streamOptions &&
+          enablePersistentRecording == other.enablePersistentRecording;
 
   @override
-  int get hashCode =>
-      Object.hash(cameraId, maxDuration, streamCallback, streamOptions);
+  int get hashCode => Object.hash(
+    cameraId,
+    maxDuration,
+    streamCallback,
+    streamOptions,
+    enablePersistentRecording,
+  );
 }
