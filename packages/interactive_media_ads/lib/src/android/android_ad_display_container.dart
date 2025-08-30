@@ -5,6 +5,7 @@
 import 'dart:async';
 import 'dart:collection';
 
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 
@@ -301,7 +302,17 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
         weakThis.target?.videoAdPlayerCallbacks.remove(callback);
       },
       loadAd: (_, ima.AdMediaInfo adMediaInfo, __) {
-        weakThis.target?._loadedAdMediaInfoQueue.add(adMediaInfo);
+        final AndroidAdDisplayContainer? container = weakThis.target;
+        if (container != null) {
+          container._loadedAdMediaInfoQueue.add(adMediaInfo);
+          if (container._loadedAdMediaInfoQueue.length == 1) {
+            container._startPlayerWhenVideoIsPrepared = false;
+            container._videoView.setAudioFocusRequest(
+              ima.AudioManagerAudioFocus.none,
+            );
+            container._videoView.setVideoUri(adMediaInfo.url);
+          }
+        }
       },
       pauseAd: (_, __) async {
         final AndroidAdDisplayContainer? container = weakThis.target;
@@ -324,8 +335,29 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
       playAd: (_, ima.AdMediaInfo adMediaInfo) {
         final AndroidAdDisplayContainer? container = weakThis.target;
         if (container != null) {
+          assert(container._loadedAdMediaInfoQueue.first == adMediaInfo);
+
+          container._videoView.setAudioFocusRequest(
+            ima.AudioManagerAudioFocus.gain,
+          );
+
+          if (container._mediaPlayer != null) {
+            // When the
+            container._mediaPlayer!
+                .start()
+                .then((_) => container._startAdProgressTracking())
+                .onError<PlatformException>(
+                  (_, _) {
+                    if (container._mediaPlayer != null) {
+                      container._videoView.setVideoUri(adMediaInfo.url);
+                    }
+                  },
+                  test:
+                      (PlatformException exception) =>
+                          exception.code == 'IllegalStateException',
+                );
+          }
           container._startPlayerWhenVideoIsPrepared = true;
-          container._videoView.setVideoUri(adMediaInfo.url);
 
           for (final ima.VideoAdPlayerCallback callback
               in container.videoAdPlayerCallbacks) {
@@ -337,10 +369,22 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
           }
         }
       },
-      release: (_) {
-        weakThis.target?._release();
+      release: (_) => weakThis.target?._release(),
+      stopAd: (_, __) {
+        final AndroidAdDisplayContainer? container = weakThis.target;
+        if (container != null) {
+          container._resetStateForNextAd();
+          if (container._loadedAdMediaInfoQueue.isNotEmpty) {
+            container._startPlayerWhenVideoIsPrepared = false;
+            container._videoView.setAudioFocusRequest(
+              ima.AudioManagerAudioFocus.none,
+            );
+            container._videoView.setVideoUri(
+              container._loadedAdMediaInfoQueue.first.url,
+            );
+          }
+        }
       },
-      stopAd: (_, __) => weakThis.target?._resetStateForNextAd(),
     );
   }
 }

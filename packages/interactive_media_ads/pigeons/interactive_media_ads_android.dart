@@ -738,6 +738,7 @@ abstract class VideoView extends View {
   VideoView();
 
   /// Callback to be invoked when the media source is ready for playback.
+  @async
   late final void Function(MediaPlayer player)? onPrepared;
 
   /// Callback to be invoked when playback of a media source has completed.

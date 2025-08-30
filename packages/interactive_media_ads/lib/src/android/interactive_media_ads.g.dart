@@ -66,7 +66,8 @@ class PigeonOverrides {
       int extra,
     )
     onError,
-    void Function(VideoView pigeon_instance, MediaPlayer player)? onPrepared,
+    Future<void> Function(VideoView pigeon_instance, MediaPlayer player)?
+    onPrepared,
     void Function(VideoView pigeon_instance, MediaPlayer player)? onCompletion,
   })?
   videoView_new;
@@ -4452,7 +4453,8 @@ class VideoView extends View {
   factory VideoView({
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-    void Function(VideoView pigeon_instance, MediaPlayer player)? onPrepared,
+    Future<void> Function(VideoView pigeon_instance, MediaPlayer player)?
+    onPrepared,
     void Function(VideoView pigeon_instance, MediaPlayer player)? onCompletion,
     required void Function(
       VideoView pigeon_instance,
@@ -4554,7 +4556,7 @@ class VideoView extends View {
   ///
   /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
-  final void Function(VideoView pigeon_instance, MediaPlayer player)?
+  final Future<void> Function(VideoView pigeon_instance, MediaPlayer player)?
   onPrepared;
 
   /// Callback to be invoked when playback of a media source has completed.
@@ -4611,7 +4613,8 @@ class VideoView extends View {
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-    void Function(VideoView pigeon_instance, MediaPlayer player)? onPrepared,
+    Future<void> Function(VideoView pigeon_instance, MediaPlayer player)?
+    onPrepared,
     void Function(VideoView pigeon_instance, MediaPlayer player)? onCompletion,
     void Function(
       VideoView pigeon_instance,
@@ -4653,7 +4656,7 @@ class VideoView extends View {
             'Argument for dev.flutter.pigeon.interactive_media_ads.VideoView.onPrepared was null, expected non-null MediaPlayer.',
           );
           try {
-            (onPrepared ?? arg_pigeon_instance!.onPrepared)?.call(
+            await (onPrepared ?? arg_pigeon_instance!.onPrepared)?.call(
               arg_pigeon_instance!,
               arg_player!,
             );
