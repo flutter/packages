@@ -173,6 +173,7 @@ class RoutingConfig {
 /// {@category Deep linking}
 /// {@category Error handling}
 /// {@category Named routes}
+/// {@category State restoration}
 class GoRouter implements RouterConfig<RouteMatchList> {
   /// Default constructor to configure a GoRouter with a routes builder
   /// and an error page builder.
