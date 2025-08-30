@@ -1,3 +1,8 @@
+## 0.9.21+3
+
+* Migrates `updateOrientation` and `setCaptureSessionPreset` methods to Swift.
+* Removes `FLTCam` class.
+
 ## 0.9.21+2
 
 * Migrates `DefaultCamera` initialization to Swift.
