@@ -220,6 +220,36 @@ enum UiElement {
   unknown,
 }
 
+/// Used to indicate the type of audio focus for a view.
+///
+/// See https://developer.android.com/reference/android/media/AudioManager#AUDIOFOCUS_GAIN.
+enum AudioManagerAudioFocus {
+  /// Used to indicate a gain of audio focus, or a request of audio focus,
+  /// of unknown duration.
+  gain,
+
+  /// Used to indicate a temporary gain or request of audio focus, anticipated
+  /// to last a short amount of time.
+  ///
+  /// Examples of temporary changes are the playback of driving directions, or
+  /// an event notification.
+  gainTransient,
+
+  /// Used to indicate a temporary request of audio focus, anticipated to last a
+  /// short amount of time, during which no other applications, or system
+  /// components, should play anything.
+  gainTransientExclusive,
+
+  /// Used to indicate a temporary request of audio focus, anticipated to last a
+  /// short amount of time, and where it is acceptable for other audio
+  /// applications to keep playing after having lowered their output level (also
+  /// referred to as "ducking").
+  gainTransientMayDuck,
+
+  /// Used to indicate no audio focus has been gained or lost, or requested.
+  none,
+}
+
 /// A base class for more specialized container interfaces.
 ///
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/BaseDisplayContainer.html.
@@ -724,6 +754,12 @@ abstract class VideoView extends View {
   ///
   /// In milliseconds.
   int getCurrentPosition();
+
+  /// Sets which type of audio focus will be requested during the playback, or
+  /// configures playback to not request audio focus.
+  ///
+  /// Only available on Android API 26+. Noop on lower versions.
+  void setAudioFocusRequest(AudioManagerAudioFocus focusGain);
 }
 
 /// This class represents the basic building block for user interface components.

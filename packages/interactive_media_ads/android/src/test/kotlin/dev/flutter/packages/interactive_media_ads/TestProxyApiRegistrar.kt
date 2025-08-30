@@ -14,4 +14,8 @@ class TestProxyApiRegistrar : ProxyApiRegistrar(mock(), mock()) {
   override fun runOnMainThread(callback: Runnable) {
     callback.run()
   }
+
+  override fun sdkIsAtLeast(version: Int): Boolean {
+    return true
+  }
 }

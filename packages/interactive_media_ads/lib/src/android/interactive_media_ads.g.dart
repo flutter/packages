@@ -852,6 +852,36 @@ enum UiElement {
   unknown,
 }
 
+/// Used to indicate the type of audio focus for a view.
+///
+/// See https://developer.android.com/reference/android/media/AudioManager#AUDIOFOCUS_GAIN.
+enum AudioManagerAudioFocus {
+  /// Used to indicate a gain of audio focus, or a request of audio focus,
+  /// of unknown duration.
+  gain,
+
+  /// Used to indicate a temporary gain or request of audio focus, anticipated
+  /// to last a short amount of time.
+  ///
+  /// Examples of temporary changes are the playback of driving directions, or
+  /// an event notification.
+  gainTransient,
+
+  /// Used to indicate a temporary request of audio focus, anticipated to last a
+  /// short amount of time, during which no other applications, or system
+  /// components, should play anything.
+  gainTransientExclusive,
+
+  /// Used to indicate a temporary request of audio focus, anticipated to last a
+  /// short amount of time, and where it is acceptable for other audio
+  /// applications to keep playing after having lowered their output level (also
+  /// referred to as "ducking").
+  gainTransientMayDuck,
+
+  /// Used to indicate no audio focus has been gained or lost, or requested.
+  none,
+}
+
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
@@ -870,6 +900,9 @@ class _PigeonCodec extends StandardMessageCodec {
       writeValue(buffer, value.index);
     } else if (value is UiElement) {
       buffer.putUint8(132);
+      writeValue(buffer, value.index);
+    } else if (value is AudioManagerAudioFocus) {
+      buffer.putUint8(133);
       writeValue(buffer, value.index);
     } else {
       super.writeValue(buffer, value);
@@ -891,6 +924,9 @@ class _PigeonCodec extends StandardMessageCodec {
       case 132:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : UiElement.values[value];
+      case 133:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AudioManagerAudioFocus.values[value];
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -4798,6 +4834,40 @@ class VideoView extends View {
       );
     } else {
       return (pigeonVar_replyList[0] as int?)!;
+    }
+  }
+
+  /// Sets which type of audio focus will be requested during the playback, or
+  /// configures playback to not request audio focus.
+  ///
+  /// Only available on Android API 26+. Noop on lower versions.
+  Future<void> setAudioFocusRequest(AudioManagerAudioFocus focusGain) async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecVideoView;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.VideoView.setAudioFocusRequest';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, focusGain],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return;
     }
   }
 
