@@ -5,10 +5,10 @@
 import 'package:go_router/go_router.dart';
 
 @TypedGoRoute<MyRoute>(path: '/product/:id')
-class MyRoute extends GoRouteData with _$MyRoute {
+class MyRoute extends GoRouteData with $MyRoute {
   const MyRoute(this.id);
   final int id;
 }
 
 // avoid error when run analytic
-mixin _$MyRoute {}
+mixin $MyRoute {}

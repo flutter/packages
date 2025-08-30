@@ -1,9 +1,9 @@
 RouteBase get $nullableRequiredParamNotInPath => GoRouteData.$route(
       path: 'bob',
-      factory: _$NullableRequiredParamNotInPath._fromState,
+      factory: $NullableRequiredParamNotInPath._fromState,
     );
 
-mixin _$NullableRequiredParamNotInPath on GoRouteData {
+mixin $NullableRequiredParamNotInPath on GoRouteData {
   static NullableRequiredParamNotInPath _fromState(GoRouterState state) =>
       NullableRequiredParamNotInPath(
         id: _$convertMapValue('id', state.uri.queryParameters, int.tryParse),
