@@ -1,7 +1,10 @@
-Generates the `GoogleFonts` class, list of supported families.
+The generator will check [fonts.google.com](https://fonts.google.com) for new fonts, validate each URL, and
+regenerate most Dart code (e.g. `GoogleFonts` class), and [families_supported](./families_supported).
 
-1. Navigate to the root directory of this project.
+Note: Googlers only, pending b/280786655, there is an additional prerequisite step required of the Google Fonts team
+
+1. Navigate to the root directory of this project ([packages/google_fonts](..)).
 2. `dart generator/generator.dart`
 
-See generator/families\_diff for a summary of changes, which is useful when
-generating CHANGELOG.md entries.
+After generation, see [families_diff](families_diff) for a summary of changes, which is useful when
+generating `CHANGELOG.md` entries.
