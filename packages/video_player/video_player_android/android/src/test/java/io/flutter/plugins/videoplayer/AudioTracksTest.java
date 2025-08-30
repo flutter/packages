@@ -9,9 +9,12 @@ import static org.mockito.Mockito.*;
 
 import androidx.media3.common.C;
 import androidx.media3.common.Format;
+import androidx.media3.common.MediaItem;
 import androidx.media3.common.Tracks;
 import androidx.media3.exoplayer.ExoPlayer;
+import com.google.common.collect.ImmutableList;
 import io.flutter.view.TextureRegistry;
+import java.lang.reflect.Field;
 import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,6 +29,8 @@ public class AudioTracksTest {
   @Mock private ExoPlayer mockExoPlayer;
   @Mock private VideoPlayerCallbacks mockVideoPlayerCallbacks;
   @Mock private TextureRegistry.SurfaceProducer mockSurfaceProducer;
+  @Mock private MediaItem mockMediaItem;
+  @Mock private VideoPlayerOptions mockVideoPlayerOptions;
   @Mock private Tracks mockTracks;
   @Mock private Tracks.Group mockAudioGroup1;
   @Mock private Tracks.Group mockAudioGroup2;
@@ -39,7 +44,24 @@ public class AudioTracksTest {
 
     // Create a concrete VideoPlayer implementation for testing
     videoPlayer =
-        new VideoPlayer(mockVideoPlayerCallbacks, mockSurfaceProducer, () -> mockExoPlayer) {};
+        new VideoPlayer(mockVideoPlayerCallbacks, mockMediaItem, mockVideoPlayerOptions, mockSurfaceProducer, () -> mockExoPlayer) {
+          @Override
+          protected ExoPlayerEventListener createExoPlayerEventListener(ExoPlayer exoPlayer, TextureRegistry.SurfaceProducer surfaceProducer) {
+            return mock(ExoPlayerEventListener.class);
+          }
+        };
+  }
+
+  // Helper method to set the length field on a mocked Tracks.Group
+  private void setGroupLength(Tracks.Group group, int length) {
+    try {
+      Field lengthField = group.getClass().getDeclaredField("length");
+      lengthField.setAccessible(true);
+      lengthField.setInt(group, length);
+    } catch (Exception e) {
+      // If reflection fails, we'll handle it in the test
+      throw new RuntimeException("Failed to set length field", e);
+    }
   }
 
   @Test
@@ -50,7 +72,7 @@ public class AudioTracksTest {
             .setId("audio_track_1")
             .setLabel("English")
             .setLanguage("en")
-            .setBitrate(128000)
+            .setAverageBitrate(128000)
             .setSampleRate(48000)
             .setChannelCount(2)
             .setCodecs("mp4a.40.2")
@@ -61,28 +83,28 @@ public class AudioTracksTest {
             .setId("audio_track_2")
             .setLabel("Español")
             .setLanguage("es")
-            .setBitrate(96000)
+            .setAverageBitrate(96000)
             .setSampleRate(44100)
             .setChannelCount(2)
             .setCodecs("mp4a.40.2")
             .build();
 
-    // Mock audio groups
+    // Mock audio groups and set length field
+    setGroupLength(mockAudioGroup1, 1);
+    setGroupLength(mockAudioGroup2, 1);
+    
     when(mockAudioGroup1.getType()).thenReturn(C.TRACK_TYPE_AUDIO);
-    when(mockAudioGroup1.length()).thenReturn(1);
     when(mockAudioGroup1.getTrackFormat(0)).thenReturn(audioFormat1);
     when(mockAudioGroup1.isTrackSelected(0)).thenReturn(true);
 
     when(mockAudioGroup2.getType()).thenReturn(C.TRACK_TYPE_AUDIO);
-    when(mockAudioGroup2.length()).thenReturn(1);
     when(mockAudioGroup2.getTrackFormat(0)).thenReturn(audioFormat2);
     when(mockAudioGroup2.isTrackSelected(0)).thenReturn(false);
 
-    // Mock video group (should be ignored)
     when(mockVideoGroup.getType()).thenReturn(C.TRACK_TYPE_VIDEO);
 
     // Mock tracks
-    List<Tracks.Group> groups = List.of(mockAudioGroup1, mockAudioGroup2, mockVideoGroup);
+    ImmutableList<Tracks.Group> groups = ImmutableList.of(mockAudioGroup1, mockAudioGroup2, mockVideoGroup);
     when(mockTracks.getGroups()).thenReturn(groups);
     when(mockExoPlayer.getCurrentTracks()).thenReturn(mockTracks);
 
@@ -122,7 +144,7 @@ public class AudioTracksTest {
     // Mock video group only (no audio tracks)
     when(mockVideoGroup.getType()).thenReturn(C.TRACK_TYPE_VIDEO);
 
-    List<Tracks.Group> groups = List.of(mockVideoGroup);
+    ImmutableList<Tracks.Group> groups = ImmutableList.of(mockVideoGroup);
     when(mockTracks.getGroups()).thenReturn(groups);
     when(mockExoPlayer.getCurrentTracks()).thenReturn(mockTracks);
 
@@ -143,19 +165,19 @@ public class AudioTracksTest {
             .setId("audio_track_null")
             .setLabel(null) // Null label
             .setLanguage(null) // Null language
-            .setBitrate(Format.NO_VALUE) // No bitrate
+            .setAverageBitrate(Format.NO_VALUE) // No bitrate
             .setSampleRate(Format.NO_VALUE) // No sample rate
             .setChannelCount(Format.NO_VALUE) // No channel count
             .setCodecs(null) // Null codec
             .build();
 
-    // Mock audio group
+    // Mock audio group and set length field
+    setGroupLength(mockAudioGroup1, 1);
     when(mockAudioGroup1.getType()).thenReturn(C.TRACK_TYPE_AUDIO);
-    when(mockAudioGroup1.length()).thenReturn(1);
     when(mockAudioGroup1.getTrackFormat(0)).thenReturn(audioFormat);
     when(mockAudioGroup1.isTrackSelected(0)).thenReturn(false);
 
-    List<Tracks.Group> groups = List.of(mockAudioGroup1);
+    ImmutableList<Tracks.Group> groups = ImmutableList.of(mockAudioGroup1);
     when(mockTracks.getGroups()).thenReturn(groups);
     when(mockExoPlayer.getCurrentTracks()).thenReturn(mockTracks);
 
@@ -186,7 +208,7 @@ public class AudioTracksTest {
             .setId("audio_track_1")
             .setLabel("Track 1")
             .setLanguage("en")
-            .setBitrate(128000)
+            .setAverageBitrate(128000)
             .build();
 
     Format audioFormat2 =
@@ -194,18 +216,18 @@ public class AudioTracksTest {
             .setId("audio_track_2")
             .setLabel("Track 2")
             .setLanguage("en")
-            .setBitrate(192000)
+            .setAverageBitrate(192000)
             .build();
 
     // Mock audio group with multiple tracks
+    setGroupLength(mockAudioGroup1, 2);
     when(mockAudioGroup1.getType()).thenReturn(C.TRACK_TYPE_AUDIO);
-    when(mockAudioGroup1.length()).thenReturn(2);
     when(mockAudioGroup1.getTrackFormat(0)).thenReturn(audioFormat1);
     when(mockAudioGroup1.getTrackFormat(1)).thenReturn(audioFormat2);
     when(mockAudioGroup1.isTrackSelected(0)).thenReturn(true);
     when(mockAudioGroup1.isTrackSelected(1)).thenReturn(false);
 
-    List<Tracks.Group> groups = List.of(mockAudioGroup1);
+    ImmutableList<Tracks.Group> groups = ImmutableList.of(mockAudioGroup1);
     when(mockTracks.getGroups()).thenReturn(groups);
     when(mockExoPlayer.getCurrentTracks()).thenReturn(mockTracks);
 
@@ -234,15 +256,15 @@ public class AudioTracksTest {
 
     Format eac3Format = new Format.Builder().setCodecs("ec-3").setLabel("EAC3 Track").build();
 
-    // Mock audio groups
+    // Mock audio group with different codecs
+    setGroupLength(mockAudioGroup1, 3);
     when(mockAudioGroup1.getType()).thenReturn(C.TRACK_TYPE_AUDIO);
-    when(mockAudioGroup1.length()).thenReturn(3);
     when(mockAudioGroup1.getTrackFormat(0)).thenReturn(aacFormat);
     when(mockAudioGroup1.getTrackFormat(1)).thenReturn(ac3Format);
     when(mockAudioGroup1.getTrackFormat(2)).thenReturn(eac3Format);
     when(mockAudioGroup1.isTrackSelected(anyInt())).thenReturn(false);
 
-    List<Tracks.Group> groups = List.of(mockAudioGroup1);
+    ImmutableList<Tracks.Group> groups = ImmutableList.of(mockAudioGroup1);
     when(mockTracks.getGroups()).thenReturn(groups);
     when(mockExoPlayer.getCurrentTracks()).thenReturn(mockTracks);
 
@@ -266,17 +288,18 @@ public class AudioTracksTest {
         new Format.Builder()
             .setId("high_bitrate_track")
             .setLabel("High Quality")
-            .setBitrate(1536000) // 1.5 Mbps
+            .setAverageBitrate(1536000) // 1.5 Mbps
             .setSampleRate(96000) // 96 kHz
             .setChannelCount(8) // 7.1 surround
             .build();
 
+    // Mock audio group with high bitrate format
+    setGroupLength(mockAudioGroup1, 1);
     when(mockAudioGroup1.getType()).thenReturn(C.TRACK_TYPE_AUDIO);
-    when(mockAudioGroup1.length()).thenReturn(1);
     when(mockAudioGroup1.getTrackFormat(0)).thenReturn(highBitrateFormat);
     when(mockAudioGroup1.isTrackSelected(0)).thenReturn(true);
 
-    List<Tracks.Group> groups = List.of(mockAudioGroup1);
+    ImmutableList<Tracks.Group> groups = ImmutableList.of(mockAudioGroup1);
     when(mockTracks.getGroups()).thenReturn(groups);
     when(mockExoPlayer.getCurrentTracks()).thenReturn(mockTracks);
 
@@ -301,20 +324,18 @@ public class AudioTracksTest {
     List<Tracks.Group> groups = new java.util.ArrayList<>();
 
     for (int i = 0; i < numGroups; i++) {
-      Tracks.Group mockGroup = mock(Tracks.Group.class);
-      when(mockGroup.getType()).thenReturn(C.TRACK_TYPE_AUDIO);
-      when(mockGroup.length()).thenReturn(1);
-
       Format format =
           new Format.Builder().setId("track_" + i).setLabel("Track " + i).setLanguage("en").build();
 
+      Tracks.Group mockGroup = mock(Tracks.Group.class);
+      setGroupLength(mockGroup, 1);
+      when(mockGroup.getType()).thenReturn(C.TRACK_TYPE_AUDIO);
       when(mockGroup.getTrackFormat(0)).thenReturn(format);
       when(mockGroup.isTrackSelected(0)).thenReturn(i == 0); // Only first track selected
-
       groups.add(mockGroup);
     }
 
-    when(mockTracks.getGroups()).thenReturn(groups);
+    when(mockTracks.getGroups()).thenReturn(ImmutableList.copyOf(groups));
     when(mockExoPlayer.getCurrentTracks()).thenReturn(mockTracks);
 
     // Measure performance
