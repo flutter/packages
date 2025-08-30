@@ -224,10 +224,10 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
       for (final ExoPlayerAudioTrackData track in nativeData.exoPlayerTracks!) {
         tracks.add(
           VideoAudioTrack(
-            id: track.trackId!,
-            label: track.label!,
-            language: track.language!,
-            isSelected: track.isSelected!,
+            id: track.trackId,
+            label: track.label ?? 'Unknown',
+            language: track.language ?? 'und',
+            isSelected: track.isSelected,
             bitrate: track.bitrate,
             sampleRate: track.sampleRate,
             channelCount: track.channelCount,

@@ -87,15 +87,16 @@ public class AudioTracksTest {
     when(mockExoPlayer.getCurrentTracks()).thenReturn(mockTracks);
 
     // Test the method
-    List<Messages.AudioTrackMessage> result = videoPlayer.getAudioTracks();
+    Messages.NativeAudioTrackData nativeData = videoPlayer.getAudioTracks();
+    List<Messages.ExoPlayerAudioTrackData> result = nativeData.getExoPlayerTracks();
 
     // Verify results
     assertNotNull(result);
     assertEquals(2, result.size());
 
     // Verify first track
-    Messages.AudioTrackMessage track1 = result.get(0);
-    assertEquals("0_0", track1.getId());
+    Messages.ExoPlayerAudioTrackData track1 = result.get(0);
+    assertEquals("0_0", track1.getTrackId());
     assertEquals("English", track1.getLabel());
     assertEquals("en", track1.getLanguage());
     assertTrue(track1.getIsSelected());
@@ -105,8 +106,8 @@ public class AudioTracksTest {
     assertEquals("mp4a.40.2", track1.getCodec());
 
     // Verify second track
-    Messages.AudioTrackMessage track2 = result.get(1);
-    assertEquals("1_0", track2.getId());
+    Messages.ExoPlayerAudioTrackData track2 = result.get(1);
+    assertEquals("1_0", track2.getTrackId());
     assertEquals("Español", track2.getLabel());
     assertEquals("es", track2.getLanguage());
     assertFalse(track2.getIsSelected());
@@ -126,7 +127,8 @@ public class AudioTracksTest {
     when(mockExoPlayer.getCurrentTracks()).thenReturn(mockTracks);
 
     // Test the method
-    List<Messages.AudioTrackMessage> result = videoPlayer.getAudioTracks();
+    Messages.NativeAudioTrackData nativeData = videoPlayer.getAudioTracks();
+    List<Messages.ExoPlayerAudioTrackData> result = nativeData.getExoPlayerTracks();
 
     // Verify results
     assertNotNull(result);
@@ -158,14 +160,15 @@ public class AudioTracksTest {
     when(mockExoPlayer.getCurrentTracks()).thenReturn(mockTracks);
 
     // Test the method
-    List<Messages.AudioTrackMessage> result = videoPlayer.getAudioTracks();
+    Messages.NativeAudioTrackData nativeData = videoPlayer.getAudioTracks();
+    List<Messages.ExoPlayerAudioTrackData> result = nativeData.getExoPlayerTracks();
 
     // Verify results
     assertNotNull(result);
     assertEquals(1, result.size());
 
-    Messages.AudioTrackMessage track = result.get(0);
-    assertEquals("0_0", track.getId());
+    Messages.ExoPlayerAudioTrackData track = result.get(0);
+    assertEquals("0_0", track.getTrackId());
     assertEquals("Audio Track 1", track.getLabel()); // Fallback label
     assertEquals("und", track.getLanguage()); // Fallback language
     assertFalse(track.getIsSelected());
@@ -207,18 +210,19 @@ public class AudioTracksTest {
     when(mockExoPlayer.getCurrentTracks()).thenReturn(mockTracks);
 
     // Test the method
-    List<Messages.AudioTrackMessage> result = videoPlayer.getAudioTracks();
+    Messages.NativeAudioTrackData nativeData = videoPlayer.getAudioTracks();
+    List<Messages.ExoPlayerAudioTrackData> result = nativeData.getExoPlayerTracks();
 
     // Verify results
     assertNotNull(result);
     assertEquals(2, result.size());
 
     // Verify track IDs are unique
-    Messages.AudioTrackMessage track1 = result.get(0);
-    Messages.AudioTrackMessage track2 = result.get(1);
-    assertEquals("0_0", track1.getId());
-    assertEquals("0_1", track2.getId());
-    assertNotEquals(track1.getId(), track2.getId());
+    Messages.ExoPlayerAudioTrackData track1 = result.get(0);
+    Messages.ExoPlayerAudioTrackData track2 = result.get(1);
+    assertEquals("0_0", track1.getTrackId());
+    assertEquals("0_1", track2.getTrackId());
+    assertNotEquals(track1.getTrackId(), track2.getTrackId());
   }
 
   @Test
@@ -243,7 +247,8 @@ public class AudioTracksTest {
     when(mockExoPlayer.getCurrentTracks()).thenReturn(mockTracks);
 
     // Test the method
-    List<Messages.AudioTrackMessage> result = videoPlayer.getAudioTracks();
+    Messages.NativeAudioTrackData nativeData = videoPlayer.getAudioTracks();
+    List<Messages.ExoPlayerAudioTrackData> result = nativeData.getExoPlayerTracks();
 
     // Verify results
     assertNotNull(result);
@@ -276,13 +281,14 @@ public class AudioTracksTest {
     when(mockExoPlayer.getCurrentTracks()).thenReturn(mockTracks);
 
     // Test the method
-    List<Messages.AudioTrackMessage> result = videoPlayer.getAudioTracks();
+    Messages.NativeAudioTrackData nativeData = videoPlayer.getAudioTracks();
+    List<Messages.ExoPlayerAudioTrackData> result = nativeData.getExoPlayerTracks();
 
     // Verify results
     assertNotNull(result);
     assertEquals(1, result.size());
 
-    Messages.AudioTrackMessage track = result.get(0);
+    Messages.ExoPlayerAudioTrackData track = result.get(0);
     assertEquals(Long.valueOf(1536000), track.getBitrate());
     assertEquals(Long.valueOf(96000), track.getSampleRate());
     assertEquals(Long.valueOf(8), track.getChannelCount());
@@ -313,7 +319,8 @@ public class AudioTracksTest {
 
     // Measure performance
     long startTime = System.currentTimeMillis();
-    List<Messages.AudioTrackMessage> result = videoPlayer.getAudioTracks();
+    Messages.NativeAudioTrackData nativeData = videoPlayer.getAudioTracks();
+    List<Messages.ExoPlayerAudioTrackData> result = nativeData.getExoPlayerTracks();
     long endTime = System.currentTimeMillis();
 
     // Verify results

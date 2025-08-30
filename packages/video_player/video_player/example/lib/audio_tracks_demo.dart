@@ -87,10 +87,12 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
       // Reload tracks to update selection status
       await _loadAudioTracks();
 
+      if (!mounted) return;
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Selected audio track: $trackId')));
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to select audio track: $e')),
       );

@@ -82,7 +82,7 @@
 
   // Test the method
   FlutterError *error = nil;
-  FVPNativeAudioTrackData *result = [self.player getRawAudioTrackData:&error];
+  FVPNativeAudioTrackData *result = [self.player getAudioTracks:&error];
 
   // Verify results
   XCTAssertNil(error);
@@ -145,7 +145,7 @@
 
   // Test the method
   FlutterError *error = nil;
-  FVPNativeAudioTrackData *result = [self.player getRawAudioTrackData:&error];
+  FVPNativeAudioTrackData *result = [self.player getAudioTracks:&error];
 
   // Verify results
   XCTAssertNil(error);
@@ -176,7 +176,7 @@
 
   // Test the method
   FlutterError *error = nil;
-  FVPNativeAudioTrackData *result = [self.player getRawAudioTrackData:&error];
+  FVPNativeAudioTrackData *result = [self.player getAudioTracks:&error];
 
   // Verify results
   XCTAssertNil(error);
@@ -191,7 +191,7 @@
 
   // Test the method
   FlutterError *error = nil;
-  FVPNativeAudioTrackData *result = [self.player getRawAudioTrackData:&error];
+  FVPNativeAudioTrackData *result = [self.player getAudioTracks:&error];
 
   // Verify results
   XCTAssertNil(error);
@@ -217,7 +217,7 @@
 
   // Test the method
   FlutterError *error = nil;
-  FVPNativeAudioTrackData *result = [self.player getRawAudioTrackData:&error];
+  FVPNativeAudioTrackData *result = [self.player getAudioTracks:&error];
 
   // Verify results
   XCTAssertNil(error);
@@ -243,7 +243,7 @@
 
   // Test the method
   FlutterError *error = nil;
-  FVPNativeAudioTrackData *result = [self.player getRawAudioTrackData:&error];
+  FVPNativeAudioTrackData *result = [self.player getAudioTracks:&error];
 
   // Verify results - should fall back to asset tracks
   XCTAssertNil(error);
@@ -266,7 +266,7 @@
 
   // Test the method
   FlutterError *error = nil;
-  FVPNativeAudioTrackData *result = [self.player getRawAudioTrackData:&error];
+  FVPNativeAudioTrackData *result = [self.player getAudioTracks:&error];
 
   // Verify results - should handle nil option gracefully
   XCTAssertNil(error);
