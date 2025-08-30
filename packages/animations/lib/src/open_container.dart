@@ -260,10 +260,14 @@ class OpenContainer<T extends Object?> extends StatefulWidget {
   final Clip clipBehavior;
 
   @override
-  State<OpenContainer<T?>> createState() => _OpenContainerState<T>();
+  State<OpenContainer<T?>> createState() => OpenContainerState<T>();
 }
 
-class _OpenContainerState<T> extends State<OpenContainer<T?>> {
+/// State for a [OpenContainer].
+///
+/// Can [openContainer] explicitly or via a tap when
+/// [OpenContainer.tappable] is true.
+class OpenContainerState<T> extends State<OpenContainer<T?>> {
   // Key used in [_OpenContainerRoute] to hide the widget returned by
   // [OpenContainer.openBuilder] in the source route while the container is
   // opening/open. A copy of that widget is included in the
@@ -276,6 +280,8 @@ class _OpenContainerState<T> extends State<OpenContainer<T?>> {
   // same widget included in the [_OpenContainerRoute] where it fades out.
   final GlobalKey _closedBuilderKey = GlobalKey();
 
+  /// Open the container using the given middle color and specific route,
+  /// then call `onClosed` with the returned data after popped.
   Future<void> openContainer() async {
     final Color middleColor =
         widget.middleColor ?? Theme.of(context).canvasColor;
