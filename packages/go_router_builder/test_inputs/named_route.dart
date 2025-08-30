@@ -4,7 +4,7 @@
 
 import 'package:go_router/go_router.dart';
 
-mixin _$NamedRoute {}
+mixin $NamedRoute {}
 
 @TypedGoRoute<NamedRoute>(path: '/named-route', name: 'namedRoute')
-class NamedRoute extends GoRouteData with _$NamedRoute {}
+class NamedRoute extends GoRouteData with $NamedRoute {}
