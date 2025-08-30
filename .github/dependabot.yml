@@ -35,6 +35,7 @@ updates:
       - /packages/file_selector/file_selector_android/example/android/app
       - /packages/flutter_plugin_android_lifecycle/example/android/app
       - /packages/go_router/example/android/app
+      - /packages/google_fonts/example/android/app
       - /packages/google_maps_flutter/google_maps_flutter/example/android/app
       - /packages/google_maps_flutter/google_maps_flutter_android/example/android/app
       - /packages/google_sign_in/google_sign_in/example/android/app
