@@ -124,19 +124,19 @@ void main() {
     ) async {
       final int videoPlayerId =
           (await VideoPlayerPlatform.instance.createWithOptions(
-            VideoCreationOptions(
-              dataSource: DataSource(
-                sourceType: DataSourceType.network,
-                uri: getUrlForAssetAsNetworkSource(
-                  'assets/__non_existent.webm',
-                ),
-              ),
-              viewType: VideoViewType.platformView,
+        VideoCreationOptions(
+          dataSource: DataSource(
+            sourceType: DataSourceType.network,
+            uri: getUrlForAssetAsNetworkSource(
+              'assets/__non_existent.webm',
             ),
-          ))!;
+          ),
+          viewType: VideoViewType.platformView,
+        ),
+      ))!;
 
-      final Stream<VideoEvent> eventStream = VideoPlayerPlatform.instance
-          .videoEventsFor(videoPlayerId);
+      final Stream<VideoEvent> eventStream =
+          VideoPlayerPlatform.instance.videoEventsFor(videoPlayerId);
 
       // Mute video to allow autoplay (See https://goo.gl/xX8pDD)
       await VideoPlayerPlatform.instance.setVolume(videoPlayerId, 0);
@@ -207,18 +207,15 @@ void main() {
       'double call to play will emit a single isPlayingStateUpdate event',
       (WidgetTester tester) async {
         final int videoPlayerId = await playerId;
-        final Stream<VideoEvent> eventStream = VideoPlayerPlatform.instance
-            .videoEventsFor(videoPlayerId);
+        final Stream<VideoEvent> eventStream =
+            VideoPlayerPlatform.instance.videoEventsFor(videoPlayerId);
 
-        final Future<List<VideoEvent>> stream =
-            eventStream
-                .timeout(
-                  const Duration(seconds: 2),
-                  onTimeout: (EventSink<VideoEvent> sink) {
-                    sink.close();
-                  },
-                )
-                .toList();
+        final Future<List<VideoEvent>> stream = eventStream.timeout(
+          const Duration(seconds: 2),
+          onTimeout: (EventSink<VideoEvent> sink) {
+            sink.close();
+          },
+        ).toList();
 
         await VideoPlayerPlatform.instance.setVolume(videoPlayerId, 0);
         await VideoPlayerPlatform.instance.play(videoPlayerId);
@@ -250,18 +247,15 @@ void main() {
       'video playback lifecycle',
       (WidgetTester tester) async {
         final int videoPlayerId = await playerId;
-        final Stream<VideoEvent> eventStream = VideoPlayerPlatform.instance
-            .videoEventsFor(videoPlayerId);
+        final Stream<VideoEvent> eventStream =
+            VideoPlayerPlatform.instance.videoEventsFor(videoPlayerId);
 
-        final Future<List<VideoEvent>> stream =
-            eventStream
-                .timeout(
-                  const Duration(seconds: 2),
-                  onTimeout: (EventSink<VideoEvent> sink) {
-                    sink.close();
-                  },
-                )
-                .toList();
+        final Future<List<VideoEvent>> stream = eventStream.timeout(
+          const Duration(seconds: 2),
+          onTimeout: (EventSink<VideoEvent> sink) {
+            sink.close();
+          },
+        ).toList();
 
         await VideoPlayerPlatform.instance.setVolume(videoPlayerId, 0);
         await VideoPlayerPlatform.instance.play(videoPlayerId);

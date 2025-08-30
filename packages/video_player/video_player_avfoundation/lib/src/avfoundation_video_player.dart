@@ -213,6 +213,55 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
+  Future<List<VideoAudioTrack>> getAudioTracks(int playerId) async {
+    final NativeAudioTrackData nativeData =
+        await _playerWith(id: playerId).getAudioTracks();
+    final List<VideoAudioTrack> tracks = <VideoAudioTrack>[];
+
+    // Convert asset tracks to VideoAudioTrack
+    if (nativeData.assetTracks != null) {
+      for (final AssetAudioTrackData track in nativeData.assetTracks!) {
+        tracks.add(
+          VideoAudioTrack(
+            id: track.trackId.toString(),
+            label: track.label ?? 'Unknown',
+            language: track.language ?? 'und',
+            isSelected: track.isSelected,
+            bitrate: track.bitrate,
+            sampleRate: track.sampleRate,
+            channelCount: track.channelCount,
+            codec: track.codec,
+          ),
+        );
+      }
+    }
+
+    // Convert media selection tracks to VideoAudioTrack (for HLS streams)
+    if (nativeData.mediaSelectionTracks != null) {
+      for (final MediaSelectionAudioTrackData track
+          in nativeData.mediaSelectionTracks!) {
+        final String trackId = 'media_selection_${track.index}';
+        final String label = track.commonMetadataTitle ?? track.displayName ?? 'Unknown';
+        tracks.add(
+          VideoAudioTrack(
+            id: trackId,
+            label: label,
+            language: track.languageCode ?? 'und',
+            isSelected: track.isSelected,
+          ),
+        );
+      }
+    }
+
+    return tracks;
+  }
+
+  @override
+  Future<void> selectAudioTrack(int playerId, String trackId) {
+    return _playerWith(id: playerId).selectAudioTrack(trackId);
+  }
+
+  @override
   Widget buildView(int playerId) {
     return buildViewWithOptions(VideoViewOptions(playerId: playerId));
   }

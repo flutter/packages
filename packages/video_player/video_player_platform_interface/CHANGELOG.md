@@ -1,5 +1,6 @@
 ## NEXT
 
+* Adds `VideoAudioTrack` class and `getAudioTracks()`, `selectAudioTrack()` methods to platform interface for audio track management.
 * Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
 
 ## 6.4.0

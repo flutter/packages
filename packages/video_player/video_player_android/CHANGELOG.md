@@ -1,3 +1,7 @@
+## NEXT
+
+* Implements `getAudioTracks()` and `selectAudioTrack()` methods for Android using ExoPlayer.
+
 ## 2.8.13
 
 * Bumps com.android.tools.build:gradle to 8.12.1.

@@ -43,15 +43,15 @@ class VideoPlayerValue {
 
   /// Returns an instance for a video that hasn't been loaded.
   const VideoPlayerValue.uninitialized()
-    : this(duration: Duration.zero, isInitialized: false);
+      : this(duration: Duration.zero, isInitialized: false);
 
   /// Returns an instance with the given [errorDescription].
   const VideoPlayerValue.erroneous(String errorDescription)
-    : this(
-        duration: Duration.zero,
-        isInitialized: false,
-        errorDescription: errorDescription,
-      );
+      : this(
+          duration: Duration.zero,
+          isInitialized: false,
+          errorDescription: errorDescription,
+        );
 
   /// The total duration of the video.
   ///
@@ -148,16 +148,16 @@ class VideoPlayerValue {
 
   @override
   int get hashCode => Object.hash(
-    duration,
-    position,
-    buffered,
-    isPlaying,
-    isBuffering,
-    playbackSpeed,
-    errorDescription,
-    size,
-    isInitialized,
-  );
+        duration,
+        position,
+        buffered,
+        isPlaying,
+        isBuffering,
+        playbackSpeed,
+        errorDescription,
+        size,
+        isInitialized,
+      );
 }
 
 /// A very minimal version of `VideoPlayerController` for running the example
@@ -172,24 +172,24 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
     this.dataSource, {
     this.package,
     this.viewType = VideoViewType.textureView,
-  }) : dataSourceType = DataSourceType.asset,
-       super(const VideoPlayerValue(duration: Duration.zero));
+  })  : dataSourceType = DataSourceType.asset,
+        super(const VideoPlayerValue(duration: Duration.zero));
 
   /// Constructs a [MiniController] playing a video from obtained from
   /// the network.
   MiniController.network(
     this.dataSource, {
     this.viewType = VideoViewType.textureView,
-  }) : dataSourceType = DataSourceType.network,
-       package = null,
-       super(const VideoPlayerValue(duration: Duration.zero));
+  })  : dataSourceType = DataSourceType.network,
+        package = null,
+        super(const VideoPlayerValue(duration: Duration.zero));
 
   /// Constructs a [MiniController] playing a video from obtained from a file.
   MiniController.file(File file, {this.viewType = VideoViewType.textureView})
-    : dataSource = Uri.file(file.absolute.path).toString(),
-      dataSourceType = DataSourceType.file,
-      package = null,
-      super(const VideoPlayerValue(duration: Duration.zero));
+      : dataSource = Uri.file(file.absolute.path).toString(),
+        dataSourceType = DataSourceType.file,
+        package = null,
+        super(const VideoPlayerValue(duration: Duration.zero));
 
   /// The URI to the video file. This will be in different formats depending on
   /// the [DataSourceType] of the original video.
@@ -253,8 +253,7 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
       viewType: viewType,
     );
 
-    _playerId =
-        (await _platform.createWithOptions(creationOptions)) ??
+    _playerId = (await _platform.createWithOptions(creationOptions)) ??
         kUninitializedPlayerId;
     _creatingCompleter!.complete(null);
     final Completer<void> initializingCompleter = Completer<void>();

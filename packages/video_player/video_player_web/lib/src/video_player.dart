@@ -42,8 +42,8 @@ class VideoPlayer {
   VideoPlayer({
     required web.HTMLVideoElement videoElement,
     @visibleForTesting StreamController<VideoEvent>? eventController,
-  }) : _videoElement = videoElement,
-       _eventController = eventController ?? StreamController<VideoEvent>();
+  })  : _videoElement = videoElement,
+        _eventController = eventController ?? StreamController<VideoEvent>();
 
   final StreamController<VideoEvent> _eventController;
   final web.HTMLVideoElement _videoElement;
@@ -313,13 +313,12 @@ class VideoPlayer {
       _videoElement.duration,
     );
 
-    final Size? size =
-        _videoElement.videoHeight.isFinite
-            ? Size(
-              _videoElement.videoWidth.toDouble(),
-              _videoElement.videoHeight.toDouble(),
-            )
-            : null;
+    final Size? size = _videoElement.videoHeight.isFinite
+        ? Size(
+            _videoElement.videoWidth.toDouble(),
+            _videoElement.videoHeight.toDouble(),
+          )
+        : null;
 
     _eventController.add(
       VideoEvent(
@@ -340,10 +339,9 @@ class VideoPlayer {
       _isBuffering = buffering;
       _eventController.add(
         VideoEvent(
-          eventType:
-              _isBuffering
-                  ? VideoEventType.bufferingStart
-                  : VideoEventType.bufferingEnd,
+          eventType: _isBuffering
+              ? VideoEventType.bufferingStart
+              : VideoEventType.bufferingEnd,
         ),
       );
     }
