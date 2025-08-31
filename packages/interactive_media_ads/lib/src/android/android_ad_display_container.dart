@@ -5,7 +5,6 @@
 import 'dart:async';
 import 'dart:collection';
 
-import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 
@@ -140,30 +139,7 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
 
   @override
   Widget build(BuildContext context) {
-    return AndroidViewWidget(
-      key: params.key,
-      view: _frameLayout,
-      platformViewsServiceProxy: _androidParams._platformViewsProxy,
-      layoutDirection: params.layoutDirection,
-      onPlatformViewCreated: () async {
-        adDisplayContainer = await _androidParams._imaProxy
-            .createAdDisplayContainerImaSdkFactory(
-              _frameLayout,
-              _videoAdPlayer,
-            );
-        final Iterable<ima.CompanionAdSlot> nativeCompanionSlots =
-            await Future.wait(
-              _androidParams.companionSlots.map((PlatformCompanionAdSlot slot) {
-                return (slot as AndroidCompanionAdSlot)
-                    .getNativeCompanionAdSlot();
-              }),
-            );
-        await adDisplayContainer!.setCompanionSlots(
-          nativeCompanionSlots.toList(),
-        );
-        params.onContainerAdded(this);
-      },
-    );
+    return _AdPlayer(this);
   }
 
   // Clears the current `MediaPlayer` and resets any saved position of an ad.
@@ -342,20 +318,9 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
           );
 
           if (container._mediaPlayer != null) {
-            // When the
-            container._mediaPlayer!
-                .start()
-                .then((_) => container._startAdProgressTracking())
-                .onError<PlatformException>(
-                  (_, _) {
-                    if (container._mediaPlayer != null) {
-                      container._videoView.setVideoUri(adMediaInfo.url);
-                    }
-                  },
-                  test:
-                      (PlatformException exception) =>
-                          exception.code == 'IllegalStateException',
-                );
+            container._mediaPlayer!.start().then(
+              (_) => container._startAdProgressTracking(),
+            );
           }
           container._startPlayerWhenVideoIsPrepared = true;
 
@@ -384,6 +349,84 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
             );
           }
         }
+      },
+    );
+  }
+}
+
+class _AdPlayer extends StatefulWidget {
+  _AdPlayer(this.container) : super(key: container._androidParams.key);
+
+  final AndroidAdDisplayContainer container;
+
+  @override
+  State<StatefulWidget> createState() => _AdPlayerState();
+}
+
+class _AdPlayerState extends State<_AdPlayer> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    WidgetsBinding.instance.removeObserver(this);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    final AndroidAdDisplayContainer container = widget.container;
+    switch (state) {
+      case AppLifecycleState.resumed:
+        if (container._loadedAdMediaInfoQueue.isNotEmpty) {
+          container._startPlayerWhenVideoIsPrepared = false;
+          container._videoView.setAudioFocusRequest(
+            ima.AudioManagerAudioFocus.none,
+          );
+          container._videoView.setVideoUri(
+            container._loadedAdMediaInfoQueue.first.url,
+          );
+        }
+      case AppLifecycleState.paused:
+        container._mediaPlayer = null;
+      case AppLifecycleState.inactive:
+      case AppLifecycleState.hidden:
+      case AppLifecycleState.detached:
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AndroidViewWidget(
+      view: widget.container._frameLayout,
+      platformViewsServiceProxy:
+          widget.container._androidParams._platformViewsProxy,
+      layoutDirection: widget.container._androidParams.layoutDirection,
+      onPlatformViewCreated: () async {
+        final ima.AdDisplayContainer nativeContainer = await widget
+            .container
+            ._androidParams
+            ._imaProxy
+            .createAdDisplayContainerImaSdkFactory(
+              widget.container._frameLayout,
+              widget.container._videoAdPlayer,
+            );
+        final Iterable<ima.CompanionAdSlot> nativeCompanionSlots =
+            await Future.wait(
+              widget.container._androidParams.companionSlots.map((
+                PlatformCompanionAdSlot slot,
+              ) {
+                return (slot as AndroidCompanionAdSlot)
+                    .getNativeCompanionAdSlot();
+              }),
+            );
+        await nativeContainer.setCompanionSlots(nativeCompanionSlots.toList());
+
+        widget.container.adDisplayContainer = nativeContainer;
+        widget.container.params.onContainerAdded(widget.container);
       },
     );
   }
