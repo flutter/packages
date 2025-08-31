@@ -132,8 +132,8 @@ class _VideoAdExampleScreenState extends State<VideoAdExampleScreen>
           ..addListener(() {
             if (_contentVideoController.value.isCompleted) {
               _adsLoader.contentComplete();
+              setState(() {});
             }
-            setState(() {});
           })
           ..initialize().then((_) {
             // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
