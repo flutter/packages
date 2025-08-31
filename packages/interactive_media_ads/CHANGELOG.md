@@ -1,6 +1,6 @@
 ## 0.2.6+7
 
-* Fixes preloading back-to-back ads on Android.
+* Updates Android `PlatformAdDisplayContainer` implementation to support preloading ads.
 
 ## 0.2.6+6
 
