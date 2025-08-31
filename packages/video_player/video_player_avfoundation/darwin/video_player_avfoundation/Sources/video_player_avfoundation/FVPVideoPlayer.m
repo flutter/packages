@@ -469,8 +469,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 - (nullable FVPNativeAudioTrackData *)getAudioTracks:(FlutterError *_Nullable *_Nonnull)error {
   AVPlayerItem *currentItem = _player.currentItem;
   if (!currentItem || !currentItem.asset) {
-    return [FVPNativeAudioTrackData makeWithAssetTracks:nil
-                                   mediaSelectionTracks:nil];
+    return [FVPNativeAudioTrackData makeWithAssetTracks:nil mediaSelectionTracks:nil];
   }
 
   AVAsset *asset = currentItem.asset;
@@ -481,12 +480,21 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   if (audioGroup && audioGroup.options.count > 0) {
     NSMutableArray<FVPMediaSelectionAudioTrackData *> *mediaSelectionTracks =
         [[NSMutableArray alloc] init];
-    AVMediaSelectionOption *currentSelection =
-        [currentItem selectedMediaOptionInMediaSelectionGroup:audioGroup];
+    AVMediaSelectionOption *currentSelection = nil;
+    if (@available(iOS 11.0, *)) {
+      AVMediaSelection *currentMediaSelection = currentItem.currentMediaSelection;
+      currentSelection =
+          [currentMediaSelection selectedMediaOptionInMediaSelectionGroup:audioGroup];
+    } else {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+      currentSelection = [currentItem selectedMediaOptionInMediaSelectionGroup:audioGroup];
+#pragma clang diagnostic pop
+    }
 
     for (NSInteger i = 0; i < audioGroup.options.count; i++) {
       AVMediaSelectionOption *option = audioGroup.options[i];
-      
+
       // Skip nil options
       if (!option || [option isKindOfClass:[NSNull class]]) {
         continue;
@@ -521,7 +529,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 
       [mediaSelectionTracks addObject:trackData];
     }
-    
+
     // Always return media selection tracks when there's a media selection group
     // even if all options were nil/invalid (empty array)
     return [FVPNativeAudioTrackData makeWithAssetTracks:nil
@@ -531,7 +539,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   // If no media selection group or empty, try to get tracks from AVAsset (for regular video files)
   NSArray<AVAssetTrack *> *assetAudioTracks = [asset tracksWithMediaType:AVMediaTypeAudio];
   NSMutableArray<FVPAssetAudioTrackData *> *assetTracks = [[NSMutableArray alloc] init];
-  
+
   for (NSInteger i = 0; i < assetAudioTracks.count; i++) {
     AVAssetTrack *track = assetAudioTracks[i];
 
@@ -563,22 +571,20 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
     // Skip entirely if we detect any mock objects or test environment indicators
     NSString *trackClassName = NSStringFromClass([track class]);
     BOOL isTestEnvironment = [trackClassName containsString:@"OCMockObject"] ||
-                            [trackClassName containsString:@"Mock"] ||
-                            NSClassFromString(@"XCTestCase") != nil;
-    
+                             [trackClassName containsString:@"Mock"] ||
+                             NSClassFromString(@"XCTestCase") != nil;
+
     if (track.formatDescriptions.count > 0 && !isTestEnvironment) {
       @try {
         id formatDescObj = track.formatDescriptions[0];
         NSString *className = NSStringFromClass([formatDescObj class]);
-        
+
         // Additional safety: only process objects that are clearly Core Media format descriptions
-        if (formatDescObj && 
-            [className hasPrefix:@"CMAudioFormatDescription"] ||
-            [className hasPrefix:@"CMVideoFormatDescription"] ||
-            [className hasPrefix:@"CMFormatDescription"]) {
-          
+        if (formatDescObj && ([className hasPrefix:@"CMAudioFormatDescription"] ||
+                              [className hasPrefix:@"CMVideoFormatDescription"] ||
+                              [className hasPrefix:@"CMFormatDescription"])) {
           CMFormatDescriptionRef formatDesc = (__bridge CMFormatDescriptionRef)formatDescObj;
-          
+
           // Get audio stream basic description
           const AudioStreamBasicDescription *audioDesc =
               CMAudioFormatDescriptionGetStreamBasicDescription(formatDesc);
@@ -637,10 +643,9 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 
     [assetTracks addObject:trackData];
   }
-  
+
   // Return asset tracks (even if empty), media selection tracks should be nil
-  return [FVPNativeAudioTrackData makeWithAssetTracks:assetTracks
-                                 mediaSelectionTracks:nil];
+  return [FVPNativeAudioTrackData makeWithAssetTracks:assetTracks mediaSelectionTracks:nil];
 }
 
 - (void)selectAudioTrack:(nonnull NSString *)trackId

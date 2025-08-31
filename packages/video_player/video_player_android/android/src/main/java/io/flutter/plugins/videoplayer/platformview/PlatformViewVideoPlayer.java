@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.media3.common.MediaItem;
+import androidx.media3.common.util.UnstableApi;
 import androidx.media3.exoplayer.ExoPlayer;
 import io.flutter.plugins.videoplayer.ExoPlayerEventListener;
 import io.flutter.plugins.videoplayer.VideoAsset;
@@ -22,6 +23,7 @@ import io.flutter.view.TextureRegistry.SurfaceProducer;
  * displaying the video in the app.
  */
 public class PlatformViewVideoPlayer extends VideoPlayer {
+  @UnstableApi
   @VisibleForTesting
   public PlatformViewVideoPlayer(
       @NonNull VideoPlayerCallbacks events,
@@ -40,6 +42,7 @@ public class PlatformViewVideoPlayer extends VideoPlayer {
    * @param options options for playback.
    * @return a video player instance.
    */
+  @UnstableApi
   @NonNull
   public static PlatformViewVideoPlayer create(
       @NonNull Context context,

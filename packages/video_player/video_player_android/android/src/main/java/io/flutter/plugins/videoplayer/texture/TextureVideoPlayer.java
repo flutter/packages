@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RestrictTo;
 import androidx.annotation.VisibleForTesting;
 import androidx.media3.common.MediaItem;
+import androidx.media3.common.util.UnstableApi;
 import androidx.media3.exoplayer.ExoPlayer;
 import io.flutter.plugins.videoplayer.ExoPlayerEventListener;
 import io.flutter.plugins.videoplayer.VideoAsset;
@@ -39,6 +40,7 @@ public final class TextureVideoPlayer extends VideoPlayer implements SurfaceProd
    * @param options options for playback.
    * @return a video player instance.
    */
+  @UnstableApi
   @NonNull
   public static TextureVideoPlayer create(
       @NonNull Context context,
@@ -62,6 +64,7 @@ public final class TextureVideoPlayer extends VideoPlayer implements SurfaceProd
         });
   }
 
+  @UnstableApi
   @VisibleForTesting
   public TextureVideoPlayer(
       @NonNull VideoPlayerCallbacks events,

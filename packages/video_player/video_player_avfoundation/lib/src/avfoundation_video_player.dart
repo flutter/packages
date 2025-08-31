@@ -241,7 +241,8 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
       for (final MediaSelectionAudioTrackData track
           in nativeData.mediaSelectionTracks!) {
         final String trackId = 'media_selection_${track.index}';
-        final String label = track.commonMetadataTitle ?? track.displayName ?? 'Unknown';
+        final String label =
+            track.commonMetadataTitle ?? track.displayName ?? 'Unknown';
         tracks.add(
           VideoAudioTrack(
             id: trackId,

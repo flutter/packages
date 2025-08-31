@@ -44,9 +44,15 @@ public class AudioTracksTest {
 
     // Create a concrete VideoPlayer implementation for testing
     videoPlayer =
-        new VideoPlayer(mockVideoPlayerCallbacks, mockMediaItem, mockVideoPlayerOptions, mockSurfaceProducer, () -> mockExoPlayer) {
+        new VideoPlayer(
+            mockVideoPlayerCallbacks,
+            mockMediaItem,
+            mockVideoPlayerOptions,
+            mockSurfaceProducer,
+            () -> mockExoPlayer) {
           @Override
-          protected ExoPlayerEventListener createExoPlayerEventListener(ExoPlayer exoPlayer, TextureRegistry.SurfaceProducer surfaceProducer) {
+          protected ExoPlayerEventListener createExoPlayerEventListener(
+              ExoPlayer exoPlayer, TextureRegistry.SurfaceProducer surfaceProducer) {
             return mock(ExoPlayerEventListener.class);
           }
         };
@@ -92,7 +98,7 @@ public class AudioTracksTest {
     // Mock audio groups and set length field
     setGroupLength(mockAudioGroup1, 1);
     setGroupLength(mockAudioGroup2, 1);
-    
+
     when(mockAudioGroup1.getType()).thenReturn(C.TRACK_TYPE_AUDIO);
     when(mockAudioGroup1.getTrackFormat(0)).thenReturn(audioFormat1);
     when(mockAudioGroup1.isTrackSelected(0)).thenReturn(true);
@@ -104,7 +110,8 @@ public class AudioTracksTest {
     when(mockVideoGroup.getType()).thenReturn(C.TRACK_TYPE_VIDEO);
 
     // Mock tracks
-    ImmutableList<Tracks.Group> groups = ImmutableList.of(mockAudioGroup1, mockAudioGroup2, mockVideoGroup);
+    ImmutableList<Tracks.Group> groups =
+        ImmutableList.of(mockAudioGroup1, mockAudioGroup2, mockVideoGroup);
     when(mockTracks.getGroups()).thenReturn(groups);
     when(mockExoPlayer.getCurrentTracks()).thenReturn(mockTracks);
 

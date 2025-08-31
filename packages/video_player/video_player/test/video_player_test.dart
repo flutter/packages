@@ -808,9 +808,8 @@ void main() {
 
     group('audio tracks', () {
       test('getAudioTracks returns list of tracks', () async {
-        final VideoPlayerController controller = VideoPlayerController.networkUrl(
-          _localhostUri,
-        );
+        final VideoPlayerController controller =
+            VideoPlayerController.networkUrl(_localhostUri);
         addTearDown(controller.dispose);
 
         await controller.initialize();
@@ -846,9 +845,8 @@ void main() {
       });
 
       test('getAudioTracks before initialization returns empty list', () async {
-        final VideoPlayerController controller = VideoPlayerController.networkUrl(
-          _localhostUri,
-        );
+        final VideoPlayerController controller =
+            VideoPlayerController.networkUrl(_localhostUri);
         addTearDown(controller.dispose);
 
         final List<VideoAudioTrack> tracks = await controller.getAudioTracks();
@@ -856,22 +854,23 @@ void main() {
       });
 
       test('selectAudioTrack works with valid track ID', () async {
-        final VideoPlayerController controller = VideoPlayerController.networkUrl(
-          _localhostUri,
-        );
+        final VideoPlayerController controller =
+            VideoPlayerController.networkUrl(_localhostUri);
         addTearDown(controller.dispose);
 
         await controller.initialize();
         await controller.selectAudioTrack('track_2');
 
         // Verify the platform recorded the selection
-        expect(fakeVideoPlayerPlatform.selectedAudioTrackIds[controller.playerId], 'track_2');
+        expect(
+          fakeVideoPlayerPlatform.selectedAudioTrackIds[controller.playerId],
+          'track_2',
+        );
       });
 
       test('selectAudioTrack before initialization throws', () async {
-        final VideoPlayerController controller = VideoPlayerController.networkUrl(
-          _localhostUri,
-        );
+        final VideoPlayerController controller =
+            VideoPlayerController.networkUrl(_localhostUri);
         addTearDown(controller.dispose);
 
         expect(
@@ -881,30 +880,37 @@ void main() {
       });
 
       test('selectAudioTrack with empty track ID', () async {
-        final VideoPlayerController controller = VideoPlayerController.networkUrl(
-          _localhostUri,
-        );
+        final VideoPlayerController controller =
+            VideoPlayerController.networkUrl(_localhostUri);
         addTearDown(controller.dispose);
 
         await controller.initialize();
         await controller.selectAudioTrack('');
 
-        expect(fakeVideoPlayerPlatform.selectedAudioTrackIds[controller.playerId], '');
+        expect(
+          fakeVideoPlayerPlatform.selectedAudioTrackIds[controller.playerId],
+          '',
+        );
       });
 
       test('multiple track selections update correctly', () async {
-        final VideoPlayerController controller = VideoPlayerController.networkUrl(
-          _localhostUri,
-        );
+        final VideoPlayerController controller =
+            VideoPlayerController.networkUrl(_localhostUri);
         addTearDown(controller.dispose);
 
         await controller.initialize();
-        
+
         await controller.selectAudioTrack('track_1');
-        expect(fakeVideoPlayerPlatform.selectedAudioTrackIds[controller.playerId], 'track_1');
+        expect(
+          fakeVideoPlayerPlatform.selectedAudioTrackIds[controller.playerId],
+          'track_1',
+        );
 
         await controller.selectAudioTrack('track_3');
-        expect(fakeVideoPlayerPlatform.selectedAudioTrackIds[controller.playerId], 'track_3');
+        expect(
+          fakeVideoPlayerPlatform.selectedAudioTrackIds[controller.playerId],
+          'track_3',
+        );
       });
     });
 

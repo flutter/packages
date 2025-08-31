@@ -34,7 +34,7 @@ public abstract class VideoPlayer implements Messages.VideoPlayerInstanceApi {
   @Nullable protected final SurfaceProducer surfaceProducer;
   @Nullable private DisposeHandler disposeHandler;
   @NonNull protected ExoPlayer exoPlayer;
-  @Nullable protected DefaultTrackSelector trackSelector;
+  @UnstableApi @Nullable protected DefaultTrackSelector trackSelector;
 
   /** A closure-compatible signature since {@link java.util.function.Supplier} is API level 24. */
   public interface ExoPlayerProvider {
@@ -52,6 +52,7 @@ public abstract class VideoPlayer implements Messages.VideoPlayerInstanceApi {
     void onDispose();
   }
 
+  @UnstableApi
   public VideoPlayer(
       @NonNull VideoPlayerCallbacks events,
       @NonNull MediaItem mediaItem,
