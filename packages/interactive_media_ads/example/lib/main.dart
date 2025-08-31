@@ -47,10 +47,14 @@ class _HomeScreenState extends State<HomeScreen> {
     ),
   ];
 
-  void _pushVideoAdExampleWithAdTagUrl(String adTagUrl) {
+  void _pushVideoAdExampleWithAdTagUrl({
+    required String adType,
+    required String adTagUrl,
+  }) {
     Navigator.of(context).push<void>(
       MaterialPageRoute<void>(
-        builder: (_) => VideoAdExampleScreen(adTagUrl: adTagUrl),
+        builder:
+            (_) => VideoAdExampleScreen(adType: adType, adTagUrl: adTagUrl),
       ),
     );
   }
@@ -68,10 +72,14 @@ class _HomeScreenState extends State<HomeScreen> {
           itemCount: _testAdTagUrls.length,
           separatorBuilder: (_, _) => const SizedBox(height: 50),
           itemBuilder: (_, int index) {
-            final (String title, String adTagUrl) = _testAdTagUrls[index];
+            final (String adType, String adTagUrl) = _testAdTagUrls[index];
             return ElevatedButton(
-              onPressed: () => _pushVideoAdExampleWithAdTagUrl(adTagUrl),
-              child: Text(title),
+              onPressed:
+                  () => _pushVideoAdExampleWithAdTagUrl(
+                    adType: adType,
+                    adTagUrl: adTagUrl,
+                  ),
+              child: Text(adType),
             );
           },
         ),

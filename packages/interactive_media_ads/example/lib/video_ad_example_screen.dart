@@ -13,6 +13,7 @@ class VideoAdExampleScreen extends StatefulWidget {
   /// Constructs an [VideoAdExampleScreen].
   const VideoAdExampleScreen({
     super.key,
+    required this.adType,
     required this.adTagUrl,
     this.enablePreloading = true,
   });
@@ -23,6 +24,9 @@ class VideoAdExampleScreen extends StatefulWidget {
   /// Allows the player to preload the ad at any point before
   /// [AdsManager.start].
   final bool enablePreloading;
+
+  /// The type of ads that will be requested.
+  final String adType;
 
   @override
   State<VideoAdExampleScreen> createState() => _VideoAdExampleScreenState();
@@ -225,9 +229,13 @@ class _VideoAdExampleScreenState extends State<VideoAdExampleScreen>
       ),
       body: Center(
         child: Column(
-          spacing: 100,
+          spacing: 80,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            Text(
+              widget.adType,
+              style: Theme.of(context).textTheme.headlineMedium,
+            ),
             SizedBox(
               width: 300,
               child:
