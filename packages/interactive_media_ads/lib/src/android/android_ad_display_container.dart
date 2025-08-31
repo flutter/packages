@@ -170,9 +170,10 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
     _frameLayout.addView(_videoView);
 
     _clearMediaPlayer();
-    _loadedAdMediaInfoQueue.removeFirst();
+    if (_loadedAdMediaInfoQueue.isNotEmpty) {
+      _loadedAdMediaInfoQueue.removeFirst();
+    }
     _adDuration = null;
-    _startPlayerWhenVideoIsPrepared = true;
   }
 
   // Starts periodically updating the IMA SDK the progress of the currently
