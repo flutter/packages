@@ -881,7 +881,7 @@ RouteBase get $_routeGetterName => ${_invokesRouteConstructor()};
 
   String get _className => routeDataClass.displayName;
 
-  String get _mixinName => '_\$$_className';
+  String get _mixinName => '\$$_className';
 
   String get _extensionName => '\$${_className}Extension';
 
