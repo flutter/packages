@@ -111,7 +111,7 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
   @internal
   ima.AdDisplayContainer? adDisplayContainer;
 
-  // Queue of loaded ads.
+  // Queue of ads to be played.
   final Queue<ima.AdMediaInfo> _loadedAdMediaInfoQueue =
       Queue<ima.AdMediaInfo>();
 
@@ -150,19 +150,21 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
     _savedAdPosition = 0;
   }
 
-  // Reset state to before an ad is loaded and release references to all ads and
-  // callbacks.
+  // Resets the state to before an ad is loaded and releases references to all
+  // ads and allbacks.
   void _release() {
     _resetStateForNextAd();
     _loadedAdMediaInfoQueue.clear();
     videoAdPlayerCallbacks.clear();
   }
 
-  // Clear state to before ad is loaded and replace current VideoView with a new
-  // one.
+  // Clears the state to before ad is loaded and replace current VideoView with
+  // a new one.
   void _resetStateForNextAd() {
     _stopAdProgressTracking();
 
+    // The `VideoView` is replaced to clear the last frame of the last loaded
+    // ad. See https://stackoverflow.com/questions/25660994/clear-video-frame-from-surfaceview-on-video-complete.
     _frameLayout.removeView(_videoView);
     _videoView = _setUpVideoView(
       WeakReference<AndroidAdDisplayContainer>(this),
@@ -217,6 +219,17 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
     _adProgressTimer = null;
   }
 
+  /// Load the first ad in the queue.
+  Future<void> _loadCurrentAd() {
+    _startPlayerWhenVideoIsPrepared = false;
+    return Future.wait(<Future<void>>[
+      // Audio focus is set to none to prevent the `VideoView` from requesting
+      // focus while loading the app in the background.
+      _videoView.setAudioFocusRequest(ima.AudioManagerAudioFocus.none),
+      _videoView.setVideoUri(_loadedAdMediaInfoQueue.first.url),
+    ]);
+  }
+
   // This value is created in a static method because the callback methods for
   // any wrapped classes must not reference the encapsulating object. This is to
   // prevent a circular reference that prevents garbage collection.
@@ -238,8 +251,8 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
       onPrepared: (_, ima.MediaPlayer player) async {
         final AndroidAdDisplayContainer? container = weakThis.target;
         if (container != null) {
-          container._adDuration = await player.getDuration();
           container._mediaPlayer = player;
+          container._adDuration = await player.getDuration();
           if (container._savedAdPosition > 0) {
             await player.seekTo(container._savedAdPosition);
           }
@@ -253,13 +266,11 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
       onError: (_, __, ___, ____) {
         final AndroidAdDisplayContainer? container = weakThis.target;
         if (container != null) {
-          container._clearMediaPlayer();
           for (final ima.VideoAdPlayerCallback callback
               in container.videoAdPlayerCallbacks) {
             callback.onError(container._loadedAdMediaInfoQueue.first);
           }
-          container._loadedAdMediaInfoQueue.removeFirst();
-          container._adDuration = null;
+          container._resetStateForNextAd();
         }
       },
     );
@@ -283,11 +294,7 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
         if (container != null) {
           container._loadedAdMediaInfoQueue.add(adMediaInfo);
           if (container._loadedAdMediaInfoQueue.length == 1) {
-            container._startPlayerWhenVideoIsPrepared = false;
-            container._videoView.setAudioFocusRequest(
-              ima.AudioManagerAudioFocus.none,
-            );
-            container._videoView.setVideoUri(adMediaInfo.url);
+            container._loadCurrentAd();
           }
         }
       },
@@ -341,13 +348,7 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
         if (container != null) {
           container._resetStateForNextAd();
           if (container._loadedAdMediaInfoQueue.isNotEmpty) {
-            container._startPlayerWhenVideoIsPrepared = false;
-            container._videoView.setAudioFocusRequest(
-              ima.AudioManagerAudioFocus.none,
-            );
-            container._videoView.setVideoUri(
-              container._loadedAdMediaInfoQueue.first.url,
-            );
+            container._loadCurrentAd();
           }
         }
       },
@@ -355,6 +356,11 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
   }
 }
 
+// Widget for displaying the native ViewGroup of the AdDisplayContainer.
+//
+// When the app is sent to the background, the state of the underlying native
+// `VideoView` is not maintained. So this widget uses `WidgetsBindingObserver`
+// to listen and react to lifecycle events.
 class _AdPlayer extends StatefulWidget {
   _AdPlayer(this.container) : super(key: container._androidParams.key);
 
@@ -383,13 +389,7 @@ class _AdPlayerState extends State<_AdPlayer> with WidgetsBindingObserver {
     switch (state) {
       case AppLifecycleState.resumed:
         if (container._loadedAdMediaInfoQueue.isNotEmpty) {
-          container._startPlayerWhenVideoIsPrepared = false;
-          container._videoView.setAudioFocusRequest(
-            ima.AudioManagerAudioFocus.none,
-          );
-          container._videoView.setVideoUri(
-            container._loadedAdMediaInfoQueue.first.url,
-          );
+          container._loadCurrentAd();
         }
       case AppLifecycleState.paused:
         container._mediaPlayer = null;
