@@ -272,6 +272,9 @@ void main() {
       late final Future<void> Function(ima.VideoView, ima.MediaPlayer)
       onPreparedCallback;
 
+      late final void Function(ima.VideoAdPlayer, ima.AdMediaInfo)
+      playAdCallback;
+
       const int adDuration = 100;
       const int adProgress = 10;
 
@@ -279,14 +282,10 @@ void main() {
         newFrameLayout: () => MockFrameLayout(),
         newVideoView: ({
           dynamic onError,
-          dynamic onPrepared,
+          Future<void> Function(ima.VideoView, ima.MediaPlayer)? onPrepared,
           dynamic onCompletion,
         }) {
-          // VideoView.onPrepared returns void, but the implementation uses an
-          // async callback method.
-          onPreparedCallback =
-              onPrepared!
-                  as Future<void> Function(ima.VideoView, ima.MediaPlayer);
+          onPreparedCallback = onPrepared!;
           final MockVideoView mockVideoView = MockVideoView();
           when(
             mockVideoView.getCurrentPosition(),
@@ -306,13 +305,14 @@ void main() {
           )
           loadAd,
           required dynamic pauseAd,
-          required dynamic playAd,
+          required void Function(ima.VideoAdPlayer, ima.AdMediaInfo) playAd,
           required dynamic release,
           required dynamic removeCallback,
           required dynamic stopAd,
         }) {
           loadAdCallback = loadAd;
           addCallbackCallback = addCallback;
+          playAdCallback = playAd;
           return MockVideoAdPlayer();
         },
         newVideoProgressUpdate: ({
@@ -334,6 +334,7 @@ void main() {
 
       final ima.AdMediaInfo mockAdMediaInfo = MockAdMediaInfo();
       loadAdCallback(MockVideoAdPlayer(), mockAdMediaInfo, MockAdPodInfo());
+      playAdCallback(MockVideoAdPlayer(), mockAdMediaInfo);
 
       final MockVideoAdPlayerCallback mockPlayerCallback =
           MockVideoAdPlayerCallback();
@@ -619,6 +620,13 @@ void main() {
     });
 
     test('play ad', () async {
+      late final void Function(
+        ima.VideoAdPlayer,
+        ima.AdMediaInfo,
+        ima.AdPodInfo,
+      )
+      loadAdCallback;
+
       late final void Function(ima.VideoAdPlayer, ima.AdMediaInfo)
       playAdCallback;
 
@@ -637,13 +645,19 @@ void main() {
         },
         newVideoAdPlayer: ({
           required dynamic addCallback,
-          required dynamic loadAd,
+          required void Function(
+            ima.VideoAdPlayer,
+            ima.AdMediaInfo,
+            ima.AdPodInfo,
+          )
+          loadAd,
           required dynamic pauseAd,
           required void Function(ima.VideoAdPlayer, ima.AdMediaInfo) playAd,
           required dynamic release,
           required dynamic removeCallback,
           required dynamic stopAd,
         }) {
+          loadAdCallback = loadAd;
           playAdCallback = playAd;
           return MockVideoAdPlayer();
         },
@@ -659,6 +673,7 @@ void main() {
       const String videoUrl = 'url';
       final ima.AdMediaInfo mockAdMediaInfo = MockAdMediaInfo();
       when(mockAdMediaInfo.url).thenReturn(videoUrl);
+      loadAdCallback(MockVideoAdPlayer(), mockAdMediaInfo, MockAdPodInfo());
       playAdCallback(MockVideoAdPlayer(), mockAdMediaInfo);
 
       verify(mockVideoView.setVideoUri(videoUrl));
