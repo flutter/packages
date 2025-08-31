@@ -7,6 +7,7 @@ import 'package:video_player/video_player.dart';
 
 /// A demo page that showcases audio track functionality.
 class AudioTracksDemo extends StatefulWidget {
+  /// Creates an AudioTracksDemo widget.
   const AudioTracksDemo({super.key});
 
   @override
@@ -15,12 +16,12 @@ class AudioTracksDemo extends StatefulWidget {
 
 class _AudioTracksDemoState extends State<AudioTracksDemo> {
   VideoPlayerController? _controller;
-  List<VideoAudioTrack> _audioTracks = [];
+  List<VideoAudioTrack> _audioTracks = <VideoAudioTrack>[];
   bool _isLoading = false;
   String? _error;
 
   // Sample video URLs with multiple audio tracks
-  final List<String> _sampleVideos = [
+  final List<String> _sampleVideos = <String>[
     'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
     'https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8',
     // Add HLS stream with multiple audio tracks if available
@@ -65,10 +66,12 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
   }
 
   Future<void> _loadAudioTracks() async {
-    if (_controller == null || !_controller!.value.isInitialized) return;
+    if (_controller == null || !_controller!.value.isInitialized) {
+      return;
+    }
 
     try {
-      final tracks = await _controller!.getAudioTracks();
+      final List<VideoAudioTrack> tracks = await _controller!.getAudioTracks();
       setState(() {
         _audioTracks = tracks;
       });
@@ -80,7 +83,9 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
   }
 
   Future<void> _selectAudioTrack(String trackId) async {
-    if (_controller == null) return;
+    if (_controller == null) {
+      return;
+    }
 
     try {
       await _controller!.selectAudioTrack(trackId);
@@ -92,12 +97,16 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
       // Reload tracks to update selection status
       await _loadAudioTracks();
 
-      if (!mounted) return;
+      if (!mounted) {
+        return;
+      }
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Selected audio track: $trackId')));
     } catch (e) {
-      if (!mounted) return;
+      if (!mounted) {
+        return;
+      }
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to select audio track: $e')),
       );
@@ -118,7 +127,7 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
       body: Column(
-        children: [
+        children: <Widget>[
           // Video selection dropdown
           Padding(
             padding: const EdgeInsets.all(16.0),
@@ -129,13 +138,13 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
                 border: OutlineInputBorder(),
               ),
               items:
-                  _sampleVideos.asMap().entries.map((entry) {
+                  _sampleVideos.asMap().entries.map((MapEntry<int, String> entry) {
                     return DropdownMenuItem<int>(
                       value: entry.key,
                       child: Text('Video ${entry.key + 1}'),
                     );
                   }).toList(),
-              onChanged: (value) {
+              onChanged: (int? value) {
                 if (value != null && value != _selectedVideoIndex) {
                   setState(() {
                     _selectedVideoIndex = value;
@@ -149,7 +158,7 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
           // Video player
           Expanded(
             flex: 2,
-            child: Container(color: Colors.black, child: _buildVideoPlayer()),
+            child: ColoredBox(color: Colors.black, child: _buildVideoPlayer()),
           ),
 
           // Audio tracks list
@@ -173,7 +182,7 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+          children: <Widget>[
             Icon(Icons.error, size: 48, color: Colors.red[300]),
             const SizedBox(height: 16),
             Text(
@@ -191,10 +200,10 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
       );
     }
 
-    if (_controller?.value.isInitialized == true) {
+    if (_controller?.value.isInitialized ?? false) {
       return Stack(
         alignment: Alignment.center,
-        children: [
+        children: <Widget>[
           AspectRatio(
             aspectRatio: _controller!.value.aspectRatio,
             child: VideoPlayer(_controller!),
@@ -238,9 +247,9 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
       padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+        children: <Widget>[
           Row(
-            children: [
+            children: <Widget>[
               const Icon(Icons.audiotrack),
               const SizedBox(width: 8),
               Text(
@@ -265,8 +274,8 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
             Expanded(
               child: ListView.builder(
                 itemCount: _audioTracks.length,
-                itemBuilder: (context, index) {
-                  final track = _audioTracks[index];
+                itemBuilder: (BuildContext context, int index) {
+                  final VideoAudioTrack track = _audioTracks[index];
                   return _buildAudioTrackTile(track);
                 },
               ),
@@ -295,7 +304,7 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
         ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+          children: <Widget>[
             Text('ID: ${track.id}'),
             Text('Language: ${track.language}'),
             if (track.codec != null) Text('Codec: ${track.codec}'),
