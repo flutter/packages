@@ -266,11 +266,11 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
       onError: (_, __, ___, ____) {
         final AndroidAdDisplayContainer? container = weakThis.target;
         if (container != null) {
+          container._clearMediaPlayer();
           for (final ima.VideoAdPlayerCallback callback
               in container.videoAdPlayerCallbacks) {
             callback.onError(container._loadedAdMediaInfoQueue.first);
           }
-          container._resetStateForNextAd();
         }
       },
     );
