@@ -16,13 +16,20 @@ Future<void> compileSvg(
   BuildOutputBuilder output, {
   required String name,
   required Uri file,
-}) async => compileSvgs(input, output, nameToFile: <String, Uri>{name: file});
+  Options options = const Options(),
+}) async => compileSvgs(
+  input,
+  output,
+  nameToFile: <String, Uri>{name: file},
+  options: options,
+);
 
 /// Helper to build svgs
 Future<void> compileSvgs(
   BuildInput input,
   BuildOutputBuilder output, {
   required Map<String, Uri> nameToFile,
+  Options options = const Options(),
 }) async {
   final IsolateProcessor processor = IsolateProcessor(
     null,
@@ -45,7 +52,7 @@ Future<void> compileSvgs(
     clippingOptimizerEnabled: true,
     overdrawOptimizerEnabled: true,
     tessellate: false,
-    dumpDebug: true,
+    dumpDebug: options.dumpDebug,
     useHalfPrecisionControlPoints: false,
   )) {
     throw ArgumentError(
@@ -66,4 +73,13 @@ Future<void> compileSvgs(
       ),
     );
   }
+}
+
+/// Options for the processor
+class Options {
+  // ignore: public_member_api_docs
+  const Options({this.dumpDebug = false});
+
+  // ignore: public_member_api_docs
+  final bool dumpDebug;
 }
