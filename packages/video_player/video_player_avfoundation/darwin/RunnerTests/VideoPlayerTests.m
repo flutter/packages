@@ -1152,7 +1152,13 @@
   OCMStub([mockAsset mediaSelectionGroupForMediaCharacteristic:AVMediaCharacteristicAudible])
       .andReturn(mockMediaSelectionGroup);
 
-  // Mock current selection
+  // Mock current selection for both iOS 11+ and older versions
+  id mockCurrentMediaSelection = OCMClassMock([AVMediaSelection class]);
+  OCMStub([mockPlayerItem currentMediaSelection]).andReturn(mockCurrentMediaSelection);
+  OCMStub([mockCurrentMediaSelection selectedMediaOptionInMediaSelectionGroup:mockMediaSelectionGroup])
+      .andReturn(mockOption1);
+  
+  // Also mock the deprecated method for iOS < 11
   OCMStub([mockPlayerItem selectedMediaOptionInMediaSelectionGroup:mockMediaSelectionGroup])
       .andReturn(mockOption1);
 
@@ -1271,9 +1277,8 @@
   OCMStub([mockTrack trackID]).andReturn(1);
   OCMStub([mockTrack languageCode]).andReturn(@"en");
 
-  // Mock format description with AAC codec
-  id mockFormatDesc = OCMClassMock([NSObject class]);
-  OCMStub([mockTrack formatDescriptions]).andReturn(@[ mockFormatDesc ]);
+  // Mock empty format descriptions to avoid Core Media crashes in test environment
+  OCMStub([mockTrack formatDescriptions]).andReturn(@[]);
 
   // Mock the asset
   OCMStub([mockAsset tracksWithMediaType:AVMediaTypeAudio]).andReturn(@[ mockTrack ]);

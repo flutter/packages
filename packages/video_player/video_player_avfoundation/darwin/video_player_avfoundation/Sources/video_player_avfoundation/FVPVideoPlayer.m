@@ -518,7 +518,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
         }
       }
 
-      BOOL isSelected = (currentSelection == option);
+      BOOL isSelected = (currentSelection == option) || [currentSelection isEqual:option];
 
       FVPMediaSelectionAudioTrackData *trackData =
           [FVPMediaSelectionAudioTrackData makeWithIndex:i
