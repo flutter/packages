@@ -63,6 +63,8 @@ public abstract class VideoPlayer {
   private static void setAudioAttributes(
       ExoPlayer exoPlayer, boolean isMixMode, boolean allowBackgroundPlayback) {
     if (allowBackgroundPlayback) {
+      // This flag allows playback to continue when the device is in Doze mode.
+      // WAKE_MODE_NETWORK is used to allow network streaming to continue.
       exoPlayer.setWakeMode(C.WAKE_MODE_NETWORK);
     }
     exoPlayer.setAudioAttributes(
