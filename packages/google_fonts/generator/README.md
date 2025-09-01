@@ -6,5 +6,4 @@ Note: Googlers only, pending b/280786655, there is an additional prerequisite st
 1. Navigate to the root directory of this project ([packages/google_fonts](..)).
 2. `dart generator/generator.dart`
 
-After generation, see [families_diff](families_diff) for a summary of changes, which is useful when
-generating `CHANGELOG.md` entries.
+After generation, see the `families_diff` file for a summary of changes, which can be useful for writing `CHANGELOG.md` entries.
