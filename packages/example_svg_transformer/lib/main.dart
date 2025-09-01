@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
         body: Center(
           child: VectorGraphic(
             loader: AssetBytesLoader(
-              'assets/example',
+              'example',
               packageName: 'example_svg_transformer',
             ),
           ),
