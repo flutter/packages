@@ -1,0 +1,27 @@
+name: example_svg_transformer
+description: "A new Flutter project."
+publish_to: "none"
+version: 0.1.0
+
+environment:
+  sdk: ^3.9.0-172.0.dev
+
+dependencies:
+  flutter:
+    sdk: flutter
+  hooks: ^0.19.3
+  vector_graphics: ^1.1.18
+  vector_graphics_compiler:
+    path: ../vector_graphics_compiler
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
+  # assets:
+  #   - path: assets/example.svg
+  #     transformers:
+  #       - package: vector_graphics_compiler
