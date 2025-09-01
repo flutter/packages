@@ -10,19 +10,27 @@ import 'package:path/path.dart' as p;
 
 import 'src/util/isolate_processor.dart';
 
-/// Helper to build svgs
-Future<void> svgBuilder(
+/// Helper to build svg
+Future<void> compileSvg(
   BuildInput input,
-  BuildOutputBuilder output,
-  Map<String, Uri> inputs,
-) async {
+  BuildOutputBuilder output, {
+  required String name,
+  required Uri file,
+}) async => compileSvgs(input, output, nameToFile: <String, Uri>{name: file});
+
+/// Helper to build svgs
+Future<void> compileSvgs(
+  BuildInput input,
+  BuildOutputBuilder output, {
+  required Map<String, Uri> nameToFile,
+}) async {
   final IsolateProcessor processor = IsolateProcessor(
     null,
     null,
     Platform.numberOfProcessors,
   );
 
-  final Map<String, Pair> pairs = inputs.map(
+  final Map<String, Pair> pairs = nameToFile.map(
     (String name, Uri file) => MapEntry<String, Pair>(
       name,
       Pair(
