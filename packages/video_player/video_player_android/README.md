@@ -11,6 +11,12 @@ so you do not need to add it to your `pubspec.yaml`.
 However, if you `import` this package to use any of its APIs directly, you
 should add it to your `pubspec.yaml` as usual.
 
+If you plan to use background playback, you will also need to add the following permission in your Android Manifest file.
+
+```xml
+<uses-permission android:name="android.permission.WAKE_LOCK"/>
+```
+
 ## Known issues
 
 Using `VideoViewType.platformView` is not currently recommended on Android due to a known [issue][3] affecting platform views on Android.
