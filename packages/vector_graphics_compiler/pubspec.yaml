@@ -12,6 +12,8 @@ environment:
 
 dependencies:
   args: ^2.3.0
+  data_assets: ^0.19.1
+  hooks: ^0.19.3
   meta: ^1.7.0
   path: ^1.8.0
   path_parsing: ^1.0.1
