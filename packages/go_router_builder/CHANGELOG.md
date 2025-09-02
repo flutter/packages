@@ -1,3 +1,7 @@
+## 4.0.0
+
+- Make Route mixins public.
+
 ## 3.3.1
 
 - Fixes warnings in generated code of iterable parameters.
