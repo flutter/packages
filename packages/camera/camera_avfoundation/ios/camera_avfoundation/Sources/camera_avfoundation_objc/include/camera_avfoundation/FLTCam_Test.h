@@ -20,15 +20,4 @@
 /// The output for photo capturing. Exposed setter for unit tests.
 @property(strong, nonatomic) NSObject<FLTCapturePhotoOutput> *capturePhotoOutput;
 
-/// True when images from the camera are being streamed.
-@property(assign, nonatomic) BOOL isStreamingImages;
-
-/// A dictionary to retain all in-progress FLTSavePhotoDelegates. The key of the dictionary is the
-/// AVCapturePhotoSettings's uniqueID for each photo capture operation, and the value is the
-/// FLTSavePhotoDelegate that handles the result of each photo capture operation. Note that photo
-/// capture operations may overlap, so FLTCam has to keep track of multiple delegates in progress,
-/// instead of just a single delegate reference.
-@property(readonly, nonatomic)
-    NSMutableDictionary<NSNumber *, FLTSavePhotoDelegate *> *inProgressSavePhotoDelegates;
-
 @end
