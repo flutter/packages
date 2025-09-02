@@ -63,20 +63,18 @@ SKProductWrapper _$SKProductWrapperFromJson(Map json) => SKProductWrapper(
   ),
   subscriptionGroupIdentifier: json['subscriptionGroupIdentifier'] as String?,
   price: json['price'] as String? ?? '',
-  subscriptionPeriod:
-      json['subscriptionPeriod'] == null
-          ? null
-          : SKProductSubscriptionPeriodWrapper.fromJson(
-            (json['subscriptionPeriod'] as Map?)?.map(
-              (k, e) => MapEntry(k as String, e),
-            ),
+  subscriptionPeriod: json['subscriptionPeriod'] == null
+      ? null
+      : SKProductSubscriptionPeriodWrapper.fromJson(
+          (json['subscriptionPeriod'] as Map?)?.map(
+            (k, e) => MapEntry(k as String, e),
           ),
-  introductoryPrice:
-      json['introductoryPrice'] == null
-          ? null
-          : SKProductDiscountWrapper.fromJson(
-            Map<String, dynamic>.from(json['introductoryPrice'] as Map),
-          ),
+        ),
+  introductoryPrice: json['introductoryPrice'] == null
+      ? null
+      : SKProductDiscountWrapper.fromJson(
+          Map<String, dynamic>.from(json['introductoryPrice'] as Map),
+        ),
   discounts:
       (json['discounts'] as List<dynamic>?)
           ?.map(

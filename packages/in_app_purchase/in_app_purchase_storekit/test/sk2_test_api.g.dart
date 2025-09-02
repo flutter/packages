@@ -159,8 +159,9 @@ abstract class TestInAppPurchase2Api {
     BinaryMessenger? binaryMessenger,
     String messageChannelSuffix = '',
   }) {
-    messageChannelSuffix =
-        messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+    messageChannelSuffix = messageChannelSuffix.isNotEmpty
+        ? '.$messageChannelSuffix'
+        : '';
     {
       final BasicMessageChannel<Object?>
       pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -212,8 +213,8 @@ abstract class TestInAppPurchase2Api {
                 'Argument for dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.products was null.',
               );
               final List<Object?> args = (message as List<Object?>?)!;
-              final List<String>? arg_identifiers =
-                  (args[0] as List<Object?>?)?.cast<String>();
+              final List<String>? arg_identifiers = (args[0] as List<Object?>?)
+                  ?.cast<String>();
               assert(
                 arg_identifiers != null,
                 'Argument for dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.products was null, expected non-null List<String>.',
@@ -384,8 +385,8 @@ abstract class TestInAppPurchase2Api {
               Object? message,
             ) async {
               try {
-                final List<SK2TransactionMessage> output =
-                    await api.transactions();
+                final List<SK2TransactionMessage> output = await api
+                    .transactions();
                 return <Object?>[output];
               } on PlatformException catch (e) {
                 return wrapResponse(error: e);
