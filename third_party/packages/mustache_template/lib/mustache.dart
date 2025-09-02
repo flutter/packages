@@ -7,12 +7,14 @@ abstract class Template {
   /// if the syntax of the source is invalid.
   /// Tag names may only contain characters a-z, A-Z, 0-9, underscore, and minus,
   /// unless lenient mode is specified.
-  factory Template(String source,
-      {bool lenient,
-      bool htmlEscapeValues,
-      String name,
-      PartialResolver? partialResolver,
-      String delimiters}) = t.Template.fromSource;
+  factory Template(
+    String source, {
+    bool lenient,
+    bool htmlEscapeValues,
+    String name,
+    PartialResolver? partialResolver,
+    String delimiters,
+  }) = t.Template.fromSource;
 
   String? get name;
   String get source;

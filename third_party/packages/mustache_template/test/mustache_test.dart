@@ -48,7 +48,7 @@ void main() {
   group('Section', () {
     test('Map', () {
       var output = parse('{{#section}}_{{var}}_{{/section}}').renderString({
-        'section': {'var': 'bob'}
+        'section': {'var': 'bob'},
       });
       expect(output, equals('_bob_'));
     });
@@ -56,19 +56,21 @@ void main() {
       var output = parse('{{#section}}_{{var}}_{{/section}}').renderString({
         'section': [
           {'var': 'bob'},
-          {'var': 'jim'}
-        ]
+          {'var': 'jim'},
+        ],
       });
       expect(output, equals('_bob__jim_'));
     });
     test('Empty List', () {
-      var output = parse('{{#section}}_{{var}}_{{/section}}')
-          .renderString({'section': []});
+      var output = parse(
+        '{{#section}}_{{var}}_{{/section}}',
+      ).renderString({'section': []});
       expect(output, equals(''));
     });
     test('False', () {
-      var output = parse('{{#section}}_{{var}}_{{/section}}')
-          .renderString({'section': false});
+      var output = parse(
+        '{{#section}}_{{var}}_{{/section}}',
+      ).renderString({'section': false});
       expect(output, equals(''));
     });
     test('Invalid value', () {
@@ -77,138 +79,146 @@ void main() {
       expect(ex.message, startsWith(VALUE_MISSING));
     });
     test('Invalid value - lenient mode', () {
-      var output = parse('{{#var}}_{{var}}_{{/var}}', lenient: true)
-          .renderString({'var': 42});
+      var output = parse(
+        '{{#var}}_{{var}}_{{/var}}',
+        lenient: true,
+      ).renderString({'var': 42});
       expect(output, equals('_42_'));
     });
 
     test('True', () {
-      var output =
-          parse('{{#section}}_ok_{{/section}}').renderString({'section': true});
+      var output = parse(
+        '{{#section}}_ok_{{/section}}',
+      ).renderString({'section': true});
       expect(output, equals('_ok_'));
     });
 
     test('Nested', () {
       var output = parse(
-              '{{#section}}.{{var}}.{{#nested}}_{{nestedvar}}_{{/nested}}.{{/section}}')
-          .renderString({
+        '{{#section}}.{{var}}.{{#nested}}_{{nestedvar}}_{{/nested}}.{{/section}}',
+      ).renderString({
         'section': {
           'var': 'bob',
           'nested': [
             {'nestedvar': 'jim'},
-            {'nestedvar': 'sally'}
-          ]
-        }
+            {'nestedvar': 'sally'},
+          ],
+        },
       });
       expect(output, equals('.bob._jim__sally_.'));
     });
 
     test('Whitespace in section tags', () {
       expect(
-          parse('{{#foo.bar}}oi{{/foo.bar}}').renderString({
-            'foo': {'bar': true}
-          }),
-          equals('oi'));
+        parse('{{#foo.bar}}oi{{/foo.bar}}').renderString({
+          'foo': {'bar': true},
+        }),
+        equals('oi'),
+      );
       expect(
-          parse('{{# foo.bar}}oi{{/foo.bar}}').renderString({
-            'foo': {'bar': true}
-          }),
-          equals('oi'));
+        parse('{{# foo.bar}}oi{{/foo.bar}}').renderString({
+          'foo': {'bar': true},
+        }),
+        equals('oi'),
+      );
       expect(
-          parse('{{#foo.bar }}oi{{/foo.bar}}').renderString({
-            'foo': {'bar': true}
-          }),
-          equals('oi'));
+        parse('{{#foo.bar }}oi{{/foo.bar}}').renderString({
+          'foo': {'bar': true},
+        }),
+        equals('oi'),
+      );
       expect(
-          parse('{{# foo.bar }}oi{{/foo.bar}}').renderString({
-            'foo': {'bar': true}
-          }),
-          equals('oi'));
+        parse('{{# foo.bar }}oi{{/foo.bar}}').renderString({
+          'foo': {'bar': true},
+        }),
+        equals('oi'),
+      );
       expect(
-          parse('{{#foo.bar}}oi{{/ foo.bar}}').renderString({
-            'foo': {'bar': true}
-          }),
-          equals('oi'));
+        parse('{{#foo.bar}}oi{{/ foo.bar}}').renderString({
+          'foo': {'bar': true},
+        }),
+        equals('oi'),
+      );
       expect(
-          parse('{{#foo.bar}}oi{{/foo.bar }}').renderString({
-            'foo': {'bar': true}
-          }),
-          equals('oi'));
+        parse('{{#foo.bar}}oi{{/foo.bar }}').renderString({
+          'foo': {'bar': true},
+        }),
+        equals('oi'),
+      );
       expect(
-          parse('{{#foo.bar}}oi{{/ foo.bar }}').renderString({
-            'foo': {'bar': true}
-          }),
-          equals('oi'));
+        parse('{{#foo.bar}}oi{{/ foo.bar }}').renderString({
+          'foo': {'bar': true},
+        }),
+        equals('oi'),
+      );
       expect(
-          parse('{{# foo.bar }}oi{{/ foo.bar }}').renderString({
-            'foo': {'bar': true}
-          }),
-          equals('oi'));
+        parse('{{# foo.bar }}oi{{/ foo.bar }}').renderString({
+          'foo': {'bar': true},
+        }),
+        equals('oi'),
+      );
     });
 
     test('Whitespace in variable tags', () {
       expect(
-          parse('{{foo.bar}}').renderString({
-            'foo': {'bar': true}
-          }),
-          equals('true'));
+        parse('{{foo.bar}}').renderString({
+          'foo': {'bar': true},
+        }),
+        equals('true'),
+      );
       expect(
-          parse('{{ foo.bar}}').renderString({
-            'foo': {'bar': true}
-          }),
-          equals('true'));
+        parse('{{ foo.bar}}').renderString({
+          'foo': {'bar': true},
+        }),
+        equals('true'),
+      );
       expect(
-          parse('{{foo.bar }}').renderString({
-            'foo': {'bar': true}
-          }),
-          equals('true'));
+        parse('{{foo.bar }}').renderString({
+          'foo': {'bar': true},
+        }),
+        equals('true'),
+      );
       expect(
-          parse('{{ foo.bar }}').renderString({
-            'foo': {'bar': true}
-          }),
-          equals('true'));
+        parse('{{ foo.bar }}').renderString({
+          'foo': {'bar': true},
+        }),
+        equals('true'),
+      );
     });
 
     test('Odd whitespace in tags', () {
       void render(source, values, output) => expect(
-          parse(source, lenient: true).renderString(values), equals(output));
+        parse(source, lenient: true).renderString(values),
+        equals(output),
+      );
 
       render('{{\t# foo}}oi{{\n/foo}}', {'foo': true}, 'oi');
 
-      render(
-          '{{ # # foo }} {{ oi }} {{ / # foo }}',
-          {
-            '# foo': [
-              {'oi': 'OI!'}
-            ]
-          },
-          ' OI! ');
+      render('{{ # # foo }} {{ oi }} {{ / # foo }}', {
+        '# foo': [
+          {'oi': 'OI!'},
+        ],
+      }, ' OI! ');
 
-      render(
-          '{{ #foo }} {{ oi }} {{ /foo }}',
-          {
-            'foo': [
-              {'oi': 'OI!'}
-            ]
-          },
-          ' OI! ');
+      render('{{ #foo }} {{ oi }} {{ /foo }}', {
+        'foo': [
+          {'oi': 'OI!'},
+        ],
+      }, ' OI! ');
 
-      render(
-          '{{\t#foo }} {{ oi }} {{ /foo }}',
-          {
-            'foo': [
-              {'oi': 'OI!'}
-            ]
-          },
-          ' OI! ');
+      render('{{\t#foo }} {{ oi }} {{ /foo }}', {
+        'foo': [
+          {'oi': 'OI!'},
+        ],
+      }, ' OI! ');
 
       render('{{{ #foo }}} {{{ /foo }}}', {'#foo': 1, '/foo': 2}, '1 2');
 
-// Invalid - I'm ok with that for now.
-//      render(
-//        "{{{ { }}}",
-//        {'{': 1},
-//        '1');
+      // Invalid - I'm ok with that for now.
+      //      render(
+      //        "{{{ { }}}",
+      //        {'{': 1},
+      //        '1');
 
       render('{{\nfoo}}', {'foo': 'bar'}, 'bar');
 
@@ -218,11 +228,11 @@ void main() {
 
       render('{{{\tfoo\t}}}', {'foo': true}, 'true');
 
-//FIXME empty, or error in strict mode.
-//      render(
-//        "{{ > }}",
-//        {'>': 'oi'},
-//        '');
+      //FIXME empty, or error in strict mode.
+      //      render(
+      //        "{{ > }}",
+      //        {'>': 'oi'},
+      //        '');
     });
 
     test('Empty source', () {
@@ -243,7 +253,7 @@ void main() {
   group('Inverse Section', () {
     test('Map', () {
       var output = parse('{{^section}}_{{var}}_{{/section}}').renderString({
-        'section': {'var': 'bob'}
+        'section': {'var': 'bob'},
       });
       expect(output, equals(''));
     });
@@ -251,19 +261,21 @@ void main() {
       var output = parse('{{^section}}_{{var}}_{{/section}}').renderString({
         'section': [
           {'var': 'bob'},
-          {'var': 'jim'}
-        ]
+          {'var': 'jim'},
+        ],
       });
       expect(output, equals(''));
     });
     test('Empty List', () {
-      var output =
-          parse('{{^section}}_ok_{{/section}}').renderString({'section': []});
+      var output = parse(
+        '{{^section}}_ok_{{/section}}',
+      ).renderString({'section': []});
       expect(output, equals('_ok_'));
     });
     test('False', () {
-      var output = parse('{{^section}}_ok_{{/section}}')
-          .renderString({'section': false});
+      var output = parse(
+        '{{^section}}_ok_{{/section}}',
+      ).renderString({'section': false});
       expect(output, equals('_ok_'));
     });
     test('Invalid value', () {
@@ -272,13 +284,16 @@ void main() {
       expect(ex.message, startsWith(BAD_VALUE_INV_SECTION));
     });
     test('Invalid value - lenient mode', () {
-      var output = parse('{{^var}}_ok_{{/var}}', lenient: true)
-          .renderString({'var': 42});
+      var output = parse(
+        '{{^var}}_ok_{{/var}}',
+        lenient: true,
+      ).renderString({'var': 42});
       expect(output, equals(''));
     });
     test('True', () {
-      var output =
-          parse('{{^section}}_ok_{{/section}}').renderString({'section': true});
+      var output = parse(
+        '{{^section}}_ok_{{/section}}',
+      ).renderString({'section': true});
       expect(output, equals(''));
     });
   });
@@ -329,7 +344,7 @@ void main() {
     test('Mismatched tag', () {
       var source = '{{#section}}_{{var}}_{{/notsection}}';
       var ex = renderFail(source, {
-        'section': {'var': 'bob'}
+        'section': {'var': 'bob'},
       });
       expectFail(ex, 1, 22, 'Mismatched tag');
     });
@@ -337,7 +352,7 @@ void main() {
     test('Unexpected EOF', () {
       var source = '{{#section}}_{{var}}_{{/section';
       var ex = renderFail(source, {
-        'section': {'var': 'bob'}
+        'section': {'var': 'bob'},
       });
       expectFail(ex, 1, 31, UNEXPECTED_EOF);
     });
@@ -345,7 +360,7 @@ void main() {
     test('Bad tag name, open section', () {
       var source = r'{{#section$%$^%}}_{{var}}_{{/section}}';
       var ex = renderFail(source, {
-        'section': {'var': 'bob'}
+        'section': {'var': 'bob'},
       });
       expectFail(ex, null, null, BAD_TAG_NAME);
     });
@@ -353,7 +368,7 @@ void main() {
     test('Bad tag name, close section', () {
       var source = r'{{#section}}_{{var}}_{{/section$%$^%}}';
       var ex = renderFail(source, {
-        'section': {'var': 'bob'}
+        'section': {'var': 'bob'},
       });
       expectFail(ex, null, null, BAD_TAG_NAME);
     });
@@ -361,7 +376,7 @@ void main() {
     test('Bad tag name, variable', () {
       var source = r'{{#section}}_{{var$%$^%}}_{{/section}}';
       var ex = renderFail(source, {
-        'section': {'var': 'bob'}
+        'section': {'var': 'bob'},
       });
       expectFail(ex, null, null, BAD_TAG_NAME);
     });
@@ -376,7 +391,7 @@ void main() {
     test('Null variable', () {
       var t = Template('{{#section}}_{{var}}_{{/section}}');
       var output = t.renderString({
-        'section': {'var': null}
+        'section': {'var': null},
       });
       expect(output, equals('__'));
     });
@@ -390,43 +405,49 @@ void main() {
 
   group('Lenient', () {
     test('Odd section name', () {
-      var output =
-          parse(r'{{#section$%$^%}}_{{var}}_{{/section$%$^%}}', lenient: true)
-              .renderString({
-        r'section$%$^%': {'var': 'bob'}
+      var output = parse(
+        r'{{#section$%$^%}}_{{var}}_{{/section$%$^%}}',
+        lenient: true,
+      ).renderString({
+        r'section$%$^%': {'var': 'bob'},
       });
       expect(output, equals('_bob_'));
     });
 
     test('Odd variable name', () {
-      var output =
-          parse(r'{{#section}}_{{var$%$^%}}_{{/section}}', lenient: true)
-              .renderString({
-        'section': {r'var$%$^%': 'bob'}
+      var output = parse(
+        r'{{#section}}_{{var$%$^%}}_{{/section}}',
+        lenient: true,
+      ).renderString({
+        'section': {r'var$%$^%': 'bob'},
       });
       expect(output, equals('_bob_'));
     });
 
     test('Null variable', () {
-      var output = parse(r'{{#section}}_{{var}}_{{/section}}', lenient: true)
-          .renderString({
-        'section': {'var': null}
+      var output = parse(
+        r'{{#section}}_{{var}}_{{/section}}',
+        lenient: true,
+      ).renderString({
+        'section': {'var': null},
       });
       expect(output, equals('__'));
     });
 
     test('Null section', () {
-      var output = parse('{{#section}}_{{var}}_{{/section}}', lenient: true)
-          .renderString({'section': null});
+      var output = parse(
+        '{{#section}}_{{var}}_{{/section}}',
+        lenient: true,
+      ).renderString({'section': null});
       expect(output, equals(''));
     });
 
-// Known failure
-//		test('Null inverse section', () {
-//			var output = parse('{{^section}}_{{var}}_{{/section}}', lenient: true)
-//				.renderString({"section": null}, lenient: true);
-//			expect(output, equals(''));
-//		});
+    // Known failure
+    //		test('Null inverse section', () {
+    //			var output = parse('{{^section}}_{{var}}_{{/section}}', lenient: true)
+    //				.renderString({"section": null}, lenient: true);
+    //			expect(output, equals(''));
+    //		});
   });
 
   group('Escape tags', () {
@@ -441,29 +462,44 @@ void main() {
   });
 
   group('Partial tag', () {
-    String _partialTest(Map values, Map sources, String renderTemplate,
-        {bool lenient = false}) {
+    String _partialTest(
+      Map values,
+      Map sources,
+      String renderTemplate, {
+      bool lenient = false,
+    }) {
       var templates = <String, Template>{};
       var resolver = (String name) => templates[name];
       for (var k in sources.keys) {
-        templates[k] = Template(sources[k],
-            name: k, lenient: lenient, partialResolver: resolver);
+        templates[k] = Template(
+          sources[k],
+          name: k,
+          lenient: lenient,
+          partialResolver: resolver,
+        );
       }
       var t = resolver(renderTemplate);
       return t!.renderString(values);
     }
 
     test('basic', () {
-      var output = _partialTest({'foo': 'bar'},
-          {'root': '{{>partial}}', 'partial': '{{foo}}'}, 'root');
+      var output = _partialTest(
+        {'foo': 'bar'},
+        {'root': '{{>partial}}', 'partial': '{{foo}}'},
+        'root',
+      );
       expect(output, 'bar');
     });
 
     test('missing partial strict', () {
       var threw = false;
       try {
-        _partialTest({'foo': 'bar'}, {'root': '{{>partial}}'}, 'root',
-            lenient: false);
+        _partialTest(
+          {'foo': 'bar'},
+          {'root': '{{>partial}}'},
+          'root',
+          lenient: false,
+        );
       } on Exception catch (e) {
         expect(e is TemplateException, isTrue);
         threw = true;
@@ -473,75 +509,91 @@ void main() {
 
     test('missing partial lenient', () {
       var output = _partialTest(
-          {'foo': 'bar'}, {'root': '{{>partial}}'}, 'root',
-          lenient: true);
+        {'foo': 'bar'},
+        {'root': '{{>partial}}'},
+        'root',
+        lenient: true,
+      );
       expect(output, equals(''));
     });
 
     test('context', () {
-      var output = _partialTest({
-        'text': 'content'
-      }, {
-        'root': '"{{>partial}}"',
-        'partial': '*{{text}}*'
-      }, 'root', lenient: true);
+      var output = _partialTest(
+        {'text': 'content'},
+        {'root': '"{{>partial}}"', 'partial': '*{{text}}*'},
+        'root',
+        lenient: true,
+      );
       expect(output, equals('"*content*"'));
     });
 
     test('recursion', () {
-      var output = _partialTest({
-        'content': 'X',
-        'nodes': [
-          {'content': 'Y', 'nodes': []}
-        ]
-      }, {
-        'root': '{{>node}}',
-        'node': '{{content}}<{{#nodes}}{{>node}}{{/nodes}}>'
-      }, 'root', lenient: true);
+      var output = _partialTest(
+        {
+          'content': 'X',
+          'nodes': [
+            {'content': 'Y', 'nodes': []},
+          ],
+        },
+        {
+          'root': '{{>node}}',
+          'node': '{{content}}<{{#nodes}}{{>node}}{{/nodes}}>',
+        },
+        'root',
+        lenient: true,
+      );
       expect(output, equals('X<Y<>>'));
     });
 
     test('standalone without previous', () {
       var output = _partialTest(
-          {}, {'root': '  {{>partial}}\n>', 'partial': '>\n>'}, 'root',
-          lenient: true);
+        {},
+        {'root': '  {{>partial}}\n>', 'partial': '>\n>'},
+        'root',
+        lenient: true,
+      );
       expect(output, equals('  >\n  >>'));
     });
 
     test('standalone indentation', () {
-      var output = _partialTest({
-        'content': '<\n->'
-      }, {
-        'root': '\\\n {{>partial}}\n\/\n',
-        'partial': '|\n{{{content}}}\n|\n'
-      }, 'root', lenient: true);
+      var output = _partialTest(
+        {'content': '<\n->'},
+        {'root': '\\\n {{>partial}}\n\/\n', 'partial': '|\n{{{content}}}\n|\n'},
+        'root',
+        lenient: true,
+      );
       expect(output, equals('\\\n |\n <\n->\n |\n\/\n'));
     });
   });
 
   group('Lambdas', () {
     void _lambdaTest({template, lambda, output}) => expect(
-        parse(template).renderString({'lambda': lambda}), equals(output));
+      parse(template).renderString({'lambda': lambda}),
+      equals(output),
+    );
 
     test('basic', () {
       _lambdaTest(
-          template: 'Hello, {{lambda}}!',
-          lambda: (_) => 'world',
-          output: 'Hello, world!');
+        template: 'Hello, {{lambda}}!',
+        lambda: (_) => 'world',
+        output: 'Hello, world!',
+      );
     });
 
     test('escaping', () {
       _lambdaTest(
-          template: '<{{lambda}}{{{lambda}}}',
-          lambda: (_) => '>',
-          output: '<&gt;>');
+        template: '<{{lambda}}{{{lambda}}}',
+        lambda: (_) => '>',
+        output: '<&gt;>',
+      );
     });
 
     test('sections', () {
       _lambdaTest(
-          template: '{{#lambda}}FILE{{/lambda}} != {{#lambda}}LINE{{/lambda}}',
-          lambda: (LambdaContext ctx) => '__${ctx.renderString()}__',
-          output: '__FILE__ != __LINE__');
+        template: '{{#lambda}}FILE{{/lambda}} != {{#lambda}}LINE{{/lambda}}',
+        lambda: (LambdaContext ctx) => '__${ctx.renderString()}__',
+        output: '__FILE__ != __LINE__',
+      );
     });
 
     //FIXME
@@ -556,7 +608,7 @@ void main() {
       var template = '<{{#markdown}}{{content}}{{/markdown}}>';
       var values = {
         'markdown': (ctx) => ctx.renderString().toLowerCase(),
-        'content': 'OI YOU!'
+        'content': 'OI YOU!',
       };
       var output = '<oi you!>';
       expect(parse(template).renderString(values), equals(output));
@@ -584,8 +636,8 @@ void main() {
       //function() { return "|planet| => {{planet}}" }
       var values = {
         'planet': 'world',
-        'lambda': (LambdaContext ctx) =>
-            ctx.renderSource('|planet| => {{planet}}')
+        'lambda':
+            (LambdaContext ctx) => ctx.renderSource('|planet| => {{planet}}'),
       };
 
       var output = 'Hello, (|planet| => world)!';
@@ -604,7 +656,7 @@ void main() {
         'lambda': (LambdaContext ctx) {
           var txt = ctx.source;
           return ctx.renderSource('$txt{{planet}} => |planet|$txt');
-        }
+        },
       };
 
       var output = '<-{{planet}} => Earth->';
@@ -636,13 +688,13 @@ void main() {
   group('Array indexing', () {
     test('Basic', () {
       var val = parse('{{array.1}}').renderString({
-        'array': [1, 2, 3]
+        'array': [1, 2, 3],
       });
       expect(val, equals('2'));
     });
     test('RangeError', () {
       var error = renderFail('{{array.5}}', {
-        'array': [1, 2, 3]
+        'array': [1, 2, 3],
       });
       expect(error, isA<TemplateException>());
     });
@@ -674,7 +726,7 @@ void main() {
       var values = {
         'markdown': (ctx) {
           ctx.write('foo');
-        }
+        },
       };
       var output = '<foo>';
       expect(parse(template).renderString(values), equals(output));
@@ -686,7 +738,7 @@ void main() {
         'content': 'bar',
         'markdown': (ctx) {
           ctx.render();
-        }
+        },
       };
       var output = '<bar>';
       expect(parse(template).renderString(values), equals(output));
@@ -697,7 +749,7 @@ void main() {
       var values = {
         'markdown': (LambdaContext ctx) {
           ctx.render(value: {'content': 'oi!'});
-        }
+        },
       };
       var output = '<oi!>';
       expect(parse(template).renderString(values), equals(output));
@@ -708,7 +760,7 @@ void main() {
       var values = {
         'markdown': (LambdaContext ctx) {
           return ctx.renderString(value: {'content': 'oi!'});
-        }
+        },
       };
       var output = '<oi!>';
       expect(parse(template).renderString(values), equals(output));
@@ -720,7 +772,7 @@ void main() {
         'markdown': (LambdaContext ctx) {
           ctx.write('foo');
           return 'bar';
-        }
+        },
       };
       var output = '<foobar>';
       expect(parse(template).renderString(values), equals(output));
@@ -731,7 +783,7 @@ void main() {
       var values = {
         'markdown': (LambdaContext ctx) {
           return ctx.renderSource(ctx.source, value: {'content': 'oi!'});
-        }
+        },
       };
       var output = '<oi!>';
       expect(parse(template).renderString(values), equals(output));

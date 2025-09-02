@@ -23,7 +23,7 @@ void main() {
         Token(TokenType.openDelimiter, '{{', 3, 5),
         Token(TokenType.identifier, 'foo', 5, 8),
         Token(TokenType.closeDelimiter, '}}', 8, 10),
-        Token(TokenType.text, 'def', 10, 13)
+        Token(TokenType.text, 'def', 10, 13),
       ]);
     });
 
@@ -38,7 +38,7 @@ void main() {
         Token(TokenType.identifier, 'foo', 6, 9),
         Token(TokenType.whitespace, ' ', 9, 10),
         Token(TokenType.closeDelimiter, '}}', 10, 12),
-        Token(TokenType.text, 'def', 12, 15)
+        Token(TokenType.text, 'def', 12, 15),
       ]);
     });
 
@@ -55,7 +55,7 @@ void main() {
         Token(TokenType.identifier, 'foo', 8, 11),
         Token(TokenType.whitespace, ' ', 11, 12),
         Token(TokenType.closeDelimiter, '}}', 12, 14),
-        Token(TokenType.text, 'def', 14, 17)
+        Token(TokenType.text, 'def', 14, 17),
       ]);
     });
 
@@ -72,7 +72,7 @@ void main() {
         Token(TokenType.identifier, 'bar', 10, 13),
         Token(TokenType.whitespace, ' ', 13, 14),
         Token(TokenType.closeDelimiter, '}}', 14, 16),
-        Token(TokenType.text, 'def', 16, 19)
+        Token(TokenType.text, 'def', 16, 19),
       ]);
     });
 
@@ -85,7 +85,7 @@ void main() {
         Token(TokenType.openDelimiter, '{{{', 3, 6),
         Token(TokenType.identifier, 'foo', 6, 9),
         Token(TokenType.closeDelimiter, '}}}', 9, 12),
-        Token(TokenType.text, 'def', 12, 15)
+        Token(TokenType.text, 'def', 12, 15),
       ]);
     });
 
@@ -100,7 +100,7 @@ void main() {
         Token(TokenType.identifier, 'foo', 7, 10),
         Token(TokenType.whitespace, ' ', 10, 11),
         Token(TokenType.closeDelimiter, '}}}', 11, 14),
-        Token(TokenType.text, 'def', 14, 17)
+        Token(TokenType.text, 'def', 14, 17),
       ]);
     });
 
@@ -136,7 +136,7 @@ void main() {
       expectNodes(nodes, [
         TextNode('abc', 0, 3),
         VariableNode('foo', 3, 10, escape: true),
-        TextNode('def', 10, 13)
+        TextNode('def', 10, 13),
       ]);
     });
 
@@ -147,7 +147,7 @@ void main() {
       expectNodes(nodes, [
         TextNode('abc', 0, 3),
         VariableNode('foo', 3, 12, escape: true),
-        TextNode('def', 12, 15)
+        TextNode('def', 12, 15),
       ]);
     });
 
@@ -158,10 +158,11 @@ void main() {
       expectNodes(nodes, [
         TextNode('abc', 0, 3),
         SectionNode('foo', 3, 11, '{{ }}'),
-        TextNode('ghi', 22, 25)
+        TextNode('ghi', 22, 25),
       ]);
-      expectNodes(
-          (nodes[1] as SectionNode).children, [TextNode('def', 11, 14)]);
+      expectNodes((nodes[1] as SectionNode).children, [
+        TextNode('def', 11, 14),
+      ]);
     });
 
     test('parse section standalone tag whitespace', () {
@@ -171,10 +172,11 @@ void main() {
       expectNodes(nodes, [
         TextNode('abc\n', 0, 4),
         SectionNode('foo', 4, 12, '{{ }}'),
-        TextNode('ghi', 26, 29)
+        TextNode('ghi', 26, 29),
       ]);
-      expectNodes(
-          (nodes[1] as SectionNode).children, [TextNode('def\n', 13, 17)]);
+      expectNodes((nodes[1] as SectionNode).children, [
+        TextNode('def\n', 13, 17),
+      ]);
     });
 
     test('parse section standalone tag whitespace consecutive', () {
@@ -187,18 +189,22 @@ void main() {
         SectionNode('foo', 26, 34, '{{ }}'),
         TextNode('ghi', 48, 51),
       ]);
-      expectNodes(
-          (nodes[1] as SectionNode).children, [TextNode('def\n', 13, 17)]);
+      expectNodes((nodes[1] as SectionNode).children, [
+        TextNode('def\n', 13, 17),
+      ]);
     });
 
     test('parse section standalone tag whitespace on first line', () {
       var source = '  {{#foo}}  \ndef\n{{/foo}}\nghi';
       var parser = Parser(source, 'foo', '{{ }}', lenient: false);
       var nodes = parser.parse();
-      expectNodes(
-          nodes, [SectionNode('foo', 2, 10, '{{ }}'), TextNode('ghi', 26, 29)]);
-      expectNodes(
-          (nodes[0] as SectionNode).children, [TextNode('def\n', 13, 17)]);
+      expectNodes(nodes, [
+        SectionNode('foo', 2, 10, '{{ }}'),
+        TextNode('ghi', 26, 29),
+      ]);
+      expectNodes((nodes[0] as SectionNode).children, [
+        TextNode('def\n', 13, 17),
+      ]);
     });
 
     test('parse section standalone tag whitespace on last line', () {
@@ -206,8 +212,9 @@ void main() {
       var parser = Parser(source, 'foo', '{{ }}', lenient: false);
       var nodes = parser.parse();
       expectNodes(nodes, [SectionNode('foo', 0, 8, '{{ }}')]);
-      expectNodes(
-          (nodes[0] as SectionNode).children, [TextNode('def\n', 8, 12)]);
+      expectNodes((nodes[0] as SectionNode).children, [
+        TextNode('def\n', 8, 12),
+      ]);
     });
 
     test('parse variable newline', () {
@@ -217,7 +224,7 @@ void main() {
       expectNodes(nodes, [
         TextNode('abc\n\n', 0, 5),
         VariableNode('foo', 5, 12, escape: true),
-        TextNode('def', 12, 15)
+        TextNode('def', 12, 15),
       ]);
     });
 
@@ -228,19 +235,18 @@ void main() {
       expectNodes(nodes, [
         TextNode('abc\n\n', 0, 5),
         SectionNode('foo', 5, 13, '{{ }}'),
-        TextNode('ghi', 27, 30)
+        TextNode('ghi', 27, 30),
       ]);
-      expectNodes(
-          (nodes[1] as SectionNode).children, [TextNode('def\n', 14, 18)]);
+      expectNodes((nodes[1] as SectionNode).children, [
+        TextNode('def\n', 14, 18),
+      ]);
     });
 
     test('parse whitespace', () {
       var source = 'abc\n   ';
       var parser = Parser(source, 'foo', '{{ }}', lenient: false);
       var nodes = parser.parse();
-      expectNodes(nodes, [
-        TextNode('abc\n   ', 0, 7),
-      ]);
+      expectNodes(nodes, [TextNode('abc\n   ', 0, 7)]);
     });
 
     test('parse partial', () {
@@ -250,7 +256,7 @@ void main() {
       expectNodes(nodes, [
         TextNode('abc\n   ', 0, 7),
         PartialNode('foo', 7, 15, '   '),
-        TextNode('def', 15, 18)
+        TextNode('def', 15, 18),
       ]);
     });
 
@@ -285,7 +291,7 @@ void main() {
       expectNodes(nodes, [
         VariableNode('#foo', 0, 12, escape: false),
         TextNode(' ', 12, 13),
-        VariableNode('/foo', 13, 25, escape: false)
+        VariableNode('/foo', 13, 25, escape: false),
       ]);
     });
 
@@ -299,7 +305,8 @@ void main() {
     });
 
     test('exception', () {
-      var source = "'{{ foo }} sdfffffffffffffffffffffffffffffffffffffffffffff "
+      var source =
+          "'{{ foo }} sdfffffffffffffffffffffffffffffffffffffffffffff "
           'dsfsdf sdfdsa fdsfads fsdfdsfadsf dsfasdfsdf sdfdsfsadf sdfadsfsdf ';
       var ex = TemplateException('boom!', 'foo.mustache', source, 2);
       ex.toString();

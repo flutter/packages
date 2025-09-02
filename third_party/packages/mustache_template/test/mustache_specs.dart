@@ -50,10 +50,12 @@ void _defineGroupFromFile(filename, text) {
       testDescription.write(t['desc']);
       var template = t['template'];
       var data = t['data'];
-      var templateOneline =
-          template.replaceAll('\n', '\\n').replaceAll('\r', '\\r');
-      var reason =
-          StringBuffer("Could not render right '''$templateOneline'''");
+      var templateOneline = template
+          .replaceAll('\n', '\\n')
+          .replaceAll('\r', '\\r');
+      var reason = StringBuffer(
+        "Could not render right '''$templateOneline'''",
+      );
       var expected = t['expected'];
       var partials = t['partials'];
       var partial = (String name) {
@@ -72,9 +74,13 @@ void _defineGroupFromFile(filename, text) {
         reason.write(' and partial: $partials');
       }
       test(
-          testDescription.toString(),
-          () => expect(render(template, data, partial: partial), expected,
-              reason: reason.toString()));
+        testDescription.toString(),
+        () => expect(
+          render(template, data, partial: partial),
+          expected,
+          reason: reason.toString(),
+        ),
+      );
     });
   });
 }
@@ -101,15 +107,18 @@ Function wrapLambda(Function f) =>
 var lambdas = {
   'Interpolation': wrapLambda((t) => 'world'),
   'Interpolation - Expansion': wrapLambda((t) => '{{planet}}'),
-  'Interpolation - Alternate Delimiters':
-      wrapLambda((t) => '|planet| => {{planet}}'),
+  'Interpolation - Alternate Delimiters': wrapLambda(
+    (t) => '|planet| => {{planet}}',
+  ),
   'Interpolation - Multiple Calls': wrapLambda(
-      _dummyCallableWithState()), //function() { return (g=(function(){return this})()).calls=(g.calls||0)+1 }
+    _dummyCallableWithState(),
+  ), //function() { return (g=(function(){return this})()).calls=(g.calls||0)+1 }
   'Escaping': wrapLambda((t) => '>'),
   'Section': wrapLambda((txt) => txt == '{{x}}' ? 'yes' : 'no'),
   'Section - Expansion': wrapLambda((txt) => '$txt{{planet}}$txt'),
-  'Section - Alternate Delimiters':
-      wrapLambda((txt) => '$txt{{planet}} => |planet|$txt'),
+  'Section - Alternate Delimiters': wrapLambda(
+    (txt) => '$txt{{planet}} => |planet|$txt',
+  ),
   'Section - Multiple Calls': wrapLambda((t) => '__${t}__'),
-  'Inverted Section': wrapLambda((txt) => false)
+  'Inverted Section': wrapLambda((txt) => false),
 };

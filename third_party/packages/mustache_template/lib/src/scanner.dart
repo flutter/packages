@@ -3,8 +3,8 @@ import 'template_exception.dart';
 
 class Scanner {
   Scanner(String source, this._templateName, String? delimiters)
-      : _source = source,
-        _itr = source.runes.iterator {
+    : _source = source,
+      _itr = source.runes.iterator {
     if (source == '') {
       _c = _EOF;
     } else {
@@ -25,7 +25,11 @@ class Scanner {
       _closeDelimiter = delimiters.codeUnits[4];
     } else {
       throw TemplateException(
-          'Invalid delimiter string $delimiters', null, null, null);
+        'Invalid delimiter string $delimiters',
+        null,
+        null,
+        null,
+      );
     }
   }
 
@@ -84,9 +88,11 @@ class Scanner {
           _parseChangeDelimiterTag(start);
         } else {
           // Scan standard mustache tag.
-          var value = String.fromCharCodes(_openDelimiterInner == null
-              ? [_openDelimiter!]
-              : [_openDelimiter!, _openDelimiterInner!]);
+          var value = String.fromCharCodes(
+            _openDelimiterInner == null
+                ? [_openDelimiter!]
+                : [_openDelimiter!, _openDelimiterInner!],
+          );
 
           _append(TokenType.openDelimiter, value, start, wsStart);
 
@@ -124,16 +130,21 @@ class Scanner {
 
     if (c == _EOF) {
       throw TemplateException(
-          'Unexpected end of input', _templateName, _source, _offset - 1);
+        'Unexpected end of input',
+        _templateName,
+        _source,
+        _offset - 1,
+      );
     }
     if (c != expectedCharCode) {
       throw TemplateException(
-          'Unexpected character, '
-          'expected: ${String.fromCharCode(expectedCharCode)}, '
-          'was: ${String.fromCharCode(c)}',
-          _templateName,
-          _source,
-          _offset - 1);
+        'Unexpected character, '
+        'expected: ${String.fromCharCode(expectedCharCode)}, '
+        'was: ${String.fromCharCode(c)}',
+        _templateName,
+        _source,
+        _offset - 1,
+      );
     }
   }
 
@@ -230,22 +241,24 @@ class Scanner {
         default:
           // Identifier can be any other character in lenient mode.
           token = TokenType.identifier;
-          value = _readWhile((c) =>
-              !(const [
-                _HASH,
-                _CARET,
-                _FORWARD_SLASH,
-                _GT,
-                _AMP,
-                _EXCLAIM,
-                _SPACE,
-                _TAB,
-                _NEWLINE,
-                _RETURN,
-                _PERIOD
-              ].contains(c)) &&
-              c != _closeDelimiterInner &&
-              c != _closeDelimiter);
+          value = _readWhile(
+            (c) =>
+                !(const [
+                  _HASH,
+                  _CARET,
+                  _FORWARD_SLASH,
+                  _GT,
+                  _AMP,
+                  _EXCLAIM,
+                  _SPACE,
+                  _TAB,
+                  _NEWLINE,
+                  _RETURN,
+                  _PERIOD,
+                ].contains(c)) &&
+                c != _closeDelimiterInner &&
+                c != _closeDelimiter,
+          );
       }
       _append(token, value, start, _offset);
     }
@@ -259,9 +272,11 @@ class Scanner {
       if (_closeDelimiterInner != null) _expect(_closeDelimiterInner!);
       _expect(_closeDelimiter!);
 
-      var value = String.fromCharCodes(_closeDelimiterInner == null
-          ? [_closeDelimiter!]
-          : [_closeDelimiterInner!, _closeDelimiter!]);
+      var value = String.fromCharCodes(
+        _closeDelimiterInner == null
+            ? [_closeDelimiter!]
+            : [_closeDelimiterInner!, _closeDelimiter!],
+      );
 
       _append(TokenType.closeDelimiter, value, start, _offset);
     }

@@ -8,29 +8,57 @@ const Object noSuchProperty = Object();
 final RegExp _integerTag = RegExp(r'^[0-9]+$');
 
 class Renderer extends Visitor {
-  Renderer(this.sink, List stack, this.lenient, this.htmlEscapeValues,
-      this.partialResolver, this.templateName, this.indent, this.source)
-      : _stack = List.from(stack);
+  Renderer(
+    this.sink,
+    List stack,
+    this.lenient,
+    this.htmlEscapeValues,
+    this.partialResolver,
+    this.templateName,
+    this.indent,
+    this.source,
+  ) : _stack = List.from(stack);
 
   Renderer.partial(Renderer ctx, Template partial, String indent)
-      : this(
-            ctx.sink,
-            ctx._stack,
-            ctx.lenient,
-            ctx.htmlEscapeValues,
-            ctx.partialResolver,
-            ctx.templateName,
-            ctx.indent + indent,
-            partial.source);
+    : this(
+        ctx.sink,
+        ctx._stack,
+        ctx.lenient,
+        ctx.htmlEscapeValues,
+        ctx.partialResolver,
+        ctx.templateName,
+        ctx.indent + indent,
+        partial.source,
+      );
 
   Renderer.subtree(Renderer ctx, StringSink sink)
-      : this(sink, ctx._stack, ctx.lenient, ctx.htmlEscapeValues,
-            ctx.partialResolver, ctx.templateName, ctx.indent, ctx.source);
+    : this(
+        sink,
+        ctx._stack,
+        ctx.lenient,
+        ctx.htmlEscapeValues,
+        ctx.partialResolver,
+        ctx.templateName,
+        ctx.indent,
+        ctx.source,
+      );
 
-  Renderer.lambda(Renderer ctx, String source, String indent, StringSink sink,
-      String delimiters)
-      : this(sink, ctx._stack, ctx.lenient, ctx.htmlEscapeValues,
-            ctx.partialResolver, ctx.templateName, ctx.indent + indent, source);
+  Renderer.lambda(
+    Renderer ctx,
+    String source,
+    String indent,
+    StringSink sink,
+    String delimiters,
+  ) : this(
+        sink,
+        ctx._stack,
+        ctx.lenient,
+        ctx.htmlEscapeValues,
+        ctx.partialResolver,
+        ctx.templateName,
+        ctx.indent + indent,
+        source,
+      );
 
   final StringSink sink;
   final List _stack;
@@ -98,9 +126,10 @@ class Renderer extends Visitor {
       }
     } else {
       var valueString = (value == null) ? '' : value.toString();
-      var output = !node.escape || !htmlEscapeValues
-          ? valueString
-          : _htmlEscape(valueString);
+      var output =
+          !node.escape || !htmlEscapeValues
+              ? valueString
+              : _htmlEscape(valueString);
       write(output);
     }
   }
@@ -120,7 +149,6 @@ class Renderer extends Visitor {
 
     if (value == null) {
       // Do nothing.
-
     } else if (value is Iterable) {
       value.forEach((v) => _renderWithValue(node, v));
     } else if (value is Map) {
@@ -129,7 +157,6 @@ class Renderer extends Visitor {
       _renderWithValue(node, value);
     } else if (value == false) {
       // Do nothing.
-
     } else if (value == noSuchProperty) {
       if (!lenient) {
         throw error('Value was missing for section tag: ${node.name}.', node);
@@ -154,28 +181,28 @@ class Renderer extends Visitor {
       _renderWithValue(node, node.name);
     } else if (value == true || value is Map || value is Iterable) {
       // Do nothing.
-
     } else if (value == noSuchProperty) {
       if (lenient) {
         _renderWithValue(node, null);
       } else {
         throw error(
-            'Value was missing for inverse section: ${node.name}.', node);
+          'Value was missing for inverse section: ${node.name}.',
+          node,
+        );
       }
     } else if (value is Function) {
       // Do nothing.
       //TODO in strict mode should this be an error?
-
     } else if (lenient) {
       // We consider all other values as 'true' in lenient mode. Since this
       // is an inverted section, we do nothing.
-
     } else {
       throw error(
-          'Invalid value type for inverse section, '
-          'section: ${node.name}, '
-          'type: ${value.runtimeType}.',
-          node);
+        'Invalid value type for inverse section, '
+        'section: ${node.name}, '
+        'type: ${value.runtimeType}.',
+        node,
+      );
     }
   }
 
@@ -188,9 +215,10 @@ class Renderer extends Visitor {
   @override
   void visitPartial(PartialNode node) {
     var partialName = node.name;
-    var template = partialResolver == null
-        ? null
-        : (partialResolver!(partialName) as Template?);
+    var template =
+        partialResolver == null
+            ? null
+            : (partialResolver!(partialName) as Template?);
     if (template != null) {
       var renderer = Renderer.partial(this, template, node.indent);
       var nodes = getTemplateNodes(template);
@@ -250,7 +278,7 @@ class Renderer extends Visitor {
     _GT: '&gt;',
     _QUOTE: '&quot;',
     _APOS: '&#x27;',
-    _FORWARD_SLASH: '&#x2F;'
+    _FORWARD_SLASH: '&#x2F;',
   };
 
   String _htmlEscape(String s) {

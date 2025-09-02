@@ -52,7 +52,8 @@ class TemplateException implements m.TemplateException {
 
     if (source == null ||
         offset == null ||
-        (offset! < 0 || offset! > source!.length)) return;
+        (offset! < 0 || offset! > source!.length))
+      return;
 
     // Find line and character column.
     var lineNum = 1;

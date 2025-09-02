@@ -4,7 +4,11 @@ import 'template_exception.dart';
 import 'token.dart';
 
 List<Node> parse(
-    String source, bool lenient, String? templateName, String delimiters) {
+  String source,
+  bool lenient,
+  String? templateName,
+  String delimiters,
+) {
   var parser = Parser(source, templateName, delimiters, lenient: lenient);
   return parser.parse();
 }
@@ -33,13 +37,16 @@ class TagType {
 }
 
 class Parser {
-  Parser(String source, String? templateName, String delimiters,
-      {lenient = false})
-      : _source = source,
-        _templateName = templateName,
-        _delimiters = delimiters,
-        _lenient = lenient,
-        _scanner = Scanner(source, templateName, delimiters);
+  Parser(
+    String source,
+    String? templateName,
+    String delimiters, {
+    lenient = false,
+  }) : _source = source,
+       _templateName = templateName,
+       _delimiters = delimiters,
+       _lenient = lenient,
+       _scanner = Scanner(source, templateName, delimiters);
 
   final String _source;
   final bool _lenient;
@@ -93,8 +100,12 @@ class Parser {
     }
 
     if (_stack.length != 1) {
-      throw TemplateException("Unclosed tag: '${_stack.last.name}'.",
-          _templateName, _source, _stack.last.start);
+      throw TemplateException(
+        "Unclosed tag: '${_stack.last.name}'.",
+        _templateName,
+        _source,
+        _stack.last.start,
+      );
     }
 
     return _stack.last.children;
@@ -137,8 +148,13 @@ class Parser {
   // Add a text node to top most section on the stack and merge consecutive
   // text nodes together.
   void _appendTextToken(Token token) {
-    assert(const [TokenType.text, TokenType.lineEnd, TokenType.whitespace]
-        .contains(token.type));
+    assert(
+      const [
+        TokenType.text,
+        TokenType.lineEnd,
+        TokenType.whitespace,
+      ].contains(token.type),
+    );
     var children = _stack.last.children;
     if (children.isEmpty || children.last is! TextNode) {
       children.add(TextNode(token.value, token.start, token.end));
@@ -153,7 +169,6 @@ class Parser {
   // push it onto the stack, if a close section tag, then pop the stack.
   void _appendTag(Tag tag, Node? node) {
     switch (tag.type) {
-
       // {{#...}}  {{^...}}
       case TagType.openSection:
       case TagType.openInverseSection:
@@ -165,11 +180,12 @@ class Parser {
       case TagType.closeSection:
         if (tag.name != _stack.last.name) {
           throw TemplateException(
-              'Mismatched tag, expected: '
-              "'${_stack.last.name}', was: '${tag.name}'",
-              _templateName,
-              _source,
-              tag.start);
+            'Mismatched tag, expected: '
+            "'${_stack.last.name}', was: '${tag.name}'",
+            _templateName,
+            _source,
+            tag.start,
+          );
         }
         var node = _stack.removeLast();
         node.contentEnd = tag.start;
@@ -225,7 +241,7 @@ class Parser {
         TagType.openInverseSection,
         TagType.partial,
         TagType.comment,
-        TagType.changeDelimiter
+        TagType.changeDelimiter,
       ];
 
       if (tag != null &&
@@ -254,7 +270,7 @@ class Parser {
     '/': TagType.closeSection,
     '&': TagType.unescapedVariable,
     '>': TagType.partial,
-    '!': TagType.comment
+    '!': TagType.comment,
   };
 
   // If open delimiter, or change delimiter token then return a tag.
@@ -300,9 +316,11 @@ class Parser {
     // TODO split up names here instead of during render.
     // Also check that they are valid token types.
     var list = <Token>[];
-    for (var t = _peek();
-        t != null && t.type != TokenType.closeDelimiter;
-        t = _peek()) {
+    for (
+      var t = _peek();
+      t != null && t.type != TokenType.closeDelimiter;
+      t = _peek()
+    ) {
       _read();
       list.add(t);
     }
@@ -319,9 +337,10 @@ class Parser {
 
         if (!_validIdentifier.hasMatch(name)) {
           throw _error(
-              'Unless in lenient mode, tags may only contain the '
-              'characters a-z, A-Z, minus, underscore and period.',
-              open.start);
+            'Unless in lenient mode, tags may only contain the '
+            'characters a-z, A-Z, minus, underscore and period.',
+            open.start,
+          );
         }
       }
     }
@@ -342,8 +361,13 @@ class Parser {
       case TagType.openSection:
       case TagType.openInverseSection:
         var inverse = tag.type == TagType.openInverseSection;
-        node = SectionNode(tag.name, tag.start, tag.end, _currentDelimiters!,
-            inverse: inverse);
+        node = SectionNode(
+          tag.name,
+          tag.start,
+          tag.end,
+          _currentDelimiters!,
+          inverse: inverse,
+        );
         break;
 
       case TagType.variable:
