@@ -40,7 +40,7 @@ If editing `Info.plist` as text, add:
 Change the minimum Android sdk version to 23 (or higher) in your `android/app/build.gradle` file.
 
 ```groovy
-minSdkVersion 23
+minSdk = 23
 ```
 
 The endorsed [`camera_android_camerax`][2] implementation of the camera plugin built with CameraX has
