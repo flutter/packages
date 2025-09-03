@@ -40,7 +40,13 @@ abstract class LocalAuthPlatform extends PlatformInterface {
   /// Authenticates the user with biometrics available on the device while also
   /// allowing the user to use device authentication - pin, pattern, passcode.
   ///
-  /// Returns true if the user successfully authenticated, false otherwise.
+  /// Returns true if the user successfully authenticated. Returns false if
+  /// the authentication completes, but the user failed the challenge with no
+  /// further effects. Platform implementations should throw a
+  /// [LocalAuthException] for any other outcome, such as errors, cancelation,
+  /// or lockout. This may mean that for some platforms, the implementation will
+  /// never return false (e.g., if the only standard outcomes are success,
+  /// cancelation, or temporary lockout due to too many retries).
   ///
   /// [localizedReason] is the message to show to user while prompting them
   /// for authentication. This is typically along the lines of: 'Please scan
@@ -50,11 +56,6 @@ abstract class LocalAuthPlatform extends PlatformInterface {
   /// customize messages in the dialogs.
   ///
   /// Provide [options] for configuring further authentication related options.
-  ///
-  /// Throws a [PlatformException] if there were technical problems with local
-  /// authentication (e.g. lack of relevant hardware). This might throw
-  /// [PlatformException] with error code [otherOperatingSystem] on the iOS
-  /// simulator.
   Future<bool> authenticate({
     required String localizedReason,
     required Iterable<AuthMessages> authMessages,
