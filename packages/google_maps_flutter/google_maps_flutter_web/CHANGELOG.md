@@ -1,6 +1,10 @@
+## 0.5.14+1
+
+* Stops processing events and cancels subscriptions when controller is disposed.
+
 ## 0.5.14
 
-* Stop processing events and cancel subscriptions when controller is disposed.
+* Adds support for disabling or moving the camera control button on web.
 
 ## 0.5.13
 
