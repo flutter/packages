@@ -22,6 +22,9 @@ final class MockCaptureSession: NSObject, FLTCaptureSession {
   var _sessionPreset = AVCaptureSession.Preset.high
   var inputs = [AVCaptureInput]()
   var outputs = [AVCaptureOutput]()
+  
+  private(set) var addedAudioOutputCount: Int = 0
+    
   var automaticallyConfiguresApplicationAudioSession = false
 
   var sessionPreset: AVCaptureSession.Preset {
@@ -59,9 +62,14 @@ final class MockCaptureSession: NSObject, FLTCaptureSession {
 
   func addConnection(_: AVCaptureConnection) {}
 
-  func addInput(_: FLTCaptureInput) {}
+  func addInput(_ : FLTCaptureInput) {}
 
-  func addOutput(_: AVCaptureOutput) {}
+  func addOutput(_ output: AVCaptureOutput) {
+
+      if output is AVCaptureAudioDataOutput {
+          addedAudioOutputCount += 1
+      }
+  }
 
   func removeInput(_: FLTCaptureInput) {}
 
