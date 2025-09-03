@@ -32,10 +32,9 @@ class AppStoreProductDetails extends ProductDetails {
       price: product.priceLocale.currencySymbol + product.price,
       rawPrice: double.parse(product.price),
       currencyCode: product.priceLocale.currencyCode,
-      currencySymbol:
-          product.priceLocale.currencySymbol.isNotEmpty
-              ? product.priceLocale.currencySymbol
-              : product.priceLocale.currencyCode,
+      currencySymbol: product.priceLocale.currencySymbol.isNotEmpty
+          ? product.priceLocale.currencySymbol
+          : product.priceLocale.currencyCode,
       skProduct: product,
     );
   }
