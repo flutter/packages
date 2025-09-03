@@ -4,19 +4,24 @@
 
 import CoreMotion
 
-// Import Objectice-C part of the implementation when SwiftPM is used.
+// Import Objective-C part of the implementation when SwiftPM is used.
 #if canImport(camera_avfoundation_objc)
   import camera_avfoundation_objc
 #endif
 
 final class DefaultCamera: FLTCam, Camera {
-  override var videoFormat: FourCharCode {
+  var dartAPI: FCPCameraEventApi?
+  var onFrameAvailable: (() -> Void)?
+
+  var videoFormat: FourCharCode = kCVPixelFormatType_32BGRA {
     didSet {
       captureVideoOutput.videoSettings = [
         kCVPixelBufferPixelFormatTypeKey as String: videoFormat
       ]
     }
   }
+
+  private(set) var isPreviewPaused = false
 
   override var deviceOrientation: UIDeviceOrientation {
     get { super.deviceOrientation }
@@ -42,11 +47,55 @@ final class DefaultCamera: FLTCam, Camera {
   /// Videos are written to disk by `videoAdaptor` on an internal queue managed by AVFoundation.
   private let photoIOQueue = DispatchQueue(label: "io.flutter.camera.photoIOQueue")
 
+  /// All DefaultCamera's state access and capture session related operations should be run on this queue.
+  private let captureSessionQueue: DispatchQueue
+
+  private let mediaSettings: FCPPlatformMediaSettings
+  private let mediaSettingsAVWrapper: FLTCamMediaSettingsAVWrapper
+
+  /// A wrapper for AVCaptureDevice creation to allow for dependency injection in tests.
+  private let captureDeviceFactory: CaptureDeviceFactory
+  private let audioCaptureDeviceFactory: AudioCaptureDeviceFactory
+  private let captureDeviceInputFactory: FLTCaptureDeviceInputFactory
+  private let assetWriterFactory: AssetWriterFactory
+  private let inputPixelBufferAdaptorFactory: InputPixelBufferAdaptorFactory
+
+  private let deviceOrientationProvider: FLTDeviceOrientationProviding
+
+  private var videoWriter: FLTAssetWriter?
+  private var videoWriterInput: FLTAssetWriterInput?
+  private var audioWriterInput: FLTAssetWriterInput?
+  private var videoAdaptor: FLTAssetWriterInputPixelBufferAdaptor?
+
+  /// A dictionary to retain all in-progress FLTSavePhotoDelegates. The key of the dictionary is the
+  /// AVCapturePhotoSettings's uniqueID for each photo capture operation, and the value is the
+  /// FLTSavePhotoDelegate that handles the result of each photo capture operation. Note that photo
+  /// capture operations may overlap, so FLTCam has to keep track of multiple delegates in progress,
+  /// instead of just a single delegate reference.
+  private(set) var inProgressSavePhotoDelegates = [Int64: FLTSavePhotoDelegate]()
+
+  private var imageStreamHandler: FLTImageStreamHandler?
+
   /// Tracks the latest pixel buffer sent from AVFoundation's sample buffer delegate callback.
   /// Used to deliver the latest pixel buffer to the flutter engine via the `copyPixelBuffer` API.
   private var latestPixelBuffer: CVPixelBuffer?
+
+  private var videoRecordingPath: String?
+  private var isRecordingPaused = false
+  private var isFirstVideoSample = false
+  private var videoIsDisconnected = false
+  private var audioIsDisconnected = false
+  private var isAudioSetup = false
   private var lastVideoSampleTime = CMTime.zero
   private var lastAudioSampleTime = CMTime.zero
+  private var videoTimeOffset = CMTime.zero
+  private var audioTimeOffset = CMTime.zero
+
+  /// True when images from the camera are being streamed.
+  private(set) var isStreamingImages = false
+
+  /// Number of frames currently pending processing.
+  private var streamingPendingFramesCount = 0
 
   /// Maximum number of frames pending processing.
   /// To limit memory consumption, limit the number of frames pending processing.
@@ -56,6 +105,7 @@ final class DefaultCamera: FLTCam, Camera {
 
   private var exposureMode = FCPPlatformExposureMode.auto
   private var focusMode = FCPPlatformFocusMode.auto
+  private var flashMode: FCPPlatformFlashMode
 
   private static func flutterErrorFromNSError(_ error: NSError) -> FlutterError {
     return FlutterError(
@@ -90,6 +140,89 @@ final class DefaultCamera: FLTCam, Camera {
     }
 
     return (captureVideoInput, captureVideoOutput, connection)
+  }
+
+  init(configuration: FLTCamConfiguration) throws {
+    captureSessionQueue = configuration.captureSessionQueue
+    mediaSettings = configuration.mediaSettings
+    mediaSettingsAVWrapper = configuration.mediaSettingsWrapper
+    captureDeviceFactory = configuration.captureDeviceFactory
+    audioCaptureDeviceFactory = configuration.audioCaptureDeviceFactory
+    captureDeviceInputFactory = configuration.captureDeviceInputFactory
+    assetWriterFactory = configuration.assetWriterFactory
+    inputPixelBufferAdaptorFactory = configuration.inputPixelBufferAdaptorFactory
+    deviceOrientationProvider = configuration.deviceOrientationProvider
+
+    let captureDevice = captureDeviceFactory(configuration.initialCameraName)
+    flashMode = captureDevice.hasFlash ? .auto : .off
+
+    super.init()
+
+    videoCaptureSession = configuration.videoCaptureSession
+    audioCaptureSession = configuration.audioCaptureSession
+    videoDimensionsForFormat = configuration.videoDimensionsForFormat
+
+    self.captureDevice = captureDevice
+
+    capturePhotoOutput = FLTDefaultCapturePhotoOutput(photoOutput: AVCapturePhotoOutput())
+    capturePhotoOutput.highResolutionCaptureEnabled = true
+
+    videoCaptureSession.automaticallyConfiguresApplicationAudioSession = false
+    audioCaptureSession.automaticallyConfiguresApplicationAudioSession = false
+
+    deviceOrientation = configuration.orientation
+
+    let connection: AVCaptureConnection
+    (captureVideoInput, captureVideoOutput, connection) = try DefaultCamera.createConnection(
+      captureDevice: captureDevice,
+      videoFormat: videoFormat,
+      captureDeviceInputFactory: configuration.captureDeviceInputFactory)
+
+    captureVideoOutput.setSampleBufferDelegate(self, queue: captureSessionQueue)
+
+    videoCaptureSession.addInputWithNoConnections(captureVideoInput)
+    videoCaptureSession.addOutputWithNoConnections(captureVideoOutput.avOutput)
+    videoCaptureSession.addConnection(connection)
+
+    videoCaptureSession.addOutput(capturePhotoOutput.avOutput)
+
+    motionManager.startAccelerometerUpdates()
+
+    if mediaSettings.framesPerSecond != nil {
+      // The frame rate can be changed only on a locked for configuration device.
+      try mediaSettingsAVWrapper.lockDevice(captureDevice)
+      defer { mediaSettingsAVWrapper.unlockDevice(captureDevice) }
+
+      mediaSettingsAVWrapper.beginConfiguration(for: videoCaptureSession)
+      defer { mediaSettingsAVWrapper.commitConfiguration(for: videoCaptureSession) }
+
+      // Possible values for presets are hard-coded in FLT interface having
+      // corresponding AVCaptureSessionPreset counterparts.
+      // If _resolutionPreset is not supported by camera there is
+      // fallback to lower resolution presets.
+      // If none can be selected there is error condition.
+      try setCaptureSessionPreset(mediaSettings.resolutionPreset)
+
+      FLTSelectBestFormatForRequestedFrameRate(
+        captureDevice,
+        mediaSettings,
+        videoDimensionsForFormat)
+
+      if let framesPerSecond = mediaSettings.framesPerSecond {
+        // Set frame rate with 1/10 precision allowing non-integral values.
+        let fpsNominator = floor(framesPerSecond.doubleValue * 10.0)
+        let duration = CMTimeMake(value: 10, timescale: Int32(fpsNominator))
+
+        mediaSettingsAVWrapper.setMinFrameDuration(duration, on: captureDevice)
+        mediaSettingsAVWrapper.setMaxFrameDuration(duration, on: captureDevice)
+      }
+    } else {
+      // If the frame rate is not important fall to a less restrictive
+      // behavior (no configuration locking).
+      try setCaptureSessionPreset(mediaSettings.resolutionPreset)
+    }
+
+    updateOrientation()
   }
 
   func setUpCaptureSessionForAudioIfNeeded() {
@@ -443,8 +576,7 @@ final class DefaultCamera: FLTCam, Camera {
         guard let strongSelf = self else { return }
 
         strongSelf.captureSessionQueue.async { [weak self] in
-          self?.inProgressSavePhotoDelegates.removeObject(
-            forKey: settings.uniqueID)
+          self?.inProgressSavePhotoDelegates.removeValue(forKey: settings.uniqueID)
         }
 
         if let error = error {
