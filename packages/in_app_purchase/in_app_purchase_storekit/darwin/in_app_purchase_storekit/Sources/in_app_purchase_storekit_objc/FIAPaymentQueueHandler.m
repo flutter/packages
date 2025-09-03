@@ -92,9 +92,7 @@
     _transactionCache = transactionCache;
 
     [_queue addTransactionObserver:self];
-    if (@available(iOS 13.0, macOS 10.15, *)) {
-      queue.delegate = self.delegate;
-    }
+    queue.delegate = self.delegate;
   }
   return self;
 }

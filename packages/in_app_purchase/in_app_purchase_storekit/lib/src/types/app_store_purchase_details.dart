@@ -38,10 +38,9 @@ class AppStorePurchaseDetails extends PurchaseDetails {
         transaction.transactionState,
         transaction.error,
       ),
-      transactionDate:
-          transaction.transactionTimeStamp != null
-              ? (transaction.transactionTimeStamp! * 1000).toInt().toString()
-              : null,
+      transactionDate: transaction.transactionTimeStamp != null
+          ? (transaction.transactionTimeStamp! * 1000).toInt().toString()
+          : null,
       verificationData: PurchaseVerificationData(
         localVerificationData: base64EncodedReceipt,
         serverVerificationData: base64EncodedReceipt,

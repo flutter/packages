@@ -240,10 +240,9 @@ class SKPaymentTransactionWrapper {
       transactionState: SKPaymentTransactionStateWrapper.convertFromPigeon(
         msg.transactionState,
       ),
-      originalTransaction:
-          msg.originalTransaction == null
-              ? null
-              : convertFromPigeon(msg.originalTransaction!),
+      originalTransaction: msg.originalTransaction == null
+          ? null
+          : convertFromPigeon(msg.originalTransaction!),
       transactionTimeStamp: msg.transactionTimeStamp,
       transactionIdentifier: msg.transactionIdentifier,
       error: msg.error == null ? null : SKError.convertFromPigeon(msg.error!),

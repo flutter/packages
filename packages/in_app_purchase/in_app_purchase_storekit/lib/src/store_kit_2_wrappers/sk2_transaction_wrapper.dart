@@ -80,8 +80,9 @@ class SK2Transaction {
   /// A sequence that emits all the customer’s transactions for your app.
   static Future<List<SK2Transaction>> transactions() async {
     final List<SK2TransactionMessage> msgs = await _hostApi.transactions();
-    final List<SK2Transaction> transactions =
-        msgs.map((SK2TransactionMessage e) => e.convertFromPigeon()).toList();
+    final List<SK2Transaction> transactions = msgs
+        .map((SK2TransactionMessage e) => e.convertFromPigeon())
+        .toList();
     return transactions;
   }
 
