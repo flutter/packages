@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:local_auth_darwin/local_auth_darwin.dart';
 import 'package:local_auth_darwin/src/messages.g.dart';
@@ -374,7 +373,8 @@ void main() {
 
       test('handles failure', () async {
         when(api.authenticate(any, any)).thenAnswer(
-          (_) async => AuthResultDetails(result: AuthResult.failure),
+          (_) async =>
+              AuthResultDetails(result: AuthResult.authenticationFailed),
         );
 
         final bool result = await plugin.authenticate(
@@ -385,189 +385,40 @@ void main() {
         expect(result, false);
       });
 
-      test('converts errorNotAvailable to legacy PlatformException', () async {
-        const String errorMessage = 'a message';
-        const String errorDetails = 'some details';
+      test('handles appCancel as failure', () async {
         when(api.authenticate(any, any)).thenAnswer(
-          (_) async => AuthResultDetails(
-            result: AuthResult.errorNotAvailable,
-            errorMessage: errorMessage,
-            errorDetails: errorDetails,
-          ),
+          (_) async => AuthResultDetails(result: AuthResult.appCancel),
         );
 
-        expect(
-          () async => plugin.authenticate(
-            localizedReason: 'reason',
-            authMessages: <AuthMessages>[],
-          ),
-          throwsA(
-            isA<PlatformException>()
-                .having((PlatformException e) => e.code, 'code', 'NotAvailable')
-                .having(
-                  (PlatformException e) => e.message,
-                  'message',
-                  errorMessage,
-                )
-                .having(
-                  (PlatformException e) => e.details,
-                  'details',
-                  errorDetails,
-                ),
-          ),
+        final bool result = await plugin.authenticate(
+          localizedReason: 'reason',
+          authMessages: <AuthMessages>[],
         );
+
+        expect(result, false);
       });
 
-      test('converts errorNotEnrolled to legacy PlatformException', () async {
-        const String errorMessage = 'a message';
-        const String errorDetails = 'some details';
+      test('handles showedAlert as failure', () async {
         when(api.authenticate(any, any)).thenAnswer(
-          (_) async => AuthResultDetails(
-            result: AuthResult.errorNotEnrolled,
-            errorMessage: errorMessage,
-            errorDetails: errorDetails,
-          ),
+          (_) async => AuthResultDetails(result: AuthResult.showedAlert),
         );
 
-        expect(
-          () async => plugin.authenticate(
-            localizedReason: 'reason',
-            authMessages: <AuthMessages>[],
-          ),
-          throwsA(
-            isA<PlatformException>()
-                .having((PlatformException e) => e.code, 'code', 'NotEnrolled')
-                .having(
-                  (PlatformException e) => e.message,
-                  'message',
-                  errorMessage,
-                )
-                .having(
-                  (PlatformException e) => e.details,
-                  'details',
-                  errorDetails,
-                ),
-          ),
-        );
-      });
-
-      test('converts errorUserCancelled to PlatformException', () async {
-        const String errorMessage = 'The user cancelled authentication.';
-        const String errorDetails = 'com.apple.LocalAuthentication';
-        when(api.authenticate(any, any)).thenAnswer(
-          (_) async => AuthResultDetails(
-            result: AuthResult.errorUserCancelled,
-            errorMessage: errorMessage,
-            errorDetails: errorDetails,
-          ),
+        final bool result = await plugin.authenticate(
+          localizedReason: 'reason',
+          authMessages: <AuthMessages>[],
         );
 
-        expect(
-          () async => plugin.authenticate(
-            localizedReason: 'reason',
-            authMessages: <AuthMessages>[],
-          ),
-          throwsA(
-            isA<PlatformException>()
-                .having(
-                  (PlatformException e) => e.code,
-                  'code',
-                  'UserCancelled',
-                )
-                .having(
-                  (PlatformException e) => e.message,
-                  'message',
-                  errorMessage,
-                )
-                .having(
-                  (PlatformException e) => e.details,
-                  'details',
-                  errorDetails,
-                ),
-          ),
-        );
-      });
-
-      test('converts errorUserFallback to PlatformException', () async {
-        const String errorMessage = 'The user chose to use the fallback.';
-        const String errorDetails = 'com.apple.LocalAuthentication';
-        when(api.authenticate(any, any)).thenAnswer(
-          (_) async => AuthResultDetails(
-            result: AuthResult.errorUserFallback,
-            errorMessage: errorMessage,
-            errorDetails: errorDetails,
-          ),
-        );
-
-        expect(
-          () async => plugin.authenticate(
-            localizedReason: 'reason',
-            authMessages: <AuthMessages>[],
-          ),
-          throwsA(
-            isA<PlatformException>()
-                .having((PlatformException e) => e.code, 'code', 'UserFallback')
-                .having(
-                  (PlatformException e) => e.message,
-                  'message',
-                  errorMessage,
-                )
-                .having(
-                  (PlatformException e) => e.details,
-                  'details',
-                  errorDetails,
-                ),
-          ),
-        );
-      });
-
-      test('converts errorBiometricNotAvailable to PlatformException', () async {
-        const String errorMessage =
-            'Biometrics are not available on this device.';
-        const String errorDetails = 'com.apple.LocalAuthentication';
-        when(api.authenticate(any, any)).thenAnswer(
-          (_) async => AuthResultDetails(
-            result: AuthResult.errorBiometricNotAvailable,
-            errorMessage: errorMessage,
-            errorDetails: errorDetails,
-          ),
-        );
-
-        expect(
-          () async => plugin.authenticate(
-            localizedReason: 'reason',
-            authMessages: <AuthMessages>[],
-          ),
-          throwsA(
-            isA<PlatformException>()
-                // The code here should match what you defined in your Dart switch statement.
-                .having(
-                  (PlatformException e) => e.code,
-                  'code',
-                  'BiometricNotAvailable',
-                )
-                .having(
-                  (PlatformException e) => e.message,
-                  'message',
-                  errorMessage,
-                )
-                .having(
-                  (PlatformException e) => e.details,
-                  'details',
-                  errorDetails,
-                ),
-          ),
-        );
+        expect(result, false);
       });
 
       test(
-        'converts errorPasscodeNotSet to legacy PlatformException',
+        'converts uiUnavailable to LocalAuthExceptionCode.uiUnavailable',
         () async {
           const String errorMessage = 'a message';
           const String errorDetails = 'some details';
           when(api.authenticate(any, any)).thenAnswer(
             (_) async => AuthResultDetails(
-              result: AuthResult.errorPasscodeNotSet,
+              result: AuthResult.uiUnavailable,
               errorMessage: errorMessage,
               errorDetails: errorDetails,
             ),
@@ -579,19 +430,540 @@ void main() {
               authMessages: <AuthMessages>[],
             ),
             throwsA(
-              isA<PlatformException>()
+              isA<LocalAuthException>()
                   .having(
-                    (PlatformException e) => e.code,
+                    (LocalAuthException e) => e.code,
                     'code',
-                    'PasscodeNotSet',
+                    LocalAuthExceptionCode.uiUnavailable,
                   )
                   .having(
-                    (PlatformException e) => e.message,
-                    'message',
+                    (LocalAuthException e) => e.description,
+                    'description',
                     errorMessage,
                   )
                   .having(
-                    (PlatformException e) => e.details,
+                    (LocalAuthException e) => e.details,
+                    'details',
+                    errorDetails,
+                  ),
+            ),
+          );
+        },
+      );
+
+      test(
+        'converts systemCancel to LocalAuthExceptionCode.systemCanceled',
+        () async {
+          const String errorMessage = 'a message';
+          const String errorDetails = 'some details';
+          when(api.authenticate(any, any)).thenAnswer(
+            (_) async => AuthResultDetails(
+              result: AuthResult.systemCancel,
+              errorMessage: errorMessage,
+              errorDetails: errorDetails,
+            ),
+          );
+
+          expect(
+            () async => plugin.authenticate(
+              localizedReason: 'reason',
+              authMessages: <AuthMessages>[],
+            ),
+            throwsA(
+              isA<LocalAuthException>()
+                  .having(
+                    (LocalAuthException e) => e.code,
+                    'code',
+                    LocalAuthExceptionCode.systemCanceled,
+                  )
+                  .having(
+                    (LocalAuthException e) => e.description,
+                    'description',
+                    errorMessage,
+                  )
+                  .having(
+                    (LocalAuthException e) => e.details,
+                    'details',
+                    errorDetails,
+                  ),
+            ),
+          );
+        },
+      );
+
+      test(
+        'converts userCancel to LocalAuthExceptionCode.userCanceled',
+        () async {
+          const String errorMessage = 'a message';
+          const String errorDetails = 'some details';
+          when(api.authenticate(any, any)).thenAnswer(
+            (_) async => AuthResultDetails(
+              result: AuthResult.userCancel,
+              errorMessage: errorMessage,
+              errorDetails: errorDetails,
+            ),
+          );
+
+          expect(
+            () async => plugin.authenticate(
+              localizedReason: 'reason',
+              authMessages: <AuthMessages>[],
+            ),
+            throwsA(
+              isA<LocalAuthException>()
+                  .having(
+                    (LocalAuthException e) => e.code,
+                    'code',
+                    LocalAuthExceptionCode.userCanceled,
+                  )
+                  .having(
+                    (LocalAuthException e) => e.description,
+                    'description',
+                    errorMessage,
+                  )
+                  .having(
+                    (LocalAuthException e) => e.details,
+                    'details',
+                    errorDetails,
+                  ),
+            ),
+          );
+        },
+      );
+
+      test(
+        'converts biometryDisconnected to LocalAuthExceptionCode.biometricHardwareTemporarilyUnavailable',
+        () async {
+          const String errorMessage = 'a message';
+          const String errorDetails = 'some details';
+          when(api.authenticate(any, any)).thenAnswer(
+            (_) async => AuthResultDetails(
+              result: AuthResult.biometryDisconnected,
+              errorMessage: errorMessage,
+              errorDetails: errorDetails,
+            ),
+          );
+
+          expect(
+            () async => plugin.authenticate(
+              localizedReason: 'reason',
+              authMessages: <AuthMessages>[],
+            ),
+            throwsA(
+              isA<LocalAuthException>()
+                  .having(
+                    (LocalAuthException e) => e.code,
+                    'code',
+                    LocalAuthExceptionCode
+                        .biometricHardwareTemporarilyUnavailable,
+                  )
+                  .having(
+                    (LocalAuthException e) => e.description,
+                    'description',
+                    errorMessage,
+                  )
+                  .having(
+                    (LocalAuthException e) => e.details,
+                    'details',
+                    errorDetails,
+                  ),
+            ),
+          );
+        },
+      );
+
+      test(
+        'converts biometryLockout to LocalAuthExceptionCode.biometricLockout',
+        () async {
+          const String errorMessage = 'a message';
+          const String errorDetails = 'some details';
+          when(api.authenticate(any, any)).thenAnswer(
+            (_) async => AuthResultDetails(
+              result: AuthResult.biometryLockout,
+              errorMessage: errorMessage,
+              errorDetails: errorDetails,
+            ),
+          );
+
+          expect(
+            () async => plugin.authenticate(
+              localizedReason: 'reason',
+              authMessages: <AuthMessages>[],
+            ),
+            throwsA(
+              isA<LocalAuthException>()
+                  .having(
+                    (LocalAuthException e) => e.code,
+                    'code',
+                    LocalAuthExceptionCode.biometricLockout,
+                  )
+                  .having(
+                    (LocalAuthException e) => e.description,
+                    'description',
+                    errorMessage,
+                  )
+                  .having(
+                    (LocalAuthException e) => e.details,
+                    'details',
+                    errorDetails,
+                  ),
+            ),
+          );
+        },
+      );
+
+      test(
+        'converts biometryNotAvailable to LocalAuthExceptionCode.noBiometricHardware',
+        () async {
+          const String errorMessage = 'a message';
+          const String errorDetails = 'some details';
+          when(api.authenticate(any, any)).thenAnswer(
+            (_) async => AuthResultDetails(
+              result: AuthResult.biometryNotAvailable,
+              errorMessage: errorMessage,
+              errorDetails: errorDetails,
+            ),
+          );
+
+          expect(
+            () async => plugin.authenticate(
+              localizedReason: 'reason',
+              authMessages: <AuthMessages>[],
+            ),
+            throwsA(
+              isA<LocalAuthException>()
+                  .having(
+                    (LocalAuthException e) => e.code,
+                    'code',
+                    LocalAuthExceptionCode.noBiometricHardware,
+                  )
+                  .having(
+                    (LocalAuthException e) => e.description,
+                    'description',
+                    errorMessage,
+                  )
+                  .having(
+                    (LocalAuthException e) => e.details,
+                    'details',
+                    errorDetails,
+                  ),
+            ),
+          );
+        },
+      );
+
+      test(
+        'converts biometryNotPaired to LocalAuthExceptionCode.noBiometricHardware',
+        () async {
+          const String errorMessage = 'a message';
+          const String errorDetails = 'some details';
+          when(api.authenticate(any, any)).thenAnswer(
+            (_) async => AuthResultDetails(
+              result: AuthResult.biometryNotPaired,
+              errorMessage: errorMessage,
+              errorDetails: errorDetails,
+            ),
+          );
+
+          expect(
+            () async => plugin.authenticate(
+              localizedReason: 'reason',
+              authMessages: <AuthMessages>[],
+            ),
+            throwsA(
+              isA<LocalAuthException>()
+                  .having(
+                    (LocalAuthException e) => e.code,
+                    'code',
+                    LocalAuthExceptionCode.noBiometricHardware,
+                  )
+                  .having(
+                    (LocalAuthException e) => e.description,
+                    'description',
+                    errorMessage,
+                  )
+                  .having(
+                    (LocalAuthException e) => e.details,
+                    'details',
+                    errorDetails,
+                  ),
+            ),
+          );
+        },
+      );
+
+      test(
+        'converts biometryNotEnrolled to LocalAuthExceptionCode.noBiometricsEnrolled',
+        () async {
+          const String errorMessage = 'a message';
+          const String errorDetails = 'some details';
+          when(api.authenticate(any, any)).thenAnswer(
+            (_) async => AuthResultDetails(
+              result: AuthResult.biometryNotEnrolled,
+              errorMessage: errorMessage,
+              errorDetails: errorDetails,
+            ),
+          );
+
+          expect(
+            () async => plugin.authenticate(
+              localizedReason: 'reason',
+              authMessages: <AuthMessages>[],
+            ),
+            throwsA(
+              isA<LocalAuthException>()
+                  .having(
+                    (LocalAuthException e) => e.code,
+                    'code',
+                    LocalAuthExceptionCode.noBiometricsEnrolled,
+                  )
+                  .having(
+                    (LocalAuthException e) => e.description,
+                    'description',
+                    errorMessage,
+                  )
+                  .having(
+                    (LocalAuthException e) => e.details,
+                    'details',
+                    errorDetails,
+                  ),
+            ),
+          );
+        },
+      );
+
+      test(
+        'converts invalidContext to LocalAuthExceptionCode.uiUnavailable',
+        () async {
+          const String errorMessage = 'a message';
+          const String errorDetails = 'some details';
+          when(api.authenticate(any, any)).thenAnswer(
+            (_) async => AuthResultDetails(
+              result: AuthResult.invalidContext,
+              errorMessage: errorMessage,
+              errorDetails: errorDetails,
+            ),
+          );
+
+          expect(
+            () async => plugin.authenticate(
+              localizedReason: 'reason',
+              authMessages: <AuthMessages>[],
+            ),
+            throwsA(
+              isA<LocalAuthException>()
+                  .having(
+                    (LocalAuthException e) => e.code,
+                    'code',
+                    LocalAuthExceptionCode.uiUnavailable,
+                  )
+                  .having(
+                    (LocalAuthException e) => e.description,
+                    'description',
+                    errorMessage,
+                  )
+                  .having(
+                    (LocalAuthException e) => e.details,
+                    'details',
+                    errorDetails,
+                  ),
+            ),
+          );
+        },
+      );
+
+      test(
+        'converts invalidDimensions to LocalAuthExceptionCode.uiUnavailable',
+        () async {
+          const String errorMessage = 'a message';
+          const String errorDetails = 'some details';
+          when(api.authenticate(any, any)).thenAnswer(
+            (_) async => AuthResultDetails(
+              result: AuthResult.invalidDimensions,
+              errorMessage: errorMessage,
+              errorDetails: errorDetails,
+            ),
+          );
+
+          expect(
+            () async => plugin.authenticate(
+              localizedReason: 'reason',
+              authMessages: <AuthMessages>[],
+            ),
+            throwsA(
+              isA<LocalAuthException>()
+                  .having(
+                    (LocalAuthException e) => e.code,
+                    'code',
+                    LocalAuthExceptionCode.uiUnavailable,
+                  )
+                  .having(
+                    (LocalAuthException e) => e.description,
+                    'description',
+                    errorMessage,
+                  )
+                  .having(
+                    (LocalAuthException e) => e.details,
+                    'details',
+                    errorDetails,
+                  ),
+            ),
+          );
+        },
+      );
+
+      test(
+        'converts notInteractive to LocalAuthExceptionCode.uiUnavailable',
+        () async {
+          const String errorMessage = 'a message';
+          const String errorDetails = 'some details';
+          when(api.authenticate(any, any)).thenAnswer(
+            (_) async => AuthResultDetails(
+              result: AuthResult.notInteractive,
+              errorMessage: errorMessage,
+              errorDetails: errorDetails,
+            ),
+          );
+
+          expect(
+            () async => plugin.authenticate(
+              localizedReason: 'reason',
+              authMessages: <AuthMessages>[],
+            ),
+            throwsA(
+              isA<LocalAuthException>()
+                  .having(
+                    (LocalAuthException e) => e.code,
+                    'code',
+                    LocalAuthExceptionCode.uiUnavailable,
+                  )
+                  .having(
+                    (LocalAuthException e) => e.description,
+                    'description',
+                    errorMessage,
+                  )
+                  .having(
+                    (LocalAuthException e) => e.details,
+                    'details',
+                    errorDetails,
+                  ),
+            ),
+          );
+        },
+      );
+
+      test(
+        'converts passcodeNotSet to LocalAuthExceptionCode.noCredentialsSet',
+        () async {
+          const String errorMessage = 'a message';
+          const String errorDetails = 'some details';
+          when(api.authenticate(any, any)).thenAnswer(
+            (_) async => AuthResultDetails(
+              result: AuthResult.passcodeNotSet,
+              errorMessage: errorMessage,
+              errorDetails: errorDetails,
+            ),
+          );
+
+          expect(
+            () async => plugin.authenticate(
+              localizedReason: 'reason',
+              authMessages: <AuthMessages>[],
+            ),
+            throwsA(
+              isA<LocalAuthException>()
+                  .having(
+                    (LocalAuthException e) => e.code,
+                    'code',
+                    LocalAuthExceptionCode.noCredentialsSet,
+                  )
+                  .having(
+                    (LocalAuthException e) => e.description,
+                    'description',
+                    errorMessage,
+                  )
+                  .having(
+                    (LocalAuthException e) => e.details,
+                    'details',
+                    errorDetails,
+                  ),
+            ),
+          );
+        },
+      );
+
+      test(
+        'converts userFallback to LocalAuthExceptionCode.userRequestedFallback',
+        () async {
+          const String errorMessage = 'a message';
+          const String errorDetails = 'some details';
+          when(api.authenticate(any, any)).thenAnswer(
+            (_) async => AuthResultDetails(
+              result: AuthResult.userFallback,
+              errorMessage: errorMessage,
+              errorDetails: errorDetails,
+            ),
+          );
+
+          expect(
+            () async => plugin.authenticate(
+              localizedReason: 'reason',
+              authMessages: <AuthMessages>[],
+            ),
+            throwsA(
+              isA<LocalAuthException>()
+                  .having(
+                    (LocalAuthException e) => e.code,
+                    'code',
+                    LocalAuthExceptionCode.userRequestedFallback,
+                  )
+                  .having(
+                    (LocalAuthException e) => e.description,
+                    'description',
+                    errorMessage,
+                  )
+                  .having(
+                    (LocalAuthException e) => e.details,
+                    'details',
+                    errorDetails,
+                  ),
+            ),
+          );
+        },
+      );
+
+      test(
+        'converts unknownError to LocalAuthExceptionCode.unknownError',
+        () async {
+          const String errorMessage = 'a message';
+          const String errorDetails = 'some details';
+          when(api.authenticate(any, any)).thenAnswer(
+            (_) async => AuthResultDetails(
+              result: AuthResult.unknownError,
+              errorMessage: errorMessage,
+              errorDetails: errorDetails,
+            ),
+          );
+
+          expect(
+            () async => plugin.authenticate(
+              localizedReason: 'reason',
+              authMessages: <AuthMessages>[],
+            ),
+            throwsA(
+              isA<LocalAuthException>()
+                  .having(
+                    (LocalAuthException e) => e.code,
+                    'code',
+                    LocalAuthExceptionCode.unknownError,
+                  )
+                  .having(
+                    (LocalAuthException e) => e.description,
+                    'description',
+                    errorMessage,
+                  )
+                  .having(
+                    (LocalAuthException e) => e.details,
                     'details',
                     errorDetails,
                   ),

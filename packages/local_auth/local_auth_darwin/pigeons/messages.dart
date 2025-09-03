@@ -39,26 +39,31 @@ enum AuthResult {
   /// The user authenticated successfully.
   success,
 
-  /// The user failed to successfully authenticate.
-  failure,
+  /// Native UI needed to be displayed, but couldn't be.
+  uiUnavailable,
 
-  /// The authentication system was not available.
-  errorNotAvailable,
+  /// The plugin showed an alert as the final step.
+  showedAlert,
 
-  /// No biometrics are enrolled.
-  errorNotEnrolled,
+  // LAError codes; see
+  // https://developer.apple.com/documentation/localauthentication/laerror-swift.struct/code
+  appCancel,
+  systemCancel,
+  userCancel,
+  biometryDisconnected,
+  biometryLockout,
+  biometryNotAvailable,
+  biometryNotEnrolled,
+  biometryNotPaired,
+  authenticationFailed,
+  invalidContext,
+  invalidDimensions,
+  notInteractive,
+  passcodeNotSet,
+  userFallback,
 
-  /// No passcode is set.
-  errorPasscodeNotSet,
-
-  /// The user cancelled the authentication.
-  errorUserCancelled,
-
-  /// The user tapped the "Enter Password" fallback.
-  errorUserFallback,
-
-  /// The user biometrics is disabled.
-  errorBiometricNotAvailable,
+  /// An error other than the expected types occurred.
+  unknownError,
 }
 
 class AuthOptions {

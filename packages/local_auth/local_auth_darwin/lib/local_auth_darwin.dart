@@ -5,7 +5,6 @@
 import 'dart:io';
 
 import 'package:flutter/foundation.dart' show visibleForTesting;
-import 'package:flutter/services.dart';
 import 'package:local_auth_platform_interface/local_auth_platform_interface.dart';
 
 import 'src/messages.g.dart';
@@ -51,53 +50,53 @@ class LocalAuthDarwin extends LocalAuthPlatform {
           ? _pigeonStringsFromMacOSAuthMessages(localizedReason, authMessages)
           : _pigeonStringsFromiOSAuthMessages(localizedReason, authMessages),
     );
-    // TODO(stuartmorgan): Replace this with structured errors, coordinated
-    // across all platform implementations, per
-    // https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#platform-exception-handling
-    // The PlatformExceptions thrown here are for compatibiilty with the
-    // previous Objective-C implementation.
+    LocalAuthExceptionCode code;
+    String? description = resultDetails.errorMessage;
     switch (resultDetails.result) {
       case AuthResult.success:
         return true;
-      case AuthResult.failure:
+      case AuthResult.authenticationFailed:
         return false;
-      case AuthResult.errorNotAvailable:
-        throw PlatformException(
-          code: 'NotAvailable',
-          message: resultDetails.errorMessage,
-          details: resultDetails.errorDetails,
-        );
-      case AuthResult.errorNotEnrolled:
-        throw PlatformException(
-          code: 'NotEnrolled',
-          message: resultDetails.errorMessage,
-          details: resultDetails.errorDetails,
-        );
-      case AuthResult.errorPasscodeNotSet:
-        throw PlatformException(
-          code: 'PasscodeNotSet',
-          message: resultDetails.errorMessage,
-          details: resultDetails.errorDetails,
-        );
-      case AuthResult.errorUserCancelled:
-        throw PlatformException(
-          code: 'UserCancelled',
-          message: resultDetails.errorMessage,
-          details: resultDetails.errorDetails,
-        );
-      case AuthResult.errorBiometricNotAvailable:
-        throw PlatformException(
-          code: 'BiometricNotAvailable',
-          message: resultDetails.errorMessage,
-          details: resultDetails.errorDetails,
-        );
-      case AuthResult.errorUserFallback:
-        throw PlatformException(
-          code: 'UserFallback',
-          message: resultDetails.errorMessage,
-          details: resultDetails.errorDetails,
-        );
+      case AuthResult.showedAlert:
+        // Temporary compat with previous return until alerts are removed.
+        return false;
+      case AuthResult.appCancel:
+        // If the plugin client intentionally canceled authentication, no need
+        // to return a specific error.
+        return false;
+      case AuthResult.uiUnavailable:
+        code = LocalAuthExceptionCode.uiUnavailable;
+      case AuthResult.systemCancel:
+        code = LocalAuthExceptionCode.systemCanceled;
+      case AuthResult.userCancel:
+        code = LocalAuthExceptionCode.userCanceled;
+      case AuthResult.biometryDisconnected:
+        code = LocalAuthExceptionCode.biometricHardwareTemporarilyUnavailable;
+      case AuthResult.biometryLockout:
+        code = LocalAuthExceptionCode.biometricLockout;
+      case AuthResult.biometryNotAvailable:
+      // Treated as no hardware since docs suggest that this means that there is
+      // no known device; paired but not connected is biometryDisconnected.
+      case AuthResult.biometryNotPaired:
+        code = LocalAuthExceptionCode.noBiometricHardware;
+      case AuthResult.biometryNotEnrolled:
+        code = LocalAuthExceptionCode.noBiometricsEnrolled;
+      case AuthResult.invalidContext:
+      case AuthResult.invalidDimensions:
+      case AuthResult.notInteractive:
+        code = LocalAuthExceptionCode.uiUnavailable;
+      case AuthResult.passcodeNotSet:
+        code = LocalAuthExceptionCode.noCredentialsSet;
+      case AuthResult.userFallback:
+        code = LocalAuthExceptionCode.userRequestedFallback;
+      case AuthResult.unknownError:
+        code = LocalAuthExceptionCode.unknownError;
     }
+    throw LocalAuthException(
+      code: code,
+      description: description,
+      details: resultDetails.errorDetails,
+    );
   }
 
   @override

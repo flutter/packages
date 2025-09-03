@@ -183,8 +183,8 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi, @unch
         completion(
           .success(
             AuthResultDetails(
-              result: .failure,
-              errorMessage: "evaluatePolicy failed without an error"
+              result: .unknownError,
+              errorMessage: "canEvaluatePolicy failed without an error"
             )))
       }
     }
@@ -255,18 +255,23 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi, @unch
       alert.addButton(withTitle: dismissButtonTitle)
       if let window = viewProvider.view?.window {
         alert.beginSheetModal(for: window) { [weak self] code in
-          self?.handleResult(succeeded: false, completion: completion)
+          self?.handleResult(result: .showedAlert, completion: completion)
         }
       } else {
         alert.runModal()
-        self.handleResult(succeeded: false, completion: completion)
+        self.handleResult(result: .showedAlert, completion: completion)
       }
     #elseif os(iOS)
       // TODO(stuartmorgan): Get the view controller from the view provider once it's possible.
       // See https://github.com/flutter/flutter/issues/104117.
       guard let controller = UIApplication.shared.delegate?.window??.rootViewController else {
-        // TODO(stuartmorgan): Create a new error code for failure to show UI, and return it here.
-        self.handleResult(succeeded: false, completion: completion)
+        completion(
+          .success(
+            AuthResultDetails(
+              result: .uiUnavailable,
+              errorMessage: "Unable to obtain root view controller",
+              errorDetails: nil)
+          ))
         return
       }
       let alert = alertFactory.createAlertController(
@@ -278,7 +283,7 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi, @unch
         title: dismissButtonTitle,
         style: .default
       ) { [weak self] action in
-        self?.handleResult(succeeded: false, completion: completion)
+        self?.handleResult(result: .showedAlert, completion: completion)
       }
 
       alert.addAction(defaultAction)
@@ -290,7 +295,7 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi, @unch
           style: .default
         ) { [weak self] action in
           UIApplication.shared.open(url, options: [:], completionHandler: nil)
-          self?.handleResult(succeeded: false, completion: completion)
+          self?.handleResult(result: .showedAlert, completion: completion)
         }
         alert.addAction(additionalAction)
       }
@@ -306,54 +311,38 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi, @unch
     completion: @escaping (Result<AuthResultDetails, Error>) -> Void
   ) {
     if success {
-      handleResult(succeeded: true, completion: completion)
+      handleResult(result: .success, completion: completion)
       return
     }
 
     if let error = error as? NSError {
-      switch LAError.Code(rawValue: error.code) {
-      case .biometryNotAvailable,
-        .biometryNotEnrolled,
-        .biometryLockout,
-        .userFallback,
-        .passcodeNotSet,
-        .authenticationFailed:
-        handleError(error, options: options, strings: strings, completion: completion)
-      case .systemCancel:
-        if options.sticky {
-          lastCallState = StickyAuthState(
-            options: options,
-            strings: strings,
-            resultHandler: completion)
-        } else {
-          handleResult(succeeded: false, completion: completion)
-        }
-      default:
+      if error.code == LAError.Code.systemCancel.rawValue && options.sticky {
+        lastCallState = StickyAuthState(
+          options: options,
+          strings: strings,
+          resultHandler: completion)
+      } else {
         handleError(error, options: options, strings: strings, completion: completion)
       }
     } else {
-      // The Obj-C declaration of evaluatePolicy defines the callback type as NSError*, but the
-      // Swift version is (any Error)?, so provide a fallback in case somehow the type is not
-      // NSError.
-      // TODO(stuartmorgan): Add an "unknown error" enum option and return that here instead of
-      // failure.
+      // This should not happen according to docs, but if it ever does the plugin should still
+      // fire the completion.
       completion(
         .success(
           AuthResultDetails(
-            result: .failure,
-            errorMessage: "Unknown error from evaluatePolicy",
-            errorDetails: error?.localizedDescription)
-        ))
+            result: .unknownError,
+            errorMessage: "evaluatePolicy failed without an error"
+          )))
     }
   }
 
   private func handleResult(
-    succeeded: Bool, completion: @escaping (Result<AuthResultDetails, Error>) -> Void
+    result: AuthResult, completion: @escaping (Result<AuthResultDetails, Error>) -> Void
   ) {
     completion(
       .success(
         AuthResultDetails(
-          result: succeeded ? .success : .failure,
+          result: result,
           errorMessage: nil,
           errorDetails: nil)
       ))
@@ -368,8 +357,29 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi, @unch
     let result: AuthResult
     let errorCode = LAError.Code(rawValue: authError.code)
     switch errorCode {
-    case .passcodeNotSet,
-      .biometryNotEnrolled:
+    case .appCancel:
+      result = .appCancel
+    case .systemCancel:
+      result = .systemCancel
+    case .userCancel:
+      result = .userCancel
+    case .biometryDisconnected:
+      result = .biometryDisconnected
+    case .biometryLockout:
+      if options.useErrorDialogs {
+        DispatchQueue.main.async { [weak self] in
+          self?.showAlert(
+            message: strings.lockOut,
+            dismissButtonTitle: strings.cancelButton,
+            openSettingsButtonTitle: nil,
+            completion: completion)
+        }
+        return
+      }
+      result = .biometryLockout
+    case .biometryNotAvailable:
+      result = .biometryNotAvailable
+    case .biometryNotEnrolled:
       if options.useErrorDialogs {
         DispatchQueue.main.async { [weak self] in
           self?.showAlert(
@@ -380,33 +390,40 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi, @unch
         }
         return
       }
-      result = errorCode == .passcodeNotSet ? .errorPasscodeNotSet : .errorNotEnrolled
-    case .userCancel:
-      result = .errorUserCancelled
-    case .userFallback:
-      result = .errorUserFallback
-    case .biometryNotAvailable:
-      result = .errorBiometricNotAvailable
-    case .biometryLockout:
-      DispatchQueue.main.async { [weak self] in
-        self?.showAlert(
-          message: strings.lockOut,
-          dismissButtonTitle: strings.cancelButton,
-          openSettingsButtonTitle: nil,
-          completion: completion)
+      result = .biometryNotEnrolled
+    case .biometryNotPaired:
+      result = .biometryNotPaired
+    case .authenticationFailed:
+      result = .authenticationFailed
+    case .invalidContext:
+      result = .invalidContext
+    case .invalidDimensions:
+      result = .invalidDimensions
+    case .notInteractive:
+      result = .notInteractive
+    case .passcodeNotSet:
+      if options.useErrorDialogs {
+        DispatchQueue.main.async { [weak self] in
+          self?.showAlert(
+            message: strings.goToSettingsDescription,
+            dismissButtonTitle: strings.cancelButton,
+            openSettingsButtonTitle: strings.goToSettingsButton,
+            completion: completion)
+        }
+        return
       }
-      return
+      result = .passcodeNotSet
+    case .userFallback:
+      result = .userFallback
     default:
-      // TODO(stuartmorgan): Improve the error mapping as part of a cross-platform overhaul of
-      // error handling. See https://github.com/flutter/flutter/issues/113687
-      result = .errorNotAvailable
+      result = .unknownError
     }
     completion(
       .success(
         AuthResultDetails(
           result: result,
           errorMessage: authError.localizedDescription,
-          errorDetails: authError.domain)
+          errorDetails: "\(authError.domain): \(authError.code)")
       ))
   }
 
