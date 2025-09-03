@@ -15,6 +15,7 @@ packages/go_router/**                                    @chunhtai
 packages/go_router_builder/**                            @chunhtai
 packages/google_adsense/**                               @sokoloff06 @ditman
 packages/google_identity_services_web/**                 @ditman
+packages/google_fonts/**                                 @Piinks
 packages/google_maps_flutter/**                          @stuartmorgan-g
 packages/google_sign_in/**                               @stuartmorgan-g
 packages/image_picker/**                                 @tarrinneal

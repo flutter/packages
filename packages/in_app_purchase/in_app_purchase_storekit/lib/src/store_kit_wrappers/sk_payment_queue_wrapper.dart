@@ -59,8 +59,8 @@ class SKPaymentQueueWrapper {
 
   /// Calls [`-[SKPaymentQueue transactions]`](https://developer.apple.com/documentation/storekit/skpaymentqueue/1506026-transactions?language=objc).
   Future<List<SKPaymentTransactionWrapper>> transactions() async {
-    final List<SKPaymentTransactionMessage?> pigeonMsgs =
-        await _hostApi.transactions();
+    final List<SKPaymentTransactionMessage?> pigeonMsgs = await _hostApi
+        .transactions();
     return pigeonMsgs
         .map(
           (SKPaymentTransactionMessage? msg) =>

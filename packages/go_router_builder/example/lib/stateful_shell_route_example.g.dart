@@ -19,7 +19,7 @@ RouteBase get $myShellRouteData => StatefulShellRouteData.$route(
       routes: [
         GoRouteData.$route(
           path: '/detailsA',
-          factory: _$DetailsARouteData._fromState,
+          factory: $DetailsARouteData._fromState,
         ),
       ],
     ),
@@ -29,7 +29,7 @@ RouteBase get $myShellRouteData => StatefulShellRouteData.$route(
       routes: [
         GoRouteData.$route(
           path: '/detailsB',
-          factory: _$DetailsBRouteData._fromState,
+          factory: $DetailsBRouteData._fromState,
         ),
       ],
     ),
@@ -41,7 +41,7 @@ extension $MyShellRouteDataExtension on MyShellRouteData {
       const MyShellRouteData();
 }
 
-mixin _$DetailsARouteData on GoRouteData {
+mixin $DetailsARouteData on GoRouteData {
   static DetailsARouteData _fromState(GoRouterState state) =>
       const DetailsARouteData();
 
@@ -62,7 +62,7 @@ mixin _$DetailsARouteData on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-mixin _$DetailsBRouteData on GoRouteData {
+mixin $DetailsBRouteData on GoRouteData {
   static DetailsBRouteData _fromState(GoRouterState state) =>
       const DetailsBRouteData();
 
