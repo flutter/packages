@@ -9,6 +9,7 @@ import 'package:hooks/hooks.dart';
 import 'package:path/path.dart' as p;
 
 import 'src/util/isolate_processor.dart';
+import 'vector_graphics_compiler.dart';
 
 /// Helper to build svg
 Future<void> compileSvg(
@@ -75,11 +76,65 @@ Future<void> compileSvgs(
   }
 }
 
-/// Options for the processor
+/// Options for the processor.
 class Options {
   // ignore: public_member_api_docs
-  const Options({this.dumpDebug = false});
+  const Options({
+    this.inputFilePath,
+    this.outputFilePath,
+    this.inputDirPath,
+    this.outputDirPath,
+    this.theme = const SvgTheme(),
+    this.maskingOptimizerEnabled = true,
+    this.clippingOptimizerEnabled = true,
+    this.overdrawOptimizerEnabled = true,
+    this.tessellate = false,
+    this.dumpDebug = false,
+    this.useHalfPrecisionControlPoints = false,
+    this.libpathops,
+    this.libtessellator,
+    this.concurrency,
+  });
+
+  // ignore: public_member_api_docs
+  final String? inputFilePath;
+
+  // ignore: public_member_api_docs
+  final String? outputFilePath;
+
+  // ignore: public_member_api_docs
+  final String? inputDirPath;
+
+  // ignore: public_member_api_docs
+  final String? outputDirPath;
+
+  // ignore: public_member_api_docs
+  final SvgTheme theme;
+
+  // ignore: public_member_api_docs
+  final bool maskingOptimizerEnabled;
+
+  // ignore: public_member_api_docs
+  final bool clippingOptimizerEnabled;
+
+  // ignore: public_member_api_docs
+  final bool overdrawOptimizerEnabled;
+
+  // ignore: public_member_api_docs
+  final bool tessellate;
 
   // ignore: public_member_api_docs
   final bool dumpDebug;
+
+  // ignore: public_member_api_docs
+  final bool useHalfPrecisionControlPoints;
+
+  // ignore: public_member_api_docs
+  final String? libpathops;
+
+  // ignore: public_member_api_docs
+  final String? libtessellator;
+
+  // ignore: public_member_api_docs
+  final int? concurrency;
 }

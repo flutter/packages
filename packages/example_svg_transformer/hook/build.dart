@@ -8,7 +8,7 @@ void main(List<String> args) {
       output,
       name: 'example',
       file: input.packageRoot.resolve('assets/example.svg'),
-      options: const Options(dumpDebug: true),
+      options: const Options(dumpDebug: true, concurrency: 2),
     );
   });
 }
