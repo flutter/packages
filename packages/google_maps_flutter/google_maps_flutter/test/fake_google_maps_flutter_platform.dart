@@ -41,13 +41,7 @@ class FakeGoogleMapsFlutterPlatform extends GoogleMapsFlutterPlatform {
   Completer<void>? initCompleter;
 
   @override
-  Future<void> init(int mapId) {
-    if (initCompleter == null) {
-      return Future<void>.value();
-    }
-
-    return initCompleter!.future;
-  }
+  Future<void> init(int mapId) async => initCompleter?.future;
 
   @override
   Future<void> updateMapConfiguration(

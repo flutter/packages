@@ -619,6 +619,7 @@ void main() {
 
     await tester.pumpWidget(Container());
 
+    // This is done to force the update path while the widget is not mounted.
     // ignore:invalid_use_of_protected_member
     googleMapState.didUpdateWidget(
       GoogleMap(
