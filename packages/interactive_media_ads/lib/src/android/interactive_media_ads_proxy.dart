@@ -48,7 +48,7 @@ class InteractiveMediaAdsProxy {
   /// Constructs [VideoView].
   final VideoView Function({
     required void Function(VideoView, MediaPlayer, int, int) onError,
-    void Function(VideoView, MediaPlayer)? onPrepared,
+    Future<void> Function(VideoView, MediaPlayer)? onPrepared,
     void Function(VideoView, MediaPlayer)? onCompletion,
   })
   newVideoView;

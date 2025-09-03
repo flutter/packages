@@ -1198,13 +1198,7 @@ abstract class URL extends NSObject {
 /// page content.
 ///
 /// See https://developer.apple.com/documentation/webkit/wkwebpagepreferences.
-@ProxyApi(
-  swiftOptions: SwiftProxyApiOptions(
-    import: 'WebKit',
-    minIosApi: '13.0.0',
-    minMacosApi: '10.15.0',
-  ),
-)
+@ProxyApi(swiftOptions: SwiftProxyApiOptions(import: 'WebKit'))
 abstract class WKWebpagePreferences extends NSObject {
   /// A Boolean value that indicates whether JavaScript from web content is
   /// allowed to run.
