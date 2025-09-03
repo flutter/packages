@@ -20,10 +20,12 @@ void main() {
   });
 
   test('SvgTheme updates the cache', () async {
-    const TestLoader loaderA =
-        TestLoader(theme: SvgTheme(currentColor: Color(0xFFABCDEF)));
-    const TestLoader loaderB =
-        TestLoader(theme: SvgTheme(currentColor: Color(0xFFFEDCBA)));
+    const TestLoader loaderA = TestLoader(
+      theme: SvgTheme(currentColor: Color(0xFFABCDEF)),
+    );
+    const TestLoader loaderB = TestLoader(
+      theme: SvgTheme(currentColor: Color(0xFFFEDCBA)),
+    );
     final ByteData bytesA = await loaderA.loadBytes(null);
     final ByteData bytesB = await loaderB.loadBytes(null);
     expect(identical(bytesA, bytesB), false);
@@ -53,8 +55,11 @@ void main() {
       'packages/packageName/foo': Uint8List(1).buffer.asByteData(),
     });
     final SvgAssetLoader loader = SvgAssetLoader('foo', assetBundle: bundle);
-    final SvgAssetLoader packageLoader =
-        SvgAssetLoader('foo', assetBundle: bundle, packageName: 'packageName');
+    final SvgAssetLoader packageLoader = SvgAssetLoader(
+      'foo',
+      assetBundle: bundle,
+      packageName: 'packageName',
+    );
     expect((await loader.prepareMessage(null))!.lengthInBytes, 0);
     expect((await packageLoader.prepareMessage(null))!.lengthInBytes, 1);
   });
@@ -62,19 +67,22 @@ void main() {
   test('SvgNetworkLoader closes internal client', () async {
     final List<VerifyCloseClient> createdClients = <VerifyCloseClient>[];
 
-    await http.runWithClient(() async {
-      const SvgNetworkLoader loader = SvgNetworkLoader('');
+    await http.runWithClient(
+      () async {
+        const SvgNetworkLoader loader = SvgNetworkLoader('');
 
-      expect(createdClients, isEmpty);
-      await loader.prepareMessage(null);
+        expect(createdClients, isEmpty);
+        await loader.prepareMessage(null);
 
-      expect(createdClients, hasLength(1));
-      expect(createdClients[0].closeCalled, isTrue);
-    }, () {
-      final VerifyCloseClient client = VerifyCloseClient();
-      createdClients.add(client);
-      return client;
-    });
+        expect(createdClients, hasLength(1));
+        expect(createdClients[0].closeCalled, isTrue);
+      },
+      () {
+        final VerifyCloseClient client = VerifyCloseClient();
+        createdClients.add(client);
+        return client;
+      },
+    );
   });
 
   test("SvgNetworkLoader doesn't close passed client", () async {
@@ -114,7 +122,10 @@ class TestLoader extends SvgLoader<void> {
   @override
   SvgCacheKey cacheKey(BuildContext? context) {
     return SvgCacheKey(
-        theme: theme, colorMapper: colorMapper, keyData: keyName);
+      theme: theme,
+      colorMapper: colorMapper,
+      keyData: keyName,
+    );
   }
 }
 
@@ -123,7 +134,11 @@ class _TestColorMapper extends ColorMapper {
 
   @override
   Color substitute(
-      String? id, String elementName, String attributeName, Color color) {
+    String? id,
+    String elementName,
+    String attributeName,
+    Color color,
+  ) {
     return color;
   }
 }

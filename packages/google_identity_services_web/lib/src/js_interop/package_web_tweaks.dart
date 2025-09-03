@@ -30,9 +30,7 @@ extension TrustedTypeSrcAttribute on web.HTMLScriptElement {
 extension CreateScriptUrlNoArgs on web.TrustedTypePolicy {
   /// Allows calling `createScriptURL` with only the `input` argument.
   @JS('createScriptURL')
-  external web.TrustedScriptURL createScriptURLNoArgs(
-    String input,
-  );
+  external web.TrustedScriptURL createScriptURLNoArgs(String input);
 }
 
 /// This extension gives web.HTMLScriptElement a nullable getter to the

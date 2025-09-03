@@ -22,7 +22,7 @@ import 'webview_android_widget.dart';
 class AndroidWebView implements WebViewPlatform {
   /// Constructs an [AndroidWebView].
   AndroidWebView({@visibleForTesting PigeonInstanceManager? instanceManager})
-      : instanceManager = instanceManager ?? PigeonInstanceManager.instance;
+    : instanceManager = instanceManager ?? PigeonInstanceManager.instance;
 
   /// Maintains instances used to communicate with the native objects they
   /// represent.
@@ -75,7 +75,8 @@ class AndroidWebView implements WebViewPlatform {
   Future<bool> clearCookies() {
     if (WebViewCookieManagerPlatform.instance == null) {
       throw Exception(
-          'Could not clear cookies as no implementation for WebViewCookieManagerPlatform has been registered.');
+        'Could not clear cookies as no implementation for WebViewCookieManagerPlatform has been registered.',
+      );
     }
     return WebViewCookieManagerPlatform.instance!.clearCookies();
   }

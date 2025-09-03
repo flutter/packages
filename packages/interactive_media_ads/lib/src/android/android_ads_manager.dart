@@ -16,11 +16,9 @@ import 'interactive_media_ads_proxy.dart';
 class AndroidAdsManager extends PlatformAdsManager {
   /// Constructs an [AndroidAdsManager].
   @internal
-  AndroidAdsManager(
-    ima.AdsManager manager, {
-    InteractiveMediaAdsProxy? proxy,
-  })  : _manager = manager,
-        _proxy = proxy ?? const InteractiveMediaAdsProxy();
+  AndroidAdsManager(ima.AdsManager manager, {InteractiveMediaAdsProxy? proxy})
+    : _manager = manager,
+      _proxy = proxy ?? const InteractiveMediaAdsProxy();
 
   final ima.AdsManager _manager;
   final InteractiveMediaAdsProxy _proxy;
@@ -36,9 +34,12 @@ class AndroidAdsManager extends PlatformAdsManager {
   Future<void> init({PlatformAdsRenderingSettings? settings}) async {
     ima.AdsRenderingSettings? nativeSettings;
     if (settings != null) {
-      nativeSettings = settings is AndroidAdsRenderingSettings
-          ? await settings.nativeSettings
-          : await AndroidAdsRenderingSettings(settings.params).nativeSettings;
+      nativeSettings =
+          settings is AndroidAdsRenderingSettings
+              ? await settings.nativeSettings
+              : await AndroidAdsRenderingSettings(
+                settings.params,
+              ).nativeSettings;
     }
 
     await _manager.init(nativeSettings);

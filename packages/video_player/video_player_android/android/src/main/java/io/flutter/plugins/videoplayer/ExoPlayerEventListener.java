@@ -11,7 +11,7 @@ import androidx.media3.exoplayer.ExoPlayer;
 
 public abstract class ExoPlayerEventListener implements Player.Listener {
   private boolean isBuffering = false;
-  private boolean isInitialized;
+  private boolean isInitialized = false;
   protected final ExoPlayer exoPlayer;
   protected final VideoPlayerCallbacks events;
 
@@ -42,10 +42,9 @@ public abstract class ExoPlayerEventListener implements Player.Listener {
   }
 
   public ExoPlayerEventListener(
-      @NonNull ExoPlayer exoPlayer, @NonNull VideoPlayerCallbacks events, boolean initialized) {
+      @NonNull ExoPlayer exoPlayer, @NonNull VideoPlayerCallbacks events) {
     this.exoPlayer = exoPlayer;
     this.events = events;
-    this.isInitialized = initialized;
   }
 
   private void setBuffering(boolean buffering) {
@@ -70,11 +69,10 @@ public abstract class ExoPlayerEventListener implements Player.Listener {
         events.onBufferingUpdate(exoPlayer.getBufferedPosition());
         break;
       case Player.STATE_READY:
-        if (isInitialized) {
-          return;
+        if (!isInitialized) {
+          isInitialized = true;
+          sendInitialized();
         }
-        isInitialized = true;
-        sendInitialized();
         break;
       case Player.STATE_ENDED:
         events.onCompleted();

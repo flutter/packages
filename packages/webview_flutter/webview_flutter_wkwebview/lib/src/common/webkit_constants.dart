@@ -69,4 +69,8 @@ class NSUrlAuthenticationMethod {
 
   /// Use NTLM authentication for this protection space.
   static const String httpNtlm = 'NSURLAuthenticationMethodNTLM';
+
+  /// Perform server trust authentication (certificate validation) for this
+  /// protection space.
+  static const String serverTrust = 'NSURLAuthenticationMethodServerTrust';
 }

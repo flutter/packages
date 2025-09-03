@@ -18,9 +18,8 @@ class App extends StatelessWidget {
   App({super.key});
 
   @override
-  Widget build(BuildContext context) => MaterialApp.router(
-        routerConfig: _router,
-      );
+  Widget build(BuildContext context) =>
+      MaterialApp.router(routerConfig: _router);
 
   final GoRouter _router = GoRouter(
     routes: $appRoutes,
@@ -100,7 +99,7 @@ class MyShellRouteScreen extends StatelessWidget {
   }
 }
 
-class HomeRouteData extends GoRouteData {
+class HomeRouteData extends GoRouteData with $HomeRouteData {
   const HomeRouteData();
 
   @override
@@ -109,7 +108,7 @@ class HomeRouteData extends GoRouteData {
   }
 }
 
-class UsersRouteData extends GoRouteData {
+class UsersRouteData extends GoRouteData with $UsersRouteData {
   const UsersRouteData();
 
   @override
@@ -143,7 +142,7 @@ class DialogPage extends Page<void> {
   }
 }
 
-class UserRouteData extends GoRouteData {
+class UserRouteData extends GoRouteData with $UserRouteData {
   const UserRouteData({required this.id});
 
   // Without this static key, the dialog will not cover the navigation rail.

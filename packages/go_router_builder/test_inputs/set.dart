@@ -4,8 +4,10 @@
 
 import 'package:go_router/go_router.dart';
 
+mixin $SetRoute {}
+
 @TypedGoRoute<SetRoute>(path: '/set-route')
-class SetRoute extends GoRouteData {
+class SetRoute extends GoRouteData with $SetRoute {
   SetRoute({
     required this.ids,
     this.nullableIds,

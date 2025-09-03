@@ -436,19 +436,19 @@
                                     : nil];
   }
   NSNumber *compassEnabled = config.compassEnabled;
-  if (compassEnabled) {
+  if (compassEnabled != nil) {
     [self setCompassEnabled:compassEnabled.boolValue];
   }
   NSNumber *indoorEnabled = config.indoorViewEnabled;
-  if (indoorEnabled) {
+  if (indoorEnabled != nil) {
     [self setIndoorEnabled:indoorEnabled.boolValue];
   }
   NSNumber *trafficEnabled = config.trafficEnabled;
-  if (trafficEnabled) {
+  if (trafficEnabled != nil) {
     [self setTrafficEnabled:trafficEnabled.boolValue];
   }
   NSNumber *buildingsEnabled = config.buildingsEnabled;
-  if (buildingsEnabled) {
+  if (buildingsEnabled != nil) {
     [self setBuildingsEnabled:buildingsEnabled.boolValue];
   }
   FGMPlatformMapTypeBox *mapType = config.mapType;
@@ -457,8 +457,8 @@
   }
   FGMPlatformZoomRange *zoomData = config.minMaxZoomPreference;
   if (zoomData) {
-    float minZoom = zoomData.min ? zoomData.min.floatValue : kGMSMinZoomLevel;
-    float maxZoom = zoomData.max ? zoomData.max.floatValue : kGMSMaxZoomLevel;
+    float minZoom = zoomData.min != nil ? zoomData.min.floatValue : kGMSMinZoomLevel;
+    float maxZoom = zoomData.max != nil ? zoomData.max.floatValue : kGMSMaxZoomLevel;
     [self setMinZoom:minZoom maxZoom:maxZoom];
   }
   FGMPlatformEdgeInsets *padding = config.padding;
@@ -467,31 +467,31 @@
   }
 
   NSNumber *rotateGesturesEnabled = config.rotateGesturesEnabled;
-  if (rotateGesturesEnabled) {
+  if (rotateGesturesEnabled != nil) {
     [self setRotateGesturesEnabled:rotateGesturesEnabled.boolValue];
   }
   NSNumber *scrollGesturesEnabled = config.scrollGesturesEnabled;
-  if (scrollGesturesEnabled) {
+  if (scrollGesturesEnabled != nil) {
     [self setScrollGesturesEnabled:scrollGesturesEnabled.boolValue];
   }
   NSNumber *tiltGesturesEnabled = config.tiltGesturesEnabled;
-  if (tiltGesturesEnabled) {
+  if (tiltGesturesEnabled != nil) {
     [self setTiltGesturesEnabled:tiltGesturesEnabled.boolValue];
   }
   NSNumber *trackCameraPosition = config.trackCameraPosition;
-  if (trackCameraPosition) {
+  if (trackCameraPosition != nil) {
     [self setTrackCameraPosition:trackCameraPosition.boolValue];
   }
   NSNumber *zoomGesturesEnabled = config.zoomGesturesEnabled;
-  if (zoomGesturesEnabled) {
+  if (zoomGesturesEnabled != nil) {
     [self setZoomGesturesEnabled:zoomGesturesEnabled.boolValue];
   }
   NSNumber *myLocationEnabled = config.myLocationEnabled;
-  if (myLocationEnabled) {
+  if (myLocationEnabled != nil) {
     [self setMyLocationEnabled:myLocationEnabled.boolValue];
   }
   NSNumber *myLocationButtonEnabled = config.myLocationButtonEnabled;
-  if (myLocationButtonEnabled) {
+  if (myLocationButtonEnabled != nil) {
     [self setMyLocationButtonEnabled:myLocationButtonEnabled.boolValue];
   }
   NSString *style = config.style;
@@ -665,7 +665,8 @@
                                  details:nil];
     return;
   }
-  FGMCATransactionWrapper *transaction = durationMilliseconds ? self.transactionWrapper : nil;
+  FGMCATransactionWrapper *transaction =
+      durationMilliseconds != nil ? self.transactionWrapper : nil;
   [transaction begin];
   [transaction setAnimationDuration:[durationMilliseconds doubleValue] / 1000];
   [self.controller.mapView animateWithCameraUpdate:update];

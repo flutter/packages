@@ -13,9 +13,8 @@ Future<void> _runCommand({
 }) async {
   stdout.write(message);
   // The `packages/shared_preferences` directory.
-  final Directory sharedPreferencesToolParent = Directory(
-    p.dirname(Platform.script.path),
-  ).parent.parent;
+  final Directory sharedPreferencesToolParent =
+      Directory(p.dirname(Platform.script.path)).parent.parent;
 
   final ProcessResult pubGetResult = await Process.run(
     executable,

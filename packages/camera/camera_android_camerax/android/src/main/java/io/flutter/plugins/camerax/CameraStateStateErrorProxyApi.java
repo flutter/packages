@@ -36,7 +36,7 @@ class CameraStateStateErrorProxyApi extends PigeonApiCameraStateStateError {
       case CameraState.ERROR_STREAM_CONFIG:
         return CameraStateErrorCode.STREAM_CONFIG;
       default:
-        return io.flutter.plugins.camerax.CameraStateErrorCode.UNKNOWN;
+        return CameraStateErrorCode.UNKNOWN;
     }
   }
 }

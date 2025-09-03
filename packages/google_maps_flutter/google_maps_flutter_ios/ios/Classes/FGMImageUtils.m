@@ -191,18 +191,18 @@ UIImage *scaledImageWithSize(UIImage *image, CGSize size) {
 
 UIImage *scaledImageWithWidthHeight(UIImage *image, NSNumber *width, NSNumber *height,
                                     CGFloat screenScale) {
-  if (!width && !height) {
+  if ((width == nil) && (height == nil)) {
     return image;
   }
 
-  CGFloat targetWidth = width ? width.doubleValue : image.size.width;
-  CGFloat targetHeight = height ? height.doubleValue : image.size.height;
+  CGFloat targetWidth = width == nil ? image.size.width : width.doubleValue;
+  CGFloat targetHeight = height == nil ? image.size.height : height.doubleValue;
 
-  if (width && !height) {
+  if ((width != nil) && (height == nil)) {
     // Calculate height based on aspect ratio if only width is provided.
     double aspectRatio = image.size.height / image.size.width;
     targetHeight = round(targetWidth * aspectRatio);
-  } else if (!width && height) {
+  } else if ((width == nil) && (height != nil)) {
     // Calculate width based on aspect ratio if only height is provided.
     double aspectRatio = image.size.width / image.size.height;
     targetWidth = round(targetHeight * aspectRatio);

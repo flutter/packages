@@ -15,10 +15,7 @@ void main() {
 
   test('default implementation setWebOptions throws unimplemented', () async {
     await expectLater(
-      () => initialInstance.setWebOptions(
-        1,
-        const VideoPlayerWebOptions(),
-      ),
+      () => initialInstance.setWebOptions(1, const VideoPlayerWebOptions()),
       throwsUnimplementedError,
     );
   });

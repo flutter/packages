@@ -20,9 +20,7 @@ class SharedPreferencesOptions {
 @immutable
 class PreferencesFilters {
   /// Creates a new instance with the given options.
-  const PreferencesFilters({
-    this.allowList,
-  });
+  const PreferencesFilters({this.allowList});
 
   /// A list of preference keys that will limit getting and clearing to only
   /// items included in this list.
@@ -58,10 +56,7 @@ class ClearPreferencesParameters {
 /// Filter options used to get and clear preferences on legacy_shared_preferences.
 class PreferencesFilter {
   /// Creates a new instance with the given options.
-  PreferencesFilter({
-    required this.prefix,
-    this.allowList,
-  });
+  PreferencesFilter({required this.prefix, this.allowList});
 
   /// A prefix to limit getting and clearing to only items that begin with
   /// this string.

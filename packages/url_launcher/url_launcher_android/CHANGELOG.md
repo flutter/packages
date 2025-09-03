@@ -1,3 +1,12 @@
+## 6.3.18
+
+* Bumps com.android.tools.build:gradle to 8.12.1.
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
+## 6.3.17
+
+* Updates kotlin version to 2.2.0 to enable gradle 8.11 support.
+
 ## 6.3.16
 
 * Removes obsolete code related to supporting SDK <21.

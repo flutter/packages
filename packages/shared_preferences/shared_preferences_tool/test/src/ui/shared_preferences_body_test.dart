@@ -21,26 +21,25 @@ void main() {
   group('group name', () {
     setupDummies();
 
-    testWidgets(
-      'should show keys and data panels',
-      (WidgetTester tester) async {
-        final MockSharedPreferencesStateNotifier notifier =
-            MockSharedPreferencesStateNotifier();
-        when(notifier.value).thenReturn(const SharedPreferencesState());
+    testWidgets('should show keys and data panels', (
+      WidgetTester tester,
+    ) async {
+      final MockSharedPreferencesStateNotifier notifier =
+          MockSharedPreferencesStateNotifier();
+      when(notifier.value).thenReturn(const SharedPreferencesState());
 
-        await tester.pumpWidget(
-          DevToolsExtension(
-            requiresRunningApplication: false,
-            child: InnerSharedPreferencesStateProvider(
-              notifier: notifier,
-              child: const SharedPreferencesBody(),
-            ),
+      await tester.pumpWidget(
+        DevToolsExtension(
+          requiresRunningApplication: false,
+          child: InnerSharedPreferencesStateProvider(
+            notifier: notifier,
+            child: const SharedPreferencesBody(),
           ),
-        );
+        ),
+      );
 
-        expect(find.byType(KeysPanel), findsOneWidget);
-        expect(find.byType(DataPanel), findsOneWidget);
-      },
-    );
+      expect(find.byType(KeysPanel), findsOneWidget);
+      expect(find.byType(DataPanel), findsOneWidget);
+    });
   });
 }

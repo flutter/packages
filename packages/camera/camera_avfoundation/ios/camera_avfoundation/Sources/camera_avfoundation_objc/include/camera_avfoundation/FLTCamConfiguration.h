@@ -19,6 +19,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// Used in tests to inject a device into FLTCam.
 typedef NSObject<FLTCaptureDevice> *_Nonnull (^CaptureDeviceFactory)(NSString *);
 
+typedef NSObject<FLTCaptureDevice> *_Nonnull (^AudioCaptureDeviceFactory)(void);
+
 typedef NSObject<FLTCaptureSession> *_Nonnull (^CaptureSessionFactory)(void);
 
 typedef NSObject<FLTAssetWriter> *_Nonnull (^AssetWriterFactory)(NSURL *, AVFileType,
@@ -38,6 +40,7 @@ typedef CMVideoDimensions (^VideoDimensionsForFormat)(NSObject<FLTCaptureDeviceF
 - (instancetype)initWithMediaSettings:(FCPPlatformMediaSettings *)mediaSettings
                  mediaSettingsWrapper:(FLTCamMediaSettingsAVWrapper *)mediaSettingsWrapper
                  captureDeviceFactory:(CaptureDeviceFactory)captureDeviceFactory
+            audioCaptureDeviceFactory:(AudioCaptureDeviceFactory)audioCaptureDeviceFactory
                 captureSessionFactory:(CaptureSessionFactory)captureSessionFactory
                   captureSessionQueue:(dispatch_queue_t)captureSessionQueue
             captureDeviceInputFactory:
@@ -49,7 +52,7 @@ typedef CMVideoDimensions (^VideoDimensionsForFormat)(NSObject<FLTCaptureDeviceF
 @property(nonatomic, strong) FCPPlatformMediaSettings *mediaSettings;
 @property(nonatomic, strong) FLTCamMediaSettingsAVWrapper *mediaSettingsWrapper;
 @property(nonatomic, copy) CaptureDeviceFactory captureDeviceFactory;
-@property(nonatomic, copy) CaptureDeviceFactory audioCaptureDeviceFactory;
+@property(nonatomic, copy) AudioCaptureDeviceFactory audioCaptureDeviceFactory;
 @property(nonatomic, copy) VideoDimensionsForFormat videoDimensionsForFormat;
 @property(nonatomic, assign) UIDeviceOrientation orientation;
 @property(nonatomic, strong) NSObject<FLTCaptureSession> *videoCaptureSession;

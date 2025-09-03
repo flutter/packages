@@ -82,12 +82,12 @@ protocol ProxyApiTestsPigeonInternalFinalizerDelegate: AnyObject {
 
 // Attaches to an object to receive a callback when the object is deallocated.
 internal final class ProxyApiTestsPigeonInternalFinalizer {
-  private static let associatedObjectKey = malloc(1)!
+  internal static let associatedObjectKey = malloc(1)!
 
   private let identifier: Int64
   // Reference to the delegate is weak because the callback should be ignored if the
   // `InstanceManager` is deallocated.
-  private weak var delegate: ProxyApiTestsPigeonInternalFinalizerDelegate?
+  internal weak var delegate: ProxyApiTestsPigeonInternalFinalizerDelegate?
 
   private init(identifier: Int64, delegate: ProxyApiTestsPigeonInternalFinalizerDelegate) {
     self.identifier = identifier
@@ -103,7 +103,13 @@ internal final class ProxyApiTestsPigeonInternalFinalizer {
   }
 
   static func detach(from instance: AnyObject) {
-    objc_setAssociatedObject(instance, associatedObjectKey, nil, .OBJC_ASSOCIATION_ASSIGN)
+    let finalizer =
+      objc_getAssociatedObject(instance, associatedObjectKey)
+      as? ProxyApiTestsPigeonInternalFinalizer
+    if let finalizer = finalizer {
+      finalizer.delegate = nil
+      objc_setAssociatedObject(instance, associatedObjectKey, nil, .OBJC_ASSOCIATION_ASSIGN)
+    }
   }
 
   deinit {
@@ -261,6 +267,10 @@ final class ProxyApiTestsPigeonInstanceManager {
   /// The manager will be empty after this call returns.
   func removeAllObjects() throws {
     lockQueue.sync {
+      let weakInstancesEnumerator = weakInstances.objectEnumerator()!
+      while let instance = weakInstancesEnumerator.nextObject() {
+        ProxyApiTestsPigeonInternalFinalizer.detach(from: instance as AnyObject)
+      }
       identifiers.removeAllObjects()
       weakInstances.removeAllObjects()
       strongInstances.removeAllObjects()

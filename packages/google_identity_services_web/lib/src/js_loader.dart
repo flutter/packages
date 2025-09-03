@@ -44,19 +44,21 @@ Future<void> loadWebSdk({
     );
     try {
       final web.TrustedTypePolicy policy = web.window.trustedTypes.createPolicy(
-          trustedTypePolicyName,
-          web.TrustedTypePolicyOptions(
-            createScriptURL: ((JSString url) => _url).toJS,
-          ));
+        trustedTypePolicyName,
+        web.TrustedTypePolicyOptions(
+          createScriptURL: ((JSString url) => _url).toJS,
+        ),
+      );
       trustedUrl = policy.createScriptURLNoArgs(_url);
     } catch (e) {
       throw TrustedTypesException(e.toString());
     }
   }
 
-  final web.HTMLScriptElement script = web.HTMLScriptElement()
-    ..async = true
-    ..defer = true;
+  final web.HTMLScriptElement script =
+      web.HTMLScriptElement()
+        ..async = true
+        ..defer = true;
   if (trustedUrl != null) {
     script.trustedSrc = trustedUrl;
   } else {
@@ -83,8 +85,9 @@ String? _getNonce({String? suppliedNonce, web.Window? window}) {
   }
 
   final web.Window currentWindow = window ?? web.window;
-  final web.NodeList elements =
-      currentWindow.document.querySelectorAll('script');
+  final web.NodeList elements = currentWindow.document.querySelectorAll(
+    'script',
+  );
 
   for (int i = 0; i < elements.length; i++) {
     if (elements.item(i) case final web.HTMLScriptElement element) {

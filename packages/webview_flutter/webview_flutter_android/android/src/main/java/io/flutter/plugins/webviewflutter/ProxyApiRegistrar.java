@@ -233,6 +233,12 @@ public class ProxyApiRegistrar extends AndroidWebkitLibraryPigeonProxyApiRegistr
   }
 
   @NonNull
+  @Override
+  public PigeonApiCertificate getPigeonApiCertificate() {
+    return new CertificateProxyApi(this);
+  }
+
+  @NonNull
   public Context getContext() {
     return context;
   }
@@ -244,5 +250,17 @@ public class ProxyApiRegistrar extends AndroidWebkitLibraryPigeonProxyApiRegistr
   @NonNull
   public FlutterAssetManager getFlutterAssetManager() {
     return flutterAssetManager;
+  }
+
+  @NonNull
+  @Override
+  public PigeonApiWebViewFeature getPigeonApiWebViewFeature() {
+    return new WebViewFeatureProxyApi(this);
+  }
+
+  @NonNull
+  @Override
+  public PigeonApiWebSettingsCompat getPigeonApiWebSettingsCompat() {
+    return new WebSettingsCompatProxyApi(this);
   }
 }

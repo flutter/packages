@@ -44,9 +44,7 @@ class OpenTextPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Open a text file'),
-      ),
+      appBar: AppBar(title: const Text('Open a text file')),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -82,9 +80,7 @@ class TextDisplay extends StatelessWidget {
     return AlertDialog(
       title: Text(fileName),
       content: Scrollbar(
-        child: SingleChildScrollView(
-          child: Text(fileContent),
-        ),
+        child: SingleChildScrollView(child: Text(fileContent)),
       ),
       actions: <Widget>[
         TextButton(

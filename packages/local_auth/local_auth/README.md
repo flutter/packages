@@ -73,7 +73,8 @@ also allows fallback to pin, pattern, or passcode.
 ```dart
 try {
   final bool didAuthenticate = await auth.authenticate(
-      localizedReason: 'Please authenticate to show account balance');
+    localizedReason: 'Please authenticate to show account balance',
+  );
   // ···
 } on PlatformException {
   // ...
@@ -86,8 +87,9 @@ To require biometric authentication, pass `AuthenticationOptions` with
 <?code-excerpt "readme_excerpts.dart (AuthBioOnly)"?>
 ```dart
 final bool didAuthenticate = await auth.authenticate(
-    localizedReason: 'Please authenticate to show account balance',
-    options: const AuthenticationOptions(biometricOnly: true));
+  localizedReason: 'Please authenticate to show account balance',
+  options: const AuthenticationOptions(biometricOnly: true),
+);
 ```
 
 *Note*: `biometricOnly` is not supported on Windows since the Windows implementation's underlying API (Windows Hello) doesn't support selecting the authentication method.
@@ -114,8 +116,9 @@ import 'package:local_auth/error_codes.dart' as auth_error;
 // ···
     try {
       final bool didAuthenticate = await auth.authenticate(
-          localizedReason: 'Please authenticate to show account balance',
-          options: const AuthenticationOptions(useErrorDialogs: false));
+        localizedReason: 'Please authenticate to show account balance',
+        options: const AuthenticationOptions(useErrorDialogs: false),
+      );
       // ···
     } on PlatformException catch (e) {
       if (e.code == auth_error.notAvailable) {
@@ -139,16 +142,15 @@ import 'package:local_auth_android/local_auth_android.dart';
 import 'package:local_auth_darwin/local_auth_darwin.dart';
 // ···
     final bool didAuthenticate = await auth.authenticate(
-        localizedReason: 'Please authenticate to show account balance',
-        authMessages: const <AuthMessages>[
-          AndroidAuthMessages(
-            signInTitle: 'Oops! Biometric authentication required!',
-            cancelButton: 'No thanks',
-          ),
-          IOSAuthMessages(
-            cancelButton: 'No thanks',
-          ),
-        ]);
+      localizedReason: 'Please authenticate to show account balance',
+      authMessages: const <AuthMessages>[
+        AndroidAuthMessages(
+          signInTitle: 'Oops! Biometric authentication required!',
+          cancelButton: 'No thanks',
+        ),
+        IOSAuthMessages(cancelButton: 'No thanks'),
+      ],
+    );
 ```
 
 See the platform-specific classes for details about what can be customized on
@@ -170,8 +172,9 @@ import 'package:local_auth/local_auth.dart';
   // ···
     try {
       final bool didAuthenticate = await auth.authenticate(
-          localizedReason: 'Please authenticate to show account balance',
-          options: const AuthenticationOptions(useErrorDialogs: false));
+        localizedReason: 'Please authenticate to show account balance',
+        options: const AuthenticationOptions(useErrorDialogs: false),
+      );
       // ···
     } on PlatformException catch (e) {
       if (e.code == auth_error.notEnrolled) {

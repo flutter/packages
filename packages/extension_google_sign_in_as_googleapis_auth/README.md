@@ -19,19 +19,16 @@ That object can then be used to create instances of `googleapis` API clients:
 
 <?code-excerpt "example/lib/main.dart (CreateAPIClient)"?>
 ```dart
-// Retrieve an [auth.AuthClient] from the current [GoogleSignIn] instance.
-final auth.AuthClient? client = await _googleSignIn.authenticatedClient();
+import 'package:googleapis_auth/googleapis_auth.dart' as auth show AuthClient;
+// ···
+    // Retrieve an [auth.AuthClient] from a GoogleSignInClientAuthorization.
+    final auth.AuthClient client = authorization.authClient(scopes: scopes);
 
-assert(client != null, 'Authenticated client missing!');
-
-// Prepare a People Service authenticated client.
-final PeopleServiceApi peopleApi = PeopleServiceApi(client!);
-// Retrieve a list of the `names` of my `connections`
-final ListConnectionsResponse response =
-    await peopleApi.people.connections.list(
-  'people/me',
-  personFields: 'names',
-);
+    // Prepare a People Service authenticated client.
+    final PeopleServiceApi peopleApi = PeopleServiceApi(client);
+    // Retrieve a list of connected contacts' names.
+    final ListConnectionsResponse response = await peopleApi.people.connections
+        .list('people/me', personFields: 'names');
 ```
 
 ## Example

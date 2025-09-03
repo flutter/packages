@@ -26,7 +26,8 @@ final class RtspVideoAsset extends VideoAsset {
   // TODO: Migrate to stable API, see https://github.com/flutter/flutter/issues/147039.
   @OptIn(markerClass = UnstableApi.class)
   @Override
-  public MediaSource.Factory getMediaSourceFactory(Context context) {
+  @NonNull
+  public MediaSource.Factory getMediaSourceFactory(@NonNull Context context) {
     return new RtspMediaSource.Factory();
   }
 }

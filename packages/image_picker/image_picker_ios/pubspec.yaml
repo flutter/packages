@@ -2,11 +2,11 @@ name: image_picker_ios
 description: iOS implementation of the image_picker plugin.
 repository: https://github.com/flutter/packages/tree/main/packages/image_picker/image_picker_ios
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+image_picker%22
-version: 0.8.12+2
+version: 0.8.13
 
 environment:
-  sdk: ^3.4.0
-  flutter: ">=3.22.0"
+  sdk: ^3.7.0
+  flutter: ">=3.29.0"
 
 flutter:
   plugin:
@@ -19,7 +19,7 @@ flutter:
 dependencies:
   flutter:
     sdk: flutter
-  image_picker_platform_interface: ^2.10.0
+  image_picker_platform_interface: ^2.11.0
 
 dev_dependencies:
   flutter_test:
