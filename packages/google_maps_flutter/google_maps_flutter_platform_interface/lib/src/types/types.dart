@@ -45,4 +45,5 @@ export 'utils/marker.dart';
 export 'utils/polygon.dart';
 export 'utils/polyline.dart';
 export 'utils/tile_overlay.dart';
+export 'web_camera_control_position.dart';
 export 'web_gesture_handling.dart';
