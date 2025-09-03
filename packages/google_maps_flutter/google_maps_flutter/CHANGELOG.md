@@ -1,3 +1,8 @@
+## 2.13.1
+
+* Fixes exception when dispose is called while asynchronous update from
+  `didUpdateWidget` is executed.
+
 ## 2.13.0
 
 * Adds support for camera control button on web.
