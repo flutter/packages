@@ -1,6 +1,10 @@
-## 0.5.14+1
+## 0.5.14+2
 
 * Fixes a bug where using `cloudMapId` for cloud-based styling would fail if the `style` property was also present.
+
+## 0.5.14+1
+
+* Stops processing events and cancels subscriptions when controller is disposed.
 
 ## 0.5.14
 
