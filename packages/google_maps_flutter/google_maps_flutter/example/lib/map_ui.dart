@@ -77,7 +77,8 @@ class MapUiBodyState extends State<MapUiBody> {
   Widget _webCameraControlToggler() {
     return TextButton(
       child: Text(
-          '${_webCameraControlEnabled ? 'disable' : 'enable'} web camera control'),
+        '${_webCameraControlEnabled ? 'disable' : 'enable'} web camera control',
+      ),
       onPressed: () {
         setState(() {
           _webCameraControlEnabled = !_webCameraControlEnabled;
@@ -88,50 +89,46 @@ class MapUiBodyState extends State<MapUiBody> {
 
   Widget _webCameraControlPositionToggler() {
     return TextButton(
-      onPressed: () => showDialog<void>(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Web camera control position'),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                DropdownButton<WebCameraControlPosition>(
-                  hint: const Text('Web camera control position'),
-                  value: _webCameraControlPosition,
-                  items: WebCameraControlPosition.values
-                      .map(
-                        (WebCameraControlPosition e) =>
-                            DropdownMenuItem<WebCameraControlPosition>(
-                          value: e,
-                          child: Text(e.name),
-                        ),
-                      )
-                      .toList(),
-                  onChanged: (WebCameraControlPosition? value) {
-                    setState(
-                      () {
-                        _webCameraControlPosition = value;
+      onPressed:
+          () => showDialog<void>(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text('Web camera control position'),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    DropdownButton<WebCameraControlPosition>(
+                      hint: const Text('Web camera control position'),
+                      value: _webCameraControlPosition,
+                      items:
+                          WebCameraControlPosition.values
+                              .map(
+                                (WebCameraControlPosition e) =>
+                                    DropdownMenuItem<WebCameraControlPosition>(
+                                      value: e,
+                                      child: Text(e.name),
+                                    ),
+                              )
+                              .toList(),
+                      onChanged: (WebCameraControlPosition? value) {
+                        setState(() {
+                          _webCameraControlPosition = value;
+                        });
                       },
-                    );
-                  },
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Text('Ok'),
+                    ),
+                  ],
                 ),
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: const Text(
-                    'Ok',
-                  ),
-                )
-              ],
-            ),
-          );
-        },
-      ),
-      child: const Text(
-        'change web camera control position',
-      ),
+              );
+            },
+          ),
+      child: const Text('change web camera control position'),
     );
   }
 
@@ -395,7 +392,7 @@ class MapUiBodyState extends State<MapUiBody> {
                 _webCameraControlToggler(),
                 if (_webCameraControlEnabled)
                   _webCameraControlPositionToggler(),
-              ]
+              ],
             ],
           ),
         ),
