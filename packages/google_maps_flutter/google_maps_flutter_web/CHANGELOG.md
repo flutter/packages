@@ -1,6 +1,10 @@
-## 0.5.14
+## 0.5.15
 
 * Fixes a bug where using `cloudMapId` for cloud-based styling would fail if the `style` property was also present.
+
+## 0.5.14
+
+* Adds support for disabling or moving the camera control button on web.
 
 ## 0.5.13
 
