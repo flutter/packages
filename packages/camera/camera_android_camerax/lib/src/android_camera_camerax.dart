@@ -927,9 +927,9 @@ class AndroidCameraCameraX extends CameraPlatform {
 
   /// Sets the active camera while recording.
   ///
-  /// Calling this method will normally cancel any active recording.
-  /// To avoid this, start the recording with [startVideoCapturing]
-  /// and set `enablePersistentRecording` of [VideoCaptureOptions] to `true`.
+  /// To avoid cancelling any active recording when this method is called,
+  /// you must start the recording with [startVideoCapturing]
+  /// with `enablePersistentRecording` set to `true`.
   @override
   Future<void> setDescriptionWhileRecording(
     CameraDescription description,
@@ -950,7 +950,7 @@ class AndroidCameraCameraX extends CameraPlatform {
       cameraInfoForFilter: chosenCameraInfo,
     );
 
-    // unbind all use cases and rebind to new cameraSelector
+    // Unbind all use cases and rebind to new CameraSelector
     final List<UseCase> useCases = <UseCase>[preview!, videoCapture!];
     if (imageCapture != null &&
         await processCameraProvider!.isBound(imageCapture!)) {

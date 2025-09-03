@@ -49,8 +49,8 @@ class VideoCaptureOptions {
   /// A persistent recording will only be stopped by explicitly calling [CameraController.stopVideoRecording]
   /// and will ignore events that would normally cause recording to stop, such as lifecycle events.
   ///
-  /// **Note:** On Android, calling [CameraController.setDescription] will normally cancel any active recording.
-  /// To avoid this, set this parameter to `true`.
+  /// On Android, you must set this parameter to `true`
+  /// to avoid cancelling any active recording when calling [CameraController.setDescription].
   ///
   /// Defaults to `false`.
   final bool enablePersistentRecording;

@@ -439,9 +439,9 @@ class CameraController extends ValueNotifier<CameraValue> {
 
   /// Sets the description of the camera.
   ///
-  /// On Android, calling this method will normally cancel any active recording.
-  /// To avoid this, start the recording with [startVideoRecording]
-  /// and set `enablePersistentRecording` to `true`.
+  /// On Android, you must start the recording with [startVideoRecording]
+  /// with `enablePersistentRecording` set to `true`
+  /// to avoid cancelling any active recording.
   ///
   /// Throws a [CameraException] if setting the description fails.
   Future<void> setDescription(CameraDescription description) async {
