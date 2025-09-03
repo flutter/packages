@@ -99,6 +99,8 @@ class GoogleMap extends StatefulWidget {
     this.onMapCreated,
     this.gestureRecognizers = const <Factory<OneSequenceGestureRecognizer>>{},
     this.webGestureHandling,
+    this.webCameraControlPosition,
+    this.webCameraControlEnabled = true,
     this.compassEnabled = true,
     this.mapToolbarEnabled = true,
     this.cameraTargetBounds = CameraTargetBounds.unbounded,
@@ -352,6 +354,18 @@ class GoogleMap extends StatefulWidget {
   ///
   /// See [WebGestureHandling] for more details.
   final WebGestureHandling? webGestureHandling;
+
+  /// This setting controls how the API handles cameraControl button position on the map. Web only.
+  ///
+  /// If null, the Google Maps API will use its default camera control position.
+  ///
+  /// See [WebCameraControlPosition] for more details.
+  final WebCameraControlPosition? webCameraControlPosition;
+
+  /// Enables or disables the Camera controls. Web only.
+  ///
+  /// See https://developers.google.com/maps/documentation/javascript/controls for more details.
+  final bool webCameraControlEnabled;
 
   /// Identifier that's associated with a specific cloud-based map style.
   ///
@@ -687,6 +701,8 @@ class _GoogleMapState extends State<GoogleMap> {
 /// Builds a [MapConfiguration] from the given [map].
 MapConfiguration _configurationFromMapWidget(GoogleMap map) {
   return MapConfiguration(
+    webCameraControlPosition: map.webCameraControlPosition,
+    webCameraControlEnabled: map.webCameraControlEnabled,
     webGestureHandling: map.webGestureHandling,
     compassEnabled: map.compassEnabled,
     mapToolbarEnabled: map.mapToolbarEnabled,
