@@ -150,5 +150,15 @@ void main() {
 
       verify(mockAdsManager.setDelegate(delegate));
     });
+
+    test('adCuePoints', () {
+      final MockIMAAdsManager mockAdsManager = MockIMAAdsManager();
+
+      final List<double> cuePoints = <double>[1.0];
+      when(mockAdsManager.adCuePoints).thenReturn(cuePoints);
+      final IOSAdsManager adsManager = IOSAdsManager(mockAdsManager);
+
+      expect(adsManager.adCuePoints, <Duration>[const Duration(seconds: 1)]);
+    });
   });
 }
