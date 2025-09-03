@@ -1,3 +1,11 @@
+## 0.5.14+1
+
+* Stops processing events and cancels subscriptions when controller is disposed.
+
+## 0.5.14
+
+* Adds support for disabling or moving the camera control button on web.
+
 ## 0.5.13
 
 * Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.

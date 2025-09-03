@@ -35,6 +35,7 @@ See the API documentation for details on the following topics:
 - [Type-safe routes](https://pub.dev/documentation/go_router/latest/topics/Type-safe%20routes-topic.html)
 - [Named routes](https://pub.dev/documentation/go_router/latest/topics/Named%20routes-topic.html)
 - [Error handling](https://pub.dev/documentation/go_router/latest/topics/Error%20handling-topic.html)
+- [State restoration](https://pub.dev/documentation/go_router/latest/topics/State%20restoration-topic.html)
 
 ## Migration Guides
 - [Migrating to 16.0.0](https://flutter.dev/go/go-router-v16-breaking-changes).
