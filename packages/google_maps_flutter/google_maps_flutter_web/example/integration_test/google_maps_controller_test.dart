@@ -310,20 +310,21 @@ void main() {
         expect(events[4], isA<CameraIdleEvent>());
       });
 
-
-      testWidgets('stops listening to map events once disposed',
-          (WidgetTester tester) async {
-        controller = createController()
-          ..debugSetOverrides(
-            createMap: (_, __) => map,
-            circles: circles,
-            heatmaps: heatmaps,
-            markers: markers,
-            polygons: polygons,
-            polylines: polylines,
-            groundOverlays: groundOverlays,
-          )
-          ..init();
+      testWidgets('stops listening to map events once disposed', (
+        WidgetTester tester,
+      ) async {
+        controller =
+            createController()
+              ..debugSetOverrides(
+                createMap: (_, __) => map,
+                circles: circles,
+                heatmaps: heatmaps,
+                markers: markers,
+                polygons: polygons,
+                polylines: polylines,
+                groundOverlays: groundOverlays,
+              )
+              ..init();
 
         controller.dispose();
 

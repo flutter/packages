@@ -256,8 +256,9 @@ class GoogleMapController {
         _streamController.add(WebMapReadyEvent(_mapId));
       }
     });
-    _onClickSubscription =
-        map.onClick.listen((gmaps.MapMouseEventOrIconMouseEvent event) {
+    _onClickSubscription = map.onClick.listen((
+      gmaps.MapMouseEventOrIconMouseEvent event,
+    ) {
       assert(event.latLng != null);
       if (!_streamController.isClosed) {
         _streamController.add(
@@ -265,8 +266,9 @@ class GoogleMapController {
         );
       }
     });
-    _onRightClickSubscription =
-        map.onRightclick.listen((gmaps.MapMouseEvent event) {
+    _onRightClickSubscription = map.onRightclick.listen((
+      gmaps.MapMouseEvent event,
+    ) {
       assert(event.latLng != null);
       if (!_streamController.isClosed) {
         _streamController.add(
