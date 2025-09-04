@@ -6,7 +6,7 @@ void main(List<String> args) {
     await compileSvg(
       input,
       output,
-      name: 'example',
+      name: 'example_file',
       file: input.packageRoot.resolve('assets/example.svg'),
       options: const Options(dumpDebug: true, concurrency: 2),
     );

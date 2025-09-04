@@ -22,10 +22,7 @@ class MyApp extends StatelessWidget {
       home: const Scaffold(
         body: Center(
           child: VectorGraphic(
-            loader: AssetBytesLoader(
-              'example',
-              packageName: 'example_svg_transformer',
-            ),
+            loader: AssetBytesLoader('example_file', packageName: 'example'),
           ),
         ),
       ),

@@ -1,18 +1,18 @@
-name: example_svg_transformer
-description: "A new Flutter project."
+name: example
+description: Example project using hooks.
 publish_to: "none"
-version: 0.1.0
 
 environment:
-  sdk: ^3.9.0-172.0.dev
+  sdk: ^3.8.0
 
 dependencies:
   flutter:
     sdk: flutter
   hooks: ^0.19.3
-  vector_graphics: ^1.1.18
+  vector_graphics:
+    path: ../../vector_graphics
   vector_graphics_compiler:
-    path: ../vector_graphics_compiler
+    path: ../
 
 dev_dependencies:
   flutter_test:
