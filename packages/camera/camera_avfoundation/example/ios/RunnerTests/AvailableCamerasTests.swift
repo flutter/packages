@@ -52,15 +52,9 @@ final class AvailableCamerasTest: XCTestCase {
       telephotoCamera.position = .back
 
       var requiredTypes: [AVCaptureDevice.DeviceType] = [
-        .builtInWideAngleCamera, .builtInTelephotoCamera,
+        .builtInWideAngleCamera, .builtInTelephotoCamera, .builtInUltraWideCamera,
       ]
-      if #available(iOS 13.0, *) {
-        requiredTypes.append(.builtInUltraWideCamera)
-      }
-      var cameras = [wideAngleCamera, frontFacingCamera, telephotoCamera]
-      if #available(iOS 13.0, *) {
-        cameras.append(ultraWideCamera)
-      }
+      var cameras = [wideAngleCamera, frontFacingCamera, telephotoCamera, ultraWideCamera]
 
       XCTAssertEqual(deviceTypes, requiredTypes)
       XCTAssertEqual(mediaType, .video)
@@ -77,11 +71,7 @@ final class AvailableCamerasTest: XCTestCase {
     waitForExpectations(timeout: 30, handler: nil)
 
     // Verify the result.
-    if #available(iOS 13.0, *) {
-      XCTAssertEqual(resultValue?.count, 4)
-    } else {
-      XCTAssertEqual(resultValue?.count, 3)
-    }
+    XCTAssertEqual(resultValue?.count, 4)
   }
 
   func testAvailableCamerasShouldReturnTwoCamerasOnDualCameraIPhone() {
@@ -100,11 +90,8 @@ final class AvailableCamerasTest: XCTestCase {
       frontFacingCamera.position = .front
 
       var requiredTypes: [AVCaptureDevice.DeviceType] = [
-        .builtInWideAngleCamera, .builtInTelephotoCamera,
+        .builtInWideAngleCamera, .builtInTelephotoCamera, .builtInUltraWideCamera,
       ]
-      if #available(iOS 13.0, *) {
-        requiredTypes.append(.builtInUltraWideCamera)
-      }
       let cameras = [wideAngleCamera, frontFacingCamera]
 
       XCTAssertEqual(deviceTypes, requiredTypes)
@@ -136,11 +123,8 @@ final class AvailableCamerasTest: XCTestCase {
       unspecifiedCamera.position = .unspecified
 
       var requiredTypes: [AVCaptureDevice.DeviceType] = [
-        .builtInWideAngleCamera, .builtInTelephotoCamera,
+        .builtInWideAngleCamera, .builtInTelephotoCamera, .builtInUltraWideCamera,
       ]
-      if #available(iOS 13.0, *) {
-        requiredTypes.append(.builtInUltraWideCamera)
-      }
       let cameras = [unspecifiedCamera]
 
       XCTAssertEqual(deviceTypes, requiredTypes)

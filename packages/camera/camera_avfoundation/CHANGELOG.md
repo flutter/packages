@@ -1,3 +1,8 @@
+## 0.9.21+3
+
+* Removes code for versions of iOS older than 13.0.
+* Updates minimum supported SDK version to Flutter 3.35.
+
 ## 0.9.21+2
 
 * Migrates `DefaultCamera` initialization to Swift.
