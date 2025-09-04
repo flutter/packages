@@ -17,6 +17,7 @@ const String _platformFlagApk = 'apk';
 
 const String _pluginToolsConfigFileName = '.pluginToolsConfig.yaml';
 const String _pluginToolsConfigBuildFlagsKey = 'buildFlags';
+const String _pluginToolsConfigsKey = 'configs';
 const String _pluginToolsConfigGlobalKey = 'global';
 
 const String _pluginToolsConfigExample = '''
@@ -24,6 +25,8 @@ $_pluginToolsConfigBuildFlagsKey:
   $_pluginToolsConfigGlobalKey:
     - "--no-tree-shake-icons"
     - "--dart-define=buildmode=testing"
+$_pluginToolsConfigsKey:
+  - "--enable-dart-data-assets"
 ''';
 
 const int _exitNoPlatformFlags = 3;
@@ -114,8 +117,9 @@ class BuildExamplesCommand extends PackageLoopingCommand {
       'directory to specify additional build arguments. It should be a YAML '
       'file with a top-level map containing a single key '
       '"$_pluginToolsConfigBuildFlagsKey" containing a map containing a '
-      'single key "$_pluginToolsConfigGlobalKey" containing a list of build '
-      'arguments.';
+      'a key "$_pluginToolsConfigGlobalKey" containing a list of build '
+      'arguments, and a key $_pluginToolsConfigsKey containing a list of '
+      'configuration arguments for `flutter config`.';
 
   /// Returns whether the Swift Package Manager feature should be enabled,
   /// disabled, or left to the default value.
@@ -251,17 +255,18 @@ class BuildExamplesCommand extends PackageLoopingCommand {
         : PackageResult.fail(errors);
   }
 
-  Iterable<String> _readExtraBuildFlagsConfiguration(
-      Directory directory) sync* {
+  _ExtraConfiguration _readExtraBuildFlagsConfiguration(Directory directory) {
     final File pluginToolsConfig =
         directory.childFile(_pluginToolsConfigFileName);
+    List<String> buildFlags = <String>[];
+    List<String> configs = <String>[];
     if (pluginToolsConfig.existsSync()) {
       final Object? configuration =
           loadYaml(pluginToolsConfig.readAsStringSync());
       if (configuration is! YamlMap) {
         printError('The $_pluginToolsConfigFileName file must be a YAML map.');
         printError(
-            'Currently, the key "$_pluginToolsConfigBuildFlagsKey" is the only one that has an effect.');
+            'The keys "$_pluginToolsConfigBuildFlagsKey" and "$_pluginToolsConfigsKey" are the only one that have an effect.');
         printError(
             'It must itself be a map. Currently, in that map only the key "$_pluginToolsConfigGlobalKey"');
         printError(
@@ -297,10 +302,24 @@ class BuildExamplesCommand extends PackageLoopingCommand {
             printError(_pluginToolsConfigExample);
             throw ToolExit(_exitInvalidPluginToolsConfig);
           }
-          yield* globalBuildFlagsConfiguration.cast<String>();
+          buildFlags = globalBuildFlagsConfiguration.cast<String>();
         }
       }
+      if (configuration.containsKey(_pluginToolsConfigsKey)) {
+        final Object? configConfiguration =
+            configuration[_pluginToolsConfigsKey];
+        if (configConfiguration is! YamlList) {
+          printError(
+              'The $_pluginToolsConfigFileName file\'s "$_pluginToolsConfigsKey" key must be a list.');
+          printError(
+              'It contains a list of arguments to pass to `flutter config`.');
+          printError(_pluginToolsConfigExample);
+          throw ToolExit(_exitInvalidPluginToolsConfig);
+        }
+        configs = configConfiguration.cast<String>();
+      }
     }
+    return _ExtraConfiguration(buildFlags: buildFlags, configs: configs);
   }
 
   Future<bool> _buildExample(
@@ -310,13 +329,29 @@ class BuildExamplesCommand extends PackageLoopingCommand {
   }) async {
     final String enableExperiment = getStringArg(kEnableExperiment);
 
+    final _ExtraConfiguration extraBuildFlagsConfiguration =
+        _readExtraBuildFlagsConfiguration(example.directory);
+
+    if (extraBuildFlagsConfiguration.configs.isNotEmpty) {
+      for (final String config in extraBuildFlagsConfiguration.configs) {
+        await processRunner.runAndStream(
+          flutterCommand,
+          <String>[
+            'config',
+            config,
+          ],
+          workingDir: example.directory,
+        );
+      }
+    }
+
     final int exitCode = await processRunner.runAndStream(
       flutterCommand,
       <String>[
         'build',
         flutterBuildType,
         ...extraBuildFlags,
-        ..._readExtraBuildFlagsConfiguration(example.directory),
+        ...extraBuildFlagsConfiguration.buildFlags,
         if (enableExperiment.isNotEmpty)
           '--enable-experiment=$enableExperiment',
       ],
@@ -346,4 +381,11 @@ class _PlatformDetails {
 
   /// Any extra flags to pass to `flutter build`.
   final List<String> extraBuildFlags;
+}
+
+class _ExtraConfiguration {
+  _ExtraConfiguration({required this.buildFlags, required this.configs});
+
+  final Iterable<String> buildFlags;
+  final Iterable<String> configs;
 }
