@@ -158,14 +158,13 @@ each platform.
 
 ### Exceptions
 
-`authenticate` throws `PlatformException`s in many error cases. See
-`error_codes.dart` for known error codes that you may want to have specific
-handling for. For example:
+`authenticate` throws `LocalAuthException`s in most failure cases. See
+`LocalAuthExceptionCodes` for known error codes that you may want to have
+specific handling for. For example:
 
 <?code-excerpt "readme_excerpts.dart (ErrorHandling)"?>
 ```dart
 import 'package:flutter/services.dart';
-import 'package:local_auth/error_codes.dart' as auth_error;
 import 'package:local_auth/local_auth.dart';
 // ···
   final LocalAuthentication auth = LocalAuthentication();

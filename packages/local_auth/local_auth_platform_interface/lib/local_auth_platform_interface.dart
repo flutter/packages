@@ -7,7 +7,7 @@ import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'default_method_channel_platform.dart';
 import 'types/types.dart';
 
-export 'package:local_auth_platform_interface/types/types.dart';
+export 'types/types.dart';
 
 /// The interface that implementations of local_auth must implement.
 ///

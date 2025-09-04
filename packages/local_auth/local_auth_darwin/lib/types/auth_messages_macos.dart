@@ -32,6 +32,8 @@ class MacOSAuthMessages extends AuthMessages {
 
   /// The localized title for the fallback button in the dialog presented to
   /// the user during authentication.
+  ///
+  /// Set this to an empty string to hide the fallback button.
   final String? localizedFallbackTitle;
 
   @override

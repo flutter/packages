@@ -10,7 +10,6 @@
 
 import 'dart:async';
 
-import 'package:flutter/services.dart';
 import 'package:local_auth_android/local_auth_android.dart';
 import 'package:local_auth_darwin/local_auth_darwin.dart';
 import 'package:local_auth_platform_interface/local_auth_platform_interface.dart';
@@ -21,7 +20,11 @@ class LocalAuthentication {
   /// Authenticates the user with biometrics available on the device while also
   /// allowing the user to use device authentication - pin, pattern, passcode.
   ///
-  /// Returns true if the user successfully authenticated, false otherwise.
+  /// Returns true if the user successfully authenticated.
+  ///
+  /// If the user fails the authentication challenge without any side effects,
+  /// returns false. For other all other failures cases, throws a
+  /// [LocalAuthException] with details about the reason it did not succeed.
   ///
   /// [localizedReason] is the message to show to user while prompting them
   /// for authentication. This is typically along the lines of: 'Authenticate
@@ -31,11 +34,6 @@ class LocalAuthentication {
   /// customize messages in the dialogs.
   ///
   /// Provide [options] for configuring further authentication related options.
-  ///
-  /// Throws a [PlatformException] if there were technical problems with local
-  /// authentication (e.g. lack of relevant hardware). This might throw
-  /// [PlatformException] with error code [otherOperatingSystem] on the iOS
-  /// simulator.
   Future<bool> authenticate({
     required String localizedReason,
     Iterable<AuthMessages> authMessages = const <AuthMessages>[
@@ -53,10 +51,11 @@ class LocalAuthentication {
   }
 
   /// Cancels any in-progress authentication, returning true if auth was
-  /// cancelled successfully.
+  /// canceled successfully.
   ///
-  /// This API is not supported by all platforms.
-  /// Returns false if there was some error, no authentication in progress,
+  /// This API may not be supported by all platforms.
+  ///
+  /// Returns false if there was some error, no authentication is in progress,
   /// or the current platform lacks support.
   Future<bool> stopAuthentication() async {
     return LocalAuthPlatform.instance.stopAuthentication();
