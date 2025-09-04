@@ -1,4 +1,4 @@
-# example_svg_transformer
+# example
 
 A Flutter showcase for how to replce asset transformers with hooks.
 
