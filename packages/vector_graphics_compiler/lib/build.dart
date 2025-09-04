@@ -33,9 +33,9 @@ Future<void> compileSvgs(
   Options options = const Options(),
 }) async {
   final IsolateProcessor processor = IsolateProcessor(
-    null,
-    null,
-    Platform.numberOfProcessors,
+    options.libpathops,
+    options.libtessellator,
+    options.concurrency ?? Platform.numberOfProcessors,
   );
 
   final Map<String, Pair> pairs = nameToFile.map(
@@ -49,12 +49,13 @@ Future<void> compileSvgs(
   );
   if (!await processor.process(
     pairs.values,
-    maskingOptimizerEnabled: true,
-    clippingOptimizerEnabled: true,
-    overdrawOptimizerEnabled: true,
-    tessellate: false,
+    maskingOptimizerEnabled: options.maskingOptimizerEnabled,
+    clippingOptimizerEnabled: options.clippingOptimizerEnabled,
+    overdrawOptimizerEnabled: options.overdrawOptimizerEnabled,
+    tessellate: options.tessellate,
     dumpDebug: options.dumpDebug,
-    useHalfPrecisionControlPoints: false,
+    useHalfPrecisionControlPoints: options.useHalfPrecisionControlPoints,
+    theme: options.theme,
   )) {
     throw ArgumentError(
       'Did not succeed for ${pairs.map((String name, Pair e) => MapEntry<String, String>(name, '$name: ${e.inputPath} -> ${e.outputPath}')).values}',
@@ -78,7 +79,7 @@ Future<void> compileSvgs(
 
 /// Options for the processor.
 class Options {
-  // ignore: public_member_api_docs
+  /// Create new options for the svg processor.
   const Options({
     this.inputFilePath,
     this.outputFilePath,
@@ -96,45 +97,57 @@ class Options {
     this.concurrency,
   });
 
-  // ignore: public_member_api_docs
+  /// The path to a file containing a single SVG.
   final String? inputFilePath;
 
-  // ignore: public_member_api_docs
+  /// The path to a file where the resulting vector_graphic will be written.
+  ///
+  /// If not provided, defaults to `<input-file>.vec`.
   final String? outputFilePath;
 
-  // ignore: public_member_api_docs
+  /// The path to a directory containing one or more SVGs.
+  ///
+  /// Only includes files that end with `.svg`. Cannot be combined with `inputFilePath` or `outputFilePath`.
   final String? inputDirPath;
 
-  // ignore: public_member_api_docs
+  /// The output directory path.
+  ///
+  /// Use it with `inputDirPath` to specify the output directory.
   final String? outputDirPath;
 
-  // ignore: public_member_api_docs
+  /// The basis for font size based values (i.e. em, ex) and the value of the 'currentColor' attribute.
   final SvgTheme theme;
 
-  // ignore: public_member_api_docs
+  /// Allows for the masking optimizer to be enabled or disabled.
   final bool maskingOptimizerEnabled;
 
-  // ignore: public_member_api_docs
+  /// Allows for the clipping optimizer to be enabled or disabled.
   final bool clippingOptimizerEnabled;
 
-  // ignore: public_member_api_docs
+  /// Allows for the overdraw optimizer to be enabled or disabled.
   final bool overdrawOptimizerEnabled;
 
-  // ignore: public_member_api_docs
+  /// Converts path fills into a tessellated shape.
+  ///
+  /// This will improve raster times at the cost of slightly larger file sizes.
   final bool tessellate;
 
-  // ignore: public_member_api_docs
+  /// Dumps a human-readable debugging format alongside the compiled asset.
   final bool dumpDebug;
 
-  // ignore: public_member_api_docs
+  /// Converts path control points into IEEE 754-2008 half-precision floating-point values.
+  ///
+  /// This reduces file size at the cost of lost precision at larger values.
   final bool useHalfPrecisionControlPoints;
 
-  // ignore: public_member_api_docs
+  /// The path to a `libpathops` dynamic library.
   final String? libpathops;
 
-  // ignore: public_member_api_docs
+  /// The path to a `libtessellator` dynamic library.
   final String? libtessellator;
 
-  // ignore: public_member_api_docs
+  /// The maximum number of SVG processing isolates to spawn at once.
+  ///
+  /// If not provided, defaults to the number of cores.
   final int? concurrency;
 }
