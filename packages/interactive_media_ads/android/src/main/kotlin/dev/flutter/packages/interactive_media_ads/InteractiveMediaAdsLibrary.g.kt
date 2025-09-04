@@ -678,6 +678,7 @@ private class InteractiveMediaAdsLibraryPigeonProxyApiBaseCodec(
         value is AdErrorType ||
         value is AdEventType ||
         value is UiElement ||
+        value is AudioManagerAudioFocus ||
         value == null) {
       super.writeValue(stream, value)
       return
@@ -956,6 +957,42 @@ enum class UiElement(val raw: Int) {
   }
 }
 
+/**
+ * Used to indicate the type of audio focus for a view.
+ *
+ * See https://developer.android.com/reference/android/media/AudioManager#AUDIOFOCUS_GAIN.
+ */
+enum class AudioManagerAudioFocus(val raw: Int) {
+  /** Used to indicate a gain of audio focus, or a request of audio focus, of unknown duration. */
+  GAIN(0),
+  /**
+   * Used to indicate a temporary gain or request of audio focus, anticipated to last a short amount
+   * of time.
+   *
+   * Examples of temporary changes are the playback of driving directions, or an event notification.
+   */
+  GAIN_TRANSIENT(1),
+  /**
+   * Used to indicate a temporary request of audio focus, anticipated to last a short amount of
+   * time, during which no other applications, or system components, should play anything.
+   */
+  GAIN_TRANSIENT_EXCLUSIVE(2),
+  /**
+   * Used to indicate a temporary request of audio focus, anticipated to last a short amount of
+   * time, and where it is acceptable for other audio applications to keep playing after having
+   * lowered their output level (also referred to as "ducking").
+   */
+  GAIN_TRANSIENT_MAY_DUCK(3),
+  /** Used to indicate no audio focus has been gained or lost, or requested. */
+  NONE(4);
+
+  companion object {
+    fun ofRaw(raw: Int): AudioManagerAudioFocus? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
 private open class InteractiveMediaAdsLibraryPigeonCodec : StandardMessageCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
     return when (type) {
@@ -970,6 +1007,9 @@ private open class InteractiveMediaAdsLibraryPigeonCodec : StandardMessageCodec(
       }
       132.toByte() -> {
         return (readValue(buffer) as Long?)?.let { UiElement.ofRaw(it.toInt()) }
+      }
+      133.toByte() -> {
+        return (readValue(buffer) as Long?)?.let { AudioManagerAudioFocus.ofRaw(it.toInt()) }
       }
       else -> super.readValueOfType(type, buffer)
     }
@@ -991,6 +1031,10 @@ private open class InteractiveMediaAdsLibraryPigeonCodec : StandardMessageCodec(
       }
       is UiElement -> {
         stream.write(132)
+        writeValue(stream, value.raw)
+      }
+      is AudioManagerAudioFocus -> {
+        stream.write(133)
         writeValue(stream, value.raw)
       }
       else -> super.writeValue(stream, value)
@@ -3709,6 +3753,17 @@ abstract class PigeonApiVideoView(
    */
   abstract fun getCurrentPosition(pigeon_instance: android.widget.VideoView): Long
 
+  /**
+   * Sets which type of audio focus will be requested during the playback, or configures playback to
+   * not request audio focus.
+   *
+   * Only available on Android API 26+. Noop on lower versions.
+   */
+  abstract fun setAudioFocusRequest(
+      pigeon_instance: android.widget.VideoView,
+      focusGain: AudioManagerAudioFocus
+  )
+
   companion object {
     @Suppress("LocalVariableName")
     fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiVideoView?) {
@@ -3774,6 +3829,30 @@ abstract class PigeonApiVideoView(
             val wrapped: List<Any?> =
                 try {
                   listOf(api.getCurrentPosition(pigeon_instanceArg))
+                } catch (exception: Throwable) {
+                  InteractiveMediaAdsLibraryPigeonUtils.wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.interactive_media_ads.VideoView.setAudioFocusRequest",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as android.widget.VideoView
+            val focusGainArg = args[1] as AudioManagerAudioFocus
+            val wrapped: List<Any?> =
+                try {
+                  api.setAudioFocusRequest(pigeon_instanceArg, focusGainArg)
+                  listOf(null)
                 } catch (exception: Throwable) {
                   InteractiveMediaAdsLibraryPigeonUtils.wrapError(exception)
                 }
