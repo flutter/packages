@@ -21,27 +21,27 @@ external ffi.Pointer<objc.ObjCObject> _test_plugin_protocolTrampoline_1mbt9g9(
   ffi.Pointer<ffi.Void> arg0,
 );
 
-enum JniAnEnum {
-  JniAnEnumOne(0),
-  JniAnEnumTwo(1),
-  JniAnEnumThree(2),
-  JniAnEnumFortyTwo(3),
-  JniAnEnumFourHundredTwentyTwo(4);
+enum NIAnEnum {
+  NIAnEnumOne(0),
+  NIAnEnumTwo(1),
+  NIAnEnumThree(2),
+  NIAnEnumFortyTwo(3),
+  NIAnEnumFourHundredTwentyTwo(4);
 
   final int value;
-  const JniAnEnum(this.value);
+  const NIAnEnum(this.value);
 
-  static JniAnEnum fromValue(int value) => switch (value) {
-        0 => JniAnEnumOne,
-        1 => JniAnEnumTwo,
-        2 => JniAnEnumThree,
-        3 => JniAnEnumFortyTwo,
-        4 => JniAnEnumFourHundredTwentyTwo,
-        _ => throw ArgumentError('Unknown value for JniAnEnum: $value'),
+  static NIAnEnum fromValue(int value) => switch (value) {
+        0 => NIAnEnumOne,
+        1 => NIAnEnumTwo,
+        2 => NIAnEnumThree,
+        3 => NIAnEnumFortyTwo,
+        4 => NIAnEnumFourHundredTwentyTwo,
+        _ => throw ArgumentError('Unknown value for NIAnEnum: $value'),
       };
 }
 
-late final _class_BasicClass = objc.getClass("test_plugin.BasicClass");
+late final _class_NIAllTypes = objc.getClass("test_plugin.NIAllTypes");
 late final _sel_isKindOfClass_ = objc.registerName("isKindOfClass:");
 final _objc_msgSend_19nvye5 = objc.msgSendPointer
     .cast<
@@ -55,10 +55,10 @@ final _objc_msgSend_19nvye5 = objc.msgSendPointer
             ffi.Pointer<objc.ObjCSelector>, ffi.Pointer<objc.ObjCObject>)>();
 typedef instancetype = ffi.Pointer<objc.ObjCObject>;
 typedef Dartinstancetype = objc.ObjCObjectBase;
-late final _sel_initWithABool_anInt_anInt64_aDouble_anEnum_aString_anObject_aList_aMap_ =
+late final _sel_initWithABool_anInt_anInt64_aDouble_anEnum_aString_list_map_ =
     objc.registerName(
-        "initWithABool:anInt:anInt64:aDouble:anEnum:aString:anObject:aList:aMap:");
-final _objc_msgSend_1vu47ix = objc.msgSendPointer
+        "initWithABool:anInt:anInt64:aDouble:anEnum:aString:list:map:");
+final _objc_msgSend_1f0nfjp = objc.msgSendPointer
     .cast<
         ffi.NativeFunction<
             ffi.Pointer<objc.ObjCObject> Function(
@@ -71,7 +71,6 @@ final _objc_msgSend_1vu47ix = objc.msgSendPointer
                 ffi.Long,
                 ffi.Pointer<objc.ObjCObject>,
                 ffi.Pointer<objc.ObjCObject>,
-                ffi.Pointer<objc.ObjCObject>,
                 ffi.Pointer<objc.ObjCObject>)>>()
     .asFunction<
         ffi.Pointer<objc.ObjCObject> Function(
@@ -82,7 +81,6 @@ final _objc_msgSend_1vu47ix = objc.msgSendPointer
             int,
             double,
             int,
-            ffi.Pointer<objc.ObjCObject>,
             ffi.Pointer<objc.ObjCObject>,
             ffi.Pointer<objc.ObjCObject>,
             ffi.Pointer<objc.ObjCObject>)>();
@@ -151,7 +149,7 @@ final _objc_msgSend_hwm8nu = objc.msgSendPointer
         void Function(ffi.Pointer<objc.ObjCObject>,
             ffi.Pointer<objc.ObjCSelector>, double)>();
 late final _sel_anEnum = objc.registerName("anEnum");
-final _objc_msgSend_1roris2 = objc.msgSendPointer
+final _objc_msgSend_d3bb7e = objc.msgSendPointer
     .cast<
         ffi.NativeFunction<
             ffi.Long Function(ffi.Pointer<objc.ObjCObject>,
@@ -160,7 +158,7 @@ final _objc_msgSend_1roris2 = objc.msgSendPointer
         int Function(
             ffi.Pointer<objc.ObjCObject>, ffi.Pointer<objc.ObjCSelector>)>();
 late final _sel_setAnEnum_ = objc.registerName("setAnEnum:");
-final _objc_msgSend_fa2mw0 = objc.msgSendPointer
+final _objc_msgSend_15w00rc = objc.msgSendPointer
     .cast<
         ffi.NativeFunction<
             ffi.Void Function(ffi.Pointer<objc.ObjCObject>,
@@ -188,12 +186,10 @@ final _objc_msgSend_xtuoz7 = objc.msgSendPointer
     .asFunction<
         void Function(ffi.Pointer<objc.ObjCObject>,
             ffi.Pointer<objc.ObjCSelector>, ffi.Pointer<objc.ObjCObject>)>();
-late final _sel_anObject = objc.registerName("anObject");
-late final _sel_setAnObject_ = objc.registerName("setAnObject:");
-late final _sel_aList = objc.registerName("aList");
-late final _sel_setAList_ = objc.registerName("setAList:");
-late final _sel_aMap = objc.registerName("aMap");
-late final _sel_setAMap_ = objc.registerName("setAMap:");
+late final _sel_list = objc.registerName("list");
+late final _sel_setList_ = objc.registerName("setList:");
+late final _sel_map = objc.registerName("map");
+late final _sel_setMap_ = objc.registerName("setMap:");
 late final _sel_init = objc.registerName("init");
 late final _sel_new = objc.registerName("new");
 late final _sel_allocWithZone_ = objc.registerName("allocWithZone:");
@@ -310,50 +306,49 @@ extension ObjCBlock_objcObjCObject_ffiVoid_CallExtension on objc
 late final _sel_retain = objc.registerName("retain");
 late final _sel_autorelease = objc.registerName("autorelease");
 
+/// A class containing all supported types.
 /// Generated class from Pigeon that represents data sent in messages.
-class BasicClass extends objc.NSObject {
-  BasicClass._(ffi.Pointer<objc.ObjCObject> pointer,
+class NIAllTypes extends objc.NSObject {
+  NIAllTypes._(ffi.Pointer<objc.ObjCObject> pointer,
       {bool retain = false, bool release = false})
       : super.castFromPointer(pointer, retain: retain, release: release);
 
-  /// Constructs a [BasicClass] that points to the same underlying object as [other].
-  BasicClass.castFrom(objc.ObjCObjectBase other)
+  /// Constructs a [NIAllTypes] that points to the same underlying object as [other].
+  NIAllTypes.castFrom(objc.ObjCObjectBase other)
       : this._(other.ref.pointer, retain: true, release: true);
 
-  /// Constructs a [BasicClass] that wraps the given raw object pointer.
-  BasicClass.castFromPointer(ffi.Pointer<objc.ObjCObject> other,
+  /// Constructs a [NIAllTypes] that wraps the given raw object pointer.
+  NIAllTypes.castFromPointer(ffi.Pointer<objc.ObjCObject> other,
       {bool retain = false, bool release = false})
       : this._(other, retain: retain, release: release);
 
-  /// Returns whether [obj] is an instance of [BasicClass].
+  /// Returns whether [obj] is an instance of [NIAllTypes].
   static bool isInstance(objc.ObjCObjectBase obj) {
     return _objc_msgSend_19nvye5(
-        obj.ref.pointer, _sel_isKindOfClass_, _class_BasicClass);
+        obj.ref.pointer, _sel_isKindOfClass_, _class_NIAllTypes);
   }
 
-  /// initWithABool:anInt:anInt64:aDouble:anEnum:aString:anObject:aList:aMap:
-  BasicClass initWithABool(bool aBool,
+  /// initWithABool:anInt:anInt64:aDouble:anEnum:aString:list:map:
+  NIAllTypes initWithABool(bool aBool,
       {required int anInt,
       required int anInt64,
       required double aDouble,
-      required JniAnEnum anEnum,
+      required NIAnEnum anEnum,
       required objc.NSString aString,
-      required objc.ObjCObjectBase anObject,
-      required objc.NSArray aList,
-      required objc.NSDictionary aMap}) {
-    final _ret = _objc_msgSend_1vu47ix(
+      required objc.NSArray list,
+      required objc.NSDictionary map}) {
+    final _ret = _objc_msgSend_1f0nfjp(
         this.ref.retainAndReturnPointer(),
-        _sel_initWithABool_anInt_anInt64_aDouble_anEnum_aString_anObject_aList_aMap_,
+        _sel_initWithABool_anInt_anInt64_aDouble_anEnum_aString_list_map_,
         aBool,
         anInt,
         anInt64,
         aDouble,
         anEnum.value,
         aString.ref.pointer,
-        anObject.ref.pointer,
-        aList.ref.pointer,
-        aMap.ref.pointer);
-    return BasicClass.castFromPointer(_ret, retain: false, release: true);
+        list.ref.pointer,
+        map.ref.pointer);
+    return NIAllTypes.castFromPointer(_ret, retain: false, release: true);
   }
 
   /// aBool
@@ -399,14 +394,14 @@ class BasicClass extends objc.NSObject {
   }
 
   /// anEnum
-  JniAnEnum get anEnum {
-    final _ret = _objc_msgSend_1roris2(this.ref.pointer, _sel_anEnum);
-    return JniAnEnum.fromValue(_ret);
+  NIAnEnum get anEnum {
+    final _ret = _objc_msgSend_d3bb7e(this.ref.pointer, _sel_anEnum);
+    return NIAnEnum.fromValue(_ret);
   }
 
   /// setAnEnum:
-  set anEnum(JniAnEnum value) {
-    _objc_msgSend_fa2mw0(this.ref.pointer, _sel_setAnEnum_, value.value);
+  set anEnum(NIAnEnum value) {
+    _objc_msgSend_15w00rc(this.ref.pointer, _sel_setAnEnum_, value.value);
   }
 
   /// aString
@@ -420,92 +415,80 @@ class BasicClass extends objc.NSObject {
     _objc_msgSend_xtuoz7(this.ref.pointer, _sel_setAString_, value.ref.pointer);
   }
 
-  /// anObject
-  objc.ObjCObjectBase get anObject {
-    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_anObject);
-    return objc.ObjCObjectBase(_ret, retain: true, release: true);
-  }
-
-  /// setAnObject:
-  set anObject(objc.ObjCObjectBase value) {
-    _objc_msgSend_xtuoz7(
-        this.ref.pointer, _sel_setAnObject_, value.ref.pointer);
-  }
-
-  /// aList
-  objc.NSArray get aList {
-    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_aList);
+  /// list
+  objc.NSArray get list {
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_list);
     return objc.NSArray.castFromPointer(_ret, retain: true, release: true);
   }
 
-  /// setAList:
-  set aList(objc.NSArray value) {
-    _objc_msgSend_xtuoz7(this.ref.pointer, _sel_setAList_, value.ref.pointer);
+  /// setList:
+  set list(objc.NSArray value) {
+    _objc_msgSend_xtuoz7(this.ref.pointer, _sel_setList_, value.ref.pointer);
   }
 
-  /// aMap
-  objc.NSDictionary get aMap {
-    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_aMap);
+  /// map
+  objc.NSDictionary get map {
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_map);
     return objc.NSDictionary.castFromPointer(_ret, retain: true, release: true);
   }
 
-  /// setAMap:
-  set aMap(objc.NSDictionary value) {
-    _objc_msgSend_xtuoz7(this.ref.pointer, _sel_setAMap_, value.ref.pointer);
+  /// setMap:
+  set map(objc.NSDictionary value) {
+    _objc_msgSend_xtuoz7(this.ref.pointer, _sel_setMap_, value.ref.pointer);
   }
 
   /// init
-  BasicClass init() {
-    objc.checkOsVersionInternal('BasicClass.init',
+  NIAllTypes init() {
+    objc.checkOsVersionInternal('NIAllTypes.init',
         iOS: (false, (2, 0, 0)), macOS: (false, (10, 0, 0)));
     final _ret =
         _objc_msgSend_151sglz(this.ref.retainAndReturnPointer(), _sel_init);
-    return BasicClass.castFromPointer(_ret, retain: false, release: true);
+    return NIAllTypes.castFromPointer(_ret, retain: false, release: true);
   }
 
   /// new
-  static BasicClass new$() {
-    final _ret = _objc_msgSend_151sglz(_class_BasicClass, _sel_new);
-    return BasicClass.castFromPointer(_ret, retain: false, release: true);
+  static NIAllTypes new$() {
+    final _ret = _objc_msgSend_151sglz(_class_NIAllTypes, _sel_new);
+    return NIAllTypes.castFromPointer(_ret, retain: false, release: true);
   }
 
   /// allocWithZone:
-  static BasicClass allocWithZone(ffi.Pointer<objc.NSZone> zone) {
+  static NIAllTypes allocWithZone(ffi.Pointer<objc.NSZone> zone) {
     final _ret =
-        _objc_msgSend_1cwp428(_class_BasicClass, _sel_allocWithZone_, zone);
-    return BasicClass.castFromPointer(_ret, retain: false, release: true);
+        _objc_msgSend_1cwp428(_class_NIAllTypes, _sel_allocWithZone_, zone);
+    return NIAllTypes.castFromPointer(_ret, retain: false, release: true);
   }
 
   /// alloc
-  static BasicClass alloc() {
-    final _ret = _objc_msgSend_151sglz(_class_BasicClass, _sel_alloc);
-    return BasicClass.castFromPointer(_ret, retain: false, release: true);
+  static NIAllTypes alloc() {
+    final _ret = _objc_msgSend_151sglz(_class_NIAllTypes, _sel_alloc);
+    return NIAllTypes.castFromPointer(_ret, retain: false, release: true);
   }
 
   /// self
-  BasicClass self$1() {
+  NIAllTypes self$1() {
     final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_self);
-    return BasicClass.castFromPointer(_ret, retain: true, release: true);
+    return NIAllTypes.castFromPointer(_ret, retain: true, release: true);
   }
 
   /// retain
-  BasicClass retain() {
+  NIAllTypes retain() {
     final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_retain);
-    return BasicClass.castFromPointer(_ret, retain: true, release: true);
+    return NIAllTypes.castFromPointer(_ret, retain: true, release: true);
   }
 
   /// autorelease
-  BasicClass autorelease() {
+  NIAllTypes autorelease() {
     final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_autorelease);
-    return BasicClass.castFromPointer(_ret, retain: true, release: true);
+    return NIAllTypes.castFromPointer(_ret, retain: true, release: true);
   }
 
-  /// Returns a new instance of BasicClass constructed with the default `new` method.
-  factory BasicClass() => new$();
+  /// Returns a new instance of NIAllTypes constructed with the default `new` method.
+  factory NIAllTypes() => new$();
 }
 
-late final _class_JniHostIntegrationCoreApiSetup =
-    objc.getClass("test_plugin.JniHostIntegrationCoreApiSetup");
+late final _class_NIHostIntegrationCoreApiSetup =
+    objc.getClass("test_plugin.NIHostIntegrationCoreApiSetup");
 late final _sel_getInstanceWithName_ =
     objc.registerName("getInstanceWithName:");
 final _objc_msgSend_1sotr3r = objc.msgSendPointer
@@ -518,7 +501,7 @@ final _objc_msgSend_1sotr3r = objc.msgSendPointer
     .asFunction<
         ffi.Pointer<objc.ObjCObject> Function(ffi.Pointer<objc.ObjCObject>,
             ffi.Pointer<objc.ObjCSelector>, ffi.Pointer<objc.ObjCObject>)>();
-late final _class_JniTestsError = objc.getClass("test_plugin.JniTestsError");
+late final _class_NiTestsError = objc.getClass("test_plugin.NiTestsError");
 late final _sel_code = objc.registerName("code");
 late final _sel_setCode_ = objc.registerName("setCode:");
 late final _sel_message = objc.registerName("message");
@@ -545,24 +528,24 @@ final _objc_msgSend_11spmsz = objc.msgSendPointer
             ffi.Pointer<objc.ObjCObject>)>();
 
 /// Error class for passing custom error details to Dart side.
-class JniTestsError extends objc.NSObject {
-  JniTestsError._(ffi.Pointer<objc.ObjCObject> pointer,
+class NiTestsError extends objc.NSObject {
+  NiTestsError._(ffi.Pointer<objc.ObjCObject> pointer,
       {bool retain = false, bool release = false})
       : super.castFromPointer(pointer, retain: retain, release: release);
 
-  /// Constructs a [JniTestsError] that points to the same underlying object as [other].
-  JniTestsError.castFrom(objc.ObjCObjectBase other)
+  /// Constructs a [NiTestsError] that points to the same underlying object as [other].
+  NiTestsError.castFrom(objc.ObjCObjectBase other)
       : this._(other.ref.pointer, retain: true, release: true);
 
-  /// Constructs a [JniTestsError] that wraps the given raw object pointer.
-  JniTestsError.castFromPointer(ffi.Pointer<objc.ObjCObject> other,
+  /// Constructs a [NiTestsError] that wraps the given raw object pointer.
+  NiTestsError.castFromPointer(ffi.Pointer<objc.ObjCObject> other,
       {bool retain = false, bool release = false})
       : this._(other, retain: retain, release: release);
 
-  /// Returns whether [obj] is an instance of [JniTestsError].
+  /// Returns whether [obj] is an instance of [NiTestsError].
   static bool isInstance(objc.ObjCObjectBase obj) {
     return _objc_msgSend_19nvye5(
-        obj.ref.pointer, _sel_isKindOfClass_, _class_JniTestsError);
+        obj.ref.pointer, _sel_isKindOfClass_, _class_NiTestsError);
   }
 
   /// code
@@ -608,16 +591,16 @@ class JniTestsError extends objc.NSObject {
   }
 
   /// init
-  JniTestsError init() {
-    objc.checkOsVersionInternal('JniTestsError.init',
+  NiTestsError init() {
+    objc.checkOsVersionInternal('NiTestsError.init',
         iOS: (false, (2, 0, 0)), macOS: (false, (10, 0, 0)));
     final _ret =
         _objc_msgSend_151sglz(this.ref.retainAndReturnPointer(), _sel_init);
-    return JniTestsError.castFromPointer(_ret, retain: false, release: true);
+    return NiTestsError.castFromPointer(_ret, retain: false, release: true);
   }
 
   /// initWithCode:message:details:
-  JniTestsError initWithCode(objc.NSString? code$1,
+  NiTestsError initWithCode(objc.NSString? code$1,
       {objc.NSString? message$1, objc.NSString? details$1}) {
     final _ret = _objc_msgSend_11spmsz(
         this.ref.retainAndReturnPointer(),
@@ -625,54 +608,54 @@ class JniTestsError extends objc.NSObject {
         code$1?.ref.pointer ?? ffi.nullptr,
         message$1?.ref.pointer ?? ffi.nullptr,
         details$1?.ref.pointer ?? ffi.nullptr);
-    return JniTestsError.castFromPointer(_ret, retain: false, release: true);
+    return NiTestsError.castFromPointer(_ret, retain: false, release: true);
   }
 
   /// new
-  static JniTestsError new$() {
-    final _ret = _objc_msgSend_151sglz(_class_JniTestsError, _sel_new);
-    return JniTestsError.castFromPointer(_ret, retain: false, release: true);
+  static NiTestsError new$() {
+    final _ret = _objc_msgSend_151sglz(_class_NiTestsError, _sel_new);
+    return NiTestsError.castFromPointer(_ret, retain: false, release: true);
   }
 
   /// allocWithZone:
-  static JniTestsError allocWithZone(ffi.Pointer<objc.NSZone> zone) {
+  static NiTestsError allocWithZone(ffi.Pointer<objc.NSZone> zone) {
     final _ret =
-        _objc_msgSend_1cwp428(_class_JniTestsError, _sel_allocWithZone_, zone);
-    return JniTestsError.castFromPointer(_ret, retain: false, release: true);
+        _objc_msgSend_1cwp428(_class_NiTestsError, _sel_allocWithZone_, zone);
+    return NiTestsError.castFromPointer(_ret, retain: false, release: true);
   }
 
   /// alloc
-  static JniTestsError alloc() {
-    final _ret = _objc_msgSend_151sglz(_class_JniTestsError, _sel_alloc);
-    return JniTestsError.castFromPointer(_ret, retain: false, release: true);
+  static NiTestsError alloc() {
+    final _ret = _objc_msgSend_151sglz(_class_NiTestsError, _sel_alloc);
+    return NiTestsError.castFromPointer(_ret, retain: false, release: true);
   }
 
   /// self
-  JniTestsError self$1() {
+  NiTestsError self$1() {
     final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_self);
-    return JniTestsError.castFromPointer(_ret, retain: true, release: true);
+    return NiTestsError.castFromPointer(_ret, retain: true, release: true);
   }
 
   /// retain
-  JniTestsError retain() {
+  NiTestsError retain() {
     final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_retain);
-    return JniTestsError.castFromPointer(_ret, retain: true, release: true);
+    return NiTestsError.castFromPointer(_ret, retain: true, release: true);
   }
 
   /// autorelease
-  JniTestsError autorelease() {
+  NiTestsError autorelease() {
     final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_autorelease);
-    return JniTestsError.castFromPointer(_ret, retain: true, release: true);
+    return NiTestsError.castFromPointer(_ret, retain: true, release: true);
   }
 
-  /// Returns a new instance of JniTestsError constructed with the default `new` method.
-  factory JniTestsError() => new$();
+  /// Returns a new instance of NiTestsError constructed with the default `new` method.
+  factory NiTestsError() => new$();
 }
 
 late final _sel_noopWithWrappedError_ =
     objc.registerName("noopWithWrappedError:");
-late final _sel_echoIntWithAnInt_wrappedError_ =
-    objc.registerName("echoIntWithAnInt:wrappedError:");
+late final _sel_echoAllTypesWithEverything_wrappedError_ =
+    objc.registerName("echoAllTypesWithEverything:wrappedError:");
 final _objc_msgSend_15qeuct = objc.msgSendPointer
     .cast<
         ffi.NativeFunction<
@@ -687,17 +670,23 @@ final _objc_msgSend_15qeuct = objc.msgSendPointer
             ffi.Pointer<objc.ObjCSelector>,
             ffi.Pointer<objc.ObjCObject>,
             ffi.Pointer<objc.ObjCObject>)>();
+late final _sel_echoIntWithAnInt_wrappedError_ =
+    objc.registerName("echoIntWithAnInt:wrappedError:");
 late final _sel_echoDoubleWithADouble_wrappedError_ =
     objc.registerName("echoDoubleWithADouble:wrappedError:");
 late final _sel_echoBoolWithABool_wrappedError_ =
     objc.registerName("echoBoolWithABool:wrappedError:");
 late final _sel_echoStringWithAString_wrappedError_ =
     objc.registerName("echoStringWithAString:wrappedError:");
-late final _sel_echoBasicClassWithABasicClass_wrappedError_ =
-    objc.registerName("echoBasicClassWithABasicClass:wrappedError:");
+late final _sel_echoObjectWithAnObject_wrappedError_ =
+    objc.registerName("echoObjectWithAnObject:wrappedError:");
+late final _sel_echoListWithList_wrappedError_ =
+    objc.registerName("echoListWithList:wrappedError:");
+late final _sel_echoMapWithMap_wrappedError_ =
+    objc.registerName("echoMapWithMap:wrappedError:");
 late final _sel_echoEnumWithAnEnum_wrappedError_ =
     objc.registerName("echoEnumWithAnEnum:wrappedError:");
-final _objc_msgSend_3tegfe = objc.msgSendPointer
+final _objc_msgSend_1k0qzru = objc.msgSendPointer
     .cast<
         ffi.NativeFunction<
             ffi.Pointer<objc.ObjCObject> Function(
@@ -711,78 +700,93 @@ final _objc_msgSend_3tegfe = objc.msgSendPointer
             ffi.Pointer<objc.ObjCSelector>,
             int,
             ffi.Pointer<objc.ObjCObject>)>();
-late final _sel_echoObjectWithAnObject_wrappedError_ =
-    objc.registerName("echoObjectWithAnObject:wrappedError:");
-late final _sel_echoListWithList_wrappedError_ =
-    objc.registerName("echoListWithList:wrappedError:");
-late final _sel_echoMapWithMap_wrappedError_ =
-    objc.registerName("echoMapWithMap:wrappedError:");
 
-/// Generated setup class from Pigeon to register implemented JniHostIntegrationCoreApi classes.
-class JniHostIntegrationCoreApiSetup extends objc.NSObject {
-  JniHostIntegrationCoreApiSetup._(ffi.Pointer<objc.ObjCObject> pointer,
+/// Generated setup class from Pigeon to register implemented NIHostIntegrationCoreApi classes.
+class NIHostIntegrationCoreApiSetup extends objc.NSObject {
+  NIHostIntegrationCoreApiSetup._(ffi.Pointer<objc.ObjCObject> pointer,
       {bool retain = false, bool release = false})
       : super.castFromPointer(pointer, retain: retain, release: release);
 
-  /// Constructs a [JniHostIntegrationCoreApiSetup] that points to the same underlying object as [other].
-  JniHostIntegrationCoreApiSetup.castFrom(objc.ObjCObjectBase other)
+  /// Constructs a [NIHostIntegrationCoreApiSetup] that points to the same underlying object as [other].
+  NIHostIntegrationCoreApiSetup.castFrom(objc.ObjCObjectBase other)
       : this._(other.ref.pointer, retain: true, release: true);
 
-  /// Constructs a [JniHostIntegrationCoreApiSetup] that wraps the given raw object pointer.
-  JniHostIntegrationCoreApiSetup.castFromPointer(
+  /// Constructs a [NIHostIntegrationCoreApiSetup] that wraps the given raw object pointer.
+  NIHostIntegrationCoreApiSetup.castFromPointer(
       ffi.Pointer<objc.ObjCObject> other,
       {bool retain = false,
       bool release = false})
       : this._(other, retain: retain, release: release);
 
-  /// Returns whether [obj] is an instance of [JniHostIntegrationCoreApiSetup].
+  /// Returns whether [obj] is an instance of [NIHostIntegrationCoreApiSetup].
   static bool isInstance(objc.ObjCObjectBase obj) {
     return _objc_msgSend_19nvye5(obj.ref.pointer, _sel_isKindOfClass_,
-        _class_JniHostIntegrationCoreApiSetup);
+        _class_NIHostIntegrationCoreApiSetup);
   }
 
   /// init
-  JniHostIntegrationCoreApiSetup init() {
-    objc.checkOsVersionInternal('JniHostIntegrationCoreApiSetup.init',
+  NIHostIntegrationCoreApiSetup init() {
+    objc.checkOsVersionInternal('NIHostIntegrationCoreApiSetup.init',
         iOS: (false, (2, 0, 0)), macOS: (false, (10, 0, 0)));
     final _ret =
         _objc_msgSend_151sglz(this.ref.retainAndReturnPointer(), _sel_init);
-    return JniHostIntegrationCoreApiSetup.castFromPointer(_ret,
+    return NIHostIntegrationCoreApiSetup.castFromPointer(_ret,
         retain: false, release: true);
   }
 
   /// getInstanceWithName:
-  static JniHostIntegrationCoreApiSetup? getInstanceWithName(
+  static NIHostIntegrationCoreApiSetup? getInstanceWithName(
       objc.NSString name) {
-    final _ret = _objc_msgSend_1sotr3r(_class_JniHostIntegrationCoreApiSetup,
+    final _ret = _objc_msgSend_1sotr3r(_class_NIHostIntegrationCoreApiSetup,
         _sel_getInstanceWithName_, name.ref.pointer);
     return _ret.address == 0
         ? null
-        : JniHostIntegrationCoreApiSetup.castFromPointer(_ret,
+        : NIHostIntegrationCoreApiSetup.castFromPointer(_ret,
             retain: true, release: true);
   }
 
-  /// noopWithWrappedError:
+  /// A no-op function taking no arguments and returning no value, to sanity
+  /// test basic calling.
   ///
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
-  void noopWithWrappedError(JniTestsError wrappedError) {
+  void noopWithWrappedError(NiTestsError wrappedError) {
     objc.checkOsVersionInternal(
-        'JniHostIntegrationCoreApiSetup.noopWithWrappedError:',
+        'NIHostIntegrationCoreApiSetup.noopWithWrappedError:',
         iOS: (false, (13, 0, 0)),
         macOS: (false, (16, 0, 0)));
     _objc_msgSend_xtuoz7(
         this.ref.pointer, _sel_noopWithWrappedError_, wrappedError.ref.pointer);
   }
 
-  /// echoIntWithAnInt:wrappedError:
+  /// Returns the passed object, to test serialization and deserialization.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  NIAllTypes? echoAllTypesWithEverything(NIAllTypes everything,
+      {required NiTestsError wrappedError}) {
+    objc.checkOsVersionInternal(
+        'NIHostIntegrationCoreApiSetup.echoAllTypesWithEverything:wrappedError:',
+        iOS: (false, (13, 0, 0)),
+        macOS: (false, (16, 0, 0)));
+    final _ret = _objc_msgSend_15qeuct(
+        this.ref.pointer,
+        _sel_echoAllTypesWithEverything_wrappedError_,
+        everything.ref.pointer,
+        wrappedError.ref.pointer);
+    return _ret.address == 0
+        ? null
+        : NIAllTypes.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// Returns passed in int.
   ///
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
   objc.NSNumber? echoIntWithAnInt(objc.NSNumber anInt,
-      {required JniTestsError wrappedError}) {
+      {required NiTestsError wrappedError}) {
     objc.checkOsVersionInternal(
-        'JniHostIntegrationCoreApiSetup.echoIntWithAnInt:wrappedError:',
+        'NIHostIntegrationCoreApiSetup.echoIntWithAnInt:wrappedError:',
         iOS: (false, (13, 0, 0)),
         macOS: (false, (16, 0, 0)));
     final _ret = _objc_msgSend_15qeuct(
@@ -795,14 +799,14 @@ class JniHostIntegrationCoreApiSetup extends objc.NSObject {
         : objc.NSNumber.castFromPointer(_ret, retain: true, release: true);
   }
 
-  /// echoDoubleWithADouble:wrappedError:
+  /// Returns passed in double.
   ///
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
   objc.NSNumber? echoDoubleWithADouble(objc.NSNumber aDouble,
-      {required JniTestsError wrappedError}) {
+      {required NiTestsError wrappedError}) {
     objc.checkOsVersionInternal(
-        'JniHostIntegrationCoreApiSetup.echoDoubleWithADouble:wrappedError:',
+        'NIHostIntegrationCoreApiSetup.echoDoubleWithADouble:wrappedError:',
         iOS: (false, (13, 0, 0)),
         macOS: (false, (16, 0, 0)));
     final _ret = _objc_msgSend_15qeuct(
@@ -815,14 +819,14 @@ class JniHostIntegrationCoreApiSetup extends objc.NSObject {
         : objc.NSNumber.castFromPointer(_ret, retain: true, release: true);
   }
 
-  /// echoBoolWithABool:wrappedError:
+  /// Returns the passed in boolean.
   ///
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
   objc.NSNumber? echoBoolWithABool(objc.NSNumber aBool,
-      {required JniTestsError wrappedError}) {
+      {required NiTestsError wrappedError}) {
     objc.checkOsVersionInternal(
-        'JniHostIntegrationCoreApiSetup.echoBoolWithABool:wrappedError:',
+        'NIHostIntegrationCoreApiSetup.echoBoolWithABool:wrappedError:',
         iOS: (false, (13, 0, 0)),
         macOS: (false, (16, 0, 0)));
     final _ret = _objc_msgSend_15qeuct(
@@ -835,14 +839,14 @@ class JniHostIntegrationCoreApiSetup extends objc.NSObject {
         : objc.NSNumber.castFromPointer(_ret, retain: true, release: true);
   }
 
-  /// echoStringWithAString:wrappedError:
+  /// Returns the passed in string.
   ///
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
   objc.NSString? echoStringWithAString(objc.NSString aString,
-      {required JniTestsError wrappedError}) {
+      {required NiTestsError wrappedError}) {
     objc.checkOsVersionInternal(
-        'JniHostIntegrationCoreApiSetup.echoStringWithAString:wrappedError:',
+        'NIHostIntegrationCoreApiSetup.echoStringWithAString:wrappedError:',
         iOS: (false, (13, 0, 0)),
         macOS: (false, (16, 0, 0)));
     final _ret = _objc_msgSend_15qeuct(
@@ -855,54 +859,14 @@ class JniHostIntegrationCoreApiSetup extends objc.NSObject {
         : objc.NSString.castFromPointer(_ret, retain: true, release: true);
   }
 
-  /// echoBasicClassWithABasicClass:wrappedError:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 16.0.0
-  BasicClass? echoBasicClassWithABasicClass(BasicClass aBasicClass,
-      {required JniTestsError wrappedError}) {
-    objc.checkOsVersionInternal(
-        'JniHostIntegrationCoreApiSetup.echoBasicClassWithABasicClass:wrappedError:',
-        iOS: (false, (13, 0, 0)),
-        macOS: (false, (16, 0, 0)));
-    final _ret = _objc_msgSend_15qeuct(
-        this.ref.pointer,
-        _sel_echoBasicClassWithABasicClass_wrappedError_,
-        aBasicClass.ref.pointer,
-        wrappedError.ref.pointer);
-    return _ret.address == 0
-        ? null
-        : BasicClass.castFromPointer(_ret, retain: true, release: true);
-  }
-
-  /// echoEnumWithAnEnum:wrappedError:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 16.0.0
-  objc.NSNumber? echoEnumWithAnEnum(JniAnEnum anEnum,
-      {required JniTestsError wrappedError}) {
-    objc.checkOsVersionInternal(
-        'JniHostIntegrationCoreApiSetup.echoEnumWithAnEnum:wrappedError:',
-        iOS: (false, (13, 0, 0)),
-        macOS: (false, (16, 0, 0)));
-    final _ret = _objc_msgSend_3tegfe(
-        this.ref.pointer,
-        _sel_echoEnumWithAnEnum_wrappedError_,
-        anEnum.value,
-        wrappedError.ref.pointer);
-    return _ret.address == 0
-        ? null
-        : objc.NSNumber.castFromPointer(_ret, retain: true, release: true);
-  }
-
-  /// echoObjectWithAnObject:wrappedError:
+  /// Returns the passed in generic Object.
   ///
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
   objc.ObjCObjectBase? echoObjectWithAnObject(objc.ObjCObjectBase anObject,
-      {required JniTestsError wrappedError}) {
+      {required NiTestsError wrappedError}) {
     objc.checkOsVersionInternal(
-        'JniHostIntegrationCoreApiSetup.echoObjectWithAnObject:wrappedError:',
+        'NIHostIntegrationCoreApiSetup.echoObjectWithAnObject:wrappedError:',
         iOS: (false, (13, 0, 0)),
         macOS: (false, (16, 0, 0)));
     final _ret = _objc_msgSend_15qeuct(
@@ -915,14 +879,14 @@ class JniHostIntegrationCoreApiSetup extends objc.NSObject {
         : objc.ObjCObjectBase(_ret, retain: true, release: true);
   }
 
-  /// echoListWithList:wrappedError:
+  /// Returns the passed list, to test serialization and deserialization.
   ///
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
   objc.NSArray? echoListWithList(objc.NSArray list,
-      {required JniTestsError wrappedError}) {
+      {required NiTestsError wrappedError}) {
     objc.checkOsVersionInternal(
-        'JniHostIntegrationCoreApiSetup.echoListWithList:wrappedError:',
+        'NIHostIntegrationCoreApiSetup.echoListWithList:wrappedError:',
         iOS: (false, (13, 0, 0)),
         macOS: (false, (16, 0, 0)));
     final _ret = _objc_msgSend_15qeuct(
@@ -935,14 +899,14 @@ class JniHostIntegrationCoreApiSetup extends objc.NSObject {
         : objc.NSArray.castFromPointer(_ret, retain: true, release: true);
   }
 
-  /// echoMapWithMap:wrappedError:
+  /// Returns the passed map, to test serialization and deserialization.
   ///
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
   objc.NSDictionary? echoMapWithMap(objc.NSDictionary map,
-      {required JniTestsError wrappedError}) {
+      {required NiTestsError wrappedError}) {
     objc.checkOsVersionInternal(
-        'JniHostIntegrationCoreApiSetup.echoMapWithMap:wrappedError:',
+        'NIHostIntegrationCoreApiSetup.echoMapWithMap:wrappedError:',
         iOS: (false, (13, 0, 0)),
         macOS: (false, (16, 0, 0)));
     final _ret = _objc_msgSend_15qeuct(
@@ -955,54 +919,74 @@ class JniHostIntegrationCoreApiSetup extends objc.NSObject {
         : objc.NSDictionary.castFromPointer(_ret, retain: true, release: true);
   }
 
+  /// Returns the passed enum to test serialization and deserialization.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  objc.NSNumber? echoEnumWithAnEnum(NIAnEnum anEnum,
+      {required NiTestsError wrappedError}) {
+    objc.checkOsVersionInternal(
+        'NIHostIntegrationCoreApiSetup.echoEnumWithAnEnum:wrappedError:',
+        iOS: (false, (13, 0, 0)),
+        macOS: (false, (16, 0, 0)));
+    final _ret = _objc_msgSend_1k0qzru(
+        this.ref.pointer,
+        _sel_echoEnumWithAnEnum_wrappedError_,
+        anEnum.value,
+        wrappedError.ref.pointer);
+    return _ret.address == 0
+        ? null
+        : objc.NSNumber.castFromPointer(_ret, retain: true, release: true);
+  }
+
   /// new
-  static JniHostIntegrationCoreApiSetup new$() {
+  static NIHostIntegrationCoreApiSetup new$() {
     final _ret =
-        _objc_msgSend_151sglz(_class_JniHostIntegrationCoreApiSetup, _sel_new);
-    return JniHostIntegrationCoreApiSetup.castFromPointer(_ret,
+        _objc_msgSend_151sglz(_class_NIHostIntegrationCoreApiSetup, _sel_new);
+    return NIHostIntegrationCoreApiSetup.castFromPointer(_ret,
         retain: false, release: true);
   }
 
   /// allocWithZone:
-  static JniHostIntegrationCoreApiSetup allocWithZone(
+  static NIHostIntegrationCoreApiSetup allocWithZone(
       ffi.Pointer<objc.NSZone> zone) {
     final _ret = _objc_msgSend_1cwp428(
-        _class_JniHostIntegrationCoreApiSetup, _sel_allocWithZone_, zone);
-    return JniHostIntegrationCoreApiSetup.castFromPointer(_ret,
+        _class_NIHostIntegrationCoreApiSetup, _sel_allocWithZone_, zone);
+    return NIHostIntegrationCoreApiSetup.castFromPointer(_ret,
         retain: false, release: true);
   }
 
   /// alloc
-  static JniHostIntegrationCoreApiSetup alloc() {
-    final _ret = _objc_msgSend_151sglz(
-        _class_JniHostIntegrationCoreApiSetup, _sel_alloc);
-    return JniHostIntegrationCoreApiSetup.castFromPointer(_ret,
+  static NIHostIntegrationCoreApiSetup alloc() {
+    final _ret =
+        _objc_msgSend_151sglz(_class_NIHostIntegrationCoreApiSetup, _sel_alloc);
+    return NIHostIntegrationCoreApiSetup.castFromPointer(_ret,
         retain: false, release: true);
   }
 
   /// self
-  JniHostIntegrationCoreApiSetup self$1() {
+  NIHostIntegrationCoreApiSetup self$1() {
     final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_self);
-    return JniHostIntegrationCoreApiSetup.castFromPointer(_ret,
+    return NIHostIntegrationCoreApiSetup.castFromPointer(_ret,
         retain: true, release: true);
   }
 
   /// retain
-  JniHostIntegrationCoreApiSetup retain() {
+  NIHostIntegrationCoreApiSetup retain() {
     final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_retain);
-    return JniHostIntegrationCoreApiSetup.castFromPointer(_ret,
+    return NIHostIntegrationCoreApiSetup.castFromPointer(_ret,
         retain: true, release: true);
   }
 
   /// autorelease
-  JniHostIntegrationCoreApiSetup autorelease() {
+  NIHostIntegrationCoreApiSetup autorelease() {
     final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_autorelease);
-    return JniHostIntegrationCoreApiSetup.castFromPointer(_ret,
+    return NIHostIntegrationCoreApiSetup.castFromPointer(_ret,
         retain: true, release: true);
   }
 
-  /// Returns a new instance of JniHostIntegrationCoreApiSetup constructed with the default `new` method.
-  factory JniHostIntegrationCoreApiSetup() => new$();
+  /// Returns a new instance of NIHostIntegrationCoreApiSetup constructed with the default `new` method.
+  factory NIHostIntegrationCoreApiSetup() => new$();
 }
 
 late final _class_NSNumberWrapper =

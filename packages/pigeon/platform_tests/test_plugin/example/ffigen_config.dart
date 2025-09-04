@@ -6,13 +6,13 @@ import 'package:swiftgen/swiftgen.dart';
 Future<void> main() async {
   final List<String> classes = <String>[
     'NSNumberWrapper',
-    'JniHostIntegrationCoreApi',
-    'JniHostIntegrationCoreApiSetup',
-    'BasicClass',
-    'JniTestsError'
+    'NIHostIntegrationCoreApi',
+    'NIHostIntegrationCoreApiSetup',
+    'NIAllTypes',
+    'NiTestsError'
   ];
   final List<String> enums = <String>[
-    'JniAnEnum',
+    'NIAnEnum',
   ];
   await SwiftGen(
     target: Target(
@@ -27,16 +27,16 @@ Future<void> main() async {
       module: 'test_plugin',
       files: <Uri>[
         Uri.file(
-            '/Users/tarrinneal/work/packages/packages/pigeon/platform_tests/test_plugin/ios/Classes/JniTests.gen.swift')
+            '/Users/tarrinneal/work/packages/packages/pigeon/platform_tests/test_plugin/ios/Classes/NiTests.gen.swift')
       ],
     ),
     tempDirectory: Uri.directory('temp'),
     outputModule: 'test_plugin',
     ffigen: FfiGenConfig(
       output: Uri.file(
-          '/Users/tarrinneal/work/packages/packages/pigeon/platform_tests/shared_test_plugin_code/lib/src/generated/jni_tests.gen.ffi.dart'),
+          '/Users/tarrinneal/work/packages/packages/pigeon/platform_tests/shared_test_plugin_code/lib/src/generated/ni_tests.gen.ffi.dart'),
       outputObjC: Uri.file(
-          '/Users/tarrinneal/work/packages/packages/pigeon/platform_tests/shared_test_plugin_code/lib/src/generated/jni_tests.gen.m'),
+          '/Users/tarrinneal/work/packages/packages/pigeon/platform_tests/shared_test_plugin_code/lib/src/generated/ni_tests.gen.m'),
       externalVersions: fg.ExternalVersions(
         ios: fg.Versions(min: Version(12, 0, 0)),
         macos: fg.Versions(min: Version(10, 14, 0)),

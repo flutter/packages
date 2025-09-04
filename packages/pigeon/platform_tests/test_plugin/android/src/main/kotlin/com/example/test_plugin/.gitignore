@@ -11,4 +11,4 @@
 # Including these makes it easier to review code generation changes.
 !ProxyApiTests.gen.kt
 !EventChannelTests.gen.kt
-!jniTests.gen.kt                       
+!NiTests.gen.kt                       

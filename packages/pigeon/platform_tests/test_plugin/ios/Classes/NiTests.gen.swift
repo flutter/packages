@@ -8,7 +8,7 @@
 import Foundation
 
 /// Error class for passing custom error details to Dart side.
-@objc final class JniTestsError: NSObject, Error {
+@objc final class NiTestsError: NSObject, Error {
   @objc var code: String?
   @objc var message: String?
   @objc var details: String?
@@ -23,7 +23,7 @@ import Foundation
 
   var localizedDescription: String {
     return
-      "JniTestsError(code: \(code ?? "<nil>"), message: \(message ?? "<nil>"), details: \(details ?? "<nil>")"
+      "NiTestsError(code: \(code ?? "<nil>"), message: \(message ?? "<nil>"), details: \(details ?? "<nil>")"
   }
 }
 
@@ -52,7 +52,7 @@ private func unwrapNumber<T>(wrappedNumber: NSNumberWrapper) -> T {
   case 3:
     return wrappedNumber.number.boolValue as! T
   case 4:
-    return JniAnEnum(rawValue: wrappedNumber.number.intValue) as! T
+    return NIAnEnum(rawValue: wrappedNumber.number.intValue) as! T
   default:
     return wrappedNumber.number.intValue as! T
   }
@@ -68,7 +68,7 @@ private func numberCodec(number: Any) -> Int {
     return 2
   case _ as Bool:
     return 3
-  case _ as JniAnEnum:
+  case _ as NIAnEnum:
     return 4
   default:
     return 0
@@ -84,7 +84,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
   return value as! T?
 }
 
-@objc enum JniAnEnum: Int {
+@objc enum NIAnEnum: Int {
   case one = 0
   case two = 1
   case three = 2
@@ -92,15 +92,19 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
   case fourHundredTwentyTwo = 4
 }
 
+/// A class containing all supported types.
+///
 /// Generated class from Pigeon that represents data sent in messages.
-@objc class BasicClass: NSObject {
+@objc class NIAllTypes: NSObject {
   @objc init(
     aBool: Bool,
     anInt: Int64,
     anInt64: Int64,
     aDouble: Double,
-    anEnum: JniAnEnum,
-    aString: String
+    anEnum: NIAnEnum,
+    aString: String,
+    list: [Any],
+    map: [AnyHashable: Any]
   ) {
     self.aBool = aBool
     self.anInt = anInt
@@ -108,30 +112,38 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
     self.aDouble = aDouble
     self.anEnum = anEnum
     self.aString = aString
+    self.list = list
+    self.map = map
   }
   @objc var aBool: Bool
   @objc var anInt: Int64
   @objc var anInt64: Int64
   @objc var aDouble: Double
-  @objc var anEnum: JniAnEnum
+  @objc var anEnum: NIAnEnum
   @objc var aString: String
+  @objc var list: [Any]
+  @objc var map: [AnyHashable: Any]
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
-  static func fromList(_ pigeonVar_list: [Any?]) -> BasicClass? {
+  static func fromList(_ pigeonVar_list: [Any?]) -> NIAllTypes? {
     let aBool = pigeonVar_list[0] as! Bool
     let anInt = pigeonVar_list[1] as! Int64
     let anInt64 = pigeonVar_list[2] as! Int64
     let aDouble = pigeonVar_list[3] as! Double
-    let anEnum = pigeonVar_list[4] as! JniAnEnum
+    let anEnum = pigeonVar_list[4] as! NIAnEnum
     let aString = pigeonVar_list[5] as! String
+    let list = pigeonVar_list[6] as! [Any]
+    let map = pigeonVar_list[7] as! [AnyHashable: Any]
 
-    return BasicClass(
+    return NIAllTypes(
       aBool: aBool,
       anInt: anInt,
       anInt64: anInt64,
       aDouble: aDouble,
       anEnum: anEnum,
-      aString: aString
+      aString: aString,
+      list: list,
+      map: map
     )
   }
   func toList() -> [Any?] {
@@ -142,10 +154,13 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
       aDouble,
       anEnum,
       aString,
+      list,
+      map,
     ]
   }
 }
 
+@available(iOS 13, macOS 16.0.0, *)
 class _PigeonFfiCodec {
   static func readValue(value: NSObject?, type: String?) -> Any? {
     if isNullish(value) {
@@ -158,8 +173,8 @@ class _PigeonFfiCodec {
         return (value as! NSNumber).doubleValue
       } else if type == "bool" {
         return (value as! NSNumber) == 1
-      } else if type == "JniAnEnum" {
-        return JniAnEnum.init(rawValue: (value as! NSNumber).intValue)
+      } else if type == "NIAnEnum" {
+        return NIAnEnum.init(rawValue: (value as! NSNumber).intValue)
       }
     }
     // } else if (value.isA<NSByteArray>(NSByteArray.type)) {
@@ -186,7 +201,7 @@ class _PigeonFfiCodec {
     //     list[i] = value.as(NSDoubleArray.type)[i]
     //   //   }
     //   return list
-    if value is NSMutableArray {
+    if value is NSMutableArray || value is NSArray {
       var res: [Any?] = []
       for i in 0..<(value as! NSMutableArray).count {
         res.append(readValue(value: (value as! NSMutableArray)[i] as? NSObject, type: nil))
@@ -196,7 +211,7 @@ class _PigeonFfiCodec {
     if value is NSDictionary {
       var res: [AnyHashable?: Any?] = Dictionary()
       for (key, value) in (value as! NSDictionary) {
-        res[readValue(value: key as? NSObject, type: nil) as! AnyHashable?] = readValue(
+        res[readValue(value: key as? NSObject, type: nil) as? AnyHashable] = readValue(
           value: value as? NSObject, type: nil)
       }
       return res
@@ -214,7 +229,7 @@ class _PigeonFfiCodec {
     if isNullish(value) {
       return nil
     }
-    if value is Bool || value is Double || value is Int || value is JniAnEnum {
+    if value is Bool || value is Double || value is Int || value is NIAnEnum {
       if isObject {
         return wrapNumber(number: value as! NSNumber, type: numberCodec(number: value!))
       }
@@ -224,8 +239,8 @@ class _PigeonFfiCodec {
         return value
       } else if value is Int {
         return value
-      } else if value is JniAnEnum {
-        return (value as! JniAnEnum).rawValue
+      } else if value is NIAnEnum {
+        return (value as! NIAnEnum).rawValue
       }
     }
     // } else if (isTypeOrNullableType<NSByteArray>(T)) {
@@ -259,14 +274,15 @@ class _PigeonFfiCodec {
     if value is [Any] {
       let res: NSMutableArray = NSMutableArray()
       for i in 0..<(value as! NSMutableArray).count {
-        res.add(writeValue(value: (value as! NSMutableArray)[i])!)
+        res.add(writeValue(value: (value as! NSMutableArray)[i]) as! NSObject)
       }
       return res
     }
     if value is [AnyHashable: Any] {
       let res: NSMutableDictionary = NSMutableDictionary()
       for (key, value) in (value as! NSDictionary) {
-        res.setObject(writeValue(value: value) as Any, forKey: writeValue(value: key) as! NSCopying)
+        res.setObject(
+          writeValue(value: value) as! NSObject, forKey: writeValue(value: key) as! NSCopying)
       }
       return res
     }
@@ -278,35 +294,54 @@ class _PigeonFfiCodec {
 }
 
 let defaultInstanceName = "PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u"
-var instancesOfJniHostIntegrationCoreApi = [String: JniHostIntegrationCoreApiSetup?]()
+var instancesOfNIHostIntegrationCoreApi = [String: NIHostIntegrationCoreApiSetup?]()
+/// The core interface that each host language plugin must implement in
+/// platform_test integration tests.
+///
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
-protocol JniHostIntegrationCoreApi {
+protocol NIHostIntegrationCoreApi {
+  /// A no-op function taking no arguments and returning no value, to sanity
+  /// test basic calling.
   func noop() throws
+  /// Returns the passed object, to test serialization and deserialization.
+  func echoAllTypes(everything: NIAllTypes) throws -> NIAllTypes
+  /// Returns passed in int.
   func echoInt(anInt: Int64) throws -> Int64
+  /// Returns passed in double.
   func echoDouble(aDouble: Double) throws -> Double
+  /// Returns the passed in boolean.
   func echoBool(aBool: Bool) throws -> Bool
+  /// Returns the passed in string.
   func echoString(aString: String) throws -> String
-  func echoBasicClass(aBasicClass: BasicClass) throws -> BasicClass
-  func echoEnum(anEnum: JniAnEnum) throws -> JniAnEnum
+  /// Returns the passed in generic Object.
   func echoObject(anObject: Any) throws -> Any
+  /// Returns the passed list, to test serialization and deserialization.
+  func echoList(list: [Any]) throws -> [Any]
+  /// Returns the passed map, to test serialization and deserialization.
+  func echoMap(map: [AnyHashable: Any]) throws -> [AnyHashable: Any]
+  /// Returns the passed enum to test serialization and deserialization.
+  func echoEnum(anEnum: NIAnEnum) throws -> NIAnEnum
 }
 
-/// Generated setup class from Pigeon to register implemented JniHostIntegrationCoreApi classes.
-@objc class JniHostIntegrationCoreApiSetup: NSObject {
-  private var api: JniHostIntegrationCoreApi?
+/// Generated setup class from Pigeon to register implemented NIHostIntegrationCoreApi classes.
+@objc class NIHostIntegrationCoreApiSetup: NSObject {
+  private var api: NIHostIntegrationCoreApi?
   override init() {}
-  static func register(api: JniHostIntegrationCoreApi?, name: String = defaultInstanceName) {
-    let wrapper = JniHostIntegrationCoreApiSetup()
+  static func register(api: NIHostIntegrationCoreApi?, name: String = defaultInstanceName) {
+    let wrapper = NIHostIntegrationCoreApiSetup()
     wrapper.api = api
-    instancesOfJniHostIntegrationCoreApi[name] = wrapper
+    instancesOfNIHostIntegrationCoreApi[name] = wrapper
   }
-  @objc static func getInstance(name: String) -> JniHostIntegrationCoreApiSetup? {
-    return instancesOfJniHostIntegrationCoreApi[name] ?? nil
+  @objc static func getInstance(name: String) -> NIHostIntegrationCoreApiSetup? {
+    return instancesOfNIHostIntegrationCoreApi[name] ?? nil
   }
-  @objc func noop(wrappedError: JniTestsError) {
+  /// A no-op function taking no arguments and returning no value, to sanity
+  /// test basic calling.
+  @available(iOS 13, macOS 16.0.0, *)
+  @objc func noop(wrappedError: NiTestsError) {
     do {
       return try api!.noop()
-    } catch let error as JniTestsError {
+    } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
       wrappedError.details = error.details
@@ -317,10 +352,28 @@ protocol JniHostIntegrationCoreApi {
     }
     return
   }
-  @objc func echoInt(anInt: NSNumber, wrappedError: JniTestsError) -> NSNumber? {
+  /// Returns the passed object, to test serialization and deserialization.
+  @available(iOS 13, macOS 16.0.0, *)
+  @objc func echoAllTypes(everything: NIAllTypes, wrappedError: NiTestsError) -> NIAllTypes? {
+    do {
+      return try api!.echoAllTypes(everything: everything)
+    } catch let error as NiTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
+  /// Returns passed in int.
+  @available(iOS 13, macOS 16.0.0, *)
+  @objc func echoInt(anInt: NSNumber, wrappedError: NiTestsError) -> NSNumber? {
     do {
       return try api!.echoInt(anInt: anInt.int64Value) as NSNumber
-    } catch let error as JniTestsError {
+    } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
       wrappedError.details = error.details
@@ -331,10 +384,12 @@ protocol JniHostIntegrationCoreApi {
     }
     return nil
   }
-  @objc func echoDouble(aDouble: NSNumber, wrappedError: JniTestsError) -> NSNumber? {
+  /// Returns passed in double.
+  @available(iOS 13, macOS 16.0.0, *)
+  @objc func echoDouble(aDouble: NSNumber, wrappedError: NiTestsError) -> NSNumber? {
     do {
       return try api!.echoDouble(aDouble: aDouble.doubleValue) as NSNumber
-    } catch let error as JniTestsError {
+    } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
       wrappedError.details = error.details
@@ -345,10 +400,12 @@ protocol JniHostIntegrationCoreApi {
     }
     return nil
   }
-  @objc func echoBool(aBool: NSNumber, wrappedError: JniTestsError) -> NSNumber? {
+  /// Returns the passed in boolean.
+  @available(iOS 13, macOS 16.0.0, *)
+  @objc func echoBool(aBool: NSNumber, wrappedError: NiTestsError) -> NSNumber? {
     do {
       return try api!.echoBool(aBool: aBool.boolValue) as NSNumber
-    } catch let error as JniTestsError {
+    } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
       wrappedError.details = error.details
@@ -359,10 +416,12 @@ protocol JniHostIntegrationCoreApi {
     }
     return nil
   }
-  @objc func echoString(aString: String, wrappedError: JniTestsError) -> String? {
+  /// Returns the passed in string.
+  @available(iOS 13, macOS 16.0.0, *)
+  @objc func echoString(aString: String, wrappedError: NiTestsError) -> String? {
     do {
       return try api!.echoString(aString: aString)
-    } catch let error as JniTestsError {
+    } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
       wrappedError.details = error.details
@@ -373,41 +432,64 @@ protocol JniHostIntegrationCoreApi {
     }
     return nil
   }
-  @objc func echoBasicClass(aBasicClass: BasicClass, wrappedError: JniTestsError) -> BasicClass? {
-    do {
-      return try api!.echoBasicClass(aBasicClass: aBasicClass)
-    } catch let error as JniTestsError {
-      wrappedError.code = error.code
-      wrappedError.message = error.message
-      wrappedError.details = error.details
-    } catch let error {
-      wrappedError.code = "\(error)"
-      wrappedError.message = "\(type(of: error))"
-      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
-    }
-    return nil
-  }
-  @objc func echoEnum(anEnum: JniAnEnum, wrappedError: JniTestsError) -> NSNumber? {
-    do {
-      return try NSNumber(value: api!.echoEnum(anEnum: anEnum).rawValue)
-    } catch let error as JniTestsError {
-      wrappedError.code = error.code
-      wrappedError.message = error.message
-      wrappedError.details = error.details
-    } catch let error {
-      wrappedError.code = "\(error)"
-      wrappedError.message = "\(type(of: error))"
-      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
-    }
-    return nil
-  }
-  @objc func echoObject(anObject: Any, wrappedError: JniTestsError) -> Any? {
+  /// Returns the passed in generic Object.
+  @available(iOS 13, macOS 16.0.0, *)
+  @objc func echoObject(anObject: Any, wrappedError: NiTestsError) -> Any? {
     do {
       return try _PigeonFfiCodec.writeValue(
         value: api!.echoObject(
           anObject: _PigeonFfiCodec.readValue(value: anObject as? NSObject, type: nil) as Any),
         isObject: true)
-    } catch let error as JniTestsError {
+    } catch let error as NiTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
+  /// Returns the passed list, to test serialization and deserialization.
+  @available(iOS 13, macOS 16.0.0, *)
+  @objc func echoList(list: [NSObject], wrappedError: NiTestsError) -> [NSObject]? {
+    do {
+      return try api!.echoList(list: list) as? [NSObject]
+    } catch let error as NiTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
+  /// Returns the passed map, to test serialization and deserialization.
+  @available(iOS 13, macOS 16.0.0, *)
+  @objc func echoMap(map: [NSObject: NSObject], wrappedError: NiTestsError) -> [NSObject: NSObject]?
+  {
+    do {
+      return try api!.echoMap(map: map) as? [NSObject: NSObject]
+    } catch let error as NiTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
+  /// Returns the passed enum to test serialization and deserialization.
+  @available(iOS 13, macOS 16.0.0, *)
+  @objc func echoEnum(anEnum: NIAnEnum, wrappedError: NiTestsError) -> NSNumber? {
+    do {
+      return try NSNumber(value: api!.echoEnum(anEnum: anEnum).rawValue)
+    } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
       wrappedError.details = error.details

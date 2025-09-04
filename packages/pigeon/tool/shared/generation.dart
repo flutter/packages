@@ -43,7 +43,7 @@ const Map<String, Set<GeneratorLanguage>> _unsupportedFiles =
     GeneratorLanguage.java,
     GeneratorLanguage.objc,
   },
-  'jni_tests': <GeneratorLanguage>{
+  'ni_tests': <GeneratorLanguage>{
     GeneratorLanguage.cpp,
     GeneratorLanguage.gobject,
     GeneratorLanguage.java,
@@ -105,7 +105,7 @@ Future<int> generateTestPigeons(
     'nullable_returns',
     'primitive',
     'proxy_api_tests',
-    'jni_tests'
+    'ni_tests'
   };
 
   final String outputBase = p.join(baseDir, 'platform_tests', 'test_plugin');
@@ -147,7 +147,7 @@ Future<int> generateTestPigeons(
           : '$outputBase/android/src/main/kotlin/com/example/test_plugin/$pascalCaseName.gen.kt',
       kotlinPackage: 'com.example.test_plugin',
       kotlinErrorClassName: kotlinErrorName,
-      kotlinUseJni: input == 'jni_tests',
+      kotlinUseJni: input == 'ni_tests',
       kotlinAppDirectory: '$outputBase/example',
       kotlinIncludeErrorClass: input != 'primitive',
       // iOS
@@ -156,7 +156,7 @@ Future<int> generateTestPigeons(
           : '$outputBase/ios/Classes/$pascalCaseName.gen.swift',
       swiftErrorClassName: swiftErrorClassName,
       swiftIncludeErrorClass: input != 'primitive',
-      swiftUseFfi: input == 'jni_tests',
+      swiftUseFfi: input == 'ni_tests',
       swiftAppDirectory: '$outputBase/example',
       // Linux
       gobjectHeaderOut: skipLanguages.contains(GeneratorLanguage.gobject)

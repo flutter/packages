@@ -300,6 +300,7 @@ typedef unsigned int swift_uint4 __attribute__((__ext_vector_type__(4)));
 #if __has_warning("-Watimport-in-framework-header")
 #pragma clang diagnostic ignored "-Watimport-in-framework-header"
 #endif
+@import Foundation;
 @import ObjectiveC;
 #endif
 
@@ -328,83 +329,105 @@ typedef unsigned int swift_uint4 __attribute__((__ext_vector_type__(4)));
 
 #if defined(__OBJC__)
 
-enum JniAnEnum : NSInteger;
+enum NIAnEnum : NSInteger;
 @class NSString;
+/// A class containing all supported types.
 /// Generated class from Pigeon that represents data sent in messages.
-SWIFT_CLASS("_TtC11test_plugin10BasicClass")
-@interface BasicClass : NSObject
+SWIFT_CLASS("_TtC11test_plugin10NIAllTypes")
+@interface NIAllTypes : NSObject
 - (nonnull instancetype)initWithABool:(BOOL)aBool
                                 anInt:(int64_t)anInt
                               anInt64:(int64_t)anInt64
                               aDouble:(double)aDouble
-                               anEnum:(enum JniAnEnum)anEnum
+                               anEnum:(enum NIAnEnum)anEnum
                               aString:(NSString *_Nonnull)aString
+                                 list:(NSArray *_Nonnull)list
+                                  map:(NSDictionary *_Nonnull)map
     OBJC_DESIGNATED_INITIALIZER;
 @property(nonatomic) BOOL aBool;
 @property(nonatomic) int64_t anInt;
 @property(nonatomic) int64_t anInt64;
 @property(nonatomic) double aDouble;
-@property(nonatomic) enum JniAnEnum anEnum;
+@property(nonatomic) enum NIAnEnum anEnum;
 @property(nonatomic, copy) NSString *_Nonnull aString;
+@property(nonatomic, copy) NSArray *_Nonnull list;
+@property(nonatomic, copy) NSDictionary *_Nonnull map;
 - (nonnull instancetype)init SWIFT_UNAVAILABLE;
 + (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
 @end
 
-typedef SWIFT_ENUM(NSInteger, JniAnEnum, closed){
-    JniAnEnumOne = 0,
-    JniAnEnumTwo = 1,
-    JniAnEnumThree = 2,
-    JniAnEnumFortyTwo = 3,
-    JniAnEnumFourHundredTwentyTwo = 4,
+typedef SWIFT_ENUM(NSInteger, NIAnEnum, closed){
+    NIAnEnumOne = 0,
+    NIAnEnumTwo = 1,
+    NIAnEnumThree = 2,
+    NIAnEnumFortyTwo = 3,
+    NIAnEnumFourHundredTwentyTwo = 4,
 };
 
-@class JniTestsError;
+@class NiTestsError;
 @class NSNumber;
 /// Generated setup class from Pigeon to register implemented
-/// JniHostIntegrationCoreApi classes.
-SWIFT_CLASS("_TtC11test_plugin30JniHostIntegrationCoreApiSetup")
-@interface JniHostIntegrationCoreApiSetup : NSObject
+/// NIHostIntegrationCoreApi classes.
+SWIFT_CLASS("_TtC11test_plugin29NIHostIntegrationCoreApiSetup")
+@interface NIHostIntegrationCoreApiSetup : NSObject
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
-+ (JniHostIntegrationCoreApiSetup *_Nullable)getInstanceWithName:
++ (NIHostIntegrationCoreApiSetup *_Nullable)getInstanceWithName:
     (NSString *_Nonnull)name SWIFT_WARN_UNUSED_RESULT;
-- (void)noopWithWrappedError:(JniTestsError *_Nonnull)wrappedError;
+/// A no-op function taking no arguments and returning no value, to sanity
+/// test basic calling.
+- (void)noopWithWrappedError:(NiTestsError *_Nonnull)wrappedError
+    SWIFT_AVAILABILITY(macos, introduced = 16.0.0)
+        SWIFT_AVAILABILITY(ios, introduced = 13);
+/// Returns the passed object, to test serialization and deserialization.
+- (NIAllTypes *_Nullable)
+    echoAllTypesWithEverything:(NIAllTypes *_Nonnull)everything
+                  wrappedError:(NiTestsError *_Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos, introduced = 16.0.0)
+        SWIFT_AVAILABILITY(ios, introduced = 13);
+/// Returns passed in int.
 - (NSNumber *_Nullable)echoIntWithAnInt:(NSNumber *_Nonnull)anInt
-                           wrappedError:(JniTestsError *_Nonnull)wrappedError
-    SWIFT_WARN_UNUSED_RESULT;
+                           wrappedError:(NiTestsError *_Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos, introduced = 16.0.0)
+        SWIFT_AVAILABILITY(ios, introduced = 13);
+/// Returns passed in double.
 - (NSNumber *_Nullable)echoDoubleWithADouble:(NSNumber *_Nonnull)aDouble
                                 wrappedError:
-                                    (JniTestsError *_Nonnull)wrappedError
-    SWIFT_WARN_UNUSED_RESULT;
+                                    (NiTestsError *_Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos, introduced = 16.0.0)
+        SWIFT_AVAILABILITY(ios, introduced = 13);
+/// Returns the passed in boolean.
 - (NSNumber *_Nullable)echoBoolWithABool:(NSNumber *_Nonnull)aBool
-                            wrappedError:(JniTestsError *_Nonnull)wrappedError
-    SWIFT_WARN_UNUSED_RESULT;
+                            wrappedError:(NiTestsError *_Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos, introduced = 16.0.0)
+        SWIFT_AVAILABILITY(ios, introduced = 13);
+/// Returns the passed in string.
 - (NSString *_Nullable)echoStringWithAString:(NSString *_Nonnull)aString
                                 wrappedError:
-                                    (JniTestsError *_Nonnull)wrappedError
-    SWIFT_WARN_UNUSED_RESULT;
-- (BasicClass *_Nullable)
-    echoBasicClassWithABasicClass:(BasicClass *_Nonnull)aBasicClass
-                     wrappedError:(JniTestsError *_Nonnull)wrappedError
-    SWIFT_WARN_UNUSED_RESULT;
-- (NSNumber *_Nullable)echoEnumWithAnEnum:(enum JniAnEnum)anEnum
-                             wrappedError:(JniTestsError *_Nonnull)wrappedError
-    SWIFT_WARN_UNUSED_RESULT;
+                                    (NiTestsError *_Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos, introduced = 16.0.0)
+        SWIFT_AVAILABILITY(ios, introduced = 13);
+/// Returns the passed in generic Object.
 - (id _Nullable)echoObjectWithAnObject:(id _Nonnull)anObject
-                          wrappedError:(JniTestsError *_Nonnull)wrappedError
-    SWIFT_WARN_UNUSED_RESULT;
-@end
-
-/// Error class for passing custom error details to Dart side.
-SWIFT_CLASS("_TtC11test_plugin13JniTestsError")
-@interface JniTestsError : NSObject
-@property(nonatomic, copy) NSString *_Nullable code;
-@property(nonatomic, copy) NSString *_Nullable message;
-@property(nonatomic, copy) NSString *_Nullable details;
-- (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
-- (nonnull instancetype)initWithCode:(NSString *_Nullable)code
-                             message:(NSString *_Nullable)message
-                             details:(NSString *_Nullable)details
-    OBJC_DESIGNATED_INITIALIZER;
+                          wrappedError:(NiTestsError *_Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos, introduced = 16.0.0)
+        SWIFT_AVAILABILITY(ios, introduced = 13);
+/// Returns the passed list, to test serialization and deserialization.
+- (NSArray<NSObject *> *_Nullable)
+    echoListWithList:(NSArray<NSObject *> *_Nonnull)list
+        wrappedError:(NiTestsError *_Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos, introduced = 16.0.0)
+        SWIFT_AVAILABILITY(ios, introduced = 13);
+/// Returns the passed map, to test serialization and deserialization.
+- (NSDictionary<id<NSCopying>, NSObject *> *_Nullable)
+    echoMapWithMap:(NSDictionary<id<NSCopying>, NSObject *> *_Nonnull)map
+      wrappedError:(NiTestsError *_Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT
+    SWIFT_AVAILABILITY(macos, introduced = 16.0.0)
+        SWIFT_AVAILABILITY(ios, introduced = 13);
+/// Returns the passed enum to test serialization and deserialization.
+- (NSNumber *_Nullable)echoEnumWithAnEnum:(enum NIAnEnum)anEnum
+                             wrappedError:(NiTestsError *_Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos, introduced = 16.0.0)
+        SWIFT_AVAILABILITY(ios, introduced = 13);
 @end
 
 SWIFT_CLASS("_TtC11test_plugin15NSNumberWrapper")
@@ -416,6 +439,19 @@ SWIFT_CLASS("_TtC11test_plugin15NSNumberWrapper")
 @property(nonatomic) NSInteger type;
 - (nonnull instancetype)init SWIFT_UNAVAILABLE;
 + (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
+@end
+
+/// Error class for passing custom error details to Dart side.
+SWIFT_CLASS("_TtC11test_plugin12NiTestsError")
+@interface NiTestsError : NSObject
+@property(nonatomic, copy) NSString *_Nullable code;
+@property(nonatomic, copy) NSString *_Nullable message;
+@property(nonatomic, copy) NSString *_Nullable details;
+- (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
+- (nonnull instancetype)initWithCode:(NSString *_Nullable)code
+                             message:(NSString *_Nullable)message
+                             details:(NSString *_Nullable)details
+    OBJC_DESIGNATED_INITIALIZER;
 @end
 
 #endif

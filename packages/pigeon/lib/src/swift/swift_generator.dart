@@ -150,7 +150,7 @@ class InternalSwiftOptions extends InternalOptions {
   /// Module to use for FFI.
   final String? ffiModuleName;
 
-  /// The directory that the app exists in, this is required for Jni APIs.
+  /// The directory that the app exists in, this is required for FFi APIs.
   final String? appDirectory;
 }
 
@@ -283,6 +283,7 @@ class SwiftGenerator extends StructuredGenerator<InternalSwiftOptions> {
   void _writeFfiCodec(Indent indent, Root root) {
     indent.newln();
     indent.format('''
+@available(iOS 13, macOS 16.0.0, *)
 class _PigeonFfiCodec {
   static func readValue(value: NSObject?, type: String?) -> Any? {
     if (isNullish(value)) {
@@ -326,7 +327,7 @@ class _PigeonFfiCodec {
       //     list[i] = value.as(NSDoubleArray.type)[i]
       //   //   }
       //   return list
-    if (value is NSMutableArray) {
+    if (value is NSMutableArray || value is NSArray) {
       var res: Array<Any?> = []
       for i in 0..<(value as! NSMutableArray).count {
           res.append(readValue(value: (value as! NSMutableArray)[i] as? NSObject, type: nil))
@@ -336,7 +337,7 @@ class _PigeonFfiCodec {
     if (value is NSDictionary) {
       var res: Dictionary<AnyHashable?, Any?> = Dictionary()
       for (key, value) in (value as! NSDictionary) {
-          res[readValue(value: key as? NSObject, type: nil) as! AnyHashable?] = readValue(value: value as? NSObject, type: nil)
+          res[readValue(value: key as? NSObject, type: nil) as? AnyHashable] = readValue(value: value as? NSObject, type: nil)
       }
       return res
     } 
@@ -403,14 +404,14 @@ class _PigeonFfiCodec {
     if (value is Array<Any>) {
       let res: NSMutableArray = NSMutableArray()
       for i in 0..<(value as! NSMutableArray).count {
-        res.add(writeValue(value: (value as! NSMutableArray)[i])!)
+        res.add(writeValue(value: (value as! NSMutableArray)[i]) as! NSObject)
       }
       return res
     }
     if (value is Dictionary<AnyHashable, Any>) {
       let res: NSMutableDictionary = NSMutableDictionary()
       for (key, value) in (value as! NSDictionary) {
-         res.setObject(writeValue(value: value) as Any, forKey: writeValue(value: key) as! NSCopying)
+         res.setObject(writeValue(value: value) as! NSObject, forKey: writeValue(value: key) as! NSCopying)
       }
       return res
     }
@@ -955,6 +956,7 @@ if (wrapped == nil) {
       for (final Method method in api.methods) {
         addDocumentationComments(
             indent, method.documentationComments, _docCommentSpec);
+        indent.writeln('@available(iOS 13, macOS 16.0.0, *)');
         indent.write(_getMethodSignature(
           name: method.name,
           parameters: method.parameters,
@@ -972,7 +974,7 @@ if (wrapped == nil) {
               indent.writeln(
                   'return try ${_swiftToFfiConversion(method.returnType, 'api!.${method.name}(${method.parameters.map((NamedType param) {
                         return '${param.name}: ${_ffiToSwiftConversion(param)}';
-                      }).join(', ')})')}');
+                      }).join(', ')})')}${method.returnType.baseName == 'List' || method.returnType.baseName == 'Map' ? ' as? ${_ffiTypeForBuiltinGenericDartType(method.returnType)}' : ''}');
             },
             addTrailingNewline: false,
           );

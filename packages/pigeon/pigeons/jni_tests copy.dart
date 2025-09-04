@@ -11,7 +11,7 @@ import 'package:pigeon/pigeon.dart';
   kotlinOptions: KotlinOptions(useJni: true),
   swiftOptions: SwiftOptions(useFfi: true),
 ))
-enum JniAnEnum {
+enum NIAnEnum {
   one,
   two,
   three,
@@ -21,20 +21,20 @@ enum JniAnEnum {
 
 // Enums require special logic, having multiple ensures that the logic can be
 // replicated without collision.
-enum JniAnotherEnum {
+enum NIAnotherEnum {
   justInCase,
 }
 
 // This exists to show that unused data classes still generate.
-class JniUnusedClass {
-  JniUnusedClass({this.aField});
+class NIUnusedClass {
+  NIUnusedClass({this.aField});
 
   Object? aField;
 }
 
 /// A class containing all supported types.
-class JniAllTypes {
-  JniAllTypes({
+class NIAllTypes {
+  NIAllTypes({
     this.aBool = false,
     this.anInt = 0,
     this.anInt64 = 0,
@@ -43,8 +43,8 @@ class JniAllTypes {
     required this.a4ByteArray,
     required this.a8ByteArray,
     required this.aFloatArray,
-    this.anEnum = JniAnEnum.one,
-    this.anotherEnum = JniAnotherEnum.justInCase,
+    this.anEnum = NIAnEnum.one,
+    this.anotherEnum = NIAnotherEnum.justInCase,
     this.aString = '',
     this.anObject = 0,
 
@@ -79,8 +79,8 @@ class JniAllTypes {
   Int32List a4ByteArray;
   Int64List a8ByteArray;
   Float64List aFloatArray;
-  JniAnEnum anEnum;
-  JniAnotherEnum anotherEnum;
+  NIAnEnum anEnum;
+  NIAnotherEnum anotherEnum;
   String aString;
   Object anObject;
 
@@ -90,7 +90,7 @@ class JniAllTypes {
   List<int> intList;
   List<double> doubleList;
   List<bool> boolList;
-  List<JniAnEnum> enumList;
+  List<NIAnEnum> enumList;
   List<Object> objectList;
   List<List<Object?>> listList;
   List<Map<Object?, Object?>> mapList;
@@ -99,7 +99,7 @@ class JniAllTypes {
   Map map;
   Map<String, String> stringMap;
   Map<int, int> intMap;
-  Map<JniAnEnum, JniAnEnum> enumMap;
+  Map<NIAnEnum, NIAnEnum> enumMap;
   Map<Object, Object> objectMap;
   Map<int, List<Object?>> listMap;
   Map<int, Map<Object?, Object?>> mapMap;
@@ -107,8 +107,8 @@ class JniAllTypes {
 
 /// A class containing all supported nullable types.
 @SwiftClass()
-class JniAllNullableTypes {
-  JniAllNullableTypes(
+class NIAllNullableTypes {
+  NIAllNullableTypes(
     this.aNullableBool,
     this.aNullableInt,
     this.aNullableInt64,
@@ -156,11 +156,11 @@ class JniAllNullableTypes {
   Int32List? aNullable4ByteArray;
   Int64List? aNullable8ByteArray;
   Float64List? aNullableFloatArray;
-  JniAnEnum? aNullableEnum;
-  JniAnotherEnum? anotherNullableEnum;
+  NIAnEnum? aNullableEnum;
+  NIAnotherEnum? anotherNullableEnum;
   String? aNullableString;
   Object? aNullableObject;
-  JniAllNullableTypes? allNullableTypes;
+  NIAllNullableTypes? allNullableTypes;
 
   // Lists
   List? list;
@@ -168,28 +168,28 @@ class JniAllNullableTypes {
   List<int?>? intList;
   List<double?>? doubleList;
   List<bool?>? boolList;
-  List<JniAnEnum?>? enumList;
+  List<NIAnEnum?>? enumList;
   List<Object?>? objectList;
   List<List<Object?>?>? listList;
   List<Map<Object?, Object?>?>? mapList;
-  List<JniAllNullableTypes?>? recursiveClassList;
+  List<NIAllNullableTypes?>? recursiveClassList;
 
   // Maps
   Map? map;
   Map<String?, String?>? stringMap;
   Map<int?, int?>? intMap;
-  Map<JniAnEnum?, JniAnEnum?>? enumMap;
+  Map<NIAnEnum?, NIAnEnum?>? enumMap;
   Map<Object?, Object?>? objectMap;
   Map<int?, List<Object?>?>? listMap;
   Map<int?, Map<Object?, Object?>?>? mapMap;
-  Map<int?, JniAllNullableTypes?>? recursiveClassMap;
+  Map<int?, NIAllNullableTypes?>? recursiveClassMap;
 }
 
 /// The primary purpose for this class is to ensure coverage of Swift structs
-/// with nullable items, as the primary [JniAllNullableTypes] class is being used to
+/// with nullable items, as the primary [NIAllNullableTypes] class is being used to
 /// test Swift classes.
-class JniAllNullableTypesWithoutRecursion {
-  JniAllNullableTypesWithoutRecursion(
+class NIAllNullableTypesWithoutRecursion {
+  NIAllNullableTypesWithoutRecursion(
     this.aNullableBool,
     this.aNullableInt,
     this.aNullableInt64,
@@ -234,8 +234,8 @@ class JniAllNullableTypesWithoutRecursion {
   Int32List? aNullable4ByteArray;
   Int64List? aNullable8ByteArray;
   Float64List? aNullableFloatArray;
-  JniAnEnum? aNullableEnum;
-  JniAnotherEnum? anotherNullableEnum;
+  NIAnEnum? aNullableEnum;
+  NIAnotherEnum? anotherNullableEnum;
   String? aNullableString;
   Object? aNullableObject;
 
@@ -245,7 +245,7 @@ class JniAllNullableTypesWithoutRecursion {
   List<int?>? intList;
   List<double?>? doubleList;
   List<bool?>? boolList;
-  List<JniAnEnum?>? enumList;
+  List<NIAnEnum?>? enumList;
   List<Object?>? objectList;
   List<List<Object?>?>? listList;
   List<Map<Object?, Object?>?>? mapList;
@@ -254,7 +254,7 @@ class JniAllNullableTypesWithoutRecursion {
   Map? map;
   Map<String?, String?>? stringMap;
   Map<int?, int?>? intMap;
-  Map<JniAnEnum?, JniAnEnum?>? enumMap;
+  Map<NIAnEnum?, NIAnEnum?>? enumMap;
   Map<Object?, Object?>? objectMap;
   Map<int?, List<Object?>?>? listMap;
   Map<int?, Map<Object?, Object?>?>? mapMap;
@@ -263,10 +263,10 @@ class JniAllNullableTypesWithoutRecursion {
 /// A class for testing nested class handling.
 ///
 /// This is needed to test nested nullable and non-nullable classes,
-/// `JniAllNullableTypes` is non-nullable here as it is easier to instantiate
-/// than `JniAllTypes` when testing doesn't require both (ie. testing null classes).
-class JniAllClassesWrapper {
-  JniAllClassesWrapper(
+/// `NIAllNullableTypes` is non-nullable here as it is easier to instantiate
+/// than `NIAllTypes` when testing doesn't require both (ie. testing null classes).
+class NIAllClassesWrapper {
+  NIAllClassesWrapper(
     this.allNullableTypes,
     this.allNullableTypesWithoutRecursion,
     this.allTypes,
@@ -275,19 +275,19 @@ class JniAllClassesWrapper {
     this.nullableClassList,
     this.nullableClassMap,
   );
-  JniAllNullableTypes allNullableTypes;
-  JniAllNullableTypesWithoutRecursion? allNullableTypesWithoutRecursion;
-  JniAllTypes? allTypes;
-  List<JniAllTypes?> classList;
-  List<JniAllNullableTypesWithoutRecursion?>? nullableClassList;
-  Map<int?, JniAllTypes?> classMap;
-  Map<int?, JniAllNullableTypesWithoutRecursion?>? nullableClassMap;
+  NIAllNullableTypes allNullableTypes;
+  NIAllNullableTypesWithoutRecursion? allNullableTypesWithoutRecursion;
+  NIAllTypes? allTypes;
+  List<NIAllTypes?> classList;
+  List<NIAllNullableTypesWithoutRecursion?>? nullableClassList;
+  Map<int?, NIAllTypes?> classMap;
+  Map<int?, NIAllNullableTypesWithoutRecursion?>? nullableClassMap;
 }
 
 /// The core interface that each host language plugin must implement in
 /// platform_test integration tests.
 @HostApi()
-abstract class JniHostIntegrationCoreApi {
+abstract class NIHostIntegrationCoreApi {
   // ========== Synchronous method tests ==========
 
   /// A no-op function taking no arguments and returning no value, to sanity
@@ -297,7 +297,7 @@ abstract class JniHostIntegrationCoreApi {
   /// Returns the passed object, to test serialization and deserialization.
   @ObjCSelector('echoAllTypes:')
   @SwiftFunction('echo(_:)')
-  JniAllTypes echoAllTypes(JniAllTypes everything);
+  NIAllTypes echoAllTypes(NIAllTypes everything);
 
   /// Returns an error, to test error handling.
   Object? throwError();
@@ -361,24 +361,23 @@ abstract class JniHostIntegrationCoreApi {
   /// Returns the passed list, to test serialization and deserialization.
   @ObjCSelector('echoEnumList:')
   @SwiftFunction('echo(enumList:)')
-  List<JniAnEnum?> echoEnumList(List<JniAnEnum?> enumList);
+  List<NIAnEnum?> echoEnumList(List<NIAnEnum?> enumList);
 
   /// Returns the passed list, to test serialization and deserialization.
   @ObjCSelector('echoClassList:')
   @SwiftFunction('echo(classList:)')
-  List<JniAllNullableTypes?> echoClassList(
-      List<JniAllNullableTypes?> classList);
+  List<NIAllNullableTypes?> echoClassList(List<NIAllNullableTypes?> classList);
 
   /// Returns the passed list, to test serialization and deserialization.
   @ObjCSelector('echoNonNullEnumList:')
   @SwiftFunction('echoNonNull(enumList:)')
-  List<JniAnEnum> echoNonNullEnumList(List<JniAnEnum> enumList);
+  List<NIAnEnum> echoNonNullEnumList(List<NIAnEnum> enumList);
 
   /// Returns the passed list, to test serialization and deserialization.
   @ObjCSelector('echoNonNullClassList:')
   @SwiftFunction('echoNonNull(classList:)')
-  List<JniAllNullableTypes> echoNonNullClassList(
-      List<JniAllNullableTypes> classList);
+  List<NIAllNullableTypes> echoNonNullClassList(
+      List<NIAllNullableTypes> classList);
 
   /// Returns the passed map, to test serialization and deserialization.
   @ObjCSelector('echoMap:')
@@ -398,13 +397,13 @@ abstract class JniHostIntegrationCoreApi {
   /// Returns the passed map, to test serialization and deserialization.
   @ObjCSelector('echoEnumMap:')
   @SwiftFunction('echo(enumMap:)')
-  Map<JniAnEnum?, JniAnEnum?> echoEnumMap(Map<JniAnEnum?, JniAnEnum?> enumMap);
+  Map<NIAnEnum?, NIAnEnum?> echoEnumMap(Map<NIAnEnum?, NIAnEnum?> enumMap);
 
   /// Returns the passed map, to test serialization and deserialization.
   @ObjCSelector('echoClassMap:')
   @SwiftFunction('echo(classMap:)')
-  Map<int?, JniAllNullableTypes?> echoClassMap(
-      Map<int?, JniAllNullableTypes?> classMap);
+  Map<int?, NIAllNullableTypes?> echoClassMap(
+      Map<int?, NIAllNullableTypes?> classMap);
 
   /// Returns the passed map, to test serialization and deserialization.
   @ObjCSelector('echoNonNullStringMap:')
@@ -419,29 +418,28 @@ abstract class JniHostIntegrationCoreApi {
   /// Returns the passed map, to test serialization and deserialization.
   @ObjCSelector('echoNonNullEnumMap:')
   @SwiftFunction('echoNonNull(enumMap:)')
-  Map<JniAnEnum, JniAnEnum> echoNonNullEnumMap(
-      Map<JniAnEnum, JniAnEnum> enumMap);
+  Map<NIAnEnum, NIAnEnum> echoNonNullEnumMap(Map<NIAnEnum, NIAnEnum> enumMap);
 
   /// Returns the passed map, to test serialization and deserialization.
   @ObjCSelector('echoNonNullClassMap:')
   @SwiftFunction('echoNonNull(classMap:)')
-  Map<int, JniAllNullableTypes> echoNonNullClassMap(
-      Map<int, JniAllNullableTypes> classMap);
+  Map<int, NIAllNullableTypes> echoNonNullClassMap(
+      Map<int, NIAllNullableTypes> classMap);
 
   /// Returns the passed class to test nested class serialization and deserialization.
   @ObjCSelector('echoClassWrapper:')
   @SwiftFunction('echo(_:)')
-  JniAllClassesWrapper echoClassWrapper(JniAllClassesWrapper wrapper);
+  NIAllClassesWrapper echoClassWrapper(NIAllClassesWrapper wrapper);
 
   /// Returns the passed enum to test serialization and deserialization.
   @ObjCSelector('echoEnum:')
   @SwiftFunction('echo(_:)')
-  JniAnEnum echoEnum(JniAnEnum anEnum);
+  NIAnEnum echoEnum(NIAnEnum anEnum);
 
   /// Returns the passed enum to test serialization and deserialization.
   @ObjCSelector('echoAnotherEnum:')
   @SwiftFunction('echo(_:)')
-  JniAnotherEnum echoAnotherEnum(JniAnotherEnum anotherEnum);
+  NIAnotherEnum echoAnotherEnum(NIAnotherEnum anotherEnum);
 
   /// Returns the default string.
   @ObjCSelector('echoNamedDefaultString:')
@@ -463,37 +461,37 @@ abstract class JniHostIntegrationCoreApi {
   /// Returns the passed object, to test serialization and deserialization.
   @ObjCSelector('echoAllNullableTypes:')
   @SwiftFunction('echo(_:)')
-  JniAllNullableTypes? echoAllNullableTypes(JniAllNullableTypes? everything);
+  NIAllNullableTypes? echoAllNullableTypes(NIAllNullableTypes? everything);
 
   /// Returns the passed object, to test serialization and deserialization.
   @ObjCSelector('echoAllNullableTypesWithoutRecursion:')
   @SwiftFunction('echo(_:)')
-  JniAllNullableTypesWithoutRecursion? echoAllNullableTypesWithoutRecursion(
-      JniAllNullableTypesWithoutRecursion? everything);
+  NIAllNullableTypesWithoutRecursion? echoAllNullableTypesWithoutRecursion(
+      NIAllNullableTypesWithoutRecursion? everything);
 
   /// Returns the inner `aString` value from the wrapped object, to test
   /// sending of nested objects.
   @ObjCSelector('extractNestedNullableStringFrom:')
   @SwiftFunction('extractNestedNullableString(from:)')
-  String? extractNestedNullableString(JniAllClassesWrapper wrapper);
+  String? extractNestedNullableString(NIAllClassesWrapper wrapper);
 
   /// Returns the inner `aString` value from the wrapped object, to test
   /// sending of nested objects.
   @ObjCSelector('createNestedObjectWithNullableString:')
   @SwiftFunction('createNestedObject(with:)')
-  JniAllClassesWrapper createNestedNullableString(String? nullableString);
+  NIAllClassesWrapper createNestedNullableString(String? nullableString);
 
   /// Returns passed in arguments of multiple types.
   @ObjCSelector('sendMultipleNullableTypesABool:anInt:aString:')
   @SwiftFunction('sendMultipleNullableTypes(aBool:anInt:aString:)')
-  JniAllNullableTypes sendMultipleNullableTypes(
+  NIAllNullableTypes sendMultipleNullableTypes(
       bool? aNullableBool, int? aNullableInt, String? aNullableString);
 
   /// Returns passed in arguments of multiple types.
   @ObjCSelector('sendMultipleNullableTypesWithoutRecursionABool:anInt:aString:')
   @SwiftFunction(
       'sendMultipleNullableTypesWithoutRecursion(aBool:anInt:aString:)')
-  JniAllNullableTypesWithoutRecursion sendMultipleNullableTypesWithoutRecursion(
+  NIAllNullableTypesWithoutRecursion sendMultipleNullableTypesWithoutRecursion(
       bool? aNullableBool, int? aNullableInt, String? aNullableString);
 
   /// Returns passed in int.
@@ -549,24 +547,24 @@ abstract class JniHostIntegrationCoreApi {
   /// Returns the passed list, to test serialization and deserialization.
   @ObjCSelector('echoNullableEnumList:')
   @SwiftFunction('echoNullable(enumList:)')
-  List<JniAnEnum?>? echoNullableEnumList(List<JniAnEnum?>? enumList);
+  List<NIAnEnum?>? echoNullableEnumList(List<NIAnEnum?>? enumList);
 
   /// Returns the passed list, to test serialization and deserialization.
   @ObjCSelector('echoNullableClassList:')
   @SwiftFunction('echoNullable(classList:)')
-  List<JniAllNullableTypes?>? echoNullableClassList(
-      List<JniAllNullableTypes?>? classList);
+  List<NIAllNullableTypes?>? echoNullableClassList(
+      List<NIAllNullableTypes?>? classList);
 
   /// Returns the passed list, to test serialization and deserialization.
   @ObjCSelector('echoNullableNonNullEnumList:')
   @SwiftFunction('echoNullableNonNull(enumList:)')
-  List<JniAnEnum>? echoNullableNonNullEnumList(List<JniAnEnum>? enumList);
+  List<NIAnEnum>? echoNullableNonNullEnumList(List<NIAnEnum>? enumList);
 
   /// Returns the passed list, to test serialization and deserialization.
   @ObjCSelector('echoNullableNonNullClassList:')
   @SwiftFunction('echoNullableNonNull(classList:)')
-  List<JniAllNullableTypes>? echoNullableNonNullClassList(
-      List<JniAllNullableTypes>? classList);
+  List<NIAllNullableTypes>? echoNullableNonNullClassList(
+      List<NIAllNullableTypes>? classList);
 
   /// Returns the passed map, to test serialization and deserialization.
   @ObjCSelector('echoNullableMap:')
@@ -587,14 +585,14 @@ abstract class JniHostIntegrationCoreApi {
   /// Returns the passed map, to test serialization and deserialization.
   @ObjCSelector('echoNullableEnumMap:')
   @SwiftFunction('echoNullable(enumMap:)')
-  Map<JniAnEnum?, JniAnEnum?>? echoNullableEnumMap(
-      Map<JniAnEnum?, JniAnEnum?>? enumMap);
+  Map<NIAnEnum?, NIAnEnum?>? echoNullableEnumMap(
+      Map<NIAnEnum?, NIAnEnum?>? enumMap);
 
   /// Returns the passed map, to test serialization and deserialization.
   @ObjCSelector('echoNullableClassMap:')
   @SwiftFunction('echoNullable(classMap:)')
-  Map<int?, JniAllNullableTypes?>? echoNullableClassMap(
-      Map<int?, JniAllNullableTypes?>? classMap);
+  Map<int?, NIAllNullableTypes?>? echoNullableClassMap(
+      Map<int?, NIAllNullableTypes?>? classMap);
 
   /// Returns the passed map, to test serialization and deserialization.
   @ObjCSelector('echoNullableNonNullStringMap:')
@@ -610,22 +608,22 @@ abstract class JniHostIntegrationCoreApi {
   /// Returns the passed map, to test serialization and deserialization.
   @ObjCSelector('echoNullableNonNullEnumMap:')
   @SwiftFunction('echoNullableNonNull(enumMap:)')
-  Map<JniAnEnum, JniAnEnum>? echoNullableNonNullEnumMap(
-      Map<JniAnEnum, JniAnEnum>? enumMap);
+  Map<NIAnEnum, NIAnEnum>? echoNullableNonNullEnumMap(
+      Map<NIAnEnum, NIAnEnum>? enumMap);
 
   /// Returns the passed map, to test serialization and deserialization.
   @ObjCSelector('echoNullableNonNullClassMap:')
   @SwiftFunction('echoNullableNonNull(classMap:)')
-  Map<int, JniAllNullableTypes>? echoNullableNonNullClassMap(
-      Map<int, JniAllNullableTypes>? classMap);
+  Map<int, NIAllNullableTypes>? echoNullableNonNullClassMap(
+      Map<int, NIAllNullableTypes>? classMap);
 
   @ObjCSelector('echoNullableEnum:')
   @SwiftFunction('echoNullable(_:)')
-  JniAnEnum? echoNullableEnum(JniAnEnum? anEnum);
+  NIAnEnum? echoNullableEnum(NIAnEnum? anEnum);
 
   @ObjCSelector('echoAnotherNullableEnum:')
   @SwiftFunction('echoNullable(_:)')
-  JniAnotherEnum? echoAnotherNullableEnum(JniAnotherEnum? anotherEnum);
+  NIAnotherEnum? echoAnotherNullableEnum(NIAnotherEnum? anotherEnum);
 
   /// Returns passed in int.
   @ObjCSelector('echoOptionalNullableInt:')
@@ -708,14 +706,14 @@ abstract class JniHostIntegrationCoreApi {
   @async
   @ObjCSelector('echoAsyncEnumList:')
   @SwiftFunction('echoAsync(enumList:)')
-  List<JniAnEnum?> echoAsyncEnumList(List<JniAnEnum?> enumList);
+  List<NIAnEnum?> echoAsyncEnumList(List<NIAnEnum?> enumList);
 
   /// Returns the passed list, to test asynchronous serialization and deserialization.
   @async
   @ObjCSelector('echoAsyncClassList:')
   @SwiftFunction('echoAsync(classList:)')
-  List<JniAllNullableTypes?> echoAsyncClassList(
-      List<JniAllNullableTypes?> classList);
+  List<NIAllNullableTypes?> echoAsyncClassList(
+      List<NIAllNullableTypes?> classList);
 
   /// Returns the passed map, to test asynchronous serialization and deserialization.
   @async
@@ -739,27 +737,26 @@ abstract class JniHostIntegrationCoreApi {
   @async
   @ObjCSelector('echoAsyncEnumMap:')
   @SwiftFunction('echoAsync(enumMap:)')
-  Map<JniAnEnum?, JniAnEnum?> echoAsyncEnumMap(
-      Map<JniAnEnum?, JniAnEnum?> enumMap);
+  Map<NIAnEnum?, NIAnEnum?> echoAsyncEnumMap(Map<NIAnEnum?, NIAnEnum?> enumMap);
 
   /// Returns the passed map, to test asynchronous serialization and deserialization.
   @async
   @ObjCSelector('echoAsyncClassMap:')
   @SwiftFunction('echoAsync(classMap:)')
-  Map<int?, JniAllNullableTypes?> echoAsyncClassMap(
-      Map<int?, JniAllNullableTypes?> classMap);
+  Map<int?, NIAllNullableTypes?> echoAsyncClassMap(
+      Map<int?, NIAllNullableTypes?> classMap);
 
   /// Returns the passed enum, to test asynchronous serialization and deserialization.
   @async
   @ObjCSelector('echoAsyncEnum:')
   @SwiftFunction('echoAsync(_:)')
-  JniAnEnum echoAsyncEnum(JniAnEnum anEnum);
+  NIAnEnum echoAsyncEnum(NIAnEnum anEnum);
 
   /// Returns the passed enum, to test asynchronous serialization and deserialization.
   @async
   @ObjCSelector('echoAnotherAsyncEnum:')
   @SwiftFunction('echoAsync(_:)')
-  JniAnotherEnum echoAnotherAsyncEnum(JniAnotherEnum anotherEnum);
+  NIAnotherEnum echoAnotherAsyncEnum(NIAnotherEnum anotherEnum);
 
   /// Responds with an error from an async function returning a value.
   @async
@@ -775,24 +772,24 @@ abstract class JniHostIntegrationCoreApi {
 
   /// Returns the passed object, to test async serialization and deserialization.
   @async
-  @ObjCSelector('echoAsyncJniAllTypes:')
+  @ObjCSelector('echoAsyncNIAllTypes:')
   @SwiftFunction('echoAsync(_:)')
-  JniAllTypes echoAsyncJniAllTypes(JniAllTypes everything);
+  NIAllTypes echoAsyncNIAllTypes(NIAllTypes everything);
 
   /// Returns the passed object, to test serialization and deserialization.
   @async
-  @ObjCSelector('echoAsyncNullableJniAllNullableTypes:')
+  @ObjCSelector('echoAsyncNullableNIAllNullableTypes:')
   @SwiftFunction('echoAsync(_:)')
-  JniAllNullableTypes? echoAsyncNullableJniAllNullableTypes(
-      JniAllNullableTypes? everything);
+  NIAllNullableTypes? echoAsyncNullableNIAllNullableTypes(
+      NIAllNullableTypes? everything);
 
   /// Returns the passed object, to test serialization and deserialization.
   @async
-  @ObjCSelector('echoAsyncNullableJniAllNullableTypesWithoutRecursion:')
+  @ObjCSelector('echoAsyncNullableNIAllNullableTypesWithoutRecursion:')
   @SwiftFunction('echoAsync(_:)')
-  JniAllNullableTypesWithoutRecursion?
-      echoAsyncNullableJniAllNullableTypesWithoutRecursion(
-          JniAllNullableTypesWithoutRecursion? everything);
+  NIAllNullableTypesWithoutRecursion?
+      echoAsyncNullableNIAllNullableTypesWithoutRecursion(
+          NIAllNullableTypesWithoutRecursion? everything);
 
   /// Returns passed in int asynchronously.
   @async
@@ -858,14 +855,14 @@ abstract class JniHostIntegrationCoreApi {
   @async
   @ObjCSelector('echoAsyncNullableEnumList:')
   @SwiftFunction('echoAsyncNullable(enumList:)')
-  List<JniAnEnum?>? echoAsyncNullableEnumList(List<JniAnEnum?>? enumList);
+  List<NIAnEnum?>? echoAsyncNullableEnumList(List<NIAnEnum?>? enumList);
 
   /// Returns the passed list, to test asynchronous serialization and deserialization.
   @async
   @ObjCSelector('echoAsyncNullableClassList:')
   @SwiftFunction('echoAsyncNullable(classList:)')
-  List<JniAllNullableTypes?>? echoAsyncNullableClassList(
-      List<JniAllNullableTypes?>? classList);
+  List<NIAllNullableTypes?>? echoAsyncNullableClassList(
+      List<NIAllNullableTypes?>? classList);
 
   /// Returns the passed map, to test asynchronous serialization and deserialization.
   @async
@@ -890,27 +887,27 @@ abstract class JniHostIntegrationCoreApi {
   @async
   @ObjCSelector('echoAsyncNullableEnumMap:')
   @SwiftFunction('echoAsyncNullable(enumMap:)')
-  Map<JniAnEnum?, JniAnEnum?>? echoAsyncNullableEnumMap(
-      Map<JniAnEnum?, JniAnEnum?>? enumMap);
+  Map<NIAnEnum?, NIAnEnum?>? echoAsyncNullableEnumMap(
+      Map<NIAnEnum?, NIAnEnum?>? enumMap);
 
   /// Returns the passed map, to test asynchronous serialization and deserialization.
   @async
   @ObjCSelector('echoAsyncNullableClassMap:')
   @SwiftFunction('echoAsyncNullable(classMap:)')
-  Map<int?, JniAllNullableTypes?>? echoAsyncNullableClassMap(
-      Map<int?, JniAllNullableTypes?>? classMap);
+  Map<int?, NIAllNullableTypes?>? echoAsyncNullableClassMap(
+      Map<int?, NIAllNullableTypes?>? classMap);
 
   /// Returns the passed enum, to test asynchronous serialization and deserialization.
   @async
   @ObjCSelector('echoAsyncNullableEnum:')
   @SwiftFunction('echoAsyncNullable(_:)')
-  JniAnEnum? echoAsyncNullableEnum(JniAnEnum? anEnum);
+  NIAnEnum? echoAsyncNullableEnum(NIAnEnum? anEnum);
 
   /// Returns the passed enum, to test asynchronous serialization and deserialization.
   @async
   @ObjCSelector('echoAnotherAsyncNullableEnum:')
   @SwiftFunction('echoAsyncNullable(_:)')
-  JniAnotherEnum? echoAnotherAsyncNullableEnum(JniAnotherEnum? anotherEnum);
+  NIAnotherEnum? echoAnotherAsyncNullableEnum(NIAnotherEnum? anotherEnum);
 
   void callFlutterNoop();
 
@@ -920,29 +917,29 @@ abstract class JniHostIntegrationCoreApi {
 
   @ObjCSelector('callFlutterEchoAllTypes:')
   @SwiftFunction('callFlutterEcho(_:)')
-  JniAllTypes callFlutterEchoJniAllTypes(JniAllTypes everything);
+  NIAllTypes callFlutterEchoNIAllTypes(NIAllTypes everything);
 
   @ObjCSelector('callFlutterEchoAllNullableTypes:')
   @SwiftFunction('callFlutterEcho(_:)')
-  JniAllNullableTypes? callFlutterEchoJniAllNullableTypes(
-      JniAllNullableTypes? everything);
+  NIAllNullableTypes? callFlutterEchoNIAllNullableTypes(
+      NIAllNullableTypes? everything);
 
   @ObjCSelector('callFlutterSendMultipleNullableTypesABool:anInt:aString:')
   @SwiftFunction('callFlutterSendMultipleNullableTypes(aBool:anInt:aString:)')
-  JniAllNullableTypes callFlutterSendMultipleNullableTypes(
+  NIAllNullableTypes callFlutterSendMultipleNullableTypes(
       bool? aNullableBool, int? aNullableInt, String? aNullableString);
 
-  @ObjCSelector('callFlutterEchoJniAllNullableTypesWithoutRecursion:')
+  @ObjCSelector('callFlutterEchoNIAllNullableTypesWithoutRecursion:')
   @SwiftFunction('callFlutterEcho(_:)')
-  JniAllNullableTypesWithoutRecursion?
-      callFlutterEchoJniAllNullableTypesWithoutRecursion(
-          JniAllNullableTypesWithoutRecursion? everything);
+  NIAllNullableTypesWithoutRecursion?
+      callFlutterEchoNIAllNullableTypesWithoutRecursion(
+          NIAllNullableTypesWithoutRecursion? everything);
 
   @ObjCSelector(
       'callFlutterSendMultipleNullableTypesWithoutRecursionABool:anInt:aString:')
   @SwiftFunction(
       'callFlutterSendMultipleNullableTypesWithoutRecursion(aBool:anInt:aString:)')
-  JniAllNullableTypesWithoutRecursion
+  NIAllNullableTypesWithoutRecursion
       callFlutterSendMultipleNullableTypesWithoutRecursion(
           bool? aNullableBool, int? aNullableInt, String? aNullableString);
 
@@ -972,21 +969,21 @@ abstract class JniHostIntegrationCoreApi {
 
   @ObjCSelector('callFlutterEchoEnumList:')
   @SwiftFunction('callFlutterEcho(enumList:)')
-  List<JniAnEnum?> callFlutterEchoEnumList(List<JniAnEnum?> enumList);
+  List<NIAnEnum?> callFlutterEchoEnumList(List<NIAnEnum?> enumList);
 
   @ObjCSelector('callFlutterEchoClassList:')
   @SwiftFunction('callFlutterEcho(classList:)')
-  List<JniAllNullableTypes?> callFlutterEchoClassList(
-      List<JniAllNullableTypes?> classList);
+  List<NIAllNullableTypes?> callFlutterEchoClassList(
+      List<NIAllNullableTypes?> classList);
 
   @ObjCSelector('callFlutterEchoNonNullEnumList:')
   @SwiftFunction('callFlutterEchoNonNull(enumList:)')
-  List<JniAnEnum> callFlutterEchoNonNullEnumList(List<JniAnEnum> enumList);
+  List<NIAnEnum> callFlutterEchoNonNullEnumList(List<NIAnEnum> enumList);
 
   @ObjCSelector('callFlutterEchoNonNullClassList:')
   @SwiftFunction('callFlutterEchoNonNull(classList:)')
-  List<JniAllNullableTypes> callFlutterEchoNonNullClassList(
-      List<JniAllNullableTypes> classList);
+  List<NIAllNullableTypes> callFlutterEchoNonNullClassList(
+      List<NIAllNullableTypes> classList);
 
   @ObjCSelector('callFlutterEchoMap:')
   @SwiftFunction('callFlutterEcho(_:)')
@@ -1003,13 +1000,13 @@ abstract class JniHostIntegrationCoreApi {
 
   @ObjCSelector('callFlutterEchoEnumMap:')
   @SwiftFunction('callFlutterEcho(enumMap:)')
-  Map<JniAnEnum?, JniAnEnum?> callFlutterEchoEnumMap(
-      Map<JniAnEnum?, JniAnEnum?> enumMap);
+  Map<NIAnEnum?, NIAnEnum?> callFlutterEchoEnumMap(
+      Map<NIAnEnum?, NIAnEnum?> enumMap);
 
   @ObjCSelector('callFlutterEchoClassMap:')
   @SwiftFunction('callFlutterEcho(classMap:)')
-  Map<int?, JniAllNullableTypes?> callFlutterEchoClassMap(
-      Map<int?, JniAllNullableTypes?> classMap);
+  Map<int?, NIAllNullableTypes?> callFlutterEchoClassMap(
+      Map<int?, NIAllNullableTypes?> classMap);
 
   @ObjCSelector('callFlutterEchoNonNullStringMap:')
   @SwiftFunction('callFlutterEchoNonNull(stringMap:)')
@@ -1022,21 +1019,21 @@ abstract class JniHostIntegrationCoreApi {
 
   @ObjCSelector('callFlutterEchoNonNullEnumMap:')
   @SwiftFunction('callFlutterEchoNonNull(enumMap:)')
-  Map<JniAnEnum, JniAnEnum> callFlutterEchoNonNullEnumMap(
-      Map<JniAnEnum, JniAnEnum> enumMap);
+  Map<NIAnEnum, NIAnEnum> callFlutterEchoNonNullEnumMap(
+      Map<NIAnEnum, NIAnEnum> enumMap);
 
   @ObjCSelector('callFlutterEchoNonNullClassMap:')
   @SwiftFunction('callFlutterEchoNonNull(classMap:)')
-  Map<int, JniAllNullableTypes> callFlutterEchoNonNullClassMap(
-      Map<int, JniAllNullableTypes> classMap);
+  Map<int, NIAllNullableTypes> callFlutterEchoNonNullClassMap(
+      Map<int, NIAllNullableTypes> classMap);
 
   @ObjCSelector('callFlutterEchoEnum:')
   @SwiftFunction('callFlutterEcho(_:)')
-  JniAnEnum callFlutterEchoEnum(JniAnEnum anEnum);
+  NIAnEnum callFlutterEchoEnum(NIAnEnum anEnum);
 
   @ObjCSelector('callFlutterEchoAnotherEnum:')
   @SwiftFunction('callFlutterEcho(_:)')
-  JniAnotherEnum callFlutterEchoJniAnotherEnum(JniAnotherEnum anotherEnum);
+  NIAnotherEnum callFlutterEchoNIAnotherEnum(NIAnotherEnum anotherEnum);
 
   @ObjCSelector('callFlutterEchoNullableBool:')
   @SwiftFunction('callFlutterEchoNullable(_:)')
@@ -1064,22 +1061,22 @@ abstract class JniHostIntegrationCoreApi {
 
   @ObjCSelector('callFlutterEchoNullableEnumList:')
   @SwiftFunction('callFlutterEchoNullable(enumList:)')
-  List<JniAnEnum?>? callFlutterEchoNullableEnumList(List<JniAnEnum?>? enumList);
+  List<NIAnEnum?>? callFlutterEchoNullableEnumList(List<NIAnEnum?>? enumList);
 
   @ObjCSelector('callFlutterEchoNullableClassList:')
   @SwiftFunction('callFlutterEchoNullable(classList:)')
-  List<JniAllNullableTypes?>? callFlutterEchoNullableClassList(
-      List<JniAllNullableTypes?>? classList);
+  List<NIAllNullableTypes?>? callFlutterEchoNullableClassList(
+      List<NIAllNullableTypes?>? classList);
 
   @ObjCSelector('callFlutterEchoNullableNonNullEnumList:')
   @SwiftFunction('callFlutterEchoNullableNonNull(enumList:)')
-  List<JniAnEnum>? callFlutterEchoNullableNonNullEnumList(
-      List<JniAnEnum>? enumList);
+  List<NIAnEnum>? callFlutterEchoNullableNonNullEnumList(
+      List<NIAnEnum>? enumList);
 
   @ObjCSelector('callFlutterEchoNullableNonNullClassList:')
   @SwiftFunction('callFlutterEchoNullableNonNull(classList:)')
-  List<JniAllNullableTypes>? callFlutterEchoNullableNonNullClassList(
-      List<JniAllNullableTypes>? classList);
+  List<NIAllNullableTypes>? callFlutterEchoNullableNonNullClassList(
+      List<NIAllNullableTypes>? classList);
 
   @ObjCSelector('callFlutterEchoNullableMap:')
   @SwiftFunction('callFlutterEchoNullable(_:)')
@@ -1096,13 +1093,13 @@ abstract class JniHostIntegrationCoreApi {
 
   @ObjCSelector('callFlutterEchoNullableEnumMap:')
   @SwiftFunction('callFlutterEchoNullable(enumMap:)')
-  Map<JniAnEnum?, JniAnEnum?>? callFlutterEchoNullableEnumMap(
-      Map<JniAnEnum?, JniAnEnum?>? enumMap);
+  Map<NIAnEnum?, NIAnEnum?>? callFlutterEchoNullableEnumMap(
+      Map<NIAnEnum?, NIAnEnum?>? enumMap);
 
   @ObjCSelector('callFlutterEchoNullableClassMap:')
   @SwiftFunction('callFlutterEchoNullable(classMap:)')
-  Map<int?, JniAllNullableTypes?>? callFlutterEchoNullableClassMap(
-      Map<int?, JniAllNullableTypes?>? classMap);
+  Map<int?, NIAllNullableTypes?>? callFlutterEchoNullableClassMap(
+      Map<int?, NIAllNullableTypes?>? classMap);
 
   @ObjCSelector('callFlutterEchoNullableNonNullStringMap:')
   @SwiftFunction('callFlutterEchoNullableNonNull(stringMap:)')
@@ -1115,22 +1112,21 @@ abstract class JniHostIntegrationCoreApi {
 
   @ObjCSelector('callFlutterEchoNullableNonNullEnumMap:')
   @SwiftFunction('callFlutterEchoNullableNonNull(enumMap:)')
-  Map<JniAnEnum, JniAnEnum>? callFlutterEchoNullableNonNullEnumMap(
-      Map<JniAnEnum, JniAnEnum>? enumMap);
+  Map<NIAnEnum, NIAnEnum>? callFlutterEchoNullableNonNullEnumMap(
+      Map<NIAnEnum, NIAnEnum>? enumMap);
 
   @ObjCSelector('callFlutterEchoNullableNonNullClassMap:')
   @SwiftFunction('callFlutterEchoNullableNonNull(classMap:)')
-  Map<int, JniAllNullableTypes>? callFlutterEchoNullableNonNullClassMap(
-      Map<int, JniAllNullableTypes>? classMap);
+  Map<int, NIAllNullableTypes>? callFlutterEchoNullableNonNullClassMap(
+      Map<int, NIAllNullableTypes>? classMap);
 
   @ObjCSelector('callFlutterEchoNullableEnum:')
   @SwiftFunction('callFlutterEchoNullable(_:)')
-  JniAnEnum? callFlutterEchoNullableEnum(JniAnEnum? anEnum);
+  NIAnEnum? callFlutterEchoNullableEnum(NIAnEnum? anEnum);
 
   @ObjCSelector('callFlutterEchoAnotherNullableEnum:')
   @SwiftFunction('callFlutterEchoNullable(_:)')
-  JniAnotherEnum? callFlutterEchoAnotherNullableEnum(
-      JniAnotherEnum? anotherEnum);
+  NIAnotherEnum? callFlutterEchoAnotherNullableEnum(NIAnotherEnum? anotherEnum);
 
   // @async
   // void callFlutterNoopAsync();
@@ -1147,18 +1143,18 @@ abstract class JniHostIntegrationCoreApi {
 // successfully in all languages (e.g., in Java where it requires having a
 // wrapper class).
 @HostApi()
-abstract class JniHostTrivialApi {
+abstract class NIHostTrivialApi {
   void noop();
 }
 
 /// A simple API implemented in some unit tests.
 //
-// This is separate from JniHostIntegrationCoreApi to avoid having to update a
+// This is separate from NIHostIntegrationCoreApi to avoid having to update a
 // lot of unit tests every time we add something to the integration test API.
 // TODO(stuartmorgan): Restructure the unit tests to reduce the number of
 // different APIs we define.
 @HostApi()
-abstract class JniHostSmallApi {
+abstract class NIHostSmallApi {
   @async
   @ObjCSelector('echoString:')
   String echo(String aString);
@@ -1170,7 +1166,7 @@ abstract class JniHostSmallApi {
 /// The core interface that the Dart platform_test code implements for host
 /// integration tests to call into.
 @FlutterApi()
-abstract class JniFlutterIntegrationCoreApi {
+abstract class NIFlutterIntegrationCoreApi {
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic calling.
   void noop();
@@ -1182,28 +1178,28 @@ abstract class JniFlutterIntegrationCoreApi {
   void throwErrorFromVoid();
 
   /// Returns the passed object, to test serialization and deserialization.
-  @ObjCSelector('echoJniAllTypes:')
+  @ObjCSelector('echoNIAllTypes:')
   @SwiftFunction('echo(_:)')
-  JniAllTypes echoJniAllTypes(JniAllTypes everything);
+  NIAllTypes echoNIAllTypes(NIAllTypes everything);
 
   /// Returns the passed object, to test serialization and deserialization.
-  @ObjCSelector('echoJniAllNullableTypes:')
+  @ObjCSelector('echoNIAllNullableTypes:')
   @SwiftFunction('echoNullable(_:)')
-  JniAllNullableTypes? echoJniAllNullableTypes(JniAllNullableTypes? everything);
+  NIAllNullableTypes? echoNIAllNullableTypes(NIAllNullableTypes? everything);
 
   /// Returns passed in arguments of multiple types.
   ///
   /// Tests multiple-arity FlutterApi handling.
   @ObjCSelector('sendMultipleNullableTypesABool:anInt:aString:')
   @SwiftFunction('sendMultipleNullableTypes(aBool:anInt:aString:)')
-  JniAllNullableTypes sendMultipleNullableTypes(
+  NIAllNullableTypes sendMultipleNullableTypes(
       bool? aNullableBool, int? aNullableInt, String? aNullableString);
 
   /// Returns the passed object, to test serialization and deserialization.
-  @ObjCSelector('echoJniAllNullableTypesWithoutRecursion:')
+  @ObjCSelector('echoNIAllNullableTypesWithoutRecursion:')
   @SwiftFunction('echoNullable(_:)')
-  JniAllNullableTypesWithoutRecursion? echoJniAllNullableTypesWithoutRecursion(
-      JniAllNullableTypesWithoutRecursion? everything);
+  NIAllNullableTypesWithoutRecursion? echoNIAllNullableTypesWithoutRecursion(
+      NIAllNullableTypesWithoutRecursion? everything);
 
   /// Returns passed in arguments of multiple types.
   ///
@@ -1211,7 +1207,7 @@ abstract class JniFlutterIntegrationCoreApi {
   @ObjCSelector('sendMultipleNullableTypesWithoutRecursionABool:anInt:aString:')
   @SwiftFunction(
       'sendMultipleNullableTypesWithoutRecursion(aBool:anInt:aString:)')
-  JniAllNullableTypesWithoutRecursion sendMultipleNullableTypesWithoutRecursion(
+  NIAllNullableTypesWithoutRecursion sendMultipleNullableTypesWithoutRecursion(
       bool? aNullableBool, int? aNullableInt, String? aNullableString);
 
   // ========== Non-nullable argument/return type tests ==========
@@ -1249,24 +1245,23 @@ abstract class JniFlutterIntegrationCoreApi {
   /// Returns the passed list, to test serialization and deserialization.
   @ObjCSelector('echoEnumList:')
   @SwiftFunction('echo(enumList:)')
-  List<JniAnEnum?> echoEnumList(List<JniAnEnum?> enumList);
+  List<NIAnEnum?> echoEnumList(List<NIAnEnum?> enumList);
 
   /// Returns the passed list, to test serialization and deserialization.
   @ObjCSelector('echoClassList:')
   @SwiftFunction('echo(classList:)')
-  List<JniAllNullableTypes?> echoClassList(
-      List<JniAllNullableTypes?> classList);
+  List<NIAllNullableTypes?> echoClassList(List<NIAllNullableTypes?> classList);
 
   /// Returns the passed list, to test serialization and deserialization.
   @ObjCSelector('echoNonNullEnumList:')
   @SwiftFunction('echoNonNull(enumList:)')
-  List<JniAnEnum> echoNonNullEnumList(List<JniAnEnum> enumList);
+  List<NIAnEnum> echoNonNullEnumList(List<NIAnEnum> enumList);
 
   /// Returns the passed list, to test serialization and deserialization.
   @ObjCSelector('echoNonNullClassList:')
   @SwiftFunction('echoNonNull(classList:)')
-  List<JniAllNullableTypes> echoNonNullClassList(
-      List<JniAllNullableTypes> classList);
+  List<NIAllNullableTypes> echoNonNullClassList(
+      List<NIAllNullableTypes> classList);
 
   /// Returns the passed map, to test serialization and deserialization.
   @ObjCSelector('echoMap:')
@@ -1286,13 +1281,13 @@ abstract class JniFlutterIntegrationCoreApi {
   /// Returns the passed map, to test serialization and deserialization.
   @ObjCSelector('echoEnumMap:')
   @SwiftFunction('echo(enumMap:)')
-  Map<JniAnEnum?, JniAnEnum?> echoEnumMap(Map<JniAnEnum?, JniAnEnum?> enumMap);
+  Map<NIAnEnum?, NIAnEnum?> echoEnumMap(Map<NIAnEnum?, NIAnEnum?> enumMap);
 
   /// Returns the passed map, to test serialization and deserialization.
   @ObjCSelector('echoClassMap:')
   @SwiftFunction('echo(classMap:)')
-  Map<int?, JniAllNullableTypes?> echoClassMap(
-      Map<int?, JniAllNullableTypes?> classMap);
+  Map<int?, NIAllNullableTypes?> echoClassMap(
+      Map<int?, NIAllNullableTypes?> classMap);
 
   /// Returns the passed map, to test serialization and deserialization.
   @ObjCSelector('echoNonNullStringMap:')
@@ -1307,24 +1302,23 @@ abstract class JniFlutterIntegrationCoreApi {
   /// Returns the passed map, to test serialization and deserialization.
   @ObjCSelector('echoNonNullEnumMap:')
   @SwiftFunction('echoNonNull(enumMap:)')
-  Map<JniAnEnum, JniAnEnum> echoNonNullEnumMap(
-      Map<JniAnEnum, JniAnEnum> enumMap);
+  Map<NIAnEnum, NIAnEnum> echoNonNullEnumMap(Map<NIAnEnum, NIAnEnum> enumMap);
 
   /// Returns the passed map, to test serialization and deserialization.
   @ObjCSelector('echoNonNullClassMap:')
   @SwiftFunction('echoNonNull(classMap:)')
-  Map<int, JniAllNullableTypes> echoNonNullClassMap(
-      Map<int, JniAllNullableTypes> classMap);
+  Map<int, NIAllNullableTypes> echoNonNullClassMap(
+      Map<int, NIAllNullableTypes> classMap);
 
   /// Returns the passed enum to test serialization and deserialization.
   @ObjCSelector('echoEnum:')
   @SwiftFunction('echo(_:)')
-  JniAnEnum echoEnum(JniAnEnum anEnum);
+  NIAnEnum echoEnum(NIAnEnum anEnum);
 
   /// Returns the passed enum to test serialization and deserialization.
   @ObjCSelector('echoAnotherEnum:')
   @SwiftFunction('echo(_:)')
-  JniAnotherEnum echoJniAnotherEnum(JniAnotherEnum anotherEnum);
+  NIAnotherEnum echoNIAnotherEnum(NIAnotherEnum anotherEnum);
 
   // ========== Nullable argument/return type tests ==========
 
@@ -1361,24 +1355,24 @@ abstract class JniFlutterIntegrationCoreApi {
   /// Returns the passed list, to test serialization and deserialization.
   @ObjCSelector('echoNullableEnumList:')
   @SwiftFunction('echoNullable(enumList:)')
-  List<JniAnEnum?>? echoNullableEnumList(List<JniAnEnum?>? enumList);
+  List<NIAnEnum?>? echoNullableEnumList(List<NIAnEnum?>? enumList);
 
   /// Returns the passed list, to test serialization and deserialization.
   @ObjCSelector('echoNullableClassList:')
   @SwiftFunction('echoNullable(classList:)')
-  List<JniAllNullableTypes?>? echoNullableClassList(
-      List<JniAllNullableTypes?>? classList);
+  List<NIAllNullableTypes?>? echoNullableClassList(
+      List<NIAllNullableTypes?>? classList);
 
   /// Returns the passed list, to test serialization and deserialization.
   @ObjCSelector('echoNullableNonNullEnumList:')
   @SwiftFunction('echoNullableNonNull(enumList:)')
-  List<JniAnEnum>? echoNullableNonNullEnumList(List<JniAnEnum>? enumList);
+  List<NIAnEnum>? echoNullableNonNullEnumList(List<NIAnEnum>? enumList);
 
   /// Returns the passed list, to test serialization and deserialization.
   @ObjCSelector('echoNullableNonNullClassList:')
   @SwiftFunction('echoNullableNonNull(classList:)')
-  List<JniAllNullableTypes>? echoNullableNonNullClassList(
-      List<JniAllNullableTypes>? classList);
+  List<NIAllNullableTypes>? echoNullableNonNullClassList(
+      List<NIAllNullableTypes>? classList);
 
   /// Returns the passed map, to test serialization and deserialization.
   @ObjCSelector('echoNullableMap:')
@@ -1399,14 +1393,14 @@ abstract class JniFlutterIntegrationCoreApi {
   /// Returns the passed map, to test serialization and deserialization.
   @ObjCSelector('echoNullableEnumMap:')
   @SwiftFunction('echoNullable(enumMap:)')
-  Map<JniAnEnum?, JniAnEnum?>? echoNullableEnumMap(
-      Map<JniAnEnum?, JniAnEnum?>? enumMap);
+  Map<NIAnEnum?, NIAnEnum?>? echoNullableEnumMap(
+      Map<NIAnEnum?, NIAnEnum?>? enumMap);
 
   /// Returns the passed map, to test serialization and deserialization.
   @ObjCSelector('echoNullableClassMap:')
   @SwiftFunction('echoNullable(classMap:)')
-  Map<int?, JniAllNullableTypes?>? echoNullableClassMap(
-      Map<int?, JniAllNullableTypes?>? classMap);
+  Map<int?, NIAllNullableTypes?>? echoNullableClassMap(
+      Map<int?, NIAllNullableTypes?>? classMap);
 
   /// Returns the passed map, to test serialization and deserialization.
   @ObjCSelector('echoNullableNonNullStringMap:')
@@ -1422,24 +1416,24 @@ abstract class JniFlutterIntegrationCoreApi {
   /// Returns the passed map, to test serialization and deserialization.
   @ObjCSelector('echoNullableNonNullEnumMap:')
   @SwiftFunction('echoNullableNonNull(enumMap:)')
-  Map<JniAnEnum, JniAnEnum>? echoNullableNonNullEnumMap(
-      Map<JniAnEnum, JniAnEnum>? enumMap);
+  Map<NIAnEnum, NIAnEnum>? echoNullableNonNullEnumMap(
+      Map<NIAnEnum, NIAnEnum>? enumMap);
 
   /// Returns the passed map, to test serialization and deserialization.
   @ObjCSelector('echoNullableNonNullClassMap:')
   @SwiftFunction('echoNullableNonNull(classMap:)')
-  Map<int, JniAllNullableTypes>? echoNullableNonNullClassMap(
-      Map<int, JniAllNullableTypes>? classMap);
+  Map<int, NIAllNullableTypes>? echoNullableNonNullClassMap(
+      Map<int, NIAllNullableTypes>? classMap);
 
   /// Returns the passed enum to test serialization and deserialization.
   @ObjCSelector('echoNullableEnum:')
   @SwiftFunction('echoNullable(_:)')
-  JniAnEnum? echoNullableEnum(JniAnEnum? anEnum);
+  NIAnEnum? echoNullableEnum(NIAnEnum? anEnum);
 
   /// Returns the passed enum to test serialization and deserialization.
   @ObjCSelector('echoAnotherNullableEnum:')
   @SwiftFunction('echoNullable(_:)')
-  JniAnotherEnum? echoAnotherNullableEnum(JniAnotherEnum? anotherEnum);
+  NIAnotherEnum? echoAnotherNullableEnum(NIAnotherEnum? anotherEnum);
 
   // ========== Async tests ==========
   // These are minimal since async FlutterApi only changes Dart generation.

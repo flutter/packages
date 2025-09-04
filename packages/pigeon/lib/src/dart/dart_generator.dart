@@ -194,7 +194,7 @@ class _FfiType {
 
   String get fullFfiName {
     if (type.baseName == 'List' || type.baseName == 'Map') {
-      return ffiName + ffiCollectionTypeAnnotations;
+      return ffiName;
     }
     return ffiName;
   }
@@ -263,7 +263,7 @@ class _FfiType {
     String asType = ' as ${getDartReturnType(true)}';
     String castCall = '';
     final String codecCall =
-        '_PigeonFfiCodec.readValue($varName)${_getForceNonNullSymbol(!type.isNullable)}';
+        '_PigeonFfiCodec.readValue($varName${type.isEnum ? ', ${type.baseName}' : ''})${_getForceNonNullSymbol(!type.isNullable)}';
     String primitiveGetter(String converter, bool classField) {
       return classField &&
               !type.isNullable &&
@@ -322,14 +322,17 @@ class _FfiType {
             type.baseName == 'bool')) {
       return name;
     }
-    return '_PigeonFfiCodec.writeValue<${getFfiCallReturnType(type.isNullable)}>($name)';
+    return '_PigeonFfiCodec.writeValue<${ffiType.ffiName}>($name)';
   }
 
   String getFfiCallReturnType(bool forceUnwrap, {bool forceNullable = false}) {
     if (type.isEnum && forceNullable) {
       return 'NSNumber?';
     }
-    return '$ffiName$ffiCollectionTypeAnnotations${_getNullableSymbol(forceNullable || type.isNullable)}';
+    if (type.baseName == 'List') {
+      return 'NSArray?';
+    }
+    return '$ffiName${_getNullableSymbol(forceNullable || type.isNullable)}';
   }
 
   String getDartReturnType(bool forceUnwrap) {
@@ -1708,12 +1711,10 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
                 final _FfiType returnType = _FfiType.fromTypeDeclaration(
                   method.returnType,
                 );
-                final String methodCallReturnString = returnType.type.isVoid &&
+                final String methodCallReturnString = returnType.type.isVoid ||
                         method.isAsynchronous
                     ? ''
-                    : (returnType.type.isVoid)
-                        ? ''
-                        : 'final ${returnType.getFfiCallReturnType(method.isAsynchronous, forceNullable: true)} res = ';
+                    : 'final ${returnType.getFfiCallReturnType(method.isAsynchronous, forceNullable: true)} res = ';
                 indent.writeln(
                     'final ffi_bridge.${generatorOptions.ffiErrorClassName} error = ffi_bridge.${generatorOptions.ffiErrorClassName}();');
                 indent.writeln(
@@ -2679,6 +2680,9 @@ class _PigeonFfiCodec {
           return value.doubleValue;
         case const (bool):
           return value.boolValue;
+        ${root.enums.map((Enum enumDefinition) => '''
+case const (${enumDefinition.name}):
+          return ${enumDefinition.name}.fromNSNumber(value);''').join('\n')}
         default:
           throw ArgumentError.value(value);
       }
@@ -2708,16 +2712,16 @@ class _PigeonFfiCodec {
       //     list[i] = value.as(NSDoubleArray.type)[i];
       //   }
       //   return list;
-    } else if (value is NSMutableArray) {
+    } else if (value is NSArray) {
       final List<Object?> res = <Object?>[];
       for (int i = 0; i < value.length; i++) {
-        res.add(readValue(value[i] as NSObject?));
+        res.add(readValue(value[i]));
       }
       return res;
     } else if (value is NSDictionary) {
       final Map<Object?, Object?> res = <Object?, Object?>{};
       for (final MapEntry<NSCopying?, ObjCObjectBase?> entry in value.entries) {
-        res[readValue(entry.key as NSObject?)] = readValue(entry.value as NSObject?);
+        res[readValue(entry.key)] = readValue(entry.value);
       }
       return res;
     } else if (ffi_bridge.NSNumberWrapper.isInstance(value)) {

@@ -10,13 +10,13 @@ summarizer:
 
 output:
   dart:
-    path: /Users/tarrinneal/work/packages/packages/pigeon/platform_tests/shared_test_plugin_code/lib/src/generated/jni_tests.gen.jni.dart
+    path: /Users/tarrinneal/work/packages/packages/pigeon/platform_tests/shared_test_plugin_code/lib/src/generated/ni_tests.gen.jni.dart
     structure: single_file
 
 log_level: all
 
 classes:
-  - 'JniHostIntegrationCoreApi'
-  - 'JniHostIntegrationCoreApiRegistrar'
-  - 'BasicClass'
-  - 'JniAnEnum'
+  - 'NIHostIntegrationCoreApi'
+  - 'NIHostIntegrationCoreApiRegistrar'
+  - 'NIAllTypes'
+  - 'NIAnEnum'

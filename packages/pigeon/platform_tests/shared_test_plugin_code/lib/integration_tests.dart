@@ -11,9 +11,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
-import 'ffi_integration_tests.dart' as ffi_tests
-    show TargetGenerator, runPigeonIntegrationTests;
 import 'generated.dart';
+import 'ni_integration_tests.dart' as ffi_tests
+    show TargetGenerator, runPigeonIntegrationTests;
 import 'test_types.dart';
 
 /// Possible host languages that test can target.
