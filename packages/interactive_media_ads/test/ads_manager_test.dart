@@ -102,6 +102,15 @@ void main() {
     final AdsManager manager = createAdsManager(platformManager);
     await manager.destroy();
   });
+
+  test('adCuePoints', () async {
+    final TestAdsManager platformManager = TestAdsManager(
+      adCuePoints: const <Duration>[Duration(seconds: 5)],
+    );
+
+    final AdsManager manager = createAdsManager(platformManager);
+    expect(platformManager.adCuePoints, manager.adCuePoints);
+  });
 }
 
 AdsManager createAdsManager(PlatformAdsManager platformManager) {

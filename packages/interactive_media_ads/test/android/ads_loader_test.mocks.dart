@@ -434,6 +434,15 @@ class MockAdsLoadedListener extends _i1.Mock implements _i2.AdsLoadedListener {
 /// See the documentation for Mockito's code generation for more information.
 class MockAdsManager extends _i1.Mock implements _i2.AdsManager {
   @override
+  List<double> get adCuePoints =>
+      (super.noSuchMethod(
+            Invocation.getter(#adCuePoints),
+            returnValue: <double>[],
+            returnValueForMissingStub: <double>[],
+          )
+          as List<double>);
+
+  @override
   _i2.PigeonInstanceManager get pigeon_instanceManager =>
       (super.noSuchMethod(
             Invocation.getter(#pigeon_instanceManager),
@@ -474,17 +483,6 @@ class MockAdsManager extends _i1.Mock implements _i2.AdsManager {
             returnValueForMissingStub: _i5.Future<void>.value(),
           )
           as _i5.Future<void>);
-
-  @override
-  _i5.Future<List<double>> getAdCuePoints() =>
-      (super.noSuchMethod(
-            Invocation.method(#getAdCuePoints, []),
-            returnValue: _i5.Future<List<double>>.value(<double>[]),
-            returnValueForMissingStub: _i5.Future<List<double>>.value(
-              <double>[],
-            ),
-          )
-          as _i5.Future<List<double>>);
 
   @override
   _i5.Future<void> resume() =>
