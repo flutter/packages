@@ -208,6 +208,43 @@ void main() {
         maxScrolls: 1000,
       );
     });
+
+    testWidgets('MergeSemantics is always present to avoid duplicate nodes', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Column(
+              children: <Widget>[
+                WebLinkDelegate(
+                  TestLinkInfo(
+                    uri: Uri.parse('https://dart.dev/xyz'),
+                    target: LinkTarget.blank,
+                    builder: (BuildContext context, FollowLink? followLink) {
+                      return ElevatedButton(
+                        onPressed: followLink,
+                        child: const Text('First Button'),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      final Finder buttonFinder = find.byType(ElevatedButton);
+      expect(buttonFinder, findsOneWidget);
+
+      final Element buttonElement = tester.element(buttonFinder);
+      final MergeSemantics? parentWidget =
+          buttonElement.findAncestorWidgetOfExactType<MergeSemantics>();
+      expect(parentWidget, isNotNull);
+    });
   });
 
   group('Follows links', () {
