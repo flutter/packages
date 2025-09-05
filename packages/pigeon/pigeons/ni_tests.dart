@@ -19,11 +19,11 @@ enum NIAnEnum {
   fourHundredTwentyTwo,
 }
 
-// // Enums require special logic, having multiple ensures that the logic can be
-// // replicated without collision.
-// enum NIAnotherEnum {
-//   justInCase,
-// }
+// Enums require special logic, having multiple ensures that the logic can be
+// replicated without collision.
+enum NIAnotherEnum {
+  justInCase,
+}
 
 // // This exists to show that unused data classes still generate.
 // class NIUnusedClass {
@@ -44,7 +44,7 @@ class NIAllTypes {
     // required this.a8ByteArray,
     // required this.aFloatArray,
     this.anEnum = NIAnEnum.one,
-    // this.anotherEnum = NIAnotherEnum.justInCase,
+    this.anotherEnum = NIAnotherEnum.justInCase,
     this.aString = '',
     // this.anObject = 0,
 
@@ -80,7 +80,7 @@ class NIAllTypes {
   // Int64List a8ByteArray;
   // Float64List aFloatArray;
   NIAnEnum anEnum;
-  // NIAnotherEnum anotherEnum;
+  NIAnotherEnum anotherEnum;
   String aString;
   // Object anObject;
 
@@ -436,10 +436,10 @@ abstract class NIHostIntegrationCoreApi {
   // @SwiftFunction('echo(_:)')
   NIAnEnum echoEnum(NIAnEnum anEnum);
 
-  // /// Returns the passed enum to test serialization and deserialization.
-  // @ObjCSelector('echoAnotherEnum:')
+  /// Returns the passed enum to test serialization and deserialization.
+  @ObjCSelector('echoAnotherEnum:')
   // @SwiftFunction('echo(_:)')
-  // NIAnotherEnum echoAnotherEnum(NIAnotherEnum anotherEnum);
+  NIAnotherEnum echoAnotherEnum(NIAnotherEnum anotherEnum);
 
   // /// Returns the default string.
   // @ObjCSelector('echoNamedDefaultString:')

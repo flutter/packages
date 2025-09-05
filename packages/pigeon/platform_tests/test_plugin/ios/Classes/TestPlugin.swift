@@ -1216,6 +1216,10 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
 }
 
 class NITestsClass: NSObject, NIHostIntegrationCoreApi {
+    func echoAnotherEnum(anotherEnum: NIAnotherEnum) throws -> NIAnotherEnum {
+        return anotherEnum
+    }
+    
 
   func echoAllTypes(everything: NIAllTypes) throws -> NIAllTypes {
     return everything

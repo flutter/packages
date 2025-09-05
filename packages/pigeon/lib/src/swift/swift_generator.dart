@@ -296,9 +296,10 @@ class _PigeonFfiCodec {
         return (value as! NSNumber).doubleValue
       } else if (type == "bool") {
         return (value as! NSNumber) == 1
+      }
       ${root.enums.map((Enum enumDefinition) {
       return '''
-      } else if (type == "${enumDefinition.name}") {
+       else if (type == "${enumDefinition.name}") {
         return ${enumDefinition.name}.init(rawValue: (value as! NSNumber).intValue)
       }''';
     }).join()}
@@ -366,9 +367,10 @@ class _PigeonFfiCodec {
         return value
       } else if (value is Int) {
         return value
+      }
       ${root.enums.map((Enum enumDefinition) {
       return '''
-      } else if (value is ${enumDefinition.name}) {
+      else if (value is ${enumDefinition.name}) {
         return (value as! ${enumDefinition.name}).rawValue
       }''';
     }).join()}

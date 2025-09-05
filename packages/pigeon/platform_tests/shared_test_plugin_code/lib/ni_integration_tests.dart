@@ -535,15 +535,15 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(receivedEnum, sentEnum);
     });
 
-//     testWidgets('enums serialize and deserialize correctly (again)',
-//         (WidgetTester _) async {
-//       final NIHostIntegrationCoreApiForNativeInterop? api =
-//           NIHostIntegrationCoreApiForNativeInterop.getInstance();
+    testWidgets('enums serialize and deserialize correctly (again)',
+        (WidgetTester _) async {
+      final NIHostIntegrationCoreApiForNativeInterop? api =
+          NIHostIntegrationCoreApiForNativeInterop.getInstance();
 
-//       const NIAnotherEnum sentEnum = NIAnotherEnum.justInCase;
-//       final NIAnotherEnum receivedEnum = api!.echoAnotherEnum(sentEnum);
-//       expect(receivedEnum, sentEnum);
-//     });
+      const NIAnotherEnum sentEnum = NIAnotherEnum.justInCase;
+      final NIAnotherEnum receivedEnum = api!.echoAnotherEnum(sentEnum);
+      expect(receivedEnum, sentEnum);
+    });
 
     testWidgets('multi word enums serialize and deserialize correctly',
         (WidgetTester _) async {

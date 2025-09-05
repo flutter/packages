@@ -20,3 +20,4 @@ classes:
   - 'NIHostIntegrationCoreApiRegistrar'
   - 'NIAllTypes'
   - 'NIAnEnum'
+  - 'NIAnotherEnum'

@@ -11,7 +11,8 @@ import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;
 import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer;
 import 'package:flutter/services.dart';
 
-sealed class PlatformEvent {}
+sealed class PlatformEvent {
+}
 
 class IntEvent extends PlatformEvent {
   IntEvent({
@@ -27,8 +28,7 @@ class IntEvent extends PlatformEvent {
   }
 
   Object encode() {
-    return _toList();
-  }
+    return _toList();  }
 
   static IntEvent decode(Object result) {
     result as List<Object?>;
@@ -46,12 +46,14 @@ class IntEvent extends PlatformEvent {
     if (identical(this, other)) {
       return true;
     }
-    return data == other.data;
+    return 
+      data == other.data;
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList());
+  int get hashCode => Object.hashAll(_toList())
+;
 }
 
 class StringEvent extends PlatformEvent {
@@ -68,8 +70,7 @@ class StringEvent extends PlatformEvent {
   }
 
   Object encode() {
-    return _toList();
-  }
+    return _toList();  }
 
   static StringEvent decode(Object result) {
     result as List<Object?>;
@@ -87,13 +88,16 @@ class StringEvent extends PlatformEvent {
     if (identical(this, other)) {
       return true;
     }
-    return data == other.data;
+    return 
+      data == other.data;
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList());
+  int get hashCode => Object.hashAll(_toList())
+;
 }
+
 
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
@@ -102,10 +106,10 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
-    } else if (value is IntEvent) {
+    }    else if (value is IntEvent) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
-    } else if (value is StringEvent) {
+    }    else if (value is StringEvent) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
     } else {
@@ -116,9 +120,9 @@ class _PigeonCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 129:
+      case 129: 
         return IntEvent.decode(readValue(buffer)!);
-      case 130:
+      case 130: 
         return StringEvent.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -126,17 +130,16 @@ class _PigeonCodec extends StandardMessageCodec {
   }
 }
 
-const StandardMethodCodec pigeonMethodCodec =
-    StandardMethodCodec(_PigeonCodec());
+const StandardMethodCodec pigeonMethodCodec = StandardMethodCodec(_PigeonCodec());
 
-Stream<PlatformEvent> streamEvents({String instanceName = ''}) {
+Stream<PlatformEvent> streamEvents( {String instanceName = ''}) {
   if (instanceName.isNotEmpty) {
     instanceName = '.$instanceName';
   }
-  final EventChannel streamEventsChannel = EventChannel(
-      'dev.flutter.pigeon.pigeon_example_package.EventChannelMethods.streamEvents$instanceName',
-      pigeonMethodCodec);
+  final EventChannel streamEventsChannel =
+      EventChannel('dev.flutter.pigeon.pigeon_example_package.EventChannelMethods.streamEvents$instanceName', pigeonMethodCodec);
   return streamEventsChannel.receiveBroadcastStream().map((dynamic event) {
     return event as PlatformEvent;
   });
 }
+    

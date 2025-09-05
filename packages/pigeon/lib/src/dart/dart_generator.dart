@@ -2633,6 +2633,7 @@ class _PigeonJniCodec {
       indent.format('''
         case ${typeNum++}:
           return ${anEnum.name}.fromNSNumber(value.number);''');
+    }
       indent.dec(2);
       indent.format('''
           default:
@@ -2654,15 +2655,16 @@ class _PigeonJniCodec {
         indent.format('''
         case ${anEnum.name} _:
           return ffi_bridge.NSNumberWrapper.alloc().initWithNumber(value.toNSNumber(), type: ${typeNum++});''');
+    }
         indent.format('''
           default:
             throw ArgumentError.value(value);
         }
       }
 ''');
-      }
-    }
+      
   }
+  
 
   void _writeFfiCodec(Indent indent, Root root) {
     indent.newln();

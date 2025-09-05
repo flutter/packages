@@ -97,8 +97,13 @@ class _PigeonJniCodec {
       return res;
     } else if (value.isA<jni_bridge.NIAllTypes>(jni_bridge.NIAllTypes.type)) {
       return NIAllTypes.fromJni(value.as(jni_bridge.NIAllTypes.type));
+        
     } else if (value.isA<jni_bridge.NIAnEnum>(jni_bridge.NIAnEnum.type)) {
       return NIAnEnum.fromJni(value.as(jni_bridge.NIAnEnum.type));
+    } else if (value
+        .isA<jni_bridge.NIAnotherEnum>(jni_bridge.NIAnotherEnum.type)) {
+      return NIAnotherEnum.fromJni(value.as(jni_bridge.NIAnotherEnum.type));
+        
     } else {
       throw ArgumentError.value(value);
     }
@@ -144,6 +149,7 @@ class _PigeonJniCodec {
         array[i] = value[i];
       }
       return array as T;
+    
     } else if (value is List<Object>) {
       final JList<JObject> res = JList<JObject>.array(JObject.type);
       for (int i = 0; i < value.length; i++) {
@@ -156,6 +162,7 @@ class _PigeonJniCodec {
         res.add(writeValue(value[i]));
       }
       return res as T;
+    
     } else if (value is Map<Object, Object>) {
       final JMap<JObject, JObject> res =
           JMap<JObject, JObject>.hash(JObject.type, JObject.type);
@@ -177,15 +184,19 @@ class _PigeonJniCodec {
         res[writeValue(entry.key)] = writeValue(entry.value);
       }
       return res as T;
-      // } else if (value is NIAllTypes) {
-      //   return value.toJni() as T;
+      //   } else if (value is NIAllTypes) {
+      // return value.toJni() as T;
     } else if (value is NIAnEnum) {
       return value.toJni() as T;
+    } else if (value is NIAnotherEnum) {
+      return value.toJni() as T;
+        
     } else {
       throw ArgumentError.value(value);
     }
   }
 }
+    
 
 class _PigeonFfiCodec {
   static Object? readValue(ObjCObjectBase? value, [Type? outType]) {
@@ -202,6 +213,8 @@ class _PigeonFfiCodec {
           return value.boolValue;
         case const (NIAnEnum):
           return NIAnEnum.fromNSNumber(value);
+case const (NIAnotherEnum):
+          return NIAnotherEnum.fromNSNumber(value);
         default:
           throw ArgumentError.value(value);
       }
@@ -248,8 +261,12 @@ class _PigeonFfiCodec {
           ffi_bridge.NSNumberWrapper.castFrom(value));
     } else if (ffi_bridge.NIAllTypes.isInstance(value)) {
       return NIAllTypes.fromFfi(ffi_bridge.NIAllTypes.castFrom(value));
+        
     } else if (value is ffi_bridge.NIAnEnum) {
       return NIAnEnum.fromFfi(value as ffi_bridge.NIAnEnum);
+      //       } else if (value is ffi_bridge.NIAnotherEnum) {
+      // return NIAnotherEnum.fromFfi(value as ffi_bridge.NIAnotherEnum);
+        
     } else {
       throw ArgumentError.value(value);
     }
@@ -322,11 +339,13 @@ class _PigeonFfiCodec {
       return res as T;
     } else if (value is NIAllTypes) {
       return value.toFfi() as T;
+        
     } else {
       throw ArgumentError.value(value);
     }
   }
 }
+    
 
 Object? convertNSNumberWrapperToDart(ffi_bridge.NSNumberWrapper value) {
   switch (value.type) {
@@ -338,6 +357,8 @@ Object? convertNSNumberWrapperToDart(ffi_bridge.NSNumberWrapper value) {
       return value.number.boolValue;
     case 4:
       return NIAnEnum.fromNSNumber(value.number);
+    case 5:
+      return NIAnotherEnum.fromNSNumber(value.number);
     default:
       throw ArgumentError.value(value);
   }
@@ -358,6 +379,9 @@ ffi_bridge.NSNumberWrapper convertNSNumberWrapperToFfi(Object value) {
     case NIAnEnum _:
       return ffi_bridge.NSNumberWrapper.alloc()
           .initWithNumber(value.toNSNumber(), type: 4);
+    case NIAnotherEnum _:
+      return ffi_bridge.NSNumberWrapper.alloc()
+          .initWithNumber(value.toNSNumber(), type: 5);
     default:
       throw ArgumentError.value(value);
   }
@@ -373,6 +397,7 @@ void _throwNoInstanceError(String channelName) {
   final String error = 'No instance $nameString has been registered.';
   throw ArgumentError(error);
 }
+
 
 enum NIAnEnum {
   one,
@@ -406,6 +431,34 @@ enum NIAnEnum {
   }
 }
 
+enum NIAnotherEnum {
+  justInCase;
+
+  jni_bridge.NIAnotherEnum toJni() {
+    return jni_bridge.NIAnotherEnum.Companion.ofRaw(index)!;
+  }
+
+  static NIAnotherEnum? fromJni(jni_bridge.NIAnotherEnum? jniEnum) {
+    return jniEnum == null ? null : NIAnotherEnum.values[jniEnum.getRaw()];
+  }
+
+  // ffi_bridge.NIAnotherEnum toFfi() {
+  //   return ffi_bridge.NIAnotherEnum.values[index];
+  // }
+
+  // static NIAnotherEnum fromFfi(ffi_bridge.NIAnotherEnum ffiEnum) {
+  //   return NIAnotherEnum.values[ffiEnum.index];
+  // }
+
+  NSNumber toNSNumber() {
+    return NSNumber.alloc().initWithLong(index);
+  }
+
+  static NIAnotherEnum? fromNSNumber(NSNumber? ffiEnum) {
+    return ffiEnum == null ? null : NIAnotherEnum.values[ffiEnum.intValue];
+  }
+}
+
 /// A class containing all supported types.
 class NIAllTypes {
   NIAllTypes({
@@ -414,6 +467,7 @@ class NIAllTypes {
     this.anInt64 = 0,
     this.aDouble = 0,
     this.anEnum = NIAnEnum.one,
+    this.anotherEnum = NIAnotherEnum.justInCase,
     this.aString = '',
     required this.list,
     required this.map,
@@ -429,6 +483,8 @@ class NIAllTypes {
 
   NIAnEnum anEnum;
 
+  NIAnotherEnum anotherEnum;
+
   String aString;
 
   List<Object?> list;
@@ -442,6 +498,7 @@ class NIAllTypes {
       anInt64,
       aDouble,
       anEnum,
+      anotherEnum,
       aString,
       list,
       map,
@@ -449,12 +506,13 @@ class NIAllTypes {
   }
 
   // jni_bridge.NIAllTypes toJni() {
-  //   return jni_bridge.NIAllTypes(
+  //   return jni_bridge.NIAllTypes (
   //     aBool: aBool,
   //     anInt: anInt,
   //     anInt64: anInt64,
   //     aDouble: aDouble,
   //     anEnum: anEnum.toJni(),
+  //     anotherEnum: anotherEnum.toJni(),
   //     aString: _PigeonJniCodec.writeValue<JString>(aString),
   //     list: _PigeonJniCodec.writeValue<JList<JObject?>>(list),
   //     map: _PigeonJniCodec.writeValue<JMap<JObject, JObject?>>(map),
@@ -468,6 +526,7 @@ class NIAllTypes {
       anInt64: anInt64,
       aDouble: aDouble,
       anEnum: ffi_bridge.NIAnEnum.values[anEnum.index],
+      anotherEnum: ffi_bridge.NIAnotherEnum.values[anotherEnum.index],
       aString: _PigeonFfiCodec.writeValue<NSString>(aString),
       list: _PigeonFfiCodec.writeValue<NSMutableArray>(list),
       map: _PigeonFfiCodec.writeValue<NSDictionary>(map),
@@ -487,6 +546,7 @@ class NIAllTypes {
             anInt64: jniClass.getAnInt64(),
             aDouble: jniClass.getADouble(),
             anEnum: NIAnEnum.fromJni(jniClass.getAnEnum())!,
+            anotherEnum: NIAnotherEnum.fromJni(jniClass.getAnotherEnum())!,
             aString: jniClass.getAString().toDartString(releaseOriginal: true),
             list: (_PigeonJniCodec.readValue(jniClass.getList())!
                     as List<Object?>)
@@ -506,6 +566,7 @@ class NIAllTypes {
             anInt64: ffiClass.anInt64,
             aDouble: ffiClass.aDouble,
             anEnum: NIAnEnum.values[ffiClass.anEnum.index],
+            // anotherEnum: NIAnotherEnum.values[ffiClass.anotherEnum.index],
             aString: ffiClass.aString.toDartString(),
             list: (_PigeonFfiCodec.readValue(ffiClass.list)! as List<Object?>)
                 .cast<Object?>(),
@@ -523,9 +584,10 @@ class NIAllTypes {
       anInt64: result[2]! as int,
       aDouble: result[3]! as double,
       anEnum: result[4]! as NIAnEnum,
-      aString: result[5]! as String,
-      list: result[6]! as List<Object?>,
-      map: result[7]! as Map<Object?, Object?>,
+      anotherEnum: result[5]! as NIAnotherEnum,
+      aString: result[6]! as String,
+      list: result[7]! as List<Object?>,
+      map: result[8]! as Map<Object?, Object?>,
     );
   }
 
@@ -543,6 +605,7 @@ class NIAllTypes {
         anInt64 == other.anInt64 &&
         aDouble == other.aDouble &&
         anEnum == other.anEnum &&
+        anotherEnum == other.anotherEnum &&
         aString == other.aString &&
         _deepEquals(list, other.list) &&
         _deepEquals(map, other.map);
@@ -552,6 +615,7 @@ class NIAllTypes {
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode => Object.hashAll(_toList());
 }
+
 
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
@@ -563,8 +627,11 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is NIAnEnum) {
       buffer.putUint8(129);
       writeValue(buffer, value.index);
-    } else if (value is NIAllTypes) {
+    } else if (value is NIAnotherEnum) {
       buffer.putUint8(130);
+      writeValue(buffer, value.index);
+    } else if (value is NIAllTypes) {
+      buffer.putUint8(131);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -574,17 +641,19 @@ class _PigeonCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 129:
+      case 129: 
         final int? value = readValue(buffer) as int?;
         return value == null ? null : NIAnEnum.values[value];
-      case 130:
+      case 130: 
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : NIAnotherEnum.values[value];
+      case 131: 
         return NIAllTypes.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
   }
 }
-
 const String defaultInstanceName =
     'PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u';
 
@@ -925,6 +994,38 @@ class NIHostIntegrationCoreApiForNativeInterop {
     }
     throw Exception("this shouldn't be possible");
   }
+
+  NIAnotherEnum echoAnotherEnum(NIAnotherEnum anotherEnum) {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final NSNumber? res = _ffiApi.echoAnotherEnum(
+            ffi_bridge.NIAnotherEnum.values[anotherEnum.index],
+            wrappedError: error);
+        if (error.code != null) {
+          throw PlatformException(
+              code: error.code!.toDartString(),
+              message: error.message?.toDartString(),
+              details: error.details.toString());
+        } else {
+          final NIAnotherEnum dartTypeRes =
+              (_PigeonFfiCodec.readValue(res, NIAnotherEnum)! as NIAnotherEnum);
+          return dartTypeRes;
+        }
+      }
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    } catch (e) {
+      rethrow;
+    }
+    throw Exception("this shouldn't be possible");
+  }
+
 }
 
 /// The core interface that each host language plugin must implement in
@@ -941,6 +1042,7 @@ class NIHostIntegrationCoreApi {
         pigeonVar_messageChannelSuffix =
             messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '',
         _nativeInteropApi = nativeInteropApi;
+
 
   /// Creates an instance of [NIHostIntegrationCoreApi] that requests an instance of
   /// [NIHostIntegrationCoreApiForNativeInterop] from the host platform with a matching instance name
@@ -1334,6 +1436,42 @@ class NIHostIntegrationCoreApi {
       );
     } else {
       return (pigeonVar_replyList[0] as NIAnEnum?)!;
+    }
+  }
+
+  /// Returns the passed enum to test serialization and deserialization.
+  Future<NIAnotherEnum> echoAnotherEnum(NIAnotherEnum anotherEnum) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoAnotherEnum(anotherEnum);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAnotherEnum$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[anotherEnum]);
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as NIAnotherEnum?)!;
     }
   }
 }

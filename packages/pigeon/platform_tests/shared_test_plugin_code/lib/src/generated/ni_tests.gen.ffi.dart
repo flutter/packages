@@ -41,6 +41,18 @@ enum NIAnEnum {
       };
 }
 
+enum NIAnotherEnum {
+  NIAnotherEnumJustInCase(0);
+
+  final int value;
+  const NIAnotherEnum(this.value);
+
+  static NIAnotherEnum fromValue(int value) => switch (value) {
+        0 => NIAnotherEnumJustInCase,
+        _ => throw ArgumentError('Unknown value for NIAnotherEnum: $value'),
+      };
+}
+
 late final _class_NIAllTypes = objc.getClass("test_plugin.NIAllTypes");
 late final _sel_isKindOfClass_ = objc.registerName("isKindOfClass:");
 final _objc_msgSend_19nvye5 = objc.msgSendPointer
@@ -55,10 +67,10 @@ final _objc_msgSend_19nvye5 = objc.msgSendPointer
             ffi.Pointer<objc.ObjCSelector>, ffi.Pointer<objc.ObjCObject>)>();
 typedef instancetype = ffi.Pointer<objc.ObjCObject>;
 typedef Dartinstancetype = objc.ObjCObjectBase;
-late final _sel_initWithABool_anInt_anInt64_aDouble_anEnum_aString_list_map_ =
+late final _sel_initWithABool_anInt_anInt64_aDouble_anEnum_anotherEnum_aString_list_map_ =
     objc.registerName(
-        "initWithABool:anInt:anInt64:aDouble:anEnum:aString:list:map:");
-final _objc_msgSend_1f0nfjp = objc.msgSendPointer
+        "initWithABool:anInt:anInt64:aDouble:anEnum:anotherEnum:aString:list:map:");
+final _objc_msgSend_1q9tan4 = objc.msgSendPointer
     .cast<
         ffi.NativeFunction<
             ffi.Pointer<objc.ObjCObject> Function(
@@ -68,6 +80,7 @@ final _objc_msgSend_1f0nfjp = objc.msgSendPointer
                 ffi.Int64,
                 ffi.Int64,
                 ffi.Double,
+                ffi.Long,
                 ffi.Long,
                 ffi.Pointer<objc.ObjCObject>,
                 ffi.Pointer<objc.ObjCObject>,
@@ -80,6 +93,7 @@ final _objc_msgSend_1f0nfjp = objc.msgSendPointer
             int,
             int,
             double,
+            int,
             int,
             ffi.Pointer<objc.ObjCObject>,
             ffi.Pointer<objc.ObjCObject>,
@@ -159,6 +173,24 @@ final _objc_msgSend_d3bb7e = objc.msgSendPointer
             ffi.Pointer<objc.ObjCObject>, ffi.Pointer<objc.ObjCSelector>)>();
 late final _sel_setAnEnum_ = objc.registerName("setAnEnum:");
 final _objc_msgSend_15w00rc = objc.msgSendPointer
+    .cast<
+        ffi.NativeFunction<
+            ffi.Void Function(ffi.Pointer<objc.ObjCObject>,
+                ffi.Pointer<objc.ObjCSelector>, ffi.Long)>>()
+    .asFunction<
+        void Function(ffi.Pointer<objc.ObjCObject>,
+            ffi.Pointer<objc.ObjCSelector>, int)>();
+late final _sel_anotherEnum = objc.registerName("anotherEnum");
+final _objc_msgSend_1otznu6 = objc.msgSendPointer
+    .cast<
+        ffi.NativeFunction<
+            ffi.Long Function(ffi.Pointer<objc.ObjCObject>,
+                ffi.Pointer<objc.ObjCSelector>)>>()
+    .asFunction<
+        int Function(
+            ffi.Pointer<objc.ObjCObject>, ffi.Pointer<objc.ObjCSelector>)>();
+late final _sel_setAnotherEnum_ = objc.registerName("setAnotherEnum:");
+final _objc_msgSend_ih63eg = objc.msgSendPointer
     .cast<
         ffi.NativeFunction<
             ffi.Void Function(ffi.Pointer<objc.ObjCObject>,
@@ -328,23 +360,25 @@ class NIAllTypes extends objc.NSObject {
         obj.ref.pointer, _sel_isKindOfClass_, _class_NIAllTypes);
   }
 
-  /// initWithABool:anInt:anInt64:aDouble:anEnum:aString:list:map:
+  /// initWithABool:anInt:anInt64:aDouble:anEnum:anotherEnum:aString:list:map:
   NIAllTypes initWithABool(bool aBool,
       {required int anInt,
       required int anInt64,
       required double aDouble,
       required NIAnEnum anEnum,
+      required NIAnotherEnum anotherEnum,
       required objc.NSString aString,
       required objc.NSArray list,
       required objc.NSDictionary map}) {
-    final _ret = _objc_msgSend_1f0nfjp(
+    final _ret = _objc_msgSend_1q9tan4(
         this.ref.retainAndReturnPointer(),
-        _sel_initWithABool_anInt_anInt64_aDouble_anEnum_aString_list_map_,
+        _sel_initWithABool_anInt_anInt64_aDouble_anEnum_anotherEnum_aString_list_map_,
         aBool,
         anInt,
         anInt64,
         aDouble,
         anEnum.value,
+        anotherEnum.value,
         aString.ref.pointer,
         list.ref.pointer,
         map.ref.pointer);
@@ -402,6 +436,17 @@ class NIAllTypes extends objc.NSObject {
   /// setAnEnum:
   set anEnum(NIAnEnum value) {
     _objc_msgSend_15w00rc(this.ref.pointer, _sel_setAnEnum_, value.value);
+  }
+
+  /// anotherEnum
+  NIAnotherEnum get anotherEnum {
+    final _ret = _objc_msgSend_1otznu6(this.ref.pointer, _sel_anotherEnum);
+    return NIAnotherEnum.fromValue(_ret);
+  }
+
+  /// setAnotherEnum:
+  set anotherEnum(NIAnotherEnum value) {
+    _objc_msgSend_ih63eg(this.ref.pointer, _sel_setAnotherEnum_, value.value);
   }
 
   /// aString
@@ -700,6 +745,22 @@ final _objc_msgSend_1k0qzru = objc.msgSendPointer
             ffi.Pointer<objc.ObjCSelector>,
             int,
             ffi.Pointer<objc.ObjCObject>)>();
+late final _sel_echoAnotherEnum_wrappedError_ =
+    objc.registerName("echoAnotherEnum:wrappedError:");
+final _objc_msgSend_ladeuy = objc.msgSendPointer
+    .cast<
+        ffi.NativeFunction<
+            ffi.Pointer<objc.ObjCObject> Function(
+                ffi.Pointer<objc.ObjCObject>,
+                ffi.Pointer<objc.ObjCSelector>,
+                ffi.Long,
+                ffi.Pointer<objc.ObjCObject>)>>()
+    .asFunction<
+        ffi.Pointer<objc.ObjCObject> Function(
+            ffi.Pointer<objc.ObjCObject>,
+            ffi.Pointer<objc.ObjCSelector>,
+            int,
+            ffi.Pointer<objc.ObjCObject>)>();
 
 /// Generated setup class from Pigeon to register implemented NIHostIntegrationCoreApi classes.
 class NIHostIntegrationCoreApiSetup extends objc.NSObject {
@@ -933,6 +994,26 @@ class NIHostIntegrationCoreApiSetup extends objc.NSObject {
         this.ref.pointer,
         _sel_echoEnumWithAnEnum_wrappedError_,
         anEnum.value,
+        wrappedError.ref.pointer);
+    return _ret.address == 0
+        ? null
+        : objc.NSNumber.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// Returns the passed enum to test serialization and deserialization.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  objc.NSNumber? echoAnotherEnum(NIAnotherEnum anotherEnum,
+      {required NiTestsError wrappedError}) {
+    objc.checkOsVersionInternal(
+        'NIHostIntegrationCoreApiSetup.echoAnotherEnum:wrappedError:',
+        iOS: (false, (13, 0, 0)),
+        macOS: (false, (16, 0, 0)));
+    final _ret = _objc_msgSend_ladeuy(
+        this.ref.pointer,
+        _sel_echoAnotherEnum_wrappedError_,
+        anotherEnum.value,
         wrappedError.ref.pointer);
     return _ret.address == 0
         ? null

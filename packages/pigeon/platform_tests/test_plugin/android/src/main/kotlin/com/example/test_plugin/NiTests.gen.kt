@@ -60,6 +60,16 @@ enum class NIAnEnum(val raw: Int) {
   }
 }
 
+enum class NIAnotherEnum(val raw: Int) {
+  JUST_IN_CASE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): NIAnotherEnum? {
+      return entries.firstOrNull { it.raw == raw }
+    }
+  }
+}
+
 /**
  * A class containing all supported types.
  *
@@ -71,6 +81,7 @@ data class NIAllTypes(
     val anInt64: Long,
     val aDouble: Double,
     val anEnum: NIAnEnum,
+    val anotherEnum: NIAnotherEnum,
     val aString: String,
     val list: List<Any?>,
     val map: Map<Any, Any?>
@@ -82,10 +93,11 @@ data class NIAllTypes(
       val anInt64 = pigeonVar_list[2] as Long
       val aDouble = pigeonVar_list[3] as Double
       val anEnum = pigeonVar_list[4] as NIAnEnum
-      val aString = pigeonVar_list[5] as String
-      val list = pigeonVar_list[6] as List<Any?>
-      val map = pigeonVar_list[7] as Map<Any, Any?>
-      return NIAllTypes(aBool, anInt, anInt64, aDouble, anEnum, aString, list, map)
+      val anotherEnum = pigeonVar_list[5] as NIAnotherEnum
+      val aString = pigeonVar_list[6] as String
+      val list = pigeonVar_list[7] as List<Any?>
+      val map = pigeonVar_list[8] as Map<Any, Any?>
+      return NIAllTypes(aBool, anInt, anInt64, aDouble, anEnum, anotherEnum, aString, list, map)
     }
   }
 
@@ -96,6 +108,7 @@ data class NIAllTypes(
         anInt64,
         aDouble,
         anEnum,
+        anotherEnum,
         aString,
         list,
         map,
@@ -114,6 +127,7 @@ data class NIAllTypes(
         anInt64 == other.anInt64 &&
         aDouble == other.aDouble &&
         anEnum == other.anEnum &&
+        anotherEnum == other.anotherEnum &&
         aString == other.aString &&
         deepEqualsNiTests(list, other.list) &&
         deepEqualsNiTests(map, other.map)
@@ -147,6 +161,8 @@ abstract class NIHostIntegrationCoreApi {
   abstract fun echoMap(map: Map<Any?, Any?>): Map<Any?, Any?>
   /** Returns the passed enum to test serialization and deserialization. */
   abstract fun echoEnum(anEnum: NIAnEnum): NIAnEnum
+  /** Returns the passed enum to test serialization and deserialization. */
+  abstract fun echoAnotherEnum(anotherEnum: NIAnotherEnum): NIAnotherEnum
 }
 
 @Keep
@@ -270,6 +286,17 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
     api?.let {
       try {
         return api!!.echoEnum(anEnum)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed enum to test serialization and deserialization. */
+  override fun echoAnotherEnum(anotherEnum: NIAnotherEnum): NIAnotherEnum {
+    api?.let {
+      try {
+        return api!!.echoAnotherEnum(anotherEnum)
       } catch (e: Exception) {
         throw e
       }
