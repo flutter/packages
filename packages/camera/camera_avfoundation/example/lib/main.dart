@@ -585,6 +585,8 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
       }
 
       onNewCameraSelected(description);
+
+      showInSnackBar('Selected lens type: ${description.lensType.name}.');
     }
 
     if (_cameras.isEmpty) {
