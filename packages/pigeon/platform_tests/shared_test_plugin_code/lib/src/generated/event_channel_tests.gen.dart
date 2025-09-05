@@ -16,13 +16,14 @@ bool _deepEquals(Object? a, Object? b) {
   if (a is List && b is List) {
     return a.length == b.length &&
         a.indexed
-        .every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
+            .every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
   }
   if (a is Map && b is Map) {
     final Iterable<Object?> keys = (a as Map<Object?, Object?>).keys;
-    return a.length == b.length && keys.every((Object? key) =>
-        (b as Map<Object?, Object?>).containsKey(key) &&
-        _deepEquals(a[key], b[key]));
+    return a.length == b.length &&
+        keys.every((Object? key) =>
+            (b as Map<Object?, Object?>).containsKey(key) &&
+            _deepEquals(a[key], b[key]));
   }
   return a == b;
 }
@@ -174,7 +175,8 @@ class EventAllNullableTypes {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static EventAllNullableTypes decode(Object result) {
     result as List<Object?>;
@@ -201,15 +203,22 @@ class EventAllNullableTypes {
       objectList: (result[19] as List<Object?>?)?.cast<Object?>(),
       listList: (result[20] as List<Object?>?)?.cast<List<Object?>?>(),
       mapList: (result[21] as List<Object?>?)?.cast<Map<Object?, Object?>?>(),
-      recursiveClassList: (result[22] as List<Object?>?)?.cast<EventAllNullableTypes?>(),
+      recursiveClassList:
+          (result[22] as List<Object?>?)?.cast<EventAllNullableTypes?>(),
       map: result[23] as Map<Object?, Object?>?,
-      stringMap: (result[24] as Map<Object?, Object?>?)?.cast<String?, String?>(),
+      stringMap:
+          (result[24] as Map<Object?, Object?>?)?.cast<String?, String?>(),
       intMap: (result[25] as Map<Object?, Object?>?)?.cast<int?, int?>(),
-      enumMap: (result[26] as Map<Object?, Object?>?)?.cast<EventEnum?, EventEnum?>(),
-      objectMap: (result[27] as Map<Object?, Object?>?)?.cast<Object?, Object?>(),
-      listMap: (result[28] as Map<Object?, Object?>?)?.cast<int?, List<Object?>?>(),
-      mapMap: (result[29] as Map<Object?, Object?>?)?.cast<int?, Map<Object?, Object?>?>(),
-      recursiveClassMap: (result[30] as Map<Object?, Object?>?)?.cast<int?, EventAllNullableTypes?>(),
+      enumMap: (result[26] as Map<Object?, Object?>?)
+          ?.cast<EventEnum?, EventEnum?>(),
+      objectMap:
+          (result[27] as Map<Object?, Object?>?)?.cast<Object?, Object?>(),
+      listMap:
+          (result[28] as Map<Object?, Object?>?)?.cast<int?, List<Object?>?>(),
+      mapMap: (result[29] as Map<Object?, Object?>?)
+          ?.cast<int?, Map<Object?, Object?>?>(),
+      recursiveClassMap: (result[30] as Map<Object?, Object?>?)
+          ?.cast<int?, EventAllNullableTypes?>(),
     );
   }
 
@@ -222,48 +231,45 @@ class EventAllNullableTypes {
     if (identical(this, other)) {
       return true;
     }
-    return 
-      aNullableBool == other.aNullableBool
-      && aNullableInt == other.aNullableInt
-      && aNullableInt64 == other.aNullableInt64
-      && aNullableDouble == other.aNullableDouble
-      && _deepEquals(aNullableByteArray, other.aNullableByteArray)
-      && _deepEquals(aNullable4ByteArray, other.aNullable4ByteArray)
-      && _deepEquals(aNullable8ByteArray, other.aNullable8ByteArray)
-      && _deepEquals(aNullableFloatArray, other.aNullableFloatArray)
-      && aNullableEnum == other.aNullableEnum
-      && anotherNullableEnum == other.anotherNullableEnum
-      && aNullableString == other.aNullableString
-      && aNullableObject == other.aNullableObject
-      && allNullableTypes == other.allNullableTypes
-      && _deepEquals(list, other.list)
-      && _deepEquals(stringList, other.stringList)
-      && _deepEquals(intList, other.intList)
-      && _deepEquals(doubleList, other.doubleList)
-      && _deepEquals(boolList, other.boolList)
-      && _deepEquals(enumList, other.enumList)
-      && _deepEquals(objectList, other.objectList)
-      && _deepEquals(listList, other.listList)
-      && _deepEquals(mapList, other.mapList)
-      && _deepEquals(recursiveClassList, other.recursiveClassList)
-      && _deepEquals(map, other.map)
-      && _deepEquals(stringMap, other.stringMap)
-      && _deepEquals(intMap, other.intMap)
-      && _deepEquals(enumMap, other.enumMap)
-      && _deepEquals(objectMap, other.objectMap)
-      && _deepEquals(listMap, other.listMap)
-      && _deepEquals(mapMap, other.mapMap)
-      && _deepEquals(recursiveClassMap, other.recursiveClassMap);
+    return aNullableBool == other.aNullableBool &&
+        aNullableInt == other.aNullableInt &&
+        aNullableInt64 == other.aNullableInt64 &&
+        aNullableDouble == other.aNullableDouble &&
+        _deepEquals(aNullableByteArray, other.aNullableByteArray) &&
+        _deepEquals(aNullable4ByteArray, other.aNullable4ByteArray) &&
+        _deepEquals(aNullable8ByteArray, other.aNullable8ByteArray) &&
+        _deepEquals(aNullableFloatArray, other.aNullableFloatArray) &&
+        aNullableEnum == other.aNullableEnum &&
+        anotherNullableEnum == other.anotherNullableEnum &&
+        aNullableString == other.aNullableString &&
+        aNullableObject == other.aNullableObject &&
+        allNullableTypes == other.allNullableTypes &&
+        _deepEquals(list, other.list) &&
+        _deepEquals(stringList, other.stringList) &&
+        _deepEquals(intList, other.intList) &&
+        _deepEquals(doubleList, other.doubleList) &&
+        _deepEquals(boolList, other.boolList) &&
+        _deepEquals(enumList, other.enumList) &&
+        _deepEquals(objectList, other.objectList) &&
+        _deepEquals(listList, other.listList) &&
+        _deepEquals(mapList, other.mapList) &&
+        _deepEquals(recursiveClassList, other.recursiveClassList) &&
+        _deepEquals(map, other.map) &&
+        _deepEquals(stringMap, other.stringMap) &&
+        _deepEquals(intMap, other.intMap) &&
+        _deepEquals(enumMap, other.enumMap) &&
+        _deepEquals(objectMap, other.objectMap) &&
+        _deepEquals(listMap, other.listMap) &&
+        _deepEquals(mapMap, other.mapMap) &&
+        _deepEquals(recursiveClassMap, other.recursiveClassMap);
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
-sealed class PlatformEvent {
-}
+sealed class PlatformEvent {}
 
 class IntEvent extends PlatformEvent {
   IntEvent({
@@ -279,7 +285,8 @@ class IntEvent extends PlatformEvent {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static IntEvent decode(Object result) {
     result as List<Object?>;
@@ -297,14 +304,12 @@ class IntEvent extends PlatformEvent {
     if (identical(this, other)) {
       return true;
     }
-    return 
-      value == other.value;
+    return value == other.value;
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class StringEvent extends PlatformEvent {
@@ -321,7 +326,8 @@ class StringEvent extends PlatformEvent {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static StringEvent decode(Object result) {
     result as List<Object?>;
@@ -339,14 +345,12 @@ class StringEvent extends PlatformEvent {
     if (identical(this, other)) {
       return true;
     }
-    return 
-      value == other.value;
+    return value == other.value;
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class BoolEvent extends PlatformEvent {
@@ -363,7 +367,8 @@ class BoolEvent extends PlatformEvent {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static BoolEvent decode(Object result) {
     result as List<Object?>;
@@ -381,14 +386,12 @@ class BoolEvent extends PlatformEvent {
     if (identical(this, other)) {
       return true;
     }
-    return 
-      value == other.value;
+    return value == other.value;
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class DoubleEvent extends PlatformEvent {
@@ -405,7 +408,8 @@ class DoubleEvent extends PlatformEvent {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static DoubleEvent decode(Object result) {
     result as List<Object?>;
@@ -423,14 +427,12 @@ class DoubleEvent extends PlatformEvent {
     if (identical(this, other)) {
       return true;
     }
-    return 
-      value == other.value;
+    return value == other.value;
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class ObjectsEvent extends PlatformEvent {
@@ -447,7 +449,8 @@ class ObjectsEvent extends PlatformEvent {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static ObjectsEvent decode(Object result) {
     result as List<Object?>;
@@ -465,14 +468,12 @@ class ObjectsEvent extends PlatformEvent {
     if (identical(this, other)) {
       return true;
     }
-    return 
-      value == other.value;
+    return value == other.value;
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class EnumEvent extends PlatformEvent {
@@ -489,7 +490,8 @@ class EnumEvent extends PlatformEvent {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static EnumEvent decode(Object result) {
     result as List<Object?>;
@@ -507,14 +509,12 @@ class EnumEvent extends PlatformEvent {
     if (identical(this, other)) {
       return true;
     }
-    return 
-      value == other.value;
+    return value == other.value;
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class ClassEvent extends PlatformEvent {
@@ -531,7 +531,8 @@ class ClassEvent extends PlatformEvent {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static ClassEvent decode(Object result) {
     result as List<Object?>;
@@ -549,16 +550,13 @@ class ClassEvent extends PlatformEvent {
     if (identical(this, other)) {
       return true;
     }
-    return 
-      value == other.value;
+    return value == other.value;
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
-
 
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
@@ -567,34 +565,34 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
-    }    else if (value is EventEnum) {
+    } else if (value is EventEnum) {
       buffer.putUint8(129);
       writeValue(buffer, value.index);
-    }    else if (value is AnotherEventEnum) {
+    } else if (value is AnotherEventEnum) {
       buffer.putUint8(130);
       writeValue(buffer, value.index);
-    }    else if (value is EventAllNullableTypes) {
+    } else if (value is EventAllNullableTypes) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
-    }    else if (value is IntEvent) {
+    } else if (value is IntEvent) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
-    }    else if (value is StringEvent) {
+    } else if (value is StringEvent) {
       buffer.putUint8(133);
       writeValue(buffer, value.encode());
-    }    else if (value is BoolEvent) {
+    } else if (value is BoolEvent) {
       buffer.putUint8(134);
       writeValue(buffer, value.encode());
-    }    else if (value is DoubleEvent) {
+    } else if (value is DoubleEvent) {
       buffer.putUint8(135);
       writeValue(buffer, value.encode());
-    }    else if (value is ObjectsEvent) {
+    } else if (value is ObjectsEvent) {
       buffer.putUint8(136);
       writeValue(buffer, value.encode());
-    }    else if (value is EnumEvent) {
+    } else if (value is EnumEvent) {
       buffer.putUint8(137);
       writeValue(buffer, value.encode());
-    }    else if (value is ClassEvent) {
+    } else if (value is ClassEvent) {
       buffer.putUint8(138);
       writeValue(buffer, value.encode());
     } else {
@@ -605,27 +603,27 @@ class _PigeonCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 129: 
+      case 129:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : EventEnum.values[value];
-      case 130: 
+      case 130:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : AnotherEventEnum.values[value];
-      case 131: 
+      case 131:
         return EventAllNullableTypes.decode(readValue(buffer)!);
-      case 132: 
+      case 132:
         return IntEvent.decode(readValue(buffer)!);
-      case 133: 
+      case 133:
         return StringEvent.decode(readValue(buffer)!);
-      case 134: 
+      case 134:
         return BoolEvent.decode(readValue(buffer)!);
-      case 135: 
+      case 135:
         return DoubleEvent.decode(readValue(buffer)!);
-      case 136: 
+      case 136:
         return ObjectsEvent.decode(readValue(buffer)!);
-      case 137: 
+      case 137:
         return EnumEvent.decode(readValue(buffer)!);
-      case 138: 
+      case 138:
         return ClassEvent.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -633,38 +631,43 @@ class _PigeonCodec extends StandardMessageCodec {
   }
 }
 
-const StandardMethodCodec pigeonMethodCodec = StandardMethodCodec(_PigeonCodec());
+const StandardMethodCodec pigeonMethodCodec =
+    StandardMethodCodec(_PigeonCodec());
 
-Stream<int> streamInts( {String instanceName = ''}) {
+Stream<int> streamInts({String instanceName = ''}) {
   if (instanceName.isNotEmpty) {
     instanceName = '.$instanceName';
   }
-  final EventChannel streamIntsChannel =
-      EventChannel('dev.flutter.pigeon.pigeon_integration_tests.EventChannelMethods.streamInts$instanceName', pigeonMethodCodec);
+  final EventChannel streamIntsChannel = EventChannel(
+      'dev.flutter.pigeon.pigeon_integration_tests.EventChannelMethods.streamInts$instanceName',
+      pigeonMethodCodec);
   return streamIntsChannel.receiveBroadcastStream().map((dynamic event) {
     return event as int;
   });
 }
-    
-Stream<PlatformEvent> streamEvents( {String instanceName = ''}) {
+
+Stream<PlatformEvent> streamEvents({String instanceName = ''}) {
   if (instanceName.isNotEmpty) {
     instanceName = '.$instanceName';
   }
-  final EventChannel streamEventsChannel =
-      EventChannel('dev.flutter.pigeon.pigeon_integration_tests.EventChannelMethods.streamEvents$instanceName', pigeonMethodCodec);
+  final EventChannel streamEventsChannel = EventChannel(
+      'dev.flutter.pigeon.pigeon_integration_tests.EventChannelMethods.streamEvents$instanceName',
+      pigeonMethodCodec);
   return streamEventsChannel.receiveBroadcastStream().map((dynamic event) {
     return event as PlatformEvent;
   });
 }
-    
-Stream<int> streamConsistentNumbers( {String instanceName = ''}) {
+
+Stream<int> streamConsistentNumbers({String instanceName = ''}) {
   if (instanceName.isNotEmpty) {
     instanceName = '.$instanceName';
   }
-  final EventChannel streamConsistentNumbersChannel =
-      EventChannel('dev.flutter.pigeon.pigeon_integration_tests.EventChannelMethods.streamConsistentNumbers$instanceName', pigeonMethodCodec);
-  return streamConsistentNumbersChannel.receiveBroadcastStream().map((dynamic event) {
+  final EventChannel streamConsistentNumbersChannel = EventChannel(
+      'dev.flutter.pigeon.pigeon_integration_tests.EventChannelMethods.streamConsistentNumbers$instanceName',
+      pigeonMethodCodec);
+  return streamConsistentNumbersChannel
+      .receiveBroadcastStream()
+      .map((dynamic event) {
     return event as int;
   });
 }
-    

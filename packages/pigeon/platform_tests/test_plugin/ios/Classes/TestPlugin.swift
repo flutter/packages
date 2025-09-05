@@ -1216,10 +1216,31 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
 }
 
 class NITestsClass: NSObject, NIHostIntegrationCoreApi {
-    func echoAnotherEnum(anotherEnum: NIAnotherEnum) throws -> NIAnotherEnum {
-        return anotherEnum
-    }
-    
+  func echoAllNullableTypesWithoutRecursion(everything: NIAllNullableTypesWithoutRecursion?) throws
+    -> NIAllNullableTypesWithoutRecursion?
+  {
+    return everything
+  }
+
+  func echoNullableInt(aNullableInt: Int64?) throws -> Int64? {
+    return aNullableInt
+  }
+
+  func echoNullableDouble(aNullableDouble: Double?) throws -> Double? {
+    return aNullableDouble
+  }
+
+  func echoNullableBool(aNullableBool: Bool?) throws -> Bool? {
+    return aNullableBool
+  }
+
+  func echoNullableString(aNullableString: String?) throws -> String? {
+    return aNullableString
+  }
+
+  func echoAnotherEnum(anotherEnum: NIAnotherEnum) throws -> NIAnotherEnum {
+    return anotherEnum
+  }
 
   func echoAllTypes(everything: NIAllTypes) throws -> NIAllTypes {
     return everything

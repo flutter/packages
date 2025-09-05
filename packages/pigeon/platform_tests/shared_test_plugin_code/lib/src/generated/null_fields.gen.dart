@@ -19,7 +19,8 @@ PlatformException _createConnectionError(String channelName) {
   );
 }
 
-List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty = false}) {
+List<Object?> wrapResponse(
+    {Object? result, PlatformException? error, bool empty = false}) {
   if (empty) {
     return <Object?>[];
   }
@@ -33,13 +34,14 @@ bool _deepEquals(Object? a, Object? b) {
   if (a is List && b is List) {
     return a.length == b.length &&
         a.indexed
-        .every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
+            .every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
   }
   if (a is Map && b is Map) {
     final Iterable<Object?> keys = (a as Map<Object?, Object?>).keys;
-    return a.length == b.length && keys.every((Object? key) =>
-        (b as Map<Object?, Object?>).containsKey(key) &&
-        _deepEquals(a[key], b[key]));
+    return a.length == b.length &&
+        keys.every((Object? key) =>
+            (b as Map<Object?, Object?>).containsKey(key) &&
+            _deepEquals(a[key], b[key]));
   }
   return a == b;
 }
@@ -67,7 +69,8 @@ class NullFieldsSearchRequest {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static NullFieldsSearchRequest decode(Object result) {
     result as List<Object?>;
@@ -86,15 +89,12 @@ class NullFieldsSearchRequest {
     if (identical(this, other)) {
       return true;
     }
-    return 
-      query == other.query
-      && identifier == other.identifier;
+    return query == other.query && identifier == other.identifier;
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class NullFieldsSearchReply {
@@ -127,7 +127,8 @@ class NullFieldsSearchReply {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static NullFieldsSearchReply decode(Object result) {
     result as List<Object?>;
@@ -149,20 +150,17 @@ class NullFieldsSearchReply {
     if (identical(this, other)) {
       return true;
     }
-    return 
-      result == other.result
-      && error == other.error
-      && _deepEquals(indices, other.indices)
-      && request == other.request
-      && type == other.type;
+    return result == other.result &&
+        error == other.error &&
+        _deepEquals(indices, other.indices) &&
+        request == other.request &&
+        type == other.type;
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
-
 
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
@@ -171,13 +169,13 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
-    }    else if (value is NullFieldsSearchReplyType) {
+    } else if (value is NullFieldsSearchReplyType) {
       buffer.putUint8(129);
       writeValue(buffer, value.index);
-    }    else if (value is NullFieldsSearchRequest) {
+    } else if (value is NullFieldsSearchRequest) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    }    else if (value is NullFieldsSearchReply) {
+    } else if (value is NullFieldsSearchReply) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
     } else {
@@ -188,12 +186,12 @@ class _PigeonCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 129: 
+      case 129:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : NullFieldsSearchReplyType.values[value];
-      case 130: 
+      case 130:
         return NullFieldsSearchRequest.decode(readValue(buffer)!);
-      case 131: 
+      case 131:
         return NullFieldsSearchReply.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -206,26 +204,28 @@ class NullFieldsHostApi {
   /// available for dependency injection. If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
   NullFieldsHostApi({
-      BinaryMessenger? binaryMessenger, 
-      String messageChannelSuffix = '', 
-      })
-      : pigeonVar_binaryMessenger = binaryMessenger,
-        pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  })  : pigeonVar_binaryMessenger = binaryMessenger,
+        pigeonVar_messageChannelSuffix =
+            messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
 
   final BinaryMessenger? pigeonVar_binaryMessenger;
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
 
   final String pigeonVar_messageChannelSuffix;
 
-
   Future<NullFieldsSearchReply> search(NullFieldsSearchRequest nested) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.pigeon_integration_tests.NullFieldsHostApi.search$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NullFieldsHostApi.search$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[nested]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[nested]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -252,24 +252,29 @@ abstract class NullFieldsFlutterApi {
 
   NullFieldsSearchReply search(NullFieldsSearchRequest request);
 
-  static void setUp(NullFieldsFlutterApi? api, {
-    BinaryMessenger? binaryMessenger, 
+  static void setUp(
+    NullFieldsFlutterApi? api, {
+    BinaryMessenger? binaryMessenger,
     String messageChannelSuffix = '',
-  }) 
-{
-    messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+  }) {
+    messageChannelSuffix =
+        messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
     {
-      final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.NullFieldsFlutterApi.search$messageChannelSuffix', pigeonChannelCodec,
+      final BasicMessageChannel<
+          Object?> pigeonVar_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.pigeon_integration_tests.NullFieldsFlutterApi.search$messageChannelSuffix',
+          pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.pigeon_integration_tests.NullFieldsFlutterApi.search was null.');
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.NullFieldsFlutterApi.search was null.');
           final List<Object?> args = (message as List<Object?>?)!;
-          final NullFieldsSearchRequest? arg_request = (args[0] as NullFieldsSearchRequest?);
+          final NullFieldsSearchRequest? arg_request =
+              (args[0] as NullFieldsSearchRequest?);
           assert(arg_request != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.NullFieldsFlutterApi.search was null, expected non-null NullFieldsSearchRequest.');
           try {
@@ -277,8 +282,9 @@ abstract class NullFieldsFlutterApi {
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }

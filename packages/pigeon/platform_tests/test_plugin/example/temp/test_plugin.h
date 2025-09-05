@@ -303,6 +303,16 @@ typedef unsigned int swift_uint4  __attribute__((__ext_vector_type__(4)));
 
 #if defined(__OBJC__)
 
+/// A class containing all supported nullable types.
+/// The primary purpose for this class is to ensure coverage of Swift structs
+/// with nullable items, as the primary [NIAllNullableTypes] class is being used to
+/// test Swift classes.
+/// Generated class from Pigeon that represents data sent in messages.
+SWIFT_CLASS("_TtC11test_plugin34NIAllNullableTypesWithoutRecursion")
+@interface NIAllNullableTypesWithoutRecursion : NSObject
+- (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
+@end
+
 enum NIAnEnum : NSInteger;
 enum NIAnotherEnum : NSInteger;
 @class NSString;
@@ -365,7 +375,18 @@ SWIFT_CLASS("_TtC11test_plugin29NIHostIntegrationCoreApiSetup")
 /// Returns the passed enum to test serialization and deserialization.
 - (NSNumber * _Nullable)echoEnumWithAnEnum:(enum NIAnEnum)anEnum wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
 /// Returns the passed enum to test serialization and deserialization.
-- (NSNumber * _Nullable)echoAnotherEnum:(enum NIAnotherEnum)anotherEnum wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+- (NSNumber * _Nullable)echoAnotherEnumWithAnotherEnum:(enum NIAnotherEnum)anotherEnum wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+/// Returns the passed object, to test serialization and deserialization.
+/// Returns the passed object, to test serialization and deserialization.
+- (NIAllNullableTypesWithoutRecursion * _Nullable)echoAllNullableTypesWithoutRecursionWithEverything:(NIAllNullableTypesWithoutRecursion * _Nonnull)everything wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+/// Returns passed in int.
+- (NSNumber * _Nullable)echoNullableIntWithANullableInt:(NSNumber * _Nonnull)aNullableInt wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+/// Returns passed in double.
+- (NSNumber * _Nullable)echoNullableDoubleWithANullableDouble:(NSNumber * _Nonnull)aNullableDouble wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+/// Returns the passed in boolean.
+- (NSNumber * _Nullable)echoNullableBoolWithANullableBool:(NSNumber * _Nonnull)aNullableBool wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+/// Returns the passed in string.
+- (NSString * _Nullable)echoNullableStringWithANullableString:(NSString * _Nonnull)aNullableString wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
 @end
 
 SWIFT_CLASS("_TtC11test_plugin15NSNumberWrapper")

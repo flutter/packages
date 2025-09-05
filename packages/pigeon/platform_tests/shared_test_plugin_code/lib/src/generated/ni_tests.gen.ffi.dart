@@ -21,6 +21,232 @@ external ffi.Pointer<objc.ObjCObject> _test_plugin_protocolTrampoline_1mbt9g9(
   ffi.Pointer<ffi.Void> arg0,
 );
 
+late final _class_NIAllNullableTypesWithoutRecursion =
+    objc.getClass("test_plugin.NIAllNullableTypesWithoutRecursion");
+late final _sel_isKindOfClass_ = objc.registerName("isKindOfClass:");
+final _objc_msgSend_19nvye5 = objc.msgSendPointer
+    .cast<
+        ffi.NativeFunction<
+            ffi.Bool Function(
+                ffi.Pointer<objc.ObjCObject>,
+                ffi.Pointer<objc.ObjCSelector>,
+                ffi.Pointer<objc.ObjCObject>)>>()
+    .asFunction<
+        bool Function(ffi.Pointer<objc.ObjCObject>,
+            ffi.Pointer<objc.ObjCSelector>, ffi.Pointer<objc.ObjCObject>)>();
+typedef instancetype = ffi.Pointer<objc.ObjCObject>;
+typedef Dartinstancetype = objc.ObjCObjectBase;
+late final _sel_init = objc.registerName("init");
+final _objc_msgSend_151sglz = objc.msgSendPointer
+    .cast<
+        ffi.NativeFunction<
+            ffi.Pointer<objc.ObjCObject> Function(ffi.Pointer<objc.ObjCObject>,
+                ffi.Pointer<objc.ObjCSelector>)>>()
+    .asFunction<
+        ffi.Pointer<objc.ObjCObject> Function(
+            ffi.Pointer<objc.ObjCObject>, ffi.Pointer<objc.ObjCSelector>)>();
+late final _sel_new = objc.registerName("new");
+late final _sel_allocWithZone_ = objc.registerName("allocWithZone:");
+final _objc_msgSend_1cwp428 = objc.msgSendPointer
+    .cast<
+        ffi.NativeFunction<
+            ffi.Pointer<objc.ObjCObject> Function(ffi.Pointer<objc.ObjCObject>,
+                ffi.Pointer<objc.ObjCSelector>, ffi.Pointer<objc.NSZone>)>>()
+    .asFunction<
+        ffi.Pointer<objc.ObjCObject> Function(ffi.Pointer<objc.ObjCObject>,
+            ffi.Pointer<objc.ObjCSelector>, ffi.Pointer<objc.NSZone>)>();
+late final _sel_alloc = objc.registerName("alloc");
+late final _sel_self = objc.registerName("self");
+ffi.Pointer<objc.ObjCObject> _ObjCBlock_objcObjCObject_ffiVoid_fnPtrTrampoline(
+        ffi.Pointer<objc.ObjCBlockImpl> block, ffi.Pointer<ffi.Void> arg0) =>
+    block.ref.target
+        .cast<
+            ffi.NativeFunction<
+                ffi.Pointer<objc.ObjCObject> Function(
+                    ffi.Pointer<ffi.Void> arg0)>>()
+        .asFunction<
+            ffi.Pointer<objc.ObjCObject> Function(
+                ffi.Pointer<ffi.Void>)>()(arg0);
+ffi.Pointer<ffi.Void> _ObjCBlock_objcObjCObject_ffiVoid_fnPtrCallable =
+    ffi.Pointer.fromFunction<
+                ffi.Pointer<objc.ObjCObject> Function(
+                    ffi.Pointer<objc.ObjCBlockImpl>, ffi.Pointer<ffi.Void>)>(
+            _ObjCBlock_objcObjCObject_ffiVoid_fnPtrTrampoline)
+        .cast();
+ffi.Pointer<objc.ObjCObject>
+    _ObjCBlock_objcObjCObject_ffiVoid_closureTrampoline(
+            ffi.Pointer<objc.ObjCBlockImpl> block,
+            ffi.Pointer<ffi.Void> arg0) =>
+        (objc.getBlockClosure(block) as ffi.Pointer<objc.ObjCObject> Function(
+            ffi.Pointer<ffi.Void>))(arg0);
+ffi.Pointer<ffi.Void> _ObjCBlock_objcObjCObject_ffiVoid_closureCallable =
+    ffi.Pointer.fromFunction<
+                ffi.Pointer<objc.ObjCObject> Function(
+                    ffi.Pointer<objc.ObjCBlockImpl>, ffi.Pointer<ffi.Void>)>(
+            _ObjCBlock_objcObjCObject_ffiVoid_closureTrampoline)
+        .cast();
+
+/// Construction methods for `objc.ObjCBlock<ffi.Pointer<objc.ObjCObject> Function(ffi.Pointer<ffi.Void>)>`.
+abstract final class ObjCBlock_objcObjCObject_ffiVoid {
+  /// Returns a block that wraps the given raw block pointer.
+  static objc
+      .ObjCBlock<ffi.Pointer<objc.ObjCObject> Function(ffi.Pointer<ffi.Void>)>
+      castFromPointer(ffi.Pointer<objc.ObjCBlockImpl> pointer,
+              {bool retain = false, bool release = false}) =>
+          objc.ObjCBlock<
+                  ffi.Pointer<objc.ObjCObject> Function(ffi.Pointer<ffi.Void>)>(
+              pointer,
+              retain: retain,
+              release: release);
+
+  /// Creates a block from a C function pointer.
+  ///
+  /// This block must be invoked by native code running on the same thread as
+  /// the isolate that registered it. Invoking the block on the wrong thread
+  /// will result in a crash.
+  static objc.ObjCBlock<ffi.Pointer<objc.ObjCObject> Function(ffi.Pointer<ffi.Void>)>
+      fromFunctionPointer(
+              ffi.Pointer<
+                      ffi.NativeFunction<
+                          ffi.Pointer<objc.ObjCObject> Function(
+                              ffi.Pointer<ffi.Void> arg0)>>
+                  ptr) =>
+          objc.ObjCBlock<ffi.Pointer<objc.ObjCObject> Function(ffi.Pointer<ffi.Void>)>(
+              objc.newPointerBlock(_ObjCBlock_objcObjCObject_ffiVoid_fnPtrCallable, ptr.cast()),
+              retain: false,
+              release: true);
+
+  /// Creates a block from a Dart function.
+  ///
+  /// This block must be invoked by native code running on the same thread as
+  /// the isolate that registered it. Invoking the block on the wrong thread
+  /// will result in a crash.
+  ///
+  /// If `keepIsolateAlive` is true, this block will keep this isolate alive
+  /// until it is garbage collected by both Dart and ObjC.
+  static objc
+      .ObjCBlock<ffi.Pointer<objc.ObjCObject> Function(ffi.Pointer<ffi.Void>)>
+      fromFunction(objc.ObjCObjectBase Function(ffi.Pointer<ffi.Void>) fn,
+              {bool keepIsolateAlive = true}) =>
+          objc.ObjCBlock<
+                  ffi.Pointer<objc.ObjCObject> Function(ffi.Pointer<ffi.Void>)>(
+              objc.newClosureBlock(
+                  _ObjCBlock_objcObjCObject_ffiVoid_closureCallable,
+                  (ffi.Pointer<ffi.Void> arg0) =>
+                      fn(arg0).ref.retainAndAutorelease(),
+                  keepIsolateAlive),
+              retain: false,
+              release: true);
+}
+
+/// Call operator for `objc.ObjCBlock<ffi.Pointer<objc.ObjCObject> Function(ffi.Pointer<ffi.Void>)>`.
+extension ObjCBlock_objcObjCObject_ffiVoid_CallExtension on objc
+    .ObjCBlock<ffi.Pointer<objc.ObjCObject> Function(ffi.Pointer<ffi.Void>)> {
+  objc.ObjCObjectBase call(ffi.Pointer<ffi.Void> arg0) => objc.ObjCObjectBase(
+      ref.pointer.ref.invoke
+          .cast<
+              ffi.NativeFunction<
+                  ffi.Pointer<objc.ObjCObject> Function(
+                      ffi.Pointer<objc.ObjCBlockImpl> block,
+                      ffi.Pointer<ffi.Void> arg0)>>()
+          .asFunction<
+              ffi.Pointer<objc.ObjCObject> Function(
+                  ffi.Pointer<objc.ObjCBlockImpl>,
+                  ffi.Pointer<ffi.Void>)>()(ref.pointer, arg0),
+      retain: true,
+      release: true);
+}
+
+late final _sel_retain = objc.registerName("retain");
+late final _sel_autorelease = objc.registerName("autorelease");
+
+/// A class containing all supported nullable types.
+/// The primary purpose for this class is to ensure coverage of Swift structs
+/// with nullable items, as the primary [NIAllNullableTypes] class is being used to
+/// test Swift classes.
+/// Generated class from Pigeon that represents data sent in messages.
+class NIAllNullableTypesWithoutRecursion extends objc.NSObject {
+  NIAllNullableTypesWithoutRecursion._(ffi.Pointer<objc.ObjCObject> pointer,
+      {bool retain = false, bool release = false})
+      : super.castFromPointer(pointer, retain: retain, release: release);
+
+  /// Constructs a [NIAllNullableTypesWithoutRecursion] that points to the same underlying object as [other].
+  NIAllNullableTypesWithoutRecursion.castFrom(objc.ObjCObjectBase other)
+      : this._(other.ref.pointer, retain: true, release: true);
+
+  /// Constructs a [NIAllNullableTypesWithoutRecursion] that wraps the given raw object pointer.
+  NIAllNullableTypesWithoutRecursion.castFromPointer(
+      ffi.Pointer<objc.ObjCObject> other,
+      {bool retain = false,
+      bool release = false})
+      : this._(other, retain: retain, release: release);
+
+  /// Returns whether [obj] is an instance of [NIAllNullableTypesWithoutRecursion].
+  static bool isInstance(objc.ObjCObjectBase obj) {
+    return _objc_msgSend_19nvye5(obj.ref.pointer, _sel_isKindOfClass_,
+        _class_NIAllNullableTypesWithoutRecursion);
+  }
+
+  /// init
+  NIAllNullableTypesWithoutRecursion init() {
+    objc.checkOsVersionInternal('NIAllNullableTypesWithoutRecursion.init',
+        iOS: (false, (2, 0, 0)), macOS: (false, (10, 0, 0)));
+    final _ret =
+        _objc_msgSend_151sglz(this.ref.retainAndReturnPointer(), _sel_init);
+    return NIAllNullableTypesWithoutRecursion.castFromPointer(_ret,
+        retain: false, release: true);
+  }
+
+  /// new
+  static NIAllNullableTypesWithoutRecursion new$() {
+    final _ret = _objc_msgSend_151sglz(
+        _class_NIAllNullableTypesWithoutRecursion, _sel_new);
+    return NIAllNullableTypesWithoutRecursion.castFromPointer(_ret,
+        retain: false, release: true);
+  }
+
+  /// allocWithZone:
+  static NIAllNullableTypesWithoutRecursion allocWithZone(
+      ffi.Pointer<objc.NSZone> zone) {
+    final _ret = _objc_msgSend_1cwp428(
+        _class_NIAllNullableTypesWithoutRecursion, _sel_allocWithZone_, zone);
+    return NIAllNullableTypesWithoutRecursion.castFromPointer(_ret,
+        retain: false, release: true);
+  }
+
+  /// alloc
+  static NIAllNullableTypesWithoutRecursion alloc() {
+    final _ret = _objc_msgSend_151sglz(
+        _class_NIAllNullableTypesWithoutRecursion, _sel_alloc);
+    return NIAllNullableTypesWithoutRecursion.castFromPointer(_ret,
+        retain: false, release: true);
+  }
+
+  /// self
+  NIAllNullableTypesWithoutRecursion self$1() {
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_self);
+    return NIAllNullableTypesWithoutRecursion.castFromPointer(_ret,
+        retain: true, release: true);
+  }
+
+  /// retain
+  NIAllNullableTypesWithoutRecursion retain() {
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_retain);
+    return NIAllNullableTypesWithoutRecursion.castFromPointer(_ret,
+        retain: true, release: true);
+  }
+
+  /// autorelease
+  NIAllNullableTypesWithoutRecursion autorelease() {
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_autorelease);
+    return NIAllNullableTypesWithoutRecursion.castFromPointer(_ret,
+        retain: true, release: true);
+  }
+
+  /// Returns a new instance of NIAllNullableTypesWithoutRecursion constructed with the default `new` method.
+  factory NIAllNullableTypesWithoutRecursion() => new$();
+}
+
 enum NIAnEnum {
   NIAnEnumOne(0),
   NIAnEnumTwo(1),
@@ -54,19 +280,6 @@ enum NIAnotherEnum {
 }
 
 late final _class_NIAllTypes = objc.getClass("test_plugin.NIAllTypes");
-late final _sel_isKindOfClass_ = objc.registerName("isKindOfClass:");
-final _objc_msgSend_19nvye5 = objc.msgSendPointer
-    .cast<
-        ffi.NativeFunction<
-            ffi.Bool Function(
-                ffi.Pointer<objc.ObjCObject>,
-                ffi.Pointer<objc.ObjCSelector>,
-                ffi.Pointer<objc.ObjCObject>)>>()
-    .asFunction<
-        bool Function(ffi.Pointer<objc.ObjCObject>,
-            ffi.Pointer<objc.ObjCSelector>, ffi.Pointer<objc.ObjCObject>)>();
-typedef instancetype = ffi.Pointer<objc.ObjCObject>;
-typedef Dartinstancetype = objc.ObjCObjectBase;
 late final _sel_initWithABool_anInt_anInt64_aDouble_anEnum_anotherEnum_aString_list_map_ =
     objc.registerName(
         "initWithABool:anInt:anInt64:aDouble:anEnum:anotherEnum:aString:list:map:");
@@ -199,14 +412,6 @@ final _objc_msgSend_ih63eg = objc.msgSendPointer
         void Function(ffi.Pointer<objc.ObjCObject>,
             ffi.Pointer<objc.ObjCSelector>, int)>();
 late final _sel_aString = objc.registerName("aString");
-final _objc_msgSend_151sglz = objc.msgSendPointer
-    .cast<
-        ffi.NativeFunction<
-            ffi.Pointer<objc.ObjCObject> Function(ffi.Pointer<objc.ObjCObject>,
-                ffi.Pointer<objc.ObjCSelector>)>>()
-    .asFunction<
-        ffi.Pointer<objc.ObjCObject> Function(
-            ffi.Pointer<objc.ObjCObject>, ffi.Pointer<objc.ObjCSelector>)>();
 late final _sel_setAString_ = objc.registerName("setAString:");
 final _objc_msgSend_xtuoz7 = objc.msgSendPointer
     .cast<
@@ -222,121 +427,6 @@ late final _sel_list = objc.registerName("list");
 late final _sel_setList_ = objc.registerName("setList:");
 late final _sel_map = objc.registerName("map");
 late final _sel_setMap_ = objc.registerName("setMap:");
-late final _sel_init = objc.registerName("init");
-late final _sel_new = objc.registerName("new");
-late final _sel_allocWithZone_ = objc.registerName("allocWithZone:");
-final _objc_msgSend_1cwp428 = objc.msgSendPointer
-    .cast<
-        ffi.NativeFunction<
-            ffi.Pointer<objc.ObjCObject> Function(ffi.Pointer<objc.ObjCObject>,
-                ffi.Pointer<objc.ObjCSelector>, ffi.Pointer<objc.NSZone>)>>()
-    .asFunction<
-        ffi.Pointer<objc.ObjCObject> Function(ffi.Pointer<objc.ObjCObject>,
-            ffi.Pointer<objc.ObjCSelector>, ffi.Pointer<objc.NSZone>)>();
-late final _sel_alloc = objc.registerName("alloc");
-late final _sel_self = objc.registerName("self");
-ffi.Pointer<objc.ObjCObject> _ObjCBlock_objcObjCObject_ffiVoid_fnPtrTrampoline(
-        ffi.Pointer<objc.ObjCBlockImpl> block, ffi.Pointer<ffi.Void> arg0) =>
-    block.ref.target
-        .cast<
-            ffi.NativeFunction<
-                ffi.Pointer<objc.ObjCObject> Function(
-                    ffi.Pointer<ffi.Void> arg0)>>()
-        .asFunction<
-            ffi.Pointer<objc.ObjCObject> Function(
-                ffi.Pointer<ffi.Void>)>()(arg0);
-ffi.Pointer<ffi.Void> _ObjCBlock_objcObjCObject_ffiVoid_fnPtrCallable =
-    ffi.Pointer.fromFunction<
-                ffi.Pointer<objc.ObjCObject> Function(
-                    ffi.Pointer<objc.ObjCBlockImpl>, ffi.Pointer<ffi.Void>)>(
-            _ObjCBlock_objcObjCObject_ffiVoid_fnPtrTrampoline)
-        .cast();
-ffi.Pointer<objc.ObjCObject>
-    _ObjCBlock_objcObjCObject_ffiVoid_closureTrampoline(
-            ffi.Pointer<objc.ObjCBlockImpl> block,
-            ffi.Pointer<ffi.Void> arg0) =>
-        (objc.getBlockClosure(block) as ffi.Pointer<objc.ObjCObject> Function(
-            ffi.Pointer<ffi.Void>))(arg0);
-ffi.Pointer<ffi.Void> _ObjCBlock_objcObjCObject_ffiVoid_closureCallable =
-    ffi.Pointer.fromFunction<
-                ffi.Pointer<objc.ObjCObject> Function(
-                    ffi.Pointer<objc.ObjCBlockImpl>, ffi.Pointer<ffi.Void>)>(
-            _ObjCBlock_objcObjCObject_ffiVoid_closureTrampoline)
-        .cast();
-
-/// Construction methods for `objc.ObjCBlock<ffi.Pointer<objc.ObjCObject> Function(ffi.Pointer<ffi.Void>)>`.
-abstract final class ObjCBlock_objcObjCObject_ffiVoid {
-  /// Returns a block that wraps the given raw block pointer.
-  static objc
-      .ObjCBlock<ffi.Pointer<objc.ObjCObject> Function(ffi.Pointer<ffi.Void>)>
-      castFromPointer(ffi.Pointer<objc.ObjCBlockImpl> pointer,
-              {bool retain = false, bool release = false}) =>
-          objc.ObjCBlock<
-                  ffi.Pointer<objc.ObjCObject> Function(ffi.Pointer<ffi.Void>)>(
-              pointer,
-              retain: retain,
-              release: release);
-
-  /// Creates a block from a C function pointer.
-  ///
-  /// This block must be invoked by native code running on the same thread as
-  /// the isolate that registered it. Invoking the block on the wrong thread
-  /// will result in a crash.
-  static objc.ObjCBlock<ffi.Pointer<objc.ObjCObject> Function(ffi.Pointer<ffi.Void>)>
-      fromFunctionPointer(
-              ffi.Pointer<
-                      ffi.NativeFunction<
-                          ffi.Pointer<objc.ObjCObject> Function(
-                              ffi.Pointer<ffi.Void> arg0)>>
-                  ptr) =>
-          objc.ObjCBlock<ffi.Pointer<objc.ObjCObject> Function(ffi.Pointer<ffi.Void>)>(
-              objc.newPointerBlock(_ObjCBlock_objcObjCObject_ffiVoid_fnPtrCallable, ptr.cast()),
-              retain: false,
-              release: true);
-
-  /// Creates a block from a Dart function.
-  ///
-  /// This block must be invoked by native code running on the same thread as
-  /// the isolate that registered it. Invoking the block on the wrong thread
-  /// will result in a crash.
-  ///
-  /// If `keepIsolateAlive` is true, this block will keep this isolate alive
-  /// until it is garbage collected by both Dart and ObjC.
-  static objc
-      .ObjCBlock<ffi.Pointer<objc.ObjCObject> Function(ffi.Pointer<ffi.Void>)>
-      fromFunction(objc.ObjCObjectBase Function(ffi.Pointer<ffi.Void>) fn,
-              {bool keepIsolateAlive = true}) =>
-          objc.ObjCBlock<
-                  ffi.Pointer<objc.ObjCObject> Function(ffi.Pointer<ffi.Void>)>(
-              objc.newClosureBlock(
-                  _ObjCBlock_objcObjCObject_ffiVoid_closureCallable,
-                  (ffi.Pointer<ffi.Void> arg0) =>
-                      fn(arg0).ref.retainAndAutorelease(),
-                  keepIsolateAlive),
-              retain: false,
-              release: true);
-}
-
-/// Call operator for `objc.ObjCBlock<ffi.Pointer<objc.ObjCObject> Function(ffi.Pointer<ffi.Void>)>`.
-extension ObjCBlock_objcObjCObject_ffiVoid_CallExtension on objc
-    .ObjCBlock<ffi.Pointer<objc.ObjCObject> Function(ffi.Pointer<ffi.Void>)> {
-  objc.ObjCObjectBase call(ffi.Pointer<ffi.Void> arg0) => objc.ObjCObjectBase(
-      ref.pointer.ref.invoke
-          .cast<
-              ffi.NativeFunction<
-                  ffi.Pointer<objc.ObjCObject> Function(
-                      ffi.Pointer<objc.ObjCBlockImpl> block,
-                      ffi.Pointer<ffi.Void> arg0)>>()
-          .asFunction<
-              ffi.Pointer<objc.ObjCObject> Function(
-                  ffi.Pointer<objc.ObjCBlockImpl>,
-                  ffi.Pointer<ffi.Void>)>()(ref.pointer, arg0),
-      retain: true,
-      release: true);
-}
-
-late final _sel_retain = objc.registerName("retain");
-late final _sel_autorelease = objc.registerName("autorelease");
 
 /// A class containing all supported types.
 /// Generated class from Pigeon that represents data sent in messages.
@@ -745,8 +835,8 @@ final _objc_msgSend_1k0qzru = objc.msgSendPointer
             ffi.Pointer<objc.ObjCSelector>,
             int,
             ffi.Pointer<objc.ObjCObject>)>();
-late final _sel_echoAnotherEnum_wrappedError_ =
-    objc.registerName("echoAnotherEnum:wrappedError:");
+late final _sel_echoAnotherEnumWithAnotherEnum_wrappedError_ =
+    objc.registerName("echoAnotherEnumWithAnotherEnum:wrappedError:");
 final _objc_msgSend_ladeuy = objc.msgSendPointer
     .cast<
         ffi.NativeFunction<
@@ -761,6 +851,17 @@ final _objc_msgSend_ladeuy = objc.msgSendPointer
             ffi.Pointer<objc.ObjCSelector>,
             int,
             ffi.Pointer<objc.ObjCObject>)>();
+late final _sel_echoAllNullableTypesWithoutRecursionWithEverything_wrappedError_ =
+    objc.registerName(
+        "echoAllNullableTypesWithoutRecursionWithEverything:wrappedError:");
+late final _sel_echoNullableIntWithANullableInt_wrappedError_ =
+    objc.registerName("echoNullableIntWithANullableInt:wrappedError:");
+late final _sel_echoNullableDoubleWithANullableDouble_wrappedError_ =
+    objc.registerName("echoNullableDoubleWithANullableDouble:wrappedError:");
+late final _sel_echoNullableBoolWithANullableBool_wrappedError_ =
+    objc.registerName("echoNullableBoolWithANullableBool:wrappedError:");
+late final _sel_echoNullableStringWithANullableString_wrappedError_ =
+    objc.registerName("echoNullableStringWithANullableString:wrappedError:");
 
 /// Generated setup class from Pigeon to register implemented NIHostIntegrationCoreApi classes.
 class NIHostIntegrationCoreApiSetup extends objc.NSObject {
@@ -1004,20 +1105,126 @@ class NIHostIntegrationCoreApiSetup extends objc.NSObject {
   ///
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
-  objc.NSNumber? echoAnotherEnum(NIAnotherEnum anotherEnum,
+  objc.NSNumber? echoAnotherEnumWithAnotherEnum(NIAnotherEnum anotherEnum,
       {required NiTestsError wrappedError}) {
     objc.checkOsVersionInternal(
-        'NIHostIntegrationCoreApiSetup.echoAnotherEnum:wrappedError:',
+        'NIHostIntegrationCoreApiSetup.echoAnotherEnumWithAnotherEnum:wrappedError:',
         iOS: (false, (13, 0, 0)),
         macOS: (false, (16, 0, 0)));
     final _ret = _objc_msgSend_ladeuy(
         this.ref.pointer,
-        _sel_echoAnotherEnum_wrappedError_,
+        _sel_echoAnotherEnumWithAnotherEnum_wrappedError_,
         anotherEnum.value,
         wrappedError.ref.pointer);
     return _ret.address == 0
         ? null
         : objc.NSNumber.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// Returns the passed object, to test serialization and deserialization.
+  /// Returns the passed object, to test serialization and deserialization.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  NIAllNullableTypesWithoutRecursion?
+      echoAllNullableTypesWithoutRecursionWithEverything(
+          NIAllNullableTypesWithoutRecursion everything,
+          {required NiTestsError wrappedError}) {
+    objc.checkOsVersionInternal(
+        'NIHostIntegrationCoreApiSetup.echoAllNullableTypesWithoutRecursionWithEverything:wrappedError:',
+        iOS: (false, (13, 0, 0)),
+        macOS: (false, (16, 0, 0)));
+    final _ret = _objc_msgSend_15qeuct(
+        this.ref.pointer,
+        _sel_echoAllNullableTypesWithoutRecursionWithEverything_wrappedError_,
+        everything.ref.pointer,
+        wrappedError.ref.pointer);
+    return _ret.address == 0
+        ? null
+        : NIAllNullableTypesWithoutRecursion.castFromPointer(_ret,
+            retain: true, release: true);
+  }
+
+  /// Returns passed in int.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  objc.NSNumber? echoNullableIntWithANullableInt(objc.NSNumber aNullableInt,
+      {required NiTestsError wrappedError}) {
+    objc.checkOsVersionInternal(
+        'NIHostIntegrationCoreApiSetup.echoNullableIntWithANullableInt:wrappedError:',
+        iOS: (false, (13, 0, 0)),
+        macOS: (false, (16, 0, 0)));
+    final _ret = _objc_msgSend_15qeuct(
+        this.ref.pointer,
+        _sel_echoNullableIntWithANullableInt_wrappedError_,
+        aNullableInt.ref.pointer,
+        wrappedError.ref.pointer);
+    return _ret.address == 0
+        ? null
+        : objc.NSNumber.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// Returns passed in double.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  objc.NSNumber? echoNullableDoubleWithANullableDouble(
+      objc.NSNumber aNullableDouble,
+      {required NiTestsError wrappedError}) {
+    objc.checkOsVersionInternal(
+        'NIHostIntegrationCoreApiSetup.echoNullableDoubleWithANullableDouble:wrappedError:',
+        iOS: (false, (13, 0, 0)),
+        macOS: (false, (16, 0, 0)));
+    final _ret = _objc_msgSend_15qeuct(
+        this.ref.pointer,
+        _sel_echoNullableDoubleWithANullableDouble_wrappedError_,
+        aNullableDouble.ref.pointer,
+        wrappedError.ref.pointer);
+    return _ret.address == 0
+        ? null
+        : objc.NSNumber.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// Returns the passed in boolean.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  objc.NSNumber? echoNullableBoolWithANullableBool(objc.NSNumber aNullableBool,
+      {required NiTestsError wrappedError}) {
+    objc.checkOsVersionInternal(
+        'NIHostIntegrationCoreApiSetup.echoNullableBoolWithANullableBool:wrappedError:',
+        iOS: (false, (13, 0, 0)),
+        macOS: (false, (16, 0, 0)));
+    final _ret = _objc_msgSend_15qeuct(
+        this.ref.pointer,
+        _sel_echoNullableBoolWithANullableBool_wrappedError_,
+        aNullableBool.ref.pointer,
+        wrappedError.ref.pointer);
+    return _ret.address == 0
+        ? null
+        : objc.NSNumber.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// Returns the passed in string.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  objc.NSString? echoNullableStringWithANullableString(
+      objc.NSString aNullableString,
+      {required NiTestsError wrappedError}) {
+    objc.checkOsVersionInternal(
+        'NIHostIntegrationCoreApiSetup.echoNullableStringWithANullableString:wrappedError:',
+        iOS: (false, (13, 0, 0)),
+        macOS: (false, (16, 0, 0)));
+    final _ret = _objc_msgSend_15qeuct(
+        this.ref.pointer,
+        _sel_echoNullableStringWithANullableString_wrappedError_,
+        aNullableString.ref.pointer,
+        wrappedError.ref.pointer);
+    return _ret.address == 0
+        ? null
+        : objc.NSString.castFromPointer(_ret, retain: true, release: true);
   }
 
   /// new

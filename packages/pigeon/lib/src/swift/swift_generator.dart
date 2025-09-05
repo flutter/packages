@@ -3283,9 +3283,10 @@ String _swiftToFfiConversion(TypeDeclaration type, String toConvert) {
   } else if (type.baseName == 'Object') {
     return '_PigeonFfiCodec.writeValue(value: $toConvert, isObject: true)';
   }
-  return _conversionToObjcRequired(type)
-      ? '$toConvert as ${_ffiTypeForBuiltinDartType(type)}'
-      : toConvert;
+  final String nullable = type.isNullable ? '?' : '';
+  return !_conversionToObjcRequired(type)
+      ? toConvert
+      : '$toConvert as$nullable ${_ffiTypeForBuiltinDartType(type)}';
 }
 
 String _getMethodSignature({

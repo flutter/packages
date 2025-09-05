@@ -304,9 +304,11 @@ class _FfiType {
   }) {
     if (type.isClass) {
       return _wrapInNullCheckIfNullable(
-        type.isNullable,
-        name,
-        '$name${_getForceNonNullSymbol(type.isNullable && forceNonNull)}.toFfi()',
+        nullable: type.isNullable,
+        varName: name,
+        ifNull: '${ffiType.ffiName}.alloc()',
+        code:
+            '$name${_getForceNonNullSymbol(type.isNullable && forceNonNull)}.toFfi()',
       );
     }
     if (type.isEnum) {
@@ -587,9 +589,10 @@ class _JniType {
   }) {
     if (type.isClass || type.isEnum) {
       return _wrapInNullCheckIfNullable(
-        type.isNullable,
-        name,
-        '$name${_getForceNonNullSymbol(type.isNullable && forceNonNull)}.toJni()',
+        nullable: type.isNullable,
+        varName: name,
+        code:
+            '$name${_getForceNonNullSymbol(type.isNullable && forceNonNull)}.toJni()',
       );
     } else if (!type.isNullable &&
         (type.baseName == 'int' ||
@@ -691,8 +694,13 @@ String _getNullableSymbol(bool nullable) => nullable ? '?' : '';
 
 String _getForceNonNullSymbol(bool force) => force ? '!' : '';
 
-String _wrapInNullCheckIfNullable(bool nullable, String varName, String code) =>
-    nullable ? '$varName == null ? null : $code' : code;
+String _wrapInNullCheckIfNullable({
+  required bool nullable,
+  required String varName,
+  required String code,
+  String ifNull = 'null',
+}) =>
+    nullable ? '$varName == null ? $ifNull : $code' : code;
 
 /// Options that control how Dart code will be generated.
 class InternalDartOptions extends InternalOptions {
@@ -2634,15 +2642,15 @@ class _PigeonJniCodec {
         case ${typeNum++}:
           return ${anEnum.name}.fromNSNumber(value.number);''');
     }
-      indent.dec(2);
-      indent.format('''
+    indent.dec(2);
+    indent.format('''
           default:
             throw ArgumentError.value(value);
         }
       }
 ''');
-      typeNum = 4;
-      indent.format('''
+    typeNum = 4;
+    indent.format('''
       ffi_bridge.NSNumberWrapper convertNSNumberWrapperToFfi(Object value) {
         switch (value) {
           case int _:
@@ -2651,20 +2659,18 @@ class _PigeonJniCodec {
             return ffi_bridge.NSNumberWrapper.alloc().initWithNumber(NSNumber.alloc().initWithDouble(value), type: 2);
           case bool _:
             return ffi_bridge.NSNumberWrapper.alloc().initWithNumber(NSNumber.alloc().initWithLong(value ? 1 : 0), type: 3);''');
-      for (final Enum anEnum in root.enums) {
-        indent.format('''
+    for (final Enum anEnum in root.enums) {
+      indent.format('''
         case ${anEnum.name} _:
           return ffi_bridge.NSNumberWrapper.alloc().initWithNumber(value.toNSNumber(), type: ${typeNum++});''');
     }
-        indent.format('''
+    indent.format('''
           default:
             throw ArgumentError.value(value);
         }
       }
 ''');
-      
   }
-  
 
   void _writeFfiCodec(Indent indent, Root root) {
     indent.newln();

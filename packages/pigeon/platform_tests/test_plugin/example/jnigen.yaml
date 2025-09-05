@@ -19,5 +19,6 @@ classes:
   - 'NIHostIntegrationCoreApi'
   - 'NIHostIntegrationCoreApiRegistrar'
   - 'NIAllTypes'
+  - 'NIAllNullableTypesWithoutRecursion'
   - 'NIAnEnum'
   - 'NIAnotherEnum'

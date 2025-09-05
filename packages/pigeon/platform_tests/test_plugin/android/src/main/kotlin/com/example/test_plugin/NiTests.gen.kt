@@ -136,6 +136,55 @@ data class NIAllTypes(
   override fun hashCode(): Int = toList().hashCode()
 }
 
+/**
+ * A class containing all supported nullable types. The primary purpose for this class is to ensure
+ * coverage of Swift structs with nullable items, as the primary [NIAllNullableTypes] class is being
+ * used to test Swift classes.
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ */
+data class NIAllNullableTypesWithoutRecursion(
+    val aNullableBool: Boolean? = null,
+    val aNullableInt: Long? = null,
+    val aNullableInt64: Long? = null,
+    val aNullableDouble: Double? = null
+) {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): NIAllNullableTypesWithoutRecursion {
+      val aNullableBool = pigeonVar_list[0] as Boolean?
+      val aNullableInt = pigeonVar_list[1] as Long?
+      val aNullableInt64 = pigeonVar_list[2] as Long?
+      val aNullableDouble = pigeonVar_list[3] as Double?
+      return NIAllNullableTypesWithoutRecursion(
+          aNullableBool, aNullableInt, aNullableInt64, aNullableDouble)
+    }
+  }
+
+  fun toList(): List<Any?> {
+    return listOf(
+        aNullableBool,
+        aNullableInt,
+        aNullableInt64,
+        aNullableDouble,
+    )
+  }
+
+  override fun equals(other: Any?): Boolean {
+    if (other !is NIAllNullableTypesWithoutRecursion) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return aNullableBool == other.aNullableBool &&
+        aNullableInt == other.aNullableInt &&
+        aNullableInt64 == other.aNullableInt64 &&
+        aNullableDouble == other.aNullableDouble
+  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
 val NIHostIntegrationCoreApiInstances: MutableMap<String, NIHostIntegrationCoreApiRegistrar> =
     mutableMapOf()
 
@@ -163,6 +212,21 @@ abstract class NIHostIntegrationCoreApi {
   abstract fun echoEnum(anEnum: NIAnEnum): NIAnEnum
   /** Returns the passed enum to test serialization and deserialization. */
   abstract fun echoAnotherEnum(anotherEnum: NIAnotherEnum): NIAnotherEnum
+  /**
+   * Returns the passed object, to test serialization and deserialization. Returns the passed
+   * object, to test serialization and deserialization.
+   */
+  abstract fun echoAllNullableTypesWithoutRecursion(
+      everything: NIAllNullableTypesWithoutRecursion?
+  ): NIAllNullableTypesWithoutRecursion?
+  /** Returns passed in int. */
+  abstract fun echoNullableInt(aNullableInt: Long?): Long?
+  /** Returns passed in double. */
+  abstract fun echoNullableDouble(aNullableDouble: Double?): Double?
+  /** Returns the passed in boolean. */
+  abstract fun echoNullableBool(aNullableBool: Boolean?): Boolean?
+  /** Returns the passed in string. */
+  abstract fun echoNullableString(aNullableString: String?): String?
 }
 
 @Keep
@@ -297,6 +361,66 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
     api?.let {
       try {
         return api!!.echoAnotherEnum(anotherEnum)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /**
+   * Returns the passed object, to test serialization and deserialization. Returns the passed
+   * object, to test serialization and deserialization.
+   */
+  override fun echoAllNullableTypesWithoutRecursion(
+      everything: NIAllNullableTypesWithoutRecursion?
+  ): NIAllNullableTypesWithoutRecursion? {
+    api?.let {
+      try {
+        return api!!.echoAllNullableTypesWithoutRecursion(everything)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns passed in int. */
+  override fun echoNullableInt(aNullableInt: Long?): Long? {
+    api?.let {
+      try {
+        return api!!.echoNullableInt(aNullableInt)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns passed in double. */
+  override fun echoNullableDouble(aNullableDouble: Double?): Double? {
+    api?.let {
+      try {
+        return api!!.echoNullableDouble(aNullableDouble)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed in boolean. */
+  override fun echoNullableBool(aNullableBool: Boolean?): Boolean? {
+    api?.let {
+      try {
+        return api!!.echoNullableBool(aNullableBool)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed in string. */
+  override fun echoNullableString(aNullableString: String?): String? {
+    api?.let {
+      try {
+        return api!!.echoNullableString(aNullableString)
       } catch (e: Exception) {
         throw e
       }

@@ -97,6 +97,10 @@ class _PigeonJniCodec {
       return res;
     } else if (value.isA<jni_bridge.NIAllTypes>(jni_bridge.NIAllTypes.type)) {
       return NIAllTypes.fromJni(value.as(jni_bridge.NIAllTypes.type));
+    } else if (value.isA<jni_bridge.NIAllNullableTypesWithoutRecursion>(
+        jni_bridge.NIAllNullableTypesWithoutRecursion.type)) {
+      return NIAllNullableTypesWithoutRecursion.fromJni(
+          value.as(jni_bridge.NIAllNullableTypesWithoutRecursion.type));
         
     } else if (value.isA<jni_bridge.NIAnEnum>(jni_bridge.NIAnEnum.type)) {
       return NIAnEnum.fromJni(value.as(jni_bridge.NIAnEnum.type));
@@ -184,8 +188,10 @@ class _PigeonJniCodec {
         res[writeValue(entry.key)] = writeValue(entry.value);
       }
       return res as T;
-      //   } else if (value is NIAllTypes) {
-      // return value.toJni() as T;
+      // } else if (value is NIAllTypes) {
+      //   return value.toJni() as T;
+      // } else if (value is NIAllNullableTypesWithoutRecursion) {
+      //   return value.toJni() as T;
     } else if (value is NIAnEnum) {
       return value.toJni() as T;
     } else if (value is NIAnotherEnum) {
@@ -261,11 +267,15 @@ case const (NIAnotherEnum):
           ffi_bridge.NSNumberWrapper.castFrom(value));
     } else if (ffi_bridge.NIAllTypes.isInstance(value)) {
       return NIAllTypes.fromFfi(ffi_bridge.NIAllTypes.castFrom(value));
+    } else if (ffi_bridge.NIAllNullableTypesWithoutRecursion.isInstance(
+        value)) {
+      return NIAllNullableTypesWithoutRecursion.fromFfi(
+          ffi_bridge.NIAllNullableTypesWithoutRecursion.castFrom(value));
         
     } else if (value is ffi_bridge.NIAnEnum) {
       return NIAnEnum.fromFfi(value as ffi_bridge.NIAnEnum);
-      //       } else if (value is ffi_bridge.NIAnotherEnum) {
-      // return NIAnotherEnum.fromFfi(value as ffi_bridge.NIAnotherEnum);
+    } else if (value is ffi_bridge.NIAnotherEnum) {
+      return NIAnotherEnum.fromFfi(value as ffi_bridge.NIAnotherEnum);
         
     } else {
       throw ArgumentError.value(value);
@@ -338,6 +348,8 @@ case const (NIAnotherEnum):
       }
       return res as T;
     } else if (value is NIAllTypes) {
+      return value.toFfi() as T;
+    } else if (value is NIAllNullableTypesWithoutRecursion) {
       return value.toFfi() as T;
         
     } else {
@@ -442,13 +454,13 @@ enum NIAnotherEnum {
     return jniEnum == null ? null : NIAnotherEnum.values[jniEnum.getRaw()];
   }
 
-  // ffi_bridge.NIAnotherEnum toFfi() {
-  //   return ffi_bridge.NIAnotherEnum.values[index];
-  // }
+  ffi_bridge.NIAnotherEnum toFfi() {
+    return ffi_bridge.NIAnotherEnum.values[index];
+  }
 
-  // static NIAnotherEnum fromFfi(ffi_bridge.NIAnotherEnum ffiEnum) {
-  //   return NIAnotherEnum.values[ffiEnum.index];
-  // }
+  static NIAnotherEnum fromFfi(ffi_bridge.NIAnotherEnum ffiEnum) {
+    return NIAnotherEnum.values[ffiEnum.index];
+  }
 
   NSNumber toNSNumber() {
     return NSNumber.alloc().initWithLong(index);
@@ -506,7 +518,7 @@ class NIAllTypes {
   }
 
   // jni_bridge.NIAllTypes toJni() {
-  //   return jni_bridge.NIAllTypes (
+  //   return jni_bridge.NIAllTypes(
   //     aBool: aBool,
   //     anInt: anInt,
   //     anInt64: anInt64,
@@ -566,7 +578,7 @@ class NIAllTypes {
             anInt64: ffiClass.anInt64,
             aDouble: ffiClass.aDouble,
             anEnum: NIAnEnum.values[ffiClass.anEnum.index],
-            // anotherEnum: NIAnotherEnum.values[ffiClass.anotherEnum.index],
+            anotherEnum: NIAnotherEnum.values[ffiClass.anotherEnum.index],
             aString: ffiClass.aString.toDartString(),
             list: (_PigeonFfiCodec.readValue(ffiClass.list)! as List<Object?>)
                 .cast<Object?>(),
@@ -616,6 +628,119 @@ class NIAllTypes {
   int get hashCode => Object.hashAll(_toList());
 }
 
+/// A class containing all supported nullable types.
+/// The primary purpose for this class is to ensure coverage of Swift structs
+/// with nullable items, as the primary [NIAllNullableTypes] class is being used to
+/// test Swift classes.
+class NIAllNullableTypesWithoutRecursion {
+  NIAllNullableTypesWithoutRecursion({
+    this.aNullableBool,
+    this.aNullableInt,
+    this.aNullableInt64,
+    this.aNullableDouble,
+  });
+
+  bool? aNullableBool;
+
+  int? aNullableInt;
+
+  int? aNullableInt64;
+
+  double? aNullableDouble;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      aNullableBool,
+      aNullableInt,
+      aNullableInt64,
+      aNullableDouble,
+    ];
+  }
+
+  // jni_bridge.NIAllNullableTypesWithoutRecursion toJni() {
+  //   return jni_bridge.NIAllNullableTypesWithoutRecursion(
+  //     aNullableBool: _PigeonJniCodec.writeValue<JBoolean?>(aNullableBool),
+  //     aNullableInt: _PigeonJniCodec.writeValue<JLong?>(aNullableInt),
+  //     aNullableInt64: _PigeonJniCodec.writeValue<JLong?>(aNullableInt64),
+  //     aNullableDouble: _PigeonJniCodec.writeValue<JDouble?>(aNullableDouble),
+  //   );
+  // }
+
+  ffi_bridge.NIAllNullableTypesWithoutRecursion toFfi() {
+    return ffi_bridge.NIAllNullableTypesWithoutRecursion.alloc();
+    //     .initWithANullableBool(
+    //   _PigeonFfiCodec.writeValue<NSNumber>(aNullableBool),
+    //   aNullableInt: _PigeonFfiCodec.writeValue<NSNumber>(aNullableInt),
+    //   aNullableInt64: _PigeonFfiCodec.writeValue<NSNumber>(aNullableInt64),
+    //   aNullableDouble: _PigeonFfiCodec.writeValue<NSNumber>(aNullableDouble),
+    // );
+  }
+
+  Object encode() {
+    return _toList();
+  }
+
+  static NIAllNullableTypesWithoutRecursion? fromJni(
+      jni_bridge.NIAllNullableTypesWithoutRecursion? jniClass) {
+    return jniClass == null
+        ? null
+        : NIAllNullableTypesWithoutRecursion(
+            aNullableBool: jniClass
+                .getANullableBool()
+                ?.booleanValue(releaseOriginal: true),
+            aNullableInt:
+                jniClass.getANullableInt()?.longValue(releaseOriginal: true),
+            aNullableInt64:
+                jniClass.getANullableInt64()?.longValue(releaseOriginal: true),
+            aNullableDouble: jniClass
+                .getANullableDouble()
+                ?.doubleValue(releaseOriginal: true),
+          );
+  }
+
+  static NIAllNullableTypesWithoutRecursion? fromFfi(
+      ffi_bridge.NIAllNullableTypesWithoutRecursion? ffiClass) {
+    return ffiClass == null
+        ? null
+        : NIAllNullableTypesWithoutRecursion(
+            // aNullableBool: ffiClass.aNullableBool?.boolValue,
+            // aNullableInt: ffiClass.aNullableInt?.longValue,
+            // aNullableInt64: ffiClass.aNullableInt64?.longValue,
+            // aNullableDouble: ffiClass.aNullableDouble?.doubleValue,
+            );
+  }
+
+  static NIAllNullableTypesWithoutRecursion decode(Object result) {
+    result as List<Object?>;
+    return NIAllNullableTypesWithoutRecursion(
+      aNullableBool: result[0] as bool?,
+      aNullableInt: result[1] as int?,
+      aNullableInt64: result[2] as int?,
+      aNullableDouble: result[3] as double?,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! NIAllNullableTypesWithoutRecursion ||
+        other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return aNullableBool == other.aNullableBool &&
+        aNullableInt == other.aNullableInt &&
+        aNullableInt64 == other.aNullableInt64 &&
+        aNullableDouble == other.aNullableDouble;
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
+}
+
 
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
@@ -633,6 +758,9 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is NIAllTypes) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
+    } else if (value is NIAllNullableTypesWithoutRecursion) {
+      buffer.putUint8(132);
+      writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
     }
@@ -649,6 +777,8 @@ class _PigeonCodec extends StandardMessageCodec {
         return value == null ? null : NIAnotherEnum.values[value];
       case 131: 
         return NIAllTypes.decode(readValue(buffer)!);
+      case 132:
+        return NIAllNullableTypesWithoutRecursion.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -1000,7 +1130,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
       if (_jniApi != null) {
       } else if (_ffiApi != null) {
         final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
-        final NSNumber? res = _ffiApi.echoAnotherEnum(
+        final NSNumber? res = _ffiApi.echoAnotherEnumWithAnotherEnum(
             ffi_bridge.NIAnotherEnum.values[anotherEnum.index],
             wrappedError: error);
         if (error.code != null) {
@@ -1011,6 +1141,161 @@ class NIHostIntegrationCoreApiForNativeInterop {
         } else {
           final NIAnotherEnum dartTypeRes =
               (_PigeonFfiCodec.readValue(res, NIAnotherEnum)! as NIAnotherEnum);
+          return dartTypeRes;
+        }
+      }
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    } catch (e) {
+      rethrow;
+    }
+    throw Exception("this shouldn't be possible");
+  }
+
+  NIAllNullableTypesWithoutRecursion? echoAllNullableTypesWithoutRecursion(
+      NIAllNullableTypesWithoutRecursion? everything) {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final ffi_bridge.NIAllNullableTypesWithoutRecursion? res =
+            _ffiApi.echoAllNullableTypesWithoutRecursionWithEverything(
+                everything == null
+                    ? ffi_bridge.NIAllNullableTypesWithoutRecursion.alloc()
+                    : everything.toFfi(),
+                wrappedError: error);
+        if (error.code != null) {
+          throw PlatformException(
+              code: error.code!.toDartString(),
+              message: error.message?.toDartString(),
+              details: error.details.toString());
+        } else {
+          final NIAllNullableTypesWithoutRecursion? dartTypeRes =
+              NIAllNullableTypesWithoutRecursion.fromFfi(res);
+          return dartTypeRes;
+        }
+      }
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    } catch (e) {
+      rethrow;
+    }
+    throw Exception("this shouldn't be possible");
+  }
+
+  int? echoNullableInt(int? aNullableInt) {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final NSNumber? res = _ffiApi.echoNullableIntWithANullableInt(
+            _PigeonFfiCodec.writeValue<NSNumber>(aNullableInt),
+            wrappedError: error);
+        if (error.code != null) {
+          throw PlatformException(
+              code: error.code!.toDartString(),
+              message: error.message?.toDartString(),
+              details: error.details.toString());
+        } else {
+          final int? dartTypeRes = res!?.longValue;
+          return dartTypeRes;
+        }
+      }
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    } catch (e) {
+      rethrow;
+    }
+    throw Exception("this shouldn't be possible");
+  }
+
+  double? echoNullableDouble(double? aNullableDouble) {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final NSNumber? res = _ffiApi.echoNullableDoubleWithANullableDouble(
+            _PigeonFfiCodec.writeValue<NSNumber>(aNullableDouble),
+            wrappedError: error);
+        if (error.code != null) {
+          throw PlatformException(
+              code: error.code!.toDartString(),
+              message: error.message?.toDartString(),
+              details: error.details.toString());
+        } else {
+          final double? dartTypeRes = res!?.doubleValue;
+          return dartTypeRes;
+        }
+      }
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    } catch (e) {
+      rethrow;
+    }
+    throw Exception("this shouldn't be possible");
+  }
+
+  bool? echoNullableBool(bool? aNullableBool) {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final NSNumber? res = _ffiApi.echoNullableBoolWithANullableBool(
+            _PigeonFfiCodec.writeValue<NSNumber>(aNullableBool),
+            wrappedError: error);
+        if (error.code != null) {
+          throw PlatformException(
+              code: error.code!.toDartString(),
+              message: error.message?.toDartString(),
+              details: error.details.toString());
+        } else {
+          final bool? dartTypeRes = res!?.boolValue;
+          return dartTypeRes;
+        }
+      }
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    } catch (e) {
+      rethrow;
+    }
+    throw Exception("this shouldn't be possible");
+  }
+
+  String? echoNullableString(String? aNullableString) {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final NSString? res = _ffiApi.echoNullableStringWithANullableString(
+            _PigeonFfiCodec.writeValue<NSString>(aNullableString),
+            wrappedError: error);
+        if (error.code != null) {
+          throw PlatformException(
+              code: error.code!.toDartString(),
+              message: error.message?.toDartString(),
+              details: error.details.toString());
+        } else {
+          final String? dartTypeRes = res!?.toDartString();
           return dartTypeRes;
         }
       }
@@ -1472,6 +1757,164 @@ class NIHostIntegrationCoreApi {
       );
     } else {
       return (pigeonVar_replyList[0] as NIAnotherEnum?)!;
+    }
+  }
+
+  /// Returns the passed object, to test serialization and deserialization.
+  /// Returns the passed object, to test serialization and deserialization.
+  Future<NIAllNullableTypesWithoutRecursion?>
+      echoAllNullableTypesWithoutRecursion(
+          NIAllNullableTypesWithoutRecursion? everything) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoAllNullableTypesWithoutRecursion(everything);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAllNullableTypesWithoutRecursion$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[everything]);
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return (pigeonVar_replyList[0] as NIAllNullableTypesWithoutRecursion?);
+    }
+  }
+
+  /// Returns passed in int.
+  Future<int?> echoNullableInt(int? aNullableInt) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoNullableInt(aNullableInt);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoNullableInt$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[aNullableInt]);
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return (pigeonVar_replyList[0] as int?);
+    }
+  }
+
+  /// Returns passed in double.
+  Future<double?> echoNullableDouble(double? aNullableDouble) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoNullableDouble(aNullableDouble);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoNullableDouble$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[aNullableDouble]);
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return (pigeonVar_replyList[0] as double?);
+    }
+  }
+
+  /// Returns the passed in boolean.
+  Future<bool?> echoNullableBool(bool? aNullableBool) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoNullableBool(aNullableBool);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoNullableBool$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[aNullableBool]);
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return (pigeonVar_replyList[0] as bool?);
+    }
+  }
+
+  /// Returns the passed in string.
+  Future<String?> echoNullableString(String? aNullableString) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoNullableString(aNullableString);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoNullableString$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[aNullableString]);
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return (pigeonVar_replyList[0] as String?);
     }
   }
 }

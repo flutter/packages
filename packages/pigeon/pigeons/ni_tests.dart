@@ -105,7 +105,7 @@ class NIAllTypes {
   // Map<int, Map<Object?, Object?>> mapMap;
 }
 
-// /// A class containing all supported nullable types.
+/// A class containing all supported nullable types.
 // @SwiftClass()
 // class NIAllNullableTypes {
 //   NIAllNullableTypes(
@@ -146,12 +146,12 @@ class NIAllTypes {
 //     this.listMap,
 //     this.mapMap,
 //     this.recursiveClassMap,
-//   );
+// );
 
-//   bool? aNullableBool;
-//   int? aNullableInt;
-//   int? aNullableInt64;
-//   double? aNullableDouble;
+// bool? aNullableBool;
+// int? aNullableInt;
+// int? aNullableInt64;
+// double? aNullableDouble;
 //   Uint8List? aNullableByteArray;
 //   Int32List? aNullable4ByteArray;
 //   Int64List? aNullable8ByteArray;
@@ -185,15 +185,15 @@ class NIAllTypes {
 //   Map<int?, NIAllNullableTypes?>? recursiveClassMap;
 // }
 
-// /// The primary purpose for this class is to ensure coverage of Swift structs
-// /// with nullable items, as the primary [NIAllNullableTypes] class is being used to
-// /// test Swift classes.
-// class NIAllNullableTypesWithoutRecursion {
-//   NIAllNullableTypesWithoutRecursion(
-//     this.aNullableBool,
-//     this.aNullableInt,
-//     this.aNullableInt64,
-//     this.aNullableDouble,
+/// The primary purpose for this class is to ensure coverage of Swift structs
+/// with nullable items, as the primary [NIAllNullableTypes] class is being used to
+/// test Swift classes.
+class NIAllNullableTypesWithoutRecursion {
+  NIAllNullableTypesWithoutRecursion(
+    this.aNullableBool,
+    this.aNullableInt,
+    this.aNullableInt64,
+    this.aNullableDouble,
 //     this.aNullableByteArray,
 //     this.aNullable4ByteArray,
 //     this.aNullable8ByteArray,
@@ -224,12 +224,12 @@ class NIAllTypes {
 //     this.objectMap,
 //     this.listMap,
 //     this.mapMap,
-//   );
+  );
 
-//   bool? aNullableBool;
-//   int? aNullableInt;
-//   int? aNullableInt64;
-//   double? aNullableDouble;
+  bool? aNullableBool;
+  int? aNullableInt;
+  int? aNullableInt64;
+  double? aNullableDouble;
 //   Uint8List? aNullableByteArray;
 //   Int32List? aNullable4ByteArray;
 //   Int64List? aNullable8ByteArray;
@@ -258,7 +258,7 @@ class NIAllTypes {
 //   Map<Object?, Object?>? objectMap;
 //   Map<int?, List<Object?>?>? listMap;
 //   Map<int?, Map<Object?, Object?>?>? mapMap;
-// }
+}
 
 // /// A class for testing nested class handling.
 // ///
@@ -458,16 +458,16 @@ abstract class NIHostIntegrationCoreApi {
 
   // // ========== Synchronous nullable method tests ==========
 
-  // /// Returns the passed object, to test serialization and deserialization.
+  /// Returns the passed object, to test serialization and deserialization.
   // @ObjCSelector('echoAllNullableTypes:')
   // @SwiftFunction('echo(_:)')
   // NIAllNullableTypes? echoAllNullableTypes(NIAllNullableTypes? everything);
 
-  // /// Returns the passed object, to test serialization and deserialization.
-  // @ObjCSelector('echoAllNullableTypesWithoutRecursion:')
+  /// Returns the passed object, to test serialization and deserialization.
+  @ObjCSelector('echoAllNullableTypesWithoutRecursion:')
   // @SwiftFunction('echo(_:)')
-  // NIAllNullableTypesWithoutRecursion? echoAllNullableTypesWithoutRecursion(
-  //     NIAllNullableTypesWithoutRecursion? everything);
+  NIAllNullableTypesWithoutRecursion? echoAllNullableTypesWithoutRecursion(
+      NIAllNullableTypesWithoutRecursion? everything);
 
   // /// Returns the inner `aString` value from the wrapped object, to test
   // /// sending of nested objects.
@@ -494,25 +494,25 @@ abstract class NIHostIntegrationCoreApi {
   // NIAllNullableTypesWithoutRecursion sendMultipleNullableTypesWithoutRecursion(
   //     bool? aNullableBool, int? aNullableInt, String? aNullableString);
 
-  // /// Returns passed in int.
-  // @ObjCSelector('echoNullableInt:')
+  /// Returns passed in int.
+  @ObjCSelector('echoNullableInt:')
   // @SwiftFunction('echo(_:)')
-  // int? echoNullableInt(int? aNullableInt);
+  int? echoNullableInt(int? aNullableInt);
 
-  // /// Returns passed in double.
-  // @ObjCSelector('echoNullableDouble:')
+  /// Returns passed in double.
+  @ObjCSelector('echoNullableDouble:')
   // @SwiftFunction('echo(_:)')
-  // double? echoNullableDouble(double? aNullableDouble);
+  double? echoNullableDouble(double? aNullableDouble);
 
-  // /// Returns the passed in boolean.
-  // @ObjCSelector('echoNullableBool:')
+  /// Returns the passed in boolean.
+  @ObjCSelector('echoNullableBool:')
   // @SwiftFunction('echo(_:)')
-  // bool? echoNullableBool(bool? aNullableBool);
+  bool? echoNullableBool(bool? aNullableBool);
 
-  // /// Returns the passed in string.
-  // @ObjCSelector('echoNullableString:')
+  /// Returns the passed in string.
+  @ObjCSelector('echoNullableString:')
   // @SwiftFunction('echo(_:)')
-  // String? echoNullableString(String? aNullableString);
+  String? echoNullableString(String? aNullableString);
 
   // /// Returns the passed in Uint8List.
   // @ObjCSelector('echoNullableUint8List:')
