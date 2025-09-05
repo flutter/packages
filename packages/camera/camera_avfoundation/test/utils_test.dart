@@ -25,6 +25,25 @@ void main() {
       );
     });
 
+    test('Should convert CameraLensType values correctly', () {
+      expect(
+        cameraLensTypeFromPlatform(PlatformCameraLensType.wide),
+        CameraLensType.wide,
+      );
+      expect(
+        cameraLensTypeFromPlatform(PlatformCameraLensType.ultraWide),
+        CameraLensType.ultraWide,
+      );
+      expect(
+        cameraLensTypeFromPlatform(PlatformCameraLensType.telephoto),
+        CameraLensType.telephoto,
+      );
+      expect(
+        cameraLensTypeFromPlatform(PlatformCameraLensType.unknown),
+        CameraLensType.unknown,
+      );
+    });
+
     test('serializeDeviceOrientation() should serialize correctly', () {
       expect(
         serializeDeviceOrientation(DeviceOrientation.portraitUp),
