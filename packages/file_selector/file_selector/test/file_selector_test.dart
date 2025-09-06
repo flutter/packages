@@ -341,6 +341,7 @@ class FakeFileSelector extends Fake
   String? initialDirectory;
   String? confirmButtonText;
   String? suggestedName;
+  bool canCreateDirectories = true;
   // Return values.
   List<XFile>? files;
   List<String>? paths;
@@ -436,9 +437,11 @@ class FakeFileSelector extends Fake
   Future<String?> getDirectoryPath({
     String? initialDirectory,
     String? confirmButtonText,
+    bool canCreateDirectories = true,
   }) async {
     expect(initialDirectory, this.initialDirectory);
     expect(confirmButtonText, this.confirmButtonText);
+    expect(canCreateDirectories, this.canCreateDirectories);
     return paths?[0];
   }
 
@@ -446,9 +449,11 @@ class FakeFileSelector extends Fake
   Future<List<String>> getDirectoryPaths({
     String? initialDirectory,
     String? confirmButtonText,
+    bool canCreateDirectories = true,
   }) async {
     expect(initialDirectory, this.initialDirectory);
     expect(confirmButtonText, this.confirmButtonText);
+    expect(canCreateDirectories, this.canCreateDirectories);
     return paths!;
   }
 }

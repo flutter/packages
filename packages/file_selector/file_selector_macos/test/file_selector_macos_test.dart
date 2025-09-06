@@ -566,6 +566,78 @@ void main() {
     });
   });
 
+  group('getDirectoryPathWithOptions', () {
+    test('works as expected with no arguments', () async {
+      when(
+        mockApi.displayOpenPanel(any),
+      ).thenAnswer((_) async => <String>['foo']);
+
+      final String? path = await plugin.getDirectoryPathWithOptions(
+        const FileDialogOptions(),
+      );
+
+      expect(path, 'foo');
+      final VerificationResult result = verify(
+        mockApi.displayOpenPanel(captureAny),
+      );
+      final OpenPanelOptions options = result.captured[0] as OpenPanelOptions;
+      expect(options.allowsMultipleSelection, false);
+      expect(options.canChooseFiles, false);
+      expect(options.canChooseDirectories, true);
+      expect(options.baseOptions.allowedFileTypes, null);
+      expect(options.baseOptions.directoryPath, null);
+      expect(options.baseOptions.nameFieldStringValue, null);
+      expect(options.baseOptions.canCreateDirectories, true);
+      expect(options.baseOptions.prompt, null);
+    });
+
+    test('handles cancel', () async {
+      when(mockApi.displayOpenPanel(any)).thenAnswer((_) async => <String>[]);
+
+      final String? path = await plugin.getDirectoryPathWithOptions(
+        const FileDialogOptions(),
+      );
+
+      expect(path, null);
+    });
+
+    test('passes initialDirectory correctly', () async {
+      await plugin.getDirectoryPathWithOptions(
+        const FileDialogOptions(initialDirectory: '/example/directory'),
+      );
+
+      final VerificationResult result = verify(
+        mockApi.displayOpenPanel(captureAny),
+      );
+      final OpenPanelOptions options = result.captured[0] as OpenPanelOptions;
+      expect(options.baseOptions.directoryPath, '/example/directory');
+    });
+
+    test('passes confirmButtonText correctly', () async {
+      await plugin.getDirectoryPathWithOptions(
+        const FileDialogOptions(confirmButtonText: 'Open File'),
+      );
+
+      final VerificationResult result = verify(
+        mockApi.displayOpenPanel(captureAny),
+      );
+      final OpenPanelOptions options = result.captured[0] as OpenPanelOptions;
+      expect(options.baseOptions.prompt, 'Open File');
+    });
+
+    test('passes canCreateDirectories correctly', () async {
+      await plugin.getDirectoryPathWithOptions(
+        const FileDialogOptions(canCreateDirectories: false),
+      );
+
+      final VerificationResult result = verify(
+        mockApi.displayOpenPanel(captureAny),
+      );
+      final OpenPanelOptions options = result.captured[0] as OpenPanelOptions;
+      expect(options.baseOptions.canCreateDirectories, false);
+    });
+  });
+
   group('getDirectoryPaths', () {
     test('works as expected with no arguments', () async {
       when(mockApi.displayOpenPanel(any)).thenAnswer(
@@ -622,6 +694,86 @@ void main() {
       );
       final OpenPanelOptions options = result.captured[0] as OpenPanelOptions;
       expect(options.baseOptions.directoryPath, '/example/directory');
+    });
+  });
+
+  group('getDirectoryPathsWithOptions', () {
+    test('works as expected with no arguments', () async {
+      when(mockApi.displayOpenPanel(any)).thenAnswer(
+        (_) async => <String>[
+          'firstDirectory',
+          'secondDirectory',
+          'thirdDirectory',
+        ],
+      );
+
+      final List<String> path = await plugin.getDirectoryPathsWithOptions(
+        const FileDialogOptions(),
+      );
+
+      expect(path, <String>[
+        'firstDirectory',
+        'secondDirectory',
+        'thirdDirectory',
+      ]);
+      final VerificationResult result = verify(
+        mockApi.displayOpenPanel(captureAny),
+      );
+      final OpenPanelOptions options = result.captured[0] as OpenPanelOptions;
+      expect(options.allowsMultipleSelection, true);
+      expect(options.canChooseFiles, false);
+      expect(options.canChooseDirectories, true);
+      expect(options.baseOptions.allowedFileTypes, null);
+      expect(options.baseOptions.directoryPath, null);
+      expect(options.baseOptions.nameFieldStringValue, null);
+      expect(options.baseOptions.canCreateDirectories, true);
+      expect(options.baseOptions.prompt, null);
+    });
+
+    test('handles cancel', () async {
+      when(mockApi.displayOpenPanel(any)).thenAnswer((_) async => <String>[]);
+
+      final List<String> paths = await plugin.getDirectoryPathsWithOptions(
+        const FileDialogOptions(),
+      );
+
+      expect(paths, <String>[]);
+    });
+
+    test('passes confirmButtonText correctly', () async {
+      await plugin.getDirectoryPathsWithOptions(
+        const FileDialogOptions(confirmButtonText: 'Select directories'),
+      );
+
+      final VerificationResult result = verify(
+        mockApi.displayOpenPanel(captureAny),
+      );
+      final OpenPanelOptions options = result.captured[0] as OpenPanelOptions;
+      expect(options.baseOptions.prompt, 'Select directories');
+    });
+
+    test('passes initialDirectory correctly', () async {
+      await plugin.getDirectoryPathsWithOptions(
+        const FileDialogOptions(initialDirectory: '/example/directory'),
+      );
+
+      final VerificationResult result = verify(
+        mockApi.displayOpenPanel(captureAny),
+      );
+      final OpenPanelOptions options = result.captured[0] as OpenPanelOptions;
+      expect(options.baseOptions.directoryPath, '/example/directory');
+    });
+
+    test('passes canCreateDirectories correctly', () async {
+      await plugin.getDirectoryPathsWithOptions(
+        const FileDialogOptions(canCreateDirectories: false),
+      );
+
+      final VerificationResult result = verify(
+        mockApi.displayOpenPanel(captureAny),
+      );
+      final OpenPanelOptions options = result.captured[0] as OpenPanelOptions;
+      expect(options.baseOptions.canCreateDirectories, false);
     });
   });
 }

@@ -175,6 +175,7 @@ struct SavePanelOptions: Hashable {
   var directoryPath: String? = nil
   var nameFieldStringValue: String? = nil
   var prompt: String? = nil
+  var canCreateDirectories: Bool? = nil
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> SavePanelOptions? {
@@ -182,12 +183,14 @@ struct SavePanelOptions: Hashable {
     let directoryPath: String? = nilOrValue(pigeonVar_list[1])
     let nameFieldStringValue: String? = nilOrValue(pigeonVar_list[2])
     let prompt: String? = nilOrValue(pigeonVar_list[3])
+    let canCreateDirectories: Bool? = nilOrValue(pigeonVar_list[4])
 
     return SavePanelOptions(
       allowedFileTypes: allowedFileTypes,
       directoryPath: directoryPath,
       nameFieldStringValue: nameFieldStringValue,
-      prompt: prompt
+      prompt: prompt,
+      canCreateDirectories: canCreateDirectories
     )
   }
   func toList() -> [Any?] {
@@ -196,6 +199,7 @@ struct SavePanelOptions: Hashable {
       directoryPath,
       nameFieldStringValue,
       prompt,
+      canCreateDirectories,
     ]
   }
   static func == (lhs: SavePanelOptions, rhs: SavePanelOptions) -> Bool {

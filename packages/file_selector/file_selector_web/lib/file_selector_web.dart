@@ -76,6 +76,11 @@ class FileSelectorWeb extends FileSelectorPlatform {
     String? confirmButtonText,
   }) async => null;
 
+  @override
+  Future<String?> getDirectoryPathWithOptions(
+    FileDialogOptions options,
+  ) async => null;
+
   Future<List<XFile>> _openFiles({
     List<XTypeGroup>? acceptedTypeGroups,
     bool multiple = false,

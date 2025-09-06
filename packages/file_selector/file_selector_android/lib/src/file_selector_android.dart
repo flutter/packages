@@ -53,7 +53,14 @@ class FileSelectorAndroid extends FileSelectorPlatform {
     String? initialDirectory,
     String? confirmButtonText,
   }) async {
-    return _api.getDirectoryPath(initialDirectory);
+    return getDirectoryPathWithOptions(
+      FileDialogOptions(initialDirectory: initialDirectory),
+    );
+  }
+
+  @override
+  Future<String?> getDirectoryPathWithOptions(FileDialogOptions options) async {
+    return _api.getDirectoryPath(options.initialDirectory);
   }
 
   XFile _xFileFromFileResponse(FileResponse file) {
