@@ -587,7 +587,7 @@ void main() {
       expect(options.baseOptions.allowedFileTypes, null);
       expect(options.baseOptions.directoryPath, null);
       expect(options.baseOptions.nameFieldStringValue, null);
-      expect(options.baseOptions.canCreateDirectories, true);
+      expect(options.baseOptions.canCreateDirectories, null);
       expect(options.baseOptions.prompt, null);
     });
 
@@ -726,7 +726,7 @@ void main() {
       expect(options.baseOptions.allowedFileTypes, null);
       expect(options.baseOptions.directoryPath, null);
       expect(options.baseOptions.nameFieldStringValue, null);
-      expect(options.baseOptions.canCreateDirectories, true);
+      expect(options.baseOptions.canCreateDirectories, null);
       expect(options.baseOptions.prompt, null);
     });
 
