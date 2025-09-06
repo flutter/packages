@@ -1,27 +1,24 @@
 RouteBase get $listRoute => GoRouteData.$route(
       path: '/list-route',
-      factory: _$ListRoute._fromState,
+      factory: $ListRoute._fromState,
     );
 
-mixin _$ListRoute on GoRouteData {
+mixin $ListRoute on GoRouteData {
   static ListRoute _fromState(GoRouterState state) => ListRoute(
-        ids: (state.uri.queryParametersAll['ids']
-                    ?.map(int.parse)
-                    .cast<int>()
-                    ?.toList() as List<int>)
-                ?.toList() ??
-            const [],
-        nullableIds: (state.uri.queryParametersAll['nullable-ids']
+        ids: state.uri.queryParametersAll['ids']
                 ?.map(int.parse)
                 .cast<int>()
-                ?.toList() as List<int>?)
-            ?.toList(),
-        idsWithDefaultValue: (state
-                    .uri.queryParametersAll['ids-with-default-value']
-                    ?.map(int.parse)
-                    .cast<int>()
-                    ?.toList() as List<int>?)
-                ?.toList() ??
+                .toList() ??
+            const [],
+        nullableIds: state.uri.queryParametersAll['nullable-ids']
+            ?.map(int.parse)
+            .cast<int>()
+            .toList(),
+        idsWithDefaultValue: state
+                .uri.queryParametersAll['ids-with-default-value']
+                ?.map(int.parse)
+                .cast<int>()
+                .toList() ??
             const <int>[0],
       );
 
