@@ -1,3 +1,7 @@
+## 0.5.2
+
+* Adds `canCreateDirectories` parameter to `FileDialogOptions` to control the visibility of the New Folder button in file dialogs on supported platforms.
+
 ## 0.5.1+16
 
 * Bumps com.android.tools.build:gradle to 8.12.1.
