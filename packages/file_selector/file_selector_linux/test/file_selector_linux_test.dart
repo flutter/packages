@@ -385,6 +385,45 @@ void main() {
     });
   });
 
+  group('getDirectoryPathWithOptions', () {
+    test('passes the core flags correctly', () async {
+      const String path = '/foo/bar';
+      api.result = <String>[path];
+
+      expect(
+        await plugin.getDirectoryPathWithOptions(const FileDialogOptions()),
+        path,
+      );
+
+      expect(api.passedType, PlatformFileChooserActionType.chooseDirectory);
+      expect(api.passedOptions?.selectMultiple, false);
+    });
+
+    test('passes initialDirectory correctly', () async {
+      const String path = '/example/directory';
+      await plugin.getDirectoryPathWithOptions(
+        const FileDialogOptions(initialDirectory: path),
+      );
+
+      expect(api.passedOptions?.currentFolderPath, path);
+    });
+
+    test('passes confirmButtonText correctly', () async {
+      const String button = 'Select Folder';
+      await plugin.getDirectoryPathWithOptions(
+        const FileDialogOptions(confirmButtonText: button),
+      );
+      expect(api.passedOptions?.acceptButtonLabel, button);
+    });
+
+    test('passes canCreateDirectories correctly', () async {
+      await plugin.getDirectoryPathWithOptions(
+        const FileDialogOptions(canCreateDirectories: true),
+      );
+      expect(api.passedOptions?.createFolders, true);
+    });
+  });
+
   group('getDirectoryPaths', () {
     test('passes the core flags correctly', () async {
       api.result = <String>['/foo/bar', 'baz'];
@@ -411,6 +450,52 @@ void main() {
 
     test('passes multiple flag correctly', () async {
       await plugin.getDirectoryPaths();
+
+      expect(api.passedOptions?.selectMultiple, true);
+    });
+  });
+
+  group('getDirectoryPathsWithOptions', () {
+    test('passes the core flags correctly', () async {
+      api.result = <String>['/foo/bar', 'baz'];
+
+      expect(
+        await plugin.getDirectoryPathsWithOptions(const FileDialogOptions()),
+        api.result,
+      );
+
+      expect(api.passedType, PlatformFileChooserActionType.chooseDirectory);
+      expect(api.passedOptions?.selectMultiple, true);
+    });
+
+    test('passes initialDirectory correctly', () async {
+      const String path = '/example/directory';
+      await plugin.getDirectoryPathsWithOptions(
+        const FileDialogOptions(initialDirectory: path),
+      );
+
+      expect(api.passedOptions?.currentFolderPath, path);
+    });
+
+    test('passes confirmButtonText correctly', () async {
+      const String button = 'Select one or mode folders';
+      await plugin.getDirectoryPathsWithOptions(
+        const FileDialogOptions(confirmButtonText: button),
+      );
+
+      expect(api.passedOptions?.acceptButtonLabel, button);
+    });
+
+    test('passes canCreateDirectories flag correctly', () async {
+      await plugin.getDirectoryPathsWithOptions(
+        const FileDialogOptions(canCreateDirectories: true),
+      );
+
+      expect(api.passedOptions?.createFolders, true);
+    });
+
+    test('passes multiple flag correctly', () async {
+      await plugin.getDirectoryPathsWithOptions(const FileDialogOptions());
 
       expect(api.passedOptions?.selectMultiple, true);
     });
