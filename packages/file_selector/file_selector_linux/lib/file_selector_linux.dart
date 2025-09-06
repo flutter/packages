@@ -119,6 +119,7 @@ class FileSelectorLinux extends FileSelectorPlatform {
       PlatformFileChooserOptions(
         currentFolderPath: options.initialDirectory,
         acceptButtonLabel: options.confirmButtonText,
+        createFolders: options.canCreateDirectories,
         selectMultiple: false,
       ),
     );
