@@ -1,5 +1,6 @@
-## NEXT
+## 2.7.0
 
+* Adds `canCreateDirectories` parameter to `FileDialogOptions` to control the visibility of the New Folder button in file dialogs on supported platforms.
 * Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
 
 ## 2.6.2
