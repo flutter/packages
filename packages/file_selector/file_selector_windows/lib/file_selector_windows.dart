@@ -94,10 +94,20 @@ class FileSelectorWindows extends FileSelectorPlatform {
     String? initialDirectory,
     String? confirmButtonText,
   }) async {
+    return getDirectoryPathWithOptions(
+      FileDialogOptions(
+        initialDirectory: initialDirectory,
+        confirmButtonText: confirmButtonText,
+      ),
+    );
+  }
+
+  @override
+  Future<String?> getDirectoryPathWithOptions(FileDialogOptions options) async {
     final FileDialogResult result = await _hostApi.showOpenDialog(
       SelectionOptions(selectFolders: true, allowedTypes: <TypeGroup>[]),
-      initialDirectory,
-      confirmButtonText,
+      options.initialDirectory,
+      options.confirmButtonText,
     );
     return result.paths.isEmpty ? null : result.paths.first;
   }
@@ -107,14 +117,26 @@ class FileSelectorWindows extends FileSelectorPlatform {
     String? initialDirectory,
     String? confirmButtonText,
   }) async {
+    return getDirectoryPathsWithOptions(
+      FileDialogOptions(
+        initialDirectory: initialDirectory,
+        confirmButtonText: confirmButtonText,
+      ),
+    );
+  }
+
+  @override
+  Future<List<String>> getDirectoryPathsWithOptions(
+    FileDialogOptions options,
+  ) async {
     final FileDialogResult result = await _hostApi.showOpenDialog(
       SelectionOptions(
         allowMultiple: true,
         selectFolders: true,
         allowedTypes: <TypeGroup>[],
       ),
-      initialDirectory,
-      confirmButtonText,
+      options.initialDirectory,
+      options.confirmButtonText,
     );
     return result.paths.isEmpty ? <String>[] : List<String>.from(result.paths);
   }

@@ -121,14 +121,22 @@ Future<FileSaveLocation?> getSaveLocation({
 /// [confirmButtonText] is the text in the confirmation button of the dialog.
 /// When not provided, the default OS label is used (for example, "Open").
 ///
+/// [canCreateDirectories] controls whether the user is allowed to create new
+/// directories in the dialog (if supported on the platform).
+/// Currently only supported on Linux and macOS.
+///
 /// Returns `null` if the user cancels the operation.
 Future<String?> getDirectoryPath({
   String? initialDirectory,
   String? confirmButtonText,
+  bool? canCreateDirectories,
 }) async {
-  return FileSelectorPlatform.instance.getDirectoryPath(
-    initialDirectory: initialDirectory,
-    confirmButtonText: confirmButtonText,
+  return FileSelectorPlatform.instance.getDirectoryPathWithOptions(
+    FileDialogOptions(
+      initialDirectory: initialDirectory,
+      confirmButtonText: confirmButtonText,
+      canCreateDirectories: canCreateDirectories,
+    ),
   );
 }
 
@@ -144,13 +152,21 @@ Future<String?> getDirectoryPath({
 /// [confirmButtonText] is the text in the confirmation button of the dialog.
 /// When not provided, the default OS label is used (for example, "Open").
 ///
+/// [canCreateDirectories] controls whether the user is allowed to create new
+/// directories in the dialog (if supported on the platform).
+/// Currently only supported on Linux and macOS.
+///
 /// Returns an empty array if the user cancels the operation.
 Future<List<String?>> getDirectoryPaths({
   String? initialDirectory,
   String? confirmButtonText,
+  bool? canCreateDirectories,
 }) async {
-  return FileSelectorPlatform.instance.getDirectoryPaths(
-    initialDirectory: initialDirectory,
-    confirmButtonText: confirmButtonText,
+  return FileSelectorPlatform.instance.getDirectoryPathsWithOptions(
+    FileDialogOptions(
+      initialDirectory: initialDirectory,
+      confirmButtonText: confirmButtonText,
+      canCreateDirectories: canCreateDirectories,
+    ),
   );
 }
