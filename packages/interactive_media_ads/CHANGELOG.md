@@ -1,3 +1,7 @@
+## 0.2.6+8
+
+* Adds support for accessing data for an ad. See `AdEvent.ad`.
+
 ## 0.2.6+7
 
 * Updates Android `PlatformAdDisplayContainer` implementation to support preloading ads.
