@@ -5,6 +5,7 @@
 import 'package:flutter/foundation.dart';
 
 import 'ad_error.dart';
+import 'platform_ad.dart';
 
 /// Types of events that can occur during ad playback.
 enum AdEventType {
@@ -110,12 +111,19 @@ enum AdEventType {
 
 /// Simple data class used to transport ad playback information.
 @immutable
-base class AdEvent {
-  /// Creates an [AdEvent].
-  const AdEvent({required this.type, this.adData = const <String, String>{}});
+base class PlatformAdEvent {
+  /// Creates an [PlatformAdEvent].
+  const PlatformAdEvent({
+    required this.type,
+    required this.ad,
+    this.adData = const <String, String>{},
+  });
 
   /// The type of event that occurred.
   final AdEventType type;
+
+  /// The ad with which this event is associated.
+  final PlatformAd? ad;
 
   /// A map containing any extra ad data for the event, if needed.
   final Map<String, String> adData;

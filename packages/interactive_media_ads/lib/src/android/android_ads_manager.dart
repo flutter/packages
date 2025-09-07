@@ -87,10 +87,11 @@ class AndroidAdsManager extends PlatformAdsManager {
       proxy.newAdEventListener(
         onAdEvent: (_, ima.AdEvent event) {
           weakThis.target?._managerDelegate?.params.onAdEvent?.call(
-            AdEvent(
+            PlatformAdEvent(
               type: toInterfaceEventType(event.type),
               adData:
                   event.adData?.cast<String, String>() ?? <String, String>{},
+              ad: event.ad != null ? _asPlatformAd(event.ad!) : null,
             ),
           );
         },
@@ -113,4 +114,99 @@ class AndroidAdsManager extends PlatformAdsManager {
       ),
     );
   }
+}
+
+PlatformAd _asPlatformAd(ima.Ad ad) {
+  return PlatformAd(
+    adId: ad.adId,
+    adPodInfo: _asPlatformAdInfo(ad.adPodInfo),
+    adSystem: ad.adSystem,
+    adWrapperCreativeIds: ad.adWrapperCreativeIds,
+    adWrapperIds: ad.adWrapperIds,
+    adWrapperSystems: ad.adWrapperSystems,
+    advertiserName: ad.advertiserName,
+    companionAds: List<PlatformCompanionAd>.unmodifiable(
+      ad.companionAds.map(_asPlatformCompanionAd),
+    ),
+    contentType: ad.contentType,
+    creativeAdId: ad.creativeAdId,
+    creativeId: ad.creativeId,
+    dealId: ad.dealId,
+    description: ad.description,
+    duration:
+        ad.duration != -1
+            ? Duration(
+              milliseconds:
+                  (ad.duration * Duration.millisecondsPerSecond).round(),
+            )
+            : null,
+    height: ad.height,
+    skipTimeOffset:
+        ad.skipTimeOffset == -1
+            ? Duration(
+              milliseconds:
+                  (ad.skipTimeOffset * Duration.millisecondsPerSecond).round(),
+            )
+            : null,
+    surveyUrl: ad.surveyUrl,
+    title: ad.title,
+    traffickingParameters: ad.traffickingParameters,
+    uiElements:
+        ad.uiElements
+            .map((ima.UiElement element) {
+              return switch (element) {
+                ima.UiElement.adAttribution => AdUIElement.adAttribution,
+                ima.UiElement.countdown => AdUIElement.countdown,
+                ima.UiElement.unknown => null,
+              };
+            })
+            .whereType<AdUIElement>()
+            .toList(),
+    universalAdIds: ad.universalAdIds.map(_asPlatformUniversalAdId).toList(),
+    vastMediaBitrate: ad.vastMediaBitrate,
+    vastMediaHeight: ad.vastMediaHeight,
+    vastMediaWidth: ad.vastMediaWidth,
+    width: ad.width,
+    isLinear: ad.isLinear,
+    isSkippable: ad.isSkippable,
+  );
+}
+
+PlatformAdPodInfo _asPlatformAdInfo(ima.AdPodInfo adPodInfo) {
+  return PlatformAdPodInfo(
+    adPosition: adPodInfo.adPosition,
+    maxDuration: Duration(
+      milliseconds:
+          (adPodInfo.maxDuration * Duration.millisecondsPerSecond).round(),
+    ),
+    podIndex: adPodInfo.podIndex,
+    timeOffset: Duration(
+      milliseconds:
+          (adPodInfo.timeOffset * Duration.millisecondsPerSecond).round(),
+    ),
+    totalAds: adPodInfo.totalAds,
+    isBumper: adPodInfo.isBumper,
+  );
+}
+
+PlatformCompanionAd _asPlatformCompanionAd(ima.CompanionAd ad) {
+  return PlatformCompanionAd(
+    apiFramework: ad.apiFramework,
+    height: ad.height == 0 ? null : ad.height,
+    resourceValue: ad.resourceValue,
+    width: ad.width == 0 ? null : ad.width,
+  );
+}
+
+PlatformUniversalAdId _asPlatformUniversalAdId(
+  ima.UniversalAdId universalAdId,
+) {
+  return PlatformUniversalAdId(
+    adIDValue:
+        universalAdId.adIdValue != 'unknown' ? universalAdId.adIdValue : null,
+    adIDRegistry:
+        universalAdId.adIdRegistry != 'unknown'
+            ? universalAdId.adIdRegistry
+            : null,
+  );
 }

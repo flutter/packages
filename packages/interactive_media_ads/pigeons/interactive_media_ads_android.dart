@@ -1018,7 +1018,7 @@ abstract class CompanionAd {
   late final int height;
 
   /// The URL for the static resource of this companion.
-  late final String resourceValue;
+  late final String? resourceValue;
 
   /// The width of the companion in pixels.
   ///

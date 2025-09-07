@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 import 'ad_ui_element.dart';
 import 'platform_ad_pod_info.dart';
 import 'platform_companion_ad.dart';
@@ -85,8 +89,8 @@ base class PlatformAd {
   /// The height of the selected creative if non-linear, else returns 0.
   final int height;
 
-  /// The number of seconds of playback before the ad becomes skippable.
-  final double skipTimeOffset;
+  /// The playback time before the ad becomes skippable.
+  final Duration? skipTimeOffset;
 
   /// The URL associated with the survey for the given ad.
   final String? surveyUrl;

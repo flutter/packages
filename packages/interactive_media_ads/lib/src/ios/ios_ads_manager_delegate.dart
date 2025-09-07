@@ -66,13 +66,14 @@ final class IOSAdsManagerDelegate extends PlatformAdsManagerDelegate {
     return interfaceDelegate.target!._iosParams._proxy.newIMAAdsManagerDelegate(
       didReceiveAdEvent: (_, __, ima.IMAAdEvent event) {
         interfaceDelegate.target?.params.onAdEvent?.call(
-          AdEvent(
+          PlatformAdEvent(
             type: toInterfaceEventType(event.type),
             adData:
                 event.adData?.map((String? key, Object? value) {
                   return MapEntry<String, String>(key!, value.toString());
                 }) ??
                 <String, String>{},
+            ad: event.ad != null ? _asPlatformAd(event.ad!) : null,
           ),
         );
       },
@@ -89,14 +90,115 @@ final class IOSAdsManagerDelegate extends PlatformAdsManagerDelegate {
       },
       didRequestContentPause: (_, __) {
         interfaceDelegate.target?.params.onAdEvent?.call(
-          const AdEvent(type: AdEventType.contentPauseRequested),
+          const PlatformAdEvent(
+            type: AdEventType.contentPauseRequested,
+            ad: null,
+          ),
         );
       },
       didRequestContentResume: (_, __) {
         interfaceDelegate.target?.params.onAdEvent?.call(
-          const AdEvent(type: AdEventType.contentResumeRequested),
+          const PlatformAdEvent(
+            type: AdEventType.contentResumeRequested,
+            ad: null,
+          ),
         );
       },
     );
   }
+}
+
+PlatformAd _asPlatformAd(ima.IMAAd ad) {
+  return PlatformAd(
+    adId: ad.adId,
+    adPodInfo: _asPlatformAdInfo(ad.adPodInfo),
+    adSystem: ad.adSystem,
+    adWrapperCreativeIds: ad.wrapperCreativeIDs,
+    adWrapperIds: ad.wrapperAdIDs,
+    adWrapperSystems: ad.wrapperSystems,
+    advertiserName: ad.advertiserName,
+    companionAds: List<PlatformCompanionAd>.unmodifiable(
+      ad.companionAds.map(_asPlatformCompanionAd),
+    ),
+    contentType: ad.contentType,
+    creativeAdId: ad.creativeAdID,
+    creativeId: ad.creativeID,
+    dealId: ad.dealID,
+    description: ad.adDescription,
+    duration:
+        ad.duration != -1
+            ? Duration(
+              milliseconds:
+                  (ad.duration * Duration.millisecondsPerSecond).round(),
+            )
+            : null,
+    height: ad.height,
+    skipTimeOffset:
+        ad.skipTimeOffset == -1
+            ? Duration(
+              milliseconds:
+                  (ad.skipTimeOffset * Duration.millisecondsPerSecond).round(),
+            )
+            : null,
+    surveyUrl: ad.surveyURL,
+    title: ad.adTitle,
+    traffickingParameters: ad.traffickingParameters,
+    uiElements:
+        ad.uiElements
+            .map((ima.UIElementType element) {
+              return switch (element) {
+                ima.UIElementType.adAttribution => AdUIElement.adAttribution,
+                ima.UIElementType.countdown => AdUIElement.countdown,
+                ima.UIElementType.unknown => null,
+              };
+            })
+            .whereType<AdUIElement>()
+            .toList(),
+    universalAdIds: ad.universalAdIDs.map(_asPlatformUniversalAdId).toList(),
+    vastMediaBitrate: ad.vastMediaBitrate,
+    vastMediaHeight: ad.vastMediaHeight,
+    vastMediaWidth: ad.vastMediaWidth,
+    width: ad.width,
+    isLinear: ad.isLinear,
+    isSkippable: ad.isSkippable,
+  );
+}
+
+PlatformAdPodInfo _asPlatformAdInfo(ima.IMAAdPodInfo adPodInfo) {
+  return PlatformAdPodInfo(
+    adPosition: adPodInfo.adPosition,
+    maxDuration: Duration(
+      milliseconds:
+          (adPodInfo.maxDuration * Duration.millisecondsPerSecond).round(),
+    ),
+    podIndex: adPodInfo.podIndex,
+    timeOffset: Duration(
+      milliseconds:
+          (adPodInfo.timeOffset * Duration.millisecondsPerSecond).round(),
+    ),
+    totalAds: adPodInfo.totalAds,
+    isBumper: adPodInfo.isBumper,
+  );
+}
+
+PlatformCompanionAd _asPlatformCompanionAd(ima.IMACompanionAd ad) {
+  return PlatformCompanionAd(
+    apiFramework: ad.apiFramework,
+    height: ad.height == 0 ? null : ad.height,
+    resourceValue: ad.resourceValue,
+    width: ad.width == 0 ? null : ad.width,
+  );
+}
+
+PlatformUniversalAdId _asPlatformUniversalAdId(
+  ima.IMAUniversalAdID universalAdId,
+) {
+  return PlatformUniversalAdId(
+    adIDValue:
+        universalAdId.adIDValue != 'unknown' ? universalAdId.adIDValue : null,
+    adIDRegistry:
+        universalAdId.adIDRegistry != 'unknown'
+            ? universalAdId.adIDRegistry
+            : null,
+  );
 }
