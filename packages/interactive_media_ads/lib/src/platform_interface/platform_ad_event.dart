@@ -115,7 +115,7 @@ base class PlatformAdEvent {
   /// Creates an [PlatformAdEvent].
   const PlatformAdEvent({
     required this.type,
-    required this.ad,
+    this.ad,
     this.adData = const <String, String>{},
   });
 

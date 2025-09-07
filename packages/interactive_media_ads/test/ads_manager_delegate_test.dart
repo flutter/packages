@@ -28,15 +28,16 @@ void main() {
           (_) => throw UnimplementedError(),
     );
 
-    void onAdEvent(AdEvent event) {}
     void onAdErrorEvent(AdErrorEvent event) {}
 
     final AdsManagerDelegate delegate = AdsManagerDelegate(
-      onAdEvent: onAdEvent,
+      onAdEvent: expectAsync1((AdEvent event) {}),
       onAdErrorEvent: onAdErrorEvent,
     );
 
-    expect(delegate.platform.params.onAdEvent, onAdEvent);
+    delegate.platform.params.onAdEvent!(
+      const PlatformAdEvent(type: AdEventType.adBreakEnded),
+    );
     expect(delegate.platform.params.onAdErrorEvent, onAdErrorEvent);
   });
 }
