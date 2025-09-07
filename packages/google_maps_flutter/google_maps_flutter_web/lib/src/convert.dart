@@ -121,8 +121,10 @@ gmaps.MapOptions _configurationAndStyleToGmapsOptions(
   options.fullscreenControl = false;
   options.streetViewControl = false;
 
-  // See updateMapConfiguration for why this is not using configuration.style.
-  options.styles = styles;
+  // If using cloud map, do not set options.styles
+  if (configuration.cloudMapId == null) {
+    options.styles = styles;
+  }
 
   options.mapId = configuration.cloudMapId;
 
