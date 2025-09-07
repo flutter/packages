@@ -4,7 +4,7 @@
 
 import 'package:go_router/go_router.dart';
 
-mixin _$MissingTypeAnnotation {}
+mixin $MissingTypeAnnotation {}
 
 @TypedGoRoute(path: 'bob')
-class MissingTypeAnnotation extends GoRouteData with _$MissingTypeAnnotation {}
+class MissingTypeAnnotation extends GoRouteData with $MissingTypeAnnotation {}

@@ -1258,6 +1258,10 @@ void main() {
         await verify(() => simulateAndroidBackButton(tester), <Object>[]);
       });
 
+      // Pump one frame between back buttons to allow any PopScope widgets to
+      // rebuild.
+      await tester.pump();
+
       // The second pop should exit the app.
       await tester.runAsync(() async {
         await verify(() => simulateAndroidBackButton(tester), <Object>[

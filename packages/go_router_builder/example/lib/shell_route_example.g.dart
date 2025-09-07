@@ -13,8 +13,8 @@ List<RouteBase> get $appRoutes => [$myShellRouteData, $loginRoute];
 RouteBase get $myShellRouteData => ShellRouteData.$route(
   factory: $MyShellRouteDataExtension._fromState,
   routes: [
-    GoRouteData.$route(path: '/foo', factory: _$FooRouteData._fromState),
-    GoRouteData.$route(path: '/bar', factory: _$BarRouteData._fromState),
+    GoRouteData.$route(path: '/foo', factory: $FooRouteData._fromState),
+    GoRouteData.$route(path: '/bar', factory: $BarRouteData._fromState),
   ],
 );
 
@@ -23,7 +23,7 @@ extension $MyShellRouteDataExtension on MyShellRouteData {
       const MyShellRouteData();
 }
 
-mixin _$FooRouteData on GoRouteData {
+mixin $FooRouteData on GoRouteData {
   static FooRouteData _fromState(GoRouterState state) => const FooRouteData();
 
   @override
@@ -43,7 +43,7 @@ mixin _$FooRouteData on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-mixin _$BarRouteData on GoRouteData {
+mixin $BarRouteData on GoRouteData {
   static BarRouteData _fromState(GoRouterState state) => const BarRouteData();
 
   @override
@@ -64,9 +64,9 @@ mixin _$BarRouteData on GoRouteData {
 }
 
 RouteBase get $loginRoute =>
-    GoRouteData.$route(path: '/login', factory: _$LoginRoute._fromState);
+    GoRouteData.$route(path: '/login', factory: $LoginRoute._fromState);
 
-mixin _$LoginRoute on GoRouteData {
+mixin $LoginRoute on GoRouteData {
   static LoginRoute _fromState(GoRouterState state) => const LoginRoute();
 
   @override
