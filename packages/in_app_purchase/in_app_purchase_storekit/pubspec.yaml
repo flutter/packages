@@ -24,7 +24,7 @@ dependencies:
   flutter:
     sdk: flutter
   in_app_purchase_platform_interface: ^1.4.0
-  json_annotation: ^4.3.0
+  json_annotation: ^4.9.0
 
 dev_dependencies:
   build_runner: ^2.0.0
