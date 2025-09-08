@@ -20,25 +20,13 @@ class AuthStrings {
   const AuthStrings({
     required this.reason,
     required this.biometricHint,
-    required this.biometricNotRecognized,
-    required this.biometricRequiredTitle,
     required this.cancelButton,
-    required this.deviceCredentialsRequiredTitle,
-    required this.deviceCredentialsSetupDescription,
-    required this.goToSettingsButton,
-    required this.goToSettingsDescription,
     required this.signInTitle,
   });
 
   final String reason;
   final String biometricHint;
-  final String biometricNotRecognized;
-  final String biometricRequiredTitle;
   final String cancelButton;
-  final String deviceCredentialsRequiredTitle;
-  final String deviceCredentialsSetupDescription;
-  final String goToSettingsButton;
-  final String goToSettingsDescription;
   final String signInTitle;
 }
 
@@ -46,9 +34,6 @@ class AuthStrings {
 enum AuthResultCode {
   /// The user authenticated successfully.
   success,
-
-  /// The user launched the settings dialog.
-  launchedSettings,
 
   /// The user pressed the negative button, which corresponds to
   /// [AuthStrings.cancelButton].
@@ -119,12 +104,10 @@ class AuthOptions {
     required this.biometricOnly,
     required this.sensitiveTransaction,
     required this.sticky,
-    required this.useErrorDialgs,
   });
   final bool biometricOnly;
   final bool sensitiveTransaction;
   final bool sticky;
-  final bool useErrorDialgs;
 }
 
 /// Pigeon equivalent of the subset of BiometricType used by Android.

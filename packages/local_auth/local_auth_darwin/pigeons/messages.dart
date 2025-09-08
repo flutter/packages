@@ -19,17 +19,11 @@ class AuthStrings {
   /// Constructs a new instance.
   const AuthStrings({
     required this.reason,
-    required this.lockOut,
-    this.goToSettingsButton,
-    required this.goToSettingsDescription,
     required this.cancelButton,
     required this.localizedFallbackTitle,
   });
 
   final String reason;
-  final String lockOut;
-  final String? goToSettingsButton;
-  final String goToSettingsDescription;
   final String cancelButton;
   final String? localizedFallbackTitle;
 }
@@ -41,9 +35,6 @@ enum AuthResult {
 
   /// Native UI needed to be displayed, but couldn't be.
   uiUnavailable,
-
-  /// The plugin showed an alert as the final step.
-  showedAlert,
 
   // LAError codes; see
   // https://developer.apple.com/documentation/localauthentication/laerror-swift.struct/code
@@ -67,14 +58,9 @@ enum AuthResult {
 }
 
 class AuthOptions {
-  AuthOptions({
-    required this.biometricOnly,
-    required this.sticky,
-    required this.useErrorDialogs,
-  });
+  AuthOptions({required this.biometricOnly, required this.sticky});
   final bool biometricOnly;
   final bool sticky;
-  final bool useErrorDialogs;
 }
 
 class AuthResultDetails {
@@ -91,10 +77,6 @@ class AuthResultDetails {
   final String? errorMessage;
 
   /// System-provided error details, if any.
-  // TODO(stuartmorgan): Remove this when standardizing errors plugin-wide in
-  // a breaking change. This is here only to preserve the existing error format
-  // exactly for compatibility, in case clients were checking PlatformException
-  // details.
   final String? errorDetails;
 }
 

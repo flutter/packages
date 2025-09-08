@@ -135,24 +135,22 @@ enum AuthResult: Int {
   case success = 0
   /// Native UI needed to be displayed, but couldn't be.
   case uiUnavailable = 1
-  /// The plugin showed an alert as the final step.
-  case showedAlert = 2
-  case appCancel = 3
-  case systemCancel = 4
-  case userCancel = 5
-  case biometryDisconnected = 6
-  case biometryLockout = 7
-  case biometryNotAvailable = 8
-  case biometryNotEnrolled = 9
-  case biometryNotPaired = 10
-  case authenticationFailed = 11
-  case invalidContext = 12
-  case invalidDimensions = 13
-  case notInteractive = 14
-  case passcodeNotSet = 15
-  case userFallback = 16
+  case appCancel = 2
+  case systemCancel = 3
+  case userCancel = 4
+  case biometryDisconnected = 5
+  case biometryLockout = 6
+  case biometryNotAvailable = 7
+  case biometryNotEnrolled = 8
+  case biometryNotPaired = 9
+  case authenticationFailed = 10
+  case invalidContext = 11
+  case invalidDimensions = 12
+  case notInteractive = 13
+  case passcodeNotSet = 14
+  case userFallback = 15
   /// An error other than the expected types occurred.
-  case unknownError = 17
+  case unknownError = 16
 }
 
 /// Pigeon equivalent of the subset of BiometricType used by iOS.
@@ -168,26 +166,17 @@ enum AuthBiometric: Int {
 /// Generated class from Pigeon that represents data sent in messages.
 struct AuthStrings: Hashable {
   var reason: String
-  var lockOut: String
-  var goToSettingsButton: String? = nil
-  var goToSettingsDescription: String
   var cancelButton: String
   var localizedFallbackTitle: String? = nil
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> AuthStrings? {
     let reason = pigeonVar_list[0] as! String
-    let lockOut = pigeonVar_list[1] as! String
-    let goToSettingsButton: String? = nilOrValue(pigeonVar_list[2])
-    let goToSettingsDescription = pigeonVar_list[3] as! String
-    let cancelButton = pigeonVar_list[4] as! String
-    let localizedFallbackTitle: String? = nilOrValue(pigeonVar_list[5])
+    let cancelButton = pigeonVar_list[1] as! String
+    let localizedFallbackTitle: String? = nilOrValue(pigeonVar_list[2])
 
     return AuthStrings(
       reason: reason,
-      lockOut: lockOut,
-      goToSettingsButton: goToSettingsButton,
-      goToSettingsDescription: goToSettingsDescription,
       cancelButton: cancelButton,
       localizedFallbackTitle: localizedFallbackTitle
     )
@@ -195,9 +184,6 @@ struct AuthStrings: Hashable {
   func toList() -> [Any?] {
     return [
       reason,
-      lockOut,
-      goToSettingsButton,
-      goToSettingsDescription,
       cancelButton,
       localizedFallbackTitle,
     ]
@@ -214,25 +200,21 @@ struct AuthStrings: Hashable {
 struct AuthOptions: Hashable {
   var biometricOnly: Bool
   var sticky: Bool
-  var useErrorDialogs: Bool
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> AuthOptions? {
     let biometricOnly = pigeonVar_list[0] as! Bool
     let sticky = pigeonVar_list[1] as! Bool
-    let useErrorDialogs = pigeonVar_list[2] as! Bool
 
     return AuthOptions(
       biometricOnly: biometricOnly,
-      sticky: sticky,
-      useErrorDialogs: useErrorDialogs
+      sticky: sticky
     )
   }
   func toList() -> [Any?] {
     return [
       biometricOnly,
       sticky,
-      useErrorDialogs,
     ]
   }
   static func == (lhs: AuthOptions, rhs: AuthOptions) -> Bool {

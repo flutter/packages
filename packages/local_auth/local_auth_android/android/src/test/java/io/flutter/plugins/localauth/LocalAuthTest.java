@@ -48,13 +48,7 @@ public class LocalAuthTest {
       new AuthStrings.Builder()
           .setReason("a reason")
           .setBiometricHint("a hint")
-          .setBiometricNotRecognized("biometric not recognized")
-          .setBiometricRequiredTitle("biometric required")
           .setCancelButton("cancel")
-          .setDeviceCredentialsRequiredTitle("credentials required")
-          .setDeviceCredentialsSetupDescription("credentials setup description")
-          .setGoToSettingsButton("go")
-          .setGoToSettingsDescription("go to settings description")
           .setSignInTitle("sign in")
           .build();
 
@@ -63,7 +57,6 @@ public class LocalAuthTest {
           .setBiometricOnly(false)
           .setSensitiveTransaction(false)
           .setSticky(false)
-          .setUseErrorDialgs(false)
           .build();
 
   @Test
@@ -144,7 +137,6 @@ public class LocalAuthTest {
             .setBiometricOnly(true)
             .setSensitiveTransaction(false)
             .setSticky(false)
-            .setUseErrorDialgs(false)
             .build();
     plugin.authenticate(options, dummyStrings, mockResult);
     assertFalse(allowCredentialsCaptor.getValue());

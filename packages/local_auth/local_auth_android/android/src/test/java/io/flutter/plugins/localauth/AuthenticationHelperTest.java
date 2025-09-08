@@ -30,13 +30,7 @@ public class AuthenticationHelperTest {
       new AuthStrings.Builder()
           .setReason("a reason")
           .setBiometricHint("a hint")
-          .setBiometricNotRecognized("biometric not recognized")
-          .setBiometricRequiredTitle("biometric required")
           .setCancelButton("cancel")
-          .setDeviceCredentialsRequiredTitle("credentials required")
-          .setDeviceCredentialsSetupDescription("credentials setup description")
-          .setGoToSettingsButton("go")
-          .setGoToSettingsDescription("go to settings description")
           .setSignInTitle("sign in")
           .build();
 
@@ -45,7 +39,6 @@ public class AuthenticationHelperTest {
           .setBiometricOnly(false)
           .setSensitiveTransaction(false)
           .setSticky(false)
-          .setUseErrorDialgs(false)
           .build();
 
   @Test

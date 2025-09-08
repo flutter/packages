@@ -107,10 +107,7 @@ void main() {
         expect(strings.reason, reason);
         // These should all be the default values from
         // auth_messages_ios.dart
-        expect(strings.lockOut, iOSLockOut);
-        expect(strings.goToSettingsButton, goToSettings);
-        expect(strings.goToSettingsDescription, iOSGoToSettingsDescription);
-        expect(strings.cancelButton, iOSOkButton);
+        expect(strings.cancelButton, iOSCancelButton);
         expect(strings.localizedFallbackTitle, null);
       });
 
@@ -139,10 +136,7 @@ void main() {
           expect(strings.reason, reason);
           // These should all be the default values from
           // auth_messages_ios.dart
-          expect(strings.lockOut, iOSLockOut);
-          expect(strings.goToSettingsButton, goToSettings);
-          expect(strings.goToSettingsDescription, iOSGoToSettingsDescription);
-          expect(strings.cancelButton, iOSOkButton);
+          expect(strings.cancelButton, iOSCancelButton);
           expect(strings.localizedFallbackTitle, null);
         },
       );
@@ -172,8 +166,6 @@ void main() {
           expect(strings.reason, reason);
           // These should all be the default values from
           // auth_messages_ios.dart
-          expect(strings.lockOut, macOSLockOut);
-          expect(strings.goToSettingsDescription, macOSGoToSettingsDescription);
           expect(strings.cancelButton, macOSCancelButton);
           expect(strings.localizedFallbackTitle, null);
         },
@@ -195,19 +187,13 @@ void main() {
           // - they are different from the defaults, and
           // - they are different from each other.
           const String reason = 'A';
-          const String lockOut = 'B';
-          const String goToSettingsButton = 'C';
-          const String gotToSettingsDescription = 'D';
-          const String cancel = 'E';
-          const String localizedFallbackTitle = 'F';
+          const String cancel = 'B';
+          const String localizedFallbackTitle = 'C';
 
           await plugin.authenticate(
             localizedReason: reason,
             authMessages: <AuthMessages>[
               const IOSAuthMessages(
-                lockOut: lockOut,
-                goToSettingsButton: goToSettingsButton,
-                goToSettingsDescription: gotToSettingsDescription,
                 cancelButton: cancel,
                 localizedFallbackTitle: localizedFallbackTitle,
               ),
@@ -220,9 +206,6 @@ void main() {
           );
           final AuthStrings strings = result.captured[0] as AuthStrings;
           expect(strings.reason, reason);
-          expect(strings.lockOut, lockOut);
-          expect(strings.goToSettingsButton, goToSettingsButton);
-          expect(strings.goToSettingsDescription, gotToSettingsDescription);
           expect(strings.cancelButton, cancel);
           expect(strings.localizedFallbackTitle, localizedFallbackTitle);
         },
@@ -243,14 +226,12 @@ void main() {
           // - they are different from the defaults, and
           // - they are different from each other.
           const String reason = 'A';
-          const String lockOut = 'B';
-          const String cancel = 'E';
-          const String localizedFallbackTitle = 'F';
+          const String cancel = 'B';
+          const String localizedFallbackTitle = 'C';
           await plugin.authenticate(
             localizedReason: reason,
             authMessages: <AuthMessages>[
               const MacOSAuthMessages(
-                lockOut: lockOut,
                 cancelButton: cancel,
                 localizedFallbackTitle: localizedFallbackTitle,
               ),
@@ -263,7 +244,6 @@ void main() {
           );
           final AuthStrings strings = result.captured[0] as AuthStrings;
           expect(strings.reason, reason);
-          expect(strings.lockOut, lockOut);
           expect(strings.cancelButton, cancel);
           expect(strings.localizedFallbackTitle, localizedFallbackTitle);
         },
@@ -280,16 +260,12 @@ void main() {
         // - they are different from the defaults, and
         // - they are different from each other.
         const String reason = 'A';
-        const String lockOut = 'B';
-        const String localizedFallbackTitle = 'C';
-        const String cancel = 'D';
+        const String localizedFallbackTitle = 'B';
         await plugin.authenticate(
           localizedReason: reason,
           authMessages: <AuthMessages>[
             const IOSAuthMessages(
-              lockOut: lockOut,
               localizedFallbackTitle: localizedFallbackTitle,
-              cancelButton: cancel,
             ),
           ],
         );
@@ -298,15 +274,12 @@ void main() {
           api.authenticate(any, captureAny),
         );
         final AuthStrings strings = result.captured[0] as AuthStrings;
-        expect(strings.reason, reason);
         // These should all be the provided values.
-        expect(strings.lockOut, lockOut);
+        expect(strings.reason, reason);
         expect(strings.localizedFallbackTitle, localizedFallbackTitle);
-        expect(strings.cancelButton, cancel);
         // These were not set, so should all be the default values from
         // auth_messages_ios.dart
-        expect(strings.goToSettingsButton, goToSettings);
-        expect(strings.goToSettingsDescription, iOSGoToSettingsDescription);
+        expect(strings.cancelButton, iOSCancelButton);
       });
     });
 
@@ -329,7 +302,6 @@ void main() {
         final AuthOptions options = result.captured[0] as AuthOptions;
         expect(options.biometricOnly, false);
         expect(options.sticky, false);
-        expect(options.useErrorDialogs, true);
       });
 
       test('passes provided non-default values', () async {
@@ -343,7 +315,6 @@ void main() {
           options: const AuthenticationOptions(
             biometricOnly: true,
             stickyAuth: true,
-            useErrorDialogs: false,
           ),
         );
 
@@ -353,7 +324,6 @@ void main() {
         final AuthOptions options = result.captured[0] as AuthOptions;
         expect(options.biometricOnly, true);
         expect(options.sticky, true);
-        expect(options.useErrorDialogs, false);
       });
     });
 
@@ -388,19 +358,6 @@ void main() {
       test('handles appCancel as failure', () async {
         when(api.authenticate(any, any)).thenAnswer(
           (_) async => AuthResultDetails(result: AuthResult.appCancel),
-        );
-
-        final bool result = await plugin.authenticate(
-          localizedReason: 'reason',
-          authMessages: <AuthMessages>[],
-        );
-
-        expect(result, false);
-      });
-
-      test('handles showedAlert as failure', () async {
-        when(api.authenticate(any, any)).thenAnswer(
-          (_) async => AuthResultDetails(result: AuthResult.showedAlert),
         );
 
         final bool result = await plugin.authenticate(

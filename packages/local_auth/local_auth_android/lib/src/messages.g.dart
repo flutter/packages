@@ -23,9 +23,6 @@ enum AuthResultCode {
   /// The user authenticated successfully.
   success,
 
-  /// The user launched the settings dialog.
-  launchedSettings,
-
   /// The user pressed the negative button, which corresponds to
   /// [AuthStrings.cancelButton].
   negativeButton,
@@ -89,13 +86,7 @@ class AuthStrings {
   AuthStrings({
     required this.reason,
     required this.biometricHint,
-    required this.biometricNotRecognized,
-    required this.biometricRequiredTitle,
     required this.cancelButton,
-    required this.deviceCredentialsRequiredTitle,
-    required this.deviceCredentialsSetupDescription,
-    required this.goToSettingsButton,
-    required this.goToSettingsDescription,
     required this.signInTitle,
   });
 
@@ -103,35 +94,12 @@ class AuthStrings {
 
   String biometricHint;
 
-  String biometricNotRecognized;
-
-  String biometricRequiredTitle;
-
   String cancelButton;
-
-  String deviceCredentialsRequiredTitle;
-
-  String deviceCredentialsSetupDescription;
-
-  String goToSettingsButton;
-
-  String goToSettingsDescription;
 
   String signInTitle;
 
   Object encode() {
-    return <Object?>[
-      reason,
-      biometricHint,
-      biometricNotRecognized,
-      biometricRequiredTitle,
-      cancelButton,
-      deviceCredentialsRequiredTitle,
-      deviceCredentialsSetupDescription,
-      goToSettingsButton,
-      goToSettingsDescription,
-      signInTitle,
-    ];
+    return <Object?>[reason, biometricHint, cancelButton, signInTitle];
   }
 
   static AuthStrings decode(Object result) {
@@ -139,14 +107,8 @@ class AuthStrings {
     return AuthStrings(
       reason: result[0]! as String,
       biometricHint: result[1]! as String,
-      biometricNotRecognized: result[2]! as String,
-      biometricRequiredTitle: result[3]! as String,
-      cancelButton: result[4]! as String,
-      deviceCredentialsRequiredTitle: result[5]! as String,
-      deviceCredentialsSetupDescription: result[6]! as String,
-      goToSettingsButton: result[7]! as String,
-      goToSettingsDescription: result[8]! as String,
-      signInTitle: result[9]! as String,
+      cancelButton: result[2]! as String,
+      signInTitle: result[3]! as String,
     );
   }
 }
@@ -179,7 +141,6 @@ class AuthOptions {
     required this.biometricOnly,
     required this.sensitiveTransaction,
     required this.sticky,
-    required this.useErrorDialgs,
   });
 
   bool biometricOnly;
@@ -188,15 +149,8 @@ class AuthOptions {
 
   bool sticky;
 
-  bool useErrorDialgs;
-
   Object encode() {
-    return <Object?>[
-      biometricOnly,
-      sensitiveTransaction,
-      sticky,
-      useErrorDialgs,
-    ];
+    return <Object?>[biometricOnly, sensitiveTransaction, sticky];
   }
 
   static AuthOptions decode(Object result) {
@@ -205,7 +159,6 @@ class AuthOptions {
       biometricOnly: result[0]! as bool,
       sensitiveTransaction: result[1]! as bool,
       sticky: result[2]! as bool,
-      useErrorDialgs: result[3]! as bool,
     );
   }
 }

@@ -108,19 +108,7 @@ void main() {
         // These should all be the default values from
         // auth_messages_android.dart
         expect(strings.biometricHint, androidBiometricHint);
-        expect(strings.biometricNotRecognized, androidBiometricNotRecognized);
-        expect(strings.biometricRequiredTitle, androidBiometricRequiredTitle);
         expect(strings.cancelButton, androidCancelButton);
-        expect(
-          strings.deviceCredentialsRequiredTitle,
-          androidDeviceCredentialsRequiredTitle,
-        );
-        expect(
-          strings.deviceCredentialsSetupDescription,
-          androidDeviceCredentialsSetupDescription,
-        );
-        expect(strings.goToSettingsButton, goToSettings);
-        expect(strings.goToSettingsDescription, androidGoToSettingsDescription);
         expect(strings.signInTitle, androidSignInTitle);
       });
 
@@ -145,22 +133,7 @@ void main() {
           // These should all be the default values from
           // auth_messages_android.dart
           expect(strings.biometricHint, androidBiometricHint);
-          expect(strings.biometricNotRecognized, androidBiometricNotRecognized);
-          expect(strings.biometricRequiredTitle, androidBiometricRequiredTitle);
           expect(strings.cancelButton, androidCancelButton);
-          expect(
-            strings.deviceCredentialsRequiredTitle,
-            androidDeviceCredentialsRequiredTitle,
-          );
-          expect(
-            strings.deviceCredentialsSetupDescription,
-            androidDeviceCredentialsSetupDescription,
-          );
-          expect(strings.goToSettingsButton, goToSettings);
-          expect(
-            strings.goToSettingsDescription,
-            androidGoToSettingsDescription,
-          );
           expect(strings.signInTitle, androidSignInTitle);
         },
       );
@@ -175,26 +148,14 @@ void main() {
         // - they are different from each other.
         const String reason = 'A';
         const String hint = 'B';
-        const String bioNotRecognized = 'C';
-        const String bioRequired = 'D';
-        const String cancel = 'E';
-        const String credentialsRequired = 'F';
-        const String credentialsSetup = 'G';
-        const String goButton = 'H';
-        const String goDescription = 'I';
-        const String signInTitle = 'J';
+        const String cancel = 'C';
+        const String signInTitle = 'D';
         await plugin.authenticate(
           localizedReason: reason,
           authMessages: <AuthMessages>[
             const AndroidAuthMessages(
               biometricHint: hint,
-              biometricNotRecognized: bioNotRecognized,
-              biometricRequiredTitle: bioRequired,
               cancelButton: cancel,
-              deviceCredentialsRequiredTitle: credentialsRequired,
-              deviceCredentialsSetupDescription: credentialsSetup,
-              goToSettingsButton: goButton,
-              goToSettingsDescription: goDescription,
               signInTitle: signInTitle,
             ),
             AnotherPlatformAuthMessages(),
@@ -207,13 +168,7 @@ void main() {
         final AuthStrings strings = result.captured[0] as AuthStrings;
         expect(strings.reason, reason);
         expect(strings.biometricHint, hint);
-        expect(strings.biometricNotRecognized, bioNotRecognized);
-        expect(strings.biometricRequiredTitle, bioRequired);
         expect(strings.cancelButton, cancel);
-        expect(strings.deviceCredentialsRequiredTitle, credentialsRequired);
-        expect(strings.deviceCredentialsSetupDescription, credentialsSetup);
-        expect(strings.goToSettingsButton, goButton);
-        expect(strings.goToSettingsDescription, goDescription);
         expect(strings.signInTitle, signInTitle);
       });
 
@@ -227,16 +182,12 @@ void main() {
         // - they are different from each other.
         const String reason = 'A';
         const String hint = 'B';
-        const String bioNotRecognized = 'C';
-        const String bioRequired = 'D';
-        const String cancel = 'E';
+        const String cancel = 'C';
         await plugin.authenticate(
           localizedReason: reason,
           authMessages: <AuthMessages>[
             const AndroidAuthMessages(
               biometricHint: hint,
-              biometricNotRecognized: bioNotRecognized,
-              biometricRequiredTitle: bioRequired,
               cancelButton: cancel,
             ),
           ],
@@ -249,21 +200,9 @@ void main() {
         expect(strings.reason, reason);
         // These should all be the provided values.
         expect(strings.biometricHint, hint);
-        expect(strings.biometricNotRecognized, bioNotRecognized);
-        expect(strings.biometricRequiredTitle, bioRequired);
         expect(strings.cancelButton, cancel);
         // These were non set, so should all be the default values from
         // auth_messages_android.dart
-        expect(
-          strings.deviceCredentialsRequiredTitle,
-          androidDeviceCredentialsRequiredTitle,
-        );
-        expect(
-          strings.deviceCredentialsSetupDescription,
-          androidDeviceCredentialsSetupDescription,
-        );
-        expect(strings.goToSettingsButton, goToSettings);
-        expect(strings.goToSettingsDescription, androidGoToSettingsDescription);
         expect(strings.signInTitle, androidSignInTitle);
       });
     });
@@ -286,7 +225,6 @@ void main() {
         expect(options.biometricOnly, false);
         expect(options.sensitiveTransaction, true);
         expect(options.sticky, false);
-        expect(options.useErrorDialgs, true);
       });
 
       test('passes provided non-default values', () async {
@@ -301,7 +239,6 @@ void main() {
             biometricOnly: true,
             sensitiveTransaction: false,
             stickyAuth: true,
-            useErrorDialogs: false,
           ),
         );
 
@@ -312,7 +249,6 @@ void main() {
         expect(options.biometricOnly, true);
         expect(options.sensitiveTransaction, false);
         expect(options.sticky, true);
-        expect(options.useErrorDialgs, false);
       });
     });
 

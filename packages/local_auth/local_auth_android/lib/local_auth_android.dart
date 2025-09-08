@@ -38,14 +38,12 @@ class LocalAuthAndroid extends LocalAuthPlatform {
         biometricOnly: options.biometricOnly,
         sensitiveTransaction: options.sensitiveTransaction,
         sticky: options.stickyAuth,
-        useErrorDialgs: options.useErrorDialogs,
       ),
       _pigeonStringsFromAuthMessages(localizedReason, authMessages),
     );
     switch (result.code) {
       case AuthResultCode.success:
         return true;
-      case AuthResultCode.launchedSettings:
       case AuthResultCode.negativeButton:
       case AuthResultCode.userCanceled:
         // Variants of user cancelation format are not currently distinguished,
@@ -152,20 +150,7 @@ class LocalAuthAndroid extends LocalAuthPlatform {
     return AuthStrings(
       reason: localizedReason,
       biometricHint: messages?.biometricHint ?? androidBiometricHint,
-      biometricNotRecognized:
-          messages?.biometricNotRecognized ?? androidBiometricNotRecognized,
-      biometricRequiredTitle:
-          messages?.biometricRequiredTitle ?? androidBiometricRequiredTitle,
       cancelButton: messages?.cancelButton ?? androidCancelButton,
-      deviceCredentialsRequiredTitle:
-          messages?.deviceCredentialsRequiredTitle ??
-          androidDeviceCredentialsRequiredTitle,
-      deviceCredentialsSetupDescription:
-          messages?.deviceCredentialsSetupDescription ??
-          androidDeviceCredentialsSetupDescription,
-      goToSettingsButton: messages?.goToSettingsButton ?? goToSettings,
-      goToSettingsDescription:
-          messages?.goToSettingsDescription ?? androidGoToSettingsDescription,
       signInTitle: messages?.signInTitle ?? androidSignInTitle,
     );
   }

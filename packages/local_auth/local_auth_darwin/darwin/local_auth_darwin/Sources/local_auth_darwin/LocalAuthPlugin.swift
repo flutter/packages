@@ -21,80 +21,6 @@ final class DefaultAuthContextFactory: AuthContextFactory {
 
 // MARK: -
 
-#if os(iOS)
-  /// A default alert controller that wraps UIAlertController.
-  final class DefaultAlertController: AuthAlertController {
-    /// The wrapped alert controller.
-    private let controller: UIAlertController
-
-    /// Returns a wrapper for the given UIAlertController.
-    init(wrapping controller: UIAlertController) {
-      self.controller = controller
-    }
-
-    @MainActor
-    func addAction(_ action: UIAlertAction) {
-      controller.addAction(action)
-    }
-
-    @MainActor
-    func present(
-      on presentingViewController: UIViewController,
-      animated: Bool,
-      completion: (() -> Void)? = nil
-    ) {
-      presentingViewController.present(controller, animated: animated, completion: completion)
-    }
-  }
-#endif  // os(iOS)
-
-/// A default alert factory that wraps standard UIAlertController and NSAlert allocation for iOS and
-/// macOS respectfully.
-final class DefaultAlertFactory: AuthAlertFactory {
-  #if os(macOS)
-    func createAlert() -> AuthAlert {
-      return NSAlert()
-    }
-  #elseif os(iOS)
-    func createAlertController(
-      title: String?,
-      message: String?,
-      preferredStyle: UIAlertController.Style
-    ) -> AuthAlertController {
-      return DefaultAlertController(
-        wrapping:
-          UIAlertController(title: title, message: message, preferredStyle: preferredStyle))
-    }
-
-    func createAlertAction(
-      title: String?, style: UIAlertAction.Style, handler: ((UIAlertAction) -> Void)? = nil
-    ) -> UIAlertAction {
-      return UIAlertAction(title: title, style: style, handler: handler)
-    }
-  #endif
-}
-
-// MARK: -
-
-/// A default view provider that wraps the FlutterPluginRegistrar.
-final class DefaultViewProvider: ViewProvider {
-  /// The wrapped registrar.
-  let registrar: FlutterPluginRegistrar
-
-  /// Returns a wrapper for the given FlutterPluginRegistrar.
-  init(registrar: FlutterPluginRegistrar) {
-    self.registrar = registrar
-  }
-
-  #if os(macOS)
-    var view: NSView? {
-      return registrar.view
-    }
-  #endif  // os(macOS)
-}
-
-// MARK: -
-
 /// A data container for sticky auth state.
 struct StickyAuthState {
   let options: AuthOptions
@@ -111,18 +37,12 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi, @unch
 
   /// The factory to create LAContexts.
   private let authContextFactory: AuthContextFactory
-  /// The factory to create alerts.
-  private let alertFactory: AuthAlertFactory
-  /// The Flutter view provider.
-  private let viewProvider: ViewProvider
   /// Manages the last call state for sticky auth.
   private var lastCallState: StickyAuthState?
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     let instance = LocalAuthPlugin(
-      contextFactory: DefaultAuthContextFactory(),
-      alertFactory: DefaultAlertFactory(),
-      viewProvider: DefaultViewProvider(registrar: registrar))
+      contextFactory: DefaultAuthContextFactory())
     registrar.addApplicationDelegate(instance)
     // Workaround for https://github.com/flutter/flutter/issues/118103.
     #if os(iOS)
@@ -135,13 +55,9 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi, @unch
 
   /// Returns an instance that uses the given factory to create LAContexts.
   init(
-    contextFactory: AuthContextFactory,
-    alertFactory: AuthAlertFactory,
-    viewProvider: ViewProvider
+    contextFactory: AuthContextFactory
   ) {
     self.authContextFactory = contextFactory
-    self.alertFactory = alertFactory
-    self.viewProvider = viewProvider
   }
 
   // MARK: LocalAuthApi
@@ -242,67 +158,6 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi, @unch
 
   // MARK: Private Methods
 
-  @MainActor
-  private func showAlert(
-    message: String,
-    dismissButtonTitle: String,
-    openSettingsButtonTitle: String?,
-    completion: @escaping (Result<AuthResultDetails, Error>) -> Void
-  ) {
-    #if os(macOS)
-      var alert = alertFactory.createAlert()
-      alert.messageText = message
-      alert.addButton(withTitle: dismissButtonTitle)
-      if let window = viewProvider.view?.window {
-        alert.beginSheetModal(for: window) { [weak self] code in
-          self?.handleResult(result: .showedAlert, completion: completion)
-        }
-      } else {
-        alert.runModal()
-        self.handleResult(result: .showedAlert, completion: completion)
-      }
-    #elseif os(iOS)
-      // TODO(stuartmorgan): Get the view controller from the view provider once it's possible.
-      // See https://github.com/flutter/flutter/issues/104117.
-      guard let controller = UIApplication.shared.delegate?.window??.rootViewController else {
-        completion(
-          .success(
-            AuthResultDetails(
-              result: .uiUnavailable,
-              errorMessage: "Unable to obtain root view controller",
-              errorDetails: nil)
-          ))
-        return
-      }
-      let alert = alertFactory.createAlertController(
-        title: "",
-        message: message,
-        preferredStyle: .alert)
-
-      let defaultAction = alertFactory.createAlertAction(
-        title: dismissButtonTitle,
-        style: .default
-      ) { [weak self] action in
-        self?.handleResult(result: .showedAlert, completion: completion)
-      }
-
-      alert.addAction(defaultAction)
-      if let openSettingsButtonTitle = openSettingsButtonTitle,
-        let url = URL(string: UIApplication.openSettingsURLString)
-      {
-        let additionalAction = UIAlertAction(
-          title: openSettingsButtonTitle,
-          style: .default
-        ) { [weak self] action in
-          UIApplication.shared.open(url, options: [:], completionHandler: nil)
-          self?.handleResult(result: .showedAlert, completion: completion)
-        }
-        alert.addAction(additionalAction)
-      }
-      alert.present(on: controller, animated: true, completion: nil)
-    #endif
-  }
-
   private func handleAuthReply(
     success: Bool,
     error: Error?,
@@ -366,30 +221,10 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi, @unch
     case .biometryDisconnected:
       result = .biometryDisconnected
     case .biometryLockout:
-      if options.useErrorDialogs {
-        DispatchQueue.main.async { [weak self] in
-          self?.showAlert(
-            message: strings.lockOut,
-            dismissButtonTitle: strings.cancelButton,
-            openSettingsButtonTitle: nil,
-            completion: completion)
-        }
-        return
-      }
       result = .biometryLockout
     case .biometryNotAvailable:
       result = .biometryNotAvailable
     case .biometryNotEnrolled:
-      if options.useErrorDialogs {
-        DispatchQueue.main.async { [weak self] in
-          self?.showAlert(
-            message: strings.goToSettingsDescription,
-            dismissButtonTitle: strings.cancelButton,
-            openSettingsButtonTitle: strings.goToSettingsButton,
-            completion: completion)
-        }
-        return
-      }
       result = .biometryNotEnrolled
     case .biometryNotPaired:
       result = .biometryNotPaired
@@ -402,16 +237,6 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi, @unch
     case .notInteractive:
       result = .notInteractive
     case .passcodeNotSet:
-      if options.useErrorDialogs {
-        DispatchQueue.main.async { [weak self] in
-          self?.showAlert(
-            message: strings.goToSettingsDescription,
-            dismissButtonTitle: strings.cancelButton,
-            openSettingsButtonTitle: strings.goToSettingsButton,
-            completion: completion)
-        }
-        return
-      }
       result = .passcodeNotSet
     case .userFallback:
       result = .userFallback

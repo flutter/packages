@@ -44,21 +44,16 @@ class LocalAuthDarwin extends LocalAuthPlatform {
       AuthOptions(
         biometricOnly: options.biometricOnly,
         sticky: options.stickyAuth,
-        useErrorDialogs: options.useErrorDialogs,
       ),
       _useMacOSAuthMessages
           ? _pigeonStringsFromMacOSAuthMessages(localizedReason, authMessages)
           : _pigeonStringsFromiOSAuthMessages(localizedReason, authMessages),
     );
     LocalAuthExceptionCode code;
-    String? description = resultDetails.errorMessage;
     switch (resultDetails.result) {
       case AuthResult.success:
         return true;
       case AuthResult.authenticationFailed:
-        return false;
-      case AuthResult.showedAlert:
-        // Temporary compat with previous return until alerts are removed.
         return false;
       case AuthResult.appCancel:
         // If the plugin client intentionally canceled authentication, no need
@@ -94,7 +89,7 @@ class LocalAuthDarwin extends LocalAuthPlatform {
     }
     throw LocalAuthException(
       code: code,
-      description: description,
+      description: resultDetails.errorMessage,
       details: resultDetails.errorDetails,
     );
   }
@@ -137,13 +132,7 @@ class LocalAuthDarwin extends LocalAuthPlatform {
     }
     return AuthStrings(
       reason: localizedReason,
-      lockOut: messages?.lockOut ?? iOSLockOut,
-      goToSettingsButton: messages?.goToSettingsButton ?? goToSettings,
-      goToSettingsDescription:
-          messages?.goToSettingsDescription ?? iOSGoToSettingsDescription,
-      // TODO(stuartmorgan): The default's name is confusing here for legacy
-      // reasons; this should be fixed as part of some future breaking change.
-      cancelButton: messages?.cancelButton ?? iOSOkButton,
+      cancelButton: messages?.cancelButton ?? iOSCancelButton,
       localizedFallbackTitle: messages?.localizedFallbackTitle,
     );
   }
@@ -161,9 +150,6 @@ class LocalAuthDarwin extends LocalAuthPlatform {
     }
     return AuthStrings(
       reason: localizedReason,
-      lockOut: messages?.lockOut ?? macOSLockOut,
-      goToSettingsDescription:
-          messages?.goToSettingsDescription ?? macOSGoToSettingsDescription,
       cancelButton: messages?.cancelButton ?? macOSCancelButton,
       localizedFallbackTitle: messages?.localizedFallbackTitle,
     );

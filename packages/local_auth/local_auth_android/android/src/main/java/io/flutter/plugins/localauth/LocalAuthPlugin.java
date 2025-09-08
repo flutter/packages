@@ -53,14 +53,17 @@ public class LocalAuthPlugin implements FlutterPlugin, ActivityAware, LocalAuthA
    */
   public LocalAuthPlugin() {}
 
+  @Override
   public @NonNull Boolean isDeviceSupported() {
     return isDeviceSecure() || canAuthenticateWithBiometrics();
   }
 
+  @Override
   public @NonNull Boolean deviceCanSupportBiometrics() {
     return hasBiometricHardware();
   }
 
+  @Override
   public @NonNull List<AuthClassification> getEnrolledBiometrics() {
     ArrayList<AuthClassification> biometrics = new ArrayList<>();
     if (biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK)
@@ -74,6 +77,7 @@ public class LocalAuthPlugin implements FlutterPlugin, ActivityAware, LocalAuthA
     return biometrics;
   }
 
+  @Override
   public @NonNull Boolean stopAuthentication() {
     try {
       if (authHelper != null && authInProgress.get()) {
@@ -87,6 +91,7 @@ public class LocalAuthPlugin implements FlutterPlugin, ActivityAware, LocalAuthA
     }
   }
 
+  @Override
   public void authenticate(
       @NonNull AuthOptions options,
       @NonNull AuthStrings strings,

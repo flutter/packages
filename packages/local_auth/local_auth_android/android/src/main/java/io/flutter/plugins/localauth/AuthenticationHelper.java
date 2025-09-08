@@ -5,19 +5,10 @@ package io.flutter.plugins.localauth;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Application;
-import android.content.Context;
-import android.content.DialogInterface.OnClickListener;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.provider.Settings;
-import android.view.ContextThemeWrapper;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.biometric.BiometricManager;
 import androidx.biometric.BiometricPrompt;
@@ -46,7 +37,6 @@ class AuthenticationHelper extends BiometricPrompt.AuthenticationCallback
   private final Lifecycle lifecycle;
   private final FragmentActivity activity;
   private final AuthCompletionHandler completionHandler;
-  private final boolean useErrorDialogs;
   private final Messages.AuthStrings strings;
   private final BiometricPrompt.PromptInfo promptInfo;
   private final boolean isAuthSticky;
@@ -66,7 +56,6 @@ class AuthenticationHelper extends BiometricPrompt.AuthenticationCallback
     this.completionHandler = completionHandler;
     this.strings = strings;
     this.isAuthSticky = options.getSticky();
-    this.useErrorDialogs = options.getUseErrorDialgs();
     this.uiThreadExecutor = new UiThreadExecutor();
 
     BiometricPrompt.PromptInfo.Builder promptBuilder =
@@ -130,20 +119,9 @@ class AuthenticationHelper extends BiometricPrompt.AuthenticationCallback
         code = AuthResultCode.NEGATIVE_BUTTON;
         break;
       case BiometricPrompt.ERROR_NO_DEVICE_CREDENTIAL:
-        if (useErrorDialogs) {
-          showGoToSettingsDialog(
-              strings.getDeviceCredentialsRequiredTitle(),
-              strings.getDeviceCredentialsSetupDescription());
-          return;
-        }
         code = AuthResultCode.NO_CREDENTIALS;
         break;
       case BiometricPrompt.ERROR_NO_BIOMETRICS:
-        if (useErrorDialogs) {
-          showGoToSettingsDialog(
-              strings.getBiometricRequiredTitle(), strings.getGoToSettingsDescription());
-          return;
-        }
         code = AuthResultCode.NOT_ENROLLED;
         break;
       case BiometricPrompt.ERROR_HW_UNAVAILABLE:
@@ -226,36 +204,6 @@ class AuthenticationHelper extends BiometricPrompt.AuthenticationCallback
   @Override
   public void onResume(@NonNull LifecycleOwner owner) {
     onActivityResumed(null);
-  }
-
-  // Suppress inflateParams lint because dialogs do not need to attach to a parent view.
-  @SuppressLint("InflateParams")
-  private void showGoToSettingsDialog(String title, String descriptionText) {
-    View view = LayoutInflater.from(activity).inflate(R.layout.go_to_setting, null, false);
-    TextView message = view.findViewById(R.id.fingerprint_required);
-    TextView description = view.findViewById(R.id.go_to_setting_description);
-    message.setText(title);
-    description.setText(descriptionText);
-    Context context = new ContextThemeWrapper(activity, R.style.AlertDialogCustom);
-    OnClickListener goToSettingHandler =
-        (dialog, which) -> {
-          completionHandler.complete(
-              new AuthResult.Builder().setCode(AuthResultCode.LAUNCHED_SETTINGS).build());
-          stop();
-          activity.startActivity(new Intent(Settings.ACTION_SECURITY_SETTINGS));
-        };
-    OnClickListener cancelHandler =
-        (dialog, which) -> {
-          completionHandler.complete(
-              new AuthResult.Builder().setCode(AuthResultCode.NEGATIVE_BUTTON).build());
-          stop();
-        };
-    new AlertDialog.Builder(context)
-        .setView(view)
-        .setPositiveButton(strings.getGoToSettingsButton(), goToSettingHandler)
-        .setNegativeButton(strings.getCancelButton(), cancelHandler)
-        .setCancelable(false)
-        .show();
   }
 
   // Unused methods for activity lifecycle.

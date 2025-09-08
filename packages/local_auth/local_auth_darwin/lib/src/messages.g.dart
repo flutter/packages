@@ -43,9 +43,6 @@ enum AuthResult {
 
   /// Native UI needed to be displayed, but couldn't be.
   uiUnavailable,
-
-  /// The plugin showed an alert as the final step.
-  showedAlert,
   appCancel,
   systemCancel,
   userCancel,
@@ -74,34 +71,18 @@ enum AuthBiometric { face, fingerprint }
 class AuthStrings {
   AuthStrings({
     required this.reason,
-    required this.lockOut,
-    this.goToSettingsButton,
-    required this.goToSettingsDescription,
     required this.cancelButton,
     this.localizedFallbackTitle,
   });
 
   String reason;
 
-  String lockOut;
-
-  String? goToSettingsButton;
-
-  String goToSettingsDescription;
-
   String cancelButton;
 
   String? localizedFallbackTitle;
 
   List<Object?> _toList() {
-    return <Object?>[
-      reason,
-      lockOut,
-      goToSettingsButton,
-      goToSettingsDescription,
-      cancelButton,
-      localizedFallbackTitle,
-    ];
+    return <Object?>[reason, cancelButton, localizedFallbackTitle];
   }
 
   Object encode() {
@@ -112,11 +93,8 @@ class AuthStrings {
     result as List<Object?>;
     return AuthStrings(
       reason: result[0]! as String,
-      lockOut: result[1]! as String,
-      goToSettingsButton: result[2] as String?,
-      goToSettingsDescription: result[3]! as String,
-      cancelButton: result[4]! as String,
-      localizedFallbackTitle: result[5] as String?,
+      cancelButton: result[1]! as String,
+      localizedFallbackTitle: result[2] as String?,
     );
   }
 
@@ -138,20 +116,14 @@ class AuthStrings {
 }
 
 class AuthOptions {
-  AuthOptions({
-    required this.biometricOnly,
-    required this.sticky,
-    required this.useErrorDialogs,
-  });
+  AuthOptions({required this.biometricOnly, required this.sticky});
 
   bool biometricOnly;
 
   bool sticky;
 
-  bool useErrorDialogs;
-
   List<Object?> _toList() {
-    return <Object?>[biometricOnly, sticky, useErrorDialogs];
+    return <Object?>[biometricOnly, sticky];
   }
 
   Object encode() {
@@ -163,7 +135,6 @@ class AuthOptions {
     return AuthOptions(
       biometricOnly: result[0]! as bool,
       sticky: result[1]! as bool,
-      useErrorDialogs: result[2]! as bool,
     );
   }
 

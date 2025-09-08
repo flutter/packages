@@ -69,44 +69,42 @@ public class Messages {
   public enum AuthResultCode {
     /** The user authenticated successfully. */
     SUCCESS(0),
-    /** The user launched the settings dialog. */
-    LAUNCHED_SETTINGS(1),
     /** The user pressed the negative button, which corresponds to [AuthStrings.cancelButton]. */
-    NEGATIVE_BUTTON(2),
+    NEGATIVE_BUTTON(1),
     /**
      * The user canceled authentication without pressing the negative button.
      *
      * <p>This may be triggered by a swipe or a back button, for example.
      */
-    USER_CANCELED(3),
+    USER_CANCELED(2),
     /** Authentication was caneceled by the system. */
-    SYSTEM_CANCELED(4),
+    SYSTEM_CANCELED(3),
     /** Authentication timed out. */
-    TIMEOUT(5),
+    TIMEOUT(4),
     /** An authentication was already in progress. */
-    ALREADY_IN_PROGRESS(6),
+    ALREADY_IN_PROGRESS(5),
     /** There is no foreground activity. */
-    NO_ACTIVITY(7),
+    NO_ACTIVITY(6),
     /** The foreground activity is not a FragmentActivity. */
-    NOT_FRAGMENT_ACTIVITY(8),
+    NOT_FRAGMENT_ACTIVITY(7),
     /** The device does not have any credentials available. */
-    NO_CREDENTIALS(9),
+    NO_CREDENTIALS(8),
     /** No biometric hardware is present. */
-    NO_HARDWARE(10),
+    NO_HARDWARE(9),
     /** The biometric is temporarily unavailable. */
-    HARDWARE_UNAVAILABLE(11),
+    HARDWARE_UNAVAILABLE(10),
     /** No biometrics are enrolled. */
-    NOT_ENROLLED(12),
+    NOT_ENROLLED(11),
     /** The user is locked out temporarily due to too many failed attempts. */
-    LOCKED_OUT_TEMPORARILY(13),
+    LOCKED_OUT_TEMPORARILY(12),
     /** The user is locked out until they log in another way due to too many failed attempts. */
-    LOCKED_OUT_PERMANENTLY(14),
+    LOCKED_OUT_PERMANENTLY(13),
     /** The device does not have enough storage to complete authentication. */
-    NO_SPACE(15),
+    NO_SPACE(14),
     /** The hardware is unavailable until a security update is performed. */
-    SECURITY_UPDATE_REQUIRED(16),
+    SECURITY_UPDATE_REQUIRED(15),
     /** Some unrecognized error case was encountered */
-    UNKNOWN_ERROR(17);
+    UNKNOWN_ERROR(16);
 
     final int index;
 
@@ -161,32 +159,6 @@ public class Messages {
       this.biometricHint = setterArg;
     }
 
-    private @NonNull String biometricNotRecognized;
-
-    public @NonNull String getBiometricNotRecognized() {
-      return biometricNotRecognized;
-    }
-
-    public void setBiometricNotRecognized(@NonNull String setterArg) {
-      if (setterArg == null) {
-        throw new IllegalStateException("Nonnull field \"biometricNotRecognized\" is null.");
-      }
-      this.biometricNotRecognized = setterArg;
-    }
-
-    private @NonNull String biometricRequiredTitle;
-
-    public @NonNull String getBiometricRequiredTitle() {
-      return biometricRequiredTitle;
-    }
-
-    public void setBiometricRequiredTitle(@NonNull String setterArg) {
-      if (setterArg == null) {
-        throw new IllegalStateException("Nonnull field \"biometricRequiredTitle\" is null.");
-      }
-      this.biometricRequiredTitle = setterArg;
-    }
-
     private @NonNull String cancelButton;
 
     public @NonNull String getCancelButton() {
@@ -198,60 +170,6 @@ public class Messages {
         throw new IllegalStateException("Nonnull field \"cancelButton\" is null.");
       }
       this.cancelButton = setterArg;
-    }
-
-    private @NonNull String deviceCredentialsRequiredTitle;
-
-    public @NonNull String getDeviceCredentialsRequiredTitle() {
-      return deviceCredentialsRequiredTitle;
-    }
-
-    public void setDeviceCredentialsRequiredTitle(@NonNull String setterArg) {
-      if (setterArg == null) {
-        throw new IllegalStateException(
-            "Nonnull field \"deviceCredentialsRequiredTitle\" is null.");
-      }
-      this.deviceCredentialsRequiredTitle = setterArg;
-    }
-
-    private @NonNull String deviceCredentialsSetupDescription;
-
-    public @NonNull String getDeviceCredentialsSetupDescription() {
-      return deviceCredentialsSetupDescription;
-    }
-
-    public void setDeviceCredentialsSetupDescription(@NonNull String setterArg) {
-      if (setterArg == null) {
-        throw new IllegalStateException(
-            "Nonnull field \"deviceCredentialsSetupDescription\" is null.");
-      }
-      this.deviceCredentialsSetupDescription = setterArg;
-    }
-
-    private @NonNull String goToSettingsButton;
-
-    public @NonNull String getGoToSettingsButton() {
-      return goToSettingsButton;
-    }
-
-    public void setGoToSettingsButton(@NonNull String setterArg) {
-      if (setterArg == null) {
-        throw new IllegalStateException("Nonnull field \"goToSettingsButton\" is null.");
-      }
-      this.goToSettingsButton = setterArg;
-    }
-
-    private @NonNull String goToSettingsDescription;
-
-    public @NonNull String getGoToSettingsDescription() {
-      return goToSettingsDescription;
-    }
-
-    public void setGoToSettingsDescription(@NonNull String setterArg) {
-      if (setterArg == null) {
-        throw new IllegalStateException("Nonnull field \"goToSettingsDescription\" is null.");
-      }
-      this.goToSettingsDescription = setterArg;
     }
 
     private @NonNull String signInTitle;
@@ -281,29 +199,13 @@ public class Messages {
       AuthStrings that = (AuthStrings) o;
       return reason.equals(that.reason)
           && biometricHint.equals(that.biometricHint)
-          && biometricNotRecognized.equals(that.biometricNotRecognized)
-          && biometricRequiredTitle.equals(that.biometricRequiredTitle)
           && cancelButton.equals(that.cancelButton)
-          && deviceCredentialsRequiredTitle.equals(that.deviceCredentialsRequiredTitle)
-          && deviceCredentialsSetupDescription.equals(that.deviceCredentialsSetupDescription)
-          && goToSettingsButton.equals(that.goToSettingsButton)
-          && goToSettingsDescription.equals(that.goToSettingsDescription)
           && signInTitle.equals(that.signInTitle);
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(
-          reason,
-          biometricHint,
-          biometricNotRecognized,
-          biometricRequiredTitle,
-          cancelButton,
-          deviceCredentialsRequiredTitle,
-          deviceCredentialsSetupDescription,
-          goToSettingsButton,
-          goToSettingsDescription,
-          signInTitle);
+      return Objects.hash(reason, biometricHint, cancelButton, signInTitle);
     }
 
     public static final class Builder {
@@ -324,59 +226,11 @@ public class Messages {
         return this;
       }
 
-      private @Nullable String biometricNotRecognized;
-
-      @CanIgnoreReturnValue
-      public @NonNull Builder setBiometricNotRecognized(@NonNull String setterArg) {
-        this.biometricNotRecognized = setterArg;
-        return this;
-      }
-
-      private @Nullable String biometricRequiredTitle;
-
-      @CanIgnoreReturnValue
-      public @NonNull Builder setBiometricRequiredTitle(@NonNull String setterArg) {
-        this.biometricRequiredTitle = setterArg;
-        return this;
-      }
-
       private @Nullable String cancelButton;
 
       @CanIgnoreReturnValue
       public @NonNull Builder setCancelButton(@NonNull String setterArg) {
         this.cancelButton = setterArg;
-        return this;
-      }
-
-      private @Nullable String deviceCredentialsRequiredTitle;
-
-      @CanIgnoreReturnValue
-      public @NonNull Builder setDeviceCredentialsRequiredTitle(@NonNull String setterArg) {
-        this.deviceCredentialsRequiredTitle = setterArg;
-        return this;
-      }
-
-      private @Nullable String deviceCredentialsSetupDescription;
-
-      @CanIgnoreReturnValue
-      public @NonNull Builder setDeviceCredentialsSetupDescription(@NonNull String setterArg) {
-        this.deviceCredentialsSetupDescription = setterArg;
-        return this;
-      }
-
-      private @Nullable String goToSettingsButton;
-
-      @CanIgnoreReturnValue
-      public @NonNull Builder setGoToSettingsButton(@NonNull String setterArg) {
-        this.goToSettingsButton = setterArg;
-        return this;
-      }
-
-      private @Nullable String goToSettingsDescription;
-
-      @CanIgnoreReturnValue
-      public @NonNull Builder setGoToSettingsDescription(@NonNull String setterArg) {
-        this.goToSettingsDescription = setterArg;
         return this;
       }
 
@@ -392,13 +246,7 @@ public class Messages {
         AuthStrings pigeonReturn = new AuthStrings();
         pigeonReturn.setReason(reason);
         pigeonReturn.setBiometricHint(biometricHint);
-        pigeonReturn.setBiometricNotRecognized(biometricNotRecognized);
-        pigeonReturn.setBiometricRequiredTitle(biometricRequiredTitle);
         pigeonReturn.setCancelButton(cancelButton);
-        pigeonReturn.setDeviceCredentialsRequiredTitle(deviceCredentialsRequiredTitle);
-        pigeonReturn.setDeviceCredentialsSetupDescription(deviceCredentialsSetupDescription);
-        pigeonReturn.setGoToSettingsButton(goToSettingsButton);
-        pigeonReturn.setGoToSettingsDescription(goToSettingsDescription);
         pigeonReturn.setSignInTitle(signInTitle);
         return pigeonReturn;
       }
@@ -406,16 +254,10 @@ public class Messages {
 
     @NonNull
     ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<>(10);
+      ArrayList<Object> toListResult = new ArrayList<>(4);
       toListResult.add(reason);
       toListResult.add(biometricHint);
-      toListResult.add(biometricNotRecognized);
-      toListResult.add(biometricRequiredTitle);
       toListResult.add(cancelButton);
-      toListResult.add(deviceCredentialsRequiredTitle);
-      toListResult.add(deviceCredentialsSetupDescription);
-      toListResult.add(goToSettingsButton);
-      toListResult.add(goToSettingsDescription);
       toListResult.add(signInTitle);
       return toListResult;
     }
@@ -426,21 +268,9 @@ public class Messages {
       pigeonResult.setReason((String) reason);
       Object biometricHint = pigeonVar_list.get(1);
       pigeonResult.setBiometricHint((String) biometricHint);
-      Object biometricNotRecognized = pigeonVar_list.get(2);
-      pigeonResult.setBiometricNotRecognized((String) biometricNotRecognized);
-      Object biometricRequiredTitle = pigeonVar_list.get(3);
-      pigeonResult.setBiometricRequiredTitle((String) biometricRequiredTitle);
-      Object cancelButton = pigeonVar_list.get(4);
+      Object cancelButton = pigeonVar_list.get(2);
       pigeonResult.setCancelButton((String) cancelButton);
-      Object deviceCredentialsRequiredTitle = pigeonVar_list.get(5);
-      pigeonResult.setDeviceCredentialsRequiredTitle((String) deviceCredentialsRequiredTitle);
-      Object deviceCredentialsSetupDescription = pigeonVar_list.get(6);
-      pigeonResult.setDeviceCredentialsSetupDescription((String) deviceCredentialsSetupDescription);
-      Object goToSettingsButton = pigeonVar_list.get(7);
-      pigeonResult.setGoToSettingsButton((String) goToSettingsButton);
-      Object goToSettingsDescription = pigeonVar_list.get(8);
-      pigeonResult.setGoToSettingsDescription((String) goToSettingsDescription);
-      Object signInTitle = pigeonVar_list.get(9);
+      Object signInTitle = pigeonVar_list.get(3);
       pigeonResult.setSignInTitle((String) signInTitle);
       return pigeonResult;
     }
@@ -582,19 +412,6 @@ public class Messages {
       this.sticky = setterArg;
     }
 
-    private @NonNull Boolean useErrorDialgs;
-
-    public @NonNull Boolean getUseErrorDialgs() {
-      return useErrorDialgs;
-    }
-
-    public void setUseErrorDialgs(@NonNull Boolean setterArg) {
-      if (setterArg == null) {
-        throw new IllegalStateException("Nonnull field \"useErrorDialgs\" is null.");
-      }
-      this.useErrorDialgs = setterArg;
-    }
-
     /** Constructor is non-public to enforce null safety; use Builder. */
     AuthOptions() {}
 
@@ -609,13 +426,12 @@ public class Messages {
       AuthOptions that = (AuthOptions) o;
       return biometricOnly.equals(that.biometricOnly)
           && sensitiveTransaction.equals(that.sensitiveTransaction)
-          && sticky.equals(that.sticky)
-          && useErrorDialgs.equals(that.useErrorDialgs);
+          && sticky.equals(that.sticky);
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(biometricOnly, sensitiveTransaction, sticky, useErrorDialgs);
+      return Objects.hash(biometricOnly, sensitiveTransaction, sticky);
     }
 
     public static final class Builder {
@@ -644,31 +460,21 @@ public class Messages {
         return this;
       }
 
-      private @Nullable Boolean useErrorDialgs;
-
-      @CanIgnoreReturnValue
-      public @NonNull Builder setUseErrorDialgs(@NonNull Boolean setterArg) {
-        this.useErrorDialgs = setterArg;
-        return this;
-      }
-
       public @NonNull AuthOptions build() {
         AuthOptions pigeonReturn = new AuthOptions();
         pigeonReturn.setBiometricOnly(biometricOnly);
         pigeonReturn.setSensitiveTransaction(sensitiveTransaction);
         pigeonReturn.setSticky(sticky);
-        pigeonReturn.setUseErrorDialgs(useErrorDialgs);
         return pigeonReturn;
       }
     }
 
     @NonNull
     ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<>(4);
+      ArrayList<Object> toListResult = new ArrayList<>(3);
       toListResult.add(biometricOnly);
       toListResult.add(sensitiveTransaction);
       toListResult.add(sticky);
-      toListResult.add(useErrorDialgs);
       return toListResult;
     }
 
@@ -680,8 +486,6 @@ public class Messages {
       pigeonResult.setSensitiveTransaction((Boolean) sensitiveTransaction);
       Object sticky = pigeonVar_list.get(2);
       pigeonResult.setSticky((Boolean) sticky);
-      Object useErrorDialgs = pigeonVar_list.get(3);
-      pigeonResult.setUseErrorDialgs((Boolean) useErrorDialgs);
       return pigeonResult;
     }
   }
