@@ -707,9 +707,9 @@ interface GoogleSignInApi {
             api.clearAuthorizationToken(tokenArg) { result: Result<Unit> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapError(error))
+                reply.reply(MessagesPigeonUtils.wrapError(error))
               } else {
-                reply.reply(wrapResult(null))
+                reply.reply(MessagesPigeonUtils.wrapResult(null))
               }
             }
           }
