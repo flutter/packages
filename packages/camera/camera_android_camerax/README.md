@@ -69,6 +69,12 @@ in the merged Android manifest of your app, then take the following steps to rem
     tools:node="remove" />
 ```
 
+### Notes on video capture
+
+#### Setting description while recording
+To avoid cancelling any active recording when calling `setDescriptionWhileRecording`,
+you must start the recording with `startVideoCapturing` with `enablePersistentRecording` set to `true`.
+
 ### Notes on image streaming
 
 #### Allowing image streaming in the background
@@ -83,12 +89,6 @@ As of Android 14, to allow for background image streaming, you will need to spec
   ...
 </manifest>
 ```
-
-### Notes on video capture
-
-#### Setting description while recording
-To avoid cancelling any active recording when calling `setDescriptionWhileRecording`,
-you must start the recording with `startVideoCapturing` with `enablePersistentRecording` set to `true`.
 
 #### Configuring NV21 image format
 
