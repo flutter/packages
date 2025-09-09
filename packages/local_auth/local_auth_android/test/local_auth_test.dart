@@ -85,6 +85,21 @@ void main() {
 
       expect(result, <BiometricType>[]);
     });
+
+    test('throws no UI for null', () async {
+      when(api.getEnrolledBiometrics()).thenAnswer((_) async => null);
+
+      expect(
+        () async => plugin.getEnrolledBiometrics(),
+        throwsA(
+          isA<LocalAuthException>().having(
+            (LocalAuthException e) => e.code,
+            'code',
+            LocalAuthExceptionCode.uiUnavailable,
+          ),
+        ),
+      );
+    });
   });
 
   group('authenticate', () {

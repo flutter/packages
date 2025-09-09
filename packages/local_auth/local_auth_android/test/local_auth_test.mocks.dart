@@ -72,14 +72,12 @@ class MockLocalAuthApi extends _i1.Mock implements _i2.LocalAuthApi {
           as _i4.Future<bool>);
 
   @override
-  _i4.Future<List<_i2.AuthClassification>> getEnrolledBiometrics() =>
+  _i4.Future<List<_i2.AuthClassification>?> getEnrolledBiometrics() =>
       (super.noSuchMethod(
             Invocation.method(#getEnrolledBiometrics, []),
-            returnValue: _i4.Future<List<_i2.AuthClassification>>.value(
-              <_i2.AuthClassification>[],
-            ),
+            returnValue: _i4.Future<List<_i2.AuthClassification>?>.value(),
           )
-          as _i4.Future<List<_i2.AuthClassification>>);
+          as _i4.Future<List<_i2.AuthClassification>?>);
 
   @override
   _i4.Future<_i2.AuthResult> authenticate(

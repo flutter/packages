@@ -586,8 +586,11 @@ public class Messages {
     Boolean stopAuthentication();
     /**
      * Returns the biometric types that are enrolled, and can thus be used without additional setup.
+     *
+     * <p>Returns null if there is no activity, in which case the enrolled biometrics can't be
+     * determined.
      */
-    @NonNull
+    @Nullable
     List<AuthClassification> getEnrolledBiometrics();
     /**
      * Attempts to authenticate the user with the provided [options], and using [strings] for any

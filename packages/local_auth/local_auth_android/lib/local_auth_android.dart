@@ -120,7 +120,13 @@ class LocalAuthAndroid extends LocalAuthPlatform {
 
   @override
   Future<List<BiometricType>> getEnrolledBiometrics() async {
-    final List<AuthClassification> result = await _api.getEnrolledBiometrics();
+    final List<AuthClassification>? result = await _api.getEnrolledBiometrics();
+    if (result == null) {
+      throw const LocalAuthException(
+        code: LocalAuthExceptionCode.uiUnavailable,
+        description: 'No Activity available.',
+      );
+    }
     return result.map((AuthClassification value) {
       switch (value) {
         case AuthClassification.weak:

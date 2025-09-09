@@ -323,7 +323,10 @@ class LocalAuthApi {
 
   /// Returns the biometric types that are enrolled, and can thus be used
   /// without additional setup.
-  Future<List<AuthClassification>> getEnrolledBiometrics() async {
+  ///
+  /// Returns null if there is no activity, in which case the enrolled
+  /// biometrics can't be determined.
+  Future<List<AuthClassification>?> getEnrolledBiometrics() async {
     final String pigeonVar_channelName =
         'dev.flutter.pigeon.local_auth_android.LocalAuthApi.getEnrolledBiometrics$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
@@ -342,14 +345,9 @@ class LocalAuthApi {
         message: pigeonVar_replyList[1] as String?,
         details: pigeonVar_replyList[2],
       );
-    } else if (pigeonVar_replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
     } else {
-      return (pigeonVar_replyList[0] as List<Object?>?)!
-          .cast<AuthClassification>();
+      return (pigeonVar_replyList[0] as List<Object?>?)
+          ?.cast<AuthClassification>();
     }
   }
 

@@ -275,6 +275,14 @@ public class LocalAuthTest {
   }
 
   @Test
+  public void getEnrolledBiometrics_shouldReturnNullForNoActivity() {
+    final LocalAuthPlugin plugin = new LocalAuthPlugin();
+
+    final List<AuthClassification> enrolled = plugin.getEnrolledBiometrics();
+    assertNull(enrolled);
+  }
+
+  @Test
   public void getEnrolledBiometrics_shouldReturnEmptyList_withoutHardwarePresent() {
     final LocalAuthPlugin plugin = new LocalAuthPlugin();
     setPluginActivity(plugin, buildMockActivityWithContext(mock(Activity.class)));

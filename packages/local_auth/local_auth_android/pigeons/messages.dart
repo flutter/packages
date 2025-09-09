@@ -130,7 +130,10 @@ abstract class LocalAuthApi {
 
   /// Returns the biometric types that are enrolled, and can thus be used
   /// without additional setup.
-  List<AuthClassification> getEnrolledBiometrics();
+  ///
+  /// Returns null if there is no activity, in which case the enrolled
+  /// biometrics can't be determined.
+  List<AuthClassification>? getEnrolledBiometrics();
 
   /// Attempts to authenticate the user with the provided [options], and using
   /// [strings] for any UI.

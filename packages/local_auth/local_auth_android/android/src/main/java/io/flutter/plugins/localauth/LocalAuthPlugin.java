@@ -65,6 +65,9 @@ public class LocalAuthPlugin implements FlutterPlugin, ActivityAware, LocalAuthA
 
   @Override
   public @NonNull List<AuthClassification> getEnrolledBiometrics() {
+    if (biometricManager == null) {
+      return null;
+    }
     ArrayList<AuthClassification> biometrics = new ArrayList<>();
     if (biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK)
         == BiometricManager.BIOMETRIC_SUCCESS) {
