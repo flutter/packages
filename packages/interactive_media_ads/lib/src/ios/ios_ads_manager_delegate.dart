@@ -90,18 +90,12 @@ final class IOSAdsManagerDelegate extends PlatformAdsManagerDelegate {
       },
       didRequestContentPause: (_, __) {
         interfaceDelegate.target?.params.onAdEvent?.call(
-          const PlatformAdEvent(
-            type: AdEventType.contentPauseRequested,
-            ad: null,
-          ),
+          const PlatformAdEvent(type: AdEventType.contentPauseRequested),
         );
       },
       didRequestContentResume: (_, __) {
         interfaceDelegate.target?.params.onAdEvent?.call(
-          const PlatformAdEvent(
-            type: AdEventType.contentResumeRequested,
-            ad: null,
-          ),
+          const PlatformAdEvent(type: AdEventType.contentResumeRequested),
         );
       },
     );
