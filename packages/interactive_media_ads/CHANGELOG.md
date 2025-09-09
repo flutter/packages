@@ -1,3 +1,7 @@
+## 0.2.6+7
+
+* Updates Android `PlatformAdDisplayContainer` implementation to support preloading ads.
+
 ## 0.2.6+6
 
 * Bumps com.android.tools.build:gradle to 8.12.1 and kotlin_version to 2.2.10.

@@ -34,14 +34,13 @@ void main() {
       cookieManager = WKWebViewCookieManager(
         websiteDataStore: mockWebsiteDataStore,
         webKitProxy: WebKitProxy(
-          newHTTPCookie: ({
-            required Map<HttpCookiePropertyKey, Object> properties,
-          }) {
-            cookieProperties = properties;
-            return cookie = HTTPCookie.pigeon_detached(
-              pigeon_instanceManager: TestInstanceManager(),
-            );
-          },
+          newHTTPCookie:
+              ({required Map<HttpCookiePropertyKey, Object> properties}) {
+                cookieProperties = properties;
+                return cookie = HTTPCookie.pigeon_detached(
+                  pigeon_instanceManager: TestInstanceManager(),
+                );
+              },
         ),
       );
     });

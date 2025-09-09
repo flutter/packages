@@ -10,8 +10,8 @@ import PackageDescription
 let package = Package(
   name: "local_auth_darwin",
   platforms: [
-    .iOS("12.0"),
-    .macOS("10.14"),
+    .iOS("13.0"),
+    .macOS("10.15"),
   ],
   products: [
     .library(name: "local-auth-darwin", targets: ["local_auth_darwin"])
