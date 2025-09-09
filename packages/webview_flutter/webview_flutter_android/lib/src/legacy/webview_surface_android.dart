@@ -49,18 +49,16 @@ class SurfaceAndroidWebView extends AndroidWebView {
       onBuildWidget: (WebViewAndroidPlatformController controller) {
         return PlatformViewLink(
           viewType: 'plugins.flutter.io/webview',
-          surfaceFactory: (
-            BuildContext context,
-            PlatformViewController controller,
-          ) {
-            return AndroidViewSurface(
-              controller: controller as AndroidViewController,
-              gestureRecognizers:
-                  gestureRecognizers ??
-                  const <Factory<OneSequenceGestureRecognizer>>{},
-              hitTestBehavior: PlatformViewHitTestBehavior.opaque,
-            );
-          },
+          surfaceFactory:
+              (BuildContext context, PlatformViewController controller) {
+                return AndroidViewSurface(
+                  controller: controller as AndroidViewController,
+                  gestureRecognizers:
+                      gestureRecognizers ??
+                      const <Factory<OneSequenceGestureRecognizer>>{},
+                  hitTestBehavior: PlatformViewHitTestBehavior.opaque,
+                );
+              },
           onCreatePlatformView: (PlatformViewCreationParams params) {
             final Color? backgroundColor = creationParams.backgroundColor;
             return _createViewController(
@@ -77,8 +75,9 @@ class SurfaceAndroidWebView extends AndroidWebView {
                 // directionality.
                 layoutDirection:
                     Directionality.maybeOf(context) ?? TextDirection.ltr,
-                webViewIdentifier:
-                    instanceManager.getIdentifier(controller.webView)!,
+                webViewIdentifier: instanceManager.getIdentifier(
+                  controller.webView,
+                )!,
               )
               ..addOnPlatformViewCreatedListener(params.onPlatformViewCreated)
               ..addOnPlatformViewCreatedListener((int id) {

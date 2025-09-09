@@ -129,29 +129,6 @@ void main() {
       expect(callbackError.isForMainFrame, false);
     });
 
-    test('onWebResourceError from onRequestError', () {
-      final AndroidNavigationDelegate androidNavigationDelegate =
-          AndroidNavigationDelegate(_buildCreationParams());
-
-      late final WebResourceError callbackError;
-      androidNavigationDelegate.setOnWebResourceError(
-        (WebResourceError error) => callbackError = error,
-      );
-
-      CapturingWebViewClient.lastCreatedDelegate.onReceivedError!(
-        CapturingWebViewClient(),
-        TestWebView(),
-        WebViewClientConstants.errorFileNotFound,
-        'Page not found.',
-        'https://www.google.com',
-      );
-
-      expect(callbackError.errorCode, WebViewClientConstants.errorFileNotFound);
-      expect(callbackError.description, 'Page not found.');
-      expect(callbackError.errorType, WebResourceErrorType.fileNotFound);
-      expect(callbackError.isForMainFrame, true);
-    });
-
     test(
       'onNavigationRequest from requestLoading should not be called when loadUrlCallback is not specified',
       () {
@@ -750,7 +727,6 @@ class CapturingWebViewClient extends android_webview.WebViewClient {
     super.onPageFinished,
     super.onPageStarted,
     super.onReceivedHttpError,
-    super.onReceivedError,
     super.onReceivedHttpAuthRequest,
     super.onReceivedRequestErrorCompat,
     super.doUpdateVisitedHistory,
