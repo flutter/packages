@@ -146,17 +146,17 @@ public class Messages {
       this.reason = setterArg;
     }
 
-    private @NonNull String biometricHint;
+    private @NonNull String signInHint;
 
-    public @NonNull String getBiometricHint() {
-      return biometricHint;
+    public @NonNull String getSignInHint() {
+      return signInHint;
     }
 
-    public void setBiometricHint(@NonNull String setterArg) {
+    public void setSignInHint(@NonNull String setterArg) {
       if (setterArg == null) {
-        throw new IllegalStateException("Nonnull field \"biometricHint\" is null.");
+        throw new IllegalStateException("Nonnull field \"signInHint\" is null.");
       }
-      this.biometricHint = setterArg;
+      this.signInHint = setterArg;
     }
 
     private @NonNull String cancelButton;
@@ -198,14 +198,14 @@ public class Messages {
       }
       AuthStrings that = (AuthStrings) o;
       return reason.equals(that.reason)
-          && biometricHint.equals(that.biometricHint)
+          && signInHint.equals(that.signInHint)
           && cancelButton.equals(that.cancelButton)
           && signInTitle.equals(that.signInTitle);
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(reason, biometricHint, cancelButton, signInTitle);
+      return Objects.hash(reason, signInHint, cancelButton, signInTitle);
     }
 
     public static final class Builder {
@@ -218,11 +218,11 @@ public class Messages {
         return this;
       }
 
-      private @Nullable String biometricHint;
+      private @Nullable String signInHint;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setBiometricHint(@NonNull String setterArg) {
-        this.biometricHint = setterArg;
+      public @NonNull Builder setSignInHint(@NonNull String setterArg) {
+        this.signInHint = setterArg;
         return this;
       }
 
@@ -245,7 +245,7 @@ public class Messages {
       public @NonNull AuthStrings build() {
         AuthStrings pigeonReturn = new AuthStrings();
         pigeonReturn.setReason(reason);
-        pigeonReturn.setBiometricHint(biometricHint);
+        pigeonReturn.setSignInHint(signInHint);
         pigeonReturn.setCancelButton(cancelButton);
         pigeonReturn.setSignInTitle(signInTitle);
         return pigeonReturn;
@@ -256,7 +256,7 @@ public class Messages {
     ArrayList<Object> toList() {
       ArrayList<Object> toListResult = new ArrayList<>(4);
       toListResult.add(reason);
-      toListResult.add(biometricHint);
+      toListResult.add(signInHint);
       toListResult.add(cancelButton);
       toListResult.add(signInTitle);
       return toListResult;
@@ -266,8 +266,8 @@ public class Messages {
       AuthStrings pigeonResult = new AuthStrings();
       Object reason = pigeonVar_list.get(0);
       pigeonResult.setReason((String) reason);
-      Object biometricHint = pigeonVar_list.get(1);
-      pigeonResult.setBiometricHint((String) biometricHint);
+      Object signInHint = pigeonVar_list.get(1);
+      pigeonResult.setSignInHint((String) signInHint);
       Object cancelButton = pigeonVar_list.get(2);
       pigeonResult.setCancelButton((String) cancelButton);
       Object signInTitle = pigeonVar_list.get(3);

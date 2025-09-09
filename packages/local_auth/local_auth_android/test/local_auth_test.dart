@@ -107,7 +107,7 @@ void main() {
         expect(strings.reason, reason);
         // These should all be the default values from
         // auth_messages_android.dart
-        expect(strings.biometricHint, androidBiometricHint);
+        expect(strings.signInHint, androidSignInHint);
         expect(strings.cancelButton, androidCancelButton);
         expect(strings.signInTitle, androidSignInTitle);
       });
@@ -132,7 +132,7 @@ void main() {
           expect(strings.reason, reason);
           // These should all be the default values from
           // auth_messages_android.dart
-          expect(strings.biometricHint, androidBiometricHint);
+          expect(strings.signInHint, androidSignInHint);
           expect(strings.cancelButton, androidCancelButton);
           expect(strings.signInTitle, androidSignInTitle);
         },
@@ -154,7 +154,7 @@ void main() {
           localizedReason: reason,
           authMessages: <AuthMessages>[
             const AndroidAuthMessages(
-              biometricHint: hint,
+              signInHint: hint,
               cancelButton: cancel,
               signInTitle: signInTitle,
             ),
@@ -167,7 +167,7 @@ void main() {
         );
         final AuthStrings strings = result.captured[0] as AuthStrings;
         expect(strings.reason, reason);
-        expect(strings.biometricHint, hint);
+        expect(strings.signInHint, hint);
         expect(strings.cancelButton, cancel);
         expect(strings.signInTitle, signInTitle);
       });
@@ -186,10 +186,7 @@ void main() {
         await plugin.authenticate(
           localizedReason: reason,
           authMessages: <AuthMessages>[
-            const AndroidAuthMessages(
-              biometricHint: hint,
-              cancelButton: cancel,
-            ),
+            const AndroidAuthMessages(signInHint: hint, cancelButton: cancel),
           ],
         );
 
@@ -199,7 +196,7 @@ void main() {
         final AuthStrings strings = result.captured[0] as AuthStrings;
         expect(strings.reason, reason);
         // These should all be the provided values.
-        expect(strings.biometricHint, hint);
+        expect(strings.signInHint, hint);
         expect(strings.cancelButton, cancel);
         // These were non set, so should all be the default values from
         // auth_messages_android.dart

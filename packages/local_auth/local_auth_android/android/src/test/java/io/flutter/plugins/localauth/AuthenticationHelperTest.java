@@ -29,7 +29,7 @@ public class AuthenticationHelperTest {
   static final AuthStrings dummyStrings =
       new AuthStrings.Builder()
           .setReason("a reason")
-          .setBiometricHint("a hint")
+          .setSignInHint("a hint")
           .setCancelButton("cancel")
           .setSignInTitle("sign in")
           .build();

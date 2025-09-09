@@ -13,14 +13,14 @@ import 'package:local_auth_platform_interface/types/auth_messages.dart';
 class AndroidAuthMessages extends AuthMessages {
   /// Constructs a new instance.
   const AndroidAuthMessages({
-    this.biometricHint,
+    this.signInHint,
     this.cancelButton,
     this.signInTitle,
   });
 
-  /// Hint message advising the user how to authenticate with biometrics.
+  /// Hint message advising the user how to authenticate.
   /// Maximum 60 characters.
-  final String? biometricHint;
+  final String? signInHint;
 
   /// Message shown on a button that the user can click to leave the
   /// current dialog.
@@ -35,7 +35,8 @@ class AndroidAuthMessages extends AuthMessages {
   @override
   Map<String, String> get args {
     return <String, String>{
-      'biometricHint': biometricHint ?? androidBiometricHint,
+      // This legacy key is kept for backwards compatibility.
+      'biometricHint': signInHint ?? androidSignInHint,
       'cancelButton': cancelButton ?? androidCancelButton,
       'signInTitle': signInTitle ?? androidSignInTitle,
     };
@@ -46,23 +47,23 @@ class AndroidAuthMessages extends AuthMessages {
       identical(this, other) ||
       other is AndroidAuthMessages &&
           runtimeType == other.runtimeType &&
-          biometricHint == other.biometricHint &&
+          signInHint == other.signInHint &&
           cancelButton == other.cancelButton &&
           signInTitle == other.signInTitle;
 
   @override
   int get hashCode =>
-      Object.hash(super.hashCode, biometricHint, cancelButton, signInTitle);
+      Object.hash(super.hashCode, signInHint, cancelButton, signInTitle);
 }
 
 // Default strings for AndroidAuthMessages. Currently supports English.
 // Intl.message must be string literals.
 
-/// Hint message advising the user how to authenticate with biometrics.
-String get androidBiometricHint => Intl.message(
+/// Hint message advising the user how to authenticate .
+String get androidSignInHint => Intl.message(
   'Verify identity',
   desc:
-      'Hint message advising the user how to authenticate with biometrics. '
+      'Hint message advising the user how to authenticate. '
       'Maximum 60 characters.',
 );
 

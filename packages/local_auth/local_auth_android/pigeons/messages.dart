@@ -19,13 +19,13 @@ class AuthStrings {
   /// Constructs a new instance.
   const AuthStrings({
     required this.reason,
-    required this.biometricHint,
+    required this.signInHint,
     required this.cancelButton,
     required this.signInTitle,
   });
 
   final String reason;
-  final String biometricHint;
+  final String signInHint;
   final String cancelButton;
   final String signInTitle;
 }

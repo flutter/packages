@@ -62,7 +62,7 @@ class AuthenticationHelper extends BiometricPrompt.AuthenticationCallback
         new BiometricPrompt.PromptInfo.Builder()
             .setDescription(strings.getReason())
             .setTitle(strings.getSignInTitle())
-            .setSubtitle(strings.getBiometricHint())
+            .setSubtitle(strings.getSignInHint())
             .setConfirmationRequired(options.getSensitiveTransaction());
 
     int allowedAuthenticators =

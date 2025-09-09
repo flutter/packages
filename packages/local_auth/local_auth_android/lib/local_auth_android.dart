@@ -149,7 +149,7 @@ class LocalAuthAndroid extends LocalAuthPlatform {
     }
     return AuthStrings(
       reason: localizedReason,
-      biometricHint: messages?.biometricHint ?? androidBiometricHint,
+      signInHint: messages?.signInHint ?? androidSignInHint,
       cancelButton: messages?.cancelButton ?? androidCancelButton,
       signInTitle: messages?.signInTitle ?? androidSignInTitle,
     );

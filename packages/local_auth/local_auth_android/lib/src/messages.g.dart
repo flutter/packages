@@ -85,28 +85,28 @@ enum AuthClassification { weak, strong }
 class AuthStrings {
   AuthStrings({
     required this.reason,
-    required this.biometricHint,
+    required this.signInHint,
     required this.cancelButton,
     required this.signInTitle,
   });
 
   String reason;
 
-  String biometricHint;
+  String signInHint;
 
   String cancelButton;
 
   String signInTitle;
 
   Object encode() {
-    return <Object?>[reason, biometricHint, cancelButton, signInTitle];
+    return <Object?>[reason, signInHint, cancelButton, signInTitle];
   }
 
   static AuthStrings decode(Object result) {
     result as List<Object?>;
     return AuthStrings(
       reason: result[0]! as String,
-      biometricHint: result[1]! as String,
+      signInHint: result[1]! as String,
       cancelButton: result[2]! as String,
       signInTitle: result[3]! as String,
     );
