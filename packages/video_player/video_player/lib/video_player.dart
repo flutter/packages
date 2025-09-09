@@ -557,26 +557,21 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         .listen(eventListener, onError: errorListener);
     return initializingCompleter.future;
   }
-
-  @override
-  Future<void> dispose() async {
+    
+  override
+  void dispose() {
     if (_isDisposed) {
       return;
     }
-
-    if (_creatingCompleter != null) {
-      await _creatingCompleter!.future;
-      if (!_isDisposed) {
-        _isDisposed = true;
-        _timer?.cancel();
-        await _eventSubscription?.cancel();
-        await _videoPlayerPlatform.dispose(_playerId);
-      }
-      _lifeCycleObserver?.dispose();
-    }
     _isDisposed = true;
+    _timer?.cancel();
+    _eventSubscription?.cancel();
+    _videoPlayerPlatform.dispose(
+        _playerId); // If this is async, try to refactor to synch or move elsewhere
+    _lifeCycleObserver?.dispose();
     super.dispose();
   }
+
 
   /// Starts playing the video.
   ///
