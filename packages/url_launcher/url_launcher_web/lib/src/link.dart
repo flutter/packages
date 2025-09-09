@@ -117,15 +117,13 @@ class WebLinkDelegateState extends State<WebLinkDelegate> {
   }
 
   Widget _buildChild(BuildContext context) {
-    return MergeSemantics(
-      child: Semantics(
-        link: true,
-        identifier: _semanticsIdentifier,
-        linkUrl: widget.link.uri,
-        child: widget.link.builder(
-          context,
-          widget.link.isDisabled ? null : _followLink,
-        ),
+    return Semantics(
+      link: true,
+      identifier: _semanticsIdentifier,
+      linkUrl: widget.link.uri,
+      child: widget.link.builder(
+        context,
+        widget.link.isDisabled ? null : _followLink,
       ),
     );
   }
