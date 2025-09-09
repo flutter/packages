@@ -12,56 +12,56 @@ List<RouteBase> get $appRoutes => [$allTypesBaseRoute];
 
 RouteBase get $allTypesBaseRoute => GoRouteData.$route(
   path: '/',
-  factory: _$AllTypesBaseRoute._fromState,
+  factory: $AllTypesBaseRoute._fromState,
   routes: [
     GoRouteData.$route(
       path: 'big-int-route/:requiredBigIntField',
-      factory: _$BigIntExtensionRoute._fromState,
+      factory: $BigIntExtensionRoute._fromState,
     ),
     GoRouteData.$route(
       path: 'bool-route/:requiredBoolField',
-      factory: _$BoolExtensionRoute._fromState,
+      factory: $BoolExtensionRoute._fromState,
     ),
     GoRouteData.$route(
       path: 'date-time-route/:requiredDateTimeField',
-      factory: _$DateTimeExtensionRoute._fromState,
+      factory: $DateTimeExtensionRoute._fromState,
     ),
     GoRouteData.$route(
       path: 'double-route/:requiredDoubleField',
-      factory: _$DoubleExtensionRoute._fromState,
+      factory: $DoubleExtensionRoute._fromState,
     ),
     GoRouteData.$route(
       path: 'int-route/:requiredIntField',
-      factory: _$IntExtensionRoute._fromState,
+      factory: $IntExtensionRoute._fromState,
     ),
     GoRouteData.$route(
       path: 'num-route/:requiredNumField',
-      factory: _$NumExtensionRoute._fromState,
+      factory: $NumExtensionRoute._fromState,
     ),
     GoRouteData.$route(
       path: 'double-route/:requiredDoubleField',
-      factory: _$DoubleExtensionRoute._fromState,
+      factory: $DoubleExtensionRoute._fromState,
     ),
     GoRouteData.$route(
       path: 'enum-route/:requiredEnumField',
-      factory: _$EnumExtensionRoute._fromState,
+      factory: $EnumExtensionRoute._fromState,
     ),
     GoRouteData.$route(
       path: 'enhanced-enum-route/:requiredEnumField',
-      factory: _$EnhancedEnumExtensionRoute._fromState,
+      factory: $EnhancedEnumExtensionRoute._fromState,
     ),
     GoRouteData.$route(
       path: 'string-route/:requiredStringField',
-      factory: _$StringExtensionRoute._fromState,
+      factory: $StringExtensionRoute._fromState,
     ),
     GoRouteData.$route(
       path: 'uri-route/:requiredUriField',
-      factory: _$UriExtensionRoute._fromState,
+      factory: $UriExtensionRoute._fromState,
     ),
   ],
 );
 
-mixin _$AllTypesBaseRoute on GoRouteData {
+mixin $AllTypesBaseRoute on GoRouteData {
   static AllTypesBaseRoute _fromState(GoRouterState state) =>
       const AllTypesBaseRoute();
 
@@ -82,7 +82,7 @@ mixin _$AllTypesBaseRoute on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-mixin _$BigIntExtensionRoute on GoRouteData {
+mixin $BigIntExtensionRoute on GoRouteData {
   static BigIntExtensionRoute _fromState(GoRouterState state) =>
       BigIntExtensionRoute(
         requiredBigIntField:
@@ -118,7 +118,7 @@ mixin _$BigIntExtensionRoute on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-mixin _$BoolExtensionRoute on GoRouteData {
+mixin $BoolExtensionRoute on GoRouteData {
   static BoolExtensionRoute _fromState(
     GoRouterState state,
   ) => BoolExtensionRoute(
@@ -162,7 +162,7 @@ mixin _$BoolExtensionRoute on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-mixin _$DateTimeExtensionRoute on GoRouteData {
+mixin $DateTimeExtensionRoute on GoRouteData {
   static DateTimeExtensionRoute _fromState(GoRouterState state) =>
       DateTimeExtensionRoute(
         requiredDateTimeField:
@@ -200,7 +200,7 @@ mixin _$DateTimeExtensionRoute on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-mixin _$DoubleExtensionRoute on GoRouteData {
+mixin $DoubleExtensionRoute on GoRouteData {
   static DoubleExtensionRoute _fromState(GoRouterState state) =>
       DoubleExtensionRoute(
         requiredDoubleField:
@@ -248,7 +248,7 @@ mixin _$DoubleExtensionRoute on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-mixin _$IntExtensionRoute on GoRouteData {
+mixin $IntExtensionRoute on GoRouteData {
   static IntExtensionRoute _fromState(GoRouterState state) => IntExtensionRoute(
     requiredIntField:
         int.parse(state.pathParameters['requiredIntField']!) as IntExtension,
@@ -290,7 +290,7 @@ mixin _$IntExtensionRoute on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-mixin _$NumExtensionRoute on GoRouteData {
+mixin $NumExtensionRoute on GoRouteData {
   static NumExtensionRoute _fromState(GoRouterState state) => NumExtensionRoute(
     requiredNumField:
         num.parse(state.pathParameters['requiredNumField']!) as NumExtension,
@@ -332,7 +332,7 @@ mixin _$NumExtensionRoute on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-mixin _$EnumExtensionRoute on GoRouteData {
+mixin $EnumExtensionRoute on GoRouteData {
   static EnumExtensionRoute _fromState(GoRouterState state) =>
       EnumExtensionRoute(
         requiredEnumField:
@@ -390,7 +390,7 @@ const _$PersonDetailsEnumMap = {
   PersonDetails.favoriteSport: 'favorite-sport',
 };
 
-mixin _$EnhancedEnumExtensionRoute on GoRouteData {
+mixin $EnhancedEnumExtensionRoute on GoRouteData {
   static EnhancedEnumExtensionRoute _fromState(GoRouterState state) =>
       EnhancedEnumExtensionRoute(
         requiredEnumField:
@@ -448,7 +448,7 @@ const _$SportDetailsEnumMap = {
   SportDetails.hockey: 'hockey',
 };
 
-mixin _$StringExtensionRoute on GoRouteData {
+mixin $StringExtensionRoute on GoRouteData {
   static StringExtensionRoute _fromState(GoRouterState state) =>
       StringExtensionRoute(
         requiredStringField:
@@ -490,7 +490,7 @@ mixin _$StringExtensionRoute on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-mixin _$UriExtensionRoute on GoRouteData {
+mixin $UriExtensionRoute on GoRouteData {
   static UriExtensionRoute _fromState(GoRouterState state) => UriExtensionRoute(
     requiredUriField:
         Uri.parse(state.pathParameters['requiredUriField']!) as UriExtension,

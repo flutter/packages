@@ -4,6 +4,10 @@
   * Switches to `LocalAuthException` for error reporting.
   * Removes support for `useErrorDialogs`.
   * Renames `biometricHint` to `signInHint` to reflect its usage.
+
+## 1.0.52
+
+* Bumps com.android.tools.build:gradle to 8.12.1.
 * Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
 
 ## 1.0.51
