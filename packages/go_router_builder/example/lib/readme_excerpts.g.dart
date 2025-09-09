@@ -23,13 +23,13 @@ List<RouteBase> get $appRoutes => [
 
 RouteBase get $homeRoute => GoRouteData.$route(
   path: '/',
-  factory: _$HomeRoute._fromState,
+  factory: $HomeRoute._fromState,
   routes: [
-    GoRouteData.$route(path: 'family/:fid', factory: _$FamilyRoute._fromState),
+    GoRouteData.$route(path: 'family/:fid', factory: $FamilyRoute._fromState),
   ],
 );
 
-mixin _$HomeRoute on GoRouteData {
+mixin $HomeRoute on GoRouteData {
   static HomeRoute _fromState(GoRouterState state) => const HomeRoute();
 
   @override
@@ -49,7 +49,7 @@ mixin _$HomeRoute on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-mixin _$FamilyRoute on GoRouteData {
+mixin $FamilyRoute on GoRouteData {
   static FamilyRoute _fromState(GoRouterState state) =>
       FamilyRoute(fid: state.pathParameters['fid']);
 
@@ -74,9 +74,9 @@ mixin _$FamilyRoute on GoRouteData {
 }
 
 RouteBase get $loginRoute =>
-    GoRouteData.$route(path: '/login', factory: _$LoginRoute._fromState);
+    GoRouteData.$route(path: '/login', factory: $LoginRoute._fromState);
 
-mixin _$LoginRoute on GoRouteData {
+mixin $LoginRoute on GoRouteData {
   static LoginRoute _fromState(GoRouterState state) =>
       LoginRoute(from: state.uri.queryParameters['from']);
 
@@ -103,9 +103,9 @@ mixin _$LoginRoute on GoRouteData {
 }
 
 RouteBase get $myRoute =>
-    GoRouteData.$route(path: '/my-route', factory: _$MyRoute._fromState);
+    GoRouteData.$route(path: '/my-route', factory: $MyRoute._fromState);
 
-mixin _$MyRoute on GoRouteData {
+mixin $MyRoute on GoRouteData {
   static MyRoute _fromState(GoRouterState state) => MyRoute(
     queryParameter:
         state.uri.queryParameters['query-parameter'] ?? 'defaultValue',
@@ -138,10 +138,10 @@ mixin _$MyRoute on GoRouteData {
 
 RouteBase get $personRouteWithExtra => GoRouteData.$route(
   path: '/person',
-  factory: _$PersonRouteWithExtra._fromState,
+  factory: $PersonRouteWithExtra._fromState,
 );
 
-mixin _$PersonRouteWithExtra on GoRouteData {
+mixin $PersonRouteWithExtra on GoRouteData {
   static PersonRouteWithExtra _fromState(GoRouterState state) =>
       PersonRouteWithExtra(state.extra as Person?);
 
@@ -168,10 +168,10 @@ mixin _$PersonRouteWithExtra on GoRouteData {
 
 RouteBase get $hotdogRouteWithEverything => GoRouteData.$route(
   path: '/:ketchup',
-  factory: _$HotdogRouteWithEverything._fromState,
+  factory: $HotdogRouteWithEverything._fromState,
 );
 
-mixin _$HotdogRouteWithEverything on GoRouteData {
+mixin $HotdogRouteWithEverything on GoRouteData {
   static HotdogRouteWithEverything _fromState(GoRouterState state) =>
       HotdogRouteWithEverything(
         _$boolConverter(state.pathParameters['ketchup']!),
@@ -215,9 +215,9 @@ bool _$boolConverter(String value) {
 }
 
 RouteBase get $booksRoute =>
-    GoRouteData.$route(path: '/books', factory: _$BooksRoute._fromState);
+    GoRouteData.$route(path: '/books', factory: $BooksRoute._fromState);
 
-mixin _$BooksRoute on GoRouteData {
+mixin $BooksRoute on GoRouteData {
   static BooksRoute _fromState(GoRouterState state) => BooksRoute(
     kind:
         _$convertMapValue(
@@ -274,10 +274,10 @@ extension<T extends Enum> on Map<T, String> {
 
 RouteBase get $myMaterialRouteWithKey => GoRouteData.$route(
   path: '/my-material-route-with-key',
-  factory: _$MyMaterialRouteWithKey._fromState,
+  factory: $MyMaterialRouteWithKey._fromState,
 );
 
-mixin _$MyMaterialRouteWithKey on GoRouteData {
+mixin $MyMaterialRouteWithKey on GoRouteData {
   static MyMaterialRouteWithKey _fromState(GoRouterState state) =>
       const MyMaterialRouteWithKey();
 
@@ -299,9 +299,9 @@ mixin _$MyMaterialRouteWithKey on GoRouteData {
 }
 
 RouteBase get $fancyRoute =>
-    GoRouteData.$route(path: '/fancy', factory: _$FancyRoute._fromState);
+    GoRouteData.$route(path: '/fancy', factory: $FancyRoute._fromState);
 
-mixin _$FancyRoute on GoRouteData {
+mixin $FancyRoute on GoRouteData {
   static FancyRoute _fromState(GoRouterState state) => const FancyRoute();
 
   @override
@@ -328,7 +328,7 @@ RouteBase get $myShellRouteData => ShellRouteData.$route(
     GoRouteData.$route(
       path: 'my-go-route',
       parentNavigatorKey: MyGoRouteData.$parentNavigatorKey,
-      factory: _$MyGoRouteData._fromState,
+      factory: $MyGoRouteData._fromState,
     ),
   ],
 );
@@ -338,7 +338,7 @@ extension $MyShellRouteDataExtension on MyShellRouteData {
       const MyShellRouteData();
 }
 
-mixin _$MyGoRouteData on GoRouteData {
+mixin $MyGoRouteData on GoRouteData {
   static MyGoRouteData _fromState(GoRouterState state) => const MyGoRouteData();
 
   @override
@@ -360,11 +360,10 @@ mixin _$MyGoRouteData on GoRouteData {
 
 RouteBase get $detailsRoute => RelativeGoRouteData.$route(
   path: 'details',
-
-  factory: _$DetailsRoute._fromState,
+  factory: $DetailsRoute._fromState,
 );
 
-mixin _$DetailsRoute on RelativeGoRouteData {
+mixin $DetailsRoute on RelativeGoRouteData {
   static DetailsRoute _fromState(GoRouterState state) => const DetailsRoute();
 
   @override

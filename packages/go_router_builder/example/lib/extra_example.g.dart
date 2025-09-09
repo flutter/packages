@@ -16,10 +16,10 @@ List<RouteBase> get $appRoutes => [
 
 RouteBase get $requiredExtraRoute => GoRouteData.$route(
   path: '/requiredExtra',
-  factory: _$RequiredExtraRoute._fromState,
+  factory: $RequiredExtraRoute._fromState,
 );
 
-mixin _$RequiredExtraRoute on GoRouteData {
+mixin $RequiredExtraRoute on GoRouteData {
   static RequiredExtraRoute _fromState(GoRouterState state) =>
       RequiredExtraRoute($extra: state.extra as Extra);
 
@@ -46,10 +46,10 @@ mixin _$RequiredExtraRoute on GoRouteData {
 
 RouteBase get $optionalExtraRoute => GoRouteData.$route(
   path: '/optionalExtra',
-  factory: _$OptionalExtraRoute._fromState,
+  factory: $OptionalExtraRoute._fromState,
 );
 
-mixin _$OptionalExtraRoute on GoRouteData {
+mixin $OptionalExtraRoute on GoRouteData {
   static OptionalExtraRoute _fromState(GoRouterState state) =>
       OptionalExtraRoute($extra: state.extra as Extra?);
 
@@ -75,9 +75,9 @@ mixin _$OptionalExtraRoute on GoRouteData {
 }
 
 RouteBase get $splashRoute =>
-    GoRouteData.$route(path: '/splash', factory: _$SplashRoute._fromState);
+    GoRouteData.$route(path: '/splash', factory: $SplashRoute._fromState);
 
-mixin _$SplashRoute on GoRouteData {
+mixin $SplashRoute on GoRouteData {
   static SplashRoute _fromState(GoRouterState state) => const SplashRoute();
 
   @override

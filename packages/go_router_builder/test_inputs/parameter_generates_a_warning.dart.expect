@@ -1,9 +1,9 @@
 RouteBase get $myRoute => GoRouteData.$route(
       path: '/product/:id',
-      factory: _$MyRoute._fromState,
+      factory: $MyRoute._fromState,
     );
 
-mixin _$MyRoute on GoRouteData {
+mixin $MyRoute on GoRouteData {
   static MyRoute _fromState(GoRouterState state) => MyRoute(
         int.parse(state.pathParameters['id']!),
       );

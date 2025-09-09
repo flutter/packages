@@ -39,10 +39,8 @@
         [[SKProductSubscriptionPeriodStub alloc] initWithMap:map[@"subscriptionPeriod"]];
     [self setValue:subscriptionPeriodSub forKey:@"subscriptionPeriod"];
     [self setValue:map[@"paymentMode"] ?: @(0) forKey:@"paymentMode"];
-    if (@available(iOS 12.2, *)) {
-      [self setValue:map[@"identifier"] ?: [NSNull null] forKey:@"identifier"];
-      [self setValue:map[@"type"] ?: @(0) forKey:@"type"];
-    }
+    [self setValue:map[@"identifier"] ?: [NSNull null] forKey:@"identifier"];
+    [self setValue:map[@"type"] ?: @(0) forKey:@"type"];
   }
   return self;
 }
@@ -71,14 +69,11 @@
     [self setValue:discount ?: [NSNull null] forKey:@"introductoryPrice"];
     [self setValue:map[@"subscriptionGroupIdentifier"] ?: [NSNull null]
             forKey:@"subscriptionGroupIdentifier"];
-    if (@available(iOS 12.2, *)) {
-      NSMutableArray *discounts = [[NSMutableArray alloc] init];
-      for (NSDictionary *discountMap in map[@"discounts"]) {
-        [discounts addObject:[[SKProductDiscountStub alloc] initWithMap:discountMap]];
-      }
-
-      [self setValue:discounts forKey:@"discounts"];
+    NSMutableArray *discounts = [[NSMutableArray alloc] init];
+    for (NSDictionary *discountMap in map[@"discounts"]) {
+      [discounts addObject:[[SKProductDiscountStub alloc] initWithMap:discountMap]];
     }
+    [self setValue:discounts forKey:@"discounts"];
   }
   return self;
 }
