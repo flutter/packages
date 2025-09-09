@@ -999,7 +999,7 @@ abstract class PigeonApiWebResourceRequest(
   abstract fun isForMainFrame(pigeon_instance: android.webkit.WebResourceRequest): Boolean
 
   /** Whether the request was a result of a server-side redirect. */
-  abstract fun isRedirect(pigeon_instance: android.webkit.WebResourceRequest): Boolean?
+  abstract fun isRedirect(pigeon_instance: android.webkit.WebResourceRequest): Boolean
 
   /** Whether a gesture (such as a click) was associated with the request. */
   abstract fun hasGesture(pigeon_instance: android.webkit.WebResourceRequest): Boolean

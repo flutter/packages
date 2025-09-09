@@ -707,7 +707,7 @@ class WebResourceRequest extends PigeonInternalProxyApiBaseClass {
     super.pigeon_instanceManager,
     required this.url,
     required this.isForMainFrame,
-    this.isRedirect,
+    required this.isRedirect,
     required this.hasGesture,
     required this.method,
     this.requestHeaders,
@@ -720,7 +720,7 @@ class WebResourceRequest extends PigeonInternalProxyApiBaseClass {
   final bool isForMainFrame;
 
   /// Whether the request was a result of a server-side redirect.
-  final bool? isRedirect;
+  final bool isRedirect;
 
   /// Whether a gesture (such as a click) was associated with the request.
   final bool hasGesture;
@@ -738,7 +738,7 @@ class WebResourceRequest extends PigeonInternalProxyApiBaseClass {
     WebResourceRequest Function(
       String url,
       bool isForMainFrame,
-      bool? isRedirect,
+      bool isRedirect,
       bool hasGesture,
       String method,
       Map<String, String>? requestHeaders,
@@ -782,6 +782,10 @@ class WebResourceRequest extends PigeonInternalProxyApiBaseClass {
             'Argument for dev.flutter.pigeon.webview_flutter_android.WebResourceRequest.pigeon_newInstance was null, expected non-null bool.',
           );
           final bool? arg_isRedirect = (args[3] as bool?);
+          assert(
+            arg_isRedirect != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_android.WebResourceRequest.pigeon_newInstance was null, expected non-null bool.',
+          );
           final bool? arg_hasGesture = (args[4] as bool?);
           assert(
             arg_hasGesture != null,
@@ -800,7 +804,7 @@ class WebResourceRequest extends PigeonInternalProxyApiBaseClass {
                   pigeon_newInstance?.call(
                         arg_url!,
                         arg_isForMainFrame!,
-                        arg_isRedirect,
+                        arg_isRedirect!,
                         arg_hasGesture!,
                         arg_method!,
                         arg_requestHeaders,
@@ -810,7 +814,7 @@ class WebResourceRequest extends PigeonInternalProxyApiBaseClass {
                         pigeon_instanceManager: pigeon_instanceManager,
                         url: arg_url!,
                         isForMainFrame: arg_isForMainFrame!,
-                        isRedirect: arg_isRedirect,
+                        isRedirect: arg_isRedirect!,
                         hasGesture: arg_hasGesture!,
                         method: arg_method!,
                         requestHeaders: arg_requestHeaders,

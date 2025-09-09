@@ -157,7 +157,7 @@ abstract class WebResourceRequest {
   late bool isForMainFrame;
 
   /// Whether the request was a result of a server-side redirect.
-  late bool? isRedirect;
+  late bool isRedirect;
 
   /// Whether a gesture (such as a click) was associated with the request.
   late bool hasGesture;

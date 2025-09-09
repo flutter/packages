@@ -27,9 +27,9 @@ public class WebResourceRequestProxyApi extends PigeonApiWebResourceRequest {
     return pigeon_instance.isForMainFrame();
   }
 
-  @Nullable
+  @NonNull
   @Override
-  public Boolean isRedirect(@NonNull WebResourceRequest pigeon_instance) {
+  public boolean isRedirect(@NonNull WebResourceRequest pigeon_instance) {
     return pigeon_instance.isRedirect();
   }
 
