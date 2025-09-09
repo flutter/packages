@@ -136,20 +136,6 @@ class WebViewAndroidPlatformController extends WebViewPlatformController {
             weakReference.target?.callbacksHandler.onPageFinished(url);
           };
         }),
-        onReceivedError: withWeakReferenceTo(this, (
-          WeakReference<WebViewAndroidPlatformController> weakReference,
-        ) {
-          return (_, __, int errorCode, String description, String failingUrl) {
-            weakReference.target?.callbacksHandler.onWebResourceError(
-              WebResourceError(
-                errorCode: errorCode,
-                description: description,
-                failingUrl: failingUrl,
-                errorType: _errorCodeToErrorType(errorCode),
-              ),
-            );
-          };
-        }),
         onReceivedRequestError: withWeakReferenceTo(this, (
           WeakReference<WebViewAndroidPlatformController> weakReference,
         ) {
@@ -181,29 +167,18 @@ class WebViewAndroidPlatformController extends WebViewPlatformController {
             );
           };
         }),
-        onFormResubmission: (
-          _,
-          __,
-          android_webview.AndroidMessage dontResend,
-          ___,
-        ) {
-          dontResend.sendToTarget();
-        },
-        onReceivedClientCertRequest: (
-          _,
-          __,
-          android_webview.ClientCertRequest request,
-        ) {
-          request.cancel();
-        },
-        onReceivedSslError: (
-          _,
-          __,
-          android_webview.SslErrorHandler handler,
-          ___,
-        ) {
-          handler.cancel();
-        },
+        onFormResubmission:
+            (_, __, android_webview.AndroidMessage dontResend, ___) {
+              dontResend.sendToTarget();
+            },
+        onReceivedClientCertRequest:
+            (_, __, android_webview.ClientCertRequest request) {
+              request.cancel();
+            },
+        onReceivedSslError:
+            (_, __, android_webview.SslErrorHandler handler, ___) {
+              handler.cancel();
+            },
         requestLoading: withWeakReferenceTo(this, (
           WeakReference<WebViewAndroidPlatformController> weakReference,
         ) {
@@ -294,10 +269,9 @@ class WebViewAndroidPlatformController extends WebViewPlatformController {
 
   @override
   Future<void> loadFile(String absoluteFilePath) {
-    final String url =
-        absoluteFilePath.startsWith('file://')
-            ? absoluteFilePath
-            : 'file://$absoluteFilePath';
+    final String url = absoluteFilePath.startsWith('file://')
+        ? absoluteFilePath
+        : 'file://$absoluteFilePath';
 
     webView.settings.setAllowFileAccess(true);
     return webView.loadUrl(url, <String, String>{});
@@ -652,14 +626,6 @@ class WebViewProxy {
     void Function(
       android_webview.WebViewClient,
       android_webview.WebView webView,
-      int errorCode,
-      String description,
-      String failingUrl,
-    )?
-    onReceivedError,
-    void Function(
-      android_webview.WebViewClient,
-      android_webview.WebView webView,
       android_webview.WebResourceRequest request,
     )?
     requestLoading,
@@ -694,7 +660,6 @@ class WebViewProxy {
       onPageStarted: onPageStarted,
       onPageFinished: onPageFinished,
       onReceivedRequestError: onReceivedRequestError,
-      onReceivedError: onReceivedError,
       requestLoading: requestLoading,
       urlLoading: urlLoading,
     );
