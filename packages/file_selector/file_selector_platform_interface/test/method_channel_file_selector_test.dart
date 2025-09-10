@@ -226,11 +226,10 @@ void main() {
 
         expectMethodCall(
           log,
-          'getDirectoryPathWithOptions',
+          'getDirectoryPath',
           arguments: <String, dynamic>{
             'initialDirectory': '/example/directory',
             'confirmButtonText': null,
-            'canCreateDirectories': null,
           },
         );
       });
@@ -239,58 +238,10 @@ void main() {
 
         expectMethodCall(
           log,
-          'getDirectoryPathWithOptions',
+          'getDirectoryPath',
           arguments: <String, dynamic>{
             'initialDirectory': null,
             'confirmButtonText': 'Select Folder',
-            'canCreateDirectories': null,
-          },
-        );
-      });
-    });
-    group('#getDirectoryPathWithOptions', () {
-      test('passes initialDirectory correctly', () async {
-        await plugin.getDirectoryPathWithOptions(
-          const FileDialogOptions(initialDirectory: '/example/directory'),
-        );
-
-        expectMethodCall(
-          log,
-          'getDirectoryPathWithOptions',
-          arguments: <String, dynamic>{
-            'initialDirectory': '/example/directory',
-            'confirmButtonText': null,
-            'canCreateDirectories': null,
-          },
-        );
-      });
-      test('passes confirmButtonText correctly', () async {
-        await plugin.getDirectoryPathWithOptions(
-          const FileDialogOptions(confirmButtonText: 'Select Folder'),
-        );
-
-        expectMethodCall(
-          log,
-          'getDirectoryPathWithOptions',
-          arguments: <String, dynamic>{
-            'initialDirectory': null,
-            'confirmButtonText': 'Select Folder',
-            'canCreateDirectories': null,
-          },
-        );
-      });
-      test('passes canCreateDirectories correctly', () async {
-        await plugin.getDirectoryPathWithOptions(
-          const FileDialogOptions(canCreateDirectories: true),
-        );
-
-        expectMethodCall(
-          log,
-          'getDirectoryPathWithOptions',
-          arguments: <String, dynamic>{
-            'initialDirectory': null,
-            'confirmButtonText': null,
-            'canCreateDirectories': true,
           },
         );
       });
@@ -301,11 +252,10 @@ void main() {
 
         expectMethodCall(
           log,
-          'getDirectoryPathsWithOptions',
+          'getDirectoryPaths',
           arguments: <String, dynamic>{
             'initialDirectory': '/example/directory',
             'confirmButtonText': null,
-            'canCreateDirectories': null,
           },
         );
       });
@@ -316,60 +266,10 @@ void main() {
 
         expectMethodCall(
           log,
-          'getDirectoryPathsWithOptions',
+          'getDirectoryPaths',
           arguments: <String, dynamic>{
             'initialDirectory': null,
             'confirmButtonText': 'Select one or more Folders',
-            'canCreateDirectories': null,
-          },
-        );
-      });
-    });
-    group('#getDirectoryPathsWithOptions', () {
-      test('passes initialDirectory correctly', () async {
-        await plugin.getDirectoryPathWithOptions(
-          const FileDialogOptions(initialDirectory: '/example/directory'),
-        );
-
-        expectMethodCall(
-          log,
-          'getDirectoryPathWithOptions',
-          arguments: <String, dynamic>{
-            'initialDirectory': '/example/directory',
-            'confirmButtonText': null,
-            'canCreateDirectories': null,
-          },
-        );
-      });
-      test('passes confirmButtonText correctly', () async {
-        await plugin.getDirectoryPathWithOptions(
-          const FileDialogOptions(
-            confirmButtonText: 'Select one or more Folders',
-          ),
-        );
-
-        expectMethodCall(
-          log,
-          'getDirectoryPathWithOptions',
-          arguments: <String, dynamic>{
-            'initialDirectory': null,
-            'confirmButtonText': 'Select one or more Folders',
-            'canCreateDirectories': null,
-          },
-        );
-      });
-      test('passes canCreateDirectories correctly', () async {
-        await plugin.getDirectoryPathWithOptions(
-          const FileDialogOptions(canCreateDirectories: true),
-        );
-
-        expectMethodCall(
-          log,
-          'getDirectoryPathWithOptions',
-          arguments: <String, dynamic>{
-            'initialDirectory': null,
-            'confirmButtonText': null,
-            'canCreateDirectories': true,
           },
         );
       });

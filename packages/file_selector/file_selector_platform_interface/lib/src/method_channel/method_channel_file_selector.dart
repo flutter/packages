@@ -78,22 +78,10 @@ class MethodChannelFileSelector extends FileSelectorPlatform {
     String? initialDirectory,
     String? confirmButtonText,
   }) async {
-    return getDirectoryPathWithOptions(
-      FileDialogOptions(
-        initialDirectory: initialDirectory,
-        confirmButtonText: confirmButtonText,
-      ),
-    );
-  }
-
-  @override
-  Future<String?> getDirectoryPathWithOptions(FileDialogOptions options) async {
-    return _channel
-        .invokeMethod<String>('getDirectoryPathWithOptions', <String, dynamic>{
-          'initialDirectory': options.initialDirectory,
-          'confirmButtonText': options.confirmButtonText,
-          'canCreateDirectories': options.canCreateDirectories,
-        });
+    return _channel.invokeMethod<String>('getDirectoryPath', <String, dynamic>{
+      'initialDirectory': initialDirectory,
+      'confirmButtonText': confirmButtonText,
+    });
   }
 
   @override
@@ -101,24 +89,11 @@ class MethodChannelFileSelector extends FileSelectorPlatform {
     String? initialDirectory,
     String? confirmButtonText,
   }) async {
-    return getDirectoryPathsWithOptions(
-      FileDialogOptions(
-        initialDirectory: initialDirectory,
-        confirmButtonText: confirmButtonText,
-      ),
-    );
-  }
-
-  @override
-  Future<List<String>> getDirectoryPathsWithOptions(
-    FileDialogOptions options,
-  ) async {
     final List<String>? pathList = await _channel.invokeListMethod<String>(
-      'getDirectoryPathsWithOptions',
+      'getDirectoryPaths',
       <String, dynamic>{
-        'initialDirectory': options.initialDirectory,
-        'confirmButtonText': options.confirmButtonText,
-        'canCreateDirectories': options.canCreateDirectories,
+        'initialDirectory': initialDirectory,
+        'confirmButtonText': confirmButtonText,
       },
     );
     return pathList ?? <String>[];
