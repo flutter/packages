@@ -111,8 +111,9 @@ abstract class FileSelectorPlatform extends PlatformInterface {
   ///
   /// Returns `null` if the user cancels the operation.
   Future<String?> getDirectoryPathWithOptions(FileDialogOptions options) {
-    throw UnimplementedError(
-      'getDirectoryPathWithOptions() has not been implemented.',
+    return getDirectoryPath(
+      initialDirectory: options.initialDirectory,
+      confirmButtonText: options.confirmButtonText,
     );
   }
 
@@ -136,8 +137,9 @@ abstract class FileSelectorPlatform extends PlatformInterface {
   ///
   /// Returns an empty list if the user cancels the operation.
   Future<List<String>> getDirectoryPathsWithOptions(FileDialogOptions options) {
-    throw UnimplementedError(
-      'getDirectoryPathsWithOptions() has not been implemented.',
+    return getDirectoryPaths(
+      initialDirectory: options.initialDirectory,
+      confirmButtonText: options.confirmButtonText,
     );
   }
 }

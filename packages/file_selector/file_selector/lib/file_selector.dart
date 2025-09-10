@@ -122,8 +122,8 @@ Future<FileSaveLocation?> getSaveLocation({
 /// When not provided, the default OS label is used (for example, "Open").
 ///
 /// [canCreateDirectories] controls whether the user is allowed to create new
-/// directories in the dialog (if supported on the platform).
-/// Currently only supported on Linux and macOS.
+/// directories in the dialog. When not provided, uses the platform default.
+/// May not be supported on all platforms.
 ///
 /// Returns `null` if the user cancels the operation.
 Future<String?> getDirectoryPath({
@@ -153,8 +153,8 @@ Future<String?> getDirectoryPath({
 /// When not provided, the default OS label is used (for example, "Open").
 ///
 /// [canCreateDirectories] controls whether the user is allowed to create new
-/// directories in the dialog (if supported on the platform).
-/// Currently only supported on Linux and macOS.
+/// directories in the dialog. When not provided, uses the platform default.
+/// May not be supported on all platforms.
 ///
 /// Returns an empty array if the user cancels the operation.
 Future<List<String?>> getDirectoryPaths({

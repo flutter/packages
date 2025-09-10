@@ -1,6 +1,6 @@
 ## 0.5.2
 
-* Adds `canCreateDirectories` parameter to `FileDialogOptions` to control the visibility of the New Folder button in file dialogs on supported platforms.
+* Adds  `getDirectoryPathWithOptions` implementation.
 
 ## 0.5.1+16
 

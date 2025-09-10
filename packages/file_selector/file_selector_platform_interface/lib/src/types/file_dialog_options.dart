@@ -20,8 +20,11 @@ class FileDialogOptions {
   /// The label for the button that confirms selection.
   final String? confirmButtonText;
 
-  /// Whether the user is allowed to create new directories in the dialog (if supported on the platform).
-  /// Currently only supported on Linux and macOS.
+  /// Whether the user is allowed to create new directories in the dialog.
+  ///
+  /// If null, the platform will decide the default value.
+  ///
+  /// May not be supported on all platforms.
   final bool? canCreateDirectories;
 }
 
