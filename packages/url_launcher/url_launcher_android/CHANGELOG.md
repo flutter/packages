@@ -1,3 +1,8 @@
+## 6.3.21
+
+* Updates minimum supported SDK version to Flutter 3.35.
+* Removes obsolete code related to supporting SDK <24.
+
 ## 6.3.20
 
 * Restore SDK 21-23 support, as the previous change was intended
@@ -5,6 +10,7 @@
 
 ## 6.3.19
 
+* **Retracted** due to not including the Flutter min SDK change.
 * Updates minimum supported SDK version to Flutter 3.35.
 * Removes obsolete code related to supporting SDK <24.
 
