@@ -460,7 +460,7 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
           .addOnFailureListener(
               e ->
                   ResultUtilsKt.completeWithUnitError(
-                      callback, new FlutterError("removeAccess failed", e.getMessage(), null)));
+                      callback, new FlutterError("revokeAccess failed", e.getMessage(), null)));
     }
 
     @Override

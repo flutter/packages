@@ -290,7 +290,10 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
         //  indirect way to get the associated email address that's not
         //  deprecated.
         if (email != null) {
-          _cachedAccounts[email] = result.grantedScopes.first;
+          final String? scope = result.grantedScopes.firstOrNull;
+          if (scope != null) {
+            _cachedAccounts[email] = scope;
+          }
         }
         return (
           accessToken: accessToken,
