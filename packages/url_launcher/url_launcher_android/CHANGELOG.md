@@ -1,3 +1,8 @@
+## 6.3.20
+
+* Restore SDK 21-23 support, as the previous change was intended
+  to require Flutter 3.35, but didn't.
+
 ## 6.3.19
 
 * Updates minimum supported SDK version to Flutter 3.35.

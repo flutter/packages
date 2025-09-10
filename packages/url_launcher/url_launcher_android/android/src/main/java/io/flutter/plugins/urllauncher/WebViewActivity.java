@@ -9,6 +9,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
 import android.provider.Browser;
@@ -19,6 +20,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.annotation.VisibleForTesting;
 import androidx.core.content.ContextCompat;
 import java.util.Collections;
@@ -47,6 +49,7 @@ public class WebViewActivity extends Activity {
 
   private final WebViewClient webViewClient =
       new WebViewClient() {
+        @RequiresApi(Build.VERSION_CODES.N)
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
           view.loadUrl(request.getUrl().toString());
@@ -70,6 +73,17 @@ public class WebViewActivity extends Activity {
             public boolean shouldOverrideUrlLoading(
                 @NonNull WebView view, @NonNull WebResourceRequest request) {
               webview.loadUrl(request.getUrl().toString());
+              return true;
+            }
+
+            /*
+             * This method is deprecated in API 24. Still overridden to support
+             * earlier Android versions.
+             */
+            @SuppressWarnings("deprecation")
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+              webview.loadUrl(url);
               return true;
             }
           };
