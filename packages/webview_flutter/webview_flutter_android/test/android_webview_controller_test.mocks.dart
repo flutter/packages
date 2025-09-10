@@ -382,6 +382,15 @@ class MockAndroidWebViewController extends _i1.Mock
           as _i8.Future<void>);
 
   @override
+  _i8.Future<void> loadFileWithParams(_i3.LoadFileParams? params) =>
+      (super.noSuchMethod(
+            Invocation.method(#loadFileWithParams, [params]),
+            returnValue: _i8.Future<void>.value(),
+            returnValueForMissingStub: _i8.Future<void>.value(),
+          )
+          as _i8.Future<void>);
+
+  @override
   _i8.Future<void> loadFlutterAsset(String? key) =>
       (super.noSuchMethod(
             Invocation.method(#loadFlutterAsset, [key]),
@@ -934,8 +943,6 @@ class MockAndroidWebViewProxy extends _i1.Mock
     void Function(_i2.WebViewClient, _i2.WebView, String)? onPageStarted,
     void Function(_i2.WebViewClient, _i2.WebView, _i2.ClientCertRequest)?
     onReceivedClientCertRequest,
-    void Function(_i2.WebViewClient, _i2.WebView, int, String, String)?
-    onReceivedError,
     void Function(
       _i2.WebViewClient,
       _i2.WebView,
@@ -1008,14 +1015,6 @@ class MockAndroidWebViewProxy extends _i1.Mock
                     _i2.ClientCertRequest,
                   )?
                   onReceivedClientCertRequest,
-                  void Function(
-                    _i2.WebViewClient,
-                    _i2.WebView,
-                    int,
-                    String,
-                    String,
-                  )?
-                  onReceivedError,
                   void Function(
                     _i2.WebViewClient,
                     _i2.WebView,
@@ -1102,14 +1101,6 @@ class MockAndroidWebViewProxy extends _i1.Mock
                   void Function(
                     _i2.WebViewClient,
                     _i2.WebView,
-                    int,
-                    String,
-                    String,
-                  )?
-                  onReceivedError,
-                  void Function(
-                    _i2.WebViewClient,
-                    _i2.WebView,
                     _i2.HttpAuthHandler,
                     String,
                     String,
@@ -1190,8 +1181,6 @@ class MockAndroidWebViewProxy extends _i1.Mock
               _i2.ClientCertRequest,
             )?
             onReceivedClientCertRequest,
-            void Function(_i2.WebViewClient, _i2.WebView, int, String, String)?
-            onReceivedError,
             void Function(
               _i2.WebViewClient,
               _i2.WebView,
@@ -1524,16 +1513,14 @@ class MockAndroidWebViewProxy extends _i1.Mock
   _i2.CookieManager Function() get instanceCookieManager =>
       (super.noSuchMethod(
             Invocation.getter(#instanceCookieManager),
-            returnValue:
-                () => _FakeCookieManager_9(
-                  this,
-                  Invocation.getter(#instanceCookieManager),
-                ),
-            returnValueForMissingStub:
-                () => _FakeCookieManager_9(
-                  this,
-                  Invocation.getter(#instanceCookieManager),
-                ),
+            returnValue: () => _FakeCookieManager_9(
+              this,
+              Invocation.getter(#instanceCookieManager),
+            ),
+            returnValueForMissingStub: () => _FakeCookieManager_9(
+              this,
+              Invocation.getter(#instanceCookieManager),
+            ),
           )
           as _i2.CookieManager Function());
 
@@ -1541,16 +1528,14 @@ class MockAndroidWebViewProxy extends _i1.Mock
   _i2.FlutterAssetManager Function() get instanceFlutterAssetManager =>
       (super.noSuchMethod(
             Invocation.getter(#instanceFlutterAssetManager),
-            returnValue:
-                () => _FakeFlutterAssetManager_10(
-                  this,
-                  Invocation.getter(#instanceFlutterAssetManager),
-                ),
-            returnValueForMissingStub:
-                () => _FakeFlutterAssetManager_10(
-                  this,
-                  Invocation.getter(#instanceFlutterAssetManager),
-                ),
+            returnValue: () => _FakeFlutterAssetManager_10(
+              this,
+              Invocation.getter(#instanceFlutterAssetManager),
+            ),
+            returnValueForMissingStub: () => _FakeFlutterAssetManager_10(
+              this,
+              Invocation.getter(#instanceFlutterAssetManager),
+            ),
           )
           as _i2.FlutterAssetManager Function());
 
@@ -1558,16 +1543,14 @@ class MockAndroidWebViewProxy extends _i1.Mock
   _i2.WebStorage Function() get instanceWebStorage =>
       (super.noSuchMethod(
             Invocation.getter(#instanceWebStorage),
-            returnValue:
-                () => _FakeWebStorage_11(
-                  this,
-                  Invocation.getter(#instanceWebStorage),
-                ),
-            returnValueForMissingStub:
-                () => _FakeWebStorage_11(
-                  this,
-                  Invocation.getter(#instanceWebStorage),
-                ),
+            returnValue: () => _FakeWebStorage_11(
+              this,
+              Invocation.getter(#instanceWebStorage),
+            ),
+            returnValueForMissingStub: () => _FakeWebStorage_11(
+              this,
+              Invocation.getter(#instanceWebStorage),
+            ),
           )
           as _i2.WebStorage Function());
 
@@ -1576,8 +1559,8 @@ class MockAndroidWebViewProxy extends _i1.Mock
       (super.noSuchMethod(
             Invocation.getter(#isWebViewFeatureSupported),
             returnValue: (String __p0) => _i8.Future<bool>.value(false),
-            returnValueForMissingStub:
-                (String __p0) => _i8.Future<bool>.value(false),
+            returnValueForMissingStub: (String __p0) =>
+                _i8.Future<bool>.value(false),
           )
           as _i8.Future<bool> Function(String));
 
@@ -1586,10 +1569,10 @@ class MockAndroidWebViewProxy extends _i1.Mock
   get setPaymentRequestEnabled =>
       (super.noSuchMethod(
             Invocation.getter(#setPaymentRequestEnabled),
-            returnValue:
-                (_i2.WebSettings __p0, bool __p1) => _i8.Future<void>.value(),
-            returnValueForMissingStub:
-                (_i2.WebSettings __p0, bool __p1) => _i8.Future<void>.value(),
+            returnValue: (_i2.WebSettings __p0, bool __p1) =>
+                _i8.Future<void>.value(),
+            returnValueForMissingStub: (_i2.WebSettings __p0, bool __p1) =>
+                _i8.Future<void>.value(),
           )
           as _i8.Future<void> Function(_i2.WebSettings, bool));
 }
@@ -1710,12 +1693,10 @@ class MockExpensiveAndroidViewController extends _i1.Mock
   _i6.PointTransformer get pointTransformer =>
       (super.noSuchMethod(
             Invocation.getter(#pointTransformer),
-            returnValue:
-                (_i4.Offset position) =>
-                    _FakeOffset_6(this, Invocation.getter(#pointTransformer)),
-            returnValueForMissingStub:
-                (_i4.Offset position) =>
-                    _FakeOffset_6(this, Invocation.getter(#pointTransformer)),
+            returnValue: (_i4.Offset position) =>
+                _FakeOffset_6(this, Invocation.getter(#pointTransformer)),
+            returnValueForMissingStub: (_i4.Offset position) =>
+                _FakeOffset_6(this, Invocation.getter(#pointTransformer)),
           )
           as _i6.PointTransformer);
 
@@ -2199,12 +2180,10 @@ class MockSurfaceAndroidViewController extends _i1.Mock
   _i6.PointTransformer get pointTransformer =>
       (super.noSuchMethod(
             Invocation.getter(#pointTransformer),
-            returnValue:
-                (_i4.Offset position) =>
-                    _FakeOffset_6(this, Invocation.getter(#pointTransformer)),
-            returnValueForMissingStub:
-                (_i4.Offset position) =>
-                    _FakeOffset_6(this, Invocation.getter(#pointTransformer)),
+            returnValue: (_i4.Offset position) =>
+                _FakeOffset_6(this, Invocation.getter(#pointTransformer)),
+            returnValueForMissingStub: (_i4.Offset position) =>
+                _FakeOffset_6(this, Invocation.getter(#pointTransformer)),
           )
           as _i6.PointTransformer);
 
