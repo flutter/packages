@@ -33,6 +33,7 @@ import com.google.android.gms.auth.api.identity.AuthorizationClient;
 import com.google.android.gms.auth.api.identity.AuthorizationRequest;
 import com.google.android.gms.auth.api.identity.AuthorizationResult;
 import com.google.android.gms.auth.api.identity.Identity;
+import com.google.android.gms.auth.api.identity.RevokeAccessRequest;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption;
@@ -337,12 +338,12 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
           new CredentialManagerCallback<>() {
             @Override
             public void onResult(Void result) {
-              ResultUtilsKt.completeWithClearCredentialStateSuccess(callback);
+              ResultUtilsKt.completeWithUnitSuccess(callback);
             }
 
             @Override
             public void onError(@NonNull ClearCredentialException e) {
-              ResultUtilsKt.completeWithClearCredentialStateError(
+              ResultUtilsKt.completeWithUnitError(
                   callback, new FlutterError("Clear Failed", e.getMessage(), null));
             }
           });
@@ -438,6 +439,28 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
                 e.getMessage(),
                 "Cause: " + e.getCause() + ", Stacktrace: " + Log.getStackTraceString(e)));
       }
+    }
+
+    @Override
+    public void revokeAccess(
+        @NonNull PlatformRevokeAccessRequest params,
+        @NonNull Function1<? super Result<Unit>, Unit> callback) {
+      List<Scope> scopes = new ArrayList<>();
+      for (String scope : params.getScopes()) {
+        scopes.add(new Scope(scope));
+      }
+      authorizationClientFactory
+          .create(context)
+          .revokeAccess(
+              RevokeAccessRequest.builder()
+                  .setAccount(new Account(params.getAccountEmail(), "com.google"))
+                  .setScopes(scopes)
+                  .build())
+          .addOnSuccessListener(unused -> ResultUtilsKt.completeWithUnitSuccess(callback))
+          .addOnFailureListener(
+              e ->
+                  ResultUtilsKt.completeWithUnitError(
+                      callback, new FlutterError("removeAccess failed", e.getMessage(), null)));
     }
 
     @Override
