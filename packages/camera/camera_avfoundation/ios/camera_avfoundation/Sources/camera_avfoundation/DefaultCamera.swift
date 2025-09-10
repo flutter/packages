@@ -143,7 +143,7 @@ final class DefaultCamera: NSObject, Camera {
     let captureVideoOutput = FLTDefaultCaptureVideoDataOutput(
       captureVideoOutput: AVCaptureVideoDataOutput())
     captureVideoOutput.videoSettings = [
-      kCVPixelBufferPixelFormatTypeKey as String: videoFormat as Any
+      kCVPixelBufferPixelFormatTypeKey as String: videoFormat
     ]
     captureVideoOutput.alwaysDiscardsLateVideoFrames = true
 
@@ -210,11 +210,6 @@ final class DefaultCamera: NSObject, Camera {
       mediaSettingsAVWrapper.beginConfiguration(for: videoCaptureSession)
       defer { mediaSettingsAVWrapper.commitConfiguration(for: videoCaptureSession) }
 
-      // Possible values for presets are hard-coded in FLT interface having
-      // corresponding AVCaptureSessionPreset counterparts.
-      // If _resolutionPreset is not supported by camera there is
-      // fallback to lower resolution presets.
-      // If none can be selected there is error condition.
       try setCaptureSessionPreset(mediaSettings.resolutionPreset)
 
       FLTSelectBestFormatForRequestedFrameRate(
@@ -239,6 +234,11 @@ final class DefaultCamera: NSObject, Camera {
     updateOrientation()
   }
 
+  // Possible values for presets are hard-coded in FLT interface having
+  // corresponding AVCaptureSessionPreset counterparts.
+  // If _resolutionPreset is not supported by camera there is
+  // fallback to lower resolution presets.
+  // If none can be selected there is error condition.
   private func setCaptureSessionPreset(
     _ resolutionPreset: FCPPlatformResolutionPreset
   ) throws {
@@ -246,7 +246,8 @@ final class DefaultCamera: NSObject, Camera {
     case .max:
       if let bestFormat = highestResolutionFormat(forCaptureDevice: captureDevice) {
         videoCaptureSession.sessionPreset = .inputPriority
-        if (try? captureDevice.lockForConfiguration()) != nil {
+        do {
+          try captureDevice.lockForConfiguration()
           // Set the best device format found and finish the device configuration.
           captureDevice.activeFormat = bestFormat
           captureDevice.unlockForConfiguration()
@@ -427,8 +428,9 @@ final class DefaultCamera: NSObject, Camera {
     // Get all the state on the current thread, not the main thread.
     let state = FCPPlatformCameraState.make(
       withPreviewSize: FCPPlatformSize.make(
-        withWidth: Double(previewSize!.width),
-        height: Double(previewSize!.height)
+        // previewSize is set during init, so it will never be nil.
+        withWidth: previewSize!.width,
+        height: previewSize!.height
       ),
       exposureMode: exposureMode,
       focusMode: focusMode,
@@ -736,7 +738,7 @@ final class DefaultCamera: NSObject, Camera {
   private func updateOrientation() {
     guard !isRecording else { return }
 
-    let orientation: UIDeviceOrientation =
+    let orientation =
       (lockedCaptureOrientation != .unknown)
       ? lockedCaptureOrientation
       : deviceOrientation
@@ -751,11 +753,11 @@ final class DefaultCamera: NSObject, Camera {
     if let connection = captureOutput.connection(withMediaType: .video),
       connection.isVideoOrientationSupported
     {
-      connection.videoOrientation = getVideoOrientation(forDeviceOrientation: orientation)
+      connection.videoOrientation = videoOrientation(forDeviceOrientation: orientation)
     }
   }
 
-  private func getVideoOrientation(forDeviceOrientation deviceOrientation: UIDeviceOrientation)
+  private func videoOrientation(forDeviceOrientation deviceOrientation: UIDeviceOrientation)
     -> AVCaptureVideoOrientation
   {
     switch deviceOrientation {
