@@ -4399,9 +4399,7 @@ void main() {
       await camera.initializeCamera(flutterSurfaceTextureId);
 
       await camera.startVideoCapturing(
-        VideoCaptureOptions(
-          flutterSurfaceTextureId,
-        ),
+        VideoCaptureOptions(flutterSurfaceTextureId),
       );
       await camera.setDescriptionWhileRecording(testFrontCameraDescription);
 
