@@ -1,3 +1,7 @@
+## 0.5.2
+
+* Adds  `getDirectoryPathWithOptions` implementation.
+
 ## 0.5.1+16
 
 * Bumps com.android.tools.build:gradle to 8.12.1.

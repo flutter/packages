@@ -1,5 +1,6 @@
-## NEXT
+## 0.9.4
 
+* Adds `getDirectoryPathWithOptions` and `getDirectoryPathsWithOptions` implementations.
 * Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
 
 ## 0.9.3+4
