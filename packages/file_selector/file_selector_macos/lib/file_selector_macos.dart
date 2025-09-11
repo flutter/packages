@@ -86,6 +86,7 @@ class FileSelectorMacOS extends FileSelectorPlatform {
         directoryPath: options.initialDirectory,
         nameFieldStringValue: options.suggestedName,
         prompt: options.confirmButtonText,
+        canCreateDirectories: options.canCreateDirectories,
       ),
     );
     return path == null ? null : FileSaveLocation(path);
