@@ -94,6 +94,7 @@ class FileSelectorLinux extends FileSelectorPlatform {
         currentFolderPath: options.initialDirectory,
         currentName: options.suggestedName,
         acceptButtonLabel: options.confirmButtonText,
+        createFolders: options.canCreateDirectories,
       ),
     );
     return paths.isEmpty ? null : FileSaveLocation(paths.first);
