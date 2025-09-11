@@ -191,26 +191,24 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: Text(toLaunch),
               ),
               ElevatedButton(
-                onPressed: _hasCustomTabSupport
-                    ? () => setState(() {
-                        _launched = _launchInBrowser(toLaunch);
-                      })
-                    : null,
+                onPressed: () => setState(() {
+                  _launched = _launchInBrowser(toLaunch);
+                }),
                 child: const Text('Launch in browser'),
               ),
               ElevatedButton(
-                onPressed: _hasCustomTabSupport
-                    ? () => setState(() {
-                        _launched = _launchInNonBrowserExternalApp(toLaunch);
-                      })
-                    : null,
+                onPressed: () => setState(() {
+                  _launched = _launchInNonBrowserExternalApp(toLaunch);
+                }),
                 child: const Text('Launch in non-browser app'),
               ),
               const Padding(padding: EdgeInsets.all(16.0)),
               ElevatedButton(
-                onPressed: () => setState(() {
-                  _launched = _launchInCustomTab(toLaunch);
-                }),
+                onPressed: _hasCustomTabSupport
+                    ? () => setState(() {
+                        _launched = _launchInCustomTab(toLaunch);
+                      })
+                    : null,
                 child: const Text('Launch in Android Custom Tab'),
               ),
               const Padding(padding: EdgeInsets.all(16.0)),
