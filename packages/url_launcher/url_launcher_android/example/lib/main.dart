@@ -69,6 +69,17 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  Future<void> _launchInNonBrowserExternalApp(String url) async {
+    if (!await launcher.launchUrl(
+      url,
+      const LaunchOptions(
+        mode: PreferredLaunchMode.externalNonBrowserApplication,
+      ),
+    )) {
+      throw Exception('Could not launch $url');
+    }
+  }
+
   Future<void> _launchInCustomTab(String url) async {
     if (!await launcher.launchUrl(
       url,
@@ -186,6 +197,14 @@ class _MyHomePageState extends State<MyHomePage> {
                       })
                     : null,
                 child: const Text('Launch in browser'),
+              ),
+              ElevatedButton(
+                onPressed: _hasCustomTabSupport
+                    ? () => setState(() {
+                        _launched = _launchInNonBrowserExternalApp(toLaunch);
+                      })
+                    : null,
+                child: const Text('Launch in non-browser app'),
               ),
               const Padding(padding: EdgeInsets.all(16.0)),
               ElevatedButton(
