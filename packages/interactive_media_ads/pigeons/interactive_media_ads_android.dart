@@ -1155,7 +1155,7 @@ abstract class Ad {
   /// trafficking.
   late final String traffickingParameters;
 
-  /// Te set of ad UI elements rendered by the IMA SDK for this ad.
+  /// The set of ad UI elements rendered by the IMA SDK for this ad.
   late final List<UiElement> uiElements;
 
   /// The list of all universal ad IDs for this ad.

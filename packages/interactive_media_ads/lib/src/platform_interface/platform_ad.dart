@@ -14,9 +14,9 @@ base class PlatformAd {
     required this.adId,
     required this.adPodInfo,
     required this.adSystem,
-    required this.adWrapperCreativeIds,
-    required this.adWrapperIds,
-    required this.adWrapperSystems,
+    required this.wrapperCreativeIds,
+    required this.wrapperIds,
+    required this.wrapperSystems,
     required this.advertiserName,
     required this.companionAds,
     required this.contentType,
@@ -50,13 +50,13 @@ base class PlatformAd {
   final String adSystem;
 
   /// The IDs of the ads' creatives, starting with the first wrapper ad.
-  final List<String> adWrapperCreativeIds;
+  final List<String> wrapperCreativeIds;
 
   /// The wrapper ad IDs as specified in the VAST response.
-  final List<String> adWrapperIds;
+  final List<String> wrapperIds;
 
   /// The wrapper ad systems as specified in the VAST response.
-  final List<String> adWrapperSystems;
+  final List<String> wrapperSystems;
 
   /// The advertiser name as defined by the serving party.
   final String advertiserName;
@@ -102,8 +102,8 @@ base class PlatformAd {
   /// trafficking.
   final String traffickingParameters;
 
-  /// Te set of ad UI elements rendered by the IMA SDK for this ad.
-  final List<AdUIElement> uiElements;
+  /// The set of ad UI elements rendered by the IMA SDK for this ad.
+  final Set<AdUIElement> uiElements;
 
   /// The list of all universal ad IDs for this ad.
   final List<PlatformUniversalAdId> universalAdIds;

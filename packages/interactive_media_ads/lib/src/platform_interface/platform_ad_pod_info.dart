@@ -43,8 +43,8 @@ base class PlatformAdPodInfo {
   /// The content time offset at which the current ad pod was scheduled.
   ///
   /// For preroll pod, 0 is returned. For midrolls, the scheduled time is
-  /// returned in seconds. For postroll, -1 is returned. Defaults to 0 if this
-  /// ad is not part of a pod, or the pod is not part of an ad playlist.
+  /// returned. For postroll, -1 is returned. Defaults to 0 if this ad is not
+  /// part of a pod, or the pod is not part of an ad playlist.
   final Duration timeOffset;
 
   /// Total number of ads in the pod this ad belongs to, including bumpers.

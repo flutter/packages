@@ -121,9 +121,9 @@ PlatformAd _asPlatformAd(ima.Ad ad) {
     adId: ad.adId,
     adPodInfo: _asPlatformAdInfo(ad.adPodInfo),
     adSystem: ad.adSystem,
-    adWrapperCreativeIds: ad.adWrapperCreativeIds,
-    adWrapperIds: ad.adWrapperIds,
-    adWrapperSystems: ad.adWrapperSystems,
+    wrapperCreativeIds: ad.adWrapperCreativeIds,
+    wrapperIds: ad.adWrapperIds,
+    wrapperSystems: ad.adWrapperSystems,
     advertiserName: ad.advertiserName,
     companionAds: List<PlatformCompanionAd>.unmodifiable(
       ad.companionAds.map(_asPlatformCompanionAd),
@@ -134,12 +134,12 @@ PlatformAd _asPlatformAd(ima.Ad ad) {
     dealId: ad.dealId,
     description: ad.description,
     duration:
-        ad.duration != -1
-            ? Duration(
+        ad.duration == -1
+            ? null
+            : Duration(
               milliseconds:
                   (ad.duration * Duration.millisecondsPerSecond).round(),
-            )
-            : null,
+            ),
     height: ad.height,
     skipTimeOffset:
         ad.skipTimeOffset == -1
@@ -161,7 +161,7 @@ PlatformAd _asPlatformAd(ima.Ad ad) {
               };
             })
             .whereType<AdUIElement>()
-            .toList(),
+            .toSet(),
     universalAdIds: ad.universalAdIds.map(_asPlatformUniversalAdId).toList(),
     vastMediaBitrate: ad.vastMediaBitrate,
     vastMediaHeight: ad.vastMediaHeight,
@@ -175,10 +175,14 @@ PlatformAd _asPlatformAd(ima.Ad ad) {
 PlatformAdPodInfo _asPlatformAdInfo(ima.AdPodInfo adPodInfo) {
   return PlatformAdPodInfo(
     adPosition: adPodInfo.adPosition,
-    maxDuration: Duration(
-      milliseconds:
-          (adPodInfo.maxDuration * Duration.millisecondsPerSecond).round(),
-    ),
+    maxDuration:
+        adPodInfo.maxDuration == -1
+            ? null
+            : Duration(
+              milliseconds:
+                  (adPodInfo.maxDuration * Duration.millisecondsPerSecond)
+                      .round(),
+            ),
     podIndex: adPodInfo.podIndex,
     timeOffset: Duration(
       milliseconds:
@@ -203,10 +207,10 @@ PlatformUniversalAdId _asPlatformUniversalAdId(
 ) {
   return PlatformUniversalAdId(
     adIDValue:
-        universalAdId.adIdValue != 'unknown' ? universalAdId.adIdValue : null,
+        universalAdId.adIdValue == 'unknown' ? null : universalAdId.adIdValue,
     adIDRegistry:
-        universalAdId.adIdRegistry != 'unknown'
-            ? universalAdId.adIdRegistry
-            : null,
+        universalAdId.adIdRegistry == 'unknown'
+            ? null
+            : universalAdId.adIdRegistry,
   );
 }

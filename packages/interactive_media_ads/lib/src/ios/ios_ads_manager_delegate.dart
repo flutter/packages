@@ -107,9 +107,9 @@ PlatformAd _asPlatformAd(ima.IMAAd ad) {
     adId: ad.adId,
     adPodInfo: _asPlatformAdInfo(ad.adPodInfo),
     adSystem: ad.adSystem,
-    adWrapperCreativeIds: ad.wrapperCreativeIDs,
-    adWrapperIds: ad.wrapperAdIDs,
-    adWrapperSystems: ad.wrapperSystems,
+    wrapperCreativeIds: ad.wrapperCreativeIDs,
+    wrapperIds: ad.wrapperAdIDs,
+    wrapperSystems: ad.wrapperSystems,
     advertiserName: ad.advertiserName,
     companionAds: List<PlatformCompanionAd>.unmodifiable(
       ad.companionAds.map(_asPlatformCompanionAd),
@@ -120,20 +120,20 @@ PlatformAd _asPlatformAd(ima.IMAAd ad) {
     dealId: ad.dealID,
     description: ad.adDescription,
     duration:
-        ad.duration != -1
-            ? Duration(
+        ad.duration == -1
+            ? null
+            : Duration(
               milliseconds:
                   (ad.duration * Duration.millisecondsPerSecond).round(),
-            )
-            : null,
+            ),
     height: ad.height,
     skipTimeOffset:
         ad.skipTimeOffset == -1
-            ? Duration(
+            ? null
+            : Duration(
               milliseconds:
                   (ad.skipTimeOffset * Duration.millisecondsPerSecond).round(),
-            )
-            : null,
+            ),
     surveyUrl: ad.surveyURL,
     title: ad.adTitle,
     traffickingParameters: ad.traffickingParameters,
@@ -147,7 +147,7 @@ PlatformAd _asPlatformAd(ima.IMAAd ad) {
               };
             })
             .whereType<AdUIElement>()
-            .toList(),
+            .toSet(),
     universalAdIds: ad.universalAdIDs.map(_asPlatformUniversalAdId).toList(),
     vastMediaBitrate: ad.vastMediaBitrate,
     vastMediaHeight: ad.vastMediaHeight,
@@ -161,10 +161,14 @@ PlatformAd _asPlatformAd(ima.IMAAd ad) {
 PlatformAdPodInfo _asPlatformAdInfo(ima.IMAAdPodInfo adPodInfo) {
   return PlatformAdPodInfo(
     adPosition: adPodInfo.adPosition,
-    maxDuration: Duration(
-      milliseconds:
-          (adPodInfo.maxDuration * Duration.millisecondsPerSecond).round(),
-    ),
+    maxDuration:
+        adPodInfo.maxDuration == -1
+            ? null
+            : Duration(
+              milliseconds:
+                  (adPodInfo.maxDuration * Duration.millisecondsPerSecond)
+                      .round(),
+            ),
     podIndex: adPodInfo.podIndex,
     timeOffset: Duration(
       milliseconds:
@@ -189,10 +193,10 @@ PlatformUniversalAdId _asPlatformUniversalAdId(
 ) {
   return PlatformUniversalAdId(
     adIDValue:
-        universalAdId.adIDValue != 'unknown' ? universalAdId.adIDValue : null,
+        universalAdId.adIDValue == 'unknown' ? null : universalAdId.adIDValue,
     adIDRegistry:
-        universalAdId.adIDRegistry != 'unknown'
-            ? universalAdId.adIDRegistry
-            : null,
+        universalAdId.adIDRegistry == 'unknown'
+            ? null
+            : universalAdId.adIDRegistry,
   );
 }

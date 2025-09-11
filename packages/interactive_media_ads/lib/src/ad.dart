@@ -6,7 +6,7 @@ import 'platform_interface/platform_interface.dart';
 
 /// Data object representing a single ad.
 class Ad {
-  /// Constructs a [Ad] from a specific platform implementation.
+  /// Constructs an [Ad] from a specific platform implementation.
   Ad.fromPlatform(this.platform);
 
   /// Implementation of [PlatformAd] for the current platform.
@@ -16,19 +16,19 @@ class Ad {
   String get adId => platform.adId;
 
   /// The pod metadata object.
-  AdPodInfo get adPodInfo => AdPodInfo._fromPlatform(platform.adPodInfo);
+  AdPodInfo get adPodInfo => AdPodInfo.fromPlatform(platform.adPodInfo);
 
   /// The ad system as specified in the VAST response.
   String get adSystem => platform.adSystem;
 
   /// The IDs of the ads' creatives, starting with the first wrapper ad.
-  List<String> get adWrapperCreativeIds => platform.adWrapperCreativeIds;
+  List<String> get wrapperCreativeIds => platform.wrapperCreativeIds;
 
   /// The wrapper ad IDs as specified in the VAST response.
-  List<String> get adWrapperIds => platform.adWrapperIds;
+  List<String> get wrapperIds => platform.wrapperIds;
 
   /// The wrapper ad systems as specified in the VAST response.
-  List<String> get adWrapperSystems => platform.adWrapperSystems;
+  List<String> get wrapperSystems => platform.wrapperSystems;
 
   /// The advertiser name as defined by the serving party.
   String get advertiserName => platform.advertiserName;
@@ -37,7 +37,7 @@ class Ad {
   ///
   /// Returns an empty list in any other scenario.
   List<CompanionAd> get companionAds => List<CompanionAd>.unmodifiable(
-    platform.companionAds.map(CompanionAd._fromPlatform),
+    platform.companionAds.map(CompanionAd.fromPlatform),
   );
 
   /// The content type of the currently selected creative, or null if no
@@ -64,6 +64,8 @@ class Ad {
   int get height => platform.height;
 
   /// The playback time before the ad becomes skippable.
+  ///
+  /// The value is null for non-skippable ads, or if the value is unavailable.
   Duration? get skipTimeOffset => platform.skipTimeOffset;
 
   /// The URL associated with the survey for the given ad.
@@ -76,12 +78,12 @@ class Ad {
   /// trafficking.
   String get traffickingParameters => platform.traffickingParameters;
 
-  /// Te set of ad UI elements rendered by the IMA SDK for this ad.
-  List<AdUIElement> get uiElements => platform.uiElements;
+  /// The set of ad UI elements rendered by the IMA SDK for this ad.
+  Set<AdUIElement> get uiElements => platform.uiElements;
 
   /// The list of all universal ad IDs for this ad.
   List<UniversalAdId> get universalAdIds => List<UniversalAdId>.unmodifiable(
-    platform.universalAdIds.map(UniversalAdId._fromPlatform),
+    platform.universalAdIds.map(UniversalAdId.fromPlatform),
   );
 
   /// The VAST bitrate in Kbps of the selected creative.
@@ -106,7 +108,8 @@ class Ad {
 
 /// Simple data object containing podding metadata.
 class AdPodInfo {
-  AdPodInfo._fromPlatform(this.platform);
+  /// Constructs an [AdPodInfo] from a specific platform implementation.
+  AdPodInfo.fromPlatform(this.platform);
 
   /// Implementation of [PlatformAdPodInfo] for the current platform.
   final PlatformAdPodInfo platform;
@@ -140,8 +143,8 @@ class AdPodInfo {
   /// The content time offset at which the current ad pod was scheduled.
   ///
   /// For preroll pod, 0 is returned. For midrolls, the scheduled time is
-  /// returned in seconds. For postroll, -1 is returned. Defaults to 0 if this
-  /// ad is not part of a pod, or the pod is not part of an ad playlist.
+  /// returned. For postroll, -1 is returned. Defaults to 0 if this ad is not
+  /// part of a pod, or the pod is not part of an ad playlist.
   Duration get timeOffset => platform.timeOffset;
 
   /// Total number of ads in the pod this ad belongs to, including bumpers.
@@ -157,7 +160,8 @@ class AdPodInfo {
 
 /// An object that holds data corresponding to the companion Ad.
 class CompanionAd {
-  CompanionAd._fromPlatform(this.platform);
+  /// Constructs a [CompanionAd] from a specific platform implementation.
+  CompanionAd.fromPlatform(this.platform);
 
   /// Implementation of [PlatformCompanionAd] for the current platform.
   final PlatformCompanionAd platform;
@@ -177,7 +181,8 @@ class CompanionAd {
 
 /// Simple data object containing universal ad ID information.
 class UniversalAdId {
-  UniversalAdId._fromPlatform(this.platform);
+  /// Constructs an [UniversalAdId] from a specific platform implementation.
+  UniversalAdId.fromPlatform(this.platform);
 
   /// Implementation of [PlatformUniversalAdId] for the current platform.
   final PlatformUniversalAdId platform;
