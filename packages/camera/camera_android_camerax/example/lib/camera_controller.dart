@@ -503,13 +503,13 @@ class CameraController extends ValueNotifier<CameraValue> {
   /// The video is returned as a [XFile] after calling [stopVideoRecording].
   /// Throws a [CameraException] if the capture fails.
   ///
-  /// If [enablePersistentRecording] is set to true, configures the recording to be a persistent recording.
+  /// `enablePersistentRecording` parameter configures the recording to be a persistent recording.
   /// A persistent recording will only be stopped by explicitly calling [stopVideoRecording]
   /// and will ignore events that would normally cause recording to stop,
   /// such as lifecycle events or explicit calls to [setDescription] while recording is in progress.
   Future<void> startVideoRecording({
     onLatestImageAvailable? onAvailable,
-    bool enablePersistentRecording = false,
+    bool enablePersistentRecording = true,
   }) async {
     _throwIfNotInitialized('startVideoRecording');
     if (value.isRecordingVideo) {
@@ -617,11 +617,8 @@ class CameraController extends ValueNotifier<CameraValue> {
 
   /// Sets the description of the camera.
   ///
-  /// By default, if a video recording is in progress, calling this method will cancel the current recording.
-  ///
-  /// To keep recording active while switching camera, start the
-  /// recording with [startVideoRecording] and set
-  /// `enablePersistentRecording` to `true`.
+  /// To avoid cancelling any active recording when calling this method,
+  /// start the recording with [startVideoRecording] with `enablePersistentRecording` to `true`.
   ///
   /// Throws a [CameraException] if setting the description fails.
   Future<void> setDescription(CameraDescription description) async {

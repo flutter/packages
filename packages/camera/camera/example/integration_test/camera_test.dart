@@ -276,11 +276,7 @@ void main() {
     await controller.initialize();
     await controller.prepareForVideoRecording();
 
-    if (Platform.isAndroid) {
-      await controller.startVideoRecording(enablePersistentRecording: true);
-    } else {
-      await controller.startVideoRecording();
-    }
+    await controller.startVideoRecording();
     await controller.setDescription(cameras[1]);
 
     await tester.pumpAndSettle(const Duration(seconds: 4));

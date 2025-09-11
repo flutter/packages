@@ -245,7 +245,7 @@ void main() {
     await controller.initialize();
     await controller.prepareForVideoRecording();
 
-    await controller.startVideoRecording(enablePersistentRecording: true);
+    await controller.startVideoRecording();
 
     await controller.setDescription(cameras[1]);
 

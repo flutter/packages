@@ -549,8 +549,6 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
           color: Colors.blue,
           onPressed:
               cameraController == null ? null : onVideoRecordButtonPressed,
-          onLongPress:
-              cameraController == null ? null : onVideoRecordButtonLongPressed,
         ),
         IconButton(
           icon:
@@ -838,14 +836,6 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
     });
   }
 
-  void onVideoRecordButtonLongPressed() {
-    startVideoRecording(enablePersistentRecording: true).then((_) {
-      if (mounted) {
-        setState(() {});
-      }
-    });
-  }
-
   void onStopButtonPressed() {
     stopVideoRecording().then((XFile? file) {
       if (mounted) {
@@ -896,9 +886,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
     });
   }
 
-  Future<void> startVideoRecording({
-    bool enablePersistentRecording = false,
-  }) async {
+  Future<void> startVideoRecording() async {
     final CameraController? cameraController = controller;
 
     if (cameraController == null || !cameraController.value.isInitialized) {
@@ -912,9 +900,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
     }
 
     try {
-      await cameraController.startVideoRecording(
-        enablePersistentRecording: enablePersistentRecording,
-      );
+      await cameraController.startVideoRecording();
     } on CameraException catch (e) {
       _showCameraException(e);
       return;

@@ -3347,6 +3347,9 @@ void main() {
           mockPendingRecording.withAudioEnabled(!enableAudio),
         ).thenAnswer((_) async => mockPendingRecordingWithAudio);
         when(
+          mockPendingRecording.asPersistentRecording(),
+        ).thenAnswer((_) async => mockPendingRecording);
+        when(
           mockPendingRecordingWithAudio.start(any),
         ).thenAnswer((_) async => mockRecording);
         when(
@@ -3513,6 +3516,9 @@ void main() {
           mockPendingRecording.withAudioEnabled(!camera.enableRecordingAudio),
         ).thenAnswer((_) async => mockPendingRecording);
         when(
+          mockPendingRecording.asPersistentRecording(),
+        ).thenAnswer((_) async => mockPendingRecording);
+        when(
           mockPendingRecording.start(any),
         ).thenAnswer((_) async => mockRecording);
         when(
@@ -3567,6 +3573,7 @@ void main() {
         verifyNoMoreInteractions(camera.recorder);
         verify(mockPendingRecording.start(any)).called(1);
         verify(mockPendingRecording.withAudioEnabled(any)).called(1);
+        verify(mockPendingRecording.asPersistentRecording()).called(1);
         verifyNoMoreInteractions(mockPendingRecording);
       },
     );
@@ -3700,6 +3707,9 @@ void main() {
         ).thenAnswer((_) async => mockPendingRecording);
         when(
           mockPendingRecording.withAudioEnabled(!camera.enableRecordingAudio),
+        ).thenAnswer((_) async => mockPendingRecording);
+        when(
+          mockPendingRecording.asPersistentRecording(),
         ).thenAnswer((_) async => mockPendingRecording);
         when(
           mockProcessCameraProvider.bindToLifecycle(any, any),
@@ -3849,6 +3859,9 @@ void main() {
         ).thenAnswer((_) async => mockPendingRecording);
         when(
           mockPendingRecording.withAudioEnabled(!camera.enableRecordingAudio),
+        ).thenAnswer((_) async => mockPendingRecording);
+        when(
+          mockPendingRecording.asPersistentRecording(),
         ).thenAnswer((_) async => mockPendingRecording);
         when(
           mockPendingRecording.start(any),
@@ -4388,7 +4401,6 @@ void main() {
       await camera.startVideoCapturing(
         VideoCaptureOptions(
           flutterSurfaceTextureId,
-          enablePersistentRecording: true,
         ),
       );
       await camera.setDescriptionWhileRecording(testFrontCameraDescription);
@@ -7182,6 +7194,9 @@ void main() {
         mockPendingRecording.withAudioEnabled(!camera.enableRecordingAudio),
       ).thenAnswer((_) async => mockPendingRecording);
       when(
+        mockPendingRecording.asPersistentRecording(),
+      ).thenAnswer((_) async => mockPendingRecording);
+      when(
         mockPendingRecording.start(any),
       ).thenAnswer((_) async => mockRecording);
       when(
@@ -7323,6 +7338,9 @@ void main() {
         mockPendingRecording.withAudioEnabled(!camera.enableRecordingAudio),
       ).thenAnswer((_) async => mockPendingRecording);
       when(
+        mockPendingRecording.asPersistentRecording(),
+      ).thenAnswer((_) async => mockPendingRecording);
+      when(
         mockPendingRecording.start(any),
       ).thenAnswer((_) async => mockRecording);
       when(
@@ -7462,6 +7480,9 @@ void main() {
       ).thenAnswer((_) async => mockPendingRecording);
       when(
         mockPendingRecording.withAudioEnabled(!camera.enableRecordingAudio),
+      ).thenAnswer((_) async => mockPendingRecording);
+      when(
+        mockPendingRecording.asPersistentRecording(),
       ).thenAnswer((_) async => mockPendingRecording);
       when(
         mockPendingRecording.start(any),
@@ -7623,6 +7644,9 @@ void main() {
       ).thenAnswer((_) async => mockPendingRecording);
       when(
         mockPendingRecording.withAudioEnabled(!camera.enableRecordingAudio),
+      ).thenAnswer((_) async => mockPendingRecording);
+      when(
+        mockPendingRecording.asPersistentRecording(),
       ).thenAnswer((_) async => mockPendingRecording);
       when(
         mockPendingRecording.start(any),
@@ -7790,6 +7814,9 @@ void main() {
         mockPendingRecording.withAudioEnabled(!camera.enableRecordingAudio),
       ).thenAnswer((_) async => mockPendingRecording);
       when(
+        mockPendingRecording.asPersistentRecording(),
+      ).thenAnswer((_) async => mockPendingRecording);
+      when(
         mockPendingRecording.start(any),
       ).thenAnswer((_) async => mockRecording);
       when(
@@ -7945,6 +7972,9 @@ void main() {
       ).thenAnswer((_) async => mockPendingRecording);
       when(
         mockPendingRecording.withAudioEnabled(!camera.enableRecordingAudio),
+      ).thenAnswer((_) async => mockPendingRecording);
+      when(
+        mockPendingRecording.asPersistentRecording(),
       ).thenAnswer((_) async => mockPendingRecording);
       when(
         mockPendingRecording.start(any),
