@@ -12,7 +12,6 @@ void main() {
   const String initialDirectory = '/home/flutteruser';
   const String confirmButtonText = 'Use this profile picture';
   const String suggestedName = 'suggested_name';
-  const bool canCreateDirectories = true;
 
   const List<XTypeGroup> acceptedTypeGroups = <XTypeGroup>[
     XTypeGroup(
@@ -282,6 +281,7 @@ void main() {
     });
 
     test('sets the canCreateDirectories parameter', () async {
+      const bool canCreateDirectories = true;
       fakePlatformImplementation
         ..setExpectations(canCreateDirectories: canCreateDirectories)
         ..setPathsResponse(<String>[expectedDirectoryPath]);
@@ -344,12 +344,13 @@ void main() {
       expect(directoryPaths, expectedDirectoryPaths);
     });
     test('sets the canCreateDirectories parameter', () async {
+      const bool canCreateDirectories = true;
       fakePlatformImplementation
         ..setExpectations(canCreateDirectories: canCreateDirectories)
         ..setPathsResponse(expectedDirectoryPaths);
 
       final List<String?> directoryPaths = await getDirectoryPaths(
-        canCreateDirectories: true,
+        canCreateDirectories: canCreateDirectories,
       );
       expect(directoryPaths, expectedDirectoryPaths);
     });
