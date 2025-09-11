@@ -342,14 +342,6 @@ public class LocalAuthTest {
   }
 
   @Test
-  @Config(sdk = 22)
-  public void isDeviceSecure_returnsFalseOnBelowApi23() {
-    final LocalAuthPlugin plugin = new LocalAuthPlugin();
-    assertFalse(plugin.isDeviceSecure());
-  }
-
-  @Test
-  @Config(sdk = 23)
   public void isDeviceSecure_returnsTrueIfDeviceIsSecure() {
     final LocalAuthPlugin plugin = new LocalAuthPlugin();
     KeyguardManager mockKeyguardManager = mock(KeyguardManager.class);
