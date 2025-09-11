@@ -98,6 +98,13 @@ abstract class GoogleSignInPlatform extends PlatformInterface {
     ServerAuthorizationTokensForScopesParameters params,
   );
 
+  /// Clears any token cache for the given access token.
+  Future<void> clearAuthorizationToken(ClearAuthorizationTokenParams params) {
+    throw UnimplementedError(
+      'clearAuthorizationToken() has not been implemented.',
+    );
+  }
+
   /// Signs out previously signed in accounts.
   Future<void> signOut(SignOutParams params);
 
@@ -165,6 +172,11 @@ class _PlaceholderImplementation extends GoogleSignInPlatform {
   Future<ServerAuthorizationTokenData?> serverAuthorizationTokensForScopes(
     ServerAuthorizationTokensForScopesParameters params,
   ) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> clearAuthorizationToken(ClearAuthorizationTokenParams params) {
     throw UnimplementedError();
   }
 

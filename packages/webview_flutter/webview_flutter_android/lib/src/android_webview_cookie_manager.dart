@@ -42,8 +42,8 @@ class AndroidWebViewCookieManager extends PlatformWebViewCookieManager {
          params is AndroidWebViewCookieManagerCreationParams
              ? params
              : AndroidWebViewCookieManagerCreationParams.fromPlatformWebViewCookieManagerCreationParams(
-               params,
-             ),
+                 params,
+               ),
        );
 
   final CookieManager _cookieManager;
@@ -84,10 +84,8 @@ class AndroidWebViewCookieManager extends PlatformWebViewCookieManager {
     bool accept,
   ) {
     // ignore: invalid_use_of_protected_member
-    final WebView webView =
-        _cookieManager.pigeon_instanceManager.getInstanceWithWeakReference(
-          controller.webViewIdentifier,
-        )!;
+    final WebView webView = _cookieManager.pigeon_instanceManager
+        .getInstanceWithWeakReference(controller.webViewIdentifier)!;
     return _cookieManager.setAcceptThirdPartyCookies(webView, accept);
   }
 }
