@@ -93,12 +93,17 @@ Future<List<XFile>> openFiles({
 /// [confirmButtonText] is the text in the confirmation button of the dialog.
 /// When not provided, the default OS label is used (for example, "Save").
 ///
+/// [canCreateDirectories] controls whether the user is allowed to create new
+/// directories in the save dialog. When not provided, uses the platform default.
+/// May not be supported on all platforms.
+///
 /// Returns `null` if the user cancels the operation.
 Future<FileSaveLocation?> getSaveLocation({
   List<XTypeGroup> acceptedTypeGroups = const <XTypeGroup>[],
   String? initialDirectory,
   String? suggestedName,
   String? confirmButtonText,
+  bool? canCreateDirectories,
 }) async {
   return FileSelectorPlatform.instance.getSaveLocation(
     acceptedTypeGroups: acceptedTypeGroups,
@@ -106,6 +111,7 @@ Future<FileSaveLocation?> getSaveLocation({
       initialDirectory: initialDirectory,
       suggestedName: suggestedName,
       confirmButtonText: confirmButtonText,
+      canCreateDirectories: canCreateDirectories,
     ),
   );
 }
