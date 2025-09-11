@@ -97,7 +97,8 @@ class _MyAppState extends State<MyApp> {
         _isAuthenticating = false;
         if (e.code != LocalAuthExceptionCode.userCanceled &&
             e.code != LocalAuthExceptionCode.systemCanceled) {
-          _authorized = 'Error - ${e.code.name}${e.description != null ? ': ${e.description}' : ''}';
+          _authorized =
+              'Error - ${e.code.name}${e.description != null ? ': ${e.description}' : ''}';
         }
       });
       return;
@@ -141,7 +142,8 @@ class _MyAppState extends State<MyApp> {
         _isAuthenticating = false;
         if (e.code != LocalAuthExceptionCode.userCanceled &&
             e.code != LocalAuthExceptionCode.systemCanceled) {
-          _authorized = 'Error - ${e.code.name}${e.description != null ? ': ${e.description}' : ''}';
+          _authorized =
+              'Error - ${e.code.name}${e.description != null ? ': ${e.description}' : ''}';
         }
       });
       return;
