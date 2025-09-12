@@ -197,5 +197,15 @@ void main() {
       when(mockErrorEvent.error).thenReturn(mockError);
       onAdErrorCallback(MockAdErrorListener(), mockErrorEvent);
     });
+
+    test('adCuePoints', () {
+      final MockAdsManager mockAdsManager = MockAdsManager();
+
+      final List<double> cuePoints = <double>[1.0];
+      when(mockAdsManager.adCuePoints).thenReturn(cuePoints);
+      final AndroidAdsManager adsManager = AndroidAdsManager(mockAdsManager);
+
+      expect(adsManager.adCuePoints, <Duration>[const Duration(seconds: 1)]);
+    });
   });
 }
