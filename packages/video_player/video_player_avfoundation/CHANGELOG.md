@@ -1,5 +1,6 @@
 ## NEXT
 
+* Implements `getAudioTracks()` and `selectAudioTrack()` methods for iOS/macOS using AVFoundation.
 * Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
 
 ## 2.8.4
