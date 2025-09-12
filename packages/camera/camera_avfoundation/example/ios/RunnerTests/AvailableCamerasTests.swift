@@ -38,18 +38,22 @@ final class AvailableCamerasTest: XCTestCase {
       let wideAngleCamera = MockCaptureDevice()
       wideAngleCamera.uniqueID = "0"
       wideAngleCamera.position = .back
+      wideAngleCamera.deviceType = .builtInWideAngleCamera
 
       let frontFacingCamera = MockCaptureDevice()
       frontFacingCamera.uniqueID = "1"
       frontFacingCamera.position = .front
+      frontFacingCamera.deviceType = .builtInWideAngleCamera
 
       let ultraWideCamera = MockCaptureDevice()
       ultraWideCamera.uniqueID = "2"
       ultraWideCamera.position = .back
+      ultraWideCamera.deviceType = .builtInUltraWideCamera
 
       let telephotoCamera = MockCaptureDevice()
       telephotoCamera.uniqueID = "3"
       telephotoCamera.position = .back
+      telephotoCamera.deviceType = .builtInTelephotoCamera
 
       var requiredTypes: [AVCaptureDevice.DeviceType] = [
         .builtInWideAngleCamera, .builtInTelephotoCamera, .builtInUltraWideCamera,
@@ -84,10 +88,12 @@ final class AvailableCamerasTest: XCTestCase {
       let wideAngleCamera = MockCaptureDevice()
       wideAngleCamera.uniqueID = "0"
       wideAngleCamera.position = .back
+      wideAngleCamera.deviceType = .builtInWideAngleCamera
 
       let frontFacingCamera = MockCaptureDevice()
       frontFacingCamera.uniqueID = "1"
       frontFacingCamera.position = .front
+      frontFacingCamera.deviceType = .builtInWideAngleCamera
 
       var requiredTypes: [AVCaptureDevice.DeviceType] = [
         .builtInWideAngleCamera, .builtInTelephotoCamera, .builtInUltraWideCamera,
@@ -121,6 +127,7 @@ final class AvailableCamerasTest: XCTestCase {
       let unspecifiedCamera = MockCaptureDevice()
       unspecifiedCamera.uniqueID = "0"
       unspecifiedCamera.position = .unspecified
+      unspecifiedCamera.deviceType = 
 
       var requiredTypes: [AVCaptureDevice.DeviceType] = [
         .builtInWideAngleCamera, .builtInTelephotoCamera, .builtInUltraWideCamera,
