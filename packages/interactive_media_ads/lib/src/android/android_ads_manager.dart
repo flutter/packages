@@ -143,11 +143,11 @@ PlatformAd _asPlatformAd(ima.Ad ad) {
     height: ad.height,
     skipTimeOffset:
         ad.skipTimeOffset == -1
-            ? Duration(
+            ? null
+            : Duration(
               milliseconds:
                   (ad.skipTimeOffset * Duration.millisecondsPerSecond).round(),
-            )
-            : null,
+            ),
     surveyUrl: ad.surveyUrl,
     title: ad.title,
     traffickingParameters: ad.traffickingParameters,
