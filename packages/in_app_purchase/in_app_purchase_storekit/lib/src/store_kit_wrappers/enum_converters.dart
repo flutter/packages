@@ -121,6 +121,7 @@ class _SerializedEnums {
   late SKPaymentTransactionStateWrapper response;
   late SKSubscriptionPeriodUnit unit;
   late SKProductDiscountPaymentMode discountPaymentMode;
+  late SKProductDiscountType discountType;
 }
 
 /// Serializer for [SKProductDiscountType].
