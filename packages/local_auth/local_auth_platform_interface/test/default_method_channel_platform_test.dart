@@ -99,7 +99,7 @@ void main() {
             'authenticate',
             arguments: <String, dynamic>{
               'localizedReason': 'Needs secure',
-              'useErrorDialogs': true,
+              'useErrorDialogs': false,
               'stickyAuth': false,
               'sensitiveTransaction': true,
               'biometricOnly': true,
@@ -114,7 +114,6 @@ void main() {
           localizedReason: 'Insecure',
           options: const AuthenticationOptions(
             sensitiveTransaction: false,
-            useErrorDialogs: false,
             biometricOnly: true,
           ),
         );
@@ -144,7 +143,7 @@ void main() {
             'authenticate',
             arguments: <String, dynamic>{
               'localizedReason': 'Needs secure',
-              'useErrorDialogs': true,
+              'useErrorDialogs': false,
               'stickyAuth': false,
               'sensitiveTransaction': true,
               'biometricOnly': false,
@@ -157,10 +156,7 @@ void main() {
         await localAuthentication.authenticate(
           authMessages: <AuthMessages>[],
           localizedReason: 'Insecure',
-          options: const AuthenticationOptions(
-            sensitiveTransaction: false,
-            useErrorDialogs: false,
-          ),
+          options: const AuthenticationOptions(sensitiveTransaction: false),
         );
         expect(log, <Matcher>[
           isMethodCall(
