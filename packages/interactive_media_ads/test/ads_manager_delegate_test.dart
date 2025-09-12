@@ -31,12 +31,53 @@ void main() {
     void onAdErrorEvent(AdErrorEvent event) {}
 
     final AdsManagerDelegate delegate = AdsManagerDelegate(
-      onAdEvent: expectAsync1((AdEvent event) {}),
+      onAdEvent: expectAsync1((AdEvent event) {
+        expect(event.type, AdEventType.adBreakEnded);
+        expect(event.ad, isNotNull);
+      }),
       onAdErrorEvent: onAdErrorEvent,
     );
 
     delegate.platform.params.onAdEvent!(
-      const PlatformAdEvent(type: AdEventType.adBreakEnded),
+      PlatformAdEvent(
+        type: AdEventType.adBreakEnded,
+        ad: PlatformAd(
+          adId: '',
+          adPodInfo: PlatformAdPodInfo(
+            adPosition: 0,
+            maxDuration: Duration.zero,
+            podIndex: 0,
+            timeOffset: Duration.zero,
+            totalAds: 0,
+            isBumper: true,
+          ),
+          adSystem: '',
+          wrapperCreativeIds: const <String>[],
+          wrapperIds: const <String>[],
+          wrapperSystems: const <String>[],
+          advertiserName: '',
+          companionAds: const <PlatformCompanionAd>[],
+          contentType: '',
+          creativeAdId: '',
+          creativeId: '',
+          dealId: '',
+          description: '',
+          duration: Duration.zero,
+          height: 9,
+          skipTimeOffset: Duration.zero,
+          surveyUrl: '',
+          title: '',
+          traffickingParameters: '',
+          uiElements: const <AdUIElement>{},
+          universalAdIds: const <PlatformUniversalAdId>[],
+          vastMediaBitrate: 0,
+          vastMediaHeight: 0,
+          vastMediaWidth: 0,
+          width: 0,
+          isLinear: true,
+          isSkippable: false,
+        ),
+      ),
     );
     expect(delegate.platform.params.onAdErrorEvent, onAdErrorEvent);
   });
