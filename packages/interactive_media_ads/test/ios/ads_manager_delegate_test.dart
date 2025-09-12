@@ -56,7 +56,7 @@ void main() {
 
       final IOSAdsManagerDelegate adsManagerDelegate = IOSAdsManagerDelegate(
         IOSAdsManagerDelegateCreationParams(
-          onAdEvent: expectAsync1((AdEvent event) {
+          onAdEvent: expectAsync1((PlatformAdEvent event) {
             expect(event.type, AdEventType.allAdsCompleted);
             expect(event.adData, <String, String>{'hello': 'world'});
           }),
@@ -123,7 +123,7 @@ void main() {
 
       final IOSAdsManagerDelegate adsManagerDelegate = IOSAdsManagerDelegate(
         IOSAdsManagerDelegateCreationParams(
-          onAdEvent: expectAsync1((AdEvent event) {
+          onAdEvent: expectAsync1((PlatformAdEvent event) {
             expect(event.type, AdEventType.contentPauseRequested);
           }),
           proxy: imaProxy,
@@ -183,7 +183,7 @@ void main() {
 
       final IOSAdsManagerDelegate adsManagerDelegate = IOSAdsManagerDelegate(
         IOSAdsManagerDelegateCreationParams(
-          onAdEvent: expectAsync1((AdEvent event) {
+          onAdEvent: expectAsync1((PlatformAdEvent event) {
             expect(event.type, AdEventType.contentResumeRequested);
           }),
           proxy: imaProxy,
