@@ -64,7 +64,7 @@ dependencies {
 
     testImplementation 'junit:junit:4.13.2'
     testImplementation "com.google.truth:truth:1.4.4"
-    api 'androidx.test.espresso:espresso-core:3.6.1'
+    api 'androidx.test.espresso:espresso-core:3.7.0'
 
     // Core library
     api 'androidx.test:core:1.7.0'
@@ -79,18 +79,18 @@ dependencies {
     api 'com.google.truth:truth:1.4.4'
 
     // Espresso dependencies
-    api 'androidx.test.espresso:espresso-core:3.6.1'
-    api 'androidx.test.espresso:espresso-contrib:3.6.1'
-    api 'androidx.test.espresso:espresso-intents:3.6.1'
-    api 'androidx.test.espresso:espresso-accessibility:3.6.1'
-    api 'androidx.test.espresso:espresso-web:3.6.1'
-    api 'androidx.test.espresso.idling:idling-concurrent:3.6.1'
+    api 'androidx.test.espresso:espresso-core:3.7.0'
+    api 'androidx.test.espresso:espresso-contrib:3.7.0'
+    api 'androidx.test.espresso:espresso-intents:3.7.0'
+    api 'androidx.test.espresso:espresso-accessibility:3.7.0'
+    api 'androidx.test.espresso:espresso-web:3.7.0'
+    api 'androidx.test.espresso.idling:idling-concurrent:3.7.0'
 
     // The following Espresso dependency can be either "implementation"
     // or "androidTestImplementation", depending on whether you want the
     // dependency to appear on your APK's compile classpath or the test APK
     // classpath.
-    api 'androidx.test.espresso:espresso-idling-resource:3.6.1'
+    api 'androidx.test.espresso:espresso-idling-resource:3.7.0'
 }
 
 
