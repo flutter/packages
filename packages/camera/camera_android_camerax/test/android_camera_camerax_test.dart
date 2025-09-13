@@ -3347,9 +3347,6 @@ void main() {
           mockPendingRecording.withAudioEnabled(!enableAudio),
         ).thenAnswer((_) async => mockPendingRecordingWithAudio);
         when(
-          mockPendingRecording.asPersistentRecording(),
-        ).thenAnswer((_) async => mockPendingRecording);
-        when(
           mockPendingRecordingWithAudio.start(any),
         ).thenAnswer((_) async => mockRecording);
         when(
@@ -3516,9 +3513,6 @@ void main() {
           mockPendingRecording.withAudioEnabled(!camera.enableRecordingAudio),
         ).thenAnswer((_) async => mockPendingRecording);
         when(
-          mockPendingRecording.asPersistentRecording(),
-        ).thenAnswer((_) async => mockPendingRecording);
-        when(
           mockPendingRecording.start(any),
         ).thenAnswer((_) async => mockRecording);
         when(
@@ -3573,7 +3567,6 @@ void main() {
         verifyNoMoreInteractions(camera.recorder);
         verify(mockPendingRecording.start(any)).called(1);
         verify(mockPendingRecording.withAudioEnabled(any)).called(1);
-        verify(mockPendingRecording.asPersistentRecording()).called(1);
         verifyNoMoreInteractions(mockPendingRecording);
       },
     );
@@ -3707,9 +3700,6 @@ void main() {
         ).thenAnswer((_) async => mockPendingRecording);
         when(
           mockPendingRecording.withAudioEnabled(!camera.enableRecordingAudio),
-        ).thenAnswer((_) async => mockPendingRecording);
-        when(
-          mockPendingRecording.asPersistentRecording(),
         ).thenAnswer((_) async => mockPendingRecording);
         when(
           mockProcessCameraProvider.bindToLifecycle(any, any),
@@ -3859,9 +3849,6 @@ void main() {
         ).thenAnswer((_) async => mockPendingRecording);
         when(
           mockPendingRecording.withAudioEnabled(!camera.enableRecordingAudio),
-        ).thenAnswer((_) async => mockPendingRecording);
-        when(
-          mockPendingRecording.asPersistentRecording(),
         ).thenAnswer((_) async => mockPendingRecording);
         when(
           mockPendingRecording.start(any),
@@ -4119,318 +4106,31 @@ void main() {
       },
     );
 
-    test('setDescriptionWhileRecording changes the camera description', () async {
-      final AndroidCameraCameraX camera = AndroidCameraCameraX();
-      final MockRecording mockRecording = MockRecording();
-      final MockPendingRecording mockPendingRecording = MockPendingRecording();
-      final MockRecorder mockRecorder = MockRecorder();
+    test(
+      'setDescriptionWhileRecording does not make any calls involving starting video recording',
+      () async {
+        // TODO(camsim99): Modify test when implemented, see https://github.com/flutter/flutter/issues/148013.
+        final AndroidCameraCameraX camera = AndroidCameraCameraX();
 
-      const int testSensorOrientation = 90;
-      const CameraDescription testBackCameraDescription = CameraDescription(
-        name: 'Camera 0',
-        lensDirection: CameraLensDirection.back,
-        sensorOrientation: testSensorOrientation,
-      );
-      const CameraDescription testFrontCameraDescription = CameraDescription(
-        name: 'Camera 1',
-        lensDirection: CameraLensDirection.front,
-        sensorOrientation: testSensorOrientation,
-      );
+        // Set directly for test versus calling createCamera.
+        camera.processCameraProvider = MockProcessCameraProvider();
+        camera.recorder = MockRecorder();
+        camera.videoCapture = MockVideoCapture();
+        camera.camera = MockCamera();
 
-      // Mock/Detached objects for (typically attached) objects created by
-      // createCamera.
-      final MockProcessCameraProvider mockProcessCameraProvider =
-          MockProcessCameraProvider();
-      final MockPreview mockPreview = MockPreview();
-      final MockCamera mockCamera = MockCamera();
-      final MockCameraInfo mockCameraInfo = MockCameraInfo();
-      final MockCameraControl mockCameraControl = MockCameraControl();
-      final MockImageCapture mockImageCapture = MockImageCapture();
-      final MockImageAnalysis mockImageAnalysis = MockImageAnalysis();
-      final MockVideoCapture mockVideoCapture = MockVideoCapture();
-      final MockCameraSelector mockBackCameraSelector = MockCameraSelector();
-      final MockCameraSelector mockFrontCameraSelector = MockCameraSelector();
-      final MockCameraInfo mockFrontCameraInfo = MockCameraInfo();
-      final MockCameraInfo mockBackCameraInfo = MockCameraInfo();
-      final MockCameraCharacteristicsKey mockCameraCharacteristicsKey =
-          MockCameraCharacteristicsKey();
-
-      const String outputPath = 'file/output.mp4';
-
-      camera.proxy = CameraXProxy(
-        newPreview:
-            ({
-              // ignore: non_constant_identifier_names
-              BinaryMessenger? pigeon_binaryMessenger,
-              // ignore: non_constant_identifier_names
-              PigeonInstanceManager? pigeon_instanceManager,
-              ResolutionSelector? resolutionSelector,
-              int? targetRotation,
-            }) {
-              when(
-                mockPreview.setSurfaceProvider(any),
-              ).thenAnswer((_) async => 19);
-              final ResolutionInfo testResolutionInfo =
-                  ResolutionInfo.pigeon_detached(resolution: MockCameraSize());
-              when(
-                mockPreview.surfaceProducerHandlesCropAndRotation(),
-              ).thenAnswer((_) async => false);
-              when(
-                mockPreview.resolutionSelector,
-              ).thenReturn(resolutionSelector);
-              when(
-                mockPreview.getResolutionInfo(),
-              ).thenAnswer((_) async => testResolutionInfo);
-              return mockPreview;
-            },
-        newImageCapture:
-            ({
-              CameraXFlashMode? flashMode,
-              // ignore: non_constant_identifier_names
-              BinaryMessenger? pigeon_binaryMessenger,
-              // ignore: non_constant_identifier_names
-              PigeonInstanceManager? pigeon_instanceManager,
-              ResolutionSelector? resolutionSelector,
-              int? targetRotation,
-            }) {
-              return mockImageCapture;
-            },
-        newRecorder:
-            ({
-              int? aspectRatio,
-              // ignore: non_constant_identifier_names
-              BinaryMessenger? pigeon_binaryMessenger,
-              // ignore: non_constant_identifier_names
-              PigeonInstanceManager? pigeon_instanceManager,
-              QualitySelector? qualitySelector,
-              int? targetVideoEncodingBitRate,
-            }) {
-              when(
-                mockRecorder.prepareRecording(outputPath),
-              ).thenAnswer((_) async => mockPendingRecording);
-              return mockRecorder;
-            },
-        withOutputVideoCapture:
-            ({
-              // ignore: non_constant_identifier_names
-              BinaryMessenger? pigeon_binaryMessenger,
-              // ignore: non_constant_identifier_names
-              PigeonInstanceManager? pigeon_instanceManager,
-              required VideoOutput videoOutput,
-            }) {
-              return mockVideoCapture;
-            },
-        newImageAnalysis:
-            ({
-              int? outputImageFormat,
-              // ignore: non_constant_identifier_names
-              BinaryMessenger? pigeon_binaryMessenger,
-              // ignore: non_constant_identifier_names
-              PigeonInstanceManager? pigeon_instanceManager,
-              ResolutionSelector? resolutionSelector,
-              int? targetRotation,
-            }) {
-              return mockImageAnalysis;
-            },
-        newCameraSelector:
-            ({
-              LensFacing? requireLensFacing,
-              CameraInfo? cameraInfoForFilter,
-              // ignore: non_constant_identifier_names
-              BinaryMessenger? pigeon_binaryMessenger,
-              // ignore: non_constant_identifier_names
-              PigeonInstanceManager? pigeon_instanceManager,
-            }) {
-              if (cameraInfoForFilter == mockFrontCameraInfo) {
-                return mockFrontCameraSelector;
-              }
-              return mockBackCameraSelector;
-            },
-        newDeviceOrientationManager:
-            ({
-              required void Function(DeviceOrientationManager, String)
-              onDeviceOrientationChanged,
-              // ignore: non_constant_identifier_names
-              BinaryMessenger? pigeon_binaryMessenger,
-              // ignore: non_constant_identifier_names
-              PigeonInstanceManager? pigeon_instanceManager,
-            }) {
-              final MockDeviceOrientationManager manager =
-                  MockDeviceOrientationManager();
-              when(manager.getUiOrientation()).thenAnswer((_) async {
-                return 'PORTRAIT_UP';
-              });
-              return manager;
-            },
-        fromCamera2CameraInfo:
-            ({
-              required CameraInfo cameraInfo,
-              // ignore: non_constant_identifier_names
-              BinaryMessenger? pigeon_binaryMessenger,
-              // ignore: non_constant_identifier_names
-              PigeonInstanceManager? pigeon_instanceManager,
-            }) {
-              final MockCamera2CameraInfo camera2cameraInfo =
-                  MockCamera2CameraInfo();
-              when(
-                camera2cameraInfo.getCameraCharacteristic(any),
-              ).thenAnswer((_) async => InfoSupportedHardwareLevel.limited);
-              return camera2cameraInfo;
-            },
-        sensorOrientationCameraCharacteristics: () {
-          return mockCameraCharacteristicsKey;
-        },
-        newObserver:
-            <T>({
-              required void Function(Observer<T>, T) onChanged,
-              // ignore: non_constant_identifier_names
-              BinaryMessenger? pigeon_binaryMessenger,
-              // ignore: non_constant_identifier_names
-              PigeonInstanceManager? pigeon_instanceManager,
-            }) {
-              return Observer<T>.detached(
-                onChanged: onChanged,
-                pigeon_instanceManager: PigeonInstanceManager(
-                  onWeakReferenceRemoved: (_) {},
-                ),
-              );
-            },
-        newSystemServicesManager:
-            ({
-              required void Function(SystemServicesManager, String)
-              onCameraError,
-              // ignore: non_constant_identifier_names
-              BinaryMessenger? pigeon_binaryMessenger,
-              // ignore: non_constant_identifier_names
-              PigeonInstanceManager? pigeon_instanceManager,
-            }) {
-              final MockSystemServicesManager mockSystemServicesManager =
-                  MockSystemServicesManager();
-              when(
-                mockSystemServicesManager.getTempFilePath(
-                  camera.videoPrefix,
-                  '.temp',
-                ),
-              ).thenAnswer((_) async => outputPath);
-              return mockSystemServicesManager;
-            },
-        newVideoRecordEventListener:
-            ({
-              required void Function(VideoRecordEventListener, VideoRecordEvent)
-              onEvent,
-              // ignore: non_constant_identifier_names
-              BinaryMessenger? pigeon_binaryMessenger,
-              // ignore: non_constant_identifier_names
-              PigeonInstanceManager? pigeon_instanceManager,
-            }) {
-              return VideoRecordEventListener.pigeon_detached(
-                onEvent: onEvent,
-                pigeon_instanceManager: PigeonInstanceManager(
-                  onWeakReferenceRemoved: (_) {},
-                ),
-              );
-            },
-        infoSupportedHardwareLevelCameraCharacteristics: () {
-          return MockCameraCharacteristicsKey();
-        },
-      );
-
-      // mock functions
-      when(mockProcessCameraProvider.getAvailableCameraInfos()).thenAnswer(
-        (_) async => <MockCameraInfo>[mockBackCameraInfo, mockFrontCameraInfo],
-      );
-      when(
-        mockProcessCameraProvider.bindToLifecycle(any, any),
-      ).thenAnswer((_) async => mockCamera);
-      when(
-        mockBackCameraSelector.filter(<MockCameraInfo>[mockBackCameraInfo]),
-      ).thenAnswer((_) async => <MockCameraInfo>[mockBackCameraInfo]);
-      when(
-        mockBackCameraSelector.filter(<MockCameraInfo>[mockFrontCameraInfo]),
-      ).thenAnswer((_) async => <MockCameraInfo>[mockFrontCameraInfo]);
-      when(
-        mockFrontCameraSelector.filter(<MockCameraInfo>[mockBackCameraInfo]),
-      ).thenAnswer((_) async => <MockCameraInfo>[mockBackCameraInfo]);
-      when(
-        mockFrontCameraSelector.filter(<MockCameraInfo>[mockFrontCameraInfo]),
-      ).thenAnswer((_) async => <MockCameraInfo>[mockFrontCameraInfo]);
-
-      camera.processCameraProvider = mockProcessCameraProvider;
-      camera.enableRecordingAudio = false;
-      when(
-        mockPendingRecording.withAudioEnabled(any),
-      ).thenAnswer((_) async => mockPendingRecording);
-      when(
-        mockPendingRecording.asPersistentRecording(),
-      ).thenAnswer((_) async => mockPendingRecording);
-      when(
-        mockPendingRecording.start(any),
-      ).thenAnswer((_) async => mockRecording);
-      when(
-        camera.processCameraProvider!.isBound(mockImageCapture),
-      ).thenAnswer((_) async => true);
-      when(
-        camera.processCameraProvider!.isBound(mockImageAnalysis),
-      ).thenAnswer((_) async => true);
-      when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
-      when(
-        mockCameraInfo.getCameraState(),
-      ).thenAnswer((_) async => MockLiveCameraState());
-      when(
-        mockCameraInfo.getCameraState(),
-      ).thenAnswer((_) async => MockLiveCameraState());
-      when(mockCamera.cameraControl).thenAnswer((_) => mockCameraControl);
-
-      // Simulate video recording being started so startVideoRecording completes.
-      AndroidCameraCameraX.videoRecordingEventStreamController.add(
-        VideoRecordEventStart.pigeon_detached(
-          pigeon_instanceManager: PigeonInstanceManager(
-            onWeakReferenceRemoved: (_) {},
+        await camera.setDescriptionWhileRecording(
+          const CameraDescription(
+            name: 'fakeCameraName',
+            lensDirection: CameraLensDirection.back,
+            sensorOrientation: 90,
           ),
-        ),
-      );
-
-      await camera.availableCameras();
-
-      final int flutterSurfaceTextureId = await camera.createCameraWithSettings(
-        testBackCameraDescription,
-        const MediaSettings(enableAudio: true),
-      );
-      await camera.initializeCamera(flutterSurfaceTextureId);
-
-      await camera.startVideoCapturing(
-        VideoCaptureOptions(flutterSurfaceTextureId),
-      );
-      await camera.setDescriptionWhileRecording(testFrontCameraDescription);
-
-      //verify front camera selected
-      verify(camera.processCameraProvider?.unbindAll()).called(2);
-      verify(
-        camera.processCameraProvider?.bindToLifecycle(
-          mockFrontCameraSelector,
-          <UseCase>[
-            mockPreview,
-            mockVideoCapture,
-            mockImageCapture,
-            mockImageAnalysis,
-          ],
-        ),
-      ).called(1);
-
-      //verify back camera selected
-      await camera.setDescriptionWhileRecording(testBackCameraDescription);
-      verify(
-        camera.processCameraProvider?.bindToLifecycle(
-          mockBackCameraSelector,
-          <UseCase>[
-            mockPreview,
-            mockVideoCapture,
-            mockImageCapture,
-            mockImageAnalysis,
-          ],
-        ),
-      ).called(1);
-    });
+        );
+        verifyNoMoreInteractions(camera.processCameraProvider);
+        verifyNoMoreInteractions(camera.recorder);
+        verifyNoMoreInteractions(camera.videoCapture);
+        verifyNoMoreInteractions(camera.camera);
+      },
+    );
   });
 
   test(
@@ -7192,9 +6892,6 @@ void main() {
         mockPendingRecording.withAudioEnabled(!camera.enableRecordingAudio),
       ).thenAnswer((_) async => mockPendingRecording);
       when(
-        mockPendingRecording.asPersistentRecording(),
-      ).thenAnswer((_) async => mockPendingRecording);
-      when(
         mockPendingRecording.start(any),
       ).thenAnswer((_) async => mockRecording);
       when(
@@ -7336,9 +7033,6 @@ void main() {
         mockPendingRecording.withAudioEnabled(!camera.enableRecordingAudio),
       ).thenAnswer((_) async => mockPendingRecording);
       when(
-        mockPendingRecording.asPersistentRecording(),
-      ).thenAnswer((_) async => mockPendingRecording);
-      when(
         mockPendingRecording.start(any),
       ).thenAnswer((_) async => mockRecording);
       when(
@@ -7478,9 +7172,6 @@ void main() {
       ).thenAnswer((_) async => mockPendingRecording);
       when(
         mockPendingRecording.withAudioEnabled(!camera.enableRecordingAudio),
-      ).thenAnswer((_) async => mockPendingRecording);
-      when(
-        mockPendingRecording.asPersistentRecording(),
       ).thenAnswer((_) async => mockPendingRecording);
       when(
         mockPendingRecording.start(any),
@@ -7642,9 +7333,6 @@ void main() {
       ).thenAnswer((_) async => mockPendingRecording);
       when(
         mockPendingRecording.withAudioEnabled(!camera.enableRecordingAudio),
-      ).thenAnswer((_) async => mockPendingRecording);
-      when(
-        mockPendingRecording.asPersistentRecording(),
       ).thenAnswer((_) async => mockPendingRecording);
       when(
         mockPendingRecording.start(any),
@@ -7812,9 +7500,6 @@ void main() {
         mockPendingRecording.withAudioEnabled(!camera.enableRecordingAudio),
       ).thenAnswer((_) async => mockPendingRecording);
       when(
-        mockPendingRecording.asPersistentRecording(),
-      ).thenAnswer((_) async => mockPendingRecording);
-      when(
         mockPendingRecording.start(any),
       ).thenAnswer((_) async => mockRecording);
       when(
@@ -7970,9 +7655,6 @@ void main() {
       ).thenAnswer((_) async => mockPendingRecording);
       when(
         mockPendingRecording.withAudioEnabled(!camera.enableRecordingAudio),
-      ).thenAnswer((_) async => mockPendingRecording);
-      when(
-        mockPendingRecording.asPersistentRecording(),
       ).thenAnswer((_) async => mockPendingRecording);
       when(
         mockPendingRecording.start(any),
