@@ -88,7 +88,7 @@ public class UrlLauncherTest {
     Messages.FlutterError exception =
         assertThrows(
             Messages.FlutterError.class,
-            () -> api.launchUrl("https://flutter.dev", new HashMap<>()));
+            () -> api.launchUrl("https://flutter.dev", new HashMap<>(), false));
     assertEquals("NO_ACTIVITY", exception.code);
   }
 
@@ -100,11 +100,29 @@ public class UrlLauncherTest {
     api.setActivity(activity);
     doThrow(new ActivityNotFoundException()).when(activity).startActivity(any());
 
-    api.launchUrl("https://flutter.dev", new HashMap<>());
+    api.launchUrl("https://flutter.dev", new HashMap<>(), false);
 
     final ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
     verify(activity).startActivity(intentCaptor.capture());
     assertEquals(url, intentCaptor.getValue().getData().toString());
+    assertEquals(0, intentCaptor.getValue().getFlags() & Intent.FLAG_ACTIVITY_REQUIRE_NON_BROWSER);
+  }
+
+  @Test
+  public void launch_setsRequireNonBrowserWhenRequested() {
+    Activity activity = mock(Activity.class);
+    String url = "https://flutter.dev";
+    UrlLauncher api = new UrlLauncher(ApplicationProvider.getApplicationContext());
+    api.setActivity(activity);
+    doThrow(new ActivityNotFoundException()).when(activity).startActivity(any());
+
+    api.launchUrl("https://flutter.dev", new HashMap<>(), true);
+
+    final ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
+    verify(activity).startActivity(intentCaptor.capture());
+    assertEquals(
+        Intent.FLAG_ACTIVITY_REQUIRE_NON_BROWSER,
+        intentCaptor.getValue().getFlags() & Intent.FLAG_ACTIVITY_REQUIRE_NON_BROWSER);
   }
 
   @Test
@@ -114,7 +132,7 @@ public class UrlLauncherTest {
     api.setActivity(activity);
     doThrow(new ActivityNotFoundException()).when(activity).startActivity(any());
 
-    boolean result = api.launchUrl("https://flutter.dev", new HashMap<>());
+    boolean result = api.launchUrl("https://flutter.dev", new HashMap<>(), false);
 
     assertFalse(result);
   }
@@ -125,7 +143,7 @@ public class UrlLauncherTest {
     UrlLauncher api = new UrlLauncher(ApplicationProvider.getApplicationContext());
     api.setActivity(activity);
 
-    boolean result = api.launchUrl("https://flutter.dev", new HashMap<>());
+    boolean result = api.launchUrl("https://flutter.dev", new HashMap<>(), false);
 
     assertTrue(result);
   }
