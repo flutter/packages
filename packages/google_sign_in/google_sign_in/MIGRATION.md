@@ -61,6 +61,7 @@ include:
   publishing, the only platform that does not support `authenticate` is web,
   where `google_sign_in_web`'s `renderButton` is used to create a sign-in
   button.
+* `clearAuthCache` has been replaced by `clearAuthorizationToken`.
 * Outcomes other than successful authentication or authorization will throw
   `GoogleSignInException`s in most cases, allowing a clear way to distinguish
   different sign in failure outcomes. This includes the user canceling

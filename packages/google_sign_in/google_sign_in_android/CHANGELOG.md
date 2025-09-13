@@ -1,3 +1,7 @@
+## 7.1.0
+
+* Adds support for the `clearAuthorizationToken` method.
+
 ## 7.0.5
 
 * Adds support for `hostedDomain` when authenticating.
