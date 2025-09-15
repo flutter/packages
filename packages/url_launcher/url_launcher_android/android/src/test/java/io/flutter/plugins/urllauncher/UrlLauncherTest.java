@@ -30,6 +30,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
 
 @RunWith(RobolectricTestRunner.class)
 public class UrlLauncherTest {
@@ -108,6 +109,7 @@ public class UrlLauncherTest {
     assertEquals(0, intentCaptor.getValue().getFlags() & Intent.FLAG_ACTIVITY_REQUIRE_NON_BROWSER);
   }
 
+  @Config(minSdk = 30)
   @Test
   public void launch_setsRequireNonBrowserWhenRequested() {
     Activity activity = mock(Activity.class);
