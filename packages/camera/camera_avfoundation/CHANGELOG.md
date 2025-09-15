@@ -1,6 +1,6 @@
 ## 0.9.21+4
 
-* Fixes crash on iOS when `enableAudio` is false by correcting audio setup guard.
+* Fixes crash on iOS when `enableAudio` is false.
 
 ## 0.9.21+3
 
