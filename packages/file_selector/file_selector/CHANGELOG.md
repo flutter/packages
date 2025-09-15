@@ -1,5 +1,6 @@
-## NEXT
+## 1.1.0
 
+* Adds `canCreateDirectories` param to `getDirectoryPath` and `getDirectoryPaths` to control the visibility of the New Folder button in file dialogs on supported platforms.
 * Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
 * Updates README to indicate that Andoid SDK <21 is no longer supported.
 

@@ -20,12 +20,46 @@ void main() {
     });
   });
 
+  group('getDirectoryPath', () {
+    test('Should throw unimplemented exception', () async {
+      final FileSelectorPlatform fileSelector = ExtendsFileSelectorPlatform();
+
+      await expectLater(() async {
+        return fileSelector.getDirectoryPath();
+      }, throwsA(isA<UnimplementedError>()));
+    });
+  });
+
+  group('getDirectoryPathWithOptions', () {
+    test('Should throw unimplemented exception', () async {
+      final FileSelectorPlatform fileSelector = ExtendsFileSelectorPlatform();
+
+      await expectLater(() async {
+        return fileSelector.getDirectoryPathWithOptions(
+          const FileDialogOptions(),
+        );
+      }, throwsA(isA<UnimplementedError>()));
+    });
+  });
+
   group('getDirectoryPaths', () {
     test('Should throw unimplemented exception', () async {
       final FileSelectorPlatform fileSelector = ExtendsFileSelectorPlatform();
 
       await expectLater(() async {
         return fileSelector.getDirectoryPaths();
+      }, throwsA(isA<UnimplementedError>()));
+    });
+  });
+
+  group('getDirectoryPathsWithOptions', () {
+    test('Should throw unimplemented exception', () async {
+      final FileSelectorPlatform fileSelector = ExtendsFileSelectorPlatform();
+
+      await expectLater(() async {
+        return fileSelector.getDirectoryPathsWithOptions(
+          const FileDialogOptions(),
+        );
       }, throwsA(isA<UnimplementedError>()));
     });
   });

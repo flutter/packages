@@ -86,6 +86,7 @@ class FileSelectorMacOS extends FileSelectorPlatform {
         directoryPath: options.initialDirectory,
         nameFieldStringValue: options.suggestedName,
         prompt: options.confirmButtonText,
+        canCreateDirectories: options.canCreateDirectories,
       ),
     );
     return path == null ? null : FileSaveLocation(path);
@@ -96,14 +97,25 @@ class FileSelectorMacOS extends FileSelectorPlatform {
     String? initialDirectory,
     String? confirmButtonText,
   }) async {
+    return getDirectoryPathWithOptions(
+      FileDialogOptions(
+        initialDirectory: initialDirectory,
+        confirmButtonText: confirmButtonText,
+      ),
+    );
+  }
+
+  @override
+  Future<String?> getDirectoryPathWithOptions(FileDialogOptions options) async {
     final List<String?> paths = await _hostApi.displayOpenPanel(
       OpenPanelOptions(
         allowsMultipleSelection: false,
         canChooseDirectories: true,
         canChooseFiles: false,
         baseOptions: SavePanelOptions(
-          directoryPath: initialDirectory,
-          prompt: confirmButtonText,
+          directoryPath: options.initialDirectory,
+          prompt: options.confirmButtonText,
+          canCreateDirectories: options.canCreateDirectories,
         ),
       ),
     );
@@ -115,14 +127,27 @@ class FileSelectorMacOS extends FileSelectorPlatform {
     String? initialDirectory,
     String? confirmButtonText,
   }) async {
+    return getDirectoryPathsWithOptions(
+      FileDialogOptions(
+        initialDirectory: initialDirectory,
+        confirmButtonText: confirmButtonText,
+      ),
+    );
+  }
+
+  @override
+  Future<List<String>> getDirectoryPathsWithOptions(
+    FileDialogOptions options,
+  ) async {
     final List<String?> paths = await _hostApi.displayOpenPanel(
       OpenPanelOptions(
         allowsMultipleSelection: true,
         canChooseDirectories: true,
         canChooseFiles: false,
         baseOptions: SavePanelOptions(
-          directoryPath: initialDirectory,
-          prompt: confirmButtonText,
+          directoryPath: options.initialDirectory,
+          prompt: options.confirmButtonText,
+          canCreateDirectories: options.canCreateDirectories,
         ),
       ),
     );

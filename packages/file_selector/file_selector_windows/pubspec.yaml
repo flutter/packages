@@ -2,7 +2,7 @@ name: file_selector_windows
 description: Windows implementation of the file_selector plugin.
 repository: https://github.com/flutter/packages/tree/main/packages/file_selector/file_selector_windows
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+file_selector%22
-version: 0.9.3+4
+version: 0.9.4
 
 environment:
   sdk: ^3.7.0
@@ -33,3 +33,7 @@ topics:
   - files
   - file-selection
   - file-selector
+# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
+# See https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#changing-federated-plugins
+dependency_overrides:
+  file_selector_platform_interface: {path: ../../../packages/file_selector/file_selector_platform_interface}
