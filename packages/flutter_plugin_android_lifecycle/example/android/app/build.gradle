@@ -41,17 +41,17 @@ android {
         release {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig signingConfigs.debug
+            signingConfig = signingConfigs.debug
         }
     }
-    namespace 'io.flutter.plugins.flutter_plugin_android_lifecycle_example'
+    namespace = 'io.flutter.plugins.flutter_plugin_android_lifecycle_example'
     lint {
         disable 'InvalidPackage'
     }
 }
 
 flutter {
-    source '../..'
+    source = '../..'
 }
 
 dependencies {
