@@ -16,6 +16,7 @@ class OpenTextPage extends StatelessWidget {
     const XTypeGroup typeGroup = XTypeGroup(
       label: 'text',
       extensions: <String>['txt', 'json'],
+      uniformTypeIdentifiers: <String>['public.text'],
     );
     // This demonstrates using an initial directory for the prompt, which should
     // only be done in cases where the application can likely predict where the
