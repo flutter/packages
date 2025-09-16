@@ -976,7 +976,9 @@ void main() {
       final Finder linkFinder = find.byKey(linkKey);
       expect(
         tester.getSemantics(
-          find.descendant(of: linkFinder, matching: find.byType(Semantics)).first,
+          find
+              .descendant(of: linkFinder, matching: find.byType(Semantics))
+              .first,
         ),
         matchesSemantics(
           isLink: true,
