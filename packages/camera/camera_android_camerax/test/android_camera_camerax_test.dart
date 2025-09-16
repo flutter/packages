@@ -162,6 +162,12 @@ void main() {
       int? targetRotation,
     })?
     newImageAnalysis,
+    Analyzer Function({
+      required void Function(Analyzer, ImageProxy) analyze,
+      BinaryMessenger? pigeon_binaryMessenger,
+      PigeonInstanceManager? pigeon_instanceManager,
+    })?
+    newAnalyzer,
   }) {
     late final CameraXProxy proxy;
     final AspectRatioStrategy ratio_4_3FallbackAutoStrategyAspectRatioStrategy =
@@ -466,6 +472,17 @@ void main() {
             PigeonInstanceManager? pigeon_instanceManager,
           }) {
             return MockFallbackStrategy();
+          },
+      newAnalyzer:
+          newAnalyzer ??
+          ({
+            required void Function(Analyzer, ImageProxy) analyze,
+            // ignore: non_constant_identifier_names
+            BinaryMessenger? pigeon_binaryMessenger,
+            // ignore: non_constant_identifier_names
+            PigeonInstanceManager? pigeon_instanceManager,
+          }) {
+            return MockAnalyzer();
           },
     );
 
@@ -4787,6 +4804,100 @@ void main() {
       expect(imageData.width, equals(imageWidth));
 
       await onStreamedFrameAvailableSubscription.cancel();
+    },
+  );
+
+  // TODO(camsim99): Fix.
+  test(
+    'onStreamedFrameAvailable emits NV21 CameraImageData with correct format and single plane when initialized with NV21',
+    () async {
+      final AndroidCameraCameraX camera = AndroidCameraCameraX();
+      const int cameraId = 42;
+      final MockProcessCameraProvider mockProcessCameraProvider =
+          MockProcessCameraProvider();
+      final MockCameraSelector mockCameraSelector = MockCameraSelector();
+      final MockImageAnalysis mockImageAnalysis = MockImageAnalysis();
+      final MockCamera mockCamera = MockCamera();
+      final MockCameraInfo mockCameraInfo = MockCameraInfo();
+      final MockImageProxy mockImageProxy = MockImageProxy();
+      final MockPlaneProxy mockPlane = MockPlaneProxy();
+      final List<MockPlaneProxy> mockPlanes = <MockPlaneProxy>[mockPlane];
+      final Uint8List buffer = Uint8List(10);
+
+      camera.processCameraProvider = mockProcessCameraProvider;
+      // camera.cameraSelector = mockCameraSelector;
+      camera.imageAnalysis = mockImageAnalysis;
+
+      // NV21-specific format
+      when(
+        mockImageProxy.format,
+      ).thenReturn(AndroidCameraCameraX.imageAnalysisOutputImageFormatNv21);
+      when(mockImageProxy.height).thenReturn(100);
+      when(mockImageProxy.width).thenReturn(200);
+      when(mockImageProxy.getPlanes()).thenAnswer((_) async => mockPlanes);
+      when(mockPlane.buffer).thenReturn(buffer);
+      when(mockPlane.rowStride).thenReturn(10);
+      when(mockPlane.pixelStride).thenReturn(1);
+
+      // Bindings and lifecycle
+      when(
+        mockProcessCameraProvider.isBound(mockImageAnalysis),
+      ).thenAnswer((_) async => false);
+      when(
+        mockProcessCameraProvider.bindToLifecycle(any, any),
+      ).thenAnswer((_) async => mockCamera);
+      when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
+      when(
+        mockCameraInfo.getCameraState(),
+      ).thenAnswer((_) async => MockLiveCameraState());
+
+      // Set up analyzer
+      camera.proxy = getProxyForTestingUseCaseConfiguration(
+        mockProcessCameraProvider,
+      );
+
+      await camera.createCamera(
+        const CameraDescription(
+          name: 'test',
+          lensDirection: CameraLensDirection.back,
+          sensorOrientation: 0,
+        ),
+        ResolutionPreset.low,
+      );
+
+      // Now initialize with NV21
+      await camera.initializeCamera(
+        cameraId,
+        imageFormatGroup: ImageFormatGroup.nv21,
+      );
+
+      // Listen to the stream and get the first image.
+      final Completer<CameraImageData> imageDataCompleter =
+          Completer<CameraImageData>();
+      final StreamSubscription<CameraImageData> subscription = camera
+          .onStreamedFrameAvailable(cameraId)
+          .listen((CameraImageData imageData) {
+            imageDataCompleter.complete(imageData);
+          });
+
+      // Wait for analyzer to be set and trigger it.
+      await untilCalled(mockImageAnalysis.setAnalyzer(any));
+      final Analyzer capturedAnalyzer =
+          verify(mockImageAnalysis.setAnalyzer(captureAny)).captured.single
+              as Analyzer;
+      capturedAnalyzer.analyze(MockAnalyzer(), mockImageProxy);
+
+      final CameraImageData imageData = await imageDataCompleter.future;
+
+      expect(
+        imageData.format.raw,
+        AndroidCameraCameraX.imageAnalysisOutputImageFormatNv21,
+      );
+      expect(imageData.format.group, ImageFormatGroup.nv21);
+      expect(imageData.planes.length, 1);
+      expect(imageData.planes[0].bytes, buffer);
+
+      await subscription.cancel();
     },
   );
 
