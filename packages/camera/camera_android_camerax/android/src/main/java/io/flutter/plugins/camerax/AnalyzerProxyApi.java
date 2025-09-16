@@ -9,6 +9,9 @@ import androidx.camera.core.ImageAnalysis.Analyzer;
 import androidx.camera.core.ImageProxy;
 import java.util.Objects;
 
+import java.nio.ByteBuffer;
+
+
 /**
  * ProxyApi implementation for {@link Analyzer}. This class may handle instantiating native object
  * instances that are attached to a Dart instance or handle method calls on the associated native
@@ -35,6 +38,11 @@ class AnalyzerProxyApi extends PigeonApiAnalyzer {
 
     @Override
     public void analyze(@NonNull ImageProxy image) {
+      // System.out.println(":::::::::::::::::::::::::::::CAMILLE: START NV21 ANALYSIS:::::::::::::::::::::::::::::");
+      // ImageProxy.PlaneProxy[] planes = image.getPlanes();
+      // boolean isNV21 = areUVPlanesNV21(planes[1].getBuffer(), planes[2].getBuffer(), image.getWidth(), image.getHeight());
+      // System.out.println(":::::::::::::::::::::::::::::CAMILLE: PLANES ARE NV21? " + isNV21 + " ::::::::::::::::::::::::::::::::");
+
       api.getPigeonRegistrar()
           .runOnMainThread(
               new ProxyApiRegistrar.FlutterMethodRunnable() {
@@ -61,5 +69,38 @@ class AnalyzerProxyApi extends PigeonApiAnalyzer {
   @Override
   public Analyzer pigeon_defaultConstructor() {
     return new AnalyzerImpl(this);
+  }
+
+
+  ///// OTHER METHODS FOR NV21 TESTING //////
+  /**
+   * <p>Checks if the UV plane buffers of a YUV_420_888 image are in the NV21 format.
+   *
+   * <p>https://github.com/googlesamples/mlkit/blob/master/android/vision-quickstart/app/src/main/java/com/google/mlkit/vision/demo/BitmapUtils.java
+   */
+  private static boolean areUVPlanesNV21(ByteBuffer uBuffer, ByteBuffer vBuffer, int width, int height) {
+    int imageSize = width * height;
+
+    // ByteBuffer uBuffer = planes[1].getBuffer();
+    // ByteBuffer vBuffer = planes[2].getBuffer();
+
+    // Backup buffer properties.
+    int vBufferPosition = vBuffer.position();
+    int uBufferLimit = uBuffer.limit();
+
+    // Advance the V buffer by 1 byte, since the U buffer will not contain the first V value.
+    vBuffer.position(vBufferPosition + 1);
+    // Chop off the last byte of the U buffer, since the V buffer will not contain the last U value.
+    uBuffer.limit(uBufferLimit - 1);
+
+    // Check that the buffers are equal and have the expected number of elements.
+    boolean areNV21 =
+        (vBuffer.remaining() == (2 * imageSize / 4 - 2)) && (vBuffer.compareTo(uBuffer) == 0);
+
+    // Restore buffers to their initial state.
+    vBuffer.position(vBufferPosition);
+    uBuffer.limit(uBufferLimit);
+
+    return areNV21;
   }
 }

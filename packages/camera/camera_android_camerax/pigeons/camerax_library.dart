@@ -919,6 +919,10 @@ abstract class ImageProxy {
   /// Returns the array of planes.
   List<PlaneProxy> getPlanes();
 
+  /// Returns a single Byte Buffer that is representative of the [planes] that
+  /// area NV21 compatible.
+  Uint8List getNv21Buffer(List<PlaneProxy> planes);
+
   /// Closes the underlying `android.media.Image`.
   void close();
 }
