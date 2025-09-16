@@ -1,3 +1,7 @@
+## 0.4.0+13
+
+* Bumps com.android.tools.build:gradle from 8.12.1 to 8.13.0.
+
 ## 0.4.0+12
 
 * Bumps androidx.test.espresso:espresso-* from 3.6.1 to 3.7.0.

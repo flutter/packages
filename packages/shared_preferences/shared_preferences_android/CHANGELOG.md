@@ -1,3 +1,7 @@
+## 2.4.13
+
+* Bumps com.android.tools.build:gradle from 8.12.1 to 8.13.0 and kotlin-gradle-plugin from 2.2.10 to 2.2.20.
+
 ## 2.4.12
 
 * Bumps com.android.tools.build:gradle to 8.12.1 and kotlin_version to 2.2.10.

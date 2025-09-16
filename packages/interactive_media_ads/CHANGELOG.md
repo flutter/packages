@@ -1,3 +1,7 @@
+## 0.2.6+8
+
+* Bumps com.android.tools.build:gradle from 8.12.1 to 8.13.0 and kotlin-gradle-plugin from 2.2.10 to 2.2.20.
+
 ## 0.2.6+7
 
 * Updates Android `PlatformAdDisplayContainer` implementation to support preloading ads.
