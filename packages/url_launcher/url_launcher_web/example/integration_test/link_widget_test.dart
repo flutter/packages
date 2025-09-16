@@ -976,14 +976,14 @@ void main() {
       final Finder linkFinder = find.byKey(linkKey);
       expect(
         tester.getSemantics(
-          find.descendant(of: linkFinder, matching: find.byType(Semantics)),
+          find.descendant(of: linkFinder, matching: find.byType(Semantics)).first,
         ),
         matchesSemantics(
           isLink: true,
           hasTapAction: true,
           identifier: 'test-link-43',
           // linkUrl: 'https://foobar/example?q=1',
-          children: <Matcher>[matchesSemantics(label: 'Link Text')],
+          label: 'Link Text',
         ),
       );
 
