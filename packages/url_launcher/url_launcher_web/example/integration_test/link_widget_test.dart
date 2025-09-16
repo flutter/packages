@@ -932,16 +932,12 @@ void main() {
         ),
         matchesSemantics(
           isLink: true,
+          hasTapAction: true,
+          hasFocusAction: true,
           identifier: 'test-link-12',
           // linkUrl: 'https://foobar/example?q=1',
           children: <Matcher>[
             matchesSemantics(
-              hasTapAction: true,
-              hasEnabledState: true,
-              hasFocusAction: true,
-              isEnabled: true,
-              isButton: true,
-              isFocusable: true,
               label: 'Button Link Text',
             ),
           ],
@@ -987,7 +983,11 @@ void main() {
           hasTapAction: true,
           identifier: 'test-link-43',
           // linkUrl: 'https://foobar/example?q=1',
-          label: 'Link Text',
+          children: <Matcher>[
+            matchesSemantics(
+              label: 'Link Text',
+            ),
+          ]
         ),
       );
 
