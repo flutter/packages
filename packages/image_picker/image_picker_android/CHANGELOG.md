@@ -1,6 +1,10 @@
-## 0.8.13+3
+## 0.8.13+4
 
 * Bumps com.android.tools.build:gradle from 8.12.1 to 8.13.0.
+
+## 0.8.13+3
+
+* Bumps androidx.exifinterface:exifinterface from 1.3.7 to 1.4.1.
 
 ## 0.8.13+2
 

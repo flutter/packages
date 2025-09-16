@@ -1,6 +1,10 @@
-## 6.3.22
+## 6.3.23
 
 * Bumps com.android.tools.build:gradle from 8.12.1 to 8.13.0.
+
+## 6.3.22
+
+* Adds support for `externalNonBrowserApplication` on API 30+.
 
 ## 6.3.21
 
