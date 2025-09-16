@@ -1,5 +1,7 @@
-## NEXT
+## 6.1.1
 
+* Fixes a bug that would cause `serverAuthorizationTokensForScopes` to
+  return null even when called for a user that had just authenticated.
 * Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
 
 ## 6.1.0
