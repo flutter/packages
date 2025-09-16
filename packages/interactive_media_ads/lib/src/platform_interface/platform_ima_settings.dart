@@ -62,8 +62,9 @@ abstract base class PlatformImaSettings {
   /// Creates a new [PlatformImaSettings].
   factory PlatformImaSettings(PlatformImaSettingsCreationParams params) {
     assert(InteractiveMediaAdsPlatform.instance != null);
-    final PlatformImaSettings implementation =
-        InteractiveMediaAdsPlatform.instance!.createPlatformImaSettings(params);
+    final PlatformImaSettings implementation = InteractiveMediaAdsPlatform
+        .instance!
+        .createPlatformImaSettings(params);
     return implementation;
   }
 

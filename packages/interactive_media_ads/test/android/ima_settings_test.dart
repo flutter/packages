@@ -135,9 +135,9 @@ void main() {
 MockImaSdkSettings _mockImaSdkSettings() {
   final MockImaSdkFactory mockImaSdkFactory = MockImaSdkFactory();
   final MockImaSdkSettings mockImaSdkSettings = MockImaSdkSettings();
-  when(mockImaSdkFactory.createImaSdkSettings()).thenAnswer(
-    (_) async => mockImaSdkSettings,
-  );
+  when(
+    mockImaSdkFactory.createImaSdkSettings(),
+  ).thenAnswer((_) async => mockImaSdkSettings);
   ima.PigeonOverrides.imaSdkFactory_instance = mockImaSdkFactory;
 
   return mockImaSdkSettings;

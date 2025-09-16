@@ -8,10 +8,7 @@ import 'package:flutter/foundation.dart';
 @immutable
 class MultiVideoPickerOptions {
   /// Creates an instance with the given options.
-  const MultiVideoPickerOptions({
-    this.maxDuration,
-    this.limit,
-  });
+  const MultiVideoPickerOptions({this.maxDuration, this.limit});
 
   /// The maximum duration of the picked video.
   final Duration? maxDuration;

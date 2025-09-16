@@ -29,7 +29,7 @@ void main() {
       pluginApi: pluginApi,
       playerProvider: (_) => instanceApi,
     );
-    player.ensureApiInitialized(playerId);
+    player.ensureApiInitialized(playerId, VideoViewType.platformView);
     return (player, pluginApi, instanceApi);
   }
 
@@ -529,28 +529,27 @@ void main() {
       verify(playerApi.seekTo(positionMilliseconds));
     });
 
-    test('getPosition', () async {
+    test('getPlaybackState', () async {
       final (
         AndroidVideoPlayer player,
         _,
         MockVideoPlayerInstanceApi playerApi,
       ) = setUpMockPlayer(playerId: 1);
       const int positionMilliseconds = 12345;
-      when(
-        playerApi.getPosition(),
-      ).thenAnswer((_) async => positionMilliseconds);
+      when(playerApi.getPlaybackState()).thenAnswer(
+        (_) async => PlaybackState(
+          playPosition: positionMilliseconds,
+          bufferPosition: 0,
+        ),
+      );
 
       final Duration position = await player.getPosition(1);
       expect(position, const Duration(milliseconds: positionMilliseconds));
     });
 
     test('videoEventsFor', () async {
-      final (
-        AndroidVideoPlayer player,
-        MockAndroidVideoPlayerApi api,
-        _,
-      ) = setUpMockPlayer(playerId: 1);
-      const String mockChannel = 'flutter.io/videoPlayer/videoEvents123';
+      const int playerId = 1;
+      const String mockChannel = 'flutter.io/videoPlayer/videoEvents$playerId';
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMessageHandler(mockChannel, (ByteData? message) async {
             final MethodCall methodCall = const StandardMethodCodec()
@@ -669,8 +668,17 @@ void main() {
               fail('Expected listen or cancel');
             }
           });
+
+      // Creating the player triggers the stream listener, so that must be done
+      // after setting up the mock native handler above.
+      final (
+        AndroidVideoPlayer player,
+        MockAndroidVideoPlayerApi api,
+        _,
+      ) = setUpMockPlayer(playerId: playerId);
+
       expect(
-        player.videoEventsFor(123),
+        player.videoEventsFor(playerId),
         emitsInOrder(<dynamic>[
           VideoEvent(
             eventType: VideoEventType.initialized,

@@ -27,22 +27,20 @@ void setInfinityDuration(web.HTMLVideoElement element) {
   DomObject.defineProperty(
     element,
     'duration',
-    Descriptor.data(
-      writable: true,
-      value: double.infinity.toJS,
-    ),
+    Descriptor.data(writable: true, value: double.infinity.toJS),
   );
 }
 
 /// Makes the `currentTime` setter throw an exception if used.
 void makeSetCurrentTimeThrow(web.HTMLVideoElement element) {
   DomObject.defineProperty(
-      element,
-      'currentTime',
-      Descriptor.accessor(
-        set: (JSAny? value) {
-          throw Exception('Unexpected call to currentTime with value: $value');
-        },
-        get: () => 100.toJS,
-      ));
+    element,
+    'currentTime',
+    Descriptor.accessor(
+      set: (JSAny? value) {
+        throw Exception('Unexpected call to currentTime with value: $value');
+      },
+      get: () => 100.toJS,
+    ),
+  );
 }

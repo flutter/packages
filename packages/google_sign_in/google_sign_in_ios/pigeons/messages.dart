@@ -4,18 +4,20 @@
 
 import 'package:pigeon/pigeon.dart';
 
-@ConfigurePigeon(PigeonOptions(
-  dartOut: 'lib/src/messages.g.dart',
-  objcHeaderOut:
-      'darwin/google_sign_in_ios/Sources/google_sign_in_ios/include/google_sign_in_ios/messages.g.h',
-  objcSourceOut:
-      'darwin/google_sign_in_ios/Sources/google_sign_in_ios/messages.g.m',
-  objcOptions: ObjcOptions(
-    prefix: 'FSI',
-    headerIncludePath: './include/google_sign_in_ios/messages.g.h',
+@ConfigurePigeon(
+  PigeonOptions(
+    dartOut: 'lib/src/messages.g.dart',
+    objcHeaderOut:
+        'darwin/google_sign_in_ios/Sources/google_sign_in_ios/include/google_sign_in_ios/messages.g.h',
+    objcSourceOut:
+        'darwin/google_sign_in_ios/Sources/google_sign_in_ios/messages.g.m',
+    objcOptions: ObjcOptions(
+      prefix: 'FSI',
+      headerIncludePath: './include/google_sign_in_ios/messages.g.h',
+    ),
+    copyrightHeader: 'pigeons/copyright.txt',
   ),
-  copyrightHeader: 'pigeons/copyright.txt',
-))
+)
 class PlatformConfigurationParams {
   PlatformConfigurationParams({
     this.clientId,

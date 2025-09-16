@@ -4,15 +4,16 @@
 
 import 'package:pigeon/pigeon.dart';
 
-@ConfigurePigeon(PigeonOptions(
-  dartOut: 'lib/src/messages.g.dart',
-  kotlinOut:
-      'android/src/main/kotlin/io/flutter/plugins/googlesignin/Messages.kt',
-  kotlinOptions: KotlinOptions(package: 'io.flutter.plugins.googlesignin'),
-  copyrightHeader: 'pigeons/copyright.txt',
-))
-
-/// The information necessary to build a an authorization request.
+@ConfigurePigeon(
+  PigeonOptions(
+    dartOut: 'lib/src/messages.g.dart',
+    kotlinOut:
+        'android/src/main/kotlin/io/flutter/plugins/googlesignin/Messages.kt',
+    kotlinOptions: KotlinOptions(package: 'io.flutter.plugins.googlesignin'),
+    copyrightHeader: 'pigeons/copyright.txt',
+  ),
+)
+/// The information necessary to build an authorization request.
 ///
 /// Corresponds to the native AuthorizationRequest object, but only contains
 /// the fields used by this plugin.
@@ -35,6 +36,7 @@ class GetCredentialRequestParams {
     required this.useButtonFlow,
     required this.googleIdOptionParams,
     this.serverClientId,
+    this.hostedDomain,
     this.nonce,
   });
 
@@ -50,6 +52,7 @@ class GetCredentialRequestParams {
   GetCredentialRequestGoogleIdOptionParams googleIdOptionParams;
 
   String? serverClientId;
+  String? hostedDomain;
   String? nonce;
 }
 
@@ -195,6 +198,8 @@ abstract class GoogleSignInApi {
 
   /// Requests authorization tokens via AuthorizationClient.
   @async
-  AuthorizeResult authorize(PlatformAuthorizationRequest params,
-      {required bool promptIfUnauthorized});
+  AuthorizeResult authorize(
+    PlatformAuthorizationRequest params, {
+    required bool promptIfUnauthorized,
+  });
 }

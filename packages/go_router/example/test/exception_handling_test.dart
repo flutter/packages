@@ -12,7 +12,9 @@ void main() {
 
     await tester.tap(find.text('Simulates user entering unknown url'));
     await tester.pumpAndSettle();
-    expect(find.text("Can't find a page for: /some-unknown-route"),
-        findsOneWidget);
+    expect(
+      find.text("Can't find a page for: /some-unknown-route"),
+      findsOneWidget,
+    );
   });
 }

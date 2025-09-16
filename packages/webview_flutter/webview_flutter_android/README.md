@@ -19,7 +19,7 @@ specific mode, you can set it explicitly.
 
 ### Texture Layer Hybrid Composition
 
-This is the current default mode for versions >=23. This is a new display mode used by most
+This is the current default mode, and is the display mode used by most
 plugins starting with Flutter 3.0. This is more performant than Hybrid Composition, but has some
 limitations from using an Android [SurfaceTexture](https://developer.android.com/reference/android/graphics/SurfaceTexture).
 See:
@@ -28,11 +28,11 @@ See:
 
 ### Hybrid Composition
 
-This is the current default mode for versions <23. It ensures that the WebView will display and work
-as expected, at the cost of some performance. See:
+This ensures that the WebView will display and work as expected in the edge cases noted above, at
+the cost of some performance. See:
 * https://docs.flutter.dev/platform-integration/android/platform-views#performance
 
-This can be configured for versions >=23 with
+This can be configured with
 `AndroidWebViewWidgetCreationParams.displayWithHybridComposition`. See https://pub.dev/packages/webview_flutter#platform-specific-features
 for more details on setting platform-specific features in the main plugin.
 
@@ -52,6 +52,37 @@ Java:
 import io.flutter.plugins.webviewflutter.WebViewFlutterAndroidExternalApi;
 ```
 
+## Enable Payment Request in WebView
+
+The Payment Request API can be enabled by calling `AndroidWebViewController.setPaymentRequestEnabled` after
+checking `AndroidWebViewController.isWebViewFeatureSupported`.
+
+<?code-excerpt "example/lib/readme_excerpts.dart (payment_request_example)"?>
+```dart
+final bool paymentRequestEnabled = await androidController
+    .isWebViewFeatureSupported(WebViewFeatureType.paymentRequest);
+
+if (paymentRequestEnabled) {
+  await androidController.setPaymentRequestEnabled(true);
+}
+```
+
+Add intent filters to your AndroidManifest.xml to discover and invoke Android payment apps using system intents:
+
+```xml
+<queries>
+  <intent>
+    <action android:name="org.chromium.intent.action.PAY"/>
+  </intent>
+  <intent>
+    <action android:name="org.chromium.intent.action.IS_READY_TO_PAY"/>
+  </intent>
+  <intent>
+    <action android:name="org.chromium.intent.action.UPDATE_PAYMENT_DETAILS"/>
+  </intent>
+</queries>
+```
+
 ## Fullscreen Video
 
 To display a video as fullscreen, an app must manually handle the notification that the current page
@@ -62,10 +93,12 @@ has entered fullscreen mode. This can be done by calling
 ```dart
 androidController.setCustomWidgetCallbacks(
   onShowCustomWidget: (Widget widget, OnHideCustomWidgetCallback callback) {
-    Navigator.of(context).push(MaterialPageRoute<void>(
-      builder: (BuildContext context) => widget,
-      fullscreenDialog: true,
-    ));
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (BuildContext context) => widget,
+        fullscreenDialog: true,
+      ),
+    );
   },
   onHideCustomWidget: () {
     Navigator.of(context).pop();

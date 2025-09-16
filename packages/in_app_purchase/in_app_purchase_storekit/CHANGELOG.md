@@ -1,3 +1,8 @@
+## 0.4.4+1
+
+* Removes code for versions of iOS older than 13.0.
+* Updates minimum supported SDK version to Flutter 3.35.
+
 ## 0.4.4
 
 * Added support for specifying quantity in `SK2ProductPurchaseOptions` (consumable purchases on iOS).

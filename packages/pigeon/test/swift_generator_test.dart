@@ -8,12 +8,15 @@ import 'package:test/test.dart';
 
 import 'dart_generator_test.dart';
 
-final Class emptyClass = Class(name: 'className', fields: <NamedType>[
-  NamedType(
-    name: 'namedTypeName',
-    type: const TypeDeclaration(baseName: 'baseName', isNullable: false),
-  )
-]);
+final Class emptyClass = Class(
+  name: 'className',
+  fields: <NamedType>[
+    NamedType(
+      name: 'namedTypeName',
+      type: const TypeDeclaration(baseName: 'baseName', isNullable: false),
+    ),
+  ],
+);
 
 final Enum emptyEnum = Enum(
   name: 'enumName',
@@ -26,11 +29,9 @@ void main() {
       name: 'Foobar',
       fields: <NamedType>[
         NamedType(
-            type: const TypeDeclaration(
-              baseName: 'int',
-              isNullable: true,
-            ),
-            name: 'field1'),
+          type: const TypeDeclaration(baseName: 'int', isNullable: true),
+          name: 'field1',
+        ),
       ],
     );
     final Root root = Root(
@@ -39,8 +40,9 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    const InternalSwiftOptions swiftOptions =
-        InternalSwiftOptions(swiftOut: '');
+    const InternalSwiftOptions swiftOptions = InternalSwiftOptions(
+      swiftOut: '',
+    );
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -51,8 +53,10 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('struct Foobar'));
     expect(code, contains('var field1: Int64? = nil'));
-    expect(code,
-        contains('static func fromList(_ pigeonVar_list: [Any?]) -> Foobar?'));
+    expect(
+      code,
+      contains('static func fromList(_ pigeonVar_list: [Any?]) -> Foobar?'),
+    );
     expect(code, contains('func toList() -> [Any?]'));
     expect(code, isNot(contains('if (')));
   });
@@ -60,10 +64,7 @@ void main() {
   test('gen one enum', () {
     final Enum anEnum = Enum(
       name: 'Foobar',
-      members: <EnumMember>[
-        EnumMember(name: 'one'),
-        EnumMember(name: 'two'),
-      ],
+      members: <EnumMember>[EnumMember(name: 'one'), EnumMember(name: 'two')],
     );
     final Root root = Root(
       apis: <Api>[],
@@ -71,8 +72,9 @@ void main() {
       enums: <Enum>[anEnum],
     );
     final StringBuffer sink = StringBuffer();
-    const InternalSwiftOptions swiftOptions =
-        InternalSwiftOptions(swiftOut: '');
+    const InternalSwiftOptions swiftOptions = InternalSwiftOptions(
+      swiftOut: '',
+    );
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -88,31 +90,44 @@ void main() {
   });
 
   test('primitive enum host', () {
-    final Root root = Root(apis: <Api>[
-      AstHostApi(name: 'Bar', methods: <Method>[
-        Method(
-            name: 'bar',
-            location: ApiLocation.host,
-            returnType: const TypeDeclaration.voidDeclaration(),
-            parameters: <Parameter>[
-              Parameter(
+    final Root root = Root(
+      apis: <Api>[
+        AstHostApi(
+          name: 'Bar',
+          methods: <Method>[
+            Method(
+              name: 'bar',
+              location: ApiLocation.host,
+              returnType: const TypeDeclaration.voidDeclaration(),
+              parameters: <Parameter>[
+                Parameter(
                   name: 'foo',
                   type: TypeDeclaration(
                     baseName: 'Foo',
                     associatedEnum: emptyEnum,
                     isNullable: false,
-                  ))
-            ])
-      ])
-    ], classes: <Class>[], enums: <Enum>[
-      Enum(name: 'Foo', members: <EnumMember>[
-        EnumMember(name: 'one'),
-        EnumMember(name: 'two'),
-      ])
-    ]);
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ],
+      classes: <Class>[],
+      enums: <Enum>[
+        Enum(
+          name: 'Foo',
+          members: <EnumMember>[
+            EnumMember(name: 'one'),
+            EnumMember(name: 'two'),
+          ],
+        ),
+      ],
+    );
     final StringBuffer sink = StringBuffer();
-    const InternalSwiftOptions swiftOptions =
-        InternalSwiftOptions(swiftOut: '');
+    const InternalSwiftOptions swiftOptions = InternalSwiftOptions(
+      swiftOut: '',
+    );
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -123,57 +138,70 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('enum Foo: Int'));
     expect(
-        code,
-        contains(
-            'let enumResultAsInt: Int? = nilOrValue(self.readValue() as! Int?)'));
+      code,
+      contains(
+        'let enumResultAsInt: Int? = nilOrValue(self.readValue() as! Int?)',
+      ),
+    );
     expect(code, contains('return Foo(rawValue: enumResultAsInt)'));
     expect(code, contains('let fooArg = args[0] as! Foo'));
     expect(code, isNot(contains('if (')));
   });
 
   test('gen one host api', () {
-    final Root root = Root(apis: <Api>[
-      AstHostApi(name: 'Api', methods: <Method>[
-        Method(
-          name: 'doSomething',
-          location: ApiLocation.host,
-          parameters: <Parameter>[
-            Parameter(
-                type: TypeDeclaration(
-                  baseName: 'Input',
-                  associatedClass: emptyClass,
-                  isNullable: false,
+    final Root root = Root(
+      apis: <Api>[
+        AstHostApi(
+          name: 'Api',
+          methods: <Method>[
+            Method(
+              name: 'doSomething',
+              location: ApiLocation.host,
+              parameters: <Parameter>[
+                Parameter(
+                  type: TypeDeclaration(
+                    baseName: 'Input',
+                    associatedClass: emptyClass,
+                    isNullable: false,
+                  ),
+                  name: '',
                 ),
-                name: '')
+              ],
+              returnType: TypeDeclaration(
+                baseName: 'Output',
+                associatedClass: emptyClass,
+                isNullable: false,
+              ),
+            ),
           ],
-          returnType: TypeDeclaration(
-            baseName: 'Output',
-            associatedClass: emptyClass,
-            isNullable: false,
-          ),
-        )
-      ])
-    ], classes: <Class>[
-      Class(name: 'Input', fields: <NamedType>[
-        NamedType(
-            type: const TypeDeclaration(
-              baseName: 'String',
-              isNullable: true,
+        ),
+      ],
+      classes: <Class>[
+        Class(
+          name: 'Input',
+          fields: <NamedType>[
+            NamedType(
+              type: const TypeDeclaration(baseName: 'String', isNullable: true),
+              name: 'input',
             ),
-            name: 'input')
-      ]),
-      Class(name: 'Output', fields: <NamedType>[
-        NamedType(
-            type: const TypeDeclaration(
-              baseName: 'String',
-              isNullable: true,
+          ],
+        ),
+        Class(
+          name: 'Output',
+          fields: <NamedType>[
+            NamedType(
+              type: const TypeDeclaration(baseName: 'String', isNullable: true),
+              name: 'output',
             ),
-            name: 'output')
-      ])
-    ], enums: <Enum>[]);
+          ],
+        ),
+      ],
+      enums: <Enum>[],
+    );
     final StringBuffer sink = StringBuffer();
-    const InternalSwiftOptions swiftOptions =
-        InternalSwiftOptions(swiftOut: '');
+    const InternalSwiftOptions swiftOptions = InternalSwiftOptions(
+      swiftOut: '',
+    );
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -189,62 +217,66 @@ void main() {
   });
 
   test('all the simple datatypes header', () {
-    final Root root = Root(apis: <Api>[], classes: <Class>[
-      Class(name: 'Foobar', fields: <NamedType>[
-        NamedType(
-            type: const TypeDeclaration(
-              baseName: 'bool',
-              isNullable: true,
+    final Root root = Root(
+      apis: <Api>[],
+      classes: <Class>[
+        Class(
+          name: 'Foobar',
+          fields: <NamedType>[
+            NamedType(
+              type: const TypeDeclaration(baseName: 'bool', isNullable: true),
+              name: 'aBool',
             ),
-            name: 'aBool'),
-        NamedType(
-            type: const TypeDeclaration(
-              baseName: 'int',
-              isNullable: true,
+            NamedType(
+              type: const TypeDeclaration(baseName: 'int', isNullable: true),
+              name: 'aInt',
             ),
-            name: 'aInt'),
-        NamedType(
-            type: const TypeDeclaration(
-              baseName: 'double',
-              isNullable: true,
+            NamedType(
+              type: const TypeDeclaration(baseName: 'double', isNullable: true),
+              name: 'aDouble',
             ),
-            name: 'aDouble'),
-        NamedType(
-            type: const TypeDeclaration(
-              baseName: 'String',
-              isNullable: true,
+            NamedType(
+              type: const TypeDeclaration(baseName: 'String', isNullable: true),
+              name: 'aString',
             ),
-            name: 'aString'),
-        NamedType(
-            type: const TypeDeclaration(
-              baseName: 'Uint8List',
-              isNullable: true,
+            NamedType(
+              type: const TypeDeclaration(
+                baseName: 'Uint8List',
+                isNullable: true,
+              ),
+              name: 'aUint8List',
             ),
-            name: 'aUint8List'),
-        NamedType(
-            type: const TypeDeclaration(
-              baseName: 'Int32List',
-              isNullable: true,
+            NamedType(
+              type: const TypeDeclaration(
+                baseName: 'Int32List',
+                isNullable: true,
+              ),
+              name: 'aInt32List',
             ),
-            name: 'aInt32List'),
-        NamedType(
-            type: const TypeDeclaration(
-              baseName: 'Int64List',
-              isNullable: true,
+            NamedType(
+              type: const TypeDeclaration(
+                baseName: 'Int64List',
+                isNullable: true,
+              ),
+              name: 'aInt64List',
             ),
-            name: 'aInt64List'),
-        NamedType(
-            type: const TypeDeclaration(
-              baseName: 'Float64List',
-              isNullable: true,
+            NamedType(
+              type: const TypeDeclaration(
+                baseName: 'Float64List',
+                isNullable: true,
+              ),
+              name: 'aFloat64List',
             ),
-            name: 'aFloat64List'),
-      ]),
-    ], enums: <Enum>[]);
+          ],
+        ),
+      ],
+      enums: <Enum>[],
+    );
 
     final StringBuffer sink = StringBuffer();
-    const InternalSwiftOptions swiftOptions =
-        InternalSwiftOptions(swiftOut: '');
+    const InternalSwiftOptions swiftOptions = InternalSwiftOptions(
+      swiftOut: '',
+    );
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -266,8 +298,9 @@ void main() {
   test('gen pigeon error type', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    const InternalSwiftOptions swiftOptions =
-        InternalSwiftOptions(swiftOut: '');
+    const InternalSwiftOptions swiftOptions = InternalSwiftOptions(
+      swiftOut: '',
+    );
     const SwiftGenerator generator = SwiftGenerator();
 
     generator.generate(
@@ -281,53 +314,66 @@ void main() {
     expect(code, contains('let code: String'));
     expect(code, contains('let message: String?'));
     expect(code, contains('let details: Sendable?'));
-    expect(code,
-        contains('init(code: String, message: String?, details: Sendable?)'));
+    expect(
+      code,
+      contains('init(code: String, message: String?, details: Sendable?)'),
+    );
   });
 
   test('gen one flutter api', () {
-    final Root root = Root(apis: <Api>[
-      AstFlutterApi(name: 'Api', methods: <Method>[
-        Method(
-          name: 'doSomething',
-          location: ApiLocation.flutter,
-          parameters: <Parameter>[
-            Parameter(
-                type: TypeDeclaration(
-                  baseName: 'Input',
-                  associatedClass: emptyClass,
-                  isNullable: false,
+    final Root root = Root(
+      apis: <Api>[
+        AstFlutterApi(
+          name: 'Api',
+          methods: <Method>[
+            Method(
+              name: 'doSomething',
+              location: ApiLocation.flutter,
+              parameters: <Parameter>[
+                Parameter(
+                  type: TypeDeclaration(
+                    baseName: 'Input',
+                    associatedClass: emptyClass,
+                    isNullable: false,
+                  ),
+                  name: '',
                 ),
-                name: '')
+              ],
+              returnType: TypeDeclaration(
+                baseName: 'Output',
+                associatedClass: emptyClass,
+                isNullable: false,
+              ),
+            ),
           ],
-          returnType: TypeDeclaration(
-            baseName: 'Output',
-            associatedClass: emptyClass,
-            isNullable: false,
-          ),
-        )
-      ])
-    ], classes: <Class>[
-      Class(name: 'Input', fields: <NamedType>[
-        NamedType(
-            type: const TypeDeclaration(
-              baseName: 'String',
-              isNullable: true,
+        ),
+      ],
+      classes: <Class>[
+        Class(
+          name: 'Input',
+          fields: <NamedType>[
+            NamedType(
+              type: const TypeDeclaration(baseName: 'String', isNullable: true),
+              name: 'input',
             ),
-            name: 'input')
-      ]),
-      Class(name: 'Output', fields: <NamedType>[
-        NamedType(
-            type: const TypeDeclaration(
-              baseName: 'String',
-              isNullable: true,
+          ],
+        ),
+        Class(
+          name: 'Output',
+          fields: <NamedType>[
+            NamedType(
+              type: const TypeDeclaration(baseName: 'String', isNullable: true),
+              name: 'output',
             ),
-            name: 'output')
-      ])
-    ], enums: <Enum>[]);
+          ],
+        ),
+      ],
+      enums: <Enum>[],
+    );
     final StringBuffer sink = StringBuffer();
-    const InternalSwiftOptions swiftOptions =
-        InternalSwiftOptions(swiftOut: '');
+    const InternalSwiftOptions swiftOptions = InternalSwiftOptions(
+      swiftOut: '',
+    );
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -338,45 +384,57 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('class Api'));
     expect(
-        code,
-        contains(
-            'init(binaryMessenger: FlutterBinaryMessenger, messageChannelSuffix: String = "")'));
+      code,
+      contains(
+        'init(binaryMessenger: FlutterBinaryMessenger, messageChannelSuffix: String = "")',
+      ),
+    );
     expect(code, matches('func doSomething.*Input.*Output'));
     expect(code, isNot(contains('if (')));
     expect(code, isNot(matches(RegExp(r';$', multiLine: true))));
   });
 
   test('gen host void api', () {
-    final Root root = Root(apis: <Api>[
-      AstHostApi(name: 'Api', methods: <Method>[
-        Method(
-          name: 'doSomething',
-          location: ApiLocation.host,
-          parameters: <Parameter>[
-            Parameter(
-                type: TypeDeclaration(
-                  baseName: 'Input',
-                  associatedClass: emptyClass,
-                  isNullable: false,
+    final Root root = Root(
+      apis: <Api>[
+        AstHostApi(
+          name: 'Api',
+          methods: <Method>[
+            Method(
+              name: 'doSomething',
+              location: ApiLocation.host,
+              parameters: <Parameter>[
+                Parameter(
+                  type: TypeDeclaration(
+                    baseName: 'Input',
+                    associatedClass: emptyClass,
+                    isNullable: false,
+                  ),
+                  name: '',
                 ),
-                name: '')
-          ],
-          returnType: const TypeDeclaration.voidDeclaration(),
-        )
-      ])
-    ], classes: <Class>[
-      Class(name: 'Input', fields: <NamedType>[
-        NamedType(
-            type: const TypeDeclaration(
-              baseName: 'String',
-              isNullable: true,
+              ],
+              returnType: const TypeDeclaration.voidDeclaration(),
             ),
-            name: 'input')
-      ]),
-    ], enums: <Enum>[]);
+          ],
+        ),
+      ],
+      classes: <Class>[
+        Class(
+          name: 'Input',
+          fields: <NamedType>[
+            NamedType(
+              type: const TypeDeclaration(baseName: 'String', isNullable: true),
+              name: 'input',
+            ),
+          ],
+        ),
+      ],
+      enums: <Enum>[],
+    );
     final StringBuffer sink = StringBuffer();
-    const InternalSwiftOptions swiftOptions =
-        InternalSwiftOptions(swiftOut: '');
+    const InternalSwiftOptions swiftOptions = InternalSwiftOptions(
+      swiftOut: '',
+    );
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -391,36 +449,46 @@ void main() {
   });
 
   test('gen flutter void return api', () {
-    final Root root = Root(apis: <Api>[
-      AstFlutterApi(name: 'Api', methods: <Method>[
-        Method(
-          name: 'doSomething',
-          location: ApiLocation.flutter,
-          parameters: <Parameter>[
-            Parameter(
-                type: TypeDeclaration(
-                  baseName: 'Input',
-                  associatedClass: emptyClass,
-                  isNullable: false,
+    final Root root = Root(
+      apis: <Api>[
+        AstFlutterApi(
+          name: 'Api',
+          methods: <Method>[
+            Method(
+              name: 'doSomething',
+              location: ApiLocation.flutter,
+              parameters: <Parameter>[
+                Parameter(
+                  type: TypeDeclaration(
+                    baseName: 'Input',
+                    associatedClass: emptyClass,
+                    isNullable: false,
+                  ),
+                  name: '',
                 ),
-                name: '')
-          ],
-          returnType: const TypeDeclaration.voidDeclaration(),
-        )
-      ])
-    ], classes: <Class>[
-      Class(name: 'Input', fields: <NamedType>[
-        NamedType(
-            type: const TypeDeclaration(
-              baseName: 'String',
-              isNullable: true,
+              ],
+              returnType: const TypeDeclaration.voidDeclaration(),
             ),
-            name: 'input')
-      ]),
-    ], enums: <Enum>[]);
+          ],
+        ),
+      ],
+      classes: <Class>[
+        Class(
+          name: 'Input',
+          fields: <NamedType>[
+            NamedType(
+              type: const TypeDeclaration(baseName: 'String', isNullable: true),
+              name: 'input',
+            ),
+          ],
+        ),
+      ],
+      enums: <Enum>[],
+    );
     final StringBuffer sink = StringBuffer();
-    const InternalSwiftOptions swiftOptions =
-        InternalSwiftOptions(swiftOut: '');
+    const InternalSwiftOptions swiftOptions = InternalSwiftOptions(
+      swiftOut: '',
+    );
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -429,39 +497,50 @@ void main() {
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
-    expect(code,
-        contains('completion: @escaping (Result<Void, PigeonError>) -> Void'));
+    expect(
+      code,
+      contains('completion: @escaping (Result<Void, PigeonError>) -> Void'),
+    );
     expect(code, contains('completion(.success(()))'));
     expect(code, isNot(contains('if (')));
   });
 
   test('gen host void argument api', () {
-    final Root root = Root(apis: <Api>[
-      AstHostApi(name: 'Api', methods: <Method>[
-        Method(
-          name: 'doSomething',
-          location: ApiLocation.host,
-          parameters: <Parameter>[],
-          returnType: TypeDeclaration(
-            baseName: 'Output',
-            associatedClass: emptyClass,
-            isNullable: false,
-          ),
-        )
-      ])
-    ], classes: <Class>[
-      Class(name: 'Output', fields: <NamedType>[
-        NamedType(
-            type: const TypeDeclaration(
-              baseName: 'String',
-              isNullable: true,
+    final Root root = Root(
+      apis: <Api>[
+        AstHostApi(
+          name: 'Api',
+          methods: <Method>[
+            Method(
+              name: 'doSomething',
+              location: ApiLocation.host,
+              parameters: <Parameter>[],
+              returnType: TypeDeclaration(
+                baseName: 'Output',
+                associatedClass: emptyClass,
+                isNullable: false,
+              ),
             ),
-            name: 'output')
-      ]),
-    ], enums: <Enum>[]);
+          ],
+        ),
+      ],
+      classes: <Class>[
+        Class(
+          name: 'Output',
+          fields: <NamedType>[
+            NamedType(
+              type: const TypeDeclaration(baseName: 'String', isNullable: true),
+              name: 'output',
+            ),
+          ],
+        ),
+      ],
+      enums: <Enum>[],
+    );
     final StringBuffer sink = StringBuffer();
-    const InternalSwiftOptions swiftOptions =
-        InternalSwiftOptions(swiftOut: '');
+    const InternalSwiftOptions swiftOptions = InternalSwiftOptions(
+      swiftOut: '',
+    );
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -477,32 +556,41 @@ void main() {
   });
 
   test('gen flutter void argument api', () {
-    final Root root = Root(apis: <Api>[
-      AstFlutterApi(name: 'Api', methods: <Method>[
-        Method(
-          name: 'doSomething',
-          location: ApiLocation.flutter,
-          parameters: <Parameter>[],
-          returnType: TypeDeclaration(
-            baseName: 'Output',
-            associatedClass: emptyClass,
-            isNullable: false,
-          ),
-        )
-      ])
-    ], classes: <Class>[
-      Class(name: 'Output', fields: <NamedType>[
-        NamedType(
-            type: const TypeDeclaration(
-              baseName: 'String',
-              isNullable: true,
+    final Root root = Root(
+      apis: <Api>[
+        AstFlutterApi(
+          name: 'Api',
+          methods: <Method>[
+            Method(
+              name: 'doSomething',
+              location: ApiLocation.flutter,
+              parameters: <Parameter>[],
+              returnType: TypeDeclaration(
+                baseName: 'Output',
+                associatedClass: emptyClass,
+                isNullable: false,
+              ),
             ),
-            name: 'output')
-      ]),
-    ], enums: <Enum>[]);
+          ],
+        ),
+      ],
+      classes: <Class>[
+        Class(
+          name: 'Output',
+          fields: <NamedType>[
+            NamedType(
+              type: const TypeDeclaration(baseName: 'String', isNullable: true),
+              name: 'output',
+            ),
+          ],
+        ),
+      ],
+      enums: <Enum>[],
+    );
     final StringBuffer sink = StringBuffer();
-    const InternalSwiftOptions swiftOptions =
-        InternalSwiftOptions(swiftOut: '');
+    const InternalSwiftOptions swiftOptions = InternalSwiftOptions(
+      swiftOut: '',
+    );
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -512,27 +600,35 @@ void main() {
     );
     final String code = sink.toString();
     expect(
-        code,
-        contains(
-            'func doSomething(completion: @escaping (Result<Output, PigeonError>) -> Void)'));
+      code,
+      contains(
+        'func doSomething(completion: @escaping (Result<Output, PigeonError>) -> Void)',
+      ),
+    );
     expect(code, contains('channel.sendMessage(nil'));
     expect(code, isNot(contains('if (')));
   });
 
   test('gen list', () {
-    final Root root = Root(apis: <Api>[], classes: <Class>[
-      Class(name: 'Foobar', fields: <NamedType>[
-        NamedType(
-            type: const TypeDeclaration(
-              baseName: 'List',
-              isNullable: true,
+    final Root root = Root(
+      apis: <Api>[],
+      classes: <Class>[
+        Class(
+          name: 'Foobar',
+          fields: <NamedType>[
+            NamedType(
+              type: const TypeDeclaration(baseName: 'List', isNullable: true),
+              name: 'field1',
             ),
-            name: 'field1')
-      ]),
-    ], enums: <Enum>[]);
+          ],
+        ),
+      ],
+      enums: <Enum>[],
+    );
     final StringBuffer sink = StringBuffer();
-    const InternalSwiftOptions swiftOptions =
-        InternalSwiftOptions(swiftOut: '');
+    const InternalSwiftOptions swiftOptions = InternalSwiftOptions(
+      swiftOut: '',
+    );
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -547,19 +643,25 @@ void main() {
   });
 
   test('gen map', () {
-    final Root root = Root(apis: <Api>[], classes: <Class>[
-      Class(name: 'Foobar', fields: <NamedType>[
-        NamedType(
-            type: const TypeDeclaration(
-              baseName: 'Map',
-              isNullable: true,
+    final Root root = Root(
+      apis: <Api>[],
+      classes: <Class>[
+        Class(
+          name: 'Foobar',
+          fields: <NamedType>[
+            NamedType(
+              type: const TypeDeclaration(baseName: 'Map', isNullable: true),
+              name: 'field1',
             ),
-            name: 'field1')
-      ]),
-    ], enums: <Enum>[]);
+          ],
+        ),
+      ],
+      enums: <Enum>[],
+    );
     final StringBuffer sink = StringBuffer();
-    const InternalSwiftOptions swiftOptions =
-        InternalSwiftOptions(swiftOut: '');
+    const InternalSwiftOptions swiftOptions = InternalSwiftOptions(
+      swiftOut: '',
+    );
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -578,23 +680,22 @@ void main() {
       name: 'Outer',
       fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(
-              baseName: 'Nested',
-              associatedClass: emptyClass,
-              isNullable: true,
-            ),
-            name: 'nested')
+          type: TypeDeclaration(
+            baseName: 'Nested',
+            associatedClass: emptyClass,
+            isNullable: true,
+          ),
+          name: 'nested',
+        ),
       ],
     );
     final Class nestedClass = Class(
       name: 'Nested',
       fields: <NamedType>[
         NamedType(
-            type: const TypeDeclaration(
-              baseName: 'int',
-              isNullable: true,
-            ),
-            name: 'data')
+          type: const TypeDeclaration(baseName: 'int', isNullable: true),
+          name: 'data',
+        ),
       ],
     );
     final Root root = Root(
@@ -603,8 +704,9 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    const InternalSwiftOptions swiftOptions =
-        InternalSwiftOptions(swiftOut: '');
+    const InternalSwiftOptions swiftOptions = InternalSwiftOptions(
+      swiftOut: '',
+    );
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -616,10 +718,14 @@ void main() {
     expect(code, contains('struct Outer'));
     expect(code, contains('struct Nested'));
     expect(code, contains('var nested: Nested? = nil'));
-    expect(code,
-        contains('static func fromList(_ pigeonVar_list: [Any?]) -> Outer?'));
     expect(
-        code, contains('let nested: Nested? = nilOrValue(pigeonVar_list[0])'));
+      code,
+      contains('static func fromList(_ pigeonVar_list: [Any?]) -> Outer?'),
+    );
+    expect(
+      code,
+      contains('let nested: Nested? = nilOrValue(pigeonVar_list[0])'),
+    );
     expect(code, contains('func toList() -> [Any?]'));
     expect(code, isNot(contains('if (')));
     // Single-element list serializations should not have a trailing comma.
@@ -627,49 +733,60 @@ void main() {
   });
 
   test('gen one async Host Api', () {
-    final Root root = Root(apis: <Api>[
-      AstHostApi(name: 'Api', methods: <Method>[
-        Method(
-          name: 'doSomething',
-          location: ApiLocation.host,
-          parameters: <Parameter>[
-            Parameter(
-                type: TypeDeclaration(
-                  baseName: 'Input',
-                  associatedClass: emptyClass,
-                  isNullable: false,
+    final Root root = Root(
+      apis: <Api>[
+        AstHostApi(
+          name: 'Api',
+          methods: <Method>[
+            Method(
+              name: 'doSomething',
+              location: ApiLocation.host,
+              parameters: <Parameter>[
+                Parameter(
+                  type: TypeDeclaration(
+                    baseName: 'Input',
+                    associatedClass: emptyClass,
+                    isNullable: false,
+                  ),
+                  name: 'arg',
                 ),
-                name: 'arg')
+              ],
+              returnType: TypeDeclaration(
+                baseName: 'Output',
+                associatedClass: emptyClass,
+                isNullable: false,
+              ),
+              isAsynchronous: true,
+            ),
           ],
-          returnType: TypeDeclaration(
-            baseName: 'Output',
-            associatedClass: emptyClass,
-            isNullable: false,
-          ),
-          isAsynchronous: true,
-        )
-      ])
-    ], classes: <Class>[
-      Class(name: 'Input', fields: <NamedType>[
-        NamedType(
-            type: const TypeDeclaration(
-              baseName: 'String',
-              isNullable: true,
+        ),
+      ],
+      classes: <Class>[
+        Class(
+          name: 'Input',
+          fields: <NamedType>[
+            NamedType(
+              type: const TypeDeclaration(baseName: 'String', isNullable: true),
+              name: 'input',
             ),
-            name: 'input')
-      ]),
-      Class(name: 'Output', fields: <NamedType>[
-        NamedType(
-            type: const TypeDeclaration(
-              baseName: 'String',
-              isNullable: true,
+          ],
+        ),
+        Class(
+          name: 'Output',
+          fields: <NamedType>[
+            NamedType(
+              type: const TypeDeclaration(baseName: 'String', isNullable: true),
+              name: 'output',
             ),
-            name: 'output')
-      ])
-    ], enums: <Enum>[]);
+          ],
+        ),
+      ],
+      enums: <Enum>[],
+    );
     final StringBuffer sink = StringBuffer();
-    const InternalSwiftOptions swiftOptions =
-        InternalSwiftOptions(swiftOut: '');
+    const InternalSwiftOptions swiftOptions = InternalSwiftOptions(
+      swiftOut: '',
+    );
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -685,49 +802,60 @@ void main() {
   });
 
   test('gen one async Flutter Api', () {
-    final Root root = Root(apis: <Api>[
-      AstFlutterApi(name: 'Api', methods: <Method>[
-        Method(
-          name: 'doSomething',
-          location: ApiLocation.flutter,
-          parameters: <Parameter>[
-            Parameter(
-                type: TypeDeclaration(
-                  baseName: 'Input',
-                  associatedClass: emptyClass,
-                  isNullable: false,
+    final Root root = Root(
+      apis: <Api>[
+        AstFlutterApi(
+          name: 'Api',
+          methods: <Method>[
+            Method(
+              name: 'doSomething',
+              location: ApiLocation.flutter,
+              parameters: <Parameter>[
+                Parameter(
+                  type: TypeDeclaration(
+                    baseName: 'Input',
+                    associatedClass: emptyClass,
+                    isNullable: false,
+                  ),
+                  name: '',
                 ),
-                name: '')
+              ],
+              returnType: TypeDeclaration(
+                baseName: 'Output',
+                associatedClass: emptyClass,
+                isNullable: false,
+              ),
+              isAsynchronous: true,
+            ),
           ],
-          returnType: TypeDeclaration(
-            baseName: 'Output',
-            associatedClass: emptyClass,
-            isNullable: false,
-          ),
-          isAsynchronous: true,
-        )
-      ])
-    ], classes: <Class>[
-      Class(name: 'Input', fields: <NamedType>[
-        NamedType(
-            type: const TypeDeclaration(
-              baseName: 'String',
-              isNullable: true,
+        ),
+      ],
+      classes: <Class>[
+        Class(
+          name: 'Input',
+          fields: <NamedType>[
+            NamedType(
+              type: const TypeDeclaration(baseName: 'String', isNullable: true),
+              name: 'input',
             ),
-            name: 'input')
-      ]),
-      Class(name: 'Output', fields: <NamedType>[
-        NamedType(
-            type: const TypeDeclaration(
-              baseName: 'String',
-              isNullable: true,
+          ],
+        ),
+        Class(
+          name: 'Output',
+          fields: <NamedType>[
+            NamedType(
+              type: const TypeDeclaration(baseName: 'String', isNullable: true),
+              name: 'output',
             ),
-            name: 'output')
-      ])
-    ], enums: <Enum>[]);
+          ],
+        ),
+      ],
+      enums: <Enum>[],
+    );
     final StringBuffer sink = StringBuffer();
-    const InternalSwiftOptions swiftOptions =
-        InternalSwiftOptions(swiftOut: '');
+    const InternalSwiftOptions swiftOptions = InternalSwiftOptions(
+      swiftOut: '',
+    );
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -744,21 +872,19 @@ void main() {
   test('gen one enum class', () {
     final Enum anEnum = Enum(
       name: 'Enum1',
-      members: <EnumMember>[
-        EnumMember(name: 'one'),
-        EnumMember(name: 'two'),
-      ],
+      members: <EnumMember>[EnumMember(name: 'one'), EnumMember(name: 'two')],
     );
     final Class classDefinition = Class(
       name: 'EnumClass',
       fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(
-              baseName: 'Enum1',
-              associatedEnum: emptyEnum,
-              isNullable: true,
-            ),
-            name: 'enum1'),
+          type: TypeDeclaration(
+            baseName: 'Enum1',
+            associatedEnum: emptyEnum,
+            isNullable: true,
+          ),
+          name: 'enum1',
+        ),
       ],
     );
     final Root root = Root(
@@ -767,8 +893,9 @@ void main() {
       enums: <Enum>[anEnum],
     );
     final StringBuffer sink = StringBuffer();
-    const InternalSwiftOptions swiftOptions =
-        InternalSwiftOptions(swiftOut: '');
+    const InternalSwiftOptions swiftOptions = InternalSwiftOptions(
+      swiftOut: '',
+    );
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -808,13 +935,15 @@ void main() {
       name: 'Foobar',
       fields: <NamedType>[
         NamedType(
-            type: const TypeDeclaration(
-                baseName: 'List',
-                isNullable: true,
-                typeArguments: <TypeDeclaration>[
-                  TypeDeclaration(baseName: 'int', isNullable: true)
-                ]),
-            name: 'field1'),
+          type: const TypeDeclaration(
+            baseName: 'List',
+            isNullable: true,
+            typeArguments: <TypeDeclaration>[
+              TypeDeclaration(baseName: 'int', isNullable: true),
+            ],
+          ),
+          name: 'field1',
+        ),
       ],
     );
     final Root root = Root(
@@ -823,8 +952,9 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    const InternalSwiftOptions swiftOptions =
-        InternalSwiftOptions(swiftOut: '');
+    const InternalSwiftOptions swiftOptions = InternalSwiftOptions(
+      swiftOut: '',
+    );
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -842,14 +972,16 @@ void main() {
       name: 'Foobar',
       fields: <NamedType>[
         NamedType(
-            type: const TypeDeclaration(
-                baseName: 'Map',
-                isNullable: true,
-                typeArguments: <TypeDeclaration>[
-                  TypeDeclaration(baseName: 'String', isNullable: true),
-                  TypeDeclaration(baseName: 'String', isNullable: true),
-                ]),
-            name: 'field1'),
+          type: const TypeDeclaration(
+            baseName: 'Map',
+            isNullable: true,
+            typeArguments: <TypeDeclaration>[
+              TypeDeclaration(baseName: 'String', isNullable: true),
+              TypeDeclaration(baseName: 'String', isNullable: true),
+            ],
+          ),
+          name: 'field1',
+        ),
       ],
     );
     final Root root = Root(
@@ -858,8 +990,9 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    const InternalSwiftOptions swiftOptions =
-        InternalSwiftOptions(swiftOut: '');
+    const InternalSwiftOptions swiftOptions = InternalSwiftOptions(
+      swiftOut: '',
+    );
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -875,29 +1008,36 @@ void main() {
   test('host generics argument', () {
     final Root root = Root(
       apis: <Api>[
-        AstHostApi(name: 'Api', methods: <Method>[
-          Method(
+        AstHostApi(
+          name: 'Api',
+          methods: <Method>[
+            Method(
               name: 'doit',
               location: ApiLocation.host,
               returnType: const TypeDeclaration.voidDeclaration(),
               parameters: <Parameter>[
                 Parameter(
-                    type: const TypeDeclaration(
-                        baseName: 'List',
-                        isNullable: false,
-                        typeArguments: <TypeDeclaration>[
-                          TypeDeclaration(baseName: 'int', isNullable: true)
-                        ]),
-                    name: 'arg')
-              ])
-        ])
+                  type: const TypeDeclaration(
+                    baseName: 'List',
+                    isNullable: false,
+                    typeArguments: <TypeDeclaration>[
+                      TypeDeclaration(baseName: 'int', isNullable: true),
+                    ],
+                  ),
+                  name: 'arg',
+                ),
+              ],
+            ),
+          ],
+        ),
       ],
       classes: <Class>[],
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    const InternalSwiftOptions swiftOptions =
-        InternalSwiftOptions(swiftOut: '');
+    const InternalSwiftOptions swiftOptions = InternalSwiftOptions(
+      swiftOut: '',
+    );
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -912,29 +1052,36 @@ void main() {
   test('flutter generics argument', () {
     final Root root = Root(
       apis: <Api>[
-        AstFlutterApi(name: 'Api', methods: <Method>[
-          Method(
+        AstFlutterApi(
+          name: 'Api',
+          methods: <Method>[
+            Method(
               name: 'doit',
               location: ApiLocation.flutter,
               returnType: const TypeDeclaration.voidDeclaration(),
               parameters: <Parameter>[
                 Parameter(
-                    type: const TypeDeclaration(
-                        baseName: 'List',
-                        isNullable: false,
-                        typeArguments: <TypeDeclaration>[
-                          TypeDeclaration(baseName: 'int', isNullable: true)
-                        ]),
-                    name: 'arg')
-              ])
-        ])
+                  type: const TypeDeclaration(
+                    baseName: 'List',
+                    isNullable: false,
+                    typeArguments: <TypeDeclaration>[
+                      TypeDeclaration(baseName: 'int', isNullable: true),
+                    ],
+                  ),
+                  name: 'arg',
+                ),
+              ],
+            ),
+          ],
+        ),
       ],
       classes: <Class>[],
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    const InternalSwiftOptions swiftOptions =
-        InternalSwiftOptions(swiftOut: '');
+    const InternalSwiftOptions swiftOptions = InternalSwiftOptions(
+      swiftOut: '',
+    );
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -949,25 +1096,31 @@ void main() {
   test('host generics return', () {
     final Root root = Root(
       apis: <Api>[
-        AstHostApi(name: 'Api', methods: <Method>[
-          Method(
+        AstHostApi(
+          name: 'Api',
+          methods: <Method>[
+            Method(
               name: 'doit',
               location: ApiLocation.host,
               returnType: const TypeDeclaration(
-                  baseName: 'List',
-                  isNullable: false,
-                  typeArguments: <TypeDeclaration>[
-                    TypeDeclaration(baseName: 'int', isNullable: true)
-                  ]),
-              parameters: <Parameter>[])
-        ])
+                baseName: 'List',
+                isNullable: false,
+                typeArguments: <TypeDeclaration>[
+                  TypeDeclaration(baseName: 'int', isNullable: true),
+                ],
+              ),
+              parameters: <Parameter>[],
+            ),
+          ],
+        ),
       ],
       classes: <Class>[],
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    const InternalSwiftOptions swiftOptions =
-        InternalSwiftOptions(swiftOut: '');
+    const InternalSwiftOptions swiftOptions = InternalSwiftOptions(
+      swiftOut: '',
+    );
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -984,25 +1137,31 @@ void main() {
   test('flutter generics return', () {
     final Root root = Root(
       apis: <Api>[
-        AstFlutterApi(name: 'Api', methods: <Method>[
-          Method(
+        AstFlutterApi(
+          name: 'Api',
+          methods: <Method>[
+            Method(
               name: 'doit',
               location: ApiLocation.flutter,
               returnType: const TypeDeclaration(
-                  baseName: 'List',
-                  isNullable: false,
-                  typeArguments: <TypeDeclaration>[
-                    TypeDeclaration(baseName: 'int', isNullable: true)
-                  ]),
-              parameters: <Parameter>[])
-        ])
+                baseName: 'List',
+                isNullable: false,
+                typeArguments: <TypeDeclaration>[
+                  TypeDeclaration(baseName: 'int', isNullable: true),
+                ],
+              ),
+              parameters: <Parameter>[],
+            ),
+          ],
+        ),
       ],
       classes: <Class>[],
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    const InternalSwiftOptions swiftOptions =
-        InternalSwiftOptions(swiftOut: '');
+    const InternalSwiftOptions swiftOptions = InternalSwiftOptions(
+      swiftOut: '',
+    );
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -1012,36 +1171,55 @@ void main() {
     );
     final String code = sink.toString();
     expect(
-        code,
-        contains(
-            'func doit(completion: @escaping (Result<[Int64?], PigeonError>) -> Void)'));
+      code,
+      contains(
+        'func doit(completion: @escaping (Result<[Int64?], PigeonError>) -> Void)',
+      ),
+    );
     expect(code, contains('let result = listResponse[0] as! [Int64?]'));
     expect(code, contains('completion(.success(result))'));
   });
 
   test('host multiple args', () {
-    final Root root = Root(apis: <Api>[
-      AstHostApi(name: 'Api', methods: <Method>[
-        Method(
-          name: 'add',
-          location: ApiLocation.host,
-          parameters: <Parameter>[
-            Parameter(
-                name: 'x',
-                type:
-                    const TypeDeclaration(isNullable: false, baseName: 'int')),
-            Parameter(
-                name: 'y',
-                type:
-                    const TypeDeclaration(isNullable: false, baseName: 'int')),
+    final Root root = Root(
+      apis: <Api>[
+        AstHostApi(
+          name: 'Api',
+          methods: <Method>[
+            Method(
+              name: 'add',
+              location: ApiLocation.host,
+              parameters: <Parameter>[
+                Parameter(
+                  name: 'x',
+                  type: const TypeDeclaration(
+                    isNullable: false,
+                    baseName: 'int',
+                  ),
+                ),
+                Parameter(
+                  name: 'y',
+                  type: const TypeDeclaration(
+                    isNullable: false,
+                    baseName: 'int',
+                  ),
+                ),
+              ],
+              returnType: const TypeDeclaration(
+                baseName: 'int',
+                isNullable: false,
+              ),
+            ),
           ],
-          returnType: const TypeDeclaration(baseName: 'int', isNullable: false),
-        )
-      ])
-    ], classes: <Class>[], enums: <Enum>[]);
+        ),
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
     final StringBuffer sink = StringBuffer();
-    const InternalSwiftOptions swiftOptions =
-        InternalSwiftOptions(swiftOut: '');
+    const InternalSwiftOptions swiftOptions = InternalSwiftOptions(
+      swiftOut: '',
+    );
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -1059,28 +1237,45 @@ void main() {
   });
 
   test('flutter multiple args', () {
-    final Root root = Root(apis: <Api>[
-      AstFlutterApi(name: 'Api', methods: <Method>[
-        Method(
-          name: 'add',
-          location: ApiLocation.flutter,
-          parameters: <Parameter>[
-            Parameter(
-                name: 'x',
-                type:
-                    const TypeDeclaration(baseName: 'int', isNullable: false)),
-            Parameter(
-                name: 'y',
-                type:
-                    const TypeDeclaration(baseName: 'int', isNullable: false)),
+    final Root root = Root(
+      apis: <Api>[
+        AstFlutterApi(
+          name: 'Api',
+          methods: <Method>[
+            Method(
+              name: 'add',
+              location: ApiLocation.flutter,
+              parameters: <Parameter>[
+                Parameter(
+                  name: 'x',
+                  type: const TypeDeclaration(
+                    baseName: 'int',
+                    isNullable: false,
+                  ),
+                ),
+                Parameter(
+                  name: 'y',
+                  type: const TypeDeclaration(
+                    baseName: 'int',
+                    isNullable: false,
+                  ),
+                ),
+              ],
+              returnType: const TypeDeclaration(
+                baseName: 'int',
+                isNullable: false,
+              ),
+            ),
           ],
-          returnType: const TypeDeclaration(baseName: 'int', isNullable: false),
-        )
-      ])
-    ], classes: <Class>[], enums: <Enum>[]);
+        ),
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
     final StringBuffer sink = StringBuffer();
-    const InternalSwiftOptions swiftOptions =
-        InternalSwiftOptions(swiftOut: '');
+    const InternalSwiftOptions swiftOptions = InternalSwiftOptions(
+      swiftOut: '',
+    );
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -1093,33 +1288,42 @@ void main() {
     expect(code, contains('let result = listResponse[0] as! Int64'));
     expect(code, contains('completion(.success(result))'));
     expect(
-        code,
-        contains(
-            'func add(x xArg: Int64, y yArg: Int64, completion: @escaping (Result<Int64, PigeonError>) -> Void)'));
-    expect(code,
-        contains('channel.sendMessage([xArg, yArg] as [Any?]) { response in'));
+      code,
+      contains(
+        'func add(x xArg: Int64, y yArg: Int64, completion: @escaping (Result<Int64, PigeonError>) -> Void)',
+      ),
+    );
+    expect(
+      code,
+      contains('channel.sendMessage([xArg, yArg] as [Any?]) { response in'),
+    );
   });
 
   test('return nullable host', () {
     final Root root = Root(
       apis: <Api>[
-        AstHostApi(name: 'Api', methods: <Method>[
-          Method(
+        AstHostApi(
+          name: 'Api',
+          methods: <Method>[
+            Method(
               name: 'doit',
               location: ApiLocation.host,
               returnType: const TypeDeclaration(
                 baseName: 'int',
                 isNullable: true,
               ),
-              parameters: <Parameter>[])
-        ])
+              parameters: <Parameter>[],
+            ),
+          ],
+        ),
       ],
       classes: <Class>[],
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    const InternalSwiftOptions swiftOptions =
-        InternalSwiftOptions(swiftOut: '');
+    const InternalSwiftOptions swiftOptions = InternalSwiftOptions(
+      swiftOut: '',
+    );
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -1134,8 +1338,10 @@ void main() {
   test('return nullable host async', () {
     final Root root = Root(
       apis: <Api>[
-        AstHostApi(name: 'Api', methods: <Method>[
-          Method(
+        AstHostApi(
+          name: 'Api',
+          methods: <Method>[
+            Method(
               name: 'doit',
               location: ApiLocation.host,
               returnType: const TypeDeclaration(
@@ -1143,15 +1349,18 @@ void main() {
                 isNullable: true,
               ),
               isAsynchronous: true,
-              parameters: <Parameter>[])
-        ])
+              parameters: <Parameter>[],
+            ),
+          ],
+        ),
       ],
       classes: <Class>[],
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    const InternalSwiftOptions swiftOptions =
-        InternalSwiftOptions(swiftOut: '');
+    const InternalSwiftOptions swiftOptions = InternalSwiftOptions(
+      swiftOut: '',
+    );
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -1161,35 +1370,43 @@ void main() {
     );
     final String code = sink.toString();
     expect(
-        code,
-        contains(
-            'func doit(completion: @escaping (Result<Int64?, Error>) -> Void'));
+      code,
+      contains(
+        'func doit(completion: @escaping (Result<Int64?, Error>) -> Void',
+      ),
+    );
   });
 
   test('nullable argument host', () {
     final Root root = Root(
       apis: <Api>[
-        AstHostApi(name: 'Api', methods: <Method>[
-          Method(
+        AstHostApi(
+          name: 'Api',
+          methods: <Method>[
+            Method(
               name: 'doit',
               location: ApiLocation.host,
               returnType: const TypeDeclaration.voidDeclaration(),
               parameters: <Parameter>[
                 Parameter(
-                    name: 'foo',
-                    type: const TypeDeclaration(
-                      baseName: 'int',
-                      isNullable: true,
-                    )),
-              ])
-        ])
+                  name: 'foo',
+                  type: const TypeDeclaration(
+                    baseName: 'int',
+                    isNullable: true,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ],
       classes: <Class>[],
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    const InternalSwiftOptions swiftOptions =
-        InternalSwiftOptions(swiftOut: '');
+    const InternalSwiftOptions swiftOptions = InternalSwiftOptions(
+      swiftOut: '',
+    );
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -1204,27 +1421,33 @@ void main() {
   test('nullable argument flutter', () {
     final Root root = Root(
       apis: <Api>[
-        AstFlutterApi(name: 'Api', methods: <Method>[
-          Method(
+        AstFlutterApi(
+          name: 'Api',
+          methods: <Method>[
+            Method(
               name: 'doit',
               location: ApiLocation.flutter,
               returnType: const TypeDeclaration.voidDeclaration(),
               parameters: <Parameter>[
                 Parameter(
-                    name: 'foo',
-                    type: const TypeDeclaration(
-                      baseName: 'int',
-                      isNullable: true,
-                    )),
-              ])
-        ])
+                  name: 'foo',
+                  type: const TypeDeclaration(
+                    baseName: 'int',
+                    isNullable: true,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ],
       classes: <Class>[],
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    const InternalSwiftOptions swiftOptions =
-        InternalSwiftOptions(swiftOut: '');
+    const InternalSwiftOptions swiftOptions = InternalSwiftOptions(
+      swiftOut: '',
+    );
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -1234,42 +1457,57 @@ void main() {
     );
     final String code = sink.toString();
     expect(
-        code,
-        contains(
-            'func doit(foo fooArg: Int64?, completion: @escaping (Result<Void, PigeonError>) -> Void)'));
+      code,
+      contains(
+        'func doit(foo fooArg: Int64?, completion: @escaping (Result<Void, PigeonError>) -> Void)',
+      ),
+    );
   });
 
   test('nonnull fields', () {
-    final Root root = Root(apis: <Api>[
-      AstHostApi(name: 'Api', methods: <Method>[
-        Method(
-          name: 'doSomething',
-          location: ApiLocation.host,
-          parameters: <Parameter>[
-            Parameter(
-                type: TypeDeclaration(
-                  baseName: 'Input',
-                  associatedClass: emptyClass,
-                  isNullable: false,
+    final Root root = Root(
+      apis: <Api>[
+        AstHostApi(
+          name: 'Api',
+          methods: <Method>[
+            Method(
+              name: 'doSomething',
+              location: ApiLocation.host,
+              parameters: <Parameter>[
+                Parameter(
+                  type: TypeDeclaration(
+                    baseName: 'Input',
+                    associatedClass: emptyClass,
+                    isNullable: false,
+                  ),
+                  name: '',
                 ),
-                name: '')
-          ],
-          returnType: const TypeDeclaration.voidDeclaration(),
-        )
-      ])
-    ], classes: <Class>[
-      Class(name: 'Input', fields: <NamedType>[
-        NamedType(
-            type: const TypeDeclaration(
-              baseName: 'String',
-              isNullable: false,
+              ],
+              returnType: const TypeDeclaration.voidDeclaration(),
             ),
-            name: 'input')
-      ]),
-    ], enums: <Enum>[]);
+          ],
+        ),
+      ],
+      classes: <Class>[
+        Class(
+          name: 'Input',
+          fields: <NamedType>[
+            NamedType(
+              type: const TypeDeclaration(
+                baseName: 'String',
+                isNullable: false,
+              ),
+              name: 'input',
+            ),
+          ],
+        ),
+      ],
+      enums: <Enum>[],
+    );
     final StringBuffer sink = StringBuffer();
-    const InternalSwiftOptions swiftOptions =
-        InternalSwiftOptions(swiftOut: '');
+    const InternalSwiftOptions swiftOptions = InternalSwiftOptions(
+      swiftOut: '',
+    );
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -1315,9 +1553,9 @@ void main() {
                   ),
                 ),
               ],
-            )
+            ),
           ],
-        )
+        ),
       ],
       classes: <Class>[
         Class(
@@ -1327,12 +1565,13 @@ void main() {
             NamedType(
               documentationComments: <String>[comments[count++]],
               type: const TypeDeclaration(
-                  baseName: 'Map',
-                  isNullable: true,
-                  typeArguments: <TypeDeclaration>[
-                    TypeDeclaration(baseName: 'String', isNullable: true),
-                    TypeDeclaration(baseName: 'int', isNullable: true),
-                  ]),
+                baseName: 'Map',
+                isNullable: true,
+                typeArguments: <TypeDeclaration>[
+                  TypeDeclaration(baseName: 'String', isNullable: true),
+                  TypeDeclaration(baseName: 'int', isNullable: true),
+                ],
+              ),
               name: 'field1',
             ),
           ],
@@ -1343,7 +1582,7 @@ void main() {
           name: 'enum',
           documentationComments: <String>[
             comments[count++],
-            unspacedComments[unspacedCount++]
+            unspacedComments[unspacedCount++],
           ],
           members: <EnumMember>[
             EnumMember(
@@ -1356,8 +1595,9 @@ void main() {
       ],
     );
     final StringBuffer sink = StringBuffer();
-    const InternalSwiftOptions swiftOptions =
-        InternalSwiftOptions(swiftOut: '');
+    const InternalSwiftOptions swiftOptions = InternalSwiftOptions(
+      swiftOut: '',
+    );
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -1373,49 +1613,60 @@ void main() {
   });
 
   test('creates custom codecs', () {
-    final Root root = Root(apis: <Api>[
-      AstFlutterApi(name: 'Api', methods: <Method>[
-        Method(
-          name: 'doSomething',
-          location: ApiLocation.flutter,
-          parameters: <Parameter>[
-            Parameter(
-                type: TypeDeclaration(
-                  baseName: 'Input',
-                  associatedClass: emptyClass,
-                  isNullable: false,
+    final Root root = Root(
+      apis: <Api>[
+        AstFlutterApi(
+          name: 'Api',
+          methods: <Method>[
+            Method(
+              name: 'doSomething',
+              location: ApiLocation.flutter,
+              parameters: <Parameter>[
+                Parameter(
+                  type: TypeDeclaration(
+                    baseName: 'Input',
+                    associatedClass: emptyClass,
+                    isNullable: false,
+                  ),
+                  name: '',
                 ),
-                name: '')
+              ],
+              returnType: TypeDeclaration(
+                baseName: 'Output',
+                associatedClass: emptyClass,
+                isNullable: false,
+              ),
+              isAsynchronous: true,
+            ),
           ],
-          returnType: TypeDeclaration(
-            baseName: 'Output',
-            associatedClass: emptyClass,
-            isNullable: false,
-          ),
-          isAsynchronous: true,
-        )
-      ])
-    ], classes: <Class>[
-      Class(name: 'Input', fields: <NamedType>[
-        NamedType(
-            type: const TypeDeclaration(
-              baseName: 'String',
-              isNullable: true,
+        ),
+      ],
+      classes: <Class>[
+        Class(
+          name: 'Input',
+          fields: <NamedType>[
+            NamedType(
+              type: const TypeDeclaration(baseName: 'String', isNullable: true),
+              name: 'input',
             ),
-            name: 'input')
-      ]),
-      Class(name: 'Output', fields: <NamedType>[
-        NamedType(
-            type: const TypeDeclaration(
-              baseName: 'String',
-              isNullable: true,
+          ],
+        ),
+        Class(
+          name: 'Output',
+          fields: <NamedType>[
+            NamedType(
+              type: const TypeDeclaration(baseName: 'String', isNullable: true),
+              name: 'output',
             ),
-            name: 'output')
-      ])
-    ], enums: <Enum>[]);
+          ],
+        ),
+      ],
+      enums: <Enum>[],
+    );
     final StringBuffer sink = StringBuffer();
-    const InternalSwiftOptions swiftOptions =
-        InternalSwiftOptions(swiftOut: '');
+    const InternalSwiftOptions swiftOptions = InternalSwiftOptions(
+      swiftOut: '',
+    );
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -1430,37 +1681,41 @@ void main() {
   test('swift function signature', () {
     final Root root = Root(
       apis: <Api>[
-        AstHostApi(name: 'Api', methods: <Method>[
-          Method(
-            name: 'set',
-            location: ApiLocation.host,
-            parameters: <Parameter>[
-              Parameter(
-                type: const TypeDeclaration(
-                  baseName: 'int',
-                  isNullable: false,
+        AstHostApi(
+          name: 'Api',
+          methods: <Method>[
+            Method(
+              name: 'set',
+              location: ApiLocation.host,
+              parameters: <Parameter>[
+                Parameter(
+                  type: const TypeDeclaration(
+                    baseName: 'int',
+                    isNullable: false,
+                  ),
+                  name: 'value',
                 ),
-                name: 'value',
-              ),
-              Parameter(
-                type: const TypeDeclaration(
-                  baseName: 'String',
-                  isNullable: false,
+                Parameter(
+                  type: const TypeDeclaration(
+                    baseName: 'String',
+                    isNullable: false,
+                  ),
+                  name: 'key',
                 ),
-                name: 'key',
-              ),
-            ],
-            swiftFunction: 'setValue(_:for:)',
-            returnType: const TypeDeclaration.voidDeclaration(),
-          )
-        ])
+              ],
+              swiftFunction: 'setValue(_:for:)',
+              returnType: const TypeDeclaration.voidDeclaration(),
+            ),
+          ],
+        ),
       ],
       classes: <Class>[],
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    const InternalSwiftOptions swiftOptions =
-        InternalSwiftOptions(swiftOut: '');
+    const InternalSwiftOptions swiftOptions = InternalSwiftOptions(
+      swiftOut: '',
+    );
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -1475,30 +1730,34 @@ void main() {
   test('swift function signature with same name argument', () {
     final Root root = Root(
       apis: <Api>[
-        AstHostApi(name: 'Api', methods: <Method>[
-          Method(
-            name: 'set',
-            location: ApiLocation.host,
-            parameters: <Parameter>[
-              Parameter(
-                type: const TypeDeclaration(
-                  baseName: 'String',
-                  isNullable: false,
+        AstHostApi(
+          name: 'Api',
+          methods: <Method>[
+            Method(
+              name: 'set',
+              location: ApiLocation.host,
+              parameters: <Parameter>[
+                Parameter(
+                  type: const TypeDeclaration(
+                    baseName: 'String',
+                    isNullable: false,
+                  ),
+                  name: 'key',
                 ),
-                name: 'key',
-              ),
-            ],
-            swiftFunction: 'removeValue(key:)',
-            returnType: const TypeDeclaration.voidDeclaration(),
-          )
-        ])
+              ],
+              swiftFunction: 'removeValue(key:)',
+              returnType: const TypeDeclaration.voidDeclaration(),
+            ),
+          ],
+        ),
       ],
       classes: <Class>[],
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    const InternalSwiftOptions swiftOptions =
-        InternalSwiftOptions(swiftOut: '');
+    const InternalSwiftOptions swiftOptions = InternalSwiftOptions(
+      swiftOut: '',
+    );
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -1513,22 +1772,26 @@ void main() {
   test('swift function signature with no arguments', () {
     final Root root = Root(
       apis: <Api>[
-        AstHostApi(name: 'Api', methods: <Method>[
-          Method(
-            name: 'clear',
-            location: ApiLocation.host,
-            parameters: <Parameter>[],
-            swiftFunction: 'removeAll()',
-            returnType: const TypeDeclaration.voidDeclaration(),
-          )
-        ])
+        AstHostApi(
+          name: 'Api',
+          methods: <Method>[
+            Method(
+              name: 'clear',
+              location: ApiLocation.host,
+              parameters: <Parameter>[],
+              swiftFunction: 'removeAll()',
+              returnType: const TypeDeclaration.voidDeclaration(),
+            ),
+          ],
+        ),
       ],
       classes: <Class>[],
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    const InternalSwiftOptions swiftOptions =
-        InternalSwiftOptions(swiftOut: '');
+    const InternalSwiftOptions swiftOptions = InternalSwiftOptions(
+      swiftOut: '',
+    );
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -1559,17 +1822,18 @@ void main() {
                   ),
                 ),
               ],
-            )
+            ),
           ],
-        )
+        ),
       ],
       classes: <Class>[],
       enums: <Enum>[],
       containsFlutterApi: true,
     );
     final StringBuffer sink = StringBuffer();
-    const InternalSwiftOptions kotlinOptions =
-        InternalSwiftOptions(swiftOut: '');
+    const InternalSwiftOptions kotlinOptions = InternalSwiftOptions(
+      swiftOut: '',
+    );
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       kotlinOptions,
@@ -1579,12 +1843,16 @@ void main() {
     );
     final String code = sink.toString();
     expect(
-        code,
-        contains(
-            'completion(.failure(createConnectionError(withChannelName: channelName)))'));
+      code,
+      contains(
+        'completion(.failure(createConnectionError(withChannelName: channelName)))',
+      ),
+    );
     expect(
-        code,
-        contains(
-            'return PigeonError(code: "channel-error", message: "Unable to establish connection on channel: \'\\(channelName)\'.", details: "")'));
+      code,
+      contains(
+        'return PigeonError(code: "channel-error", message: "Unable to establish connection on channel: \'\\(channelName)\'.", details: "")',
+      ),
+    );
   });
 }

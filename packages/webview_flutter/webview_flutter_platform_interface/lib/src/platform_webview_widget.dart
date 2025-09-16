@@ -19,8 +19,9 @@ abstract class PlatformWebViewWidget extends PlatformInterface {
       '`WebViewPlatform.instance` before use. For unit testing, '
       '`WebViewPlatform.instance` can be set with your own test implementation.',
     );
-    final PlatformWebViewWidget webViewWidgetDelegate =
-        WebViewPlatform.instance!.createPlatformWebViewWidget(params);
+    final PlatformWebViewWidget webViewWidgetDelegate = WebViewPlatform
+        .instance!
+        .createPlatformWebViewWidget(params);
     PlatformInterface.verify(webViewWidgetDelegate, _token);
     return webViewWidgetDelegate;
   }

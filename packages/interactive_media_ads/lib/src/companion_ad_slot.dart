@@ -37,11 +37,11 @@ class CompanionAdSlot {
     required CompanionAdSlotSize size,
     void Function()? onClicked,
   }) : this.fromPlatformCreationParams(
-          params: PlatformCompanionAdSlotCreationParams(
-            size: size,
-            onClicked: onClicked,
-          ),
-        );
+         params: PlatformCompanionAdSlotCreationParams(
+           size: size,
+           onClicked: onClicked,
+         ),
+       );
 
   /// Constructs a [CompanionAdSlot] from creation params for a specific
   /// platform.

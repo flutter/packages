@@ -17,8 +17,11 @@ const String kInvalidBillingConfigErrorMessage =
 @immutable
 class BillingConfigWrapper implements HasBillingResponse {
   /// Constructs the object with [responseCode] and [debugMessage].
-  const BillingConfigWrapper(
-      {required this.responseCode, this.debugMessage, this.countryCode = ''});
+  const BillingConfigWrapper({
+    required this.responseCode,
+    this.debugMessage,
+    this.countryCode = '',
+  });
 
   /// Response code returned in the Play Billing API calls.
   @override

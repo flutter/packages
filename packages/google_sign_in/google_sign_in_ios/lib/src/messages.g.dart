@@ -63,11 +63,7 @@ class PlatformConfigurationParams {
   String? hostedDomain;
 
   Object encode() {
-    return <Object?>[
-      clientId,
-      serverClientId,
-      hostedDomain,
-    ];
+    return <Object?>[clientId, serverClientId, hostedDomain];
   }
 
   static PlatformConfigurationParams decode(Object result) {
@@ -103,13 +99,7 @@ class UserData {
   String? idToken;
 
   Object encode() {
-    return <Object?>[
-      displayName,
-      email,
-      userId,
-      photoUrl,
-      idToken,
-    ];
+    return <Object?>[displayName, email, userId, photoUrl, idToken];
   }
 
   static UserData decode(Object result) {
@@ -126,10 +116,7 @@ class UserData {
 
 /// The response from an auth call.
 class SignInResult {
-  SignInResult({
-    this.success,
-    this.error,
-  });
+  SignInResult({this.success, this.error});
 
   /// The success result, if any.
   ///
@@ -142,10 +129,7 @@ class SignInResult {
   SignInFailure? error;
 
   Object encode() {
-    return <Object?>[
-      success,
-      error,
-    ];
+    return <Object?>[success, error];
   }
 
   static SignInResult decode(Object result) {
@@ -159,11 +143,7 @@ class SignInResult {
 
 /// An sign in failure.
 class SignInFailure {
-  SignInFailure({
-    required this.type,
-    this.message,
-    this.details,
-  });
+  SignInFailure({required this.type, this.message, this.details});
 
   /// The type of failure.
   GoogleSignInErrorCode type;
@@ -175,11 +155,7 @@ class SignInFailure {
   Object? details;
 
   Object encode() {
-    return <Object?>[
-      type,
-      message,
-      details,
-    ];
+    return <Object?>[type, message, details];
   }
 
   static SignInFailure decode(Object result) {
@@ -215,12 +191,7 @@ class SignInSuccess {
   String? serverAuthCode;
 
   Object encode() {
-    return <Object?>[
-      user,
-      accessToken,
-      grantedScopes,
-      serverAuthCode,
-    ];
+    return <Object?>[user, accessToken, grantedScopes, serverAuthCode];
   }
 
   static SignInSuccess decode(Object result) {
@@ -290,11 +261,12 @@ class GoogleSignInApi {
   /// Constructor for [GoogleSignInApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  GoogleSignInApi(
-      {BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
-      : pigeonVar_binaryMessenger = binaryMessenger,
-        pigeonVar_messageChannelSuffix =
-            messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+  GoogleSignInApi({
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) : pigeonVar_binaryMessenger = binaryMessenger,
+       pigeonVar_messageChannelSuffix =
+           messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -307,10 +279,10 @@ class GoogleSignInApi {
         'dev.flutter.pigeon.google_sign_in_ios.GoogleSignInApi.configure$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_channel.send(<Object?>[params]) as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -333,10 +305,10 @@ class GoogleSignInApi {
         'dev.flutter.pigeon.google_sign_in_ios.GoogleSignInApi.restorePreviousSignIn$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_channel.send(null) as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -363,12 +335,13 @@ class GoogleSignInApi {
         'dev.flutter.pigeon.google_sign_in_ios.GoogleSignInApi.signIn$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
-    final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
-        .send(<Object?>[scopeHint, nonce]) as List<Object?>?;
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_channel.send(<Object?>[scopeHint, nonce])
+            as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {
@@ -393,10 +366,10 @@ class GoogleSignInApi {
         'dev.flutter.pigeon.google_sign_in_ios.GoogleSignInApi.getRefreshedAuthorizationTokens$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_channel.send(<Object?>[userId]) as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -423,12 +396,13 @@ class GoogleSignInApi {
         'dev.flutter.pigeon.google_sign_in_ios.GoogleSignInApi.addScopes$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
-    final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
-        .send(<Object?>[scopes, userId]) as List<Object?>?;
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_channel.send(<Object?>[scopes, userId])
+            as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {
@@ -453,10 +427,10 @@ class GoogleSignInApi {
         'dev.flutter.pigeon.google_sign_in_ios.GoogleSignInApi.signOut$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_channel.send(null) as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -478,10 +452,10 @@ class GoogleSignInApi {
         'dev.flutter.pigeon.google_sign_in_ios.GoogleSignInApi.disconnect$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_channel.send(null) as List<Object?>?;
     if (pigeonVar_replyList == null) {

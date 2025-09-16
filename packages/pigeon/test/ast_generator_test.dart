@@ -12,11 +12,9 @@ void main() {
       name: 'Foobar',
       fields: <NamedType>[
         NamedType(
-            type: const TypeDeclaration(
-              baseName: 'dataType1',
-              isNullable: true,
-            ),
-            name: 'field1'),
+          type: const TypeDeclaration(baseName: 'dataType1', isNullable: true),
+          name: 'field1',
+        ),
       ],
     );
     final Root root = Root(

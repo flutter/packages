@@ -57,68 +57,87 @@ abstract class TestPathProviderApi {
     messageChannelSuffix =
         messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.path_provider_foundation.PathProviderApi.getDirectoryPath$messageChannelSuffix',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.path_provider_foundation.PathProviderApi.getDirectoryPath$messageChannelSuffix',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (api == null) {
         _testBinaryMessengerBinding!.defaultBinaryMessenger
             .setMockDecodedMessageHandler<Object?>(pigeonVar_channel, null);
       } else {
         _testBinaryMessengerBinding!.defaultBinaryMessenger
-            .setMockDecodedMessageHandler<Object?>(pigeonVar_channel,
-                (Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.path_provider_foundation.PathProviderApi.getDirectoryPath was null.');
-          final List<Object?> args = (message as List<Object?>?)!;
-          final DirectoryType? arg_type = (args[0] as DirectoryType?);
-          assert(arg_type != null,
-              'Argument for dev.flutter.pigeon.path_provider_foundation.PathProviderApi.getDirectoryPath was null, expected non-null DirectoryType.');
-          try {
-            final String? output = api.getDirectoryPath(arg_type!);
-            return <Object?>[output];
-          } on PlatformException catch (e) {
-            return wrapResponse(error: e);
-          } catch (e) {
-            return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
-          }
-        });
+            .setMockDecodedMessageHandler<Object?>(pigeonVar_channel, (
+              Object? message,
+            ) async {
+              assert(
+                message != null,
+                'Argument for dev.flutter.pigeon.path_provider_foundation.PathProviderApi.getDirectoryPath was null.',
+              );
+              final List<Object?> args = (message as List<Object?>?)!;
+              final DirectoryType? arg_type = (args[0] as DirectoryType?);
+              assert(
+                arg_type != null,
+                'Argument for dev.flutter.pigeon.path_provider_foundation.PathProviderApi.getDirectoryPath was null, expected non-null DirectoryType.',
+              );
+              try {
+                final String? output = api.getDirectoryPath(arg_type!);
+                return <Object?>[output];
+              } on PlatformException catch (e) {
+                return wrapResponse(error: e);
+              } catch (e) {
+                return wrapResponse(
+                  error: PlatformException(
+                    code: 'error',
+                    message: e.toString(),
+                  ),
+                );
+              }
+            });
       }
     }
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.path_provider_foundation.PathProviderApi.getContainerPath$messageChannelSuffix',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.path_provider_foundation.PathProviderApi.getContainerPath$messageChannelSuffix',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (api == null) {
         _testBinaryMessengerBinding!.defaultBinaryMessenger
             .setMockDecodedMessageHandler<Object?>(pigeonVar_channel, null);
       } else {
         _testBinaryMessengerBinding!.defaultBinaryMessenger
-            .setMockDecodedMessageHandler<Object?>(pigeonVar_channel,
-                (Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.path_provider_foundation.PathProviderApi.getContainerPath was null.');
-          final List<Object?> args = (message as List<Object?>?)!;
-          final String? arg_appGroupIdentifier = (args[0] as String?);
-          assert(arg_appGroupIdentifier != null,
-              'Argument for dev.flutter.pigeon.path_provider_foundation.PathProviderApi.getContainerPath was null, expected non-null String.');
-          try {
-            final String? output =
-                api.getContainerPath(arg_appGroupIdentifier!);
-            return <Object?>[output];
-          } on PlatformException catch (e) {
-            return wrapResponse(error: e);
-          } catch (e) {
-            return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
-          }
-        });
+            .setMockDecodedMessageHandler<Object?>(pigeonVar_channel, (
+              Object? message,
+            ) async {
+              assert(
+                message != null,
+                'Argument for dev.flutter.pigeon.path_provider_foundation.PathProviderApi.getContainerPath was null.',
+              );
+              final List<Object?> args = (message as List<Object?>?)!;
+              final String? arg_appGroupIdentifier = (args[0] as String?);
+              assert(
+                arg_appGroupIdentifier != null,
+                'Argument for dev.flutter.pigeon.path_provider_foundation.PathProviderApi.getContainerPath was null, expected non-null String.',
+              );
+              try {
+                final String? output = api.getContainerPath(
+                  arg_appGroupIdentifier!,
+                );
+                return <Object?>[output];
+              } on PlatformException catch (e) {
+                return wrapResponse(error: e);
+              } catch (e) {
+                return wrapResponse(
+                  error: PlatformException(
+                    code: 'error',
+                    message: e.toString(),
+                  ),
+                );
+              }
+            });
       }
     }
   }

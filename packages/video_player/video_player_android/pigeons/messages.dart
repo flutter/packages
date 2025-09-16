@@ -35,6 +35,16 @@ class CreateMessage {
   PlatformVideoViewType? viewType;
 }
 
+class PlaybackState {
+  PlaybackState({required this.playPosition, required this.bufferPosition});
+
+  /// The current playback position, in milliseconds.
+  final int playPosition;
+
+  /// The current buffer position, in milliseconds.
+  final int bufferPosition;
+}
+
 @HostApi()
 abstract class AndroidVideoPlayerApi {
   void initialize();
@@ -46,11 +56,27 @@ abstract class AndroidVideoPlayerApi {
 
 @HostApi()
 abstract class VideoPlayerInstanceApi {
+  /// Sets whether to automatically loop playback of the video.
   void setLooping(bool looping);
+
+  /// Sets the volume, with 0.0 being muted and 1.0 being full volume.
   void setVolume(double volume);
+
+  /// Sets the playback speed as a multiple of normal speed.
   void setPlaybackSpeed(double speed);
+
+  /// Begins playback if the video is not currently playing.
   void play();
-  int getPosition();
-  void seekTo(int position);
+
+  /// Pauses playback if the video is currently playing.
   void pause();
+
+  /// Seeks to the given playback position, in milliseconds.
+  void seekTo(int position);
+
+  /// Returns the current playback state.
+  ///
+  /// This is combined into a single call to minimize platform channel calls for
+  /// state that needs to be polled frequently.
+  PlaybackState getPlaybackState();
 }

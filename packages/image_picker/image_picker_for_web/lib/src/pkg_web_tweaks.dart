@@ -9,6 +9,7 @@ extension WebFileListToDartList on web.FileList {
   /// Converts a [web.FileList] into a [List] of [web.File].
   ///
   /// This method makes a copy.
-  List<web.File> get toList =>
-      <web.File>[for (int i = 0; i < length; i++) item(i)!];
+  List<web.File> get toList => <web.File>[
+    for (int i = 0; i < length; i++) item(i)!,
+  ];
 }

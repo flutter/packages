@@ -48,9 +48,7 @@ class Sk2PurchaseParam extends PurchaseParam {
           ),
         );
       case SK2SubscriptionOfferType.introductory:
-        return Sk2PurchaseParam(
-          productDetails: productDetails,
-        );
+        return Sk2PurchaseParam(productDetails: productDetails);
     }
   }
 

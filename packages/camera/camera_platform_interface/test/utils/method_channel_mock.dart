@@ -24,8 +24,10 @@ class MethodChannelMock {
     log.add(methodCall);
 
     if (!methods.containsKey(methodCall.method)) {
-      throw MissingPluginException('No implementation found for method '
-          '${methodCall.method} on channel ${methodChannel.name}');
+      throw MissingPluginException(
+        'No implementation found for method '
+        '${methodCall.method} on channel ${methodChannel.name}',
+      );
     }
 
     return Future<dynamic>.delayed(delay ?? Duration.zero, () {

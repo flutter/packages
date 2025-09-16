@@ -22,8 +22,12 @@ class _ValidatorGeneratorAdapter implements GeneratorAdapter {
   final IOSink? sink;
 
   @override
-  void generate(StringSink sink, InternalPigeonOptions options, Root root,
-      FileType fileType) {}
+  void generate(
+    StringSink sink,
+    InternalPigeonOptions options,
+    Root root,
+    FileType fileType,
+  ) {}
 
   @override
   IOSink? shouldGenerate(InternalPigeonOptions options, FileType _) => sink;
@@ -31,9 +35,7 @@ class _ValidatorGeneratorAdapter implements GeneratorAdapter {
   @override
   List<Error> validate(InternalPigeonOptions options, Root root) {
     didCallValidate = true;
-    return <Error>[
-      Error(message: '_ValidatorGenerator'),
-    ];
+    return <Error>[Error(message: '_ValidatorGenerator')];
   }
 }
 
@@ -64,86 +66,113 @@ void main() {
   }
 
   test('parse args - input', () {
-    final PigeonOptions opts =
-        Pigeon.parseArgs(<String>['--input', 'foo.dart']);
+    final PigeonOptions opts = Pigeon.parseArgs(<String>[
+      '--input',
+      'foo.dart',
+    ]);
     expect(opts.input, equals('foo.dart'));
   });
 
   test('parse args - dart_out', () {
-    final PigeonOptions opts =
-        Pigeon.parseArgs(<String>['--dart_out', 'foo.dart']);
+    final PigeonOptions opts = Pigeon.parseArgs(<String>[
+      '--dart_out',
+      'foo.dart',
+    ]);
     expect(opts.dartOut, equals('foo.dart'));
   });
 
   test('parse args - java_package', () {
-    final PigeonOptions opts =
-        Pigeon.parseArgs(<String>['--java_package', 'com.google.foo']);
+    final PigeonOptions opts = Pigeon.parseArgs(<String>[
+      '--java_package',
+      'com.google.foo',
+    ]);
     expect(opts.javaOptions?.package, equals('com.google.foo'));
   });
 
   test('parse args - input', () {
-    final PigeonOptions opts =
-        Pigeon.parseArgs(<String>['--java_out', 'foo.java']);
+    final PigeonOptions opts = Pigeon.parseArgs(<String>[
+      '--java_out',
+      'foo.java',
+    ]);
     expect(opts.javaOut, equals('foo.java'));
   });
 
   test('parse args - objc_header_out', () {
-    final PigeonOptions opts =
-        Pigeon.parseArgs(<String>['--objc_header_out', 'foo.h']);
+    final PigeonOptions opts = Pigeon.parseArgs(<String>[
+      '--objc_header_out',
+      'foo.h',
+    ]);
     expect(opts.objcHeaderOut, equals('foo.h'));
   });
 
   test('parse args - objc_source_out', () {
-    final PigeonOptions opts =
-        Pigeon.parseArgs(<String>['--objc_source_out', 'foo.m']);
+    final PigeonOptions opts = Pigeon.parseArgs(<String>[
+      '--objc_source_out',
+      'foo.m',
+    ]);
     expect(opts.objcSourceOut, equals('foo.m'));
   });
 
   test('parse args - swift_out', () {
-    final PigeonOptions opts =
-        Pigeon.parseArgs(<String>['--swift_out', 'Foo.swift']);
+    final PigeonOptions opts = Pigeon.parseArgs(<String>[
+      '--swift_out',
+      'Foo.swift',
+    ]);
     expect(opts.swiftOut, equals('Foo.swift'));
   });
 
   test('parse args - kotlin_out', () {
-    final PigeonOptions opts =
-        Pigeon.parseArgs(<String>['--kotlin_out', 'Foo.kt']);
+    final PigeonOptions opts = Pigeon.parseArgs(<String>[
+      '--kotlin_out',
+      'Foo.kt',
+    ]);
     expect(opts.kotlinOut, equals('Foo.kt'));
   });
 
   test('parse args - kotlin_package', () {
-    final PigeonOptions opts =
-        Pigeon.parseArgs(<String>['--kotlin_package', 'com.google.foo']);
+    final PigeonOptions opts = Pigeon.parseArgs(<String>[
+      '--kotlin_package',
+      'com.google.foo',
+    ]);
     expect(opts.kotlinOptions?.package, equals('com.google.foo'));
   });
 
   test('parse args - cpp_header_out', () {
-    final PigeonOptions opts =
-        Pigeon.parseArgs(<String>['--cpp_header_out', 'foo.h']);
+    final PigeonOptions opts = Pigeon.parseArgs(<String>[
+      '--cpp_header_out',
+      'foo.h',
+    ]);
     expect(opts.cppHeaderOut, equals('foo.h'));
   });
 
   test('parse args - java_use_generated_annotation', () {
-    final PigeonOptions opts =
-        Pigeon.parseArgs(<String>['--java_use_generated_annotation']);
+    final PigeonOptions opts = Pigeon.parseArgs(<String>[
+      '--java_use_generated_annotation',
+    ]);
     expect(opts.javaOptions!.useGeneratedAnnotation, isTrue);
   });
 
   test('parse args - cpp_source_out', () {
-    final PigeonOptions opts =
-        Pigeon.parseArgs(<String>['--cpp_source_out', 'foo.cpp']);
+    final PigeonOptions opts = Pigeon.parseArgs(<String>[
+      '--cpp_source_out',
+      'foo.cpp',
+    ]);
     expect(opts.cppSourceOut, equals('foo.cpp'));
   });
 
   test('parse args - ast_out', () {
-    final PigeonOptions opts =
-        Pigeon.parseArgs(<String>['--ast_out', 'stdout']);
+    final PigeonOptions opts = Pigeon.parseArgs(<String>[
+      '--ast_out',
+      'stdout',
+    ]);
     expect(opts.astOut, equals('stdout'));
   });
 
   test('parse args - base_path', () {
-    final PigeonOptions opts =
-        Pigeon.parseArgs(<String>['--base_path', './foo/']);
+    final PigeonOptions opts = Pigeon.parseArgs(<String>[
+      '--base_path',
+      './foo/',
+    ]);
     expect(opts.basePath, equals('./foo/'));
   });
 
@@ -176,7 +205,9 @@ abstract class Api1 {
     expect(root.apis[0].methods[0].name, equals('doit'));
     expect(root.apis[0].methods[0].parameters[0].name, equals('input'));
     expect(
-        root.apis[0].methods[0].parameters[0].type.baseName, equals('Input1'));
+      root.apis[0].methods[0].parameters[0].type.baseName,
+      equals('Input1'),
+    );
     expect(root.apis[0].methods[0].returnType.baseName, equals('Output1'));
 
     Class? input;
@@ -239,9 +270,11 @@ abstract class Api {
     final ParseResults results = parseSource(source);
     expect(results.errors.length, 1);
     expect(
-        results.errors[0].message,
-        contains(
-            'API "Api" can only have one API annotation but contains: [@HostApi(), @FlutterApi()]'));
+      results.errors[0].message,
+      contains(
+        'API "Api" can only have one API annotation but contains: [@HostApi(), @FlutterApi()]',
+      ),
+    );
   });
 
   test('Only allow one api annotation plus @ConfigurePigeon', () {
@@ -329,8 +362,9 @@ abstract class Api {
     final ParseResults results = parseSource(code);
     expect(results.errors.length, equals(0));
     expect(results.root.classes.length, equals(2));
-    final Class nested =
-        results.root.classes.firstWhere((Class x) => x.name == 'Nested');
+    final Class nested = results.root.classes.firstWhere(
+      (Class x) => x.name == 'Nested',
+    );
     expect(nested.fields.length, equals(1));
     expect(nested.fields[0].type.baseName, equals('Input1'));
     expect(nested.fields[0].type.isNullable, isTrue);
@@ -394,7 +428,9 @@ abstract class VoidArgApi {
     expect(results.root.apis[0].methods.length, equals(1));
     expect(results.root.apis[0].name, equals('VoidArgApi'));
     expect(
-        results.root.apis[0].methods[0].returnType.baseName, equals('Output1'));
+      results.root.apis[0].methods[0].returnType.baseName,
+      equals('Output1'),
+    );
     expect(results.root.apis[0].methods[0].parameters.isEmpty, isTrue);
   });
 
@@ -444,30 +480,44 @@ abstract class NestorApi {
   });
 
   test('copyright flag', () {
-    final PigeonOptions results =
-        Pigeon.parseArgs(<String>['--copyright_header', 'foobar.txt']);
+    final PigeonOptions results = Pigeon.parseArgs(<String>[
+      '--copyright_header',
+      'foobar.txt',
+    ]);
     expect(results.copyrightHeader, 'foobar.txt');
   });
 
   test('Dart generator copyright flag', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
-    const PigeonOptions options =
-        PigeonOptions(copyrightHeader: './copyright_header.txt', dartOut: '');
+    const PigeonOptions options = PigeonOptions(
+      copyrightHeader: './copyright_header.txt',
+      dartOut: '',
+    );
     final DartGeneratorAdapter dartGeneratorAdapter = DartGeneratorAdapter();
     final StringBuffer buffer = StringBuffer();
-    dartGeneratorAdapter.generate(buffer,
-        InternalPigeonOptions.fromPigeonOptions(options), root, FileType.na);
+    dartGeneratorAdapter.generate(
+      buffer,
+      InternalPigeonOptions.fromPigeonOptions(options),
+      root,
+      FileType.na,
+    );
     expect(buffer.toString(), startsWith('// Copyright 2013'));
   });
 
   test('Java generator copyright flag', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
     const PigeonOptions options = PigeonOptions(
-        javaOut: 'Foo.java', copyrightHeader: './copyright_header.txt');
+      javaOut: 'Foo.java',
+      copyrightHeader: './copyright_header.txt',
+    );
     final JavaGeneratorAdapter javaGeneratorAdapter = JavaGeneratorAdapter();
     final StringBuffer buffer = StringBuffer();
-    javaGeneratorAdapter.generate(buffer,
-        InternalPigeonOptions.fromPigeonOptions(options), root, FileType.na);
+    javaGeneratorAdapter.generate(
+      buffer,
+      InternalPigeonOptions.fromPigeonOptions(options),
+      root,
+      FileType.na,
+    );
     expect(buffer.toString(), startsWith('// Copyright 2013'));
   });
 
@@ -482,10 +532,11 @@ abstract class NestorApi {
         ObjcGeneratorAdapter();
     final StringBuffer buffer = StringBuffer();
     objcHeaderGeneratorAdapter.generate(
-        buffer,
-        InternalPigeonOptions.fromPigeonOptions(options),
-        root,
-        FileType.header);
+      buffer,
+      InternalPigeonOptions.fromPigeonOptions(options),
+      root,
+      FileType.header,
+    );
     expect(buffer.toString(), startsWith('// Copyright 2013'));
   });
 
@@ -500,37 +551,46 @@ abstract class NestorApi {
         ObjcGeneratorAdapter();
     final StringBuffer buffer = StringBuffer();
     objcSourceGeneratorAdapter.generate(
-        buffer,
-        InternalPigeonOptions.fromPigeonOptions(options),
-        root,
-        FileType.source);
+      buffer,
+      InternalPigeonOptions.fromPigeonOptions(options),
+      root,
+      FileType.source,
+    );
     expect(buffer.toString(), startsWith('// Copyright 2013'));
   });
 
   test('Swift generator copyright flag', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
     const PigeonOptions options = PigeonOptions(
-        swiftOut: 'Foo.swift', copyrightHeader: './copyright_header.txt');
+      swiftOut: 'Foo.swift',
+      copyrightHeader: './copyright_header.txt',
+    );
     final SwiftGeneratorAdapter swiftGeneratorAdapter = SwiftGeneratorAdapter();
     final StringBuffer buffer = StringBuffer();
-    swiftGeneratorAdapter.generate(buffer,
-        InternalPigeonOptions.fromPigeonOptions(options), root, FileType.na);
+    swiftGeneratorAdapter.generate(
+      buffer,
+      InternalPigeonOptions.fromPigeonOptions(options),
+      root,
+      FileType.na,
+    );
     expect(buffer.toString(), startsWith('// Copyright 2013'));
   });
 
   test('C++ header generator copyright flag', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
     const PigeonOptions options = PigeonOptions(
-        cppSourceOut: '',
-        cppHeaderOut: 'Foo.h',
-        copyrightHeader: './copyright_header.txt');
+      cppSourceOut: '',
+      cppHeaderOut: 'Foo.h',
+      copyrightHeader: './copyright_header.txt',
+    );
     final CppGeneratorAdapter cppHeaderGeneratorAdapter = CppGeneratorAdapter();
     final StringBuffer buffer = StringBuffer();
     cppHeaderGeneratorAdapter.generate(
-        buffer,
-        InternalPigeonOptions.fromPigeonOptions(options),
-        root,
-        FileType.header);
+      buffer,
+      InternalPigeonOptions.fromPigeonOptions(options),
+      root,
+      FileType.header,
+    );
     expect(buffer.toString(), startsWith('// Copyright 2013'));
   });
 
@@ -541,14 +601,16 @@ abstract class NestorApi {
       cppHeaderOut: '',
       cppSourceOut: '',
     );
-    final CppGeneratorAdapter cppSourceGeneratorAdapter =
-        CppGeneratorAdapter(fileTypeList: <FileType>[FileType.source]);
+    final CppGeneratorAdapter cppSourceGeneratorAdapter = CppGeneratorAdapter(
+      fileTypeList: <FileType>[FileType.source],
+    );
     final StringBuffer buffer = StringBuffer();
     cppSourceGeneratorAdapter.generate(
-        buffer,
-        InternalPigeonOptions.fromPigeonOptions(options),
-        root,
-        FileType.source);
+      buffer,
+      InternalPigeonOptions.fromPigeonOptions(options),
+      root,
+      FileType.source,
+    );
     expect(buffer.toString(), startsWith('// Copyright 2013'));
   });
 
@@ -599,8 +661,9 @@ abstract class NotificationsHostApi {
     final ParseResults results = parseSource(code);
     expect(results.errors.length, 0);
     expect(results.root.classes.length, 2);
-    final Class foo =
-        results.root.classes.firstWhere((Class aClass) => aClass.name == 'Foo');
+    final Class foo = results.root.classes.firstWhere(
+      (Class aClass) => aClass.name == 'Foo',
+    );
     expect(foo.fields.length, 1);
     expect(foo.fields[0].type.baseName, 'Bar');
   });
@@ -902,13 +965,19 @@ abstract class Api {
     final ParseResults parseResult = parseSource(code);
     expect(parseResult.root.apis[0].methods[0].returnType.baseName, 'List');
     expect(
-        parseResult
-            .root.apis[0].methods[0].returnType.typeArguments[0].baseName,
-        'double');
+      parseResult.root.apis[0].methods[0].returnType.typeArguments[0].baseName,
+      'double',
+    );
     expect(
-        parseResult
-            .root.apis[0].methods[0].returnType.typeArguments[0].isNullable,
-        isTrue);
+      parseResult
+          .root
+          .apis[0]
+          .methods[0]
+          .returnType
+          .typeArguments[0]
+          .isNullable,
+      isTrue,
+    );
   });
 
   test('argument generics', () {
@@ -919,16 +988,32 @@ abstract class Api {
 }
 ''';
     final ParseResults parseResult = parseSource(code);
-    expect(parseResult.root.apis[0].methods[0].parameters[1].type.baseName,
-        'List');
     expect(
-        parseResult.root.apis[0].methods[0].parameters[1].type.typeArguments[0]
-            .baseName,
-        'double');
+      parseResult.root.apis[0].methods[0].parameters[1].type.baseName,
+      'List',
+    );
     expect(
-        parseResult.root.apis[0].methods[0].parameters[1].type.typeArguments[0]
-            .isNullable,
-        isTrue);
+      parseResult
+          .root
+          .apis[0]
+          .methods[0]
+          .parameters[1]
+          .type
+          .typeArguments[0]
+          .baseName,
+      'double',
+    );
+    expect(
+      parseResult
+          .root
+          .apis[0]
+          .methods[0]
+          .parameters[1]
+          .type
+          .typeArguments[0]
+          .isNullable,
+      isTrue,
+    );
   });
 
   test('map generics', () {
@@ -977,8 +1062,10 @@ abstract class Api {
     final ParseResults results = parseSource(code);
     expect(results.errors.length, 1);
     expect(results.errors[0].lineNumber, 3);
-    expect(results.errors[0].message,
-        contains('Parameters must specify their type'));
+    expect(
+      results.errors[0].message,
+      contains('Parameters must specify their type'),
+    );
   });
 
   test('custom objc selector', () {
@@ -993,8 +1080,10 @@ abstract class Api {
     expect(results.errors.length, 0);
     expect(results.root.apis.length, 1);
     expect(results.root.apis[0].methods.length, equals(1));
-    expect(results.root.apis[0].methods[0].objcSelector,
-        equals('subtractValue:by:'));
+    expect(
+      results.root.apis[0].methods[0].objcSelector,
+      equals('subtractValue:by:'),
+    );
   });
 
   test('custom objc invalid selector', () {
@@ -1008,8 +1097,10 @@ abstract class Api {
     final ParseResults results = parseSource(code);
     expect(results.errors.length, 1);
     expect(results.errors[0].lineNumber, 3);
-    expect(results.errors[0].message,
-        contains('Invalid selector, expected 2 parameters'));
+    expect(
+      results.errors[0].message,
+      contains('Invalid selector, expected 2 parameters'),
+    );
   });
 
   test('custom objc no parameters', () {
@@ -1039,8 +1130,10 @@ abstract class Api {
     expect(results.errors.length, 0);
     expect(results.root.apis.length, 1);
     expect(results.root.apis[0].methods.length, equals(1));
-    expect(results.root.apis[0].methods[0].swiftFunction,
-        equals('subtractValue(_:by:)'));
+    expect(
+      results.root.apis[0].methods[0].swiftFunction,
+      equals('subtractValue(_:by:)'),
+    );
   });
 
   test('custom swift invalid function signature', () {
@@ -1054,8 +1147,10 @@ abstract class Api {
     final ParseResults results = parseSource(code);
     expect(results.errors.length, 1);
     expect(results.errors[0].lineNumber, 3);
-    expect(results.errors[0].message,
-        contains('Invalid function signature, expected 2 parameters'));
+    expect(
+      results.errors[0].message,
+      contains('Invalid function signature, expected 2 parameters'),
+    );
   });
 
   test('custom swift function signature no parameters', () {
@@ -1084,10 +1179,11 @@ abstract class Api {
         DartTestGeneratorAdapter();
     final StringBuffer buffer = StringBuffer();
     dartTestGeneratorAdapter.generate(
-        buffer,
-        InternalPigeonOptions.fromPigeonOptions(options),
-        root,
-        FileType.source);
+      buffer,
+      InternalPigeonOptions.fromPigeonOptions(options),
+      root,
+      FileType.source,
+    );
     expect(buffer.toString(), startsWith('// Copyright 2013'));
   });
 
@@ -1145,15 +1241,17 @@ abstract class Api {
     expect(results.errors.length, 0);
     expect(results.root.classes.length, 2);
     expect(
-        results.root.classes
-            .where((Class element) => element.name == 'Foo')
-            .length,
-        1);
+      results.root.classes
+          .where((Class element) => element.name == 'Foo')
+          .length,
+      1,
+    );
     expect(
-        results.root.classes
-            .where((Class element) => element.name == 'Bar')
-            .length,
-        1);
+      results.root.classes
+          .where((Class element) => element.name == 'Bar')
+          .length,
+      1,
+    );
   });
 
   test('undeclared class in argument type argument', () {
@@ -1301,7 +1399,9 @@ abstract class Api {
     final ParseResults results = parseSource(code);
     expect(results.errors.length, 0);
     expect(
-        results.root.apis[0].methods[0].parameters[0].type.isNullable, isTrue);
+      results.root.apis[0].methods[0].parameters[0].type.isNullable,
+      isTrue,
+    );
   });
 
   test('task queue specified', () {
@@ -1315,8 +1415,10 @@ abstract class Api {
 
     final ParseResults results = parseSource(code);
     expect(results.errors.length, 0);
-    expect(results.root.apis[0].methods[0].taskQueueType,
-        equals(TaskQueueType.serialBackgroundThread));
+    expect(
+      results.root.apis[0].methods[0].taskQueueType,
+      equals(TaskQueueType.serialBackgroundThread),
+    );
   });
 
   test('task queue unspecified', () {
@@ -1329,8 +1431,10 @@ abstract class Api {
 
     final ParseResults results = parseSource(code);
     expect(results.errors.length, 0);
-    expect(results.root.apis[0].methods[0].taskQueueType,
-        equals(TaskQueueType.serial));
+    expect(
+      results.root.apis[0].methods[0].taskQueueType,
+      equals(TaskQueueType.serial),
+    );
   });
 
   test('unsupported task queue on FlutterApi', () {
@@ -1344,17 +1448,22 @@ abstract class Api {
 
     final ParseResults results = parseSource(code);
     expect(results.errors.length, 1);
-    expect(results.errors[0].message,
-        contains('Unsupported TaskQueue specification'));
+    expect(
+      results.errors[0].message,
+      contains('Unsupported TaskQueue specification'),
+    );
   });
 
   test('generator validation', () async {
     final Completer<void> completer = Completer<void>();
     withTempFile('foo.dart', (File input) async {
-      final _ValidatorGeneratorAdapter generator =
-          _ValidatorGeneratorAdapter(stdout);
-      final int result = await Pigeon.run(<String>['--input', input.path],
-          adapters: <GeneratorAdapter>[generator]);
+      final _ValidatorGeneratorAdapter generator = _ValidatorGeneratorAdapter(
+        stdout,
+      );
+      final int result = await Pigeon.run(
+        <String>['--input', input.path],
+        adapters: <GeneratorAdapter>[generator],
+      );
       expect(generator.didCallValidate, isTrue);
       expect(result, isNot(0));
       completer.complete();
@@ -1365,11 +1474,13 @@ abstract class Api {
   test('generator validation skipped', () async {
     final Completer<void> completer = Completer<void>();
     withTempFile('foo.dart', (File input) async {
-      final _ValidatorGeneratorAdapter generator =
-          _ValidatorGeneratorAdapter(null);
+      final _ValidatorGeneratorAdapter generator = _ValidatorGeneratorAdapter(
+        null,
+      );
       final int result = await Pigeon.run(
-          <String>['--input', input.path, '--dart_out', 'foo.dart'],
-          adapters: <GeneratorAdapter>[generator]);
+        <String>['--input', input.path, '--dart_out', 'foo.dart'],
+        adapters: <GeneratorAdapter>[generator],
+      );
       expect(generator.didCallValidate, isFalse);
       expect(result, equals(0));
       completer.complete();
@@ -1380,11 +1491,13 @@ abstract class Api {
   test('run with PigeonOptions', () async {
     final Completer<void> completer = Completer<void>();
     withTempFile('foo.dart', (File input) async {
-      final _ValidatorGeneratorAdapter generator =
-          _ValidatorGeneratorAdapter(null);
+      final _ValidatorGeneratorAdapter generator = _ValidatorGeneratorAdapter(
+        null,
+      );
       final int result = await Pigeon.runWithOptions(
-          PigeonOptions(input: input.path, dartOut: 'foo.dart'),
-          adapters: <GeneratorAdapter>[generator]);
+        PigeonOptions(input: input.path, dartOut: 'foo.dart'),
+        adapters: <GeneratorAdapter>[generator],
+      );
       expect(generator.didCallValidate, isFalse);
       expect(result, equals(0));
       completer.complete();
@@ -1402,8 +1515,10 @@ abstract class Api {
 
     final ParseResults results = parseSource(code);
     expect(results.errors.length, 1);
-    expect(results.errors[0].message,
-        contains('FlutterApi method parameters must be positional'));
+    expect(
+      results.errors[0].message,
+      contains('FlutterApi method parameters must be positional'),
+    );
   });
 
   test('unsupported optional parameters on FlutterApi', () {
@@ -1416,8 +1531,10 @@ abstract class Api {
 
     final ParseResults results = parseSource(code);
     expect(results.errors.length, 1);
-    expect(results.errors[0].message,
-        contains('FlutterApi method parameters must not be optional'));
+    expect(
+      results.errors[0].message,
+      contains('FlutterApi method parameters must not be optional'),
+    );
   });
 
   test('simple parse ProxyApi', () {
@@ -1528,9 +1645,9 @@ abstract class MyOtherClass {
     });
 
     test(
-        'api is not used as an attached field while having an unattached field',
-        () {
-      const String code = '''
+      'api is not used as an attached field while having an unattached field',
+      () {
+        const String code = '''
 @ProxyApi()
 abstract class MyClass {
   @attached
@@ -1542,20 +1659,21 @@ abstract class MyOtherClass {
   late int aField;
 }
 ''';
-      final ParseResults parseResult = parseSource(code);
-      expect(parseResult.errors, isNotEmpty);
-      expect(
-        parseResult.errors[0].message,
-        contains(
-          'ProxyApis with unattached fields can not be used as attached fields: anAttachedField',
-        ),
-      );
-    });
+        final ParseResults parseResult = parseSource(code);
+        expect(parseResult.errors, isNotEmpty);
+        expect(
+          parseResult.errors[0].message,
+          contains(
+            'ProxyApis with unattached fields can not be used as attached fields: anAttachedField',
+          ),
+        );
+      },
+    );
 
     test(
-        'api is not used as an attached field while having a required Flutter method',
-        () {
-      const String code = '''
+      'api is not used as an attached field while having a required Flutter method',
+      () {
+        const String code = '''
 @ProxyApi()
 abstract class MyClass {
   @attached
@@ -1567,15 +1685,16 @@ abstract class MyOtherClass {
   late void Function() aCallbackMethod;
 }
 ''';
-      final ParseResults parseResult = parseSource(code);
-      expect(parseResult.errors, isNotEmpty);
-      expect(
-        parseResult.errors[0].message,
-        contains(
-          'ProxyApis with required callback methods can not be used as attached fields: anAttachedField',
-        ),
-      );
-    });
+        final ParseResults parseResult = parseSource(code);
+        expect(parseResult.errors, isNotEmpty);
+        expect(
+          parseResult.errors[0].message,
+          contains(
+            'ProxyApis with required callback methods can not be used as attached fields: anAttachedField',
+          ),
+        );
+      },
+    );
 
     test('interfaces can only have callback methods', () {
       const String code = '''
@@ -1661,7 +1780,8 @@ abstract class EventChannelApi {
       expect(
         parseResult.errors.single.message,
         contains(
-            'event channel methods must not be contain parameters, in method "streamInts" in API: "EventChannelApi"'),
+          'event channel methods must not be contain parameters, in method "streamInts" in API: "EventChannelApi"',
+        ),
       );
     });
   });

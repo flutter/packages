@@ -24,8 +24,8 @@ final class IOSAdsLoaderCreationParams extends PlatformAdsLoaderCreationParams {
     required super.onAdsLoaded,
     required super.onAdsLoadError,
     @visibleForTesting InteractiveMediaAdsProxy? proxy,
-  })  : _proxy = proxy ?? const InteractiveMediaAdsProxy(),
-        super();
+  }) : _proxy = proxy ?? const InteractiveMediaAdsProxy(),
+       super();
 
   /// Creates a [IOSAdsLoaderCreationParams] from an instance of
   /// [PlatformAdsLoaderCreationParams].
@@ -49,23 +49,24 @@ final class IOSAdsLoaderCreationParams extends PlatformAdsLoaderCreationParams {
 base class IOSAdsLoader extends PlatformAdsLoader {
   /// Constructs an [IOSAdsLoader].
   IOSAdsLoader(super.params)
-      : assert(params.container is IOSAdDisplayContainer),
-        assert(
-          (params.container as IOSAdDisplayContainer).adDisplayContainer !=
-              null,
-          'Ensure the AdDisplayContainer has been added to the Widget tree before creating an AdsLoader.',
-        ),
-        super.implementation();
+    : assert(params.container is IOSAdDisplayContainer),
+      assert(
+        (params.container as IOSAdDisplayContainer).adDisplayContainer != null,
+        'Ensure the AdDisplayContainer has been added to the Widget tree before creating an AdsLoader.',
+      ),
+      super.implementation();
 
   late final IMAAdsLoader _adsLoader = _initAdsLoader();
   late final IMAAdsLoaderDelegate _delegate = _createAdsLoaderDelegate(
     WeakReference<IOSAdsLoader>(this),
   );
 
-  late final IOSAdsLoaderCreationParams _iosParams = params
-          is IOSAdsLoaderCreationParams
-      ? params as IOSAdsLoaderCreationParams
-      : IOSAdsLoaderCreationParams.fromPlatformAdsLoaderCreationParams(params);
+  late final IOSAdsLoaderCreationParams _iosParams =
+      params is IOSAdsLoaderCreationParams
+          ? params as IOSAdsLoaderCreationParams
+          : IOSAdsLoaderCreationParams.fromPlatformAdsLoaderCreationParams(
+            params,
+          );
 
   @override
   Future<void> contentComplete() {
@@ -84,15 +85,15 @@ base class IOSAdsLoader extends PlatformAdsLoader {
 
     final IMAAdsRequest adsRequest = switch (request) {
       final PlatformAdsRequestWithAdTagUrl request => IMAAdsRequest(
-          adTagUrl: request.adTagUrl,
-          adDisplayContainer: adDisplayContainer,
-          contentPlayhead: contentProgressProvider,
-        ),
+        adTagUrl: request.adTagUrl,
+        adDisplayContainer: adDisplayContainer,
+        contentPlayhead: contentProgressProvider,
+      ),
       PlatformAdsRequestWithAdsResponse() => IMAAdsRequest.withAdsResponse(
-          adsResponse: request.adsResponse,
-          adDisplayContainer: adDisplayContainer,
-          contentPlayhead: contentProgressProvider,
-        ),
+        adsResponse: request.adsResponse,
+        adDisplayContainer: adDisplayContainer,
+        contentPlayhead: contentProgressProvider,
+      ),
     };
 
     return Future.wait(<Future<void>>[

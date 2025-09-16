@@ -39,9 +39,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(
-          title: const Text('README snippet app'),
-        ),
+        appBar: AppBar(title: const Text('README snippet app')),
         body: const Text('See example in main.dart'),
       ),
     );
@@ -53,8 +51,9 @@ class _MyAppState extends State<MyApp> {
         GoogleMapsFlutterPlatform.instance;
     if (mapsImplementation is GoogleMapsFlutterAndroid) {
       WidgetsFlutterBinding.ensureInitialized();
-      mapRenderer = await mapsImplementation
-          .initializeWithRenderer(AndroidMapRenderer.latest);
+      mapRenderer = await mapsImplementation.initializeWithRenderer(
+        AndroidMapRenderer.latest,
+      );
     }
     // #enddocregion MapRenderer
   }

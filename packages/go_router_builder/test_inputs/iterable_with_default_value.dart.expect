@@ -1,15 +1,14 @@
 RouteBase get $iterableDefaultValueRoute => GoRouteData.$route(
       path: '/iterable-default-value-route',
-      factory: _$IterableDefaultValueRoute._fromState,
+      factory: $IterableDefaultValueRoute._fromState,
     );
 
-mixin _$IterableDefaultValueRoute on GoRouteData {
+mixin $IterableDefaultValueRoute on GoRouteData {
   static IterableDefaultValueRoute _fromState(GoRouterState state) =>
       IterableDefaultValueRoute(
-        param: (state.uri.queryParametersAll['param']
-                ?.map(int.parse)
-                .cast<int>() as Iterable<int>?) ??
-            const <int>[0],
+        param:
+            state.uri.queryParametersAll['param']?.map(int.parse).cast<int>() ??
+                const <int>[0],
       );
 
   IterableDefaultValueRoute get _self => this as IterableDefaultValueRoute;

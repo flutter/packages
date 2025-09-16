@@ -12,7 +12,7 @@ import 'page.dart';
 
 class MapIdPage extends GoogleMapExampleAppPage {
   const MapIdPage({Key? key})
-      : super(const Icon(Icons.map), 'Cloud-based maps styling', key: key);
+    : super(const Icon(Icons.map), 'Cloud-based maps styling', key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -61,31 +61,23 @@ class MapIdBodyState extends State<MapIdBody> {
       Padding(
         padding: const EdgeInsets.all(10.0),
         child: Center(
-          child: SizedBox(
-            width: 300.0,
-            height: 200.0,
-            child: googleMap,
-          ),
+          child: SizedBox(width: 300.0, height: 200.0, child: googleMap),
         ),
       ),
       Padding(
         padding: const EdgeInsets.all(10.0),
         child: TextField(
           controller: _mapIdController,
-          decoration: const InputDecoration(
-            hintText: 'Map Id',
-          ),
+          decoration: const InputDecoration(hintText: 'Map Id'),
         ),
       ),
       Padding(
         padding: const EdgeInsets.all(10.0),
         child: ElevatedButton(
           onPressed: () => _setMapId(),
-          child: const Text(
-            'Press to use specified map Id',
-          ),
+          child: const Text('Press to use specified map Id'),
         ),
-      )
+      ),
     ];
 
     return Column(

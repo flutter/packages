@@ -8,11 +8,7 @@ import 'package:flutter/material.dart';
 /// A panel that displays an error message and a stack trace.
 class ErrorPanel extends StatelessWidget {
   /// Default constructor for [ErrorPanel].
-  const ErrorPanel({
-    super.key,
-    required this.error,
-    required this.stackTrace,
-  });
+  const ErrorPanel({super.key, required this.error, required this.stackTrace});
 
   /// The error message to display.
   /// This will be displayed as a string.

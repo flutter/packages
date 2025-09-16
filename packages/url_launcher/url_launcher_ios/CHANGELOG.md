@@ -1,5 +1,6 @@
 ## NEXT
 
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
 * Fixes integration test button text matcher to work on iOS 26.
 
 ## 6.3.4

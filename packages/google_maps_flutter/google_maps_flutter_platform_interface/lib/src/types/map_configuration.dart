@@ -15,6 +15,8 @@ class MapConfiguration {
   /// as either a full configuration selection, or an update to an existing
   /// configuration where only non-null values are updated.
   const MapConfiguration({
+    this.webCameraControlPosition,
+    this.webCameraControlEnabled,
     this.webGestureHandling,
     this.compassEnabled,
     this.mapToolbarEnabled,
@@ -46,6 +48,18 @@ class MapConfiguration {
   ///
   /// See [WebGestureHandling] for more details.
   final WebGestureHandling? webGestureHandling;
+
+  /// This setting controls how the API handles cameraControl button position on the map. Web only.
+  ///
+  /// If null, the Google Maps API will use its default camera control position.
+  ///
+  /// See [WebCameraControlPosition] for more details.
+  final WebCameraControlPosition? webCameraControlPosition;
+
+  /// This setting controls how the API handles cameraControl button on the map. Web only.
+  ///
+  /// See https://developers.google.com/maps/documentation/javascript/controls for more details.
+  final bool? webCameraControlEnabled;
 
   /// True if the compass UI should be shown.
   final bool? compassEnabled;
@@ -142,21 +156,33 @@ class MapConfiguration {
   /// that are different from [other].
   MapConfiguration diffFrom(MapConfiguration other) {
     return MapConfiguration(
-      webGestureHandling: webGestureHandling != other.webGestureHandling
-          ? webGestureHandling
-          : null,
+      webCameraControlPosition:
+          webCameraControlPosition != other.webCameraControlPosition
+              ? webCameraControlPosition
+              : null,
+      webCameraControlEnabled:
+          webCameraControlEnabled != other.webCameraControlEnabled
+              ? webCameraControlEnabled
+              : null,
+      webGestureHandling:
+          webGestureHandling != other.webGestureHandling
+              ? webGestureHandling
+              : null,
       compassEnabled:
           compassEnabled != other.compassEnabled ? compassEnabled : null,
-      mapToolbarEnabled: mapToolbarEnabled != other.mapToolbarEnabled
-          ? mapToolbarEnabled
-          : null,
-      cameraTargetBounds: cameraTargetBounds != other.cameraTargetBounds
-          ? cameraTargetBounds
-          : null,
+      mapToolbarEnabled:
+          mapToolbarEnabled != other.mapToolbarEnabled
+              ? mapToolbarEnabled
+              : null,
+      cameraTargetBounds:
+          cameraTargetBounds != other.cameraTargetBounds
+              ? cameraTargetBounds
+              : null,
       mapType: mapType != other.mapType ? mapType : null,
-      minMaxZoomPreference: minMaxZoomPreference != other.minMaxZoomPreference
-          ? minMaxZoomPreference
-          : null,
+      minMaxZoomPreference:
+          minMaxZoomPreference != other.minMaxZoomPreference
+              ? minMaxZoomPreference
+              : null,
       rotateGesturesEnabled:
           rotateGesturesEnabled != other.rotateGesturesEnabled
               ? rotateGesturesEnabled
@@ -165,35 +191,41 @@ class MapConfiguration {
           scrollGesturesEnabled != other.scrollGesturesEnabled
               ? scrollGesturesEnabled
               : null,
-      tiltGesturesEnabled: tiltGesturesEnabled != other.tiltGesturesEnabled
-          ? tiltGesturesEnabled
-          : null,
+      tiltGesturesEnabled:
+          tiltGesturesEnabled != other.tiltGesturesEnabled
+              ? tiltGesturesEnabled
+              : null,
       fortyFiveDegreeImageryEnabled:
           fortyFiveDegreeImageryEnabled != other.fortyFiveDegreeImageryEnabled
               ? fortyFiveDegreeImageryEnabled
               : null,
-      trackCameraPosition: trackCameraPosition != other.trackCameraPosition
-          ? trackCameraPosition
-          : null,
-      zoomControlsEnabled: zoomControlsEnabled != other.zoomControlsEnabled
-          ? zoomControlsEnabled
-          : null,
-      zoomGesturesEnabled: zoomGesturesEnabled != other.zoomGesturesEnabled
-          ? zoomGesturesEnabled
-          : null,
+      trackCameraPosition:
+          trackCameraPosition != other.trackCameraPosition
+              ? trackCameraPosition
+              : null,
+      zoomControlsEnabled:
+          zoomControlsEnabled != other.zoomControlsEnabled
+              ? zoomControlsEnabled
+              : null,
+      zoomGesturesEnabled:
+          zoomGesturesEnabled != other.zoomGesturesEnabled
+              ? zoomGesturesEnabled
+              : null,
       liteModeEnabled:
           liteModeEnabled != other.liteModeEnabled ? liteModeEnabled : null,
-      myLocationEnabled: myLocationEnabled != other.myLocationEnabled
-          ? myLocationEnabled
-          : null,
+      myLocationEnabled:
+          myLocationEnabled != other.myLocationEnabled
+              ? myLocationEnabled
+              : null,
       myLocationButtonEnabled:
           myLocationButtonEnabled != other.myLocationButtonEnabled
               ? myLocationButtonEnabled
               : null,
       padding: padding != other.padding ? padding : null,
-      indoorViewEnabled: indoorViewEnabled != other.indoorViewEnabled
-          ? indoorViewEnabled
-          : null,
+      indoorViewEnabled:
+          indoorViewEnabled != other.indoorViewEnabled
+              ? indoorViewEnabled
+              : null,
       trafficEnabled:
           trafficEnabled != other.trafficEnabled ? trafficEnabled : null,
       buildingsEnabled:
@@ -208,6 +240,10 @@ class MapConfiguration {
   /// replacing the previous values.
   MapConfiguration applyDiff(MapConfiguration diff) {
     return MapConfiguration(
+      webCameraControlPosition:
+          diff.webCameraControlPosition ?? webCameraControlPosition,
+      webCameraControlEnabled:
+          diff.webCameraControlEnabled ?? webCameraControlEnabled,
       webGestureHandling: diff.webGestureHandling ?? webGestureHandling,
       compassEnabled: diff.compassEnabled ?? compassEnabled,
       mapToolbarEnabled: diff.mapToolbarEnabled ?? mapToolbarEnabled,
@@ -240,6 +276,8 @@ class MapConfiguration {
 
   /// True if no options are set.
   bool get isEmpty =>
+      webCameraControlPosition == null &&
+      webCameraControlEnabled == null &&
       webGestureHandling == null &&
       compassEnabled == null &&
       mapToolbarEnabled == null &&
@@ -273,6 +311,8 @@ class MapConfiguration {
       return false;
     }
     return other is MapConfiguration &&
+        webCameraControlPosition == other.webCameraControlPosition &&
+        webCameraControlEnabled == other.webCameraControlEnabled &&
         webGestureHandling == other.webGestureHandling &&
         compassEnabled == other.compassEnabled &&
         mapToolbarEnabled == other.mapToolbarEnabled &&
@@ -300,30 +340,32 @@ class MapConfiguration {
 
   @override
   int get hashCode => Object.hashAll(<Object?>[
-        webGestureHandling,
-        compassEnabled,
-        mapToolbarEnabled,
-        cameraTargetBounds,
-        mapType,
-        minMaxZoomPreference,
-        rotateGesturesEnabled,
-        scrollGesturesEnabled,
-        tiltGesturesEnabled,
-        fortyFiveDegreeImageryEnabled,
-        trackCameraPosition,
-        zoomControlsEnabled,
-        zoomGesturesEnabled,
-        liteModeEnabled,
-        myLocationEnabled,
-        myLocationButtonEnabled,
-        padding,
-        indoorViewEnabled,
-        trafficEnabled,
-        buildingsEnabled,
-        mapId,
-        style,
-        markerType,
-      ]);
+    webGestureHandling,
+    webCameraControlPosition,
+    webCameraControlEnabled,
+    compassEnabled,
+    mapToolbarEnabled,
+    cameraTargetBounds,
+    mapType,
+    minMaxZoomPreference,
+    rotateGesturesEnabled,
+    scrollGesturesEnabled,
+    tiltGesturesEnabled,
+    fortyFiveDegreeImageryEnabled,
+    trackCameraPosition,
+    zoomControlsEnabled,
+    zoomGesturesEnabled,
+    liteModeEnabled,
+    myLocationEnabled,
+    myLocationButtonEnabled,
+    padding,
+    indoorViewEnabled,
+    trafficEnabled,
+    buildingsEnabled,
+    mapId,
+    style,
+    markerType,
+  ]);
 }
 
 /// Indicates the type of marker that the map should use.
