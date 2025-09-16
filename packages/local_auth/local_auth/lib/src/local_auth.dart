@@ -41,9 +41,10 @@ class LocalAuthentication {
   /// unlock their device.
   ///
   /// On mobile platforms, authentication may be stopped by the system when the
-  /// is backgrounded during an authentication. Set [persistAcrossBackgrounding]
-  /// to true to have the plugin automatically retry the authentication on
-  /// foregrounding instead of failing with an error on backgrounding.
+  /// app is backgrounded during an authentication. Set
+  /// [persistAcrossBackgrounding] to true to have the plugin automatically
+  /// retry the authentication on foregrounding instead of failing with an error
+  /// on backgrounding.
   Future<bool> authenticate({
     required String localizedReason,
     Iterable<AuthMessages> authMessages = const <AuthMessages>[

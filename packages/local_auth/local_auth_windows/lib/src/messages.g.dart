@@ -35,7 +35,7 @@ enum AuthResult {
   /// The biometric hardware is currently in use.
   deviceBusy,
 
-  /// Device poilcy does not allow using the authentication system.
+  /// Device policy does not allow using the authentication system.
   disabledByPolicy,
 
   /// Authentication is unavailable for an unknown reason.

@@ -4,11 +4,11 @@
 
 import 'package:flutter/foundation.dart';
 
-/// An exception thrown by the plugin when there is authenication failure, or
+/// An exception thrown by the plugin when there is authentication failure, or
 /// some other error.
 @immutable
 class LocalAuthException implements Exception {
-  /// Crceates a new exception with the given information.
+  /// Creates a new exception with the given information.
   const LocalAuthException({
     required this.code,
     this.description,

@@ -70,7 +70,7 @@ enum class AuthResult {
   kNotEnrolled = 3,
   // The biometric hardware is currently in use.
   kDeviceBusy = 4,
-  // Device poilcy does not allow using the authentication system.
+  // Device policy does not allow using the authentication system.
   kDisabledByPolicy = 5,
   // Authentication is unavailable for an unknown reason.
   kUnavailable = 6
