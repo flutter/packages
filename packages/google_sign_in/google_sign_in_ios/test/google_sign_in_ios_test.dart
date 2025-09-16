@@ -1014,36 +1014,38 @@ void main() {
       },
     );
 
-    test('does not return cached token from authn when user changes', () async {
+    test('does not return cached token from authn if user changes', () async {
       const List<String> scopes = <String>['a', 'b'];
       const String accessToken = 'accessToken';
       const String serverAuthCode = 'authCode';
+      final UserData previousUser = UserData(
+        displayName: 'Previous user',
+        email: 'previous.user@gmail.com',
+        userId: 'different_id',
+        photoUrl: _testUser.photoUrl,
+        idToken: '',
+      );
+      final UserData newUser = UserData(
+        displayName: _testUser.displayName,
+        email: _testUser.email,
+        userId: _testUser.id,
+        photoUrl: _testUser.photoUrl,
+        idToken: '',
+      );
       when(mockApi.signIn(scopes, null)).thenAnswer(
         (_) async => SignInResult(
           success: SignInSuccess(
-            user: UserData(
-              displayName: 'Previous user',
-              email: 'previous.user@gmail.com',
-              userId: 'different_id',
-              photoUrl: _testUser.photoUrl,
-              idToken: '',
-            ),
+            user: previousUser,
             accessToken: accessToken,
             serverAuthCode: serverAuthCode,
             grantedScopes: <String>[],
           ),
         ),
       );
-      when(mockApi.getRefreshedAuthorizationTokens(_testUser.id)).thenAnswer(
+      when(mockApi.getRefreshedAuthorizationTokens(newUser.userId)).thenAnswer(
         (_) async => SignInResult(
           success: SignInSuccess(
-            user: UserData(
-              displayName: _testUser.displayName,
-              email: _testUser.email,
-              userId: _testUser.id,
-              photoUrl: _testUser.photoUrl,
-              idToken: '',
-            ),
+            user: newUser,
             accessToken: accessToken,
             // serverAuthCode will always be null for getRefreshedAuthorizationTokens.
             grantedScopes: scopes,
@@ -1059,8 +1061,8 @@ void main() {
             ServerAuthorizationTokensForScopesParameters(
               request: AuthorizationRequestDetails(
                 scopes: scopes,
-                userId: _testUser.id,
-                email: _testUser.email,
+                userId: newUser.userId,
+                email: newUser.email,
                 promptIfUnauthorized: false,
               ),
             ),
