@@ -1298,10 +1298,16 @@ class AndroidCameraCameraX extends CameraPlatform {
       final List<PlaneProxy> planes = await imageProxy.getPlanes();
       final List<CameraImagePlane> cameraImagePlanes = <CameraImagePlane>[];
 
+      // Determine image planes.
       if (_imageAnalysisOutputImageFormat ==
           imageAnalysisOutputImageFormatNv21) {
-        // TODO(camsim99): This will be different if I expose the Y and VU planes separately.
-        final Uint8List bytes = await imageProxy.getNv21Buffer(planes);
+        // Convert three generically YUV_420_888 formatted image planes into one singular
+        // NV21 formatted image plane if NV21 was requested for image streaming.
+        final Uint8List bytes = await ImageProxyUtils.getNv21Buffer(
+          imageProxy.width,
+          imageProxy.height,
+          planes,
+        );
         cameraImagePlanes.add(
           CameraImagePlane(
             bytes: bytes,
@@ -1321,6 +1327,7 @@ class AndroidCameraCameraX extends CameraPlatform {
         }
       }
 
+      // Determine image format.
       CameraImageFormat? cameraImageFormat;
 
       if (_imageAnalysisOutputImageFormat ==
@@ -1339,6 +1346,7 @@ class AndroidCameraCameraX extends CameraPlatform {
         );
       }
 
+      // Send out CameraImageData.
       final CameraImageData cameraImageData = CameraImageData(
         format: cameraImageFormat,
         planes: cameraImagePlanes,

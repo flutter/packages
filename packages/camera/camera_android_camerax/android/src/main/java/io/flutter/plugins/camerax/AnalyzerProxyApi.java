@@ -7,10 +7,8 @@ package io.flutter.plugins.camerax;
 import androidx.annotation.NonNull;
 import androidx.camera.core.ImageAnalysis.Analyzer;
 import androidx.camera.core.ImageProxy;
-import java.util.Objects;
-
 import java.nio.ByteBuffer;
-
+import java.util.Objects;
 
 /**
  * ProxyApi implementation for {@link Analyzer}. This class may handle instantiating native object
@@ -38,11 +36,6 @@ class AnalyzerProxyApi extends PigeonApiAnalyzer {
 
     @Override
     public void analyze(@NonNull ImageProxy image) {
-      // System.out.println(":::::::::::::::::::::::::::::CAMILLE: START NV21 ANALYSIS:::::::::::::::::::::::::::::");
-      // ImageProxy.PlaneProxy[] planes = image.getPlanes();
-      // boolean isNV21 = areUVPlanesNV21(planes[1].getBuffer(), planes[2].getBuffer(), image.getWidth(), image.getHeight());
-      // System.out.println(":::::::::::::::::::::::::::::CAMILLE: PLANES ARE NV21? " + isNV21 + " ::::::::::::::::::::::::::::::::");
-
       api.getPigeonRegistrar()
           .runOnMainThread(
               new ProxyApiRegistrar.FlutterMethodRunnable() {
@@ -71,14 +64,14 @@ class AnalyzerProxyApi extends PigeonApiAnalyzer {
     return new AnalyzerImpl(this);
   }
 
-
   ///// OTHER METHODS FOR NV21 TESTING //////
   /**
-   * <p>Checks if the UV plane buffers of a YUV_420_888 image are in the NV21 format.
+   * Checks if the UV plane buffers of a YUV_420_888 image are in the NV21 format.
    *
    * <p>https://github.com/googlesamples/mlkit/blob/master/android/vision-quickstart/app/src/main/java/com/google/mlkit/vision/demo/BitmapUtils.java
    */
-  private static boolean areUVPlanesNV21(ByteBuffer uBuffer, ByteBuffer vBuffer, int width, int height) {
+  private static boolean areUVPlanesNV21(
+      ByteBuffer uBuffer, ByteBuffer vBuffer, int width, int height) {
     int imageSize = width * height;
 
     // ByteBuffer uBuffer = planes[1].getBuffer();
