@@ -19,84 +19,58 @@ class AuthStrings {
   /// Constructs a new instance.
   const AuthStrings({
     required this.reason,
-    required this.signInHint,
+    required this.biometricHint,
+    required this.biometricNotRecognized,
+    required this.biometricRequiredTitle,
     required this.cancelButton,
+    required this.deviceCredentialsRequiredTitle,
+    required this.deviceCredentialsSetupDescription,
+    required this.goToSettingsButton,
+    required this.goToSettingsDescription,
     required this.signInTitle,
   });
 
   final String reason;
-  final String signInHint;
+  final String biometricHint;
+  final String biometricNotRecognized;
+  final String biometricRequiredTitle;
   final String cancelButton;
+  final String deviceCredentialsRequiredTitle;
+  final String deviceCredentialsSetupDescription;
+  final String goToSettingsButton;
+  final String goToSettingsDescription;
   final String signInTitle;
 }
 
 /// Possible outcomes of an authentication attempt.
-enum AuthResultCode {
+enum AuthResult {
   /// The user authenticated successfully.
   success,
 
-  /// The user pressed the negative button, which corresponds to
-  /// [AuthStrings.cancelButton].
-  negativeButton,
-
-  /// The user canceled authentication without pressing the negative button.
-  ///
-  /// This may be triggered by a swipe or a back button, for example.
-  userCanceled,
-
-  /// Authentication was caneceled by the system.
-  systemCanceled,
-
-  /// Authentication timed out.
-  timeout,
+  /// The user failed to successfully authenticate.
+  failure,
 
   /// An authentication was already in progress.
-  alreadyInProgress,
+  errorAlreadyInProgress,
 
   /// There is no foreground activity.
-  noActivity,
+  errorNoActivity,
 
   /// The foreground activity is not a FragmentActivity.
-  notFragmentActivity,
+  errorNotFragmentActivity,
 
-  /// The device does not have any credentials available.
-  noCredentials,
-
-  /// No biometric hardware is present.
-  noHardware,
-
-  /// The biometric is temporarily unavailable.
-  hardwareUnavailable,
+  /// The authentication system was not available.
+  errorNotAvailable,
 
   /// No biometrics are enrolled.
-  notEnrolled,
+  errorNotEnrolled,
 
   /// The user is locked out temporarily due to too many failed attempts.
-  lockedOutTemporarily,
+  errorLockedOutTemporarily,
 
   /// The user is locked out until they log in another way due to too many
   /// failed attempts.
-  lockedOutPermanently,
-
-  /// The device does not have enough storage to complete authentication.
-  noSpace,
-
-  /// The hardware is unavailable until a security update is performed.
-  securityUpdateRequired,
-
-  /// Some unrecognized error case was encountered
-  unknownError,
-}
-
-/// The results of an authentication request.
-class AuthResult {
-  const AuthResult({required this.code, this.errorMessage});
-
-  /// The specific result returned from the SDK.
-  final AuthResultCode code;
-
-  /// The error message associated with the result, if any.
-  final String? errorMessage;
+  errorLockedOutPermanently,
 }
 
 class AuthOptions {
@@ -104,10 +78,12 @@ class AuthOptions {
     required this.biometricOnly,
     required this.sensitiveTransaction,
     required this.sticky,
+    required this.useErrorDialgs,
   });
   final bool biometricOnly;
   final bool sensitiveTransaction;
   final bool sticky;
+  final bool useErrorDialgs;
 }
 
 /// Pigeon equivalent of the subset of BiometricType used by Android.
@@ -130,10 +106,7 @@ abstract class LocalAuthApi {
 
   /// Returns the biometric types that are enrolled, and can thus be used
   /// without additional setup.
-  ///
-  /// Returns null if there is no activity, in which case the enrolled
-  /// biometrics can't be determined.
-  List<AuthClassification>? getEnrolledBiometrics();
+  List<AuthClassification> getEnrolledBiometrics();
 
   /// Attempts to authenticate the user with the provided [options], and using
   /// [strings] for any UI.

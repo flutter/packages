@@ -15,7 +15,6 @@ import androidx.fragment.app.FragmentActivity;
 import io.flutter.plugins.localauth.AuthenticationHelper.AuthCompletionHandler;
 import io.flutter.plugins.localauth.Messages.AuthOptions;
 import io.flutter.plugins.localauth.Messages.AuthResult;
-import io.flutter.plugins.localauth.Messages.AuthResultCode;
 import io.flutter.plugins.localauth.Messages.AuthStrings;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,8 +28,14 @@ public class AuthenticationHelperTest {
   static final AuthStrings dummyStrings =
       new AuthStrings.Builder()
           .setReason("a reason")
-          .setSignInHint("a hint")
+          .setBiometricHint("a hint")
+          .setBiometricNotRecognized("biometric not recognized")
+          .setBiometricRequiredTitle("biometric required")
           .setCancelButton("cancel")
+          .setDeviceCredentialsRequiredTitle("credentials required")
+          .setDeviceCredentialsSetupDescription("credentials setup description")
+          .setGoToSettingsButton("go")
+          .setGoToSettingsDescription("go to settings description")
           .setSignInTitle("sign in")
           .build();
 
@@ -39,54 +44,11 @@ public class AuthenticationHelperTest {
           .setBiometricOnly(false)
           .setSensitiveTransaction(false)
           .setSticky(false)
+          .setUseErrorDialgs(false)
           .build();
 
   @Test
-  public void onAuthenticationError_returnsUserCanceled() {
-    final AuthCompletionHandler handler = mock(AuthCompletionHandler.class);
-    final AuthenticationHelper helper =
-        new AuthenticationHelper(
-            null,
-            buildMockActivityWithContext(mock(FragmentActivity.class)),
-            defaultOptions,
-            dummyStrings,
-            handler,
-            true);
-
-    helper.onAuthenticationError(BiometricPrompt.ERROR_USER_CANCELED, "");
-
-    verify(handler)
-        .complete(
-            new AuthResult.Builder()
-                .setCode(AuthResultCode.USER_CANCELED)
-                .setErrorMessage("")
-                .build());
-  }
-
-  @Test
-  public void onAuthenticationError_returnsNegativeButton() {
-    final AuthCompletionHandler handler = mock(AuthCompletionHandler.class);
-    final AuthenticationHelper helper =
-        new AuthenticationHelper(
-            null,
-            buildMockActivityWithContext(mock(FragmentActivity.class)),
-            defaultOptions,
-            dummyStrings,
-            handler,
-            true);
-
-    helper.onAuthenticationError(BiometricPrompt.ERROR_NEGATIVE_BUTTON, "");
-
-    verify(handler)
-        .complete(
-            new AuthResult.Builder()
-                .setCode(AuthResultCode.NEGATIVE_BUTTON)
-                .setErrorMessage("")
-                .build());
-  }
-
-  @Test
-  public void onAuthenticationError_withoutDialogs_returnsNoCredential() {
+  public void onAuthenticationError_withoutDialogs_returnsNotAvailableForNoCredential() {
     final AuthCompletionHandler handler = mock(AuthCompletionHandler.class);
     final AuthenticationHelper helper =
         new AuthenticationHelper(
@@ -99,12 +61,7 @@ public class AuthenticationHelperTest {
 
     helper.onAuthenticationError(BiometricPrompt.ERROR_NO_DEVICE_CREDENTIAL, "");
 
-    verify(handler)
-        .complete(
-            new AuthResult.Builder()
-                .setCode(AuthResultCode.NO_CREDENTIALS)
-                .setErrorMessage("")
-                .build());
+    verify(handler).complete(AuthResult.ERROR_NOT_AVAILABLE);
   }
 
   @Test
@@ -121,16 +78,11 @@ public class AuthenticationHelperTest {
 
     helper.onAuthenticationError(BiometricPrompt.ERROR_NO_BIOMETRICS, "");
 
-    verify(handler)
-        .complete(
-            new AuthResult.Builder()
-                .setCode(AuthResultCode.NOT_ENROLLED)
-                .setErrorMessage("")
-                .build());
+    verify(handler).complete(AuthResult.ERROR_NOT_ENROLLED);
   }
 
   @Test
-  public void onAuthenticationError_returnsHardwareUnavailable() {
+  public void onAuthenticationError_returnsNotAvailableForHardwareUnavailable() {
     final AuthCompletionHandler handler = mock(AuthCompletionHandler.class);
     final AuthenticationHelper helper =
         new AuthenticationHelper(
@@ -143,16 +95,11 @@ public class AuthenticationHelperTest {
 
     helper.onAuthenticationError(BiometricPrompt.ERROR_HW_UNAVAILABLE, "");
 
-    verify(handler)
-        .complete(
-            new AuthResult.Builder()
-                .setCode(AuthResultCode.HARDWARE_UNAVAILABLE)
-                .setErrorMessage("")
-                .build());
+    verify(handler).complete(AuthResult.ERROR_NOT_AVAILABLE);
   }
 
   @Test
-  public void onAuthenticationError_returnsHardwareNotPresent() {
+  public void onAuthenticationError_returnsNotAvailableForHardwareNotPresent() {
     final AuthCompletionHandler handler = mock(AuthCompletionHandler.class);
     final AuthenticationHelper helper =
         new AuthenticationHelper(
@@ -165,12 +112,7 @@ public class AuthenticationHelperTest {
 
     helper.onAuthenticationError(BiometricPrompt.ERROR_HW_NOT_PRESENT, "");
 
-    verify(handler)
-        .complete(
-            new AuthResult.Builder()
-                .setCode(AuthResultCode.NO_HARDWARE)
-                .setErrorMessage("")
-                .build());
+    verify(handler).complete(AuthResult.ERROR_NOT_AVAILABLE);
   }
 
   @Test
@@ -187,12 +129,7 @@ public class AuthenticationHelperTest {
 
     helper.onAuthenticationError(BiometricPrompt.ERROR_LOCKOUT, "");
 
-    verify(handler)
-        .complete(
-            new AuthResult.Builder()
-                .setCode(AuthResultCode.LOCKED_OUT_TEMPORARILY)
-                .setErrorMessage("")
-                .build());
+    verify(handler).complete(AuthResult.ERROR_LOCKED_OUT_TEMPORARILY);
   }
 
   @Test
@@ -209,16 +146,11 @@ public class AuthenticationHelperTest {
 
     helper.onAuthenticationError(BiometricPrompt.ERROR_LOCKOUT_PERMANENT, "");
 
-    verify(handler)
-        .complete(
-            new AuthResult.Builder()
-                .setCode(AuthResultCode.LOCKED_OUT_PERMANENTLY)
-                .setErrorMessage("")
-                .build());
+    verify(handler).complete(AuthResult.ERROR_LOCKED_OUT_PERMANENTLY);
   }
 
   @Test
-  public void onAuthenticationError_withoutSticky_returnsSystemCanceled() {
+  public void onAuthenticationError_withoutSticky_returnsFailureForCanceled() {
     final AuthCompletionHandler handler = mock(AuthCompletionHandler.class);
     final AuthenticationHelper helper =
         new AuthenticationHelper(
@@ -231,16 +163,11 @@ public class AuthenticationHelperTest {
 
     helper.onAuthenticationError(BiometricPrompt.ERROR_CANCELED, "");
 
-    verify(handler)
-        .complete(
-            new AuthResult.Builder()
-                .setCode(AuthResultCode.SYSTEM_CANCELED)
-                .setErrorMessage("")
-                .build());
+    verify(handler).complete(AuthResult.FAILURE);
   }
 
   @Test
-  public void onAuthenticationError_returnsTimeout() {
+  public void onAuthenticationError_withoutSticky_returnsFailureForOtherCases() {
     final AuthCompletionHandler handler = mock(AuthCompletionHandler.class);
     final AuthenticationHelper helper =
         new AuthenticationHelper(
@@ -251,74 +178,9 @@ public class AuthenticationHelperTest {
             handler,
             true);
 
-    helper.onAuthenticationError(BiometricPrompt.ERROR_TIMEOUT, "");
+    helper.onAuthenticationError(BiometricPrompt.ERROR_VENDOR, "");
 
-    verify(handler)
-        .complete(
-            new AuthResult.Builder().setCode(AuthResultCode.TIMEOUT).setErrorMessage("").build());
-  }
-
-  @Test
-  public void onAuthenticationError_returnsNoSpace() {
-    final AuthCompletionHandler handler = mock(AuthCompletionHandler.class);
-    final AuthenticationHelper helper =
-        new AuthenticationHelper(
-            null,
-            buildMockActivityWithContext(mock(FragmentActivity.class)),
-            defaultOptions,
-            dummyStrings,
-            handler,
-            true);
-
-    helper.onAuthenticationError(BiometricPrompt.ERROR_NO_SPACE, "");
-
-    verify(handler)
-        .complete(
-            new AuthResult.Builder().setCode(AuthResultCode.NO_SPACE).setErrorMessage("").build());
-  }
-
-  @Test
-  public void onAuthenticationError_returnsSecurityUpdateRequired() {
-    final AuthCompletionHandler handler = mock(AuthCompletionHandler.class);
-    final AuthenticationHelper helper =
-        new AuthenticationHelper(
-            null,
-            buildMockActivityWithContext(mock(FragmentActivity.class)),
-            defaultOptions,
-            dummyStrings,
-            handler,
-            true);
-
-    helper.onAuthenticationError(BiometricPrompt.ERROR_SECURITY_UPDATE_REQUIRED, "");
-
-    verify(handler)
-        .complete(
-            new AuthResult.Builder()
-                .setCode(AuthResultCode.SECURITY_UPDATE_REQUIRED)
-                .setErrorMessage("")
-                .build());
-  }
-
-  @Test
-  public void onAuthenticationError_returnsUnknownForOtherCases() {
-    final AuthCompletionHandler handler = mock(AuthCompletionHandler.class);
-    final AuthenticationHelper helper =
-        new AuthenticationHelper(
-            null,
-            buildMockActivityWithContext(mock(FragmentActivity.class)),
-            defaultOptions,
-            dummyStrings,
-            handler,
-            true);
-
-    helper.onAuthenticationError(BiometricPrompt.ERROR_UNABLE_TO_PROCESS, "");
-
-    verify(handler)
-        .complete(
-            new AuthResult.Builder()
-                .setCode(AuthResultCode.UNKNOWN_ERROR)
-                .setErrorMessage("")
-                .build());
+    verify(handler).complete(AuthResult.FAILURE);
   }
 
   private FragmentActivity buildMockActivityWithContext(FragmentActivity mockActivity) {

@@ -94,12 +94,12 @@ TEST(LocalAuthPlugin, AuthenticateHandlerWorksWhenAuthorized) {
       });
 
   LocalAuthPlugin plugin(std::move(mockConsentVerifier));
-  ErrorOr<AuthResult> result(AuthResult::kUnavailable);
+  ErrorOr<bool> result(false);
   plugin.Authenticate("My Reason",
-                      [&result](ErrorOr<AuthResult> reply) { result = reply; });
+                      [&result](ErrorOr<bool> reply) { result = reply; });
 
   EXPECT_FALSE(result.has_error());
-  EXPECT_EQ(result.value(), AuthResult::kSuccess);
+  EXPECT_TRUE(result.value());
 }
 
 TEST(LocalAuthPlugin, AuthenticateHandlerWorksWhenNotAuthorized) {
@@ -127,78 +127,12 @@ TEST(LocalAuthPlugin, AuthenticateHandlerWorksWhenNotAuthorized) {
       });
 
   LocalAuthPlugin plugin(std::move(mockConsentVerifier));
-  ErrorOr<AuthResult> result(AuthResult::kUnavailable);
+  ErrorOr<bool> result(true);
   plugin.Authenticate("My Reason",
-                      [&result](ErrorOr<AuthResult> reply) { result = reply; });
+                      [&result](ErrorOr<bool> reply) { result = reply; });
 
   EXPECT_FALSE(result.has_error());
-  EXPECT_EQ(result.value(), AuthResult::kFailure);
-}
-
-TEST(LocalAuthPlugin, AuthenticateHandlerReportsNoHardware) {
-  std::unique_ptr<MockUserConsentVerifier> mockConsentVerifier =
-      std::make_unique<MockUserConsentVerifier>();
-
-  EXPECT_CALL(*mockConsentVerifier, CheckAvailabilityAsync)
-      .Times(1)
-      .WillOnce([]() -> winrt::Windows::Foundation::IAsyncOperation<
-                         winrt::Windows::Security::Credentials::UI::
-                             UserConsentVerifierAvailability> {
-        co_return winrt::Windows::Security::Credentials::UI::
-            UserConsentVerifierAvailability::DeviceNotPresent;
-      });
-
-  LocalAuthPlugin plugin(std::move(mockConsentVerifier));
-  ErrorOr<AuthResult> result(AuthResult::kUnavailable);
-  plugin.Authenticate("My Reason",
-                      [&result](ErrorOr<AuthResult> reply) { result = reply; });
-
-  EXPECT_FALSE(result.has_error());
-  EXPECT_EQ(result.value(), AuthResult::kNoHardware);
-}
-
-TEST(LocalAuthPlugin, AuthenticateHandlerReportsBusy) {
-  std::unique_ptr<MockUserConsentVerifier> mockConsentVerifier =
-      std::make_unique<MockUserConsentVerifier>();
-
-  EXPECT_CALL(*mockConsentVerifier, CheckAvailabilityAsync)
-      .Times(1)
-      .WillOnce([]() -> winrt::Windows::Foundation::IAsyncOperation<
-                         winrt::Windows::Security::Credentials::UI::
-                             UserConsentVerifierAvailability> {
-        co_return winrt::Windows::Security::Credentials::UI::
-            UserConsentVerifierAvailability::DeviceBusy;
-      });
-
-  LocalAuthPlugin plugin(std::move(mockConsentVerifier));
-  ErrorOr<AuthResult> result(AuthResult::kUnavailable);
-  plugin.Authenticate("My Reason",
-                      [&result](ErrorOr<AuthResult> reply) { result = reply; });
-
-  EXPECT_FALSE(result.has_error());
-  EXPECT_EQ(result.value(), AuthResult::kDeviceBusy);
-}
-
-TEST(LocalAuthPlugin, AuthenticateHandlerReportsDisabledByPolicy) {
-  std::unique_ptr<MockUserConsentVerifier> mockConsentVerifier =
-      std::make_unique<MockUserConsentVerifier>();
-
-  EXPECT_CALL(*mockConsentVerifier, CheckAvailabilityAsync)
-      .Times(1)
-      .WillOnce([]() -> winrt::Windows::Foundation::IAsyncOperation<
-                         winrt::Windows::Security::Credentials::UI::
-                             UserConsentVerifierAvailability> {
-        co_return winrt::Windows::Security::Credentials::UI::
-            UserConsentVerifierAvailability::DisabledByPolicy;
-      });
-
-  LocalAuthPlugin plugin(std::move(mockConsentVerifier));
-  ErrorOr<AuthResult> result(AuthResult::kUnavailable);
-  plugin.Authenticate("My Reason",
-                      [&result](ErrorOr<AuthResult> reply) { result = reply; });
-
-  EXPECT_FALSE(result.has_error());
-  EXPECT_EQ(result.value(), AuthResult::kDisabledByPolicy);
+  EXPECT_FALSE(result.value());
 }
 
 }  // namespace test

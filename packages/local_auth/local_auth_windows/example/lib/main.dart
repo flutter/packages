@@ -94,18 +94,11 @@ class _MyAppState extends State<MyApp> {
       setState(() {
         _isAuthenticating = false;
       });
-    } on LocalAuthException catch (e) {
-      print(e);
-      setState(() {
-        _isAuthenticating = false;
-        _authorized = 'Error - $e';
-      });
-      return;
     } on PlatformException catch (e) {
       print(e);
       setState(() {
         _isAuthenticating = false;
-        _authorized = 'Unexpected error - ${e.message}';
+        _authorized = 'Error - ${e.message}';
       });
       return;
     }
@@ -116,6 +109,11 @@ class _MyAppState extends State<MyApp> {
     setState(
       () => _authorized = authenticated ? 'Authorized' : 'Not Authorized',
     );
+  }
+
+  Future<void> _cancelAuthentication() async {
+    await LocalAuthPlatform.instance.stopAuthentication();
+    setState(() => _isAuthenticating = false);
   }
 
   @override
@@ -151,7 +149,18 @@ class _MyAppState extends State<MyApp> {
                 ),
                 const Divider(height: 100),
                 Text('Current State: $_authorized\n'),
-                if (!_isAuthenticating)
+                if (_isAuthenticating)
+                  ElevatedButton(
+                    onPressed: _cancelAuthentication,
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Text('Cancel Authentication'),
+                        Icon(Icons.cancel),
+                      ],
+                    ),
+                  )
+                else
                   Column(
                     children: <Widget>[
                       ElevatedButton(

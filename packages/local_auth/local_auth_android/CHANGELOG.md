@@ -1,10 +1,3 @@
-## 2.0.0
-
-* **BREAKING CHANGES:**
-  * Switches to `LocalAuthException` for error reporting.
-  * Removes support for `useErrorDialogs`.
-  * Renames `biometricHint` to `signInHint` to reflect its usage.
-
 ## 1.0.53
 
 * Removes obsolete code related to supporting SDK <24.

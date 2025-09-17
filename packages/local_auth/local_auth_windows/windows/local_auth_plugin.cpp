@@ -120,14 +120,14 @@ void LocalAuthPlugin::IsDeviceSupported(
 
 void LocalAuthPlugin::Authenticate(
     const std::string& localized_reason,
-    std::function<void(ErrorOr<AuthResult> reply)> result) {
+    std::function<void(ErrorOr<bool> reply)> result) {
   AuthenticateCoroutine(localized_reason, std::move(result));
 }
 
 // Starts authentication process.
 winrt::fire_and_forget LocalAuthPlugin::AuthenticateCoroutine(
     const std::string& localized_reason,
-    std::function<void(ErrorOr<AuthResult> reply)> result) {
+    std::function<void(ErrorOr<bool> reply)> result) {
   std::wstring reason = Utf16FromUtf8(localized_reason);
 
   winrt::Windows::Security::Credentials::UI::UserConsentVerifierAvailability
@@ -137,27 +137,19 @@ winrt::fire_and_forget LocalAuthPlugin::AuthenticateCoroutine(
   if (ucv_availability ==
       winrt::Windows::Security::Credentials::UI::
           UserConsentVerifierAvailability::DeviceNotPresent) {
-    result(AuthResult::kNoHardware);
+    result(FlutterError("NoHardware", "No biometric hardware found"));
     co_return;
   } else if (ucv_availability ==
              winrt::Windows::Security::Credentials::UI::
                  UserConsentVerifierAvailability::NotConfiguredForUser) {
-    result(AuthResult::kNotEnrolled);
-    co_return;
-  } else if (ucv_availability ==
-             winrt::Windows::Security::Credentials::UI::
-                 UserConsentVerifierAvailability::DeviceBusy) {
-    result(AuthResult::kDeviceBusy);
-    co_return;
-  } else if (ucv_availability ==
-             winrt::Windows::Security::Credentials::UI::
-                 UserConsentVerifierAvailability::DisabledByPolicy) {
-    result(AuthResult::kDisabledByPolicy);
+    result(
+        FlutterError("NotEnrolled", "No biometrics enrolled on this device."));
     co_return;
   } else if (ucv_availability !=
              winrt::Windows::Security::Credentials::UI::
                  UserConsentVerifierAvailability::Available) {
-    result(AuthResult::kUnavailable);
+    result(
+        FlutterError("NotAvailable", "Required security features not enabled"));
     co_return;
   }
 
@@ -168,11 +160,9 @@ winrt::fire_and_forget LocalAuthPlugin::AuthenticateCoroutine(
                 reason);
 
     result(consent_result == winrt::Windows::Security::Credentials::UI::
-                                 UserConsentVerificationResult::Verified
-               ? AuthResult::kSuccess
-               : AuthResult::kFailure);
+                                 UserConsentVerificationResult::Verified);
   } catch (...) {
-    result(AuthResult::kFailure);
+    result(false);
   }
 }
 

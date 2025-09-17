@@ -67,9 +67,8 @@ class LocalAuthPlugin : public flutter::Plugin, public LocalAuthApi {
   // LocalAuthApi:
   void IsDeviceSupported(
       std::function<void(ErrorOr<bool> reply)> result) override;
-  void Authenticate(
-      const std::string& localized_reason,
-      std::function<void(ErrorOr<AuthResult> reply)> result) override;
+  void Authenticate(const std::string& localized_reason,
+                    std::function<void(ErrorOr<bool> reply)> result) override;
 
  private:
   std::unique_ptr<UserConsentVerifier> user_consent_verifier_;
@@ -77,7 +76,7 @@ class LocalAuthPlugin : public flutter::Plugin, public LocalAuthApi {
   // Starts authentication process.
   winrt::fire_and_forget AuthenticateCoroutine(
       const std::string& localized_reason,
-      std::function<void(ErrorOr<AuthResult> reply)> result);
+      std::function<void(ErrorOr<bool> reply)> result);
 
   // Returns whether the system supports Windows Hello.
   winrt::fire_and_forget IsDeviceSupportedCoroutine(

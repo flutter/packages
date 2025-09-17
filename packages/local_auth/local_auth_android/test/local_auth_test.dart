@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:local_auth_android/local_auth_android.dart';
 import 'package:local_auth_android/src/messages.g.dart';
@@ -85,21 +86,6 @@ void main() {
 
       expect(result, <BiometricType>[]);
     });
-
-    test('throws no UI for null', () async {
-      when(api.getEnrolledBiometrics()).thenAnswer((_) async => null);
-
-      expect(
-        () async => plugin.getEnrolledBiometrics(),
-        throwsA(
-          isA<LocalAuthException>().having(
-            (LocalAuthException e) => e.code,
-            'code',
-            LocalAuthExceptionCode.uiUnavailable,
-          ),
-        ),
-      );
-    });
   });
 
   group('authenticate', () {
@@ -107,7 +93,7 @@ void main() {
       test('passes default values when nothing is provided', () async {
         when(
           api.authenticate(any, any),
-        ).thenAnswer((_) async => AuthResult(code: AuthResultCode.success));
+        ).thenAnswer((_) async => AuthResult.success);
 
         const String reason = 'test reason';
         await plugin.authenticate(
@@ -122,8 +108,20 @@ void main() {
         expect(strings.reason, reason);
         // These should all be the default values from
         // auth_messages_android.dart
-        expect(strings.signInHint, androidSignInHint);
+        expect(strings.biometricHint, androidBiometricHint);
+        expect(strings.biometricNotRecognized, androidBiometricNotRecognized);
+        expect(strings.biometricRequiredTitle, androidBiometricRequiredTitle);
         expect(strings.cancelButton, androidCancelButton);
+        expect(
+          strings.deviceCredentialsRequiredTitle,
+          androidDeviceCredentialsRequiredTitle,
+        );
+        expect(
+          strings.deviceCredentialsSetupDescription,
+          androidDeviceCredentialsSetupDescription,
+        );
+        expect(strings.goToSettingsButton, goToSettings);
+        expect(strings.goToSettingsDescription, androidGoToSettingsDescription);
         expect(strings.signInTitle, androidSignInTitle);
       });
 
@@ -132,7 +130,7 @@ void main() {
         () async {
           when(
             api.authenticate(any, any),
-          ).thenAnswer((_) async => AuthResult(code: AuthResultCode.success));
+          ).thenAnswer((_) async => AuthResult.success);
 
           const String reason = 'test reason';
           await plugin.authenticate(
@@ -147,8 +145,23 @@ void main() {
           expect(strings.reason, reason);
           // These should all be the default values from
           // auth_messages_android.dart
-          expect(strings.signInHint, androidSignInHint);
+          expect(strings.biometricHint, androidBiometricHint);
+          expect(strings.biometricNotRecognized, androidBiometricNotRecognized);
+          expect(strings.biometricRequiredTitle, androidBiometricRequiredTitle);
           expect(strings.cancelButton, androidCancelButton);
+          expect(
+            strings.deviceCredentialsRequiredTitle,
+            androidDeviceCredentialsRequiredTitle,
+          );
+          expect(
+            strings.deviceCredentialsSetupDescription,
+            androidDeviceCredentialsSetupDescription,
+          );
+          expect(strings.goToSettingsButton, goToSettings);
+          expect(
+            strings.goToSettingsDescription,
+            androidGoToSettingsDescription,
+          );
           expect(strings.signInTitle, androidSignInTitle);
         },
       );
@@ -156,21 +169,33 @@ void main() {
       test('passes all non-default values correctly', () async {
         when(
           api.authenticate(any, any),
-        ).thenAnswer((_) async => AuthResult(code: AuthResultCode.success));
+        ).thenAnswer((_) async => AuthResult.success);
 
         // These are arbitrary values; all that matters is that:
         // - they are different from the defaults, and
         // - they are different from each other.
         const String reason = 'A';
         const String hint = 'B';
-        const String cancel = 'C';
-        const String signInTitle = 'D';
+        const String bioNotRecognized = 'C';
+        const String bioRequired = 'D';
+        const String cancel = 'E';
+        const String credentialsRequired = 'F';
+        const String credentialsSetup = 'G';
+        const String goButton = 'H';
+        const String goDescription = 'I';
+        const String signInTitle = 'J';
         await plugin.authenticate(
           localizedReason: reason,
           authMessages: <AuthMessages>[
             const AndroidAuthMessages(
-              signInHint: hint,
+              biometricHint: hint,
+              biometricNotRecognized: bioNotRecognized,
+              biometricRequiredTitle: bioRequired,
               cancelButton: cancel,
+              deviceCredentialsRequiredTitle: credentialsRequired,
+              deviceCredentialsSetupDescription: credentialsSetup,
+              goToSettingsButton: goButton,
+              goToSettingsDescription: goDescription,
               signInTitle: signInTitle,
             ),
             AnotherPlatformAuthMessages(),
@@ -182,26 +207,39 @@ void main() {
         );
         final AuthStrings strings = result.captured[0] as AuthStrings;
         expect(strings.reason, reason);
-        expect(strings.signInHint, hint);
+        expect(strings.biometricHint, hint);
+        expect(strings.biometricNotRecognized, bioNotRecognized);
+        expect(strings.biometricRequiredTitle, bioRequired);
         expect(strings.cancelButton, cancel);
+        expect(strings.deviceCredentialsRequiredTitle, credentialsRequired);
+        expect(strings.deviceCredentialsSetupDescription, credentialsSetup);
+        expect(strings.goToSettingsButton, goButton);
+        expect(strings.goToSettingsDescription, goDescription);
         expect(strings.signInTitle, signInTitle);
       });
 
       test('passes provided messages with default fallbacks', () async {
         when(
           api.authenticate(any, any),
-        ).thenAnswer((_) async => AuthResult(code: AuthResultCode.success));
+        ).thenAnswer((_) async => AuthResult.success);
 
         // These are arbitrary values; all that matters is that:
         // - they are different from the defaults, and
         // - they are different from each other.
         const String reason = 'A';
         const String hint = 'B';
-        const String cancel = 'C';
+        const String bioNotRecognized = 'C';
+        const String bioRequired = 'D';
+        const String cancel = 'E';
         await plugin.authenticate(
           localizedReason: reason,
           authMessages: <AuthMessages>[
-            const AndroidAuthMessages(signInHint: hint, cancelButton: cancel),
+            const AndroidAuthMessages(
+              biometricHint: hint,
+              biometricNotRecognized: bioNotRecognized,
+              biometricRequiredTitle: bioRequired,
+              cancelButton: cancel,
+            ),
           ],
         );
 
@@ -211,10 +249,22 @@ void main() {
         final AuthStrings strings = result.captured[0] as AuthStrings;
         expect(strings.reason, reason);
         // These should all be the provided values.
-        expect(strings.signInHint, hint);
+        expect(strings.biometricHint, hint);
+        expect(strings.biometricNotRecognized, bioNotRecognized);
+        expect(strings.biometricRequiredTitle, bioRequired);
         expect(strings.cancelButton, cancel);
         // These were non set, so should all be the default values from
         // auth_messages_android.dart
+        expect(
+          strings.deviceCredentialsRequiredTitle,
+          androidDeviceCredentialsRequiredTitle,
+        );
+        expect(
+          strings.deviceCredentialsSetupDescription,
+          androidDeviceCredentialsSetupDescription,
+        );
+        expect(strings.goToSettingsButton, goToSettings);
+        expect(strings.goToSettingsDescription, androidGoToSettingsDescription);
         expect(strings.signInTitle, androidSignInTitle);
       });
     });
@@ -223,7 +273,7 @@ void main() {
       test('passes default values', () async {
         when(
           api.authenticate(any, any),
-        ).thenAnswer((_) async => AuthResult(code: AuthResultCode.success));
+        ).thenAnswer((_) async => AuthResult.success);
 
         await plugin.authenticate(
           localizedReason: 'reason',
@@ -237,12 +287,13 @@ void main() {
         expect(options.biometricOnly, false);
         expect(options.sensitiveTransaction, true);
         expect(options.sticky, false);
+        expect(options.useErrorDialgs, true);
       });
 
       test('passes provided non-default values', () async {
         when(
           api.authenticate(any, any),
-        ).thenAnswer((_) async => AuthResult(code: AuthResultCode.success));
+        ).thenAnswer((_) async => AuthResult.success);
 
         await plugin.authenticate(
           localizedReason: 'reason',
@@ -251,6 +302,7 @@ void main() {
             biometricOnly: true,
             sensitiveTransaction: false,
             stickyAuth: true,
+            useErrorDialogs: false,
           ),
         );
 
@@ -261,6 +313,7 @@ void main() {
         expect(options.biometricOnly, true);
         expect(options.sensitiveTransaction, false);
         expect(options.sticky, true);
+        expect(options.useErrorDialgs, false);
       });
     });
 
@@ -268,7 +321,7 @@ void main() {
       test('handles success', () async {
         when(
           api.authenticate(any, any),
-        ).thenAnswer((_) async => AuthResult(code: AuthResultCode.success));
+        ).thenAnswer((_) async => AuthResult.success);
 
         final bool result = await plugin.authenticate(
           localizedReason: 'reason',
@@ -278,101 +331,25 @@ void main() {
         expect(result, true);
       });
 
-      test(
-        'converts negativeButton to userCanceled LocalAuthException',
-        () async {
-          when(api.authenticate(any, any)).thenAnswer(
-            (_) async => AuthResult(code: AuthResultCode.negativeButton),
-          );
-
-          expect(
-            () async => plugin.authenticate(
-              localizedReason: 'reason',
-              authMessages: <AuthMessages>[],
-            ),
-            throwsA(
-              isA<LocalAuthException>().having(
-                (LocalAuthException e) => e.code,
-                'code',
-                LocalAuthExceptionCode.userCanceled,
-              ),
-            ),
-          );
-        },
-      );
-
-      test(
-        'converts userCanceled to userCanceled LocalAuthException',
-        () async {
-          when(api.authenticate(any, any)).thenAnswer(
-            (_) async => AuthResult(code: AuthResultCode.userCanceled),
-          );
-
-          expect(
-            () async => plugin.authenticate(
-              localizedReason: 'reason',
-              authMessages: <AuthMessages>[],
-            ),
-            throwsA(
-              isA<LocalAuthException>().having(
-                (LocalAuthException e) => e.code,
-                'code',
-                LocalAuthExceptionCode.userCanceled,
-              ),
-            ),
-          );
-        },
-      );
-
-      test(
-        'converts systemCanceled to systemCanceled LocalAuthException',
-        () async {
-          when(api.authenticate(any, any)).thenAnswer(
-            (_) async => AuthResult(code: AuthResultCode.systemCanceled),
-          );
-
-          expect(
-            () async => plugin.authenticate(
-              localizedReason: 'reason',
-              authMessages: <AuthMessages>[],
-            ),
-            throwsA(
-              isA<LocalAuthException>().having(
-                (LocalAuthException e) => e.code,
-                'code',
-                LocalAuthExceptionCode.systemCanceled,
-              ),
-            ),
-          );
-        },
-      );
-
-      test('converts timeout to timeout LocalAuthException', () async {
+      test('handles failure', () async {
         when(
           api.authenticate(any, any),
-        ).thenAnswer((_) async => AuthResult(code: AuthResultCode.timeout));
+        ).thenAnswer((_) async => AuthResult.failure);
 
-        expect(
-          () async => plugin.authenticate(
-            localizedReason: 'reason',
-            authMessages: <AuthMessages>[],
-          ),
-          throwsA(
-            isA<LocalAuthException>().having(
-              (LocalAuthException e) => e.code,
-              'code',
-              LocalAuthExceptionCode.timeout,
-            ),
-          ),
+        final bool result = await plugin.authenticate(
+          localizedReason: 'reason',
+          authMessages: <AuthMessages>[],
         );
+
+        expect(result, false);
       });
 
       test(
-        'converts alreadyInProgress to authInProgress LocalAuthException',
+        'converts errorAlreadyInProgress to legacy PlatformException',
         () async {
-          when(api.authenticate(any, any)).thenAnswer(
-            (_) async => AuthResult(code: AuthResultCode.alreadyInProgress),
-          );
+          when(
+            api.authenticate(any, any),
+          ).thenAnswer((_) async => AuthResult.errorAlreadyInProgress);
 
           expect(
             () async => plugin.authenticate(
@@ -380,20 +357,26 @@ void main() {
               authMessages: <AuthMessages>[],
             ),
             throwsA(
-              isA<LocalAuthException>().having(
-                (LocalAuthException e) => e.code,
-                'code',
-                LocalAuthExceptionCode.authInProgress,
-              ),
+              isA<PlatformException>()
+                  .having(
+                    (PlatformException e) => e.code,
+                    'code',
+                    'auth_in_progress',
+                  )
+                  .having(
+                    (PlatformException e) => e.message,
+                    'message',
+                    'Authentication in progress',
+                  ),
             ),
           );
         },
       );
 
-      test('converts noActivity to uiUnavailable LocalAuthException', () async {
+      test('converts errorNoActivity to legacy PlatformException', () async {
         when(
           api.authenticate(any, any),
-        ).thenAnswer((_) async => AuthResult(code: AuthResultCode.noActivity));
+        ).thenAnswer((_) async => AuthResult.errorNoActivity);
 
         expect(
           () async => plugin.authenticate(
@@ -401,209 +384,23 @@ void main() {
             authMessages: <AuthMessages>[],
           ),
           throwsA(
-            isA<LocalAuthException>().having(
-              (LocalAuthException e) => e.code,
-              'code',
-              LocalAuthExceptionCode.uiUnavailable,
-            ),
-          ),
-        );
-      });
-
-      test(
-        'converts notFragmentActivity to uiUnavailable LocalAuthException',
-        () async {
-          when(api.authenticate(any, any)).thenAnswer(
-            (_) async => AuthResult(code: AuthResultCode.notFragmentActivity),
-          );
-
-          expect(
-            () async => plugin.authenticate(
-              localizedReason: 'reason',
-              authMessages: <AuthMessages>[],
-            ),
-            throwsA(
-              isA<LocalAuthException>().having(
-                (LocalAuthException e) => e.code,
-                'code',
-                LocalAuthExceptionCode.uiUnavailable,
-              ),
-            ),
-          );
-        },
-      );
-
-      test(
-        'converts noCredentials to noCredentialsSet LocalAuthException',
-        () async {
-          when(api.authenticate(any, any)).thenAnswer(
-            (_) async => AuthResult(code: AuthResultCode.noCredentials),
-          );
-
-          expect(
-            () async => plugin.authenticate(
-              localizedReason: 'reason',
-              authMessages: <AuthMessages>[],
-            ),
-            throwsA(
-              isA<LocalAuthException>().having(
-                (LocalAuthException e) => e.code,
-                'code',
-                LocalAuthExceptionCode.noCredentialsSet,
-              ),
-            ),
-          );
-        },
-      );
-
-      test(
-        'converts noHardware to noBiometricHardware LocalAuthException',
-        () async {
-          when(api.authenticate(any, any)).thenAnswer(
-            (_) async => AuthResult(code: AuthResultCode.noHardware),
-          );
-
-          expect(
-            () async => plugin.authenticate(
-              localizedReason: 'reason',
-              authMessages: <AuthMessages>[],
-            ),
-            throwsA(
-              isA<LocalAuthException>().having(
-                (LocalAuthException e) => e.code,
-                'code',
-                LocalAuthExceptionCode.noBiometricHardware,
-              ),
-            ),
-          );
-        },
-      );
-
-      test(
-        'converts hardwareUnavailable to biometricHardwareTemporarilyUnavailable LocalAuthException',
-        () async {
-          when(api.authenticate(any, any)).thenAnswer(
-            (_) async => AuthResult(code: AuthResultCode.hardwareUnavailable),
-          );
-
-          expect(
-            () async => plugin.authenticate(
-              localizedReason: 'reason',
-              authMessages: <AuthMessages>[],
-            ),
-            throwsA(
-              isA<LocalAuthException>().having(
-                (LocalAuthException e) => e.code,
-                'code',
-                LocalAuthExceptionCode.biometricHardwareTemporarilyUnavailable,
-              ),
-            ),
-          );
-        },
-      );
-
-      test(
-        'converts notEnrolled to noBiometricsEnrolled LocalAuthException',
-        () async {
-          when(api.authenticate(any, any)).thenAnswer(
-            (_) async => AuthResult(code: AuthResultCode.notEnrolled),
-          );
-
-          expect(
-            () async => plugin.authenticate(
-              localizedReason: 'reason',
-              authMessages: <AuthMessages>[],
-            ),
-            throwsA(
-              isA<LocalAuthException>().having(
-                (LocalAuthException e) => e.code,
-                'code',
-                LocalAuthExceptionCode.noBiometricsEnrolled,
-              ),
-            ),
-          );
-        },
-      );
-
-      test(
-        'converts lockedOutTemporarily to temporaryLockout LocalAuthException',
-        () async {
-          when(api.authenticate(any, any)).thenAnswer(
-            (_) async => AuthResult(code: AuthResultCode.lockedOutTemporarily),
-          );
-
-          expect(
-            () async => plugin.authenticate(
-              localizedReason: 'reason',
-              authMessages: <AuthMessages>[],
-            ),
-            throwsA(
-              isA<LocalAuthException>().having(
-                (LocalAuthException e) => e.code,
-                'code',
-                LocalAuthExceptionCode.temporaryLockout,
-              ),
-            ),
-          );
-        },
-      );
-
-      test(
-        'converts lockedOutPermanently to biometricLockout LocalAuthException',
-        () async {
-          when(api.authenticate(any, any)).thenAnswer(
-            (_) async => AuthResult(code: AuthResultCode.lockedOutPermanently),
-          );
-
-          expect(
-            () async => plugin.authenticate(
-              localizedReason: 'reason',
-              authMessages: <AuthMessages>[],
-            ),
-            throwsA(
-              isA<LocalAuthException>().having(
-                (LocalAuthException e) => e.code,
-                'code',
-                LocalAuthExceptionCode.biometricLockout,
-              ),
-            ),
-          );
-        },
-      );
-
-      test('converts noSpace to deviceError LocalAuthException', () async {
-        when(
-          api.authenticate(any, any),
-        ).thenAnswer((_) async => AuthResult(code: AuthResultCode.noSpace));
-
-        expect(
-          () async => plugin.authenticate(
-            localizedReason: 'reason',
-            authMessages: <AuthMessages>[],
-          ),
-          throwsA(
-            isA<LocalAuthException>()
+            isA<PlatformException>()
+                .having((PlatformException e) => e.code, 'code', 'no_activity')
                 .having(
-                  (LocalAuthException e) => e.code,
-                  'code',
-                  LocalAuthExceptionCode.deviceError,
-                )
-                .having(
-                  (LocalAuthException e) => e.description,
-                  'description',
-                  startsWith('Not enough space available:'),
+                  (PlatformException e) => e.message,
+                  'message',
+                  'local_auth plugin requires a foreground activity',
                 ),
           ),
         );
       });
 
       test(
-        'converts securityUpdateRequired to deviceError LocalAuthException',
+        'converts errorNotFragmentActivity to legacy PlatformException',
         () async {
-          when(api.authenticate(any, any)).thenAnswer(
-            (_) async =>
-                AuthResult(code: AuthResultCode.securityUpdateRequired),
-          );
+          when(
+            api.authenticate(any, any),
+          ).thenAnswer((_) async => AuthResult.errorNotFragmentActivity);
 
           expect(
             () async => plugin.authenticate(
@@ -611,16 +408,87 @@ void main() {
               authMessages: <AuthMessages>[],
             ),
             throwsA(
-              isA<LocalAuthException>()
+              isA<PlatformException>()
                   .having(
-                    (LocalAuthException e) => e.code,
+                    (PlatformException e) => e.code,
                     'code',
-                    LocalAuthExceptionCode.deviceError,
+                    'no_fragment_activity',
                   )
                   .having(
-                    (LocalAuthException e) => e.description,
-                    'description',
-                    startsWith('Security update required:'),
+                    (PlatformException e) => e.message,
+                    'message',
+                    'local_auth plugin requires activity to be a FragmentActivity.',
+                  ),
+            ),
+          );
+        },
+      );
+
+      test('converts errorNotAvailable to legacy PlatformException', () async {
+        when(
+          api.authenticate(any, any),
+        ).thenAnswer((_) async => AuthResult.errorNotAvailable);
+
+        expect(
+          () async => plugin.authenticate(
+            localizedReason: 'reason',
+            authMessages: <AuthMessages>[],
+          ),
+          throwsA(
+            isA<PlatformException>()
+                .having((PlatformException e) => e.code, 'code', 'NotAvailable')
+                .having(
+                  (PlatformException e) => e.message,
+                  'message',
+                  'Security credentials not available.',
+                ),
+          ),
+        );
+      });
+
+      test('converts errorNotEnrolled to legacy PlatformException', () async {
+        when(
+          api.authenticate(any, any),
+        ).thenAnswer((_) async => AuthResult.errorNotEnrolled);
+
+        expect(
+          () async => plugin.authenticate(
+            localizedReason: 'reason',
+            authMessages: <AuthMessages>[],
+          ),
+          throwsA(
+            isA<PlatformException>()
+                .having((PlatformException e) => e.code, 'code', 'NotEnrolled')
+                .having(
+                  (PlatformException e) => e.message,
+                  'message',
+                  'No Biometrics enrolled on this device.',
+                ),
+          ),
+        );
+      });
+
+      test(
+        'converts errorLockedOutTemporarily to legacy PlatformException',
+        () async {
+          when(
+            api.authenticate(any, any),
+          ).thenAnswer((_) async => AuthResult.errorLockedOutTemporarily);
+
+          expect(
+            () async => plugin.authenticate(
+              localizedReason: 'reason',
+              authMessages: <AuthMessages>[],
+            ),
+            throwsA(
+              isA<PlatformException>()
+                  .having((PlatformException e) => e.code, 'code', 'LockedOut')
+                  .having(
+                    (PlatformException e) => e.message,
+                    'message',
+                    'The operation was canceled because the API is locked out '
+                        'due to too many attempts. This occurs after 5 failed '
+                        'attempts, and lasts for 30 seconds.',
                   ),
             ),
           );
@@ -628,15 +496,11 @@ void main() {
       );
 
       test(
-        'converts unknownError to unknownError LocalAuthException, passing error message',
+        'converts errorLockedOutPermanently to legacy PlatformException',
         () async {
-          const String errorMessage = 'Some error message';
-          when(api.authenticate(any, any)).thenAnswer(
-            (_) async => AuthResult(
-              code: AuthResultCode.unknownError,
-              errorMessage: errorMessage,
-            ),
-          );
+          when(
+            api.authenticate(any, any),
+          ).thenAnswer((_) async => AuthResult.errorLockedOutPermanently);
 
           expect(
             () async => plugin.authenticate(
@@ -644,16 +508,19 @@ void main() {
               authMessages: <AuthMessages>[],
             ),
             throwsA(
-              isA<LocalAuthException>()
+              isA<PlatformException>()
                   .having(
-                    (LocalAuthException e) => e.code,
+                    (PlatformException e) => e.code,
                     'code',
-                    LocalAuthExceptionCode.unknownError,
+                    'PermanentlyLockedOut',
                   )
                   .having(
-                    (LocalAuthException e) => e.description,
-                    'description',
-                    errorMessage,
+                    (PlatformException e) => e.message,
+                    'message',
+                    'The operation was canceled because ERROR_LOCKOUT occurred '
+                        'too many times. Biometric authentication is disabled '
+                        'until the user unlocks with strong '
+                        'authentication (PIN/Pattern/Password)',
                   ),
             ),
           );
