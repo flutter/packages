@@ -1302,15 +1302,17 @@ class AndroidCameraCameraX extends CameraPlatform {
       if (_imageAnalysisOutputImageFormat ==
           imageAnalysisOutputImageFormatNv21) {
         // Convert three generically YUV_420_888 formatted image planes into one singular
-        // NV21 formatted image plane if NV21 was requested for image streaming.
-        final Uint8List bytes = await ImageProxyUtils.getNv21Buffer(
+        // NV21 formatted image plane if NV21 was requested for image streaming. The conversion
+        // should be null safe.
+        final Uint8List? bytes = await proxy.getNv21BufferImageProxyUtils(
           imageProxy.width,
           imageProxy.height,
           planes,
         );
+
         cameraImagePlanes.add(
           CameraImagePlane(
-            bytes: bytes,
+            bytes: bytes!,
             bytesPerRow: imageProxy.width,
             bytesPerPixel: 1,
           ),

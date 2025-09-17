@@ -70,6 +70,7 @@ class CameraXProxy {
         _infoSupportedHardwareLevelCameraCharacteristics,
     this.sensorOrientationCameraCharacteristics =
         _sensorOrientationCameraCharacteristics,
+    this.getNv21BufferImageProxyUtils = ImageProxyUtils.getNv21Buffer,
   });
 
   /// Handles adding support for generic classes.
@@ -375,6 +376,16 @@ class CameraXProxy {
   /// Calls to [CameraCharacteristics.sensorOrientation].
   final CameraCharacteristicsKey Function()
   sensorOrientationCameraCharacteristics;
+
+  /// Calls to [ImageProxyUtils.getNv21Buffer].
+  final Future<Uint8List?> Function(
+    int imageWidth,
+    int imageHeight,
+    List<PlaneProxy> planes, {
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+  })
+  getNv21BufferImageProxyUtils;
 
   static CameraSelector _defaultBackCameraCameraSelector() =>
       CameraSelector.defaultBackCamera;

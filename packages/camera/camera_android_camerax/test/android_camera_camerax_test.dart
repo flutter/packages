@@ -168,6 +168,14 @@ void main() {
       PigeonInstanceManager? pigeon_instanceManager,
     })?
     newAnalyzer,
+    Future<Uint8List?> Function(
+      int imageWidth,
+      int imageHeight,
+      List<PlaneProxy> planes, {
+      BinaryMessenger? pigeon_binaryMessenger,
+      PigeonInstanceManager? pigeon_instanceManager,
+    })?
+    getNv21BufferImageProxyUtils,
   }) {
     late final CameraXProxy proxy;
     final AspectRatioStrategy ratio_4_3FallbackAutoStrategyAspectRatioStrategy =
@@ -483,6 +491,17 @@ void main() {
             PigeonInstanceManager? pigeon_instanceManager,
           }) {
             return MockAnalyzer();
+          },
+      getNv21BufferImageProxyUtils:
+          getNv21BufferImageProxyUtils ??
+          (
+            int imageWidth,
+            int imageHeight,
+            List<PlaneProxy> planes, {
+            BinaryMessenger? pigeon_binaryMessenger,
+            PigeonInstanceManager? pigeon_instanceManager,
+          }) {
+            return Future<Uint8List>.value(Uint8List(0));
           },
     );
 
@@ -4806,8 +4825,6 @@ void main() {
       await onStreamedFrameAvailableSubscription.cancel();
     },
   );
-
-  // TODO(camsim99): Fix.
   test(
     'onStreamedFrameAvailable emits NV21 CameraImageData with correct format and single plane when initialized with NV21',
     () async {
@@ -4815,34 +4832,19 @@ void main() {
       const int cameraId = 42;
       final MockProcessCameraProvider mockProcessCameraProvider =
           MockProcessCameraProvider();
-      final MockCameraSelector mockCameraSelector = MockCameraSelector();
       final MockImageAnalysis mockImageAnalysis = MockImageAnalysis();
       final MockCamera mockCamera = MockCamera();
       final MockCameraInfo mockCameraInfo = MockCameraInfo();
       final MockImageProxy mockImageProxy = MockImageProxy();
       final MockPlaneProxy mockPlane = MockPlaneProxy();
-      final List<MockPlaneProxy> mockPlanes = <MockPlaneProxy>[mockPlane];
-      final Uint8List buffer = Uint8List(10);
+      final List<MockPlaneProxy> mockPlanes = <MockPlaneProxy>[
+        mockPlane,
+        mockPlane,
+        mockPlane,
+      ];
+      final Uint8List testNv21Buffer = Uint8List(10);
 
-      camera.processCameraProvider = mockProcessCameraProvider;
-      // camera.cameraSelector = mockCameraSelector;
-      camera.imageAnalysis = mockImageAnalysis;
-
-      // NV21-specific format
-      when(
-        mockImageProxy.format,
-      ).thenReturn(AndroidCameraCameraX.imageAnalysisOutputImageFormatNv21);
-      when(mockImageProxy.height).thenReturn(100);
-      when(mockImageProxy.width).thenReturn(200);
-      when(mockImageProxy.getPlanes()).thenAnswer((_) async => mockPlanes);
-      when(mockPlane.buffer).thenReturn(buffer);
-      when(mockPlane.rowStride).thenReturn(10);
-      when(mockPlane.pixelStride).thenReturn(1);
-
-      // Bindings and lifecycle
-      when(
-        mockProcessCameraProvider.isBound(mockImageAnalysis),
-      ).thenAnswer((_) async => false);
+      // Mock use case bindings and related Camera objects.
       when(
         mockProcessCameraProvider.bindToLifecycle(any, any),
       ).thenAnswer((_) async => mockCamera);
@@ -4851,11 +4853,47 @@ void main() {
         mockCameraInfo.getCameraState(),
       ).thenAnswer((_) async => MockLiveCameraState());
 
-      // Set up analyzer
+      // Set up CameraXProxy with ImageAnalysis specifics needed for testing its Analyzer.
       camera.proxy = getProxyForTestingUseCaseConfiguration(
         mockProcessCameraProvider,
+        newAnalyzer:
+            ({
+              required void Function(Analyzer, ImageProxy) analyze,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return Analyzer.pigeon_detached(
+                analyze: analyze,
+                pigeon_instanceManager: PigeonInstanceManager(
+                  onWeakReferenceRemoved: (_) {},
+                ),
+              );
+            },
+        newImageAnalysis:
+            ({
+              int? outputImageFormat,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+              ResolutionSelector? resolutionSelector,
+              int? targetRotation,
+            }) => mockImageAnalysis,
+        getNv21BufferImageProxyUtils:
+            (
+              int imageWidth,
+              int imageHeight,
+              List<PlaneProxy> planes, {
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) => Future<Uint8List>.value(testNv21Buffer),
       );
 
+      // Create and initialize camera with NV21.
       await camera.createCamera(
         const CameraDescription(
           name: 'test',
@@ -4864,14 +4902,21 @@ void main() {
         ),
         ResolutionPreset.low,
       );
-
-      // Now initialize with NV21
       await camera.initializeCamera(
         cameraId,
         imageFormatGroup: ImageFormatGroup.nv21,
       );
 
-      // Listen to the stream and get the first image.
+      // Create mock ImageProxy with theoretical underlying NV21 format but with three
+      // planes still in YUV_420_888 format that should get transformed to testNv21Buffer.
+      when(mockImageProxy.height).thenReturn(100);
+      when(mockImageProxy.width).thenReturn(200);
+      when(mockImageProxy.getPlanes()).thenAnswer((_) async => mockPlanes);
+      when(mockPlane.buffer).thenReturn(Uint8List(33));
+      when(mockPlane.rowStride).thenReturn(10);
+      when(mockPlane.pixelStride).thenReturn(22);
+
+      // Set up listener to receive mock ImageProxy.
       final Completer<CameraImageData> imageDataCompleter =
           Completer<CameraImageData>();
       final StreamSubscription<CameraImageData> subscription = camera
@@ -4880,7 +4925,6 @@ void main() {
             imageDataCompleter.complete(imageData);
           });
 
-      // Wait for analyzer to be set and trigger it.
       await untilCalled(mockImageAnalysis.setAnalyzer(any));
       final Analyzer capturedAnalyzer =
           verify(mockImageAnalysis.setAnalyzer(captureAny)).captured.single
@@ -4889,13 +4933,10 @@ void main() {
 
       final CameraImageData imageData = await imageDataCompleter.future;
 
-      expect(
-        imageData.format.raw,
-        AndroidCameraCameraX.imageAnalysisOutputImageFormatNv21,
-      );
+      expect(imageData.format.raw, AndroidCameraCameraX.imageProxyFormatNv21);
       expect(imageData.format.group, ImageFormatGroup.nv21);
       expect(imageData.planes.length, 1);
-      expect(imageData.planes[0].bytes, buffer);
+      expect(imageData.planes[0].bytes, testNv21Buffer);
 
       await subscription.cancel();
     },
