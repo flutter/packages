@@ -660,6 +660,8 @@ interface GoogleSignInApi {
   )
   /** Clears CredentialManager credential state. */
   fun clearCredentialState(callback: (Result<Unit>) -> Unit)
+  /** Clears the authorization cache for the given token. */
+  fun clearAuthorizationToken(token: String, callback: (Result<Unit>) -> Unit)
   /** Requests authorization tokens via AuthorizationClient. */
   fun authorize(
       params: PlatformAuthorizationRequest,
@@ -736,6 +738,29 @@ interface GoogleSignInApi {
         if (api != null) {
           channel.setMessageHandler { _, reply ->
             api.clearCredentialState { result: Result<Unit> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(MessagesPigeonUtils.wrapError(error))
+              } else {
+                reply.reply(MessagesPigeonUtils.wrapResult(null))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.clearAuthorizationToken$separatedMessageChannelSuffix",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val tokenArg = args[0] as String
+            api.clearAuthorizationToken(tokenArg) { result: Result<Unit> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(MessagesPigeonUtils.wrapError(error))
