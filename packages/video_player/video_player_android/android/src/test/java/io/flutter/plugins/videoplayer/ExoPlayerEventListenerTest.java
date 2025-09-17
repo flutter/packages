@@ -10,7 +10,6 @@ import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
 
 import androidx.media3.common.PlaybackException;
 import androidx.media3.common.Player;
@@ -59,16 +58,10 @@ public final class ExoPlayerEventListenerTest {
   }
 
   @Test
-  public void onPlaybackStateChangedBufferingSendsBufferingStartAndUpdates() {
-    when(mockExoPlayer.getBufferedPosition()).thenReturn(10L);
+  public void onPlaybackStateChangedBufferingSendsBufferingStart() {
     eventListener.onPlaybackStateChanged(Player.STATE_BUFFERING);
 
     verify(mockCallbacks).onBufferingStart();
-    verify(mockCallbacks).onBufferingUpdate(10L);
-    verifyNoMoreInteractions(mockCallbacks);
-
-    // If it's invoked again, only the update event is called.
-    verify(mockCallbacks).onBufferingUpdate(10L);
     verifyNoMoreInteractions(mockCallbacks);
   }
 
@@ -82,10 +75,8 @@ public final class ExoPlayerEventListenerTest {
 
   @Test
   public void onPlaybackStateChangedEndedAfterBufferingSendsBufferingEndAndOnCompleted() {
-    when(mockExoPlayer.getBufferedPosition()).thenReturn(10L);
     eventListener.onPlaybackStateChanged(Player.STATE_BUFFERING);
     verify(mockCallbacks).onBufferingStart();
-    verify(mockCallbacks).onBufferingUpdate(10L);
 
     eventListener.onPlaybackStateChanged(Player.STATE_ENDED);
     verify(mockCallbacks).onCompleted();
@@ -96,10 +87,8 @@ public final class ExoPlayerEventListenerTest {
 
   @Test
   public void onPlaybackStateChangedReadyAfterBufferingSendsBufferingEnd() {
-    when(mockExoPlayer.getBufferedPosition()).thenReturn(10L);
     eventListener.onPlaybackStateChanged(Player.STATE_BUFFERING);
     verify(mockCallbacks).onBufferingStart();
-    verify(mockCallbacks).onBufferingUpdate(10L);
 
     eventListener.onPlaybackStateChanged(Player.STATE_READY);
     verify(mockCallbacks).onBufferingEnd();
@@ -116,10 +105,8 @@ public final class ExoPlayerEventListenerTest {
 
   @Test
   public void onPlaybackStateChangedIdleAfterBufferingSendsBufferingEnd() {
-    when(mockExoPlayer.getBufferedPosition()).thenReturn(10L);
     eventListener.onPlaybackStateChanged(Player.STATE_BUFFERING);
     verify(mockCallbacks).onBufferingStart();
-    verify(mockCallbacks).onBufferingUpdate(10L);
 
     eventListener.onPlaybackStateChanged(Player.STATE_IDLE);
     verify(mockCallbacks).onBufferingEnd();
@@ -129,10 +116,8 @@ public final class ExoPlayerEventListenerTest {
 
   @Test
   public void onErrorVideoErrorWhenBufferingInProgressAlsoEndBuffering() {
-    when(mockExoPlayer.getBufferedPosition()).thenReturn(10L);
     eventListener.onPlaybackStateChanged(Player.STATE_BUFFERING);
     verify(mockCallbacks).onBufferingStart();
-    verify(mockCallbacks).onBufferingUpdate(10L);
 
     eventListener.onPlayerError(
         new PlaybackException("BAD", null, PlaybackException.ERROR_CODE_AUDIO_TRACK_INIT_FAILED));

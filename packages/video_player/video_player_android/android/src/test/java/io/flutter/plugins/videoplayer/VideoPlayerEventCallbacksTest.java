@@ -25,8 +25,8 @@ import org.robolectric.RobolectricTestRunner;
  * Unit tests {@link VideoPlayerEventCallbacks}.
  *
  * <p>This test suite <em>narrowly verifies</em> that calling the provided event callbacks, such as
- * {@link VideoPlayerEventCallbacks#onBufferingUpdate(long)}, produces the expected data as an
- * encoded {@link Map}.
+ * {@link VideoPlayerEventCallbacks#onBufferingStart()}, produces the expected data as an encoded
+ * {@link Map}.
  *
  * <p>In other words, this tests that "the Java-side of the event channel works as expected".
  */
@@ -87,19 +87,6 @@ public final class VideoPlayerEventCallbacksTest {
     Map<String, Object> actual = eventCaptor.getValue();
     Map<String, Object> expected = new HashMap<>();
     expected.put("event", "bufferingStart");
-    assertEquals(expected, actual);
-  }
-
-  @Test
-  public void onBufferingUpdateProvidesPosition() {
-    eventCallbacks.onBufferingUpdate(10L);
-
-    verify(mockEventSink).success(eventCaptor.capture());
-
-    Map<String, Object> actual = eventCaptor.getValue();
-    Map<String, Object> expected = new HashMap<>();
-    expected.put("event", "bufferingUpdate");
-    expected.put("position", 10L);
     assertEquals(expected, actual);
   }
 

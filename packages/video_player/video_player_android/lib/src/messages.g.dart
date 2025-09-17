@@ -168,48 +168,6 @@ class TexturePlayerIds {
   int get hashCode => Object.hashAll(_toList());
 }
 
-class PlaybackState {
-  PlaybackState({required this.playPosition, required this.bufferPosition});
-
-  /// The current playback position, in milliseconds.
-  int playPosition;
-
-  /// The current buffer position, in milliseconds.
-  int bufferPosition;
-
-  List<Object?> _toList() {
-    return <Object?>[playPosition, bufferPosition];
-  }
-
-  Object encode() {
-    return _toList();
-  }
-
-  static PlaybackState decode(Object result) {
-    result as List<Object?>;
-    return PlaybackState(
-      playPosition: result[0]! as int,
-      bufferPosition: result[1]! as int,
-    );
-  }
-
-  @override
-  // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  bool operator ==(Object other) {
-    if (other is! PlaybackState || other.runtimeType != runtimeType) {
-      return false;
-    }
-    if (identical(this, other)) {
-      return true;
-    }
-    return _deepEquals(encode(), other.encode());
-  }
-
-  @override
-  // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList());
-}
-
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
@@ -229,9 +187,6 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is TexturePlayerIds) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
-    } else if (value is PlaybackState) {
-      buffer.putUint8(133);
-      writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
     }
@@ -249,8 +204,6 @@ class _PigeonCodec extends StandardMessageCodec {
         return CreationOptions.decode(readValue(buffer)!);
       case 132:
         return TexturePlayerIds.decode(readValue(buffer)!);
-      case 133:
-        return PlaybackState.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -629,13 +582,10 @@ class VideoPlayerInstanceApi {
     }
   }
 
-  /// Returns the current playback state.
-  ///
-  /// This is combined into a single call to minimize platform channel calls for
-  /// state that needs to be polled frequently.
-  Future<PlaybackState> getPlaybackState() async {
+  /// Returns the current playback position, in milliseconds.
+  Future<int> getCurrentPosition() async {
     final String pigeonVar_channelName =
-        'dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.getPlaybackState$pigeonVar_messageChannelSuffix';
+        'dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.getCurrentPosition$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
@@ -659,7 +609,38 @@ class VideoPlayerInstanceApi {
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (pigeonVar_replyList[0] as PlaybackState?)!;
+      return (pigeonVar_replyList[0] as int?)!;
+    }
+  }
+
+  /// Returns the current buffer position, in milliseconds.
+  Future<int> getBufferedPosition() async {
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.getBufferedPosition$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as int?)!;
     }
   }
 }

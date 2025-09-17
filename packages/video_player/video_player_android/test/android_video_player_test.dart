@@ -582,188 +582,196 @@ void main() {
       verify(playerApi.seekTo(positionMilliseconds));
     });
 
-    test('getPlaybackState', () async {
+    test('getPosition', () async {
       final (
         AndroidVideoPlayer player,
         _,
         MockVideoPlayerInstanceApi playerApi,
       ) = setUpMockPlayer(playerId: 1);
       const int positionMilliseconds = 12345;
-      when(playerApi.getPlaybackState()).thenAnswer(
-        (_) async => PlaybackState(
-          playPosition: positionMilliseconds,
-          bufferPosition: 0,
-        ),
-      );
+      when(
+        playerApi.getCurrentPosition(),
+      ).thenAnswer((_) async => positionMilliseconds);
 
       final Duration position = await player.getPosition(1);
       expect(position, const Duration(milliseconds: positionMilliseconds));
     });
 
-    test('videoEventsFor', () async {
-      const int playerId = 1;
-      const String mockChannel = 'flutter.io/videoPlayer/videoEvents$playerId';
-      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-          .setMockMessageHandler(mockChannel, (ByteData? message) async {
-            final MethodCall methodCall = const StandardMethodCodec()
-                .decodeMethodCall(message);
-            if (methodCall.method == 'listen') {
-              await TestDefaultBinaryMessengerBinding
-                  .instance
-                  .defaultBinaryMessenger
-                  .handlePlatformMessage(
-                    mockChannel,
-                    const StandardMethodCodec()
-                        .encodeSuccessEnvelope(<String, dynamic>{
-                          'event': 'initialized',
-                          'duration': 98765,
-                          'width': 1920,
-                          'height': 1080,
-                        }),
-                    (ByteData? data) {},
-                  );
+    group('video events', () {
+      // Sets up a mock player that emits the given event structure as a success
+      // callback on the internal platform channel event stream, and returns
+      // the player's videoEventsFor(...) stream.
+      Stream<VideoEvent> mockPlayerEmitingEvent(Object event) {
+        const int playerId = 1;
+        const String mockChannel =
+            'flutter.io/videoPlayer/videoEvents$playerId';
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+            .setMockMessageHandler(mockChannel, (ByteData? message) async {
+              final MethodCall methodCall = const StandardMethodCodec()
+                  .decodeMethodCall(message);
+              if (methodCall.method == 'listen') {
+                await TestDefaultBinaryMessengerBinding
+                    .instance
+                    .defaultBinaryMessenger
+                    .handlePlatformMessage(
+                      mockChannel,
+                      const StandardMethodCodec().encodeSuccessEnvelope(event),
+                      (ByteData? data) {},
+                    );
+                return const StandardMethodCodec().encodeSuccessEnvelope(null);
+              } else if (methodCall.method == 'cancel') {
+                return const StandardMethodCodec().encodeSuccessEnvelope(null);
+              } else {
+                fail('Expected listen or cancel');
+              }
+            });
 
-              await TestDefaultBinaryMessengerBinding
-                  .instance
-                  .defaultBinaryMessenger
-                  .handlePlatformMessage(
-                    mockChannel,
-                    const StandardMethodCodec()
-                        .encodeSuccessEnvelope(<String, dynamic>{
-                          'event': 'initialized',
-                          'duration': 98765,
-                          'width': 1920,
-                          'height': 1080,
-                          'rotationCorrection': 180,
-                        }),
-                    (ByteData? data) {},
-                  );
+        // Creating the player triggers the stream listener, so that must be
+        // done after setting up the mock native handler above.
+        final (AndroidVideoPlayer player, _, _) = setUpMockPlayer(
+          playerId: playerId,
+        );
 
-              await TestDefaultBinaryMessengerBinding
-                  .instance
-                  .defaultBinaryMessenger
-                  .handlePlatformMessage(
-                    mockChannel,
-                    const StandardMethodCodec().encodeSuccessEnvelope(
-                      <String, dynamic>{'event': 'completed'},
-                    ),
-                    (ByteData? data) {},
-                  );
+        final Stream<VideoEvent> events = player.videoEventsFor(playerId);
+        // Dispose the player immediately to ensure that its internal timer
+        // doesn't create update events that could lead to false positives.
+        player.dispose(playerId);
+        return events;
+      }
 
-              await TestDefaultBinaryMessengerBinding
-                  .instance
-                  .defaultBinaryMessenger
-                  .handlePlatformMessage(
-                    mockChannel,
-                    const StandardMethodCodec().encodeSuccessEnvelope(
-                      <String, dynamic>{
-                        'event': 'bufferingUpdate',
-                        'position': 1234,
-                      },
-                    ),
-                    (ByteData? data) {},
-                  );
+      test('initialize', () async {
+        final Stream<VideoEvent> eventStream = mockPlayerEmitingEvent(
+          <String, dynamic>{
+            'event': 'initialized',
+            'duration': 98765,
+            'width': 1920,
+            'height': 1080,
+          },
+        );
 
-              await TestDefaultBinaryMessengerBinding
-                  .instance
-                  .defaultBinaryMessenger
-                  .handlePlatformMessage(
-                    mockChannel,
-                    const StandardMethodCodec().encodeSuccessEnvelope(
-                      <String, dynamic>{'event': 'bufferingStart'},
-                    ),
-                    (ByteData? data) {},
-                  );
+        expect(
+          eventStream,
+          emitsInOrder(<dynamic>[
+            VideoEvent(
+              eventType: VideoEventType.initialized,
+              duration: const Duration(milliseconds: 98765),
+              size: const Size(1920, 1080),
+              rotationCorrection: 0,
+            ),
+          ]),
+        );
+      });
 
-              await TestDefaultBinaryMessengerBinding
-                  .instance
-                  .defaultBinaryMessenger
-                  .handlePlatformMessage(
-                    mockChannel,
-                    const StandardMethodCodec().encodeSuccessEnvelope(
-                      <String, dynamic>{'event': 'bufferingEnd'},
-                    ),
-                    (ByteData? data) {},
-                  );
+      test('initialize with rotation correction', () async {
+        final Stream<VideoEvent> eventStream =
+            mockPlayerEmitingEvent(<String, dynamic>{
+              'event': 'initialized',
+              'duration': 98765,
+              'width': 1920,
+              'height': 1080,
+              'rotationCorrection': 180,
+            });
 
-              await TestDefaultBinaryMessengerBinding
-                  .instance
-                  .defaultBinaryMessenger
-                  .handlePlatformMessage(
-                    mockChannel,
-                    const StandardMethodCodec().encodeSuccessEnvelope(
-                      <String, dynamic>{
-                        'event': 'isPlayingStateUpdate',
-                        'isPlaying': true,
-                      },
-                    ),
-                    (ByteData? data) {},
-                  );
+        expect(
+          eventStream,
+          emitsInOrder(<dynamic>[
+            VideoEvent(
+              eventType: VideoEventType.initialized,
+              duration: const Duration(milliseconds: 98765),
+              size: const Size(1920, 1080),
+              rotationCorrection: 180,
+            ),
+          ]),
+        );
+      });
 
-              await TestDefaultBinaryMessengerBinding
-                  .instance
-                  .defaultBinaryMessenger
-                  .handlePlatformMessage(
-                    mockChannel,
-                    const StandardMethodCodec().encodeSuccessEnvelope(
-                      <String, dynamic>{
-                        'event': 'isPlayingStateUpdate',
-                        'isPlaying': false,
-                      },
-                    ),
-                    (ByteData? data) {},
-                  );
+      test('completed', () async {
+        final Stream<VideoEvent> eventStream = mockPlayerEmitingEvent(
+          <String, dynamic>{'event': 'completed'},
+        );
 
-              return const StandardMethodCodec().encodeSuccessEnvelope(null);
-            } else if (methodCall.method == 'cancel') {
-              return const StandardMethodCodec().encodeSuccessEnvelope(null);
-            } else {
-              fail('Expected listen or cancel');
-            }
-          });
+        expect(
+          eventStream,
+          emitsInOrder(<dynamic>[
+            VideoEvent(eventType: VideoEventType.completed),
+          ]),
+        );
+      });
 
-      // Creating the player triggers the stream listener, so that must be done
-      // after setting up the mock native handler above.
-      final (
-        AndroidVideoPlayer player,
-        MockAndroidVideoPlayerApi api,
-        _,
-      ) = setUpMockPlayer(playerId: playerId);
+      test('buffering start', () async {
+        final Stream<VideoEvent> eventStream = mockPlayerEmitingEvent(
+          <String, dynamic>{'event': 'bufferingStart'},
+        );
 
-      expect(
-        player.videoEventsFor(playerId),
-        emitsInOrder(<dynamic>[
-          VideoEvent(
-            eventType: VideoEventType.initialized,
-            duration: const Duration(milliseconds: 98765),
-            size: const Size(1920, 1080),
-            rotationCorrection: 0,
-          ),
-          VideoEvent(
-            eventType: VideoEventType.initialized,
-            duration: const Duration(milliseconds: 98765),
-            size: const Size(1920, 1080),
-            rotationCorrection: 180,
-          ),
-          VideoEvent(eventType: VideoEventType.completed),
-          VideoEvent(
-            eventType: VideoEventType.bufferingUpdate,
-            buffered: <DurationRange>[
-              DurationRange(Duration.zero, const Duration(milliseconds: 1234)),
-            ],
-          ),
-          VideoEvent(eventType: VideoEventType.bufferingStart),
-          VideoEvent(eventType: VideoEventType.bufferingEnd),
-          VideoEvent(
-            eventType: VideoEventType.isPlayingStateUpdate,
-            isPlaying: true,
-          ),
-          VideoEvent(
-            eventType: VideoEventType.isPlayingStateUpdate,
-            isPlaying: false,
-          ),
-        ]),
-      );
+        expect(
+          eventStream,
+          emitsInOrder(<dynamic>[
+            VideoEvent(eventType: VideoEventType.bufferingStart),
+            // A buffer start should trigger a buffer update as well.
+            VideoEvent(
+              eventType: VideoEventType.bufferingUpdate,
+              buffered: <DurationRange>[
+                DurationRange(Duration.zero, Duration.zero),
+              ],
+            ),
+          ]),
+        );
+      });
+
+      test('buffering end', () async {
+        final Stream<VideoEvent> eventStream = mockPlayerEmitingEvent(
+          <String, dynamic>{'event': 'bufferingEnd'},
+        );
+
+        expect(
+          eventStream,
+          emitsInOrder(<dynamic>[
+            VideoEvent(eventType: VideoEventType.bufferingEnd),
+            // A buffer end should trigger a buffer update as well.
+            VideoEvent(
+              eventType: VideoEventType.bufferingUpdate,
+              buffered: <DurationRange>[
+                DurationRange(Duration.zero, Duration.zero),
+              ],
+            ),
+          ]),
+        );
+      });
+
+      test('playback start', () async {
+        final Stream<VideoEvent> eventStream = mockPlayerEmitingEvent(
+          <String, dynamic>{'event': 'isPlayingStateUpdate', 'isPlaying': true},
+        );
+
+        expect(
+          eventStream,
+          emitsInOrder(<dynamic>[
+            VideoEvent(
+              eventType: VideoEventType.isPlayingStateUpdate,
+              isPlaying: true,
+            ),
+          ]),
+        );
+      });
+
+      test('playback stop', () async {
+        final Stream<VideoEvent> eventStream = mockPlayerEmitingEvent(
+          <String, dynamic>{
+            'event': 'isPlayingStateUpdate',
+            'isPlaying': false,
+          },
+        );
+
+        expect(
+          eventStream,
+          emitsInOrder(<dynamic>[
+            VideoEvent(
+              eventType: VideoEventType.isPlayingStateUpdate,
+              isPlaying: false,
+            ),
+          ]),
+        );
+      });
     });
   });
 }

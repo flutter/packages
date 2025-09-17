@@ -103,11 +103,13 @@ public abstract class VideoPlayer implements Messages.VideoPlayerInstanceApi {
   }
 
   @Override
-  public @NonNull Messages.PlaybackState getPlaybackState() {
-    return new Messages.PlaybackState.Builder()
-        .setPlayPosition(exoPlayer.getCurrentPosition())
-        .setBufferPosition(exoPlayer.getBufferedPosition())
-        .build();
+  public @NonNull Long getCurrentPosition() {
+    return exoPlayer.getCurrentPosition();
+  }
+
+  @Override
+  public @NonNull Long getBufferedPosition() {
+    return exoPlayer.getBufferedPosition();
   }
 
   @Override

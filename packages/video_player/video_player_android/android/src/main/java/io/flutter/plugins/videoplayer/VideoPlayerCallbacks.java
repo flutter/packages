@@ -21,8 +21,6 @@ public interface VideoPlayerCallbacks {
 
   void onBufferingStart();
 
-  void onBufferingUpdate(long bufferedPosition);
-
   void onBufferingEnd();
 
   void onCompleted();

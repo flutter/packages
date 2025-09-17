@@ -38,16 +38,6 @@ class TexturePlayerIds {
   final int textureId;
 }
 
-class PlaybackState {
-  PlaybackState({required this.playPosition, required this.bufferPosition});
-
-  /// The current playback position, in milliseconds.
-  final int playPosition;
-
-  /// The current buffer position, in milliseconds.
-  final int bufferPosition;
-}
-
 @HostApi()
 abstract class AndroidVideoPlayerApi {
   void initialize();
@@ -81,9 +71,9 @@ abstract class VideoPlayerInstanceApi {
   /// Seeks to the given playback position, in milliseconds.
   void seekTo(int position);
 
-  /// Returns the current playback state.
-  ///
-  /// This is combined into a single call to minimize platform channel calls for
-  /// state that needs to be polled frequently.
-  PlaybackState getPlaybackState();
+  /// Returns the current playback position, in milliseconds.
+  int getCurrentPosition();
+
+  /// Returns the current buffer position, in milliseconds.
+  int getBufferedPosition();
 }

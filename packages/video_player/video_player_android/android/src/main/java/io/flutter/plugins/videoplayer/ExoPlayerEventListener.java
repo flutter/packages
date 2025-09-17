@@ -66,7 +66,6 @@ public abstract class ExoPlayerEventListener implements Player.Listener {
     switch (playbackState) {
       case Player.STATE_BUFFERING:
         setBuffering(true);
-        events.onBufferingUpdate(exoPlayer.getBufferedPosition());
         break;
       case Player.STATE_READY:
         if (!isInitialized) {

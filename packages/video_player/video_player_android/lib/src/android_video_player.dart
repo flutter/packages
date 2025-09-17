@@ -261,6 +261,7 @@ class _PlayerInstance {
   final StreamController<VideoEvent> _eventStreamController =
       StreamController<VideoEvent>();
   late final StreamSubscription<dynamic> _eventSubscription;
+  Timer? _bufferPollingTimer;
   int _lastBufferPosition = -1;
 
   final VideoPlayerViewState viewState;
@@ -290,17 +291,7 @@ class _PlayerInstance {
   }
 
   Future<Duration> getPosition() async {
-    final PlaybackState state = await _api.getPlaybackState();
-    // TODO(stuartmorgan): Move this logic. This is a workaround for the fact
-    //  that ExoPlayer doesn't have any way to observe buffer position
-    //  changes, so polling is required. To minimize platform channel overhead,
-    //  that's combined with getting the position, but this relies on the fact
-    //  that the app-facing package polls getPosition frequently, which makes
-    //  this fragile (for instance, as of writing, this won't be called while
-    //  the video is paused). It should instead be called on its own timer,
-    //  independent of higher-level package logic.
-    _updateBufferingState(state.bufferPosition);
-    return Duration(milliseconds: state.playPosition);
+    return Duration(milliseconds: await _api.getCurrentPosition());
   }
 
   Stream<VideoEvent> videoEvents() {
@@ -308,6 +299,7 @@ class _PlayerInstance {
   }
 
   Future<void> dispose() async {
+    _bufferPollingTimer?.cancel();
     await _eventSubscription.cancel();
   }
 
@@ -327,29 +319,61 @@ class _PlayerInstance {
 
   void _onStreamEvent(dynamic event) {
     final Map<dynamic, dynamic> map = event as Map<dynamic, dynamic>;
-    _eventStreamController.add(switch (map['event']) {
-      'initialized' => VideoEvent(
-        eventType: VideoEventType.initialized,
-        duration: Duration(milliseconds: map['duration'] as int),
-        size: Size(
-          (map['width'] as num?)?.toDouble() ?? 0.0,
-          (map['height'] as num?)?.toDouble() ?? 0.0,
-        ),
-        rotationCorrection: map['rotationCorrection'] as int? ?? 0,
-      ),
-      'completed' => VideoEvent(eventType: VideoEventType.completed),
-      'bufferingUpdate' => VideoEvent(
-        eventType: VideoEventType.bufferingUpdate,
-        buffered: _bufferRangeForPosition(map['position'] as int),
-      ),
-      'bufferingStart' => VideoEvent(eventType: VideoEventType.bufferingStart),
-      'bufferingEnd' => VideoEvent(eventType: VideoEventType.bufferingEnd),
-      'isPlayingStateUpdate' => VideoEvent(
-        eventType: VideoEventType.isPlayingStateUpdate,
-        isPlaying: map['isPlaying'] as bool,
-      ),
-      _ => VideoEvent(eventType: VideoEventType.unknown),
-    });
+    switch (map['event']) {
+      case 'initialized':
+        _eventStreamController.add(
+          VideoEvent(
+            eventType: VideoEventType.initialized,
+            duration: Duration(milliseconds: map['duration'] as int),
+            size: Size(
+              (map['width'] as num?)?.toDouble() ?? 0.0,
+              (map['height'] as num?)?.toDouble() ?? 0.0,
+            ),
+            rotationCorrection: map['rotationCorrection'] as int? ?? 0,
+          ),
+        );
+
+        // Start polling for buffer position, since there is no buffer position
+        // event to listen to.
+        _bufferPollingTimer = Timer.periodic(const Duration(seconds: 1), (
+          Timer timer,
+        ) async {
+          _updateBufferingState(await _api.getBufferedPosition());
+        });
+      case 'completed':
+        _eventStreamController.add(
+          VideoEvent(eventType: VideoEventType.completed),
+        );
+      case 'bufferingStart':
+        _eventStreamController.add(
+          VideoEvent(eventType: VideoEventType.bufferingStart),
+        );
+        // Trigger an extra buffer position check to get fresher state, so that
+        // clients have an accurate reporting of the current buffering state.
+        _api.getBufferedPosition().then(
+          (int position) => _updateBufferingState(position),
+        );
+      case 'bufferingEnd':
+        _eventStreamController.add(
+          VideoEvent(eventType: VideoEventType.bufferingEnd),
+        );
+        // Trigger an extra buffer position check to get fresher state, so that
+        // clients have an accurate reporting of the current buffering state.
+        _api.getBufferedPosition().then(
+          (int position) => _updateBufferingState(position),
+        );
+      case 'isPlayingStateUpdate':
+        _eventStreamController.add(
+          VideoEvent(
+            eventType: VideoEventType.isPlayingStateUpdate,
+            isPlaying: map['isPlaying'] as bool,
+          ),
+        );
+      default:
+        _eventStreamController.add(
+          VideoEvent(eventType: VideoEventType.unknown),
+        );
+    }
   }
 
   // Turns a single buffer position, which is what ExoPlayer reports, into the
