@@ -12,12 +12,12 @@ import androidx.camera.core.ImageProxy.PlaneProxy;
 import java.nio.ByteBuffer;
 import java.util.List;
 
-/* Utitlities for working with {@code ImageProxy}s. */
+/* Utilities for working with {@code ImageProxy}s. */
 public class ImageProxyUtils {
 
   /**
-   * Converts PlaneProxy[] in YUV_420_888 format (with VU planes in NV21 layout) to a single NV21
-   * ByteBuffer.
+   * Converts list of {@link PlaneProxy}s in YUV_420_888 format (with VU planes in NV21 layout) to a
+   * single NV21 {@code ByteBuffer}.
    */
   @NonNull
   public static ByteBuffer planesToNV21(@NonNull List<PlaneProxy> planes, int width, int height) {

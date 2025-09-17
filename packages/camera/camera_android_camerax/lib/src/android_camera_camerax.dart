@@ -291,7 +291,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// The ID of the surface texture that the camera preview is drawn to.
   late int _flutterSurfaceTextureId;
 
-  /// The format of outputted images from image streaming.
+  /// The configured format of outputted images from image streaming.
   int? _imageAnalysisOutputImageFormat;
 
   /// Returns list of all available cameras and their descriptions.
@@ -1314,6 +1314,8 @@ class AndroidCameraCameraX extends CameraPlatform {
           CameraImagePlane(
             bytes: bytes!,
             bytesPerRow: imageProxy.width,
+            // NV21 has 1.5 bytes per pixel (Y plane has width * height; VU plane has width * height / 2),
+            // but this is rounded up because an int is expected. camera_android reports the same.
             bytesPerPixel: 1,
           ),
         );

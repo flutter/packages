@@ -10,9 +10,9 @@ import java.nio.ByteBuffer;
 import java.util.List;
 
 /**
- * ProxyApi implementation for {@link DeviceOrientationManager}. This class may handle instantiating
- * native object instances that are attached to a Dart instance or handle method calls on the
- * associated native class or an instance of that class.
+ * ProxyApi implementation for {@link ImageProxyUtils}. This class may handle instantiating native
+ * object instances that are attached to a Dart instance or handle method calls on the associated
+ * native class or an instance of that class.
  */
 public class ImageProxyUtilsProxyApi extends PigeonApiImageProxyUtils {
   ImageProxyUtilsProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {

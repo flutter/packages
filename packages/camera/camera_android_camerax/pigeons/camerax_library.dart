@@ -923,11 +923,10 @@ abstract class ImageProxy {
   void close();
 }
 
-/// Utils for working with [ImageProxy]s.
+/// Utilities for working with [ImageProxy]s.
 @ProxyApi()
 abstract class ImageProxyUtils {
-  /// Returns a single Byte Buffer that is representative of the [planes]
-  /// that are NV21 compatible.
+  /// Returns a single buffer that is representative of three NV21-compatible [planes].
   @static
   Uint8List getNv21Buffer(
     int imageWidth,

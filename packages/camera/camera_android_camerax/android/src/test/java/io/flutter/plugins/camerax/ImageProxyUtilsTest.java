@@ -22,7 +22,7 @@ public class ImageProxyUtilsTest {
     int height = 2;
     byte[] y = new byte[] {0, 1, 2, 3, 4, 5, 6, 7};
 
-    // U and V planes: not in NV21 layout (all values are the same)
+    // U and V planes are not in NV21 layout (not interleaved).
     byte[] u = new byte[] {20, 20, 20, 20};
     byte[] v = new byte[] {30, 30, 30, 30};
 
@@ -46,7 +46,7 @@ public class ImageProxyUtilsTest {
     byte[] y = new byte[] {0, 1, 2, 3, 4, 5, 6, 7};
     PlaneProxy yPlane = mockPlaneProxyWithData(y);
 
-    // U and V planes in NV21 format. Both have 2 bytes that are identical (5, 7).
+    // U and V planes in NV21 format. Both have 2 bytes that are overlapping (5, 7).
     ByteBuffer vBuffer = ByteBuffer.wrap(new byte[] {9, 5, 7});
     ByteBuffer uBuffer = ByteBuffer.wrap(new byte[] {5, 7, 33});
 
