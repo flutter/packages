@@ -63,7 +63,7 @@ import 'package:swiftgen/swiftgen.dart';
           }
         }
         for (final Class dataClass in root.classes) {
-          indent.writeln("'${dataClass.name}',");
+          indent.writeln("'${dataClass.name}Bridge',");
         }
         indent.writeln(
             "'${generatorOptions.swiftOptions.errorClassName ?? 'PigeonError'}'");

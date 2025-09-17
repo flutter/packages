@@ -178,7 +178,8 @@ class _FfiType {
       default:
         {
           if (type.isClass || type.isEnum) {
-            return 'ffi_bridge.${type.baseName}';
+            final String bridge = type.isClass ? 'Bridge' : '';
+            return 'ffi_bridge.${type.baseName}$bridge';
           }
           // if (type.isEnum) {
           //   return type.isNullable ? 'NSNumber' : 'ffi_bridge.${type.baseName}';
@@ -1033,12 +1034,13 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
   }
 
   void _writeToFfi(Indent indent, Class classDefinition) {
-    indent.writeScoped('ffi_bridge.${classDefinition.name} toFfi() {', '}', () {
+    final _FfiType ffiClass = _FfiType.fromClass(classDefinition);
+    indent.writeScoped('${ffiClass.ffiName} toFfi() {', '}', () {
       final Iterable<NamedType> fields = getFieldsInSerializationOrder(
         classDefinition,
       );
       indent.writeScoped(
-          'return ffi_bridge.${classDefinition.name}.alloc().initWith${toUpperCamelCase(fields.first.name)}(',
+          'return ${ffiClass.ffiName}.alloc().initWith${toUpperCamelCase(fields.first.name)}(',
           ');', () {
         bool first = true;
         for (final NamedType field in fields) {
@@ -1735,10 +1737,11 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
                 }, addTrailingNewline: false);
                 indent.addScoped(' else {', '}', () {
                   if (!returnType.type.isVoid) {
-                    final String forceRes = returnType.type.baseName == 'int' ||
-                            returnType.type.baseName == 'double' ||
-                            returnType.type.baseName == 'String' ||
-                            returnType.type.baseName == 'bool'
+                    final String forceRes = !returnType.type.isNullable &&
+                            (returnType.type.baseName == 'int' ||
+                                returnType.type.baseName == 'double' ||
+                                returnType.type.baseName == 'String' ||
+                                returnType.type.baseName == 'bool')
                         ? '!'
                         : '';
                     indent.writeln(

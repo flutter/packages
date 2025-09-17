@@ -5,8 +5,8 @@
 import 'package:flutter/material.dart';
 
 import 'generated.dart';
-// import 'src/generated/ni_tests.gen.dart';
-// import 'test_types.dart';
+import 'src/generated/ni_tests.gen.dart';
+import 'ni_test_types.dart';
 
 void main() {
   runApp(const ExampleApp());
@@ -41,9 +41,10 @@ class _ExampleAppState extends State<ExampleApp> {
       // Make a single trivial call just to validate that everything is wired
       // up.
       // await api.noop();
-      // final NIHostIntegrationCoreApiForNativeInterop? api =
-      //     NIHostIntegrationCoreApiForNativeInterop.getInstance();
-      // api!.noop();
+      final NIHostIntegrationCoreApiForNativeInterop? api =
+          NIHostIntegrationCoreApiForNativeInterop.getInstance();
+      api!.noop();
+      api.echoAllTypes(genericNIAllTypes);
     } catch (e) {
       setState(() {
         status = 'Failed: $e';

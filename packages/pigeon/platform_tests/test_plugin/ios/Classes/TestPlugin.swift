@@ -1246,11 +1246,11 @@ class NITestsClass: NSObject, NIHostIntegrationCoreApi {
     return everything
   }
 
-  func echoList(list: [Any]) throws -> [Any] {
+  func echoList(list: [Any?]) throws -> [Any?] {
     return list
   }
 
-  func echoMap(map: [AnyHashable: Any]) throws -> [AnyHashable: Any] {
+  func echoMap(map: [AnyHashable?: Any?]) throws -> [AnyHashable?: Any?] {
     return map
   }
 

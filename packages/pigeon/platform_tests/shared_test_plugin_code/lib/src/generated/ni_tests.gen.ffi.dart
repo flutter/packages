@@ -21,8 +21,8 @@ external ffi.Pointer<objc.ObjCObject> _test_plugin_protocolTrampoline_1mbt9g9(
   ffi.Pointer<ffi.Void> arg0,
 );
 
-late final _class_NIAllNullableTypesWithoutRecursion =
-    objc.getClass("test_plugin.NIAllNullableTypesWithoutRecursion");
+late final _class_NIAllNullableTypesWithoutRecursionBridge =
+    objc.getClass("test_plugin.NIAllNullableTypesWithoutRecursionBridge");
 late final _sel_isKindOfClass_ = objc.registerName("isKindOfClass:");
 final _objc_msgSend_19nvye5 = objc.msgSendPointer
     .cast<
@@ -36,7 +36,28 @@ final _objc_msgSend_19nvye5 = objc.msgSendPointer
             ffi.Pointer<objc.ObjCSelector>, ffi.Pointer<objc.ObjCObject>)>();
 typedef instancetype = ffi.Pointer<objc.ObjCObject>;
 typedef Dartinstancetype = objc.ObjCObjectBase;
-late final _sel_init = objc.registerName("init");
+late final _sel_initWithANullableBool_aNullableInt_aNullableInt64_aNullableDouble_ =
+    objc.registerName(
+        "initWithANullableBool:aNullableInt:aNullableInt64:aNullableDouble:");
+final _objc_msgSend_s92gih = objc.msgSendPointer
+    .cast<
+        ffi.NativeFunction<
+            ffi.Pointer<objc.ObjCObject> Function(
+                ffi.Pointer<objc.ObjCObject>,
+                ffi.Pointer<objc.ObjCSelector>,
+                ffi.Pointer<objc.ObjCObject>,
+                ffi.Pointer<objc.ObjCObject>,
+                ffi.Pointer<objc.ObjCObject>,
+                ffi.Pointer<objc.ObjCObject>)>>()
+    .asFunction<
+        ffi.Pointer<objc.ObjCObject> Function(
+            ffi.Pointer<objc.ObjCObject>,
+            ffi.Pointer<objc.ObjCSelector>,
+            ffi.Pointer<objc.ObjCObject>,
+            ffi.Pointer<objc.ObjCObject>,
+            ffi.Pointer<objc.ObjCObject>,
+            ffi.Pointer<objc.ObjCObject>)>();
+late final _sel_aNullableBool = objc.registerName("aNullableBool");
 final _objc_msgSend_151sglz = objc.msgSendPointer
     .cast<
         ffi.NativeFunction<
@@ -45,6 +66,24 @@ final _objc_msgSend_151sglz = objc.msgSendPointer
     .asFunction<
         ffi.Pointer<objc.ObjCObject> Function(
             ffi.Pointer<objc.ObjCObject>, ffi.Pointer<objc.ObjCSelector>)>();
+late final _sel_setANullableBool_ = objc.registerName("setANullableBool:");
+final _objc_msgSend_xtuoz7 = objc.msgSendPointer
+    .cast<
+        ffi.NativeFunction<
+            ffi.Void Function(
+                ffi.Pointer<objc.ObjCObject>,
+                ffi.Pointer<objc.ObjCSelector>,
+                ffi.Pointer<objc.ObjCObject>)>>()
+    .asFunction<
+        void Function(ffi.Pointer<objc.ObjCObject>,
+            ffi.Pointer<objc.ObjCSelector>, ffi.Pointer<objc.ObjCObject>)>();
+late final _sel_aNullableInt = objc.registerName("aNullableInt");
+late final _sel_setANullableInt_ = objc.registerName("setANullableInt:");
+late final _sel_aNullableInt64 = objc.registerName("aNullableInt64");
+late final _sel_setANullableInt64_ = objc.registerName("setANullableInt64:");
+late final _sel_aNullableDouble = objc.registerName("aNullableDouble");
+late final _sel_setANullableDouble_ = objc.registerName("setANullableDouble:");
+late final _sel_init = objc.registerName("init");
 late final _sel_new = objc.registerName("new");
 late final _sel_allocWithZone_ = objc.registerName("allocWithZone:");
 final _objc_msgSend_1cwp428 = objc.msgSendPointer
@@ -164,87 +203,164 @@ late final _sel_autorelease = objc.registerName("autorelease");
 /// The primary purpose for this class is to ensure coverage of Swift structs
 /// with nullable items, as the primary [NIAllNullableTypes] class is being used to
 /// test Swift classes.
-/// Generated class from Pigeon that represents data sent in messages.
-class NIAllNullableTypesWithoutRecursion extends objc.NSObject {
-  NIAllNullableTypesWithoutRecursion._(ffi.Pointer<objc.ObjCObject> pointer,
-      {bool retain = false, bool release = false})
+/// Generated bridge class from Pigeon that moves data from Swift to Objective-C.
+class NIAllNullableTypesWithoutRecursionBridge extends objc.NSObject {
+  NIAllNullableTypesWithoutRecursionBridge._(
+      ffi.Pointer<objc.ObjCObject> pointer,
+      {bool retain = false,
+      bool release = false})
       : super.castFromPointer(pointer, retain: retain, release: release);
 
-  /// Constructs a [NIAllNullableTypesWithoutRecursion] that points to the same underlying object as [other].
-  NIAllNullableTypesWithoutRecursion.castFrom(objc.ObjCObjectBase other)
+  /// Constructs a [NIAllNullableTypesWithoutRecursionBridge] that points to the same underlying object as [other].
+  NIAllNullableTypesWithoutRecursionBridge.castFrom(objc.ObjCObjectBase other)
       : this._(other.ref.pointer, retain: true, release: true);
 
-  /// Constructs a [NIAllNullableTypesWithoutRecursion] that wraps the given raw object pointer.
-  NIAllNullableTypesWithoutRecursion.castFromPointer(
+  /// Constructs a [NIAllNullableTypesWithoutRecursionBridge] that wraps the given raw object pointer.
+  NIAllNullableTypesWithoutRecursionBridge.castFromPointer(
       ffi.Pointer<objc.ObjCObject> other,
       {bool retain = false,
       bool release = false})
       : this._(other, retain: retain, release: release);
 
-  /// Returns whether [obj] is an instance of [NIAllNullableTypesWithoutRecursion].
+  /// Returns whether [obj] is an instance of [NIAllNullableTypesWithoutRecursionBridge].
   static bool isInstance(objc.ObjCObjectBase obj) {
     return _objc_msgSend_19nvye5(obj.ref.pointer, _sel_isKindOfClass_,
-        _class_NIAllNullableTypesWithoutRecursion);
+        _class_NIAllNullableTypesWithoutRecursionBridge);
+  }
+
+  /// initWithANullableBool:aNullableInt:aNullableInt64:aNullableDouble:
+  NIAllNullableTypesWithoutRecursionBridge initWithANullableBool(
+      objc.NSNumber? aNullableBool,
+      {objc.NSNumber? aNullableInt,
+      objc.NSNumber? aNullableInt64,
+      objc.NSNumber? aNullableDouble}) {
+    final _ret = _objc_msgSend_s92gih(
+        this.ref.retainAndReturnPointer(),
+        _sel_initWithANullableBool_aNullableInt_aNullableInt64_aNullableDouble_,
+        aNullableBool?.ref.pointer ?? ffi.nullptr,
+        aNullableInt?.ref.pointer ?? ffi.nullptr,
+        aNullableInt64?.ref.pointer ?? ffi.nullptr,
+        aNullableDouble?.ref.pointer ?? ffi.nullptr);
+    return NIAllNullableTypesWithoutRecursionBridge.castFromPointer(_ret,
+        retain: false, release: true);
+  }
+
+  /// aNullableBool
+  objc.NSNumber? get aNullableBool {
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_aNullableBool);
+    return _ret.address == 0
+        ? null
+        : objc.NSNumber.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// setANullableBool:
+  set aNullableBool(objc.NSNumber? value) {
+    _objc_msgSend_xtuoz7(this.ref.pointer, _sel_setANullableBool_,
+        value?.ref.pointer ?? ffi.nullptr);
+  }
+
+  /// aNullableInt
+  objc.NSNumber? get aNullableInt {
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_aNullableInt);
+    return _ret.address == 0
+        ? null
+        : objc.NSNumber.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// setANullableInt:
+  set aNullableInt(objc.NSNumber? value) {
+    _objc_msgSend_xtuoz7(this.ref.pointer, _sel_setANullableInt_,
+        value?.ref.pointer ?? ffi.nullptr);
+  }
+
+  /// aNullableInt64
+  objc.NSNumber? get aNullableInt64 {
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_aNullableInt64);
+    return _ret.address == 0
+        ? null
+        : objc.NSNumber.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// setANullableInt64:
+  set aNullableInt64(objc.NSNumber? value) {
+    _objc_msgSend_xtuoz7(this.ref.pointer, _sel_setANullableInt64_,
+        value?.ref.pointer ?? ffi.nullptr);
+  }
+
+  /// aNullableDouble
+  objc.NSNumber? get aNullableDouble {
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_aNullableDouble);
+    return _ret.address == 0
+        ? null
+        : objc.NSNumber.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// setANullableDouble:
+  set aNullableDouble(objc.NSNumber? value) {
+    _objc_msgSend_xtuoz7(this.ref.pointer, _sel_setANullableDouble_,
+        value?.ref.pointer ?? ffi.nullptr);
   }
 
   /// init
-  NIAllNullableTypesWithoutRecursion init() {
-    objc.checkOsVersionInternal('NIAllNullableTypesWithoutRecursion.init',
+  NIAllNullableTypesWithoutRecursionBridge init() {
+    objc.checkOsVersionInternal('NIAllNullableTypesWithoutRecursionBridge.init',
         iOS: (false, (2, 0, 0)), macOS: (false, (10, 0, 0)));
     final _ret =
         _objc_msgSend_151sglz(this.ref.retainAndReturnPointer(), _sel_init);
-    return NIAllNullableTypesWithoutRecursion.castFromPointer(_ret,
+    return NIAllNullableTypesWithoutRecursionBridge.castFromPointer(_ret,
         retain: false, release: true);
   }
 
   /// new
-  static NIAllNullableTypesWithoutRecursion new$() {
+  static NIAllNullableTypesWithoutRecursionBridge new$() {
     final _ret = _objc_msgSend_151sglz(
-        _class_NIAllNullableTypesWithoutRecursion, _sel_new);
-    return NIAllNullableTypesWithoutRecursion.castFromPointer(_ret,
+        _class_NIAllNullableTypesWithoutRecursionBridge, _sel_new);
+    return NIAllNullableTypesWithoutRecursionBridge.castFromPointer(_ret,
         retain: false, release: true);
   }
 
   /// allocWithZone:
-  static NIAllNullableTypesWithoutRecursion allocWithZone(
+  static NIAllNullableTypesWithoutRecursionBridge allocWithZone(
       ffi.Pointer<objc.NSZone> zone) {
     final _ret = _objc_msgSend_1cwp428(
-        _class_NIAllNullableTypesWithoutRecursion, _sel_allocWithZone_, zone);
-    return NIAllNullableTypesWithoutRecursion.castFromPointer(_ret,
+        _class_NIAllNullableTypesWithoutRecursionBridge,
+        _sel_allocWithZone_,
+        zone);
+    return NIAllNullableTypesWithoutRecursionBridge.castFromPointer(_ret,
         retain: false, release: true);
   }
 
   /// alloc
-  static NIAllNullableTypesWithoutRecursion alloc() {
+  static NIAllNullableTypesWithoutRecursionBridge alloc() {
     final _ret = _objc_msgSend_151sglz(
-        _class_NIAllNullableTypesWithoutRecursion, _sel_alloc);
-    return NIAllNullableTypesWithoutRecursion.castFromPointer(_ret,
+        _class_NIAllNullableTypesWithoutRecursionBridge, _sel_alloc);
+    return NIAllNullableTypesWithoutRecursionBridge.castFromPointer(_ret,
         retain: false, release: true);
   }
 
   /// self
-  NIAllNullableTypesWithoutRecursion self$1() {
+  NIAllNullableTypesWithoutRecursionBridge self$1() {
     final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_self);
-    return NIAllNullableTypesWithoutRecursion.castFromPointer(_ret,
+    return NIAllNullableTypesWithoutRecursionBridge.castFromPointer(_ret,
         retain: true, release: true);
   }
 
   /// retain
-  NIAllNullableTypesWithoutRecursion retain() {
+  NIAllNullableTypesWithoutRecursionBridge retain() {
     final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_retain);
-    return NIAllNullableTypesWithoutRecursion.castFromPointer(_ret,
+    return NIAllNullableTypesWithoutRecursionBridge.castFromPointer(_ret,
         retain: true, release: true);
   }
 
   /// autorelease
-  NIAllNullableTypesWithoutRecursion autorelease() {
+  NIAllNullableTypesWithoutRecursionBridge autorelease() {
     final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_autorelease);
-    return NIAllNullableTypesWithoutRecursion.castFromPointer(_ret,
+    return NIAllNullableTypesWithoutRecursionBridge.castFromPointer(_ret,
         retain: true, release: true);
   }
 
-  /// Returns a new instance of NIAllNullableTypesWithoutRecursion constructed with the default `new` method.
-  factory NIAllNullableTypesWithoutRecursion() => new$();
+  /// Returns a new instance of NIAllNullableTypesWithoutRecursionBridge constructed with the default `new` method.
+  factory NIAllNullableTypesWithoutRecursionBridge() => new$();
 }
 
 enum NIAnEnum {
@@ -279,7 +395,8 @@ enum NIAnotherEnum {
       };
 }
 
-late final _class_NIAllTypes = objc.getClass("test_plugin.NIAllTypes");
+late final _class_NIAllTypesBridge =
+    objc.getClass("test_plugin.NIAllTypesBridge");
 late final _sel_initWithABool_anInt_anInt64_aDouble_anEnum_anotherEnum_aString_list_map_ =
     objc.registerName(
         "initWithABool:anInt:anInt64:aDouble:anEnum:anotherEnum:aString:list:map:");
@@ -413,45 +530,35 @@ final _objc_msgSend_ih63eg = objc.msgSendPointer
             ffi.Pointer<objc.ObjCSelector>, int)>();
 late final _sel_aString = objc.registerName("aString");
 late final _sel_setAString_ = objc.registerName("setAString:");
-final _objc_msgSend_xtuoz7 = objc.msgSendPointer
-    .cast<
-        ffi.NativeFunction<
-            ffi.Void Function(
-                ffi.Pointer<objc.ObjCObject>,
-                ffi.Pointer<objc.ObjCSelector>,
-                ffi.Pointer<objc.ObjCObject>)>>()
-    .asFunction<
-        void Function(ffi.Pointer<objc.ObjCObject>,
-            ffi.Pointer<objc.ObjCSelector>, ffi.Pointer<objc.ObjCObject>)>();
 late final _sel_list = objc.registerName("list");
 late final _sel_setList_ = objc.registerName("setList:");
 late final _sel_map = objc.registerName("map");
 late final _sel_setMap_ = objc.registerName("setMap:");
 
 /// A class containing all supported types.
-/// Generated class from Pigeon that represents data sent in messages.
-class NIAllTypes extends objc.NSObject {
-  NIAllTypes._(ffi.Pointer<objc.ObjCObject> pointer,
+/// Generated bridge class from Pigeon that moves data from Swift to Objective-C.
+class NIAllTypesBridge extends objc.NSObject {
+  NIAllTypesBridge._(ffi.Pointer<objc.ObjCObject> pointer,
       {bool retain = false, bool release = false})
       : super.castFromPointer(pointer, retain: retain, release: release);
 
-  /// Constructs a [NIAllTypes] that points to the same underlying object as [other].
-  NIAllTypes.castFrom(objc.ObjCObjectBase other)
+  /// Constructs a [NIAllTypesBridge] that points to the same underlying object as [other].
+  NIAllTypesBridge.castFrom(objc.ObjCObjectBase other)
       : this._(other.ref.pointer, retain: true, release: true);
 
-  /// Constructs a [NIAllTypes] that wraps the given raw object pointer.
-  NIAllTypes.castFromPointer(ffi.Pointer<objc.ObjCObject> other,
+  /// Constructs a [NIAllTypesBridge] that wraps the given raw object pointer.
+  NIAllTypesBridge.castFromPointer(ffi.Pointer<objc.ObjCObject> other,
       {bool retain = false, bool release = false})
       : this._(other, retain: retain, release: release);
 
-  /// Returns whether [obj] is an instance of [NIAllTypes].
+  /// Returns whether [obj] is an instance of [NIAllTypesBridge].
   static bool isInstance(objc.ObjCObjectBase obj) {
     return _objc_msgSend_19nvye5(
-        obj.ref.pointer, _sel_isKindOfClass_, _class_NIAllTypes);
+        obj.ref.pointer, _sel_isKindOfClass_, _class_NIAllTypesBridge);
   }
 
   /// initWithABool:anInt:anInt64:aDouble:anEnum:anotherEnum:aString:list:map:
-  NIAllTypes initWithABool(bool aBool,
+  NIAllTypesBridge initWithABool(bool aBool,
       {required int anInt,
       required int anInt64,
       required double aDouble,
@@ -472,7 +579,7 @@ class NIAllTypes extends objc.NSObject {
         aString.ref.pointer,
         list.ref.pointer,
         map.ref.pointer);
-    return NIAllTypes.castFromPointer(_ret, retain: false, release: true);
+    return NIAllTypesBridge.castFromPointer(_ret, retain: false, release: true);
   }
 
   /// aBool
@@ -573,53 +680,53 @@ class NIAllTypes extends objc.NSObject {
   }
 
   /// init
-  NIAllTypes init() {
-    objc.checkOsVersionInternal('NIAllTypes.init',
+  NIAllTypesBridge init() {
+    objc.checkOsVersionInternal('NIAllTypesBridge.init',
         iOS: (false, (2, 0, 0)), macOS: (false, (10, 0, 0)));
     final _ret =
         _objc_msgSend_151sglz(this.ref.retainAndReturnPointer(), _sel_init);
-    return NIAllTypes.castFromPointer(_ret, retain: false, release: true);
+    return NIAllTypesBridge.castFromPointer(_ret, retain: false, release: true);
   }
 
   /// new
-  static NIAllTypes new$() {
-    final _ret = _objc_msgSend_151sglz(_class_NIAllTypes, _sel_new);
-    return NIAllTypes.castFromPointer(_ret, retain: false, release: true);
+  static NIAllTypesBridge new$() {
+    final _ret = _objc_msgSend_151sglz(_class_NIAllTypesBridge, _sel_new);
+    return NIAllTypesBridge.castFromPointer(_ret, retain: false, release: true);
   }
 
   /// allocWithZone:
-  static NIAllTypes allocWithZone(ffi.Pointer<objc.NSZone> zone) {
-    final _ret =
-        _objc_msgSend_1cwp428(_class_NIAllTypes, _sel_allocWithZone_, zone);
-    return NIAllTypes.castFromPointer(_ret, retain: false, release: true);
+  static NIAllTypesBridge allocWithZone(ffi.Pointer<objc.NSZone> zone) {
+    final _ret = _objc_msgSend_1cwp428(
+        _class_NIAllTypesBridge, _sel_allocWithZone_, zone);
+    return NIAllTypesBridge.castFromPointer(_ret, retain: false, release: true);
   }
 
   /// alloc
-  static NIAllTypes alloc() {
-    final _ret = _objc_msgSend_151sglz(_class_NIAllTypes, _sel_alloc);
-    return NIAllTypes.castFromPointer(_ret, retain: false, release: true);
+  static NIAllTypesBridge alloc() {
+    final _ret = _objc_msgSend_151sglz(_class_NIAllTypesBridge, _sel_alloc);
+    return NIAllTypesBridge.castFromPointer(_ret, retain: false, release: true);
   }
 
   /// self
-  NIAllTypes self$1() {
+  NIAllTypesBridge self$1() {
     final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_self);
-    return NIAllTypes.castFromPointer(_ret, retain: true, release: true);
+    return NIAllTypesBridge.castFromPointer(_ret, retain: true, release: true);
   }
 
   /// retain
-  NIAllTypes retain() {
+  NIAllTypesBridge retain() {
     final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_retain);
-    return NIAllTypes.castFromPointer(_ret, retain: true, release: true);
+    return NIAllTypesBridge.castFromPointer(_ret, retain: true, release: true);
   }
 
   /// autorelease
-  NIAllTypes autorelease() {
+  NIAllTypesBridge autorelease() {
     final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_autorelease);
-    return NIAllTypes.castFromPointer(_ret, retain: true, release: true);
+    return NIAllTypesBridge.castFromPointer(_ret, retain: true, release: true);
   }
 
-  /// Returns a new instance of NIAllTypes constructed with the default `new` method.
-  factory NIAllTypes() => new$();
+  /// Returns a new instance of NIAllTypesBridge constructed with the default `new` method.
+  factory NIAllTypesBridge() => new$();
 }
 
 late final _class_NIHostIntegrationCoreApiSetup =
@@ -925,7 +1032,7 @@ class NIHostIntegrationCoreApiSetup extends objc.NSObject {
   ///
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
-  NIAllTypes? echoAllTypesWithEverything(NIAllTypes everything,
+  NIAllTypesBridge? echoAllTypesWithEverything(NIAllTypesBridge everything,
       {required NiTestsError wrappedError}) {
     objc.checkOsVersionInternal(
         'NIHostIntegrationCoreApiSetup.echoAllTypesWithEverything:wrappedError:',
@@ -938,7 +1045,7 @@ class NIHostIntegrationCoreApiSetup extends objc.NSObject {
         wrappedError.ref.pointer);
     return _ret.address == 0
         ? null
-        : NIAllTypes.castFromPointer(_ret, retain: true, release: true);
+        : NIAllTypesBridge.castFromPointer(_ret, retain: true, release: true);
   }
 
   /// Returns passed in int.
@@ -1126,9 +1233,9 @@ class NIHostIntegrationCoreApiSetup extends objc.NSObject {
   ///
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
-  NIAllNullableTypesWithoutRecursion?
+  NIAllNullableTypesWithoutRecursionBridge?
       echoAllNullableTypesWithoutRecursionWithEverything(
-          NIAllNullableTypesWithoutRecursion everything,
+          NIAllNullableTypesWithoutRecursionBridge everything,
           {required NiTestsError wrappedError}) {
     objc.checkOsVersionInternal(
         'NIHostIntegrationCoreApiSetup.echoAllNullableTypesWithoutRecursionWithEverything:wrappedError:',
@@ -1141,7 +1248,7 @@ class NIHostIntegrationCoreApiSetup extends objc.NSObject {
         wrappedError.ref.pointer);
     return _ret.address == 0
         ? null
-        : NIAllNullableTypesWithoutRecursion.castFromPointer(_ret,
+        : NIAllNullableTypesWithoutRecursionBridge.castFromPointer(_ret,
             retain: true, release: true);
   }
 

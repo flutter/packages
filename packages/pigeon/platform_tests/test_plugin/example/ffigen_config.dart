@@ -8,8 +8,8 @@ Future<void> main() async {
     'NSNumberWrapper',
     'NIHostIntegrationCoreApi',
     'NIHostIntegrationCoreApiSetup',
-    'NIAllTypes',
-    'NIAllNullableTypesWithoutRecursion',
+    'NIAllTypesBridge',
+    'NIAllNullableTypesWithoutRecursionBridge',
     'NiTestsError'
   ];
   final List<String> enums = <String>[
