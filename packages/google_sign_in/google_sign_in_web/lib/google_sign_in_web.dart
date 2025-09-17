@@ -244,6 +244,14 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
   }
 
   @override
+  Future<void> clearAuthorizationToken(
+    ClearAuthorizationTokenParams params,
+  ) async {
+    await initialized;
+    return _gisClient.clearAuthorizationToken(params.accessToken);
+  }
+
+  @override
   Stream<AuthenticationEvent> get authenticationEvents =>
       _authenticationController.stream;
 

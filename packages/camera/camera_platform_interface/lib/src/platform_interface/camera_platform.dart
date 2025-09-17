@@ -292,6 +292,10 @@ abstract class CameraPlatform extends PlatformInterface {
   }
 
   /// Sets the active camera while recording.
+  ///
+  /// On Android, you must start the recording with [startVideoCapturing]
+  /// with `enablePersistentRecording` set to `true`
+  /// to avoid cancelling any active recording.
   Future<void> setDescriptionWhileRecording(CameraDescription description) {
     throw UnimplementedError(
       'setDescriptionWhileRecording() is not implemented.',
