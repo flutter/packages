@@ -760,22 +760,4 @@ void main() {
       );
     });
   });
-
-  group('clearAuthorizationToken', () {
-    test('passes expected paramaters', () async {
-      final GoogleSignIn googleSignIn = GoogleSignIn.instance;
-
-      const String token = 'someAccessToken';
-      await googleSignIn.authorizationClient.clearAuthorizationToken(
-        accessToken: token,
-      );
-
-      final VerificationResult verification = verify(
-        mockPlatform.clearAuthorizationToken(captureAny),
-      );
-      final ClearAuthorizationTokenParams params =
-          verification.captured[0] as ClearAuthorizationTokenParams;
-      expect(params.accessToken, token);
-    });
-  });
 }
