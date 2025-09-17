@@ -86,27 +86,16 @@ class _MyAppState extends State<MyApp> {
       });
       authenticated = await auth.authenticate(
         localizedReason: 'Let OS determine authentication method',
-        persistAcrossBackgrounding: true,
+        options: const AuthenticationOptions(stickyAuth: true),
       );
       setState(() {
         _isAuthenticating = false;
       });
-    } on LocalAuthException catch (e) {
-      print(e);
-      setState(() {
-        _isAuthenticating = false;
-        if (e.code != LocalAuthExceptionCode.userCanceled &&
-            e.code != LocalAuthExceptionCode.systemCanceled) {
-          _authorized =
-              'Error - ${e.code.name}${e.description != null ? ': ${e.description}' : ''}';
-        }
-      });
-      return;
     } on PlatformException catch (e) {
       print(e);
       setState(() {
         _isAuthenticating = false;
-        _authorized = 'Unexpected error - ${e.message}';
+        _authorized = 'Error - ${e.message}';
       });
       return;
     }
@@ -129,29 +118,20 @@ class _MyAppState extends State<MyApp> {
       authenticated = await auth.authenticate(
         localizedReason:
             'Scan your fingerprint (or face or whatever) to authenticate',
-        persistAcrossBackgrounding: true,
-        biometricOnly: true,
+        options: const AuthenticationOptions(
+          stickyAuth: true,
+          biometricOnly: true,
+        ),
       );
       setState(() {
         _isAuthenticating = false;
         _authorized = 'Authenticating';
       });
-    } on LocalAuthException catch (e) {
-      print(e);
-      setState(() {
-        _isAuthenticating = false;
-        if (e.code != LocalAuthExceptionCode.userCanceled &&
-            e.code != LocalAuthExceptionCode.systemCanceled) {
-          _authorized =
-              'Error - ${e.code.name}${e.description != null ? ': ${e.description}' : ''}';
-        }
-      });
-      return;
     } on PlatformException catch (e) {
       print(e);
       setState(() {
         _isAuthenticating = false;
-        _authorized = 'Unexpected Error - ${e.message}';
+        _authorized = 'Error - ${e.message}';
       });
       return;
     }

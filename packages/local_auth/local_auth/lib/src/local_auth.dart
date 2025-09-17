@@ -10,6 +10,7 @@
 
 import 'dart:async';
 
+import 'package:flutter/services.dart';
 import 'package:local_auth_android/local_auth_android.dart';
 import 'package:local_auth_darwin/local_auth_darwin.dart';
 import 'package:local_auth_platform_interface/local_auth_platform_interface.dart';
@@ -20,31 +21,21 @@ class LocalAuthentication {
   /// Authenticates the user with biometrics available on the device while also
   /// allowing the user to use device authentication - pin, pattern, passcode.
   ///
-  /// Returns true if the user successfully authenticated.
-  ///
-  /// If the user fails the authentication challenge without any side effects,
-  /// returns false. For other other failures cases, throws a
-  /// [LocalAuthException] with details about the reason it did not succeed.
+  /// Returns true if the user successfully authenticated, false otherwise.
   ///
   /// [localizedReason] is the message to show to user while prompting them
   /// for authentication. This is typically along the lines of: 'Authenticate
   /// to access MyApp.'. This must not be empty.
   ///
-  /// Provide [authMessages] if you want to customize messages in the dialogs.
+  /// Provide [authMessages] if you want to
+  /// customize messages in the dialogs.
   ///
-  /// Set [biometricOnly] to true to prevent authentications from using
-  /// non-biometric local authentication such as pin, passcode, or pattern.
+  /// Provide [options] for configuring further authentication related options.
   ///
-  /// [sensitiveTransaction], which defaults to true, controls whether
-  /// platform-specific precautions are enabled, such as showing a confirmation
-  /// dialog after face unlock is recognized to make sure the user meant to
-  /// unlock their device.
-  ///
-  /// On mobile platforms, authentication may be stopped by the system when the
-  /// app is backgrounded during an authentication. Set
-  /// [persistAcrossBackgrounding] to true to have the plugin automatically
-  /// retry the authentication on foregrounding instead of failing with an error
-  /// on backgrounding.
+  /// Throws a [PlatformException] if there were technical problems with local
+  /// authentication (e.g. lack of relevant hardware). This might throw
+  /// [PlatformException] with error code [otherOperatingSystem] on the iOS
+  /// simulator.
   Future<bool> authenticate({
     required String localizedReason,
     Iterable<AuthMessages> authMessages = const <AuthMessages>[
@@ -52,27 +43,20 @@ class LocalAuthentication {
       AndroidAuthMessages(),
       WindowsAuthMessages(),
     ],
-    bool biometricOnly = false,
-    bool sensitiveTransaction = true,
-    bool persistAcrossBackgrounding = false,
+    AuthenticationOptions options = const AuthenticationOptions(),
   }) {
     return LocalAuthPlatform.instance.authenticate(
       localizedReason: localizedReason,
       authMessages: authMessages,
-      options: AuthenticationOptions(
-        stickyAuth: persistAcrossBackgrounding,
-        biometricOnly: biometricOnly,
-        sensitiveTransaction: sensitiveTransaction,
-      ),
+      options: options,
     );
   }
 
   /// Cancels any in-progress authentication, returning true if auth was
-  /// canceled successfully.
+  /// cancelled successfully.
   ///
-  /// This API may not be supported by all platforms.
-  ///
-  /// Returns false if there was some error, no authentication is in progress,
+  /// This API is not supported by all platforms.
+  /// Returns false if there was some error, no authentication in progress,
   /// or the current platform lacks support.
   Future<bool> stopAuthentication() async {
     return LocalAuthPlatform.instance.stopAuthentication();
