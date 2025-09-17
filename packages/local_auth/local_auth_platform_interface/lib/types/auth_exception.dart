@@ -25,7 +25,8 @@ class LocalAuthException implements Exception {
   final Object? details;
 
   @override
-  String toString() => 'LocalAuthException(code $code, $description, $details)';
+  String toString() =>
+      '${objectRuntimeType(this, 'LocalAuthException')}(code ${code.name}, $description, $details)';
 }
 
 /// Types of [LocalAuthException]s, as indicated by [LocalAuthException.code].
