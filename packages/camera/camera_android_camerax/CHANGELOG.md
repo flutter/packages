@@ -1,3 +1,7 @@
+## 0.6.22
+
+* Converts NV21-compatible streamed images to NV21 when requested.
+
 ## 0.6.21
 
 * Implements NV21 support for image streaming.

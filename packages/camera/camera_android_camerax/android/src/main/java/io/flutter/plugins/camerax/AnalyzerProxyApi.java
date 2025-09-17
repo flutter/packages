@@ -56,4 +56,10 @@ class AnalyzerProxyApi extends PigeonApiAnalyzer {
               });
     }
   }
+
+  @NonNull
+  @Override
+  public Analyzer pigeon_defaultConstructor() {
+    return new AnalyzerImpl(this);
+  }
 }

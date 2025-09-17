@@ -164,7 +164,9 @@ void main() {
     newImageAnalysis,
     Analyzer Function({
       required void Function(Analyzer, ImageProxy) analyze,
+      // ignore: non_constant_identifier_names
       BinaryMessenger? pigeon_binaryMessenger,
+      // ignore: non_constant_identifier_names
       PigeonInstanceManager? pigeon_instanceManager,
     })?
     newAnalyzer,
@@ -172,7 +174,9 @@ void main() {
       int imageWidth,
       int imageHeight,
       List<PlaneProxy> planes, {
+      // ignore: non_constant_identifier_names
       BinaryMessenger? pigeon_binaryMessenger,
+      // ignore: non_constant_identifier_names
       PigeonInstanceManager? pigeon_instanceManager,
     })?
     getNv21BufferImageProxyUtils,
@@ -498,7 +502,9 @@ void main() {
             int imageWidth,
             int imageHeight,
             List<PlaneProxy> planes, {
+            // ignore: non_constant_identifier_names
             BinaryMessenger? pigeon_binaryMessenger,
+            // ignore: non_constant_identifier_names
             PigeonInstanceManager? pigeon_instanceManager,
           }) {
             return Future<Uint8List>.value(Uint8List(0));

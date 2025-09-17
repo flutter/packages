@@ -1,7 +1,6 @@
 package io.flutter.plugins.camerax;
 
 import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
 import androidx.camera.core.ImageProxy.PlaneProxy;
@@ -33,8 +32,8 @@ public class ImageProxyUtilsTest {
         IllegalArgumentException.class, () -> ImageProxyUtils.planesToNV21(planes, width, height));
   }
 
-@Test
-public void planesToNV21_returnsExpectedBufferWhenPlanesAreNV21Compatible() {
+  @Test
+  public void planesToNV21_returnsExpectedBufferWhenPlanesAreNV21Compatible() {
     int width = 4;
     int height = 2;
     int imageSize = width * height; // 8
@@ -63,13 +62,24 @@ public void planesToNV21_returnsExpectedBufferWhenPlanesAreNV21Compatible() {
     // 1. All of the Y plane bytes.
     // 2. The first byte of the V plane.
     // 3. The first three (2 * 8 / 4 - 1) bytes of the U plane.
-    byte[] expected = new byte[] {
-        0, 1, 2, 3, 4, 5, 6, 7, // Y
-        9, 5, 7, 33  // V0, U0, U1, U2
-    };
+    byte[] expected =
+        new byte[] {
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7, // Y
+          9,
+          5,
+          7,
+          33 // V0, U0, U1, U2
+        };
 
     assertArrayEquals(expected, nv21);
-}
+  }
 
   // Creates a mock PlaneProxy with a buffer (of zeroes) of the given size.
   private PlaneProxy mockPlaneProxy(int bufferSize) {

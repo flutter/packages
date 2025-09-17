@@ -1338,7 +1338,7 @@ class AndroidCameraCameraX extends CameraPlatform {
         // still reports YUV_420_888 if the underlying format is NV21.
         cameraImageFormat = const CameraImageFormat(
           ImageFormatGroup.nv21,
-          raw: imageProxyFormatNv21, // TODO(camsim99): rename
+          raw: imageProxyFormatNv21,
         );
       } else {
         final int imageRawFormat = imageProxy.format;
