@@ -326,8 +326,8 @@ class _PlayerInstance {
             eventType: VideoEventType.initialized,
             duration: Duration(milliseconds: map['duration'] as int),
             size: Size(
-              (map['width'] as num?)?.toDouble() ?? 0.0,
-              (map['height'] as num?)?.toDouble() ?? 0.0,
+              (map['width'] as num).toDouble(),
+              (map['height'] as num).toDouble(),
             ),
             rotationCorrection: map['rotationCorrection'] as int? ?? 0,
           ),
@@ -348,8 +348,8 @@ class _PlayerInstance {
         _eventStreamController.add(
           VideoEvent(eventType: VideoEventType.bufferingStart),
         );
-        // Trigger an extra buffer position check to get fresher state, so that
-        // clients have an accurate reporting of the current buffering state.
+        // Trigger an extra buffer position check, so that clients have an
+        // accurate reporting of the current buffering state.
         _api.getBufferedPosition().then(
           (int position) => _updateBufferingState(position),
         );
@@ -357,8 +357,8 @@ class _PlayerInstance {
         _eventStreamController.add(
           VideoEvent(eventType: VideoEventType.bufferingEnd),
         );
-        // Trigger an extra buffer position check to get fresher state, so that
-        // clients have an accurate reporting of the current buffering state.
+        // Trigger an extra buffer position check, so that clients have an
+        // accurate reporting of the current buffering state.
         _api.getBufferedPosition().then(
           (int position) => _updateBufferingState(position),
         );

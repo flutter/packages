@@ -53,21 +53,6 @@ public final class TextureExoPlayerEventListener extends ExoPlayerEventListener 
     events.onInitialized(width, height, exoPlayer.getDuration(), rotationCorrection.getDegrees());
   }
 
-  private RotationDegrees getRotationCorrectionFromUnappliedRotation(
-      RotationDegrees unappliedRotationDegrees) {
-    RotationDegrees rotationCorrection = RotationDegrees.ROTATE_0;
-
-    // Rotating the video with ExoPlayer does not seem to be possible with a Surface,
-    // so inform the Flutter code that the widget needs to be rotated to prevent
-    // upside-down playback for videos with unappliedRotationDegrees of 180 (other orientations
-    // work correctly without correction).
-    if (unappliedRotationDegrees == RotationDegrees.ROTATE_180) {
-      rotationCorrection = unappliedRotationDegrees;
-    }
-
-    return rotationCorrection;
-  }
-
   @OptIn(markerClass = androidx.media3.common.util.UnstableApi.class)
   // A video's Format and its rotation degrees are unstable because they are not guaranteed
   // the same implementation across API versions. It is possible that this logic may need
