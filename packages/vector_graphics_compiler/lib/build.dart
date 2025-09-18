@@ -61,17 +61,16 @@ Future<void> compileSvgs(
       'Did not succeed for ${pairs.map((String name, Pair e) => MapEntry<String, String>(name, '$name: ${e.inputPath} -> ${e.outputPath}')).values}',
     );
   }
-
-  for (final MapEntry<String, Pair> entry in pairs.entries) {
-    final String name = entry.key;
-    final Pair pair = entry.value;
-    final String packageName = input.packageName;
-
+  for (final MapEntry<String, Pair>(
+        key: String name,
+        value: Pair(:String outputPath),
+      )
+      in pairs.entries) {
     output.assets.data.add(
       DataAsset(
-        package: packageName,
+        package: input.packageName,
         name: name,
-        file: Uri.file(pair.outputPath),
+        file: Uri.file(outputPath),
       ),
     );
   }
