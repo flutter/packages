@@ -55,23 +55,10 @@ final class VideoPlayerEventCallbacks implements VideoPlayerCallbacks {
   }
 
   @Override
-  public void onBufferingStart() {
+  public void onPlaybackStateChanged(Messages.PlatformPlaybackState state) {
     Map<String, Object> event = new HashMap<>();
-    event.put("event", "bufferingStart");
-    eventSink.success(event);
-  }
-
-  @Override
-  public void onBufferingEnd() {
-    Map<String, Object> event = new HashMap<>();
-    event.put("event", "bufferingEnd");
-    eventSink.success(event);
-  }
-
-  @Override
-  public void onCompleted() {
-    Map<String, Object> event = new HashMap<>();
-    event.put("event", "completed");
+    event.put("event", "playbackStateChanged");
+    event.put("state", state.index);
     eventSink.success(event);
   }
 

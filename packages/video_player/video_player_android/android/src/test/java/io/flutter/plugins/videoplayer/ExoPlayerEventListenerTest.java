@@ -4,9 +4,7 @@
 
 package io.flutter.plugins.videoplayer;
 
-import static org.mockito.ArgumentMatchers.contains;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.isNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -34,7 +32,7 @@ import org.robolectric.RobolectricTestRunner;
 public final class ExoPlayerEventListenerTest {
   @Mock private ExoPlayer mockExoPlayer;
   @Mock private VideoPlayerCallbacks mockCallbacks;
-  private ExoPlayerEventListener eventListener;
+  private TestExoPlayerEventListener eventListener;
 
   @Rule public MockitoRule initRule = MockitoJUnit.rule();
 
@@ -42,13 +40,19 @@ public final class ExoPlayerEventListenerTest {
    * A test subclass of {@link ExoPlayerEventListener} that exposes the abstract class for testing.
    */
   private static final class TestExoPlayerEventListener extends ExoPlayerEventListener {
+    private boolean calledSendInitialized = false;
+
     public TestExoPlayerEventListener(ExoPlayer exoPlayer, VideoPlayerCallbacks callbacks) {
       super(exoPlayer, callbacks);
     }
 
     @Override
     protected void sendInitialized() {
-      // No implementation needed.
+      calledSendInitialized = true;
+    }
+
+    boolean calledSendInitialized() {
+      return calledSendInitialized;
     }
   }
 
@@ -58,71 +62,36 @@ public final class ExoPlayerEventListenerTest {
   }
 
   @Test
-  public void onPlaybackStateChangedBufferingSendsBufferingStart() {
+  public void onPlaybackStateChangedBufferingSendsBuffering() {
     eventListener.onPlaybackStateChanged(Player.STATE_BUFFERING);
 
-    verify(mockCallbacks).onBufferingStart();
+    verify(mockCallbacks).onPlaybackStateChanged(Messages.PlatformPlaybackState.BUFFERING);
     verifyNoMoreInteractions(mockCallbacks);
   }
 
   @Test
-  public void onPlaybackStateChangedEndedSendsOnCompleted() {
+  public void onPlaybackStateChangedEndedSendsEnded() {
     eventListener.onPlaybackStateChanged(Player.STATE_ENDED);
 
-    verify(mockCallbacks).onCompleted();
+    verify(mockCallbacks).onPlaybackStateChanged(Messages.PlatformPlaybackState.ENDED);
     verifyNoMoreInteractions(mockCallbacks);
   }
 
   @Test
-  public void onPlaybackStateChangedEndedAfterBufferingSendsBufferingEndAndOnCompleted() {
-    eventListener.onPlaybackStateChanged(Player.STATE_BUFFERING);
-    verify(mockCallbacks).onBufferingStart();
+  public void onPlaybackStateChangedIdleSendsIdle() {
+    eventListener.onPlaybackStateChanged(Player.STATE_IDLE);
 
-    eventListener.onPlaybackStateChanged(Player.STATE_ENDED);
-    verify(mockCallbacks).onCompleted();
-    verify(mockCallbacks).onBufferingEnd();
-
+    verify(mockCallbacks).onPlaybackStateChanged(Messages.PlatformPlaybackState.IDLE);
     verifyNoMoreInteractions(mockCallbacks);
   }
 
   @Test
-  public void onPlaybackStateChangedReadyAfterBufferingSendsBufferingEnd() {
-    eventListener.onPlaybackStateChanged(Player.STATE_BUFFERING);
-    verify(mockCallbacks).onBufferingStart();
-
+  public void onPlaybackStateChangedReadySendsInitializedAndReady() {
     eventListener.onPlaybackStateChanged(Player.STATE_READY);
-    verify(mockCallbacks).onBufferingEnd();
 
+    verify(mockCallbacks).onPlaybackStateChanged(Messages.PlatformPlaybackState.READY);
     verifyNoMoreInteractions(mockCallbacks);
-  }
-
-  @Test
-  public void onPlaybackStateChangedIdleDoNothing() {
-    eventListener.onPlaybackStateChanged(Player.STATE_IDLE);
-
-    verifyNoInteractions(mockCallbacks);
-  }
-
-  @Test
-  public void onPlaybackStateChangedIdleAfterBufferingSendsBufferingEnd() {
-    eventListener.onPlaybackStateChanged(Player.STATE_BUFFERING);
-    verify(mockCallbacks).onBufferingStart();
-
-    eventListener.onPlaybackStateChanged(Player.STATE_IDLE);
-    verify(mockCallbacks).onBufferingEnd();
-
-    verifyNoMoreInteractions(mockCallbacks);
-  }
-
-  @Test
-  public void onErrorVideoErrorWhenBufferingInProgressAlsoEndBuffering() {
-    eventListener.onPlaybackStateChanged(Player.STATE_BUFFERING);
-    verify(mockCallbacks).onBufferingStart();
-
-    eventListener.onPlayerError(
-        new PlaybackException("BAD", null, PlaybackException.ERROR_CODE_AUDIO_TRACK_INIT_FAILED));
-    verify(mockCallbacks).onBufferingEnd();
-    verify(mockCallbacks).onError(eq("VideoError"), contains("BAD"), isNull());
+    assertTrue(eventListener.calledSendInitialized());
   }
 
   @Test

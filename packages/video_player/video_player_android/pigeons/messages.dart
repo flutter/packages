@@ -16,6 +16,10 @@ import 'package:pigeon/pigeon.dart';
 /// Pigeon equivalent of video_platform_interface's VideoFormat.
 enum PlatformVideoFormat { dash, hls, ss }
 
+/// Pigeon equivalent of Player's playback state.
+/// https://developer.android.com/media/media3/exoplayer/listening-to-player-events#playback-state
+enum PlatformPlaybackState { idle, buffering, ready, ended, unknown }
+
 /// Information passed to the platform view creation.
 class PlatformVideoViewCreationParams {
   const PlatformVideoViewCreationParams({required this.playerId});

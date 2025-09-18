@@ -39,6 +39,10 @@ bool _deepEquals(Object? a, Object? b) {
 /// Pigeon equivalent of video_platform_interface's VideoFormat.
 enum PlatformVideoFormat { dash, hls, ss }
 
+/// Pigeon equivalent of Player's playback state.
+/// https://developer.android.com/media/media3/exoplayer/listening-to-player-events#playback-state
+enum PlatformPlaybackState { idle, buffering, ready, ended, unknown }
+
 /// Information passed to the platform view creation.
 class PlatformVideoViewCreationParams {
   PlatformVideoViewCreationParams({required this.playerId});
@@ -178,14 +182,17 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is PlatformVideoFormat) {
       buffer.putUint8(129);
       writeValue(buffer, value.index);
-    } else if (value is PlatformVideoViewCreationParams) {
+    } else if (value is PlatformPlaybackState) {
       buffer.putUint8(130);
-      writeValue(buffer, value.encode());
-    } else if (value is CreationOptions) {
+      writeValue(buffer, value.index);
+    } else if (value is PlatformVideoViewCreationParams) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
-    } else if (value is TexturePlayerIds) {
+    } else if (value is CreationOptions) {
       buffer.putUint8(132);
+      writeValue(buffer, value.encode());
+    } else if (value is TexturePlayerIds) {
+      buffer.putUint8(133);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -199,10 +206,13 @@ class _PigeonCodec extends StandardMessageCodec {
         final int? value = readValue(buffer) as int?;
         return value == null ? null : PlatformVideoFormat.values[value];
       case 130:
-        return PlatformVideoViewCreationParams.decode(readValue(buffer)!);
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : PlatformPlaybackState.values[value];
       case 131:
-        return CreationOptions.decode(readValue(buffer)!);
+        return PlatformVideoViewCreationParams.decode(readValue(buffer)!);
       case 132:
+        return CreationOptions.decode(readValue(buffer)!);
+      case 133:
         return TexturePlayerIds.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);

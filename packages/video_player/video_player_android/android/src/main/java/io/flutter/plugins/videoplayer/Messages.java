@@ -79,6 +79,24 @@ public class Messages {
   }
 
   /**
+   * Pigeon equivalent of Player's playback state.
+   * https://developer.android.com/media/media3/exoplayer/listening-to-player-events#playback-state
+   */
+  public enum PlatformPlaybackState {
+    IDLE(0),
+    BUFFERING(1),
+    READY(2),
+    ENDED(3),
+    UNKNOWN(4);
+
+    final int index;
+
+    PlatformPlaybackState(final int index) {
+      this.index = index;
+    }
+  }
+
+  /**
    * Information passed to the platform view creation.
    *
    * <p>Generated class from Pigeon that represents data sent in messages.
@@ -395,10 +413,15 @@ public class Messages {
             return value == null ? null : PlatformVideoFormat.values()[((Long) value).intValue()];
           }
         case (byte) 130:
-          return PlatformVideoViewCreationParams.fromList((ArrayList<Object>) readValue(buffer));
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : PlatformPlaybackState.values()[((Long) value).intValue()];
+          }
         case (byte) 131:
-          return CreationOptions.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformVideoViewCreationParams.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 132:
+          return CreationOptions.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 133:
           return TexturePlayerIds.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
@@ -410,14 +433,17 @@ public class Messages {
       if (value instanceof PlatformVideoFormat) {
         stream.write(129);
         writeValue(stream, value == null ? null : ((PlatformVideoFormat) value).index);
-      } else if (value instanceof PlatformVideoViewCreationParams) {
+      } else if (value instanceof PlatformPlaybackState) {
         stream.write(130);
+        writeValue(stream, value == null ? null : ((PlatformPlaybackState) value).index);
+      } else if (value instanceof PlatformVideoViewCreationParams) {
+        stream.write(131);
         writeValue(stream, ((PlatformVideoViewCreationParams) value).toList());
       } else if (value instanceof CreationOptions) {
-        stream.write(131);
+        stream.write(132);
         writeValue(stream, ((CreationOptions) value).toList());
       } else if (value instanceof TexturePlayerIds) {
-        stream.write(132);
+        stream.write(133);
         writeValue(stream, ((TexturePlayerIds) value).toList());
       } else {
         super.writeValue(stream, value);

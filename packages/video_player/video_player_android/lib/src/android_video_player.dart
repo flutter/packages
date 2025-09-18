@@ -251,6 +251,7 @@ class _PlayerInstance {
     _eventSubscription = _eventChannel.receiveBroadcastStream().listen(
       _onStreamEvent,
       onError: (Object e) {
+        _setBuffering(false);
         _eventStreamController.addError(e);
       },
     );
@@ -261,8 +262,10 @@ class _PlayerInstance {
   final StreamController<VideoEvent> _eventStreamController =
       StreamController<VideoEvent>();
   late final StreamSubscription<dynamic> _eventSubscription;
+  bool _isDisposed = false;
   Timer? _bufferPollingTimer;
   int _lastBufferPosition = -1;
+  bool _isBuffering = false;
 
   final VideoPlayerViewState viewState;
 
@@ -299,13 +302,36 @@ class _PlayerInstance {
   }
 
   Future<void> dispose() async {
+    _isDisposed = true;
     _bufferPollingTimer?.cancel();
     await _eventSubscription.cancel();
   }
 
+  void _setBuffering(bool buffering) {
+    if (buffering != _isBuffering) {
+      _isBuffering = buffering;
+
+      _eventStreamController.add(
+        VideoEvent(
+          eventType:
+              buffering
+                  ? VideoEventType.bufferingStart
+                  : VideoEventType.bufferingEnd,
+        ),
+      );
+      // Trigger an extra buffer position check, so that clients have an
+      // accurate reporting of the current buffering state.
+      _api.getBufferedPosition().then((int position) {
+        if (!_isDisposed) {
+          _updateBufferPosition(position);
+        }
+      });
+    }
+  }
+
   /// Sends a buffering update if the buffer position has changed since the
   /// last check.
-  void _updateBufferingState(int bufferPosition) {
+  void _updateBufferPosition(int bufferPosition) {
     if (bufferPosition != _lastBufferPosition) {
       _lastBufferPosition = bufferPosition;
       _eventStreamController.add(
@@ -338,30 +364,8 @@ class _PlayerInstance {
         _bufferPollingTimer = Timer.periodic(const Duration(seconds: 1), (
           Timer timer,
         ) async {
-          _updateBufferingState(await _api.getBufferedPosition());
+          _updateBufferPosition(await _api.getBufferedPosition());
         });
-      case 'completed':
-        _eventStreamController.add(
-          VideoEvent(eventType: VideoEventType.completed),
-        );
-      case 'bufferingStart':
-        _eventStreamController.add(
-          VideoEvent(eventType: VideoEventType.bufferingStart),
-        );
-        // Trigger an extra buffer position check, so that clients have an
-        // accurate reporting of the current buffering state.
-        _api.getBufferedPosition().then(
-          (int position) => _updateBufferingState(position),
-        );
-      case 'bufferingEnd':
-        _eventStreamController.add(
-          VideoEvent(eventType: VideoEventType.bufferingEnd),
-        );
-        // Trigger an extra buffer position check, so that clients have an
-        // accurate reporting of the current buffering state.
-        _api.getBufferedPosition().then(
-          (int position) => _updateBufferingState(position),
-        );
       case 'isPlayingStateUpdate':
         _eventStreamController.add(
           VideoEvent(
@@ -369,10 +373,36 @@ class _PlayerInstance {
             isPlaying: map['isPlaying'] as bool,
           ),
         );
+      case 'playbackStateChanged':
+        final PlatformPlaybackState state =
+            PlatformPlaybackState.values[map['state'] as int];
+        switch (state) {
+          case PlatformPlaybackState.idle:
+            // This is currently only used for buffering below.
+            break;
+          case PlatformPlaybackState.buffering:
+            _setBuffering(true);
+          case PlatformPlaybackState.ready:
+            // On the Dart side, this is only used for buffering below. On the
+            // native side it drives the 'initialized' event; that can't
+            // currently be moved here since gathering the initialization state
+            // should be synchronous with the state change.
+            break;
+          case PlatformPlaybackState.ended:
+            _eventStreamController.add(
+              VideoEvent(eventType: VideoEventType.completed),
+            );
+          case PlatformPlaybackState.unknown:
+            // Ignore unknown states. This isn't an error since the media
+            // framework could add new states in the future.
+            break;
+        }
+        // Any state other than buffering should end the buffering state.
+        if (state != PlatformPlaybackState.buffering) {
+          _setBuffering(false);
+        }
       default:
-        _eventStreamController.add(
-          VideoEvent(eventType: VideoEventType.unknown),
-        );
+        throw StateError('Unexpected event: $event');
     }
   }
 
