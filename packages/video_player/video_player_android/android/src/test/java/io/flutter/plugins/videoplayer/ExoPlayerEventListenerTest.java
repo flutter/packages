@@ -65,7 +65,7 @@ public final class ExoPlayerEventListenerTest {
   public void onPlaybackStateChangedBufferingSendsBuffering() {
     eventListener.onPlaybackStateChanged(Player.STATE_BUFFERING);
 
-    verify(mockCallbacks).onPlaybackStateChanged(Messages.PlatformPlaybackState.BUFFERING);
+    verify(mockCallbacks).onPlaybackStateChanged(PlatformPlaybackState.BUFFERING);
     verifyNoMoreInteractions(mockCallbacks);
   }
 
@@ -73,7 +73,7 @@ public final class ExoPlayerEventListenerTest {
   public void onPlaybackStateChangedEndedSendsEnded() {
     eventListener.onPlaybackStateChanged(Player.STATE_ENDED);
 
-    verify(mockCallbacks).onPlaybackStateChanged(Messages.PlatformPlaybackState.ENDED);
+    verify(mockCallbacks).onPlaybackStateChanged(PlatformPlaybackState.ENDED);
     verifyNoMoreInteractions(mockCallbacks);
   }
 
@@ -81,7 +81,7 @@ public final class ExoPlayerEventListenerTest {
   public void onPlaybackStateChangedIdleSendsIdle() {
     eventListener.onPlaybackStateChanged(Player.STATE_IDLE);
 
-    verify(mockCallbacks).onPlaybackStateChanged(Messages.PlatformPlaybackState.IDLE);
+    verify(mockCallbacks).onPlaybackStateChanged(PlatformPlaybackState.IDLE);
     verifyNoMoreInteractions(mockCallbacks);
   }
 
@@ -89,7 +89,7 @@ public final class ExoPlayerEventListenerTest {
   public void onPlaybackStateChangedReadySendsInitializedAndReady() {
     eventListener.onPlaybackStateChanged(Player.STATE_READY);
 
-    verify(mockCallbacks).onPlaybackStateChanged(Messages.PlatformPlaybackState.READY);
+    verify(mockCallbacks).onPlaybackStateChanged(PlatformPlaybackState.READY);
     verifyNoMoreInteractions(mockCallbacks);
     assertTrue(eventListener.calledSendInitialized());
   }

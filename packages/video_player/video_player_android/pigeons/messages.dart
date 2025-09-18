@@ -7,9 +7,9 @@ import 'package:pigeon/pigeon.dart';
 @ConfigurePigeon(
   PigeonOptions(
     dartOut: 'lib/src/messages.g.dart',
-    javaOut:
-        'android/src/main/java/io/flutter/plugins/videoplayer/Messages.java',
-    javaOptions: JavaOptions(package: 'io.flutter.plugins.videoplayer'),
+    kotlinOut:
+        'android/src/main/kotlin/io/flutter/plugins/videoplayer/Messages.kt',
+    kotlinOptions: KotlinOptions(package: 'io.flutter.plugins.videoplayer'),
     copyrightHeader: 'pigeons/copyright.txt',
   ),
 )

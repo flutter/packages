@@ -25,8 +25,8 @@ import org.robolectric.RobolectricTestRunner;
  * Unit tests {@link VideoPlayerEventCallbacks}.
  *
  * <p>This test suite <em>narrowly verifies</em> that calling the provided event callbacks, such as
- * {@link VideoPlayerEventCallbacks#onPlaybackStateChanged(Messages.PlatformPlaybackState)},
- * produces the expected data as an encoded {@link Map}.
+ * {@link VideoPlayerEventCallbacks#onPlaybackStateChanged(PlatformPlaybackState)}, produces the
+ * expected data as an encoded {@link Map}.
  *
  * <p>In other words, this tests that "the Java-side of the event channel works as expected".
  */
@@ -80,7 +80,7 @@ public final class VideoPlayerEventCallbacksTest {
 
   @Test
   public void onPlaybackStateChanged() {
-    Messages.PlatformPlaybackState state = Messages.PlatformPlaybackState.READY;
+    PlatformPlaybackState state = PlatformPlaybackState.READY;
     eventCallbacks.onPlaybackStateChanged(state);
 
     verify(mockEventSink).success(eventCaptor.capture());

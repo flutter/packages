@@ -50,23 +50,23 @@ public abstract class ExoPlayerEventListener implements Player.Listener {
 
   @Override
   public void onPlaybackStateChanged(final int playbackState) {
-    Messages.PlatformPlaybackState platformState = Messages.PlatformPlaybackState.UNKNOWN;
+    PlatformPlaybackState platformState = PlatformPlaybackState.UNKNOWN;
     switch (playbackState) {
       case Player.STATE_BUFFERING:
-        platformState = Messages.PlatformPlaybackState.BUFFERING;
+        platformState = PlatformPlaybackState.BUFFERING;
         break;
       case Player.STATE_READY:
-        platformState = Messages.PlatformPlaybackState.READY;
+        platformState = PlatformPlaybackState.READY;
         if (!isInitialized) {
           isInitialized = true;
           sendInitialized();
         }
         break;
       case Player.STATE_ENDED:
-        platformState = Messages.PlatformPlaybackState.ENDED;
+        platformState = PlatformPlaybackState.ENDED;
         break;
       case Player.STATE_IDLE:
-        platformState = Messages.PlatformPlaybackState.IDLE;
+        platformState = PlatformPlaybackState.IDLE;
         break;
     }
     events.onPlaybackStateChanged(platformState);

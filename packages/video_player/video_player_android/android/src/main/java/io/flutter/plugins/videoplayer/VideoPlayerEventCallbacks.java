@@ -55,10 +55,10 @@ final class VideoPlayerEventCallbacks implements VideoPlayerCallbacks {
   }
 
   @Override
-  public void onPlaybackStateChanged(Messages.PlatformPlaybackState state) {
+  public void onPlaybackStateChanged(PlatformPlaybackState state) {
     Map<String, Object> event = new HashMap<>();
     event.put("event", "playbackStateChanged");
-    event.put("state", state.index);
+    event.put("state", state.getRaw());
     eventSink.success(event);
   }
 

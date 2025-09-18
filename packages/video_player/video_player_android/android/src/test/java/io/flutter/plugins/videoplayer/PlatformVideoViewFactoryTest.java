@@ -28,8 +28,8 @@ public class PlatformVideoViewFactoryTest {
     when(videoPlayer.getExoPlayer()).thenReturn(exoPlayer);
 
     final PlatformVideoViewFactory factory = new PlatformVideoViewFactory(videoPlayerProvider);
-    final Messages.PlatformVideoViewCreationParams args =
-        new Messages.PlatformVideoViewCreationParams.Builder().setPlayerId(playerId).build();
+    final PlatformVideoViewCreationParams args =
+        new PlatformVideoViewCreationParams.Builder().setPlayerId(playerId).build();
 
     final PlatformView view = factory.create(context, 0, args);
 

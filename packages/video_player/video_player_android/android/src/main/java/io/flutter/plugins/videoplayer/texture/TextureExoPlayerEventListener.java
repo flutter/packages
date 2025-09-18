@@ -14,7 +14,7 @@ import io.flutter.plugins.videoplayer.VideoPlayerCallbacks;
 import java.util.Objects;
 
 public final class TextureExoPlayerEventListener extends ExoPlayerEventListener {
-  private boolean surfaceProducerHandlesCropAndRotation;
+  private final boolean surfaceProducerHandlesCropAndRotation;
 
   public TextureExoPlayerEventListener(
       @NonNull ExoPlayer exoPlayer,
@@ -31,11 +31,9 @@ public final class TextureExoPlayerEventListener extends ExoPlayerEventListener 
     int width = videoSize.width;
     int height = videoSize.height;
     if (width != 0 && height != 0) {
-      if (surfaceProducerHandlesCropAndRotation) {
-        // When the SurfaceTexture backend for Impeller is used, the preview should already
-        // be correctly rotated.
-        rotationCorrection = RotationDegrees.ROTATE_0;
-      } else {
+      // When the SurfaceTexture backend for Impeller is used, the preview should already
+      // be correctly rotated.
+      if (!surfaceProducerHandlesCropAndRotation) {
         // The video's Format also provides a rotation correction that may be used to
         // correct the rotation, so we try to use that to correct the video rotation
         // when the ImageReader backend for Impeller is used.
