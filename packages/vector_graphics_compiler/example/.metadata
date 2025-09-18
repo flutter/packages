@@ -15,10 +15,7 @@ migration:
     - platform: root
       create_revision: 260e8f022510f454d23ee9f563a5092ae4e64289
       base_revision: 260e8f022510f454d23ee9f563a5092ae4e64289
-    - platform: macos
-      create_revision: 260e8f022510f454d23ee9f563a5092ae4e64289
-      base_revision: 260e8f022510f454d23ee9f563a5092ae4e64289
-    - platform: windows
+    - platform: web
       create_revision: 260e8f022510f454d23ee9f563a5092ae4e64289
       base_revision: 260e8f022510f454d23ee9f563a5092ae4e64289
 
