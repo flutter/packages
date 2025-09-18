@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'package:flutter/foundation.dart' show visibleForTesting;
-import 'package:flutter/services.dart';
 import 'package:local_auth_platform_interface/local_auth_platform_interface.dart';
 
 import 'src/auth_messages_android.dart';
@@ -39,62 +38,77 @@ class LocalAuthAndroid extends LocalAuthPlatform {
         biometricOnly: options.biometricOnly,
         sensitiveTransaction: options.sensitiveTransaction,
         sticky: options.stickyAuth,
-        useErrorDialgs: options.useErrorDialogs,
       ),
       _pigeonStringsFromAuthMessages(localizedReason, authMessages),
     );
-    // TODO(stuartmorgan): Replace this with structured errors, coordinated
-    // across all platform implementations, per
-    // https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#platform-exception-handling
-    // The PlatformExceptions thrown here are for compatibiilty with the
-    // previous Java implementation.
-    switch (result) {
-      case AuthResult.success:
+    switch (result.code) {
+      case AuthResultCode.success:
         return true;
-      case AuthResult.failure:
-        return false;
-      case AuthResult.errorAlreadyInProgress:
-        throw PlatformException(
-          code: 'auth_in_progress',
-          message: 'Authentication in progress',
+      case AuthResultCode.negativeButton:
+      case AuthResultCode.userCanceled:
+        // Variants of user cancelation format are not currently distinguished,
+        // but could be if there's a use case for it in the future.
+        throw const LocalAuthException(
+          code: LocalAuthExceptionCode.userCanceled,
         );
-      case AuthResult.errorNoActivity:
-        throw PlatformException(
-          code: 'no_activity',
-          message: 'local_auth plugin requires a foreground activity',
+      case AuthResultCode.systemCanceled:
+        throw const LocalAuthException(
+          code: LocalAuthExceptionCode.systemCanceled,
         );
-      case AuthResult.errorNotFragmentActivity:
-        throw PlatformException(
-          code: 'no_fragment_activity',
-          message:
-              'local_auth plugin requires activity to be a FragmentActivity.',
+      case AuthResultCode.timeout:
+        throw const LocalAuthException(code: LocalAuthExceptionCode.timeout);
+      case AuthResultCode.alreadyInProgress:
+        throw const LocalAuthException(
+          code: LocalAuthExceptionCode.authInProgress,
         );
-      case AuthResult.errorNotAvailable:
-        throw PlatformException(
-          code: 'NotAvailable',
-          message: 'Security credentials not available.',
+      case AuthResultCode.noActivity:
+        throw const LocalAuthException(
+          code: LocalAuthExceptionCode.uiUnavailable,
+          description: 'No Activity available.',
         );
-      case AuthResult.errorNotEnrolled:
-        throw PlatformException(
-          code: 'NotEnrolled',
-          message: 'No Biometrics enrolled on this device.',
+      case AuthResultCode.notFragmentActivity:
+        throw const LocalAuthException(
+          code: LocalAuthExceptionCode.uiUnavailable,
+          description: 'The current Activity must be a FragmentActivity.',
         );
-      case AuthResult.errorLockedOutTemporarily:
-        throw PlatformException(
-          code: 'LockedOut',
-          message:
-              'The operation was canceled because the API is locked out '
-              'due to too many attempts. This occurs after 5 failed '
-              'attempts, and lasts for 30 seconds.',
+      case AuthResultCode.noCredentials:
+        throw const LocalAuthException(
+          code: LocalAuthExceptionCode.noCredentialsSet,
         );
-      case AuthResult.errorLockedOutPermanently:
-        throw PlatformException(
-          code: 'PermanentlyLockedOut',
-          message:
-              'The operation was canceled because ERROR_LOCKOUT '
-              'occurred too many times. Biometric authentication is disabled '
-              'until the user unlocks with strong authentication '
-              '(PIN/Pattern/Password)',
+      case AuthResultCode.noHardware:
+        throw const LocalAuthException(
+          code: LocalAuthExceptionCode.noBiometricHardware,
+        );
+      case AuthResultCode.hardwareUnavailable:
+        throw const LocalAuthException(
+          code: LocalAuthExceptionCode.biometricHardwareTemporarilyUnavailable,
+        );
+      case AuthResultCode.notEnrolled:
+        throw const LocalAuthException(
+          code: LocalAuthExceptionCode.noBiometricsEnrolled,
+        );
+      case AuthResultCode.lockedOutTemporarily:
+        throw const LocalAuthException(
+          code: LocalAuthExceptionCode.temporaryLockout,
+        );
+      case AuthResultCode.lockedOutPermanently:
+        throw const LocalAuthException(
+          code: LocalAuthExceptionCode.biometricLockout,
+        );
+      case AuthResultCode.noSpace:
+        throw LocalAuthException(
+          code: LocalAuthExceptionCode.deviceError,
+          description: 'Not enough space available: ${result.errorMessage}',
+        );
+      case AuthResultCode.securityUpdateRequired:
+        throw LocalAuthException(
+          code: LocalAuthExceptionCode.deviceError,
+          description: 'Security update required: ${result.errorMessage}',
+        );
+      case AuthResultCode.unknownError:
+        throw LocalAuthException(
+          code: LocalAuthExceptionCode.unknownError,
+          description: result.errorMessage,
         );
     }
   }
@@ -106,7 +120,13 @@ class LocalAuthAndroid extends LocalAuthPlatform {
 
   @override
   Future<List<BiometricType>> getEnrolledBiometrics() async {
-    final List<AuthClassification> result = await _api.getEnrolledBiometrics();
+    final List<AuthClassification>? result = await _api.getEnrolledBiometrics();
+    if (result == null) {
+      throw const LocalAuthException(
+        code: LocalAuthExceptionCode.uiUnavailable,
+        description: 'No Activity available.',
+      );
+    }
     return result.map((AuthClassification value) {
       switch (value) {
         case AuthClassification.weak:
@@ -135,21 +155,8 @@ class LocalAuthAndroid extends LocalAuthPlatform {
     }
     return AuthStrings(
       reason: localizedReason,
-      biometricHint: messages?.biometricHint ?? androidBiometricHint,
-      biometricNotRecognized:
-          messages?.biometricNotRecognized ?? androidBiometricNotRecognized,
-      biometricRequiredTitle:
-          messages?.biometricRequiredTitle ?? androidBiometricRequiredTitle,
+      signInHint: messages?.signInHint ?? androidSignInHint,
       cancelButton: messages?.cancelButton ?? androidCancelButton,
-      deviceCredentialsRequiredTitle:
-          messages?.deviceCredentialsRequiredTitle ??
-          androidDeviceCredentialsRequiredTitle,
-      deviceCredentialsSetupDescription:
-          messages?.deviceCredentialsSetupDescription ??
-          androidDeviceCredentialsSetupDescription,
-      goToSettingsButton: messages?.goToSettingsButton ?? goToSettings,
-      goToSettingsDescription:
-          messages?.goToSettingsDescription ?? androidGoToSettingsDescription,
       signInTitle: messages?.signInTitle ?? androidSignInTitle,
     );
   }
