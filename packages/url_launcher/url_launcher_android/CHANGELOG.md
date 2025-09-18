@@ -1,3 +1,7 @@
+## 6.3.22
+
+* Adds support for `externalNonBrowserApplication` on API 30+.
+
 ## 6.3.21
 
 * Updates minimum supported SDK version to Flutter 3.35.
