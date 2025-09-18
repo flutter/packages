@@ -147,7 +147,8 @@ data class NIAllNullableTypesWithoutRecursion(
     val aNullableBool: Boolean? = null,
     val aNullableInt: Long? = null,
     val aNullableInt64: Long? = null,
-    val aNullableDouble: Double? = null
+    val aNullableDouble: Double? = null,
+    val aNullableString: String? = null
 ) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): NIAllNullableTypesWithoutRecursion {
@@ -155,8 +156,9 @@ data class NIAllNullableTypesWithoutRecursion(
       val aNullableInt = pigeonVar_list[1] as Long?
       val aNullableInt64 = pigeonVar_list[2] as Long?
       val aNullableDouble = pigeonVar_list[3] as Double?
+      val aNullableString = pigeonVar_list[4] as String?
       return NIAllNullableTypesWithoutRecursion(
-          aNullableBool, aNullableInt, aNullableInt64, aNullableDouble)
+          aNullableBool, aNullableInt, aNullableInt64, aNullableDouble, aNullableString)
     }
   }
 
@@ -166,6 +168,7 @@ data class NIAllNullableTypesWithoutRecursion(
         aNullableInt,
         aNullableInt64,
         aNullableDouble,
+        aNullableString,
     )
   }
 
@@ -179,7 +182,8 @@ data class NIAllNullableTypesWithoutRecursion(
     return aNullableBool == other.aNullableBool &&
         aNullableInt == other.aNullableInt &&
         aNullableInt64 == other.aNullableInt64 &&
-        aNullableDouble == other.aNullableDouble
+        aNullableDouble == other.aNullableDouble &&
+        aNullableString == other.aNullableString
   }
 
   override fun hashCode(): Int = toList().hashCode()
@@ -227,6 +231,10 @@ abstract class NIHostIntegrationCoreApi {
   abstract fun echoNullableBool(aNullableBool: Boolean?): Boolean?
   /** Returns the passed in string. */
   abstract fun echoNullableString(aNullableString: String?): String?
+
+  abstract fun echoNullableEnum(anEnum: NIAnEnum?): NIAnEnum?
+
+  abstract fun echoAnotherNullableEnum(anotherEnum: NIAnotherEnum?): NIAnotherEnum?
 }
 
 @Keep
@@ -421,6 +429,28 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
     api?.let {
       try {
         return api!!.echoNullableString(aNullableString)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+
+  override fun echoNullableEnum(anEnum: NIAnEnum?): NIAnEnum? {
+    api?.let {
+      try {
+        return api!!.echoNullableEnum(anEnum)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+
+  override fun echoAnotherNullableEnum(anotherEnum: NIAnotherEnum?): NIAnotherEnum? {
+    api?.let {
+      try {
+        return api!!.echoAnotherNullableEnum(anotherEnum)
       } catch (e: Exception) {
         throw e
       }

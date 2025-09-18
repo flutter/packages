@@ -111,32 +111,32 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 //       expect(listTypes, echoNullFilledClass);
 //     });
 
-//     testWidgets(
-//         'all nullable datatypes without recursion serialize and deserialize correctly',
-//         (WidgetTester _) async {
-//       final NIHostIntegrationCoreApiForNativeInterop? api =
-//           NIHostIntegrationCoreApiForNativeInterop.getInstance();
+    testWidgets(
+        'all nullable datatypes without recursion serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final NIHostIntegrationCoreApiForNativeInterop? api =
+          NIHostIntegrationCoreApiForNativeInterop.getInstance();
 
-//       final NIAllNullableTypesWithoutRecursion? echoObject = api!
-//           .echoAllNullableTypesWithoutRecursion(
-//               genericNIAllNullableTypesWithoutRecursion);
+      final NIAllNullableTypesWithoutRecursion? echoObject = api!
+          .echoAllNullableTypesWithoutRecursion(
+              genericNIAllNullableTypesWithoutRecursion);
 
-//       expect(echoObject, genericNIAllNullableTypesWithoutRecursion);
-//     });
+      expect(echoObject, genericNIAllNullableTypesWithoutRecursion);
+    });
 
-//     testWidgets(
-//         'all null datatypes without recursion serialize and deserialize correctly',
-//         (WidgetTester _) async {
-//       final NIHostIntegrationCoreApiForNativeInterop? api =
-//           NIHostIntegrationCoreApiForNativeInterop.getInstance();
+    testWidgets(
+        'all null datatypes without recursion serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final NIHostIntegrationCoreApiForNativeInterop? api =
+          NIHostIntegrationCoreApiForNativeInterop.getInstance();
 
-//       final NIAllNullableTypesWithoutRecursion allTypesNull =
-//           NIAllNullableTypesWithoutRecursion();
+      final NIAllNullableTypesWithoutRecursion allTypesNull =
+          NIAllNullableTypesWithoutRecursion();
 
-//       final NIAllNullableTypesWithoutRecursion? echoNullFilledClass =
-//           api!.echoAllNullableTypesWithoutRecursion(allTypesNull);
-//       expect(allTypesNull, echoNullFilledClass);
-//     });
+      final NIAllNullableTypesWithoutRecursion? echoNullFilledClass =
+          api!.echoAllNullableTypesWithoutRecursion(allTypesNull);
+      expect(allTypesNull, echoNullFilledClass);
+    });
 
 //     testWidgets(
 //         'Classes without recursion with list of null serialize and deserialize correctly',

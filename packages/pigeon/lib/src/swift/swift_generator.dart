@@ -788,6 +788,7 @@ if (wrapped == nil) {
   }
 
   String _varToObjc(String varName, TypeDeclaration type) {
+    final String nullable = type.isNullable ? '?' : '';
     switch (type.baseName) {
       case 'int':
       case 'double':
@@ -796,7 +797,7 @@ if (wrapped == nil) {
             ? 'isNullish($varName) ? nil : NSNumber(value: $varName!)'
             : varName;
       case 'String':
-        return '$varName as NSString';
+        return '$varName as NSString$nullable';
       case 'List':
         return '_PigeonFfiCodec.writeValue(value: $varName, isObject: true) as! [NSObject]';
       case 'Map':
@@ -807,6 +808,7 @@ if (wrapped == nil) {
   }
 
   String _varToSwift(String varName, TypeDeclaration type) {
+    final String nullable = type.isNullable ? '?' : '';
     return switch (type.baseName) {
       'int' => type.isNullable
           ? 'isNullish($varName) ? nil : $varName!.int64Value'
@@ -817,7 +819,7 @@ if (wrapped == nil) {
       'bool' => type.isNullable
           ? 'isNullish($varName) ? nil : $varName!.boolValue'
           : varName,
-      'String' => '$varName as String',
+      'String' => '$varName as String$nullable',
       _ => varName
     };
   }
@@ -1064,10 +1066,19 @@ if (wrapped == nil) {
             'do {',
             '}',
             () {
-              indent.writeln(
-                  'return try ${_swiftToFfiConversion(method.returnType, 'api!.${method.name}(${method.parameters.map((NamedType param) {
-                        return '${param.name}: ${_ffiToSwiftConversion(param)}';
-                      }).join(', ')})')}${method.returnType.baseName == 'List' || method.returnType.baseName == 'Map' ? ' as? ${_ffiTypeForBuiltinGenericDartType(method.returnType)}' : ''}');
+              if (method.returnType.isNullable && method.returnType.isEnum) {
+                indent.writeln(
+                    'let res = try api!.${method.name}(${method.parameters.map((NamedType param) {
+                  return '${param.name}: ${_ffiToSwiftConversion(param)}';
+                }).join(', ')})?.rawValue');
+                indent.writeln(
+                    'return isNullish(res) ? nil : NSNumber(value: res!)');
+              } else {
+                indent.writeln(
+                    'return try ${_swiftToFfiConversion(method.returnType, 'api!.${method.name}(${method.parameters.map((NamedType param) {
+                          return '${param.name}: ${_ffiToSwiftConversion(param)}';
+                        }).join(', ')})')}${method.returnType.baseName == 'List' || method.returnType.baseName == 'Map' ? ' as? ${_ffiTypeForBuiltinGenericDartType(method.returnType)}' : ''}');
+              }
             },
             addTrailingNewline: false,
           );
@@ -3387,20 +3398,21 @@ String _nullSafeSwiftTypeForDartType(
 
 String _nullSafeFfiTypeForDartType(TypeDeclaration type,
     {bool collectionSubType = false, bool forceNullable = false}) {
-  return '${_ffiTypeForDartType(type, collectionSubType: collectionSubType, forceNullable: forceNullable)}${forceNullable ? '?' : ''}';
+  return '${_ffiTypeForDartType(type, collectionSubType: collectionSubType, forceNullable: forceNullable)}${(type.isNullable && type.baseName != 'Object') || forceNullable ? '?' : ''}';
 }
 
 String _ffiToSwiftConversion(NamedType param) {
+  final String nullable = param.type.isNullable ? '?' : '';
   if (param.type.isEnum && param.type.isNullable) {
-    return '${param.type.baseName}(rawValue: ${param.name}.intValue)${param.type.isNullable ? '' : '!'}';
+    return 'isNullish(${param.name}) ? nil : ${param.type.baseName}(rawValue: ${param.name}!.intValue)${param.type.isNullable ? '' : '!'}';
   }
   if (param.type.isClass) {
-    return '${param.name}.toSwift()';
+    return '${param.name}$nullable.toSwift()';
   }
   if (param.type.baseName == 'Object') {
     return ' _PigeonFfiCodec.readValue(value: ${param.name} as? NSObject, type: nil) as Any';
   }
-  return '${param.name}${_conversionToObjcRequired(param.type) ? '.${toLowerCamelCase(_swiftTypeForBuiltinDartType(param.type)!)}Value' : ''}';
+  return '${param.name}${_conversionToObjcRequired(param.type) ? '$nullable.${toLowerCamelCase(_swiftTypeForBuiltinDartType(param.type)!)}Value' : ''}';
 }
 
 String _swiftToFfiConversion(TypeDeclaration type, String toConvert) {
@@ -3447,7 +3459,7 @@ String _getMethodSignature({
     return argument.label ?? _getArgumentName(index, argument.namedType);
   });
 
-  String objc = useFfi ? '@objc ' : '';
+  final String objc = useFfi ? '@objc ' : '';
   String throwString = ' throws';
   String errorParam = isAsynchronous
       ? '${parameters.isEmpty ? '' : ', '}completion: @escaping (Result<$returnTypeString, $errorTypeName>) -> Void'
@@ -3455,7 +3467,6 @@ String _getMethodSignature({
 
   if (useFfi) {
     methodName = name;
-    objc = '@objc ';
     returnTypeString =
         _nullSafeFfiTypeForDartType(returnType, forceNullable: true);
     types =

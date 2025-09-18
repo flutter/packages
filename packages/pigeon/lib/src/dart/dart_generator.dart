@@ -177,9 +177,12 @@ class _FfiType {
         return 'NSDictionary';
       default:
         {
-          if (type.isClass || type.isEnum) {
+          if (type.isClass) {
             final String bridge = type.isClass ? 'Bridge' : '';
             return 'ffi_bridge.${type.baseName}$bridge';
+          }
+          if (type.isEnum) {
+            return 'NSNumber';
           }
           // if (type.isEnum) {
           //   return type.isNullable ? 'NSNumber' : 'ffi_bridge.${type.baseName}';
@@ -312,10 +315,7 @@ class _FfiType {
             '$name${_getForceNonNullSymbol(type.isNullable && forceNonNull)}.toFfi()',
       );
     }
-    if (type.isEnum) {
-      // if (type.isNullable) {
-      //   return 'NSNumber.alloc().initWithLong($name)';
-      // }
+    if (type.isEnum && !type.isNullable) {
       return 'ffi_bridge.${type.baseName}.values[$name]';
     }
     if (!type.isNullable &&
@@ -325,7 +325,7 @@ class _FfiType {
             type.baseName == 'bool')) {
       return name;
     }
-    return '_PigeonFfiCodec.writeValue<${ffiType.ffiName}>($name)';
+    return '_PigeonFfiCodec.writeValue<${ffiType.ffiName}${_getNullableSymbol(type.isNullable)}>($name)';
   }
 
   String getFfiCallReturnType(bool forceUnwrap, {bool forceNullable = false}) {
@@ -865,20 +865,19 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
         final _FfiType ffiType = _FfiType.fromEnum(anEnum);
         indent.newln();
         indent.writeScoped('${ffiType.ffiName} toFfi() {', '}', () {
-          indent.writeln(
-              'return ${ffiType.getToFfiCall(ffiType.type, 'index', ffiType)};');
+          indent.writeln('return _PigeonFfiCodec.writeValue<NSNumber>(index);');
         });
 
-        indent.newln();
-        indent.writeScoped(
-          'static ${anEnum.name} fromFfi(${ffiType.ffiName} ffiEnum) {',
-          '}',
-          () {
-            indent.writeln(
-              'return ${anEnum.name}.values[ffiEnum.index];',
-            );
-          },
-        );
+        // indent.newln();
+        // indent.writeScoped(
+        //   'static ${anEnum.name} fromFfi(${ffiType.ffiName} ffiEnum) {',
+        //   '}',
+        //   () {
+        //     indent.writeln(
+        //       'return ${anEnum.name}.values[ffiEnum.index];',
+        //     );
+        //   },
+        // );
 
         indent.newln();
         indent.writeScoped('NSNumber toNSNumber() {', '}', () {
@@ -1133,14 +1132,13 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
       final String castCallPrefix = field.type.isNullable ? '?' : '!';
       final String genericType = _makeGenericTypeArguments(field.type);
       final String castCall = _makeGenericCastCall(field.type);
-      final String nullableTag = field.type.isNullable ? '?' : '';
       if (field.type.typeArguments.isNotEmpty) {
         indent.add('($resultAt as $genericType?)$castCallPrefix$castCall');
       } else {
         final String castCallForcePrefix = field.type.isNullable ? '' : '!';
         final String castString = field.type.baseName == 'Object'
             ? ''
-            : ' as $genericType$nullableTag';
+            : ' as $genericType${_getNullableSymbol(field.type.isNullable)}';
 
         indent.add('$resultAt$castCallForcePrefix$castString');
       }
@@ -1785,8 +1783,10 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
   String _getFfiMethodCallArguments(Iterable<Parameter> parameters) {
     return parameters.map((Parameter parameter) {
       final _FfiType ffiType = _FfiType.fromTypeDeclaration(parameter.type);
-      return ffiType.getToFfiCall(parameter.type,
-          '${parameter.name}${parameter.type.isEnum ? '.index' : ''}', ffiType);
+      return ffiType.getToFfiCall(
+          parameter.type,
+          '${parameter.name}${(parameter.type.isEnum && !parameter.type.isNullable) ? '.index' : ''}',
+          ffiType);
     }).join(', ');
   }
 
@@ -2744,13 +2744,6 @@ case const (${enumDefinition.name}):
         return ${ffiType.type.baseName}.fromFfi(${ffiType.ffiName}.castFrom(value));
         ''';
     }).join()}
-    ${root.enums.map((Enum enumDefinition) {
-      final _FfiType ffiType = _FfiType.fromEnum(enumDefinition);
-      return '''
-      } else if (value is ${ffiType.ffiName}) {
-        return ${ffiType.type.baseName}.fromFfi(value as ${ffiType.ffiName});
-        ''';
-    }).join()}
     } else {
       throw ArgumentError.value(value);
     }
@@ -2760,7 +2753,7 @@ case const (${enumDefinition.name}):
     if (value == null) {
       return null as T;
     } else if (value is bool || value is double || value is int || value is Enum) {
-      if (T != NSNumber) {
+      if (T != NSNumber && T.toString() != 'NSNumber?') {
         return convertNSNumberWrapperToFfi(value) as T;
       }
       if (value is bool) {
@@ -4170,8 +4163,7 @@ String _addGenericTypes(
 
 String _addGenericTypesNullable(TypeDeclaration type, {bool useJni = false}) {
   final String genericType = _addGenericTypes(type, useJni: useJni);
-  final String nullableSymbol = type.isNullable ? '?' : '';
-  return '$genericType$nullableSymbol';
+  return '$genericType${_getNullableSymbol(type.isNullable)}';
 }
 
 /// Converts [inputPath] to a posix absolute path.

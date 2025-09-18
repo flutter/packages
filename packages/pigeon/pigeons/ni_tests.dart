@@ -200,7 +200,7 @@ class NIAllNullableTypesWithoutRecursion {
 //     this.aNullableFloatArray,
 //     this.aNullableEnum,
 //     this.anotherNullableEnum,
-//     this.aNullableString,
+    this.aNullableString,
 //     this.aNullableObject,
 
 //     // Lists
@@ -236,7 +236,7 @@ class NIAllNullableTypesWithoutRecursion {
 //   Float64List? aNullableFloatArray;
 //   NIAnEnum? aNullableEnum;
 //   NIAnotherEnum? anotherNullableEnum;
-//   String? aNullableString;
+  String? aNullableString;
 //   Object? aNullableObject;
 
 //   // Lists
@@ -617,13 +617,13 @@ abstract class NIHostIntegrationCoreApi {
   // Map<int, NIAllNullableTypes>? echoNullableNonNullClassMap(
   //     Map<int, NIAllNullableTypes>? classMap);
 
-  // @ObjCSelector('echoNullableEnum:')
+  @ObjCSelector('echoNullableEnum:')
   // @SwiftFunction('echoNullable(_:)')
-  // NIAnEnum? echoNullableEnum(NIAnEnum? anEnum);
+  NIAnEnum? echoNullableEnum(NIAnEnum? anEnum);
 
-  // @ObjCSelector('echoAnotherNullableEnum:')
+  @ObjCSelector('echoAnotherNullableEnum:')
   // @SwiftFunction('echoNullable(_:)')
-  // NIAnotherEnum? echoAnotherNullableEnum(NIAnotherEnum? anotherEnum);
+  NIAnotherEnum? echoAnotherNullableEnum(NIAnotherEnum? anotherEnum);
 
   // /// Returns passed in int.
   // @ObjCSelector('echoOptionalNullableInt:')

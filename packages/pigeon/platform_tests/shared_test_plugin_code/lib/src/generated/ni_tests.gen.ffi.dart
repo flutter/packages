@@ -36,10 +36,10 @@ final _objc_msgSend_19nvye5 = objc.msgSendPointer
             ffi.Pointer<objc.ObjCSelector>, ffi.Pointer<objc.ObjCObject>)>();
 typedef instancetype = ffi.Pointer<objc.ObjCObject>;
 typedef Dartinstancetype = objc.ObjCObjectBase;
-late final _sel_initWithANullableBool_aNullableInt_aNullableInt64_aNullableDouble_ =
+late final _sel_initWithANullableBool_aNullableInt_aNullableInt64_aNullableDouble_aNullableString_ =
     objc.registerName(
-        "initWithANullableBool:aNullableInt:aNullableInt64:aNullableDouble:");
-final _objc_msgSend_s92gih = objc.msgSendPointer
+        "initWithANullableBool:aNullableInt:aNullableInt64:aNullableDouble:aNullableString:");
+final _objc_msgSend_3cbdpb = objc.msgSendPointer
     .cast<
         ffi.NativeFunction<
             ffi.Pointer<objc.ObjCObject> Function(
@@ -48,11 +48,13 @@ final _objc_msgSend_s92gih = objc.msgSendPointer
                 ffi.Pointer<objc.ObjCObject>,
                 ffi.Pointer<objc.ObjCObject>,
                 ffi.Pointer<objc.ObjCObject>,
+                ffi.Pointer<objc.ObjCObject>,
                 ffi.Pointer<objc.ObjCObject>)>>()
     .asFunction<
         ffi.Pointer<objc.ObjCObject> Function(
             ffi.Pointer<objc.ObjCObject>,
             ffi.Pointer<objc.ObjCSelector>,
+            ffi.Pointer<objc.ObjCObject>,
             ffi.Pointer<objc.ObjCObject>,
             ffi.Pointer<objc.ObjCObject>,
             ffi.Pointer<objc.ObjCObject>,
@@ -83,6 +85,8 @@ late final _sel_aNullableInt64 = objc.registerName("aNullableInt64");
 late final _sel_setANullableInt64_ = objc.registerName("setANullableInt64:");
 late final _sel_aNullableDouble = objc.registerName("aNullableDouble");
 late final _sel_setANullableDouble_ = objc.registerName("setANullableDouble:");
+late final _sel_aNullableString = objc.registerName("aNullableString");
+late final _sel_setANullableString_ = objc.registerName("setANullableString:");
 late final _sel_init = objc.registerName("init");
 late final _sel_new = objc.registerName("new");
 late final _sel_allocWithZone_ = objc.registerName("allocWithZone:");
@@ -228,19 +232,21 @@ class NIAllNullableTypesWithoutRecursionBridge extends objc.NSObject {
         _class_NIAllNullableTypesWithoutRecursionBridge);
   }
 
-  /// initWithANullableBool:aNullableInt:aNullableInt64:aNullableDouble:
+  /// initWithANullableBool:aNullableInt:aNullableInt64:aNullableDouble:aNullableString:
   NIAllNullableTypesWithoutRecursionBridge initWithANullableBool(
       objc.NSNumber? aNullableBool,
       {objc.NSNumber? aNullableInt,
       objc.NSNumber? aNullableInt64,
-      objc.NSNumber? aNullableDouble}) {
-    final _ret = _objc_msgSend_s92gih(
+      objc.NSNumber? aNullableDouble,
+      objc.NSString? aNullableString}) {
+    final _ret = _objc_msgSend_3cbdpb(
         this.ref.retainAndReturnPointer(),
-        _sel_initWithANullableBool_aNullableInt_aNullableInt64_aNullableDouble_,
+        _sel_initWithANullableBool_aNullableInt_aNullableInt64_aNullableDouble_aNullableString_,
         aNullableBool?.ref.pointer ?? ffi.nullptr,
         aNullableInt?.ref.pointer ?? ffi.nullptr,
         aNullableInt64?.ref.pointer ?? ffi.nullptr,
-        aNullableDouble?.ref.pointer ?? ffi.nullptr);
+        aNullableDouble?.ref.pointer ?? ffi.nullptr,
+        aNullableString?.ref.pointer ?? ffi.nullptr);
     return NIAllNullableTypesWithoutRecursionBridge.castFromPointer(_ret,
         retain: false, release: true);
   }
@@ -298,6 +304,20 @@ class NIAllNullableTypesWithoutRecursionBridge extends objc.NSObject {
   /// setANullableDouble:
   set aNullableDouble(objc.NSNumber? value) {
     _objc_msgSend_xtuoz7(this.ref.pointer, _sel_setANullableDouble_,
+        value?.ref.pointer ?? ffi.nullptr);
+  }
+
+  /// aNullableString
+  objc.NSString? get aNullableString {
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_aNullableString);
+    return _ret.address == 0
+        ? null
+        : objc.NSString.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// setANullableString:
+  set aNullableString(objc.NSString? value) {
+    _objc_msgSend_xtuoz7(this.ref.pointer, _sel_setANullableString_,
         value?.ref.pointer ?? ffi.nullptr);
   }
 
@@ -969,6 +989,10 @@ late final _sel_echoNullableBoolWithANullableBool_wrappedError_ =
     objc.registerName("echoNullableBoolWithANullableBool:wrappedError:");
 late final _sel_echoNullableStringWithANullableString_wrappedError_ =
     objc.registerName("echoNullableStringWithANullableString:wrappedError:");
+late final _sel_echoNullableEnumWithAnEnum_wrappedError_ =
+    objc.registerName("echoNullableEnumWithAnEnum:wrappedError:");
+late final _sel_echoAnotherNullableEnumWithAnotherEnum_wrappedError_ =
+    objc.registerName("echoAnotherNullableEnumWithAnotherEnum:wrappedError:");
 
 /// Generated setup class from Pigeon to register implemented NIHostIntegrationCoreApi classes.
 class NIHostIntegrationCoreApiSetup extends objc.NSObject {
@@ -1235,7 +1259,7 @@ class NIHostIntegrationCoreApiSetup extends objc.NSObject {
   /// macOS: introduced 16.0.0
   NIAllNullableTypesWithoutRecursionBridge?
       echoAllNullableTypesWithoutRecursionWithEverything(
-          NIAllNullableTypesWithoutRecursionBridge everything,
+          NIAllNullableTypesWithoutRecursionBridge? everything,
           {required NiTestsError wrappedError}) {
     objc.checkOsVersionInternal(
         'NIHostIntegrationCoreApiSetup.echoAllNullableTypesWithoutRecursionWithEverything:wrappedError:',
@@ -1244,7 +1268,7 @@ class NIHostIntegrationCoreApiSetup extends objc.NSObject {
     final _ret = _objc_msgSend_15qeuct(
         this.ref.pointer,
         _sel_echoAllNullableTypesWithoutRecursionWithEverything_wrappedError_,
-        everything.ref.pointer,
+        everything?.ref.pointer ?? ffi.nullptr,
         wrappedError.ref.pointer);
     return _ret.address == 0
         ? null
@@ -1256,7 +1280,7 @@ class NIHostIntegrationCoreApiSetup extends objc.NSObject {
   ///
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
-  objc.NSNumber? echoNullableIntWithANullableInt(objc.NSNumber aNullableInt,
+  objc.NSNumber? echoNullableIntWithANullableInt(objc.NSNumber? aNullableInt,
       {required NiTestsError wrappedError}) {
     objc.checkOsVersionInternal(
         'NIHostIntegrationCoreApiSetup.echoNullableIntWithANullableInt:wrappedError:',
@@ -1265,7 +1289,7 @@ class NIHostIntegrationCoreApiSetup extends objc.NSObject {
     final _ret = _objc_msgSend_15qeuct(
         this.ref.pointer,
         _sel_echoNullableIntWithANullableInt_wrappedError_,
-        aNullableInt.ref.pointer,
+        aNullableInt?.ref.pointer ?? ffi.nullptr,
         wrappedError.ref.pointer);
     return _ret.address == 0
         ? null
@@ -1277,7 +1301,7 @@ class NIHostIntegrationCoreApiSetup extends objc.NSObject {
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
   objc.NSNumber? echoNullableDoubleWithANullableDouble(
-      objc.NSNumber aNullableDouble,
+      objc.NSNumber? aNullableDouble,
       {required NiTestsError wrappedError}) {
     objc.checkOsVersionInternal(
         'NIHostIntegrationCoreApiSetup.echoNullableDoubleWithANullableDouble:wrappedError:',
@@ -1286,7 +1310,7 @@ class NIHostIntegrationCoreApiSetup extends objc.NSObject {
     final _ret = _objc_msgSend_15qeuct(
         this.ref.pointer,
         _sel_echoNullableDoubleWithANullableDouble_wrappedError_,
-        aNullableDouble.ref.pointer,
+        aNullableDouble?.ref.pointer ?? ffi.nullptr,
         wrappedError.ref.pointer);
     return _ret.address == 0
         ? null
@@ -1297,7 +1321,7 @@ class NIHostIntegrationCoreApiSetup extends objc.NSObject {
   ///
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
-  objc.NSNumber? echoNullableBoolWithANullableBool(objc.NSNumber aNullableBool,
+  objc.NSNumber? echoNullableBoolWithANullableBool(objc.NSNumber? aNullableBool,
       {required NiTestsError wrappedError}) {
     objc.checkOsVersionInternal(
         'NIHostIntegrationCoreApiSetup.echoNullableBoolWithANullableBool:wrappedError:',
@@ -1306,7 +1330,7 @@ class NIHostIntegrationCoreApiSetup extends objc.NSObject {
     final _ret = _objc_msgSend_15qeuct(
         this.ref.pointer,
         _sel_echoNullableBoolWithANullableBool_wrappedError_,
-        aNullableBool.ref.pointer,
+        aNullableBool?.ref.pointer ?? ffi.nullptr,
         wrappedError.ref.pointer);
     return _ret.address == 0
         ? null
@@ -1318,7 +1342,7 @@ class NIHostIntegrationCoreApiSetup extends objc.NSObject {
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
   objc.NSString? echoNullableStringWithANullableString(
-      objc.NSString aNullableString,
+      objc.NSString? aNullableString,
       {required NiTestsError wrappedError}) {
     objc.checkOsVersionInternal(
         'NIHostIntegrationCoreApiSetup.echoNullableStringWithANullableString:wrappedError:',
@@ -1327,11 +1351,52 @@ class NIHostIntegrationCoreApiSetup extends objc.NSObject {
     final _ret = _objc_msgSend_15qeuct(
         this.ref.pointer,
         _sel_echoNullableStringWithANullableString_wrappedError_,
-        aNullableString.ref.pointer,
+        aNullableString?.ref.pointer ?? ffi.nullptr,
         wrappedError.ref.pointer);
     return _ret.address == 0
         ? null
         : objc.NSString.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// echoNullableEnumWithAnEnum:wrappedError:
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  objc.NSNumber? echoNullableEnumWithAnEnum(objc.NSNumber? anEnum,
+      {required NiTestsError wrappedError}) {
+    objc.checkOsVersionInternal(
+        'NIHostIntegrationCoreApiSetup.echoNullableEnumWithAnEnum:wrappedError:',
+        iOS: (false, (13, 0, 0)),
+        macOS: (false, (16, 0, 0)));
+    final _ret = _objc_msgSend_15qeuct(
+        this.ref.pointer,
+        _sel_echoNullableEnumWithAnEnum_wrappedError_,
+        anEnum?.ref.pointer ?? ffi.nullptr,
+        wrappedError.ref.pointer);
+    return _ret.address == 0
+        ? null
+        : objc.NSNumber.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// echoAnotherNullableEnumWithAnotherEnum:wrappedError:
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  objc.NSNumber? echoAnotherNullableEnumWithAnotherEnum(
+      objc.NSNumber? anotherEnum,
+      {required NiTestsError wrappedError}) {
+    objc.checkOsVersionInternal(
+        'NIHostIntegrationCoreApiSetup.echoAnotherNullableEnumWithAnotherEnum:wrappedError:',
+        iOS: (false, (13, 0, 0)),
+        macOS: (false, (16, 0, 0)));
+    final _ret = _objc_msgSend_15qeuct(
+        this.ref.pointer,
+        _sel_echoAnotherNullableEnumWithAnotherEnum_wrappedError_,
+        anotherEnum?.ref.pointer ?? ffi.nullptr,
+        wrappedError.ref.pointer);
+    return _ret.address == 0
+        ? null
+        : objc.NSNumber.castFromPointer(_ret, retain: true, release: true);
   }
 
   /// new
