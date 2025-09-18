@@ -118,6 +118,7 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
 
   @override
   Future<void> signOut(SignOutParams params) {
+    _updateAuthCodeCache(null);
     return _api.signOut();
   }
 
