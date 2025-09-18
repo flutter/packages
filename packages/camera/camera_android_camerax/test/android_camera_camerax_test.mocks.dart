@@ -3030,6 +3030,25 @@ class MockPendingRecording extends _i1.Mock implements _i2.PendingRecording {
           as _i5.Future<_i2.PendingRecording>);
 
   @override
+  _i5.Future<_i2.PendingRecording> asPersistentRecording() =>
+      (super.noSuchMethod(
+            Invocation.method(#asPersistentRecording, []),
+            returnValue: _i5.Future<_i2.PendingRecording>.value(
+              _FakePendingRecording_39(
+                this,
+                Invocation.method(#asPersistentRecording, []),
+              ),
+            ),
+            returnValueForMissingStub: _i5.Future<_i2.PendingRecording>.value(
+              _FakePendingRecording_39(
+                this,
+                Invocation.method(#asPersistentRecording, []),
+              ),
+            ),
+          )
+          as _i5.Future<_i2.PendingRecording>);
+
+  @override
   _i5.Future<_i2.Recording> start(_i2.VideoRecordEventListener? listener) =>
       (super.noSuchMethod(
             Invocation.method(#start, [listener]),
