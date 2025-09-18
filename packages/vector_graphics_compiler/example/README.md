@@ -1,9 +1,9 @@
-# example
+# Vector Graphics Compiler - Build Hooks Example
 
-A Flutter showcase for how to replce asset transformers with hooks.
+A Flutter showcase for how to replace asset transformers with hooks.
 
 To run execute:
 ```bash
 flutter config --enable-dart-data-assets
-flutter run -d linux
+flutter run
 ```
