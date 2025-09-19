@@ -157,10 +157,24 @@ extension CameraPlugin: FCPCameraApi {
         @unknown default:
           lensFacing = .external
         }
+        print(device.deviceType)
+        var lensType: FCPPlatformCameraLensType
+
+        switch device.deviceType {
+            case .builtInWideAngleCamera:
+                lensType = .wide
+            case .builtInUltraWideCamera:
+                lensType = .ultraWide
+            case .builtInTelephotoCamera:
+                lensType = .telephoto
+            default:
+                lensType = .unknown
+        }
 
         let cameraDescription = FCPPlatformCameraDescription.make(
           withName: device.uniqueID,
-          lensDirection: lensFacing
+          lensDirection: lensFacing,
+          lensType: lensType
         )
         reply.append(cameraDescription)
       }

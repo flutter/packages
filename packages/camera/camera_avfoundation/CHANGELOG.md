@@ -1,3 +1,7 @@
+## 0.9.21+4
+
+* Add lensType to CameraDescription
+
 ## 0.9.21+3
 
 * Removes code for versions of iOS older than 13.0.

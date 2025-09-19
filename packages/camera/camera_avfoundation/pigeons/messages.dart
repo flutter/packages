@@ -30,6 +30,21 @@ enum PlatformCameraLensDirection {
   external,
 }
 
+// Pigeon version of CameraLensType.
+enum PlatformCameraLensType {
+  /// A built-in wide-angle camera device type.
+  wide,
+
+  /// A built-in camera device type with a longer focal length than a wide-angle camera.
+  telephoto,
+
+  /// A built-in camera device type with a shorter focal length than a wide-angle camera.
+  ultraWide,
+
+  /// Unknown camera device type.
+  unknown,
+}
+
 // Pigeon version of DeviceOrientation.
 enum PlatformDeviceOrientation {
   portraitUp,
@@ -65,6 +80,9 @@ class PlatformCameraDescription {
 
   /// The direction the camera is facing.
   final PlatformCameraLensDirection lensDirection;
+
+  /// The type of the camera lense
+  final PlatformCameraLensType lensType;
 }
 
 // Pigeon version of the data needed for a CameraInitializedEvent.
