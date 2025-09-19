@@ -1,3 +1,7 @@
+## 0.6.21+1
+
+* Updates to stable version of `androidx.camera` 1.5.
+
 ## 0.6.21
 
 * Implements NV21 support for image streaming.
