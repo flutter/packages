@@ -7,13 +7,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
+import 'test_helpers.dart';
+
 // Regression test for https://github.com/flutter/flutter/issues/120353
 void main() {
-  group('iOS back gesture inside a StatefulShellRoute', () {
-    Future<void> backGesture(WidgetTester tester) async {
-      await tester.dragFrom(const Offset(0, 300), const Offset(500, 300));
-    }
-
+  group('iOS back gesture inside a ShellRoute', () {
     testWidgets('pops the top sub-route '
         'when there is an active sub-route', (WidgetTester tester) async {
       debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
@@ -29,14 +27,14 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('Comment'), findsOneWidget);
 
-      await backGesture(tester);
+      await simulateIosBackGesture(tester);
       await tester.pumpAndSettle();
       expect(find.text('Post'), findsOneWidget);
 
       debugDefaultTargetPlatformOverride = null;
     });
 
-    testWidgets('pops StatefulShellRoute '
+    testWidgets('pops ShellRoute '
         'when there are no active sub-routes', (WidgetTester tester) async {
       debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
 
@@ -47,11 +45,45 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('Post'), findsOneWidget);
 
-      await backGesture(tester);
+      await simulateIosBackGesture(tester);
       await tester.pumpAndSettle();
       expect(find.text('Home'), findsOneWidget);
 
       debugDefaultTargetPlatformOverride = null;
+    });
+  });
+
+  group('Android back button inside a ShellRoute', () {
+    testWidgets('pops the top sub-route '
+        'when there is an active sub-route', (WidgetTester tester) async {
+      await tester.pumpWidget(const _TestApp());
+      expect(find.text('Home'), findsOneWidget);
+
+      await tester.tap(find.byType(FilledButton));
+      await tester.pumpAndSettle();
+      expect(find.text('Post'), findsOneWidget);
+
+      await tester.tap(find.byType(FilledButton));
+      await tester.pumpAndSettle();
+      expect(find.text('Comment'), findsOneWidget);
+
+      await simulateAndroidBackButton(tester);
+      await tester.pumpAndSettle();
+      expect(find.text('Post'), findsOneWidget);
+    });
+
+    testWidgets('pops ShellRoute '
+        'when there are no active sub-routes', (WidgetTester tester) async {
+      await tester.pumpWidget(const _TestApp());
+      expect(find.text('Home'), findsOneWidget);
+
+      await tester.tap(find.byType(FilledButton));
+      await tester.pumpAndSettle();
+      expect(find.text('Post'), findsOneWidget);
+
+      await simulateAndroidBackButton(tester);
+      await tester.pumpAndSettle();
+      expect(find.text('Home'), findsOneWidget);
     });
   });
 }
@@ -82,42 +114,34 @@ class _TestAppState extends State<_TestApp> {
           );
         },
         routes: <RouteBase>[
-          StatefulShellRoute.indexedStack(
-            builder: (
-              BuildContext context,
-              GoRouterState state,
-              StatefulNavigationShell navigationShell,
-            ) {
-              return navigationShell;
+          ShellRoute(
+            builder: (BuildContext context, GoRouterState state, Widget child) {
+              return child;
             },
-            branches: <StatefulShellBranch>[
-              StatefulShellBranch(
+            routes: <GoRoute>[
+              GoRoute(
+                path: '/post',
+                builder: (BuildContext context, GoRouterState state) {
+                  return Scaffold(
+                    appBar: AppBar(title: const Text('Post')),
+                    body: Center(
+                      child: FilledButton(
+                        onPressed: () {
+                          GoRouter.of(context).go('/post/comment');
+                        },
+                        child: const Text('Comment'),
+                      ),
+                    ),
+                  );
+                },
                 routes: <GoRoute>[
                   GoRoute(
-                    path: '/post',
+                    path: 'comment',
                     builder: (BuildContext context, GoRouterState state) {
                       return Scaffold(
-                        appBar: AppBar(title: const Text('Post')),
-                        body: Center(
-                          child: FilledButton(
-                            onPressed: () {
-                              GoRouter.of(context).go('/post/comment');
-                            },
-                            child: const Text('Comment'),
-                          ),
-                        ),
+                        appBar: AppBar(title: const Text('Comment')),
                       );
                     },
-                    routes: <GoRoute>[
-                      GoRoute(
-                        path: 'comment',
-                        builder: (BuildContext context, GoRouterState state) {
-                          return Scaffold(
-                            appBar: AppBar(title: const Text('Comment')),
-                          );
-                        },
-                      ),
-                    ],
                   ),
                 ],
               ),
