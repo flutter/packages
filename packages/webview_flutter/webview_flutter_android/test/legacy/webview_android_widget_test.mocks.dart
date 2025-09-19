@@ -1134,8 +1134,6 @@ class MockWebViewProxy extends _i1.Mock implements _i7.WebViewProxy {
       _i2.WebResourceError,
     )?
     onReceivedRequestError,
-    void Function(_i2.WebViewClient, _i2.WebView, int, String, String)?
-    onReceivedError,
     void Function(_i2.WebViewClient, _i2.WebView, _i2.WebResourceRequest)?
     requestLoading,
     void Function(
@@ -1161,7 +1159,6 @@ class MockWebViewProxy extends _i1.Mock implements _i7.WebViewProxy {
               #onPageStarted: onPageStarted,
               #onPageFinished: onPageFinished,
               #onReceivedRequestError: onReceivedRequestError,
-              #onReceivedError: onReceivedError,
               #requestLoading: requestLoading,
               #onFormResubmission: onFormResubmission,
               #onReceivedClientCertRequest: onReceivedClientCertRequest,
@@ -1174,7 +1171,6 @@ class MockWebViewProxy extends _i1.Mock implements _i7.WebViewProxy {
                 #onPageStarted: onPageStarted,
                 #onPageFinished: onPageFinished,
                 #onReceivedRequestError: onReceivedRequestError,
-                #onReceivedError: onReceivedError,
                 #requestLoading: requestLoading,
                 #onFormResubmission: onFormResubmission,
                 #onReceivedClientCertRequest: onReceivedClientCertRequest,
