@@ -511,11 +511,11 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
       }
 
       NSString *commonMetadataTitle = nil;
-      for (AVMetadataItem *item in option.commonMetadata) {
-        if ([item.commonKey isEqualToString:AVMetadataCommonKeyTitle] && item.stringValue) {
-          commonMetadataTitle = item.stringValue;
-          break;
-        }
+      NSArray<AVMetadataItem *> *titleItems = [AVMetadataItem metadataItemsFromArray:option.commonMetadata
+                                                                              withKey:AVMetadataCommonKeyTitle
+                                                                             keySpace:AVMetadataKeySpaceCommon];
+      if (titleItems.count > 0 && titleItems.firstObject.stringValue) {
+        commonMetadataTitle = titleItems.firstObject.stringValue;
       }
 
       BOOL isSelected = (currentSelection == option) || [currentSelection isEqual:option];
