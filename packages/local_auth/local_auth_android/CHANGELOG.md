@@ -1,3 +1,7 @@
+## 1.0.54
+
+* Bumps com.android.tools.build:gradle from 8.12.1 to 8.13.0.
+
 ## 1.0.53
 
 * Removes obsolete code related to supporting SDK <24.

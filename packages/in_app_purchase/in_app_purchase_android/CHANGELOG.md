@@ -1,3 +1,7 @@
+## 0.4.0+5
+
+* Bumps com.android.tools.build:gradle from 8.12.1 to 8.13.0.
+
 ## 0.4.0+4
 
 * Bumps com.android.tools.build:gradle to 8.12.1.

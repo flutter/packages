@@ -1,3 +1,7 @@
+## 0.4.0+14
+
+* Bumps com.android.tools.build:gradle from 8.12.1 to 8.13.0.
+
 ## 0.4.0+13
 
 * Bumps com.google.code.gson:gson from 2.11.0 to 2.13.2.

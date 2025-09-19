@@ -1,3 +1,7 @@
+## 0.10.10+8
+
+* Bumps com.android.tools.build:gradle from 8.12.1 to 8.13.0.
+
 ## 0.10.10+7
 
 * Updates minimum supported SDK version to Flutter 3.35.
