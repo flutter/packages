@@ -1,3 +1,7 @@
+## 7.2.0
+
+* Adds support for `disconnect`.
+
 ## 7.1.0
 
 * Adds support for the `clearAuthorizationToken` method.

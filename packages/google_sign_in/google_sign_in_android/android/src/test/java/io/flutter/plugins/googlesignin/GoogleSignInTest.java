@@ -41,6 +41,7 @@ import com.google.android.gms.auth.api.identity.AuthorizationClient;
 import com.google.android.gms.auth.api.identity.AuthorizationRequest;
 import com.google.android.gms.auth.api.identity.AuthorizationResult;
 import com.google.android.gms.auth.api.identity.ClearTokenRequest;
+import com.google.android.gms.auth.api.identity.RevokeAccessRequest;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -72,7 +73,7 @@ public class GoogleSignInTest {
   @Mock CustomCredential mockGenericCredential;
   @Mock GoogleIdTokenCredential mockGoogleCredential;
   @Mock Task<AuthorizationResult> mockAuthorizationTask;
-  @Mock Task<Void> mockClearTokenTask;
+  @Mock Task<Void> mockVoidTask;
 
   private GoogleSignInPlugin flutterPlugin;
   // Technically this is not the plugin, but in practice almost all of the functionality is in this
@@ -90,8 +91,8 @@ public class GoogleSignInTest {
         .thenReturn(GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL);
     when(mockAuthorizationTask.addOnSuccessListener(any())).thenReturn(mockAuthorizationTask);
     when(mockAuthorizationTask.addOnFailureListener(any())).thenReturn(mockAuthorizationTask);
-    when(mockClearTokenTask.addOnSuccessListener(any())).thenReturn(mockClearTokenTask);
-    when(mockClearTokenTask.addOnFailureListener(any())).thenReturn(mockClearTokenTask);
+    when(mockVoidTask.addOnSuccessListener(any())).thenReturn(mockVoidTask);
+    when(mockVoidTask.addOnFailureListener(any())).thenReturn(mockVoidTask);
     when(mockAuthorizationIntent.getIntentSender()).thenReturn(mockAuthorizationIntentSender);
     when(mockActivityPluginBinding.getActivity()).thenReturn(mockActivity);
 
@@ -1150,9 +1151,39 @@ public class GoogleSignInTest {
   }
 
   @Test
+  public void revokeAccess_callsClient() {
+    final List<String> scopes = new ArrayList<>(List.of("openid"));
+    final String accountEmail = "someone@example.com";
+    PlatformRevokeAccessRequest params = new PlatformRevokeAccessRequest(accountEmail, scopes);
+    when(mockAuthorizationClient.revokeAccess(any())).thenReturn(mockVoidTask);
+    plugin.revokeAccess(
+        params,
+        ResultCompat.asCompatCallback(
+            reply -> {
+              return null;
+            }));
+
+    ArgumentCaptor<RevokeAccessRequest> requestCaptor =
+        ArgumentCaptor.forClass(RevokeAccessRequest.class);
+    verify(mockAuthorizationClient).revokeAccess(requestCaptor.capture());
+
+    @SuppressWarnings("unchecked")
+    ArgumentCaptor<OnSuccessListener<Void>> callbackCaptor =
+        ArgumentCaptor.forClass(OnSuccessListener.class);
+    verify(mockVoidTask).addOnSuccessListener(callbackCaptor.capture());
+    callbackCaptor.getValue().onSuccess(null);
+
+    RevokeAccessRequest request = requestCaptor.getValue();
+    assertEquals(scopes.size(), request.getScopes().size());
+    assertEquals(scopes.get(0), request.getScopes().get(0).getScopeUri());
+    // Account is mostly opaque, so just verify that one was set.
+    assertNotNull(request.getAccount());
+  }
+
+  @Test
   public void clearAuthorizationToken_callsClient() {
     final String testToken = "testToken";
-    when(mockAuthorizationClient.clearToken(any())).thenReturn(mockClearTokenTask);
+    when(mockAuthorizationClient.clearToken(any())).thenReturn(mockVoidTask);
     plugin.clearAuthorizationToken(
         testToken,
         ResultCompat.asCompatCallback(
@@ -1167,7 +1198,7 @@ public class GoogleSignInTest {
     @SuppressWarnings("unchecked")
     ArgumentCaptor<OnSuccessListener<Void>> callbackCaptor =
         ArgumentCaptor.forClass(OnSuccessListener.class);
-    verify(mockClearTokenTask).addOnSuccessListener(callbackCaptor.capture());
+    verify(mockVoidTask).addOnSuccessListener(callbackCaptor.capture());
     callbackCaptor.getValue().onSuccess(null);
 
     ClearTokenRequest request = authRequestCaptor.getValue();

@@ -271,6 +271,59 @@ class GetCredentialRequestGoogleIdOptionParams {
   int get hashCode => Object.hashAll(_toList());
 }
 
+/// Parameters for revoking authorization.
+///
+/// Corresponds to the native RevokeAccessRequest.
+/// https://developers.google.com/android/reference/com/google/android/gms/auth/api/identity/RevokeAccessRequest
+class PlatformRevokeAccessRequest {
+  PlatformRevokeAccessRequest({
+    required this.accountEmail,
+    required this.scopes,
+  });
+
+  /// The email for the Google account to revoke authorizations for.
+  String accountEmail;
+
+  /// A list of requested scopes.
+  ///
+  /// Per docs, all granted scopes will be revoked, not only the ones passed
+  /// here. However, at least one currently-granted scope must be provided.
+  List<String> scopes;
+
+  List<Object?> _toList() {
+    return <Object?>[accountEmail, scopes];
+  }
+
+  Object encode() {
+    return _toList();
+  }
+
+  static PlatformRevokeAccessRequest decode(Object result) {
+    result as List<Object?>;
+    return PlatformRevokeAccessRequest(
+      accountEmail: result[0]! as String,
+      scopes: (result[1] as List<Object?>?)!.cast<String>(),
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PlatformRevokeAccessRequest ||
+        other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
+}
+
 /// Pigeon equivalent of the native GoogleIdTokenCredential.
 class PlatformGoogleIdTokenCredential {
   PlatformGoogleIdTokenCredential({
@@ -555,20 +608,23 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is GetCredentialRequestGoogleIdOptionParams) {
       buffer.putUint8(133);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformGoogleIdTokenCredential) {
+    } else if (value is PlatformRevokeAccessRequest) {
       buffer.putUint8(134);
       writeValue(buffer, value.encode());
-    } else if (value is GetCredentialFailure) {
+    } else if (value is PlatformGoogleIdTokenCredential) {
       buffer.putUint8(135);
       writeValue(buffer, value.encode());
-    } else if (value is GetCredentialSuccess) {
+    } else if (value is GetCredentialFailure) {
       buffer.putUint8(136);
       writeValue(buffer, value.encode());
-    } else if (value is AuthorizeFailure) {
+    } else if (value is GetCredentialSuccess) {
       buffer.putUint8(137);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformAuthorizationResult) {
+    } else if (value is AuthorizeFailure) {
       buffer.putUint8(138);
+      writeValue(buffer, value.encode());
+    } else if (value is PlatformAuthorizationResult) {
+      buffer.putUint8(139);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -593,14 +649,16 @@ class _PigeonCodec extends StandardMessageCodec {
           readValue(buffer)!,
         );
       case 134:
-        return PlatformGoogleIdTokenCredential.decode(readValue(buffer)!);
+        return PlatformRevokeAccessRequest.decode(readValue(buffer)!);
       case 135:
-        return GetCredentialFailure.decode(readValue(buffer)!);
+        return PlatformGoogleIdTokenCredential.decode(readValue(buffer)!);
       case 136:
-        return GetCredentialSuccess.decode(readValue(buffer)!);
+        return GetCredentialFailure.decode(readValue(buffer)!);
       case 137:
-        return AuthorizeFailure.decode(readValue(buffer)!);
+        return GetCredentialSuccess.decode(readValue(buffer)!);
       case 138:
+        return AuthorizeFailure.decode(readValue(buffer)!);
+      case 139:
         return PlatformAuthorizationResult.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -774,6 +832,33 @@ class GoogleSignInApi {
       );
     } else {
       return (pigeonVar_replyList[0] as AuthorizeResult?)!;
+    }
+  }
+
+  Future<void> revokeAccess(PlatformRevokeAccessRequest params) async {
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.revokeAccess$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[params],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return;
     }
   }
 }
