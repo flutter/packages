@@ -75,7 +75,27 @@ class ProxyApiTestsPigeonInstanceManager(
     fun onFinalize(identifier: Long)
   }
 
-  private val identifiers = java.util.WeakHashMap<Any, Long>()
+  // Wraps an instance in a class that overrides the `equals` and `hashCode` methods using identity
+  // rather than equality.
+  private class IdentityKey<T : Any> {
+    private val instance: java.lang.ref.WeakReference<T>
+
+    constructor(instance: T) {
+      this.instance = java.lang.ref.WeakReference<T>(instance)
+    }
+
+    override fun equals(other: Any?): Boolean {
+      return instance.get() != null &&
+          other is IdentityKey<*> &&
+          other.instance.get() === instance.get()
+    }
+
+    override fun hashCode(): Int {
+      return instance.get().hashCode()
+    }
+  }
+
+  private val identifiers = java.util.WeakHashMap<IdentityKey<*>, Long>()
   private val weakInstances = HashMap<Long, java.lang.ref.WeakReference<Any>>()
   private val strongInstances = HashMap<Long, Any>()
   private val referenceQueue = java.lang.ref.ReferenceQueue<Any>()
@@ -144,9 +164,12 @@ class ProxyApiTestsPigeonInstanceManager(
    */
   fun getIdentifierForStrongReference(instance: Any?): Long? {
     logWarningIfFinalizationListenerHasStopped()
-    val identifier = identifiers[instance]
-    if (identifier != null && strongInstances[identifier] == null) {
-      strongInstances[identifier] = instance!!
+    if (instance == null) {
+      return null
+    }
+    val identifier = identifiers[IdentityKey(instance)]
+    if (identifier != null) {
+      strongInstances[identifier] = instance
     }
     return identifier
   }
@@ -192,7 +215,7 @@ class ProxyApiTestsPigeonInstanceManager(
   /** Returns whether this manager contains the given `instance`. */
   fun containsInstance(instance: Any?): Boolean {
     logWarningIfFinalizationListenerHasStopped()
-    return identifiers.containsKey(instance)
+    return instance != null && identifiers.containsKey(IdentityKey(instance))
   }
 
   /**
@@ -252,7 +275,7 @@ class ProxyApiTestsPigeonInstanceManager(
       "Identifier has already been added: $identifier"
     }
     val weakReference = java.lang.ref.WeakReference(instance, referenceQueue)
-    identifiers[instance] = identifier
+    identifiers[IdentityKey(instance)] = identifier
     weakInstances[identifier] = weakReference
     weakReferencesToIdentifiers[weakReference] = identifier
     strongInstances[identifier] = instance

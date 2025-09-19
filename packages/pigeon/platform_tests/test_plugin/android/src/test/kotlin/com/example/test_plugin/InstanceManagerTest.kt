@@ -150,19 +150,45 @@ class InstanceManagerTest {
   }
 
   @Test
-  fun getIdentifierForStrongReferenceDoesNotReplaceOriginal() {
+  fun containsInstanceAndGetIdentifierForStrongReferenceUseIdentityComparison() {
     val instanceManager: ProxyApiTestsPigeonInstanceManager = createInstanceManager()
     instanceManager.stopFinalizationListener()
 
+    // Create two objects that are equal.
     val testString = "aString"
     val testObject1 = TestDataClass(testString)
-
-    val identifier = instanceManager.addHostCreatedInstance(testObject1)
-
     val testObject2 = TestDataClass(testString)
+    assertEquals(testObject1, testObject2)
+
+    val identifier1 = instanceManager.addHostCreatedInstance(testObject1)
+    assertFalse(instanceManager.containsInstance(testObject2))
+    assertNull(instanceManager.getIdentifierForStrongReference(testObject2))
+
+    val identifier2 = instanceManager.addHostCreatedInstance(testObject2)
+    assertTrue(instanceManager.containsInstance(testObject1))
     assertTrue(instanceManager.containsInstance(testObject2))
-    assertEquals(identifier, instanceManager.getIdentifierForStrongReference(testObject2))
-    assertTrue(testObject1 === instanceManager.remove(identifier))
+    assertEquals(identifier1, instanceManager.getIdentifierForStrongReference(testObject1))
+    assertEquals(identifier2, instanceManager.getIdentifierForStrongReference(testObject2))
+  }
+
+  @Test
+  fun addingTwoDartCreatedInstancesThatAreEqual() {
+    val instanceManager: ProxyApiTestsPigeonInstanceManager = createInstanceManager()
+    instanceManager.stopFinalizationListener()
+
+    // Create two objects that are equal.
+    val testString = "aString"
+    val testObject1 = TestDataClass(testString)
+    val testObject2 = TestDataClass(testString)
+    assertEquals(testObject1, testObject2)
+
+    instanceManager.addDartCreatedInstance(testObject1, 0)
+    instanceManager.addDartCreatedInstance(testObject2, 1)
+
+    assertEquals(testObject1, instanceManager.getInstance(0))
+    assertEquals(testObject2, instanceManager.getInstance(1))
+    assertEquals(0L, instanceManager.getIdentifierForStrongReference(testObject1))
+    assertEquals(1L, instanceManager.getIdentifierForStrongReference(testObject2))
   }
 
   private fun createInstanceManager(): ProxyApiTestsPigeonInstanceManager {
