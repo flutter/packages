@@ -37,7 +37,7 @@ class InternalFfigenConfigOptions extends InternalOptions {
   final String? exampleAppDirectory;
 }
 
-/// Generator for jnigen yaml configuration file.
+/// Generator for ffigen configuration file.
 class FfigenConfigGenerator extends Generator<InternalFfigenConfigOptions> {
   @override
   void generate(
@@ -47,8 +47,9 @@ class FfigenConfigGenerator extends Generator<InternalFfigenConfigOptions> {
 
     indent.format('''
 import 'package:ffigen/ffigen.dart' as fg;
-import 'package:ffigen/src/config_provider/config_types.dart';
 import 'package:pub_semver/pub_semver.dart';
+import 'package:swift2objc/src/ast/_core/interfaces/declaration.dart';
+import 'package:swiftgen/src/config.dart';
 import 'package:swiftgen/swiftgen.dart';
 
   ''');
@@ -78,7 +79,7 @@ import 'package:swiftgen/swiftgen.dart';
       });
 
       indent.format('''
-  await SwiftGen(
+  await SwiftGenerator(
     target: Target(
       // triple: 'x86_64-apple-macosx14.0',
       triple: 'arm64-apple-ios',
@@ -87,34 +88,40 @@ import 'package:swiftgen/swiftgen.dart';
         // '/Applications/Xcode/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk',
       ),
     ),
-    input: ObjCCompatibleSwiftFileInput(
+    inputs: <SwiftGenInput>[ObjCCompatibleSwiftFileInput(files: <Uri>[
+        Uri.file('${generatorOptions.swiftOptions.swiftOut}')
+      ])
+    ],
+    include: (Declaration d) =>
+        classes.contains(d.name) || enums.contains(d.name),
+    output: Output(
       module: '${generatorOptions.swiftOptions.ffiModuleName ?? ''}',
-      files: <Uri>[Uri.file('${generatorOptions.swiftOptions.swiftOut}')],
-    ),
-    tempDirectory: Uri.directory('temp'),
-    outputModule: '${generatorOptions.swiftOptions.ffiModuleName ?? ''}',
-    ffigen: FfiGenConfig(
-      output: Uri.file('${path.posix.join(generatorOptions.basePath ?? '', path.withoutExtension(generatorOptions.dartOut ?? ''))}.ffi.dart'),
-      outputObjC: Uri.file('${path.posix.join(generatorOptions.basePath ?? '', path.withoutExtension(generatorOptions.dartOut ?? ''))}.m'),
-      externalVersions: fg.ExternalVersions(
-        ios: fg.Versions(min: Version(12, 0, 0)),
-        macos: fg.Versions(min: Version(10, 14, 0)),
-      ),
-      objcInterfaces: fg.DeclarationFilters(
-        shouldInclude: (Declaration decl) => classes.contains(decl.originalName),
-      ),
-      enumClassDecl: fg.DeclarationFilters(
-        shouldInclude: (Declaration decl) => enums.contains(decl.originalName),
-      ),
+      dartFile: Uri.file('${path.posix.join(generatorOptions.basePath ?? '', path.withoutExtension(generatorOptions.dartOut ?? ''))}.ffi.dart'),
+      objectiveCFile:  Uri.file('${path.posix.join(generatorOptions.basePath ?? '', path.withoutExtension(generatorOptions.dartOut ?? ''))}.m'),
       preamble: \'''
 // ${generatorOptions.swiftOptions.copyrightHeader?.join('\n// ') ?? ''}
 
 // ignore_for_file: always_specify_types, camel_case_types, non_constant_identifier_names, unnecessary_non_null_assertion, unused_element, unused_field
 // coverage:ignore-file
 \''',
+      ),
+    ffigen: FfiGeneratorOptions(
+      objectiveC: fg.ObjectiveC(
+        externalVersions: fg.ExternalVersions(
+          ios: fg.Versions(min: Version(12, 0, 0)),
+          macos: fg.Versions(min: Version(10, 14, 0)),
+        ),
+        interfaces: fg.Interfaces(
+          include: (fg.Declaration decl) =>
+              classes.contains(decl.originalName) ||
+              enums.contains(decl.originalName),
+        ),
+      ),
     ),
-  ).generate();
-
+  ).generate(
+    logger: null,
+    tempDirectory: Uri.directory('temp'),
+  );
       ''');
     });
   }

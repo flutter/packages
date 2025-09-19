@@ -233,6 +233,8 @@ struct NIAllNullableTypesWithoutRecursion {
   var aNullableInt64: Int64? = nil
   var aNullableDouble: Double? = nil
   var aNullableString: String? = nil
+  var list: [Any?]? = nil
+  var map: [AnyHashable?: Any?]? = nil
 
   static func fromList(_ pigeonVar_list: [Any?]) -> NIAllNullableTypesWithoutRecursion? {
     let aNullableBool: Bool? = nilOrValue(pigeonVar_list[0])
@@ -240,13 +242,17 @@ struct NIAllNullableTypesWithoutRecursion {
     let aNullableInt64: Int64? = nilOrValue(pigeonVar_list[2])
     let aNullableDouble: Double? = nilOrValue(pigeonVar_list[3])
     let aNullableString: String? = nilOrValue(pigeonVar_list[4])
+    let list: [Any?]? = nilOrValue(pigeonVar_list[5])
+    let map: [AnyHashable?: Any?]? = nilOrValue(pigeonVar_list[6])
 
     return NIAllNullableTypesWithoutRecursion(
       aNullableBool: aNullableBool,
       aNullableInt: aNullableInt,
       aNullableInt64: aNullableInt64,
       aNullableDouble: aNullableDouble,
-      aNullableString: aNullableString
+      aNullableString: aNullableString,
+      list: list,
+      map: map
     )
   }
   func toList() -> [Any?] {
@@ -256,6 +262,8 @@ struct NIAllNullableTypesWithoutRecursion {
       aNullableInt64,
       aNullableDouble,
       aNullableString,
+      list,
+      map,
     ]
   }
 }
@@ -272,19 +280,25 @@ struct NIAllNullableTypesWithoutRecursion {
     aNullableInt: NSNumber? = nil,
     aNullableInt64: NSNumber? = nil,
     aNullableDouble: NSNumber? = nil,
-    aNullableString: NSString? = nil
+    aNullableString: NSString? = nil,
+    list: [NSObject]? = nil,
+    map: [NSObject: NSObject]? = nil
   ) {
     self.aNullableBool = aNullableBool
     self.aNullableInt = aNullableInt
     self.aNullableInt64 = aNullableInt64
     self.aNullableDouble = aNullableDouble
     self.aNullableString = aNullableString
+    self.list = list
+    self.map = map
   }
   @objc var aNullableBool: NSNumber? = nil
   @objc var aNullableInt: NSNumber? = nil
   @objc var aNullableInt64: NSNumber? = nil
   @objc var aNullableDouble: NSNumber? = nil
   @objc var aNullableString: NSString? = nil
+  @objc var list: [NSObject]? = nil
+  @objc var map: [NSObject: NSObject]? = nil
 
   @available(iOS 13, macOS 16.0.0, *)
   static func fromSwift(_ pigeonVar_Class: NIAllNullableTypesWithoutRecursion?)
@@ -303,6 +317,9 @@ struct NIAllNullableTypesWithoutRecursion {
       aNullableDouble: isNullish(pigeonVar_Class!.aNullableDouble)
         ? nil : NSNumber(value: pigeonVar_Class!.aNullableDouble!),
       aNullableString: pigeonVar_Class!.aNullableString as NSString?,
+      list: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.list, isObject: true) as? [NSObject],
+      map: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.map, isObject: true)
+        as? [NSObject: NSObject],
     )
   }
   func toSwift() -> NIAllNullableTypesWithoutRecursion {
@@ -312,6 +329,8 @@ struct NIAllNullableTypesWithoutRecursion {
       aNullableInt64: isNullish(aNullableInt64) ? nil : aNullableInt64!.int64Value,
       aNullableDouble: isNullish(aNullableDouble) ? nil : aNullableDouble!.doubleValue,
       aNullableString: aNullableString as String?,
+      list: list,
+      map: map,
     )
   }
 }
@@ -497,6 +516,10 @@ protocol NIHostIntegrationCoreApi {
   func echoNullableBool(aNullableBool: Bool?) throws -> Bool?
   /// Returns the passed in string.
   func echoNullableString(aNullableString: String?) throws -> String?
+  /// Returns the passed list, to test serialization and deserialization.
+  func echoNullableList(aNullableList: [Any?]?) throws -> [Any?]?
+  /// Returns the passed map, to test serialization and deserialization.
+  func echoNullableMap(map: [AnyHashable?: Any?]?) throws -> [AnyHashable?: Any?]?
   func echoNullableEnum(anEnum: NIAnEnum?) throws -> NIAnEnum?
   func echoAnotherNullableEnum(anotherEnum: NIAnotherEnum?) throws -> NIAnotherEnum?
 }
@@ -770,6 +793,41 @@ protocol NIHostIntegrationCoreApi {
   @objc func echoNullableString(aNullableString: String?, wrappedError: NiTestsError) -> String? {
     do {
       return try api!.echoNullableString(aNullableString: aNullableString)
+    } catch let error as NiTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
+  /// Returns the passed list, to test serialization and deserialization.
+  @available(iOS 13, macOS 16.0.0, *)
+  @objc func echoNullableList(aNullableList: [NSObject]?, wrappedError: NiTestsError) -> [NSObject]?
+  {
+    do {
+      return try api!.echoNullableList(aNullableList: aNullableList) as? [NSObject]
+    } catch let error as NiTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
+  /// Returns the passed map, to test serialization and deserialization.
+  @available(iOS 13, macOS 16.0.0, *)
+  @objc func echoNullableMap(map: [NSObject: NSObject]?, wrappedError: NiTestsError) -> [NSObject:
+    NSObject]?
+  {
+    do {
+      return try api!.echoNullableMap(map: map) as? [NSObject: NSObject]
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message

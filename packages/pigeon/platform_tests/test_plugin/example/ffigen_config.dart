@@ -1,6 +1,7 @@
 import 'package:ffigen/ffigen.dart' as fg;
-import 'package:ffigen/src/config_provider/config_types.dart';
 import 'package:pub_semver/pub_semver.dart';
+import 'package:swift2objc/src/ast/_core/interfaces/declaration.dart';
+import 'package:swiftgen/src/config.dart';
 import 'package:swiftgen/swiftgen.dart';
 
 Future<void> main() async {
@@ -16,7 +17,7 @@ Future<void> main() async {
     'NIAnEnum',
     'NIAnotherEnum',
   ];
-  await SwiftGen(
+  await SwiftGenerator(
     target: Target(
       // triple: 'x86_64-apple-macosx14.0',
       triple: 'arm64-apple-ios',
@@ -25,31 +26,20 @@ Future<void> main() async {
         // '/Applications/Xcode/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk',
       ),
     ),
-    input: ObjCCompatibleSwiftFileInput(
-      module: 'test_plugin',
-      files: <Uri>[
+    inputs: <SwiftGenInput>[
+      ObjCCompatibleSwiftFileInput(files: <Uri>[
         Uri.file(
             '/Users/tarrinneal/work/packages/packages/pigeon/platform_tests/test_plugin/ios/Classes/NiTests.gen.swift')
-      ],
-    ),
-    tempDirectory: Uri.directory('temp'),
-    outputModule: 'test_plugin',
-    ffigen: FfiGenConfig(
-      output: Uri.file(
+      ])
+    ],
+    include: (Declaration d) =>
+        classes.contains(d.name) || enums.contains(d.name),
+    output: Output(
+      module: 'test_plugin',
+      dartFile: Uri.file(
           '/Users/tarrinneal/work/packages/packages/pigeon/platform_tests/shared_test_plugin_code/lib/src/generated/ni_tests.gen.ffi.dart'),
-      outputObjC: Uri.file(
+      objectiveCFile: Uri.file(
           '/Users/tarrinneal/work/packages/packages/pigeon/platform_tests/shared_test_plugin_code/lib/src/generated/ni_tests.gen.m'),
-      externalVersions: fg.ExternalVersions(
-        ios: fg.Versions(min: Version(12, 0, 0)),
-        macos: fg.Versions(min: Version(10, 14, 0)),
-      ),
-      objcInterfaces: fg.DeclarationFilters(
-        shouldInclude: (Declaration decl) =>
-            classes.contains(decl.originalName),
-      ),
-      enumClassDecl: fg.DeclarationFilters(
-        shouldInclude: (Declaration decl) => enums.contains(decl.originalName),
-      ),
       preamble: '''
   // Copyright 2013 The Flutter Authors. All rights reserved.
   // Use of this source code is governed by a BSD-style license that can be
@@ -60,5 +50,21 @@ Future<void> main() async {
   // coverage:ignore-file
   ''',
     ),
-  ).generate();
+    ffigen: FfiGeneratorOptions(
+      objectiveC: fg.ObjectiveC(
+        externalVersions: fg.ExternalVersions(
+          ios: fg.Versions(min: Version(12, 0, 0)),
+          macos: fg.Versions(min: Version(10, 14, 0)),
+        ),
+        interfaces: fg.Interfaces(
+          include: (fg.Declaration decl) =>
+              classes.contains(decl.originalName) ||
+              enums.contains(decl.originalName),
+        ),
+      ),
+    ),
+  ).generate(
+    logger: null,
+    tempDirectory: Uri.directory('temp'),
+  );
 }

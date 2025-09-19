@@ -148,7 +148,9 @@ data class NIAllNullableTypesWithoutRecursion(
     val aNullableInt: Long? = null,
     val aNullableInt64: Long? = null,
     val aNullableDouble: Double? = null,
-    val aNullableString: String? = null
+    val aNullableString: String? = null,
+    val list: List<Any?>? = null,
+    val map: Map<Any, Any?>? = null
 ) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): NIAllNullableTypesWithoutRecursion {
@@ -157,8 +159,10 @@ data class NIAllNullableTypesWithoutRecursion(
       val aNullableInt64 = pigeonVar_list[2] as Long?
       val aNullableDouble = pigeonVar_list[3] as Double?
       val aNullableString = pigeonVar_list[4] as String?
+      val list = pigeonVar_list[5] as List<Any?>?
+      val map = pigeonVar_list[6] as Map<Any, Any?>?
       return NIAllNullableTypesWithoutRecursion(
-          aNullableBool, aNullableInt, aNullableInt64, aNullableDouble, aNullableString)
+          aNullableBool, aNullableInt, aNullableInt64, aNullableDouble, aNullableString, list, map)
     }
   }
 
@@ -169,6 +173,8 @@ data class NIAllNullableTypesWithoutRecursion(
         aNullableInt64,
         aNullableDouble,
         aNullableString,
+        list,
+        map,
     )
   }
 
@@ -183,7 +189,9 @@ data class NIAllNullableTypesWithoutRecursion(
         aNullableInt == other.aNullableInt &&
         aNullableInt64 == other.aNullableInt64 &&
         aNullableDouble == other.aNullableDouble &&
-        aNullableString == other.aNullableString
+        aNullableString == other.aNullableString &&
+        deepEqualsNiTests(list, other.list) &&
+        deepEqualsNiTests(map, other.map)
   }
 
   override fun hashCode(): Int = toList().hashCode()
@@ -231,6 +239,10 @@ abstract class NIHostIntegrationCoreApi {
   abstract fun echoNullableBool(aNullableBool: Boolean?): Boolean?
   /** Returns the passed in string. */
   abstract fun echoNullableString(aNullableString: String?): String?
+  /** Returns the passed list, to test serialization and deserialization. */
+  abstract fun echoNullableList(aNullableList: List<Any?>?): List<Any?>?
+  /** Returns the passed map, to test serialization and deserialization. */
+  abstract fun echoNullableMap(map: Map<Any?, Any?>?): Map<Any?, Any?>?
 
   abstract fun echoNullableEnum(anEnum: NIAnEnum?): NIAnEnum?
 
@@ -429,6 +441,28 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
     api?.let {
       try {
         return api!!.echoNullableString(aNullableString)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed list, to test serialization and deserialization. */
+  override fun echoNullableList(aNullableList: List<Any?>?): List<Any?>? {
+    api?.let {
+      try {
+        return api!!.echoNullableList(aNullableList)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed map, to test serialization and deserialization. */
+  override fun echoNullableMap(map: Map<Any?, Any?>?): Map<Any?, Any?>? {
+    api?.let {
+      try {
+        return api!!.echoNullableMap(map)
       } catch (e: Exception) {
         throw e
       }

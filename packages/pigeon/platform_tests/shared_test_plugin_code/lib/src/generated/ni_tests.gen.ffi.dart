@@ -12,6 +12,7 @@
 // ignore_for_file: type=lint
 import 'dart:ffi' as ffi;
 import 'package:objective_c/objective_c.dart' as objc;
+import 'package:ffi/ffi.dart' as pkg_ffi;
 
 @ffi.Native<
     ffi.Pointer<objc.ObjCObject> Function(
@@ -36,10 +37,10 @@ final _objc_msgSend_19nvye5 = objc.msgSendPointer
             ffi.Pointer<objc.ObjCSelector>, ffi.Pointer<objc.ObjCObject>)>();
 typedef instancetype = ffi.Pointer<objc.ObjCObject>;
 typedef Dartinstancetype = objc.ObjCObjectBase;
-late final _sel_initWithANullableBool_aNullableInt_aNullableInt64_aNullableDouble_aNullableString_ =
+late final _sel_initWithANullableBool_aNullableInt_aNullableInt64_aNullableDouble_aNullableString_list_map_ =
     objc.registerName(
-        "initWithANullableBool:aNullableInt:aNullableInt64:aNullableDouble:aNullableString:");
-final _objc_msgSend_3cbdpb = objc.msgSendPointer
+        "initWithANullableBool:aNullableInt:aNullableInt64:aNullableDouble:aNullableString:list:map:");
+final _objc_msgSend_1387m63 = objc.msgSendPointer
     .cast<
         ffi.NativeFunction<
             ffi.Pointer<objc.ObjCObject> Function(
@@ -49,11 +50,15 @@ final _objc_msgSend_3cbdpb = objc.msgSendPointer
                 ffi.Pointer<objc.ObjCObject>,
                 ffi.Pointer<objc.ObjCObject>,
                 ffi.Pointer<objc.ObjCObject>,
+                ffi.Pointer<objc.ObjCObject>,
+                ffi.Pointer<objc.ObjCObject>,
                 ffi.Pointer<objc.ObjCObject>)>>()
     .asFunction<
         ffi.Pointer<objc.ObjCObject> Function(
             ffi.Pointer<objc.ObjCObject>,
             ffi.Pointer<objc.ObjCSelector>,
+            ffi.Pointer<objc.ObjCObject>,
+            ffi.Pointer<objc.ObjCObject>,
             ffi.Pointer<objc.ObjCObject>,
             ffi.Pointer<objc.ObjCObject>,
             ffi.Pointer<objc.ObjCObject>,
@@ -87,6 +92,10 @@ late final _sel_aNullableDouble = objc.registerName("aNullableDouble");
 late final _sel_setANullableDouble_ = objc.registerName("setANullableDouble:");
 late final _sel_aNullableString = objc.registerName("aNullableString");
 late final _sel_setANullableString_ = objc.registerName("setANullableString:");
+late final _sel_list = objc.registerName("list");
+late final _sel_setList_ = objc.registerName("setList:");
+late final _sel_map = objc.registerName("map");
+late final _sel_setMap_ = objc.registerName("setMap:");
 late final _sel_init = objc.registerName("init");
 late final _sel_new = objc.registerName("new");
 late final _sel_allocWithZone_ = objc.registerName("allocWithZone:");
@@ -232,21 +241,58 @@ class NIAllNullableTypesWithoutRecursionBridge extends objc.NSObject {
         _class_NIAllNullableTypesWithoutRecursionBridge);
   }
 
-  /// initWithANullableBool:aNullableInt:aNullableInt64:aNullableDouble:aNullableString:
+  /// new
+  static NIAllNullableTypesWithoutRecursionBridge new$() {
+    final _ret = _objc_msgSend_151sglz(
+        _class_NIAllNullableTypesWithoutRecursionBridge, _sel_new);
+    return NIAllNullableTypesWithoutRecursionBridge.castFromPointer(_ret,
+        retain: false, release: true);
+  }
+
+  /// allocWithZone:
+  static NIAllNullableTypesWithoutRecursionBridge allocWithZone(
+      ffi.Pointer<objc.NSZone> zone) {
+    final _ret = _objc_msgSend_1cwp428(
+        _class_NIAllNullableTypesWithoutRecursionBridge,
+        _sel_allocWithZone_,
+        zone);
+    return NIAllNullableTypesWithoutRecursionBridge.castFromPointer(_ret,
+        retain: false, release: true);
+  }
+
+  /// alloc
+  static NIAllNullableTypesWithoutRecursionBridge alloc() {
+    final _ret = _objc_msgSend_151sglz(
+        _class_NIAllNullableTypesWithoutRecursionBridge, _sel_alloc);
+    return NIAllNullableTypesWithoutRecursionBridge.castFromPointer(_ret,
+        retain: false, release: true);
+  }
+
+  /// Returns a new instance of NIAllNullableTypesWithoutRecursionBridge constructed with the default `new` method.
+  factory NIAllNullableTypesWithoutRecursionBridge() => new$();
+}
+
+extension NIAllNullableTypesWithoutRecursionBridge$Methods
+    on NIAllNullableTypesWithoutRecursionBridge {
+  /// initWithANullableBool:aNullableInt:aNullableInt64:aNullableDouble:aNullableString:list:map:
   NIAllNullableTypesWithoutRecursionBridge initWithANullableBool(
       objc.NSNumber? aNullableBool,
       {objc.NSNumber? aNullableInt,
       objc.NSNumber? aNullableInt64,
       objc.NSNumber? aNullableDouble,
-      objc.NSString? aNullableString}) {
-    final _ret = _objc_msgSend_3cbdpb(
+      objc.NSString? aNullableString,
+      objc.NSArray? list,
+      objc.NSDictionary? map}) {
+    final _ret = _objc_msgSend_1387m63(
         this.ref.retainAndReturnPointer(),
-        _sel_initWithANullableBool_aNullableInt_aNullableInt64_aNullableDouble_aNullableString_,
+        _sel_initWithANullableBool_aNullableInt_aNullableInt64_aNullableDouble_aNullableString_list_map_,
         aNullableBool?.ref.pointer ?? ffi.nullptr,
         aNullableInt?.ref.pointer ?? ffi.nullptr,
         aNullableInt64?.ref.pointer ?? ffi.nullptr,
         aNullableDouble?.ref.pointer ?? ffi.nullptr,
-        aNullableString?.ref.pointer ?? ffi.nullptr);
+        aNullableString?.ref.pointer ?? ffi.nullptr,
+        list?.ref.pointer ?? ffi.nullptr,
+        map?.ref.pointer ?? ffi.nullptr);
     return NIAllNullableTypesWithoutRecursionBridge.castFromPointer(_ret,
         retain: false, release: true);
   }
@@ -321,6 +367,34 @@ class NIAllNullableTypesWithoutRecursionBridge extends objc.NSObject {
         value?.ref.pointer ?? ffi.nullptr);
   }
 
+  /// list
+  objc.NSArray? get list {
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_list);
+    return _ret.address == 0
+        ? null
+        : objc.NSArray.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// setList:
+  set list(objc.NSArray? value) {
+    _objc_msgSend_xtuoz7(
+        this.ref.pointer, _sel_setList_, value?.ref.pointer ?? ffi.nullptr);
+  }
+
+  /// map
+  objc.NSDictionary? get map {
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_map);
+    return _ret.address == 0
+        ? null
+        : objc.NSDictionary.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// setMap:
+  set map(objc.NSDictionary? value) {
+    _objc_msgSend_xtuoz7(
+        this.ref.pointer, _sel_setMap_, value?.ref.pointer ?? ffi.nullptr);
+  }
+
   /// init
   NIAllNullableTypesWithoutRecursionBridge init() {
     objc.checkOsVersionInternal('NIAllNullableTypesWithoutRecursionBridge.init',
@@ -331,35 +405,8 @@ class NIAllNullableTypesWithoutRecursionBridge extends objc.NSObject {
         retain: false, release: true);
   }
 
-  /// new
-  static NIAllNullableTypesWithoutRecursionBridge new$() {
-    final _ret = _objc_msgSend_151sglz(
-        _class_NIAllNullableTypesWithoutRecursionBridge, _sel_new);
-    return NIAllNullableTypesWithoutRecursionBridge.castFromPointer(_ret,
-        retain: false, release: true);
-  }
-
-  /// allocWithZone:
-  static NIAllNullableTypesWithoutRecursionBridge allocWithZone(
-      ffi.Pointer<objc.NSZone> zone) {
-    final _ret = _objc_msgSend_1cwp428(
-        _class_NIAllNullableTypesWithoutRecursionBridge,
-        _sel_allocWithZone_,
-        zone);
-    return NIAllNullableTypesWithoutRecursionBridge.castFromPointer(_ret,
-        retain: false, release: true);
-  }
-
-  /// alloc
-  static NIAllNullableTypesWithoutRecursionBridge alloc() {
-    final _ret = _objc_msgSend_151sglz(
-        _class_NIAllNullableTypesWithoutRecursionBridge, _sel_alloc);
-    return NIAllNullableTypesWithoutRecursionBridge.castFromPointer(_ret,
-        retain: false, release: true);
-  }
-
   /// self
-  NIAllNullableTypesWithoutRecursionBridge self$1() {
+  NIAllNullableTypesWithoutRecursionBridge self() {
     final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_self);
     return NIAllNullableTypesWithoutRecursionBridge.castFromPointer(_ret,
         retain: true, release: true);
@@ -378,9 +425,6 @@ class NIAllNullableTypesWithoutRecursionBridge extends objc.NSObject {
     return NIAllNullableTypesWithoutRecursionBridge.castFromPointer(_ret,
         retain: true, release: true);
   }
-
-  /// Returns a new instance of NIAllNullableTypesWithoutRecursionBridge constructed with the default `new` method.
-  factory NIAllNullableTypesWithoutRecursionBridge() => new$();
 }
 
 enum NIAnEnum {
@@ -550,10 +594,6 @@ final _objc_msgSend_ih63eg = objc.msgSendPointer
             ffi.Pointer<objc.ObjCSelector>, int)>();
 late final _sel_aString = objc.registerName("aString");
 late final _sel_setAString_ = objc.registerName("setAString:");
-late final _sel_list = objc.registerName("list");
-late final _sel_setList_ = objc.registerName("setList:");
-late final _sel_map = objc.registerName("map");
-late final _sel_setMap_ = objc.registerName("setMap:");
 
 /// A class containing all supported types.
 /// Generated bridge class from Pigeon that moves data from Swift to Objective-C.
@@ -577,6 +617,30 @@ class NIAllTypesBridge extends objc.NSObject {
         obj.ref.pointer, _sel_isKindOfClass_, _class_NIAllTypesBridge);
   }
 
+  /// new
+  static NIAllTypesBridge new$() {
+    final _ret = _objc_msgSend_151sglz(_class_NIAllTypesBridge, _sel_new);
+    return NIAllTypesBridge.castFromPointer(_ret, retain: false, release: true);
+  }
+
+  /// allocWithZone:
+  static NIAllTypesBridge allocWithZone(ffi.Pointer<objc.NSZone> zone) {
+    final _ret = _objc_msgSend_1cwp428(
+        _class_NIAllTypesBridge, _sel_allocWithZone_, zone);
+    return NIAllTypesBridge.castFromPointer(_ret, retain: false, release: true);
+  }
+
+  /// alloc
+  static NIAllTypesBridge alloc() {
+    final _ret = _objc_msgSend_151sglz(_class_NIAllTypesBridge, _sel_alloc);
+    return NIAllTypesBridge.castFromPointer(_ret, retain: false, release: true);
+  }
+
+  /// Returns a new instance of NIAllTypesBridge constructed with the default `new` method.
+  factory NIAllTypesBridge() => new$();
+}
+
+extension NIAllTypesBridge$Methods on NIAllTypesBridge {
   /// initWithABool:anInt:anInt64:aDouble:anEnum:anotherEnum:aString:list:map:
   NIAllTypesBridge initWithABool(bool aBool,
       {required int anInt,
@@ -708,27 +772,8 @@ class NIAllTypesBridge extends objc.NSObject {
     return NIAllTypesBridge.castFromPointer(_ret, retain: false, release: true);
   }
 
-  /// new
-  static NIAllTypesBridge new$() {
-    final _ret = _objc_msgSend_151sglz(_class_NIAllTypesBridge, _sel_new);
-    return NIAllTypesBridge.castFromPointer(_ret, retain: false, release: true);
-  }
-
-  /// allocWithZone:
-  static NIAllTypesBridge allocWithZone(ffi.Pointer<objc.NSZone> zone) {
-    final _ret = _objc_msgSend_1cwp428(
-        _class_NIAllTypesBridge, _sel_allocWithZone_, zone);
-    return NIAllTypesBridge.castFromPointer(_ret, retain: false, release: true);
-  }
-
-  /// alloc
-  static NIAllTypesBridge alloc() {
-    final _ret = _objc_msgSend_151sglz(_class_NIAllTypesBridge, _sel_alloc);
-    return NIAllTypesBridge.castFromPointer(_ret, retain: false, release: true);
-  }
-
   /// self
-  NIAllTypesBridge self$1() {
+  NIAllTypesBridge self() {
     final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_self);
     return NIAllTypesBridge.castFromPointer(_ret, retain: true, release: true);
   }
@@ -744,9 +789,6 @@ class NIAllTypesBridge extends objc.NSObject {
     final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_autorelease);
     return NIAllTypesBridge.castFromPointer(_ret, retain: true, release: true);
   }
-
-  /// Returns a new instance of NIAllTypesBridge constructed with the default `new` method.
-  factory NIAllTypesBridge() => new$();
 }
 
 late final _class_NIHostIntegrationCoreApiSetup =
@@ -810,6 +852,30 @@ class NiTestsError extends objc.NSObject {
         obj.ref.pointer, _sel_isKindOfClass_, _class_NiTestsError);
   }
 
+  /// new
+  static NiTestsError new$() {
+    final _ret = _objc_msgSend_151sglz(_class_NiTestsError, _sel_new);
+    return NiTestsError.castFromPointer(_ret, retain: false, release: true);
+  }
+
+  /// allocWithZone:
+  static NiTestsError allocWithZone(ffi.Pointer<objc.NSZone> zone) {
+    final _ret =
+        _objc_msgSend_1cwp428(_class_NiTestsError, _sel_allocWithZone_, zone);
+    return NiTestsError.castFromPointer(_ret, retain: false, release: true);
+  }
+
+  /// alloc
+  static NiTestsError alloc() {
+    final _ret = _objc_msgSend_151sglz(_class_NiTestsError, _sel_alloc);
+    return NiTestsError.castFromPointer(_ret, retain: false, release: true);
+  }
+
+  /// Returns a new instance of NiTestsError constructed with the default `new` method.
+  factory NiTestsError() => new$();
+}
+
+extension NiTestsError$Methods on NiTestsError {
   /// code
   objc.NSString? get code {
     final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_code);
@@ -873,27 +939,8 @@ class NiTestsError extends objc.NSObject {
     return NiTestsError.castFromPointer(_ret, retain: false, release: true);
   }
 
-  /// new
-  static NiTestsError new$() {
-    final _ret = _objc_msgSend_151sglz(_class_NiTestsError, _sel_new);
-    return NiTestsError.castFromPointer(_ret, retain: false, release: true);
-  }
-
-  /// allocWithZone:
-  static NiTestsError allocWithZone(ffi.Pointer<objc.NSZone> zone) {
-    final _ret =
-        _objc_msgSend_1cwp428(_class_NiTestsError, _sel_allocWithZone_, zone);
-    return NiTestsError.castFromPointer(_ret, retain: false, release: true);
-  }
-
-  /// alloc
-  static NiTestsError alloc() {
-    final _ret = _objc_msgSend_151sglz(_class_NiTestsError, _sel_alloc);
-    return NiTestsError.castFromPointer(_ret, retain: false, release: true);
-  }
-
   /// self
-  NiTestsError self$1() {
+  NiTestsError self() {
     final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_self);
     return NiTestsError.castFromPointer(_ret, retain: true, release: true);
   }
@@ -909,9 +956,6 @@ class NiTestsError extends objc.NSObject {
     final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_autorelease);
     return NiTestsError.castFromPointer(_ret, retain: true, release: true);
   }
-
-  /// Returns a new instance of NiTestsError constructed with the default `new` method.
-  factory NiTestsError() => new$();
 }
 
 late final _sel_noopWithWrappedError_ =
@@ -989,6 +1033,10 @@ late final _sel_echoNullableBoolWithANullableBool_wrappedError_ =
     objc.registerName("echoNullableBoolWithANullableBool:wrappedError:");
 late final _sel_echoNullableStringWithANullableString_wrappedError_ =
     objc.registerName("echoNullableStringWithANullableString:wrappedError:");
+late final _sel_echoNullableListWithANullableList_wrappedError_ =
+    objc.registerName("echoNullableListWithANullableList:wrappedError:");
+late final _sel_echoNullableMapWithMap_wrappedError_ =
+    objc.registerName("echoNullableMapWithMap:wrappedError:");
 late final _sel_echoNullableEnumWithAnEnum_wrappedError_ =
     objc.registerName("echoNullableEnumWithAnEnum:wrappedError:");
 late final _sel_echoAnotherNullableEnumWithAnotherEnum_wrappedError_ =
@@ -1017,16 +1065,6 @@ class NIHostIntegrationCoreApiSetup extends objc.NSObject {
         _class_NIHostIntegrationCoreApiSetup);
   }
 
-  /// init
-  NIHostIntegrationCoreApiSetup init() {
-    objc.checkOsVersionInternal('NIHostIntegrationCoreApiSetup.init',
-        iOS: (false, (2, 0, 0)), macOS: (false, (10, 0, 0)));
-    final _ret =
-        _objc_msgSend_151sglz(this.ref.retainAndReturnPointer(), _sel_init);
-    return NIHostIntegrationCoreApiSetup.castFromPointer(_ret,
-        retain: false, release: true);
-  }
-
   /// getInstanceWithName:
   static NIHostIntegrationCoreApiSetup? getInstanceWithName(
       objc.NSString name) {
@@ -1036,6 +1074,47 @@ class NIHostIntegrationCoreApiSetup extends objc.NSObject {
         ? null
         : NIHostIntegrationCoreApiSetup.castFromPointer(_ret,
             retain: true, release: true);
+  }
+
+  /// new
+  static NIHostIntegrationCoreApiSetup new$() {
+    final _ret =
+        _objc_msgSend_151sglz(_class_NIHostIntegrationCoreApiSetup, _sel_new);
+    return NIHostIntegrationCoreApiSetup.castFromPointer(_ret,
+        retain: false, release: true);
+  }
+
+  /// allocWithZone:
+  static NIHostIntegrationCoreApiSetup allocWithZone(
+      ffi.Pointer<objc.NSZone> zone) {
+    final _ret = _objc_msgSend_1cwp428(
+        _class_NIHostIntegrationCoreApiSetup, _sel_allocWithZone_, zone);
+    return NIHostIntegrationCoreApiSetup.castFromPointer(_ret,
+        retain: false, release: true);
+  }
+
+  /// alloc
+  static NIHostIntegrationCoreApiSetup alloc() {
+    final _ret =
+        _objc_msgSend_151sglz(_class_NIHostIntegrationCoreApiSetup, _sel_alloc);
+    return NIHostIntegrationCoreApiSetup.castFromPointer(_ret,
+        retain: false, release: true);
+  }
+
+  /// Returns a new instance of NIHostIntegrationCoreApiSetup constructed with the default `new` method.
+  factory NIHostIntegrationCoreApiSetup() => new$();
+}
+
+extension NIHostIntegrationCoreApiSetup$Methods
+    on NIHostIntegrationCoreApiSetup {
+  /// init
+  NIHostIntegrationCoreApiSetup init() {
+    objc.checkOsVersionInternal('NIHostIntegrationCoreApiSetup.init',
+        iOS: (false, (2, 0, 0)), macOS: (false, (10, 0, 0)));
+    final _ret =
+        _objc_msgSend_151sglz(this.ref.retainAndReturnPointer(), _sel_init);
+    return NIHostIntegrationCoreApiSetup.castFromPointer(_ret,
+        retain: false, release: true);
   }
 
   /// A no-op function taking no arguments and returning no value, to sanity
@@ -1358,6 +1437,46 @@ class NIHostIntegrationCoreApiSetup extends objc.NSObject {
         : objc.NSString.castFromPointer(_ret, retain: true, release: true);
   }
 
+  /// Returns the passed list, to test serialization and deserialization.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  objc.NSArray? echoNullableListWithANullableList(objc.NSArray? aNullableList,
+      {required NiTestsError wrappedError}) {
+    objc.checkOsVersionInternal(
+        'NIHostIntegrationCoreApiSetup.echoNullableListWithANullableList:wrappedError:',
+        iOS: (false, (13, 0, 0)),
+        macOS: (false, (16, 0, 0)));
+    final _ret = _objc_msgSend_15qeuct(
+        this.ref.pointer,
+        _sel_echoNullableListWithANullableList_wrappedError_,
+        aNullableList?.ref.pointer ?? ffi.nullptr,
+        wrappedError.ref.pointer);
+    return _ret.address == 0
+        ? null
+        : objc.NSArray.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// Returns the passed map, to test serialization and deserialization.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  objc.NSDictionary? echoNullableMapWithMap(objc.NSDictionary? map,
+      {required NiTestsError wrappedError}) {
+    objc.checkOsVersionInternal(
+        'NIHostIntegrationCoreApiSetup.echoNullableMapWithMap:wrappedError:',
+        iOS: (false, (13, 0, 0)),
+        macOS: (false, (16, 0, 0)));
+    final _ret = _objc_msgSend_15qeuct(
+        this.ref.pointer,
+        _sel_echoNullableMapWithMap_wrappedError_,
+        map?.ref.pointer ?? ffi.nullptr,
+        wrappedError.ref.pointer);
+    return _ret.address == 0
+        ? null
+        : objc.NSDictionary.castFromPointer(_ret, retain: true, release: true);
+  }
+
   /// echoNullableEnumWithAnEnum:wrappedError:
   ///
   /// iOS: introduced 13.0.0
@@ -1399,33 +1518,8 @@ class NIHostIntegrationCoreApiSetup extends objc.NSObject {
         : objc.NSNumber.castFromPointer(_ret, retain: true, release: true);
   }
 
-  /// new
-  static NIHostIntegrationCoreApiSetup new$() {
-    final _ret =
-        _objc_msgSend_151sglz(_class_NIHostIntegrationCoreApiSetup, _sel_new);
-    return NIHostIntegrationCoreApiSetup.castFromPointer(_ret,
-        retain: false, release: true);
-  }
-
-  /// allocWithZone:
-  static NIHostIntegrationCoreApiSetup allocWithZone(
-      ffi.Pointer<objc.NSZone> zone) {
-    final _ret = _objc_msgSend_1cwp428(
-        _class_NIHostIntegrationCoreApiSetup, _sel_allocWithZone_, zone);
-    return NIHostIntegrationCoreApiSetup.castFromPointer(_ret,
-        retain: false, release: true);
-  }
-
-  /// alloc
-  static NIHostIntegrationCoreApiSetup alloc() {
-    final _ret =
-        _objc_msgSend_151sglz(_class_NIHostIntegrationCoreApiSetup, _sel_alloc);
-    return NIHostIntegrationCoreApiSetup.castFromPointer(_ret,
-        retain: false, release: true);
-  }
-
   /// self
-  NIHostIntegrationCoreApiSetup self$1() {
+  NIHostIntegrationCoreApiSetup self() {
     final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_self);
     return NIHostIntegrationCoreApiSetup.castFromPointer(_ret,
         retain: true, release: true);
@@ -1444,9 +1538,6 @@ class NIHostIntegrationCoreApiSetup extends objc.NSObject {
     return NIHostIntegrationCoreApiSetup.castFromPointer(_ret,
         retain: true, release: true);
   }
-
-  /// Returns a new instance of NIHostIntegrationCoreApiSetup constructed with the default `new` method.
-  factory NIHostIntegrationCoreApiSetup() => new$();
 }
 
 late final _class_NSNumberWrapper =
@@ -1509,6 +1600,30 @@ class NSNumberWrapper extends objc.NSObject {
         obj.ref.pointer, _sel_isKindOfClass_, _class_NSNumberWrapper);
   }
 
+  /// new
+  static NSNumberWrapper new$() {
+    final _ret = _objc_msgSend_151sglz(_class_NSNumberWrapper, _sel_new);
+    return NSNumberWrapper.castFromPointer(_ret, retain: false, release: true);
+  }
+
+  /// allocWithZone:
+  static NSNumberWrapper allocWithZone(ffi.Pointer<objc.NSZone> zone) {
+    final _ret = _objc_msgSend_1cwp428(
+        _class_NSNumberWrapper, _sel_allocWithZone_, zone);
+    return NSNumberWrapper.castFromPointer(_ret, retain: false, release: true);
+  }
+
+  /// alloc
+  static NSNumberWrapper alloc() {
+    final _ret = _objc_msgSend_151sglz(_class_NSNumberWrapper, _sel_alloc);
+    return NSNumberWrapper.castFromPointer(_ret, retain: false, release: true);
+  }
+
+  /// Returns a new instance of NSNumberWrapper constructed with the default `new` method.
+  factory NSNumberWrapper() => new$();
+}
+
+extension NSNumberWrapper$Methods on NSNumberWrapper {
   /// initWithNumber:type:
   NSNumberWrapper initWithNumber(objc.NSNumber number, {required int type}) {
     final _ret = _objc_msgSend_9slupp(this.ref.retainAndReturnPointer(),
@@ -1546,27 +1661,8 @@ class NSNumberWrapper extends objc.NSObject {
     return NSNumberWrapper.castFromPointer(_ret, retain: false, release: true);
   }
 
-  /// new
-  static NSNumberWrapper new$() {
-    final _ret = _objc_msgSend_151sglz(_class_NSNumberWrapper, _sel_new);
-    return NSNumberWrapper.castFromPointer(_ret, retain: false, release: true);
-  }
-
-  /// allocWithZone:
-  static NSNumberWrapper allocWithZone(ffi.Pointer<objc.NSZone> zone) {
-    final _ret = _objc_msgSend_1cwp428(
-        _class_NSNumberWrapper, _sel_allocWithZone_, zone);
-    return NSNumberWrapper.castFromPointer(_ret, retain: false, release: true);
-  }
-
-  /// alloc
-  static NSNumberWrapper alloc() {
-    final _ret = _objc_msgSend_151sglz(_class_NSNumberWrapper, _sel_alloc);
-    return NSNumberWrapper.castFromPointer(_ret, retain: false, release: true);
-  }
-
   /// self
-  NSNumberWrapper self$1() {
+  NSNumberWrapper self() {
     final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_self);
     return NSNumberWrapper.castFromPointer(_ret, retain: true, release: true);
   }
@@ -1582,7 +1678,4 @@ class NSNumberWrapper extends objc.NSObject {
     final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_autorelease);
     return NSNumberWrapper.castFromPointer(_ret, retain: true, release: true);
   }
-
-  /// Returns a new instance of NSNumberWrapper constructed with the default `new` method.
-  factory NSNumberWrapper() => new$();
 }

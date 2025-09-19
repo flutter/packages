@@ -29,7 +29,7 @@ dependencies:
     git:
       url: https://github.com/dart-lang/native/
       path: pkgs/jni
-      ref: df4cc9acb90bc6594c6044d452d51b5f14e6acde
+      ref: e78967cc8ef3de2d4e283645c509658f39d9225d
   ffi: ^2.1.3
 
 dev_dependencies:

@@ -1216,6 +1216,14 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
 }
 
 class NITestsClass: NSObject, NIHostIntegrationCoreApi {
+  func echoNullableList(aNullableList: [Any?]?) throws -> [Any?]? {
+    return aNullableList
+  }
+
+  func echoNullableMap(map: [AnyHashable?: Any?]?) throws -> [AnyHashable?: Any?]? {
+    return map
+  }
+
   func echoNullableEnum(anEnum: NIAnEnum?) throws -> NIAnEnum? {
     return anEnum
   }

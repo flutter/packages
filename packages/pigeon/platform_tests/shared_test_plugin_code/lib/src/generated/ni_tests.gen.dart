@@ -616,6 +616,8 @@ class NIAllNullableTypesWithoutRecursion {
     this.aNullableInt64,
     this.aNullableDouble,
     this.aNullableString,
+    this.list,
+    this.map,
   });
 
   bool? aNullableBool;
@@ -628,6 +630,10 @@ class NIAllNullableTypesWithoutRecursion {
 
   String? aNullableString;
 
+  List<Object?>? list;
+
+  Map<Object?, Object?>? map;
+
   List<Object?> _toList() {
     return <Object?>[
       aNullableBool,
@@ -635,6 +641,8 @@ class NIAllNullableTypesWithoutRecursion {
       aNullableInt64,
       aNullableDouble,
       aNullableString,
+      list,
+      map,
     ];
   }
 
@@ -645,6 +653,8 @@ class NIAllNullableTypesWithoutRecursion {
   //     aNullableInt64: _PigeonJniCodec.writeValue<JLong?>(aNullableInt64),
   //     aNullableDouble: _PigeonJniCodec.writeValue<JDouble?>(aNullableDouble),
   //     aNullableString: _PigeonJniCodec.writeValue<JString?>(aNullableString),
+  //     list: _PigeonJniCodec.writeValue<JList<JObject?>?>(list),
+  //     map: _PigeonJniCodec.writeValue<JMap<JObject, JObject?>?>(map),
   //   );
   // }
 
@@ -656,6 +666,8 @@ class NIAllNullableTypesWithoutRecursion {
       aNullableInt64: _PigeonFfiCodec.writeValue<NSNumber?>(aNullableInt64),
       aNullableDouble: _PigeonFfiCodec.writeValue<NSNumber?>(aNullableDouble),
       aNullableString: _PigeonFfiCodec.writeValue<NSString?>(aNullableString),
+      list: _PigeonFfiCodec.writeValue<NSMutableArray?>(list),
+      map: _PigeonFfiCodec.writeValue<NSDictionary?>(map),
     );
   }
 
@@ -681,6 +693,12 @@ class NIAllNullableTypesWithoutRecursion {
             aNullableString: jniClass
                 .getANullableString()
                 ?.toDartString(releaseOriginal: true),
+            list: (_PigeonJniCodec.readValue(jniClass.getList())
+                    as List<Object?>?)
+                ?.cast<Object?>(),
+            map: (_PigeonJniCodec.readValue(jniClass.getMap())
+                    as Map<Object?, Object?>?)
+                ?.cast<Object?, Object?>(),
           );
   }
 
@@ -694,6 +712,11 @@ class NIAllNullableTypesWithoutRecursion {
             aNullableInt64: ffiClass.aNullableInt64?.longValue,
             aNullableDouble: ffiClass.aNullableDouble?.doubleValue,
             aNullableString: ffiClass.aNullableString?.toDartString(),
+            list: (_PigeonFfiCodec.readValue(ffiClass.list) as List<Object?>?)
+                ?.cast<Object?>(),
+            map: (_PigeonFfiCodec.readValue(ffiClass.map)
+                    as Map<Object?, Object?>?)
+                ?.cast<Object?, Object?>(),
           );
   }
 
@@ -705,6 +728,8 @@ class NIAllNullableTypesWithoutRecursion {
       aNullableInt64: result[2] as int?,
       aNullableDouble: result[3] as double?,
       aNullableString: result[4] as String?,
+      list: result[5] as List<Object?>?,
+      map: result[6] as Map<Object?, Object?>?,
     );
   }
 
@@ -722,7 +747,9 @@ class NIAllNullableTypesWithoutRecursion {
         aNullableInt == other.aNullableInt &&
         aNullableInt64 == other.aNullableInt64 &&
         aNullableDouble == other.aNullableDouble &&
-        aNullableString == other.aNullableString;
+        aNullableString == other.aNullableString &&
+        _deepEquals(list, other.list) &&
+        _deepEquals(map, other.map);
   }
 
   @override
@@ -1286,6 +1313,70 @@ class NIHostIntegrationCoreApiForNativeInterop {
               details: error.details.toString());
         } else {
           final String? dartTypeRes = res?.toDartString();
+          return dartTypeRes;
+        }
+      }
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    } catch (e) {
+      rethrow;
+    }
+    throw Exception("this shouldn't be possible");
+  }
+
+  List<Object?>? echoNullableList(List<Object?>? aNullableList) {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final NSArray? res = _ffiApi.echoNullableListWithANullableList(
+            _PigeonFfiCodec.writeValue<NSMutableArray?>(aNullableList),
+            wrappedError: error);
+        if (error.code != null) {
+          throw PlatformException(
+              code: error.code!.toDartString(),
+              message: error.message?.toDartString(),
+              details: error.details.toString());
+        } else {
+          final List<Object?>? dartTypeRes =
+              (_PigeonFfiCodec.readValue(res) as List<Object?>?)
+                  ?.cast<Object?>();
+          return dartTypeRes;
+        }
+      }
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    } catch (e) {
+      rethrow;
+    }
+    throw Exception("this shouldn't be possible");
+  }
+
+  Map<Object?, Object?>? echoNullableMap(Map<Object?, Object?>? map) {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final NSDictionary? res = _ffiApi.echoNullableMapWithMap(
+            _PigeonFfiCodec.writeValue<NSDictionary?>(map),
+            wrappedError: error);
+        if (error.code != null) {
+          throw PlatformException(
+              code: error.code!.toDartString(),
+              message: error.message?.toDartString(),
+              details: error.details.toString());
+        } else {
+          final Map<Object?, Object?>? dartTypeRes =
+              (_PigeonFfiCodec.readValue(res) as Map<Object?, Object?>?)
+                  ?.cast<Object?, Object?>();
           return dartTypeRes;
         }
       }
@@ -1965,6 +2056,70 @@ class NIHostIntegrationCoreApi {
       );
     } else {
       return (pigeonVar_replyList[0] as String?);
+    }
+  }
+
+  /// Returns the passed list, to test serialization and deserialization.
+  Future<List<Object?>?> echoNullableList(List<Object?>? aNullableList) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoNullableList(aNullableList);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoNullableList$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[aNullableList]);
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return (pigeonVar_replyList[0] as List<Object?>?)?.cast<Object?>();
+    }
+  }
+
+  /// Returns the passed map, to test serialization and deserialization.
+  Future<Map<Object?, Object?>?> echoNullableMap(
+      Map<Object?, Object?>? map) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoNullableMap(map);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoNullableMap$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[map]);
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return (pigeonVar_replyList[0] as Map<Object?, Object?>?)
+          ?.cast<Object?, Object?>();
     }
   }
 

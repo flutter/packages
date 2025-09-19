@@ -137,7 +137,7 @@ final List<Object?> list = <Object?>[
   2,
   true,
   3.14,
-  // null,
+  null,
 ];
 
 final List<String?> stringList = <String?>[
@@ -283,7 +283,7 @@ final NIAllNullableTypesWithoutRecursion
   // aNullableFloatArray: Float64List.fromList(<double>[2.71828, doublePi]),
   // aNullableEnum: NIAnEnum.fourHundredTwentyTwo,
   // aNullableObject: 0,
-  // list: list,
+  list: list,
   // stringList: stringList,
   // intList: intList,
   // doubleList: doubleList,
@@ -292,7 +292,7 @@ final NIAllNullableTypesWithoutRecursion
   // objectList: list,
   // listList: listList,
   // mapList: mapList,
-  // map: map,
+  map: map,
   // stringMap: stringMap,
   // intMap: intMap,
   // enumMap: enumMap,
@@ -329,7 +329,7 @@ final NIAllTypes genericNIAllTypes = NIAllTypes(
   // aFloatArray: Float64List.fromList(<double>[2.71828, doublePi]),
   anEnum: NIAnEnum.fortyTwo,
   // anObject: 1,
-  list: list,
+  list: nonNullList,
   // stringList: nonNullStringList,
   // intList: nonNullIntList,
   // doubleList: nonNullDoubleList,

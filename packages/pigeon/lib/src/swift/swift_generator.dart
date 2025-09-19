@@ -799,9 +799,9 @@ if (wrapped == nil) {
       case 'String':
         return '$varName as NSString$nullable';
       case 'List':
-        return '_PigeonFfiCodec.writeValue(value: $varName, isObject: true) as! [NSObject]';
+        return '_PigeonFfiCodec.writeValue(value: $varName, isObject: true) as${type.isNullable ? '?' : '!'} [NSObject]';
       case 'Map':
-        return '_PigeonFfiCodec.writeValue(value: $varName, isObject: true) as! [NSObject: NSObject]';
+        return '_PigeonFfiCodec.writeValue(value: $varName, isObject: true) as${type.isNullable ? '?' : '!'} [NSObject: NSObject]';
       default:
         return varName;
     }
