@@ -21,7 +21,7 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
   String? _error;
 
   // Sample video URLs with multiple audio tracks
-  final List<String> _sampleVideos = <String>[
+  static const List<String> _sampleVideos = <String>[
     'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
     'https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8',
     // Add HLS stream with multiple audio tracks if available
@@ -45,11 +45,12 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
     try {
       await _controller?.dispose();
 
-      _controller = VideoPlayerController.networkUrl(
+      final VideoPlayerController controller = VideoPlayerController.networkUrl(
         Uri.parse(_sampleVideos[_selectedVideoIndex]),
       );
+      _controller = controller;
 
-      await _controller!.initialize();
+      await controller.initialize();
 
       // Get audio tracks after initialization
       await _loadAudioTracks();
@@ -66,12 +67,13 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
   }
 
   Future<void> _loadAudioTracks() async {
-    if (_controller == null || !_controller!.value.isInitialized) {
+    final VideoPlayerController? controller = _controller;
+    if (controller == null || !controller.value.isInitialized) {
       return;
     }
 
     try {
-      final List<VideoAudioTrack> tracks = await _controller!.getAudioTracks();
+      final List<VideoAudioTrack> tracks = await controller.getAudioTracks();
       setState(() {
         _audioTracks = tracks;
       });
@@ -83,12 +85,13 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
   }
 
   Future<void> _selectAudioTrack(String trackId) async {
-    if (_controller == null) {
+    final VideoPlayerController? controller = _controller;
+    if (controller == null) {
       return;
     }
 
     try {
-      await _controller!.selectAudioTrack(trackId);
+      await controller.selectAudioTrack(trackId);
 
       // Add a small delay to allow ExoPlayer to process the track selection change
       // This is needed because ExoPlayer's track selection update is asynchronous
@@ -107,9 +110,9 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
       if (!mounted) {
         return;
       }
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to select audio track: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Failed to select audio track: $e')));
     }
   }
 
@@ -191,22 +194,20 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _initializeVideo,
-              child: const Text('Retry'),
-            ),
+            ElevatedButton(onPressed: _initializeVideo, child: const Text('Retry')),
           ],
         ),
       );
     }
 
-    if (_controller?.value.isInitialized ?? false) {
+    final VideoPlayerController? controller = _controller;
+    if (controller?.value.isInitialized ?? false) {
       return Stack(
         alignment: Alignment.center,
         children: <Widget>[
           AspectRatio(
-            aspectRatio: _controller!.value.aspectRatio,
-            child: VideoPlayer(_controller!),
+            aspectRatio: controller!.value.aspectRatio,
+            child: VideoPlayer(controller),
           ),
           _buildPlayPauseButton(),
         ],
@@ -219,6 +220,11 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
   }
 
   Widget _buildPlayPauseButton() {
+    final VideoPlayerController? controller = _controller;
+    if (controller == null) {
+      return const SizedBox.shrink();
+    }
+
     return Container(
       decoration: BoxDecoration(
         color: Colors.black54,
@@ -228,16 +234,14 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
         iconSize: 48,
         color: Colors.white,
         onPressed: () {
-          if (_controller!.value.isPlaying) {
-            _controller!.pause();
+          if (controller.value.isPlaying) {
+            controller.pause();
           } else {
-            _controller!.play();
+            controller.play();
           }
           setState(() {});
         },
-        icon: Icon(
-          _controller!.value.isPlaying ? Icons.pause : Icons.play_arrow,
-        ),
+        icon: Icon(controller.value.isPlaying ? Icons.pause : Icons.play_arrow),
       ),
     );
   }
@@ -309,10 +313,8 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
             Text('Language: ${track.language}'),
             if (track.codec != null) Text('Codec: ${track.codec}'),
             if (track.bitrate != null) Text('Bitrate: ${track.bitrate} bps'),
-            if (track.sampleRate != null)
-              Text('Sample Rate: ${track.sampleRate} Hz'),
-            if (track.channelCount != null)
-              Text('Channels: ${track.channelCount}'),
+            if (track.sampleRate != null) Text('Sample Rate: ${track.sampleRate} Hz'),
+            if (track.channelCount != null) Text('Channels: ${track.channelCount}'),
           ],
         ),
         trailing:

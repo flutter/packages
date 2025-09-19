@@ -24,17 +24,19 @@ void main() {
 
     setUp(() {
       // Never set "src" on the video, so this test doesn't hit the network!
-      video = web.HTMLVideoElement()
-        ..controls = true
-        ..playsInline = false;
+      video =
+          web.HTMLVideoElement()
+            ..controls = true
+            ..playsInline = false;
     });
 
     testWidgets('initialize() calls load', (WidgetTester _) async {
       bool loadCalled = false;
 
-      video['load'] = () {
-        loadCalled = true;
-      }.toJS;
+      video['load'] =
+          () {
+            loadCalled = true;
+          }.toJS;
 
       VideoPlayer(videoElement: video).initialize();
 
@@ -191,15 +193,17 @@ void main() {
         WidgetTester tester,
       ) async {
         // Take all the "buffering" events that we see during the next few seconds
-        final Future<List<bool>> stream = timedStream
-            .where(
-              (VideoEvent event) => bufferingEvents.contains(event.eventType),
-            )
-            .map(
-              (VideoEvent event) =>
-                  event.eventType == VideoEventType.bufferingStart,
-            )
-            .toList();
+        final Future<List<bool>> stream =
+            timedStream
+                .where(
+                  (VideoEvent event) =>
+                      bufferingEvents.contains(event.eventType),
+                )
+                .map(
+                  (VideoEvent event) =>
+                      event.eventType == VideoEventType.bufferingStart,
+                )
+                .toList();
 
         // Simulate some events coming from the player...
         player.setBuffering(true);
@@ -222,15 +226,17 @@ void main() {
         WidgetTester tester,
       ) async {
         // Take all the "buffering" events that we see during the next few seconds
-        final Future<List<bool>> stream = timedStream
-            .where(
-              (VideoEvent event) => bufferingEvents.contains(event.eventType),
-            )
-            .map(
-              (VideoEvent event) =>
-                  event.eventType == VideoEventType.bufferingStart,
-            )
-            .toList();
+        final Future<List<bool>> stream =
+            timedStream
+                .where(
+                  (VideoEvent event) =>
+                      bufferingEvents.contains(event.eventType),
+                )
+                .map(
+                  (VideoEvent event) =>
+                      event.eventType == VideoEventType.bufferingStart,
+                )
+                .toList();
 
         player.setBuffering(true);
 
@@ -247,15 +253,17 @@ void main() {
         WidgetTester tester,
       ) async {
         // Take all the "buffering" events that we see during the next few seconds
-        final Future<List<bool>> stream = timedStream
-            .where(
-              (VideoEvent event) => bufferingEvents.contains(event.eventType),
-            )
-            .map(
-              (VideoEvent event) =>
-                  event.eventType == VideoEventType.bufferingStart,
-            )
-            .toList();
+        final Future<List<bool>> stream =
+            timedStream
+                .where(
+                  (VideoEvent event) =>
+                      bufferingEvents.contains(event.eventType),
+                )
+                .map(
+                  (VideoEvent event) =>
+                      event.eventType == VideoEventType.bufferingStart,
+                )
+                .toList();
 
         player.setBuffering(true);
 
@@ -277,12 +285,13 @@ void main() {
         video.dispatchEvent(web.Event('canplay'));
 
         // Take all the "initialized" events that we see during the next few seconds
-        final Future<List<VideoEvent>> stream = timedStream
-            .where(
-              (VideoEvent event) =>
-                  event.eventType == VideoEventType.initialized,
-            )
-            .toList();
+        final Future<List<VideoEvent>> stream =
+            timedStream
+                .where(
+                  (VideoEvent event) =>
+                      event.eventType == VideoEventType.initialized,
+                )
+                .toList();
 
         video.dispatchEvent(web.Event('canplay'));
         video.dispatchEvent(web.Event('canplay'));
@@ -300,12 +309,13 @@ void main() {
         video.dispatchEvent(web.Event('loadedmetadata'));
         video.dispatchEvent(web.Event('loadedmetadata'));
 
-        final Future<List<VideoEvent>> stream = timedStream
-            .where(
-              (VideoEvent event) =>
-                  event.eventType == VideoEventType.initialized,
-            )
-            .toList();
+        final Future<List<VideoEvent>> stream =
+            timedStream
+                .where(
+                  (VideoEvent event) =>
+                      event.eventType == VideoEventType.initialized,
+                )
+                .toList();
 
         final List<VideoEvent> events = await stream;
 
@@ -318,12 +328,13 @@ void main() {
         video.dispatchEvent(web.Event('loadeddata'));
         video.dispatchEvent(web.Event('loadeddata'));
 
-        final Future<List<VideoEvent>> stream = timedStream
-            .where(
-              (VideoEvent event) =>
-                  event.eventType == VideoEventType.initialized,
-            )
-            .toList();
+        final Future<List<VideoEvent>> stream =
+            timedStream
+                .where(
+                  (VideoEvent event) =>
+                      event.eventType == VideoEventType.initialized,
+                )
+                .toList();
 
         final List<VideoEvent> events = await stream;
 
@@ -335,12 +346,13 @@ void main() {
         setInfinityDuration(video);
         expect(video.duration.isInfinite, isTrue);
 
-        final Future<List<VideoEvent>> stream = timedStream
-            .where(
-              (VideoEvent event) =>
-                  event.eventType == VideoEventType.initialized,
-            )
-            .toList();
+        final Future<List<VideoEvent>> stream =
+            timedStream
+                .where(
+                  (VideoEvent event) =>
+                      event.eventType == VideoEventType.initialized,
+                )
+                .toList();
 
         video.dispatchEvent(web.Event('canplay'));
 
