@@ -296,6 +296,8 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
         return PopScope(
           // Prevent ShellRoute from being popped, for example
           // by an iOS back gesture, when the route has active sub-routes.
+          // TODO(LukasMirbt): Remove when minimum flutter version includes
+          // https://github.com/flutter/flutter/pull/152330.
           canPop: match.matches.length == 1,
           child: _CustomNavigator(
             // The state needs to persist across rebuild.
