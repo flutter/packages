@@ -1155,9 +1155,10 @@
   // Mock current selection for both iOS 11+ and older versions
   id mockCurrentMediaSelection = OCMClassMock([AVMediaSelection class]);
   OCMStub([mockPlayerItem currentMediaSelection]).andReturn(mockCurrentMediaSelection);
-  OCMStub([mockCurrentMediaSelection selectedMediaOptionInMediaSelectionGroup:mockMediaSelectionGroup])
+  OCMStub(
+      [mockCurrentMediaSelection selectedMediaOptionInMediaSelectionGroup:mockMediaSelectionGroup])
       .andReturn(mockOption1);
-  
+
   // Also mock the deprecated method for iOS < 11
   OCMStub([mockPlayerItem selectedMediaOptionInMediaSelectionGroup:mockMediaSelectionGroup])
       .andReturn(mockOption1);

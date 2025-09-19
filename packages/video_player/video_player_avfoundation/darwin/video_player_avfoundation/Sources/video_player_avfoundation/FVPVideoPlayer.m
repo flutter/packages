@@ -511,9 +511,10 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
       }
 
       NSString *commonMetadataTitle = nil;
-      NSArray<AVMetadataItem *> *titleItems = [AVMetadataItem metadataItemsFromArray:option.commonMetadata
-                                                                              withKey:AVMetadataCommonKeyTitle
-                                                                             keySpace:AVMetadataKeySpaceCommon];
+      NSArray<AVMetadataItem *> *titleItems =
+          [AVMetadataItem metadataItemsFromArray:option.commonMetadata
+                                         withKey:AVMetadataCommonKeyTitle
+                                        keySpace:AVMetadataKeySpaceCommon];
       if (titleItems.count > 0 && titleItems.firstObject.stringValue) {
         commonMetadataTitle = titleItems.firstObject.stringValue;
       }
@@ -567,24 +568,27 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
     NSNumber *channelCount = nil;
     NSString *codec = nil;
 
-    // Attempt format description parsing 
+    // Attempt format description parsing
     if (track.formatDescriptions.count > 0) {
       @try {
         id formatDescObj = track.formatDescriptions[0];
-        
+
         // Validate that we have a valid format description object
         if (formatDescObj && [formatDescObj respondsToSelector:@selector(self)]) {
           NSString *className = NSStringFromClass([formatDescObj class]);
-          
+
           // Only process objects that are clearly Core Media format descriptions
-          // This works for both real CMFormatDescription objects and properly configured mock objects
+          // This works for both real CMFormatDescription objects and properly configured mock
+          // objects
           if ([className hasPrefix:@"CMAudioFormatDescription"] ||
               [className hasPrefix:@"CMVideoFormatDescription"] ||
               [className hasPrefix:@"CMFormatDescription"] ||
-              [formatDescObj isKindOfClass:[NSObject class]]) { // Allow mock objects that inherit from NSObject
-            
+              [formatDescObj
+                  isKindOfClass:[NSObject
+                                    class]]) {  // Allow mock objects that inherit from NSObject
+
             CMFormatDescriptionRef formatDesc = (__bridge CMFormatDescriptionRef)formatDescObj;
-            
+
             // Validate the format description reference before using Core Media APIs
             if (formatDesc && CFGetTypeID(formatDesc) == CMFormatDescriptionGetTypeID()) {
               // Get audio stream basic description
