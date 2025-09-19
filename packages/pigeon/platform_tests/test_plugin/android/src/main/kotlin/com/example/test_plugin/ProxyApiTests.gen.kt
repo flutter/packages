@@ -461,13 +461,37 @@ private class ProxyApiTestsPigeonProxyApiBaseCodec(
     }
 
     if (value is ProxyApiTestClass) {
-      registrar.getPigeonApiProxyApiTestClass().pigeon_newInstance(value) {}
+      registrar.getPigeonApiProxyApiTestClass().pigeon_newInstance(value) {
+        if (it.isFailure) {
+          Log.w(
+              "PigeonProxyApiBaseCodec",
+              "Failed to create new Dart proxy instance of ProxyApiTestClass: $value. ${it.exceptionOrNull()}")
+        }
+      }
     } else if (value is com.example.test_plugin.ProxyApiSuperClass) {
-      registrar.getPigeonApiProxyApiSuperClass().pigeon_newInstance(value) {}
+      registrar.getPigeonApiProxyApiSuperClass().pigeon_newInstance(value) {
+        if (it.isFailure) {
+          Log.w(
+              "PigeonProxyApiBaseCodec",
+              "Failed to create new Dart proxy instance of ProxyApiSuperClass: $value. ${it.exceptionOrNull()}")
+        }
+      }
     } else if (value is ProxyApiInterface) {
-      registrar.getPigeonApiProxyApiInterface().pigeon_newInstance(value) {}
+      registrar.getPigeonApiProxyApiInterface().pigeon_newInstance(value) {
+        if (it.isFailure) {
+          Log.w(
+              "PigeonProxyApiBaseCodec",
+              "Failed to create new Dart proxy instance of ProxyApiInterface: $value. ${it.exceptionOrNull()}")
+        }
+      }
     } else if (android.os.Build.VERSION.SDK_INT >= 25 && value is ClassWithApiRequirement) {
-      registrar.getPigeonApiClassWithApiRequirement().pigeon_newInstance(value) {}
+      registrar.getPigeonApiClassWithApiRequirement().pigeon_newInstance(value) {
+        if (it.isFailure) {
+          Log.w(
+              "PigeonProxyApiBaseCodec",
+              "Failed to create new Dart proxy instance of ClassWithApiRequirement: $value. ${it.exceptionOrNull()}")
+        }
+      }
     }
 
     when {

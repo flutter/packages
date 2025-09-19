@@ -1043,7 +1043,13 @@ if (wrapped == null) {
 
               indent.format('''
                   ${index > 0 ? ' else ' : ''}if (${versionCheck}value is $className) {
-                    registrar.get$hostProxyApiPrefix${api.name}().${classMemberNamePrefix}newInstance(value) { }
+                    registrar.get$hostProxyApiPrefix${api.name}().${classMemberNamePrefix}newInstance(value) {
+                      if (it.isFailure) {
+                        Log.w(
+                          "${proxyApiCodecName(const InternalKotlinOptions(kotlinOut: ''))}",
+                          "Failed to create new Dart proxy instance of ${api.name}: \$value. \${it.exceptionOrNull()}")
+                      }
+                    }
                   }''');
             });
             indent.newln();
