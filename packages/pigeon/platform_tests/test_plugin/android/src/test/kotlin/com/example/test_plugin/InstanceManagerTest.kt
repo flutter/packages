@@ -149,10 +149,28 @@ class InstanceManagerTest {
     assertFalse(finalizerRan)
   }
 
+  @Test
+  fun getIdentifierForStrongReferenceDoesNotReplaceOriginal() {
+    val instanceManager: ProxyApiTestsPigeonInstanceManager = createInstanceManager()
+    instanceManager.stopFinalizationListener()
+
+    val testString = "aString"
+    val testObject1 = TestDataClass(testString)
+
+    val identifier = instanceManager.addHostCreatedInstance(testObject1)
+
+    val testObject2 = TestDataClass(testString)
+    assertTrue(instanceManager.containsInstance(testObject2))
+    assertEquals(identifier, instanceManager.getIdentifierForStrongReference(testObject2))
+    assertTrue(testObject1 === instanceManager.remove(identifier))
+  }
+
   private fun createInstanceManager(): ProxyApiTestsPigeonInstanceManager {
     return ProxyApiTestsPigeonInstanceManager.create(
         object : ProxyApiTestsPigeonInstanceManager.PigeonFinalizationListener {
           override fun onFinalize(identifier: Long) {}
         })
   }
+
+  data class TestDataClass(val value: String)
 }

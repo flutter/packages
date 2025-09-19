@@ -113,7 +113,7 @@ class ${kotlinInstanceManagerClassName(options)}(private val finalizationListene
   fun getIdentifierForStrongReference(instance: Any?): Long? {
     logWarningIfFinalizationListenerHasStopped()
     val identifier = identifiers[instance]
-    if (identifier != null) {
+    if (identifier != null && strongInstances[identifier] == null) {
       strongInstances[identifier] = instance!!
     }
     return identifier
