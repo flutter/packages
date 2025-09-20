@@ -130,9 +130,9 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
       if (!mounted) {
         return;
       }
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Failed to select audio track: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to select audio track: $e')),
+      );
     }
   }
 
@@ -241,7 +241,10 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16),
-            ElevatedButton(onPressed: _initializeVideo, child: const Text('Retry')),
+            ElevatedButton(
+              onPressed: _initializeVideo,
+              child: const Text('Retry'),
+            ),
           ],
         ),
       );
@@ -359,8 +362,10 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
             Text('Language: ${track.language}'),
             if (track.codec != null) Text('Codec: ${track.codec}'),
             if (track.bitrate != null) Text('Bitrate: ${track.bitrate} bps'),
-            if (track.sampleRate != null) Text('Sample Rate: ${track.sampleRate} Hz'),
-            if (track.channelCount != null) Text('Channels: ${track.channelCount}'),
+            if (track.sampleRate != null)
+              Text('Sample Rate: ${track.sampleRate} Hz'),
+            if (track.channelCount != null)
+              Text('Channels: ${track.channelCount}'),
           ],
         ),
         trailing:
