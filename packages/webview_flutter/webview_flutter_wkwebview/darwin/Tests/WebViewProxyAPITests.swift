@@ -311,7 +311,6 @@ class WebViewProxyAPITests: XCTestCase {
       XCTAssertEqual(webView.scrollView.contentInsetAdjustmentBehavior, .never)
     }
 
-    @available(iOS 13.0, *)
     @MainActor
     func testScrollViewsAutomaticallyAdjustsScrollIndicatorInsetsShouldbeFalse() {
       let registrar = TestProxyApiRegistrar()

@@ -160,6 +160,15 @@ class MockAndroidWebViewController extends _i1.Mock
           as _i5.Future<void>);
 
   @override
+  _i5.Future<void> loadFileWithParams(_i3.LoadFileParams? params) =>
+      (super.noSuchMethod(
+            Invocation.method(#loadFileWithParams, [params]),
+            returnValue: _i5.Future<void>.value(),
+            returnValueForMissingStub: _i5.Future<void>.value(),
+          )
+          as _i5.Future<void>);
+
+  @override
   _i5.Future<void> loadFlutterAsset(String? key) =>
       (super.noSuchMethod(
             Invocation.method(#loadFlutterAsset, [key]),

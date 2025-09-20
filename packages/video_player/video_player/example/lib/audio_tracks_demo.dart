@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
@@ -19,6 +21,10 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
   List<VideoAudioTrack> _audioTracks = <VideoAudioTrack>[];
   bool _isLoading = false;
   String? _error;
+
+  // Track previous state to detect relevant changes
+  bool _wasPlaying = false;
+  bool _wasInitialized = false;
 
   // Sample video URLs with multiple audio tracks
   static const List<String> _sampleVideos = <String>[
@@ -52,13 +58,25 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
 
       await controller.initialize();
 
+      // Add listener for video player state changes
+      _controller!.addListener(_onVideoPlayerValueChanged);
+
+      // Initialize tracking variables
+      _wasPlaying = _controller!.value.isPlaying;
+      _wasInitialized = _controller!.value.isInitialized;
+
       // Get audio tracks after initialization
       await _loadAudioTracks();
-
+      if (!mounted) {
+        return;
+      }
       setState(() {
         _isLoading = false;
       });
     } catch (e) {
+      if (!mounted) {
+        return;
+      }
       setState(() {
         _error = 'Failed to initialize video: $e';
         _isLoading = false;
@@ -73,11 +91,17 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
     }
 
     try {
-      final List<VideoAudioTrack> tracks = await controller.getAudioTracks();
+      final List<VideoAudioTrack> tracks = await _controller!.getAudioTracks();
+      if (!mounted) {
+        return;
+      }
       setState(() {
         _audioTracks = tracks;
       });
     } catch (e) {
+      if (!mounted) {
+        return;
+      }
       setState(() {
         _error = 'Failed to load audio tracks: $e';
       });
@@ -92,10 +116,6 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
 
     try {
       await controller.selectAudioTrack(trackId);
-
-      // Add a small delay to allow ExoPlayer to process the track selection change
-      // This is needed because ExoPlayer's track selection update is asynchronous
-      await Future<void>.delayed(const Duration(milliseconds: 100));
 
       // Reload tracks to update selection status
       await _loadAudioTracks();
@@ -116,8 +136,34 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
     }
   }
 
+  void _onVideoPlayerValueChanged() {
+    if (!mounted || _controller == null) {
+      return;
+    }
+
+    final VideoPlayerValue currentValue = _controller!.value;
+    bool shouldUpdate = false;
+
+    // Check for relevant state changes that affect UI
+    if (currentValue.isPlaying != _wasPlaying) {
+      _wasPlaying = currentValue.isPlaying;
+      shouldUpdate = true;
+    }
+
+    if (currentValue.isInitialized != _wasInitialized) {
+      _wasInitialized = currentValue.isInitialized;
+      shouldUpdate = true;
+    }
+
+    // Only call setState if there are relevant changes
+    if (shouldUpdate) {
+      setState(() {});
+    }
+  }
+
   @override
   void dispose() {
+    _controller?.removeListener(_onVideoPlayerValueChanged);
     _controller?.dispose();
     super.dispose();
   }
@@ -134,20 +180,21 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
           // Video selection dropdown
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: DropdownButtonFormField<int>(
-              value: _selectedVideoIndex,
-              decoration: const InputDecoration(
-                labelText: 'Select Video',
+            child: DropdownMenu<int>(
+              initialSelection: _selectedVideoIndex,
+              label: const Text('Select Video'),
+              inputDecorationTheme: const InputDecorationTheme(
                 border: OutlineInputBorder(),
               ),
-              items:
-                  _sampleVideos.asMap().entries.map((MapEntry<int, String> entry) {
-                    return DropdownMenuItem<int>(
-                      value: entry.key,
-                      child: Text('Video ${entry.key + 1}'),
+              dropdownMenuEntries:
+                  _sampleVideos.indexed.map((record) {
+                    final (index, _) = record;
+                    return DropdownMenuEntry<int>(
+                      value: index,
+                      label: 'Video ${index + 1}',
                     );
                   }).toList(),
-              onChanged: (int? value) {
+              onSelected: (int? value) {
                 if (value != null && value != _selectedVideoIndex) {
                   setState(() {
                     _selectedVideoIndex = value;
@@ -239,7 +286,6 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
           } else {
             controller.play();
           }
-          setState(() {});
         },
         icon: Icon(controller.value.isPlaying ? Icons.pause : Icons.play_arrow),
       ),

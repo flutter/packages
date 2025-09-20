@@ -849,6 +849,34 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       throw Exception('VideoPlayerController is disposed or not initialized');
     }
     await _videoPlayerPlatform.selectAudioTrack(_playerId, trackId);
+
+    if (Platform.isAndroid) {
+      // Add a small delay to allow ExoPlayer to process the track selection change
+      // This is needed because ExoPlayer's track selection update is asynchronous
+      await Future<void>.delayed(const Duration(milliseconds: 100));
+    }
+  }
+
+  /// Returns whether audio track selection is supported on this platform.
+  ///
+  /// This method allows developers to query at runtime whether the current
+  /// platform supports audio track selection functionality. This is useful
+  /// for platforms like web where audio track selection may not be available.
+  ///
+  /// Returns `true` if [getAudioTracks] and [selectAudioTrack] are supported,
+  /// `false` otherwise.
+  ///
+  /// Example usage:
+  /// ```dart
+  /// if (await controller.isAudioTrackSupportAvailable()) {
+  ///   final tracks = await controller.getAudioTracks();
+  ///   // Show audio track selection UI
+  /// } else {
+  ///   // Hide audio track selection UI or show unsupported message
+  /// }
+  /// ```
+  Future<bool> isAudioTrackSupportAvailable() async {
+    return _videoPlayerPlatform.isAudioTrackSupportAvailable();
   }
 
   bool get _isDisposedOrNotInitialized => _isDisposed || !value.isInitialized;

@@ -572,11 +572,10 @@ mixin $_mixinName on $routeDataClassName {
   }
 
   @override
-  String get routeConstructorParameters => '''
-    path: ${escapeDartString(path)},
-    ${caseSensitive ? '' : 'caseSensitive: $caseSensitive,'}
-    ${parentNavigatorKey == null ? '' : 'parentNavigatorKey: $parentNavigatorKey,'}
-''';
+  String get routeConstructorParameters =>
+      'path: ${escapeDartString(path)},'
+      '${caseSensitive ? '' : 'caseSensitive: $caseSensitive,'}'
+      '${parentNavigatorKey == null ? '' : 'parentNavigatorKey: $parentNavigatorKey,'}';
 
   @override
   String get routeDataClassName => 'RelativeGoRouteData';

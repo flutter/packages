@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -62,6 +65,29 @@ void main() {
     );
     expect((await loader.prepareMessage(null))!.lengthInBytes, 0);
     expect((await packageLoader.prepareMessage(null))!.lengthInBytes, 1);
+  });
+
+  test('AssetLoader correctly accesses buffer', () async {
+    final ByteBuffer buffer = utf8.encode('foobar').buffer;
+    final TestBundle bundle = TestBundle(<String, ByteData>{
+      'foo': buffer.asByteData(0, 3),
+      'bar': buffer.asByteData(3, 3),
+    });
+    final SvgAssetLoader loaderFoo = SvgAssetLoader('foo', assetBundle: bundle);
+    final SvgAssetLoader loaderBar = SvgAssetLoader('bar', assetBundle: bundle);
+    final ByteData? byteDataFoo = await loaderFoo.prepareMessage(null);
+    final ByteData? byteDataBar = await loaderBar.prepareMessage(null);
+
+    expect(byteDataFoo!.buffer, equals(byteDataBar!.buffer));
+
+    expect(byteDataFoo.lengthInBytes, 3);
+    expect(byteDataFoo.offsetInBytes, 0);
+
+    expect(byteDataBar.offsetInBytes, 3);
+    expect(byteDataBar.lengthInBytes, 3);
+
+    expect(loaderFoo.provideSvg(byteDataFoo), equals('foo'));
+    expect(loaderBar.provideSvg(byteDataBar), equals('bar'));
   });
 
   test('SvgNetworkLoader closes internal client', () async {

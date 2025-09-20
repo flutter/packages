@@ -120,6 +120,12 @@ class FakeController extends ValueNotifier<VideoPlayerValue>
     selectedAudioTrackId = trackId;
   }
 
+  @override
+  Future<bool> isAudioTrackSupportAvailable() async {
+    // Return true for testing purposes
+    return true;
+  }
+
   String? selectedAudioTrackId;
 }
 
@@ -1850,6 +1856,12 @@ class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
   Future<void> selectAudioTrack(int playerId, String trackId) async {
     calls.add('selectAudioTrack');
     selectedAudioTrackIds[playerId] = trackId;
+  }
+
+  @override
+  Future<bool> isAudioTrackSupportAvailable() async {
+    calls.add('isAudioTrackSupportAvailable');
+    return true; // Return true for testing purposes
   }
 
   final Map<int, String> selectedAudioTrackIds = <int, String>{};

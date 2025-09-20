@@ -124,7 +124,6 @@ class WebViewConfigurationProxyAPITests: XCTestCase {
     XCTAssertEqual(instance.mediaTypesRequiringUserActionForPlayback, [])
   }
 
-  @available(iOS 13.0, macOS 10.15, *)
   @MainActor func testGetDefaultWebpagePreferences() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKWebViewConfiguration(registrar)

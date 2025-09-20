@@ -339,8 +339,8 @@ class SKProductMessage {
       price: result[5]! as String,
       subscriptionPeriod: result[6] as SKProductSubscriptionPeriodMessage?,
       introductoryPrice: result[7] as SKProductDiscountMessage?,
-      discounts:
-          (result[8] as List<Object?>?)?.cast<SKProductDiscountMessage>(),
+      discounts: (result[8] as List<Object?>?)
+          ?.cast<SKProductDiscountMessage>(),
     );
   }
 }
@@ -560,8 +560,9 @@ class InAppPurchaseAPI {
     BinaryMessenger? binaryMessenger,
     String messageChannelSuffix = '',
   }) : pigeonVar_binaryMessenger = binaryMessenger,
-       pigeonVar_messageChannelSuffix =
-           messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+           ? '.$messageChannelSuffix'
+           : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
