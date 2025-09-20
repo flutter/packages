@@ -41,3 +41,4 @@ dependency_overrides:
   video_player_android: {path: ../../../../packages/video_player/video_player_android}
   video_player_avfoundation: {path: ../../../../packages/video_player/video_player_avfoundation}
   video_player_platform_interface: {path: ../../../../packages/video_player/video_player_platform_interface}
+  video_player_web: {path: ../../../../packages/video_player/video_player_web}
