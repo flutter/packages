@@ -245,6 +245,12 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
     return _playerWith(id: playerId).selectAudioTrack(trackId);
   }
 
+  @override
+  Future<bool> isAudioTrackSupportAvailable() async {
+    // Android with ExoPlayer supports audio track selection
+    return true;
+  }
+
   _PlayerInstance _playerWith({required int id}) {
     final _PlayerInstance? player = _players[id];
     return player ?? (throw StateError('No active player with ID $id.'));
