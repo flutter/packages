@@ -131,6 +131,18 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
   Future<void> selectAudioTrack(int playerId, String trackId) {
     throw UnimplementedError('selectAudioTrack() has not been implemented.');
   }
+
+  /// Returns whether audio track selection is supported on this platform.
+  ///
+  /// This method allows developers to query at runtime whether the current
+  /// platform supports audio track selection functionality. This is useful
+  /// for platforms like web where audio track selection may not be available.
+  ///
+  /// Returns `true` if [getAudioTracks] and [selectAudioTrack] are supported,
+  /// `false` otherwise.
+  Future<bool> isAudioTrackSupportAvailable() {
+    throw UnimplementedError('isAudioTrackSupportAvailable() has not been implemented.');
+  }
 }
 
 class _PlaceholderImplementation extends VideoPlayerPlatform {}
