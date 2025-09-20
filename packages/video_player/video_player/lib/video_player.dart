@@ -4,7 +4,6 @@
 
 import 'dart:async';
 import 'dart:io';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -850,7 +849,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     }
     await _videoPlayerPlatform.selectAudioTrack(_playerId, trackId);
 
-    if (Platform.isAndroid) {
+    if (!kIsWeb && Platform.isAndroid) {
       // Add a small delay to allow ExoPlayer to process the track selection change
       // This is needed because ExoPlayer's track selection update is asynchronous
       await Future<void>.delayed(const Duration(milliseconds: 100));

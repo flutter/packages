@@ -187,8 +187,8 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
                 border: OutlineInputBorder(),
               ),
               dropdownMenuEntries:
-                  _sampleVideos.indexed.map((record) {
-                    final (index, _) = record;
+                  _sampleVideos.indexed.map(((int, String) record) {
+                    final (int index, _) = record;
                     return DropdownMenuEntry<int>(
                       value: index,
                       label: 'Video ${index + 1}',
