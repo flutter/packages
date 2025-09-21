@@ -29,16 +29,15 @@ void main() {
 
   test('setCookie should throw ArgumentError for cookie with invalid path', () {
     expect(
-      () => WebViewAndroidCookieManager(
-        cookieManager: MockCookieManager(),
-      ).setCookie(
-        const WebViewCookie(
-          name: 'foo',
-          value: 'bar',
-          domain: 'flutter.dev',
-          path: 'invalid;path',
-        ),
-      ),
+      () => WebViewAndroidCookieManager(cookieManager: MockCookieManager())
+          .setCookie(
+            const WebViewCookie(
+              name: 'foo',
+              value: 'bar',
+              domain: 'flutter.dev',
+              path: 'invalid;path',
+            ),
+          ),
       throwsA(const TypeMatcher<ArgumentError>()),
     );
   });

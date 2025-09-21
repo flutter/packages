@@ -28,11 +28,10 @@ void main() {
           const PlatformWebViewCookieManagerCreationParams(),
         );
 
-    final bool hasClearedCookies =
-        await AndroidWebViewCookieManager(
-          params,
-          cookieManager: mockCookieManager,
-        ).clearCookies();
+    final bool hasClearedCookies = await AndroidWebViewCookieManager(
+      params,
+      cookieManager: mockCookieManager,
+    ).clearCookies();
 
     expect(hasClearedCookies, true);
     verify(mockCookieManager.removeAllCookies());

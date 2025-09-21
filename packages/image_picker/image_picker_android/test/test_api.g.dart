@@ -120,8 +120,9 @@ abstract class TestHostImagePickerApi {
     BinaryMessenger? binaryMessenger,
     String messageChannelSuffix = '',
   }) {
-    messageChannelSuffix =
-        messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+    messageChannelSuffix = messageChannelSuffix.isNotEmpty
+        ? '.$messageChannelSuffix'
+        : '';
     {
       final BasicMessageChannel<Object?>
       pigeonVar_channel = BasicMessageChannel<Object?>(

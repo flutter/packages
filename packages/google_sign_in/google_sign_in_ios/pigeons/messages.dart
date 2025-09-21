@@ -120,7 +120,8 @@ class SignInSuccess {
 
   late List<String> grantedScopes;
 
-  // This is set only on a new sign in or scope grant, not a restored sign-in.
+  // This is set only on a new sign in or scope grant, not a restored sign-in
+  // or a call to getRefreshedAuthorizationTokens.
   // See https://github.com/google/GoogleSignIn-iOS/issues/202
   String? serverAuthCode;
 }
