@@ -56,7 +56,7 @@ class ${kotlinInstanceManagerClassName(options)}(private val finalizationListene
     }
 
     override fun hashCode(): Int {
-      return instance.get().hashCode()
+      return System.identityHashCode(instance.get())
     }
   }
 
