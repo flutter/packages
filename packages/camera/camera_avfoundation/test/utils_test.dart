@@ -10,6 +10,35 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('Utility methods', () {
+    test('Should convert CameraLensType values correctly', () {
+      expect(
+        cameraLensTypeFromPlatform(
+          PlatformCameraLensType.builtInWideAngleCamera,
+        ),
+        CameraLensType.wide,
+        reason: 'PlatformLensType.builtInWideAngleCamera',
+      );
+      expect(
+        cameraLensTypeFromPlatform(
+          PlatformCameraLensType.builtInUltraWideCamera,
+        ),
+        CameraLensType.ultraWide,
+        reason: 'PlatformLensType.builtInUltraWideCamera',
+      );
+      expect(
+        cameraLensTypeFromPlatform(
+          PlatformCameraLensType.builtInTelephotoCamera,
+        ),
+        CameraLensType.telephoto,
+        reason: 'PlatformLensType.builtInTelephotoCamera',
+      );
+      expect(
+        cameraLensTypeFromPlatform(PlatformCameraLensType.unknown),
+        CameraLensType.unknown,
+        reason: 'PlatformLensType.unknown',
+      );
+    });
+
     test('Should convert CameraLensDirection values correctly', () {
       expect(
         cameraLensDirectionFromPlatform(PlatformCameraLensDirection.back),

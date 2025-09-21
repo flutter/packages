@@ -1,3 +1,7 @@
+## 0.9.21+5
+
+* Adds accurate values for `lensType` in `CameraDescription`.
+
 ## 0.9.21+4
 
 * Migrates `updateOrientation` and `setCaptureSessionPreset` methods to Swift.

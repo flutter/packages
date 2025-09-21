@@ -28,38 +28,62 @@ final class AvailableCamerasTest: XCTestCase {
     )
   }
 
+  private func fakeNativeCameraList() -> [MockCaptureDevice] {
+    var cameras: [MockCaptureDevice] = []
+
+    let wideAngleCamera = MockCaptureDevice()
+    wideAngleCamera.uniqueID = "0"
+    wideAngleCamera.position = .back
+    wideAngleCamera.deviceType = .builtInWideAngleCamera
+
+    let frontFacingCamera = MockCaptureDevice()
+    frontFacingCamera.uniqueID = "1"
+    frontFacingCamera.position = .front
+    frontFacingCamera.deviceType = .builtInWideAngleCamera
+
+    let ultraWideCamera = MockCaptureDevice()
+    ultraWideCamera.uniqueID = "2"
+    ultraWideCamera.position = .back
+    ultraWideCamera.deviceType = .builtInUltraWideCamera
+
+    let telephotoCamera = MockCaptureDevice()
+    telephotoCamera.uniqueID = "3"
+    telephotoCamera.position = .back
+    telephotoCamera.deviceType = .builtInTelephotoCamera
+
+    // the order of `cameras` is important. It must match the order of the
+    // discoveryDevices list used by availableCameras()
+    cameras = [
+      wideAngleCamera, frontFacingCamera, telephotoCamera, ultraWideCamera,
+    ]
+
+    return cameras
+  }
+
   func testAvailableCamerasShouldReturnAllCamerasOnMultiCameraIPhone() {
     let mockDeviceDiscoverer = MockCameraDeviceDiscoverer()
     let cameraPlugin = createCameraPlugin(with: mockDeviceDiscoverer)
     let expectation = self.expectation(description: "Result finished")
 
+    // We'll stub the discovery session and return this list of fake cameras
+    let nativeCameras = fakeNativeCameraList()
+
+    // The order of expectedDeviceTypesToBeRequested is important. We will use
+    // this in our discovery session stub to confirm that availableCameras()
+    // requests the correct DeviceTypes in the correct order.
+    var expectedDeviceTypesToBeRequested: [AVCaptureDevice.DeviceType] = [
+      .builtInWideAngleCamera,
+      .builtInTelephotoCamera,
+      .builtInUltraWideCamera,
+    ]
+
     mockDeviceDiscoverer.discoverySessionStub = { deviceTypes, mediaType, position in
-      // iPhone 13 Cameras:
-      let wideAngleCamera = MockCaptureDevice()
-      wideAngleCamera.uniqueID = "0"
-      wideAngleCamera.position = .back
-
-      let frontFacingCamera = MockCaptureDevice()
-      frontFacingCamera.uniqueID = "1"
-      frontFacingCamera.position = .front
-
-      let ultraWideCamera = MockCaptureDevice()
-      ultraWideCamera.uniqueID = "2"
-      ultraWideCamera.position = .back
-
-      let telephotoCamera = MockCaptureDevice()
-      telephotoCamera.uniqueID = "3"
-      telephotoCamera.position = .back
-
-      var requiredTypes: [AVCaptureDevice.DeviceType] = [
-        .builtInWideAngleCamera, .builtInTelephotoCamera, .builtInUltraWideCamera,
-      ]
-      var cameras = [wideAngleCamera, frontFacingCamera, telephotoCamera, ultraWideCamera]
-
-      XCTAssertEqual(deviceTypes, requiredTypes)
+      // confirm that availableCameras() made the
+      // expected call to our discovery stub
+      XCTAssertEqual(deviceTypes, expectedDeviceTypesToBeRequested)
       XCTAssertEqual(mediaType, .video)
       XCTAssertEqual(position, .unspecified)
-      return cameras
+      return nativeCameras
     }
 
     var resultValue: [FCPPlatformCameraDescription]?
@@ -71,7 +95,7 @@ final class AvailableCamerasTest: XCTestCase {
     waitForExpectations(timeout: 30, handler: nil)
 
     // Verify the result.
-    XCTAssertEqual(resultValue?.count, 4)
+    XCTAssertEqual(resultValue?.count, nativeCameras.count)
   }
 
   func testAvailableCamerasShouldReturnTwoCamerasOnDualCameraIPhone() {
@@ -89,14 +113,8 @@ final class AvailableCamerasTest: XCTestCase {
       frontFacingCamera.uniqueID = "1"
       frontFacingCamera.position = .front
 
-      var requiredTypes: [AVCaptureDevice.DeviceType] = [
-        .builtInWideAngleCamera, .builtInTelephotoCamera, .builtInUltraWideCamera,
-      ]
       let cameras = [wideAngleCamera, frontFacingCamera]
 
-      XCTAssertEqual(deviceTypes, requiredTypes)
-      XCTAssertEqual(mediaType, .video)
-      XCTAssertEqual(position, .unspecified)
       return cameras
     }
 
@@ -122,14 +140,8 @@ final class AvailableCamerasTest: XCTestCase {
       unspecifiedCamera.uniqueID = "0"
       unspecifiedCamera.position = .unspecified
 
-      var requiredTypes: [AVCaptureDevice.DeviceType] = [
-        .builtInWideAngleCamera, .builtInTelephotoCamera, .builtInUltraWideCamera,
-      ]
       let cameras = [unspecifiedCamera]
 
-      XCTAssertEqual(deviceTypes, requiredTypes)
-      XCTAssertEqual(mediaType, .video)
-      XCTAssertEqual(position, .unspecified)
       return cameras
     }
 
