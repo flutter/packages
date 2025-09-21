@@ -56,15 +56,28 @@ enum PlatformImageFormatGroup { bgra8888, yuv420 }
 // Pigeon version of ResolutionPreset.
 enum PlatformResolutionPreset { low, medium, high, veryHigh, ultraHigh, max }
 
+enum PlatformCameraLensType {
+  builtInWideAngleCamera,
+  builtInUltraWideCamera,
+  builtInTelephotoCamera,
+  unknown,
+}
+
 // Pigeon version of CameraDescription.
 class PlatformCameraDescription {
-  PlatformCameraDescription({required this.name, required this.lensDirection});
+  PlatformCameraDescription({
+    required this.name,
+    required this.lensDirection,
+    required this.lensType,
+  });
 
   /// The name of the camera device.
   final String name;
 
   /// The direction the camera is facing.
   final PlatformCameraLensDirection lensDirection;
+
+  final PlatformCameraLensType lensType;
 }
 
 // Pigeon version of the data needed for a CameraInitializedEvent.

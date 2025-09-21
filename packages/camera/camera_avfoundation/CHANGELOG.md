@@ -1,3 +1,7 @@
+## 0.9.21+4
+
+* Adds accurate values for `lensType` in `CameraDescription`.
+
 ## 0.9.21+3
 
 * Removes code for versions of iOS older than 13.0.
