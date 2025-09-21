@@ -3,8 +3,8 @@ description: An SVG samnple app.
 publish_to: none
 
 environment:
-  sdk: ^3.4.0
-  flutter: ">=3.22.0"
+  sdk: ^3.7.0
+  flutter: ">=3.29.0"
 
 dependencies:
   flutter:
@@ -13,6 +13,11 @@ dependencies:
     sdk: flutter
   flutter_svg:
     path: ../
+  vector_graphics: ^1.1.13
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
 
 # The following section is specific to Flutter.
 flutter:

@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import Flutter
+import Foundation
 import XCTest
 
 @testable import test_plugin
@@ -127,6 +128,24 @@ final class InstanceManagerTests: XCTestCase {
       to: registrar!.instanceManager, identifier: 0, delegate: finalizerDelegate)
     registrar = nil
     XCTAssertEqual(finalizerDelegate.lastHandledIdentifier, 0)
+  }
+
+  func testRemoveAllObjectsRemovesFinalizersFromWeakInstances() {
+    let finalizerDelegate = TestFinalizerDelegate()
+    let instanceManager = ProxyApiTestsPigeonInstanceManager(finalizerDelegate: finalizerDelegate)
+
+    let object: NSObject? = NSObject()
+    let identifier = instanceManager.addHostCreatedInstance(object!)
+    let finalizer =
+      objc_getAssociatedObject(object!, ProxyApiTestsPigeonInternalFinalizer.associatedObjectKey)
+      as! ProxyApiTestsPigeonInternalFinalizer
+
+    let _: AnyObject? = try! instanceManager.removeInstance(withIdentifier: identifier)
+    try? instanceManager.removeAllObjects()
+
+    XCTAssertNil(finalizer.delegate)
+    XCTAssertNil(
+      objc_getAssociatedObject(object!, ProxyApiTestsPigeonInternalFinalizer.associatedObjectKey))
   }
 }
 

@@ -4,6 +4,7 @@
 
 import 'dart:async';
 
+import 'package:flutter/src/services/binary_messenger.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:quick_actions_android/quick_actions_android.dart';
 import 'package:quick_actions_android/src/messages.g.dart';
@@ -48,8 +49,11 @@ void main() {
 
   test('setShortCutItems', () async {
     await quickActions.initialize((String type) {});
-    const ShortcutItem item =
-        ShortcutItem(type: 'test', localizedTitle: 'title', icon: 'icon.svg');
+    const ShortcutItem item = ShortcutItem(
+      type: 'test',
+      localizedTitle: 'title',
+      icon: 'icon.svg',
+    );
     await quickActions.setShortcutItems(<ShortcutItem>[item]);
 
     expect(api.items.first.type, item.type);
@@ -59,8 +63,11 @@ void main() {
 
   test('clearShortCutItems', () {
     quickActions.initialize((String type) {});
-    const ShortcutItem item =
-        ShortcutItem(type: 'test', localizedTitle: 'title', icon: 'icon.svg');
+    const ShortcutItem item = ShortcutItem(
+      type: 'test',
+      localizedTitle: 'title',
+      icon: 'icon.svg',
+    );
     quickActions.setShortcutItems(<ShortcutItem>[item]);
     quickActions.clearShortcutItems();
 
@@ -72,8 +79,11 @@ void main() {
     const String localizedTitle = 'title';
     const String icon = 'foo';
 
-    const ShortcutItem item =
-        ShortcutItem(type: type, localizedTitle: localizedTitle, icon: icon);
+    const ShortcutItem item = ShortcutItem(
+      type: type,
+      localizedTitle: localizedTitle,
+      icon: icon,
+    );
 
     expect(item.type, type);
     expect(item.localizedTitle, localizedTitle);
@@ -104,4 +114,12 @@ class _FakeQuickActionsApi implements AndroidQuickActionsApi {
       items.add(shortcutItemMessageToShortcutItem(element!));
     }
   }
+
+  @override
+  // ignore: non_constant_identifier_names
+  BinaryMessenger? get pigeonVar_binaryMessenger => null;
+
+  @override
+  // ignore: non_constant_identifier_names
+  String get pigeonVar_messageChannelSuffix => '';
 }

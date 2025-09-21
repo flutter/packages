@@ -1,3 +1,24 @@
+## 2.2.18
+
+* Bumps com.android.tools.build:gradle to 8.12.1.
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
+## 2.2.17
+
+* Removes obsolete code related to supporting SDK <21.
+
+## 2.2.16
+
+* Updates compileSdk 34 to flutter.compileSdkVersion.
+
+## 2.2.15
+
+* Removes unnecessary native code.
+
+## 2.2.14
+
+* Updates annotations lib to 1.9.1.
+
 ## 2.2.13
 
 * Updates annotations lib to 1.9.0.

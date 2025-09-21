@@ -16,12 +16,25 @@ import 'package:pigeon/pigeon.dart';
     copyrightHeader: 'pigeons/copyright.txt',
   ),
 )
+enum FileSelectorExceptionCode {
+  securityException, // unused
+  ioException, // unused
+  illegalArgumentException,
+  illegalStateException, //unused
+}
+
+class FileSelectorNativeException implements Exception {
+  late final FileSelectorExceptionCode fileSelectorExceptionCode;
+  late final String message;
+}
+
 class FileResponse {
   late final String path;
   late final String? mimeType;
   late final String? name;
   late final int size;
   late final Uint8List bytes;
+  late final FileSelectorNativeException? fileSelectorNativeException;
 }
 
 class FileTypes {

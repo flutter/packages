@@ -19,8 +19,10 @@ class MyApp extends StatelessWidget {
           title: const Text('Sample flutter_plugin_android_lifecycle usage'),
         ),
         body: const Center(
-            child: Text(
-                'This plugin only provides Android Lifecycle API\n for other Android plugins.')),
+          child: Text(
+            'This plugin only provides Android Lifecycle API\n for other Android plugins.',
+          ),
+        ),
       ),
     );
   }

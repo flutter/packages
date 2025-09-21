@@ -4,23 +4,24 @@
 
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
-import 'package:file/memory.dart';
 import 'package:flutter_plugin_tools/src/update_min_sdk_command.dart';
+import 'package:git/git.dart';
 import 'package:test/test.dart';
 
 import 'util.dart';
 
 void main() {
-  late FileSystem fileSystem;
   late Directory packagesDir;
   late CommandRunner<void> runner;
 
   setUp(() {
-    fileSystem = MemoryFileSystem();
-    packagesDir = createPackagesDirectory(fileSystem: fileSystem);
+    final GitDir gitDir;
+    (:packagesDir, processRunner: _, gitProcessRunner: _, :gitDir) =
+        configureBaseCommandMocks();
 
     final UpdateMinSdkCommand command = UpdateMinSdkCommand(
       packagesDir,
+      gitDir: gitDir,
     );
     runner = CommandRunner<void>(
         'update_min_sdk_command', 'Test for update_min_sdk_command');
@@ -50,7 +51,7 @@ void main() {
     ]);
 
     final String dartVersion =
-        package.parsePubspec().environment?['sdk'].toString() ?? '';
+        package.parsePubspec().environment['sdk'].toString();
     expect(dartVersion, '^3.1.0');
   });
 
@@ -65,7 +66,7 @@ void main() {
     ]);
 
     final String dartVersion =
-        package.parsePubspec().environment?['sdk'].toString() ?? '';
+        package.parsePubspec().environment['sdk'].toString();
     expect(dartVersion, '^3.1.0');
   });
 
@@ -80,7 +81,7 @@ void main() {
     ]);
 
     final String dartVersion =
-        package.parsePubspec().environment?['sdk'].toString() ?? '';
+        package.parsePubspec().environment['sdk'].toString();
     expect(dartVersion, '^3.2.0');
   });
 
@@ -98,9 +99,9 @@ void main() {
     ]);
 
     final String dartVersion =
-        package.parsePubspec().environment?['sdk'].toString() ?? '';
+        package.parsePubspec().environment['sdk'].toString();
     final String flutterVersion =
-        package.parsePubspec().environment?['flutter'].toString() ?? '';
+        package.parsePubspec().environment['flutter'].toString();
     expect(dartVersion, '^3.1.0');
     expect(flutterVersion, '>=3.13.0');
   });
@@ -119,9 +120,9 @@ void main() {
     ]);
 
     final String dartVersion =
-        package.parsePubspec().environment?['sdk'].toString() ?? '';
+        package.parsePubspec().environment['sdk'].toString();
     final String flutterVersion =
-        package.parsePubspec().environment?['flutter'].toString() ?? '';
+        package.parsePubspec().environment['flutter'].toString();
     expect(dartVersion, '^3.2.0');
     expect(flutterVersion, '>=3.16.0');
   });

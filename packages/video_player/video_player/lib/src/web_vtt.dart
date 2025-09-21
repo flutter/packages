@@ -16,7 +16,7 @@ class WebVTTCaptionFile extends ClosedCaptionFile {
   /// the WebVTT file format.
   /// * See: https://en.wikipedia.org/wiki/WebVTT
   WebVTTCaptionFile(String fileContents)
-      : _captions = _parseCaptionsFromWebVTTString(fileContents);
+    : _captions = _parseCaptionsFromWebVTTString(fileContents);
 
   @override
   List<Caption> get captions => _captions;
@@ -49,8 +49,9 @@ List<Caption> _parseCaptionsFromWebVTTString(String file) {
       continue;
     }
 
-    // Caption has header
-    final bool hasHeader = captionLines.length > 2;
+    // Caption has header / identifier
+    // See: https://www.w3.org/TR/webvtt1/#webvtt-cue-identifier for valid cue identifier
+    final bool hasHeader = !captionLines[0].contains(_webVTTArrow);
     if (hasHeader) {
       final int? tryParseCaptionNumber = int.tryParse(captionLines[0]);
       if (tryParseCaptionNumber != null) {
@@ -95,8 +96,9 @@ class _CaptionRange {
   // For example:
   // 00:09.000 --> 00:11.000
   static _CaptionRange? fromWebVTTString(String line) {
-    final RegExp format =
-        RegExp(_webVTTTimeStamp + _webVTTArrow + _webVTTTimeStamp);
+    final RegExp format = RegExp(
+      _webVTTTimeStamp + _webVTTArrow + _webVTTTimeStamp,
+    );
 
     if (!format.hasMatch(line)) {
       return null;

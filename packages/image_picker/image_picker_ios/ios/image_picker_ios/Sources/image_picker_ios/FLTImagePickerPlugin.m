@@ -98,14 +98,15 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
     API_AVAILABLE(ios(14)) {
   PHPickerConfiguration *config =
       [[PHPickerConfiguration alloc] initWithPhotoLibrary:PHPhotoLibrary.sharedPhotoLibrary];
-  config.selectionLimit = context.maxImageCount;
-  if (context.includeVideo) {
-    config.filter = [PHPickerFilter anyFilterMatchingSubfilters:@[
-      [PHPickerFilter imagesFilter], [PHPickerFilter videosFilter]
-    ]];
-  } else {
-    config.filter = [PHPickerFilter imagesFilter];
+  config.selectionLimit = context.maxItemCount;
+  NSMutableArray<PHPickerFilter *> *filters = [[NSMutableArray alloc] init];
+  if (context.includeImages) {
+    [filters addObject:[PHPickerFilter imagesFilter]];
   }
+  if (context.includeVideo) {
+    [filters addObject:[PHPickerFilter videosFilter]];
+  }
+  config.filter = [PHPickerFilter anyFilterMatchingSubfilters:filters];
 
   PHPickerViewController *pickerViewController =
       [[PHPickerViewController alloc] initWithConfiguration:config];
@@ -113,11 +114,7 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
   pickerViewController.presentationController.delegate = self;
   self.callContext = context;
 
-  if (context.requestFullMetadata) {
-    [self checkPhotoAuthorizationWithPHPicker:pickerViewController];
-  } else {
-    [self showPhotoLibraryWithPHPicker:pickerViewController];
-  }
+  [self showPhotoLibraryWithPHPicker:pickerViewController];
 }
 
 - (void)launchUIImagePickerWithSource:(nonnull FLTSourceSpecification *)source
@@ -125,12 +122,19 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
   UIImagePickerController *imagePickerController = [self createImagePickerController];
   imagePickerController.modalPresentationStyle = UIModalPresentationCurrentContext;
   imagePickerController.delegate = self;
-  if (context.includeVideo) {
-    imagePickerController.mediaTypes = @[ (NSString *)kUTTypeImage, (NSString *)kUTTypeMovie ];
-
-  } else {
-    imagePickerController.mediaTypes = @[ (NSString *)kUTTypeImage ];
+  NSMutableArray<NSString *> *mediaTypes = [[NSMutableArray alloc] init];
+  if (context.includeImages) {
+    [mediaTypes addObject:(NSString *)kUTTypeImage];
   }
+  if (context.includeVideo) {
+    [mediaTypes addObject:(NSString *)kUTTypeMovie];
+    imagePickerController.videoQuality = UIImagePickerControllerQualityTypeHigh;
+  }
+  imagePickerController.mediaTypes = mediaTypes;
+  if (context.maxDuration != 0.0) {
+    imagePickerController.videoMaximumDuration = context.maxDuration;
+  }
+
   self.callContext = context;
 
   switch (source.type) {
@@ -171,9 +175,10 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
         }
         completion(paths.firstObject, error);
       }];
+  context.includeImages = YES;
   context.maxSize = maxSize;
   context.imageQuality = imageQuality;
-  context.maxImageCount = 1;
+  context.maxItemCount = 1;
   context.requestFullMetadata = fullMetadata;
 
   if (source.type == FLTSourceTypeGallery) {  // Capture is not possible with PHPicker
@@ -196,10 +201,11 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
   [self cancelInProgressCall];
   FLTImagePickerMethodCallContext *context =
       [[FLTImagePickerMethodCallContext alloc] initWithResult:completion];
+  context.includeImages = YES;
   context.maxSize = maxSize;
   context.imageQuality = imageQuality;
   context.requestFullMetadata = fullMetadata;
-  context.maxImageCount = limit.intValue;
+  context.maxItemCount = limit.intValue;
 
   if (@available(iOS 14, *)) {
     [self launchPHPickerWithContext:context];
@@ -220,12 +226,13 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
   context.maxSize = [mediaSelectionOptions maxSize];
   context.imageQuality = [mediaSelectionOptions imageQuality];
   context.requestFullMetadata = [mediaSelectionOptions requestFullMetadata];
+  context.includeImages = YES;
   context.includeVideo = YES;
   NSNumber *limit = [mediaSelectionOptions limit];
   if (!mediaSelectionOptions.allowMultiple) {
-    context.maxImageCount = 1;
+    context.maxItemCount = 1;
   } else if (limit != nil) {
-    context.maxImageCount = limit.intValue;
+    context.maxItemCount = limit.intValue;
   }
 
   if (@available(iOS 14, *)) {
@@ -252,37 +259,39 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
         }
         completion(paths.firstObject, error);
       }];
-  context.maxImageCount = 1;
+  context.includeVideo = YES;
+  context.maxItemCount = 1;
+  context.maxDuration = maxDurationSeconds.doubleValue;
 
-  UIImagePickerController *imagePickerController = [self createImagePickerController];
-  imagePickerController.modalPresentationStyle = UIModalPresentationCurrentContext;
-  imagePickerController.delegate = self;
-  imagePickerController.mediaTypes = @[
-    (NSString *)kUTTypeMovie, (NSString *)kUTTypeAVIMovie, (NSString *)kUTTypeVideo,
-    (NSString *)kUTTypeMPEG4
-  ];
-  imagePickerController.videoQuality = UIImagePickerControllerQualityTypeHigh;
-
-  if (maxDurationSeconds) {
-    NSTimeInterval max = [maxDurationSeconds doubleValue];
-    imagePickerController.videoMaximumDuration = max;
+  if (source.type == FLTSourceTypeGallery) {  // Capture is not possible with PHPicker
+    if (@available(iOS 14, *)) {
+      [self launchPHPickerWithContext:context];
+    } else {
+      [self launchUIImagePickerWithSource:source context:context];
+    }
+  } else {
+    [self launchUIImagePickerWithSource:source context:context];
   }
+}
 
-  self.callContext = context;
+- (void)pickMultiVideoWithMaxDuration:(nullable NSNumber *)maxDurationSeconds
+                                limit:(nullable NSNumber *)limit
+                           completion:(nonnull void (^)(NSArray<NSString *> *_Nullable,
+                                                        FlutterError *_Nullable))completion {
+  [self cancelInProgressCall];
+  FLTImagePickerMethodCallContext *context =
+      [[FLTImagePickerMethodCallContext alloc] initWithResult:completion];
+  context.includeVideo = YES;
+  context.maxItemCount = limit.intValue;
+  context.maxDuration = maxDurationSeconds.doubleValue;
 
-  switch (source.type) {
-    case FLTSourceTypeCamera:
-      [self checkCameraAuthorizationWithImagePicker:imagePickerController
-                                             camera:[self cameraDeviceForSource:source]];
-      break;
-    case FLTSourceTypeGallery:
-      [self checkPhotoAuthorizationWithImagePicker:imagePickerController];
-      break;
-    default:
-      [self sendCallResultWithError:[FlutterError errorWithCode:@"invalid_source"
-                                                        message:@"Invalid video source."
-                                                        details:nil]];
-      break;
+  if (@available(iOS 14, *)) {
+    [self launchPHPickerWithContext:context];
+  } else {
+    // Camera is ignored for gallery mode, so the value here is arbitrary.
+    [self launchUIImagePickerWithSource:[FLTSourceSpecification makeWithType:FLTSourceTypeGallery
+                                                                      camera:FLTSourceCameraRear]
+                                context:context];
   }
 }
 
@@ -381,40 +390,6 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
     }
     case PHAuthorizationStatusAuthorized:
       [self showPhotoLibraryWithImagePicker:imagePickerController];
-      break;
-    case PHAuthorizationStatusDenied:
-    case PHAuthorizationStatusRestricted:
-    default:
-      [self errorNoPhotoAccess:status];
-      break;
-  }
-}
-
-- (void)checkPhotoAuthorizationWithPHPicker:(PHPickerViewController *)pickerViewController
-    API_AVAILABLE(ios(14)) {
-  PHAccessLevel requestedAccessLevel = PHAccessLevelReadWrite;
-  PHAuthorizationStatus status =
-      [PHPhotoLibrary authorizationStatusForAccessLevel:requestedAccessLevel];
-  switch (status) {
-    case PHAuthorizationStatusNotDetermined: {
-      [PHPhotoLibrary
-          requestAuthorizationForAccessLevel:requestedAccessLevel
-                                     handler:^(PHAuthorizationStatus status) {
-                                       dispatch_async(dispatch_get_main_queue(), ^{
-                                         if (status == PHAuthorizationStatusAuthorized) {
-                                           [self showPhotoLibraryWithPHPicker:pickerViewController];
-                                         } else if (status == PHAuthorizationStatusLimited) {
-                                           [self showPhotoLibraryWithPHPicker:pickerViewController];
-                                         } else {
-                                           [self errorNoPhotoAccess:status];
-                                         }
-                                       });
-                                     }];
-      break;
-    }
-    case PHAuthorizationStatusAuthorized:
-    case PHAuthorizationStatusLimited:
-      [self showPhotoLibraryWithPHPicker:pickerViewController];
       break;
     case PHAuthorizationStatusDenied:
     case PHAuthorizationStatusRestricted:

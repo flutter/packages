@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 // All the public types exposed by this package.
+export 'advanced_marker.dart';
 export 'bitmap.dart';
 export 'callbacks.dart';
 export 'camera.dart';
@@ -12,6 +13,8 @@ export 'circle_updates.dart';
 export 'cluster.dart';
 export 'cluster_manager.dart';
 export 'cluster_manager_updates.dart';
+export 'ground_overlay.dart';
+export 'ground_overlay_updates.dart';
 export 'heatmap.dart';
 export 'heatmap_updates.dart';
 export 'joint_type.dart';
@@ -36,9 +39,11 @@ export 'ui.dart';
 // Export the utils used by the Widget
 export 'utils/circle.dart';
 export 'utils/cluster_manager.dart';
+export 'utils/ground_overlay.dart';
 export 'utils/heatmap.dart';
 export 'utils/marker.dart';
 export 'utils/polygon.dart';
 export 'utils/polyline.dart';
 export 'utils/tile_overlay.dart';
+export 'web_camera_control_position.dart';
 export 'web_gesture_handling.dart';

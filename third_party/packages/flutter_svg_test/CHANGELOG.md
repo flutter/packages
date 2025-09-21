@@ -1,3 +1,11 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
+## 1.0.3
+
+* Adopts code excerpts for README.
+
 ## 1.0.2
 
 * Transfers the package source from https://github.com/dnfield/flutter_svg

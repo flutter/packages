@@ -32,12 +32,12 @@ void main() {
   test('LRU', () async {
     final Cache cache = Cache();
     cache.maximumSize = 2;
-    final Completer<ByteData> completerA = Completer<ByteData>()
-      ..complete(ByteData(1));
-    final Completer<ByteData> completerB = Completer<ByteData>()
-      ..complete(ByteData(2));
-    final Completer<ByteData> completerC = Completer<ByteData>()
-      ..complete(ByteData(3));
+    final Completer<ByteData> completerA =
+        Completer<ByteData>()..complete(ByteData(1));
+    final Completer<ByteData> completerB =
+        Completer<ByteData>()..complete(ByteData(2));
+    final Completer<ByteData> completerC =
+        Completer<ByteData>()..complete(ByteData(3));
 
     expect(cache.count, 0);
 
@@ -74,12 +74,15 @@ void main() {
   test('Adding beyond max with synchronous futures', () async {
     final Cache cache = Cache();
     cache.maximumSize = 2;
-    final Future<ByteData> completerA =
-        SynchronousFuture<ByteData>(ByteData(1));
-    final Future<ByteData> completerB =
-        SynchronousFuture<ByteData>(ByteData(2));
-    final Future<ByteData> completerC =
-        SynchronousFuture<ByteData>(ByteData(3));
+    final Future<ByteData> completerA = SynchronousFuture<ByteData>(
+      ByteData(1),
+    );
+    final Future<ByteData> completerB = SynchronousFuture<ByteData>(
+      ByteData(2),
+    );
+    final Future<ByteData> completerC = SynchronousFuture<ByteData>(
+      ByteData(3),
+    );
 
     expect(cache.count, 0);
 

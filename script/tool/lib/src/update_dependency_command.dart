@@ -32,6 +32,7 @@ class UpdateDependencyCommand extends PackageLoopingCommand {
   UpdateDependencyCommand(
     super.packagesDir, {
     super.processRunner,
+    super.gitDir,
     http.Client? httpClient,
   }) : _pubVersionFinder =
             PubVersionFinder(httpClient: httpClient ?? http.Client()) {

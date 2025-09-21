@@ -310,6 +310,18 @@
   XCTAssertEqual(controller.videoMaximumDuration, 95);
 }
 
+- (void)testPickingMultiVideoWithDuration {
+  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+
+  [plugin
+      pickMultiVideoWithMaxDuration:@(95)
+                              limit:nil
+                         completion:^(NSArray<NSString *> *result, FlutterError *_Nullable error){
+                         }];
+
+  XCTAssertEqual(plugin.callContext.maxDuration, 95);
+}
+
 - (void)testViewController {
   UIWindow *window = [UIWindow new];
   MockViewController *vc1 = [MockViewController new];
@@ -495,11 +507,11 @@
   [self waitForExpectationsWithTimeout:30 handler:nil];
 }
 
-- (void)testPickImageRequestAuthorization API_AVAILABLE(ios(14)) {
+- (void)testPickImageDoesntRequestAuthorization API_AVAILABLE(ios(14)) {
   id mockPhotoLibrary = OCMClassMock([PHPhotoLibrary class]);
   OCMStub([mockPhotoLibrary authorizationStatusForAccessLevel:PHAccessLevelReadWrite])
       .andReturn(PHAuthorizationStatusNotDetermined);
-  OCMExpect([mockPhotoLibrary requestAuthorizationForAccessLevel:PHAccessLevelReadWrite
+  OCMReject([mockPhotoLibrary requestAuthorizationForAccessLevel:PHAccessLevelReadWrite
                                                          handler:OCMOCK_ANY]);
 
   FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
@@ -512,29 +524,6 @@
                    completion:^(NSString *result, FlutterError *error){
                    }];
   OCMVerifyAll(mockPhotoLibrary);
-}
-
-- (void)testPickImageAuthorizationDenied API_AVAILABLE(ios(14)) {
-  id mockPhotoLibrary = OCMClassMock([PHPhotoLibrary class]);
-  OCMStub([mockPhotoLibrary authorizationStatusForAccessLevel:PHAccessLevelReadWrite])
-      .andReturn(PHAuthorizationStatusDenied);
-
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
-
-  XCTestExpectation *resultExpectation = [self expectationWithDescription:@"result"];
-
-  [plugin pickImageWithSource:[FLTSourceSpecification makeWithType:FLTSourceTypeGallery
-                                                            camera:FLTSourceCameraFront]
-                      maxSize:[[FLTMaxSize alloc] init]
-                      quality:nil
-                 fullMetadata:YES
-                   completion:^(NSString *result, FlutterError *error) {
-                     XCTAssertNil(result);
-                     XCTAssertEqualObjects(error.code, @"photo_access_denied");
-                     XCTAssertEqualObjects(error.message, @"The user did not allow photo access.");
-                     [resultExpectation fulfill];
-                   }];
-  [self waitForExpectationsWithTimeout:30 handler:nil];
 }
 
 - (void)testPickMultiImageDuplicateCallCancels API_AVAILABLE(ios(14)) {
@@ -626,7 +615,7 @@
                          completion:^(NSArray<NSString *> *_Nullable result,
                                       FlutterError *_Nullable error){
                          }];
-  XCTAssertEqual(plugin.callContext.maxImageCount, 2);
+  XCTAssertEqual(plugin.callContext.maxItemCount, 2);
 }
 
 - (void)testPickMediaWithLimitAllowsMultiple {
@@ -643,7 +632,7 @@
                                                FlutterError *_Nullable error){
                                   }];
 
-  XCTAssertEqual(plugin.callContext.maxImageCount, 2);
+  XCTAssertEqual(plugin.callContext.maxItemCount, 2);
 }
 
 - (void)testPickMediaWithLimitMultipleNotAllowed {
@@ -660,7 +649,7 @@
                                                FlutterError *_Nullable error){
                                   }];
 
-  XCTAssertEqual(plugin.callContext.maxImageCount, 1);
+  XCTAssertEqual(plugin.callContext.maxItemCount, 1);
 }
 
 - (void)testPickMultiImageWithoutLimit {
@@ -672,7 +661,7 @@
                          completion:^(NSArray<NSString *> *_Nullable result,
                                       FlutterError *_Nullable error){
                          }];
-  XCTAssertEqual(plugin.callContext.maxImageCount, 0);
+  XCTAssertEqual(plugin.callContext.maxItemCount, 0);
 }
 
 - (void)testPickMediaWithoutLimitAllowsMultiple {
@@ -689,7 +678,27 @@
                                                FlutterError *_Nullable error){
                                   }];
 
-  XCTAssertEqual(plugin.callContext.maxImageCount, 0);
+  XCTAssertEqual(plugin.callContext.maxItemCount, 0);
+}
+
+- (void)testPickMultiVideoWithLimit {
+  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  [plugin pickMultiVideoWithMaxDuration:nil
+                                  limit:@(2)
+                             completion:^(NSArray<NSString *> *_Nullable result,
+                                          FlutterError *_Nullable error){
+                             }];
+  XCTAssertEqual(plugin.callContext.maxItemCount, 2);
+}
+
+- (void)testPickMultiVideoWithoutLimit {
+  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  [plugin pickMultiVideoWithMaxDuration:nil
+                                  limit:nil
+                             completion:^(NSArray<NSString *> *_Nullable result,
+                                          FlutterError *_Nullable error){
+                             }];
+  XCTAssertEqual(plugin.callContext.maxItemCount, 0);
 }
 
 @end

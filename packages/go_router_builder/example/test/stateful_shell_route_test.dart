@@ -6,8 +6,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router_builder_example/stateful_shell_route_example.dart';
 
 void main() {
-  testWidgets('Navigate between section A and section B',
-      (WidgetTester tester) async {
+  testWidgets('Navigate between section A and section B', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(App());
     expect(find.text('Details for A - Counter: 0'), findsOneWidget);
 

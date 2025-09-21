@@ -24,15 +24,20 @@ void main() {
       expect(patternToPath('/', const <String, String>{}), '/');
       expect(patternToPath('/user', const <String, String>{}), '/user');
       expect(
-          patternToPath('/user/:id', const <String, String>{'id': 'user-id'}),
-          '/user/user-id');
+        patternToPath('/user/:id', const <String, String>{'id': 'user-id'}),
+        '/user/user-id',
+      );
       expect(
-          patternToPath(
-              '/user/:id/book', const <String, String>{'id': 'user-id'}),
-          '/user/user-id/book');
+        patternToPath('/user/:id/book', const <String, String>{
+          'id': 'user-id',
+        }),
+        '/user/user-id/book',
+      );
       expect(
-        patternToPath('/user/:id/book/:bookId',
-            const <String, String>{'id': 'user-id', 'bookId': 'book-id'}),
+        patternToPath('/user/:id/book/:bookId', const <String, String>{
+          'id': 'user-id',
+          'bookId': 'book-id',
+        }),
         '/user/user-id/book/book-id',
       );
     });

@@ -16,7 +16,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property(assign, nonatomic, readonly) BOOL consumeTapEvents;
 - (instancetype)initWithMarker:(GMSMarker *)marker
               markerIdentifier:(NSString *)markerIdentifier
-      clusterManagerIdentifier:(nullable NSString *)clusterManagerIdentifier
                        mapView:(GMSMapView *)mapView;
 - (void)showInfoWindow;
 - (void)hideInfoWindow;

@@ -4,9 +4,12 @@
 
 // ignore_for_file: public_member_api_docs
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'src/event_channel_messages.g.dart';
 import 'src/messages.g.dart';
 
 // #docregion main-dart-flutter
@@ -20,9 +23,9 @@ class _ExampleFlutterApi implements MessageFlutterApi {
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-// #docregion main-dart-flutter
+  // #docregion main-dart-flutter
   MessageFlutterApi.setUp(_ExampleFlutterApi());
-// #enddocregion main-dart-flutter
+  // #enddocregion main-dart-flutter
   runApp(const MyApp());
 }
 
@@ -85,18 +88,37 @@ class _MyHomePageState extends State<MyHomePage> {
   }
   // #enddocregion main-dart
 
+  // #docregion main-dart-event
+  Stream<String> getEventStream() async* {
+    final Stream<PlatformEvent> events = streamEvents();
+    await for (final PlatformEvent event in events) {
+      switch (event) {
+        case IntEvent():
+          final int intData = event.data;
+          yield '$intData, ';
+        case StringEvent():
+          final String stringData = event.data;
+          yield '$stringData, ';
+      }
+    }
+  }
+  // #enddocregion main-dart-event
+
   @override
   void initState() {
     super.initState();
-    _hostApi.getHostLanguage().then((String response) {
-      setState(() {
-        _hostCallResult = 'Hello from $response!';
-      });
-    }).onError<PlatformException>((PlatformException error, StackTrace _) {
-      setState(() {
-        _hostCallResult = 'Failed to get host language: ${error.message}';
-      });
-    });
+    _hostApi
+        .getHostLanguage()
+        .then((String response) {
+          setState(() {
+            _hostCallResult = 'Hello from $response!';
+          });
+        })
+        .onError<PlatformException>((PlatformException error, StackTrace _) {
+          setState(() {
+            _hostCallResult = 'Failed to get host language: ${error.message}';
+          });
+        });
   }
 
   @override
@@ -110,10 +132,24 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
-              _hostCallResult ?? 'Waiting for host language...',
-            ),
+            Text(_hostCallResult ?? 'Waiting for host language...'),
             if (_hostCallResult == null) const CircularProgressIndicator(),
+            if (Platform.isAndroid || Platform.isIOS)
+              StreamBuilder<String>(
+                stream: getEventStream(),
+                builder: (
+                  BuildContext context,
+                  AsyncSnapshot<String> snapshot,
+                ) {
+                  if (snapshot.hasData) {
+                    return Text(snapshot.data ?? '');
+                  } else {
+                    return const CircularProgressIndicator();
+                  }
+                },
+              )
+            else
+              const Text('event channels are not supported on this platform'),
           ],
         ),
       ),

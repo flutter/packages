@@ -23,6 +23,7 @@ class PublishCheckCommand extends PackageLoopingCommand {
     super.packagesDir, {
     super.processRunner,
     super.platform,
+    super.gitDir,
     http.Client? httpClient,
   }) : _pubVersionFinder =
             PubVersionFinder(httpClient: httpClient ?? http.Client()) {

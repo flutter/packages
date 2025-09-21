@@ -5,7 +5,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:webview_flutter_android/src/android_webview.dart'
+import 'package:webview_flutter_android/src/android_webkit.g.dart'
     as android_webview;
 import 'package:webview_flutter_android/src/legacy/webview_android_cookie_manager.dart';
 import 'package:webview_flutter_platform_interface/src/webview_flutter_platform_interface_legacy.dart';
@@ -18,8 +18,9 @@ void main() {
 
   test('clearCookies should call android_webview.clearCookies', () {
     final MockCookieManager mockCookieManager = MockCookieManager();
-    when(mockCookieManager.removeAllCookies())
-        .thenAnswer((_) => Future<bool>.value(true));
+    when(
+      mockCookieManager.removeAllCookies(),
+    ).thenAnswer((_) => Future<bool>.value(true));
     WebViewAndroidCookieManager(
       cookieManager: mockCookieManager,
     ).clearCookies();
@@ -29,26 +30,28 @@ void main() {
   test('setCookie should throw ArgumentError for cookie with invalid path', () {
     expect(
       () => WebViewAndroidCookieManager(cookieManager: MockCookieManager())
-          .setCookie(const WebViewCookie(
-        name: 'foo',
-        value: 'bar',
-        domain: 'flutter.dev',
-        path: 'invalid;path',
-      )),
+          .setCookie(
+            const WebViewCookie(
+              name: 'foo',
+              value: 'bar',
+              domain: 'flutter.dev',
+              path: 'invalid;path',
+            ),
+          ),
       throwsA(const TypeMatcher<ArgumentError>()),
     );
   });
 
   test(
-      'setCookie should call android_webview.csetCookie with properly formatted cookie value',
-      () {
-    final MockCookieManager mockCookieManager = MockCookieManager();
-    WebViewAndroidCookieManager(cookieManager: mockCookieManager)
-        .setCookie(const WebViewCookie(
-      name: 'foo&',
-      value: 'bar@',
-      domain: 'flutter.dev',
-    ));
-    verify(mockCookieManager.setCookie('flutter.dev', 'foo%26=bar%40; path=/'));
-  });
+    'setCookie should call android_webview.csetCookie with properly formatted cookie value',
+    () {
+      final MockCookieManager mockCookieManager = MockCookieManager();
+      WebViewAndroidCookieManager(cookieManager: mockCookieManager).setCookie(
+        const WebViewCookie(name: 'foo&', value: 'bar@', domain: 'flutter.dev'),
+      );
+      verify(
+        mockCookieManager.setCookie('flutter.dev', 'foo%26=bar%40; path=/'),
+      );
+    },
+  );
 }

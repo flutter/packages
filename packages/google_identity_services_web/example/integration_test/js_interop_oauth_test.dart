@@ -37,15 +37,15 @@ void main() async {
         error_callback: (GoogleIdentityServicesError? _) {},
       );
 
-      final utils.ExpectConfigValueFn expectConfigValue =
-          utils.createExpectConfigValue(config as JSObject);
+      final utils.ExpectConfigValueFn expectConfigValue = utils
+          .createExpectConfigValue(config as JSObject);
 
       expectConfigValue('client_id', 'testing_1-2-3');
       expectConfigValue('callback', utils.isAJs('function'));
       expectConfigValue('scope', 'one two three');
-      expectConfigValue('include_granted_scopes', isTrue);
+      expectConfigValue('include_granted_scopes', true);
       expectConfigValue('prompt', 'some-prompt');
-      expectConfigValue('enable_granular_consent', isTrue);
+      expectConfigValue('enable_granular_consent', true);
       expectConfigValue('login_hint', 'login-hint@example.com');
       expectConfigValue('hd', 'hd_value');
       expectConfigValue('state', 'some-state');
@@ -62,13 +62,13 @@ void main() async {
         state: 'some-state',
       );
 
-      final utils.ExpectConfigValueFn expectConfigValue =
-          utils.createExpectConfigValue(config as JSObject);
+      final utils.ExpectConfigValueFn expectConfigValue = utils
+          .createExpectConfigValue(config as JSObject);
 
       expectConfigValue('scope', 'one two three');
-      expectConfigValue('include_granted_scopes', isTrue);
+      expectConfigValue('include_granted_scopes', true);
       expectConfigValue('prompt', 'some-prompt');
-      expectConfigValue('enable_granular_consent', isTrue);
+      expectConfigValue('enable_granular_consent', true);
       expectConfigValue('login_hint', 'login-hint@example.com');
       expectConfigValue('state', 'some-state');
     });
@@ -89,30 +89,32 @@ void main() async {
         error_callback: (GoogleIdentityServicesError? _) {},
       );
 
-      final utils.ExpectConfigValueFn expectConfigValue =
-          utils.createExpectConfigValue(config as JSObject);
+      final utils.ExpectConfigValueFn expectConfigValue = utils
+          .createExpectConfigValue(config as JSObject);
 
       expectConfigValue('scope', 'one two three');
-      expectConfigValue('include_granted_scopes', isTrue);
+      expectConfigValue('include_granted_scopes', true);
       expectConfigValue('redirect_uri', 'https://www.example.com/login');
       expectConfigValue('callback', utils.isAJs('function'));
       expectConfigValue('state', 'some-state');
-      expectConfigValue('enable_granular_consent', isTrue);
+      expectConfigValue('enable_granular_consent', true);
       expectConfigValue('login_hint', 'login-hint@example.com');
       expectConfigValue('hd', 'hd_value');
       expectConfigValue('ux_mode', 'popup');
-      expectConfigValue('select_account', isTrue);
+      expectConfigValue('select_account', true);
       expectConfigValue('error_callback', utils.isAJs('function'));
     });
   });
 
   group('initTokenClient', () {
     testWidgets('returns a tokenClient', (_) async {
-      final TokenClient client = oauth2.initTokenClient(TokenClientConfig(
-        client_id: 'for-tests',
-        callback: (TokenResponse _) {},
-        scope: <String>['some_scope', 'for_tests', 'not_real'],
-      ));
+      final TokenClient client = oauth2.initTokenClient(
+        TokenClientConfig(
+          client_id: 'for-tests',
+          callback: (TokenResponse _) {},
+          scope: <String>['some_scope', 'for_tests', 'not_real'],
+        ),
+      );
 
       expect(client, isNotNull);
     });
@@ -125,11 +127,13 @@ void main() async {
 
       final List<String> scopes = <String>['some_scope', 'another', 'more'];
 
-      final TokenClient client = oauth2.initTokenClient(TokenClientConfig(
-        client_id: 'for-tests',
-        callback: controller.add,
-        scope: scopes,
-      ));
+      final TokenClient client = oauth2.initTokenClient(
+        TokenClientConfig(
+          client_id: 'for-tests',
+          callback: controller.add,
+          scope: scopes,
+        ),
+      );
 
       utils.setMockTokenResponse(client, 'some-non-null-auth-token-value');
 
@@ -148,17 +152,17 @@ void main() async {
 
       final List<String> scopes = <String>['some_scope', 'another', 'more'];
 
-      final TokenClient client = oauth2.initTokenClient(TokenClientConfig(
-        client_id: 'for-tests',
-        callback: controller.add,
-        scope: <String>['blank'],
-      ));
+      final TokenClient client = oauth2.initTokenClient(
+        TokenClientConfig(
+          client_id: 'for-tests',
+          callback: controller.add,
+          scope: <String>['blank'],
+        ),
+      );
 
       utils.setMockTokenResponse(client, 'some-non-null-auth-token-value');
 
-      client.requestAccessToken(OverridableTokenClientConfig(
-        scope: scopes,
-      ));
+      client.requestAccessToken(OverridableTokenClientConfig(scope: scopes));
 
       final TokenResponse response = await controller.stream.first;
 

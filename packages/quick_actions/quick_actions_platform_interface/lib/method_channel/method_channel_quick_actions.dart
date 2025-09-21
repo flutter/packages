@@ -8,8 +8,9 @@ import 'package:flutter/services.dart';
 import '../platform_interface/quick_actions_platform.dart';
 import '../types/types.dart';
 
-const MethodChannel _channel =
-    MethodChannel('plugins.flutter.io/quick_actions');
+const MethodChannel _channel = MethodChannel(
+  'plugins.flutter.io/quick_actions',
+);
 
 /// An implementation of [QuickActionsPlatform] that uses method channels.
 class MethodChannelQuickActions extends QuickActionsPlatform {
@@ -23,8 +24,9 @@ class MethodChannelQuickActions extends QuickActionsPlatform {
       assert(call.method == 'launch');
       handler(call.arguments as String);
     });
-    final String? action =
-        await channel.invokeMethod<String?>('getLaunchAction');
+    final String? action = await channel.invokeMethod<String?>(
+      'getLaunchAction',
+    );
     if (action != null) {
       handler(action);
     }
@@ -45,6 +47,8 @@ class MethodChannelQuickActions extends QuickActionsPlatform {
     return <String, String?>{
       'type': item.type,
       'localizedTitle': item.localizedTitle,
+      if (item.localizedSubtitle != null)
+        'localizedSubtitle': item.localizedSubtitle,
       'icon': item.icon,
     };
   }

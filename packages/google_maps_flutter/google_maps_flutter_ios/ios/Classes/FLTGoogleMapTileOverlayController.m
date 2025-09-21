@@ -14,14 +14,15 @@
 
 @implementation FLTGoogleMapTileOverlayController
 
-- (instancetype)initWithTileLayer:(GMSTileLayer *)tileLayer
-                          mapView:(GMSMapView *)mapView
-                          options:(NSDictionary *)optionsData {
+- (instancetype)initWithTileOverlay:(FGMPlatformTileOverlay *)tileOverlay
+                          tileLayer:(GMSTileLayer *)tileLayer
+                            mapView:(GMSMapView *)mapView {
   self = [super init];
   if (self) {
     _layer = tileLayer;
     _mapView = mapView;
-    [self interpretTileOverlayOptions:optionsData];
+    // TODO(stuartmorgan: Refactor to avoid this call to an instance method in init.
+    [self updateFromPlatformTileOverlay:tileOverlay];
   }
   return self;
 }
@@ -55,34 +56,12 @@
   self.layer.tileSize = tileSize;
 }
 
-- (void)interpretTileOverlayOptions:(NSDictionary *)data {
-  if (!data) {
-    return;
-  }
-  NSNumber *visible = FGMGetValueOrNilFromDict(data, @"visible");
-  if (visible) {
-    [self setVisible:visible.boolValue];
-  }
-
-  NSNumber *transparency = FGMGetValueOrNilFromDict(data, @"transparency");
-  if (transparency) {
-    [self setTransparency:transparency.floatValue];
-  }
-
-  NSNumber *zIndex = FGMGetValueOrNilFromDict(data, @"zIndex");
-  if (zIndex) {
-    [self setZIndex:zIndex.intValue];
-  }
-
-  NSNumber *fadeIn = FGMGetValueOrNilFromDict(data, @"fadeIn");
-  if (fadeIn) {
-    [self setFadeIn:fadeIn.boolValue];
-  }
-
-  NSNumber *tileSize = FGMGetValueOrNilFromDict(data, @"tileSize");
-  if (tileSize) {
-    [self setTileSize:tileSize.integerValue];
-  }
+- (void)updateFromPlatformTileOverlay:(FGMPlatformTileOverlay *)overlay {
+  [self setVisible:overlay.visible];
+  [self setTransparency:overlay.transparency];
+  [self setZIndex:(int)overlay.zIndex];
+  [self setFadeIn:overlay.fadeIn];
+  [self setTileSize:overlay.tileSize];
 }
 
 @end
@@ -117,8 +96,9 @@
   // If it is wide gamut, we want to downsample it
   if (isFloat & (bitsPerComponent == 16)) {
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    CGContextRef context = CGBitmapContextCreate(nil, tile.size.width, tile.size.height, 8, 0,
-                                                 colorSpace, kCGImageAlphaPremultipliedLast);
+    CGContextRef context =
+        CGBitmapContextCreate(nil, tile.size.width, tile.size.height, 8, 0, colorSpace,
+                              (kCGBitmapAlphaInfoMask & kCGImageAlphaPremultipliedLast));
     CGContextDrawImage(context, CGRectMake(0, 0, tile.size.width, tile.size.height), tile.CGImage);
     CGImageRef image = CGBitmapContextCreateImage(context);
     tile = [UIImage imageWithCGImage:image];
@@ -182,24 +162,24 @@
 
 - (void)addTileOverlays:(NSArray<FGMPlatformTileOverlay *> *)tileOverlaysToAdd {
   for (FGMPlatformTileOverlay *tileOverlay in tileOverlaysToAdd) {
-    NSString *identifier = [FLTTileOverlaysController identifierForTileOverlay:tileOverlay.json];
+    NSString *identifier = tileOverlay.tileOverlayId;
     FLTTileProviderController *tileProvider =
         [[FLTTileProviderController alloc] initWithTileOverlayIdentifier:identifier
                                                          callbackHandler:self.callbackHandler];
     FLTGoogleMapTileOverlayController *controller =
-        [[FLTGoogleMapTileOverlayController alloc] initWithTileLayer:tileProvider
-                                                             mapView:self.mapView
-                                                             options:tileOverlay.json];
+        [[FLTGoogleMapTileOverlayController alloc] initWithTileOverlay:tileOverlay
+                                                             tileLayer:tileProvider
+                                                               mapView:self.mapView];
     self.tileOverlayIdentifierToController[identifier] = controller;
   }
 }
 
 - (void)changeTileOverlays:(NSArray<FGMPlatformTileOverlay *> *)tileOverlaysToChange {
   for (FGMPlatformTileOverlay *tileOverlay in tileOverlaysToChange) {
-    NSString *identifier = [FLTTileOverlaysController identifierForTileOverlay:tileOverlay.json];
+    NSString *identifier = tileOverlay.tileOverlayId;
     FLTGoogleMapTileOverlayController *controller =
         self.tileOverlayIdentifierToController[identifier];
-    [controller interpretTileOverlayOptions:tileOverlay.json];
+    [controller updateFromPlatformTileOverlay:tileOverlay];
   }
 }
 - (void)removeTileOverlayWithIdentifiers:(NSArray<NSString *> *)identifiers {
@@ -222,10 +202,6 @@
 
 - (nullable FLTGoogleMapTileOverlayController *)tileOverlayWithIdentifier:(NSString *)identifier {
   return self.tileOverlayIdentifierToController[identifier];
-}
-
-+ (NSString *)identifierForTileOverlay:(NSDictionary *)tileOverlay {
-  return tileOverlay[@"tileOverlayId"];
 }
 
 @end

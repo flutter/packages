@@ -1,5 +1,15 @@
 ## NEXT
 
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
+## 1.2.1
+
+* Updates to Pigeon 25.5.0.
+* Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+
+## 1.2.0
+
+* Adds localizedSubtitle field for iOS quick actions.
 * Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
 
 ## 1.1.1

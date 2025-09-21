@@ -1,3 +1,28 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
+## 1.1.19
+
+* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
+* Enhance image handling by adding validity checks and clear error messages for improved robustness and maintainability.
+
+## 1.1.18
+
+* Allow transition between placeholder and loaded image to have an animation.
+
+## 1.1.17
+
+* Reverts leaker tracker changes that caused runtime exceptions.
+
+## 1.1.16
+
+* Fixes some memory leaks by disposing undisposed `ImageInfo`, `ui.Picture` and `Picture`.
+
+## 1.1.15
+
+* Updates error handling in VectorGraphicWidget to handle errors when the bytes of the graphic cannot be loaded.
+
 ## 1.1.14
 
 * Relaxes dependency constraint on vector_graphics_codec.

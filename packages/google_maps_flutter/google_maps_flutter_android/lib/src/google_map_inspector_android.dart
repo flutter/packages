@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:ui';
+
 import 'package:flutter/foundation.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 
@@ -14,8 +16,8 @@ class GoogleMapsInspectorAndroid extends GoogleMapsInspectorPlatform {
   /// Creates an inspector API instance for a given map ID from
   /// [inspectorProvider].
   GoogleMapsInspectorAndroid(
-      MapsInspectorApi? Function(int mapId) inspectorProvider)
-      : _inspectorProvider = inspectorProvider;
+    MapsInspectorApi? Function(int mapId) inspectorProvider,
+  ) : _inspectorProvider = inspectorProvider;
 
   final MapsInspectorApi? Function(int mapId) _inspectorProvider;
 
@@ -57,10 +59,13 @@ class GoogleMapsInspectorAndroid extends GoogleMapsInspectorPlatform {
   }
 
   @override
-  Future<TileOverlay?> getTileOverlayInfo(TileOverlayId tileOverlayId,
-      {required int mapId}) async {
-    final PlatformTileLayer? tileInfo = await _inspectorProvider(mapId)!
-        .getTileOverlayInfo(tileOverlayId.value);
+  Future<TileOverlay?> getTileOverlayInfo(
+    TileOverlayId tileOverlayId, {
+    required int mapId,
+  }) async {
+    final PlatformTileLayer? tileInfo = await _inspectorProvider(
+      mapId,
+    )!.getTileOverlayInfo(tileOverlayId.value);
     if (tileInfo == null) {
       return null;
     }
@@ -77,6 +82,72 @@ class GoogleMapsInspectorAndroid extends GoogleMapsInspectorPlatform {
 
   @override
   bool supportsGettingHeatmapInfo() => false;
+
+  @override
+  bool supportsGettingGroundOverlayInfo() => true;
+
+  @override
+  Future<GroundOverlay?> getGroundOverlayInfo(
+    GroundOverlayId groundOverlayId, {
+    required int mapId,
+  }) async {
+    final PlatformGroundOverlay? groundOverlayInfo = await _inspectorProvider(
+      mapId,
+    )!.getGroundOverlayInfo(groundOverlayId.value);
+
+    if (groundOverlayInfo == null) {
+      return null;
+    }
+
+    // Create dummy image to represent the image of the ground overlay.
+    final BytesMapBitmap dummyImage = BytesMapBitmap(
+      Uint8List.fromList(<int>[0]),
+      bitmapScaling: MapBitmapScaling.none,
+    );
+
+    final PlatformLatLng? position = groundOverlayInfo.position;
+    final PlatformLatLngBounds? bounds = groundOverlayInfo.bounds;
+
+    if (position != null) {
+      return GroundOverlay.fromPosition(
+        groundOverlayId: groundOverlayId,
+        position: LatLng(position.latitude, position.longitude),
+        image: dummyImage,
+        width: groundOverlayInfo.width,
+        height: groundOverlayInfo.height,
+        zIndex: groundOverlayInfo.zIndex,
+        bearing: groundOverlayInfo.bearing,
+        transparency: groundOverlayInfo.transparency,
+        visible: groundOverlayInfo.visible,
+        clickable: groundOverlayInfo.clickable,
+        anchor: Offset(
+          groundOverlayInfo.anchor!.x,
+          groundOverlayInfo.anchor!.y,
+        ),
+      );
+    } else if (bounds != null) {
+      return GroundOverlay.fromBounds(
+        groundOverlayId: groundOverlayId,
+        bounds: LatLngBounds(
+          southwest: LatLng(
+            bounds.southwest.latitude,
+            bounds.southwest.longitude,
+          ),
+          northeast: LatLng(
+            bounds.northeast.latitude,
+            bounds.northeast.longitude,
+          ),
+        ),
+        image: dummyImage,
+        zIndex: groundOverlayInfo.zIndex,
+        bearing: groundOverlayInfo.bearing,
+        transparency: groundOverlayInfo.transparency,
+        visible: groundOverlayInfo.visible,
+        clickable: groundOverlayInfo.clickable,
+      );
+    }
+    return null;
+  }
 
   @override
   Future<bool> isCompassEnabled({required int mapId}) async {
@@ -109,11 +180,32 @@ class GoogleMapsInspectorAndroid extends GoogleMapsInspectorPlatform {
     required int mapId,
     required ClusterManagerId clusterManagerId,
   }) async {
-    return (await _inspectorProvider(mapId)!
-            .getClusters(clusterManagerId.value))
+    return (await _inspectorProvider(
+          mapId,
+        )!.getClusters(clusterManagerId.value))
         // See comment in messages.dart for why the force unwrap is okay.
-        .map((PlatformCluster? cluster) =>
-            GoogleMapsFlutterAndroid.clusterFromPlatformCluster(cluster!))
+        .map(
+          (PlatformCluster? cluster) =>
+              GoogleMapsFlutterAndroid.clusterFromPlatformCluster(cluster!),
+        )
         .toList();
+  }
+
+  @override
+  bool supportsGettingGameraPosition() => true;
+
+  @override
+  Future<CameraPosition> getCameraPosition({required int mapId}) async {
+    final PlatformCameraPosition cameraPosition =
+        await _inspectorProvider(mapId)!.getCameraPosition();
+    return CameraPosition(
+      target: LatLng(
+        cameraPosition.target.latitude,
+        cameraPosition.target.longitude,
+      ),
+      bearing: cameraPosition.bearing,
+      tilt: cameraPosition.tilt,
+      zoom: cameraPosition.zoom,
+    );
   }
 }

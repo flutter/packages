@@ -7,6 +7,7 @@
     <activity
       android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|layoutDirection"
       android:hardwareAccelerated="true"
+      android:exported="true"
       android:launchMode="singleTop"
       android:name="io.flutter.embedding.android.FlutterActivity"
       android:theme="@style/LaunchTheme"

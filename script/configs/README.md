@@ -12,5 +12,3 @@ Expected format:
 # Reason for exclusion
 - name_of_package
 ```
-
-If there are no exclusions there should be an file with [].

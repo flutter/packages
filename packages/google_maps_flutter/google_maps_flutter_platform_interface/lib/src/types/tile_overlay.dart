@@ -70,7 +70,7 @@ class TileOverlay implements MapsObject<TileOverlay> {
   final double transparency;
 
   /// The tile overlay's zIndex, i.e., the order in which it will be drawn where
-  /// overlays with larger values are drawn above those with lower values
+  /// overlays with larger values are drawn above those with lower values.
   final int zIndex;
 
   /// The visibility for the tile overlay. The default visibility is true.
@@ -146,6 +146,13 @@ class TileOverlay implements MapsObject<TileOverlay> {
   }
 
   @override
-  int get hashCode => Object.hash(tileOverlayId, fadeIn, tileProvider,
-      transparency, zIndex, visible, tileSize);
+  int get hashCode => Object.hash(
+    tileOverlayId,
+    fadeIn,
+    tileProvider,
+    transparency,
+    zIndex,
+    visible,
+    tileSize,
+  );
 }

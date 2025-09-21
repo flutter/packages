@@ -41,7 +41,7 @@ void main() {
       0.0,
       10.0,
       0.0,
-      0.0
+      0.0,
     ]);
     expect(verticesNode.vertices.indices, null);
   });

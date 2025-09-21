@@ -6,7 +6,7 @@ import 'package:flutter/foundation.dart';
 // ignore: implementation_imports
 import 'package:webview_flutter_platform_interface/src/webview_flutter_platform_interface_legacy.dart';
 
-import '../android_webview.dart' as android_webview;
+import '../android_webkit.g.dart' as android_webview;
 
 /// Handles all cookie operations for the current platform.
 class WebViewAndroidCookieManager extends WebViewCookieManagerPlatform {
@@ -24,7 +24,8 @@ class WebViewAndroidCookieManager extends WebViewCookieManagerPlatform {
   Future<void> setCookie(WebViewCookie cookie) {
     if (!_isValidPath(cookie.path)) {
       throw ArgumentError(
-          'The path property for the provided cookie was not given a legal value.');
+        'The path property for the provided cookie was not given a legal value.',
+      );
     }
     return _cookieManager.setCookie(
       cookie.domain,

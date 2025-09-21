@@ -2,12 +2,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
 import 'package:file/file.dart';
 
 import 'common/core.dart';
+import 'common/file_filters.dart';
 import 'common/output_utils.dart';
 import 'common/package_looping_command.dart';
 import 'common/plugin_utils.dart';
@@ -26,6 +28,7 @@ class DriveExamplesCommand extends PackageLoopingCommand {
     super.packagesDir, {
     super.processRunner,
     super.platform,
+    super.gitDir,
   }) {
     argParser.addFlag(platformAndroid,
         help: 'Runs the Android implementation of the examples',
@@ -65,6 +68,17 @@ class DriveExamplesCommand extends PackageLoopingCommand {
       'This command requires "flutter" to be in your path.';
 
   Map<String, List<String>> _targetDeviceFlags = const <String, List<String>>{};
+
+  @override
+  bool shouldIgnoreFile(String path) {
+    return isRepoLevelNonCodeImpactingFile(path) ||
+        isPackageSupportFile(path) ||
+        // This isn't part of isRepoLevelNonCodeImpactingFile since there could
+        // potentially be code-based commands that it could affect, but it
+        // should not affect integration tests, and they are the most expensive
+        // and flaky tests.
+        path == '.gitignore';
+  }
 
   @override
   Future<void> initializeRun() async {
@@ -128,13 +142,7 @@ class DriveExamplesCommand extends PackageLoopingCommand {
           'web-server',
           '--web-port=7357',
           '--browser-name=chrome',
-          if (useWasm)
-            '--wasm'
-          // TODO(dit): Clean this up, https://github.com/flutter/flutter/issues/151869
-          else if (platform.environment['CHANNEL']?.toLowerCase() == 'master')
-            '--web-renderer=canvaskit'
-          else
-            '--web-renderer=html',
+          if (useWasm) '--wasm',
           if (platform.environment.containsKey('CHROME_EXECUTABLE'))
             '--chrome-binary=${platform.environment['CHROME_EXECUTABLE']}',
         ],
@@ -445,17 +453,36 @@ class DriveExamplesCommand extends PackageLoopingCommand {
 
     bool passed = true;
     for (final String target in individualRunTargets) {
-      final int exitCode = await processRunner.runAndStream(
+      final Timer timeoutTimer = Timer(const Duration(minutes: 10), () async {
+        final String screenshotBasename =
+            'test-timeout-screenshot_${target.replaceAll(platform.pathSeparator, '_')}.png';
+        printWarning(
+            'Test is taking a long time, taking screenshot $screenshotBasename...');
+        await processRunner.runAndStream(
           flutterCommand,
           <String>[
-            'test',
+            'screenshot',
             ...deviceFlags,
-            if (enableExperiment.isNotEmpty)
-              '--enable-experiment=$enableExperiment',
-            if (logsDirectory != null) '--debug-logs-dir=${logsDirectory.path}',
-            target,
+            if (logsDirectory != null)
+              '--out=${logsDirectory.childFile(screenshotBasename).path}',
           ],
-          workingDir: example.directory);
+          workingDir: example.directory,
+        );
+      });
+      final int exitCode = await processRunner.runAndStream(
+        flutterCommand,
+        <String>[
+          'test',
+          ...deviceFlags,
+          if (enableExperiment.isNotEmpty)
+            '--enable-experiment=$enableExperiment',
+          if (logsDirectory != null) '--debug-logs-dir=${logsDirectory.path}',
+          target,
+        ],
+        workingDir: example.directory,
+      );
+
+      timeoutTimer.cancel();
       passed = passed && (exitCode == 0);
     }
     return passed;

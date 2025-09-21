@@ -10,14 +10,12 @@ import 'dart:js_interop_unsafe';
 
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 // ignore_for_file: implementation_imports
-import 'package:camera_web/src/camera.dart';
 import 'package:camera_web/src/camera_service.dart';
-import 'package:camera_web/src/shims/dart_js_util.dart';
 import 'package:camera_web/src/types/types.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:mocktail/mocktail.dart';
+import 'package:mockito/mockito.dart';
 import 'package:web/web.dart' as web;
 
 import 'helpers/helpers.dart';
@@ -36,7 +34,7 @@ void main() {
     late web.Navigator navigator;
     late web.MediaDevices mediaDevices;
 
-    late JsUtil jsUtil;
+    late MockJsUtil jsUtil;
 
     late CameraService cameraService;
 
@@ -55,31 +53,31 @@ void main() {
 
       jsUtil = MockJsUtil();
 
-      registerFallbackValue(createJSInteropWrapper(MockWindow()));
-
       // Mock JsUtil to return the real getProperty from dart:js_util.
-      when<dynamic>(() => jsUtil.getProperty(any(), any())).thenAnswer(
+      when(jsUtil.getProperty(any, any)).thenAnswer(
         (Invocation invocation) =>
-            (invocation.positionalArguments[0] as JSObject)
-                .getProperty(invocation.positionalArguments[1] as JSAny),
+            (invocation.positionalArguments[0] as JSObject).getProperty(
+              invocation.positionalArguments[1] as JSAny,
+            ),
       );
 
       cameraService = CameraService()..window = window;
     });
 
     group('getMediaStreamForOptions', () {
-      testWidgets(
-          'calls MediaDevices.getUserMedia '
+      testWidgets('calls MediaDevices.getUserMedia '
           'with provided options', (WidgetTester tester) async {
         late final web.MediaStreamConstraints? capturedConstraints;
         mockMediaDevices.getUserMedia =
             ([web.MediaStreamConstraints? constraints]) {
-          capturedConstraints = constraints;
-          final web.MediaStream stream =
-              createJSInteropWrapper(FakeMediaStream(<web.MediaStreamTrack>[]))
-                  as web.MediaStream;
-          return Future<web.MediaStream>.value(stream).toJS;
-        }.toJS;
+              capturedConstraints = constraints;
+              final web.MediaStream stream =
+                  createJSInteropWrapper(
+                        FakeMediaStream(<web.MediaStreamTrack>[]),
+                      )
+                      as web.MediaStream;
+              return Future<web.MediaStream>.value(stream).toJS;
+            }.toJS;
 
         final CameraOptions options = CameraOptions(
           video: VideoConstraints(
@@ -101,15 +99,15 @@ void main() {
       });
 
       group('throws CameraWebException', () {
-        testWidgets(
-            'with notFound error '
+        testWidgets('with notFound error '
             'when MediaDevices.getUserMedia throws DomException '
             'with NotFoundError', (WidgetTester tester) async {
-          mockMediaDevices.getUserMedia = ([web.MediaStreamConstraints? _]) {
-            throw web.DOMException('', 'NotFoundError');
-            // ignore: dead_code
-            return Future<web.MediaStream>.value(web.MediaStream()).toJS;
-          }.toJS;
+          mockMediaDevices.getUserMedia =
+              ([web.MediaStreamConstraints? _]) {
+                throw web.DOMException('', 'NotFoundError');
+                // ignore: dead_code
+                return Future<web.MediaStream>.value(web.MediaStream()).toJS;
+              }.toJS;
 
           expect(
             () => cameraService.getMediaStreamForOptions(
@@ -118,23 +116,29 @@ void main() {
             ),
             throwsA(
               isA<CameraWebException>()
-                  .having((CameraWebException e) => e.cameraId, 'cameraId',
-                      cameraId)
-                  .having((CameraWebException e) => e.code, 'code',
-                      CameraErrorCode.notFound),
+                  .having(
+                    (CameraWebException e) => e.cameraId,
+                    'cameraId',
+                    cameraId,
+                  )
+                  .having(
+                    (CameraWebException e) => e.code,
+                    'code',
+                    CameraErrorCode.notFound,
+                  ),
             ),
           );
         });
 
-        testWidgets(
-            'with notFound error '
+        testWidgets('with notFound error '
             'when MediaDevices.getUserMedia throws DomException '
             'with DevicesNotFoundError', (WidgetTester tester) async {
-          mockMediaDevices.getUserMedia = ([web.MediaStreamConstraints? _]) {
-            throw web.DOMException('', 'DevicesNotFoundError');
-            // ignore: dead_code
-            return Future<web.MediaStream>.value(web.MediaStream()).toJS;
-          }.toJS;
+          mockMediaDevices.getUserMedia =
+              ([web.MediaStreamConstraints? _]) {
+                throw web.DOMException('', 'DevicesNotFoundError');
+                // ignore: dead_code
+                return Future<web.MediaStream>.value(web.MediaStream()).toJS;
+              }.toJS;
 
           expect(
             () => cameraService.getMediaStreamForOptions(
@@ -143,23 +147,29 @@ void main() {
             ),
             throwsA(
               isA<CameraWebException>()
-                  .having((CameraWebException e) => e.cameraId, 'cameraId',
-                      cameraId)
-                  .having((CameraWebException e) => e.code, 'code',
-                      CameraErrorCode.notFound),
+                  .having(
+                    (CameraWebException e) => e.cameraId,
+                    'cameraId',
+                    cameraId,
+                  )
+                  .having(
+                    (CameraWebException e) => e.code,
+                    'code',
+                    CameraErrorCode.notFound,
+                  ),
             ),
           );
         });
 
-        testWidgets(
-            'with notReadable error '
+        testWidgets('with notReadable error '
             'when MediaDevices.getUserMedia throws DomException '
             'with NotReadableError', (WidgetTester tester) async {
-          mockMediaDevices.getUserMedia = ([web.MediaStreamConstraints? _]) {
-            throw web.DOMException('', 'NotReadableError');
-            // ignore: dead_code
-            return Future<web.MediaStream>.value(web.MediaStream()).toJS;
-          }.toJS;
+          mockMediaDevices.getUserMedia =
+              ([web.MediaStreamConstraints? _]) {
+                throw web.DOMException('', 'NotReadableError');
+                // ignore: dead_code
+                return Future<web.MediaStream>.value(web.MediaStream()).toJS;
+              }.toJS;
           expect(
             () => cameraService.getMediaStreamForOptions(
               const CameraOptions(),
@@ -167,23 +177,29 @@ void main() {
             ),
             throwsA(
               isA<CameraWebException>()
-                  .having((CameraWebException e) => e.cameraId, 'cameraId',
-                      cameraId)
-                  .having((CameraWebException e) => e.code, 'code',
-                      CameraErrorCode.notReadable),
+                  .having(
+                    (CameraWebException e) => e.cameraId,
+                    'cameraId',
+                    cameraId,
+                  )
+                  .having(
+                    (CameraWebException e) => e.code,
+                    'code',
+                    CameraErrorCode.notReadable,
+                  ),
             ),
           );
         });
 
-        testWidgets(
-            'with notReadable error '
+        testWidgets('with notReadable error '
             'when MediaDevices.getUserMedia throws DomException '
             'with TrackStartError', (WidgetTester tester) async {
-          mockMediaDevices.getUserMedia = ([web.MediaStreamConstraints? _]) {
-            throw web.DOMException('', 'TrackStartError');
-            // ignore: dead_code
-            return Future<web.MediaStream>.value(web.MediaStream()).toJS;
-          }.toJS;
+          mockMediaDevices.getUserMedia =
+              ([web.MediaStreamConstraints? _]) {
+                throw web.DOMException('', 'TrackStartError');
+                // ignore: dead_code
+                return Future<web.MediaStream>.value(web.MediaStream()).toJS;
+              }.toJS;
 
           expect(
             () => cameraService.getMediaStreamForOptions(
@@ -192,23 +208,29 @@ void main() {
             ),
             throwsA(
               isA<CameraWebException>()
-                  .having((CameraWebException e) => e.cameraId, 'cameraId',
-                      cameraId)
-                  .having((CameraWebException e) => e.code, 'code',
-                      CameraErrorCode.notReadable),
+                  .having(
+                    (CameraWebException e) => e.cameraId,
+                    'cameraId',
+                    cameraId,
+                  )
+                  .having(
+                    (CameraWebException e) => e.code,
+                    'code',
+                    CameraErrorCode.notReadable,
+                  ),
             ),
           );
         });
 
-        testWidgets(
-            'with overconstrained error '
+        testWidgets('with overconstrained error '
             'when MediaDevices.getUserMedia throws DomException '
             'with OverconstrainedError', (WidgetTester tester) async {
-          mockMediaDevices.getUserMedia = ([web.MediaStreamConstraints? _]) {
-            throw web.DOMException('', 'OverconstrainedError');
-            // ignore: dead_code
-            return Future<web.MediaStream>.value(web.MediaStream()).toJS;
-          }.toJS;
+          mockMediaDevices.getUserMedia =
+              ([web.MediaStreamConstraints? _]) {
+                throw web.DOMException('', 'OverconstrainedError');
+                // ignore: dead_code
+                return Future<web.MediaStream>.value(web.MediaStream()).toJS;
+              }.toJS;
 
           expect(
             () => cameraService.getMediaStreamForOptions(
@@ -217,23 +239,29 @@ void main() {
             ),
             throwsA(
               isA<CameraWebException>()
-                  .having((CameraWebException e) => e.cameraId, 'cameraId',
-                      cameraId)
-                  .having((CameraWebException e) => e.code, 'code',
-                      CameraErrorCode.overconstrained),
+                  .having(
+                    (CameraWebException e) => e.cameraId,
+                    'cameraId',
+                    cameraId,
+                  )
+                  .having(
+                    (CameraWebException e) => e.code,
+                    'code',
+                    CameraErrorCode.overconstrained,
+                  ),
             ),
           );
         });
 
-        testWidgets(
-            'with overconstrained error '
+        testWidgets('with overconstrained error '
             'when MediaDevices.getUserMedia throws DomException '
             'with ConstraintNotSatisfiedError', (WidgetTester tester) async {
-          mockMediaDevices.getUserMedia = ([web.MediaStreamConstraints? _]) {
-            throw web.DOMException('', 'ConstraintNotSatisfiedError');
-            // ignore: dead_code
-            return Future<web.MediaStream>.value(web.MediaStream()).toJS;
-          }.toJS;
+          mockMediaDevices.getUserMedia =
+              ([web.MediaStreamConstraints? _]) {
+                throw web.DOMException('', 'ConstraintNotSatisfiedError');
+                // ignore: dead_code
+                return Future<web.MediaStream>.value(web.MediaStream()).toJS;
+              }.toJS;
 
           expect(
             () => cameraService.getMediaStreamForOptions(
@@ -242,23 +270,29 @@ void main() {
             ),
             throwsA(
               isA<CameraWebException>()
-                  .having((CameraWebException e) => e.cameraId, 'cameraId',
-                      cameraId)
-                  .having((CameraWebException e) => e.code, 'code',
-                      CameraErrorCode.overconstrained),
+                  .having(
+                    (CameraWebException e) => e.cameraId,
+                    'cameraId',
+                    cameraId,
+                  )
+                  .having(
+                    (CameraWebException e) => e.code,
+                    'code',
+                    CameraErrorCode.overconstrained,
+                  ),
             ),
           );
         });
 
-        testWidgets(
-            'with permissionDenied error '
+        testWidgets('with permissionDenied error '
             'when MediaDevices.getUserMedia throws DomException '
             'with NotAllowedError', (WidgetTester tester) async {
-          mockMediaDevices.getUserMedia = ([web.MediaStreamConstraints? _]) {
-            throw web.DOMException('', 'NotAllowedError');
-            // ignore: dead_code
-            return Future<web.MediaStream>.value(web.MediaStream()).toJS;
-          }.toJS;
+          mockMediaDevices.getUserMedia =
+              ([web.MediaStreamConstraints? _]) {
+                throw web.DOMException('', 'NotAllowedError');
+                // ignore: dead_code
+                return Future<web.MediaStream>.value(web.MediaStream()).toJS;
+              }.toJS;
 
           expect(
             () => cameraService.getMediaStreamForOptions(
@@ -267,23 +301,29 @@ void main() {
             ),
             throwsA(
               isA<CameraWebException>()
-                  .having((CameraWebException e) => e.cameraId, 'cameraId',
-                      cameraId)
-                  .having((CameraWebException e) => e.code, 'code',
-                      CameraErrorCode.permissionDenied),
+                  .having(
+                    (CameraWebException e) => e.cameraId,
+                    'cameraId',
+                    cameraId,
+                  )
+                  .having(
+                    (CameraWebException e) => e.code,
+                    'code',
+                    CameraErrorCode.permissionDenied,
+                  ),
             ),
           );
         });
 
-        testWidgets(
-            'with permissionDenied error '
+        testWidgets('with permissionDenied error '
             'when MediaDevices.getUserMedia throws DomException '
             'with PermissionDeniedError', (WidgetTester tester) async {
-          mockMediaDevices.getUserMedia = ([web.MediaStreamConstraints? _]) {
-            throw web.DOMException('', 'PermissionDeniedError');
-            // ignore: dead_code
-            return Future<web.MediaStream>.value(web.MediaStream()).toJS;
-          }.toJS;
+          mockMediaDevices.getUserMedia =
+              ([web.MediaStreamConstraints? _]) {
+                throw web.DOMException('', 'PermissionDeniedError');
+                // ignore: dead_code
+                return Future<web.MediaStream>.value(web.MediaStream()).toJS;
+              }.toJS;
 
           expect(
             () => cameraService.getMediaStreamForOptions(
@@ -292,23 +332,29 @@ void main() {
             ),
             throwsA(
               isA<CameraWebException>()
-                  .having((CameraWebException e) => e.cameraId, 'cameraId',
-                      cameraId)
-                  .having((CameraWebException e) => e.code, 'code',
-                      CameraErrorCode.permissionDenied),
+                  .having(
+                    (CameraWebException e) => e.cameraId,
+                    'cameraId',
+                    cameraId,
+                  )
+                  .having(
+                    (CameraWebException e) => e.code,
+                    'code',
+                    CameraErrorCode.permissionDenied,
+                  ),
             ),
           );
         });
 
-        testWidgets(
-            'with type error '
+        testWidgets('with type error '
             'when MediaDevices.getUserMedia throws DomException '
             'with TypeError', (WidgetTester tester) async {
-          mockMediaDevices.getUserMedia = ([web.MediaStreamConstraints? _]) {
-            throw web.DOMException('', 'TypeError');
-            // ignore: dead_code
-            return Future<web.MediaStream>.value(web.MediaStream()).toJS;
-          }.toJS;
+          mockMediaDevices.getUserMedia =
+              ([web.MediaStreamConstraints? _]) {
+                throw web.DOMException('', 'TypeError');
+                // ignore: dead_code
+                return Future<web.MediaStream>.value(web.MediaStream()).toJS;
+              }.toJS;
 
           expect(
             () => cameraService.getMediaStreamForOptions(
@@ -317,23 +363,29 @@ void main() {
             ),
             throwsA(
               isA<CameraWebException>()
-                  .having((CameraWebException e) => e.cameraId, 'cameraId',
-                      cameraId)
-                  .having((CameraWebException e) => e.code, 'code',
-                      CameraErrorCode.type),
+                  .having(
+                    (CameraWebException e) => e.cameraId,
+                    'cameraId',
+                    cameraId,
+                  )
+                  .having(
+                    (CameraWebException e) => e.code,
+                    'code',
+                    CameraErrorCode.type,
+                  ),
             ),
           );
         });
 
-        testWidgets(
-            'with abort error '
+        testWidgets('with abort error '
             'when MediaDevices.getUserMedia throws DomException '
             'with AbortError', (WidgetTester tester) async {
-          mockMediaDevices.getUserMedia = ([web.MediaStreamConstraints? _]) {
-            throw web.DOMException('', 'AbortError');
-            // ignore: dead_code
-            return Future<web.MediaStream>.value(web.MediaStream()).toJS;
-          }.toJS;
+          mockMediaDevices.getUserMedia =
+              ([web.MediaStreamConstraints? _]) {
+                throw web.DOMException('', 'AbortError');
+                // ignore: dead_code
+                return Future<web.MediaStream>.value(web.MediaStream()).toJS;
+              }.toJS;
 
           expect(
             () => cameraService.getMediaStreamForOptions(
@@ -342,23 +394,29 @@ void main() {
             ),
             throwsA(
               isA<CameraWebException>()
-                  .having((CameraWebException e) => e.cameraId, 'cameraId',
-                      cameraId)
-                  .having((CameraWebException e) => e.code, 'code',
-                      CameraErrorCode.abort),
+                  .having(
+                    (CameraWebException e) => e.cameraId,
+                    'cameraId',
+                    cameraId,
+                  )
+                  .having(
+                    (CameraWebException e) => e.code,
+                    'code',
+                    CameraErrorCode.abort,
+                  ),
             ),
           );
         });
 
-        testWidgets(
-            'with security error '
+        testWidgets('with security error '
             'when MediaDevices.getUserMedia throws DomException '
             'with SecurityError', (WidgetTester tester) async {
-          mockMediaDevices.getUserMedia = ([web.MediaStreamConstraints? _]) {
-            throw web.DOMException('', 'SecurityError');
-            // ignore: dead_code
-            return Future<web.MediaStream>.value(web.MediaStream()).toJS;
-          }.toJS;
+          mockMediaDevices.getUserMedia =
+              ([web.MediaStreamConstraints? _]) {
+                throw web.DOMException('', 'SecurityError');
+                // ignore: dead_code
+                return Future<web.MediaStream>.value(web.MediaStream()).toJS;
+              }.toJS;
 
           expect(
             () => cameraService.getMediaStreamForOptions(
@@ -367,23 +425,29 @@ void main() {
             ),
             throwsA(
               isA<CameraWebException>()
-                  .having((CameraWebException e) => e.cameraId, 'cameraId',
-                      cameraId)
-                  .having((CameraWebException e) => e.code, 'code',
-                      CameraErrorCode.security),
+                  .having(
+                    (CameraWebException e) => e.cameraId,
+                    'cameraId',
+                    cameraId,
+                  )
+                  .having(
+                    (CameraWebException e) => e.code,
+                    'code',
+                    CameraErrorCode.security,
+                  ),
             ),
           );
         });
 
-        testWidgets(
-            'with unknown error '
+        testWidgets('with unknown error '
             'when MediaDevices.getUserMedia throws DomException '
             'with an unknown error', (WidgetTester tester) async {
-          mockMediaDevices.getUserMedia = ([web.MediaStreamConstraints? _]) {
-            throw web.DOMException('', 'Unknown');
-            // ignore: dead_code
-            return Future<web.MediaStream>.value(web.MediaStream()).toJS;
-          }.toJS;
+          mockMediaDevices.getUserMedia =
+              ([web.MediaStreamConstraints? _]) {
+                throw web.DOMException('', 'Unknown');
+                // ignore: dead_code
+                return Future<web.MediaStream>.value(web.MediaStream()).toJS;
+              }.toJS;
 
           expect(
             () => cameraService.getMediaStreamForOptions(
@@ -392,23 +456,30 @@ void main() {
             ),
             throwsA(
               isA<CameraWebException>()
-                  .having((CameraWebException e) => e.cameraId, 'cameraId',
-                      cameraId)
-                  .having((CameraWebException e) => e.code, 'code',
-                      CameraErrorCode.unknown),
+                  .having(
+                    (CameraWebException e) => e.cameraId,
+                    'cameraId',
+                    cameraId,
+                  )
+                  .having(
+                    (CameraWebException e) => e.code,
+                    'code',
+                    CameraErrorCode.unknown,
+                  ),
             ),
           );
         });
 
-        testWidgets(
-            'with unknown error '
-            'when MediaDevices.getUserMedia throws an unknown exception',
-            (WidgetTester tester) async {
-          mockMediaDevices.getUserMedia = ([web.MediaStreamConstraints? _]) {
-            throw Exception();
-            // ignore: dead_code
-            return Future<web.MediaStream>.value(web.MediaStream()).toJS;
-          }.toJS;
+        testWidgets('with unknown error '
+            'when MediaDevices.getUserMedia throws an unknown exception', (
+          WidgetTester tester,
+        ) async {
+          mockMediaDevices.getUserMedia =
+              ([web.MediaStreamConstraints? _]) {
+                throw Exception();
+                // ignore: dead_code
+                return Future<web.MediaStream>.value(web.MediaStream()).toJS;
+              }.toJS;
 
           expect(
             () => cameraService.getMediaStreamForOptions(
@@ -417,10 +488,16 @@ void main() {
             ),
             throwsA(
               isA<CameraWebException>()
-                  .having((CameraWebException e) => e.cameraId, 'cameraId',
-                      cameraId)
-                  .having((CameraWebException e) => e.code, 'code',
-                      CameraErrorCode.unknown),
+                  .having(
+                    (CameraWebException e) => e.cameraId,
+                    'cameraId',
+                    cameraId,
+                  )
+                  .having(
+                    (CameraWebException e) => e.code,
+                    'code',
+                    CameraErrorCode.unknown,
+                  ),
             ),
           );
         });
@@ -428,7 +505,7 @@ void main() {
     });
 
     group('getZoomLevelCapabilityForCamera', () {
-      late Camera camera;
+      late MockCamera camera;
       late MockMediaStreamTrack mockVideoTrack;
       late List<web.MediaStreamTrack> videoTracks;
 
@@ -441,8 +518,8 @@ void main() {
               as web.MediaStreamTrack,
         ];
 
-        when(() => camera.textureId).thenReturn(0);
-        when(() => camera.stream).thenReturn(
+        when(camera.textureId).thenReturn(0);
+        when(camera.stream).thenReturn(
           createJSInteropWrapper(FakeMediaStream(videoTracks))
               as web.MediaStream,
         );
@@ -450,21 +527,22 @@ void main() {
         cameraService.jsUtil = jsUtil;
       });
 
-      testWidgets(
-          'returns the zoom level capability '
+      testWidgets('returns the zoom level capability '
           'based on the first video track', (WidgetTester tester) async {
-        mockMediaDevices.getSupportedConstraints = () {
-          return web.MediaTrackSupportedConstraints(zoom: true);
-        }.toJS;
+        mockMediaDevices.getSupportedConstraints =
+            () {
+              return web.MediaTrackSupportedConstraints(zoom: true);
+            }.toJS;
 
-        mockVideoTrack.getCapabilities = () {
-          return web.MediaTrackCapabilities(
-            zoom: web.MediaSettingsRange(min: 100, max: 400, step: 2),
-          );
-        }.toJS;
+        mockVideoTrack.getCapabilities =
+            () {
+              return web.MediaTrackCapabilities(
+                zoom: web.MediaSettingsRange(min: 100, max: 400, step: 2),
+              );
+            }.toJS;
 
-        final ZoomLevelCapability zoomLevelCapability =
-            cameraService.getZoomLevelCapabilityForCamera(camera);
+        final ZoomLevelCapability zoomLevelCapability = cameraService
+            .getZoomLevelCapabilityForCamera(camera);
 
         expect(zoomLevelCapability.minimum, equals(100.0));
         expect(zoomLevelCapability.maximum, equals(400.0));
@@ -472,19 +550,20 @@ void main() {
       });
 
       group('throws CameraWebException', () {
-        testWidgets(
-            'with zoomLevelNotSupported error '
+        testWidgets('with zoomLevelNotSupported error '
             'when the zoom level is not supported '
             'in the browser', (WidgetTester tester) async {
-          mockMediaDevices.getSupportedConstraints = () {
-            return web.MediaTrackSupportedConstraints(zoom: false);
-          }.toJS;
+          mockMediaDevices.getSupportedConstraints =
+              () {
+                return web.MediaTrackSupportedConstraints(zoom: false);
+              }.toJS;
 
-          mockVideoTrack.getCapabilities = () {
-            return web.MediaTrackCapabilities(
-              zoom: web.MediaSettingsRange(min: 100, max: 400, step: 2),
-            );
-          }.toJS;
+          mockVideoTrack.getCapabilities =
+              () {
+                return web.MediaTrackCapabilities(
+                  zoom: web.MediaSettingsRange(min: 100, max: 400, step: 2),
+                );
+              }.toJS;
 
           expect(
             () => cameraService.getZoomLevelCapabilityForCamera(camera),
@@ -504,16 +583,17 @@ void main() {
           );
         });
 
-        testWidgets(
-            'with notStarted error '
-            'when the camera stream has not been initialized',
-            (WidgetTester tester) async {
-          mockMediaDevices.getSupportedConstraints = () {
-            return web.MediaTrackSupportedConstraints(zoom: true);
-          }.toJS;
+        testWidgets('with notStarted error '
+            'when the camera stream has not been initialized', (
+          WidgetTester tester,
+        ) async {
+          mockMediaDevices.getSupportedConstraints =
+              () {
+                return web.MediaTrackSupportedConstraints(zoom: true);
+              }.toJS;
 
           // Create a camera stream with no video tracks.
-          when(() => camera.stream).thenReturn(
+          when(camera.stream).thenReturn(
             createJSInteropWrapper(FakeMediaStream(<web.MediaStreamTrack>[]))
                 as web.MediaStream,
           );
@@ -543,12 +623,12 @@ void main() {
         cameraService.jsUtil = jsUtil;
       });
 
-      testWidgets(
-          'returns null '
+      testWidgets('returns null '
           'when the facing mode is not supported', (WidgetTester tester) async {
-        mockMediaDevices.getSupportedConstraints = () {
-          return web.MediaTrackSupportedConstraints(facingMode: false);
-        }.toJS;
+        mockMediaDevices.getSupportedConstraints =
+            () {
+              return web.MediaTrackSupportedConstraints(facingMode: false);
+            }.toJS;
 
         final String? facingMode = cameraService.getFacingModeForVideoTrack(
           createJSInteropWrapper(MockMediaStreamTrack())
@@ -567,81 +647,95 @@ void main() {
           videoTrack =
               createJSInteropWrapper(mockVideoTrack) as web.MediaStreamTrack;
 
-          when(() => jsUtil.hasProperty(videoTrack, 'getCapabilities'.toJS))
-              .thenReturn(true);
+          when(
+            jsUtil.hasProperty(videoTrack, 'getCapabilities'.toJS),
+          ).thenReturn(true);
 
-          mockMediaDevices.getSupportedConstraints = () {
-            return web.MediaTrackSupportedConstraints(facingMode: true);
-          }.toJS;
+          mockMediaDevices.getSupportedConstraints =
+              () {
+                return web.MediaTrackSupportedConstraints(facingMode: true);
+              }.toJS;
         });
 
-        testWidgets(
-            'returns an appropriate facing mode '
+        testWidgets('returns an appropriate facing mode '
             'based on the video track settings', (WidgetTester tester) async {
-          mockVideoTrack.getSettings = () {
-            return web.MediaTrackSettings(facingMode: 'user');
-          }.toJS;
+          mockVideoTrack.getSettings =
+              () {
+                return web.MediaTrackSettings(facingMode: 'user');
+              }.toJS;
 
-          final String? facingMode =
-              cameraService.getFacingModeForVideoTrack(videoTrack);
+          final String? facingMode = cameraService.getFacingModeForVideoTrack(
+            videoTrack,
+          );
 
           expect(facingMode, equals('user'));
         });
 
-        testWidgets(
-            'returns an appropriate facing mode '
+        testWidgets('returns an appropriate facing mode '
             'based on the video track capabilities '
-            'when the facing mode setting is empty',
-            (WidgetTester tester) async {
-          mockVideoTrack.getSettings = () {
-            return web.MediaTrackSettings(facingMode: '');
-          }.toJS;
-          mockVideoTrack.getCapabilities = () {
-            return web.MediaTrackCapabilities(
-              facingMode: <JSString>['environment'.toJS, 'left'.toJS].toJS,
-            );
-          }.toJS;
+            'when the facing mode setting is empty', (
+          WidgetTester tester,
+        ) async {
+          mockVideoTrack.getSettings =
+              () {
+                return web.MediaTrackSettings(facingMode: '');
+              }.toJS;
+          mockVideoTrack.getCapabilities =
+              () {
+                return web.MediaTrackCapabilities(
+                  facingMode: <JSString>['environment'.toJS, 'left'.toJS].toJS,
+                );
+              }.toJS;
 
-          when(() => jsUtil.hasProperty(videoTrack, 'getCapabilities'.toJS))
-              .thenReturn(true);
+          when(
+            jsUtil.hasProperty(videoTrack, 'getCapabilities'.toJS),
+          ).thenReturn(true);
 
-          final String? facingMode =
-              cameraService.getFacingModeForVideoTrack(videoTrack);
+          final String? facingMode = cameraService.getFacingModeForVideoTrack(
+            videoTrack,
+          );
 
           expect(facingMode, equals('environment'));
         });
 
-        testWidgets(
-            'returns null '
+        testWidgets('returns null '
             'when the facing mode setting '
             'and capabilities are empty', (WidgetTester tester) async {
-          mockVideoTrack.getSettings = () {
-            return web.MediaTrackSettings(facingMode: '');
-          }.toJS;
-          mockVideoTrack.getCapabilities = () {
-            return web.MediaTrackCapabilities(facingMode: <JSString>[].toJS);
-          }.toJS;
+          mockVideoTrack.getSettings =
+              () {
+                return web.MediaTrackSettings(facingMode: '');
+              }.toJS;
+          mockVideoTrack.getCapabilities =
+              () {
+                return web.MediaTrackCapabilities(
+                  facingMode: <JSString>[].toJS,
+                );
+              }.toJS;
 
-          final String? facingMode =
-              cameraService.getFacingModeForVideoTrack(videoTrack);
+          final String? facingMode = cameraService.getFacingModeForVideoTrack(
+            videoTrack,
+          );
 
           expect(facingMode, isNull);
         });
 
-        testWidgets(
-            'returns null '
+        testWidgets('returns null '
             'when the facing mode setting is empty and '
-            'the video track capabilities are not supported',
-            (WidgetTester tester) async {
-          mockVideoTrack.getSettings = () {
-            return web.MediaTrackSettings(facingMode: '');
-          }.toJS;
+            'the video track capabilities are not supported', (
+          WidgetTester tester,
+        ) async {
+          mockVideoTrack.getSettings =
+              () {
+                return web.MediaTrackSettings(facingMode: '');
+              }.toJS;
 
-          when(() => jsUtil.hasProperty(videoTrack, 'getCapabilities'.toJS))
-              .thenReturn(false);
+          when(
+            jsUtil.hasProperty(videoTrack, 'getCapabilities'.toJS),
+          ).thenReturn(false);
 
-          final String? facingMode =
-              cameraService.getFacingModeForVideoTrack(videoTrack);
+          final String? facingMode = cameraService.getFacingModeForVideoTrack(
+            videoTrack,
+          );
 
           expect(facingMode, isNull);
         });
@@ -649,8 +743,7 @@ void main() {
     });
 
     group('mapFacingModeToLensDirection', () {
-      testWidgets(
-          'returns front '
+      testWidgets('returns front '
           'when the facing mode is user', (WidgetTester tester) async {
         expect(
           cameraService.mapFacingModeToLensDirection('user'),
@@ -658,8 +751,7 @@ void main() {
         );
       });
 
-      testWidgets(
-          'returns back '
+      testWidgets('returns back '
           'when the facing mode is environment', (WidgetTester tester) async {
         expect(
           cameraService.mapFacingModeToLensDirection('environment'),
@@ -667,8 +759,7 @@ void main() {
         );
       });
 
-      testWidgets(
-          'returns external '
+      testWidgets('returns external '
           'when the facing mode is left', (WidgetTester tester) async {
         expect(
           cameraService.mapFacingModeToLensDirection('left'),
@@ -676,8 +767,7 @@ void main() {
         );
       });
 
-      testWidgets(
-          'returns external '
+      testWidgets('returns external '
           'when the facing mode is right', (WidgetTester tester) async {
         expect(
           cameraService.mapFacingModeToLensDirection('right'),
@@ -687,8 +777,7 @@ void main() {
     });
 
     group('mapFacingModeToCameraType', () {
-      testWidgets(
-          'returns user '
+      testWidgets('returns user '
           'when the facing mode is user', (WidgetTester tester) async {
         expect(
           cameraService.mapFacingModeToCameraType('user'),
@@ -696,8 +785,7 @@ void main() {
         );
       });
 
-      testWidgets(
-          'returns environment '
+      testWidgets('returns environment '
           'when the facing mode is environment', (WidgetTester tester) async {
         expect(
           cameraService.mapFacingModeToCameraType('environment'),
@@ -705,8 +793,7 @@ void main() {
         );
       });
 
-      testWidgets(
-          'returns user '
+      testWidgets('returns user '
           'when the facing mode is left', (WidgetTester tester) async {
         expect(
           cameraService.mapFacingModeToCameraType('left'),
@@ -714,8 +801,7 @@ void main() {
         );
       });
 
-      testWidgets(
-          'returns user '
+      testWidgets('returns user '
           'when the facing mode is right', (WidgetTester tester) async {
         expect(
           cameraService.mapFacingModeToCameraType('right'),
@@ -725,8 +811,7 @@ void main() {
     });
 
     group('mapResolutionPresetToSize', () {
-      testWidgets(
-          'returns 4096x2160 '
+      testWidgets('returns 4096x2160 '
           'when the resolution preset is max', (WidgetTester tester) async {
         expect(
           cameraService.mapResolutionPresetToSize(ResolutionPreset.max),
@@ -734,28 +819,27 @@ void main() {
         );
       });
 
-      testWidgets(
-          'returns 4096x2160 '
-          'when the resolution preset is ultraHigh',
-          (WidgetTester tester) async {
+      testWidgets('returns 4096x2160 '
+          'when the resolution preset is ultraHigh', (
+        WidgetTester tester,
+      ) async {
         expect(
           cameraService.mapResolutionPresetToSize(ResolutionPreset.ultraHigh),
           equals(const Size(4096, 2160)),
         );
       });
 
-      testWidgets(
-          'returns 1920x1080 '
-          'when the resolution preset is veryHigh',
-          (WidgetTester tester) async {
+      testWidgets('returns 1920x1080 '
+          'when the resolution preset is veryHigh', (
+        WidgetTester tester,
+      ) async {
         expect(
           cameraService.mapResolutionPresetToSize(ResolutionPreset.veryHigh),
           equals(const Size(1920, 1080)),
         );
       });
 
-      testWidgets(
-          'returns 1280x720 '
+      testWidgets('returns 1280x720 '
           'when the resolution preset is high', (WidgetTester tester) async {
         expect(
           cameraService.mapResolutionPresetToSize(ResolutionPreset.high),
@@ -763,8 +847,7 @@ void main() {
         );
       });
 
-      testWidgets(
-          'returns 720x480 '
+      testWidgets('returns 720x480 '
           'when the resolution preset is medium', (WidgetTester tester) async {
         expect(
           cameraService.mapResolutionPresetToSize(ResolutionPreset.medium),
@@ -772,8 +855,7 @@ void main() {
         );
       });
 
-      testWidgets(
-          'returns 320x240 '
+      testWidgets('returns 320x240 '
           'when the resolution preset is low', (WidgetTester tester) async {
         expect(
           cameraService.mapResolutionPresetToSize(ResolutionPreset.low),
@@ -783,10 +865,10 @@ void main() {
     });
 
     group('mapDeviceOrientationToOrientationType', () {
-      testWidgets(
-          'returns portraitPrimary '
-          'when the device orientation is portraitUp',
-          (WidgetTester tester) async {
+      testWidgets('returns portraitPrimary '
+          'when the device orientation is portraitUp', (
+        WidgetTester tester,
+      ) async {
         expect(
           cameraService.mapDeviceOrientationToOrientationType(
             DeviceOrientation.portraitUp,
@@ -795,10 +877,10 @@ void main() {
         );
       });
 
-      testWidgets(
-          'returns landscapePrimary '
-          'when the device orientation is landscapeLeft',
-          (WidgetTester tester) async {
+      testWidgets('returns landscapePrimary '
+          'when the device orientation is landscapeLeft', (
+        WidgetTester tester,
+      ) async {
         expect(
           cameraService.mapDeviceOrientationToOrientationType(
             DeviceOrientation.landscapeLeft,
@@ -807,10 +889,10 @@ void main() {
         );
       });
 
-      testWidgets(
-          'returns portraitSecondary '
-          'when the device orientation is portraitDown',
-          (WidgetTester tester) async {
+      testWidgets('returns portraitSecondary '
+          'when the device orientation is portraitDown', (
+        WidgetTester tester,
+      ) async {
         expect(
           cameraService.mapDeviceOrientationToOrientationType(
             DeviceOrientation.portraitDown,
@@ -819,10 +901,10 @@ void main() {
         );
       });
 
-      testWidgets(
-          'returns landscapeSecondary '
-          'when the device orientation is landscapeRight',
-          (WidgetTester tester) async {
+      testWidgets('returns landscapeSecondary '
+          'when the device orientation is landscapeRight', (
+        WidgetTester tester,
+      ) async {
         expect(
           cameraService.mapDeviceOrientationToOrientationType(
             DeviceOrientation.landscapeRight,
@@ -833,10 +915,10 @@ void main() {
     });
 
     group('mapOrientationTypeToDeviceOrientation', () {
-      testWidgets(
-          'returns portraitUp '
-          'when the orientation type is portraitPrimary',
-          (WidgetTester tester) async {
+      testWidgets('returns portraitUp '
+          'when the orientation type is portraitPrimary', (
+        WidgetTester tester,
+      ) async {
         expect(
           cameraService.mapOrientationTypeToDeviceOrientation(
             OrientationType.portraitPrimary,
@@ -845,10 +927,10 @@ void main() {
         );
       });
 
-      testWidgets(
-          'returns landscapeLeft '
-          'when the orientation type is landscapePrimary',
-          (WidgetTester tester) async {
+      testWidgets('returns landscapeLeft '
+          'when the orientation type is landscapePrimary', (
+        WidgetTester tester,
+      ) async {
         expect(
           cameraService.mapOrientationTypeToDeviceOrientation(
             OrientationType.landscapePrimary,
@@ -857,10 +939,10 @@ void main() {
         );
       });
 
-      testWidgets(
-          'returns portraitDown '
-          'when the orientation type is portraitSecondary',
-          (WidgetTester tester) async {
+      testWidgets('returns portraitDown '
+          'when the orientation type is portraitSecondary', (
+        WidgetTester tester,
+      ) async {
         expect(
           cameraService.mapOrientationTypeToDeviceOrientation(
             OrientationType.portraitSecondary,
@@ -869,10 +951,10 @@ void main() {
         );
       });
 
-      testWidgets(
-          'returns portraitDown '
-          'when the orientation type is portraitSecondary',
-          (WidgetTester tester) async {
+      testWidgets('returns portraitDown '
+          'when the orientation type is portraitSecondary', (
+        WidgetTester tester,
+      ) async {
         expect(
           cameraService.mapOrientationTypeToDeviceOrientation(
             OrientationType.portraitSecondary,
@@ -881,10 +963,10 @@ void main() {
         );
       });
 
-      testWidgets(
-          'returns landscapeRight '
-          'when the orientation type is landscapeSecondary',
-          (WidgetTester tester) async {
+      testWidgets('returns landscapeRight '
+          'when the orientation type is landscapeSecondary', (
+        WidgetTester tester,
+      ) async {
         expect(
           cameraService.mapOrientationTypeToDeviceOrientation(
             OrientationType.landscapeSecondary,
@@ -893,13 +975,10 @@ void main() {
         );
       });
 
-      testWidgets(
-          'returns portraitUp '
+      testWidgets('returns portraitUp '
           'for an unknown orientation type', (WidgetTester tester) async {
         expect(
-          cameraService.mapOrientationTypeToDeviceOrientation(
-            'unknown',
-          ),
+          cameraService.mapOrientationTypeToDeviceOrientation('unknown'),
           equals(DeviceOrientation.portraitUp),
         );
       });

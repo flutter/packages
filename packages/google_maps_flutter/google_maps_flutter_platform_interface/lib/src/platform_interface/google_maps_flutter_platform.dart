@@ -73,8 +73,10 @@ abstract class GoogleMapsFlutterPlatform extends PlatformInterface {
     MapConfiguration configuration, {
     required int mapId,
   }) {
-    return updateMapOptions(jsonForMapConfiguration(configuration),
-        mapId: mapId);
+    return updateMapOptions(
+      jsonForMapConfiguration(configuration),
+      mapId: mapId,
+    );
   }
 
   /// Updates marker configuration.
@@ -166,7 +168,21 @@ abstract class GoogleMapsFlutterPlatform extends PlatformInterface {
     required int mapId,
   }) {
     throw UnimplementedError(
-        'updateClusterManagers() has not been implemented.');
+      'updateClusterManagers() has not been implemented.',
+    );
+  }
+
+  /// Updates ground overlay configuration.
+  ///
+  /// The returned [Future] completes once the update has been made on the
+  /// platform side.
+  Future<void> updateGroundOverlays(
+    GroundOverlayUpdates groundOverlayUpdates, {
+    required int mapId,
+  }) {
+    throw UnimplementedError(
+      'updateGroundOverlays() has not been implemented.',
+    );
   }
 
   /// Clears the tile cache so that all tiles will be requested again from the
@@ -187,21 +203,28 @@ abstract class GoogleMapsFlutterPlatform extends PlatformInterface {
   ///
   /// The returned [Future] completes after the change has been started on the
   /// platform side.
-  Future<void> animateCamera(
-    CameraUpdate cameraUpdate, {
+  Future<void> animateCamera(CameraUpdate cameraUpdate, {required int mapId}) {
+    throw UnimplementedError('animateCamera() has not been implemented.');
+  }
+
+  /// Starts an animated change of the map camera position using the provided
+  /// [CameraUpdateAnimationConfiguration].
+  ///
+  /// The returned [Future] completes after the change has been started on the
+  /// platform side.
+  Future<void> animateCameraWithConfiguration(
+    CameraUpdate cameraUpdate,
+    CameraUpdateAnimationConfiguration configuration, {
     required int mapId,
   }) {
-    throw UnimplementedError('animateCamera() has not been implemented.');
+    return animateCamera(cameraUpdate, mapId: mapId);
   }
 
   /// Changes the map camera position.
   ///
   /// The returned [Future] completes after the change has been made on the
   /// platform side.
-  Future<void> moveCamera(
-    CameraUpdate cameraUpdate, {
-    required int mapId,
-  }) {
+  Future<void> moveCamera(CameraUpdate cameraUpdate, {required int mapId}) {
     throw UnimplementedError('moveCamera() has not been implemented.');
   }
 
@@ -215,17 +238,12 @@ abstract class GoogleMapsFlutterPlatform extends PlatformInterface {
   /// style is left unchanged.
   ///
   /// The style string can be generated using [map style tool](https://mapstyle.withgoogle.com/).
-  Future<void> setMapStyle(
-    String? mapStyle, {
-    required int mapId,
-  }) {
+  Future<void> setMapStyle(String? mapStyle, {required int mapId}) {
     throw UnimplementedError('setMapStyle() has not been implemented.');
   }
 
   /// Return the region that is visible in a map.
-  Future<LatLngBounds> getVisibleRegion({
-    required int mapId,
-  }) {
+  Future<LatLngBounds> getVisibleRegion({required int mapId}) {
     throw UnimplementedError('getVisibleRegion() has not been implemented.');
   }
 
@@ -261,12 +279,10 @@ abstract class GoogleMapsFlutterPlatform extends PlatformInterface {
   /// * See also:
   ///   * [hideMarkerInfoWindow] to hide the Info Window.
   ///   * [isMarkerInfoWindowShown] to check if the Info Window is showing.
-  Future<void> showMarkerInfoWindow(
-    MarkerId markerId, {
-    required int mapId,
-  }) {
+  Future<void> showMarkerInfoWindow(MarkerId markerId, {required int mapId}) {
     throw UnimplementedError(
-        'showMarkerInfoWindow() has not been implemented.');
+      'showMarkerInfoWindow() has not been implemented.',
+    );
   }
 
   /// Programmatically hide the Info Window for a [Marker].
@@ -277,12 +293,10 @@ abstract class GoogleMapsFlutterPlatform extends PlatformInterface {
   /// * See also:
   ///   * [showMarkerInfoWindow] to show the Info Window.
   ///   * [isMarkerInfoWindowShown] to check if the Info Window is showing.
-  Future<void> hideMarkerInfoWindow(
-    MarkerId markerId, {
-    required int mapId,
-  }) {
+  Future<void> hideMarkerInfoWindow(MarkerId markerId, {required int mapId}) {
     throw UnimplementedError(
-        'hideMarkerInfoWindow() has not been implemented.');
+      'hideMarkerInfoWindow() has not been implemented.',
+    );
   }
 
   /// Returns `true` when the [InfoWindow] is showing, `false` otherwise.
@@ -301,18 +315,14 @@ abstract class GoogleMapsFlutterPlatform extends PlatformInterface {
   }
 
   /// Returns the current zoom level of the map.
-  Future<double> getZoomLevel({
-    required int mapId,
-  }) {
+  Future<double> getZoomLevel({required int mapId}) {
     throw UnimplementedError('getZoomLevel() has not been implemented.');
   }
 
   /// Returns the image bytes of the map.
   ///
   /// Returns null if a snapshot cannot be created.
-  Future<Uint8List?> takeSnapshot({
-    required int mapId,
-  }) {
+  Future<Uint8List?> takeSnapshot({required int mapId}) {
     throw UnimplementedError('takeSnapshot() has not been implemented.');
   }
 
@@ -389,6 +399,11 @@ abstract class GoogleMapsFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('onClusterTap() has not been implemented.');
   }
 
+  /// A [GroundOverlay] has been tapped.
+  Stream<GroundOverlayTapEvent> onGroundOverlayTap({required int mapId}) {
+    throw UnimplementedError('onGroundOverlayTap() has not been implemented.');
+  }
+
   /// Dispose of whatever resources the `mapId` is holding on to.
   void dispose({required int mapId}) {
     throw UnimplementedError('dispose() has not been implemented.');
@@ -398,6 +413,11 @@ abstract class GoogleMapsFlutterPlatform extends PlatformInterface {
   /// returns the error information, otherwise returns null.
   Future<String?> getStyleError({required int mapId}) async {
     return null;
+  }
+
+  /// Returns true if [AdvancedMarker]s can be used with this map.
+  Future<bool> isAdvancedMarkersAvailable({required int mapId}) async {
+    return false;
   }
 
   /// Returns a widget displaying the map view.
@@ -485,6 +505,7 @@ abstract class GoogleMapsFlutterPlatform extends PlatformInterface {
   @visibleForTesting
   void enableDebugInspection() {
     throw UnimplementedError(
-        'enableDebugInspection() has not been implemented.');
+      'enableDebugInspection() has not been implemented.',
+    );
   }
 }

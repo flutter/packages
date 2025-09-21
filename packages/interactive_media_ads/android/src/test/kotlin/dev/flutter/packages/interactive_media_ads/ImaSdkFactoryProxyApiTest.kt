@@ -6,7 +6,9 @@ package dev.flutter.packages.interactive_media_ads
 
 import com.google.ads.interactivemedia.v3.api.AdDisplayContainer
 import com.google.ads.interactivemedia.v3.api.AdsLoader
+import com.google.ads.interactivemedia.v3.api.AdsRenderingSettings
 import com.google.ads.interactivemedia.v3.api.AdsRequest
+import com.google.ads.interactivemedia.v3.api.CompanionAdSlot
 import com.google.ads.interactivemedia.v3.api.ImaSdkFactory
 import com.google.ads.interactivemedia.v3.api.ImaSdkSettings
 import kotlin.test.Test
@@ -42,6 +44,17 @@ class ImaSdkFactoryProxyApiTest {
   }
 
   @Test
+  fun createCompanionAdSlot() {
+    val api = TestProxyApiRegistrar().getPigeonApiImaSdkFactory()
+
+    val instance = mock<ImaSdkFactory>()
+    val mockAdSlot = mock<CompanionAdSlot>()
+    whenever(instance.createCompanionAdSlot()).thenReturn(mockAdSlot)
+
+    assertEquals(mockAdSlot, api.createCompanionAdSlot(instance))
+  }
+
+  @Test
   fun createAdsRequest() {
     val api = TestProxyApiRegistrar().getPigeonApiImaSdkFactory()
 
@@ -50,5 +63,16 @@ class ImaSdkFactoryProxyApiTest {
     whenever(instance.createAdsRequest()).thenReturn(mockRequest)
 
     assertEquals(mockRequest, api.createAdsRequest(instance))
+  }
+
+  @Test
+  fun createAdsRenderingSettings() {
+    val api = TestProxyApiRegistrar().getPigeonApiImaSdkFactory()
+
+    val instance = mock<ImaSdkFactory>()
+    val mockSettings = mock<AdsRenderingSettings>()
+    whenever(instance.createAdsRenderingSettings()).thenReturn(mockSettings)
+
+    assertEquals(mockSettings, api.createAdsRenderingSettings(instance))
   }
 }

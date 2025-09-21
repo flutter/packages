@@ -1,14 +1,3 @@
-buildscript {
-    repositories {
-        google()
-        mavenCentral()
-    }
-
-    dependencies {
-        classpath 'com.android.tools.build:gradle:8.5.1'
-    }
-}
-
 allprojects {
     repositories {
         // See https://github.com/flutter/flutter/blob/master/docs/ecosystem/Plugins-and-Packages-repository-structure.md#gradle-structure for more info.
@@ -41,7 +30,8 @@ tasks.register("clean", Delete) {
 gradle.projectsEvaluated {
     project(":image_picker_android") {
         tasks.withType(JavaCompile) {
-            options.compilerArgs << "-Xlint:all" << "-Werror"
+            // Ignore classfile due to https://issuetracker.google.com/issues/342067844
+            options.compilerArgs << "-Xlint:all" << "-Werror" << "-Xlint:-classfile"
         }
     }
 }

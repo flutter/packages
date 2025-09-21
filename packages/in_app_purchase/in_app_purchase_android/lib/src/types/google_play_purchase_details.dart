@@ -6,6 +6,7 @@ import 'package:in_app_purchase_platform_interface/in_app_purchase_platform_inte
 
 import '../../billing_client_wrappers.dart';
 import '../in_app_purchase_android_platform.dart';
+import '../pigeon_converters.dart';
 
 /// The class represents the information of a purchase made using Google Play.
 class GooglePlayPurchaseDetails extends PurchaseDetails {
@@ -26,21 +27,22 @@ class GooglePlayPurchaseDetails extends PurchaseDetails {
   ///
   /// The list contains one entry per product.
   static List<GooglePlayPurchaseDetails> fromPurchase(
-      PurchaseWrapper purchase) {
+    PurchaseWrapper purchase,
+  ) {
     return purchase.products.map((String productId) {
       final GooglePlayPurchaseDetails purchaseDetails =
           GooglePlayPurchaseDetails(
-        purchaseID: purchase.orderId,
-        productID: productId,
-        verificationData: PurchaseVerificationData(
-            localVerificationData: purchase.originalJson,
-            serverVerificationData: purchase.purchaseToken,
-            source: kIAPSource),
-        transactionDate: purchase.purchaseTime.toString(),
-        billingClientPurchase: purchase,
-        status: const PurchaseStateConverter()
-            .toPurchaseStatus(purchase.purchaseState),
-      );
+            purchaseID: purchase.orderId,
+            productID: productId,
+            verificationData: PurchaseVerificationData(
+              localVerificationData: purchase.originalJson,
+              serverVerificationData: purchase.purchaseToken,
+              source: kIAPSource,
+            ),
+            transactionDate: purchase.purchaseTime.toString(),
+            billingClientPurchase: purchase,
+            status: purchaseStatusFromWrapper(purchase.purchaseState),
+          );
 
       if (purchaseDetails.status == PurchaseStatus.error) {
         purchaseDetails.error = IAPError(

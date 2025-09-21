@@ -8,9 +8,9 @@ the user.
 On supported devices, this includes authentication with biometrics such as
 fingerprint or facial recognition.
 
-|             | Android   | iOS   | macOS  | Windows     |
-|-------------|-----------|-------|--------|-------------|
-| **Support** | SDK 16+\* | 12.0+ | 10.14+ | Windows 10+ |
+|             | Android | iOS   | macOS  | Windows     |
+|-------------|---------|-------|--------|-------------|
+| **Support** | SDK 24+ | 12.0+ | 10.14+ | Windows 10+ |
 
 ## Usage
 
@@ -73,7 +73,8 @@ also allows fallback to pin, pattern, or passcode.
 ```dart
 try {
   final bool didAuthenticate = await auth.authenticate(
-      localizedReason: 'Please authenticate to show account balance');
+    localizedReason: 'Please authenticate to show account balance',
+  );
   // ···
 } on PlatformException {
   // ...
@@ -86,8 +87,9 @@ To require biometric authentication, pass `AuthenticationOptions` with
 <?code-excerpt "readme_excerpts.dart (AuthBioOnly)"?>
 ```dart
 final bool didAuthenticate = await auth.authenticate(
-    localizedReason: 'Please authenticate to show account balance',
-    options: const AuthenticationOptions(biometricOnly: true));
+  localizedReason: 'Please authenticate to show account balance',
+  options: const AuthenticationOptions(biometricOnly: true),
+);
 ```
 
 *Note*: `biometricOnly` is not supported on Windows since the Windows implementation's underlying API (Windows Hello) doesn't support selecting the authentication method.
@@ -114,8 +116,9 @@ import 'package:local_auth/error_codes.dart' as auth_error;
 // ···
     try {
       final bool didAuthenticate = await auth.authenticate(
-          localizedReason: 'Please authenticate to show account balance',
-          options: const AuthenticationOptions(useErrorDialogs: false));
+        localizedReason: 'Please authenticate to show account balance',
+        options: const AuthenticationOptions(useErrorDialogs: false),
+      );
       // ···
     } on PlatformException catch (e) {
       if (e.code == auth_error.notAvailable) {
@@ -139,16 +142,15 @@ import 'package:local_auth_android/local_auth_android.dart';
 import 'package:local_auth_darwin/local_auth_darwin.dart';
 // ···
     final bool didAuthenticate = await auth.authenticate(
-        localizedReason: 'Please authenticate to show account balance',
-        authMessages: const <AuthMessages>[
-          AndroidAuthMessages(
-            signInTitle: 'Oops! Biometric authentication required!',
-            cancelButton: 'No thanks',
-          ),
-          IOSAuthMessages(
-            cancelButton: 'No thanks',
-          ),
-        ]);
+      localizedReason: 'Please authenticate to show account balance',
+      authMessages: const <AuthMessages>[
+        AndroidAuthMessages(
+          signInTitle: 'Oops! Biometric authentication required!',
+          cancelButton: 'No thanks',
+        ),
+        IOSAuthMessages(cancelButton: 'No thanks'),
+      ],
+    );
 ```
 
 See the platform-specific classes for details about what can be customized on
@@ -170,8 +172,9 @@ import 'package:local_auth/local_auth.dart';
   // ···
     try {
       final bool didAuthenticate = await auth.authenticate(
-          localizedReason: 'Please authenticate to show account balance',
-          options: const AuthenticationOptions(useErrorDialogs: false));
+        localizedReason: 'Please authenticate to show account balance',
+        options: const AuthenticationOptions(useErrorDialogs: false),
+      );
       // ···
     } on PlatformException catch (e) {
       if (e.code == auth_error.notEnrolled) {
@@ -200,12 +203,9 @@ app has not been updated to use Face ID.
 
 ## Android Integration
 
-\* The plugin will build and run on SDK 16+, but `isDeviceSupported()` will
-always return false before SDK 23 (Android 6.0).
-
 ### Activity Changes
 
-Note that `local_auth` requires the use of a `FragmentActivity` instead of an
+`local_auth` requires the use of a `FragmentActivity` instead of an
 `Activity`. To update your application:
 
 * If you are using `FlutterActivity` directly, change it to

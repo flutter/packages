@@ -14,343 +14,335 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import android.content.Context;
-import android.os.Build;
 import android.view.View;
 import android.webkit.DownloadListener;
 import android.webkit.ValueCallback;
-import android.webkit.WebChromeClient;
+import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import androidx.annotation.NonNull;
 import io.flutter.embedding.android.FlutterView;
-import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.WebViewFlutterApi;
-import io.flutter.plugins.webviewflutter.WebViewHostApiImpl.WebViewPlatformView;
 import java.util.HashMap;
-import java.util.Objects;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
+import java.util.Map;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
 
 public class WebViewTest {
-  @Rule public MockitoRule mockitoRule = MockitoJUnit.rule();
+  @Test
+  public void pigeon_defaultConstructor() {
+    final PigeonApiWebView api = new TestProxyApiRegistrar().getPigeonApiWebView();
 
-  @Mock public WebViewPlatformView mockWebView;
-
-  @Mock WebViewHostApiImpl.WebViewProxy mockWebViewProxy;
-
-  @Mock Context mockContext;
-
-  @Mock BinaryMessenger mockBinaryMessenger;
-
-  InstanceManager testInstanceManager;
-  WebViewHostApiImpl testHostApiImpl;
-
-  @Before
-  public void setUp() {
-    testInstanceManager = InstanceManager.create(identifier -> {});
-
-    when(mockWebViewProxy.createWebView(mockContext, mockBinaryMessenger, testInstanceManager))
-        .thenReturn(mockWebView);
-    testHostApiImpl =
-        new WebViewHostApiImpl(
-            testInstanceManager, mockBinaryMessenger, mockWebViewProxy, mockContext);
-    testHostApiImpl.create(0L);
-  }
-
-  @After
-  public void tearDown() {
-    testInstanceManager.stopFinalizationListener();
+    assertTrue(api.pigeon_defaultConstructor() instanceof WebViewProxyApi.WebViewPlatformView);
   }
 
   @Test
   public void loadData() {
-    testHostApiImpl.loadData(
-        0L, "VGhpcyBkYXRhIGlzIGJhc2U2NCBlbmNvZGVkLg==", "text/plain", "base64");
-    verify(mockWebView)
-        .loadData("VGhpcyBkYXRhIGlzIGJhc2U2NCBlbmNvZGVkLg==", "text/plain", "base64");
+    final PigeonApiWebView api = new TestProxyApiRegistrar().getPigeonApiWebView();
+
+    final WebView instance = mock(WebView.class);
+    final String data = "VGhpcyBkYXRhIGlzIGJhc2U2NCBlbmNvZGVkLg==";
+    final String mimeType = "text/plain";
+    final String encoding = "base64";
+    api.loadData(instance, data, mimeType, encoding);
+
+    verify(instance).loadData(data, mimeType, encoding);
   }
 
   @Test
   public void loadDataWithNullValues() {
-    testHostApiImpl.loadData(0L, "VGhpcyBkYXRhIGlzIGJhc2U2NCBlbmNvZGVkLg==", null, null);
-    verify(mockWebView).loadData("VGhpcyBkYXRhIGlzIGJhc2U2NCBlbmNvZGVkLg==", null, null);
+    final PigeonApiWebView api = new TestProxyApiRegistrar().getPigeonApiWebView();
+
+    final WebView instance = mock(WebView.class);
+    final String data = "VGhpcyBkYXRhIGlzIGJhc2U2NCBlbmNvZGVkLg==";
+    final String mimeType = null;
+    final String encoding = null;
+    api.loadData(instance, data, mimeType, encoding);
+
+    verify(instance).loadData(data, mimeType, encoding);
   }
 
   @Test
   public void loadDataWithBaseUrl() {
-    testHostApiImpl.loadDataWithBaseUrl(
-        0L,
-        "https://flutter.dev",
-        "VGhpcyBkYXRhIGlzIGJhc2U2NCBlbmNvZGVkLg==",
-        "text/plain",
-        "base64",
-        "about:blank");
-    verify(mockWebView)
-        .loadDataWithBaseURL(
-            "https://flutter.dev",
-            "VGhpcyBkYXRhIGlzIGJhc2U2NCBlbmNvZGVkLg==",
-            "text/plain",
-            "base64",
-            "about:blank");
+    final PigeonApiWebView api = new TestProxyApiRegistrar().getPigeonApiWebView();
+
+    final WebView instance = mock(WebView.class);
+    final String baseUrl = "myString";
+    final String data = "myString1";
+    final String mimeType = "myString2";
+    final String encoding = "myString3";
+    final String historyUrl = "myString4";
+    api.loadDataWithBaseUrl(instance, baseUrl, data, mimeType, encoding, historyUrl);
+
+    verify(instance).loadDataWithBaseURL(baseUrl, data, mimeType, encoding, historyUrl);
   }
 
   @Test
   public void loadDataWithBaseUrlAndNullValues() {
-    testHostApiImpl.loadDataWithBaseUrl(
-        0L, null, "VGhpcyBkYXRhIGlzIGJhc2U2NCBlbmNvZGVkLg==", null, null, null);
-    verify(mockWebView)
-        .loadDataWithBaseURL(null, "VGhpcyBkYXRhIGlzIGJhc2U2NCBlbmNvZGVkLg==", null, null, null);
+    final PigeonApiWebView api = new TestProxyApiRegistrar().getPigeonApiWebView();
+
+    final WebView instance = mock(WebView.class);
+    final String baseUrl = null;
+    final String data = "myString1";
+    final String mimeType = null;
+    final String encoding = null;
+    final String historyUrl = null;
+    api.loadDataWithBaseUrl(instance, baseUrl, data, mimeType, encoding, historyUrl);
+
+    verify(instance).loadDataWithBaseURL(baseUrl, data, mimeType, encoding, historyUrl);
   }
 
   @Test
   public void loadUrl() {
-    testHostApiImpl.loadUrl(0L, "https://www.google.com", new HashMap<>());
-    verify(mockWebView).loadUrl("https://www.google.com", new HashMap<>());
+    final PigeonApiWebView api = new TestProxyApiRegistrar().getPigeonApiWebView();
+
+    final WebView instance = mock(WebView.class);
+    final String url = "myString";
+    final Map<String, String> headers =
+        new HashMap<String, String>() {
+          {
+            put("myString", "myString");
+          }
+        };
+    api.loadUrl(instance, url, headers);
+
+    verify(instance).loadUrl(url, headers);
   }
 
   @Test
   public void postUrl() {
-    testHostApiImpl.postUrl(0L, "https://www.google.com", new byte[] {0x01, 0x02});
-    verify(mockWebView).postUrl("https://www.google.com", new byte[] {0x01, 0x02});
+    final PigeonApiWebView api = new TestProxyApiRegistrar().getPigeonApiWebView();
+
+    final WebView instance = mock(WebView.class);
+    final String url = "myString";
+    final byte[] data = {(byte) 0xA1};
+    api.postUrl(instance, url, data);
+
+    verify(instance).postUrl(url, data);
   }
 
   @Test
   public void getUrl() {
-    when(mockWebView.getUrl()).thenReturn("https://www.google.com");
-    assertEquals(testHostApiImpl.getUrl(0L), "https://www.google.com");
+    final PigeonApiWebView api = new TestProxyApiRegistrar().getPigeonApiWebView();
+
+    final WebView instance = mock(WebView.class);
+    final String value = "myString";
+    when(instance.getUrl()).thenReturn(value);
+
+    assertEquals(value, api.getUrl(instance));
   }
 
   @Test
   public void canGoBack() {
-    when(mockWebView.canGoBack()).thenReturn(true);
-    assertEquals(testHostApiImpl.canGoBack(0L), true);
+    final PigeonApiWebView api = new TestProxyApiRegistrar().getPigeonApiWebView();
+
+    final WebView instance = mock(WebView.class);
+    final Boolean value = true;
+    when(instance.canGoBack()).thenReturn(value);
+
+    assertEquals(value, api.canGoBack(instance));
   }
 
   @Test
   public void canGoForward() {
-    when(mockWebView.canGoForward()).thenReturn(false);
-    assertEquals(testHostApiImpl.canGoForward(0L), false);
+    final PigeonApiWebView api = new TestProxyApiRegistrar().getPigeonApiWebView();
+
+    final WebView instance = mock(WebView.class);
+    final Boolean value = true;
+    when(instance.canGoForward()).thenReturn(value);
+
+    assertEquals(value, api.canGoForward(instance));
   }
 
   @Test
   public void goBack() {
-    testHostApiImpl.goBack(0L);
-    verify(mockWebView).goBack();
+    final PigeonApiWebView api = new TestProxyApiRegistrar().getPigeonApiWebView();
+
+    final WebView instance = mock(WebView.class);
+    api.goBack(instance);
+
+    verify(instance).goBack();
   }
 
   @Test
   public void goForward() {
-    testHostApiImpl.goForward(0L);
-    verify(mockWebView).goForward();
+    final PigeonApiWebView api = new TestProxyApiRegistrar().getPigeonApiWebView();
+
+    final WebView instance = mock(WebView.class);
+    api.goForward(instance);
+
+    verify(instance).goForward();
   }
 
   @Test
   public void reload() {
-    testHostApiImpl.reload(0L);
-    verify(mockWebView).reload();
+    final PigeonApiWebView api = new TestProxyApiRegistrar().getPigeonApiWebView();
+
+    final WebView instance = mock(WebView.class);
+    api.reload(instance);
+
+    verify(instance).reload();
   }
 
   @Test
   public void clearCache() {
-    testHostApiImpl.clearCache(0L, false);
-    verify(mockWebView).clearCache(false);
+    final PigeonApiWebView api = new TestProxyApiRegistrar().getPigeonApiWebView();
+
+    final WebView instance = mock(WebView.class);
+    final boolean includeDiskFiles = true;
+    api.clearCache(instance, includeDiskFiles);
+
+    verify(instance).clearCache(includeDiskFiles);
   }
 
   @Test
   public void evaluateJavaScript() {
-    final String[] successValue = new String[1];
-    testHostApiImpl.evaluateJavascript(
-        0L,
-        "2 + 2",
-        new GeneratedAndroidWebView.Result<String>() {
-          @Override
-          public void success(String result) {
-            successValue[0] = result;
-          }
+    final PigeonApiWebView api = new TestProxyApiRegistrar().getPigeonApiWebView();
 
-          @Override
-          public void error(@NonNull Throwable error) {}
-        });
+    final WebView instance = mock(WebView.class);
+    final String script = "2 + 2";
+    final String[] resultValue = new String[1];
+    api.evaluateJavascript(
+        instance,
+        script,
+        ResultCompat.asCompatCallback(
+            reply -> {
+              resultValue[0] = reply.getOrNull();
+              return null;
+            }));
 
     @SuppressWarnings("unchecked")
     final ArgumentCaptor<ValueCallback<String>> callbackCaptor =
         ArgumentCaptor.forClass(ValueCallback.class);
-    verify(mockWebView).evaluateJavascript(eq("2 + 2"), callbackCaptor.capture());
+    verify(instance).evaluateJavascript(eq(script), callbackCaptor.capture());
 
-    callbackCaptor.getValue().onReceiveValue("da result");
-    assertEquals(successValue[0], "da result");
+    final String result = "resultValue";
+    callbackCaptor.getValue().onReceiveValue(result);
+    assertEquals(resultValue[0], result);
   }
 
   @Test
   public void getTitle() {
-    when(mockWebView.getTitle()).thenReturn("My title");
-    assertEquals(testHostApiImpl.getTitle(0L), "My title");
-  }
+    final PigeonApiWebView api = new TestProxyApiRegistrar().getPigeonApiWebView();
 
-  @Test
-  public void scrollTo() {
-    testHostApiImpl.scrollTo(0L, 12L, 13L);
-    verify(mockWebView).scrollTo(12, 13);
-  }
+    final WebView instance = mock(WebView.class);
+    final String value = "myString";
+    when(instance.getTitle()).thenReturn(value);
 
-  @Test
-  public void scrollBy() {
-    testHostApiImpl.scrollBy(0L, 15L, 23L);
-    verify(mockWebView).scrollBy(15, 23);
-  }
-
-  @Test
-  public void getScrollX() {
-    when(mockWebView.getScrollX()).thenReturn(55);
-    assertEquals((long) testHostApiImpl.getScrollX(0L), 55);
-  }
-
-  @Test
-  public void getScrollY() {
-    when(mockWebView.getScrollY()).thenReturn(23);
-    assertEquals((long) testHostApiImpl.getScrollY(0L), 23);
-  }
-
-  @Test
-  public void getScrollPosition() {
-    when(mockWebView.getScrollX()).thenReturn(1);
-    when(mockWebView.getScrollY()).thenReturn(2);
-    final GeneratedAndroidWebView.WebViewPoint position = testHostApiImpl.getScrollPosition(0L);
-    assertEquals((long) position.getX(), 1L);
-    assertEquals((long) position.getY(), 2L);
+    assertEquals(value, api.getTitle(instance));
   }
 
   @Test
   public void setWebViewClient() {
-    final WebViewClient mockWebViewClient = mock(WebViewClient.class);
-    testInstanceManager.addDartCreatedInstance(mockWebViewClient, 1L);
+    final PigeonApiWebView api = new TestProxyApiRegistrar().getPigeonApiWebView();
 
-    testHostApiImpl.setWebViewClient(0L, 1L);
-    verify(mockWebView).setWebViewClient(mockWebViewClient);
+    final WebView instance = mock(WebView.class);
+    final android.webkit.WebViewClient client = mock(WebViewClient.class);
+    api.setWebViewClient(instance, client);
+
+    verify(instance).setWebViewClient(client);
   }
 
   @Test
   public void addJavaScriptChannel() {
-    final JavaScriptChannel javaScriptChannel =
-        new JavaScriptChannel(mock(JavaScriptChannelFlutterApiImpl.class), "aName", null);
-    testInstanceManager.addDartCreatedInstance(javaScriptChannel, 1L);
+    final PigeonApiWebView api = new TestProxyApiRegistrar().getPigeonApiWebView();
 
-    testHostApiImpl.addJavaScriptChannel(0L, 1L);
-    verify(mockWebView).addJavascriptInterface(javaScriptChannel, "aName");
+    final WebView instance = mock(WebView.class);
+    final JavaScriptChannel channel = mock(JavaScriptChannel.class);
+    api.addJavaScriptChannel(instance, channel);
+
+    verify(instance).addJavascriptInterface(channel, channel.javaScriptChannelName);
   }
 
   @Test
   public void removeJavaScriptChannel() {
-    final JavaScriptChannel javaScriptChannel =
-        new JavaScriptChannel(mock(JavaScriptChannelFlutterApiImpl.class), "aName", null);
-    testInstanceManager.addDartCreatedInstance(javaScriptChannel, 1L);
+    final PigeonApiWebView api = new TestProxyApiRegistrar().getPigeonApiWebView();
 
-    testHostApiImpl.removeJavaScriptChannel(0L, 1L);
-    verify(mockWebView).removeJavascriptInterface("aName");
+    final WebView instance = mock(WebView.class);
+    final String name = "myString";
+    api.removeJavaScriptChannel(instance, name);
+
+    verify(instance).removeJavascriptInterface(name);
   }
 
   @Test
   public void setDownloadListener() {
-    final DownloadListener mockDownloadListener = mock(DownloadListener.class);
-    testInstanceManager.addDartCreatedInstance(mockDownloadListener, 1L);
+    final PigeonApiWebView api = new TestProxyApiRegistrar().getPigeonApiWebView();
 
-    testHostApiImpl.setDownloadListener(0L, 1L);
-    verify(mockWebView).setDownloadListener(mockDownloadListener);
+    final WebView instance = mock(WebView.class);
+    final android.webkit.DownloadListener listener = mock(DownloadListener.class);
+    api.setDownloadListener(instance, listener);
+
+    verify(instance).setDownloadListener(listener);
   }
 
   @Test
   public void setWebChromeClient() {
-    final WebChromeClient mockWebChromeClient = mock(WebChromeClient.class);
-    testInstanceManager.addDartCreatedInstance(mockWebChromeClient, 1L);
+    final PigeonApiWebView api = new TestProxyApiRegistrar().getPigeonApiWebView();
 
-    testHostApiImpl.setWebChromeClient(0L, 1L);
-    verify(mockWebView).setWebChromeClient(mockWebChromeClient);
+    final WebView instance = mock(WebView.class);
+    final io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl client =
+        mock(WebChromeClientProxyApi.WebChromeClientImpl.class);
+    api.setWebChromeClient(instance, client);
+
+    verify(instance).setWebChromeClient(client);
+  }
+
+  @Test
+  public void setBackgroundColor() {
+    final PigeonApiWebView api = new TestProxyApiRegistrar().getPigeonApiWebView();
+
+    final WebView instance = mock(WebView.class);
+    final long color = 0L;
+    api.setBackgroundColor(instance, color);
+
+    verify(instance).setBackgroundColor((int) color);
   }
 
   @Test
   public void defaultWebChromeClientIsSecureWebChromeClient() {
-    final WebViewPlatformView webView = new WebViewPlatformView(mockContext, null, null);
+    final WebViewProxyApi mockApi = mock(WebViewProxyApi.class);
+    when(mockApi.getPigeonRegistrar()).thenReturn(new TestProxyApiRegistrar());
+    final WebViewProxyApi.WebViewPlatformView webView =
+        new WebViewProxyApi.WebViewPlatformView(mockApi);
+
     assertTrue(
-        webView.getWebChromeClient() instanceof WebChromeClientHostApiImpl.SecureWebChromeClient);
+        webView.getWebChromeClient() instanceof WebChromeClientProxyApi.SecureWebChromeClient);
     assertFalse(
-        webView.getWebChromeClient() instanceof WebChromeClientHostApiImpl.WebChromeClientImpl);
+        webView.getWebChromeClient() instanceof WebChromeClientProxyApi.WebChromeClientImpl);
   }
 
+  // This test verifies that WebView.destroy() is called when the Dart instance is garbage collected.
+  // This requires adding
+  //
+  // ```
+  // val instance: Any? = getInstance(identifier)
+  // if (instance is WebViewProxyApi.WebViewPlatformView) {
+  //   instance.destroy()
+  // }
+  // ```
+  //
+  // to `AndroidWebkitLibraryPigeonInstanceManager.remove` in the generated code. This is done as a
+  // temporary workaround to prevent the transition to the new pigeon ProxyApi generator from being
+  // a breaking change. Maintainers should consider whether continuing  to call `destroy` on
+  // `WebView` is valuable.
   @Test
-  public void defaultWebChromeClientDoesNotAttemptToCommunicateWithDart() {
-    final WebViewPlatformView webView = new WebViewPlatformView(mockContext, null, null);
-    // This shouldn't throw an Exception.
-    Objects.requireNonNull(webView.getWebChromeClient()).onProgressChanged(webView, 0);
-  }
+  public void destroyWebViewWhenRemovedFromInstanceManager() {
+    final WebViewProxyApi.WebViewPlatformView mockWebView =
+        mock(WebViewProxyApi.WebViewPlatformView.class);
 
-  @Test
-  public void disposeDoesNotCallDestroy() {
-    final boolean[] destroyCalled = {false};
-    final WebViewPlatformView webView =
-        new WebViewPlatformView(mockContext, null, null) {
-          @Override
-          public void destroy() {
-            destroyCalled[0] = true;
-          }
-        };
-    webView.dispose();
+    final TestProxyApiRegistrar registrar = new TestProxyApiRegistrar();
+    registrar.getInstanceManager().addDartCreatedInstance(mockWebView, 0);
 
-    assertFalse(destroyCalled[0]);
-  }
-
-  @Test
-  public void destroyWebViewWhenDisposedFromJavaObjectHostApi() {
-    final boolean[] destroyCalled = {false};
-    final WebViewPlatformView webView =
-        new WebViewPlatformView(mockContext, null, null) {
-          @Override
-          public void destroy() {
-            destroyCalled[0] = true;
-          }
-        };
-
-    testInstanceManager.addDartCreatedInstance(webView, 1);
-    final JavaObjectHostApiImpl javaObjectHostApi = new JavaObjectHostApiImpl(testInstanceManager);
-    javaObjectHostApi.dispose(1L);
-
-    assertTrue(destroyCalled[0]);
-  }
-
-  @Test
-  public void flutterApiCreate() {
-    final InstanceManager instanceManager = InstanceManager.create(identifier -> {});
-
-    final WebViewFlutterApiImpl flutterApiImpl =
-        new WebViewFlutterApiImpl(mockBinaryMessenger, instanceManager);
-
-    final WebViewFlutterApi mockFlutterApi = mock(WebViewFlutterApi.class);
-    flutterApiImpl.setApi(mockFlutterApi);
-
-    flutterApiImpl.create(mockWebView, reply -> {});
-
-    final long instanceIdentifier =
-        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(mockWebView));
-    verify(mockFlutterApi).create(eq(instanceIdentifier), any());
-
-    instanceManager.stopFinalizationListener();
+    registrar.getInstanceManager().remove(0);
+    verify(mockWebView).destroy();
   }
 
   @Test
   public void setImportantForAutofillForParentFlutterView() {
-    final WebViewPlatformView webView =
-        new WebViewPlatformView(
-            mockContext,
-            mockBinaryMessenger,
-            testInstanceManager,
-            (int version) -> version <= Build.VERSION_CODES.O);
+    final WebViewProxyApi mockApi = mock(WebViewProxyApi.class);
+    when(mockApi.getPigeonRegistrar()).thenReturn(new TestProxyApiRegistrar());
+    final WebViewProxyApi.WebViewPlatformView webView =
+        new WebViewProxyApi.WebViewPlatformView(mockApi);
 
-    final WebViewPlatformView webViewSpy = spy(webView);
+    final WebViewProxyApi.WebViewPlatformView webViewSpy = spy(webView);
     final FlutterView mockFlutterView = mock(FlutterView.class);
     when(webViewSpy.getParent()).thenReturn(mockFlutterView);
 
@@ -361,22 +353,19 @@ public class WebViewTest {
 
   @Test
   public void onScrollChanged() {
-    final InstanceManager instanceManager = InstanceManager.create(identifier -> {});
+    final WebViewProxyApi mockApi = mock(WebViewProxyApi.class);
+    when(mockApi.getPigeonRegistrar()).thenReturn(new TestProxyApiRegistrar());
 
-    final WebViewFlutterApiImpl flutterApiImpl =
-        new WebViewFlutterApiImpl(mockBinaryMessenger, instanceManager);
+    final WebViewProxyApi.WebViewPlatformView instance =
+        new WebViewProxyApi.WebViewPlatformView(mockApi);
+    final Long left = 0L;
+    final Long top = 0L;
+    final Long oldLeft = 0L;
+    final Long oldTop = 0L;
+    instance.onScrollChanged(
+        left.intValue(), top.intValue(), oldLeft.intValue(), oldTop.intValue());
 
-    final WebViewFlutterApi mockFlutterApi = mock(WebViewFlutterApi.class);
-    flutterApiImpl.setApi(mockFlutterApi);
-    flutterApiImpl.create(mockWebView, reply -> {});
-
-    flutterApiImpl.onScrollChanged(mockWebView, 0L, 1L, 2L, 3L, reply -> {});
-
-    final long instanceIdentifier =
-        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(mockWebView));
-    verify(mockFlutterApi)
-        .onScrollChanged(eq(instanceIdentifier), eq(0L), eq(1L), eq(2L), eq(3L), any());
-
-    instanceManager.stopFinalizationListener();
+    verify(mockApi)
+        .onScrollChanged(eq(instance), eq(left), eq(top), eq(oldLeft), eq(oldTop), any());
   }
 }

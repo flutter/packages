@@ -780,6 +780,10 @@ abstract class _CurriedWidget extends BlobNode {
             );
           } else if (inputList is DataReference) {
             inputList = dataResolver(inputList.parts);
+          } else if (inputList is WidgetBuilderArgReference) {
+            inputList = widgetBuilderArgResolver(
+              <Object>[inputList.argumentName, ...inputList.parts],
+            );
           } else if (inputList is BoundStateReference) {
             inputList = stateResolver(inputList.parts, inputList.depth);
           } else if (inputList is BoundLoopReference) {

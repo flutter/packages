@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 export 'src/platform_navigation_delegate.dart';
+export 'src/platform_ssl_auth_error.dart';
 export 'src/platform_webview_controller.dart';
 export 'src/platform_webview_cookie_manager.dart';
 export 'src/platform_webview_widget.dart';

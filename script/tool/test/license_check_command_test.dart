@@ -4,33 +4,30 @@
 
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
-import 'package:file/memory.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
 import 'package:flutter_plugin_tools/src/license_check_command.dart';
-import 'package:mockito/mockito.dart';
+import 'package:git/git.dart';
+import 'package:path/path.dart' as p;
 import 'package:platform/platform.dart';
 import 'package:test/test.dart';
 
-import 'common/package_command_test.mocks.dart';
 import 'mocks.dart';
 import 'util.dart';
 
 void main() {
   group('LicenseCheckCommand', () {
     late CommandRunner<void> runner;
-    late FileSystem fileSystem;
     late Platform platform;
+    late RecordingProcessRunner gitProcessRunner;
+    late Directory packagesDir;
     late Directory root;
 
     setUp(() {
-      fileSystem = MemoryFileSystem();
       platform = MockPlatformWithSeparator();
-      final Directory packagesDir =
-          fileSystem.currentDirectory.childDirectory('packages');
+      final GitDir gitDir;
+      (:packagesDir, processRunner: _, :gitProcessRunner, :gitDir) =
+          configureBaseCommandMocks(platform: platform);
       root = packagesDir.parent;
-
-      final MockGitDir gitDir = MockGitDir();
-      when(gitDir.path).thenReturn(packagesDir.parent.path);
 
       final LicenseCheckCommand command = LicenseCheckCommand(
         packagesDir,
@@ -69,6 +66,22 @@ void main() {
       file.writeAsStringSync(lines.join(newline) + suffix + newline);
     }
 
+    /// Mocks `git ls-files` to return all files in `root`, simulating a
+    /// repository where everything present is checked in.
+    void mockGitFilesListWithAllFiles(Directory root) {
+      final String fileList = root
+          .listSync(recursive: true, followLinks: false)
+          .whereType<File>()
+          .map((File f) => p.posix
+              .joinAll(p.split(p.relative(f.absolute.path, from: root.path))))
+          .join('\n');
+
+      gitProcessRunner.mockProcessesForExecutable['git-ls-files'] =
+          <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: '$fileList\n')),
+      ];
+    }
+
     test('looks at only expected extensions', () async {
       final Map<String, bool> extensions = <String, bool>{
         'c': true,
@@ -93,6 +106,7 @@ void main() {
       for (final String fileExtension in extensions.keys) {
         root.childFile('$filenameBase.$fileExtension').createSync();
       }
+      mockGitFilesListWithAllFiles(root);
 
       final List<String> output = await runCapturingPrint(
           runner, <String>['license-check'], errorHandler: (Error e) {
@@ -126,6 +140,7 @@ void main() {
       for (final String name in ignoredFiles) {
         root.childFile(name).createSync();
       }
+      mockGitFilesListWithAllFiles(root);
 
       final List<String> output =
           await runCapturingPrint(runner, <String>['license-check']);
@@ -162,12 +177,33 @@ void main() {
       }
     });
 
+    test('ignores files that are not checked in', () async {
+      mockGitFilesListWithAllFiles(root);
+      // Add files after creating the mock output from created files.
+      final Directory packageDir = root
+          .childDirectory('FlutterGeneratedPluginSwiftPackage')
+        ..createSync();
+      packageDir.childFile('Package.swift').createSync();
+      packageDir
+          .childDirectory('Sources')
+          .childDirectory('FlutterGeneratedPluginSwiftPackage')
+          .childFile('FlutterGeneratedPluginSwiftPackage.swift')
+          .createSync(recursive: true);
+
+      final List<String> output =
+          await runCapturingPrint(runner, <String>['license-check']);
+
+      expect(output,
+          isNot(contains('Checking FlutterGeneratedPluginSwiftPackage')));
+    });
+
     test('passes if all checked files have license blocks', () async {
       final File checked = root.childFile('checked.cc');
       checked.createSync();
       writeLicense(checked);
       final File notChecked = root.childFile('not_checked.md');
       notChecked.createSync();
+      mockGitFilesListWithAllFiles(root);
 
       final List<String> output =
           await runCapturingPrint(runner, <String>['license-check']);
@@ -185,6 +221,7 @@ void main() {
       final File checked = root.childFile('checked.cc');
       checked.createSync();
       writeLicense(checked, useCrlf: true);
+      mockGitFilesListWithAllFiles(root);
 
       final List<String> output =
           await runCapturingPrint(runner, <String>['license-check']);
@@ -208,6 +245,7 @@ void main() {
       final File fileC = root.childFile('file_c.html');
       fileC.createSync();
       writeLicense(fileC, comment: '', prefix: '<!-- ', suffix: ' -->');
+      mockGitFilesListWithAllFiles(root);
 
       final List<String> output =
           await runCapturingPrint(runner, <String>['license-check']);
@@ -232,6 +270,7 @@ void main() {
       writeLicense(goodB);
       root.childFile('bad.cc').createSync();
       root.childFile('bad.h').createSync();
+      mockGitFilesListWithAllFiles(root);
 
       Error? commandError;
       final List<String> output = await runCapturingPrint(
@@ -260,6 +299,7 @@ void main() {
       final File bad = root.childFile('bad.cc');
       bad.createSync();
       writeLicense(bad, copyright: '');
+      mockGitFilesListWithAllFiles(root);
 
       Error? commandError;
       final List<String> output = await runCapturingPrint(
@@ -287,6 +327,7 @@ void main() {
       final File bad = root.childFile('bad.cc');
       bad.createSync();
       writeLicense(bad, license: <String>[]);
+      mockGitFilesListWithAllFiles(root);
 
       Error? commandError;
       final List<String> output = await runCapturingPrint(
@@ -312,6 +353,7 @@ void main() {
       final File thirdPartyFile = root.childFile('third_party.cc');
       thirdPartyFile.createSync();
       writeLicense(thirdPartyFile, copyright: 'Copyright 2017 Someone Else');
+      mockGitFilesListWithAllFiles(root);
 
       Error? commandError;
       final List<String> output = await runCapturingPrint(
@@ -346,6 +388,7 @@ void main() {
             'Licensed under the Apache License, Version 2.0 (the "License");',
             'you may not use this file except in compliance with the License.'
           ]);
+      mockGitFilesListWithAllFiles(root);
 
       final List<String> output =
           await runCapturingPrint(runner, <String>['license-check']);
@@ -368,6 +411,7 @@ void main() {
           .childFile('first_party.cc');
       firstPartyFileInThirdParty.createSync(recursive: true);
       writeLicense(firstPartyFileInThirdParty);
+      mockGitFilesListWithAllFiles(root);
 
       final List<String> output =
           await runCapturingPrint(runner, <String>['license-check']);
@@ -391,6 +435,7 @@ void main() {
         'This program is free software: you can redistribute it and/or modify',
         'it under the terms of the GNU General Public License',
       ]);
+      mockGitFilesListWithAllFiles(root);
 
       Error? commandError;
       final List<String> output = await runCapturingPrint(
@@ -426,6 +471,7 @@ void main() {
           'you may not use this file except in compliance with the License.'
         ],
       );
+      mockGitFilesListWithAllFiles(root);
 
       Error? commandError;
       final List<String> output = await runCapturingPrint(
@@ -451,6 +497,7 @@ void main() {
       final File license = root.childFile('LICENSE');
       license.createSync();
       license.writeAsStringSync(_correctLicenseFileText);
+      mockGitFilesListWithAllFiles(root);
 
       final List<String> output =
           await runCapturingPrint(runner, <String>['license-check']);
@@ -469,6 +516,7 @@ void main() {
       license.createSync();
       license
           .writeAsStringSync(_correctLicenseFileText.replaceAll('\n', '\r\n'));
+      mockGitFilesListWithAllFiles(root);
 
       final List<String> output =
           await runCapturingPrint(runner, <String>['license-check']);
@@ -487,6 +535,7 @@ void main() {
       final File license = root.childFile('LICENSE');
       license.createSync();
       license.writeAsStringSync(_incorrectLicenseFileText);
+      mockGitFilesListWithAllFiles(root);
 
       Error? commandError;
       final List<String> output = await runCapturingPrint(
@@ -503,6 +552,7 @@ void main() {
           root.childDirectory('third_party').childFile('LICENSE');
       license.createSync(recursive: true);
       license.writeAsStringSync(_incorrectLicenseFileText);
+      mockGitFilesListWithAllFiles(root);
 
       final List<String> output =
           await runCapturingPrint(runner, <String>['license-check']);
@@ -520,6 +570,7 @@ void main() {
       final File license = root.childFile('LICENSE');
       license.createSync();
       license.writeAsStringSync(_incorrectLicenseFileText);
+      mockGitFilesListWithAllFiles(root);
 
       Error? commandError;
       final List<String> output = await runCapturingPrint(
@@ -550,7 +601,7 @@ void main() {
       final File checked = root.childFile('Package.swift');
       checked.createSync();
       writeLicense(checked, prefix: '// swift-tools-version: 5.9\n');
-
+      mockGitFilesListWithAllFiles(root);
       final List<String> output =
           await runCapturingPrint(runner, <String>['license-check']);
 

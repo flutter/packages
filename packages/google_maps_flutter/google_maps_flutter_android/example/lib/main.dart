@@ -10,6 +10,7 @@ import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platf
 
 import 'animate_camera.dart';
 import 'clustering.dart';
+import 'ground_overlay.dart';
 import 'lite_mode.dart';
 import 'map_click.dart';
 import 'map_coordinates.dart';
@@ -43,6 +44,7 @@ final List<GoogleMapExampleAppPage> _allPages = <GoogleMapExampleAppPage>[
   const SnapshotPage(),
   const LiteModePage(),
   const TileOverlayPage(),
+  const GroundOverlayPage(),
   const ClusteringPage(),
   const MapIdPage(),
 ];
@@ -53,11 +55,13 @@ class MapsDemo extends StatelessWidget {
   const MapsDemo({super.key});
 
   void _pushPage(BuildContext context, GoogleMapExampleAppPage page) {
-    Navigator.of(context).push(MaterialPageRoute<void>(
-        builder: (_) => Scaffold(
-              appBar: AppBar(title: Text(page.title)),
-              body: page,
-            )));
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder:
+            (_) =>
+                Scaffold(appBar: AppBar(title: Text(page.title)), body: page),
+      ),
+    );
   }
 
   @override
@@ -66,11 +70,12 @@ class MapsDemo extends StatelessWidget {
       appBar: AppBar(title: const Text('GoogleMaps examples')),
       body: ListView.builder(
         itemCount: _allPages.length,
-        itemBuilder: (_, int index) => ListTile(
-          leading: _allPages[index].leading,
-          title: Text(_allPages[index].title),
-          onTap: () => _pushPage(context, _allPages[index]),
-        ),
+        itemBuilder:
+            (_, int index) => ListTile(
+              leading: _allPages[index].leading,
+              title: Text(_allPages[index].title),
+              onTap: () => _pushPage(context, _allPages[index]),
+            ),
       ),
     );
   }
@@ -83,7 +88,8 @@ void main() {
 
 Completer<AndroidMapRenderer?>? _initializedRendererCompleter;
 
-/// Initializes map renderer to the `latest` renderer type.
+/// Initializes map renderer to the `latest` renderer type, and calls
+/// [GoogleMapsFlutterAndroid.warmup()].
 ///
 /// The renderer must be requested before creating GoogleMap instances,
 /// as the renderer can be initialized only once per application context.
@@ -98,11 +104,17 @@ Future<AndroidMapRenderer?> initializeMapRenderer() async {
 
   WidgetsFlutterBinding.ensureInitialized();
 
-  final GoogleMapsFlutterPlatform platform = GoogleMapsFlutterPlatform.instance;
-  unawaited((platform as GoogleMapsFlutterAndroid)
-      .initializeWithRenderer(AndroidMapRenderer.latest)
-      .then((AndroidMapRenderer initializedRenderer) =>
-          completer.complete(initializedRenderer)));
+  final GoogleMapsFlutterAndroid platform =
+      GoogleMapsFlutterPlatform.instance as GoogleMapsFlutterAndroid;
+  unawaited(
+    platform
+        .initializeWithRenderer(AndroidMapRenderer.latest)
+        .then(
+          (AndroidMapRenderer initializedRenderer) =>
+              completer.complete(initializedRenderer),
+        )
+        .then((_) => platform.warmup()),
+  );
 
   return completer.future;
 }

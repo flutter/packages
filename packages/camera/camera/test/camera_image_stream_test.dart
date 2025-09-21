@@ -21,11 +21,13 @@ void main() {
 
   test('startImageStream() throws $CameraException when uninitialized', () {
     final CameraController cameraController = CameraController(
-        const CameraDescription(
-            name: 'cam',
-            lensDirection: CameraLensDirection.back,
-            sensorOrientation: 90),
-        ResolutionPreset.max);
+      const CameraDescription(
+        name: 'cam',
+        lensDirection: CameraLensDirection.back,
+        sensorOrientation: 90,
+      ),
+      ResolutionPreset.max,
+    );
 
     expect(
       () => cameraController.startImageStream((CameraImage image) {}),
@@ -45,72 +47,94 @@ void main() {
     );
   });
 
-  test('startImageStream() throws $CameraException when recording videos',
-      () async {
-    final CameraController cameraController = CameraController(
-        const CameraDescription(
-            name: 'cam',
-            lensDirection: CameraLensDirection.back,
-            sensorOrientation: 90),
-        ResolutionPreset.max);
-
-    await cameraController.initialize();
-
-    cameraController.value =
-        cameraController.value.copyWith(isRecordingVideo: true);
-
-    expect(
-        () => cameraController.startImageStream((CameraImage image) {}),
-        throwsA(isA<CameraException>().having(
-          (CameraException error) => error.description,
-          'A video recording is already started.',
-          'startImageStream was called while a video is being recorded.',
-        )));
-  });
   test(
-      'startImageStream() throws $CameraException when already streaming images',
-      () async {
-    final CameraController cameraController = CameraController(
+    'startImageStream() throws $CameraException when recording videos',
+    () async {
+      final CameraController cameraController = CameraController(
         const CameraDescription(
-            name: 'cam',
-            lensDirection: CameraLensDirection.back,
-            sensorOrientation: 90),
-        ResolutionPreset.max);
-    await cameraController.initialize();
+          name: 'cam',
+          lensDirection: CameraLensDirection.back,
+          sensorOrientation: 90,
+        ),
+        ResolutionPreset.max,
+      );
 
-    cameraController.value =
-        cameraController.value.copyWith(isStreamingImages: true);
-    expect(
+      await cameraController.initialize();
+
+      cameraController.value = cameraController.value.copyWith(
+        isRecordingVideo: true,
+      );
+
+      expect(
         () => cameraController.startImageStream((CameraImage image) {}),
-        throwsA(isA<CameraException>().having(
-          (CameraException error) => error.description,
-          'A camera has started streaming images.',
-          'startImageStream was called while a camera was streaming images.',
-        )));
-  });
+        throwsA(
+          isA<CameraException>().having(
+            (CameraException error) => error.description,
+            'A video recording is already started.',
+            'startImageStream was called while a video is being recorded.',
+          ),
+        ),
+      );
+    },
+  );
+  test(
+    'startImageStream() throws $CameraException when already streaming images',
+    () async {
+      final CameraController cameraController = CameraController(
+        const CameraDescription(
+          name: 'cam',
+          lensDirection: CameraLensDirection.back,
+          sensorOrientation: 90,
+        ),
+        ResolutionPreset.max,
+      );
+      await cameraController.initialize();
+
+      cameraController.value = cameraController.value.copyWith(
+        isStreamingImages: true,
+      );
+      expect(
+        () => cameraController.startImageStream((CameraImage image) {}),
+        throwsA(
+          isA<CameraException>().having(
+            (CameraException error) => error.description,
+            'A camera has started streaming images.',
+            'startImageStream was called while a camera was streaming images.',
+          ),
+        ),
+      );
+    },
+  );
 
   test('startImageStream() calls CameraPlatform', () async {
     final CameraController cameraController = CameraController(
-        const CameraDescription(
-            name: 'cam',
-            lensDirection: CameraLensDirection.back,
-            sensorOrientation: 90),
-        ResolutionPreset.max);
+      const CameraDescription(
+        name: 'cam',
+        lensDirection: CameraLensDirection.back,
+        sensorOrientation: 90,
+      ),
+      ResolutionPreset.max,
+    );
     await cameraController.initialize();
 
     await cameraController.startImageStream((CameraImage image) {});
 
-    expect(mockPlatform.streamCallLog,
-        <String>['onStreamedFrameAvailable', 'listen']);
+    expect(mockPlatform.streamCallLog, <String>[
+      'supportsImageStreaming',
+      'onStreamedFrameAvailable',
+      'listen',
+    ]);
   });
 
   test('stopImageStream() throws $CameraException when uninitialized', () {
     final CameraController cameraController = CameraController(
-        const CameraDescription(
-            name: 'cam',
-            lensDirection: CameraLensDirection.back,
-            sensorOrientation: 90),
-        ResolutionPreset.max);
+      const CameraDescription(
+        name: 'cam',
+        lensDirection: CameraLensDirection.back,
+        sensorOrientation: 90,
+      ),
+      ResolutionPreset.max,
+    );
 
     expect(
       cameraController.stopImageStream,
@@ -130,65 +154,85 @@ void main() {
     );
   });
 
-  test('stopImageStream() throws $CameraException when not streaming images',
-      () async {
-    final CameraController cameraController = CameraController(
+  test(
+    'stopImageStream() throws $CameraException when not streaming images',
+    () async {
+      final CameraController cameraController = CameraController(
         const CameraDescription(
-            name: 'cam',
-            lensDirection: CameraLensDirection.back,
-            sensorOrientation: 90),
-        ResolutionPreset.max);
-    await cameraController.initialize();
+          name: 'cam',
+          lensDirection: CameraLensDirection.back,
+          sensorOrientation: 90,
+        ),
+        ResolutionPreset.max,
+      );
+      await cameraController.initialize();
 
-    expect(
+      expect(
         cameraController.stopImageStream,
-        throwsA(isA<CameraException>().having(
-          (CameraException error) => error.description,
-          'No camera is streaming images',
-          'stopImageStream was called when no camera is streaming images.',
-        )));
-  });
+        throwsA(
+          isA<CameraException>().having(
+            (CameraException error) => error.description,
+            'No camera is streaming images',
+            'stopImageStream was called when no camera is streaming images.',
+          ),
+        ),
+      );
+    },
+  );
 
   test('stopImageStream() intended behaviour', () async {
     final CameraController cameraController = CameraController(
-        const CameraDescription(
-            name: 'cam',
-            lensDirection: CameraLensDirection.back,
-            sensorOrientation: 90),
-        ResolutionPreset.max);
+      const CameraDescription(
+        name: 'cam',
+        lensDirection: CameraLensDirection.back,
+        sensorOrientation: 90,
+      ),
+      ResolutionPreset.max,
+    );
     await cameraController.initialize();
     await cameraController.startImageStream((CameraImage image) {});
     await cameraController.stopImageStream();
 
-    expect(mockPlatform.streamCallLog,
-        <String>['onStreamedFrameAvailable', 'listen', 'cancel']);
+    expect(mockPlatform.streamCallLog, <String>[
+      'supportsImageStreaming',
+      'onStreamedFrameAvailable',
+      'listen',
+      'supportsImageStreaming',
+      'cancel',
+    ]);
   });
 
   test('startVideoRecording() can stream images', () async {
     final CameraController cameraController = CameraController(
-        const CameraDescription(
-            name: 'cam',
-            lensDirection: CameraLensDirection.back,
-            sensorOrientation: 90),
-        ResolutionPreset.max);
+      const CameraDescription(
+        name: 'cam',
+        lensDirection: CameraLensDirection.back,
+        sensorOrientation: 90,
+      ),
+      ResolutionPreset.max,
+    );
 
     await cameraController.initialize();
 
     await cameraController.startVideoRecording(
-        onAvailable: (CameraImage image) {});
+      onAvailable: (CameraImage image) {},
+    );
 
     expect(
-        mockPlatform.streamCallLog.contains('startVideoCapturing with stream'),
-        isTrue);
+      mockPlatform.streamCallLog.contains('startVideoCapturing with stream'),
+      isTrue,
+    );
   });
 
   test('startVideoRecording() by default does not stream', () async {
     final CameraController cameraController = CameraController(
-        const CameraDescription(
-            name: 'cam',
-            lensDirection: CameraLensDirection.back,
-            sensorOrientation: 90),
-        ResolutionPreset.max);
+      const CameraDescription(
+        name: 'cam',
+        lensDirection: CameraLensDirection.back,
+        sensorOrientation: 90,
+      ),
+      ResolutionPreset.max,
+    );
 
     await cameraController.initialize();
 
@@ -204,8 +248,10 @@ class MockStreamingCameraPlatform extends MockCameraPlatform {
   StreamController<CameraImageData>? _streamController;
 
   @override
-  Stream<CameraImageData> onStreamedFrameAvailable(int cameraId,
-      {CameraImageStreamOptions? options}) {
+  Stream<CameraImageData> onStreamedFrameAvailable(
+    int cameraId, {
+    CameraImageStreamOptions? options,
+  }) {
     streamCallLog.add('onStreamedFrameAvailable');
     _streamController = StreamController<CameraImageData>(
       onListen: _onFrameStreamListen,
@@ -233,6 +279,12 @@ class MockStreamingCameraPlatform extends MockCameraPlatform {
 
   void _onFrameStreamListen() {
     streamCallLog.add('listen');
+  }
+
+  @override
+  bool supportsImageStreaming() {
+    streamCallLog.add('supportsImageStreaming');
+    return true;
   }
 
   FutureOr<void> _onFrameStreamCancel() async {

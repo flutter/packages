@@ -9,8 +9,8 @@ import PackageDescription
 let package = Package(
   name: "webview_flutter_wkwebview",
   platforms: [
-    .iOS("12.0"),
-    .macOS("10.14"),
+    .iOS("13.0"),
+    .macOS("10.15"),
   ],
   products: [
     .library(name: "webview-flutter-wkwebview", targets: ["webview_flutter_wkwebview"])
@@ -20,12 +20,8 @@ let package = Package(
     .target(
       name: "webview_flutter_wkwebview",
       dependencies: [],
-      exclude: ["include/FlutterWebView.modulemap", "include/webview-umbrella.h"],
       resources: [
         .process("Resources")
-      ],
-      cSettings: [
-        .headerSearchPath("include/webview_flutter_wkwebview")
       ]
     )
   ]

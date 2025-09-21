@@ -9,7 +9,6 @@ import 'package:flutter/material.dart';
 /// Platform specific implementations can add additional fields by extending
 /// this class.
 ///
-/// {@tool sample}
 /// This example demonstrates how to extend the [PlatformWebViewCookieManagerCreationParams] to
 /// provide additional platform specific parameters.
 ///
@@ -37,7 +36,6 @@ import 'package:flutter/material.dart';
 ///   final Uri? uri;
 /// }
 /// ```
-/// {@end-tool}
 @immutable
 class PlatformWebViewCookieManagerCreationParams {
   /// Used by the platform implementation to create a new [PlatformWebViewCookieManagerDelegate].

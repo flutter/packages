@@ -4,21 +4,17 @@
 
 import 'package:pigeon/pigeon.dart';
 
-@ConfigurePigeon(PigeonOptions(
-  dartOut: 'lib/src/messages.g.dart',
-  javaOptions: JavaOptions(package: 'io.flutter.plugins.googlemaps'),
-  javaOut: 'android/src/main/java/io/flutter/plugins/googlemaps/Messages.java',
-  copyrightHeader: 'pigeons/copyright.txt',
-))
-
+@ConfigurePigeon(
+  PigeonOptions(
+    dartOut: 'lib/src/messages.g.dart',
+    javaOptions: JavaOptions(package: 'io.flutter.plugins.googlemaps'),
+    javaOut:
+        'android/src/main/java/io/flutter/plugins/googlemaps/Messages.java',
+    copyrightHeader: 'pigeons/copyright.txt',
+  ),
+)
 /// Pigeon equivalent of MapType
-enum PlatformMapType {
-  none,
-  normal,
-  satellite,
-  terrain,
-  hybrid,
-}
+enum PlatformMapType { none, normal, satellite, terrain, hybrid }
 
 // Pigeon equivalent of the Java MapsInitializer.Renderer.
 enum PlatformRendererType { legacy, latest }
@@ -157,11 +153,7 @@ class PlatformDoublePair {
 
 /// Pigeon equivalent of the InfoWindow class.
 class PlatformInfoWindow {
-  PlatformInfoWindow({
-    required this.anchor,
-    this.title,
-    this.snippet,
-  });
+  PlatformInfoWindow({required this.anchor, this.title, this.snippet});
 
   final String? title;
   final String? snippet;
@@ -230,11 +222,7 @@ class PlatformPolygon {
 }
 
 /// Join types for polyline joints.
-enum PlatformJointType {
-  mitered,
-  bevel,
-  round,
-}
+enum PlatformJointType { mitered, bevel, round }
 
 /// Pigeon equivalent of the Polyline class.
 class PlatformPolyline {
@@ -278,12 +266,7 @@ class PlatformPolyline {
 /// Enumeration of possible types of PlatformCap, corresponding to the
 /// subclasses of Cap in the Google Maps Android SDK.
 /// See https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/model/Cap.
-enum PlatformCapType {
-  buttCap,
-  roundCap,
-  squareCap,
-  customCap,
-}
+enum PlatformCapType { buttCap, roundCap, squareCap, customCap }
 
 /// Pigeon equivalent of Cap from the platform interface.
 /// https://github.com/flutter/packages/blob/main/packages/google_maps_flutter/google_maps_flutter_platform_interface/lib/src/types/cap.dart
@@ -297,11 +280,7 @@ class PlatformCap {
 }
 
 /// Enumeration of possible types for PatternItem.
-enum PlatformPatternItemType {
-  dot,
-  dash,
-  gap,
-}
+enum PlatformPatternItemType { dot, dash, gap }
 
 /// Pigeon equivalent of the PatternItem class.
 class PlatformPatternItem {
@@ -385,6 +364,37 @@ class PlatformCluster {
   final List<String> markerIds;
 }
 
+/// Pigeon equivalent of the GroundOverlay class.
+class PlatformGroundOverlay {
+  PlatformGroundOverlay({
+    required this.groundOverlayId,
+    required this.image,
+    required this.position,
+    required this.bounds,
+    required this.width,
+    required this.height,
+    required this.anchor,
+    required this.transparency,
+    required this.bearing,
+    required this.zIndex,
+    required this.visible,
+    required this.clickable,
+  });
+
+  final String groundOverlayId;
+  final PlatformBitmap image;
+  final PlatformLatLng? position;
+  final PlatformLatLngBounds? bounds;
+  final double? width;
+  final double? height;
+  final PlatformDoublePair? anchor;
+  final double transparency;
+  final double bearing;
+  final int zIndex;
+  final bool visible;
+  final bool clickable;
+}
+
 /// Pigeon equivalent of CameraTargetBounds.
 ///
 /// As with the Dart version, it exists to distinguish between not setting a
@@ -407,6 +417,7 @@ class PlatformMapViewCreationParams {
     required this.initialHeatmaps,
     required this.initialTileOverlays,
     required this.initialClusterManagers,
+    required this.initialGroundOverlays,
   });
 
   final PlatformCameraPosition initialCameraPosition;
@@ -418,6 +429,7 @@ class PlatformMapViewCreationParams {
   final List<PlatformHeatmap> initialHeatmaps;
   final List<PlatformTileOverlay> initialTileOverlays;
   final List<PlatformClusterManager> initialClusterManagers;
+  final List<PlatformGroundOverlay> initialGroundOverlays;
 }
 
 /// Pigeon equivalent of MapConfiguration.
@@ -543,28 +555,29 @@ class PlatformBitmapAsset {
 /// Pigeon equivalent of [AssetImageBitmap]. See
 /// https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/model/BitmapDescriptorFactory#public-static-bitmapdescriptor-fromasset-string-assetname
 class PlatformBitmapAssetImage {
-  PlatformBitmapAssetImage(
-      {required this.name, required this.scale, this.size});
+  PlatformBitmapAssetImage({
+    required this.name,
+    required this.scale,
+    this.size,
+  });
   final String name;
   final double scale;
   final PlatformDoublePair? size;
 }
 
 /// Pigeon equivalent of [MapBitmapScaling].
-enum PlatformMapBitmapScaling {
-  auto,
-  none,
-}
+enum PlatformMapBitmapScaling { auto, none }
 
 /// Pigeon equivalent of [AssetMapBitmap]. See
 /// https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/model/BitmapDescriptorFactory#public-static-bitmapdescriptor-fromasset-string-assetname
 class PlatformBitmapAssetMap {
-  PlatformBitmapAssetMap(
-      {required this.assetName,
-      required this.bitmapScaling,
-      required this.imagePixelRatio,
-      this.width,
-      this.height});
+  PlatformBitmapAssetMap({
+    required this.assetName,
+    required this.bitmapScaling,
+    required this.imagePixelRatio,
+    this.width,
+    this.height,
+  });
   final String assetName;
   final PlatformMapBitmapScaling bitmapScaling;
   final double imagePixelRatio;
@@ -575,12 +588,13 @@ class PlatformBitmapAssetMap {
 /// Pigeon equivalent of [BytesMapBitmap]. See
 /// https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/model/BitmapDescriptorFactory#public-static-bitmapdescriptor-frombitmap-bitmap-image
 class PlatformBitmapBytesMap {
-  PlatformBitmapBytesMap(
-      {required this.byteData,
-      required this.bitmapScaling,
-      required this.imagePixelRatio,
-      this.width,
-      this.height});
+  PlatformBitmapBytesMap({
+    required this.byteData,
+    required this.bitmapScaling,
+    required this.imagePixelRatio,
+    this.width,
+    this.height,
+  });
   final Uint8List byteData;
   final PlatformMapBitmapScaling bitmapScaling;
   final double imagePixelRatio;
@@ -604,32 +618,59 @@ abstract class MapsApi {
   void updateMapConfiguration(PlatformMapConfiguration configuration);
 
   /// Updates the set of circles on the map.
-  void updateCircles(List<PlatformCircle> toAdd, List<PlatformCircle> toChange,
-      List<String> idsToRemove);
+  void updateCircles(
+    List<PlatformCircle> toAdd,
+    List<PlatformCircle> toChange,
+    List<String> idsToRemove,
+  );
 
   /// Updates the set of heatmaps on the map.
-  void updateHeatmaps(List<PlatformHeatmap> toAdd,
-      List<PlatformHeatmap> toChange, List<String> idsToRemove);
+  void updateHeatmaps(
+    List<PlatformHeatmap> toAdd,
+    List<PlatformHeatmap> toChange,
+    List<String> idsToRemove,
+  );
 
   /// Updates the set of custer managers for clusters on the map.
   void updateClusterManagers(
-      List<PlatformClusterManager> toAdd, List<String> idsToRemove);
+    List<PlatformClusterManager> toAdd,
+    List<String> idsToRemove,
+  );
 
   /// Updates the set of markers on the map.
-  void updateMarkers(List<PlatformMarker> toAdd, List<PlatformMarker> toChange,
-      List<String> idsToRemove);
+  void updateMarkers(
+    List<PlatformMarker> toAdd,
+    List<PlatformMarker> toChange,
+    List<String> idsToRemove,
+  );
 
   /// Updates the set of polygonss on the map.
-  void updatePolygons(List<PlatformPolygon> toAdd,
-      List<PlatformPolygon> toChange, List<String> idsToRemove);
+  void updatePolygons(
+    List<PlatformPolygon> toAdd,
+    List<PlatformPolygon> toChange,
+    List<String> idsToRemove,
+  );
 
   /// Updates the set of polylines on the map.
-  void updatePolylines(List<PlatformPolyline> toAdd,
-      List<PlatformPolyline> toChange, List<String> idsToRemove);
+  void updatePolylines(
+    List<PlatformPolyline> toAdd,
+    List<PlatformPolyline> toChange,
+    List<String> idsToRemove,
+  );
 
   /// Updates the set of tile overlays on the map.
-  void updateTileOverlays(List<PlatformTileOverlay> toAdd,
-      List<PlatformTileOverlay> toChange, List<String> idsToRemove);
+  void updateTileOverlays(
+    List<PlatformTileOverlay> toAdd,
+    List<PlatformTileOverlay> toChange,
+    List<String> idsToRemove,
+  );
+
+  /// Updates the set of ground overlays on the map.
+  void updateGroundOverlays(
+    List<PlatformGroundOverlay> toAdd,
+    List<PlatformGroundOverlay> toChange,
+    List<String> idsToRemove,
+  );
 
   /// Gets the screen coordinate for the given map location.
   PlatformPoint getScreenCoordinate(PlatformLatLng latLng);
@@ -644,8 +685,12 @@ abstract class MapsApi {
   /// animation.
   void moveCamera(PlatformCameraUpdate cameraUpdate);
 
-  /// Moves the camera according to [cameraUpdate], animating the update.
-  void animateCamera(PlatformCameraUpdate cameraUpdate);
+  /// Moves the camera according to [cameraUpdate], animating the update using a
+  /// duration in milliseconds if provided.
+  void animateCamera(
+    PlatformCameraUpdate cameraUpdate,
+    int? durationMilliseconds,
+  );
 
   /// Gets the current map zoom level.
   double getZoomLevel();
@@ -726,10 +771,16 @@ abstract class MapsCallbackApi {
   /// Called when a polyline is tapped.
   void onPolylineTap(String polylineId);
 
+  /// Called when a ground overlay is tapped.
+  void onGroundOverlayTap(String groundOverlayId);
+
   /// Called to get data for a map tile.
   @async
   PlatformTile getTileOverlayTile(
-      String tileOverlayId, PlatformPoint location, int zoom);
+    String tileOverlayId,
+    PlatformPoint location,
+    int zoom,
+  );
 }
 
 /// Interface for global SDK initialization.
@@ -743,7 +794,12 @@ abstract class MapsInitializerApi {
   /// in an error.
   @async
   PlatformRendererType initializeWithPreferredRenderer(
-      PlatformRendererType? type);
+    PlatformRendererType? type,
+  );
+
+  /// Attempts to trigger any thread-blocking work
+  /// the Google Maps SDK normally does when a map is shown for the first time.
+  void warmup();
 }
 
 /// Dummy interface to force generation of the platform view creation params,
@@ -770,6 +826,8 @@ abstract class MapsInspectorApi {
   bool isMyLocationButtonEnabled();
   bool isTrafficEnabled();
   PlatformTileLayer? getTileOverlayInfo(String tileOverlayId);
+  PlatformGroundOverlay? getGroundOverlayInfo(String groundOverlayId);
   PlatformZoomRange getZoomRange();
   List<PlatformCluster> getClusters(String clusterManagerId);
+  PlatformCameraPosition getCameraPosition();
 }

@@ -1,5 +1,37 @@
-## NEXT
+## 0.5.14+2
 
+* Fixes a bug where using `cloudMapId` for cloud-based styling would fail if the `style` property was also present.
+
+## 0.5.14+1
+
+* Stops processing events and cancels subscriptions when controller is disposed.
+
+## 0.5.14
+
+* Adds support for disabling or moving the camera control button on web.
+
+## 0.5.13
+
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+* Fixes `consumeTapEvents` for Circles, Polygons & Polyline on web.
+
+## 0.5.12+2
+
+* Fix broken cameraTargetBounds option on web.
+
+## 0.5.12+1
+
+* Deprecates `zIndex` parameter in Marker in favor of `zIndexInt`.
+* Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+
+## 0.5.12
+
+* Adds support for ground overlay.
+
+## 0.5.11
+
+* Adds support for marker anchor.
+* Updates READMEs and API docs.
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
 
 ## 0.5.10

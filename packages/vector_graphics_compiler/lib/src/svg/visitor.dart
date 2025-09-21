@@ -45,11 +45,13 @@ abstract class Visitor<S, V> {
   S visitEmptyNode(Node node, V data);
 
   /// Visit a [PatternNode].
-  S visitPatternNode(PatternNode node, V data);
+  S visitPatternNode(PatternNode patternNode, V data);
 
   /// Visit a [ResolvedTextPositionNode].
   S visitResolvedTextPositionNode(
-      ResolvedTextPositionNode textPositionNode, V data);
+    ResolvedTextPositionNode textPositionNode,
+    V data,
+  );
 
   /// Visit a [ResolvedTextNode].
   S visitResolvedText(ResolvedTextNode textNode, V data);
@@ -164,10 +166,9 @@ class CommandBuilderVisitor extends Visitor<void, void>
 
   @override
   void visitResolvedMaskNode(ResolvedMaskNode maskNode, void data) {
-    _builder.addSaveLayer(Paint(
-      blendMode: maskNode.blendMode,
-      fill: const Fill(),
-    ));
+    _builder.addSaveLayer(
+      Paint(blendMode: maskNode.blendMode, fill: const Fill()),
+    );
     maskNode.child.accept(this, data);
     _builder.addMask();
     maskNode.mask.accept(this, data);
@@ -182,7 +183,9 @@ class CommandBuilderVisitor extends Visitor<void, void>
 
   @override
   void visitResolvedTextPositionNode(
-      ResolvedTextPositionNode textPositionNode, void data) {
+    ResolvedTextPositionNode textPositionNode,
+    void data,
+  ) {
     _builder.updateTextPosition(textPositionNode.textPosition);
     textPositionNode.visitChildren((Node child) {
       child.accept(this, data);
@@ -192,7 +195,11 @@ class CommandBuilderVisitor extends Visitor<void, void>
   @override
   void visitResolvedText(ResolvedTextNode textNode, void data) {
     _builder.addText(
-        textNode.textConfig, textNode.paint, null, currentPatternId);
+      textNode.textConfig,
+      textNode.paint,
+      null,
+      currentPatternId,
+    );
   }
 
   @override

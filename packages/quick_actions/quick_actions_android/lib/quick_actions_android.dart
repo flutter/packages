@@ -14,9 +14,8 @@ late QuickActionHandler _handler;
 /// An implementation of [QuickActionsPlatform] for Android.
 class QuickActionsAndroid extends QuickActionsPlatform {
   /// Creates a new plugin implementation instance.
-  QuickActionsAndroid({
-    @visibleForTesting AndroidQuickActionsApi? api,
-  }) : _hostApi = api ?? AndroidQuickActionsApi();
+  QuickActionsAndroid({@visibleForTesting AndroidQuickActionsApi? api})
+    : _hostApi = api ?? AndroidQuickActionsApi();
 
   final AndroidQuickActionsApi _hostApi;
 
@@ -29,7 +28,7 @@ class QuickActionsAndroid extends QuickActionsPlatform {
   Future<void> initialize(QuickActionHandler handler) async {
     final _QuickActionHandlerApi quickActionsHandlerApi =
         _QuickActionHandlerApi();
-    AndroidQuickActionsFlutterApi.setup(quickActionsHandlerApi);
+    AndroidQuickActionsFlutterApi.setUp(quickActionsHandlerApi);
     _handler = handler;
     final String? action = await _hostApi.getLaunchAction();
     if (action != null) {

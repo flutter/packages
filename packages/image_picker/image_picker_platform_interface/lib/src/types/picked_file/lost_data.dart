@@ -18,11 +18,7 @@ class LostData {
 
   /// Initializes an instance with all member params set to null and considered
   /// to be empty.
-  LostData.empty()
-      : file = null,
-        exception = null,
-        type = null,
-        _empty = true;
+  LostData.empty() : file = null, exception = null, type = null, _empty = true;
 
   /// Whether it is an empty response.
   ///
