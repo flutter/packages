@@ -51,6 +51,7 @@ HRESULT BuildMediaTypeForVideoPreview(IMFMediaType* src_media_type,
 
 HRESULT PreviewHandler::InitPreviewSink(
     IMFCaptureEngine* capture_engine, IMFMediaType* base_media_type,
+    DWORD source_stream_index,
     CaptureEngineListener* sample_callback) {
   assert(capture_engine);
   assert(base_media_type);
@@ -95,7 +96,7 @@ HRESULT PreviewHandler::InitPreviewSink(
 
   DWORD preview_sink_stream_index;
   hr = preview_sink_->AddStream(
-      (DWORD)MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_VIDEO_PREVIEW,
+      source_stream_index,
       preview_media_type.Get(), nullptr, &preview_sink_stream_index);
 
   if (FAILED(hr)) {
@@ -115,12 +116,13 @@ HRESULT PreviewHandler::InitPreviewSink(
 
 HRESULT PreviewHandler::StartPreview(IMFCaptureEngine* capture_engine,
                                      IMFMediaType* base_media_type,
+                                     DWORD source_stream_index,
                                      CaptureEngineListener* sample_callback) {
   assert(capture_engine);
   assert(base_media_type);
 
   HRESULT hr =
-      InitPreviewSink(capture_engine, base_media_type, sample_callback);
+      InitPreviewSink(capture_engine, base_media_type, source_stream_index, sample_callback);
 
   if (FAILED(hr)) {
     return hr;

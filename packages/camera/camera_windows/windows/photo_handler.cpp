@@ -50,7 +50,8 @@ HRESULT BuildMediaTypeForPhotoCapture(IMFMediaType* src_media_type,
 }
 
 HRESULT PhotoHandler::InitPhotoSink(IMFCaptureEngine* capture_engine,
-                                    IMFMediaType* base_media_type) {
+                                    IMFMediaType* base_media_type,
+                                    DWORD source_stream_index) {
   assert(capture_engine);
   assert(base_media_type);
 
@@ -100,7 +101,7 @@ HRESULT PhotoHandler::InitPhotoSink(IMFCaptureEngine* capture_engine,
 
   DWORD photo_sink_stream_index;
   hr = photo_sink_->AddStream(
-      (DWORD)MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_PHOTO,
+      source_stream_index,
       photo_media_type.Get(), nullptr, &photo_sink_stream_index);
   if (FAILED(hr)) {
     photo_sink_ = nullptr;
@@ -118,14 +119,17 @@ HRESULT PhotoHandler::InitPhotoSink(IMFCaptureEngine* capture_engine,
 
 HRESULT PhotoHandler::TakePhoto(const std::string& file_path,
                                 IMFCaptureEngine* capture_engine,
-                                IMFMediaType* base_media_type) {
+                                IMFMediaType* base_media_type,
+                                DWORD source_stream_index) {
   assert(!file_path.empty());
   assert(capture_engine);
   assert(base_media_type);
 
   file_path_ = file_path;
 
-  HRESULT hr = InitPhotoSink(capture_engine, base_media_type);
+  HRESULT hr = InitPhotoSink(capture_engine,
+                             base_media_type,
+                             source_stream_index);
   if (FAILED(hr)) {
     return hr;
   }

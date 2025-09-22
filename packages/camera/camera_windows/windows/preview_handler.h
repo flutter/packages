@@ -52,8 +52,10 @@ class PreviewHandler {
   //                  for the actual video capture media type.
   // sample_callback: A pointer to capture engine listener.
   //                  This is set as sample callback for preview sink.
+  // source_stream_index: Integer index of the preview source stream in MediaFoundation.
   HRESULT StartPreview(IMFCaptureEngine* capture_engine,
                        IMFMediaType* base_media_type,
+                       DWORD source_stream_index,
                        CaptureEngineListener* sample_callback);
 
   // Stops existing recording.
@@ -90,6 +92,7 @@ class PreviewHandler {
   // Initializes record sink for video file capture.
   HRESULT InitPreviewSink(IMFCaptureEngine* capture_engine,
                           IMFMediaType* base_media_type,
+                          DWORD source_stream_index,
                           CaptureEngineListener* sample_callback);
 
   PreviewState preview_state_ = PreviewState::kNotStarted;
