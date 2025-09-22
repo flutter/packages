@@ -1,3 +1,7 @@
+## 4.10.3
+
+* Bumps com.android.tools.build:gradle from 8.12.1 to 8.13.0 and kotlin-gradle-plugin from 2.2.10 to 2.2.20.
+
 ## 4.10.2
 
 * Updates minimum supported SDK version to Flutter 3.35.
