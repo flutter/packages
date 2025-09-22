@@ -964,7 +964,10 @@ class AndroidCameraCameraX extends CameraPlatform {
       useCases.add(imageAnalysis!);
     }
     await processCameraProvider?.unbindAll();
-    await processCameraProvider?.bindToLifecycle(cameraSelector!, useCases);
+    camera = await processCameraProvider?.bindToLifecycle(
+      cameraSelector!,
+      useCases,
+    );
 
     // Retrieve info required for correcting the rotation of the camera preview
     sensorOrientationDegrees = description.sensorOrientation.toDouble();

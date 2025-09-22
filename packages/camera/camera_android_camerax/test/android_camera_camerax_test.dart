@@ -4143,6 +4143,9 @@ void main() {
           MockProcessCameraProvider();
       final MockPreview mockPreview = MockPreview();
       final MockCamera mockCamera = MockCamera();
+      final MockCamera newMockCamera = MockCamera();
+      final MockLiveCameraState mockLiveCameraState = MockLiveCameraState();
+      final MockLiveCameraState newMockLiveCameraState = MockLiveCameraState();
       final MockCameraInfo mockCameraInfo = MockCameraInfo();
       final MockCameraControl mockCameraControl = MockCameraControl();
       final MockImageCapture mockImageCapture = MockImageCapture();
@@ -4356,6 +4359,7 @@ void main() {
       ).thenAnswer((_) async => <MockCameraInfo>[mockFrontCameraInfo]);
 
       camera.processCameraProvider = mockProcessCameraProvider;
+      camera.liveCameraState = mockLiveCameraState;
       camera.enableRecordingAudio = false;
       when(
         mockPendingRecording.withAudioEnabled(any),
@@ -4373,13 +4377,25 @@ void main() {
         camera.processCameraProvider!.isBound(mockImageAnalysis),
       ).thenAnswer((_) async => true);
       when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
-      when(
-        mockCameraInfo.getCameraState(),
-      ).thenAnswer((_) async => MockLiveCameraState());
-      when(
-        mockCameraInfo.getCameraState(),
-      ).thenAnswer((_) async => MockLiveCameraState());
       when(mockCamera.cameraControl).thenAnswer((_) => mockCameraControl);
+      when(
+        camera.processCameraProvider?.bindToLifecycle(
+          mockFrontCameraSelector,
+          <UseCase>[
+            mockVideoCapture,
+            mockPreview,
+            mockImageCapture,
+            mockImageAnalysis,
+          ],
+        ),
+      ).thenAnswer((_) async => newMockCamera);
+      when(
+        newMockCamera.getCameraInfo(),
+      ).thenAnswer((_) async => mockCameraInfo);
+      when(newMockCamera.cameraControl).thenReturn(mockCameraControl);
+      when(
+        mockCameraInfo.getCameraState(),
+      ).thenAnswer((_) async => newMockLiveCameraState);
 
       // Simulate video recording being started so startVideoRecording completes.
       AndroidCameraCameraX.videoRecordingEventStreamController.add(
@@ -4403,19 +4419,35 @@ void main() {
       );
       await camera.setDescriptionWhileRecording(testFrontCameraDescription);
 
-      //verify front camera selected
+      //verify front camera selected and camera properties updated
       verify(camera.processCameraProvider?.unbindAll()).called(2);
       verify(
         camera.processCameraProvider?.bindToLifecycle(
           mockFrontCameraSelector,
           <UseCase>[
-            mockPreview,
             mockVideoCapture,
+            mockPreview,
             mockImageCapture,
             mockImageAnalysis,
           ],
         ),
       ).called(1);
+      expect(camera.camera, equals(newMockCamera));
+      expect(camera.cameraInfo, equals(mockCameraInfo));
+      expect(camera.cameraControl, equals(mockCameraControl));
+      verify(mockLiveCameraState.removeObservers());
+      for (final dynamic observer in verify(
+        newMockLiveCameraState.observe(captureAny),
+      ).captured) {
+        expect(
+          await testCameraClosingObserver(
+            camera,
+            flutterSurfaceTextureId,
+            observer as Observer<dynamic>,
+          ),
+          isTrue,
+        );
+      }
 
       //verify back camera selected
       await camera.setDescriptionWhileRecording(testBackCameraDescription);
@@ -4423,8 +4455,8 @@ void main() {
         camera.processCameraProvider?.bindToLifecycle(
           mockBackCameraSelector,
           <UseCase>[
-            mockPreview,
             mockVideoCapture,
+            mockPreview,
             mockImageCapture,
             mockImageAnalysis,
           ],
