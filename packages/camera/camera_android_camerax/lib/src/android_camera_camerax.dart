@@ -951,7 +951,10 @@ class AndroidCameraCameraX extends CameraPlatform {
     );
 
     // Unbind all use cases and rebind to new CameraSelector
-    final List<UseCase> useCases = <UseCase>[preview!, videoCapture!];
+    final List<UseCase> useCases = <UseCase>[videoCapture!];
+    if (!_previewIsPaused) {
+      useCases.add(preview!);
+    }
     if (imageCapture != null &&
         await processCameraProvider!.isBound(imageCapture!)) {
       useCases.add(imageCapture!);
