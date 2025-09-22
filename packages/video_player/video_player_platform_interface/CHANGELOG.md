@@ -1,7 +1,7 @@
 ## NEXT
 
 * Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
-* Implements background playback functionality using allowBackgroundPlayback option.
+* Adds a `setAllowBackgroundPlayback` method to dynamically control background playback.
 
 ## 6.3.0
 
