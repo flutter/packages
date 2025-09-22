@@ -4,22 +4,23 @@
 
 import 'dart:async';
 
-import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:video_player_platform_interface/video_player_platform_interface.dart';
 
-import 'messages.g.dart';
+import 'messages.g.dart' hide videoEvents;
+import 'messages.g.dart' as pigeon show videoEvents;
 import 'platform_view_player.dart';
-
-/// The string to append a player ID to in order to construct the event channel
-/// name for the event channel used to receive player state updates.
-///
-/// Must match the string used to create the EventChannel on the Java side.
-const String _videoEventChannelNameBase = 'flutter.io/videoPlayer/videoEvents';
 
 /// The non-test implementation of `_apiProvider`.
 VideoPlayerInstanceApi _productionApiProvider(int playerId) {
   return VideoPlayerInstanceApi(messageChannelSuffix: playerId.toString());
+}
+
+/// The non-test implementation of `_videoEventStreamProvider`.
+Stream<PlatformVideoEvent> _productionVideoEventStreamProvider(
+  String streamIdentifier,
+) {
+  return pigeon.videoEvents(instanceName: streamIdentifier);
 }
 
 /// An Android implementation of [VideoPlayerPlatform] that uses the
@@ -30,13 +31,21 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
     @visibleForTesting AndroidVideoPlayerApi? pluginApi,
     @visibleForTesting
     VideoPlayerInstanceApi Function(int playerId)? playerApiProvider,
+    Stream<PlatformVideoEvent> Function(String streamIdentifier)?
+    videoEventStreamProvider,
   }) : _api = pluginApi ?? AndroidVideoPlayerApi(),
-       _playerApiProvider = playerApiProvider ?? _productionApiProvider;
+       _playerApiProvider = playerApiProvider ?? _productionApiProvider,
+       _videoEventStreamProvider =
+           videoEventStreamProvider ?? _productionVideoEventStreamProvider;
 
   final AndroidVideoPlayerApi _api;
   // A method to create VideoPlayerInstanceApi instances, which can be
-  //overridden for testing.
+  // overridden for testing.
   final VideoPlayerInstanceApi Function(int playerId) _playerApiProvider;
+  // A method to create video event stream instances, which can be
+  // overridden for testing.
+  final Stream<PlatformVideoEvent> Function(String streamIdentifier)
+  _videoEventStreamProvider;
 
   final Map<int, _PlayerInstance> _players = <int, _PlayerInstance>{};
 
@@ -143,11 +152,10 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
   @visibleForTesting
   void ensurePlayerInitialized(int playerId, VideoPlayerViewState viewState) {
     _players.putIfAbsent(playerId, () {
-      final String eventChannelName = '$_videoEventChannelNameBase$playerId';
       return _PlayerInstance(
         _playerApiProvider(playerId),
         viewState,
-        eventChannelName: eventChannelName,
+        videoEventStream: _videoEventStreamProvider(playerId.toString()),
       );
     });
   }
@@ -245,10 +253,9 @@ class _PlayerInstance {
   _PlayerInstance(
     this._api,
     this.viewState, {
-    required String eventChannelName,
+    required Stream<PlatformVideoEvent> videoEventStream,
   }) {
-    _eventChannel = EventChannel(eventChannelName);
-    _eventSubscription = _eventChannel.receiveBroadcastStream().listen(
+    _eventSubscription = videoEventStream.listen(
       _onStreamEvent,
       onError: (Object e) {
         _setBuffering(false);
@@ -258,7 +265,6 @@ class _PlayerInstance {
   }
 
   final VideoPlayerInstanceApi _api;
-  late final EventChannel _eventChannel;
   final StreamController<VideoEvent> _eventStreamController =
       StreamController<VideoEvent>();
   late final StreamSubscription<dynamic> _eventSubscription;
@@ -343,19 +349,15 @@ class _PlayerInstance {
     }
   }
 
-  void _onStreamEvent(dynamic event) {
-    final Map<dynamic, dynamic> map = event as Map<dynamic, dynamic>;
-    switch (map['event']) {
-      case 'initialized':
+  void _onStreamEvent(PlatformVideoEvent event) {
+    switch (event) {
+      case InitializationEvent _:
         _eventStreamController.add(
           VideoEvent(
             eventType: VideoEventType.initialized,
-            duration: Duration(milliseconds: map['duration'] as int),
-            size: Size(
-              (map['width'] as num).toDouble(),
-              (map['height'] as num).toDouble(),
-            ),
-            rotationCorrection: map['rotationCorrection'] as int? ?? 0,
+            duration: Duration(milliseconds: event.duration),
+            size: Size(event.width.toDouble(), event.height.toDouble()),
+            rotationCorrection: event.rotationCorrection,
           ),
         );
 
@@ -366,17 +368,15 @@ class _PlayerInstance {
         ) async {
           _updateBufferPosition(await _api.getBufferedPosition());
         });
-      case 'isPlayingStateUpdate':
+      case IsPlayingStateEvent _:
         _eventStreamController.add(
           VideoEvent(
             eventType: VideoEventType.isPlayingStateUpdate,
-            isPlaying: map['isPlaying'] as bool,
+            isPlaying: event.isPlaying,
           ),
         );
-      case 'playbackStateChanged':
-        final PlatformPlaybackState state =
-            PlatformPlaybackState.values[map['state'] as int];
-        switch (state) {
+      case PlaybackStateChangeEvent _:
+        switch (event.state) {
           case PlatformPlaybackState.idle:
             // This is currently only used for buffering below.
             break;
@@ -398,11 +398,9 @@ class _PlayerInstance {
             break;
         }
         // Any state other than buffering should end the buffering state.
-        if (state != PlatformPlaybackState.buffering) {
+        if (event.state != PlatformPlaybackState.buffering) {
           _setBuffering(false);
         }
-      default:
-        throw StateError('Unexpected event: $event');
     }
   }
 

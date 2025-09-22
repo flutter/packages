@@ -43,6 +43,141 @@ enum PlatformVideoFormat { dash, hls, ss }
 /// https://developer.android.com/media/media3/exoplayer/listening-to-player-events#playback-state
 enum PlatformPlaybackState { idle, buffering, ready, ended, unknown }
 
+sealed class PlatformVideoEvent {}
+
+/// Sent when the video is initialized and ready to play.
+class InitializationEvent extends PlatformVideoEvent {
+  InitializationEvent({
+    required this.duration,
+    required this.width,
+    required this.height,
+    required this.rotationCorrection,
+  });
+
+  /// The video duration in milliseconds.
+  int duration;
+
+  /// The width of the video in pixels.
+  int width;
+
+  /// The height of the video in pixels.
+  int height;
+
+  /// The rotation that should be applied during playback.
+  int rotationCorrection;
+
+  List<Object?> _toList() {
+    return <Object?>[duration, width, height, rotationCorrection];
+  }
+
+  Object encode() {
+    return _toList();
+  }
+
+  static InitializationEvent decode(Object result) {
+    result as List<Object?>;
+    return InitializationEvent(
+      duration: result[0]! as int,
+      width: result[1]! as int,
+      height: result[2]! as int,
+      rotationCorrection: result[3]! as int,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! InitializationEvent || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
+}
+
+/// Sent when the video state changes.
+///
+/// Corresponds to ExoPlayer's onPlaybackStateChanged.
+class PlaybackStateChangeEvent extends PlatformVideoEvent {
+  PlaybackStateChangeEvent({required this.state});
+
+  PlatformPlaybackState state;
+
+  List<Object?> _toList() {
+    return <Object?>[state];
+  }
+
+  Object encode() {
+    return _toList();
+  }
+
+  static PlaybackStateChangeEvent decode(Object result) {
+    result as List<Object?>;
+    return PlaybackStateChangeEvent(state: result[0]! as PlatformPlaybackState);
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PlaybackStateChangeEvent ||
+        other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
+}
+
+/// Sent when the video starts or stops playing.
+///
+/// Corresponds to ExoPlayer's onIsPlayingChanged.
+class IsPlayingStateEvent extends PlatformVideoEvent {
+  IsPlayingStateEvent({required this.isPlaying});
+
+  bool isPlaying;
+
+  List<Object?> _toList() {
+    return <Object?>[isPlaying];
+  }
+
+  Object encode() {
+    return _toList();
+  }
+
+  static IsPlayingStateEvent decode(Object result) {
+    result as List<Object?>;
+    return IsPlayingStateEvent(isPlaying: result[0]! as bool);
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! IsPlayingStateEvent || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
+}
+
 /// Information passed to the platform view creation.
 class PlatformVideoViewCreationParams {
   PlatformVideoViewCreationParams({required this.playerId});
@@ -185,14 +320,23 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is PlatformPlaybackState) {
       buffer.putUint8(130);
       writeValue(buffer, value.index);
-    } else if (value is PlatformVideoViewCreationParams) {
+    } else if (value is InitializationEvent) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
-    } else if (value is CreationOptions) {
+    } else if (value is PlaybackStateChangeEvent) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
-    } else if (value is TexturePlayerIds) {
+    } else if (value is IsPlayingStateEvent) {
       buffer.putUint8(133);
+      writeValue(buffer, value.encode());
+    } else if (value is PlatformVideoViewCreationParams) {
+      buffer.putUint8(134);
+      writeValue(buffer, value.encode());
+    } else if (value is CreationOptions) {
+      buffer.putUint8(135);
+      writeValue(buffer, value.encode());
+    } else if (value is TexturePlayerIds) {
+      buffer.putUint8(136);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -209,16 +353,26 @@ class _PigeonCodec extends StandardMessageCodec {
         final int? value = readValue(buffer) as int?;
         return value == null ? null : PlatformPlaybackState.values[value];
       case 131:
-        return PlatformVideoViewCreationParams.decode(readValue(buffer)!);
+        return InitializationEvent.decode(readValue(buffer)!);
       case 132:
-        return CreationOptions.decode(readValue(buffer)!);
+        return PlaybackStateChangeEvent.decode(readValue(buffer)!);
       case 133:
+        return IsPlayingStateEvent.decode(readValue(buffer)!);
+      case 134:
+        return PlatformVideoViewCreationParams.decode(readValue(buffer)!);
+      case 135:
+        return CreationOptions.decode(readValue(buffer)!);
+      case 136:
         return TexturePlayerIds.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
   }
 }
+
+const StandardMethodCodec pigeonMethodCodec = StandardMethodCodec(
+  _PigeonCodec(),
+);
 
 class AndroidVideoPlayerApi {
   /// Constructor for [AndroidVideoPlayerApi].  The [binaryMessenger] named argument is
@@ -653,4 +807,17 @@ class VideoPlayerInstanceApi {
       return (pigeonVar_replyList[0] as int?)!;
     }
   }
+}
+
+Stream<PlatformVideoEvent> videoEvents({String instanceName = ''}) {
+  if (instanceName.isNotEmpty) {
+    instanceName = '.$instanceName';
+  }
+  final EventChannel videoEventsChannel = EventChannel(
+    'dev.flutter.pigeon.video_player_android.VideoEventChannel.videoEvents$instanceName',
+    pigeonMethodCodec,
+  );
+  return videoEventsChannel.receiveBroadcastStream().map((dynamic event) {
+    return event as PlatformVideoEvent;
+  });
 }

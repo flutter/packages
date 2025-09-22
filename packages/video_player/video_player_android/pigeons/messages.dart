@@ -20,6 +20,37 @@ enum PlatformVideoFormat { dash, hls, ss }
 /// https://developer.android.com/media/media3/exoplayer/listening-to-player-events#playback-state
 enum PlatformPlaybackState { idle, buffering, ready, ended, unknown }
 
+sealed class PlatformVideoEvent {}
+
+/// Sent when the video is initialized and ready to play.
+class InitializationEvent extends PlatformVideoEvent {
+  /// The video duration in milliseconds.
+  late final int duration;
+
+  /// The width of the video in pixels.
+  late final int width;
+
+  /// The height of the video in pixels.
+  late final int height;
+
+  /// The rotation that should be applied during playback.
+  late final int rotationCorrection;
+}
+
+/// Sent when the video state changes.
+///
+/// Corresponds to ExoPlayer's onPlaybackStateChanged.
+class PlaybackStateChangeEvent extends PlatformVideoEvent {
+  late final PlatformPlaybackState state;
+}
+
+/// Sent when the video starts or stops playing.
+///
+/// Corresponds to ExoPlayer's onIsPlayingChanged.
+class IsPlayingStateEvent extends PlatformVideoEvent {
+  late final bool isPlaying;
+}
+
 /// Information passed to the platform view creation.
 class PlatformVideoViewCreationParams {
   const PlatformVideoViewCreationParams({required this.playerId});
@@ -80,4 +111,9 @@ abstract class VideoPlayerInstanceApi {
 
   /// Returns the current buffer position, in milliseconds.
   int getBufferedPosition();
+}
+
+@EventChannelApi()
+abstract class VideoEventChannel {
+  PlatformVideoEvent videoEvents();
 }

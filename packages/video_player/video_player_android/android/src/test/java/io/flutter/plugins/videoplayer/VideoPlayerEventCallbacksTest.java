@@ -8,7 +8,6 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 
-import java.util.HashMap;
 import java.util.Map;
 import org.junit.Before;
 import org.junit.Rule;
@@ -36,7 +35,7 @@ public final class VideoPlayerEventCallbacksTest {
 
   @Mock private QueuingEventSink mockEventSink;
 
-  @Captor private ArgumentCaptor<Map<String, Object>> eventCaptor;
+  @Captor private ArgumentCaptor<PlatformVideoEvent> eventCaptor;
 
   @Rule public MockitoRule initRule = MockitoJUnit.rule();
 
@@ -46,35 +45,17 @@ public final class VideoPlayerEventCallbacksTest {
   }
 
   @Test
-  public void onInitializedSendsWidthHeightAndDuration() {
-    eventCallbacks.onInitialized(800, 400, 10L, 0);
+  public void onInitializedSendsExpectedArguments() {
+    final int width = 800;
+    final int height = 600;
+    final long duration = 10L;
+    final int rotation = 180;
+    eventCallbacks.onInitialized(width, height, duration, rotation);
 
     verify(mockEventSink).success(eventCaptor.capture());
 
-    Map<String, Object> actual = eventCaptor.getValue();
-    Map<String, Object> expected = new HashMap<>();
-    expected.put("event", "initialized");
-    expected.put("duration", 10L);
-    expected.put("width", 800);
-    expected.put("height", 400);
-
-    assertEquals(expected, actual);
-  }
-
-  @Test
-  public void onInitializedIncludesRotationCorrectIfNonZero() {
-    eventCallbacks.onInitialized(800, 400, 10L, 180);
-
-    verify(mockEventSink).success(eventCaptor.capture());
-
-    Map<String, Object> actual = eventCaptor.getValue();
-    Map<String, Object> expected = new HashMap<>();
-    expected.put("event", "initialized");
-    expected.put("duration", 10L);
-    expected.put("width", 800);
-    expected.put("height", 400);
-    expected.put("rotationCorrection", 180);
-
+    PlatformVideoEvent actual = eventCaptor.getValue();
+    InitializationEvent expected = new InitializationEvent(duration, width, height, rotation);
     assertEquals(expected, actual);
   }
 
@@ -85,10 +66,8 @@ public final class VideoPlayerEventCallbacksTest {
 
     verify(mockEventSink).success(eventCaptor.capture());
 
-    Map<String, Object> actual = eventCaptor.getValue();
-    Map<String, Object> expected = new HashMap<>();
-    expected.put("event", "playbackStateChanged");
-    expected.put("state", state.index);
+    PlatformVideoEvent actual = eventCaptor.getValue();
+    PlaybackStateChangeEvent expected = new PlaybackStateChangeEvent(state);
     assertEquals(expected, actual);
   }
 
@@ -105,10 +84,8 @@ public final class VideoPlayerEventCallbacksTest {
 
     verify(mockEventSink).success(eventCaptor.capture());
 
-    Map<String, Object> actual = eventCaptor.getValue();
-    Map<String, Object> expected = new HashMap<>();
-    expected.put("event", "isPlayingStateUpdate");
-    expected.put("isPlaying", true);
+    PlatformVideoEvent actual = eventCaptor.getValue();
+    IsPlayingStateEvent expected = new IsPlayingStateEvent(true);
     assertEquals(expected, actual);
   }
 }

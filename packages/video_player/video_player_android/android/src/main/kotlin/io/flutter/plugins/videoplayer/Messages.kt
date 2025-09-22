@@ -10,8 +10,10 @@ package io.flutter.plugins.videoplayer
 import android.util.Log
 import io.flutter.plugin.common.BasicMessageChannel
 import io.flutter.plugin.common.BinaryMessenger
+import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MessageCodec
 import io.flutter.plugin.common.StandardMessageCodec
+import io.flutter.plugin.common.StandardMethodCodec
 import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
 
@@ -101,6 +103,126 @@ enum class PlatformPlaybackState(val raw: Int) {
       return values().firstOrNull { it.raw == raw }
     }
   }
+}
+
+/**
+ * Generated class from Pigeon that represents data sent in messages. This class should not be
+ * extended by any user class outside of the generated file.
+ */
+sealed class PlatformVideoEvent
+/**
+ * Sent when the video is initialized and ready to play.
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ */
+data class InitializationEvent(
+    /** The video duration in milliseconds. */
+    val duration: Long,
+    /** The width of the video in pixels. */
+    val width: Long,
+    /** The height of the video in pixels. */
+    val height: Long,
+    /** The rotation that should be applied during playback. */
+    val rotationCorrection: Long
+) : PlatformVideoEvent() {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): InitializationEvent {
+      val duration = pigeonVar_list[0] as Long
+      val width = pigeonVar_list[1] as Long
+      val height = pigeonVar_list[2] as Long
+      val rotationCorrection = pigeonVar_list[3] as Long
+      return InitializationEvent(duration, width, height, rotationCorrection)
+    }
+  }
+
+  fun toList(): List<Any?> {
+    return listOf(
+        duration,
+        width,
+        height,
+        rotationCorrection,
+    )
+  }
+
+  override fun equals(other: Any?): Boolean {
+    if (other !is InitializationEvent) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return MessagesPigeonUtils.deepEquals(toList(), other.toList())
+  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/**
+ * Sent when the video state changes.
+ *
+ * Corresponds to ExoPlayer's onPlaybackStateChanged.
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ */
+data class PlaybackStateChangeEvent(val state: PlatformPlaybackState) : PlatformVideoEvent() {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): PlaybackStateChangeEvent {
+      val state = pigeonVar_list[0] as PlatformPlaybackState
+      return PlaybackStateChangeEvent(state)
+    }
+  }
+
+  fun toList(): List<Any?> {
+    return listOf(
+        state,
+    )
+  }
+
+  override fun equals(other: Any?): Boolean {
+    if (other !is PlaybackStateChangeEvent) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return MessagesPigeonUtils.deepEquals(toList(), other.toList())
+  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/**
+ * Sent when the video starts or stops playing.
+ *
+ * Corresponds to ExoPlayer's onIsPlayingChanged.
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ */
+data class IsPlayingStateEvent(val isPlaying: Boolean) : PlatformVideoEvent() {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): IsPlayingStateEvent {
+      val isPlaying = pigeonVar_list[0] as Boolean
+      return IsPlayingStateEvent(isPlaying)
+    }
+  }
+
+  fun toList(): List<Any?> {
+    return listOf(
+        isPlaying,
+    )
+  }
+
+  override fun equals(other: Any?): Boolean {
+    if (other !is IsPlayingStateEvent) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return MessagesPigeonUtils.deepEquals(toList(), other.toList())
+  }
+
+  override fun hashCode(): Int = toList().hashCode()
 }
 
 /**
@@ -214,14 +336,23 @@ private open class MessagesPigeonCodec : StandardMessageCodec() {
         return (readValue(buffer) as Long?)?.let { PlatformPlaybackState.ofRaw(it.toInt()) }
       }
       131.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let { InitializationEvent.fromList(it) }
+      }
+      132.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let { PlaybackStateChangeEvent.fromList(it) }
+      }
+      133.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let { IsPlayingStateEvent.fromList(it) }
+      }
+      134.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
           PlatformVideoViewCreationParams.fromList(it)
         }
       }
-      132.toByte() -> {
+      135.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { CreationOptions.fromList(it) }
       }
-      133.toByte() -> {
+      136.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { TexturePlayerIds.fromList(it) }
       }
       else -> super.readValueOfType(type, buffer)
@@ -238,22 +369,36 @@ private open class MessagesPigeonCodec : StandardMessageCodec() {
         stream.write(130)
         writeValue(stream, value.raw)
       }
-      is PlatformVideoViewCreationParams -> {
+      is InitializationEvent -> {
         stream.write(131)
         writeValue(stream, value.toList())
       }
-      is CreationOptions -> {
+      is PlaybackStateChangeEvent -> {
         stream.write(132)
         writeValue(stream, value.toList())
       }
-      is TexturePlayerIds -> {
+      is IsPlayingStateEvent -> {
         stream.write(133)
+        writeValue(stream, value.toList())
+      }
+      is PlatformVideoViewCreationParams -> {
+        stream.write(134)
+        writeValue(stream, value.toList())
+      }
+      is CreationOptions -> {
+        stream.write(135)
+        writeValue(stream, value.toList())
+      }
+      is TexturePlayerIds -> {
+        stream.write(136)
         writeValue(stream, value.toList())
       }
       else -> super.writeValue(stream, value)
     }
   }
 }
+
+val MessagesPigeonMethodCodec = StandardMethodCodec(MessagesPigeonCodec())
 
 /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
 interface AndroidVideoPlayerApi {
@@ -629,6 +774,60 @@ interface VideoPlayerInstanceApi {
           channel.setMessageHandler(null)
         }
       }
+    }
+  }
+}
+
+private class MessagesPigeonStreamHandler<T>(val wrapper: MessagesPigeonEventChannelWrapper<T>) :
+    EventChannel.StreamHandler {
+  var pigeonSink: PigeonEventSink<T>? = null
+
+  override fun onListen(p0: Any?, sink: EventChannel.EventSink) {
+    pigeonSink = PigeonEventSink<T>(sink)
+    wrapper.onListen(p0, pigeonSink!!)
+  }
+
+  override fun onCancel(p0: Any?) {
+    pigeonSink = null
+    wrapper.onCancel(p0)
+  }
+}
+
+interface MessagesPigeonEventChannelWrapper<T> {
+  open fun onListen(p0: Any?, sink: PigeonEventSink<T>) {}
+
+  open fun onCancel(p0: Any?) {}
+}
+
+class PigeonEventSink<T>(private val sink: EventChannel.EventSink) {
+  fun success(value: T) {
+    sink.success(value)
+  }
+
+  fun error(errorCode: String, errorMessage: String?, errorDetails: Any?) {
+    sink.error(errorCode, errorMessage, errorDetails)
+  }
+
+  fun endOfStream() {
+    sink.endOfStream()
+  }
+}
+
+abstract class VideoEventsStreamHandler : MessagesPigeonEventChannelWrapper<PlatformVideoEvent> {
+  companion object {
+    fun register(
+        messenger: BinaryMessenger,
+        streamHandler: VideoEventsStreamHandler,
+        instanceName: String = ""
+    ) {
+      var channelName: String =
+          "dev.flutter.pigeon.video_player_android.VideoEventChannel.videoEvents"
+      if (instanceName.isNotEmpty()) {
+        channelName += ".$instanceName"
+      }
+      val internalStreamHandler = MessagesPigeonStreamHandler<PlatformVideoEvent>(streamHandler)
+      EventChannel(messenger, channelName, MessagesPigeonMethodCodec)
+          .setStreamHandler(internalStreamHandler)
     }
   }
 }
