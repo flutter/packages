@@ -8,7 +8,7 @@ part of '../google_maps_flutter_web.dart';
 class HeatmapController {
   /// Creates a `HeatmapController`, which wraps a [visualization.HeatmapLayer] object and its `onTap` behavior.
   HeatmapController({required visualization.HeatmapLayer heatmap})
-      : _heatmap = heatmap;
+    : _heatmap = heatmap;
 
   visualization.HeatmapLayer? _heatmap;
 

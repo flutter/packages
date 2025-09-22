@@ -15,16 +15,18 @@ class AdsRenderingSettings {
     List<String>? mimeTypes,
     Duration? playAdsAfterTime,
     Set<AdUIElement>? uiElements,
-  }) : this.fromPlatform(PlatformAdsRenderingSettings(
-          PlatformAdsRenderingSettingsCreationParams(
-            bitrate: bitrate,
-            enablePreloading: enablePreloading,
-            loadVideoTimeout: loadVideoTimeout,
-            mimeTypes: mimeTypes,
-            playAdsAfterTime: playAdsAfterTime,
-            uiElements: uiElements,
-          ),
-        ));
+  }) : this.fromPlatform(
+         PlatformAdsRenderingSettings(
+           PlatformAdsRenderingSettingsCreationParams(
+             bitrate: bitrate,
+             enablePreloading: enablePreloading,
+             loadVideoTimeout: loadVideoTimeout,
+             mimeTypes: mimeTypes,
+             playAdsAfterTime: playAdsAfterTime,
+             uiElements: uiElements,
+           ),
+         ),
+       );
 
   /// Constructs an [AdsRenderingSettings] from a specific platform
   /// implementation.

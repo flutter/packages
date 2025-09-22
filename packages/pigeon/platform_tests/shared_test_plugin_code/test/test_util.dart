@@ -10,10 +10,13 @@ void echoOneArgument(
   String channel,
   MessageCodec<Object?> codec,
 ) {
-  when(mockMessenger.send(channel, any))
-      .thenAnswer((Invocation realInvocation) async {
-    final Object input = codec
-        .decodeMessage(realInvocation.positionalArguments[1] as ByteData?)!;
+  when(mockMessenger.send(channel, any)).thenAnswer((
+    Invocation realInvocation,
+  ) async {
+    final Object input =
+        codec.decodeMessage(
+          realInvocation.positionalArguments[1] as ByteData?,
+        )!;
     final List<Object?> args = input as List<Object?>;
     return codec.encodeMessage(<Object>[args[0]!]);
   });

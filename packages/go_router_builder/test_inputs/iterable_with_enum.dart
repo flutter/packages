@@ -4,17 +4,13 @@
 
 import 'package:go_router/go_router.dart';
 
-mixin _$IterableWithEnumRoute {}
+mixin $IterableWithEnumRoute {}
 
 @TypedGoRoute<IterableWithEnumRoute>(path: '/iterable-with-enum')
-class IterableWithEnumRoute extends GoRouteData with _$IterableWithEnumRoute {
+class IterableWithEnumRoute extends GoRouteData with $IterableWithEnumRoute {
   IterableWithEnumRoute({this.param});
 
   final Iterable<EnumOnlyUsedInIterable>? param;
 }
 
-enum EnumOnlyUsedInIterable {
-  a,
-  b,
-  c,
-}
+enum EnumOnlyUsedInIterable { a, b, c }

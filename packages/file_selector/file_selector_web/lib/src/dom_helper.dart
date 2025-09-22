@@ -38,11 +38,11 @@ class DomHelper {
     );
 
     inputElement.onChange.first.then((_) {
-      final List<XFile> files = Iterable<File>.generate(
-              inputElement.files!.length,
-              (int i) => inputElement.files!.item(i)!)
-          .map(_convertFileToXFile)
-          .toList();
+      final List<XFile> files =
+          Iterable<File>.generate(
+            inputElement.files!.length,
+            (int i) => inputElement.files!.item(i)!,
+          ).map(_convertFileToXFile).toList();
       inputElement.remove();
       completer.complete(files);
     });
@@ -72,9 +72,9 @@ class DomHelper {
   }
 
   XFile _convertFileToXFile(File file) => XFile(
-        URL.createObjectURL(file),
-        name: file.name,
-        length: file.size,
-        lastModified: DateTime.fromMillisecondsSinceEpoch(file.lastModified),
-      );
+    URL.createObjectURL(file),
+    name: file.name,
+    length: file.size,
+    lastModified: DateTime.fromMillisecondsSinceEpoch(file.lastModified),
+  );
 }

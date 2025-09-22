@@ -11,13 +11,18 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'page.dart';
 
-const CameraPosition _kInitialPosition =
-    CameraPosition(target: LatLng(-33.852, 151.211), zoom: 11.0);
+const CameraPosition _kInitialPosition = CameraPosition(
+  target: LatLng(-33.852, 151.211),
+  zoom: 11.0,
+);
 
 class SnapshotPage extends GoogleMapExampleAppPage {
   const SnapshotPage({Key? key})
-      : super(const Icon(Icons.camera_alt), 'Take a snapshot of the map',
-            key: key);
+    : super(
+        const Icon(Icons.camera_alt),
+        'Take a snapshot of the map',
+        key: key,
+      );
 
   @override
   Widget build(BuildContext context) {

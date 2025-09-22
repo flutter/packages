@@ -56,8 +56,12 @@ Future<void> migrateLegacySharedPreferencesToSharedPreferencesAsyncIfNecessary({
       case const (List<dynamic>):
         try {
           await sharedPreferencesAsyncInstance.setStringList(
-              key, (value! as List<Object?>).cast<String>());
-        } on TypeError catch (_) {} // Pass over Lists containing non-String values.
+            key,
+            (value! as List<Object?>).cast<String>(),
+          );
+        } on TypeError catch (
+          _
+        ) {} // Pass over Lists containing non-String values.
     }
   }
 

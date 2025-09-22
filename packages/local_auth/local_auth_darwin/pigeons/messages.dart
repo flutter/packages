@@ -4,13 +4,14 @@
 
 import 'package:pigeon/pigeon.dart';
 
-@ConfigurePigeon(PigeonOptions(
-  dartOut: 'lib/src/messages.g.dart',
-  swiftOut:
-      'darwin/local_auth_darwin/Sources/local_auth_darwin/messages.g.swift',
-  copyrightHeader: 'pigeons/copyright.txt',
-))
-
+@ConfigurePigeon(
+  PigeonOptions(
+    dartOut: 'lib/src/messages.g.dart',
+    swiftOut:
+        'darwin/local_auth_darwin/Sources/local_auth_darwin/messages.g.swift',
+    copyrightHeader: 'pigeons/copyright.txt',
+  ),
+)
 /// Pigeon version of IOSAuthMessages, plus the authorization reason.
 ///
 /// See auth_messages_ios.dart for details.
@@ -49,21 +50,34 @@ enum AuthResult {
 
   /// No passcode is set.
   errorPasscodeNotSet,
+
+  /// The user cancelled the authentication.
+  errorUserCancelled,
+
+  /// The user tapped the "Enter Password" fallback.
+  errorUserFallback,
+
+  /// The user biometrics is disabled.
+  errorBiometricNotAvailable,
 }
 
 class AuthOptions {
-  AuthOptions(
-      {required this.biometricOnly,
-      required this.sticky,
-      required this.useErrorDialogs});
+  AuthOptions({
+    required this.biometricOnly,
+    required this.sticky,
+    required this.useErrorDialogs,
+  });
   final bool biometricOnly;
   final bool sticky;
   final bool useErrorDialogs;
 }
 
 class AuthResultDetails {
-  AuthResultDetails(
-      {required this.result, this.errorMessage, this.errorDetails});
+  AuthResultDetails({
+    required this.result,
+    this.errorMessage,
+    this.errorDetails,
+  });
 
   /// The result of authenticating.
   final AuthResult result;

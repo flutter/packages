@@ -21,10 +21,7 @@ class SharedPreferencesBody extends StatelessWidget {
     return SplitPane(
       axis: splitAxis,
       initialFractions: const <double>[0.33, 0.67],
-      children: const <Widget>[
-        KeysPanel(),
-        DataPanel(),
-      ],
+      children: const <Widget>[KeysPanel(), DataPanel()],
     );
   }
 }

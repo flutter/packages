@@ -12,9 +12,7 @@ import 'package:mockito/mockito.dart';
 
 import 'content_progress_provider_test.mocks.dart';
 
-@GenerateNiceMocks(<MockSpec<Object>>[
-  MockSpec<ima.ContentProgressProvider>(),
-])
+@GenerateNiceMocks(<MockSpec<Object>>[MockSpec<ima.ContentProgressProvider>()])
 void main() {
   group('AndroidContentProgressProvider', () {
     test('setProgress', () async {
@@ -23,24 +21,24 @@ void main() {
 
       final AndroidContentProgressProvider provider =
           AndroidContentProgressProvider(
-        AndroidContentProgressProviderCreationParams(
-          proxy: InteractiveMediaAdsProxy(
-            newContentProgressProvider: () => mockContentProgressProvider,
-            newVideoProgressUpdate: ({
-              required int currentTimeMs,
-              required int durationMs,
-            }) {
-              expect(currentTimeMs, 1000);
-              expect(durationMs, 10000);
-              return ima.VideoProgressUpdate.pigeon_detached(
-                pigeon_instanceManager: ima.PigeonInstanceManager(
-                  onWeakReferenceRemoved: (_) {},
-                ),
-              );
-            },
-          ),
-        ),
-      );
+            AndroidContentProgressProviderCreationParams(
+              proxy: InteractiveMediaAdsProxy(
+                newContentProgressProvider: () => mockContentProgressProvider,
+                newVideoProgressUpdate: ({
+                  required int currentTimeMs,
+                  required int durationMs,
+                }) {
+                  expect(currentTimeMs, 1000);
+                  expect(durationMs, 10000);
+                  return ima.VideoProgressUpdate.pigeon_detached(
+                    pigeon_instanceManager: ima.PigeonInstanceManager(
+                      onWeakReferenceRemoved: (_) {},
+                    ),
+                  );
+                },
+              ),
+            ),
+          );
 
       await provider.setProgress(
         progress: const Duration(seconds: 1),

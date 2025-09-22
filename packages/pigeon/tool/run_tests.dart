@@ -73,9 +73,7 @@ Future<void> _validateGeneratedFiles(
       GeneratorLanguage.objc,
     };
   } else if (Platform.isMacOS) {
-    languagesToValidate = <GeneratorLanguage>{
-      GeneratorLanguage.swift,
-    };
+    languagesToValidate = <GeneratorLanguage>{GeneratorLanguage.swift};
   } else {
     return;
   }
@@ -103,7 +101,9 @@ Future<void> _validateGeneratedFiles(
 
   print('  Formatting output...');
   final int formatExitCode = await formatAllFiles(
-      repositoryRoot: repositoryRoot, languages: languagesToValidate);
+    repositoryRoot: repositoryRoot,
+    languages: languagesToValidate,
+  );
   if (formatExitCode != 0) {
     print('Formatting failed; see above for errors.');
     exit(formatExitCode);
@@ -111,13 +111,18 @@ Future<void> _validateGeneratedFiles(
 
   print('  Checking for changes...');
   final List<String> modifiedFiles = await _modifiedFiles(
-      repositoryRoot: repositoryRoot, relativePigeonPath: relativePigeonPath);
-  final Set<String> extensions = languagesToValidate
-      .map((GeneratorLanguage lang) => _extensionsForLanguage(lang))
-      .flattened
-      .toSet();
-  final Iterable<String> filteredFiles = modifiedFiles.where((String path) =>
-      extensions.contains(p.extension(path).replaceFirst('.', '')));
+    repositoryRoot: repositoryRoot,
+    relativePigeonPath: relativePigeonPath,
+  );
+  final Set<String> extensions =
+      languagesToValidate
+          .map((GeneratorLanguage lang) => _extensionsForLanguage(lang))
+          .flattened
+          .toSet();
+  final Iterable<String> filteredFiles = modifiedFiles.where(
+    (String path) =>
+        extensions.contains(p.extension(path).replaceFirst('.', '')),
+  );
 
   if (filteredFiles.isEmpty) {
     return;
@@ -126,14 +131,15 @@ Future<void> _validateGeneratedFiles(
   print(incorrectFilesMessage);
   filteredFiles.map((String line) => '  $line').forEach(print);
 
-  print('\nTo fix run "dart run tool/generate.dart --format" from the pigeon/ '
-      'directory, or apply the diff with the command below.\n');
-
-  final ProcessResult diffResult = await Process.run(
-    'git',
-    <String>['diff', ...filteredFiles],
-    workingDirectory: repositoryRoot,
+  print(
+    '\nTo fix run "dart run tool/generate.dart --format" from the pigeon/ '
+    'directory, or apply the diff with the command below.\n',
   );
+
+  final ProcessResult diffResult = await Process.run('git', <String>[
+    'diff',
+    ...filteredFiles,
+  ], workingDirectory: repositoryRoot);
   if (diffResult.exitCode != 0) {
     print('Unable to determine diff.');
     exit(1);
@@ -156,14 +162,15 @@ Set<String> _extensionsForLanguage(GeneratorLanguage language) {
   };
 }
 
-Future<List<String>> _modifiedFiles(
-    {required String repositoryRoot,
-    required String relativePigeonPath}) async {
-  final ProcessResult result = await Process.run(
-    'git',
-    <String>['ls-files', '--modified', relativePigeonPath],
-    workingDirectory: repositoryRoot,
-  );
+Future<List<String>> _modifiedFiles({
+  required String repositoryRoot,
+  required String relativePigeonPath,
+}) async {
+  final ProcessResult result = await Process.run('git', <String>[
+    'ls-files',
+    '--modified',
+    relativePigeonPath,
+  ], workingDirectory: repositoryRoot);
   if (result.exitCode != 0) {
     print('Unable to determine changed files.');
     print(result.stdout);

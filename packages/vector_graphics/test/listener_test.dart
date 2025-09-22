@@ -75,19 +75,14 @@ void main() {
   test('Scales image correctly', () async {
     final TestPictureFactory factory = TestPictureFactory();
     final FlutterVectorGraphicsListener listener =
-        FlutterVectorGraphicsListener(
-      pictureFactory: factory,
-    );
+        FlutterVectorGraphicsListener(pictureFactory: factory);
     listener.onImage(0, 0, base64.decode(bluePngPixel));
     await listener.waitForImageDecode();
     listener.onDrawImage(0, 10, 10, 30, 30, null);
     final Invocation drawRect = factory.fakeCanvases.first.invocations.single;
     expect(drawRect.isMethod, true);
     expect(drawRect.memberName, #drawImageRect);
-    expect(
-      drawRect.positionalArguments[1],
-      const ui.Rect.fromLTRB(0, 0, 1, 1),
-    );
+    expect(drawRect.positionalArguments[1], const ui.Rect.fromLTRB(0, 0, 1, 1));
     expect(
       drawRect.positionalArguments[2],
       const ui.Rect.fromLTRB(10, 10, 40, 40),
@@ -97,9 +92,7 @@ void main() {
   test('Pattern start clips the new canvas', () async {
     final TestPictureFactory factory = TestPictureFactory();
     final FlutterVectorGraphicsListener listener =
-        FlutterVectorGraphicsListener(
-      pictureFactory: factory,
-    );
+        FlutterVectorGraphicsListener(pictureFactory: factory);
     listener.onPatternStart(0, 0, 0, 100, 100, Matrix4.identity().storage);
     final Invocation clipRect = factory.fakeCanvases.last.invocations.single;
     expect(clipRect.isMethod, true);
@@ -113,9 +106,7 @@ void main() {
   test('Text position is respected', () async {
     final TestPictureFactory factory = TestPictureFactory();
     final FlutterVectorGraphicsListener listener =
-        FlutterVectorGraphicsListener(
-      pictureFactory: factory,
-    );
+        FlutterVectorGraphicsListener(pictureFactory: factory);
     listener.onPaintObject(
       color: const ui.Color(0xff000000).value,
       strokeCap: null,
@@ -148,13 +139,13 @@ void main() {
   test('should assert when imageId is invalid', () async {
     final TestPictureFactory factory = TestPictureFactory();
     final FlutterVectorGraphicsListener listener =
-        FlutterVectorGraphicsListener(
-      pictureFactory: factory,
-    );
+        FlutterVectorGraphicsListener(pictureFactory: factory);
     listener.onImage(0, 0, base64.decode(bluePngPixel));
     await listener.waitForImageDecode();
-    expect(() => listener.onDrawImage(2, 10, 10, 100, 100, null),
-        throwsAssertionError);
+    expect(
+      () => listener.onDrawImage(2, 10, 10, 100, 100, null),
+      throwsAssertionError,
+    );
   });
 }
 

@@ -27,13 +27,8 @@ import 'package:shared_preferences_tool/src/shared_preferences_state_notifier.da
 
 class _FakeSharedPreferencesState_0 extends _i1.SmartFake
     implements _i2.SharedPreferencesState {
-  _FakeSharedPreferencesState_0(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeSharedPreferencesState_0(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 /// A class which mocks [SharedPreferencesStateNotifier].
@@ -42,145 +37,116 @@ class _FakeSharedPreferencesState_0 extends _i1.SmartFake
 class MockSharedPreferencesStateNotifier extends _i1.Mock
     implements _i3.SharedPreferencesStateNotifier {
   @override
-  _i2.SharedPreferencesState get value => (super.noSuchMethod(
-        Invocation.getter(#value),
-        returnValue: _FakeSharedPreferencesState_0(
-          this,
-          Invocation.getter(#value),
-        ),
-        returnValueForMissingStub: _FakeSharedPreferencesState_0(
-          this,
-          Invocation.getter(#value),
-        ),
-      ) as _i2.SharedPreferencesState);
+  _i2.SharedPreferencesState get value =>
+      (super.noSuchMethod(
+            Invocation.getter(#value),
+            returnValue: _FakeSharedPreferencesState_0(
+              this,
+              Invocation.getter(#value),
+            ),
+            returnValueForMissingStub: _FakeSharedPreferencesState_0(
+              this,
+              Invocation.getter(#value),
+            ),
+          )
+          as _i2.SharedPreferencesState);
 
   @override
   set value(_i2.SharedPreferencesState? newValue) => super.noSuchMethod(
-        Invocation.setter(
-          #value,
-          newValue,
-        ),
-        returnValueForMissingStub: null,
-      );
+    Invocation.setter(#value, newValue),
+    returnValueForMissingStub: null,
+  );
 
   @override
-  bool get hasListeners => (super.noSuchMethod(
-        Invocation.getter(#hasListeners),
-        returnValue: false,
-        returnValueForMissingStub: false,
-      ) as bool);
+  bool get hasListeners =>
+      (super.noSuchMethod(
+            Invocation.getter(#hasListeners),
+            returnValue: false,
+            returnValueForMissingStub: false,
+          )
+          as bool);
 
   @override
-  _i4.Future<void> fetchAllKeys() => (super.noSuchMethod(
-        Invocation.method(
-          #fetchAllKeys,
-          [],
-        ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+  _i4.Future<void> fetchAllKeys() =>
+      (super.noSuchMethod(
+            Invocation.method(#fetchAllKeys, []),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
 
   @override
-  _i4.Future<void> selectKey(String? key) => (super.noSuchMethod(
-        Invocation.method(
-          #selectKey,
-          [key],
-        ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+  _i4.Future<void> selectKey(String? key) =>
+      (super.noSuchMethod(
+            Invocation.method(#selectKey, [key]),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
 
   @override
   void filter(String? token) => super.noSuchMethod(
-        Invocation.method(
-          #filter,
-          [token],
-        ),
-        returnValueForMissingStub: null,
-      );
+    Invocation.method(#filter, [token]),
+    returnValueForMissingStub: null,
+  );
 
   @override
   _i4.Future<void> changeValue(_i2.SharedPreferencesData? newValue) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #changeValue,
-          [newValue],
-        ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+            Invocation.method(#changeValue, [newValue]),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
 
   @override
-  _i4.Future<void> deleteSelectedKey() => (super.noSuchMethod(
-        Invocation.method(
-          #deleteSelectedKey,
-          [],
-        ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+  _i4.Future<void> deleteSelectedKey() =>
+      (super.noSuchMethod(
+            Invocation.method(#deleteSelectedKey, []),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
 
   @override
   void startEditing() => super.noSuchMethod(
-        Invocation.method(
-          #startEditing,
-          [],
-        ),
-        returnValueForMissingStub: null,
-      );
+    Invocation.method(#startEditing, []),
+    returnValueForMissingStub: null,
+  );
 
   @override
   void stopEditing() => super.noSuchMethod(
-        Invocation.method(
-          #stopEditing,
-          [],
-        ),
-        returnValueForMissingStub: null,
-      );
+    Invocation.method(#stopEditing, []),
+    returnValueForMissingStub: null,
+  );
 
   @override
   void selectApi({required bool? legacyApi}) => super.noSuchMethod(
-        Invocation.method(
-          #selectApi,
-          [],
-          {#legacyApi: legacyApi},
-        ),
-        returnValueForMissingStub: null,
-      );
+    Invocation.method(#selectApi, [], {#legacyApi: legacyApi}),
+    returnValueForMissingStub: null,
+  );
 
   @override
   void addListener(_i5.VoidCallback? listener) => super.noSuchMethod(
-        Invocation.method(
-          #addListener,
-          [listener],
-        ),
-        returnValueForMissingStub: null,
-      );
+    Invocation.method(#addListener, [listener]),
+    returnValueForMissingStub: null,
+  );
 
   @override
   void removeListener(_i5.VoidCallback? listener) => super.noSuchMethod(
-        Invocation.method(
-          #removeListener,
-          [listener],
-        ),
-        returnValueForMissingStub: null,
-      );
+    Invocation.method(#removeListener, [listener]),
+    returnValueForMissingStub: null,
+  );
 
   @override
   void dispose() => super.noSuchMethod(
-        Invocation.method(
-          #dispose,
-          [],
-        ),
-        returnValueForMissingStub: null,
-      );
+    Invocation.method(#dispose, []),
+    returnValueForMissingStub: null,
+  );
 
   @override
   void notifyListeners() => super.noSuchMethod(
-        Invocation.method(
-          #notifyListeners,
-          [],
-        ),
-        returnValueForMissingStub: null,
-      );
+    Invocation.method(#notifyListeners, []),
+    returnValueForMissingStub: null,
+  );
 }

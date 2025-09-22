@@ -81,9 +81,10 @@ class MockScreen {
 @JSExport()
 class MockScreenOrientation {
   /// JSPromise<JSAny?> Function(web.OrientationLockType orientation)
-  JSFunction lock = (web.OrientationLockType orientation) {
-    return Future<void>.value().toJS;
-  }.toJS;
+  JSFunction lock =
+      (web.OrientationLockType orientation) {
+        return Future<void>.value().toJS;
+      }.toJS;
 
   /// void Function()
   late JSFunction unlock;
@@ -98,9 +99,10 @@ class MockDocument {
 @JSExport()
 class MockElement {
   /// JSPromise<JSAny?> Function([FullscreenOptions options])
-  JSFunction requestFullscreen = ([web.FullscreenOptions? options]) {
-    return Future<void>.value().toJS;
-  }.toJS;
+  JSFunction requestFullscreen =
+      ([web.FullscreenOptions? options]) {
+        return Future<void>.value().toJS;
+      }.toJS;
 }
 
 @JSExport()
@@ -126,9 +128,10 @@ class MockMediaStreamTrack {
   late JSFunction getCapabilities;
 
   /// web.MediaTrackSettings Function()
-  JSFunction getSettings = () {
-    return web.MediaTrackSettings();
-  }.toJS;
+  JSFunction getSettings =
+      () {
+        return web.MediaTrackSettings();
+      }.toJS;
 
   /// JSPromise<JSAny?> Function([web.MediaTrackConstraints? constraints])
   late JSFunction applyConstraints;
@@ -191,10 +194,7 @@ class FakeMediaDeviceInfo {
 /// A fake [MediaError] that returns the provided error [_code] and [_message].
 @JSExport()
 class FakeMediaError {
-  FakeMediaError(
-    this.code, [
-    this.message = '',
-  ]);
+  FakeMediaError(this.code, [this.message = '']);
 
   final int code;
   final String message;
@@ -208,8 +208,12 @@ class FakeElementStream<T extends web.Event> extends Fake
   final Stream<T> _stream;
 
   @override
-  StreamSubscription<T> listen(void Function(T event)? onData,
-      {Function? onError, void Function()? onDone, bool? cancelOnError}) {
+  StreamSubscription<T> listen(
+    void Function(T event)? onData, {
+    Function? onError,
+    void Function()? onDone,
+    bool? cancelOnError,
+  }) {
     return _stream.listen(
       onData,
       onError: onError,
@@ -230,10 +234,7 @@ class FakeBlobEvent {
 /// A fake [DomException] that returns the provided error [_name] and [_message].
 @JSExport()
 class FakeErrorEvent {
-  FakeErrorEvent(
-    this.type, [
-    this.message = '',
-  ]);
+  FakeErrorEvent(this.type, [this.message = '']);
 
   final String type;
   final String message;
@@ -247,13 +248,14 @@ class FakeErrorEvent {
 /// final videoStream = videoElement.captureStream();
 /// ```
 web.HTMLVideoElement getVideoElementWithBlankStream(Size videoSize) {
-  final web.HTMLCanvasElement canvasElement = web.HTMLCanvasElement()
-    ..width = videoSize.width.toInt()
-    ..height = videoSize.height.toInt()
-    ..context2D.fillRect(0, 0, videoSize.width, videoSize.height);
+  final web.HTMLCanvasElement canvasElement =
+      web.HTMLCanvasElement()
+        ..width = videoSize.width.toInt()
+        ..height = videoSize.height.toInt()
+        ..context2D.fillRect(0, 0, videoSize.width, videoSize.height);
 
-  final web.HTMLVideoElement videoElement = web.HTMLVideoElement()
-    ..srcObject = canvasElement.captureStream();
+  final web.HTMLVideoElement videoElement =
+      web.HTMLVideoElement()..srcObject = canvasElement.captureStream();
 
   return videoElement;
 }
@@ -261,32 +263,28 @@ web.HTMLVideoElement getVideoElementWithBlankStream(Size videoSize) {
 class MockEventStreamProvider<T extends web.Event> extends Mock
     implements web.EventStreamProvider<T> {
   @override
-  Stream<T> forTarget(
-    web.EventTarget? e, {
-    bool? useCapture = false,
-  }) {
+  Stream<T> forTarget(web.EventTarget? e, {bool? useCapture = false}) {
     return super.noSuchMethod(
-      Invocation.method(
-        #forTarget,
-        <Object?>[e],
-        <Symbol, Object?>{#useCapture: useCapture},
-      ),
-      returnValue: Stream<T>.empty(),
-    ) as Stream<T>;
+          Invocation.method(
+            #forTarget,
+            <Object?>[e],
+            <Symbol, Object?>{#useCapture: useCapture},
+          ),
+          returnValue: Stream<T>.empty(),
+        )
+        as Stream<T>;
   }
 
   @override
-  ElementStream<T> forElement(
-    web.Element? e, {
-    bool? useCapture = false,
-  }) {
+  ElementStream<T> forElement(web.Element? e, {bool? useCapture = false}) {
     return super.noSuchMethod(
-      Invocation.method(
-        #forElement,
-        <Object?>[e],
-        <Symbol, Object?>{#useCapture: useCapture},
-      ),
-      returnValue: FakeElementStream<T>(Stream<T>.empty()),
-    ) as ElementStream<T>;
+          Invocation.method(
+            #forElement,
+            <Object?>[e],
+            <Symbol, Object?>{#useCapture: useCapture},
+          ),
+          returnValue: FakeElementStream<T>(Stream<T>.empty()),
+        )
+        as ElementStream<T>;
   }
 }

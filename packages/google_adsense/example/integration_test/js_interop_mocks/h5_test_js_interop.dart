@@ -14,9 +14,7 @@ export 'adsbygoogle_js_interop.dart';
 
 /// Returns a push implementation that handles calls to `adBreak`.
 AdBreakPlacement? lastAdBreakPlacement;
-PushFn mockAdBreak({
-  AdBreakDonePlacementInfo? adBreakDonePlacementInfo,
-}) {
+PushFn mockAdBreak({AdBreakDonePlacementInfo? adBreakDonePlacementInfo}) {
   lastAdBreakPlacement = null;
   return (JSAny? adBreakPlacement) {
     adBreakPlacement as AdBreakPlacement?;
@@ -25,8 +23,10 @@ PushFn mockAdBreak({
     // Call `adBreakDone` if set, with `adBreakDonePlacementInfo`.
     if (adBreakPlacement?.adBreakDone != null) {
       assert(adBreakDonePlacementInfo != null);
-      adBreakPlacement!.adBreakDone!
-          .callAsFunction(null, adBreakDonePlacementInfo);
+      adBreakPlacement!.adBreakDone!.callAsFunction(
+        null,
+        adBreakDonePlacementInfo,
+      );
     }
   };
 }

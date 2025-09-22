@@ -57,8 +57,9 @@ final class _SurfaceTextureRotatedPreviewState
   late Future<int> defaultDisplayRotationQuarterTurns;
 
   Future<int> _getCurrentDefaultDisplayRotationQuarterTurns() async {
-    final int currentDefaultDisplayRotationQuarterTurns =
-        await widget.deviceOrientationManager.getDefaultDisplayRotation();
+    final int currentDefaultDisplayRotationQuarterTurns = await widget
+        .deviceOrientationManager
+        .getDefaultDisplayRotation();
     return getQuarterTurnsFromSurfaceRotationConstant(
       currentDefaultDisplayRotationQuarterTurns,
     );

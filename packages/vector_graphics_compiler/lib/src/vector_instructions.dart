@@ -73,17 +73,18 @@ class VectorInstructions {
 
   @override
   int get hashCode => Object.hash(
-      width,
-      height,
-      Object.hashAll(patternData),
-      Object.hashAll(paints),
-      Object.hashAll(paths),
-      Object.hashAll(vertices),
-      Object.hashAll(text),
-      Object.hashAll(commands),
-      Object.hashAll(images),
-      Object.hashAll(drawImages),
-      Object.hashAll(textPositions));
+    width,
+    height,
+    Object.hashAll(patternData),
+    Object.hashAll(paints),
+    Object.hashAll(paths),
+    Object.hashAll(vertices),
+    Object.hashAll(text),
+    Object.hashAll(commands),
+    Object.hashAll(images),
+    Object.hashAll(drawImages),
+    Object.hashAll(textPositions),
+  );
 
   @override
   bool operator ==(Object other) {

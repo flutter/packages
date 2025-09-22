@@ -14,6 +14,14 @@ open class ProxyApiDelegate: InteractiveMediaAdsLibraryPigeonProxyApiDelegate {
       details: nil)
   }
 
+  /// Creates an error when the constructor of a class returns null.
+  func createConstructorNullError(type: Any.Type, parameters: [String: Any?]) -> PigeonError {
+    return PigeonError(
+      code: "ConstructorReturnedNullError",
+      message: "Failed to instantiate `\(String(describing: type))` with parameters: \(parameters)",
+      details: nil)
+  }
+
   func pigeonApiUIView(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar)
     -> PigeonApiUIView
   {
@@ -156,5 +164,18 @@ open class ProxyApiDelegate: InteractiveMediaAdsLibraryPigeonProxyApiDelegate {
     -> PigeonApiIMASettings
   {
     return PigeonApiIMASettings(pigeonRegistrar: registrar, delegate: SettingsProxyAPIDelegate())
+  }
+
+  func pigeonApiIMAAd(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiIMAAd
+  {
+    return PigeonApiIMAAd(pigeonRegistrar: registrar, delegate: AdProxyAPIDelegate())
+  }
+
+  func pigeonApiIMAUniversalAdID(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiIMAUniversalAdID
+  {
+    return PigeonApiIMAUniversalAdID(
+      pigeonRegistrar: registrar, delegate: UniversalAdIDProxyAPIDelegate())
   }
 }

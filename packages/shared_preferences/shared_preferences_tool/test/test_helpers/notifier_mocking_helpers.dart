@@ -23,9 +23,7 @@ void setupDummies() {
       ),
     );
     provideDummy(
-      const AsyncState<SharedPreferencesState>.data(
-        SharedPreferencesState(),
-      ),
+      const AsyncState<SharedPreferencesState>.data(SharedPreferencesState()),
     );
   });
 }
