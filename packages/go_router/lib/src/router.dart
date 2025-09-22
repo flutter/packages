@@ -54,10 +54,6 @@ class RoutingConfig {
   const RoutingConfig({
     required this.routes,
     this.onEnter,
-    @Deprecated(
-      'Use onEnter instead. '
-      'This feature will be removed in a future release.',
-    )
     this.redirect = _defaultRedirect,
     this.redirectLimit = 5,
   });
@@ -83,11 +79,10 @@ class RoutingConfig {
   /// implemented), a re-evaluation will be triggered when the [InheritedWidget]
   /// changes.
   ///
-  /// See [GoRouter].
-  @Deprecated(
-    'Use onEnter for redirection. In the onEnter callback, call a navigation '
-    'method like router.go() and return const Block(). ',
-  )
+  /// This legacy callback remains supported alongside [onEnter]. If both are
+  /// provided, [onEnter] executes first and may block the navigation. When
+  /// allowed, this callback runs once per navigation cycle before any
+  /// route-level redirects.
   final GoRouterRedirect redirect;
 
   /// The maximum number of redirection allowed.
@@ -138,7 +133,7 @@ class RoutingConfig {
 /// processed. Return [Allow] to proceed or [Block] to prevent navigation.
 /// Order of operations:
 /// 1) `onEnter` (your guard) - can block navigation
-/// 2) If allowed: legacy top-level `redirect` (deprecated) - runs in same navigation cycle
+/// 2) If allowed: legacy top-level `redirect` - runs in same navigation cycle
 /// 3) route-level `GoRoute.redirect`
 ///
 /// The [redirect] callback allows the app to redirect to a new location.
@@ -186,10 +181,6 @@ class GoRouter implements RouterConfig<RouteMatchList> {
     GoExceptionHandler? onException,
     GoRouterPageBuilder? errorPageBuilder,
     GoRouterWidgetBuilder? errorBuilder,
-    @Deprecated(
-      'Use onEnter for redirection. In the onEnter callback, call a navigation '
-      'method like router.go() and return const Block(). ',
-    )
     GoRouterRedirect? redirect,
     int redirectLimit = 5,
     Listenable? refreshListenable,

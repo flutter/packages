@@ -77,27 +77,31 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
     // Normalize inputs into a RouteInformationState so we ALWAYS go through onEnter.
     final Object? raw = routeInformation.state;
     late final RouteInfoState infoState;
+    late final Uri incomingUri;
     late final RouteInformation effectiveRoute;
 
     if (raw == null) {
       // Framework/browser provided no state — synthesize a standard "go" nav.
       // This happens on initial app load and some framework calls.
       infoState = RouteInformationState.go();
-      effectiveRoute = RouteInformation(
-        uri: routeInformation.uri,
-        state: infoState,
-      );
+      incomingUri = routeInformation.uri;
     } else if (raw is! RouteInformationState) {
       // Restoration/back-forward: decode the stored match list and treat as restore.
       final RouteMatchList decoded = _routeMatchListCodec.decode(
         raw as Map<Object?, Object?>,
       );
       infoState = RouteInformationState.restore(base: decoded);
-      effectiveRoute = RouteInformation(uri: decoded.uri, state: infoState);
+      incomingUri = decoded.uri;
     } else {
       infoState = raw;
-      effectiveRoute = routeInformation;
+      incomingUri = routeInformation.uri;
     }
+
+    // Normalize once so downstream steps can assume the URI is canonical.
+    effectiveRoute = RouteInformation(
+      uri: RouteConfiguration.normalizeUri(incomingUri),
+      state: infoState,
+    );
 
     // ALL navigation types now go through onEnter, and if allowed,
     // legacy top-level redirect runs, then route-level redirects.
@@ -106,10 +110,9 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
       routeInformation: effectiveRoute,
       infoState: infoState,
       onCanEnter: () {
-        // Compose legacy top-level redirect here (one shared cycle/history)
-        final Uri uri = RouteConfiguration.normalizeUri(effectiveRoute.uri);
+        // Compose legacy top-level redirect here (one shared cycle/history).
         final RouteMatchList initialMatches = configuration.findMatch(
-          uri,
+          effectiveRoute.uri,
           extra: infoState.extra,
         );
         final List<RouteMatchList> redirectHistory = <RouteMatchList>[];
@@ -145,19 +148,27 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
         if (_lastMatchList != null) {
           return SynchronousFuture<RouteMatchList>(_lastMatchList!);
         }
-        // Fall back to parsing the current URI so Router still paints something sensible.
-        final Uri uri = RouteConfiguration.normalizeUri(effectiveRoute.uri);
-        final RouteMatchList stay = configuration.findMatch(
-          uri,
+
+        // No prior route to restore (e.g., an initial deeplink was blocked).
+        // Surface an error so the app decides how to recover via onException.
+        final RouteMatchList blocked = _OnEnterHandler._errorRouteMatchList(
+          effectiveRoute.uri,
+          GoException(
+            'Navigation to ${effectiveRoute.uri} was blocked by onEnter with no prior route to restore',
+          ),
           extra: infoState.extra,
         );
-        return SynchronousFuture<RouteMatchList>(stay);
+        final RouteMatchList resolved =
+            onParserException != null
+                ? onParserException!(context, blocked)
+                : blocked;
+        return SynchronousFuture<RouteMatchList>(resolved);
       },
     );
   }
 
-  /// Normalizes the URI, finds matching routes, processes redirects, and updates
-  /// the route match list based on the navigation type.
+  /// Finds matching routes, processes redirects, and updates the route match
+  /// list based on the navigation type.
   ///
   /// This method is called ONLY AFTER onEnter has allowed the navigation.
   Future<RouteMatchList> _navigate(
@@ -167,13 +178,11 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
     FutureOr<RouteMatchList>? startingMatches,
     List<RouteMatchList>? preSharedHistory,
   }) {
-    // If we weren't given matches, compute them (normalized) here.
+    // If we weren't given matches, compute them here. The URI has already been
+    // normalized at the parser entry point.
     final FutureOr<RouteMatchList> baseMatches =
         startingMatches ??
-        configuration.findMatch(
-          RouteConfiguration.normalizeUri(routeInformation.uri),
-          extra: infoState.extra,
-        );
+        configuration.findMatch(routeInformation.uri, extra: infoState.extra);
 
     // History may be shared with the legacy step done in onEnter.
     final List<RouteMatchList> redirectHistory =
@@ -406,14 +415,10 @@ class _OnEnterHandler {
       return onCanEnter();
     }
 
-    // Normalize the incoming URI
-    final Uri normalizedUri = RouteConfiguration.normalizeUri(
-      routeInformation.uri,
-    );
-
     // Check if the redirection history exceeds the configured limit.
+    // `routeInformation` has already been normalized by the parser entrypoint.
     final RouteMatchList? redirectionErrorMatchList =
-        _redirectionErrorMatchList(context, normalizedUri, infoState);
+        _redirectionErrorMatchList(context, routeInformation.uri, infoState);
 
     if (redirectionErrorMatchList != null) {
       // Return immediately if the redirection limit is exceeded.
@@ -422,7 +427,7 @@ class _OnEnterHandler {
 
     // Find route matches for the normalized URI.
     final RouteMatchList incomingMatches = _configuration.findMatch(
-      normalizedUri,
+      routeInformation.uri,
       extra: infoState.extra,
     );
 
@@ -485,15 +490,20 @@ class _OnEnterHandler {
           );
           matchList = await onCanNotEnter();
 
-          // Hard stop (no then callback): reset history so user retries don't trigger limit
+          // Treat `Block()` (no callback) as the explicit hard stop.
+          // We intentionally don't try to detect "no-op" callbacks; any
+          // Block with `then` keeps history so chained guards can detect loops.
           final bool hardStop = result is Block && callback == null;
           if (hardStop) {
             _resetRedirectionHistory();
           }
-          // For chaining blocks (with then), keep history to detect loops
+          // For chaining blocks (with then), keep history to detect loops.
         }
 
         if (callback != null) {
+          // Schedule outside the parse cycle to avoid re-entrancy if the
+          // callback triggers navigation or UI work. Errors are reported but
+          // the committed navigation remains intact.
           unawaited(
             Future<void>.microtask(callback).catchError((
               Object error,

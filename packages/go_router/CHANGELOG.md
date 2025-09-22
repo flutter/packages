@@ -1,7 +1,6 @@
 ## 16.3.0
 
-- Adds new top level `onEnter` callback with access to current and next route states.
-- Deprecates top level `redirect` in favor of `onEnter`.
+- Adds a top-level `onEnter` callback with access to current and next route states.
 
 ## 16.2.2
 
@@ -1221,3 +1220,4 @@
 ## 0.1.0
 
 - squatting on the package name (I'm not too proud to admit it)
+

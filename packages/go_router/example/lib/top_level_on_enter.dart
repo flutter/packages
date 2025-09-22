@@ -4,6 +4,8 @@
 
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -90,12 +92,8 @@ class App extends StatelessWidget {
       ) async {
         // Example: fire-and-forget analytics for deep links; never block the nav
         if (next.uri.hasQuery || next.uri.hasFragment) {
-          await ReferralService.trackDeepLink(next.uri).catchError((
-            Object e,
-            __,
-          ) {
-            debugPrint('Failed to track deep link: $e');
-          });
+          // Don't await: keep the guard non-blocking for best UX.
+          unawaited(ReferralService.trackDeepLink(next.uri));
         }
 
         switch (next.uri.path) {
@@ -207,31 +205,21 @@ class App extends StatelessWidget {
     BuildContext context,
     String code,
   ) async {
-    try {
-      final bool ok = await ReferralService.processReferralCode(code);
-      if (!context.mounted) {
-        return;
-      }
-
-      // Show result with a simple SnackBar
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            ok
-                ? 'Referral code $code applied successfully!'
-                : 'Failed to apply referral code',
-          ),
-        ),
-      );
-    } catch (e) {
-      if (!context.mounted) {
-        return;
-      }
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
-      );
+    final bool ok = await ReferralService.processReferralCode(code);
+    if (!context.mounted) {
+      return;
     }
+
+    // Show result with a simple SnackBar
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          ok
+              ? 'Referral code $code applied successfully!'
+              : 'Failed to apply referral code',
+        ),
+      ),
+    );
   }
 
   /// Handles OAuth tokens with minimal UI interaction

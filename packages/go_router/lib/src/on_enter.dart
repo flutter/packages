@@ -38,5 +38,9 @@ final class Block extends OnEnterResult {
   /// **History behavior:** a plain `Block()` (no `then`) is a "hard stop" and
   /// resets `onEnter`'s internal redirection history so subsequent attempts are
   /// evaluated fresh; `Block(then: ...)` keeps history to detect loops.
+  ///
+  /// Note: We don't introspect callback bodies. Even an empty closure
+  /// (`Block(then: () {})`) counts as chaining. Omit `then` entirely when you
+  /// want the hard stop behavior.
   const Block({super.then});
 }

@@ -246,8 +246,8 @@ class RouteConfiguration {
   /// The list of top level routes used by [GoRouterDelegate].
   List<RouteBase> get routes => _routingConfig.value.routes;
 
-  /// Top level page redirect (deprecated).
-  /// This is handled via applyTopLegacyRedirect and runs at most once per navigation.
+  /// Legacy top level page redirect.
+  /// This is handled via [applyTopLegacyRedirect] and runs at most once per navigation.
   GoRouterRedirect get topRedirect => _routingConfig.value.redirect;
 
   /// Top level page on enter.
@@ -281,7 +281,7 @@ class RouteConfiguration {
   ///  * [extra_codec](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/extra_codec.dart)
   ///    example.
   ///  * [topOnEnter] for navigation interception.
-  ///  * [topRedirect] (deprecated) for legacy redirections.
+  ///  * [topRedirect] for legacy redirections.
   final Codec<Object?, Object?>? extraCodec;
 
   final Map<String, _NamedPath> _nameToPath = <String, _NamedPath>{};
@@ -447,7 +447,7 @@ class RouteConfiguration {
     return prevMatchListFuture.then<RouteMatchList>(processRedirect);
   }
 
-  /// Applies the (deprecated) top-level redirect to [prevMatchList] and returns the
+  /// Applies the legacy top-level redirect to [prevMatchList] and returns the
   /// resulting matches. Returns [prevMatchList] when no redirect happens.
   /// Shares [redirectHistory] with later route-level redirects for proper loop detection.
   ///
