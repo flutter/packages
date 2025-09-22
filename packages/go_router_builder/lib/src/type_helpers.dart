@@ -6,7 +6,7 @@ import 'package:analyzer/dart/analysis/results.dart';
 import 'package:analyzer/dart/analysis/session.dart';
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/constant/value.dart';
-import 'package:analyzer/dart/element/element2.dart';
+import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:collection/collection.dart';
 import 'package:source_gen/source_gen.dart';
@@ -56,7 +56,7 @@ const List<_TypeHelper> _helpers = <_TypeHelper>[
 
 /// Checks if has a function that converts string to string, such as encode and decode.
 bool _isStringToStringFunction(
-  ExecutableElement2? executableElement,
+  ExecutableElement? executableElement,
   String name,
 ) {
   if (executableElement == null) {
@@ -71,9 +71,10 @@ bool _isStringToStringFunction(
 
 /// Returns the custom codec for the annotation.
 String? _getCustomCodec(ElementAnnotation annotation, String name) {
-  final ExecutableElement2? executableElement =
-      // ignore: experimental_member_use
-      annotation.computeConstantValue()?.getField(name)?.toFunctionValue2();
+  final ExecutableElement? executableElement = annotation
+      .computeConstantValue()
+      ?.getField(name)
+      ?.toFunctionValue2();
   if (_isStringToStringFunction(executableElement, name)) {
     return executableElement!.displayName;
   }
@@ -141,7 +142,7 @@ String decodeParameter(
 ///
 /// Otherwise, throws an [InvalidGenerationSourceError].
 String encodeField(
-  PropertyAccessorElement2 element,
+  PropertyAccessorElement element,
   List<ElementAnnotation>? metadata,
 ) {
   for (final _TypeHelper helper in _helpers) {
@@ -181,19 +182,16 @@ String encodeField(
   );
 }
 
-/// Returns an AstNode type from a InterfaceElement2.
-T? getNodeDeclaration<T extends AstNode>(InterfaceElement2 element) {
+/// Returns an AstNode type from a InterfaceElement.
+T? getNodeDeclaration<T extends AstNode>(InterfaceElement element) {
   final AnalysisSession? session = element.session;
   if (session == null) {
     return null;
   }
 
   final ParsedLibraryResult parsedLibrary =
-      // ignore: experimental_member_use
-      session.getParsedLibraryByElement2(element.library2)
-          as ParsedLibraryResult;
+      session.getParsedLibraryByElement(element.library) as ParsedLibraryResult;
   final FragmentDeclarationResult? declaration = parsedLibrary
-      // ignore: experimental_member_use
       .getFragmentDeclaration(element.firstFragment);
   final AstNode? node = declaration?.node;
 
@@ -698,10 +696,10 @@ class _TypeHelperJson extends _TypeHelperWithHelper {
       return false;
     }
 
-    final MethodElement2? toJsonMethod = type.lookUpMethod3(
+    final MethodElement? toJsonMethod = type.lookUpMethod(
       'toJson',
-      // ignore: experimental_member_use
-      type.element3.library2,
+
+      type.element.library,
     );
     if (toJsonMethod == null ||
         !toJsonMethod.isPublic ||
@@ -715,9 +713,9 @@ class _TypeHelperJson extends _TypeHelperWithHelper {
       return _matchesType(type.typeArguments.first);
     }
 
-    // ignore: experimental_member_use
-    final ConstructorElement2? fromJsonMethod = type.element3
-        .getNamedConstructor2('fromJson');
+    final ConstructorElement? fromJsonMethod = type.element.getNamedConstructor(
+      'fromJson',
+    );
 
     if (fromJsonMethod == null ||
         !fromJsonMethod.isPublic ||
@@ -729,8 +727,8 @@ class _TypeHelperJson extends _TypeHelperWithHelper {
       throw InvalidGenerationSourceError(
         'The parameter type '
         '`${type.getDisplayString(withNullability: false)}` not have a supported fromJson definition.',
-        // ignore: experimental_member_use
-        element: type.element3,
+
+        element: type.element,
       );
     }
 
@@ -759,9 +757,9 @@ class _TypeHelperJson extends _TypeHelperWithHelper {
 
   bool _isNestedTemplate(InterfaceType type) {
     // check if has fromJson constructor
-    // ignore: experimental_member_use
-    final ConstructorElement2? fromJsonMethod = type.element3
-        .getNamedConstructor2('fromJson');
+    final ConstructorElement? fromJsonMethod = type.element.getNamedConstructor(
+      'fromJson',
+    );
     if (fromJsonMethod == null || !fromJsonMethod.isPublic) {
       return false;
     }
@@ -783,8 +781,7 @@ class _TypeHelperJson extends _TypeHelperWithHelper {
       throw InvalidGenerationSourceError(
         'The parameter type '
         '`${type.getDisplayString(withNullability: false)}` not have a supported fromJson definition.',
-        // ignore: experimental_member_use
-        element: type.element3,
+        element: type.element,
       );
     }
 
@@ -795,17 +792,14 @@ class _TypeHelperJson extends _TypeHelperWithHelper {
     }
 
     final FunctionType functionType = secondParam.type as FunctionType;
-    // ignore: experimental_member_use
     if (functionType.formalParameters.length != 1 ||
         functionType.returnType.getDisplayString() !=
             type.element.typeParameters.first.displayName ||
-        // ignore: experimental_member_use
         functionType.formalParameters[0].type.getDisplayString() != 'Object?') {
       throw InvalidGenerationSourceError(
         'The parameter type '
         '`${type.getDisplayString(withNullability: false)}` not have a supported fromJson definition.',
-        // ignore: experimental_member_use
-        element: type.element3,
+        element: type.element,
       );
     }
 
@@ -866,7 +860,7 @@ extension FormalParameterElementExtension on FormalParameterElement {
 /// An error thrown when a default value is used with a nullable type.
 class NullableDefaultValueError extends InvalidGenerationSourceError {
   /// An error thrown when a default value is used with a nullable type.
-  NullableDefaultValueError(Element2 element)
+  NullableDefaultValueError(Element element)
     : super(
         'Default value used with a nullable type. Only non-nullable type can have a default value.',
         todo: 'Remove the default value or make the type non-nullable.',
