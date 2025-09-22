@@ -2,6 +2,14 @@
 
 * Converts NV21-compatible streamed images to NV21 when requested.
 
+## 0.6.21+2
+
+* Bumps com.google.guava:guava from 33.4.8-android to 33.5.0-android.
+
+## 0.6.21+1
+
+* Updates to stable version of `androidx.camera` 1.5.
+
 ## 0.6.21
 
 * Implements NV21 support for image streaming.
