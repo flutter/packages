@@ -1,4 +1,4 @@
-## 16.2.3
+## 16.2.4
 
 - Fix Android Cold Start deep link with empty path losing scheme and authority.
 
