@@ -1,6 +1,6 @@
 --- packages/vector_graphics_compiler/example/windows/runner/win32_window.cpp
 +++ packages/vector_graphics_compiler/example/windows/runner/win32_window.cpp
-@@ -24,8 +25,9 @@ constexpr const wchar_t kWindowClassName[] = L"FLUTTER_RUNNER_WIN32_WINDOW";
+@@ -24,8 +24,9 @@ constexpr const wchar_t kWindowClassName[] = L"FLUTTER_RUNNER_WIN32_WINDOW";
  /// A value of 0 indicates apps should use dark mode. A non-zero or missing
  /// value indicates apps should use light mode.
  constexpr const wchar_t kGetPreferredBrightnessRegKey[] =
