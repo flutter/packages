@@ -362,6 +362,10 @@ Future<void> simulateAndroidBackButton(WidgetTester tester) async {
   );
 }
 
+Future<void> simulateIosBackGesture(WidgetTester tester) async {
+  await tester.dragFrom(const Offset(0, 300), const Offset(500, 300));
+}
+
 GoRouterPageBuilder createPageBuilder({
   String? restorationId,
   required Widget child,

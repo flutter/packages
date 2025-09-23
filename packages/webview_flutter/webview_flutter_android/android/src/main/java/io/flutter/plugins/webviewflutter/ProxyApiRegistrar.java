@@ -12,7 +12,6 @@ import android.os.Looper;
 import android.util.Log;
 import androidx.annotation.ChecksSdkIntAtLeast;
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import io.flutter.plugin.common.BinaryMessenger;
 
 public class ProxyApiRegistrar extends AndroidWebkitLibraryPigeonProxyApiRegistrar {
@@ -75,7 +74,6 @@ public class ProxyApiRegistrar extends AndroidWebkitLibraryPigeonProxyApiRegistr
     return new WebResourceRequestProxyApi(this);
   }
 
-  @RequiresApi(api = Build.VERSION_CODES.M)
   @NonNull
   @Override
   public PigeonApiWebResourceError getPigeonApiWebResourceError() {
