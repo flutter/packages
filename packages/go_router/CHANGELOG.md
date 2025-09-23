@@ -1,3 +1,7 @@
+## 16.2.3
+
+- Fixes an issue where iOS back gesture pops entire ShellRoute instead of the active sub-route.
+
 ## 16.2.2
 
 - Fixes broken links in readme.
