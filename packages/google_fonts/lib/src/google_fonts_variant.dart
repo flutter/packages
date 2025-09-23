@@ -171,7 +171,7 @@ const String _italic = 'italic';
 
 /// Mapping from font weight types to the 'weight' part of the Google Fonts API
 /// specific filename.
-const Map<FontWeight, String> _fontWeightToFilenameWeightParts =
+Map<FontWeight, String> _fontWeightToFilenameWeightParts =
     <FontWeight, String>{
       FontWeight.w100: 'Thin',
       FontWeight.w200: 'ExtraLight',
