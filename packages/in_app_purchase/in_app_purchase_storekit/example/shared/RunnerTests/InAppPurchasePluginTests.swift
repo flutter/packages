@@ -153,7 +153,7 @@ final class InAppPurchasePluginTests: XCTestCase {
       "transactionTimeStamp": NSDate().timeIntervalSince1970,
     ]
 
-    let paymentTransactionStub = SKPaymentTransactionStub(map: transactionMap)
+    let _ = SKPaymentTransactionStub(map: transactionMap)
 
     let handler = PaymentQueueHandlerStub()
     plugin.paymentQueueHandler = handler
