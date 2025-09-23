@@ -4,9 +4,7 @@
 
 import 'package:go_router/go_router.dart';
 
-@TypedShellRoute<ShellRouteWithoutUnnamedConstructor>(
-  routes: <TypedRoute<RouteData>>[],
-)
+@TypedShellRoute<ShellRouteWithoutUnnamedConstructor>()
 class ShellRouteWithoutUnnamedConstructor extends ShellRouteData {
   const ShellRouteWithoutUnnamedConstructor.namedConstructor();
 }
