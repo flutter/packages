@@ -1,3 +1,8 @@
+## 6.2.1
+
+* Fixes a bug that would cause `serverAuthorizationTokensForScopes` to
+  return null even when called for a user that had just authenticated.
+
 ## 6.2.0
 
 * Adds support for the `clearAuthorizationToken` method.
