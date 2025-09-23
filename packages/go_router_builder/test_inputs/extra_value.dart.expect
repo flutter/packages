@@ -1,9 +1,9 @@
 RouteBase get $extraValueRoute => GoRouteData.$route(
       path: '/default-value-route',
-      factory: _$ExtraValueRoute._fromState,
+      factory: $ExtraValueRoute._fromState,
     );
 
-mixin _$ExtraValueRoute on GoRouteData {
+mixin $ExtraValueRoute on GoRouteData {
   static ExtraValueRoute _fromState(GoRouterState state) => ExtraValueRoute(
         param:
             _$convertMapValue('param', state.uri.queryParameters, int.parse) ??

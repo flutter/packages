@@ -13,7 +13,7 @@ import 'package:pigeon/pigeon.dart';
     copyrightHeader: 'pigeons/copyright.txt',
   ),
 )
-/// The information necessary to build a an authorization request.
+/// The information necessary to build an authorization request.
 ///
 /// Corresponds to the native AuthorizationRequest object, but only contains
 /// the fields used by this plugin.
@@ -36,6 +36,7 @@ class GetCredentialRequestParams {
     required this.useButtonFlow,
     required this.googleIdOptionParams,
     this.serverClientId,
+    this.hostedDomain,
     this.nonce,
   });
 
@@ -51,6 +52,7 @@ class GetCredentialRequestParams {
   GetCredentialRequestGoogleIdOptionParams googleIdOptionParams;
 
   String? serverClientId;
+  String? hostedDomain;
   String? nonce;
 }
 
@@ -193,6 +195,10 @@ abstract class GoogleSignInApi {
   /// Clears CredentialManager credential state.
   @async
   void clearCredentialState();
+
+  /// Clears the authorization cache for the given token.
+  @async
+  void clearAuthorizationToken(String token);
 
   /// Requests authorization tokens via AuthorizationClient.
   @async

@@ -140,7 +140,6 @@ public class CameraPropertiesImpl implements CameraProperties {
     return cameraCharacteristics.get(CameraCharacteristics.SENSOR_INFO_PIXEL_ARRAY_SIZE);
   }
 
-  @RequiresApi(api = VERSION_CODES.M)
   @NonNull
   @Override
   public Rect getSensorInfoPreCorrectionActiveArraySize() {

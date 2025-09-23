@@ -215,8 +215,8 @@ class SK2SubscriptionInfoMessage {
   static SK2SubscriptionInfoMessage decode(Object result) {
     result as List<Object?>;
     return SK2SubscriptionInfoMessage(
-      promotionalOffers:
-          (result[0] as List<Object?>?)!.cast<SK2SubscriptionOfferMessage>(),
+      promotionalOffers: (result[0] as List<Object?>?)!
+          .cast<SK2SubscriptionOfferMessage>(),
       subscriptionGroupID: result[1]! as String,
       subscriptionPeriod: result[2]! as SK2SubscriptionPeriodMessage,
     );
@@ -776,8 +776,9 @@ class InAppPurchase2API {
     BinaryMessenger? binaryMessenger,
     String messageChannelSuffix = '',
   }) : pigeonVar_binaryMessenger = binaryMessenger,
-       pigeonVar_messageChannelSuffix =
-           messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+           ? '.$messageChannelSuffix'
+           : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -1145,8 +1146,9 @@ abstract class InAppPurchase2CallbackAPI {
     BinaryMessenger? binaryMessenger,
     String messageChannelSuffix = '',
   }) {
-    messageChannelSuffix =
-        messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+    messageChannelSuffix = messageChannelSuffix.isNotEmpty
+        ? '.$messageChannelSuffix'
+        : '';
     {
       final BasicMessageChannel<Object?>
       pigeonVar_channel = BasicMessageChannel<Object?>(

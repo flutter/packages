@@ -1,3 +1,23 @@
+## 0.4.0+14
+
+* Bumps okhttp, junit, and truth dependencies.
+
+## 0.4.0+13
+
+* Bumps com.google.code.gson:gson from 2.11.0 to 2.13.2.
+
+## 0.4.0+12
+
+* Bumps androidx.test.espresso:espresso-* from 3.6.1 to 3.7.0.
+
+## 0.4.0+11
+
+* Bumps androidx.test.ext:truth from 1.6.0 to 1.7.0.
+
+## 0.4.0+10
+
+* Bumps com.android.tools.build:gradle to 8.12.1.
+
 ## 0.4.0+9
 
 * Bumps `androidx.test:*` from 1.6.1 to 1.7.0.

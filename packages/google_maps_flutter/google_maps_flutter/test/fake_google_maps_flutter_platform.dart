@@ -37,8 +37,11 @@ class FakeGoogleMapsFlutterPlatform extends GoogleMapsFlutterPlatform {
   final StreamController<MapEvent<dynamic>> mapEventStreamController =
       StreamController<MapEvent<dynamic>>.broadcast();
 
+  // Overrides completion of the init.
+  Completer<void>? initCompleter;
+
   @override
-  Future<void> init(int mapId) async {}
+  Future<void> init(int mapId) async => initCompleter?.future;
 
   @override
   Future<void> updateMapConfiguration(

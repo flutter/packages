@@ -5,7 +5,7 @@
 import Flutter
 import ObjectiveC
 
-// Import Objectice-C part of the implementation when SwiftPM is used.
+// Import Objective-C part of the implementation when SwiftPM is used.
 #if canImport(camera_avfoundation_objc)
   import camera_avfoundation_objc
 #endif
@@ -131,14 +131,11 @@ extension CameraPlugin: FCPCameraApi {
     captureSessionQueue.async { [weak self] in
       guard let strongSelf = self else { return }
 
-      var discoveryDevices: [AVCaptureDevice.DeviceType] = [
+      let discoveryDevices: [AVCaptureDevice.DeviceType] = [
         .builtInWideAngleCamera,
         .builtInTelephotoCamera,
+        .builtInUltraWideCamera,
       ]
-
-      if #available(iOS 13.0, *) {
-        discoveryDevices.append(.builtInUltraWideCamera)
-      }
 
       let devices = strongSelf.deviceDiscoverer.discoverySession(
         withDeviceTypes: discoveryDevices,
@@ -248,12 +245,9 @@ extension CameraPlugin: FCPCameraApi {
       initialCameraName: name
     )
 
-    var error: NSError?
-    let newCamera = DefaultCamera(configuration: camConfiguration, error: &error)
+    do {
+      let newCamera = try DefaultCamera(configuration: camConfiguration)
 
-    if let error = error {
-      completion(nil, CameraPlugin.flutterErrorFromNSError(error))
-    } else {
       camera?.close()
       camera = newCamera
 
@@ -261,6 +255,8 @@ extension CameraPlugin: FCPCameraApi {
         guard let strongSelf = self else { return }
         completion(NSNumber(value: strongSelf.registry.register(newCamera)), nil)
       }
+    } catch let error as NSError {
+      completion(nil, CameraPlugin.flutterErrorFromNSError(error))
     }
   }
 

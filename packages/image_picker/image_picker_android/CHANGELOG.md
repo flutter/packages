@@ -1,5 +1,15 @@
-## NEXT
+## 0.8.13+3
 
+* Bumps androidx.exifinterface:exifinterface from 1.3.7 to 1.4.1.
+
+## 0.8.13+2
+
+* Updates minimum supported SDK version to Flutter 3.35.
+* Removes obsolete code related to supporting SDK <24.
+
+## 0.8.13+1
+
+* Bumps com.android.tools.build:gradle to 8.12.1.
 * Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
 
 ## 0.8.13

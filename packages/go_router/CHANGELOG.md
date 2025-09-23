@@ -1,3 +1,11 @@
+## 16.2.2
+
+- Fixes broken links in readme.
+
+## 16.2.1
+
+- Adds state restoration topic to documentation.
+
 ## 16.2.0
 
 - Adds `RelativeGoRouteData` and `TypedRelativeGoRoute`.
