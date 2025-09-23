@@ -198,7 +198,7 @@ public class AudioTracksTest {
 
     Messages.ExoPlayerAudioTrackData track = result.get(0);
     assertEquals("0_0", track.getTrackId());
-    assertEquals("Audio Track 1", track.getLabel()); // Fallback label
+    assertEquals("", track.getLabel()); 
     assertEquals("und", track.getLanguage()); // Fallback language
     assertFalse(track.getIsSelected());
     assertNull(track.getBitrate());

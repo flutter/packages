@@ -500,10 +500,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
         continue;
       }
 
-      NSString *displayName = option.displayName;
-      if (!displayName || displayName.length == 0) {
-        displayName = [NSString stringWithFormat:@"Audio Track %ld", (long)(i + 1)];
-      }
+      NSString *displayName = option.displayName ?: @"";
 
       NSString *languageCode = @"und";
       if (option.locale) {
@@ -546,7 +543,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 
     // Extract metadata from the track
     NSString *language = @"und";
-    NSString *label = [NSString stringWithFormat:@"Audio Track %ld", (long)(i + 1)];
+    NSString *label = @"";
 
     // Try to get language from track
     NSString *trackLanguage = [track.languageCode length] > 0 ? track.languageCode : nil;
