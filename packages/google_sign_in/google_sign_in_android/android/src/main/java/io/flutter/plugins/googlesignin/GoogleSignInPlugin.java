@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -34,6 +34,7 @@ import com.google.android.gms.auth.api.identity.AuthorizationRequest;
 import com.google.android.gms.auth.api.identity.AuthorizationResult;
 import com.google.android.gms.auth.api.identity.ClearTokenRequest;
 import com.google.android.gms.auth.api.identity.Identity;
+import com.google.android.gms.auth.api.identity.RevokeAccessRequest;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption;
@@ -58,6 +59,9 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
   private Delegate delegate;
   private @Nullable BinaryMessenger messenger;
   private ActivityPluginBinding activityPluginBinding;
+
+  // The account type to use to create an Account object for a Google Sign In account.
+  private static final String GOOGLE_ACCOUNT_TYPE = "com.google";
 
   private void initInstance(@NonNull BinaryMessenger messenger, @NonNull Context context) {
     initWithDelegate(
@@ -384,7 +388,7 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
         }
         if (params.getAccountEmail() != null) {
           authorizationRequestBuilder.setAccount(
-              new Account(params.getAccountEmail(), "com.google"));
+              new Account(params.getAccountEmail(), GOOGLE_ACCOUNT_TYPE));
         }
         AuthorizationRequest authorizationRequest = authorizationRequestBuilder.build();
         authorizationClientFactory
@@ -453,6 +457,28 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
                 e.getMessage(),
                 "Cause: " + e.getCause() + ", Stacktrace: " + Log.getStackTraceString(e)));
       }
+    }
+
+    @Override
+    public void revokeAccess(
+        @NonNull PlatformRevokeAccessRequest params,
+        @NonNull Function1<? super Result<Unit>, Unit> callback) {
+      List<Scope> scopes = new ArrayList<>();
+      for (String scope : params.getScopes()) {
+        scopes.add(new Scope(scope));
+      }
+      authorizationClientFactory
+          .create(context)
+          .revokeAccess(
+              RevokeAccessRequest.builder()
+                  .setAccount(new Account(params.getAccountEmail(), GOOGLE_ACCOUNT_TYPE))
+                  .setScopes(scopes)
+                  .build())
+          .addOnSuccessListener(unused -> ResultUtilsKt.completeWithUnitSuccess(callback))
+          .addOnFailureListener(
+              e ->
+                  ResultUtilsKt.completeWithUnitError(
+                      callback, new FlutterError("revokeAccess failed", e.getMessage(), null)));
     }
 
     @Override
