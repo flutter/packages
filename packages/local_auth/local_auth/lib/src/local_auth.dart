@@ -63,6 +63,9 @@ class LocalAuthentication {
         stickyAuth: persistAcrossBackgrounding,
         biometricOnly: biometricOnly,
         sensitiveTransaction: sensitiveTransaction,
+        // This is a legacy option; implementations compatible with 3.x plus
+        // should always assume this is false, so set it accordingly.
+        useErrorDialogs: false,
       ),
     );
   }

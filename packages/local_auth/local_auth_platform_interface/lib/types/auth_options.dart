@@ -9,15 +9,21 @@ import 'package:flutter/foundation.dart';
 class AuthenticationOptions {
   /// Constructs a new instance.
   const AuthenticationOptions({
-    @Deprecated('This option is no longer supported, and is ignored.')
-    this.useErrorDialogs = false,
+    this.useErrorDialogs = true,
     this.stickyAuth = false,
     this.sensitiveTransaction = true,
     this.biometricOnly = false,
   });
 
-  @Deprecated('This option is no longer supported, and is ignored.')
-  /// Whether to show native dialogs for some errors.
+  /// Whether the system will attempt to handle user-fixable issues encountered
+  /// while authenticating. For instance, if a fingerprint reader exists on the
+  /// device but there's no fingerprint registered, the plugin might attempt to
+  /// take the user to settings to add one. Anything that is not user fixable,
+  /// such as no biometric sensor on device, will still result in
+  /// a [PlatformException].
+  // This parameter still exists for backwards compatibility with local_auth
+  // 2.x, but implementers targetting local_auth 3.x or later should ignore it,
+  // as it will always be false.
   final bool useErrorDialogs;
 
   /// Used when the application goes into background for any reason while the
