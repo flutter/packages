@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -15,12 +15,14 @@ Future<ByteData> createCustomMarkerIconImage({required Size size}) async {
 
   painter.paint(canvas, size);
 
-  final ui.Image image = await recorder
-      .endRecording()
-      .toImage(size.width.floor(), size.height.floor());
+  final ui.Image image = await recorder.endRecording().toImage(
+    size.width.floor(),
+    size.height.floor(),
+  );
 
-  final ByteData? bytes =
-      await image.toByteData(format: ui.ImageByteFormat.png);
+  final ByteData? bytes = await image.toByteData(
+    format: ui.ImageByteFormat.png,
+  );
   return bytes!;
 }
 
@@ -34,10 +36,7 @@ class _MarkerPainter extends CustomPainter {
     );
 
     // Draw radial gradient
-    canvas.drawRect(
-      rect,
-      Paint()..shader = gradient.createShader(rect),
-    );
+    canvas.drawRect(rect, Paint()..shader = gradient.createShader(rect));
 
     // Draw diagonal black line
     canvas.drawLine(

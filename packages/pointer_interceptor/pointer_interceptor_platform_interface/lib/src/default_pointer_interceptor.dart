@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -9,11 +9,7 @@ import 'pointer_interceptor_platform.dart';
 /// A default no-op implementation of [PointerInterceptorPlatform].
 class DefaultPointerInterceptor extends PointerInterceptorPlatform {
   @override
-  Widget buildWidget({
-    required Widget child,
-    bool debug = false,
-    Key? key,
-  }) {
+  Widget buildWidget({required Widget child, bool debug = false, Key? key}) {
     return child;
   }
 }

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -85,9 +85,9 @@ class TreeRowBorder extends SpanBorder {
   /// Creates a [TreeRowBorder] with the provided [BorderSide] applied to all
   /// sides.
   const TreeRowBorder.all(BorderSide side)
-      : left = side,
-        right = side,
-        super(leading: side, trailing: side);
+    : left = side,
+      right = side,
+      super(leading: side, trailing: side);
 
   /// The border to paint on the top, or leading edge of the [TreeRow].
   BorderSide get top => leading;
@@ -102,21 +102,14 @@ class TreeRowBorder extends SpanBorder {
   final BorderSide right;
 
   @override
-  void paint(
-    SpanDecorationPaintDetails details,
-    BorderRadius? borderRadius,
-  ) {
+  void paint(SpanDecorationPaintDetails details, BorderRadius? borderRadius) {
     final Border border = Border(
       top: top,
       bottom: bottom,
       left: left,
       right: right,
     );
-    border.paint(
-      details.canvas,
-      details.rect,
-      borderRadius: borderRadius,
-    );
+    border.paint(details.canvas, details.rect, borderRadius: borderRadius);
   }
 }
 

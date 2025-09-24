@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -15,9 +15,9 @@ class WKWebViewCookieManager extends WebViewCookieManagerPlatform {
   WKWebViewCookieManager({
     WKWebsiteDataStore? websiteDataStore,
     @visibleForTesting WebKitProxy webKitProxy = const WebKitProxy(),
-  })  : _webKitProxy = webKitProxy,
-        websiteDataStore = websiteDataStore ??
-            webKitProxy.defaultDataStoreWKWebsiteDataStore();
+  }) : _webKitProxy = webKitProxy,
+       websiteDataStore =
+           websiteDataStore ?? webKitProxy.defaultDataStoreWKWebsiteDataStore();
 
   /// Manages stored data for [WKWebView]s.
   final WKWebsiteDataStore websiteDataStore;
@@ -26,17 +26,17 @@ class WKWebViewCookieManager extends WebViewCookieManagerPlatform {
 
   @override
   Future<bool> clearCookies() async {
-    return websiteDataStore.removeDataOfTypes(
-      <WebsiteDataType>[WebsiteDataType.cookies],
-      0,
-    );
+    return websiteDataStore.removeDataOfTypes(<WebsiteDataType>[
+      WebsiteDataType.cookies,
+    ], 0);
   }
 
   @override
   Future<void> setCookie(WebViewCookie cookie) {
     if (!_isValidPath(cookie.path)) {
       throw ArgumentError(
-          'The path property for the provided cookie was not given a legal value.');
+        'The path property for the provided cookie was not given a legal value.',
+      );
     }
 
     return websiteDataStore.httpCookieStore.setCookie(
@@ -53,10 +53,8 @@ class WKWebViewCookieManager extends WebViewCookieManagerPlatform {
 
   bool _isValidPath(String path) {
     // Permitted ranges based on RFC6265bis: https://datatracker.ietf.org/doc/html/draft-ietf-httpbis-rfc6265bis-02#section-4.1.1
-    return !path.codeUnits.any(
-      (int char) {
-        return (char < 0x20 || char > 0x3A) && (char < 0x3C || char > 0x7E);
-      },
-    );
+    return !path.codeUnits.any((int char) {
+      return (char < 0x20 || char > 0x3A) && (char < 0x3C || char > 0x7E);
+    });
   }
 }

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -46,15 +46,7 @@ class HTTPCookieProxyAPIDelegate: PigeonApiDelegateHTTPCookie {
       case .version:
         newKey = .version
       case .sameSitePolicy:
-        if #available(iOS 13.0, macOS 10.15, *) {
-          newKey = .sameSitePolicy
-        } else {
-          throw
-            registrar
-            .createUnsupportedVersionError(
-              method: "HTTPCookiePropertyKey.sameSitePolicy",
-              versionRequirements: "iOS 13.0, macOS 10.15")
-        }
+        newKey = .sameSitePolicy
       case .unknown:
         throw registrar.createUnknownEnumError(
           withEnum: key)
@@ -82,39 +74,37 @@ class HTTPCookieProxyAPIDelegate: PigeonApiDelegateHTTPCookie {
 
     let keyValueTuples = pigeonInstance.properties!.map { key, value in
       let newKey: HttpCookiePropertyKey
-      if #available(iOS 13.0, macOS 10.15, *), key == .sameSitePolicy {
+      switch key {
+      case .comment:
+        newKey = .comment
+      case .commentURL:
+        newKey = .commentUrl
+      case .discard:
+        newKey = .discard
+      case .domain:
+        newKey = .domain
+      case .expires:
+        newKey = .expires
+      case .maximumAge:
+        newKey = .maximumAge
+      case .name:
+        newKey = .name
+      case .originURL:
+        newKey = .originUrl
+      case .path:
+        newKey = .path
+      case .port:
+        newKey = .port
+      case .sameSitePolicy:
         newKey = .sameSitePolicy
-      } else {
-        switch key {
-        case .comment:
-          newKey = .comment
-        case .commentURL:
-          newKey = .commentUrl
-        case .discard:
-          newKey = .discard
-        case .domain:
-          newKey = .domain
-        case .expires:
-          newKey = .expires
-        case .maximumAge:
-          newKey = .maximumAge
-        case .name:
-          newKey = .name
-        case .originURL:
-          newKey = .originUrl
-        case .path:
-          newKey = .path
-        case .port:
-          newKey = .port
-        case .secure:
-          newKey = .secure
-        case .value:
-          newKey = .value
-        case .version:
-          newKey = .version
-        default:
-          newKey = .unknown
-        }
+      case .secure:
+        newKey = .secure
+      case .value:
+        newKey = .value
+      case .version:
+        newKey = .version
+      default:
+        newKey = .unknown
       }
 
       return (newKey, value)

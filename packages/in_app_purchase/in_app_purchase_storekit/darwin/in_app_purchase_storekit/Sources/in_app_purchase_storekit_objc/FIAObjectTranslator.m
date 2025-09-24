@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -12,32 +12,21 @@
   if (!product) {
     return nil;
   }
-  NSMutableDictionary *map = [[NSMutableDictionary alloc] initWithDictionary:@{
+  return @{
+    @"discounts" : [FIAObjectTranslator getMapArrayFromSKProductDiscounts:product.discounts],
+    @"introductoryPrice" :
+            [FIAObjectTranslator getMapFromSKProductDiscount:product.introductoryPrice]
+        ?: [NSNull null],
     @"localizedDescription" : product.localizedDescription ?: [NSNull null],
     @"localizedTitle" : product.localizedTitle ?: [NSNull null],
     @"productIdentifier" : product.productIdentifier ?: [NSNull null],
-    @"price" : product.price.description ?: [NSNull null]
-
-  }];
-  // TODO(cyanglaz): NSLocale is a complex object, want to see the actual need of getting this
-  // expanded to a map. Matching android to only get the currencySymbol for now.
-  // https://github.com/flutter/flutter/issues/26610
-  [map setObject:[FIAObjectTranslator getMapFromNSLocale:product.priceLocale] ?: [NSNull null]
-          forKey:@"priceLocale"];
-  [map setObject:[FIAObjectTranslator
-                     getMapFromSKProductSubscriptionPeriod:product.subscriptionPeriod]
-                     ?: [NSNull null]
-          forKey:@"subscriptionPeriod"];
-  [map setObject:[FIAObjectTranslator getMapFromSKProductDiscount:product.introductoryPrice]
-                     ?: [NSNull null]
-          forKey:@"introductoryPrice"];
-  if (@available(iOS 12.2, *)) {
-    [map setObject:[FIAObjectTranslator getMapArrayFromSKProductDiscounts:product.discounts]
-            forKey:@"discounts"];
-  }
-  [map setObject:product.subscriptionGroupIdentifier ?: [NSNull null]
-          forKey:@"subscriptionGroupIdentifier"];
-  return map;
+    @"price" : product.price.description ?: [NSNull null],
+    @"subscriptionGroupIdentifier" : product.subscriptionGroupIdentifier ?: [NSNull null],
+    @"subscriptionPeriod" :
+            [FIAObjectTranslator getMapFromSKProductSubscriptionPeriod:product.subscriptionPeriod]
+        ?: [NSNull null],
+    @"priceLocale" : [FIAObjectTranslator getMapFromNSLocale:product.priceLocale] ?: [NSNull null],
+  };
 }
 
 + (NSDictionary *)getMapFromSKProductSubscriptionPeriod:(SKProductSubscriptionPeriod *)period {
@@ -49,7 +38,7 @@
 
 + (nonnull NSArray *)getMapArrayFromSKProductDiscounts:
     (nonnull NSArray<SKProductDiscount *> *)productDiscounts {
-  NSMutableArray *discountsMapArray = [[NSMutableArray alloc] init];
+  NSMutableArray *discountsMapArray = [NSMutableArray arrayWithCapacity:productDiscounts.count];
 
   for (SKProductDiscount *productDiscount in productDiscounts) {
     [discountsMapArray addObject:[FIAObjectTranslator getMapFromSKProductDiscount:productDiscount]];
@@ -62,32 +51,25 @@
   if (!discount) {
     return nil;
   }
-  NSMutableDictionary *map = [[NSMutableDictionary alloc] initWithDictionary:@{
-    @"price" : discount.price.description ?: [NSNull null],
+  return @{
+    @"identifier" : discount.identifier ?: [NSNull null],
     @"numberOfPeriods" : @(discount.numberOfPeriods),
+    @"paymentMode" : @(discount.paymentMode),
+    @"price" : discount.price.description ?: [NSNull null],
     @"subscriptionPeriod" :
             [FIAObjectTranslator getMapFromSKProductSubscriptionPeriod:discount.subscriptionPeriod]
         ?: [NSNull null],
-    @"paymentMode" : @(discount.paymentMode),
-  }];
-  if (@available(iOS 12.2, *)) {
-    [map setObject:discount.identifier ?: [NSNull null] forKey:@"identifier"];
-    [map setObject:@(discount.type) forKey:@"type"];
-  }
-
-  // TODO(cyanglaz): NSLocale is a complex object, want to see the actual need of getting this
-  // expanded to a map. Matching android to only get the currencySymbol for now.
-  // https://github.com/flutter/flutter/issues/26610
-  [map setObject:[FIAObjectTranslator getMapFromNSLocale:discount.priceLocale] ?: [NSNull null]
-          forKey:@"priceLocale"];
-  return map;
+    @"type" : @(discount.type),
+    @"priceLocale" : [FIAObjectTranslator getMapFromNSLocale:discount.priceLocale] ?: [NSNull null],
+  };
 }
 
 + (NSDictionary *)getMapFromSKProductsResponse:(SKProductsResponse *)productResponse {
   if (!productResponse) {
     return nil;
   }
-  NSMutableArray *productsMapArray = [NSMutableArray new];
+  NSMutableArray *productsMapArray =
+      [NSMutableArray arrayWithCapacity:productResponse.products.count];
   for (SKProduct *product in productResponse.products) {
     [productsMapArray addObject:[FIAObjectTranslator getMapFromSKProduct:product]];
   }
@@ -101,27 +83,28 @@
   if (!payment) {
     return nil;
   }
-  NSMutableDictionary *map = [[NSMutableDictionary alloc] initWithDictionary:@{
+  return @{
+    @"applicationUsername" : payment.applicationUsername ?: [NSNull null],
     @"productIdentifier" : payment.productIdentifier ?: [NSNull null],
+    @"quantity" : @(payment.quantity),
     @"requestData" : payment.requestData ? [[NSString alloc] initWithData:payment.requestData
                                                                  encoding:NSUTF8StringEncoding]
                                          : [NSNull null],
-    @"quantity" : @(payment.quantity),
-    @"applicationUsername" : payment.applicationUsername ?: [NSNull null]
-  }];
-  [map setObject:@(payment.simulatesAskToBuyInSandbox) forKey:@"simulatesAskToBuyInSandbox"];
-  return map;
+    @"simulatesAskToBuyInSandbox" : @(payment.simulatesAskToBuyInSandbox),
+  };
 }
 
+// This intentionally only exposes fields that there has been a demonstrated
+// need for; see discussion in https://github.com/flutter/plugins/pull/3897.
 + (NSDictionary *)getMapFromNSLocale:(NSLocale *)locale {
   if (!locale) {
     return nil;
   }
-  NSMutableDictionary *map = [[NSMutableDictionary alloc] init];
-  [map setObject:locale.currencySymbol ?: [NSNull null] forKey:@"currencySymbol"];
-  [map setObject:locale.currencyCode ?: [NSNull null] forKey:@"currencyCode"];
-  [map setObject:locale.countryCode ?: [NSNull null] forKey:@"countryCode"];
-  return map;
+  return @{
+    @"currencySymbol" : locale.currencySymbol ?: [NSNull null],
+    @"currencyCode" : locale.currencyCode ?: [NSNull null],
+    @"countryCode" : locale.countryCode ?: [NSNull null],
+  };
 }
 
 + (SKMutablePayment *)getSKMutablePaymentFromMap:(NSDictionary *)map {
@@ -142,7 +125,7 @@
   if (!transaction) {
     return nil;
   }
-  NSMutableDictionary *map = [[NSMutableDictionary alloc] initWithDictionary:@{
+  return @{
     @"error" : [FIAObjectTranslator getMapFromNSError:transaction.error] ?: [NSNull null],
     @"payment" : transaction.payment ? [FIAObjectTranslator getMapFromSKPayment:transaction.payment]
                                      : [NSNull null],
@@ -154,9 +137,7 @@
         : [NSNull null],
     @"transactionIdentifier" : transaction.transactionIdentifier ?: [NSNull null],
     @"transactionState" : @(transaction.transactionState)
-  }];
-
-  return map;
+  };
 }
 
 + (NSDictionary *)getMapFromNSError:(NSError *)error {
@@ -181,13 +162,14 @@
   } else if ([value isKindOfClass:[NSString class]]) {
     return value;
   } else if ([value isKindOfClass:[NSArray class]]) {
-    NSMutableArray *errors = [[NSMutableArray alloc] init];
+    NSMutableArray *errors = [NSMutableArray arrayWithCapacity:((NSArray *)value).count];
     for (id error in value) {
       [errors addObject:[FIAObjectTranslator encodeNSErrorUserInfo:error]];
     }
     return errors;
   } else if ([value isKindOfClass:[NSDictionary class]]) {
-    NSMutableDictionary *errors = [[NSMutableDictionary alloc] init];
+    NSMutableDictionary *errors =
+        [NSMutableDictionary dictionaryWithCapacity:((NSDictionary *)value).count];
     for (id key in value) {
       errors[key] = [FIAObjectTranslator encodeNSErrorUserInfo:value[key]];
     }
@@ -210,12 +192,7 @@
     return nil;
   }
 
-  NSMutableDictionary *map = [[NSMutableDictionary alloc] initWithDictionary:@{
-    @"countryCode" : storefront.countryCode,
-    @"identifier" : storefront.identifier
-  }];
-
-  return map;
+  return @{@"countryCode" : storefront.countryCode, @"identifier" : storefront.identifier};
 }
 
 + (NSDictionary *)getMapFromSKStorefront:(SKStorefront *)storefront
@@ -224,12 +201,10 @@
     return nil;
   }
 
-  NSMutableDictionary *map = [[NSMutableDictionary alloc] initWithDictionary:@{
+  return @{
     @"storefront" : [FIAObjectTranslator getMapFromSKStorefront:storefront],
     @"transaction" : [FIAObjectTranslator getMapFromSKPaymentTransaction:transaction]
-  }];
-
-  return map;
+  };
 }
 
 + (SKPaymentDiscount *)getSKPaymentDiscountFromMap:(NSDictionary *)map
@@ -313,7 +288,7 @@
     return nil;
   }
 
-  NSMutableDictionary *userInfo = [NSMutableDictionary new];
+  NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithCapacity:error.userInfo.count];
   for (NSErrorUserInfoKey key in error.userInfo) {
     id value = error.userInfo[key];
     userInfo[key] = [FIAObjectTranslator encodeNSErrorUserInfo:value];

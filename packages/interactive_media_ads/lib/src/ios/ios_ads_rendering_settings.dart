@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -20,8 +20,8 @@ final class IOSAdsRenderingSettingsCreationParams
     super.playAdsAfterTime,
     super.uiElements,
     @visibleForTesting InteractiveMediaAdsProxy? proxy,
-  })  : _proxy = proxy ?? const InteractiveMediaAdsProxy(),
-        super();
+  }) : _proxy = proxy ?? const InteractiveMediaAdsProxy(),
+       super();
 
   /// Creates a [IOSAdsRenderingSettingsCreationParams] from an instance of
   /// [PlatformAdsRenderingSettingsCreationParams].
@@ -66,14 +66,12 @@ base class IOSAdsRenderingSettings extends PlatformAdsRenderingSettings {
     }
     if (_iosParams.uiElements != null) {
       nativeSettings.setUIElements(
-        _iosParams.uiElements!.map(
-          (AdUIElement element) {
-            return switch (element) {
-              AdUIElement.adAttribution => UIElementType.adAttribution,
-              AdUIElement.countdown => UIElementType.countdown,
-            };
-          },
-        ).toList(),
+        _iosParams.uiElements!.map((AdUIElement element) {
+          return switch (element) {
+            AdUIElement.adAttribution => UIElementType.adAttribution,
+            AdUIElement.countdown => UIElementType.countdown,
+          };
+        }).toList(),
       );
     }
   }
@@ -86,8 +84,7 @@ base class IOSAdsRenderingSettings extends PlatformAdsRenderingSettings {
   late final IOSAdsRenderingSettingsCreationParams _iosParams =
       params is IOSAdsRenderingSettingsCreationParams
           ? params as IOSAdsRenderingSettingsCreationParams
-          : IOSAdsRenderingSettingsCreationParams
-              .fromPlatformAdsRenderingSettingsCreationParams(
-              params,
-            );
+          : IOSAdsRenderingSettingsCreationParams.fromPlatformAdsRenderingSettingsCreationParams(
+            params,
+          );
 }

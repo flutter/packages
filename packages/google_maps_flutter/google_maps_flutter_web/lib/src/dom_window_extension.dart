@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -42,7 +42,5 @@ extension InnerHTMLString on web.HTMLElement {
 extension CreateHTMLNoArgs on web.TrustedTypePolicy {
   /// Allows calling `createHTML` with only the `input` argument.
   @JS('createHTML')
-  external web.TrustedHTML createHTMLNoArgs(
-    String input,
-  );
+  external web.TrustedHTML createHTMLNoArgs(String input);
 }

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -17,7 +17,8 @@ final Codec<Object?, String> _jwtCodec = json.fuse(utf8).fuse(base64);
 ///
 /// More info: https://regexr.com/789qc
 final RegExp _jwtTokenRegexp = RegExp(
-    r'^(?<header>[^\.\s]+)\.(?<payload>[^\.\s]+)\.(?<signature>[^\.\s]+)$');
+  r'^(?<header>[^\.\s]+)\.(?<payload>[^\.\s]+)\.(?<signature>[^\.\s]+)$',
+);
 
 /// Decodes the `claims` of a JWT token and returns them as a Map.
 ///

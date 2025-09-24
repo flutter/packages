@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -6,11 +6,12 @@
 /// using [WebViewCookieManagerPlatform].
 class WebViewCookie {
   /// Constructs a new [WebViewCookie].
-  const WebViewCookie(
-      {required this.name,
-      required this.value,
-      required this.domain,
-      this.path = '/'});
+  const WebViewCookie({
+    required this.name,
+    required this.value,
+    required this.domain,
+    this.path = '/',
+  });
 
   /// The cookie-name of the cookie.
   ///
@@ -43,7 +44,7 @@ class WebViewCookie {
       'name': name,
       'value': value,
       'domain': domain,
-      'path': path
+      'path': path,
     };
   }
 }

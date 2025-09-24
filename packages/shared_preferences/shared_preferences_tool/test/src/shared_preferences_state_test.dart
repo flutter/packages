@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -25,19 +25,22 @@ void main() {
 
   group('SharedPreferencesData', () {
     test('value as string should return formatted value', () {
-      const SharedPreferencesData stringData =
-          SharedPreferencesData.string(value: 'value');
+      const SharedPreferencesData stringData = SharedPreferencesData.string(
+        value: 'value',
+      );
       expect(stringData.valueAsString, 'value');
 
       const SharedPreferencesData intData = SharedPreferencesData.int(value: 1);
       expect(intData.valueAsString, '1');
 
-      const SharedPreferencesData doubleData =
-          SharedPreferencesData.double(value: 1.1);
+      const SharedPreferencesData doubleData = SharedPreferencesData.double(
+        value: 1.1,
+      );
       expect(doubleData.valueAsString, '1.1');
 
-      const SharedPreferencesData boolData =
-          SharedPreferencesData.bool(value: true);
+      const SharedPreferencesData boolData = SharedPreferencesData.bool(
+        value: true,
+      );
       expect(boolData.valueAsString, 'true');
 
       const SharedPreferencesData stringListData =
@@ -47,19 +50,22 @@ void main() {
   });
 
   test('should return pretty type', () {
-    const SharedPreferencesData stringData =
-        SharedPreferencesData.string(value: 'value');
+    const SharedPreferencesData stringData = SharedPreferencesData.string(
+      value: 'value',
+    );
     expect(stringData.kind, 'String');
 
     const SharedPreferencesData intData = SharedPreferencesData.int(value: 1);
     expect(intData.kind, 'int');
 
-    const SharedPreferencesData doubleData =
-        SharedPreferencesData.double(value: 1.0);
+    const SharedPreferencesData doubleData = SharedPreferencesData.double(
+      value: 1.0,
+    );
     expect(doubleData.kind, 'double');
 
-    const SharedPreferencesData boolData =
-        SharedPreferencesData.bool(value: true);
+    const SharedPreferencesData boolData = SharedPreferencesData.bool(
+      value: true,
+    );
     expect(boolData.kind, 'bool');
 
     const SharedPreferencesData stringListData =
@@ -68,8 +74,9 @@ void main() {
   });
 
   test('should change value', () {
-    const SharedPreferencesData stringData =
-        SharedPreferencesData.string(value: 'value');
+    const SharedPreferencesData stringData = SharedPreferencesData.string(
+      value: 'value',
+    );
     const String newStringValue = 'newValue';
     expect(
       stringData.changeValue(newStringValue),
@@ -91,8 +98,9 @@ void main() {
       ),
     );
 
-    const SharedPreferencesData doubleData =
-        SharedPreferencesData.double(value: 1.0);
+    const SharedPreferencesData doubleData = SharedPreferencesData.double(
+      value: 1.0,
+    );
     const String newDoubleValue = '2.0';
     expect(
       doubleData.changeValue(newDoubleValue),
@@ -103,8 +111,9 @@ void main() {
       ),
     );
 
-    const SharedPreferencesData boolData =
-        SharedPreferencesData.bool(value: true);
+    const SharedPreferencesData boolData = SharedPreferencesData.bool(
+      value: true,
+    );
     const String newBoolValue = 'false';
     expect(
       boolData.changeValue(newBoolValue),

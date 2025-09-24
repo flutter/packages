@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -9,15 +9,17 @@ import 'package:go_router/go_router.dart';
 import 'test_helpers.dart';
 
 void main() {
-  testWidgets('throws if more than one exception handlers are provided.',
-      (WidgetTester tester) async {
+  testWidgets('throws if more than one exception handlers are provided.', (
+    WidgetTester tester,
+  ) async {
     bool thrown = false;
     try {
       GoRouter(
         routes: <RouteBase>[
           GoRoute(
-              path: '/',
-              builder: (_, GoRouterState state) => const Text('home')),
+            path: '/',
+            builder: (_, GoRouterState state) => const Text('home'),
+          ),
         ],
         errorBuilder: (_, __) => const Text(''),
         onException: (_, __, ___) {},
@@ -32,8 +34,9 @@ void main() {
       GoRouter(
         routes: <RouteBase>[
           GoRoute(
-              path: '/',
-              builder: (_, GoRouterState state) => const Text('home')),
+            path: '/',
+            builder: (_, GoRouterState state) => const Text('home'),
+          ),
         ],
         errorBuilder: (_, __) => const Text(''),
         errorPageBuilder: (_, __) => const MaterialPage<void>(child: Text('')),
@@ -48,8 +51,9 @@ void main() {
       GoRouter(
         routes: <RouteBase>[
           GoRoute(
-              path: '/',
-              builder: (_, GoRouterState state) => const Text('home')),
+            path: '/',
+            builder: (_, GoRouterState state) => const Text('home'),
+          ),
         ],
         onException: (_, __, ___) {},
         errorPageBuilder: (_, __) => const MaterialPage<void>(child: Text('')),
@@ -62,14 +66,19 @@ void main() {
 
   group('onException', () {
     testWidgets('can redirect.', (WidgetTester tester) async {
-      final GoRouter router = await createRouter(<RouteBase>[
-        GoRoute(
+      final GoRouter router = await createRouter(
+        <RouteBase>[
+          GoRoute(
             path: '/error',
-            builder: (_, GoRouterState state) =>
-                Text('redirected ${state.extra}')),
-      ], tester,
-          onException: (_, GoRouterState state, GoRouter router) =>
-              router.go('/error', extra: state.uri.toString()));
+            builder:
+                (_, GoRouterState state) => Text('redirected ${state.extra}'),
+          ),
+        ],
+        tester,
+        onException:
+            (_, GoRouterState state, GoRouter router) =>
+                router.go('/error', extra: state.uri.toString()),
+      );
       expect(find.text('redirected /'), findsOneWidget);
 
       router.go('/some-other-location');
@@ -78,13 +87,18 @@ void main() {
     });
 
     testWidgets('can redirect with extra', (WidgetTester tester) async {
-      final GoRouter router = await createRouter(<RouteBase>[
-        GoRoute(
+      final GoRouter router = await createRouter(
+        <RouteBase>[
+          GoRoute(
             path: '/error',
-            builder: (_, GoRouterState state) => Text('extra: ${state.extra}')),
-      ], tester,
-          onException: (_, GoRouterState state, GoRouter router) =>
-              router.go('/error', extra: state.extra));
+            builder: (_, GoRouterState state) => Text('extra: ${state.extra}'),
+          ),
+        ],
+        tester,
+        onException:
+            (_, GoRouterState state, GoRouter router) =>
+                router.go('/error', extra: state.extra),
+      );
       expect(find.text('extra: null'), findsOneWidget);
 
       router.go('/some-other-location', extra: 'X');
@@ -96,8 +110,9 @@ void main() {
       final GoRouter router = await createRouter(
         <RouteBase>[
           GoRoute(
-              path: '/',
-              builder: (_, GoRouterState state) => const Text('home')),
+            path: '/',
+            builder: (_, GoRouterState state) => const Text('home'),
+          ),
         ],
         tester,
         onException: (_, __, ___) {},

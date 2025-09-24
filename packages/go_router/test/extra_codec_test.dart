@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -11,8 +11,9 @@ import 'package:go_router/go_router.dart';
 import 'test_helpers.dart';
 
 void main() {
-  testWidgets('router rebuild with extra codec works',
-      (WidgetTester tester) async {
+  testWidgets('router rebuild with extra codec works', (
+    WidgetTester tester,
+  ) async {
     const String initialString = 'some string';
     const String empty = 'empty';
     final GoRouter router = GoRouter(
@@ -21,10 +22,11 @@ void main() {
       initialExtra: ComplexData(initialString),
       routes: <RouteBase>[
         GoRoute(
-            path: '/',
-            builder: (_, GoRouterState state) {
-              return Text((state.extra as ComplexData?)?.data ?? empty);
-            }),
+          path: '/',
+          builder: (_, GoRouterState state) {
+            return Text((state.extra as ComplexData?)?.data ?? empty);
+          },
+        ),
       ],
       redirect: (BuildContext context, _) {
         // Set up dependency.
@@ -40,9 +42,7 @@ void main() {
     await tester.pumpWidget(
       SimpleDependencyProvider(
         dependency: dependency,
-        child: MaterialApp.router(
-          routerConfig: router,
-        ),
+        child: MaterialApp.router(routerConfig: router),
       ),
     );
     expect(find.text(initialString), findsOneWidget);

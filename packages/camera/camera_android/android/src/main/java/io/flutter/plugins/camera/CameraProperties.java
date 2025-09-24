@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -224,7 +224,6 @@ public interface CameraProperties {
    * @return android.graphics.Rect Area of the image sensor which corresponds to active pixels prior
    *     to the application of any geometric distortion correction.
    */
-  @RequiresApi(api = VERSION_CODES.M)
   @NonNull
   Rect getSensorInfoPreCorrectionActiveArraySize();
 

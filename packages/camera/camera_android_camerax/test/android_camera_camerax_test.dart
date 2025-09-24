@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -114,9 +114,9 @@ void main() {
     return cameraClosingEventSent && cameraErrorSent;
   }
 
-  /// CameraXProxy for testing functionality related to the camera resolution
-  /// preset (setting expected ResolutionSelectors, QualitySelectors, etc.).
-  CameraXProxy getProxyForTestingResolutionPreset(
+  /// CameraXProxy for testing functionality related to the configuration
+  /// of CameraX UseCases.
+  CameraXProxy getProxyForTestingUseCaseConfiguration(
     MockProcessCameraProvider mockProcessCameraProvider, {
     ResolutionFilter Function({
       required CameraSize preferredSize,
@@ -152,6 +152,16 @@ void main() {
       PigeonInstanceManager? pigeon_instanceManager,
     })?
     newPreview,
+    ImageAnalysis Function({
+      // ignore: non_constant_identifier_names
+      BinaryMessenger? pigeon_binaryMessenger,
+      // ignore: non_constant_identifier_names
+      PigeonInstanceManager? pigeon_instanceManager,
+      ResolutionSelector? resolutionSelector,
+      int? outputImageFormat,
+      int? targetRotation,
+    })?
+    newImageAnalysis,
   }) {
     late final CameraXProxy proxy;
     final AspectRatioStrategy ratio_4_3FallbackAutoStrategyAspectRatioStrategy =
@@ -159,33 +169,35 @@ void main() {
     final ResolutionStrategy highestAvailableStrategyResolutionStrategy =
         MockResolutionStrategy();
     proxy = CameraXProxy(
-      getInstanceProcessCameraProvider: ({
-        // ignore: non_constant_identifier_names
-        BinaryMessenger? pigeon_binaryMessenger,
-        // ignore: non_constant_identifier_names
-        PigeonInstanceManager? pigeon_instanceManager,
-      }) async {
-        return mockProcessCameraProvider;
-      },
-      newCameraSelector: ({
-        LensFacing? requireLensFacing,
-        CameraInfo? cameraInfoForFilter,
-        // ignore: non_constant_identifier_names
-        BinaryMessenger? pigeon_binaryMessenger,
-        // ignore: non_constant_identifier_names
-        PigeonInstanceManager? pigeon_instanceManager,
-      }) {
-        switch (requireLensFacing) {
-          case LensFacing.front:
-            return MockCameraSelector();
-          case LensFacing.back:
-          case LensFacing.external:
-          case LensFacing.unknown:
-          case null:
-        }
+      getInstanceProcessCameraProvider:
+          ({
+            // ignore: non_constant_identifier_names
+            BinaryMessenger? pigeon_binaryMessenger,
+            // ignore: non_constant_identifier_names
+            PigeonInstanceManager? pigeon_instanceManager,
+          }) async {
+            return mockProcessCameraProvider;
+          },
+      newCameraSelector:
+          ({
+            LensFacing? requireLensFacing,
+            CameraInfo? cameraInfoForFilter,
+            // ignore: non_constant_identifier_names
+            BinaryMessenger? pigeon_binaryMessenger,
+            // ignore: non_constant_identifier_names
+            PigeonInstanceManager? pigeon_instanceManager,
+          }) {
+            switch (requireLensFacing) {
+              case LensFacing.front:
+                return MockCameraSelector();
+              case LensFacing.back:
+              case LensFacing.external:
+              case LensFacing.unknown:
+              case null:
+            }
 
-        return MockCameraSelector();
-      },
+            return MockCameraSelector();
+          },
       newPreview:
           newPreview ??
           ({
@@ -197,107 +209,120 @@ void main() {
             PigeonInstanceManager? pigeon_instanceManager,
           }) {
             final MockPreview mockPreview = MockPreview();
+            final ResolutionInfo testResolutionInfo =
+                ResolutionInfo.pigeon_detached(resolution: MockCameraSize());
             when(
               mockPreview.surfaceProducerHandlesCropAndRotation(),
             ).thenAnswer((_) async => false);
             when(mockPreview.resolutionSelector).thenReturn(resolutionSelector);
+            when(
+              mockPreview.getResolutionInfo(),
+            ).thenAnswer((_) async => testResolutionInfo);
             return mockPreview;
           },
-      newImageCapture: ({
-        int? targetRotation,
-        CameraXFlashMode? flashMode,
-        ResolutionSelector? resolutionSelector,
-        // ignore: non_constant_identifier_names
-        BinaryMessenger? pigeon_binaryMessenger,
-        // ignore: non_constant_identifier_names
-        PigeonInstanceManager? pigeon_instanceManager,
-      }) {
-        final MockImageCapture mockImageCapture = MockImageCapture();
-        when(
-          mockImageCapture.resolutionSelector,
-        ).thenReturn(resolutionSelector);
-        return mockImageCapture;
-      },
-      newRecorder: ({
-        int? aspectRatio,
-        int? targetVideoEncodingBitRate,
-        QualitySelector? qualitySelector,
-        // ignore: non_constant_identifier_names
-        BinaryMessenger? pigeon_binaryMessenger,
-        // ignore: non_constant_identifier_names
-        PigeonInstanceManager? pigeon_instanceManager,
-      }) {
-        final MockRecorder mockRecorder = MockRecorder();
-        when(
-          mockRecorder.getQualitySelector(),
-        ).thenAnswer((_) async => qualitySelector ?? MockQualitySelector());
-        return mockRecorder;
-      },
-      withOutputVideoCapture: ({
-        required VideoOutput videoOutput,
-        // ignore: non_constant_identifier_names
-        BinaryMessenger? pigeon_binaryMessenger,
-        // ignore: non_constant_identifier_names
-        PigeonInstanceManager? pigeon_instanceManager,
-      }) {
-        return MockVideoCapture();
-      },
-      newImageAnalysis: ({
-        int? targetRotation,
-        ResolutionSelector? resolutionSelector,
-        // ignore: non_constant_identifier_names
-        BinaryMessenger? pigeon_binaryMessenger,
-        // ignore: non_constant_identifier_names
-        PigeonInstanceManager? pigeon_instanceManager,
-      }) {
-        final MockImageAnalysis mockImageAnalysis = MockImageAnalysis();
-        when(
-          mockImageAnalysis.resolutionSelector,
-        ).thenReturn(resolutionSelector);
-        return mockImageAnalysis;
-      },
-      newResolutionStrategy: ({
-        required CameraSize boundSize,
-        required ResolutionStrategyFallbackRule fallbackRule,
-        // ignore: non_constant_identifier_names
-        BinaryMessenger? pigeon_binaryMessenger,
-        // ignore: non_constant_identifier_names
-        PigeonInstanceManager? pigeon_instanceManager,
-      }) {
-        final MockResolutionStrategy resolutionStrategy =
-            MockResolutionStrategy();
-        when(
-          resolutionStrategy.getBoundSize(),
-        ).thenAnswer((_) async => boundSize);
-        when(
-          resolutionStrategy.getFallbackRule(),
-        ).thenAnswer((_) async => fallbackRule);
-        return resolutionStrategy;
-      },
-      newResolutionSelector: ({
-        AspectRatioStrategy? aspectRatioStrategy,
-        ResolutionStrategy? resolutionStrategy,
-        ResolutionFilter? resolutionFilter,
-        // ignore: non_constant_identifier_names
-        BinaryMessenger? pigeon_binaryMessenger,
-        // ignore: non_constant_identifier_names
-        PigeonInstanceManager? pigeon_instanceManager,
-      }) {
-        final MockResolutionSelector mockResolutionSelector =
-            MockResolutionSelector();
-        when(mockResolutionSelector.getAspectRatioStrategy()).thenAnswer(
-          (_) async =>
-              aspectRatioStrategy ??
-              proxy.ratio_4_3FallbackAutoStrategyAspectRatioStrategy(),
-        );
-        when(
-          mockResolutionSelector.resolutionStrategy,
-        ).thenReturn(resolutionStrategy);
-        when(
-          mockResolutionSelector.resolutionFilter,
-        ).thenReturn(resolutionFilter);
-        return mockResolutionSelector;
-      },
+      newImageCapture:
+          ({
+            int? targetRotation,
+            CameraXFlashMode? flashMode,
+            ResolutionSelector? resolutionSelector,
+            // ignore: non_constant_identifier_names
+            BinaryMessenger? pigeon_binaryMessenger,
+            // ignore: non_constant_identifier_names
+            PigeonInstanceManager? pigeon_instanceManager,
+          }) {
+            final MockImageCapture mockImageCapture = MockImageCapture();
+            when(
+              mockImageCapture.resolutionSelector,
+            ).thenReturn(resolutionSelector);
+            return mockImageCapture;
+          },
+      newRecorder:
+          ({
+            int? aspectRatio,
+            int? targetVideoEncodingBitRate,
+            QualitySelector? qualitySelector,
+            // ignore: non_constant_identifier_names
+            BinaryMessenger? pigeon_binaryMessenger,
+            // ignore: non_constant_identifier_names
+            PigeonInstanceManager? pigeon_instanceManager,
+          }) {
+            final MockRecorder mockRecorder = MockRecorder();
+            when(
+              mockRecorder.getQualitySelector(),
+            ).thenAnswer((_) async => qualitySelector ?? MockQualitySelector());
+            return mockRecorder;
+          },
+      withOutputVideoCapture:
+          ({
+            required VideoOutput videoOutput,
+            // ignore: non_constant_identifier_names
+            BinaryMessenger? pigeon_binaryMessenger,
+            // ignore: non_constant_identifier_names
+            PigeonInstanceManager? pigeon_instanceManager,
+          }) {
+            return MockVideoCapture();
+          },
+      newImageAnalysis:
+          newImageAnalysis ??
+          ({
+            int? targetRotation,
+            int? outputImageFormat,
+            ResolutionSelector? resolutionSelector,
+            // ignore: non_constant_identifier_names
+            BinaryMessenger? pigeon_binaryMessenger,
+            // ignore: non_constant_identifier_names
+            PigeonInstanceManager? pigeon_instanceManager,
+          }) {
+            final MockImageAnalysis mockImageAnalysis = MockImageAnalysis();
+            when(
+              mockImageAnalysis.resolutionSelector,
+            ).thenReturn(resolutionSelector);
+            return mockImageAnalysis;
+          },
+      newResolutionStrategy:
+          ({
+            required CameraSize boundSize,
+            required ResolutionStrategyFallbackRule fallbackRule,
+            // ignore: non_constant_identifier_names
+            BinaryMessenger? pigeon_binaryMessenger,
+            // ignore: non_constant_identifier_names
+            PigeonInstanceManager? pigeon_instanceManager,
+          }) {
+            final MockResolutionStrategy resolutionStrategy =
+                MockResolutionStrategy();
+            when(
+              resolutionStrategy.getBoundSize(),
+            ).thenAnswer((_) async => boundSize);
+            when(
+              resolutionStrategy.getFallbackRule(),
+            ).thenAnswer((_) async => fallbackRule);
+            return resolutionStrategy;
+          },
+      newResolutionSelector:
+          ({
+            AspectRatioStrategy? aspectRatioStrategy,
+            ResolutionStrategy? resolutionStrategy,
+            ResolutionFilter? resolutionFilter,
+            // ignore: non_constant_identifier_names
+            BinaryMessenger? pigeon_binaryMessenger,
+            // ignore: non_constant_identifier_names
+            PigeonInstanceManager? pigeon_instanceManager,
+          }) {
+            final MockResolutionSelector mockResolutionSelector =
+                MockResolutionSelector();
+            when(mockResolutionSelector.getAspectRatioStrategy()).thenAnswer(
+              (_) async =>
+                  aspectRatioStrategy ??
+                  proxy.ratio_4_3FallbackAutoStrategyAspectRatioStrategy(),
+            );
+            when(
+              mockResolutionSelector.resolutionStrategy,
+            ).thenReturn(resolutionStrategy);
+            when(
+              mockResolutionSelector.resolutionFilter,
+            ).thenReturn(resolutionFilter);
+            return mockResolutionSelector;
+          },
       fromQualitySelector:
           fromQualitySelector ??
           ({
@@ -310,62 +335,66 @@ void main() {
           }) {
             return MockQualitySelector();
           },
-      newObserver: <T>({
-        required void Function(Observer<T>, T) onChanged,
-        // ignore: non_constant_identifier_names
-        BinaryMessenger? pigeon_binaryMessenger,
-        // ignore: non_constant_identifier_names
-        PigeonInstanceManager? pigeon_instanceManager,
-      }) {
-        return Observer<T>.detached(
-          onChanged: onChanged,
-          pigeon_instanceManager: PigeonInstanceManager(
-            onWeakReferenceRemoved: (_) {},
-          ),
-        );
-      },
-      newSystemServicesManager: ({
-        required void Function(SystemServicesManager, String) onCameraError,
-        // ignore: non_constant_identifier_names
-        BinaryMessenger? pigeon_binaryMessenger,
-        // ignore: non_constant_identifier_names
-        PigeonInstanceManager? pigeon_instanceManager,
-      }) {
-        return MockSystemServicesManager();
-      },
-      newDeviceOrientationManager: ({
-        required void Function(DeviceOrientationManager, String)
-        onDeviceOrientationChanged,
-        // ignore: non_constant_identifier_names
-        BinaryMessenger? pigeon_binaryMessenger,
-        // ignore: non_constant_identifier_names
-        PigeonInstanceManager? pigeon_instanceManager,
-      }) {
-        final MockDeviceOrientationManager manager =
-            MockDeviceOrientationManager();
-        when(manager.getUiOrientation()).thenAnswer((_) async {
-          return 'PORTRAIT_UP';
-        });
-        return manager;
-      },
-      newAspectRatioStrategy: ({
-        required AspectRatio preferredAspectRatio,
-        required AspectRatioStrategyFallbackRule fallbackRule,
-        // ignore: non_constant_identifier_names
-        BinaryMessenger? pigeon_binaryMessenger,
-        // ignore: non_constant_identifier_names
-        PigeonInstanceManager? pigeon_instanceManager,
-      }) {
-        final MockAspectRatioStrategy mockAspectRatioStrategy =
-            MockAspectRatioStrategy();
-        when(
-          mockAspectRatioStrategy.getFallbackRule(),
-        ).thenAnswer((_) async => fallbackRule);
-        when(
-          mockAspectRatioStrategy.getPreferredAspectRatio(),
-        ).thenAnswer((_) async => preferredAspectRatio);
-        return mockAspectRatioStrategy;
-      },
+      newObserver:
+          <T>({
+            required void Function(Observer<T>, T) onChanged,
+            // ignore: non_constant_identifier_names
+            BinaryMessenger? pigeon_binaryMessenger,
+            // ignore: non_constant_identifier_names
+            PigeonInstanceManager? pigeon_instanceManager,
+          }) {
+            return Observer<T>.detached(
+              onChanged: onChanged,
+              pigeon_instanceManager: PigeonInstanceManager(
+                onWeakReferenceRemoved: (_) {},
+              ),
+            );
+          },
+      newSystemServicesManager:
+          ({
+            required void Function(SystemServicesManager, String) onCameraError,
+            // ignore: non_constant_identifier_names
+            BinaryMessenger? pigeon_binaryMessenger,
+            // ignore: non_constant_identifier_names
+            PigeonInstanceManager? pigeon_instanceManager,
+          }) {
+            return MockSystemServicesManager();
+          },
+      newDeviceOrientationManager:
+          ({
+            required void Function(DeviceOrientationManager, String)
+            onDeviceOrientationChanged,
+            // ignore: non_constant_identifier_names
+            BinaryMessenger? pigeon_binaryMessenger,
+            // ignore: non_constant_identifier_names
+            PigeonInstanceManager? pigeon_instanceManager,
+          }) {
+            final MockDeviceOrientationManager manager =
+                MockDeviceOrientationManager();
+            when(manager.getUiOrientation()).thenAnswer((_) async {
+              return 'PORTRAIT_UP';
+            });
+            return manager;
+          },
+      newAspectRatioStrategy:
+          ({
+            required AspectRatio preferredAspectRatio,
+            required AspectRatioStrategyFallbackRule fallbackRule,
+            // ignore: non_constant_identifier_names
+            BinaryMessenger? pigeon_binaryMessenger,
+            // ignore: non_constant_identifier_names
+            PigeonInstanceManager? pigeon_instanceManager,
+          }) {
+            final MockAspectRatioStrategy mockAspectRatioStrategy =
+                MockAspectRatioStrategy();
+            when(
+              mockAspectRatioStrategy.getFallbackRule(),
+            ).thenAnswer((_) async => fallbackRule);
+            when(
+              mockAspectRatioStrategy.getPreferredAspectRatio(),
+            ).thenAnswer((_) async => preferredAspectRatio);
+            return mockAspectRatioStrategy;
+          },
       createWithOnePreferredSizeResolutionFilter:
           createWithOnePreferredSizeResolutionFilter ??
           ({
@@ -377,35 +406,38 @@ void main() {
           }) {
             return MockResolutionFilter();
           },
-      fromCamera2CameraInfo: ({
-        required CameraInfo cameraInfo,
-        // ignore: non_constant_identifier_names
-        BinaryMessenger? pigeon_binaryMessenger,
-        // ignore: non_constant_identifier_names
-        PigeonInstanceManager? pigeon_instanceManager,
-      }) {
-        final MockCamera2CameraInfo camera2cameraInfo = MockCamera2CameraInfo();
-        when(
-          camera2cameraInfo.getCameraCharacteristic(any),
-        ).thenAnswer((_) async => 90);
-        return camera2cameraInfo;
-      },
-      newCameraSize: ({
-        required int width,
-        required int height,
-        // ignore: non_constant_identifier_names
-        BinaryMessenger? pigeon_binaryMessenger,
-        // ignore: non_constant_identifier_names
-        PigeonInstanceManager? pigeon_instanceManager,
-      }) {
-        return CameraSize.pigeon_detached(
-          width: width,
-          height: height,
-          pigeon_instanceManager: PigeonInstanceManager(
-            onWeakReferenceRemoved: (_) {},
-          ),
-        );
-      },
+      fromCamera2CameraInfo:
+          ({
+            required CameraInfo cameraInfo,
+            // ignore: non_constant_identifier_names
+            BinaryMessenger? pigeon_binaryMessenger,
+            // ignore: non_constant_identifier_names
+            PigeonInstanceManager? pigeon_instanceManager,
+          }) {
+            final MockCamera2CameraInfo camera2cameraInfo =
+                MockCamera2CameraInfo();
+            when(
+              camera2cameraInfo.getCameraCharacteristic(any),
+            ).thenAnswer((_) async => 90);
+            return camera2cameraInfo;
+          },
+      newCameraSize:
+          ({
+            required int width,
+            required int height,
+            // ignore: non_constant_identifier_names
+            BinaryMessenger? pigeon_binaryMessenger,
+            // ignore: non_constant_identifier_names
+            PigeonInstanceManager? pigeon_instanceManager,
+          }) {
+            return CameraSize.pigeon_detached(
+              width: width,
+              height: height,
+              pigeon_instanceManager: PigeonInstanceManager(
+                onWeakReferenceRemoved: (_) {},
+              ),
+            );
+          },
       sensorOrientationCameraCharacteristics: () {
         return MockCameraCharacteristicsKey();
       },
@@ -423,17 +455,18 @@ void main() {
       highestAvailableStrategyResolutionStrategy: () {
         return highestAvailableStrategyResolutionStrategy;
       },
-      ratio_4_3FallbackAutoStrategyAspectRatioStrategy:
-          () => ratio_4_3FallbackAutoStrategyAspectRatioStrategy,
-      lowerQualityThanFallbackStrategy: ({
-        required VideoQuality quality,
-        // ignore: non_constant_identifier_names
-        BinaryMessenger? pigeon_binaryMessenger,
-        // ignore: non_constant_identifier_names
-        PigeonInstanceManager? pigeon_instanceManager,
-      }) {
-        return MockFallbackStrategy();
-      },
+      ratio_4_3FallbackAutoStrategyAspectRatioStrategy: () =>
+          ratio_4_3FallbackAutoStrategyAspectRatioStrategy,
+      lowerQualityThanFallbackStrategy:
+          ({
+            required VideoQuality quality,
+            // ignore: non_constant_identifier_names
+            BinaryMessenger? pigeon_binaryMessenger,
+            // ignore: non_constant_identifier_names
+            PigeonInstanceManager? pigeon_instanceManager,
+          }) {
+            return MockFallbackStrategy();
+          },
     );
 
     return proxy;
@@ -603,28 +636,28 @@ void main() {
           BinaryMessenger? pigeon_binaryMessenger,
           // ignore: non_constant_identifier_names
           PigeonInstanceManager? pigeon_instanceManager,
-        }) =>
-            cameraControl == cameraControlForComparison
-                ? camera2cameraControl
-                : Camera2CameraControl.pigeon_detached(
-                  pigeon_instanceManager: testInstanceManager,
-                );
-    proxy.newCaptureRequestOptions = ({
-      required Map<CaptureRequestKey, Object?> options,
-      // ignore: non_constant_identifier_names
-      BinaryMessenger? pigeon_binaryMessenger,
-      // ignore: non_constant_identifier_names
-      PigeonInstanceManager? pigeon_instanceManager,
-    }) {
-      final MockCaptureRequestOptions mockCaptureRequestOptions =
-          MockCaptureRequestOptions();
-      options.forEach((CaptureRequestKey key, Object? value) {
-        when(
-          mockCaptureRequestOptions.getCaptureRequestOption(key),
-        ).thenAnswer((_) async => value);
-      });
-      return mockCaptureRequestOptions;
-    };
+        }) => cameraControl == cameraControlForComparison
+        ? camera2cameraControl
+        : Camera2CameraControl.pigeon_detached(
+            pigeon_instanceManager: testInstanceManager,
+          );
+    proxy.newCaptureRequestOptions =
+        ({
+          required Map<CaptureRequestKey, Object?> options,
+          // ignore: non_constant_identifier_names
+          BinaryMessenger? pigeon_binaryMessenger,
+          // ignore: non_constant_identifier_names
+          PigeonInstanceManager? pigeon_instanceManager,
+        }) {
+          final MockCaptureRequestOptions mockCaptureRequestOptions =
+              MockCaptureRequestOptions();
+          options.forEach((CaptureRequestKey key, Object? value) {
+            when(
+              mockCaptureRequestOptions.getCaptureRequestOption(key),
+            ).thenAnswer((_) async => value);
+          });
+          return mockCaptureRequestOptions;
+        };
     final CaptureRequestKey controlAeLock = CaptureRequestKey.pigeon_detached(
       pigeon_instanceManager: testInstanceManager,
     );
@@ -674,34 +707,37 @@ void main() {
               PigeonInstanceManager? pigeon_instanceManager,
             }) =>
                 Future<ProcessCameraProvider>.value(mockProcessCameraProvider),
-        newCameraSelector: ({
-          LensFacing? requireLensFacing,
-          CameraInfo? cameraInfoForFilter,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          switch (requireLensFacing) {
-            case LensFacing.front:
-              return mockFrontCameraSelector;
-            case LensFacing.back:
-            case LensFacing.external:
-            case LensFacing.unknown:
-            case null:
-          }
+        newCameraSelector:
+            ({
+              LensFacing? requireLensFacing,
+              CameraInfo? cameraInfoForFilter,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              switch (requireLensFacing) {
+                case LensFacing.front:
+                  return mockFrontCameraSelector;
+                case LensFacing.back:
+                case LensFacing.external:
+                case LensFacing.unknown:
+                case null:
+              }
 
-          return mockBackCameraSelector;
-        },
-        newSystemServicesManager: ({
-          required void Function(SystemServicesManager, String) onCameraError,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return MockSystemServicesManager();
-        },
+              return mockBackCameraSelector;
+            },
+        newSystemServicesManager:
+            ({
+              required void Function(SystemServicesManager, String)
+              onCameraError,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return MockSystemServicesManager();
+            },
       );
 
       // Mock calls to native platform
@@ -723,8 +759,8 @@ void main() {
       when(mockBackCameraInfo.sensorRotationDegrees).thenReturn(0);
       when(mockFrontCameraInfo.sensorRotationDegrees).thenReturn(90);
 
-      final List<CameraDescription> cameraDescriptions =
-          await camera.availableCameras();
+      final List<CameraDescription> cameraDescriptions = await camera
+          .availableCameras();
 
       expect(cameraDescriptions.length, returnData.length);
       for (int i = 0; i < returnData.length; i++) {
@@ -732,10 +768,9 @@ void main() {
             (returnData[i] as Map<dynamic, dynamic>).cast<String, Object?>();
         final CameraDescription cameraDescription = CameraDescription(
           name: typedData['name']! as String,
-          lensDirection:
-              (typedData['lensFacing']! as String) == 'front'
-                  ? CameraLensDirection.front
-                  : CameraLensDirection.back,
+          lensDirection: (typedData['lensFacing']! as String) == 'front'
+              ? CameraLensDirection.front
+              : CameraLensDirection.back,
           sensorOrientation: typedData['sensorOrientation']! as int,
         );
         expect(cameraDescriptions[i], cameraDescription);
@@ -779,221 +814,241 @@ void main() {
       bool startedListeningForDeviceOrientationChanges = false;
 
       camera.proxy = CameraXProxy(
-        getInstanceProcessCameraProvider: ({
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) async {
-          return mockProcessCameraProvider;
-        },
-        newCameraSelector: ({
-          LensFacing? requireLensFacing,
-          CameraInfo? cameraInfoForFilter,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          switch (requireLensFacing) {
-            case LensFacing.front:
-              return MockCameraSelector();
-            case LensFacing.back:
-            case LensFacing.external:
-            case LensFacing.unknown:
-            case null:
-          }
+        getInstanceProcessCameraProvider:
+            ({
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) async {
+              return mockProcessCameraProvider;
+            },
+        newCameraSelector:
+            ({
+              LensFacing? requireLensFacing,
+              CameraInfo? cameraInfoForFilter,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              switch (requireLensFacing) {
+                case LensFacing.front:
+                  return MockCameraSelector();
+                case LensFacing.back:
+                case LensFacing.external:
+                case LensFacing.unknown:
+                case null:
+              }
 
-          return mockBackCameraSelector;
-        },
-        newPreview: ({
-          int? targetRotation,
-          ResolutionSelector? resolutionSelector,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return mockPreview;
-        },
-        newImageCapture: ({
-          int? targetRotation,
-          CameraXFlashMode? flashMode,
-          ResolutionSelector? resolutionSelector,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return mockImageCapture;
-        },
-        newRecorder: ({
-          int? aspectRatio,
-          int? targetVideoEncodingBitRate,
-          QualitySelector? qualitySelector,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return mockRecorder;
-        },
-        withOutputVideoCapture: ({
-          required VideoOutput videoOutput,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return mockVideoCapture;
-        },
-        newImageAnalysis: ({
-          int? targetRotation,
-          ResolutionSelector? resolutionSelector,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return mockImageAnalysis;
-        },
-        newResolutionStrategy: ({
-          required CameraSize boundSize,
-          required ResolutionStrategyFallbackRule fallbackRule,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return MockResolutionStrategy();
-        },
-        newResolutionSelector: ({
-          AspectRatioStrategy? aspectRatioStrategy,
-          ResolutionStrategy? resolutionStrategy,
-          ResolutionFilter? resolutionFilter,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return MockResolutionSelector();
-        },
-        fromQualitySelector: ({
-          required VideoQuality quality,
-          FallbackStrategy? fallbackStrategy,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return MockQualitySelector();
-        },
-        newObserver: <T>({
-          required void Function(Observer<T>, T) onChanged,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return Observer<T>.detached(
-            onChanged: onChanged,
-            pigeon_instanceManager: PigeonInstanceManager(
-              onWeakReferenceRemoved: (_) {},
-            ),
-          );
-        },
-        newSystemServicesManager: ({
-          required void Function(SystemServicesManager, String) onCameraError,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          when(
-            mockSystemServicesManager.requestCameraPermissions(any),
-          ).thenAnswer((_) async {
-            cameraPermissionsRequested = true;
-            return null;
-          });
-          return mockSystemServicesManager;
-        },
-        newDeviceOrientationManager: ({
-          required void Function(DeviceOrientationManager, String)
-          onDeviceOrientationChanged,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          final MockDeviceOrientationManager manager =
-              MockDeviceOrientationManager();
-          when(manager.startListeningForDeviceOrientationChange()).thenAnswer((
-            _,
-          ) async {
-            startedListeningForDeviceOrientationChanges = true;
-          });
-          when(manager.getUiOrientation()).thenAnswer((_) async {
-            return 'PORTRAIT_UP';
-          });
-          return manager;
-        },
-        newAspectRatioStrategy: ({
-          required AspectRatio preferredAspectRatio,
-          required AspectRatioStrategyFallbackRule fallbackRule,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return MockAspectRatioStrategy();
-        },
-        createWithOnePreferredSizeResolutionFilter: ({
-          required CameraSize preferredSize,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return MockResolutionFilter();
-        },
-        fromCamera2CameraInfo: ({
-          required CameraInfo cameraInfo,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          final MockCamera2CameraInfo camera2cameraInfo =
-              MockCamera2CameraInfo();
-          when(
-            camera2cameraInfo.getCameraCharacteristic(
-              mockCameraCharacteristicsKey,
-            ),
-          ).thenAnswer((_) async => testSensorOrientation);
-          return camera2cameraInfo;
-        },
-        newCameraSize: ({
-          required int width,
-          required int height,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return MockCameraSize();
-        },
+              return mockBackCameraSelector;
+            },
+        newPreview:
+            ({
+              int? targetRotation,
+              ResolutionSelector? resolutionSelector,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return mockPreview;
+            },
+        newImageCapture:
+            ({
+              int? targetRotation,
+              CameraXFlashMode? flashMode,
+              ResolutionSelector? resolutionSelector,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return mockImageCapture;
+            },
+        newRecorder:
+            ({
+              int? aspectRatio,
+              int? targetVideoEncodingBitRate,
+              QualitySelector? qualitySelector,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return mockRecorder;
+            },
+        withOutputVideoCapture:
+            ({
+              required VideoOutput videoOutput,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return mockVideoCapture;
+            },
+        newImageAnalysis:
+            ({
+              int? targetRotation,
+              int? outputImageFormat,
+              ResolutionSelector? resolutionSelector,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return mockImageAnalysis;
+            },
+        newResolutionStrategy:
+            ({
+              required CameraSize boundSize,
+              required ResolutionStrategyFallbackRule fallbackRule,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return MockResolutionStrategy();
+            },
+        newResolutionSelector:
+            ({
+              AspectRatioStrategy? aspectRatioStrategy,
+              ResolutionStrategy? resolutionStrategy,
+              ResolutionFilter? resolutionFilter,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return MockResolutionSelector();
+            },
+        fromQualitySelector:
+            ({
+              required VideoQuality quality,
+              FallbackStrategy? fallbackStrategy,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return MockQualitySelector();
+            },
+        newObserver:
+            <T>({
+              required void Function(Observer<T>, T) onChanged,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return Observer<T>.detached(
+                onChanged: onChanged,
+                pigeon_instanceManager: PigeonInstanceManager(
+                  onWeakReferenceRemoved: (_) {},
+                ),
+              );
+            },
+        newSystemServicesManager:
+            ({
+              required void Function(SystemServicesManager, String)
+              onCameraError,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              when(
+                mockSystemServicesManager.requestCameraPermissions(any),
+              ).thenAnswer((_) async {
+                cameraPermissionsRequested = true;
+                return null;
+              });
+              return mockSystemServicesManager;
+            },
+        newDeviceOrientationManager:
+            ({
+              required void Function(DeviceOrientationManager, String)
+              onDeviceOrientationChanged,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              final MockDeviceOrientationManager manager =
+                  MockDeviceOrientationManager();
+              when(
+                manager.startListeningForDeviceOrientationChange(),
+              ).thenAnswer((_) async {
+                startedListeningForDeviceOrientationChanges = true;
+              });
+              when(manager.getUiOrientation()).thenAnswer((_) async {
+                return 'PORTRAIT_UP';
+              });
+              return manager;
+            },
+        newAspectRatioStrategy:
+            ({
+              required AspectRatio preferredAspectRatio,
+              required AspectRatioStrategyFallbackRule fallbackRule,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return MockAspectRatioStrategy();
+            },
+        createWithOnePreferredSizeResolutionFilter:
+            ({
+              required CameraSize preferredSize,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return MockResolutionFilter();
+            },
+        fromCamera2CameraInfo:
+            ({
+              required CameraInfo cameraInfo,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              final MockCamera2CameraInfo camera2cameraInfo =
+                  MockCamera2CameraInfo();
+              when(
+                camera2cameraInfo.getCameraCharacteristic(
+                  mockCameraCharacteristicsKey,
+                ),
+              ).thenAnswer((_) async => testSensorOrientation);
+              return camera2cameraInfo;
+            },
+        newCameraSize:
+            ({
+              required int width,
+              required int height,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return MockCameraSize();
+            },
         sensorOrientationCameraCharacteristics: () {
           return mockCameraCharacteristicsKey;
         },
-        lowerQualityOrHigherThanFallbackStrategy: ({
-          required VideoQuality quality,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return MockFallbackStrategy();
-        },
+        lowerQualityOrHigherThanFallbackStrategy:
+            ({
+              required VideoQuality quality,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return MockFallbackStrategy();
+            },
       );
 
       camera.processCameraProvider = mockProcessCameraProvider;
@@ -1045,306 +1100,11 @@ void main() {
 
       // Verify the camera's Preview instance has its surface provider set.
       verify(camera.preview!.setSurfaceProvider(mockSystemServicesManager));
-
-      // Verify the camera state observer is updated.
-      expect(
-        await testCameraClosingObserver(
-          camera,
-          testSurfaceTextureId,
-          verify(mockLiveCameraState.observe(captureAny)).captured.single
-              as Observer<CameraState>,
-        ),
-        isTrue,
-      );
     },
   );
 
   test(
-    'createCamera binds Preview and ImageCapture use cases to ProcessCameraProvider instance',
-    () async {
-      final AndroidCameraCameraX camera = AndroidCameraCameraX();
-      const CameraLensDirection testLensDirection = CameraLensDirection.back;
-      const int testSensorOrientation = 90;
-      const CameraDescription testCameraDescription = CameraDescription(
-        name: 'cameraName',
-        lensDirection: testLensDirection,
-        sensorOrientation: testSensorOrientation,
-      );
-      const ResolutionPreset testResolutionPreset = ResolutionPreset.veryHigh;
-      const bool enableAudio = true;
-
-      // Mock/Detached objects for (typically attached) objects created by
-      // createCamera.
-      final MockProcessCameraProvider mockProcessCameraProvider =
-          MockProcessCameraProvider();
-      final MockPreview mockPreview = MockPreview();
-      final MockCameraSelector mockBackCameraSelector = MockCameraSelector();
-      final MockImageCapture mockImageCapture = MockImageCapture();
-      final MockImageAnalysis mockImageAnalysis = MockImageAnalysis();
-      final MockRecorder mockRecorder = MockRecorder();
-      final MockVideoCapture mockVideoCapture = MockVideoCapture();
-      final MockCamera mockCamera = MockCamera();
-      final MockCameraInfo mockCameraInfo = MockCameraInfo();
-      final MockCameraControl mockCameraControl = MockCameraControl();
-      final MockCamera2CameraInfo mockCamera2CameraInfo =
-          MockCamera2CameraInfo();
-      final MockCameraCharacteristicsKey mockCameraCharacteristicsKey =
-          MockCameraCharacteristicsKey();
-
-      // Tell plugin to create mock/detached objects and stub method calls for the
-      // testing of createCamera.
-      camera.proxy = CameraXProxy(
-        getInstanceProcessCameraProvider: ({
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) async {
-          return mockProcessCameraProvider;
-        },
-        newCameraSelector: ({
-          LensFacing? requireLensFacing,
-          CameraInfo? cameraInfoForFilter,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          switch (requireLensFacing) {
-            case LensFacing.front:
-              return MockCameraSelector();
-            case LensFacing.back:
-            case LensFacing.external:
-            case LensFacing.unknown:
-            case null:
-          }
-
-          return mockBackCameraSelector;
-        },
-        newPreview: ({
-          int? targetRotation,
-          ResolutionSelector? resolutionSelector,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return mockPreview;
-        },
-        newImageCapture: ({
-          int? targetRotation,
-          CameraXFlashMode? flashMode,
-          ResolutionSelector? resolutionSelector,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return mockImageCapture;
-        },
-        newRecorder: ({
-          int? aspectRatio,
-          int? targetVideoEncodingBitRate,
-          QualitySelector? qualitySelector,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return mockRecorder;
-        },
-        withOutputVideoCapture: ({
-          required VideoOutput videoOutput,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return mockVideoCapture;
-        },
-        newImageAnalysis: ({
-          int? targetRotation,
-          ResolutionSelector? resolutionSelector,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return mockImageAnalysis;
-        },
-        newResolutionStrategy: ({
-          required CameraSize boundSize,
-          required ResolutionStrategyFallbackRule fallbackRule,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return MockResolutionStrategy();
-        },
-        newResolutionSelector: ({
-          AspectRatioStrategy? aspectRatioStrategy,
-          ResolutionStrategy? resolutionStrategy,
-          ResolutionFilter? resolutionFilter,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return MockResolutionSelector();
-        },
-        fromQualitySelector: ({
-          required VideoQuality quality,
-          FallbackStrategy? fallbackStrategy,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return MockQualitySelector();
-        },
-        newObserver: <T>({
-          required void Function(Observer<T>, T) onChanged,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return Observer<T>.detached(
-            onChanged: onChanged,
-            pigeon_instanceManager: PigeonInstanceManager(
-              onWeakReferenceRemoved: (_) {},
-            ),
-          );
-        },
-        newSystemServicesManager: ({
-          required void Function(SystemServicesManager, String) onCameraError,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return MockSystemServicesManager();
-        },
-        newDeviceOrientationManager: ({
-          required void Function(DeviceOrientationManager, String)
-          onDeviceOrientationChanged,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          final MockDeviceOrientationManager manager =
-              MockDeviceOrientationManager();
-          when(manager.getUiOrientation()).thenAnswer((_) async {
-            return 'PORTRAIT_UP';
-          });
-          return manager;
-        },
-        newAspectRatioStrategy: ({
-          required AspectRatio preferredAspectRatio,
-          required AspectRatioStrategyFallbackRule fallbackRule,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return MockAspectRatioStrategy();
-        },
-        createWithOnePreferredSizeResolutionFilter: ({
-          required CameraSize preferredSize,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return MockResolutionFilter();
-        },
-        fromCamera2CameraInfo: ({
-          required CameraInfo cameraInfo,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          when(
-            mockCamera2CameraInfo.getCameraCharacteristic(
-              mockCameraCharacteristicsKey,
-            ),
-          ).thenAnswer((_) async => testSensorOrientation);
-          return mockCamera2CameraInfo;
-        },
-        newCameraSize: ({
-          required int width,
-          required int height,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return MockCameraSize();
-        },
-        sensorOrientationCameraCharacteristics: () {
-          return mockCameraCharacteristicsKey;
-        },
-        lowerQualityOrHigherThanFallbackStrategy: ({
-          required VideoQuality quality,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return MockFallbackStrategy();
-        },
-      );
-
-      when(
-        mockProcessCameraProvider.bindToLifecycle(
-          mockBackCameraSelector,
-          <UseCase>[mockPreview, mockImageCapture, mockImageAnalysis],
-        ),
-      ).thenAnswer((_) async => mockCamera);
-      when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
-      when(
-        mockCameraInfo.getCameraState(),
-      ).thenAnswer((_) async => MockLiveCameraState());
-      when(mockCamera.cameraControl).thenAnswer((_) => mockCameraControl);
-
-      camera.processCameraProvider = mockProcessCameraProvider;
-
-      await camera.createCameraWithSettings(
-        testCameraDescription,
-        const MediaSettings(
-          resolutionPreset: testResolutionPreset,
-          fps: 15,
-          videoBitrate: 2000000,
-          audioBitrate: 64000,
-          enableAudio: enableAudio,
-        ),
-      );
-
-      // Verify expected UseCases were bound.
-      verify(
-        camera.processCameraProvider!.bindToLifecycle(
-          camera.cameraSelector!,
-          <UseCase>[mockPreview, mockImageCapture, mockImageAnalysis],
-        ),
-      );
-
-      // Verify the camera's CameraInfo instance got updated.
-      expect(camera.cameraInfo, equals(mockCameraInfo));
-
-      // Verify camera's CameraControl instance got updated.
-      expect(camera.cameraControl, equals(mockCameraControl));
-
-      // Verify preview has been marked as bound to the camera lifecycle by
-      // createCamera.
-      expect(camera.previewInitiallyBound, isTrue);
-    },
-  );
-
-  test(
-    'createCamera properly sets preset resolution selection strategy for non-video capture use cases',
+    'createCamera and initializeCamera properly set preset resolution selection strategy for non-video capture use cases',
     () async {
       final AndroidCameraCameraX camera = AndroidCameraCameraX();
       const CameraLensDirection testLensDirection = CameraLensDirection.back;
@@ -1374,17 +1134,18 @@ void main() {
 
       // Tell plugin to create mock/detached objects for testing createCamera
       // as needed.
-      camera.proxy = getProxyForTestingResolutionPreset(
+      camera.proxy = getProxyForTestingUseCaseConfiguration(
         mockProcessCameraProvider,
       );
 
       // Test non-null resolution presets.
       for (final ResolutionPreset resolutionPreset in ResolutionPreset.values) {
-        await camera.createCamera(
+        final int flutterSurfaceTextureId = await camera.createCamera(
           testCameraDescription,
           resolutionPreset,
           enableAudio: enableAudio,
         );
+        await camera.initializeCamera(flutterSurfaceTextureId);
 
         late final CameraSize? expectedBoundSize;
         final PigeonInstanceManager testInstanceManager = PigeonInstanceManager(
@@ -1425,9 +1186,11 @@ void main() {
             continue;
         }
 
-        final CameraSize? previewSize =
-            await camera.preview!.resolutionSelector!.resolutionStrategy!
-                .getBoundSize();
+        final CameraSize? previewSize = await camera
+            .preview!
+            .resolutionSelector!
+            .resolutionStrategy!
+            .getBoundSize();
         expect(previewSize?.width, equals(expectedBoundSize.width));
         expect(previewSize?.height, equals(expectedBoundSize.height));
         expect(
@@ -1436,9 +1199,11 @@ void main() {
           ResolutionStrategyFallbackRule.closestLowerThenHigher,
         );
 
-        final CameraSize? imageCaptureSize =
-            await camera.imageCapture!.resolutionSelector!.resolutionStrategy!
-                .getBoundSize();
+        final CameraSize? imageCaptureSize = await camera
+            .imageCapture!
+            .resolutionSelector!
+            .resolutionStrategy!
+            .getBoundSize();
         expect(imageCaptureSize?.width, equals(expectedBoundSize.width));
         expect(imageCaptureSize?.height, equals(expectedBoundSize.height));
         expect(
@@ -1447,9 +1212,11 @@ void main() {
           ResolutionStrategyFallbackRule.closestLowerThenHigher,
         );
 
-        final CameraSize? imageAnalysisSize =
-            await camera.imageAnalysis!.resolutionSelector!.resolutionStrategy!
-                .getBoundSize();
+        final CameraSize? imageAnalysisSize = await camera
+            .imageAnalysis!
+            .resolutionSelector!
+            .resolutionStrategy!
+            .getBoundSize();
         expect(imageAnalysisSize?.width, equals(expectedBoundSize.width));
         expect(imageAnalysisSize?.height, equals(expectedBoundSize.height));
         expect(
@@ -1480,7 +1247,12 @@ void main() {
       );
 
       // Test null case.
-      await camera.createCamera(testCameraDescription, null);
+      final int flutterSurfaceTextureId = await camera.createCamera(
+        testCameraDescription,
+        null,
+      );
+      await camera.initializeCamera(flutterSurfaceTextureId);
+
       expect(camera.preview!.resolutionSelector, isNull);
       expect(camera.imageCapture!.resolutionSelector, isNull);
       expect(camera.imageAnalysis!.resolutionSelector, isNull);
@@ -1488,7 +1260,7 @@ void main() {
   );
 
   test(
-    'createCamera properly sets filter for resolution preset for non-video capture use cases',
+    'createCamera and initializeCamera properly set filter for resolution preset for non-video capture use cases',
     () async {
       final AndroidCameraCameraX camera = AndroidCameraCameraX();
       const CameraLensDirection testLensDirection = CameraLensDirection.front;
@@ -1510,18 +1282,19 @@ void main() {
       // Tell plugin to create mock/detached objects for testing createCamera
       // as needed.
       CameraSize? lastSetPreferredSize;
-      camera.proxy = getProxyForTestingResolutionPreset(
+      camera.proxy = getProxyForTestingUseCaseConfiguration(
         mockProcessCameraProvider,
-        createWithOnePreferredSizeResolutionFilter: ({
-          required CameraSize preferredSize,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          lastSetPreferredSize = preferredSize;
-          return MockResolutionFilter();
-        },
+        createWithOnePreferredSizeResolutionFilter:
+            ({
+              required CameraSize preferredSize,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              lastSetPreferredSize = preferredSize;
+              return MockResolutionFilter();
+            },
       );
 
       when(
@@ -1535,11 +1308,12 @@ void main() {
 
       // Test non-null resolution presets.
       for (final ResolutionPreset resolutionPreset in ResolutionPreset.values) {
-        await camera.createCamera(
+        final int flutterSurfaceTextureId = await camera.createCamera(
           testCameraDescription,
           resolutionPreset,
           enableAudio: enableAudio,
         );
+        await camera.initializeCamera(flutterSurfaceTextureId);
 
         CameraSize? expectedPreferredResolution;
         final PigeonInstanceManager testInstanceManager = PigeonInstanceManager(
@@ -1602,9 +1376,11 @@ void main() {
           equals(expectedPreferredResolution.height),
         );
 
-        final CameraSize? imageCaptureSize =
-            await camera.imageCapture!.resolutionSelector!.resolutionStrategy!
-                .getBoundSize();
+        final CameraSize? imageCaptureSize = await camera
+            .imageCapture!
+            .resolutionSelector!
+            .resolutionStrategy!
+            .getBoundSize();
         expect(
           imageCaptureSize?.width,
           equals(expectedPreferredResolution.width),
@@ -1614,9 +1390,11 @@ void main() {
           equals(expectedPreferredResolution.height),
         );
 
-        final CameraSize? imageAnalysisSize =
-            await camera.imageAnalysis!.resolutionSelector!.resolutionStrategy!
-                .getBoundSize();
+        final CameraSize? imageAnalysisSize = await camera
+            .imageAnalysis!
+            .resolutionSelector!
+            .resolutionStrategy!
+            .getBoundSize();
         expect(
           imageAnalysisSize?.width,
           equals(expectedPreferredResolution.width),
@@ -1628,7 +1406,12 @@ void main() {
       }
 
       // Test null case.
-      await camera.createCamera(testCameraDescription, null);
+      final int flutterSurfaceTextureId = await camera.createCamera(
+        testCameraDescription,
+        null,
+      );
+      await camera.initializeCamera(flutterSurfaceTextureId);
+
       expect(camera.preview!.resolutionSelector, isNull);
       expect(camera.imageCapture!.resolutionSelector, isNull);
       expect(camera.imageAnalysis!.resolutionSelector, isNull);
@@ -1636,7 +1419,7 @@ void main() {
   );
 
   test(
-    'createCamera properly sets aspect ratio based on preset resolution for non-video capture use cases',
+    'createCamera and initializeCamera properly set aspect ratio based on preset resolution for non-video capture use cases',
     () async {
       final AndroidCameraCameraX camera = AndroidCameraCameraX();
       const CameraLensDirection testLensDirection = CameraLensDirection.back;
@@ -1647,6 +1430,7 @@ void main() {
         sensorOrientation: testSensorOrientation,
       );
       const bool enableAudio = true;
+      const int testCameraId = 12;
       final MockCamera mockCamera = MockCamera();
 
       // Mock/Detached objects for (typically attached) objects created by
@@ -1657,7 +1441,7 @@ void main() {
 
       // Tell plugin to create mock/detached objects for testing createCamera
       // as needed.
-      camera.proxy = getProxyForTestingResolutionPreset(
+      camera.proxy = getProxyForTestingUseCaseConfiguration(
         mockProcessCameraProvider,
       );
       when(
@@ -1671,11 +1455,12 @@ void main() {
 
       // Test non-null resolution presets.
       for (final ResolutionPreset resolutionPreset in ResolutionPreset.values) {
-        await camera.createCamera(
+        final int flutterSurfaceTextureId = await camera.createCamera(
           testCameraDescription,
           resolutionPreset,
           enableAudio: enableAudio,
         );
+        await camera.initializeCamera(flutterSurfaceTextureId);
 
         AspectRatio? expectedAspectRatio;
         AspectRatioStrategyFallbackRule? expectedFallbackRule;
@@ -1718,14 +1503,18 @@ void main() {
           continue;
         }
 
-        final AspectRatioStrategy previewStrategy =
-            await camera.preview!.resolutionSelector!.getAspectRatioStrategy();
-        final AspectRatioStrategy imageCaptureStrategy =
-            await camera.imageCapture!.resolutionSelector!
-                .getAspectRatioStrategy();
-        final AspectRatioStrategy imageAnalysisStrategy =
-            await camera.imageCapture!.resolutionSelector!
-                .getAspectRatioStrategy();
+        final AspectRatioStrategy previewStrategy = await camera
+            .preview!
+            .resolutionSelector!
+            .getAspectRatioStrategy();
+        final AspectRatioStrategy imageCaptureStrategy = await camera
+            .imageCapture!
+            .resolutionSelector!
+            .getAspectRatioStrategy();
+        final AspectRatioStrategy imageAnalysisStrategy = await camera
+            .imageCapture!
+            .resolutionSelector!
+            .getAspectRatioStrategy();
 
         // Check aspect ratio.
         expect(
@@ -1758,9 +1547,321 @@ void main() {
 
       // Test null case.
       await camera.createCamera(testCameraDescription, null);
+      await camera.initializeCamera(testCameraId);
+
       expect(camera.preview!.resolutionSelector, isNull);
       expect(camera.imageCapture!.resolutionSelector, isNull);
       expect(camera.imageAnalysis!.resolutionSelector, isNull);
+    },
+  );
+
+  test(
+    'createCamera and initializeCamera binds Preview, ImageCapture, and ImageAnalysis use cases to ProcessCameraProvider instance',
+    () async {
+      final AndroidCameraCameraX camera = AndroidCameraCameraX();
+      const CameraLensDirection testLensDirection = CameraLensDirection.back;
+      const int testSensorOrientation = 90;
+      const CameraDescription testCameraDescription = CameraDescription(
+        name: 'cameraName',
+        lensDirection: testLensDirection,
+        sensorOrientation: testSensorOrientation,
+      );
+      const ResolutionPreset testResolutionPreset = ResolutionPreset.veryHigh;
+      const bool enableAudio = true;
+
+      // Mock/Detached objects for (typically attached) objects created by
+      // createCamera.
+      final MockProcessCameraProvider mockProcessCameraProvider =
+          MockProcessCameraProvider();
+      final MockPreview mockPreview = MockPreview();
+      final MockCameraSelector mockBackCameraSelector = MockCameraSelector();
+      final MockImageCapture mockImageCapture = MockImageCapture();
+      final MockImageAnalysis mockImageAnalysis = MockImageAnalysis();
+      final MockRecorder mockRecorder = MockRecorder();
+      final MockVideoCapture mockVideoCapture = MockVideoCapture();
+      final MockCamera mockCamera = MockCamera();
+      final MockCameraInfo mockCameraInfo = MockCameraInfo();
+      final MockCameraControl mockCameraControl = MockCameraControl();
+      final MockCamera2CameraInfo mockCamera2CameraInfo =
+          MockCamera2CameraInfo();
+      final MockCameraCharacteristicsKey mockCameraCharacteristicsKey =
+          MockCameraCharacteristicsKey();
+
+      // Tell plugin to create mock/detached objects and stub method calls for the
+      // testing of createCamera.
+      camera.proxy = CameraXProxy(
+        getInstanceProcessCameraProvider:
+            ({
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) async {
+              return mockProcessCameraProvider;
+            },
+        newCameraSelector:
+            ({
+              LensFacing? requireLensFacing,
+              CameraInfo? cameraInfoForFilter,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              switch (requireLensFacing) {
+                case LensFacing.front:
+                  return MockCameraSelector();
+                case LensFacing.back:
+                case LensFacing.external:
+                case LensFacing.unknown:
+                case null:
+              }
+
+              return mockBackCameraSelector;
+            },
+        newPreview:
+            ({
+              int? targetRotation,
+              ResolutionSelector? resolutionSelector,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              final ResolutionInfo testResolutionInfo =
+                  ResolutionInfo.pigeon_detached(resolution: MockCameraSize());
+              when(
+                mockPreview.getResolutionInfo(),
+              ).thenAnswer((_) async => testResolutionInfo);
+              return mockPreview;
+            },
+        newImageCapture:
+            ({
+              int? targetRotation,
+              CameraXFlashMode? flashMode,
+              ResolutionSelector? resolutionSelector,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return mockImageCapture;
+            },
+        newRecorder:
+            ({
+              int? aspectRatio,
+              int? targetVideoEncodingBitRate,
+              QualitySelector? qualitySelector,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return mockRecorder;
+            },
+        withOutputVideoCapture:
+            ({
+              required VideoOutput videoOutput,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return mockVideoCapture;
+            },
+        newImageAnalysis:
+            ({
+              int? targetRotation,
+              int? outputImageFormat,
+              ResolutionSelector? resolutionSelector,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return mockImageAnalysis;
+            },
+        newResolutionStrategy:
+            ({
+              required CameraSize boundSize,
+              required ResolutionStrategyFallbackRule fallbackRule,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return MockResolutionStrategy();
+            },
+        newResolutionSelector:
+            ({
+              AspectRatioStrategy? aspectRatioStrategy,
+              ResolutionStrategy? resolutionStrategy,
+              ResolutionFilter? resolutionFilter,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return MockResolutionSelector();
+            },
+        fromQualitySelector:
+            ({
+              required VideoQuality quality,
+              FallbackStrategy? fallbackStrategy,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return MockQualitySelector();
+            },
+        newObserver:
+            <T>({
+              required void Function(Observer<T>, T) onChanged,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return Observer<T>.detached(
+                onChanged: onChanged,
+                pigeon_instanceManager: PigeonInstanceManager(
+                  onWeakReferenceRemoved: (_) {},
+                ),
+              );
+            },
+        newSystemServicesManager:
+            ({
+              required void Function(SystemServicesManager, String)
+              onCameraError,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return MockSystemServicesManager();
+            },
+        newDeviceOrientationManager:
+            ({
+              required void Function(DeviceOrientationManager, String)
+              onDeviceOrientationChanged,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              final MockDeviceOrientationManager manager =
+                  MockDeviceOrientationManager();
+              when(manager.getUiOrientation()).thenAnswer((_) async {
+                return 'PORTRAIT_UP';
+              });
+              return manager;
+            },
+        newAspectRatioStrategy:
+            ({
+              required AspectRatio preferredAspectRatio,
+              required AspectRatioStrategyFallbackRule fallbackRule,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return MockAspectRatioStrategy();
+            },
+        createWithOnePreferredSizeResolutionFilter:
+            ({
+              required CameraSize preferredSize,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return MockResolutionFilter();
+            },
+        fromCamera2CameraInfo:
+            ({
+              required CameraInfo cameraInfo,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              when(
+                mockCamera2CameraInfo.getCameraCharacteristic(
+                  mockCameraCharacteristicsKey,
+                ),
+              ).thenAnswer((_) async => testSensorOrientation);
+              return mockCamera2CameraInfo;
+            },
+        newCameraSize:
+            ({
+              required int width,
+              required int height,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return MockCameraSize();
+            },
+        sensorOrientationCameraCharacteristics: () {
+          return mockCameraCharacteristicsKey;
+        },
+        lowerQualityOrHigherThanFallbackStrategy:
+            ({
+              required VideoQuality quality,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return MockFallbackStrategy();
+            },
+      );
+
+      when(
+        mockProcessCameraProvider.bindToLifecycle(
+          mockBackCameraSelector,
+          <UseCase>[mockPreview, mockImageCapture, mockImageAnalysis],
+        ),
+      ).thenAnswer((_) async => mockCamera);
+      when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
+      when(
+        mockCameraInfo.getCameraState(),
+      ).thenAnswer((_) async => MockLiveCameraState());
+      when(mockCamera.cameraControl).thenAnswer((_) => mockCameraControl);
+
+      camera.processCameraProvider = mockProcessCameraProvider;
+
+      final int flutterSurfaceTextureId = await camera.createCameraWithSettings(
+        testCameraDescription,
+        const MediaSettings(
+          resolutionPreset: testResolutionPreset,
+          fps: 15,
+          videoBitrate: 2000000,
+          audioBitrate: 64000,
+          enableAudio: enableAudio,
+        ),
+      );
+      await camera.initializeCamera(flutterSurfaceTextureId);
+
+      // Verify expected UseCases were bound.
+      verify(
+        camera.processCameraProvider!.bindToLifecycle(
+          camera.cameraSelector!,
+          <UseCase>[mockPreview, mockImageCapture, mockImageAnalysis],
+        ),
+      );
+
+      // Verify the camera's CameraInfo instance got updated.
+      expect(camera.cameraInfo, equals(mockCameraInfo));
+
+      // Verify camera's CameraControl instance got updated.
+      expect(camera.cameraControl, equals(mockCameraControl));
+
+      // Verify preview has been marked as bound to the camera lifecycle by
+      // createCamera.
+      expect(camera.previewInitiallyBound, isTrue);
     },
   );
 
@@ -1791,30 +1892,32 @@ void main() {
       FallbackStrategy? setFallbackStrategy;
       final MockFallbackStrategy mockFallbackStrategy = MockFallbackStrategy();
       final MockQualitySelector mockQualitySelector = MockQualitySelector();
-      camera.proxy = getProxyForTestingResolutionPreset(
+      camera.proxy = getProxyForTestingUseCaseConfiguration(
         mockProcessCameraProvider,
-        lowerQualityOrHigherThanFallbackStrategy: ({
-          required VideoQuality quality,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          fallbackStrategyVideoQuality = quality;
-          return mockFallbackStrategy;
-        },
-        fromQualitySelector: ({
-          required VideoQuality quality,
-          FallbackStrategy? fallbackStrategy,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          qualitySelectorVideoQuality = quality;
-          setFallbackStrategy = fallbackStrategy;
-          return mockQualitySelector;
-        },
+        lowerQualityOrHigherThanFallbackStrategy:
+            ({
+              required VideoQuality quality,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              fallbackStrategyVideoQuality = quality;
+              return mockFallbackStrategy;
+            },
+        fromQualitySelector:
+            ({
+              required VideoQuality quality,
+              FallbackStrategy? fallbackStrategy,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              qualitySelectorVideoQuality = quality;
+              setFallbackStrategy = fallbackStrategy;
+              return mockQualitySelector;
+            },
       );
 
       when(
@@ -1895,23 +1998,26 @@ void main() {
       // The proxy needed for this test is the same as testing resolution
       // presets except for mocking the retrieval of the sensor and current
       // UI orientation.
-      camera.proxy = getProxyForTestingResolutionPreset(
+      camera.proxy = getProxyForTestingUseCaseConfiguration(
         mockProcessCameraProvider,
-        newPreview: ({
-          int? targetRotation,
-          ResolutionSelector? resolutionSelector,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          final MockPreview mockPreview = MockPreview();
-          when(
-            mockPreview.surfaceProducerHandlesCropAndRotation(),
-          ).thenAnswer((_) async => testHandlesCropAndRotation);
-          when(mockPreview.resolutionSelector).thenReturn(resolutionSelector);
-          return mockPreview;
-        },
+        newPreview:
+            ({
+              int? targetRotation,
+              ResolutionSelector? resolutionSelector,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              final MockPreview mockPreview = MockPreview();
+              when(
+                mockPreview.surfaceProducerHandlesCropAndRotation(),
+              ).thenAnswer((_) async => testHandlesCropAndRotation);
+              when(
+                mockPreview.resolutionSelector,
+              ).thenReturn(resolutionSelector);
+              return mockPreview;
+            },
       );
 
       when(
@@ -1997,211 +2103,233 @@ void main() {
               BinaryMessenger? pigeonBinaryMessenger,
               PigeonInstanceManager? pigeonInstanceManager,
             }) {},
-        getInstanceProcessCameraProvider: ({
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return Future<ProcessCameraProvider>.value(mockProcessCameraProvider);
-        },
-        newCameraSelector: ({
-          LensFacing? requireLensFacing,
-          CameraInfo? cameraInfoForFilter,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          switch (requireLensFacing) {
-            case LensFacing.front:
-              return mockFrontCameraSelector;
-            case LensFacing.back:
-            case LensFacing.external:
-            case LensFacing.unknown:
-            case null:
-          }
-          if (cameraInfoForFilter == mockBackCameraInfoOne) {
-            return mockChosenCameraInfoCameraSelector;
-          }
+        getInstanceProcessCameraProvider:
+            ({
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return Future<ProcessCameraProvider>.value(
+                mockProcessCameraProvider,
+              );
+            },
+        newCameraSelector:
+            ({
+              LensFacing? requireLensFacing,
+              CameraInfo? cameraInfoForFilter,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              switch (requireLensFacing) {
+                case LensFacing.front:
+                  return mockFrontCameraSelector;
+                case LensFacing.back:
+                case LensFacing.external:
+                case LensFacing.unknown:
+                case null:
+              }
+              if (cameraInfoForFilter == mockBackCameraInfoOne) {
+                return mockChosenCameraInfoCameraSelector;
+              }
 
-          return mockBackCameraSelector;
-        },
-        newSystemServicesManager: ({
-          required void Function(SystemServicesManager, String) onCameraError,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return MockSystemServicesManager();
-        },
-        newPreview: ({
-          int? targetRotation,
-          ResolutionSelector? resolutionSelector,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return mockPreview;
-        },
-        newImageCapture: ({
-          int? targetRotation,
-          CameraXFlashMode? flashMode,
-          ResolutionSelector? resolutionSelector,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return mockImageCapture;
-        },
-        newRecorder: ({
-          int? aspectRatio,
-          int? targetVideoEncodingBitRate,
-          QualitySelector? qualitySelector,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return mockRecorder;
-        },
-        withOutputVideoCapture: ({
-          required VideoOutput videoOutput,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return mockVideoCapture;
-        },
-        newImageAnalysis: ({
-          int? targetRotation,
-          ResolutionSelector? resolutionSelector,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return mockImageAnalysis;
-        },
-        newResolutionStrategy: ({
-          required CameraSize boundSize,
-          required ResolutionStrategyFallbackRule fallbackRule,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return MockResolutionStrategy();
-        },
-        newResolutionSelector: ({
-          AspectRatioStrategy? aspectRatioStrategy,
-          ResolutionStrategy? resolutionStrategy,
-          ResolutionFilter? resolutionFilter,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return MockResolutionSelector();
-        },
-        fromQualitySelector: ({
-          required VideoQuality quality,
-          FallbackStrategy? fallbackStrategy,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return MockQualitySelector();
-        },
-        newObserver: <T>({
-          required void Function(Observer<T>, T) onChanged,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return Observer<T>.detached(
-            onChanged: onChanged,
-            pigeon_instanceManager: PigeonInstanceManager(
-              onWeakReferenceRemoved: (_) {},
-            ),
-          );
-        },
-        newDeviceOrientationManager: ({
-          required void Function(DeviceOrientationManager, String)
-          onDeviceOrientationChanged,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          final MockDeviceOrientationManager manager =
-              MockDeviceOrientationManager();
-          when(manager.getUiOrientation()).thenAnswer((_) async {
-            return 'PORTRAIT_UP';
-          });
-          return manager;
-        },
-        newAspectRatioStrategy: ({
-          required AspectRatio preferredAspectRatio,
-          required AspectRatioStrategyFallbackRule fallbackRule,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return MockAspectRatioStrategy();
-        },
-        createWithOnePreferredSizeResolutionFilter: ({
-          required CameraSize preferredSize,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return MockResolutionFilter();
-        },
-        fromCamera2CameraInfo: ({
-          required CameraInfo cameraInfo,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          when(
-            mockCamera2CameraInfo.getCameraCharacteristic(
-              mockCameraCharacteristicsKey,
-            ),
-          ).thenAnswer((_) async => testSensorOrientation);
-          return mockCamera2CameraInfo;
-        },
-        newCameraSize: ({
-          required int width,
-          required int height,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return MockCameraSize();
-        },
+              return mockBackCameraSelector;
+            },
+        newSystemServicesManager:
+            ({
+              required void Function(SystemServicesManager, String)
+              onCameraError,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return MockSystemServicesManager();
+            },
+        newPreview:
+            ({
+              int? targetRotation,
+              ResolutionSelector? resolutionSelector,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return mockPreview;
+            },
+        newImageCapture:
+            ({
+              int? targetRotation,
+              CameraXFlashMode? flashMode,
+              ResolutionSelector? resolutionSelector,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return mockImageCapture;
+            },
+        newRecorder:
+            ({
+              int? aspectRatio,
+              int? targetVideoEncodingBitRate,
+              QualitySelector? qualitySelector,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return mockRecorder;
+            },
+        withOutputVideoCapture:
+            ({
+              required VideoOutput videoOutput,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return mockVideoCapture;
+            },
+        newImageAnalysis:
+            ({
+              int? targetRotation,
+              int? outputImageFormat,
+              ResolutionSelector? resolutionSelector,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return mockImageAnalysis;
+            },
+        newResolutionStrategy:
+            ({
+              required CameraSize boundSize,
+              required ResolutionStrategyFallbackRule fallbackRule,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return MockResolutionStrategy();
+            },
+        newResolutionSelector:
+            ({
+              AspectRatioStrategy? aspectRatioStrategy,
+              ResolutionStrategy? resolutionStrategy,
+              ResolutionFilter? resolutionFilter,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return MockResolutionSelector();
+            },
+        fromQualitySelector:
+            ({
+              required VideoQuality quality,
+              FallbackStrategy? fallbackStrategy,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return MockQualitySelector();
+            },
+        newObserver:
+            <T>({
+              required void Function(Observer<T>, T) onChanged,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return Observer<T>.detached(
+                onChanged: onChanged,
+                pigeon_instanceManager: PigeonInstanceManager(
+                  onWeakReferenceRemoved: (_) {},
+                ),
+              );
+            },
+        newDeviceOrientationManager:
+            ({
+              required void Function(DeviceOrientationManager, String)
+              onDeviceOrientationChanged,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              final MockDeviceOrientationManager manager =
+                  MockDeviceOrientationManager();
+              when(manager.getUiOrientation()).thenAnswer((_) async {
+                return 'PORTRAIT_UP';
+              });
+              return manager;
+            },
+        newAspectRatioStrategy:
+            ({
+              required AspectRatio preferredAspectRatio,
+              required AspectRatioStrategyFallbackRule fallbackRule,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return MockAspectRatioStrategy();
+            },
+        createWithOnePreferredSizeResolutionFilter:
+            ({
+              required CameraSize preferredSize,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return MockResolutionFilter();
+            },
+        fromCamera2CameraInfo:
+            ({
+              required CameraInfo cameraInfo,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              when(
+                mockCamera2CameraInfo.getCameraCharacteristic(
+                  mockCameraCharacteristicsKey,
+                ),
+              ).thenAnswer((_) async => testSensorOrientation);
+              return mockCamera2CameraInfo;
+            },
+        newCameraSize:
+            ({
+              required int width,
+              required int height,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return MockCameraSize();
+            },
         sensorOrientationCameraCharacteristics: () {
           return mockCameraCharacteristicsKey;
         },
-        lowerQualityOrHigherThanFallbackStrategy: ({
-          required VideoQuality quality,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return MockFallbackStrategy();
-        },
+        lowerQualityOrHigherThanFallbackStrategy:
+            ({
+              required VideoQuality quality,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return MockFallbackStrategy();
+            },
       );
 
       // Mock calls to native platform
@@ -2238,8 +2366,8 @@ void main() {
         mockFrontCameraSelector.filter(<MockCameraInfo>[mockFrontCameraInfo]),
       ).thenAnswer((_) async => <MockCameraInfo>[mockFrontCameraInfo]);
 
-      final List<CameraDescription> cameraDescriptions =
-          await camera.availableCameras();
+      final List<CameraDescription> cameraDescriptions = await camera
+          .availableCameras();
       expect(cameraDescriptions.length, returnData.length);
 
       for (int i = 0; i < returnData.length; i++) {
@@ -2250,10 +2378,9 @@ void main() {
             mockCameraInfosList[i];
         final CameraDescription cameraDescription = CameraDescription(
           name: savedData['name']! as String,
-          lensDirection:
-              (savedData['lensFacing']! as String) == 'front'
-                  ? CameraLensDirection.front
-                  : CameraLensDirection.back,
+          lensDirection: (savedData['lensFacing']! as String) == 'front'
+              ? CameraLensDirection.front
+              : CameraLensDirection.back,
           sensorOrientation: savedData['sensorOrientation']! as int,
         );
         expect(cameraDescriptions[i], cameraDescription);
@@ -2308,6 +2435,176 @@ void main() {
     },
   );
 
+  test('initializeCamera sets camera state observer as expected', () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    const CameraLensDirection testLensDirection = CameraLensDirection.back;
+    const int testSensorOrientation = 90;
+    const CameraDescription testCameraDescription = CameraDescription(
+      name: 'cameraName',
+      lensDirection: testLensDirection,
+      sensorOrientation: testSensorOrientation,
+    );
+    const bool enableAudio = true;
+    final MockCamera mockCamera = MockCamera();
+    const int testSurfaceTextureId = 244;
+
+    // Mock/Detached objects for (typically attached) objects created by
+    // createCamera.
+    final MockProcessCameraProvider mockProcessCameraProvider =
+        MockProcessCameraProvider();
+    final MockCameraInfo mockCameraInfo = MockCameraInfo();
+    final MockLiveCameraState mockLiveCameraState = MockLiveCameraState();
+    final MockPreview mockPreview = MockPreview();
+    final ResolutionInfo testResolutionInfo = ResolutionInfo.pigeon_detached(
+      resolution: MockCameraSize(),
+    );
+
+    when(
+      mockProcessCameraProvider.bindToLifecycle(any, any),
+    ).thenAnswer((_) async => mockCamera);
+    when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
+    when(
+      mockCameraInfo.getCameraState(),
+    ).thenAnswer((_) async => mockLiveCameraState);
+    when(
+      mockPreview.getResolutionInfo(),
+    ).thenAnswer((_) async => testResolutionInfo);
+    when(
+      mockPreview.setSurfaceProvider(any),
+    ).thenAnswer((_) async => testSurfaceTextureId);
+    camera.processCameraProvider = mockProcessCameraProvider;
+
+    // Tell plugin to create mock/detached objects for testing createCamera
+    // as needed.
+    camera.proxy = getProxyForTestingUseCaseConfiguration(
+      mockProcessCameraProvider,
+      newPreview:
+          ({
+            // ignore: non_constant_identifier_names
+            BinaryMessenger? pigeon_binaryMessenger,
+            // ignore: non_constant_identifier_names
+            PigeonInstanceManager? pigeon_instanceManager,
+            ResolutionSelector? resolutionSelector,
+            int? targetRotation,
+          }) => mockPreview,
+    );
+
+    // Create and initialize camera.
+    await camera.createCameraWithSettings(
+      testCameraDescription,
+      const MediaSettings(enableAudio: enableAudio),
+    );
+    await camera.initializeCamera(testSurfaceTextureId);
+
+    // Verify the camera state observer is updated.
+    expect(
+      await testCameraClosingObserver(
+        camera,
+        testSurfaceTextureId,
+        verify(mockLiveCameraState.observe(captureAny)).captured.single
+            as Observer<CameraState>,
+      ),
+      isTrue,
+    );
+  });
+
+  test(
+    'initializeCamera sets image format of ImageAnalysis use case as expected',
+    () async {
+      final AndroidCameraCameraX camera = AndroidCameraCameraX();
+      const CameraLensDirection testLensDirection = CameraLensDirection.back;
+      const int testSensorOrientation = 90;
+      const CameraDescription testCameraDescription = CameraDescription(
+        name: 'cameraName',
+        lensDirection: testLensDirection,
+        sensorOrientation: testSensorOrientation,
+      );
+      const bool enableAudio = true;
+      final MockCamera mockCamera = MockCamera();
+      const int testSurfaceTextureId = 244;
+
+      // Mock/Detached objects for (typically attached) objects created by
+      // createCamera.
+      final MockProcessCameraProvider mockProcessCameraProvider =
+          MockProcessCameraProvider();
+      final MockCameraInfo mockCameraInfo = MockCameraInfo();
+      final MockLiveCameraState mockLiveCameraState = MockLiveCameraState();
+      final MockPreview mockPreview = MockPreview();
+      final ResolutionInfo testResolutionInfo = ResolutionInfo.pigeon_detached(
+        resolution: MockCameraSize(),
+      );
+      final MockImageAnalysis mockImageAnalysis = MockImageAnalysis();
+
+      // Configure mocks for camera initialization.
+      when(
+        mockProcessCameraProvider.bindToLifecycle(any, any),
+      ).thenAnswer((_) async => mockCamera);
+      when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
+      when(
+        mockCameraInfo.getCameraState(),
+      ).thenAnswer((_) async => mockLiveCameraState);
+      when(
+        mockPreview.getResolutionInfo(),
+      ).thenAnswer((_) async => testResolutionInfo);
+      when(
+        mockPreview.setSurfaceProvider(any),
+      ).thenAnswer((_) async => testSurfaceTextureId);
+      camera.processCameraProvider = mockProcessCameraProvider;
+
+      for (final ImageFormatGroup imageFormatGroup in ImageFormatGroup.values) {
+        // Get CameraX image format constant for imageFormatGroup.
+        final int? cameraXImageFormat = switch (imageFormatGroup) {
+          ImageFormatGroup.yuv420 =>
+            AndroidCameraCameraX.imageAnalysisOutputImageFormatYuv420_888,
+          ImageFormatGroup.nv21 =>
+            AndroidCameraCameraX.imageAnalysisOutputImageFormatNv21,
+          _ => null,
+        };
+        // Tell plugin to create mock/detached objects for testing createCamera
+        // as needed.
+        int? imageAnalysisOutputImageFormat;
+        camera.proxy = getProxyForTestingUseCaseConfiguration(
+          mockProcessCameraProvider,
+          newImageAnalysis:
+              ({
+                // ignore: non_constant_identifier_names
+                BinaryMessenger? pigeon_binaryMessenger,
+                // ignore: non_constant_identifier_names
+                PigeonInstanceManager? pigeon_instanceManager,
+                ResolutionSelector? resolutionSelector,
+                int? targetRotation,
+                int? outputImageFormat,
+              }) {
+                imageAnalysisOutputImageFormat = outputImageFormat;
+                return mockImageAnalysis;
+              },
+          newPreview:
+              ({
+                // ignore: non_constant_identifier_names
+                BinaryMessenger? pigeon_binaryMessenger,
+                // ignore: non_constant_identifier_names
+                PigeonInstanceManager? pigeon_instanceManager,
+                ResolutionSelector? resolutionSelector,
+                int? targetRotation,
+              }) => mockPreview,
+        );
+
+        // Create and initialize camera.
+        await camera.createCameraWithSettings(
+          testCameraDescription,
+          const MediaSettings(enableAudio: enableAudio),
+        );
+        await camera.initializeCamera(
+          testSurfaceTextureId,
+          imageFormatGroup: imageFormatGroup,
+        );
+
+        // Test image format group is set as expected.
+        expect(imageAnalysisOutputImageFormat, cameraXImageFormat);
+      }
+    },
+  );
+
   test('initializeCamera sends expected CameraInitializedEvent', () async {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
 
@@ -2354,21 +2651,22 @@ void main() {
             // ignore: non_constant_identifier_names
             PigeonInstanceManager? pigeon_instanceManager,
           }) => Future<ProcessCameraProvider>.value(mockProcessCameraProvider),
-      newCameraSelector: ({
-        LensFacing? requireLensFacing,
-        CameraInfo? cameraInfoForFilter,
-        // ignore: non_constant_identifier_names
-        BinaryMessenger? pigeon_binaryMessenger,
-        // ignore: non_constant_identifier_names
-        PigeonInstanceManager? pigeon_instanceManager,
-      }) {
-        switch (requireLensFacing) {
-          case LensFacing.front:
-            return mockFrontCameraSelector;
-          case _:
-            return mockBackCameraSelector;
-        }
-      },
+      newCameraSelector:
+          ({
+            LensFacing? requireLensFacing,
+            CameraInfo? cameraInfoForFilter,
+            // ignore: non_constant_identifier_names
+            BinaryMessenger? pigeon_binaryMessenger,
+            // ignore: non_constant_identifier_names
+            PigeonInstanceManager? pigeon_instanceManager,
+          }) {
+            switch (requireLensFacing) {
+              case LensFacing.front:
+                return mockFrontCameraSelector;
+              case _:
+                return mockBackCameraSelector;
+            }
+          },
       newPreview:
           ({
             int? targetRotation,
@@ -2409,6 +2707,7 @@ void main() {
       newImageAnalysis:
           ({
             int? targetRotation,
+            int? outputImageFormat,
             ResolutionSelector? resolutionSelector,
             // ignore: non_constant_identifier_names
             BinaryMessenger? pigeon_binaryMessenger,
@@ -2451,20 +2750,21 @@ void main() {
             // ignore: non_constant_identifier_names
             PigeonInstanceManager? pigeon_instanceManager,
           }) => MockQualitySelector(),
-      newObserver: <T>({
-        required void Function(Observer<T>, T) onChanged,
-        // ignore: non_constant_identifier_names
-        BinaryMessenger? pigeon_binaryMessenger,
-        // ignore: non_constant_identifier_names
-        PigeonInstanceManager? pigeon_instanceManager,
-      }) {
-        return Observer<T>.detached(
-          onChanged: onChanged,
-          pigeon_instanceManager: PigeonInstanceManager(
-            onWeakReferenceRemoved: (_) {},
-          ),
-        );
-      },
+      newObserver:
+          <T>({
+            required void Function(Observer<T>, T) onChanged,
+            // ignore: non_constant_identifier_names
+            BinaryMessenger? pigeon_binaryMessenger,
+            // ignore: non_constant_identifier_names
+            PigeonInstanceManager? pigeon_instanceManager,
+          }) {
+            return Observer<T>.detached(
+              onChanged: onChanged,
+              pigeon_instanceManager: PigeonInstanceManager(
+                onWeakReferenceRemoved: (_) {},
+              ),
+            );
+          },
       newSystemServicesManager:
           ({
             required void Function(SystemServicesManager, String) onCameraError,
@@ -2473,21 +2773,22 @@ void main() {
             // ignore: non_constant_identifier_names
             PigeonInstanceManager? pigeon_instanceManager,
           }) => MockSystemServicesManager(),
-      newDeviceOrientationManager: ({
-        required void Function(DeviceOrientationManager, String)
-        onDeviceOrientationChanged,
-        // ignore: non_constant_identifier_names
-        BinaryMessenger? pigeon_binaryMessenger,
-        // ignore: non_constant_identifier_names
-        PigeonInstanceManager? pigeon_instanceManager,
-      }) {
-        final MockDeviceOrientationManager manager =
-            MockDeviceOrientationManager();
-        when(manager.getUiOrientation()).thenAnswer((_) async {
-          return 'PORTRAIT_UP';
-        });
-        return manager;
-      },
+      newDeviceOrientationManager:
+          ({
+            required void Function(DeviceOrientationManager, String)
+            onDeviceOrientationChanged,
+            // ignore: non_constant_identifier_names
+            BinaryMessenger? pigeon_binaryMessenger,
+            // ignore: non_constant_identifier_names
+            PigeonInstanceManager? pigeon_instanceManager,
+          }) {
+            final MockDeviceOrientationManager manager =
+                MockDeviceOrientationManager();
+            when(manager.getUiOrientation()).thenAnswer((_) async {
+              return 'PORTRAIT_UP';
+            });
+            return manager;
+          },
       newAspectRatioStrategy:
           ({
             required AspectRatio preferredAspectRatio,
@@ -2505,20 +2806,21 @@ void main() {
             // ignore: non_constant_identifier_names
             PigeonInstanceManager? pigeon_instanceManager,
           }) => MockResolutionFilter(),
-      fromCamera2CameraInfo: ({
-        required CameraInfo cameraInfo,
-        // ignore: non_constant_identifier_names
-        BinaryMessenger? pigeon_binaryMessenger,
-        // ignore: non_constant_identifier_names
-        PigeonInstanceManager? pigeon_instanceManager,
-      }) {
-        final MockCamera2CameraInfo mockCamera2CameraInfo =
-            MockCamera2CameraInfo();
-        when(
-          mockCamera2CameraInfo.getCameraCharacteristic(any),
-        ).thenAnswer((_) async => 90);
-        return mockCamera2CameraInfo;
-      },
+      fromCamera2CameraInfo:
+          ({
+            required CameraInfo cameraInfo,
+            // ignore: non_constant_identifier_names
+            BinaryMessenger? pigeon_binaryMessenger,
+            // ignore: non_constant_identifier_names
+            PigeonInstanceManager? pigeon_instanceManager,
+          }) {
+            final MockCamera2CameraInfo mockCamera2CameraInfo =
+                MockCamera2CameraInfo();
+            when(
+              mockCamera2CameraInfo.getCameraCharacteristic(any),
+            ).thenAnswer((_) async => 90);
+            return mockCamera2CameraInfo;
+          },
       newCameraSize:
           ({
             required int width,
@@ -2528,8 +2830,8 @@ void main() {
             // ignore: non_constant_identifier_names
             PigeonInstanceManager? pigeon_instanceManager,
           }) => MockCameraSize(),
-      sensorOrientationCameraCharacteristics:
-          () => MockCameraCharacteristicsKey(),
+      sensorOrientationCameraCharacteristics: () =>
+          MockCameraCharacteristicsKey(),
     );
 
     final CameraInitializedEvent testCameraInitializedEvent =
@@ -2589,24 +2891,25 @@ void main() {
       bool stoppedListeningForDeviceOrientationChange = false;
       final AndroidCameraCameraX camera = AndroidCameraCameraX();
       camera.proxy = CameraXProxy(
-        newDeviceOrientationManager: ({
-          required void Function(DeviceOrientationManager, String)
-          onDeviceOrientationChanged,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          final MockDeviceOrientationManager mockDeviceOrientationManager =
-              MockDeviceOrientationManager();
-          when(
-            mockDeviceOrientationManager
-                .stopListeningForDeviceOrientationChange(),
-          ).thenAnswer((_) async {
-            stoppedListeningForDeviceOrientationChange = true;
-          });
-          return mockDeviceOrientationManager;
-        },
+        newDeviceOrientationManager:
+            ({
+              required void Function(DeviceOrientationManager, String)
+              onDeviceOrientationChanged,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              final MockDeviceOrientationManager mockDeviceOrientationManager =
+                  MockDeviceOrientationManager();
+              when(
+                mockDeviceOrientationManager
+                    .stopListeningForDeviceOrientationChange(),
+              ).thenAnswer((_) async {
+                stoppedListeningForDeviceOrientationChange = true;
+              });
+              return mockDeviceOrientationManager;
+            },
       );
 
       camera.preview = MockPreview();
@@ -2686,20 +2989,22 @@ void main() {
           StreamQueue<CameraErrorEvent>(eventStream);
 
       camera.proxy = CameraXProxy(
-        newSystemServicesManager: ({
-          required void Function(SystemServicesManager, String) onCameraError,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          final MockSystemServicesManager mockSystemServicesManager =
-              MockSystemServicesManager();
-          when(
-            mockSystemServicesManager.onCameraError,
-          ).thenReturn(onCameraError);
-          return mockSystemServicesManager;
-        },
+        newSystemServicesManager:
+            ({
+              required void Function(SystemServicesManager, String)
+              onCameraError,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              final MockSystemServicesManager mockSystemServicesManager =
+                  MockSystemServicesManager();
+              when(
+                mockSystemServicesManager.onCameraError,
+              ).thenReturn(onCameraError);
+              return mockSystemServicesManager;
+            },
       );
 
       camera.systemServicesManager.onCameraError(
@@ -2722,29 +3027,30 @@ void main() {
     'onDeviceOrientationChanged stream emits changes in device orientation detected by system services',
     () async {
       final AndroidCameraCameraX camera = AndroidCameraCameraX();
-      final Stream<DeviceOrientationChangedEvent> eventStream =
-          camera.onDeviceOrientationChanged();
+      final Stream<DeviceOrientationChangedEvent> eventStream = camera
+          .onDeviceOrientationChanged();
       final StreamQueue<DeviceOrientationChangedEvent> streamQueue =
           StreamQueue<DeviceOrientationChangedEvent>(eventStream);
       const DeviceOrientationChangedEvent testEvent =
           DeviceOrientationChangedEvent(DeviceOrientation.portraitDown);
 
       camera.proxy = CameraXProxy(
-        newDeviceOrientationManager: ({
-          required void Function(DeviceOrientationManager, String)
-          onDeviceOrientationChanged,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          final MockDeviceOrientationManager mockDeviceOrientationManager =
-              MockDeviceOrientationManager();
-          when(
-            mockDeviceOrientationManager.onDeviceOrientationChanged,
-          ).thenReturn(onDeviceOrientationChanged);
-          return mockDeviceOrientationManager;
-        },
+        newDeviceOrientationManager:
+            ({
+              required void Function(DeviceOrientationManager, String)
+              onDeviceOrientationChanged,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              final MockDeviceOrientationManager mockDeviceOrientationManager =
+                  MockDeviceOrientationManager();
+              when(
+                mockDeviceOrientationManager.onDeviceOrientationChanged,
+              ).thenReturn(onDeviceOrientationChanged);
+              return mockDeviceOrientationManager;
+            },
       );
 
       camera.deviceOrientationManager.onDeviceOrientationChanged(
@@ -2856,20 +3162,21 @@ void main() {
       // track camera state once preview is bound to the lifecycle and needed to
       // test for expected updates.
       camera.proxy = CameraXProxy(
-        newObserver: <T>({
-          required void Function(Observer<T>, T) onChanged,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return Observer<T>.detached(
-            onChanged: onChanged,
-            pigeon_instanceManager: PigeonInstanceManager(
-              onWeakReferenceRemoved: (_) {},
-            ),
-          );
-        },
+        newObserver:
+            <T>({
+              required void Function(Observer<T>, T) onChanged,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return Observer<T>.detached(
+                onChanged: onChanged,
+                pigeon_instanceManager: PigeonInstanceManager(
+                  onWeakReferenceRemoved: (_) {},
+                ),
+              );
+            },
       );
 
       when(
@@ -2964,20 +3271,21 @@ void main() {
         // Tell plugin to create detached Observer when camera info updated.
         const String outputPath = '/temp/REC123.temp';
         camera.proxy = CameraXProxy(
-          newObserver: <T>({
-            required void Function(Observer<T>, T) onChanged,
-            // ignore: non_constant_identifier_names
-            BinaryMessenger? pigeon_binaryMessenger,
-            // ignore: non_constant_identifier_names
-            PigeonInstanceManager? pigeon_instanceManager,
-          }) {
-            return Observer<T>.detached(
-              onChanged: onChanged,
-              pigeon_instanceManager: PigeonInstanceManager(
-                onWeakReferenceRemoved: (_) {},
-              ),
-            );
-          },
+          newObserver:
+              <T>({
+                required void Function(Observer<T>, T) onChanged,
+                // ignore: non_constant_identifier_names
+                BinaryMessenger? pigeon_binaryMessenger,
+                // ignore: non_constant_identifier_names
+                PigeonInstanceManager? pigeon_instanceManager,
+              }) {
+                return Observer<T>.detached(
+                  onChanged: onChanged,
+                  pigeon_instanceManager: PigeonInstanceManager(
+                    onWeakReferenceRemoved: (_) {},
+                  ),
+                );
+              },
           fromCamera2CameraInfo:
               ({
                 required CameraInfo cameraInfo,
@@ -2986,38 +3294,44 @@ void main() {
                 // ignore: non_constant_identifier_names
                 PigeonInstanceManager? pigeon_instanceManager,
               }) => mockCamera2CameraInfo,
-          newSystemServicesManager: ({
-            required void Function(SystemServicesManager, String) onCameraError,
-            // ignore: non_constant_identifier_names
-            BinaryMessenger? pigeon_binaryMessenger,
-            // ignore: non_constant_identifier_names
-            PigeonInstanceManager? pigeon_instanceManager,
-          }) {
-            final MockSystemServicesManager mockSystemServicesManager =
-                MockSystemServicesManager();
-            when(
-              mockSystemServicesManager.getTempFilePath(
-                camera.videoPrefix,
-                '.temp',
-              ),
-            ).thenAnswer((_) async => outputPath);
-            return mockSystemServicesManager;
-          },
-          newVideoRecordEventListener: ({
-            required void Function(VideoRecordEventListener, VideoRecordEvent)
-            onEvent,
-            // ignore: non_constant_identifier_names
-            BinaryMessenger? pigeon_binaryMessenger,
-            // ignore: non_constant_identifier_names
-            PigeonInstanceManager? pigeon_instanceManager,
-          }) {
-            return VideoRecordEventListener.pigeon_detached(
-              onEvent: onEvent,
-              pigeon_instanceManager: PigeonInstanceManager(
-                onWeakReferenceRemoved: (_) {},
-              ),
-            );
-          },
+          newSystemServicesManager:
+              ({
+                required void Function(SystemServicesManager, String)
+                onCameraError,
+                // ignore: non_constant_identifier_names
+                BinaryMessenger? pigeon_binaryMessenger,
+                // ignore: non_constant_identifier_names
+                PigeonInstanceManager? pigeon_instanceManager,
+              }) {
+                final MockSystemServicesManager mockSystemServicesManager =
+                    MockSystemServicesManager();
+                when(
+                  mockSystemServicesManager.getTempFilePath(
+                    camera.videoPrefix,
+                    '.temp',
+                  ),
+                ).thenAnswer((_) async => outputPath);
+                return mockSystemServicesManager;
+              },
+          newVideoRecordEventListener:
+              ({
+                required void Function(
+                  VideoRecordEventListener,
+                  VideoRecordEvent,
+                )
+                onEvent,
+                // ignore: non_constant_identifier_names
+                BinaryMessenger? pigeon_binaryMessenger,
+                // ignore: non_constant_identifier_names
+                PigeonInstanceManager? pigeon_instanceManager,
+              }) {
+                return VideoRecordEventListener.pigeon_detached(
+                  onEvent: onEvent,
+                  pigeon_instanceManager: PigeonInstanceManager(
+                    onWeakReferenceRemoved: (_) {},
+                  ),
+                );
+              },
           infoSupportedHardwareLevelCameraCharacteristics: () {
             return MockCameraCharacteristicsKey();
           },
@@ -3123,20 +3437,21 @@ void main() {
         // Tell plugin to create detached Observer when camera info updated.
         const String outputPath = '/temp/REC123.temp';
         camera.proxy = CameraXProxy(
-          newObserver: <T>({
-            required void Function(Observer<T>, T) onChanged,
-            // ignore: non_constant_identifier_names
-            BinaryMessenger? pigeon_binaryMessenger,
-            // ignore: non_constant_identifier_names
-            PigeonInstanceManager? pigeon_instanceManager,
-          }) {
-            return Observer<T>.detached(
-              onChanged: onChanged,
-              pigeon_instanceManager: PigeonInstanceManager(
-                onWeakReferenceRemoved: (_) {},
-              ),
-            );
-          },
+          newObserver:
+              <T>({
+                required void Function(Observer<T>, T) onChanged,
+                // ignore: non_constant_identifier_names
+                BinaryMessenger? pigeon_binaryMessenger,
+                // ignore: non_constant_identifier_names
+                PigeonInstanceManager? pigeon_instanceManager,
+              }) {
+                return Observer<T>.detached(
+                  onChanged: onChanged,
+                  pigeon_instanceManager: PigeonInstanceManager(
+                    onWeakReferenceRemoved: (_) {},
+                  ),
+                );
+              },
           fromCamera2CameraInfo:
               ({
                 required CameraInfo cameraInfo,
@@ -3145,38 +3460,44 @@ void main() {
                 // ignore: non_constant_identifier_names
                 PigeonInstanceManager? pigeon_instanceManager,
               }) => mockCamera2CameraInfo,
-          newSystemServicesManager: ({
-            required void Function(SystemServicesManager, String) onCameraError,
-            // ignore: non_constant_identifier_names
-            BinaryMessenger? pigeon_binaryMessenger,
-            // ignore: non_constant_identifier_names
-            PigeonInstanceManager? pigeon_instanceManager,
-          }) {
-            final MockSystemServicesManager mockSystemServicesManager =
-                MockSystemServicesManager();
-            when(
-              mockSystemServicesManager.getTempFilePath(
-                camera.videoPrefix,
-                '.temp',
-              ),
-            ).thenAnswer((_) async => outputPath);
-            return mockSystemServicesManager;
-          },
-          newVideoRecordEventListener: ({
-            required void Function(VideoRecordEventListener, VideoRecordEvent)
-            onEvent,
-            // ignore: non_constant_identifier_names
-            BinaryMessenger? pigeon_binaryMessenger,
-            // ignore: non_constant_identifier_names
-            PigeonInstanceManager? pigeon_instanceManager,
-          }) {
-            return VideoRecordEventListener.pigeon_detached(
-              onEvent: onEvent,
-              pigeon_instanceManager: PigeonInstanceManager(
-                onWeakReferenceRemoved: (_) {},
-              ),
-            );
-          },
+          newSystemServicesManager:
+              ({
+                required void Function(SystemServicesManager, String)
+                onCameraError,
+                // ignore: non_constant_identifier_names
+                BinaryMessenger? pigeon_binaryMessenger,
+                // ignore: non_constant_identifier_names
+                PigeonInstanceManager? pigeon_instanceManager,
+              }) {
+                final MockSystemServicesManager mockSystemServicesManager =
+                    MockSystemServicesManager();
+                when(
+                  mockSystemServicesManager.getTempFilePath(
+                    camera.videoPrefix,
+                    '.temp',
+                  ),
+                ).thenAnswer((_) async => outputPath);
+                return mockSystemServicesManager;
+              },
+          newVideoRecordEventListener:
+              ({
+                required void Function(
+                  VideoRecordEventListener,
+                  VideoRecordEvent,
+                )
+                onEvent,
+                // ignore: non_constant_identifier_names
+                BinaryMessenger? pigeon_binaryMessenger,
+                // ignore: non_constant_identifier_names
+                PigeonInstanceManager? pigeon_instanceManager,
+              }) {
+                return VideoRecordEventListener.pigeon_detached(
+                  onEvent: onEvent,
+                  pigeon_instanceManager: PigeonInstanceManager(
+                    onWeakReferenceRemoved: (_) {},
+                  ),
+                );
+              },
           infoSupportedHardwareLevelCameraCharacteristics: () {
             return MockCameraCharacteristicsKey();
           },
@@ -3282,20 +3603,21 @@ void main() {
         // Tell plugin to create detached Analyzer for testing.
         const String outputPath = '/temp/REC123.temp';
         camera.proxy = CameraXProxy(
-          newObserver: <T>({
-            required void Function(Observer<T>, T) onChanged,
-            // ignore: non_constant_identifier_names
-            BinaryMessenger? pigeon_binaryMessenger,
-            // ignore: non_constant_identifier_names
-            PigeonInstanceManager? pigeon_instanceManager,
-          }) {
-            return Observer<T>.detached(
-              onChanged: onChanged,
-              pigeon_instanceManager: PigeonInstanceManager(
-                onWeakReferenceRemoved: (_) {},
-              ),
-            );
-          },
+          newObserver:
+              <T>({
+                required void Function(Observer<T>, T) onChanged,
+                // ignore: non_constant_identifier_names
+                BinaryMessenger? pigeon_binaryMessenger,
+                // ignore: non_constant_identifier_names
+                PigeonInstanceManager? pigeon_instanceManager,
+              }) {
+                return Observer<T>.detached(
+                  onChanged: onChanged,
+                  pigeon_instanceManager: PigeonInstanceManager(
+                    onWeakReferenceRemoved: (_) {},
+                  ),
+                );
+              },
           fromCamera2CameraInfo:
               ({
                 required CameraInfo cameraInfo,
@@ -3304,50 +3626,57 @@ void main() {
                 // ignore: non_constant_identifier_names
                 PigeonInstanceManager? pigeon_instanceManager,
               }) => mockCamera2CameraInfo,
-          newSystemServicesManager: ({
-            required void Function(SystemServicesManager, String) onCameraError,
-            // ignore: non_constant_identifier_names
-            BinaryMessenger? pigeon_binaryMessenger,
-            // ignore: non_constant_identifier_names
-            PigeonInstanceManager? pigeon_instanceManager,
-          }) {
-            final MockSystemServicesManager mockSystemServicesManager =
-                MockSystemServicesManager();
-            when(
-              mockSystemServicesManager.getTempFilePath(
-                camera.videoPrefix,
-                '.temp',
-              ),
-            ).thenAnswer((_) async => outputPath);
-            return mockSystemServicesManager;
-          },
-          newVideoRecordEventListener: ({
-            required void Function(VideoRecordEventListener, VideoRecordEvent)
-            onEvent,
-            // ignore: non_constant_identifier_names
-            BinaryMessenger? pigeon_binaryMessenger,
-            // ignore: non_constant_identifier_names
-            PigeonInstanceManager? pigeon_instanceManager,
-          }) {
-            return VideoRecordEventListener.pigeon_detached(
-              onEvent: onEvent,
-              pigeon_instanceManager: PigeonInstanceManager(
-                onWeakReferenceRemoved: (_) {},
-              ),
-            );
-          },
+          newSystemServicesManager:
+              ({
+                required void Function(SystemServicesManager, String)
+                onCameraError,
+                // ignore: non_constant_identifier_names
+                BinaryMessenger? pigeon_binaryMessenger,
+                // ignore: non_constant_identifier_names
+                PigeonInstanceManager? pigeon_instanceManager,
+              }) {
+                final MockSystemServicesManager mockSystemServicesManager =
+                    MockSystemServicesManager();
+                when(
+                  mockSystemServicesManager.getTempFilePath(
+                    camera.videoPrefix,
+                    '.temp',
+                  ),
+                ).thenAnswer((_) async => outputPath);
+                return mockSystemServicesManager;
+              },
+          newVideoRecordEventListener:
+              ({
+                required void Function(
+                  VideoRecordEventListener,
+                  VideoRecordEvent,
+                )
+                onEvent,
+                // ignore: non_constant_identifier_names
+                BinaryMessenger? pigeon_binaryMessenger,
+                // ignore: non_constant_identifier_names
+                PigeonInstanceManager? pigeon_instanceManager,
+              }) {
+                return VideoRecordEventListener.pigeon_detached(
+                  onEvent: onEvent,
+                  pigeon_instanceManager: PigeonInstanceManager(
+                    onWeakReferenceRemoved: (_) {},
+                  ),
+                );
+              },
           infoSupportedHardwareLevelCameraCharacteristics: () {
             return MockCameraCharacteristicsKey();
           },
-          newAnalyzer: ({
-            required void Function(Analyzer, ImageProxy) analyze,
-            // ignore: non_constant_identifier_names
-            BinaryMessenger? pigeon_binaryMessenger,
-            // ignore: non_constant_identifier_names
-            PigeonInstanceManager? pigeon_instanceManager,
-          }) {
-            return MockAnalyzer();
-          },
+          newAnalyzer:
+              ({
+                required void Function(Analyzer, ImageProxy) analyze,
+                // ignore: non_constant_identifier_names
+                BinaryMessenger? pigeon_binaryMessenger,
+                // ignore: non_constant_identifier_names
+                PigeonInstanceManager? pigeon_instanceManager,
+              }) {
+                return MockAnalyzer();
+              },
         );
 
         const int cameraId = 17;
@@ -3355,9 +3684,8 @@ void main() {
             Completer<CameraImageData>();
         final VideoCaptureOptions videoCaptureOptions = VideoCaptureOptions(
           cameraId,
-          streamCallback:
-              (CameraImageData imageData) =>
-                  imageDataCompleter.complete(imageData),
+          streamCallback: (CameraImageData imageData) =>
+              imageDataCompleter.complete(imageData),
         );
 
         // Mock method calls.
@@ -3429,20 +3757,21 @@ void main() {
         // Tell plugin to mock call to get current video orientation and mock Camera2CameraInfo retrieval.
         const String outputPath = '/temp/REC123.temp';
         camera.proxy = CameraXProxy(
-          newObserver: <T>({
-            required void Function(Observer<T>, T) onChanged,
-            // ignore: non_constant_identifier_names
-            BinaryMessenger? pigeon_binaryMessenger,
-            // ignore: non_constant_identifier_names
-            PigeonInstanceManager? pigeon_instanceManager,
-          }) {
-            return Observer<T>.detached(
-              onChanged: onChanged,
-              pigeon_instanceManager: PigeonInstanceManager(
-                onWeakReferenceRemoved: (_) {},
-              ),
-            );
-          },
+          newObserver:
+              <T>({
+                required void Function(Observer<T>, T) onChanged,
+                // ignore: non_constant_identifier_names
+                BinaryMessenger? pigeon_binaryMessenger,
+                // ignore: non_constant_identifier_names
+                PigeonInstanceManager? pigeon_instanceManager,
+              }) {
+                return Observer<T>.detached(
+                  onChanged: onChanged,
+                  pigeon_instanceManager: PigeonInstanceManager(
+                    onWeakReferenceRemoved: (_) {},
+                  ),
+                );
+              },
           fromCamera2CameraInfo:
               ({
                 required CameraInfo cameraInfo,
@@ -3450,57 +3779,63 @@ void main() {
                 BinaryMessenger? pigeon_binaryMessenger,
                 // ignore: non_constant_identifier_names
                 PigeonInstanceManager? pigeon_instanceManager,
-              }) =>
-                  cameraInfo == initialCameraInfo
-                      ? mockCamera2CameraInfo
-                      : MockCamera2CameraInfo(),
-          newSystemServicesManager: ({
-            required void Function(SystemServicesManager, String) onCameraError,
-            // ignore: non_constant_identifier_names
-            BinaryMessenger? pigeon_binaryMessenger,
-            // ignore: non_constant_identifier_names
-            PigeonInstanceManager? pigeon_instanceManager,
-          }) {
-            final MockSystemServicesManager mockSystemServicesManager =
-                MockSystemServicesManager();
-            when(
-              mockSystemServicesManager.getTempFilePath(
-                camera.videoPrefix,
-                '.temp',
-              ),
-            ).thenAnswer((_) async => outputPath);
-            return mockSystemServicesManager;
-          },
-          newDeviceOrientationManager: ({
-            required void Function(DeviceOrientationManager, String)
-            onDeviceOrientationChanged,
-            // ignore: non_constant_identifier_names
-            BinaryMessenger? pigeon_binaryMessenger,
-            // ignore: non_constant_identifier_names
-            PigeonInstanceManager? pigeon_instanceManager,
-          }) {
-            final MockDeviceOrientationManager mockDeviceOrientationManager =
-                MockDeviceOrientationManager();
-            when(
-              mockDeviceOrientationManager.getDefaultDisplayRotation(),
-            ).thenAnswer((_) async => defaultTargetRotation);
-            return mockDeviceOrientationManager;
-          },
-          newVideoRecordEventListener: ({
-            required void Function(VideoRecordEventListener, VideoRecordEvent)
-            onEvent,
-            // ignore: non_constant_identifier_names
-            BinaryMessenger? pigeon_binaryMessenger,
-            // ignore: non_constant_identifier_names
-            PigeonInstanceManager? pigeon_instanceManager,
-          }) {
-            return VideoRecordEventListener.pigeon_detached(
-              onEvent: onEvent,
-              pigeon_instanceManager: PigeonInstanceManager(
-                onWeakReferenceRemoved: (_) {},
-              ),
-            );
-          },
+              }) => cameraInfo == initialCameraInfo
+              ? mockCamera2CameraInfo
+              : MockCamera2CameraInfo(),
+          newSystemServicesManager:
+              ({
+                required void Function(SystemServicesManager, String)
+                onCameraError,
+                // ignore: non_constant_identifier_names
+                BinaryMessenger? pigeon_binaryMessenger,
+                // ignore: non_constant_identifier_names
+                PigeonInstanceManager? pigeon_instanceManager,
+              }) {
+                final MockSystemServicesManager mockSystemServicesManager =
+                    MockSystemServicesManager();
+                when(
+                  mockSystemServicesManager.getTempFilePath(
+                    camera.videoPrefix,
+                    '.temp',
+                  ),
+                ).thenAnswer((_) async => outputPath);
+                return mockSystemServicesManager;
+              },
+          newDeviceOrientationManager:
+              ({
+                required void Function(DeviceOrientationManager, String)
+                onDeviceOrientationChanged,
+                // ignore: non_constant_identifier_names
+                BinaryMessenger? pigeon_binaryMessenger,
+                // ignore: non_constant_identifier_names
+                PigeonInstanceManager? pigeon_instanceManager,
+              }) {
+                final MockDeviceOrientationManager
+                mockDeviceOrientationManager = MockDeviceOrientationManager();
+                when(
+                  mockDeviceOrientationManager.getDefaultDisplayRotation(),
+                ).thenAnswer((_) async => defaultTargetRotation);
+                return mockDeviceOrientationManager;
+              },
+          newVideoRecordEventListener:
+              ({
+                required void Function(
+                  VideoRecordEventListener,
+                  VideoRecordEvent,
+                )
+                onEvent,
+                // ignore: non_constant_identifier_names
+                BinaryMessenger? pigeon_binaryMessenger,
+                // ignore: non_constant_identifier_names
+                PigeonInstanceManager? pigeon_instanceManager,
+              }) {
+                return VideoRecordEventListener.pigeon_detached(
+                  onEvent: onEvent,
+                  pigeon_instanceManager: PigeonInstanceManager(
+                    onWeakReferenceRemoved: (_) {},
+                  ),
+                );
+              },
           infoSupportedHardwareLevelCameraCharacteristics: () {
             return MockCameraCharacteristicsKey();
           },
@@ -3818,20 +4153,21 @@ void main() {
 
       // Tell plugin to create detached camera state observers.
       camera.proxy = CameraXProxy(
-        newObserver: <T>({
-          required void Function(Observer<T>, T) onChanged,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return Observer<T>.detached(
-            onChanged: onChanged,
-            pigeon_instanceManager: PigeonInstanceManager(
-              onWeakReferenceRemoved: (_) {},
-            ),
-          );
-        },
+        newObserver:
+            <T>({
+              required void Function(Observer<T>, T) onChanged,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return Observer<T>.detached(
+                onChanged: onChanged,
+                pigeon_instanceManager: PigeonInstanceManager(
+                  onWeakReferenceRemoved: (_) {},
+                ),
+              );
+            },
       );
 
       when(
@@ -3874,21 +4210,22 @@ void main() {
 
       // Tell plugin to mock call to get current photo orientation.
       camera.proxy = CameraXProxy(
-        newDeviceOrientationManager: ({
-          required void Function(DeviceOrientationManager, String)
-          onDeviceOrientationChanged,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          final MockDeviceOrientationManager mockDeviceOrientationManager =
-              MockDeviceOrientationManager();
-          when(
-            mockDeviceOrientationManager.getDefaultDisplayRotation(),
-          ).thenAnswer((_) async => defaultTargetRotation);
-          return mockDeviceOrientationManager;
-        },
+        newDeviceOrientationManager:
+            ({
+              required void Function(DeviceOrientationManager, String)
+              onDeviceOrientationChanged,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              final MockDeviceOrientationManager mockDeviceOrientationManager =
+                  MockDeviceOrientationManager();
+              when(
+                mockDeviceOrientationManager.getDefaultDisplayRotation(),
+              ).thenAnswer((_) async => defaultTargetRotation);
+              return mockDeviceOrientationManager;
+            },
       );
 
       when(
@@ -4223,20 +4560,21 @@ void main() {
 
       // Tell plugin to create detached Analyzer for testing.
       camera.proxy = CameraXProxy(
-        newAnalyzer: ({
-          required void Function(Analyzer, ImageProxy) analyze,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return Analyzer.pigeon_detached(
-            analyze: analyze,
-            pigeon_instanceManager: PigeonInstanceManager(
-              onWeakReferenceRemoved: (_) {},
-            ),
-          );
-        },
+        newAnalyzer:
+            ({
+              required void Function(Analyzer, ImageProxy) analyze,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return Analyzer.pigeon_detached(
+                analyze: analyze,
+                pigeon_instanceManager: PigeonInstanceManager(
+                  onWeakReferenceRemoved: (_) {},
+                ),
+              );
+            },
       );
 
       // Set directly for test versus calling createCamera.
@@ -4283,20 +4621,21 @@ void main() {
 
       // Tell plugin to create detached Analyzer for testing.
       camera.proxy = CameraXProxy(
-        newAnalyzer: ({
-          required void Function(Analyzer, ImageProxy) analyze,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return Analyzer.pigeon_detached(
-            analyze: analyze,
-            pigeon_instanceManager: PigeonInstanceManager(
-              onWeakReferenceRemoved: (_) {},
-            ),
-          );
-        },
+        newAnalyzer:
+            ({
+              required void Function(Analyzer, ImageProxy) analyze,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return Analyzer.pigeon_detached(
+                analyze: analyze,
+                pigeon_instanceManager: PigeonInstanceManager(
+                  onWeakReferenceRemoved: (_) {},
+                ),
+              );
+            },
       );
 
       // Set directly for test versus calling createCamera.
@@ -4357,34 +4696,36 @@ void main() {
 
       // Tell plugin to create detached Analyzer for testing.
       camera.proxy = CameraXProxy(
-        newAnalyzer: ({
-          required void Function(Analyzer, ImageProxy) analyze,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return Analyzer.pigeon_detached(
-            analyze: analyze,
-            pigeon_instanceManager: PigeonInstanceManager(
-              onWeakReferenceRemoved: (_) {},
-            ),
-          );
-        },
-        newObserver: <T>({
-          required void Function(Observer<T>, T) onChanged,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return Observer<T>.detached(
-            onChanged: onChanged,
-            pigeon_instanceManager: PigeonInstanceManager(
-              onWeakReferenceRemoved: (_) {},
-            ),
-          );
-        },
+        newAnalyzer:
+            ({
+              required void Function(Analyzer, ImageProxy) analyze,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return Analyzer.pigeon_detached(
+                analyze: analyze,
+                pigeon_instanceManager: PigeonInstanceManager(
+                  onWeakReferenceRemoved: (_) {},
+                ),
+              );
+            },
+        newObserver:
+            <T>({
+              required void Function(Observer<T>, T) onChanged,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return Observer<T>.detached(
+                onChanged: onChanged,
+                pigeon_instanceManager: PigeonInstanceManager(
+                  onWeakReferenceRemoved: (_) {},
+                ),
+              );
+            },
       );
 
       // Set directly for test versus calling createCamera.
@@ -4516,21 +4857,22 @@ void main() {
               // ignore: non_constant_identifier_names
               PigeonInstanceManager? pigeon_instanceManager,
             }) => MockAnalyzer(),
-        newDeviceOrientationManager: ({
-          required void Function(DeviceOrientationManager, String)
-          onDeviceOrientationChanged,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          final MockDeviceOrientationManager manager =
-              MockDeviceOrientationManager();
-          when(manager.getDefaultDisplayRotation()).thenAnswer((_) async {
-            return defaultTargetRotation;
-          });
-          return manager;
-        },
+        newDeviceOrientationManager:
+            ({
+              required void Function(DeviceOrientationManager, String)
+              onDeviceOrientationChanged,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              final MockDeviceOrientationManager manager =
+                  MockDeviceOrientationManager();
+              when(manager.getDefaultDisplayRotation()).thenAnswer((_) async {
+                return defaultTargetRotation;
+              });
+              return manager;
+            },
       );
 
       when(
@@ -4666,28 +5008,28 @@ void main() {
               BinaryMessenger? pigeon_binaryMessenger,
               // ignore: non_constant_identifier_names
               PigeonInstanceManager? pigeon_instanceManager,
-            }) =>
-                cameraControl == mockCameraControl
-                    ? mockCamera2CameraControl
-                    : Camera2CameraControl.pigeon_detached(
-                      pigeon_instanceManager: testInstanceManager,
-                    ),
-        newCaptureRequestOptions: ({
-          required Map<CaptureRequestKey, Object?> options,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          final MockCaptureRequestOptions mockCaptureRequestOptions =
-              MockCaptureRequestOptions();
-          options.forEach((CaptureRequestKey key, Object? value) {
-            when(
-              mockCaptureRequestOptions.getCaptureRequestOption(key),
-            ).thenAnswer((_) async => value);
-          });
-          return mockCaptureRequestOptions;
-        },
+            }) => cameraControl == mockCameraControl
+            ? mockCamera2CameraControl
+            : Camera2CameraControl.pigeon_detached(
+                pigeon_instanceManager: testInstanceManager,
+              ),
+        newCaptureRequestOptions:
+            ({
+              required Map<CaptureRequestKey, Object?> options,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              final MockCaptureRequestOptions mockCaptureRequestOptions =
+                  MockCaptureRequestOptions();
+              options.forEach((CaptureRequestKey key, Object? value) {
+                when(
+                  mockCaptureRequestOptions.getCaptureRequestOption(key),
+                ).thenAnswer((_) async => value);
+              });
+              return mockCaptureRequestOptions;
+            },
         controlAELockCaptureRequest: () => controlAELockKey,
       );
 
@@ -4753,18 +5095,19 @@ void main() {
       MeteringMode? actionBuilderMeteringMode;
       MeteringPoint? actionBuilderMeteringPoint;
       camera.proxy = getProxyForExposureAndFocus(
-        withModeFocusMeteringActionBuilder: ({
-          required MeteringMode mode,
-          required MeteringPoint point,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          actionBuilderMeteringMode = mode;
-          actionBuilderMeteringPoint = point;
-          return mockActionBuilder;
-        },
+        withModeFocusMeteringActionBuilder:
+            ({
+              required MeteringMode mode,
+              required MeteringPoint point,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              actionBuilderMeteringMode = mode;
+              actionBuilderMeteringPoint = point;
+              return mockActionBuilder;
+            },
       );
 
       // Verify nothing happens if no current focus and metering action has been
@@ -4877,34 +5220,36 @@ void main() {
         ),
       );
       camera.proxy = getProxyForExposureAndFocus(
-        newDisplayOrientedMeteringPointFactory: ({
-          required CameraInfo cameraInfo,
-          required double width,
-          required double height,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          final MockDisplayOrientedMeteringPointFactory mockFactory =
-              MockDisplayOrientedMeteringPointFactory();
-          when(
-            mockFactory.createPoint(exposurePointX, exposurePointY),
-          ).thenAnswer((_) async => createdMeteringPoint);
-          return mockFactory;
-        },
-        withModeFocusMeteringActionBuilder: ({
-          required MeteringMode mode,
-          required MeteringPoint point,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          actionBuilderMeteringMode = mode;
-          actionBuilderMeteringPoint = point;
-          return mockActionBuilder;
-        },
+        newDisplayOrientedMeteringPointFactory:
+            ({
+              required CameraInfo cameraInfo,
+              required double width,
+              required double height,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              final MockDisplayOrientedMeteringPointFactory mockFactory =
+                  MockDisplayOrientedMeteringPointFactory();
+              when(
+                mockFactory.createPoint(exposurePointX, exposurePointY),
+              ).thenAnswer((_) async => createdMeteringPoint);
+              return mockFactory;
+            },
+        withModeFocusMeteringActionBuilder:
+            ({
+              required MeteringMode mode,
+              required MeteringPoint point,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              actionBuilderMeteringMode = mode;
+              actionBuilderMeteringPoint = point;
+              return mockActionBuilder;
+            },
       );
 
       // Verify current auto-exposure metering point is removed if previously set.
@@ -5016,34 +5361,36 @@ void main() {
         ),
       );
       camera.proxy = getProxyForExposureAndFocus(
-        newDisplayOrientedMeteringPointFactory: ({
-          required CameraInfo cameraInfo,
-          required double width,
-          required double height,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          final MockDisplayOrientedMeteringPointFactory mockFactory =
-              MockDisplayOrientedMeteringPointFactory();
-          when(
-            mockFactory.createPoint(exposurePointX, exposurePointY),
-          ).thenAnswer((_) async => createdMeteringPoint);
-          return mockFactory;
-        },
-        withModeFocusMeteringActionBuilder: ({
-          required MeteringMode mode,
-          required MeteringPoint point,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          actionBuilderMeteringMode = mode;
-          actionBuilderMeteringPoint = point;
-          return mockActionBuilder;
-        },
+        newDisplayOrientedMeteringPointFactory:
+            ({
+              required CameraInfo cameraInfo,
+              required double width,
+              required double height,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              final MockDisplayOrientedMeteringPointFactory mockFactory =
+                  MockDisplayOrientedMeteringPointFactory();
+              when(
+                mockFactory.createPoint(exposurePointX, exposurePointY),
+              ).thenAnswer((_) async => createdMeteringPoint);
+              return mockFactory;
+            },
+        withModeFocusMeteringActionBuilder:
+            ({
+              required MeteringMode mode,
+              required MeteringPoint point,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              actionBuilderMeteringMode = mode;
+              actionBuilderMeteringPoint = point;
+              return mockActionBuilder;
+            },
       );
 
       await camera.setExposurePoint(cameraId, exposurePoint);
@@ -5293,18 +5640,19 @@ void main() {
       MeteringMode? actionBuilderMeteringMode;
       MeteringPoint? actionBuilderMeteringPoint;
       camera.proxy = getProxyForExposureAndFocus(
-        withModeFocusMeteringActionBuilder: ({
-          required MeteringMode mode,
-          required MeteringPoint point,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          actionBuilderMeteringMode = mode;
-          actionBuilderMeteringPoint = point;
-          return mockActionBuilder;
-        },
+        withModeFocusMeteringActionBuilder:
+            ({
+              required MeteringMode mode,
+              required MeteringPoint point,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              actionBuilderMeteringMode = mode;
+              actionBuilderMeteringPoint = point;
+              return mockActionBuilder;
+            },
       );
 
       // Verify nothing happens if no current focus and metering action has been
@@ -5417,34 +5765,36 @@ void main() {
         ),
       );
       camera.proxy = getProxyForExposureAndFocus(
-        newDisplayOrientedMeteringPointFactory: ({
-          required CameraInfo cameraInfo,
-          required double width,
-          required double height,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          final MockDisplayOrientedMeteringPointFactory mockFactory =
-              MockDisplayOrientedMeteringPointFactory();
-          when(
-            mockFactory.createPoint(focusPointX, focusPointY),
-          ).thenAnswer((_) async => createdMeteringPoint);
-          return mockFactory;
-        },
-        withModeFocusMeteringActionBuilder: ({
-          required MeteringMode mode,
-          required MeteringPoint point,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          actionBuilderMeteringMode = mode;
-          actionBuilderMeteringPoint = point;
-          return mockActionBuilder;
-        },
+        newDisplayOrientedMeteringPointFactory:
+            ({
+              required CameraInfo cameraInfo,
+              required double width,
+              required double height,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              final MockDisplayOrientedMeteringPointFactory mockFactory =
+                  MockDisplayOrientedMeteringPointFactory();
+              when(
+                mockFactory.createPoint(focusPointX, focusPointY),
+              ).thenAnswer((_) async => createdMeteringPoint);
+              return mockFactory;
+            },
+        withModeFocusMeteringActionBuilder:
+            ({
+              required MeteringMode mode,
+              required MeteringPoint point,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              actionBuilderMeteringMode = mode;
+              actionBuilderMeteringPoint = point;
+              return mockActionBuilder;
+            },
       );
 
       // Verify current auto-exposure metering point is removed if previously set.
@@ -5549,34 +5899,36 @@ void main() {
         ),
       );
       camera.proxy = getProxyForExposureAndFocus(
-        newDisplayOrientedMeteringPointFactory: ({
-          required CameraInfo cameraInfo,
-          required double width,
-          required double height,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          final MockDisplayOrientedMeteringPointFactory mockFactory =
-              MockDisplayOrientedMeteringPointFactory();
-          when(
-            mockFactory.createPoint(focusPointX, focusPointY),
-          ).thenAnswer((_) async => createdMeteringPoint);
-          return mockFactory;
-        },
-        withModeFocusMeteringActionBuilder: ({
-          required MeteringMode mode,
-          required MeteringPoint point,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          actionBuilderMeteringMode = mode;
-          actionBuilderMeteringPoint = point;
-          return mockActionBuilder;
-        },
+        newDisplayOrientedMeteringPointFactory:
+            ({
+              required CameraInfo cameraInfo,
+              required double width,
+              required double height,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              final MockDisplayOrientedMeteringPointFactory mockFactory =
+                  MockDisplayOrientedMeteringPointFactory();
+              when(
+                mockFactory.createPoint(focusPointX, focusPointY),
+              ).thenAnswer((_) async => createdMeteringPoint);
+              return mockFactory;
+            },
+        withModeFocusMeteringActionBuilder:
+            ({
+              required MeteringMode mode,
+              required MeteringPoint point,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              actionBuilderMeteringMode = mode;
+              actionBuilderMeteringPoint = point;
+              return mockActionBuilder;
+            },
       );
 
       await camera.setFocusPoint(cameraId, focusPoint);
@@ -5714,39 +6066,40 @@ void main() {
       camera.proxy = getProxyForSettingFocusandExposurePoints(
         mockCameraControl,
         mockCamera2CameraControl,
-        newDisplayOrientedMeteringPointFactory: ({
-          required CameraInfo cameraInfo,
-          required double width,
-          required double height,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          final MockDisplayOrientedMeteringPointFactory mockFactory =
-              MockDisplayOrientedMeteringPointFactory();
-          when(
-            mockFactory.createPoint(exposurePointX, exposurePointY),
-          ).thenAnswer((_) async {
-            final MeteringPoint createdMeteringPoint =
-                MeteringPoint.pigeon_detached(
-                  pigeon_instanceManager: testInstanceManager,
-                );
-            createdMeteringPoints.add(createdMeteringPoint);
-            return createdMeteringPoint;
-          });
-          when(mockFactory.createPointWithSize(0.5, 0.5, 1)).thenAnswer((
-            _,
-          ) async {
-            final MeteringPoint createdMeteringPoint =
-                MeteringPoint.pigeon_detached(
-                  pigeon_instanceManager: testInstanceManager,
-                );
-            createdMeteringPoints.add(createdMeteringPoint);
-            return createdMeteringPoint;
-          });
-          return mockFactory;
-        },
+        newDisplayOrientedMeteringPointFactory:
+            ({
+              required CameraInfo cameraInfo,
+              required double width,
+              required double height,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              final MockDisplayOrientedMeteringPointFactory mockFactory =
+                  MockDisplayOrientedMeteringPointFactory();
+              when(
+                mockFactory.createPoint(exposurePointX, exposurePointY),
+              ).thenAnswer((_) async {
+                final MeteringPoint createdMeteringPoint =
+                    MeteringPoint.pigeon_detached(
+                      pigeon_instanceManager: testInstanceManager,
+                    );
+                createdMeteringPoints.add(createdMeteringPoint);
+                return createdMeteringPoint;
+              });
+              when(mockFactory.createPointWithSize(0.5, 0.5, 1)).thenAnswer((
+                _,
+              ) async {
+                final MeteringPoint createdMeteringPoint =
+                    MeteringPoint.pigeon_detached(
+                      pigeon_instanceManager: testInstanceManager,
+                    );
+                createdMeteringPoints.add(createdMeteringPoint);
+                return createdMeteringPoint;
+              });
+              return mockFactory;
+            },
       );
 
       // Make setting focus and metering action successful for test.
@@ -6393,20 +6746,21 @@ void main() {
               // ignore: non_constant_identifier_names
               PigeonInstanceManager? pigeon_instanceManager,
             }) => MockAnalyzer(),
-        newObserver: <T>({
-          required void Function(Observer<T>, T) onChanged,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return Observer<T>.detached(
-            onChanged: onChanged,
-            pigeon_instanceManager: PigeonInstanceManager(
-              onWeakReferenceRemoved: (_) {},
-            ),
-          );
-        },
+        newObserver:
+            <T>({
+              required void Function(Observer<T>, T) onChanged,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return Observer<T>.detached(
+                onChanged: onChanged,
+                pigeon_instanceManager: PigeonInstanceManager(
+                  onWeakReferenceRemoved: (_) {},
+                ),
+              );
+            },
       );
 
       when(
@@ -6465,20 +6819,21 @@ void main() {
       // Tell plugin to create detached Observer when camera info updated.
       const String outputPath = '/temp/REC123.temp';
       camera.proxy = CameraXProxy(
-        newObserver: <T>({
-          required void Function(Observer<T>, T) onChanged,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return Observer<T>.detached(
-            onChanged: onChanged,
-            pigeon_instanceManager: PigeonInstanceManager(
-              onWeakReferenceRemoved: (_) {},
-            ),
-          );
-        },
+        newObserver:
+            <T>({
+              required void Function(Observer<T>, T) onChanged,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return Observer<T>.detached(
+                onChanged: onChanged,
+                pigeon_instanceManager: PigeonInstanceManager(
+                  onWeakReferenceRemoved: (_) {},
+                ),
+              );
+            },
         fromCamera2CameraInfo:
             ({
               required CameraInfo cameraInfo,
@@ -6487,38 +6842,41 @@ void main() {
               // ignore: non_constant_identifier_names
               PigeonInstanceManager? pigeon_instanceManager,
             }) => mockCamera2CameraInfo,
-        newSystemServicesManager: ({
-          required void Function(SystemServicesManager, String) onCameraError,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          final MockSystemServicesManager mockSystemServicesManager =
-              MockSystemServicesManager();
-          when(
-            mockSystemServicesManager.getTempFilePath(
-              camera.videoPrefix,
-              '.temp',
-            ),
-          ).thenAnswer((_) async => outputPath);
-          return mockSystemServicesManager;
-        },
-        newVideoRecordEventListener: ({
-          required void Function(VideoRecordEventListener, VideoRecordEvent)
-          onEvent,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return VideoRecordEventListener.pigeon_detached(
-            onEvent: onEvent,
-            pigeon_instanceManager: PigeonInstanceManager(
-              onWeakReferenceRemoved: (_) {},
-            ),
-          );
-        },
+        newSystemServicesManager:
+            ({
+              required void Function(SystemServicesManager, String)
+              onCameraError,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              final MockSystemServicesManager mockSystemServicesManager =
+                  MockSystemServicesManager();
+              when(
+                mockSystemServicesManager.getTempFilePath(
+                  camera.videoPrefix,
+                  '.temp',
+                ),
+              ).thenAnswer((_) async => outputPath);
+              return mockSystemServicesManager;
+            },
+        newVideoRecordEventListener:
+            ({
+              required void Function(VideoRecordEventListener, VideoRecordEvent)
+              onEvent,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return VideoRecordEventListener.pigeon_detached(
+                onEvent: onEvent,
+                pigeon_instanceManager: PigeonInstanceManager(
+                  onWeakReferenceRemoved: (_) {},
+                ),
+              );
+            },
         infoSupportedHardwareLevelCameraCharacteristics: () {
           return MockCameraCharacteristicsKey();
         },
@@ -6602,20 +6960,21 @@ void main() {
       // Tell plugin to create detached Observer when camera info updated.
       const String outputPath = '/temp/REC123.temp';
       camera.proxy = CameraXProxy(
-        newObserver: <T>({
-          required void Function(Observer<T>, T) onChanged,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return Observer<T>.detached(
-            onChanged: onChanged,
-            pigeon_instanceManager: PigeonInstanceManager(
-              onWeakReferenceRemoved: (_) {},
-            ),
-          );
-        },
+        newObserver:
+            <T>({
+              required void Function(Observer<T>, T) onChanged,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return Observer<T>.detached(
+                onChanged: onChanged,
+                pigeon_instanceManager: PigeonInstanceManager(
+                  onWeakReferenceRemoved: (_) {},
+                ),
+              );
+            },
         fromCamera2CameraInfo:
             ({
               required CameraInfo cameraInfo,
@@ -6624,38 +6983,41 @@ void main() {
               // ignore: non_constant_identifier_names
               PigeonInstanceManager? pigeon_instanceManager,
             }) => mockCamera2CameraInfo,
-        newSystemServicesManager: ({
-          required void Function(SystemServicesManager, String) onCameraError,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          final MockSystemServicesManager mockSystemServicesManager =
-              MockSystemServicesManager();
-          when(
-            mockSystemServicesManager.getTempFilePath(
-              camera.videoPrefix,
-              '.temp',
-            ),
-          ).thenAnswer((_) async => outputPath);
-          return mockSystemServicesManager;
-        },
-        newVideoRecordEventListener: ({
-          required void Function(VideoRecordEventListener, VideoRecordEvent)
-          onEvent,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return VideoRecordEventListener.pigeon_detached(
-            onEvent: onEvent,
-            pigeon_instanceManager: PigeonInstanceManager(
-              onWeakReferenceRemoved: (_) {},
-            ),
-          );
-        },
+        newSystemServicesManager:
+            ({
+              required void Function(SystemServicesManager, String)
+              onCameraError,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              final MockSystemServicesManager mockSystemServicesManager =
+                  MockSystemServicesManager();
+              when(
+                mockSystemServicesManager.getTempFilePath(
+                  camera.videoPrefix,
+                  '.temp',
+                ),
+              ).thenAnswer((_) async => outputPath);
+              return mockSystemServicesManager;
+            },
+        newVideoRecordEventListener:
+            ({
+              required void Function(VideoRecordEventListener, VideoRecordEvent)
+              onEvent,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return VideoRecordEventListener.pigeon_detached(
+                onEvent: onEvent,
+                pigeon_instanceManager: PigeonInstanceManager(
+                  onWeakReferenceRemoved: (_) {},
+                ),
+              );
+            },
         infoSupportedHardwareLevelCameraCharacteristics: () {
           return MockCameraCharacteristicsKey();
         },
@@ -6739,20 +7101,21 @@ void main() {
       // Tell plugin to create detached Observer when camera info updated.
       const String outputPath = '/temp/REC123.temp';
       camera.proxy = CameraXProxy(
-        newObserver: <T>({
-          required void Function(Observer<T>, T) onChanged,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return Observer<T>.detached(
-            onChanged: onChanged,
-            pigeon_instanceManager: PigeonInstanceManager(
-              onWeakReferenceRemoved: (_) {},
-            ),
-          );
-        },
+        newObserver:
+            <T>({
+              required void Function(Observer<T>, T) onChanged,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return Observer<T>.detached(
+                onChanged: onChanged,
+                pigeon_instanceManager: PigeonInstanceManager(
+                  onWeakReferenceRemoved: (_) {},
+                ),
+              );
+            },
         fromCamera2CameraInfo:
             ({
               required CameraInfo cameraInfo,
@@ -6761,38 +7124,41 @@ void main() {
               // ignore: non_constant_identifier_names
               PigeonInstanceManager? pigeon_instanceManager,
             }) => mockCamera2CameraInfo,
-        newSystemServicesManager: ({
-          required void Function(SystemServicesManager, String) onCameraError,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          final MockSystemServicesManager mockSystemServicesManager =
-              MockSystemServicesManager();
-          when(
-            mockSystemServicesManager.getTempFilePath(
-              camera.videoPrefix,
-              '.temp',
-            ),
-          ).thenAnswer((_) async => outputPath);
-          return mockSystemServicesManager;
-        },
-        newVideoRecordEventListener: ({
-          required void Function(VideoRecordEventListener, VideoRecordEvent)
-          onEvent,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return VideoRecordEventListener.pigeon_detached(
-            onEvent: onEvent,
-            pigeon_instanceManager: PigeonInstanceManager(
-              onWeakReferenceRemoved: (_) {},
-            ),
-          );
-        },
+        newSystemServicesManager:
+            ({
+              required void Function(SystemServicesManager, String)
+              onCameraError,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              final MockSystemServicesManager mockSystemServicesManager =
+                  MockSystemServicesManager();
+              when(
+                mockSystemServicesManager.getTempFilePath(
+                  camera.videoPrefix,
+                  '.temp',
+                ),
+              ).thenAnswer((_) async => outputPath);
+              return mockSystemServicesManager;
+            },
+        newVideoRecordEventListener:
+            ({
+              required void Function(VideoRecordEventListener, VideoRecordEvent)
+              onEvent,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return VideoRecordEventListener.pigeon_detached(
+                onEvent: onEvent,
+                pigeon_instanceManager: PigeonInstanceManager(
+                  onWeakReferenceRemoved: (_) {},
+                ),
+              );
+            },
         infoSupportedHardwareLevelCameraCharacteristics: () {
           return MockCameraCharacteristicsKey();
         },
@@ -6881,34 +7247,36 @@ void main() {
       // Tell plugin to create detached Observer when camera info updated.
       const String outputPath = '/temp/REC123.temp';
       camera.proxy = CameraXProxy(
-        newAnalyzer: ({
-          required void Function(Analyzer, ImageProxy) analyze,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return Analyzer.pigeon_detached(
-            analyze: analyze,
-            pigeon_instanceManager: PigeonInstanceManager(
-              onWeakReferenceRemoved: (_) {},
-            ),
-          );
-        },
-        newObserver: <T>({
-          required void Function(Observer<T>, T) onChanged,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return Observer<T>.detached(
-            onChanged: onChanged,
-            pigeon_instanceManager: PigeonInstanceManager(
-              onWeakReferenceRemoved: (_) {},
-            ),
-          );
-        },
+        newAnalyzer:
+            ({
+              required void Function(Analyzer, ImageProxy) analyze,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return Analyzer.pigeon_detached(
+                analyze: analyze,
+                pigeon_instanceManager: PigeonInstanceManager(
+                  onWeakReferenceRemoved: (_) {},
+                ),
+              );
+            },
+        newObserver:
+            <T>({
+              required void Function(Observer<T>, T) onChanged,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return Observer<T>.detached(
+                onChanged: onChanged,
+                pigeon_instanceManager: PigeonInstanceManager(
+                  onWeakReferenceRemoved: (_) {},
+                ),
+              );
+            },
         fromCamera2CameraInfo:
             ({
               required CameraInfo cameraInfo,
@@ -6917,38 +7285,41 @@ void main() {
               // ignore: non_constant_identifier_names
               PigeonInstanceManager? pigeon_instanceManager,
             }) => mockCamera2CameraInfo,
-        newSystemServicesManager: ({
-          required void Function(SystemServicesManager, String) onCameraError,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          final MockSystemServicesManager mockSystemServicesManager =
-              MockSystemServicesManager();
-          when(
-            mockSystemServicesManager.getTempFilePath(
-              camera.videoPrefix,
-              '.temp',
-            ),
-          ).thenAnswer((_) async => outputPath);
-          return mockSystemServicesManager;
-        },
-        newVideoRecordEventListener: ({
-          required void Function(VideoRecordEventListener, VideoRecordEvent)
-          onEvent,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return VideoRecordEventListener.pigeon_detached(
-            onEvent: onEvent,
-            pigeon_instanceManager: PigeonInstanceManager(
-              onWeakReferenceRemoved: (_) {},
-            ),
-          );
-        },
+        newSystemServicesManager:
+            ({
+              required void Function(SystemServicesManager, String)
+              onCameraError,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              final MockSystemServicesManager mockSystemServicesManager =
+                  MockSystemServicesManager();
+              when(
+                mockSystemServicesManager.getTempFilePath(
+                  camera.videoPrefix,
+                  '.temp',
+                ),
+              ).thenAnswer((_) async => outputPath);
+              return mockSystemServicesManager;
+            },
+        newVideoRecordEventListener:
+            ({
+              required void Function(VideoRecordEventListener, VideoRecordEvent)
+              onEvent,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return VideoRecordEventListener.pigeon_detached(
+                onEvent: onEvent,
+                pigeon_instanceManager: PigeonInstanceManager(
+                  onWeakReferenceRemoved: (_) {},
+                ),
+              );
+            },
         infoSupportedHardwareLevelCameraCharacteristics: () {
           return MockCameraCharacteristicsKey();
         },
@@ -7041,34 +7412,36 @@ void main() {
       // Tell plugin to create detached Observer when camera info updated.
       const String outputPath = '/temp/REC123.temp';
       camera.proxy = CameraXProxy(
-        newAnalyzer: ({
-          required void Function(Analyzer, ImageProxy) analyze,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return Analyzer.pigeon_detached(
-            analyze: analyze,
-            pigeon_instanceManager: PigeonInstanceManager(
-              onWeakReferenceRemoved: (_) {},
-            ),
-          );
-        },
-        newObserver: <T>({
-          required void Function(Observer<T>, T) onChanged,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return Observer<T>.detached(
-            onChanged: onChanged,
-            pigeon_instanceManager: PigeonInstanceManager(
-              onWeakReferenceRemoved: (_) {},
-            ),
-          );
-        },
+        newAnalyzer:
+            ({
+              required void Function(Analyzer, ImageProxy) analyze,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return Analyzer.pigeon_detached(
+                analyze: analyze,
+                pigeon_instanceManager: PigeonInstanceManager(
+                  onWeakReferenceRemoved: (_) {},
+                ),
+              );
+            },
+        newObserver:
+            <T>({
+              required void Function(Observer<T>, T) onChanged,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return Observer<T>.detached(
+                onChanged: onChanged,
+                pigeon_instanceManager: PigeonInstanceManager(
+                  onWeakReferenceRemoved: (_) {},
+                ),
+              );
+            },
         fromCamera2CameraInfo:
             ({
               required CameraInfo cameraInfo,
@@ -7077,38 +7450,41 @@ void main() {
               // ignore: non_constant_identifier_names
               PigeonInstanceManager? pigeon_instanceManager,
             }) => mockCamera2CameraInfo,
-        newSystemServicesManager: ({
-          required void Function(SystemServicesManager, String) onCameraError,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          final MockSystemServicesManager mockSystemServicesManager =
-              MockSystemServicesManager();
-          when(
-            mockSystemServicesManager.getTempFilePath(
-              camera.videoPrefix,
-              '.temp',
-            ),
-          ).thenAnswer((_) async => outputPath);
-          return mockSystemServicesManager;
-        },
-        newVideoRecordEventListener: ({
-          required void Function(VideoRecordEventListener, VideoRecordEvent)
-          onEvent,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return VideoRecordEventListener.pigeon_detached(
-            onEvent: onEvent,
-            pigeon_instanceManager: PigeonInstanceManager(
-              onWeakReferenceRemoved: (_) {},
-            ),
-          );
-        },
+        newSystemServicesManager:
+            ({
+              required void Function(SystemServicesManager, String)
+              onCameraError,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              final MockSystemServicesManager mockSystemServicesManager =
+                  MockSystemServicesManager();
+              when(
+                mockSystemServicesManager.getTempFilePath(
+                  camera.videoPrefix,
+                  '.temp',
+                ),
+              ).thenAnswer((_) async => outputPath);
+              return mockSystemServicesManager;
+            },
+        newVideoRecordEventListener:
+            ({
+              required void Function(VideoRecordEventListener, VideoRecordEvent)
+              onEvent,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return VideoRecordEventListener.pigeon_detached(
+                onEvent: onEvent,
+                pigeon_instanceManager: PigeonInstanceManager(
+                  onWeakReferenceRemoved: (_) {},
+                ),
+              );
+            },
         infoSupportedHardwareLevelCameraCharacteristics: () {
           return MockCameraCharacteristicsKey();
         },
@@ -7193,34 +7569,36 @@ void main() {
       // Tell plugin to create detached Observer when camera info updated.
       const String outputPath = '/temp/REC123.temp';
       camera.proxy = CameraXProxy(
-        newAnalyzer: ({
-          required void Function(Analyzer, ImageProxy) analyze,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return Analyzer.pigeon_detached(
-            analyze: analyze,
-            pigeon_instanceManager: PigeonInstanceManager(
-              onWeakReferenceRemoved: (_) {},
-            ),
-          );
-        },
-        newObserver: <T>({
-          required void Function(Observer<T>, T) onChanged,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return Observer<T>.detached(
-            onChanged: onChanged,
-            pigeon_instanceManager: PigeonInstanceManager(
-              onWeakReferenceRemoved: (_) {},
-            ),
-          );
-        },
+        newAnalyzer:
+            ({
+              required void Function(Analyzer, ImageProxy) analyze,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return Analyzer.pigeon_detached(
+                analyze: analyze,
+                pigeon_instanceManager: PigeonInstanceManager(
+                  onWeakReferenceRemoved: (_) {},
+                ),
+              );
+            },
+        newObserver:
+            <T>({
+              required void Function(Observer<T>, T) onChanged,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return Observer<T>.detached(
+                onChanged: onChanged,
+                pigeon_instanceManager: PigeonInstanceManager(
+                  onWeakReferenceRemoved: (_) {},
+                ),
+              );
+            },
         fromCamera2CameraInfo:
             ({
               required CameraInfo cameraInfo,
@@ -7229,38 +7607,41 @@ void main() {
               // ignore: non_constant_identifier_names
               PigeonInstanceManager? pigeon_instanceManager,
             }) => mockCamera2CameraInfo,
-        newSystemServicesManager: ({
-          required void Function(SystemServicesManager, String) onCameraError,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          final MockSystemServicesManager mockSystemServicesManager =
-              MockSystemServicesManager();
-          when(
-            mockSystemServicesManager.getTempFilePath(
-              camera.videoPrefix,
-              '.temp',
-            ),
-          ).thenAnswer((_) async => outputPath);
-          return mockSystemServicesManager;
-        },
-        newVideoRecordEventListener: ({
-          required void Function(VideoRecordEventListener, VideoRecordEvent)
-          onEvent,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return VideoRecordEventListener.pigeon_detached(
-            onEvent: onEvent,
-            pigeon_instanceManager: PigeonInstanceManager(
-              onWeakReferenceRemoved: (_) {},
-            ),
-          );
-        },
+        newSystemServicesManager:
+            ({
+              required void Function(SystemServicesManager, String)
+              onCameraError,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              final MockSystemServicesManager mockSystemServicesManager =
+                  MockSystemServicesManager();
+              when(
+                mockSystemServicesManager.getTempFilePath(
+                  camera.videoPrefix,
+                  '.temp',
+                ),
+              ).thenAnswer((_) async => outputPath);
+              return mockSystemServicesManager;
+            },
+        newVideoRecordEventListener:
+            ({
+              required void Function(VideoRecordEventListener, VideoRecordEvent)
+              onEvent,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return VideoRecordEventListener.pigeon_detached(
+                onEvent: onEvent,
+                pigeon_instanceManager: PigeonInstanceManager(
+                  onWeakReferenceRemoved: (_) {},
+                ),
+              );
+            },
         infoSupportedHardwareLevelCameraCharacteristics: () {
           return MockCameraCharacteristicsKey();
         },

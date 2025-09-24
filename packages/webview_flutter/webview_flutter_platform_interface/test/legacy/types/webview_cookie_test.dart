@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -11,7 +11,11 @@ void main() {
     Map<String, String> serializedCookie;
     // Test serialization
     cookie = const WebViewCookie(
-        name: 'foo', value: 'bar', domain: 'example.com', path: '/test');
+      name: 'foo',
+      value: 'bar',
+      domain: 'example.com',
+      path: '/test',
+    );
     serializedCookie = cookie.toJson();
     expect(serializedCookie['name'], 'foo');
     expect(serializedCookie['value'], 'bar');

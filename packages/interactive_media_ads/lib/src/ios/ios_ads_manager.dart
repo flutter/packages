@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -35,9 +35,10 @@ class IOSAdsManager extends PlatformAdsManager {
   Future<void> init({PlatformAdsRenderingSettings? settings}) {
     IMAAdsRenderingSettings? nativeSettings;
     if (settings != null) {
-      nativeSettings = settings is IOSAdsRenderingSettings
-          ? settings.nativeSettings
-          : IOSAdsRenderingSettings(settings.params).nativeSettings;
+      nativeSettings =
+          settings is IOSAdsRenderingSettings
+              ? settings.nativeSettings
+              : IOSAdsRenderingSettings(settings.params).nativeSettings;
     }
 
     return _manager.initialize(nativeSettings);

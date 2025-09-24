@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -7,8 +7,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:two_dimensional_examples/tree_view/custom_tree.dart';
 
 void main() {
-  testWidgets('Example builds and can be interacted with',
-      (WidgetTester tester) async {
+  testWidgets('Example builds and can be interacted with', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(const MaterialApp(home: CustomTreeExample()));
     await tester.pumpAndSettle();
     expect(find.text('README.md'), findsOneWidget);
@@ -34,9 +35,8 @@ void main() {
     expect(verticalPosition.maxScrollExtent, 0.0);
     expect(verticalPosition.pixels, 0.0);
 
-    final CustomTreeExampleState state = tester.state(
-      find.byType(CustomTreeExample),
-    ) as CustomTreeExampleState;
+    final CustomTreeExampleState state =
+        tester.state(find.byType(CustomTreeExample)) as CustomTreeExampleState;
 
     state.treeController.toggleNode(state.treeController.getNodeFor('lib')!);
     await tester.pumpAndSettle();

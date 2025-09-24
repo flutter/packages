@@ -1,7 +1,32 @@
-## 16.0.1
+## 16.2.5
 
 - Fixes `GoRouter.of(context)` access inside redirect callbacks by providing router access through Zone-based context tracking.
 - Adds support for using context extension methods (e.g., `context.namedLocation()`, `context.go()`) within redirect callbacks.
+
+## 16.2.4
+
+- Fix Android Cold Start deep link with empty path losing scheme and authority.
+
+## 16.2.3
+
+- Fixes an issue where iOS back gesture pops entire ShellRoute instead of the active sub-route.
+
+## 16.2.2
+
+- Fixes broken links in readme.
+
+## 16.2.1
+
+- Adds state restoration topic to documentation.
+
+## 16.2.0
+
+- Adds `RelativeGoRouteData` and `TypedRelativeGoRoute`.
+- Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
+## 16.1.0
+
+- Adds annotation for go_router_builder that enable custom string encoder/decoder [#110781](https://github.com/flutter/flutter/issues/110781). **Requires go_router_builder >= 3.1.0**.
 
 ## 16.0.0
 
@@ -40,7 +65,7 @@
 ## 14.8.1
 
 - Secured canPop method for the lack of matches in routerDelegate's configuration.
- 
+
 ## 14.8.0
 
 - Adds `preload` parameter to `StatefulShellBranchData.$branch`.

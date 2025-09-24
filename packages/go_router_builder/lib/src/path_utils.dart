@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -15,9 +15,9 @@ final RegExp _parameterRegExp = RegExp(r':(\w+)(\((?:\\.|[^\\()])+\))?');
 /// final pathParameters = pathParametersFromPattern(pattern); // {'id', 'bookId'}
 /// ```
 Set<String> pathParametersFromPattern(String pattern) => <String>{
-      for (final RegExpMatch match in _parameterRegExp.allMatches(pattern))
-        match[1]!,
-    };
+  for (final RegExpMatch match in _parameterRegExp.allMatches(pattern))
+    match[1]!,
+};
 
 /// Reconstructs the full path from a [pattern] and path parameters.
 ///

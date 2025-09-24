@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -18,11 +18,7 @@ class FadeThroughTransitionDemo extends StatefulWidget {
 class _FadeThroughTransitionDemoState extends State<FadeThroughTransitionDemo> {
   int pageIndex = 0;
 
-  List<Widget> pageList = <Widget>[
-    _FirstPage(),
-    _SecondPage(),
-    _ThirdPage(),
-  ];
+  List<Widget> pageList = <Widget>[_FirstPage(), _SecondPage(), _ThirdPage()];
 
   @override
   Widget build(BuildContext context) {
@@ -54,14 +50,8 @@ class _FadeThroughTransitionDemoState extends State<FadeThroughTransitionDemo> {
             icon: Icon(Icons.photo_library),
             label: 'Albums',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.photo),
-            label: 'Photos',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'Search',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.photo), label: 'Photos'),
+          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
         ],
       ),
     );
@@ -107,10 +97,7 @@ class _ExampleCard extends StatelessWidget {
                 ),
               ],
             ),
-            InkWell(
-              splashColor: Colors.black38,
-              onTap: () {},
-            ),
+            InkWell(splashColor: Colors.black38, onTap: () {}),
           ],
         ),
       ),
@@ -126,28 +113,19 @@ class _FirstPage extends StatelessWidget {
         Expanded(
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              _ExampleCard(),
-              _ExampleCard(),
-            ],
+            children: <Widget>[_ExampleCard(), _ExampleCard()],
           ),
         ),
         Expanded(
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              _ExampleCard(),
-              _ExampleCard(),
-            ],
+            children: <Widget>[_ExampleCard(), _ExampleCard()],
           ),
         ),
         Expanded(
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              _ExampleCard(),
-              _ExampleCard(),
-            ],
+            children: <Widget>[_ExampleCard(), _ExampleCard()],
           ),
         ),
       ],
@@ -158,12 +136,7 @@ class _FirstPage extends StatelessWidget {
 class _SecondPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        _ExampleCard(),
-        _ExampleCard(),
-      ],
-    );
+    return Column(children: <Widget>[_ExampleCard(), _ExampleCard()]);
   }
 }
 
@@ -173,10 +146,7 @@ class _ThirdPage extends StatelessWidget {
     return ListView.builder(
       itemBuilder: (BuildContext context, int index) {
         return ListTile(
-          leading: Image.asset(
-            'assets/avatar_logo.png',
-            width: 40,
-          ),
+          leading: Image.asset('assets/avatar_logo.png', width: 40),
           title: Text('List item ${index + 1}'),
           subtitle: const Text('Secondary text'),
         );

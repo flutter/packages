@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -37,7 +37,9 @@ base class GUID extends Struct {
     final ByteData bytes = ByteData(16);
     for (int i = 0; i < 16; ++i) {
       bytes.setUint8(
-          i, int.parse(hexOnly.substring(i * 2, i * 2 + 2), radix: 16));
+        i,
+        int.parse(hexOnly.substring(i * 2, i * 2 + 2), radix: 16),
+      );
     }
     data1 = bytes.getInt32(0);
     data2 = bytes.getInt16(4);

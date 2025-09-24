@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -9,8 +9,9 @@ import 'package:two_dimensional_examples/tree_view/simple_tree.dart';
 import 'package:two_dimensional_examples/tree_view/tree_explorer.dart';
 
 void main() {
-  testWidgets('Tree explorer switches between samples',
-      (WidgetTester tester) async {
+  testWidgets('Tree explorer switches between samples', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(const MaterialApp(home: TreeExplorer()));
     await tester.pumpAndSettle();
     // The first example

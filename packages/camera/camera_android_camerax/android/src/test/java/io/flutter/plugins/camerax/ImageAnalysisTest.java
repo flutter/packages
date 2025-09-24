@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -32,11 +32,13 @@ public class ImageAnalysisTest {
 
     final ResolutionSelector mockResolutionSelector = new ResolutionSelector.Builder().build();
     final long targetResolution = Surface.ROTATION_0;
+    final long outputImageFormat = ImageAnalysis.OUTPUT_IMAGE_FORMAT_NV21;
     final ImageAnalysis imageAnalysis =
-        api.pigeon_defaultConstructor(mockResolutionSelector, targetResolution);
+        api.pigeon_defaultConstructor(mockResolutionSelector, targetResolution, outputImageFormat);
 
     assertEquals(imageAnalysis.getResolutionSelector(), mockResolutionSelector);
     assertEquals(imageAnalysis.getTargetRotation(), Surface.ROTATION_0);
+    assertEquals(imageAnalysis.getOutputImageFormat(), ImageAnalysis.OUTPUT_IMAGE_FORMAT_NV21);
   }
 
   @Test
