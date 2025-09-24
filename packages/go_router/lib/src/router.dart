@@ -574,12 +574,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
       WidgetsBinding.instance.platformDispatcher.defaultRouteName,
     );
     if (platformDefaultUri.hasEmptyPath) {
-      // TODO(chunhtai): Clean up this once `RouteInformation.uri` is available
-      // in packages repo.
-      platformDefaultUri = Uri(
-        path: '/',
-        queryParameters: platformDefaultUri.queryParameters,
-      );
+      platformDefaultUri = platformDefaultUri.replace(path: '/');
     }
     final String platformDefault = platformDefaultUri.toString();
     if (initialLocation == null) {

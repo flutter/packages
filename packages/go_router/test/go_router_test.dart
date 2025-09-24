@@ -3371,7 +3371,7 @@ void main() {
         final GoRouter router = await createRouter(routes, tester);
         expect(
           router.routeInformationProvider.value.uri.toString(),
-          '/?param=1',
+          'https://domain.com/?param=1',
         );
         TestWidgetsFlutterBinding.instance.platformDispatcher
             .clearDefaultRouteNameTestValue();
