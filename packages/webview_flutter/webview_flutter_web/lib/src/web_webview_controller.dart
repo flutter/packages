@@ -79,23 +79,30 @@ class WebWebViewController extends PlatformWebViewController {
 
   // Retrieves the iFrame's content document after attachment to DOM.
   Future<web.Document> _getIFrameDocument() async {
-    // If the document is not yet available, wait for the 'load' event.
-    if (_webWebViewParams.iFrame.contentDocument == null) {
-      final Completer<void> completer = Completer<void>();
-      _webWebViewParams.iFrame.addEventListener(
-        'load',
-        (web.Event _) {
-          completer.complete();
-        }.toJS,
-        AddEventListenerOptions(once: true),
-      );
-      // If src is not set, the iframe will never load.
-      if (_webWebViewParams.iFrame.src.isEmpty) {
-        _webWebViewParams.iFrame.src = 'about:blank';
+    try {
+      // If the document is not yet available, wait for the 'load' event.
+      if (_webWebViewParams.iFrame.contentDocument == null) {
+        final Completer<void> completer = Completer<void>();
+        _webWebViewParams.iFrame.addEventListener(
+          'load',
+          (web.Event _) {
+            completer.complete();
+          }.toJS,
+          AddEventListenerOptions(once: true),
+        );
+        // If src is not set, the iframe will never load.
+        if (_webWebViewParams.iFrame.src.isEmpty) {
+          _webWebViewParams.iFrame.src = 'about:blank';
+        }
+        await completer.future;
       }
-      await completer.future;
+      // Test origin permission
+      _webWebViewParams.iFrame.contentDocument!.body;
+      // Return on success
+      return _webWebViewParams.iFrame.contentDocument!;
+    } catch (_) {
+      throw StateError('Web view origin mismatch');
     }
-    return _webWebViewParams.iFrame.contentDocument!;
   }
 
   @override
