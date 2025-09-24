@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -62,8 +62,10 @@ void main() {
         // Run
         controller.loadHtmlString('test html');
         // Verify
-        expect(fakeIFrame.src,
-            'data:text/html;charset=utf-8,${Uri.encodeFull('test html')}');
+        expect(
+          fakeIFrame.src,
+          'data:text/html;charset=utf-8,${Uri.encodeFull('test html')}',
+        );
       });
 
       test('loadHtmlString escapes "#" correctly', () {
@@ -87,60 +89,70 @@ void main() {
 
         // Run & Verify
         expect(
-            () async => controller.loadRequest(
-                  WebViewRequest(
-                    uri: Uri.parse('flutter.dev'),
-                    method: WebViewRequestMethod.get,
-                  ),
-                ),
-            throwsA(const TypeMatcher<ArgumentError>()));
+          () async => controller.loadRequest(
+            WebViewRequest(
+              uri: Uri.parse('flutter.dev'),
+              method: WebViewRequestMethod.get,
+            ),
+          ),
+          throwsA(const TypeMatcher<ArgumentError>()),
+        );
       });
 
-      test('loadRequest makes request and loads response into iframe',
-          () async {
-        // Setup
-        final web.HTMLIFrameElement fakeIFrame = web.HTMLIFrameElement();
-        final WebWebViewPlatformController controller =
-            WebWebViewPlatformController(fakeIFrame);
+      test(
+        'loadRequest makes request and loads response into iframe',
+        () async {
+          // Setup
+          final web.HTMLIFrameElement fakeIFrame = web.HTMLIFrameElement();
+          final WebWebViewPlatformController controller =
+              WebWebViewPlatformController(fakeIFrame);
 
-        final web.Response fakeResponse = web.Response(
+          final web.Response fakeResponse = web.Response(
             'test data'.toJS,
             <String, Object>{
-              'headers': <String, Object>{
-                'content-type': 'text/plain',
-              },
-            }.jsify()! as web.ResponseInit);
+                  'headers': <String, Object>{'content-type': 'text/plain'},
+                }.jsify()!
+                as web.ResponseInit,
+          );
 
-        final MockHttpRequestFactory mockHttpRequestFactory =
-            MockHttpRequestFactory();
-        when(mockHttpRequestFactory.request(
-          any,
-          method: anyNamed('method'),
-          requestHeaders: anyNamed('requestHeaders'),
-          sendData: anyNamed('sendData'),
-        )).thenAnswer((_) => Future<web.Response>.value(fakeResponse));
+          final MockHttpRequestFactory mockHttpRequestFactory =
+              MockHttpRequestFactory();
+          when(
+            mockHttpRequestFactory.request(
+              any,
+              method: anyNamed('method'),
+              requestHeaders: anyNamed('requestHeaders'),
+              sendData: anyNamed('sendData'),
+            ),
+          ).thenAnswer((_) => Future<web.Response>.value(fakeResponse));
 
-        controller.httpRequestFactory = mockHttpRequestFactory;
+          controller.httpRequestFactory = mockHttpRequestFactory;
 
-        // Run
-        await controller.loadRequest(
-          WebViewRequest(
+          // Run
+          await controller.loadRequest(
+            WebViewRequest(
               uri: Uri.parse('https://flutter.dev'),
               method: WebViewRequestMethod.post,
               body: Uint8List.fromList('test body'.codeUnits),
-              headers: <String, String>{'Foo': 'Bar'}),
-        );
-        // Verify
-        verify(mockHttpRequestFactory.request(
-          'https://flutter.dev',
-          method: 'post',
-          requestHeaders: <String, String>{'Foo': 'Bar'},
-          sendData: Uint8List.fromList('test body'.codeUnits),
-        ));
+              headers: <String, String>{'Foo': 'Bar'},
+            ),
+          );
+          // Verify
+          verify(
+            mockHttpRequestFactory.request(
+              'https://flutter.dev',
+              method: 'post',
+              requestHeaders: <String, String>{'Foo': 'Bar'},
+              sendData: Uint8List.fromList('test body'.codeUnits),
+            ),
+          );
 
-        expect(fakeIFrame.src,
-            'data:;charset=utf-8,${Uri.encodeFull('test data')}');
-      });
+          expect(
+            fakeIFrame.src,
+            'data:;charset=utf-8,${Uri.encodeFull('test data')}',
+          );
+        },
+      );
 
       test('loadRequest escapes "#" correctly', () async {
         // Setup
@@ -149,31 +161,34 @@ void main() {
             WebWebViewPlatformController(fakeIFrame);
 
         final web.Response fakeResponse = web.Response(
-            '#'.toJS,
-            <String, Object>{
-              'headers': <String, Object>{
-                'content-type': 'text/html',
-              },
-            }.jsify()! as web.ResponseInit);
+          '#'.toJS,
+          <String, Object>{
+                'headers': <String, Object>{'content-type': 'text/html'},
+              }.jsify()!
+              as web.ResponseInit,
+        );
 
         final MockHttpRequestFactory mockHttpRequestFactory =
             MockHttpRequestFactory();
-        when(mockHttpRequestFactory.request(
-          any,
-          method: anyNamed('method'),
-          requestHeaders: anyNamed('requestHeaders'),
-          sendData: anyNamed('sendData'),
-        )).thenAnswer((_) => Future<web.Response>.value(fakeResponse));
+        when(
+          mockHttpRequestFactory.request(
+            any,
+            method: anyNamed('method'),
+            requestHeaders: anyNamed('requestHeaders'),
+            sendData: anyNamed('sendData'),
+          ),
+        ).thenAnswer((_) => Future<web.Response>.value(fakeResponse));
 
         controller.httpRequestFactory = mockHttpRequestFactory;
 
         // Run
         await controller.loadRequest(
           WebViewRequest(
-              uri: Uri.parse('https://flutter.dev'),
-              method: WebViewRequestMethod.post,
-              body: Uint8List.fromList('test body'.codeUnits),
-              headers: <String, String>{'Foo': 'Bar'}),
+            uri: Uri.parse('https://flutter.dev'),
+            method: WebViewRequestMethod.post,
+            body: Uint8List.fromList('test body'.codeUnits),
+            headers: <String, String>{'Foo': 'Bar'},
+          ),
         );
 
         expect(fakeIFrame.src, contains('%23'));

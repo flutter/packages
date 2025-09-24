@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -10,11 +10,10 @@ String getFlutterCommand() => Platform.isWindows ? 'flutter.bat' : 'flutter';
 /// Returns the first device listed by `flutter devices` that targets
 /// [platform], or null if there is no such device.
 Future<String?> getDeviceForPlatform(String platform) async {
-  final ProcessResult result = await Process.run(
-    getFlutterCommand(),
-    <String>['devices', '--machine'],
-    stdoutEncoding: utf8,
-  );
+  final ProcessResult result = await Process.run(getFlutterCommand(), <String>[
+    'devices',
+    '--machine',
+  ], stdoutEncoding: utf8);
   if (result.exitCode != 0) {
     return null;
   }

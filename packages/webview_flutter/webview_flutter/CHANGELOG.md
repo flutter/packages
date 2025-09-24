@@ -1,3 +1,8 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+* Updates README to reflect that only Android API 24+ is supported.
+
 ## 4.13.0
 
 * Adds support to respond to recoverable SSL certificate errors. See `NavigationDelegate(onSSlAuthError)`.

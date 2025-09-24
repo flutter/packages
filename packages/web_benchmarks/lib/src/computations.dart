@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -21,7 +21,7 @@ class Timeseries {
   ///
   /// [name], [isReported], and [useCustomWarmUp] must not be null.
   Timeseries(this.name, this.isReported, {this.useCustomWarmUp = false})
-      : _warmUpFrameCount = useCustomWarmUp ? 0 : null;
+    : _warmUpFrameCount = useCustomWarmUp ? 0 : null;
 
   /// The label of this timeseries used for debugging and result inspection.
   final String name;
@@ -65,12 +65,15 @@ class Timeseries {
     assert(finalWarmUpFrameCount >= 0 && finalWarmUpFrameCount < count);
 
     // The first few values we simply discard and never look at. They're from the warm-up phase.
-    final List<double> warmUpValues =
-        _allValues.sublist(0, finalWarmUpFrameCount);
+    final List<double> warmUpValues = _allValues.sublist(
+      0,
+      finalWarmUpFrameCount,
+    );
 
     // Values we analyze.
-    final List<double> candidateValues =
-        _allValues.sublist(finalWarmUpFrameCount);
+    final List<double> candidateValues = _allValues.sublist(
+      finalWarmUpFrameCount,
+    );
 
     // The average that includes outliers.
     final double dirtyAverage = _computeAverage(name, candidateValues);
@@ -83,17 +86,21 @@ class Timeseries {
     final double outlierCutOff = dirtyAverage + dirtyStandardDeviation;
 
     // Candidates with outliers removed.
-    final Iterable<double> cleanValues =
-        candidateValues.where((double value) => value <= outlierCutOff);
+    final Iterable<double> cleanValues = candidateValues.where(
+      (double value) => value <= outlierCutOff,
+    );
 
     // Outlier candidates.
-    final Iterable<double> outliers =
-        candidateValues.where((double value) => value > outlierCutOff);
+    final Iterable<double> outliers = candidateValues.where(
+      (double value) => value > outlierCutOff,
+    );
 
     // Final statistics.
     final double cleanAverage = _computeAverage(name, cleanValues);
-    final double standardDeviation =
-        _computeStandardDeviationForPopulation(name, cleanValues);
+    final double standardDeviation = _computeStandardDeviationForPopulation(
+      name,
+      cleanValues,
+    );
     final double noise =
         cleanAverage > 0.0 ? standardDeviation / cleanAverage : 0.0;
 
@@ -228,9 +235,10 @@ class TimeseriesStats {
   /// This is a measure of performance consistency. The higher this number the
   /// worse is jank when it happens. Smaller is better, with 1.0 being the
   /// perfect score. If [average] is zero, this value defaults to 1.0.
-  double get outlierRatio => average > 0.0
-      ? outlierAverage / average
-      : 1.0; // this can only happen in perfect benchmark that reports only zeros
+  double get outlierRatio =>
+      average > 0.0
+          ? outlierAverage / average
+          : 1.0; // this can only happen in perfect benchmark that reports only zeros
 
   @override
   String toString() {
@@ -282,7 +290,8 @@ class AnnotatedSample {
 double _computeAverage(String label, Iterable<double> values) {
   if (values.isEmpty) {
     throw StateError(
-        '$label: attempted to compute an average of an empty value list.');
+      '$label: attempted to compute an average of an empty value list.',
+    );
   }
 
   final double sum = values.reduce((double a, double b) => a + b);
@@ -297,10 +306,13 @@ double _computeAverage(String label, Iterable<double> values) {
 ///
 /// * https://en.wikipedia.org/wiki/Standard_deviation
 double _computeStandardDeviationForPopulation(
-    String label, Iterable<double> population) {
+  String label,
+  Iterable<double> population,
+) {
   if (population.isEmpty) {
     throw StateError(
-        '$label: attempted to compute the standard deviation of empty population.');
+      '$label: attempted to compute the standard deviation of empty population.',
+    );
   }
   final double mean = _computeAverage(label, population);
   final double sumOfSquaredDeltas = population.fold<double>(
@@ -338,12 +350,15 @@ Map<double, double> computePercentiles(
     }
   }
 
-  final List<double> sorted =
-      values.sorted((double a, double b) => a.compareTo(b));
+  final List<double> sorted = values.sorted(
+    (double a, double b) => a.compareTo(b),
+  );
   final Map<double, double> computed = <double, double>{};
   for (final double percentile in percentiles) {
-    final int percentileIndex =
-        (sorted.length * percentile).round().clamp(0, sorted.length - 1);
+    final int percentileIndex = (sorted.length * percentile).round().clamp(
+      0,
+      sorted.length - 1,
+    );
     computed[percentile] = sorted[percentileIndex];
   }
 

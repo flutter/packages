@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -41,36 +41,33 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
+      appBar: AppBar(title: Text(widget.title)),
       body: Center(
         child: ListView(
           padding: const EdgeInsets.only(left: 20),
           shrinkWrap: true,
           children: <Widget>[
-            const SizedBox(
-              height: 20,
-            ),
+            const SizedBox(height: 20),
             ListView.builder(
               shrinkWrap: true,
               itemCount: userDirectoryNames.length,
-              itemBuilder: (BuildContext context, int index) => Text(
-                '${userDirectoryNames.elementAt(index)}: \n${getUserDirectory(userDirectoryNames.elementAt(index))?.path}\n',
-              ),
+              itemBuilder:
+                  (BuildContext context, int index) => Text(
+                    '${userDirectoryNames.elementAt(index)}: \n${getUserDirectory(userDirectoryNames.elementAt(index))?.path}\n',
+                  ),
             ),
             Text('Data Home: \n${dataHome.path}\n'),
             Text('Config Home: \n${configHome.path}\n'),
             Text(
-                'Data Directories: \n${dataDirs.map((Directory directory) => directory.path).toList().join('\n')}\n'),
+              'Data Directories: \n${dataDirs.map((Directory directory) => directory.path).toList().join('\n')}\n',
+            ),
             Text(
-                'Config Directories: \n${configDirs.map((Directory directory) => directory.path).toList().join('\n')}\n'),
+              'Config Directories: \n${configDirs.map((Directory directory) => directory.path).toList().join('\n')}\n',
+            ),
             Text('Cache Home: \n${cacheHome.path}\n'),
             Text('Runtime Directory: \n${runtimeDir?.path}\n'),
             Text('State Home: \n${stateHome.path}\n'),
-            const SizedBox(
-              height: 100,
-            ),
+            const SizedBox(height: 100),
           ],
         ),
       ),

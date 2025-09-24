@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -11,7 +11,7 @@ import 'types.dart';
 class MarkerUpdates extends MapsObjectUpdates<Marker> {
   /// Computes [MarkerUpdates] given previous and current [Marker]s.
   MarkerUpdates.from(super.previous, super.current)
-      : super.from(objectName: 'marker');
+    : super.from(objectName: 'marker');
 
   /// Set of Markers to be added in this update.
   Set<Marker> get markersToAdd => objectsToAdd;

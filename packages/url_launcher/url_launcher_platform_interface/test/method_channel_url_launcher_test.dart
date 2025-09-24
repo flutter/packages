@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -45,17 +45,18 @@ void main() {
   });
 
   group('$MethodChannelUrlLauncher', () {
-    const MethodChannel channel =
-        MethodChannel('plugins.flutter.io/url_launcher');
+    const MethodChannel channel = MethodChannel(
+      'plugins.flutter.io/url_launcher',
+    );
     final List<MethodCall> log = <MethodCall>[];
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
-      log.add(methodCall);
+          log.add(methodCall);
 
-      // Return null explicitly instead of relying on the implicit null
-      // returned by the method channel if no return statement is specified.
-      return null;
-    });
+          // Return null explicitly instead of relying on the implicit null
+          // returned by the method channel if no return statement is specified.
+          return null;
+        });
 
     final MethodChannelUrlLauncher launcher = MethodChannelUrlLauncher();
 
@@ -65,14 +66,12 @@ void main() {
 
     test('canLaunch', () async {
       await launcher.canLaunch('http://example.com/');
-      expect(
-        log,
-        <Matcher>[
-          isMethodCall('canLaunch', arguments: <String, Object>{
-            'url': 'http://example.com/',
-          })
-        ],
-      );
+      expect(log, <Matcher>[
+        isMethodCall(
+          'canLaunch',
+          arguments: <String, Object>{'url': 'http://example.com/'},
+        ),
+      ]);
     });
 
     test('canLaunch should return false if platform returns null', () async {
@@ -91,10 +90,10 @@ void main() {
         universalLinksOnly: false,
         headers: const <String, String>{},
       );
-      expect(
-        log,
-        <Matcher>[
-          isMethodCall('launch', arguments: <String, Object>{
+      expect(log, <Matcher>[
+        isMethodCall(
+          'launch',
+          arguments: <String, Object>{
             'url': 'http://example.com/',
             'useSafariVC': true,
             'useWebView': false,
@@ -102,9 +101,9 @@ void main() {
             'enableDomStorage': false,
             'universalLinksOnly': false,
             'headers': <String, String>{},
-          })
-        ],
-      );
+          },
+        ),
+      ]);
     });
 
     test('launch with headers', () async {
@@ -117,10 +116,10 @@ void main() {
         universalLinksOnly: false,
         headers: const <String, String>{'key': 'value'},
       );
-      expect(
-        log,
-        <Matcher>[
-          isMethodCall('launch', arguments: <String, Object>{
+      expect(log, <Matcher>[
+        isMethodCall(
+          'launch',
+          arguments: <String, Object>{
             'url': 'http://example.com/',
             'useSafariVC': true,
             'useWebView': false,
@@ -128,9 +127,9 @@ void main() {
             'enableDomStorage': false,
             'universalLinksOnly': false,
             'headers': <String, String>{'key': 'value'},
-          })
-        ],
-      );
+          },
+        ),
+      ]);
     });
 
     test('launch force SafariVC', () async {
@@ -143,10 +142,10 @@ void main() {
         universalLinksOnly: false,
         headers: const <String, String>{},
       );
-      expect(
-        log,
-        <Matcher>[
-          isMethodCall('launch', arguments: <String, Object>{
+      expect(log, <Matcher>[
+        isMethodCall(
+          'launch',
+          arguments: <String, Object>{
             'url': 'http://example.com/',
             'useSafariVC': true,
             'useWebView': false,
@@ -154,9 +153,9 @@ void main() {
             'enableDomStorage': false,
             'universalLinksOnly': false,
             'headers': <String, String>{},
-          })
-        ],
-      );
+          },
+        ),
+      ]);
     });
 
     test('launch universal links only', () async {
@@ -169,10 +168,10 @@ void main() {
         universalLinksOnly: true,
         headers: const <String, String>{},
       );
-      expect(
-        log,
-        <Matcher>[
-          isMethodCall('launch', arguments: <String, Object>{
+      expect(log, <Matcher>[
+        isMethodCall(
+          'launch',
+          arguments: <String, Object>{
             'url': 'http://example.com/',
             'useSafariVC': false,
             'useWebView': false,
@@ -180,9 +179,9 @@ void main() {
             'enableDomStorage': false,
             'universalLinksOnly': true,
             'headers': <String, String>{},
-          })
-        ],
-      );
+          },
+        ),
+      ]);
     });
 
     test('launch force WebView', () async {
@@ -195,10 +194,10 @@ void main() {
         universalLinksOnly: false,
         headers: const <String, String>{},
       );
-      expect(
-        log,
-        <Matcher>[
-          isMethodCall('launch', arguments: <String, Object>{
+      expect(log, <Matcher>[
+        isMethodCall(
+          'launch',
+          arguments: <String, Object>{
             'url': 'http://example.com/',
             'useSafariVC': true,
             'useWebView': true,
@@ -206,9 +205,9 @@ void main() {
             'enableDomStorage': false,
             'universalLinksOnly': false,
             'headers': <String, String>{},
-          })
-        ],
-      );
+          },
+        ),
+      ]);
     });
 
     test('launch force WebView enable javascript', () async {
@@ -221,10 +220,10 @@ void main() {
         universalLinksOnly: false,
         headers: const <String, String>{},
       );
-      expect(
-        log,
-        <Matcher>[
-          isMethodCall('launch', arguments: <String, Object>{
+      expect(log, <Matcher>[
+        isMethodCall(
+          'launch',
+          arguments: <String, Object>{
             'url': 'http://example.com/',
             'useSafariVC': true,
             'useWebView': true,
@@ -232,9 +231,9 @@ void main() {
             'enableDomStorage': false,
             'universalLinksOnly': false,
             'headers': <String, String>{},
-          })
-        ],
-      );
+          },
+        ),
+      ]);
     });
 
     test('launch force WebView enable DOM storage', () async {
@@ -247,10 +246,10 @@ void main() {
         universalLinksOnly: false,
         headers: const <String, String>{},
       );
-      expect(
-        log,
-        <Matcher>[
-          isMethodCall('launch', arguments: <String, Object>{
+      expect(log, <Matcher>[
+        isMethodCall(
+          'launch',
+          arguments: <String, Object>{
             'url': 'http://example.com/',
             'useSafariVC': true,
             'useWebView': true,
@@ -258,9 +257,9 @@ void main() {
             'enableDomStorage': true,
             'universalLinksOnly': false,
             'headers': <String, String>{},
-          })
-        ],
-      );
+          },
+        ),
+      ]);
     });
 
     test('launch force SafariVC to false', () async {
@@ -273,10 +272,10 @@ void main() {
         universalLinksOnly: false,
         headers: const <String, String>{},
       );
-      expect(
-        log,
-        <Matcher>[
-          isMethodCall('launch', arguments: <String, Object>{
+      expect(log, <Matcher>[
+        isMethodCall(
+          'launch',
+          arguments: <String, Object>{
             'url': 'http://example.com/',
             'useSafariVC': false,
             'useWebView': false,
@@ -284,9 +283,9 @@ void main() {
             'enableDomStorage': false,
             'universalLinksOnly': false,
             'headers': <String, String>{},
-          })
-        ],
-      );
+          },
+        ),
+      ]);
     });
 
     test('launch should return false if platform returns null', () async {
@@ -305,10 +304,7 @@ void main() {
 
     test('closeWebView default behavior', () async {
       await launcher.closeWebView();
-      expect(
-        log,
-        <Matcher>[isMethodCall('closeWebView', arguments: null)],
-      );
+      expect(log, <Matcher>[isMethodCall('closeWebView', arguments: null)]);
     });
   });
 }

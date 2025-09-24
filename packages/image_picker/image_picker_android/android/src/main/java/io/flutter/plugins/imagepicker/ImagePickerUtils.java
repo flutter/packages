@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -45,8 +45,8 @@ final class ImagePickerUtils {
   }
 
   /**
-   * Camera permission need request if it present in manifest, because for M or great for take Photo
-   * ar Video by intent need it permission, even if the camera permission is not used.
+   * Camera permission needs to be requested if it is present in the manifest, even if the camera
+   * permission is not used.
    *
    * <p>Camera permission may be used in another package, as example flutter_barcode_reader.
    * https://github.com/flutter/flutter/issues/29837
@@ -54,8 +54,7 @@ final class ImagePickerUtils {
    * @return returns true, if need request camera permission, otherwise false
    */
   static boolean needRequestCameraPermission(Context context) {
-    boolean greatOrEqualM = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
-    return greatOrEqualM && isPermissionPresentInManifest(context, Manifest.permission.CAMERA);
+    return isPermissionPresentInManifest(context, Manifest.permission.CAMERA);
   }
 
   /**

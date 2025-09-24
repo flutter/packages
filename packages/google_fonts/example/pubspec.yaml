@@ -1,0 +1,23 @@
+name: google_fonts_tester
+description: A Flutter application showcasing how to use the google_fonts package.
+publish_to: none
+
+environment:
+  sdk: ^3.7.0
+
+dependencies:
+  cupertino_icons: ^1.0.0
+  flutter:
+    sdk: flutter
+  google_fonts:
+    path: ../
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - google_fonts/

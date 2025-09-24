@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -113,13 +113,10 @@ class BenchmarkServer {
   /// The default value is [defaultInitialPath].
   final String benchmarkPath;
 
-  String get _benchmarkAppUrl => Uri.parse(benchmarkPath)
-      .replace(
-        scheme: 'http',
-        host: 'localhost',
-        port: benchmarkServerPort,
-      )
-      .toString();
+  String get _benchmarkAppUrl =>
+      Uri.parse(benchmarkPath)
+          .replace(scheme: 'http', host: 'localhost', port: benchmarkServerPort)
+          .toString();
 
   /// Builds and serves the benchmark app, and collects benchmark results.
   Future<BenchmarkResults> run() async {
@@ -128,33 +125,30 @@ class BenchmarkServer {
 
     if (!_processManager.canRun('flutter')) {
       throw Exception(
-          "flutter executable is not runnable. Make sure it's in the PATH.");
+        "flutter executable is not runnable. Make sure it's in the PATH.",
+      );
     }
 
     final DateTime startTime = DateTime.now();
     print('Building Flutter web app $compilationOptions...');
-    final io.ProcessResult buildResult = await _processManager.run(
-      <String>[
-        'flutter',
-        'build',
-        'web',
-        if (compilationOptions.useWasm) ...<String>[
-          '--wasm',
-          '--no-strip-wasm',
-        ],
-        '--dart-define=FLUTTER_WEB_ENABLE_PROFILING=true',
-        if (!treeShakeIcons) '--no-tree-shake-icons',
-        '--profile',
-        '-t',
-        entryPoint,
-      ],
-      workingDirectory: benchmarkAppDirectory.path,
-    );
+    final io.ProcessResult buildResult = await _processManager.run(<String>[
+      'flutter',
+      'build',
+      'web',
+      if (compilationOptions.useWasm) ...<String>['--wasm', '--no-strip-wasm'],
+      '--dart-define=FLUTTER_WEB_ENABLE_PROFILING=true',
+      if (!treeShakeIcons) '--no-tree-shake-icons',
+      '--profile',
+      '-t',
+      entryPoint,
+    ], workingDirectory: benchmarkAppDirectory.path);
 
-    final int buildTime = Duration(
-      milliseconds: DateTime.now().millisecondsSinceEpoch -
-          startTime.millisecondsSinceEpoch,
-    ).inSeconds;
+    final int buildTime =
+        Duration(
+          milliseconds:
+              DateTime.now().millisecondsSinceEpoch -
+              startTime.millisecondsSinceEpoch,
+        ).inSeconds;
     print('Build took ${buildTime}s to complete.');
 
     if (buildResult.exitCode != 0) {
@@ -194,10 +188,12 @@ class BenchmarkServer {
     cascade = cascade.add((Request request) async {
       final Response response = await buildFolderHandler(request);
       if (response.mimeType == 'text/html') {
-        return response.change(headers: <String, String>{
-          'Cross-Origin-Opener-Policy': 'same-origin',
-          'Cross-Origin-Embedder-Policy': 'require-corp',
-        });
+        return response.change(
+          headers: <String, String>{
+            'Cross-Origin-Opener-Policy': 'same-origin',
+            'Cross-Origin-Embedder-Policy': 'require-corp',
+          },
+        );
       }
       return response;
     });
@@ -212,18 +208,21 @@ class BenchmarkServer {
               json.decode(await request.readAsString()) as Map<String, dynamic>;
           final String? benchmarkName = profile['name'] as String?;
           if (benchmarkName != benchmarkIterator.current) {
-            profileData.completeError(Exception(
-              'Browser returned benchmark results from a wrong benchmark.\n'
-              'Requested to run benchmark ${benchmarkIterator.current}, but '
-              'got results for $benchmarkName.',
-            ));
+            profileData.completeError(
+              Exception(
+                'Browser returned benchmark results from a wrong benchmark.\n'
+                'Requested to run benchmark ${benchmarkIterator.current}, but '
+                'got results for $benchmarkName.',
+              ),
+            );
             unawaited(server.close());
           }
 
           // Trace data is null when the benchmark is not frame-based, such as RawRecorder.
           if (latestPerformanceTrace != null) {
-            final BlinkTraceSummary? traceSummary =
-                BlinkTraceSummary.fromJson(latestPerformanceTrace!);
+            final BlinkTraceSummary? traceSummary = BlinkTraceSummary.fromJson(
+              latestPerformanceTrace!,
+            );
             profile[totalUiFrameAverage] =
                 traceSummary?.averageTotalUIFrameTime.inMicroseconds;
             profile['scoreKeys'] ??=
@@ -233,14 +232,17 @@ class BenchmarkServer {
           }
           collectedProfiles.add(profile);
           return Response.ok('Profile received');
-        } else if (request.requestedUri.path
-            .endsWith('/start-performance-tracing')) {
+        } else if (request.requestedUri.path.endsWith(
+          '/start-performance-tracing',
+        )) {
           latestPerformanceTrace = null;
           await chrome!.beginRecordingPerformance(
-              request.requestedUri.queryParameters['label']);
+            request.requestedUri.queryParameters['label'],
+          );
           return Response.ok('Started performance tracing');
-        } else if (request.requestedUri.path
-            .endsWith('/stop-performance-tracing')) {
+        } else if (request.requestedUri.path.endsWith(
+          '/stop-performance-tracing',
+        )) {
           latestPerformanceTrace = await chrome!.endRecordingPerformance();
           return Response.ok('Stopped performance tracing');
         } else if (request.requestedUri.path.endsWith('/on-error')) {
@@ -280,7 +282,8 @@ class BenchmarkServer {
           return Response.ok('Reported.');
         } else {
           return Response.notFound(
-              'This request is not handled by the profile-data handler.');
+            'This request is not handled by the profile-data handler.',
+          );
         }
       } catch (error, stackTrace) {
         if (!profileData.isCompleted) {
@@ -315,11 +318,14 @@ class BenchmarkServer {
     try {
       shelf_io.serveRequests(server, cascade.handler);
 
-      final String dartToolDirectory =
-          path.join(benchmarkAppDirectory.path, '.dart_tool');
-      final String userDataDir = io.Directory(dartToolDirectory)
-          .createTempSync('chrome_user_data_')
-          .path;
+      final String dartToolDirectory = path.join(
+        benchmarkAppDirectory.path,
+        '.dart_tool',
+      );
+      final String userDataDir =
+          io.Directory(
+            dartToolDirectory,
+          ).createTempSync('chrome_user_data_').path;
 
       final ChromeOptions options = ChromeOptions(
         url: _benchmarkAppUrl,
@@ -353,16 +359,18 @@ class BenchmarkServer {
           throw StateError('Benchmark name is empty');
         }
 
-        final List<String> scoreKeys =
-            List<String>.from(profile['scoreKeys'] as Iterable<dynamic>);
+        final List<String> scoreKeys = List<String>.from(
+          profile['scoreKeys'] as Iterable<dynamic>,
+        );
         if (scoreKeys.isEmpty) {
           throw StateError('No score keys in benchmark "$benchmarkName"');
         }
         for (final String scoreKey in scoreKeys) {
           if (scoreKey.isEmpty) {
             throw StateError(
-                'Score key is empty in benchmark "$benchmarkName". '
-                'Received [${scoreKeys.join(', ')}]');
+              'Score key is empty in benchmark "$benchmarkName". '
+              'Received [${scoreKeys.join(', ')}]',
+            );
           }
         }
 
@@ -371,10 +379,7 @@ class BenchmarkServer {
           if (key == 'name' || key == 'scoreKeys') {
             continue;
           }
-          scores.add(BenchmarkScore(
-            metric: key,
-            value: profile[key] as num,
-          ));
+          scores.add(BenchmarkScore(metric: key, value: profile[key] as num));
         }
         results[benchmarkName] = scores;
       }

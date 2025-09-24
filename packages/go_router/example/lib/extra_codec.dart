@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -15,8 +15,8 @@ final GoRouter _router = GoRouter(
   routes: <RouteBase>[
     GoRoute(
       path: '/',
-      builder: (BuildContext context, GoRouterState state) =>
-          const HomeScreen(),
+      builder:
+          (BuildContext context, GoRouterState state) => const HomeScreen(),
     ),
   ],
   extraCodec: const MyExtraCodec(),
@@ -29,9 +29,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      routerConfig: _router,
-    );
+    return MaterialApp.router(routerConfig: _router);
   }
 }
 
@@ -49,9 +47,11 @@ class HomeScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             const Text(
-                "If running in web, use the browser's backward and forward button to test extra codec after setting extra several times."),
+              "If running in web, use the browser's backward and forward button to test extra codec after setting extra several times.",
+            ),
             Text(
-                'The extra for this page is: ${GoRouterState.of(context).extra}'),
+              'The extra for this page is: ${GoRouterState.of(context).extra}',
+            ),
             ElevatedButton(
               onPressed: () => context.go('/', extra: ComplexData1('data')),
               child: const Text('Set extra to ComplexData1'),

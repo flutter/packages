@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -16,8 +16,9 @@ class TileOverlaysController extends GeometryController {
   // After insertion, the arrays stay sorted by ascending z-index.
   void _insertZSorted(TileOverlayController tileOverlayController) {
     final int index = _visibleTileOverlays.lowerBoundBy<num>(
-        tileOverlayController,
-        (TileOverlayController c) => c.tileOverlay.zIndex);
+      tileOverlayController,
+      (TileOverlayController c) => c.tileOverlay.zIndex,
+    );
 
     googleMap.overlayMapTypes.insertAt(index, tileOverlayController.gmMapType);
     _visibleTileOverlays.insert(index, tileOverlayController);
@@ -80,8 +81,9 @@ class TileOverlaysController extends GeometryController {
   }
 
   void _removeTileOverlay(TileOverlayId tileOverlayId) {
-    final TileOverlayController? controller =
-        _tileOverlays.remove(tileOverlayId);
+    final TileOverlayController? controller = _tileOverlays.remove(
+      tileOverlayId,
+    );
     if (controller != null) {
       _remove(controller);
     }

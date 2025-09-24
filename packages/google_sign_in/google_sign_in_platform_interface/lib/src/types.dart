@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -9,8 +9,11 @@ import 'package:flutter/foundation.dart' show immutable;
 @immutable
 class GoogleSignInException implements Exception {
   /// Crceates a new exception with the given information.
-  const GoogleSignInException(
-      {required this.code, this.description, this.details});
+  const GoogleSignInException({
+    required this.code,
+    this.description,
+    this.details,
+  });
 
   /// The type of failure.
   final GoogleSignInExceptionCode code;
@@ -199,9 +202,7 @@ class AuthorizationRequestDetails {
 @immutable
 class ClientAuthorizationTokensForScopesParameters {
   /// Creates a new parameter object with the given details.
-  const ClientAuthorizationTokensForScopesParameters({
-    required this.request,
-  });
+  const ClientAuthorizationTokensForScopesParameters({required this.request});
 
   /// Details about the authorization request.
   final AuthorizationRequestDetails request;
@@ -214,9 +215,7 @@ class ClientAuthorizationTokensForScopesParameters {
 @immutable
 class ServerAuthorizationTokensForScopesParameters {
   /// Creates a new parameter object with the given details.
-  const ServerAuthorizationTokensForScopesParameters({
-    required this.request,
-  });
+  const ServerAuthorizationTokensForScopesParameters({required this.request});
 
   /// Details about the authorization request.
   final AuthorizationRequestDetails request;
@@ -282,9 +281,7 @@ class GoogleSignInUserData {
 @immutable
 class AuthenticationTokenData {
   /// Creates authentication data with the given tokens.
-  const AuthenticationTokenData({
-    required this.idToken,
-  });
+  const AuthenticationTokenData({required this.idToken});
 
   /// A token that can be sent to your own server to verify the authentication
   /// data.
@@ -306,9 +303,7 @@ class AuthenticationTokenData {
 @immutable
 class ClientAuthorizationTokenData {
   /// Creates authorization data with the given tokens.
-  const ClientAuthorizationTokenData({
-    required this.accessToken,
-  });
+  const ClientAuthorizationTokenData({required this.accessToken});
 
   /// The OAuth2 access token used to access Google services.
   final String accessToken;
@@ -330,9 +325,7 @@ class ClientAuthorizationTokenData {
 @immutable
 class ServerAuthorizationTokenData {
   /// Creates authorization data with the given tokens.
-  const ServerAuthorizationTokenData({
-    required this.serverAuthCode,
-  });
+  const ServerAuthorizationTokenData({required this.serverAuthCode});
 
   /// Auth code to provide to a backend server to exchange for access or
   /// refresh tokens.
@@ -358,14 +351,39 @@ class ServerAuthorizationTokenData {
 @immutable
 class AuthenticationResults {
   /// Creates a new result object.
-  const AuthenticationResults(
-      {required this.user, required this.authenticationTokens});
+  const AuthenticationResults({
+    required this.user,
+    required this.authenticationTokens,
+  });
 
   /// The user that was authenticated.
   final GoogleSignInUserData user;
 
   /// Authentication tokens for the signed-in user.
   final AuthenticationTokenData authenticationTokens;
+}
+
+/// Parameters for the clearAuthorizationToken method.
+@immutable
+class ClearAuthorizationTokenParams {
+  /// Creates new parameters for clearAuthorizationToken with the given
+  /// [accessToken]
+  const ClearAuthorizationTokenParams({required this.accessToken});
+
+  /// The OAuth2 access token to clear.
+  final String accessToken;
+
+  @override
+  int get hashCode => accessToken.hashCode;
+
+  @override
+  bool operator ==(Object other) {
+    if (other.runtimeType != runtimeType) {
+      return false;
+    }
+    return other is ClearAuthorizationTokenParams &&
+        other.accessToken == accessToken;
+  }
 }
 
 /// Parameters for the signOut method.
@@ -399,8 +417,10 @@ sealed class AuthenticationEvent {
 @immutable
 class AuthenticationEventSignIn extends AuthenticationEvent {
   /// Creates an event for a successful sign in.
-  const AuthenticationEventSignIn(
-      {required this.user, required this.authenticationTokens});
+  const AuthenticationEventSignIn({
+    required this.user,
+    required this.authenticationTokens,
+  });
 
   /// The user that was authenticated.
   final GoogleSignInUserData user;

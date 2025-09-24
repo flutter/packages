@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -16,22 +16,29 @@ void main() {
       const CameraErrorCode code = CameraErrorCode.notFound;
       const String description = 'The camera is not found.';
 
-      final CameraWebException exception =
-          CameraWebException(cameraId, code, description);
+      final CameraWebException exception = CameraWebException(
+        cameraId,
+        code,
+        description,
+      );
 
       expect(exception.cameraId, equals(cameraId));
       expect(exception.code, equals(code));
       expect(exception.description, equals(description));
     });
 
-    testWidgets('toString includes all properties',
-        (WidgetTester tester) async {
+    testWidgets('toString includes all properties', (
+      WidgetTester tester,
+    ) async {
       const int cameraId = 2;
       const CameraErrorCode code = CameraErrorCode.notReadable;
       const String description = 'The camera is not readable.';
 
-      final CameraWebException exception =
-          CameraWebException(cameraId, code, description);
+      final CameraWebException exception = CameraWebException(
+        cameraId,
+        code,
+        description,
+      );
 
       expect(
         exception.toString(),

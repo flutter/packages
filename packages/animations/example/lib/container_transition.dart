@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -55,9 +55,9 @@ class _OpenContainerTransformDemoState
 
   void _showMarkedAsDoneSnackbar(bool? isMarkedAsDone) {
     if (isMarkedAsDone ?? false) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Marked as done!'),
-      ));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Marked as done!')));
     }
   }
 
@@ -84,9 +84,10 @@ class _OpenContainerTransformDemoState
                     onPressed: (int index) {
                       setModalState(() {
                         setState(() {
-                          _transitionType = index == 0
-                              ? ContainerTransitionType.fade
-                              : ContainerTransitionType.fadeThrough;
+                          _transitionType =
+                              index == 0
+                                  ? ContainerTransitionType.fade
+                                  : ContainerTransitionType.fadeThrough;
                         });
                       });
                     },
@@ -229,10 +230,7 @@ class _OpenContainerTransformDemoState
               closedElevation: 0.0,
               closedBuilder: (BuildContext _, VoidCallback openContainer) {
                 return ListTile(
-                  leading: Image.asset(
-                    'assets/avatar_logo.png',
-                    width: 40,
-                  ),
+                  leading: Image.asset('assets/avatar_logo.png', width: 40),
                   onTap: openContainer,
                   title: Text('List item ${index + 1}'),
                   subtitle: const Text('Secondary text'),
@@ -245,15 +243,11 @@ class _OpenContainerTransformDemoState
       floatingActionButton: OpenContainer(
         transitionType: _transitionType,
         openBuilder: (BuildContext context, VoidCallback _) {
-          return const _DetailsPage(
-            includeMarkAsDoneButton: false,
-          );
+          return const _DetailsPage(includeMarkAsDoneButton: false);
         },
         closedElevation: 6.0,
         closedShape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(
-            Radius.circular(_fabDimension / 2),
-          ),
+          borderRadius: BorderRadius.all(Radius.circular(_fabDimension / 2)),
         ),
         closedColor: Theme.of(context).colorScheme.secondary,
         closedBuilder: (BuildContext context, VoidCallback openContainer) {
@@ -315,10 +309,7 @@ class _ExampleCard extends StatelessWidget {
             child: ColoredBox(
               color: Colors.black38,
               child: Center(
-                child: Image.asset(
-                  'assets/placeholder_image.png',
-                  width: 100,
-                ),
+                child: Image.asset('assets/placeholder_image.png', width: 100),
               ),
             ),
           ),
@@ -335,10 +326,9 @@ class _ExampleCard extends StatelessWidget {
             child: Text(
               'Lorem ipsum dolor sit amet, consectetur '
               'adipiscing elit, sed do eiusmod tempor.',
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyMedium!
-                  .copyWith(color: Colors.black54),
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium!.copyWith(color: Colors.black54),
             ),
           ),
         ],
@@ -348,10 +338,7 @@ class _ExampleCard extends StatelessWidget {
 }
 
 class _SmallerCard extends StatelessWidget {
-  const _SmallerCard({
-    required this.openContainer,
-    required this.subtitle,
-  });
+  const _SmallerCard({required this.openContainer, required this.subtitle});
 
   final VoidCallback openContainer;
   final String subtitle;
@@ -368,10 +355,7 @@ class _SmallerCard extends StatelessWidget {
             color: Colors.black38,
             height: 150,
             child: Center(
-              child: Image.asset(
-                'assets/placeholder_image.png',
-                width: 80,
-              ),
+              child: Image.asset('assets/placeholder_image.png', width: 80),
             ),
           ),
           Expanded(
@@ -381,15 +365,9 @@ class _SmallerCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text(
-                    'Title',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
+                  Text('Title', style: Theme.of(context).textTheme.titleLarge),
                   const SizedBox(height: 4),
-                  Text(
-                    subtitle,
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
+                  Text(subtitle, style: Theme.of(context).textTheme.bodySmall),
                 ],
               ),
             ),
@@ -419,10 +397,7 @@ class _ExampleSingleTile extends StatelessWidget {
             height: height,
             width: height,
             child: Center(
-              child: Image.asset(
-                'assets/placeholder_image.png',
-                width: 60,
-              ),
+              child: Image.asset('assets/placeholder_image.png', width: 60),
             ),
           ),
           Expanded(
@@ -431,15 +406,13 @@ class _ExampleSingleTile extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text(
-                    'Title',
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
+                  Text('Title', style: Theme.of(context).textTheme.titleMedium),
                   const SizedBox(height: 8),
                   Text(
-                      'Lorem ipsum dolor sit amet, consectetur '
-                      'adipiscing elit,',
-                      style: Theme.of(context).textTheme.bodySmall),
+                    'Lorem ipsum dolor sit amet, consectetur '
+                    'adipiscing elit,',
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
                 ],
               ),
             ),
@@ -451,11 +424,7 @@ class _ExampleSingleTile extends StatelessWidget {
 }
 
 class _InkWellOverlay extends StatelessWidget {
-  const _InkWellOverlay({
-    this.openContainer,
-    this.height,
-    this.child,
-  });
+  const _InkWellOverlay({this.openContainer, this.height, this.child});
 
   final VoidCallback? openContainer;
   final double? height;
@@ -465,10 +434,7 @@ class _InkWellOverlay extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       height: height,
-      child: InkWell(
-        onTap: openContainer,
-        child: child,
-      ),
+      child: InkWell(onTap: openContainer, child: child),
     );
   }
 }
@@ -489,7 +455,7 @@ class _DetailsPage extends StatelessWidget {
               icon: const Icon(Icons.done),
               onPressed: () => Navigator.pop(context, true),
               tooltip: 'Mark as done',
-            )
+            ),
         ],
       ),
       body: ListView(
@@ -499,9 +465,7 @@ class _DetailsPage extends StatelessWidget {
             height: 250,
             child: Padding(
               padding: const EdgeInsets.all(70.0),
-              child: Image.asset(
-                'assets/placeholder_image.png',
-              ),
+              child: Image.asset('assets/placeholder_image.png'),
             ),
           ),
           Padding(
@@ -512,18 +476,18 @@ class _DetailsPage extends StatelessWidget {
                 Text(
                   'Title',
                   style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                        color: Colors.black54,
-                        fontSize: 30.0,
-                      ),
+                    color: Colors.black54,
+                    fontSize: 30.0,
+                  ),
                 ),
                 const SizedBox(height: 10),
                 Text(
                   _loremIpsumParagraph,
                   style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                        color: Colors.black54,
-                        height: 1.5,
-                        fontSize: 16.0,
-                      ),
+                    color: Colors.black54,
+                    height: 1.5,
+                    fontSize: 16.0,
+                  ),
                 ),
               ],
             ),

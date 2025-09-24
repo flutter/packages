@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -17,8 +17,11 @@ void main() {
   });
 
   test('setCookie should throw UnimplementedError', () {
-    const WebViewCookie cookie =
-        WebViewCookie(domain: 'flutter.dev', name: 'foo', value: 'bar');
+    const WebViewCookie cookie = WebViewCookie(
+      domain: 'flutter.dev',
+      name: 'foo',
+      value: 'bar',
+    );
     expect(() => cookieManager!.setCookie(cookie), throwsUnimplementedError);
   });
 }

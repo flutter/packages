@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -36,7 +36,10 @@ Map<String, Object?> serializeHeatmap(Heatmap heatmap) {
   final HeatmapGradient? gradient = heatmap.gradient;
   if (gradient != null) {
     _addIfNonNull(
-        json, _heatmapGradientKey, serializeHeatmapGradient(gradient));
+      json,
+      _heatmapGradientKey,
+      serializeHeatmapGradient(gradient),
+    );
   }
   _addIfNonNull(json, _heatmapMaxIntensityKey, heatmap.maxIntensity);
   _addIfNonNull(json, _heatmapOpacityKey, heatmap.opacity);
@@ -102,10 +105,11 @@ HeatmapGradient? deserializeHeatmapGradient(Object? json) {
   }
   assert(json is Map);
   final Map<String, Object?> map = (json as Map<Object?, Object?>).cast();
-  final List<Color> colors = (map[_heatmapGradientColorsKey]! as List<Object?>)
-      .whereType<int>()
-      .map((int e) => Color(e))
-      .toList();
+  final List<Color> colors =
+      (map[_heatmapGradientColorsKey]! as List<Object?>)
+          .whereType<int>()
+          .map((int e) => Color(e))
+          .toList();
   final List<double> startPoints =
       (map[_heatmapGradientStartPointsKey]! as List<Object?>)
           .whereType<double>()

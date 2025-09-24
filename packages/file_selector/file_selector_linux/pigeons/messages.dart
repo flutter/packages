@@ -1,17 +1,18 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 import 'package:pigeon/pigeon.dart';
 
-@ConfigurePigeon(PigeonOptions(
-  input: 'pigeons/messages.dart',
-  gobjectHeaderOut: 'linux/messages.g.h',
-  gobjectSourceOut: 'linux/messages.g.cc',
-  gobjectOptions: GObjectOptions(module: 'Ffs'),
-  dartOut: 'lib/src/messages.g.dart',
-  copyrightHeader: 'pigeons/copyright.txt',
-))
-
+@ConfigurePigeon(
+  PigeonOptions(
+    input: 'pigeons/messages.dart',
+    gobjectHeaderOut: 'linux/messages.g.h',
+    gobjectSourceOut: 'linux/messages.g.cc',
+    gobjectOptions: GObjectOptions(module: 'Ffs'),
+    dartOut: 'lib/src/messages.g.dart',
+    copyrightHeader: 'pigeons/copyright.txt',
+  ),
+)
 /// A Pigeon representation of the GTK_FILE_CHOOSER_ACTION_* options.
 enum PlatformFileChooserActionType { open, chooseDirectory, save }
 
@@ -58,5 +59,7 @@ abstract class FileSelectorApi {
   ///
   /// An empty list corresponds to a cancelled selection.
   List<String> showFileChooser(
-      PlatformFileChooserActionType type, PlatformFileChooserOptions options);
+    PlatformFileChooserActionType type,
+    PlatformFileChooserOptions options,
+  );
 }

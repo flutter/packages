@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -23,8 +23,8 @@ final class AndroidAdsRenderingSettingsCreationParams
     super.uiElements,
     this.enableCustomTabs = false,
     @visibleForTesting InteractiveMediaAdsProxy? proxy,
-  })  : _proxy = proxy ?? const InteractiveMediaAdsProxy(),
-        super();
+  }) : _proxy = proxy ?? const InteractiveMediaAdsProxy(),
+       super();
 
   /// Creates a [AndroidAdsRenderingSettingsCreationParams] from an instance of
   /// [PlatformAdsRenderingSettingsCreationParams].
@@ -62,37 +62,37 @@ base class AndroidAdsRenderingSettings extends PlatformAdsRenderingSettings {
         .instanceImaSdkFactory()
         .createAdsRenderingSettings()
         .then((ima.AdsRenderingSettings nativeSettings) async {
-      await Future.wait(<Future<void>>[
-        if (_androidParams.bitrate != null)
-          nativeSettings.setBitrateKbps(params.bitrate!),
-        if (_androidParams.enablePreloading != null)
-          nativeSettings.setEnablePreloading(_androidParams.enablePreloading!),
-        nativeSettings.setLoadVideoTimeout(
-          _androidParams.loadVideoTimeout.inMilliseconds,
-        ),
-        if (_androidParams.mimeTypes != null)
-          nativeSettings.setMimeTypes(_androidParams.mimeTypes!),
-        if (_androidParams.playAdsAfterTime != null)
-          nativeSettings.setPlayAdsAfterTime(
-            _androidParams.playAdsAfterTime!.inMicroseconds /
-                Duration.microsecondsPerSecond,
-          ),
-        if (_androidParams.uiElements != null)
-          nativeSettings.setUiElements(
-            _androidParams.uiElements!.map(
-              (AdUIElement element) {
-                return switch (element) {
-                  AdUIElement.adAttribution => ima.UiElement.adAttribution,
-                  AdUIElement.countdown => ima.UiElement.countdown,
-                };
-              },
-            ).toList(),
-          ),
-        nativeSettings.setEnableCustomTabs(_androidParams.enableCustomTabs)
-      ]);
+          await Future.wait(<Future<void>>[
+            if (_androidParams.bitrate != null)
+              nativeSettings.setBitrateKbps(params.bitrate!),
+            if (_androidParams.enablePreloading != null)
+              nativeSettings.setEnablePreloading(
+                _androidParams.enablePreloading!,
+              ),
+            nativeSettings.setLoadVideoTimeout(
+              _androidParams.loadVideoTimeout.inMilliseconds,
+            ),
+            if (_androidParams.mimeTypes != null)
+              nativeSettings.setMimeTypes(_androidParams.mimeTypes!),
+            if (_androidParams.playAdsAfterTime != null)
+              nativeSettings.setPlayAdsAfterTime(
+                _androidParams.playAdsAfterTime!.inMicroseconds /
+                    Duration.microsecondsPerSecond,
+              ),
+            if (_androidParams.uiElements != null)
+              nativeSettings.setUiElements(
+                _androidParams.uiElements!.map((AdUIElement element) {
+                  return switch (element) {
+                    AdUIElement.adAttribution => ima.UiElement.adAttribution,
+                    AdUIElement.countdown => ima.UiElement.countdown,
+                  };
+                }).toList(),
+              ),
+            nativeSettings.setEnableCustomTabs(_androidParams.enableCustomTabs),
+          ]);
 
-      nativeSettingsCompleter.complete(nativeSettings);
-    });
+          nativeSettingsCompleter.complete(nativeSettings);
+        });
   }
 
   /// The native Android AdsRenderingSettings.
@@ -106,8 +106,7 @@ base class AndroidAdsRenderingSettings extends PlatformAdsRenderingSettings {
   late final AndroidAdsRenderingSettingsCreationParams _androidParams =
       params is AndroidAdsRenderingSettingsCreationParams
           ? params as AndroidAdsRenderingSettingsCreationParams
-          : AndroidAdsRenderingSettingsCreationParams
-              .fromPlatformAdsRenderingSettingsCreationParams(
-              params,
-            );
+          : AndroidAdsRenderingSettingsCreationParams.fromPlatformAdsRenderingSettingsCreationParams(
+            params,
+          );
 }

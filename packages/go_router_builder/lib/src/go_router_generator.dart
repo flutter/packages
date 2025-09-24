@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -16,6 +16,7 @@ const String _routeDataUrl = 'package:go_router/src/route_data.dart';
 
 const Map<String, String> _annotations = <String, String>{
   'TypedGoRoute': 'GoRouteData',
+  'TypedRelativeGoRoute': 'RelativeGoRouteData',
   'TypedShellRoute': 'ShellRouteData',
   'TypedStatefulShellBranch': 'StatefulShellBranchData',
   'TypedStatefulShellRoute': 'StatefulShellRouteData',

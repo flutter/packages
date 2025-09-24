@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -36,13 +36,13 @@ class XFile extends XFileBase {
     Uint8List? bytes,
     DateTime? lastModified,
     @visibleForTesting CrossFileTestOverrides? overrides,
-  })  : _mimeType = mimeType,
-        _path = path,
-        _length = length,
-        _overrides = overrides,
-        _lastModified = lastModified ?? DateTime.fromMillisecondsSinceEpoch(0),
-        _name = name ?? '',
-        super(path) {
+  }) : _mimeType = mimeType,
+       _path = path,
+       _length = length,
+       _overrides = overrides,
+       _lastModified = lastModified ?? DateTime.fromMillisecondsSinceEpoch(0),
+       _name = name ?? '',
+       super(path) {
     // Cache `bytes` as Blob, if passed.
     if (bytes != null) {
       _browserBlob = _createBlobFromBytes(bytes, mimeType);
@@ -58,12 +58,12 @@ class XFile extends XFileBase {
     DateTime? lastModified,
     String? path,
     @visibleForTesting CrossFileTestOverrides? overrides,
-  })  : _mimeType = mimeType,
-        _length = length,
-        _overrides = overrides,
-        _lastModified = lastModified ?? DateTime.fromMillisecondsSinceEpoch(0),
-        _name = name ?? '',
-        super(path) {
+  }) : _mimeType = mimeType,
+       _length = length,
+       _overrides = overrides,
+       _lastModified = lastModified ?? DateTime.fromMillisecondsSinceEpoch(0),
+       _name = name ?? '',
+       super(path) {
     if (path == null) {
       _browserBlob = _createBlobFromBytes(bytes, mimeType);
       _path = URL.createObjectURL(_browserBlob!);
@@ -77,7 +77,9 @@ class XFile extends XFileBase {
     return (mimeType == null)
         ? Blob(<JSUint8Array>[bytes.toJS].toJS)
         : Blob(
-            <JSUint8Array>[bytes.toJS].toJS, BlobPropertyBag(type: mimeType));
+          <JSUint8Array>[bytes.toJS].toJS,
+          BlobPropertyBag(type: mimeType),
+        );
   }
 
   // Overridable (meta) data that can be specified by the constructors.
@@ -136,21 +138,27 @@ class XFile extends XFileBase {
     final Completer<Blob> blobCompleter = Completer<Blob>();
 
     late XMLHttpRequest request;
-    request = XMLHttpRequest()
-      ..open('get', path, true)
-      ..responseType = 'blob'
-      ..onLoad.listen((ProgressEvent e) {
-        assert(request.response != null,
-            'The Blob backing this XFile cannot be null!');
-        blobCompleter.complete(request.response! as Blob);
-      })
-      ..onError.listen((ProgressEvent e) {
-        if (e.type == 'error') {
-          blobCompleter.completeError(Exception(
-              'Could not load Blob from its URL. Has it been revoked?'));
-        }
-      })
-      ..send();
+    request =
+        XMLHttpRequest()
+          ..open('get', path, true)
+          ..responseType = 'blob'
+          ..onLoad.listen((ProgressEvent e) {
+            assert(
+              request.response != null,
+              'The Blob backing this XFile cannot be null!',
+            );
+            blobCompleter.complete(request.response! as Blob);
+          })
+          ..onError.listen((ProgressEvent e) {
+            if (e.type == 'error') {
+              blobCompleter.completeError(
+                Exception(
+                  'Could not load Blob from its URL. Has it been revoked?',
+                ),
+              );
+            }
+          })
+          ..send();
 
     return blobCompleter.future;
   }
@@ -208,9 +216,11 @@ class XFile extends XFileBase {
 
     // Create an <a> tag with the appropriate download attributes and click it
     // May be overridden with CrossFileTestOverrides
-    final HTMLAnchorElement element = _hasTestOverrides
-        ? _overrides!.createAnchorElement(this.path, name) as HTMLAnchorElement
-        : createAnchorElement(this.path, name);
+    final HTMLAnchorElement element =
+        _hasTestOverrides
+            ? _overrides!.createAnchorElement(this.path, name)
+                as HTMLAnchorElement
+            : createAnchorElement(this.path, name);
 
     // Clear the children in _target and add an element to click
     while (_target.children.length > 0) {

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -36,8 +36,10 @@ void main() {
 
   testWidgets('getLibraryDirectory', (WidgetTester tester) async {
     final PathProviderPlatform provider = PathProviderPlatform.instance;
-    expect(() => provider.getLibraryPath(),
-        throwsA(isInstanceOf<UnsupportedError>()));
+    expect(
+      () => provider.getLibraryPath(),
+      throwsA(isInstanceOf<UnsupportedError>()),
+    );
   });
 
   testWidgets('getExternalStorageDirectory', (WidgetTester tester) async {
@@ -67,12 +69,14 @@ void main() {
   ];
 
   for (final StorageDirectory? type in allDirs) {
-    testWidgets('getExternalStorageDirectories (type: $type)',
-        (WidgetTester tester) async {
+    testWidgets('getExternalStorageDirectories (type: $type)', (
+      WidgetTester tester,
+    ) async {
       final PathProviderPlatform provider = PathProviderPlatform.instance;
 
-      final List<String>? directories =
-          await provider.getExternalStoragePaths(type: type);
+      final List<String>? directories = await provider.getExternalStoragePaths(
+        type: type,
+      );
       expect(directories, isNotNull);
       expect(directories, isNotEmpty);
       for (final String result in directories!) {
@@ -102,6 +106,8 @@ void _verifySampleFile(String? directoryPath, String name) {
   // This check intentionally avoids using Directory.listSync due to
   // https://github.com/dart-lang/sdk/issues/54287.
   expect(
-      Process.runSync('ls', <String>[directory.path]).stdout, contains(name));
+    Process.runSync('ls', <String>[directory.path]).stdout,
+    contains(name),
+  );
   file.deleteSync();
 }

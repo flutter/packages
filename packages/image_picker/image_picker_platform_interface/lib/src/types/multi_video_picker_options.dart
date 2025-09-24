@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -8,10 +8,7 @@ import 'package:flutter/foundation.dart';
 @immutable
 class MultiVideoPickerOptions {
   /// Creates an instance with the given options.
-  const MultiVideoPickerOptions({
-    this.maxDuration,
-    this.limit,
-  });
+  const MultiVideoPickerOptions({this.maxDuration, this.limit});
 
   /// The maximum duration of the picked video.
   final Duration? maxDuration;

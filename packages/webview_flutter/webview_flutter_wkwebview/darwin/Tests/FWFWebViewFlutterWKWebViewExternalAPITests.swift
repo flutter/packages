@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -83,6 +83,8 @@ class TestFlutterPluginRegistrar: NSObject, FlutterPluginRegistrar {
   var plugin: WebViewFlutterPlugin? = nil
 
   #if os(iOS)
+    var viewController: UIViewController?
+
     func messenger() -> FlutterBinaryMessenger {
       return TestBinaryMessenger()
     }
@@ -102,6 +104,7 @@ class TestFlutterPluginRegistrar: NSObject, FlutterPluginRegistrar {
     }
   #elseif os(macOS)
     var view: NSView?
+    var viewController: NSViewController?
 
     var messenger: FlutterBinaryMessenger {
       return TestBinaryMessenger()

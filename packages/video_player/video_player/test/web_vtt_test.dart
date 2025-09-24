@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -15,8 +15,10 @@ void main() {
       expect(parsedFile.captions.length, 1);
 
       expect(parsedFile.captions[0].start, const Duration(seconds: 1));
-      expect(parsedFile.captions[0].end,
-          const Duration(seconds: 2, milliseconds: 500));
+      expect(
+        parsedFile.captions[0].end,
+        const Duration(seconds: 2, milliseconds: 500),
+      );
       expect(parsedFile.captions[0].text, 'We are in New York City');
     });
 
@@ -25,37 +27,54 @@ void main() {
       expect(parsedFile.captions.length, 1);
 
       expect(parsedFile.captions[0].number, 2);
-      expect(parsedFile.captions[0].start,
-          const Duration(seconds: 2, milliseconds: 800));
-      expect(parsedFile.captions[0].end,
-          const Duration(seconds: 3, milliseconds: 283));
-      expect(parsedFile.captions[0].text,
-          '— It will perforate your stomach.\n— You could die.');
+      expect(
+        parsedFile.captions[0].start,
+        const Duration(seconds: 2, milliseconds: 800),
+      );
+      expect(
+        parsedFile.captions[0].end,
+        const Duration(seconds: 3, milliseconds: 283),
+      );
+      expect(
+        parsedFile.captions[0].text,
+        '— It will perforate your stomach.\n— You could die.',
+      );
     });
 
     test('with Multiline without identifier', () {
-      parsedFile =
-          WebVTTCaptionFile(_valid_vtt_with_multiline_without_identifier);
+      parsedFile = WebVTTCaptionFile(
+        _valid_vtt_with_multiline_without_identifier,
+      );
       expect(parsedFile.captions.length, 1);
 
       expect(parsedFile.captions[0].number, 1);
-      expect(parsedFile.captions[0].start,
-          const Duration(seconds: 2, milliseconds: 800));
-      expect(parsedFile.captions[0].end,
-          const Duration(seconds: 3, milliseconds: 283));
-      expect(parsedFile.captions[0].text,
-          '— It will perforate your stomach.\n— You could die.');
+      expect(
+        parsedFile.captions[0].start,
+        const Duration(seconds: 2, milliseconds: 800),
+      );
+      expect(
+        parsedFile.captions[0].end,
+        const Duration(seconds: 3, milliseconds: 283),
+      );
+      expect(
+        parsedFile.captions[0].text,
+        '— It will perforate your stomach.\n— You could die.',
+      );
     });
 
     test('with styles tags', () {
       parsedFile = WebVTTCaptionFile(_valid_vtt_with_styles);
       expect(parsedFile.captions.length, 3);
 
-      expect(parsedFile.captions[0].start,
-          const Duration(seconds: 5, milliseconds: 200));
+      expect(
+        parsedFile.captions[0].start,
+        const Duration(seconds: 5, milliseconds: 200),
+      );
       expect(parsedFile.captions[0].end, const Duration(seconds: 6));
-      expect(parsedFile.captions[0].text,
-          "You know I'm so excited my glasses are falling off here.");
+      expect(
+        parsedFile.captions[0].text,
+        "You know I'm so excited my glasses are falling off here.",
+      );
     });
 
     test('with subtitling features', () {

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -62,8 +62,9 @@ abstract base class PlatformImaSettings {
   /// Creates a new [PlatformImaSettings].
   factory PlatformImaSettings(PlatformImaSettingsCreationParams params) {
     assert(InteractiveMediaAdsPlatform.instance != null);
-    final PlatformImaSettings implementation =
-        InteractiveMediaAdsPlatform.instance!.createPlatformImaSettings(params);
+    final PlatformImaSettings implementation = InteractiveMediaAdsPlatform
+        .instance!
+        .createPlatformImaSettings(params);
     return implementation;
   }
 

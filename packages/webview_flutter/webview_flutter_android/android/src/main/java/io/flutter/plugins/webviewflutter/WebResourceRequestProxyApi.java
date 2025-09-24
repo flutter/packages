@@ -1,10 +1,9 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 package io.flutter.plugins.webviewflutter;
 
-import android.os.Build;
 import android.webkit.WebResourceRequest;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -28,14 +27,10 @@ public class WebResourceRequestProxyApi extends PigeonApiWebResourceRequest {
     return pigeon_instance.isForMainFrame();
   }
 
-  @Nullable
+  @NonNull
   @Override
-  public Boolean isRedirect(@NonNull WebResourceRequest pigeon_instance) {
-    if (getPigeonRegistrar().sdkIsAtLeast(Build.VERSION_CODES.N)) {
-      return pigeon_instance.isRedirect();
-    }
-
-    return null;
+  public boolean isRedirect(@NonNull WebResourceRequest pigeon_instance) {
+    return pigeon_instance.isRedirect();
   }
 
   @NonNull

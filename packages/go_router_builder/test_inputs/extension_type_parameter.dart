@@ -1,21 +1,21 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import 'package:go_router/go_router.dart';
 
-mixin _$ExtensionTypeParam {}
-mixin _$ExtensionTypeStringParam {}
-mixin _$ExtensionTypeStringDefaultParam {}
-mixin _$ExtensionTypeIntParam {}
-mixin _$ExtensionTypeIntDefaultParam {}
-mixin _$ExtensionTypeDoubleParam {}
-mixin _$ExtensionTypeNumParam {}
-mixin _$ExtensionTypeBoolParam {}
-mixin _$ExtensionTypeEnumType {}
-mixin _$ExtensionTypeBigIntParam {}
-mixin _$ExtensionTypeDateTimeParam {}
-mixin _$ExtensionTypeUriType {}
+mixin $ExtensionTypeParam {}
+mixin $ExtensionTypeStringParam {}
+mixin $ExtensionTypeStringDefaultParam {}
+mixin $ExtensionTypeIntParam {}
+mixin $ExtensionTypeIntDefaultParam {}
+mixin $ExtensionTypeDoubleParam {}
+mixin $ExtensionTypeNumParam {}
+mixin $ExtensionTypeBoolParam {}
+mixin $ExtensionTypeEnumType {}
+mixin $ExtensionTypeBigIntParam {}
+mixin $ExtensionTypeDateTimeParam {}
+mixin $ExtensionTypeUriType {}
 
 @TypedGoRoute<ExtensionTypeParam>(
   path: '/',
@@ -33,12 +33,12 @@ mixin _$ExtensionTypeUriType {}
     TypedGoRoute<ExtensionTypeUriType>(path: 'uri/:uri'),
   ],
 )
-class ExtensionTypeParam extends GoRouteData with _$ExtensionTypeParam {
+class ExtensionTypeParam extends GoRouteData with $ExtensionTypeParam {
   ExtensionTypeParam();
 }
 
 class ExtensionTypeStringParam extends GoRouteData
-    with _$ExtensionTypeStringParam {
+    with $ExtensionTypeStringParam {
   ExtensionTypeStringParam({
     required this.s,
     required this.requiredValue,
@@ -52,14 +52,14 @@ class ExtensionTypeStringParam extends GoRouteData
 }
 
 class ExtensionTypeStringDefaultParam extends GoRouteData
-    with _$ExtensionTypeStringDefaultParam {
+    with $ExtensionTypeStringDefaultParam {
   ExtensionTypeStringDefaultParam({
     this.s = const StringExtensionType('default'),
   });
   final StringExtensionType s;
 }
 
-class ExtensionTypeIntParam extends GoRouteData with _$ExtensionTypeIntParam {
+class ExtensionTypeIntParam extends GoRouteData with $ExtensionTypeIntParam {
   ExtensionTypeIntParam({
     required this.x,
     required this.requiredValue,
@@ -73,13 +73,13 @@ class ExtensionTypeIntParam extends GoRouteData with _$ExtensionTypeIntParam {
 }
 
 class ExtensionTypeIntDefaultParam extends GoRouteData
-    with _$ExtensionTypeIntDefaultParam {
+    with $ExtensionTypeIntDefaultParam {
   ExtensionTypeIntDefaultParam({this.x = const IntExtensionType(42)});
   final IntExtensionType x;
 }
 
 class ExtensionTypeDoubleParam extends GoRouteData
-    with _$ExtensionTypeDoubleParam {
+    with $ExtensionTypeDoubleParam {
   ExtensionTypeDoubleParam({
     required this.d,
     required this.requiredValue,
@@ -92,7 +92,7 @@ class ExtensionTypeDoubleParam extends GoRouteData
   final DoubleExtensionType optionalDefaultValue;
 }
 
-class ExtensionTypeNumParam extends GoRouteData with _$ExtensionTypeNumParam {
+class ExtensionTypeNumParam extends GoRouteData with $ExtensionTypeNumParam {
   ExtensionTypeNumParam({
     required this.n,
     required this.requiredValue,
@@ -105,7 +105,7 @@ class ExtensionTypeNumParam extends GoRouteData with _$ExtensionTypeNumParam {
   final NumExtensionType optionalDefaultValue;
 }
 
-class ExtensionTypeBoolParam extends GoRouteData with _$ExtensionTypeBoolParam {
+class ExtensionTypeBoolParam extends GoRouteData with $ExtensionTypeBoolParam {
   ExtensionTypeBoolParam({
     required this.b,
     required this.requiredValue,
@@ -120,7 +120,7 @@ class ExtensionTypeBoolParam extends GoRouteData with _$ExtensionTypeBoolParam {
 
 enum MyEnum { value1, value2, value3 }
 
-class ExtensionTypeEnumType extends GoRouteData with _$ExtensionTypeEnumType {
+class ExtensionTypeEnumType extends GoRouteData with $ExtensionTypeEnumType {
   ExtensionTypeEnumType({
     required this.value,
     required this.requiredValue,
@@ -134,7 +134,7 @@ class ExtensionTypeEnumType extends GoRouteData with _$ExtensionTypeEnumType {
 }
 
 class ExtensionTypeBigIntParam extends GoRouteData
-    with _$ExtensionTypeBigIntParam {
+    with $ExtensionTypeBigIntParam {
   ExtensionTypeBigIntParam({
     required this.bi,
     required this.requiredValue,
@@ -148,7 +148,7 @@ class ExtensionTypeBigIntParam extends GoRouteData
 }
 
 class ExtensionTypeDateTimeParam extends GoRouteData
-    with _$ExtensionTypeDateTimeParam {
+    with $ExtensionTypeDateTimeParam {
   ExtensionTypeDateTimeParam({
     required this.dt,
     required this.optionalValue,
@@ -159,7 +159,7 @@ class ExtensionTypeDateTimeParam extends GoRouteData
   final DateTimeExtensionType? optionalNullableValue;
 }
 
-class ExtensionTypeUriType extends GoRouteData with _$ExtensionTypeUriType {
+class ExtensionTypeUriType extends GoRouteData with $ExtensionTypeUriType {
   ExtensionTypeUriType({
     required this.uri,
     required this.requiredValue,
