@@ -191,6 +191,30 @@ class InstanceManagerTest {
     assertEquals(1L, instanceManager.getIdentifierForStrongReference(testObject2))
   }
 
+  @Test
+  fun identityWeakReferenceAreEqualWithSameInstance() {
+    val testObject = Any()
+
+    assertEquals(
+        ProxyApiTestsPigeonInstanceManager.IdentityWeakReference(testObject),
+        ProxyApiTestsPigeonInstanceManager.IdentityWeakReference(testObject))
+  }
+
+  @Test
+  fun identityWeakReferenceRemainsEqualAfterGetReturnsNull() {
+    var testObject: Any? = Any()
+
+    val reference = ProxyApiTestsPigeonInstanceManager.IdentityWeakReference(testObject!!)
+
+    // To allow for object to be garbage collected.
+    @Suppress("UNUSED_VALUE")
+    testObject = null
+    Runtime.getRuntime().gc()
+
+    assertNull(reference.get())
+    assertEquals(reference, reference)
+  }
+
   private fun createInstanceManager(): ProxyApiTestsPigeonInstanceManager {
     return ProxyApiTestsPigeonInstanceManager.create(
         object : ProxyApiTestsPigeonInstanceManager.PigeonFinalizationListener {
