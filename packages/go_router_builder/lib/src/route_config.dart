@@ -273,7 +273,14 @@ mixin _GoRouteMixin on RouteBaseConfig {
         );
       }
     }
-    final String fromStateExpression = decodeParameter(element, _pathParams);
+    final List<ElementAnnotation>? metadata = _fieldMetadata(
+      element.displayName,
+    );
+    final String fromStateExpression = decodeParameter(
+      element,
+      _pathParams,
+      metadata,
+    );
 
     if (element.isPositional) {
       return '$fromStateExpression,';
@@ -298,7 +305,8 @@ mixin _GoRouteMixin on RouteBaseConfig {
       );
     }
 
-    return encodeField(field);
+    final List<ElementAnnotation>? metadata = _fieldMetadata(fieldName);
+    return encodeField(field, metadata);
   }
 
   String get _locationQueryParams {
@@ -473,19 +481,19 @@ mixin $_mixinName on $routeDataClassName {
   $_castedSelf
   @override
   String get location => GoRouteData.\$location($_locationArgs,$_locationQueryParams);
-  
+
   @override
   void go(BuildContext context) =>
       context.go(location${_extraParam != null ? ', extra: $selfFieldName.$extraFieldName' : ''});
-  
+
   @override
   Future<T?> push<T>(BuildContext context) =>
       context.push<T>(location${_extraParam != null ? ', extra: $selfFieldName.$extraFieldName' : ''});
-  
+
   @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location${_extraParam != null ? ', extra: $selfFieldName.$extraFieldName' : ''});
-  
+
   @override
   void replace(BuildContext context) =>
       context.replace(location${_extraParam != null ? ', extra: $selfFieldName.$extraFieldName' : ''});
@@ -548,7 +556,7 @@ mixin $_mixinName on $routeDataClassName {
   $_castedSelf
   @override
   String get subLocation => RelativeGoRouteData.\$location($_locationArgs,$_locationQueryParams);
-  
+
   @override
   String get relativeLocation => './\$subLocation';
 
@@ -559,11 +567,11 @@ mixin $_mixinName on $routeDataClassName {
   @override
   Future<T?> pushRelative<T>(BuildContext context) =>
       context.push<T>(relativeLocation${_extraParam != null ? ', extra: $selfFieldName.$extraFieldName' : ''});
-  
+
   @override
   void pushReplacementRelative(BuildContext context) =>
       context.pushReplacement(relativeLocation${_extraParam != null ? ', extra: $selfFieldName.$extraFieldName' : ''});
-  
+
   @override
   void replaceRelative(BuildContext context) =>
       context.replace(relativeLocation${_extraParam != null ? ', extra: $selfFieldName.$extraFieldName' : ''});
@@ -900,6 +908,14 @@ $routeDataClassName.$dataConvertionFunctionName(
 
   PropertyAccessorElement2? _field(String name) =>
       routeDataClass.getGetter2(name);
+
+  List<ElementAnnotation>? _fieldMetadata(String name) =>
+      routeDataClass.fields2
+          .firstWhereOrNull(
+            (FieldElement2 element) => element.displayName == name,
+          )
+          ?.metadata2
+          .annotations;
 
   /// The name of `RouteData` subclass this configuration represents.
   @protected
