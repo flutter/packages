@@ -1,6 +1,6 @@
 ## 6.3.2
 
-- Make a map keyed on FontWeight non-const for compatibility with proposed changes to the engine's implementation of FontWeight.
+- Makes a map keyed on FontWeight non-const for compatibility with proposed changes to the engine's implementation of FontWeight.
 
 ## 6.3.1
 
