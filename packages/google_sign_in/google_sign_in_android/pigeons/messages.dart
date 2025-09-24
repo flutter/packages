@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -64,6 +64,26 @@ class GetCredentialRequestGoogleIdOptionParams {
 
   bool filterToAuthorized;
   bool autoSelectEnabled;
+}
+
+/// Parameters for revoking authorization.
+///
+/// Corresponds to the native RevokeAccessRequest.
+/// https://developers.google.com/android/reference/com/google/android/gms/auth/api/identity/RevokeAccessRequest
+class PlatformRevokeAccessRequest {
+  PlatformRevokeAccessRequest({
+    required this.accountEmail,
+    required this.scopes,
+  });
+
+  /// The email for the Google account to revoke authorizations for.
+  String accountEmail;
+
+  /// A list of requested scopes.
+  ///
+  /// Per docs, all granted scopes will be revoked, not only the ones passed
+  /// here. However, at least one currently-granted scope must be provided.
+  List<String> scopes;
 }
 
 /// Pigeon equivalent of the native GoogleIdTokenCredential.
@@ -206,4 +226,7 @@ abstract class GoogleSignInApi {
     PlatformAuthorizationRequest params, {
     required bool promptIfUnauthorized,
   });
+
+  @async
+  void revokeAccess(PlatformRevokeAccessRequest params);
 }
