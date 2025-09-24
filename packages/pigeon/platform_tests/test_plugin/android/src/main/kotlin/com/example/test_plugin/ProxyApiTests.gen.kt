@@ -78,16 +78,24 @@ class ProxyApiTestsPigeonInstanceManager(
   // Extends WeakReference and overrides the `equals` and `hashCode` methods using identity rather
   // than equality.
   private class IdentityWeakReference<T : Any> : java.lang.ref.WeakReference<T> {
-    constructor(instance: T) : super(instance)
+    private val savedHashCode: Int
 
-    constructor(instance: T, queue: java.lang.ref.ReferenceQueue<T>) : super(instance, queue)
+    constructor(instance: T) : this(instance, null)
+
+    constructor(instance: T, queue: java.lang.ref.ReferenceQueue<T>?) : super(instance, queue) {
+      savedHashCode = System.identityHashCode(instance)
+    }
 
     override fun equals(other: Any?): Boolean {
-      return get() != null && other is IdentityWeakReference<*> && other.get() === get()
+      val instance = get()
+      if (instance != null) {
+        return other is IdentityWeakReference<*> && other.get() === instance
+      }
+      return other === this
     }
 
     override fun hashCode(): Int {
-      return System.identityHashCode(get())
+      return savedHashCode
     }
   }
 
