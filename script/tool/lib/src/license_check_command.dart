@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -110,7 +110,7 @@ final List<RegExp> _thirdPartyLicenseBlockRegexes = <RegExp>[
 // tools that assemble all licenses used in distributed applications.
 // standardized.
 const String _fullBsdLicenseText = '''
-Copyright 2013 The Flutter Authors. All rights reserved.
+Copyright 2013 The Flutter Authors
 
 Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
@@ -228,7 +228,7 @@ class LicenseCheckCommand extends PackageCommand {
     String prefix = '',
     String suffix = '',
   }) {
-    return '$prefix${comment}Copyright 2013 The Flutter Authors. All rights reserved.\n'
+    return '$prefix${comment}Copyright 2013 The Flutter Authors\n'
         '${comment}Use of this source code is governed by a BSD-style license that can be\n'
         '${comment}found in the LICENSE file.$suffix\n';
   }
