@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -198,7 +198,7 @@ public class AudioTracksTest {
 
     Messages.ExoPlayerAudioTrackData track = result.get(0);
     assertEquals("0_0", track.getTrackId());
-    assertEquals("", track.getLabel()); 
+    assertEquals("", track.getLabel());
     assertEquals("und", track.getLanguage()); // Fallback language
     assertFalse(track.getIsSelected());
     assertNull(track.getBitrate());
