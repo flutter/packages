@@ -60,6 +60,9 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
   private @Nullable BinaryMessenger messenger;
   private ActivityPluginBinding activityPluginBinding;
 
+  // The account type to use to create an Account object for a Google Sign In account.
+  private static final String GOOGLE_ACCOUNT_TYPE = "com.google";
+
   private void initInstance(@NonNull BinaryMessenger messenger, @NonNull Context context) {
     initWithDelegate(
         messenger,
@@ -385,7 +388,7 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
         }
         if (params.getAccountEmail() != null) {
           authorizationRequestBuilder.setAccount(
-              new Account(params.getAccountEmail(), "com.google"));
+              new Account(params.getAccountEmail(), GOOGLE_ACCOUNT_TYPE));
         }
         AuthorizationRequest authorizationRequest = authorizationRequestBuilder.build();
         authorizationClientFactory
@@ -468,7 +471,7 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
           .create(context)
           .revokeAccess(
               RevokeAccessRequest.builder()
-                  .setAccount(new Account(params.getAccountEmail(), "com.google"))
+                  .setAccount(new Account(params.getAccountEmail(), GOOGLE_ACCOUNT_TYPE))
                   .setScopes(scopes)
                   .build())
           .addOnSuccessListener(unused -> ResultUtilsKt.completeWithUnitSuccess(callback))
