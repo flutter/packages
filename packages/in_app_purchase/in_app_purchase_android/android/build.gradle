@@ -1,5 +1,5 @@
-group 'io.flutter.plugins.inapppurchase'
-version '1.0-SNAPSHOT'
+group = 'io.flutter.plugins.inapppurchase'
+version = '1.0-SNAPSHOT'
 
 buildscript {
     repositories {
@@ -23,10 +23,10 @@ apply plugin: 'com.android.library'
 
 android {
     buildFeatures {
-        buildConfig true
+        buildConfig = true
     }
 
-    namespace 'io.flutter.plugins.inapppurchase'
+    namespace = 'io.flutter.plugins.inapppurchase'
 
     compileSdk = flutter.compileSdkVersion
 
@@ -35,8 +35,8 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     lintOptions {
-        checkAllWarnings true
-        warningsAsErrors true
+        checkAllWarnings = true
+        warningsAsErrors = true
         disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency', 'NewerVersionAvailable'
     }
     compileOptions {

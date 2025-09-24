@@ -1,5 +1,5 @@
-group 'com.example.alternate_language_test_plugin'
-version '1.0'
+group = 'com.example.alternate_language_test_plugin'
+version = '1.0'
 
 buildscript {
     repositories {
@@ -22,7 +22,7 @@ rootProject.allprojects {
 apply plugin: 'com.android.library'
 
 android {
-    namespace 'com.example.alternate_language_test_plugin'
+    namespace = 'com.example.alternate_language_test_plugin'
     compileSdk = flutter.compileSdkVersion
 
     compileOptions {
@@ -47,8 +47,8 @@ android {
     }
 
     lintOptions {
-        checkAllWarnings true
-        warningsAsErrors true
+        checkAllWarnings = true
+        warningsAsErrors = true
         disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency', 'NewerVersionAvailable'
     }
 

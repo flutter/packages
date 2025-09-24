@@ -1,5 +1,5 @@
-group 'io.flutter.plugins.localauth'
-version '1.0-SNAPSHOT'
+group = 'io.flutter.plugins.localauth'
+version = '1.0-SNAPSHOT'
 
 buildscript {
     repositories {
@@ -22,7 +22,7 @@ rootProject.allprojects {
 apply plugin: 'com.android.library'
 
 android {
-    namespace 'io.flutter.plugins.localauth'
+    namespace = 'io.flutter.plugins.localauth'
     compileSdk = flutter.compileSdkVersion
 
     defaultConfig {
@@ -36,8 +36,8 @@ android {
     }
 
     lintOptions {
-        checkAllWarnings true
-        warningsAsErrors true
+        checkAllWarnings = true
+        warningsAsErrors = true
         disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency', 'NewerVersionAvailable'
     }
 

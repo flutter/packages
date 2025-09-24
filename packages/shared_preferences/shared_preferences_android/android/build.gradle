@@ -1,5 +1,5 @@
-group 'io.flutter.plugins.sharedpreferences'
-version '1.0-SNAPSHOT'
+group = 'io.flutter.plugins.sharedpreferences'
+version = '1.0-SNAPSHOT'
 
 buildscript {
     ext.kotlin_version = '2.2.10'
@@ -33,7 +33,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    namespace 'io.flutter.plugins.sharedpreferences'
+    namespace = 'io.flutter.plugins.sharedpreferences'
     compileSdk = flutter.compileSdkVersion
 
     compileOptions {
@@ -54,8 +54,8 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     lintOptions {
-        checkAllWarnings true
-        warningsAsErrors true
+        checkAllWarnings = true
+        warningsAsErrors = true
         disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency', 'NewerVersionAvailable'
     }
     dependencies {
