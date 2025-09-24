@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -50,8 +50,7 @@ void main() {
       String comment = '// ',
       String prefix = '',
       String suffix = '',
-      String copyright =
-          'Copyright 2013 The Flutter Authors. All rights reserved.',
+      String copyright = 'Copyright 2013 The Flutter Authors',
       List<String> license = const <String>[
         'Use of this source code is governed by a BSD-style license that can be',
         'found in the LICENSE file.',
@@ -348,6 +347,40 @@ void main() {
       expect(output, isNot(contains(contains('All files passed validation!'))));
     });
 
+    test('fails if any checked files are using the older boilerplate format',
+        () async {
+      final File good = root.childFile('good.cc');
+      good.createSync();
+      writeLicense(good);
+      final File bad = root.childFile('bad.cc');
+      bad.createSync();
+      bad.writeAsStringSync('''
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+''');
+
+      mockGitFilesListWithAllFiles(root);
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['license-check'], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      // Failure should give information about the problematic files.
+      expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains(
+                'The license block for these files is missing or incorrect:'),
+            contains('  bad.cc'),
+          ]));
+      // Failure shouldn't print the success message.
+      expect(output, isNot(contains(contains('All files passed validation!'))));
+    });
+
     test('fails if any third-party code is not in a third_party directory',
         () async {
       final File thirdPartyFile = root.childFile('third_party.cc');
@@ -622,7 +655,7 @@ class MockPlatformWithSeparator extends MockPlatform {
 }
 
 const String _correctLicenseFileText = '''
-Copyright 2013 The Flutter Authors. All rights reserved.
+Copyright 2013 The Flutter Authors
 
 Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:

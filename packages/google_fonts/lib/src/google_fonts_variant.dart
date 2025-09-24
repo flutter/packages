@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -171,7 +171,7 @@ const String _italic = 'italic';
 
 /// Mapping from font weight types to the 'weight' part of the Google Fonts API
 /// specific filename.
-const Map<FontWeight, String> _fontWeightToFilenameWeightParts =
+final Map<FontWeight, String> _fontWeightToFilenameWeightParts =
     <FontWeight, String>{
       FontWeight.w100: 'Thin',
       FontWeight.w200: 'ExtraLight',
