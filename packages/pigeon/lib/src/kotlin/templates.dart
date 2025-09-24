@@ -42,29 +42,29 @@ class ${kotlinInstanceManagerClassName(options)}(private val finalizationListene
     fun onFinalize(identifier: Long)
   }
 
-  // Wraps an instance in a class that overrides the `equals` and `hashCode` methods using identity
-  // rather than equality.
-  private class IdentityKey<T : Any> {
-    private val instance: java.lang.ref.WeakReference<T>
+  // Extends WeakReference and overrides the `equals` and `hashCode` methods using identity rather
+  // than equality.
+  private class IdentityWeakReference<T : Any>: java.lang.ref.WeakReference<T> {
+    constructor(instance: T) : super(instance)
 
-    constructor(instance: T) {
-      this.instance = java.lang.ref.WeakReference<T>(instance)
-    }
+    constructor(instance: T, queue: java.lang.ref.ReferenceQueue<T>) : super(instance, queue)
 
     override fun equals(other: Any?): Boolean {
-      return instance.get() != null && other is IdentityKey<*> && other.instance.get() === instance.get()
+      return get() != null &&
+          other is IdentityWeakReference<*> &&
+          other.get() === get()
     }
 
     override fun hashCode(): Int {
-      return System.identityHashCode(instance.get())
+      return System.identityHashCode(get())
     }
   }
 
-  private val identifiers = java.util.WeakHashMap<IdentityKey<*>, Long>()
-  private val weakInstances = HashMap<Long, java.lang.ref.WeakReference<Any>>()
+  private val identifiers = java.util.WeakHashMap<IdentityWeakReference<Any>, Long>()
+  private val weakInstances = HashMap<Long, IdentityWeakReference<Any>>()
   private val strongInstances = HashMap<Long, Any>()
   private val referenceQueue = java.lang.ref.ReferenceQueue<Any>()
-  private val weakReferencesToIdentifiers = HashMap<java.lang.ref.WeakReference<Any>, Long>()
+  private val weakReferencesToIdentifiers = HashMap<IdentityWeakReference<Any>, Long>()
   private val handler = android.os.Handler(android.os.Looper.getMainLooper())
   private val releaseAllFinalizedInstancesRunnable = Runnable {
     this.releaseAllFinalizedInstances()
@@ -133,7 +133,7 @@ class ${kotlinInstanceManagerClassName(options)}(private val finalizationListene
     if (instance == null) {
       return null
     }
-    val identifier = identifiers[IdentityKey(instance)]
+    val identifier = identifiers[IdentityWeakReference(instance)]
     if (identifier != null) {
       strongInstances[identifier] = instance
     }
@@ -172,14 +172,14 @@ class ${kotlinInstanceManagerClassName(options)}(private val finalizationListene
   /** Retrieves the instance associated with identifier, if present, otherwise `null`. */
   fun <T> getInstance(identifier: Long): T? {
     logWarningIfFinalizationListenerHasStopped()
-    val instance = weakInstances[identifier] as java.lang.ref.WeakReference<T>?
+    val instance = weakInstances[identifier] as IdentityWeakReference<T>?
     return instance?.get()
   }
 
   /** Returns whether this manager contains the given `instance`. */
   fun containsInstance(instance: Any?): Boolean {
     logWarningIfFinalizationListenerHasStopped()
-    return instance != null && identifiers.containsKey(IdentityKey(instance))
+    return instance != null && identifiers.containsKey(IdentityWeakReference(instance))
   }
 
   /**
@@ -220,8 +220,8 @@ class ${kotlinInstanceManagerClassName(options)}(private val finalizationListene
     if (hasFinalizationListenerStopped()) {
       return
     }
-    var reference: java.lang.ref.WeakReference<Any>?
-    while ((referenceQueue.poll() as java.lang.ref.WeakReference<Any>?).also { reference = it } != null) {
+    var reference: IdentityWeakReference<Any>?
+    while ((referenceQueue.poll() as IdentityWeakReference<Any>?).also { reference = it } != null) {
       val identifier = weakReferencesToIdentifiers.remove(reference)
       if (identifier != null) {
         weakInstances.remove(identifier)
@@ -237,8 +237,8 @@ class ${kotlinInstanceManagerClassName(options)}(private val finalizationListene
     require(!weakInstances.containsKey(identifier)) {
       "Identifier has already been added: \$identifier"
     }
-    val weakReference = java.lang.ref.WeakReference(instance, referenceQueue)
-    identifiers[IdentityKey(instance)] = identifier
+    val weakReference = IdentityWeakReference(instance, referenceQueue)
+    identifiers[weakReference] = identifier
     weakInstances[identifier] = weakReference
     weakReferencesToIdentifiers[weakReference] = identifier
     strongInstances[identifier] = instance
