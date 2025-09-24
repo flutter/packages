@@ -170,7 +170,7 @@ class _FfiType {
       // case 'Float64List':
       //   return 'NSDoubleArray';
       case 'Object':
-        return 'ObjCObjectBase';
+        return 'NSObject';
       case 'List':
         return 'NSMutableArray';
       case 'Map':
@@ -325,7 +325,7 @@ class _FfiType {
             type.baseName == 'bool')) {
       return name;
     }
-    return '_PigeonFfiCodec.writeValue<${ffiType.ffiName}${_getNullableSymbol(type.isNullable)}>($name)';
+    return '_PigeonFfiCodec.writeValue<${ffiType.ffiName}${_getNullableSymbol(type.isNullable && type.baseName != 'Object')}>($name)';
   }
 
   String getFfiCallReturnType(bool forceUnwrap, {bool forceNullable = false}) {
@@ -334,6 +334,9 @@ class _FfiType {
     }
     if (type.baseName == 'List') {
       return 'NSArray?';
+    }
+    if (type.baseName == 'Object' && !type.isNullable) {
+      return 'ObjCObjectBase?';
     }
     return '$ffiName${_getNullableSymbol(forceNullable || type.isNullable)}';
   }
@@ -1726,7 +1729,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
                 indent.writeln(
                     'final ffi_bridge.${generatorOptions.ffiErrorClassName} error = ffi_bridge.${generatorOptions.ffiErrorClassName}();');
                 indent.writeln(
-                  '$methodCallReturnString${method.isAsynchronous ? 'await ' : ''}_ffiApi.${method.name}${method.parameters.isNotEmpty ? 'With${toUpperCamelCase(method.parameters.first.name)}' : 'WithWrappedError'}(${_getFfiMethodCallArguments(method.parameters)}${method.parameters.isEmpty ? '' : ', wrappedError: '}error);',
+                  '$methodCallReturnString${method.isAsynchronous ? 'await ' : ''}_ffiApi.${method.name}${method.parameters.isNotEmpty ? 'With${toUpperCamelCase(method.parameters.first.name)}' : 'WithWrappedError'}(${_getFfiMethodCallArguments(method.parameters)}${method.parameters.isEmpty ? '' : ', wrappedError: '}error)${returnType.type.baseName == 'Object' && returnType.type.isNullable ? ' as NSObject?' : ''};',
                 );
                 indent.writeScoped('if (error.code != null) {', '}', () {
                   indent.writeln(
@@ -2384,7 +2387,7 @@ ${api.name}({
       }
       if (generatorOptions.useFfi) {
         _writeFfiCodec(indent, root);
-        _writeConvertNSNumberWrapper(indent, root);
+        _writeConvertNumberWrapper(indent, root);
       }
 
       indent.writeln('bool isType<T>(Type t) => T == t;');
@@ -2627,11 +2630,11 @@ class _PigeonJniCodec {
     ''');
   }
 
-  void _writeConvertNSNumberWrapper(Indent indent, Root root) {
+  void _writeConvertNumberWrapper(Indent indent, Root root) {
     indent.newln();
     int typeNum = 4;
     indent.format('''
-      Object? convertNSNumberWrapperToDart(ffi_bridge.NSNumberWrapper value) {
+      Object? convertNumberWrapperToDart(ffi_bridge.NumberWrapper value) {
         switch (value.type) {
           case 1:
             return value.number.longValue;
@@ -2654,18 +2657,18 @@ class _PigeonJniCodec {
 ''');
     typeNum = 4;
     indent.format('''
-      ffi_bridge.NSNumberWrapper convertNSNumberWrapperToFfi(Object value) {
+      ffi_bridge.NumberWrapper convertNumberWrapperToFfi(Object value) {
         switch (value) {
           case int _:
-            return ffi_bridge.NSNumberWrapper.alloc().initWithNumber(NSNumber.alloc().initWithLong(value), type: 1);
+            return ffi_bridge.NumberWrapper.alloc().initWithNumber(NSNumber.alloc().initWithLong(value), type: 1);
           case double _:
-            return ffi_bridge.NSNumberWrapper.alloc().initWithNumber(NSNumber.alloc().initWithDouble(value), type: 2);
+            return ffi_bridge.NumberWrapper.alloc().initWithNumber(NSNumber.alloc().initWithDouble(value), type: 2);
           case bool _:
-            return ffi_bridge.NSNumberWrapper.alloc().initWithNumber(NSNumber.alloc().initWithLong(value ? 1 : 0), type: 3);''');
+            return ffi_bridge.NumberWrapper.alloc().initWithNumber(NSNumber.alloc().initWithLong(value ? 1 : 0), type: 3);''');
     for (final Enum anEnum in root.enums) {
       indent.format('''
         case ${anEnum.name} _:
-          return ffi_bridge.NSNumberWrapper.alloc().initWithNumber(value.toNSNumber(), type: ${typeNum++});''');
+          return ffi_bridge.NumberWrapper.alloc().initWithNumber(value.toNSNumber(), type: ${typeNum++});''');
     }
     indent.format('''
           default:
@@ -2680,7 +2683,7 @@ class _PigeonJniCodec {
     indent.format('''
 class _PigeonFfiCodec {
   static Object? readValue(ObjCObjectBase? value, [Type? outType]) {
-    if (value == null) {
+    if (value == null || ffi_bridge.PigeonInternalNull.isInstance(value)) {
       return null;
     } else if (NSNumber.isInstance(value)) {
       value as NSNumber;
@@ -2735,8 +2738,8 @@ case const (${enumDefinition.name}):
         res[readValue(entry.key)] = readValue(entry.value);
       }
       return res;
-    } else if (ffi_bridge.NSNumberWrapper.isInstance(value)) {
-      return convertNSNumberWrapperToDart(ffi_bridge.NSNumberWrapper.castFrom(value));
+    } else if (ffi_bridge.NumberWrapper.isInstance(value)) {
+      return convertNumberWrapperToDart(ffi_bridge.NumberWrapper.castFrom(value));
     ${root.classes.map((Class dataClass) {
       final _FfiType ffiType = _FfiType.fromClass(dataClass);
       return '''
@@ -2751,10 +2754,14 @@ case const (${enumDefinition.name}):
 
   static T writeValue<T extends ObjCObjectBase?>(Object? value) {
     if (value == null) {
+      final String tString = T.toString();
+      if (tString.contains('ObjCObjectBase') || tString.contains('NSObject')) {
+        return ffi_bridge.PigeonInternalNull() as T;
+      }
       return null as T;
     } else if (value is bool || value is double || value is int || value is Enum) {
       if (T != NSNumber && T.toString() != 'NSNumber?') {
-        return convertNSNumberWrapperToFfi(value) as T;
+        return convertNumberWrapperToFfi(value) as T;
       }
       if (value is bool) {
         return NSNumber.alloc().initWithLong(value ? 1 : 0) as T;
@@ -2768,7 +2775,7 @@ case const (${enumDefinition.name}):
       if (value is Enum) {
         return NSNumber.alloc().initWithLong(value.index) as T;
       }
-      return convertNSNumberWrapperToFfi(value) as T;
+      return convertNumberWrapperToFfi(value) as T;
     } else if (value is String) {
       return NSString(value) as T;
     // } else if (isTypeOrNullableType<NSByteArray>(T)) {
@@ -2808,7 +2815,7 @@ case const (${enumDefinition.name}):
     } else if (value is Map) {
       final NSMutableDictionary res = NSMutableDictionary();
       for (final MapEntry<Object?, Object?> entry in value.entries) {
-        res.setObject(writeValue(entry.value), forKey: writeValue(entry.key));
+        NSMutableDictionary\$Methods(res).setObject(writeValue(entry.value), forKey: NSCopying.castFrom(writeValue(entry.key)));
       }
       return res as T;
     ${root.classes.map((Class dataClass) {

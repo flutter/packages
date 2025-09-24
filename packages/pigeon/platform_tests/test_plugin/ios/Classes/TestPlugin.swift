@@ -1216,6 +1216,10 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
 }
 
 class NITestsClass: NSObject, NIHostIntegrationCoreApi {
+  func echoNullableObject(aNullableObject: Any?) throws -> Any? {
+    return aNullableObject
+  }
+
   func echoNullableList(aNullableList: [Any?]?) throws -> [Any?]? {
     return aNullableList
   }

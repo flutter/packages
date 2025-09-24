@@ -46,7 +46,7 @@ class NIAllTypes {
     this.anEnum = NIAnEnum.one,
     this.anotherEnum = NIAnotherEnum.justInCase,
     this.aString = '',
-    // this.anObject = 0,
+    this.anObject = 0,
 
     // Lists
     // This name is in a different format than the others to ensure that name
@@ -82,7 +82,7 @@ class NIAllTypes {
   NIAnEnum anEnum;
   NIAnotherEnum anotherEnum;
   String aString;
-  // Object anObject;
+  Object anObject;
 
   // Lists
   List list;
@@ -201,7 +201,7 @@ class NIAllNullableTypesWithoutRecursion {
 //     this.aNullableEnum,
 //     this.anotherNullableEnum,
     this.aNullableString,
-//     this.aNullableObject,
+    this.aNullableObject,
 
 //     // Lists
 //     // This name is in a different format than the others to ensure that name
@@ -237,7 +237,7 @@ class NIAllNullableTypesWithoutRecursion {
 //   NIAnEnum? aNullableEnum;
 //   NIAnotherEnum? anotherNullableEnum;
   String? aNullableString;
-//   Object? aNullableObject;
+  Object? aNullableObject;
 
 //   // Lists
   List? list;
@@ -534,10 +534,10 @@ abstract class NIHostIntegrationCoreApi {
   // @SwiftFunction('echo(_:)')
   // Float64List? echoNullableFloat64List(Float64List? aNullableFloat64List);
 
-  // /// Returns the passed in generic Object.
-  // @ObjCSelector('echoNullableObject:')
+  /// Returns the passed in generic Object.
+  @ObjCSelector('echoNullableObject:')
   // @SwiftFunction('echo(_:)')
-  // Object? echoNullableObject(Object? aNullableObject);
+  Object? echoNullableObject(Object? aNullableObject);
 
   /// Returns the passed list, to test serialization and deserialization.
   @ObjCSelector('echoNullableList:')

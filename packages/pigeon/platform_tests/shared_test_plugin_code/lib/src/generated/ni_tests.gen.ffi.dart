@@ -37,10 +37,10 @@ final _objc_msgSend_19nvye5 = objc.msgSendPointer
             ffi.Pointer<objc.ObjCSelector>, ffi.Pointer<objc.ObjCObject>)>();
 typedef instancetype = ffi.Pointer<objc.ObjCObject>;
 typedef Dartinstancetype = objc.ObjCObjectBase;
-late final _sel_initWithANullableBool_aNullableInt_aNullableInt64_aNullableDouble_aNullableString_list_map_ =
+late final _sel_initWithANullableBool_aNullableInt_aNullableInt64_aNullableDouble_aNullableString_aNullableObject_list_map_ =
     objc.registerName(
-        "initWithANullableBool:aNullableInt:aNullableInt64:aNullableDouble:aNullableString:list:map:");
-final _objc_msgSend_1387m63 = objc.msgSendPointer
+        "initWithANullableBool:aNullableInt:aNullableInt64:aNullableDouble:aNullableString:aNullableObject:list:map:");
+final _objc_msgSend_9sahzl = objc.msgSendPointer
     .cast<
         ffi.NativeFunction<
             ffi.Pointer<objc.ObjCObject> Function(
@@ -52,11 +52,13 @@ final _objc_msgSend_1387m63 = objc.msgSendPointer
                 ffi.Pointer<objc.ObjCObject>,
                 ffi.Pointer<objc.ObjCObject>,
                 ffi.Pointer<objc.ObjCObject>,
+                ffi.Pointer<objc.ObjCObject>,
                 ffi.Pointer<objc.ObjCObject>)>>()
     .asFunction<
         ffi.Pointer<objc.ObjCObject> Function(
             ffi.Pointer<objc.ObjCObject>,
             ffi.Pointer<objc.ObjCSelector>,
+            ffi.Pointer<objc.ObjCObject>,
             ffi.Pointer<objc.ObjCObject>,
             ffi.Pointer<objc.ObjCObject>,
             ffi.Pointer<objc.ObjCObject>,
@@ -92,6 +94,8 @@ late final _sel_aNullableDouble = objc.registerName("aNullableDouble");
 late final _sel_setANullableDouble_ = objc.registerName("setANullableDouble:");
 late final _sel_aNullableString = objc.registerName("aNullableString");
 late final _sel_setANullableString_ = objc.registerName("setANullableString:");
+late final _sel_aNullableObject = objc.registerName("aNullableObject");
+late final _sel_setANullableObject_ = objc.registerName("setANullableObject:");
 late final _sel_list = objc.registerName("list");
 late final _sel_setList_ = objc.registerName("setList:");
 late final _sel_map = objc.registerName("map");
@@ -274,23 +278,25 @@ class NIAllNullableTypesWithoutRecursionBridge extends objc.NSObject {
 
 extension NIAllNullableTypesWithoutRecursionBridge$Methods
     on NIAllNullableTypesWithoutRecursionBridge {
-  /// initWithANullableBool:aNullableInt:aNullableInt64:aNullableDouble:aNullableString:list:map:
+  /// initWithANullableBool:aNullableInt:aNullableInt64:aNullableDouble:aNullableString:aNullableObject:list:map:
   NIAllNullableTypesWithoutRecursionBridge initWithANullableBool(
       objc.NSNumber? aNullableBool,
       {objc.NSNumber? aNullableInt,
       objc.NSNumber? aNullableInt64,
       objc.NSNumber? aNullableDouble,
       objc.NSString? aNullableString,
+      objc.NSObject? aNullableObject,
       objc.NSArray? list,
       objc.NSDictionary? map}) {
-    final _ret = _objc_msgSend_1387m63(
+    final _ret = _objc_msgSend_9sahzl(
         this.ref.retainAndReturnPointer(),
-        _sel_initWithANullableBool_aNullableInt_aNullableInt64_aNullableDouble_aNullableString_list_map_,
+        _sel_initWithANullableBool_aNullableInt_aNullableInt64_aNullableDouble_aNullableString_aNullableObject_list_map_,
         aNullableBool?.ref.pointer ?? ffi.nullptr,
         aNullableInt?.ref.pointer ?? ffi.nullptr,
         aNullableInt64?.ref.pointer ?? ffi.nullptr,
         aNullableDouble?.ref.pointer ?? ffi.nullptr,
         aNullableString?.ref.pointer ?? ffi.nullptr,
+        aNullableObject?.ref.pointer ?? ffi.nullptr,
         list?.ref.pointer ?? ffi.nullptr,
         map?.ref.pointer ?? ffi.nullptr);
     return NIAllNullableTypesWithoutRecursionBridge.castFromPointer(_ret,
@@ -364,6 +370,20 @@ extension NIAllNullableTypesWithoutRecursionBridge$Methods
   /// setANullableString:
   set aNullableString(objc.NSString? value) {
     _objc_msgSend_xtuoz7(this.ref.pointer, _sel_setANullableString_,
+        value?.ref.pointer ?? ffi.nullptr);
+  }
+
+  /// aNullableObject
+  objc.NSObject? get aNullableObject {
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_aNullableObject);
+    return _ret.address == 0
+        ? null
+        : objc.NSObject.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// setANullableObject:
+  set aNullableObject(objc.NSObject? value) {
+    _objc_msgSend_xtuoz7(this.ref.pointer, _sel_setANullableObject_,
         value?.ref.pointer ?? ffi.nullptr);
   }
 
@@ -461,10 +481,10 @@ enum NIAnotherEnum {
 
 late final _class_NIAllTypesBridge =
     objc.getClass("test_plugin.NIAllTypesBridge");
-late final _sel_initWithABool_anInt_anInt64_aDouble_anEnum_anotherEnum_aString_list_map_ =
+late final _sel_initWithABool_anInt_anInt64_aDouble_anEnum_anotherEnum_aString_anObject_list_map_ =
     objc.registerName(
-        "initWithABool:anInt:anInt64:aDouble:anEnum:anotherEnum:aString:list:map:");
-final _objc_msgSend_1q9tan4 = objc.msgSendPointer
+        "initWithABool:anInt:anInt64:aDouble:anEnum:anotherEnum:aString:anObject:list:map:");
+final _objc_msgSend_16elobq = objc.msgSendPointer
     .cast<
         ffi.NativeFunction<
             ffi.Pointer<objc.ObjCObject> Function(
@@ -478,6 +498,7 @@ final _objc_msgSend_1q9tan4 = objc.msgSendPointer
                 ffi.Long,
                 ffi.Pointer<objc.ObjCObject>,
                 ffi.Pointer<objc.ObjCObject>,
+                ffi.Pointer<objc.ObjCObject>,
                 ffi.Pointer<objc.ObjCObject>)>>()
     .asFunction<
         ffi.Pointer<objc.ObjCObject> Function(
@@ -489,6 +510,7 @@ final _objc_msgSend_1q9tan4 = objc.msgSendPointer
             double,
             int,
             int,
+            ffi.Pointer<objc.ObjCObject>,
             ffi.Pointer<objc.ObjCObject>,
             ffi.Pointer<objc.ObjCObject>,
             ffi.Pointer<objc.ObjCObject>)>();
@@ -594,6 +616,8 @@ final _objc_msgSend_ih63eg = objc.msgSendPointer
             ffi.Pointer<objc.ObjCSelector>, int)>();
 late final _sel_aString = objc.registerName("aString");
 late final _sel_setAString_ = objc.registerName("setAString:");
+late final _sel_anObject = objc.registerName("anObject");
+late final _sel_setAnObject_ = objc.registerName("setAnObject:");
 
 /// A class containing all supported types.
 /// Generated bridge class from Pigeon that moves data from Swift to Objective-C.
@@ -641,7 +665,7 @@ class NIAllTypesBridge extends objc.NSObject {
 }
 
 extension NIAllTypesBridge$Methods on NIAllTypesBridge {
-  /// initWithABool:anInt:anInt64:aDouble:anEnum:anotherEnum:aString:list:map:
+  /// initWithABool:anInt:anInt64:aDouble:anEnum:anotherEnum:aString:anObject:list:map:
   NIAllTypesBridge initWithABool(bool aBool,
       {required int anInt,
       required int anInt64,
@@ -649,11 +673,12 @@ extension NIAllTypesBridge$Methods on NIAllTypesBridge {
       required NIAnEnum anEnum,
       required NIAnotherEnum anotherEnum,
       required objc.NSString aString,
+      required objc.NSObject anObject,
       required objc.NSArray list,
       required objc.NSDictionary map}) {
-    final _ret = _objc_msgSend_1q9tan4(
+    final _ret = _objc_msgSend_16elobq(
         this.ref.retainAndReturnPointer(),
-        _sel_initWithABool_anInt_anInt64_aDouble_anEnum_anotherEnum_aString_list_map_,
+        _sel_initWithABool_anInt_anInt64_aDouble_anEnum_anotherEnum_aString_anObject_list_map_,
         aBool,
         anInt,
         anInt64,
@@ -661,6 +686,7 @@ extension NIAllTypesBridge$Methods on NIAllTypesBridge {
         anEnum.value,
         anotherEnum.value,
         aString.ref.pointer,
+        anObject.ref.pointer,
         list.ref.pointer,
         map.ref.pointer);
     return NIAllTypesBridge.castFromPointer(_ret, retain: false, release: true);
@@ -739,6 +765,18 @@ extension NIAllTypesBridge$Methods on NIAllTypesBridge {
   /// setAString:
   set aString(objc.NSString value) {
     _objc_msgSend_xtuoz7(this.ref.pointer, _sel_setAString_, value.ref.pointer);
+  }
+
+  /// anObject
+  objc.NSObject get anObject {
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_anObject);
+    return objc.NSObject.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// setAnObject:
+  set anObject(objc.NSObject value) {
+    _objc_msgSend_xtuoz7(
+        this.ref.pointer, _sel_setAnObject_, value.ref.pointer);
   }
 
   /// list
@@ -1033,6 +1071,8 @@ late final _sel_echoNullableBoolWithANullableBool_wrappedError_ =
     objc.registerName("echoNullableBoolWithANullableBool:wrappedError:");
 late final _sel_echoNullableStringWithANullableString_wrappedError_ =
     objc.registerName("echoNullableStringWithANullableString:wrappedError:");
+late final _sel_echoNullableObjectWithANullableObject_wrappedError_ =
+    objc.registerName("echoNullableObjectWithANullableObject:wrappedError:");
 late final _sel_echoNullableListWithANullableList_wrappedError_ =
     objc.registerName("echoNullableListWithANullableList:wrappedError:");
 late final _sel_echoNullableMapWithMap_wrappedError_ =
@@ -1437,6 +1477,27 @@ extension NIHostIntegrationCoreApiSetup$Methods
         : objc.NSString.castFromPointer(_ret, retain: true, release: true);
   }
 
+  /// Returns the passed in generic Object.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  objc.ObjCObjectBase? echoNullableObjectWithANullableObject(
+      objc.ObjCObjectBase aNullableObject,
+      {required NiTestsError wrappedError}) {
+    objc.checkOsVersionInternal(
+        'NIHostIntegrationCoreApiSetup.echoNullableObjectWithANullableObject:wrappedError:',
+        iOS: (false, (13, 0, 0)),
+        macOS: (false, (16, 0, 0)));
+    final _ret = _objc_msgSend_15qeuct(
+        this.ref.pointer,
+        _sel_echoNullableObjectWithANullableObject_wrappedError_,
+        aNullableObject.ref.pointer,
+        wrappedError.ref.pointer);
+    return _ret.address == 0
+        ? null
+        : objc.ObjCObjectBase(_ret, retain: true, release: true);
+  }
+
   /// Returns the passed list, to test serialization and deserialization.
   ///
   /// iOS: introduced 13.0.0
@@ -1540,8 +1601,7 @@ extension NIHostIntegrationCoreApiSetup$Methods
   }
 }
 
-late final _class_NSNumberWrapper =
-    objc.getClass("test_plugin.NSNumberWrapper");
+late final _class_NumberWrapper = objc.getClass("test_plugin.NumberWrapper");
 late final _sel_initWithNumber_type_ =
     objc.registerName("initWithNumber:type:");
 final _objc_msgSend_9slupp = objc.msgSendPointer
@@ -1579,56 +1639,56 @@ final _objc_msgSend_4sp4xj = objc.msgSendPointer
         void Function(ffi.Pointer<objc.ObjCObject>,
             ffi.Pointer<objc.ObjCSelector>, int)>();
 
-/// NSNumberWrapper
-class NSNumberWrapper extends objc.NSObject {
-  NSNumberWrapper._(ffi.Pointer<objc.ObjCObject> pointer,
+/// NumberWrapper
+class NumberWrapper extends objc.NSObject {
+  NumberWrapper._(ffi.Pointer<objc.ObjCObject> pointer,
       {bool retain = false, bool release = false})
       : super.castFromPointer(pointer, retain: retain, release: release);
 
-  /// Constructs a [NSNumberWrapper] that points to the same underlying object as [other].
-  NSNumberWrapper.castFrom(objc.ObjCObjectBase other)
+  /// Constructs a [NumberWrapper] that points to the same underlying object as [other].
+  NumberWrapper.castFrom(objc.ObjCObjectBase other)
       : this._(other.ref.pointer, retain: true, release: true);
 
-  /// Constructs a [NSNumberWrapper] that wraps the given raw object pointer.
-  NSNumberWrapper.castFromPointer(ffi.Pointer<objc.ObjCObject> other,
+  /// Constructs a [NumberWrapper] that wraps the given raw object pointer.
+  NumberWrapper.castFromPointer(ffi.Pointer<objc.ObjCObject> other,
       {bool retain = false, bool release = false})
       : this._(other, retain: retain, release: release);
 
-  /// Returns whether [obj] is an instance of [NSNumberWrapper].
+  /// Returns whether [obj] is an instance of [NumberWrapper].
   static bool isInstance(objc.ObjCObjectBase obj) {
     return _objc_msgSend_19nvye5(
-        obj.ref.pointer, _sel_isKindOfClass_, _class_NSNumberWrapper);
+        obj.ref.pointer, _sel_isKindOfClass_, _class_NumberWrapper);
   }
 
   /// new
-  static NSNumberWrapper new$() {
-    final _ret = _objc_msgSend_151sglz(_class_NSNumberWrapper, _sel_new);
-    return NSNumberWrapper.castFromPointer(_ret, retain: false, release: true);
+  static NumberWrapper new$() {
+    final _ret = _objc_msgSend_151sglz(_class_NumberWrapper, _sel_new);
+    return NumberWrapper.castFromPointer(_ret, retain: false, release: true);
   }
 
   /// allocWithZone:
-  static NSNumberWrapper allocWithZone(ffi.Pointer<objc.NSZone> zone) {
-    final _ret = _objc_msgSend_1cwp428(
-        _class_NSNumberWrapper, _sel_allocWithZone_, zone);
-    return NSNumberWrapper.castFromPointer(_ret, retain: false, release: true);
+  static NumberWrapper allocWithZone(ffi.Pointer<objc.NSZone> zone) {
+    final _ret =
+        _objc_msgSend_1cwp428(_class_NumberWrapper, _sel_allocWithZone_, zone);
+    return NumberWrapper.castFromPointer(_ret, retain: false, release: true);
   }
 
   /// alloc
-  static NSNumberWrapper alloc() {
-    final _ret = _objc_msgSend_151sglz(_class_NSNumberWrapper, _sel_alloc);
-    return NSNumberWrapper.castFromPointer(_ret, retain: false, release: true);
+  static NumberWrapper alloc() {
+    final _ret = _objc_msgSend_151sglz(_class_NumberWrapper, _sel_alloc);
+    return NumberWrapper.castFromPointer(_ret, retain: false, release: true);
   }
 
-  /// Returns a new instance of NSNumberWrapper constructed with the default `new` method.
-  factory NSNumberWrapper() => new$();
+  /// Returns a new instance of NumberWrapper constructed with the default `new` method.
+  factory NumberWrapper() => new$();
 }
 
-extension NSNumberWrapper$Methods on NSNumberWrapper {
+extension NumberWrapper$Methods on NumberWrapper {
   /// initWithNumber:type:
-  NSNumberWrapper initWithNumber(objc.NSNumber number, {required int type}) {
+  NumberWrapper initWithNumber(objc.NSNumber number, {required int type}) {
     final _ret = _objc_msgSend_9slupp(this.ref.retainAndReturnPointer(),
         _sel_initWithNumber_type_, number.ref.pointer, type);
-    return NSNumberWrapper.castFromPointer(_ret, retain: false, release: true);
+    return NumberWrapper.castFromPointer(_ret, retain: false, release: true);
   }
 
   /// number
@@ -1653,29 +1713,112 @@ extension NSNumberWrapper$Methods on NSNumberWrapper {
   }
 
   /// init
-  NSNumberWrapper init() {
-    objc.checkOsVersionInternal('NSNumberWrapper.init',
+  NumberWrapper init() {
+    objc.checkOsVersionInternal('NumberWrapper.init',
         iOS: (false, (2, 0, 0)), macOS: (false, (10, 0, 0)));
     final _ret =
         _objc_msgSend_151sglz(this.ref.retainAndReturnPointer(), _sel_init);
-    return NSNumberWrapper.castFromPointer(_ret, retain: false, release: true);
+    return NumberWrapper.castFromPointer(_ret, retain: false, release: true);
   }
 
   /// self
-  NSNumberWrapper self() {
+  NumberWrapper self() {
     final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_self);
-    return NSNumberWrapper.castFromPointer(_ret, retain: true, release: true);
+    return NumberWrapper.castFromPointer(_ret, retain: true, release: true);
   }
 
   /// retain
-  NSNumberWrapper retain() {
+  NumberWrapper retain() {
     final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_retain);
-    return NSNumberWrapper.castFromPointer(_ret, retain: true, release: true);
+    return NumberWrapper.castFromPointer(_ret, retain: true, release: true);
   }
 
   /// autorelease
-  NSNumberWrapper autorelease() {
+  NumberWrapper autorelease() {
     final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_autorelease);
-    return NSNumberWrapper.castFromPointer(_ret, retain: true, release: true);
+    return NumberWrapper.castFromPointer(_ret, retain: true, release: true);
+  }
+}
+
+late final _class_PigeonInternalNull =
+    objc.getClass("test_plugin.PigeonInternalNull");
+
+/// PigeonInternalNull
+class PigeonInternalNull extends objc.NSObject {
+  PigeonInternalNull._(ffi.Pointer<objc.ObjCObject> pointer,
+      {bool retain = false, bool release = false})
+      : super.castFromPointer(pointer, retain: retain, release: release);
+
+  /// Constructs a [PigeonInternalNull] that points to the same underlying object as [other].
+  PigeonInternalNull.castFrom(objc.ObjCObjectBase other)
+      : this._(other.ref.pointer, retain: true, release: true);
+
+  /// Constructs a [PigeonInternalNull] that wraps the given raw object pointer.
+  PigeonInternalNull.castFromPointer(ffi.Pointer<objc.ObjCObject> other,
+      {bool retain = false, bool release = false})
+      : this._(other, retain: retain, release: release);
+
+  /// Returns whether [obj] is an instance of [PigeonInternalNull].
+  static bool isInstance(objc.ObjCObjectBase obj) {
+    return _objc_msgSend_19nvye5(
+        obj.ref.pointer, _sel_isKindOfClass_, _class_PigeonInternalNull);
+  }
+
+  /// new
+  static PigeonInternalNull new$() {
+    final _ret = _objc_msgSend_151sglz(_class_PigeonInternalNull, _sel_new);
+    return PigeonInternalNull.castFromPointer(_ret,
+        retain: false, release: true);
+  }
+
+  /// allocWithZone:
+  static PigeonInternalNull allocWithZone(ffi.Pointer<objc.NSZone> zone) {
+    final _ret = _objc_msgSend_1cwp428(
+        _class_PigeonInternalNull, _sel_allocWithZone_, zone);
+    return PigeonInternalNull.castFromPointer(_ret,
+        retain: false, release: true);
+  }
+
+  /// alloc
+  static PigeonInternalNull alloc() {
+    final _ret = _objc_msgSend_151sglz(_class_PigeonInternalNull, _sel_alloc);
+    return PigeonInternalNull.castFromPointer(_ret,
+        retain: false, release: true);
+  }
+
+  /// Returns a new instance of PigeonInternalNull constructed with the default `new` method.
+  factory PigeonInternalNull() => new$();
+}
+
+extension PigeonInternalNull$Methods on PigeonInternalNull {
+  /// init
+  PigeonInternalNull init() {
+    objc.checkOsVersionInternal('PigeonInternalNull.init',
+        iOS: (false, (2, 0, 0)), macOS: (false, (10, 0, 0)));
+    final _ret =
+        _objc_msgSend_151sglz(this.ref.retainAndReturnPointer(), _sel_init);
+    return PigeonInternalNull.castFromPointer(_ret,
+        retain: false, release: true);
+  }
+
+  /// self
+  PigeonInternalNull self() {
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_self);
+    return PigeonInternalNull.castFromPointer(_ret,
+        retain: true, release: true);
+  }
+
+  /// retain
+  PigeonInternalNull retain() {
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_retain);
+    return PigeonInternalNull.castFromPointer(_ret,
+        retain: true, release: true);
+  }
+
+  /// autorelease
+  PigeonInternalNull autorelease() {
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_autorelease);
+    return PigeonInternalNull.castFromPointer(_ret,
+        retain: true, release: true);
   }
 }

@@ -83,6 +83,7 @@ data class NIAllTypes(
     val anEnum: NIAnEnum,
     val anotherEnum: NIAnotherEnum,
     val aString: String,
+    val anObject: Any,
     val list: List<Any?>,
     val map: Map<Any, Any?>
 ) {
@@ -95,9 +96,11 @@ data class NIAllTypes(
       val anEnum = pigeonVar_list[4] as NIAnEnum
       val anotherEnum = pigeonVar_list[5] as NIAnotherEnum
       val aString = pigeonVar_list[6] as String
-      val list = pigeonVar_list[7] as List<Any?>
-      val map = pigeonVar_list[8] as Map<Any, Any?>
-      return NIAllTypes(aBool, anInt, anInt64, aDouble, anEnum, anotherEnum, aString, list, map)
+      val anObject = pigeonVar_list[7] as Any
+      val list = pigeonVar_list[8] as List<Any?>
+      val map = pigeonVar_list[9] as Map<Any, Any?>
+      return NIAllTypes(
+          aBool, anInt, anInt64, aDouble, anEnum, anotherEnum, aString, anObject, list, map)
     }
   }
 
@@ -110,6 +113,7 @@ data class NIAllTypes(
         anEnum,
         anotherEnum,
         aString,
+        anObject,
         list,
         map,
     )
@@ -129,6 +133,7 @@ data class NIAllTypes(
         anEnum == other.anEnum &&
         anotherEnum == other.anotherEnum &&
         aString == other.aString &&
+        anObject == other.anObject &&
         deepEqualsNiTests(list, other.list) &&
         deepEqualsNiTests(map, other.map)
   }
@@ -149,6 +154,7 @@ data class NIAllNullableTypesWithoutRecursion(
     val aNullableInt64: Long? = null,
     val aNullableDouble: Double? = null,
     val aNullableString: String? = null,
+    val aNullableObject: Any? = null,
     val list: List<Any?>? = null,
     val map: Map<Any, Any?>? = null
 ) {
@@ -159,10 +165,18 @@ data class NIAllNullableTypesWithoutRecursion(
       val aNullableInt64 = pigeonVar_list[2] as Long?
       val aNullableDouble = pigeonVar_list[3] as Double?
       val aNullableString = pigeonVar_list[4] as String?
-      val list = pigeonVar_list[5] as List<Any?>?
-      val map = pigeonVar_list[6] as Map<Any, Any?>?
+      val aNullableObject = pigeonVar_list[5]
+      val list = pigeonVar_list[6] as List<Any?>?
+      val map = pigeonVar_list[7] as Map<Any, Any?>?
       return NIAllNullableTypesWithoutRecursion(
-          aNullableBool, aNullableInt, aNullableInt64, aNullableDouble, aNullableString, list, map)
+          aNullableBool,
+          aNullableInt,
+          aNullableInt64,
+          aNullableDouble,
+          aNullableString,
+          aNullableObject,
+          list,
+          map)
     }
   }
 
@@ -173,6 +187,7 @@ data class NIAllNullableTypesWithoutRecursion(
         aNullableInt64,
         aNullableDouble,
         aNullableString,
+        aNullableObject,
         list,
         map,
     )
@@ -190,6 +205,7 @@ data class NIAllNullableTypesWithoutRecursion(
         aNullableInt64 == other.aNullableInt64 &&
         aNullableDouble == other.aNullableDouble &&
         aNullableString == other.aNullableString &&
+        aNullableObject == other.aNullableObject &&
         deepEqualsNiTests(list, other.list) &&
         deepEqualsNiTests(map, other.map)
   }
@@ -239,6 +255,8 @@ abstract class NIHostIntegrationCoreApi {
   abstract fun echoNullableBool(aNullableBool: Boolean?): Boolean?
   /** Returns the passed in string. */
   abstract fun echoNullableString(aNullableString: String?): String?
+  /** Returns the passed in generic Object. */
+  abstract fun echoNullableObject(aNullableObject: Any?): Any?
   /** Returns the passed list, to test serialization and deserialization. */
   abstract fun echoNullableList(aNullableList: List<Any?>?): List<Any?>?
   /** Returns the passed map, to test serialization and deserialization. */
@@ -441,6 +459,17 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
     api?.let {
       try {
         return api!!.echoNullableString(aNullableString)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed in generic Object. */
+  override fun echoNullableObject(aNullableObject: Any?): Any? {
+    api?.let {
+      try {
+        return api!!.echoNullableObject(aNullableObject)
       } catch (e: Exception) {
         throw e
       }

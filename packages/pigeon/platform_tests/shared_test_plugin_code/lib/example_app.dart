@@ -44,7 +44,8 @@ class _ExampleAppState extends State<ExampleApp> {
       // final NIHostIntegrationCoreApiForNativeInterop? api =
       //     NIHostIntegrationCoreApiForNativeInterop.getInstance();
       // api!.noop();
-      // api.echoAllTypes(genericNIAllTypes);
+      // api.echoAllNullableTypesWithoutRecursion(
+      //     genericNIAllNullableTypesWithoutRecursion);
     } catch (e) {
       setState(() {
         status = 'Failed: $e';

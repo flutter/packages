@@ -284,6 +284,8 @@ class SwiftGenerator extends StructuredGenerator<InternalSwiftOptions> {
   void _writeFfiCodec(Indent indent, Root root) {
     indent.newln();
     indent.format('''
+@objc class PigeonInternalNull: NSObject {}
+
 @available(iOS 13, macOS 16.0.0, *)
 class _PigeonFfiCodec {
   static func readValue(value: NSObject?, type: String?) -> Any? {
@@ -343,8 +345,8 @@ class _PigeonFfiCodec {
       }
       return res
     } 
-    if (value is NSNumberWrapper) {
-      return unwrapNumber(wrappedNumber: value as! NSNumberWrapper)
+    if (value is NumberWrapper) {
+      return unwrapNumber(wrappedNumber: value as! NumberWrapper)
     }
     if (value is NSString) {
       return value as! NSString
@@ -354,7 +356,7 @@ class _PigeonFfiCodec {
 
   static func writeValue(value: Any?, isObject: Bool = false) -> Any? {
     if (isNullish(value)) {
-      return nil
+      return PigeonInternalNull()
     }
     if (value is Bool || value is Double || value is Int${root.enums.map((Enum enumDefinition) {
       return ' || value is ${enumDefinition.name}';
@@ -802,6 +804,8 @@ if (wrapped == nil) {
         return '_PigeonFfiCodec.writeValue(value: $varName, isObject: true) as${type.isNullable ? '?' : '!'} [NSObject]';
       case 'Map':
         return '_PigeonFfiCodec.writeValue(value: $varName, isObject: true) as${type.isNullable ? '?' : '!'} [NSObject: NSObject]';
+      case 'Object':
+        return '$varName as! NSObject$nullable';
       default:
         return varName;
     }
@@ -1697,11 +1701,12 @@ if (wrapped == nil) {
     }
   }
 
-  void _writeIsNullish(Indent indent) {
+  void _writeIsNullish(Indent indent, {bool useFfi = false}) {
     indent.newln();
     indent.write('private func isNullish(_ value: Any?) -> Bool ');
     indent.addScoped('{', '}', () {
-      indent.writeln('return value is NSNull || value == nil');
+      indent.writeln(
+          'return value is NSNull || value == nil${useFfi ? ' || value is PigeonInternalNull' : ''}');
     });
   }
 
@@ -1767,7 +1772,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
 
   void _writeNumberWrapper(Root root, Indent indent) {
     indent.newln();
-    indent.writeScoped('@objc class NSNumberWrapper: NSObject {', '}', () {
+    indent.writeScoped('@objc class NumberWrapper: NSObject {', '}', () {
       indent.writeScoped('@objc init(', ')', () {
         indent.writeln('number: NSNumber,');
         indent.writeln('type: Int,');
@@ -1781,13 +1786,13 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
     });
     indent.newln();
     indent.writeScoped(
-        'private func wrapNumber(number: NSNumber, type: Int) -> NSNumberWrapper {',
+        'private func wrapNumber(number: NSNumber, type: Int) -> NumberWrapper {',
         '}', () {
-      indent.writeln('return NSNumberWrapper(number: number, type: type)');
+      indent.writeln('return NumberWrapper(number: number, type: type)');
     });
     indent.newln();
     indent.writeScoped(
-        'private func unwrapNumber<T>(wrappedNumber: NSNumberWrapper) -> T {',
+        'private func unwrapNumber<T>(wrappedNumber: NumberWrapper) -> T {',
         '}', () {
       indent.writeScoped('switch (wrappedNumber.type) {', '}', () {
         int caseNum = 4;
@@ -1863,7 +1868,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
       _writeNumberWrapper(root, indent);
     }
 
-    _writeIsNullish(indent);
+    _writeIsNullish(indent, useFfi: generatorOptions.useFfi);
     _writeNilOrValue(indent);
   }
 

@@ -17,22 +17,22 @@ dependencies:
     git:
       url: https://github.com/dart-lang/native/
       path: pkgs/jni
-      ref: e78967cc8ef3de2d4e283645c509658f39d9225d
+      ref: d3c3acb4c67331e5b22010555f7d4f19d4fb5689
   jnigen:
     git:
       url: https://github.com/dart-lang/native/
       path: pkgs/jnigen
-      ref: e78967cc8ef3de2d4e283645c509658f39d9225d
+      ref: d3c3acb4c67331e5b22010555f7d4f19d4fb5689
   swiftgen:
     git:
       url: https://github.com/dart-lang/native/
       path: pkgs/swiftgen
-      ref: e78967cc8ef3de2d4e283645c509658f39d9225d
+      ref: d3c3acb4c67331e5b22010555f7d4f19d4fb5689
   ffigen: 
     git:
       url: https://github.com/dart-lang/native/
       path: pkgs/ffigen
-      ref: e78967cc8ef3de2d4e283645c509658f39d9225d
+      ref: d3c3acb4c67331e5b22010555f7d4f19d4fb5689
   pub_semver: ^2.2.0
 
 dev_dependencies:
@@ -51,4 +51,9 @@ dependency_overrides:
     git:
       url: https://github.com/dart-lang/native/
       path: pkgs/ffigen
-      ref: e78967cc8ef3de2d4e283645c509658f39d9225d
+      ref: d3c3acb4c67331e5b22010555f7d4f19d4fb5689
+  objective_c: 
+    git:
+      url: https://github.com/dart-lang/native/
+      path: pkgs/objective_c
+      ref: d3c3acb4c67331e5b22010555f7d4f19d4fb5689

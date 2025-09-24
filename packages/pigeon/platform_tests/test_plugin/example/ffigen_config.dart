@@ -6,7 +6,8 @@ import 'package:swiftgen/swiftgen.dart';
 
 Future<void> main() async {
   final List<String> classes = <String>[
-    'NSNumberWrapper',
+    'PigeonInternalNull',
+    'NumberWrapper',
     'NIHostIntegrationCoreApi',
     'NIHostIntegrationCoreApiSetup',
     'NIAllTypesBridge',
@@ -57,10 +58,12 @@ Future<void> main() async {
           macos: fg.Versions(min: Version(10, 14, 0)),
         ),
         interfaces: fg.Interfaces(
-          include: (fg.Declaration decl) =>
-              classes.contains(decl.originalName) ||
-              enums.contains(decl.originalName),
-        ),
+            include: (fg.Declaration decl) =>
+                classes.contains(decl.originalName) ||
+                enums.contains(decl.originalName),
+            module: (fg.Declaration decl) {
+              return decl.originalName.startsWith('NS') ? null : 'test_plugin';
+            }),
       ),
     ),
   ).generate(

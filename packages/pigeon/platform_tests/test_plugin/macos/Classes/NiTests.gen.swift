@@ -28,7 +28,7 @@ import Foundation
   }
 }
 
-@objc class NSNumberWrapper: NSObject {
+@objc class NumberWrapper: NSObject {
   @objc init(
     number: NSNumber,
     type: Int,
@@ -40,11 +40,11 @@ import Foundation
   @objc var type: Int
 }
 
-private func wrapNumber(number: NSNumber, type: Int) -> NSNumberWrapper {
-  return NSNumberWrapper(number: number, type: type)
+private func wrapNumber(number: NSNumber, type: Int) -> NumberWrapper {
+  return NumberWrapper(number: number, type: type)
 }
 
-private func unwrapNumber<T>(wrappedNumber: NSNumberWrapper) -> T {
+private func unwrapNumber<T>(wrappedNumber: NumberWrapper) -> T {
   switch wrappedNumber.type {
   case 1:
     return wrappedNumber.number.intValue as! T
@@ -81,7 +81,7 @@ private func numberCodec(number: Any) -> Int {
 }
 
 private func isNullish(_ value: Any?) -> Bool {
-  return value is NSNull || value == nil
+  return value is NSNull || value == nil || value is PigeonInternalNull
 }
 
 private func nilOrValue<T>(_ value: Any?) -> T? {
@@ -112,6 +112,7 @@ struct NIAllTypes {
   var anEnum: NIAnEnum
   var anotherEnum: NIAnotherEnum
   var aString: String
+  var anObject: Any
   var list: [Any?]
   var map: [AnyHashable?: Any?]
 
@@ -123,8 +124,9 @@ struct NIAllTypes {
     let anEnum = pigeonVar_list[4] as! NIAnEnum
     let anotherEnum = pigeonVar_list[5] as! NIAnotherEnum
     let aString = pigeonVar_list[6] as! String
-    let list = pigeonVar_list[7] as! [Any?]
-    let map = pigeonVar_list[8] as! [AnyHashable?: Any?]
+    let anObject = pigeonVar_list[7]!
+    let list = pigeonVar_list[8] as! [Any?]
+    let map = pigeonVar_list[9] as! [AnyHashable?: Any?]
 
     return NIAllTypes(
       aBool: aBool,
@@ -134,6 +136,7 @@ struct NIAllTypes {
       anEnum: anEnum,
       anotherEnum: anotherEnum,
       aString: aString,
+      anObject: anObject,
       list: list,
       map: map
     )
@@ -147,6 +150,7 @@ struct NIAllTypes {
       anEnum,
       anotherEnum,
       aString,
+      anObject,
       list,
       map,
     ]
@@ -165,6 +169,7 @@ struct NIAllTypes {
     anEnum: NIAnEnum,
     anotherEnum: NIAnotherEnum,
     aString: NSString,
+    anObject: NSObject,
     list: [NSObject],
     map: [NSObject: NSObject]
   ) {
@@ -175,6 +180,7 @@ struct NIAllTypes {
     self.anEnum = anEnum
     self.anotherEnum = anotherEnum
     self.aString = aString
+    self.anObject = anObject
     self.list = list
     self.map = map
   }
@@ -185,6 +191,7 @@ struct NIAllTypes {
   @objc var anEnum: NIAnEnum
   @objc var anotherEnum: NIAnotherEnum
   @objc var aString: NSString
+  @objc var anObject: NSObject
   @objc var list: [NSObject]
   @objc var map: [NSObject: NSObject]
 
@@ -201,6 +208,7 @@ struct NIAllTypes {
       anEnum: pigeonVar_Class!.anEnum,
       anotherEnum: pigeonVar_Class!.anotherEnum,
       aString: pigeonVar_Class!.aString as NSString,
+      anObject: pigeonVar_Class!.anObject as! NSObject,
       list: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.list, isObject: true) as! [NSObject],
       map: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.map, isObject: true)
         as! [NSObject: NSObject],
@@ -215,6 +223,7 @@ struct NIAllTypes {
       anEnum: anEnum,
       anotherEnum: anotherEnum,
       aString: aString as String,
+      anObject: anObject,
       list: list,
       map: map,
     )
@@ -233,6 +242,7 @@ struct NIAllNullableTypesWithoutRecursion {
   var aNullableInt64: Int64? = nil
   var aNullableDouble: Double? = nil
   var aNullableString: String? = nil
+  var aNullableObject: Any? = nil
   var list: [Any?]? = nil
   var map: [AnyHashable?: Any?]? = nil
 
@@ -242,8 +252,9 @@ struct NIAllNullableTypesWithoutRecursion {
     let aNullableInt64: Int64? = nilOrValue(pigeonVar_list[2])
     let aNullableDouble: Double? = nilOrValue(pigeonVar_list[3])
     let aNullableString: String? = nilOrValue(pigeonVar_list[4])
-    let list: [Any?]? = nilOrValue(pigeonVar_list[5])
-    let map: [AnyHashable?: Any?]? = nilOrValue(pigeonVar_list[6])
+    let aNullableObject: Any? = pigeonVar_list[5]
+    let list: [Any?]? = nilOrValue(pigeonVar_list[6])
+    let map: [AnyHashable?: Any?]? = nilOrValue(pigeonVar_list[7])
 
     return NIAllNullableTypesWithoutRecursion(
       aNullableBool: aNullableBool,
@@ -251,6 +262,7 @@ struct NIAllNullableTypesWithoutRecursion {
       aNullableInt64: aNullableInt64,
       aNullableDouble: aNullableDouble,
       aNullableString: aNullableString,
+      aNullableObject: aNullableObject,
       list: list,
       map: map
     )
@@ -262,6 +274,7 @@ struct NIAllNullableTypesWithoutRecursion {
       aNullableInt64,
       aNullableDouble,
       aNullableString,
+      aNullableObject,
       list,
       map,
     ]
@@ -281,6 +294,7 @@ struct NIAllNullableTypesWithoutRecursion {
     aNullableInt64: NSNumber? = nil,
     aNullableDouble: NSNumber? = nil,
     aNullableString: NSString? = nil,
+    aNullableObject: NSObject? = nil,
     list: [NSObject]? = nil,
     map: [NSObject: NSObject]? = nil
   ) {
@@ -289,6 +303,7 @@ struct NIAllNullableTypesWithoutRecursion {
     self.aNullableInt64 = aNullableInt64
     self.aNullableDouble = aNullableDouble
     self.aNullableString = aNullableString
+    self.aNullableObject = aNullableObject
     self.list = list
     self.map = map
   }
@@ -297,6 +312,7 @@ struct NIAllNullableTypesWithoutRecursion {
   @objc var aNullableInt64: NSNumber? = nil
   @objc var aNullableDouble: NSNumber? = nil
   @objc var aNullableString: NSString? = nil
+  @objc var aNullableObject: NSObject? = nil
   @objc var list: [NSObject]? = nil
   @objc var map: [NSObject: NSObject]? = nil
 
@@ -317,6 +333,7 @@ struct NIAllNullableTypesWithoutRecursion {
       aNullableDouble: isNullish(pigeonVar_Class!.aNullableDouble)
         ? nil : NSNumber(value: pigeonVar_Class!.aNullableDouble!),
       aNullableString: pigeonVar_Class!.aNullableString as NSString?,
+      aNullableObject: pigeonVar_Class!.aNullableObject as! NSObject?,
       list: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.list, isObject: true) as? [NSObject],
       map: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.map, isObject: true)
         as? [NSObject: NSObject],
@@ -329,11 +346,14 @@ struct NIAllNullableTypesWithoutRecursion {
       aNullableInt64: isNullish(aNullableInt64) ? nil : aNullableInt64!.int64Value,
       aNullableDouble: isNullish(aNullableDouble) ? nil : aNullableDouble!.doubleValue,
       aNullableString: aNullableString as String?,
+      aNullableObject: aNullableObject,
       list: list,
       map: map,
     )
   }
 }
+
+@objc class PigeonInternalNull: NSObject {}
 
 @available(iOS 13, macOS 16.0.0, *)
 class _PigeonFfiCodec {
@@ -393,8 +413,8 @@ class _PigeonFfiCodec {
       }
       return res
     }
-    if value is NSNumberWrapper {
-      return unwrapNumber(wrappedNumber: value as! NSNumberWrapper)
+    if value is NumberWrapper {
+      return unwrapNumber(wrappedNumber: value as! NumberWrapper)
     }
     if value is NSString {
       return value as! NSString
@@ -404,7 +424,7 @@ class _PigeonFfiCodec {
 
   static func writeValue(value: Any?, isObject: Bool = false) -> Any? {
     if isNullish(value) {
-      return nil
+      return PigeonInternalNull()
     }
     if value is Bool || value is Double || value is Int || value is NIAnEnum
       || value is NIAnotherEnum
@@ -516,6 +536,8 @@ protocol NIHostIntegrationCoreApi {
   func echoNullableBool(aNullableBool: Bool?) throws -> Bool?
   /// Returns the passed in string.
   func echoNullableString(aNullableString: String?) throws -> String?
+  /// Returns the passed in generic Object.
+  func echoNullableObject(aNullableObject: Any?) throws -> Any?
   /// Returns the passed list, to test serialization and deserialization.
   func echoNullableList(aNullableList: [Any?]?) throws -> [Any?]?
   /// Returns the passed map, to test serialization and deserialization.
@@ -793,6 +815,25 @@ protocol NIHostIntegrationCoreApi {
   @objc func echoNullableString(aNullableString: String?, wrappedError: NiTestsError) -> String? {
     do {
       return try api!.echoNullableString(aNullableString: aNullableString)
+    } catch let error as NiTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
+  /// Returns the passed in generic Object.
+  @available(iOS 13, macOS 16.0.0, *)
+  @objc func echoNullableObject(aNullableObject: Any, wrappedError: NiTestsError) -> Any? {
+    do {
+      return try _PigeonFfiCodec.writeValue(
+        value: api!.echoNullableObject(
+          aNullableObject: _PigeonFfiCodec.readValue(value: aNullableObject as? NSObject, type: nil)
+            as Any), isObject: true)
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message

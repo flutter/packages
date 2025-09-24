@@ -56,7 +56,8 @@ import 'package:swiftgen/swiftgen.dart';
     indent.writeScoped('Future<void> main() async {', '}', () {
       indent.writeScoped('final List<String> classes = <String>[', '];', () {
         indent.inc();
-        indent.writeln("'NSNumberWrapper',");
+        indent.writeln("'PigeonInternalNull',");
+        indent.writeln("'NumberWrapper',");
         for (final Api api in root.apis) {
           if (api is AstHostApi || api is AstFlutterApi) {
             indent.writeln("'${api.name}',");
@@ -115,6 +116,9 @@ import 'package:swiftgen/swiftgen.dart';
           include: (fg.Declaration decl) =>
               classes.contains(decl.originalName) ||
               enums.contains(decl.originalName),
+          module: (fg.Declaration decl) {
+            return decl.originalName.startsWith('NS') ? null : 'test_plugin';
+          }
         ),
       ),
     ),
