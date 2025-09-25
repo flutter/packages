@@ -4,11 +4,8 @@
 
 package io.flutter.plugins.pathprovider;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 public class PathProviderPluginTest {
   @org.junit.Test
-  public void placeHolderTest() {
-  }
+  public void placeHolderTest() {}
 }

@@ -25,14 +25,16 @@ class PathProviderAndroid extends PathProviderPlatform {
 
   @override
   Future<String?> getApplicationSupportPath() async {
-    return PathUtils.getFilesDir(_applicationContext)
-        .toDartString(releaseOriginal: true);
+    return PathUtils.getFilesDir(
+      _applicationContext,
+    ).toDartString(releaseOriginal: true);
   }
 
   @override
   Future<String?> getApplicationDocumentsPath() async {
-    return PathUtils.getDataDirectory(_applicationContext)
-        .toDartString(releaseOriginal: true);
+    return PathUtils.getDataDirectory(
+      _applicationContext,
+    ).toDartString(releaseOriginal: true);
   }
 
   @override
@@ -47,8 +49,9 @@ class PathProviderAndroid extends PathProviderPlatform {
   Future<String?> getExternalStoragePath() async {
     final File? dir = _applicationContext.getExternalFilesDir(null);
     if (dir != null) {
-      final String? path =
-          dir.getAbsolutePath()?.toDartString(releaseOriginal: true);
+      final String? path = dir.getAbsolutePath()?.toDartString(
+        releaseOriginal: true,
+      );
       dir.release();
       return path;
     }
@@ -86,8 +89,9 @@ class PathProviderAndroid extends PathProviderPlatform {
 
   @override
   Future<String?> getDownloadsPath() async {
-    final List<String>? paths =
-        await getExternalStoragePaths(type: StorageDirectory.downloads);
+    final List<String>? paths = await getExternalStoragePaths(
+      type: StorageDirectory.downloads,
+    );
     if (paths != null && paths.isNotEmpty) {
       return paths.first;
     }
@@ -127,8 +131,9 @@ List<String> _toStringList(JArray<File?> files) {
   while (filesIterator.moveNext()) {
     final File? file = filesIterator.current;
     if (file != null) {
-      final String? path =
-          file.getAbsolutePath()?.toDartString(releaseOriginal: true);
+      final String? path = file.getAbsolutePath()?.toDartString(
+        releaseOriginal: true,
+      );
       if (path != null) {
         paths.add(path);
       }
