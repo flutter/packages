@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -63,7 +63,6 @@ void main() {
         mockWebViewProxy.createWebViewClient(
           onPageStarted: anyNamed('onPageStarted'),
           onPageFinished: anyNamed('onPageFinished'),
-          onReceivedError: anyNamed('onReceivedError'),
           onReceivedRequestError: anyNamed('onReceivedRequestError'),
           requestLoading: anyNamed('requestLoading'),
           urlLoading: anyNamed('urlLoading'),
@@ -241,7 +240,6 @@ void main() {
             mockWebViewProxy.createWebViewClient(
               onPageStarted: anyNamed('onPageStarted'),
               onPageFinished: anyNamed('onPageFinished'),
-              onReceivedError: anyNamed('onReceivedError'),
               onReceivedRequestError: anyNamed('onReceivedRequestError'),
               requestLoading: anyNamed('requestLoading'),
               urlLoading: anyNamed('urlLoading'),
@@ -771,7 +769,6 @@ void main() {
                   mockWebViewProxy.createWebViewClient(
                     onPageStarted: captureAnyNamed('onPageStarted'),
                     onPageFinished: anyNamed('onPageFinished'),
-                    onReceivedError: anyNamed('onReceivedError'),
                     onReceivedRequestError: anyNamed('onReceivedRequestError'),
                     requestLoading: anyNamed('requestLoading'),
                     urlLoading: anyNamed('urlLoading'),
@@ -805,7 +802,6 @@ void main() {
                   mockWebViewProxy.createWebViewClient(
                     onPageStarted: anyNamed('onPageStarted'),
                     onPageFinished: captureAnyNamed('onPageFinished'),
-                    onReceivedError: anyNamed('onReceivedError'),
                     onReceivedRequestError: anyNamed('onReceivedRequestError'),
                     requestLoading: anyNamed('requestLoading'),
                     urlLoading: anyNamed('urlLoading'),
@@ -826,62 +822,6 @@ void main() {
         verify(mockCallbacksHandler.onPageFinished('https://google.com'));
       });
 
-      testWidgets('onWebResourceError from onReceivedError', (
-        WidgetTester tester,
-      ) async {
-        await buildWidget(tester);
-
-        final void Function(
-          android_webview.WebViewClient,
-          android_webview.WebView,
-          int,
-          String,
-          String,
-        )
-        onReceivedError =
-            verify(
-                  mockWebViewProxy.createWebViewClient(
-                    onPageStarted: anyNamed('onPageStarted'),
-                    onPageFinished: anyNamed('onPageFinished'),
-                    onReceivedError: captureAnyNamed('onReceivedError'),
-                    onReceivedRequestError: anyNamed('onReceivedRequestError'),
-                    requestLoading: anyNamed('requestLoading'),
-                    urlLoading: anyNamed('urlLoading'),
-                    onReceivedSslError: anyNamed('onReceivedSslError'),
-                    onFormResubmission: anyNamed('onFormResubmission'),
-                    onReceivedClientCertRequest: anyNamed(
-                      'onReceivedClientCertRequest',
-                    ),
-                  ),
-                ).captured.single
-                as void Function(
-                  android_webview.WebViewClient,
-                  android_webview.WebView,
-                  int,
-                  String,
-                  String,
-                );
-
-        onReceivedError(
-          MockWebViewClient(),
-          mockWebView,
-          WebViewClientConstants.errorAuthentication,
-          'description',
-          'https://google.com',
-        );
-
-        final WebResourceError error =
-            verify(
-                  mockCallbacksHandler.onWebResourceError(captureAny),
-                ).captured.single
-                as WebResourceError;
-        expect(error.description, 'description');
-        expect(error.errorCode, -4);
-        expect(error.failingUrl, 'https://google.com');
-        expect(error.domain, isNull);
-        expect(error.errorType, WebResourceErrorType.authentication);
-      });
-
       testWidgets('onWebResourceError from onReceivedRequestError', (
         WidgetTester tester,
       ) async {
@@ -898,7 +838,6 @@ void main() {
                   mockWebViewProxy.createWebViewClient(
                     onPageStarted: anyNamed('onPageStarted'),
                     onPageFinished: anyNamed('onPageFinished'),
-                    onReceivedError: anyNamed('onReceivedError'),
                     onReceivedRequestError: captureAnyNamed(
                       'onReceivedRequestError',
                     ),
@@ -968,7 +907,6 @@ void main() {
                   mockWebViewProxy.createWebViewClient(
                     onPageStarted: anyNamed('onPageStarted'),
                     onPageFinished: anyNamed('onPageFinished'),
-                    onReceivedError: anyNamed('onReceivedError'),
                     onReceivedRequestError: anyNamed('onReceivedRequestError'),
                     requestLoading: anyNamed('requestLoading'),
                     urlLoading: captureAnyNamed('urlLoading'),
@@ -1016,7 +954,6 @@ void main() {
                   mockWebViewProxy.createWebViewClient(
                     onPageStarted: anyNamed('onPageStarted'),
                     onPageFinished: anyNamed('onPageFinished'),
-                    onReceivedError: anyNamed('onReceivedError'),
                     onReceivedRequestError: anyNamed('onReceivedRequestError'),
                     requestLoading: captureAnyNamed('requestLoading'),
                     urlLoading: anyNamed('urlLoading'),

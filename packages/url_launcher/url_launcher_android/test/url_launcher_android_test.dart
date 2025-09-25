@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -236,6 +236,7 @@ void main() {
       );
       expect(launched, true);
       expect(api.usedWebView, false);
+      expect(api.requiredNonBrowser, false);
       expect(api.passedWebViewOptions?.headers, isEmpty);
     });
 
@@ -252,6 +253,19 @@ void main() {
       );
       expect(api.passedWebViewOptions?.headers.length, 1);
       expect(api.passedWebViewOptions?.headers['key'], 'value');
+    });
+
+    test('passes non-browser flag', () async {
+      final UrlLauncherAndroid launcher = UrlLauncherAndroid(api: api);
+      final bool launched = await launcher.launchUrl(
+        'http://example.com/',
+        const LaunchOptions(
+          mode: PreferredLaunchMode.externalNonBrowserApplication,
+        ),
+      );
+      expect(launched, true);
+      expect(api.usedWebView, false);
+      expect(api.requiredNonBrowser, true);
     });
 
     test('passes through no-activity exception', () async {
@@ -484,6 +498,7 @@ class _FakeUrlLauncherApi implements UrlLauncherApi {
   BrowserOptions? passedBrowserOptions;
   bool? usedWebView;
   bool? allowedCustomTab;
+  bool? requiredNonBrowser;
   bool? closed;
 
   /// A domain that will be treated as having no handler, even for http(s).
@@ -495,13 +510,18 @@ class _FakeUrlLauncherApi implements UrlLauncherApi {
   }
 
   @override
-  Future<bool> launchUrl(String url, Map<String, String> headers) async {
+  Future<bool> launchUrl(
+    String url,
+    Map<String, String> headers,
+    bool requireNonBrowser,
+  ) async {
     passedWebViewOptions = WebViewOptions(
       enableJavaScript: false,
       enableDomStorage: false,
       headers: headers,
     );
 
+    requiredNonBrowser = requireNonBrowser;
     usedWebView = false;
     return _launch(url);
   }

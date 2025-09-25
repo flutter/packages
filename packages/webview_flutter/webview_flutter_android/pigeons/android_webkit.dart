@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -157,7 +157,7 @@ abstract class WebResourceRequest {
   late bool isForMainFrame;
 
   /// Whether the request was a result of a server-side redirect.
-  late bool? isRedirect;
+  late bool isRedirect;
 
   /// Whether a gesture (such as a click) was associated with the request.
   late bool hasGesture;
@@ -189,7 +189,6 @@ abstract class WebResourceResponse {
 @ProxyApi(
   kotlinOptions: KotlinProxyApiOptions(
     fullClassName: 'android.webkit.WebResourceError',
-    minAndroidApi: 23,
   ),
 )
 abstract class WebResourceError {
@@ -481,15 +480,6 @@ abstract class WebViewClient {
     WebResourceErrorCompat error,
   )?
   onReceivedRequestErrorCompat;
-
-  /// Report an error to the host application.
-  late void Function(
-    WebView webView,
-    int errorCode,
-    String description,
-    String failingUrl,
-  )?
-  onReceivedError;
 
   /// Give the host application a chance to take control when a URL is about to
   /// be loaded in the current WebView.

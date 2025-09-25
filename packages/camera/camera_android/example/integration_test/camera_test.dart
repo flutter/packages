@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -81,8 +81,8 @@ void main() {
   testWidgets(
     'Capture specific video resolutions',
     (WidgetTester tester) async {
-      final List<CameraDescription> cameras =
-          await CameraPlatform.instance.availableCameras();
+      final List<CameraDescription> cameras = await CameraPlatform.instance
+          .availableCameras();
       if (cameras.isEmpty) {
         return;
       }
@@ -114,8 +114,8 @@ void main() {
   );
 
   testWidgets('Pause and resume video recording', (WidgetTester tester) async {
-    final List<CameraDescription> cameras =
-        await CameraPlatform.instance.availableCameras();
+    final List<CameraDescription> cameras = await CameraPlatform.instance
+        .availableCameras();
     if (cameras.isEmpty) {
       return;
     }
@@ -164,8 +164,8 @@ void main() {
   });
 
   testWidgets('Set description while recording', (WidgetTester tester) async {
-    final List<CameraDescription> cameras =
-        await CameraPlatform.instance.availableCameras();
+    final List<CameraDescription> cameras = await CameraPlatform.instance
+        .availableCameras();
     if (cameras.length < 2) {
       return;
     }
@@ -201,8 +201,8 @@ void main() {
   });
 
   testWidgets('Set description', (WidgetTester tester) async {
-    final List<CameraDescription> cameras =
-        await CameraPlatform.instance.availableCameras();
+    final List<CameraDescription> cameras = await CameraPlatform.instance
+        .availableCameras();
     if (cameras.length < 2) {
       return;
     }
@@ -216,8 +216,8 @@ void main() {
   });
 
   testWidgets('image streaming', (WidgetTester tester) async {
-    final List<CameraDescription> cameras =
-        await CameraPlatform.instance.availableCameras();
+    final List<CameraDescription> cameras = await CameraPlatform.instance
+        .availableCameras();
     if (cameras.isEmpty) {
       return;
     }
@@ -246,8 +246,8 @@ void main() {
   });
 
   testWidgets('recording with image stream', (WidgetTester tester) async {
-    final List<CameraDescription> cameras =
-        await CameraPlatform.instance.availableCameras();
+    final List<CameraDescription> cameras = await CameraPlatform.instance
+        .availableCameras();
     if (cameras.isEmpty) {
       return;
     }
@@ -284,8 +284,8 @@ void main() {
 
   group('Camera settings', () {
     Future<CameraDescription> getCamera() async {
-      final List<CameraDescription> cameras =
-          await CameraPlatform.instance.availableCameras();
+      final List<CameraDescription> cameras = await CameraPlatform.instance
+          .availableCameras();
       expect(cameras.isNotEmpty, equals(true));
 
       // Prefer back camera, as it allows more customizations.

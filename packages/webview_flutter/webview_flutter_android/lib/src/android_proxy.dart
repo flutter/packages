@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -64,7 +64,6 @@ class AndroidWebViewProxy {
       WebResourceErrorCompat,
     )?
     onReceivedRequestErrorCompat,
-    void Function(WebViewClient, WebView, int, String, String)? onReceivedError,
     void Function(WebViewClient, WebView, WebResourceRequest)? requestLoading,
     void Function(WebViewClient, WebView, String)? urlLoading,
     void Function(WebViewClient, WebView, String, bool)? doUpdateVisitedHistory,

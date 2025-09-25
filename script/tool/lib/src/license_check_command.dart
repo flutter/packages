@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -53,6 +53,7 @@ const Set<String> _ignoredFullBasenameList = <String>{
 // the package-level LICENSE file. Each entry must be a directory relative to
 // third_party/packages, as that is the only directory where this is allowed.
 const Set<String> _unannotatedFileThirdPartyDirectories = <String>{
+  'mustache_template',
   'path_parsing',
   'flutter_svg',
   'flutter_svg_test',
@@ -85,6 +86,13 @@ final List<RegExp> _thirdPartyLicenseBlockRegexes = <RegExp>[
     r'// Use of this source code is governed by a BSD-style license that can be\n'
     r'// found in the LICENSE file\.\n',
   ),
+  // packages/third_party/mustache_template.
+  RegExp(
+    r'Copyright \(c\) 2013, Greg Lowe\n'
+    r'All rights reserved.\n\n'
+    r'Redistribution and use in source and binary forms, with or without '
+    r'modification, are permitted provided that the following conditions are met:\n',
+  ),
   // packages/third_party/path_parsing.
   RegExp(
     r'Copyright \(c\) 2018 Dan Field\n\n'
@@ -102,7 +110,7 @@ final List<RegExp> _thirdPartyLicenseBlockRegexes = <RegExp>[
 // tools that assemble all licenses used in distributed applications.
 // standardized.
 const String _fullBsdLicenseText = '''
-Copyright 2013 The Flutter Authors. All rights reserved.
+Copyright 2013 The Flutter Authors
 
 Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
@@ -220,7 +228,7 @@ class LicenseCheckCommand extends PackageCommand {
     String prefix = '',
     String suffix = '',
   }) {
-    return '$prefix${comment}Copyright 2013 The Flutter Authors. All rights reserved.\n'
+    return '$prefix${comment}Copyright 2013 The Flutter Authors\n'
         '${comment}Use of this source code is governed by a BSD-style license that can be\n'
         '${comment}found in the LICENSE file.$suffix\n';
   }

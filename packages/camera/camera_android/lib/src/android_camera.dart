@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -67,8 +67,8 @@ class AndroidCamera extends CameraPlatform {
   @override
   Future<List<CameraDescription>> availableCameras() async {
     try {
-      final List<PlatformCameraDescription> cameraDescriptions =
-          await _hostApi.getAvailableCameras();
+      final List<PlatformCameraDescription> cameraDescriptions = await _hostApi
+          .getAvailableCameras();
       return cameraDescriptions.map((
         PlatformCameraDescription cameraDescription,
       ) {
