@@ -22,8 +22,8 @@ import 'state.dart';
 /// The function signature of [GoRouter.onException].
 ///
 /// Use `state.error` to access the exception.
-typedef GoExceptionHandler = void Function(
-    BuildContext context, GoRouterState state, GoRouter router);
+typedef GoExceptionHandler =
+    void Function(BuildContext context, GoRouterState state, GoRouter router);
 
 /// A set of parameters that defines routing in GoRouter.
 ///
@@ -46,8 +46,7 @@ class RoutingConfig {
   static FutureOr<String?> _defaultRedirect(
     BuildContext context,
     GoRouterState state,
-  ) =>
-      null;
+  ) => null;
 
   /// The supported routes.
   ///
@@ -184,23 +183,23 @@ class GoRouter implements RouterConfig<RouteMatchList> {
     GlobalKey<NavigatorState>? navigatorKey,
     String? restorationScopeId,
     bool requestFocus = true,
-  })  : _routingConfig = routingConfig,
-        backButtonDispatcher = RootBackButtonDispatcher(),
-        assert(
-          initialExtra == null || initialLocation != null,
-          'initialLocation must be set in order to use initialExtra',
-        ),
-        assert(
-          !overridePlatformDefaultLocation || initialLocation != null,
-          'Initial location must be set to override platform default',
-        ),
-        assert(
-          (onException == null ? 0 : 1) +
-                  (errorPageBuilder == null ? 0 : 1) +
-                  (errorBuilder == null ? 0 : 1) <
-              2,
-          'Only one of onException, errorPageBuilder, or errorBuilder can be provided.',
-        ) {
+  }) : _routingConfig = routingConfig,
+       backButtonDispatcher = RootBackButtonDispatcher(),
+       assert(
+         initialExtra == null || initialLocation != null,
+         'initialLocation must be set in order to use initialExtra',
+       ),
+       assert(
+         !overridePlatformDefaultLocation || initialLocation != null,
+         'Initial location must be set to override platform default',
+       ),
+       assert(
+         (onException == null ? 0 : 1) +
+                 (errorPageBuilder == null ? 0 : 1) +
+                 (errorBuilder == null ? 0 : 1) <
+             2,
+         'Only one of onException, errorPageBuilder, or errorBuilder can be provided.',
+       ) {
     setLogging(enabled: debugLogDiagnostics);
     WidgetsFlutterBinding.ensureInitialized();
 
@@ -254,8 +253,9 @@ class GoRouter implements RouterConfig<RouteMatchList> {
       requestFocus: requestFocus,
       // wrap the returned Navigator to enable GoRouter.of(context).go() et al,
       // allowing the caller to wrap the navigator themselves
-      builderWithNav: (BuildContext context, Widget child) =>
-          InheritedGoRouter(goRouter: this, child: child),
+      builderWithNav:
+          (BuildContext context, Widget child) =>
+              InheritedGoRouter(goRouter: this, child: child),
     );
 
     assert(() {
@@ -345,13 +345,12 @@ class GoRouter implements RouterConfig<RouteMatchList> {
     Map<String, String> pathParameters = const <String, String>{},
     Map<String, dynamic> queryParameters = const <String, dynamic>{},
     String? fragment,
-  }) =>
-      configuration.namedLocation(
-        name,
-        pathParameters: pathParameters,
-        queryParameters: queryParameters,
-        fragment: fragment,
-      );
+  }) => configuration.namedLocation(
+    name,
+    pathParameters: pathParameters,
+    queryParameters: queryParameters,
+    fragment: fragment,
+  );
 
   /// Navigate to a URI location w/ optional query parameters, e.g.
   /// `/family/f2/person/p1?color=blue`
@@ -379,17 +378,16 @@ class GoRouter implements RouterConfig<RouteMatchList> {
     Object? extra,
     String? fragment,
   }) =>
-
-      /// Construct location with optional fragment, using null-safe navigation
-      go(
-        namedLocation(
-          name,
-          pathParameters: pathParameters,
-          queryParameters: queryParameters,
-          fragment: fragment,
-        ),
-        extra: extra,
-      );
+  /// Construct location with optional fragment, using null-safe navigation
+  go(
+    namedLocation(
+      name,
+      pathParameters: pathParameters,
+      queryParameters: queryParameters,
+      fragment: fragment,
+    ),
+    extra: extra,
+  );
 
   /// Push a URI location onto the page stack w/ optional query parameters, e.g.
   /// `/family/f2/person/p1?color=blue`.
@@ -416,15 +414,14 @@ class GoRouter implements RouterConfig<RouteMatchList> {
     Map<String, String> pathParameters = const <String, String>{},
     Map<String, dynamic> queryParameters = const <String, dynamic>{},
     Object? extra,
-  }) =>
-      push<T>(
-        namedLocation(
-          name,
-          pathParameters: pathParameters,
-          queryParameters: queryParameters,
-        ),
-        extra: extra,
-      );
+  }) => push<T>(
+    namedLocation(
+      name,
+      pathParameters: pathParameters,
+      queryParameters: queryParameters,
+    ),
+    extra: extra,
+  );
 
   /// Replaces the top-most page of the page stack with the given URL location
   /// w/ optional query parameters, e.g. `/family/f2/person/p1?color=blue`.
@@ -552,9 +549,11 @@ class GoRouter implements RouterConfig<RouteMatchList> {
 
   /// The current GoRouter in the widget tree, if any.
   static GoRouter? maybeOf(BuildContext context) {
-    final InheritedGoRouter? inherited = context
-        .getElementForInheritedWidgetOfExactType<InheritedGoRouter>()
-        ?.widget as InheritedGoRouter?;
+    final InheritedGoRouter? inherited =
+        context
+                .getElementForInheritedWidgetOfExactType<InheritedGoRouter>()
+                ?.widget
+            as InheritedGoRouter?;
     if (inherited != null) {
       return inherited.goRouter;
     }

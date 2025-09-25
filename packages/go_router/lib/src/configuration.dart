@@ -18,8 +18,8 @@ import 'router.dart';
 import 'state.dart';
 
 /// The signature of the redirect callback.
-typedef GoRouterRedirect = FutureOr<String?> Function(
-    BuildContext context, GoRouterState state);
+typedef GoRouterRedirect =
+    FutureOr<String?> Function(BuildContext context, GoRouterState state);
 
 typedef _NamedPath = ({String path, bool caseSensitive});
 
@@ -448,18 +448,28 @@ class RouteConfiguration {
           return routeLevelRedirectResult
               .then<RouteMatchList>(processRouteLevelRedirect)
               .catchError((Object error) {
-            final GoException goException = error is GoException
-                ? error
-                : GoException('Exception during route redirect: $error');
-            return _errorRouteMatchList(prevMatchList.uri, goException,
-                extra: prevMatchList.extra);
-          });
+                final GoException goException =
+                    error is GoException
+                        ? error
+                        : GoException(
+                          'Exception during route redirect: $error',
+                        );
+                return _errorRouteMatchList(
+                  prevMatchList.uri,
+                  goException,
+                  extra: prevMatchList.extra,
+                );
+              });
         } catch (exception) {
-          final GoException goException = exception is GoException
-              ? exception
-              : GoException('Exception during route redirect: $exception');
-          return _errorRouteMatchList(prevMatchList.uri, goException,
-              extra: prevMatchList.extra);
+          final GoException goException =
+              exception is GoException
+                  ? exception
+                  : GoException('Exception during route redirect: $exception');
+          return _errorRouteMatchList(
+            prevMatchList.uri,
+            goException,
+            extra: prevMatchList.extra,
+          );
         }
       }
 
@@ -505,29 +515,28 @@ class RouteConfiguration {
     final RouteBase route = match.route;
     try {
       final FutureOr<String?> routeRedirectResult = _runInRouterZone(() {
-        return route.redirect!.call(
-          context,
-          match.buildState(this, matchList),
-        );
+        return route.redirect!.call(context, match.buildState(this, matchList));
       });
       if (routeRedirectResult is String?) {
         return processRouteRedirect(routeRedirectResult);
       }
-      return routeRedirectResult
-          .then<String?>(processRouteRedirect)
-          .catchError((Object error) {
-        // Convert any exception during async route redirect to a GoException
-        final GoException goException = error is GoException
-            ? error
-            : GoException('Exception during route redirect: $error');
-        // Throw the GoException to be caught by the redirect handling chain
-        throw goException;
-      });
+      return routeRedirectResult.then<String?>(processRouteRedirect).catchError(
+        (Object error) {
+          // Convert any exception during async route redirect to a GoException
+          final GoException goException =
+              error is GoException
+                  ? error
+                  : GoException('Exception during route redirect: $error');
+          // Throw the GoException to be caught by the redirect handling chain
+          throw goException;
+        },
+      );
     } catch (exception) {
       // Convert any exception during route redirect to a GoException
-      final GoException goException = exception is GoException
-          ? exception
-          : GoException('Exception during route redirect: $exception');
+      final GoException goException =
+          exception is GoException
+              ? exception
+              : GoException('Exception during route redirect: $exception');
       // Throw the GoException to be caught by the redirect handling chain
       throw goException;
     }
@@ -543,9 +552,10 @@ class RouteConfiguration {
       _addRedirect(redirectHistory, newMatch, previousLocation);
       return newMatch;
     } catch (exception) {
-      final GoException goException = exception is GoException
-          ? exception
-          : GoException('Exception during redirect: $exception');
+      final GoException goException =
+          exception is GoException
+              ? exception
+              : GoException('Exception during redirect: $exception');
       log('Redirection exception: ${goException.message}');
       return _errorRouteMatchList(previousLocation, goException);
     }
@@ -561,18 +571,12 @@ class RouteConfiguration {
   ) {
     if (redirects.contains(newMatch)) {
       throw GoException(
-        'redirect loop detected ${_formatRedirectionHistory(<RouteMatchList>[
-              ...redirects,
-              newMatch
-            ])}',
+        'redirect loop detected ${_formatRedirectionHistory(<RouteMatchList>[...redirects, newMatch])}',
       );
     }
     if (redirects.length > _routingConfig.value.redirectLimit) {
       throw GoException(
-        'too many redirects ${_formatRedirectionHistory(<RouteMatchList>[
-              ...redirects,
-              newMatch
-            ])}',
+        'too many redirects ${_formatRedirectionHistory(<RouteMatchList>[...redirects, newMatch])}',
       );
     }
 
@@ -605,14 +609,13 @@ class RouteConfiguration {
       (Object error, StackTrace stack) {
         errorOccurred = true;
         // Convert any exception during redirect to a GoException and rethrow
-        final GoException goException = error is GoException
-            ? error
-            : GoException('Exception during redirect: $error');
+        final GoException goException =
+            error is GoException
+                ? error
+                : GoException('Exception during redirect: $error');
         throw goException;
       },
-      zoneValues: <Object?, Object?>{
-        currentRouterKey: router,
-      },
+      zoneValues: <Object?, Object?>{currentRouterKey: router},
     );
 
     if (errorOccurred) {

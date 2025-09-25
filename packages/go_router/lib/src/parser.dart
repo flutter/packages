@@ -22,10 +22,11 @@ import 'router.dart';
 ///
 /// The returned [RouteMatchList] is used as parsed result for the
 /// [GoRouterDelegate].
-typedef ParserExceptionHandler = RouteMatchList Function(
-  BuildContext context,
-  RouteMatchList routeMatchList,
-);
+typedef ParserExceptionHandler =
+    RouteMatchList Function(
+      BuildContext context,
+      RouteMatchList routeMatchList,
+    );
 
 /// Converts between incoming URLs and a [RouteMatchList] using [RouteMatcher].
 /// Also performs redirection using [RouteRedirector].
@@ -181,9 +182,10 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
       }
       return redirectedFuture.catchError((Object error) {
         // Convert any exception during redirect to a GoException
-        final GoException goException = error is GoException
-            ? error
-            : GoException('Exception during redirect: $error');
+        final GoException goException =
+            error is GoException
+                ? error
+                : GoException('Exception during redirect: $error');
         // Return an error match list instead of throwing
         return RouteMatchList(
           matches: const <RouteMatch>[],
@@ -195,17 +197,20 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
       });
     } catch (exception) {
       // Convert any exception during redirect to a GoException
-      final GoException goException = exception is GoException
-          ? exception
-          : GoException('Exception during redirect: $exception');
+      final GoException goException =
+          exception is GoException
+              ? exception
+              : GoException('Exception during redirect: $exception');
       // Return an error match list instead of throwing
-      return SynchronousFuture<RouteMatchList>(RouteMatchList(
-        matches: const <RouteMatch>[],
-        extra: routeMatch.extra,
-        error: goException,
-        uri: routeMatch.uri,
-        pathParameters: const <String, String>{},
-      ));
+      return SynchronousFuture<RouteMatchList>(
+        RouteMatchList(
+          matches: const <RouteMatch>[],
+          extra: routeMatch.extra,
+          error: goException,
+          uri: routeMatch.uri,
+          pathParameters: const <String, String>{},
+        ),
+      );
     }
   }
 

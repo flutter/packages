@@ -124,10 +124,12 @@ void main() {
       expect(find.text('home'), findsOneWidget);
     });
 
-    testWidgets('can catch errors thrown in redirect callbacks', (WidgetTester tester) async {
+    testWidgets('can catch errors thrown in redirect callbacks', (
+      WidgetTester tester,
+    ) async {
       bool exceptionCaught = false;
       String? errorMessage;
-      
+
       final GoRouter router = await createRouter(
         <RouteBase>[
           GoRoute(
@@ -136,11 +138,14 @@ void main() {
           ),
           GoRoute(
             path: '/error-page',
-            builder: (_, GoRouterState state) => Text('error handled: ${state.extra}'),
+            builder:
+                (_, GoRouterState state) =>
+                    Text('error handled: ${state.extra}'),
           ),
           GoRoute(
             path: '/trigger-error',
-            builder: (_, GoRouterState state) => const Text('should not reach here'),
+            builder:
+                (_, GoRouterState state) => const Text('should not reach here'),
           ),
         ],
         tester,
@@ -151,30 +156,39 @@ void main() {
           }
           return null;
         },
-        onException: (BuildContext context, GoRouterState state, GoRouter router) {
+        onException: (
+          BuildContext context,
+          GoRouterState state,
+          GoRouter router,
+        ) {
           exceptionCaught = true;
           errorMessage = 'Caught exception for ${state.uri}';
           router.go('/error-page', extra: errorMessage);
         },
       );
-      
+
       expect(find.text('home'), findsOneWidget);
       expect(exceptionCaught, isFalse);
 
       // Navigate to a route that will trigger an error in the redirect callback
       router.go('/trigger-error');
       await tester.pumpAndSettle();
-      
+
       // Verify the exception was caught and handled
       expect(exceptionCaught, isTrue);
       expect(errorMessage, isNotNull);
-      expect(find.text('error handled: Caught exception for /trigger-error'), findsOneWidget);
+      expect(
+        find.text('error handled: Caught exception for /trigger-error'),
+        findsOneWidget,
+      );
       expect(find.text('should not reach here'), findsNothing);
     });
 
-    testWidgets('can catch non-GoException errors thrown in redirect callbacks', (WidgetTester tester) async {
+    testWidgets('can catch non-GoException errors thrown in redirect callbacks', (
+      WidgetTester tester,
+    ) async {
       bool exceptionCaught = false;
-      
+
       final GoRouter router = await createRouter(
         <RouteBase>[
           GoRoute(
@@ -183,11 +197,13 @@ void main() {
           ),
           GoRoute(
             path: '/error-page',
-            builder: (_, GoRouterState state) => const Text('generic error handled'),
+            builder:
+                (_, GoRouterState state) => const Text('generic error handled'),
           ),
           GoRoute(
             path: '/trigger-runtime-error',
-            builder: (_, GoRouterState state) => const Text('should not reach here'),
+            builder:
+                (_, GoRouterState state) => const Text('should not reach here'),
           ),
         ],
         tester,
@@ -198,19 +214,23 @@ void main() {
           }
           return null;
         },
-        onException: (BuildContext context, GoRouterState state, GoRouter router) {
+        onException: (
+          BuildContext context,
+          GoRouterState state,
+          GoRouter router,
+        ) {
           exceptionCaught = true;
           router.go('/error-page');
         },
       );
-      
+
       expect(find.text('home'), findsOneWidget);
       expect(exceptionCaught, isFalse);
 
       // Navigate to a route that will trigger a runtime error in the redirect callback
       router.go('/trigger-runtime-error');
       await tester.pumpAndSettle();
-      
+
       // Verify the exception was caught and handled
       expect(exceptionCaught, isTrue);
       expect(find.text('generic error handled'), findsOneWidget);
