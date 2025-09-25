@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -7,16 +7,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets(
-    'Container opens - Fade (by default)',
-    (WidgetTester tester) async {
-      const ShapeBorder shape = RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(8.0)),
-      );
-      bool closedBuilderCalled = false;
-      bool openBuilderCalled = false;
+  testWidgets('Container opens - Fade (by default)', (
+    WidgetTester tester,
+  ) async {
+    const ShapeBorder shape = RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(Radius.circular(8.0)),
+    );
+    bool closedBuilderCalled = false;
+    bool openBuilderCalled = false;
 
-      await tester.pumpWidget(_boilerplate(
+    await tester.pumpWidget(
+      _boilerplate(
         child: Center(
           child: OpenContainer(
             closedColor: Colors.green,
@@ -34,357 +35,12 @@ void main() {
             },
           ),
         ),
-      ));
-
-      // Closed container has the expected properties.
-      final Element srcMaterialElement = tester.firstElement(
-        find.ancestor(
-          of: find.text('Closed'),
-          matching: find.byType(Material),
-        ),
-      );
-      final Material srcMaterial = srcMaterialElement.widget as Material;
-      expect(srcMaterial.color, Colors.green);
-      expect(srcMaterial.elevation, 4.0);
-      expect(srcMaterial.shape, shape);
-      expect(find.text('Closed'), findsOneWidget);
-      expect(find.text('Open'), findsNothing);
-      expect(closedBuilderCalled, isTrue);
-      expect(openBuilderCalled, isFalse);
-      final Rect srcMaterialRect = tester.getRect(
-        find.byElementPredicate((Element e) => e == srcMaterialElement),
-      );
-
-      // Open the container.
-      await tester.tap(find.text('Closed'));
-      expect(find.text('Closed'), findsOneWidget);
-      expect(find.text('Open'), findsNothing);
-      await tester.pump();
-
-      // On the first frame of the animation everything still looks like before.
-      final Element destMaterialElement = tester.firstElement(
-        find.ancestor(
-          of: find.text('Closed'),
-          matching: find.byType(Material),
-        ),
-      );
-      final Material closedMaterial = destMaterialElement.widget as Material;
-      expect(closedMaterial.color, Colors.green);
-      expect(closedMaterial.elevation, 4.0);
-      expect(closedMaterial.shape, shape);
-      expect(find.text('Closed'), findsOneWidget);
-      expect(find.text('Open'), findsOneWidget);
-      final Rect closedMaterialRect = tester.getRect(
-        find.byElementPredicate((Element e) => e == destMaterialElement),
-      );
-      expect(closedMaterialRect, srcMaterialRect);
-      expect(_getOpacity(tester, 'Open'), 0.0);
-      expect(_getOpacity(tester, 'Closed'), 1.0);
-
-      final _TrackedData dataClosed = _TrackedData(
-        closedMaterial,
-        closedMaterialRect,
-      );
-
-      // Jump to the start of the fade in.
-      await tester.pump(const Duration(milliseconds: 60)); // 300ms * 1/5 = 60ms
-      final _TrackedData dataPreFade = _TrackedData(
-        destMaterialElement.widget as Material,
-        tester.getRect(
-          find.byElementPredicate((Element e) => e == destMaterialElement),
-        ),
-      );
-      _expectMaterialPropertiesHaveAdvanced(
-        smallerMaterial: dataClosed,
-        biggerMaterial: dataPreFade,
-        tester: tester,
-      );
-      expect(_getOpacity(tester, 'Open'), moreOrLessEquals(0.0));
-      expect(_getOpacity(tester, 'Closed'), 1.0);
-
-      // Jump to the middle of the fade in.
-      await tester
-          .pump(const Duration(milliseconds: 30)); // 300ms * 3/10 = 90ms
-      final _TrackedData dataMidFadeIn = _TrackedData(
-        destMaterialElement.widget as Material,
-        tester.getRect(
-          find.byElementPredicate((Element e) => e == destMaterialElement),
-        ),
-      );
-      _expectMaterialPropertiesHaveAdvanced(
-        smallerMaterial: dataPreFade,
-        biggerMaterial: dataMidFadeIn,
-        tester: tester,
-      );
-      expect(dataMidFadeIn.material.color, isNot(dataPreFade.material.color));
-      expect(_getOpacity(tester, 'Open'), lessThan(1.0));
-      expect(_getOpacity(tester, 'Open'), greaterThan(0.0));
-      expect(_getOpacity(tester, 'Closed'), 1.0);
-
-      // Jump to the end of the fade in at 2/5 of 300ms.
-      await tester.pump(
-        const Duration(milliseconds: 30),
-      ); // 300ms * 2/5 = 120ms
-
-      final _TrackedData dataPostFadeIn = _TrackedData(
-        destMaterialElement.widget as Material,
-        tester.getRect(
-          find.byElementPredicate((Element e) => e == destMaterialElement),
-        ),
-      );
-      _expectMaterialPropertiesHaveAdvanced(
-        smallerMaterial: dataMidFadeIn,
-        biggerMaterial: dataPostFadeIn,
-        tester: tester,
-      );
-      expect(_getOpacity(tester, 'Open'), moreOrLessEquals(1.0));
-      expect(_getOpacity(tester, 'Closed'), 1.0);
-
-      // Jump almost to the end of the transition.
-      await tester.pump(const Duration(milliseconds: 180));
-      final _TrackedData dataTransitionDone = _TrackedData(
-        destMaterialElement.widget as Material,
-        tester.getRect(
-          find.byElementPredicate((Element e) => e == destMaterialElement),
-        ),
-      );
-      _expectMaterialPropertiesHaveAdvanced(
-        smallerMaterial: dataMidFadeIn,
-        biggerMaterial: dataTransitionDone,
-        tester: tester,
-      );
-      expect(_getOpacity(tester, 'Open'), 1.0);
-      expect(dataTransitionDone.material.color, Colors.blue);
-      expect(dataTransitionDone.material.elevation, 8.0);
-      expect(dataTransitionDone.radius, 0.0);
-      expect(dataTransitionDone.rect, const Rect.fromLTRB(0, 0, 800, 600));
-
-      await tester.pump(const Duration(milliseconds: 1));
-      expect(find.text('Closed'), findsNothing); // No longer in the tree.
-      expect(find.text('Open'), findsOneWidget);
-      final Element finalMaterialElement = tester.firstElement(
-        find.ancestor(
-          of: find.text('Open'),
-          matching: find.byType(Material),
-        ),
-      );
-      final _TrackedData dataOpen = _TrackedData(
-        finalMaterialElement.widget as Material,
-        tester.getRect(
-          find.byElementPredicate((Element e) => e == finalMaterialElement),
-        ),
-      );
-      expect(dataOpen.material.color, dataTransitionDone.material.color);
-      expect(
-          dataOpen.material.elevation, dataTransitionDone.material.elevation);
-      expect(dataOpen.radius, dataTransitionDone.radius);
-      expect(dataOpen.rect, dataTransitionDone.rect);
-    },
-  );
-
-  testWidgets(
-    'Container closes - Fade (by default)',
-    (WidgetTester tester) async {
-      const ShapeBorder shape = RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(8.0)),
-      );
-
-      await tester.pumpWidget(_boilerplate(
-        child: Center(
-          child: OpenContainer(
-            closedColor: Colors.green,
-            openColor: Colors.blue,
-            closedElevation: 4.0,
-            openElevation: 8.0,
-            closedShape: shape,
-            closedBuilder: (BuildContext context, VoidCallback _) {
-              return const Text('Closed');
-            },
-            openBuilder: (BuildContext context, VoidCallback _) {
-              return const Text('Open');
-            },
-          ),
-        ),
-      ));
-
-      await tester.tap(find.text('Closed'));
-      await tester.pumpAndSettle();
-
-      // Open container has the expected properties.
-      expect(find.text('Closed'), findsNothing);
-      expect(find.text('Open'), findsOneWidget);
-      final Element initialMaterialElement = tester.firstElement(
-        find.ancestor(
-          of: find.text('Open'),
-          matching: find.byType(Material),
-        ),
-      );
-      final _TrackedData dataOpen = _TrackedData(
-        initialMaterialElement.widget as Material,
-        tester.getRect(
-          find.byElementPredicate((Element e) => e == initialMaterialElement),
-        ),
-      );
-      expect(dataOpen.material.color, Colors.blue);
-      expect(dataOpen.material.elevation, 8.0);
-      expect(dataOpen.radius, 0.0);
-      expect(dataOpen.rect, const Rect.fromLTRB(0, 0, 800, 600));
-
-      // Close the container.
-      final NavigatorState navigator = tester.state(find.byType(Navigator));
-      navigator.pop();
-      await tester.pump();
-
-      expect(find.text('Closed'), findsOneWidget);
-      expect(find.text('Open'), findsOneWidget);
-      final Element materialElement = tester.firstElement(
-        find.ancestor(
-          of: find.text('Open'),
-          matching: find.byType(Material),
-        ),
-      );
-      final _TrackedData dataTransitionStart = _TrackedData(
-        materialElement.widget as Material,
-        tester.getRect(
-          find.byElementPredicate((Element e) => e == materialElement),
-        ),
-      );
-      expect(dataTransitionStart.material.color, dataOpen.material.color);
-      expect(
-          dataTransitionStart.material.elevation, dataOpen.material.elevation);
-      expect(dataTransitionStart.radius, dataOpen.radius);
-      expect(dataTransitionStart.rect, dataOpen.rect);
-      expect(_getOpacity(tester, 'Open'), 1.0);
-
-      // Jump to start of fade out: 1/5 of 300.
-      await tester.pump(const Duration(milliseconds: 60)); // 300 * 1/5 = 60
-      final _TrackedData dataPreFadeOut = _TrackedData(
-        materialElement.widget as Material,
-        tester.getRect(
-          find.byElementPredicate((Element e) => e == materialElement),
-        ),
-      );
-      _expectMaterialPropertiesHaveAdvanced(
-        smallerMaterial: dataPreFadeOut,
-        biggerMaterial: dataTransitionStart,
-        tester: tester,
-      );
-      expect(_getOpacity(tester, 'Open'), moreOrLessEquals(1.0));
-      expect(_getOpacity(tester, 'Closed'), 1.0);
-
-      // Jump to the middle of the fade out.
-      await tester.pump(const Duration(milliseconds: 30)); // 300 * 3/10 = 90
-      final _TrackedData dataMidpoint = _TrackedData(
-        materialElement.widget as Material,
-        tester.getRect(
-          find.byElementPredicate((Element e) => e == materialElement),
-        ),
-      );
-      _expectMaterialPropertiesHaveAdvanced(
-        smallerMaterial: dataMidpoint,
-        biggerMaterial: dataPreFadeOut,
-        tester: tester,
-      );
-      expect(dataMidpoint.material.color, isNot(dataPreFadeOut.material.color));
-      expect(_getOpacity(tester, 'Open'), lessThan(1.0));
-      expect(_getOpacity(tester, 'Open'), greaterThan(0.0));
-      expect(_getOpacity(tester, 'Closed'), 1.0);
-
-      // Jump to the end of the fade out.
-      await tester.pump(const Duration(milliseconds: 30)); // 300 * 2/5 = 120
-      final _TrackedData dataPostFadeOut = _TrackedData(
-        materialElement.widget as Material,
-        tester.getRect(
-          find.byElementPredicate((Element e) => e == materialElement),
-        ),
-      );
-      _expectMaterialPropertiesHaveAdvanced(
-        smallerMaterial: dataPostFadeOut,
-        biggerMaterial: dataMidpoint,
-        tester: tester,
-      );
-      expect(_getOpacity(tester, 'Open'), moreOrLessEquals(0.0));
-      expect(_getOpacity(tester, 'Closed'), 1.0);
-
-      // Jump almost to the end of the transition.
-      await tester.pump(const Duration(milliseconds: 180));
-      final _TrackedData dataTransitionDone = _TrackedData(
-        materialElement.widget as Material,
-        tester.getRect(
-          find.byElementPredicate((Element e) => e == materialElement),
-        ),
-      );
-      _expectMaterialPropertiesHaveAdvanced(
-        smallerMaterial: dataTransitionDone,
-        biggerMaterial: dataPostFadeOut,
-        tester: tester,
-      );
-      expect(_getOpacity(tester, 'Closed'), 1.0);
-      expect(_getOpacity(tester, 'Open'), 0.0);
-      expect(dataTransitionDone.material.color, Colors.green);
-      expect(dataTransitionDone.material.elevation, 4.0);
-      expect(dataTransitionDone.radius, 8.0);
-
-      await tester.pump(const Duration(milliseconds: 1));
-      expect(find.text('Open'), findsNothing); // No longer in the tree.
-      expect(find.text('Closed'), findsOneWidget);
-      final Element finalMaterialElement = tester.firstElement(
-        find.ancestor(
-          of: find.text('Closed'),
-          matching: find.byType(Material),
-        ),
-      );
-      final _TrackedData dataClosed = _TrackedData(
-        finalMaterialElement.widget as Material,
-        tester.getRect(
-          find.byElementPredicate((Element e) => e == finalMaterialElement),
-        ),
-      );
-      expect(dataClosed.material.color, dataTransitionDone.material.color);
-      expect(
-        dataClosed.material.elevation,
-        dataTransitionDone.material.elevation,
-      );
-      expect(dataClosed.radius, dataTransitionDone.radius);
-      expect(dataClosed.rect, dataTransitionDone.rect);
-    },
-  );
-
-  testWidgets('Container opens - Fade through', (WidgetTester tester) async {
-    const ShapeBorder shape = RoundedRectangleBorder(
-      borderRadius: BorderRadius.all(Radius.circular(8.0)),
-    );
-    bool closedBuilderCalled = false;
-    bool openBuilderCalled = false;
-
-    await tester.pumpWidget(_boilerplate(
-      child: Center(
-        child: OpenContainer(
-          closedColor: Colors.green,
-          openColor: Colors.blue,
-          middleColor: Colors.red,
-          closedElevation: 4.0,
-          openElevation: 8.0,
-          closedShape: shape,
-          closedBuilder: (BuildContext context, VoidCallback _) {
-            closedBuilderCalled = true;
-            return const Text('Closed');
-          },
-          openBuilder: (BuildContext context, VoidCallback _) {
-            openBuilderCalled = true;
-            return const Text('Open');
-          },
-          transitionType: ContainerTransitionType.fadeThrough,
-        ),
       ),
-    ));
+    );
 
     // Closed container has the expected properties.
     final Element srcMaterialElement = tester.firstElement(
-      find.ancestor(
-        of: find.text('Closed'),
-        matching: find.byType(Material),
-      ),
+      find.ancestor(of: find.text('Closed'), matching: find.byType(Material)),
     );
     final Material srcMaterial = srcMaterialElement.widget as Material;
     expect(srcMaterial.color, Colors.green);
@@ -406,10 +62,329 @@ void main() {
 
     // On the first frame of the animation everything still looks like before.
     final Element destMaterialElement = tester.firstElement(
-      find.ancestor(
-        of: find.text('Closed'),
-        matching: find.byType(Material),
+      find.ancestor(of: find.text('Closed'), matching: find.byType(Material)),
+    );
+    final Material closedMaterial = destMaterialElement.widget as Material;
+    expect(closedMaterial.color, Colors.green);
+    expect(closedMaterial.elevation, 4.0);
+    expect(closedMaterial.shape, shape);
+    expect(find.text('Closed'), findsOneWidget);
+    expect(find.text('Open'), findsOneWidget);
+    final Rect closedMaterialRect = tester.getRect(
+      find.byElementPredicate((Element e) => e == destMaterialElement),
+    );
+    expect(closedMaterialRect, srcMaterialRect);
+    expect(_getOpacity(tester, 'Open'), 0.0);
+    expect(_getOpacity(tester, 'Closed'), 1.0);
+
+    final _TrackedData dataClosed = _TrackedData(
+      closedMaterial,
+      closedMaterialRect,
+    );
+
+    // Jump to the start of the fade in.
+    await tester.pump(const Duration(milliseconds: 60)); // 300ms * 1/5 = 60ms
+    final _TrackedData dataPreFade = _TrackedData(
+      destMaterialElement.widget as Material,
+      tester.getRect(
+        find.byElementPredicate((Element e) => e == destMaterialElement),
       ),
+    );
+    _expectMaterialPropertiesHaveAdvanced(
+      smallerMaterial: dataClosed,
+      biggerMaterial: dataPreFade,
+      tester: tester,
+    );
+    expect(_getOpacity(tester, 'Open'), moreOrLessEquals(0.0));
+    expect(_getOpacity(tester, 'Closed'), 1.0);
+
+    // Jump to the middle of the fade in.
+    await tester.pump(const Duration(milliseconds: 30)); // 300ms * 3/10 = 90ms
+    final _TrackedData dataMidFadeIn = _TrackedData(
+      destMaterialElement.widget as Material,
+      tester.getRect(
+        find.byElementPredicate((Element e) => e == destMaterialElement),
+      ),
+    );
+    _expectMaterialPropertiesHaveAdvanced(
+      smallerMaterial: dataPreFade,
+      biggerMaterial: dataMidFadeIn,
+      tester: tester,
+    );
+    expect(dataMidFadeIn.material.color, isNot(dataPreFade.material.color));
+    expect(_getOpacity(tester, 'Open'), lessThan(1.0));
+    expect(_getOpacity(tester, 'Open'), greaterThan(0.0));
+    expect(_getOpacity(tester, 'Closed'), 1.0);
+
+    // Jump to the end of the fade in at 2/5 of 300ms.
+    await tester.pump(const Duration(milliseconds: 30)); // 300ms * 2/5 = 120ms
+
+    final _TrackedData dataPostFadeIn = _TrackedData(
+      destMaterialElement.widget as Material,
+      tester.getRect(
+        find.byElementPredicate((Element e) => e == destMaterialElement),
+      ),
+    );
+    _expectMaterialPropertiesHaveAdvanced(
+      smallerMaterial: dataMidFadeIn,
+      biggerMaterial: dataPostFadeIn,
+      tester: tester,
+    );
+    expect(_getOpacity(tester, 'Open'), moreOrLessEquals(1.0));
+    expect(_getOpacity(tester, 'Closed'), 1.0);
+
+    // Jump almost to the end of the transition.
+    await tester.pump(const Duration(milliseconds: 180));
+    final _TrackedData dataTransitionDone = _TrackedData(
+      destMaterialElement.widget as Material,
+      tester.getRect(
+        find.byElementPredicate((Element e) => e == destMaterialElement),
+      ),
+    );
+    _expectMaterialPropertiesHaveAdvanced(
+      smallerMaterial: dataMidFadeIn,
+      biggerMaterial: dataTransitionDone,
+      tester: tester,
+    );
+    expect(_getOpacity(tester, 'Open'), 1.0);
+    expect(dataTransitionDone.material.color, Colors.blue);
+    expect(dataTransitionDone.material.elevation, 8.0);
+    expect(dataTransitionDone.radius, 0.0);
+    expect(dataTransitionDone.rect, const Rect.fromLTRB(0, 0, 800, 600));
+
+    await tester.pump(const Duration(milliseconds: 1));
+    expect(find.text('Closed'), findsNothing); // No longer in the tree.
+    expect(find.text('Open'), findsOneWidget);
+    final Element finalMaterialElement = tester.firstElement(
+      find.ancestor(of: find.text('Open'), matching: find.byType(Material)),
+    );
+    final _TrackedData dataOpen = _TrackedData(
+      finalMaterialElement.widget as Material,
+      tester.getRect(
+        find.byElementPredicate((Element e) => e == finalMaterialElement),
+      ),
+    );
+    expect(dataOpen.material.color, dataTransitionDone.material.color);
+    expect(dataOpen.material.elevation, dataTransitionDone.material.elevation);
+    expect(dataOpen.radius, dataTransitionDone.radius);
+    expect(dataOpen.rect, dataTransitionDone.rect);
+  });
+
+  testWidgets('Container closes - Fade (by default)', (
+    WidgetTester tester,
+  ) async {
+    const ShapeBorder shape = RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(Radius.circular(8.0)),
+    );
+
+    await tester.pumpWidget(
+      _boilerplate(
+        child: Center(
+          child: OpenContainer(
+            closedColor: Colors.green,
+            openColor: Colors.blue,
+            closedElevation: 4.0,
+            openElevation: 8.0,
+            closedShape: shape,
+            closedBuilder: (BuildContext context, VoidCallback _) {
+              return const Text('Closed');
+            },
+            openBuilder: (BuildContext context, VoidCallback _) {
+              return const Text('Open');
+            },
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('Closed'));
+    await tester.pumpAndSettle();
+
+    // Open container has the expected properties.
+    expect(find.text('Closed'), findsNothing);
+    expect(find.text('Open'), findsOneWidget);
+    final Element initialMaterialElement = tester.firstElement(
+      find.ancestor(of: find.text('Open'), matching: find.byType(Material)),
+    );
+    final _TrackedData dataOpen = _TrackedData(
+      initialMaterialElement.widget as Material,
+      tester.getRect(
+        find.byElementPredicate((Element e) => e == initialMaterialElement),
+      ),
+    );
+    expect(dataOpen.material.color, Colors.blue);
+    expect(dataOpen.material.elevation, 8.0);
+    expect(dataOpen.radius, 0.0);
+    expect(dataOpen.rect, const Rect.fromLTRB(0, 0, 800, 600));
+
+    // Close the container.
+    final NavigatorState navigator = tester.state(find.byType(Navigator));
+    navigator.pop();
+    await tester.pump();
+
+    expect(find.text('Closed'), findsOneWidget);
+    expect(find.text('Open'), findsOneWidget);
+    final Element materialElement = tester.firstElement(
+      find.ancestor(of: find.text('Open'), matching: find.byType(Material)),
+    );
+    final _TrackedData dataTransitionStart = _TrackedData(
+      materialElement.widget as Material,
+      tester.getRect(
+        find.byElementPredicate((Element e) => e == materialElement),
+      ),
+    );
+    expect(dataTransitionStart.material.color, dataOpen.material.color);
+    expect(dataTransitionStart.material.elevation, dataOpen.material.elevation);
+    expect(dataTransitionStart.radius, dataOpen.radius);
+    expect(dataTransitionStart.rect, dataOpen.rect);
+    expect(_getOpacity(tester, 'Open'), 1.0);
+
+    // Jump to start of fade out: 1/5 of 300.
+    await tester.pump(const Duration(milliseconds: 60)); // 300 * 1/5 = 60
+    final _TrackedData dataPreFadeOut = _TrackedData(
+      materialElement.widget as Material,
+      tester.getRect(
+        find.byElementPredicate((Element e) => e == materialElement),
+      ),
+    );
+    _expectMaterialPropertiesHaveAdvanced(
+      smallerMaterial: dataPreFadeOut,
+      biggerMaterial: dataTransitionStart,
+      tester: tester,
+    );
+    expect(_getOpacity(tester, 'Open'), moreOrLessEquals(1.0));
+    expect(_getOpacity(tester, 'Closed'), 1.0);
+
+    // Jump to the middle of the fade out.
+    await tester.pump(const Duration(milliseconds: 30)); // 300 * 3/10 = 90
+    final _TrackedData dataMidpoint = _TrackedData(
+      materialElement.widget as Material,
+      tester.getRect(
+        find.byElementPredicate((Element e) => e == materialElement),
+      ),
+    );
+    _expectMaterialPropertiesHaveAdvanced(
+      smallerMaterial: dataMidpoint,
+      biggerMaterial: dataPreFadeOut,
+      tester: tester,
+    );
+    expect(dataMidpoint.material.color, isNot(dataPreFadeOut.material.color));
+    expect(_getOpacity(tester, 'Open'), lessThan(1.0));
+    expect(_getOpacity(tester, 'Open'), greaterThan(0.0));
+    expect(_getOpacity(tester, 'Closed'), 1.0);
+
+    // Jump to the end of the fade out.
+    await tester.pump(const Duration(milliseconds: 30)); // 300 * 2/5 = 120
+    final _TrackedData dataPostFadeOut = _TrackedData(
+      materialElement.widget as Material,
+      tester.getRect(
+        find.byElementPredicate((Element e) => e == materialElement),
+      ),
+    );
+    _expectMaterialPropertiesHaveAdvanced(
+      smallerMaterial: dataPostFadeOut,
+      biggerMaterial: dataMidpoint,
+      tester: tester,
+    );
+    expect(_getOpacity(tester, 'Open'), moreOrLessEquals(0.0));
+    expect(_getOpacity(tester, 'Closed'), 1.0);
+
+    // Jump almost to the end of the transition.
+    await tester.pump(const Duration(milliseconds: 180));
+    final _TrackedData dataTransitionDone = _TrackedData(
+      materialElement.widget as Material,
+      tester.getRect(
+        find.byElementPredicate((Element e) => e == materialElement),
+      ),
+    );
+    _expectMaterialPropertiesHaveAdvanced(
+      smallerMaterial: dataTransitionDone,
+      biggerMaterial: dataPostFadeOut,
+      tester: tester,
+    );
+    expect(_getOpacity(tester, 'Closed'), 1.0);
+    expect(_getOpacity(tester, 'Open'), 0.0);
+    expect(dataTransitionDone.material.color, Colors.green);
+    expect(dataTransitionDone.material.elevation, 4.0);
+    expect(dataTransitionDone.radius, 8.0);
+
+    await tester.pump(const Duration(milliseconds: 1));
+    expect(find.text('Open'), findsNothing); // No longer in the tree.
+    expect(find.text('Closed'), findsOneWidget);
+    final Element finalMaterialElement = tester.firstElement(
+      find.ancestor(of: find.text('Closed'), matching: find.byType(Material)),
+    );
+    final _TrackedData dataClosed = _TrackedData(
+      finalMaterialElement.widget as Material,
+      tester.getRect(
+        find.byElementPredicate((Element e) => e == finalMaterialElement),
+      ),
+    );
+    expect(dataClosed.material.color, dataTransitionDone.material.color);
+    expect(
+      dataClosed.material.elevation,
+      dataTransitionDone.material.elevation,
+    );
+    expect(dataClosed.radius, dataTransitionDone.radius);
+    expect(dataClosed.rect, dataTransitionDone.rect);
+  });
+
+  testWidgets('Container opens - Fade through', (WidgetTester tester) async {
+    const ShapeBorder shape = RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(Radius.circular(8.0)),
+    );
+    bool closedBuilderCalled = false;
+    bool openBuilderCalled = false;
+
+    await tester.pumpWidget(
+      _boilerplate(
+        child: Center(
+          child: OpenContainer(
+            closedColor: Colors.green,
+            openColor: Colors.blue,
+            middleColor: Colors.red,
+            closedElevation: 4.0,
+            openElevation: 8.0,
+            closedShape: shape,
+            closedBuilder: (BuildContext context, VoidCallback _) {
+              closedBuilderCalled = true;
+              return const Text('Closed');
+            },
+            openBuilder: (BuildContext context, VoidCallback _) {
+              openBuilderCalled = true;
+              return const Text('Open');
+            },
+            transitionType: ContainerTransitionType.fadeThrough,
+          ),
+        ),
+      ),
+    );
+
+    // Closed container has the expected properties.
+    final Element srcMaterialElement = tester.firstElement(
+      find.ancestor(of: find.text('Closed'), matching: find.byType(Material)),
+    );
+    final Material srcMaterial = srcMaterialElement.widget as Material;
+    expect(srcMaterial.color, Colors.green);
+    expect(srcMaterial.elevation, 4.0);
+    expect(srcMaterial.shape, shape);
+    expect(find.text('Closed'), findsOneWidget);
+    expect(find.text('Open'), findsNothing);
+    expect(closedBuilderCalled, isTrue);
+    expect(openBuilderCalled, isFalse);
+    final Rect srcMaterialRect = tester.getRect(
+      find.byElementPredicate((Element e) => e == srcMaterialElement),
+    );
+
+    // Open the container.
+    await tester.tap(find.text('Closed'));
+    expect(find.text('Closed'), findsOneWidget);
+    expect(find.text('Open'), findsNothing);
+    await tester.pump();
+
+    // On the first frame of the animation everything still looks like before.
+    final Element destMaterialElement = tester.firstElement(
+      find.ancestor(of: find.text('Closed'), matching: find.byType(Material)),
     );
     final Material closedMaterial = destMaterialElement.widget as Material;
     expect(closedMaterial.color, Colors.green);
@@ -510,10 +485,7 @@ void main() {
     expect(find.text('Closed'), findsNothing); // No longer in the tree.
     expect(find.text('Open'), findsOneWidget);
     final Element finalMaterialElement = tester.firstElement(
-      find.ancestor(
-        of: find.text('Open'),
-        matching: find.byType(Material),
-      ),
+      find.ancestor(of: find.text('Open'), matching: find.byType(Material)),
     );
     final _TrackedData dataOpen = _TrackedData(
       finalMaterialElement.widget as Material,
@@ -532,25 +504,27 @@ void main() {
       borderRadius: BorderRadius.all(Radius.circular(8.0)),
     );
 
-    await tester.pumpWidget(_boilerplate(
-      child: Center(
-        child: OpenContainer(
-          closedColor: Colors.green,
-          openColor: Colors.blue,
-          middleColor: Colors.red,
-          closedElevation: 4.0,
-          openElevation: 8.0,
-          closedShape: shape,
-          closedBuilder: (BuildContext context, VoidCallback _) {
-            return const Text('Closed');
-          },
-          openBuilder: (BuildContext context, VoidCallback _) {
-            return const Text('Open');
-          },
-          transitionType: ContainerTransitionType.fadeThrough,
+    await tester.pumpWidget(
+      _boilerplate(
+        child: Center(
+          child: OpenContainer(
+            closedColor: Colors.green,
+            openColor: Colors.blue,
+            middleColor: Colors.red,
+            closedElevation: 4.0,
+            openElevation: 8.0,
+            closedShape: shape,
+            closedBuilder: (BuildContext context, VoidCallback _) {
+              return const Text('Closed');
+            },
+            openBuilder: (BuildContext context, VoidCallback _) {
+              return const Text('Open');
+            },
+            transitionType: ContainerTransitionType.fadeThrough,
+          ),
         ),
       ),
-    ));
+    );
 
     await tester.tap(find.text('Closed'));
     await tester.pumpAndSettle();
@@ -559,10 +533,7 @@ void main() {
     expect(find.text('Closed'), findsNothing);
     expect(find.text('Open'), findsOneWidget);
     final Element initialMaterialElement = tester.firstElement(
-      find.ancestor(
-        of: find.text('Open'),
-        matching: find.byType(Material),
-      ),
+      find.ancestor(of: find.text('Open'), matching: find.byType(Material)),
     );
     final _TrackedData dataOpen = _TrackedData(
       initialMaterialElement.widget as Material,
@@ -584,10 +555,7 @@ void main() {
     expect(find.text('Closed'), findsOneWidget);
     expect(find.text('Open'), findsOneWidget);
     final Element materialElement = tester.firstElement(
-      find.ancestor(
-        of: find.text('Open'),
-        matching: find.byType(Material),
-      ),
+      find.ancestor(of: find.text('Open'), matching: find.byType(Material)),
     );
     final _TrackedData dataTransitionStart = _TrackedData(
       materialElement.widget as Material,
@@ -685,10 +653,7 @@ void main() {
     expect(find.text('Open'), findsNothing); // No longer in the tree.
     expect(find.text('Closed'), findsOneWidget);
     final Element finalMaterialElement = tester.firstElement(
-      find.ancestor(
-        of: find.text('Closed'),
-        matching: find.byType(Material),
-      ),
+      find.ancestor(of: find.text('Closed'), matching: find.byType(Material)),
     );
     final _TrackedData dataClosed = _TrackedData(
       finalMaterialElement.widget as Material,
@@ -705,21 +670,24 @@ void main() {
     expect(dataClosed.rect, dataTransitionDone.rect);
   });
 
-  testWidgets('Cannot tap container if tappable=false',
-      (WidgetTester tester) async {
-    await tester.pumpWidget(_boilerplate(
-      child: Center(
-        child: OpenContainer(
-          tappable: false,
-          closedBuilder: (BuildContext context, VoidCallback _) {
-            return const Text('Closed');
-          },
-          openBuilder: (BuildContext context, VoidCallback _) {
-            return const Text('Open');
-          },
+  testWidgets('Cannot tap container if tappable=false', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      _boilerplate(
+        child: Center(
+          child: OpenContainer(
+            tappable: false,
+            closedBuilder: (BuildContext context, VoidCallback _) {
+              return const Text('Closed');
+            },
+            openBuilder: (BuildContext context, VoidCallback _) {
+              return const Text('Open');
+            },
+          ),
         ),
       ),
-    ));
+    );
 
     expect(find.text('Open'), findsNothing);
     expect(find.text('Closed'), findsOneWidget);
@@ -731,21 +699,23 @@ void main() {
 
   testWidgets('Action callbacks work', (WidgetTester tester) async {
     late VoidCallback open, close;
-    await tester.pumpWidget(_boilerplate(
-      child: Center(
-        child: OpenContainer(
-          tappable: false,
-          closedBuilder: (BuildContext context, VoidCallback action) {
-            open = action;
-            return const Text('Closed');
-          },
-          openBuilder: (BuildContext context, VoidCallback action) {
-            close = action;
-            return const Text('Open');
-          },
+    await tester.pumpWidget(
+      _boilerplate(
+        child: Center(
+          child: OpenContainer(
+            tappable: false,
+            closedBuilder: (BuildContext context, VoidCallback action) {
+              open = action;
+              return const Text('Closed');
+            },
+            openBuilder: (BuildContext context, VoidCallback action) {
+              close = action;
+              return const Text('Open');
+            },
+          ),
         ),
       ),
-    ));
+    );
 
     expect(find.text('Open'), findsNothing);
     expect(find.text('Closed'), findsOneWidget);
@@ -766,18 +736,20 @@ void main() {
   });
 
   testWidgets('open widget keeps state', (WidgetTester tester) async {
-    await tester.pumpWidget(_boilerplate(
-      child: Center(
-        child: OpenContainer(
-          closedBuilder: (BuildContext context, VoidCallback action) {
-            return const Text('Closed');
-          },
-          openBuilder: (BuildContext context, VoidCallback action) {
-            return const DummyStatefulWidget();
-          },
+    await tester.pumpWidget(
+      _boilerplate(
+        child: Center(
+          child: OpenContainer(
+            closedBuilder: (BuildContext context, VoidCallback action) {
+              return const Text('Closed');
+            },
+            openBuilder: (BuildContext context, VoidCallback action) {
+              return const DummyStatefulWidget();
+            },
+          ),
         ),
       ),
-    ));
+    );
 
     await tester.tap(find.text('Closed'));
     await tester.pump(const Duration(milliseconds: 200));
@@ -802,19 +774,21 @@ void main() {
 
   testWidgets('closed widget keeps state', (WidgetTester tester) async {
     late VoidCallback open;
-    await tester.pumpWidget(_boilerplate(
-      child: Center(
-        child: OpenContainer(
-          closedBuilder: (BuildContext context, VoidCallback action) {
-            open = action;
-            return const DummyStatefulWidget();
-          },
-          openBuilder: (BuildContext context, VoidCallback action) {
-            return const Text('Open');
-          },
+    await tester.pumpWidget(
+      _boilerplate(
+        child: Center(
+          child: OpenContainer(
+            closedBuilder: (BuildContext context, VoidCallback action) {
+              open = action;
+              return const DummyStatefulWidget();
+            },
+            openBuilder: (BuildContext context, VoidCallback action) {
+              return const Text('Open');
+            },
+          ),
         ),
       ),
-    ));
+    );
 
     final State stateClosed = tester.state(find.byType(DummyStatefulWidget));
     expect(stateClosed, isNotNull);
@@ -829,10 +803,9 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byType(DummyStatefulWidget), findsNothing);
     expect(find.text('Open'), findsOneWidget);
-    final State stateOpen = tester.state(find.byType(
-      DummyStatefulWidget,
-      skipOffstage: false,
-    ));
+    final State stateOpen = tester.state(
+      find.byType(DummyStatefulWidget, skipOffstage: false),
+    );
     expect(stateOpen, same(stateOpening));
 
     final NavigatorState navigator = tester.state(find.byType(Navigator));
@@ -844,35 +817,29 @@ void main() {
 
     await tester.pumpAndSettle();
     expect(find.text('Open'), findsNothing);
-    final State stateClosedAgain =
-        tester.state(find.byType(DummyStatefulWidget));
+    final State stateClosedAgain = tester.state(
+      find.byType(DummyStatefulWidget),
+    );
     expect(stateClosedAgain, same(stateClosing));
   });
 
-  testWidgets('closes to the right location when src position has changed',
-      (WidgetTester tester) async {
+  testWidgets('closes to the right location when src position has changed', (
+    WidgetTester tester,
+  ) async {
     final Widget openContainer = OpenContainer(
       closedBuilder: (BuildContext context, VoidCallback action) {
-        return const SizedBox(
-          height: 100,
-          width: 100,
-          child: Text('Closed'),
-        );
+        return const SizedBox(height: 100, width: 100, child: Text('Closed'));
       },
       openBuilder: (BuildContext context, VoidCallback action) {
-        return GestureDetector(
-          onTap: action,
-          child: const Text('Open'),
-        );
+        return GestureDetector(onTap: action, child: const Text('Open'));
       },
     );
 
-    await tester.pumpWidget(_boilerplate(
-      child: Align(
-        alignment: Alignment.topLeft,
-        child: openContainer,
+    await tester.pumpWidget(
+      _boilerplate(
+        child: Align(alignment: Alignment.topLeft, child: openContainer),
       ),
-    ));
+    );
 
     final Rect originTextRect = tester.getRect(find.text('Closed'));
     expect(originTextRect.topLeft, Offset.zero);
@@ -883,12 +850,11 @@ void main() {
     expect(find.text('Open'), findsOneWidget);
     expect(find.text('Closed'), findsNothing);
 
-    await tester.pumpWidget(_boilerplate(
-      child: Align(
-        alignment: Alignment.bottomLeft,
-        child: openContainer,
+    await tester.pumpWidget(
+      _boilerplate(
+        child: Align(alignment: Alignment.bottomLeft, child: openContainer),
       ),
-    ));
+    );
 
     expect(find.text('Open'), findsOneWidget);
     expect(find.text('Closed'), findsNothing);
@@ -921,10 +887,7 @@ void main() {
             );
           },
           openBuilder: (BuildContext context, VoidCallback action) {
-            return GestureDetector(
-              onTap: action,
-              child: const Text('Open'),
-            );
+            return GestureDetector(onTap: action, child: const Text('Open'));
           },
         ),
       ),
@@ -932,12 +895,11 @@ void main() {
 
     await tester.pumpWidget(openContainer);
 
-    final Size orignalClosedRect = tester.getSize(find
-        .ancestor(
-          of: find.text('Closed'),
-          matching: find.byType(Material),
-        )
-        .first);
+    final Size orignalClosedRect = tester.getSize(
+      find
+          .ancestor(of: find.text('Closed'), matching: find.byType(Material))
+          .first,
+    );
     expect(orignalClosedRect, const Size(100, 100));
 
     await tester.tap(find.text('Closed'));
@@ -946,10 +908,9 @@ void main() {
     expect(find.text('Open'), findsOneWidget);
     expect(find.text('Closed'), findsNothing);
 
-    final _SizableContainerState containerState = tester.state(find.byType(
-      _SizableContainer,
-      skipOffstage: false,
-    ));
+    final _SizableContainerState containerState = tester.state(
+      find.byType(_SizableContainer, skipOffstage: false),
+    );
     containerState.size = 200;
 
     expect(find.text('Open'), findsOneWidget);
@@ -960,41 +921,42 @@ void main() {
     expect(find.text('Open'), findsOneWidget);
     expect(find.text('Closed'), findsOneWidget);
 
-    final Size transitionEndSize = tester.getSize(find
-        .ancestor(
-          of: find.text('Open'),
-          matching: find.byType(Material),
-        )
-        .first);
+    final Size transitionEndSize = tester.getSize(
+      find
+          .ancestor(of: find.text('Open'), matching: find.byType(Material))
+          .first,
+    );
     expect(transitionEndSize, const Size(200, 200));
 
     await tester.pump(const Duration(milliseconds: 1));
     expect(find.text('Open'), findsNothing);
     expect(find.text('Closed'), findsOneWidget);
 
-    final Size finalSize = tester.getSize(find
-        .ancestor(
-          of: find.text('Closed'),
-          matching: find.byType(Material),
-        )
-        .first);
+    final Size finalSize = tester.getSize(
+      find
+          .ancestor(of: find.text('Closed'), matching: find.byType(Material))
+          .first,
+    );
     expect(finalSize, const Size(200, 200));
   });
 
-  testWidgets('transition is interrupted and should not jump',
-      (WidgetTester tester) async {
-    await tester.pumpWidget(_boilerplate(
-      child: Center(
-        child: OpenContainer(
-          closedBuilder: (BuildContext context, VoidCallback action) {
-            return const Text('Closed');
-          },
-          openBuilder: (BuildContext context, VoidCallback action) {
-            return const Text('Open');
-          },
+  testWidgets('transition is interrupted and should not jump', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      _boilerplate(
+        child: Center(
+          child: OpenContainer(
+            closedBuilder: (BuildContext context, VoidCallback action) {
+              return const Text('Closed');
+            },
+            openBuilder: (BuildContext context, VoidCallback action) {
+              return const Text('Open');
+            },
+          ),
         ),
       ),
-    ));
+    );
 
     await tester.tap(find.text('Closed'));
     await tester.pump();
@@ -1002,10 +964,9 @@ void main() {
     expect(find.text('Open'), findsOneWidget);
     expect(find.text('Closed'), findsOneWidget);
 
-    final Material openingMaterial = tester.firstWidget(find.ancestor(
-      of: find.text('Closed'),
-      matching: find.byType(Material),
-    ));
+    final Material openingMaterial = tester.firstWidget(
+      find.ancestor(of: find.text('Closed'), matching: find.byType(Material)),
+    );
     final Rect openingRect = tester.getRect(
       find.byWidgetPredicate((Widget w) => w == openingMaterial),
     );
@@ -1015,10 +976,9 @@ void main() {
     navigator.pop();
     await tester.pump();
 
-    final Material closingMaterial = tester.firstWidget(find.ancestor(
-      of: find.text('Open'),
-      matching: find.byType(Material),
-    ));
+    final Material closingMaterial = tester.firstWidget(
+      find.ancestor(of: find.text('Open'), matching: find.byType(Material)),
+    );
     final Rect closingRect = tester.getRect(
       find.byWidgetPredicate((Widget w) => w == closingMaterial),
     );
@@ -1030,82 +990,83 @@ void main() {
   });
 
   testWidgets('navigator is not full size', (WidgetTester tester) async {
-    await tester.pumpWidget(Center(
-      child: SizedBox(
-        width: 300,
-        height: 400,
-        child: _boilerplate(
-          child: Center(
-            child: OpenContainer(
-              closedBuilder: (BuildContext context, VoidCallback action) {
-                return const Text('Closed');
-              },
-              openBuilder: (BuildContext context, VoidCallback action) {
-                return const Text('Open');
-              },
+    await tester.pumpWidget(
+      Center(
+        child: SizedBox(
+          width: 300,
+          height: 400,
+          child: _boilerplate(
+            child: Center(
+              child: OpenContainer(
+                closedBuilder: (BuildContext context, VoidCallback action) {
+                  return const Text('Closed');
+                },
+                openBuilder: (BuildContext context, VoidCallback action) {
+                  return const Text('Open');
+                },
+              ),
             ),
           ),
         ),
       ),
-    ));
+    );
     const Rect fullNavigator = Rect.fromLTWH(250, 100, 300, 400);
 
     expect(tester.getRect(find.byType(Navigator)), fullNavigator);
-    final Rect materialRectClosed = tester.getRect(find
-        .ancestor(
-          of: find.text('Closed'),
-          matching: find.byType(Material),
-        )
-        .first);
+    final Rect materialRectClosed = tester.getRect(
+      find
+          .ancestor(of: find.text('Closed'), matching: find.byType(Material))
+          .first,
+    );
 
     await tester.tap(find.text('Closed'));
     await tester.pump();
     expect(find.text('Open'), findsOneWidget);
     expect(find.text('Closed'), findsOneWidget);
-    final Rect materialRectTransitionStart = tester.getRect(find.ancestor(
-      of: find.text('Closed'),
-      matching: find.byType(Material),
-    ));
+    final Rect materialRectTransitionStart = tester.getRect(
+      find.ancestor(of: find.text('Closed'), matching: find.byType(Material)),
+    );
     expect(materialRectTransitionStart, materialRectClosed);
 
     await tester.pump(const Duration(milliseconds: 300));
     expect(find.text('Open'), findsOneWidget);
     expect(find.text('Closed'), findsOneWidget);
-    final Rect materialRectTransitionEnd = tester.getRect(find.ancestor(
-      of: find.text('Open'),
-      matching: find.byType(Material),
-    ));
+    final Rect materialRectTransitionEnd = tester.getRect(
+      find.ancestor(of: find.text('Open'), matching: find.byType(Material)),
+    );
     expect(materialRectTransitionEnd, fullNavigator);
     await tester.pumpAndSettle();
     expect(find.text('Open'), findsOneWidget);
     expect(find.text('Closed'), findsNothing);
-    final Rect materialRectOpen = tester.getRect(find.ancestor(
-      of: find.text('Open'),
-      matching: find.byType(Material),
-    ));
+    final Rect materialRectOpen = tester.getRect(
+      find.ancestor(of: find.text('Open'), matching: find.byType(Material)),
+    );
     expect(materialRectOpen, fullNavigator);
   });
 
-  testWidgets('does not crash when disposed right after pop',
-      (WidgetTester tester) async {
-    await tester.pumpWidget(Center(
-      child: SizedBox(
-        width: 300,
-        height: 400,
-        child: _boilerplate(
-          child: Center(
-            child: OpenContainer(
-              closedBuilder: (BuildContext context, VoidCallback action) {
-                return const Text('Closed');
-              },
-              openBuilder: (BuildContext context, VoidCallback action) {
-                return const Text('Open');
-              },
+  testWidgets('does not crash when disposed right after pop', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      Center(
+        child: SizedBox(
+          width: 300,
+          height: 400,
+          child: _boilerplate(
+            child: Center(
+              child: OpenContainer(
+                closedBuilder: (BuildContext context, VoidCallback action) {
+                  return const Text('Closed');
+                },
+                openBuilder: (BuildContext context, VoidCallback action) {
+                  return const Text('Open');
+                },
+              ),
             ),
           ),
         ),
       ),
-    ));
+    );
 
     await tester.tap(find.text('Closed'));
     await tester.pumpAndSettle();
@@ -1120,25 +1081,27 @@ void main() {
   });
 
   testWidgets('can specify a duration', (WidgetTester tester) async {
-    await tester.pumpWidget(Center(
-      child: SizedBox(
-        width: 300,
-        height: 400,
-        child: _boilerplate(
-          child: Center(
-            child: OpenContainer(
-              transitionDuration: const Duration(seconds: 2),
-              closedBuilder: (BuildContext context, VoidCallback action) {
-                return const Text('Closed');
-              },
-              openBuilder: (BuildContext context, VoidCallback action) {
-                return const Text('Open');
-              },
+    await tester.pumpWidget(
+      Center(
+        child: SizedBox(
+          width: 300,
+          height: 400,
+          child: _boilerplate(
+            child: Center(
+              child: OpenContainer(
+                transitionDuration: const Duration(seconds: 2),
+                closedBuilder: (BuildContext context, VoidCallback action) {
+                  return const Text('Closed');
+                },
+                openBuilder: (BuildContext context, VoidCallback action) {
+                  return const Text('Open');
+                },
+              ),
             ),
           ),
         ),
       ),
-    ));
+    );
 
     expect(find.text('Open'), findsNothing);
     expect(find.text('Closed'), findsOneWidget);
@@ -1168,75 +1131,82 @@ void main() {
   });
 
   testWidgets('can specify an open shape', (WidgetTester tester) async {
-    await tester.pumpWidget(Center(
-      child: SizedBox(
-        width: 300,
-        height: 400,
-        child: _boilerplate(
-          child: Center(
-            child: OpenContainer(
-              closedShape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
+    await tester.pumpWidget(
+      Center(
+        child: SizedBox(
+          width: 300,
+          height: 400,
+          child: _boilerplate(
+            child: Center(
+              child: OpenContainer(
+                closedShape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                openShape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(40),
+                ),
+                closedBuilder: (BuildContext context, VoidCallback action) {
+                  return const Text('Closed');
+                },
+                openBuilder: (BuildContext context, VoidCallback action) {
+                  return const Text('Open');
+                },
               ),
-              openShape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(40),
-              ),
-              closedBuilder: (BuildContext context, VoidCallback action) {
-                return const Text('Closed');
-              },
-              openBuilder: (BuildContext context, VoidCallback action) {
-                return const Text('Open');
-              },
             ),
           ),
         ),
       ),
-    ));
+    );
 
     expect(find.text('Open'), findsNothing);
     expect(find.text('Closed'), findsOneWidget);
-    final double closedRadius = _getRadius(tester.firstWidget(find.ancestor(
-      of: find.text('Closed'),
-      matching: find.byType(Material),
-    )));
+    final double closedRadius = _getRadius(
+      tester.firstWidget(
+        find.ancestor(of: find.text('Closed'), matching: find.byType(Material)),
+      ),
+    );
     expect(closedRadius, 10.0);
 
     await tester.tap(find.text('Closed'));
     await tester.pump();
     expect(find.text('Open'), findsOneWidget);
     expect(find.text('Closed'), findsOneWidget);
-    final double openingRadius = _getRadius(tester.firstWidget(find.ancestor(
-      of: find.text('Open'),
-      matching: find.byType(Material),
-    )));
+    final double openingRadius = _getRadius(
+      tester.firstWidget(
+        find.ancestor(of: find.text('Open'), matching: find.byType(Material)),
+      ),
+    );
     expect(openingRadius, 10.0);
 
     await tester.pump(const Duration(milliseconds: 150));
     expect(find.text('Open'), findsOneWidget);
     expect(find.text('Closed'), findsOneWidget);
-    final double halfwayRadius = _getRadius(tester.firstWidget(find.ancestor(
-      of: find.text('Open'),
-      matching: find.byType(Material),
-    )));
+    final double halfwayRadius = _getRadius(
+      tester.firstWidget(
+        find.ancestor(of: find.text('Open'), matching: find.byType(Material)),
+      ),
+    );
     expect(halfwayRadius, greaterThan(10.0));
     expect(halfwayRadius, lessThan(40.0));
 
     await tester.pump(const Duration(milliseconds: 150));
     expect(find.text('Open'), findsOneWidget);
     expect(find.text('Closed'), findsOneWidget);
-    final double openRadius = _getRadius(tester.firstWidget(find.ancestor(
-      of: find.text('Open'),
-      matching: find.byType(Material),
-    )));
+    final double openRadius = _getRadius(
+      tester.firstWidget(
+        find.ancestor(of: find.text('Open'), matching: find.byType(Material)),
+      ),
+    );
     expect(openRadius, 40.0);
 
     await tester.pump(const Duration(milliseconds: 1));
     expect(find.text('Closed'), findsNothing);
     expect(find.text('Open'), findsOneWidget);
-    final double finalRadius = _getRadius(tester.firstWidget(find.ancestor(
-      of: find.text('Open'),
-      matching: find.byType(Material),
-    )));
+    final double finalRadius = _getRadius(
+      tester.firstWidget(
+        find.ancestor(of: find.text('Open'), matching: find.byType(Material)),
+      ),
+    );
     expect(finalRadius, 40.0);
   });
 
@@ -1245,23 +1215,25 @@ void main() {
       borderRadius: BorderRadius.all(Radius.circular(8.0)),
     );
 
-    await tester.pumpWidget(_boilerplate(
-      child: Center(
-        child: OpenContainer(
-          closedColor: Colors.green,
-          openColor: Colors.blue,
-          closedElevation: 4.0,
-          openElevation: 8.0,
-          closedShape: shape,
-          closedBuilder: (BuildContext context, VoidCallback _) {
-            return const Text('Closed');
-          },
-          openBuilder: (BuildContext context, VoidCallback _) {
-            return const Text('Open');
-          },
+    await tester.pumpWidget(
+      _boilerplate(
+        child: Center(
+          child: OpenContainer(
+            closedColor: Colors.green,
+            openColor: Colors.blue,
+            closedElevation: 4.0,
+            openElevation: 8.0,
+            closedShape: shape,
+            closedBuilder: (BuildContext context, VoidCallback _) {
+              return const Text('Closed');
+            },
+            openBuilder: (BuildContext context, VoidCallback _) {
+              return const Text('Open');
+            },
+          ),
         ),
       ),
-    ));
+    );
 
     expect(find.text('Closed'), findsOneWidget);
     expect(find.text('Open'), findsNothing);
@@ -1302,206 +1274,210 @@ void main() {
   });
 
   testWidgets(
-      'Container partly offscreen can be opened without crash - vertical',
-      (WidgetTester tester) async {
-    final ScrollController controller =
-        ScrollController(initialScrollOffset: 50);
-    await tester.pumpWidget(Center(
-      child: SizedBox(
-        height: 200,
-        width: 200,
-        child: _boilerplate(
-          child: ListView.builder(
-            cacheExtent: 0,
-            controller: controller,
-            itemBuilder: (BuildContext context, int index) {
-              return OpenContainer(
-                closedBuilder: (BuildContext context, VoidCallback _) {
-                  return SizedBox(
-                    height: 100,
-                    width: 100,
-                    child: Text('Closed $index'),
+    'Container partly offscreen can be opened without crash - vertical',
+    (WidgetTester tester) async {
+      final ScrollController controller = ScrollController(
+        initialScrollOffset: 50,
+      );
+      await tester.pumpWidget(
+        Center(
+          child: SizedBox(
+            height: 200,
+            width: 200,
+            child: _boilerplate(
+              child: ListView.builder(
+                cacheExtent: 0,
+                controller: controller,
+                itemBuilder: (BuildContext context, int index) {
+                  return OpenContainer(
+                    closedBuilder: (BuildContext context, VoidCallback _) {
+                      return SizedBox(
+                        height: 100,
+                        width: 100,
+                        child: Text('Closed $index'),
+                      );
+                    },
+                    openBuilder: (BuildContext context, VoidCallback _) {
+                      return Text('Open $index');
+                    },
                   );
                 },
-                openBuilder: (BuildContext context, VoidCallback _) {
-                  return Text('Open $index');
-                },
-              );
-            },
+              ),
+            ),
           ),
         ),
-      ),
-    ));
+      );
 
-    void expectClosedState() {
-      expect(find.text('Closed 0'), findsOneWidget);
-      expect(find.text('Closed 1'), findsOneWidget);
-      expect(find.text('Closed 2'), findsOneWidget);
-      expect(find.text('Closed 3'), findsNothing);
+      void expectClosedState() {
+        expect(find.text('Closed 0'), findsOneWidget);
+        expect(find.text('Closed 1'), findsOneWidget);
+        expect(find.text('Closed 2'), findsOneWidget);
+        expect(find.text('Closed 3'), findsNothing);
 
-      expect(find.text('Open 0'), findsNothing);
-      expect(find.text('Open 1'), findsNothing);
-      expect(find.text('Open 2'), findsNothing);
-      expect(find.text('Open 3'), findsNothing);
-    }
+        expect(find.text('Open 0'), findsNothing);
+        expect(find.text('Open 1'), findsNothing);
+        expect(find.text('Open 2'), findsNothing);
+        expect(find.text('Open 3'), findsNothing);
+      }
 
-    expectClosedState();
+      expectClosedState();
 
-    // Open container that's partly visible at top.
-    await tester.tapAt(
-      tester.getBottomRight(find.text('Closed 0')) - const Offset(20, 20),
-    );
-    await tester.pump();
-    await tester.pumpAndSettle();
-    expect(find.text('Closed 0'), findsNothing);
-    expect(find.text('Open 0'), findsOneWidget);
+      // Open container that's partly visible at top.
+      await tester.tapAt(
+        tester.getBottomRight(find.text('Closed 0')) - const Offset(20, 20),
+      );
+      await tester.pump();
+      await tester.pumpAndSettle();
+      expect(find.text('Closed 0'), findsNothing);
+      expect(find.text('Open 0'), findsOneWidget);
 
-    final NavigatorState navigator = tester.state(find.byType(Navigator));
-    navigator.pop();
-    await tester.pump();
-    await tester.pumpAndSettle();
-    expectClosedState();
+      final NavigatorState navigator = tester.state(find.byType(Navigator));
+      navigator.pop();
+      await tester.pump();
+      await tester.pumpAndSettle();
+      expectClosedState();
 
-    // Open container that's partly visible at bottom.
-    await tester.tapAt(
-      tester.getTopLeft(find.text('Closed 2')) + const Offset(20, 20),
-    );
-    await tester.pump();
-    await tester.pumpAndSettle();
+      // Open container that's partly visible at bottom.
+      await tester.tapAt(
+        tester.getTopLeft(find.text('Closed 2')) + const Offset(20, 20),
+      );
+      await tester.pump();
+      await tester.pumpAndSettle();
 
-    expect(find.text('Closed 2'), findsNothing);
-    expect(find.text('Open 2'), findsOneWidget);
-  });
+      expect(find.text('Closed 2'), findsNothing);
+      expect(find.text('Open 2'), findsOneWidget);
+    },
+  );
 
   testWidgets(
-      'Container partly offscreen can be opened without crash - horizontal',
-      (WidgetTester tester) async {
-    final ScrollController controller =
-        ScrollController(initialScrollOffset: 50);
-    await tester.pumpWidget(Center(
-      child: SizedBox(
-        height: 200,
-        width: 200,
-        child: _boilerplate(
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            cacheExtent: 0,
-            controller: controller,
-            itemBuilder: (BuildContext context, int index) {
-              return OpenContainer(
-                closedBuilder: (BuildContext context, VoidCallback _) {
-                  return SizedBox(
-                    height: 100,
-                    width: 100,
-                    child: Text('Closed $index'),
+    'Container partly offscreen can be opened without crash - horizontal',
+    (WidgetTester tester) async {
+      final ScrollController controller = ScrollController(
+        initialScrollOffset: 50,
+      );
+      await tester.pumpWidget(
+        Center(
+          child: SizedBox(
+            height: 200,
+            width: 200,
+            child: _boilerplate(
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                cacheExtent: 0,
+                controller: controller,
+                itemBuilder: (BuildContext context, int index) {
+                  return OpenContainer(
+                    closedBuilder: (BuildContext context, VoidCallback _) {
+                      return SizedBox(
+                        height: 100,
+                        width: 100,
+                        child: Text('Closed $index'),
+                      );
+                    },
+                    openBuilder: (BuildContext context, VoidCallback _) {
+                      return Text('Open $index');
+                    },
                   );
                 },
-                openBuilder: (BuildContext context, VoidCallback _) {
-                  return Text('Open $index');
-                },
-              );
-            },
+              ),
+            ),
           ),
         ),
-      ),
-    ));
+      );
 
-    void expectClosedState() {
-      expect(find.text('Closed 0'), findsOneWidget);
-      expect(find.text('Closed 1'), findsOneWidget);
-      expect(find.text('Closed 2'), findsOneWidget);
-      expect(find.text('Closed 3'), findsNothing);
+      void expectClosedState() {
+        expect(find.text('Closed 0'), findsOneWidget);
+        expect(find.text('Closed 1'), findsOneWidget);
+        expect(find.text('Closed 2'), findsOneWidget);
+        expect(find.text('Closed 3'), findsNothing);
 
-      expect(find.text('Open 0'), findsNothing);
-      expect(find.text('Open 1'), findsNothing);
-      expect(find.text('Open 2'), findsNothing);
-      expect(find.text('Open 3'), findsNothing);
-    }
+        expect(find.text('Open 0'), findsNothing);
+        expect(find.text('Open 1'), findsNothing);
+        expect(find.text('Open 2'), findsNothing);
+        expect(find.text('Open 3'), findsNothing);
+      }
 
-    expectClosedState();
+      expectClosedState();
 
-    // Open container that's partly visible at left edge.
-    await tester.tapAt(
-      tester.getBottomRight(find.text('Closed 0')) - const Offset(20, 20),
-    );
-    await tester.pump();
-    await tester.pumpAndSettle();
-    expect(find.text('Closed 0'), findsNothing);
-    expect(find.text('Open 0'), findsOneWidget);
+      // Open container that's partly visible at left edge.
+      await tester.tapAt(
+        tester.getBottomRight(find.text('Closed 0')) - const Offset(20, 20),
+      );
+      await tester.pump();
+      await tester.pumpAndSettle();
+      expect(find.text('Closed 0'), findsNothing);
+      expect(find.text('Open 0'), findsOneWidget);
 
-    final NavigatorState navigator = tester.state(find.byType(Navigator));
-    navigator.pop();
-    await tester.pump();
-    await tester.pumpAndSettle();
-    expectClosedState();
+      final NavigatorState navigator = tester.state(find.byType(Navigator));
+      navigator.pop();
+      await tester.pump();
+      await tester.pumpAndSettle();
+      expectClosedState();
 
-    // Open container that's partly visible at right edge.
-    await tester.tapAt(
-      tester.getTopLeft(find.text('Closed 2')) + const Offset(20, 20),
-    );
-    await tester.pump();
-    await tester.pumpAndSettle();
+      // Open container that's partly visible at right edge.
+      await tester.tapAt(
+        tester.getTopLeft(find.text('Closed 2')) + const Offset(20, 20),
+      );
+      await tester.pump();
+      await tester.pumpAndSettle();
 
-    expect(find.text('Closed 2'), findsNothing);
-    expect(find.text('Open 2'), findsOneWidget);
-  });
+      expect(find.text('Closed 2'), findsNothing);
+      expect(find.text('Open 2'), findsOneWidget);
+    },
+  );
 
   testWidgets(
-      'Container can be dismissed after container widget itself is removed without crash',
-      (WidgetTester tester) async {
-    await tester.pumpWidget(_boilerplate(child: _RemoveOpenContainerExample()));
+    'Container can be dismissed after container widget itself is removed without crash',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(
+        _boilerplate(child: _RemoveOpenContainerExample()),
+      );
 
-    expect(find.text('Closed'), findsOneWidget);
-    expect(find.text('Closed', skipOffstage: false), findsOneWidget);
-    expect(find.text('Open'), findsNothing);
+      expect(find.text('Closed'), findsOneWidget);
+      expect(find.text('Closed', skipOffstage: false), findsOneWidget);
+      expect(find.text('Open'), findsNothing);
 
-    await tester.tap(find.text('Open the container'));
-    await tester.pumpAndSettle();
+      await tester.tap(find.text('Open the container'));
+      await tester.pumpAndSettle();
 
-    expect(find.text('Closed'), findsNothing);
-    expect(find.text('Closed', skipOffstage: false), findsOneWidget);
-    expect(find.text('Open'), findsOneWidget);
+      expect(find.text('Closed'), findsNothing);
+      expect(find.text('Closed', skipOffstage: false), findsOneWidget);
+      expect(find.text('Open'), findsOneWidget);
 
-    await tester.tap(find.text('Remove the container'));
-    await tester.pump();
+      await tester.tap(find.text('Remove the container'));
+      await tester.pump();
 
-    expect(find.text('Closed'), findsNothing);
-    expect(find.text('Closed', skipOffstage: false), findsNothing);
-    expect(find.text('Open'), findsOneWidget);
+      expect(find.text('Closed'), findsNothing);
+      expect(find.text('Closed', skipOffstage: false), findsNothing);
+      expect(find.text('Open'), findsOneWidget);
 
-    await tester.tap(find.text('Close the container'));
-    await tester.pumpAndSettle();
+      await tester.tap(find.text('Close the container'));
+      await tester.pumpAndSettle();
 
-    expect(find.text('Closed'), findsNothing);
-    expect(find.text('Closed', skipOffstage: false), findsNothing);
-    expect(find.text('Open'), findsNothing);
-    expect(find.text('Container has been removed'), findsOneWidget);
-  });
+      expect(find.text('Closed'), findsNothing);
+      expect(find.text('Closed', skipOffstage: false), findsNothing);
+      expect(find.text('Open'), findsNothing);
+      expect(find.text('Container has been removed'), findsOneWidget);
+    },
+  );
 
-  testWidgets('onClosed callback is called when container has closed',
-      (WidgetTester tester) async {
+  testWidgets('onClosed callback is called when container has closed', (
+    WidgetTester tester,
+  ) async {
     bool hasClosed = false;
     final Widget openContainer = OpenContainer(
       onClosed: (dynamic _) {
         hasClosed = true;
       },
       closedBuilder: (BuildContext context, VoidCallback action) {
-        return GestureDetector(
-          onTap: action,
-          child: const Text('Closed'),
-        );
+        return GestureDetector(onTap: action, child: const Text('Closed'));
       },
       openBuilder: (BuildContext context, VoidCallback action) {
-        return GestureDetector(
-          onTap: action,
-          child: const Text('Open'),
-        );
+        return GestureDetector(onTap: action, child: const Text('Open'));
       },
     );
 
-    await tester.pumpWidget(
-      _boilerplate(child: openContainer),
-    );
+    await tester.pumpWidget(_boilerplate(child: openContainer));
 
     expect(find.text('Open'), findsNothing);
     expect(find.text('Closed'), findsOneWidget);
@@ -1522,73 +1498,73 @@ void main() {
   });
 
   testWidgets(
-      'onClosed callback receives popped value when container has closed',
-      (WidgetTester tester) async {
-    bool? value = false;
-    final Widget openContainer = OpenContainer<bool>(
-      onClosed: (bool? poppedValue) {
-        value = poppedValue;
-      },
-      closedBuilder: (BuildContext context, VoidCallback action) {
-        return GestureDetector(
-          onTap: action,
-          child: const Text('Closed'),
-        );
-      },
-      openBuilder:
-          (BuildContext context, CloseContainerActionCallback<bool> action) {
-        return GestureDetector(
-          onTap: () => action(returnValue: true),
-          child: const Text('Open'),
-        );
-      },
-    );
+    'onClosed callback receives popped value when container has closed',
+    (WidgetTester tester) async {
+      bool? value = false;
+      final Widget openContainer = OpenContainer<bool>(
+        onClosed: (bool? poppedValue) {
+          value = poppedValue;
+        },
+        closedBuilder: (BuildContext context, VoidCallback action) {
+          return GestureDetector(onTap: action, child: const Text('Closed'));
+        },
+        openBuilder: (
+          BuildContext context,
+          CloseContainerActionCallback<bool> action,
+        ) {
+          return GestureDetector(
+            onTap: () => action(returnValue: true),
+            child: const Text('Open'),
+          );
+        },
+      );
 
-    await tester.pumpWidget(
-      _boilerplate(child: openContainer),
-    );
+      await tester.pumpWidget(_boilerplate(child: openContainer));
 
-    expect(find.text('Open'), findsNothing);
-    expect(find.text('Closed'), findsOneWidget);
-    expect(value, isFalse);
+      expect(find.text('Open'), findsNothing);
+      expect(find.text('Closed'), findsOneWidget);
+      expect(value, isFalse);
 
-    await tester.tap(find.text('Closed'));
-    await tester.pumpAndSettle();
+      await tester.tap(find.text('Closed'));
+      await tester.pumpAndSettle();
 
-    expect(find.text('Open'), findsOneWidget);
-    expect(find.text('Closed'), findsNothing);
+      expect(find.text('Open'), findsOneWidget);
+      expect(find.text('Closed'), findsNothing);
 
-    await tester.tap(find.text('Open'));
-    await tester.pumpAndSettle();
+      await tester.tap(find.text('Open'));
+      await tester.pumpAndSettle();
 
-    expect(find.text('Open'), findsNothing);
-    expect(find.text('Closed'), findsOneWidget);
-    expect(value, isTrue);
-  });
+      expect(find.text('Open'), findsNothing);
+      expect(find.text('Closed'), findsOneWidget);
+      expect(value, isTrue);
+    },
+  );
 
-  testWidgets('closedBuilder has anti-alias clip by default',
-      (WidgetTester tester) async {
+  testWidgets('closedBuilder has anti-alias clip by default', (
+    WidgetTester tester,
+  ) async {
     final GlobalKey closedBuilderKey = GlobalKey();
     final Widget openContainer = OpenContainer(
       closedBuilder: (BuildContext context, VoidCallback action) {
         return Text('Close', key: closedBuilderKey);
       },
-      openBuilder:
-          (BuildContext context, CloseContainerActionCallback<bool> action) {
+      openBuilder: (
+        BuildContext context,
+        CloseContainerActionCallback<bool> action,
+      ) {
         return const Text('Open');
       },
     );
 
-    await tester.pumpWidget(
-      _boilerplate(child: openContainer),
-    );
+    await tester.pumpWidget(_boilerplate(child: openContainer));
 
-    final Finder closedBuilderMaterial = find
-        .ancestor(
-          of: find.byKey(closedBuilderKey),
-          matching: find.byType(Material),
-        )
-        .first;
+    final Finder closedBuilderMaterial =
+        find
+            .ancestor(
+              of: find.byKey(closedBuilderKey),
+              matching: find.byType(Material),
+            )
+            .first;
 
     final Material material = tester.widget<Material>(closedBuilderMaterial);
     expect(material.clipBehavior, Clip.antiAlias);
@@ -1600,23 +1576,24 @@ void main() {
       closedBuilder: (BuildContext context, VoidCallback action) {
         return Text('Close', key: closedBuilderKey);
       },
-      openBuilder:
-          (BuildContext context, CloseContainerActionCallback<bool> action) {
+      openBuilder: (
+        BuildContext context,
+        CloseContainerActionCallback<bool> action,
+      ) {
         return const Text('Open');
       },
       clipBehavior: Clip.none,
     );
 
-    await tester.pumpWidget(
-      _boilerplate(child: openContainer),
-    );
+    await tester.pumpWidget(_boilerplate(child: openContainer));
 
-    final Finder closedBuilderMaterial = find
-        .ancestor(
-          of: find.byKey(closedBuilderKey),
-          matching: find.byType(Material),
-        )
-        .first;
+    final Finder closedBuilderMaterial =
+        find
+            .ancestor(
+              of: find.byKey(closedBuilderKey),
+              matching: find.byType(Material),
+            )
+            .first;
 
     final Material material = tester.widget<Material>(closedBuilderMaterial);
     expect(material.clipBehavior, Clip.none);
@@ -1665,124 +1642,145 @@ void main() {
   }
 
   testWidgets(
-      'Verify that "useRootNavigator: false" uses the correct navigator',
-      (WidgetTester tester) async {
-    const Key appKey = Key('App');
-    const Key nestedNavigatorKey = Key('Nested Navigator');
-
-    await tester.pumpWidget(createRootNavigatorTest(
-        appKey: appKey,
-        nestedNavigatorKey: nestedNavigatorKey,
-        useRootNavigator: false));
-
-    await tester.tap(find.text('Closed'));
-    await tester.pumpAndSettle();
-
-    expect(
-        find.descendant(of: find.byKey(appKey), matching: find.text('Opened')),
-        findsOneWidget);
-
-    expect(
-        find.descendant(
-            of: find.byKey(nestedNavigatorKey), matching: find.text('Opened')),
-        findsOneWidget);
-  });
-
-  testWidgets('Verify that "useRootNavigator: true" uses the correct navigator',
-      (WidgetTester tester) async {
-    const Key appKey = Key('App');
-    const Key nestedNavigatorKey = Key('Nested Navigator');
-
-    await tester.pumpWidget(createRootNavigatorTest(
-        appKey: appKey,
-        nestedNavigatorKey: nestedNavigatorKey,
-        useRootNavigator: true));
-
-    await tester.tap(find.text('Closed'));
-    await tester.pumpAndSettle();
-
-    expect(
-        find.descendant(of: find.byKey(appKey), matching: find.text('Opened')),
-        findsOneWidget);
-
-    expect(
-        find.descendant(
-            of: find.byKey(nestedNavigatorKey), matching: find.text('Opened')),
-        findsNothing);
-  });
-
-  testWidgets('Verify correct opened size  when "useRootNavigator: false"',
-      (WidgetTester tester) async {
-    const Key appKey = Key('App');
-    const Key nestedNavigatorKey = Key('Nested Navigator');
-
-    await tester.pumpWidget(createRootNavigatorTest(
-        appKey: appKey,
-        nestedNavigatorKey: nestedNavigatorKey,
-        useRootNavigator: false));
-
-    await tester.tap(find.text('Closed'));
-    await tester.pumpAndSettle();
-
-    expect(tester.getSize(find.text('Opened')),
-        equals(tester.getSize(find.byKey(nestedNavigatorKey))));
-  });
-
-  testWidgets('Verify correct opened size  when "useRootNavigator: true"',
-      (WidgetTester tester) async {
-    const Key appKey = Key('App');
-    const Key nestedNavigatorKey = Key('Nested Navigator');
-
-    await tester.pumpWidget(createRootNavigatorTest(
-        appKey: appKey,
-        nestedNavigatorKey: nestedNavigatorKey,
-        useRootNavigator: true));
-
-    await tester.tap(find.text('Closed'));
-    await tester.pumpAndSettle();
-
-    expect(tester.getSize(find.text('Opened')),
-        equals(tester.getSize(find.byKey(appKey))));
-  });
-
-  testWidgets(
-    'Verify routeSettings passed to Navigator',
+    'Verify that "useRootNavigator: false" uses the correct navigator',
     (WidgetTester tester) async {
-      const RouteSettings routeSettings = RouteSettings(
-        name: 'route-name',
-        arguments: 'arguments',
+      const Key appKey = Key('App');
+      const Key nestedNavigatorKey = Key('Nested Navigator');
+
+      await tester.pumpWidget(
+        createRootNavigatorTest(
+          appKey: appKey,
+          nestedNavigatorKey: nestedNavigatorKey,
+          useRootNavigator: false,
+        ),
       );
 
-      final Widget openContainer = OpenContainer(
-        routeSettings: routeSettings,
-        closedBuilder: (BuildContext context, VoidCallback action) {
-          return GestureDetector(
-            onTap: action,
-            child: const Text('Closed'),
-          );
-        },
-        openBuilder: (BuildContext context, VoidCallback action) {
-          return GestureDetector(
-            onTap: action,
-            child: const Text('Open'),
-          );
-        },
-      );
-
-      await tester.pumpWidget(_boilerplate(child: openContainer));
-
-      // Open the container
       await tester.tap(find.text('Closed'));
       await tester.pumpAndSettle();
 
-      // Expect the last route pushed to the navigator to contain RouteSettings
-      // equal to the RouteSettings passed to the OpenContainer
-      final ModalRoute<dynamic> modalRoute = ModalRoute.of(
-        tester.element(find.text('Open')),
-      )!;
-      expect(modalRoute.settings, routeSettings);
+      expect(
+        find.descendant(of: find.byKey(appKey), matching: find.text('Opened')),
+        findsOneWidget,
+      );
+
+      expect(
+        find.descendant(
+          of: find.byKey(nestedNavigatorKey),
+          matching: find.text('Opened'),
+        ),
+        findsOneWidget,
+      );
     },
   );
+
+  testWidgets(
+    'Verify that "useRootNavigator: true" uses the correct navigator',
+    (WidgetTester tester) async {
+      const Key appKey = Key('App');
+      const Key nestedNavigatorKey = Key('Nested Navigator');
+
+      await tester.pumpWidget(
+        createRootNavigatorTest(
+          appKey: appKey,
+          nestedNavigatorKey: nestedNavigatorKey,
+          useRootNavigator: true,
+        ),
+      );
+
+      await tester.tap(find.text('Closed'));
+      await tester.pumpAndSettle();
+
+      expect(
+        find.descendant(of: find.byKey(appKey), matching: find.text('Opened')),
+        findsOneWidget,
+      );
+
+      expect(
+        find.descendant(
+          of: find.byKey(nestedNavigatorKey),
+          matching: find.text('Opened'),
+        ),
+        findsNothing,
+      );
+    },
+  );
+
+  testWidgets('Verify correct opened size  when "useRootNavigator: false"', (
+    WidgetTester tester,
+  ) async {
+    const Key appKey = Key('App');
+    const Key nestedNavigatorKey = Key('Nested Navigator');
+
+    await tester.pumpWidget(
+      createRootNavigatorTest(
+        appKey: appKey,
+        nestedNavigatorKey: nestedNavigatorKey,
+        useRootNavigator: false,
+      ),
+    );
+
+    await tester.tap(find.text('Closed'));
+    await tester.pumpAndSettle();
+
+    expect(
+      tester.getSize(find.text('Opened')),
+      equals(tester.getSize(find.byKey(nestedNavigatorKey))),
+    );
+  });
+
+  testWidgets('Verify correct opened size  when "useRootNavigator: true"', (
+    WidgetTester tester,
+  ) async {
+    const Key appKey = Key('App');
+    const Key nestedNavigatorKey = Key('Nested Navigator');
+
+    await tester.pumpWidget(
+      createRootNavigatorTest(
+        appKey: appKey,
+        nestedNavigatorKey: nestedNavigatorKey,
+        useRootNavigator: true,
+      ),
+    );
+
+    await tester.tap(find.text('Closed'));
+    await tester.pumpAndSettle();
+
+    expect(
+      tester.getSize(find.text('Opened')),
+      equals(tester.getSize(find.byKey(appKey))),
+    );
+  });
+
+  testWidgets('Verify routeSettings passed to Navigator', (
+    WidgetTester tester,
+  ) async {
+    const RouteSettings routeSettings = RouteSettings(
+      name: 'route-name',
+      arguments: 'arguments',
+    );
+
+    final Widget openContainer = OpenContainer(
+      routeSettings: routeSettings,
+      closedBuilder: (BuildContext context, VoidCallback action) {
+        return GestureDetector(onTap: action, child: const Text('Closed'));
+      },
+      openBuilder: (BuildContext context, VoidCallback action) {
+        return GestureDetector(onTap: action, child: const Text('Open'));
+      },
+    );
+
+    await tester.pumpWidget(_boilerplate(child: openContainer));
+
+    // Open the container
+    await tester.tap(find.text('Closed'));
+    await tester.pumpAndSettle();
+
+    // Expect the last route pushed to the navigator to contain RouteSettings
+    // equal to the RouteSettings passed to the OpenContainer
+    final ModalRoute<dynamic> modalRoute =
+        ModalRoute.of(tester.element(find.text('Open')))!;
+    expect(modalRoute.settings, routeSettings);
+  });
 }
 
 Color _getScrimColor(WidgetTester tester) {
@@ -1813,10 +1811,9 @@ void _expectMaterialPropertiesHaveAdvanced({
 }
 
 double _getOpacity(WidgetTester tester, String label) {
-  final FadeTransition widget = tester.firstWidget(find.ancestor(
-    of: find.text(label),
-    matching: find.byType(FadeTransition),
-  ));
+  final FadeTransition widget = tester.firstWidget(
+    find.ancestor(of: find.text(label), matching: find.byType(FadeTransition)),
+  );
   // Verify that the correct fade transition is retrieved (i.e. not something from a page transition).
   assert(widget.child is Builder && widget.child?.key is GlobalKey, '$widget');
   return widget.opacity.value;
@@ -1842,11 +1839,7 @@ double _getRadius(Material material) {
 }
 
 Widget _boilerplate({required Widget child}) {
-  return MaterialApp(
-    home: Scaffold(
-      body: child,
-    ),
-  );
+  return MaterialApp(home: Scaffold(body: child));
 }
 
 class _SizableContainer extends StatefulWidget {
@@ -1879,11 +1872,7 @@ class _SizableContainerState extends State<_SizableContainer> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: size,
-      width: size,
-      child: widget.child,
-    );
+    return SizedBox(height: size, width: size, child: widget.child);
   }
 }
 
@@ -1902,33 +1891,35 @@ class __RemoveOpenContainerExampleState
     return removeOpenContainerWidget
         ? const Text('Container has been removed')
         : OpenContainer(
-            closedBuilder: (BuildContext context, VoidCallback action) =>
-                Column(
-              children: <Widget>[
-                const Text('Closed'),
-                ElevatedButton(
-                  onPressed: action,
-                  child: const Text('Open the container'),
-                ),
-              ],
-            ),
-            openBuilder: (BuildContext context, VoidCallback action) => Column(
-              children: <Widget>[
-                const Text('Open'),
-                ElevatedButton(
-                  onPressed: action,
-                  child: const Text('Close the container'),
-                ),
-                ElevatedButton(
+          closedBuilder:
+              (BuildContext context, VoidCallback action) => Column(
+                children: <Widget>[
+                  const Text('Closed'),
+                  ElevatedButton(
+                    onPressed: action,
+                    child: const Text('Open the container'),
+                  ),
+                ],
+              ),
+          openBuilder:
+              (BuildContext context, VoidCallback action) => Column(
+                children: <Widget>[
+                  const Text('Open'),
+                  ElevatedButton(
+                    onPressed: action,
+                    child: const Text('Close the container'),
+                  ),
+                  ElevatedButton(
                     onPressed: () {
                       setState(() {
                         removeOpenContainerWidget = true;
                       });
                     },
-                    child: const Text('Remove the container')),
-              ],
-            ),
-          );
+                    child: const Text('Remove the container'),
+                  ),
+                ],
+              ),
+        );
   }
 }
 

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -10,10 +10,7 @@ import 'matrix.dart';
 /// The encoded image data and its format.
 class ImageData {
   /// Create a new [ImageData].
-  const ImageData(
-    this.data,
-    this.format,
-  );
+  const ImageData(this.data, this.format);
 
   /// An encoded image.
   final Uint8List data;
@@ -25,11 +22,7 @@ class ImageData {
 /// A command to draw an image at a particular location.
 class DrawImageData {
   /// Create a new [DrawImageData].
-  const DrawImageData(
-    this.id,
-    this.rect,
-    this.transform,
-  );
+  const DrawImageData(this.id, this.rect, this.transform);
 
   /// The corresponding encoding image to draw.
   final int id;

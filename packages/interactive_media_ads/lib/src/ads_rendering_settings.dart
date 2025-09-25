@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -15,16 +15,18 @@ class AdsRenderingSettings {
     List<String>? mimeTypes,
     Duration? playAdsAfterTime,
     Set<AdUIElement>? uiElements,
-  }) : this.fromPlatform(PlatformAdsRenderingSettings(
-          PlatformAdsRenderingSettingsCreationParams(
-            bitrate: bitrate,
-            enablePreloading: enablePreloading,
-            loadVideoTimeout: loadVideoTimeout,
-            mimeTypes: mimeTypes,
-            playAdsAfterTime: playAdsAfterTime,
-            uiElements: uiElements,
-          ),
-        ));
+  }) : this.fromPlatform(
+         PlatformAdsRenderingSettings(
+           PlatformAdsRenderingSettingsCreationParams(
+             bitrate: bitrate,
+             enablePreloading: enablePreloading,
+             loadVideoTimeout: loadVideoTimeout,
+             mimeTypes: mimeTypes,
+             playAdsAfterTime: playAdsAfterTime,
+             uiElements: uiElements,
+           ),
+         ),
+       );
 
   /// Constructs an [AdsRenderingSettings] from a specific platform
   /// implementation.

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -16,6 +16,7 @@ class OpenTextPage extends StatelessWidget {
     const XTypeGroup typeGroup = XTypeGroup(
       label: 'text',
       extensions: <String>['txt', 'json'],
+      uniformTypeIdentifiers: <String>['public.text'],
     );
     // This demonstrates using an initial directory for the prompt, which should
     // only be done in cases where the application can likely predict where the
@@ -44,9 +45,7 @@ class OpenTextPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Open a text file'),
-      ),
+      appBar: AppBar(title: const Text('Open a text file')),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -82,9 +81,7 @@ class TextDisplay extends StatelessWidget {
     return AlertDialog(
       title: Text(fileName),
       content: Scrollbar(
-        child: SingleChildScrollView(
-          child: Text(fileContent),
-        ),
+        child: SingleChildScrollView(child: Text(fileContent)),
       ),
       actions: <Widget>[
         TextButton(

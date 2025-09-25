@@ -1,3 +1,16 @@
+## 0.4.5
+
+* Makes `SKError.userInfo` key non-nullable to comply with json serialization requirements.
+
+## 0.4.4+1
+
+* Removes code for versions of iOS older than 13.0.
+* Updates minimum supported SDK version to Flutter 3.35.
+
+## 0.4.4
+
+* Added support for specifying quantity in `SK2ProductPurchaseOptions` (consumable purchases on iOS).
+
 ## 0.4.3
 
 * Adds **Introductory Offer Eligibility** support for StoreKit2

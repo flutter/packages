@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -23,9 +23,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Vector Graphics Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: ThemeData(primarySwatch: Colors.blue),
       home: const Scaffold(
         body: Center(
           child: VectorGraphic(
@@ -49,20 +47,24 @@ class NetworkSvgLoader extends BytesLoader {
 
   @override
   Future<ByteData> loadBytes(BuildContext? context) async {
-    return compute((String svgUrl) async {
-      final http.Response request = await http.get(Uri.parse(svgUrl));
-      final TimelineTask task = TimelineTask()..start('encodeSvg');
-      final Uint8List compiledBytes = encodeSvg(
-        xml: request.body,
-        debugName: svgUrl,
-        enableClippingOptimizer: false,
-        enableMaskingOptimizer: false,
-        enableOverdrawOptimizer: false,
-      );
-      task.finish();
-      // sendAndExit will make sure this isn't copied.
-      return compiledBytes.buffer.asByteData();
-    }, url, debugLabel: 'Load Bytes');
+    return compute(
+      (String svgUrl) async {
+        final http.Response request = await http.get(Uri.parse(svgUrl));
+        final TimelineTask task = TimelineTask()..start('encodeSvg');
+        final Uint8List compiledBytes = encodeSvg(
+          xml: request.body,
+          debugName: svgUrl,
+          enableClippingOptimizer: false,
+          enableMaskingOptimizer: false,
+          enableOverdrawOptimizer: false,
+        );
+        task.finish();
+        // sendAndExit will make sure this isn't copied.
+        return compiledBytes.buffer.asByteData();
+      },
+      url,
+      debugLabel: 'Load Bytes',
+    );
   }
 
   @override

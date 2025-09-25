@@ -15,10 +15,7 @@ Basic usage (to create an SVG rendering widget from an asset):
 <?code-excerpt "example/lib/readme_excerpts.dart (SimpleAsset)"?>
 ```dart
 const String assetName = 'assets/dart.svg';
-final Widget svg = SvgPicture.asset(
-  assetName,
-  semanticsLabel: 'Dart Logo',
-);
+final Widget svg = SvgPicture.asset(assetName, semanticsLabel: 'Dart Logo');
 ```
 
 You can color/tint the image like so:
@@ -93,9 +90,7 @@ parsing/loading (normally only relevant for network access).
 ```dart
 // Will print error messages to the console.
 const String assetName = 'assets/image_that_does_not_exist.svg';
-final Widget svg = SvgPicture.asset(
-  assetName,
-);
+final Widget svg = SvgPicture.asset(assetName);
 ```
 
 <?code-excerpt "example/lib/readme_excerpts.dart (AssetWithPlaceholder)"?>
@@ -103,9 +98,11 @@ final Widget svg = SvgPicture.asset(
 final Widget networkSvg = SvgPicture.network(
   'https://site-that-takes-a-while.com/image.svg',
   semanticsLabel: 'A shark?!',
-  placeholderBuilder: (BuildContext context) => Container(
-      padding: const EdgeInsets.all(30.0),
-      child: const CircularProgressIndicator()),
+  placeholderBuilder:
+      (BuildContext context) => Container(
+        padding: const EdgeInsets.all(30.0),
+        child: const CircularProgressIndicator(),
+      ),
 );
 ```
 
@@ -117,8 +114,10 @@ import 'dart:ui' as ui;
 
 // ···
   const String rawSvg = '''<svg ...>...</svg>''';
-  final PictureInfo pictureInfo =
-      await vg.loadPicture(const SvgStringLoader(rawSvg), null);
+  final PictureInfo pictureInfo = await vg.loadPicture(
+    const SvgStringLoader(rawSvg),
+    null,
+  );
 
   // You can draw the picture to a canvas:
   canvas.drawPicture(pictureInfo.picture);

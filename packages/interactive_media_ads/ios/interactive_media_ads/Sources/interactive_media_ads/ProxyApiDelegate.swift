@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -164,5 +164,18 @@ open class ProxyApiDelegate: InteractiveMediaAdsLibraryPigeonProxyApiDelegate {
     -> PigeonApiIMASettings
   {
     return PigeonApiIMASettings(pigeonRegistrar: registrar, delegate: SettingsProxyAPIDelegate())
+  }
+
+  func pigeonApiIMAAd(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiIMAAd
+  {
+    return PigeonApiIMAAd(pigeonRegistrar: registrar, delegate: AdProxyAPIDelegate())
+  }
+
+  func pigeonApiIMAUniversalAdID(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiIMAUniversalAdID
+  {
+    return PigeonApiIMAUniversalAdID(
+      pigeonRegistrar: registrar, delegate: UniversalAdIDProxyAPIDelegate())
   }
 }

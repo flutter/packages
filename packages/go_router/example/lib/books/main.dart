@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -29,52 +29,46 @@ class Bookstore extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => BookstoreAuthScope(
-        notifier: _auth,
-        child: MaterialApp.router(
-          routerConfig: _router,
-        ),
-      );
+    notifier: _auth,
+    child: MaterialApp.router(routerConfig: _router),
+  );
 
   final BookstoreAuth _auth = BookstoreAuth();
 
   late final GoRouter _router = GoRouter(
     routes: <GoRoute>[
-      GoRoute(
-        path: '/',
-        redirect: (_, __) => '/books',
-      ),
+      GoRoute(path: '/', redirect: (_, __) => '/books'),
       GoRoute(
         path: '/signin',
-        pageBuilder: (BuildContext context, GoRouterState state) =>
-            FadeTransitionPage(
-          key: state.pageKey,
-          child: SignInScreen(
-            onSignIn: (Credentials credentials) {
-              BookstoreAuthScope.of(context)
-                  .signIn(credentials.username, credentials.password);
-            },
-          ),
-        ),
+        pageBuilder:
+            (BuildContext context, GoRouterState state) => FadeTransitionPage(
+              key: state.pageKey,
+              child: SignInScreen(
+                onSignIn: (Credentials credentials) {
+                  BookstoreAuthScope.of(
+                    context,
+                  ).signIn(credentials.username, credentials.password);
+                },
+              ),
+            ),
       ),
-      GoRoute(
-        path: '/books',
-        redirect: (_, __) => '/books/popular',
-      ),
+      GoRoute(path: '/books', redirect: (_, __) => '/books/popular'),
       GoRoute(
         path: '/book/:bookId',
-        redirect: (BuildContext context, GoRouterState state) =>
-            '/books/all/${state.pathParameters['bookId']}',
+        redirect:
+            (BuildContext context, GoRouterState state) =>
+                '/books/all/${state.pathParameters['bookId']}',
       ),
       GoRoute(
         path: '/books/:kind(new|all|popular)',
-        pageBuilder: (BuildContext context, GoRouterState state) =>
-            FadeTransitionPage(
-          key: _scaffoldKey,
-          child: BookstoreScaffold(
-            selectedTab: ScaffoldTab.books,
-            child: BooksScreen(state.pathParameters['kind']!),
-          ),
-        ),
+        pageBuilder:
+            (BuildContext context, GoRouterState state) => FadeTransitionPage(
+              key: _scaffoldKey,
+              child: BookstoreScaffold(
+                selectedTab: ScaffoldTab.books,
+                child: BooksScreen(state.pathParameters['kind']!),
+              ),
+            ),
         routes: <GoRoute>[
           GoRoute(
             path: ':bookId',
@@ -90,19 +84,20 @@ class Bookstore extends StatelessWidget {
       ),
       GoRoute(
         path: '/author/:authorId',
-        redirect: (BuildContext context, GoRouterState state) =>
-            '/authors/${state.pathParameters['authorId']}',
+        redirect:
+            (BuildContext context, GoRouterState state) =>
+                '/authors/${state.pathParameters['authorId']}',
       ),
       GoRoute(
         path: '/authors',
-        pageBuilder: (BuildContext context, GoRouterState state) =>
-            FadeTransitionPage(
-          key: _scaffoldKey,
-          child: const BookstoreScaffold(
-            selectedTab: ScaffoldTab.authors,
-            child: AuthorsScreen(),
-          ),
-        ),
+        pageBuilder:
+            (BuildContext context, GoRouterState state) => FadeTransitionPage(
+              key: _scaffoldKey,
+              child: const BookstoreScaffold(
+                selectedTab: ScaffoldTab.authors,
+                child: AuthorsScreen(),
+              ),
+            ),
         routes: <GoRoute>[
           GoRoute(
             path: ':authorId',
@@ -118,14 +113,14 @@ class Bookstore extends StatelessWidget {
       ),
       GoRoute(
         path: '/settings',
-        pageBuilder: (BuildContext context, GoRouterState state) =>
-            FadeTransitionPage(
-          key: _scaffoldKey,
-          child: const BookstoreScaffold(
-            selectedTab: ScaffoldTab.settings,
-            child: SettingsScreen(),
-          ),
-        ),
+        pageBuilder:
+            (BuildContext context, GoRouterState state) => FadeTransitionPage(
+              key: _scaffoldKey,
+              child: const BookstoreScaffold(
+                selectedTab: ScaffoldTab.settings,
+                child: SettingsScreen(),
+              ),
+            ),
       ),
     ],
     redirect: _guard,
@@ -154,18 +149,19 @@ class Bookstore extends StatelessWidget {
 /// A page that fades in an out.
 class FadeTransitionPage extends CustomTransitionPage<void> {
   /// Creates a [FadeTransitionPage].
-  FadeTransitionPage({
-    required LocalKey super.key,
-    required super.child,
-  }) : super(
-            transitionsBuilder: (BuildContext context,
-                    Animation<double> animation,
-                    Animation<double> secondaryAnimation,
-                    Widget child) =>
-                FadeTransition(
-                  opacity: animation.drive(_curveTween),
-                  child: child,
-                ));
+  FadeTransitionPage({required LocalKey super.key, required super.child})
+    : super(
+        transitionsBuilder:
+            (
+              BuildContext context,
+              Animation<double> animation,
+              Animation<double> secondaryAnimation,
+              Widget child,
+            ) => FadeTransition(
+              opacity: animation.drive(_curveTween),
+              child: child,
+            ),
+      );
 
   static final CurveTween _curveTween = CurveTween(curve: Curves.easeIn);
 }

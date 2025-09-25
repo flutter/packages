@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -62,7 +62,8 @@ abstract class GoogleMapsInspectorPlatform extends PlatformInterface {
   /// Returns true if the "my location" button is enabled.
   Future<bool> isMyLocationButtonEnabled({required int mapId}) {
     throw UnimplementedError(
-        'isMyLocationButtonEnabled() has not been implemented.');
+      'isMyLocationButtonEnabled() has not been implemented.',
+    );
   }
 
   /// Returns true if the traffic overlay is enabled.
@@ -78,31 +79,36 @@ abstract class GoogleMapsInspectorPlatform extends PlatformInterface {
   /// Returns true if rotate gestures are enabled.
   Future<bool> areRotateGesturesEnabled({required int mapId}) {
     throw UnimplementedError(
-        'areRotateGesturesEnabled() has not been implemented.');
+      'areRotateGesturesEnabled() has not been implemented.',
+    );
   }
 
   /// Returns true if scroll gestures are enabled.
   Future<bool> areScrollGesturesEnabled({required int mapId}) {
     throw UnimplementedError(
-        'areScrollGesturesEnabled() has not been implemented.');
+      'areScrollGesturesEnabled() has not been implemented.',
+    );
   }
 
   /// Returns true if tilt gestures are enabled.
   Future<bool> areTiltGesturesEnabled({required int mapId}) {
     throw UnimplementedError(
-        'areTiltGesturesEnabled() has not been implemented.');
+      'areTiltGesturesEnabled() has not been implemented.',
+    );
   }
 
   /// Returns true if zoom controls are enabled.
   Future<bool> areZoomControlsEnabled({required int mapId}) {
     throw UnimplementedError(
-        'areZoomControlsEnabled() has not been implemented.');
+      'areZoomControlsEnabled() has not been implemented.',
+    );
   }
 
   /// Returns true if zoom gestures are enabled.
   Future<bool> areZoomGesturesEnabled({required int mapId}) {
     throw UnimplementedError(
-        'areZoomGesturesEnabled() has not been implemented.');
+      'areZoomGesturesEnabled() has not been implemented.',
+    );
   }
 
   /// Returns information about the tile overlay with the given ID.
@@ -111,8 +117,10 @@ abstract class GoogleMapsInspectorPlatform extends PlatformInterface {
   /// be the same Dart object as the original [TileOverlay] provided to the
   /// platform interface with that ID, and not all fields (e.g.,
   /// [TileOverlay.tileProvider]) will be populated.
-  Future<TileOverlay?> getTileOverlayInfo(TileOverlayId tileOverlayId,
-      {required int mapId}) {
+  Future<TileOverlay?> getTileOverlayInfo(
+    TileOverlayId tileOverlayId, {
+    required int mapId,
+  }) {
     throw UnimplementedError('getTileOverlayInfo() has not been implemented.');
   }
 
@@ -136,15 +144,20 @@ abstract class GoogleMapsInspectorPlatform extends PlatformInterface {
   /// The returned object will be synthesized from platform data, so will not
   /// be the same Dart object as the original [GroundOverlay] provided to the
   /// platform interface with that ID, and not all fields will be populated.
-  Future<GroundOverlay?> getGroundOverlayInfo(GroundOverlayId groundOverlayId,
-      {required int mapId}) {
+  Future<GroundOverlay?> getGroundOverlayInfo(
+    GroundOverlayId groundOverlayId, {
+    required int mapId,
+  }) {
     throw UnimplementedError(
-        'getGroundOverlayInfo() has not been implemented.');
+      'getGroundOverlayInfo() has not been implemented.',
+    );
   }
 
   /// Returns current clusters from [ClusterManager].
-  Future<List<Cluster>> getClusters(
-      {required int mapId, required ClusterManagerId clusterManagerId}) {
+  Future<List<Cluster>> getClusters({
+    required int mapId,
+    required ClusterManagerId clusterManagerId,
+  }) {
     throw UnimplementedError('getClusters() has not been implemented.');
   }
 

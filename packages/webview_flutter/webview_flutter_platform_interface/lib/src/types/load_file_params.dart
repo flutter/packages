@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -29,9 +29,7 @@ import 'package:flutter/material.dart';
 @immutable
 base class LoadFileParams {
   /// Creates a new [LoadFileParams] object.
-  const LoadFileParams({
-    required this.absoluteFilePath,
-  });
+  const LoadFileParams({required this.absoluteFilePath});
 
   /// The path to the local HTML file to be loaded.
   final String absoluteFilePath;

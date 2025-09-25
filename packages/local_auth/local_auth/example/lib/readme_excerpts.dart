@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -45,9 +45,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(
-          title: const Text('README example app'),
-        ),
+        appBar: AppBar(title: const Text('README example app')),
         body: const Text('See example in main.dart'),
       ),
     );
@@ -85,7 +83,8 @@ class _MyAppState extends State<MyApp> {
     // #docregion AuthAny
     try {
       final bool didAuthenticate = await auth.authenticate(
-          localizedReason: 'Please authenticate to show account balance');
+        localizedReason: 'Please authenticate to show account balance',
+      );
       // #enddocregion AuthAny
       print(didAuthenticate);
       // #docregion AuthAny
@@ -98,8 +97,9 @@ class _MyAppState extends State<MyApp> {
   Future<void> authenticateWithBiometrics() async {
     // #docregion AuthBioOnly
     final bool didAuthenticate = await auth.authenticate(
-        localizedReason: 'Please authenticate to show account balance',
-        options: const AuthenticationOptions(biometricOnly: true));
+      localizedReason: 'Please authenticate to show account balance',
+      options: const AuthenticationOptions(biometricOnly: true),
+    );
     // #enddocregion AuthBioOnly
     print(didAuthenticate);
   }
@@ -108,8 +108,9 @@ class _MyAppState extends State<MyApp> {
     // #docregion NoErrorDialogs
     try {
       final bool didAuthenticate = await auth.authenticate(
-          localizedReason: 'Please authenticate to show account balance',
-          options: const AuthenticationOptions(useErrorDialogs: false));
+        localizedReason: 'Please authenticate to show account balance',
+        options: const AuthenticationOptions(useErrorDialogs: false),
+      );
       // #enddocregion NoErrorDialogs
       print(didAuthenticate ? 'Success!' : 'Failure');
       // #docregion NoErrorDialogs
@@ -129,8 +130,9 @@ class _MyAppState extends State<MyApp> {
     // #docregion ErrorHandling
     try {
       final bool didAuthenticate = await auth.authenticate(
-          localizedReason: 'Please authenticate to show account balance',
-          options: const AuthenticationOptions(useErrorDialogs: false));
+        localizedReason: 'Please authenticate to show account balance',
+        options: const AuthenticationOptions(useErrorDialogs: false),
+      );
       // #enddocregion ErrorHandling
       print(didAuthenticate ? 'Success!' : 'Failure');
       // #docregion ErrorHandling
@@ -150,16 +152,15 @@ class _MyAppState extends State<MyApp> {
   Future<void> authenticateWithCustomDialogMessages() async {
     // #docregion CustomMessages
     final bool didAuthenticate = await auth.authenticate(
-        localizedReason: 'Please authenticate to show account balance',
-        authMessages: const <AuthMessages>[
-          AndroidAuthMessages(
-            signInTitle: 'Oops! Biometric authentication required!',
-            cancelButton: 'No thanks',
-          ),
-          IOSAuthMessages(
-            cancelButton: 'No thanks',
-          ),
-        ]);
+      localizedReason: 'Please authenticate to show account balance',
+      authMessages: const <AuthMessages>[
+        AndroidAuthMessages(
+          signInTitle: 'Oops! Biometric authentication required!',
+          cancelButton: 'No thanks',
+        ),
+        IOSAuthMessages(cancelButton: 'No thanks'),
+      ],
+    );
     // #enddocregion CustomMessages
     print(didAuthenticate ? 'Success!' : 'Failure');
   }

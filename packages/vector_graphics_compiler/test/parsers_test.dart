@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -19,32 +19,41 @@ void main() {
       null,
     );
     expect(parser.parseColor('null', attributeName: 'foo', id: null), null);
-    expect(parser.parseColor('red', attributeName: 'foo', id: null),
-        const Color.fromARGB(255, 255, 0, 0));
-    expect(parser.parseColor('#ABCDEF', attributeName: 'foo', id: null),
-        const Color.fromARGB(255, 0xAB, 0xCD, 0xEF));
+    expect(
+      parser.parseColor('red', attributeName: 'foo', id: null),
+      const Color.fromARGB(255, 255, 0, 0),
+    );
+    expect(
+      parser.parseColor('#ABCDEF', attributeName: 'foo', id: null),
+      const Color.fromARGB(255, 0xAB, 0xCD, 0xEF),
+    );
     // RGBA in svg/css, ARGB in this library.
-    expect(parser.parseColor('#ABCDEF88', attributeName: 'foo', id: null),
-        const Color.fromARGB(0x88, 0xAB, 0xCD, 0xEF));
+    expect(
+      parser.parseColor('#ABCDEF88', attributeName: 'foo', id: null),
+      const Color.fromARGB(0x88, 0xAB, 0xCD, 0xEF),
+    );
   });
 
   test('Colors - mapped', () async {
     final TestColorMapper mapper = TestColorMapper();
-    final SvgParser parser = SvgParser(
-      '<svg viewBox="0 0 10 10"><rect id="rect1" x="1" y="1" width="5" height="5" fill="red" /></svg>',
-      const SvgTheme(),
-      'test_key',
-      true,
-      mapper,
-    )
-      ..enableMaskingOptimizer = false
-      ..enableClippingOptimizer = false
-      ..enableOverdrawOptimizer = false;
+    final SvgParser parser =
+        SvgParser(
+            '<svg viewBox="0 0 10 10"><rect id="rect1" x="1" y="1" width="5" height="5" fill="red" /></svg>',
+            const SvgTheme(),
+            'test_key',
+            true,
+            mapper,
+          )
+          ..enableMaskingOptimizer = false
+          ..enableClippingOptimizer = false
+          ..enableOverdrawOptimizer = false;
     final VectorInstructions instructions = parser.parse();
 
     // TestMapper just always returns this color.
-    expect(instructions.paints.single.fill!.color,
-        const Color.fromARGB(255, 255, 0, 255));
+    expect(
+      instructions.paints.single.fill!.color,
+      const Color.fromARGB(255, 255, 0, 255),
+    );
 
     // TestMapper should have gotten the ID/element name/attribute name from the rect.
     expect(mapper.lastId, 'rect1');
@@ -78,9 +87,7 @@ void main() {
         .translated(0.338957, 0.010104)
         .scaled(0.869768, 1.000000);
     expect(
-      parseTransform(
-        'translate(0.338957,0.010104),scale(0.869768,1.000000)',
-      ),
+      parseTransform('translate(0.338957,0.010104),scale(0.869768,1.000000)'),
       expected,
     );
   });
@@ -89,14 +96,8 @@ void main() {
     expect(() => parseTransform('invalid'), throwsStateError);
     expect(() => parseTransform('transformunsupported(0,0)'), throwsStateError);
 
-    expect(
-      parseTransform('skewX(60)'),
-      AffineMatrix.identity.xSkewed(60.0),
-    );
-    expect(
-      parseTransform('skewY(60)'),
-      AffineMatrix.identity.ySkewed(60.0),
-    );
+    expect(parseTransform('skewX(60)'), AffineMatrix.identity.xSkewed(60.0));
+    expect(parseTransform('skewY(60)'), AffineMatrix.identity.ySkewed(60.0));
     expect(
       parseTransform('translate(10,0.0)'),
       AffineMatrix.identity.translated(10.0, 0.0),
@@ -132,12 +133,12 @@ void main() {
 
     expect(
       parseTransform('matrix(1.5, 2.0, 3.0, 4.0, 5.0, 6.0)'),
-      const AffineMatrix(1.5, 2.0, 3.0, 4.0, 5.0, 6.0),
+      const AffineMatrix(1.5, 2.0, 3.0, 4.0, 5.0, 6.0, 1.0),
     );
 
     expect(
       parseTransform('matrix(1.5, 2.0, 3.0, 4.0, 5.0, 6.0 )'),
-      const AffineMatrix(1.5, 2.0, 3.0, 4.0, 5.0, 6.0),
+      const AffineMatrix(1.5, 2.0, 3.0, 4.0, 5.0, 6.0, 1.0),
     );
 
     expect(
@@ -156,16 +157,26 @@ void main() {
   });
 
   test('Parses pattern units to double correctly', () {
-    final ViewportNode viewportNode = ViewportNode(SvgAttributes.empty,
-        width: 100, height: 1000, transform: AffineMatrix.identity);
+    final ViewportNode viewportNode = ViewportNode(
+      SvgAttributes.empty,
+      width: 100,
+      height: 1000,
+      transform: AffineMatrix.identity,
+    );
     expect(parsePatternUnitToDouble('25.0', 'width'), 25.0);
     expect(
-        parsePatternUnitToDouble('0.25', 'width', viewBox: viewportNode), 25.0);
+      parsePatternUnitToDouble('0.25', 'width', viewBox: viewportNode),
+      25.0,
+    );
     expect(
-        parsePatternUnitToDouble('25%', 'width', viewBox: viewportNode), 25.0);
+      parsePatternUnitToDouble('25%', 'width', viewBox: viewportNode),
+      25.0,
+    );
     expect(parsePatternUnitToDouble('25', 'width'), 25.0);
     expect(
-        parsePatternUnitToDouble('0.1%', 'height', viewBox: viewportNode), 1.0);
+      parsePatternUnitToDouble('0.1%', 'height', viewBox: viewportNode),
+      1.0,
+    );
   });
 
   test('Point conversion', () {
@@ -195,10 +206,13 @@ void main() {
     expect(
       parseTransform('matrix(.70711-.70711.70711.70711-640.89 452.68)'),
       const AffineMatrix(
-        0.70711, -0.70711, //
-        0.70711, 0.70711, //
-        -640.89, 452.68, //
+        0.70711,
+        -0.70711, //
+        0.70711,
         0.70711, //
+        -640.89,
+        452.68, //
+        1.0, //
       ),
     );
   });

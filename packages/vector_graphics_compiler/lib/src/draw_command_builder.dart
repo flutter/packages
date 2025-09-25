@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -31,20 +31,19 @@ class DrawCommandBuilder {
   void addVertices(IndexedVertices vertices, Paint paint) {
     final int paintId = _getOrGenerateId(paint, _paints);
     final int verticesId = _getOrGenerateId(vertices, _vertices);
-    _commands.add(DrawCommand(
-      DrawCommandType.vertices,
-      paintId: paintId,
-      objectId: verticesId,
-    ));
+    _commands.add(
+      DrawCommand(
+        DrawCommandType.vertices,
+        paintId: paintId,
+        objectId: verticesId,
+      ),
+    );
   }
 
   /// Add a save layer to the command stack.
   void addSaveLayer(Paint paint) {
     final int paintId = _getOrGenerateId(paint, _paints);
-    _commands.add(DrawCommand(
-      DrawCommandType.saveLayer,
-      paintId: paintId,
-    ));
+    _commands.add(DrawCommand(DrawCommandType.saveLayer, paintId: paintId));
   }
 
   /// Add a restore to the command stack.
@@ -77,20 +76,21 @@ class DrawCommandBuilder {
       PatternData(x, y, width, height, transform),
       _patternData,
     );
-    _commands.add(DrawCommand(
-      DrawCommandType.pattern,
-      objectId: patternId,
-      patternDataId: patternDataId,
-    ));
+    _commands.add(
+      DrawCommand(
+        DrawCommandType.pattern,
+        objectId: patternId,
+        patternDataId: patternDataId,
+      ),
+    );
   }
 
   /// Updates the current text position to [position].
   void updateTextPosition(TextPosition position) {
     final int positionId = _getOrGenerateId(position, _textPositions);
-    _commands.add(DrawCommand(
-      DrawCommandType.textPosition,
-      objectId: positionId,
-    ));
+    _commands.add(
+      DrawCommand(DrawCommandType.textPosition, objectId: positionId),
+    );
   }
 
   /// Add a path to the current draw command stack
@@ -101,11 +101,15 @@ class DrawCommandBuilder {
     final int pathId = _getOrGenerateId(path, _paths);
     final int paintId = _getOrGenerateId(paint, _paints);
 
-    _commands.add(DrawCommand(DrawCommandType.path,
+    _commands.add(
+      DrawCommand(
+        DrawCommandType.path,
         objectId: pathId,
         paintId: paintId,
         debugString: debugString,
-        patternId: patternId != null ? _patterns[patternId] : null));
+        patternId: patternId != null ? _patterns[patternId] : null,
+      ),
+    );
   }
 
   /// Adds a text to the current draw command stack.
@@ -117,14 +121,16 @@ class DrawCommandBuilder {
   ) {
     final int paintId = _getOrGenerateId(paint, _paints);
     final int styleId = _getOrGenerateId(textConfig, _text);
-    _commands.add(DrawCommand(
-      DrawCommandType.text,
-      objectId: styleId,
-      paintId: paintId,
-      debugString: debugString,
-      patternId: patternId != null ? _patterns[patternId] : null,
-      patternDataId: patternId != null ? _patternData[patternId] : null,
-    ));
+    _commands.add(
+      DrawCommand(
+        DrawCommandType.text,
+        objectId: styleId,
+        paintId: paintId,
+        debugString: debugString,
+        patternId: patternId != null ? _patterns[patternId] : null,
+        patternDataId: patternId != null ? _patternData[patternId] : null,
+      ),
+    );
   }
 
   /// Add an image to the current draw command stack.
@@ -138,11 +144,13 @@ class DrawCommandBuilder {
     );
 
     final int drawImageId = _getOrGenerateId(drawImageData, _drawImages);
-    _commands.add(DrawCommand(
-      DrawCommandType.image,
-      objectId: drawImageId,
-      debugString: debugString,
-    ));
+    _commands.add(
+      DrawCommand(
+        DrawCommandType.image,
+        objectId: drawImageId,
+        debugString: debugString,
+      ),
+    );
   }
 
   /// Create a new [VectorInstructions] with the given width and height.

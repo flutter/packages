@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -20,13 +20,13 @@ class PathProviderLinux extends PathProviderPlatform {
 
   /// Constructs an instance of [PathProviderLinux] with the given [environment]
   @visibleForTesting
-  PathProviderLinux.private(
-      {Map<String, String> environment = const <String, String>{},
-      String? executableName,
-      String? applicationId})
-      : _environment = environment,
-        _executableName = executableName,
-        _applicationId = applicationId;
+  PathProviderLinux.private({
+    Map<String, String> environment = const <String, String>{},
+    String? executableName,
+    String? applicationId,
+  }) : _environment = environment,
+       _executableName = executableName,
+       _applicationId = applicationId;
 
   final Map<String, String> _environment;
   String? _executableName;
@@ -47,16 +47,18 @@ class PathProviderLinux extends PathProviderPlatform {
 
   @override
   Future<String?> getApplicationSupportPath() async {
-    final Directory directory =
-        Directory(path.join(xdg.dataHome.path, await _getId()));
+    final Directory directory = Directory(
+      path.join(xdg.dataHome.path, await _getId()),
+    );
     if (directory.existsSync()) {
       return directory.path;
     }
 
     // This plugin originally used the executable name as a directory.
     // Use that if it exists for backwards compatibility.
-    final Directory legacyDirectory =
-        Directory(path.join(xdg.dataHome.path, await _getExecutableName()));
+    final Directory legacyDirectory = Directory(
+      path.join(xdg.dataHome.path, await _getExecutableName()),
+    );
     if (legacyDirectory.existsSync()) {
       return legacyDirectory.path;
     }
@@ -73,8 +75,9 @@ class PathProviderLinux extends PathProviderPlatform {
 
   @override
   Future<String?> getApplicationCachePath() async {
-    final Directory directory =
-        Directory(path.join(xdg.cacheHome.path, await _getId()));
+    final Directory directory = Directory(
+      path.join(xdg.cacheHome.path, await _getId()),
+    );
     if (!directory.existsSync()) {
       await directory.create(recursive: true);
     }
@@ -89,7 +92,8 @@ class PathProviderLinux extends PathProviderPlatform {
   // Gets the name of this executable.
   Future<String> _getExecutableName() async {
     _executableName ??= path.basenameWithoutExtension(
-        await File('/proc/self/exe').resolveSymbolicLinks());
+      await File('/proc/self/exe').resolveSymbolicLinks(),
+    );
     return _executableName!;
   }
 

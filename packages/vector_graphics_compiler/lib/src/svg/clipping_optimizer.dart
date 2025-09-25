@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -39,11 +39,16 @@ class ClippingOptimizer extends Visitor<_Result, Node>
     final ResolvedPathNode pathNode = child as ResolvedPathNode;
     final path_ops.Path clipPathOpsPath = toPathOpsPath(clipPath);
     final path_ops.Path pathPathOpsPath = toPathOpsPath(pathNode.path);
-    final path_ops.Path intersection =
-        clipPathOpsPath.applyOp(pathPathOpsPath, path_ops.PathOp.intersect);
+    final path_ops.Path intersection = clipPathOpsPath.applyOp(
+      pathPathOpsPath,
+      path_ops.PathOp.intersect,
+    );
     final Path newPath = toVectorGraphicsPath(intersection);
     final ResolvedPathNode newPathNode = ResolvedPathNode(
-        paint: pathNode.paint, bounds: newPath.bounds(), path: newPath);
+      paint: pathNode.paint,
+      bounds: newPath.bounds(),
+      path: newPath,
+    );
 
     clipPathOpsPath.dispose();
     pathPathOpsPath.dispose();
@@ -82,8 +87,11 @@ class ClippingOptimizer extends Visitor<_Result, Node>
       }
     }
 
-    final ParentNode newParentNode = ParentNode(parentNode.attributes,
-        precalculatedTransform: parentNode.transform, children: newChildren);
+    final ParentNode newParentNode = ParentNode(
+      parentNode.attributes,
+      precalculatedTransform: parentNode.transform,
+      children: newChildren,
+    );
 
     final _Result result = _Result(newParentNode);
 
@@ -110,9 +118,10 @@ class ClippingOptimizer extends Visitor<_Result, Node>
   _Result visitResolvedMaskNode(ResolvedMaskNode maskNode, void data) {
     final _Result childResult = maskNode.child.accept(this, maskNode);
     final ResolvedMaskNode newMaskNode = ResolvedMaskNode(
-        child: childResult.node,
-        mask: maskNode.mask,
-        blendMode: maskNode.blendMode);
+      child: childResult.node,
+      mask: maskNode.mask,
+      blendMode: maskNode.blendMode,
+    );
     final _Result result = _Result(newMaskNode);
     result.children.add(childResult.node);
     result.childCount = 1;
@@ -138,14 +147,18 @@ class ClippingOptimizer extends Visitor<_Result, Node>
       if (childResult.deleteClipNode) {
         result = _Result(childResult.node);
       } else {
-        final ResolvedClipNode newClipNode =
-            ResolvedClipNode(child: childResult.node, clips: clipNode.clips);
+        final ResolvedClipNode newClipNode = ResolvedClipNode(
+          child: childResult.node,
+          clips: clipNode.clips,
+        );
         result = _Result(newClipNode);
       }
     } else {
       final _Result childResult = clipNode.child.accept(this, clipNode);
-      final ResolvedClipNode newClipNode =
-          ResolvedClipNode(child: childResult.node, clips: clipNode.clips);
+      final ResolvedClipNode newClipNode = ResolvedClipNode(
+        child: childResult.node,
+        clips: clipNode.clips,
+      );
       result = _Result(newClipNode);
     }
     return result;
@@ -192,7 +205,9 @@ class ClippingOptimizer extends Visitor<_Result, Node>
   @override
   // ignore: library_private_types_in_public_api
   _Result visitResolvedVerticesNode(
-      ResolvedVerticesNode verticesNode, Node data) {
+    ResolvedVerticesNode verticesNode,
+    Node data,
+  ) {
     final _Result result = _Result(verticesNode);
     return result;
   }
@@ -205,8 +220,11 @@ class ClippingOptimizer extends Visitor<_Result, Node>
       final _Result childResult = child.accept(this, layerNode);
       newChildren.add(childResult.node);
     }
-    final SaveLayerNode newLayerNode = SaveLayerNode(layerNode.attributes,
-        paint: layerNode.paint, children: newChildren);
+    final SaveLayerNode newLayerNode = SaveLayerNode(
+      layerNode.attributes,
+      paint: layerNode.paint,
+      children: newChildren,
+    );
 
     final _Result result = _Result(newLayerNode);
     result.children = newChildren;
@@ -240,7 +258,9 @@ class ClippingOptimizer extends Visitor<_Result, Node>
   @override
   // ignore: library_private_types_in_public_api
   _Result visitResolvedImageNode(
-      ResolvedImageNode resolvedImageNode, Node data) {
+    ResolvedImageNode resolvedImageNode,
+    Node data,
+  ) {
     final _Result result = _Result(resolvedImageNode);
     result.deleteClipNode = false;
     return result;
@@ -255,15 +275,14 @@ class ClippingOptimizer extends Visitor<_Result, Node>
   @override
   // ignore: library_private_types_in_public_api
   _Result visitResolvedTextPositionNode(
-      ResolvedTextPositionNode textPositionNode, void data) {
+    ResolvedTextPositionNode textPositionNode,
+    void data,
+  ) {
     return _Result(
-      ResolvedTextPositionNode(
-        textPositionNode.textPosition,
-        <Node>[
-          for (final Node child in textPositionNode.children)
-            child.accept(this, data).node
-        ],
-      ),
+      ResolvedTextPositionNode(textPositionNode.textPosition, <Node>[
+        for (final Node child in textPositionNode.children)
+          child.accept(this, data).node,
+      ]),
     );
   }
 }

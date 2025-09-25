@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -23,14 +23,13 @@ MaterialPage<void> pageBuilderForMaterialApp({
   required Object? arguments,
   required String restorationId,
   required Widget child,
-}) =>
-    MaterialPage<void>(
-      name: name,
-      arguments: arguments,
-      key: key,
-      restorationId: restorationId,
-      child: child,
-    );
+}) => MaterialPage<void>(
+  name: name,
+  arguments: arguments,
+  key: key,
+  restorationId: restorationId,
+  child: child,
+);
 
 /// Default error page implementation for Material.
 class MaterialErrorScreen extends StatelessWidget {
@@ -42,18 +41,18 @@ class MaterialErrorScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: const Text('Page Not Found')),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              SelectableText(error?.toString() ?? 'page not found'),
-              TextButton(
-                onPressed: () => context.go('/'),
-                child: const Text('Home'),
-              ),
-            ],
+    appBar: AppBar(title: const Text('Page Not Found')),
+    body: Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          SelectableText(error?.toString() ?? 'page not found'),
+          TextButton(
+            onPressed: () => context.go('/'),
+            child: const Text('Home'),
           ),
-        ),
-      );
+        ],
+      ),
+    ),
+  );
 }

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -17,7 +17,6 @@ import 'package:pigeon/pigeon.dart';
     ),
   ),
 )
-
 /// The types of error that can be encountered.
 ///
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdError.AdErrorCode.html.
@@ -221,6 +220,36 @@ enum UiElement {
   unknown,
 }
 
+/// Used to indicate the type of audio focus for a view.
+///
+/// See https://developer.android.com/reference/android/media/AudioManager#AUDIOFOCUS_GAIN.
+enum AudioManagerAudioFocus {
+  /// Used to indicate a gain of audio focus, or a request of audio focus,
+  /// of unknown duration.
+  gain,
+
+  /// Used to indicate a temporary gain or request of audio focus, anticipated
+  /// to last a short amount of time.
+  ///
+  /// Examples of temporary changes are the playback of driving directions, or
+  /// an event notification.
+  gainTransient,
+
+  /// Used to indicate a temporary request of audio focus, anticipated to last a
+  /// short amount of time, during which no other applications, or system
+  /// components, should play anything.
+  gainTransientExclusive,
+
+  /// Used to indicate a temporary request of audio focus, anticipated to last a
+  /// short amount of time, and where it is acceptable for other audio
+  /// applications to keep playing after having lowered their output level (also
+  /// referred to as "ducking").
+  gainTransientMayDuck,
+
+  /// Used to indicate no audio focus has been gained or lost, or requested.
+  none,
+}
+
 /// A base class for more specialized container interfaces.
 ///
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/BaseDisplayContainer.html.
@@ -419,6 +448,11 @@ abstract class ContentProgressProvider {
   ),
 )
 abstract class AdsManager extends BaseManager {
+  /// List of content time offsets in seconds at which ad breaks are scheduled.
+  ///
+  /// The list will be empty if no ad breaks are scheduled.
+  late List<double> adCuePoints;
+
   /// Discards current ad break and resumes content.
   void discardAdBreak();
 
@@ -427,11 +461,6 @@ abstract class AdsManager extends BaseManager {
 
   /// Starts playing the ads.
   void start();
-
-  /// List of content time offsets in seconds at which ad breaks are scheduled.
-  ///
-  /// The list will be empty if no ad breaks are scheduled.
-  List<double> getAdCuePoints();
 
   /// Resumes the current ad.
   void resume();
@@ -485,7 +514,7 @@ abstract class BaseManager {
 
 /// Event to notify publisher that an event occurred with an Ad.
 ///
-/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdEvent.html.
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/kotlin/com/google/ads/interactivemedia/v3/api/AdEvent.
 @ProxyApi(
   kotlinOptions: KotlinProxyApiOptions(
     fullClassName: 'com.google.ads.interactivemedia.v3.api.AdEvent',
@@ -497,6 +526,9 @@ abstract class AdEvent {
 
   /// A map containing any extra ad data for the event, if needed.
   late final Map<String, String>? adData;
+
+  /// The ad with which this event is associated.
+  late final Ad? ad;
 }
 
 /// Factory class for creating SDK objects.
@@ -682,9 +714,7 @@ abstract class FrameLayout extends ViewGroup {
 ///
 /// See https://developer.android.com/reference/android/view/ViewGroup.
 @ProxyApi(
-  kotlinOptions: KotlinProxyApiOptions(
-    fullClassName: 'android.view.ViewGroup',
-  ),
+  kotlinOptions: KotlinProxyApiOptions(fullClassName: 'android.view.ViewGroup'),
 )
 abstract class ViewGroup extends View {
   /// Adds a child view.
@@ -708,6 +738,7 @@ abstract class VideoView extends View {
   VideoView();
 
   /// Callback to be invoked when the media source is ready for playback.
+  @async
   late final void Function(MediaPlayer player)? onPrepared;
 
   /// Callback to be invoked when playback of a media source has completed.
@@ -724,6 +755,12 @@ abstract class VideoView extends View {
   ///
   /// In milliseconds.
   int getCurrentPosition();
+
+  /// Sets which type of audio focus will be requested during the playback, or
+  /// configures playback to not request audio focus.
+  ///
+  /// Only available on Android API 26+. Noop on lower versions.
+  void setAudioFocusRequest(AudioManagerAudioFocus focusGain);
 }
 
 /// This class represents the basic building block for user interface components.
@@ -824,6 +861,7 @@ abstract class VideoAdPlayer {
   late final void Function(AdMediaInfo adMediaInfo, AdPodInfo adPodInfo) loadAd;
 
   /// Pauses playing the current ad.
+  @async
   late final void Function(AdMediaInfo adMediaInfo) pauseAd;
 
   /// Starts or resumes playing the video ad referenced by the AdMediaInfo,

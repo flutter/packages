@@ -1,14 +1,16 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-final GlobalKey<NavigatorState> _rootNavigatorKey =
-    GlobalKey<NavigatorState>(debugLabel: 'root');
-final GlobalKey<NavigatorState> _shellNavigatorKey =
-    GlobalKey<NavigatorState>(debugLabel: 'shell');
+final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(
+  debugLabel: 'root',
+);
+final GlobalKey<NavigatorState> _shellNavigatorKey = GlobalKey<NavigatorState>(
+  debugLabel: 'shell',
+);
 
 // This scenario demonstrates how to set up nested navigation using ShellRoute,
 // which is a pattern where an additional Navigator is placed in the widget tree
@@ -125,9 +127,7 @@ class ShellRouteExampleApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: ThemeData(primarySwatch: Colors.blue),
       routerConfig: _router,
     );
   }
@@ -154,16 +154,10 @@ class ScaffoldWithNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: child,
-      appBar: AppBar(
-        title: Text(title),
-        leading: _buildLeadingButton(context),
-      ),
+      appBar: AppBar(title: Text(title), leading: _buildLeadingButton(context)),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'A Screen',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'A Screen'),
           BottomNavigationBarItem(
             icon: Icon(Icons.business),
             label: 'B Screen',
@@ -187,9 +181,10 @@ class ScaffoldWithNavBar extends StatelessWidget {
     final RouteMatchList currentConfiguration =
         GoRouter.of(context).routerDelegate.currentConfiguration;
     final RouteMatch lastMatch = currentConfiguration.last;
-    final Uri location = lastMatch is ImperativeRouteMatch
-        ? lastMatch.matches.uri
-        : currentConfiguration.uri;
+    final Uri location =
+        lastMatch is ImperativeRouteMatch
+            ? lastMatch.matches.uri
+            : currentConfiguration.uri;
     final bool canPop = location.pathSegments.length > 1;
     return canPop ? BackButton(onPressed: GoRouter.of(context).pop) : null;
   }
@@ -283,10 +278,7 @@ class ScreenC extends StatelessWidget {
 /// The details screen for either the A, B or C screen.
 class DetailsScreen extends StatelessWidget {
   /// Constructs a [DetailsScreen].
-  const DetailsScreen({
-    required this.label,
-    super.key,
-  });
+  const DetailsScreen({required this.label, super.key});
 
   /// The label to display in the center of the screen.
   final String label;

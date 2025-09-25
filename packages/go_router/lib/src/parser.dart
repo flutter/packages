@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -21,10 +21,11 @@ import 'router.dart';
 ///
 /// The returned [RouteMatchList] is used as parsed result for the
 /// [GoRouterDelegate].
-typedef ParserExceptionHandler = RouteMatchList Function(
-  BuildContext context,
-  RouteMatchList routeMatchList,
-);
+typedef ParserExceptionHandler =
+    RouteMatchList Function(
+      BuildContext context,
+      RouteMatchList routeMatchList,
+    );
 
 /// Converts between incoming URLs and a [RouteMatchList] using [RouteMatcher].
 /// Also performs redirection using [RouteRedirector].
@@ -67,10 +68,13 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
       // This is a result of browser backward/forward button or state
       // restoration. In this case, the route match list is already stored in
       // the state.
-      final RouteMatchList matchList =
-          _routeMatchListCodec.decode(state as Map<Object?, Object?>);
-      return debugParserFuture = _redirect(context, matchList)
-          .then<RouteMatchList>((RouteMatchList value) {
+      final RouteMatchList matchList = _routeMatchListCodec.decode(
+        state as Map<Object?, Object?>,
+      );
+      return debugParserFuture = _redirect(
+        context,
+        matchList,
+      ).then<RouteMatchList>((RouteMatchList value) {
         if (value.isError && onParserException != null) {
           // TODO(chunhtai): Figure out what to return if context is invalid.
           // ignore: use_build_context_synchronously
@@ -107,8 +111,10 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
 
       assert(() {
         if (matchList.isNotEmpty) {
-          assert(!matchList.last.route.redirectOnly,
-              'A redirect-only route must redirect to location different from itself.\n The offending route: ${matchList.last.route}');
+          assert(
+            !matchList.last.route.redirectOnly,
+            'A redirect-only route must redirect to location different from itself.\n The offending route: ${matchList.last.route}',
+          );
         }
         return true;
       }());
@@ -123,9 +129,11 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
 
   @override
   Future<RouteMatchList> parseRouteInformation(
-      RouteInformation routeInformation) {
+    RouteInformation routeInformation,
+  ) {
     throw UnimplementedError(
-        'use parseRouteInformationWithDependencies instead');
+      'use parseRouteInformationWithDependencies instead',
+    );
   }
 
   /// for use by the Router architecture as part of the RouteInformationParser
@@ -159,9 +167,14 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
   }
 
   Future<RouteMatchList> _redirect(
-      BuildContext context, RouteMatchList routeMatch) {
-    final FutureOr<RouteMatchList> redirectedFuture = configuration
-        .redirect(context, routeMatch, redirectHistory: <RouteMatchList>[]);
+    BuildContext context,
+    RouteMatchList routeMatch,
+  ) {
+    final FutureOr<RouteMatchList> redirectedFuture = configuration.redirect(
+      context,
+      routeMatch,
+      redirectHistory: <RouteMatchList>[],
+    );
     if (redirectedFuture is RouteMatchList) {
       return SynchronousFuture<RouteMatchList>(redirectedFuture);
     }
@@ -220,7 +233,10 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
   }
 
   ValueKey<String> _getUniqueValueKey() {
-    return ValueKey<String>(String.fromCharCodes(
-        List<int>.generate(32, (_) => _random.nextInt(33) + 89)));
+    return ValueKey<String>(
+      String.fromCharCodes(
+        List<int>.generate(32, (_) => _random.nextInt(33) + 89),
+      ),
+    );
   }
 }

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -135,9 +135,9 @@ void main() {
 MockImaSdkSettings _mockImaSdkSettings() {
   final MockImaSdkFactory mockImaSdkFactory = MockImaSdkFactory();
   final MockImaSdkSettings mockImaSdkSettings = MockImaSdkSettings();
-  when(mockImaSdkFactory.createImaSdkSettings()).thenAnswer(
-    (_) async => mockImaSdkSettings,
-  );
+  when(
+    mockImaSdkFactory.createImaSdkSettings(),
+  ).thenAnswer((_) async => mockImaSdkSettings);
   ima.PigeonOverrides.imaSdkFactory_instance = mockImaSdkFactory;
 
   return mockImaSdkSettings;

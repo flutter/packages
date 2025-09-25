@@ -1,6 +1,11 @@
-## 2.8.4
+## 2.8.5
 
 * Removes unnecessary workarounds for detecting initialized status.
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
+## 2.8.4
+
+* Simplifies native code.
 
 ## 2.8.3
 

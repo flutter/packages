@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -10,18 +10,18 @@ void main() {
   final Set<JavascriptChannel> channels = <JavascriptChannel>{
     JavascriptChannel(
       name: 'js_channel_1',
-      onMessageReceived: (JavascriptMessage message) =>
-          log['js_channel_1'] = message.message,
+      onMessageReceived:
+          (JavascriptMessage message) => log['js_channel_1'] = message.message,
     ),
     JavascriptChannel(
       name: 'js_channel_2',
-      onMessageReceived: (JavascriptMessage message) =>
-          log['js_channel_2'] = message.message,
+      onMessageReceived:
+          (JavascriptMessage message) => log['js_channel_2'] = message.message,
     ),
     JavascriptChannel(
       name: 'js_channel_3',
-      onMessageReceived: (JavascriptMessage message) =>
-          log['js_channel_3'] = message.message,
+      onMessageReceived:
+          (JavascriptMessage message) => log['js_channel_3'] = message.message,
     ),
   };
 
@@ -30,8 +30,9 @@ void main() {
   });
 
   test('ctor should initialize with channels.', () {
-    final JavascriptChannelRegistry registry =
-        JavascriptChannelRegistry(channels);
+    final JavascriptChannelRegistry registry = JavascriptChannelRegistry(
+      channels,
+    );
 
     expect(registry.channels.length, 3);
     for (final JavascriptChannel channel in channels) {
@@ -39,79 +40,90 @@ void main() {
     }
   });
 
-  test('onJavascriptChannelMessage should forward message on correct channel.',
-      () {
-    final JavascriptChannelRegistry registry =
-        JavascriptChannelRegistry(channels);
+  test(
+    'onJavascriptChannelMessage should forward message on correct channel.',
+    () {
+      final JavascriptChannelRegistry registry = JavascriptChannelRegistry(
+        channels,
+      );
 
-    registry.onJavascriptChannelMessage(
-      'js_channel_2',
-      'test message on channel 2',
-    );
+      registry.onJavascriptChannelMessage(
+        'js_channel_2',
+        'test message on channel 2',
+      );
 
-    expect(
-        log,
-        containsPair(
-          'js_channel_2',
-          'test message on channel 2',
-        ));
-  });
+      expect(log, containsPair('js_channel_2', 'test message on channel 2'));
+    },
+  );
 
   test(
-      'onJavascriptChannelMessage should throw ArgumentError when message arrives on non-existing channel.',
-      () {
-    final JavascriptChannelRegistry registry =
-        JavascriptChannelRegistry(channels);
+    'onJavascriptChannelMessage should throw ArgumentError when message arrives on non-existing channel.',
+    () {
+      final JavascriptChannelRegistry registry = JavascriptChannelRegistry(
+        channels,
+      );
 
-    expect(
+      expect(
         () => registry.onJavascriptChannelMessage(
-              'js_channel_4',
-              'test message on channel 2',
-            ),
+          'js_channel_4',
+          'test message on channel 2',
+        ),
         throwsA(
-          isA<ArgumentError>().having((ArgumentError error) => error.message,
-              'message', 'No channel registered with name js_channel_4.'),
-        ));
-  });
+          isA<ArgumentError>().having(
+            (ArgumentError error) => error.message,
+            'message',
+            'No channel registered with name js_channel_4.',
+          ),
+        ),
+      );
+    },
+  );
 
   test(
-      'updateJavascriptChannelsFromSet should clear all channels when null is supplied.',
-      () {
-    final JavascriptChannelRegistry registry =
-        JavascriptChannelRegistry(channels);
+    'updateJavascriptChannelsFromSet should clear all channels when null is supplied.',
+    () {
+      final JavascriptChannelRegistry registry = JavascriptChannelRegistry(
+        channels,
+      );
 
-    expect(registry.channels.length, 3);
+      expect(registry.channels.length, 3);
 
-    registry.updateJavascriptChannelsFromSet(null);
+      registry.updateJavascriptChannelsFromSet(null);
 
-    expect(registry.channels, isEmpty);
-  });
+      expect(registry.channels, isEmpty);
+    },
+  );
 
-  test('updateJavascriptChannelsFromSet should update registry with new set.',
-      () {
-    final JavascriptChannelRegistry registry =
-        JavascriptChannelRegistry(channels);
+  test(
+    'updateJavascriptChannelsFromSet should update registry with new set.',
+    () {
+      final JavascriptChannelRegistry registry = JavascriptChannelRegistry(
+        channels,
+      );
 
-    expect(registry.channels.length, 3);
+      expect(registry.channels.length, 3);
 
-    final Set<JavascriptChannel> newChannels = <JavascriptChannel>{
-      JavascriptChannel(
-        name: 'new_js_channel_1',
-        onMessageReceived: (JavascriptMessage message) =>
-            log['new_js_channel_1'] = message.message,
-      ),
-      JavascriptChannel(
-        name: 'new_js_channel_2',
-        onMessageReceived: (JavascriptMessage message) =>
-            log['new_js_channel_2'] = message.message,
-      ),
-    };
+      final Set<JavascriptChannel> newChannels = <JavascriptChannel>{
+        JavascriptChannel(
+          name: 'new_js_channel_1',
+          onMessageReceived:
+              (JavascriptMessage message) =>
+                  log['new_js_channel_1'] = message.message,
+        ),
+        JavascriptChannel(
+          name: 'new_js_channel_2',
+          onMessageReceived:
+              (JavascriptMessage message) =>
+                  log['new_js_channel_2'] = message.message,
+        ),
+      };
 
-    registry.updateJavascriptChannelsFromSet(newChannels);
+      registry.updateJavascriptChannelsFromSet(newChannels);
 
-    expect(registry.channels.length, 2);
-    for (final JavascriptChannel channel in newChannels) {
-      expect(registry.channels[channel.name], channel);
-    }
-  });
+      expect(registry.channels.length, 2);
+      for (final JavascriptChannel channel in newChannels) {
+        expect(registry.channels[channel.name], channel);
+      }
+    },
+  );
 }

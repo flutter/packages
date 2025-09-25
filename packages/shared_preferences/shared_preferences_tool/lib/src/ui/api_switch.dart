@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -10,9 +10,7 @@ import '../shared_preferences_state_provider.dart';
 /// A switch to toggle between the legacy and async APIs.
 class ApiSwitch extends StatelessWidget {
   /// Default constructor for [ApiSwitch].
-  const ApiSwitch({
-    super.key,
-  });
+  const ApiSwitch({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -21,16 +19,15 @@ class ApiSwitch extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: denseSpacing),
       decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(color: Theme.of(context).focusColor),
-        ),
+        border: Border(bottom: BorderSide(color: Theme.of(context).focusColor)),
       ),
       child: Center(
         child: DevToolsToggleButtonGroup(
           selectedStates: <bool>[legacyApi, !legacyApi],
           onPressed: (int index) {
-            context.sharedPreferencesStateNotifier
-                .selectApi(legacyApi: index == 0);
+            context.sharedPreferencesStateNotifier.selectApi(
+              legacyApi: index == 0,
+            );
           },
           children: const <Widget>[
             Padding(

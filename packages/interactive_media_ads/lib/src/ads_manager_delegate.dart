@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -36,11 +36,11 @@ class AdsManagerDelegate {
     void Function(AdEvent event)? onAdEvent,
     void Function(AdErrorEvent event)? onAdErrorEvent,
   }) : this.fromPlatformCreationParams(
-          PlatformAdsManagerDelegateCreationParams(
-            onAdEvent: onAdEvent,
-            onAdErrorEvent: onAdErrorEvent,
-          ),
-        );
+         PlatformAdsManagerDelegateCreationParams(
+           onAdEvent: onAdEvent,
+           onAdErrorEvent: onAdErrorEvent,
+         ),
+       );
 
   /// Constructs an [AdsManagerDelegate] from creation params for a specific platform.
   ///
