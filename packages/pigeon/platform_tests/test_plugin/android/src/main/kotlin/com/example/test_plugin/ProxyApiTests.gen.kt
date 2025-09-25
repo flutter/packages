@@ -77,6 +77,10 @@ class ProxyApiTestsPigeonInstanceManager(
 
   // Extends WeakReference and overrides the `equals` and `hashCode` methods using identity rather
   // than equality.
+  //
+  // Two `IdentityWeakReference`s are equal if either
+  // 1: `get()` returns the identical nonnull value for both references.
+  // 2: `get()` returns null for both references and the references are identical.
   class IdentityWeakReference<T : Any> : java.lang.ref.WeakReference<T> {
     private val savedHashCode: Int
 
