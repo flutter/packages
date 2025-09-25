@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -74,7 +74,7 @@ void main() {
           navigationAttempts.add(next.uri.path);
           currentPath = current.uri.path;
           return next.uri.path.contains('blocked')
-              ? const Block()
+              ? const Block.stop()
               : const Allow();
         },
         routes: <RouteBase>[
@@ -144,7 +144,7 @@ void main() {
         ) async {
           onEnterCallCount++;
           return next.uri.path.contains('block')
-              ? const Block()
+              ? const Block.stop()
               : const Allow();
         },
         routes: <RouteBase>[
@@ -213,7 +213,7 @@ void main() {
             GoRouter goRouter,
           ) async {
             if (next.uri.path == '/recursive') {
-              return Block(then: () => goRouter.push('/recursive'));
+              return Block.then(() => goRouter.push('/recursive'));
             }
             return const Allow();
           },
@@ -287,7 +287,7 @@ void main() {
           if (await isAuthenticated()) {
             return const Allow();
           }
-          return Block(then: () => router.go('/sign-in'));
+          return Block.then(() => router.go('/sign-in'));
         },
         routes: <RouteBase>[
           GoRoute(
@@ -350,14 +350,11 @@ void main() {
           navigationAttempts.add(next.uri.path);
 
           if (next.uri.path == '/requires-auth') {
-            return Block(
-              then:
-                  () => goRouter.goNamed(
-                    'login-page',
-                    queryParameters: <String, String>{
-                      'from': next.uri.toString(),
-                    },
-                  ),
+            return Block.then(
+              () => goRouter.goNamed(
+                'login-page',
+                queryParameters: <String, String>{'from': next.uri.toString()},
+              ),
             );
           }
           return const Allow();
@@ -448,7 +445,7 @@ void main() {
             }
           });
 
-          return const Block();
+          return const Block.stop();
         },
         routes: <RouteBase>[
           GoRoute(
@@ -515,7 +512,7 @@ void main() {
           if (next.uri.path == '/old-page') {
             navigationHistory.add('Replacing with /new-version');
             await goRouter.replace<void>('/new-version');
-            return const Block();
+            return const Block.stop();
           }
           return const Allow();
         },
@@ -576,7 +573,7 @@ void main() {
           if (next.uri.path == '/outdated') {
             navigationLog.add('Push replacing with /updated');
             await goRouter.pushReplacement('/updated');
-            return const Block();
+            return const Block.stop();
           }
           return const Allow();
         },
@@ -699,7 +696,7 @@ void main() {
               },
             );
             // 2. Block the original navigation to '/protected'
-            return const Block();
+            return const Block.stop();
           },
           routes: <RouteBase>[
             GoRoute(
@@ -835,7 +832,7 @@ void main() {
             // Step 1: Go to a different route
             navigationChain.add('Step 1: Go to /step-one');
             // We're blocking the original navigation and deferring the go
-            return Block(then: () => goRouter.go('/step-one'));
+            return Block.then(() => goRouter.go('/step-one'));
           }
 
           // When we reach step-one, mark test as complete
@@ -988,7 +985,7 @@ void main() {
           onEnterCallCount++;
           lastOnEnterBlocked = next.uri.path == '/blocked';
           if (lastOnEnterBlocked) {
-            return const Block();
+            return const Block.stop();
           }
           return const Allow();
         },
@@ -1053,7 +1050,7 @@ void main() {
           capturedNextPath = next.uri.path;
 
           if (next.uri.path == '/protected') {
-            return const Block();
+            return const Block.stop();
           }
           return const Allow();
         },
@@ -1137,7 +1134,7 @@ void main() {
           onEnterCount++;
           // Simulate auth check - block protected route if not allowed
           if (next.uri.path == '/protected' && !allowNavigation) {
-            return const Block();
+            return const Block.stop();
           }
           return const Allow();
         },
@@ -1390,8 +1387,8 @@ void main() {
       WidgetTester tester,
     ) async {
       // With redirectLimit=1:
-      //  - Block() (no then) should reset history so repeated attempts don't hit the limit.
-      //  - Block(then: go(...)) keeps history and will exceed the limit.
+      //  - Block.stop() resets history so repeated attempts don't hit the limit.
+      //  - Block.then(() => go(...)) keeps history and will exceed the limit.
       int onExceptionCalls = 0;
       final Completer<void> exceededCompleter = Completer<void>();
 
@@ -1407,11 +1404,11 @@ void main() {
         onEnter: (_, __, GoRouterState next, GoRouter goRouter) async {
           if (next.uri.path == '/blocked-once') {
             // Hard stop: no then -> history should reset
-            return const Block();
+            return const Block.stop();
           }
           if (next.uri.path == '/chain') {
             // Chaining block: keep history -> will exceed limit
-            return Block(then: () => goRouter.go('/chain'));
+            return Block.then(() => goRouter.go('/chain'));
           }
           return const Allow();
         },

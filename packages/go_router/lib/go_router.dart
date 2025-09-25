@@ -15,7 +15,8 @@ export 'src/misc/custom_parameter.dart';
 export 'src/misc/errors.dart';
 export 'src/misc/extensions.dart';
 export 'src/misc/inherited_router.dart';
-export 'src/on_enter.dart' show Allow, Block, OnEnterResult;
+export 'src/on_enter.dart'
+    show Allow, Block, OnEnterResult, OnEnterThenCallback;
 export 'src/pages/custom_transition_page.dart';
 export 'src/parser.dart';
 export 'src/route.dart';

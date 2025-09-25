@@ -247,6 +247,7 @@ class RouteConfiguration {
   List<RouteBase> get routes => _routingConfig.value.routes;
 
   /// Legacy top level page redirect.
+  ///
   /// This is handled via [applyTopLegacyRedirect] and runs at most once per navigation.
   GoRouterRedirect get topRedirect => _routingConfig.value.redirect;
 
@@ -394,8 +395,9 @@ class RouteConfiguration {
     return const <RouteMatchBase>[];
   }
 
-  /// Processes route-level redirects by returning a new [RouteMatchList] representing the new
-  /// location. This method now handles ONLY route-level redirects.
+  /// Processes route-level redirects by returning a new [RouteMatchList] representing the new location.
+  ///
+  /// This method now handles ONLY route-level redirects.
   /// Top-level redirects are handled by applyTopLegacyRedirect.
   FutureOr<RouteMatchList> redirect(
     BuildContext context,

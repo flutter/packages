@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -83,7 +83,8 @@ class App extends StatelessWidget {
       /// Top-level guard runs BEFORE legacy top-level redirects and route-level redirects.
       /// Return:
       ///  - `Allow()` to proceed (optionally with `then:` side-effects)
-      ///  - `Block()` to cancel navigation (optionally with `then:` to defer an action/redirect)
+      ///  - `Block.stop()` to cancel navigation immediately
+      ///  - `Block.then(() => ...)` to cancel navigation and run follow-up work
       onEnter: (
         BuildContext context,
         GoRouterState current,
@@ -114,7 +115,7 @@ class App extends StatelessWidget {
                 // Do the real work in the background; don’t keep the user waiting.
                 await _processReferralCodeInBackground(context, code);
               }
-              return const Block(); // keep user where they are
+              return const Block.stop(); // keep user where they are
             }
 
           // Simulate an OAuth callback: do background work + toast; never show a page at /auth
@@ -123,7 +124,7 @@ class App extends StatelessWidget {
               final String? token = next.uri.queryParameters['token'];
               if (token != null) {
                 _handleAuthToken(context, token);
-                return const Block(); // cancel showing any /auth page
+                return const Block.stop(); // cancel showing any /auth page
               }
               return const Allow();
             }
@@ -140,7 +141,7 @@ class App extends StatelessWidget {
                 // Chaining block: cancel the original nav, then redirect to /login.
                 // This preserves redirection history to detect loops.
                 final String from = Uri.encodeComponent(next.uri.toString());
-                return Block(then: () => router.go('/login?from=$from'));
+                return Block.then(() => router.go('/login?from=$from'));
               }
               // ignore: dead_code
               return const Allow();
@@ -312,7 +313,7 @@ class HomeScreen extends StatelessWidget {
           const _DeepLinkButton(
             label: 'Protected Route (redirects to login)',
             path: '/protected',
-            description: 'Top-level onEnter returns Block(then: go(...))',
+            description: 'Top-level onEnter returns Block.then(() => go(...))',
           ),
           const SizedBox(height: 8),
           const _DeepLinkButton(

@@ -478,7 +478,7 @@ class _OnEnterHandler {
     return onEnterResultFuture.then<RouteMatchList>(
       (OnEnterResult result) async {
         RouteMatchList matchList;
-        final FutureOr<void> Function()? callback = result.then;
+        final OnEnterThenCallback? callback = result.then;
 
         if (result is Allow) {
           matchList = await onCanEnter();
@@ -490,7 +490,7 @@ class _OnEnterHandler {
           );
           matchList = await onCanNotEnter();
 
-          // Treat `Block()` (no callback) as the explicit hard stop.
+          // Treat `Block.stop()` as the explicit hard stop.
           // We intentionally don't try to detect "no-op" callbacks; any
           // Block with `then` keeps history so chained guards can detect loops.
           final bool hardStop = result is Block && callback == null;
@@ -501,26 +501,20 @@ class _OnEnterHandler {
         }
 
         if (callback != null) {
-          // Schedule outside the parse cycle to avoid re-entrancy if the
-          // callback triggers navigation or UI work. Errors are reported but
-          // the committed navigation remains intact.
-          unawaited(
-            Future<void>.microtask(callback).catchError((
-              Object error,
-              StackTrace stack,
-            ) {
-              // Log error but don't crash - navigation already committed
-              log('Error in then callback: $error');
-              FlutterError.reportError(
-                FlutterErrorDetails(
-                  exception: error,
-                  stack: stack,
-                  library: 'go_router',
-                  context: ErrorDescription('while executing then callback'),
-                ),
-              );
-            }),
-          );
+          try {
+            await Future<void>.sync(callback);
+          } catch (error, stack) {
+            // Log error but don't crash - navigation already committed
+            log('Error in then callback: $error');
+            FlutterError.reportError(
+              FlutterErrorDetails(
+                exception: error,
+                stack: stack,
+                library: 'go_router',
+                context: ErrorDescription('while executing then callback'),
+              ),
+            );
+          }
         }
 
         return matchList;

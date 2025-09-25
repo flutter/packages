@@ -1,8 +1,11 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import 'dart:async';
+
+/// Signature for callbacks invoked after an [OnEnterResult] is resolved.
+typedef OnEnterThenCallback = FutureOr<void> Function();
 
 /// The result of an onEnter callback.
 ///
@@ -15,32 +18,36 @@ sealed class OnEnterResult {
 
   /// Executed after the decision is committed.
   /// Errors are reported and do not revert navigation.
-  final FutureOr<void> Function()? then;
+  final OnEnterThenCallback? then;
 }
 
 /// Allows the navigation to proceed.
+///
+/// The [then] callback runs **after** the navigation is committed. Errors
+/// thrown by this callback are reported via `FlutterError.reportError` and
+/// do **not** undo the already-committed navigation.
 final class Allow extends OnEnterResult {
-  /// Creates an [Allow] result.
-  ///
-  /// The [then] callback runs **after** the navigation is committed. Errors
-  /// thrown by this callback are reported via `FlutterError.reportError` and
-  /// do **not** undo the already-committed navigation.
+  /// Creates an [Allow] result with an optional [then] callback executed after
+  /// navigation completes.
   const Allow({super.then});
 }
 
 /// Blocks the navigation from proceeding.
+///
+/// Use [Block.stop] for a "hard stop" that resets the redirection history, or
+/// [Block.then] to chain a callback after the block (commonly to redirect
+/// elsewhere, e.g. `router.go('/login')`).
+///
+/// Note: We don't introspect callback bodies. Even an empty closure still
+/// counts as chaining, so prefer [Block.stop] when you want the hard stop
+/// behavior.
 final class Block extends OnEnterResult {
-  /// Creates a [Block] result.
-  ///
-  /// The [then] callback is executed after the navigation is blocked.
-  /// Commonly used to navigate to a different route (e.g. `router.go('/login')`).
-  ///
-  /// **History behavior:** a plain `Block()` (no `then`) is a "hard stop" and
-  /// resets `onEnter`'s internal redirection history so subsequent attempts are
-  /// evaluated fresh; `Block(then: ...)` keeps history to detect loops.
-  ///
-  /// Note: We don't introspect callback bodies. Even an empty closure
-  /// (`Block(then: () {})`) counts as chaining. Omit `then` entirely when you
-  /// want the hard stop behavior.
-  const Block({super.then});
+  /// Creates a [Block] that stops navigation without running a follow-up
+  /// callback. Resets the redirection history so the next attempt is evaluated
+  /// fresh.
+  const Block.stop() : super();
+
+  /// Creates a [Block] that runs [then] after the navigation is blocked.
+  /// Keeps the redirection history to detect loops during chained redirects.
+  const Block.then(OnEnterThenCallback then) : super(then: then);
 }

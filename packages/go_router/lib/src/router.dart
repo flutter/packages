@@ -107,11 +107,11 @@ class RoutingConfig {
   ///   onEnter: (BuildContext context, GoRouterState current,
   ///             GoRouterState next, GoRouter router) async {
   ///     if (next.uri.path == '/login' && isUserLoggedIn()) {
-  ///       return const Block(); // Prevent navigation to /login
+  ///       return const Block.stop(); // Prevent navigation to /login
   ///     }
   ///     if (next.uri.path == '/protected' && !isUserLoggedIn()) {
   ///       // Block and redirect to login
-  ///       return Block(then: () => router.go('/login?from=${next.uri}'));
+  ///       return Block.then(() => router.go('/login?from=${next.uri}'));
   ///     }
   ///     return const Allow(); // Allow navigation
   ///   },
