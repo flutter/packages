@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -17,8 +17,8 @@ final class IOSAdsManagerDelegateCreationParams
     super.onAdEvent,
     super.onAdErrorEvent,
     @visibleForTesting InteractiveMediaAdsProxy? proxy,
-  })  : _proxy = proxy ?? const InteractiveMediaAdsProxy(),
-        super();
+  }) : _proxy = proxy ?? const InteractiveMediaAdsProxy(),
+       super();
 
   /// Creates an [IOSAdsManagerDelegateCreationParams] from an instance of
   /// [PlatformAdsManagerDelegateCreationParams].
@@ -53,8 +53,9 @@ final class IOSAdsManagerDelegate extends PlatformAdsManagerDelegate {
   late final IOSAdsManagerDelegateCreationParams _iosParams =
       params is IOSAdsManagerDelegateCreationParams
           ? params as IOSAdsManagerDelegateCreationParams
-          : IOSAdsManagerDelegateCreationParams
-              .fromPlatformAdsManagerDelegateCreationParams(params);
+          : IOSAdsManagerDelegateCreationParams.fromPlatformAdsManagerDelegateCreationParams(
+            params,
+          );
 
   // This value is created in a static method because the callback methods for
   // any wrapped classes must not reference the encapsulating object. This is to
@@ -67,11 +68,10 @@ final class IOSAdsManagerDelegate extends PlatformAdsManagerDelegate {
         interfaceDelegate.target?.params.onAdEvent?.call(
           AdEvent(
             type: toInterfaceEventType(event.type),
-            adData: event.adData?.map(
-                  (String? key, Object? value) {
-                    return MapEntry<String, String>(key!, value.toString());
-                  },
-                ) ??
+            adData:
+                event.adData?.map((String? key, Object? value) {
+                  return MapEntry<String, String>(key!, value.toString());
+                }) ??
                 <String, String>{},
           ),
         );

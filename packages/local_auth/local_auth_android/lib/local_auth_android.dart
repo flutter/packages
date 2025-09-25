@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -17,9 +17,8 @@ export 'package:local_auth_platform_interface/types/biometric_type.dart';
 /// The implementation of [LocalAuthPlatform] for Android.
 class LocalAuthAndroid extends LocalAuthPlatform {
   /// Creates a new plugin implementation instance.
-  LocalAuthAndroid({
-    @visibleForTesting LocalAuthApi? api,
-  }) : _api = api ?? LocalAuthApi();
+  LocalAuthAndroid({@visibleForTesting LocalAuthApi? api})
+    : _api = api ?? LocalAuthApi();
 
   /// Registers this class as the default instance of [LocalAuthPlatform].
   static void registerWith() {
@@ -36,12 +35,14 @@ class LocalAuthAndroid extends LocalAuthPlatform {
   }) async {
     assert(localizedReason.isNotEmpty);
     final AuthResult result = await _api.authenticate(
-        AuthOptions(
-            biometricOnly: options.biometricOnly,
-            sensitiveTransaction: options.sensitiveTransaction,
-            sticky: options.stickyAuth,
-            useErrorDialgs: options.useErrorDialogs),
-        _pigeonStringsFromAuthMessages(localizedReason, authMessages));
+      AuthOptions(
+        biometricOnly: options.biometricOnly,
+        sensitiveTransaction: options.sensitiveTransaction,
+        sticky: options.stickyAuth,
+        useErrorDialgs: options.useErrorDialogs,
+      ),
+      _pigeonStringsFromAuthMessages(localizedReason, authMessages),
+    );
     // TODO(stuartmorgan): Replace this with structured errors, coordinated
     // across all platform implementations, per
     // https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#platform-exception-handling
@@ -54,37 +55,47 @@ class LocalAuthAndroid extends LocalAuthPlatform {
         return false;
       case AuthResult.errorAlreadyInProgress:
         throw PlatformException(
-            code: 'auth_in_progress', message: 'Authentication in progress');
+          code: 'auth_in_progress',
+          message: 'Authentication in progress',
+        );
       case AuthResult.errorNoActivity:
         throw PlatformException(
-            code: 'no_activity',
-            message: 'local_auth plugin requires a foreground activity');
+          code: 'no_activity',
+          message: 'local_auth plugin requires a foreground activity',
+        );
       case AuthResult.errorNotFragmentActivity:
         throw PlatformException(
-            code: 'no_fragment_activity',
-            message:
-                'local_auth plugin requires activity to be a FragmentActivity.');
+          code: 'no_fragment_activity',
+          message:
+              'local_auth plugin requires activity to be a FragmentActivity.',
+        );
       case AuthResult.errorNotAvailable:
         throw PlatformException(
-            code: 'NotAvailable',
-            message: 'Security credentials not available.');
+          code: 'NotAvailable',
+          message: 'Security credentials not available.',
+        );
       case AuthResult.errorNotEnrolled:
         throw PlatformException(
-            code: 'NotEnrolled',
-            message: 'No Biometrics enrolled on this device.');
+          code: 'NotEnrolled',
+          message: 'No Biometrics enrolled on this device.',
+        );
       case AuthResult.errorLockedOutTemporarily:
         throw PlatformException(
-            code: 'LockedOut',
-            message: 'The operation was canceled because the API is locked out '
-                'due to too many attempts. This occurs after 5 failed '
-                'attempts, and lasts for 30 seconds.');
+          code: 'LockedOut',
+          message:
+              'The operation was canceled because the API is locked out '
+              'due to too many attempts. This occurs after 5 failed '
+              'attempts, and lasts for 30 seconds.',
+        );
       case AuthResult.errorLockedOutPermanently:
         throw PlatformException(
-            code: 'PermanentlyLockedOut',
-            message: 'The operation was canceled because ERROR_LOCKOUT '
-                'occurred too many times. Biometric authentication is disabled '
-                'until the user unlocks with strong authentication '
-                '(PIN/Pattern/Password)');
+          code: 'PermanentlyLockedOut',
+          message:
+              'The operation was canceled because ERROR_LOCKOUT '
+              'occurred too many times. Biometric authentication is disabled '
+              'until the user unlocks with strong authentication '
+              '(PIN/Pattern/Password)',
+        );
     }
   }
 
@@ -113,7 +124,9 @@ class LocalAuthAndroid extends LocalAuthPlatform {
   Future<bool> stopAuthentication() async => _api.stopAuthentication();
 
   AuthStrings _pigeonStringsFromAuthMessages(
-      String localizedReason, Iterable<AuthMessages> messagesList) {
+    String localizedReason,
+    Iterable<AuthMessages> messagesList,
+  ) {
     AndroidAuthMessages? messages;
     for (final AuthMessages entry in messagesList) {
       if (entry is AndroidAuthMessages) {
@@ -121,22 +134,23 @@ class LocalAuthAndroid extends LocalAuthPlatform {
       }
     }
     return AuthStrings(
-        reason: localizedReason,
-        biometricHint: messages?.biometricHint ?? androidBiometricHint,
-        biometricNotRecognized:
-            messages?.biometricNotRecognized ?? androidBiometricNotRecognized,
-        biometricRequiredTitle:
-            messages?.biometricRequiredTitle ?? androidBiometricRequiredTitle,
-        cancelButton: messages?.cancelButton ?? androidCancelButton,
-        deviceCredentialsRequiredTitle:
-            messages?.deviceCredentialsRequiredTitle ??
-                androidDeviceCredentialsRequiredTitle,
-        deviceCredentialsSetupDescription:
-            messages?.deviceCredentialsSetupDescription ??
-                androidDeviceCredentialsSetupDescription,
-        goToSettingsButton: messages?.goToSettingsButton ?? goToSettings,
-        goToSettingsDescription:
-            messages?.goToSettingsDescription ?? androidGoToSettingsDescription,
-        signInTitle: messages?.signInTitle ?? androidSignInTitle);
+      reason: localizedReason,
+      biometricHint: messages?.biometricHint ?? androidBiometricHint,
+      biometricNotRecognized:
+          messages?.biometricNotRecognized ?? androidBiometricNotRecognized,
+      biometricRequiredTitle:
+          messages?.biometricRequiredTitle ?? androidBiometricRequiredTitle,
+      cancelButton: messages?.cancelButton ?? androidCancelButton,
+      deviceCredentialsRequiredTitle:
+          messages?.deviceCredentialsRequiredTitle ??
+          androidDeviceCredentialsRequiredTitle,
+      deviceCredentialsSetupDescription:
+          messages?.deviceCredentialsSetupDescription ??
+          androidDeviceCredentialsSetupDescription,
+      goToSettingsButton: messages?.goToSettingsButton ?? goToSettings,
+      goToSettingsDescription:
+          messages?.goToSettingsDescription ?? androidGoToSettingsDescription,
+      signInTitle: messages?.signInTitle ?? androidSignInTitle,
+    );
   }
 }

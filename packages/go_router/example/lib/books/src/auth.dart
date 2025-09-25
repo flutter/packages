@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -40,7 +40,8 @@ class BookstoreAuthScope extends InheritedNotifier<BookstoreAuth> {
   });
 
   /// Gets the [BookstoreAuth] above the context.
-  static BookstoreAuth of(BuildContext context) => context
-      .dependOnInheritedWidgetOfExactType<BookstoreAuthScope>()!
-      .notifier!;
+  static BookstoreAuth of(BuildContext context) =>
+      context
+          .dependOnInheritedWidgetOfExactType<BookstoreAuthScope>()!
+          .notifier!;
 }

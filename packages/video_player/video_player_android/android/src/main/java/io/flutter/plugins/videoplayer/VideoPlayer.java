@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -66,10 +66,6 @@ public abstract class VideoPlayer implements Messages.VideoPlayerInstanceApi {
   protected abstract ExoPlayerEventListener createExoPlayerEventListener(
       @NonNull ExoPlayer exoPlayer, @Nullable SurfaceProducer surfaceProducer);
 
-  void sendBufferingUpdate() {
-    videoPlayerEvents.onBufferingUpdate(exoPlayer.getBufferedPosition());
-  }
-
   private static void setAudioAttributes(ExoPlayer exoPlayer, boolean isMixMode) {
     exoPlayer.setAudioAttributes(
         new AudioAttributes.Builder().setContentType(C.AUDIO_CONTENT_TYPE_MOVIE).build(),
@@ -107,12 +103,11 @@ public abstract class VideoPlayer implements Messages.VideoPlayerInstanceApi {
   }
 
   @Override
-  public @NonNull Long getPosition() {
-    long position = exoPlayer.getCurrentPosition();
-    // TODO(stuartmorgan): Move this; this is relying on the fact that getPosition is called
-    //  frequently to drive buffering updates, which is a fragile hack.
-    sendBufferingUpdate();
-    return position;
+  public @NonNull Messages.PlaybackState getPlaybackState() {
+    return new Messages.PlaybackState.Builder()
+        .setPlayPosition(exoPlayer.getCurrentPosition())
+        .setBufferPosition(exoPlayer.getBufferedPosition())
+        .build();
   }
 
   @Override

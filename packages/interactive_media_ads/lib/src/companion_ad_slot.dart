@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -37,11 +37,11 @@ class CompanionAdSlot {
     required CompanionAdSlotSize size,
     void Function()? onClicked,
   }) : this.fromPlatformCreationParams(
-          params: PlatformCompanionAdSlotCreationParams(
-            size: size,
-            onClicked: onClicked,
-          ),
-        );
+         params: PlatformCompanionAdSlotCreationParams(
+           size: size,
+           onClicked: onClicked,
+         ),
+       );
 
   /// Constructs a [CompanionAdSlot] from creation params for a specific
   /// platform.

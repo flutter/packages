@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -59,6 +59,9 @@ extension InAppPurchasePlugin: InAppPurchase2API {
           let accountTokenUUID = UUID(uuidString: appAccountToken)
         {
           purchaseOptions.insert(.appAccountToken(accountTokenUUID))
+        }
+        if let quantity = options?.quantity {
+          purchaseOptions.insert(.quantity(Int(quantity)))
         }
 
         if #available(iOS 17.4, macOS 14.4, *) {

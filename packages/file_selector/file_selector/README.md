@@ -38,9 +38,11 @@ Please also take a look at our [example][example] app.
 const XTypeGroup typeGroup = XTypeGroup(
   label: 'images',
   extensions: <String>['jpg', 'png'],
+  uniformTypeIdentifiers: <String>['public.jpeg', 'public.png'],
 );
-final XFile? file =
-    await openFile(acceptedTypeGroups: <XTypeGroup>[typeGroup]);
+final XFile? file = await openFile(
+  acceptedTypeGroups: <XTypeGroup>[typeGroup],
+);
 ```
 
 #### Open multiple files at once
@@ -50,15 +52,16 @@ final XFile? file =
 const XTypeGroup jpgsTypeGroup = XTypeGroup(
   label: 'JPEGs',
   extensions: <String>['jpg', 'jpeg'],
+  uniformTypeIdentifiers: <String>['public.jpeg'],
 );
 const XTypeGroup pngTypeGroup = XTypeGroup(
   label: 'PNGs',
   extensions: <String>['png'],
+  uniformTypeIdentifiers: <String>['public.png'],
 );
-final List<XFile> files = await openFiles(acceptedTypeGroups: <XTypeGroup>[
-  jpgsTypeGroup,
-  pngTypeGroup,
-]);
+final List<XFile> files = await openFiles(
+  acceptedTypeGroups: <XTypeGroup>[jpgsTypeGroup, pngTypeGroup],
+);
 ```
 
 #### Save a file
@@ -66,8 +69,9 @@ final List<XFile> files = await openFiles(acceptedTypeGroups: <XTypeGroup>[
 <?code-excerpt "readme_standalone_excerpts.dart (Save)"?>
 ```dart
 const String fileName = 'suggested_name.txt';
-final FileSaveLocation? result =
-    await getSaveLocation(suggestedName: fileName);
+final FileSaveLocation? result = await getSaveLocation(
+  suggestedName: fileName,
+);
 if (result == null) {
   // Operation was canceled by the user.
   return;
@@ -75,8 +79,11 @@ if (result == null) {
 
 final Uint8List fileData = Uint8List.fromList('Hello World!'.codeUnits);
 const String mimeType = 'text/plain';
-final XFile textFile =
-    XFile.fromData(fileData, mimeType: mimeType, name: fileName);
+final XFile textFile = XFile.fromData(
+  fileData,
+  mimeType: mimeType,
+  name: fileName,
+);
 await textFile.saveTo(result.path);
 ```
 

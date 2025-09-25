@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -33,104 +33,112 @@ void main() {
     });
 
     test(
-        'Default implementation of purchaseStream should throw unimplemented error',
-        () {
-      final ExtendsInAppPurchasePlatform inAppPurchasePlatform =
-          ExtendsInAppPurchasePlatform();
+      'Default implementation of purchaseStream should throw unimplemented error',
+      () {
+        final ExtendsInAppPurchasePlatform inAppPurchasePlatform =
+            ExtendsInAppPurchasePlatform();
 
-      expect(
-        () => inAppPurchasePlatform.purchaseStream,
-        throwsUnimplementedError,
-      );
-    });
-
-    test(
-        'Default implementation of isAvailable should throw unimplemented error',
-        () {
-      final ExtendsInAppPurchasePlatform inAppPurchasePlatform =
-          ExtendsInAppPurchasePlatform();
-
-      expect(
-        () => inAppPurchasePlatform.isAvailable(),
-        throwsUnimplementedError,
-      );
-    });
+        expect(
+          () => inAppPurchasePlatform.purchaseStream,
+          throwsUnimplementedError,
+        );
+      },
+    );
 
     test(
-        'Default implementation of queryProductDetails should throw unimplemented error',
-        () {
-      final ExtendsInAppPurchasePlatform inAppPurchasePlatform =
-          ExtendsInAppPurchasePlatform();
+      'Default implementation of isAvailable should throw unimplemented error',
+      () {
+        final ExtendsInAppPurchasePlatform inAppPurchasePlatform =
+            ExtendsInAppPurchasePlatform();
 
-      expect(
-        () => inAppPurchasePlatform.queryProductDetails(<String>{''}),
-        throwsUnimplementedError,
-      );
-    });
-
-    test(
-        'Default implementation of buyNonConsumable should throw unimplemented error',
-        () {
-      final ExtendsInAppPurchasePlatform inAppPurchasePlatform =
-          ExtendsInAppPurchasePlatform();
-
-      expect(
-        () => inAppPurchasePlatform.buyNonConsumable(
-          purchaseParam: MockPurchaseParam(),
-        ),
-        throwsUnimplementedError,
-      );
-    });
+        expect(
+          () => inAppPurchasePlatform.isAvailable(),
+          throwsUnimplementedError,
+        );
+      },
+    );
 
     test(
-        'Default implementation of buyConsumable should throw unimplemented error',
-        () {
-      final ExtendsInAppPurchasePlatform inAppPurchasePlatform =
-          ExtendsInAppPurchasePlatform();
+      'Default implementation of queryProductDetails should throw unimplemented error',
+      () {
+        final ExtendsInAppPurchasePlatform inAppPurchasePlatform =
+            ExtendsInAppPurchasePlatform();
 
-      expect(
-        () => inAppPurchasePlatform.buyConsumable(
-          purchaseParam: MockPurchaseParam(),
-        ),
-        throwsUnimplementedError,
-      );
-    });
-
-    test(
-        'Default implementation of completePurchase should throw unimplemented error',
-        () {
-      final ExtendsInAppPurchasePlatform inAppPurchasePlatform =
-          ExtendsInAppPurchasePlatform();
-
-      expect(
-        () => inAppPurchasePlatform.completePurchase(MockPurchaseDetails()),
-        throwsUnimplementedError,
-      );
-    });
+        expect(
+          () => inAppPurchasePlatform.queryProductDetails(<String>{''}),
+          throwsUnimplementedError,
+        );
+      },
+    );
 
     test(
-        'Default implementation of restorePurchases should throw unimplemented error',
-        () {
-      final ExtendsInAppPurchasePlatform inAppPurchasePlatform =
-          ExtendsInAppPurchasePlatform();
+      'Default implementation of buyNonConsumable should throw unimplemented error',
+      () {
+        final ExtendsInAppPurchasePlatform inAppPurchasePlatform =
+            ExtendsInAppPurchasePlatform();
 
-      expect(
-        () => inAppPurchasePlatform.restorePurchases(),
-        throwsUnimplementedError,
-      );
-    });
+        expect(
+          () => inAppPurchasePlatform.buyNonConsumable(
+            purchaseParam: MockPurchaseParam(),
+          ),
+          throwsUnimplementedError,
+        );
+      },
+    );
 
     test(
-        'Default implementation of countryCode should throw unimplemented error',
-        () {
-      final ExtendsInAppPurchasePlatform inAppPurchasePlatform =
-          ExtendsInAppPurchasePlatform();
+      'Default implementation of buyConsumable should throw unimplemented error',
+      () {
+        final ExtendsInAppPurchasePlatform inAppPurchasePlatform =
+            ExtendsInAppPurchasePlatform();
 
-      expect(
-        () => inAppPurchasePlatform.countryCode(),
-        throwsUnimplementedError,
-      );
-    });
+        expect(
+          () => inAppPurchasePlatform.buyConsumable(
+            purchaseParam: MockPurchaseParam(),
+          ),
+          throwsUnimplementedError,
+        );
+      },
+    );
+
+    test(
+      'Default implementation of completePurchase should throw unimplemented error',
+      () {
+        final ExtendsInAppPurchasePlatform inAppPurchasePlatform =
+            ExtendsInAppPurchasePlatform();
+
+        expect(
+          () => inAppPurchasePlatform.completePurchase(MockPurchaseDetails()),
+          throwsUnimplementedError,
+        );
+      },
+    );
+
+    test(
+      'Default implementation of restorePurchases should throw unimplemented error',
+      () {
+        final ExtendsInAppPurchasePlatform inAppPurchasePlatform =
+            ExtendsInAppPurchasePlatform();
+
+        expect(
+          () => inAppPurchasePlatform.restorePurchases(),
+          throwsUnimplementedError,
+        );
+      },
+    );
+
+    test(
+      'Default implementation of countryCode should throw unimplemented error',
+      () {
+        final ExtendsInAppPurchasePlatform inAppPurchasePlatform =
+            ExtendsInAppPurchasePlatform();
+
+        expect(
+          () => inAppPurchasePlatform.countryCode(),
+          throwsUnimplementedError,
+        );
+      },
+    );
   });
 
   group('$InAppPurchasePlatformAddition', () {
@@ -154,9 +162,11 @@ void main() {
 
     test('Can not be a `InAppPurchasePlatform`', () {
       expect(
-          () => InAppPurchasePlatformAddition.instance =
-              ExtendsInAppPurchasePlatformAdditionIsPlatformInterface(),
-          throwsAssertionError);
+        () =>
+            InAppPurchasePlatformAddition.instance =
+                ExtendsInAppPurchasePlatformAdditionIsPlatformInterface(),
+        throwsAssertionError,
+      );
     });
 
     test('Provider can provide', () {
@@ -187,8 +197,7 @@ class MockInAppPurchasePlatform extends Mock
     with
         // ignore: prefer_mixin
         MockPlatformInterfaceMixin
-    implements
-        InAppPurchasePlatform {}
+    implements InAppPurchasePlatform {}
 
 class ExtendsInAppPurchasePlatform extends InAppPurchasePlatform {}
 

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -24,23 +24,26 @@ PlatformBillingChoiceMode platformBillingChoiceMode(BillingChoiceMode mode) {
 /// Creates a [BillingResultWrapper] from the Pigeon equivalent.
 BillingResultWrapper resultWrapperFromPlatform(PlatformBillingResult result) {
   return BillingResultWrapper(
-      responseCode: billingResponseFromPlatform(result.responseCode),
-      debugMessage: result.debugMessage);
+    responseCode: billingResponseFromPlatform(result.responseCode),
+    debugMessage: result.debugMessage,
+  );
 }
 
 /// Creates a [ProductDetailsResponseWrapper] from the Pigeon equivalent.
 ProductDetailsResponseWrapper productDetailsResponseWrapperFromPlatform(
-    PlatformProductDetailsResponse response) {
+  PlatformProductDetailsResponse response,
+) {
   return ProductDetailsResponseWrapper(
-      billingResult: resultWrapperFromPlatform(response.billingResult),
-      productDetailsList: response.productDetails
-          .map(productDetailsWrapperFromPlatform)
-          .toList());
+    billingResult: resultWrapperFromPlatform(response.billingResult),
+    productDetailsList:
+        response.productDetails.map(productDetailsWrapperFromPlatform).toList(),
+  );
 }
 
 /// Creates a [ProductDetailsWrapper] from the Pigeon equivalent.
 ProductDetailsWrapper productDetailsWrapperFromPlatform(
-    PlatformProductDetails product) {
+  PlatformProductDetails product,
+) {
   return ProductDetailsWrapper(
     description: product.description,
     name: product.name,
@@ -48,17 +51,20 @@ ProductDetailsWrapper productDetailsWrapperFromPlatform(
     productType: productTypeFromPlatform(product.productType),
     title: product.title,
     oneTimePurchaseOfferDetails: oneTimePurchaseOfferDetailsWrapperFromPlatform(
-        product.oneTimePurchaseOfferDetails),
-    subscriptionOfferDetails: product.subscriptionOfferDetails
-        ?.map(subscriptionOfferDetailsWrapperFromPlatform)
-        .toList(),
+      product.oneTimePurchaseOfferDetails,
+    ),
+    subscriptionOfferDetails:
+        product.subscriptionOfferDetails
+            ?.map(subscriptionOfferDetailsWrapperFromPlatform)
+            .toList(),
   );
 }
 
 /// Creates a [OneTimePurchaseOfferDetailsWrapper] from the Pigeon equivalent.
 OneTimePurchaseOfferDetailsWrapper?
-    oneTimePurchaseOfferDetailsWrapperFromPlatform(
-        PlatformOneTimePurchaseOfferDetails? details) {
+oneTimePurchaseOfferDetailsWrapperFromPlatform(
+  PlatformOneTimePurchaseOfferDetails? details,
+) {
   if (details == null) {
     return null;
   }
@@ -71,18 +77,21 @@ OneTimePurchaseOfferDetailsWrapper?
 
 /// Creates a [PurchaseHistoryResult] from the Pigeon equivalent.
 PurchasesHistoryResult purchaseHistoryResultFromPlatform(
-    PlatformPurchaseHistoryResponse response) {
+  PlatformPurchaseHistoryResponse response,
+) {
   return PurchasesHistoryResult(
     billingResult: resultWrapperFromPlatform(response.billingResult),
-    purchaseHistoryRecordList: response.purchases
-        .map(purchaseHistoryRecordWrapperFromPlatform)
-        .toList(),
+    purchaseHistoryRecordList:
+        response.purchases
+            .map(purchaseHistoryRecordWrapperFromPlatform)
+            .toList(),
   );
 }
 
 /// Creates a [PurchaseHistoryRecordWrapper] from the Pigeon equivalent.
 PurchaseHistoryRecordWrapper purchaseHistoryRecordWrapperFromPlatform(
-    PlatformPurchaseHistoryRecord record) {
+  PlatformPurchaseHistoryRecord record,
+) {
   return PurchaseHistoryRecordWrapper(
     purchaseTime: record.purchaseTime,
     purchaseToken: record.purchaseToken,
@@ -95,22 +104,25 @@ PurchaseHistoryRecordWrapper purchaseHistoryRecordWrapperFromPlatform(
 
 /// Creates a [PurchasesResultWrapper] from the Pigeon equivalent.
 PurchasesResultWrapper purchasesResultWrapperFromPlatform(
-    PlatformPurchasesResponse response,
-    {bool forceOkResponseCode = false}) {
+  PlatformPurchasesResponse response, {
+  bool forceOkResponseCode = false,
+}) {
   return PurchasesResultWrapper(
     billingResult: resultWrapperFromPlatform(response.billingResult),
     purchasesList: response.purchases.map(purchaseWrapperFromPlatform).toList(),
-    responseCode: forceOkResponseCode
-        ? BillingResponse.ok
-        : billingResponseFromPlatform(response.billingResult.responseCode),
+    responseCode:
+        forceOkResponseCode
+            ? BillingResponse.ok
+            : billingResponseFromPlatform(response.billingResult.responseCode),
   );
 }
 
 /// Creates an [AlternativeBillingOnlyReportingDetailsWrapper] from the Pigeon
 /// equivalent.
 AlternativeBillingOnlyReportingDetailsWrapper
-    alternativeBillingOnlyReportingDetailsWrapperFromPlatform(
-        PlatformAlternativeBillingOnlyReportingDetailsResponse response) {
+alternativeBillingOnlyReportingDetailsWrapperFromPlatform(
+  PlatformAlternativeBillingOnlyReportingDetailsResponse response,
+) {
   return AlternativeBillingOnlyReportingDetailsWrapper(
     responseCode: billingResponseFromPlatform(
       response.billingResult.responseCode,
@@ -122,7 +134,8 @@ AlternativeBillingOnlyReportingDetailsWrapper
 
 /// Creates a [BillingConfigWrapper] from the Pigeon equivalent.
 BillingConfigWrapper billingConfigWrapperFromPlatform(
-    PlatformBillingConfigResponse response) {
+  PlatformBillingConfigResponse response,
+) {
   return BillingConfigWrapper(
     responseCode: billingResponseFromPlatform(
       response.billingResult.responseCode,
@@ -150,7 +163,8 @@ PlatformProductType platformProductTypeFromWrapper(ProductType type) {
 
 /// Creates a [PricingPhaseWrapper] from its Pigeon equivalent.
 PricingPhaseWrapper pricingPhaseWrapperFromPlatform(
-    PlatformPricingPhase phase) {
+  PlatformPricingPhase phase,
+) {
   return PricingPhaseWrapper(
     billingCycleCount: phase.billingCycleCount,
     billingPeriod: phase.billingPeriod,
@@ -185,26 +199,30 @@ PurchaseWrapper purchaseWrapperFromPlatform(PlatformPurchase purchase) {
     developerPayload: purchase.developerPayload,
     obfuscatedAccountId: purchase.accountIdentifiers?.obfuscatedAccountId,
     obfuscatedProfileId: purchase.accountIdentifiers?.obfuscatedProfileId,
-    pendingPurchaseUpdate:
-        pendingPurchaseUpdateFromPlatform(purchase.pendingPurchaseUpdate),
+    pendingPurchaseUpdate: pendingPurchaseUpdateFromPlatform(
+      purchase.pendingPurchaseUpdate,
+    ),
   );
 }
 
 /// Creates a [PendingPurchaseUpdateWrapper] from the Pigeon equivalent.
 PendingPurchaseUpdateWrapper? pendingPurchaseUpdateFromPlatform(
-    PlatformPendingPurchaseUpdate? pendingPurchaseUpdate) {
+  PlatformPendingPurchaseUpdate? pendingPurchaseUpdate,
+) {
   if (pendingPurchaseUpdate == null) {
     return null;
   }
 
   return PendingPurchaseUpdateWrapper(
-      purchaseToken: pendingPurchaseUpdate.purchaseToken,
-      products: pendingPurchaseUpdate.products);
+    purchaseToken: pendingPurchaseUpdate.purchaseToken,
+    products: pendingPurchaseUpdate.products,
+  );
 }
 
 /// Creates a [PurchaseStateWrapper] from the Pigeon equivalent.
 PurchaseStateWrapper purchaseStateWrapperFromPlatform(
-    PlatformPurchaseState state) {
+  PlatformPurchaseState state,
+) {
   return switch (state) {
     PlatformPurchaseState.unspecified => PurchaseStateWrapper.unspecified_state,
     PlatformPurchaseState.purchased => PurchaseStateWrapper.purchased,
@@ -233,7 +251,8 @@ RecurrenceMode recurrenceModeFromPlatform(PlatformRecurrenceMode mode) {
 
 /// Creates a [SubscriptionOfferDetailsWrapper] from the Pigeon equivalent.
 SubscriptionOfferDetailsWrapper subscriptionOfferDetailsWrapperFromPlatform(
-    PlatformSubscriptionOfferDetails offer) {
+  PlatformSubscriptionOfferDetails offer,
+) {
   return SubscriptionOfferDetailsWrapper(
     basePlanId: offer.basePlanId,
     offerId: offer.offerId,
@@ -241,14 +260,16 @@ SubscriptionOfferDetailsWrapper subscriptionOfferDetailsWrapperFromPlatform(
     offerIdToken: offer.offerToken,
     pricingPhases:
         offer.pricingPhases.map(pricingPhaseWrapperFromPlatform).toList(),
-    installmentPlanDetails:
-        installmentPlanDetailsFromPlatform(offer.installmentPlanDetails),
+    installmentPlanDetails: installmentPlanDetailsFromPlatform(
+      offer.installmentPlanDetails,
+    ),
   );
 }
 
 /// Creates a [UserChoiceDetailsWrapper] from the Pigeon equivalent.
 UserChoiceDetailsWrapper userChoiceDetailsFromPlatform(
-    PlatformUserChoiceDetails details) {
+  PlatformUserChoiceDetails details,
+) {
   return UserChoiceDetailsWrapper(
     originalExternalTransactionId: details.originalExternalTransactionId ?? '',
     externalTransactionToken: details.externalTransactionToken,
@@ -259,7 +280,8 @@ UserChoiceDetailsWrapper userChoiceDetailsFromPlatform(
 
 /// Creates a [UserChoiceDetailsProductWrapper] from the Pigeon equivalent.
 UserChoiceDetailsProductWrapper userChoiceDetailsProductFromPlatform(
-    PlatformUserChoiceProduct product) {
+  PlatformUserChoiceProduct product,
+) {
   return UserChoiceDetailsProductWrapper(
     id: product.id,
     offerToken: product.offerToken ?? '',
@@ -269,7 +291,8 @@ UserChoiceDetailsProductWrapper userChoiceDetailsProductFromPlatform(
 
 /// Creates a [InstallmentPlanDetailsWrapper] from the Pigeon equivalent.
 InstallmentPlanDetailsWrapper? installmentPlanDetailsFromPlatform(
-    PlatformInstallmentPlanDetails? details) {
+  PlatformInstallmentPlanDetails? details,
+) {
   if (details == null) {
     return null;
   }
@@ -283,7 +306,8 @@ InstallmentPlanDetailsWrapper? installmentPlanDetailsFromPlatform(
 
 /// Converts a [PendingPurchasesParamsWrapper] to its Pigeon equivalent.
 PlatformPendingPurchasesParams pendingPurchasesParamsFromWrapper(
-    PendingPurchasesParamsWrapper params) {
+  PendingPurchasesParamsWrapper params,
+) {
   return PlatformPendingPurchasesParams(
     enablePrepaidPlans: params.enablePrepaidPlans,
   );
@@ -291,7 +315,8 @@ PlatformPendingPurchasesParams pendingPurchasesParamsFromWrapper(
 
 /// Converts [PlatformBillingResponse] to its public API enum equivalent.
 BillingResponse billingResponseFromPlatform(
-    PlatformBillingResponse responseCode) {
+  PlatformBillingResponse responseCode,
+) {
   return switch (responseCode) {
     PlatformBillingResponse.serviceTimeout => BillingResponse.serviceTimeout,
     PlatformBillingResponse.featureNotSupported =>
@@ -316,7 +341,8 @@ BillingResponse billingResponseFromPlatform(
 
 /// Converts a [BillingResponse] to its Pigeon equivalent.
 PlatformBillingResponse billingResponseFromWrapper(
-    BillingResponse responseCode) {
+  BillingResponse responseCode,
+) {
   return switch (responseCode) {
     BillingResponse.serviceTimeout => PlatformBillingResponse.serviceTimeout,
     BillingResponse.featureNotSupported =>
@@ -341,7 +367,8 @@ PlatformBillingResponse billingResponseFromWrapper(
 
 /// Converts [ReplacementMode] enum to its Pigeon equivalent.
 PlatformReplacementMode replacementModeFromWrapper(
-    ReplacementMode replacementMode) {
+  ReplacementMode replacementMode,
+) {
   return switch (replacementMode) {
     ReplacementMode.unknownReplacementMode =>
       PlatformReplacementMode.unknownReplacementMode,
@@ -358,7 +385,8 @@ PlatformReplacementMode replacementModeFromWrapper(
 
 /// Converts [BillingClientFeature] enum to its Pigeon equivalent.
 PlatformBillingClientFeature billingClientFeatureFromWrapper(
-    BillingClientFeature feature) {
+  BillingClientFeature feature,
+) {
   return switch (feature) {
     BillingClientFeature.alternativeBillingOnly =>
       PlatformBillingClientFeature.alternativeBillingOnly,

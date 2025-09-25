@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -24,12 +24,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, readonly) BOOL isPlaying;
 /// Indicates whether the video player has been initialized.
 @property(nonatomic, readonly) BOOL isInitialized;
-
-/// Initializes a new instance of FVPVideoPlayer with the given AVPlayerItem, frame updater, display
-/// link, AV factory, and view provider.
-- (instancetype)initWithPlayerItem:(AVPlayerItem *)item
-                         avFactory:(id<FVPAVFactory>)avFactory
-                      viewProvider:(NSObject<FVPViewProvider> *)viewProvider;
 
 /// Updates the playing state of the video player.
 - (void)updatePlayingState;

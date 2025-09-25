@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -56,14 +56,11 @@ Future<void> main(List<String> arguments) async {
     coverageDirectory.deleteSync(recursive: true);
   }
 
-  final ProcessResult result = Process.runSync(
-    'flutter',
-    <String>[
-      'test',
-      '--coverage',
-      if (arguments.isNotEmpty) ...arguments,
-    ],
-  );
+  final ProcessResult result = Process.runSync('flutter', <String>[
+    'test',
+    '--coverage',
+    if (arguments.isNotEmpty) ...arguments,
+  ]);
 
   if (result.exitCode != 0) {
     print(result.stdout);
@@ -83,11 +80,12 @@ Future<void> main(List<String> arguments) async {
     exit(0);
   }
 
-  final List<File> libFiles = Directory('lib')
-      .listSync(recursive: true)
-      .whereType<File>()
-      .where((File file) => file.path.endsWith('.dart'))
-      .toList();
+  final List<File> libFiles =
+      Directory('lib')
+          .listSync(recursive: true)
+          .whereType<File>()
+          .where((File file) => file.path.endsWith('.dart'))
+          .toList();
   final Set<LcovLine> flakyLines = <LcovLine>{};
   final Set<LcovLine> deadLines = <LcovLine>{};
   for (final File file in libFiles) {
@@ -158,8 +156,8 @@ Future<void> main(List<String> arguments) async {
     exit(1);
   }
 
-  final String coveredPercent =
-      (100.0 * coveredLines / totalLines).toStringAsFixed(1);
+  final String coveredPercent = (100.0 * coveredLines / totalLines)
+      .toStringAsFixed(1);
 
   if (targetLines != null) {
     if (targetLines! < totalLines) {
@@ -193,9 +191,7 @@ Future<void> main(List<String> arguments) async {
       'Please add sufficient tests to get coverage back to 100%.',
     );
     print('');
-    print(
-      'When in doubt, ask @Hixie for advice. Thanks!',
-    );
+    print('When in doubt, ask @Hixie for advice. Thanks!');
     exit(1);
   }
 

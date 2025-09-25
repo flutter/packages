@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -33,18 +33,20 @@ Future<void> loadJsSdk(
 
   final String scriptUrl = '$_URL?client=ca-pub-$adClient';
 
-  final web.HTMLScriptElement script = web.HTMLScriptElement()
-    ..async = true
-    ..crossOrigin = 'anonymous';
+  final web.HTMLScriptElement script =
+      web.HTMLScriptElement()
+        ..async = true
+        ..crossOrigin = 'anonymous';
 
   if (web.window.nullableTrustedTypes != null) {
     final String trustedTypePolicyName = 'adsense-dart-$adClient';
     try {
       final web.TrustedTypePolicy policy = web.window.trustedTypes.createPolicy(
-          trustedTypePolicyName,
-          web.TrustedTypePolicyOptions(
-            createScriptURL: ((JSString url) => url).toJS,
-          ));
+        trustedTypePolicyName,
+        web.TrustedTypePolicyOptions(
+          createScriptURL: ((JSString url) => url).toJS,
+        ),
+      );
       script.trustedSrc = policy.createScriptURLNoArgs(scriptUrl);
     } catch (e) {
       throw TrustedTypesException(e.toString());
@@ -73,10 +75,7 @@ void _applyDataAttributes(
 //
 // [target] can be used to specify a different injection target than
 // `window.document.head`, and is normally used for tests.
-bool _sdkAlreadyLoaded(
-  String adClient,
-  web.HTMLElement? target,
-) {
+bool _sdkAlreadyLoaded(String adClient, web.HTMLElement? target) {
   final String selector = 'script[src*=ca-pub-$adClient]';
   return adsbygooglePresent ||
       web.document.querySelector(selector) != null ||

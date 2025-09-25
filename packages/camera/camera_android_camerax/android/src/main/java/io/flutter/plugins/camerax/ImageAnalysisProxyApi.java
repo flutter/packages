@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -21,7 +21,9 @@ class ImageAnalysisProxyApi extends PigeonApiImageAnalysis {
   @NonNull
   @Override
   public ImageAnalysis pigeon_defaultConstructor(
-      @Nullable ResolutionSelector resolutionSelector, @Nullable Long targetRotation) {
+      @Nullable ResolutionSelector resolutionSelector,
+      @Nullable Long targetRotation,
+      @Nullable Long outputImageFormat) {
     final ImageAnalysis.Builder builder = new ImageAnalysis.Builder();
     if (resolutionSelector != null) {
       builder.setResolutionSelector(resolutionSelector);
@@ -29,6 +31,11 @@ class ImageAnalysisProxyApi extends PigeonApiImageAnalysis {
     if (targetRotation != null) {
       builder.setTargetRotation(targetRotation.intValue());
     }
+
+    if (outputImageFormat != null) {
+      builder.setOutputImageFormat(outputImageFormat.intValue());
+    }
+
     return builder.build();
   }
 

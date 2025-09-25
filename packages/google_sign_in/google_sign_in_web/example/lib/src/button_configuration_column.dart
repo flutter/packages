@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -9,8 +9,11 @@ import 'package:google_sign_in_web/web_only.dart';
 typedef OnWebConfigChangeFn = void Function(GSIButtonConfiguration newConfig);
 
 /// The type of the widget builder function for each Card in the ListView builder
-typedef CardBuilder = Widget Function(
-    GSIButtonConfiguration? currentConfig, OnWebConfigChangeFn? onChange);
+typedef CardBuilder =
+    Widget Function(
+      GSIButtonConfiguration? currentConfig,
+      OnWebConfigChangeFn? onChange,
+    );
 
 // (Incomplete) List of the locales that can be used to configure the button.
 const List<String> _availableLocales = <String>[
@@ -96,8 +99,9 @@ Widget renderWebButtonConfiguration(
       child: ListView.builder(
         controller: scrollController,
         itemCount: _cards.length,
-        itemBuilder: (BuildContext _, int index) =>
-            _cards[index](currentConfig, onChange),
+        itemBuilder:
+            (BuildContext _, int index) =>
+                _cards[index](currentConfig, onChange),
       ),
     ),
   );
@@ -115,12 +119,15 @@ Widget _renderLocaleCard({
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: DropdownButton<String>(
-          items: locales
-              .map((String locale) => DropdownMenuItem<String>(
-                    value: locale,
-                    child: Text(locale),
-                  ))
-              .toList(),
+          items:
+              locales
+                  .map(
+                    (String locale) => DropdownMenuItem<String>(
+                      value: locale,
+                      child: Text(locale),
+                    ),
+                  )
+                  .toList(),
           value: value,
           onChanged: onChanged,
           isExpanded: true,
@@ -150,7 +157,7 @@ Widget _renderMinimumWidthCard({
         secondaryTrackValue: actualMax,
         onChanged: onChanged,
         divisions: 10,
-      )
+      ),
     ],
   );
 }
@@ -163,17 +170,21 @@ Widget _renderRadioListTileCard<T extends Enum>({
   void Function(T?)? onChanged,
 }) {
   return _renderConfigCard(
-      title: title,
-      children: values
-          .map((T value) => RadioListTile<T>(
+    title: title,
+    children:
+        values
+            .map(
+              (T value) => RadioListTile<T>(
                 value: value,
                 groupValue: selected,
                 onChanged: onChanged,
                 selected: value == selected,
                 title: Text(value.name),
                 dense: true,
-              ))
-          .toList());
+              ),
+            )
+            .toList(),
+  );
 }
 
 /// Renders a Card where we render some `children` that change config.

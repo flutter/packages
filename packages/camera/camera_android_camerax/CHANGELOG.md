@@ -1,3 +1,27 @@
+## 0.6.21+2
+
+* Bumps com.google.guava:guava from 33.4.8-android to 33.5.0-android.
+
+## 0.6.21+1
+
+* Updates to stable version of `androidx.camera` 1.5.
+
+## 0.6.21
+
+* Implements NV21 support for image streaming.
+
+## 0.6.20+3
+
+* Bumps com.google.guava:guava from 33.4.0-android to 33.4.8-android.
+
+## 0.6.20+2
+
+* Bumps com.android.tools.build:gradle to 8.12.1 and kotlin_version to 2.2.10.
+
+## 0.6.20+1
+
+* Updates kotlin version to 2.2.0 to enable gradle 8.11 support.
+
 ## 0.6.20
 
 * Fixes pausing and resuming the camera preview.

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -33,10 +33,14 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     auth.isDeviceSupported().then(
-          (bool isSupported) => setState(() => _supportState = isSupported
-              ? _SupportState.supported
-              : _SupportState.unsupported),
-        );
+      (bool isSupported) => setState(
+        () =>
+            _supportState =
+                isSupported
+                    ? _SupportState.supported
+                    : _SupportState.unsupported,
+      ),
+    );
   }
 
   Future<void> _checkBiometrics() async {
@@ -82,9 +86,7 @@ class _MyAppState extends State<MyApp> {
       });
       authenticated = await auth.authenticate(
         localizedReason: 'Let OS determine authentication method',
-        options: const AuthenticationOptions(
-          stickyAuth: true,
-        ),
+        options: const AuthenticationOptions(stickyAuth: true),
       );
       setState(() {
         _isAuthenticating = false;
@@ -102,7 +104,8 @@ class _MyAppState extends State<MyApp> {
     }
 
     setState(
-        () => _authorized = authenticated ? 'Authorized' : 'Not Authorized');
+      () => _authorized = authenticated ? 'Authorized' : 'Not Authorized',
+    );
   }
 
   Future<void> _authenticateWithBiometrics() async {
@@ -151,9 +154,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Plugin example app'),
-        ),
+        appBar: AppBar(title: const Text('Plugin example app')),
         body: ListView(
           padding: const EdgeInsets.only(top: 30),
           children: <Widget>[
@@ -209,9 +210,11 @@ class _MyAppState extends State<MyApp> {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
-                            Text(_isAuthenticating
-                                ? 'Cancel'
-                                : 'Authenticate: biometrics only'),
+                            Text(
+                              _isAuthenticating
+                                  ? 'Cancel'
+                                  : 'Authenticate: biometrics only',
+                            ),
                             const Icon(Icons.fingerprint),
                           ],
                         ),
@@ -227,8 +230,4 @@ class _MyAppState extends State<MyApp> {
   }
 }
 
-enum _SupportState {
-  unknown,
-  supported,
-  unsupported,
-}
+enum _SupportState { unknown, supported, unsupported }

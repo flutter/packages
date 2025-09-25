@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -12,9 +12,8 @@ import 'webkit_proxy.dart';
 class WebKitWebViewCookieManagerCreationParams
     extends PlatformWebViewCookieManagerCreationParams {
   /// Constructs a [WebKitWebViewCookieManagerCreationParams].
-  WebKitWebViewCookieManagerCreationParams({
-    WebKitProxy? webKitProxy,
-  }) : webKitProxy = webKitProxy ?? const WebKitProxy();
+  WebKitWebViewCookieManagerCreationParams({WebKitProxy? webKitProxy})
+    : webKitProxy = webKitProxy ?? const WebKitProxy();
 
   /// Constructs a [WebKitWebViewCookieManagerCreationParams] using a
   /// [PlatformWebViewCookieManagerCreationParams].
@@ -31,30 +30,30 @@ class WebKitWebViewCookieManagerCreationParams
   final WebKitProxy webKitProxy;
 
   /// Manages stored data for [WKWebView]s.
-  late final WKWebsiteDataStore _websiteDataStore =
-      webKitProxy.defaultDataStoreWKWebsiteDataStore();
+  late final WKWebsiteDataStore _websiteDataStore = webKitProxy
+      .defaultDataStoreWKWebsiteDataStore();
 }
 
 /// An implementation of [PlatformWebViewCookieManager] with the WebKit api.
 class WebKitWebViewCookieManager extends PlatformWebViewCookieManager {
   /// Constructs a [WebKitWebViewCookieManager].
   WebKitWebViewCookieManager(PlatformWebViewCookieManagerCreationParams params)
-      : super.implementation(
-          params is WebKitWebViewCookieManagerCreationParams
-              ? params
-              : WebKitWebViewCookieManagerCreationParams
-                  .fromPlatformWebViewCookieManagerCreationParams(params),
-        );
+    : super.implementation(
+        params is WebKitWebViewCookieManagerCreationParams
+            ? params
+            : WebKitWebViewCookieManagerCreationParams.fromPlatformWebViewCookieManagerCreationParams(
+                params,
+              ),
+      );
 
   WebKitWebViewCookieManagerCreationParams get _webkitParams =>
       params as WebKitWebViewCookieManagerCreationParams;
 
   @override
   Future<bool> clearCookies() {
-    return _webkitParams._websiteDataStore.removeDataOfTypes(
-      <WebsiteDataType>[WebsiteDataType.cookies],
-      0.0,
-    );
+    return _webkitParams._websiteDataStore.removeDataOfTypes(<WebsiteDataType>[
+      WebsiteDataType.cookies,
+    ], 0.0);
   }
 
   @override
@@ -79,10 +78,8 @@ class WebKitWebViewCookieManager extends PlatformWebViewCookieManager {
 
   bool _isValidPath(String path) {
     // Permitted ranges based on RFC6265bis: https://datatracker.ietf.org/doc/html/draft-ietf-httpbis-rfc6265bis-02#section-4.1.1
-    return !path.codeUnits.any(
-      (int char) {
-        return (char < 0x20 || char > 0x3A) && (char < 0x3C || char > 0x7E);
-      },
-    );
+    return !path.codeUnits.any((int char) {
+      return (char < 0x20 || char > 0x3A) && (char < 0x3C || char > 0x7E);
+    });
   }
 }

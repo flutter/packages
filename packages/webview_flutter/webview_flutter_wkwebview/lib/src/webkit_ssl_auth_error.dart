@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -22,10 +22,11 @@ class WebKitSslAuthError extends PlatformSslAuthError {
     required Future<void> Function(
       UrlSessionAuthChallengeDisposition disposition,
       URLCredential? credential,
-    ) onResponse,
-  })  : _trust = trust,
-        _proxy = proxy,
-        _onResponse = onResponse;
+    )
+    onResponse,
+  }) : _trust = trust,
+       _proxy = proxy,
+       _onResponse = onResponse;
 
   final SecTrust _trust;
   final WebKitProxy _proxy;
@@ -33,7 +34,8 @@ class WebKitSslAuthError extends PlatformSslAuthError {
   final Future<void> Function(
     UrlSessionAuthChallengeDisposition disposition,
     URLCredential? credential,
-  ) _onResponse;
+  )
+  _onResponse;
 
   /// The host portion of the url associated with the error.
   final String host;

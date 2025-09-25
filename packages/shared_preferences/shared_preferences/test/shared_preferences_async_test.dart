@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -36,134 +36,79 @@ void main() {
         FakeSharedPreferencesAsync store,
       ) = getPreferences();
       await preferences.setString(stringKey, testString);
-      expect(
-        store.log,
-        <Matcher>[
-          isMethodCall('setString', arguments: <dynamic>[
-            stringKey,
-            testString,
-          ]),
-        ],
-      );
+      expect(store.log, <Matcher>[
+        isMethodCall('setString', arguments: <dynamic>[stringKey, testString]),
+      ]);
       store.log.clear();
       expect(await preferences.getString(stringKey), testString);
-      expect(
-        store.log,
-        <Matcher>[
-          isMethodCall('getString', arguments: <dynamic>[
-            stringKey,
-          ]),
-        ],
-      );
+      expect(store.log, <Matcher>[
+        isMethodCall('getString', arguments: <dynamic>[stringKey]),
+      ]);
     });
 
     test('set and get bool', () async {
       final (
         SharedPreferencesAsync preferences,
-        FakeSharedPreferencesAsync store
+        FakeSharedPreferencesAsync store,
       ) = getPreferences();
       await preferences.setBool(boolKey, testBool);
-      expect(
-        store.log,
-        <Matcher>[
-          isMethodCall('setBool', arguments: <dynamic>[
-            boolKey,
-            testBool,
-          ]),
-        ],
-      );
+      expect(store.log, <Matcher>[
+        isMethodCall('setBool', arguments: <dynamic>[boolKey, testBool]),
+      ]);
       store.log.clear();
       expect(await preferences.getBool(boolKey), testBool);
-      expect(
-        store.log,
-        <Matcher>[
-          isMethodCall('getBool', arguments: <dynamic>[
-            boolKey,
-          ]),
-        ],
-      );
+      expect(store.log, <Matcher>[
+        isMethodCall('getBool', arguments: <dynamic>[boolKey]),
+      ]);
     });
 
     test('set and get int', () async {
       final (
         SharedPreferencesAsync preferences,
-        FakeSharedPreferencesAsync store
+        FakeSharedPreferencesAsync store,
       ) = getPreferences();
       await preferences.setInt(intKey, testInt);
-      expect(
-        store.log,
-        <Matcher>[
-          isMethodCall('setInt', arguments: <dynamic>[
-            intKey,
-            testInt,
-          ]),
-        ],
-      );
+      expect(store.log, <Matcher>[
+        isMethodCall('setInt', arguments: <dynamic>[intKey, testInt]),
+      ]);
       store.log.clear();
 
       expect(await preferences.getInt(intKey), testInt);
-      expect(
-        store.log,
-        <Matcher>[
-          isMethodCall('getInt', arguments: <dynamic>[
-            intKey,
-          ]),
-        ],
-      );
+      expect(store.log, <Matcher>[
+        isMethodCall('getInt', arguments: <dynamic>[intKey]),
+      ]);
     });
 
     test('set and get double', () async {
       final (
         SharedPreferencesAsync preferences,
-        FakeSharedPreferencesAsync store
+        FakeSharedPreferencesAsync store,
       ) = getPreferences();
       await preferences.setDouble(doubleKey, testDouble);
-      expect(
-        store.log,
-        <Matcher>[
-          isMethodCall('setDouble', arguments: <dynamic>[
-            doubleKey,
-            testDouble,
-          ]),
-        ],
-      );
+      expect(store.log, <Matcher>[
+        isMethodCall('setDouble', arguments: <dynamic>[doubleKey, testDouble]),
+      ]);
       store.log.clear();
       expect(await preferences.getDouble(doubleKey), testDouble);
-      expect(
-        store.log,
-        <Matcher>[
-          isMethodCall('getDouble', arguments: <dynamic>[
-            doubleKey,
-          ]),
-        ],
-      );
+      expect(store.log, <Matcher>[
+        isMethodCall('getDouble', arguments: <dynamic>[doubleKey]),
+      ]);
     });
 
     test('set and get StringList', () async {
       final (
         SharedPreferencesAsync preferences,
-        FakeSharedPreferencesAsync store
+        FakeSharedPreferencesAsync store,
       ) = getPreferences();
       await preferences.setStringList(listKey, testList);
-      expect(
-        store.log,
-        <Matcher>[
-          isMethodCall('setStringList', arguments: <dynamic>[
-            listKey,
-            testList,
-          ]),
-        ],
-      );
+      expect(store.log, <Matcher>[
+        isMethodCall('setStringList', arguments: <dynamic>[listKey, testList]),
+      ]);
       store.log.clear();
       expect(await preferences.getStringList(listKey), testList);
-      expect(
-        store.log,
-        <Matcher>[
-          isMethodCall('getStringList', arguments: <dynamic>[
-            listKey,
-          ]),
-        ],
-      );
+      expect(store.log, <Matcher>[
+        isMethodCall('getStringList', arguments: <dynamic>[listKey]),
+      ]);
     });
 
     test('getAll', () async {
@@ -173,7 +118,7 @@ void main() {
         preferences.setBool(boolKey, testBool),
         preferences.setInt(intKey, testInt),
         preferences.setDouble(doubleKey, testDouble),
-        preferences.setStringList(listKey, testList)
+        preferences.setStringList(listKey, testList),
       ]);
 
       final Map<String, Object?> gotAll = await preferences.getAll();
@@ -193,11 +138,12 @@ void main() {
         preferences.setBool(boolKey, testBool),
         preferences.setInt(intKey, testInt),
         preferences.setDouble(doubleKey, testDouble),
-        preferences.setStringList(listKey, testList)
+        preferences.setStringList(listKey, testList),
       ]);
 
-      final Map<String, Object?> gotAll =
-          await preferences.getAll(allowList: <String>{stringKey, boolKey});
+      final Map<String, Object?> gotAll = await preferences.getAll(
+        allowList: <String>{stringKey, boolKey},
+      );
 
       expect(gotAll.length, 2);
       expect(gotAll[stringKey], testString);
@@ -207,20 +153,18 @@ void main() {
     test('remove', () async {
       final (
         SharedPreferencesAsync preferences,
-        FakeSharedPreferencesAsync store
+        FakeSharedPreferencesAsync store,
       ) = getPreferences();
       const String key = 'testKey';
       await preferences.remove(key);
       expect(
-          store.log,
-          List<Matcher>.filled(
-            1,
-            isMethodCall(
-              'clear',
-              arguments: <String>[key],
-            ),
-            growable: true,
-          ));
+        store.log,
+        List<Matcher>.filled(
+          1,
+          isMethodCall('clear', arguments: <String>[key]),
+          growable: true,
+        ),
+      );
     });
 
     test('getKeys', () async {
@@ -230,7 +174,7 @@ void main() {
         preferences.setBool(boolKey, testBool),
         preferences.setInt(intKey, testInt),
         preferences.setDouble(doubleKey, testDouble),
-        preferences.setStringList(listKey, testList)
+        preferences.setStringList(listKey, testList),
       ]);
 
       final Set<String> keys = await preferences.getKeys();
@@ -250,11 +194,12 @@ void main() {
         preferences.setBool(boolKey, testBool),
         preferences.setInt(intKey, testInt),
         preferences.setDouble(doubleKey, testDouble),
-        preferences.setStringList(listKey, testList)
+        preferences.setStringList(listKey, testList),
       ]);
 
-      final Set<String> keys =
-          await preferences.getKeys(allowList: <String>{stringKey, boolKey});
+      final Set<String> keys = await preferences.getKeys(
+        allowList: <String>{stringKey, boolKey},
+      );
 
       expect(keys.length, 2);
       expect(keys, contains(stringKey));
@@ -274,19 +219,20 @@ void main() {
     test('clear', () async {
       final (
         SharedPreferencesAsync preferences,
-        FakeSharedPreferencesAsync store
+        FakeSharedPreferencesAsync store,
       ) = getPreferences();
       await Future.wait(<Future<void>>[
         preferences.setString(stringKey, testString),
         preferences.setBool(boolKey, testBool),
         preferences.setInt(intKey, testInt),
         preferences.setDouble(doubleKey, testDouble),
-        preferences.setStringList(listKey, testList)
+        preferences.setStringList(listKey, testList),
       ]);
       store.log.clear();
       await preferences.clear();
-      expect(
-          store.log, <Matcher>[isMethodCall('clear', arguments: <Object>[])]);
+      expect(store.log, <Matcher>[
+        isMethodCall('clear', arguments: <Object>[]),
+      ]);
       expect(await preferences.getString(stringKey), null);
       expect(await preferences.getBool(boolKey), null);
       expect(await preferences.getInt(intKey), null);
@@ -297,19 +243,19 @@ void main() {
     test('clear with filter', () async {
       final (
         SharedPreferencesAsync preferences,
-        FakeSharedPreferencesAsync store
+        FakeSharedPreferencesAsync store,
       ) = getPreferences();
       await Future.wait(<Future<void>>[
         preferences.setString(stringKey, testString),
         preferences.setBool(boolKey, testBool),
         preferences.setInt(intKey, testInt),
         preferences.setDouble(doubleKey, testDouble),
-        preferences.setStringList(listKey, testList)
+        preferences.setStringList(listKey, testList),
       ]);
       store.log.clear();
       await preferences.clear(allowList: <String>{stringKey, boolKey});
       expect(store.log, <Matcher>[
-        isMethodCall('clear', arguments: <Object>[stringKey, boolKey])
+        isMethodCall('clear', arguments: <Object>[stringKey, boolKey]),
       ]);
       expect(await preferences.getString(stringKey), null);
       expect(await preferences.getBool(boolKey), null);
@@ -321,19 +267,21 @@ void main() {
 
   group('withCache', () {
     Future<
-        (
-          SharedPreferencesWithCache,
-          FakeSharedPreferencesAsync,
-          Map<String, Object?>,
-        )> getPreferences() async {
+      (
+        SharedPreferencesWithCache,
+        FakeSharedPreferencesAsync,
+        Map<String, Object?>,
+      )
+    >
+    getPreferences() async {
       final Map<String, Object?> cache = <String, Object?>{};
       final FakeSharedPreferencesAsync store = FakeSharedPreferencesAsync();
       SharedPreferencesAsyncPlatform.instance = store;
       final SharedPreferencesWithCache preferences =
           await SharedPreferencesWithCache.create(
-        cache: cache,
-        cacheOptions: const SharedPreferencesWithCacheOptions(),
-      );
+            cache: cache,
+            cacheOptions: const SharedPreferencesWithCacheOptions(),
+          );
       store.log.clear();
       return (preferences, store, cache);
     }
@@ -345,21 +293,12 @@ void main() {
         _,
       ) = await getPreferences();
       await preferences.setString(stringKey, testString);
-      expect(
-        store.log,
-        <Matcher>[
-          isMethodCall('setString', arguments: <dynamic>[
-            stringKey,
-            testString,
-          ]),
-        ],
-      );
+      expect(store.log, <Matcher>[
+        isMethodCall('setString', arguments: <dynamic>[stringKey, testString]),
+      ]);
       store.log.clear();
       expect(preferences.getString(stringKey), testString);
-      expect(
-        store.log,
-        <Matcher>[],
-      );
+      expect(store.log, <Matcher>[]);
     });
 
     test('set and get bool', () async {
@@ -369,21 +308,12 @@ void main() {
         _,
       ) = await getPreferences();
       await preferences.setBool(boolKey, testBool);
-      expect(
-        store.log,
-        <Matcher>[
-          isMethodCall('setBool', arguments: <dynamic>[
-            boolKey,
-            testBool,
-          ]),
-        ],
-      );
+      expect(store.log, <Matcher>[
+        isMethodCall('setBool', arguments: <dynamic>[boolKey, testBool]),
+      ]);
       store.log.clear();
       expect(preferences.getBool(boolKey), testBool);
-      expect(
-        store.log,
-        <Matcher>[],
-      );
+      expect(store.log, <Matcher>[]);
     });
 
     test('set and get int', () async {
@@ -393,22 +323,13 @@ void main() {
         _,
       ) = await getPreferences();
       await preferences.setInt(intKey, testInt);
-      expect(
-        store.log,
-        <Matcher>[
-          isMethodCall('setInt', arguments: <dynamic>[
-            intKey,
-            testInt,
-          ]),
-        ],
-      );
+      expect(store.log, <Matcher>[
+        isMethodCall('setInt', arguments: <dynamic>[intKey, testInt]),
+      ]);
       store.log.clear();
 
       expect(preferences.getInt(intKey), testInt);
-      expect(
-        store.log,
-        <Matcher>[],
-      );
+      expect(store.log, <Matcher>[]);
     });
 
     test('set and get double', () async {
@@ -418,21 +339,12 @@ void main() {
         _,
       ) = await getPreferences();
       await preferences.setDouble(doubleKey, testDouble);
-      expect(
-        store.log,
-        <Matcher>[
-          isMethodCall('setDouble', arguments: <dynamic>[
-            doubleKey,
-            testDouble,
-          ]),
-        ],
-      );
+      expect(store.log, <Matcher>[
+        isMethodCall('setDouble', arguments: <dynamic>[doubleKey, testDouble]),
+      ]);
       store.log.clear();
       expect(preferences.getDouble(doubleKey), testDouble);
-      expect(
-        store.log,
-        <Matcher>[],
-      );
+      expect(store.log, <Matcher>[]);
     });
 
     test('set and get StringList', () async {
@@ -442,21 +354,12 @@ void main() {
         _,
       ) = await getPreferences();
       await preferences.setStringList(listKey, testList);
-      expect(
-        store.log,
-        <Matcher>[
-          isMethodCall('setStringList', arguments: <dynamic>[
-            listKey,
-            testList,
-          ]),
-        ],
-      );
+      expect(store.log, <Matcher>[
+        isMethodCall('setStringList', arguments: <dynamic>[listKey, testList]),
+      ]);
       store.log.clear();
       expect(preferences.getStringList(listKey), testList);
-      expect(
-        store.log,
-        <Matcher>[],
-      );
+      expect(store.log, <Matcher>[]);
     });
 
     test('reloading', () async {
@@ -476,11 +379,8 @@ void main() {
     });
 
     test('containsKey', () async {
-      final (
-        SharedPreferencesWithCache preferences,
-        _,
-        _,
-      ) = await getPreferences();
+      final (SharedPreferencesWithCache preferences, _, _) =
+          await getPreferences();
       const String key = 'testKey';
 
       expect(false, preferences.containsKey(key));
@@ -490,17 +390,14 @@ void main() {
     });
 
     test('getKeys', () async {
-      final (
-        SharedPreferencesWithCache preferences,
-        _,
-        _,
-      ) = await getPreferences();
+      final (SharedPreferencesWithCache preferences, _, _) =
+          await getPreferences();
       await Future.wait(<Future<void>>[
         preferences.setString(stringKey, testString),
         preferences.setBool(boolKey, testBool),
         preferences.setInt(intKey, testInt),
         preferences.setDouble(doubleKey, testDouble),
-        preferences.setStringList(listKey, testList)
+        preferences.setStringList(listKey, testList),
       ]);
 
       final Set<String> keys = preferences.keys;
@@ -522,15 +419,13 @@ void main() {
       const String key = 'testKey';
       await preferences.remove(key);
       expect(
-          store.log,
-          List<Matcher>.filled(
-            1,
-            isMethodCall(
-              'clear',
-              arguments: <String>[key],
-            ),
-            growable: true,
-          ));
+        store.log,
+        List<Matcher>.filled(
+          1,
+          isMethodCall('clear', arguments: <String>[key]),
+          growable: true,
+        ),
+      );
     });
 
     test('clear', () async {
@@ -544,12 +439,13 @@ void main() {
         preferences.setBool(boolKey, testBool),
         preferences.setInt(intKey, testInt),
         preferences.setDouble(doubleKey, testDouble),
-        preferences.setStringList(listKey, testList)
+        preferences.setStringList(listKey, testList),
       ]);
       store.log.clear();
       await preferences.clear();
-      expect(
-          store.log, <Matcher>[isMethodCall('clear', arguments: <Object>[])]);
+      expect(store.log, <Matcher>[
+        isMethodCall('clear', arguments: <Object>[]),
+      ]);
       expect(preferences.getString(stringKey), null);
       expect(preferences.getBool(boolKey), null);
       expect(preferences.getInt(intKey), null);
@@ -560,26 +456,29 @@ void main() {
 
   group('withCache with filter', () {
     Future<
-        (
-          SharedPreferencesWithCache,
-          FakeSharedPreferencesAsync,
-          Map<String, Object?>,
-        )> getPreferences() async {
+      (
+        SharedPreferencesWithCache,
+        FakeSharedPreferencesAsync,
+        Map<String, Object?>,
+      )
+    >
+    getPreferences() async {
       final Map<String, Object?> cache = <String, Object?>{};
       final FakeSharedPreferencesAsync store = FakeSharedPreferencesAsync();
       SharedPreferencesAsyncPlatform.instance = store;
       final SharedPreferencesWithCache preferences =
           await SharedPreferencesWithCache.create(
-        cache: cache,
-        cacheOptions:
-            const SharedPreferencesWithCacheOptions(allowList: <String>{
-          stringKey,
-          boolKey,
-          intKey,
-          doubleKey,
-          listKey,
-        }),
-      );
+            cache: cache,
+            cacheOptions: const SharedPreferencesWithCacheOptions(
+              allowList: <String>{
+                stringKey,
+                boolKey,
+                intKey,
+                doubleKey,
+                listKey,
+              },
+            ),
+          );
       store.log.clear();
       return (preferences, store, cache);
     }
@@ -591,21 +490,12 @@ void main() {
         _,
       ) = await getPreferences();
       await preferences.setString(stringKey, testString);
-      expect(
-        store.log,
-        <Matcher>[
-          isMethodCall('setString', arguments: <dynamic>[
-            stringKey,
-            testString,
-          ]),
-        ],
-      );
+      expect(store.log, <Matcher>[
+        isMethodCall('setString', arguments: <dynamic>[stringKey, testString]),
+      ]);
       store.log.clear();
       expect(preferences.getString(stringKey), testString);
-      expect(
-        store.log,
-        <Matcher>[],
-      );
+      expect(store.log, <Matcher>[]);
     });
 
     test('set and get bool', () async {
@@ -615,21 +505,12 @@ void main() {
         _,
       ) = await getPreferences();
       await preferences.setBool(boolKey, testBool);
-      expect(
-        store.log,
-        <Matcher>[
-          isMethodCall('setBool', arguments: <dynamic>[
-            boolKey,
-            testBool,
-          ]),
-        ],
-      );
+      expect(store.log, <Matcher>[
+        isMethodCall('setBool', arguments: <dynamic>[boolKey, testBool]),
+      ]);
       store.log.clear();
       expect(preferences.getBool(boolKey), testBool);
-      expect(
-        store.log,
-        <Matcher>[],
-      );
+      expect(store.log, <Matcher>[]);
     });
 
     test('set and get int', () async {
@@ -639,22 +520,13 @@ void main() {
         _,
       ) = await getPreferences();
       await preferences.setInt(intKey, testInt);
-      expect(
-        store.log,
-        <Matcher>[
-          isMethodCall('setInt', arguments: <dynamic>[
-            intKey,
-            testInt,
-          ]),
-        ],
-      );
+      expect(store.log, <Matcher>[
+        isMethodCall('setInt', arguments: <dynamic>[intKey, testInt]),
+      ]);
       store.log.clear();
 
       expect(preferences.getInt(intKey), testInt);
-      expect(
-        store.log,
-        <Matcher>[],
-      );
+      expect(store.log, <Matcher>[]);
     });
 
     test('set and get double', () async {
@@ -664,21 +536,12 @@ void main() {
         _,
       ) = await getPreferences();
       await preferences.setDouble(doubleKey, testDouble);
-      expect(
-        store.log,
-        <Matcher>[
-          isMethodCall('setDouble', arguments: <dynamic>[
-            doubleKey,
-            testDouble,
-          ]),
-        ],
-      );
+      expect(store.log, <Matcher>[
+        isMethodCall('setDouble', arguments: <dynamic>[doubleKey, testDouble]),
+      ]);
       store.log.clear();
       expect(preferences.getDouble(doubleKey), testDouble);
-      expect(
-        store.log,
-        <Matcher>[],
-      );
+      expect(store.log, <Matcher>[]);
     });
 
     test('set and get StringList', () async {
@@ -688,21 +551,12 @@ void main() {
         _,
       ) = await getPreferences();
       await preferences.setStringList(listKey, testList);
-      expect(
-        store.log,
-        <Matcher>[
-          isMethodCall('setStringList', arguments: <dynamic>[
-            listKey,
-            testList,
-          ]),
-        ],
-      );
+      expect(store.log, <Matcher>[
+        isMethodCall('setStringList', arguments: <dynamic>[listKey, testList]),
+      ]);
       store.log.clear();
       expect(preferences.getStringList(listKey), testList);
-      expect(
-        store.log,
-        <Matcher>[],
-      );
+      expect(store.log, <Matcher>[]);
     });
     test('reloading', () async {
       final (
@@ -721,23 +575,19 @@ void main() {
     });
 
     test('throws ArgumentError if key is not included in filter', () async {
-      final (
-        SharedPreferencesWithCache preferences,
-        _,
-        _,
-      ) = await getPreferences();
+      final (SharedPreferencesWithCache preferences, _, _) =
+          await getPreferences();
       const String key = 'testKey';
 
       expect(
-          () async => preferences.setString(key, 'test'), throwsArgumentError);
+        () async => preferences.setString(key, 'test'),
+        throwsArgumentError,
+      );
     });
 
     test('containsKey', () async {
-      final (
-        SharedPreferencesWithCache preferences,
-        _,
-        _,
-      ) = await getPreferences();
+      final (SharedPreferencesWithCache preferences, _, _) =
+          await getPreferences();
 
       expect(false, preferences.containsKey(stringKey));
 
@@ -746,17 +596,14 @@ void main() {
     });
 
     test('getKeys', () async {
-      final (
-        SharedPreferencesWithCache preferences,
-        _,
-        _,
-      ) = await getPreferences();
+      final (SharedPreferencesWithCache preferences, _, _) =
+          await getPreferences();
       await Future.wait(<Future<void>>[
         preferences.setString(stringKey, testString),
         preferences.setBool(boolKey, testBool),
         preferences.setInt(intKey, testInt),
         preferences.setDouble(doubleKey, testDouble),
-        preferences.setStringList(listKey, testList)
+        preferences.setStringList(listKey, testList),
       ]);
 
       final Set<String> keys = preferences.keys;
@@ -777,15 +624,13 @@ void main() {
       ) = await getPreferences();
       await preferences.remove(stringKey);
       expect(
-          store.log,
-          List<Matcher>.filled(
-            1,
-            isMethodCall(
-              'clear',
-              arguments: <String>[stringKey],
-            ),
-            growable: true,
-          ));
+        store.log,
+        List<Matcher>.filled(
+          1,
+          isMethodCall('clear', arguments: <String>[stringKey]),
+          growable: true,
+        ),
+      );
     });
 
     test('clear', () async {
@@ -799,18 +644,15 @@ void main() {
         preferences.setBool(boolKey, testBool),
         preferences.setInt(intKey, testInt),
         preferences.setDouble(doubleKey, testDouble),
-        preferences.setStringList(listKey, testList)
+        preferences.setStringList(listKey, testList),
       ]);
       store.log.clear();
       await preferences.clear();
       expect(store.log, <Matcher>[
-        isMethodCall('clear', arguments: <Object>[
-          stringKey,
-          boolKey,
-          intKey,
-          doubleKey,
-          listKey,
-        ])
+        isMethodCall(
+          'clear',
+          arguments: <Object>[stringKey, boolKey, intKey, doubleKey, listKey],
+        ),
       ]);
 
       expect(preferences.getString(stringKey), null);
@@ -832,7 +674,9 @@ base class FakeSharedPreferencesAsync extends SharedPreferencesAsyncPlatform {
 
   @override
   Future<bool> clear(
-      ClearPreferencesParameters parameters, SharedPreferencesOptions options) {
+    ClearPreferencesParameters parameters,
+    SharedPreferencesOptions options,
+  ) {
     log.add(MethodCall('clear', <Object>[...?parameters.filter.allowList]));
     return backend.clear(parameters, options);
   }
@@ -857,16 +701,21 @@ base class FakeSharedPreferencesAsync extends SharedPreferencesAsyncPlatform {
 
   @override
   Future<Set<String>> getKeys(
-      GetPreferencesParameters parameters, SharedPreferencesOptions options) {
+    GetPreferencesParameters parameters,
+    SharedPreferencesOptions options,
+  ) {
     log.add(MethodCall('getKeys', <String>[...?parameters.filter.allowList]));
     return backend.getKeys(parameters, options);
   }
 
   @override
   Future<Map<String, Object>> getPreferences(
-      GetPreferencesParameters parameters, SharedPreferencesOptions options) {
-    log.add(MethodCall(
-        'getPreferences', <Object>[...?parameters.filter.allowList]));
+    GetPreferencesParameters parameters,
+    SharedPreferencesOptions options,
+  ) {
+    log.add(
+      MethodCall('getPreferences', <Object>[...?parameters.filter.allowList]),
+    );
     return backend.getPreferences(parameters, options);
   }
 
@@ -878,21 +727,29 @@ base class FakeSharedPreferencesAsync extends SharedPreferencesAsyncPlatform {
 
   @override
   Future<List<String>?> getStringList(
-      String key, SharedPreferencesOptions options) {
+    String key,
+    SharedPreferencesOptions options,
+  ) {
     log.add(MethodCall('getStringList', <String>[key]));
     return backend.getStringList(key, options);
   }
 
   @override
   Future<bool> setBool(
-      String key, bool value, SharedPreferencesOptions options) {
+    String key,
+    bool value,
+    SharedPreferencesOptions options,
+  ) {
     log.add(MethodCall('setBool', <Object>[key, value]));
     return backend.setBool(key, value, options);
   }
 
   @override
   Future<bool> setDouble(
-      String key, double value, SharedPreferencesOptions options) {
+    String key,
+    double value,
+    SharedPreferencesOptions options,
+  ) {
     log.add(MethodCall('setDouble', <Object>[key, value]));
     return backend.setDouble(key, value, options);
   }
@@ -905,14 +762,20 @@ base class FakeSharedPreferencesAsync extends SharedPreferencesAsyncPlatform {
 
   @override
   Future<bool> setString(
-      String key, String value, SharedPreferencesOptions options) {
+    String key,
+    String value,
+    SharedPreferencesOptions options,
+  ) {
     log.add(MethodCall('setString', <Object>[key, value]));
     return backend.setString(key, value, options);
   }
 
   @override
   Future<bool> setStringList(
-      String key, List<String> value, SharedPreferencesOptions options) {
+    String key,
+    List<String> value,
+    SharedPreferencesOptions options,
+  ) {
     log.add(MethodCall('setStringList', <Object>[key, value]));
     return backend.setStringList(key, value, options);
   }

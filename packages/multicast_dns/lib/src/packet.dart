@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -87,9 +87,10 @@ List<int> encodeMDnsQuery(
   packetByteData.setUint16(offset, type); // QTYPE.
   offset += 2;
   packetByteData.setUint16(
-      offset,
-      ResourceRecordClass.internet |
-          (multicast ? QuestionType.multicast : QuestionType.unicast));
+    offset,
+    ResourceRecordClass.internet |
+        (multicast ? QuestionType.multicast : QuestionType.unicast),
+  );
 
   return data;
 }
@@ -126,7 +127,11 @@ String readFQDN(List<int> packet, [int offset = 0]) {
 //
 // If decoding fails (e.g. due to an invalid packet) `null` is returned.
 _FQDNReadResult _readFQDN(
-    Uint8List data, ByteData byteData, int offset, int length) {
+  Uint8List data,
+  ByteData byteData,
+  int offset,
+  int length,
+) {
   void checkLength(int required) {
     if (length < required) {
       throw MDnsDecodeException(required);
@@ -168,8 +173,11 @@ _FQDNReadResult _readFQDN(
         offset++;
         if (partLength > 0) {
           checkLength(offset + partLength);
-          final Uint8List partBytes =
-              Uint8List.view(data.buffer, offset, partLength);
+          final Uint8List partBytes = Uint8List.view(
+            data.buffer,
+            offset,
+            partLength,
+          );
           offset += partLength;
           // According to the RFC, this is supposed to be utf-8 encoded, but
           // we should continue decoding even if it isn't to avoid dropping the
@@ -258,8 +266,11 @@ List<ResourceRecord>? decodeMDnsResponse(List<int> packet) {
           addr.write('.');
           addr.write(packetBytes.getUint8(offset));
         }
-        return IPAddressResourceRecord(fqdn, validUntil,
-            address: InternetAddress(addr.toString()));
+        return IPAddressResourceRecord(
+          fqdn,
+          validUntil,
+          address: InternetAddress(addr.toString()),
+        );
       case ResourceRecordType.addressIPv6:
         checkLength(offset + readDataLength);
         final StringBuffer addr = StringBuffer();
@@ -285,8 +296,12 @@ List<ResourceRecord>? decodeMDnsResponse(List<int> packet) {
         checkLength(offset + 2);
         final int port = packetBytes.getUint16(offset);
         offset += 2;
-        final _FQDNReadResult result =
-            _readFQDN(data, packetBytes, offset, length);
+        final _FQDNReadResult result = _readFQDN(
+          data,
+          packetBytes,
+          offset,
+          length,
+        );
         offset += result.bytesRead;
         return SrvResourceRecord(
           fqdn,
@@ -298,14 +313,14 @@ List<ResourceRecord>? decodeMDnsResponse(List<int> packet) {
         );
       case ResourceRecordType.serverPointer:
         checkLength(offset + readDataLength);
-        final _FQDNReadResult result =
-            _readFQDN(data, packetBytes, offset, length);
-        offset += readDataLength;
-        return PtrResourceRecord(
-          fqdn,
-          validUntil,
-          domainName: result.fqdn,
+        final _FQDNReadResult result = _readFQDN(
+          data,
+          packetBytes,
+          offset,
+          length,
         );
+        offset += readDataLength;
+        return PtrResourceRecord(fqdn, validUntil, domainName: result.fqdn);
       case ResourceRecordType.text:
         checkLength(offset + readDataLength);
         // The first byte of the buffer is the length of the first string of
@@ -342,8 +357,12 @@ List<ResourceRecord>? decodeMDnsResponse(List<int> packet) {
 
   try {
     for (int i = 0; i < questionCount; i++) {
-      final _FQDNReadResult result =
-          _readFQDN(data, packetBytes, offset, length);
+      final _FQDNReadResult result = _readFQDN(
+        data,
+        packetBytes,
+        offset,
+        length,
+      );
       offset += result.bytesRead;
       checkLength(offset + 4);
       offset += 4;

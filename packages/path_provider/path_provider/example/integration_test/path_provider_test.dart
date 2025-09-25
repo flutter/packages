@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -83,8 +83,9 @@ void main() {
   ];
 
   for (final StorageDirectory? type in allDirs) {
-    testWidgets('getExternalStorageDirectories (type: $type)',
-        (WidgetTester tester) async {
+    testWidgets('getExternalStorageDirectories (type: $type)', (
+      WidgetTester tester,
+    ) async {
       if (Platform.isIOS) {
         final Future<List<Directory>?> result = getExternalStorageDirectories();
         await expectLater(result, throwsA(isInstanceOf<UnsupportedError>()));
@@ -129,7 +130,9 @@ void _verifySampleFile(Directory? directory, String name) {
   // https://github.com/dart-lang/sdk/issues/54287.
   if (Platform.isAndroid) {
     expect(
-        Process.runSync('ls', <String>[directory.path]).stdout, contains(name));
+      Process.runSync('ls', <String>[directory.path]).stdout,
+      contains(name),
+    );
   } else {
     expect(directory.listSync(), isNotEmpty);
   }

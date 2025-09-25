@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -30,10 +30,7 @@ void main() {
     test('get products method channel', () async {
       final SkProductResponseWrapper productResponseWrapper =
           await SKRequestMaker().startProductRequest(<String>['xxx']);
-      expect(
-        productResponseWrapper.products,
-        isNotEmpty,
-      );
+      expect(productResponseWrapper.products, isNotEmpty);
       expect(
         productResponseWrapper.products.first.priceLocale.currencySymbol,
         r'$',
@@ -51,15 +48,9 @@ void main() {
         productResponseWrapper.products.first.priceLocale.countryCode,
         'US',
       );
-      expect(
-        productResponseWrapper.invalidProductIdentifiers,
-        isNotEmpty,
-      );
+      expect(productResponseWrapper.invalidProductIdentifiers, isNotEmpty);
 
-      expect(
-        fakeStoreKitPlatform.startProductRequestParam,
-        <String>['xxx'],
-      );
+      expect(fakeStoreKitPlatform.startProductRequestParam, <String>['xxx']);
     });
 
     test('get products method channel should throw exception', () async {
@@ -74,25 +65,31 @@ void main() {
     test('refreshed receipt', () async {
       final int receiptCountBefore = fakeStoreKitPlatform.refreshReceiptCount;
       await SKRequestMaker().startRefreshReceiptRequest(
-          receiptProperties: <String, dynamic>{'isExpired': true});
+        receiptProperties: <String, dynamic>{'isExpired': true},
+      );
       expect(fakeStoreKitPlatform.refreshReceiptCount, receiptCountBefore + 1);
-      expect(fakeStoreKitPlatform.refreshReceiptParam,
-          <String, dynamic>{'isExpired': true});
+      expect(fakeStoreKitPlatform.refreshReceiptParam, <String, dynamic>{
+        'isExpired': true,
+      });
     });
 
     test('should get null receipt if any exceptions are raised', () async {
       fakeStoreKitPlatform.getReceiptFailTest = true;
-      expect(() async => SKReceiptManager.retrieveReceiptData(),
-          throwsA(const TypeMatcher<PlatformException>()));
+      expect(
+        () async => SKReceiptManager.retrieveReceiptData(),
+        throwsA(const TypeMatcher<PlatformException>()),
+      );
     });
   });
 
   group('sk_receipt_manager', () {
-    test('should get receipt (faking it by returning a `receipt data` string)',
-        () async {
-      final String receiptData = await SKReceiptManager.retrieveReceiptData();
-      expect(receiptData, 'receipt data');
-    });
+    test(
+      'should get receipt (faking it by returning a `receipt data` string)',
+      () async {
+        final String receiptData = await SKReceiptManager.retrieveReceiptData();
+        expect(receiptData, 'receipt data');
+      },
+    );
   });
 
   group('sk_payment_queue', () {
@@ -103,11 +100,12 @@ void main() {
     test('storefront returns valid SKStoreFrontWrapper object', () async {
       final SKPaymentQueueWrapper queue = SKPaymentQueueWrapper();
       expect(
-          await queue.storefront(),
-          SKStorefrontWrapper.fromJson(const <String, dynamic>{
-            'countryCode': 'USA',
-            'identifier': 'unique_identifier',
-          }));
+        await queue.storefront(),
+        SKStorefrontWrapper.fromJson(const <String, dynamic>{
+          'countryCode': 'USA',
+          'identifier': 'unique_identifier',
+        }),
+      );
     });
 
     test('transactions should return a valid list of transactions', () async {
@@ -115,11 +113,14 @@ void main() {
     });
 
     test(
-        'throws if observer is not set for payment queue before adding payment',
-        () async {
-      expect(SKPaymentQueueWrapper().addPayment(dummyPayment),
-          throwsAssertionError);
-    });
+      'throws if observer is not set for payment queue before adding payment',
+      () async {
+        expect(
+          SKPaymentQueueWrapper().addPayment(dummyPayment),
+          throwsAssertionError,
+        );
+      },
+    );
 
     test('should add payment to the payment queue', () async {
       final SKPaymentQueueWrapper queue = SKPaymentQueueWrapper();
@@ -136,8 +137,10 @@ void main() {
           TestPaymentTransactionObserver();
       queue.setTransactionObserver(observer);
       await queue.finishTransaction(dummyTransaction);
-      expect(fakeStoreKitPlatform.transactionsFinished.first,
-          equals(dummyTransaction.toFinishMap()));
+      expect(
+        fakeStoreKitPlatform.transactionsFinished.first,
+        equals(dummyTransaction.toFinishMap()),
+      );
     });
 
     test('should restore transaction', () async {
@@ -146,8 +149,10 @@ void main() {
           TestPaymentTransactionObserver();
       queue.setTransactionObserver(observer);
       await queue.restoreTransactions(applicationUserName: 'aUserID');
-      expect(fakeStoreKitPlatform.applicationNameHasTransactionRestored,
-          'aUserID');
+      expect(
+        fakeStoreKitPlatform.applicationNameHasTransactionRestored,
+        'aUserID',
+      );
     });
 
     test('startObservingTransactionQueue should call methodChannel', () async {
@@ -219,8 +224,9 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
 
   @override
   void addPayment(Map<String?, Object?> paymentMap) {
-    payments
-        .add(SKPaymentWrapper.fromJson(Map<String, dynamic>.from(paymentMap)));
+    payments.add(
+      SKPaymentWrapper.fromJson(Map<String, dynamic>.from(paymentMap)),
+    );
   }
 
   @override
@@ -231,7 +237,9 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
   @override
   SKStorefrontMessage storefront() {
     return SKStorefrontMessage(
-        countryCode: 'USA', identifier: 'unique_identifier');
+      countryCode: 'USA',
+      identifier: 'unique_identifier',
+    );
   }
 
   @override
@@ -255,11 +263,13 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
 
   @override
   Future<SKProductsResponseMessage> startProductRequest(
-      List<String?> productIdentifiers) {
+    List<String?> productIdentifiers,
+  ) {
     startProductRequestParam = productIdentifiers;
     if (getProductRequestFailTest) {
       return Future<SKProductsResponseMessage>.value(
-          SKProductsResponseMessage());
+        SKProductsResponseMessage(),
+      );
     }
     return Future<SKProductsResponseMessage>.value(dummyProductResponseMessage);
   }
@@ -295,8 +305,9 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
   @override
   Future<void> refreshReceipt({Map<String?, dynamic>? receiptProperties}) {
     refreshReceiptCount++;
-    refreshReceiptParam =
-        Map.castFrom<dynamic, dynamic, String, dynamic>(receiptProperties!);
+    refreshReceiptParam = Map.castFrom<dynamic, dynamic, String, dynamic>(
+      receiptProperties!,
+    );
     return Future<void>.sync(() {});
   }
 
@@ -315,12 +326,14 @@ class TestPaymentQueueDelegate extends SKPaymentQueueDelegateWrapper {}
 
 class TestPaymentTransactionObserver extends SKTransactionObserverWrapper {
   @override
-  void updatedTransactions(
-      {required List<SKPaymentTransactionWrapper> transactions}) {}
+  void updatedTransactions({
+    required List<SKPaymentTransactionWrapper> transactions,
+  }) {}
 
   @override
-  void removedTransactions(
-      {required List<SKPaymentTransactionWrapper> transactions}) {}
+  void removedTransactions({
+    required List<SKPaymentTransactionWrapper> transactions,
+  }) {}
 
   @override
   void restoreCompletedTransactionsFailed({required SKError error}) {}
@@ -329,8 +342,10 @@ class TestPaymentTransactionObserver extends SKTransactionObserverWrapper {
   void paymentQueueRestoreCompletedTransactionsFinished() {}
 
   @override
-  bool shouldAddStorePayment(
-      {required SKPaymentWrapper payment, required SKProductWrapper product}) {
+  bool shouldAddStorePayment({
+    required SKPaymentWrapper payment,
+    required SKProductWrapper product,
+  }) {
     return true;
   }
 }

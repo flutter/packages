@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -35,9 +35,7 @@ class CameraService {
 
     try {
       return await mediaDevices
-          .getUserMedia(
-            options.toMediaStreamConstraints(),
-          )
+          .getUserMedia(options.toMediaStreamConstraints())
           .toDart;
     } on web.DOMException catch (e) {
       switch (e.name) {
@@ -110,9 +108,7 @@ class CameraService {
   ///
   /// Throws a [CameraWebException] if the zoom level is not supported
   /// or the camera has not been initialized or started.
-  ZoomLevelCapability getZoomLevelCapabilityForCamera(
-    Camera camera,
-  ) {
+  ZoomLevelCapability getZoomLevelCapabilityForCamera(Camera camera) {
     final web.MediaDevices mediaDevices = window.navigator.mediaDevices;
     final web.MediaTrackSupportedConstraints supportedConstraints =
         mediaDevices.getSupportedConstraints();
@@ -203,10 +199,10 @@ class CameraService {
 
       // A list of facing mode capabilities as
       // the camera may support multiple facing modes.
-      final List<String> facingModeCapabilities = videoTrackCapabilities
-          .facingMode.toDart
-          .map((JSString e) => e.toDart)
-          .toList();
+      final List<String> facingModeCapabilities =
+          videoTrackCapabilities.facingMode.toDart
+              .map((JSString e) => e.toDart)
+              .toList();
 
       if (facingModeCapabilities.isNotEmpty) {
         final String facingModeCapability = facingModeCapabilities.first;

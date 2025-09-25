@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -37,10 +37,11 @@ class MapsObjectUpdates<T extends MapsObject<T>> {
 
     _objectIdsToRemove = previousObjectIds.difference(currentObjectIds);
 
-    _objectsToAdd = currentObjectIds
-        .difference(previousObjectIds)
-        .map(idToCurrentObject)
-        .toSet();
+    _objectsToAdd =
+        currentObjectIds
+            .difference(previousObjectIds)
+            .map(idToCurrentObject)
+            .toSet();
 
     // Returns `true` if [current] is not equals to previous one with the
     // same id.
@@ -49,11 +50,12 @@ class MapsObjectUpdates<T extends MapsObject<T>> {
       return current != previous;
     }
 
-    _objectsToChange = currentObjectIds
-        .intersection(previousObjectIds)
-        .map(idToCurrentObject)
-        .where(hasChanged)
-        .toSet();
+    _objectsToChange =
+        currentObjectIds
+            .intersection(previousObjectIds)
+            .map(idToCurrentObject)
+            .where(hasChanged)
+            .toSet();
   }
 
   /// The name of the objects being updated, for use in serialization.
@@ -92,12 +94,13 @@ class MapsObjectUpdates<T extends MapsObject<T>> {
 
     addIfNonNull('${objectName}sToAdd', serializeMapsObjectSet(_objectsToAdd));
     addIfNonNull(
-        '${objectName}sToChange', serializeMapsObjectSet(_objectsToChange));
+      '${objectName}sToChange',
+      serializeMapsObjectSet(_objectsToChange),
+    );
     addIfNonNull(
-        '${objectName}IdsToRemove',
-        _objectIdsToRemove
-            .map<String>((MapsObjectId<T> m) => m.value)
-            .toList());
+      '${objectName}IdsToRemove',
+      _objectIdsToRemove.map<String>((MapsObjectId<T> m) => m.value).toList(),
+    );
 
     return updateMap;
   }
@@ -114,8 +117,11 @@ class MapsObjectUpdates<T extends MapsObject<T>> {
   }
 
   @override
-  int get hashCode => Object.hash(Object.hashAll(_objectsToAdd),
-      Object.hashAll(_objectIdsToRemove), Object.hashAll(_objectsToChange));
+  int get hashCode => Object.hash(
+    Object.hashAll(_objectsToAdd),
+    Object.hashAll(_objectIdsToRemove),
+    Object.hashAll(_objectsToChange),
+  );
 
   @override
   String toString() {

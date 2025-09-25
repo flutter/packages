@@ -1,0 +1,213 @@
+// GENERATED CODE - DO NOT EDIT
+
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+import 'dart:ui' as ui;
+
+import 'package:flutter/material.dart';
+
+import 'google_fonts_base.dart';
+{{#allParts}}
+import '{{partFilePath}}';
+{{/allParts}}
+
+/// A collection of properties used to specify custom behavior of the
+/// GoogleFonts library.
+class Config {
+  /// Whether or not the GoogleFonts library can make requests to
+  /// [fonts.google.com](https://fonts.google.com/) to retrieve font files.
+  bool allowRuntimeFetching = true;
+}
+
+/// Provides configuration, and static methods to obtain [TextStyle]s and [TextTheme]s.
+///
+/// {@youtube 560 315 https://www.youtube.com/watch?v=8Vzv2CdbEY0}
+///
+/// Obtain a map of available fonts with [asMap]. Retrieve a font by family name
+/// with [getFont]. Retrieve a text theme by its font family name [getTextTheme].
+///
+/// Check out the [README](https://pub.dev/packages/google_fonts) for more info.
+class GoogleFonts {
+  /// Configuration for the [GoogleFonts] library.
+  ///
+  /// Use this to define custom behavior of the GoogleFonts library in your app.
+  /// For example, if you do not want the GoogleFonts library to make any HTTP
+  /// requests for fonts, add the following snippet to your app's `main` method.
+  ///
+  /// ```dart
+  /// GoogleFonts.config.allowRuntimeFetching = false;
+  /// ```
+  static final Config config = Config();
+
+  /// Returns a [Future] which resolves when requested fonts have finished
+  /// loading and are ready to be rendered on screen.
+  ///
+  /// Usage:
+  /// ```dart
+  /// GoogleFonts.lato();
+  /// GoogleFonts.pacificoTextTheme();
+  /// await GoogleFonts.pendingFonts(); // <-- waits until Lato and Pacifico files have loaded.
+  /// ```
+  ///
+  /// To keep things tidy, on can also pass in requested fonts as a list
+  /// to [pendingFonts].
+  ///
+  /// ```dart
+  /// await GoogleFonts.pendingFonts([
+  ///   GoogleFonts.lato(),
+  ///   GoogleFonts.pacificoTextTheme()
+  /// ]);
+  /// ```
+  ///
+  /// To avoid visual font swaps that occur when a font is loading,
+  /// consider using [FutureBuilder]. Note: This future cannot be created in
+  /// [build], as described in [FutureBuilder]'s documentation.
+  ///
+  /// ```dart
+  /// late Future googleFontsPending;
+  ///
+  /// @override
+  /// void initState() {
+  ///   super.initState();
+  ///   googleFontsPending = GoogleFonts.pendingFonts([
+  ///     ...
+  ///   ]);
+  /// }
+  ///
+  /// @override
+  /// Widget build(BuildContext context) {
+  ///   return FutureBuilder(
+  ///     future: googleFontsPending,
+  ///     builder: (context, snapshot) {
+  ///       if (snapshot.connectionState != ConnectionState.done) {
+  ///         return const SizedBox();
+  ///       }
+  ///       ...
+  ///     }
+  ///   );
+  /// }
+  /// ```
+  static Future<List<void>> pendingFonts([List<dynamic>? _]) =>
+      Future.wait(pendingFontFutures);
+
+  /// Get a map of all available fonts.
+  ///
+  /// Returns a map where the key is the name of the font family and the value
+  /// is the corresponding [GoogleFonts] method.
+  static Map<String, TextStyle Function({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  })> asMap() => const {
+    {{#method}}
+    '{{fontFamilyDisplay}}': Part{{part}}.{{methodName}},
+    {{/method}}
+  };
+
+  /// Get a map of all available fonts and their associated text themes.
+  ///
+  /// Returns a map where the key is the name of the font family and the value
+  /// is the corresponding [GoogleFonts] `TextTheme` method.
+  static Map<String, TextTheme Function([TextTheme?])> _asMapOfTextThemes() => const {
+    {{#method}}
+    '{{fontFamilyDisplay}}': Part{{part}}.{{methodName}}TextTheme,
+    {{/method}}
+  };
+
+  /// Retrieve a font by family name.
+  ///
+  /// Applies the given font family from Google Fonts to the given [textStyle]
+  /// and returns the resulting [TextStyle].
+  ///
+  /// Note: [fontFamily] is case-sensitive.
+  ///
+  /// Parameter [fontFamily] must not be `null`. Throws if no font by name
+  /// [fontFamily] exists.
+  static TextStyle getFont(String fontFamily, {
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = GoogleFonts.asMap();
+    if (!fonts.containsKey(fontFamily)) {
+      throw Exception("No font family by name '$fontFamily' was found.");
+    }
+    return fonts[fontFamily]!(
+      textStyle: textStyle,
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+    );
+  }
+
+  /// Retrieve a text theme by its font family name.
+  ///
+  /// Applies the given font family from Google Fonts to the given [textTheme]
+  /// and returns the resulting [textTheme].
+  ///
+  /// Note: [fontFamily] is case-sensitive.
+  ///
+  /// Parameter [fontFamily] must not be `null`. Throws if no font by name
+  /// [fontFamily] exists.
+  static TextTheme getTextTheme(String fontFamily, [TextTheme? textTheme]) {
+    final fonts = _asMapOfTextThemes();
+    if (!fonts.containsKey(fontFamily)) {
+      throw Exception("No font family by name '$fontFamily' was found.");
+    }
+    return fonts[fontFamily]!(textTheme);
+  }
+
+  {{#method}}
+  static const {{methodName}} = Part{{part}}.{{methodName}};
+  static const {{methodName}}TextTheme = Part{{part}}.{{methodName}}TextTheme;
+  {{/method}}
+}

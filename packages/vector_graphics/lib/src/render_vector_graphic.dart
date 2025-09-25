@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -196,7 +196,10 @@ class RenderVectorGraphic extends RenderBox {
   }
 
   static RasterData _createRaster(
-      RasterKey key, double scaleFactor, PictureInfo info) {
+    RasterKey key,
+    double scaleFactor,
+    PictureInfo info,
+  ) {
     final int scaledWidth = key.width;
     final int scaledHeight = key.height;
     // In order to scale a picture, it must be placed in a new picture
@@ -211,8 +214,10 @@ class RenderVectorGraphic extends RenderBox {
     canvas.drawPicture(info.picture);
     final ui.Picture rasterPicture = recorder.endRecording();
 
-    final ui.Image pending =
-        rasterPicture.toImageSync(scaledWidth, scaledHeight);
+    final ui.Image pending = rasterPicture.toImageSync(
+      scaledWidth,
+      scaledHeight,
+    );
     return RasterData(pending, 0, key);
   }
 
@@ -248,8 +253,11 @@ class RenderVectorGraphic extends RenderBox {
       _rasterData = data;
       return;
     }
-    final RasterData data =
-        _createRaster(key, devicePixelRatio / scale, pictureInfo);
+    final RasterData data = _createRaster(
+      key,
+      devicePixelRatio / scale,
+      pictureInfo,
+    );
     data.count += 1;
 
     assert(!_liveRasterCache.containsKey(key));
@@ -287,8 +295,10 @@ class RenderVectorGraphic extends RenderBox {
   void paint(PaintingContext context, ui.Offset offset) {
     assert(size == pictureInfo.size);
     if (kDebugMode && debugSkipRaster) {
-      context.canvas
-          .drawRect(offset & size, Paint()..color = const Color(0xFFFF00FF));
+      context.canvas.drawRect(
+        offset & size,
+        Paint()..color = const Color(0xFFFF00FF),
+      );
       return;
     }
 
@@ -321,12 +331,7 @@ class RenderVectorGraphic extends RenderBox {
       pictureInfo.size.height,
     );
 
-    context.canvas.drawImageRect(
-      image,
-      src,
-      dst,
-      colorPaint,
-    );
+    context.canvas.drawImageRect(image, src, dst, colorPaint);
   }
 }
 

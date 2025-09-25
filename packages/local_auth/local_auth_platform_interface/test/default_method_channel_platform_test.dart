@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -10,9 +10,7 @@ import 'package:local_auth_platform_interface/local_auth_platform_interface.dart
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  const MethodChannel channel = MethodChannel(
-    'plugins.flutter.io/local_auth',
-  );
+  const MethodChannel channel = MethodChannel('plugins.flutter.io/local_auth');
 
   late List<MethodCall> log;
   late LocalAuthPlatform localAuthentication;
@@ -22,26 +20,26 @@ void main() {
   });
 
   test(
-      'DefaultLocalAuthPlatform is registered as the default platform implementation',
-      () async {
-    expect(LocalAuthPlatform.instance,
-        const TypeMatcher<DefaultLocalAuthPlatform>());
-  });
+    'DefaultLocalAuthPlatform is registered as the default platform implementation',
+    () async {
+      expect(
+        LocalAuthPlatform.instance,
+        const TypeMatcher<DefaultLocalAuthPlatform>(),
+      );
+    },
+  );
 
   test('getAvailableBiometrics', () async {
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(channel, (MethodCall methodCall) {
-      log.add(methodCall);
-      return Future<dynamic>.value(<String>[]);
-    });
+          log.add(methodCall);
+          return Future<dynamic>.value(<String>[]);
+        });
     localAuthentication = DefaultLocalAuthPlatform();
     await localAuthentication.getEnrolledBiometrics();
-    expect(
-      log,
-      <Matcher>[
-        isMethodCall('getAvailableBiometrics', arguments: null),
-      ],
-    );
+    expect(log, <Matcher>[
+      isMethodCall('getAvailableBiometrics', arguments: null),
+    ]);
   });
 
   test('deviceSupportsBiometrics handles special sentinal value', () async {
@@ -52,50 +50,41 @@ void main() {
     // enrolled, but that the hardware does support biometrics.
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(channel, (MethodCall methodCall) {
-      log.add(methodCall);
-      return Future<dynamic>.value(<String>['undefined']);
-    });
+          log.add(methodCall);
+          return Future<dynamic>.value(<String>['undefined']);
+        });
 
     localAuthentication = DefaultLocalAuthPlatform();
     final bool supportsBiometrics =
         await localAuthentication.deviceSupportsBiometrics();
     expect(supportsBiometrics, true);
-    expect(
-      log,
-      <Matcher>[
-        isMethodCall('getAvailableBiometrics', arguments: null),
-      ],
-    );
+    expect(log, <Matcher>[
+      isMethodCall('getAvailableBiometrics', arguments: null),
+    ]);
   });
 
   group('Boolean returning methods', () {
     setUp(() {
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMethodCallHandler(channel, (MethodCall methodCall) {
-        log.add(methodCall);
-        return Future<dynamic>.value(true);
-      });
+            log.add(methodCall);
+            return Future<dynamic>.value(true);
+          });
       localAuthentication = DefaultLocalAuthPlatform();
     });
 
     test('isDeviceSupported', () async {
       await localAuthentication.isDeviceSupported();
-      expect(
-        log,
-        <Matcher>[
-          isMethodCall('isDeviceSupported', arguments: null),
-        ],
-      );
+      expect(log, <Matcher>[
+        isMethodCall('isDeviceSupported', arguments: null),
+      ]);
     });
 
     test('stopAuthentication', () async {
       await localAuthentication.stopAuthentication();
-      expect(
-        log,
-        <Matcher>[
-          isMethodCall('stopAuthentication', arguments: null),
-        ],
-      );
+      expect(log, <Matcher>[
+        isMethodCall('stopAuthentication', arguments: null),
+      ]);
     });
 
     group('authenticate with device auth fail over', () {
@@ -105,21 +94,18 @@ void main() {
           localizedReason: 'Needs secure',
           options: const AuthenticationOptions(biometricOnly: true),
         );
-        expect(
-          log,
-          <Matcher>[
-            isMethodCall(
-              'authenticate',
-              arguments: <String, dynamic>{
-                'localizedReason': 'Needs secure',
-                'useErrorDialogs': true,
-                'stickyAuth': false,
-                'sensitiveTransaction': true,
-                'biometricOnly': true,
-              },
-            ),
-          ],
-        );
+        expect(log, <Matcher>[
+          isMethodCall(
+            'authenticate',
+            arguments: <String, dynamic>{
+              'localizedReason': 'Needs secure',
+              'useErrorDialogs': true,
+              'stickyAuth': false,
+              'sensitiveTransaction': true,
+              'biometricOnly': true,
+            },
+          ),
+        ]);
       });
 
       test('authenticate with no sensitive transaction.', () async {
@@ -132,21 +118,18 @@ void main() {
             biometricOnly: true,
           ),
         );
-        expect(
-          log,
-          <Matcher>[
-            isMethodCall(
-              'authenticate',
-              arguments: <String, dynamic>{
-                'localizedReason': 'Insecure',
-                'useErrorDialogs': false,
-                'stickyAuth': false,
-                'sensitiveTransaction': false,
-                'biometricOnly': true,
-              },
-            ),
-          ],
-        );
+        expect(log, <Matcher>[
+          isMethodCall(
+            'authenticate',
+            arguments: <String, dynamic>{
+              'localizedReason': 'Insecure',
+              'useErrorDialogs': false,
+              'stickyAuth': false,
+              'sensitiveTransaction': false,
+              'biometricOnly': true,
+            },
+          ),
+        ]);
       });
     });
 
@@ -156,21 +139,18 @@ void main() {
           authMessages: <AuthMessages>[],
           localizedReason: 'Needs secure',
         );
-        expect(
-          log,
-          <Matcher>[
-            isMethodCall(
-              'authenticate',
-              arguments: <String, dynamic>{
-                'localizedReason': 'Needs secure',
-                'useErrorDialogs': true,
-                'stickyAuth': false,
-                'sensitiveTransaction': true,
-                'biometricOnly': false,
-              },
-            ),
-          ],
-        );
+        expect(log, <Matcher>[
+          isMethodCall(
+            'authenticate',
+            arguments: <String, dynamic>{
+              'localizedReason': 'Needs secure',
+              'useErrorDialogs': true,
+              'stickyAuth': false,
+              'sensitiveTransaction': true,
+              'biometricOnly': false,
+            },
+          ),
+        ]);
       });
 
       test('authenticate with no sensitive transaction.', () async {
@@ -182,21 +162,18 @@ void main() {
             useErrorDialogs: false,
           ),
         );
-        expect(
-          log,
-          <Matcher>[
-            isMethodCall(
-              'authenticate',
-              arguments: <String, dynamic>{
-                'localizedReason': 'Insecure',
-                'useErrorDialogs': false,
-                'stickyAuth': false,
-                'sensitiveTransaction': false,
-                'biometricOnly': false,
-              },
-            ),
-          ],
-        );
+        expect(log, <Matcher>[
+          isMethodCall(
+            'authenticate',
+            arguments: <String, dynamic>{
+              'localizedReason': 'Insecure',
+              'useErrorDialogs': false,
+              'stickyAuth': false,
+              'sensitiveTransaction': false,
+              'biometricOnly': false,
+            },
+          ),
+        ]);
       });
     });
   });

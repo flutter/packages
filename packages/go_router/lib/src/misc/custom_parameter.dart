@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -29,10 +29,7 @@ import 'package:meta/meta_meta.dart' show Target, TargetKind;
 final class CustomParameterCodec {
   /// create a custom parameter codec
   ///
-  const CustomParameterCodec({
-    required this.encode,
-    required this.decode,
-  });
+  const CustomParameterCodec({required this.encode, required this.decode});
 
   /// custom function to encode the field
   final String Function(String field) encode;

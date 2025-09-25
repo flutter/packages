@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -16,99 +16,107 @@ class App extends StatelessWidget {
   static const String title = 'GoRouter Example: Custom Transitions';
 
   @override
-  Widget build(BuildContext context) => MaterialApp.router(
-        routerConfig: _router,
-        title: title,
-      );
+  Widget build(BuildContext context) =>
+      MaterialApp.router(routerConfig: _router, title: title);
 
   final GoRouter _router = GoRouter(
     routes: <GoRoute>[
-      GoRoute(
-        path: '/',
-        redirect: (_, __) => '/none',
-      ),
+      GoRoute(path: '/', redirect: (_, __) => '/none'),
       GoRoute(
         path: '/fade',
-        pageBuilder: (BuildContext context, GoRouterState state) =>
-            CustomTransitionPage<void>(
-          key: state.pageKey,
-          child: const ExampleTransitionsScreen(
-            kind: 'fade',
-            color: Colors.red,
-          ),
-          transitionsBuilder: (BuildContext context,
-                  Animation<double> animation,
-                  Animation<double> secondaryAnimation,
-                  Widget child) =>
-              FadeTransition(opacity: animation, child: child),
-        ),
+        pageBuilder:
+            (BuildContext context, GoRouterState state) =>
+                CustomTransitionPage<void>(
+                  key: state.pageKey,
+                  child: const ExampleTransitionsScreen(
+                    kind: 'fade',
+                    color: Colors.red,
+                  ),
+                  transitionsBuilder:
+                      (
+                        BuildContext context,
+                        Animation<double> animation,
+                        Animation<double> secondaryAnimation,
+                        Widget child,
+                      ) => FadeTransition(opacity: animation, child: child),
+                ),
       ),
       GoRoute(
         path: '/scale',
-        pageBuilder: (BuildContext context, GoRouterState state) =>
-            CustomTransitionPage<void>(
-          key: state.pageKey,
-          child: const ExampleTransitionsScreen(
-            kind: 'scale',
-            color: Colors.green,
-          ),
-          transitionsBuilder: (BuildContext context,
-                  Animation<double> animation,
-                  Animation<double> secondaryAnimation,
-                  Widget child) =>
-              ScaleTransition(scale: animation, child: child),
-        ),
+        pageBuilder:
+            (BuildContext context, GoRouterState state) =>
+                CustomTransitionPage<void>(
+                  key: state.pageKey,
+                  child: const ExampleTransitionsScreen(
+                    kind: 'scale',
+                    color: Colors.green,
+                  ),
+                  transitionsBuilder:
+                      (
+                        BuildContext context,
+                        Animation<double> animation,
+                        Animation<double> secondaryAnimation,
+                        Widget child,
+                      ) => ScaleTransition(scale: animation, child: child),
+                ),
       ),
       GoRoute(
         path: '/slide',
-        pageBuilder: (BuildContext context, GoRouterState state) =>
-            CustomTransitionPage<void>(
-          key: state.pageKey,
-          child: const ExampleTransitionsScreen(
-            kind: 'slide',
-            color: Colors.yellow,
-          ),
-          transitionsBuilder: (BuildContext context,
-                  Animation<double> animation,
-                  Animation<double> secondaryAnimation,
-                  Widget child) =>
-              SlideTransition(
-            position: animation.drive(
-              Tween<Offset>(
-                begin: const Offset(0.25, 0.25),
-                end: Offset.zero,
-              ).chain(CurveTween(curve: Curves.easeIn)),
-            ),
-            child: child,
-          ),
-        ),
+        pageBuilder:
+            (BuildContext context, GoRouterState state) =>
+                CustomTransitionPage<void>(
+                  key: state.pageKey,
+                  child: const ExampleTransitionsScreen(
+                    kind: 'slide',
+                    color: Colors.yellow,
+                  ),
+                  transitionsBuilder:
+                      (
+                        BuildContext context,
+                        Animation<double> animation,
+                        Animation<double> secondaryAnimation,
+                        Widget child,
+                      ) => SlideTransition(
+                        position: animation.drive(
+                          Tween<Offset>(
+                            begin: const Offset(0.25, 0.25),
+                            end: Offset.zero,
+                          ).chain(CurveTween(curve: Curves.easeIn)),
+                        ),
+                        child: child,
+                      ),
+                ),
       ),
       GoRoute(
         path: '/rotation',
-        pageBuilder: (BuildContext context, GoRouterState state) =>
-            CustomTransitionPage<void>(
-          key: state.pageKey,
-          child: const ExampleTransitionsScreen(
-            kind: 'rotation',
-            color: Colors.purple,
-          ),
-          transitionsBuilder: (BuildContext context,
-                  Animation<double> animation,
-                  Animation<double> secondaryAnimation,
-                  Widget child) =>
-              RotationTransition(turns: animation, child: child),
-        ),
+        pageBuilder:
+            (BuildContext context, GoRouterState state) =>
+                CustomTransitionPage<void>(
+                  key: state.pageKey,
+                  child: const ExampleTransitionsScreen(
+                    kind: 'rotation',
+                    color: Colors.purple,
+                  ),
+                  transitionsBuilder:
+                      (
+                        BuildContext context,
+                        Animation<double> animation,
+                        Animation<double> secondaryAnimation,
+                        Widget child,
+                      ) => RotationTransition(turns: animation, child: child),
+                ),
       ),
       GoRoute(
         path: '/none',
-        pageBuilder: (BuildContext context, GoRouterState state) =>
-            NoTransitionPage<void>(
-          key: state.pageKey,
-          child: const ExampleTransitionsScreen(
-            kind: 'none',
-            color: Colors.white,
-          ),
-        ),
+        pageBuilder:
+            (BuildContext context, GoRouterState state) =>
+                NoTransitionPage<void>(
+                  key: state.pageKey,
+                  child: const ExampleTransitionsScreen(
+                    kind: 'none',
+                    color: Colors.white,
+                  ),
+                ),
       ),
     ],
   );
@@ -129,7 +137,7 @@ class ExampleTransitionsScreen extends StatelessWidget {
     'scale',
     'slide',
     'rotation',
-    'none'
+    'none',
   ];
 
   /// The color of the container.
@@ -140,24 +148,24 @@ class ExampleTransitionsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: Text('${App.title}: $kind')),
-        body: ColoredBox(
-          color: color,
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                for (final String kind in kinds)
-                  Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: ElevatedButton(
-                      onPressed: () => context.go('/$kind'),
-                      child: Text('$kind transition'),
-                    ),
-                  )
-              ],
-            ),
-          ),
+    appBar: AppBar(title: Text('${App.title}: $kind')),
+    body: ColoredBox(
+      color: color,
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            for (final String kind in kinds)
+              Padding(
+                padding: const EdgeInsets.all(8),
+                child: ElevatedButton(
+                  onPressed: () => context.go('/$kind'),
+                  child: Text('$kind transition'),
+                ),
+              ),
+          ],
         ),
-      );
+      ),
+    ),
+  );
 }

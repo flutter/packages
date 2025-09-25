@@ -1,16 +1,18 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 import 'package:pigeon/pigeon.dart';
 
-@ConfigurePigeon(PigeonOptions(
-  input: 'pigeons/messages.dart',
-  swiftOut:
-      'darwin/path_provider_foundation/Sources/path_provider_foundation/messages.g.swift',
-  dartOut: 'lib/messages.g.dart',
-  dartTestOut: 'test/messages_test.g.dart',
-  copyrightHeader: 'pigeons/copyright.txt',
-))
+@ConfigurePigeon(
+  PigeonOptions(
+    input: 'pigeons/messages.dart',
+    swiftOut:
+        'darwin/path_provider_foundation/Sources/path_provider_foundation/messages.g.swift',
+    dartOut: 'lib/messages.g.dart',
+    dartTestOut: 'test/messages_test.g.dart',
+    copyrightHeader: 'pigeons/copyright.txt',
+  ),
+)
 enum DirectoryType {
   applicationDocuments,
   applicationSupport,

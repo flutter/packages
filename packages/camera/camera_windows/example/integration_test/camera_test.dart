@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -19,68 +19,87 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   group('initializeCamera', () {
-    testWidgets('throws exception if camera is not created',
-        (WidgetTester _) async {
+    testWidgets('throws exception if camera is not created', (
+      WidgetTester _,
+    ) async {
       final CameraPlatform camera = CameraPlatform.instance;
 
-      expect(() async => camera.initializeCamera(1234),
-          throwsA(isA<CameraException>()));
+      expect(
+        () async => camera.initializeCamera(1234),
+        throwsA(isA<CameraException>()),
+      );
     });
   });
 
   group('takePicture', () {
-    testWidgets('throws exception if camera is not created',
-        (WidgetTester _) async {
+    testWidgets('throws exception if camera is not created', (
+      WidgetTester _,
+    ) async {
       final CameraPlatform camera = CameraPlatform.instance;
 
-      expect(() async => camera.takePicture(1234),
-          throwsA(isA<PlatformException>()));
+      expect(
+        () async => camera.takePicture(1234),
+        throwsA(isA<PlatformException>()),
+      );
     });
   });
 
   group('startVideoRecording', () {
-    testWidgets('throws exception if camera is not created',
-        (WidgetTester _) async {
+    testWidgets('throws exception if camera is not created', (
+      WidgetTester _,
+    ) async {
       final CameraPlatform camera = CameraPlatform.instance;
 
-      expect(() async => camera.startVideoRecording(1234),
-          throwsA(isA<PlatformException>()));
+      expect(
+        () async => camera.startVideoRecording(1234),
+        throwsA(isA<PlatformException>()),
+      );
     });
   });
 
   group('stopVideoRecording', () {
-    testWidgets('throws exception if camera is not created',
-        (WidgetTester _) async {
+    testWidgets('throws exception if camera is not created', (
+      WidgetTester _,
+    ) async {
       final CameraPlatform camera = CameraPlatform.instance;
 
-      expect(() async => camera.stopVideoRecording(1234),
-          throwsA(isA<PlatformException>()));
+      expect(
+        () async => camera.stopVideoRecording(1234),
+        throwsA(isA<PlatformException>()),
+      );
     });
   });
 
   group('pausePreview', () {
-    testWidgets('throws exception if camera is not created',
-        (WidgetTester _) async {
+    testWidgets('throws exception if camera is not created', (
+      WidgetTester _,
+    ) async {
       final CameraPlatform camera = CameraPlatform.instance;
 
-      expect(() async => camera.pausePreview(1234),
-          throwsA(isA<PlatformException>()));
+      expect(
+        () async => camera.pausePreview(1234),
+        throwsA(isA<PlatformException>()),
+      );
     });
   });
 
   group('resumePreview', () {
-    testWidgets('throws exception if camera is not created',
-        (WidgetTester _) async {
+    testWidgets('throws exception if camera is not created', (
+      WidgetTester _,
+    ) async {
       final CameraPlatform camera = CameraPlatform.instance;
 
-      expect(() async => camera.resumePreview(1234),
-          throwsA(isA<PlatformException>()));
+      expect(
+        () async => camera.resumePreview(1234),
+        throwsA(isA<PlatformException>()),
+      );
     });
   });
 
   group('onDeviceOrientationChanged', () {
-    testWidgets('emits the initial DeviceOrientationChangedEvent',
-        (WidgetTester _) async {
+    testWidgets('emits the initial DeviceOrientationChangedEvent', (
+      WidgetTester _,
+    ) async {
       final Stream<DeviceOrientationChangedEvent> eventStream =
           CameraPlatform.instance.onDeviceOrientationChanged();
 
@@ -90,9 +109,7 @@ void main() {
       expect(
         await streamQueue.next,
         equals(
-          const DeviceOrientationChangedEvent(
-            DeviceOrientation.landscapeRight,
-          ),
+          const DeviceOrientationChangedEvent(DeviceOrientation.landscapeRight),
         ),
       );
     });

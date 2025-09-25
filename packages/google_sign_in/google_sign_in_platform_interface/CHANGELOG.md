@@ -1,3 +1,9 @@
+## 3.1.0
+
+* Adds a `clearAuthorizationToken` method to remove an access token from the
+  cache.
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
 ## 3.0.0
 
 * **BREAKING CHANGE**: Overhauls the entire API surface to better abstract the

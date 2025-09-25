@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -33,9 +33,9 @@ import 'platform_interface/platform_interface.dart';
 class ImaSettings {
   /// Creates an [ImaSettings].
   ImaSettings({String? language})
-      : this.fromPlatformCreationParams(
-          PlatformImaSettingsCreationParams(language: language),
-        );
+    : this.fromPlatformCreationParams(
+        PlatformImaSettingsCreationParams(language: language),
+      );
 
   /// Constructs an [ImaSettings] from creation params for a specific platform.
   ///
