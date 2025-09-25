@@ -22,7 +22,7 @@ rootProject.allprojects {
 apply plugin: 'com.android.library'
 
 android {
-    namespace 'io.flutter.plugins.pathprovider'
+    namespace = "io.flutter.plugins.pathprovider"
     compileSdk = flutter.compileSdkVersion
 
     defaultConfig {

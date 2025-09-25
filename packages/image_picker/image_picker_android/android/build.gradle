@@ -22,7 +22,7 @@ rootProject.allprojects {
 apply plugin: 'com.android.library'
 
 android {
-    namespace 'io.flutter.plugins.imagepicker'
+    namespace = "io.flutter.plugins.imagepicker"
     compileSdk = flutter.compileSdkVersion
 
     defaultConfig {

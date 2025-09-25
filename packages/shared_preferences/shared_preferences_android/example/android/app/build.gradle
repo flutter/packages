@@ -36,7 +36,7 @@ if (flutterVersionName == null) {
 }
 
 android {
-    namespace "dev.flutter.plugins.shared_preferences_example"
+    namespace = "dev.flutter.plugins.shared_preferences_example"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 

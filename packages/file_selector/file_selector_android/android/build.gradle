@@ -22,7 +22,7 @@ rootProject.allprojects {
 apply plugin: 'com.android.library'
 
 android {
-    namespace 'dev.flutter.packages.file_selector_android'
+    namespace = "dev.flutter.packages.file_selector_android"
     compileSdk = flutter.compileSdkVersion
 
     compileOptions {

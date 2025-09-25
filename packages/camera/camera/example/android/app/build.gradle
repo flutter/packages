@@ -23,7 +23,7 @@ if (flutterVersionName == null) {
 }
 
 android {
-    namespace 'io.flutter.plugins.cameraexample'
+    namespace = "io.flutter.plugins.cameraexample"
     compileSdk = flutter.compileSdkVersion
 
 

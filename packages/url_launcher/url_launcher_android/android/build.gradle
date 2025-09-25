@@ -25,7 +25,7 @@ android {
     buildFeatures {
         buildConfig true
     }
-    namespace 'io.flutter.plugins.urllauncher'
+    namespace = "io.flutter.plugins.urllauncher"
     compileSdk = flutter.compileSdkVersion
 
     defaultConfig {

@@ -54,7 +54,7 @@ android {
             signingConfig signingConfigs.debug
         }
     }
-    namespace 'com.example.example'
+    namespace = "com.example.example"
 }
 
 flutter {
