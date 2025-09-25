@@ -151,7 +151,7 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
   }
 
   // Resets the state to before an ad is loaded and releases references to all
-  // ads and allbacks.
+  // ads and callbacks.
   void _release() {
     _resetStateForNextAd();
     _loadedAdMediaInfoQueue.clear();
