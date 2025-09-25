@@ -264,7 +264,7 @@ flutter {
 }
 
 dependencies {
-    testImplementation 'fake.package:fake:1.0.0'
+    testImplementation("fake.package:fake:1.0.0")
 }
 ''');
   }

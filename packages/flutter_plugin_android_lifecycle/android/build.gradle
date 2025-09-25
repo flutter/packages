@@ -43,7 +43,7 @@ android {
     }
 
     dependencies {
-        implementation "androidx.annotation:annotation:1.9.1"
+        implementation("androidx.annotation:annotation:1.9.1")
     }
 
 
@@ -61,6 +61,6 @@ android {
 }
 
 dependencies {
-    testImplementation 'junit:junit:4.13.2'
-    testImplementation 'org.mockito:mockito-core:5.19.0'
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.mockito:mockito-core:5.19.0")
 }
