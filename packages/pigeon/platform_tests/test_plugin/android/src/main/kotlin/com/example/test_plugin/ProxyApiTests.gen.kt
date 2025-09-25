@@ -490,36 +490,34 @@ private class ProxyApiTestsPigeonProxyApiBaseCodec(
       return
     }
 
+    fun logNewInstanceFailure(apiName: String, value: Any, exception: Throwable?) {
+      Log.w(
+          "PigeonProxyApiBaseCodec",
+          "Failed to create new Dart proxy instance of $apiName: $value. $exception")
+    }
+
     if (value is ProxyApiTestClass) {
       registrar.getPigeonApiProxyApiTestClass().pigeon_newInstance(value) {
         if (it.isFailure) {
-          Log.w(
-              "PigeonProxyApiBaseCodec",
-              "Failed to create new Dart proxy instance of ProxyApiTestClass: $value. ${it.exceptionOrNull()}")
+          logNewInstanceFailure("ProxyApiTestClass", value, it.exceptionOrNull())
         }
       }
     } else if (value is com.example.test_plugin.ProxyApiSuperClass) {
       registrar.getPigeonApiProxyApiSuperClass().pigeon_newInstance(value) {
         if (it.isFailure) {
-          Log.w(
-              "PigeonProxyApiBaseCodec",
-              "Failed to create new Dart proxy instance of ProxyApiSuperClass: $value. ${it.exceptionOrNull()}")
+          logNewInstanceFailure("ProxyApiSuperClass", value, it.exceptionOrNull())
         }
       }
     } else if (value is ProxyApiInterface) {
       registrar.getPigeonApiProxyApiInterface().pigeon_newInstance(value) {
         if (it.isFailure) {
-          Log.w(
-              "PigeonProxyApiBaseCodec",
-              "Failed to create new Dart proxy instance of ProxyApiInterface: $value. ${it.exceptionOrNull()}")
+          logNewInstanceFailure("ProxyApiInterface", value, it.exceptionOrNull())
         }
       }
     } else if (android.os.Build.VERSION.SDK_INT >= 25 && value is ClassWithApiRequirement) {
       registrar.getPigeonApiClassWithApiRequirement().pigeon_newInstance(value) {
         if (it.isFailure) {
-          Log.w(
-              "PigeonProxyApiBaseCodec",
-              "Failed to create new Dart proxy instance of ClassWithApiRequirement: $value. ${it.exceptionOrNull()}")
+          logNewInstanceFailure("ClassWithApiRequirement", value, it.exceptionOrNull())
         }
       }
     }
