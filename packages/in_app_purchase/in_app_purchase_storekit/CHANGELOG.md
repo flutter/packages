@@ -1,3 +1,7 @@
+## 0.4.5
+
+* Makes `SKError.userInfo` key non-nullable to comply with json serialization requirements.
+
 ## 0.4.4+1
 
 * Removes code for versions of iOS older than 13.0.
