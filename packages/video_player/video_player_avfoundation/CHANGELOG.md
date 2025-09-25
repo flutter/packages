@@ -1,6 +1,8 @@
 ## 2.8.5
 
-* Removes unnecessary workarounds for detecting initialized status.
+* Fixes a bug where the video player fails to initialize when `AVFoundation` reports a duration of zero.
+* Fixes a bug in the example app that some widgets stop updating after GlobalKey reparenting.
+* Updates the `VideoProgressIndicator` widget in the example app to handle zero-duration videos.
 * Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
 
 ## 2.8.4
