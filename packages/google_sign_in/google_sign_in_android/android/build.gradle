@@ -1,5 +1,5 @@
-group 'io.flutter.plugins.googlesignin'
-version '1.0-SNAPSHOT'
+group = 'io.flutter.plugins.googlesignin'
+version = '1.0-SNAPSHOT'
 
 buildscript {
     ext.kotlin_version = '2.2.10'
@@ -25,7 +25,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    namespace 'io.flutter.plugins.googlesignin'
+    namespace = 'io.flutter.plugins.googlesignin'
     compileSdk = flutter.compileSdkVersion
 
     defaultConfig {
@@ -47,8 +47,8 @@ android {
     }
 
     lintOptions {
-        checkAllWarnings true
-        warningsAsErrors true
+        checkAllWarnings = true
+        warningsAsErrors = true
         disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency', 'NewerVersionAvailable'
     }
 
