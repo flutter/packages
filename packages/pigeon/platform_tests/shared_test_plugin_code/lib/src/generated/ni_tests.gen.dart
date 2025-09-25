@@ -106,7 +106,6 @@ class _PigeonJniCodec {
     } else if (value
         .isA<jni_bridge.NIAnotherEnum>(jni_bridge.NIAnotherEnum.type)) {
       return NIAnotherEnum.fromJni(value.as(jni_bridge.NIAnotherEnum.type));
-        
     } else {
       throw ArgumentError.value(value);
     }
@@ -152,7 +151,6 @@ class _PigeonJniCodec {
         array[i] = value[i];
       }
       return array as T;
-    
     } else if (value is List<Object>) {
       final JList<JObject> res = JList<JObject>.array(JObject.type);
       for (int i = 0; i < value.length; i++) {
@@ -165,7 +163,6 @@ class _PigeonJniCodec {
         res.add(writeValue(value[i]));
       }
       return res as T;
-    
     } else if (value is Map<Object, Object>) {
       final JMap<JObject, JObject> res =
           JMap<JObject, JObject>.hash(JObject.type, JObject.type);
@@ -195,13 +192,11 @@ class _PigeonJniCodec {
       return value.toJni() as T;
     } else if (value is NIAnotherEnum) {
       return value.toJni() as T;
-        
     } else {
       throw ArgumentError.value(value);
     }
   }
 }
-    
 
 class _PigeonFfiCodec {
   static Object? readValue(ObjCObjectBase? value, [Type? outType]) {
@@ -218,7 +213,7 @@ class _PigeonFfiCodec {
           return value.boolValue;
         case const (NIAnEnum):
           return NIAnEnum.fromNSNumber(value);
-case const (NIAnotherEnum):
+        case const (NIAnotherEnum):
           return NIAnotherEnum.fromNSNumber(value);
         default:
           throw ArgumentError.value(value);
@@ -270,7 +265,10 @@ case const (NIAnotherEnum):
         value)) {
       return NIAllNullableTypesWithoutRecursion.fromFfi(
           ffi_bridge.NIAllNullableTypesWithoutRecursionBridge.castFrom(value));
-        
+
+      // ignore: unnecessary_type_check
+    } else if (value is ObjCObjectBase) {
+      return null;
     } else {
       throw ArgumentError.value(value);
     }
@@ -350,13 +348,11 @@ case const (NIAnotherEnum):
       return value.toFfi() as T;
     } else if (value is NIAllNullableTypesWithoutRecursion) {
       return value.toFfi() as T;
-        
     } else {
       throw ArgumentError.value(value);
     }
   }
 }
-    
 
 Object? convertNumberWrapperToDart(ffi_bridge.NumberWrapper value) {
   switch (value.type) {
@@ -408,7 +404,6 @@ void _throwNoInstanceError(String channelName) {
   final String error = 'No instance $nameString has been registered.';
   throw ArgumentError(error);
 }
-
 
 enum NIAnEnum {
   one,
@@ -513,7 +508,7 @@ class NIAllTypes {
   }
 
   // jni_bridge.NIAllTypes toJni() {
-  //   return jni_bridge.NIAllTypes (
+  //   return jni_bridge.NIAllTypes(
   //     aBool: aBool,
   //     anInt: anInt,
   //     anInt64: anInt64,
@@ -675,7 +670,7 @@ class NIAllNullableTypesWithoutRecursion {
   }
 
   // jni_bridge.NIAllNullableTypesWithoutRecursion toJni() {
-  //   return jni_bridge.NIAllNullableTypesWithoutRecursion (
+  //   return jni_bridge.NIAllNullableTypesWithoutRecursion(
   //     aNullableBool: _PigeonJniCodec.writeValue<JBoolean?>(aNullableBool),
   //     aNullableInt: _PigeonJniCodec.writeValue<JLong?>(aNullableInt),
   //     aNullableInt64: _PigeonJniCodec.writeValue<JLong?>(aNullableInt64),
@@ -793,7 +788,6 @@ class NIAllNullableTypesWithoutRecursion {
   int get hashCode => Object.hashAll(_toList());
 }
 
-
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
@@ -821,21 +815,22 @@ class _PigeonCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 129: 
+      case 129:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : NIAnEnum.values[value];
-      case 130: 
+      case 130:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : NIAnotherEnum.values[value];
-      case 131: 
+      case 131:
         return NIAllTypes.decode(readValue(buffer)!);
-      case 132: 
+      case 132:
         return NIAllNullableTypesWithoutRecursion.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
   }
 }
+
 const String defaultInstanceName =
     'PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u';
 
@@ -1369,9 +1364,10 @@ class NIHostIntegrationCoreApiForNativeInterop {
       if (_jniApi != null) {
       } else if (_ffiApi != null) {
         final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
-        final NSObject? res = _ffiApi.echoNullableObjectWithANullableObject(
-            _PigeonFfiCodec.writeValue<NSObject>(aNullableObject),
-            wrappedError: error) as NSObject?;
+        final ObjCObjectBase? res =
+            _ffiApi.echoNullableObjectWithANullableObject(
+                _PigeonFfiCodec.writeValue<NSObject>(aNullableObject),
+                wrappedError: error);
         if (error.code != null) {
           throw PlatformException(
               code: error.code!.toDartString(),
@@ -1519,7 +1515,6 @@ class NIHostIntegrationCoreApiForNativeInterop {
     }
     throw Exception("this shouldn't be possible");
   }
-
 }
 
 /// The core interface that each host language plugin must implement in
@@ -1536,7 +1531,6 @@ class NIHostIntegrationCoreApi {
         pigeonVar_messageChannelSuffix =
             messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '',
         _nativeInteropApi = nativeInteropApi;
-
 
   /// Creates an instance of [NIHostIntegrationCoreApi] that requests an instance of
   /// [NIHostIntegrationCoreApiForNativeInterop] from the host platform with a matching instance name

@@ -335,7 +335,7 @@ class _FfiType {
     if (type.baseName == 'List') {
       return 'NSArray?';
     }
-    if (type.baseName == 'Object' && !type.isNullable) {
+    if (type.baseName == 'Object') {
       return 'ObjCObjectBase?';
     }
     return '$ffiName${_getNullableSymbol(forceNullable || type.isNullable)}';
@@ -1729,7 +1729,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
                 indent.writeln(
                     'final ffi_bridge.${generatorOptions.ffiErrorClassName} error = ffi_bridge.${generatorOptions.ffiErrorClassName}();');
                 indent.writeln(
-                  '$methodCallReturnString${method.isAsynchronous ? 'await ' : ''}_ffiApi.${method.name}${method.parameters.isNotEmpty ? 'With${toUpperCamelCase(method.parameters.first.name)}' : 'WithWrappedError'}(${_getFfiMethodCallArguments(method.parameters)}${method.parameters.isEmpty ? '' : ', wrappedError: '}error)${returnType.type.baseName == 'Object' && returnType.type.isNullable ? ' as NSObject?' : ''};',
+                  '$methodCallReturnString${method.isAsynchronous ? 'await ' : ''}_ffiApi.${method.name}${method.parameters.isNotEmpty ? 'With${toUpperCamelCase(method.parameters.first.name)}' : 'WithWrappedError'}(${_getFfiMethodCallArguments(method.parameters)}${method.parameters.isEmpty ? '' : ', wrappedError: '}error);',
                 );
                 indent.writeScoped('if (error.code != null) {', '}', () {
                   indent.writeln(
@@ -2747,6 +2747,9 @@ case const (${enumDefinition.name}):
         return ${ffiType.type.baseName}.fromFfi(${ffiType.ffiName}.castFrom(value));
         ''';
     }).join()}
+      // ignore: unnecessary_type_check
+    } else if (value is ObjCObjectBase) {
+      return null;
     } else {
       throw ArgumentError.value(value);
     }

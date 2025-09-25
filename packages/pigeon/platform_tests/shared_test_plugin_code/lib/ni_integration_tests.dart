@@ -720,28 +720,28 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 //       expect(receivedNullUint8List, null);
 //     });
 
-//     testWidgets('generic nullable Objects serialize and deserialize correctly',
-//         (WidgetTester _) async {
-//       final NIHostIntegrationCoreApiForNativeInterop? api =
-//           NIHostIntegrationCoreApiForNativeInterop.getInstance();
-//       const Object sentString = "I'm a computer";
-//       final Object? receivedString = api!.echoNullableObject(sentString);
-//       expect(receivedString, sentString);
+    testWidgets('generic nullable Objects serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final NIHostIntegrationCoreApiForNativeInterop? api =
+          NIHostIntegrationCoreApiForNativeInterop.getInstance();
+      const Object sentString = "I'm a computer";
+      final Object? receivedString = api!.echoNullableObject(sentString);
+      expect(receivedString, sentString);
 
-//       // Echo a second type as well to ensure the handling is generic.
-//       const Object sentInt = regularInt;
-//       final Object? receivedInt = api.echoNullableObject(sentInt);
-//       expect(receivedInt, sentInt);
-//     });
+      // Echo a second type as well to ensure the handling is generic.
+      const Object sentInt = regularInt;
+      final Object? receivedInt = api.echoNullableObject(sentInt);
+      expect(receivedInt, sentInt);
+    });
 
-//     testWidgets('Null generic Objects serialize and deserialize correctly',
-//         (WidgetTester _) async {
-//       final NIHostIntegrationCoreApiForNativeInterop? api =
-//           NIHostIntegrationCoreApiForNativeInterop.getInstance();
+    testWidgets('Null generic Objects serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final NIHostIntegrationCoreApiForNativeInterop? api =
+          NIHostIntegrationCoreApiForNativeInterop.getInstance();
 
-//       final Object? receivedNullObject = api!.echoNullableObject(null);
-//       expect(receivedNullObject, null);
-//     });
+      final Object? receivedNullObject = api!.echoNullableObject(null);
+      expect(receivedNullObject, null);
+    });
 
 //     testWidgets('nullable lists serialize and deserialize correctly',
 //         (WidgetTester _) async {
