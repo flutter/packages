@@ -11,7 +11,7 @@ environment:
   flutter: ">=3.29.0"
 
 dependencies:
-  analyzer: ">=7.4.0 <8.0.0"
+  analyzer: ^8.2.0
   async: ^2.8.0
   build: ^3.0.0
   build_config: ^1.0.0

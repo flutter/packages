@@ -224,7 +224,7 @@ String compareField(
 String enumMapName(InterfaceType type) => '_\$${type.element.name}EnumMap';
 
 /// Gets the name of the `const` map generated to help encode [Json] types.
-String jsonMapName(InterfaceType type) => type.element.name;
+String jsonMapName(InterfaceType type) => type.element.name!;
 
 String _stateValueAccess(
   FormalParameterElement element,
@@ -775,10 +775,10 @@ class _TypeHelperJson extends _TypeHelperWithHelper {
     }
 
     final FunctionType functionType = secondParam.type as FunctionType;
-    if (functionType.parameters.length != 1 ||
+    if (functionType.formalParameters.length != 1 ||
         functionType.returnType.getDisplayString() !=
-            type.element.typeParameters.first.getDisplayString() ||
-        functionType.parameters[0].type.getDisplayString() != 'Object?') {
+            type.element.typeParameters.first.displayName ||
+        functionType.formalParameters[0].type.getDisplayString() != 'Object?') {
       throw InvalidGenerationSourceError(
         'The parameter type '
         '`${type.getDisplayString(withNullability: false)}` not have a supported fromJson definition.',
