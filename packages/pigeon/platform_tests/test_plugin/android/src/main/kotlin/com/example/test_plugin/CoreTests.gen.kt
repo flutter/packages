@@ -704,11 +704,11 @@ private open class CoreTestsPigeonCodec : StandardMessageCodec() {
     when (value) {
       is AnEnum -> {
         stream.write(129)
-        writeValue(stream, value.raw)
+        writeValue(stream, value.raw.toLong())
       }
       is AnotherEnum -> {
         stream.write(130)
-        writeValue(stream, value.raw)
+        writeValue(stream, value.raw.toLong())
       }
       is UnusedClass -> {
         stream.write(131)

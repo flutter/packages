@@ -58,10 +58,13 @@ internal class AllDatatypesTest {
             aNullable4ByteArray = intArrayOf(1, 2, 3, 4),
             aNullable8ByteArray = longArrayOf(1, 2, 3, 4),
             aNullableFloatArray = doubleArrayOf(0.5, 0.25, 1.5, 1.25),
+            aNullableEnum = AnEnum.TWO,
+            anotherNullableEnum = AnotherEnum.JUST_IN_CASE,
             aNullableObject = 0,
             list = listOf(1, 2, 3),
             stringList = stringList,
             boolList = listOf(true, false),
+            enumList = listOf(AnEnum.ONE, AnEnum.TWO),
             intList = listOf(1, 2),
             doubleList = listOf(1.1, 2.2),
             objectList = listOf(1, 2, 3),
@@ -71,6 +74,8 @@ internal class AllDatatypesTest {
             stringMap = mapOf("hello" to "you"),
             intMap = mapOf(1L to 0L),
             objectMap = mapOf("hello" to 1234),
+            enumMap =
+                mapOf(AnEnum.ONE to AnEnum.FORTY_TWO, AnEnum.TWO to AnEnum.FOUR_HUNDRED_TWENTY_TWO),
             listMap = mapOf(1L to stringList),
             mapMap = mapOf(1L to mapOf()))
     val binaryMessenger = mockk<BinaryMessenger>()
