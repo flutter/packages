@@ -724,11 +724,13 @@ Future<O> _markerOptionsFromMarker<T, O>(
 /// Gets marker Id from a [marker] object.
 MarkerId getMarkerId(Object? marker) {
   final JSObject object = marker! as JSObject;
-  final gmaps.MVCObject mapObject = marker as gmaps.MVCObject;
   if (object.isA<gmaps.Marker>()) {
+    final gmaps.MVCObject mapObject = marker as gmaps.MVCObject;
     return MarkerId((mapObject.get('markerId')! as JSString).toDart);
   } else if (object.isA<gmaps.AdvancedMarkerElement>()) {
-    return MarkerId((mapObject.get('id')! as JSString).toDart);
+    final gmaps.AdvancedMarkerElement element =
+        marker as gmaps.AdvancedMarkerElement;
+    return MarkerId(element.id);
   } else {
     throw ArgumentError(
       'Must be either a gmaps.Marker or a gmaps.AdvancedMarkerElement',
