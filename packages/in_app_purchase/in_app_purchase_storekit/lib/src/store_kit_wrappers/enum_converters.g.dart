@@ -15,6 +15,10 @@ _SerializedEnums _$SerializedEnumsFromJson(Map json) => _SerializedEnums()
   ..discountPaymentMode = $enumDecode(
     _$SKProductDiscountPaymentModeEnumMap,
     json['discountPaymentMode'],
+  )
+  ..discountType = $enumDecode(
+    _$SKProductDiscountTypeEnumMap,
+    json['discountType'],
   );
 
 const _$SKPaymentTransactionStateWrapperEnumMap = {
