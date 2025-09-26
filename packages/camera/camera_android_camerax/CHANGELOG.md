@@ -1,3 +1,7 @@
+## 0.6.22
+
+* Implements `setDescriptionWhileRecording`.
+
 ## 0.6.21+2
 
 * Bumps com.google.guava:guava from 33.4.8-android to 33.5.0-android.

@@ -4404,6 +4404,50 @@ class PendingRecording extends PigeonInternalProxyApiBaseClass {
     }
   }
 
+  /// Configures the recording to be a persistent recording.
+  ///
+  /// A persistent recording will only be stopped by explicitly calling [Recording.stop] or [Recording.close]
+  /// and will ignore events that would normally cause recording to stop, such as lifecycle events
+  /// or explicit unbinding of a [VideoCapture] use case that the recording's Recorder is attached to.
+  ///
+  /// To switch to a different camera stream while a recording is in progress,
+  /// first create the recording as persistent recording,
+  /// then rebind the [VideoCapture] it's associated with to a different camera.
+  Future<PendingRecording> asPersistentRecording() async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecPendingRecording;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.camera_android_camerax.PendingRecording.asPersistentRecording';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as PendingRecording?)!;
+    }
+  }
+
   /// Starts the recording, making it an active recording.
   Future<Recording> start(VideoRecordEventListener listener) async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
