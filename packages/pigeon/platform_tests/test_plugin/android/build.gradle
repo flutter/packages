@@ -25,7 +25,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    namespace 'com.example.test_plugin'
+    namespace = "com.example.test_plugin"
     compileSdk = flutter.compileSdkVersion
 
     compileOptions {

@@ -23,7 +23,7 @@ if (flutterVersionName == null) {
 }
 
 android {
-    namespace "dev.flutter.packages.file_selector_android_example"
+    namespace = "dev.flutter.packages.file_selector_android_example"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 

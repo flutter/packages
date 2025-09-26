@@ -23,7 +23,7 @@ if (flutterVersionName == null) {
 }
 
 android {
-    namespace 'io.flutter.plugins.videoplayerexample'
+    namespace = "io.flutter.plugins.videoplayerexample"
     compileSdk = flutter.compileSdkVersion
 
     compileOptions {

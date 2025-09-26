@@ -22,7 +22,7 @@ rootProject.allprojects {
 apply plugin: 'com.android.library'
 
 android {
-    namespace 'io.flutter.plugins.localauth'
+    namespace = "io.flutter.plugins.localauth"
     compileSdk = flutter.compileSdkVersion
 
     defaultConfig {

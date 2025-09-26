@@ -25,7 +25,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    namespace 'dev.flutter.packages.interactive_media_ads'
+    namespace = "dev.flutter.packages.interactive_media_ads"
 
     compileSdk = flutter.compileSdkVersion
 

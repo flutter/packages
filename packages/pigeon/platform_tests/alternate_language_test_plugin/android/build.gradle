@@ -22,7 +22,7 @@ rootProject.allprojects {
 apply plugin: 'com.android.library'
 
 android {
-    namespace 'com.example.alternate_language_test_plugin'
+    namespace = "com.example.alternate_language_test_plugin"
     compileSdk = flutter.compileSdkVersion
 
     compileOptions {

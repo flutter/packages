@@ -25,7 +25,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    namespace 'io.flutter.plugins.webviewflutter'
+    namespace = "io.flutter.plugins.webviewflutter"
     compileSdk = flutter.compileSdkVersion
 
     compileOptions {

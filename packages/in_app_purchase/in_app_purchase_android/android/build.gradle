@@ -26,7 +26,7 @@ android {
         buildConfig true
     }
 
-    namespace 'io.flutter.plugins.inapppurchase'
+    namespace = "io.flutter.plugins.inapppurchase"
 
     compileSdk = flutter.compileSdkVersion
 

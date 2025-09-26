@@ -44,7 +44,7 @@ android {
             signingConfig signingConfigs.debug
         }
     }
-    namespace 'io.flutter.plugins.flutter_plugin_android_lifecycle_example'
+    namespace = "io.flutter.plugins.flutter_plugin_android_lifecycle_example"
     lint {
         disable 'InvalidPackage'
     }

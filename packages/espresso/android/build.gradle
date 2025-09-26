@@ -22,7 +22,7 @@ rootProject.allprojects {
 apply plugin: 'com.android.library'
 
 android {
-    namespace 'com.example.espresso'
+    namespace = "com.example.espresso"
     compileSdk = flutter.compileSdkVersion
 
     defaultConfig {

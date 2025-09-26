@@ -52,7 +52,7 @@ if (!configured) {
 }
 
 android {
-    namespace 'io.flutter.plugins.inapppurchaseexample'
+    namespace = "io.flutter.plugins.inapppurchaseexample"
     compileSdk = flutter.compileSdkVersion
 
     signingConfigs {

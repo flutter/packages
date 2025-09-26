@@ -23,7 +23,7 @@ if (flutterVersionName == null) {
 }
 
 android {
-    namespace 'dev.flutter.rfw.examples.local'
+    namespace = "dev.flutter.rfw.examples.local"
     compileSdk = flutter.compileSdkVersion
 
     compileOptions {
