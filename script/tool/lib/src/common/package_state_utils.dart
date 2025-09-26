@@ -241,7 +241,7 @@ Future<bool> _isGradleTestDependencyChange(List<String> pathComponents,
   final List<String> diff = await git.getDiffContents(targetPath: repoPath);
   final RegExp changeLine = RegExp(r'^[+-] ');
   final RegExp testDependencyLine =
-      RegExp(r'^[+-]\s*(?:androidT|t)estImplementation\s');
+      RegExp(r'^[+-]\s*(?:androidT|t)estImplementation(?:\s|\()');
   bool foundTestDependencyChange = false;
   for (final String line in diff) {
     if (!changeLine.hasMatch(line) ||
