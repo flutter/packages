@@ -30,6 +30,10 @@
   return self.device.position;
 }
 
+- (AVCaptureDeviceType)deviceType {
+  return self.device.deviceType;
+}
+
 // Format/Configuration
 - (NSObject<FLTCaptureDeviceFormat> *)activeFormat {
   return [[FLTDefaultCaptureDeviceFormat alloc] initWithFormat:self.device.activeFormat];

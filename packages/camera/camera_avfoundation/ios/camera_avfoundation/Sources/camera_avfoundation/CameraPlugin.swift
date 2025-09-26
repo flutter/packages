@@ -145,27 +145,46 @@ extension CameraPlugin: FCPCameraApi {
       var reply: [FCPPlatformCameraDescription] = []
 
       for device in devices {
-        var lensFacing: FCPPlatformCameraLensDirection
-
-        switch device.position {
-        case .back:
-          lensFacing = .back
-        case .front:
-          lensFacing = .front
-        case .unspecified:
-          lensFacing = .external
-        @unknown default:
-          lensFacing = .external
-        }
-
+        let lensFacing = strongSelf.platformLensDirection(for: device)
+        let lensType = strongSelf.platformLensType(for: device)
         let cameraDescription = FCPPlatformCameraDescription.make(
           withName: device.uniqueID,
-          lensDirection: lensFacing
+          lensDirection: lensFacing,
+          lensType: lensType
         )
         reply.append(cameraDescription)
       }
 
       completion(reply, nil)
+    }
+  }
+
+  private func platformLensDirection(for device: FLTCaptureDevice) -> FCPPlatformCameraLensDirection
+  {
+    switch device.position {
+    case .back:
+      return FCPPlatformCameraLensDirection.back
+    case .front:
+      return FCPPlatformCameraLensDirection.front
+    case .unspecified:
+      return FCPPlatformCameraLensDirection.external
+    @unknown default:
+      return FCPPlatformCameraLensDirection.external
+    }
+  }
+
+  private func platformLensType(for device: FLTCaptureDevice) -> FCPPlatformCameraLensType {
+    switch device.deviceType {
+    case AVCaptureDevice.DeviceType.builtInWideAngleCamera:
+      return FCPPlatformCameraLensType.wide
+    case AVCaptureDevice.DeviceType.builtInTelephotoCamera:
+      return FCPPlatformCameraLensType.telephoto
+    case AVCaptureDevice.DeviceType.builtInUltraWideCamera:
+      return FCPPlatformCameraLensType.ultraWide
+    case AVCaptureDevice.DeviceType.builtInDualWideCamera:
+      return FCPPlatformCameraLensType.wide
+    default:
+      return FCPPlatformCameraLensType.unknown
     }
   }
 
