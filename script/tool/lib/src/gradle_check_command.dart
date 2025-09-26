@@ -294,8 +294,8 @@ plugins {
   /// compatibility with apps that use AGP 8+.
   bool _validateNamespace(RepositoryPackage package, String gradleContents,
       {required bool isExample}) {
-    // Regex to validate that either the following namespace definition
-    // are found (where the single quotes can be single or double):
+    // Regex to validate that the following namespace definition
+    // is found (where the single quotes can be single or double):
     //  - namespace = 'dev.flutter.foo'
     final RegExp nameSpaceRegex =
         RegExp('^\\s*namespace\\s+=\\s*[\'"](.*?)[\'"]', multiLine: true);
