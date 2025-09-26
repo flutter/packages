@@ -12,7 +12,7 @@ final gmaps.LatLngBounds _nullGmapsLatLngBounds = gmaps.LatLngBounds(
 );
 
 // The TrustedType Policy used by this plugin. Used to sanitize InfoWindow contents.
-TrustedTypePolicy? _gmapsTrustedTypePolicy;
+web.TrustedTypePolicy? _gmapsTrustedTypePolicy;
 
 // A cache for image size Futures to reduce redundant image fetch requests.
 // This cache should be always cleaned up after marker updates are processed.
@@ -267,27 +267,27 @@ gmaps.InfoWindowOptions? _infoWindowOptionsFromMarker(Marker marker) {
 
   // Add an outer wrapper to the contents of the infowindow, we need it to listen
   // to click events...
-  final HTMLElement container =
+  final web.HTMLElement container =
       createDivElement()
         ..id = 'gmaps-marker-${marker.markerId.value}-infowindow';
 
   if (markerTitle.isNotEmpty) {
-    final HTMLHeadingElement title =
-        (document.createElement('h3') as HTMLHeadingElement)
+    final web.HTMLHeadingElement title =
+        (web.document.createElement('h3') as web.HTMLHeadingElement)
           ..className = 'infowindow-title'
           ..innerText = markerTitle;
     container.appendChild(title);
   }
   if (markerSnippet.isNotEmpty) {
-    final HTMLElement snippet =
+    final web.HTMLElement snippet =
         createDivElement()..className = 'infowindow-snippet';
 
     // Firefox and Safari don't support Trusted Types yet.
     // See https://developer.mozilla.org/en-US/docs/Web/API/TrustedTypePolicyFactory#browser_compatibility
-    if (window.nullableTrustedTypes != null) {
-      _gmapsTrustedTypePolicy ??= window.trustedTypes.createPolicy(
+    if (web.window.nullableTrustedTypes != null) {
+      _gmapsTrustedTypePolicy ??= web.window.trustedTypes.createPolicy(
         'google_maps_flutter_sanitize',
-        TrustedTypePolicyOptions(
+        web.TrustedTypePolicyOptions(
           createHTML:
               (String html) {
                 return sanitizeHtml(html).toJS;
@@ -421,10 +421,10 @@ Future<gmaps.Size?> _getBitmapSize(MapBitmap mapBitmap, String url) async {
 ///
 /// This method attempts to fetch the image size for a given [url].
 Future<Size?> _fetchBitmapSize(String url) async {
-  final HTMLImageElement image = HTMLImageElement()..src = url;
+  final web.HTMLImageElement image = web.HTMLImageElement()..src = url;
 
   // Wait for the onLoad or onError event.
-  await Future.any(<Future<Event>>[image.onLoad.first, image.onError.first]);
+  await Future.any(<Future<web.Event>>[image.onLoad.first, image.onError.first]);
 
   if (image.width == 0 || image.height == 0) {
     // Complete with null for invalid images.
@@ -447,7 +447,7 @@ void _cleanUpBitmapConversionCaches() {
 
 /// Converts a [BitmapDescriptor] into a [Node] that can be used as
 /// [AdvancedMarker]'s icon.
-Future<Node?> _advancedMarkerIconFromBitmapDescriptor(
+Future<web.Node?> _advancedMarkerIconFromBitmapDescriptor(
   BitmapDescriptor bitmapDescriptor, {
   required double? opacity,
   required bool isVisible,
@@ -470,7 +470,7 @@ Future<Node?> _advancedMarkerIconFromBitmapDescriptor(
       case final CircleGlyph circleGlyph:
         options.glyphColor = _getCssColor(circleGlyph.color);
       case final TextGlyph textGlyph:
-        final web.Element element = document.createElement('p');
+        final web.Element element = web.document.createElement('p');
         element.innerHTML = textGlyph.text.toJS;
         if (textGlyph.textColor != null) {
           element.setAttribute(
@@ -480,7 +480,7 @@ Future<Node?> _advancedMarkerIconFromBitmapDescriptor(
         }
         options.glyph = element;
       case final BitmapGlyph bitmapGlyph:
-        final Node? glyphBitmap = await _advancedMarkerIconFromBitmapDescriptor(
+        final web.Node? glyphBitmap = await _advancedMarkerIconFromBitmapDescriptor(
           bitmapGlyph.bitmap,
           // Always opaque, opacity is handled by the parent marker.
           opacity: 1.0,
@@ -494,7 +494,7 @@ Future<Node?> _advancedMarkerIconFromBitmapDescriptor(
     }
 
     final gmaps.PinElement pinElement = gmaps.PinElement(options);
-    final HTMLElement htmlElement = pinElement.element;
+    final web.HTMLElement htmlElement = pinElement.element;
     htmlElement.style
       ..visibility = isVisible ? 'visible' : 'hidden'
       ..opacity = opacity?.toString() ?? '1.0'
@@ -507,10 +507,10 @@ Future<Node?> _advancedMarkerIconFromBitmapDescriptor(
       (final BytesMapBitmap bytesMapBitmap) => _bitmapBlobUrlCache.putIfAbsent(
         bytesMapBitmap.byteData.hashCode,
         () {
-          final Blob blob = Blob(
+          final web.Blob blob = web.Blob(
             <JSUint8Array>[bytesMapBitmap.byteData.toJS].toJS,
           );
-          return URL.createObjectURL(blob as JSObject);
+          return web.URL.createObjectURL(blob as JSObject);
         },
       ),
       (final AssetMapBitmap assetMapBitmap) => ui_web.assetManager.getAssetUrl(
@@ -519,7 +519,7 @@ Future<Node?> _advancedMarkerIconFromBitmapDescriptor(
       _ => throw UnimplementedError(),
     };
 
-    final web.Element icon = document.createElement('img')
+    final web.Element icon = web.document.createElement('img')
       ..setAttribute('src', url);
 
     final gmaps.Size? size = switch (bitmapDescriptor.bitmapScaling) {
@@ -543,7 +543,7 @@ Future<Node?> _advancedMarkerIconFromBitmapDescriptor(
     assert(iconConfig.length >= 2);
     // iconConfig[2] contains the DPIs of the screen, but that information is
     // already encoded in the iconConfig[1]
-    final web.Element icon = document.createElement('img')..setAttribute(
+    final web.Element icon = web.document.createElement('img')..setAttribute(
       'src',
       ui_web.assetManager.getAssetUrl(iconConfig[1]! as String),
     );
@@ -560,7 +560,7 @@ Future<Node?> _advancedMarkerIconFromBitmapDescriptor(
     // Grab the bytes, and put them into a blob.
     final List<int> bytes = iconConfig[1]! as List<int>;
     // Create a Blob from bytes, but let the browser figure out the encoding.
-    final Blob blob;
+    final web.Blob blob;
 
     assert(
       bytes is Uint8List,
@@ -569,10 +569,10 @@ Future<Node?> _advancedMarkerIconFromBitmapDescriptor(
 
     // TODO(ditman): Improve this conversion
     // See https://github.com/dart-lang/web/issues/180
-    blob = Blob(<JSUint8Array>[(bytes as Uint8List).toJS].toJS);
+    blob = web.Blob(<JSUint8Array>[(bytes as Uint8List).toJS].toJS);
 
-    final web.Element icon = document.createElement('img')
-      ..setAttribute('src', URL.createObjectURL(blob as JSObject));
+    final web.Element icon = web.document.createElement('img')
+      ..setAttribute('src', web.URL.createObjectURL(blob as JSObject));
 
     final gmaps.Size? size = _gmSizeFromIconConfig(iconConfig, 2);
     _setIconStyle(
@@ -599,10 +599,10 @@ Future<gmaps.Icon?> _gmIconFromBitmapDescriptor(
       (final BytesMapBitmap bytesMapBitmap) => _bitmapBlobUrlCache.putIfAbsent(
         bytesMapBitmap.byteData.hashCode,
         () {
-          final Blob blob = Blob(
+          final web.Blob blob = web.Blob(
             <JSUint8Array>[bytesMapBitmap.byteData.toJS].toJS,
           );
-          return URL.createObjectURL(blob as JSObject);
+          return web.URL.createObjectURL(blob as JSObject);
         },
       ),
       (final AssetMapBitmap assetMapBitmap) => ui_web.assetManager.getAssetUrl(
@@ -648,7 +648,7 @@ Future<gmaps.Icon?> _gmIconFromBitmapDescriptor(
     // Grab the bytes, and put them into a blob
     final List<int> bytes = iconConfig[1]! as List<int>;
     // Create a Blob from bytes, but let the browser figure out the encoding
-    final Blob blob;
+    final web.Blob blob;
 
     assert(
       bytes is Uint8List,
@@ -657,9 +657,9 @@ Future<gmaps.Icon?> _gmIconFromBitmapDescriptor(
 
     // TODO(ditman): Improve this conversion
     // See https://github.com/dart-lang/web/issues/180
-    blob = Blob(<JSUint8Array>[(bytes as Uint8List).toJS].toJS);
+    blob = web.Blob(<JSUint8Array>[(bytes as Uint8List).toJS].toJS);
 
-    icon = gmaps.Icon()..url = URL.createObjectURL(blob as JSObject);
+    icon = gmaps.Icon()..url = web.URL.createObjectURL(blob as JSObject);
 
     final gmaps.Size? size = _gmSizeFromIconConfig(iconConfig, 2);
     if (size != null) {
@@ -971,10 +971,10 @@ String urlFromMapBitmap(MapBitmap mapBitmap) {
     (final BytesMapBitmap bytesMapBitmap) => _bitmapBlobUrlCache.putIfAbsent(
       bytesMapBitmap.byteData.hashCode,
       () {
-        final Blob blob = Blob(
+        final web.Blob blob = web.Blob(
           <JSUint8Array>[bytesMapBitmap.byteData.toJS].toJS,
         );
-        return URL.createObjectURL(blob as JSObject);
+        return web.URL.createObjectURL(blob as JSObject);
       },
     ),
     (final AssetMapBitmap assetMapBitmap) => ui_web.assetManager.getAssetUrl(

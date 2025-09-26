@@ -64,7 +64,7 @@ abstract class MarkerController<T, O> {
   /// This cannot be called after [remove].
   void update(
     O options, {
-    HTMLElement? newInfoWindowContent,
+    web.HTMLElement? newInfoWindowContent,
   });
 
   /// Initializes the listener for the wrapped marker object.
