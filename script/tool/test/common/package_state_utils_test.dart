@@ -282,7 +282,7 @@ void main() {
     });
 
     test(
-        'does not requires changelog or version change for build.gradle '
+        'does not require changelog or version change for build.gradle '
         'test-dependency-only changes with paren style', () async {
       final RepositoryPackage package =
           createFakePlugin('a_plugin', packagesDir);
