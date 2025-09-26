@@ -5839,7 +5839,7 @@ abstract class PigeonApiCompanionAd(
   /** The URL for the static resource of this companion. */
   abstract fun resourceValue(
       pigeon_instance: com.google.ads.interactivemedia.v3.api.CompanionAd
-  ): String
+  ): String?
 
   /**
    * The width of the companion in pixels.

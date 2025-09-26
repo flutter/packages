@@ -3,17 +3,21 @@
 // found in the LICENSE file.
 
 export 'ad_error.dart';
-export 'ad_event.dart';
 export 'ad_ui_element.dart';
 export 'build_widget_creation_params.dart';
 export 'companion_ad_slot_size.dart';
 export 'interactive_media_ads_platform.dart';
+export 'platform_ad.dart';
 export 'platform_ad_display_container.dart';
+export 'platform_ad_event.dart';
+export 'platform_ad_pod_info.dart';
 export 'platform_ads_loader.dart';
 export 'platform_ads_manager.dart';
 export 'platform_ads_manager_delegate.dart';
 export 'platform_ads_rendering_settings.dart';
 export 'platform_ads_request.dart';
+export 'platform_companion_ad.dart';
 export 'platform_companion_ad_slot.dart';
 export 'platform_content_progress_provider.dart';
 export 'platform_ima_settings.dart';
+export 'platform_universal_ad_id.dart';
