@@ -1,4 +1,4 @@
-## 0.5.15
+## 0.6.0
 
 * Adds Advanced markers support.
 
