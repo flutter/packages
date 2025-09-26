@@ -67,7 +67,7 @@ translates into:
 
 <?code-excerpt "../example/lib/ad_unit_widget.dart (adUnit)"?>
 ```dart
-    AdUnitWidget(
+AdUnitWidget(
   configuration: AdUnitConfiguration.displayAdUnit(
     // TODO: Replace with your Ad Unit ID
     adSlot: '1234567890',
@@ -102,8 +102,10 @@ Note some [policies and restrictions](https://support.google.com/adsense/answer/
 <?code-excerpt "../example/lib/ad_unit_widget.dart (constraints)"?>
 ```dart
 Container(
-  constraints:
-      const BoxConstraints(maxHeight: 100, maxWidth: 1200),
+  constraints: const BoxConstraints(
+    maxHeight: 100,
+    maxWidth: 1200,
+  ),
   padding: const EdgeInsets.only(bottom: 10),
   child: AdUnitWidget(
     configuration: AdUnitConfiguration.displayAdUnit(

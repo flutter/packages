@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -15,12 +15,14 @@ import 'package:web/web.dart' as html;
 
 const String expectedStringContents = 'Hello, world! I ❤ ñ! 空手';
 final Uint8List bytes = Uint8List.fromList(utf8.encode(expectedStringContents));
-final html.File textFile =
-    html.File(<JSUint8Array>[bytes.toJS].toJS, 'hello.txt');
+final html.File textFile = html.File(
+  <JSUint8Array>[bytes.toJS].toJS,
+  'hello.txt',
+);
 final String textFileUrl =
-    // TODO(kevmoo): drop ignore when pkg:web constraint excludes v0.3
-    // ignore: unnecessary_cast
-    html.URL.createObjectURL(textFile as JSObject);
+// TODO(kevmoo): drop ignore when pkg:web constraint excludes v0.3
+// ignore: unnecessary_cast
+html.URL.createObjectURL(textFile as JSObject);
 
 void main() {
   group('Create with an objectUrl', () {
@@ -94,8 +96,9 @@ void main() {
 
         await file.saveTo('');
 
-        final html.Element? container =
-            html.document.querySelector('#$crossFileDomElementId');
+        final html.Element? container = html.document.querySelector(
+          '#$crossFileDomElementId',
+        );
 
         expect(container, isNotNull);
       });
@@ -130,8 +133,11 @@ void main() {
           createAnchorElement: (_, __) => mockAnchor,
         );
 
-        final XFile file =
-            XFile.fromData(bytes, name: textFile.name, overrides: overrides);
+        final XFile file = XFile.fromData(
+          bytes,
+          name: textFile.name,
+          overrides: overrides,
+        );
 
         bool clicked = false;
         mockAnchor.onClick.listen((html.MouseEvent event) => clicked = true);

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -10,7 +10,6 @@ import 'package:flutter/foundation.dart';
 /// this class and providing a factory method that takes the
 /// [JavaScriptMessage] as a parameter.
 ///
-/// {@tool sample}
 /// This example demonstrates how to extend the [JavaScriptMessage] to
 /// provide additional platform specific parameters.
 ///
@@ -38,13 +37,10 @@ import 'package:flutter/foundation.dart';
 ///   final String? extraData;
 /// }
 /// ```
-/// {@end-tool}
 @immutable
 class JavaScriptMessage {
   /// Creates a new JavaScript message object.
-  const JavaScriptMessage({
-    required this.message,
-  });
+  const JavaScriptMessage({required this.message});
 
   /// The contents of the message that was sent by the JavaScript code.
   final String message;

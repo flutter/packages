@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -21,9 +21,7 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      routerConfig: _router,
-    );
+    return MaterialApp.router(routerConfig: _router);
   }
 }
 
@@ -34,7 +32,7 @@ class Extra {
 }
 
 @TypedGoRoute<RequiredExtraRoute>(path: '/requiredExtra')
-class RequiredExtraRoute extends GoRouteData {
+class RequiredExtraRoute extends GoRouteData with $RequiredExtraRoute {
   const RequiredExtraRoute({required this.$extra});
 
   final Extra $extra;
@@ -59,7 +57,7 @@ class RequiredExtraScreen extends StatelessWidget {
 }
 
 @TypedGoRoute<OptionalExtraRoute>(path: '/optionalExtra')
-class OptionalExtraRoute extends GoRouteData {
+class OptionalExtraRoute extends GoRouteData with $OptionalExtraRoute {
   const OptionalExtraRoute({this.$extra});
 
   final Extra? $extra;
@@ -84,7 +82,7 @@ class OptionalExtraScreen extends StatelessWidget {
 }
 
 @TypedGoRoute<SplashRoute>(path: '/splash')
-class SplashRoute extends GoRouteData {
+class SplashRoute extends GoRouteData with $SplashRoute {
   const SplashRoute();
 
   @override
@@ -103,13 +101,13 @@ class Splash extends StatelessWidget {
         children: <Widget>[
           const Placeholder(),
           ElevatedButton(
-            onPressed: () =>
-                const RequiredExtraRoute($extra: Extra(1)).go(context),
+            onPressed:
+                () => const RequiredExtraRoute($extra: Extra(1)).go(context),
             child: const Text('Required Extra'),
           ),
           ElevatedButton(
-            onPressed: () =>
-                const OptionalExtraRoute($extra: Extra(2)).go(context),
+            onPressed:
+                () => const OptionalExtraRoute($extra: Extra(2)).go(context),
             child: const Text('Optional Extra'),
           ),
           ElevatedButton(

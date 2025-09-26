@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -12,57 +12,65 @@ import androidx.camera.core.resolutionselector.AspectRatioStrategy;
 import androidx.camera.core.resolutionselector.ResolutionFilter;
 import androidx.camera.core.resolutionselector.ResolutionSelector;
 import androidx.camera.core.resolutionselector.ResolutionStrategy;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
 
+@RunWith(RobolectricTestRunner.class)
 public class ResolutionSelectorTest {
-  @Rule public MockitoRule mockitoRule = MockitoJUnit.rule();
-  @Mock public ResolutionSelector mockResolutionSelector;
-  @Mock public ResolutionSelectorHostApiImpl.ResolutionSelectorProxy mockProxy;
+  @Test
+  public void pigeon_defaultConstructor_createsExpectedResolutionSelectorInstance() {
+    final PigeonApiResolutionSelector api =
+        new TestProxyApiRegistrar().getPigeonApiResolutionSelector();
 
-  InstanceManager instanceManager;
+    final ResolutionFilter resolutionFilter = mock(ResolutionFilter.class);
+    final ResolutionStrategy resolutionStrategy = mock(ResolutionStrategy.class);
+    final AspectRatioStrategy aspectRatioStrategy = mock(AspectRatioStrategy.class);
 
-  @Before
-  public void setUp() {
-    instanceManager = InstanceManager.create(identifier -> {});
-  }
+    final ResolutionSelector instance =
+        api.pigeon_defaultConstructor(resolutionFilter, resolutionStrategy, aspectRatioStrategy);
 
-  @After
-  public void tearDown() {
-    instanceManager.stopFinalizationListener();
+    assertEquals(instance.getResolutionFilter(), resolutionFilter);
+    assertEquals(instance.getResolutionStrategy(), resolutionStrategy);
+    assertEquals(instance.getAspectRatioStrategy(), aspectRatioStrategy);
   }
 
   @Test
-  public void hostApiCreate_createsExpectedResolutionSelectorInstance() {
-    final ResolutionStrategy mockResolutionStrategy = mock(ResolutionStrategy.class);
-    final long resolutionStrategyIdentifier = 14;
-    instanceManager.addDartCreatedInstance(mockResolutionStrategy, resolutionStrategyIdentifier);
+  public void resolutionFilter_returnsExpectedResolutionFilter() {
+    final PigeonApiResolutionSelector api =
+        new TestProxyApiRegistrar().getPigeonApiResolutionSelector();
 
-    final AspectRatioStrategy mockAspectRatioStrategy = mock(AspectRatioStrategy.class);
-    final long aspectRatioStrategyIdentifier = 15;
-    instanceManager.addDartCreatedInstance(mockAspectRatioStrategy, aspectRatioStrategyIdentifier);
+    final ResolutionSelector instance = mock(ResolutionSelector.class);
+    final androidx.camera.core.resolutionselector.ResolutionFilter value =
+        mock(ResolutionFilter.class);
+    when(instance.getResolutionFilter()).thenReturn(value);
 
-    final ResolutionFilter mockResolutionFilter = mock(ResolutionFilter.class);
-    final long resolutionFilterIdentifier = 33;
-    instanceManager.addDartCreatedInstance(mockResolutionFilter, resolutionFilterIdentifier);
+    assertEquals(value, api.resolutionFilter(instance));
+  }
 
-    when(mockProxy.create(mockResolutionStrategy, mockAspectRatioStrategy, mockResolutionFilter))
-        .thenReturn(mockResolutionSelector);
-    final ResolutionSelectorHostApiImpl hostApi =
-        new ResolutionSelectorHostApiImpl(instanceManager, mockProxy);
+  @Test
+  public void resolutionStrategy_returnsExpectedResolutionStrategy() {
+    final PigeonApiResolutionSelector api =
+        new TestProxyApiRegistrar().getPigeonApiResolutionSelector();
 
-    final long instanceIdentifier = 0;
-    hostApi.create(
-        instanceIdentifier,
-        resolutionStrategyIdentifier,
-        resolutionFilterIdentifier,
-        aspectRatioStrategyIdentifier);
+    final ResolutionSelector instance = mock(ResolutionSelector.class);
+    final androidx.camera.core.resolutionselector.ResolutionStrategy value =
+        mock(ResolutionStrategy.class);
+    when(instance.getResolutionStrategy()).thenReturn(value);
 
-    assertEquals(instanceManager.getInstance(instanceIdentifier), mockResolutionSelector);
+    assertEquals(value, api.resolutionStrategy(instance));
+  }
+
+  @Test
+  public void getAspectRatioStrategy() {
+    final PigeonApiResolutionSelector api =
+        new TestProxyApiRegistrar().getPigeonApiResolutionSelector();
+
+    final ResolutionSelector instance = mock(ResolutionSelector.class);
+    final androidx.camera.core.resolutionselector.AspectRatioStrategy value =
+        mock(AspectRatioStrategy.class);
+    when(instance.getAspectRatioStrategy()).thenReturn(value);
+
+    assertEquals(value, api.getAspectRatioStrategy(instance));
   }
 }

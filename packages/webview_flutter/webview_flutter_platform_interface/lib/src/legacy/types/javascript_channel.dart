@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -14,10 +14,8 @@ class JavascriptChannel {
   /// Constructs a JavaScript channel.
   ///
   /// The parameters `name` and `onMessageReceived` must not be null.
-  JavascriptChannel({
-    required this.name,
-    required this.onMessageReceived,
-  }) : assert(_validChannelNames.hasMatch(name));
+  JavascriptChannel({required this.name, required this.onMessageReceived})
+    : assert(_validChannelNames.hasMatch(name));
 
   /// The channel's name.
   ///

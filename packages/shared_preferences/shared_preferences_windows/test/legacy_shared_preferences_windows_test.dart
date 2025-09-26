@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -79,8 +79,10 @@ void main() {
 
   test('registered instance', () async {
     SharedPreferencesWindows.registerWith();
-    expect(SharedPreferencesStorePlatform.instance,
-        isA<SharedPreferencesWindows>());
+    expect(
+      SharedPreferencesStorePlatform.instance,
+      isA<SharedPreferencesWindows>(),
+    );
   });
 
   test('getAll', () async {
@@ -106,9 +108,7 @@ void main() {
     final SharedPreferencesWindows prefs = getPreferences();
 
     final Map<String, Object> values = await prefs.getAllWithParameters(
-      GetAllParameters(
-        filter: PreferencesFilter(prefix: 'prefix.'),
-      ),
+      GetAllParameters(filter: PreferencesFilter(prefix: 'prefix.')),
     );
     expect(values, hasLength(5));
     expect(values, prefixTestValues);
@@ -162,8 +162,9 @@ void main() {
     await writeTestFile(json.encode(flutterTestValues));
     final SharedPreferencesWindows prefs = getPreferences();
     await prefs.clearWithPrefix('prefix.');
-    final Map<String, Object> noValues =
-        await prefs.getAllWithPrefix('prefix.');
+    final Map<String, Object> noValues = await prefs.getAllWithPrefix(
+      'prefix.',
+    );
     expect(noValues, hasLength(0));
 
     final Map<String, Object> values = await prefs.getAll();
@@ -192,14 +193,10 @@ void main() {
     await writeTestFile(json.encode(flutterTestValues));
     final SharedPreferencesWindows prefs = getPreferences();
     await prefs.clearWithParameters(
-      ClearParameters(
-        filter: PreferencesFilter(prefix: 'prefix.'),
-      ),
+      ClearParameters(filter: PreferencesFilter(prefix: 'prefix.')),
     );
     final Map<String, Object> noValues = await prefs.getAllWithParameters(
-      GetAllParameters(
-        filter: PreferencesFilter(prefix: 'prefix.'),
-      ),
+      GetAllParameters(filter: PreferencesFilter(prefix: 'prefix.')),
     );
     expect(noValues, hasLength(0));
 
@@ -220,9 +217,7 @@ void main() {
       ),
     );
     final Map<String, Object> noValues = await prefs.getAllWithParameters(
-      GetAllParameters(
-        filter: PreferencesFilter(prefix: 'prefix.'),
-      ),
+      GetAllParameters(filter: PreferencesFilter(prefix: 'prefix.')),
     );
     expect(noValues, hasLength(4));
   });
@@ -232,9 +227,7 @@ void main() {
     final SharedPreferencesWindows prefs = getPreferences();
 
     final Map<String, Object> values = await prefs.getAllWithParameters(
-      GetAllParameters(
-        filter: PreferencesFilter(prefix: ''),
-      ),
+      GetAllParameters(filter: PreferencesFilter(prefix: '')),
     );
     expect(values, hasLength(15));
     expect(values, allTestValues);
@@ -244,14 +237,10 @@ void main() {
     await writeTestFile(json.encode(flutterTestValues));
     final SharedPreferencesWindows prefs = getPreferences();
     await prefs.clearWithParameters(
-      ClearParameters(
-        filter: PreferencesFilter(prefix: ''),
-      ),
+      ClearParameters(filter: PreferencesFilter(prefix: '')),
     );
     final Map<String, Object> noValues = await prefs.getAllWithParameters(
-      GetAllParameters(
-        filter: PreferencesFilter(prefix: ''),
-      ),
+      GetAllParameters(filter: PreferencesFilter(prefix: '')),
     );
     expect(noValues, hasLength(0));
   });

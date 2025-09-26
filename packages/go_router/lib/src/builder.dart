@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -17,23 +17,20 @@ import 'route_data.dart';
 import 'state.dart';
 
 /// Signature of a go router builder function with navigator.
-typedef GoRouterBuilderWithNav = Widget Function(
-  BuildContext context,
-  Widget child,
-);
+typedef GoRouterBuilderWithNav =
+    Widget Function(BuildContext context, Widget child);
 
-typedef _PageBuilderForAppType = Page<void> Function({
-  required LocalKey key,
-  required String? name,
-  required Object? arguments,
-  required String restorationId,
-  required Widget child,
-});
+typedef _PageBuilderForAppType =
+    Page<void> Function({
+      required LocalKey key,
+      required String? name,
+      required Object? arguments,
+      required String restorationId,
+      required Widget child,
+    });
 
-typedef _ErrorBuilderForAppType = Widget Function(
-  BuildContext context,
-  GoRouterState state,
-);
+typedef _ErrorBuilderForAppType =
+    Widget Function(BuildContext context, GoRouterState state);
 
 /// Signature for a function that takes in a `route` to be popped with
 /// the `result` and returns a boolean decision on whether the pop
@@ -43,8 +40,8 @@ typedef _ErrorBuilderForAppType = Widget Function(
 /// associates with.
 ///
 /// Used by of [RouteBuilder.onPopPageWithRouteMatch].
-typedef PopPageWithRouteMatchCallback = bool Function(
-    Route<dynamic> route, dynamic result, RouteMatchBase match);
+typedef PopPageWithRouteMatchCallback =
+    bool Function(Route<dynamic> route, dynamic result, RouteMatchBase match);
 
 /// Builds the top-level Navigator for GoRouter.
 class RouteBuilder {
@@ -121,6 +118,7 @@ class RouteBuilder {
         configuration: configuration,
         errorBuilder: errorBuilder,
         errorPageBuilder: errorPageBuilder,
+        requestFocus: requestFocus,
       ),
     );
   }
@@ -138,6 +136,7 @@ class _CustomNavigator extends StatefulWidget {
     required this.configuration,
     required this.errorBuilder,
     required this.errorPageBuilder,
+    required this.requestFocus,
   });
 
   final GlobalKey<NavigatorState> navigatorKey;
@@ -155,6 +154,7 @@ class _CustomNavigator extends StatefulWidget {
   final String? navigatorRestorationId;
   final GoRouterWidgetBuilder? errorBuilder;
   final GoRouterPageBuilder? errorPageBuilder;
+  final bool requestFocus;
 
   @override
   State<StatefulWidget> createState() => _CustomNavigatorState();
@@ -216,8 +216,10 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
         }
         pages.add(page);
         pageToRouteMatchBase[page] = match;
-        registry[page] =
-            match.buildState(widget.configuration, widget.matchList);
+        registry[page] = match.buildState(
+          widget.configuration,
+          widget.matchList,
+        );
       }
     }
     _pages = pages;
@@ -241,8 +243,10 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
   /// Builds a [Page] for a [RouteMatch]
   Page<Object?>? _buildPageForGoRoute(BuildContext context, RouteMatch match) {
     final GoRouterPageBuilder? pageBuilder = match.route.pageBuilder;
-    final GoRouterState state =
-        match.buildState(widget.configuration, widget.matchList);
+    final GoRouterState state = match.buildState(
+      widget.configuration,
+      widget.matchList,
+    );
     if (pageBuilder != null) {
       final Page<Object?> page = pageBuilder(context, state);
       if (page is! NoOpPage) {
@@ -255,10 +259,15 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
     if (builder == null) {
       return null;
     }
-    return _buildPlatformAdapterPage(context, state,
-        Builder(builder: (BuildContext context) {
-      return builder(context, state);
-    }));
+    return _buildPlatformAdapterPage(
+      context,
+      state,
+      Builder(
+        builder: (BuildContext context) {
+          return builder(context, state);
+        },
+      ),
+    );
   }
 
   /// Builds a [Page] for a [ShellRouteMatch]
@@ -266,8 +275,10 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
     BuildContext context,
     ShellRouteMatch match,
   ) {
-    final GoRouterState state =
-        match.buildState(widget.configuration, widget.matchList);
+    final GoRouterState state = match.buildState(
+      widget.configuration,
+      widget.matchList,
+    );
     final GlobalKey<NavigatorState> navigatorKey = match.navigatorKey;
     final ShellRouteContext shellRouteContext = ShellRouteContext(
       route: match.route,
@@ -282,24 +293,35 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
         List<NavigatorObserver>? observers,
         String? restorationScopeId,
       ) {
-        return _CustomNavigator(
-          // The state needs to persist across rebuild.
-          key: GlobalObjectKey(navigatorKey.hashCode),
-          navigatorRestorationId: restorationScopeId,
-          navigatorKey: navigatorKey,
-          matches: match.matches,
-          matchList: matchList,
-          configuration: widget.configuration,
-          observers: observers ?? const <NavigatorObserver>[],
-          onPopPageWithRouteMatch: widget.onPopPageWithRouteMatch,
-          // This is used to recursively build pages under this shell route.
-          errorBuilder: widget.errorBuilder,
-          errorPageBuilder: widget.errorPageBuilder,
+        return PopScope(
+          // Prevent ShellRoute from being popped, for example
+          // by an iOS back gesture, when the route has active sub-routes.
+          // TODO(LukasMirbt): Remove when minimum flutter version includes
+          // https://github.com/flutter/flutter/pull/152330.
+          canPop: match.matches.length == 1,
+          child: _CustomNavigator(
+            // The state needs to persist across rebuild.
+            key: GlobalObjectKey(navigatorKey.hashCode),
+            navigatorRestorationId: restorationScopeId,
+            navigatorKey: navigatorKey,
+            matches: match.matches,
+            matchList: matchList,
+            configuration: widget.configuration,
+            observers: observers ?? const <NavigatorObserver>[],
+            onPopPageWithRouteMatch: widget.onPopPageWithRouteMatch,
+            // This is used to recursively build pages under this shell route.
+            errorBuilder: widget.errorBuilder,
+            errorPageBuilder: widget.errorPageBuilder,
+            requestFocus: widget.requestFocus,
+          ),
         );
       },
     );
-    final Page<Object?>? page =
-        match.route.buildPage(context, state, shellRouteContext);
+    final Page<Object?>? page = match.route.buildPage(
+      context,
+      state,
+      shellRouteContext,
+    );
     if (page != null && page is! NoOpPage) {
       return page;
     }
@@ -340,14 +362,14 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
             (BuildContext c, GoRouterState s) => CupertinoErrorScreen(s.error);
       } else {
         log('Using WidgetsApp configuration');
-        _pageBuilderForAppType = ({
-          required LocalKey key,
-          required String? name,
-          required Object? arguments,
-          required String restorationId,
-          required Widget child,
-        }) =>
-            NoTransitionPage<void>(
+        _pageBuilderForAppType =
+            ({
+              required LocalKey key,
+              required String? name,
+              required Object? arguments,
+              required String restorationId,
+              required Widget child,
+            }) => NoTransitionPage<void>(
               name: name,
               arguments: arguments,
               key: key,
@@ -376,7 +398,7 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
       name: state.name ?? state.path,
       arguments: <String, String>{
         ...state.pathParameters,
-        ...state.uri.queryParameters
+        ...state.uri.queryParameters,
       },
       restorationId: state.pageKey.value,
       child: child,
@@ -411,12 +433,12 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
     return widget.errorPageBuilder != null
         ? widget.errorPageBuilder!(context, state)
         : _buildPlatformAdapterPage(
-            context,
-            state,
-            errorBuilder != null
-                ? errorBuilder(context, state)
-                : _errorBuilderForAppType!(context, state),
-          );
+          context,
+          state,
+          errorBuilder != null
+              ? errorBuilder(context, state)
+              : _errorBuilderForAppType!(context, state),
+        );
   }
 
   bool _handlePopPage(Route<Object?> route, Object? result) {
@@ -437,6 +459,7 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
         controller: _controller!,
         child: Navigator(
           key: widget.navigatorKey,
+          requestFocus: widget.requestFocus,
           restorationScopeId: widget.navigatorRestorationId,
           pages: _pages!,
           observers: widget.observers,

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -7,12 +7,16 @@ import '../platform_interface/platform_ad_display_container.dart';
 import '../platform_interface/platform_ads_loader.dart';
 import '../platform_interface/platform_ads_manager_delegate.dart';
 import '../platform_interface/platform_ads_rendering_settings.dart';
+import '../platform_interface/platform_companion_ad_slot.dart';
 import '../platform_interface/platform_content_progress_provider.dart';
+import '../platform_interface/platform_ima_settings.dart';
 import 'ios_ad_display_container.dart';
 import 'ios_ads_loader.dart';
 import 'ios_ads_manager_delegate.dart';
 import 'ios_ads_rendering_settings.dart';
+import 'ios_companion_ad_slot.dart';
 import 'ios_content_progress_provider.dart';
+import 'ios_ima_settings.dart';
 
 /// Implementation of [InteractiveMediaAdsPlatform] for iOS.
 final class IOSInteractiveMediaAds extends InteractiveMediaAdsPlatform {
@@ -52,5 +56,19 @@ final class IOSInteractiveMediaAds extends InteractiveMediaAdsPlatform {
     PlatformAdsRenderingSettingsCreationParams params,
   ) {
     return IOSAdsRenderingSettings(params);
+  }
+
+  @override
+  IOSCompanionAdSlot createPlatformCompanionAdSlot(
+    PlatformCompanionAdSlotCreationParams params,
+  ) {
+    return IOSCompanionAdSlot(params);
+  }
+
+  @override
+  IOSImaSettings createPlatformImaSettings(
+    PlatformImaSettingsCreationParams params,
+  ) {
+    return IOSImaSettings(params);
   }
 }

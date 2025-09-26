@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -6,7 +6,6 @@ package io.flutter.plugins.videoplayer.platformview;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.OptIn;
-import androidx.annotation.VisibleForTesting;
 import androidx.media3.common.Format;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.exoplayer.ExoPlayer;
@@ -15,15 +14,9 @@ import io.flutter.plugins.videoplayer.VideoPlayerCallbacks;
 import java.util.Objects;
 
 public final class PlatformViewExoPlayerEventListener extends ExoPlayerEventListener {
-  @VisibleForTesting
   public PlatformViewExoPlayerEventListener(
       @NonNull ExoPlayer exoPlayer, @NonNull VideoPlayerCallbacks events) {
-    this(exoPlayer, events, false);
-  }
-
-  public PlatformViewExoPlayerEventListener(
-      @NonNull ExoPlayer exoPlayer, @NonNull VideoPlayerCallbacks events, boolean initialized) {
-    super(exoPlayer, events, initialized);
+    super(exoPlayer, events);
   }
 
   @OptIn(markerClass = UnstableApi.class)

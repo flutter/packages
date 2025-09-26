@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -13,7 +13,7 @@ import 'page.dart';
 
 class PlacePolylinePage extends GoogleMapExampleAppPage {
   const PlacePolylinePage({Key? key})
-      : super(const Icon(Icons.linear_scale), 'Place polyline', key: key);
+    : super(const Icon(Icons.linear_scale), 'Place polyline', key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +53,7 @@ class PlacePolylineBodyState extends State<PlacePolylineBody> {
   List<JointType> jointTypes = <JointType>[
     JointType.mitered,
     JointType.bevel,
-    JointType.round
+    JointType.round,
   ];
 
   // Values when toggling polyline end cap type
@@ -72,7 +72,7 @@ class PlacePolylineBodyState extends State<PlacePolylineBody> {
       PatternItem.dash(30.0),
       PatternItem.gap(20.0),
       PatternItem.dot,
-      PatternItem.gap(20.0)
+      PatternItem.gap(20.0),
     ],
     <PatternItem>[PatternItem.dash(30.0), PatternItem.gap(20.0)],
     <PatternItem>[PatternItem.dot, PatternItem.gap(10.0)],
@@ -235,26 +235,26 @@ class PlacePolylineBodyState extends State<PlacePolylineBody> {
                   children: <Widget>[
                     Column(
                       children: <Widget>[
+                        TextButton(onPressed: _add, child: const Text('add')),
                         TextButton(
-                          onPressed: _add,
-                          child: const Text('add'),
-                        ),
-                        TextButton(
-                          onPressed: (selectedId == null)
-                              ? null
-                              : () => _remove(selectedId),
+                          onPressed:
+                              (selectedId == null)
+                                  ? null
+                                  : () => _remove(selectedId),
                           child: const Text('remove'),
                         ),
                         TextButton(
-                          onPressed: (selectedId == null)
-                              ? null
-                              : () => _toggleVisible(selectedId),
+                          onPressed:
+                              (selectedId == null)
+                                  ? null
+                                  : () => _toggleVisible(selectedId),
                           child: const Text('toggle visible'),
                         ),
                         TextButton(
-                          onPressed: (selectedId == null)
-                              ? null
-                              : () => _toggleGeodesic(selectedId),
+                          onPressed:
+                              (selectedId == null)
+                                  ? null
+                                  : () => _toggleGeodesic(selectedId),
                           child: const Text('toggle geodesic'),
                         ),
                       ],
@@ -262,45 +262,51 @@ class PlacePolylineBodyState extends State<PlacePolylineBody> {
                     Column(
                       children: <Widget>[
                         TextButton(
-                          onPressed: (selectedId == null)
-                              ? null
-                              : () => _changeWidth(selectedId),
+                          onPressed:
+                              (selectedId == null)
+                                  ? null
+                                  : () => _changeWidth(selectedId),
                           child: const Text('change width'),
                         ),
                         TextButton(
-                          onPressed: (selectedId == null)
-                              ? null
-                              : () => _changeColor(selectedId),
+                          onPressed:
+                              (selectedId == null)
+                                  ? null
+                                  : () => _changeColor(selectedId),
                           child: const Text('change color'),
                         ),
                         TextButton(
-                          onPressed: isIOS || (selectedId == null)
-                              ? null
-                              : () => _changeStartCap(selectedId),
+                          onPressed:
+                              isIOS || (selectedId == null)
+                                  ? null
+                                  : () => _changeStartCap(selectedId),
                           child: const Text('change start cap [Android only]'),
                         ),
                         TextButton(
-                          onPressed: isIOS || (selectedId == null)
-                              ? null
-                              : () => _changeEndCap(selectedId),
+                          onPressed:
+                              isIOS || (selectedId == null)
+                                  ? null
+                                  : () => _changeEndCap(selectedId),
                           child: const Text('change end cap [Android only]'),
                         ),
                         TextButton(
-                          onPressed: isIOS || (selectedId == null)
-                              ? null
-                              : () => _changeJointType(selectedId),
+                          onPressed:
+                              isIOS || (selectedId == null)
+                                  ? null
+                                  : () => _changeJointType(selectedId),
                           child: const Text('change joint type [Android only]'),
                         ),
                         TextButton(
-                          onPressed: (selectedId == null)
-                              ? null
-                              : () => _changePattern(selectedId),
+                          onPressed:
+                              (selectedId == null)
+                                  ? null
+                                  : () => _changePattern(selectedId),
                           child: const Text('change pattern'),
                         ),
                       ],
-                    )
+                    ),
                   ],
-                )
+                ),
               ],
             ),
           ),

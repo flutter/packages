@@ -13,7 +13,7 @@ Supported data types are `int`, `double`, `bool`, `String` and `List<String>`.
 
 |             | Android | iOS   | Linux | macOS  | Web | Windows     |
 |-------------|---------|-------|-------|--------|-----|-------------|
-| **Support** | SDK 16+ | 12.0+ | Any   | 10.14+ | Any | Any         |
+| **Support** | SDK 21+ | 12.0+ | Any   | 10.14+ | Any | Any         |
 
 ## Usage
 
@@ -63,9 +63,11 @@ import 'package:shared_preferences_android/shared_preferences_android.dart';
 ```dart
 const SharedPreferencesAsyncAndroidOptions options =
     SharedPreferencesAsyncAndroidOptions(
-        backend: SharedPreferencesAndroidBackendLibrary.SharedPreferences,
-        originalSharedPreferencesOptions: AndroidSharedPreferencesStoreOptions(
-            fileName: 'the_name_of_a_file'));
+      backend: SharedPreferencesAndroidBackendLibrary.SharedPreferences,
+      originalSharedPreferencesOptions: AndroidSharedPreferencesStoreOptions(
+        fileName: 'the_name_of_a_file',
+      ),
+    );
 ```
 
 The [SharedPreferences] API uses the native [Android SharedPreferences](https://developer.android.com/reference/android/content/SharedPreferences) tool to store data.
@@ -136,8 +138,8 @@ await asyncPrefs.clear(allowList: <String>{'action', 'repeat'});
 ### SharedPreferencesWithCache
 <?code-excerpt "readme_excerpts.dart (WithCache)"?>
 ```dart
-final SharedPreferencesWithCache prefsWithCache =
-    await SharedPreferencesWithCache.create(
+final SharedPreferencesWithCache
+prefsWithCache = await SharedPreferencesWithCache.create(
   cacheOptions: const SharedPreferencesWithCacheOptions(
     // When an allowlist is included, any keys that aren't included cannot be used.
     allowList: <String>{'repeat', 'action'},

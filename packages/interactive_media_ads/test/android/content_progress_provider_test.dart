@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -12,9 +12,7 @@ import 'package:mockito/mockito.dart';
 
 import 'content_progress_provider_test.mocks.dart';
 
-@GenerateNiceMocks(<MockSpec<Object>>[
-  MockSpec<ima.ContentProgressProvider>(),
-])
+@GenerateNiceMocks(<MockSpec<Object>>[MockSpec<ima.ContentProgressProvider>()])
 void main() {
   group('AndroidContentProgressProvider', () {
     test('setProgress', () async {
@@ -23,20 +21,24 @@ void main() {
 
       final AndroidContentProgressProvider provider =
           AndroidContentProgressProvider(
-        AndroidContentProgressProviderCreationParams(
-          proxy: InteractiveMediaAdsProxy(
-            newContentProgressProvider: () => mockContentProgressProvider,
-            newVideoProgressUpdate: ({
-              required int currentTimeMs,
-              required int durationMs,
-            }) {
-              expect(currentTimeMs, 1000);
-              expect(durationMs, 10000);
-              return ima.VideoProgressUpdate.pigeon_detached();
-            },
-          ),
-        ),
-      );
+            AndroidContentProgressProviderCreationParams(
+              proxy: InteractiveMediaAdsProxy(
+                newContentProgressProvider: () => mockContentProgressProvider,
+                newVideoProgressUpdate: ({
+                  required int currentTimeMs,
+                  required int durationMs,
+                }) {
+                  expect(currentTimeMs, 1000);
+                  expect(durationMs, 10000);
+                  return ima.VideoProgressUpdate.pigeon_detached(
+                    pigeon_instanceManager: ima.PigeonInstanceManager(
+                      onWeakReferenceRemoved: (_) {},
+                    ),
+                  );
+                },
+              ),
+            ),
+          );
 
       await provider.setProgress(
         progress: const Duration(seconds: 1),

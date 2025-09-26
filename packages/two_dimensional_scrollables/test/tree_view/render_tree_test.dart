@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -17,9 +17,9 @@ TreeRow getTappableRow(TreeViewNode<String> node, VoidCallback callback) {
     recognizerFactories: <Type, GestureRecognizerFactory>{
       TapGestureRecognizer:
           GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>(
-        () => TapGestureRecognizer(),
-        (TapGestureRecognizer t) => t.onTap = () => callback(),
-      ),
+            () => TapGestureRecognizer(),
+            (TapGestureRecognizer t) => t.onTap = () => callback(),
+          ),
     },
   );
 }
@@ -87,9 +87,8 @@ void main() {
             delegate: TreeRowBuilderDelegate(
               rowCount: 0,
               nodeBuilder: (_, __) => const SizedBox(),
-              rowBuilder: (_) => const TreeRow(
-                extent: FixedTreeRowExtent(40.0),
-              ),
+              rowBuilder:
+                  (_) => const TreeRow(extent: FixedTreeRowExtent(40.0)),
             ),
             activeAnimations: const <UniqueKey, TreeViewNodesAnimation>{},
             rowDepths: const <int, int>{},
@@ -115,9 +114,8 @@ void main() {
             delegate: TreeRowBuilderDelegate(
               rowCount: 0,
               nodeBuilder: (_, __) => const SizedBox(),
-              rowBuilder: (_) => const TreeRow(
-                extent: FixedTreeRowExtent(40.0),
-              ),
+              rowBuilder:
+                  (_) => const TreeRow(extent: FixedTreeRowExtent(40.0)),
             ),
             activeAnimations: const <UniqueKey, TreeViewNodesAnimation>{},
             rowDepths: const <int, int>{},
@@ -143,13 +141,10 @@ void main() {
         tree: treeNodes,
         treeRowBuilder: (TreeViewNode<String> node) {
           if (node.depth! == 0) {
-            return getTappableRow(
-              node,
-              () {
-                log.add(node.content);
-                tapCounter++;
-              },
-            );
+            return getTappableRow(node, () {
+              log.add(node.content);
+              tapCounter++;
+            });
           }
           return row;
         },
@@ -218,8 +213,9 @@ void main() {
       );
     });
 
-    testWidgets('Scrolls when there is enough content',
-        (WidgetTester tester) async {
+    testWidgets('Scrolls when there is enough content', (
+      WidgetTester tester,
+    ) async {
       final ScrollController verticalController = ScrollController();
       final ScrollController horizontalController = ScrollController();
       final TreeViewController treeController = TreeViewController();
@@ -270,9 +266,7 @@ void main() {
 
       testWidgets('Basic', (WidgetTester tester) async {
         // Default layout, custom indentation values, row extents.
-        TreeView<String> treeView = TreeView<String>(
-          tree: treeNodes,
-        );
+        TreeView<String> treeView = TreeView<String>(tree: treeNodes);
         await tester.pumpWidget(MaterialApp(home: treeView));
         await tester.pump();
         expect(find.text('First'), findsOneWidget);
@@ -470,20 +464,11 @@ void main() {
         );
         // Progress the animation.
         await tester.pump(const Duration(milliseconds: 50));
-        expect(
-          tester.getRect(find.text('alpha')).top.floor(),
-          8.0,
-        );
+        expect(tester.getRect(find.text('alpha')).top.floor(), 8.0);
         expect(find.text('beta'), findsOneWidget);
-        expect(
-          tester.getRect(find.text('beta')).top.floor(),
-          48.0,
-        );
+        expect(tester.getRect(find.text('beta')).top.floor(), 48.0);
         expect(find.text('kappa'), findsOneWidget);
-        expect(
-          tester.getRect(find.text('kappa')).top.floor(),
-          88.0,
-        );
+        expect(tester.getRect(find.text('kappa')).top.floor(), 88.0);
         // Complete the animation
         await tester.pumpAndSettle();
         expect(find.text('alpha'), findsOneWidget);
@@ -524,37 +509,19 @@ void main() {
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 200));
         expect(find.text('alpha'), findsOneWidget);
-        expect(
-          tester.getRect(find.text('alpha')).top.floor(),
-          -22,
-        );
+        expect(tester.getRect(find.text('alpha')).top.floor(), -22);
         expect(find.text('beta'), findsOneWidget);
-        expect(
-          tester.getRect(find.text('beta')).top.floor(),
-          18,
-        );
+        expect(tester.getRect(find.text('beta')).top.floor(), 18);
         expect(find.text('kappa'), findsOneWidget);
-        expect(
-          tester.getRect(find.text('kappa')).top.floor(),
-          58,
-        );
+        expect(tester.getRect(find.text('kappa')).top.floor(), 58);
         // Progress the animation.
         await tester.pump(const Duration(milliseconds: 200));
         expect(find.text('alpha'), findsOneWidget);
-        expect(
-          tester.getRect(find.text('alpha')).top.floor(),
-          -25,
-        );
+        expect(tester.getRect(find.text('alpha')).top.floor(), -25);
         expect(find.text('beta'), findsOneWidget);
-        expect(
-          tester.getRect(find.text('beta')).top.floor(),
-          15,
-        );
+        expect(tester.getRect(find.text('beta')).top.floor(), 15);
         expect(find.text('kappa'), findsOneWidget);
-        expect(
-          tester.getRect(find.text('kappa')).top.floor(),
-          55.0,
-        );
+        expect(tester.getRect(find.text('kappa')).top.floor(), 55.0);
         // Complete the animation
         await tester.pumpAndSettle();
         expect(find.text('alpha'), findsNothing);
@@ -589,15 +556,15 @@ void main() {
         );
       });
 
-      testWidgets('Multiple animating node segments',
-          (WidgetTester tester) async {
+      testWidgets('Multiple animating node segments', (
+        WidgetTester tester,
+      ) async {
         final TreeViewController controller = TreeViewController();
-        await tester.pumpWidget(MaterialApp(
-          home: TreeView<String>(
-            tree: treeNodes,
-            controller: controller,
+        await tester.pumpWidget(
+          MaterialApp(
+            home: TreeView<String>(tree: treeNodes, controller: controller),
           ),
-        ));
+        );
         await tester.pump();
         expect(find.text('Second'), findsOneWidget);
         expect(find.text('alpha'), findsNothing); // Second is collapsed
@@ -638,17 +605,11 @@ void main() {
           const Rect.fromLTRB(46.0, 48.0, 334.0, 72.0),
         );
         // alpha has been added and is animating into view.
-        expect(
-          tester.getRect(find.text('alpha')).top.floor(),
-          -32.0,
-        );
+        expect(tester.getRect(find.text('alpha')).top.floor(), -32.0);
         await tester.pump(const Duration(milliseconds: 15));
         // Third is still collapsing. Third is sliding down
         // as Seconds's children slide in, gamma is still exiting.
-        expect(
-          tester.getRect(find.text('Third')).top.floor(),
-          100.0,
-        );
+        expect(tester.getRect(find.text('Third')).top.floor(), 100.0);
         // gamma appears to not have moved, this is because it is
         // intersecting both animations, the positive offset of
         // Second animation == the negative offset of Third
@@ -662,18 +623,12 @@ void main() {
           const Rect.fromLTRB(46.0, 48.0, 334.0, 72.0),
         );
         // alpha is still animating into view.
-        expect(
-          tester.getRect(find.text('alpha')).top.floor(),
-          -20.0,
-        );
+        expect(tester.getRect(find.text('alpha')).top.floor(), -20.0);
         // Progress the animation further
         await tester.pump(const Duration(milliseconds: 15));
         // Third is still collapsing. Third is sliding down
         // as Seconds's children slide in, gamma is still exiting.
-        expect(
-          tester.getRect(find.text('Third')).top.floor(),
-          112.0,
-        );
+        expect(tester.getRect(find.text('Third')).top.floor(), 112.0);
         // gamma appears to not have moved, this is because it is
         // intersecting both animations, the positive offset of
         // Second animation == the negative offset of Third
@@ -687,10 +642,7 @@ void main() {
           const Rect.fromLTRB(46.0, 48.0, 334.0, 72.0),
         );
         // alpha is still animating into view.
-        expect(
-          tester.getRect(find.text('alpha')).top.floor(),
-          -8.0,
-        );
+        expect(tester.getRect(find.text('alpha')).top.floor(), -8.0);
         // Complete the animations
         await tester.pumpAndSettle();
         expect(
@@ -769,12 +721,14 @@ void main() {
           tree: treeNodes,
           treeRowBuilder: (TreeViewNode<String> node) {
             return row.copyWith(
-              backgroundDecoration: node.depth! == 0
-                  ? rootBackgroundDecoration
-                  : backgroundDecoration,
-              foregroundDecoration: node.depth! == 0
-                  ? rootForegroundDecoration
-                  : foregroundDecoration,
+              backgroundDecoration:
+                  node.depth! == 0
+                      ? rootBackgroundDecoration
+                      : backgroundDecoration,
+              foregroundDecoration:
+                  node.depth! == 0
+                      ? rootForegroundDecoration
+                      : foregroundDecoration,
             );
           },
         );

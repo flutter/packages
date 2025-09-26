@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -19,11 +19,9 @@ import 'package:web/web.dart' as web;
 class CameraOptions {
   /// Creates a new instance of [CameraOptions]
   /// with the given [audio] and [video] constraints.
-  const CameraOptions({
-    AudioConstraints? audio,
-    VideoConstraints? video,
-  })  : audio = audio ?? const AudioConstraints(),
-        video = video ?? const VideoConstraints();
+  const CameraOptions({AudioConstraints? audio, VideoConstraints? video})
+    : audio = audio ?? const AudioConstraints(),
+      video = video ?? const VideoConstraints();
 
   /// The audio constraints for the camera.
   final AudioConstraints audio;

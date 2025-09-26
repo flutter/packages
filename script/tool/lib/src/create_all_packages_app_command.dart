@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -243,9 +243,9 @@ dependencies {}
       gradleFile,
       replacements: <String, List<String>>{
         if (gradleFileIsKotlin)
-          'compileSdk': <String>['compileSdk = 34']
+          'compileSdk': <String>['compileSdk = 36']
         else ...<String, List<String>>{
-          'compileSdkVersion': <String>['compileSdk 34'],
+          'compileSdkVersion': <String>['compileSdk 36'],
         }
       },
       regexReplacements: <RegExp, List<String>>{

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -26,24 +26,23 @@ class AndroidWebViewProxy {
     this.instanceCookieManager = _instanceCookieManager,
     this.instanceFlutterAssetManager = _instanceFlutterAssetManager,
     this.instanceWebStorage = _instanceWebStorage,
+    this.isWebViewFeatureSupported = WebViewFeature.isFeatureSupported,
+    this.setPaymentRequestEnabled = WebSettingsCompat.setPaymentRequestEnabled,
   });
 
   /// Constructs [WebView].
   final WebView Function({
-    void Function(
-      WebView,
-      int left,
-      int top,
-      int oldLeft,
-      int oldTop,
-    )? onScrollChanged,
-  }) newWebView;
+    void Function(WebView, int left, int top, int oldLeft, int oldTop)?
+    onScrollChanged,
+  })
+  newWebView;
 
   /// Constructs [JavaScriptChannel].
   final JavaScriptChannel Function({
     required String channelName,
     required void Function(JavaScriptChannel, String) postMessage,
-  }) newJavaScriptChannel;
+  })
+  newJavaScriptChannel;
 
   /// Constructs [WebViewClient].
   final WebViewClient Function({
@@ -54,67 +53,73 @@ class AndroidWebViewProxy {
       WebView,
       WebResourceRequest,
       WebResourceResponse,
-    )? onReceivedHttpError,
-    void Function(
-      WebViewClient,
-      WebView,
-      WebResourceRequest,
-      WebResourceError,
-    )? onReceivedRequestError,
+    )?
+    onReceivedHttpError,
+    void Function(WebViewClient, WebView, WebResourceRequest, WebResourceError)?
+    onReceivedRequestError,
     void Function(
       WebViewClient,
       WebView,
       WebResourceRequest,
       WebResourceErrorCompat,
-    )? onReceivedRequestErrorCompat,
-    void Function(WebViewClient, WebView, int, String, String)? onReceivedError,
+    )?
+    onReceivedRequestErrorCompat,
     void Function(WebViewClient, WebView, WebResourceRequest)? requestLoading,
     void Function(WebViewClient, WebView, String)? urlLoading,
     void Function(WebViewClient, WebView, String, bool)? doUpdateVisitedHistory,
     void Function(WebViewClient, WebView, HttpAuthHandler, String, String)?
-        onReceivedHttpAuthRequest,
-  }) newWebViewClient;
+    onReceivedHttpAuthRequest,
+    void Function(WebViewClient, WebView, AndroidMessage, AndroidMessage)?
+    onFormResubmission,
+    void Function(WebViewClient, WebView, String)? onLoadResource,
+    void Function(WebViewClient, WebView, String)? onPageCommitVisible,
+    void Function(WebViewClient, WebView, ClientCertRequest)?
+    onReceivedClientCertRequest,
+    void Function(WebViewClient, WebView, String, String?, String)?
+    onReceivedLoginRequest,
+    void Function(WebViewClient, WebView, SslErrorHandler, SslError)?
+    onReceivedSslError,
+    void Function(WebViewClient, WebView, double, double)? onScaleChanged,
+  })
+  newWebViewClient;
 
   /// Constructs [DownloadListener].
   final DownloadListener Function({
     required void Function(
-            DownloadListener, String, String, String, String, int)
-        onDownloadStart,
-  }) newDownloadListener;
+      DownloadListener,
+      String,
+      String,
+      String,
+      String,
+      int,
+    )
+    onDownloadStart,
+  })
+  newDownloadListener;
 
   /// Constructs [WebChromeClient].
   final WebChromeClient Function({
     void Function(WebChromeClient, WebView, int)? onProgressChanged,
-    Future<List<String>> Function(
+    required Future<List<String>> Function(
       WebChromeClient,
       WebView,
       FileChooserParams,
-    )? onShowFileChooser,
+    )
+    onShowFileChooser,
     void Function(WebChromeClient, PermissionRequest)? onPermissionRequest,
     void Function(WebChromeClient, View, CustomViewCallback)? onShowCustomView,
     void Function(WebChromeClient)? onHideCustomView,
-    void Function(
-      WebChromeClient,
-      String,
-      GeolocationPermissionsCallback,
-    )? onGeolocationPermissionsShowPrompt,
+    void Function(WebChromeClient, String, GeolocationPermissionsCallback)?
+    onGeolocationPermissionsShowPrompt,
     void Function(WebChromeClient)? onGeolocationPermissionsHidePrompt,
     void Function(WebChromeClient, ConsoleMessage)? onConsoleMessage,
     Future<void> Function(WebChromeClient, WebView, String, String)? onJsAlert,
-    Future<bool> Function(
-      WebChromeClient,
-      WebView,
-      String,
-      String,
-    )? onJsConfirm,
-    Future<String?> Function(
-      WebChromeClient,
-      WebView,
-      String,
-      String,
-      String,
-    )? onJsPrompt,
-  }) newWebChromeClient;
+    required Future<bool> Function(WebChromeClient, WebView, String, String)
+    onJsConfirm,
+    Future<String?> Function(WebChromeClient, WebView, String, String, String)?
+    onJsPrompt,
+  })
+  newWebChromeClient;
 
   /// Calls to [WebView.setWebContentsDebuggingEnabled].
   final Future<void> Function(bool) setWebContentsDebuggingEnabledWebView;
@@ -127,6 +132,12 @@ class AndroidWebViewProxy {
 
   /// Calls to [WebStorage.instance].
   final WebStorage Function() instanceWebStorage;
+
+  /// Calls to [WebViewFeature.isFeatureSupported].
+  final Future<bool> Function(String) isWebViewFeatureSupported;
+
+  /// Calls to [WebSettingsCompat.setPaymentRequestEnabled].
+  final Future<void> Function(WebSettings, bool) setPaymentRequestEnabled;
 
   static CookieManager _instanceCookieManager() => CookieManager.instance;
 

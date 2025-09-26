@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -59,9 +59,9 @@ class WebViewController {
   WebViewController({
     void Function(WebViewPermissionRequest request)? onPermissionRequest,
   }) : this.fromPlatformCreationParams(
-          const PlatformWebViewControllerCreationParams(),
-          onPermissionRequest: onPermissionRequest,
-        );
+         const PlatformWebViewControllerCreationParams(),
+         onPermissionRequest: onPermissionRequest,
+       );
 
   /// Constructs a [WebViewController] from creation params for a specific
   /// platform.
@@ -98,9 +98,9 @@ class WebViewController {
     PlatformWebViewControllerCreationParams params, {
     void Function(WebViewPermissionRequest request)? onPermissionRequest,
   }) : this.fromPlatform(
-          PlatformWebViewController(params),
-          onPermissionRequest: onPermissionRequest,
-        );
+         PlatformWebViewController(params),
+         onPermissionRequest: onPermissionRequest,
+       );
 
   /// Constructs a [WebViewController] from a specific platform implementation.
   ///
@@ -110,14 +110,13 @@ class WebViewController {
     void Function(WebViewPermissionRequest request)? onPermissionRequest,
   }) {
     if (onPermissionRequest != null) {
-      platform.setOnPlatformPermissionRequest(
-        (PlatformWebViewPermissionRequest request) {
-          onPermissionRequest(WebViewPermissionRequest._(
-            request,
-            types: request.types,
-          ));
-        },
-      );
+      platform.setOnPlatformPermissionRequest((
+        PlatformWebViewPermissionRequest request,
+      ) {
+        onPermissionRequest(
+          WebViewPermissionRequest._(request, types: request.types),
+        );
+      });
     }
   }
 
@@ -172,12 +171,9 @@ class WebViewController {
     if (uri.scheme.isEmpty) {
       throw ArgumentError('Missing scheme in uri: $uri');
     }
-    return platform.loadRequest(LoadRequestParams(
-      uri: uri,
-      method: method,
-      headers: headers,
-      body: body,
-    ));
+    return platform.loadRequest(
+      LoadRequestParams(uri: uri, method: method, headers: headers, body: body),
+    );
   }
 
   /// Returns the current URL that the WebView is displaying.
@@ -291,10 +287,9 @@ class WebViewController {
     required void Function(JavaScriptMessage) onMessageReceived,
   }) {
     assert(name.isNotEmpty);
-    return platform.addJavaScriptChannel(JavaScriptChannelParams(
-      name: name,
-      onMessageReceived: onMessageReceived,
-    ));
+    return platform.addJavaScriptChannel(
+      JavaScriptChannelParams(name: name, onMessageReceived: onMessageReceived),
+    );
   }
 
   /// Removes the JavaScript channel with the matching name from the set of
@@ -366,31 +361,35 @@ class WebViewController {
   /// WebKit framework unfortunately doesn't provide a built-in method to
   /// forward console messages.
   Future<void> setOnConsoleMessage(
-      void Function(JavaScriptConsoleMessage message) onConsoleMessage) {
+    void Function(JavaScriptConsoleMessage message) onConsoleMessage,
+  ) {
     return platform.setOnConsoleMessage(onConsoleMessage);
   }
 
   /// Sets a callback that notifies the host application that the web page
   /// wants to display a JavaScript alert() dialog.
   Future<void> setOnJavaScriptAlertDialog(
-      Future<void> Function(JavaScriptAlertDialogRequest request)
-          onJavaScriptAlertDialog) async {
+    Future<void> Function(JavaScriptAlertDialogRequest request)
+    onJavaScriptAlertDialog,
+  ) async {
     return platform.setOnJavaScriptAlertDialog(onJavaScriptAlertDialog);
   }
 
   /// Sets a callback that notifies the host application that the web page
   /// wants to display a JavaScript confirm() dialog.
   Future<void> setOnJavaScriptConfirmDialog(
-      Future<bool> Function(JavaScriptConfirmDialogRequest request)
-          onJavaScriptConfirmDialog) async {
+    Future<bool> Function(JavaScriptConfirmDialogRequest request)
+    onJavaScriptConfirmDialog,
+  ) async {
     return platform.setOnJavaScriptConfirmDialog(onJavaScriptConfirmDialog);
   }
 
   /// Sets a callback that notifies the host application that the web page
   /// wants to display a JavaScript prompt() dialog.
   Future<void> setOnJavaScriptTextInputDialog(
-      Future<String> Function(JavaScriptTextInputDialogRequest request)
-          onJavaScriptTextInputDialog) async {
+    Future<String> Function(JavaScriptTextInputDialogRequest request)
+    onJavaScriptTextInputDialog,
+  ) async {
     return platform.setOnJavaScriptTextInputDialog(onJavaScriptTextInputDialog);
   }
 
@@ -404,6 +403,31 @@ class WebViewController {
     void Function(ScrollPositionChange change)? onScrollPositionChange,
   ) {
     return platform.setOnScrollPositionChange(onScrollPositionChange);
+  }
+
+  /// Whether the vertical scrollbar should be drawn or not.
+  Future<void> setVerticalScrollBarEnabled(bool enabled) {
+    return platform.setVerticalScrollBarEnabled(enabled);
+  }
+
+  /// Whether the horizontal scrollbar should be drawn or not.
+  Future<void> setHorizontalScrollBarEnabled(bool enabled) {
+    return platform.setHorizontalScrollBarEnabled(enabled);
+  }
+
+  /// Returns true if the current platform supports setting whether scrollbars
+  /// should be drawn or not.
+  ///
+  /// See [setVerticalScrollBarEnabled] and [setHorizontalScrollBarEnabled].
+  Future<bool> supportsSetScrollBarsEnabled() async {
+    return platform.supportsSetScrollBarsEnabled();
+  }
+
+  /// Sets the over-scroll mode for the WebView.
+  ///
+  /// Default behavior is platform dependent.
+  Future<void> setOverScrollMode(WebViewOverScrollMode mode) async {
+    return platform.setOverScrollMode(mode);
   }
 }
 

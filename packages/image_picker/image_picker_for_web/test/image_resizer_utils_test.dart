@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 import 'dart:ui';
@@ -10,24 +10,33 @@ void main() {
   group('Image Resizer Utils', () {
     group('calculateSizeOfScaledImage', () {
       test(
-          "scaled image height and width are same if max width and max height are same as image's width and height",
-          () {
-        expect(calculateSizeOfDownScaledImage(const Size(500, 300), 500, 300),
-            const Size(500, 300));
-      });
+        "scaled image height and width are same if max width and max height are same as image's width and height",
+        () {
+          expect(
+            calculateSizeOfDownScaledImage(const Size(500, 300), 500, 300),
+            const Size(500, 300),
+          );
+        },
+      );
 
       test(
-          'scaled image height and width are same if max width and max height are null',
-          () {
-        expect(calculateSizeOfDownScaledImage(const Size(500, 300), null, null),
-            const Size(500, 300));
-      });
+        'scaled image height and width are same if max width and max height are null',
+        () {
+          expect(
+            calculateSizeOfDownScaledImage(const Size(500, 300), null, null),
+            const Size(500, 300),
+          );
+        },
+      );
 
       test('image size is scaled when maxWidth is set', () {
         const Size imageSize = Size(500, 300);
         const int maxWidth = 400;
         final Size scaledSize = calculateSizeOfDownScaledImage(
-            Size(imageSize.width, imageSize.height), maxWidth.toDouble(), null);
+          Size(imageSize.width, imageSize.height),
+          maxWidth.toDouble(),
+          null,
+        );
         expect(scaledSize.height <= imageSize.height, true);
         expect(scaledSize.width <= maxWidth, true);
       });
@@ -36,9 +45,10 @@ void main() {
         const Size imageSize = Size(500, 300);
         const int maxHeight = 400;
         final Size scaledSize = calculateSizeOfDownScaledImage(
-            Size(imageSize.width, imageSize.height),
-            null,
-            maxHeight.toDouble());
+          Size(imageSize.width, imageSize.height),
+          null,
+          maxHeight.toDouble(),
+        );
         expect(scaledSize.height <= maxHeight, true);
         expect(scaledSize.width <= imageSize.width, true);
       });
@@ -48,9 +58,10 @@ void main() {
         const int maxHeight = 1200;
         const int maxWidth = 99;
         final Size scaledSize = calculateSizeOfDownScaledImage(
-            Size(imageSize.width, imageSize.height),
-            maxWidth.toDouble(),
-            maxHeight.toDouble());
+          Size(imageSize.width, imageSize.height),
+          maxWidth.toDouble(),
+          maxHeight.toDouble(),
+        );
         expect(scaledSize.height <= maxHeight, true);
         expect(scaledSize.width <= maxWidth, true);
       });
@@ -82,11 +93,12 @@ void main() {
       });
 
       test(
-          'image quality is not valid when imageQuality is less than 0 or greater than 100',
-          () {
-        expect(isImageQualityValid(-1), false);
-        expect(isImageQualityValid(101), false);
-      });
+        'image quality is not valid when imageQuality is less than 0 or greater than 100',
+        () {
+          expect(isImageQualityValid(-1), false);
+          expect(isImageQualityValid(101), false);
+        },
+      );
     });
   });
 }

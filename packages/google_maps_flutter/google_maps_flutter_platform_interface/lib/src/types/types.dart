@@ -1,8 +1,9 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 // All the public types exposed by this package.
+export 'advanced_marker.dart';
 export 'bitmap.dart';
 export 'callbacks.dart';
 export 'camera.dart';
@@ -44,4 +45,5 @@ export 'utils/marker.dart';
 export 'utils/polygon.dart';
 export 'utils/polyline.dart';
 export 'utils/tile_overlay.dart';
+export 'web_camera_control_position.dart';
 export 'web_gesture_handling.dart';

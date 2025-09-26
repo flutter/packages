@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -12,7 +12,7 @@ import 'package:camera_web/src/camera.dart';
 import 'package:camera_web/src/types/types.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:mocktail/mocktail.dart';
+import 'package:mockito/mockito.dart';
 import 'package:web/web.dart';
 
 import 'helpers/helpers.dart';
@@ -45,12 +45,9 @@ void main() {
     }
   }
 
-  setUpAll(() {
-    registerFallbackValue(MockCameraOptions());
-  });
-
-  testWidgets('Camera allows to control video bitrate',
-      (WidgetTester tester) async {
+  testWidgets('Camera allows to control video bitrate', (
+    WidgetTester tester,
+  ) async {
     //const String supportedVideoType = 'video/webm';
     const String supportedVideoType = 'video/webm;codecs="vp9,opus"';
     bool isVideoTypeSupported(String type) => type == supportedVideoType;
@@ -69,52 +66,39 @@ void main() {
       mockWindow.navigator = navigator;
       mockNavigator.mediaDevices = mediaDevices;
 
-      final HTMLCanvasElement canvasElement = HTMLCanvasElement()
-        ..width = videoSize.width.toInt()
-        ..height = videoSize.height.toInt()
-        ..context2D.clearRect(0, 0, videoSize.width, videoSize.height);
+      final HTMLCanvasElement canvasElement =
+          HTMLCanvasElement()
+            ..width = videoSize.width.toInt()
+            ..height = videoSize.height.toInt()
+            ..context2D.clearRect(0, 0, videoSize.width, videoSize.height);
 
       final HTMLVideoElement videoElement = HTMLVideoElement();
 
       final MockCameraService cameraService = MockCameraService();
 
-      CameraPlatform.instance = CameraPlugin(
-        cameraService: cameraService,
-      )..window = window;
+      CameraPlatform.instance = CameraPlugin(cameraService: cameraService)
+        ..window = window;
 
       final CameraOptions options = CameraOptions(
         audio: const AudioConstraints(),
         video: VideoConstraints(
-          width: VideoSizeConstraint(
-            ideal: videoSize.width.toInt(),
-          ),
-          height: VideoSizeConstraint(
-            ideal: videoSize.height.toInt(),
-          ),
+          width: VideoSizeConstraint(ideal: videoSize.width.toInt()),
+          height: VideoSizeConstraint(ideal: videoSize.height.toInt()),
         ),
       );
 
       final int cameraId = videoBitrate;
 
       when(
-        () {
-          return cameraService.getMediaStreamForOptions(
-            options,
-            cameraId: cameraId,
-          );
-        },
-      ).thenAnswer(
-          (_) => Future<MediaStream>.value(canvasElement.captureStream()));
+        cameraService.getMediaStreamForOptions(options, cameraId: cameraId),
+      ).thenAnswer((_) async => canvasElement.captureStream());
 
       final Camera camera = Camera(
-          textureId: cameraId,
-          cameraService: cameraService,
-          options: options,
-          recorderOptions: (
-            audioBitrate: null,
-            videoBitrate: videoBitrate,
-          ))
-        ..isVideoTypeSupported = isVideoTypeSupported;
+        textureId: cameraId,
+        cameraService: cameraService,
+        options: options,
+        recorderOptions: (audioBitrate: null, videoBitrate: videoBitrate),
+      )..isVideoTypeSupported = isVideoTypeSupported;
 
       await camera.initialize();
       await camera.play();

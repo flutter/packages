@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -8,57 +8,29 @@ import static org.junit.Assert.assertEquals;
 
 import android.util.Size;
 import androidx.camera.core.resolutionselector.ResolutionFilter;
-import io.flutter.plugins.camerax.GeneratedCameraXLibrary.ResolutionInfo;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
-import org.robolectric.RobolectricTestRunner;
 
-@RunWith(RobolectricTestRunner.class)
 public class ResolutionFilterTest {
-  @Rule public MockitoRule mockitoRule = MockitoJUnit.rule();
-
-  InstanceManager instanceManager;
-
-  @Before
-  public void setUp() {
-    instanceManager = InstanceManager.create(identifier -> {});
-  }
-
-  @After
-  public void tearDown() {
-    instanceManager.stopFinalizationListener();
-  }
-
   @Test
-  public void hostApiCreateWithOnePreferredSize_createsExpectedResolutionFilterInstance() {
-    final ResolutionFilterHostApiImpl hostApi = new ResolutionFilterHostApiImpl(instanceManager);
-    final long instanceIdentifier = 50;
-    final long preferredResolutionWidth = 20;
-    final long preferredResolutionHeight = 80;
-    final ResolutionInfo preferredResolution =
-        new ResolutionInfo.Builder()
-            .setWidth(preferredResolutionWidth)
-            .setHeight(preferredResolutionHeight)
-            .build();
+  public void createWithOnePreferredSize_createsExpectedResolutionFilterInstance() {
+    final PigeonApiResolutionFilter api =
+        new TestProxyApiRegistrar().getPigeonApiResolutionFilter();
 
-    hostApi.createWithOnePreferredSize(instanceIdentifier, preferredResolution);
+    final int preferredResolutionWidth = 20;
+    final int preferredResolutionHeight = 80;
+    final ResolutionFilter resolutionFilter =
+        api.createWithOnePreferredSize(
+            new Size(preferredResolutionWidth, preferredResolutionHeight));
 
     // Test that instance filters supported resolutions as expected.
-    final ResolutionFilter resolutionFilter = instanceManager.getInstance(instanceIdentifier);
     final Size fakeSupportedSize1 = new Size(720, 480);
     final Size fakeSupportedSize2 = new Size(20, 80);
     final Size fakeSupportedSize3 = new Size(2, 8);
-    final Size preferredSize =
-        new Size((int) preferredResolutionWidth, (int) preferredResolutionHeight);
+    final Size preferredSize = new Size(preferredResolutionWidth, preferredResolutionHeight);
 
-    final ArrayList<Size> fakeSupportedSizes = new ArrayList<Size>();
+    final ArrayList<Size> fakeSupportedSizes = new ArrayList<>();
     fakeSupportedSizes.add(fakeSupportedSize1);
     fakeSupportedSizes.add(fakeSupportedSize2);
     fakeSupportedSizes.add(preferredSize);

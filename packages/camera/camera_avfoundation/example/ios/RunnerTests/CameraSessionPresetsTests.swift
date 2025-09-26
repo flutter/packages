@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -6,6 +6,11 @@ import AVFoundation
 import XCTest
 
 @testable import camera_avfoundation
+
+// Import Objective-C part of the implementation when SwiftPM is used.
+#if canImport(camera_avfoundation_objc)
+  import camera_avfoundation_objc
+#endif
 
 /// Includes test cases related to resolution presets setting operations for FLTCam class.
 final class CameraSessionPresetsTests: XCTestCase {
@@ -30,7 +35,7 @@ final class CameraSessionPresetsTests: XCTestCase {
     }
 
     let configuration = CameraTestUtils.createTestCameraConfiguration()
-    configuration.captureDeviceFactory = { captureDeviceMock }
+    configuration.captureDeviceFactory = { _ in captureDeviceMock }
     configuration.videoDimensionsForFormat = { format in
       return CMVideoDimensions(width: 1, height: 1)
     }
@@ -38,7 +43,7 @@ final class CameraSessionPresetsTests: XCTestCase {
     configuration.mediaSettings = CameraTestUtils.createDefaultMediaSettings(
       resolutionPreset: FCPPlatformResolutionPreset.max)
 
-    let _ = FLTCam(configuration: configuration, error: nil)
+    let _ = CameraTestUtils.createTestCamera(configuration)
 
     waitForExpectations(timeout: 30, handler: nil)
   }
@@ -60,9 +65,9 @@ final class CameraSessionPresetsTests: XCTestCase {
     configuration.videoCaptureSession = videoSessionMock
     configuration.mediaSettings = CameraTestUtils.createDefaultMediaSettings(
       resolutionPreset: FCPPlatformResolutionPreset.max)
-    configuration.captureDeviceFactory = { MockCaptureDevice() }
+    configuration.captureDeviceFactory = { _ in MockCaptureDevice() }
 
-    let _ = FLTCam(configuration: configuration, error: nil)
+    let _ = CameraTestUtils.createTestCamera(configuration)
 
     waitForExpectations(timeout: 30, handler: nil)
   }
@@ -86,7 +91,7 @@ final class CameraSessionPresetsTests: XCTestCase {
     configuration.mediaSettings = CameraTestUtils.createDefaultMediaSettings(
       resolutionPreset: FCPPlatformResolutionPreset.ultraHigh)
 
-    let _ = FLTCam(configuration: configuration, error: nil)
+    let _ = CameraTestUtils.createTestCamera(configuration)
 
     waitForExpectations(timeout: 30, handler: nil)
   }

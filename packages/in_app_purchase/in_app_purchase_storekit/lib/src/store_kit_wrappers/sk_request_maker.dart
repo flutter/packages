@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -27,9 +27,10 @@ class SKRequestMaker {
   /// [SkProductResponseWrapper] is returned if there is no error during the request.
   /// A [PlatformException] is thrown if the platform code making the request fails.
   Future<SkProductResponseWrapper> startProductRequest(
-      List<String> productIdentifiers) async {
-    final SKProductsResponseMessage productResponsePigeon =
-        await _hostApi.startProductRequest(productIdentifiers);
+    List<String> productIdentifiers,
+  ) async {
+    final SKProductsResponseMessage productResponsePigeon = await _hostApi
+        .startProductRequest(productIdentifiers);
 
     // should products be null or <String>[] ?
     if (productResponsePigeon.products == null) {
@@ -51,8 +52,9 @@ class SKRequestMaker {
   /// * isExpired: whether the receipt is expired.
   /// * isRevoked: whether the receipt has been revoked.
   /// * isVolumePurchase: whether the receipt is a Volume Purchase Plan receipt.
-  Future<void> startRefreshReceiptRequest(
-      {Map<String, Object?>? receiptProperties}) {
+  Future<void> startRefreshReceiptRequest({
+    Map<String, Object?>? receiptProperties,
+  }) {
     return _hostApi.refreshReceipt(receiptProperties: receiptProperties);
   }
 

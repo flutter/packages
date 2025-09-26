@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -16,11 +16,13 @@ import Foundation
 
 /// Implementation of `WebKitLibraryPigeonProxyApiRegistrar` that provides any additional resources needed by API implementations.
 open class ProxyAPIRegistrar: WebKitLibraryPigeonProxyApiRegistrar {
-  let assetManager = FlutterAssetManager()
-  let bundle: Bundle
+  let assetManager: FlutterAssetManager
 
-  init(binaryMessenger: FlutterBinaryMessenger, bundle: Bundle = Bundle.main) {
-    self.bundle = bundle
+  init(
+    binaryMessenger: FlutterBinaryMessenger,
+    assetManager: FlutterAssetManager = FlutterAssetManager()
+  ) {
+    self.assetManager = assetManager
     super.init(binaryMessenger: binaryMessenger, apiDelegate: ProxyAPIDelegate())
   }
 
@@ -66,11 +68,12 @@ open class ProxyAPIRegistrar: WebKitLibraryPigeonProxyApiRegistrar {
       details: nil)
   }
 
-  // Creates an assertion failure when a Flutter method receives an error from Dart.
-  fileprivate func assertFlutterMethodFailure(_ error: PigeonError, methodName: String) {
-    assertionFailure(
+  // Log when a Flutter method receives an error from Dart.
+  func logFlutterMethodFailure(_ error: PigeonError, methodName: String) {
+    NSLog(
       "\(String(describing: error)): Error returned from calling \(methodName): \(String(describing: error.message))"
     )
+    NSLog("%@", Thread.callStackSymbols.joined(separator: "\n"))
   }
 
   /// Handles calling a Flutter method on the main thread.
@@ -81,7 +84,7 @@ open class ProxyAPIRegistrar: WebKitLibraryPigeonProxyApiRegistrar {
   ) {
     DispatchQueue.main.async {
       work { methodName, error in
-        self.assertFlutterMethodFailure(error, methodName: methodName)
+        self.logFlutterMethodFailure(error, methodName: methodName)
       }
     }
   }
@@ -279,5 +282,23 @@ class ProxyAPIDelegate: WebKitLibraryPigeonProxyApiDelegate {
   {
     return PigeonApiWKWebpagePreferences(
       pigeonRegistrar: registrar, delegate: WebpagePreferencesProxyAPIDelegate())
+  }
+
+  func pigeonApiGetTrustResultResponse(_ registrar: WebKitLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiGetTrustResultResponse
+  {
+    return PigeonApiGetTrustResultResponse(
+      pigeonRegistrar: registrar, delegate: GetTrustResultResponseProxyAPIDelegate())
+  }
+
+  func pigeonApiSecTrust(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiSecTrust {
+    return PigeonApiSecTrust(pigeonRegistrar: registrar, delegate: SecTrustProxyAPIDelegate())
+  }
+
+  func pigeonApiSecCertificate(_ registrar: WebKitLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiSecCertificate
+  {
+    return PigeonApiSecCertificate(
+      pigeonRegistrar: registrar, delegate: SecCertificateProxyAPIDelegate())
   }
 }

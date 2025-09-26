@@ -1,17 +1,17 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import '../generator_tools.dart';
 
-/// Name for the generated InstanceManager for ProxyApis.
+/// Name for the generated InstanceManager for Dart proxy classes.
 ///
 /// This lowers the chances of variable name collisions with user defined
 /// parameters.
 const String dartInstanceManagerClassName =
     '${proxyApiClassNamePrefix}InstanceManager';
 
-/// Name for the generated InstanceManager API for ProxyApis.
+/// Name for the generated InstanceManager API.
 ///
 /// This lowers the chances of variable name collisions with user defined
 /// parameters.
@@ -19,14 +19,10 @@ const String dartInstanceManagerApiClassName =
     '_${classNamePrefix}InstanceManagerApi';
 
 /// Creates the `InstanceManager` with the passed string values.
-String instanceManagerTemplate({
-  required Iterable<String> allProxyApiNames,
-}) {
-  final Iterable<String> apiHandlerSetUps = allProxyApiNames.map(
-    (String name) {
-      return '$name.${classMemberNamePrefix}setUpMessageHandlers(${classMemberNamePrefix}instanceManager: instanceManager);';
-    },
-  );
+String instanceManagerTemplate({required Iterable<String> allProxyApiNames}) {
+  final Iterable<String> apiHandlerSetUps = allProxyApiNames.map((String name) {
+    return '$name.${classMemberNamePrefix}setUpMessageHandlers(${classMemberNamePrefix}instanceManager: instanceManager);';
+  });
 
   return '''
 /// Maintains instances used to communicate with the native objects they
@@ -60,7 +56,7 @@ class $dartInstanceManagerClassName {
   // 0 <= n < 2^16.
   static const int _maxDartCreatedIdentifier = 65536;
 
-  /// The default [$dartInstanceManagerClassName] used by ProxyApis.
+  /// The default [$dartInstanceManagerClassName] used by Dart proxy classes.
   ///
   /// On creation, this manager makes a call to clear the native
   /// InstanceManager. This is to prevent identifier conflicts after a host
@@ -87,6 +83,9 @@ class $dartInstanceManagerClassName {
   late final void Function(int) onWeakReferenceRemoved;
 
   static $dartInstanceManagerClassName _initInstance() {
+    if (Platform.environment['FLUTTER_TEST'] == 'true') {
+      return $dartInstanceManagerClassName(onWeakReferenceRemoved: (_) {});
+    }
     WidgetsFlutterBinding.ensureInitialized();
     final $dartInstanceManagerApiClassName api = $dartInstanceManagerApiClassName();
     // Clears the native `$dartInstanceManagerClassName` on the initial use of the Dart one.
@@ -110,8 +109,17 @@ class $dartInstanceManagerClassName {
   ///
   /// Returns the randomly generated id of the [instance] added.
   int addDartCreatedInstance($proxyApiBaseClassName instance) {
+    assert(getIdentifier(instance) == null);
+
     final int identifier = _nextUniqueIdentifier();
-    _addInstanceWithIdentifier(instance, identifier);
+    _identifiers[instance] = identifier;
+    _weakInstances[identifier] =
+        WeakReference<$proxyApiBaseClassName>(instance);
+    _finalizer.attach(instance, identifier, detach: instance);
+
+    final $proxyApiBaseClassName copy = instance.pigeon_copy();
+    _identifiers[copy] = identifier;
+    _strongInstances[identifier] = copy;
     return identifier;
   }
 
@@ -143,9 +151,15 @@ class $dartInstanceManagerClassName {
   /// it was removed. Returns `null` if [identifier] was not associated with
   /// any strong reference.
   ///
-  /// This does not remove the weak referenced instance associated with
-  /// [identifier]. This can be done with [removeWeakReference].
+  /// Throws an `AssertionError` if the weak referenced instance associated with
+  /// [identifier] is not removed first. This can be done with
+  /// [removeWeakReference].
   T? remove<T extends $proxyApiBaseClassName>(int identifier) {
+    final T? instance = _weakInstances[identifier]?.target as T?;
+    assert(
+      instance == null,
+      'A strong instance with identifier \$identifier is being removed despite the weak reference still existing: \$instance',
+    );
     return _strongInstances.remove(identifier) as T?;
   }
 
@@ -191,24 +205,13 @@ class $dartInstanceManagerClassName {
   ///
   /// Throws assertion error if the instance or its identifier has already been
   /// added.
-  ///
-  /// Returns unique identifier of the [instance] added.
   void addHostCreatedInstance($proxyApiBaseClassName instance, int identifier) {
-    _addInstanceWithIdentifier(instance, identifier);
-  }
-
-  void _addInstanceWithIdentifier($proxyApiBaseClassName instance, int identifier) {
     assert(!containsIdentifier(identifier));
     assert(getIdentifier(instance) == null);
     assert(identifier >= 0);
 
     _identifiers[instance] = identifier;
-    _weakInstances[identifier] = WeakReference<$proxyApiBaseClassName>(instance);
-    _finalizer.attach(instance, identifier, detach: instance);
-
-    final $proxyApiBaseClassName copy = instance.${classMemberNamePrefix}copy();
-    _identifiers[copy] = identifier;
-    _strongInstances[identifier] = copy;
+    _strongInstances[identifier] = instance;
   }
 
   /// Whether this manager contains the given [identifier].
@@ -229,12 +232,12 @@ class $dartInstanceManagerClassName {
 ''';
 }
 
-/// The base class for all ProxyApis.
+/// The base class for all Dart proxy classes.
 ///
-/// All Dart classes generated as a ProxyApi extends this one.
+/// All Dart proxy classes generated as a part of a ProxyApi extends this one.
 const String proxyApiBaseClass = '''
-/// An immutable object that serves as the base class for all ProxyApis and
-/// can provide functional copies of itself.
+/// An immutable object that serves as the base class for all Dart proxy classes
+/// and can provide functional copies of itself.
 ///
 /// All implementers are expected to be [immutable] as defined by the annotation
 /// and override [${classMemberNamePrefix}copy] returning an instance of itself.
@@ -269,11 +272,11 @@ abstract class $proxyApiBaseClassName {
 }
 ''';
 
-/// The base codec for ProxyApis.
+/// The Dart base codec for ProxyApis.
 ///
-/// All generated Dart proxy apis should use this codec or extend it. This codec
-/// adds support to convert instances to their corresponding identifier from an
-/// `InstanceManager` and vice versa.
+/// All generated Dart proxy classes should use this codec or extend it. This
+/// codec adds support to convert instances to their corresponding identifier
+/// from an `InstanceManager` and vice versa.
 const String proxyApiBaseCodec = '''
 class $_proxyApiCodecName extends _PigeonCodec {
  const $_proxyApiCodecName(this.instanceManager);
@@ -300,7 +303,7 @@ class $_proxyApiCodecName extends _PigeonCodec {
 }
 ''';
 
-/// Name of the base class of all ProxyApis.
+/// Name of the base class of all Dart proxy classes.
 const String proxyApiBaseClassName = '${classNamePrefix}ProxyApiBaseClass';
 const String _proxyApiBaseClassMessengerVarName =
     '${classMemberNamePrefix}binaryMessenger';

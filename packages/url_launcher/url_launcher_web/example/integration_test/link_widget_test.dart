@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -38,19 +38,24 @@ void main() {
   });
 
   group('Link Widget', () {
-    testWidgets('creates anchor with correct attributes',
-        (WidgetTester tester) async {
+    testWidgets('creates anchor with correct attributes', (
+      WidgetTester tester,
+    ) async {
       final Uri uri = Uri.parse('http://foobar/example?q=1');
-      await tester.pumpWidget(Directionality(
-        textDirection: TextDirection.ltr,
-        child: WebLinkDelegate(TestLinkInfo(
-          uri: uri,
-          target: LinkTarget.blank,
-          builder: (BuildContext context, FollowLink? followLink) {
-            return const SizedBox(width: 100, height: 100);
-          },
-        )),
-      ));
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: WebLinkDelegate(
+            TestLinkInfo(
+              uri: uri,
+              target: LinkTarget.blank,
+              builder: (BuildContext context, FollowLink? followLink) {
+                return const SizedBox(width: 100, height: 100);
+              },
+            ),
+          ),
+        ),
+      );
       // Platform view creation happens asynchronously.
       await tester.pumpAndSettle();
       await tester.pump();
@@ -60,16 +65,20 @@ void main() {
       expect(anchor.getAttribute('target'), '_blank');
 
       final Uri uri2 = Uri.parse('http://foobar2/example?q=2');
-      await tester.pumpWidget(Directionality(
-        textDirection: TextDirection.ltr,
-        child: WebLinkDelegate(TestLinkInfo(
-          uri: uri2,
-          target: LinkTarget.self,
-          builder: (BuildContext context, FollowLink? followLink) {
-            return const SizedBox(width: 100, height: 100);
-          },
-        )),
-      ));
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: WebLinkDelegate(
+            TestLinkInfo(
+              uri: uri2,
+              target: LinkTarget.self,
+              builder: (BuildContext context, FollowLink? followLink) {
+                return const SizedBox(width: 100, height: 100);
+              },
+            ),
+          ),
+        ),
+      );
       await tester.pumpAndSettle();
       await tester.pump();
 
@@ -78,47 +87,57 @@ void main() {
       expect(anchor.getAttribute('target'), '_self');
 
       final Uri uri3 = Uri.parse('/foobar');
-      await tester.pumpWidget(Directionality(
-        textDirection: TextDirection.ltr,
-        child: WebLinkDelegate(TestLinkInfo(
-          uri: uri3,
-          target: LinkTarget.self,
-          builder: (BuildContext context, FollowLink? followLink) {
-            return const SizedBox(width: 100, height: 100);
-          },
-        )),
-      ));
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: WebLinkDelegate(
+            TestLinkInfo(
+              uri: uri3,
+              target: LinkTarget.self,
+              builder: (BuildContext context, FollowLink? followLink) {
+                return const SizedBox(width: 100, height: 100);
+              },
+            ),
+          ),
+        ),
+      );
       await tester.pumpAndSettle();
       await tester.pump();
 
       // Check that internal route properly prepares using the default
       // [UrlStrategy]
-      expect(anchor.getAttribute('href'),
-          ui_web.urlStrategy?.prepareExternalUrl(uri3.toString()));
+      expect(
+        anchor.getAttribute('href'),
+        ui_web.urlStrategy?.prepareExternalUrl(uri3.toString()),
+      );
       expect(anchor.getAttribute('target'), '_self');
     });
 
     testWidgets('sizes itself correctly', (WidgetTester tester) async {
       final Key containerKey = GlobalKey();
       final Uri uri = Uri.parse('http://foobar');
-      await tester.pumpWidget(Directionality(
-        textDirection: TextDirection.ltr,
-        child: Center(
-          child: ConstrainedBox(
-            constraints: BoxConstraints.tight(const Size(100.0, 100.0)),
-            child: WebLinkDelegate(TestLinkInfo(
-              uri: uri,
-              target: LinkTarget.blank,
-              builder: (BuildContext context, FollowLink? followLink) {
-                return Container(
-                  key: containerKey,
-                  child: const SizedBox(width: 50.0, height: 50.0),
-                );
-              },
-            )),
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: Center(
+            child: ConstrainedBox(
+              constraints: BoxConstraints.tight(const Size(100.0, 100.0)),
+              child: WebLinkDelegate(
+                TestLinkInfo(
+                  uri: uri,
+                  target: LinkTarget.blank,
+                  builder: (BuildContext context, FollowLink? followLink) {
+                    return Container(
+                      key: containerKey,
+                      child: const SizedBox(width: 50.0, height: 50.0),
+                    );
+                  },
+                ),
+              ),
+            ),
           ),
         ),
-      ));
+      );
       await tester.pumpAndSettle();
       await tester.pump();
 
@@ -133,16 +152,20 @@ void main() {
 
     // See: https://github.com/flutter/plugins/pull/3522#discussion_r574703724
     testWidgets('uri can be null', (WidgetTester tester) async {
-      await tester.pumpWidget(Directionality(
-        textDirection: TextDirection.ltr,
-        child: WebLinkDelegate(TestLinkInfo(
-          uri: null,
-          target: LinkTarget.defaultTarget,
-          builder: (BuildContext context, FollowLink? followLink) {
-            return const SizedBox(width: 100, height: 100);
-          },
-        )),
-      ));
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: WebLinkDelegate(
+            TestLinkInfo(
+              uri: null,
+              target: LinkTarget.defaultTarget,
+              builder: (BuildContext context, FollowLink? followLink) {
+                return const SizedBox(width: 100, height: 100);
+              },
+            ),
+          ),
+        ),
+      );
       // Platform view creation happens asynchronously.
       await tester.pumpAndSettle();
       await tester.pump();
@@ -161,12 +184,16 @@ void main() {
             data: const MediaQueryData(),
             child: ListView.builder(
               itemCount: itemCount,
-              itemBuilder: (_, int index) => WebLinkDelegate(TestLinkInfo(
-                uri: uri,
-                target: LinkTarget.defaultTarget,
-                builder: (BuildContext context, FollowLink? followLink) =>
-                    Text('#$index', textAlign: TextAlign.center),
-              )),
+              itemBuilder:
+                  (_, int index) => WebLinkDelegate(
+                    TestLinkInfo(
+                      uri: uri,
+                      target: LinkTarget.defaultTarget,
+                      builder:
+                          (BuildContext context, FollowLink? followLink) =>
+                              Text('#$index', textAlign: TextAlign.center),
+                    ),
+                  ),
             ),
           ),
         ),
@@ -197,24 +224,29 @@ void main() {
       UrlLauncherPlatform.instance = originalPlugin;
     });
 
-    testWidgets('click to navigate to internal link',
-        (WidgetTester tester) async {
+    testWidgets('click to navigate to internal link', (
+      WidgetTester tester,
+    ) async {
       final Uri uri = Uri.parse('/foobar');
       FollowLink? followLinkCallback;
 
-      await tester.pumpWidget(MaterialApp(
-        routes: <String, WidgetBuilder>{
-          '/foobar': (BuildContext context) => const Text('Internal route'),
-        },
-        home: WebLinkDelegate(TestLinkInfo(
-          uri: uri,
-          target: LinkTarget.blank,
-          builder: (BuildContext context, FollowLink? followLink) {
-            followLinkCallback = followLink;
-            return const SizedBox(width: 100, height: 100);
+      await tester.pumpWidget(
+        MaterialApp(
+          routes: <String, WidgetBuilder>{
+            '/foobar': (BuildContext context) => const Text('Internal route'),
           },
-        )),
-      ));
+          home: WebLinkDelegate(
+            TestLinkInfo(
+              uri: uri,
+              target: LinkTarget.blank,
+              builder: (BuildContext context, FollowLink? followLink) {
+                followLinkCallback = followLink;
+                return const SizedBox(width: 100, height: 100);
+              },
+            ),
+          ),
+        ),
+      );
       // Platform view creation happens asynchronously.
       await tester.pumpAndSettle();
       await tester.pump();
@@ -234,24 +266,29 @@ void main() {
       expect(event.defaultPrevented, isTrue);
     });
 
-    testWidgets('keydown to navigate to internal link',
-        (WidgetTester tester) async {
+    testWidgets('keydown to navigate to internal link', (
+      WidgetTester tester,
+    ) async {
       final Uri uri = Uri.parse('/foobar');
       FollowLink? followLinkCallback;
 
-      await tester.pumpWidget(MaterialApp(
-        routes: <String, WidgetBuilder>{
-          '/foobar': (BuildContext context) => const Text('Internal route'),
-        },
-        home: WebLinkDelegate(TestLinkInfo(
-          uri: uri,
-          target: LinkTarget.blank,
-          builder: (BuildContext context, FollowLink? followLink) {
-            followLinkCallback = followLink;
-            return const SizedBox(width: 100, height: 100);
+      await tester.pumpWidget(
+        MaterialApp(
+          routes: <String, WidgetBuilder>{
+            '/foobar': (BuildContext context) => const Text('Internal route'),
           },
-        )),
-      ));
+          home: WebLinkDelegate(
+            TestLinkInfo(
+              uri: uri,
+              target: LinkTarget.blank,
+              builder: (BuildContext context, FollowLink? followLink) {
+                followLinkCallback = followLink;
+                return const SizedBox(width: 100, height: 100);
+              },
+            ),
+          ),
+        ),
+      );
       // Platform view creation happens asynchronously.
       await tester.pumpAndSettle();
       await tester.pump();
@@ -271,21 +308,26 @@ void main() {
       expect(event.defaultPrevented, isFalse);
     });
 
-    testWidgets('click to navigate to external link',
-        (WidgetTester tester) async {
+    testWidgets('click to navigate to external link', (
+      WidgetTester tester,
+    ) async {
       final Uri uri = Uri.parse('https://flutter.dev');
       FollowLink? followLinkCallback;
 
-      await tester.pumpWidget(MaterialApp(
-        home: WebLinkDelegate(TestLinkInfo(
-          uri: uri,
-          target: LinkTarget.blank,
-          builder: (BuildContext context, FollowLink? followLink) {
-            followLinkCallback = followLink;
-            return const SizedBox(width: 100, height: 100);
-          },
-        )),
-      ));
+      await tester.pumpWidget(
+        MaterialApp(
+          home: WebLinkDelegate(
+            TestLinkInfo(
+              uri: uri,
+              target: LinkTarget.blank,
+              builder: (BuildContext context, FollowLink? followLink) {
+                followLinkCallback = followLink;
+                return const SizedBox(width: 100, height: 100);
+              },
+            ),
+          ),
+        ),
+      );
       // Platform view creation happens asynchronously.
       await tester.pumpAndSettle();
       await tester.pump();
@@ -306,21 +348,26 @@ void main() {
       expect(event.defaultPrevented, isFalse);
     });
 
-    testWidgets('keydown to navigate to external link',
-        (WidgetTester tester) async {
+    testWidgets('keydown to navigate to external link', (
+      WidgetTester tester,
+    ) async {
       final Uri uri = Uri.parse('https://flutter.dev');
       FollowLink? followLinkCallback;
 
-      await tester.pumpWidget(MaterialApp(
-        home: WebLinkDelegate(TestLinkInfo(
-          uri: uri,
-          target: LinkTarget.blank,
-          builder: (BuildContext context, FollowLink? followLink) {
-            followLinkCallback = followLink;
-            return const SizedBox(width: 100, height: 100);
-          },
-        )),
-      ));
+      await tester.pumpWidget(
+        MaterialApp(
+          home: WebLinkDelegate(
+            TestLinkInfo(
+              uri: uri,
+              target: LinkTarget.blank,
+              builder: (BuildContext context, FollowLink? followLink) {
+                followLinkCallback = followLink;
+                return const SizedBox(width: 100, height: 100);
+              },
+            ),
+          ),
+        ),
+      );
       // Platform view creation happens asynchronously.
       await tester.pumpAndSettle();
       await tester.pump();
@@ -346,32 +393,40 @@ void main() {
       FollowLink? followLinkCallback1;
       FollowLink? followLinkCallback2;
 
-      await tester.pumpWidget(MaterialApp(
-        routes: <String, WidgetBuilder>{
-          '/foobar1': (BuildContext context) => const Text('Internal route 1'),
-          '/foobar2': (BuildContext context) => const Text('Internal route 2'),
-        },
-        home: Column(
-          children: <Widget>[
-            WebLinkDelegate(TestLinkInfo(
-              uri: uri1,
-              target: LinkTarget.blank,
-              builder: (BuildContext context, FollowLink? followLink) {
-                followLinkCallback1 = followLink;
-                return const SizedBox(width: 100, height: 100);
-              },
-            )),
-            WebLinkDelegate(TestLinkInfo(
-              uri: uri2,
-              target: LinkTarget.blank,
-              builder: (BuildContext context, FollowLink? followLink) {
-                followLinkCallback2 = followLink;
-                return const SizedBox(width: 100, height: 100);
-              },
-            )),
-          ],
+      await tester.pumpWidget(
+        MaterialApp(
+          routes: <String, WidgetBuilder>{
+            '/foobar1':
+                (BuildContext context) => const Text('Internal route 1'),
+            '/foobar2':
+                (BuildContext context) => const Text('Internal route 2'),
+          },
+          home: Column(
+            children: <Widget>[
+              WebLinkDelegate(
+                TestLinkInfo(
+                  uri: uri1,
+                  target: LinkTarget.blank,
+                  builder: (BuildContext context, FollowLink? followLink) {
+                    followLinkCallback1 = followLink;
+                    return const SizedBox(width: 100, height: 100);
+                  },
+                ),
+              ),
+              WebLinkDelegate(
+                TestLinkInfo(
+                  uri: uri2,
+                  target: LinkTarget.blank,
+                  builder: (BuildContext context, FollowLink? followLink) {
+                    followLinkCallback2 = followLink;
+                    return const SizedBox(width: 100, height: 100);
+                  },
+                ),
+              ),
+            ],
+          ),
         ),
-      ));
+      );
       // Platform view creation happens asynchronously.
       await tester.pumpAndSettle();
       await tester.pump();
@@ -414,24 +469,29 @@ void main() {
       expect(event.defaultPrevented, isTrue);
     });
 
-    testWidgets('trigger signals are reset after a delay',
-        (WidgetTester tester) async {
+    testWidgets('trigger signals are reset after a delay', (
+      WidgetTester tester,
+    ) async {
       final Uri uri = Uri.parse('/foobar');
       FollowLink? followLinkCallback;
 
-      await tester.pumpWidget(MaterialApp(
-        routes: <String, WidgetBuilder>{
-          '/foobar': (BuildContext context) => const Text('Internal route'),
-        },
-        home: WebLinkDelegate(TestLinkInfo(
-          uri: uri,
-          target: LinkTarget.blank,
-          builder: (BuildContext context, FollowLink? followLink) {
-            followLinkCallback = followLink;
-            return const SizedBox(width: 100, height: 100);
+      await tester.pumpWidget(
+        MaterialApp(
+          routes: <String, WidgetBuilder>{
+            '/foobar': (BuildContext context) => const Text('Internal route'),
           },
-        )),
-      ));
+          home: WebLinkDelegate(
+            TestLinkInfo(
+              uri: uri,
+              target: LinkTarget.blank,
+              builder: (BuildContext context, FollowLink? followLink) {
+                followLinkCallback = followLink;
+                return const SizedBox(width: 100, height: 100);
+              },
+            ),
+          ),
+        ),
+      );
       // Platform view creation happens asynchronously.
       await tester.pumpAndSettle();
       await tester.pump();
@@ -475,24 +535,29 @@ void main() {
       expect(event3.defaultPrevented, isTrue);
     });
 
-    testWidgets('ignores clicks on non-Flutter link',
-        (WidgetTester tester) async {
+    testWidgets('ignores clicks on non-Flutter link', (
+      WidgetTester tester,
+    ) async {
       final Uri uri = Uri.parse('/foobar');
       FollowLink? followLinkCallback;
 
-      await tester.pumpWidget(MaterialApp(
-        routes: <String, WidgetBuilder>{
-          '/foobar': (BuildContext context) => const Text('Internal route'),
-        },
-        home: WebLinkDelegate(TestLinkInfo(
-          uri: uri,
-          target: LinkTarget.blank,
-          builder: (BuildContext context, FollowLink? followLink) {
-            followLinkCallback = followLink;
-            return const SizedBox(width: 100, height: 100);
+      await tester.pumpWidget(
+        MaterialApp(
+          routes: <String, WidgetBuilder>{
+            '/foobar': (BuildContext context) => const Text('Internal route'),
           },
-        )),
-      ));
+          home: WebLinkDelegate(
+            TestLinkInfo(
+              uri: uri,
+              target: LinkTarget.blank,
+              builder: (BuildContext context, FollowLink? followLink) {
+                followLinkCallback = followLink;
+                return const SizedBox(width: 100, height: 100);
+              },
+            ),
+          ),
+        ),
+      );
       // Platform view creation happens asynchronously.
       await tester.pumpAndSettle();
       await tester.pump();
@@ -516,19 +581,23 @@ void main() {
       final Uri uri = Uri.parse('/foobar');
       FollowLink? followLinkCallback;
 
-      await tester.pumpWidget(MaterialApp(
-        routes: <String, WidgetBuilder>{
-          '/foobar': (BuildContext context) => const Text('Internal route'),
-        },
-        home: WebLinkDelegate(TestLinkInfo(
-          uri: uri,
-          target: LinkTarget.blank,
-          builder: (BuildContext context, FollowLink? followLink) {
-            followLinkCallback = followLink;
-            return const SizedBox(width: 100, height: 100);
+      await tester.pumpWidget(
+        MaterialApp(
+          routes: <String, WidgetBuilder>{
+            '/foobar': (BuildContext context) => const Text('Internal route'),
           },
-        )),
-      ));
+          home: WebLinkDelegate(
+            TestLinkInfo(
+              uri: uri,
+              target: LinkTarget.blank,
+              builder: (BuildContext context, FollowLink? followLink) {
+                followLinkCallback = followLink;
+                return const SizedBox(width: 100, height: 100);
+              },
+            ),
+          ),
+        ),
+      );
       // Platform view creation happens asynchronously.
       await tester.pumpAndSettle();
       await tester.pump();
@@ -548,24 +617,29 @@ void main() {
       expect(event.defaultPrevented, isFalse);
     });
 
-    testWidgets('ignores keydown when it is a modifier key',
-        (WidgetTester tester) async {
+    testWidgets('ignores keydown when it is a modifier key', (
+      WidgetTester tester,
+    ) async {
       final Uri uri = Uri.parse('/foobar');
       FollowLink? followLinkCallback;
 
-      await tester.pumpWidget(MaterialApp(
-        routes: <String, WidgetBuilder>{
-          '/foobar': (BuildContext context) => const Text('Internal route'),
-        },
-        home: WebLinkDelegate(TestLinkInfo(
-          uri: uri,
-          target: LinkTarget.blank,
-          builder: (BuildContext context, FollowLink? followLink) {
-            followLinkCallback = followLink;
-            return const SizedBox(width: 100, height: 100);
+      await tester.pumpWidget(
+        MaterialApp(
+          routes: <String, WidgetBuilder>{
+            '/foobar': (BuildContext context) => const Text('Internal route'),
           },
-        )),
-      ));
+          home: WebLinkDelegate(
+            TestLinkInfo(
+              uri: uri,
+              target: LinkTarget.blank,
+              builder: (BuildContext context, FollowLink? followLink) {
+                followLinkCallback = followLink;
+                return const SizedBox(width: 100, height: 100);
+              },
+            ),
+          ),
+        ),
+      );
       // Platform view creation happens asynchronously.
       await tester.pumpAndSettle();
       await tester.pump();
@@ -607,24 +681,29 @@ void main() {
       UrlLauncherPlatform.instance = originalPlugin;
     });
 
-    testWidgets('click to navigate to internal link',
-        (WidgetTester tester) async {
+    testWidgets('click to navigate to internal link', (
+      WidgetTester tester,
+    ) async {
       final Uri uri = Uri.parse('/foobar');
       FollowLink? followLinkCallback;
 
-      await tester.pumpWidget(MaterialApp(
-        routes: <String, WidgetBuilder>{
-          '/foobar': (BuildContext context) => const Text('Internal route'),
-        },
-        home: WebLinkDelegate(TestLinkInfo(
-          uri: uri,
-          target: LinkTarget.blank,
-          builder: (BuildContext context, FollowLink? followLink) {
-            followLinkCallback = followLink;
-            return const SizedBox(width: 100, height: 100);
+      await tester.pumpWidget(
+        MaterialApp(
+          routes: <String, WidgetBuilder>{
+            '/foobar': (BuildContext context) => const Text('Internal route'),
           },
-        )),
-      ));
+          home: WebLinkDelegate(
+            TestLinkInfo(
+              uri: uri,
+              target: LinkTarget.blank,
+              builder: (BuildContext context, FollowLink? followLink) {
+                followLinkCallback = followLink;
+                return const SizedBox(width: 100, height: 100);
+              },
+            ),
+          ),
+        ),
+      );
       // Platform view creation happens asynchronously.
       await tester.pumpAndSettle();
       await tester.pump();
@@ -644,24 +723,29 @@ void main() {
       expect(event.defaultPrevented, isTrue);
     });
 
-    testWidgets('keydown to navigate to internal link',
-        (WidgetTester tester) async {
+    testWidgets('keydown to navigate to internal link', (
+      WidgetTester tester,
+    ) async {
       final Uri uri = Uri.parse('/foobar');
       FollowLink? followLinkCallback;
 
-      await tester.pumpWidget(MaterialApp(
-        routes: <String, WidgetBuilder>{
-          '/foobar': (BuildContext context) => const Text('Internal route'),
-        },
-        home: WebLinkDelegate(TestLinkInfo(
-          uri: uri,
-          target: LinkTarget.blank,
-          builder: (BuildContext context, FollowLink? followLink) {
-            followLinkCallback = followLink;
-            return const SizedBox(width: 100, height: 100);
+      await tester.pumpWidget(
+        MaterialApp(
+          routes: <String, WidgetBuilder>{
+            '/foobar': (BuildContext context) => const Text('Internal route'),
           },
-        )),
-      ));
+          home: WebLinkDelegate(
+            TestLinkInfo(
+              uri: uri,
+              target: LinkTarget.blank,
+              builder: (BuildContext context, FollowLink? followLink) {
+                followLinkCallback = followLink;
+                return const SizedBox(width: 100, height: 100);
+              },
+            ),
+          ),
+        ),
+      );
       // Platform view creation happens asynchronously.
       await tester.pumpAndSettle();
       await tester.pump();
@@ -681,21 +765,26 @@ void main() {
       expect(event.defaultPrevented, isFalse);
     });
 
-    testWidgets('click to navigate to external link',
-        (WidgetTester tester) async {
+    testWidgets('click to navigate to external link', (
+      WidgetTester tester,
+    ) async {
       final Uri uri = Uri.parse('https://flutter.dev');
       FollowLink? followLinkCallback;
 
-      await tester.pumpWidget(MaterialApp(
-        home: WebLinkDelegate(TestLinkInfo(
-          uri: uri,
-          target: LinkTarget.blank,
-          builder: (BuildContext context, FollowLink? followLink) {
-            followLinkCallback = followLink;
-            return const SizedBox(width: 100, height: 100);
-          },
-        )),
-      ));
+      await tester.pumpWidget(
+        MaterialApp(
+          home: WebLinkDelegate(
+            TestLinkInfo(
+              uri: uri,
+              target: LinkTarget.blank,
+              builder: (BuildContext context, FollowLink? followLink) {
+                followLinkCallback = followLink;
+                return const SizedBox(width: 100, height: 100);
+              },
+            ),
+          ),
+        ),
+      );
       // Platform view creation happens asynchronously.
       await tester.pumpAndSettle();
       await tester.pump();
@@ -716,21 +805,26 @@ void main() {
       expect(event.defaultPrevented, isFalse);
     });
 
-    testWidgets('keydown to navigate to external link',
-        (WidgetTester tester) async {
+    testWidgets('keydown to navigate to external link', (
+      WidgetTester tester,
+    ) async {
       final Uri uri = Uri.parse('https://flutter.dev');
       FollowLink? followLinkCallback;
 
-      await tester.pumpWidget(MaterialApp(
-        home: WebLinkDelegate(TestLinkInfo(
-          uri: uri,
-          target: LinkTarget.blank,
-          builder: (BuildContext context, FollowLink? followLink) {
-            followLinkCallback = followLink;
-            return const SizedBox(width: 100, height: 100);
-          },
-        )),
-      ));
+      await tester.pumpWidget(
+        MaterialApp(
+          home: WebLinkDelegate(
+            TestLinkInfo(
+              uri: uri,
+              target: LinkTarget.blank,
+              builder: (BuildContext context, FollowLink? followLink) {
+                followLinkCallback = followLink;
+                return const SizedBox(width: 100, height: 100);
+              },
+            ),
+          ),
+        ),
+      );
       // Platform view creation happens asynchronously.
       await tester.pumpAndSettle();
       await tester.pump();
@@ -765,35 +859,40 @@ void main() {
       UrlLauncherPlatform.instance = originalPlugin;
     });
 
-    testWidgets('produces the correct semantics tree with a button',
-        (WidgetTester tester) async {
+    testWidgets('produces the correct semantics tree with a button', (
+      WidgetTester tester,
+    ) async {
       final SemanticsHandle semanticsHandle = tester.ensureSemantics();
       final Key linkKey = UniqueKey();
 
-      await tester.pumpWidget(Directionality(
-        textDirection: TextDirection.ltr,
-        child: WebLinkDelegate(
-          key: linkKey,
-          semanticsIdentifier: 'test-link-12',
-          TestLinkInfo(
-            uri: Uri.parse('https://foobar/example?q=1'),
-            target: LinkTarget.blank,
-            builder: (BuildContext context, FollowLink? followLink) {
-              return ElevatedButton(
-                onPressed: followLink,
-                child: const Text('Button Link Text'),
-              );
-            },
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: WebLinkDelegate(
+            key: linkKey,
+            semanticsIdentifier: 'test-link-12',
+            TestLinkInfo(
+              uri: Uri.parse('https://foobar/example?q=1'),
+              target: LinkTarget.blank,
+              builder: (BuildContext context, FollowLink? followLink) {
+                return ElevatedButton(
+                  onPressed: followLink,
+                  child: const Text('Button Link Text'),
+                );
+              },
+            ),
           ),
         ),
-      ));
+      );
 
       final Finder linkFinder = find.byKey(linkKey);
       expect(
-        tester.getSemantics(find.descendant(
-          of: linkFinder,
-          matching: find.byType(Semantics).first,
-        )),
+        tester.getSemantics(
+          find.descendant(
+            of: linkFinder,
+            matching: find.byType(Semantics).first,
+          ),
+        ),
         matchesSemantics(
           isLink: true,
           identifier: 'test-link-12',
@@ -815,35 +914,37 @@ void main() {
       semanticsHandle.dispose();
     });
 
-    testWidgets('produces the correct semantics tree with text',
-        (WidgetTester tester) async {
+    testWidgets('produces the correct semantics tree with text', (
+      WidgetTester tester,
+    ) async {
       final SemanticsHandle semanticsHandle = tester.ensureSemantics();
       final Key linkKey = UniqueKey();
 
-      await tester.pumpWidget(Directionality(
-        textDirection: TextDirection.ltr,
-        child: WebLinkDelegate(
-          key: linkKey,
-          semanticsIdentifier: 'test-link-43',
-          TestLinkInfo(
-            uri: Uri.parse('https://foobar/example?q=1'),
-            target: LinkTarget.blank,
-            builder: (BuildContext context, FollowLink? followLink) {
-              return GestureDetector(
-                onTap: followLink,
-                child: const Text('Link Text'),
-              );
-            },
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: WebLinkDelegate(
+            key: linkKey,
+            semanticsIdentifier: 'test-link-43',
+            TestLinkInfo(
+              uri: Uri.parse('https://foobar/example?q=1'),
+              target: LinkTarget.blank,
+              builder: (BuildContext context, FollowLink? followLink) {
+                return GestureDetector(
+                  onTap: followLink,
+                  child: const Text('Link Text'),
+                );
+              },
+            ),
           ),
         ),
-      ));
+      );
 
       final Finder linkFinder = find.byKey(linkKey);
       expect(
-        tester.getSemantics(find.descendant(
-          of: linkFinder,
-          matching: find.byType(Semantics),
-        )),
+        tester.getSemantics(
+          find.descendant(of: linkFinder, matching: find.byType(Semantics)),
+        ),
         matchesSemantics(
           isLink: true,
           hasTapAction: true,
@@ -856,44 +957,50 @@ void main() {
       semanticsHandle.dispose();
     });
 
-    testWidgets('handles clicks on semantic link with a button',
-        (WidgetTester tester) async {
+    testWidgets('handles clicks on semantic link with a button', (
+      WidgetTester tester,
+    ) async {
       final Uri uri = Uri.parse('/foobar');
       FollowLink? followLinkCallback;
 
-      await tester.pumpWidget(MaterialApp(
-        routes: <String, WidgetBuilder>{
-          '/foobar': (BuildContext context) => const Text('Internal route'),
-        },
-        home: WebLinkDelegate(
-          semanticsIdentifier: 'test-link-27',
-          TestLinkInfo(
-            uri: uri,
-            target: LinkTarget.blank,
-            builder: (BuildContext context, FollowLink? followLink) {
-              followLinkCallback = followLink;
-              return ElevatedButton(
-                onPressed: () {},
-                child: const Text('My Button Link'),
-              );
-            },
+      await tester.pumpWidget(
+        MaterialApp(
+          routes: <String, WidgetBuilder>{
+            '/foobar': (BuildContext context) => const Text('Internal route'),
+          },
+          home: WebLinkDelegate(
+            semanticsIdentifier: 'test-link-27',
+            TestLinkInfo(
+              uri: uri,
+              target: LinkTarget.blank,
+              builder: (BuildContext context, FollowLink? followLink) {
+                followLinkCallback = followLink;
+                return ElevatedButton(
+                  onPressed: () {},
+                  child: const Text('My Button Link'),
+                );
+              },
+            ),
           ),
         ),
-      ));
+      );
       // Platform view creation happens asynchronously.
       await tester.pumpAndSettle();
       await tester.pump();
 
-      final html.Element semanticsHost =
-          html.document.createElement('flt-semantics-host');
+      final html.Element semanticsHost = html.document.createElement(
+        'flt-semantics-host',
+      );
       html.document.body!.append(semanticsHost);
-      final html.Element semanticsAnchor = html.document.createElement('a')
-        ..setAttribute('id', 'flt-semantic-node-99')
-        ..setAttribute('flt-semantics-identifier', 'test-link-27')
-        ..setAttribute('href', '/foobar');
+      final html.Element semanticsAnchor =
+          html.document.createElement('a')
+            ..setAttribute('id', 'flt-semantic-node-99')
+            ..setAttribute('flt-semantics-identifier', 'test-link-27')
+            ..setAttribute('href', '/foobar');
       semanticsHost.append(semanticsAnchor);
-      final html.Element semanticsContainer =
-          html.document.createElement('flt-semantics-container');
+      final html.Element semanticsContainer = html.document.createElement(
+        'flt-semantics-container',
+      );
       semanticsAnchor.append(semanticsContainer);
       final html.Element semanticsButton =
           html.document.createElement('flt-semantics')
@@ -922,42 +1029,47 @@ void main() {
       expect(event2.defaultPrevented, isTrue);
     });
 
-    testWidgets('handles clicks on semantic link with text',
-        (WidgetTester tester) async {
+    testWidgets('handles clicks on semantic link with text', (
+      WidgetTester tester,
+    ) async {
       final Uri uri = Uri.parse('/foobar');
       FollowLink? followLinkCallback;
 
-      await tester.pumpWidget(MaterialApp(
-        routes: <String, WidgetBuilder>{
-          '/foobar': (BuildContext context) => const Text('Internal route'),
-        },
-        home: WebLinkDelegate(
-          semanticsIdentifier: 'test-link-71',
-          TestLinkInfo(
-            uri: uri,
-            target: LinkTarget.blank,
-            builder: (BuildContext context, FollowLink? followLink) {
-              followLinkCallback = followLink;
-              return GestureDetector(
-                onTap: () {},
-                child: const Text('My Link'),
-              );
-            },
+      await tester.pumpWidget(
+        MaterialApp(
+          routes: <String, WidgetBuilder>{
+            '/foobar': (BuildContext context) => const Text('Internal route'),
+          },
+          home: WebLinkDelegate(
+            semanticsIdentifier: 'test-link-71',
+            TestLinkInfo(
+              uri: uri,
+              target: LinkTarget.blank,
+              builder: (BuildContext context, FollowLink? followLink) {
+                followLinkCallback = followLink;
+                return GestureDetector(
+                  onTap: () {},
+                  child: const Text('My Link'),
+                );
+              },
+            ),
           ),
         ),
-      ));
+      );
       // Platform view creation happens asynchronously.
       await tester.pumpAndSettle();
       await tester.pump();
 
-      final html.Element semanticsHost =
-          html.document.createElement('flt-semantics-host');
+      final html.Element semanticsHost = html.document.createElement(
+        'flt-semantics-host',
+      );
       html.document.body!.append(semanticsHost);
-      final html.Element semanticsAnchor = html.document.createElement('a')
-        ..setAttribute('id', 'flt-semantic-node-99')
-        ..setAttribute('flt-semantics-identifier', 'test-link-71')
-        ..setAttribute('href', '/foobar')
-        ..textContent = 'My Text Link';
+      final html.Element semanticsAnchor =
+          html.document.createElement('a')
+            ..setAttribute('id', 'flt-semantic-node-99')
+            ..setAttribute('flt-semantics-identifier', 'test-link-71')
+            ..setAttribute('href', '/foobar')
+            ..textContent = 'My Text Link';
       semanticsHost.append(semanticsAnchor);
 
       expect(pushedRouteNames, isEmpty);
@@ -971,39 +1083,44 @@ void main() {
       expect(event.defaultPrevented, isTrue);
     });
 
-    testWidgets('handles debounced clicks on semantic link',
-        (WidgetTester tester) async {
+    testWidgets('handles debounced clicks on semantic link', (
+      WidgetTester tester,
+    ) async {
       final Uri uri = Uri.parse('https://flutter.dev');
       FollowLink? followLinkCallback;
 
-      await tester.pumpWidget(MaterialApp(
-        home: WebLinkDelegate(
-          semanticsIdentifier: 'test-link-71',
-          TestLinkInfo(
-            uri: uri,
-            target: LinkTarget.blank,
-            builder: (BuildContext context, FollowLink? followLink) {
-              followLinkCallback = followLink;
-              return GestureDetector(
-                onTap: () {},
-                child: const Text('My Link'),
-              );
-            },
+      await tester.pumpWidget(
+        MaterialApp(
+          home: WebLinkDelegate(
+            semanticsIdentifier: 'test-link-71',
+            TestLinkInfo(
+              uri: uri,
+              target: LinkTarget.blank,
+              builder: (BuildContext context, FollowLink? followLink) {
+                followLinkCallback = followLink;
+                return GestureDetector(
+                  onTap: () {},
+                  child: const Text('My Link'),
+                );
+              },
+            ),
           ),
         ),
-      ));
+      );
       // Platform view creation happens asynchronously.
       await tester.pumpAndSettle();
       await tester.pump();
 
-      final html.Element semanticsHost =
-          html.document.createElement('flt-semantics-host');
+      final html.Element semanticsHost = html.document.createElement(
+        'flt-semantics-host',
+      );
       html.document.body!.append(semanticsHost);
-      final html.Element semanticsAnchor = html.document.createElement('a')
-        ..setAttribute('id', 'flt-semantic-node-99')
-        ..setAttribute('flt-semantics-identifier', 'test-link-71')
-        ..setAttribute('href', uri.toString())
-        ..textContent = 'My Text Link';
+      final html.Element semanticsAnchor =
+          html.document.createElement('a')
+            ..setAttribute('id', 'flt-semantic-node-99')
+            ..setAttribute('flt-semantics-identifier', 'test-link-71')
+            ..setAttribute('href', uri.toString())
+            ..textContent = 'My Text Link';
       semanticsHost.append(semanticsAnchor);
 
       expect(pushedRouteNames, isEmpty);
@@ -1025,37 +1142,42 @@ void main() {
     });
 
     // Regression test for: https://github.com/flutter/flutter/issues/162927
-    testWidgets('prevents navigation with debounced clicks on semantic link',
-        (WidgetTester tester) async {
+    testWidgets('prevents navigation with debounced clicks on semantic link', (
+      WidgetTester tester,
+    ) async {
       final Uri uri = Uri.parse('https://flutter.dev');
 
-      await tester.pumpWidget(MaterialApp(
-        home: WebLinkDelegate(
-          semanticsIdentifier: 'test-link-71',
-          TestLinkInfo(
-            uri: uri,
-            target: LinkTarget.blank,
-            builder: (BuildContext context, FollowLink? followLink) {
-              return GestureDetector(
-                onTap: () {},
-                child: const Text('My Link'),
-              );
-            },
+      await tester.pumpWidget(
+        MaterialApp(
+          home: WebLinkDelegate(
+            semanticsIdentifier: 'test-link-71',
+            TestLinkInfo(
+              uri: uri,
+              target: LinkTarget.blank,
+              builder: (BuildContext context, FollowLink? followLink) {
+                return GestureDetector(
+                  onTap: () {},
+                  child: const Text('My Link'),
+                );
+              },
+            ),
           ),
         ),
-      ));
+      );
       // Platform view creation happens asynchronously.
       await tester.pumpAndSettle();
       await tester.pump();
 
-      final html.Element semanticsHost =
-          html.document.createElement('flt-semantics-host');
+      final html.Element semanticsHost = html.document.createElement(
+        'flt-semantics-host',
+      );
       html.document.body!.append(semanticsHost);
-      final html.Element semanticsAnchor = html.document.createElement('a')
-        ..setAttribute('id', 'flt-semantic-node-99')
-        ..setAttribute('flt-semantics-identifier', 'test-link-71')
-        ..setAttribute('href', uri.toString())
-        ..textContent = 'My Text Link';
+      final html.Element semanticsAnchor =
+          html.document.createElement('a')
+            ..setAttribute('id', 'flt-semantic-node-99')
+            ..setAttribute('flt-semantics-identifier', 'test-link-71')
+            ..setAttribute('href', uri.toString())
+            ..textContent = 'My Text Link';
       semanticsHost.append(semanticsAnchor);
 
       expect(pushedRouteNames, isEmpty);
@@ -1076,37 +1198,45 @@ void main() {
 
     // TODO(mdebbar): Remove this test after the engine PR [1] makes it to stable.
     //                [1] https://github.com/flutter/engine/pull/52720
-    testWidgets('handles clicks on (old) semantic link with a button',
-        (WidgetTester tester) async {
+    testWidgets('handles clicks on (old) semantic link with a button', (
+      WidgetTester tester,
+    ) async {
       final Uri uri = Uri.parse('/foobar');
       FollowLink? followLinkCallback;
 
-      await tester.pumpWidget(MaterialApp(
-        routes: <String, WidgetBuilder>{
-          '/foobar': (BuildContext context) => const Text('Internal route'),
-        },
-        home: WebLinkDelegate(TestLinkInfo(
-          uri: uri,
-          target: LinkTarget.blank,
-          builder: (BuildContext context, FollowLink? followLink) {
-            followLinkCallback = followLink;
-            return const SizedBox(width: 100, height: 100);
+      await tester.pumpWidget(
+        MaterialApp(
+          routes: <String, WidgetBuilder>{
+            '/foobar': (BuildContext context) => const Text('Internal route'),
           },
-        )),
-      ));
+          home: WebLinkDelegate(
+            TestLinkInfo(
+              uri: uri,
+              target: LinkTarget.blank,
+              builder: (BuildContext context, FollowLink? followLink) {
+                followLinkCallback = followLink;
+                return const SizedBox(width: 100, height: 100);
+              },
+            ),
+          ),
+        ),
+      );
       // Platform view creation happens asynchronously.
       await tester.pumpAndSettle();
       await tester.pump();
 
-      final html.Element semanticsHost =
-          html.document.createElement('flt-semantics-host');
+      final html.Element semanticsHost = html.document.createElement(
+        'flt-semantics-host',
+      );
       html.document.body!.append(semanticsHost);
-      final html.Element semanticsAnchor = html.document.createElement('a')
-        ..setAttribute('id', 'flt-semantic-node-99')
-        ..setAttribute('href', '#');
+      final html.Element semanticsAnchor =
+          html.document.createElement('a')
+            ..setAttribute('id', 'flt-semantic-node-99')
+            ..setAttribute('href', '#');
       semanticsHost.append(semanticsAnchor);
-      final html.Element semanticsContainer =
-          html.document.createElement('flt-semantics-container');
+      final html.Element semanticsContainer = html.document.createElement(
+        'flt-semantics-container',
+      );
       semanticsAnchor.append(semanticsContainer);
       final html.Element semanticsButton =
           html.document.createElement('flt-semantics')
@@ -1129,38 +1259,45 @@ void main() {
 
     // TODO(mdebbar): Remove this test after the engine PR [1] makes it to stable.
     //                [1] https://github.com/flutter/engine/pull/52720
-    testWidgets('handles clicks on (old) semantic link with text',
-        (WidgetTester tester) async {
+    testWidgets('handles clicks on (old) semantic link with text', (
+      WidgetTester tester,
+    ) async {
       final Uri uri = Uri.parse('/foobar');
       FollowLink? followLinkCallback;
 
-      await tester.pumpWidget(MaterialApp(
-        routes: <String, WidgetBuilder>{
-          '/foobar': (BuildContext context) => const Text('Internal route'),
-        },
-        home: WebLinkDelegate(TestLinkInfo(
-          uri: uri,
-          target: LinkTarget.blank,
-          builder: (BuildContext context, FollowLink? followLink) {
-            followLinkCallback = followLink;
-            return GestureDetector(
-              onTap: () {},
-              child: const Text('My Link'),
-            );
+      await tester.pumpWidget(
+        MaterialApp(
+          routes: <String, WidgetBuilder>{
+            '/foobar': (BuildContext context) => const Text('Internal route'),
           },
-        )),
-      ));
+          home: WebLinkDelegate(
+            TestLinkInfo(
+              uri: uri,
+              target: LinkTarget.blank,
+              builder: (BuildContext context, FollowLink? followLink) {
+                followLinkCallback = followLink;
+                return GestureDetector(
+                  onTap: () {},
+                  child: const Text('My Link'),
+                );
+              },
+            ),
+          ),
+        ),
+      );
       // Platform view creation happens asynchronously.
       await tester.pumpAndSettle();
       await tester.pump();
 
-      final html.Element semanticsHost =
-          html.document.createElement('flt-semantics-host');
+      final html.Element semanticsHost = html.document.createElement(
+        'flt-semantics-host',
+      );
       html.document.body!.append(semanticsHost);
-      final html.Element semanticsAnchor = html.document.createElement('a')
-        ..setAttribute('id', 'flt-semantic-node-99')
-        ..setAttribute('href', '#')
-        ..textContent = 'My Text Link';
+      final html.Element semanticsAnchor =
+          html.document.createElement('a')
+            ..setAttribute('id', 'flt-semantic-node-99')
+            ..setAttribute('href', '#')
+            ..textContent = 'My Text Link';
       semanticsHost.append(semanticsAnchor);
 
       expect(pushedRouteNames, isEmpty);
@@ -1204,26 +1341,25 @@ html.MouseEvent _simulateClick(html.Element target, {bool metaKey = false}) {
   //     }.toJS);
   final html.MouseEvent mouseEvent = html.MouseEvent(
     'click',
-    html.MouseEventInit(
-      bubbles: true,
-      cancelable: true,
-      metaKey: metaKey,
-    ),
+    html.MouseEventInit(bubbles: true, cancelable: true, metaKey: metaKey),
   );
   LinkViewController.handleGlobalClick(event: mouseEvent, target: target);
   return mouseEvent;
 }
 
-html.KeyboardEvent _simulateKeydown(html.Element target,
-    {bool metaKey = false}) {
+html.KeyboardEvent _simulateKeydown(
+  html.Element target, {
+  bool metaKey = false,
+}) {
   final html.KeyboardEvent keydownEvent = html.KeyboardEvent(
-      'keydown',
-      html.KeyboardEventInit(
-        bubbles: true,
-        cancelable: true,
-        metaKey: metaKey,
-        // code: 'Space',
-      ));
+    'keydown',
+    html.KeyboardEventInit(
+      bubbles: true,
+      cancelable: true,
+      metaKey: metaKey,
+      // code: 'Space',
+    ),
+  );
   LinkViewController.handleGlobalKeydown(event: keydownEvent);
   return keydownEvent;
 }

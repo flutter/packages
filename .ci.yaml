@@ -28,22 +28,25 @@ platform_properties:
       device_type: none
       dependencies: >-
         [
-          {"dependency": "android_sdk", "version": "version:33v6"},
+          {"dependency": "android_sdk", "version": "version:36v1"},
           {"dependency": "open_jdk", "version": "version:17"},
           {"dependency": "curl", "version": "version:7.64.0"},
-          {"dependency": "avd_cipd_version", "version": "build_id:8733065022087935185"}
+          {"dependency": "avd_cipd_version", "version": "build_id:8719362231152674241"}
         ]
   linux_android_legacy:
     properties:
       os: Ubuntu
       cores: "8"
       device_type: none
+      # The android_virtual_device here should be as old as is feasible. Currently it's 31
+      # because the older devices available (see link above for options) are all x86, which
+      # is no longer supported by Flutter.
       dependencies: >-
         [
           {"dependency": "android_sdk", "version": "version:33v6"},
           {"dependency": "open_jdk", "version": "version:17"},
           {"dependency": "curl", "version": "version:7.64.0"},
-          {"dependency": "android_virtual_device", "version": "generic_android22.textpb"},
+          {"dependency": "android_virtual_device", "version": "android_31_google_apis_x64.textpb"},
           {"dependency": "avd_cipd_version", "version": "build_id:8733065022087935185"}
         ]
   linux_desktop:
@@ -90,12 +93,12 @@ platform_properties:
         [
           {"dependency": "ruby", "version": "ruby_3.1-pod_1.13"}
         ]
-      os: Mac-13|Mac-14
+      os: Mac-14|Mac-15.5
       device_type: none
       cpu: arm64
       $flutter/osx_sdk : >-
         {
-          "sdk_version": "15a240d"
+          "sdk_version": "16c5032a"
         }
   mac_x64:
     properties:
@@ -103,18 +106,18 @@ platform_properties:
         [
           {"dependency": "ruby", "version": "ruby_3.1-pod_1.13"}
         ]
-      os: Mac-13|Mac-14
+      os: Mac-14|Mac-15.5
       device_type: none
       cpu: x86
       $flutter/osx_sdk : >-
         {
-          "sdk_version": "15a240d"
+          "sdk_version": "16c5032a"
         }
 
 targets:
   - name: Linux repo_checks
     recipe: packages/packages
-    timeout: 30
+    timeout: 60
     properties:
       add_recipes_cq: "true"
       target_file: repo_checks.yaml
@@ -322,10 +325,10 @@ targets:
     timeout: 30
     properties:
       target_file: analyze_legacy.yaml
-      channel: "3.24.5"
+      channel: "3.32.8"
       env_variables: >-
         {
-          "CHANNEL": "3.24.5"
+          "CHANNEL": "3.32.8"
         }
 
   - name: Linux analyze_legacy N-2
@@ -333,10 +336,10 @@ targets:
     timeout: 30
     properties:
       target_file: analyze_legacy.yaml
-      channel: "3.22.3"
+      channel: "3.29.3"
       env_variables: >-
         {
-          "CHANNEL": "3.22.3"
+          "CHANNEL": "3.29.3"
         }
 
   - name: Linux_android custom_package_tests master
@@ -353,7 +356,7 @@ targets:
       # web_benchmarks needs Chrome.
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"},
+          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"},
           {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"},
           {"dependency": "cmake", "version": "build_id:8787856497187628321"},
           {"dependency": "ninja", "version": "version:1.9.0"},
@@ -376,7 +379,7 @@ targets:
       # See comments on 'master' version above.
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"},
+          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"},
           {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"},
           {"dependency": "cmake", "version": "build_id:8787856497187628321"},
           {"dependency": "ninja", "version": "version:1.9.0"},
@@ -391,33 +394,12 @@ targets:
   ### Android tasks ###
   - name: Linux_android android_build_all_packages master
     recipe: packages/packages
-    timeout: 30
+    timeout: 60
     properties:
       version_file: flutter_master.version
       # This builds the all_packages app only in a current JDK.
-      target_file: android_build_all_packages_jdk17.yaml
+      target_file: android_build_all_packages.yaml
       channel: master
-      env_variables: >-
-        {
-          "CHANNEL": "master"
-        }
-
-  - name: Linux_android android_build_all_packages_legacy master
-    recipe: packages/packages
-    timeout: 30
-    properties:
-      version_file: flutter_master.version
-      # TODO(stuartmorgan): Once stable requires JDK 17, and the
-      # legacy project is updated accordingly, this entire target
-      # can be merged back into android_build_all_packages.
-      # This file only builds a *legacy* version of the project.
-      target_file: android_build_all_packages_legacy.yaml
-      channel: master
-      # The legacy project build requires an older JDK.
-      dependencies: >-
-        [
-          {"dependency": "open_jdk", "version": "version:11"}
-        ]
       env_variables: >-
         {
           "CHANNEL": "master"
@@ -425,31 +407,13 @@ targets:
 
   - name: Linux_android android_build_all_packages stable
     recipe: packages/packages
-    timeout: 30
+    timeout: 60
     properties:
       add_recipes_cq: "true"
       version_file: flutter_stable.version
       # This builds the all_packages app only in a current JDK.
-      target_file: android_build_all_packages_jdk17.yaml
+      target_file: android_build_all_packages.yaml
       channel: stable
-      env_variables: >-
-        {
-          "CHANNEL": "stable"
-        }
-
-  - name: Linux_android android_build_all_packages_legacy stable
-    recipe: packages/packages
-    timeout: 30
-    properties:
-      version_file: flutter_stable.version
-      # This file only builds a *legacy* version of the project.
-      target_file: android_build_all_packages_legacy.yaml
-      channel: stable
-      # The legacy project build requires an older JDK.
-      dependencies: >-
-        [
-          {"dependency": "open_jdk", "version": "version:11"}
-        ]
       env_variables: >-
         {
           "CHANNEL": "stable"
@@ -465,7 +429,7 @@ targets:
       package_sharding: "--shardIndex 0 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
+          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -483,7 +447,7 @@ targets:
       package_sharding: "--shardIndex 1 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
+          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -501,7 +465,7 @@ targets:
       package_sharding: "--shardIndex 2 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
+          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -519,7 +483,7 @@ targets:
       package_sharding: "--shardIndex 3 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
+          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -537,7 +501,7 @@ targets:
       package_sharding: "--shardIndex 4 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
+          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -555,7 +519,7 @@ targets:
       package_sharding: "--shardIndex 5 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
+          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -574,7 +538,7 @@ targets:
       package_sharding: "--shardIndex 0 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
+          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -593,7 +557,7 @@ targets:
       package_sharding: "--shardIndex 1 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
+          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -612,7 +576,7 @@ targets:
       package_sharding: "--shardIndex 2 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
+          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -631,7 +595,7 @@ targets:
       package_sharding: "--shardIndex 3 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
+          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -650,7 +614,7 @@ targets:
       package_sharding: "--shardIndex 4 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
+          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -669,7 +633,7 @@ targets:
       package_sharding: "--shardIndex 5 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
+          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -1073,10 +1037,6 @@ targets:
     properties:
       version_file: flutter_master.version
       target_file: macos_repo_checks.yaml
-      dependencies: >
-        [
-          {"dependency": "swift_format", "version": "build_id:8797338979890974865"}
-        ]
 
   ### macOS desktop tasks ###
   # macos-platform_tests builds all the packages on ARM, so this build is run
@@ -1146,10 +1106,6 @@ targets:
         {
           "CHANNEL": "master"
         }
-      dependencies: >
-        [
-          {"dependency": "swift_format", "version": "build_id:8797338979890974865"}
-        ]
 
   - name: Mac_arm64 custom_package_tests stable
     recipe: packages/packages
@@ -1162,10 +1118,6 @@ targets:
         {
           "CHANNEL": "stable"
         }
-      dependencies: >
-        [
-          {"dependency": "swift_format", "version": "build_id:8797338979890974865"}
-        ]
 
   ### iOS tasks ###
   # ios_platform_tests builds all the packages on ARM, so this build is run
@@ -1479,7 +1431,6 @@ targets:
     recipe: packages/packages
     presubmit: false
     timeout: 30
-    bringup: true # https://github.com/flutter/flutter/issues/134083
     properties:
       add_recipes_cq: "true"
       target_file: windows_build_all_packages.yaml
@@ -1514,7 +1465,6 @@ targets:
     recipe: packages/packages
     presubmit: false
     timeout: 30
-    bringup: true
     properties:
       target_file: windows_build_all_packages.yaml
       channel: stable

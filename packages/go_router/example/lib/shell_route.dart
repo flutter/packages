@@ -1,14 +1,16 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-final GlobalKey<NavigatorState> _rootNavigatorKey =
-    GlobalKey<NavigatorState>(debugLabel: 'root');
-final GlobalKey<NavigatorState> _shellNavigatorKey =
-    GlobalKey<NavigatorState>(debugLabel: 'shell');
+final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(
+  debugLabel: 'root',
+);
+final GlobalKey<NavigatorState> _shellNavigatorKey = GlobalKey<NavigatorState>(
+  debugLabel: 'shell',
+);
 
 // This scenario demonstrates how to set up nested navigation using ShellRoute,
 // which is a pattern where an additional Navigator is placed in the widget tree
@@ -105,9 +107,7 @@ class ShellRouteExampleApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: ThemeData(primarySwatch: Colors.blue),
       routerConfig: _router,
     );
   }
@@ -117,10 +117,7 @@ class ShellRouteExampleApp extends StatelessWidget {
 /// BottomNavigationBar, where [child] is placed in the body of the Scaffold.
 class ScaffoldWithNavBar extends StatelessWidget {
   /// Constructs an [ScaffoldWithNavBar].
-  const ScaffoldWithNavBar({
-    required this.child,
-    super.key,
-  });
+  const ScaffoldWithNavBar({required this.child, super.key});
 
   /// The widget to display in the body of the Scaffold.
   /// In this sample, it is a Navigator.
@@ -132,10 +129,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
       body: child,
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'A Screen',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'A Screen'),
           BottomNavigationBarItem(
             icon: Icon(Icons.business),
             label: 'B Screen',
@@ -261,10 +255,7 @@ class ScreenC extends StatelessWidget {
 /// The details screen for either the A, B or C screen.
 class DetailsScreen extends StatelessWidget {
   /// Constructs a [DetailsScreen].
-  const DetailsScreen({
-    required this.label,
-    super.key,
-  });
+  const DetailsScreen({required this.label, super.key});
 
   /// The label to display in the center of the screen.
   final String label;
@@ -272,9 +263,7 @@ class DetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Details Screen'),
-      ),
+      appBar: AppBar(title: const Text('Details Screen')),
       body: Center(
         child: Text(
           'Details for $label',

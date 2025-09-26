@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -71,8 +71,8 @@ void main() {
 
       test('defaults to a nonce set in other script of the page', () async {
         const String expectedNonce = 'another-random-nonce';
-        final web.HTMLScriptElement otherScript = web.HTMLScriptElement()
-          ..nonce = expectedNonce;
+        final web.HTMLScriptElement otherScript =
+            web.HTMLScriptElement()..nonce = expectedNonce;
         web.document.head?.appendChild(otherScript);
 
         // This test doesn't simulate the callback that completes the future, and
@@ -89,8 +89,8 @@ void main() {
 
       test('when explicitly set overrides the default', () async {
         const String expectedNonce = 'third-random-nonce';
-        final web.HTMLScriptElement otherScript = web.HTMLScriptElement()
-          ..nonce = 'this-is-the-wrong-nonce';
+        final web.HTMLScriptElement otherScript =
+            web.HTMLScriptElement()..nonce = 'this-is-the-wrong-nonce';
         web.document.head?.appendChild(otherScript);
 
         // This test doesn't simulate the callback that completes the future, and
@@ -106,8 +106,8 @@ void main() {
       });
 
       test('when null disables the feature', () async {
-        final web.HTMLScriptElement otherScript = web.HTMLScriptElement()
-          ..nonce = 'this-is-the-wrong-nonce';
+        final web.HTMLScriptElement otherScript =
+            web.HTMLScriptElement()..nonce = 'this-is-the-wrong-nonce';
         web.document.head?.appendChild(otherScript);
 
         // This test doesn't simulate the callback that completes the future, and

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -13,10 +13,8 @@ class GetMultipleDirectoriesPage extends StatelessWidget {
 
   Future<void> _getDirectoryPaths(BuildContext context) async {
     const String confirmButtonText = 'Choose';
-    final List<String?> directoriesPaths =
-        await FileSelectorPlatform.instance.getDirectoryPaths(
-      confirmButtonText: confirmButtonText,
-    );
+    final List<String?> directoriesPaths = await FileSelectorPlatform.instance
+        .getDirectoryPaths(confirmButtonText: confirmButtonText);
     if (directoriesPaths.isEmpty) {
       // Operation was canceled by the user.
       return;
@@ -24,8 +22,8 @@ class GetMultipleDirectoriesPage extends StatelessWidget {
     if (context.mounted) {
       await showDialog<void>(
         context: context,
-        builder: (BuildContext context) =>
-            TextDisplay(directoriesPaths.join('\n')),
+        builder:
+            (BuildContext context) => TextDisplay(directoriesPaths.join('\n')),
       );
     }
   }
@@ -33,9 +31,7 @@ class GetMultipleDirectoriesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Select multiple directories'),
-      ),
+      appBar: AppBar(title: const Text('Select multiple directories')),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -46,7 +42,8 @@ class GetMultipleDirectoriesPage extends StatelessWidget {
                 foregroundColor: Colors.white,
               ),
               child: const Text(
-                  'Press to ask user to choose multiple directories'),
+                'Press to ask user to choose multiple directories',
+              ),
               onPressed: () => _getDirectoryPaths(context),
             ),
           ],
@@ -69,9 +66,7 @@ class TextDisplay extends StatelessWidget {
     return AlertDialog(
       title: const Text('Selected Directories'),
       content: Scrollbar(
-        child: SingleChildScrollView(
-          child: Text(directoryPaths),
-        ),
+        child: SingleChildScrollView(child: Text(directoryPaths)),
       ),
       actions: <Widget>[
         TextButton(

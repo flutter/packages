@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -17,7 +17,7 @@ import 'page.dart';
 
 class PlaceMarkerPage extends GoogleMapExampleAppPage {
   const PlaceMarkerPage({Key? key})
-      : super(const Icon(Icons.place), 'Place marker', key: key);
+    : super(const Icon(Icons.place), 'Place marker', key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -60,8 +60,9 @@ class PlaceMarkerBodyState extends State<PlaceMarkerBody> {
       setState(() {
         final MarkerId? previousMarkerId = selectedMarker;
         if (previousMarkerId != null && markers.containsKey(previousMarkerId)) {
-          final Marker resetOld = markers[previousMarkerId]!
-              .copyWith(iconParam: BitmapDescriptor.defaultMarker);
+          final Marker resetOld = markers[previousMarkerId]!.copyWith(
+            iconParam: BitmapDescriptor.defaultMarker,
+          );
           markers[previousMarkerId] = resetOld;
         }
         selectedMarker = markerId;
@@ -90,25 +91,28 @@ class PlaceMarkerBodyState extends State<PlaceMarkerBody> {
         markerPosition = null;
       });
       await showDialog<void>(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-                actions: <Widget>[
-                  TextButton(
-                    child: const Text('OK'),
-                    onPressed: () => Navigator.of(context).pop(),
-                  )
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            actions: <Widget>[
+              TextButton(
+                child: const Text('OK'),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ],
+            content: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 66),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Text('Old position: ${tappedMarker.position}'),
+                  Text('New position: $newPosition'),
                 ],
-                content: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 66),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Text('Old position: ${tappedMarker.position}'),
-                        Text('New position: $newPosition'),
-                      ],
-                    )));
-          });
+              ),
+            ),
+          );
+        },
+      );
     }
   }
 
@@ -170,9 +174,7 @@ class PlaceMarkerBodyState extends State<PlaceMarkerBody> {
     final Offset currentAnchor = marker.anchor;
     final Offset newAnchor = Offset(1.0 - currentAnchor.dy, currentAnchor.dx);
     setState(() {
-      markers[markerId] = marker.copyWith(
-        anchorParam: newAnchor,
-      );
+      markers[markerId] = marker.copyWith(anchorParam: newAnchor);
     });
   }
 
@@ -182,9 +184,7 @@ class PlaceMarkerBodyState extends State<PlaceMarkerBody> {
     final Offset newAnchor = Offset(1.0 - currentAnchor.dy, currentAnchor.dx);
     setState(() {
       markers[markerId] = marker.copyWith(
-        infoWindowParam: marker.infoWindow.copyWith(
-          anchorParam: newAnchor,
-        ),
+        infoWindowParam: marker.infoWindow.copyWith(anchorParam: newAnchor),
       );
     });
   }
@@ -192,18 +192,14 @@ class PlaceMarkerBodyState extends State<PlaceMarkerBody> {
   Future<void> _toggleDraggable(MarkerId markerId) async {
     final Marker marker = markers[markerId]!;
     setState(() {
-      markers[markerId] = marker.copyWith(
-        draggableParam: !marker.draggable,
-      );
+      markers[markerId] = marker.copyWith(draggableParam: !marker.draggable);
     });
   }
 
   Future<void> _toggleFlat(MarkerId markerId) async {
     final Marker marker = markers[markerId]!;
     setState(() {
-      markers[markerId] = marker.copyWith(
-        flatParam: !marker.flat,
-      );
+      markers[markerId] = marker.copyWith(flatParam: !marker.flat);
     });
   }
 
@@ -212,9 +208,7 @@ class PlaceMarkerBodyState extends State<PlaceMarkerBody> {
     final String newSnippet = '${marker.infoWindow.snippet!}*';
     setState(() {
       markers[markerId] = marker.copyWith(
-        infoWindowParam: marker.infoWindow.copyWith(
-          snippetParam: newSnippet,
-        ),
+        infoWindowParam: marker.infoWindow.copyWith(snippetParam: newSnippet),
       );
     });
   }
@@ -242,18 +236,16 @@ class PlaceMarkerBodyState extends State<PlaceMarkerBody> {
   Future<void> _toggleVisible(MarkerId markerId) async {
     final Marker marker = markers[markerId]!;
     setState(() {
-      markers[markerId] = marker.copyWith(
-        visibleParam: !marker.visible,
-      );
+      markers[markerId] = marker.copyWith(visibleParam: !marker.visible);
     });
   }
 
   Future<void> _changeZIndex(MarkerId markerId) async {
     final Marker marker = markers[markerId]!;
-    final double current = marker.zIndex;
+    final int current = marker.zIndexInt;
     setState(() {
       markers[markerId] = marker.copyWith(
-        zIndexParam: current == 12.0 ? 0.0 : current + 1.0,
+        zIndexIntParam: current == 12 ? 0 : current + 1,
       );
     });
   }
@@ -261,9 +253,7 @@ class PlaceMarkerBodyState extends State<PlaceMarkerBody> {
   void _setMarkerIcon(MarkerId markerId, BitmapDescriptor assetIcon) {
     final Marker marker = markers[markerId]!;
     setState(() {
-      markers[markerId] = marker.copyWith(
-        iconParam: assetIcon,
-      );
+      markers[markerId] = marker.copyWith(iconParam: assetIcon);
     });
   }
 
@@ -276,130 +266,141 @@ class PlaceMarkerBodyState extends State<PlaceMarkerBody> {
   @override
   Widget build(BuildContext context) {
     final MarkerId? selectedId = selectedMarker;
-    return Stack(children: <Widget>[
-      Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Expanded(
-            child: ExampleGoogleMap(
-              onMapCreated: _onMapCreated,
-              initialCameraPosition: const CameraPosition(
-                target: LatLng(-33.852, 151.211),
-                zoom: 11.0,
+    return Stack(
+      children: <Widget>[
+        Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Expanded(
+              child: ExampleGoogleMap(
+                onMapCreated: _onMapCreated,
+                initialCameraPosition: const CameraPosition(
+                  target: LatLng(-33.852, 151.211),
+                  zoom: 11.0,
+                ),
+                markers: Set<Marker>.of(markers.values),
               ),
-              markers: Set<Marker>.of(markers.values),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                TextButton(onPressed: _add, child: const Text('Add')),
+                TextButton(
+                  onPressed:
+                      selectedId == null ? null : () => _remove(selectedId),
+                  child: const Text('Remove'),
+                ),
+              ],
+            ),
+            Wrap(
+              alignment: WrapAlignment.spaceEvenly,
+              children: <Widget>[
+                TextButton(
+                  onPressed:
+                      selectedId == null ? null : () => _changeInfo(selectedId),
+                  child: const Text('change info'),
+                ),
+                TextButton(
+                  onPressed:
+                      selectedId == null
+                          ? null
+                          : () => _changeInfoAnchor(selectedId),
+                  child: const Text('change info anchor'),
+                ),
+                TextButton(
+                  onPressed:
+                      selectedId == null
+                          ? null
+                          : () => _changeAlpha(selectedId),
+                  child: const Text('change alpha'),
+                ),
+                TextButton(
+                  onPressed:
+                      selectedId == null
+                          ? null
+                          : () => _changeAnchor(selectedId),
+                  child: const Text('change anchor'),
+                ),
+                TextButton(
+                  onPressed:
+                      selectedId == null
+                          ? null
+                          : () => _toggleDraggable(selectedId),
+                  child: const Text('toggle draggable'),
+                ),
+                TextButton(
+                  onPressed:
+                      selectedId == null ? null : () => _toggleFlat(selectedId),
+                  child: const Text('toggle flat'),
+                ),
+                TextButton(
+                  onPressed:
+                      selectedId == null
+                          ? null
+                          : () => _changePosition(selectedId),
+                  child: const Text('change position'),
+                ),
+                TextButton(
+                  onPressed:
+                      selectedId == null
+                          ? null
+                          : () => _changeRotation(selectedId),
+                  child: const Text('change rotation'),
+                ),
+                TextButton(
+                  onPressed:
+                      selectedId == null
+                          ? null
+                          : () => _toggleVisible(selectedId),
+                  child: const Text('toggle visible'),
+                ),
+                TextButton(
+                  onPressed:
+                      selectedId == null
+                          ? null
+                          : () => _changeZIndex(selectedId),
+                  child: const Text('change zIndex'),
+                ),
+                TextButton(
+                  onPressed:
+                      selectedId == null
+                          ? null
+                          : () {
+                            _getMarkerIcon(context).then((
+                              BitmapDescriptor icon,
+                            ) {
+                              _setMarkerIcon(selectedId, icon);
+                            });
+                          },
+                  child: const Text('set marker icon'),
+                ),
+              ],
+            ),
+          ],
+        ),
+        Visibility(
+          visible: markerPosition != null,
+          child: Container(
+            color: Colors.white70,
+            height: 30,
+            padding: const EdgeInsets.only(left: 12, right: 12),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: <Widget>[
+                if (markerPosition == null)
+                  Container()
+                else
+                  Expanded(child: Text('lat: ${markerPosition!.latitude}')),
+                if (markerPosition == null)
+                  Container()
+                else
+                  Expanded(child: Text('lng: ${markerPosition!.longitude}')),
+              ],
             ),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              TextButton(
-                onPressed: _add,
-                child: const Text('Add'),
-              ),
-              TextButton(
-                onPressed:
-                    selectedId == null ? null : () => _remove(selectedId),
-                child: const Text('Remove'),
-              ),
-            ],
-          ),
-          Wrap(
-            alignment: WrapAlignment.spaceEvenly,
-            children: <Widget>[
-              TextButton(
-                onPressed:
-                    selectedId == null ? null : () => _changeInfo(selectedId),
-                child: const Text('change info'),
-              ),
-              TextButton(
-                onPressed: selectedId == null
-                    ? null
-                    : () => _changeInfoAnchor(selectedId),
-                child: const Text('change info anchor'),
-              ),
-              TextButton(
-                onPressed:
-                    selectedId == null ? null : () => _changeAlpha(selectedId),
-                child: const Text('change alpha'),
-              ),
-              TextButton(
-                onPressed:
-                    selectedId == null ? null : () => _changeAnchor(selectedId),
-                child: const Text('change anchor'),
-              ),
-              TextButton(
-                onPressed: selectedId == null
-                    ? null
-                    : () => _toggleDraggable(selectedId),
-                child: const Text('toggle draggable'),
-              ),
-              TextButton(
-                onPressed:
-                    selectedId == null ? null : () => _toggleFlat(selectedId),
-                child: const Text('toggle flat'),
-              ),
-              TextButton(
-                onPressed: selectedId == null
-                    ? null
-                    : () => _changePosition(selectedId),
-                child: const Text('change position'),
-              ),
-              TextButton(
-                onPressed: selectedId == null
-                    ? null
-                    : () => _changeRotation(selectedId),
-                child: const Text('change rotation'),
-              ),
-              TextButton(
-                onPressed: selectedId == null
-                    ? null
-                    : () => _toggleVisible(selectedId),
-                child: const Text('toggle visible'),
-              ),
-              TextButton(
-                onPressed:
-                    selectedId == null ? null : () => _changeZIndex(selectedId),
-                child: const Text('change zIndex'),
-              ),
-              TextButton(
-                onPressed: selectedId == null
-                    ? null
-                    : () {
-                        _getMarkerIcon(context).then(
-                          (BitmapDescriptor icon) {
-                            _setMarkerIcon(selectedId, icon);
-                          },
-                        );
-                      },
-                child: const Text('set marker icon'),
-              ),
-            ],
-          ),
-        ],
-      ),
-      Visibility(
-        visible: markerPosition != null,
-        child: Container(
-          color: Colors.white70,
-          height: 30,
-          padding: const EdgeInsets.only(left: 12, right: 12),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget>[
-              if (markerPosition == null)
-                Container()
-              else
-                Expanded(child: Text('lat: ${markerPosition!.latitude}')),
-              if (markerPosition == null)
-                Container()
-              else
-                Expanded(child: Text('lng: ${markerPosition!.longitude}')),
-            ],
-          ),
         ),
-      ),
-    ]);
+      ],
+    );
   }
 }

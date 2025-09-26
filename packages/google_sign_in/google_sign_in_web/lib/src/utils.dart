@@ -1,11 +1,10 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import 'dart:convert';
 
 import 'package:google_identity_services_web/id.dart';
-import 'package:google_identity_services_web/oauth2.dart';
 import 'package:google_sign_in_platform_interface/google_sign_in_platform_interface.dart';
 
 /// A codec that can encode/decode JWT payloads.
@@ -21,7 +20,8 @@ final Codec<Object?, String> jwtCodec = json.fuse(utf8).fuse(base64);
 ///
 /// More info: https://regexr.com/789qc
 final RegExp jwtTokenRegexp = RegExp(
-    r'^(?<header>[^\.\s]+)\.(?<payload>[^\.\s]+)\.(?<signature>[^\.\s]+)$');
+  r'^(?<header>[^\.\s]+)\.(?<payload>[^\.\s]+)\.(?<signature>[^\.\s]+)$',
+);
 
 /// Decodes the `claims` of a JWT token and returns them as a Map.
 ///
@@ -65,22 +65,29 @@ Map<String, Object?>? getResponsePayload(CredentialResponse? response) {
 ///
 /// May return `null`, if the `credentialResponse` is null, or its `credential`
 /// cannot be decoded.
-GoogleSignInUserData? gisResponsesToUserData(
-    CredentialResponse? credentialResponse) {
+AuthenticationEvent? gisResponsesToAuthenticationEvent(
+  CredentialResponse? credentialResponse,
+) {
   final Map<String, Object?>? payload = getResponsePayload(credentialResponse);
   if (payload == null) {
     return null;
   }
 
-  assert(credentialResponse?.credential != null,
-      'The CredentialResponse cannot be null and have a payload.');
+  assert(
+    credentialResponse?.credential != null,
+    'The CredentialResponse cannot be null and have a payload.',
+  );
 
-  return GoogleSignInUserData(
-    email: payload['email']! as String,
-    id: payload['sub']! as String,
-    displayName: payload['name'] as String?,
-    photoUrl: payload['picture'] as String?,
-    idToken: credentialResponse!.credential,
+  return AuthenticationEventSignIn(
+    user: GoogleSignInUserData(
+      email: payload['email']! as String,
+      id: payload['sub']! as String,
+      displayName: payload['name'] as String?,
+      photoUrl: payload['picture'] as String?,
+    ),
+    authenticationTokens: AuthenticationTokenData(
+      idToken: credentialResponse!.credential,
+    ),
   );
 }
 
@@ -89,23 +96,11 @@ GoogleSignInUserData? gisResponsesToUserData(
 /// May return `null` if the `credentialResponse` is null, its `credential`
 /// cannot be decoded, or the `exp` field is not set on the JWT payload.
 DateTime? getCredentialResponseExpirationTimestamp(
-    CredentialResponse? credentialResponse) {
+  CredentialResponse? credentialResponse,
+) {
   final Map<String, Object?>? payload = getResponsePayload(credentialResponse);
   // Get the 'exp' field from the payload, if present.
   final int? exp = (payload != null) ? payload['exp'] as int? : null;
   // Return 'exp' (a timestamp in seconds since Epoch) as a DateTime.
   return (exp != null) ? DateTime.fromMillisecondsSinceEpoch(exp * 1000) : null;
-}
-
-/// Converts responses from the GIS library into TokenData for the plugin.
-GoogleSignInTokenData gisResponsesToTokenData(
-  CredentialResponse? credentialResponse,
-  TokenResponse? tokenResponse, [
-  CodeResponse? codeResponse,
-]) {
-  return GoogleSignInTokenData(
-    idToken: credentialResponse?.credential,
-    accessToken: tokenResponse?.access_token,
-    serverAuthCode: codeResponse?.code,
-  );
 }

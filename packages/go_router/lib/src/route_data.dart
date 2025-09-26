@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -8,6 +8,7 @@ import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 import 'package:meta/meta_meta.dart';
 
+import 'configuration.dart';
 import 'route.dart';
 import 'state.dart';
 
@@ -18,17 +19,10 @@ abstract class RouteData {
   const RouteData();
 }
 
-/// A class to represent a [GoRoute] in
-/// [Type-safe routing](https://pub.dev/documentation/go_router/latest/topics/Type-safe%20routes-topic.html).
-///
-/// Subclasses must override one of [build], [buildPage], or
-/// [redirect].
-/// {@category Type-safe routes}
-abstract class GoRouteData extends RouteData {
-  /// Allows subclasses to have `const` constructors.
-  ///
-  /// [GoRouteData] is abstract and cannot be instantiated directly.
-  const GoRouteData();
+/// A base class for [GoRouteData] and [RelativeGoRouteData] that provides
+/// common functionality for type-safe routing.
+abstract class _GoRouteDataBase extends RouteData {
+  const _GoRouteDataBase();
 
   /// Creates the [Widget] for `this` route.
   ///
@@ -68,17 +62,93 @@ abstract class GoRouteData extends RouteData {
   /// Corresponds to [GoRoute.onExit].
   FutureOr<bool> onExit(BuildContext context, GoRouterState state) => true;
 
+  /// The error thrown when a user-facing method is not implemented by the
+  /// generated code.
+  static UnimplementedError get shouldBeGeneratedError => UnimplementedError(
+    'Should be generated using [Type-safe routing](https://pub.dev/documentation/go_router/latest/topics/Type-safe%20routes-topic.html).',
+  );
+
+  /// Used to cache [_GoRouteDataBase] that corresponds to a given [GoRouterState]
+  /// to minimize the number of times it has to be deserialized.
+  static final Expando<_GoRouteDataBase> stateObjectExpando =
+      Expando<_GoRouteDataBase>('GoRouteState to _GoRouteDataBase expando');
+}
+
+/// Helper to build a location string from a path and query parameters.
+String _buildLocation(String path, {Map<String, dynamic>? queryParams}) =>
+    Uri.parse(path)
+        .replace(
+          queryParameters:
+              // Avoid `?` in generated location if `queryParams` is empty
+              queryParams?.isNotEmpty ?? false ? queryParams : null,
+        )
+        .toString();
+
+/// Holds the parameters for constructing a [GoRoute].
+class _GoRouteParameters {
+  const _GoRouteParameters({
+    required this.builder,
+    required this.pageBuilder,
+    required this.redirect,
+    required this.onExit,
+  });
+
+  final GoRouterWidgetBuilder builder;
+  final GoRouterPageBuilder pageBuilder;
+  final GoRouterRedirect redirect;
+  final ExitCallback onExit;
+}
+
+/// Helper to create [GoRoute] parameters from a factory function and an Expando.
+_GoRouteParameters _createGoRouteParameters<T extends _GoRouteDataBase>({
+  required T Function(GoRouterState) factory,
+  required Expando<_GoRouteDataBase> expando,
+}) {
+  T factoryImpl(GoRouterState state) {
+    final Object? extra = state.extra;
+
+    // If the "extra" value is of type `T` then we know it's the source
+    // instance, so it doesn't need to be recreated.
+    if (extra is T) {
+      return extra;
+    }
+
+    return (expando[state] ??= factory(state)) as T;
+  }
+
+  return _GoRouteParameters(
+    builder:
+        (BuildContext context, GoRouterState state) =>
+            factoryImpl(state).build(context, state),
+    pageBuilder:
+        (BuildContext context, GoRouterState state) =>
+            factoryImpl(state).buildPage(context, state),
+    redirect:
+        (BuildContext context, GoRouterState state) =>
+            factoryImpl(state).redirect(context, state),
+    onExit:
+        (BuildContext context, GoRouterState state) =>
+            factoryImpl(state).onExit(context, state),
+  );
+}
+
+/// A class to represent a [GoRoute] in
+/// [Type-safe routing](https://pub.dev/documentation/go_router/latest/topics/Type-safe%20routes-topic.html).
+///
+/// Subclasses must override one of [build], [buildPage], or
+/// [redirect].
+/// {@category Type-safe routes}
+abstract class GoRouteData extends _GoRouteDataBase {
+  /// Allows subclasses to have `const` constructors.
+  ///
+  /// [GoRouteData] is abstract and cannot be instantiated directly.
+  const GoRouteData();
+
   /// A helper function used by generated code.
   ///
   /// Should not be used directly.
   static String $location(String path, {Map<String, dynamic>? queryParams}) =>
-      Uri.parse(path)
-          .replace(
-            queryParameters:
-                // Avoid `?` in generated location if `queryParams` is empty
-                queryParams?.isNotEmpty ?? false ? queryParams : null,
-          )
-          .toString();
+      _buildLocation(path, queryParams: queryParams);
 
   /// A helper function used by generated code.
   ///
@@ -86,51 +156,125 @@ abstract class GoRouteData extends RouteData {
   static GoRoute $route<T extends GoRouteData>({
     required String path,
     String? name,
+    bool caseSensitive = true,
     required T Function(GoRouterState) factory,
     GlobalKey<NavigatorState>? parentNavigatorKey,
     List<RouteBase> routes = const <RouteBase>[],
   }) {
-    T factoryImpl(GoRouterState state) {
-      final Object? extra = state.extra;
-
-      // If the "extra" value is of type `T` then we know it's the source
-      // instance of `GoRouteData`, so it doesn't need to be recreated.
-      if (extra is T) {
-        return extra;
-      }
-
-      return (_stateObjectExpando[state] ??= factory(state)) as T;
-    }
-
-    Widget builder(BuildContext context, GoRouterState state) =>
-        factoryImpl(state).build(context, state);
-
-    Page<void> pageBuilder(BuildContext context, GoRouterState state) =>
-        factoryImpl(state).buildPage(context, state);
-
-    FutureOr<String?> redirect(BuildContext context, GoRouterState state) =>
-        factoryImpl(state).redirect(context, state);
-
-    FutureOr<bool> onExit(BuildContext context, GoRouterState state) =>
-        factoryImpl(state).onExit(context, state);
+    final _GoRouteParameters params = _createGoRouteParameters<T>(
+      factory: factory,
+      expando: _GoRouteDataBase.stateObjectExpando,
+    );
 
     return GoRoute(
       path: path,
       name: name,
-      builder: builder,
-      pageBuilder: pageBuilder,
-      redirect: redirect,
+      caseSensitive: caseSensitive,
+      builder: params.builder,
+      pageBuilder: params.pageBuilder,
+      redirect: params.redirect,
       routes: routes,
       parentNavigatorKey: parentNavigatorKey,
-      onExit: onExit,
+      onExit: params.onExit,
     );
   }
 
-  /// Used to cache [GoRouteData] that corresponds to a given [GoRouterState]
-  /// to minimize the number of times it has to be deserialized.
-  static final Expando<GoRouteData> _stateObjectExpando = Expando<GoRouteData>(
-    'GoRouteState to GoRouteData expando',
-  );
+  /// The location of this route, e.g. /family/f2/person/p1
+  String get location => throw _GoRouteDataBase.shouldBeGeneratedError;
+
+  /// Navigate to the route.
+  void go(BuildContext context) =>
+      throw _GoRouteDataBase.shouldBeGeneratedError;
+
+  /// Push the route onto the page stack.
+  Future<T?> push<T>(BuildContext context) =>
+      throw _GoRouteDataBase.shouldBeGeneratedError;
+
+  /// Replaces the top-most page of the page stack with the route.
+  void pushReplacement(BuildContext context) =>
+      throw _GoRouteDataBase.shouldBeGeneratedError;
+
+  /// Replaces the top-most page of the page stack with the route but treats
+  /// it as the same page.
+  ///
+  /// The page key will be reused. This will preserve the state and not run any
+  /// page animation.
+  ///
+  void replace(BuildContext context) =>
+      throw _GoRouteDataBase.shouldBeGeneratedError;
+}
+
+/// A class to represent a relative [GoRoute] in
+/// [Type-safe routing](https://pub.dev/documentation/go_router/latest/topics/Type-safe%20routes-topic.html).
+///
+/// Subclasses must override one of [build], [buildPage], or
+/// [redirect].
+/// {@category Type-safe routes}
+abstract class RelativeGoRouteData extends _GoRouteDataBase {
+  /// Allows subclasses to have `const` constructors.
+  ///
+  /// [RelativeGoRouteData] is abstract and cannot be instantiated directly.
+  const RelativeGoRouteData();
+
+  /// A helper function used by generated code.
+  ///
+  /// Should not be used directly.
+  static String $location(String path, {Map<String, dynamic>? queryParams}) =>
+      _buildLocation(path, queryParams: queryParams);
+
+  /// A helper function used by generated code.
+  ///
+  /// Should not be used directly.
+  static GoRoute $route<T extends RelativeGoRouteData>({
+    required String path,
+    bool caseSensitive = true,
+    required T Function(GoRouterState) factory,
+    GlobalKey<NavigatorState>? parentNavigatorKey,
+    List<RouteBase> routes = const <RouteBase>[],
+  }) {
+    final _GoRouteParameters params = _createGoRouteParameters<T>(
+      factory: factory,
+      expando: _GoRouteDataBase.stateObjectExpando,
+    );
+
+    return GoRoute(
+      path: path,
+      caseSensitive: caseSensitive,
+      builder: params.builder,
+      pageBuilder: params.pageBuilder,
+      redirect: params.redirect,
+      routes: routes,
+      parentNavigatorKey: parentNavigatorKey,
+      onExit: params.onExit,
+    );
+  }
+
+  /// The sub-location of this route, e.g. person/p1
+  String get subLocation => throw _GoRouteDataBase.shouldBeGeneratedError;
+
+  /// The relative location of this route, e.g. ./person/p1
+  String get relativeLocation => throw _GoRouteDataBase.shouldBeGeneratedError;
+
+  /// Navigate to the route.
+  void goRelative(BuildContext context) =>
+      throw _GoRouteDataBase.shouldBeGeneratedError;
+
+  /// Push the route onto the page stack.
+  Future<T?> pushRelative<T>(BuildContext context) =>
+      throw _GoRouteDataBase.shouldBeGeneratedError;
+
+  /// Replaces the top-most page of the page stack with the route.
+  void pushReplacementRelative(BuildContext context) =>
+      throw _GoRouteDataBase.shouldBeGeneratedError;
+
+  /// Replaces the top-most page of the page stack with the route but treats
+  /// it as the same page.
+  ///
+  /// The page key will be reused. This will preserve the state and not run any
+  /// page animation.
+  ///
+  void replaceRelative(BuildContext context) =>
+      throw _GoRouteDataBase.shouldBeGeneratedError;
 }
 
 /// A class to represent a [ShellRoute] in
@@ -146,15 +290,10 @@ abstract class ShellRouteData extends RouteData {
     BuildContext context,
     GoRouterState state,
     Widget navigator,
-  ) =>
-      const NoOpPage();
+  ) => const NoOpPage();
 
   /// [builder] is used to build the widget
-  Widget builder(
-    BuildContext context,
-    GoRouterState state,
-    Widget navigator,
-  ) =>
+  Widget builder(BuildContext context, GoRouterState state, Widget navigator) =>
       throw UnimplementedError(
         'One of `builder` or `pageBuilder` must be implemented.',
       );
@@ -189,23 +328,13 @@ abstract class ShellRouteData extends RouteData {
       BuildContext context,
       GoRouterState state,
       Widget navigator,
-    ) =>
-        factoryImpl(state).builder(
-          context,
-          state,
-          navigator,
-        );
+    ) => factoryImpl(state).builder(context, state, navigator);
 
     Page<void> pageBuilder(
       BuildContext context,
       GoRouterState state,
       Widget navigator,
-    ) =>
-        factoryImpl(state).pageBuilder(
-          context,
-          state,
-          navigator,
-        );
+    ) => factoryImpl(state).pageBuilder(context, state, navigator);
 
     return ShellRoute(
       builder: builder,
@@ -222,9 +351,7 @@ abstract class ShellRouteData extends RouteData {
   /// Used to cache [ShellRouteData] that corresponds to a given [GoRouterState]
   /// to minimize the number of times it has to be deserialized.
   static final Expando<ShellRouteData> _stateObjectExpando =
-      Expando<ShellRouteData>(
-    'GoRouteState to ShellRouteData expando',
-  );
+      Expando<ShellRouteData>('GoRouteState to ShellRouteData expando');
 }
 
 /// Base class for supporting
@@ -246,8 +373,7 @@ abstract class StatefulShellRouteData extends RouteData {
     BuildContext context,
     GoRouterState state,
     StatefulNavigationShell navigationShell,
-  ) =>
-      const NoOpPage();
+  ) => const NoOpPage();
 
   /// [builder] is used to build the widget
   Widget builder(
@@ -277,23 +403,13 @@ abstract class StatefulShellRouteData extends RouteData {
       BuildContext context,
       GoRouterState state,
       StatefulNavigationShell navigationShell,
-    ) =>
-        factoryImpl(state).builder(
-          context,
-          state,
-          navigationShell,
-        );
+    ) => factoryImpl(state).builder(context, state, navigationShell);
 
     Page<void> pageBuilder(
       BuildContext context,
       GoRouterState state,
       StatefulNavigationShell navigationShell,
-    ) =>
-        factoryImpl(state).pageBuilder(
-          context,
-          state,
-          navigationShell,
-        );
+    ) => factoryImpl(state).pageBuilder(context, state, navigationShell);
 
     FutureOr<String?> redirect(BuildContext context, GoRouterState state) =>
         factoryImpl(state).redirect(context, state);
@@ -323,8 +439,8 @@ abstract class StatefulShellRouteData extends RouteData {
   /// to minimize the number of times it has to be deserialized.
   static final Expando<StatefulShellRouteData> _stateObjectExpando =
       Expando<StatefulShellRouteData>(
-    'GoRouteState to StatefulShellRouteData expando',
-  );
+        'GoRouteState to StatefulShellRouteData expando',
+      );
 }
 
 /// Base class for supporting
@@ -369,6 +485,7 @@ class TypedGoRoute<T extends GoRouteData> extends TypedRoute<T> {
     required this.path,
     this.name,
     this.routes = const <TypedRoute<RouteData>>[],
+    this.caseSensitive = true,
   });
 
   /// The path that corresponds to this route.
@@ -390,15 +507,59 @@ class TypedGoRoute<T extends GoRouteData> extends TypedRoute<T> {
   ///
   /// See [RouteBase.routes].
   final List<TypedRoute<RouteData>> routes;
+
+  /// Determines whether the route matching is case sensitive.
+  ///
+  /// When `true`, the path must match the specified case. For example,
+  /// a route with `path: '/family/:fid'` will not match `/FaMiLy/f2`.
+  ///
+  /// When `false`, the path matching is case insensitive.  The route
+  /// with `path: '/family/:fid'` will match `/FaMiLy/f2`.
+  ///
+  /// Defaults to `true`.
+  final bool caseSensitive;
+}
+
+/// A superclass for each typed relative go route descendant
+@Target(<TargetKind>{TargetKind.library, TargetKind.classType})
+class TypedRelativeGoRoute<T extends RelativeGoRouteData>
+    extends TypedRoute<T> {
+  /// Default const constructor
+  const TypedRelativeGoRoute({
+    required this.path,
+    this.routes = const <TypedRoute<RouteData>>[],
+    this.caseSensitive = true,
+  });
+
+  /// The relative path that corresponds to this route.
+  ///
+  /// See [GoRoute.path].
+  ///
+  ///
+  final String path;
+
+  /// Child route definitions.
+  ///
+  /// See [RouteBase.routes].
+  final List<TypedRoute<RouteData>> routes;
+
+  /// Determines whether the route matching is case sensitive.
+  ///
+  /// When `true`, the path must match the specified case. For example,
+  /// a route with `path: '/family/:fid'` will not match `/FaMiLy/f2`.
+  ///
+  /// When `false`, the path matching is case insensitive.  The route
+  /// with `path: '/family/:fid'` will match `/FaMiLy/f2`.
+  ///
+  /// Defaults to `true`.
+  final bool caseSensitive;
 }
 
 /// A superclass for each typed shell route descendant
 @Target(<TargetKind>{TargetKind.library, TargetKind.classType})
 class TypedShellRoute<T extends ShellRouteData> extends TypedRoute<T> {
   /// Default const constructor
-  const TypedShellRoute({
-    this.routes = const <TypedRoute<RouteData>>[],
-  });
+  const TypedShellRoute({this.routes = const <TypedRoute<RouteData>>[]});
 
   /// Child route definitions.
   ///

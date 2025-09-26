@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -80,7 +80,8 @@ abstract class LocalAuthPlatform extends PlatformInterface {
   /// - BiometricType.weak
   Future<List<BiometricType>> getEnrolledBiometrics() async {
     throw UnimplementedError(
-        'getAvailableBiometrics() has not been implemented.');
+      'getAvailableBiometrics() has not been implemented.',
+    );
   }
 
   /// Returns true if device is capable of checking biometrics or is able to

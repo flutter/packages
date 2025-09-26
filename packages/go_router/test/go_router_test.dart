@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -13,6 +13,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:go_router/src/match.dart';
+import 'package:go_router/src/pages/material.dart';
 import 'package:logging/logging.dart';
 
 import 'test_helpers.dart';
@@ -27,8 +28,11 @@ Future<void> sendPlatformUrl(String url, WidgetTester tester) async {
   final ByteData message = const JSONMethodCodec().encodeMethodCall(
     MethodCall('pushRouteInformation', testRouteInformation),
   );
-  await tester.binding.defaultBinaryMessenger
-      .handlePlatformMessage('flutter/navigation', message, (_) {});
+  await tester.binding.defaultBinaryMessenger.handlePlatformMessage(
+    'flutter/navigation',
+    message,
+    (_) {},
+  );
 }
 
 void main() {
@@ -40,9 +44,10 @@ void main() {
     testWidgets('match home route', (WidgetTester tester) async {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
-            path: '/',
-            builder: (BuildContext context, GoRouterState state) =>
-                const HomeScreen()),
+          path: '/',
+          builder:
+              (BuildContext context, GoRouterState state) => const HomeScreen(),
+        ),
       ];
 
       final GoRouter router = await createRouter(routes, tester);
@@ -52,24 +57,27 @@ void main() {
       expect(find.byType(HomeScreen), findsOneWidget);
     });
 
-    testWidgets('If there is more than one route to match, use the first match',
-        (WidgetTester tester) async {
-      final List<GoRoute> routes = <GoRoute>[
-        GoRoute(name: '1', path: '/', builder: dummy),
-        GoRoute(name: '2', path: '/', builder: dummy),
-      ];
+    testWidgets(
+      'If there is more than one route to match, use the first match',
+      (WidgetTester tester) async {
+        final List<GoRoute> routes = <GoRoute>[
+          GoRoute(name: '1', path: '/', builder: dummy),
+          GoRoute(name: '2', path: '/', builder: dummy),
+        ];
 
-      final GoRouter router = await createRouter(routes, tester);
-      router.go('/');
-      final List<RouteMatchBase> matches =
-          router.routerDelegate.currentConfiguration.matches;
-      expect(matches, hasLength(1));
-      expect((matches.first.route as GoRoute).name, '1');
-      expect(find.byType(DummyScreen), findsOneWidget);
-    });
+        final GoRouter router = await createRouter(routes, tester);
+        router.go('/');
+        final List<RouteMatchBase> matches =
+            router.routerDelegate.currentConfiguration.matches;
+        expect(matches, hasLength(1));
+        expect((matches.first.route as GoRoute).name, '1');
+        expect(find.byType(DummyScreen), findsOneWidget);
+      },
+    );
 
-    testWidgets('pushReplacement and replace when only one matches',
-        (WidgetTester tester) async {
+    testWidgets('pushReplacement and replace when only one matches', (
+      WidgetTester tester,
+    ) async {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(name: '1', path: '/', builder: dummy),
         GoRoute(name: '2', path: '/a', builder: dummy),
@@ -103,12 +111,7 @@ void main() {
             GoRoute(
               path: '/',
               builder: dummy,
-              routes: <GoRoute>[
-                GoRoute(
-                  path: 'foo/',
-                  builder: dummy,
-                ),
-              ],
+              routes: <GoRoute>[GoRoute(path: 'foo/', builder: dummy)],
             ),
           ],
         );
@@ -123,8 +126,9 @@ void main() {
       final GoRouter router = await createRouter(
         routes,
         tester,
-        errorBuilder: (BuildContext context, GoRouterState state) =>
-            TestErrorScreen(state.error!),
+        errorBuilder:
+            (BuildContext context, GoRouterState state) =>
+                TestErrorScreen(state.error!),
       );
       router.go('/foo');
       await tester.pumpAndSettle();
@@ -137,67 +141,77 @@ void main() {
     testWidgets('match 2nd top level route', (WidgetTester tester) async {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
-            path: '/',
-            builder: (BuildContext context, GoRouterState state) =>
-                const HomeScreen()),
-        GoRoute(
-            path: '/login',
-            builder: (BuildContext context, GoRouterState state) =>
-                const LoginScreen()),
-      ];
-
-      final GoRouter router = await createRouter(routes, tester);
-      router.go('/login');
-      await tester.pumpAndSettle();
-      final List<RouteMatchBase> matches =
-          router.routerDelegate.currentConfiguration.matches;
-      expect(matches, hasLength(1));
-      expect(matches.first.matchedLocation, '/login');
-      expect(find.byType(LoginScreen), findsOneWidget);
-    });
-
-    testWidgets('match 2nd top level route with subroutes',
-        (WidgetTester tester) async {
-      final List<GoRoute> routes = <GoRoute>[
-        GoRoute(
           path: '/',
-          builder: (BuildContext context, GoRouterState state) =>
-              const HomeScreen(),
-          routes: <GoRoute>[
-            GoRoute(
-                path: 'page1',
-                builder: (BuildContext context, GoRouterState state) =>
-                    const Page1Screen())
-          ],
-        ),
-        GoRoute(
-            path: '/login',
-            builder: (BuildContext context, GoRouterState state) =>
-                const LoginScreen()),
-      ];
-
-      final GoRouter router = await createRouter(routes, tester);
-      router.go('/login');
-      await tester.pumpAndSettle();
-      final List<RouteMatchBase> matches =
-          router.routerDelegate.currentConfiguration.matches;
-      expect(matches, hasLength(1));
-      expect(matches.first.matchedLocation, '/login');
-      expect(find.byType(LoginScreen), findsOneWidget);
-    });
-
-    testWidgets('match top level route when location has trailing /',
-        (WidgetTester tester) async {
-      final List<GoRoute> routes = <GoRoute>[
-        GoRoute(
-          path: '/',
-          builder: (BuildContext context, GoRouterState state) =>
-              const HomeScreen(),
+          builder:
+              (BuildContext context, GoRouterState state) => const HomeScreen(),
         ),
         GoRoute(
           path: '/login',
-          builder: (BuildContext context, GoRouterState state) =>
-              const LoginScreen(),
+          builder:
+              (BuildContext context, GoRouterState state) =>
+                  const LoginScreen(),
+        ),
+      ];
+
+      final GoRouter router = await createRouter(routes, tester);
+      router.go('/login');
+      await tester.pumpAndSettle();
+      final List<RouteMatchBase> matches =
+          router.routerDelegate.currentConfiguration.matches;
+      expect(matches, hasLength(1));
+      expect(matches.first.matchedLocation, '/login');
+      expect(find.byType(LoginScreen), findsOneWidget);
+    });
+
+    testWidgets('match 2nd top level route with subroutes', (
+      WidgetTester tester,
+    ) async {
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+          path: '/',
+          builder:
+              (BuildContext context, GoRouterState state) => const HomeScreen(),
+          routes: <GoRoute>[
+            GoRoute(
+              path: 'page1',
+              builder:
+                  (BuildContext context, GoRouterState state) =>
+                      const Page1Screen(),
+            ),
+          ],
+        ),
+        GoRoute(
+          path: '/login',
+          builder:
+              (BuildContext context, GoRouterState state) =>
+                  const LoginScreen(),
+        ),
+      ];
+
+      final GoRouter router = await createRouter(routes, tester);
+      router.go('/login');
+      await tester.pumpAndSettle();
+      final List<RouteMatchBase> matches =
+          router.routerDelegate.currentConfiguration.matches;
+      expect(matches, hasLength(1));
+      expect(matches.first.matchedLocation, '/login');
+      expect(find.byType(LoginScreen), findsOneWidget);
+    });
+
+    testWidgets('match top level route when location has trailing /', (
+      WidgetTester tester,
+    ) async {
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+          path: '/',
+          builder:
+              (BuildContext context, GoRouterState state) => const HomeScreen(),
+        ),
+        GoRoute(
+          path: '/login',
+          builder:
+              (BuildContext context, GoRouterState state) =>
+                  const LoginScreen(),
         ),
       ];
 
@@ -211,13 +225,15 @@ void main() {
       expect(find.byType(LoginScreen), findsOneWidget);
     });
 
-    testWidgets('match top level route when location has trailing / (2)',
-        (WidgetTester tester) async {
+    testWidgets('match top level route when location has trailing / (2)', (
+      WidgetTester tester,
+    ) async {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
-            path: '/profile',
-            builder: dummy,
-            redirect: (_, __) => '/profile/foo'),
+          path: '/profile',
+          builder: dummy,
+          redirect: (_, __) => '/profile/foo',
+        ),
         GoRoute(path: '/profile/:kind', builder: dummy),
       ];
 
@@ -231,13 +247,15 @@ void main() {
       expect(find.byType(DummyScreen), findsOneWidget);
     });
 
-    testWidgets('match top level route when location has trailing / (3)',
-        (WidgetTester tester) async {
+    testWidgets('match top level route when location has trailing / (3)', (
+      WidgetTester tester,
+    ) async {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
-            path: '/profile',
-            builder: dummy,
-            redirect: (_, __) => '/profile/foo'),
+          path: '/profile',
+          builder: dummy,
+          redirect: (_, __) => '/profile/foo',
+        ),
         GoRoute(path: '/profile/:kind', builder: dummy),
       ];
 
@@ -252,113 +270,123 @@ void main() {
     });
 
     testWidgets(
-        'match top level route when location has scheme/host and has trailing /',
-        (WidgetTester tester) async {
-      final List<GoRoute> routes = <GoRoute>[
-        GoRoute(
-          path: '/',
-          builder: (BuildContext context, GoRouterState state) =>
-              const HomeScreen(),
-        ),
-      ];
+      'match top level route when location has scheme/host and has trailing /',
+      (WidgetTester tester) async {
+        final List<GoRoute> routes = <GoRoute>[
+          GoRoute(
+            path: '/',
+            builder:
+                (BuildContext context, GoRouterState state) =>
+                    const HomeScreen(),
+          ),
+        ];
 
-      final GoRouter router = await createRouter(routes, tester);
-      router.go('https://www.domain.com/?bar=baz');
-      await tester.pumpAndSettle();
-      final List<RouteMatchBase> matches =
-          router.routerDelegate.currentConfiguration.matches;
-      expect(matches, hasLength(1));
-      expect(matches.first.matchedLocation, '/');
-      expect(find.byType(HomeScreen), findsOneWidget);
-    });
-
-    testWidgets(
-        'match top level route when location has scheme/host and has trailing / (2)',
-        (WidgetTester tester) async {
-      final List<GoRoute> routes = <GoRoute>[
-        GoRoute(
-          path: '/',
-          builder: (BuildContext context, GoRouterState state) =>
-              const HomeScreen(),
-        ),
-        GoRoute(
-          path: '/login',
-          builder: (BuildContext context, GoRouterState state) =>
-              const LoginScreen(),
-        ),
-      ];
-
-      final GoRouter router = await createRouter(routes, tester);
-      router.go('https://www.domain.com/login/');
-      await tester.pumpAndSettle();
-      final List<RouteMatchBase> matches =
-          router.routerDelegate.currentConfiguration.matches;
-      expect(matches, hasLength(1));
-      expect(matches.first.matchedLocation, '/login');
-      expect(find.byType(LoginScreen), findsOneWidget);
-    });
+        final GoRouter router = await createRouter(routes, tester);
+        router.go('https://www.domain.com/?bar=baz');
+        await tester.pumpAndSettle();
+        final List<RouteMatchBase> matches =
+            router.routerDelegate.currentConfiguration.matches;
+        expect(matches, hasLength(1));
+        expect(matches.first.matchedLocation, '/');
+        expect(find.byType(HomeScreen), findsOneWidget);
+      },
+    );
 
     testWidgets(
-        'match top level route when location has scheme/host and has trailing / (3)',
-        (WidgetTester tester) async {
-      final List<GoRoute> routes = <GoRoute>[
-        GoRoute(
+      'match top level route when location has scheme/host and has trailing / (2)',
+      (WidgetTester tester) async {
+        final List<GoRoute> routes = <GoRoute>[
+          GoRoute(
+            path: '/',
+            builder:
+                (BuildContext context, GoRouterState state) =>
+                    const HomeScreen(),
+          ),
+          GoRoute(
+            path: '/login',
+            builder:
+                (BuildContext context, GoRouterState state) =>
+                    const LoginScreen(),
+          ),
+        ];
+
+        final GoRouter router = await createRouter(routes, tester);
+        router.go('https://www.domain.com/login/');
+        await tester.pumpAndSettle();
+        final List<RouteMatchBase> matches =
+            router.routerDelegate.currentConfiguration.matches;
+        expect(matches, hasLength(1));
+        expect(matches.first.matchedLocation, '/login');
+        expect(find.byType(LoginScreen), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'match top level route when location has scheme/host and has trailing / (3)',
+      (WidgetTester tester) async {
+        final List<GoRoute> routes = <GoRoute>[
+          GoRoute(
             path: '/profile',
             builder: dummy,
-            redirect: (_, __) => '/profile/foo'),
-        GoRoute(path: '/profile/:kind', builder: dummy),
-      ];
+            redirect: (_, __) => '/profile/foo',
+          ),
+          GoRoute(path: '/profile/:kind', builder: dummy),
+        ];
 
-      final GoRouter router = await createRouter(routes, tester);
-      router.go('https://www.domain.com/profile/');
-      await tester.pumpAndSettle();
-      final List<RouteMatchBase> matches =
-          router.routerDelegate.currentConfiguration.matches;
-      expect(matches, hasLength(1));
-      expect(matches.first.matchedLocation, '/profile/foo');
-      expect(find.byType(DummyScreen), findsOneWidget);
-    });
+        final GoRouter router = await createRouter(routes, tester);
+        router.go('https://www.domain.com/profile/');
+        await tester.pumpAndSettle();
+        final List<RouteMatchBase> matches =
+            router.routerDelegate.currentConfiguration.matches;
+        expect(matches, hasLength(1));
+        expect(matches.first.matchedLocation, '/profile/foo');
+        expect(find.byType(DummyScreen), findsOneWidget);
+      },
+    );
 
     testWidgets(
-        'match top level route when location has scheme/host and has trailing / (4)',
-        (WidgetTester tester) async {
-      final List<GoRoute> routes = <GoRoute>[
-        GoRoute(
+      'match top level route when location has scheme/host and has trailing / (4)',
+      (WidgetTester tester) async {
+        final List<GoRoute> routes = <GoRoute>[
+          GoRoute(
             path: '/profile',
             builder: dummy,
-            redirect: (_, __) => '/profile/foo'),
-        GoRoute(path: '/profile/:kind', builder: dummy),
-      ];
+            redirect: (_, __) => '/profile/foo',
+          ),
+          GoRoute(path: '/profile/:kind', builder: dummy),
+        ];
 
-      final GoRouter router = await createRouter(routes, tester);
-      router.go('https://www.domain.com/profile/?bar=baz');
-      await tester.pumpAndSettle();
-      final List<RouteMatchBase> matches =
-          router.routerDelegate.currentConfiguration.matches;
-      expect(matches, hasLength(1));
-      expect(matches.first.matchedLocation, '/profile/foo');
-      expect(find.byType(DummyScreen), findsOneWidget);
-    });
+        final GoRouter router = await createRouter(routes, tester);
+        router.go('https://www.domain.com/profile/?bar=baz');
+        await tester.pumpAndSettle();
+        final List<RouteMatchBase> matches =
+            router.routerDelegate.currentConfiguration.matches;
+        expect(matches, hasLength(1));
+        expect(matches.first.matchedLocation, '/profile/foo');
+        expect(find.byType(DummyScreen), findsOneWidget);
+      },
+    );
 
-    testWidgets('repeatedly pops imperative route does not crash',
-        (WidgetTester tester) async {
+    testWidgets('repeatedly pops imperative route does not crash', (
+      WidgetTester tester,
+    ) async {
       // Regression test for https://github.com/flutter/flutter/issues/123369.
       final UniqueKey home = UniqueKey();
       final UniqueKey settings = UniqueKey();
       final UniqueKey dialog = UniqueKey();
       final GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
       final List<GoRoute> routes = <GoRoute>[
-        GoRoute(
-          path: '/',
-          builder: (_, __) => DummyScreen(key: home),
-        ),
+        GoRoute(path: '/', builder: (_, __) => DummyScreen(key: home)),
         GoRoute(
           path: '/settings',
           builder: (_, __) => DummyScreen(key: settings),
         ),
       ];
-      final GoRouter router =
-          await createRouter(routes, tester, navigatorKey: navKey);
+      final GoRouter router = await createRouter(
+        routes,
+        tester,
+        navigatorKey: navKey,
+      );
       expect(find.byKey(home), findsOneWidget);
 
       router.push('/settings');
@@ -391,50 +419,51 @@ void main() {
       expect(find.byKey(settings), findsOneWidget);
     });
 
-    testWidgets('android back button pop in correct order',
-        (WidgetTester tester) async {
+    testWidgets('android back button pop in correct order', (
+      WidgetTester tester,
+    ) async {
       // Regression test for https://github.com/flutter/flutter/issues/141906.
       final List<RouteBase> routes = <RouteBase>[
         GoRoute(
-            path: '/',
-            builder: (_, __) => const Text('home'),
-            routes: <RouteBase>[
-              ShellRoute(
-                builder: (
-                  BuildContext context,
-                  GoRouterState state,
-                  Widget child,
-                ) {
-                  return Column(
-                    children: <Widget>[
-                      const Text('shell'),
-                      child,
-                    ],
-                  );
-                },
-                routes: <GoRoute>[
-                  GoRoute(
-                    path: 'page',
-                    builder: (BuildContext context, __) {
-                      return TextButton(
-                        onPressed: () {
-                          Navigator.of(context, rootNavigator: true).push(
-                            MaterialPageRoute<void>(
-                                builder: (BuildContext context) {
+          path: '/',
+          builder: (_, __) => const Text('home'),
+          routes: <RouteBase>[
+            ShellRoute(
+              builder: (
+                BuildContext context,
+                GoRouterState state,
+                Widget child,
+              ) {
+                return Column(children: <Widget>[const Text('shell'), child]);
+              },
+              routes: <GoRoute>[
+                GoRoute(
+                  path: 'page',
+                  builder: (BuildContext context, __) {
+                    return TextButton(
+                      onPressed: () {
+                        Navigator.of(context, rootNavigator: true).push(
+                          MaterialPageRoute<void>(
+                            builder: (BuildContext context) {
                               return const Text('pageless');
-                            }),
-                          );
-                        },
-                        child: const Text('page'),
-                      );
-                    },
-                  ),
-                ],
-              ),
-            ]),
+                            },
+                          ),
+                        );
+                      },
+                      child: const Text('page'),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
       ];
-      final GoRouter router =
-          await createRouter(routes, tester, initialLocation: '/page');
+      final GoRouter router = await createRouter(
+        routes,
+        tester,
+        initialLocation: '/page',
+      );
       expect(find.text('shell'), findsOneWidget);
       expect(find.text('page'), findsOneWidget);
 
@@ -452,30 +481,34 @@ void main() {
       expect(find.text('pageless'), findsNothing);
     });
 
-    testWidgets('can correctly pop stacks of repeated pages',
-        (WidgetTester tester) async {
+    testWidgets('can correctly pop stacks of repeated pages', (
+      WidgetTester tester,
+    ) async {
       // Regression test for https://github.com/flutter/flutter/issues/#132229.
 
       final GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          pageBuilder: (_, __) =>
-              const MaterialPage<Object>(child: HomeScreen()),
+          pageBuilder:
+              (_, __) => const MaterialPage<Object>(child: HomeScreen()),
         ),
         GoRoute(
           path: '/page1',
-          pageBuilder: (_, __) =>
-              const MaterialPage<Object>(child: Page1Screen()),
+          pageBuilder:
+              (_, __) => const MaterialPage<Object>(child: Page1Screen()),
         ),
         GoRoute(
           path: '/page2',
-          pageBuilder: (_, __) =>
-              const MaterialPage<Object>(child: Page2Screen()),
+          pageBuilder:
+              (_, __) => const MaterialPage<Object>(child: Page2Screen()),
         ),
       ];
-      final GoRouter router =
-          await createRouter(routes, tester, navigatorKey: navKey);
+      final GoRouter router = await createRouter(
+        routes,
+        tester,
+        navigatorKey: navKey,
+      );
       expect(find.byType(HomeScreen), findsOneWidget);
 
       router.push('/page1');
@@ -503,13 +536,14 @@ void main() {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder: (BuildContext context, GoRouterState state) =>
-              const HomeScreen(),
+          builder:
+              (BuildContext context, GoRouterState state) => const HomeScreen(),
           routes: <GoRoute>[
             GoRoute(
               path: 'login',
-              builder: (BuildContext context, GoRouterState state) =>
-                  const LoginScreen(),
+              builder:
+                  (BuildContext context, GoRouterState state) =>
+                      const LoginScreen(),
             ),
           ],
         ),
@@ -531,25 +565,28 @@ void main() {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder: (BuildContext context, GoRouterState state) =>
-              const HomeScreen(),
+          builder:
+              (BuildContext context, GoRouterState state) => const HomeScreen(),
           routes: <GoRoute>[
             GoRoute(
               path: 'family/:fid',
-              builder: (BuildContext context, GoRouterState state) =>
-                  const FamilyScreen('dummy'),
+              builder:
+                  (BuildContext context, GoRouterState state) =>
+                      const FamilyScreen('dummy'),
               routes: <GoRoute>[
                 GoRoute(
                   path: 'person/:pid',
-                  builder: (BuildContext context, GoRouterState state) =>
-                      const PersonScreen('dummy', 'dummy'),
+                  builder:
+                      (BuildContext context, GoRouterState state) =>
+                          const PersonScreen('dummy', 'dummy'),
                 ),
               ],
             ),
             GoRoute(
               path: 'login',
-              builder: (BuildContext context, GoRouterState state) =>
-                  const LoginScreen(),
+              builder:
+                  (BuildContext context, GoRouterState state) =>
+                      const LoginScreen(),
             ),
           ],
         ),
@@ -603,33 +640,38 @@ void main() {
       }
     });
 
-    testWidgets('return first matching route if too many subroutes',
-        (WidgetTester tester) async {
+    testWidgets('return first matching route if too many subroutes', (
+      WidgetTester tester,
+    ) async {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder: (BuildContext context, GoRouterState state) =>
-              const HomeScreen(),
+          builder:
+              (BuildContext context, GoRouterState state) => const HomeScreen(),
           routes: <GoRoute>[
             GoRoute(
               path: 'foo/bar',
-              builder: (BuildContext context, GoRouterState state) =>
-                  const FamilyScreen(''),
+              builder:
+                  (BuildContext context, GoRouterState state) =>
+                      const FamilyScreen(''),
             ),
             GoRoute(
               path: 'bar',
-              builder: (BuildContext context, GoRouterState state) =>
-                  const Page1Screen(),
+              builder:
+                  (BuildContext context, GoRouterState state) =>
+                      const Page1Screen(),
             ),
             GoRoute(
               path: 'foo',
-              builder: (BuildContext context, GoRouterState state) =>
-                  const Page2Screen(),
+              builder:
+                  (BuildContext context, GoRouterState state) =>
+                      const Page2Screen(),
               routes: <GoRoute>[
                 GoRoute(
                   path: 'bar',
-                  builder: (BuildContext context, GoRouterState state) =>
-                      const LoginScreen(),
+                  builder:
+                      (BuildContext context, GoRouterState state) =>
+                          const LoginScreen(),
                 ),
               ],
             ),
@@ -719,14 +761,16 @@ void main() {
                     expect(state.name, 'person');
                     expect(state.path, 'person/:pid');
                     expect(state.fullPath, '/family/:fid/person/:pid');
-                    expect(
-                      state.pathParameters,
-                      <String, String>{'fid': 'f2', 'pid': 'p1'},
-                    );
+                    expect(state.pathParameters, <String, String>{
+                      'fid': 'f2',
+                      'pid': 'p1',
+                    });
                     expect(state.error, null);
                     expect(state.extra! as int, 4);
-                    return PersonScreen(state.pathParameters['fid']!,
-                        state.pathParameters['pid']!);
+                    return PersonScreen(
+                      state.pathParameters['fid']!,
+                      state.pathParameters['pid']!,
+                    );
                   },
                 ),
               ],
@@ -750,13 +794,15 @@ void main() {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder: (BuildContext context, GoRouterState state) =>
-              const HomeScreen(),
+          builder:
+              (BuildContext context, GoRouterState state) => const HomeScreen(),
         ),
         GoRoute(
           path: '/family/:fid',
-          builder: (BuildContext context, GoRouterState state) =>
-              FamilyScreen(state.pathParameters['fid']!),
+          caseSensitive: false,
+          builder:
+              (BuildContext context, GoRouterState state) =>
+                  FamilyScreen(state.pathParameters['fid']!),
         ),
       ];
 
@@ -771,51 +817,122 @@ void main() {
       // path case whereas the location can be any case; so long as the path
       // produces a match regardless of the location case, we win!
       expect(
-          router.routerDelegate.currentConfiguration.uri
-              .toString()
-              .toLowerCase(),
-          loc.toLowerCase());
+        router.routerDelegate.currentConfiguration.uri.toString().toLowerCase(),
+        loc.toLowerCase(),
+      );
 
       expect(matches, hasLength(1));
       expect(find.byType(FamilyScreen), findsOneWidget);
     });
 
-    testWidgets(
-        'If there is more than one route to match, use the first match.',
-        (WidgetTester tester) async {
+    testWidgets('match path case sensitively', (WidgetTester tester) async {
       final List<GoRoute> routes = <GoRoute>[
-        GoRoute(path: '/', builder: dummy),
-        GoRoute(path: '/page1', builder: dummy),
-        GoRoute(path: '/page1', builder: dummy),
-        GoRoute(path: '/:ok', builder: dummy),
+        GoRoute(
+          path: '/',
+          builder:
+              (BuildContext context, GoRouterState state) => const HomeScreen(),
+        ),
+        GoRoute(
+          path: '/family/:fid',
+          builder:
+              (BuildContext context, GoRouterState state) =>
+                  FamilyScreen(state.pathParameters['fid']!),
+        ),
       ];
 
       final GoRouter router = await createRouter(routes, tester);
-      router.go('/user');
+      const String wrongLoc = '/FaMiLy/f2';
+
+      router.go(wrongLoc);
+      await tester.pumpAndSettle();
+
+      expect(find.byType(MaterialErrorScreen), findsOne);
+      expect(find.text('Page Not Found'), findsOne);
+
+      const String loc = '/family/f2';
+      router.go(loc);
       await tester.pumpAndSettle();
       final List<RouteMatchBase> matches =
           router.routerDelegate.currentConfiguration.matches;
+
+      expect(router.routerDelegate.currentConfiguration.uri.toString(), loc);
+
       expect(matches, hasLength(1));
-      expect(find.byType(DummyScreen), findsOneWidget);
+      expect(find.byType(FamilyScreen), findsOne);
     });
 
-    testWidgets('Handles the Android back button correctly',
-        (WidgetTester tester) async {
+    testWidgets('supports routes with a different case', (
+      WidgetTester tester,
+    ) async {
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+          path: '/',
+          builder:
+              (BuildContext context, GoRouterState state) => const HomeScreen(),
+        ),
+        GoRoute(
+          path: '/abc',
+          builder:
+              (BuildContext context, GoRouterState state) =>
+                  const SizedBox(key: Key('abc')),
+        ),
+        GoRoute(
+          path: '/ABC',
+          builder:
+              (BuildContext context, GoRouterState state) =>
+                  const SizedBox(key: Key('ABC')),
+        ),
+      ];
+
+      final GoRouter router = await createRouter(routes, tester);
+      const String loc1 = '/abc';
+
+      router.go(loc1);
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const Key('abc')), findsOne);
+
+      const String loc = '/ABC';
+      router.go(loc);
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const Key('ABC')), findsOne);
+    });
+
+    testWidgets(
+      'If there is more than one route to match, use the first match.',
+      (WidgetTester tester) async {
+        final List<GoRoute> routes = <GoRoute>[
+          GoRoute(path: '/', builder: dummy),
+          GoRoute(path: '/page1', builder: dummy),
+          GoRoute(path: '/page1', builder: dummy),
+          GoRoute(path: '/:ok', builder: dummy),
+        ];
+
+        final GoRouter router = await createRouter(routes, tester);
+        router.go('/user');
+        await tester.pumpAndSettle();
+        final List<RouteMatchBase> matches =
+            router.routerDelegate.currentConfiguration.matches;
+        expect(matches, hasLength(1));
+        expect(find.byType(DummyScreen), findsOneWidget);
+      },
+    );
+
+    testWidgets('Handles the Android back button correctly', (
+      WidgetTester tester,
+    ) async {
       final List<RouteBase> routes = <RouteBase>[
         GoRoute(
           path: '/',
           builder: (BuildContext context, GoRouterState state) {
-            return const Scaffold(
-              body: Text('Screen A'),
-            );
+            return const Scaffold(body: Text('Screen A'));
           },
           routes: <RouteBase>[
             GoRoute(
               path: 'b',
               builder: (BuildContext context, GoRouterState state) {
-                return const Scaffold(
-                  body: Text('Screen B'),
-                );
+                return const Scaffold(body: Text('Screen B'));
               },
             ),
           ],
@@ -832,8 +949,9 @@ void main() {
       expect(find.text('Screen B'), findsNothing);
     });
 
-    testWidgets('Handles the Android back button correctly with ShellRoute',
-        (WidgetTester tester) async {
+    testWidgets('Handles the Android back button correctly with ShellRoute', (
+      WidgetTester tester,
+    ) async {
       final GlobalKey<NavigatorState> rootNavigatorKey =
           GlobalKey<NavigatorState>();
 
@@ -849,34 +967,26 @@ void main() {
             GoRoute(
               path: '/a',
               builder: (BuildContext context, GoRouterState state) {
-                return const Scaffold(
-                  body: Text('Screen A'),
-                );
+                return const Scaffold(body: Text('Screen A'));
               },
               routes: <GoRoute>[
                 GoRoute(
                   path: 'b',
                   builder: (BuildContext context, GoRouterState state) {
-                    return const Scaffold(
-                      body: Text('Screen B'),
-                    );
+                    return const Scaffold(body: Text('Screen B'));
                   },
                   routes: <GoRoute>[
                     GoRoute(
                       path: 'c',
                       builder: (BuildContext context, GoRouterState state) {
-                        return const Scaffold(
-                          body: Text('Screen C'),
-                        );
+                        return const Scaffold(body: Text('Screen C'));
                       },
                       routes: <GoRoute>[
                         GoRoute(
                           path: 'd',
                           parentNavigatorKey: rootNavigatorKey,
                           builder: (BuildContext context, GoRouterState state) {
-                            return const Scaffold(
-                              body: Text('Screen D'),
-                            );
+                            return const Scaffold(body: Text('Screen D'));
                           },
                         ),
                       ],
@@ -889,8 +999,12 @@ void main() {
         ),
       ];
 
-      await createRouter(routes, tester,
-          initialLocation: '/a/b/c/d', navigatorKey: rootNavigatorKey);
+      await createRouter(
+        routes,
+        tester,
+        initialLocation: '/a/b/c/d',
+        navigatorKey: rootNavigatorKey,
+      );
       expect(find.text('Shell'), findsNothing);
       expect(find.text('Screen A'), findsNothing);
       expect(find.text('Screen B'), findsNothing);
@@ -914,15 +1028,66 @@ void main() {
     });
 
     testWidgets(
-        'Handles the Android back button when parentNavigatorKey is set to the root navigator',
-        (WidgetTester tester) async {
+      'Handles the Android back button when parentNavigatorKey is set to the root navigator',
+      (WidgetTester tester) async {
+        final List<MethodCall> log = <MethodCall>[];
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+            .setMockMethodCallHandler(SystemChannels.platform, (
+              MethodCall methodCall,
+            ) async {
+              log.add(methodCall);
+              return null;
+            });
+
+        Future<void> verify(
+          AsyncCallback test,
+          List<Object> expectations,
+        ) async {
+          log.clear();
+          await test();
+          expect(log, expectations);
+        }
+
+        final GlobalKey<NavigatorState> rootNavigatorKey =
+            GlobalKey<NavigatorState>();
+
+        final List<RouteBase> routes = <RouteBase>[
+          GoRoute(
+            parentNavigatorKey: rootNavigatorKey,
+            path: '/a',
+            builder: (BuildContext context, GoRouterState state) {
+              return const Scaffold(body: Text('Screen A'));
+            },
+          ),
+        ];
+
+        await createRouter(
+          routes,
+          tester,
+          initialLocation: '/a',
+          navigatorKey: rootNavigatorKey,
+        );
+        expect(find.text('Screen A'), findsOneWidget);
+
+        await tester.runAsync(() async {
+          await verify(() => simulateAndroidBackButton(tester), <Object>[
+            isMethodCall('SystemNavigator.pop', arguments: null),
+          ]);
+        });
+      },
+    );
+
+    testWidgets("Handles the Android back button when ShellRoute can't pop", (
+      WidgetTester tester,
+    ) async {
       final List<MethodCall> log = <MethodCall>[];
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-          .setMockMethodCallHandler(SystemChannels.platform,
-              (MethodCall methodCall) async {
-        log.add(methodCall);
-        return null;
-      });
+          .setMockMethodCallHandler(SystemChannels.platform, (
+            MethodCall methodCall,
+          ) async {
+            log.add(methodCall);
+            return null;
+          });
 
       Future<void> verify(AsyncCallback test, List<Object> expectations) async {
         log.clear();
@@ -938,59 +1103,13 @@ void main() {
           parentNavigatorKey: rootNavigatorKey,
           path: '/a',
           builder: (BuildContext context, GoRouterState state) {
-            return const Scaffold(
-              body: Text('Screen A'),
-            );
-          },
-        ),
-      ];
-
-      await createRouter(routes, tester,
-          initialLocation: '/a', navigatorKey: rootNavigatorKey);
-      expect(find.text('Screen A'), findsOneWidget);
-
-      await tester.runAsync(() async {
-        await verify(() => simulateAndroidBackButton(tester), <Object>[
-          isMethodCall('SystemNavigator.pop', arguments: null),
-        ]);
-      });
-    });
-
-    testWidgets("Handles the Android back button when ShellRoute can't pop",
-        (WidgetTester tester) async {
-      final List<MethodCall> log = <MethodCall>[];
-      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-          .setMockMethodCallHandler(SystemChannels.platform,
-              (MethodCall methodCall) async {
-        log.add(methodCall);
-        return null;
-      });
-
-      Future<void> verify(AsyncCallback test, List<Object> expectations) async {
-        log.clear();
-        await test();
-        expect(log, expectations);
-      }
-
-      final GlobalKey<NavigatorState> rootNavigatorKey =
-          GlobalKey<NavigatorState>();
-
-      final List<RouteBase> routes = <RouteBase>[
-        GoRoute(
-          parentNavigatorKey: rootNavigatorKey,
-          path: '/a',
-          builder: (BuildContext context, GoRouterState state) {
-            return const Scaffold(
-              body: Text('Screen A'),
-            );
+            return const Scaffold(body: Text('Screen A'));
           },
         ),
         ShellRoute(
           builder: (BuildContext context, GoRouterState state, Widget child) {
             return Scaffold(
-              appBar: AppBar(
-                title: const Text('Shell'),
-              ),
+              appBar: AppBar(title: const Text('Shell')),
               body: child,
             );
           },
@@ -998,17 +1117,19 @@ void main() {
             GoRoute(
               path: '/b',
               builder: (BuildContext context, GoRouterState state) {
-                return const Scaffold(
-                  body: Text('Screen B'),
-                );
+                return const Scaffold(body: Text('Screen B'));
               },
             ),
           ],
         ),
       ];
 
-      await createRouter(routes, tester,
-          initialLocation: '/b', navigatorKey: rootNavigatorKey);
+      await createRouter(
+        routes,
+        tester,
+        initialLocation: '/b',
+        navigatorKey: rootNavigatorKey,
+      );
       expect(find.text('Screen B'), findsOneWidget);
 
       await tester.runAsync(() async {
@@ -1019,28 +1140,26 @@ void main() {
     });
   });
 
-  testWidgets('does not crash when inherited widget changes',
-      (WidgetTester tester) async {
+  testWidgets('does not crash when inherited widget changes', (
+    WidgetTester tester,
+  ) async {
     final ValueNotifier<String> notifier = ValueNotifier<String>('initial');
 
     addTearDown(notifier.dispose);
     final List<GoRoute> routes = <GoRoute>[
       GoRoute(
-          path: '/',
-          pageBuilder: (BuildContext context, GoRouterState state) {
-            final String value = context
-                .dependOnInheritedWidgetOfExactType<TestInheritedNotifier>()!
-                .notifier!
-                .value;
-            return MaterialPage<void>(
-              key: state.pageKey,
-              child: Text(value),
-            );
-          }),
+        path: '/',
+        pageBuilder: (BuildContext context, GoRouterState state) {
+          final String value =
+              context
+                  .dependOnInheritedWidgetOfExactType<TestInheritedNotifier>()!
+                  .notifier!
+                  .value;
+          return MaterialPage<void>(key: state.pageKey, child: Text(value));
+        },
+      ),
     ];
-    final GoRouter router = GoRouter(
-      routes: routes,
-    );
+    final GoRouter router = GoRouter(routes: routes);
     addTearDown(router.dispose);
     await tester.pumpWidget(
       MaterialApp.router(
@@ -1058,361 +1177,64 @@ void main() {
   });
 
   testWidgets(
-      'Handles the Android back button when a second Shell has a GoRoute with parentNavigator key',
-      (WidgetTester tester) async {
-    final List<MethodCall> log = <MethodCall>[];
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-        .setMockMethodCallHandler(SystemChannels.platform,
-            (MethodCall methodCall) async {
-      log.add(methodCall);
-      return null;
-    });
-
-    Future<void> verify(AsyncCallback test, List<Object> expectations) async {
-      log.clear();
-      await test();
-      expect(log, expectations);
-    }
-
-    final GlobalKey<NavigatorState> rootNavigatorKey =
-        GlobalKey<NavigatorState>();
-    final GlobalKey<NavigatorState> shellNavigatorKeyA =
-        GlobalKey<NavigatorState>();
-    final GlobalKey<NavigatorState> shellNavigatorKeyB =
-        GlobalKey<NavigatorState>();
-
-    final List<RouteBase> routes = <RouteBase>[
-      ShellRoute(
-        navigatorKey: shellNavigatorKeyA,
-        builder: (BuildContext context, GoRouterState state, Widget child) {
-          return Scaffold(
-            appBar: AppBar(
-              title: const Text('Shell'),
-            ),
-            body: child,
-          );
-        },
-        routes: <RouteBase>[
-          GoRoute(
-            path: '/a',
-            builder: (BuildContext context, GoRouterState state) {
-              return const Scaffold(
-                body: Text('Screen A'),
-              );
-            },
-            routes: <RouteBase>[
-              ShellRoute(
-                navigatorKey: shellNavigatorKeyB,
-                builder:
-                    (BuildContext context, GoRouterState state, Widget child) {
-                  return Scaffold(
-                    appBar: AppBar(
-                      title: const Text('Shell'),
-                    ),
-                    body: child,
-                  );
-                },
-                routes: <RouteBase>[
-                  GoRoute(
-                    path: 'b',
-                    parentNavigatorKey: shellNavigatorKeyB,
-                    builder: (BuildContext context, GoRouterState state) {
-                      return const Scaffold(
-                        body: Text('Screen B'),
-                      );
-                    },
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ],
-      ),
-    ];
-
-    await createRouter(routes, tester,
-        initialLocation: '/a/b', navigatorKey: rootNavigatorKey);
-    expect(find.text('Screen B'), findsOneWidget);
-
-    // The first pop should not exit the app.
-    await tester.runAsync(() async {
-      await verify(() => simulateAndroidBackButton(tester), <Object>[]);
-    });
-
-    // The second pop should exit the app.
-    await tester.runAsync(() async {
-      await verify(() => simulateAndroidBackButton(tester), <Object>[
-        isMethodCall('SystemNavigator.pop', arguments: null),
-      ]);
-    });
-  });
-
-  group('report correct url', () {
-    final List<MethodCall> log = <MethodCall>[];
-    setUp(() {
-      GoRouter.optionURLReflectsImperativeAPIs = false;
+    'Handles the Android back button when a second Shell has a GoRoute with parentNavigator key',
+    (WidgetTester tester) async {
+      final List<MethodCall> log = <MethodCall>[];
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-          .setMockMethodCallHandler(SystemChannels.navigation,
-              (MethodCall methodCall) async {
-        log.add(methodCall);
-        return null;
-      });
-    });
-    tearDown(() {
-      GoRouter.optionURLReflectsImperativeAPIs = false;
-      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-          .setMockMethodCallHandler(SystemChannels.navigation, null);
-      log.clear();
-    });
+          .setMockMethodCallHandler(SystemChannels.platform, (
+            MethodCall methodCall,
+          ) async {
+            log.add(methodCall);
+            return null;
+          });
 
-    testWidgets(
-        'on push shell route with optionURLReflectImperativeAPIs = true',
-        (WidgetTester tester) async {
-      GoRouter.optionURLReflectsImperativeAPIs = true;
-      final List<RouteBase> routes = <RouteBase>[
-        GoRoute(
-          path: '/',
-          builder: (BuildContext context, GoRouterState state) =>
-              const DummyScreen(),
-          routes: <RouteBase>[
-            ShellRoute(
-              builder:
-                  (BuildContext context, GoRouterState state, Widget child) =>
-                      child,
-              routes: <RouteBase>[
-                GoRoute(
-                  path: 'c',
-                  builder: (BuildContext context, GoRouterState state) =>
-                      const DummyScreen(),
-                )
-              ],
-            ),
-          ],
-        ),
-      ];
+      Future<void> verify(AsyncCallback test, List<Object> expectations) async {
+        log.clear();
+        await test();
+        expect(log, expectations);
+      }
 
-      final GoRouter router = await createRouter(routes, tester);
-
-      log.clear();
-      router.push('/c?foo=bar');
-      final RouteMatchListCodec codec =
-          RouteMatchListCodec(router.configuration);
-      await tester.pumpAndSettle();
-      expect(log, <Object>[
-        isMethodCall('selectMultiEntryHistory', arguments: null),
-        IsRouteUpdateCall('/c?foo=bar', false,
-            codec.encode(router.routerDelegate.currentConfiguration)),
-      ]);
-      GoRouter.optionURLReflectsImperativeAPIs = false;
-    });
-
-    testWidgets('on push with optionURLReflectImperativeAPIs = true',
-        (WidgetTester tester) async {
-      GoRouter.optionURLReflectsImperativeAPIs = true;
-      final List<GoRoute> routes = <GoRoute>[
-        GoRoute(
-          path: '/',
-          builder: (_, __) => const DummyScreen(),
-        ),
-        GoRoute(
-          path: '/settings',
-          builder: (_, __) => const DummyScreen(),
-        ),
-      ];
-
-      final GoRouter router = await createRouter(routes, tester);
-
-      log.clear();
-      router.push('/settings');
-      final RouteMatchListCodec codec =
-          RouteMatchListCodec(router.configuration);
-      await tester.pumpAndSettle();
-      expect(log, <Object>[
-        isMethodCall('selectMultiEntryHistory', arguments: null),
-        IsRouteUpdateCall('/settings', false,
-            codec.encode(router.routerDelegate.currentConfiguration)),
-      ]);
-      GoRouter.optionURLReflectsImperativeAPIs = false;
-    });
-
-    testWidgets('on push', (WidgetTester tester) async {
-      final List<GoRoute> routes = <GoRoute>[
-        GoRoute(
-          path: '/',
-          builder: (_, __) => const DummyScreen(),
-        ),
-        GoRoute(
-          path: '/settings',
-          builder: (_, __) => const DummyScreen(),
-        ),
-      ];
-
-      final GoRouter router = await createRouter(routes, tester);
-
-      log.clear();
-      router.push('/settings');
-      final RouteMatchListCodec codec =
-          RouteMatchListCodec(router.configuration);
-      await tester.pumpAndSettle();
-      expect(log, <Object>[
-        isMethodCall('selectMultiEntryHistory', arguments: null),
-        IsRouteUpdateCall('/', false,
-            codec.encode(router.routerDelegate.currentConfiguration)),
-      ]);
-    });
-
-    testWidgets('on pop', (WidgetTester tester) async {
-      final List<GoRoute> routes = <GoRoute>[
-        GoRoute(
-            path: '/',
-            builder: (_, __) => const DummyScreen(),
-            routes: <RouteBase>[
-              GoRoute(
-                path: 'settings',
-                builder: (_, __) => const DummyScreen(),
-              ),
-            ]),
-      ];
-
-      final GoRouter router =
-          await createRouter(routes, tester, initialLocation: '/settings');
-      final RouteMatchListCodec codec =
-          RouteMatchListCodec(router.configuration);
-      log.clear();
-      router.pop();
-      await tester.pumpAndSettle();
-      expect(log, <Object>[
-        isMethodCall('selectMultiEntryHistory', arguments: null),
-        IsRouteUpdateCall('/', false,
-            codec.encode(router.routerDelegate.currentConfiguration)),
-      ]);
-    });
-
-    testWidgets('on pop twice', (WidgetTester tester) async {
-      final List<GoRoute> routes = <GoRoute>[
-        GoRoute(
-            path: '/',
-            builder: (_, __) => const DummyScreen(),
-            routes: <RouteBase>[
-              GoRoute(
-                  path: 'settings',
-                  builder: (_, __) => const DummyScreen(),
-                  routes: <RouteBase>[
-                    GoRoute(
-                      path: 'profile',
-                      builder: (_, __) => const DummyScreen(),
-                    ),
-                  ]),
-            ]),
-      ];
-
-      final GoRouter router = await createRouter(routes, tester,
-          initialLocation: '/settings/profile');
-      final RouteMatchListCodec codec =
-          RouteMatchListCodec(router.configuration);
-      log.clear();
-      router.pop();
-      router.pop();
-      await tester.pumpAndSettle();
-      expect(log, <Object>[
-        isMethodCall('selectMultiEntryHistory', arguments: null),
-        IsRouteUpdateCall('/', false,
-            codec.encode(router.routerDelegate.currentConfiguration)),
-      ]);
-    });
-
-    testWidgets('on pop with path parameters', (WidgetTester tester) async {
-      final List<GoRoute> routes = <GoRoute>[
-        GoRoute(
-            path: '/',
-            builder: (_, __) => const DummyScreen(),
-            routes: <RouteBase>[
-              GoRoute(
-                path: 'settings/:id',
-                builder: (_, __) => const DummyScreen(),
-              ),
-            ]),
-      ];
-
-      final GoRouter router =
-          await createRouter(routes, tester, initialLocation: '/settings/123');
-      final RouteMatchListCodec codec =
-          RouteMatchListCodec(router.configuration);
-      log.clear();
-      router.pop();
-      await tester.pumpAndSettle();
-      expect(log, <Object>[
-        isMethodCall('selectMultiEntryHistory', arguments: null),
-        IsRouteUpdateCall('/', false,
-            codec.encode(router.routerDelegate.currentConfiguration)),
-      ]);
-    });
-
-    testWidgets('on pop with path parameters case 2',
-        (WidgetTester tester) async {
-      final List<GoRoute> routes = <GoRoute>[
-        GoRoute(
-            path: '/',
-            builder: (_, __) => const DummyScreen(),
-            routes: <RouteBase>[
-              GoRoute(
-                path: ':id',
-                builder: (_, __) => const DummyScreen(),
-              ),
-            ]),
-      ];
-
-      final GoRouter router =
-          await createRouter(routes, tester, initialLocation: '/123/');
-      final RouteMatchListCodec codec =
-          RouteMatchListCodec(router.configuration);
-      log.clear();
-      router.pop();
-      await tester.pumpAndSettle();
-      expect(log, <Object>[
-        isMethodCall('selectMultiEntryHistory', arguments: null),
-        IsRouteUpdateCall('/', false,
-            codec.encode(router.routerDelegate.currentConfiguration)),
-      ]);
-    });
-
-    testWidgets('Can manually pop root navigator and display correct url',
-        (WidgetTester tester) async {
       final GlobalKey<NavigatorState> rootNavigatorKey =
+          GlobalKey<NavigatorState>();
+      final GlobalKey<NavigatorState> shellNavigatorKeyA =
+          GlobalKey<NavigatorState>();
+      final GlobalKey<NavigatorState> shellNavigatorKeyB =
           GlobalKey<NavigatorState>();
 
       final List<RouteBase> routes = <RouteBase>[
-        GoRoute(
-          path: '/',
-          builder: (BuildContext context, GoRouterState state) {
-            return const Scaffold(
-              body: Text('Home'),
+        ShellRoute(
+          navigatorKey: shellNavigatorKeyA,
+          builder: (BuildContext context, GoRouterState state, Widget child) {
+            return Scaffold(
+              appBar: AppBar(title: const Text('Shell')),
+              body: child,
             );
           },
           routes: <RouteBase>[
-            ShellRoute(
-              builder:
-                  (BuildContext context, GoRouterState state, Widget child) {
-                return Scaffold(
-                  appBar: AppBar(),
-                  body: child,
-                );
+            GoRoute(
+              path: '/a',
+              builder: (BuildContext context, GoRouterState state) {
+                return const Scaffold(body: Text('Screen A'));
               },
               routes: <RouteBase>[
-                GoRoute(
-                  path: 'b',
-                  builder: (BuildContext context, GoRouterState state) {
-                    return const Scaffold(
-                      body: Text('Screen B'),
+                ShellRoute(
+                  navigatorKey: shellNavigatorKeyB,
+                  builder: (
+                    BuildContext context,
+                    GoRouterState state,
+                    Widget child,
+                  ) {
+                    return Scaffold(
+                      appBar: AppBar(title: const Text('Shell')),
+                      body: child,
                     );
                   },
                   routes: <RouteBase>[
                     GoRoute(
-                      path: 'c',
+                      path: 'b',
+                      parentNavigatorKey: shellNavigatorKeyB,
                       builder: (BuildContext context, GoRouterState state) {
-                        return const Scaffold(
-                          body: Text('Screen C'),
-                        );
+                        return const Scaffold(body: Text('Screen B'));
                       },
                     ),
                   ],
@@ -1423,15 +1245,353 @@ void main() {
         ),
       ];
 
-      final GoRouter router = await createRouter(routes, tester,
-          initialLocation: '/b/c', navigatorKey: rootNavigatorKey);
-      final RouteMatchListCodec codec =
-          RouteMatchListCodec(router.configuration);
+      await createRouter(
+        routes,
+        tester,
+        initialLocation: '/a/b',
+        navigatorKey: rootNavigatorKey,
+      );
+      expect(find.text('Screen B'), findsOneWidget);
+
+      // The first pop should not exit the app.
+      await tester.runAsync(() async {
+        await verify(() => simulateAndroidBackButton(tester), <Object>[]);
+      });
+
+      // Pump one frame between back buttons to allow any PopScope widgets to
+      // rebuild.
+      await tester.pump();
+
+      // The second pop should exit the app.
+      await tester.runAsync(() async {
+        await verify(() => simulateAndroidBackButton(tester), <Object>[
+          isMethodCall('SystemNavigator.pop', arguments: null),
+        ]);
+      });
+    },
+  );
+
+  group('report correct url', () {
+    final List<MethodCall> log = <MethodCall>[];
+    setUp(() {
+      GoRouter.optionURLReflectsImperativeAPIs = false;
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(SystemChannels.navigation, (
+            MethodCall methodCall,
+          ) async {
+            log.add(methodCall);
+            return null;
+          });
+    });
+    tearDown(() {
+      GoRouter.optionURLReflectsImperativeAPIs = false;
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(SystemChannels.navigation, null);
+      log.clear();
+    });
+
+    testWidgets(
+      'on push shell route with optionURLReflectImperativeAPIs = true',
+      (WidgetTester tester) async {
+        GoRouter.optionURLReflectsImperativeAPIs = true;
+        final List<RouteBase> routes = <RouteBase>[
+          GoRoute(
+            path: '/',
+            builder:
+                (BuildContext context, GoRouterState state) =>
+                    const DummyScreen(),
+            routes: <RouteBase>[
+              ShellRoute(
+                builder:
+                    (BuildContext context, GoRouterState state, Widget child) =>
+                        child,
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: 'c',
+                    builder:
+                        (BuildContext context, GoRouterState state) =>
+                            const DummyScreen(),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ];
+
+        final GoRouter router = await createRouter(routes, tester);
+
+        log.clear();
+        router.push('/c?foo=bar');
+        final RouteMatchListCodec codec = RouteMatchListCodec(
+          router.configuration,
+        );
+        await tester.pumpAndSettle();
+        expect(log, <Object>[
+          isMethodCall('selectMultiEntryHistory', arguments: null),
+          IsRouteUpdateCall(
+            '/c?foo=bar',
+            false,
+            codec.encode(router.routerDelegate.currentConfiguration),
+          ),
+        ]);
+        GoRouter.optionURLReflectsImperativeAPIs = false;
+      },
+    );
+
+    testWidgets('on push with optionURLReflectImperativeAPIs = true', (
+      WidgetTester tester,
+    ) async {
+      GoRouter.optionURLReflectsImperativeAPIs = true;
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(path: '/', builder: (_, __) => const DummyScreen()),
+        GoRoute(path: '/settings', builder: (_, __) => const DummyScreen()),
+      ];
+
+      final GoRouter router = await createRouter(routes, tester);
+
+      log.clear();
+      router.push('/settings');
+      final RouteMatchListCodec codec = RouteMatchListCodec(
+        router.configuration,
+      );
+      await tester.pumpAndSettle();
+      expect(log, <Object>[
+        isMethodCall('selectMultiEntryHistory', arguments: null),
+        IsRouteUpdateCall(
+          '/settings',
+          false,
+          codec.encode(router.routerDelegate.currentConfiguration),
+        ),
+      ]);
+      GoRouter.optionURLReflectsImperativeAPIs = false;
+    });
+
+    testWidgets('on push', (WidgetTester tester) async {
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(path: '/', builder: (_, __) => const DummyScreen()),
+        GoRoute(path: '/settings', builder: (_, __) => const DummyScreen()),
+      ];
+
+      final GoRouter router = await createRouter(routes, tester);
+
+      log.clear();
+      router.push('/settings');
+      final RouteMatchListCodec codec = RouteMatchListCodec(
+        router.configuration,
+      );
+      await tester.pumpAndSettle();
+      expect(log, <Object>[
+        isMethodCall('selectMultiEntryHistory', arguments: null),
+        IsRouteUpdateCall(
+          '/',
+          false,
+          codec.encode(router.routerDelegate.currentConfiguration),
+        ),
+      ]);
+    });
+
+    testWidgets('on pop', (WidgetTester tester) async {
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+          path: '/',
+          builder: (_, __) => const DummyScreen(),
+          routes: <RouteBase>[
+            GoRoute(path: 'settings', builder: (_, __) => const DummyScreen()),
+          ],
+        ),
+      ];
+
+      final GoRouter router = await createRouter(
+        routes,
+        tester,
+        initialLocation: '/settings',
+      );
+      final RouteMatchListCodec codec = RouteMatchListCodec(
+        router.configuration,
+      );
+      log.clear();
+      router.pop();
+      await tester.pumpAndSettle();
+      expect(log, <Object>[
+        isMethodCall('selectMultiEntryHistory', arguments: null),
+        IsRouteUpdateCall(
+          '/',
+          false,
+          codec.encode(router.routerDelegate.currentConfiguration),
+        ),
+      ]);
+    });
+
+    testWidgets('on pop twice', (WidgetTester tester) async {
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+          path: '/',
+          builder: (_, __) => const DummyScreen(),
+          routes: <RouteBase>[
+            GoRoute(
+              path: 'settings',
+              builder: (_, __) => const DummyScreen(),
+              routes: <RouteBase>[
+                GoRoute(
+                  path: 'profile',
+                  builder: (_, __) => const DummyScreen(),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ];
+
+      final GoRouter router = await createRouter(
+        routes,
+        tester,
+        initialLocation: '/settings/profile',
+      );
+      final RouteMatchListCodec codec = RouteMatchListCodec(
+        router.configuration,
+      );
+      log.clear();
+      router.pop();
+      router.pop();
+      await tester.pumpAndSettle();
+      expect(log, <Object>[
+        isMethodCall('selectMultiEntryHistory', arguments: null),
+        IsRouteUpdateCall(
+          '/',
+          false,
+          codec.encode(router.routerDelegate.currentConfiguration),
+        ),
+      ]);
+    });
+
+    testWidgets('on pop with path parameters', (WidgetTester tester) async {
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+          path: '/',
+          builder: (_, __) => const DummyScreen(),
+          routes: <RouteBase>[
+            GoRoute(
+              path: 'settings/:id',
+              builder: (_, __) => const DummyScreen(),
+            ),
+          ],
+        ),
+      ];
+
+      final GoRouter router = await createRouter(
+        routes,
+        tester,
+        initialLocation: '/settings/123',
+      );
+      final RouteMatchListCodec codec = RouteMatchListCodec(
+        router.configuration,
+      );
+      log.clear();
+      router.pop();
+      await tester.pumpAndSettle();
+      expect(log, <Object>[
+        isMethodCall('selectMultiEntryHistory', arguments: null),
+        IsRouteUpdateCall(
+          '/',
+          false,
+          codec.encode(router.routerDelegate.currentConfiguration),
+        ),
+      ]);
+    });
+
+    testWidgets('on pop with path parameters case 2', (
+      WidgetTester tester,
+    ) async {
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+          path: '/',
+          builder: (_, __) => const DummyScreen(),
+          routes: <RouteBase>[
+            GoRoute(path: ':id', builder: (_, __) => const DummyScreen()),
+          ],
+        ),
+      ];
+
+      final GoRouter router = await createRouter(
+        routes,
+        tester,
+        initialLocation: '/123/',
+      );
+      final RouteMatchListCodec codec = RouteMatchListCodec(
+        router.configuration,
+      );
+      log.clear();
+      router.pop();
+      await tester.pumpAndSettle();
+      expect(log, <Object>[
+        isMethodCall('selectMultiEntryHistory', arguments: null),
+        IsRouteUpdateCall(
+          '/',
+          false,
+          codec.encode(router.routerDelegate.currentConfiguration),
+        ),
+      ]);
+    });
+
+    testWidgets('Can manually pop root navigator and display correct url', (
+      WidgetTester tester,
+    ) async {
+      final GlobalKey<NavigatorState> rootNavigatorKey =
+          GlobalKey<NavigatorState>();
+
+      final List<RouteBase> routes = <RouteBase>[
+        GoRoute(
+          path: '/',
+          builder: (BuildContext context, GoRouterState state) {
+            return const Scaffold(body: Text('Home'));
+          },
+          routes: <RouteBase>[
+            ShellRoute(
+              builder: (
+                BuildContext context,
+                GoRouterState state,
+                Widget child,
+              ) {
+                return Scaffold(appBar: AppBar(), body: child);
+              },
+              routes: <RouteBase>[
+                GoRoute(
+                  path: 'b',
+                  builder: (BuildContext context, GoRouterState state) {
+                    return const Scaffold(body: Text('Screen B'));
+                  },
+                  routes: <RouteBase>[
+                    GoRoute(
+                      path: 'c',
+                      builder: (BuildContext context, GoRouterState state) {
+                        return const Scaffold(body: Text('Screen C'));
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
+      ];
+
+      final GoRouter router = await createRouter(
+        routes,
+        tester,
+        initialLocation: '/b/c',
+        navigatorKey: rootNavigatorKey,
+      );
+      final RouteMatchListCodec codec = RouteMatchListCodec(
+        router.configuration,
+      );
       expect(find.text('Screen C'), findsOneWidget);
       expect(log, <Object>[
         isMethodCall('selectMultiEntryHistory', arguments: null),
-        IsRouteUpdateCall('/b/c', true,
-            codec.encode(router.routerDelegate.currentConfiguration)),
+        IsRouteUpdateCall(
+          '/b/c',
+          true,
+          codec.encode(router.routerDelegate.currentConfiguration),
+        ),
       ]);
 
       log.clear();
@@ -1441,13 +1601,17 @@ void main() {
       expect(find.text('Home'), findsOneWidget);
       expect(log, <Object>[
         isMethodCall('selectMultiEntryHistory', arguments: null),
-        IsRouteUpdateCall('/', false,
-            codec.encode(router.routerDelegate.currentConfiguration)),
+        IsRouteUpdateCall(
+          '/',
+          false,
+          codec.encode(router.routerDelegate.currentConfiguration),
+        ),
       ]);
     });
 
-    testWidgets('can handle route information update from browser',
-        (WidgetTester tester) async {
+    testWidgets('can handle route information update from browser', (
+      WidgetTester tester,
+    ) async {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
@@ -1455,8 +1619,10 @@ void main() {
           routes: <RouteBase>[
             GoRoute(
               path: 'settings',
-              builder: (_, GoRouterState state) =>
-                  DummyScreen(key: ValueKey<String>('settings-${state.extra}')),
+              builder:
+                  (_, GoRouterState state) => DummyScreen(
+                    key: ValueKey<String>('settings-${state.extra}'),
+                  ),
             ),
           ],
         ),
@@ -1488,7 +1654,8 @@ void main() {
       expect(find.byKey(const ValueKey<String>('home')), findsOneWidget);
 
       router.routeInformationProvider.didPushRouteInformation(
-          RouteInformation(uri: Uri.parse(location), state: state));
+        RouteInformation(uri: Uri.parse(location), state: state),
+      );
       await tester.pumpAndSettle();
       // Make sure it has all the imperative routes.
       expect(find.byKey(const ValueKey<String>('settings-1')), findsOneWidget);
@@ -1502,27 +1669,26 @@ void main() {
       expect(find.byKey(const ValueKey<String>('home')), findsOneWidget);
     });
 
-    testWidgets('works correctly with async redirect',
-        (WidgetTester tester) async {
+    testWidgets('works correctly with async redirect', (
+      WidgetTester tester,
+    ) async {
       final UniqueKey login = UniqueKey();
       final List<GoRoute> routes = <GoRoute>[
-        GoRoute(
-          path: '/',
-          builder: (_, __) => const DummyScreen(),
-        ),
-        GoRoute(
-          path: '/login',
-          builder: (_, __) => DummyScreen(key: login),
-        ),
+        GoRoute(path: '/', builder: (_, __) => const DummyScreen()),
+        GoRoute(path: '/login', builder: (_, __) => DummyScreen(key: login)),
       ];
       final Completer<void> completer = Completer<void>();
-      final GoRouter router =
-          await createRouter(routes, tester, redirect: (_, __) async {
-        await completer.future;
-        return '/login';
-      });
-      final RouteMatchListCodec codec =
-          RouteMatchListCodec(router.configuration);
+      final GoRouter router = await createRouter(
+        routes,
+        tester,
+        redirect: (_, __) async {
+          await completer.future;
+          return '/login';
+        },
+      );
+      final RouteMatchListCodec codec = RouteMatchListCodec(
+        router.configuration,
+      );
       await tester.pumpAndSettle();
       expect(find.byKey(login), findsNothing);
       expect(tester.takeException(), isNull);
@@ -1535,8 +1701,11 @@ void main() {
       expect(tester.takeException(), isNull);
       expect(log, <Object>[
         isMethodCall('selectMultiEntryHistory', arguments: null),
-        IsRouteUpdateCall('/login', true,
-            codec.encode(router.routerDelegate.currentConfiguration)),
+        IsRouteUpdateCall(
+          '/login',
+          true,
+          codec.encode(router.routerDelegate.currentConfiguration),
+        ),
       ]);
     });
   });
@@ -1545,10 +1714,11 @@ void main() {
     testWidgets('match home route', (WidgetTester tester) async {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
-            name: 'home',
-            path: '/',
-            builder: (BuildContext context, GoRouterState state) =>
-                const HomeScreen()),
+          name: 'home',
+          path: '/',
+          builder:
+              (BuildContext context, GoRouterState state) => const HomeScreen(),
+        ),
       ];
 
       final GoRouter router = await createRouter(routes, tester);
@@ -1587,14 +1757,15 @@ void main() {
         GoRoute(
           name: 'home',
           path: '/',
-          builder: (BuildContext context, GoRouterState state) =>
-              const HomeScreen(),
+          builder:
+              (BuildContext context, GoRouterState state) => const HomeScreen(),
         ),
         GoRoute(
           name: 'login',
           path: '/login',
-          builder: (BuildContext context, GoRouterState state) =>
-              const LoginScreen(),
+          builder:
+              (BuildContext context, GoRouterState state) =>
+                  const LoginScreen(),
         ),
       ];
 
@@ -1607,14 +1778,15 @@ void main() {
         GoRoute(
           name: 'home',
           path: '/',
-          builder: (BuildContext context, GoRouterState state) =>
-              const HomeScreen(),
+          builder:
+              (BuildContext context, GoRouterState state) => const HomeScreen(),
           routes: <GoRoute>[
             GoRoute(
               name: 'login',
               path: 'login',
-              builder: (BuildContext context, GoRouterState state) =>
-                  const LoginScreen(),
+              builder:
+                  (BuildContext context, GoRouterState state) =>
+                      const LoginScreen(),
             ),
           ],
         ),
@@ -1629,21 +1801,24 @@ void main() {
         GoRoute(
           name: 'home',
           path: '/',
-          builder: (BuildContext context, GoRouterState state) =>
-              const HomeScreen(),
+          builder:
+              (BuildContext context, GoRouterState state) => const HomeScreen(),
           routes: <GoRoute>[
             GoRoute(
               name: 'family',
               path: 'family/:fid',
-              builder: (BuildContext context, GoRouterState state) =>
-                  const FamilyScreen('dummy'),
+              builder:
+                  (BuildContext context, GoRouterState state) =>
+                      const FamilyScreen('dummy'),
               routes: <GoRoute>[
                 GoRoute(
                   name: 'person',
                   path: 'person/:pid',
                   builder: (BuildContext context, GoRouterState state) {
-                    expect(state.pathParameters,
-                        <String, String>{'fid': 'f2', 'pid': 'p1'});
+                    expect(state.pathParameters, <String, String>{
+                      'fid': 'f2',
+                      'pid': 'p1',
+                    });
                     return const PersonScreen('dummy', 'dummy');
                   },
                 ),
@@ -1654,8 +1829,10 @@ void main() {
       ];
 
       final GoRouter router = await createRouter(routes, tester);
-      router.goNamed('person',
-          pathParameters: <String, String>{'fid': 'f2', 'pid': 'p1'});
+      router.goNamed(
+        'person',
+        pathParameters: <String, String>{'fid': 'f2', 'pid': 'p1'},
+      );
     });
 
     testWidgets('too few params', (WidgetTester tester) async {
@@ -1663,20 +1840,22 @@ void main() {
         GoRoute(
           name: 'home',
           path: '/',
-          builder: (BuildContext context, GoRouterState state) =>
-              const HomeScreen(),
+          builder:
+              (BuildContext context, GoRouterState state) => const HomeScreen(),
           routes: <GoRoute>[
             GoRoute(
               name: 'family',
               path: 'family/:fid',
-              builder: (BuildContext context, GoRouterState state) =>
-                  const FamilyScreen('dummy'),
+              builder:
+                  (BuildContext context, GoRouterState state) =>
+                      const FamilyScreen('dummy'),
               routes: <GoRoute>[
                 GoRoute(
                   name: 'person',
                   path: 'person/:pid',
-                  builder: (BuildContext context, GoRouterState state) =>
-                      const PersonScreen('dummy', 'dummy'),
+                  builder:
+                      (BuildContext context, GoRouterState state) =>
+                          const PersonScreen('dummy', 'dummy'),
                 ),
               ],
             ),
@@ -1695,21 +1874,24 @@ void main() {
         GoRoute(
           name: 'home',
           path: '/',
-          builder: (BuildContext context, GoRouterState state) =>
-              const HomeScreen(),
+          builder:
+              (BuildContext context, GoRouterState state) => const HomeScreen(),
           routes: <GoRoute>[
             GoRoute(
               name: 'family',
               path: 'family/:fid',
-              builder: (BuildContext context, GoRouterState state) =>
-                  const FamilyScreen('dummy'),
+              builder:
+                  (BuildContext context, GoRouterState state) =>
+                      const FamilyScreen('dummy'),
               routes: <GoRoute>[
                 GoRoute(
                   name: 'PeRsOn',
                   path: 'person/:pid',
                   builder: (BuildContext context, GoRouterState state) {
-                    expect(state.pathParameters,
-                        <String, String>{'fid': 'f2', 'pid': 'p1'});
+                    expect(state.pathParameters, <String, String>{
+                      'fid': 'f2',
+                      'pid': 'p1',
+                    });
                     return const PersonScreen('dummy', 'dummy');
                   },
                 ),
@@ -1720,15 +1902,12 @@ void main() {
       ];
 
       final GoRouter router = await createRouter(routes, tester);
-      expect(
-        () {
-          router.goNamed(
-            'person',
-            pathParameters: <String, String>{'fid': 'f2', 'pid': 'p1'},
-          );
-        },
-        throwsAssertionError,
-      );
+      expect(() {
+        router.goNamed(
+          'person',
+          pathParameters: <String, String>{'fid': 'f2', 'pid': 'p1'},
+        );
+      }, throwsAssertionError);
     });
 
     testWidgets('too few params', (WidgetTester tester) async {
@@ -1736,8 +1915,9 @@ void main() {
         GoRoute(
           name: 'family',
           path: '/family/:fid',
-          builder: (BuildContext context, GoRouterState state) =>
-              const FamilyScreen('dummy'),
+          builder:
+              (BuildContext context, GoRouterState state) =>
+                  const FamilyScreen('dummy'),
         ),
       ];
       await expectLater(() async {
@@ -1751,52 +1931,54 @@ void main() {
         GoRoute(
           name: 'family',
           path: '/family/:fid',
-          builder: (BuildContext context, GoRouterState state) =>
-              const FamilyScreen('dummy'),
+          builder:
+              (BuildContext context, GoRouterState state) =>
+                  const FamilyScreen('dummy'),
         ),
       ];
       await expectLater(() async {
         final GoRouter router = await createRouter(routes, tester);
-        router.goNamed('family',
-            pathParameters: <String, String>{'fid': 'f2', 'pid': 'p1'});
+        router.goNamed(
+          'family',
+          pathParameters: <String, String>{'fid': 'f2', 'pid': 'p1'},
+        );
       }, throwsA(isAssertionError));
     });
 
     testWidgets('sparsely named routes', (WidgetTester tester) async {
       final List<GoRoute> routes = <GoRoute>[
-        GoRoute(
-          path: '/',
-          builder: dummy,
-          redirect: (_, __) => '/family/f2',
-        ),
+        GoRoute(path: '/', builder: dummy, redirect: (_, __) => '/family/f2'),
         GoRoute(
           path: '/family/:fid',
-          builder: (BuildContext context, GoRouterState state) => FamilyScreen(
-            state.pathParameters['fid']!,
-          ),
+          builder:
+              (BuildContext context, GoRouterState state) =>
+                  FamilyScreen(state.pathParameters['fid']!),
           routes: <GoRoute>[
             GoRoute(
               name: 'person',
               path: 'person:pid',
-              builder: (BuildContext context, GoRouterState state) =>
-                  PersonScreen(
-                state.pathParameters['fid']!,
-                state.pathParameters['pid']!,
-              ),
+              builder:
+                  (BuildContext context, GoRouterState state) => PersonScreen(
+                    state.pathParameters['fid']!,
+                    state.pathParameters['pid']!,
+                  ),
             ),
           ],
         ),
       ];
 
       final GoRouter router = await createRouter(routes, tester);
-      router.goNamed('person',
-          pathParameters: <String, String>{'fid': 'f2', 'pid': 'p1'});
+      router.goNamed(
+        'person',
+        pathParameters: <String, String>{'fid': 'f2', 'pid': 'p1'},
+      );
       await tester.pumpAndSettle();
       expect(find.byType(PersonScreen), findsOneWidget);
     });
 
-    testWidgets('preserve path param spaces and slashes',
-        (WidgetTester tester) async {
+    testWidgets('preserve path param spaces and slashes', (
+      WidgetTester tester,
+    ) async {
       const String param1 = 'param w/ spaces and slashes';
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
@@ -1810,8 +1992,10 @@ void main() {
       ];
 
       final GoRouter router = await createRouter(routes, tester);
-      final String loc = router.namedLocation('page1',
-          pathParameters: <String, String>{'param1': param1});
+      final String loc = router.namedLocation(
+        'page1',
+        pathParameters: <String, String>{'param1': param1},
+      );
       router.go(loc);
       await tester.pumpAndSettle();
 
@@ -1820,8 +2004,9 @@ void main() {
       expect(matches.pathParameters['param1'], param1);
     });
 
-    testWidgets('preserve query param spaces and slashes',
-        (WidgetTester tester) async {
+    testWidgets('preserve query param spaces and slashes', (
+      WidgetTester tester,
+    ) async {
       const String param1 = 'param w/ spaces and slashes';
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
@@ -1835,8 +2020,10 @@ void main() {
       ];
 
       final GoRouter router = await createRouter(routes, tester);
-      final String loc = router.namedLocation('page1',
-          queryParameters: <String, String>{'param1': param1});
+      final String loc = router.namedLocation(
+        'page1',
+        queryParameters: <String, String>{'param1': param1},
+      );
       router.go(loc);
       await tester.pumpAndSettle();
       final RouteMatchList matches = router.routerDelegate.currentConfiguration;
@@ -1850,13 +2037,14 @@ void main() {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder: (BuildContext context, GoRouterState state) =>
-              const HomeScreen(),
+          builder:
+              (BuildContext context, GoRouterState state) => const HomeScreen(),
           routes: <GoRoute>[
             GoRoute(
               path: 'login',
-              builder: (BuildContext context, GoRouterState state) =>
-                  const LoginScreen(),
+              builder:
+                  (BuildContext context, GoRouterState state) =>
+                      const LoginScreen(),
             ),
           ],
         ),
@@ -1872,13 +2060,14 @@ void main() {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/home',
-          builder: (BuildContext context, GoRouterState state) =>
-              const HomeScreen(),
+          builder:
+              (BuildContext context, GoRouterState state) => const HomeScreen(),
           routes: <GoRoute>[
             GoRoute(
               path: 'login',
-              builder: (BuildContext context, GoRouterState state) =>
-                  const LoginScreen(),
+              builder:
+                  (BuildContext context, GoRouterState state) =>
+                      const LoginScreen(),
             ),
           ],
         ),
@@ -1898,20 +2087,23 @@ void main() {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/home',
-          builder: (BuildContext context, GoRouterState state) =>
-              const HomeScreen(),
+          builder:
+              (BuildContext context, GoRouterState state) => const HomeScreen(),
           routes: <GoRoute>[
             GoRoute(
               path: 'family/:fid',
-              builder: (BuildContext context, GoRouterState state) =>
-                  const FamilyScreen('dummy'),
+              builder:
+                  (BuildContext context, GoRouterState state) =>
+                      const FamilyScreen('dummy'),
               routes: <GoRoute>[
                 GoRoute(
                   name: 'person',
                   path: 'person/:pid',
                   builder: (BuildContext context, GoRouterState state) {
-                    expect(state.pathParameters,
-                        <String, String>{'fid': fid, 'pid': pid});
+                    expect(state.pathParameters, <String, String>{
+                      'fid': fid,
+                      'pid': pid,
+                    });
                     return const PersonScreen('dummy', 'dummy');
                   },
                 ),
@@ -1921,8 +2113,11 @@ void main() {
         ),
       ];
 
-      final GoRouter router =
-          await createRouter(routes, tester, initialLocation: '/home');
+      final GoRouter router = await createRouter(
+        routes,
+        tester,
+        initialLocation: '/home',
+      );
 
       router.go('./family/$fid');
       await tester.pumpAndSettle();
@@ -1940,19 +2135,21 @@ void main() {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/home',
-          builder: (BuildContext context, GoRouterState state) =>
-              const HomeScreen(),
+          builder:
+              (BuildContext context, GoRouterState state) => const HomeScreen(),
           routes: <GoRoute>[
             GoRoute(
               path: 'family',
-              builder: (BuildContext context, GoRouterState state) =>
-                  const FamilyScreen('dummy'),
+              builder:
+                  (BuildContext context, GoRouterState state) =>
+                      const FamilyScreen('dummy'),
               routes: <GoRoute>[
                 GoRoute(
                   path: 'person',
                   builder: (BuildContext context, GoRouterState state) {
-                    expect(state.uri.queryParameters,
-                        <String, String>{'pid': pid});
+                    expect(state.uri.queryParameters, <String, String>{
+                      'pid': pid,
+                    });
                     return const PersonScreen('dummy', 'dummy');
                   },
                 ),
@@ -1962,8 +2159,11 @@ void main() {
         ),
       ];
 
-      final GoRouter router =
-          await createRouter(routes, tester, initialLocation: '/home');
+      final GoRouter router = await createRouter(
+        routes,
+        tester,
+        initialLocation: '/home',
+      );
 
       router.go('./family?fid=$fid');
       await tester.pumpAndSettle();
@@ -1980,18 +2180,20 @@ void main() {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/home',
-          builder: (BuildContext context, GoRouterState state) =>
-              const HomeScreen(),
+          builder:
+              (BuildContext context, GoRouterState state) => const HomeScreen(),
           routes: <GoRoute>[
             GoRoute(
               path: 'family/:fid',
-              builder: (BuildContext context, GoRouterState state) =>
-                  const FamilyScreen('dummy'),
+              builder:
+                  (BuildContext context, GoRouterState state) =>
+                      const FamilyScreen('dummy'),
               routes: <GoRoute>[
                 GoRoute(
                   path: 'person/:pid',
-                  builder: (BuildContext context, GoRouterState state) =>
-                      const PersonScreen('dummy', 'dummy'),
+                  builder:
+                      (BuildContext context, GoRouterState state) =>
+                          const PersonScreen('dummy', 'dummy'),
                 ),
               ],
             ),
@@ -2003,8 +2205,9 @@ void main() {
         routes,
         tester,
         initialLocation: '/home',
-        errorBuilder: (BuildContext context, GoRouterState state) =>
-            TestErrorScreen(state.error!),
+        errorBuilder:
+            (BuildContext context, GoRouterState state) =>
+                TestErrorScreen(state.error!),
       );
       router.go('./family/person/$pid');
       await tester.pumpAndSettle();
@@ -2019,18 +2222,20 @@ void main() {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/home',
-          builder: (BuildContext context, GoRouterState state) =>
-              const HomeScreen(),
+          builder:
+              (BuildContext context, GoRouterState state) => const HomeScreen(),
           routes: <GoRoute>[
             GoRoute(
               path: 'family',
-              builder: (BuildContext context, GoRouterState state) =>
-                  const FamilyScreen('dummy'),
+              builder:
+                  (BuildContext context, GoRouterState state) =>
+                      const FamilyScreen('dummy'),
               routes: <GoRoute>[
                 GoRoute(
                   path: 'person',
-                  builder: (BuildContext context, GoRouterState state) =>
-                      const PersonScreen('dummy', 'dummy'),
+                  builder:
+                      (BuildContext context, GoRouterState state) =>
+                          const PersonScreen('dummy', 'dummy'),
                 ),
               ],
             ),
@@ -2042,8 +2247,9 @@ void main() {
         routes,
         tester,
         initialLocation: '/home',
-        errorBuilder: (BuildContext context, GoRouterState state) =>
-            TestErrorScreen(state.error!),
+        errorBuilder:
+            (BuildContext context, GoRouterState state) =>
+                TestErrorScreen(state.error!),
       );
       router.go('person');
 
@@ -2055,8 +2261,9 @@ void main() {
       expect(matches, hasLength(0));
     });
 
-    testWidgets('preserve path param spaces and slashes',
-        (WidgetTester tester) async {
+    testWidgets('preserve path param spaces and slashes', (
+      WidgetTester tester,
+    ) async {
       const String param1 = 'param w/ spaces and slashes';
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
@@ -2071,11 +2278,14 @@ void main() {
               },
             ),
           ],
-        )
+        ),
       ];
 
-      final GoRouter router =
-          await createRouter(routes, tester, initialLocation: '/home');
+      final GoRouter router = await createRouter(
+        routes,
+        tester,
+        initialLocation: '/home',
+      );
       final String loc = 'page1/${Uri.encodeComponent(param1)}';
       router.go('./$loc');
 
@@ -2086,8 +2296,9 @@ void main() {
       expect(matches.pathParameters['param1'], param1);
     });
 
-    testWidgets('preserve query param spaces and slashes',
-        (WidgetTester tester) async {
+    testWidgets('preserve query param spaces and slashes', (
+      WidgetTester tester,
+    ) async {
       const String param1 = 'param w/ spaces and slashes';
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
@@ -2102,16 +2313,20 @@ void main() {
               },
             ),
           ],
-        )
+        ),
       ];
 
-      final GoRouter router =
-          await createRouter(routes, tester, initialLocation: '/home');
+      final GoRouter router = await createRouter(
+        routes,
+        tester,
+        initialLocation: '/home',
+      );
 
-      final String loc = Uri(
-        path: 'page1',
-        queryParameters: <String, dynamic>{'param1': param1},
-      ).toString();
+      final String loc =
+          Uri(
+            path: 'page1',
+            queryParameters: <String, dynamic>{'param1': param1},
+          ).toString();
       router.go('./$loc');
 
       await tester.pumpAndSettle();
@@ -2127,30 +2342,39 @@ void main() {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder: (BuildContext context, GoRouterState state) =>
-              const HomeScreen(),
+          builder:
+              (BuildContext context, GoRouterState state) => const HomeScreen(),
           routes: <GoRoute>[
             GoRoute(
-                path: 'dummy',
-                builder: (BuildContext context, GoRouterState state) =>
-                    const DummyScreen()),
+              path: 'dummy',
+              builder:
+                  (BuildContext context, GoRouterState state) =>
+                      const DummyScreen(),
+            ),
             GoRoute(
-                path: 'login',
-                builder: (BuildContext context, GoRouterState state) =>
-                    const LoginScreen()),
+              path: 'login',
+              builder:
+                  (BuildContext context, GoRouterState state) =>
+                      const LoginScreen(),
+            ),
           ],
         ),
       ];
       bool redirected = false;
 
-      final GoRouter router = await createRouter(routes, tester,
-          redirect: (BuildContext context, GoRouterState state) {
-        redirected = true;
-        return state.matchedLocation == '/login' ? null : '/login';
-      });
+      final GoRouter router = await createRouter(
+        routes,
+        tester,
+        redirect: (BuildContext context, GoRouterState state) {
+          redirected = true;
+          return state.matchedLocation == '/login' ? null : '/login';
+        },
+      );
 
       expect(
-          router.routerDelegate.currentConfiguration.uri.toString(), '/login');
+        router.routerDelegate.currentConfiguration.uri.toString(),
+        '/login',
+      );
       expect(redirected, isTrue);
 
       redirected = false;
@@ -2159,62 +2383,28 @@ void main() {
 
       await tester.pumpAndSettle();
       expect(
-          router.routerDelegate.currentConfiguration.uri.toString(), '/login');
+        router.routerDelegate.currentConfiguration.uri.toString(),
+        '/login',
+      );
       expect(redirected, isTrue);
     });
 
-    testWidgets('redirect can redirect to same path',
-        (WidgetTester tester) async {
+    testWidgets('redirect can redirect to same path', (
+      WidgetTester tester,
+    ) async {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder: (BuildContext context, GoRouterState state) =>
-              const HomeScreen(),
+          builder:
+              (BuildContext context, GoRouterState state) => const HomeScreen(),
           routes: <GoRoute>[
             GoRoute(
-                path: 'dummy',
-                // Return same location.
-                redirect: (_, GoRouterState state) => state.uri.toString(),
-                builder: (BuildContext context, GoRouterState state) =>
-                    const DummyScreen()),
-          ],
-        ),
-      ];
-
-      final GoRouter router = await createRouter(routes, tester,
-          redirect: (BuildContext context, GoRouterState state) {
-        // Return same location.
-        return state.uri.toString();
-      });
-
-      expect(router.routerDelegate.currentConfiguration.uri.toString(), '/');
-      // Directly set the url through platform message.
-      await sendPlatformUrl('/dummy', tester);
-      await tester.pumpAndSettle();
-      expect(
-          router.routerDelegate.currentConfiguration.uri.toString(), '/dummy');
-    });
-
-    testWidgets('top-level redirect w/ named routes',
-        (WidgetTester tester) async {
-      final List<GoRoute> routes = <GoRoute>[
-        GoRoute(
-          name: 'home',
-          path: '/',
-          builder: (BuildContext context, GoRouterState state) =>
-              const HomeScreen(),
-          routes: <GoRoute>[
-            GoRoute(
-              name: 'dummy',
               path: 'dummy',
-              builder: (BuildContext context, GoRouterState state) =>
-                  const DummyScreen(),
-            ),
-            GoRoute(
-              name: 'login',
-              path: 'login',
-              builder: (BuildContext context, GoRouterState state) =>
-                  const LoginScreen(),
+              // Return same location.
+              redirect: (_, GoRouterState state) => state.uri.toString(),
+              builder:
+                  (BuildContext context, GoRouterState state) =>
+                      const DummyScreen(),
             ),
           ],
         ),
@@ -2223,32 +2413,84 @@ void main() {
       final GoRouter router = await createRouter(
         routes,
         tester,
-        redirect: (BuildContext context, GoRouterState state) =>
-            state.matchedLocation == '/login'
-                ? null
-                : state.namedLocation('login'),
+        redirect: (BuildContext context, GoRouterState state) {
+          // Return same location.
+          return state.uri.toString();
+        },
+      );
+
+      expect(router.routerDelegate.currentConfiguration.uri.toString(), '/');
+      // Directly set the url through platform message.
+      await sendPlatformUrl('/dummy', tester);
+      await tester.pumpAndSettle();
+      expect(
+        router.routerDelegate.currentConfiguration.uri.toString(),
+        '/dummy',
+      );
+    });
+
+    testWidgets('top-level redirect w/ named routes', (
+      WidgetTester tester,
+    ) async {
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+          name: 'home',
+          path: '/',
+          builder:
+              (BuildContext context, GoRouterState state) => const HomeScreen(),
+          routes: <GoRoute>[
+            GoRoute(
+              name: 'dummy',
+              path: 'dummy',
+              builder:
+                  (BuildContext context, GoRouterState state) =>
+                      const DummyScreen(),
+            ),
+            GoRoute(
+              name: 'login',
+              path: 'login',
+              builder:
+                  (BuildContext context, GoRouterState state) =>
+                      const LoginScreen(),
+            ),
+          ],
+        ),
+      ];
+
+      final GoRouter router = await createRouter(
+        routes,
+        tester,
+        redirect:
+            (BuildContext context, GoRouterState state) =>
+                state.matchedLocation == '/login'
+                    ? null
+                    : state.namedLocation('login'),
       );
       expect(
-          router.routerDelegate.currentConfiguration.uri.toString(), '/login');
+        router.routerDelegate.currentConfiguration.uri.toString(),
+        '/login',
+      );
     });
 
     testWidgets('route-level redirect', (WidgetTester tester) async {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder: (BuildContext context, GoRouterState state) =>
-              const HomeScreen(),
+          builder:
+              (BuildContext context, GoRouterState state) => const HomeScreen(),
           routes: <GoRoute>[
             GoRoute(
               path: 'dummy',
-              builder: (BuildContext context, GoRouterState state) =>
-                  const DummyScreen(),
+              builder:
+                  (BuildContext context, GoRouterState state) =>
+                      const DummyScreen(),
               redirect: (BuildContext context, GoRouterState state) => '/login',
             ),
             GoRoute(
               path: 'login',
-              builder: (BuildContext context, GoRouterState state) =>
-                  const LoginScreen(),
+              builder:
+                  (BuildContext context, GoRouterState state) =>
+                      const LoginScreen(),
             ),
           ],
         ),
@@ -2258,75 +2500,93 @@ void main() {
       router.go('/dummy');
       await tester.pump();
       expect(
-          router.routerDelegate.currentConfiguration.uri.toString(), '/login');
+        router.routerDelegate.currentConfiguration.uri.toString(),
+        '/login',
+      );
     });
 
-    testWidgets('top-level redirect take priority over route level',
-        (WidgetTester tester) async {
+    testWidgets('top-level redirect take priority over route level', (
+      WidgetTester tester,
+    ) async {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder: (BuildContext context, GoRouterState state) =>
-              const HomeScreen(),
+          builder:
+              (BuildContext context, GoRouterState state) => const HomeScreen(),
           routes: <GoRoute>[
             GoRoute(
-                path: 'dummy',
-                builder: (BuildContext context, GoRouterState state) =>
-                    const DummyScreen(),
-                redirect: (BuildContext context, GoRouterState state) {
-                  // should never be reached.
-                  assert(false);
-                  return '/dummy2';
-                }),
+              path: 'dummy',
+              builder:
+                  (BuildContext context, GoRouterState state) =>
+                      const DummyScreen(),
+              redirect: (BuildContext context, GoRouterState state) {
+                // should never be reached.
+                assert(false);
+                return '/dummy2';
+              },
+            ),
             GoRoute(
-                path: 'dummy2',
-                builder: (BuildContext context, GoRouterState state) =>
-                    const DummyScreen()),
+              path: 'dummy2',
+              builder:
+                  (BuildContext context, GoRouterState state) =>
+                      const DummyScreen(),
+            ),
             GoRoute(
-                path: 'login',
-                builder: (BuildContext context, GoRouterState state) =>
-                    const LoginScreen()),
+              path: 'login',
+              builder:
+                  (BuildContext context, GoRouterState state) =>
+                      const LoginScreen(),
+            ),
           ],
         ),
       ];
       bool redirected = false;
-      final GoRouter router = await createRouter(routes, tester,
-          redirect: (BuildContext context, GoRouterState state) {
-        redirected = true;
-        return state.matchedLocation == '/login' ? null : '/login';
-      });
+      final GoRouter router = await createRouter(
+        routes,
+        tester,
+        redirect: (BuildContext context, GoRouterState state) {
+          redirected = true;
+          return state.matchedLocation == '/login' ? null : '/login';
+        },
+      );
       redirected = false;
       // Directly set the url through platform message.
       await sendPlatformUrl('/dummy', tester);
 
       await tester.pumpAndSettle();
       expect(
-          router.routerDelegate.currentConfiguration.uri.toString(), '/login');
+        router.routerDelegate.currentConfiguration.uri.toString(),
+        '/login',
+      );
       expect(redirected, isTrue);
     });
 
-    testWidgets('route-level redirect w/ named routes',
-        (WidgetTester tester) async {
+    testWidgets('route-level redirect w/ named routes', (
+      WidgetTester tester,
+    ) async {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           name: 'home',
           path: '/',
-          builder: (BuildContext context, GoRouterState state) =>
-              const HomeScreen(),
+          builder:
+              (BuildContext context, GoRouterState state) => const HomeScreen(),
           routes: <GoRoute>[
             GoRoute(
               name: 'dummy',
               path: 'dummy',
-              builder: (BuildContext context, GoRouterState state) =>
-                  const DummyScreen(),
-              redirect: (BuildContext context, GoRouterState state) =>
-                  state.namedLocation('login'),
+              builder:
+                  (BuildContext context, GoRouterState state) =>
+                      const DummyScreen(),
+              redirect:
+                  (BuildContext context, GoRouterState state) =>
+                      state.namedLocation('login'),
             ),
             GoRoute(
               name: 'login',
               path: 'login',
-              builder: (BuildContext context, GoRouterState state) =>
-                  const LoginScreen(),
+              builder:
+                  (BuildContext context, GoRouterState state) =>
+                      const LoginScreen(),
             ),
           ],
         ),
@@ -2336,34 +2596,42 @@ void main() {
       router.go('/dummy');
       await tester.pump();
       expect(
-          router.routerDelegate.currentConfiguration.uri.toString(), '/login');
+        router.routerDelegate.currentConfiguration.uri.toString(),
+        '/login',
+      );
     });
 
     testWidgets('multiple mixed redirect', (WidgetTester tester) async {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder: (BuildContext context, GoRouterState state) =>
-              const HomeScreen(),
+          builder:
+              (BuildContext context, GoRouterState state) => const HomeScreen(),
           routes: <GoRoute>[
             GoRoute(
               path: 'dummy1',
-              builder: (BuildContext context, GoRouterState state) =>
-                  const DummyScreen(),
+              builder:
+                  (BuildContext context, GoRouterState state) =>
+                      const DummyScreen(),
             ),
             GoRoute(
               path: 'dummy2',
-              builder: (BuildContext context, GoRouterState state) =>
-                  const DummyScreen(),
+              builder:
+                  (BuildContext context, GoRouterState state) =>
+                      const DummyScreen(),
               redirect: (BuildContext context, GoRouterState state) => '/',
             ),
           ],
         ),
       ];
 
-      final GoRouter router = await createRouter(routes, tester,
-          redirect: (BuildContext context, GoRouterState state) =>
-              state.matchedLocation == '/dummy1' ? '/dummy2' : null);
+      final GoRouter router = await createRouter(
+        routes,
+        tester,
+        redirect:
+            (BuildContext context, GoRouterState state) =>
+                state.matchedLocation == '/dummy1' ? '/dummy2' : null,
+      );
       router.go('/dummy1');
       await tester.pump();
       expect(router.routerDelegate.currentConfiguration.uri.toString(), '/');
@@ -2373,21 +2641,24 @@ void main() {
       final GoRouter router = await createRouter(
         <GoRoute>[],
         tester,
-        redirect: (BuildContext context, GoRouterState state) =>
-            state.matchedLocation == '/'
-                ? '/login'
-                : state.matchedLocation == '/login'
+        redirect:
+            (BuildContext context, GoRouterState state) =>
+                state.matchedLocation == '/'
+                    ? '/login'
+                    : state.matchedLocation == '/login'
                     ? '/'
                     : null,
-        errorBuilder: (BuildContext context, GoRouterState state) =>
-            TestErrorScreen(state.error!),
+        errorBuilder:
+            (BuildContext context, GoRouterState state) =>
+                TestErrorScreen(state.error!),
       );
       final List<RouteMatchBase> matches =
           router.routerDelegate.currentConfiguration.matches;
       expect(matches, hasLength(0));
       expect(find.byType(TestErrorScreen), findsOneWidget);
-      final TestErrorScreen screen =
-          tester.widget<TestErrorScreen>(find.byType(TestErrorScreen));
+      final TestErrorScreen screen = tester.widget<TestErrorScreen>(
+        find.byType(TestErrorScreen),
+      );
       expect(screen.ex, isNotNull);
     });
 
@@ -2406,16 +2677,18 @@ void main() {
           ),
         ],
         tester,
-        errorBuilder: (BuildContext context, GoRouterState state) =>
-            TestErrorScreen(state.error!),
+        errorBuilder:
+            (BuildContext context, GoRouterState state) =>
+                TestErrorScreen(state.error!),
       );
 
       final List<RouteMatchBase> matches =
           router.routerDelegate.currentConfiguration.matches;
       expect(matches, hasLength(0));
       expect(find.byType(TestErrorScreen), findsOneWidget);
-      final TestErrorScreen screen =
-          tester.widget<TestErrorScreen>(find.byType(TestErrorScreen));
+      final TestErrorScreen screen = tester.widget<TestErrorScreen>(
+        find.byType(TestErrorScreen),
+      );
       expect(screen.ex, isNotNull);
     });
 
@@ -2429,52 +2702,60 @@ void main() {
           ),
         ],
         tester,
-        redirect: (BuildContext context, GoRouterState state) =>
-            state.matchedLocation == '/' ? '/login' : null,
-        errorBuilder: (BuildContext context, GoRouterState state) =>
-            TestErrorScreen(state.error!),
+        redirect:
+            (BuildContext context, GoRouterState state) =>
+                state.matchedLocation == '/' ? '/login' : null,
+        errorBuilder:
+            (BuildContext context, GoRouterState state) =>
+                TestErrorScreen(state.error!),
       );
 
       final List<RouteMatchBase> matches =
           router.routerDelegate.currentConfiguration.matches;
       expect(matches, hasLength(0));
       expect(find.byType(TestErrorScreen), findsOneWidget);
-      final TestErrorScreen screen =
-          tester.widget<TestErrorScreen>(find.byType(TestErrorScreen));
+      final TestErrorScreen screen = tester.widget<TestErrorScreen>(
+        find.byType(TestErrorScreen),
+      );
       expect(screen.ex, isNotNull);
     });
 
-    testWidgets('top-level redirect loop w/ query params',
-        (WidgetTester tester) async {
+    testWidgets('top-level redirect loop w/ query params', (
+      WidgetTester tester,
+    ) async {
       final GoRouter router = await createRouter(
         <GoRoute>[],
         tester,
-        redirect: (BuildContext context, GoRouterState state) =>
-            state.matchedLocation == '/'
-                ? '/login?from=${state.uri}'
-                : state.matchedLocation == '/login'
+        redirect:
+            (BuildContext context, GoRouterState state) =>
+                state.matchedLocation == '/'
+                    ? '/login?from=${state.uri}'
+                    : state.matchedLocation == '/login'
                     ? '/'
                     : null,
-        errorBuilder: (BuildContext context, GoRouterState state) =>
-            TestErrorScreen(state.error!),
+        errorBuilder:
+            (BuildContext context, GoRouterState state) =>
+                TestErrorScreen(state.error!),
       );
 
       final List<RouteMatchBase> matches =
           router.routerDelegate.currentConfiguration.matches;
       expect(matches, hasLength(0));
       expect(find.byType(TestErrorScreen), findsOneWidget);
-      final TestErrorScreen screen =
-          tester.widget<TestErrorScreen>(find.byType(TestErrorScreen));
+      final TestErrorScreen screen = tester.widget<TestErrorScreen>(
+        find.byType(TestErrorScreen),
+      );
       expect(screen.ex, isNotNull);
     });
 
-    testWidgets('expect null path/fullPath on top-level redirect',
-        (WidgetTester tester) async {
+    testWidgets('expect null path/fullPath on top-level redirect', (
+      WidgetTester tester,
+    ) async {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder: (BuildContext context, GoRouterState state) =>
-              const HomeScreen(),
+          builder:
+              (BuildContext context, GoRouterState state) => const HomeScreen(),
         ),
         GoRoute(
           path: '/dummy',
@@ -2495,13 +2776,14 @@ void main() {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder: (BuildContext context, GoRouterState state) =>
-              const HomeScreen(),
+          builder:
+              (BuildContext context, GoRouterState state) => const HomeScreen(),
         ),
         GoRoute(
           path: '/login',
-          builder: (BuildContext context, GoRouterState state) =>
-              const LoginScreen(),
+          builder:
+              (BuildContext context, GoRouterState state) =>
+                  const LoginScreen(),
         ),
       ];
 
@@ -2527,20 +2809,24 @@ void main() {
       expect(find.byType(LoginScreen), findsOneWidget);
     });
 
-    testWidgets('top-level redirect state contains path parameters',
-        (WidgetTester tester) async {
+    testWidgets('top-level redirect state contains path parameters', (
+      WidgetTester tester,
+    ) async {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
-            path: '/',
-            builder: (BuildContext context, GoRouterState state) =>
-                const DummyScreen(),
-            routes: <RouteBase>[
-              GoRoute(
-                path: ':id',
-                builder: (BuildContext context, GoRouterState state) =>
-                    const DummyScreen(),
-              ),
-            ]),
+          path: '/',
+          builder:
+              (BuildContext context, GoRouterState state) =>
+                  const DummyScreen(),
+          routes: <RouteBase>[
+            GoRoute(
+              path: ':id',
+              builder:
+                  (BuildContext context, GoRouterState state) =>
+                      const DummyScreen(),
+            ),
+          ],
+        ),
       ];
 
       final GoRouter router = await createRouter(
@@ -2591,8 +2877,9 @@ void main() {
       expect(find.byType(HomeScreen), findsOneWidget);
     });
 
-    testWidgets('sub-sub-route-level redirect params',
-        (WidgetTester tester) async {
+    testWidgets('sub-sub-route-level redirect params', (
+      WidgetTester tester,
+    ) async {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
@@ -2600,8 +2887,9 @@ void main() {
           routes: <GoRoute>[
             GoRoute(
               path: 'family/:fid',
-              builder: (BuildContext c, GoRouterState s) =>
-                  FamilyScreen(s.pathParameters['fid']!),
+              builder:
+                  (BuildContext c, GoRouterState s) =>
+                      FamilyScreen(s.pathParameters['fid']!),
               routes: <GoRoute>[
                 GoRoute(
                   path: 'person/:pid',
@@ -2610,10 +2898,11 @@ void main() {
                     expect(s.pathParameters['pid'], 'p1');
                     return null;
                   },
-                  builder: (BuildContext c, GoRouterState s) => PersonScreen(
-                    s.pathParameters['fid']!,
-                    s.pathParameters['pid']!,
-                  ),
+                  builder:
+                      (BuildContext c, GoRouterState s) => PersonScreen(
+                        s.pathParameters['fid']!,
+                        s.pathParameters['pid']!,
+                      ),
                 ),
               ],
             ),
@@ -2632,8 +2921,9 @@ void main() {
       expect(matches.length, 3);
       expect(find.byType(HomeScreen, skipOffstage: false), findsOneWidget);
       expect(find.byType(FamilyScreen, skipOffstage: false), findsOneWidget);
-      final PersonScreen page =
-          tester.widget<PersonScreen>(find.byType(PersonScreen));
+      final PersonScreen page = tester.widget<PersonScreen>(
+        find.byType(PersonScreen),
+      );
       expect(page.fid, 'f2');
       expect(page.pid, 'p1');
     });
@@ -2642,10 +2932,11 @@ void main() {
       final GoRouter router = await createRouter(
         <GoRoute>[],
         tester,
-        redirect: (BuildContext context, GoRouterState state) =>
-            '/${state.uri}+',
-        errorBuilder: (BuildContext context, GoRouterState state) =>
-            TestErrorScreen(state.error!),
+        redirect:
+            (BuildContext context, GoRouterState state) => '/${state.uri}+',
+        errorBuilder:
+            (BuildContext context, GoRouterState state) =>
+                TestErrorScreen(state.error!),
         redirectLimit: 10,
       );
 
@@ -2653,16 +2944,15 @@ void main() {
           router.routerDelegate.currentConfiguration.matches;
       expect(matches, hasLength(0));
       expect(find.byType(TestErrorScreen), findsOneWidget);
-      final TestErrorScreen screen =
-          tester.widget<TestErrorScreen>(find.byType(TestErrorScreen));
+      final TestErrorScreen screen = tester.widget<TestErrorScreen>(
+        find.byType(TestErrorScreen),
+      );
       expect(screen.ex, isNotNull);
     });
 
     testWidgets('can push error page', (WidgetTester tester) async {
       final GoRouter router = await createRouter(
-        <GoRoute>[
-          GoRoute(path: '/', builder: (_, __) => const Text('/')),
-        ],
+        <GoRoute>[GoRoute(path: '/', builder: (_, __) => const Text('/'))],
         tester,
         errorBuilder: (_, GoRouterState state) {
           return Text(state.uri.toString());
@@ -2707,8 +2997,8 @@ void main() {
         GoRoute(
           name: 'home',
           path: '/',
-          builder: (BuildContext context, GoRouterState state) =>
-              const HomeScreen(),
+          builder:
+              (BuildContext context, GoRouterState state) => const HomeScreen(),
           routes: <GoRoute>[
             GoRoute(
               name: 'login',
@@ -2747,39 +3037,46 @@ void main() {
       expect(isCallRouteRedirect, true);
     });
 
-    testWidgets('parent route level redirect take priority over child',
-        (WidgetTester tester) async {
+    testWidgets('parent route level redirect take priority over child', (
+      WidgetTester tester,
+    ) async {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder: (BuildContext context, GoRouterState state) =>
-              const HomeScreen(),
+          builder:
+              (BuildContext context, GoRouterState state) => const HomeScreen(),
           routes: <GoRoute>[
             GoRoute(
-                path: 'dummy',
-                builder: (BuildContext context, GoRouterState state) =>
-                    const DummyScreen(),
-                redirect: (BuildContext context, GoRouterState state) =>
-                    '/other',
-                routes: <GoRoute>[
-                  GoRoute(
-                    path: 'dummy2',
-                    builder: (BuildContext context, GoRouterState state) =>
-                        const DummyScreen(),
-                    redirect: (BuildContext context, GoRouterState state) {
-                      assert(false);
-                      return '/other2';
-                    },
-                  ),
-                ]),
+              path: 'dummy',
+              builder:
+                  (BuildContext context, GoRouterState state) =>
+                      const DummyScreen(),
+              redirect: (BuildContext context, GoRouterState state) => '/other',
+              routes: <GoRoute>[
+                GoRoute(
+                  path: 'dummy2',
+                  builder:
+                      (BuildContext context, GoRouterState state) =>
+                          const DummyScreen(),
+                  redirect: (BuildContext context, GoRouterState state) {
+                    assert(false);
+                    return '/other2';
+                  },
+                ),
+              ],
+            ),
             GoRoute(
-                path: 'other',
-                builder: (BuildContext context, GoRouterState state) =>
-                    const DummyScreen()),
+              path: 'other',
+              builder:
+                  (BuildContext context, GoRouterState state) =>
+                      const DummyScreen(),
+            ),
             GoRoute(
-                path: 'other2',
-                builder: (BuildContext context, GoRouterState state) =>
-                    const DummyScreen()),
+              path: 'other2',
+              builder:
+                  (BuildContext context, GoRouterState state) =>
+                      const DummyScreen(),
+            ),
           ],
         ),
       ];
@@ -2791,33 +3088,40 @@ void main() {
 
       await tester.pumpAndSettle();
       expect(
-          router.routerDelegate.currentConfiguration.uri.toString(), '/other');
+        router.routerDelegate.currentConfiguration.uri.toString(),
+        '/other',
+      );
     });
 
-    testWidgets('redirect when go to a shell route',
-        (WidgetTester tester) async {
+    testWidgets('redirect when go to a shell route', (
+      WidgetTester tester,
+    ) async {
       final List<RouteBase> routes = <RouteBase>[
         ShellRoute(
           redirect: (BuildContext context, GoRouterState state) => '/dummy',
-          builder: (BuildContext context, GoRouterState state, Widget child) =>
-              Scaffold(appBar: AppBar(), body: child),
+          builder:
+              (BuildContext context, GoRouterState state, Widget child) =>
+                  Scaffold(appBar: AppBar(), body: child),
           routes: <RouteBase>[
             GoRoute(
               path: '/other',
-              builder: (BuildContext context, GoRouterState state) =>
-                  const DummyScreen(),
+              builder:
+                  (BuildContext context, GoRouterState state) =>
+                      const DummyScreen(),
             ),
             GoRoute(
               path: '/other2',
-              builder: (BuildContext context, GoRouterState state) =>
-                  const DummyScreen(),
+              builder:
+                  (BuildContext context, GoRouterState state) =>
+                      const DummyScreen(),
             ),
           ],
         ),
         GoRoute(
           path: '/dummy',
-          builder: (BuildContext context, GoRouterState state) =>
-              const DummyScreen(),
+          builder:
+              (BuildContext context, GoRouterState state) =>
+                  const DummyScreen(),
         ),
       ];
 
@@ -2833,13 +3137,17 @@ void main() {
       }
     });
 
-    testWidgets('redirect when go to a stateful shell route',
-        (WidgetTester tester) async {
+    testWidgets('redirect when go to a stateful shell route', (
+      WidgetTester tester,
+    ) async {
       final List<RouteBase> routes = <RouteBase>[
         StatefulShellRoute.indexedStack(
           redirect: (BuildContext context, GoRouterState state) => '/dummy',
-          builder: (BuildContext context, GoRouterState state,
-              StatefulNavigationShell navigationShell) {
+          builder: (
+            BuildContext context,
+            GoRouterState state,
+            StatefulNavigationShell navigationShell,
+          ) {
             return navigationShell;
           },
           branches: <StatefulShellBranch>[
@@ -2847,8 +3155,9 @@ void main() {
               routes: <RouteBase>[
                 GoRoute(
                   path: '/other',
-                  builder: (BuildContext context, GoRouterState state) =>
-                      const DummyScreen(),
+                  builder:
+                      (BuildContext context, GoRouterState state) =>
+                          const DummyScreen(),
                 ),
               ],
             ),
@@ -2856,8 +3165,9 @@ void main() {
               routes: <RouteBase>[
                 GoRoute(
                   path: '/other2',
-                  builder: (BuildContext context, GoRouterState state) =>
-                      const DummyScreen(),
+                  builder:
+                      (BuildContext context, GoRouterState state) =>
+                          const DummyScreen(),
                 ),
               ],
             ),
@@ -2865,8 +3175,9 @@ void main() {
         ),
         GoRoute(
           path: '/dummy',
-          builder: (BuildContext context, GoRouterState state) =>
-              const DummyScreen(),
+          builder:
+              (BuildContext context, GoRouterState state) =>
+                  const DummyScreen(),
         ),
       ];
 
@@ -2888,13 +3199,14 @@ void main() {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder: (BuildContext context, GoRouterState state) =>
-              const HomeScreen(),
+          builder:
+              (BuildContext context, GoRouterState state) => const HomeScreen(),
           routes: <GoRoute>[
             GoRoute(
               path: 'dummy',
-              builder: (BuildContext context, GoRouterState state) =>
-                  const DummyScreen(),
+              builder:
+                  (BuildContext context, GoRouterState state) =>
+                      const DummyScreen(),
             ),
           ],
         ),
@@ -2906,15 +3218,17 @@ void main() {
         initialLocation: '/dummy',
       );
       expect(
-          router.routerDelegate.currentConfiguration.uri.toString(), '/dummy');
+        router.routerDelegate.currentConfiguration.uri.toString(),
+        '/dummy',
+      );
     });
 
     testWidgets('initial location with extra', (WidgetTester tester) async {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder: (BuildContext context, GoRouterState state) =>
-              const HomeScreen(),
+          builder:
+              (BuildContext context, GoRouterState state) => const HomeScreen(),
           routes: <GoRoute>[
             GoRoute(
               path: 'dummy',
@@ -2933,7 +3247,9 @@ void main() {
         initialExtra: 'extra',
       );
       expect(
-          router.routerDelegate.currentConfiguration.uri.toString(), '/dummy');
+        router.routerDelegate.currentConfiguration.uri.toString(),
+        '/dummy',
+      );
       expect(find.byKey(const ValueKey<Object?>('extra')), findsOneWidget);
     });
 
@@ -2941,8 +3257,8 @@ void main() {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder: (BuildContext context, GoRouterState state) =>
-              const HomeScreen(),
+          builder:
+              (BuildContext context, GoRouterState state) => const HomeScreen(),
         ),
         GoRoute(
           path: '/dummy',
@@ -2960,41 +3276,40 @@ void main() {
     });
 
     testWidgets(
-        'does not take precedence over platformDispatcher.defaultRouteName',
-        (WidgetTester tester) async {
-      TestWidgetsFlutterBinding
-          .instance.platformDispatcher.defaultRouteNameTestValue = '/dummy';
+      'does not take precedence over platformDispatcher.defaultRouteName',
+      (WidgetTester tester) async {
+        TestWidgetsFlutterBinding
+            .instance
+            .platformDispatcher
+            .defaultRouteNameTestValue = '/dummy';
 
-      final List<GoRoute> routes = <GoRoute>[
-        GoRoute(
-          path: '/',
-          builder: (BuildContext context, GoRouterState state) =>
-              const HomeScreen(),
-          routes: <GoRoute>[
-            GoRoute(
-              path: 'dummy',
-              builder: (BuildContext context, GoRouterState state) =>
-                  const DummyScreen(),
-            ),
-          ],
-        ),
-      ];
+        final List<GoRoute> routes = <GoRoute>[
+          GoRoute(
+            path: '/',
+            builder:
+                (BuildContext context, GoRouterState state) =>
+                    const HomeScreen(),
+            routes: <GoRoute>[
+              GoRoute(
+                path: 'dummy',
+                builder:
+                    (BuildContext context, GoRouterState state) =>
+                        const DummyScreen(),
+              ),
+            ],
+          ),
+        ];
 
-      final GoRouter router = await createRouter(
-        routes,
-        tester,
-      );
-      expect(router.routeInformationProvider.value.uri.path, '/dummy');
-      TestWidgetsFlutterBinding.instance.platformDispatcher
-          .clearDefaultRouteNameTestValue();
-    });
+        final GoRouter router = await createRouter(routes, tester);
+        expect(router.routeInformationProvider.value.uri.path, '/dummy');
+        TestWidgetsFlutterBinding.instance.platformDispatcher
+            .clearDefaultRouteNameTestValue();
+      },
+    );
 
     test('throws assertion if initialExtra is set w/o initialLocation', () {
       expect(
-        () => GoRouter(
-          routes: const <GoRoute>[],
-          initialExtra: 1,
-        ),
+        () => GoRouter(routes: const <GoRoute>[], initialExtra: 1),
         throwsA(
           isA<AssertionError>().having(
             (AssertionError e) => e.message,
@@ -3010,54 +3325,58 @@ void main() {
     final List<GoRoute> routes = <GoRoute>[
       GoRoute(
         path: '/',
-        builder: (BuildContext context, GoRouterState state) =>
-            const HomeScreen(),
+        builder:
+            (BuildContext context, GoRouterState state) => const HomeScreen(),
       ),
     ];
 
     testWidgets(
-        'When platformDispatcher.defaultRouteName is deep-link Uri with '
-        'scheme, authority, no path', (WidgetTester tester) async {
-      TestWidgetsFlutterBinding.instance.platformDispatcher
-          .defaultRouteNameTestValue = 'https://domain.com';
-      final GoRouter router = await createRouter(
-        routes,
-        tester,
-      );
-      expect(router.routeInformationProvider.value.uri.path, '/');
-      TestWidgetsFlutterBinding.instance.platformDispatcher
-          .clearDefaultRouteNameTestValue();
-    });
+      'When platformDispatcher.defaultRouteName is deep-link Uri with '
+      'scheme, authority, no path',
+      (WidgetTester tester) async {
+        TestWidgetsFlutterBinding
+            .instance
+            .platformDispatcher
+            .defaultRouteNameTestValue = 'https://domain.com';
+        final GoRouter router = await createRouter(routes, tester);
+        expect(router.routeInformationProvider.value.uri.path, '/');
+        TestWidgetsFlutterBinding.instance.platformDispatcher
+            .clearDefaultRouteNameTestValue();
+      },
+    );
 
     testWidgets(
-        'When platformDispatcher.defaultRouteName is deep-link Uri with '
-        'scheme, authority, no path, but trailing slash',
-        (WidgetTester tester) async {
-      TestWidgetsFlutterBinding.instance.platformDispatcher
-          .defaultRouteNameTestValue = 'https://domain.com/';
-      final GoRouter router = await createRouter(
-        routes,
-        tester,
-      );
-      expect(router.routeInformationProvider.value.uri.path, '/');
-      TestWidgetsFlutterBinding.instance.platformDispatcher
-          .clearDefaultRouteNameTestValue();
-    });
+      'When platformDispatcher.defaultRouteName is deep-link Uri with '
+      'scheme, authority, no path, but trailing slash',
+      (WidgetTester tester) async {
+        TestWidgetsFlutterBinding
+            .instance
+            .platformDispatcher
+            .defaultRouteNameTestValue = 'https://domain.com/';
+        final GoRouter router = await createRouter(routes, tester);
+        expect(router.routeInformationProvider.value.uri.path, '/');
+        TestWidgetsFlutterBinding.instance.platformDispatcher
+            .clearDefaultRouteNameTestValue();
+      },
+    );
 
     testWidgets(
-        'When platformDispatcher.defaultRouteName is deep-link Uri with '
-        'scheme, authority, no path, and query parameters',
-        (WidgetTester tester) async {
-      TestWidgetsFlutterBinding.instance.platformDispatcher
-          .defaultRouteNameTestValue = 'https://domain.com?param=1';
-      final GoRouter router = await createRouter(
-        routes,
-        tester,
-      );
-      expect(router.routeInformationProvider.value.uri.toString(), '/?param=1');
-      TestWidgetsFlutterBinding.instance.platformDispatcher
-          .clearDefaultRouteNameTestValue();
-    });
+      'When platformDispatcher.defaultRouteName is deep-link Uri with '
+      'scheme, authority, no path, and query parameters',
+      (WidgetTester tester) async {
+        TestWidgetsFlutterBinding
+            .instance
+            .platformDispatcher
+            .defaultRouteNameTestValue = 'https://domain.com?param=1';
+        final GoRouter router = await createRouter(routes, tester);
+        expect(
+          router.routeInformationProvider.value.uri.toString(),
+          'https://domain.com/?param=1',
+        );
+        TestWidgetsFlutterBinding.instance.platformDispatcher
+            .clearDefaultRouteNameTestValue();
+      },
+    );
   });
 
   group('params', () {
@@ -3065,13 +3384,14 @@ void main() {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder: (BuildContext context, GoRouterState state) =>
-              const HomeScreen(),
+          builder:
+              (BuildContext context, GoRouterState state) => const HomeScreen(),
         ),
         GoRoute(
           path: '/family/:fid',
-          builder: (BuildContext context, GoRouterState state) =>
-              FamilyScreen(state.pathParameters['fid']!),
+          builder:
+              (BuildContext context, GoRouterState state) =>
+                  FamilyScreen(state.pathParameters['fid']!),
         ),
       ];
 
@@ -3094,14 +3414,14 @@ void main() {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder: (BuildContext context, GoRouterState state) =>
-              const HomeScreen(),
+          builder:
+              (BuildContext context, GoRouterState state) => const HomeScreen(),
         ),
         GoRoute(
           path: '/family',
-          builder: (BuildContext context, GoRouterState state) => FamilyScreen(
-            state.uri.queryParameters['fid']!,
-          ),
+          builder:
+              (BuildContext context, GoRouterState state) =>
+                  FamilyScreen(state.uri.queryParameters['fid']!),
         ),
       ];
 
@@ -3120,8 +3440,9 @@ void main() {
       }
     });
 
-    testWidgets('preserve path param spaces and slashes',
-        (WidgetTester tester) async {
+    testWidgets('preserve path param spaces and slashes', (
+      WidgetTester tester,
+    ) async {
       const String param1 = 'param w/ spaces and slashes';
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
@@ -3143,8 +3464,9 @@ void main() {
       expect(matches.pathParameters['param1'], param1);
     });
 
-    testWidgets('preserve query param spaces and slashes',
-        (WidgetTester tester) async {
+    testWidgets('preserve query param spaces and slashes', (
+      WidgetTester tester,
+    ) async {
       const String param1 = 'param w/ spaces and slashes';
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
@@ -3178,13 +3500,11 @@ void main() {
       try {
         GoRouter(
           routes: <GoRoute>[
-            GoRoute(
-              path: '/:id/:blah/:bam/:id/:blah',
-              builder: dummy,
-            ),
+            GoRoute(path: '/:id/:blah/:bam/:id/:blah', builder: dummy),
           ],
-          errorBuilder: (BuildContext context, GoRouterState state) =>
-              TestErrorScreen(state.error!),
+          errorBuilder:
+              (BuildContext context, GoRouterState state) =>
+                  TestErrorScreen(state.error!),
           initialLocation: '/0/1/2/0/1',
         );
         expect(false, true);
@@ -3217,19 +3537,16 @@ void main() {
     });
 
     testWidgets('duplicate path + query param', (WidgetTester tester) async {
-      final GoRouter router = await createRouter(
-        <GoRoute>[
-          GoRoute(
-            path: '/:id',
-            builder: (BuildContext context, GoRouterState state) {
-              expect(state.pathParameters, <String, String>{'id': '0'});
-              expect(state.uri.queryParameters, <String, String>{'id': '1'});
-              return const HomeScreen();
-            },
-          ),
-        ],
-        tester,
-      );
+      final GoRouter router = await createRouter(<GoRoute>[
+        GoRoute(
+          path: '/:id',
+          builder: (BuildContext context, GoRouterState state) {
+            expect(state.pathParameters, <String, String>{'id': '0'});
+            expect(state.uri.queryParameters, <String, String>{'id': '1'});
+            return const HomeScreen();
+          },
+        ),
+      ], tester);
 
       router.go('/0?id=1');
       await tester.pumpAndSettle();
@@ -3240,75 +3557,71 @@ void main() {
     });
 
     testWidgets('push + query param', (WidgetTester tester) async {
-      final GoRouter router = await createRouter(
-        <GoRoute>[
-          GoRoute(path: '/', builder: dummy),
-          GoRoute(
-            path: '/family',
-            builder: (BuildContext context, GoRouterState state) =>
-                FamilyScreen(
-              state.uri.queryParameters['fid']!,
-            ),
-          ),
-          GoRoute(
-            path: '/person',
-            builder: (BuildContext context, GoRouterState state) =>
-                PersonScreen(
-              state.uri.queryParameters['fid']!,
-              state.uri.queryParameters['pid']!,
-            ),
-          ),
-        ],
-        tester,
-      );
+      final GoRouter router = await createRouter(<GoRoute>[
+        GoRoute(path: '/', builder: dummy),
+        GoRoute(
+          path: '/family',
+          builder:
+              (BuildContext context, GoRouterState state) =>
+                  FamilyScreen(state.uri.queryParameters['fid']!),
+        ),
+        GoRoute(
+          path: '/person',
+          builder:
+              (BuildContext context, GoRouterState state) => PersonScreen(
+                state.uri.queryParameters['fid']!,
+                state.uri.queryParameters['pid']!,
+              ),
+        ),
+      ], tester);
 
       router.go('/family?fid=f2');
       await tester.pumpAndSettle();
       router.push('/person?fid=f2&pid=p1');
       await tester.pumpAndSettle();
-      final FamilyScreen page1 = tester
-          .widget<FamilyScreen>(find.byType(FamilyScreen, skipOffstage: false));
+      final FamilyScreen page1 = tester.widget<FamilyScreen>(
+        find.byType(FamilyScreen, skipOffstage: false),
+      );
       expect(page1.fid, 'f2');
 
-      final PersonScreen page2 =
-          tester.widget<PersonScreen>(find.byType(PersonScreen));
+      final PersonScreen page2 = tester.widget<PersonScreen>(
+        find.byType(PersonScreen),
+      );
       expect(page2.fid, 'f2');
       expect(page2.pid, 'p1');
     });
 
     testWidgets('push + extra param', (WidgetTester tester) async {
-      final GoRouter router = await createRouter(
-        <GoRoute>[
-          GoRoute(path: '/', builder: dummy),
-          GoRoute(
-            path: '/family',
-            builder: (BuildContext context, GoRouterState state) =>
-                FamilyScreen(
-              (state.extra! as Map<String, String>)['fid']!,
-            ),
-          ),
-          GoRoute(
-            path: '/person',
-            builder: (BuildContext context, GoRouterState state) =>
-                PersonScreen(
-              (state.extra! as Map<String, String>)['fid']!,
-              (state.extra! as Map<String, String>)['pid']!,
-            ),
-          ),
-        ],
-        tester,
-      );
+      final GoRouter router = await createRouter(<GoRoute>[
+        GoRoute(path: '/', builder: dummy),
+        GoRoute(
+          path: '/family',
+          builder:
+              (BuildContext context, GoRouterState state) =>
+                  FamilyScreen((state.extra! as Map<String, String>)['fid']!),
+        ),
+        GoRoute(
+          path: '/person',
+          builder:
+              (BuildContext context, GoRouterState state) => PersonScreen(
+                (state.extra! as Map<String, String>)['fid']!,
+                (state.extra! as Map<String, String>)['pid']!,
+              ),
+        ),
+      ], tester);
 
       router.go('/family', extra: <String, String>{'fid': 'f2'});
       await tester.pumpAndSettle();
       router.push('/person', extra: <String, String>{'fid': 'f2', 'pid': 'p1'});
       await tester.pumpAndSettle();
-      final FamilyScreen page1 = tester
-          .widget<FamilyScreen>(find.byType(FamilyScreen, skipOffstage: false));
+      final FamilyScreen page1 = tester.widget<FamilyScreen>(
+        find.byType(FamilyScreen, skipOffstage: false),
+      );
       expect(page1.fid, 'f2');
 
-      final PersonScreen page2 =
-          tester.widget<PersonScreen>(find.byType(PersonScreen));
+      final PersonScreen page2 = tester.widget<PersonScreen>(
+        find.byType(PersonScreen),
+      );
       expect(page2.fid, 'f2');
       expect(page2.pid, 'p1');
     });
@@ -3317,13 +3630,14 @@ void main() {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder: (BuildContext context, GoRouterState state) =>
-              const HomeScreen(),
+          builder:
+              (BuildContext context, GoRouterState state) => const HomeScreen(),
         ),
         GoRoute(
           path: '/family/:fid',
-          builder: (BuildContext context, GoRouterState state) =>
-              FamilyScreen(state.pathParameters['fid']!),
+          builder:
+              (BuildContext context, GoRouterState state) =>
+                  FamilyScreen(state.pathParameters['fid']!),
           routes: <GoRoute>[
             GoRoute(
               path: 'person/:pid',
@@ -3356,13 +3670,17 @@ void main() {
       expect(imperativeRouteMatch.matches.pathParameters['pid'], pid);
     });
 
-    testWidgets('StatefulShellRoute supports nested routes with params',
-        (WidgetTester tester) async {
+    testWidgets('StatefulShellRoute supports nested routes with params', (
+      WidgetTester tester,
+    ) async {
       StatefulNavigationShell? routeState;
       final List<RouteBase> routes = <RouteBase>[
         StatefulShellRoute.indexedStack(
-          builder: (BuildContext context, GoRouterState state,
-              StatefulNavigationShell navigationShell) {
+          builder: (
+            BuildContext context,
+            GoRouterState state,
+            StatefulNavigationShell navigationShell,
+          ) {
             routeState = navigationShell;
             return navigationShell;
           },
@@ -3371,44 +3689,50 @@ void main() {
               routes: <RouteBase>[
                 GoRoute(
                   path: '/a',
-                  builder: (BuildContext context, GoRouterState state) =>
-                      const Text('Screen A'),
+                  builder:
+                      (BuildContext context, GoRouterState state) =>
+                          const Text('Screen A'),
                 ),
               ],
             ),
             StatefulShellBranch(
               routes: <RouteBase>[
                 GoRoute(
-                    path: '/family',
-                    builder: (BuildContext context, GoRouterState state) =>
-                        const Text('Families'),
-                    routes: <RouteBase>[
-                      GoRoute(
-                        path: ':fid',
-                        builder: (BuildContext context, GoRouterState state) =>
-                            FamilyScreen(state.pathParameters['fid']!),
-                        routes: <GoRoute>[
-                          GoRoute(
-                            path: 'person/:pid',
-                            builder:
-                                (BuildContext context, GoRouterState state) {
-                              final String fid = state.pathParameters['fid']!;
-                              final String pid = state.pathParameters['pid']!;
+                  path: '/family',
+                  builder:
+                      (BuildContext context, GoRouterState state) =>
+                          const Text('Families'),
+                  routes: <RouteBase>[
+                    GoRoute(
+                      path: ':fid',
+                      builder:
+                          (BuildContext context, GoRouterState state) =>
+                              FamilyScreen(state.pathParameters['fid']!),
+                      routes: <GoRoute>[
+                        GoRoute(
+                          path: 'person/:pid',
+                          builder: (BuildContext context, GoRouterState state) {
+                            final String fid = state.pathParameters['fid']!;
+                            final String pid = state.pathParameters['pid']!;
 
-                              return PersonScreen(fid, pid);
-                            },
-                          ),
-                        ],
-                      )
-                    ]),
+                            return PersonScreen(fid, pid);
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ],
             ),
           ],
         ),
       ];
 
-      final GoRouter router =
-          await createRouter(routes, tester, initialLocation: '/a');
+      final GoRouter router = await createRouter(
+        routes,
+        tester,
+        initialLocation: '/a',
+      );
       const String fid = 'f1';
       const String pid = 'p2';
       const String loc = '/family/$fid/person/$pid';
@@ -3440,14 +3764,18 @@ void main() {
       expect(matches.pathParameters['pid'], pid);
     });
 
-    testWidgets('StatefulShellRoute preserve extra when switching branch',
-        (WidgetTester tester) async {
+    testWidgets('StatefulShellRoute preserve extra when switching branch', (
+      WidgetTester tester,
+    ) async {
       StatefulNavigationShell? routeState;
       Object? latestExtra;
       final List<RouteBase> routes = <RouteBase>[
         StatefulShellRoute.indexedStack(
-          builder: (BuildContext context, GoRouterState state,
-              StatefulNavigationShell navigationShell) {
+          builder: (
+            BuildContext context,
+            GoRouterState state,
+            StatefulNavigationShell navigationShell,
+          ) {
             routeState = navigationShell;
             return navigationShell;
           },
@@ -3456,19 +3784,21 @@ void main() {
               routes: <RouteBase>[
                 GoRoute(
                   path: '/a',
-                  builder: (BuildContext context, GoRouterState state) =>
-                      const Text('Screen A'),
+                  builder:
+                      (BuildContext context, GoRouterState state) =>
+                          const Text('Screen A'),
                 ),
               ],
             ),
             StatefulShellBranch(
               routes: <RouteBase>[
                 GoRoute(
-                    path: '/b',
-                    builder: (BuildContext context, GoRouterState state) {
-                      latestExtra = state.extra;
-                      return const DummyScreen();
-                    }),
+                  path: '/b',
+                  builder: (BuildContext context, GoRouterState state) {
+                    latestExtra = state.extra;
+                    return const DummyScreen();
+                  },
+                ),
               ],
             ),
           ],
@@ -3476,8 +3806,12 @@ void main() {
       ];
       final Object expectedExtra = Object();
 
-      await createRouter(routes, tester,
-          initialLocation: '/b', initialExtra: expectedExtra);
+      await createRouter(
+        routes,
+        tester,
+        initialLocation: '/b',
+        initialExtra: expectedExtra,
+      );
       expect(latestExtra, expectedExtra);
       routeState!.goBranch(0);
       await tester.pumpAndSettle();
@@ -3486,8 +3820,9 @@ void main() {
       expect(latestExtra, expectedExtra);
     });
 
-    testWidgets('goNames should allow dynamics values for queryParams',
-        (WidgetTester tester) async {
+    testWidgets('goNames should allow dynamics values for queryParams', (
+      WidgetTester tester,
+    ) async {
       const Map<String, dynamic> queryParametersAll = <String, List<dynamic>>{
         'q1': <String>['v1'],
         'q2': <String>['v2', 'v3'],
@@ -3501,8 +3836,8 @@ void main() {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder: (BuildContext context, GoRouterState state) =>
-              const HomeScreen(),
+          builder:
+              (BuildContext context, GoRouterState state) => const HomeScreen(),
         ),
         GoRoute(
           name: 'page',
@@ -3519,17 +3854,21 @@ void main() {
 
       final GoRouter router = await createRouter(routes, tester);
 
-      router.goNamed('page', queryParameters: const <String, dynamic>{
-        'q1': 'v1',
-        'q2': <String>['v2', 'v3'],
-      });
+      router.goNamed(
+        'page',
+        queryParameters: const <String, dynamic>{
+          'q1': 'v1',
+          'q2': <String>['v2', 'v3'],
+        },
+      );
       await tester.pumpAndSettle();
       final List<RouteMatchBase> matches =
           router.routerDelegate.currentConfiguration.matches;
 
       expect(matches, hasLength(1));
       expectLocationWithQueryParams(
-          router.routerDelegate.currentConfiguration.uri.toString());
+        router.routerDelegate.currentConfiguration.uri.toString(),
+      );
       expect(
         tester.widget<DummyScreen>(find.byType(DummyScreen)),
         isA<DummyScreen>().having(
@@ -3541,8 +3880,9 @@ void main() {
     });
   });
 
-  testWidgets('go should preserve the query parameters when navigating',
-      (WidgetTester tester) async {
+  testWidgets('go should preserve the query parameters when navigating', (
+    WidgetTester tester,
+  ) async {
     const Map<String, dynamic> queryParametersAll = <String, List<dynamic>>{
       'q1': <String>['v1'],
       'q2': <String>['v2', 'v3'],
@@ -3556,8 +3896,8 @@ void main() {
     final List<GoRoute> routes = <GoRoute>[
       GoRoute(
         path: '/',
-        builder: (BuildContext context, GoRouterState state) =>
-            const HomeScreen(),
+        builder:
+            (BuildContext context, GoRouterState state) => const HomeScreen(),
       ),
       GoRoute(
         name: 'page',
@@ -3565,9 +3905,7 @@ void main() {
         builder: (BuildContext context, GoRouterState state) {
           expect(state.uri.queryParametersAll, queryParametersAll);
           expectLocationWithQueryParams(state.uri.toString());
-          return DummyScreen(
-            queryParametersAll: state.uri.queryParametersAll,
-          );
+          return DummyScreen(queryParametersAll: state.uri.queryParametersAll);
         },
       ),
     ];
@@ -3581,7 +3919,8 @@ void main() {
 
     expect(matches, hasLength(1));
     expectLocationWithQueryParams(
-        router.routerDelegate.currentConfiguration.uri.toString());
+      router.routerDelegate.currentConfiguration.uri.toString(),
+    );
     expect(
       tester.widget<DummyScreen>(find.byType(DummyScreen)),
       isA<DummyScreen>().having(
@@ -3592,8 +3931,9 @@ void main() {
     );
   });
 
-  testWidgets('goRouter should rebuild widget if ',
-      (WidgetTester tester) async {
+  testWidgets('goRouter should rebuild widget if ', (
+    WidgetTester tester,
+  ) async {
     const Map<String, dynamic> queryParametersAll = <String, List<dynamic>>{
       'q1': <String>['v1'],
       'q2': <String>['v2', 'v3'],
@@ -3607,8 +3947,8 @@ void main() {
     final List<GoRoute> routes = <GoRoute>[
       GoRoute(
         path: '/',
-        builder: (BuildContext context, GoRouterState state) =>
-            const HomeScreen(),
+        builder:
+            (BuildContext context, GoRouterState state) => const HomeScreen(),
       ),
       GoRoute(
         name: 'page',
@@ -3616,9 +3956,7 @@ void main() {
         builder: (BuildContext context, GoRouterState state) {
           expect(state.uri.queryParametersAll, queryParametersAll);
           expectLocationWithQueryParams(state.uri.toString());
-          return DummyScreen(
-            queryParametersAll: state.uri.queryParametersAll,
-          );
+          return DummyScreen(queryParametersAll: state.uri.queryParametersAll);
         },
       ),
     ];
@@ -3632,7 +3970,8 @@ void main() {
 
     expect(matches, hasLength(1));
     expectLocationWithQueryParams(
-        router.routerDelegate.currentConfiguration.uri.toString());
+      router.routerDelegate.currentConfiguration.uri.toString(),
+    );
     expect(
       tester.widget<DummyScreen>(find.byType(DummyScreen)),
       isA<DummyScreen>().having(
@@ -3650,14 +3989,15 @@ void main() {
       GoRoute(
         path: '/',
         name: 'home',
-        builder: (BuildContext context, GoRouterState state) =>
-            DummyStatefulWidget(key: key),
+        builder:
+            (BuildContext context, GoRouterState state) =>
+                DummyStatefulWidget(key: key),
       ),
       GoRoute(
         path: '/page1',
         name: 'page1',
-        builder: (BuildContext context, GoRouterState state) =>
-            const Page1Screen(),
+        builder:
+            (BuildContext context, GoRouterState state) => const Page1Screen(),
       ),
     ];
 
@@ -3671,16 +4011,15 @@ void main() {
     const String location = '/page1';
     const String extra = 'Hello';
 
-    testWidgets('calls [namedLocation] on closest GoRouter',
-        (WidgetTester tester) async {
-      final GoRouterNamedLocationSpy router =
-          GoRouterNamedLocationSpy(routes: routes);
+    testWidgets('calls [namedLocation] on closest GoRouter', (
+      WidgetTester tester,
+    ) async {
+      final GoRouterNamedLocationSpy router = GoRouterNamedLocationSpy(
+        routes: routes,
+      );
       addTearDown(router.dispose);
       await tester.pumpWidget(
-        MaterialApp.router(
-          routerConfig: router,
-          title: 'GoRouter Example',
-        ),
+        MaterialApp.router(routerConfig: router, title: 'GoRouter Example'),
       );
       key.currentContext!.namedLocation(
         name,
@@ -3696,28 +4035,20 @@ void main() {
       final GoRouterGoSpy router = GoRouterGoSpy(routes: routes);
       addTearDown(router.dispose);
       await tester.pumpWidget(
-        MaterialApp.router(
-          routerConfig: router,
-          title: 'GoRouter Example',
-        ),
+        MaterialApp.router(routerConfig: router, title: 'GoRouter Example'),
       );
-      key.currentContext!.go(
-        location,
-        extra: extra,
-      );
+      key.currentContext!.go(location, extra: extra);
       expect(router.myLocation, location);
       expect(router.extra, extra);
     });
 
-    testWidgets('calls [goNamed] on closest GoRouter',
-        (WidgetTester tester) async {
+    testWidgets('calls [goNamed] on closest GoRouter', (
+      WidgetTester tester,
+    ) async {
       final GoRouterGoNamedSpy router = GoRouterGoNamedSpy(routes: routes);
       addTearDown(router.dispose);
       await tester.pumpWidget(
-        MaterialApp.router(
-          routerConfig: router,
-          title: 'GoRouter Example',
-        ),
+        MaterialApp.router(routerConfig: router, title: 'GoRouter Example'),
       );
       key.currentContext!.goNamed(
         name,
@@ -3731,26 +4062,22 @@ void main() {
       expect(router.extra, extra);
     });
 
-    testWidgets('calls [push] on closest GoRouter',
-        (WidgetTester tester) async {
+    testWidgets('calls [push] on closest GoRouter', (
+      WidgetTester tester,
+    ) async {
       final GoRouterPushSpy router = GoRouterPushSpy(routes: routes);
       addTearDown(router.dispose);
       await tester.pumpWidget(
-        MaterialApp.router(
-          routerConfig: router,
-          title: 'GoRouter Example',
-        ),
+        MaterialApp.router(routerConfig: router, title: 'GoRouter Example'),
       );
-      key.currentContext!.push(
-        location,
-        extra: extra,
-      );
+      key.currentContext!.push(location, extra: extra);
       expect(router.myLocation, location);
       expect(router.extra, extra);
     });
 
-    testWidgets('calls [push] on closest GoRouter and waits for result',
-        (WidgetTester tester) async {
+    testWidgets('calls [push] on closest GoRouter and waits for result', (
+      WidgetTester tester,
+    ) async {
       final GoRouterPushSpy router = GoRouterPushSpy(routes: routes);
       addTearDown(router.dispose);
       await tester.pumpWidget(
@@ -3761,24 +4088,19 @@ void main() {
           title: 'GoRouter Example',
         ),
       );
-      final String? result = await router.push<String>(
-        location,
-        extra: extra,
-      );
+      final String? result = await router.push<String>(location, extra: extra);
       expect(result, extra);
       expect(router.myLocation, location);
       expect(router.extra, extra);
     });
 
-    testWidgets('calls [pushNamed] on closest GoRouter',
-        (WidgetTester tester) async {
+    testWidgets('calls [pushNamed] on closest GoRouter', (
+      WidgetTester tester,
+    ) async {
       final GoRouterPushNamedSpy router = GoRouterPushNamedSpy(routes: routes);
       addTearDown(router.dispose);
       await tester.pumpWidget(
-        MaterialApp.router(
-          routerConfig: router,
-          title: 'GoRouter Example',
-        ),
+        MaterialApp.router(routerConfig: router, title: 'GoRouter Example'),
       );
       key.currentContext!.pushNamed(
         name,
@@ -3792,8 +4114,9 @@ void main() {
       expect(router.extra, extra);
     });
 
-    testWidgets('calls [pushNamed] on closest GoRouter and waits for result',
-        (WidgetTester tester) async {
+    testWidgets('calls [pushNamed] on closest GoRouter and waits for result', (
+      WidgetTester tester,
+    ) async {
       final GoRouterPushNamedSpy router = GoRouterPushNamedSpy(routes: routes);
       addTearDown(router.dispose);
       await tester.pumpWidget(
@@ -3821,25 +4144,20 @@ void main() {
       final GoRouterPopSpy router = GoRouterPopSpy(routes: routes);
       addTearDown(router.dispose);
       await tester.pumpWidget(
-        MaterialApp.router(
-          routerConfig: router,
-          title: 'GoRouter Example',
-        ),
+        MaterialApp.router(routerConfig: router, title: 'GoRouter Example'),
       );
       key.currentContext!.pop();
       expect(router.popped, true);
       expect(router.poppedResult, null);
     });
 
-    testWidgets('calls [pop] on closest GoRouter with result',
-        (WidgetTester tester) async {
+    testWidgets('calls [pop] on closest GoRouter with result', (
+      WidgetTester tester,
+    ) async {
       final GoRouterPopSpy router = GoRouterPopSpy(routes: routes);
       addTearDown(router.dispose);
       await tester.pumpWidget(
-        MaterialApp.router(
-          routerConfig: router,
-          title: 'GoRouter Example',
-        ),
+        MaterialApp.router(routerConfig: router, title: 'GoRouter Example'),
       );
       key.currentContext!.pop('result');
       expect(router.popped, true);
@@ -3852,25 +4170,19 @@ void main() {
       final List<RouteBase> routes = <RouteBase>[
         ShellRoute(
           builder: (BuildContext context, GoRouterState state, Widget child) {
-            return Scaffold(
-              body: child,
-            );
+            return Scaffold(body: child);
           },
           routes: <RouteBase>[
             GoRoute(
               path: '/a',
               builder: (BuildContext context, GoRouterState state) {
-                return const Scaffold(
-                  body: Text('Screen A'),
-                );
+                return const Scaffold(body: Text('Screen A'));
               },
             ),
             GoRoute(
               path: '/b',
               builder: (BuildContext context, GoRouterState state) {
-                return const Scaffold(
-                  body: Text('Screen B'),
-                );
+                return const Scaffold(body: Text('Screen B'));
               },
             ),
           ],
@@ -3899,17 +4211,13 @@ void main() {
         ),
         ShellRoute(
           builder: (BuildContext context, GoRouterState state, Widget child) {
-            return Scaffold(
-              body: child,
-            );
+            return Scaffold(body: child);
           },
           routes: <RouteBase>[
             GoRoute(
               path: '/a',
               builder: (BuildContext context, GoRouterState state) {
-                return const Scaffold(
-                  body: Text('Screen A'),
-                );
+                return const Scaffold(body: Text('Screen A'));
               },
             ),
           ],
@@ -3929,58 +4237,54 @@ void main() {
     });
 
     testWidgets(
-        'Pops from the correct Navigator when the Android back button is pressed',
-        (WidgetTester tester) async {
-      final List<RouteBase> routes = <RouteBase>[
-        ShellRoute(
-          builder: (BuildContext context, GoRouterState state, Widget child) {
-            return Scaffold(
-              body: Column(
-                children: <Widget>[
-                  const Text('Screen A'),
-                  Expanded(child: child),
+      'Pops from the correct Navigator when the Android back button is pressed',
+      (WidgetTester tester) async {
+        final List<RouteBase> routes = <RouteBase>[
+          ShellRoute(
+            builder: (BuildContext context, GoRouterState state, Widget child) {
+              return Scaffold(
+                body: Column(
+                  children: <Widget>[
+                    const Text('Screen A'),
+                    Expanded(child: child),
+                  ],
+                ),
+              );
+            },
+            routes: <RouteBase>[
+              GoRoute(
+                path: '/b',
+                builder: (BuildContext context, GoRouterState state) {
+                  return const Scaffold(body: Text('Screen B'));
+                },
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: 'c',
+                    builder: (BuildContext context, GoRouterState state) {
+                      return const Scaffold(body: Text('Screen C'));
+                    },
+                  ),
                 ],
               ),
-            );
-          },
-          routes: <RouteBase>[
-            GoRoute(
-              path: '/b',
-              builder: (BuildContext context, GoRouterState state) {
-                return const Scaffold(
-                  body: Text('Screen B'),
-                );
-              },
-              routes: <RouteBase>[
-                GoRoute(
-                  path: 'c',
-                  builder: (BuildContext context, GoRouterState state) {
-                    return const Scaffold(
-                      body: Text('Screen C'),
-                    );
-                  },
-                ),
-              ],
-            ),
-          ],
-        ),
-      ];
+            ],
+          ),
+        ];
 
-      await createRouter(routes, tester, initialLocation: '/b/c');
-      expect(find.text('Screen A'), findsOneWidget);
-      expect(find.text('Screen B'), findsNothing);
-      expect(find.text('Screen C'), findsOneWidget);
+        await createRouter(routes, tester, initialLocation: '/b/c');
+        expect(find.text('Screen A'), findsOneWidget);
+        expect(find.text('Screen B'), findsNothing);
+        expect(find.text('Screen C'), findsOneWidget);
 
-      await simulateAndroidBackButton(tester);
-      await tester.pumpAndSettle();
+        await simulateAndroidBackButton(tester);
+        await tester.pumpAndSettle();
 
-      expect(find.text('Screen A'), findsOneWidget);
-      expect(find.text('Screen B'), findsOneWidget);
-      expect(find.text('Screen C'), findsNothing);
-    });
+        expect(find.text('Screen A'), findsOneWidget);
+        expect(find.text('Screen B'), findsOneWidget);
+        expect(find.text('Screen C'), findsNothing);
+      },
+    );
 
-    testWidgets(
-        'Pops from the correct navigator when a sub-route is placed on '
+    testWidgets('Pops from the correct navigator when a sub-route is placed on '
         'the root Navigator', (WidgetTester tester) async {
       final GlobalKey<NavigatorState> rootNavigatorKey =
           GlobalKey<NavigatorState>();
@@ -4004,18 +4308,14 @@ void main() {
             GoRoute(
               path: '/b',
               builder: (BuildContext context, GoRouterState state) {
-                return const Scaffold(
-                  body: Text('Screen B'),
-                );
+                return const Scaffold(body: Text('Screen B'));
               },
               routes: <RouteBase>[
                 GoRoute(
                   path: 'c',
                   parentNavigatorKey: rootNavigatorKey,
                   builder: (BuildContext context, GoRouterState state) {
-                    return const Scaffold(
-                      body: Text('Screen C'),
-                    );
+                    return const Scaffold(body: Text('Screen C'));
                   },
                 ),
               ],
@@ -4024,8 +4324,12 @@ void main() {
         ),
       ];
 
-      await createRouter(routes, tester,
-          initialLocation: '/b/c', navigatorKey: rootNavigatorKey);
+      await createRouter(
+        routes,
+        tester,
+        initialLocation: '/b/c',
+        navigatorKey: rootNavigatorKey,
+      );
       expect(find.text('Screen A'), findsNothing);
       expect(find.text('Screen B'), findsNothing);
       expect(find.text('Screen C'), findsOneWidget);
@@ -4044,30 +4348,43 @@ void main() {
 
       final List<RouteBase> routes = <RouteBase>[
         StatefulShellRoute.indexedStack(
-          builder: (BuildContext context, GoRouterState state,
-                  StatefulNavigationShell navigationShell) =>
-              navigationShell,
+          builder:
+              (
+                BuildContext context,
+                GoRouterState state,
+                StatefulNavigationShell navigationShell,
+              ) => navigationShell,
           branches: <StatefulShellBranch>[
-            StatefulShellBranch(routes: <GoRoute>[
-              GoRoute(
-                path: '/a',
-                builder: (BuildContext context, GoRouterState state) =>
-                    const Text('Screen A'),
-              ),
-            ]),
-            StatefulShellBranch(routes: <GoRoute>[
-              GoRoute(
-                path: '/b',
-                builder: (BuildContext context, GoRouterState state) =>
-                    const Text('Screen B'),
-              ),
-            ]),
+            StatefulShellBranch(
+              routes: <GoRoute>[
+                GoRoute(
+                  path: '/a',
+                  builder:
+                      (BuildContext context, GoRouterState state) =>
+                          const Text('Screen A'),
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              routes: <GoRoute>[
+                GoRoute(
+                  path: '/b',
+                  builder:
+                      (BuildContext context, GoRouterState state) =>
+                          const Text('Screen B'),
+                ),
+              ],
+            ),
           ],
         ),
       ];
 
-      final GoRouter router = await createRouter(routes, tester,
-          initialLocation: '/a', navigatorKey: rootNavigatorKey);
+      final GoRouter router = await createRouter(
+        routes,
+        tester,
+        initialLocation: '/a',
+        navigatorKey: rootNavigatorKey,
+      );
       expect(find.text('Screen A'), findsOneWidget);
       expect(find.text('Screen B'), findsNothing);
 
@@ -4077,44 +4394,58 @@ void main() {
       expect(find.text('Screen B'), findsOneWidget);
     });
 
-    testWidgets('Builds StatefulShellRoute as a sub-route',
-        (WidgetTester tester) async {
+    testWidgets('Builds StatefulShellRoute as a sub-route', (
+      WidgetTester tester,
+    ) async {
       final GlobalKey<NavigatorState> rootNavigatorKey =
           GlobalKey<NavigatorState>();
 
       final List<RouteBase> routes = <RouteBase>[
         GoRoute(
           path: '/root',
-          builder: (BuildContext context, GoRouterState state) =>
-              const Text('Root'),
+          builder:
+              (BuildContext context, GoRouterState state) => const Text('Root'),
           routes: <RouteBase>[
             StatefulShellRoute.indexedStack(
-              builder: (BuildContext context, GoRouterState state,
-                      StatefulNavigationShell navigationShell) =>
-                  navigationShell,
+              builder:
+                  (
+                    BuildContext context,
+                    GoRouterState state,
+                    StatefulNavigationShell navigationShell,
+                  ) => navigationShell,
               branches: <StatefulShellBranch>[
-                StatefulShellBranch(routes: <GoRoute>[
-                  GoRoute(
-                    path: 'a',
-                    builder: (BuildContext context, GoRouterState state) =>
-                        const Text('Screen A'),
-                  ),
-                ]),
-                StatefulShellBranch(routes: <GoRoute>[
-                  GoRoute(
-                    path: 'b',
-                    builder: (BuildContext context, GoRouterState state) =>
-                        const Text('Screen B'),
-                  ),
-                ]),
+                StatefulShellBranch(
+                  routes: <GoRoute>[
+                    GoRoute(
+                      path: 'a',
+                      builder:
+                          (BuildContext context, GoRouterState state) =>
+                              const Text('Screen A'),
+                    ),
+                  ],
+                ),
+                StatefulShellBranch(
+                  routes: <GoRoute>[
+                    GoRoute(
+                      path: 'b',
+                      builder:
+                          (BuildContext context, GoRouterState state) =>
+                              const Text('Screen B'),
+                    ),
+                  ],
+                ),
               ],
             ),
           ],
         ),
       ];
 
-      final GoRouter router = await createRouter(routes, tester,
-          initialLocation: '/root/a', navigatorKey: rootNavigatorKey);
+      final GoRouter router = await createRouter(
+        routes,
+        tester,
+        initialLocation: '/root/a',
+        navigatorKey: rootNavigatorKey,
+      );
       expect(find.text('Screen A'), findsOneWidget);
       expect(find.text('Screen B'), findsNothing);
 
@@ -4125,214 +4456,257 @@ void main() {
     });
 
     testWidgets(
-        'Navigation with goBranch is correctly handled in StatefulShellRoute',
-        (WidgetTester tester) async {
-      final GlobalKey<NavigatorState> rootNavigatorKey =
-          GlobalKey<NavigatorState>();
-      final GlobalKey<DummyStatefulWidgetState> statefulWidgetKey =
-          GlobalKey<DummyStatefulWidgetState>();
-      StatefulNavigationShell? routeState;
+      'Navigation with goBranch is correctly handled in StatefulShellRoute',
+      (WidgetTester tester) async {
+        final GlobalKey<NavigatorState> rootNavigatorKey =
+            GlobalKey<NavigatorState>();
+        final GlobalKey<DummyStatefulWidgetState> statefulWidgetKey =
+            GlobalKey<DummyStatefulWidgetState>();
+        StatefulNavigationShell? routeState;
 
-      final List<RouteBase> routes = <RouteBase>[
-        StatefulShellRoute.indexedStack(
-          builder: (BuildContext context, GoRouterState state,
-              StatefulNavigationShell navigationShell) {
-            routeState = navigationShell;
-            return navigationShell;
-          },
-          branches: <StatefulShellBranch>[
-            StatefulShellBranch(
-              routes: <RouteBase>[
-                GoRoute(
-                  path: '/a',
-                  builder: (BuildContext context, GoRouterState state) =>
-                      const Text('Screen A'),
-                ),
-              ],
-            ),
-            StatefulShellBranch(
-              routes: <RouteBase>[
-                GoRoute(
-                  path: '/b',
-                  builder: (BuildContext context, GoRouterState state) =>
-                      const Text('Screen B'),
-                ),
-              ],
-            ),
-            StatefulShellBranch(
-              routes: <RouteBase>[
-                GoRoute(
-                  path: '/c',
-                  builder: (BuildContext context, GoRouterState state) =>
-                      const Text('Screen C'),
-                ),
-              ],
-            ),
-            StatefulShellBranch(
-              routes: <RouteBase>[
-                GoRoute(
-                  path: '/d',
-                  builder: (BuildContext context, GoRouterState state) =>
-                      const Text('Screen D'),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ];
-
-      await createRouter(routes, tester,
-          initialLocation: '/a', navigatorKey: rootNavigatorKey);
-      statefulWidgetKey.currentState?.increment();
-      expect(find.text('Screen A'), findsOneWidget);
-      expect(find.text('Screen B'), findsNothing);
-      expect(find.text('Screen C'), findsNothing);
-      expect(find.text('Screen D'), findsNothing);
-
-      routeState!.goBranch(1);
-      await tester.pumpAndSettle();
-      expect(find.text('Screen A'), findsNothing);
-      expect(find.text('Screen B'), findsOneWidget);
-      expect(find.text('Screen C'), findsNothing);
-      expect(find.text('Screen D'), findsNothing);
-
-      routeState!.goBranch(2);
-      await tester.pumpAndSettle();
-      expect(find.text('Screen A'), findsNothing);
-      expect(find.text('Screen B'), findsNothing);
-      expect(find.text('Screen C'), findsOneWidget);
-      expect(find.text('Screen D'), findsNothing);
-
-      routeState!.goBranch(3);
-      await tester.pumpAndSettle();
-      expect(find.text('Screen A'), findsNothing);
-      expect(find.text('Screen B'), findsNothing);
-      expect(find.text('Screen C'), findsNothing);
-      expect(find.text('Screen D'), findsOneWidget);
-
-      expect(() {
-        // Verify that navigation to unknown index fails
-        routeState!.goBranch(4);
-      }, throwsA(isA<Error>()));
-    });
-
-    testWidgets(
-        'Navigates to correct nested navigation tree in StatefulShellRoute '
-        'and maintains state', (WidgetTester tester) async {
-      final GlobalKey<NavigatorState> rootNavigatorKey =
-          GlobalKey<NavigatorState>();
-      final GlobalKey<DummyStatefulWidgetState> statefulWidgetKey =
-          GlobalKey<DummyStatefulWidgetState>();
-      StatefulNavigationShell? routeState;
-
-      final List<RouteBase> routes = <RouteBase>[
-        StatefulShellRoute.indexedStack(
-          builder: (BuildContext context, GoRouterState state,
-              StatefulNavigationShell navigationShell) {
-            routeState = navigationShell;
-            return navigationShell;
-          },
-          branches: <StatefulShellBranch>[
-            StatefulShellBranch(routes: <GoRoute>[
-              GoRoute(
-                path: '/a',
-                builder: (BuildContext context, GoRouterState state) =>
-                    const Text('Screen A'),
+        final List<RouteBase> routes = <RouteBase>[
+          StatefulShellRoute.indexedStack(
+            builder: (
+              BuildContext context,
+              GoRouterState state,
+              StatefulNavigationShell navigationShell,
+            ) {
+              routeState = navigationShell;
+              return navigationShell;
+            },
+            branches: <StatefulShellBranch>[
+              StatefulShellBranch(
                 routes: <RouteBase>[
                   GoRoute(
-                    path: 'detailA',
-                    builder: (BuildContext context, GoRouterState state) =>
-                        Column(children: <Widget>[
-                      const Text('Screen A Detail'),
-                      DummyStatefulWidget(key: statefulWidgetKey),
-                    ]),
+                    path: '/a',
+                    builder:
+                        (BuildContext context, GoRouterState state) =>
+                            const Text('Screen A'),
                   ),
                 ],
               ),
-            ]),
-            StatefulShellBranch(routes: <GoRoute>[
-              GoRoute(
-                path: '/b',
-                builder: (BuildContext context, GoRouterState state) =>
-                    const Text('Screen B'),
+              StatefulShellBranch(
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: '/b',
+                    builder:
+                        (BuildContext context, GoRouterState state) =>
+                            const Text('Screen B'),
+                  ),
+                ],
               ),
-            ]),
-          ],
-        ),
-      ];
+              StatefulShellBranch(
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: '/c',
+                    builder:
+                        (BuildContext context, GoRouterState state) =>
+                            const Text('Screen C'),
+                  ),
+                ],
+              ),
+              StatefulShellBranch(
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: '/d',
+                    builder:
+                        (BuildContext context, GoRouterState state) =>
+                            const Text('Screen D'),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ];
 
-      final GoRouter router = await createRouter(routes, tester,
-          initialLocation: '/a/detailA', navigatorKey: rootNavigatorKey);
-      statefulWidgetKey.currentState?.increment();
-      expect(find.text('Screen A'), findsNothing);
-      expect(find.text('Screen A Detail'), findsOneWidget);
-      expect(find.text('Screen B'), findsNothing);
+        await createRouter(
+          routes,
+          tester,
+          initialLocation: '/a',
+          navigatorKey: rootNavigatorKey,
+        );
+        statefulWidgetKey.currentState?.increment();
+        expect(find.text('Screen A'), findsOneWidget);
+        expect(find.text('Screen B'), findsNothing);
+        expect(find.text('Screen C'), findsNothing);
+        expect(find.text('Screen D'), findsNothing);
 
-      routeState!.goBranch(1);
-      await tester.pumpAndSettle();
-      expect(find.text('Screen A'), findsNothing);
-      expect(find.text('Screen A Detail'), findsNothing);
-      expect(find.text('Screen B'), findsOneWidget);
+        routeState!.goBranch(1);
+        await tester.pumpAndSettle();
+        expect(find.text('Screen A'), findsNothing);
+        expect(find.text('Screen B'), findsOneWidget);
+        expect(find.text('Screen C'), findsNothing);
+        expect(find.text('Screen D'), findsNothing);
 
-      routeState!.goBranch(0);
-      await tester.pumpAndSettle();
-      expect(statefulWidgetKey.currentState?.counter, equals(1));
+        routeState!.goBranch(2);
+        await tester.pumpAndSettle();
+        expect(find.text('Screen A'), findsNothing);
+        expect(find.text('Screen B'), findsNothing);
+        expect(find.text('Screen C'), findsOneWidget);
+        expect(find.text('Screen D'), findsNothing);
 
-      router.go('/a');
-      await tester.pumpAndSettle();
-      expect(find.text('Screen A'), findsOneWidget);
-      expect(find.text('Screen A Detail'), findsNothing);
-      router.go('/a/detailA');
-      await tester.pumpAndSettle();
-      expect(statefulWidgetKey.currentState?.counter, equals(0));
-    });
+        routeState!.goBranch(3);
+        await tester.pumpAndSettle();
+        expect(find.text('Screen A'), findsNothing);
+        expect(find.text('Screen B'), findsNothing);
+        expect(find.text('Screen C'), findsNothing);
+        expect(find.text('Screen D'), findsOneWidget);
+
+        expect(() {
+          // Verify that navigation to unknown index fails
+          routeState!.goBranch(4);
+        }, throwsA(isA<Error>()));
+      },
+    );
 
     testWidgets(
-        'Navigates to correct nested navigation tree in StatefulShellRoute '
-        'and maintains path parameters', (WidgetTester tester) async {
-      StatefulNavigationShell? routeState;
+      'Navigates to correct nested navigation tree in StatefulShellRoute '
+      'and maintains state',
+      (WidgetTester tester) async {
+        final GlobalKey<NavigatorState> rootNavigatorKey =
+            GlobalKey<NavigatorState>();
+        final GlobalKey<DummyStatefulWidgetState> statefulWidgetKey =
+            GlobalKey<DummyStatefulWidgetState>();
+        StatefulNavigationShell? routeState;
 
-      final List<RouteBase> routes = <RouteBase>[
-        GoRoute(
+        final List<RouteBase> routes = <RouteBase>[
+          StatefulShellRoute.indexedStack(
+            builder: (
+              BuildContext context,
+              GoRouterState state,
+              StatefulNavigationShell navigationShell,
+            ) {
+              routeState = navigationShell;
+              return navigationShell;
+            },
+            branches: <StatefulShellBranch>[
+              StatefulShellBranch(
+                routes: <GoRoute>[
+                  GoRoute(
+                    path: '/a',
+                    builder:
+                        (BuildContext context, GoRouterState state) =>
+                            const Text('Screen A'),
+                    routes: <RouteBase>[
+                      GoRoute(
+                        path: 'detailA',
+                        builder:
+                            (BuildContext context, GoRouterState state) =>
+                                Column(
+                                  children: <Widget>[
+                                    const Text('Screen A Detail'),
+                                    DummyStatefulWidget(key: statefulWidgetKey),
+                                  ],
+                                ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              StatefulShellBranch(
+                routes: <GoRoute>[
+                  GoRoute(
+                    path: '/b',
+                    builder:
+                        (BuildContext context, GoRouterState state) =>
+                            const Text('Screen B'),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ];
+
+        final GoRouter router = await createRouter(
+          routes,
+          tester,
+          initialLocation: '/a/detailA',
+          navigatorKey: rootNavigatorKey,
+        );
+        statefulWidgetKey.currentState?.increment();
+        expect(find.text('Screen A'), findsNothing);
+        expect(find.text('Screen A Detail'), findsOneWidget);
+        expect(find.text('Screen B'), findsNothing);
+
+        routeState!.goBranch(1);
+        await tester.pumpAndSettle();
+        expect(find.text('Screen A'), findsNothing);
+        expect(find.text('Screen A Detail'), findsNothing);
+        expect(find.text('Screen B'), findsOneWidget);
+
+        routeState!.goBranch(0);
+        await tester.pumpAndSettle();
+        expect(statefulWidgetKey.currentState?.counter, equals(1));
+
+        router.go('/a');
+        await tester.pumpAndSettle();
+        expect(find.text('Screen A'), findsOneWidget);
+        expect(find.text('Screen A Detail'), findsNothing);
+        router.go('/a/detailA');
+        await tester.pumpAndSettle();
+        expect(statefulWidgetKey.currentState?.counter, equals(0));
+      },
+    );
+
+    testWidgets(
+      'Navigates to correct nested navigation tree in StatefulShellRoute '
+      'and maintains path parameters',
+      (WidgetTester tester) async {
+        StatefulNavigationShell? routeState;
+
+        final List<RouteBase> routes = <RouteBase>[
+          GoRoute(
             path: '/:id',
             builder: (_, __) => const Placeholder(),
             routes: <RouteBase>[
               StatefulShellRoute.indexedStack(
-                builder: (BuildContext context, GoRouterState state,
-                    StatefulNavigationShell navigationShell) {
+                builder: (
+                  BuildContext context,
+                  GoRouterState state,
+                  StatefulNavigationShell navigationShell,
+                ) {
                   routeState = navigationShell;
                   return navigationShell;
                 },
                 branches: <StatefulShellBranch>[
-                  StatefulShellBranch(routes: <GoRoute>[
-                    GoRoute(
-                      path: 'a',
-                      builder: (BuildContext context, GoRouterState state) =>
-                          Text('a id is ${state.pathParameters['id']}'),
-                    ),
-                  ]),
-                  StatefulShellBranch(routes: <GoRoute>[
-                    GoRoute(
-                      path: 'b',
-                      builder: (BuildContext context, GoRouterState state) =>
-                          Text('b id is ${state.pathParameters['id']}'),
-                    ),
-                  ]),
+                  StatefulShellBranch(
+                    routes: <GoRoute>[
+                      GoRoute(
+                        path: 'a',
+                        builder:
+                            (BuildContext context, GoRouterState state) =>
+                                Text('a id is ${state.pathParameters['id']}'),
+                      ),
+                    ],
+                  ),
+                  StatefulShellBranch(
+                    routes: <GoRoute>[
+                      GoRoute(
+                        path: 'b',
+                        builder:
+                            (BuildContext context, GoRouterState state) =>
+                                Text('b id is ${state.pathParameters['id']}'),
+                      ),
+                    ],
+                  ),
                 ],
               ),
-            ])
-      ];
+            ],
+          ),
+        ];
 
-      await createRouter(routes, tester, initialLocation: '/123/a');
-      expect(find.text('a id is 123'), findsOneWidget);
+        await createRouter(routes, tester, initialLocation: '/123/a');
+        expect(find.text('a id is 123'), findsOneWidget);
 
-      routeState!.goBranch(1);
-      await tester.pumpAndSettle();
-      expect(find.text('b id is 123'), findsOneWidget);
-    });
+        routeState!.goBranch(1);
+        await tester.pumpAndSettle();
+        expect(find.text('b id is 123'), findsOneWidget);
+      },
+    );
 
-    testWidgets('Maintains state for nested StatefulShellRoute',
-        (WidgetTester tester) async {
+    testWidgets('Maintains state for nested StatefulShellRoute', (
+      WidgetTester tester,
+    ) async {
       final GlobalKey<NavigatorState> rootNavigatorKey =
           GlobalKey<NavigatorState>();
       final GlobalKey<DummyStatefulWidgetState> statefulWidgetKey =
@@ -4342,67 +4716,96 @@ void main() {
 
       final List<RouteBase> routes = <RouteBase>[
         StatefulShellRoute.indexedStack(
-          builder: (BuildContext context, GoRouterState state,
-              StatefulNavigationShell navigationShell) {
+          builder: (
+            BuildContext context,
+            GoRouterState state,
+            StatefulNavigationShell navigationShell,
+          ) {
             routeState1 = navigationShell;
             return navigationShell;
           },
           branches: <StatefulShellBranch>[
-            StatefulShellBranch(routes: <RouteBase>[
-              StatefulShellRoute.indexedStack(
-                  builder: (BuildContext context, GoRouterState state,
-                      StatefulNavigationShell navigationShell) {
+            StatefulShellBranch(
+              routes: <RouteBase>[
+                StatefulShellRoute.indexedStack(
+                  builder: (
+                    BuildContext context,
+                    GoRouterState state,
+                    StatefulNavigationShell navigationShell,
+                  ) {
                     routeState2 = navigationShell;
                     return navigationShell;
                   },
                   branches: <StatefulShellBranch>[
-                    StatefulShellBranch(routes: <RouteBase>[
-                      GoRoute(
-                        path: '/a',
-                        builder: (BuildContext context, GoRouterState state) =>
-                            const Text('Screen A'),
-                        routes: <RouteBase>[
-                          GoRoute(
-                            path: 'detailA',
-                            builder:
-                                (BuildContext context, GoRouterState state) =>
-                                    Column(children: <Widget>[
-                              const Text('Screen A Detail'),
-                              DummyStatefulWidget(key: statefulWidgetKey),
-                            ]),
-                          ),
-                        ],
-                      ),
-                    ]),
-                    StatefulShellBranch(routes: <RouteBase>[
-                      GoRoute(
-                        path: '/b',
-                        builder: (BuildContext context, GoRouterState state) =>
-                            const Text('Screen B'),
-                      ),
-                    ]),
-                    StatefulShellBranch(routes: <RouteBase>[
-                      GoRoute(
-                        path: '/c',
-                        builder: (BuildContext context, GoRouterState state) =>
-                            const Text('Screen C'),
-                      ),
-                    ]),
-                  ]),
-            ]),
-            StatefulShellBranch(routes: <GoRoute>[
-              GoRoute(
-                path: '/d',
-                builder: (BuildContext context, GoRouterState state) =>
-                    const Text('Screen D'),
-              ),
-            ]),
+                    StatefulShellBranch(
+                      routes: <RouteBase>[
+                        GoRoute(
+                          path: '/a',
+                          builder:
+                              (BuildContext context, GoRouterState state) =>
+                                  const Text('Screen A'),
+                          routes: <RouteBase>[
+                            GoRoute(
+                              path: 'detailA',
+                              builder:
+                                  (BuildContext context, GoRouterState state) =>
+                                      Column(
+                                        children: <Widget>[
+                                          const Text('Screen A Detail'),
+                                          DummyStatefulWidget(
+                                            key: statefulWidgetKey,
+                                          ),
+                                        ],
+                                      ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    StatefulShellBranch(
+                      routes: <RouteBase>[
+                        GoRoute(
+                          path: '/b',
+                          builder:
+                              (BuildContext context, GoRouterState state) =>
+                                  const Text('Screen B'),
+                        ),
+                      ],
+                    ),
+                    StatefulShellBranch(
+                      routes: <RouteBase>[
+                        GoRoute(
+                          path: '/c',
+                          builder:
+                              (BuildContext context, GoRouterState state) =>
+                                  const Text('Screen C'),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              routes: <GoRoute>[
+                GoRoute(
+                  path: '/d',
+                  builder:
+                      (BuildContext context, GoRouterState state) =>
+                          const Text('Screen D'),
+                ),
+              ],
+            ),
           ],
         ),
       ];
 
-      await createRouter(routes, tester,
-          initialLocation: '/a/detailA', navigatorKey: rootNavigatorKey);
+      await createRouter(
+        routes,
+        tester,
+        initialLocation: '/a/detailA',
+        navigatorKey: rootNavigatorKey,
+      );
       statefulWidgetKey.currentState?.increment();
       expect(find.text('Screen A Detail'), findsOneWidget);
       routeState2!.goBranch(1);
@@ -4428,96 +4831,110 @@ void main() {
     });
 
     testWidgets(
-        'Pops from the correct Navigator in a StatefulShellRoute when the '
-        'Android back button is pressed', (WidgetTester tester) async {
-      final GlobalKey<NavigatorState> rootNavigatorKey =
-          GlobalKey<NavigatorState>();
-      final GlobalKey<NavigatorState> sectionANavigatorKey =
-          GlobalKey<NavigatorState>();
-      final GlobalKey<NavigatorState> sectionBNavigatorKey =
-          GlobalKey<NavigatorState>();
-      StatefulNavigationShell? routeState;
+      'Pops from the correct Navigator in a StatefulShellRoute when the '
+      'Android back button is pressed',
+      (WidgetTester tester) async {
+        final GlobalKey<NavigatorState> rootNavigatorKey =
+            GlobalKey<NavigatorState>();
+        final GlobalKey<NavigatorState> sectionANavigatorKey =
+            GlobalKey<NavigatorState>();
+        final GlobalKey<NavigatorState> sectionBNavigatorKey =
+            GlobalKey<NavigatorState>();
+        StatefulNavigationShell? routeState;
 
-      final List<RouteBase> routes = <RouteBase>[
-        StatefulShellRoute.indexedStack(
-          builder: (BuildContext context, GoRouterState state,
-              StatefulNavigationShell navigationShell) {
-            routeState = navigationShell;
-            return navigationShell;
-          },
-          branches: <StatefulShellBranch>[
-            StatefulShellBranch(
+        final List<RouteBase> routes = <RouteBase>[
+          StatefulShellRoute.indexedStack(
+            builder: (
+              BuildContext context,
+              GoRouterState state,
+              StatefulNavigationShell navigationShell,
+            ) {
+              routeState = navigationShell;
+              return navigationShell;
+            },
+            branches: <StatefulShellBranch>[
+              StatefulShellBranch(
                 navigatorKey: sectionANavigatorKey,
                 routes: <GoRoute>[
                   GoRoute(
                     path: '/a',
-                    builder: (BuildContext context, GoRouterState state) =>
-                        const Text('Screen A'),
+                    builder:
+                        (BuildContext context, GoRouterState state) =>
+                            const Text('Screen A'),
                     routes: <RouteBase>[
                       GoRoute(
                         path: 'detailA',
-                        builder: (BuildContext context, GoRouterState state) =>
-                            const Text('Screen A Detail'),
+                        builder:
+                            (BuildContext context, GoRouterState state) =>
+                                const Text('Screen A Detail'),
                       ),
                     ],
                   ),
-                ]),
-            StatefulShellBranch(
+                ],
+              ),
+              StatefulShellBranch(
                 navigatorKey: sectionBNavigatorKey,
                 routes: <GoRoute>[
                   GoRoute(
                     path: '/b',
-                    builder: (BuildContext context, GoRouterState state) =>
-                        const Text('Screen B'),
+                    builder:
+                        (BuildContext context, GoRouterState state) =>
+                            const Text('Screen B'),
                     routes: <RouteBase>[
                       GoRoute(
                         path: 'detailB',
-                        builder: (BuildContext context, GoRouterState state) =>
-                            const Text('Screen B Detail'),
+                        builder:
+                            (BuildContext context, GoRouterState state) =>
+                                const Text('Screen B Detail'),
                       ),
                     ],
                   ),
-                ]),
-          ],
-        ),
-      ];
+                ],
+              ),
+            ],
+          ),
+        ];
 
-      final GoRouter router = await createRouter(routes, tester,
-          initialLocation: '/a/detailA', navigatorKey: rootNavigatorKey);
-      expect(find.text('Screen A'), findsNothing);
-      expect(find.text('Screen A Detail'), findsOneWidget);
-      expect(find.text('Screen B'), findsNothing);
-      expect(find.text('Screen B Detail'), findsNothing);
+        final GoRouter router = await createRouter(
+          routes,
+          tester,
+          initialLocation: '/a/detailA',
+          navigatorKey: rootNavigatorKey,
+        );
+        expect(find.text('Screen A'), findsNothing);
+        expect(find.text('Screen A Detail'), findsOneWidget);
+        expect(find.text('Screen B'), findsNothing);
+        expect(find.text('Screen B Detail'), findsNothing);
 
-      router.go('/b/detailB');
-      await tester.pumpAndSettle();
+        router.go('/b/detailB');
+        await tester.pumpAndSettle();
 
-      expect(find.text('Screen A'), findsNothing);
-      expect(find.text('Screen A Detail'), findsNothing);
-      expect(find.text('Screen B'), findsNothing);
-      expect(find.text('Screen B Detail'), findsOneWidget);
+        expect(find.text('Screen A'), findsNothing);
+        expect(find.text('Screen A Detail'), findsNothing);
+        expect(find.text('Screen B'), findsNothing);
+        expect(find.text('Screen B Detail'), findsOneWidget);
 
-      await simulateAndroidBackButton(tester);
-      await tester.pumpAndSettle();
+        await simulateAndroidBackButton(tester);
+        await tester.pumpAndSettle();
 
-      expect(find.text('Screen A'), findsNothing);
-      expect(find.text('Screen A Detail'), findsNothing);
-      expect(find.text('Screen B'), findsOneWidget);
-      expect(find.text('Screen B Detail'), findsNothing);
+        expect(find.text('Screen A'), findsNothing);
+        expect(find.text('Screen A Detail'), findsNothing);
+        expect(find.text('Screen B'), findsOneWidget);
+        expect(find.text('Screen B Detail'), findsNothing);
 
-      routeState!.goBranch(0);
-      await tester.pumpAndSettle();
-      expect(find.text('Screen A'), findsNothing);
-      expect(find.text('Screen A Detail'), findsOneWidget);
+        routeState!.goBranch(0);
+        await tester.pumpAndSettle();
+        expect(find.text('Screen A'), findsNothing);
+        expect(find.text('Screen A Detail'), findsOneWidget);
 
-      await simulateAndroidBackButton(tester);
-      await tester.pumpAndSettle();
-      expect(find.text('Screen A'), findsOneWidget);
-      expect(find.text('Screen A Detail'), findsNothing);
-    });
+        await simulateAndroidBackButton(tester);
+        await tester.pumpAndSettle();
+        expect(find.text('Screen A'), findsOneWidget);
+        expect(find.text('Screen A Detail'), findsNothing);
+      },
+    );
 
-    testWidgets(
-        'Maintains extra navigation information when navigating '
+    testWidgets('Maintains extra navigation information when navigating '
         'between branches in StatefulShellRoute', (WidgetTester tester) async {
       final GlobalKey<NavigatorState> rootNavigatorKey =
           GlobalKey<NavigatorState>();
@@ -4525,32 +4942,45 @@ void main() {
 
       final List<RouteBase> routes = <RouteBase>[
         StatefulShellRoute.indexedStack(
-          builder: (BuildContext context, GoRouterState state,
-              StatefulNavigationShell navigationShell) {
+          builder: (
+            BuildContext context,
+            GoRouterState state,
+            StatefulNavigationShell navigationShell,
+          ) {
             routeState = navigationShell;
             return navigationShell;
           },
           branches: <StatefulShellBranch>[
-            StatefulShellBranch(routes: <GoRoute>[
-              GoRoute(
-                path: '/a',
-                builder: (BuildContext context, GoRouterState state) =>
-                    const Text('Screen A'),
-              ),
-            ]),
-            StatefulShellBranch(routes: <GoRoute>[
-              GoRoute(
-                path: '/b',
-                builder: (BuildContext context, GoRouterState state) =>
-                    Text('Screen B - ${state.extra}'),
-              ),
-            ]),
+            StatefulShellBranch(
+              routes: <GoRoute>[
+                GoRoute(
+                  path: '/a',
+                  builder:
+                      (BuildContext context, GoRouterState state) =>
+                          const Text('Screen A'),
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              routes: <GoRoute>[
+                GoRoute(
+                  path: '/b',
+                  builder:
+                      (BuildContext context, GoRouterState state) =>
+                          Text('Screen B - ${state.extra}'),
+                ),
+              ],
+            ),
           ],
         ),
       ];
 
-      final GoRouter router = await createRouter(routes, tester,
-          initialLocation: '/a', navigatorKey: rootNavigatorKey);
+      final GoRouter router = await createRouter(
+        routes,
+        tester,
+        initialLocation: '/a',
+        navigatorKey: rootNavigatorKey,
+      );
       expect(find.text('Screen A'), findsOneWidget);
 
       router.go('/b', extra: 'X');
@@ -4569,10 +4999,10 @@ void main() {
       expect(find.text('Screen B - X'), findsOneWidget);
     });
 
-    testWidgets(
-        'Pushed non-descendant routes are correctly restored when '
-        'navigating between branches in StatefulShellRoute',
-        (WidgetTester tester) async {
+    testWidgets('Pushed non-descendant routes are correctly restored when '
+        'navigating between branches in StatefulShellRoute', (
+      WidgetTester tester,
+    ) async {
       final GlobalKey<NavigatorState> rootNavigatorKey =
           GlobalKey<NavigatorState>();
       StatefulNavigationShell? routeState;
@@ -4580,36 +5010,50 @@ void main() {
       final List<RouteBase> routes = <RouteBase>[
         GoRoute(
           path: '/common',
-          builder: (BuildContext context, GoRouterState state) =>
-              Text('Common - ${state.extra}'),
+          builder:
+              (BuildContext context, GoRouterState state) =>
+                  Text('Common - ${state.extra}'),
         ),
         StatefulShellRoute.indexedStack(
-          builder: (BuildContext context, GoRouterState state,
-              StatefulNavigationShell navigationShell) {
+          builder: (
+            BuildContext context,
+            GoRouterState state,
+            StatefulNavigationShell navigationShell,
+          ) {
             routeState = navigationShell;
             return navigationShell;
           },
           branches: <StatefulShellBranch>[
-            StatefulShellBranch(routes: <GoRoute>[
-              GoRoute(
-                path: '/a',
-                builder: (BuildContext context, GoRouterState state) =>
-                    const Text('Screen A'),
-              ),
-            ]),
-            StatefulShellBranch(routes: <GoRoute>[
-              GoRoute(
-                path: '/b',
-                builder: (BuildContext context, GoRouterState state) =>
-                    const Text('Screen B'),
-              ),
-            ]),
+            StatefulShellBranch(
+              routes: <GoRoute>[
+                GoRoute(
+                  path: '/a',
+                  builder:
+                      (BuildContext context, GoRouterState state) =>
+                          const Text('Screen A'),
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              routes: <GoRoute>[
+                GoRoute(
+                  path: '/b',
+                  builder:
+                      (BuildContext context, GoRouterState state) =>
+                          const Text('Screen B'),
+                ),
+              ],
+            ),
           ],
         ),
       ];
 
-      final GoRouter router = await createRouter(routes, tester,
-          initialLocation: '/a', navigatorKey: rootNavigatorKey);
+      final GoRouter router = await createRouter(
+        routes,
+        tester,
+        initialLocation: '/a',
+        navigatorKey: rootNavigatorKey,
+      );
       expect(find.text('Screen A'), findsOneWidget);
 
       router.go('/b');
@@ -4634,8 +5078,9 @@ void main() {
       expect(find.text('Screen B'), findsOneWidget);
     });
 
-    testWidgets('Preloads routes correctly in a StatefulShellRoute',
-        (WidgetTester tester) async {
+    testWidgets('Preloads routes correctly in a StatefulShellRoute', (
+      WidgetTester tester,
+    ) async {
       final GlobalKey<NavigatorState> rootNavigatorKey =
           GlobalKey<NavigatorState>();
       final GlobalKey<DummyStatefulWidgetState> statefulWidgetKeyA =
@@ -4653,20 +5098,26 @@ void main() {
         StatefulShellRoute.indexedStack(
           builder: mockStackedShellBuilder,
           branches: <StatefulShellBranch>[
-            StatefulShellBranch(routes: <RouteBase>[
-              GoRoute(
-                path: '/a',
-                builder: (BuildContext context, GoRouterState state) =>
-                    DummyStatefulWidget(key: statefulWidgetKeyA),
-              ),
-            ]),
-            StatefulShellBranch(routes: <RouteBase>[
-              GoRoute(
-                path: '/b',
-                builder: (BuildContext context, GoRouterState state) =>
-                    DummyStatefulWidget(key: statefulWidgetKeyB),
-              ),
-            ]),
+            StatefulShellBranch(
+              routes: <RouteBase>[
+                GoRoute(
+                  path: '/a',
+                  builder:
+                      (BuildContext context, GoRouterState state) =>
+                          DummyStatefulWidget(key: statefulWidgetKeyA),
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              routes: <RouteBase>[
+                GoRoute(
+                  path: '/b',
+                  builder:
+                      (BuildContext context, GoRouterState state) =>
+                          DummyStatefulWidget(key: statefulWidgetKeyB),
+                ),
+              ],
+            ),
           ],
         ),
         StatefulShellRoute.indexedStack(
@@ -4677,8 +5128,9 @@ void main() {
               routes: <RouteBase>[
                 GoRoute(
                   path: '/c',
-                  builder: (BuildContext context, GoRouterState state) =>
-                      DummyStatefulWidget(key: statefulWidgetKeyC),
+                  builder:
+                      (BuildContext context, GoRouterState state) =>
+                          DummyStatefulWidget(key: statefulWidgetKeyC),
                 ),
               ],
             ),
@@ -4687,8 +5139,9 @@ void main() {
               routes: <RouteBase>[
                 GoRoute(
                   path: '/d',
-                  builder: (BuildContext context, GoRouterState state) =>
-                      DummyStatefulWidget(key: statefulWidgetKeyD),
+                  builder:
+                      (BuildContext context, GoRouterState state) =>
+                          DummyStatefulWidget(key: statefulWidgetKeyD),
                 ),
               ],
             ),
@@ -4697,16 +5150,19 @@ void main() {
               initialLocation: '/e/details',
               routes: <RouteBase>[
                 GoRoute(
-                    path: '/e',
-                    builder: (BuildContext context, GoRouterState state) =>
-                        const Text('E'),
-                    routes: <RouteBase>[
-                      GoRoute(
-                        path: 'details',
-                        builder: (BuildContext context, GoRouterState state) =>
-                            DummyStatefulWidget(key: statefulWidgetKeyE),
-                      ),
-                    ]),
+                  path: '/e',
+                  builder:
+                      (BuildContext context, GoRouterState state) =>
+                          const Text('E'),
+                  routes: <RouteBase>[
+                    GoRoute(
+                      path: 'details',
+                      builder:
+                          (BuildContext context, GoRouterState state) =>
+                              DummyStatefulWidget(key: statefulWidgetKeyE),
+                    ),
+                  ],
+                ),
               ],
             ),
           ],
@@ -4731,8 +5187,9 @@ void main() {
       expect(statefulWidgetKeyE.currentState?.counter, equals(0));
     });
 
-    testWidgets('Preloads nested routes correctly in a StatefulShellRoute',
-        (WidgetTester tester) async {
+    testWidgets('Preloads nested routes correctly in a StatefulShellRoute', (
+      WidgetTester tester,
+    ) async {
       final GlobalKey<NavigatorState> rootNavigatorKey =
           GlobalKey<NavigatorState>();
       final GlobalKey<DummyStatefulWidgetState> statefulWidgetKeyA =
@@ -4754,20 +5211,28 @@ void main() {
                 StatefulShellRoute.indexedStack(
                   builder: mockStackedShellBuilder,
                   branches: <StatefulShellBranch>[
-                    StatefulShellBranch(preload: true, routes: <RouteBase>[
-                      GoRoute(
-                        path: '/a',
-                        builder: (BuildContext context, GoRouterState state) =>
-                            DummyStatefulWidget(key: statefulWidgetKeyA),
-                      ),
-                    ]),
-                    StatefulShellBranch(preload: true, routes: <RouteBase>[
-                      GoRoute(
-                        path: '/b',
-                        builder: (BuildContext context, GoRouterState state) =>
-                            DummyStatefulWidget(key: statefulWidgetKeyB),
-                      ),
-                    ]),
+                    StatefulShellBranch(
+                      preload: true,
+                      routes: <RouteBase>[
+                        GoRoute(
+                          path: '/a',
+                          builder:
+                              (BuildContext context, GoRouterState state) =>
+                                  DummyStatefulWidget(key: statefulWidgetKeyA),
+                        ),
+                      ],
+                    ),
+                    StatefulShellBranch(
+                      preload: true,
+                      routes: <RouteBase>[
+                        GoRoute(
+                          path: '/b',
+                          builder:
+                              (BuildContext context, GoRouterState state) =>
+                                  DummyStatefulWidget(key: statefulWidgetKeyB),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ],
@@ -4777,8 +5242,9 @@ void main() {
               routes: <RouteBase>[
                 GoRoute(
                   path: '/c',
-                  builder: (BuildContext context, GoRouterState state) =>
-                      DummyStatefulWidget(key: statefulWidgetKeyC),
+                  builder:
+                      (BuildContext context, GoRouterState state) =>
+                          DummyStatefulWidget(key: statefulWidgetKeyC),
                 ),
               ],
             ),
@@ -4786,8 +5252,9 @@ void main() {
               routes: <RouteBase>[
                 GoRoute(
                   path: '/d',
-                  builder: (BuildContext context, GoRouterState state) =>
-                      DummyStatefulWidget(key: statefulWidgetKeyD),
+                  builder:
+                      (BuildContext context, GoRouterState state) =>
+                          DummyStatefulWidget(key: statefulWidgetKeyD),
                 ),
               ],
             ),
@@ -4807,8 +5274,7 @@ void main() {
       expect(statefulWidgetKeyD.currentState?.counter, null);
     });
 
-    testWidgets(
-        'Redirects are correctly handled when switching branch in a '
+    testWidgets('Redirects are correctly handled when switching branch in a '
         'StatefulShellRoute', (WidgetTester tester) async {
       final GlobalKey<NavigatorState> rootNavigatorKey =
           GlobalKey<NavigatorState>();
@@ -4816,54 +5282,66 @@ void main() {
 
       final List<RouteBase> routes = <RouteBase>[
         StatefulShellRoute.indexedStack(
-          builder: (BuildContext context, GoRouterState state,
-              StatefulNavigationShell navigationShell) {
+          builder: (
+            BuildContext context,
+            GoRouterState state,
+            StatefulNavigationShell navigationShell,
+          ) {
             routeState = navigationShell;
             return navigationShell;
           },
           branches: <StatefulShellBranch>[
-            StatefulShellBranch(routes: <GoRoute>[
-              GoRoute(
-                path: '/a',
-                builder: (BuildContext context, GoRouterState state) =>
-                    const Text('Screen A'),
-              ),
-            ]),
-            StatefulShellBranch(routes: <GoRoute>[
-              GoRoute(
-                path: '/b',
-                builder: (BuildContext context, GoRouterState state) =>
-                    const Text('Screen B'),
-                routes: <RouteBase>[
-                  GoRoute(
-                    path: 'details1',
-                    builder: (BuildContext context, GoRouterState state) =>
-                        const Text('Screen B Detail1'),
-                  ),
-                  GoRoute(
-                    path: 'details2',
-                    builder: (BuildContext context, GoRouterState state) =>
-                        const Text('Screen B Detail2'),
-                  ),
-                ],
-              ),
-            ]),
-            StatefulShellBranch(routes: <GoRoute>[
-              GoRoute(
-                path: '/c',
-                redirect: (_, __) => '/c/main2',
-              ),
-              GoRoute(
-                path: '/c/main1',
-                builder: (BuildContext context, GoRouterState state) =>
-                    const Text('Screen C1'),
-              ),
-              GoRoute(
-                path: '/c/main2',
-                builder: (BuildContext context, GoRouterState state) =>
-                    const Text('Screen C2'),
-              ),
-            ]),
+            StatefulShellBranch(
+              routes: <GoRoute>[
+                GoRoute(
+                  path: '/a',
+                  builder:
+                      (BuildContext context, GoRouterState state) =>
+                          const Text('Screen A'),
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              routes: <GoRoute>[
+                GoRoute(
+                  path: '/b',
+                  builder:
+                      (BuildContext context, GoRouterState state) =>
+                          const Text('Screen B'),
+                  routes: <RouteBase>[
+                    GoRoute(
+                      path: 'details1',
+                      builder:
+                          (BuildContext context, GoRouterState state) =>
+                              const Text('Screen B Detail1'),
+                    ),
+                    GoRoute(
+                      path: 'details2',
+                      builder:
+                          (BuildContext context, GoRouterState state) =>
+                              const Text('Screen B Detail2'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              routes: <GoRoute>[
+                GoRoute(path: '/c', redirect: (_, __) => '/c/main2'),
+                GoRoute(
+                  path: '/c/main1',
+                  builder:
+                      (BuildContext context, GoRouterState state) =>
+                          const Text('Screen C1'),
+                ),
+                GoRoute(
+                  path: '/c/main2',
+                  builder:
+                      (BuildContext context, GoRouterState state) =>
+                          const Text('Screen C2'),
+                ),
+              ],
+            ),
           ],
         ),
       ];
@@ -4904,184 +5382,212 @@ void main() {
     });
 
     testWidgets(
-        'Pushed top-level route is correctly handled by StatefulShellRoute',
-        (WidgetTester tester) async {
-      final GlobalKey<NavigatorState> rootNavigatorKey =
-          GlobalKey<NavigatorState>();
-      final GlobalKey<NavigatorState> nestedNavigatorKey =
-          GlobalKey<NavigatorState>();
-      StatefulNavigationShell? routeState;
+      'Pushed top-level route is correctly handled by StatefulShellRoute',
+      (WidgetTester tester) async {
+        final GlobalKey<NavigatorState> rootNavigatorKey =
+            GlobalKey<NavigatorState>();
+        final GlobalKey<NavigatorState> nestedNavigatorKey =
+            GlobalKey<NavigatorState>();
+        StatefulNavigationShell? routeState;
 
-      final List<RouteBase> routes = <RouteBase>[
-        // First level shell
-        StatefulShellRoute.indexedStack(
-          builder: (BuildContext context, GoRouterState state,
-              StatefulNavigationShell navigationShell) {
-            routeState = navigationShell;
-            return navigationShell;
-          },
-          branches: <StatefulShellBranch>[
-            StatefulShellBranch(routes: <GoRoute>[
-              GoRoute(
-                path: '/a',
-                builder: (BuildContext context, GoRouterState state) =>
-                    const Text('Screen A'),
-              ),
-            ]),
-            StatefulShellBranch(routes: <RouteBase>[
-              // Second level / nested shell
-              StatefulShellRoute.indexedStack(
-                builder: (BuildContext context, GoRouterState state,
-                        StatefulNavigationShell navigationShell) =>
-                    navigationShell,
-                branches: <StatefulShellBranch>[
-                  StatefulShellBranch(routes: <GoRoute>[
-                    GoRoute(
-                      path: '/b1',
-                      builder: (BuildContext context, GoRouterState state) =>
-                          const Text('Screen B1'),
-                    ),
-                  ]),
-                  StatefulShellBranch(
-                      navigatorKey: nestedNavigatorKey,
-                      routes: <GoRoute>[
-                        GoRoute(
-                          path: '/b2',
-                          builder:
-                              (BuildContext context, GoRouterState state) =>
-                                  const Text('Screen B2'),
-                        ),
-                        GoRoute(
-                          path: '/b2-modal',
-                          // We pass an explicit parentNavigatorKey here, to
-                          // properly test the logic in RouteBuilder, i.e.
-                          // routes with parentNavigatorKeys under the shell
-                          // should not be stripped.
-                          parentNavigatorKey: nestedNavigatorKey,
-                          builder:
-                              (BuildContext context, GoRouterState state) =>
-                                  const Text('Nested Modal'),
-                        ),
-                      ]),
+        final List<RouteBase> routes = <RouteBase>[
+          // First level shell
+          StatefulShellRoute.indexedStack(
+            builder: (
+              BuildContext context,
+              GoRouterState state,
+              StatefulNavigationShell navigationShell,
+            ) {
+              routeState = navigationShell;
+              return navigationShell;
+            },
+            branches: <StatefulShellBranch>[
+              StatefulShellBranch(
+                routes: <GoRoute>[
+                  GoRoute(
+                    path: '/a',
+                    builder:
+                        (BuildContext context, GoRouterState state) =>
+                            const Text('Screen A'),
+                  ),
                 ],
               ),
-            ]),
-          ],
-        ),
-        GoRoute(
-          path: '/top-modal',
-          parentNavigatorKey: rootNavigatorKey,
-          builder: (BuildContext context, GoRouterState state) =>
-              const Text('Top Modal'),
-        ),
-      ];
+              StatefulShellBranch(
+                routes: <RouteBase>[
+                  // Second level / nested shell
+                  StatefulShellRoute.indexedStack(
+                    builder:
+                        (
+                          BuildContext context,
+                          GoRouterState state,
+                          StatefulNavigationShell navigationShell,
+                        ) => navigationShell,
+                    branches: <StatefulShellBranch>[
+                      StatefulShellBranch(
+                        routes: <GoRoute>[
+                          GoRoute(
+                            path: '/b1',
+                            builder:
+                                (BuildContext context, GoRouterState state) =>
+                                    const Text('Screen B1'),
+                          ),
+                        ],
+                      ),
+                      StatefulShellBranch(
+                        navigatorKey: nestedNavigatorKey,
+                        routes: <GoRoute>[
+                          GoRoute(
+                            path: '/b2',
+                            builder:
+                                (BuildContext context, GoRouterState state) =>
+                                    const Text('Screen B2'),
+                          ),
+                          GoRoute(
+                            path: '/b2-modal',
+                            // We pass an explicit parentNavigatorKey here, to
+                            // properly test the logic in RouteBuilder, i.e.
+                            // routes with parentNavigatorKeys under the shell
+                            // should not be stripped.
+                            parentNavigatorKey: nestedNavigatorKey,
+                            builder:
+                                (BuildContext context, GoRouterState state) =>
+                                    const Text('Nested Modal'),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
+          GoRoute(
+            path: '/top-modal',
+            parentNavigatorKey: rootNavigatorKey,
+            builder:
+                (BuildContext context, GoRouterState state) =>
+                    const Text('Top Modal'),
+          ),
+        ];
 
-      final GoRouter router = await createRouter(routes, tester,
-          initialLocation: '/a', navigatorKey: rootNavigatorKey);
-      expect(find.text('Screen A'), findsOneWidget);
+        final GoRouter router = await createRouter(
+          routes,
+          tester,
+          initialLocation: '/a',
+          navigatorKey: rootNavigatorKey,
+        );
+        expect(find.text('Screen A'), findsOneWidget);
 
-      routeState!.goBranch(1);
-      await tester.pumpAndSettle();
-      expect(find.text('Screen B1'), findsOneWidget);
+        routeState!.goBranch(1);
+        await tester.pumpAndSettle();
+        expect(find.text('Screen B1'), findsOneWidget);
 
-      // Navigate nested (second level) shell to second branch
-      router.go('/b2');
-      await tester.pumpAndSettle();
-      expect(find.text('Screen B2'), findsOneWidget);
+        // Navigate nested (second level) shell to second branch
+        router.go('/b2');
+        await tester.pumpAndSettle();
+        expect(find.text('Screen B2'), findsOneWidget);
 
-      // Push route over second branch of nested (second level) shell
-      router.push('/b2-modal');
-      await tester.pumpAndSettle();
-      expect(find.text('Nested Modal'), findsOneWidget);
+        // Push route over second branch of nested (second level) shell
+        router.push('/b2-modal');
+        await tester.pumpAndSettle();
+        expect(find.text('Nested Modal'), findsOneWidget);
 
-      // Push top-level route while on second branch
-      router.push('/top-modal');
-      await tester.pumpAndSettle();
-      expect(find.text('Top Modal'), findsOneWidget);
+        // Push top-level route while on second branch
+        router.push('/top-modal');
+        await tester.pumpAndSettle();
+        expect(find.text('Top Modal'), findsOneWidget);
 
-      // Return to shell and first branch
-      router.go('/a');
-      await tester.pumpAndSettle();
-      expect(find.text('Screen A'), findsOneWidget);
+        // Return to shell and first branch
+        router.go('/a');
+        await tester.pumpAndSettle();
+        expect(find.text('Screen A'), findsOneWidget);
 
-      // Switch to second branch, which should only contain 'Nested Modal'
-      // (in the nested shell)
-      routeState!.goBranch(1);
-      await tester.pumpAndSettle();
-      expect(find.text('Screen A'), findsNothing);
-      expect(find.text('Screen B1'), findsNothing);
-      expect(find.text('Screen B2'), findsNothing);
-      expect(find.text('Top Modal'), findsNothing);
-      expect(find.text('Nested Modal'), findsOneWidget);
-    });
+        // Switch to second branch, which should only contain 'Nested Modal'
+        // (in the nested shell)
+        routeState!.goBranch(1);
+        await tester.pumpAndSettle();
+        expect(find.text('Screen A'), findsNothing);
+        expect(find.text('Screen B1'), findsNothing);
+        expect(find.text('Screen B2'), findsNothing);
+        expect(find.text('Top Modal'), findsNothing);
+        expect(find.text('Nested Modal'), findsOneWidget);
+      },
+    );
 
     testWidgets(
-        'Obsolete branches in StatefulShellRoute are cleaned up after route '
-        'configuration change',
-        // TODO(tolo): Temporarily skipped due to a bug that causes test to faiL
-        skip: true, (WidgetTester tester) async {
-      final GlobalKey<NavigatorState> rootNavigatorKey =
-          GlobalKey<NavigatorState>(debugLabel: 'root');
-      final GlobalKey<StatefulNavigationShellState> statefulShellKey =
-          GlobalKey<StatefulNavigationShellState>(debugLabel: 'shell');
-      StatefulNavigationShell? routeState;
-      StatefulShellBranch makeBranch(String name) => StatefulShellBranch(
-              navigatorKey:
-                  GlobalKey<NavigatorState>(debugLabel: 'branch-$name'),
-              preload: true,
-              initialLocation: '/$name',
-              routes: <GoRoute>[
-                GoRoute(
-                  path: '/$name',
-                  builder: (BuildContext context, GoRouterState state) =>
+      'Obsolete branches in StatefulShellRoute are cleaned up after route '
+      'configuration change',
+      // TODO(tolo): Temporarily skipped due to a bug that causes test to faiL
+      skip: true,
+      (WidgetTester tester) async {
+        final GlobalKey<NavigatorState> rootNavigatorKey =
+            GlobalKey<NavigatorState>(debugLabel: 'root');
+        final GlobalKey<StatefulNavigationShellState> statefulShellKey =
+            GlobalKey<StatefulNavigationShellState>(debugLabel: 'shell');
+        StatefulNavigationShell? routeState;
+        StatefulShellBranch makeBranch(String name) => StatefulShellBranch(
+          navigatorKey: GlobalKey<NavigatorState>(debugLabel: 'branch-$name'),
+          preload: true,
+          initialLocation: '/$name',
+          routes: <GoRoute>[
+            GoRoute(
+              path: '/$name',
+              builder:
+                  (BuildContext context, GoRouterState state) =>
                       Text('Screen $name'),
-                ),
-              ]);
-
-      List<RouteBase> createRoutes(bool includeCRoute) => <RouteBase>[
-            StatefulShellRoute.indexedStack(
-              key: statefulShellKey,
-              builder: (BuildContext context, GoRouterState state,
-                  StatefulNavigationShell navigationShell) {
-                routeState = navigationShell;
-                return navigationShell;
-              },
-              branches: <StatefulShellBranch>[
-                makeBranch('a'),
-                makeBranch('b'),
-                if (includeCRoute) makeBranch('c'),
-              ],
             ),
-          ];
+          ],
+        );
 
-      final ValueNotifier<RoutingConfig> config = ValueNotifier<RoutingConfig>(
-        RoutingConfig(routes: createRoutes(true)),
-      );
-      addTearDown(config.dispose);
-      await createRouterWithRoutingConfig(
-        navigatorKey: rootNavigatorKey,
-        config,
-        tester,
-        initialLocation: '/a',
-        errorBuilder: (_, __) => const Text('error'),
-      );
-      await tester.pumpAndSettle();
+        List<RouteBase> createRoutes(bool includeCRoute) => <RouteBase>[
+          StatefulShellRoute.indexedStack(
+            key: statefulShellKey,
+            builder: (
+              BuildContext context,
+              GoRouterState state,
+              StatefulNavigationShell navigationShell,
+            ) {
+              routeState = navigationShell;
+              return navigationShell;
+            },
+            branches: <StatefulShellBranch>[
+              makeBranch('a'),
+              makeBranch('b'),
+              if (includeCRoute) makeBranch('c'),
+            ],
+          ),
+        ];
 
-      bool hasLoadedBranch(String name) => routeState!.debugLoadedBranches
-          .any((StatefulShellBranch e) => e.initialLocation == '/$name');
+        final ValueNotifier<RoutingConfig> config =
+            ValueNotifier<RoutingConfig>(
+              RoutingConfig(routes: createRoutes(true)),
+            );
+        addTearDown(config.dispose);
+        await createRouterWithRoutingConfig(
+          navigatorKey: rootNavigatorKey,
+          config,
+          tester,
+          initialLocation: '/a',
+          errorBuilder: (_, __) => const Text('error'),
+        );
+        await tester.pumpAndSettle();
 
-      expect(hasLoadedBranch('a'), isTrue);
-      expect(hasLoadedBranch('b'), isTrue);
-      expect(hasLoadedBranch('c'), isTrue);
+        bool hasLoadedBranch(String name) => routeState!.debugLoadedBranches
+            .any((StatefulShellBranch e) => e.initialLocation == '/$name');
 
-      // Unload branch 'c' by changing the route configuration
-      config.value = RoutingConfig(routes: createRoutes(false));
-      await tester.pumpAndSettle();
+        expect(hasLoadedBranch('a'), isTrue);
+        expect(hasLoadedBranch('b'), isTrue);
+        expect(hasLoadedBranch('c'), isTrue);
 
-      expect(hasLoadedBranch('a'), isTrue);
-      expect(hasLoadedBranch('b'), isTrue);
-      expect(hasLoadedBranch('c'), isFalse);
-    });
+        // Unload branch 'c' by changing the route configuration
+        config.value = RoutingConfig(routes: createRoutes(false));
+        await tester.pumpAndSettle();
+
+        expect(hasLoadedBranch('a'), isTrue);
+        expect(hasLoadedBranch('b'), isTrue);
+        expect(hasLoadedBranch('c'), isFalse);
+      },
+    );
   });
 
   group('Imperative navigation', () {
@@ -5123,9 +5629,10 @@ void main() {
 
           await tester.pumpWidget(
             MaterialApp.router(
-                routeInformationProvider: router.routeInformationProvider,
-                routeInformationParser: router.routeInformationParser,
-                routerDelegate: router.routerDelegate),
+              routeInformationProvider: router.routeInformationProvider,
+              routeInformationParser: router.routeInformationParser,
+              routerDelegate: router.routerDelegate,
+            ),
           );
 
           expect(router.canPop(), false);
@@ -5134,104 +5641,110 @@ void main() {
           await tester.pumpAndSettle();
 
           expect(
-              find.text('pageless route', skipOffstage: false), findsOneWidget);
+            find.text('pageless route', skipOffstage: false),
+            findsOneWidget,
+          );
           expect(router.canPop(), true);
         },
       );
 
-      testWidgets(
-        'It checks if ShellRoute navigators can pop',
-        (WidgetTester tester) async {
-          final GlobalKey<NavigatorState> shellNavigatorKey =
-              GlobalKey<NavigatorState>();
-          final GoRouter router = GoRouter(
-            initialLocation: '/a',
-            routes: <RouteBase>[
-              ShellRoute(
-                navigatorKey: shellNavigatorKey,
-                builder:
-                    (BuildContext context, GoRouterState state, Widget child) {
-                  return Scaffold(
-                    appBar: AppBar(title: const Text('Shell')),
-                    body: child,
-                  );
-                },
-                routes: <GoRoute>[
-                  GoRoute(
-                    path: '/a',
-                    builder: (BuildContext context, _) {
-                      return Scaffold(
-                        body: TextButton(
-                          onPressed: () async {
-                            shellNavigatorKey.currentState!.push(
-                              MaterialPageRoute<void>(
-                                builder: (BuildContext context) {
-                                  return const Scaffold(
-                                    body: Text('pageless route'),
-                                  );
-                                },
-                              ),
-                            );
-                          },
-                          child: const Text('Push'),
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              ),
-            ],
-          );
-          addTearDown(router.dispose);
+      testWidgets('It checks if ShellRoute navigators can pop', (
+        WidgetTester tester,
+      ) async {
+        final GlobalKey<NavigatorState> shellNavigatorKey =
+            GlobalKey<NavigatorState>();
+        final GoRouter router = GoRouter(
+          initialLocation: '/a',
+          routes: <RouteBase>[
+            ShellRoute(
+              navigatorKey: shellNavigatorKey,
+              builder: (
+                BuildContext context,
+                GoRouterState state,
+                Widget child,
+              ) {
+                return Scaffold(
+                  appBar: AppBar(title: const Text('Shell')),
+                  body: child,
+                );
+              },
+              routes: <GoRoute>[
+                GoRoute(
+                  path: '/a',
+                  builder: (BuildContext context, _) {
+                    return Scaffold(
+                      body: TextButton(
+                        onPressed: () async {
+                          shellNavigatorKey.currentState!.push(
+                            MaterialPageRoute<void>(
+                              builder: (BuildContext context) {
+                                return const Scaffold(
+                                  body: Text('pageless route'),
+                                );
+                              },
+                            ),
+                          );
+                        },
+                        child: const Text('Push'),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ],
+        );
+        addTearDown(router.dispose);
 
-          await tester.pumpWidget(
-            MaterialApp.router(
-                routeInformationProvider: router.routeInformationProvider,
-                routeInformationParser: router.routeInformationParser,
-                routerDelegate: router.routerDelegate),
-          );
+        await tester.pumpWidget(
+          MaterialApp.router(
+            routeInformationProvider: router.routeInformationProvider,
+            routeInformationParser: router.routeInformationParser,
+            routerDelegate: router.routerDelegate,
+          ),
+        );
 
-          expect(router.canPop(), false);
-          expect(find.text('Push'), findsOneWidget);
+        expect(router.canPop(), false);
+        expect(find.text('Push'), findsOneWidget);
 
-          await tester.tap(find.text('Push'));
-          await tester.pumpAndSettle();
+        await tester.tap(find.text('Push'));
+        await tester.pumpAndSettle();
 
-          expect(
-              find.text('pageless route', skipOffstage: false), findsOneWidget);
-          expect(router.canPop(), true);
-        },
-      );
+        expect(
+          find.text('pageless route', skipOffstage: false),
+          findsOneWidget,
+        );
+        expect(router.canPop(), true);
+      });
 
-      testWidgets(
-        'It checks if StatefulShellRoute navigators can pop',
-        (WidgetTester tester) async {
-          final GlobalKey<NavigatorState> rootNavigatorKey =
-              GlobalKey<NavigatorState>();
-          final GoRouter router = GoRouter(
-            navigatorKey: rootNavigatorKey,
-            initialLocation: '/a',
-            routes: <RouteBase>[
-              StatefulShellRoute.indexedStack(
-                builder: mockStackedShellBuilder,
-                branches: <StatefulShellBranch>[
-                  StatefulShellBranch(routes: <GoRoute>[
+      testWidgets('It checks if StatefulShellRoute navigators can pop', (
+        WidgetTester tester,
+      ) async {
+        final GlobalKey<NavigatorState> rootNavigatorKey =
+            GlobalKey<NavigatorState>();
+        final GoRouter router = GoRouter(
+          navigatorKey: rootNavigatorKey,
+          initialLocation: '/a',
+          routes: <RouteBase>[
+            StatefulShellRoute.indexedStack(
+              builder: mockStackedShellBuilder,
+              branches: <StatefulShellBranch>[
+                StatefulShellBranch(
+                  routes: <GoRoute>[
                     GoRoute(
                       path: '/a',
                       builder: (BuildContext context, _) {
-                        return const Scaffold(
-                          body: Text('Screen A'),
-                        );
+                        return const Scaffold(body: Text('Screen A'));
                       },
                     ),
-                  ]),
-                  StatefulShellBranch(routes: <GoRoute>[
+                  ],
+                ),
+                StatefulShellBranch(
+                  routes: <GoRoute>[
                     GoRoute(
                       path: '/b',
                       builder: (BuildContext context, _) {
-                        return const Scaffold(
-                          body: Text('Screen B'),
-                        );
+                        return const Scaffold(body: Text('Screen B'));
                       },
                       routes: <RouteBase>[
                         GoRoute(
@@ -5244,48 +5757,57 @@ void main() {
                         ),
                       ],
                     ),
-                  ]),
-                ],
-              ),
-            ],
-          );
-          addTearDown(router.dispose);
+                  ],
+                ),
+              ],
+            ),
+          ],
+        );
+        addTearDown(router.dispose);
 
-          await tester.pumpWidget(
-            MaterialApp.router(
-                routeInformationProvider: router.routeInformationProvider,
-                routeInformationParser: router.routeInformationParser,
-                routerDelegate: router.routerDelegate),
-          );
+        await tester.pumpWidget(
+          MaterialApp.router(
+            routeInformationProvider: router.routeInformationProvider,
+            routeInformationParser: router.routeInformationParser,
+            routerDelegate: router.routerDelegate,
+          ),
+        );
 
-          expect(router.canPop(), false);
+        expect(router.canPop(), false);
 
-          router.go('/b/detail');
-          await tester.pumpAndSettle();
+        router.go('/b/detail');
+        await tester.pumpAndSettle();
 
-          expect(find.text('Screen B detail', skipOffstage: false),
-              findsOneWidget);
-          expect(router.canPop(), true);
-          // Verify that it is actually the StatefulShellRoute that reports
-          // canPop = true
-          expect(rootNavigatorKey.currentState?.canPop(), false);
-        },
-      );
+        expect(
+          find.text('Screen B detail', skipOffstage: false),
+          findsOneWidget,
+        );
+        expect(router.canPop(), true);
+        // Verify that it is actually the StatefulShellRoute that reports
+        // canPop = true
+        expect(rootNavigatorKey.currentState?.canPop(), false);
+      });
 
-      testWidgets('Pageless route should include in can pop',
-          (WidgetTester tester) async {
-        final GlobalKey<NavigatorState> root =
-            GlobalKey<NavigatorState>(debugLabel: 'root');
-        final GlobalKey<NavigatorState> shell =
-            GlobalKey<NavigatorState>(debugLabel: 'shell');
+      testWidgets('Pageless route should include in can pop', (
+        WidgetTester tester,
+      ) async {
+        final GlobalKey<NavigatorState> root = GlobalKey<NavigatorState>(
+          debugLabel: 'root',
+        );
+        final GlobalKey<NavigatorState> shell = GlobalKey<NavigatorState>(
+          debugLabel: 'shell',
+        );
 
         final GoRouter router = GoRouter(
           navigatorKey: root,
           routes: <RouteBase>[
             ShellRoute(
               navigatorKey: shell,
-              builder:
-                  (BuildContext context, GoRouterState state, Widget child) {
+              builder: (
+                BuildContext context,
+                GoRouterState state,
+                Widget child,
+              ) {
                 return Scaffold(
                   body: Center(
                     child: Column(
@@ -5298,10 +5820,7 @@ void main() {
                 );
               },
               routes: <RouteBase>[
-                GoRoute(
-                  path: '/',
-                  builder: (_, __) => const Text('A Screen'),
-                ),
+                GoRoute(path: '/', builder: (_, __) => const Text('A Screen')),
               ],
             ),
           ],
@@ -5314,8 +5833,9 @@ void main() {
         expect(find.text('A Screen'), findsOneWidget);
         expect(find.text('Shell'), findsOneWidget);
         showDialog<void>(
-            context: root.currentContext!,
-            builder: (_) => const Text('A dialog'));
+          context: root.currentContext!,
+          builder: (_) => const Text('A dialog'),
+        );
         await tester.pumpAndSettle();
         expect(find.text('A dialog'), findsOneWidget);
         expect(router.canPop(), isTrue);
@@ -5326,10 +5846,12 @@ void main() {
       testWidgets(
         'Should pop from the correct navigator when parentNavigatorKey is set',
         (WidgetTester tester) async {
-          final GlobalKey<NavigatorState> root =
-              GlobalKey<NavigatorState>(debugLabel: 'root');
-          final GlobalKey<NavigatorState> shell =
-              GlobalKey<NavigatorState>(debugLabel: 'shell');
+          final GlobalKey<NavigatorState> root = GlobalKey<NavigatorState>(
+            debugLabel: 'root',
+          );
+          final GlobalKey<NavigatorState> shell = GlobalKey<NavigatorState>(
+            debugLabel: 'shell',
+          );
 
           final GoRouter router = GoRouter(
             initialLocation: '/a/b',
@@ -5338,15 +5860,16 @@ void main() {
               GoRoute(
                 path: '/',
                 builder: (BuildContext context, _) {
-                  return const Scaffold(
-                    body: Text('Home'),
-                  );
+                  return const Scaffold(body: Text('Home'));
                 },
                 routes: <RouteBase>[
                   ShellRoute(
                     navigatorKey: shell,
-                    builder: (BuildContext context, GoRouterState state,
-                        Widget child) {
+                    builder: (
+                      BuildContext context,
+                      GoRouterState state,
+                      Widget child,
+                    ) {
                       return Scaffold(
                         body: Center(
                           child: Column(
@@ -5380,9 +5903,10 @@ void main() {
 
           await tester.pumpWidget(
             MaterialApp.router(
-                routeInformationProvider: router.routeInformationProvider,
-                routeInformationParser: router.routeInformationParser,
-                routerDelegate: router.routerDelegate),
+              routeInformationProvider: router.routeInformationProvider,
+              routeInformationParser: router.routeInformationParser,
+              routerDelegate: router.routerDelegate,
+            ),
           );
 
           expect(router.canPop(), isTrue);
@@ -5402,12 +5926,15 @@ void main() {
         },
       );
 
-      testWidgets('Should pop dialog if it is present',
-          (WidgetTester tester) async {
-        final GlobalKey<NavigatorState> root =
-            GlobalKey<NavigatorState>(debugLabel: 'root');
-        final GlobalKey<NavigatorState> shell =
-            GlobalKey<NavigatorState>(debugLabel: 'shell');
+      testWidgets('Should pop dialog if it is present', (
+        WidgetTester tester,
+      ) async {
+        final GlobalKey<NavigatorState> root = GlobalKey<NavigatorState>(
+          debugLabel: 'root',
+        );
+        final GlobalKey<NavigatorState> shell = GlobalKey<NavigatorState>(
+          debugLabel: 'shell',
+        );
 
         final GoRouter router = GoRouter(
           initialLocation: '/a',
@@ -5416,15 +5943,16 @@ void main() {
             GoRoute(
               path: '/',
               builder: (BuildContext context, _) {
-                return const Scaffold(
-                  body: Text('Home'),
-                );
+                return const Scaffold(body: Text('Home'));
               },
               routes: <RouteBase>[
                 ShellRoute(
                   navigatorKey: shell,
-                  builder: (BuildContext context, GoRouterState state,
-                      Widget child) {
+                  builder: (
+                    BuildContext context,
+                    GoRouterState state,
+                    Widget child,
+                  ) {
                     return Scaffold(
                       body: Center(
                         child: Column(
@@ -5456,8 +5984,9 @@ void main() {
         expect(find.text('Shell'), findsOneWidget);
         expect(find.text('Home'), findsNothing);
         final Future<bool?> resultFuture = showDialog<bool>(
-            context: root.currentContext!,
-            builder: (_) => const Text('A dialog'));
+          context: root.currentContext!,
+          builder: (_) => const Text('A dialog'),
+        );
         await tester.pumpAndSettle();
         expect(find.text('A dialog'), findsOneWidget);
         expect(router.canPop(), isTrue);
@@ -5471,8 +6000,9 @@ void main() {
         expect(result, isTrue);
       });
 
-      testWidgets('Triggers a Hero inside a ShellRoute',
-          (WidgetTester tester) async {
+      testWidgets('Triggers a Hero inside a ShellRoute', (
+        WidgetTester tester,
+      ) async {
         final UniqueKey heroKey = UniqueKey();
         const String kHeroTag = 'hero';
 
@@ -5483,29 +6013,31 @@ void main() {
             },
             routes: <GoRoute>[
               GoRoute(
-                  path: '/a',
-                  builder: (BuildContext context, _) {
-                    return Hero(
-                      tag: kHeroTag,
-                      child: Container(),
-                      flightShuttleBuilder: (_, __, ___, ____, _____) {
-                        return Container(key: heroKey);
-                      },
-                    );
-                  }),
+                path: '/a',
+                builder: (BuildContext context, _) {
+                  return Hero(
+                    tag: kHeroTag,
+                    child: Container(),
+                    flightShuttleBuilder: (_, __, ___, ____, _____) {
+                      return Container(key: heroKey);
+                    },
+                  );
+                },
+              ),
               GoRoute(
-                  path: '/b',
-                  builder: (BuildContext context, _) {
-                    return Hero(
-                      tag: kHeroTag,
-                      child: Container(),
-                    );
-                  }),
+                path: '/b',
+                builder: (BuildContext context, _) {
+                  return Hero(tag: kHeroTag, child: Container());
+                },
+              ),
             ],
-          )
+          ),
         ];
-        final GoRouter router =
-            await createRouter(routes, tester, initialLocation: '/a');
+        final GoRouter router = await createRouter(
+          routes,
+          tester,
+          initialLocation: '/a',
+        );
 
         // check that flightShuttleBuilder widget is not yet present
         expect(find.byKey(heroKey), findsNothing);
@@ -5524,54 +6056,45 @@ void main() {
   });
 
   group('of', () {
-    testWidgets(
-      'It should return the go router instance of the widget tree',
-      (WidgetTester tester) async {
-        const Key key = Key('key');
-        final List<RouteBase> routes = <RouteBase>[
-          GoRoute(
-            path: '/',
-            builder: (_, __) => const SizedBox(key: key),
-          ),
-        ];
+    testWidgets('It should return the go router instance of the widget tree', (
+      WidgetTester tester,
+    ) async {
+      const Key key = Key('key');
+      final List<RouteBase> routes = <RouteBase>[
+        GoRoute(path: '/', builder: (_, __) => const SizedBox(key: key)),
+      ];
 
-        final GoRouter router = await createRouter(routes, tester);
-        final Element context = tester.element(find.byKey(key));
-        final GoRouter foundRouter = GoRouter.of(context);
-        expect(foundRouter, router);
-      },
-    );
+      final GoRouter router = await createRouter(routes, tester);
+      final Element context = tester.element(find.byKey(key));
+      final GoRouter foundRouter = GoRouter.of(context);
+      expect(foundRouter, router);
+    });
 
-    testWidgets(
-      'It should throw if there is no go router in the widget tree',
-      (WidgetTester tester) async {
-        const Key key = Key('key');
-        await tester.pumpWidget(const SizedBox(key: key));
+    testWidgets('It should throw if there is no go router in the widget tree', (
+      WidgetTester tester,
+    ) async {
+      const Key key = Key('key');
+      await tester.pumpWidget(const SizedBox(key: key));
 
-        final Element context = tester.element(find.byKey(key));
-        expect(() => GoRouter.of(context), throwsA(anything));
-      },
-    );
+      final Element context = tester.element(find.byKey(key));
+      expect(() => GoRouter.of(context), throwsA(anything));
+    });
   });
 
   group('maybeOf', () {
-    testWidgets(
-      'It should return the go router instance of the widget tree',
-      (WidgetTester tester) async {
-        const Key key = Key('key');
-        final List<RouteBase> routes = <RouteBase>[
-          GoRoute(
-            path: '/',
-            builder: (_, __) => const SizedBox(key: key),
-          ),
-        ];
+    testWidgets('It should return the go router instance of the widget tree', (
+      WidgetTester tester,
+    ) async {
+      const Key key = Key('key');
+      final List<RouteBase> routes = <RouteBase>[
+        GoRoute(path: '/', builder: (_, __) => const SizedBox(key: key)),
+      ];
 
-        final GoRouter router = await createRouter(routes, tester);
-        final Element context = tester.element(find.byKey(key));
-        final GoRouter? foundRouter = GoRouter.maybeOf(context);
-        expect(foundRouter, router);
-      },
-    );
+      final GoRouter router = await createRouter(routes, tester);
+      final Element context = tester.element(find.byKey(key));
+      final GoRouter? foundRouter = GoRouter.maybeOf(context);
+      expect(foundRouter, router);
+    });
 
     testWidgets(
       'It should return null if there is no go router in the widget tree',
@@ -5594,24 +6117,35 @@ void main() {
         GoRoute(
           path: '/a',
           pageBuilder: createPageBuilder(
-              restorationId: 'screenA', child: const Text('Screen A')),
+            restorationId: 'screenA',
+            child: const Text('Screen A'),
+          ),
           routes: <RouteBase>[
             GoRoute(
               path: 'detail',
               pageBuilder: createPageBuilder(
-                  restorationId: 'screenADetail',
-                  child: Column(children: <Widget>[
+                restorationId: 'screenADetail',
+                child: Column(
+                  children: <Widget>[
                     const Text('Screen A Detail'),
                     DummyRestorableStatefulWidget(
-                        key: statefulWidgetKeyA, restorationId: 'counterA'),
-                  ])),
+                      key: statefulWidgetKeyA,
+                      restorationId: 'counterA',
+                    ),
+                  ],
+                ),
+              ),
             ),
           ],
         ),
       ];
 
-      await createRouter(routes, tester,
-          initialLocation: '/a/detail', restorationScopeId: 'test');
+      await createRouter(
+        routes,
+        tester,
+        initialLocation: '/a/detail',
+        restorationScopeId: 'test',
+      );
       await tester.pumpAndSettle();
       statefulWidgetKeyA.currentState?.increment();
       expect(statefulWidgetKeyA.currentState?.counter, equals(1));
@@ -5624,8 +6158,9 @@ void main() {
       expect(statefulWidgetKeyA.currentState?.counter, equals(1));
     });
 
-    testWidgets('Restores state of branches in StatefulShellRoute correctly',
-        (WidgetTester tester) async {
+    testWidgets('Restores state of branches in StatefulShellRoute correctly', (
+      WidgetTester tester,
+    ) async {
       final GlobalKey<NavigatorState> rootNavigatorKey =
           GlobalKey<NavigatorState>();
       final GlobalKey<DummyRestorableStatefulWidgetState> statefulWidgetKeyA =
@@ -5639,87 +6174,115 @@ void main() {
       final List<RouteBase> routes = <RouteBase>[
         StatefulShellRoute.indexedStack(
           restorationScopeId: 'shell',
-          pageBuilder: (BuildContext context, GoRouterState state,
-              StatefulNavigationShell navigationShell) {
+          pageBuilder: (
+            BuildContext context,
+            GoRouterState state,
+            StatefulNavigationShell navigationShell,
+          ) {
             routeState = navigationShell;
             return MaterialPage<dynamic>(
-                restorationId: 'shellWidget', child: navigationShell);
+              restorationId: 'shellWidget',
+              child: navigationShell,
+            );
           },
           branches: <StatefulShellBranch>[
             StatefulShellBranch(
-                restorationScopeId: 'branchA',
-                routes: <GoRoute>[
-                  GoRoute(
-                    path: '/a',
-                    pageBuilder: createPageBuilder(
-                        restorationId: 'screenA',
-                        child: const Text('Screen A')),
-                    routes: <RouteBase>[
-                      GoRoute(
-                        path: 'detailA',
-                        pageBuilder: createPageBuilder(
-                            restorationId: 'screenADetail',
-                            child: Column(children: <Widget>[
-                              const Text('Screen A Detail'),
-                              DummyRestorableStatefulWidget(
-                                  key: statefulWidgetKeyA,
-                                  restorationId: 'counterA'),
-                            ])),
-                      ),
-                    ],
+              restorationScopeId: 'branchA',
+              routes: <GoRoute>[
+                GoRoute(
+                  path: '/a',
+                  pageBuilder: createPageBuilder(
+                    restorationId: 'screenA',
+                    child: const Text('Screen A'),
                   ),
-                ]),
+                  routes: <RouteBase>[
+                    GoRoute(
+                      path: 'detailA',
+                      pageBuilder: createPageBuilder(
+                        restorationId: 'screenADetail',
+                        child: Column(
+                          children: <Widget>[
+                            const Text('Screen A Detail'),
+                            DummyRestorableStatefulWidget(
+                              key: statefulWidgetKeyA,
+                              restorationId: 'counterA',
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
             StatefulShellBranch(
-                restorationScopeId: 'branchB',
-                routes: <GoRoute>[
-                  GoRoute(
-                    path: '/b',
-                    pageBuilder: createPageBuilder(
-                        restorationId: 'screenB',
-                        child: const Text('Screen B')),
-                    routes: <RouteBase>[
-                      GoRoute(
-                        path: 'detailB',
-                        pageBuilder: createPageBuilder(
-                            restorationId: 'screenBDetail',
-                            child: Column(children: <Widget>[
-                              const Text('Screen B Detail'),
-                              DummyRestorableStatefulWidget(
-                                  key: statefulWidgetKeyB,
-                                  restorationId: 'counterB'),
-                            ])),
+              restorationScopeId: 'branchB',
+              routes: <GoRoute>[
+                GoRoute(
+                  path: '/b',
+                  pageBuilder: createPageBuilder(
+                    restorationId: 'screenB',
+                    child: const Text('Screen B'),
+                  ),
+                  routes: <RouteBase>[
+                    GoRoute(
+                      path: 'detailB',
+                      pageBuilder: createPageBuilder(
+                        restorationId: 'screenBDetail',
+                        child: Column(
+                          children: <Widget>[
+                            const Text('Screen B Detail'),
+                            DummyRestorableStatefulWidget(
+                              key: statefulWidgetKeyB,
+                              restorationId: 'counterB',
+                            ),
+                          ],
+                        ),
                       ),
-                    ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              routes: <GoRoute>[
+                GoRoute(
+                  path: '/c',
+                  pageBuilder: createPageBuilder(
+                    restorationId: 'screenC',
+                    child: const Text('Screen C'),
                   ),
-                ]),
-            StatefulShellBranch(routes: <GoRoute>[
-              GoRoute(
-                path: '/c',
-                pageBuilder: createPageBuilder(
-                    restorationId: 'screenC', child: const Text('Screen C')),
-                routes: <RouteBase>[
-                  GoRoute(
-                    path: 'detailC',
-                    pageBuilder: createPageBuilder(
+                  routes: <RouteBase>[
+                    GoRoute(
+                      path: 'detailC',
+                      pageBuilder: createPageBuilder(
                         restorationId: 'screenCDetail',
-                        child: Column(children: <Widget>[
-                          const Text('Screen C Detail'),
-                          DummyRestorableStatefulWidget(
+                        child: Column(
+                          children: <Widget>[
+                            const Text('Screen C Detail'),
+                            DummyRestorableStatefulWidget(
                               key: statefulWidgetKeyC,
-                              restorationId: 'counterC'),
-                        ])),
-                  ),
-                ],
-              ),
-            ]),
+                              restorationId: 'counterC',
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ],
         ),
       ];
 
-      final GoRouter router = await createRouter(routes, tester,
-          initialLocation: '/a/detailA',
-          navigatorKey: rootNavigatorKey,
-          restorationScopeId: 'test');
+      final GoRouter router = await createRouter(
+        routes,
+        tester,
+        initialLocation: '/a/detailA',
+        navigatorKey: rootNavigatorKey,
+        restorationScopeId: 'test',
+      );
       await tester.pumpAndSettle();
       statefulWidgetKeyA.currentState?.increment();
       expect(statefulWidgetKeyA.currentState?.counter, equals(1));
@@ -5757,172 +6320,205 @@ void main() {
     });
 
     testWidgets(
-        'Restores state of imperative routes in StatefulShellRoute correctly',
-        (WidgetTester tester) async {
-      final GlobalKey<NavigatorState> rootNavigatorKey =
-          GlobalKey<NavigatorState>();
-      final GlobalKey<DummyRestorableStatefulWidgetState> statefulWidgetKeyA =
-          GlobalKey<DummyRestorableStatefulWidgetState>();
-      final GlobalKey<DummyRestorableStatefulWidgetState> statefulWidgetKeyB =
-          GlobalKey<DummyRestorableStatefulWidgetState>();
-      StatefulNavigationShell? routeStateRoot;
-      StatefulNavigationShell? routeStateNested;
+      'Restores state of imperative routes in StatefulShellRoute correctly',
+      (WidgetTester tester) async {
+        final GlobalKey<NavigatorState> rootNavigatorKey =
+            GlobalKey<NavigatorState>();
+        final GlobalKey<DummyRestorableStatefulWidgetState> statefulWidgetKeyA =
+            GlobalKey<DummyRestorableStatefulWidgetState>();
+        final GlobalKey<DummyRestorableStatefulWidgetState> statefulWidgetKeyB =
+            GlobalKey<DummyRestorableStatefulWidgetState>();
+        StatefulNavigationShell? routeStateRoot;
+        StatefulNavigationShell? routeStateNested;
 
-      final List<RouteBase> routes = <RouteBase>[
-        StatefulShellRoute.indexedStack(
-          restorationScopeId: 'shell',
-          pageBuilder: (BuildContext context, GoRouterState state,
-              StatefulNavigationShell navigationShell) {
-            routeStateRoot = navigationShell;
-            return MaterialPage<dynamic>(
-                restorationId: 'shellWidget', child: navigationShell);
-          },
-          branches: <StatefulShellBranch>[
-            StatefulShellBranch(
+        final List<RouteBase> routes = <RouteBase>[
+          StatefulShellRoute.indexedStack(
+            restorationScopeId: 'shell',
+            pageBuilder: (
+              BuildContext context,
+              GoRouterState state,
+              StatefulNavigationShell navigationShell,
+            ) {
+              routeStateRoot = navigationShell;
+              return MaterialPage<dynamic>(
+                restorationId: 'shellWidget',
+                child: navigationShell,
+              );
+            },
+            branches: <StatefulShellBranch>[
+              StatefulShellBranch(
                 restorationScopeId: 'branchA',
                 routes: <GoRoute>[
                   GoRoute(
                     path: '/a',
                     pageBuilder: createPageBuilder(
-                        restorationId: 'screenA',
-                        child: const Text('Screen A')),
+                      restorationId: 'screenA',
+                      child: const Text('Screen A'),
+                    ),
                     routes: <RouteBase>[
                       GoRoute(
                         path: 'detailA',
                         pageBuilder: createPageBuilder(
-                            restorationId: 'screenADetail',
-                            child: Column(children: <Widget>[
+                          restorationId: 'screenADetail',
+                          child: Column(
+                            children: <Widget>[
                               const Text('Screen A Detail'),
                               DummyRestorableStatefulWidget(
-                                  key: statefulWidgetKeyA,
-                                  restorationId: 'counterA'),
-                            ])),
+                                key: statefulWidgetKeyA,
+                                restorationId: 'counterA',
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                     ],
                   ),
-                ]),
-            StatefulShellBranch(
+                ],
+              ),
+              StatefulShellBranch(
                 restorationScopeId: 'branchB',
                 routes: <RouteBase>[
                   StatefulShellRoute.indexedStack(
-                      restorationScopeId: 'branchB-nested-shell',
-                      pageBuilder: (BuildContext context, GoRouterState state,
-                          StatefulNavigationShell navigationShell) {
-                        routeStateNested = navigationShell;
-                        return MaterialPage<dynamic>(
-                            restorationId: 'shellWidget-nested',
-                            child: navigationShell);
-                      },
-                      branches: <StatefulShellBranch>[
-                        StatefulShellBranch(
-                            restorationScopeId: 'branchB-nested',
-                            routes: <GoRoute>[
+                    restorationScopeId: 'branchB-nested-shell',
+                    pageBuilder: (
+                      BuildContext context,
+                      GoRouterState state,
+                      StatefulNavigationShell navigationShell,
+                    ) {
+                      routeStateNested = navigationShell;
+                      return MaterialPage<dynamic>(
+                        restorationId: 'shellWidget-nested',
+                        child: navigationShell,
+                      );
+                    },
+                    branches: <StatefulShellBranch>[
+                      StatefulShellBranch(
+                        restorationScopeId: 'branchB-nested',
+                        routes: <GoRoute>[
+                          GoRoute(
+                            path: '/b',
+                            pageBuilder: createPageBuilder(
+                              restorationId: 'screenB',
+                              child: const Text('Screen B'),
+                            ),
+                            routes: <RouteBase>[
                               GoRoute(
-                                path: '/b',
+                                path: 'detailB',
                                 pageBuilder: createPageBuilder(
-                                    restorationId: 'screenB',
-                                    child: const Text('Screen B')),
-                                routes: <RouteBase>[
-                                  GoRoute(
-                                    path: 'detailB',
-                                    pageBuilder: createPageBuilder(
-                                        restorationId: 'screenBDetail',
-                                        child: Column(children: <Widget>[
-                                          const Text('Screen B Detail'),
-                                          DummyRestorableStatefulWidget(
-                                              key: statefulWidgetKeyB,
-                                              restorationId: 'counterB'),
-                                        ])),
+                                  restorationId: 'screenBDetail',
+                                  child: Column(
+                                    children: <Widget>[
+                                      const Text('Screen B Detail'),
+                                      DummyRestorableStatefulWidget(
+                                        key: statefulWidgetKeyB,
+                                        restorationId: 'counterB',
+                                      ),
+                                    ],
                                   ),
-                                ],
+                                ),
                               ),
-                            ]),
-                        StatefulShellBranch(
-                            restorationScopeId: 'branchC-nested',
-                            routes: <GoRoute>[
-                              GoRoute(
-                                path: '/c',
-                                pageBuilder: createPageBuilder(
-                                    restorationId: 'screenC',
-                                    child: const Text('Screen C')),
-                              ),
-                            ]),
-                      ])
-                ]),
-          ],
-        ),
-      ];
+                            ],
+                          ),
+                        ],
+                      ),
+                      StatefulShellBranch(
+                        restorationScopeId: 'branchC-nested',
+                        routes: <GoRoute>[
+                          GoRoute(
+                            path: '/c',
+                            pageBuilder: createPageBuilder(
+                              restorationId: 'screenC',
+                              child: const Text('Screen C'),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ];
 
-      final GoRouter router = await createRouter(routes, tester,
+        final GoRouter router = await createRouter(
+          routes,
+          tester,
           initialLocation: '/a/detailA',
           navigatorKey: rootNavigatorKey,
-          restorationScopeId: 'test');
-      await tester.pumpAndSettle();
-      statefulWidgetKeyA.currentState?.increment();
-      expect(statefulWidgetKeyA.currentState?.counter, equals(1));
+          restorationScopeId: 'test',
+        );
+        await tester.pumpAndSettle();
+        statefulWidgetKeyA.currentState?.increment();
+        expect(statefulWidgetKeyA.currentState?.counter, equals(1));
 
-      routeStateRoot!.goBranch(1);
-      await tester.pumpAndSettle();
+        routeStateRoot!.goBranch(1);
+        await tester.pumpAndSettle();
 
-      router.go('/b/detailB');
-      await tester.pumpAndSettle();
-      statefulWidgetKeyB.currentState?.increment();
-      expect(statefulWidgetKeyB.currentState?.counter, equals(1));
+        router.go('/b/detailB');
+        await tester.pumpAndSettle();
+        statefulWidgetKeyB.currentState?.increment();
+        expect(statefulWidgetKeyB.currentState?.counter, equals(1));
 
-      routeStateRoot!.goBranch(0);
-      await tester.pumpAndSettle();
-      expect(find.text('Screen A Detail'), findsOneWidget);
-      expect(find.text('Screen B'), findsNothing);
-      expect(find.text('Screen B Pushed Detail'), findsNothing);
+        routeStateRoot!.goBranch(0);
+        await tester.pumpAndSettle();
+        expect(find.text('Screen A Detail'), findsOneWidget);
+        expect(find.text('Screen B'), findsNothing);
+        expect(find.text('Screen B Pushed Detail'), findsNothing);
 
-      await tester.restartAndRestore();
+        await tester.restartAndRestore();
 
-      await tester.pumpAndSettle();
-      expect(find.text('Screen A Detail'), findsOneWidget);
-      expect(find.text('Screen B'), findsNothing);
-      expect(find.text('Screen B Pushed Detail'), findsNothing);
-      expect(statefulWidgetKeyA.currentState?.counter, equals(1));
+        await tester.pumpAndSettle();
+        expect(find.text('Screen A Detail'), findsOneWidget);
+        expect(find.text('Screen B'), findsNothing);
+        expect(find.text('Screen B Pushed Detail'), findsNothing);
+        expect(statefulWidgetKeyA.currentState?.counter, equals(1));
 
-      routeStateRoot!.goBranch(1);
-      await tester.pumpAndSettle();
-      expect(find.text('Screen A Detail'), findsNothing);
-      expect(find.text('Screen B'), findsNothing);
-      expect(find.text('Screen B Detail'), findsOneWidget);
-      expect(statefulWidgetKeyB.currentState?.counter, equals(1));
+        routeStateRoot!.goBranch(1);
+        await tester.pumpAndSettle();
+        expect(find.text('Screen A Detail'), findsNothing);
+        expect(find.text('Screen B'), findsNothing);
+        expect(find.text('Screen B Detail'), findsOneWidget);
+        expect(statefulWidgetKeyB.currentState?.counter, equals(1));
 
-      routeStateNested!.goBranch(1);
-      await tester.pumpAndSettle();
-      routeStateNested!.goBranch(0);
-      await tester.pumpAndSettle();
+        routeStateNested!.goBranch(1);
+        await tester.pumpAndSettle();
+        routeStateNested!.goBranch(0);
+        await tester.pumpAndSettle();
 
-      expect(find.text('Screen B Detail'), findsOneWidget);
-      expect(statefulWidgetKeyB.currentState?.counter, equals(1));
-    });
+        expect(find.text('Screen B Detail'), findsOneWidget);
+        expect(statefulWidgetKeyB.currentState?.counter, equals(1));
+      },
+    );
   });
 
   ///Regression tests for https://github.com/flutter/flutter/issues/132557
   group('overridePlatformDefaultLocation', () {
     test('No initial location provided', () {
       expect(
-          () => GoRouter(
-                overridePlatformDefaultLocation: true,
-                routes: <RouteBase>[
-                  GoRoute(
-                    path: '/a',
-                    builder: (BuildContext context, GoRouterState state) =>
-                        const Placeholder(),
-                  ),
-                  GoRoute(
-                    path: '/b',
-                    builder: (BuildContext context, GoRouterState state) =>
-                        const Placeholder(),
-                  ),
-                ],
-              ),
-          throwsA(const TypeMatcher<AssertionError>()));
+        () => GoRouter(
+          overridePlatformDefaultLocation: true,
+          routes: <RouteBase>[
+            GoRoute(
+              path: '/a',
+              builder:
+                  (BuildContext context, GoRouterState state) =>
+                      const Placeholder(),
+            ),
+            GoRoute(
+              path: '/b',
+              builder:
+                  (BuildContext context, GoRouterState state) =>
+                      const Placeholder(),
+            ),
+          ],
+        ),
+        throwsA(const TypeMatcher<AssertionError>()),
+      );
     });
-    testWidgets('Test override using routeInformationProvider',
-        (WidgetTester tester) async {
+    testWidgets('Test override using routeInformationProvider', (
+      WidgetTester tester,
+    ) async {
       tester.binding.platformDispatcher.defaultRouteNameTestValue =
           '/some-route';
       final String platformRoute =
@@ -5933,13 +6529,15 @@ void main() {
       final List<RouteBase> routes = <RouteBase>[
         GoRoute(
           path: '/abc',
-          builder: (BuildContext context, GoRouterState state) =>
-              const Placeholder(),
+          builder:
+              (BuildContext context, GoRouterState state) =>
+                  const Placeholder(),
         ),
         GoRoute(
           path: '/bcd',
-          builder: (BuildContext context, GoRouterState state) =>
-              const Placeholder(),
+          builder:
+              (BuildContext context, GoRouterState state) =>
+                  const Placeholder(),
         ),
       ];
 
@@ -5949,153 +6547,165 @@ void main() {
         overridePlatformDefaultLocation: true,
         initialLocation: expectedInitialRoute,
       );
-      expect(router.routeInformationProvider.value.uri.toString(),
-          expectedInitialRoute);
+      expect(
+        router.routeInformationProvider.value.uri.toString(),
+        expectedInitialRoute,
+      );
     });
   });
 
   testWidgets(
-      'test the pathParameters in redirect when the Router is recreated',
-      (WidgetTester tester) async {
-    final GoRouter router = GoRouter(
-      initialLocation: '/foo',
-      routes: <RouteBase>[
+    'test the pathParameters in redirect when the Router is recreated',
+    (WidgetTester tester) async {
+      final GoRouter router = GoRouter(
+        initialLocation: '/foo',
+        routes: <RouteBase>[
+          GoRoute(
+            path: '/foo',
+            builder: dummy,
+            routes: <GoRoute>[
+              GoRoute(
+                path: ':id',
+                redirect: (_, GoRouterState state) {
+                  expect(state.pathParameters['id'], isNotNull);
+                  return null;
+                },
+                builder: dummy,
+              ),
+            ],
+          ),
+        ],
+      );
+      addTearDown(router.dispose);
+      await tester.pumpWidget(
+        MaterialApp.router(key: UniqueKey(), routerConfig: router),
+      );
+      router.push('/foo/123');
+      await tester.pump(); // wait reportRouteInformation
+      await tester.pumpWidget(
+        MaterialApp.router(key: UniqueKey(), routerConfig: router),
+      );
+    },
+  );
+
+  testWidgets(
+    'should return the current GoRouterState when router.currentState is called',
+    (WidgetTester tester) async {
+      final List<RouteBase> routes = <RouteBase>[
         GoRoute(
-          path: '/foo',
-          builder: dummy,
-          routes: <GoRoute>[
+          name: 'home',
+          path: '/',
+          builder:
+              (BuildContext context, GoRouterState state) => const HomeScreen(),
+        ),
+        GoRoute(
+          name: 'books',
+          path: '/books',
+          builder:
+              (BuildContext context, GoRouterState state) =>
+                  const Text('books'),
+        ),
+        GoRoute(
+          name: 'boats',
+          path: '/boats',
+          builder:
+              (BuildContext context, GoRouterState state) =>
+                  const Text('boats'),
+        ),
+        ShellRoute(
+          builder:
+              (BuildContext context, GoRouterState state, Widget child) =>
+                  child,
+          routes: <RouteBase>[
             GoRoute(
-              path: ':id',
-              redirect: (_, GoRouterState state) {
-                expect(state.pathParameters['id'], isNotNull);
-                return null;
-              },
-              builder: dummy,
+              name: 'tulips',
+              path: '/tulips',
+              builder:
+                  (BuildContext context, GoRouterState state) =>
+                      const Text('tulips'),
             ),
           ],
         ),
-      ],
-    );
-    addTearDown(router.dispose);
-    await tester.pumpWidget(
-      MaterialApp.router(
-        key: UniqueKey(),
-        routerConfig: router,
-      ),
-    );
-    router.push('/foo/123');
-    await tester.pump(); // wait reportRouteInformation
-    await tester.pumpWidget(
-      MaterialApp.router(
-        key: UniqueKey(),
-        routerConfig: router,
-      ),
-    );
-  });
+      ];
 
-  testWidgets(
-      'should return the current GoRouterState when router.currentState is called',
-      (WidgetTester tester) async {
-    final List<RouteBase> routes = <RouteBase>[
-      GoRoute(
-          name: 'home',
-          path: '/',
-          builder: (BuildContext context, GoRouterState state) =>
-              const HomeScreen()),
-      GoRoute(
-          name: 'books',
-          path: '/books',
-          builder: (BuildContext context, GoRouterState state) =>
-              const Text('books')),
-      GoRoute(
-          name: 'boats',
-          path: '/boats',
-          builder: (BuildContext context, GoRouterState state) =>
-              const Text('boats')),
-      ShellRoute(
-        builder: (BuildContext context, GoRouterState state, Widget child) =>
-            child,
-        routes: <RouteBase>[
-          GoRoute(
-            name: 'tulips',
-            path: '/tulips',
-            builder: (BuildContext context, GoRouterState state) =>
-                const Text('tulips'),
-          ),
-        ],
-      )
-    ];
+      final GoRouter router = await createRouter(routes, tester);
+      await tester.pumpAndSettle();
 
-    final GoRouter router = await createRouter(routes, tester);
-    await tester.pumpAndSettle();
+      GoRouterState? state = router.state;
+      expect(state.name, 'home');
+      expect(state.fullPath, '/');
 
-    GoRouterState? state = router.state;
-    expect(state.name, 'home');
-    expect(state.fullPath, '/');
+      router.go('/books');
+      await tester.pumpAndSettle();
+      state = router.state;
+      expect(state.name, 'books');
+      expect(state.fullPath, '/books');
 
-    router.go('/books');
-    await tester.pumpAndSettle();
-    state = router.state;
-    expect(state.name, 'books');
-    expect(state.fullPath, '/books');
+      router.push('/boats');
+      await tester.pumpAndSettle();
+      state = router.state;
+      expect(state.name, 'boats');
+      expect(state.fullPath, '/boats');
 
-    router.push('/boats');
-    await tester.pumpAndSettle();
-    state = router.state;
-    expect(state.name, 'boats');
-    expect(state.fullPath, '/boats');
+      router.pop();
+      await tester.pumpAndSettle();
+      state = router.state;
+      expect(state.name, 'books');
+      expect(state.fullPath, '/books');
 
-    router.pop();
-    await tester.pumpAndSettle();
-    state = router.state;
-    expect(state.name, 'books');
-    expect(state.fullPath, '/books');
+      router.go('/tulips');
+      await tester.pumpAndSettle();
+      state = router.state;
+      expect(state.name, 'tulips');
+      expect(state.fullPath, '/tulips');
 
-    router.go('/tulips');
-    await tester.pumpAndSettle();
-    state = router.state;
-    expect(state.name, 'tulips');
-    expect(state.fullPath, '/tulips');
+      router.go('/books');
+      router.push('/tulips');
+      await tester.pumpAndSettle();
+      state = router.state;
+      expect(state.name, 'tulips');
+      expect(state.fullPath, '/tulips');
+    },
+  );
 
-    router.go('/books');
-    router.push('/tulips');
-    await tester.pumpAndSettle();
-    state = router.state;
-    expect(state.name, 'tulips');
-    expect(state.fullPath, '/tulips');
-  });
-
-  testWidgets('should allow route paths without leading /',
-      (WidgetTester tester) async {
+  testWidgets('should allow route paths without leading /', (
+    WidgetTester tester,
+  ) async {
     final List<GoRoute> routes = <GoRoute>[
       GoRoute(
         path: '/', // root cannot be empty (existing assert)
-        builder: (BuildContext context, GoRouterState state) =>
-            const HomeScreen(),
+        builder:
+            (BuildContext context, GoRouterState state) => const HomeScreen(),
         routes: <RouteBase>[
           GoRoute(
             path: 'child-route',
-            builder: (BuildContext context, GoRouterState state) =>
-                const Text('/child-route'),
+            builder:
+                (BuildContext context, GoRouterState state) =>
+                    const Text('/child-route'),
             routes: <RouteBase>[
               GoRoute(
                 path: 'grand-child-route',
-                builder: (BuildContext context, GoRouterState state) =>
-                    const Text('/grand-child-route'),
+                builder:
+                    (BuildContext context, GoRouterState state) =>
+                        const Text('/grand-child-route'),
               ),
               GoRoute(
                 path: 'redirected-grand-child-route',
-                redirect: (BuildContext context, GoRouterState state) =>
-                    '/child-route',
+                redirect:
+                    (BuildContext context, GoRouterState state) =>
+                        '/child-route',
               ),
             ],
-          )
+          ),
         ],
       ),
     ];
 
-    final GoRouter router = await createRouter(routes, tester,
-        initialLocation: '/child-route/grand-child-route');
+    final GoRouter router = await createRouter(
+      routes,
+      tester,
+      initialLocation: '/child-route/grand-child-route',
+    );
     RouteMatchList matches = router.routerDelegate.currentConfiguration;
     expect(matches.matches, hasLength(3));
     expect(matches.uri.toString(), '/child-route/grand-child-route');
@@ -6109,37 +6719,44 @@ void main() {
     expect(find.text('/child-route'), findsOneWidget);
   });
 
-  testWidgets('should allow route paths with leading /',
-      (WidgetTester tester) async {
+  testWidgets('should allow route paths with leading /', (
+    WidgetTester tester,
+  ) async {
     final List<GoRoute> routes = <GoRoute>[
       GoRoute(
         path: '/',
-        builder: (BuildContext context, GoRouterState state) =>
-            const HomeScreen(),
+        builder:
+            (BuildContext context, GoRouterState state) => const HomeScreen(),
         routes: <RouteBase>[
           GoRoute(
             path: '/child-route',
-            builder: (BuildContext context, GoRouterState state) =>
-                const Text('/child-route'),
+            builder:
+                (BuildContext context, GoRouterState state) =>
+                    const Text('/child-route'),
             routes: <RouteBase>[
               GoRoute(
                 path: '/grand-child-route',
-                builder: (BuildContext context, GoRouterState state) =>
-                    const Text('/grand-child-route'),
+                builder:
+                    (BuildContext context, GoRouterState state) =>
+                        const Text('/grand-child-route'),
               ),
               GoRoute(
                 path: '/redirected-grand-child-route',
-                redirect: (BuildContext context, GoRouterState state) =>
-                    '/child-route',
+                redirect:
+                    (BuildContext context, GoRouterState state) =>
+                        '/child-route',
               ),
             ],
-          )
+          ),
         ],
       ),
     ];
 
-    final GoRouter router = await createRouter(routes, tester,
-        initialLocation: '/child-route/grand-child-route');
+    final GoRouter router = await createRouter(
+      routes,
+      tester,
+      initialLocation: '/child-route/grand-child-route',
+    );
     RouteMatchList matches = router.routerDelegate.currentConfiguration;
     expect(matches.matches, hasLength(3));
     expect(matches.uri.toString(), '/child-route/grand-child-route');

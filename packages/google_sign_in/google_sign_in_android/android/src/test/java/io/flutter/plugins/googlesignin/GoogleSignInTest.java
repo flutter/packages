@@ -1,63 +1,107 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 package io.flutter.plugins.googlesignin;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import android.accounts.Account;
 import android.app.Activity;
+import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
+import android.content.IntentSender;
 import android.content.res.Resources;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import androidx.credentials.ClearCredentialStateRequest;
+import androidx.credentials.Credential;
+import androidx.credentials.CredentialManager;
+import androidx.credentials.CredentialManagerCallback;
+import androidx.credentials.CustomCredential;
+import androidx.credentials.GetCredentialRequest;
+import androidx.credentials.GetCredentialResponse;
+import androidx.credentials.PasswordCredential;
+import androidx.credentials.exceptions.ClearCredentialException;
+import androidx.credentials.exceptions.GetCredentialCancellationException;
+import androidx.credentials.exceptions.GetCredentialException;
+import androidx.credentials.exceptions.GetCredentialInterruptedException;
+import androidx.credentials.exceptions.GetCredentialProviderConfigurationException;
+import androidx.credentials.exceptions.GetCredentialUnknownException;
+import androidx.credentials.exceptions.GetCredentialUnsupportedException;
+import androidx.credentials.exceptions.NoCredentialException;
+import com.google.android.gms.auth.api.identity.AuthorizationClient;
+import com.google.android.gms.auth.api.identity.AuthorizationRequest;
+import com.google.android.gms.auth.api.identity.AuthorizationResult;
+import com.google.android.gms.auth.api.identity.ClearTokenRequest;
+import com.google.android.gms.auth.api.identity.RevokeAccessRequest;
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.common.api.CommonStatusCodes;
-import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import io.flutter.plugins.googlesignin.Messages.FlutterError;
-import io.flutter.plugins.googlesignin.Messages.InitParams;
-import java.util.Collections;
+import com.google.android.libraries.identity.googleid.GetGoogleIdOption;
+import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption;
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential;
+import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.MockedConstruction;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.mockito.Spy;
 
 public class GoogleSignInTest {
   @Mock Context mockContext;
   @Mock Resources mockResources;
   @Mock Activity mockActivity;
-  @Spy Messages.VoidResult voidResult;
-  @Spy Messages.Result<Boolean> boolResult;
-  @Spy Messages.Result<Messages.UserData> userDataResult;
-  @Mock GoogleSignInWrapper mockGoogleSignIn;
-  @Mock GoogleSignInAccount account;
-  @Mock GoogleSignInClient mockClient;
-  @Mock Task<GoogleSignInAccount> mockSignInTask;
+  @Mock ActivityPluginBinding mockActivityPluginBinding;
+  @Mock PendingIntent mockAuthorizationIntent;
+  @Mock IntentSender mockAuthorizationIntentSender;
+  @Mock AuthorizeResult mockAuthorizeResult;
+  @Mock CredentialManager mockCredentialManager;
+  @Mock AuthorizationClient mockAuthorizationClient;
+  @Mock CustomCredential mockGenericCredential;
+  @Mock GoogleIdTokenCredential mockGoogleCredential;
+  @Mock Task<AuthorizationResult> mockAuthorizationTask;
+  @Mock Task<Void> mockVoidTask;
 
+  private GoogleSignInPlugin flutterPlugin;
+  // Technically this is not the plugin, but in practice almost all of the functionality is in this
+  // class so it is given the simpler name.
   private GoogleSignInPlugin.Delegate plugin;
   private AutoCloseable mockCloseable;
 
   @Before
   public void setUp() {
     mockCloseable = MockitoAnnotations.openMocks(this);
+
+    // Wire up basic mock functionality that is not test-specific.
     when(mockContext.getResources()).thenReturn(mockResources);
-    plugin = new GoogleSignInPlugin.Delegate(mockContext, mockGoogleSignIn);
+    when(mockGenericCredential.getType())
+        .thenReturn(GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL);
+    when(mockAuthorizationTask.addOnSuccessListener(any())).thenReturn(mockAuthorizationTask);
+    when(mockAuthorizationTask.addOnFailureListener(any())).thenReturn(mockAuthorizationTask);
+    when(mockVoidTask.addOnSuccessListener(any())).thenReturn(mockVoidTask);
+    when(mockVoidTask.addOnFailureListener(any())).thenReturn(mockVoidTask);
+    when(mockAuthorizationIntent.getIntentSender()).thenReturn(mockAuthorizationIntentSender);
+    when(mockActivityPluginBinding.getActivity()).thenReturn(mockActivity);
+
+    plugin =
+        new GoogleSignInPlugin.Delegate(
+            mockContext,
+            (Context c) -> mockCredentialManager,
+            (Context c) -> mockAuthorizationClient,
+            (Credential cred) -> mockGoogleCredential);
   }
 
   @After
@@ -66,327 +110,1098 @@ public class GoogleSignInTest {
   }
 
   @Test
-  public void requestScopes_ResultErrorIfAccountIsNull() {
-    when(mockGoogleSignIn.getLastSignedInAccount(mockContext)).thenReturn(null);
+  public void onAttachedToActivity_updatesDelegate() {
+    flutterPlugin = new GoogleSignInPlugin();
+    flutterPlugin.initWithDelegate(mock(io.flutter.plugin.common.BinaryMessenger.class), plugin);
+    flutterPlugin.onAttachedToActivity(mockActivityPluginBinding);
 
-    plugin.requestScopes(Collections.singletonList("requestedScope"), boolResult);
-
-    ArgumentCaptor<Throwable> resultCaptor = ArgumentCaptor.forClass(Throwable.class);
-    verify(boolResult).error(resultCaptor.capture());
-    FlutterError error = (FlutterError) resultCaptor.getValue();
-    Assert.assertEquals("sign_in_required", error.code);
-    Assert.assertEquals("No account to grant scopes.", error.getMessage());
+    verify(mockActivityPluginBinding).addActivityResultListener(plugin);
+    assertEquals(mockActivity, plugin.getActivity());
   }
 
   @Test
-  public void requestScopes_ResultTrueIfAlreadyGranted() {
-    Scope requestedScope = new Scope("requestedScope");
-    when(mockGoogleSignIn.getLastSignedInAccount(mockContext)).thenReturn(account);
-    when(account.getGrantedScopes()).thenReturn(Collections.singleton(requestedScope));
-    when(mockGoogleSignIn.hasPermissions(account, requestedScope)).thenReturn(true);
+  public void onDetachedFromActivity_updatesDelegate() {
+    flutterPlugin = new GoogleSignInPlugin();
+    flutterPlugin.initWithDelegate(mock(io.flutter.plugin.common.BinaryMessenger.class), plugin);
+    flutterPlugin.onAttachedToActivity(mockActivityPluginBinding);
+    flutterPlugin.onDetachedFromActivity();
 
-    plugin.requestScopes(Collections.singletonList("requestedScope"), boolResult);
-
-    verify(boolResult).success(true);
+    verify(mockActivityPluginBinding).removeActivityResultListener(plugin);
+    assertNull(plugin.getActivity());
   }
 
   @Test
-  public void requestScopes_RequestsPermissionIfNotGranted() {
-    Scope requestedScope = new Scope("requestedScope");
+  public void onReattachedToActivityForConfigChanges_updatesDelegate() {
+    flutterPlugin = new GoogleSignInPlugin();
+    flutterPlugin.initWithDelegate(mock(io.flutter.plugin.common.BinaryMessenger.class), plugin);
+    flutterPlugin.onReattachedToActivityForConfigChanges(mockActivityPluginBinding);
+
+    verify(mockActivityPluginBinding).addActivityResultListener(plugin);
+    assertEquals(mockActivity, plugin.getActivity());
+  }
+
+  @Test
+  public void onDetachedFromActivityForConfigChanges_updatesDelegate() {
+    flutterPlugin = new GoogleSignInPlugin();
+    flutterPlugin.initWithDelegate(mock(io.flutter.plugin.common.BinaryMessenger.class), plugin);
+    flutterPlugin.onAttachedToActivity(mockActivityPluginBinding);
+    flutterPlugin.onDetachedFromActivityForConfigChanges();
+
+    verify(mockActivityPluginBinding).removeActivityResultListener(plugin);
+    assertNull(plugin.getActivity());
+  }
+
+  @Test
+  public void getGoogleServicesJsonServerClientId_loadsServerClientIdFromResources() {
+    final String packageName = "fakePackageName";
+    final String serverClientId = "fakeServerClientId";
+    final int resourceId = 1;
+    when(mockContext.getPackageName()).thenReturn(packageName);
+    when(mockResources.getIdentifier("default_web_client_id", "string", packageName))
+        .thenReturn(resourceId);
+    when(mockContext.getString(resourceId)).thenReturn(serverClientId);
+
+    final String returnedId = plugin.getGoogleServicesJsonServerClientId();
+    assertEquals(serverClientId, returnedId);
+  }
+
+  @Test
+  public void getGoogleServicesJsonServerClientId_returnsNullIfNotFound() {
+    final String packageName = "fakePackageName";
+    when(mockContext.getPackageName()).thenReturn(packageName);
+    when(mockResources.getIdentifier("default_web_client_id", "string", packageName)).thenReturn(0);
+
+    final String returnedId = plugin.getGoogleServicesJsonServerClientId();
+    assertNull(returnedId);
+  }
+
+  @Test
+  public void getCredential_returnsAuthenticationInfo() {
+    GetCredentialRequestParams params =
+        new GetCredentialRequestParams(
+            false,
+            new GetCredentialRequestGoogleIdOptionParams(false, false),
+            "serverClientId",
+            null,
+            null);
+
+    final String displayName = "Jane User";
+    final String givenName = "Jane";
+    final String familyName = "User";
+    final String id = "someId";
+    final String idToken = "idToken";
+    when(mockGoogleCredential.getDisplayName()).thenReturn(displayName);
+    when(mockGoogleCredential.getGivenName()).thenReturn(givenName);
+    when(mockGoogleCredential.getFamilyName()).thenReturn(familyName);
+    when(mockGoogleCredential.getId()).thenReturn(id);
+    when(mockGoogleCredential.getIdToken()).thenReturn(idToken);
+
+    final Boolean[] callbackCalled = new Boolean[1];
     plugin.setActivity(mockActivity);
-    when(mockGoogleSignIn.getLastSignedInAccount(mockContext)).thenReturn(account);
-    when(account.getGrantedScopes()).thenReturn(Collections.singleton(requestedScope));
-    when(mockGoogleSignIn.hasPermissions(account, requestedScope)).thenReturn(false);
+    plugin.getCredential(
+        params,
+        ResultCompat.asCompatCallback(
+            reply -> {
+              callbackCalled[0] = true;
+              assertTrue(reply.isSuccess());
+              GetCredentialResult result = reply.getOrNull();
+              assertTrue(result instanceof GetCredentialSuccess);
+              PlatformGoogleIdTokenCredential credential =
+                  ((GetCredentialSuccess) result).getCredential();
+              assertEquals(displayName, credential.getDisplayName());
+              assertEquals(givenName, credential.getGivenName());
+              assertEquals(familyName, credential.getFamilyName());
+              assertEquals(id, credential.getId());
+              assertEquals(idToken, credential.getIdToken());
+              return null;
+            }));
 
-    plugin.requestScopes(Collections.singletonList("requestedScope"), boolResult);
+    @SuppressWarnings("unchecked")
+    ArgumentCaptor<CredentialManagerCallback<GetCredentialResponse, GetCredentialException>>
+        callbackCaptor = ArgumentCaptor.forClass(CredentialManagerCallback.class);
+    verify(mockCredentialManager)
+        .getCredentialAsync(
+            eq(mockActivity),
+            any(GetCredentialRequest.class),
+            any(),
+            any(),
+            callbackCaptor.capture());
 
-    verify(mockGoogleSignIn)
-        .requestPermissions(mockActivity, 53295, account, new Scope[] {requestedScope});
+    callbackCaptor.getValue().onResult(new GetCredentialResponse(mockGenericCredential));
+    assertTrue(callbackCalled[0]);
   }
 
   @Test
-  public void requestScopes_ReturnsFalseIfPermissionDenied() {
-    Scope requestedScope = new Scope("requestedScope");
+  public void getCredential_usesGetSignInWithGoogleOptionForButtonFlow() {
+    GetCredentialRequestParams params =
+        new GetCredentialRequestParams(
+            true,
+            new GetCredentialRequestGoogleIdOptionParams(false, false),
+            "serverClientId",
+            null,
+            null);
 
-    when(mockGoogleSignIn.getLastSignedInAccount(mockContext)).thenReturn(account);
-    when(account.getGrantedScopes()).thenReturn(Collections.singleton(requestedScope));
-    when(mockGoogleSignIn.hasPermissions(account, requestedScope)).thenReturn(false);
+    plugin.setActivity(mockActivity);
+    plugin.getCredential(
+        params,
+        ResultCompat.asCompatCallback(
+            reply -> {
+              // No-op, since this test doesn't trigger the getCredentialsAsync callback that would
+              // call this.
+              return null;
+            }));
 
-    plugin.requestScopes(Collections.singletonList("requestedScope"), boolResult);
-    plugin.onActivityResult(
-        GoogleSignInPlugin.Delegate.REQUEST_CODE_REQUEST_SCOPE,
-        Activity.RESULT_CANCELED,
-        new Intent());
+    ArgumentCaptor<GetCredentialRequest> captor =
+        ArgumentCaptor.forClass(GetCredentialRequest.class);
+    verify(mockCredentialManager)
+        .getCredentialAsync(eq(mockActivity), captor.capture(), any(), any(), any());
 
-    verify(boolResult).success(false);
+    assertEquals(1, captor.getValue().getCredentialOptions().size());
+    assertTrue(
+        captor.getValue().getCredentialOptions().get(0) instanceof GetSignInWithGoogleOption);
   }
 
   @Test
-  public void requestScopes_ReturnsTrueIfPermissionGranted() {
-    Scope requestedScope = new Scope("requestedScope");
+  public void getCredential_usesGetGoogleIdOptionForNonButtonFlow() {
+    GetCredentialRequestParams params =
+        new GetCredentialRequestParams(
+            false,
+            new GetCredentialRequestGoogleIdOptionParams(false, false),
+            "serverClientId",
+            null,
+            null);
 
-    when(mockGoogleSignIn.getLastSignedInAccount(mockContext)).thenReturn(account);
-    when(account.getGrantedScopes()).thenReturn(Collections.singleton(requestedScope));
-    when(mockGoogleSignIn.hasPermissions(account, requestedScope)).thenReturn(false);
+    plugin.setActivity(mockActivity);
+    plugin.getCredential(
+        params,
+        ResultCompat.asCompatCallback(
+            reply -> {
+              // This test doesn't trigger the getCredentialsAsync callback that would call this,
+              // so if this is reached something has gone wrong.
+              fail();
+              return null;
+            }));
 
-    plugin.requestScopes(Collections.singletonList("requestedScope"), boolResult);
-    plugin.onActivityResult(
-        GoogleSignInPlugin.Delegate.REQUEST_CODE_REQUEST_SCOPE, Activity.RESULT_OK, new Intent());
+    ArgumentCaptor<GetCredentialRequest> captor =
+        ArgumentCaptor.forClass(GetCredentialRequest.class);
+    verify(mockCredentialManager)
+        .getCredentialAsync(eq(mockActivity), captor.capture(), any(), any(), any());
 
-    verify(boolResult).success(true);
+    assertEquals(1, captor.getValue().getCredentialOptions().size());
+    assertTrue(captor.getValue().getCredentialOptions().get(0) instanceof GetGoogleIdOption);
   }
 
   @Test
-  public void requestScopes_mayBeCalledRepeatedly_ifAlreadyGranted() {
-    List<String> requestedScopes = Collections.singletonList("requestedScope");
-    Scope requestedScope = new Scope("requestedScope");
+  public void getCredential_passesHostedDomainInButtonFlow() {
+    final String hostedDomain = "example.com";
+    GetCredentialRequestParams params =
+        new GetCredentialRequestParams(
+            true,
+            new GetCredentialRequestGoogleIdOptionParams(false, false),
+            "serverClientId",
+            hostedDomain,
+            null);
 
-    when(mockGoogleSignIn.getLastSignedInAccount(mockContext)).thenReturn(account);
-    when(account.getGrantedScopes()).thenReturn(Collections.singleton(requestedScope));
-    when(mockGoogleSignIn.hasPermissions(account, requestedScope)).thenReturn(false);
+    plugin.setActivity(mockActivity);
+    plugin.getCredential(
+        params,
+        ResultCompat.asCompatCallback(
+            reply -> {
+              // This test doesn't trigger the getCredentialsAsync callback that would call this,
+              // so if this is reached something has gone wrong.
+              fail();
+              return null;
+            }));
 
-    plugin.requestScopes(requestedScopes, boolResult);
-    plugin.onActivityResult(
-        GoogleSignInPlugin.Delegate.REQUEST_CODE_REQUEST_SCOPE, Activity.RESULT_OK, new Intent());
-    plugin.requestScopes(requestedScopes, boolResult);
-    plugin.onActivityResult(
-        GoogleSignInPlugin.Delegate.REQUEST_CODE_REQUEST_SCOPE, Activity.RESULT_OK, new Intent());
+    ArgumentCaptor<GetCredentialRequest> captor =
+        ArgumentCaptor.forClass(GetCredentialRequest.class);
+    verify(mockCredentialManager)
+        .getCredentialAsync(eq(mockActivity), captor.capture(), any(), any(), any());
 
-    verify(boolResult, times(2)).success(true);
+    assertEquals(1, captor.getValue().getCredentialOptions().size());
+    assertEquals(
+        hostedDomain,
+        ((GetSignInWithGoogleOption) captor.getValue().getCredentialOptions().get(0))
+            .getHostedDomainFilter());
   }
 
   @Test
-  public void requestScopes_mayBeCalledRepeatedly_ifNotSignedIn() {
-    List<String> requestedScopes = Collections.singletonList("requestedScope");
+  public void getCredential_passesNonceInButtonFlow() {
+    final String nonce = "nonce";
+    GetCredentialRequestParams params =
+        new GetCredentialRequestParams(
+            true,
+            new GetCredentialRequestGoogleIdOptionParams(false, false),
+            "serverClientId",
+            null,
+            nonce);
 
-    when(mockGoogleSignIn.getLastSignedInAccount(mockContext)).thenReturn(null);
+    plugin.setActivity(mockActivity);
+    plugin.getCredential(
+        params,
+        ResultCompat.asCompatCallback(
+            reply -> {
+              // This test doesn't trigger the getCredentialsAsync callback that would call this,
+              // so if this is reached something has gone wrong.
+              fail();
+              return null;
+            }));
 
-    plugin.requestScopes(requestedScopes, boolResult);
-    plugin.onActivityResult(
-        GoogleSignInPlugin.Delegate.REQUEST_CODE_REQUEST_SCOPE, Activity.RESULT_OK, new Intent());
-    plugin.requestScopes(requestedScopes, boolResult);
-    plugin.onActivityResult(
-        GoogleSignInPlugin.Delegate.REQUEST_CODE_REQUEST_SCOPE, Activity.RESULT_OK, new Intent());
+    ArgumentCaptor<GetCredentialRequest> captor =
+        ArgumentCaptor.forClass(GetCredentialRequest.class);
+    verify(mockCredentialManager)
+        .getCredentialAsync(eq(mockActivity), captor.capture(), any(), any(), any());
 
-    ArgumentCaptor<Throwable> resultCaptor = ArgumentCaptor.forClass(Throwable.class);
-    verify(boolResult, times(2)).error(resultCaptor.capture());
-    List<Throwable> errors = resultCaptor.getAllValues();
-    Assert.assertEquals(2, errors.size());
-    FlutterError error = (FlutterError) errors.get(0);
-    Assert.assertEquals("sign_in_required", error.code);
-    Assert.assertEquals("No account to grant scopes.", error.getMessage());
-    error = (FlutterError) errors.get(1);
-    Assert.assertEquals("sign_in_required", error.code);
-    Assert.assertEquals("No account to grant scopes.", error.getMessage());
-  }
-
-  @Test(expected = IllegalStateException.class)
-  public void signInThrowsWithoutActivity() {
-    final GoogleSignInPlugin.Delegate plugin =
-        new GoogleSignInPlugin.Delegate(mock(Context.class), mock(GoogleSignInWrapper.class));
-
-    plugin.signIn(userDataResult);
-  }
-
-  @Test
-  public void signInSilentlyThatImmediatelyCompletesWithoutResultFinishesWithError()
-      throws ApiException {
-    final String clientId = "fakeClientId";
-    InitParams params = buildInitParams(clientId, null);
-    initAndAssertServerClientId(params, clientId);
-
-    ApiException exception =
-        new ApiException(new Status(CommonStatusCodes.SIGN_IN_REQUIRED, "Error text"));
-    when(mockClient.silentSignIn()).thenReturn(mockSignInTask);
-    when(mockSignInTask.isComplete()).thenReturn(true);
-    when(mockSignInTask.getResult(ApiException.class)).thenThrow(exception);
-
-    plugin.signInSilently(userDataResult);
-    ArgumentCaptor<Throwable> resultCaptor = ArgumentCaptor.forClass(Throwable.class);
-    verify(userDataResult).error(resultCaptor.capture());
-    FlutterError error = (FlutterError) resultCaptor.getValue();
-    Assert.assertEquals("sign_in_required", error.code);
-    Assert.assertEquals(
-        "com.google.android.gms.common.api.ApiException: 4: Error text", error.getMessage());
+    assertEquals(1, captor.getValue().getCredentialOptions().size());
+    assertEquals(
+        nonce,
+        ((GetSignInWithGoogleOption) captor.getValue().getCredentialOptions().get(0)).getNonce());
   }
 
   @Test
-  public void init_LoadsServerClientIdFromResources() {
-    final String packageName = "fakePackageName";
-    final String serverClientId = "fakeServerClientId";
-    final int resourceId = 1;
-    InitParams params = buildInitParams(null, null);
-    when(mockContext.getPackageName()).thenReturn(packageName);
-    when(mockResources.getIdentifier("default_web_client_id", "string", packageName))
-        .thenReturn(resourceId);
-    when(mockContext.getString(resourceId)).thenReturn(serverClientId);
-    initAndAssertServerClientId(params, serverClientId);
+  public void getCredential_passesNonceInNonButtonFlow() {
+    final String nonce = "nonce";
+    GetCredentialRequestParams params =
+        new GetCredentialRequestParams(
+            false,
+            new GetCredentialRequestGoogleIdOptionParams(false, false),
+            "serverClientId",
+            null,
+            nonce);
+
+    plugin.setActivity(mockActivity);
+    plugin.getCredential(
+        params,
+        ResultCompat.asCompatCallback(
+            reply -> {
+              // This test doesn't trigger the getCredentialsAsync callback that would call this,
+              // so if this is reached something has gone wrong.
+              fail();
+              return null;
+            }));
+
+    ArgumentCaptor<GetCredentialRequest> captor =
+        ArgumentCaptor.forClass(GetCredentialRequest.class);
+    verify(mockCredentialManager)
+        .getCredentialAsync(eq(mockActivity), captor.capture(), any(), any(), any());
+
+    assertEquals(1, captor.getValue().getCredentialOptions().size());
+    assertEquals(
+        nonce, ((GetGoogleIdOption) captor.getValue().getCredentialOptions().get(0)).getNonce());
   }
 
   @Test
-  public void init_InterpretsClientIdAsServerClientId() {
-    final String clientId = "fakeClientId";
-    InitParams params = buildInitParams(clientId, null);
-    initAndAssertServerClientId(params, clientId);
+  public void getCredential_reportsMissingActivity() {
+    GetCredentialRequestParams params =
+        new GetCredentialRequestParams(
+            false,
+            new GetCredentialRequestGoogleIdOptionParams(false, false),
+            "serverClientId",
+            null,
+            null);
+
+    final Boolean[] callbackCalled = new Boolean[1];
+    plugin.setActivity(null);
+    plugin.getCredential(
+        params,
+        ResultCompat.asCompatCallback(
+            reply -> {
+              callbackCalled[0] = true;
+              // This failure is a structured return value, not an exception.
+              assertTrue(reply.isSuccess());
+              GetCredentialResult result = reply.getOrNull();
+              assertTrue(result instanceof GetCredentialFailure);
+              GetCredentialFailure failure = (GetCredentialFailure) result;
+              assertEquals(GetCredentialFailureType.NO_ACTIVITY, failure.getType());
+              return null;
+            }));
+    assertTrue(callbackCalled[0]);
   }
 
   @Test
-  public void init_ForwardsServerClientId() {
-    final String serverClientId = "fakeServerClientId";
-    InitParams params = buildInitParams(null, serverClientId);
-    initAndAssertServerClientId(params, serverClientId);
+  public void getCredential_reportsMissingServerClientId() {
+    GetCredentialRequestParams params =
+        new GetCredentialRequestParams(
+            false, new GetCredentialRequestGoogleIdOptionParams(false, false), null, null, null);
+
+    final Boolean[] callbackCalled = new Boolean[1];
+    plugin.setActivity(mockActivity);
+    plugin.getCredential(
+        params,
+        ResultCompat.asCompatCallback(
+            reply -> {
+              callbackCalled[0] = true;
+              // This failure is a structured return value, not an exception.
+              assertTrue(reply.isSuccess());
+              GetCredentialResult result = reply.getOrNull();
+              assertTrue(result instanceof GetCredentialFailure);
+              GetCredentialFailure failure = (GetCredentialFailure) result;
+              assertEquals(GetCredentialFailureType.MISSING_SERVER_CLIENT_ID, failure.getType());
+              return null;
+            }));
+    assertTrue(callbackCalled[0]);
   }
 
   @Test
-  public void init_IgnoresClientIdIfServerClientIdIsProvided() {
-    final String clientId = "fakeClientId";
-    final String serverClientId = "fakeServerClientId";
-    InitParams params = buildInitParams(clientId, serverClientId);
-    initAndAssertServerClientId(params, serverClientId);
+  public void getCredential_reportsWrongCredentialType() {
+    GetCredentialRequestParams params =
+        new GetCredentialRequestParams(
+            false,
+            new GetCredentialRequestGoogleIdOptionParams(false, false),
+            "serverClientId",
+            null,
+            null);
+
+    final Boolean[] callbackCalled = new Boolean[1];
+    plugin.setActivity(mockActivity);
+    plugin.getCredential(
+        params,
+        ResultCompat.asCompatCallback(
+            reply -> {
+              callbackCalled[0] = true;
+              // This failure is a structured return value, not an exception.
+              assertTrue(reply.isSuccess());
+              GetCredentialResult result = reply.getOrNull();
+              assertTrue(result instanceof GetCredentialFailure);
+              GetCredentialFailure failure = (GetCredentialFailure) result;
+              assertEquals(GetCredentialFailureType.UNEXPECTED_CREDENTIAL_TYPE, failure.getType());
+              return null;
+            }));
+
+    @SuppressWarnings("unchecked")
+    ArgumentCaptor<CredentialManagerCallback<GetCredentialResponse, GetCredentialException>>
+        callbackCaptor = ArgumentCaptor.forClass(CredentialManagerCallback.class);
+    verify(mockCredentialManager)
+        .getCredentialAsync(
+            eq(mockActivity),
+            any(GetCredentialRequest.class),
+            any(),
+            any(),
+            callbackCaptor.capture());
+
+    // PasswordCredential is used because it's easy to create without mocking; all that matters is
+    // that it's not a CustomCredential of type TYPE_GOOGLE_ID_TOKEN_CREDENTIAL.
+    callbackCaptor
+        .getValue()
+        .onResult(new GetCredentialResponse(new PasswordCredential("wrong", "type")));
+    assertTrue(callbackCalled[0]);
   }
 
   @Test
-  public void init_PassesForceCodeForRefreshTokenFalseWithServerClientIdParameter() {
-    InitParams params = buildInitParams("fakeClientId", "fakeServerClientId", false);
+  public void getCredential_reportsCancellation() {
+    GetCredentialRequestParams params =
+        new GetCredentialRequestParams(
+            false,
+            new GetCredentialRequestGoogleIdOptionParams(false, false),
+            "serverClientId",
+            null,
+            null);
 
-    initAndAssertForceCodeForRefreshToken(params, false);
+    final Boolean[] callbackCalled = new Boolean[1];
+    plugin.setActivity(mockActivity);
+    plugin.getCredential(
+        params,
+        ResultCompat.asCompatCallback(
+            reply -> {
+              callbackCalled[0] = true;
+              // This failure is a structured return value, not an exception.
+              assertTrue(reply.isSuccess());
+              GetCredentialResult result = reply.getOrNull();
+              assertTrue(result instanceof GetCredentialFailure);
+              GetCredentialFailure failure = (GetCredentialFailure) result;
+              assertEquals(GetCredentialFailureType.CANCELED, failure.getType());
+              return null;
+            }));
+
+    @SuppressWarnings("unchecked")
+    ArgumentCaptor<CredentialManagerCallback<GetCredentialResponse, GetCredentialException>>
+        callbackCaptor = ArgumentCaptor.forClass(CredentialManagerCallback.class);
+    verify(mockCredentialManager)
+        .getCredentialAsync(
+            eq(mockActivity),
+            any(GetCredentialRequest.class),
+            any(),
+            any(),
+            callbackCaptor.capture());
+
+    callbackCaptor.getValue().onError(new GetCredentialCancellationException());
+    assertTrue(callbackCalled[0]);
   }
 
   @Test
-  public void init_PassesForceCodeForRefreshTokenTrueWithServerClientIdParameter() {
-    InitParams params = buildInitParams("fakeClientId", "fakeServerClientId", true);
+  public void getCredential_reportsInterrupted() {
+    GetCredentialRequestParams params =
+        new GetCredentialRequestParams(
+            false,
+            new GetCredentialRequestGoogleIdOptionParams(false, false),
+            "serverClientId",
+            null,
+            null);
 
-    initAndAssertForceCodeForRefreshToken(params, true);
+    final Boolean[] callbackCalled = new Boolean[1];
+    plugin.setActivity(mockActivity);
+    plugin.getCredential(
+        params,
+        ResultCompat.asCompatCallback(
+            reply -> {
+              callbackCalled[0] = true;
+              // This failure is a structured return value, not an exception.
+              assertTrue(reply.isSuccess());
+              GetCredentialResult result = reply.getOrNull();
+              assertTrue(result instanceof GetCredentialFailure);
+              GetCredentialFailure failure = (GetCredentialFailure) result;
+              assertEquals(GetCredentialFailureType.INTERRUPTED, failure.getType());
+              return null;
+            }));
+
+    @SuppressWarnings("unchecked")
+    ArgumentCaptor<CredentialManagerCallback<GetCredentialResponse, GetCredentialException>>
+        callbackCaptor = ArgumentCaptor.forClass(CredentialManagerCallback.class);
+    verify(mockCredentialManager)
+        .getCredentialAsync(
+            eq(mockActivity),
+            any(GetCredentialRequest.class),
+            any(),
+            any(),
+            callbackCaptor.capture());
+
+    callbackCaptor.getValue().onError(new GetCredentialInterruptedException());
+    assertTrue(callbackCalled[0]);
   }
 
   @Test
-  public void init_PassesForceCodeForRefreshTokenFalseWithServerClientIdFromResources() {
-    final String packageName = "fakePackageName";
-    final String serverClientId = "fakeServerClientId";
-    final int resourceId = 1;
-    InitParams params = buildInitParams(null, null, false);
-    when(mockContext.getPackageName()).thenReturn(packageName);
-    when(mockResources.getIdentifier("default_web_client_id", "string", packageName))
-        .thenReturn(resourceId);
-    when(mockContext.getString(resourceId)).thenReturn(serverClientId);
+  public void getCredential_reportsProviderConfigurationIssue() {
+    GetCredentialRequestParams params =
+        new GetCredentialRequestParams(
+            false,
+            new GetCredentialRequestGoogleIdOptionParams(false, false),
+            "serverClientId",
+            null,
+            null);
 
-    initAndAssertForceCodeForRefreshToken(params, false);
+    final Boolean[] callbackCalled = new Boolean[1];
+    plugin.setActivity(mockActivity);
+    plugin.getCredential(
+        params,
+        ResultCompat.asCompatCallback(
+            reply -> {
+              callbackCalled[0] = true;
+              // This failure is a structured return value, not an exception.
+              assertTrue(reply.isSuccess());
+              GetCredentialResult result = reply.getOrNull();
+              assertTrue(result instanceof GetCredentialFailure);
+              GetCredentialFailure failure = (GetCredentialFailure) result;
+              assertEquals(
+                  GetCredentialFailureType.PROVIDER_CONFIGURATION_ISSUE, failure.getType());
+              return null;
+            }));
+
+    @SuppressWarnings("unchecked")
+    ArgumentCaptor<CredentialManagerCallback<GetCredentialResponse, GetCredentialException>>
+        callbackCaptor = ArgumentCaptor.forClass(CredentialManagerCallback.class);
+    verify(mockCredentialManager)
+        .getCredentialAsync(
+            eq(mockActivity),
+            any(GetCredentialRequest.class),
+            any(),
+            any(),
+            callbackCaptor.capture());
+
+    callbackCaptor.getValue().onError(new GetCredentialProviderConfigurationException());
+    assertTrue(callbackCalled[0]);
   }
 
   @Test
-  public void init_PassesForceCodeForRefreshTokenTrueWithServerClientIdFromResources() {
-    final String packageName = "fakePackageName";
-    final String serverClientId = "fakeServerClientId";
-    final int resourceId = 1;
-    InitParams params = buildInitParams(null, null, true);
-    when(mockContext.getPackageName()).thenReturn(packageName);
-    when(mockResources.getIdentifier("default_web_client_id", "string", packageName))
-        .thenReturn(resourceId);
-    when(mockContext.getString(resourceId)).thenReturn(serverClientId);
+  public void getCredential_reportsUnsupported() {
+    GetCredentialRequestParams params =
+        new GetCredentialRequestParams(
+            false,
+            new GetCredentialRequestGoogleIdOptionParams(false, false),
+            "serverClientId",
+            null,
+            null);
 
-    initAndAssertForceCodeForRefreshToken(params, true);
+    final Boolean[] callbackCalled = new Boolean[1];
+    plugin.setActivity(mockActivity);
+    plugin.getCredential(
+        params,
+        ResultCompat.asCompatCallback(
+            reply -> {
+              callbackCalled[0] = true;
+              // This failure is a structured return value, not an exception.
+              assertTrue(reply.isSuccess());
+              GetCredentialResult result = reply.getOrNull();
+              assertTrue(result instanceof GetCredentialFailure);
+              GetCredentialFailure failure = (GetCredentialFailure) result;
+              assertEquals(GetCredentialFailureType.UNSUPPORTED, failure.getType());
+              return null;
+            }));
+
+    @SuppressWarnings("unchecked")
+    ArgumentCaptor<CredentialManagerCallback<GetCredentialResponse, GetCredentialException>>
+        callbackCaptor = ArgumentCaptor.forClass(CredentialManagerCallback.class);
+    verify(mockCredentialManager)
+        .getCredentialAsync(
+            eq(mockActivity),
+            any(GetCredentialRequest.class),
+            any(),
+            any(),
+            callbackCaptor.capture());
+
+    callbackCaptor.getValue().onError(new GetCredentialUnsupportedException());
+    assertTrue(callbackCalled[0]);
   }
 
   @Test
-  public void init_PassesForceAccountName() {
-    String fakeAccountName = "fakeEmailAddress@example.com";
+  public void getCredential_reportsNoCredential() {
+    GetCredentialRequestParams params =
+        new GetCredentialRequestParams(
+            false,
+            new GetCredentialRequestGoogleIdOptionParams(false, false),
+            "serverClientId",
+            null,
+            null);
 
-    try (MockedConstruction<Account> mocked =
-        Mockito.mockConstruction(
-            Account.class,
-            (mock, context) -> {
-              when(mock.toString()).thenReturn(fakeAccountName);
-            })) {
-      InitParams params = buildInitParams("fakeClientId", "fakeServerClientId2", fakeAccountName);
+    final Boolean[] callbackCalled = new Boolean[1];
+    plugin.setActivity(mockActivity);
+    plugin.getCredential(
+        params,
+        ResultCompat.asCompatCallback(
+            reply -> {
+              callbackCalled[0] = true;
+              // This failure is a structured return value, not an exception.
+              assertTrue(reply.isSuccess());
+              GetCredentialResult result = reply.getOrNull();
+              assertTrue(result instanceof GetCredentialFailure);
+              GetCredentialFailure failure = (GetCredentialFailure) result;
+              assertEquals(GetCredentialFailureType.NO_CREDENTIAL, failure.getType());
+              return null;
+            }));
 
-      initAndAssertForceAccountName(params, fakeAccountName);
+    @SuppressWarnings("unchecked")
+    ArgumentCaptor<CredentialManagerCallback<GetCredentialResponse, GetCredentialException>>
+        callbackCaptor = ArgumentCaptor.forClass(CredentialManagerCallback.class);
+    verify(mockCredentialManager)
+        .getCredentialAsync(
+            eq(mockActivity),
+            any(GetCredentialRequest.class),
+            any(),
+            any(),
+            callbackCaptor.capture());
 
-      List<Account> constructed = mocked.constructed();
-      Assert.assertEquals(1, constructed.size());
-    }
+    callbackCaptor.getValue().onError(new NoCredentialException());
+    assertTrue(callbackCalled[0]);
   }
 
-  public void initAndAssertServerClientId(InitParams params, String serverClientId) {
-    ArgumentCaptor<GoogleSignInOptions> optionsCaptor =
-        ArgumentCaptor.forClass(GoogleSignInOptions.class);
-    when(mockGoogleSignIn.getClient(any(Context.class), optionsCaptor.capture()))
-        .thenReturn(mockClient);
-    plugin.init(params);
-    Assert.assertEquals(serverClientId, optionsCaptor.getValue().getServerClientId());
+  @Test
+  public void getCredential_reportsUnknown() {
+    GetCredentialRequestParams params =
+        new GetCredentialRequestParams(
+            false,
+            new GetCredentialRequestGoogleIdOptionParams(false, false),
+            "serverClientId",
+            null,
+            null);
+
+    final Boolean[] callbackCalled = new Boolean[1];
+    plugin.setActivity(mockActivity);
+    plugin.getCredential(
+        params,
+        ResultCompat.asCompatCallback(
+            reply -> {
+              callbackCalled[0] = true;
+              // This failure is a structured return value, not an exception.
+              assertTrue(reply.isSuccess());
+              GetCredentialResult result = reply.getOrNull();
+              assertTrue(result instanceof GetCredentialFailure);
+              GetCredentialFailure failure = (GetCredentialFailure) result;
+              assertEquals(GetCredentialFailureType.UNKNOWN, failure.getType());
+              return null;
+            }));
+
+    @SuppressWarnings("unchecked")
+    ArgumentCaptor<CredentialManagerCallback<GetCredentialResponse, GetCredentialException>>
+        callbackCaptor = ArgumentCaptor.forClass(CredentialManagerCallback.class);
+    verify(mockCredentialManager)
+        .getCredentialAsync(
+            eq(mockActivity),
+            any(GetCredentialRequest.class),
+            any(),
+            any(),
+            callbackCaptor.capture());
+
+    callbackCaptor.getValue().onError(new GetCredentialUnknownException());
+    assertTrue(callbackCalled[0]);
   }
 
-  public void initAndAssertForceCodeForRefreshToken(
-      InitParams params, boolean forceCodeForRefreshToken) {
-    ArgumentCaptor<GoogleSignInOptions> optionsCaptor =
-        ArgumentCaptor.forClass(GoogleSignInOptions.class);
-    when(mockGoogleSignIn.getClient(any(Context.class), optionsCaptor.capture()))
-        .thenReturn(mockClient);
-    plugin.init(params);
-    Assert.assertEquals(
-        forceCodeForRefreshToken, optionsCaptor.getValue().isForceCodeForRefreshToken());
-  }
+  @Test
+  public void authorize_passesNullParamaters() {
+    final List<String> scopes = new ArrayList<>(Arrays.asList("scope1", "scope1"));
+    PlatformAuthorizationRequest params =
+        new PlatformAuthorizationRequest(scopes, null, null, null);
 
-  public void initAndAssertForceAccountName(InitParams params, String forceAccountName) {
-    ArgumentCaptor<GoogleSignInOptions> optionsCaptor =
-        ArgumentCaptor.forClass(GoogleSignInOptions.class);
-    when(mockGoogleSignIn.getClient(any(Context.class), optionsCaptor.capture()))
-        .thenReturn(mockClient);
-    plugin.init(params);
-    Assert.assertEquals(forceAccountName, optionsCaptor.getValue().getAccount().toString());
-  }
+    final String accessToken = "accessToken";
+    final String serverAuthCode = "serverAuthCode";
+    when(mockAuthorizationClient.authorize(any())).thenReturn(mockAuthorizationTask);
 
-  private static InitParams buildInitParams(String clientId, String serverClientId) {
-    return buildInitParams(
-        Messages.SignInType.STANDARD,
-        Collections.emptyList(),
-        clientId,
-        serverClientId,
+    plugin.authorize(
+        params,
         false,
-        null);
+        ResultCompat.asCompatCallback(
+            reply -> {
+              // This test doesn't trigger the getCredentialsAsync callback that would call this,
+              // so if this is reached something has gone wrong.
+              fail();
+              return null;
+            }));
+
+    ArgumentCaptor<AuthorizationRequest> authRequestCaptor =
+        ArgumentCaptor.forClass(AuthorizationRequest.class);
+    verify(mockAuthorizationClient).authorize(authRequestCaptor.capture());
+
+    AuthorizationRequest request = authRequestCaptor.getValue();
+    assertNull(request.getHostedDomain());
+    assertNull(request.getServerClientId());
+    assertNull(request.getAccount());
   }
 
-  private static InitParams buildInitParams(
-      String clientId, String serverClientId, boolean forceCodeForRefreshToken) {
-    return buildInitParams(
-        Messages.SignInType.STANDARD,
-        Collections.emptyList(),
-        clientId,
-        serverClientId,
-        forceCodeForRefreshToken,
-        null);
-  }
+  @Test
+  public void authorize_passesOptionalParameters() {
+    final List<String> scopes = new ArrayList<>(Arrays.asList("scope1", "scope1"));
+    final String hostedDomain = "example.com";
+    final String accountEmail = "someone@example.com";
+    final String serverClientId = "serverClientId";
+    PlatformAuthorizationRequest params =
+        new PlatformAuthorizationRequest(scopes, hostedDomain, accountEmail, serverClientId);
 
-  private static InitParams buildInitParams(
-      String clientId, String serverClientId, String forceAccountName) {
-    return buildInitParams(
-        Messages.SignInType.STANDARD,
-        Collections.emptyList(),
-        clientId,
-        serverClientId,
+    final String accessToken = "accessToken";
+    final String serverAuthCode = "serverAuthCode";
+    when(mockAuthorizationClient.authorize(any())).thenReturn(mockAuthorizationTask);
+
+    plugin.authorize(
+        params,
         false,
-        forceAccountName);
+        ResultCompat.asCompatCallback(
+            reply -> {
+              // This test doesn't trigger the getCredentialsAsync callback that would call this,
+              // so if this is reached something has gone wrong.
+              fail();
+              return null;
+            }));
+
+    ArgumentCaptor<AuthorizationRequest> authRequestCaptor =
+        ArgumentCaptor.forClass(AuthorizationRequest.class);
+    verify(mockAuthorizationClient).authorize(authRequestCaptor.capture());
+
+    AuthorizationRequest request = authRequestCaptor.getValue();
+    assertEquals(hostedDomain, request.getHostedDomain());
+    assertEquals(serverClientId, request.getServerClientId());
+    // Account is mostly opaque, so just verify that one was set if an email was provided.
+    assertNotNull(request.getAccount());
   }
 
-  private static InitParams buildInitParams(
-      Messages.SignInType signInType,
-      List<String> scopes,
-      String clientId,
-      String serverClientId,
-      boolean forceCodeForRefreshToken,
-      String forceAccountName) {
-    InitParams.Builder builder = new InitParams.Builder();
-    builder.setSignInType(signInType);
-    builder.setScopes(scopes);
-    if (clientId != null) {
-      builder.setClientId(clientId);
+  @Test
+  public void authorize_returnsImmediateResult() {
+    final List<String> scopes = new ArrayList<>(Arrays.asList("scope1", "scope1"));
+    PlatformAuthorizationRequest params =
+        new PlatformAuthorizationRequest(scopes, null, null, null);
+
+    final String accessToken = "accessToken";
+    final String serverAuthCode = "serverAuthCode";
+    when(mockAuthorizationClient.authorize(any())).thenReturn(mockAuthorizationTask);
+
+    final Boolean[] callbackCalled = new Boolean[1];
+    plugin.authorize(
+        params,
+        false,
+        ResultCompat.asCompatCallback(
+            reply -> {
+              callbackCalled[0] = true;
+              assertTrue(reply.isSuccess());
+              AuthorizeResult result = reply.getOrNull();
+              assertTrue(result instanceof PlatformAuthorizationResult);
+              PlatformAuthorizationResult auth = (PlatformAuthorizationResult) result;
+              assertEquals(accessToken, auth.getAccessToken());
+              assertEquals(serverAuthCode, auth.getServerAuthCode());
+              assertEquals(scopes, auth.getGrantedScopes());
+              return null;
+            }));
+
+    @SuppressWarnings("unchecked")
+    ArgumentCaptor<OnSuccessListener<AuthorizationResult>> callbackCaptor =
+        ArgumentCaptor.forClass(OnSuccessListener.class);
+    verify(mockAuthorizationTask).addOnSuccessListener(callbackCaptor.capture());
+
+    callbackCaptor
+        .getValue()
+        .onSuccess(
+            new AuthorizationResult(serverAuthCode, accessToken, "idToken", scopes, null, null));
+    assertTrue(callbackCalled[0]);
+  }
+
+  @Test
+  public void authorize_reportsImmediateException() {
+    final List<String> scopes = new ArrayList<>(Arrays.asList("scope1", "scope1"));
+    PlatformAuthorizationRequest params =
+        new PlatformAuthorizationRequest(scopes, null, null, null);
+
+    when(mockAuthorizationClient.authorize(any())).thenThrow(new RuntimeException());
+
+    final Boolean[] callbackCalled = new Boolean[1];
+    plugin.authorize(
+        params,
+        false,
+        ResultCompat.asCompatCallback(
+            reply -> {
+              callbackCalled[0] = true;
+              // This failure is a structured return value, not an exception.
+              assertTrue(reply.isSuccess());
+              AuthorizeResult result = reply.getOrNull();
+              assertTrue(result instanceof AuthorizeFailure);
+              AuthorizeFailure failure = (AuthorizeFailure) result;
+              assertEquals(AuthorizeFailureType.API_EXCEPTION, failure.getType());
+              return null;
+            }));
+
+    assertTrue(callbackCalled[0]);
+  }
+
+  @Test
+  public void authorize_reportsFailureIfUnauthorizedAndNoPromptAllowed() {
+    final List<String> scopes = new ArrayList<>(Arrays.asList("scope1", "scope1"));
+    PlatformAuthorizationRequest params =
+        new PlatformAuthorizationRequest(scopes, null, null, null);
+
+    when(mockAuthorizationClient.authorize(any())).thenReturn(mockAuthorizationTask);
+
+    final Boolean[] callbackCalled = new Boolean[1];
+    plugin.authorize(
+        params,
+        false,
+        ResultCompat.asCompatCallback(
+            reply -> {
+              callbackCalled[0] = true;
+              // This failure is a structured return value, not an exception.
+              assertTrue(reply.isSuccess());
+              AuthorizeResult result = reply.getOrNull();
+              assertTrue(result instanceof AuthorizeFailure);
+              AuthorizeFailure failure = (AuthorizeFailure) result;
+              assertEquals(AuthorizeFailureType.UNAUTHORIZED, failure.getType());
+              return null;
+            }));
+
+    @SuppressWarnings("unchecked")
+    ArgumentCaptor<OnSuccessListener<AuthorizationResult>> callbackCaptor =
+        ArgumentCaptor.forClass(OnSuccessListener.class);
+    verify(mockAuthorizationTask).addOnSuccessListener(callbackCaptor.capture());
+
+    callbackCaptor
+        .getValue()
+        .onSuccess(
+            new AuthorizationResult(null, null, null, scopes, null, mockAuthorizationIntent));
+    assertTrue(callbackCalled[0]);
+  }
+
+  @Test
+  public void authorize_reportsFailureIfUnauthorizedAndNoActivity() {
+    final List<String> scopes = new ArrayList<>(Arrays.asList("scope1", "scope1"));
+    PlatformAuthorizationRequest params =
+        new PlatformAuthorizationRequest(scopes, null, null, null);
+
+    when(mockAuthorizationClient.authorize(any())).thenReturn(mockAuthorizationTask);
+
+    plugin.setActivity(null);
+    final Boolean[] callbackCalled = new Boolean[1];
+    plugin.authorize(
+        params,
+        true,
+        ResultCompat.asCompatCallback(
+            reply -> {
+              callbackCalled[0] = true;
+              // This failure is a structured return value, not an exception.
+              assertTrue(reply.isSuccess());
+              AuthorizeResult result = reply.getOrNull();
+              assertTrue(result instanceof AuthorizeFailure);
+              AuthorizeFailure failure = (AuthorizeFailure) result;
+              assertEquals(AuthorizeFailureType.NO_ACTIVITY, failure.getType());
+              return null;
+            }));
+
+    @SuppressWarnings("unchecked")
+    ArgumentCaptor<OnSuccessListener<AuthorizationResult>> callbackCaptor =
+        ArgumentCaptor.forClass(OnSuccessListener.class);
+    verify(mockAuthorizationTask).addOnSuccessListener(callbackCaptor.capture());
+
+    callbackCaptor
+        .getValue()
+        .onSuccess(
+            new AuthorizationResult(null, null, null, scopes, null, mockAuthorizationIntent));
+    assertTrue(callbackCalled[0]);
+  }
+
+  @Test
+  public void authorize_returnsPostIntentResult() {
+    final List<String> scopes = new ArrayList<>(Arrays.asList("scope1", "scope1"));
+    PlatformAuthorizationRequest params =
+        new PlatformAuthorizationRequest(scopes, null, null, null);
+
+    final String accessToken = "accessToken";
+    final String serverAuthCode = "serverAuthCode";
+    when(mockAuthorizationClient.authorize(any())).thenReturn(mockAuthorizationTask);
+    try {
+      when(mockAuthorizationClient.getAuthorizationResultFromIntent(any()))
+          .thenReturn(
+              new AuthorizationResult(serverAuthCode, accessToken, "idToken", scopes, null, null));
+    } catch (ApiException e) {
+      fail();
     }
-    if (serverClientId != null) {
-      builder.setServerClientId(serverClientId);
+
+    plugin.setActivity(mockActivity);
+    final Boolean[] callbackCalled = new Boolean[1];
+    plugin.authorize(
+        params,
+        true,
+        ResultCompat.asCompatCallback(
+            reply -> {
+              callbackCalled[0] = true;
+              assertTrue(reply.isSuccess());
+              AuthorizeResult result = reply.getOrNull();
+              assertTrue(result instanceof PlatformAuthorizationResult);
+              PlatformAuthorizationResult auth = (PlatformAuthorizationResult) result;
+              assertEquals(accessToken, auth.getAccessToken());
+              assertEquals(serverAuthCode, auth.getServerAuthCode());
+              assertEquals(scopes, auth.getGrantedScopes());
+              return null;
+            }));
+
+    @SuppressWarnings("unchecked")
+    ArgumentCaptor<OnSuccessListener<AuthorizationResult>> callbackCaptor =
+        ArgumentCaptor.forClass(OnSuccessListener.class);
+    verify(mockAuthorizationTask).addOnSuccessListener(callbackCaptor.capture());
+    callbackCaptor
+        .getValue()
+        .onSuccess(
+            new AuthorizationResult(null, null, null, scopes, null, mockAuthorizationIntent));
+    try {
+      verify(mockActivity)
+          .startIntentSenderForResult(
+              mockAuthorizationIntent.getIntentSender(),
+              GoogleSignInPlugin.Delegate.REQUEST_CODE_AUTHORIZE,
+              null,
+              0,
+              0,
+              0,
+              null);
+    } catch (IntentSender.SendIntentException e) {
+      fail();
     }
-    builder.setForceCodeForRefreshToken(forceCodeForRefreshToken);
-    if (forceAccountName != null) {
-      builder.setForceAccountName(forceAccountName);
+    // Simulate the UI flow completing. The intent data can be null here because the mock of
+    // mockAuthorizationClient.getAuthorizationResultFromIntent above ignores the parameter.
+    plugin.onActivityResult(GoogleSignInPlugin.Delegate.REQUEST_CODE_AUTHORIZE, 0, null);
+
+    assertTrue(callbackCalled[0]);
+  }
+
+  @Test
+  public void authorize_reportsPendingIntentException() {
+    final List<String> scopes = new ArrayList<>(Arrays.asList("scope1", "scope1"));
+    PlatformAuthorizationRequest params =
+        new PlatformAuthorizationRequest(scopes, null, null, null);
+
+    when(mockAuthorizationClient.authorize(any())).thenReturn(mockAuthorizationTask);
+    try {
+      doThrow(new IntentSender.SendIntentException())
+          .when(mockActivity)
+          .startIntentSenderForResult(
+              mockAuthorizationIntentSender,
+              GoogleSignInPlugin.Delegate.REQUEST_CODE_AUTHORIZE,
+              null,
+              0,
+              0,
+              0,
+              null);
+    } catch (IntentSender.SendIntentException e) {
+      fail();
     }
-    return builder.build();
+
+    plugin.setActivity(mockActivity);
+    final Boolean[] callbackCalled = new Boolean[1];
+    plugin.authorize(
+        params,
+        true,
+        ResultCompat.asCompatCallback(
+            reply -> {
+              callbackCalled[0] = true;
+              // This failure is a structured return value, not an exception.
+              assertTrue(reply.isSuccess());
+              AuthorizeResult result = reply.getOrNull();
+              assertTrue(result instanceof AuthorizeFailure);
+              AuthorizeFailure failure = (AuthorizeFailure) result;
+              assertEquals(AuthorizeFailureType.PENDING_INTENT_EXCEPTION, failure.getType());
+              return null;
+            }));
+
+    @SuppressWarnings("unchecked")
+    ArgumentCaptor<OnSuccessListener<AuthorizationResult>> callbackCaptor =
+        ArgumentCaptor.forClass(OnSuccessListener.class);
+    verify(mockAuthorizationTask).addOnSuccessListener(callbackCaptor.capture());
+    callbackCaptor
+        .getValue()
+        .onSuccess(
+            new AuthorizationResult(null, null, null, scopes, null, mockAuthorizationIntent));
+
+    assertTrue(callbackCalled[0]);
+  }
+
+  @Test
+  public void authorize_reportsPostIntentException() {
+    final List<String> scopes = new ArrayList<>(Arrays.asList("scope1", "scope1"));
+    PlatformAuthorizationRequest params =
+        new PlatformAuthorizationRequest(scopes, null, null, null);
+
+    when(mockAuthorizationClient.authorize(any())).thenReturn(mockAuthorizationTask);
+    try {
+      when(mockAuthorizationClient.getAuthorizationResultFromIntent(any()))
+          .thenThrow(new ApiException(Status.RESULT_INTERNAL_ERROR));
+    } catch (ApiException e) {
+      fail();
+    }
+
+    plugin.setActivity(mockActivity);
+    final Boolean[] callbackCalled = new Boolean[1];
+    plugin.authorize(
+        params,
+        true,
+        ResultCompat.asCompatCallback(
+            reply -> {
+              callbackCalled[0] = true;
+              // This failure is a structured return value, not an exception.
+              assertTrue(reply.isSuccess());
+              AuthorizeResult result = reply.getOrNull();
+              assertTrue(result instanceof AuthorizeFailure);
+              AuthorizeFailure failure = (AuthorizeFailure) result;
+              assertEquals(AuthorizeFailureType.API_EXCEPTION, failure.getType());
+              return null;
+            }));
+
+    @SuppressWarnings("unchecked")
+    ArgumentCaptor<OnSuccessListener<AuthorizationResult>> callbackCaptor =
+        ArgumentCaptor.forClass(OnSuccessListener.class);
+    verify(mockAuthorizationTask).addOnSuccessListener(callbackCaptor.capture());
+    callbackCaptor
+        .getValue()
+        .onSuccess(
+            new AuthorizationResult(null, null, null, scopes, null, mockAuthorizationIntent));
+    try {
+      verify(mockActivity)
+          .startIntentSenderForResult(
+              mockAuthorizationIntent.getIntentSender(),
+              GoogleSignInPlugin.Delegate.REQUEST_CODE_AUTHORIZE,
+              null,
+              0,
+              0,
+              0,
+              null);
+    } catch (IntentSender.SendIntentException e) {
+      fail();
+    }
+    // Simulate the UI flow completing. The intent data can be null here because the mock of
+    // mockAuthorizationClient.getAuthorizationResultFromIntent above ignores the parameter.
+    plugin.onActivityResult(GoogleSignInPlugin.Delegate.REQUEST_CODE_AUTHORIZE, 0, null);
+
+    assertTrue(callbackCalled[0]);
+  }
+
+  @Test
+  public void clearCredentialState_reportsSuccess() {
+    plugin.clearCredentialState(
+        ResultCompat.asCompatCallback(
+            reply -> {
+              assertTrue(reply.isSuccess());
+              return null;
+            }));
+
+    @SuppressWarnings("unchecked")
+    ArgumentCaptor<CredentialManagerCallback<Void, ClearCredentialException>> callbackCaptor =
+        ArgumentCaptor.forClass(CredentialManagerCallback.class);
+    verify(mockCredentialManager)
+        .clearCredentialStateAsync(
+            any(ClearCredentialStateRequest.class), any(), any(), callbackCaptor.capture());
+
+    callbackCaptor.getValue().onResult(null);
+  }
+
+  @Test
+  public void clearCredentialState_reportsFailure() {
+    plugin.clearCredentialState(
+        ResultCompat.asCompatCallback(
+            reply -> {
+              assertTrue(reply.isFailure());
+              return null;
+            }));
+
+    @SuppressWarnings("unchecked")
+    ArgumentCaptor<CredentialManagerCallback<Void, ClearCredentialException>> callbackCaptor =
+        ArgumentCaptor.forClass(CredentialManagerCallback.class);
+    verify(mockCredentialManager)
+        .clearCredentialStateAsync(
+            any(ClearCredentialStateRequest.class), any(), any(), callbackCaptor.capture());
+
+    callbackCaptor.getValue().onError(mock(ClearCredentialException.class));
+  }
+
+  @Test
+  public void revokeAccess_callsClient() {
+    final List<String> scopes = new ArrayList<>(List.of("openid"));
+    final String accountEmail = "someone@example.com";
+    PlatformRevokeAccessRequest params = new PlatformRevokeAccessRequest(accountEmail, scopes);
+    when(mockAuthorizationClient.revokeAccess(any())).thenReturn(mockVoidTask);
+    plugin.revokeAccess(
+        params,
+        ResultCompat.asCompatCallback(
+            reply -> {
+              return null;
+            }));
+
+    ArgumentCaptor<RevokeAccessRequest> requestCaptor =
+        ArgumentCaptor.forClass(RevokeAccessRequest.class);
+    verify(mockAuthorizationClient).revokeAccess(requestCaptor.capture());
+
+    @SuppressWarnings("unchecked")
+    ArgumentCaptor<OnSuccessListener<Void>> callbackCaptor =
+        ArgumentCaptor.forClass(OnSuccessListener.class);
+    verify(mockVoidTask).addOnSuccessListener(callbackCaptor.capture());
+    callbackCaptor.getValue().onSuccess(null);
+
+    RevokeAccessRequest request = requestCaptor.getValue();
+    assertEquals(scopes.size(), request.getScopes().size());
+    assertEquals(scopes.get(0), request.getScopes().get(0).getScopeUri());
+    // Account is mostly opaque, so just verify that one was set.
+    assertNotNull(request.getAccount());
+  }
+
+  @Test
+  public void clearAuthorizationToken_callsClient() {
+    final String testToken = "testToken";
+    when(mockAuthorizationClient.clearToken(any())).thenReturn(mockVoidTask);
+    plugin.clearAuthorizationToken(
+        testToken,
+        ResultCompat.asCompatCallback(
+            reply -> {
+              return null;
+            }));
+
+    ArgumentCaptor<ClearTokenRequest> authRequestCaptor =
+        ArgumentCaptor.forClass(ClearTokenRequest.class);
+    verify(mockAuthorizationClient).clearToken(authRequestCaptor.capture());
+
+    @SuppressWarnings("unchecked")
+    ArgumentCaptor<OnSuccessListener<Void>> callbackCaptor =
+        ArgumentCaptor.forClass(OnSuccessListener.class);
+    verify(mockVoidTask).addOnSuccessListener(callbackCaptor.capture());
+    callbackCaptor.getValue().onSuccess(null);
+
+    ClearTokenRequest request = authRequestCaptor.getValue();
+    assertEquals(testToken, request.getToken());
   }
 }

@@ -1,3 +1,24 @@
+## 2.4.13
+
+* Bumps androidx.datastore:datastore from 1.1.3 to 1.1.7.
+
+## 2.4.12
+
+* Bumps com.android.tools.build:gradle to 8.12.1 and kotlin_version to 2.2.10.
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
+## 2.4.11
+
+* Updates kotlin version to 2.2.0 to enable gradle 8.11 support.
+
+## 2.4.10
+
+* Removes obsolete code related to supporting SDK <21.
+
+## 2.4.9
+
+* Enables callers to use `getInt` to read preference of type `int` that was written to shared preferences by native code without passing though plugin code.
+
 ## 2.4.8
 
 * Updates compileSdk 34 to flutter.compileSdkVersion.

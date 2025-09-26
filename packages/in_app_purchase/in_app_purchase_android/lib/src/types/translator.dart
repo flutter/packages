@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -13,25 +13,32 @@ class Translator {
 
   /// Converts from [UserChoiceDetailsWrapper] to [GooglePlayUserChoiceDetails].
   static GooglePlayUserChoiceDetails convertToUserChoiceDetails(
-      UserChoiceDetailsWrapper detailsWrapper) {
+    UserChoiceDetailsWrapper detailsWrapper,
+  ) {
     return GooglePlayUserChoiceDetails(
-        originalExternalTransactionId:
-            detailsWrapper.originalExternalTransactionId,
-        externalTransactionToken: detailsWrapper.externalTransactionToken,
-        products: detailsWrapper.products
-            .map((UserChoiceDetailsProductWrapper e) =>
-                convertToUserChoiceDetailsProduct(e))
-            .toList());
+      originalExternalTransactionId:
+          detailsWrapper.originalExternalTransactionId,
+      externalTransactionToken: detailsWrapper.externalTransactionToken,
+      products:
+          detailsWrapper.products
+              .map(
+                (UserChoiceDetailsProductWrapper e) =>
+                    convertToUserChoiceDetailsProduct(e),
+              )
+              .toList(),
+    );
   }
 
   /// Converts from [UserChoiceDetailsProductWrapper] to [GooglePlayUserChoiceDetailsProduct].
   @visibleForTesting
   static GooglePlayUserChoiceDetailsProduct convertToUserChoiceDetailsProduct(
-      UserChoiceDetailsProductWrapper productWrapper) {
+    UserChoiceDetailsProductWrapper productWrapper,
+  ) {
     return GooglePlayUserChoiceDetailsProduct(
-        id: productWrapper.id,
-        offerToken: productWrapper.offerToken,
-        productType: convertToPlayProductType(productWrapper.productType));
+      id: productWrapper.id,
+      offerToken: productWrapper.offerToken,
+      productType: convertToPlayProductType(productWrapper.productType),
+    );
   }
 
   /// Coverts from [ProductType] to [GooglePlayProductType].

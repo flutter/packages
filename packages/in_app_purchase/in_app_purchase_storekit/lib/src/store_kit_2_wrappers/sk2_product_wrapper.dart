@@ -1,8 +1,9 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import 'package:flutter/services.dart';
+
 import '../../store_kit_2_wrappers.dart';
 
 InAppPurchase2API _hostApi = InAppPurchase2API();
@@ -21,11 +22,11 @@ enum SK2ProductType {
   nonRenewable,
 
   /// An auto-renewable subscription.
-  autoRenewable;
+  autoRenewable,
 }
 
 extension on SK2ProductTypeMessage {
-  /// Convert the equivalent pigeon class of [SK2ProductTypeMessage] into an instance of [SK2ProductType]
+  /// Convert the equivalent pigeon class of [SK2ProductTypeMessage] into an instance of [SK2ProductType].
   SK2ProductType convertFromPigeon() {
     switch (this) {
       case SK2ProductTypeMessage.autoRenewable:
@@ -62,8 +63,11 @@ enum SK2SubscriptionOfferType {
   /// An introductory offer.
   introductory,
 
-  /// A A promotional offer.
-  promotional
+  /// A promotional offer.
+  promotional,
+
+  /// A win-back offer.
+  winBack,
 }
 
 extension on SK2SubscriptionOfferTypeMessage {
@@ -73,6 +77,8 @@ extension on SK2SubscriptionOfferTypeMessage {
         return SK2SubscriptionOfferType.introductory;
       case SK2SubscriptionOfferTypeMessage.promotional:
         return SK2SubscriptionOfferType.promotional;
+      case SK2SubscriptionOfferTypeMessage.winBack:
+        return SK2SubscriptionOfferType.winBack;
     }
   }
 }
@@ -113,12 +119,13 @@ class SK2SubscriptionOffer {
 extension on SK2SubscriptionOfferMessage {
   SK2SubscriptionOffer convertFromPigeon() {
     return SK2SubscriptionOffer(
-        id: id,
-        price: price,
-        type: type.convertFromPigeon(),
-        period: period.convertFromPigeon(),
-        periodCount: periodCount,
-        paymentMode: paymentMode.convertFromPigeon());
+      id: id,
+      price: price,
+      type: type.convertFromPigeon(),
+      period: period.convertFromPigeon(),
+      periodCount: periodCount,
+      paymentMode: paymentMode.convertFromPigeon(),
+    );
   }
 }
 
@@ -147,12 +154,12 @@ class SK2SubscriptionInfo {
 extension on SK2SubscriptionInfoMessage {
   SK2SubscriptionInfo convertFromPigeon() {
     return SK2SubscriptionInfo(
-        subscriptionGroupID: subscriptionGroupID,
-        promotionalOffers: promotionalOffers
-            .map((SK2SubscriptionOfferMessage offer) =>
-                offer.convertFromPigeon())
-            .toList(),
-        subscriptionPeriod: subscriptionPeriod.convertFromPigeon());
+      subscriptionGroupID: subscriptionGroupID,
+      promotionalOffers: promotionalOffers
+          .map((SK2SubscriptionOfferMessage offer) => offer.convertFromPigeon())
+          .toList(),
+      subscriptionPeriod: subscriptionPeriod.convertFromPigeon(),
+    );
   }
 }
 
@@ -190,7 +197,7 @@ enum SK2SubscriptionPeriodUnit {
   month,
 
   /// A subscription period unit of a year.
-  year
+  year,
 }
 
 extension on SK2SubscriptionPeriodUnitMessage {
@@ -218,7 +225,7 @@ enum SK2SubscriptionOfferPaymentMode {
   payUpFront,
 
   /// A payment mode of a product discount that indicates a free trial offer.
-  freeTrial;
+  freeTrial,
 }
 
 extension on SK2SubscriptionOfferPaymentModeMessage {
@@ -249,14 +256,18 @@ class SK2PriceLocale {
   /// Convert this instance of [SK2PriceLocale] to [SK2PriceLocaleMessage]
   SK2PriceLocaleMessage convertToPigeon() {
     return SK2PriceLocaleMessage(
-        currencyCode: currencyCode, currencySymbol: currencySymbol);
+      currencyCode: currencyCode,
+      currencySymbol: currencySymbol,
+    );
   }
 }
 
 extension on SK2PriceLocaleMessage {
   SK2PriceLocale convertFromPigeon() {
     return SK2PriceLocale(
-        currencyCode: currencyCode, currencySymbol: currencySymbol);
+      currencyCode: currencyCode,
+      currencySymbol: currencySymbol,
+    );
   }
 }
 
@@ -270,14 +281,19 @@ enum SK2ProductPurchaseResult {
   userCancelled,
 
   /// The purchase is pending, and requires action from the customer.
-  pending
+  pending,
 }
 
 /// Wrapper around [PurchaseOption]
 /// https://developer.apple.com/documentation/storekit/product/purchaseoption
 class SK2ProductPurchaseOptions {
-  /// Creates a new instance of [SK2ProductPurchaseOptions]
-  SK2ProductPurchaseOptions({this.appAccountToken, this.quantity});
+  /// Creates a new instance of [SK2ProductPurchaseOptions].
+  SK2ProductPurchaseOptions({
+    this.appAccountToken,
+    this.quantity,
+    this.promotionalOffer,
+    this.winBackOfferId,
+  });
 
   /// Sets a UUID to associate the purchase with an account in your system.
   final String? appAccountToken;
@@ -285,10 +301,20 @@ class SK2ProductPurchaseOptions {
   /// Indicates the quantity of items the customer is purchasing.
   final int? quantity;
 
-  /// Convert to pigeon representation [SK2ProductPurchaseOptionsMessage]
+  /// Sets a promotional offer to a purchase.
+  final SK2SubscriptionOfferPurchaseMessage? promotionalOffer;
+
+  /// Sets a win back offer to a purchase.
+  final String? winBackOfferId;
+
+  /// Convert to pigeon representation [SK2ProductPurchaseOptionsMessage].
   SK2ProductPurchaseOptionsMessage convertToPigeon() {
     return SK2ProductPurchaseOptionsMessage(
-        appAccountToken: appAccountToken, quantity: quantity);
+      appAccountToken: appAccountToken,
+      quantity: quantity,
+      winBackOfferId: winBackOfferId,
+      promotionalOffer: promotionalOffer,
+    );
   }
 }
 
@@ -350,8 +376,9 @@ class SK2Product {
   /// If any of the identifiers are invalid or can't be found, they are excluded
   /// from the returned list.
   static Future<List<SK2Product>> products(List<String> identifiers) async {
-    final List<SK2ProductMessage?> productsMsg =
-        await _hostApi.products(identifiers);
+    final List<SK2ProductMessage?> productsMsg = await _hostApi.products(
+      identifiers,
+    );
     if (productsMsg.isEmpty && identifiers.isNotEmpty) {
       throw PlatformException(
         code: 'storekit_no_response',
@@ -368,8 +395,10 @@ class SK2Product {
   /// Wrapper for StoreKit's [Product.purchase]
   /// https://developer.apple.com/documentation/storekit/product/3791971-purchase
   /// Initiates a purchase for the product with the App Store and displays the confirmation sheet.
-  static Future<SK2ProductPurchaseResult> purchase(String id,
-      {SK2ProductPurchaseOptions? options}) async {
+  static Future<SK2ProductPurchaseResult> purchase(
+    String id, {
+    SK2ProductPurchaseOptions? options,
+  }) async {
     SK2ProductPurchaseResultMessage result;
     if (options != null) {
       result = await _hostApi.purchase(id, options: options.convertToPigeon());
@@ -379,29 +408,52 @@ class SK2Product {
     return result.convertFromPigeon();
   }
 
+  /// Checks if the user is eligible for an introductory offer.
+  /// The product must be an auto-renewable subscription.
+  static Future<bool> isIntroductoryOfferEligible(String productId) async {
+    final bool result = await _hostApi.isIntroductoryOfferEligible(productId);
+
+    return result;
+  }
+
+  /// Checks if the user is eligible for a specific win back offer.
+  static Future<bool> isWinBackOfferEligible(
+    String productId,
+    String offerId,
+  ) async {
+    final bool result = await _hostApi.isWinBackOfferEligible(
+      productId,
+      offerId,
+    );
+
+    return result;
+  }
+
   /// Converts this instance of [SK2Product] to it's pigeon representation [SK2ProductMessage]
   SK2ProductMessage convertToPigeon() {
     return SK2ProductMessage(
-        id: id,
-        displayName: displayName,
-        description: description,
-        price: price,
-        displayPrice: displayPrice,
-        type: type.convertToPigeon(),
-        priceLocale: priceLocale.convertToPigeon());
+      id: id,
+      displayName: displayName,
+      description: description,
+      price: price,
+      displayPrice: displayPrice,
+      type: type.convertToPigeon(),
+      priceLocale: priceLocale.convertToPigeon(),
+    );
   }
 }
 
 extension on SK2ProductMessage {
   SK2Product convertFromPigeon() {
     return SK2Product(
-        id: id,
-        displayName: displayName,
-        displayPrice: displayPrice,
-        price: price,
-        description: description,
-        type: type.convertFromPigeon(),
-        subscription: subscription?.convertFromPigeon(),
-        priceLocale: priceLocale.convertFromPigeon());
+      id: id,
+      displayName: displayName,
+      displayPrice: displayPrice,
+      price: price,
+      description: description,
+      type: type.convertFromPigeon(),
+      subscription: subscription?.convertFromPigeon(),
+      priceLocale: priceLocale.convertFromPigeon(),
+    );
   }
 }

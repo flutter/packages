@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -9,19 +9,19 @@ import android.Manifest.permission;
 import android.app.Activity;
 import android.content.pm.PackageManager;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import io.flutter.plugin.common.PluginRegistry;
 
-final class CameraPermissionsManager {
+public final class CameraPermissionsManager {
   interface PermissionsRegistry {
-    @SuppressWarnings("deprecation")
-    void addListener(
-        io.flutter.plugin.common.PluginRegistry.RequestPermissionsResultListener handler);
+    void addListener(PluginRegistry.RequestPermissionsResultListener handler);
   }
 
   interface ResultCallback {
-    void onResult(String errorCode, String errorDescription);
+    void onResult(@Nullable CameraPermissionsError error);
   }
 
   /**
@@ -48,15 +48,16 @@ final class CameraPermissionsManager {
       ResultCallback callback) {
     if (ongoing) {
       callback.onResult(
-          CAMERA_PERMISSIONS_REQUEST_ONGOING, CAMERA_PERMISSIONS_REQUEST_ONGOING_MESSAGE);
+          new CameraPermissionsError(
+              CAMERA_PERMISSIONS_REQUEST_ONGOING, CAMERA_PERMISSIONS_REQUEST_ONGOING_MESSAGE));
       return;
     }
     if (!hasCameraPermission(activity) || (enableAudio && !hasAudioPermission(activity))) {
       permissionsRegistry.addListener(
           new CameraRequestPermissionsListener(
-              (String errorCode, String errorDescription) -> {
+              (CameraPermissionsError error) -> {
                 ongoing = false;
-                callback.onResult(errorCode, errorDescription);
+                callback.onResult(error);
               }));
       ongoing = true;
       ActivityCompat.requestPermissions(
@@ -67,7 +68,7 @@ final class CameraPermissionsManager {
           CAMERA_REQUEST_ID);
     } else {
       // Permissions already exist. Call the callback with success.
-      callback.onResult(null, null);
+      callback.onResult(null);
     }
   }
 
@@ -82,9 +83,8 @@ final class CameraPermissionsManager {
   }
 
   @VisibleForTesting
-  @SuppressWarnings("deprecation")
   static final class CameraRequestPermissionsListener
-      implements io.flutter.plugin.common.PluginRegistry.RequestPermissionsResultListener {
+      implements PluginRegistry.RequestPermissionsResultListener {
 
     // There's no way to unregister permission listeners in the v1 embedding, so we'll be called
     // duplicate times in cases where the user denies and then grants a permission. Keep track of if
@@ -110,11 +110,13 @@ final class CameraPermissionsManager {
       // grantResults could be empty if the permissions request with the user is interrupted
       // https://developer.android.com/reference/android/app/Activity#onRequestPermissionsResult(int,%20java.lang.String[],%20int[])
       if (grantResults.length == 0 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-        callback.onResult(CAMERA_ACCESS_DENIED, CAMERA_ACCESS_DENIED_MESSAGE);
+        callback.onResult(
+            new CameraPermissionsError(CAMERA_ACCESS_DENIED, CAMERA_ACCESS_DENIED_MESSAGE));
       } else if (grantResults.length > 1 && grantResults[1] != PackageManager.PERMISSION_GRANTED) {
-        callback.onResult(AUDIO_ACCESS_DENIED, AUDIO_ACCESS_DENIED_MESSAGE);
+        callback.onResult(
+            new CameraPermissionsError(AUDIO_ACCESS_DENIED, AUDIO_ACCESS_DENIED_MESSAGE));
       } else {
-        callback.onResult(null, null);
+        callback.onResult(null);
       }
       return true;
     }

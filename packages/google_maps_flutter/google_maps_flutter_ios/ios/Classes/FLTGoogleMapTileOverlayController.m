@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -96,8 +96,9 @@
   // If it is wide gamut, we want to downsample it
   if (isFloat & (bitsPerComponent == 16)) {
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    CGContextRef context = CGBitmapContextCreate(nil, tile.size.width, tile.size.height, 8, 0,
-                                                 colorSpace, kCGImageAlphaPremultipliedLast);
+    CGContextRef context =
+        CGBitmapContextCreate(nil, tile.size.width, tile.size.height, 8, 0, colorSpace,
+                              (kCGBitmapAlphaInfoMask & kCGImageAlphaPremultipliedLast));
     CGContextDrawImage(context, CGRectMake(0, 0, tile.size.width, tile.size.height), tile.CGImage);
     CGImageRef image = CGBitmapContextCreateImage(context);
     tile = [UIImage imageWithCGImage:image];

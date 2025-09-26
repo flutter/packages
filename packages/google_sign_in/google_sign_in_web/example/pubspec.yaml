@@ -2,15 +2,15 @@ name: google_sign_in_web_integration_tests
 publish_to: none
 
 environment:
-  sdk: ^3.4.0
-  flutter: ">=3.22.0"
+  sdk: ^3.7.0
+  flutter: ">=3.29.0"
 
 dependencies:
   cupertino_icons: ^1.0.2
   flutter:
     sdk: flutter
   google_identity_services_web: ^0.3.1
-  google_sign_in_platform_interface: ^2.5.0
+  google_sign_in_platform_interface: ^3.1.0
   google_sign_in_web:
     path: ../
 

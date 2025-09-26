@@ -1,62 +1,41 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart' show PlatformException;
 import 'package:google_sign_in_platform_interface/google_sign_in_platform_interface.dart';
 
-import 'src/common.dart';
+import 'src/event_types.dart';
+import 'src/identity_types.dart';
+import 'src/token_types.dart';
 
 export 'package:google_sign_in_platform_interface/google_sign_in_platform_interface.dart'
-    show SignInOption;
-
-export 'src/common.dart';
+    show GoogleSignInException, GoogleSignInExceptionCode;
+export 'src/event_types.dart';
+export 'src/identity_types.dart';
+export 'src/token_types.dart';
 export 'widgets.dart';
 
-/// Holds authentication tokens after sign in.
-class GoogleSignInAuthentication {
-  GoogleSignInAuthentication._(this._data);
-
-  final GoogleSignInTokenData _data;
-
-  /// An OpenID Connect ID token that identifies the user.
-  String? get idToken => _data.idToken;
-
-  /// The OAuth2 access token to access Google services.
-  String? get accessToken => _data.accessToken;
-
-  /// Server auth code used to access Google Login
-  @Deprecated('Use the `GoogleSignInAccount.serverAuthCode` property instead')
-  String? get serverAuthCode => _data.serverAuthCode;
-
-  @override
-  String toString() => 'GoogleSignInAuthentication:$_data';
-}
-
-/// Holds fields describing a signed in user's identity, following
-/// [GoogleSignInUserData].
+/// Represents a signed-in Google account, providing account information as well
+/// as utilities for obtaining authentication and authorization tokens.
 ///
-/// [id] is guaranteed to be non-null.
+/// Although the API of the plugin is structured to allow for the possibility
+/// of multiple signed in users, the underlying Google Sign In SDKs on each
+/// platform do not all currently support multiple users in practice. For best
+/// cross-platform results, clients should not call [authenticate] to obtain a
+/// new [GoogleSignInAccount] instance until after a call to [signOut].
 @immutable
 class GoogleSignInAccount implements GoogleIdentity {
-  GoogleSignInAccount._(this._googleSignIn, GoogleSignInUserData data)
-      : displayName = data.displayName,
-        email = data.email,
-        id = data.id,
-        photoUrl = data.photoUrl,
-        serverAuthCode = data.serverAuthCode,
-        _idToken = data.idToken;
-
-  // These error codes must match with ones declared on Android and iOS sides.
-
-  /// Error code indicating there was a failed attempt to recover user authentication.
-  static const String kFailedToRecoverAuthError = 'failed_to_recover_auth';
-
-  /// Error indicating that authentication can be recovered with user action;
-  static const String kUserRecoverableAuthError = 'user_recoverable_auth';
+  GoogleSignInAccount._(
+    GoogleSignInUserData userData,
+    AuthenticationTokenData tokenData,
+  ) : displayName = userData.displayName,
+      email = userData.email,
+      id = userData.id,
+      photoUrl = userData.photoUrl,
+      _authenticationTokens = tokenData;
 
   @override
   final String? displayName;
@@ -70,61 +49,24 @@ class GoogleSignInAccount implements GoogleIdentity {
   @override
   final String? photoUrl;
 
-  @override
-  final String? serverAuthCode;
+  final AuthenticationTokenData _authenticationTokens;
 
-  final String? _idToken;
-  final GoogleSignIn _googleSignIn;
-
-  /// Retrieve [GoogleSignInAuthentication] for this account.
+  /// Returns authentication tokens for this account.
   ///
-  /// [shouldRecoverAuth] sets whether to attempt to recover authentication if
-  /// user action is needed. If an attempt to recover authentication fails a
-  /// [PlatformException] is thrown with possible error code
-  /// [kFailedToRecoverAuthError].
+  /// This returns the authentication information that was returned at the time
+  /// of the initial authentication.
   ///
-  /// Otherwise, if [shouldRecoverAuth] is false and the authentication can be
-  /// recovered by user action a [PlatformException] is thrown with error code
-  /// [kUserRecoverableAuthError].
-  Future<GoogleSignInAuthentication> get authentication async {
-    if (_googleSignIn.currentUser != this) {
-      throw StateError('User is no longer signed in.');
-    }
-
-    final GoogleSignInTokenData response =
-        await GoogleSignInPlatform.instance.getTokens(
-      email: email,
-      shouldRecoverAuth: true,
-    );
-
-    // On Android, there isn't an API for refreshing the idToken, so re-use
-    // the one we obtained on login.
-    response.idToken ??= _idToken;
-
-    return GoogleSignInAuthentication._(response);
+  /// Clients are strongly encouraged to use this information immediately after
+  /// authentication, as tokens are subject to expiration, and obtaining new
+  /// tokens requires re-authenticating.
+  GoogleSignInAuthentication get authentication {
+    return GoogleSignInAuthentication(idToken: _authenticationTokens.idToken);
   }
 
-  /// Convenience method returning a `<String, String>` map of HTML Authorization
-  /// headers, containing the current `authentication.accessToken`.
-  ///
-  /// See also https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Authorization.
-  Future<Map<String, String>> get authHeaders async {
-    final String? token = (await authentication).accessToken;
-    return <String, String>{
-      'Authorization': 'Bearer $token',
-      // TODO(kevmoo): Use the correct value once it's available from authentication
-      // See https://github.com/flutter/flutter/issues/80905
-      'X-Goog-AuthUser': '0',
-    };
-  }
-
-  /// Clears any client side cache that might be holding invalid tokens.
-  ///
-  /// If client runs into 401 errors using a token, it is expected to call
-  /// this method and grab `authHeaders` once again.
-  Future<void> clearAuthCache() async {
-    final String token = (await authentication).accessToken!;
-    await GoogleSignInPlatform.instance.clearAuthCache(token: token);
+  /// Returns a client that can be used to request authorization tokens for
+  /// this user.
+  GoogleSignInAuthorizationClient get authorizationClient {
+    return GoogleSignInAuthorizationClient._(this);
   }
 
   @override
@@ -140,13 +82,18 @@ class GoogleSignInAccount implements GoogleIdentity {
         email == otherAccount.email &&
         id == otherAccount.id &&
         photoUrl == otherAccount.photoUrl &&
-        serverAuthCode == otherAccount.serverAuthCode &&
-        _idToken == otherAccount._idToken;
+        _authenticationTokens.idToken ==
+            otherAccount._authenticationTokens.idToken;
   }
 
   @override
-  int get hashCode =>
-      Object.hash(displayName, email, id, photoUrl, _idToken, serverAuthCode);
+  int get hashCode => Object.hash(
+    displayName,
+    email,
+    id,
+    photoUrl,
+    _authenticationTokens.idToken,
+  );
 
   @override
   String toString() {
@@ -155,321 +102,502 @@ class GoogleSignInAccount implements GoogleIdentity {
       'email': email,
       'id': id,
       'photoUrl': photoUrl,
-      'serverAuthCode': serverAuthCode
     };
     return 'GoogleSignInAccount:$data';
   }
 }
 
+/// A utility for requesting authorization tokens.
+///
+/// If the instance was obtained from a [GoogleSignInAccount], any requests
+/// issued by this client will be for tokens for that account.
+///
+/// If the instance was obtained directly from [GoogleSignIn], the request will
+/// not be limited to a specific user, and the behavior will depend on the
+/// platform and the current application state. Examples include:
+/// - If there is an active authentication session in the application already,
+///   the authorization tokens may be associated for that user.
+/// - If no user has been authenticated, this may trigger a combined
+///   authentication+authorization flow. In that case, whether
+///   [GoogleSignIn]'s authenticationEvents stream will be informed of the
+///   authentication depends on the platform implementation. You should not
+///   assume the user information or authenication tokens will be available in
+///   this case.
+class GoogleSignInAuthorizationClient {
+  GoogleSignInAuthorizationClient._(GoogleIdentity? user)
+    : _userId = user?.id,
+      _userEmail = user?.email;
+
+  final String? _userId;
+  final String? _userEmail;
+
+  /// Requests client authorization tokens if they can be returned without user
+  /// interaction.
+  ///
+  /// If authorization would require user interaction, this returns null, in
+  /// which case [authorizeScopes] should be used instead.
+  ///
+  /// In rare cases, this can return tokens that are no longer valid. See
+  /// [clearAuthorizationToken] for details.
+  Future<GoogleSignInClientAuthorization?> authorizationForScopes(
+    List<String> scopes,
+  ) async {
+    return _authorizeClient(scopes, promptIfUnauthorized: false);
+  }
+
+  /// Requests that the user authorize the given scopes, and either returns the
+  /// resulting client authorization tokens, or throws an exception with failure
+  /// details.
+  ///
+  /// This should only be called from a context where user interaction is
+  /// allowed (for example, while the app is foregrounded on mobile), and if
+  /// [GoogleSignIn.authorizationRequiresUserInteraction] returns true this
+  /// should only be called from an user interaction handler.
+  ///
+  /// In rare cases, this can return tokens that are no longer valid. See
+  /// [clearAuthorizationToken] for details.
+  Future<GoogleSignInClientAuthorization> authorizeScopes(
+    List<String> scopes,
+  ) async {
+    final GoogleSignInClientAuthorization? authz = await _authorizeClient(
+      scopes,
+      promptIfUnauthorized: true,
+    );
+    // The platform interface documents that null should only be returned for
+    // cases where prompting isn't requested, so if this happens it's a bug
+    // in the platform implementation.
+    if (authz == null) {
+      throw const GoogleSignInException(
+        code: GoogleSignInExceptionCode.unknownError,
+        description: 'Platform returned null unexpectedly.',
+      );
+    }
+    return authz;
+  }
+
+  /// Convenience method returning a `<String, String>` map of HTML
+  /// authorization headers, containing the access token for the given scopes.
+  ///
+  /// Returns null if the given scopes are not authorized, or there is no
+  /// unexpired authorization token available, and [promptIfNecessary] is false.
+  ///
+  /// In rare cases, this can return tokens that are no longer valid. See
+  /// [clearAuthorizationToken] for details.
+  ///
+  /// See also https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Authorization.
+  Future<Map<String, String>?> authorizationHeaders(
+    List<String> scopes, {
+    bool promptIfNecessary = false,
+  }) async {
+    final GoogleSignInClientAuthorization? authz =
+        await authorizationForScopes(scopes) ??
+        (promptIfNecessary ? await authorizeScopes(scopes) : null);
+    if (authz == null) {
+      return null;
+    }
+    return <String, String>{
+      'Authorization': 'Bearer ${authz.accessToken}',
+      'X-Goog-AuthUser': '0',
+    };
+  }
+
+  /// Requests that the user authorize the given scopes for server use.
+  ///
+  /// In addition to throwing an exception for authorization failures, this can
+  /// return null if the server authorization tokens are not available. For
+  /// intance, some platforms only provide a valid server auth token on initial
+  /// login. Clients requiring a server auth token should not rely on being able
+  /// to re-request server auth tokens at arbitrary times, and should instead
+  /// store the token when it is first available, and manage refreshes on
+  /// the server side using that token.
+  ///
+  /// This should only be called from a context where user interaction is
+  /// allowed (for example, while the app is foregrounded on mobile), and if
+  /// [GoogleSignIn.authorizationRequiresUserInteraction] returns true this
+  /// should only be called from an user interaction handler.
+  ///
+  /// In rare cases, this can return tokens that are no longer valid. See
+  /// [clearAuthorizationToken] for details.
+  Future<GoogleSignInServerAuthorization?> authorizeServer(
+    List<String> scopes,
+  ) async {
+    final ServerAuthorizationTokenData? tokens = await GoogleSignInPlatform
+        .instance
+        .serverAuthorizationTokensForScopes(
+          ServerAuthorizationTokensForScopesParameters(
+            request: AuthorizationRequestDetails(
+              scopes: scopes,
+              userId: _userId,
+              email: _userEmail,
+              promptIfUnauthorized: true,
+            ),
+          ),
+        );
+    return tokens == null
+        ? null
+        : GoogleSignInServerAuthorization(
+          serverAuthCode: tokens.serverAuthCode,
+        );
+  }
+
+  /// Removes the given [accessToken] from any local authorization caches.
+  ///
+  /// This should be called if using an access token results in an invalid token
+  /// response from the target API, followed by re-requsting authorization.
+  ///
+  /// A token can be invalidated by, for example, a user removing an
+  /// application's authorization from outside of the application:
+  /// https://support.google.com/accounts/answer/13533235.
+  Future<void> clearAuthorizationToken({required String accessToken}) {
+    return GoogleSignInPlatform.instance.clearAuthorizationToken(
+      ClearAuthorizationTokenParams(accessToken: accessToken),
+    );
+  }
+
+  Future<GoogleSignInClientAuthorization?> _authorizeClient(
+    List<String> scopes, {
+    required bool promptIfUnauthorized,
+  }) async {
+    final ClientAuthorizationTokenData? tokens = await GoogleSignInPlatform
+        .instance
+        .clientAuthorizationTokensForScopes(
+          ClientAuthorizationTokensForScopesParameters(
+            request: AuthorizationRequestDetails(
+              scopes: scopes,
+              userId: _userId,
+              email: _userEmail,
+              promptIfUnauthorized: promptIfUnauthorized,
+            ),
+          ),
+        );
+    return tokens == null
+        ? null
+        : GoogleSignInClientAuthorization(accessToken: tokens.accessToken);
+  }
+}
+
 /// GoogleSignIn allows you to authenticate Google users.
 class GoogleSignIn {
-  /// Initializes global sign-in configuration settings.
-  ///
-  /// The [signInOption] determines the user experience. [SigninOption.games]
-  /// is only supported on Android.
-  ///
-  /// The list of [scopes] are OAuth scope codes to request when signing in.
-  /// These scope codes will determine the level of data access that is granted
-  /// to your application by the user. The full list of available scopes can
-  /// be found here:
-  /// <https://developers.google.com/identity/protocols/googlescopes>
-  ///
-  /// The [hostedDomain] argument specifies a hosted domain restriction. By
-  /// setting this, sign in will be restricted to accounts of the user in the
-  /// specified domain. By default, the list of accounts will not be restricted.
-  ///
-  /// The [forceCodeForRefreshToken] is used on Android to ensure the authentication
-  /// code can be exchanged for a refresh token after the first request.
-  GoogleSignIn({
-    this.signInOption = SignInOption.standard,
-    this.scopes = const <String>[],
-    this.hostedDomain,
-    this.clientId,
-    this.serverClientId,
-    this.forceCodeForRefreshToken = false,
-    this.forceAccountName,
-  }) {
-    // Start initializing.
-    if (kIsWeb) {
-      // Start initializing the plugin ASAP, so the `userDataEvents` Stream for
-      // the web can be used without calling any other methods of the plugin
-      // (like `silentSignIn` or `isSignedIn`).
-      unawaited(_ensureInitialized());
-    }
-  }
+  GoogleSignIn._();
 
-  /// Factory for creating default sign in user experience.
-  factory GoogleSignIn.standard({
-    List<String> scopes = const <String>[],
+  /// Returns the single [GoogleSignIn] instance.
+  ///
+  /// [initialize] must be called on this instance exactly once, and its future
+  /// allowed to complete, before any other methods on the object are called.
+  static final GoogleSignIn instance = GoogleSignIn._();
+
+  /// Initializes the sign in manager with the given configuration.
+  ///
+  /// Clients must call this method exactly once, and wait for its future to
+  /// complete, before calling any other methods on this object. Calling other
+  /// methods without waiting for this method to return, or calling this method
+  /// more than once, will result in undefined behavior.
+  ///
+  /// [clientId] is the identifier for your client application, as provided by
+  /// the Google Sign In server configuration, if any. This does not need to be
+  /// provided on platforms that do not require a client identifier, or if it is
+  /// provided via application-level configuration files. See the README for
+  /// details. If provided, it will take precedence over any value in a
+  /// configuration file.
+  ///
+  /// [serverClientId] is the identifier for your application's server-side
+  /// component, as provided by the Google Sign In server configuration, if any.
+  /// Depending on the platform, this value may be unused, optional, or
+  /// required. See the README for details. If provided, it will take precedence
+  /// over any value in a configuration file.
+  ///
+  /// If provided, [nonce] will be passed as part of any authentication
+  /// requests, to allow additional validation of the resulting ID token.
+  ///
+  /// If provided, [hostedDomain] restricts account selection to accounts in
+  /// that domain.
+  Future<void> initialize({
+    String? clientId,
+    String? serverClientId,
+    String? nonce,
     String? hostedDomain,
-  }) {
-    return GoogleSignIn(scopes: scopes, hostedDomain: hostedDomain);
-  }
-
-  /// Factory for creating sign in suitable for games. This option is only
-  /// supported on Android.
-  factory GoogleSignIn.games() {
-    return GoogleSignIn(signInOption: SignInOption.games);
-  }
-
-  // These error codes must match with ones declared on Android and iOS sides.
-
-  /// Error code indicating there is no signed in user and interactive sign in
-  /// flow is required.
-  static const String kSignInRequiredError = 'sign_in_required';
-
-  /// Error code indicating that interactive sign in process was canceled by the
-  /// user.
-  static const String kSignInCanceledError = 'sign_in_canceled';
-
-  /// Error code indicating network error. Retrying should resolve the problem.
-  static const String kNetworkError = 'network_error';
-
-  /// Error code indicating that attempt to sign in failed.
-  static const String kSignInFailedError = 'sign_in_failed';
-
-  /// Option to determine the sign in user experience. [SignInOption.games] is
-  /// only supported on Android.
-  final SignInOption signInOption;
-
-  /// The list of [scopes] are OAuth scope codes requested when signing in.
-  final List<String> scopes;
-
-  /// Domain to restrict sign-in to.
-  final String? hostedDomain;
-
-  /// Client ID being used to connect to google sign-in.
-  ///
-  /// This option is not supported on all platforms (e.g. Android). It is
-  /// optional if file-based configuration is used.
-  ///
-  /// The value specified here has precedence over a value from a configuration
-  /// file.
-  final String? clientId;
-
-  /// Client ID of the backend server to which the app needs to authenticate
-  /// itself.
-  ///
-  /// Optional and not supported on all platforms (e.g. web). By default, it
-  /// is initialized from a configuration file if available.
-  ///
-  /// The value specified here has precedence over a value from a configuration
-  /// file.
-  ///
-  /// [GoogleSignInAuthentication.idToken] and
-  /// [GoogleSignInAccount.serverAuthCode] will be specific to the backend
-  /// server.
-  final String? serverClientId;
-
-  /// Force the authorization code to be valid for a refresh token every time. Only needed on Android.
-  final bool forceCodeForRefreshToken;
-
-  /// Explicitly specifies the account name to be used in sign-in. Must only be set on Android.
-  final String? forceAccountName;
-
-  final StreamController<GoogleSignInAccount?> _currentUserController =
-      StreamController<GoogleSignInAccount?>.broadcast();
-
-  /// Subscribe to this stream to be notified when the current user changes.
-  Stream<GoogleSignInAccount?> get onCurrentUserChanged {
-    return _currentUserController.stream;
-  }
-
-  Future<GoogleSignInAccount?> _callMethod(
-      Future<dynamic> Function() method) async {
-    await _ensureInitialized();
-
-    final dynamic response = await method();
-
-    return _setCurrentUser(response != null && response is GoogleSignInUserData
-        ? GoogleSignInAccount._(this, response)
-        : null);
-  }
-
-  // Sets the current user, and propagates it through the _currentUserController.
-  GoogleSignInAccount? _setCurrentUser(GoogleSignInAccount? currentUser) {
-    if (currentUser != _currentUser) {
-      _currentUser = currentUser;
-      _currentUserController.add(_currentUser);
-    }
-    return _currentUser;
-  }
-
-  // Future that completes when `init` has completed on the native side.
-  Future<void>? _initialization;
-
-  // Performs initialization, guarding it with the _initialization future.
-  Future<void> _ensureInitialized() async {
-    _initialization ??= _doInitialization().catchError((Object e) {
-      // Invalidate initialization if it errors out.
-      _initialization = null;
-      // ignore: only_throw_errors
-      throw e;
-    });
-    return _initialization;
-  }
-
-  // Actually performs the initialization.
-  //
-  // This method calls initWithParams, and then, if the plugin instance has a
-  // userDataEvents Stream, connects it to the [_setCurrentUser] method.
-  Future<void> _doInitialization() async {
-    await GoogleSignInPlatform.instance.initWithParams(SignInInitParameters(
-      signInOption: signInOption,
-      scopes: scopes,
-      hostedDomain: hostedDomain,
-      clientId: clientId,
-      serverClientId: serverClientId,
-      forceCodeForRefreshToken: forceCodeForRefreshToken,
-      forceAccountName: forceAccountName,
-    ));
-
-    unawaited(GoogleSignInPlatform.instance.userDataEvents
-        ?.map((GoogleSignInUserData? userData) {
-      return userData != null ? GoogleSignInAccount._(this, userData) : null;
-    }).forEach(_setCurrentUser));
-  }
-
-  /// The most recently scheduled method call.
-  Future<void>? _lastMethodCall;
-
-  /// Returns a [Future] that completes with a success after [future], whether
-  /// it completed with a value or an error.
-  static Future<void> _waitFor(Future<void> future) {
-    final Completer<void> completer = Completer<void>();
-    future.whenComplete(completer.complete).catchError((dynamic _) {
-      // Ignore if previous call completed with an error.
-      // TODO(ditman): Should we log errors here, if debug or similar?
-    });
-    return completer.future;
-  }
-
-  /// Adds call to [method] in a queue for execution.
-  ///
-  /// At most one in flight call is allowed to prevent concurrent (out of order)
-  /// updates to [currentUser] and [onCurrentUserChanged].
-  ///
-  /// The optional, named parameter [canSkipCall] lets the plugin know that the
-  /// method call may be skipped, if there's already [_currentUser] information.
-  /// This is used from the [signIn] and [signInSilently] methods.
-  Future<GoogleSignInAccount?> _addMethodCall(
-    Future<dynamic> Function() method, {
-    bool canSkipCall = false,
   }) async {
-    Future<GoogleSignInAccount?> response;
-    if (_lastMethodCall == null) {
-      response = _callMethod(method);
+    await GoogleSignInPlatform.instance.init(
+      InitParameters(
+        clientId: clientId,
+        serverClientId: serverClientId,
+        nonce: nonce,
+        hostedDomain: hostedDomain,
+      ),
+    );
+
+    final Stream<AuthenticationEvent>? platformAuthEvents =
+        GoogleSignInPlatform.instance.authenticationEvents;
+    if (platformAuthEvents == null) {
+      _createAuthenticationStreamEvents = true;
     } else {
-      response = _lastMethodCall!.then((_) {
-        // If after the last completed call `currentUser` is not `null` and requested
-        // method can be skipped (`canSkipCall`), re-use the same authenticated user
-        // instead of making extra call to the native side.
-        if (canSkipCall && _currentUser != null) {
-          return _currentUser;
-        }
-        return _callMethod(method);
-      });
+      unawaited(platformAuthEvents.forEach(_translateAuthenticationEvent));
     }
-    // Add the current response to the currently running Promise of all pending responses
-    _lastMethodCall = _waitFor(response);
-    return response;
   }
 
-  /// The currently signed in account, or null if the user is signed out.
-  GoogleSignInAccount? get currentUser => _currentUser;
-  GoogleSignInAccount? _currentUser;
+  /// Converts [event] into a corresponding event using the app-facing package
+  /// types.
+  ///
+  /// The platform interface types are intentionally not exposed to clients to
+  /// avoid platform interface package changes immediately transferring to the
+  /// public API without being able to control how they are exposed.
+  ///
+  /// This uses a convert-and-add approach rather than `map` so that new types
+  /// that don't have handlers yet can be dropped rather than causing errors.
+  void _translateAuthenticationEvent(AuthenticationEvent event) {
+    switch (event) {
+      case AuthenticationEventSignIn():
+        _authenticationStreamController.add(
+          GoogleSignInAuthenticationEventSignIn(
+            user: GoogleSignInAccount._(event.user, event.authenticationTokens),
+          ),
+        );
+      case AuthenticationEventSignOut():
+        _authenticationStreamController.add(
+          GoogleSignInAuthenticationEventSignOut(),
+        );
+      case AuthenticationEventException():
+        _authenticationStreamController.addError(event.exception);
+    }
+  }
 
-  /// Attempts to sign in a previously authenticated user without interaction.
+  /// Subscribe to this stream to be notified when sign in (authentication) and
+  /// sign out events happen.
+  Stream<GoogleSignInAuthenticationEvent> get authenticationEvents {
+    return _authenticationStreamController.stream;
+  }
+
+  final StreamController<GoogleSignInAuthenticationEvent>
+  _authenticationStreamController =
+      StreamController<GoogleSignInAuthenticationEvent>.broadcast();
+
+  // Whether this package is responsible for creating stream events from
+  // authentication calls. This is true iff the platform instance returns null
+  // for authenticationEvents.
+  bool _createAuthenticationStreamEvents = false;
+
+  /// Attempts to sign in a previously authenticated user with minimal
+  /// interaction.
   ///
-  /// Returned Future resolves to an instance of [GoogleSignInAccount] for a
-  /// successful sign in or `null` if there is no previously authenticated user.
-  /// Use [signIn] method to trigger interactive sign in process.
+  /// The amount of allowable UI is up to the platform to determine, but it
+  /// should be minimal. Possible examples include FedCM on the web, and One Tap
+  /// on Android. Platforms may even show no UI, and only sign in if a previous
+  /// sign-in is being restored. This method is intended to be called as soon
+  /// as the application needs to know if the user is signed in, often at
+  /// initial launch.
   ///
-  /// Authentication is triggered if there is no currently signed in
-  /// user (that is when `currentUser == null`), otherwise this method returns
-  /// a Future which resolves to the same user instance.
+  /// Use [authenticate] instead to trigger a full interactive sign in process.
   ///
-  /// Re-authentication can be triggered after [signOut] or [disconnect]. It can
-  /// also be triggered by setting [reAuthenticate] to `true` if a new ID token
-  /// is required.
+  /// There are two possible return modes:
+  /// - If a Future is returned, applications could reasonably `await` that
+  ///   future before deciding whether to display UI in a signed in or signed
+  ///   out mode. For example, a platform where this method only restores
+  ///   existing sign-ins would return a future, as either way it will resolve
+  ///   quickly.
+  /// - If null is returned, applications must rely on [authenticationEvents] to
+  ///   know when a sign-in occurs, and cannot rely on receiving a notification
+  ///   that this call has *not* resulted in a sign-in in any reasonable amount
+  ///   of time. In this mode, applications should assume a signed out mode
+  ///   until/unless a sign-in event arrives on the stream. FedCM on the web
+  ///   would be an example of this mode.
   ///
-  /// When [suppressErrors] is set to `false` and an error occurred during sign in
-  /// returned Future completes with [PlatformException] whose `code` can be
-  /// one of [kSignInRequiredError] (when there is no authenticated user) ,
-  /// [kNetworkError] (when a network error occurred) or [kSignInFailedError]
-  /// (when an unknown error occurred).
-  Future<GoogleSignInAccount?> signInSilently({
-    bool suppressErrors = true,
-    bool reAuthenticate = false,
+  /// If a Future is returned, it resolves to an instance of
+  /// [GoogleSignInAccount] for a successful sign in or null if the attempt
+  /// implicitly did not result in any authentication. A [GoogleSignInException]
+  /// will be thrown if there was a failure (such as a client configuration
+  /// error). By default, this will not throw any of the following:
+  /// - [GoogleSignInExceptionCode.canceled]
+  /// - [GoogleSignInExceptionCode.interrupted]
+  /// - [GoogleSignInExceptionCode.uiUnavailable]
+  /// and will instead return null in those cases. To receive exceptions
+  /// for those cases instead, set [reportAllExceptions] to true.
+  Future<GoogleSignInAccount?>? attemptLightweightAuthentication({
+    bool reportAllExceptions = false,
+  }) {
+    try {
+      final Future<AuthenticationResults?>? future = GoogleSignInPlatform
+          .instance
+          .attemptLightweightAuthentication(
+            const AttemptLightweightAuthenticationParameters(),
+          );
+      if (future == null) {
+        return null;
+      }
+      return _resolveLightweightAuthenticationAttempt(
+        future,
+        reportAllExceptions: reportAllExceptions,
+      );
+    } catch (e, stack) {
+      if (e is GoogleSignInException) {
+        if (_createAuthenticationStreamEvents) {
+          _authenticationStreamController.addError(e, stack);
+        }
+
+        // For exceptions that should not be reported out, just return null.
+        if (!_shouldRethrowLightweightAuthenticationException(
+          e,
+          reportAllExceptions: reportAllExceptions,
+        )) {
+          return Future<GoogleSignInAccount?>.value();
+        }
+      }
+      return Future<GoogleSignInAccount?>.error(e, stack);
+    }
+  }
+
+  /// Resolves a future from the platform implementation's
+  /// attemptLightweightAuthentication.
+  ///
+  /// This is a separate method from [attemptLightweightAuthentication] to allow
+  /// using async/await, since [attemptLightweightAuthentication] can't use
+  /// async without losing the ability to return a null future.
+  Future<GoogleSignInAccount?> _resolveLightweightAuthenticationAttempt(
+    Future<AuthenticationResults?> future, {
+    required bool reportAllExceptions,
   }) async {
     try {
-      return await _addMethodCall(GoogleSignInPlatform.instance.signInSilently,
-          canSkipCall: !reAuthenticate);
-    } catch (_) {
-      if (suppressErrors) {
+      final AuthenticationResults? result = await future;
+      if (result == null) {
         return null;
-      } else {
+      }
+
+      final GoogleSignInAccount account = GoogleSignInAccount._(
+        result.user,
+        result.authenticationTokens,
+      );
+      if (_createAuthenticationStreamEvents) {
+        _authenticationStreamController.add(
+          GoogleSignInAuthenticationEventSignIn(user: account),
+        );
+      }
+      return account;
+    } on GoogleSignInException catch (e, stack) {
+      if (_createAuthenticationStreamEvents) {
+        _authenticationStreamController.addError(e, stack);
+      }
+
+      if (_shouldRethrowLightweightAuthenticationException(
+        e,
+        reportAllExceptions: reportAllExceptions,
+      )) {
         rethrow;
       }
+      return null;
     }
   }
 
-  /// Returns a future that resolves to whether a user is currently signed in.
-  Future<bool> isSignedIn() async {
-    await _ensureInitialized();
-    return GoogleSignInPlatform.instance.isSignedIn();
+  bool _shouldRethrowLightweightAuthenticationException(
+    GoogleSignInException e, {
+    required bool reportAllExceptions,
+  }) {
+    if (reportAllExceptions) {
+      return true;
+    }
+    switch (e.code) {
+      case GoogleSignInExceptionCode.canceled:
+      case GoogleSignInExceptionCode.interrupted:
+      case GoogleSignInExceptionCode.uiUnavailable:
+        return false;
+      // Only specific types are ignored, everything else should rethrow.
+      // ignore: no_default_cases
+      default:
+        return true;
+    }
   }
 
-  /// Starts the interactive sign-in process.
+  /// Whether or not the current platform supports the [authenticate] method.
   ///
-  /// Returned Future resolves to an instance of [GoogleSignInAccount] for a
-  /// successful sign in or `null` in case sign in process was aborted.
+  /// If this returns false, [authenticate] will throw an [UnsupportedError] if
+  /// called. See the platform-specific documentation for the package to
+  /// determine how authentication is handled. For instance, the platform may
+  /// provide platform-controlled sign-in UI elements that must be used instead
+  /// of application-specific UI.
+  bool supportsAuthenticate() =>
+      GoogleSignInPlatform.instance.supportsAuthenticate();
+
+  /// Whether or not authorization calls that could show UI must be called from
+  /// a user interaction, such as a button press, on the current platform.
   ///
-  /// Authentication process is triggered only if there is no currently signed in
-  /// user (that is when `currentUser == null`), otherwise this method returns
-  /// a Future which resolves to the same user instance.
+  /// For instance, this would return true on web if the sign in SDK uses popups
+  /// in its flow, since browsers may block popups that are not triggered
+  /// within the context of a user interaction.
+  bool authorizationRequiresUserInteraction() =>
+      GoogleSignInPlatform.instance.authorizationRequiresUserInteraction();
+
+  /// Starts an interactive sign-in process.
   ///
-  /// Re-authentication can be triggered only after [signOut] or [disconnect].
-  Future<GoogleSignInAccount?> signIn() {
-    final Future<GoogleSignInAccount?> result =
-        _addMethodCall(GoogleSignInPlatform.instance.signIn, canSkipCall: true);
-    bool isCanceled(dynamic error) =>
-        error is PlatformException && error.code == kSignInCanceledError;
-    return result.catchError((dynamic _) => null, test: isCanceled);
-  }
-
-  /// Marks current user as being in the signed out state.
-  Future<GoogleSignInAccount?> signOut() =>
-      _addMethodCall(GoogleSignInPlatform.instance.signOut);
-
-  /// Disconnects the current user from the app and revokes previous
-  /// authentication.
-  Future<GoogleSignInAccount?> disconnect() =>
-      _addMethodCall(GoogleSignInPlatform.instance.disconnect);
-
-  /// Requests the user grants additional Oauth [scopes].
-  Future<bool> requestScopes(List<String> scopes) async {
-    await _ensureInitialized();
-    return GoogleSignInPlatform.instance.requestScopes(scopes);
-  }
-
-  /// Checks if the current user has granted access to all the specified [scopes].
+  /// Returns a [GoogleSignInAccount] with valid authentication tokens for a
+  /// successful sign in, or throws a [GoogleSignInException] for any other
+  /// outcome, with details in the exception.
   ///
-  /// Optionally, an [accessToken] can be passed to perform this check. This
-  /// may be useful when an application holds on to a cached, potentially
-  /// long-lived [accessToken].
-  Future<bool> canAccessScopes(
-    List<String> scopes, {
-    String? accessToken,
+  /// If you will immediately be requesting authorization tokens, you can pass
+  /// [scopeHint] to indicate a preference for a combined
+  /// authentication+authorization flow on platforms that support it. Best
+  /// practice for Google Sign In flows is to separate authentication and
+  /// authorization, so not all platforms support a combined flow, and those
+  /// that do not will ignore [scopeHint]. You should always assume that
+  /// [GoogleSignInAuthorizationClient.authorizationForScopes] could return null
+  /// even if you pass a [scopeHint] here.
+  Future<GoogleSignInAccount> authenticate({
+    List<String> scopeHint = const <String>[],
   }) async {
-    await _ensureInitialized();
+    try {
+      final AuthenticationResults result = await GoogleSignInPlatform.instance
+          .authenticate(AuthenticateParameters(scopeHint: scopeHint));
+      final GoogleSignInAccount account = GoogleSignInAccount._(
+        result.user,
+        result.authenticationTokens,
+      );
+      if (_createAuthenticationStreamEvents) {
+        _authenticationStreamController.add(
+          GoogleSignInAuthenticationEventSignIn(user: account),
+        );
+      }
+      return account;
+    } on GoogleSignInException catch (e, stack) {
+      if (_createAuthenticationStreamEvents) {
+        _authenticationStreamController.addError(e, stack);
+      }
+      rethrow;
+    }
+  }
 
-    final String? token =
-        accessToken ?? (await _currentUser?.authentication)?.accessToken;
+  /// Returns a client that can be used to request authorization tokens for
+  /// some user.
+  ///
+  /// In most cases, authorization tokens should be obtained via
+  /// [GoogleSignInAccount.authorizationClient] rather than this method, as this
+  /// will provied only authorization tokens, without any corresponding user
+  /// information or authentication tokens.
+  ///
+  /// See [GoogleSignInAuthorizationClient] for details.
+  GoogleSignInAuthorizationClient get authorizationClient {
+    return GoogleSignInAuthorizationClient._(null);
+  }
 
-    return GoogleSignInPlatform.instance.canAccessScopes(
-      scopes,
-      accessToken: token,
-    );
+  /// Signs out any currently signed in user(s).
+  Future<void> signOut() {
+    if (_createAuthenticationStreamEvents) {
+      _authenticationStreamController.add(
+        GoogleSignInAuthenticationEventSignOut(),
+      );
+    }
+    return GoogleSignInPlatform.instance.signOut(const SignOutParams());
+  }
+
+  /// Disconnects any currently authorized users from the app, revoking previous
+  /// authorization.
+  Future<void> disconnect() async {
+    // Disconnecting also signs out, so synthesize a sign-out if necessary.
+    if (_createAuthenticationStreamEvents) {
+      _authenticationStreamController.add(
+        GoogleSignInAuthenticationEventSignOut(),
+      );
+    }
+    // TODO(stuartmorgan): Consider making a per-user disconnect option once
+    //  the Android implementation is available so that we can see how it is
+    //  structured. In practice, currently the plugin only fully supports a
+    //  single user at a time, so the distinction is mostly theoretical for now.
+    await GoogleSignInPlatform.instance.disconnect(const DisconnectParams());
   }
 }

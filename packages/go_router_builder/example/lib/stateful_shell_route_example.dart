@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -19,9 +19,8 @@ class App extends StatelessWidget {
   App({super.key});
 
   @override
-  Widget build(BuildContext context) => MaterialApp.router(
-        routerConfig: _router,
-      );
+  Widget build(BuildContext context) =>
+      MaterialApp.router(routerConfig: _router);
 
   final GoRouter _router = GoRouter(
     routes: $appRoutes,
@@ -33,9 +32,8 @@ class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: const Text('foo')),
-      );
+  Widget build(BuildContext context) =>
+      Scaffold(appBar: AppBar(title: const Text('foo')));
 }
 
 @TypedStatefulShellRoute<MyShellRouteData>(
@@ -66,8 +64,11 @@ class MyShellRouteData extends StatefulShellRouteData {
 
   static const String $restorationScopeId = 'restorationScopeId';
 
-  static Widget $navigatorContainerBuilder(BuildContext context,
-      StatefulNavigationShell navigationShell, List<Widget> children) {
+  static Widget $navigatorContainerBuilder(
+    BuildContext context,
+    StatefulNavigationShell navigationShell,
+    List<Widget> children,
+  ) {
     return ScaffoldWithNavBar(
       navigationShell: navigationShell,
       children: children,
@@ -86,7 +87,7 @@ class BranchBData extends StatefulShellBranchData {
   static const String $restorationScopeId = 'restorationScopeId';
 }
 
-class DetailsARouteData extends GoRouteData {
+class DetailsARouteData extends GoRouteData with $DetailsARouteData {
   const DetailsARouteData();
 
   @override
@@ -95,7 +96,7 @@ class DetailsARouteData extends GoRouteData {
   }
 }
 
-class DetailsBRouteData extends GoRouteData {
+class DetailsBRouteData extends GoRouteData with $DetailsBRouteData {
   const DetailsBRouteData();
 
   @override
@@ -164,8 +165,11 @@ class ScaffoldWithNavBar extends StatelessWidget {
 /// when switching branches.
 class AnimatedBranchContainer extends StatelessWidget {
   /// Creates a AnimatedBranchContainer
-  const AnimatedBranchContainer(
-      {super.key, required this.currentIndex, required this.children});
+  const AnimatedBranchContainer({
+    super.key,
+    required this.currentIndex,
+    required this.children,
+  });
 
   /// The index (in [children]) of the branch Navigator to display.
   final int currentIndex;
@@ -176,39 +180,31 @@ class AnimatedBranchContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Stack(
-        children: children.mapIndexed(
-      (int index, Widget navigator) {
-        return AnimatedScale(
-          scale: index == currentIndex ? 1 : 1.5,
-          duration: const Duration(milliseconds: 400),
-          child: AnimatedOpacity(
-            opacity: index == currentIndex ? 1 : 0,
-            duration: const Duration(milliseconds: 400),
-            child: _branchNavigatorWrapper(index, navigator),
-          ),
-        );
-      },
-    ).toList());
+      children:
+          children.mapIndexed((int index, Widget navigator) {
+            return AnimatedScale(
+              scale: index == currentIndex ? 1 : 1.5,
+              duration: const Duration(milliseconds: 400),
+              child: AnimatedOpacity(
+                opacity: index == currentIndex ? 1 : 0,
+                duration: const Duration(milliseconds: 400),
+                child: _branchNavigatorWrapper(index, navigator),
+              ),
+            );
+          }).toList(),
+    );
   }
 
   Widget _branchNavigatorWrapper(int index, Widget navigator) => IgnorePointer(
-        ignoring: index != currentIndex,
-        child: TickerMode(
-          enabled: index == currentIndex,
-          child: navigator,
-        ),
-      );
+    ignoring: index != currentIndex,
+    child: TickerMode(enabled: index == currentIndex, child: navigator),
+  );
 }
 
 /// The details screen for either the A or B screen.
 class DetailsScreen extends StatefulWidget {
   /// Constructs a [DetailsScreen].
-  const DetailsScreen({
-    required this.label,
-    this.param,
-    this.extra,
-    super.key,
-  });
+  const DetailsScreen({required this.label, this.param, this.extra, super.key});
 
   /// The label to display in the center of the screen.
   final String label;
@@ -229,9 +225,7 @@ class DetailsScreenState extends State<DetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Details Screen - ${widget.label}'),
-      ),
+      appBar: AppBar(title: Text('Details Screen - ${widget.label}')),
       body: _build(context),
     );
   }
@@ -241,8 +235,10 @@ class DetailsScreenState extends State<DetailsScreen> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Text('Details for ${widget.label} - Counter: $_counter',
-              style: Theme.of(context).textTheme.titleLarge),
+          Text(
+            'Details for ${widget.label} - Counter: $_counter',
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
           const Padding(padding: EdgeInsets.all(4)),
           TextButton(
             onPressed: () {
@@ -254,12 +250,16 @@ class DetailsScreenState extends State<DetailsScreen> {
           ),
           const Padding(padding: EdgeInsets.all(8)),
           if (widget.param != null)
-            Text('Parameter: ${widget.param!}',
-                style: Theme.of(context).textTheme.titleMedium),
+            Text(
+              'Parameter: ${widget.param!}',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
           const Padding(padding: EdgeInsets.all(8)),
           if (widget.extra != null)
-            Text('Extra: ${widget.extra!}',
-                style: Theme.of(context).textTheme.titleMedium),
+            Text(
+              'Extra: ${widget.extra!}',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
         ],
       ),
     );

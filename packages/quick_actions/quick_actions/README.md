@@ -11,7 +11,7 @@ Android.
 
 |             | Android   | iOS  |
 |-------------|-----------|------|
-| **Support** | SDK 16+\* | 9.0+ |
+| **Support** | SDK 21+\* | 9.0+ |
 
 ## Usage
 

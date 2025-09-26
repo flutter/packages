@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -15,30 +15,24 @@ import 'package:flutter/services.dart';
 bool _deepEquals(Object? a, Object? b) {
   if (a is List && b is List) {
     return a.length == b.length &&
-        a.indexed
-            .every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
+        a.indexed.every(
+          ((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]),
+        );
   }
   if (a is Map && b is Map) {
-    final Iterable<Object?> keys = (a as Map<Object?, Object?>).keys;
     return a.length == b.length &&
-        keys.every((Object? key) =>
-            (b as Map<Object?, Object?>).containsKey(key) &&
-            _deepEquals(a[key], b[key]));
+        a.entries.every(
+          (MapEntry<Object?, Object?> entry) =>
+              (b as Map<Object?, Object?>).containsKey(entry.key) &&
+              _deepEquals(entry.value, b[entry.key]),
+        );
   }
   return a == b;
 }
 
-enum EventEnum {
-  one,
-  two,
-  three,
-  fortyTwo,
-  fourHundredTwentyTwo,
-}
+enum EventEnum { one, two, three, fortyTwo, fourHundredTwentyTwo }
 
-enum AnotherEventEnum {
-  justInCase,
-}
+enum AnotherEventEnum { justInCase }
 
 /// A class containing all supported nullable types.
 class EventAllNullableTypes {
@@ -209,16 +203,19 @@ class EventAllNullableTypes {
       stringMap:
           (result[24] as Map<Object?, Object?>?)?.cast<String?, String?>(),
       intMap: (result[25] as Map<Object?, Object?>?)?.cast<int?, int?>(),
-      enumMap: (result[26] as Map<Object?, Object?>?)
-          ?.cast<EventEnum?, EventEnum?>(),
+      enumMap:
+          (result[26] as Map<Object?, Object?>?)
+              ?.cast<EventEnum?, EventEnum?>(),
       objectMap:
           (result[27] as Map<Object?, Object?>?)?.cast<Object?, Object?>(),
       listMap:
           (result[28] as Map<Object?, Object?>?)?.cast<int?, List<Object?>?>(),
-      mapMap: (result[29] as Map<Object?, Object?>?)
-          ?.cast<int?, Map<Object?, Object?>?>(),
-      recursiveClassMap: (result[30] as Map<Object?, Object?>?)
-          ?.cast<int?, EventAllNullableTypes?>(),
+      mapMap:
+          (result[29] as Map<Object?, Object?>?)
+              ?.cast<int?, Map<Object?, Object?>?>(),
+      recursiveClassMap:
+          (result[30] as Map<Object?, Object?>?)
+              ?.cast<int?, EventAllNullableTypes?>(),
     );
   }
 
@@ -231,37 +228,7 @@ class EventAllNullableTypes {
     if (identical(this, other)) {
       return true;
     }
-    return aNullableBool == other.aNullableBool &&
-        aNullableInt == other.aNullableInt &&
-        aNullableInt64 == other.aNullableInt64 &&
-        aNullableDouble == other.aNullableDouble &&
-        _deepEquals(aNullableByteArray, other.aNullableByteArray) &&
-        _deepEquals(aNullable4ByteArray, other.aNullable4ByteArray) &&
-        _deepEquals(aNullable8ByteArray, other.aNullable8ByteArray) &&
-        _deepEquals(aNullableFloatArray, other.aNullableFloatArray) &&
-        aNullableEnum == other.aNullableEnum &&
-        anotherNullableEnum == other.anotherNullableEnum &&
-        aNullableString == other.aNullableString &&
-        aNullableObject == other.aNullableObject &&
-        allNullableTypes == other.allNullableTypes &&
-        _deepEquals(list, other.list) &&
-        _deepEquals(stringList, other.stringList) &&
-        _deepEquals(intList, other.intList) &&
-        _deepEquals(doubleList, other.doubleList) &&
-        _deepEquals(boolList, other.boolList) &&
-        _deepEquals(enumList, other.enumList) &&
-        _deepEquals(objectList, other.objectList) &&
-        _deepEquals(listList, other.listList) &&
-        _deepEquals(mapList, other.mapList) &&
-        _deepEquals(recursiveClassList, other.recursiveClassList) &&
-        _deepEquals(map, other.map) &&
-        _deepEquals(stringMap, other.stringMap) &&
-        _deepEquals(intMap, other.intMap) &&
-        _deepEquals(enumMap, other.enumMap) &&
-        _deepEquals(objectMap, other.objectMap) &&
-        _deepEquals(listMap, other.listMap) &&
-        _deepEquals(mapMap, other.mapMap) &&
-        _deepEquals(recursiveClassMap, other.recursiveClassMap);
+    return _deepEquals(encode(), other.encode());
   }
 
   @override
@@ -272,16 +239,12 @@ class EventAllNullableTypes {
 sealed class PlatformEvent {}
 
 class IntEvent extends PlatformEvent {
-  IntEvent({
-    required this.value,
-  });
+  IntEvent({required this.value});
 
   int value;
 
   List<Object?> _toList() {
-    return <Object?>[
-      value,
-    ];
+    return <Object?>[value];
   }
 
   Object encode() {
@@ -290,9 +253,7 @@ class IntEvent extends PlatformEvent {
 
   static IntEvent decode(Object result) {
     result as List<Object?>;
-    return IntEvent(
-      value: result[0]! as int,
-    );
+    return IntEvent(value: result[0]! as int);
   }
 
   @override
@@ -304,7 +265,7 @@ class IntEvent extends PlatformEvent {
     if (identical(this, other)) {
       return true;
     }
-    return value == other.value;
+    return _deepEquals(encode(), other.encode());
   }
 
   @override
@@ -313,16 +274,12 @@ class IntEvent extends PlatformEvent {
 }
 
 class StringEvent extends PlatformEvent {
-  StringEvent({
-    required this.value,
-  });
+  StringEvent({required this.value});
 
   String value;
 
   List<Object?> _toList() {
-    return <Object?>[
-      value,
-    ];
+    return <Object?>[value];
   }
 
   Object encode() {
@@ -331,9 +288,7 @@ class StringEvent extends PlatformEvent {
 
   static StringEvent decode(Object result) {
     result as List<Object?>;
-    return StringEvent(
-      value: result[0]! as String,
-    );
+    return StringEvent(value: result[0]! as String);
   }
 
   @override
@@ -345,7 +300,7 @@ class StringEvent extends PlatformEvent {
     if (identical(this, other)) {
       return true;
     }
-    return value == other.value;
+    return _deepEquals(encode(), other.encode());
   }
 
   @override
@@ -354,16 +309,12 @@ class StringEvent extends PlatformEvent {
 }
 
 class BoolEvent extends PlatformEvent {
-  BoolEvent({
-    required this.value,
-  });
+  BoolEvent({required this.value});
 
   bool value;
 
   List<Object?> _toList() {
-    return <Object?>[
-      value,
-    ];
+    return <Object?>[value];
   }
 
   Object encode() {
@@ -372,9 +323,7 @@ class BoolEvent extends PlatformEvent {
 
   static BoolEvent decode(Object result) {
     result as List<Object?>;
-    return BoolEvent(
-      value: result[0]! as bool,
-    );
+    return BoolEvent(value: result[0]! as bool);
   }
 
   @override
@@ -386,7 +335,7 @@ class BoolEvent extends PlatformEvent {
     if (identical(this, other)) {
       return true;
     }
-    return value == other.value;
+    return _deepEquals(encode(), other.encode());
   }
 
   @override
@@ -395,16 +344,12 @@ class BoolEvent extends PlatformEvent {
 }
 
 class DoubleEvent extends PlatformEvent {
-  DoubleEvent({
-    required this.value,
-  });
+  DoubleEvent({required this.value});
 
   double value;
 
   List<Object?> _toList() {
-    return <Object?>[
-      value,
-    ];
+    return <Object?>[value];
   }
 
   Object encode() {
@@ -413,9 +358,7 @@ class DoubleEvent extends PlatformEvent {
 
   static DoubleEvent decode(Object result) {
     result as List<Object?>;
-    return DoubleEvent(
-      value: result[0]! as double,
-    );
+    return DoubleEvent(value: result[0]! as double);
   }
 
   @override
@@ -427,7 +370,7 @@ class DoubleEvent extends PlatformEvent {
     if (identical(this, other)) {
       return true;
     }
-    return value == other.value;
+    return _deepEquals(encode(), other.encode());
   }
 
   @override
@@ -436,16 +379,12 @@ class DoubleEvent extends PlatformEvent {
 }
 
 class ObjectsEvent extends PlatformEvent {
-  ObjectsEvent({
-    required this.value,
-  });
+  ObjectsEvent({required this.value});
 
   Object value;
 
   List<Object?> _toList() {
-    return <Object?>[
-      value,
-    ];
+    return <Object?>[value];
   }
 
   Object encode() {
@@ -454,9 +393,7 @@ class ObjectsEvent extends PlatformEvent {
 
   static ObjectsEvent decode(Object result) {
     result as List<Object?>;
-    return ObjectsEvent(
-      value: result[0]!,
-    );
+    return ObjectsEvent(value: result[0]!);
   }
 
   @override
@@ -468,7 +405,7 @@ class ObjectsEvent extends PlatformEvent {
     if (identical(this, other)) {
       return true;
     }
-    return value == other.value;
+    return _deepEquals(encode(), other.encode());
   }
 
   @override
@@ -477,16 +414,12 @@ class ObjectsEvent extends PlatformEvent {
 }
 
 class EnumEvent extends PlatformEvent {
-  EnumEvent({
-    required this.value,
-  });
+  EnumEvent({required this.value});
 
   EventEnum value;
 
   List<Object?> _toList() {
-    return <Object?>[
-      value,
-    ];
+    return <Object?>[value];
   }
 
   Object encode() {
@@ -495,9 +428,7 @@ class EnumEvent extends PlatformEvent {
 
   static EnumEvent decode(Object result) {
     result as List<Object?>;
-    return EnumEvent(
-      value: result[0]! as EventEnum,
-    );
+    return EnumEvent(value: result[0]! as EventEnum);
   }
 
   @override
@@ -509,7 +440,7 @@ class EnumEvent extends PlatformEvent {
     if (identical(this, other)) {
       return true;
     }
-    return value == other.value;
+    return _deepEquals(encode(), other.encode());
   }
 
   @override
@@ -518,16 +449,12 @@ class EnumEvent extends PlatformEvent {
 }
 
 class ClassEvent extends PlatformEvent {
-  ClassEvent({
-    required this.value,
-  });
+  ClassEvent({required this.value});
 
   EventAllNullableTypes value;
 
   List<Object?> _toList() {
-    return <Object?>[
-      value,
-    ];
+    return <Object?>[value];
   }
 
   Object encode() {
@@ -536,9 +463,7 @@ class ClassEvent extends PlatformEvent {
 
   static ClassEvent decode(Object result) {
     result as List<Object?>;
-    return ClassEvent(
-      value: result[0]! as EventAllNullableTypes,
-    );
+    return ClassEvent(value: result[0]! as EventAllNullableTypes);
   }
 
   @override
@@ -550,7 +475,7 @@ class ClassEvent extends PlatformEvent {
     if (identical(this, other)) {
       return true;
     }
-    return value == other.value;
+    return _deepEquals(encode(), other.encode());
   }
 
   @override
@@ -631,16 +556,18 @@ class _PigeonCodec extends StandardMessageCodec {
   }
 }
 
-const StandardMethodCodec pigeonMethodCodec =
-    StandardMethodCodec(_PigeonCodec());
+const StandardMethodCodec pigeonMethodCodec = StandardMethodCodec(
+  _PigeonCodec(),
+);
 
 Stream<int> streamInts({String instanceName = ''}) {
   if (instanceName.isNotEmpty) {
     instanceName = '.$instanceName';
   }
   final EventChannel streamIntsChannel = EventChannel(
-      'dev.flutter.pigeon.pigeon_integration_tests.EventChannelMethods.streamInts$instanceName',
-      pigeonMethodCodec);
+    'dev.flutter.pigeon.pigeon_integration_tests.EventChannelMethods.streamInts$instanceName',
+    pigeonMethodCodec,
+  );
   return streamIntsChannel.receiveBroadcastStream().map((dynamic event) {
     return event as int;
   });
@@ -651,8 +578,9 @@ Stream<PlatformEvent> streamEvents({String instanceName = ''}) {
     instanceName = '.$instanceName';
   }
   final EventChannel streamEventsChannel = EventChannel(
-      'dev.flutter.pigeon.pigeon_integration_tests.EventChannelMethods.streamEvents$instanceName',
-      pigeonMethodCodec);
+    'dev.flutter.pigeon.pigeon_integration_tests.EventChannelMethods.streamEvents$instanceName',
+    pigeonMethodCodec,
+  );
   return streamEventsChannel.receiveBroadcastStream().map((dynamic event) {
     return event as PlatformEvent;
   });
@@ -663,11 +591,12 @@ Stream<int> streamConsistentNumbers({String instanceName = ''}) {
     instanceName = '.$instanceName';
   }
   final EventChannel streamConsistentNumbersChannel = EventChannel(
-      'dev.flutter.pigeon.pigeon_integration_tests.EventChannelMethods.streamConsistentNumbers$instanceName',
-      pigeonMethodCodec);
-  return streamConsistentNumbersChannel
-      .receiveBroadcastStream()
-      .map((dynamic event) {
+    'dev.flutter.pigeon.pigeon_integration_tests.EventChannelMethods.streamConsistentNumbers$instanceName',
+    pigeonMethodCodec,
+  );
+  return streamConsistentNumbersChannel.receiveBroadcastStream().map((
+    dynamic event,
+  ) {
     return event as int;
   });
 }

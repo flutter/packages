@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -443,7 +443,7 @@ public class FileSelectorAndroidPluginTest {
             new FileSelectorApiImpl(
                 mockActivityBinding,
                 mockObjectFactory,
-                (version) -> Build.VERSION_CODES.LOLLIPOP >= version);
+                (version) -> Build.VERSION.SDK_INT >= version);
 
         final GeneratedFileSelectorApi.NullableResult mockResult =
             mock(GeneratedFileSelectorApi.NullableResult.class);
@@ -464,21 +464,5 @@ public class FileSelectorAndroidPluginTest {
         verify(mockResult).success(mockUriPath);
       }
     }
-  }
-
-  @Test
-  public void getDirectoryPath_errorsForUnsupportedVersion() {
-    final FileSelectorApiImpl fileSelectorApi =
-        new FileSelectorApiImpl(
-            mockActivityBinding,
-            mockObjectFactory,
-            (version) -> Build.VERSION_CODES.KITKAT >= version);
-
-    @SuppressWarnings("unchecked")
-    final GeneratedFileSelectorApi.NullableResult<String> mockResult =
-        mock(GeneratedFileSelectorApi.NullableResult.class);
-    fileSelectorApi.getDirectoryPath(null, mockResult);
-
-    verify(mockResult).error(any());
   }
 }

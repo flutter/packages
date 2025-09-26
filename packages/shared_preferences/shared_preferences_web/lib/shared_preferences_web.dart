@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -28,16 +28,15 @@ class SharedPreferencesPlugin extends SharedPreferencesStorePlatform {
   @override
   Future<bool> clear() async {
     return clearWithParameters(
-      ClearParameters(
-        filter: PreferencesFilter(prefix: _defaultPrefix),
-      ),
+      ClearParameters(filter: PreferencesFilter(prefix: _defaultPrefix)),
     );
   }
 
   @override
   Future<bool> clearWithPrefix(String prefix) async {
     return clearWithParameters(
-        ClearParameters(filter: PreferencesFilter(prefix: prefix)));
+      ClearParameters(filter: PreferencesFilter(prefix: prefix)),
+    );
   }
 
   @override
@@ -46,35 +45,40 @@ class SharedPreferencesPlugin extends SharedPreferencesStorePlatform {
     // IMPORTANT: Do not use html.window.localStorage.clear() as that will
     //            remove _all_ local data, not just the keys prefixed with
     //            _prefix
-    _getPrefixedKeys(filter.prefix, allowList: filter.allowList)
-        .forEach(remove);
+    _getPrefixedKeys(
+      filter.prefix,
+      allowList: filter.allowList,
+    ).forEach(remove);
     return true;
   }
 
   @override
   Future<Map<String, Object>> getAll() async {
     return getAllWithParameters(
-      GetAllParameters(
-        filter: PreferencesFilter(prefix: _defaultPrefix),
-      ),
+      GetAllParameters(filter: PreferencesFilter(prefix: _defaultPrefix)),
     );
   }
 
   @override
   Future<Map<String, Object>> getAllWithPrefix(String prefix) async {
     return getAllWithParameters(
-        GetAllParameters(filter: PreferencesFilter(prefix: prefix)));
+      GetAllParameters(filter: PreferencesFilter(prefix: prefix)),
+    );
   }
 
   @override
   Future<Map<String, Object>> getAllWithParameters(
-      GetAllParameters parameters) async {
+    GetAllParameters parameters,
+  ) async {
     final PreferencesFilter filter = parameters.filter;
     final Map<String, Object> allData = <String, Object>{};
-    for (final String key
-        in _getPrefixedKeys(filter.prefix, allowList: filter.allowList)) {
-      final Object? value =
-          _decodeValue(html.window.localStorage.getItem(key)!);
+    for (final String key in _getPrefixedKeys(
+      filter.prefix,
+      allowList: filter.allowList,
+    )) {
+      final Object? value = _decodeValue(
+        html.window.localStorage.getItem(key)!,
+      );
       if (value != null) {
         allData[key] = value;
       }
@@ -94,12 +98,10 @@ class SharedPreferencesPlugin extends SharedPreferencesStorePlatform {
     return true;
   }
 
-  Iterable<String> _getPrefixedKeys(
-    String prefix, {
-    Set<String>? allowList,
-  }) {
-    return _getAllowedKeys(allowList: allowList)
-        .where((String key) => key.startsWith(prefix));
+  Iterable<String> _getPrefixedKeys(String prefix, {Set<String>? allowList}) {
+    return _getAllowedKeys(
+      allowList: allowList,
+    ).where((String key) => key.startsWith(prefix));
   }
 }
 
@@ -118,8 +120,9 @@ base class SharedPreferencesAsyncWeb extends SharedPreferencesAsyncPlatform {
     SharedPreferencesOptions options,
   ) async {
     final PreferencesFilters filter = parameters.filter;
-    _getAllowedKeys(allowList: filter.allowList)
-        .forEach((String key) => html.window.localStorage.removeItem(key));
+    _getAllowedKeys(
+      allowList: filter.allowList,
+    ).forEach((String key) => html.window.localStorage.removeItem(key));
   }
 
   @override
@@ -136,8 +139,9 @@ base class SharedPreferencesAsyncWeb extends SharedPreferencesAsyncPlatform {
   ) async {
     final Map<String, Object> allData = <String, Object>{};
     for (final String key in _getAllowedKeys(allowList: allowList)) {
-      final Object? value =
-          _decodeValue(html.window.localStorage.getItem(key)!);
+      final Object? value = _decodeValue(
+        html.window.localStorage.getItem(key)!,
+      );
       if (value != null) {
         allData[key] = value;
       }
@@ -146,8 +150,10 @@ base class SharedPreferencesAsyncWeb extends SharedPreferencesAsyncPlatform {
   }
 
   @override
-  Future<Set<String>> getKeys(GetPreferencesParameters parameters,
-      SharedPreferencesOptions options) async {
+  Future<Set<String>> getKeys(
+    GetPreferencesParameters parameters,
+    SharedPreferencesOptions options,
+  ) async {
     return (await getPreferences(parameters, options)).keys.toSet();
   }
 
@@ -179,11 +185,7 @@ base class SharedPreferencesAsyncWeb extends SharedPreferencesAsyncPlatform {
   }
 
   @override
-  Future<void> setInt(
-    String key,
-    int value,
-    SharedPreferencesOptions options,
-  ) {
+  Future<void> setInt(String key, int value, SharedPreferencesOptions options) {
     return _setValue(key, value, options);
   }
 
@@ -209,18 +211,17 @@ base class SharedPreferencesAsyncWeb extends SharedPreferencesAsyncPlatform {
     String key,
     SharedPreferencesOptions options,
   ) async {
-    final Map<String, Object> data =
-        await _readAllFromLocalStorage(<String>{key}, options);
+    final Map<String, Object> data = await _readAllFromLocalStorage(<String>{
+      key,
+    }, options);
     return data[key] as String?;
   }
 
   @override
-  Future<bool?> getBool(
-    String key,
-    SharedPreferencesOptions options,
-  ) async {
-    final Map<String, Object> data =
-        await _readAllFromLocalStorage(<String>{key}, options);
+  Future<bool?> getBool(String key, SharedPreferencesOptions options) async {
+    final Map<String, Object> data = await _readAllFromLocalStorage(<String>{
+      key,
+    }, options);
     return data[key] as bool?;
   }
 
@@ -229,18 +230,17 @@ base class SharedPreferencesAsyncWeb extends SharedPreferencesAsyncPlatform {
     String key,
     SharedPreferencesOptions options,
   ) async {
-    final Map<String, Object> data =
-        await _readAllFromLocalStorage(<String>{key}, options);
+    final Map<String, Object> data = await _readAllFromLocalStorage(<String>{
+      key,
+    }, options);
     return data[key] as double?;
   }
 
   @override
-  Future<int?> getInt(
-    String key,
-    SharedPreferencesOptions options,
-  ) async {
-    final Map<String, Object> data =
-        await _readAllFromLocalStorage(<String>{key}, options);
+  Future<int?> getInt(String key, SharedPreferencesOptions options) async {
+    final Map<String, Object> data = await _readAllFromLocalStorage(<String>{
+      key,
+    }, options);
     return data[key] as int?;
   }
 
@@ -249,17 +249,17 @@ base class SharedPreferencesAsyncWeb extends SharedPreferencesAsyncPlatform {
     String key,
     SharedPreferencesOptions options,
   ) async {
-    final Map<String, Object> data =
-        await _readAllFromLocalStorage(<String>{key}, options);
+    final Map<String, Object> data = await _readAllFromLocalStorage(<String>{
+      key,
+    }, options);
     return (data[key] as List<String>?)?.toList();
   }
 }
 
-Iterable<String> _getAllowedKeys({
-  Set<String>? allowList,
-}) {
-  return html.window.localStorage.keys
-      .where((String key) => allowList?.contains(key) ?? true);
+Iterable<String> _getAllowedKeys({Set<String>? allowList}) {
+  return html.window.localStorage.keys.where(
+    (String key) => allowList?.contains(key) ?? true,
+  );
 }
 
 String _encodeValue(Object? value) {

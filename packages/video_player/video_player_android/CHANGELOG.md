@@ -1,3 +1,51 @@
+## 2.8.13
+
+* Bumps com.android.tools.build:gradle to 8.12.1.
+
+## 2.8.12
+
+* Moves buffer position update event generation to Dart.
+
+## 2.8.11
+
+* Updates kotlin version to 2.2.0 to enable gradle 8.11 support.
+
+## 2.8.10
+
+* Restructures internal logic to move more code to Dart.
+
+## 2.8.9
+
+* Restructures the communication between Dart and Java code.
+
+## 2.8.8
+
+* * Updates Media3-ExoPlayer to 1.5.1.
+
+## 2.8.7
+
+* Adds note about known issue regarding platform views to the README.
+
+## 2.8.6
+
+* Fixes a [bug](https://github.com/flutter/flutter/issues/165149) where the `isBuffering` flag
+  always returns true after seeking to any position.
+
+## 2.8.5
+
+* Replaces deprecated `onSurfaceDestroyed` with `onSurfaceCleanup`.
+* Restores background playback support.
+
+## 2.8.4
+
+* Fixes incorrect width/height swap ([bug](https://github.com/flutter/flutter/issues/166097)). The swap was originally required for the uncorrected width/height of `Format` but was mistakenly retained after [switching to `VideoSize`](https://github.com/flutter/packages/pull/6535), which already accounts for rotation.
+* Fixes example app layout issue caused by `Transform.rotate`  not affecting space calculation (following [#8685](https://github.com/flutter/packages/pull/8685)).
+
+## 2.8.3
+
+* Changes plugin to use `TextureRegistry.SurfaceProducer.handlesCropAndRotation` to detect
+  whether or not the video player rotation needs to be corrected.
+
 ## 2.8.2
 
 * Fixes a [bug](https://github.com/flutter/flutter/issues/164689) that can cause video to

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -14,7 +14,6 @@ import 'package:pigeon/pigeon.dart';
         'darwin/webview_flutter_wkwebview/Sources/webview_flutter_wkwebview/WebKitLibrary.g.swift',
   ),
 )
-
 /// The values that can be returned in a change dictionary.
 ///
 /// See https://developer.apple.com/documentation/foundation/nskeyvalueobservingoptions.
@@ -340,6 +339,39 @@ enum UrlCredentialPersistence {
   synchronizable,
 }
 
+/// Trust evaluation result codes.
+///
+/// See https://developer.apple.com/documentation/security/sectrustresulttype?language=objc.
+enum DartSecTrustResultType {
+  /// The user did not specify a trust setting.
+  unspecified,
+
+  /// The user granted permission to trust the certificate for the purposes
+  /// designated in the specified policies.
+  proceed,
+
+  /// The user specified that the certificate should not be trusted.
+  deny,
+
+  /// Trust is denied, but recovery may be possible.
+  recoverableTrustFailure,
+
+  /// Trust is denied and no simple fix is available.
+  fatalTrustFailure,
+
+  /// A value that indicates a failure other than trust evaluation.
+  otherError,
+
+  /// An indication of an invalid setting or result.
+  invalid,
+
+  /// User confirmation is required before proceeding.
+  confirm,
+
+  /// The type is not recognized by this wrapper.
+  unknown,
+}
+
 /// A URL load request that is independent of protocol or URL scheme.
 ///
 /// See https://developer.apple.com/documentation/foundation/urlrequest.
@@ -514,7 +546,23 @@ abstract class HTTPCookie extends NSObject {
 /// values. The wrapper returns this class instead to handle this scenario.
 @ProxyApi()
 abstract class AuthenticationChallengeResponse {
+  /// Creates an [AuthenticationChallengeResponse].
+  ///
+  /// Due to https://github.com/flutter/flutter/issues/162437, this should only
+  /// be used for testing.
   AuthenticationChallengeResponse();
+
+  /// Creates an [AuthenticationChallengeResponse]
+  ///
+  /// This provides the native `AuthenticationChallengeResponse()` constructor
+  /// as an async method to ensure the class is added to the InstanceManager.
+  /// See https://github.com/flutter/flutter/issues/162437.
+  @async
+  @static
+  AuthenticationChallengeResponse createAsync(
+    UrlSessionAuthChallengeDisposition disposition,
+    URLCredential? credential,
+  );
 
   /// The option to use to handle the challenge.
   late UrlSessionAuthChallengeDisposition disposition;
@@ -609,6 +657,16 @@ abstract class UIScrollView extends UIView {
   /// the scroll view allows horizontal dragging even if the content is smaller
   /// than the bounds of the scroll view.
   void setAlwaysBounceHorizontal(bool value);
+
+  /// Whether the vertical scroll indicator is visible.
+  ///
+  /// The default value is true.
+  void setShowsVerticalScrollIndicator(bool value);
+
+  /// Whether the horizontal scroll indicator is visible.
+  ///
+  /// The default value is true.
+  void setShowsHorizontalScrollIndicator(bool value);
 }
 
 /// A collection of properties that you use to initialize a web view..
@@ -699,7 +757,8 @@ abstract class WKScriptMessageHandler extends NSObject {
   late void Function(
     WKUserContentController controller,
     WKScriptMessage message,
-  ) didReceiveScriptMessage;
+  )
+  didReceiveScriptMessage;
 }
 
 /// Methods for accepting or rejecting navigation changes, and for tracking the
@@ -714,10 +773,8 @@ abstract class WKNavigationDelegate extends NSObject {
   late void Function(WKWebView webView, String? url)? didFinishNavigation;
 
   /// Tells the delegate that navigation from the main frame has started.
-  late void Function(
-    WKWebView webView,
-    String? url,
-  )? didStartProvisionalNavigation;
+  late void Function(WKWebView webView, String? url)?
+  didStartProvisionalNavigation;
 
   /// Asks the delegate for permission to navigate to new content based on the
   /// specified action information.
@@ -725,7 +782,8 @@ abstract class WKNavigationDelegate extends NSObject {
   late NavigationActionPolicy Function(
     WKWebView webView,
     WKNavigationAction navigationAction,
-  ) decidePolicyForNavigationAction;
+  )
+  decidePolicyForNavigationAction;
 
   /// Asks the delegate for permission to navigate to new content after the
   /// response to the navigation request is known.
@@ -733,7 +791,8 @@ abstract class WKNavigationDelegate extends NSObject {
   late NavigationResponsePolicy Function(
     WKWebView webView,
     WKNavigationResponse navigationResponse,
-  ) decidePolicyForNavigationResponse;
+  )
+  decidePolicyForNavigationResponse;
 
   /// Tells the delegate that an error occurred during navigation.
   void Function(WKWebView webView, NSError error)? didFailNavigation;
@@ -745,25 +804,13 @@ abstract class WKNavigationDelegate extends NSObject {
   /// Tells the delegate that the web view’s content process was terminated.
   void Function(WKWebView webView)? webViewWebContentProcessDidTerminate;
 
-  // TODO(bparrishMines): This method should return an
-  // `AuthenticationChallengeResponse` once the cause of
-  // https://github.com/flutter/flutter/issues/162437 can be found and fixed.
   /// Asks the delegate to respond to an authentication challenge.
-  ///
-  /// This return value expects a List with:
-  ///
-  /// 1. `UrlSessionAuthChallengeDisposition`
-  /// 2. A nullable map to instantiate a `URLCredential`. The map structure is
-  /// [
-  ///   "user": "<nonnull String username>",
-  ///   "password": "<nonnull String user password>",
-  ///   "persistence": <nonnull enum value of `UrlCredentialPersistence`>,
-  /// ]
   @async
-  late List<Object?> Function(
+  late AuthenticationChallengeResponse Function(
     WKWebView webView,
     URLAuthenticationChallenge challenge,
-  ) didReceiveAuthenticationChallenge;
+  )
+  didReceiveAuthenticationChallenge;
 }
 
 /// The root class of most Objective-C class hierarchies, from which subclasses
@@ -781,7 +828,8 @@ abstract class NSObject {
     String? keyPath,
     NSObject? object,
     Map<KeyValueChangeKey, Object?>? change,
-  )? observeValue;
+  )?
+  observeValue;
 
   /// Registers the observer object to receive KVO notifications for the key
   /// path relative to the object receiving this message.
@@ -882,6 +930,12 @@ abstract class UIViewWKWebView extends UIView implements WKWebView {
 
   /// The custom user agent string.
   String? getCustomUserAgent();
+
+  /// Whether to allow previews for link destinations and detected data such as
+  /// addresses and phone numbers.
+  ///
+  /// Defaults to true.
+  void setAllowsLinkPreview(bool allow);
 }
 
 /// An object that displays interactive web content, such as for an in-app
@@ -965,6 +1019,12 @@ abstract class NSViewWKWebView extends NSObject implements WKWebView {
 
   /// The custom user agent string.
   String? getCustomUserAgent();
+
+  /// Whether to allow previews for link destinations and detected data such as
+  /// addresses and phone numbers.
+  ///
+  /// Defaults to true.
+  void setAllowsLinkPreview(bool allow);
 }
 
 /// An object that displays interactive web content, such as for an in-app
@@ -972,10 +1032,7 @@ abstract class NSViewWKWebView extends NSObject implements WKWebView {
 ///
 /// See https://developer.apple.com/documentation/webkit/wkwebview.
 @ProxyApi(
-  swiftOptions: SwiftProxyApiOptions(
-    import: 'WebKit',
-    name: 'WKWebView',
-  ),
+  swiftOptions: SwiftProxyApiOptions(import: 'WebKit', name: 'WKWebView'),
 )
 abstract class WKWebView extends NSObject {}
 
@@ -992,7 +1049,8 @@ abstract class WKUIDelegate extends NSObject {
     WKWebView webView,
     WKWebViewConfiguration configuration,
     WKNavigationAction navigationAction,
-  )? onCreateWebView;
+  )?
+  onCreateWebView;
 
   /// Determines whether a web resource, which the security origin object
   /// describes, can access to the device’s microphone audio and camera video.
@@ -1002,23 +1060,18 @@ abstract class WKUIDelegate extends NSObject {
     WKSecurityOrigin origin,
     WKFrameInfo frame,
     MediaCaptureType type,
-  ) requestMediaCapturePermission;
+  )
+  requestMediaCapturePermission;
 
   /// Displays a JavaScript alert panel.
   @async
-  void Function(
-    WKWebView webView,
-    String message,
-    WKFrameInfo frame,
-  )? runJavaScriptAlertPanel;
+  void Function(WKWebView webView, String message, WKFrameInfo frame)?
+  runJavaScriptAlertPanel;
 
   /// Displays a JavaScript confirm panel.
   @async
-  late bool Function(
-    WKWebView webView,
-    String message,
-    WKFrameInfo frame,
-  ) runJavaScriptConfirmPanel;
+  late bool Function(WKWebView webView, String message, WKFrameInfo frame)
+  runJavaScriptConfirmPanel;
 
   /// Displays a JavaScript text input panel.
   @async
@@ -1027,7 +1080,8 @@ abstract class WKUIDelegate extends NSObject {
     String prompt,
     String? defaultText,
     WKFrameInfo frame,
-  )? runJavaScriptTextInputPanel;
+  )?
+  runJavaScriptTextInputPanel;
 }
 
 /// An object that manages the HTTP cookies associated with a particular web
@@ -1056,11 +1110,8 @@ abstract class UIScrollViewDelegate extends NSObject {
   ///
   /// Note that this is a convenient method that includes the `contentOffset` of
   /// the `scrollView`.
-  void Function(
-    UIScrollView scrollView,
-    double x,
-    double y,
-  )? scrollViewDidScroll;
+  void Function(UIScrollView scrollView, double x, double y)?
+  scrollViewDidScroll;
 }
 
 /// An authentication credential consisting of information specific to the type
@@ -1076,6 +1127,30 @@ abstract class URLCredential extends NSObject {
     String password,
     UrlCredentialPersistence persistence,
   );
+
+  /// Creates a URL credential instance for internet password authentication
+  /// with a given user name and password, using a given persistence setting.
+  ///
+  /// This provides the native `UrlCredential(user:password:persistence)`
+  /// constructor as an async method to ensure the class is added to the
+  /// InstanceManager. See https://github.com/flutter/flutter/issues/162437.
+  @async
+  @static
+  URLCredential withUserAsync(
+    String user,
+    String password,
+    UrlCredentialPersistence persistence,
+  );
+
+  /// Creates a URL credential instance for server trust authentication,
+  /// initialized with a accepted trust.
+  ///
+  /// This provides the native `UrlCredential(forTrust:)` constructor as an
+  /// async method to ensure the class is added to the InstanceManager. See
+  /// https://github.com/flutter/flutter/issues/162437.
+  @async
+  @static
+  URLCredential serverTrustAsync(SecTrust trust);
 }
 
 /// A server or an area on a server, commonly referred to as a realm, that
@@ -1095,6 +1170,9 @@ abstract class URLProtectionSpace extends NSObject {
 
   /// The authentication method used by the receiver.
   late String? authenticationMethod;
+
+  /// A representation of the server’s SSL transaction state.
+  SecTrust? getServerTrust();
 }
 
 /// A challenge from a server requiring authentication from the client.
@@ -1120,15 +1198,63 @@ abstract class URL extends NSObject {
 /// page content.
 ///
 /// See https://developer.apple.com/documentation/webkit/wkwebpagepreferences.
-@ProxyApi(
-  swiftOptions: SwiftProxyApiOptions(
-    import: 'WebKit',
-    minIosApi: '13.0.0',
-    minMacosApi: '10.15.0',
-  ),
-)
+@ProxyApi(swiftOptions: SwiftProxyApiOptions(import: 'WebKit'))
 abstract class WKWebpagePreferences extends NSObject {
   /// A Boolean value that indicates whether JavaScript from web content is
   /// allowed to run.
   void setAllowsContentJavaScript(bool allow);
+}
+
+/// Data class used to respond to `SecTrust.getTrustResult`.
+///
+/// The native method needs to return two values, so this custom class is
+/// created to support this.
+@ProxyApi()
+abstract class GetTrustResultResponse extends NSObject {
+  /// The result code from the most recent trust evaluation.
+  late DartSecTrustResultType result;
+
+  /// A result code.
+  ///
+  /// See https://developer.apple.com/documentation/security/security-framework-result-codes?language=objc.
+  late int resultCode;
+}
+
+/// An object used to evaluate trust.
+///
+/// See https://developer.apple.com/documentation/security/sectrust.
+@ProxyApi(swiftOptions: SwiftProxyApiOptions(name: 'SecTrustWrapper'))
+abstract class SecTrust extends NSObject {
+  /// Evaluates trust for the specified certificate and policies.
+  @static
+  @async
+  bool evaluateWithError(SecTrust trust);
+
+  /// Returns an opaque cookie containing exceptions to trust policies that will
+  /// allow future evaluations of the current certificate to succeed.
+  @static
+  Uint8List? copyExceptions(SecTrust trust);
+
+  /// Sets a list of exceptions that should be ignored when the certificate is
+  /// evaluated.
+  @static
+  bool setExceptions(SecTrust trust, Uint8List? exceptions);
+
+  /// Returns the result code from the most recent trust evaluation.
+  @static
+  GetTrustResultResponse getTrustResult(SecTrust trust);
+
+  /// Certificates used to evaluate trust.
+  @static
+  List<SecCertificate>? copyCertificateChain(SecTrust trust);
+}
+
+/// An abstract Core Foundation-type object representing an X.509 certificate.
+///
+/// See https://developer.apple.com/documentation/security/seccertificate.
+@ProxyApi(swiftOptions: SwiftProxyApiOptions(name: 'SecCertificateWrapper'))
+abstract class SecCertificate extends NSObject {
+  /// Returns a DER representation of a certificate given a certificate object.
+  @static
+  Uint8List copyData(SecCertificate certificate);
 }

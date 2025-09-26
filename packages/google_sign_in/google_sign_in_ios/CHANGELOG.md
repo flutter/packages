@@ -1,3 +1,33 @@
+## 6.2.1
+
+* Fixes a bug that would cause `serverAuthorizationTokensForScopes` to
+  return null even when called for a user that had just authenticated.
+
+## 6.2.0
+
+* Adds support for the `clearAuthorizationToken` method.
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
+## 6.1.0
+
+* Updates to `GoogleSignIn` 9.0.
+* Adds support for the `nonce` parameter.
+
+## 6.0.1
+
+* Returns configuration errors as `PlatformException`s in Dart instead of
+  crashing the app.
+
+## 6.0.0
+
+* **BREAKING CHANGE**: Switches to implementing version 3.0 of the platform
+  interface package, rather than 2.x, significantly changing the API surface.
+* Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+
+## 5.9.0
+
+* Updates Google Sign-In SDK to 8.0+.
+
 ## 5.8.1
 
 * Asserts that new `forceAccountName` parameter is null (not used in iOS).

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -118,6 +118,35 @@ class InstanceManagerTest {
     assertEquals(instanceManager.getInstance(identifier), instance)
     assertEquals(instanceManager.getIdentifierForStrongReference(instance), identifier)
     assertTrue(instanceManager.containsInstance(instance))
+  }
+
+  @Test
+  fun clearPreventsFinalizationOfWeakInstances() {
+    var finalizerRan = false
+    val instanceManager: ProxyApiTestsPigeonInstanceManager =
+        ProxyApiTestsPigeonInstanceManager.create(
+            object : ProxyApiTestsPigeonInstanceManager.PigeonFinalizationListener {
+              override fun onFinalize(identifier: Long) {
+                finalizerRan = true
+              }
+            })
+
+    var testObject: Any? = Any()
+    instanceManager.addDartCreatedInstance(testObject!!, 0)
+    instanceManager.remove<Any?>(0)
+    instanceManager.clear()
+
+    // To allow for object to be garbage collected.
+    @Suppress("UNUSED_VALUE")
+    testObject = null
+    Runtime.getRuntime().gc()
+
+    // Changing this value triggers the callback.
+    instanceManager.clearFinalizedWeakReferencesInterval = 1000
+    instanceManager.stopFinalizationListener()
+
+    assertNull(instanceManager.getInstance<Any?>(0))
+    assertFalse(finalizerRan)
   }
 
   private fun createInstanceManager(): ProxyApiTestsPigeonInstanceManager {

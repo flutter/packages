@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -100,5 +100,15 @@ class CompanionAdSlotProxyApiTest {
     api.setSize(instance, width, height)
 
     verify(instance).setSize(width.toInt(), height.toInt())
+  }
+
+  @Test
+  fun setFluidSize() {
+    val api = TestProxyApiRegistrar().getPigeonApiCompanionAdSlot()
+
+    val instance = mock<CompanionAdSlot>()
+    api.setFluidSize(instance)
+
+    verify(instance).setSize(CompanionAdSlot.FLUID_SIZE, CompanionAdSlot.FLUID_SIZE)
   }
 }

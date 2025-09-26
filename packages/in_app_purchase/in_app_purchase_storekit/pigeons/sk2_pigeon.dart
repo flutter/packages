@@ -1,16 +1,18 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import 'package:pigeon/pigeon.dart';
 
-@ConfigurePigeon(PigeonOptions(
-  dartOut: 'lib/src/sk2_pigeon.g.dart',
-  dartTestOut: 'test/sk2_test_api.g.dart',
-  swiftOut:
-      'darwin/in_app_purchase_storekit/Sources/in_app_purchase_storekit/StoreKit2/sk2_pigeon.g.swift',
-  copyrightHeader: 'pigeons/copyright.txt',
-))
+@ConfigurePigeon(
+  PigeonOptions(
+    dartOut: 'lib/src/sk2_pigeon.g.dart',
+    dartTestOut: 'test/sk2_test_api.g.dart',
+    swiftOut:
+        'darwin/in_app_purchase_storekit/Sources/in_app_purchase_storekit/StoreKit2/sk2_pigeon.g.swift',
+    copyrightHeader: 'pigeons/copyright.txt',
+  ),
+)
 enum SK2ProductTypeMessage {
   /// A consumable in-app purchase.
   consumable,
@@ -22,10 +24,10 @@ enum SK2ProductTypeMessage {
   nonRenewable,
 
   /// An auto-renewable subscription.
-  autoRenewable
+  autoRenewable,
 }
 
-enum SK2SubscriptionOfferTypeMessage { introductory, promotional }
+enum SK2SubscriptionOfferTypeMessage { introductory, promotional, winBack }
 
 enum SK2SubscriptionOfferPaymentModeMessage {
   payAsYouGo,
@@ -82,15 +84,16 @@ class SK2SubscriptionInfoMessage {
 /// A Pigeon message class representing a Product
 /// https://developer.apple.com/documentation/storekit/product
 class SK2ProductMessage {
-  const SK2ProductMessage(
-      {required this.id,
-      required this.displayName,
-      required this.displayPrice,
-      required this.description,
-      required this.price,
-      required this.type,
-      this.subscription,
-      required this.priceLocale});
+  const SK2ProductMessage({
+    required this.id,
+    required this.displayName,
+    required this.displayPrice,
+    required this.description,
+    required this.price,
+    required this.type,
+    this.subscription,
+    required this.priceLocale,
+  });
 
   /// The unique product identifier.
   final String id;
@@ -127,28 +130,60 @@ class SK2PriceLocaleMessage {
   final String currencySymbol;
 }
 
+/// A Pigeon message class representing a Signature
+/// https://developer.apple.com/documentation/storekit/product/subscriptionoffer/signature
+class SK2SubscriptionOfferSignatureMessage {
+  SK2SubscriptionOfferSignatureMessage({
+    required this.keyID,
+    required this.nonce,
+    required this.timestamp,
+    required this.signature,
+  });
+
+  final String keyID;
+  final String nonce;
+  final int timestamp;
+  final String signature;
+}
+
+class SK2SubscriptionOfferPurchaseMessage {
+  SK2SubscriptionOfferPurchaseMessage({
+    required this.promotionalOfferId,
+    required this.promotionalOfferSignature,
+  });
+
+  final String promotionalOfferId;
+  final SK2SubscriptionOfferSignatureMessage promotionalOfferSignature;
+}
+
 class SK2ProductPurchaseOptionsMessage {
   SK2ProductPurchaseOptionsMessage({
     this.appAccountToken,
     this.quantity = 1,
+    this.promotionalOffer,
+    this.winBackOfferId,
   });
+
   final String? appAccountToken;
   final int? quantity;
+  final SK2SubscriptionOfferPurchaseMessage? promotionalOffer;
+  final String? winBackOfferId;
 }
 
 class SK2TransactionMessage {
-  SK2TransactionMessage(
-      {required this.id,
-      required this.originalId,
-      required this.productId,
-      required this.purchaseDate,
-      this.expirationDate,
-      this.purchasedQuantity = 1,
-      this.appAccountToken,
-      this.error,
-      this.receiptData,
-      this.jsonRepresentation,
-      this.restoring = false});
+  SK2TransactionMessage({
+    required this.id,
+    required this.originalId,
+    required this.productId,
+    required this.purchaseDate,
+    this.expirationDate,
+    this.purchasedQuantity = 1,
+    this.appAccountToken,
+    this.error,
+    this.receiptData,
+    this.jsonRepresentation,
+    this.restoring = false,
+  });
   final int id;
   final int originalId;
   final String productId;
@@ -163,8 +198,11 @@ class SK2TransactionMessage {
 }
 
 class SK2ErrorMessage {
-  const SK2ErrorMessage(
-      {required this.code, required this.domain, required this.userInfo});
+  const SK2ErrorMessage({
+    required this.code,
+    required this.domain,
+    required this.userInfo,
+  });
 
   final int code;
   final String domain;
@@ -184,8 +222,16 @@ abstract class InAppPurchase2API {
 
   // https://developer.apple.com/documentation/storekit/product/3791971-purchase
   @async
-  SK2ProductPurchaseResultMessage purchase(String id,
-      {SK2ProductPurchaseOptionsMessage? options});
+  SK2ProductPurchaseResultMessage purchase(
+    String id, {
+    SK2ProductPurchaseOptionsMessage? options,
+  });
+
+  @async
+  bool isWinBackOfferEligible(String productId, String offerId);
+
+  @async
+  bool isIntroductoryOfferEligible(String productId);
 
   @async
   List<SK2TransactionMessage> transactions();
@@ -199,6 +245,12 @@ abstract class InAppPurchase2API {
 
   @async
   void restorePurchases();
+
+  @async
+  String countryCode();
+
+  @async
+  void sync();
 }
 
 @FlutterApi()

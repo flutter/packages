@@ -1,3 +1,16 @@
+## 0.4.0+4
+
+* Bumps com.android.tools.build:gradle to 8.12.1.
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
+## 0.4.0+3
+
+* Updates kotlin version to 2.2.0 to enable gradle 8.11 support.
+
+## 0.4.0+2
+
+* Adds support for setting the `offerToken` on `GooglePlayPurchaseParam`.
+
 ## 0.4.0+1
 
 * Updates compileSdk 34 to flutter.compileSdkVersion.

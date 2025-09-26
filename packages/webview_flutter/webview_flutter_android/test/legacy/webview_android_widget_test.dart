@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -59,14 +59,18 @@ void main() {
 
       mockWebViewProxy = MockWebViewProxy();
       when(mockWebViewProxy.createWebView()).thenReturn(mockWebView);
-      when(mockWebViewProxy.createWebViewClient(
-        onPageStarted: anyNamed('onPageStarted'),
-        onPageFinished: anyNamed('onPageFinished'),
-        onReceivedError: anyNamed('onReceivedError'),
-        onReceivedRequestError: anyNamed('onReceivedRequestError'),
-        requestLoading: anyNamed('requestLoading'),
-        urlLoading: anyNamed('urlLoading'),
-      )).thenReturn(mockWebViewClient);
+      when(
+        mockWebViewProxy.createWebViewClient(
+          onPageStarted: anyNamed('onPageStarted'),
+          onPageFinished: anyNamed('onPageFinished'),
+          onReceivedRequestError: anyNamed('onReceivedRequestError'),
+          requestLoading: anyNamed('requestLoading'),
+          urlLoading: anyNamed('urlLoading'),
+          onReceivedSslError: anyNamed('onReceivedSslError'),
+          onFormResubmission: anyNamed('onFormResubmission'),
+          onReceivedClientCertRequest: anyNamed('onReceivedClientCertRequest'),
+        ),
+      ).thenReturn(mockWebViewClient);
 
       mockCallbacksHandler = MockWebViewPlatformCallbacksHandler();
       mockJavascriptChannelRegistry = MockJavascriptChannelRegistry();
@@ -80,24 +84,28 @@ void main() {
       bool hasProgressTracking = false,
       bool useHybridComposition = false,
     }) async {
-      await tester.pumpWidget(WebViewAndroidWidget(
-        creationParams: creationParams ??
-            CreationParams(
+      await tester.pumpWidget(
+        WebViewAndroidWidget(
+          creationParams:
+              creationParams ??
+              CreationParams(
                 webSettings: WebSettings(
-              userAgent: const WebSetting<String?>.absent(),
-              hasNavigationDelegate: hasNavigationDelegate,
-              hasProgressTracking: hasProgressTracking,
-            )),
-        callbacksHandler: mockCallbacksHandler,
-        javascriptChannelRegistry: mockJavascriptChannelRegistry,
-        webViewProxy: mockWebViewProxy,
-        flutterAssetManager: mockFlutterAssetManager,
-        webStorage: mockWebStorage,
-        onBuildWidget: (WebViewAndroidPlatformController controller) {
-          testController = controller;
-          return Container();
-        },
-      ));
+                  userAgent: const WebSetting<String?>.absent(),
+                  hasNavigationDelegate: hasNavigationDelegate,
+                  hasProgressTracking: hasProgressTracking,
+                ),
+              ),
+          callbacksHandler: mockCallbacksHandler,
+          javascriptChannelRegistry: mockJavascriptChannelRegistry,
+          webViewProxy: mockWebViewProxy,
+          flutterAssetManager: mockFlutterAssetManager,
+          webStorage: mockWebStorage,
+          onBuildWidget: (WebViewAndroidPlatformController controller) {
+            testController = controller;
+            return Container();
+          },
+        ),
+      );
 
       mockWebViewClient = testController.webViewClient as MockWebViewClient;
       downloadListener = testController.downloadListener;
@@ -122,13 +130,12 @@ void main() {
       ]);
     });
 
-    testWidgets(
-      'Create Widget with Hybrid Composition',
-      (WidgetTester tester) async {
-        await buildWidget(tester, useHybridComposition: true);
-        verify(mockWebViewProxy.createWebView());
-      },
-    );
+    testWidgets('Create Widget with Hybrid Composition', (
+      WidgetTester tester,
+    ) async {
+      await buildWidget(tester, useHybridComposition: true);
+      verify(mockWebViewProxy.createWebView());
+    });
 
     group('CreationParams', () {
       testWidgets('initialUrl', (WidgetTester tester) async {
@@ -142,10 +149,9 @@ void main() {
             ),
           ),
         );
-        verify(mockWebView.loadUrl(
-          'https://www.google.com',
-          <String, String>{},
-        ));
+        verify(
+          mockWebView.loadUrl('https://www.google.com', <String, String>{}),
+        );
       });
 
       testWidgets('userAgent', (WidgetTester tester) async {
@@ -205,9 +211,9 @@ void main() {
         );
 
         final List<android_webview.JavaScriptChannel> javaScriptChannels =
-            verify(mockWebView.addJavaScriptChannel(captureAny))
-                .captured
-                .cast<android_webview.JavaScriptChannel>();
+            verify(
+              mockWebView.addJavaScriptChannel(captureAny),
+            ).captured.cast<android_webview.JavaScriptChannel>();
         expect(javaScriptChannels[0].channelName, 'a');
         expect(javaScriptChannels[1].channelName, 'b');
       });
@@ -230,14 +236,20 @@ void main() {
 
         testWidgets('hasNavigationDelegate', (WidgetTester tester) async {
           final MockWebViewClient mockWebViewClient = MockWebViewClient();
-          when(mockWebViewProxy.createWebViewClient(
-            onPageStarted: anyNamed('onPageStarted'),
-            onPageFinished: anyNamed('onPageFinished'),
-            onReceivedError: anyNamed('onReceivedError'),
-            onReceivedRequestError: anyNamed('onReceivedRequestError'),
-            requestLoading: anyNamed('requestLoading'),
-            urlLoading: anyNamed('urlLoading'),
-          )).thenReturn(mockWebViewClient);
+          when(
+            mockWebViewProxy.createWebViewClient(
+              onPageStarted: anyNamed('onPageStarted'),
+              onPageFinished: anyNamed('onPageFinished'),
+              onReceivedRequestError: anyNamed('onReceivedRequestError'),
+              requestLoading: anyNamed('requestLoading'),
+              urlLoading: anyNamed('urlLoading'),
+              onReceivedSslError: anyNamed('onReceivedSslError'),
+              onFormResubmission: anyNamed('onFormResubmission'),
+              onReceivedClientCertRequest: anyNamed(
+                'onReceivedClientCertRequest',
+              ),
+            ),
+          ).thenReturn(mockWebViewClient);
 
           await buildWidget(
             tester,
@@ -317,33 +329,32 @@ void main() {
     });
 
     group('WebViewPlatformController', () {
-      testWidgets('loadFile without "file://" prefix',
-          (WidgetTester tester) async {
+      testWidgets('loadFile without "file://" prefix', (
+        WidgetTester tester,
+      ) async {
         await buildWidget(tester);
 
         const String filePath = '/path/to/file.html';
         await testController.loadFile(filePath);
 
-        verify(mockWebView.loadUrl(
-          'file://$filePath',
-          <String, String>{},
-        ));
+        verify(mockWebView.loadUrl('file://$filePath', <String, String>{}));
       });
 
-      testWidgets('loadFile with "file://" prefix',
-          (WidgetTester tester) async {
+      testWidgets('loadFile with "file://" prefix', (
+        WidgetTester tester,
+      ) async {
         await buildWidget(tester);
 
         await testController.loadFile('file:///path/to/file.html');
 
-        verify(mockWebView.loadUrl(
-          'file:///path/to/file.html',
-          <String, String>{},
-        ));
+        verify(
+          mockWebView.loadUrl('file:///path/to/file.html', <String, String>{}),
+        );
       });
 
-      testWidgets('loadFile should setAllowFileAccess to true',
-          (WidgetTester tester) async {
+      testWidgets('loadFile should setAllowFileAccess to true', (
+        WidgetTester tester,
+      ) async {
         await buildWidget(tester);
 
         await testController.loadFile('file:///path/to/file.html');
@@ -355,78 +366,92 @@ void main() {
         await buildWidget(tester);
         const String assetKey = 'test_assets/index.html';
 
-        when(mockFlutterAssetManager.getAssetFilePathByName(assetKey))
-            .thenAnswer(
-                (_) => Future<String>.value('flutter_assets/$assetKey'));
-        when(mockFlutterAssetManager.list('flutter_assets/test_assets'))
-            .thenAnswer(
-                (_) => Future<List<String>>.value(<String>['index.html']));
+        when(
+          mockFlutterAssetManager.getAssetFilePathByName(assetKey),
+        ).thenAnswer((_) => Future<String>.value('flutter_assets/$assetKey'));
+        when(
+          mockFlutterAssetManager.list('flutter_assets/test_assets'),
+        ).thenAnswer((_) => Future<List<String>>.value(<String>['index.html']));
 
         await testController.loadFlutterAsset(assetKey);
 
-        verify(mockWebView.loadUrl(
-          'file:///android_asset/flutter_assets/$assetKey',
-          <String, String>{},
-        ));
-      });
-
-      testWidgets('loadFlutterAsset with file in root',
-          (WidgetTester tester) async {
-        await buildWidget(tester);
-        const String assetKey = 'index.html';
-
-        when(mockFlutterAssetManager.getAssetFilePathByName(assetKey))
-            .thenAnswer(
-                (_) => Future<String>.value('flutter_assets/$assetKey'));
-        when(mockFlutterAssetManager.list('flutter_assets')).thenAnswer(
-            (_) => Future<List<String>>.value(<String>['index.html']));
-
-        await testController.loadFlutterAsset(assetKey);
-
-        verify(mockWebView.loadUrl(
-          'file:///android_asset/flutter_assets/$assetKey',
-          <String, String>{},
-        ));
-      });
-
-      testWidgets(
-          'loadFlutterAsset throws ArgumentError when asset does not exist',
-          (WidgetTester tester) async {
-        await buildWidget(tester);
-        const String assetKey = 'test_assets/index.html';
-
-        when(mockFlutterAssetManager.getAssetFilePathByName(assetKey))
-            .thenAnswer(
-                (_) => Future<String>.value('flutter_assets/$assetKey'));
-        when(mockFlutterAssetManager.list('flutter_assets/test_assets'))
-            .thenAnswer((_) => Future<List<String>>.value(<String>['']));
-
-        expect(
-          () => testController.loadFlutterAsset(assetKey),
-          throwsA(
-            isA<ArgumentError>()
-                .having((ArgumentError error) => error.name, 'name', 'key')
-                .having((ArgumentError error) => error.message, 'message',
-                    'Asset for key "$assetKey" not found.'),
+        verify(
+          mockWebView.loadUrl(
+            'file:///android_asset/flutter_assets/$assetKey',
+            <String, String>{},
           ),
         );
       });
 
-      testWidgets('loadHtmlString without base URL',
-          (WidgetTester tester) async {
+      testWidgets('loadFlutterAsset with file in root', (
+        WidgetTester tester,
+      ) async {
+        await buildWidget(tester);
+        const String assetKey = 'index.html';
+
+        when(
+          mockFlutterAssetManager.getAssetFilePathByName(assetKey),
+        ).thenAnswer((_) => Future<String>.value('flutter_assets/$assetKey'));
+        when(
+          mockFlutterAssetManager.list('flutter_assets'),
+        ).thenAnswer((_) => Future<List<String>>.value(<String>['index.html']));
+
+        await testController.loadFlutterAsset(assetKey);
+
+        verify(
+          mockWebView.loadUrl(
+            'file:///android_asset/flutter_assets/$assetKey',
+            <String, String>{},
+          ),
+        );
+      });
+
+      testWidgets(
+        'loadFlutterAsset throws ArgumentError when asset does not exist',
+        (WidgetTester tester) async {
+          await buildWidget(tester);
+          const String assetKey = 'test_assets/index.html';
+
+          when(
+            mockFlutterAssetManager.getAssetFilePathByName(assetKey),
+          ).thenAnswer((_) => Future<String>.value('flutter_assets/$assetKey'));
+          when(
+            mockFlutterAssetManager.list('flutter_assets/test_assets'),
+          ).thenAnswer((_) => Future<List<String>>.value(<String>['']));
+
+          expect(
+            () => testController.loadFlutterAsset(assetKey),
+            throwsA(
+              isA<ArgumentError>()
+                  .having((ArgumentError error) => error.name, 'name', 'key')
+                  .having(
+                    (ArgumentError error) => error.message,
+                    'message',
+                    'Asset for key "$assetKey" not found.',
+                  ),
+            ),
+          );
+        },
+      );
+
+      testWidgets('loadHtmlString without base URL', (
+        WidgetTester tester,
+      ) async {
         await buildWidget(tester);
 
         const String htmlString =
             '<html lang=""><body>Test data.</body></html>';
         await testController.loadHtmlString(htmlString);
 
-        verify(mockWebView.loadDataWithBaseUrl(
-          null,
-          htmlString,
-          'text/html',
-          null,
-          null,
-        ));
+        verify(
+          mockWebView.loadDataWithBaseUrl(
+            null,
+            htmlString,
+            'text/html',
+            null,
+            null,
+          ),
+        );
       });
 
       testWidgets('loadHtmlString with base URL', (WidgetTester tester) async {
@@ -439,85 +464,92 @@ void main() {
           baseUrl: 'https://flutter.dev',
         );
 
-        verify(mockWebView.loadDataWithBaseUrl(
-          'https://flutter.dev',
-          htmlString,
-          'text/html',
-          null,
-          null,
-        ));
+        verify(
+          mockWebView.loadDataWithBaseUrl(
+            'https://flutter.dev',
+            htmlString,
+            'text/html',
+            null,
+            null,
+          ),
+        );
       });
 
       testWidgets('loadUrl', (WidgetTester tester) async {
         await buildWidget(tester);
 
-        await testController.loadUrl(
-          'https://www.google.com',
-          <String, String>{'a': 'header'},
-        );
+        await testController.loadUrl('https://www.google.com', <String, String>{
+          'a': 'header',
+        });
 
-        verify(mockWebView.loadUrl(
-          'https://www.google.com',
-          <String, String>{'a': 'header'},
-        ));
+        verify(
+          mockWebView.loadUrl('https://www.google.com', <String, String>{
+            'a': 'header',
+          }),
+        );
       });
 
       group('loadRequest', () {
-        testWidgets('Throws ArgumentError for empty scheme',
-            (WidgetTester tester) async {
+        testWidgets('Throws ArgumentError for empty scheme', (
+          WidgetTester tester,
+        ) async {
           await buildWidget(tester);
 
           expect(
-              () async => testController.loadRequest(
-                    WebViewRequest(
-                      uri: Uri.parse('www.google.com'),
-                      method: WebViewRequestMethod.get,
-                    ),
-                  ),
-              throwsA(const TypeMatcher<ArgumentError>()));
+            () async => testController.loadRequest(
+              WebViewRequest(
+                uri: Uri.parse('www.google.com'),
+                method: WebViewRequestMethod.get,
+              ),
+            ),
+            throwsA(const TypeMatcher<ArgumentError>()),
+          );
         });
 
         testWidgets('GET without headers', (WidgetTester tester) async {
           await buildWidget(tester);
 
-          await testController.loadRequest(WebViewRequest(
-            uri: Uri.parse('https://www.google.com'),
-            method: WebViewRequestMethod.get,
-          ));
+          await testController.loadRequest(
+            WebViewRequest(
+              uri: Uri.parse('https://www.google.com'),
+              method: WebViewRequestMethod.get,
+            ),
+          );
 
-          verify(mockWebView.loadUrl(
-            'https://www.google.com',
-            <String, String>{},
-          ));
+          verify(
+            mockWebView.loadUrl('https://www.google.com', <String, String>{}),
+          );
         });
 
         testWidgets('GET with headers', (WidgetTester tester) async {
           await buildWidget(tester);
 
-          await testController.loadRequest(WebViewRequest(
-            uri: Uri.parse('https://www.google.com'),
-            method: WebViewRequestMethod.get,
-            headers: <String, String>{'a': 'header'},
-          ));
+          await testController.loadRequest(
+            WebViewRequest(
+              uri: Uri.parse('https://www.google.com'),
+              method: WebViewRequestMethod.get,
+              headers: <String, String>{'a': 'header'},
+            ),
+          );
 
-          verify(mockWebView.loadUrl(
-            'https://www.google.com',
-            <String, String>{'a': 'header'},
-          ));
+          verify(
+            mockWebView.loadUrl('https://www.google.com', <String, String>{
+              'a': 'header',
+            }),
+          );
         });
 
         testWidgets('POST without body', (WidgetTester tester) async {
           await buildWidget(tester);
 
-          await testController.loadRequest(WebViewRequest(
-            uri: Uri.parse('https://www.google.com'),
-            method: WebViewRequestMethod.post,
-          ));
+          await testController.loadRequest(
+            WebViewRequest(
+              uri: Uri.parse('https://www.google.com'),
+              method: WebViewRequestMethod.post,
+            ),
+          );
 
-          verify(mockWebView.postUrl(
-            'https://www.google.com',
-            Uint8List(0),
-          ));
+          verify(mockWebView.postUrl('https://www.google.com', Uint8List(0)));
         });
 
         testWidgets('POST with body', (WidgetTester tester) async {
@@ -525,40 +557,42 @@ void main() {
 
           final Uint8List body = Uint8List.fromList('Test Body'.codeUnits);
 
-          await testController.loadRequest(WebViewRequest(
+          await testController.loadRequest(
+            WebViewRequest(
               uri: Uri.parse('https://www.google.com'),
               method: WebViewRequestMethod.post,
-              body: body));
+              body: body,
+            ),
+          );
 
-          verify(mockWebView.postUrl(
-            'https://www.google.com',
-            body,
-          ));
+          verify(mockWebView.postUrl('https://www.google.com', body));
         });
       });
 
-      testWidgets('no update to userAgentString when there is no change',
-          (WidgetTester tester) async {
+      testWidgets('no update to userAgentString when there is no change', (
+        WidgetTester tester,
+      ) async {
         await buildWidget(tester);
 
         reset(mockWebSettings);
 
-        await testController.updateSettings(WebSettings(
-          userAgent: const WebSetting<String>.absent(),
-        ));
+        await testController.updateSettings(
+          WebSettings(userAgent: const WebSetting<String>.absent()),
+        );
 
         verifyNever(mockWebSettings.setUserAgentString(any));
       });
 
-      testWidgets('update null userAgentString with empty string',
-          (WidgetTester tester) async {
+      testWidgets('update null userAgentString with empty string', (
+        WidgetTester tester,
+      ) async {
         await buildWidget(tester);
 
         reset(mockWebSettings);
 
-        await testController.updateSettings(WebSettings(
-          userAgent: const WebSetting<String?>.of(null),
-        ));
+        await testController.updateSettings(
+          WebSettings(userAgent: const WebSetting<String?>.of(null)),
+        );
 
         verify(mockWebSettings.setUserAgentString(''));
       });
@@ -566,27 +600,30 @@ void main() {
       testWidgets('currentUrl', (WidgetTester tester) async {
         await buildWidget(tester);
 
-        when(mockWebView.getUrl())
-            .thenAnswer((_) => Future<String>.value('https://www.google.com'));
+        when(
+          mockWebView.getUrl(),
+        ).thenAnswer((_) => Future<String>.value('https://www.google.com'));
         expect(
-            testController.currentUrl(), completion('https://www.google.com'));
+          testController.currentUrl(),
+          completion('https://www.google.com'),
+        );
       });
 
       testWidgets('canGoBack', (WidgetTester tester) async {
         await buildWidget(tester);
 
-        when(mockWebView.canGoBack()).thenAnswer(
-          (_) => Future<bool>.value(false),
-        );
+        when(
+          mockWebView.canGoBack(),
+        ).thenAnswer((_) => Future<bool>.value(false));
         expect(testController.canGoBack(), completion(false));
       });
 
       testWidgets('canGoForward', (WidgetTester tester) async {
         await buildWidget(tester);
 
-        when(mockWebView.canGoForward()).thenAnswer(
-          (_) => Future<bool>.value(true),
-        );
+        when(
+          mockWebView.canGoForward(),
+        ).thenAnswer((_) => Future<bool>.value(true));
         expect(testController.canGoForward(), completion(true));
       });
 
@@ -622,9 +659,9 @@ void main() {
       testWidgets('evaluateJavascript', (WidgetTester tester) async {
         await buildWidget(tester);
 
-        when(mockWebView.evaluateJavascript('runJavaScript')).thenAnswer(
-          (_) => Future<String>.value('returnString'),
-        );
+        when(
+          mockWebView.evaluateJavascript('runJavaScript'),
+        ).thenAnswer((_) => Future<String>.value('returnString'));
         expect(
           testController.evaluateJavascript('runJavaScript'),
           completion('returnString'),
@@ -634,9 +671,9 @@ void main() {
       testWidgets('runJavascriptReturningResult', (WidgetTester tester) async {
         await buildWidget(tester);
 
-        when(mockWebView.evaluateJavascript('runJavaScript')).thenAnswer(
-          (_) => Future<String>.value('returnString'),
-        );
+        when(
+          mockWebView.evaluateJavascript('runJavaScript'),
+        ).thenAnswer((_) => Future<String>.value('returnString'));
         expect(
           testController.runJavascriptReturningResult('runJavaScript'),
           completion('returnString'),
@@ -646,13 +683,10 @@ void main() {
       testWidgets('runJavascript', (WidgetTester tester) async {
         await buildWidget(tester);
 
-        when(mockWebView.evaluateJavascript('runJavaScript')).thenAnswer(
-          (_) => Future<String>.value('returnString'),
-        );
-        expect(
-          testController.runJavascript('runJavaScript'),
-          completes,
-        );
+        when(
+          mockWebView.evaluateJavascript('runJavaScript'),
+        ).thenAnswer((_) => Future<String>.value('returnString'));
+        expect(testController.runJavascript('runJavaScript'), completes);
       });
 
       testWidgets('addJavascriptChannels', (WidgetTester tester) async {
@@ -660,9 +694,9 @@ void main() {
 
         await testController.addJavascriptChannels(<String>{'c', 'd'});
         final List<android_webview.JavaScriptChannel> javaScriptChannels =
-            verify(mockWebView.addJavaScriptChannel(captureAny))
-                .captured
-                .cast<android_webview.JavaScriptChannel>();
+            verify(
+              mockWebView.addJavaScriptChannel(captureAny),
+            ).captured.cast<android_webview.JavaScriptChannel>();
         expect(javaScriptChannels[0].channelName, 'c');
         expect(javaScriptChannels[1].channelName, 'd');
       });
@@ -679,8 +713,9 @@ void main() {
       testWidgets('getTitle', (WidgetTester tester) async {
         await buildWidget(tester);
 
-        when(mockWebView.getTitle())
-            .thenAnswer((_) => Future<String>.value('Web Title'));
+        when(
+          mockWebView.getTitle(),
+        ).thenAnswer((_) => Future<String>.value('Web Title'));
         expect(testController.getTitle(), completion('Web Title'));
       });
 
@@ -725,16 +760,30 @@ void main() {
       testWidgets('onPageStarted', (WidgetTester tester) async {
         await buildWidget(tester);
         final void Function(
-                android_webview.WebViewClient, android_webview.WebView, String)
-            onPageStarted = verify(mockWebViewProxy.createWebViewClient(
-          onPageStarted: captureAnyNamed('onPageStarted'),
-          onPageFinished: anyNamed('onPageFinished'),
-          onReceivedError: anyNamed('onReceivedError'),
-          onReceivedRequestError: anyNamed('onReceivedRequestError'),
-          requestLoading: anyNamed('requestLoading'),
-          urlLoading: anyNamed('urlLoading'),
-        )).captured.single as void Function(
-                android_webview.WebViewClient, android_webview.WebView, String);
+          android_webview.WebViewClient,
+          android_webview.WebView,
+          String,
+        )
+        onPageStarted =
+            verify(
+                  mockWebViewProxy.createWebViewClient(
+                    onPageStarted: captureAnyNamed('onPageStarted'),
+                    onPageFinished: anyNamed('onPageFinished'),
+                    onReceivedRequestError: anyNamed('onReceivedRequestError'),
+                    requestLoading: anyNamed('requestLoading'),
+                    urlLoading: anyNamed('urlLoading'),
+                    onReceivedSslError: anyNamed('onReceivedSslError'),
+                    onFormResubmission: anyNamed('onFormResubmission'),
+                    onReceivedClientCertRequest: anyNamed(
+                      'onReceivedClientCertRequest',
+                    ),
+                  ),
+                ).captured.single
+                as void Function(
+                  android_webview.WebViewClient,
+                  android_webview.WebView,
+                  String,
+                );
 
         onPageStarted(MockWebViewClient(), mockWebView, 'https://google.com');
         verify(mockCallbacksHandler.onPageStarted('https://google.com'));
@@ -744,58 +793,38 @@ void main() {
         await buildWidget(tester);
 
         final void Function(
-                android_webview.WebViewClient, android_webview.WebView, String)
-            onPageFinished = verify(mockWebViewProxy.createWebViewClient(
-          onPageStarted: anyNamed('onPageStarted'),
-          onPageFinished: captureAnyNamed('onPageFinished'),
-          onReceivedError: anyNamed('onReceivedError'),
-          onReceivedRequestError: anyNamed('onReceivedRequestError'),
-          requestLoading: anyNamed('requestLoading'),
-          urlLoading: anyNamed('urlLoading'),
-        )).captured.single as void Function(
-                android_webview.WebViewClient, android_webview.WebView, String);
+          android_webview.WebViewClient,
+          android_webview.WebView,
+          String,
+        )
+        onPageFinished =
+            verify(
+                  mockWebViewProxy.createWebViewClient(
+                    onPageStarted: anyNamed('onPageStarted'),
+                    onPageFinished: captureAnyNamed('onPageFinished'),
+                    onReceivedRequestError: anyNamed('onReceivedRequestError'),
+                    requestLoading: anyNamed('requestLoading'),
+                    urlLoading: anyNamed('urlLoading'),
+                    onReceivedSslError: anyNamed('onReceivedSslError'),
+                    onFormResubmission: anyNamed('onFormResubmission'),
+                    onReceivedClientCertRequest: anyNamed(
+                      'onReceivedClientCertRequest',
+                    ),
+                  ),
+                ).captured.single
+                as void Function(
+                  android_webview.WebViewClient,
+                  android_webview.WebView,
+                  String,
+                );
 
         onPageFinished(MockWebViewClient(), mockWebView, 'https://google.com');
         verify(mockCallbacksHandler.onPageFinished('https://google.com'));
       });
 
-      testWidgets('onWebResourceError from onReceivedError',
-          (WidgetTester tester) async {
-        await buildWidget(tester);
-
-        final void Function(android_webview.WebViewClient,
-                android_webview.WebView, int, String, String) onReceivedError =
-            verify(mockWebViewProxy.createWebViewClient(
-          onPageStarted: anyNamed('onPageStarted'),
-          onPageFinished: anyNamed('onPageFinished'),
-          onReceivedError: captureAnyNamed('onReceivedError'),
-          onReceivedRequestError: anyNamed('onReceivedRequestError'),
-          requestLoading: anyNamed('requestLoading'),
-          urlLoading: anyNamed('urlLoading'),
-        )).captured.single as void Function(android_webview.WebViewClient,
-                android_webview.WebView, int, String, String);
-
-        onReceivedError(
-          MockWebViewClient(),
-          mockWebView,
-          WebViewClientConstants.errorAuthentication,
-          'description',
-          'https://google.com',
-        );
-
-        final WebResourceError error =
-            verify(mockCallbacksHandler.onWebResourceError(captureAny))
-                .captured
-                .single as WebResourceError;
-        expect(error.description, 'description');
-        expect(error.errorCode, -4);
-        expect(error.failingUrl, 'https://google.com');
-        expect(error.domain, isNull);
-        expect(error.errorType, WebResourceErrorType.authentication);
-      });
-
-      testWidgets('onWebResourceError from onReceivedRequestError',
-          (WidgetTester tester) async {
+      testWidgets('onWebResourceError from onReceivedRequestError', (
+        WidgetTester tester,
+      ) async {
         await buildWidget(tester);
 
         final void Function(
@@ -803,19 +832,30 @@ void main() {
           android_webview.WebView,
           android_webview.WebResourceRequest,
           android_webview.WebResourceError,
-        ) onReceivedRequestError = verify(mockWebViewProxy.createWebViewClient(
-          onPageStarted: anyNamed('onPageStarted'),
-          onPageFinished: anyNamed('onPageFinished'),
-          onReceivedError: anyNamed('onReceivedError'),
-          onReceivedRequestError: captureAnyNamed('onReceivedRequestError'),
-          requestLoading: anyNamed('requestLoading'),
-          urlLoading: anyNamed('urlLoading'),
-        )).captured.single as void Function(
-          android_webview.WebViewClient,
-          android_webview.WebView,
-          android_webview.WebResourceRequest,
-          android_webview.WebResourceError,
-        );
+        )
+        onReceivedRequestError =
+            verify(
+                  mockWebViewProxy.createWebViewClient(
+                    onPageStarted: anyNamed('onPageStarted'),
+                    onPageFinished: anyNamed('onPageFinished'),
+                    onReceivedRequestError: captureAnyNamed(
+                      'onReceivedRequestError',
+                    ),
+                    requestLoading: anyNamed('requestLoading'),
+                    urlLoading: anyNamed('urlLoading'),
+                    onReceivedSslError: anyNamed('onReceivedSslError'),
+                    onFormResubmission: anyNamed('onFormResubmission'),
+                    onReceivedClientCertRequest: anyNamed(
+                      'onReceivedClientCertRequest',
+                    ),
+                  ),
+                ).captured.single
+                as void Function(
+                  android_webview.WebViewClient,
+                  android_webview.WebView,
+                  android_webview.WebResourceRequest,
+                  android_webview.WebResourceError,
+                );
 
         onReceivedRequestError(
           MockWebViewClient(),
@@ -835,9 +875,10 @@ void main() {
         );
 
         final WebResourceError error =
-            verify(mockCallbacksHandler.onWebResourceError(captureAny))
-                .captured
-                .single as WebResourceError;
+            verify(
+                  mockCallbacksHandler.onWebResourceError(captureAny),
+                ).captured.single
+                as WebResourceError;
         expect(error.description, 'description');
         expect(error.errorCode, -16);
         expect(error.failingUrl, 'https://google.com');
@@ -845,58 +886,89 @@ void main() {
         expect(error.errorType, WebResourceErrorType.unsafeResource);
       });
 
-      testWidgets('onNavigationRequest from urlLoading',
-          (WidgetTester tester) async {
+      testWidgets('onNavigationRequest from urlLoading', (
+        WidgetTester tester,
+      ) async {
         await buildWidget(tester, hasNavigationDelegate: true);
-        when(mockCallbacksHandler.onNavigationRequest(
-          isForMainFrame: argThat(isTrue, named: 'isForMainFrame'),
-          url: 'https://google.com',
-        )).thenReturn(true);
+        when(
+          mockCallbacksHandler.onNavigationRequest(
+            isForMainFrame: argThat(isTrue, named: 'isForMainFrame'),
+            url: 'https://google.com',
+          ),
+        ).thenReturn(true);
 
         final void Function(
-                android_webview.WebViewClient, android_webview.WebView, String)
-            urlLoading = verify(mockWebViewProxy.createWebViewClient(
-          onPageStarted: anyNamed('onPageStarted'),
-          onPageFinished: anyNamed('onPageFinished'),
-          onReceivedError: anyNamed('onReceivedError'),
-          onReceivedRequestError: anyNamed('onReceivedRequestError'),
-          requestLoading: anyNamed('requestLoading'),
-          urlLoading: captureAnyNamed('urlLoading'),
-        )).captured.single as void Function(
-                android_webview.WebViewClient, android_webview.WebView, String);
+          android_webview.WebViewClient,
+          android_webview.WebView,
+          String,
+        )
+        urlLoading =
+            verify(
+                  mockWebViewProxy.createWebViewClient(
+                    onPageStarted: anyNamed('onPageStarted'),
+                    onPageFinished: anyNamed('onPageFinished'),
+                    onReceivedRequestError: anyNamed('onReceivedRequestError'),
+                    requestLoading: anyNamed('requestLoading'),
+                    urlLoading: captureAnyNamed('urlLoading'),
+                    onReceivedSslError: anyNamed('onReceivedSslError'),
+                    onFormResubmission: anyNamed('onFormResubmission'),
+                    onReceivedClientCertRequest: anyNamed(
+                      'onReceivedClientCertRequest',
+                    ),
+                  ),
+                ).captured.single
+                as void Function(
+                  android_webview.WebViewClient,
+                  android_webview.WebView,
+                  String,
+                );
 
         urlLoading(MockWebViewClient(), mockWebView, 'https://google.com');
-        verify(mockCallbacksHandler.onNavigationRequest(
-          url: 'https://google.com',
-          isForMainFrame: true,
-        ));
+        verify(
+          mockCallbacksHandler.onNavigationRequest(
+            url: 'https://google.com',
+            isForMainFrame: true,
+          ),
+        );
         verify(mockWebView.loadUrl('https://google.com', <String, String>{}));
       });
 
-      testWidgets('onNavigationRequest from requestLoading',
-          (WidgetTester tester) async {
+      testWidgets('onNavigationRequest from requestLoading', (
+        WidgetTester tester,
+      ) async {
         await buildWidget(tester, hasNavigationDelegate: true);
-        when(mockCallbacksHandler.onNavigationRequest(
-          isForMainFrame: argThat(isTrue, named: 'isForMainFrame'),
-          url: 'https://google.com',
-        )).thenReturn(true);
+        when(
+          mockCallbacksHandler.onNavigationRequest(
+            isForMainFrame: argThat(isTrue, named: 'isForMainFrame'),
+            url: 'https://google.com',
+          ),
+        ).thenReturn(true);
 
         final void Function(
           android_webview.WebViewClient,
           android_webview.WebView,
           android_webview.WebResourceRequest,
-        ) requestLoading = verify(mockWebViewProxy.createWebViewClient(
-          onPageStarted: anyNamed('onPageStarted'),
-          onPageFinished: anyNamed('onPageFinished'),
-          onReceivedError: anyNamed('onReceivedError'),
-          onReceivedRequestError: anyNamed('onReceivedRequestError'),
-          requestLoading: captureAnyNamed('requestLoading'),
-          urlLoading: anyNamed('urlLoading'),
-        )).captured.single as void Function(
-          android_webview.WebViewClient,
-          android_webview.WebView,
-          android_webview.WebResourceRequest,
-        );
+        )
+        requestLoading =
+            verify(
+                  mockWebViewProxy.createWebViewClient(
+                    onPageStarted: anyNamed('onPageStarted'),
+                    onPageFinished: anyNamed('onPageFinished'),
+                    onReceivedRequestError: anyNamed('onReceivedRequestError'),
+                    requestLoading: captureAnyNamed('requestLoading'),
+                    urlLoading: anyNamed('urlLoading'),
+                    onReceivedSslError: anyNamed('onReceivedSslError'),
+                    onFormResubmission: anyNamed('onFormResubmission'),
+                    onReceivedClientCertRequest: anyNamed(
+                      'onReceivedClientCertRequest',
+                    ),
+                  ),
+                ).captured.single
+                as void Function(
+                  android_webview.WebViewClient,
+                  android_webview.WebView,
+                  android_webview.WebResourceRequest,
+                );
 
         requestLoading(
           MockWebViewClient(),
@@ -910,10 +982,12 @@ void main() {
             requestHeaders: const <String, String>{},
           ),
         );
-        verify(mockCallbacksHandler.onNavigationRequest(
-          url: 'https://google.com',
-          isForMainFrame: true,
-        ));
+        verify(
+          mockCallbacksHandler.onNavigationRequest(
+            url: 'https://google.com',
+            isForMainFrame: true,
+          ),
+        );
         verify(mockWebView.loadUrl('https://google.com', <String, String>{}));
       });
 
@@ -924,14 +998,17 @@ void main() {
           await testController.addJavascriptChannels(<String>{'hello'});
 
           final WebViewAndroidJavaScriptChannel javaScriptChannel =
-              verify(mockWebView.addJavaScriptChannel(captureAny))
-                  .captured
-                  .single as WebViewAndroidJavaScriptChannel;
+              verify(
+                    mockWebView.addJavaScriptChannel(captureAny),
+                  ).captured.single
+                  as WebViewAndroidJavaScriptChannel;
           javaScriptChannel.postMessage(javaScriptChannel, 'goodbye');
-          verify(mockJavascriptChannelRegistry.onJavascriptChannelMessage(
-            'hello',
-            'goodbye',
-          ));
+          verify(
+            mockJavascriptChannelRegistry.onJavascriptChannelMessage(
+              'hello',
+              'goodbye',
+            ),
+          );
         });
       });
     });

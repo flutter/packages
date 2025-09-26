@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -17,7 +17,6 @@ import 'package:pigeon/pigeon.dart';
     ),
   ),
 )
-
 /// The types of error that can be encountered.
 ///
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdError.AdErrorCode.html.
@@ -221,6 +220,36 @@ enum UiElement {
   unknown,
 }
 
+/// Used to indicate the type of audio focus for a view.
+///
+/// See https://developer.android.com/reference/android/media/AudioManager#AUDIOFOCUS_GAIN.
+enum AudioManagerAudioFocus {
+  /// Used to indicate a gain of audio focus, or a request of audio focus,
+  /// of unknown duration.
+  gain,
+
+  /// Used to indicate a temporary gain or request of audio focus, anticipated
+  /// to last a short amount of time.
+  ///
+  /// Examples of temporary changes are the playback of driving directions, or
+  /// an event notification.
+  gainTransient,
+
+  /// Used to indicate a temporary request of audio focus, anticipated to last a
+  /// short amount of time, during which no other applications, or system
+  /// components, should play anything.
+  gainTransientExclusive,
+
+  /// Used to indicate a temporary request of audio focus, anticipated to last a
+  /// short amount of time, and where it is acceptable for other audio
+  /// applications to keep playing after having lowered their output level (also
+  /// referred to as "ducking").
+  gainTransientMayDuck,
+
+  /// Used to indicate no audio focus has been gained or lost, or requested.
+  none,
+}
+
 /// A base class for more specialized container interfaces.
 ///
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/BaseDisplayContainer.html.
@@ -230,7 +259,12 @@ enum UiElement {
         'com.google.ads.interactivemedia.v3.api.BaseDisplayContainer',
   ),
 )
-abstract class BaseDisplayContainer {}
+abstract class BaseDisplayContainer {
+  /// Sets slots for displaying companions.
+  ///
+  /// Passing null will reset the container to having no companion slots.
+  void setCompanionSlots(List<CompanionAdSlot>? companionSlots);
+}
 
 /// A container in which to display the ads.
 ///
@@ -240,7 +274,7 @@ abstract class BaseDisplayContainer {}
     fullClassName: 'com.google.ads.interactivemedia.v3.api.AdDisplayContainer',
   ),
 )
-abstract class AdDisplayContainer implements BaseDisplayContainer {}
+abstract class AdDisplayContainer extends BaseDisplayContainer {}
 
 /// An object which allows publishers to request ads from ad servers or a
 /// dynamic ad insertion stream.
@@ -314,7 +348,7 @@ abstract class AdError {
 
 /// An object containing the data used to request ads from the server.
 ///
-/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdsRequest.
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/kotlin/com/google/ads/interactivemedia/v3/api/AdsRequest.
 @ProxyApi(
   kotlinOptions: KotlinProxyApiOptions(
     fullClassName: 'com.google.ads.interactivemedia.v3.api.AdsRequest',
@@ -327,6 +361,62 @@ abstract class AdsRequest {
   /// Attaches a ContentProgressProvider instance to allow scheduling ad breaks
   /// based on content progress (cue points).
   void setContentProgressProvider(ContentProgressProvider provider);
+
+  /// Notifies the SDK whether the player intends to start the content and ad in
+  /// response to a user action or whether it will be automatically played.
+  ///
+  /// Not calling this function leaves the setting as unknown. Note: Changing
+  /// this setting will have no impact on ad playback.
+  void setAdWillAutoPlay(bool willAutoPlay);
+
+  /// Notifies the SDK whether the player intends to start the content and ad
+  /// while muted.
+  ///
+  /// Not calling this function leaves the setting as unknown. Note: Changing
+  /// this setting will have no impact on ad playback.
+  void setAdWillPlayMuted(bool willPlayMuted);
+
+  /// Specifies a VAST, VMAP, or ad rules response to be used instead of making
+  /// a request through an ad tag URL.
+  void setAdsResponse(String cannedAdResponse);
+
+  /// Specifies the duration of the content in seconds to be shown.
+  ///
+  /// This optional parameter is used by AdX requests. It is recommended for AdX
+  /// users.
+  void setContentDuration(double duration);
+
+  /// Specifies the keywords used to describe the content to be shown.
+  ///
+  /// This optional parameter is used by AdX requests and is recommended for AdX
+  /// users.
+  void setContentKeywords(List<String> keywords);
+
+  /// Specifies the title of the content to be shown.
+  ///
+  /// Used in AdX requests. This optional parameter is used by AdX requests and
+  /// is recommended for AdX users.
+  void setContentTitle(String title);
+
+  /// Notifies the SDK whether the player intends to continuously play the
+  /// content videos one after another similar to TV broadcast.
+  ///
+  /// Not calling this function leaves the setting as unknown. Note: Changing
+  /// this setting will have no impact on ad playback.
+  void setContinuousPlayback(bool continuousPlayback);
+
+  /// Specifies the maximum amount of time to wait in seconds, after calling
+  /// requestAds, before requesting the ad tag URL.
+  ///
+  /// This can be used to stagger requests during a live-stream event, in order
+  /// to mitigate spikes in the number of requests.
+  void setLiveStreamPrefetchSeconds(double prefetchTime);
+
+  /// Specifies the VAST load timeout in milliseconds for a single wrapper.
+  ///
+  /// This parameter is optional and will override the default timeout,
+  /// currently set to 5000ms.
+  void setVastLoadTimeout(double timeout);
 }
 
 /// Defines an interface to allow SDK to track progress of the content video.
@@ -358,6 +448,11 @@ abstract class ContentProgressProvider {
   ),
 )
 abstract class AdsManager extends BaseManager {
+  /// List of content time offsets in seconds at which ad breaks are scheduled.
+  ///
+  /// The list will be empty if no ad breaks are scheduled.
+  late List<double> adCuePoints;
+
   /// Discards current ad break and resumes content.
   void discardAdBreak();
 
@@ -366,11 +461,6 @@ abstract class AdsManager extends BaseManager {
 
   /// Starts playing the ads.
   void start();
-
-  /// List of content time offsets in seconds at which ad breaks are scheduled.
-  ///
-  /// The list will be empty if no ad breaks are scheduled.
-  List<double> getAdCuePoints();
 
   /// Resumes the current ad.
   void resume();
@@ -424,7 +514,7 @@ abstract class BaseManager {
 
 /// Event to notify publisher that an event occurred with an Ad.
 ///
-/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdEvent.html.
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/kotlin/com/google/ads/interactivemedia/v3/api/AdEvent.
 @ProxyApi(
   kotlinOptions: KotlinProxyApiOptions(
     fullClassName: 'com.google.ads.interactivemedia.v3.api.AdEvent',
@@ -436,6 +526,9 @@ abstract class AdEvent {
 
   /// A map containing any extra ad data for the event, if needed.
   late final Map<String, String>? adData;
+
+  /// The ad with which this event is associated.
+  late final Ad? ad;
 }
 
 /// Factory class for creating SDK objects.
@@ -456,6 +549,9 @@ abstract class ImaSdkFactory {
     ViewGroup container,
     VideoAdPlayer player,
   );
+
+  /// Creates a CompanionAdSlot for the SDK to fill with companion ads.
+  CompanionAdSlot createCompanionAdSlot();
 
   /// Creates an `ImaSdkSettings` object for configuring the IMA SDK.
   ImaSdkSettings createImaSdkSettings();
@@ -483,7 +579,55 @@ abstract class ImaSdkFactory {
     fullClassName: 'com.google.ads.interactivemedia.v3.api.ImaSdkSettings',
   ),
 )
-abstract class ImaSdkSettings {}
+abstract class ImaSdkSettings {
+  /// Sets whether to automatically play VMAP and ad rules ad breaks.
+  void setAutoPlayAdBreaks(bool autoPlayAdBreaks);
+
+  /// Enables and disables the debug mode, which is disabled by default.
+  void setDebugMode(bool debugMode);
+
+  /// Sets the feature flags and their states to control experimental features.
+  ///
+  /// This should be set as early as possible, before requesting ads. Settings
+  /// will remain constant until the next ad request. Calling this method again
+  /// will reset any feature flags for the next ad request.
+  void setFeatureFlags(Map<String, String> featureFlags);
+
+  /// Sets the preferred language for the ad UI.
+  ///
+  /// The supported codes can be found in the Localization guide and are closely
+  /// related to the two-letter ISO 639-1 language codes.
+  ///
+  /// Once the AdsLoader object has been created, using this setter will have no
+  /// effect.
+  void setLanguage(String language);
+
+  /// Specifies the maximum number of redirects before the subsequent redirects
+  /// will be denied and the ad load aborted.
+  ///
+  /// The default is 4.
+  void setMaxRedirects(int maxRedirects);
+
+  /// Sets the partner provided player type.
+  ///
+  /// Player type greater than 20 characters will be truncated. The player type
+  /// specified should be short and unique.
+  void setPlayerType(String playerType);
+
+  /// Sets the partner provided player version.
+  ///
+  /// Player versions greater than 20 characters will be truncated.
+  void setPlayerVersion(String playerVersion);
+
+  /// Sets the publisher provided ID used for tracking.
+  void setPpid(String ppid);
+
+  /// Session ID is a temporary random ID.
+  ///
+  /// A session ID must be a UUID, or an empty string if the SDK should not send
+  /// a session ID.
+  void setSessionId(String sessionId);
+}
 
 /// Defines an update to the video's progress.
 ///
@@ -570,9 +714,7 @@ abstract class FrameLayout extends ViewGroup {
 ///
 /// See https://developer.android.com/reference/android/view/ViewGroup.
 @ProxyApi(
-  kotlinOptions: KotlinProxyApiOptions(
-    fullClassName: 'android.view.ViewGroup',
-  ),
+  kotlinOptions: KotlinProxyApiOptions(fullClassName: 'android.view.ViewGroup'),
 )
 abstract class ViewGroup extends View {
   /// Adds a child view.
@@ -596,6 +738,7 @@ abstract class VideoView extends View {
   VideoView();
 
   /// Callback to be invoked when the media source is ready for playback.
+  @async
   late final void Function(MediaPlayer player)? onPrepared;
 
   /// Callback to be invoked when playback of a media source has completed.
@@ -612,6 +755,12 @@ abstract class VideoView extends View {
   ///
   /// In milliseconds.
   int getCurrentPosition();
+
+  /// Sets which type of audio focus will be requested during the playback, or
+  /// configures playback to not request audio focus.
+  ///
+  /// Only available on Android API 26+. Noop on lower versions.
+  void setAudioFocusRequest(AudioManagerAudioFocus focusGain);
 }
 
 /// This class represents the basic building block for user interface components.
@@ -712,6 +861,7 @@ abstract class VideoAdPlayer {
   late final void Function(AdMediaInfo adMediaInfo, AdPodInfo adPodInfo) loadAd;
 
   /// Pauses playing the current ad.
+  @async
   late final void Function(AdMediaInfo adMediaInfo) pauseAd;
 
   /// Starts or resumes playing the video ad referenced by the AdMediaInfo,
@@ -1083,4 +1233,10 @@ abstract class CompanionAdSlot {
   ///
   /// Only companions matching the slot size will be displayed in the slot.
   void setSize(int width, int height);
+
+  /// Sets the size of the slot as fluid.
+  ///
+  /// This is a convenience method that sets both parameters of [setSize] to
+  /// [CompanionAdSlot.FLUID_SIZE](https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/CompanionAdSlot#FLUID_SIZE()).
+  void setFluidSize();
 }

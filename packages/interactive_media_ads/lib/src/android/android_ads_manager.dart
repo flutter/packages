@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -16,11 +16,18 @@ import 'interactive_media_ads_proxy.dart';
 class AndroidAdsManager extends PlatformAdsManager {
   /// Constructs an [AndroidAdsManager].
   @internal
-  AndroidAdsManager(
-    ima.AdsManager manager, {
-    InteractiveMediaAdsProxy? proxy,
-  })  : _manager = manager,
-        _proxy = proxy ?? const InteractiveMediaAdsProxy();
+  AndroidAdsManager(ima.AdsManager manager, {InteractiveMediaAdsProxy? proxy})
+    : _manager = manager,
+      _proxy = proxy ?? const InteractiveMediaAdsProxy(),
+      super(
+        adCuePoints: List<Duration>.unmodifiable(
+          manager.adCuePoints.map((double seconds) {
+            return Duration(
+              milliseconds: (seconds * Duration.millisecondsPerSecond).round(),
+            );
+          }),
+        ),
+      );
 
   final ima.AdsManager _manager;
   final InteractiveMediaAdsProxy _proxy;
@@ -36,9 +43,12 @@ class AndroidAdsManager extends PlatformAdsManager {
   Future<void> init({PlatformAdsRenderingSettings? settings}) async {
     ima.AdsRenderingSettings? nativeSettings;
     if (settings != null) {
-      nativeSettings = settings is AndroidAdsRenderingSettings
-          ? await settings.nativeSettings
-          : await AndroidAdsRenderingSettings(settings.params).nativeSettings;
+      nativeSettings =
+          settings is AndroidAdsRenderingSettings
+              ? await settings.nativeSettings
+              : await AndroidAdsRenderingSettings(
+                settings.params,
+              ).nativeSettings;
     }
 
     await _manager.init(nativeSettings);

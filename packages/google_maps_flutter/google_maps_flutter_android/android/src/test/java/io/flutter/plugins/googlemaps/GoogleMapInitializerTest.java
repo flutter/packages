@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -13,7 +13,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import android.content.Context;
-import android.os.Build;
 import androidx.test.core.app.ApplicationProvider;
 import com.google.android.gms.maps.MapsInitializer.Renderer;
 import io.flutter.plugin.common.BinaryMessenger;
@@ -23,10 +22,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Config;
 
 @RunWith(RobolectricTestRunner.class)
-@Config(minSdk = Build.VERSION_CODES.LOLLIPOP)
 public class GoogleMapInitializerTest {
   private GoogleMapInitializer googleMapInitializer;
 
@@ -51,6 +48,7 @@ public class GoogleMapInitializerTest {
     verify(result, never()).error(any());
   }
 
+  @SuppressWarnings("deprecation")
   @Test
   public void initializer_OnMapsSdkInitializedWithLegacyRenderer() {
     doNothing().when(googleMapInitializer).initializeWithRendererRequest(Renderer.LEGACY);

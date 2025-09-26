@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -32,6 +32,17 @@ class AuthenticationChallengeResponseProxyAPIDelegate:
     }
 
     return AuthenticationChallengeResponse(disposition: nativeDisposition, credential: credential)
+  }
+
+  func createAsync(
+    pigeonApi: PigeonApiAuthenticationChallengeResponse,
+    disposition: UrlSessionAuthChallengeDisposition, credential: URLCredential?,
+    completion: @escaping (Result<AuthenticationChallengeResponse, Error>) -> Void
+  ) {
+    completion(
+      Result.success(
+        try! pigeonDefaultConstructor(
+          pigeonApi: pigeonApi, disposition: disposition, credential: credential)))
   }
 
   func disposition(

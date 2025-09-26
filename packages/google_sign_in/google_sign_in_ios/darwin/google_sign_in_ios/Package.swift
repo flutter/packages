@@ -1,6 +1,6 @@
 // swift-tools-version: 5.9
 
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -18,7 +18,7 @@ let package = Package(
   dependencies: [
     .package(
       url: "https://github.com/google/GoogleSignIn-iOS.git",
-      from: "7.1.0")
+      from: "9.0.0")
   ],
   targets: [
     .target(

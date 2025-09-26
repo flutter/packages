@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -30,20 +30,19 @@ void main() {
           ],
         },
       );
-      final BenchmarkResults average =
-          computeAverage(<BenchmarkResults>[result1, result2]);
-      expect(
-        average.toJson(),
-        <String, List<Map<String, Object?>>>{
-          'foo': <Map<String, Object?>>[
-            <String, Object?>{'metric': 'foo.bar', 'value': 5},
-            <String, Object?>{'metric': 'foo.baz', 'value': 10},
-          ],
-          'bar': <Map<String, Object?>>[
-            <String, Object?>{'metric': 'bar.foo', 'value': 1.7999999999999998},
-          ],
-        },
-      );
+      final BenchmarkResults average = computeAverage(<BenchmarkResults>[
+        result1,
+        result2,
+      ]);
+      expect(average.toJson(), <String, List<Map<String, Object?>>>{
+        'foo': <Map<String, Object?>>[
+          <String, Object?>{'metric': 'foo.bar', 'value': 5},
+          <String, Object?>{'metric': 'foo.baz', 'value': 10},
+        ],
+        'bar': <Map<String, Object?>>[
+          <String, Object?>{'metric': 'bar.foo', 'value': 1.7999999999999998},
+        ],
+      });
     });
 
     test('fails for mismatched benchmark names', () {
@@ -57,12 +56,9 @@ void main() {
           'foo1': <BenchmarkScore>[BenchmarkScore(metric: 'foo.bar', value: 4)],
         },
       );
-      expect(
-        () {
-          computeAverage(<BenchmarkResults>[result1, result2]);
-        },
-        throwsException,
-      );
+      expect(() {
+        computeAverage(<BenchmarkResults>[result1, result2]);
+      }, throwsException);
     });
 
     test('fails for mismatched benchmark metrics', () {
@@ -76,27 +72,26 @@ void main() {
           'foo': <BenchmarkScore>[BenchmarkScore(metric: 'foo.boo', value: 4)],
         },
       );
-      expect(
-        () {
-          computeAverage(<BenchmarkResults>[result1, result2]);
-        },
-        throwsException,
-      );
+      expect(() {
+        computeAverage(<BenchmarkResults>[result1, result2]);
+      }, throwsException);
     });
   });
 
   test('computeDelta', () {
-    final BenchmarkResults benchmark1 =
-        BenchmarkResults.parse(testBenchmarkResults1);
-    final BenchmarkResults benchmark2 =
-        BenchmarkResults.parse(testBenchmarkResults2);
+    final BenchmarkResults benchmark1 = BenchmarkResults.parse(
+      testBenchmarkResults1,
+    );
+    final BenchmarkResults benchmark2 = BenchmarkResults.parse(
+      testBenchmarkResults2,
+    );
     final BenchmarkResults delta = computeDelta(benchmark1, benchmark2);
     expect(delta.toJson(), expectedBenchmarkDelta);
   });
 }
 
-final Map<String, List<Map<String, Object?>>> testBenchmarkResults1 =
-    <String, List<Map<String, Object?>>>{
+final Map<String, List<Map<String, Object?>>>
+testBenchmarkResults1 = <String, List<Map<String, Object?>>>{
   'foo': <Map<String, Object?>>[
     <String, Object?>{'metric': 'preroll_frame.average', 'value': 60.5},
     <String, Object?>{'metric': 'preroll_frame.outlierAverage', 'value': 1400},
@@ -141,8 +136,8 @@ final Map<String, List<Map<String, Object?>>> testBenchmarkResults1 =
   ],
 };
 
-final Map<String, List<Map<String, Object?>>> testBenchmarkResults2 =
-    <String, List<Map<String, Object?>>>{
+final Map<String, List<Map<String, Object?>>>
+testBenchmarkResults2 = <String, List<Map<String, Object?>>>{
   'foo': <Map<String, Object?>>[
     <String, Object?>{'metric': 'preroll_frame.average', 'value': 65.5},
     <String, Object?>{'metric': 'preroll_frame.outlierAverage', 'value': 1410},
@@ -155,11 +150,11 @@ final Map<String, List<Map<String, Object?>>> testBenchmarkResults2 =
     <String, Object?>{'metric': 'drawFrameDuration.average', 'value': 2000.0},
     <String, Object?>{
       'metric': 'drawFrameDuration.outlierAverage',
-      'value': 20000
+      'value': 20000,
     },
     <String, Object?>{
       'metric': 'drawFrameDuration.outlierRatio',
-      'value': 11.05
+      'value': 11.05,
     },
     <String, Object?>{'metric': 'drawFrameDuration.noise', 'value': 1.34},
     <String, Object?>{'metric': 'totalUiFrame.average', 'value': 4150},
@@ -176,11 +171,11 @@ final Map<String, List<Map<String, Object?>>> testBenchmarkResults2 =
     <String, Object?>{'metric': 'drawFrameDuration.average', 'value': 2000.0},
     <String, Object?>{
       'metric': 'drawFrameDuration.outlierAverage',
-      'value': 20000
+      'value': 20000,
     },
     <String, Object?>{
       'metric': 'drawFrameDuration.outlierRatio',
-      'value': 11.05
+      'value': 11.05,
     },
     <String, Object?>{'metric': 'drawFrameDuration.noise', 'value': 1.34},
     <String, Object?>{'metric': 'totalUiFrame.average', 'value': 4150},
@@ -189,138 +184,138 @@ final Map<String, List<Map<String, Object?>>> testBenchmarkResults2 =
 
 final Map<String, List<Map<String, Object?>>> expectedBenchmarkDelta =
     <String, List<Map<String, Object?>>>{
-  'foo': <Map<String, Object?>>[
-    <String, Object?>{
-      'metric': 'preroll_frame.average',
-      'value': 65.5,
-      'delta': 5.0
-    },
-    <String, Object?>{
-      'metric': 'preroll_frame.outlierAverage',
-      'value': 1410.0,
-      'delta': 10.0,
-    },
-    <String, Object?>{
-      'metric': 'preroll_frame.outlierRatio',
-      'value': 20.0,
-      'delta': -0.1999999999999993,
-    },
-    <String, Object?>{
-      'metric': 'preroll_frame.noise',
-      'value': 1.5,
-      'delta': 0.65,
-    },
-    <String, Object?>{
-      'metric': 'apply_frame.average',
-      'value': 50.0,
-      'delta': -30.0,
-    },
-    <String, Object?>{
-      'metric': 'apply_frame.outlierAverage',
-      'value': 100.0,
-      'delta': -100.6,
-    },
-    <String, Object?>{
-      'metric': 'apply_frame.outlierRatio',
-      'value': 2.55,
-      'delta': 0.04999999999999982,
-    },
-    <String, Object?>{
-      'metric': 'apply_frame.noise',
-      'value': 0.9,
-      'delta': 0.5,
-    },
-    <String, Object?>{
-      'metric': 'drawFrameDuration.average',
-      'value': 2000.0,
-      'delta': -58.90000000000009,
-    },
-    <String, Object?>{
-      'metric': 'drawFrameDuration.outlierAverage',
-      'value': 20000.0,
-      'delta': -4000.0,
-    },
-    <String, Object?>{
-      'metric': 'drawFrameDuration.outlierRatio',
-      'value': 11.05,
-      'delta': -1.0,
-    },
-    <String, Object?>{
-      'metric': 'drawFrameDuration.noise',
-      'value': 1.34,
-      'delta': 1.0,
-    },
-    <String, Object?>{
-      'metric': 'totalUiFrame.average',
-      'value': 4150.0,
-      'delta': -16.0,
-    },
-  ],
-  'bar': <Map<String, Object?>>[
-    <String, Object?>{
-      'metric': 'preroll_frame.average',
-      'value': 65.5,
-      'delta': 5.0,
-    },
-    <String, Object?>{
-      'metric': 'preroll_frame.outlierAverage',
-      'value': 1410.0,
-      'delta': 10.0,
-    },
-    <String, Object?>{
-      'metric': 'preroll_frame.outlierRatio',
-      'value': 20.0,
-      'delta': -0.1999999999999993,
-    },
-    <String, Object?>{
-      'metric': 'preroll_frame.noise',
-      'value': 1.5,
-      'delta': 0.65,
-    },
-    <String, Object?>{
-      'metric': 'apply_frame.average',
-      'value': 50.0,
-      'delta': -30.0,
-    },
-    <String, Object?>{
-      'metric': 'apply_frame.outlierAverage',
-      'value': 100.0,
-      'delta': -100.6,
-    },
-    <String, Object?>{
-      'metric': 'apply_frame.outlierRatio',
-      'value': 2.55,
-      'delta': 0.04999999999999982,
-    },
-    <String, Object?>{
-      'metric': 'apply_frame.noise',
-      'value': 0.9,
-      'delta': 0.5,
-    },
-    <String, Object?>{
-      'metric': 'drawFrameDuration.average',
-      'value': 2000.0,
-      'delta': -58.90000000000009,
-    },
-    <String, Object?>{
-      'metric': 'drawFrameDuration.outlierAverage',
-      'value': 20000.0,
-      'delta': -4000.0,
-    },
-    <String, Object?>{
-      'metric': 'drawFrameDuration.outlierRatio',
-      'value': 11.05,
-      'delta': -1.0,
-    },
-    <String, Object?>{
-      'metric': 'drawFrameDuration.noise',
-      'value': 1.34,
-      'delta': 1.0,
-    },
-    <String, Object?>{
-      'metric': 'totalUiFrame.average',
-      'value': 4150.0,
-      'delta': -16.0,
-    },
-  ],
-};
+      'foo': <Map<String, Object?>>[
+        <String, Object?>{
+          'metric': 'preroll_frame.average',
+          'value': 65.5,
+          'delta': 5.0,
+        },
+        <String, Object?>{
+          'metric': 'preroll_frame.outlierAverage',
+          'value': 1410.0,
+          'delta': 10.0,
+        },
+        <String, Object?>{
+          'metric': 'preroll_frame.outlierRatio',
+          'value': 20.0,
+          'delta': -0.1999999999999993,
+        },
+        <String, Object?>{
+          'metric': 'preroll_frame.noise',
+          'value': 1.5,
+          'delta': 0.65,
+        },
+        <String, Object?>{
+          'metric': 'apply_frame.average',
+          'value': 50.0,
+          'delta': -30.0,
+        },
+        <String, Object?>{
+          'metric': 'apply_frame.outlierAverage',
+          'value': 100.0,
+          'delta': -100.6,
+        },
+        <String, Object?>{
+          'metric': 'apply_frame.outlierRatio',
+          'value': 2.55,
+          'delta': 0.04999999999999982,
+        },
+        <String, Object?>{
+          'metric': 'apply_frame.noise',
+          'value': 0.9,
+          'delta': 0.5,
+        },
+        <String, Object?>{
+          'metric': 'drawFrameDuration.average',
+          'value': 2000.0,
+          'delta': -58.90000000000009,
+        },
+        <String, Object?>{
+          'metric': 'drawFrameDuration.outlierAverage',
+          'value': 20000.0,
+          'delta': -4000.0,
+        },
+        <String, Object?>{
+          'metric': 'drawFrameDuration.outlierRatio',
+          'value': 11.05,
+          'delta': -1.0,
+        },
+        <String, Object?>{
+          'metric': 'drawFrameDuration.noise',
+          'value': 1.34,
+          'delta': 1.0,
+        },
+        <String, Object?>{
+          'metric': 'totalUiFrame.average',
+          'value': 4150.0,
+          'delta': -16.0,
+        },
+      ],
+      'bar': <Map<String, Object?>>[
+        <String, Object?>{
+          'metric': 'preroll_frame.average',
+          'value': 65.5,
+          'delta': 5.0,
+        },
+        <String, Object?>{
+          'metric': 'preroll_frame.outlierAverage',
+          'value': 1410.0,
+          'delta': 10.0,
+        },
+        <String, Object?>{
+          'metric': 'preroll_frame.outlierRatio',
+          'value': 20.0,
+          'delta': -0.1999999999999993,
+        },
+        <String, Object?>{
+          'metric': 'preroll_frame.noise',
+          'value': 1.5,
+          'delta': 0.65,
+        },
+        <String, Object?>{
+          'metric': 'apply_frame.average',
+          'value': 50.0,
+          'delta': -30.0,
+        },
+        <String, Object?>{
+          'metric': 'apply_frame.outlierAverage',
+          'value': 100.0,
+          'delta': -100.6,
+        },
+        <String, Object?>{
+          'metric': 'apply_frame.outlierRatio',
+          'value': 2.55,
+          'delta': 0.04999999999999982,
+        },
+        <String, Object?>{
+          'metric': 'apply_frame.noise',
+          'value': 0.9,
+          'delta': 0.5,
+        },
+        <String, Object?>{
+          'metric': 'drawFrameDuration.average',
+          'value': 2000.0,
+          'delta': -58.90000000000009,
+        },
+        <String, Object?>{
+          'metric': 'drawFrameDuration.outlierAverage',
+          'value': 20000.0,
+          'delta': -4000.0,
+        },
+        <String, Object?>{
+          'metric': 'drawFrameDuration.outlierRatio',
+          'value': 11.05,
+          'delta': -1.0,
+        },
+        <String, Object?>{
+          'metric': 'drawFrameDuration.noise',
+          'value': 1.34,
+          'delta': 1.0,
+        },
+        <String, Object?>{
+          'metric': 'totalUiFrame.average',
+          'value': 4150.0,
+          'delta': -16.0,
+        },
+      ],
+    };

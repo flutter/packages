@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -12,7 +12,6 @@ import android.os.Looper;
 import android.util.Log;
 import androidx.annotation.ChecksSdkIntAtLeast;
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import io.flutter.plugin.common.BinaryMessenger;
 
 public class ProxyApiRegistrar extends AndroidWebkitLibraryPigeonProxyApiRegistrar {
@@ -56,13 +55,25 @@ public class ProxyApiRegistrar extends AndroidWebkitLibraryPigeonProxyApiRegistr
             + Log.getStackTraceString(exception));
   }
 
+  /** Creates an exception when the `unknown` enum value is passed to a host method. */
+  @NonNull
+  IllegalArgumentException createUnknownEnumException(@NonNull Object enumValue) {
+    return new IllegalArgumentException(enumValue + " doesn't represent a native value.");
+  }
+
+  /** Creates the error message when a method is called on an unsupported version. */
+  @NonNull
+  String createUnsupportedVersionMessage(
+      @NonNull String method, @NonNull String versionRequirements) {
+    return method + " requires " + versionRequirements + ".";
+  }
+
   @NonNull
   @Override
   public PigeonApiWebResourceRequest getPigeonApiWebResourceRequest() {
     return new WebResourceRequestProxyApi(this);
   }
 
-  @RequiresApi(api = Build.VERSION_CODES.M)
   @NonNull
   @Override
   public PigeonApiWebResourceError getPigeonApiWebResourceError() {
@@ -184,6 +195,48 @@ public class ProxyApiRegistrar extends AndroidWebkitLibraryPigeonProxyApiRegistr
   }
 
   @NonNull
+  @Override
+  public PigeonApiClientCertRequest getPigeonApiClientCertRequest() {
+    return new ClientCertRequestProxyApi(this);
+  }
+
+  @NonNull
+  @Override
+  public PigeonApiSslErrorHandler getPigeonApiSslErrorHandler() {
+    return new SslErrorHandlerProxyApi(this);
+  }
+
+  @NonNull
+  @Override
+  public PigeonApiSslError getPigeonApiSslError() {
+    return new SslErrorProxyApi(this);
+  }
+
+  @NonNull
+  @Override
+  public PigeonApiSslCertificateDName getPigeonApiSslCertificateDName() {
+    return new SslCertificateDNameProxyApi(this);
+  }
+
+  @NonNull
+  @Override
+  public PigeonApiSslCertificate getPigeonApiSslCertificate() {
+    return new SslCertificateProxyApi(this);
+  }
+
+  @NonNull
+  @Override
+  public PigeonApiAndroidMessage getPigeonApiAndroidMessage() {
+    return new MessageProxyApi(this);
+  }
+
+  @NonNull
+  @Override
+  public PigeonApiCertificate getPigeonApiCertificate() {
+    return new CertificateProxyApi(this);
+  }
+
+  @NonNull
   public Context getContext() {
     return context;
   }
@@ -195,5 +248,17 @@ public class ProxyApiRegistrar extends AndroidWebkitLibraryPigeonProxyApiRegistr
   @NonNull
   public FlutterAssetManager getFlutterAssetManager() {
     return flutterAssetManager;
+  }
+
+  @NonNull
+  @Override
+  public PigeonApiWebViewFeature getPigeonApiWebViewFeature() {
+    return new WebViewFeatureProxyApi(this);
+  }
+
+  @NonNull
+  @Override
+  public PigeonApiWebSettingsCompat getPigeonApiWebSettingsCompat() {
+    return new WebSettingsCompatProxyApi(this);
   }
 }

@@ -35,8 +35,11 @@ See the API documentation for details on the following topics:
 - [Type-safe routes](https://pub.dev/documentation/go_router/latest/topics/Type-safe%20routes-topic.html)
 - [Named routes](https://pub.dev/documentation/go_router/latest/topics/Named%20routes-topic.html)
 - [Error handling](https://pub.dev/documentation/go_router/latest/topics/Error%20handling-topic.html)
+- [State restoration](https://pub.dev/documentation/go_router/latest/topics/State%20restoration-topic.html)
 
 ## Migration Guides
+- [Migrating to 16.0.0](https://flutter.dev/go/go-router-v16-breaking-changes).
+- [Migrating to 15.0.0](https://flutter.dev/go/go-router-v15-breaking-changes).
 - [Migrating to 14.0.0](https://flutter.dev/go/go-router-v14-breaking-changes).
 - [Migrating to 13.0.0](https://flutter.dev/go/go-router-v13-breaking-changes).
 - [Migrating to 12.0.0](https://flutter.dev/go/go-router-v12-breaking-changes).
@@ -59,16 +62,16 @@ See the
 for a list of new features and breaking changes.
 
 ## Triage
-See the [GitHub issues](https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-asc+label%3Ateam-go_router+)
+See the [GitHub issues](https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-asc+label%3A"p%3A%20go_router")
 for all Go Router issues.
 
 The project follows the same priority system as flutter framework.
-[P0](https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-asc+label%3Ateam-go_router+label%3AP0+)
-[P1](https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-asc+label%3Ateam-go_router+label%3AP1+)
-[P2](https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-asc+label%3Ateam-go_router+label%3AP2+)
-[P3](https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-asc+label%3Ateam-go_router+label%3AP3+)
+[P0](https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-asc+label%3A"p%3A%20go_router"+label%3AP0)
+[P1](https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-asc+label%3A"p%3A%20go_router"+label%3AP1)
+[P2](https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-asc+label%3A"p%3A%20go_router"+label%3AP2)
+[P3](https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-asc+label%3A"p%3A%20go_router"+label%3AP3)
 
-[Package PRs](https://github.com/flutter/packages/pulls?q=is%3Apr+is%3Aopen+label%3A%22p%3A+go_router%22%2C%22p%3A+go_router_builder%22)
+[Package PRs](https://github.com/flutter/packages/pulls?q=is%3Aopen+is%3Apr+label%3A%22p%3A+go_router%22)
 
 ## Roadmap
 

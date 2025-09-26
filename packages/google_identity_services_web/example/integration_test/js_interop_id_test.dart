@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -57,8 +57,8 @@ void main() async {
         use_fedcm_for_prompt: true,
       );
 
-      final utils.ExpectConfigValueFn expectConfigValue =
-          utils.createExpectConfigValue(config as JSObject);
+      final utils.ExpectConfigValueFn expectConfigValue = utils
+          .createExpectConfigValue(config as JSObject);
 
       expectConfigValue('client_id', 'testing_1-2-3');
       expectConfigValue('auto_select', false);
@@ -66,15 +66,19 @@ void main() async {
       expectConfigValue('login_uri', 'https://www.example.com/login');
       expectConfigValue('native_callback', utils.isAJs('function'));
       expectConfigValue('cancel_on_tap_outside', false);
-      expectConfigValue(
-          'allowed_parent_origin', <String>['allowed', 'another']);
+      expectConfigValue('allowed_parent_origin', <String>[
+        'allowed',
+        'another',
+      ]);
       expectConfigValue('prompt_parent_id', 'some_dom_id');
       expectConfigValue('nonce', 's0m3_r4ndOM_vALu3');
       expectConfigValue('context', 'signin');
       expectConfigValue('state_cookie_domain', 'subdomain.example.com');
       expectConfigValue('ux_mode', 'popup');
       expectConfigValue(
-          'intermediate_iframe_close_callback', utils.isAJs('function'));
+        'intermediate_iframe_close_callback',
+        utils.isAJs('function'),
+      );
       expectConfigValue('itp_support', true);
       expectConfigValue('login_hint', 'login-hint@example.com');
       expectConfigValue('hd', 'hd_value');
@@ -83,20 +87,42 @@ void main() async {
   });
 
   group('prompt', () {
-    testWidgets('supports a moment notification callback', (_) async {
-      id.initialize(IdConfiguration(client_id: 'testing_1-2-3'));
+    testWidgets(
+      'supports a moment notification callback with correct type and reason',
+      (_) async {
+        id.initialize(IdConfiguration(client_id: 'testing_1-2-3'));
+        utils.setMockMomentNotification('skipped', 'user_cancel');
 
-      final StreamController<PromptMomentNotification> controller =
-          StreamController<PromptMomentNotification>();
+        final StreamController<PromptMomentNotification> controller =
+            StreamController<PromptMomentNotification>();
 
-      id.prompt(controller.add);
+        id.prompt(controller.add);
 
-      final PromptMomentNotification moment = await controller.stream.first;
+        final PromptMomentNotification moment = await controller.stream.first;
 
-      // These defaults are set in mock-gis.js
-      expect(moment.getMomentType(), MomentType.skipped);
-      expect(moment.getSkippedReason(), MomentSkippedReason.user_cancel);
-    });
+        expect(moment.getMomentType(), MomentType.skipped);
+        expect(moment.getSkippedReason(), MomentSkippedReason.user_cancel);
+      },
+    );
+
+    testWidgets(
+      'supports a moment notification callback while handling invalid reason '
+      'value gracefully',
+      (_) async {
+        id.initialize(IdConfiguration(client_id: 'testing_1-2-3'));
+        utils.setMockMomentNotification('skipped', 'random_invalid_reason');
+
+        final StreamController<PromptMomentNotification> controller =
+            StreamController<PromptMomentNotification>();
+
+        id.prompt(controller.add);
+
+        final PromptMomentNotification moment = await controller.stream.first;
+
+        expect(moment.getMomentType(), MomentType.skipped);
+        expect(moment.getSkippedReason(), isNull);
+      },
+    );
 
     testWidgets('calls config callback with credential response', (_) async {
       const String expected = 'should_be_a_proper_jwt_token';
@@ -105,10 +131,9 @@ void main() async {
       final StreamController<CredentialResponse> controller =
           StreamController<CredentialResponse>();
 
-      id.initialize(IdConfiguration(
-        client_id: 'testing_1-2-3',
-        callback: controller.add,
-      ));
+      id.initialize(
+        IdConfiguration(client_id: 'testing_1-2-3', callback: controller.add),
+      );
 
       id.prompt();
 

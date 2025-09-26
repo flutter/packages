@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -7,36 +7,52 @@ package io.flutter.plugins.googlesignin;
 import android.accounts.Account;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Handler;
-import android.os.Looper;
-import android.util.Log;
+import android.content.IntentSender;
+import android.net.Uri;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
-import com.google.android.gms.auth.GoogleAuthUtil;
-import com.google.android.gms.auth.UserRecoverableAuthException;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.auth.api.signin.GoogleSignInStatusCodes;
+import androidx.credentials.ClearCredentialStateRequest;
+import androidx.credentials.Credential;
+import androidx.credentials.CredentialManager;
+import androidx.credentials.CredentialManagerCallback;
+import androidx.credentials.CustomCredential;
+import androidx.credentials.GetCredentialRequest;
+import androidx.credentials.GetCredentialResponse;
+import androidx.credentials.exceptions.ClearCredentialException;
+import androidx.credentials.exceptions.GetCredentialCancellationException;
+import androidx.credentials.exceptions.GetCredentialException;
+import androidx.credentials.exceptions.GetCredentialInterruptedException;
+import androidx.credentials.exceptions.GetCredentialProviderConfigurationException;
+import androidx.credentials.exceptions.GetCredentialUnsupportedException;
+import androidx.credentials.exceptions.NoCredentialException;
+import com.google.android.gms.auth.api.identity.AuthorizationClient;
+import com.google.android.gms.auth.api.identity.AuthorizationRequest;
+import com.google.android.gms.auth.api.identity.AuthorizationResult;
+import com.google.android.gms.auth.api.identity.ClearTokenRequest;
+import com.google.android.gms.auth.api.identity.Identity;
+import com.google.android.gms.auth.api.identity.RevokeAccessRequest;
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.common.api.Scope;
-import com.google.android.gms.tasks.RuntimeExecutionException;
-import com.google.android.gms.tasks.Task;
+import com.google.android.libraries.identity.googleid.GetGoogleIdOption;
+import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption;
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential;
+import io.flutter.Log;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.PluginRegistry;
-import io.flutter.plugins.googlesignin.Messages.FlutterError;
-import io.flutter.plugins.googlesignin.Messages.GoogleSignInApi;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.Executors;
+import kotlin.Result;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 
 /** Google sign-in plugin for Flutter. */
 public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
@@ -44,20 +60,31 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
   private @Nullable BinaryMessenger messenger;
   private ActivityPluginBinding activityPluginBinding;
 
+  // The account type to use to create an Account object for a Google Sign In account.
+  private static final String GOOGLE_ACCOUNT_TYPE = "com.google";
+
+  private void initInstance(@NonNull BinaryMessenger messenger, @NonNull Context context) {
+    initWithDelegate(
+        messenger,
+        new Delegate(
+            context,
+            (@NonNull Context c) -> CredentialManager.create(c),
+            (@NonNull Context c) -> Identity.getAuthorizationClient(c),
+            (@NonNull Credential credential) ->
+                GoogleIdTokenCredential.createFrom(credential.getData())));
+  }
+
   @VisibleForTesting
-  public void initInstance(
-      @NonNull BinaryMessenger messenger,
-      @NonNull Context context,
-      @NonNull GoogleSignInWrapper googleSignInWrapper) {
+  void initWithDelegate(@NonNull BinaryMessenger messenger, @NonNull Delegate delegate) {
     this.messenger = messenger;
-    delegate = new Delegate(context, googleSignInWrapper);
-    GoogleSignInApi.setUp(messenger, delegate);
+    this.delegate = delegate;
+    GoogleSignInApi.Companion.setUp(messenger, delegate);
   }
 
   private void dispose() {
     delegate = null;
     if (messenger != null) {
-      GoogleSignInApi.setUp(messenger, null);
+      GoogleSignInApi.Companion.setUp(messenger, null);
       messenger = null;
     }
   }
@@ -76,8 +103,7 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
 
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
-    initInstance(
-        binding.getBinaryMessenger(), binding.getApplicationContext(), new GoogleSignInWrapper());
+    initInstance(binding.getBinaryMessenger(), binding.getApplicationContext());
   }
 
   @Override
@@ -106,42 +132,58 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
     disposeActivity();
   }
 
+  // Creates CredentialManager instances. This is provided to be overridden for tests.
+  @VisibleForTesting
+  public interface CredentialManagerFactory {
+    @NonNull
+    CredentialManager create(@NonNull Context context);
+  }
+
+  // Creates AuthorizationClient instances. This is provided to be overridden for tests.
+  @VisibleForTesting
+  public interface AuthorizationClientFactory {
+    @NonNull
+    AuthorizationClient create(@NonNull Context context);
+  }
+
+  // Creates GoogleIdTokenCredential instances from Credential instances. This is provided
+  // to be overridden for tests.
+  @VisibleForTesting
+  public interface GoogleIdCredentialConverter {
+    @NonNull
+    GoogleIdTokenCredential createFrom(@NonNull Credential credential);
+  }
+
   /**
    * Delegate class that does the work for the Google sign-in plugin. This is exposed as a dedicated
    * class for use in other plugins that wrap basic sign-in functionality.
    *
    * <p>All methods in this class assume that they are run to completion before any other method is
-   * invoked. In this context, "run to completion" means that their {@link Messages.Result} argument
-   * has been completed (either successfully or in error). This class provides no synchronization
-   * constructs to guarantee such behavior; callers are responsible for providing such guarantees.
+   * invoked. In this context, "run to completion" means that their callback argument has been
+   * completed (either successfully or in error). This class provides no synchronization constructs
+   * to guarantee such behavior; callers are responsible for providing such guarantees.
    */
   public static class Delegate implements PluginRegistry.ActivityResultListener, GoogleSignInApi {
-    private static final int REQUEST_CODE_SIGNIN = 53293;
-    private static final int REQUEST_CODE_RECOVER_AUTH = 53294;
-    @VisibleForTesting static final int REQUEST_CODE_REQUEST_SCOPE = 53295;
-
-    private static final String ERROR_REASON_EXCEPTION = "exception";
-    private static final String ERROR_REASON_STATUS = "status";
-    // These error codes must match with ones declared on iOS and Dart sides.
-    private static final String ERROR_REASON_SIGN_IN_CANCELED = "sign_in_canceled";
-    private static final String ERROR_REASON_SIGN_IN_REQUIRED = "sign_in_required";
-    private static final String ERROR_REASON_NETWORK_ERROR = "network_error";
-    private static final String ERROR_REASON_SIGN_IN_FAILED = "sign_in_failed";
-    private static final String ERROR_FAILURE_TO_RECOVER_AUTH = "failed_to_recover_auth";
-    private static final String ERROR_USER_RECOVERABLE_AUTH = "user_recoverable_auth";
+    @VisibleForTesting static final int REQUEST_CODE_AUTHORIZE = 53294;
 
     private final @NonNull Context context;
-    // Only set activity for v2 embedder. Always access activity from getActivity() method.
+    private final @NonNull CredentialManagerFactory credentialManagerFactory;
+    private final @NonNull AuthorizationClientFactory authorizationClientFactory;
+    final @NonNull GoogleIdCredentialConverter credentialConverter;
+    // Always access activity from getActivity() method.
     private @Nullable Activity activity;
-    private final GoogleSignInWrapper googleSignInWrapper;
 
-    private GoogleSignInClient signInClient;
-    private List<String> requestedScopes;
-    private PendingOperation pendingOperation;
+    private Function1<? super Result<? extends AuthorizeResult>, Unit> pendingAuthorizationCallback;
 
-    public Delegate(@NonNull Context context, @NonNull GoogleSignInWrapper googleSignInWrapper) {
+    public Delegate(
+        @NonNull Context context,
+        @NonNull CredentialManagerFactory credentialManagerFactory,
+        @NonNull AuthorizationClientFactory authorizationClientFactory,
+        @NonNull GoogleIdCredentialConverter credentialConverter) {
       this.context = context;
-      this.googleSignInWrapper = googleSignInWrapper;
+      this.credentialManagerFactory = credentialManagerFactory;
+      this.authorizationClientFactory = authorizationClientFactory;
+      this.credentialConverter = credentialConverter;
     }
 
     public void setActivity(@Nullable Activity activity) {
@@ -153,433 +195,317 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
       return activity;
     }
 
-    private void checkAndSetPendingOperation(
-        String method,
-        Messages.Result<Messages.UserData> userDataResult,
-        Messages.VoidResult voidResult,
-        Messages.Result<Boolean> boolResult,
-        Messages.Result<String> stringResult,
-        Object data) {
-      if (pendingOperation != null) {
-        throw new IllegalStateException(
-            "Concurrent operations detected: " + pendingOperation.method + ", " + method);
-      }
-      pendingOperation =
-          new PendingOperation(method, userDataResult, voidResult, boolResult, stringResult, data);
-    }
-
-    private void checkAndSetPendingSignInOperation(
-        String method, @NonNull Messages.Result<Messages.UserData> result) {
-      checkAndSetPendingOperation(method, result, null, null, null, null);
-    }
-
-    private void checkAndSetPendingVoidOperation(
-        String method, @NonNull Messages.VoidResult result) {
-      checkAndSetPendingOperation(method, null, result, null, null, null);
-    }
-
-    private void checkAndSetPendingBoolOperation(
-        String method, @NonNull Messages.Result<Boolean> result) {
-      checkAndSetPendingOperation(method, null, null, result, null, null);
-    }
-
-    private void checkAndSetPendingStringOperation(
-        String method, @NonNull Messages.Result<String> result, @Nullable Object data) {
-      checkAndSetPendingOperation(method, null, null, null, result, data);
-    }
-
-    private void checkAndSetPendingAccessTokenOperation(
-        String method, Messages.Result<String> result, @NonNull Object data) {
-      checkAndSetPendingStringOperation(method, result, data);
-    }
-
-    /**
-     * Initializes this delegate so that it is ready to perform other operations. The Dart code
-     * guarantees that this will be called and completed before any other methods are invoked.
-     */
     @Override
-    public void init(@NonNull Messages.InitParams params) {
+    public @Nullable String getGoogleServicesJsonServerClientId() {
+      @SuppressLint("DiscouragedApi")
+      int webClientIdIdentifier =
+          context
+              .getResources()
+              .getIdentifier("default_web_client_id", "string", context.getPackageName());
+      if (webClientIdIdentifier != 0) {
+        return context.getString(webClientIdIdentifier);
+      }
+      return null;
+    }
+
+    @Override
+    public void getCredential(
+        @NonNull GetCredentialRequestParams params,
+        @NonNull Function1<? super Result<? extends GetCredentialResult>, Unit> callback) {
       try {
-        GoogleSignInOptions.Builder optionsBuilder;
-
-        switch (params.getSignInType()) {
-          case GAMES:
-            optionsBuilder =
-                new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN);
-            break;
-          case STANDARD:
-            optionsBuilder =
-                new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail();
-            break;
-          default:
-            throw new IllegalStateException("Unknown signInOption");
-        }
-
-        // The clientId parameter is not supported on Android.
-        // Android apps are identified by their package name and the SHA-1 of their signing key.
-        // https://developers.google.com/android/guides/client-auth
-        // https://developers.google.com/identity/sign-in/android/start#configure-a-google-api-project
         String serverClientId = params.getServerClientId();
-        if (!isNullOrEmpty(params.getClientId()) && isNullOrEmpty(serverClientId)) {
-          Log.w(
-              "google_sign_in",
-              "clientId is not supported on Android and is interpreted as serverClientId. "
-                  + "Use serverClientId instead to suppress this warning.");
-          serverClientId = params.getClientId();
+        if (serverClientId == null || serverClientId.isEmpty()) {
+          ResultUtilsKt.completeWithGetCredentialFailure(
+              callback,
+              new GetCredentialFailure(
+                  GetCredentialFailureType.MISSING_SERVER_CLIENT_ID,
+                  "CredentialManager requires a serverClientId.",
+                  null));
+          return;
         }
 
-        if (isNullOrEmpty(serverClientId)) {
-          // Only requests a clientId if google-services.json was present and parsed
-          // by the google-services Gradle script.
-          // TODO(jackson): Perhaps we should provide a mechanism to override this
-          // behavior.
-          @SuppressLint("DiscouragedApi")
-          int webClientIdIdentifier =
-              context
-                  .getResources()
-                  .getIdentifier("default_web_client_id", "string", context.getPackageName());
-          if (webClientIdIdentifier != 0) {
-            serverClientId = context.getString(webClientIdIdentifier);
+        // getCredentialAsync requires an activity context, not an application context, per
+        // the API docs.
+        Activity activity = getActivity();
+        if (activity == null) {
+          ResultUtilsKt.completeWithGetCredentialFailure(
+              callback,
+              new GetCredentialFailure(
+                  GetCredentialFailureType.NO_ACTIVITY, "No activity available", null));
+          return;
+        }
+
+        String nonce = params.getNonce();
+        String hostedDomain = params.getHostedDomain();
+        GetCredentialRequest.Builder requestBuilder = new GetCredentialRequest.Builder();
+        if (params.getUseButtonFlow()) {
+          GetSignInWithGoogleOption.Builder optionBuilder =
+              new GetSignInWithGoogleOption.Builder(serverClientId);
+          if (hostedDomain != null) {
+            optionBuilder.setHostedDomainFilter(hostedDomain);
           }
-        }
-        if (!isNullOrEmpty(serverClientId)) {
-          optionsBuilder.requestIdToken(serverClientId);
-          optionsBuilder.requestServerAuthCode(
-              serverClientId, params.getForceCodeForRefreshToken());
-        }
-        requestedScopes = params.getScopes();
-        for (String scope : requestedScopes) {
-          optionsBuilder.requestScopes(new Scope(scope));
-        }
-        if (!isNullOrEmpty(params.getHostedDomain())) {
-          optionsBuilder.setHostedDomain(params.getHostedDomain());
-        }
-
-        String forceAccountName = params.getForceAccountName();
-        if (!isNullOrEmpty(forceAccountName)) {
-          optionsBuilder.setAccountName(forceAccountName);
-        }
-
-        signInClient = googleSignInWrapper.getClient(context, optionsBuilder.build());
-      } catch (Exception e) {
-        throw new FlutterError(ERROR_REASON_EXCEPTION, e.getMessage(), null);
-      }
-    }
-
-    /**
-     * Returns the account information for the user who is signed in to this app. If no user is
-     * signed in, tries to sign the user in without displaying any user interface.
-     */
-    @Override
-    public void signInSilently(@NonNull Messages.Result<Messages.UserData> result) {
-      checkAndSetPendingSignInOperation("signInSilently", result);
-      Task<GoogleSignInAccount> task = signInClient.silentSignIn();
-      if (task.isComplete()) {
-        // There's immediate result available.
-        onSignInResult(task);
-      } else {
-        task.addOnCompleteListener(this::onSignInResult);
-      }
-    }
-
-    /**
-     * Signs the user in via the sign-in user interface, including the OAuth consent flow if scopes
-     * were requested.
-     */
-    @Override
-    public void signIn(@NonNull Messages.Result<Messages.UserData> result) {
-      if (getActivity() == null) {
-        throw new IllegalStateException("signIn needs a foreground activity");
-      }
-      checkAndSetPendingSignInOperation("signIn", result);
-
-      Intent signInIntent = signInClient.getSignInIntent();
-      getActivity().startActivityForResult(signInIntent, REQUEST_CODE_SIGNIN);
-    }
-
-    /**
-     * Signs the user out. Their credentials may remain valid, meaning they'll be able to silently
-     * sign back in.
-     */
-    @Override
-    public void signOut(@NonNull Messages.VoidResult result) {
-      checkAndSetPendingVoidOperation("signOut", result);
-
-      signInClient
-          .signOut()
-          .addOnCompleteListener(
-              task -> {
-                if (task.isSuccessful()) {
-                  finishWithSuccess();
-                } else {
-                  finishWithError(ERROR_REASON_STATUS, "Failed to signout.");
-                }
-              });
-    }
-
-    /** Signs the user out, and revokes their credentials. */
-    @Override
-    public void disconnect(@NonNull Messages.VoidResult result) {
-      checkAndSetPendingVoidOperation("disconnect", result);
-
-      signInClient
-          .revokeAccess()
-          .addOnCompleteListener(
-              task -> {
-                if (task.isSuccessful()) {
-                  finishWithSuccess();
-                } else {
-                  finishWithError(ERROR_REASON_STATUS, "Failed to disconnect.");
-                }
-              });
-    }
-
-    /** Checks if there is a signed in user. */
-    @NonNull
-    @Override
-    public Boolean isSignedIn() {
-      return GoogleSignIn.getLastSignedInAccount(context) != null;
-    }
-
-    @Override
-    public void requestScopes(
-        @NonNull List<String> scopes, @NonNull Messages.Result<Boolean> result) {
-      checkAndSetPendingBoolOperation("requestScopes", result);
-
-      GoogleSignInAccount account = googleSignInWrapper.getLastSignedInAccount(context);
-      if (account == null) {
-        finishWithError(ERROR_REASON_SIGN_IN_REQUIRED, "No account to grant scopes.");
-        return;
-      }
-
-      List<Scope> wrappedScopes = new ArrayList<>();
-
-      for (String scope : scopes) {
-        Scope wrappedScope = new Scope(scope);
-        if (!googleSignInWrapper.hasPermissions(account, wrappedScope)) {
-          wrappedScopes.add(wrappedScope);
-        }
-      }
-
-      if (wrappedScopes.isEmpty()) {
-        finishWithBoolean(true);
-        return;
-      }
-
-      googleSignInWrapper.requestPermissions(
-          getActivity(), REQUEST_CODE_REQUEST_SCOPE, account, wrappedScopes.toArray(new Scope[0]));
-    }
-
-    private void onSignInResult(Task<GoogleSignInAccount> completedTask) {
-      try {
-        GoogleSignInAccount account = completedTask.getResult(ApiException.class);
-        onSignInAccount(account);
-      } catch (ApiException e) {
-        // Forward all errors and let Dart decide how to handle.
-        String errorCode = errorCodeForStatus(e.getStatusCode());
-        finishWithError(errorCode, e.toString());
-      } catch (RuntimeExecutionException e) {
-        finishWithError(ERROR_REASON_EXCEPTION, e.toString());
-      }
-    }
-
-    private void onSignInAccount(GoogleSignInAccount account) {
-      final Messages.UserData.Builder builder =
-          new Messages.UserData.Builder()
-              // TODO(stuartmorgan): Test with games sign-in; according to docs these could be null
-              // as the games login request is currently constructed, but the public Dart API
-              // assumes they are non-null, so the sign-in query may need to change to
-              // include requestEmail() and requestProfile().
-              .setEmail(account.getEmail())
-              .setId(account.getId())
-              .setIdToken(account.getIdToken())
-              .setServerAuthCode(account.getServerAuthCode())
-              .setDisplayName(account.getDisplayName());
-      if (account.getPhotoUrl() != null) {
-        builder.setPhotoUrl(account.getPhotoUrl().toString());
-      }
-      finishWithUserData(builder.build());
-    }
-
-    private String errorCodeForStatus(int statusCode) {
-      switch (statusCode) {
-        case GoogleSignInStatusCodes.SIGN_IN_CANCELLED:
-          return ERROR_REASON_SIGN_IN_CANCELED;
-        case CommonStatusCodes.SIGN_IN_REQUIRED:
-          return ERROR_REASON_SIGN_IN_REQUIRED;
-        case CommonStatusCodes.NETWORK_ERROR:
-          return ERROR_REASON_NETWORK_ERROR;
-        case GoogleSignInStatusCodes.SIGN_IN_CURRENTLY_IN_PROGRESS:
-        case GoogleSignInStatusCodes.SIGN_IN_FAILED:
-        case CommonStatusCodes.INVALID_ACCOUNT:
-        case CommonStatusCodes.INTERNAL_ERROR:
-        default:
-          return ERROR_REASON_SIGN_IN_FAILED;
-      }
-    }
-
-    private void finishWithSuccess() {
-      Objects.requireNonNull(pendingOperation.voidResult).success();
-      pendingOperation = null;
-    }
-
-    private void finishWithBoolean(Boolean value) {
-      Objects.requireNonNull(pendingOperation.boolResult).success(value);
-      pendingOperation = null;
-    }
-
-    private void finishWithUserData(Messages.UserData data) {
-      Objects.requireNonNull(pendingOperation.userDataResult).success(data);
-      pendingOperation = null;
-    }
-
-    private void finishWithError(String errorCode, String errorMessage) {
-      if (pendingOperation.voidResult != null) {
-        Objects.requireNonNull(pendingOperation.voidResult)
-            .error(new FlutterError(errorCode, errorMessage, null));
-      } else {
-        Messages.Result<?> result;
-        if (pendingOperation.userDataResult != null) {
-          result = pendingOperation.userDataResult;
-        } else if (pendingOperation.boolResult != null) {
-          result = pendingOperation.boolResult;
+          if (nonce != null) {
+            optionBuilder.setNonce(nonce);
+          }
+          requestBuilder.addCredentialOption(optionBuilder.build());
         } else {
-          result = pendingOperation.stringResult;
+          GetCredentialRequestGoogleIdOptionParams optionParams = params.getGoogleIdOptionParams();
+          // TODO(stuartmorgan): Add a hosted domain filter here if hosted
+          // domain support is added to GetGoogleIdOption in the future.
+          GetGoogleIdOption.Builder optionBuilder =
+              new GetGoogleIdOption.Builder()
+                  .setFilterByAuthorizedAccounts(optionParams.getFilterToAuthorized())
+                  .setAutoSelectEnabled(optionParams.getAutoSelectEnabled())
+                  .setServerClientId(serverClientId);
+          if (nonce != null) {
+            optionBuilder.setNonce(nonce);
+          }
+          requestBuilder.addCredentialOption(optionBuilder.build());
         }
-        Objects.requireNonNull(result).error(new FlutterError(errorCode, errorMessage, null));
-      }
-      pendingOperation = null;
-    }
 
-    private static boolean isNullOrEmpty(@Nullable String s) {
-      return s == null || s.isEmpty();
-    }
-
-    private static class PendingOperation {
-      final @NonNull String method;
-      final @Nullable Messages.Result<Messages.UserData> userDataResult;
-      final @Nullable Messages.VoidResult voidResult;
-      final @Nullable Messages.Result<Boolean> boolResult;
-      final @Nullable Messages.Result<String> stringResult;
-      final @Nullable Object data;
-
-      PendingOperation(
-          @NonNull String method,
-          @Nullable Messages.Result<Messages.UserData> userDataResult,
-          @Nullable Messages.VoidResult voidResult,
-          @Nullable Messages.Result<Boolean> boolResult,
-          @Nullable Messages.Result<String> stringResult,
-          @Nullable Object data) {
-        assert (userDataResult != null
-            || voidResult != null
-            || boolResult != null
-            || stringResult != null);
-        this.method = method;
-        this.userDataResult = userDataResult;
-        this.voidResult = voidResult;
-        this.boolResult = boolResult;
-        this.stringResult = stringResult;
-        this.data = data;
-      }
-    }
-
-    /**
-     * Clears the token kept in the client side cache.
-     *
-     * <p>Runs on a background task queue.
-     */
-    @Override
-    public void clearAuthCache(@NonNull String token) {
-      try {
-        GoogleAuthUtil.clearToken(context, token);
-      } catch (Exception e) {
-        throw new FlutterError(ERROR_REASON_EXCEPTION, e.getMessage(), null);
-      }
-    }
-
-    /**
-     * Gets an OAuth access token with the scopes that were specified during initialization for the
-     * user with the specified email address.
-     *
-     * <p>Runs on a background task queue.
-     *
-     * <p>If shouldRecoverAuth is set to true and user needs to recover authentication for method to
-     * complete, the method will attempt to recover authentication and rerun method.
-     */
-    @Override
-    public void getAccessToken(
-        @NonNull String email,
-        @NonNull Boolean shouldRecoverAuth,
-        @NonNull Messages.Result<String> result) {
-      try {
-        Account account = new Account(email, "com.google");
-        String scopesStr = "oauth2:" + String.join(" ", requestedScopes);
-        String token = GoogleAuthUtil.getToken(context, account, scopesStr);
-        result.success(token);
-      } catch (UserRecoverableAuthException e) {
-        // This method runs in a background task queue; hop to the main thread for interactions with
-        // plugin state and activities.
-        final Handler handler = new Handler(Looper.getMainLooper());
-        handler.post(
-            () -> {
-              if (shouldRecoverAuth && pendingOperation == null) {
-                Activity activity = getActivity();
-                if (activity == null) {
-                  result.error(
-                      new FlutterError(
-                          ERROR_USER_RECOVERABLE_AUTH,
-                          "Cannot recover auth because app is not in foreground. "
-                              + e.getLocalizedMessage(),
-                          null));
+        CredentialManager credentialManager = credentialManagerFactory.create(context);
+        credentialManager.getCredentialAsync(
+            activity,
+            requestBuilder.build(),
+            null,
+            Executors.newSingleThreadExecutor(),
+            new CredentialManagerCallback<>() {
+              @Override
+              public void onResult(GetCredentialResponse response) {
+                Credential credential = response.getCredential();
+                if (credential instanceof CustomCredential
+                    && credential
+                        .getType()
+                        .equals(GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL)) {
+                  GoogleIdTokenCredential googleIdTokenCredential =
+                      credentialConverter.createFrom(credential);
+                  Uri profilePictureUri = googleIdTokenCredential.getProfilePictureUri();
+                  ResultUtilsKt.completeWithGetGetCredentialResult(
+                      callback,
+                      new GetCredentialSuccess(
+                          new PlatformGoogleIdTokenCredential(
+                              googleIdTokenCredential.getDisplayName(),
+                              googleIdTokenCredential.getFamilyName(),
+                              googleIdTokenCredential.getGivenName(),
+                              googleIdTokenCredential.getId(),
+                              googleIdTokenCredential.getIdToken(),
+                              profilePictureUri == null ? null : profilePictureUri.toString())));
                 } else {
-                  checkAndSetPendingAccessTokenOperation("getTokens", result, email);
-                  Intent recoveryIntent = e.getIntent();
-                  activity.startActivityForResult(recoveryIntent, REQUEST_CODE_RECOVER_AUTH);
+                  ResultUtilsKt.completeWithGetCredentialFailure(
+                      callback,
+                      new GetCredentialFailure(
+                          GetCredentialFailureType.UNEXPECTED_CREDENTIAL_TYPE,
+                          "Unexpected credential type: " + credential,
+                          null));
                 }
-              } else {
-                result.error(
-                    new FlutterError(ERROR_USER_RECOVERABLE_AUTH, e.getLocalizedMessage(), null));
+              }
+
+              @Override
+              public void onError(@NonNull GetCredentialException e) {
+                GetCredentialFailureType type;
+                if (e instanceof GetCredentialCancellationException) {
+                  type = GetCredentialFailureType.CANCELED;
+                } else if (e instanceof GetCredentialInterruptedException) {
+                  type = GetCredentialFailureType.INTERRUPTED;
+                } else if (e instanceof GetCredentialProviderConfigurationException) {
+                  type = GetCredentialFailureType.PROVIDER_CONFIGURATION_ISSUE;
+                } else if (e instanceof GetCredentialUnsupportedException) {
+                  type = GetCredentialFailureType.UNSUPPORTED;
+                } else if (e instanceof NoCredentialException) {
+                  type = GetCredentialFailureType.NO_CREDENTIAL;
+                } else {
+                  type = GetCredentialFailureType.UNKNOWN;
+                }
+                // Errors are reported through the return value as structured data, rather than
+                // a Result error's PlatformException.
+                ResultUtilsKt.completeWithGetCredentialFailure(
+                    callback, new GetCredentialFailure(type, e.getMessage(), null));
               }
             });
-      } catch (Exception e) {
-        result.error(new FlutterError(ERROR_REASON_EXCEPTION, e.getMessage(), null));
+      } catch (RuntimeException e) {
+        ResultUtilsKt.completeWithGetCredentialFailure(
+            callback,
+            new GetCredentialFailure(
+                GetCredentialFailureType.UNKNOWN,
+                e.getMessage(),
+                "Cause: " + e.getCause() + ", Stacktrace: " + Log.getStackTraceString(e)));
       }
+    }
+
+    @Override
+    public void clearCredentialState(@NonNull Function1<? super Result<Unit>, Unit> callback) {
+      CredentialManager credentialManager = credentialManagerFactory.create(context);
+      credentialManager.clearCredentialStateAsync(
+          new ClearCredentialStateRequest(),
+          null,
+          Executors.newSingleThreadExecutor(),
+          new CredentialManagerCallback<>() {
+            @Override
+            public void onResult(Void result) {
+              ResultUtilsKt.completeWithUnitSuccess(callback);
+            }
+
+            @Override
+            public void onError(@NonNull ClearCredentialException e) {
+              ResultUtilsKt.completeWithUnitError(
+                  callback, new FlutterError("Clear Failed", e.getMessage(), null));
+            }
+          });
+    }
+
+    @Override
+    public void clearAuthorizationToken(
+        @NonNull String token, @NonNull Function1<? super Result<Unit>, Unit> callback) {
+      authorizationClientFactory
+          .create(context)
+          .clearToken(ClearTokenRequest.builder().setToken(token).build())
+          .addOnSuccessListener(unused -> ResultUtilsKt.completeWithUnitSuccess(callback))
+          .addOnFailureListener(
+              e ->
+                  ResultUtilsKt.completeWithUnitError(
+                      callback,
+                      new FlutterError("clearAuthorizationToken failed", e.getMessage(), null)));
+    }
+
+    @Override
+    public void authorize(
+        @NonNull PlatformAuthorizationRequest params,
+        boolean promptIfUnauthorized,
+        @NonNull Function1<? super Result<? extends AuthorizeResult>, Unit> callback) {
+      try {
+        List<Scope> requestedScopes = new ArrayList<>();
+        for (String scope : params.getScopes()) {
+          requestedScopes.add(new Scope(scope));
+        }
+        AuthorizationRequest.Builder authorizationRequestBuilder =
+            AuthorizationRequest.builder().setRequestedScopes(requestedScopes);
+        if (params.getHostedDomain() != null) {
+          authorizationRequestBuilder.filterByHostedDomain(params.getHostedDomain());
+        }
+        if (params.getServerClientIdForForcedRefreshToken() != null) {
+          authorizationRequestBuilder.requestOfflineAccess(
+              params.getServerClientIdForForcedRefreshToken(), true);
+        }
+        if (params.getAccountEmail() != null) {
+          authorizationRequestBuilder.setAccount(
+              new Account(params.getAccountEmail(), GOOGLE_ACCOUNT_TYPE));
+        }
+        AuthorizationRequest authorizationRequest = authorizationRequestBuilder.build();
+        authorizationClientFactory
+            .create(context)
+            .authorize(authorizationRequest)
+            .addOnSuccessListener(
+                authorizationResult -> {
+                  if (authorizationResult.hasResolution()) {
+                    if (promptIfUnauthorized) {
+                      Activity activity = getActivity();
+                      if (activity == null) {
+                        ResultUtilsKt.completeWithAuthorizeFailure(
+                            callback,
+                            new AuthorizeFailure(
+                                AuthorizeFailureType.NO_ACTIVITY, "No activity available", null));
+                        return;
+                      }
+                      // Prompt for access. `callback` will be resolved in onActivityResult.
+                      // There must be a pending intent if hasResolution() was true.
+                      PendingIntent pendingIntent =
+                          Objects.requireNonNull(authorizationResult.getPendingIntent());
+                      try {
+                        pendingAuthorizationCallback = callback;
+                        activity.startIntentSenderForResult(
+                            pendingIntent.getIntentSender(),
+                            REQUEST_CODE_AUTHORIZE,
+                            /* fillInIntent */ null,
+                            /* flagsMask */ 0,
+                            /* flagsValue */ 0,
+                            /* extraFlags */ 0,
+                            /* options */ null);
+                      } catch (IntentSender.SendIntentException e) {
+                        pendingAuthorizationCallback = null;
+                        ResultUtilsKt.completeWithAuthorizeFailure(
+                            callback,
+                            new AuthorizeFailure(
+                                AuthorizeFailureType.PENDING_INTENT_EXCEPTION,
+                                e.getMessage(),
+                                null));
+                      }
+                    } else {
+                      ResultUtilsKt.completeWithAuthorizeFailure(
+                          callback,
+                          new AuthorizeFailure(AuthorizeFailureType.UNAUTHORIZED, null, null));
+                    }
+                  } else {
+                    ResultUtilsKt.completeWithAuthorizationResult(
+                        callback,
+                        new PlatformAuthorizationResult(
+                            authorizationResult.getAccessToken(),
+                            authorizationResult.getServerAuthCode(),
+                            authorizationResult.getGrantedScopes()));
+                  }
+                })
+            .addOnFailureListener(
+                e ->
+                    ResultUtilsKt.completeWithAuthorizeFailure(
+                        callback,
+                        new AuthorizeFailure(
+                            AuthorizeFailureType.AUTHORIZE_FAILURE, e.getMessage(), null)));
+      } catch (RuntimeException e) {
+        ResultUtilsKt.completeWithAuthorizeFailure(
+            callback,
+            new AuthorizeFailure(
+                AuthorizeFailureType.API_EXCEPTION,
+                e.getMessage(),
+                "Cause: " + e.getCause() + ", Stacktrace: " + Log.getStackTraceString(e)));
+      }
+    }
+
+    @Override
+    public void revokeAccess(
+        @NonNull PlatformRevokeAccessRequest params,
+        @NonNull Function1<? super Result<Unit>, Unit> callback) {
+      List<Scope> scopes = new ArrayList<>();
+      for (String scope : params.getScopes()) {
+        scopes.add(new Scope(scope));
+      }
+      authorizationClientFactory
+          .create(context)
+          .revokeAccess(
+              RevokeAccessRequest.builder()
+                  .setAccount(new Account(params.getAccountEmail(), GOOGLE_ACCOUNT_TYPE))
+                  .setScopes(scopes)
+                  .build())
+          .addOnSuccessListener(unused -> ResultUtilsKt.completeWithUnitSuccess(callback))
+          .addOnFailureListener(
+              e ->
+                  ResultUtilsKt.completeWithUnitError(
+                      callback, new FlutterError("revokeAccess failed", e.getMessage(), null)));
     }
 
     @Override
     public boolean onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-      if (pendingOperation == null) {
-        return false;
-      }
-      switch (requestCode) {
-        case REQUEST_CODE_RECOVER_AUTH:
-          if (resultCode == Activity.RESULT_OK) {
-            // Recover the previous result and data and attempt to get tokens again.
-            Messages.Result<String> result = Objects.requireNonNull(pendingOperation.stringResult);
-            String email = (String) Objects.requireNonNull(pendingOperation.data);
-            pendingOperation = null;
-            getAccessToken(email, false, result);
-          } else {
-            finishWithError(
-                ERROR_FAILURE_TO_RECOVER_AUTH, "Failed attempt to recover authentication");
+      if (requestCode == REQUEST_CODE_AUTHORIZE) {
+        if (pendingAuthorizationCallback != null) {
+          try {
+            AuthorizationResult authorizationResult =
+                authorizationClientFactory.create(context).getAuthorizationResultFromIntent(data);
+            ResultUtilsKt.completeWithAuthorizationResult(
+                pendingAuthorizationCallback,
+                new PlatformAuthorizationResult(
+                    authorizationResult.getAccessToken(),
+                    authorizationResult.getServerAuthCode(),
+                    authorizationResult.getGrantedScopes()));
+            return true;
+          } catch (ApiException e) {
+            ResultUtilsKt.completeWithAuthorizeFailure(
+                pendingAuthorizationCallback,
+                new AuthorizeFailure(AuthorizeFailureType.API_EXCEPTION, e.getMessage(), null));
           }
-          return true;
-        case REQUEST_CODE_SIGNIN:
-          // Whether resultCode is OK or not, the Task returned by GoogleSigIn will determine
-          // failure with better specifics which are extracted in onSignInResult method.
-          if (data != null) {
-            onSignInResult(GoogleSignIn.getSignedInAccountFromIntent(data));
-          } else {
-            // data is null which is highly unusual for a sign in result.
-            finishWithError(ERROR_REASON_SIGN_IN_FAILED, "Signin failed");
-          }
-          return true;
-        case REQUEST_CODE_REQUEST_SCOPE:
-          finishWithBoolean(resultCode == Activity.RESULT_OK);
-          return true;
-        default:
-          return false;
+          pendingAuthorizationCallback = null;
+        } else {
+          Log.e("google_sign_in", "Unexpected authorization result callback");
+        }
       }
+      return false;
     }
   }
 }

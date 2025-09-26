@@ -1,111 +1,53 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 package io.flutter.plugins.camerax;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 import androidx.camera.video.Recording;
-import io.flutter.plugin.common.BinaryMessenger;
-import java.util.Objects;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
-import org.robolectric.RobolectricTestRunner;
 
-@RunWith(RobolectricTestRunner.class)
 public class RecordingTest {
-  @Rule public MockitoRule mockitoRule = MockitoJUnit.rule();
+  @Test
+  public void close_callsCloseOnInstance() {
+    final PigeonApiRecording api = new TestProxyApiRegistrar().getPigeonApiRecording();
 
-  @Mock public BinaryMessenger mockBinaryMessenger;
-  @Mock public Recording mockRecording;
+    final Recording instance = mock(Recording.class);
+    api.close(instance);
 
-  InstanceManager testInstanceManager;
-
-  @Before
-  public void setUp() {
-    testInstanceManager = spy(InstanceManager.create(identifier -> {}));
-  }
-
-  @After
-  public void tearDown() {
-    testInstanceManager.stopFinalizationListener();
+    verify(instance).close();
   }
 
   @Test
-  public void close_getsRecordingFromInstanceManagerAndCloses() {
-    final RecordingHostApiImpl recordingHostApi =
-        new RecordingHostApiImpl(mockBinaryMessenger, testInstanceManager);
-    final Long recordingId = 5L;
+  public void pause_callsPauseOnInstance() {
+    final PigeonApiRecording api = new TestProxyApiRegistrar().getPigeonApiRecording();
 
-    testInstanceManager.addDartCreatedInstance(mockRecording, recordingId);
+    final Recording instance = mock(Recording.class);
+    api.pause(instance);
 
-    recordingHostApi.close(recordingId);
-
-    verify(mockRecording).close();
-    testInstanceManager.remove(recordingId);
+    verify(instance).pause();
   }
 
   @Test
-  public void stop_getsRecordingFromInstanceManagerAndStops() {
-    final RecordingHostApiImpl recordingHostApi =
-        new RecordingHostApiImpl(mockBinaryMessenger, testInstanceManager);
-    final Long recordingId = 5L;
+  public void resume_callsResumeOnInstance() {
+    final PigeonApiRecording api = new TestProxyApiRegistrar().getPigeonApiRecording();
 
-    testInstanceManager.addDartCreatedInstance(mockRecording, recordingId);
+    final Recording instance = mock(Recording.class);
+    api.resume(instance);
 
-    recordingHostApi.stop(recordingId);
-
-    verify(mockRecording).stop();
-    testInstanceManager.remove(recordingId);
+    verify(instance).resume();
   }
 
   @Test
-  public void resume_getsRecordingFromInstanceManagerAndResumes() {
-    final RecordingHostApiImpl recordingHostApi =
-        new RecordingHostApiImpl(mockBinaryMessenger, testInstanceManager);
-    final Long recordingId = 5L;
+  public void stop_callsStopOnInstance() {
+    final PigeonApiRecording api = new TestProxyApiRegistrar().getPigeonApiRecording();
 
-    testInstanceManager.addDartCreatedInstance(mockRecording, recordingId);
+    final Recording instance = mock(Recording.class);
+    api.stop(instance);
 
-    recordingHostApi.resume(recordingId);
-
-    verify(mockRecording).resume();
-    testInstanceManager.remove(recordingId);
-  }
-
-  @Test
-  public void pause_getsRecordingFromInstanceManagerAndPauses() {
-    final RecordingHostApiImpl recordingHostApi =
-        new RecordingHostApiImpl(mockBinaryMessenger, testInstanceManager);
-    final Long recordingId = 5L;
-
-    testInstanceManager.addDartCreatedInstance(mockRecording, recordingId);
-
-    recordingHostApi.pause(recordingId);
-
-    verify(mockRecording).pause();
-    testInstanceManager.remove(recordingId);
-  }
-
-  @Test
-  public void flutterApiCreateTest() {
-    final RecordingFlutterApiImpl spyRecordingFlutterApi =
-        spy(new RecordingFlutterApiImpl(mockBinaryMessenger, testInstanceManager));
-
-    spyRecordingFlutterApi.create(mockRecording, reply -> {});
-
-    final long identifier =
-        Objects.requireNonNull(testInstanceManager.getIdentifierForStrongReference(mockRecording));
-    verify(spyRecordingFlutterApi).create(eq(identifier), any());
+    verify(instance).stop();
   }
 }

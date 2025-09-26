@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -23,6 +23,7 @@ import io.flutter.plugin.common.BinaryMessenger
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.ObjectOutputStream
+import java.lang.ClassCastException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
@@ -37,7 +38,7 @@ const val LIST_PREFIX = "VGhpcyBpcyB0aGUgcHJlZml4IGZvciBhIGxpc3Qu"
 const val JSON_LIST_PREFIX = LIST_PREFIX + "!"
 const val DOUBLE_PREFIX = "VGhpcyBpcyB0aGUgcHJlZml4IGZvciBEb3VibGUu"
 
-private val Context.sharedPreferencesDataStore: DataStore<Preferences> by
+/*package private*/ val Context.sharedPreferencesDataStore: DataStore<Preferences> by
     preferencesDataStore(SHARED_PREFERENCES_NAME)
 
 /// SharedPreferencesPlugin
@@ -379,7 +380,12 @@ class SharedPreferencesBackend(
   override fun getInt(key: String, options: SharedPreferencesPigeonOptions): Long? {
     val preferences = createSharedPreferences(options)
     return if (preferences.contains(key)) {
-      preferences.getLong(key, 0)
+      try {
+        preferences.getLong(key, 0)
+      } catch (e: ClassCastException) {
+        // Retry with getInt in case the preference was written by native code directly.
+        preferences.getInt(key, 0).toLong()
+      }
     } else {
       null
     }
