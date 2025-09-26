@@ -295,7 +295,7 @@ void main() {
         'packages/a_plugin/android/build.gradle': <String>[
           '-  androidTestImplementation("androidx.test.espresso:espresso-core:3.2.0")',
           '-  testImplementation("junit:junit:4.10.0")',
-          '+  androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0"',
+          '+  androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")',
           '+  testImplementation("junit:junit:4.13.2")',
         ]
       });
