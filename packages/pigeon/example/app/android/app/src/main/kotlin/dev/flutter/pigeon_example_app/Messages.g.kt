@@ -142,7 +142,7 @@ private open class MessagesPigeonCodec : StandardMessageCodec() {
     when (value) {
       is Code -> {
         stream.write(129)
-        writeValue(stream, value.raw)
+        writeValue(stream, value.raw.toLong())
       }
       is MessageData -> {
         stream.write(130)

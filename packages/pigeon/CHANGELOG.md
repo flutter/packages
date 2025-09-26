@@ -1,6 +1,7 @@
-## NEXT
+## 26.0.2
 
 * Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+* [kotlin] Serialize custom enums as `Long` instead of `Int` to avoid `ClassCastException` on decoding.
 
 ## 26.0.1
 

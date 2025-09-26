@@ -508,7 +508,7 @@ private open class ProxyApiTestsPigeonCodec : StandardMessageCodec() {
     when (value) {
       is ProxyApiTestEnum -> {
         stream.write(129)
-        writeValue(stream, value.raw)
+        writeValue(stream, value.raw.toLong())
       }
       else -> super.writeValue(stream, value)
     }
