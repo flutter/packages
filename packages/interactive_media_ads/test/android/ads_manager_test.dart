@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -196,6 +196,16 @@ void main() {
       when(mockError.message).thenReturn('error message');
       when(mockErrorEvent.error).thenReturn(mockError);
       onAdErrorCallback(MockAdErrorListener(), mockErrorEvent);
+    });
+
+    test('adCuePoints', () {
+      final MockAdsManager mockAdsManager = MockAdsManager();
+
+      final List<double> cuePoints = <double>[1.0];
+      when(mockAdsManager.adCuePoints).thenReturn(cuePoints);
+      final AndroidAdsManager adsManager = AndroidAdsManager(mockAdsManager);
+
+      expect(adsManager.adCuePoints, <Duration>[const Duration(seconds: 1)]);
     });
   });
 }

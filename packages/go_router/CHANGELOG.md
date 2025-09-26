@@ -1,3 +1,15 @@
+## 16.2.4
+
+- Fix Android Cold Start deep link with empty path losing scheme and authority.
+
+## 16.2.3
+
+- Fixes an issue where iOS back gesture pops entire ShellRoute instead of the active sub-route.
+
+## 16.2.2
+
+- Fixes broken links in readme.
+
 ## 16.2.1
 
 - Adds state restoration topic to documentation.

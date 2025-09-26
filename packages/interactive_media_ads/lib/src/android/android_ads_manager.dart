@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -18,7 +18,16 @@ class AndroidAdsManager extends PlatformAdsManager {
   @internal
   AndroidAdsManager(ima.AdsManager manager, {InteractiveMediaAdsProxy? proxy})
     : _manager = manager,
-      _proxy = proxy ?? const InteractiveMediaAdsProxy();
+      _proxy = proxy ?? const InteractiveMediaAdsProxy(),
+      super(
+        adCuePoints: List<Duration>.unmodifiable(
+          manager.adCuePoints.map((double seconds) {
+            return Duration(
+              milliseconds: (seconds * Duration.millisecondsPerSecond).round(),
+            );
+          }),
+        ),
+      );
 
   final ima.AdsManager _manager;
   final InteractiveMediaAdsProxy _proxy;

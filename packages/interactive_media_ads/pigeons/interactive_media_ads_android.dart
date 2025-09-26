@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -448,6 +448,11 @@ abstract class ContentProgressProvider {
   ),
 )
 abstract class AdsManager extends BaseManager {
+  /// List of content time offsets in seconds at which ad breaks are scheduled.
+  ///
+  /// The list will be empty if no ad breaks are scheduled.
+  late List<double> adCuePoints;
+
   /// Discards current ad break and resumes content.
   void discardAdBreak();
 
@@ -456,11 +461,6 @@ abstract class AdsManager extends BaseManager {
 
   /// Starts playing the ads.
   void start();
-
-  /// List of content time offsets in seconds at which ad breaks are scheduled.
-  ///
-  /// The list will be empty if no ad breaks are scheduled.
-  List<double> getAdCuePoints();
 
   /// Resumes the current ad.
   void resume();
