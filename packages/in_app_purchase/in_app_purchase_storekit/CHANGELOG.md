@@ -1,4 +1,4 @@
-## 0.4.5
+## 0.4.6
 
 * Adds a new case `.unverified` to enum `SK2ProductPurchaseResult`
 * Fixes the StoreKit2 implementation throwing `PlatformException`s instead of returning the corresponding 
