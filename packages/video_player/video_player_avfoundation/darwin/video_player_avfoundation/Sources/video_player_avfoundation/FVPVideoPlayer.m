@@ -69,8 +69,6 @@ static NSDictionary<NSString *, NSValue *> *FVPGetPlayerItemObservations(void) {
 @implementation FVPVideoPlayer {
   // Whether or not player and player item listeners have ever been registered.
   BOOL _listenersRegistered;
-  // Whether the status of the associated AVPlayerItem has become .readyToPlay at least once.
-  BOOL _isInitialized;
 }
 
 - (instancetype)initWithPlayerItem:(AVPlayerItem *)item
@@ -287,11 +285,10 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
     case AVPlayerItemStatusUnknown:
       break;
     case AVPlayerItemStatusReadyToPlay:
-      if (!_isInitialized) {
-        _isInitialized = YES;
+      if (_isInitialized) {
         [item addOutput:_videoOutput];
+        [self reportInitializedIfReadyToPlay];
       }
-      [self reportInitializedIfReadyToPlay];
       break;
   }
 }
@@ -368,6 +365,9 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   AVPlayerItem *currentItem = self.player.currentItem;
   NSAssert(currentItem.status == AVPlayerItemStatusReadyToPlay,
            @"reportInitializedIfReadyToPlay was called when the item wasn't ready to play.");
+  NSAssert(!_isInitialized, @"reportInitializedIfReadyToPlay should only be called once.");
+
+  _isInitialized = YES;
   [self updatePlayingState];
   [self.eventListener videoPlayerDidInitializeWithDuration:self.duration
                                                       size:currentItem.presentationSize];
