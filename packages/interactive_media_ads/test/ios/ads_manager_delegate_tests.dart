@@ -72,6 +72,7 @@ void main() {
         delegate,
         ima.IMAAdsManager.pigeon_detached(
           pigeon_instanceManager: instanceManager,
+          adCuePoints: const <double>[],
         ),
         ima.IMAAdEvent.pigeon_detached(
           type: ima.AdEventType.allAdsCompleted,
@@ -138,6 +139,7 @@ void main() {
         delegate,
         ima.IMAAdsManager.pigeon_detached(
           pigeon_instanceManager: instanceManager,
+          adCuePoints: const <double>[],
         ),
       );
     });
@@ -198,6 +200,7 @@ void main() {
         delegate,
         ima.IMAAdsManager.pigeon_detached(
           pigeon_instanceManager: instanceManager,
+          adCuePoints: const <double>[],
         ),
       );
     });
@@ -264,6 +267,7 @@ void main() {
         delegate,
         ima.IMAAdsManager.pigeon_detached(
           pigeon_instanceManager: instanceManager,
+          adCuePoints: const <double>[],
         ),
         ima.IMAAdError.pigeon_detached(
           type: ima.AdErrorType.loadingFailed,

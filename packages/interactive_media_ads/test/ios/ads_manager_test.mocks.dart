@@ -45,6 +45,15 @@ class _FakeIMAAdsRenderingSettings_2 extends _i1.SmartFake
 /// See the documentation for Mockito's code generation for more information.
 class MockIMAAdsManager extends _i1.Mock implements _i2.IMAAdsManager {
   @override
+  List<double> get adCuePoints =>
+      (super.noSuchMethod(
+            Invocation.getter(#adCuePoints),
+            returnValue: <double>[],
+            returnValueForMissingStub: <double>[],
+          )
+          as List<double>);
+
+  @override
   _i2.PigeonInstanceManager get pigeon_instanceManager =>
       (super.noSuchMethod(
             Invocation.getter(#pigeon_instanceManager),
