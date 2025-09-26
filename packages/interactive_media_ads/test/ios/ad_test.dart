@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -54,7 +54,7 @@ void main() {
 
       didReceiveAdEventCallback(
         delegate,
-        IMAAdsManager.pigeon_detached(),
+        IMAAdsManager.pigeon_detached(adCuePoints: const <double>[]),
         IMAAdEvent.pigeon_detached(
           type: AdEventType.allAdsCompleted,
           typeString: 'typeString',
@@ -110,7 +110,7 @@ void main() {
 
       didReceiveAdEventCallback(
         delegate,
-        IMAAdsManager.pigeon_detached(),
+        IMAAdsManager.pigeon_detached(adCuePoints: const <double>[]),
         IMAAdEvent.pigeon_detached(
           type: AdEventType.allAdsCompleted,
           typeString: 'typeString',
@@ -164,7 +164,7 @@ void main() {
 
       didReceiveAdEventCallback(
         delegate,
-        IMAAdsManager.pigeon_detached(),
+        IMAAdsManager.pigeon_detached(adCuePoints: const <double>[]),
         IMAAdEvent.pigeon_detached(
           type: AdEventType.allAdsCompleted,
           typeString: 'typeString',
