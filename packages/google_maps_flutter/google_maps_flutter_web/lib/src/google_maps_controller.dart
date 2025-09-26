@@ -81,7 +81,7 @@ class GoogleMapController {
         ),
       MarkerType.advancedMarker => AdvancedMarkersController(
           stream: stream,
-          clusterManagersController: clusterManagersController!
+          clusterManagersController: _clusterManagersController!
               as ClusterManagersController<gmaps.AdvancedMarkerElement>,
         ),
     };
