@@ -634,6 +634,8 @@ class NIAllNullableTypesWithoutRecursion {
     this.aNullableInt,
     this.aNullableInt64,
     this.aNullableDouble,
+    this.aNullableEnum,
+    this.anotherNullableEnum,
     this.aNullableString,
     this.aNullableObject,
     this.list,
@@ -647,6 +649,10 @@ class NIAllNullableTypesWithoutRecursion {
   int? aNullableInt64;
 
   double? aNullableDouble;
+
+  NIAnEnum? aNullableEnum;
+
+  NIAnotherEnum? anotherNullableEnum;
 
   String? aNullableString;
 
@@ -662,6 +668,8 @@ class NIAllNullableTypesWithoutRecursion {
       aNullableInt,
       aNullableInt64,
       aNullableDouble,
+      aNullableEnum,
+      anotherNullableEnum,
       aNullableString,
       aNullableObject,
       list,
@@ -675,6 +683,9 @@ class NIAllNullableTypesWithoutRecursion {
   //     aNullableInt: _PigeonJniCodec.writeValue<JLong?>(aNullableInt),
   //     aNullableInt64: _PigeonJniCodec.writeValue<JLong?>(aNullableInt64),
   //     aNullableDouble: _PigeonJniCodec.writeValue<JDouble?>(aNullableDouble),
+  //     aNullableEnum: aNullableEnum == null ? null : aNullableEnum!.toJni(),
+  //     anotherNullableEnum:
+  //         anotherNullableEnum == null ? null : anotherNullableEnum!.toJni(),
   //     aNullableString: _PigeonJniCodec.writeValue<JString?>(aNullableString),
   //     aNullableObject: _PigeonJniCodec.writeValue<JObject?>(aNullableObject),
   //     list: _PigeonJniCodec.writeValue<JList<JObject?>?>(list),
@@ -689,6 +700,10 @@ class NIAllNullableTypesWithoutRecursion {
       aNullableInt: _PigeonFfiCodec.writeValue<NSNumber?>(aNullableInt),
       aNullableInt64: _PigeonFfiCodec.writeValue<NSNumber?>(aNullableInt64),
       aNullableDouble: _PigeonFfiCodec.writeValue<NSNumber?>(aNullableDouble),
+      aNullableEnum:
+          _PigeonFfiCodec.writeValue<NSNumber?>(aNullableEnum?.index),
+      anotherNullableEnum:
+          _PigeonFfiCodec.writeValue<NSNumber?>(anotherNullableEnum?.index),
       aNullableString: _PigeonFfiCodec.writeValue<NSString?>(aNullableString),
       aNullableObject: _PigeonFfiCodec.writeValue<NSObject>(aNullableObject),
       list: _PigeonFfiCodec.writeValue<NSMutableArray?>(list),
@@ -715,6 +730,9 @@ class NIAllNullableTypesWithoutRecursion {
             aNullableDouble: jniClass
                 .getANullableDouble()
                 ?.doubleValue(releaseOriginal: true),
+            aNullableEnum: NIAnEnum.fromJni(jniClass.getANullableEnum()),
+            anotherNullableEnum:
+                NIAnotherEnum.fromJni(jniClass.getAnotherNullableEnum()),
             aNullableString: jniClass
                 .getANullableString()
                 ?.toDartString(releaseOriginal: true),
@@ -738,6 +756,12 @@ class NIAllNullableTypesWithoutRecursion {
             aNullableInt: ffiClass.aNullableInt?.longValue,
             aNullableInt64: ffiClass.aNullableInt64?.longValue,
             aNullableDouble: ffiClass.aNullableDouble?.doubleValue,
+            aNullableEnum: ffiClass.aNullableEnum == null
+                ? null
+                : NIAnEnum.values[ffiClass.aNullableEnum!.longValue],
+            anotherNullableEnum: ffiClass.anotherNullableEnum == null
+                ? null
+                : NIAnotherEnum.values[ffiClass.anotherNullableEnum!.longValue],
             aNullableString: ffiClass.aNullableString?.toDartString(),
             aNullableObject:
                 _PigeonFfiCodec.readValue(ffiClass.aNullableObject),
@@ -756,10 +780,12 @@ class NIAllNullableTypesWithoutRecursion {
       aNullableInt: result[1] as int?,
       aNullableInt64: result[2] as int?,
       aNullableDouble: result[3] as double?,
-      aNullableString: result[4] as String?,
-      aNullableObject: result[5],
-      list: result[6] as List<Object?>?,
-      map: result[7] as Map<Object?, Object?>?,
+      aNullableEnum: result[4] as NIAnEnum?,
+      anotherNullableEnum: result[5] as NIAnotherEnum?,
+      aNullableString: result[6] as String?,
+      aNullableObject: result[7],
+      list: result[8] as List<Object?>?,
+      map: result[9] as Map<Object?, Object?>?,
     );
   }
 
@@ -777,6 +803,8 @@ class NIAllNullableTypesWithoutRecursion {
         aNullableInt == other.aNullableInt &&
         aNullableInt64 == other.aNullableInt64 &&
         aNullableDouble == other.aNullableDouble &&
+        aNullableEnum == other.aNullableEnum &&
+        anotherNullableEnum == other.anotherNullableEnum &&
         aNullableString == other.aNullableString &&
         aNullableObject == other.aNullableObject &&
         _deepEquals(list, other.list) &&
@@ -1224,6 +1252,43 @@ class NIHostIntegrationCoreApiForNativeInterop {
         } else {
           final NIAllNullableTypesWithoutRecursion? dartTypeRes =
               NIAllNullableTypesWithoutRecursion.fromFfi(res);
+          return dartTypeRes;
+        }
+      }
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    } catch (e) {
+      rethrow;
+    }
+    throw Exception("this shouldn't be possible");
+  }
+
+  NIAllNullableTypesWithoutRecursion sendMultipleNullableTypesWithoutRecursion(
+      bool? aNullableBool, int? aNullableInt, String? aNullableString) {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final ffi_bridge.NIAllNullableTypesWithoutRecursionBridge? res =
+            _ffiApi.sendMultipleNullableTypesWithoutRecursionWithANullableBool(
+                _PigeonFfiCodec.writeValue<NSNumber?>(aNullableBool),
+                aNullableInt:
+                    _PigeonFfiCodec.writeValue<NSNumber?>(aNullableInt),
+                aNullableString:
+                    _PigeonFfiCodec.writeValue<NSString?>(aNullableString),
+                wrappedError: error);
+        if (error.code != null) {
+          throw PlatformException(
+              code: error.code!.toDartString(),
+              message: error.message?.toDartString(),
+              details: error.details.toString());
+        } else {
+          final NIAllNullableTypesWithoutRecursion dartTypeRes =
+              NIAllNullableTypesWithoutRecursion.fromFfi(res)!;
           return dartTypeRes;
         }
       }
@@ -1994,6 +2059,44 @@ class NIHostIntegrationCoreApi {
       );
     } else {
       return (pigeonVar_replyList[0] as NIAllNullableTypesWithoutRecursion?);
+    }
+  }
+
+  Future<NIAllNullableTypesWithoutRecursion>
+      sendMultipleNullableTypesWithoutRecursion(bool? aNullableBool,
+          int? aNullableInt, String? aNullableString) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.sendMultipleNullableTypesWithoutRecursion(
+          aNullableBool, aNullableInt, aNullableString);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.sendMultipleNullableTypesWithoutRecursion$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel
+        .send(<Object?>[aNullableBool, aNullableInt, aNullableString]);
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as NIAllNullableTypesWithoutRecursion?)!;
     }
   }
 

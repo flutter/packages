@@ -262,6 +262,13 @@ class _FfiType {
       return '${type.baseName}.fromFfi($varName)${_getForceNonNullSymbol(!type.isNullable)}';
     }
     if (type.isEnum && classField) {
+      if (type.isNullable) {
+        return _wrapInNullCheckIfNullable(
+            nullable: type.isNullable,
+            varName: varName,
+            code:
+                '${type.baseName}.values[$varName${_getForceNonNullSymbol(type.isNullable)}.longValue]');
+      }
       return '${type.baseName}.values[$varName.index]';
     }
     String asType = ' as ${getDartReturnType(true)}';
@@ -1044,19 +1051,19 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
       indent.writeScoped(
           'return ${ffiClass.ffiName}.alloc().initWith${toUpperCamelCase(fields.first.name)}(',
           ');', () {
-        bool first = true;
+        bool needsName = false;
         for (final NamedType field in fields) {
           final _FfiType ffiType = _FfiType.fromTypeDeclaration(field.type);
           indent.writeln(
-            '${first ? '' : '${field.name}: '}${ffiType.getToFfiCall(
+            '${needsName ? '${field.name}: ' : ''}${ffiType.getToFfiCall(
               field.type,
-              '${field.name}${ffiType.type.isEnum ? '.index' : ''}',
+              '${field.name}${ffiType.type.isEnum ? '${_getNullableSymbol(ffiType.type.isNullable)}.index' : ''}',
               ffiType,
               forceNonNull: true,
               classField: true,
             )},',
           );
-          first = false;
+          needsName = true;
         }
       });
     });
@@ -1784,12 +1791,16 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
   }
 
   String _getFfiMethodCallArguments(Iterable<Parameter> parameters) {
+    bool needsName = false;
     return parameters.map((Parameter parameter) {
       final _FfiType ffiType = _FfiType.fromTypeDeclaration(parameter.type);
-      return ffiType.getToFfiCall(
-          parameter.type,
-          '${parameter.name}${(parameter.type.isEnum && !parameter.type.isNullable) ? '.index' : ''}',
-          ffiType);
+      final String argument = (needsName ? '${parameter.name}: ' : '') +
+          ffiType.getToFfiCall(
+              parameter.type,
+              '${parameter.name}${(parameter.type.isEnum && !parameter.type.isNullable) ? '.index' : ''}',
+              ffiType);
+      needsName = true;
+      return argument;
     }).join(', ');
   }
 

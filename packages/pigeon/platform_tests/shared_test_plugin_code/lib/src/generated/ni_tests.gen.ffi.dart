@@ -37,10 +37,10 @@ final _objc_msgSend_19nvye5 = objc.msgSendPointer
             ffi.Pointer<objc.ObjCSelector>, ffi.Pointer<objc.ObjCObject>)>();
 typedef instancetype = ffi.Pointer<objc.ObjCObject>;
 typedef Dartinstancetype = objc.ObjCObjectBase;
-late final _sel_initWithANullableBool_aNullableInt_aNullableInt64_aNullableDouble_aNullableString_aNullableObject_list_map_ =
+late final _sel_initWithANullableBool_aNullableInt_aNullableInt64_aNullableDouble_aNullableEnum_anotherNullableEnum_aNullableString_aNullableObject_list_map_ =
     objc.registerName(
-        "initWithANullableBool:aNullableInt:aNullableInt64:aNullableDouble:aNullableString:aNullableObject:list:map:");
-final _objc_msgSend_9sahzl = objc.msgSendPointer
+        "initWithANullableBool:aNullableInt:aNullableInt64:aNullableDouble:aNullableEnum:anotherNullableEnum:aNullableString:aNullableObject:list:map:");
+final _objc_msgSend_l3ma9p = objc.msgSendPointer
     .cast<
         ffi.NativeFunction<
             ffi.Pointer<objc.ObjCObject> Function(
@@ -53,11 +53,15 @@ final _objc_msgSend_9sahzl = objc.msgSendPointer
                 ffi.Pointer<objc.ObjCObject>,
                 ffi.Pointer<objc.ObjCObject>,
                 ffi.Pointer<objc.ObjCObject>,
+                ffi.Pointer<objc.ObjCObject>,
+                ffi.Pointer<objc.ObjCObject>,
                 ffi.Pointer<objc.ObjCObject>)>>()
     .asFunction<
         ffi.Pointer<objc.ObjCObject> Function(
             ffi.Pointer<objc.ObjCObject>,
             ffi.Pointer<objc.ObjCSelector>,
+            ffi.Pointer<objc.ObjCObject>,
+            ffi.Pointer<objc.ObjCObject>,
             ffi.Pointer<objc.ObjCObject>,
             ffi.Pointer<objc.ObjCObject>,
             ffi.Pointer<objc.ObjCObject>,
@@ -92,6 +96,11 @@ late final _sel_aNullableInt64 = objc.registerName("aNullableInt64");
 late final _sel_setANullableInt64_ = objc.registerName("setANullableInt64:");
 late final _sel_aNullableDouble = objc.registerName("aNullableDouble");
 late final _sel_setANullableDouble_ = objc.registerName("setANullableDouble:");
+late final _sel_aNullableEnum = objc.registerName("aNullableEnum");
+late final _sel_setANullableEnum_ = objc.registerName("setANullableEnum:");
+late final _sel_anotherNullableEnum = objc.registerName("anotherNullableEnum");
+late final _sel_setAnotherNullableEnum_ =
+    objc.registerName("setAnotherNullableEnum:");
 late final _sel_aNullableString = objc.registerName("aNullableString");
 late final _sel_setANullableString_ = objc.registerName("setANullableString:");
 late final _sel_aNullableObject = objc.registerName("aNullableObject");
@@ -278,23 +287,27 @@ class NIAllNullableTypesWithoutRecursionBridge extends objc.NSObject {
 
 extension NIAllNullableTypesWithoutRecursionBridge$Methods
     on NIAllNullableTypesWithoutRecursionBridge {
-  /// initWithANullableBool:aNullableInt:aNullableInt64:aNullableDouble:aNullableString:aNullableObject:list:map:
+  /// initWithANullableBool:aNullableInt:aNullableInt64:aNullableDouble:aNullableEnum:anotherNullableEnum:aNullableString:aNullableObject:list:map:
   NIAllNullableTypesWithoutRecursionBridge initWithANullableBool(
       objc.NSNumber? aNullableBool,
       {objc.NSNumber? aNullableInt,
       objc.NSNumber? aNullableInt64,
       objc.NSNumber? aNullableDouble,
+      objc.NSNumber? aNullableEnum,
+      objc.NSNumber? anotherNullableEnum,
       objc.NSString? aNullableString,
       objc.NSObject? aNullableObject,
       objc.NSArray? list,
       objc.NSDictionary? map}) {
-    final _ret = _objc_msgSend_9sahzl(
+    final _ret = _objc_msgSend_l3ma9p(
         this.ref.retainAndReturnPointer(),
-        _sel_initWithANullableBool_aNullableInt_aNullableInt64_aNullableDouble_aNullableString_aNullableObject_list_map_,
+        _sel_initWithANullableBool_aNullableInt_aNullableInt64_aNullableDouble_aNullableEnum_anotherNullableEnum_aNullableString_aNullableObject_list_map_,
         aNullableBool?.ref.pointer ?? ffi.nullptr,
         aNullableInt?.ref.pointer ?? ffi.nullptr,
         aNullableInt64?.ref.pointer ?? ffi.nullptr,
         aNullableDouble?.ref.pointer ?? ffi.nullptr,
+        aNullableEnum?.ref.pointer ?? ffi.nullptr,
+        anotherNullableEnum?.ref.pointer ?? ffi.nullptr,
         aNullableString?.ref.pointer ?? ffi.nullptr,
         aNullableObject?.ref.pointer ?? ffi.nullptr,
         list?.ref.pointer ?? ffi.nullptr,
@@ -356,6 +369,35 @@ extension NIAllNullableTypesWithoutRecursionBridge$Methods
   /// setANullableDouble:
   set aNullableDouble(objc.NSNumber? value) {
     _objc_msgSend_xtuoz7(this.ref.pointer, _sel_setANullableDouble_,
+        value?.ref.pointer ?? ffi.nullptr);
+  }
+
+  /// aNullableEnum
+  objc.NSNumber? get aNullableEnum {
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_aNullableEnum);
+    return _ret.address == 0
+        ? null
+        : objc.NSNumber.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// setANullableEnum:
+  set aNullableEnum(objc.NSNumber? value) {
+    _objc_msgSend_xtuoz7(this.ref.pointer, _sel_setANullableEnum_,
+        value?.ref.pointer ?? ffi.nullptr);
+  }
+
+  /// anotherNullableEnum
+  objc.NSNumber? get anotherNullableEnum {
+    final _ret =
+        _objc_msgSend_151sglz(this.ref.pointer, _sel_anotherNullableEnum);
+    return _ret.address == 0
+        ? null
+        : objc.NSNumber.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// setAnotherNullableEnum:
+  set anotherNullableEnum(objc.NSNumber? value) {
+    _objc_msgSend_xtuoz7(this.ref.pointer, _sel_setAnotherNullableEnum_,
         value?.ref.pointer ?? ffi.nullptr);
   }
 
@@ -1063,6 +1105,27 @@ final _objc_msgSend_ladeuy = objc.msgSendPointer
 late final _sel_echoAllNullableTypesWithoutRecursionWithEverything_wrappedError_ =
     objc.registerName(
         "echoAllNullableTypesWithoutRecursionWithEverything:wrappedError:");
+late final _sel_sendMultipleNullableTypesWithoutRecursionWithANullableBool_aNullableInt_aNullableString_wrappedError_ =
+    objc.registerName(
+        "sendMultipleNullableTypesWithoutRecursionWithANullableBool:aNullableInt:aNullableString:wrappedError:");
+final _objc_msgSend_s92gih = objc.msgSendPointer
+    .cast<
+        ffi.NativeFunction<
+            ffi.Pointer<objc.ObjCObject> Function(
+                ffi.Pointer<objc.ObjCObject>,
+                ffi.Pointer<objc.ObjCSelector>,
+                ffi.Pointer<objc.ObjCObject>,
+                ffi.Pointer<objc.ObjCObject>,
+                ffi.Pointer<objc.ObjCObject>,
+                ffi.Pointer<objc.ObjCObject>)>>()
+    .asFunction<
+        ffi.Pointer<objc.ObjCObject> Function(
+            ffi.Pointer<objc.ObjCObject>,
+            ffi.Pointer<objc.ObjCSelector>,
+            ffi.Pointer<objc.ObjCObject>,
+            ffi.Pointer<objc.ObjCObject>,
+            ffi.Pointer<objc.ObjCObject>,
+            ffi.Pointer<objc.ObjCObject>)>();
 late final _sel_echoNullableIntWithANullableInt_wrappedError_ =
     objc.registerName("echoNullableIntWithANullableInt:wrappedError:");
 late final _sel_echoNullableDoubleWithANullableDouble_wrappedError_ =
@@ -1388,6 +1451,33 @@ extension NIHostIntegrationCoreApiSetup$Methods
         this.ref.pointer,
         _sel_echoAllNullableTypesWithoutRecursionWithEverything_wrappedError_,
         everything?.ref.pointer ?? ffi.nullptr,
+        wrappedError.ref.pointer);
+    return _ret.address == 0
+        ? null
+        : NIAllNullableTypesWithoutRecursionBridge.castFromPointer(_ret,
+            retain: true, release: true);
+  }
+
+  /// sendMultipleNullableTypesWithoutRecursionWithANullableBool:aNullableInt:aNullableString:wrappedError:
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  NIAllNullableTypesWithoutRecursionBridge?
+      sendMultipleNullableTypesWithoutRecursionWithANullableBool(
+          objc.NSNumber? aNullableBool,
+          {objc.NSNumber? aNullableInt,
+          objc.NSString? aNullableString,
+          required NiTestsError wrappedError}) {
+    objc.checkOsVersionInternal(
+        'NIHostIntegrationCoreApiSetup.sendMultipleNullableTypesWithoutRecursionWithANullableBool:aNullableInt:aNullableString:wrappedError:',
+        iOS: (false, (13, 0, 0)),
+        macOS: (false, (16, 0, 0)));
+    final _ret = _objc_msgSend_s92gih(
+        this.ref.pointer,
+        _sel_sendMultipleNullableTypesWithoutRecursionWithANullableBool_aNullableInt_aNullableString_wrappedError_,
+        aNullableBool?.ref.pointer ?? ffi.nullptr,
+        aNullableInt?.ref.pointer ?? ffi.nullptr,
+        aNullableString?.ref.pointer ?? ffi.nullptr,
         wrappedError.ref.pointer);
     return _ret.address == 0
         ? null

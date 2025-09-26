@@ -795,9 +795,7 @@ if (wrapped == nil) {
       case 'int':
       case 'double':
       case 'bool':
-        return type.isNullable
-            ? 'isNullish($varName) ? nil : NSNumber(value: $varName!)'
-            : varName;
+        return type.isNullable ? _numberToObjc(varName, getter: '!') : varName;
       case 'String':
         return '$varName as NSString$nullable';
       case 'List':
@@ -807,25 +805,41 @@ if (wrapped == nil) {
       case 'Object':
         return '$varName as! NSObject$nullable';
       default:
+        if (type.isEnum && type.isNullable) {
+          return _numberToObjc(varName, getter: '!.rawValue');
+        }
         return varName;
     }
   }
 
+  String _numberToObjc(String varName, {String getter = ''}) =>
+      'isNullish($varName) ? nil : NSNumber(value: $varName$getter)';
+
   String _varToSwift(String varName, TypeDeclaration type) {
     final String nullable = type.isNullable ? '?' : '';
-    return switch (type.baseName) {
-      'int' => type.isNullable
-          ? 'isNullish($varName) ? nil : $varName!.int64Value'
-          : varName,
-      'double' => type.isNullable
-          ? 'isNullish($varName) ? nil : $varName!.doubleValue'
-          : varName,
-      'bool' => type.isNullable
-          ? 'isNullish($varName) ? nil : $varName!.boolValue'
-          : varName,
-      'String' => '$varName as String$nullable',
-      _ => varName
-    };
+    switch (type.baseName) {
+      case 'int':
+        return type.isNullable
+            ? 'isNullish($varName) ? nil : $varName!.int64Value'
+            : varName;
+      case 'double':
+        return type.isNullable
+            ? 'isNullish($varName) ? nil : $varName!.doubleValue'
+            : varName;
+      case 'bool':
+        return type.isNullable
+            ? 'isNullish($varName) ? nil : $varName!.boolValue'
+            : varName;
+      case 'String':
+        return '$varName as String$nullable';
+      default:
+        if (type.isEnum) {
+          return type.isNullable
+              ? 'isNullish($varName) ? nil : ${type.baseName}.init(rawValue: $varName!.intValue)'
+              : varName;
+        }
+        return varName;
+    }
   }
 
   void _writeClassInit(Indent indent, List<NamedType> fields, String objc,
@@ -3377,6 +3391,9 @@ String _swiftTypeForDartType(
   bool mapKey = false,
   bool useFfi = false,
 }) {
+  if (useFfi && type.isEnum && type.isNullable) {
+    return 'NSNumber';
+  }
   return _swiftTypeForBuiltinDartType(type, mapKey: mapKey, useFfi: useFfi) ??
       _swiftTypeForProxyApiType(type) ??
       type.baseName;

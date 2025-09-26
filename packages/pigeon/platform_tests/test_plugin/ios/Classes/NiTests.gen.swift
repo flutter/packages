@@ -241,6 +241,8 @@ struct NIAllNullableTypesWithoutRecursion {
   var aNullableInt: Int64? = nil
   var aNullableInt64: Int64? = nil
   var aNullableDouble: Double? = nil
+  var aNullableEnum: NIAnEnum? = nil
+  var anotherNullableEnum: NIAnotherEnum? = nil
   var aNullableString: String? = nil
   var aNullableObject: Any? = nil
   var list: [Any?]? = nil
@@ -251,16 +253,20 @@ struct NIAllNullableTypesWithoutRecursion {
     let aNullableInt: Int64? = nilOrValue(pigeonVar_list[1])
     let aNullableInt64: Int64? = nilOrValue(pigeonVar_list[2])
     let aNullableDouble: Double? = nilOrValue(pigeonVar_list[3])
-    let aNullableString: String? = nilOrValue(pigeonVar_list[4])
-    let aNullableObject: Any? = pigeonVar_list[5]
-    let list: [Any?]? = nilOrValue(pigeonVar_list[6])
-    let map: [AnyHashable?: Any?]? = nilOrValue(pigeonVar_list[7])
+    let aNullableEnum: NIAnEnum? = nilOrValue(pigeonVar_list[4])
+    let anotherNullableEnum: NIAnotherEnum? = nilOrValue(pigeonVar_list[5])
+    let aNullableString: String? = nilOrValue(pigeonVar_list[6])
+    let aNullableObject: Any? = pigeonVar_list[7]
+    let list: [Any?]? = nilOrValue(pigeonVar_list[8])
+    let map: [AnyHashable?: Any?]? = nilOrValue(pigeonVar_list[9])
 
     return NIAllNullableTypesWithoutRecursion(
       aNullableBool: aNullableBool,
       aNullableInt: aNullableInt,
       aNullableInt64: aNullableInt64,
       aNullableDouble: aNullableDouble,
+      aNullableEnum: aNullableEnum,
+      anotherNullableEnum: anotherNullableEnum,
       aNullableString: aNullableString,
       aNullableObject: aNullableObject,
       list: list,
@@ -273,6 +279,8 @@ struct NIAllNullableTypesWithoutRecursion {
       aNullableInt,
       aNullableInt64,
       aNullableDouble,
+      aNullableEnum,
+      anotherNullableEnum,
       aNullableString,
       aNullableObject,
       list,
@@ -293,6 +301,8 @@ struct NIAllNullableTypesWithoutRecursion {
     aNullableInt: NSNumber? = nil,
     aNullableInt64: NSNumber? = nil,
     aNullableDouble: NSNumber? = nil,
+    aNullableEnum: NSNumber? = nil,
+    anotherNullableEnum: NSNumber? = nil,
     aNullableString: NSString? = nil,
     aNullableObject: NSObject? = nil,
     list: [NSObject]? = nil,
@@ -302,6 +312,8 @@ struct NIAllNullableTypesWithoutRecursion {
     self.aNullableInt = aNullableInt
     self.aNullableInt64 = aNullableInt64
     self.aNullableDouble = aNullableDouble
+    self.aNullableEnum = aNullableEnum
+    self.anotherNullableEnum = anotherNullableEnum
     self.aNullableString = aNullableString
     self.aNullableObject = aNullableObject
     self.list = list
@@ -311,6 +323,8 @@ struct NIAllNullableTypesWithoutRecursion {
   @objc var aNullableInt: NSNumber? = nil
   @objc var aNullableInt64: NSNumber? = nil
   @objc var aNullableDouble: NSNumber? = nil
+  @objc var aNullableEnum: NSNumber? = nil
+  @objc var anotherNullableEnum: NSNumber? = nil
   @objc var aNullableString: NSString? = nil
   @objc var aNullableObject: NSObject? = nil
   @objc var list: [NSObject]? = nil
@@ -332,6 +346,10 @@ struct NIAllNullableTypesWithoutRecursion {
         ? nil : NSNumber(value: pigeonVar_Class!.aNullableInt64!),
       aNullableDouble: isNullish(pigeonVar_Class!.aNullableDouble)
         ? nil : NSNumber(value: pigeonVar_Class!.aNullableDouble!),
+      aNullableEnum: isNullish(pigeonVar_Class!.aNullableEnum)
+        ? nil : NSNumber(value: pigeonVar_Class!.aNullableEnum!.rawValue),
+      anotherNullableEnum: isNullish(pigeonVar_Class!.anotherNullableEnum)
+        ? nil : NSNumber(value: pigeonVar_Class!.anotherNullableEnum!.rawValue),
       aNullableString: pigeonVar_Class!.aNullableString as NSString?,
       aNullableObject: pigeonVar_Class!.aNullableObject as! NSObject?,
       list: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.list, isObject: true) as? [NSObject],
@@ -345,6 +363,10 @@ struct NIAllNullableTypesWithoutRecursion {
       aNullableInt: isNullish(aNullableInt) ? nil : aNullableInt!.int64Value,
       aNullableInt64: isNullish(aNullableInt64) ? nil : aNullableInt64!.int64Value,
       aNullableDouble: isNullish(aNullableDouble) ? nil : aNullableDouble!.doubleValue,
+      aNullableEnum: isNullish(aNullableEnum)
+        ? nil : NIAnEnum.init(rawValue: aNullableEnum!.intValue),
+      anotherNullableEnum: isNullish(anotherNullableEnum)
+        ? nil : NIAnotherEnum.init(rawValue: anotherNullableEnum!.intValue),
       aNullableString: aNullableString as String?,
       aNullableObject: aNullableObject,
       list: list,
@@ -528,6 +550,9 @@ protocol NIHostIntegrationCoreApi {
   /// Returns the passed object, to test serialization and deserialization.
   func echoAllNullableTypesWithoutRecursion(everything: NIAllNullableTypesWithoutRecursion?) throws
     -> NIAllNullableTypesWithoutRecursion?
+  func sendMultipleNullableTypesWithoutRecursion(
+    aNullableBool: Bool?, aNullableInt: Int64?, aNullableString: String?
+  ) throws -> NIAllNullableTypesWithoutRecursion
   /// Returns passed in int.
   func echoNullableInt(aNullableInt: Int64?) throws -> Int64?
   /// Returns passed in double.
@@ -750,6 +775,27 @@ protocol NIHostIntegrationCoreApi {
     do {
       return try NIAllNullableTypesWithoutRecursionBridge.fromSwift(
         api!.echoAllNullableTypesWithoutRecursion(everything: everything?.toSwift()))
+    } catch let error as NiTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
+  @available(iOS 13, macOS 16.0.0, *)
+  @objc func sendMultipleNullableTypesWithoutRecursion(
+    aNullableBool: NSNumber?, aNullableInt: NSNumber?, aNullableString: String?,
+    wrappedError: NiTestsError
+  ) -> NIAllNullableTypesWithoutRecursionBridge? {
+    do {
+      return try NIAllNullableTypesWithoutRecursionBridge.fromSwift(
+        api!.sendMultipleNullableTypesWithoutRecursion(
+          aNullableBool: aNullableBool?.boolValue, aNullableInt: aNullableInt?.int64Value,
+          aNullableString: aNullableString))
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message

@@ -153,6 +153,8 @@ data class NIAllNullableTypesWithoutRecursion(
     val aNullableInt: Long? = null,
     val aNullableInt64: Long? = null,
     val aNullableDouble: Double? = null,
+    val aNullableEnum: NIAnEnum? = null,
+    val anotherNullableEnum: NIAnotherEnum? = null,
     val aNullableString: String? = null,
     val aNullableObject: Any? = null,
     val list: List<Any?>? = null,
@@ -164,15 +166,19 @@ data class NIAllNullableTypesWithoutRecursion(
       val aNullableInt = pigeonVar_list[1] as Long?
       val aNullableInt64 = pigeonVar_list[2] as Long?
       val aNullableDouble = pigeonVar_list[3] as Double?
-      val aNullableString = pigeonVar_list[4] as String?
-      val aNullableObject = pigeonVar_list[5]
-      val list = pigeonVar_list[6] as List<Any?>?
-      val map = pigeonVar_list[7] as Map<Any, Any?>?
+      val aNullableEnum = pigeonVar_list[4] as NIAnEnum?
+      val anotherNullableEnum = pigeonVar_list[5] as NIAnotherEnum?
+      val aNullableString = pigeonVar_list[6] as String?
+      val aNullableObject = pigeonVar_list[7]
+      val list = pigeonVar_list[8] as List<Any?>?
+      val map = pigeonVar_list[9] as Map<Any, Any?>?
       return NIAllNullableTypesWithoutRecursion(
           aNullableBool,
           aNullableInt,
           aNullableInt64,
           aNullableDouble,
+          aNullableEnum,
+          anotherNullableEnum,
           aNullableString,
           aNullableObject,
           list,
@@ -186,6 +192,8 @@ data class NIAllNullableTypesWithoutRecursion(
         aNullableInt,
         aNullableInt64,
         aNullableDouble,
+        aNullableEnum,
+        anotherNullableEnum,
         aNullableString,
         aNullableObject,
         list,
@@ -204,6 +212,8 @@ data class NIAllNullableTypesWithoutRecursion(
         aNullableInt == other.aNullableInt &&
         aNullableInt64 == other.aNullableInt64 &&
         aNullableDouble == other.aNullableDouble &&
+        aNullableEnum == other.aNullableEnum &&
+        anotherNullableEnum == other.anotherNullableEnum &&
         aNullableString == other.aNullableString &&
         aNullableObject == other.aNullableObject &&
         deepEqualsNiTests(list, other.list) &&
@@ -247,6 +257,12 @@ abstract class NIHostIntegrationCoreApi {
   abstract fun echoAllNullableTypesWithoutRecursion(
       everything: NIAllNullableTypesWithoutRecursion?
   ): NIAllNullableTypesWithoutRecursion?
+
+  abstract fun sendMultipleNullableTypesWithoutRecursion(
+      aNullableBool: Boolean?,
+      aNullableInt: Long?,
+      aNullableString: String?
+  ): NIAllNullableTypesWithoutRecursion
   /** Returns passed in int. */
   abstract fun echoNullableInt(aNullableInt: Long?): Long?
   /** Returns passed in double. */
@@ -415,6 +431,22 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
     api?.let {
       try {
         return api!!.echoAllNullableTypesWithoutRecursion(everything)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+
+  override fun sendMultipleNullableTypesWithoutRecursion(
+      aNullableBool: Boolean?,
+      aNullableInt: Long?,
+      aNullableString: String?
+  ): NIAllNullableTypesWithoutRecursion {
+    api?.let {
+      try {
+        return api!!.sendMultipleNullableTypesWithoutRecursion(
+            aNullableBool, aNullableInt, aNullableString)
       } catch (e: Exception) {
         throw e
       }

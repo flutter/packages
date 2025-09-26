@@ -343,6 +343,8 @@ SWIFT_CLASS("_TtC11test_plugin40NIAllNullableTypesWithoutRecursionBridge")
              aNullableInt:(NSNumber *_Nullable)aNullableInt
            aNullableInt64:(NSNumber *_Nullable)aNullableInt64
           aNullableDouble:(NSNumber *_Nullable)aNullableDouble
+            aNullableEnum:(NSNumber *_Nullable)aNullableEnum
+      anotherNullableEnum:(NSNumber *_Nullable)anotherNullableEnum
           aNullableString:(NSString *_Nullable)aNullableString
           aNullableObject:(NSObject *_Nullable)aNullableObject
                      list:(NSArray<NSObject *> *_Nullable)list
@@ -352,6 +354,8 @@ SWIFT_CLASS("_TtC11test_plugin40NIAllNullableTypesWithoutRecursionBridge")
 @property(nonatomic, strong) NSNumber *_Nullable aNullableInt;
 @property(nonatomic, strong) NSNumber *_Nullable aNullableInt64;
 @property(nonatomic, strong) NSNumber *_Nullable aNullableDouble;
+@property(nonatomic, strong) NSNumber *_Nullable aNullableEnum;
+@property(nonatomic, strong) NSNumber *_Nullable anotherNullableEnum;
 @property(nonatomic, strong) NSString *_Nullable aNullableString;
 @property(nonatomic, strong) NSObject *_Nullable aNullableObject;
 @property(nonatomic, copy) NSArray<NSObject *> *_Nullable list;
@@ -483,6 +487,20 @@ SWIFT_CLASS("_TtC11test_plugin29NIHostIntegrationCoreApiSetup")
         (NIAllNullableTypesWithoutRecursionBridge *_Nullable)everything
                                           wrappedError:(NiTestsError *_Nonnull)
                                                            wrappedError
+    SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos, introduced = 16.0.0)
+        SWIFT_AVAILABILITY(ios, introduced = 13);
+- (NIAllNullableTypesWithoutRecursionBridge *_Nullable)
+    sendMultipleNullableTypesWithoutRecursionWithANullableBool:
+        (NSNumber *_Nullable)aNullableBool
+                                                  aNullableInt:
+                                                      (NSNumber *_Nullable)
+                                                          aNullableInt
+                                               aNullableString:
+                                                   (NSString *_Nullable)
+                                                       aNullableString
+                                                  wrappedError:
+                                                      (NiTestsError *_Nonnull)
+                                                          wrappedError
     SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos, introduced = 16.0.0)
         SWIFT_AVAILABILITY(ios, introduced = 13);
 /// Returns passed in int.

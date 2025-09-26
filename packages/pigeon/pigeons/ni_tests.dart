@@ -198,8 +198,8 @@ class NIAllNullableTypesWithoutRecursion {
 //     this.aNullable4ByteArray,
 //     this.aNullable8ByteArray,
 //     this.aNullableFloatArray,
-//     this.aNullableEnum,
-//     this.anotherNullableEnum,
+    this.aNullableEnum,
+    this.anotherNullableEnum,
     this.aNullableString,
     this.aNullableObject,
 
@@ -234,8 +234,8 @@ class NIAllNullableTypesWithoutRecursion {
 //   Int32List? aNullable4ByteArray;
 //   Int64List? aNullable8ByteArray;
 //   Float64List? aNullableFloatArray;
-//   NIAnEnum? aNullableEnum;
-//   NIAnotherEnum? anotherNullableEnum;
+  NIAnEnum? aNullableEnum;
+  NIAnotherEnum? anotherNullableEnum;
   String? aNullableString;
   Object? aNullableObject;
 
@@ -488,11 +488,11 @@ abstract class NIHostIntegrationCoreApi {
   //     bool? aNullableBool, int? aNullableInt, String? aNullableString);
 
   // /// Returns passed in arguments of multiple types.
-  // @ObjCSelector('sendMultipleNullableTypesWithoutRecursionABool:anInt:aString:')
+  @ObjCSelector('sendMultipleNullableTypesWithoutRecursionABool:anInt:aString:')
   // @SwiftFunction(
   //     'sendMultipleNullableTypesWithoutRecursion(aBool:anInt:aString:)')
-  // NIAllNullableTypesWithoutRecursion sendMultipleNullableTypesWithoutRecursion(
-  //     bool? aNullableBool, int? aNullableInt, String? aNullableString);
+  NIAllNullableTypesWithoutRecursion sendMultipleNullableTypesWithoutRecursion(
+      bool? aNullableBool, int? aNullableInt, String? aNullableString);
 
   /// Returns passed in int.
   @ObjCSelector('echoNullableInt:')
