@@ -661,7 +661,6 @@ class Camera {
   // TODO(TecHaxter): Introduce FPS in CameraImageStreamOptions of
   //                  package:camera_platform_interface.
   //                  https://github.com/flutter/flutter/issues/176148
-  // This class is deprecated and will be removed in the future.
   /// Used for running the camera frame stream at a specified FPS
   final int cameraStreamFPS = 60;
 
