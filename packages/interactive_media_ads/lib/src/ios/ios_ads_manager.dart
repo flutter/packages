@@ -15,7 +15,17 @@ import 'ios_ads_rendering_settings.dart';
 class IOSAdsManager extends PlatformAdsManager {
   /// Constructs an [IOSAdsManager].
   @internal
-  IOSAdsManager(IMAAdsManager manager) : _manager = manager;
+  IOSAdsManager(IMAAdsManager manager)
+    : _manager = manager,
+      super(
+        adCuePoints: List<Duration>.unmodifiable(
+          manager.adCuePoints.map((double seconds) {
+            return Duration(
+              milliseconds: (seconds * Duration.millisecondsPerSecond).round(),
+            );
+          }),
+        ),
+      );
 
   final IMAAdsManager _manager;
 
