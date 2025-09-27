@@ -1,3 +1,7 @@
+## 0.4.0+15
+
+* Updates Java compatibility version to 17.
+
 ## 0.4.0+14
 
 * Bumps okhttp, junit, and truth dependencies.
