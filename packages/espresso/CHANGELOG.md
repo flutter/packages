@@ -1,6 +1,6 @@
 ## 0.4.0+15
 
-* Migrates from JVM 11 to JVM 17.
+* Updates Java compatibility version to 17.
 
 ## 0.4.0+14
 
