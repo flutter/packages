@@ -1,6 +1,7 @@
-## NEXT
+## 3.0.1
 
 * Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+* Updates Java compatibility version to 17 in example.
 
 ## 3.0.0
 
