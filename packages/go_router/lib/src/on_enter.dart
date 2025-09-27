@@ -19,6 +19,9 @@ sealed class OnEnterResult {
   /// Executed after the decision is committed.
   /// Errors are reported and do not revert navigation.
   final OnEnterThenCallback? then;
+
+  /// Whether this block represents a hard stop without a follow-up callback.
+  bool get isStop => this is Block && then == null;
 }
 
 /// Allows the navigation to proceed.
@@ -34,6 +37,9 @@ final class Allow extends OnEnterResult {
 
 /// Blocks the navigation from proceeding.
 ///
+/// Returning an object of this class from an `onEnter` callback halts the
+/// navigation completely.
+///
 /// Use [Block.stop] for a "hard stop" that resets the redirection history, or
 /// [Block.then] to chain a callback after the block (commonly to redirect
 /// elsewhere, e.g. `router.go('/login')`).
@@ -43,11 +49,15 @@ final class Allow extends OnEnterResult {
 /// behavior.
 final class Block extends OnEnterResult {
   /// Creates a [Block] that stops navigation without running a follow-up
-  /// callback. Resets the redirection history so the next attempt is evaluated
-  /// fresh.
+  /// callback.
+  ///
+  /// Returning an object created by this constructor from an `onEnter`
+  /// callback halts the navigation completely and resets the redirection
+  /// history so the next attempt is evaluated fresh.
   const Block.stop() : super();
 
   /// Creates a [Block] that runs [then] after the navigation is blocked.
+  ///
   /// Keeps the redirection history to detect loops during chained redirects.
   const Block.then(OnEnterThenCallback then) : super(then: then);
 }

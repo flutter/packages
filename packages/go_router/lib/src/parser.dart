@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// ignore_for_file: use_build_context_synchronously
 import 'dart:async';
 import 'dart:math';
 
@@ -134,6 +133,16 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
           );
         }
         return afterLegacy.then((RouteMatchList ml) {
+          if (!context.mounted) {
+            return _lastMatchList ??
+                _OnEnterHandler._errorRouteMatchList(
+                  effectiveRoute.uri,
+                  GoException(
+                    'Navigation aborted because the router context was disposed.',
+                  ),
+                  extra: infoState.extra,
+                );
+          }
           return _navigate(
             effectiveRoute,
             context,
@@ -197,6 +206,9 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
         );
       }
       return base.then<RouteMatchList>((RouteMatchList ml) {
+        if (!context.mounted) {
+          return ml;
+        }
         final FutureOr<RouteMatchList> step = configuration.redirect(
           context,
           ml,
@@ -214,6 +226,9 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
             : redirected)
         .then((RouteMatchList matchList) {
           if (matchList.isError && onParserException != null) {
+            if (!context.mounted) {
+              return matchList;
+            }
             return onParserException!(context, matchList);
           }
 
@@ -467,11 +482,14 @@ class _OnEnterHandler {
 
       _resetRedirectionHistory();
 
-      return SynchronousFuture<RouteMatchList>(
-        _onParserException != null
-            ? _onParserException(context, errorMatchList)
-            : errorMatchList,
-      );
+      final bool canHandleException =
+          _onParserException != null && context.mounted;
+      final RouteMatchList handledMatchList =
+          canHandleException
+              ? _onParserException(context, errorMatchList)
+              : errorMatchList;
+
+      return SynchronousFuture<RouteMatchList>(handledMatchList);
     }
 
     // Handle asynchronous completion and catch any errors.
@@ -493,8 +511,7 @@ class _OnEnterHandler {
           // Treat `Block.stop()` as the explicit hard stop.
           // We intentionally don't try to detect "no-op" callbacks; any
           // Block with `then` keeps history so chained guards can detect loops.
-          final bool hardStop = result is Block && callback == null;
-          if (hardStop) {
+          if (result.isStop) {
             _resetRedirectionHistory();
           }
           // For chaining blocks (with then), keep history to detect loops.
@@ -529,9 +546,10 @@ class _OnEnterHandler {
           extra: infoState.extra,
         );
 
-        return _onParserException != null
-            ? _onParserException(context, errorMatchList)
-            : errorMatchList;
+        if (_onParserException != null && context.mounted) {
+          return _onParserException(context, errorMatchList);
+        }
+        return errorMatchList;
       },
     );
   }
@@ -609,9 +627,10 @@ class _OnEnterHandler {
         extra: infoState.extra,
       );
       _resetRedirectionHistory();
-      return _onParserException != null
-          ? _onParserException(context, errorMatchList)
-          : errorMatchList;
+      if (_onParserException != null && context.mounted) {
+        return _onParserException(context, errorMatchList);
+      }
+      return errorMatchList;
     }
     return null;
   }
