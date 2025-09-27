@@ -1,3 +1,8 @@
+## 2.18.3
+
+* Updates Java compatibility version to 17.
+
+
 ## 2.18.2
 
 * Bumps com.android.tools.build:gradle to 8.12.1.
