@@ -1,3 +1,7 @@
+## 0.4.0+15
+
+* Migrates from JVM 11 to JVM 17.
+
 ## 0.4.0+14
 
 * Bumps okhttp, junit, and truth dependencies.
