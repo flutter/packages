@@ -12,6 +12,7 @@ Future<void> main() async {
     'NIHostIntegrationCoreApiSetup',
     'NIAllTypesBridge',
     'NIAllNullableTypesWithoutRecursionBridge',
+    'NIAllClassesWrapperBridge',
     'NiTestsError'
   ];
   final List<String> enums = <String>[

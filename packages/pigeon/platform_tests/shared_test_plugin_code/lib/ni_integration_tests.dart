@@ -224,29 +224,29 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 //       expect(receivedObject.allNullableTypes.aNullableString, sentString);
 //     });
 
-//     testWidgets('nested classes can serialize and deserialize correctly',
-//         (WidgetTester _) async {
-//       final NIHostIntegrationCoreApiForNativeInterop? api =
-//           NIHostIntegrationCoreApiForNativeInterop.getInstance();
-//       final NIAllClassesWrapper classWrapper = classWrapperMaker();
+    testWidgets('nested classes can serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final NIHostIntegrationCoreApiForNativeInterop? api =
+          NIHostIntegrationCoreApiForNativeInterop.getInstance();
+      final NIAllClassesWrapper classWrapper = classWrapperMaker();
+      final NIAllClassesWrapper receivedClassWrapper =
+          api!.echoClassWrapper(classWrapper);
 
-//       final NIAllClassesWrapper receivedClassWrapper =
-//           api!.echoClassWrapper(classWrapper);
-//       expect(classWrapper, receivedClassWrapper);
-//     });
+      expect(classWrapper, receivedClassWrapper);
+    });
 
-//     testWidgets('nested null classes can serialize and deserialize correctly',
-//         (WidgetTester _) async {
-//       final NIHostIntegrationCoreApiForNativeInterop? api =
-//           NIHostIntegrationCoreApiForNativeInterop.getInstance();
-//       final NIAllClassesWrapper classWrapper = classWrapperMaker();
+    testWidgets('nested null classes can serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final NIHostIntegrationCoreApiForNativeInterop? api =
+          NIHostIntegrationCoreApiForNativeInterop.getInstance();
+      final NIAllClassesWrapper classWrapper = classWrapperMaker();
 
-//       classWrapper.allTypes = null;
+      classWrapper.allTypes = null;
 
-//       final NIAllClassesWrapper receivedClassWrapper =
-//           api!.echoClassWrapper(classWrapper);
-//       expect(classWrapper, receivedClassWrapper);
-//     });
+      final NIAllClassesWrapper receivedClassWrapper =
+          api!.echoClassWrapper(classWrapper);
+      expect(classWrapper, receivedClassWrapper);
+    });
 
 //     testWidgets(
 //         'Arguments of multiple types serialize and deserialize correctly',

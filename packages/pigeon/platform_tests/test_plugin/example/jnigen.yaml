@@ -20,5 +20,6 @@ classes:
   - 'NIHostIntegrationCoreApiRegistrar'
   - 'NIAllTypes'
   - 'NIAllNullableTypesWithoutRecursion'
+  - 'NIAllClassesWrapper'
   - 'NIAnEnum'
   - 'NIAnotherEnum'

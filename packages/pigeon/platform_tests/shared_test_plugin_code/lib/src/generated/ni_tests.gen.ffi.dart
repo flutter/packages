@@ -22,8 +22,8 @@ external ffi.Pointer<objc.ObjCObject> _test_plugin_protocolTrampoline_1mbt9g9(
   ffi.Pointer<ffi.Void> arg0,
 );
 
-late final _class_NIAllNullableTypesWithoutRecursionBridge =
-    objc.getClass("test_plugin.NIAllNullableTypesWithoutRecursionBridge");
+late final _class_NIAllClassesWrapperBridge =
+    objc.getClass("test_plugin.NIAllClassesWrapperBridge");
 late final _sel_isKindOfClass_ = objc.registerName("isKindOfClass:");
 final _objc_msgSend_19nvye5 = objc.msgSendPointer
     .cast<
@@ -37,6 +37,8 @@ final _objc_msgSend_19nvye5 = objc.msgSendPointer
             ffi.Pointer<objc.ObjCSelector>, ffi.Pointer<objc.ObjCObject>)>();
 typedef instancetype = ffi.Pointer<objc.ObjCObject>;
 typedef Dartinstancetype = objc.ObjCObjectBase;
+late final _class_NIAllNullableTypesWithoutRecursionBridge =
+    objc.getClass("test_plugin.NIAllNullableTypesWithoutRecursionBridge");
 late final _sel_initWithANullableBool_aNullableInt_aNullableInt64_aNullableDouble_aNullableEnum_anotherNullableEnum_aNullableString_aNullableObject_list_map_ =
     objc.registerName(
         "initWithANullableBool:aNullableInt:aNullableInt64:aNullableDouble:aNullableEnum:anotherNullableEnum:aNullableString:aNullableObject:list:map:");
@@ -489,6 +491,9 @@ extension NIAllNullableTypesWithoutRecursionBridge$Methods
   }
 }
 
+late final _class_NIAllTypesBridge =
+    objc.getClass("test_plugin.NIAllTypesBridge");
+
 enum NIAnEnum {
   NIAnEnumOne(0),
   NIAnEnumTwo(1),
@@ -521,8 +526,6 @@ enum NIAnotherEnum {
       };
 }
 
-late final _class_NIAllTypesBridge =
-    objc.getClass("test_plugin.NIAllTypesBridge");
 late final _sel_initWithABool_anInt_anInt64_aDouble_anEnum_anotherEnum_aString_anObject_list_map_ =
     objc.registerName(
         "initWithABool:anInt:anInt64:aDouble:anEnum:anotherEnum:aString:anObject:list:map:");
@@ -871,6 +874,164 @@ extension NIAllTypesBridge$Methods on NIAllTypesBridge {
   }
 }
 
+late final _sel_initWithAllNullableTypesWithoutRecursion_allTypes_ =
+    objc.registerName("initWithAllNullableTypesWithoutRecursion:allTypes:");
+final _objc_msgSend_15qeuct = objc.msgSendPointer
+    .cast<
+        ffi.NativeFunction<
+            ffi.Pointer<objc.ObjCObject> Function(
+                ffi.Pointer<objc.ObjCObject>,
+                ffi.Pointer<objc.ObjCSelector>,
+                ffi.Pointer<objc.ObjCObject>,
+                ffi.Pointer<objc.ObjCObject>)>>()
+    .asFunction<
+        ffi.Pointer<objc.ObjCObject> Function(
+            ffi.Pointer<objc.ObjCObject>,
+            ffi.Pointer<objc.ObjCSelector>,
+            ffi.Pointer<objc.ObjCObject>,
+            ffi.Pointer<objc.ObjCObject>)>();
+late final _sel_allNullableTypesWithoutRecursion =
+    objc.registerName("allNullableTypesWithoutRecursion");
+late final _sel_setAllNullableTypesWithoutRecursion_ =
+    objc.registerName("setAllNullableTypesWithoutRecursion:");
+late final _sel_allTypes = objc.registerName("allTypes");
+late final _sel_setAllTypes_ = objc.registerName("setAllTypes:");
+
+/// A class for testing nested class handling.
+/// This is needed to test nested nullable and non-nullable classes,
+/// <code>NIAllNullableTypes</code> is non-nullable here as it is easier to instantiate
+/// than <code>NIAllTypes</code> when testing doesn’t require both (ie. testing null classes).
+/// Generated bridge class from Pigeon that moves data from Swift to Objective-C.
+class NIAllClassesWrapperBridge extends objc.NSObject {
+  NIAllClassesWrapperBridge._(ffi.Pointer<objc.ObjCObject> pointer,
+      {bool retain = false, bool release = false})
+      : super.castFromPointer(pointer, retain: retain, release: release);
+
+  /// Constructs a [NIAllClassesWrapperBridge] that points to the same underlying object as [other].
+  NIAllClassesWrapperBridge.castFrom(objc.ObjCObjectBase other)
+      : this._(other.ref.pointer, retain: true, release: true);
+
+  /// Constructs a [NIAllClassesWrapperBridge] that wraps the given raw object pointer.
+  NIAllClassesWrapperBridge.castFromPointer(ffi.Pointer<objc.ObjCObject> other,
+      {bool retain = false, bool release = false})
+      : this._(other, retain: retain, release: release);
+
+  /// Returns whether [obj] is an instance of [NIAllClassesWrapperBridge].
+  static bool isInstance(objc.ObjCObjectBase obj) {
+    return _objc_msgSend_19nvye5(
+        obj.ref.pointer, _sel_isKindOfClass_, _class_NIAllClassesWrapperBridge);
+  }
+
+  /// new
+  static NIAllClassesWrapperBridge new$() {
+    final _ret =
+        _objc_msgSend_151sglz(_class_NIAllClassesWrapperBridge, _sel_new);
+    return NIAllClassesWrapperBridge.castFromPointer(_ret,
+        retain: false, release: true);
+  }
+
+  /// allocWithZone:
+  static NIAllClassesWrapperBridge allocWithZone(
+      ffi.Pointer<objc.NSZone> zone) {
+    final _ret = _objc_msgSend_1cwp428(
+        _class_NIAllClassesWrapperBridge, _sel_allocWithZone_, zone);
+    return NIAllClassesWrapperBridge.castFromPointer(_ret,
+        retain: false, release: true);
+  }
+
+  /// alloc
+  static NIAllClassesWrapperBridge alloc() {
+    final _ret =
+        _objc_msgSend_151sglz(_class_NIAllClassesWrapperBridge, _sel_alloc);
+    return NIAllClassesWrapperBridge.castFromPointer(_ret,
+        retain: false, release: true);
+  }
+
+  /// Returns a new instance of NIAllClassesWrapperBridge constructed with the default `new` method.
+  factory NIAllClassesWrapperBridge() => new$();
+}
+
+extension NIAllClassesWrapperBridge$Methods on NIAllClassesWrapperBridge {
+  /// initWithAllNullableTypesWithoutRecursion:allTypes:
+  NIAllClassesWrapperBridge initWithAllNullableTypesWithoutRecursion(
+      NIAllNullableTypesWithoutRecursionBridge?
+          allNullableTypesWithoutRecursion,
+      {NIAllTypesBridge? allTypes}) {
+    final _ret = _objc_msgSend_15qeuct(
+        this.ref.retainAndReturnPointer(),
+        _sel_initWithAllNullableTypesWithoutRecursion_allTypes_,
+        allNullableTypesWithoutRecursion?.ref.pointer ?? ffi.nullptr,
+        allTypes?.ref.pointer ?? ffi.nullptr);
+    return NIAllClassesWrapperBridge.castFromPointer(_ret,
+        retain: false, release: true);
+  }
+
+  /// allNullableTypesWithoutRecursion
+  NIAllNullableTypesWithoutRecursionBridge?
+      get allNullableTypesWithoutRecursion {
+    final _ret = _objc_msgSend_151sglz(
+        this.ref.pointer, _sel_allNullableTypesWithoutRecursion);
+    return _ret.address == 0
+        ? null
+        : NIAllNullableTypesWithoutRecursionBridge.castFromPointer(_ret,
+            retain: true, release: true);
+  }
+
+  /// setAllNullableTypesWithoutRecursion:
+  set allNullableTypesWithoutRecursion(
+      NIAllNullableTypesWithoutRecursionBridge? value) {
+    _objc_msgSend_xtuoz7(
+        this.ref.pointer,
+        _sel_setAllNullableTypesWithoutRecursion_,
+        value?.ref.pointer ?? ffi.nullptr);
+  }
+
+  /// allTypes
+  NIAllTypesBridge? get allTypes {
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_allTypes);
+    return _ret.address == 0
+        ? null
+        : NIAllTypesBridge.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// setAllTypes:
+  set allTypes(NIAllTypesBridge? value) {
+    _objc_msgSend_xtuoz7(
+        this.ref.pointer, _sel_setAllTypes_, value?.ref.pointer ?? ffi.nullptr);
+  }
+
+  /// init
+  NIAllClassesWrapperBridge init() {
+    objc.checkOsVersionInternal('NIAllClassesWrapperBridge.init',
+        iOS: (false, (2, 0, 0)), macOS: (false, (10, 0, 0)));
+    final _ret =
+        _objc_msgSend_151sglz(this.ref.retainAndReturnPointer(), _sel_init);
+    return NIAllClassesWrapperBridge.castFromPointer(_ret,
+        retain: false, release: true);
+  }
+
+  /// self
+  NIAllClassesWrapperBridge self() {
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_self);
+    return NIAllClassesWrapperBridge.castFromPointer(_ret,
+        retain: true, release: true);
+  }
+
+  /// retain
+  NIAllClassesWrapperBridge retain() {
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_retain);
+    return NIAllClassesWrapperBridge.castFromPointer(_ret,
+        retain: true, release: true);
+  }
+
+  /// autorelease
+  NIAllClassesWrapperBridge autorelease() {
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_autorelease);
+    return NIAllClassesWrapperBridge.castFromPointer(_ret,
+        retain: true, release: true);
+  }
+}
+
 late final _class_NIHostIntegrationCoreApiSetup =
     objc.getClass("test_plugin.NIHostIntegrationCoreApiSetup");
 late final _sel_getInstanceWithName_ =
@@ -1042,20 +1203,6 @@ late final _sel_noopWithWrappedError_ =
     objc.registerName("noopWithWrappedError:");
 late final _sel_echoAllTypesWithEverything_wrappedError_ =
     objc.registerName("echoAllTypesWithEverything:wrappedError:");
-final _objc_msgSend_15qeuct = objc.msgSendPointer
-    .cast<
-        ffi.NativeFunction<
-            ffi.Pointer<objc.ObjCObject> Function(
-                ffi.Pointer<objc.ObjCObject>,
-                ffi.Pointer<objc.ObjCSelector>,
-                ffi.Pointer<objc.ObjCObject>,
-                ffi.Pointer<objc.ObjCObject>)>>()
-    .asFunction<
-        ffi.Pointer<objc.ObjCObject> Function(
-            ffi.Pointer<objc.ObjCObject>,
-            ffi.Pointer<objc.ObjCSelector>,
-            ffi.Pointer<objc.ObjCObject>,
-            ffi.Pointer<objc.ObjCObject>)>();
 late final _sel_echoIntWithAnInt_wrappedError_ =
     objc.registerName("echoIntWithAnInt:wrappedError:");
 late final _sel_echoDoubleWithADouble_wrappedError_ =
@@ -1070,6 +1217,8 @@ late final _sel_echoListWithList_wrappedError_ =
     objc.registerName("echoListWithList:wrappedError:");
 late final _sel_echoMapWithMap_wrappedError_ =
     objc.registerName("echoMapWithMap:wrappedError:");
+late final _sel_echoClassWrapperWithWrapper_wrappedError_ =
+    objc.registerName("echoClassWrapperWithWrapper:wrappedError:");
 late final _sel_echoEnumWithAnEnum_wrappedError_ =
     objc.registerName("echoEnumWithAnEnum:wrappedError:");
 final _objc_msgSend_1k0qzru = objc.msgSendPointer
@@ -1392,6 +1541,28 @@ extension NIHostIntegrationCoreApiSetup$Methods
     return _ret.address == 0
         ? null
         : objc.NSDictionary.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// Returns the passed class to test nested class serialization and deserialization.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  NIAllClassesWrapperBridge? echoClassWrapperWithWrapper(
+      NIAllClassesWrapperBridge wrapper,
+      {required NiTestsError wrappedError}) {
+    objc.checkOsVersionInternal(
+        'NIHostIntegrationCoreApiSetup.echoClassWrapperWithWrapper:wrappedError:',
+        iOS: (false, (13, 0, 0)),
+        macOS: (false, (16, 0, 0)));
+    final _ret = _objc_msgSend_15qeuct(
+        this.ref.pointer,
+        _sel_echoClassWrapperWithWrapper_wrappedError_,
+        wrapper.ref.pointer,
+        wrappedError.ref.pointer);
+    return _ret.address == 0
+        ? null
+        : NIAllClassesWrapperBridge.castFromPointer(_ret,
+            retain: true, release: true);
   }
 
   /// Returns the passed enum to test serialization and deserialization.

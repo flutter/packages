@@ -223,6 +223,49 @@ data class NIAllNullableTypesWithoutRecursion(
   override fun hashCode(): Int = toList().hashCode()
 }
 
+/**
+ * A class for testing nested class handling.
+ *
+ * This is needed to test nested nullable and non-nullable classes, `NIAllNullableTypes` is
+ * non-nullable here as it is easier to instantiate than `NIAllTypes` when testing doesn't require
+ * both (ie. testing null classes).
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ */
+data class NIAllClassesWrapper(
+    val allNullableTypesWithoutRecursion: NIAllNullableTypesWithoutRecursion? = null,
+    val allTypes: NIAllTypes? = null
+) {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): NIAllClassesWrapper {
+      val allNullableTypesWithoutRecursion =
+          pigeonVar_list[0] as NIAllNullableTypesWithoutRecursion?
+      val allTypes = pigeonVar_list[1] as NIAllTypes?
+      return NIAllClassesWrapper(allNullableTypesWithoutRecursion, allTypes)
+    }
+  }
+
+  fun toList(): List<Any?> {
+    return listOf(
+        allNullableTypesWithoutRecursion,
+        allTypes,
+    )
+  }
+
+  override fun equals(other: Any?): Boolean {
+    if (other !is NIAllClassesWrapper) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return allNullableTypesWithoutRecursion == other.allNullableTypesWithoutRecursion &&
+        allTypes == other.allTypes
+  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
 val NIHostIntegrationCoreApiInstances: MutableMap<String, NIHostIntegrationCoreApiRegistrar> =
     mutableMapOf()
 
@@ -246,6 +289,8 @@ abstract class NIHostIntegrationCoreApi {
   abstract fun echoList(list: List<Any?>): List<Any?>
   /** Returns the passed map, to test serialization and deserialization. */
   abstract fun echoMap(map: Map<Any?, Any?>): Map<Any?, Any?>
+  /** Returns the passed class to test nested class serialization and deserialization. */
+  abstract fun echoClassWrapper(wrapper: NIAllClassesWrapper): NIAllClassesWrapper
   /** Returns the passed enum to test serialization and deserialization. */
   abstract fun echoEnum(anEnum: NIAnEnum): NIAnEnum
   /** Returns the passed enum to test serialization and deserialization. */
@@ -393,6 +438,17 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
     api?.let {
       try {
         return api!!.echoMap(map)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed class to test nested class serialization and deserialization. */
+  override fun echoClassWrapper(wrapper: NIAllClassesWrapper): NIAllClassesWrapper {
+    api?.let {
+      try {
+        return api!!.echoClassWrapper(wrapper)
       } catch (e: Exception) {
         throw e
       }

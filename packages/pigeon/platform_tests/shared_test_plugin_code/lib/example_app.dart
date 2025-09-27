@@ -41,11 +41,16 @@ class _ExampleAppState extends State<ExampleApp> {
       // Make a single trivial call just to validate that everything is wired
       // up.
       // await api.noop();
-      // final NIHostIntegrationCoreApiForNativeInterop? api =
-      //     NIHostIntegrationCoreApiForNativeInterop.getInstance();
+      final NIHostIntegrationCoreApiForNativeInterop? api =
+          NIHostIntegrationCoreApiForNativeInterop.getInstance();
       // api!.noop();
       // api.echoAllNullableTypesWithoutRecursion(
       //     genericNIAllNullableTypesWithoutRecursion);
+      final NIAllClassesWrapper classWrapper = classWrapperMaker();
+      classWrapper.allTypes = null;
+      final NIAllClassesWrapper receivedClassWrapper =
+          api!.echoClassWrapper(classWrapper);
+      print(receivedClassWrapper);
     } catch (e) {
       setState(() {
         status = 'Failed: $e';

@@ -447,14 +447,14 @@ final NIAllTypes genericNIAllTypes = NIAllTypes(
 //   recursiveClassMap: allNullableTypesMap,
 // );
 
-// NIAllClassesWrapper classWrapperMaker() {
-//   return NIAllClassesWrapper(
+NIAllClassesWrapper classWrapperMaker() {
+  return NIAllClassesWrapper(
 //     allNullableTypes: recursiveNIAllNullableTypes,
-//     allNullableTypesWithoutRecursion: genericNIAllNullableTypesWithoutRecursion,
-//     allTypes: genericNIAllTypes,
+    allNullableTypesWithoutRecursion: genericNIAllNullableTypesWithoutRecursion,
+    allTypes: genericNIAllTypes,
 //     classList: allTypesClassList,
 //     classMap: allTypesClassMap,
 //     nullableClassList: allNullableTypesWithoutRecursionClassList,
 //     nullableClassMap: allNullableTypesWithoutRecursionClassMap,
-//   );
-// }
+  );
+}

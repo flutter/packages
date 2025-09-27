@@ -1216,6 +1216,10 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
 }
 
 class NITestsClass: NSObject, NIHostIntegrationCoreApi {
+  func echoClassWrapper(wrapper: NIAllClassesWrapper) throws -> NIAllClassesWrapper {
+    return wrapper
+  }
+
   func sendMultipleNullableTypesWithoutRecursion(
     aNullableBool: Bool?, aNullableInt: Int64?, aNullableString: String?
   ) throws -> NIAllNullableTypesWithoutRecursion {

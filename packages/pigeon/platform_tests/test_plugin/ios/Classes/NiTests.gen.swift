@@ -375,6 +375,73 @@ struct NIAllNullableTypesWithoutRecursion {
   }
 }
 
+/// A class for testing nested class handling.
+///
+/// This is needed to test nested nullable and non-nullable classes,
+/// `NIAllNullableTypes` is non-nullable here as it is easier to instantiate
+/// than `NIAllTypes` when testing doesn't require both (ie. testing null classes).
+///
+/// Generated class from Pigeon that represents data sent in messages.
+struct NIAllClassesWrapper {
+  var allNullableTypesWithoutRecursion: NIAllNullableTypesWithoutRecursion? = nil
+  var allTypes: NIAllTypes? = nil
+
+  static func fromList(_ pigeonVar_list: [Any?]) -> NIAllClassesWrapper? {
+    let allNullableTypesWithoutRecursion: NIAllNullableTypesWithoutRecursion? = nilOrValue(
+      pigeonVar_list[0])
+    let allTypes: NIAllTypes? = nilOrValue(pigeonVar_list[1])
+
+    return NIAllClassesWrapper(
+      allNullableTypesWithoutRecursion: allNullableTypesWithoutRecursion,
+      allTypes: allTypes
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      allNullableTypesWithoutRecursion,
+      allTypes,
+    ]
+  }
+}
+
+/// A class for testing nested class handling.
+///
+/// This is needed to test nested nullable and non-nullable classes,
+/// `NIAllNullableTypes` is non-nullable here as it is easier to instantiate
+/// than `NIAllTypes` when testing doesn't require both (ie. testing null classes).
+///
+/// Generated bridge class from Pigeon that moves data from Swift to Objective-C.
+@objc class NIAllClassesWrapperBridge: NSObject {
+  @objc init(
+    allNullableTypesWithoutRecursion: NIAllNullableTypesWithoutRecursionBridge? = nil,
+    allTypes: NIAllTypesBridge? = nil
+  ) {
+    self.allNullableTypesWithoutRecursion = allNullableTypesWithoutRecursion
+    self.allTypes = allTypes
+  }
+  @objc var allNullableTypesWithoutRecursion: NIAllNullableTypesWithoutRecursionBridge? = nil
+  @objc var allTypes: NIAllTypesBridge? = nil
+
+  @available(iOS 13, macOS 16.0.0, *)
+  static func fromSwift(_ pigeonVar_Class: NIAllClassesWrapper?) -> NIAllClassesWrapperBridge? {
+    if isNullish(pigeonVar_Class) {
+      return nil
+    }
+    return NIAllClassesWrapperBridge(
+      allNullableTypesWithoutRecursion: NIAllNullableTypesWithoutRecursionBridge.fromSwift(
+        pigeonVar_Class!.allNullableTypesWithoutRecursion),
+      allTypes: NIAllTypesBridge.fromSwift(pigeonVar_Class!.allTypes),
+    )
+  }
+  func toSwift() -> NIAllClassesWrapper {
+    return NIAllClassesWrapper(
+      allNullableTypesWithoutRecursion: isNullish(allNullableTypesWithoutRecursion)
+        ? nil : allNullableTypesWithoutRecursion!.toSwift(),
+      allTypes: isNullish(allTypes) ? nil : allTypes!.toSwift(),
+    )
+  }
+}
+
 @objc class PigeonInternalNull: NSObject {}
 
 @available(iOS 13, macOS 16.0.0, *)
@@ -542,6 +609,8 @@ protocol NIHostIntegrationCoreApi {
   func echoList(list: [Any?]) throws -> [Any?]
   /// Returns the passed map, to test serialization and deserialization.
   func echoMap(map: [AnyHashable?: Any?]) throws -> [AnyHashable?: Any?]
+  /// Returns the passed class to test nested class serialization and deserialization.
+  func echoClassWrapper(wrapper: NIAllClassesWrapper) throws -> NIAllClassesWrapper
   /// Returns the passed enum to test serialization and deserialization.
   func echoEnum(anEnum: NIAnEnum) throws -> NIAnEnum
   /// Returns the passed enum to test serialization and deserialization.
@@ -734,6 +803,25 @@ protocol NIHostIntegrationCoreApi {
     }
     return nil
   }
+  /// Returns the passed class to test nested class serialization and deserialization.
+  @available(iOS 13, macOS 16.0.0, *)
+  @objc func echoClassWrapper(wrapper: NIAllClassesWrapperBridge, wrappedError: NiTestsError)
+    -> NIAllClassesWrapperBridge?
+  {
+    do {
+      return try NIAllClassesWrapperBridge.fromSwift(
+        api!.echoClassWrapper(wrapper: wrapper.toSwift()))
+    } catch let error as NiTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
   /// Returns the passed enum to test serialization and deserialization.
   @available(iOS 13, macOS 16.0.0, *)
   @objc func echoEnum(anEnum: NIAnEnum, wrappedError: NiTestsError) -> NSNumber? {
@@ -774,7 +862,8 @@ protocol NIHostIntegrationCoreApi {
   ) -> NIAllNullableTypesWithoutRecursionBridge? {
     do {
       return try NIAllNullableTypesWithoutRecursionBridge.fromSwift(
-        api!.echoAllNullableTypesWithoutRecursion(everything: everything?.toSwift()))
+        api!.echoAllNullableTypesWithoutRecursion(
+          everything: isNullish(everything) ? nil : everything?.toSwift()))
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message

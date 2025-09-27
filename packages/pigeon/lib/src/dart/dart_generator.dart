@@ -317,7 +317,6 @@ class _FfiType {
       return _wrapInNullCheckIfNullable(
         nullable: type.isNullable,
         varName: name,
-        ifNull: '${ffiType.ffiName}.alloc()',
         code:
             '$name${_getForceNonNullSymbol(type.isNullable && forceNonNull)}.toFfi()',
       );
@@ -1027,19 +1026,19 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
   }
 
   void _writeToJni(Indent indent, Class classDefinition) {
-    indent.writeScoped('jni_bridge.${classDefinition.name} toJni() {', '}', () {
-      indent.writeScoped('return jni_bridge.${classDefinition.name} (', ');',
-          () {
-        for (final NamedType field in getFieldsInSerializationOrder(
-          classDefinition,
-        )) {
-          final _JniType jniType = _JniType.fromTypeDeclaration(field.type);
-          indent.writeln(
-            '${field.name}: ${jniType.getToJniCall(field.type, field.name, jniType, forceNonNull: true)},',
-          );
-        }
-      });
-    });
+    // indent.writeScoped('jni_bridge.${classDefinition.name} toJni() {', '}', () {
+    //   indent.writeScoped('return jni_bridge.${classDefinition.name} (', ');',
+    //       () {
+    //     for (final NamedType field in getFieldsInSerializationOrder(
+    //       classDefinition,
+    //     )) {
+    //       final _JniType jniType = _JniType.fromTypeDeclaration(field.type);
+    //       indent.writeln(
+    //         '${field.name}: ${jniType.getToJniCall(field.type, field.name, jniType, forceNonNull: true)},',
+    //       );
+    //     }
+    //   });
+    // });
   }
 
   void _writeToFfi(Indent indent, Class classDefinition) {
@@ -1070,27 +1069,27 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
   }
 
   void _writeFromJni(Indent indent, Class classDefinition) {
-    final _JniType jniClass = _JniType.fromClass(classDefinition);
-    indent.writeScoped(
-      'static ${jniClass.type.baseName}? fromJni(${jniClass.jniName}? jniClass) {',
-      '}',
-      () {
-        indent.writeScoped(
-          'return jniClass == null ? null : ${jniClass.type.baseName}(',
-          ');',
-          () {
-            for (final NamedType field in getFieldsInSerializationOrder(
-              classDefinition,
-            )) {
-              final _JniType jniType = _JniType.fromTypeDeclaration(field.type);
-              indent.writeln(
-                '${field.name}: ${jniType.getToDartCall(field.type, varName: 'jniClass.${jniType.getJniGetterMethodName(field.name)}')},',
-              );
-            }
-          },
-        );
-      },
-    );
+    // final _JniType jniClass = _JniType.fromClass(classDefinition);
+    // indent.writeScoped(
+    //   'static ${jniClass.type.baseName}? fromJni(${jniClass.jniName}? jniClass) {',
+    //   '}',
+    //   () {
+    //     indent.writeScoped(
+    //       'return jniClass == null ? null : ${jniClass.type.baseName}(',
+    //       ');',
+    //       () {
+    //         for (final NamedType field in getFieldsInSerializationOrder(
+    //           classDefinition,
+    //         )) {
+    //           final _JniType jniType = _JniType.fromTypeDeclaration(field.type);
+    //           indent.writeln(
+    //             '${field.name}: ${jniType.getToDartCall(field.type, varName: 'jniClass.${jniType.getJniGetterMethodName(field.name)}')},',
+    //           );
+    //         }
+    //       },
+    //     );
+    //   },
+    // );
   }
 
   void _writeFromFfi(Indent indent, Class classDefinition) {
@@ -2491,9 +2490,9 @@ class _PigeonJniCodec {
     ${root.classes.map((Class dataClass) {
       final _JniType jniType = _JniType.fromClass(dataClass);
       return '''
-      } else if (value.isA<${jniType.jniName}>(
-          ${jniType.jniName}.type)) {
-        return ${jniType.type.baseName}.fromJni(value.as(${jniType.jniName}.type));
+      // } else if (value.isA<${jniType.jniName}>(
+      //     ${jniType.jniName}.type)) {
+      //   return ${jniType.type.baseName}.fromJni(value.as(${jniType.jniName}.type));
         ''';
     }).join()}
     ${root.enums.map((Enum enumDefinition) {
@@ -2622,8 +2621,8 @@ class _PigeonJniCodec {
     ${root.classes.map((Class dataClass) {
       final _JniType jniType = _JniType.fromClass(dataClass);
       return '''
-      } else if (value is ${jniType.type.baseName}) {
-        return value.toJni() as T;
+      // } else if (value is ${jniType.type.baseName}) {
+      //   return value.toJni() as T;
         ''';
     }).join()}
     ${root.enums.map((Enum enumDefinition) {

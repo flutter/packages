@@ -329,6 +329,30 @@ typedef unsigned int swift_uint4 __attribute__((__ext_vector_type__(4)));
 
 #if defined(__OBJC__)
 
+@class NIAllNullableTypesWithoutRecursionBridge;
+@class NIAllTypesBridge;
+/// A class for testing nested class handling.
+/// This is needed to test nested nullable and non-nullable classes,
+/// <code>NIAllNullableTypes</code> is non-nullable here as it is easier to
+/// instantiate than <code>NIAllTypes</code> when testing doesn’t require both
+/// (ie. testing null classes). Generated bridge class from Pigeon that moves
+/// data from Swift to Objective-C.
+SWIFT_CLASS("_TtC11test_plugin25NIAllClassesWrapperBridge")
+@interface NIAllClassesWrapperBridge : NSObject
+- (nonnull instancetype)
+    initWithAllNullableTypesWithoutRecursion:
+        (NIAllNullableTypesWithoutRecursionBridge *_Nullable)
+            allNullableTypesWithoutRecursion
+                                    allTypes:
+                                        (NIAllTypesBridge *_Nullable)allTypes
+    OBJC_DESIGNATED_INITIALIZER;
+@property(nonatomic, strong) NIAllNullableTypesWithoutRecursionBridge
+    *_Nullable allNullableTypesWithoutRecursion;
+@property(nonatomic, strong) NIAllTypesBridge *_Nullable allTypes;
+- (nonnull instancetype)init SWIFT_UNAVAILABLE;
++ (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
+@end
+
 @class NSNumber;
 @class NSString;
 /// A class containing all supported nullable types.
@@ -468,6 +492,13 @@ SWIFT_CLASS("_TtC11test_plugin29NIHostIntegrationCoreApiSetup")
     echoMapWithMap:(NSDictionary<id<NSCopying>, NSObject *> *_Nonnull)map
       wrappedError:(NiTestsError *_Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT
     SWIFT_AVAILABILITY(macos, introduced = 16.0.0)
+        SWIFT_AVAILABILITY(ios, introduced = 13);
+/// Returns the passed class to test nested class serialization and
+/// deserialization.
+- (NIAllClassesWrapperBridge *_Nullable)
+    echoClassWrapperWithWrapper:(NIAllClassesWrapperBridge *_Nonnull)wrapper
+                   wrappedError:(NiTestsError *_Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos, introduced = 16.0.0)
         SWIFT_AVAILABILITY(ios, introduced = 13);
 /// Returns the passed enum to test serialization and deserialization.
 - (NSNumber *_Nullable)echoEnumWithAnEnum:(enum NIAnEnum)anEnum

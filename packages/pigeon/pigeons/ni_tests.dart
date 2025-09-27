@@ -260,29 +260,29 @@ class NIAllNullableTypesWithoutRecursion {
 //   Map<int?, Map<Object?, Object?>?>? mapMap;
 }
 
-// /// A class for testing nested class handling.
-// ///
-// /// This is needed to test nested nullable and non-nullable classes,
-// /// `NIAllNullableTypes` is non-nullable here as it is easier to instantiate
-// /// than `NIAllTypes` when testing doesn't require both (ie. testing null classes).
-// class NIAllClassesWrapper {
-//   NIAllClassesWrapper(
-//     this.allNullableTypes,
-//     this.allNullableTypesWithoutRecursion,
-//     this.allTypes,
-//     this.classList,
-//     this.classMap,
-//     this.nullableClassList,
-//     this.nullableClassMap,
-//   );
-//   NIAllNullableTypes allNullableTypes;
-//   NIAllNullableTypesWithoutRecursion? allNullableTypesWithoutRecursion;
-//   NIAllTypes? allTypes;
-//   List<NIAllTypes?> classList;
-//   List<NIAllNullableTypesWithoutRecursion?>? nullableClassList;
-//   Map<int?, NIAllTypes?> classMap;
-//   Map<int?, NIAllNullableTypesWithoutRecursion?>? nullableClassMap;
-// }
+/// A class for testing nested class handling.
+///
+/// This is needed to test nested nullable and non-nullable classes,
+/// `NIAllNullableTypes` is non-nullable here as it is easier to instantiate
+/// than `NIAllTypes` when testing doesn't require both (ie. testing null classes).
+class NIAllClassesWrapper {
+  NIAllClassesWrapper(
+    // this.allNullableTypes,
+    this.allNullableTypesWithoutRecursion,
+    this.allTypes,
+    // this.classList,
+    // this.classMap,
+    // this.nullableClassList,
+    // this.nullableClassMap,
+  );
+  // NIAllNullableTypes allNullableTypes;
+  NIAllNullableTypesWithoutRecursion? allNullableTypesWithoutRecursion;
+  NIAllTypes? allTypes;
+  // List<NIAllTypes?> classList;
+  // List<NIAllNullableTypesWithoutRecursion?>? nullableClassList;
+  // Map<int?, NIAllTypes?> classMap;
+  // Map<int?, NIAllNullableTypesWithoutRecursion?>? nullableClassMap;
+}
 
 /// The core interface that each host language plugin must implement in
 /// platform_test integration tests.
@@ -426,10 +426,10 @@ abstract class NIHostIntegrationCoreApi {
   // Map<int, NIAllNullableTypes> echoNonNullClassMap(
   //     Map<int, NIAllNullableTypes> classMap);
 
-  // /// Returns the passed class to test nested class serialization and deserialization.
-  // @ObjCSelector('echoClassWrapper:')
+  /// Returns the passed class to test nested class serialization and deserialization.
+  @ObjCSelector('echoClassWrapper:')
   // @SwiftFunction('echo(_:)')
-  // NIAllClassesWrapper echoClassWrapper(NIAllClassesWrapper wrapper);
+  NIAllClassesWrapper echoClassWrapper(NIAllClassesWrapper wrapper);
 
   /// Returns the passed enum to test serialization and deserialization.
   @ObjCSelector('echoEnum:')
