@@ -658,7 +658,10 @@ class Camera {
   final StreamController<CameraImageData> _cameraFrameStreamController =
       StreamController<CameraImageData>.broadcast();
 
-  // TODO(TecHaxter): package:camera_platform_interface has CameraImageStreamOptions class. FPS should be introduced there instead of here.
+  // TODO(TecHaxter): Introduce FPS in CameraImageStreamOptions of
+  //                  package:camera_platform_interface.
+  //                  https://github.com/flutter/flutter/issues/176148
+  // This class is deprecated and will be removed in the future.
   /// Used for running the camera frame stream at a specified FPS
   final int cameraStreamFPS = 60;
 
