@@ -2,6 +2,10 @@
 
 * Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
 
+## 2.0.12
+
+* Migrates from JVM 11 to JVM 17
+
 ## 2.0.11
 
 * Fixes new lint warnings.
