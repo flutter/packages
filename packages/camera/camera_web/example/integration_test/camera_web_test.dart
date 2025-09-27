@@ -95,9 +95,7 @@ void main() {
         ),
       ).thenAnswer((_) async => videoElement.captureStream());
 
-      when(
-        () => cameraService.hasPropertyOffScreenCanvas(),
-      ).thenAnswer((_) => true);
+      when(cameraService.hasPropertyOffScreenCanvas()).thenAnswer((_) => true);
 
       CameraPlatform.instance = CameraPlugin(cameraService: cameraService)
         ..window = window;

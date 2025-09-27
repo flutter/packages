@@ -49,8 +49,8 @@ class Camera {
     required CameraService cameraService,
     this.options = const CameraOptions(),
     this.recorderOptions = const (audioBitrate: null, videoBitrate: null),
-  })  : _cameraService = cameraService,
-        canUseOffscreenCanvas = cameraService.hasPropertyOffScreenCanvas();
+  }) : _cameraService = cameraService,
+       canUseOffscreenCanvas = cameraService.hasPropertyOffScreenCanvas();
 
   /// The texture id used to register the camera view.
   final int textureId;
@@ -162,7 +162,10 @@ class Camera {
 
   /// Used to check if allowed to paint canvas off screen
   @visibleForTesting
-  bool canUseOffscreenCanvas = false;
+  final bool canUseOffscreenCanvas;
+
+  /// The tolerance for the camera streaming frame time.
+  final int _frameTimeToleranceMs = 8;
 
   /// Initializes the camera stream displayed in the [videoElement].
   /// Registers the camera view with [textureId] under [_getViewType] type.
@@ -655,8 +658,8 @@ class Camera {
   final StreamController<CameraImageData> _cameraFrameStreamController =
       StreamController<CameraImageData>.broadcast();
 
-  // TODO(replace): introduced fps in
-  /// [CameraImageStreamOptions]
+  // TODO(TecHaxter): package:camera_platform_interface has CameraImageStreamOptions class. FPS should be introduced there instead of here.
+  /// Used for running the camera frame stream at a specified FPS
   final int cameraStreamFPS = 60;
 
   /// Returns a stream of camera frames.
@@ -677,23 +680,21 @@ class Camera {
 
   /// Triggers animation frames in a loop at a specified FPS
   /// as long as [animationFrameId] is not cancelled
-  void _triggerAnimationFramesLoop(
-    VoidCallback action, {
-    required int fps,
-  }) {
+  void _triggerAnimationFramesLoop(VoidCallback action, {required int fps}) {
     int? animationFrameId;
-    num then = 0, fpsInterval = 1000 / fps;
+    final num fpsInterval = 1000 / fps;
+    num lastFrameTimestamp = 0;
 
     int? animate(num timestamp) {
       // Schedule the next frame
       animationFrameId = window.requestAnimationFrame(animate.toJS);
       // Calculate the elapsed time since the last frame
-      final num elapsed = timestamp - then;
+      final num elapsed = timestamp - lastFrameTimestamp;
 
-      // if we're close to the next frame (by ~8ms), do it.
-      if (fpsInterval - elapsed <= 8) {
+      // If we're close to the next frame (~`_frameTimeToleranceMs`), do it.
+      if (fpsInterval - elapsed <= _frameTimeToleranceMs) {
         // Get ready for next frame
-        then = timestamp;
+        lastFrameTimestamp = timestamp;
         // Perform the action task
         action();
       }

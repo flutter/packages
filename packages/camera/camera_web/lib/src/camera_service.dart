@@ -366,16 +366,14 @@ class CameraService {
     return jsUtil.hasProperty(window, 'OffscreenCanvas'.toJS);
   }
 
-  ///Used in [takeFrame] if [canUseOffscreenCanvas] is false
+  ///Used in [takeFrame] if `OffscreenCanvas` is not supported
   web.CanvasElement? _canvasElement;
 
-  ///Used in [takeFrame] if [canUseOffscreenCanvas] is false
+  ///Used in [takeFrame] if `OffscreenCanvas` is supported
   web.OffscreenCanvas? _offscreenCanvas;
 
   ///Returns frame at a specific time using video element
-  CameraImageData takeFrame(
-    web.VideoElement videoElement,
-  ) {
+  CameraImageData takeFrame(web.VideoElement videoElement) {
     final int width = videoElement.videoWidth;
     final int height = videoElement.videoHeight;
     if (width == 0 || height == 0) {
@@ -392,18 +390,20 @@ class CameraService {
       }
       final web.OffscreenCanvasRenderingContext2D context =
           _offscreenCanvas!.getContext(
-        '2d',
-        <String, Object?>{'willReadFrequently': true}.jsify(),
-      )! as web.OffscreenCanvasRenderingContext2D;
+                '2d',
+                <String, Object?>{'willReadFrequently': true}.jsify(),
+              )!
+              as web.OffscreenCanvasRenderingContext2D;
       context.drawImage(videoElement, 0, 0);
       imageData = context.getImageData(0, 0, width, height);
     } else {
       if (_canvasElement == null ||
           _canvasElement!.width != width ||
           _canvasElement!.height != height) {
-        _canvasElement = web.CanvasElement()
-          ..height = height
-          ..width = width;
+        _canvasElement =
+            web.CanvasElement()
+              ..height = height
+              ..width = width;
       }
       final web.CanvasRenderingContext2D context = _canvasElement!.context2D;
 
@@ -419,10 +419,7 @@ class CameraService {
     final ByteBuffer byteBuffer = imageData.data.toDart.buffer;
 
     return CameraImageData(
-      format: const CameraImageFormat(
-        ImageFormatGroup.unknown,
-        raw: 0,
-      ),
+      format: const CameraImageFormat(ImageFormatGroup.unknown, raw: 0),
       planes: <CameraImagePlane>[
         CameraImagePlane(
           bytes: byteBuffer.asUint8List(),

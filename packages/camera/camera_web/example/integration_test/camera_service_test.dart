@@ -985,58 +985,41 @@ void main() {
     });
 
     group('camera image stream', () {
-      setUp(
-        () {
-          cameraService = cameraService..jsUtil = jsUtil;
-        },
-      );
-      testWidgets(
-        'returns true if broswer has OffscreenCanvas '
-        'otherwise false',
-        (WidgetTester widgetTester) async {
+      setUp(() {
+        cameraService = cameraService..jsUtil = jsUtil;
+      });
+      testWidgets('returns true if broswer has OffscreenCanvas '
+          'otherwise false', (WidgetTester widgetTester) async {
+        for (final bool supportsOffscreenCanvas in <bool>[true, false]) {
           when(
-            () => jsUtil.hasProperty(
-              window,
-              'OffscreenCanvas'.toJS,
-            ),
-          ).thenReturn(true);
+            jsUtil.hasProperty(window, 'OffscreenCanvas'.toJS),
+          ).thenReturn(supportsOffscreenCanvas);
           final bool hasOffScreenCanvas =
               cameraService.hasPropertyOffScreenCanvas();
           expect(
             hasOffScreenCanvas,
-            true,
+            supportsOffscreenCanvas ? isTrue : isFalse,
           );
+        }
+      });
+      testWidgets('returns Camera Image of Size '
+          'when videoElement is of Size '
+          'regardless of OffscreenCanvas support', (
+        WidgetTester widgetTester,
+      ) async {
+        const Size size = Size(10, 10);
+        final Completer<void> completer = Completer<void>();
+        final web.VideoElement videoElement =
+            getVideoElementWithBlankStream(size)
+              ..onLoadedMetadata.listen((_) {
+                completer.complete();
+              })
+              ..load();
+        await completer.future;
+        for (final bool supportsOffscreenCanvas in <bool>[true, false]) {
           when(
-            () => jsUtil.hasProperty(
-              window,
-              'OffscreenCanvas'.toJS,
-            ),
-          ).thenReturn(false);
-          final bool hasNotOffScreenCanvas =
-              cameraService.hasPropertyOffScreenCanvas();
-          expect(
-            hasNotOffScreenCanvas,
-            false,
-          );
-        },
-      );
-      testWidgets(
-        'returns Camera Image of Size '
-        'when videoElement is of Size '
-        'when browser supports OffscreenCanvas',
-        (WidgetTester widgetTester) async {
-          const Size size = Size(10, 10);
-          final Completer<void> completer = Completer<void>();
-          final web.VideoElement videoElement =
-              getVideoElementWithBlankStream(size)
-                ..onLoadedMetadata.listen((_) {
-                  completer.complete();
-                })
-                ..load();
-          await completer.future;
-          when(() => cameraService.hasPropertyOffScreenCanvas()).thenReturn(
-            true,
-          );
+            jsUtil.hasProperty(window, 'OffscreenCanvas'.toJS),
+          ).thenReturn(supportsOffscreenCanvas);
           final CameraImageData cameraImageData = cameraService.takeFrame(
             videoElement,
           );
@@ -1047,39 +1030,8 @@ void main() {
               cameraImageData.height.toDouble(),
             ),
           );
-          verify(cameraService.hasPropertyOffScreenCanvas).called(1);
-        },
-      );
-      testWidgets(
-        'returns Camera Image of Size '
-        'when videoElement is of Size '
-        'when browser does not supports OffscreenCanvas',
-        (WidgetTester widgetTester) async {
-          const Size size = Size(10, 10);
-          final Completer<void> loadVideo = Completer<void>();
-          final web.VideoElement videoElement =
-              getVideoElementWithBlankStream(size)
-                ..onLoadedMetadata.listen((_) {
-                  loadVideo.complete();
-                })
-                ..load();
-          await loadVideo.future;
-          when(() => cameraService.hasPropertyOffScreenCanvas()).thenReturn(
-            false,
-          );
-          final CameraImageData cameraImageData = cameraService.takeFrame(
-            videoElement,
-          );
-          expect(
-            size,
-            Size(
-              cameraImageData.width.toDouble(),
-              cameraImageData.height.toDouble(),
-            ),
-          );
-          verify(cameraService.hasPropertyOffScreenCanvas).called(1);
-        },
-      );
+        }
+      });
     });
   });
 }
