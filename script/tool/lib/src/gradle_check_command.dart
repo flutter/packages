@@ -372,15 +372,15 @@ build.gradle must set an explicit Java compatibility version.
 This can be done either via "sourceCompatibility"/"targetCompatibility":
     android {
         compileOptions {
-            sourceCompatibility JavaVersion.VERSION_11
-            targetCompatibility JavaVersion.VERSION_11
+            sourceCompatibility = JavaVersion.VERSION_17
+            targetCompatibility = JavaVersion.VERSION_17
         }
     }
 
 or "toolchain":
     java {
         toolchain {
-            languageVersion = JavaLanguageVersion.of(11)
+            languageVersion = JavaLanguageVersion.of(17)
         }
     }
 
