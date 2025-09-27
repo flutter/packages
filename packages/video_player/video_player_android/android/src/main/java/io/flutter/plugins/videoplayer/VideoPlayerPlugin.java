@@ -90,6 +90,7 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
   }
 
   @Override
+  @androidx.media3.common.util.UnstableApi
   public @NonNull Long create(@NonNull CreateMessage arg) {
     final @NonNull String uri = arg.getUri();
     final VideoAsset videoAsset;
