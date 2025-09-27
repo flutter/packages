@@ -1,7 +1,7 @@
 ## 2.0.12
 
 * Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
-* Migrates from JVM 11 to JVM 17
+* Updates Java compatibility version to 17
 
 ## 2.0.11
 
