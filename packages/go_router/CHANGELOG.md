@@ -1,3 +1,8 @@
+## 16.2.5
+
+- Fixes `GoRouter.of(context)` access inside redirect callbacks by providing router access through Zone-based context tracking.
+- Adds support for using context extension methods (e.g., `context.namedLocation()`, `context.go()`) within redirect callbacks.
+
 ## 16.2.4
 
 - Fix Android Cold Start deep link with empty path losing scheme and authority.
