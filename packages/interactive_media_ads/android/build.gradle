@@ -25,7 +25,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    namespace 'dev.flutter.packages.interactive_media_ads'
+    namespace = "dev.flutter.packages.interactive_media_ads"
 
     compileSdk = flutter.compileSdkVersion
 
@@ -48,14 +48,14 @@ android {
     }
 
     dependencies {
-        implementation 'androidx.annotation:annotation:1.9.1'
-        implementation 'androidx.core:core-ktx:1.13.0'
-        implementation 'com.google.ads.interactivemedia.v3:interactivemedia:3.36.0'
-        testImplementation 'junit:junit:4.13.2'
-        testImplementation 'org.jetbrains.kotlin:kotlin-test'
-        testImplementation "org.mockito.kotlin:mockito-kotlin:6.0.0"
-        testImplementation 'org.mockito:mockito-inline:5.2.0'
-        testImplementation 'androidx.test:core:1.7.0'
+        implementation("androidx.annotation:annotation:1.9.1")
+        implementation("androidx.core:core-ktx:1.13.0")
+        implementation("com.google.ads.interactivemedia.v3:interactivemedia:3.36.0")
+        testImplementation("junit:junit:4.13.2")
+        testImplementation("org.jetbrains.kotlin:kotlin-test")
+        testImplementation("org.mockito.kotlin:mockito-kotlin:6.0.0")
+        testImplementation("org.mockito:mockito-inline:5.2.0")
+        testImplementation("androidx.test:core:1.7.0")
     }
 
     lintOptions {

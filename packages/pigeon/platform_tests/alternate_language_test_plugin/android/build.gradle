@@ -22,7 +22,7 @@ rootProject.allprojects {
 apply plugin: 'com.android.library'
 
 android {
-    namespace 'com.example.alternate_language_test_plugin'
+    namespace = "com.example.alternate_language_test_plugin"
     compileSdk = flutter.compileSdkVersion
 
     compileOptions {
@@ -53,7 +53,7 @@ android {
     }
 
     dependencies {
-        testImplementation 'junit:junit:4.13.2'
-        testImplementation "org.mockito:mockito-core:5.19.0"
+        testImplementation("junit:junit:4.13.2")
+        testImplementation("org.mockito:mockito-core:5.19.0")
     }
 }

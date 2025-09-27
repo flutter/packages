@@ -23,7 +23,7 @@ if (flutterVersionName == null) {
 }
 
 android {
-    namespace 'dev.flutter.rfw.examples.remote'
+    namespace = "dev.flutter.rfw.examples.remote"
     compileSdk = flutter.compileSdkVersion
 
     compileOptions {

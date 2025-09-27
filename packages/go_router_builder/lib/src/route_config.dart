@@ -645,6 +645,7 @@ abstract class RouteBaseConfig {
     }
 
     // TODO(kevmoo): validate that this MUST be a subtype of `GoRouteData`
+    // ignore: experimental_member_use
     final InterfaceElement2 classElement = typeParamType.element3;
 
     final RouteBaseConfig value;
@@ -945,6 +946,7 @@ String _enumMapConst(InterfaceType type) {
 
   final StringBuffer buffer = StringBuffer('const ${enumMapName(type)} = {');
 
+  // ignore: experimental_member_use
   for (final FieldElement2 enumField in type.element3.fields2.where(
     (FieldElement2 element) => element.isEnumConstant,
   )) {
