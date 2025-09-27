@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -151,7 +151,7 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
   }
 
   // Resets the state to before an ad is loaded and releases references to all
-  // ads and allbacks.
+  // ads and callbacks.
   void _release() {
     _resetStateForNextAd();
     _loadedAdMediaInfoQueue.clear();

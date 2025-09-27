@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -72,6 +72,7 @@ void main() {
         delegate,
         ima.IMAAdsManager.pigeon_detached(
           pigeon_instanceManager: instanceManager,
+          adCuePoints: const <double>[],
         ),
         ima.IMAAdEvent.pigeon_detached(
           type: ima.AdEventType.allAdsCompleted,
@@ -138,6 +139,7 @@ void main() {
         delegate,
         ima.IMAAdsManager.pigeon_detached(
           pigeon_instanceManager: instanceManager,
+          adCuePoints: const <double>[],
         ),
       );
     });
@@ -198,6 +200,7 @@ void main() {
         delegate,
         ima.IMAAdsManager.pigeon_detached(
           pigeon_instanceManager: instanceManager,
+          adCuePoints: const <double>[],
         ),
       );
     });
@@ -264,6 +267,7 @@ void main() {
         delegate,
         ima.IMAAdsManager.pigeon_detached(
           pigeon_instanceManager: instanceManager,
+          adCuePoints: const <double>[],
         ),
         ima.IMAAdError.pigeon_detached(
           type: ima.AdErrorType.loadingFailed,
