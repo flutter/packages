@@ -6,6 +6,7 @@
 
 * Adds HTML5 video poster support as a VideoPlayerWebOptions.
 * Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+* Adds a `setAllowBackgroundPlayback` method to dynamically control background playback.
 
 ## 6.3.0
 
