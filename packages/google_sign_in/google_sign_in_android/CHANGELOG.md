@@ -1,3 +1,7 @@
+## 7.2.1
+
+* Updates Java compatibility version to 17.
+
 ## 7.2.0
 
 * Adds support for `disconnect`.
