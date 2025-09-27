@@ -1,3 +1,7 @@
+## 6.3.3
+
+* Updates Java compatibility version to 17 in example.
+
 ## 6.3.2
 
 - Makes a map keyed on FontWeight non-const for compatibility with proposed changes to the engine's implementation of FontWeight.
