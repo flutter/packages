@@ -1,3 +1,7 @@
+## 0.10.10+8
+
+* Migrates from JVM 11 to JVM 17.
+
 ## 0.10.10+7
 
 * Updates minimum supported SDK version to Flutter 3.35.
