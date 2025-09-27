@@ -267,6 +267,7 @@ class OpenContainer<T extends Object?> extends StatefulWidget {
 ///
 /// Can [openContainer] explicitly or via a tap when
 /// [OpenContainer.tappable] is true.
+@optionalTypeArgs
 class OpenContainerState<T> extends State<OpenContainer<T?>> {
   // Key used in [_OpenContainerRoute] to hide the widget returned by
   // [OpenContainer.openBuilder] in the source route while the container is
