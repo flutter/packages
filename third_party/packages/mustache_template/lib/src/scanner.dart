@@ -133,7 +133,7 @@ class Scanner {
       _read();
     }
     final int end = _peek() == _EOF ? _runes.length : _offset;
-    final String part = String.fromCharCodes(_runes.sublist( start, end));
+    final String part = String.fromCharCodes(_runes.sublist(start, end));
     return part;
   }
 
