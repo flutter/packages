@@ -302,6 +302,15 @@ void main() {
       ]);
     });
 
+    test('emoji', () {
+      const String source = 'Hello! 🖖👍🏽🏳️‍🌈\nEmoji';
+      final Parser parser = Parser(source, 'foo', '{{ }}');
+      final List<Node> nodes = parser.parse();
+      expectNodes(nodes, <Node>[
+        TextNode('Hello! 🖖👍🏽🏳️‍🌈\nEmoji', 0, 20), // End offset includes emoji sizes
+      ]);
+    });
+
     test('toString', () {
       TextNode('foo', 1, 3).toString();
       VariableNode('foo', 1, 3).toString();
