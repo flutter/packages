@@ -945,8 +945,7 @@
   XCTAssertNil(error);
   FVPCreationOptions *create = [FVPCreationOptions
       makeWithUri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"
-      httpHeaders:@{}
-         viewType:FVPPlatformVideoViewTypeTextureView];
+      httpHeaders:@{}];
 
   NSNumber *playerIdentifier = [videoPlayerPlugin createWithOptions:create error:&error];
   FVPVideoPlayer *player = videoPlayerPlugin.playersByIdentifier[playerIdentifier];
