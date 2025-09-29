@@ -45,7 +45,7 @@ void main() {
     bool warningsConfigured = true,
     bool useDeprecatedCompileSdkVersion = false,
     bool usePropertyAssignment = true,
-    String compileSdk = '33',
+    String compileSdk = '36',
   }) {
     final File buildGradle = package
         .platformDirectory(FlutterPlatform.android)
@@ -997,12 +997,13 @@ dependencies {
   });
 
   group('compileSdk check', () {
-    test('passes if set to a number', () async {
+    test('passes if set to a version higher than flutter.compileSdkVersio',
+        () async {
       const String packageName = 'a_package';
       final RepositoryPackage package =
           createFakePackage(packageName, packagesDir, isFlutter: true);
       writeFakePluginBuildGradle(package,
-          includeLanguageVersion: true, compileSdk: '35');
+          includeLanguageVersion: true, compileSdk: '37');
       writeFakeManifest(package);
       final RepositoryPackage example = package.getExamples().first;
       writeFakeExampleBuildGradles(example, pluginName: packageName);
@@ -1044,13 +1045,16 @@ dependencies {
       );
     });
 
-    test('fails if set to a number with Flutter >=3.27', () async {
+    test('fails if set to a version lower than flutter.compileSdkVersion',
+        () async {
       const String packageName = 'a_package';
-      final RepositoryPackage package = createFakePackage(
-          packageName, packagesDir,
-          isFlutter: true, flutterConstraint: '>=3.27.0');
+      final RepositoryPackage package =
+          createFakePackage(packageName, packagesDir, isFlutter: true);
+      // Current flutter.compileSdkVersion is 36.
+      const String minCompileSdkVersion = '36';
+      const String testCompileSdkVersion = '35';
       writeFakePluginBuildGradle(package,
-          includeLanguageVersion: true, compileSdk: '35');
+          includeLanguageVersion: true, compileSdk: testCompileSdkVersion);
       writeFakeManifest(package);
       final RepositoryPackage example = package.getExamples().first;
       writeFakeExampleBuildGradles(example, pluginName: packageName);
@@ -1066,9 +1070,10 @@ dependencies {
       expect(
         output,
         containsAllInOrder(<Matcher>[
-          contains(
-              'Please use flutter.compileSdkVersion instead of a hardcoded '
-              'compileSdk version number'),
+          contains('compileSdk version $testCompileSdkVersion is too low. '
+              'Minimum required version is $minCompileSdkVersion.'),
+          // "Please update this package's compileSdkVersion to at least "
+          // '$minCompileSdkVersion or use flutter.compileSdkVersion.')
         ]),
       );
     });

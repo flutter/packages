@@ -429,14 +429,6 @@ for more details.''';
     final String? compileSdkLine = gradleLines
         .firstWhereOrNull((String line) => linePattern.hasMatch(line));
 
-    final Pubspec pubspec = package.parsePubspec();
-    final VersionConstraint? flutterConstraint =
-    pubspec.environment['flutter'];
-    final Version? minFlutterVersion =
-    flutterConstraint != null && flutterConstraint is VersionRange
-        ? flutterConstraint.min
-        : null;
-
     if (compileSdkLine == null) {
       // Equals regex not found check for method pattern.
       final RegExp compileSpacePattern = RegExp(r'^\s*compileSdk');
@@ -456,6 +448,13 @@ for more details.''';
       return false;
     }
     if (compileSdkLine.contains('flutter.compileSdkVersion')) {
+      final Pubspec pubspec = package.parsePubspec();
+      final VersionConstraint? flutterConstraint =
+          pubspec.environment['flutter'];
+      final Version? minFlutterVersion =
+          flutterConstraint != null && flutterConstraint is VersionRange
+              ? flutterConstraint.min
+              : null;
       if (minFlutterVersion == null) {
         printError('${indentation}Unable to find a Flutter SDK version '
             'constraint. Use of flutter.compileSdkVersion requires a minimum '
@@ -470,11 +469,28 @@ for more details.''';
             'version to at least 3.27.');
         return false;
       }
-    }
-    if (!compileSdkLine.contains('flutter.compileSdkVersion') && minFlutterVersion! >= Version(3, 27, 0)) {
-      printError('${indentation}Please use flutter.compileSdkVersion instead '
-          'of a hardcoded compileSdk version number');
-      return false;
+    } else {
+      // Extract compileSdkVersion and check if it higher than flutter.compileSdkVersion.
+      final RegExp numericVersionPattern = RegExp(r'=\s*(\d+)');
+      final RegExpMatch? versionMatch =
+          numericVersionPattern.firstMatch(compileSdkLine);
+
+      if (versionMatch != null) {
+        final int compileSdkVersion = int.parse(versionMatch.group(1)!);
+        const int minCompileSdkVersion = 36;
+
+        if (compileSdkVersion < minCompileSdkVersion) {
+          printError(
+              '${indentation}compileSdk version $compileSdkVersion is too low. '
+              'Minimum required version is $minCompileSdkVersion. '
+              "${indentation}Please update this package's compileSdkVersion to at least "
+              '$minCompileSdkVersion or use flutter.compileSdkVersion.');
+          return false;
+        }
+      } else {
+        printError('${indentation}Unable to parse compileSdk version number.');
+        return false;
+      }
     }
     return true;
   }
