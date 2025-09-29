@@ -1,3 +1,8 @@
+## 0.9.21+5
+
+* Migrates `FLTCamConfiguration`, `FLTCamMediaSettingsAVWrapper` classes to Swift.
+* Migrates `FLTCaptureOutput`, `FLTCapturePhotoOutput`, `FLTCaptureVideoDataOutput` protocols to Swift.
+
 ## 0.9.21+4
 
 * Migrates `updateOrientation` and `setCaptureSessionPreset` methods to Swift.
