@@ -4915,12 +4915,7 @@ void main() {
 
       // Create mock ImageProxy with theoretical underlying NV21 format but with three
       // planes still in YUV_420_888 format that should get transformed to testNv21Buffer.
-      when(mockImageProxy.height).thenReturn(100);
-      when(mockImageProxy.width).thenReturn(200);
       when(mockImageProxy.getPlanes()).thenAnswer((_) async => mockPlanes);
-      when(mockPlane.buffer).thenReturn(Uint8List(33));
-      when(mockPlane.rowStride).thenReturn(10);
-      when(mockPlane.pixelStride).thenReturn(22);
 
       // Set up listener to receive mock ImageProxy.
       final Completer<CameraImageData> imageDataCompleter =

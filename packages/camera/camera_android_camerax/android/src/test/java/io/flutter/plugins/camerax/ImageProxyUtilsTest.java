@@ -22,7 +22,9 @@ public class ImageProxyUtilsTest {
     int height = 2;
     byte[] y = new byte[] {0, 1, 2, 3, 4, 5, 6, 7};
 
-    // U and V planes are not in NV21 layout (not interleaved).
+    // U and V planes are not in NV21 layout because the 2 ending
+    // bytes of the U plane does not overlap with the two
+    // starting bytes of the V plane.
     byte[] u = new byte[] {20, 20, 20, 20};
     byte[] v = new byte[] {30, 30, 30, 30};
 
