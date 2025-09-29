@@ -947,8 +947,11 @@
       makeWithUri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"
       httpHeaders:@{}];
 
-  NSNumber *playerIdentifier = [videoPlayerPlugin createWithOptions:create error:&error];
-  FVPVideoPlayer *player = videoPlayerPlugin.playersByIdentifier[playerIdentifier];
+  FVPTexturePlayerIds *identifiers = [videoPlayerPlugin createTexturePlayerWithOptions:create
+                                                                                 error:&error];
+  XCTAssertNil(error);
+  XCTAssertNotNil(identifiers);
+  FVPVideoPlayer *player = videoPlayerPlugin.playersByIdentifier[@(identifiers.playerId)];
   XCTAssertNotNil(player);
 
   AVPlayerItem *item = player.player.currentItem;
