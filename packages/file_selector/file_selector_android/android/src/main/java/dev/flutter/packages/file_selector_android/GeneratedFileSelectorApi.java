@@ -22,10 +22,7 @@ import java.lang.annotation.Target;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 /** Generated class from Pigeon. */
@@ -41,8 +38,7 @@ public class GeneratedFileSelectorApi {
     /** The error details. Must be a datatype supported by the api codec. */
     public final Object details;
 
-    public FlutterError(@NonNull String code, @Nullable String message, @Nullable Object details) 
-    {
+    public FlutterError(@NonNull String code, @Nullable String message, @Nullable Object details) {
       super(message);
       this.code = code;
       this.details = details;
@@ -61,7 +57,7 @@ public class GeneratedFileSelectorApi {
       errorList.add(exception.toString());
       errorList.add(exception.getClass().getSimpleName());
       errorList.add(
-        "Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
+          "Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
     }
     return errorList;
   }
@@ -116,10 +112,15 @@ public class GeneratedFileSelectorApi {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       FileSelectorNativeException that = (FileSelectorNativeException) o;
-      return fileSelectorExceptionCode.equals(that.fileSelectorExceptionCode) && message.equals(that.message);
+      return fileSelectorExceptionCode.equals(that.fileSelectorExceptionCode)
+          && message.equals(that.message);
     }
 
     @Override
@@ -132,7 +133,8 @@ public class GeneratedFileSelectorApi {
       private @Nullable FileSelectorExceptionCode fileSelectorExceptionCode;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setFileSelectorExceptionCode(@NonNull FileSelectorExceptionCode setterArg) {
+      public @NonNull Builder setFileSelectorExceptionCode(
+          @NonNull FileSelectorExceptionCode setterArg) {
         this.fileSelectorExceptionCode = setterArg;
         return this;
       }
@@ -161,10 +163,12 @@ public class GeneratedFileSelectorApi {
       return toListResult;
     }
 
-    static @NonNull FileSelectorNativeException fromList(@NonNull ArrayList<Object> pigeonVar_list) {
+    static @NonNull FileSelectorNativeException fromList(
+        @NonNull ArrayList<Object> pigeonVar_list) {
       FileSelectorNativeException pigeonResult = new FileSelectorNativeException();
       Object fileSelectorExceptionCode = pigeonVar_list.get(0);
-      pigeonResult.setFileSelectorExceptionCode((FileSelectorExceptionCode) fileSelectorExceptionCode);
+      pigeonResult.setFileSelectorExceptionCode(
+          (FileSelectorExceptionCode) fileSelectorExceptionCode);
       Object message = pigeonVar_list.get(1);
       pigeonResult.setMessage((String) message);
       return pigeonResult;
@@ -247,10 +251,19 @@ public class GeneratedFileSelectorApi {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       FileResponse that = (FileResponse) o;
-      return path.equals(that.path) && Objects.equals(mimeType, that.mimeType) && Objects.equals(name, that.name) && size.equals(that.size) && Arrays.equals(bytes, that.bytes) && Objects.equals(fileSelectorNativeException, that.fileSelectorNativeException);
+      return path.equals(that.path)
+          && Objects.equals(mimeType, that.mimeType)
+          && Objects.equals(name, that.name)
+          && size.equals(that.size)
+          && Arrays.equals(bytes, that.bytes)
+          && Objects.equals(fileSelectorNativeException, that.fileSelectorNativeException);
     }
 
     @Override
@@ -305,7 +318,8 @@ public class GeneratedFileSelectorApi {
       private @Nullable FileSelectorNativeException fileSelectorNativeException;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setFileSelectorNativeException(@Nullable FileSelectorNativeException setterArg) {
+      public @NonNull Builder setFileSelectorNativeException(
+          @Nullable FileSelectorNativeException setterArg) {
         this.fileSelectorNativeException = setterArg;
         return this;
       }
@@ -347,7 +361,8 @@ public class GeneratedFileSelectorApi {
       Object bytes = pigeonVar_list.get(4);
       pigeonResult.setBytes((byte[]) bytes);
       Object fileSelectorNativeException = pigeonVar_list.get(5);
-      pigeonResult.setFileSelectorNativeException((FileSelectorNativeException) fileSelectorNativeException);
+      pigeonResult.setFileSelectorNativeException(
+          (FileSelectorNativeException) fileSelectorNativeException);
       return pigeonResult;
     }
   }
@@ -385,8 +400,12 @@ public class GeneratedFileSelectorApi {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       FileTypes that = (FileTypes) o;
       return mimeTypes.equals(that.mimeTypes) && extensions.equals(that.extensions);
     }
@@ -448,10 +467,13 @@ public class GeneratedFileSelectorApi {
     @Override
     protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {
       switch (type) {
-        case (byte) 129: {
-          Object value = readValue(buffer);
-          return value == null ? null : FileSelectorExceptionCode.values()[((Long) value).intValue()];
-        }
+        case (byte) 129:
+          {
+            Object value = readValue(buffer);
+            return value == null
+                ? null
+                : FileSelectorExceptionCode.values()[((Long) value).intValue()];
+          }
         case (byte) 130:
           return FileSelectorNativeException.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 131:
@@ -483,7 +505,6 @@ public class GeneratedFileSelectorApi {
     }
   }
 
-
   /** Asynchronous error handling return type for non-nullable API method returns. */
   public interface Result<T> {
     /** Success case callback method for handling returns. */
@@ -511,41 +532,57 @@ public class GeneratedFileSelectorApi {
   /**
    * An API to call to native code to select files or directories.
    *
-   * Generated interface from Pigeon that represents a handler of messages from Flutter.
+   * <p>Generated interface from Pigeon that represents a handler of messages from Flutter.
    */
   public interface FileSelectorApi {
     /**
      * Opens a file dialog for loading files and returns a file path.
      *
-     * Returns `null` if user cancels the operation.
+     * <p>Returns `null` if user cancels the operation.
      */
-    void openFile(@Nullable String initialDirectory, @NonNull FileTypes allowedTypes, @NonNull NullableResult<FileResponse> result);
+    void openFile(
+        @Nullable String initialDirectory,
+        @NonNull FileTypes allowedTypes,
+        @NonNull NullableResult<FileResponse> result);
     /**
-     * Opens a file dialog for loading files and returns a list of file responses
-     * chosen by the user.
+     * Opens a file dialog for loading files and returns a list of file responses chosen by the
+     * user.
      */
-    void openFiles(@Nullable String initialDirectory, @NonNull FileTypes allowedTypes, @NonNull Result<List<FileResponse>> result);
+    void openFiles(
+        @Nullable String initialDirectory,
+        @NonNull FileTypes allowedTypes,
+        @NonNull Result<List<FileResponse>> result);
     /**
      * Opens a file dialog for loading directories and returns a directory path.
      *
-     * Returns `null` if user cancels the operation.
+     * <p>Returns `null` if user cancels the operation.
      */
-    void getDirectoryPath(@Nullable String initialDirectory, @NonNull NullableResult<String> result);
+    void getDirectoryPath(
+        @Nullable String initialDirectory, @NonNull NullableResult<String> result);
 
     /** The codec used by FileSelectorApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return PigeonCodec.INSTANCE;
     }
-    /**Sets up an instance of `FileSelectorApi` to handle messages through the `binaryMessenger`. */
+    /**
+     * Sets up an instance of `FileSelectorApi` to handle messages through the `binaryMessenger`.
+     */
     static void setUp(@NonNull BinaryMessenger binaryMessenger, @Nullable FileSelectorApi api) {
       setUp(binaryMessenger, "", api);
     }
-    static void setUp(@NonNull BinaryMessenger binaryMessenger, @NonNull String messageChannelSuffix, @Nullable FileSelectorApi api) {
+
+    static void setUp(
+        @NonNull BinaryMessenger binaryMessenger,
+        @NonNull String messageChannelSuffix,
+        @Nullable FileSelectorApi api) {
       messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.file_selector_android.FileSelectorApi.openFile" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.file_selector_android.FileSelectorApi.openFile"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -575,7 +612,10 @@ public class GeneratedFileSelectorApi {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.file_selector_android.FileSelectorApi.openFiles" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.file_selector_android.FileSelectorApi.openFiles"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -605,7 +645,10 @@ public class GeneratedFileSelectorApi {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.file_selector_android.FileSelectorApi.getDirectoryPath" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.file_selector_android.FileSelectorApi.getDirectoryPath"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
