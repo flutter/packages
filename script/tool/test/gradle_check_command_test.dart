@@ -1072,7 +1072,7 @@ dependencies {
         output,
         containsAllInOrder(<Matcher>[
           contains('compileSdk version $testCompileSdkVersion is too low. '
-          'Minimum required version is $minCompileSdkVersion.'),
+              'Minimum required version is $minCompileSdkVersion.'),
         ]),
       );
     });
