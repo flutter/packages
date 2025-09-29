@@ -997,11 +997,12 @@ dependencies {
   });
 
   group('compileSdk check', () {
-    test('passes if set to a version higher than flutter.compileSdkVersio',
+    test('passes if set to a version higher than flutter.compileSdkVersion',
         () async {
       const String packageName = 'a_package';
       final RepositoryPackage package =
           createFakePackage(packageName, packagesDir, isFlutter: true);
+      // Current flutter.compileSdkVersion is 36.
       writeFakePluginBuildGradle(package,
           includeLanguageVersion: true, compileSdk: '37');
       writeFakeManifest(package);
@@ -1071,9 +1072,7 @@ dependencies {
         output,
         containsAllInOrder(<Matcher>[
           contains('compileSdk version $testCompileSdkVersion is too low. '
-              'Minimum required version is $minCompileSdkVersion.'),
-          // "Please update this package's compileSdkVersion to at least "
-          // '$minCompileSdkVersion or use flutter.compileSdkVersion.')
+          'Minimum required version is $minCompileSdkVersion.'),
         ]),
       );
     });

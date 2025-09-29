@@ -482,7 +482,7 @@ for more details.''';
         if (compileSdkVersion < minCompileSdkVersion) {
           printError(
               '${indentation}compileSdk version $compileSdkVersion is too low. '
-              'Minimum required version is $minCompileSdkVersion. '
+              'Minimum required version is $minCompileSdkVersion.\n'
               "${indentation}Please update this package's compileSdkVersion to at least "
               '$minCompileSdkVersion or use flutter.compileSdkVersion.');
           return false;
