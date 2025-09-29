@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -120,7 +120,8 @@ class SignInSuccess {
 
   late List<String> grantedScopes;
 
-  // This is set only on a new sign in or scope grant, not a restored sign-in.
+  // This is set only on a new sign in or scope grant, not a restored sign-in
+  // or a call to getRefreshedAuthorizationTokens.
   // See https://github.com/google/GoogleSignIn-iOS/issues/202
   String? serverAuthCode;
 }
