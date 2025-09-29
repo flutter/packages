@@ -366,7 +366,10 @@ class _PlayerInstance {
         _bufferPollingTimer = Timer.periodic(const Duration(seconds: 1), (
           Timer timer,
         ) async {
-          _updateBufferPosition(await _api.getBufferedPosition());
+          final int position = await _api.getBufferedPosition();
+          if (!_isDisposed) {
+            _updateBufferPosition(position);
+          }
         });
       case IsPlayingStateEvent _:
         _eventStreamController.add(
