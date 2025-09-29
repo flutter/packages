@@ -69,11 +69,11 @@ java {
 
 ''';
     final String sourceCompat =
-        '${commentSourceLanguage ? '// ' : ''}sourceCompatibility JavaVersion.VERSION_11';
+        '${commentSourceLanguage ? '// ' : ''}sourceCompatibility = JavaVersion.VERSION_11';
     final String targetCompat =
-        '${commentSourceLanguage ? '// ' : ''}targetCompatibility JavaVersion.VERSION_11';
+        '${commentSourceLanguage ? '// ' : ''}targetCompatibility = JavaVersion.VERSION_11';
     final String namespace =
-        "    ${commentNamespace ? '// ' : ''}namespace '$_defaultFakeNamespace'";
+        "    ${commentNamespace ? '// ' : ''}namespace = '$_defaultFakeNamespace'";
 
     buildGradle.writeAsStringSync('''
 group 'dev.flutter.plugins.fake'
@@ -264,7 +264,7 @@ flutter {
 }
 
 dependencies {
-    testImplementation 'fake.package:fake:1.0.0'
+    testImplementation("fake.package:fake:1.0.0")
 }
 ''');
   }
@@ -274,7 +274,7 @@ dependencies {
     required String pluginName,
     bool includeNamespace = true,
     bool commentNamespace = false,
-    bool includeNameSpaceAsDeclaration = false,
+    bool includeNameSpaceAsDeclaration = true,
     bool warningsConfigured = true,
     String? kotlinVersion,
     bool includeBuildArtifactHub = true,
@@ -608,14 +608,14 @@ dependencies {
     );
   });
 
-  test('passes when namespace is declared with "=" declaration', () async {
+  test('fails when namespace is declared without "=" declaration', () async {
     const String pluginName = 'a_plugin';
     final RepositoryPackage package = createFakePlugin(pluginName, packagesDir);
     writeFakePluginBuildGradle(package, includeLanguageVersion: true);
     writeFakeManifest(package);
     final RepositoryPackage example = package.getExamples().first;
     writeFakeExampleBuildGradles(example,
-        pluginName: pluginName, includeNameSpaceAsDeclaration: true);
+        pluginName: pluginName, includeNameSpaceAsDeclaration: false);
     writeFakeManifest(example, isApp: true);
 
     final List<String> output = await runCapturingPrint(

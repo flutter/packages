@@ -23,12 +23,12 @@ if (flutterVersionName == null) {
 }
 
 android {
-    namespace = 'dev.flutter.rfw.examples.hello'
+    namespace = "dev.flutter.rfw.examples.hello"
     compileSdk = flutter.compileSdkVersion
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
 
     kotlinOptions {

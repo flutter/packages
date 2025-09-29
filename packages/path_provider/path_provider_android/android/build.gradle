@@ -22,7 +22,7 @@ rootProject.allprojects {
 apply plugin: 'com.android.library'
 
 android {
-    namespace = 'io.flutter.plugins.pathprovider'
+    namespace = "io.flutter.plugins.pathprovider"
     compileSdk = flutter.compileSdkVersion
 
     defaultConfig {
@@ -35,8 +35,8 @@ android {
         disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency', 'NewerVersionAvailable'
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
 
 
@@ -54,6 +54,6 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.annotation:annotation:1.9.1'
-    testImplementation 'junit:junit:4.13.2'
+    implementation("androidx.annotation:annotation:1.9.1")
+    testImplementation("junit:junit:4.13.2")
 }

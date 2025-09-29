@@ -26,8 +26,8 @@ android {
     compileSdk = flutter.compileSdkVersion
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
 
     kotlinOptions {
@@ -54,7 +54,7 @@ android {
             signingConfig = signingConfigs.debug
         }
     }
-    namespace = 'com.example.example'
+    namespace = "com.example.example"
 }
 
 flutter {
