@@ -36,15 +36,17 @@ void main() {
         mockApi.openFile(
           'some/path/',
           argThat(
-            isA<FileTypes>().having(
-              (FileTypes types) => types.mimeTypes,
-              'mimeTypes',
-              <String>['text/plain', 'image/jpg'],
-            ).having(
-              (FileTypes types) => types.extensions,
-              'extensions',
-              <String>['txt', 'jpg'],
-            ),
+            isA<FileTypes>()
+                .having(
+                  (FileTypes types) => types.mimeTypes,
+                  'mimeTypes',
+                  <String>['text/plain', 'image/jpg'],
+                )
+                .having(
+                  (FileTypes types) => types.extensions,
+                  'extensions',
+                  <String>['txt', 'jpg'],
+                ),
           ),
         ),
       ).thenAnswer(
@@ -87,15 +89,17 @@ void main() {
         mockApi.openFiles(
           'some/path/',
           argThat(
-            isA<FileTypes>().having(
-              (FileTypes types) => types.mimeTypes,
-              'mimeTypes',
-              <String>['text/plain', 'image/jpg'],
-            ).having(
-              (FileTypes types) => types.extensions,
-              'extensions',
-              <String>['txt', 'jpg'],
-            ),
+            isA<FileTypes>()
+                .having(
+                  (FileTypes types) => types.mimeTypes,
+                  'mimeTypes',
+                  <String>['text/plain', 'image/jpg'],
+                )
+                .having(
+                  (FileTypes types) => types.extensions,
+                  'extensions',
+                  <String>['txt', 'jpg'],
+                ),
           ),
         ),
       ).thenAnswer(

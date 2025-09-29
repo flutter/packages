@@ -13,7 +13,7 @@ import 'types/native_illegal_argument_exception.dart';
 /// An implementation of [FileSelectorPlatform] for Android.
 class FileSelectorAndroid extends FileSelectorPlatform {
   FileSelectorAndroid({@visibleForTesting FileSelectorApi? api})
-      : _api = api ?? FileSelectorApi();
+    : _api = api ?? FileSelectorApi();
 
   final FileSelectorApi _api;
 
@@ -111,8 +111,8 @@ class FileSelectorAndroid extends FileSelectorPlatform {
           fileSelectorNativeException.message,
         );
       case (FileSelectorExceptionCode.illegalStateException ||
-            FileSelectorExceptionCode.ioException ||
-            FileSelectorExceptionCode.securityException):
+          FileSelectorExceptionCode.ioException ||
+          FileSelectorExceptionCode.securityException):
       // unused for now
     }
   }
