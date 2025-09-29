@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -293,20 +293,27 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
         List<NavigatorObserver>? observers,
         String? restorationScopeId,
       ) {
-        return _CustomNavigator(
-          // The state needs to persist across rebuild.
-          key: GlobalObjectKey(navigatorKey.hashCode),
-          navigatorRestorationId: restorationScopeId,
-          navigatorKey: navigatorKey,
-          matches: match.matches,
-          matchList: matchList,
-          configuration: widget.configuration,
-          observers: observers ?? const <NavigatorObserver>[],
-          onPopPageWithRouteMatch: widget.onPopPageWithRouteMatch,
-          // This is used to recursively build pages under this shell route.
-          errorBuilder: widget.errorBuilder,
-          errorPageBuilder: widget.errorPageBuilder,
-          requestFocus: widget.requestFocus,
+        return PopScope(
+          // Prevent ShellRoute from being popped, for example
+          // by an iOS back gesture, when the route has active sub-routes.
+          // TODO(LukasMirbt): Remove when minimum flutter version includes
+          // https://github.com/flutter/flutter/pull/152330.
+          canPop: match.matches.length == 1,
+          child: _CustomNavigator(
+            // The state needs to persist across rebuild.
+            key: GlobalObjectKey(navigatorKey.hashCode),
+            navigatorRestorationId: restorationScopeId,
+            navigatorKey: navigatorKey,
+            matches: match.matches,
+            matchList: matchList,
+            configuration: widget.configuration,
+            observers: observers ?? const <NavigatorObserver>[],
+            onPopPageWithRouteMatch: widget.onPopPageWithRouteMatch,
+            // This is used to recursively build pages under this shell route.
+            errorBuilder: widget.errorBuilder,
+            errorPageBuilder: widget.errorPageBuilder,
+            requestFocus: widget.requestFocus,
+          ),
         );
       },
     );
