@@ -7,8 +7,7 @@ import 'token.dart';
 class Scanner {
   Scanner(String source, this._templateName, String? delimiters)
     : _source = source,
-      _itr = source.runes.iterator,
-      _runes = source.runes.toList() {
+      _itr = source.runes.iterator {
     if (source == '') {
       _c = _EOF;
     } else {
@@ -41,7 +40,6 @@ class Scanner {
   final String _source;
 
   final Iterator<int> _itr;
-  final List<int> _runes;
   int _offset = 0;
   int _c = 0;
 
@@ -128,13 +126,12 @@ class Scanner {
     if (_c == _EOF) {
       return '';
     }
-    final int start = _offset;
+
+    final StringBuffer buffer = StringBuffer();
     while (_peek() != _EOF && test(_peek())) {
-      _read();
+      buffer.writeCharCode(_read());
     }
-    final int end = _peek() == _EOF ? _runes.length : _offset;
-    final String part = String.fromCharCodes(_runes.sublist(start, end));
-    return part;
+    return buffer.toString();
   }
 
   void _expect(int expectedCharCode) {
