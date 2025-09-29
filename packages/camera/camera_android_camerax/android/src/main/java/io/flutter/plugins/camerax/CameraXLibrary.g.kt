@@ -3652,6 +3652,22 @@ abstract class PigeonApiPendingRecording(
       initialMuted: Boolean
   ): androidx.camera.video.PendingRecording
 
+  /**
+   * Configures the recording to be a persistent recording.
+   *
+   * A persistent recording will only be stopped by explicitly calling [Recording.stop] or
+   * [Recording.close] and will ignore events that would normally cause recording to stop, such as
+   * lifecycle events or explicit unbinding of a [VideoCapture] use case that the recording's
+   * Recorder is attached to.
+   *
+   * To switch to a different camera stream while a recording is in progress, first create the
+   * recording as persistent recording, then rebind the [VideoCapture] it's associated with to a
+   * different camera.
+   */
+  abstract fun asPersistentRecording(
+      pigeon_instance: androidx.camera.video.PendingRecording
+  ): androidx.camera.video.PendingRecording
+
   /** Starts the recording, making it an active recording. */
   abstract fun start(
       pigeon_instance: androidx.camera.video.PendingRecording,
@@ -3676,6 +3692,28 @@ abstract class PigeonApiPendingRecording(
             val wrapped: List<Any?> =
                 try {
                   listOf(api.withAudioEnabled(pigeon_instanceArg, initialMutedArg))
+                } catch (exception: Throwable) {
+                  CameraXLibraryPigeonUtils.wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.camera_android_camerax.PendingRecording.asPersistentRecording",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as androidx.camera.video.PendingRecording
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.asPersistentRecording(pigeon_instanceArg))
                 } catch (exception: Throwable) {
                   CameraXLibraryPigeonUtils.wrapError(exception)
                 }
