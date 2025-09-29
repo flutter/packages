@@ -285,7 +285,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
     case AVPlayerItemStatusUnknown:
       break;
     case AVPlayerItemStatusReadyToPlay:
-      if (_isInitialized) {
+      if (!_isInitialized) {
         [item addOutput:_videoOutput];
         [self reportInitializedIfReadyToPlay];
       }
