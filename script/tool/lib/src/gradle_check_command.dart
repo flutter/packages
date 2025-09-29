@@ -469,7 +469,7 @@ for more details.''';
         return false;
       }
     } else {
-      // Extract compileSdkVersion and check if it higher than flutter.compileSdkVersion.
+      // Extract compileSdkVersion and check if it is higher than flutter.compileSdkVersion.
       final RegExp numericVersionPattern = RegExp(r'=\s*(\d+)');
       final RegExpMatch? versionMatch =
           numericVersionPattern.firstMatch(compileSdkLine);
