@@ -1,4 +1,4 @@
-## 0.5.2+0
+## 0.5.2
 
 * Updates Java compatibility version to 17
 
