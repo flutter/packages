@@ -105,4 +105,11 @@ final class StoreKit2TranslatorTests: XCTestCase {
     let pigeonMessage = locale.convertToPigeon
     XCTAssertEqual(pigeonMessage, productMessage.priceLocale)
   }
+
+  func testPigeonConversionForPurchaseResult() {
+    // Unfortunately the .success case is not testable because the Transaction
+    // type has no visible initializers.
+    XCTAssertEqual(Product.PurchaseResult.pending.convertToPigeon(), .pending)
+    XCTAssertEqual(Product.PurchaseResult.userCancelled.convertToPigeon(), .userCancelled)
+  }
 }
