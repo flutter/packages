@@ -1,3 +1,10 @@
+## 2.8.15
+
+* Moves video event processing logic to Dart, and fixes an issue where buffer
+  range would not be updated for a paused video.
+* Switches to Kotlin for Pigeon-generated code.
+* Adopts type-safe event channels for internal communication.
+
 ## 2.8.14
 
 * Restructures internal logic for player creation and tracking.
