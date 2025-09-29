@@ -306,9 +306,8 @@ void main() {
       const String source = 'Hello! 🖖👍🏽🏳️‍🌈\nEmoji';
       final Parser parser = Parser(source, 'foo', '{{ }}');
       final List<Node> nodes = parser.parse();
-      expectNodes(nodes, <Node>[
-        TextNode('Hello! 🖖👍🏽🏳️‍🌈\nEmoji', 0, 20), // End offset includes emoji sizes
-      ]);
+      // End offset includes emoji sizes
+      expectNodes(nodes, <Node>[TextNode('Hello! 🖖👍🏽🏳️‍🌈\nEmoji', 0, 20)]);
     });
 
     test('toString', () {
