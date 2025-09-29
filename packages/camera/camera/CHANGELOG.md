@@ -1,6 +1,6 @@
 ## 0.11.2+1
 
-* Fixes flutter/flutter#148013: setDescriptionWhileRecording with android camerax.
+* Implement setDescriptionWhileRecording with android camerax (Fixes flutter/flutter#148013).
 * Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
 * Updates README to reflect that only Android API 24+ is supported.
 
