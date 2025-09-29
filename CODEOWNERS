@@ -6,8 +6,8 @@
 
 packages/animations/**                                   @hannah-hyj
 packages/camera/**                                       @bparrishMines
-packages/cross_file/**                                   @stuartmorgan
-packages/extension_google_sign_in_as_googleapis_auth/**  @stuartmorgan
+packages/cross_file/**                                   @stuartmorgan-g
+packages/extension_google_sign_in_as_googleapis_auth/**  @stuartmorgan-g
 packages/file_selector/**                                @stuartmorgan-g
 packages/flutter_lints/**                                @chunhtai
 packages/flutter_template_images/**                      @stuartmorgan-g
