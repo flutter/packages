@@ -934,6 +934,18 @@ abstract class ImageProxy {
   void close();
 }
 
+/// Utilities for working with [ImageProxy]s.
+@ProxyApi()
+abstract class ImageProxyUtils {
+  /// Returns a single buffer that is representative of three NV21-compatible [planes].
+  @static
+  Uint8List getNv21Buffer(
+    int imageWidth,
+    int imageHeight,
+    List<PlaneProxy> planes,
+  );
+}
+
 /// A plane proxy which has an analogous interface as
 /// `android.media.Image.Plane`.
 ///

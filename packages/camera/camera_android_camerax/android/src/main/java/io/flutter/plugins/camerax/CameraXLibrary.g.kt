@@ -598,6 +598,12 @@ abstract class CameraXLibraryPigeonProxyApiRegistrar(val binaryMessenger: Binary
   abstract fun getPigeonApiImageProxy(): PigeonApiImageProxy
 
   /**
+   * An implementation of [PigeonApiImageProxyUtils] used to add a new Dart instance of
+   * `ImageProxyUtils` to the Dart `InstanceManager`.
+   */
+  abstract fun getPigeonApiImageProxyUtils(): PigeonApiImageProxyUtils
+
+  /**
    * An implementation of [PigeonApiPlaneProxy] used to add a new Dart instance of `PlaneProxy` to
    * the Dart `InstanceManager`.
    */
@@ -738,6 +744,7 @@ abstract class CameraXLibraryPigeonProxyApiRegistrar(val binaryMessenger: Binary
     PigeonApiAnalyzer.setUpMessageHandlers(binaryMessenger, getPigeonApiAnalyzer())
     PigeonApiLiveData.setUpMessageHandlers(binaryMessenger, getPigeonApiLiveData())
     PigeonApiImageProxy.setUpMessageHandlers(binaryMessenger, getPigeonApiImageProxy())
+    PigeonApiImageProxyUtils.setUpMessageHandlers(binaryMessenger, getPigeonApiImageProxyUtils())
     PigeonApiQualitySelector.setUpMessageHandlers(binaryMessenger, getPigeonApiQualitySelector())
     PigeonApiFallbackStrategy.setUpMessageHandlers(binaryMessenger, getPigeonApiFallbackStrategy())
     PigeonApiCameraControl.setUpMessageHandlers(binaryMessenger, getPigeonApiCameraControl())
@@ -785,6 +792,7 @@ abstract class CameraXLibraryPigeonProxyApiRegistrar(val binaryMessenger: Binary
     PigeonApiAnalyzer.setUpMessageHandlers(binaryMessenger, null)
     PigeonApiLiveData.setUpMessageHandlers(binaryMessenger, null)
     PigeonApiImageProxy.setUpMessageHandlers(binaryMessenger, null)
+    PigeonApiImageProxyUtils.setUpMessageHandlers(binaryMessenger, null)
     PigeonApiQualitySelector.setUpMessageHandlers(binaryMessenger, null)
     PigeonApiFallbackStrategy.setUpMessageHandlers(binaryMessenger, null)
     PigeonApiCameraControl.setUpMessageHandlers(binaryMessenger, null)
@@ -916,6 +924,8 @@ private class CameraXLibraryPigeonProxyApiBaseCodec(
       registrar.getPigeonApiLiveData().pigeon_newInstance(value) {}
     } else if (value is androidx.camera.core.ImageProxy) {
       registrar.getPigeonApiImageProxy().pigeon_newInstance(value) {}
+    } else if (value is ImageProxyUtils) {
+      registrar.getPigeonApiImageProxyUtils().pigeon_newInstance(value) {}
     } else if (value is androidx.camera.core.ImageProxy.PlaneProxy) {
       registrar.getPigeonApiPlaneProxy().pigeon_newInstance(value) {}
     } else if (value is androidx.camera.video.QualitySelector) {
@@ -5358,6 +5368,83 @@ abstract class PigeonApiImageProxy(
       val channelName = "dev.flutter.pigeon.camera_android_camerax.ImageProxy.pigeon_newInstance"
       val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
       channel.send(listOf(pigeon_identifierArg, formatArg, widthArg, heightArg)) {
+        if (it is List<*>) {
+          if (it.size > 1) {
+            callback(
+                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
+          } else {
+            callback(Result.success(Unit))
+          }
+        } else {
+          callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
+        }
+      }
+    }
+  }
+}
+/** Utils for working with [ImageProxy]s. */
+@Suppress("UNCHECKED_CAST")
+abstract class PigeonApiImageProxyUtils(
+    open val pigeonRegistrar: CameraXLibraryPigeonProxyApiRegistrar
+) {
+  /**
+   * Returns a single Byte Buffer that is representative of the [planes] that are NV21 compatible.
+   */
+  abstract fun getNv21Buffer(
+      imageWidth: Long,
+      imageHeight: Long,
+      planes: List<androidx.camera.core.ImageProxy.PlaneProxy>
+  ): ByteArray
+
+  companion object {
+    @Suppress("LocalVariableName")
+    fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiImageProxyUtils?) {
+      val codec = api?.pigeonRegistrar?.codec ?: CameraXLibraryPigeonCodec()
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.camera_android_camerax.ImageProxyUtils.getNv21Buffer",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val imageWidthArg = args[0] as Long
+            val imageHeightArg = args[1] as Long
+            val planesArg = args[2] as List<androidx.camera.core.ImageProxy.PlaneProxy>
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.getNv21Buffer(imageWidthArg, imageHeightArg, planesArg))
+                } catch (exception: Throwable) {
+                  CameraXLibraryPigeonUtils.wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+    }
+  }
+
+  @Suppress("LocalVariableName", "FunctionName")
+  /** Creates a Dart instance of ImageProxyUtils and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(pigeon_instanceArg: ImageProxyUtils, callback: (Result<Unit>) -> Unit) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+    } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
+      callback(Result.success(Unit))
+    } else {
+      val pigeon_identifierArg =
+          pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+      val binaryMessenger = pigeonRegistrar.binaryMessenger
+      val codec = pigeonRegistrar.codec
+      val channelName =
+          "dev.flutter.pigeon.camera_android_camerax.ImageProxyUtils.pigeon_newInstance"
+      val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+      channel.send(listOf(pigeon_identifierArg)) {
         if (it is List<*>) {
           if (it.size > 1) {
             callback(

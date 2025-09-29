@@ -7,6 +7,7 @@ import 'dart:math' show Point;
 
 import 'package:async/async.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
+import 'package:flutter/foundation.dart' show Uint8List;
 import 'package:flutter/services.dart'
     show DeviceOrientation, PlatformException;
 import 'package:flutter/widgets.dart' show Texture, Widget, visibleForTesting;
@@ -290,6 +291,9 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// The ID of the surface texture that the camera preview is drawn to.
   late int _flutterSurfaceTextureId;
 
+  /// The configured format of outputted images from image streaming.
+  int? _imageAnalysisOutputImageFormat;
+
   /// Returns list of all available cameras and their descriptions.
   @override
   Future<List<CameraDescription>> availableCameras() async {
@@ -472,11 +476,11 @@ class AndroidCameraCameraX extends CameraPlatform {
     }
     // Configure ImageAnalysis instance.
     // Defaults to YUV_420_888 image format.
+    _imageAnalysisOutputImageFormat =
+        _imageAnalysisOutputFormatFromImageFormatGroup(imageFormatGroup);
     imageAnalysis = proxy.newImageAnalysis(
       resolutionSelector: _presetResolutionSelector,
-      outputImageFormat: _imageAnalysisOutputFormatFromImageFormatGroup(
-        imageFormatGroup,
-      ),
+      outputImageFormat: _imageAnalysisOutputImageFormat,
       /* use CameraX default target rotation */ targetRotation: null,
     );
 
@@ -1338,22 +1342,60 @@ class AndroidCameraCameraX extends CameraPlatform {
     Future<void> analyze(ImageProxy imageProxy) async {
       final List<PlaneProxy> planes = await imageProxy.getPlanes();
       final List<CameraImagePlane> cameraImagePlanes = <CameraImagePlane>[];
-      for (final PlaneProxy plane in planes) {
+
+      // Determine image planes.
+      if (_imageAnalysisOutputImageFormat ==
+          imageAnalysisOutputImageFormatNv21) {
+        // Convert three generically YUV_420_888 formatted image planes into one singular
+        // NV21 formatted image plane if NV21 was requested for image streaming. The conversion
+        // should be null safe.
+        final Uint8List? bytes = await proxy.getNv21BufferImageProxyUtils(
+          imageProxy.width,
+          imageProxy.height,
+          planes,
+        );
+
         cameraImagePlanes.add(
           CameraImagePlane(
-            bytes: plane.buffer,
-            bytesPerRow: plane.rowStride,
-            bytesPerPixel: plane.pixelStride,
+            bytes: bytes!,
+            bytesPerRow: imageProxy.width,
+            // NV21 has 1.5 bytes per pixel (Y plane has width * height; VU plane has width * height / 2),
+            // but this is rounded up because an int is expected. camera_android reports the same.
+            bytesPerPixel: 1,
           ),
+        );
+      } else {
+        for (final PlaneProxy plane in planes) {
+          cameraImagePlanes.add(
+            CameraImagePlane(
+              bytes: plane.buffer,
+              bytesPerRow: plane.rowStride,
+              bytesPerPixel: plane.pixelStride,
+            ),
+          );
+        }
+      }
+
+      // Determine image format.
+      CameraImageFormat? cameraImageFormat;
+
+      if (_imageAnalysisOutputImageFormat ==
+          imageAnalysisOutputImageFormatNv21) {
+        // Manually override ImageFormat to NV21 if set for image streaming as CameraX
+        // still reports YUV_420_888 if the underlying format is NV21.
+        cameraImageFormat = const CameraImageFormat(
+          ImageFormatGroup.nv21,
+          raw: imageProxyFormatNv21,
+        );
+      } else {
+        final int imageRawFormat = imageProxy.format;
+        cameraImageFormat = CameraImageFormat(
+          _imageFormatGroupFromPlatformData(imageRawFormat),
+          raw: imageRawFormat,
         );
       }
 
-      final int format = imageProxy.format;
-      final CameraImageFormat cameraImageFormat = CameraImageFormat(
-        _imageFormatGroupFromPlatformData(format),
-        raw: format,
-      );
-
+      // Send out CameraImageData.
       final CameraImageData cameraImageData = CameraImageData(
         format: cameraImageFormat,
         planes: cameraImagePlanes,
