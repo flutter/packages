@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -99,7 +99,7 @@ void main() {
             'authenticate',
             arguments: <String, dynamic>{
               'localizedReason': 'Needs secure',
-              'useErrorDialogs': false,
+              'useErrorDialogs': true,
               'stickyAuth': false,
               'sensitiveTransaction': true,
               'biometricOnly': true,
@@ -122,7 +122,7 @@ void main() {
             'authenticate',
             arguments: <String, dynamic>{
               'localizedReason': 'Insecure',
-              'useErrorDialogs': false,
+              'useErrorDialogs': true,
               'stickyAuth': false,
               'sensitiveTransaction': false,
               'biometricOnly': true,
@@ -143,7 +143,7 @@ void main() {
             'authenticate',
             arguments: <String, dynamic>{
               'localizedReason': 'Needs secure',
-              'useErrorDialogs': false,
+              'useErrorDialogs': true,
               'stickyAuth': false,
               'sensitiveTransaction': true,
               'biometricOnly': false,
@@ -163,7 +163,7 @@ void main() {
             'authenticate',
             arguments: <String, dynamic>{
               'localizedReason': 'Insecure',
-              'useErrorDialogs': false,
+              'useErrorDialogs': true,
               'stickyAuth': false,
               'sensitiveTransaction': false,
               'biometricOnly': false,
@@ -171,6 +171,29 @@ void main() {
           ),
         ]);
       });
+
+      test(
+        'legacy useErrorDialogs is passed for backward compatibility.',
+        () async {
+          await localAuthentication.authenticate(
+            authMessages: <AuthMessages>[],
+            localizedReason: 'Insecure',
+            options: const AuthenticationOptions(useErrorDialogs: false),
+          );
+          expect(log, <Matcher>[
+            isMethodCall(
+              'authenticate',
+              arguments: <String, dynamic>{
+                'localizedReason': 'Insecure',
+                'useErrorDialogs': false,
+                'stickyAuth': false,
+                'sensitiveTransaction': true,
+                'biometricOnly': false,
+              },
+            ),
+          ]);
+        },
+      );
     });
   });
 }
