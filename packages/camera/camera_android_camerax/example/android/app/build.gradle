@@ -23,13 +23,13 @@ if (flutterVersionName == null) {
 }
 
 android {
-    namespace 'io.flutter.plugins.cameraxexample'
+    namespace = "io.flutter.plugins.cameraxexample"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
 
     kotlinOptions {
@@ -60,8 +60,8 @@ flutter {
 }
 
 dependencies {
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test:runner:1.2.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
-    api 'androidx.test:core:1.4.0'
+    testImplementation("junit:junit:4.13.2")
+    androidTestImplementation("androidx.test:runner:1.2.0")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.2.0")
+    api("androidx.test:core:1.4.0")
 }

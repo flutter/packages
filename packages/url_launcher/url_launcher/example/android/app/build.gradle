@@ -23,7 +23,7 @@ if (flutterVersionName == null) {
 }
 
 android {
-    namespace 'io.flutter.plugins.urllauncherexample'
+    namespace = "io.flutter.plugins.urllauncherexample"
     compileSdk = flutter.compileSdkVersion
 
 
@@ -53,7 +53,7 @@ flutter {
 }
 
 dependencies {
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test:runner:1.2.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    testImplementation("junit:junit:4.13.2")
+    androidTestImplementation("androidx.test:runner:1.2.0")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.2.0")
 }
