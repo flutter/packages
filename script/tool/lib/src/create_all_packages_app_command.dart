@@ -254,6 +254,10 @@ dependencies {}
         }
       },
       regexReplacements: <RegExp, List<String>>{
+        RegExp(r'^compileOptions\s+{$'): <String>[
+          'compileOptions {',
+          'coreLibraryDesugaringEnabled true',
+        ],
         // Tests for https://github.com/flutter/flutter/issues/43383
         // Handling of 'dependencies' is more complex since it hasn't been very
         // stable across template versions.

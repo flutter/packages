@@ -1,3 +1,10 @@
+## 0.2.8
+
+* Bumps `com.google.ads.interactivemedia.v3:interactivemedia` from 3.36.0 to 3.37.0.
+* Adds app desugaring as a requirement for apps integrating the IMA SDK. Apps without desugaring
+  enabled won't build with the current or future IMA versions. To enable app desugaring, `README.md`
+  to your project.
+
 ## 0.2.7
 
 * Adds support to retrieve content time offsets at which ad breaks are scheduled. See
