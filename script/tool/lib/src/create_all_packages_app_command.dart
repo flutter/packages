@@ -239,6 +239,11 @@ dependencies {}
         ? '    implementation("androidx.lifecycle:lifecycle-runtime:2.2.0-rc01")'
         : "    implementation 'androidx.lifecycle:lifecycle-runtime:2.2.0-rc01'";
 
+    // Desugaring is required for interactive_media_ads.
+    final String desugaringDependency = gradleFileIsKotlin
+        ? '    implementation("com.android.tools:desugar_jdk_libs:2.1.5")'
+        : "    implementation 'com.android.tools:desugar_jdk_libs:2.1.5'";
+
     _adjustFile(
       gradleFile,
       replacements: <String, List<String>>{
@@ -256,12 +261,14 @@ dependencies {}
         RegExp(r'^dependencies\s+{\s*}$'): <String>[
           'dependencies {',
           lifecycleDependency,
+          desugaringDependency,
           '}',
         ],
         // - Handle a normal dependencies section.
         RegExp(r'^dependencies\s+{$'): <String>[
           'dependencies {',
           lifecycleDependency,
+          desugaringDependency,
         ],
         // - See below for handling of the case where there is no dependencies
         // section.
