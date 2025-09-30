@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -125,14 +125,19 @@ class GoRouterState {
       }
       final RouteSettings settings = route.settings;
       if (settings is Page<Object?>) {
-        scope = context
-            .dependOnInheritedWidgetOfExactType<GoRouterStateRegistryScope>();
+        scope =
+            context
+                .dependOnInheritedWidgetOfExactType<
+                  GoRouterStateRegistryScope
+                >();
         if (scope == null) {
           throw _noGoRouterStateError;
         }
         final GoRouterState? state = scope.notifier!
             ._createPageRouteAssociation(
-                route.settings as Page<Object?>, route);
+              route.settings as Page<Object?>,
+              route,
+            );
         if (state != null) {
           return state;
         }
@@ -146,10 +151,10 @@ class GoRouterState {
   }
 
   static GoError get _noGoRouterStateError => GoError(
-        'There is no GoRouterState above the current context. '
-        'This method should only be called under the sub tree of a '
-        'RouteBase.builder.',
-      );
+    'There is no GoRouterState above the current context. '
+    'This method should only be called under the sub tree of a '
+    'RouteBase.builder.',
+  );
 
   /// Get a location from route name and parameters.
   /// This is useful for redirecting to a named location.
@@ -161,10 +166,12 @@ class GoRouterState {
   }) {
     // Generate base location using configuration, with optional path and query parameters
     // Then conditionally append fragment if it exists and is not empty
-    return _configuration.namedLocation(name,
-        pathParameters: pathParameters,
-        queryParameters: queryParameters,
-        fragment: fragment);
+    return _configuration.namedLocation(
+      name,
+      pathParameters: pathParameters,
+      queryParameters: queryParameters,
+      fragment: fragment,
+    );
   }
 
   @override
@@ -183,16 +190,16 @@ class GoRouterState {
 
   @override
   int get hashCode => Object.hash(
-        uri,
-        matchedLocation,
-        name,
-        path,
-        fullPath,
-        pathParameters,
-        extra,
-        error,
-        pageKey,
-      );
+    uri,
+    matchedLocation,
+    name,
+    path,
+    fullPath,
+    pathParameters,
+    extra,
+    error,
+    pageKey,
+  );
 }
 
 /// An inherited widget to host a [GoRouterStateRegistry] for the subtree.
@@ -228,7 +235,9 @@ class GoRouterStateRegistry extends ChangeNotifier {
       <ModalRoute<Object?>, Page<Object?>>{};
 
   GoRouterState? _createPageRouteAssociation(
-      Page<Object?> page, ModalRoute<Object?> route) {
+    Page<Object?> page,
+    ModalRoute<Object?> route,
+  ) {
     assert(route.settings == page);
     if (!registry.containsKey(page)) {
       return null;

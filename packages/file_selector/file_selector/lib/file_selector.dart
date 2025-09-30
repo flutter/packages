@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -35,9 +35,10 @@ Future<XFile?> openFile({
   String? confirmButtonText,
 }) {
   return FileSelectorPlatform.instance.openFile(
-      acceptedTypeGroups: acceptedTypeGroups,
-      initialDirectory: initialDirectory,
-      confirmButtonText: confirmButtonText);
+    acceptedTypeGroups: acceptedTypeGroups,
+    initialDirectory: initialDirectory,
+    confirmButtonText: confirmButtonText,
+  );
 }
 
 /// Opens a file selection dialog and returns the list of paths chosen by the
@@ -66,9 +67,10 @@ Future<List<XFile>> openFiles({
   String? confirmButtonText,
 }) {
   return FileSelectorPlatform.instance.openFiles(
-      acceptedTypeGroups: acceptedTypeGroups,
-      initialDirectory: initialDirectory,
-      confirmButtonText: confirmButtonText);
+    acceptedTypeGroups: acceptedTypeGroups,
+    initialDirectory: initialDirectory,
+    confirmButtonText: confirmButtonText,
+  );
 }
 
 /// Opens a save dialog and returns the target path chosen by the user.
@@ -99,11 +101,13 @@ Future<FileSaveLocation?> getSaveLocation({
   String? confirmButtonText,
 }) async {
   return FileSelectorPlatform.instance.getSaveLocation(
-      acceptedTypeGroups: acceptedTypeGroups,
-      options: SaveDialogOptions(
-          initialDirectory: initialDirectory,
-          suggestedName: suggestedName,
-          confirmButtonText: confirmButtonText));
+    acceptedTypeGroups: acceptedTypeGroups,
+    options: SaveDialogOptions(
+      initialDirectory: initialDirectory,
+      suggestedName: suggestedName,
+      confirmButtonText: confirmButtonText,
+    ),
+  );
 }
 
 /// Opens a directory selection dialog and returns the path chosen by the user.
@@ -123,7 +127,9 @@ Future<String?> getDirectoryPath({
   String? confirmButtonText,
 }) async {
   return FileSelectorPlatform.instance.getDirectoryPath(
-      initialDirectory: initialDirectory, confirmButtonText: confirmButtonText);
+    initialDirectory: initialDirectory,
+    confirmButtonText: confirmButtonText,
+  );
 }
 
 /// Opens a directory selection dialog and returns a list of the paths chosen
@@ -144,5 +150,7 @@ Future<List<String?>> getDirectoryPaths({
   String? confirmButtonText,
 }) async {
   return FileSelectorPlatform.instance.getDirectoryPaths(
-      initialDirectory: initialDirectory, confirmButtonText: confirmButtonText);
+    initialDirectory: initialDirectory,
+    confirmButtonText: confirmButtonText,
+  );
 }

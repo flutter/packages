@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -57,8 +57,9 @@ void main() {
     expect(position.pixels, 0.0);
   });
 
-  testWidgets('Selection SegmentedButton control works',
-      (WidgetTester tester) async {
+  testWidgets('Selection SegmentedButton control works', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(const MaterialApp(home: TableExample()));
     await tester.pump();
 

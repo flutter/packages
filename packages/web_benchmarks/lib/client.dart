@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -58,7 +58,8 @@ Future<void> runBenchmarks(
 
   if (nextBenchmark == LocalBenchmarkServerClient.kManualFallback) {
     _fallbackToManual(
-        'The server did not tell us which benchmark to run next.');
+      'The server did not tell us which benchmark to run next.',
+    );
     return;
   }
 
@@ -67,13 +68,14 @@ Future<void> runBenchmarks(
   final Uri currentUri = Uri.parse(window.location.href);
   // Create a new URI with the parsed value of [benchmarkPath] to ensure the
   // benchmark app is reloaded with the proper configuration.
-  final String newUri = Uri.parse(benchmarkPath)
-      .replace(
-        scheme: currentUri.scheme,
-        host: currentUri.host,
-        port: currentUri.port,
-      )
-      .toString();
+  final String newUri =
+      Uri.parse(benchmarkPath)
+          .replace(
+            scheme: currentUri.scheme,
+            host: currentUri.host,
+            port: currentUri.port,
+          )
+          .toString();
 
   // Reloading the window will trigger the next benchmark to run.
   await _client.printToConsole(
@@ -93,14 +95,15 @@ Future<void> _runBenchmark(String? benchmarkName) async {
   await runZoned<Future<void>>(
     () async {
       final Recorder recorder = recorderFactory();
-      final Runner runner = recorder.isTracingEnabled && !_client.isInManualMode
-          ? Runner(
-              recorder: recorder,
-              setUpAllDidRun: () =>
-                  _client.startPerformanceTracing(benchmarkName),
-              tearDownAllWillRun: _client.stopPerformanceTracing,
-            )
-          : Runner(recorder: recorder);
+      final Runner runner =
+          recorder.isTracingEnabled && !_client.isInManualMode
+              ? Runner(
+                recorder: recorder,
+                setUpAllDidRun:
+                    () => _client.startPerformanceTracing(benchmarkName),
+                tearDownAllWillRun: _client.stopPerformanceTracing,
+              )
+              : Runner(recorder: recorder);
 
       final Profile profile = await runner.run();
       if (!_client.isInManualMode) {
@@ -154,12 +157,13 @@ void _fallbackToManual(String error) {
     // Find the button elements added above.
     final Element button = document.querySelector('#$benchmarkName')!;
     button.addEventListener(
-        'click',
-        (JSAny? arg) {
-          final Element? manualPanel = document.querySelector('#manual-panel');
-          manualPanel?.remove();
-          _runBenchmark(benchmarkName);
-        }.toJS);
+      'click',
+      (JSAny? arg) {
+        final Element? manualPanel = document.querySelector('#manual-panel');
+        manualPanel?.remove();
+        _runBenchmark(benchmarkName);
+      }.toJS,
+    );
   }
 }
 
@@ -194,7 +198,8 @@ class TimeseriesVisualization {
     // The amount of vertical space available on the chart. Because some
     // outliers can be huge they can dwarf all the useful values. So we
     // limit it to 1.5 x the biggest non-outlier.
-    _maxValueChartRange = 1.5 *
+    _maxValueChartRange =
+        1.5 *
         _stats.samples
             .where((AnnotatedSample sample) => !sample.isOutlier)
             .map<double>((AnnotatedSample sample) => sample.magnitude)
@@ -260,13 +265,21 @@ class TimeseriesVisualization {
 
     // Draw a horizontal solid line corresponding to the average.
     _ctx.lineWidth = 1;
-    drawLine(0, _normalized(_stats.average), _screenWidth,
-        _normalized(_stats.average));
+    drawLine(
+      0,
+      _normalized(_stats.average),
+      _screenWidth,
+      _normalized(_stats.average),
+    );
 
     // Draw a horizontal dashed line corresponding to the outlier cut off.
     _ctx.setLineDash(<JSNumber>[5.toJS, 5.toJS].toJS);
-    drawLine(0, _normalized(_stats.outlierCutOff), _screenWidth,
-        _normalized(_stats.outlierCutOff));
+    drawLine(
+      0,
+      _normalized(_stats.outlierCutOff),
+      _screenWidth,
+      _normalized(_stats.outlierCutOff),
+    );
 
     // Draw a light red band that shows the noise (1 stddev in each direction).
     _ctx.fillStyle = 'rgba(255,50,50,0.3)'.toJS;
@@ -361,8 +374,10 @@ class LocalBenchmarkServerClient {
       sendData: json.encode(profile.toJson()),
     );
     if (request.status != 200) {
-      throw Exception('Failed to report profile data to benchmark server. '
-          'The server responded with status code ${request.status}.');
+      throw Exception(
+        'Failed to report profile data to benchmark server. '
+        'The server responded with status code ${request.status}.',
+      );
     }
   }
 

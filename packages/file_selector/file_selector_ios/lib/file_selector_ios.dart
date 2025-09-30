@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -21,8 +21,11 @@ class FileSelectorIOS extends FileSelectorPlatform {
     String? initialDirectory,
     String? confirmButtonText,
   }) async {
-    final List<String> path = await _hostApi.openFile(FileSelectorConfig(
-        utis: _allowedUtiListFromTypeGroups(acceptedTypeGroups)));
+    final List<String> path = await _hostApi.openFile(
+      FileSelectorConfig(
+        utis: _allowedUtiListFromTypeGroups(acceptedTypeGroups),
+      ),
+    );
     return path.isEmpty ? null : XFile(path.first);
   }
 
@@ -32,9 +35,12 @@ class FileSelectorIOS extends FileSelectorPlatform {
     String? initialDirectory,
     String? confirmButtonText,
   }) async {
-    final List<String> pathList = await _hostApi.openFile(FileSelectorConfig(
+    final List<String> pathList = await _hostApi.openFile(
+      FileSelectorConfig(
         utis: _allowedUtiListFromTypeGroups(acceptedTypeGroups),
-        allowMultiSelection: true));
+        allowMultiSelection: true,
+      ),
+    );
     return pathList.map((String path) => XFile(path)).toList();
   }
 
@@ -55,8 +61,10 @@ class FileSelectorIOS extends FileSelectorPlatform {
         return allowAny;
       }
       if (typeGroup.uniformTypeIdentifiers?.isEmpty ?? true) {
-        throw ArgumentError('The provided type group $typeGroup should either '
-            'allow all files, or have a non-empty "uniformTypeIdentifiers"');
+        throw ArgumentError(
+          'The provided type group $typeGroup should either '
+          'allow all files, or have a non-empty "uniformTypeIdentifiers"',
+        );
       }
       allowedUTIs.addAll(typeGroup.uniformTypeIdentifiers!);
     }

@@ -8,7 +8,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.5.1'
+        classpath 'com.android.tools.build:gradle:8.12.1'
     }
 }
 
@@ -25,17 +25,17 @@ android {
     buildFeatures {
         buildConfig true
     }
-    namespace 'io.flutter.plugins.urllauncher'
+    namespace = "io.flutter.plugins.urllauncher"
     compileSdk = flutter.compileSdkVersion
 
     defaultConfig {
-        minSdkVersion 21
+        minSdkVersion 24
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
 
     lintOptions {
@@ -61,11 +61,11 @@ android {
 dependencies {
 
     // Java language implementation
-    implementation "androidx.core:core:1.13.1"
-    implementation 'androidx.annotation:annotation:1.9.1'
-    implementation 'androidx.browser:browser:1.8.0'
-    testImplementation 'junit:junit:4.13.2'
-    testImplementation 'org.mockito:mockito-core:5.17.0'
-    testImplementation 'androidx.test:core:1.6.1'
-    testImplementation 'org.robolectric:robolectric:4.14.1'
+    implementation("androidx.core:core:1.13.1")
+    implementation("androidx.annotation:annotation:1.9.1")
+    implementation("androidx.browser:browser:1.8.0")
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.mockito:mockito-core:5.19.0")
+    testImplementation("androidx.test:core:1.7.0")
+    testImplementation("org.robolectric:robolectric:4.15.1")
 }

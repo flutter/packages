@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -40,11 +40,20 @@ void main() {
 
   final Map<String, dynamic>? credentialsJson = getTestGcpCredentialsJson();
 
-  test('FlutterDestination integration test with update.', () async {
-    final FlutterDestination dst =
-        await FlutterDestination.makeFromCredentialsJson(credentialsJson!,
-            isTesting: true);
-    await dst.update(<FlutterEngineMetricPoint>[simplePoint],
-        DateTime.fromMillisecondsSinceEpoch(123), 'test');
-  }, skip: credentialsJson == null);
+  test(
+    'FlutterDestination integration test with update.',
+    () async {
+      final FlutterDestination dst =
+          await FlutterDestination.makeFromCredentialsJson(
+            credentialsJson!,
+            isTesting: true,
+          );
+      await dst.update(
+        <FlutterEngineMetricPoint>[simplePoint],
+        DateTime.fromMillisecondsSinceEpoch(123),
+        'test',
+      );
+    },
+    skip: credentialsJson == null,
+  );
 }

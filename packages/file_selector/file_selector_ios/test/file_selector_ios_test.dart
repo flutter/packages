@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -44,11 +44,12 @@ void main() {
       );
 
       const XTypeGroup groupTwo = XTypeGroup(
-          label: 'image',
-          extensions: <String>['jpg'],
-          mimeTypes: <String>['image/jpg'],
-          uniformTypeIdentifiers: <String>['public.image'],
-          webWildCards: <String>['image/*']);
+        label: 'image',
+        extensions: <String>['jpg'],
+        mimeTypes: <String>['image/jpg'],
+        uniformTypeIdentifiers: <String>['public.image'],
+        webWildCards: <String>['image/*'],
+      );
 
       await plugin.openFile(acceptedTypeGroups: <XTypeGroup>[group, groupTwo]);
 
@@ -57,8 +58,10 @@ void main() {
           result.captured[0] as FileSelectorConfig;
 
       // iOS only accepts uniformTypeIdentifiers.
-      expect(listEquals(config.utis, <String>['public.text', 'public.image']),
-          isTrue);
+      expect(
+        listEquals(config.utis, <String>['public.text', 'public.image']),
+        isTrue,
+      );
       expect(config.allowMultiSelection, isFalse);
     });
     test('throws for a type group that does not support iOS', () async {
@@ -68,8 +71,9 @@ void main() {
       );
 
       await expectLater(
-          plugin.openFile(acceptedTypeGroups: <XTypeGroup>[group]),
-          throwsArgumentError);
+        plugin.openFile(acceptedTypeGroups: <XTypeGroup>[group]),
+        throwsArgumentError,
+      );
     });
 
     test('correctly handles no type groups', () async {
@@ -81,12 +85,12 @@ void main() {
     });
 
     test('correctly handles a wildcard group', () async {
-      const XTypeGroup group = XTypeGroup(
-        label: 'text',
-      );
+      const XTypeGroup group = XTypeGroup(label: 'text');
 
       await expectLater(
-          plugin.openFile(acceptedTypeGroups: <XTypeGroup>[group]), completes);
+        plugin.openFile(acceptedTypeGroups: <XTypeGroup>[group]),
+        completes,
+      );
       final VerificationResult result = verify(mockApi.openFile(captureAny));
       final FileSelectorConfig config =
           result.captured[0] as FileSelectorConfig;
@@ -108,11 +112,12 @@ void main() {
       );
 
       const XTypeGroup groupTwo = XTypeGroup(
-          label: 'image',
-          extensions: <String>['jpg'],
-          mimeTypes: <String>['image/jpg'],
-          uniformTypeIdentifiers: <String>['public.image'],
-          webWildCards: <String>['image/*']);
+        label: 'image',
+        extensions: <String>['jpg'],
+        mimeTypes: <String>['image/jpg'],
+        uniformTypeIdentifiers: <String>['public.image'],
+        webWildCards: <String>['image/*'],
+      );
 
       await plugin.openFiles(acceptedTypeGroups: <XTypeGroup>[group, groupTwo]);
 
@@ -121,8 +126,10 @@ void main() {
           result.captured[0] as FileSelectorConfig;
 
       // iOS only accepts uniformTypeIdentifiers.
-      expect(listEquals(config.utis, <String>['public.text', 'public.image']),
-          isTrue);
+      expect(
+        listEquals(config.utis, <String>['public.text', 'public.image']),
+        isTrue,
+      );
       expect(config.allowMultiSelection, isTrue);
     });
 
@@ -133,8 +140,9 @@ void main() {
       );
 
       await expectLater(
-          plugin.openFiles(acceptedTypeGroups: <XTypeGroup>[group]),
-          throwsArgumentError);
+        plugin.openFiles(acceptedTypeGroups: <XTypeGroup>[group]),
+        throwsArgumentError,
+      );
     });
 
     test('correctly handles no type groups', () async {
@@ -146,12 +154,12 @@ void main() {
     });
 
     test('correctly handles a wildcard group', () async {
-      const XTypeGroup group = XTypeGroup(
-        label: 'text',
-      );
+      const XTypeGroup group = XTypeGroup(label: 'text');
 
       await expectLater(
-          plugin.openFiles(acceptedTypeGroups: <XTypeGroup>[group]), completes);
+        plugin.openFiles(acceptedTypeGroups: <XTypeGroup>[group]),
+        completes,
+      );
       final VerificationResult result = verify(mockApi.openFile(captureAny));
       final FileSelectorConfig config =
           result.captured[0] as FileSelectorConfig;

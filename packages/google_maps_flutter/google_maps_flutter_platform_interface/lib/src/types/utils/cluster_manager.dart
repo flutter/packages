@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -7,7 +7,9 @@ import 'maps_object.dart';
 
 /// Converts an [Iterable] of Cluster Managers in a Map of ClusterManagerId -> Cluster.
 Map<ClusterManagerId, ClusterManager> keyByClusterManagerId(
-    Iterable<ClusterManager> clusterManagers) {
-  return keyByMapsObjectId<ClusterManager>(clusterManagers)
-      .cast<ClusterManagerId, ClusterManager>();
+  Iterable<ClusterManager> clusterManagers,
+) {
+  return keyByMapsObjectId<ClusterManager>(
+    clusterManagers,
+  ).cast<ClusterManagerId, ClusterManager>();
 }

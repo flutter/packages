@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -222,11 +222,8 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi, @unch
     let context = authContextFactory.createAuthContext()
     var biometrics: [AuthBiometric] = []
     if context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: nil) {
-      if #available(macOS 10.15, iOS 11.0, *) {
-        if context.biometryType == LABiometryType.faceID {
-          biometrics.append(AuthBiometric.face)
-          return biometrics
-        }
+      if context.biometryType == LABiometryType.faceID {
+        biometrics.append(AuthBiometric.face)
       }
       if context.biometryType == LABiometryType.touchID {
         biometrics.append(AuthBiometric.fingerprint)
@@ -381,6 +378,12 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi, @unch
         return
       }
       result = errorCode == .passcodeNotSet ? .errorPasscodeNotSet : .errorNotEnrolled
+    case .userCancel:
+      result = .errorUserCancelled
+    case .userFallback:
+      result = .errorUserFallback
+    case .biometryNotAvailable:
+      result = .errorBiometricNotAvailable
     case .biometryLockout:
       DispatchQueue.main.async { [weak self] in
         self?.showAlert(

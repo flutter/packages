@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -27,10 +27,7 @@ class Point {
   /// the number advances from 0 to 1 it returns a value closer to a or b
   /// respectively.
   static Point lerp(Point a, Point b, double t) {
-    return Point(
-      lerpDouble(a.x, b.x, t),
-      lerpDouble(a.y, b.y, t),
-    );
+    return Point(lerpDouble(a.x, b.x, t), lerpDouble(a.y, b.y, t));
   }
 
   /// The distance between points [a] and [b].
@@ -90,12 +87,12 @@ class Rect {
   /// Creates a rectangle from the specified left and top positions with width
   /// and height dimensions.
   const Rect.fromLTWH(double left, double top, double width, double height)
-      : this.fromLTRB(left, top, left + width, top + height);
+    : this.fromLTRB(left, top, left + width, top + height);
 
   /// Creates a rectangle representing a circle with centerpoint `x,`y` and
   /// radius `r`.
   const Rect.fromCircle(double x, double y, double r)
-      : this.fromLTRB(x - r, y - r, x + r, y + r);
+    : this.fromLTRB(x - r, y - r, x + r, y + r);
 
   /// A rectangle covering the entire coordinate space, equal to dart:ui's
   /// definition.

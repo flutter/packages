@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -37,6 +37,21 @@ void main() {
       // this behavior, which could be implemented in the subclass.
       expect(ExtendsGoogleSignInPlatform().authenticationEvents, null);
     });
+
+    test(
+      'Default implementation of clearAuthorizationToken throws unimplemented error',
+      () {
+        final ExtendsGoogleSignInPlatform platform =
+            ExtendsGoogleSignInPlatform();
+
+        expect(
+          () => platform.clearAuthorizationToken(
+            const ClearAuthorizationTokenParams(accessToken: 'someToken'),
+          ),
+          throwsUnimplementedError,
+        );
+      },
+    );
   });
 
   group('GoogleSignInUserData', () {
@@ -72,13 +87,9 @@ void main() {
   group('ClientAuthorizationTokenData', () {
     test('can be compared by == operator', () {
       const ClientAuthorizationTokenData firstInstance =
-          ClientAuthorizationTokenData(
-        accessToken: 'accessToken',
-      );
+          ClientAuthorizationTokenData(accessToken: 'accessToken');
       const ClientAuthorizationTokenData secondInstance =
-          ClientAuthorizationTokenData(
-        accessToken: 'accessToken',
-      );
+          ClientAuthorizationTokenData(accessToken: 'accessToken');
       expect(firstInstance == secondInstance, isTrue);
     });
   });
@@ -86,13 +97,9 @@ void main() {
   group('ServerAuthorizationTokenData', () {
     test('can be compared by == operator', () {
       const ServerAuthorizationTokenData firstInstance =
-          ServerAuthorizationTokenData(
-        serverAuthCode: 'serverAuthCode',
-      );
+          ServerAuthorizationTokenData(serverAuthCode: 'serverAuthCode');
       const ServerAuthorizationTokenData secondInstance =
-          ServerAuthorizationTokenData(
-        serverAuthCode: 'serverAuthCode',
-      );
+          ServerAuthorizationTokenData(serverAuthCode: 'serverAuthCode');
       expect(firstInstance == secondInstance, isTrue);
     });
   });
@@ -108,7 +115,8 @@ class ImplementsGoogleSignInPlatform extends Mock
 class ExtendsGoogleSignInPlatform extends GoogleSignInPlatform {
   @override
   Future<AuthenticationResults?>? attemptLightweightAuthentication(
-      AttemptLightweightAuthenticationParameters params) async {
+    AttemptLightweightAuthenticationParameters params,
+  ) async {
     return null;
   }
 
@@ -125,7 +133,8 @@ class ExtendsGoogleSignInPlatform extends GoogleSignInPlatform {
 
   @override
   Future<ClientAuthorizationTokenData?> clientAuthorizationTokensForScopes(
-      ClientAuthorizationTokensForScopesParameters params) async {
+    ClientAuthorizationTokensForScopesParameters params,
+  ) async {
     return null;
   }
 
@@ -137,7 +146,8 @@ class ExtendsGoogleSignInPlatform extends GoogleSignInPlatform {
 
   @override
   Future<ServerAuthorizationTokenData?> serverAuthorizationTokensForScopes(
-      ServerAuthorizationTokensForScopesParameters params) async {
+    ServerAuthorizationTokensForScopesParameters params,
+  ) async {
     return null;
   }
 

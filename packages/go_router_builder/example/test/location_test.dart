@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -16,9 +16,7 @@ void main() {
     // https://github.com/flutter/flutter/issues/127825.
     final Set<double> doubleSetField = <double>{};
     expect(
-      IterableRouteWithDefaultValues(
-        doubleSetField: doubleSetField,
-      ).location,
+      IterableRouteWithDefaultValues(doubleSetField: doubleSetField).location,
       '/iterable-route-with-default-values',
     );
 
@@ -33,9 +31,7 @@ void main() {
     // https://github.com/flutter/flutter/issues/127825.
     final Set<int> intSetField = <int>{0, 1};
     expect(
-      IterableRouteWithDefaultValues(
-        intSetField: intSetField,
-      ).location,
+      IterableRouteWithDefaultValues(intSetField: intSetField).location,
       '/iterable-route-with-default-values',
     );
 

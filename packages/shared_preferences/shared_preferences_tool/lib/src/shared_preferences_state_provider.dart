@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -18,10 +18,7 @@ import 'shared_preferences_tool_eval.dart';
 /// Check [SharedPreferencesStateProviderExtension] for more info.
 class _StateInheritedWidget extends InheritedWidget {
   /// Default constructor for [_StateInheritedWidget].
-  const _StateInheritedWidget({
-    required super.child,
-    required this.notifier,
-  });
+  const _StateInheritedWidget({required super.child, required this.notifier});
 
   final SharedPreferencesStateNotifier notifier;
 
@@ -83,7 +80,6 @@ class _SharedPreferencesStateInheritedModel
 }
 
 @visibleForTesting
-
 /// A class that provides a [SharedPreferencesStateNotifier] to its descendants.
 ///
 /// Only used for testing. You can override the notifier with a mock when testing.
@@ -107,11 +103,7 @@ class InnerSharedPreferencesStateProvider extends StatelessWidget {
       notifier: notifier,
       child: ValueListenableBuilder<SharedPreferencesState>(
         valueListenable: notifier,
-        builder: (
-          BuildContext context,
-          SharedPreferencesState value,
-          _,
-        ) {
+        builder: (BuildContext context, SharedPreferencesState value, _) {
           return _SharedPreferencesStateInheritedModel(
             state: value,
             child: child,
@@ -125,10 +117,7 @@ class InnerSharedPreferencesStateProvider extends StatelessWidget {
 /// A provider that creates a [SharedPreferencesStateNotifier] and provides it to its descendants.
 class SharedPreferencesStateProvider extends StatefulWidget {
   /// Default constructor for [SharedPreferencesStateProvider].
-  const SharedPreferencesStateProvider({
-    super.key,
-    required this.child,
-  });
+  const SharedPreferencesStateProvider({super.key, required this.child});
 
   /// Returns the async state of the list of all keys.
   /// [_SharedPreferencesStateInheritedModel] ancestor.
@@ -139,9 +128,8 @@ class SharedPreferencesStateProvider extends StatefulWidget {
   static AsyncState<List<String>> keysListStateOf(BuildContext context) {
     return context
         .dependOnInheritedWidgetOfExactType<
-            _SharedPreferencesStateInheritedModel>(
-          aspect: _StateInheritedModelAspect.keysList,
-        )!
+          _SharedPreferencesStateInheritedModel
+        >(aspect: _StateInheritedModelAspect.keysList)!
         .state
         .allKeys;
   }
@@ -155,9 +143,8 @@ class SharedPreferencesStateProvider extends StatefulWidget {
   static SelectedSharedPreferencesKey? selectedKeyOf(BuildContext context) {
     return context
         .dependOnInheritedWidgetOfExactType<
-            _SharedPreferencesStateInheritedModel>(
-          aspect: _StateInheritedModelAspect.selectedKey,
-        )!
+          _SharedPreferencesStateInheritedModel
+        >(aspect: _StateInheritedModelAspect.selectedKey)!
         .state
         .selectedKey;
   }
@@ -167,7 +154,8 @@ class SharedPreferencesStateProvider extends StatefulWidget {
   ///
   /// Throws an error if the selected key is null.
   static SelectedSharedPreferencesKey requireSelectedKeyOf(
-      BuildContext context) {
+    BuildContext context,
+  ) {
     return selectedKeyOf(context)!;
   }
 
@@ -181,9 +169,8 @@ class SharedPreferencesStateProvider extends StatefulWidget {
   ) {
     return context
         .dependOnInheritedWidgetOfExactType<
-            _SharedPreferencesStateInheritedModel>(
-          aspect: _StateInheritedModelAspect.selectedKeyData,
-        )!
+          _SharedPreferencesStateInheritedModel
+        >(aspect: _StateInheritedModelAspect.selectedKeyData)!
         .state
         .selectedKey
         ?.value;
@@ -197,9 +184,8 @@ class SharedPreferencesStateProvider extends StatefulWidget {
   static bool editingOf(BuildContext context) {
     return context
         .dependOnInheritedWidgetOfExactType<
-            _SharedPreferencesStateInheritedModel>(
-          aspect: _StateInheritedModelAspect.editing,
-        )!
+          _SharedPreferencesStateInheritedModel
+        >(aspect: _StateInheritedModelAspect.editing)!
         .state
         .editing;
   }
@@ -212,9 +198,8 @@ class SharedPreferencesStateProvider extends StatefulWidget {
   static bool legacyApiOf(BuildContext context) {
     return context
         .dependOnInheritedWidgetOfExactType<
-            _SharedPreferencesStateInheritedModel>(
-          aspect: _StateInheritedModelAspect.legacyApi,
-        )!
+          _SharedPreferencesStateInheritedModel
+        >(aspect: _StateInheritedModelAspect.legacyApi)!
         .state
         .legacyApi;
   }

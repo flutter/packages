@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -162,10 +162,18 @@ class PathProviderWindows extends PathProviderPlatform {
   }
 
   String? _getStringValue(Pointer<Uint8>? infoBuffer, String key) =>
-      versionInfoQuerier.getStringValue(infoBuffer, key,
-          language: languageEn, encoding: encodingCP1252) ??
-      versionInfoQuerier.getStringValue(infoBuffer, key,
-          language: languageEn, encoding: encodingUnicode);
+      versionInfoQuerier.getStringValue(
+        infoBuffer,
+        key,
+        language: languageEn,
+        encoding: encodingCP1252,
+      ) ??
+      versionInfoQuerier.getStringValue(
+        infoBuffer,
+        key,
+        language: languageEn,
+        encoding: encodingUnicode,
+      );
 
   /// Returns the relative path string to append to the root directory returned
   /// by Win32 APIs for application storage (such as RoamingAppDir) to get a
@@ -187,8 +195,11 @@ class PathProviderWindows extends PathProviderPlatform {
     Pointer<BYTE>? infoBuffer;
     try {
       // Get the module name.
-      final int moduleNameLength =
-          GetModuleFileName(0, moduleNameBuffer, MAX_PATH);
+      final int moduleNameLength = GetModuleFileName(
+        0,
+        moduleNameBuffer,
+        MAX_PATH,
+      );
       if (moduleNameLength == 0) {
         final int error = GetLastError();
         throw _createWin32Exception(error);
@@ -204,14 +215,17 @@ class PathProviderWindows extends PathProviderPlatform {
           infoBuffer = null;
         }
       }
-      companyName =
-          _sanitizedDirectoryName(_getStringValue(infoBuffer, 'CompanyName'));
-      productName =
-          _sanitizedDirectoryName(_getStringValue(infoBuffer, 'ProductName'));
+      companyName = _sanitizedDirectoryName(
+        _getStringValue(infoBuffer, 'CompanyName'),
+      );
+      productName = _sanitizedDirectoryName(
+        _getStringValue(infoBuffer, 'ProductName'),
+      );
 
       // If there was no product name, use the executable name.
-      productName ??=
-          path.basenameWithoutExtension(moduleNameBuffer.toDartString());
+      productName ??= path.basenameWithoutExtension(
+        moduleNameBuffer.toDartString(),
+      );
 
       return companyName != null
           ? path.join(companyName, productName)
@@ -252,8 +266,9 @@ class PathProviderWindows extends PathProviderPlatform {
     if (baseDir == null) {
       return null;
     }
-    final Directory directory =
-        Directory(path.join(baseDir, _getApplicationSpecificSubdirectory()));
+    final Directory directory = Directory(
+      path.join(baseDir, _getApplicationSpecificSubdirectory()),
+    );
     // Ensure that the directory exists if possible, since it will on other
     // platforms. If the name is longer than MAXPATH, creating will fail, so
     // skip that step; it's up to the client to decide what to do with the path
@@ -269,12 +284,13 @@ class PathProviderWindows extends PathProviderPlatform {
 
 Exception _createWin32Exception(int errorCode) {
   return PlatformException(
-      code: 'Win32 Error',
-      // TODO(stuartmorgan): Consider getting the system error message via
-      // FormatMessage if it turns out to be necessary for debugging issues.
-      // Plugin-client-level usability isn't a major consideration since per
-      // https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#platform-exception-handling
-      // any case that comes up in practice should be handled and returned
-      // via a plugin-specific exception, not this fallback.
-      message: 'Error code 0x${errorCode.toRadixString(16)}');
+    code: 'Win32 Error',
+    // TODO(stuartmorgan): Consider getting the system error message via
+    // FormatMessage if it turns out to be necessary for debugging issues.
+    // Plugin-client-level usability isn't a major consideration since per
+    // https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#platform-exception-handling
+    // any case that comes up in practice should be handled and returned
+    // via a plugin-specific exception, not this fallback.
+    message: 'Error code 0x${errorCode.toRadixString(16)}',
+  );
 }

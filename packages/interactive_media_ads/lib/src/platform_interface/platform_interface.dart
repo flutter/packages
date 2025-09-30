@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -16,3 +16,4 @@ export 'platform_ads_rendering_settings.dart';
 export 'platform_ads_request.dart';
 export 'platform_companion_ad_slot.dart';
 export 'platform_content_progress_provider.dart';
+export 'platform_ima_settings.dart';

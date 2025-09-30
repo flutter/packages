@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -10,17 +10,20 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   test(
-      'Default implementation of PointerInterceptorPlatform should throw unimplemented error',
-      () {
-    final PointerInterceptorPlatform unimplementedPointerInterceptorPlatform =
-        UnimplementedPointerInterceptorPlatform();
+    'Default implementation of PointerInterceptorPlatform should throw unimplemented error',
+    () {
+      final PointerInterceptorPlatform unimplementedPointerInterceptorPlatform =
+          UnimplementedPointerInterceptorPlatform();
 
-    final Container testChild = Container();
-    expect(
+      final Container testChild = Container();
+      expect(
         () => unimplementedPointerInterceptorPlatform.buildWidget(
-            child: testChild),
-        throwsUnimplementedError);
-  });
+          child: testChild,
+        ),
+        throwsUnimplementedError,
+      );
+    },
+  );
 }
 
 class UnimplementedPointerInterceptorPlatform

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -9,12 +9,14 @@ import '../platform_interface/platform_ads_manager_delegate.dart';
 import '../platform_interface/platform_ads_rendering_settings.dart';
 import '../platform_interface/platform_companion_ad_slot.dart';
 import '../platform_interface/platform_content_progress_provider.dart';
+import '../platform_interface/platform_ima_settings.dart';
 import 'android_ad_display_container.dart';
 import 'android_ads_loader.dart';
 import 'android_ads_manager_delegate.dart';
 import 'android_ads_rendering_settings.dart';
 import 'android_companion_ad_slot.dart';
 import 'android_content_progress_provider.dart';
+import 'android_ima_settings.dart';
 
 /// Android implementation of [InteractiveMediaAdsPlatform].
 final class AndroidInteractiveMediaAds extends InteractiveMediaAdsPlatform {
@@ -24,28 +26,28 @@ final class AndroidInteractiveMediaAds extends InteractiveMediaAdsPlatform {
   }
 
   @override
-  PlatformAdDisplayContainer createPlatformAdDisplayContainer(
+  AndroidAdDisplayContainer createPlatformAdDisplayContainer(
     PlatformAdDisplayContainerCreationParams params,
   ) {
     return AndroidAdDisplayContainer(params);
   }
 
   @override
-  PlatformAdsLoader createPlatformAdsLoader(
+  AndroidAdsLoader createPlatformAdsLoader(
     PlatformAdsLoaderCreationParams params,
   ) {
     return AndroidAdsLoader(params);
   }
 
   @override
-  PlatformAdsManagerDelegate createPlatformAdsManagerDelegate(
+  AndroidAdsManagerDelegate createPlatformAdsManagerDelegate(
     PlatformAdsManagerDelegateCreationParams params,
   ) {
     return AndroidAdsManagerDelegate(params);
   }
 
   @override
-  PlatformContentProgressProvider createPlatformContentProgressProvider(
+  AndroidContentProgressProvider createPlatformContentProgressProvider(
     PlatformContentProgressProviderCreationParams params,
   ) {
     return AndroidContentProgressProvider(params);
@@ -63,5 +65,12 @@ final class AndroidInteractiveMediaAds extends InteractiveMediaAdsPlatform {
     PlatformCompanionAdSlotCreationParams params,
   ) {
     return AndroidCompanionAdSlot(params);
+  }
+
+  @override
+  AndroidImaSettings createPlatformImaSettings(
+    PlatformImaSettingsCreationParams params,
+  ) {
+    return AndroidImaSettings(params);
   }
 }

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -120,8 +120,10 @@ void main() {
           showTitle: false,
         )
         ..setResponse(true);
-      expect(await launchUrlString(urlString, mode: LaunchMode.inAppWebView),
-          isTrue);
+      expect(
+        await launchUrlString(urlString, mode: LaunchMode.inAppWebView),
+        isTrue,
+      );
     });
 
     test('external browser', () async {
@@ -139,9 +141,9 @@ void main() {
         )
         ..setResponse(true);
       expect(
-          await launchUrlString(urlString,
-              mode: LaunchMode.externalApplication),
-          isTrue);
+        await launchUrlString(urlString, mode: LaunchMode.externalApplication),
+        isTrue,
+      );
     });
 
     test('in-app browser', () async {
@@ -203,9 +205,12 @@ void main() {
         )
         ..setResponse(true);
       expect(
-          await launchUrlString(urlString,
-              mode: LaunchMode.externalNonBrowserApplication),
-          isTrue);
+        await launchUrlString(
+          urlString,
+          mode: LaunchMode.externalNonBrowserApplication,
+        ),
+        isTrue,
+      );
     });
 
     test('in-app webview without javascript', () async {
@@ -223,11 +228,15 @@ void main() {
         )
         ..setResponse(true);
       expect(
-          await launchUrlString(urlString,
-              mode: LaunchMode.inAppWebView,
-              webViewConfiguration:
-                  const WebViewConfiguration(enableJavaScript: false)),
-          isTrue);
+        await launchUrlString(
+          urlString,
+          mode: LaunchMode.inAppWebView,
+          webViewConfiguration: const WebViewConfiguration(
+            enableJavaScript: false,
+          ),
+        ),
+        isTrue,
+      );
     });
 
     test('in-app webview without DOM storage', () async {
@@ -245,11 +254,15 @@ void main() {
         )
         ..setResponse(true);
       expect(
-          await launchUrlString(urlString,
-              mode: LaunchMode.inAppWebView,
-              webViewConfiguration:
-                  const WebViewConfiguration(enableDomStorage: false)),
-          isTrue);
+        await launchUrlString(
+          urlString,
+          mode: LaunchMode.inAppWebView,
+          webViewConfiguration: const WebViewConfiguration(
+            enableDomStorage: false,
+          ),
+        ),
+        isTrue,
+      );
     });
 
     test('in-app webview with headers', () async {
@@ -267,18 +280,23 @@ void main() {
         )
         ..setResponse(true);
       expect(
-          await launchUrlString(urlString,
-              mode: LaunchMode.inAppWebView,
-              webViewConfiguration: const WebViewConfiguration(
-                  headers: <String, String>{'key': 'value'})),
-          isTrue);
+        await launchUrlString(
+          urlString,
+          mode: LaunchMode.inAppWebView,
+          webViewConfiguration: const WebViewConfiguration(
+            headers: <String, String>{'key': 'value'},
+          ),
+        ),
+        isTrue,
+      );
     });
 
     test('cannot launch a non-web URL in a webview', () async {
       expect(
-          () async => launchUrlString('tel:555-555-5555',
-              mode: LaunchMode.inAppWebView),
-          throwsA(isA<ArgumentError>()));
+        () async =>
+            launchUrlString('tel:555-555-5555', mode: LaunchMode.inAppWebView),
+        throwsA(isA<ArgumentError>()),
+      );
     });
 
     test('non-web URL with default options', () async {

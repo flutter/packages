@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -9,11 +9,7 @@ import '../data.dart';
 /// The book list view.
 class BookList extends StatelessWidget {
   /// Creates an [BookList].
-  const BookList({
-    required this.books,
-    this.onTap,
-    super.key,
-  });
+  const BookList({required this.books, this.onTap, super.key});
 
   /// The list of books to be displayed.
   final List<Book> books;
@@ -23,15 +19,12 @@ class BookList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => ListView.builder(
-        itemCount: books.length,
-        itemBuilder: (BuildContext context, int index) => ListTile(
-          title: Text(
-            books[index].title,
-          ),
-          subtitle: Text(
-            books[index].author.name,
-          ),
+    itemCount: books.length,
+    itemBuilder:
+        (BuildContext context, int index) => ListTile(
+          title: Text(books[index].title),
+          subtitle: Text(books[index].author.name),
           onTap: onTap != null ? () => onTap!(books[index]) : null,
         ),
-      );
+  );
 }

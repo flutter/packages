@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -14,9 +14,8 @@ late QuickActionHandler _handler;
 /// An implementation of [QuickActionsPlatform] for Android.
 class QuickActionsAndroid extends QuickActionsPlatform {
   /// Creates a new plugin implementation instance.
-  QuickActionsAndroid({
-    @visibleForTesting AndroidQuickActionsApi? api,
-  }) : _hostApi = api ?? AndroidQuickActionsApi();
+  QuickActionsAndroid({@visibleForTesting AndroidQuickActionsApi? api})
+    : _hostApi = api ?? AndroidQuickActionsApi();
 
   final AndroidQuickActionsApi _hostApi;
 

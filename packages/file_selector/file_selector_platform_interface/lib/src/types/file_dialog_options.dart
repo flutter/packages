@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -21,8 +21,11 @@ class FileDialogOptions {
 @immutable
 class SaveDialogOptions extends FileDialogOptions {
   /// Creates a new options set with the given settings.
-  const SaveDialogOptions(
-      {super.initialDirectory, super.confirmButtonText, this.suggestedName});
+  const SaveDialogOptions({
+    super.initialDirectory,
+    super.confirmButtonText,
+    this.suggestedName,
+  });
 
   /// The suggested name of the file to save or open.
   final String? suggestedName;

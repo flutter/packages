@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -46,11 +46,12 @@ String addSizeDirectiveToUrl(String photoUrl, double size) {
       final String baseUrl = imagePath.substring(0, directiveSeparator);
       final String directive = imagePath.substring(directiveSeparator + 1);
       // Split the directive by "-"
-      final Set<String> directives = Set<String>.from(directive.split('-'))
-        // Remove the size directive, if present, and any empty values
-        ..removeWhere((String s) => s.isEmpty || sizeDirective.hasMatch(s))
-        // Add the size and crop directives
-        ..addAll(<String>['c', 's${size.round()}']);
+      final Set<String> directives =
+          Set<String>.from(directive.split('-'))
+            // Remove the size directive, if present, and any empty values
+            ..removeWhere((String s) => s.isEmpty || sizeDirective.hasMatch(s))
+            // Add the size and crop directives
+            ..addAll(<String>['c', 's${size.round()}']);
       // Recompose the URL by performing the reverse of the parsing
       pathSegments.last = '$baseUrl=${directives.join("-")}';
     } else {

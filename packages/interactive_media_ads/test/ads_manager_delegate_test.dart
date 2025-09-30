@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -11,19 +11,21 @@ import 'test_stubs.dart';
 void main() {
   test('passes params to platform instance', () async {
     InteractiveMediaAdsPlatform.instance = TestInteractiveMediaAdsPlatform(
-      onCreatePlatformAdsManagerDelegate:
-          (PlatformAdsManagerDelegateCreationParams params) {
+      onCreatePlatformAdsManagerDelegate: (
+        PlatformAdsManagerDelegateCreationParams params,
+      ) {
         return TestPlatformAdsManagerDelegate(params);
       },
       onCreatePlatformAdsLoader: (PlatformAdsLoaderCreationParams params) {
         throw UnimplementedError();
       },
-      onCreatePlatformAdDisplayContainer:
-          (PlatformAdDisplayContainerCreationParams params) {
+      onCreatePlatformAdDisplayContainer: (
+        PlatformAdDisplayContainerCreationParams params,
+      ) {
         throw UnimplementedError();
       },
-      onCreatePlatformContentProgressProvider: (_) =>
-          throw UnimplementedError(),
+      onCreatePlatformContentProgressProvider:
+          (_) => throw UnimplementedError(),
     );
 
     void onAdEvent(AdEvent event) {}
