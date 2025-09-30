@@ -25,7 +25,7 @@ dependencies:
   flutter:
     sdk: flutter
   intl: ">=0.17.0 <0.21.0"
-  local_auth_platform_interface: ^1.0.1
+  local_auth_platform_interface: ^1.1.0
 
 dev_dependencies:
   build_runner: ^2.3.3
@@ -38,7 +38,3 @@ topics:
   - authentication
   - biometrics
   - local-auth
-# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
-# See https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#changing-federated-plugins
-dependency_overrides:
-  local_auth_platform_interface: {path: ../../../packages/local_auth/local_auth_platform_interface}
