@@ -23,13 +23,13 @@ if (flutterVersionName == null) {
 }
 
 android {
-    namespace "dev.flutter.pigeon_example_app"
+    namespace = "dev.flutter.pigeon_example_app"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
 
     kotlinOptions {

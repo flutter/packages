@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -153,7 +153,7 @@ final class InAppPurchasePluginTests: XCTestCase {
       "transactionTimeStamp": NSDate().timeIntervalSince1970,
     ]
 
-    let paymentTransactionStub = SKPaymentTransactionStub(map: transactionMap)
+    let _ = SKPaymentTransactionStub(map: transactionMap)
 
     let handler = PaymentQueueHandlerStub()
     plugin.paymentQueueHandler = handler

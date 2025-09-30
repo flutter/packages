@@ -12,7 +12,7 @@ SKPaymentTransactionWrapper _$SKPaymentTransactionWrapperFromJson(Map json) =>
         Map<String, dynamic>.from(json['payment'] as Map),
       ),
       transactionState: const SKTransactionStatusConverter().fromJson(
-        json['transactionState'] as int?,
+        (json['transactionState'] as num?)?.toInt(),
       ),
       originalTransaction: json['originalTransaction'] == null
           ? null

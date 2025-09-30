@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -11,8 +11,8 @@ import android.content.Context;
 import android.util.LongSparseArray;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.platform.PlatformViewRegistry;
-import io.flutter.plugins.videoplayer.Messages.CreateMessage;
-import io.flutter.plugins.videoplayer.Messages.PlatformVideoViewType;
+import io.flutter.plugins.videoplayer.Messages.CreationOptions;
+import io.flutter.plugins.videoplayer.Messages.TexturePlayerIds;
 import io.flutter.plugins.videoplayer.platformview.PlatformVideoViewFactory;
 import io.flutter.plugins.videoplayer.platformview.PlatformViewVideoPlayer;
 import io.flutter.plugins.videoplayer.texture.TextureVideoPlayer;
@@ -78,17 +78,16 @@ public class VideoPlayerPluginTest {
           .when(() -> PlatformViewVideoPlayer.create(any(), any(), any(), any()))
           .thenReturn(mock(PlatformViewVideoPlayer.class));
 
-      final CreateMessage createMessage =
-          new CreateMessage.Builder()
-              .setViewType(PlatformVideoViewType.PLATFORM_VIEW)
+      final CreationOptions options =
+          new CreationOptions.Builder()
               .setUri("https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4")
               .setHttpHeaders(new HashMap<>())
               .build();
 
-      final long playerId = plugin.create(createMessage);
+      final long playerId = plugin.createForPlatformView(options);
 
       final LongSparseArray<VideoPlayer> videoPlayers = getVideoPlayers();
-      assertNotNull(videoPlayers.get(playerId));
+      assertTrue(videoPlayers.get(playerId) instanceof PlatformViewVideoPlayer);
     }
   }
 
@@ -100,17 +99,16 @@ public class VideoPlayerPluginTest {
           .when(() -> TextureVideoPlayer.create(any(), any(), any(), any(), any()))
           .thenReturn(mock(TextureVideoPlayer.class));
 
-      final CreateMessage createMessage =
-          new CreateMessage.Builder()
-              .setViewType(PlatformVideoViewType.TEXTURE_VIEW)
+      final CreationOptions options =
+          new CreationOptions.Builder()
               .setUri("https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4")
               .setHttpHeaders(new HashMap<>())
               .build();
 
-      final long playerId = plugin.create(createMessage);
+      final TexturePlayerIds ids = plugin.createForTextureView(options);
 
       final LongSparseArray<VideoPlayer> videoPlayers = getVideoPlayers();
-      assertTrue(videoPlayers.get(playerId) instanceof TextureVideoPlayer);
+      assertTrue(videoPlayers.get(ids.getPlayerId()) instanceof TextureVideoPlayer);
     }
   }
 }

@@ -23,13 +23,13 @@ if (flutterVersionName == null) {
 }
 
 android {
-    namespace 'com.example.test_plugin_example'
+    namespace = "com.example.test_plugin_example"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
 
     kotlinOptions {

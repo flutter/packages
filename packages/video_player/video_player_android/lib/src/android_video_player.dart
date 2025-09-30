@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -29,14 +29,14 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
   AndroidVideoPlayer({
     @visibleForTesting AndroidVideoPlayerApi? pluginApi,
     @visibleForTesting
-    VideoPlayerInstanceApi Function(int playerId)? playerProvider,
+    VideoPlayerInstanceApi Function(int playerId)? playerApiProvider,
   }) : _api = pluginApi ?? AndroidVideoPlayerApi(),
-       _playerProvider = playerProvider ?? _productionApiProvider;
+       _playerApiProvider = playerApiProvider ?? _productionApiProvider;
 
   final AndroidVideoPlayerApi _api;
   // A method to create VideoPlayerInstanceApi instances, which can be
   //overridden for testing.
-  final VideoPlayerInstanceApi Function(int playerId) _playerProvider;
+  final VideoPlayerInstanceApi Function(int playerId) _playerApiProvider;
 
   final Map<int, _PlayerInstance> _players = <int, _PlayerInstance>{};
 
@@ -100,16 +100,27 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
     if (uri == null) {
       throw ArgumentError('Unable to construct a video asset from $options');
     }
-    final CreateMessage message = CreateMessage(
+    final CreationOptions pigeonCreationOptions = CreationOptions(
       uri: uri,
       httpHeaders: httpHeaders,
       userAgent: userAgent,
       formatHint: formatHint,
-      viewType: _platformVideoViewTypeFromVideoViewType(options.viewType),
     );
 
-    final int playerId = await _api.create(message);
-    ensureApiInitialized(playerId, options.viewType);
+    final int playerId;
+    final VideoPlayerViewState state;
+    switch (options.viewType) {
+      case VideoViewType.textureView:
+        final TexturePlayerIds ids = await _api.createForTextureView(
+          pigeonCreationOptions,
+        );
+        playerId = ids.playerId;
+        state = VideoPlayerTextureViewState(textureId: ids.textureId);
+      case VideoViewType.platformView:
+        playerId = await _api.createForPlatformView(pigeonCreationOptions);
+        state = const VideoPlayerPlatformViewState();
+    }
+    ensurePlayerInitialized(playerId, state);
 
     return playerId;
   }
@@ -130,18 +141,11 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
   /// Returns the player instance for [playerId], creating it if it doesn't
   /// already exist.
   @visibleForTesting
-  void ensureApiInitialized(int playerId, VideoViewType viewType) {
+  void ensurePlayerInitialized(int playerId, VideoPlayerViewState viewState) {
     _players.putIfAbsent(playerId, () {
-      final _VideoPlayerViewState viewState = switch (viewType) {
-        // playerId is also the textureId when using texture view.
-        VideoViewType.textureView => _VideoPlayerTextureViewState(
-          textureId: playerId,
-        ),
-        VideoViewType.platformView => const _VideoPlayerPlatformViewState(),
-      };
       final String eventChannelName = '$_videoEventChannelNameBase$playerId';
       return _PlayerInstance(
-        _playerProvider(playerId),
+        _playerApiProvider(playerId),
         viewState,
         eventChannelName: eventChannelName,
       );
@@ -198,13 +202,13 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
   @override
   Widget buildViewWithOptions(VideoViewOptions options) {
     final int playerId = options.playerId;
-    final _VideoPlayerViewState viewState = _playerWith(id: playerId).viewState;
+    final VideoPlayerViewState viewState = _playerWith(id: playerId).viewState;
 
     return switch (viewState) {
-      _VideoPlayerTextureViewState(:final int textureId) => Texture(
+      VideoPlayerTextureViewState(:final int textureId) => Texture(
         textureId: textureId,
       ),
-      _VideoPlayerPlatformViewState() => PlatformViewPlayer(playerId: playerId),
+      VideoPlayerPlatformViewState() => PlatformViewPlayer(playerId: playerId),
     };
   }
 
@@ -233,15 +237,6 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
   }
 }
 
-PlatformVideoViewType _platformVideoViewTypeFromVideoViewType(
-  VideoViewType viewType,
-) {
-  return switch (viewType) {
-    VideoViewType.textureView => PlatformVideoViewType.textureView,
-    VideoViewType.platformView => PlatformVideoViewType.platformView,
-  };
-}
-
 /// An instance of a video player, corresponding to a single player ID in
 /// [AndroidVideoPlayer].
 class _PlayerInstance {
@@ -268,7 +263,7 @@ class _PlayerInstance {
   late final StreamSubscription<dynamic> _eventSubscription;
   int _lastBufferPosition = -1;
 
-  final _VideoPlayerViewState viewState;
+  final VideoPlayerViewState viewState;
 
   Future<void> setLooping(bool looping) {
     return _api.setLooping(looping);
@@ -367,22 +362,25 @@ class _PlayerInstance {
 }
 
 /// Base class representing the state of a video player view.
+@visibleForTesting
 @immutable
-sealed class _VideoPlayerViewState {
-  const _VideoPlayerViewState();
+sealed class VideoPlayerViewState {
+  const VideoPlayerViewState();
 }
 
 /// Represents the state of a video player view that uses a texture.
-final class _VideoPlayerTextureViewState extends _VideoPlayerViewState {
-  /// Creates a new instance of [_VideoPlayerTextureViewState].
-  const _VideoPlayerTextureViewState({required this.textureId});
+@visibleForTesting
+final class VideoPlayerTextureViewState extends VideoPlayerViewState {
+  /// Creates a new instance of [VideoPlayerTextureViewState].
+  const VideoPlayerTextureViewState({required this.textureId});
 
   /// The ID of the texture used by the video player.
   final int textureId;
 }
 
 /// Represents the state of a video player view that uses a platform view.
-final class _VideoPlayerPlatformViewState extends _VideoPlayerViewState {
-  /// Creates a new instance of [_VideoPlayerPlatformViewState].
-  const _VideoPlayerPlatformViewState();
+@visibleForTesting
+final class VideoPlayerPlatformViewState extends VideoPlayerViewState {
+  /// Creates a new instance of [VideoPlayerPlatformViewState].
+  const VideoPlayerPlatformViewState();
 }
