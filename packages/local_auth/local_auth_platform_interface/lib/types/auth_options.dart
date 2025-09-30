@@ -22,7 +22,7 @@ class AuthenticationOptions {
   /// such as no biometric sensor on device, will still result in
   /// a [PlatformException].
   // This parameter still exists for backwards compatibility with local_auth
-  // 2.x, but implementers targetting local_auth 3.x or later should ignore it,
+  // 2.x, but implementers targeting local_auth 3.x or later should ignore it,
   // as it will always be false.
   final bool useErrorDialogs;
 
