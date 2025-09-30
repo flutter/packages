@@ -23,7 +23,7 @@ enum FileSelectorExceptionCode {
   illegalStateException, //unused
 }
 
-class FileSelectorNativeException implements Exception {
+class FileSelectorNativeException {
   late final FileSelectorExceptionCode fileSelectorExceptionCode;
   late final String message;
 }
