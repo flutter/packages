@@ -2180,6 +2180,21 @@ class MockCameraXProxy extends _i1.Mock implements _i7.CameraXProxy {
           as _i2.CaptureRequestKey Function());
 
   @override
+  _i2.CaptureRequestKey Function() get controlVideoStabilizationModeRequest =>
+      (super.noSuchMethod(
+            Invocation.getter(#controlVideoStabilizationModeRequest),
+            returnValue: () => _FakeCaptureRequestKey_34(
+              this,
+              Invocation.getter(#controlVideoStabilizationModeRequest),
+            ),
+            returnValueForMissingStub: () => _FakeCaptureRequestKey_34(
+              this,
+              Invocation.getter(#controlVideoStabilizationModeRequest),
+            ),
+          )
+          as _i2.CaptureRequestKey Function());
+
+  @override
   _i2.CameraCharacteristicsKey Function()
   get infoSupportedHardwareLevelCameraCharacteristics =>
       (super.noSuchMethod(
@@ -2214,6 +2229,64 @@ class MockCameraXProxy extends _i1.Mock implements _i7.CameraXProxy {
             ),
           )
           as _i2.CameraCharacteristicsKey Function());
+
+  @override
+  _i2.CameraCharacteristicsKey Function()
+  get controlAvailableVideoStabilizationModesCameraCharacteristics =>
+      (super.noSuchMethod(
+            Invocation.getter(
+              #controlAvailableVideoStabilizationModesCameraCharacteristics,
+            ),
+            returnValue: () => _FakeCameraCharacteristicsKey_9(
+              this,
+              Invocation.getter(
+                #controlAvailableVideoStabilizationModesCameraCharacteristics,
+              ),
+            ),
+            returnValueForMissingStub: () => _FakeCameraCharacteristicsKey_9(
+              this,
+              Invocation.getter(
+                #controlAvailableVideoStabilizationModesCameraCharacteristics,
+              ),
+            ),
+          )
+          as _i2.CameraCharacteristicsKey Function());
+
+  @override
+  _i5.Future<_i9.Uint8List?> Function(
+    int,
+    int,
+    List<_i2.PlaneProxy>, {
+    _i8.BinaryMessenger? pigeon_binaryMessenger,
+    _i2.PigeonInstanceManager? pigeon_instanceManager,
+  })
+  get getNv21BufferImageProxyUtils =>
+      (super.noSuchMethod(
+            Invocation.getter(#getNv21BufferImageProxyUtils),
+            returnValue:
+                (
+                  int imageWidth,
+                  int imageHeight,
+                  List<_i2.PlaneProxy> planes, {
+                  _i8.BinaryMessenger? pigeon_binaryMessenger,
+                  _i2.PigeonInstanceManager? pigeon_instanceManager,
+                }) => _i5.Future<_i9.Uint8List?>.value(),
+            returnValueForMissingStub:
+                (
+                  int imageWidth,
+                  int imageHeight,
+                  List<_i2.PlaneProxy> planes, {
+                  _i8.BinaryMessenger? pigeon_binaryMessenger,
+                  _i2.PigeonInstanceManager? pigeon_instanceManager,
+                }) => _i5.Future<_i9.Uint8List?>.value(),
+          )
+          as _i5.Future<_i9.Uint8List?> Function(
+            int,
+            int,
+            List<_i2.PlaneProxy>, {
+            _i8.BinaryMessenger? pigeon_binaryMessenger,
+            _i2.PigeonInstanceManager? pigeon_instanceManager,
+          }));
 
   @override
   set withModeFocusMeteringActionBuilder(
@@ -2283,6 +2356,17 @@ class MockCameraXProxy extends _i1.Mock implements _i7.CameraXProxy {
     Invocation.setter(
       #controlAELockCaptureRequest,
       _controlAELockCaptureRequest,
+    ),
+    returnValueForMissingStub: null,
+  );
+
+  @override
+  set controlVideoStabilizationModeRequest(
+    _i2.CaptureRequestKey Function()? _controlVideoStabilizationModeRequest,
+  ) => super.noSuchMethod(
+    Invocation.setter(
+      #controlVideoStabilizationModeRequest,
+      _controlVideoStabilizationModeRequest,
     ),
     returnValueForMissingStub: null,
   );

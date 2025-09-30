@@ -5382,14 +5382,12 @@ abstract class PigeonApiImageProxy(
     }
   }
 }
-/** Utils for working with [ImageProxy]s. */
+/** Utilities for working with [ImageProxy]s. */
 @Suppress("UNCHECKED_CAST")
 abstract class PigeonApiImageProxyUtils(
     open val pigeonRegistrar: CameraXLibraryPigeonProxyApiRegistrar
 ) {
-  /**
-   * Returns a single Byte Buffer that is representative of the [planes] that are NV21 compatible.
-   */
+  /** Returns a single buffer that is representative of three NV21-compatible [planes]. */
   abstract fun getNv21Buffer(
       imageWidth: Long,
       imageHeight: Long,
@@ -6423,6 +6421,15 @@ abstract class PigeonApiCaptureRequest(
    */
   abstract fun controlAELock(): android.hardware.camera2.CaptureRequest.Key<*>
 
+  /**
+   * Whether video stabilization is active.
+   *
+   * Value is int.
+   *
+   * This key is available on all devices.
+   */
+  abstract fun controlVideoStabilizationMode(): android.hardware.camera2.CaptureRequest.Key<*>
+
   companion object {
     @Suppress("LocalVariableName")
     fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiCaptureRequest?) {
@@ -6441,6 +6448,30 @@ abstract class PigeonApiCaptureRequest(
                 try {
                   api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
                       api.controlAELock(), pigeon_identifierArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  CameraXLibraryPigeonUtils.wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.camera_android_camerax.CaptureRequest.controlVideoStabilizationMode",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_identifierArg = args[0] as Long
+            val wrapped: List<Any?> =
+                try {
+                  api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
+                      api.controlVideoStabilizationMode(), pigeon_identifierArg)
                   listOf(null)
                 } catch (exception: Throwable) {
                   CameraXLibraryPigeonUtils.wrapError(exception)
@@ -6921,6 +6952,17 @@ abstract class PigeonApiCameraCharacteristics(
    */
   abstract fun sensorOrientation(): android.hardware.camera2.CameraCharacteristics.Key<*>
 
+  /**
+   * List of video stabilization modes for android.control.videoStabilizationMode that are supported
+   * by this camera device.
+   *
+   * Value is `ControlAvailableVideoStabilizationMode`.
+   *
+   * This key is available on all devices.
+   */
+  abstract fun controlAvailableVideoStabilizationModes():
+      android.hardware.camera2.CameraCharacteristics.Key<*>
+
   companion object {
     @Suppress("LocalVariableName")
     fun setUpMessageHandlers(
@@ -6966,6 +7008,30 @@ abstract class PigeonApiCameraCharacteristics(
                 try {
                   api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
                       api.sensorOrientation(), pigeon_identifierArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  CameraXLibraryPigeonUtils.wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.camera_android_camerax.CameraCharacteristics.controlAvailableVideoStabilizationModes",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_identifierArg = args[0] as Long
+            val wrapped: List<Any?> =
+                try {
+                  api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
+                      api.controlAvailableVideoStabilizationModes(), pigeon_identifierArg)
                   listOf(null)
                 } catch (exception: Throwable) {
                   CameraXLibraryPigeonUtils.wrapError(exception)

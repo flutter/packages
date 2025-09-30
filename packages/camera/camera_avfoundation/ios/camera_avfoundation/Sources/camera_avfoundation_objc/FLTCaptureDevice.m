@@ -139,6 +139,11 @@
   self.device.videoZoomFactor = factor;
 }
 
+// Video Stabilization
+- (BOOL)isVideoStabilizationModeSupported:(AVCaptureVideoStabilizationMode)videoStabilizationMode {
+  return [self.device.activeFormat isVideoStabilizationModeSupported:videoStabilizationMode];
+}
+
 // Camera Properties
 - (float)lensAperture {
   return self.device.lensAperture;

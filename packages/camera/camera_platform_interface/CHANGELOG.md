@@ -1,3 +1,7 @@
+## 2.12.0
+
+* Adds support for video stabilization.
+
 ## 2.11.0
 
 * Adds a flag to configure a recording to be persistent across camera changes. See
@@ -19,6 +23,7 @@
 * Deprecates `maxVideoDuration`/`maxDuration`, as it was never implemented on
   most platforms, and there is no plan to implement it in the future.
 * Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+
 
 ## 2.7.4
 

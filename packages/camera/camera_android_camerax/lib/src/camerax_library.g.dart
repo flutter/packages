@@ -6793,7 +6793,7 @@ class ImageProxy extends PigeonInternalProxyApiBaseClass {
   }
 }
 
-/// Utils for working with [ImageProxy]s.
+/// Utilities for working with [ImageProxy]s.
 class ImageProxyUtils extends PigeonInternalProxyApiBaseClass {
   /// Constructs [ImageProxyUtils] without creating the associated native object.
   ///
@@ -6863,8 +6863,7 @@ class ImageProxyUtils extends PigeonInternalProxyApiBaseClass {
     }
   }
 
-  /// Returns a single Byte Buffer that is representative of the [planes]
-  /// that are NV21 compatible.
+  /// Returns a single buffer that is representative of three NV21-compatible [planes].
   static Future<Uint8List> getNv21Buffer(
     int imageWidth,
     int imageHeight,
@@ -8258,6 +8257,14 @@ class CaptureRequest extends PigeonInternalProxyApiBaseClass {
   /// This key is available on all devices.
   static final CaptureRequestKey controlAELock = pigeonVar_controlAELock();
 
+  /// Whether video stabilization is active.
+  ///
+  /// Value is int.
+  ///
+  /// This key is available on all devices.
+  static final CaptureRequestKey controlVideoStabilizationMode =
+      pigeonVar_controlVideoStabilizationMode();
+
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
@@ -8325,6 +8332,44 @@ class CaptureRequest extends PigeonInternalProxyApiBaseClass {
     () async {
       const String pigeonVar_channelName =
           'dev.flutter.pigeon.camera_android_camerax.CaptureRequest.controlAELock';
+      final BasicMessageChannel<Object?> pigeonVar_channel =
+          BasicMessageChannel<Object?>(
+            pigeonVar_channelName,
+            pigeonChannelCodec,
+            binaryMessenger: pigeonVar_binaryMessenger,
+          );
+      final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+        <Object?>[pigeonVar_instanceIdentifier],
+      );
+      final List<Object?>? pigeonVar_replyList =
+          await pigeonVar_sendFuture as List<Object?>?;
+      if (pigeonVar_replyList == null) {
+        throw _createConnectionError(pigeonVar_channelName);
+      } else if (pigeonVar_replyList.length > 1) {
+        throw PlatformException(
+          code: pigeonVar_replyList[0]! as String,
+          message: pigeonVar_replyList[1] as String?,
+          details: pigeonVar_replyList[2],
+        );
+      } else {
+        return;
+      }
+    }();
+    return pigeonVar_instance;
+  }
+
+  static CaptureRequestKey pigeonVar_controlVideoStabilizationMode() {
+    final CaptureRequestKey pigeonVar_instance =
+        CaptureRequestKey.pigeon_detached();
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _PigeonInternalProxyApiBaseCodec(PigeonInstanceManager.instance);
+    final BinaryMessenger pigeonVar_binaryMessenger =
+        ServicesBinding.instance.defaultBinaryMessenger;
+    final int pigeonVar_instanceIdentifier = PigeonInstanceManager.instance
+        .addDartCreatedInstance(pigeonVar_instance);
+    () async {
+      const String pigeonVar_channelName =
+          'dev.flutter.pigeon.camera_android_camerax.CaptureRequest.controlVideoStabilizationMode';
       final BasicMessageChannel<Object?> pigeonVar_channel =
           BasicMessageChannel<Object?>(
             pigeonVar_channelName,
@@ -8977,6 +9022,16 @@ class CameraCharacteristics extends PigeonInternalProxyApiBaseClass {
   static final CameraCharacteristicsKey sensorOrientation =
       pigeonVar_sensorOrientation();
 
+  /// List of video stabilization modes for android.control.videoStabilizationMode
+  /// that are supported by this camera device.
+  ///
+  /// Value is `ControlAvailableVideoStabilizationMode`.
+  ///
+  /// This key is available on all devices.
+  static final CameraCharacteristicsKey
+  controlAvailableVideoStabilizationModes =
+      pigeonVar_controlAvailableVideoStabilizationModes();
+
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
@@ -9082,6 +9137,45 @@ class CameraCharacteristics extends PigeonInternalProxyApiBaseClass {
     () async {
       const String pigeonVar_channelName =
           'dev.flutter.pigeon.camera_android_camerax.CameraCharacteristics.sensorOrientation';
+      final BasicMessageChannel<Object?> pigeonVar_channel =
+          BasicMessageChannel<Object?>(
+            pigeonVar_channelName,
+            pigeonChannelCodec,
+            binaryMessenger: pigeonVar_binaryMessenger,
+          );
+      final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+        <Object?>[pigeonVar_instanceIdentifier],
+      );
+      final List<Object?>? pigeonVar_replyList =
+          await pigeonVar_sendFuture as List<Object?>?;
+      if (pigeonVar_replyList == null) {
+        throw _createConnectionError(pigeonVar_channelName);
+      } else if (pigeonVar_replyList.length > 1) {
+        throw PlatformException(
+          code: pigeonVar_replyList[0]! as String,
+          message: pigeonVar_replyList[1] as String?,
+          details: pigeonVar_replyList[2],
+        );
+      } else {
+        return;
+      }
+    }();
+    return pigeonVar_instance;
+  }
+
+  static CameraCharacteristicsKey
+  pigeonVar_controlAvailableVideoStabilizationModes() {
+    final CameraCharacteristicsKey pigeonVar_instance =
+        CameraCharacteristicsKey.pigeon_detached();
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _PigeonInternalProxyApiBaseCodec(PigeonInstanceManager.instance);
+    final BinaryMessenger pigeonVar_binaryMessenger =
+        ServicesBinding.instance.defaultBinaryMessenger;
+    final int pigeonVar_instanceIdentifier = PigeonInstanceManager.instance
+        .addDartCreatedInstance(pigeonVar_instance);
+    () async {
+      const String pigeonVar_channelName =
+          'dev.flutter.pigeon.camera_android_camerax.CameraCharacteristics.controlAvailableVideoStabilizationModes';
       final BasicMessageChannel<Object?> pigeonVar_channel =
           BasicMessageChannel<Object?>(
             pigeonVar_channelName,
