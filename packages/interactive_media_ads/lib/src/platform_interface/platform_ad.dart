@@ -25,6 +25,7 @@ base class PlatformAd {
     required this.dealId,
     required this.description,
     required this.duration,
+    required this.width,
     required this.height,
     required this.skipTimeOffset,
     required this.surveyUrl,
@@ -33,9 +34,8 @@ base class PlatformAd {
     required this.uiElements,
     required this.universalAdIds,
     required this.vastMediaBitrate,
-    required this.vastMediaHeight,
     required this.vastMediaWidth,
-    required this.width,
+    required this.vastMediaHeight,
     required this.isLinear,
     required this.isSkippable,
   });
@@ -86,6 +86,9 @@ base class PlatformAd {
   /// The duration of the ad.
   final Duration? duration;
 
+  /// The width of the selected creative if non-linear, else returns 0.
+  final int width;
+
   /// The height of the selected creative if non-linear, else returns 0.
   final int height;
 
@@ -111,14 +114,11 @@ base class PlatformAd {
   /// The VAST bitrate in Kbps of the selected creative.
   final int vastMediaBitrate;
 
-  /// The VAST media height in pixels of the selected creative.
-  final int vastMediaHeight;
-
   /// The VAST media width in pixels of the selected creative.
   final int vastMediaWidth;
 
-  /// The width of the selected creative if non-linear, else returns 0.
-  final int width;
+  /// The VAST media height in pixels of the selected creative.
+  final int vastMediaHeight;
 
   /// Indicates whether the ad’s current mode of operation is linear or
   /// non-linear.

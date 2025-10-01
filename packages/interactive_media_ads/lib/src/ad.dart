@@ -60,6 +60,9 @@ class Ad {
   /// The duration of the ad.
   Duration? get duration => platform.duration;
 
+  /// The width of the selected creative if non-linear, else returns 0.
+  int get width => platform.width;
+
   /// The height of the selected creative if non-linear, else returns 0.
   int get height => platform.height;
 
@@ -94,9 +97,6 @@ class Ad {
 
   /// The VAST media width in pixels of the selected creative.
   int get vastMediaWidth => platform.vastMediaWidth;
-
-  /// The width of the selected creative if non-linear, else returns 0.
-  int get width => platform.width;
 
   /// Indicates whether the ad’s current mode of operation is linear or
   /// non-linear.
@@ -166,17 +166,21 @@ class CompanionAd {
   /// Implementation of [PlatformCompanionAd] for the current platform.
   final PlatformCompanionAd platform;
 
+  /// The width of the companion in pixels.
+  ///
+  /// `null` if unavailable.
+  int? get width => platform.width;
+
+  /// The height of the companion in pixels.
+  ///
+  /// `null` if unavailable.
+  int? get height => platform.height;
+
   /// The API needed to execute this ad, or null if unavailable.
   String? get apiFramework => platform.apiFramework;
 
-  /// The height of the companion in pixels.
-  int? get height => platform.height;
-
   /// The URL for the static resource of this companion.
   String? get resourceValue => platform.resourceValue;
-
-  /// The width of the companion in pixels.
-  int? get width => platform.width;
 }
 
 /// Simple data object containing universal ad ID information.
@@ -190,10 +194,10 @@ class UniversalAdId {
   /// The universal ad ID value.
   ///
   /// This will be null if it isn’t defined by the ad.
-  String? get adIDValue => platform.adIDValue;
+  String? get adIdValue => platform.adIdValue;
 
   /// The universal ad ID registry with which the value is registered.
   ///
   /// This will be null if it isn’t defined by the ad.
-  String? get adIDRegistry => platform.adIDRegistry;
+  String? get adIdRegistry => platform.adIdRegistry;
 }

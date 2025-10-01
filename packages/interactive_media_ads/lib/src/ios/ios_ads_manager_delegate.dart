@@ -192,9 +192,9 @@ PlatformUniversalAdId _asPlatformUniversalAdId(
   ima.IMAUniversalAdID universalAdId,
 ) {
   return PlatformUniversalAdId(
-    adIDValue:
+    adIdValue:
         universalAdId.adIDValue == 'unknown' ? null : universalAdId.adIDValue,
-    adIDRegistry:
+    adIdRegistry:
         universalAdId.adIDRegistry == 'unknown'
             ? null
             : universalAdId.adIDRegistry,

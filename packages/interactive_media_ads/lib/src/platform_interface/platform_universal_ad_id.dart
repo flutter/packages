@@ -5,15 +5,15 @@
 /// Simple data object containing universal ad ID information.
 base class PlatformUniversalAdId {
   /// Constructs a [PlatformUniversalAdId].
-  PlatformUniversalAdId({required this.adIDValue, required this.adIDRegistry});
+  PlatformUniversalAdId({required this.adIdValue, required this.adIdRegistry});
 
   /// The universal ad ID value.
   ///
   /// This will be null if it isn’t defined by the ad.
-  final String? adIDValue;
+  final String? adIdValue;
 
   /// The universal ad ID registry with which the value is registered.
   ///
   /// This will be null if it isn’t defined by the ad.
-  final String? adIDRegistry;
+  final String? adIdRegistry;
 }

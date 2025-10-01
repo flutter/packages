@@ -6,21 +6,25 @@
 base class PlatformCompanionAd {
   /// Constructs a [PlatformCompanionAd].
   PlatformCompanionAd({
-    required this.apiFramework,
-    required this.height,
-    required this.resourceValue,
     required this.width,
+    required this.height,
+    required this.apiFramework,
+    required this.resourceValue,
   });
+
+  /// The width of the companion in pixels.
+  ///
+  /// `null` if unavailable.
+  final int? width;
+
+  /// The height of the companion in pixels.
+  ///
+  /// `null` if unavailable.
+  final int? height;
 
   /// The API needed to execute this ad, or null if unavailable.
   final String? apiFramework;
 
-  /// The height of the companion in pixels.
-  final int? height;
-
   /// The URL for the static resource of this companion.
   final String? resourceValue;
-
-  /// The width of the companion in pixels.
-  final int? width;
 }

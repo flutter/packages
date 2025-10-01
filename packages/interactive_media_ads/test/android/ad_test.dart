@@ -50,8 +50,8 @@ void main() {
         AndroidAdsManagerDelegate(
           PlatformAdsManagerDelegateCreationParams(
             onAdEvent: expectAsync1((PlatformAdEvent event) {
-              expect(event.ad!.universalAdIds.single.adIDValue, isNull);
-              expect(event.ad!.universalAdIds.single.adIDRegistry, isNull);
+              expect(event.ad!.universalAdIds.single.adIdValue, isNull);
+              expect(event.ad!.universalAdIds.single.adIdRegistry, isNull);
             }),
           ),
         ),
