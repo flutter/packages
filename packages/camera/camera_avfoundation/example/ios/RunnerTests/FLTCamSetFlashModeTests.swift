@@ -88,7 +88,7 @@ final class FLTCamSetFlashModeTests: XCTestCase {
     let (camera, mockDevice, mockCapturePhotoOutput) = createCamera()
 
     mockCapturePhotoOutput.supportedFlashModes = [
-      NSNumber(value: AVCaptureDevice.FlashMode.auto.rawValue)
+      AVCaptureDevice.FlashMode.auto
     ]
 
     mockDevice.hasFlash = true

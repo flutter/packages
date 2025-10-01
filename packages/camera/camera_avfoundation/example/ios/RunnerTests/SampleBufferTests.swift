@@ -60,7 +60,7 @@ private class FakeMediaSettingsAVWrapper: FLTCamMediaSettingsAVWrapper {
   }
 
   override func recommendedVideoSettingsForAssetWriter(
-    withFileType fileType: AVFileType, for output: FLTCaptureVideoDataOutput
+    withFileType fileType: AVFileType, for output: CaptureVideoDataOutput
   ) -> [String: Any]? {
     return [:]
   }
