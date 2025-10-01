@@ -2,14 +2,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+@import Foundation;
+
 // TODO(stuartmorgan): This file is temporarily iOS workaround for changes in
 // FlutterPluginRegistrar. See the TestFlutterPluginRegistrar TODO in
 // FWFWebViewFlutterWKWebViewExternalAPITests.swift.
 #if TARGET_OS_IOS
 
 #import "TemporaryObjCStub.h"
-
-@import Foundation;
 @import Flutter;
 
 #import "RunnerTests-Swift.h"
