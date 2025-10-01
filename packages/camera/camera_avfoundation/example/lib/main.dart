@@ -138,8 +138,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
               decoration: BoxDecoration(
                 color: Colors.black,
                 border: Border.all(
-                  color:
-                      controller != null && controller!.value.isRecordingVideo
+                  color: controller != null && controller!.value.isRecordingVideo
                       ? Colors.redAccent
                       : Colors.grey,
                   width: 3.0,
@@ -155,9 +154,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
           _modeControlRowWidget(),
           Padding(
             padding: const EdgeInsets.all(5.0),
-            child: Row(
-              children: <Widget>[_cameraTogglesRowWidget(), _thumbnailWidget()],
-            ),
+            child: Row(children: <Widget>[_cameraTogglesRowWidget(), _thumbnailWidget()]),
           ),
         ],
       ),
@@ -171,11 +168,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
     if (cameraController == null || !cameraController.value.isInitialized) {
       return const Text(
         'Tap a camera',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 24.0,
-          fontWeight: FontWeight.w900,
-        ),
+        style: TextStyle(color: Colors.white, fontSize: 24.0, fontWeight: FontWeight.w900),
       );
     } else {
       return Listener(
@@ -189,8 +182,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
                 behavior: HitTestBehavior.opaque,
                 onScaleStart: _handleScaleStart,
                 onScaleUpdate: _handleScaleUpdate,
-                onTapDown: (TapDownDetails details) =>
-                    onViewFinderTap(details, constraints),
+                onTapDown: (TapDownDetails details) => onViewFinderTap(details, constraints),
               );
             },
           ),
@@ -209,15 +201,9 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
       return;
     }
 
-    _currentScale = (_baseScale * details.scale).clamp(
-      _minAvailableZoom,
-      _maxAvailableZoom,
-    );
+    _currentScale = (_baseScale * details.scale).clamp(_minAvailableZoom, _maxAvailableZoom);
 
-    await CameraPlatform.instance.setZoomLevel(
-      controller!.cameraId,
-      _currentScale,
-    );
+    await CameraPlatform.instance.setZoomLevel(controller!.cameraId, _currentScale);
   }
 
   /// Display the thumbnail of the captured image or video.
@@ -242,13 +228,9 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
                       // pointing to a location within the browser. It may be displayed
                       // either with Image.network or Image.memory after loading the image
                       // bytes to memory.
-                      kIsWeb
-                          ? Image.network(imageFile!.path)
-                          : Image.file(File(imageFile!.path)))
+                      kIsWeb ? Image.network(imageFile!.path) : Image.file(File(imageFile!.path)))
                     : Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.pink),
-                        ),
+                        decoration: BoxDecoration(border: Border.all(color: Colors.pink)),
                         child: Center(
                           child: AspectRatio(
                             aspectRatio: localVideoController.value.aspectRatio,
@@ -281,16 +263,12 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
                     IconButton(
                       icon: const Icon(Icons.exposure),
                       color: Colors.blue,
-                      onPressed: controller != null
-                          ? onExposureModeButtonPressed
-                          : null,
+                      onPressed: controller != null ? onExposureModeButtonPressed : null,
                     ),
                     IconButton(
                       icon: const Icon(Icons.filter_center_focus),
                       color: Colors.blue,
-                      onPressed: controller != null
-                          ? onFocusModeButtonPressed
-                          : null,
+                      onPressed: controller != null ? onFocusModeButtonPressed : null,
                     ),
                   ]
                 : <Widget>[],
@@ -306,9 +284,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
                     : Icons.screen_rotation,
               ),
               color: Colors.blue,
-              onPressed: controller != null
-                  ? onCaptureOrientationLockButtonPressed
-                  : null,
+              onPressed: controller != null ? onCaptureOrientationLockButtonPressed : null,
             ),
           ],
         ),
@@ -328,36 +304,28 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
           children: <Widget>[
             IconButton(
               icon: const Icon(Icons.flash_off),
-              color: controller?.value.flashMode == FlashMode.off
-                  ? Colors.orange
-                  : Colors.blue,
+              color: controller?.value.flashMode == FlashMode.off ? Colors.orange : Colors.blue,
               onPressed: controller != null
                   ? () => onSetFlashModeButtonPressed(FlashMode.off)
                   : null,
             ),
             IconButton(
               icon: const Icon(Icons.flash_auto),
-              color: controller?.value.flashMode == FlashMode.auto
-                  ? Colors.orange
-                  : Colors.blue,
+              color: controller?.value.flashMode == FlashMode.auto ? Colors.orange : Colors.blue,
               onPressed: controller != null
                   ? () => onSetFlashModeButtonPressed(FlashMode.auto)
                   : null,
             ),
             IconButton(
               icon: const Icon(Icons.flash_on),
-              color: controller?.value.flashMode == FlashMode.always
-                  ? Colors.orange
-                  : Colors.blue,
+              color: controller?.value.flashMode == FlashMode.always ? Colors.orange : Colors.blue,
               onPressed: controller != null
                   ? () => onSetFlashModeButtonPressed(FlashMode.always)
                   : null,
             ),
             IconButton(
               icon: const Icon(Icons.highlight),
-              color: controller?.value.flashMode == FlashMode.torch
-                  ? Colors.orange
-                  : Colors.blue,
+              color: controller?.value.flashMode == FlashMode.torch ? Colors.orange : Colors.blue,
               onPressed: controller != null
                   ? () => onSetFlashModeButtonPressed(FlashMode.torch)
                   : null,
@@ -394,15 +362,11 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
                   TextButton(
                     style: styleAuto,
                     onPressed: controller != null
-                        ? () =>
-                              onSetExposureModeButtonPressed(ExposureMode.auto)
+                        ? () => onSetExposureModeButtonPressed(ExposureMode.auto)
                         : null,
                     onLongPress: () {
                       if (controller != null) {
-                        CameraPlatform.instance.setExposurePoint(
-                          controller!.cameraId,
-                          null,
-                        );
+                        CameraPlatform.instance.setExposurePoint(controller!.cameraId, null);
                         showInSnackBar('Resetting exposure point');
                       }
                     },
@@ -411,17 +375,13 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
                   TextButton(
                     style: styleLocked,
                     onPressed: controller != null
-                        ? () => onSetExposureModeButtonPressed(
-                            ExposureMode.locked,
-                          )
+                        ? () => onSetExposureModeButtonPressed(ExposureMode.locked)
                         : null,
                     child: const Text('LOCKED'),
                   ),
                   TextButton(
                     style: styleLocked,
-                    onPressed: controller != null
-                        ? () => controller!.setExposureOffset(0.0)
-                        : null,
+                    onPressed: controller != null ? () => controller!.setExposureOffset(0.0) : null,
                     child: const Text('RESET OFFSET'),
                   ),
                 ],
@@ -436,9 +396,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
                     min: _minAvailableExposureOffset,
                     max: _maxAvailableExposureOffset,
                     label: _currentExposureOffset.toString(),
-                    onChanged:
-                        _minAvailableExposureOffset ==
-                            _maxAvailableExposureOffset
+                    onChanged: _minAvailableExposureOffset == _maxAvailableExposureOffset
                         ? null
                         : setExposureOffset,
                   ),
@@ -454,9 +412,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
 
   Widget _focusModeControlRowWidget() {
     final ButtonStyle styleAuto = TextButton.styleFrom(
-      foregroundColor: controller?.value.focusMode == FocusMode.auto
-          ? Colors.orange
-          : Colors.blue,
+      foregroundColor: controller?.value.focusMode == FocusMode.auto ? Colors.orange : Colors.blue,
     );
     final ButtonStyle styleLocked = TextButton.styleFrom(
       foregroundColor: controller?.value.focusMode == FocusMode.locked
@@ -482,10 +438,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
                         : null,
                     onLongPress: () {
                       if (controller != null) {
-                        CameraPlatform.instance.setFocusPoint(
-                          controller!.cameraId,
-                          null,
-                        );
+                        CameraPlatform.instance.setFocusPoint(controller!.cameraId, null);
                       }
                       showInSnackBar('Resetting focus point');
                     },
@@ -563,13 +516,10 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
         ),
         IconButton(
           icon: const Icon(Icons.pause_presentation),
-          color:
-              cameraController != null && cameraController.value.isPreviewPaused
+          color: cameraController != null && cameraController.value.isPreviewPaused
               ? Colors.red
               : Colors.blue,
-          onPressed: cameraController == null
-              ? null
-              : onPausePreviewButtonPressed,
+          onPressed: cameraController == null ? null : onPausePreviewButtonPressed,
         ),
       ],
     );
@@ -598,7 +548,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
       }
     }
 
-    final isRecording = controller?.value.isRecordingVideo ?? false;
+    final bool isRecording = controller?.value.isRecordingVideo ?? false;
 
     return RadioGroup<CameraDescription>(
       groupValue: controller?.description,
@@ -617,9 +567,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
   String timestamp() => DateTime.now().millisecondsSinceEpoch.toString();
 
   void showInSnackBar(String message) {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(message)));
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
   }
 
   void onViewFinderTap(TapDownDetails details, BoxConstraints constraints) {
@@ -645,9 +593,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
     }
   }
 
-  Future<void> _initializeCameraController(
-    CameraDescription cameraDescription,
-  ) async {
+  Future<void> _initializeCameraController(CameraDescription cameraDescription) async {
     final CameraController cameraController = CameraController(
       cameraDescription,
       kIsWeb ? ResolutionPreset.max : ResolutionPreset.medium,
@@ -672,14 +618,10 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
             ? <Future<Object?>>[
                 CameraPlatform.instance
                     .getMinExposureOffset(cameraController.cameraId)
-                    .then(
-                      (double value) => _minAvailableExposureOffset = value,
-                    ),
+                    .then((double value) => _minAvailableExposureOffset = value),
                 CameraPlatform.instance
                     .getMaxExposureOffset(cameraController.cameraId)
-                    .then(
-                      (double value) => _maxAvailableExposureOffset = value,
-                    ),
+                    .then((double value) => _maxAvailableExposureOffset = value),
               ]
             : <Future<Object?>>[],
         CameraPlatform.instance
