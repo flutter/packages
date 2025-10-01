@@ -579,14 +579,6 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
   Widget _cameraTogglesRowWidget() {
     final List<Widget> toggles = <Widget>[];
 
-    void onChanged(CameraDescription? description) {
-      if (description == null) {
-        return;
-      }
-
-      onNewCameraSelected(description);
-    }
-
     if (_cameras.isEmpty) {
       SchedulerBinding.instance.addPostFrameCallback((_) async {
         showInSnackBar('No camera found.');
@@ -599,18 +591,27 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
             width: 90.0,
             child: RadioListTile<CameraDescription>(
               title: Icon(getCameraLensIcon(cameraDescription.lensDirection)),
-              groupValue: controller?.description,
               value: cameraDescription,
-              onChanged: (controller?.value.isRecordingVideo ?? false)
-                  ? null
-                  : onChanged,
             ),
           ),
         );
       }
     }
 
-    return Row(children: toggles);
+    final isRecording = controller?.value.isRecordingVideo ?? false;
+
+    return RadioGroup<CameraDescription>(
+      groupValue: controller?.description,
+      onChanged: (CameraDescription? description) {
+        if (isRecording) {
+          return;
+        }
+        if (description != null) {
+          onNewCameraSelected(description);
+        }
+      },
+      child: Row(children: toggles),
+    );
   }
 
   String timestamp() => DateTime.now().millisecondsSinceEpoch.toString();
