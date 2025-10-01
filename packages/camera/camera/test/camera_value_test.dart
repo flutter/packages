@@ -28,6 +28,7 @@ void main() {
         focusPointSupported: true,
         previewPauseOrientation: DeviceOrientation.portraitUp,
         description: FakeController.fakeDescription,
+        videoStabilizationMode: VideoStabilizationMode.level2,
       );
 
       expect(cameraValue, isA<CameraValue>());
@@ -49,6 +50,7 @@ void main() {
       expect(cameraValue.recordingOrientation, DeviceOrientation.portraitUp);
       expect(cameraValue.isPreviewPaused, false);
       expect(cameraValue.previewPauseOrientation, DeviceOrientation.portraitUp);
+      expect(cameraValue.videoStabilizationMode, VideoStabilizationMode.level2);
     });
 
     test('Can be created as uninitialized', () {
@@ -73,6 +75,7 @@ void main() {
       expect(cameraValue.recordingOrientation, null);
       expect(cameraValue.isPreviewPaused, isFalse);
       expect(cameraValue.previewPauseOrientation, null);
+      expect(cameraValue.videoStabilizationMode, VideoStabilizationMode.off);
     });
 
     test('Can be copied with isInitialized', () {
@@ -98,6 +101,7 @@ void main() {
       expect(cameraValue.recordingOrientation, null);
       expect(cameraValue.isPreviewPaused, isFalse);
       expect(cameraValue.previewPauseOrientation, null);
+      expect(cameraValue.videoStabilizationMode, VideoStabilizationMode.off);
     });
 
     test('Has aspectRatio after setting size', () {
@@ -154,6 +158,7 @@ void main() {
         isPreviewPaused: true,
         previewPauseOrientation: DeviceOrientation.portraitUp,
         description: FakeController.fakeDescription,
+        videoStabilizationMode: VideoStabilizationMode.level3,
       );
 
       expect(
@@ -168,6 +173,7 @@ void main() {
         'recordingOrientation: DeviceOrientation.portraitUp, '
         'isPreviewPaused: true, '
         'previewPausedOrientation: DeviceOrientation.portraitUp, '
+        'videoStabilizationMode: VideoStabilizationMode.level3, '
         // CameraDescription.toString is defined in the platform interface
         // package, so don't assert a specific value for it, only that
         // whatever it returns is inserted as expected.

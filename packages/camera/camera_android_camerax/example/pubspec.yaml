@@ -29,3 +29,5 @@ dev_dependencies:
 flutter:
   uses-material-design: true
 
+dependency_overrides:
+   {camera_android_camerax: {path: ../../../camera/camera_android_camerax}, camera_platform_interface: {path: ../../../camera/camera_platform_interface}}

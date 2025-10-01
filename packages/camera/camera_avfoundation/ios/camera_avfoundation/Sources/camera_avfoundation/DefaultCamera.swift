@@ -951,6 +951,30 @@ final class DefaultCamera: NSObject, Camera {
     completion(nil)
   }
 
+  func setVideoStabilizationMode(_ mode: FCPPlatformVideoStabilizationMode, withCompletion completion: @escaping (FlutterError?) -> Void) {
+      let stabilizationMode = getAvCaptureVideoStabilizationMode(mode)
+ 
+      guard captureDevice.isVideoStabilizationModeSupported(stabilizationMode) else {
+          completion(
+              FlutterError(
+                  code: "VIDEO_STABILIZATION_ERROR",
+                  message: "Unavailable video stabilization mode.",
+                  details: nil
+              )
+          )
+          return
+      }
+      if let connection = captureVideoOutput.connection(withMediaType: .video) {
+          connection.preferredVideoStabilizationMode = stabilizationMode
+      }
+      completion(nil)
+  }
+  
+  func isVideoStabilizationModeSupported(_ mode: FCPPlatformVideoStabilizationMode) -> Bool {
+      let stabilizationMode = getAvCaptureVideoStabilizationMode(mode)
+      return captureDevice.isVideoStabilizationModeSupported(stabilizationMode)
+  }
+
   func setFlashMode(
     _ mode: FCPPlatformFlashMode,
     withCompletion completion: @escaping (FlutterError?) -> Void

@@ -101,6 +101,10 @@ protocol Camera: FlutterTexture, AVCaptureVideoDataOutputSampleBufferDelegate,
   )
 
   func setZoomLevel(_ zoom: CGFloat, withCompletion: @escaping (_ error: FlutterError?) -> Void)
+  
+  func setVideoStabilizationMode(_ mode: FCPPlatformVideoStabilizationMode, withCompletion: @escaping (_ error: FlutterError?) -> Void)
+  
+  func isVideoStabilizationModeSupported(_ mode: FCPPlatformVideoStabilizationMode) -> Bool
 
   func setFlashMode(
     _ mode: FCPPlatformFlashMode,

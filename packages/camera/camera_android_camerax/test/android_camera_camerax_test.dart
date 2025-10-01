@@ -5215,6 +5215,424 @@ void main() {
     verify(mockCameraControl.setZoomRatio(zoomRatio));
   });
 
+  test('setVideoStabilizationMode sets mode expected', () async {
+    // Set up mocks and constants.
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    final MockCameraControl mockCameraControl = MockCameraControl();
+    final MockCamera2CameraControl mockCamera2CameraControl =
+        MockCamera2CameraControl();
+
+    // Set directly for test versus calling createCamera.
+    camera.cameraControl = mockCameraControl;
+    camera.cameraInfo = MockCameraInfo();
+    final MockCamera2CameraInfo mockCamera2CameraInfo = MockCamera2CameraInfo();
+    final PigeonInstanceManager testInstanceManager = PigeonInstanceManager(
+      onWeakReferenceRemoved: (_) {},
+    );
+    final CaptureRequestKey controlVideoStabilizationModeKey =
+        CaptureRequestKey.pigeon_detached(
+          pigeon_instanceManager: testInstanceManager,
+        );
+
+    camera.proxy = CameraXProxy(
+      fromCamera2CameraControl:
+          ({
+            required CameraControl cameraControl,
+            // ignore: non_constant_identifier_names
+            BinaryMessenger? pigeon_binaryMessenger,
+            // ignore: non_constant_identifier_names
+            PigeonInstanceManager? pigeon_instanceManager,
+          }) => cameraControl == mockCameraControl
+          ? mockCamera2CameraControl
+          : Camera2CameraControl.pigeon_detached(
+              pigeon_instanceManager: testInstanceManager,
+            ),
+      fromCamera2CameraInfo:
+          ({
+            required CameraInfo cameraInfo,
+            // ignore: non_constant_identifier_names
+            BinaryMessenger? pigeon_binaryMessenger,
+            // ignore: non_constant_identifier_names
+            PigeonInstanceManager? pigeon_instanceManager,
+          }) => mockCamera2CameraInfo,
+
+      newCaptureRequestOptions:
+          ({
+            required Map<CaptureRequestKey, Object?> options,
+            // ignore: non_constant_identifier_names
+            BinaryMessenger? pigeon_binaryMessenger,
+            // ignore: non_constant_identifier_names
+            PigeonInstanceManager? pigeon_instanceManager,
+          }) {
+            final MockCaptureRequestOptions mockCaptureRequestOptions =
+                MockCaptureRequestOptions();
+            options.forEach((CaptureRequestKey key, Object? value) {
+              when(
+                mockCaptureRequestOptions.getCaptureRequestOption(key),
+              ).thenAnswer((_) async => value);
+            });
+            return mockCaptureRequestOptions;
+          },
+
+      controlVideoStabilizationModeRequest: () =>
+          controlVideoStabilizationModeKey,
+      controlAvailableVideoStabilizationModesCameraCharacteristics: () {
+        return MockCameraCharacteristicsKey();
+      },
+    );
+
+    const int cameraId = 98;
+
+    when(
+      mockCamera2CameraInfo.getCameraCharacteristic(any),
+    ).thenAnswer((_) async => <int>[0, 1, 2]);
+
+    // Test off.
+    await camera.setVideoStabilizationMode(
+      cameraId,
+      VideoStabilizationMode.off,
+    );
+
+    VerificationResult verificationResult = verify(
+      mockCamera2CameraControl.addCaptureRequestOptions(captureAny),
+    );
+    CaptureRequestOptions capturedCaptureRequestOptions =
+        verificationResult.captured.single as CaptureRequestOptions;
+    expect(
+      await capturedCaptureRequestOptions.getCaptureRequestOption(
+        controlVideoStabilizationModeKey,
+      ),
+      equals(0),
+    );
+
+    clearInteractions(mockCamera2CameraControl);
+
+    // Test level1.
+    await camera.setVideoStabilizationMode(
+      cameraId,
+      VideoStabilizationMode.level1,
+    );
+
+    verificationResult = verify(
+      mockCamera2CameraControl.addCaptureRequestOptions(captureAny),
+    );
+    capturedCaptureRequestOptions =
+        verificationResult.captured.single as CaptureRequestOptions;
+    expect(
+      await capturedCaptureRequestOptions.getCaptureRequestOption(
+        controlVideoStabilizationModeKey,
+      ),
+      equals(1),
+    );
+  });
+
+  test(
+    'setVideoStabilizationMode throws ArgumentError when mode not available',
+    () async {
+      // Set up mocks and constants.
+      final AndroidCameraCameraX camera = AndroidCameraCameraX();
+      final MockCameraControl mockCameraControl = MockCameraControl();
+      final MockCamera2CameraControl mockCamera2CameraControl =
+          MockCamera2CameraControl();
+
+      // Set directly for test versus calling createCamera.
+      camera.cameraControl = mockCameraControl;
+      camera.cameraInfo = MockCameraInfo();
+      final MockCamera2CameraInfo mockCamera2CameraInfo =
+          MockCamera2CameraInfo();
+      final PigeonInstanceManager testInstanceManager = PigeonInstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
+      final CaptureRequestKey controlVideoStabilizationModeKey =
+          CaptureRequestKey.pigeon_detached(
+            pigeon_instanceManager: testInstanceManager,
+          );
+
+      camera.proxy = CameraXProxy(
+        fromCamera2CameraControl:
+            ({
+              required CameraControl cameraControl,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) => cameraControl == mockCameraControl
+            ? mockCamera2CameraControl
+            : Camera2CameraControl.pigeon_detached(
+                pigeon_instanceManager: testInstanceManager,
+              ),
+        fromCamera2CameraInfo:
+            ({
+              required CameraInfo cameraInfo,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) => mockCamera2CameraInfo,
+
+        newCaptureRequestOptions:
+            ({
+              required Map<CaptureRequestKey, Object?> options,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              final MockCaptureRequestOptions mockCaptureRequestOptions =
+                  MockCaptureRequestOptions();
+              options.forEach((CaptureRequestKey key, Object? value) {
+                when(
+                  mockCaptureRequestOptions.getCaptureRequestOption(key),
+                ).thenAnswer((_) async => value);
+              });
+              return mockCaptureRequestOptions;
+            },
+
+        controlVideoStabilizationModeRequest: () =>
+            controlVideoStabilizationModeKey,
+        controlAvailableVideoStabilizationModesCameraCharacteristics: () {
+          return MockCameraCharacteristicsKey();
+        },
+      );
+
+      const int cameraId = 102;
+
+      when(
+        mockCamera2CameraInfo.getCameraCharacteristic(any),
+      ).thenAnswer((_) async => <int>[0]);
+
+      expect(
+        () => camera.setVideoStabilizationMode(
+          cameraId,
+          VideoStabilizationMode.level1,
+        ),
+        throwsA(
+          isA<ArgumentError>().having(
+            (ArgumentError e) => e.name,
+            'name',
+            'mode',
+          ),
+        ),
+      );
+    },
+  );
+
+  test(
+    'setVideoStabilizationMode throws ArgumentError when mode not mapped',
+    () async {
+      // Set up mocks and constants.
+      final AndroidCameraCameraX camera = AndroidCameraCameraX();
+      final MockCameraControl mockCameraControl = MockCameraControl();
+      final MockCamera2CameraControl mockCamera2CameraControl =
+          MockCamera2CameraControl();
+
+      // Set directly for test versus calling createCamera.
+      camera.cameraControl = mockCameraControl;
+      camera.cameraInfo = MockCameraInfo();
+      final MockCamera2CameraInfo mockCamera2CameraInfo =
+          MockCamera2CameraInfo();
+      final PigeonInstanceManager testInstanceManager = PigeonInstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
+      final CaptureRequestKey controlVideoStabilizationModeKey =
+          CaptureRequestKey.pigeon_detached(
+            pigeon_instanceManager: testInstanceManager,
+          );
+
+      camera.proxy = CameraXProxy(
+        fromCamera2CameraControl:
+            ({
+              required CameraControl cameraControl,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) => cameraControl == mockCameraControl
+            ? mockCamera2CameraControl
+            : Camera2CameraControl.pigeon_detached(
+                pigeon_instanceManager: testInstanceManager,
+              ),
+        fromCamera2CameraInfo:
+            ({
+              required CameraInfo cameraInfo,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) => mockCamera2CameraInfo,
+
+        newCaptureRequestOptions:
+            ({
+              required Map<CaptureRequestKey, Object?> options,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              final MockCaptureRequestOptions mockCaptureRequestOptions =
+                  MockCaptureRequestOptions();
+              options.forEach((CaptureRequestKey key, Object? value) {
+                when(
+                  mockCaptureRequestOptions.getCaptureRequestOption(key),
+                ).thenAnswer((_) async => value);
+              });
+              return mockCaptureRequestOptions;
+            },
+
+        controlVideoStabilizationModeRequest: () =>
+            controlVideoStabilizationModeKey,
+        controlAvailableVideoStabilizationModesCameraCharacteristics: () {
+          return MockCameraCharacteristicsKey();
+        },
+      );
+
+      const int cameraId = 102;
+
+      when(
+        mockCamera2CameraInfo.getCameraCharacteristic(any),
+      ).thenAnswer((_) async => <int>[0, 1, 2]);
+
+      expect(
+        () => camera.setVideoStabilizationMode(
+          cameraId,
+          VideoStabilizationMode.level2,
+        ),
+        throwsA(
+          isA<ArgumentError>().having(
+            (ArgumentError e) => e.name,
+            'name',
+            'mode',
+          ),
+        ),
+      );
+      expect(
+        () => camera.setVideoStabilizationMode(
+          cameraId,
+          VideoStabilizationMode.level3,
+        ),
+        throwsA(
+          isA<ArgumentError>().having(
+            (ArgumentError e) => e.name,
+            'name',
+            'mode',
+          ),
+        ),
+      );
+    },
+  );
+
+  test('getVideoStabilizationMode returns no available mode', () async {
+    // Set up mocks and constants.
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+
+    final MockCamera2CameraInfo mockCamera2CameraInfo = MockCamera2CameraInfo();
+
+    // Set directly for test versus calling createCamera.
+    camera.cameraInfo = MockCameraInfo();
+    camera.proxy = CameraXProxy(
+      fromCamera2CameraInfo:
+          ({
+            required CameraInfo cameraInfo,
+            // ignore: non_constant_identifier_names
+            BinaryMessenger? pigeon_binaryMessenger,
+            // ignore: non_constant_identifier_names
+            PigeonInstanceManager? pigeon_instanceManager,
+          }) => mockCamera2CameraInfo,
+
+      newCaptureRequestOptions:
+          ({
+            required Map<CaptureRequestKey, Object?> options,
+            // ignore: non_constant_identifier_names
+            BinaryMessenger? pigeon_binaryMessenger,
+            // ignore: non_constant_identifier_names
+            PigeonInstanceManager? pigeon_instanceManager,
+          }) {
+            final MockCaptureRequestOptions mockCaptureRequestOptions =
+                MockCaptureRequestOptions();
+            options.forEach((CaptureRequestKey key, Object? value) {
+              when(
+                mockCaptureRequestOptions.getCaptureRequestOption(key),
+              ).thenAnswer((_) async => value);
+            });
+            return mockCaptureRequestOptions;
+          },
+
+      controlAvailableVideoStabilizationModesCameraCharacteristics: () {
+        return MockCameraCharacteristicsKey();
+      },
+    );
+
+    const int cameraId = 103;
+
+    when(
+      mockCamera2CameraInfo.getCameraCharacteristic(any),
+    ).thenAnswer((_) async => <int>[]);
+
+    final Iterable<VideoStabilizationMode> modes = await camera
+        .getSupportedVideoStabilizationModes(cameraId);
+
+    expect(modes, orderedEquals(<VideoStabilizationMode>[]));
+  });
+
+  test('getVideoStabilizationMode returns all available modes', () async {
+    // Set up mocks and constants.
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+
+    final MockCamera2CameraInfo mockCamera2CameraInfo = MockCamera2CameraInfo();
+
+    // Set directly for test versus calling createCamera.
+    camera.cameraInfo = MockCameraInfo();
+    camera.proxy = CameraXProxy(
+      fromCamera2CameraInfo:
+          ({
+            required CameraInfo cameraInfo,
+            // ignore: non_constant_identifier_names
+            BinaryMessenger? pigeon_binaryMessenger,
+            // ignore: non_constant_identifier_names
+            PigeonInstanceManager? pigeon_instanceManager,
+          }) => mockCamera2CameraInfo,
+
+      newCaptureRequestOptions:
+          ({
+            required Map<CaptureRequestKey, Object?> options,
+            // ignore: non_constant_identifier_names
+            BinaryMessenger? pigeon_binaryMessenger,
+            // ignore: non_constant_identifier_names
+            PigeonInstanceManager? pigeon_instanceManager,
+          }) {
+            final MockCaptureRequestOptions mockCaptureRequestOptions =
+                MockCaptureRequestOptions();
+            options.forEach((CaptureRequestKey key, Object? value) {
+              when(
+                mockCaptureRequestOptions.getCaptureRequestOption(key),
+              ).thenAnswer((_) async => value);
+            });
+            return mockCaptureRequestOptions;
+          },
+
+      controlAvailableVideoStabilizationModesCameraCharacteristics: () {
+        return MockCameraCharacteristicsKey();
+      },
+    );
+
+    const int cameraId = 104;
+
+    when(
+      mockCamera2CameraInfo.getCameraCharacteristic(any),
+    ).thenAnswer((_) async => <int>[0, 1, 2]);
+
+    final Iterable<VideoStabilizationMode> modes = await camera
+        .getSupportedVideoStabilizationModes(cameraId);
+
+    expect(
+      modes,
+      orderedEquals(<VideoStabilizationMode>[
+        VideoStabilizationMode.off,
+        VideoStabilizationMode.level1,
+      ]),
+    );
+  });
+
   test('Should report support for image streaming', () async {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
     expect(camera.supportsImageStreaming(), true);

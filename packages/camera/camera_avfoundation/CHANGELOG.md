@@ -1,3 +1,7 @@
+## 0.10.0
+
+* Adds video stabilization.
+
 ## 0.9.21+4
 
 * Migrates `updateOrientation` and `setCaptureSessionPreset` methods to Swift.

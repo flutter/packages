@@ -1,3 +1,7 @@
+## 0.7.0
+
+* Adds video stabilization.
+
 ## 0.6.23
 
 * Converts NV21-compatible streamed images to NV21 when requested. In doing so,
