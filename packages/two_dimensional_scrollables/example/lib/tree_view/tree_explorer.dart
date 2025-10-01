@@ -53,15 +53,17 @@ class _TreeExplorerState extends State<TreeExplorer> {
           RadioGroup<TreeType>(
             groupValue: _currentExample,
             onChanged: (TreeType? value) {
-              if (value == null) return;
+              if (value == null) {
+                return;
+              }
               setState(() => _currentExample = value);
             },
             child: Row(
               children: <Widget>[
-                Radio<TreeType>(value: TreeType.simple),
+                const Radio<TreeType>(value: TreeType.simple),
                 const Text('Simple'),
                 _spacer,
-                Radio<TreeType>(value: TreeType.custom),
+                const Radio<TreeType>(value: TreeType.custom),
                 const Text('Custom'),
               ],
             ),
@@ -79,10 +81,7 @@ class _TreeExplorerState extends State<TreeExplorer> {
         title: Text(_getTitle()),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(50),
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: _getRadioRow(),
-          ),
+          child: Padding(padding: const EdgeInsets.all(8.0), child: _getRadioRow()),
         ),
       ),
       body: _getTree(),

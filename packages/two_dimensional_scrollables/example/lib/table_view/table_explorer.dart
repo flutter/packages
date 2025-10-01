@@ -59,18 +59,20 @@ class _TableExplorerState extends State<TableExplorer> {
           RadioGroup<TableType>(
             groupValue: _currentExample,
             onChanged: (TableType? value) {
-              if (value == null) return;
+              if (value == null) {
+                return;
+              }
               setState(() => _currentExample = value);
             },
             child: Row(
               children: <Widget>[
-                Radio<TableType>(value: TableType.simple),
+                const Radio<TableType>(value: TableType.simple),
                 const Text('Simple'),
                 _spacer,
-                Radio<TableType>(value: TableType.merged),
+                const Radio<TableType>(value: TableType.merged),
                 const Text('Merged'),
                 _spacer,
-                Radio<TableType>(value: TableType.infinite),
+                const Radio<TableType>(value: TableType.infinite),
                 const Text('Infinite'),
               ],
             ),
@@ -88,10 +90,7 @@ class _TableExplorerState extends State<TableExplorer> {
         title: Text(_getTitle()),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(50),
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: _getRadioRow(),
-          ),
+          child: Padding(padding: const EdgeInsets.all(8.0), child: _getRadioRow()),
         ),
       ),
       body: _getTable(),
