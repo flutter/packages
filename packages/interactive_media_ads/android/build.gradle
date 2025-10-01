@@ -58,10 +58,11 @@ android {
         testImplementation("androidx.test:core:1.7.0")
     }
 
-    lintOptions {
+    lint {
         checkAllWarnings = true
         warningsAsErrors = true
         disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency', 'NewerVersionAvailable'
+        baseline = file("lint-baseline.xml")
     }
 
     testOptions {
