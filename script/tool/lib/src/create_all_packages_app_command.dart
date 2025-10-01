@@ -241,8 +241,8 @@ dependencies {}
 
     // Desugaring is required for interactive_media_ads.
     final String desugaringDependency = gradleFileIsKotlin
-        ? '    implementation("com.android.tools:desugar_jdk_libs:2.1.5")'
-        : "    implementation 'com.android.tools:desugar_jdk_libs:2.1.5'";
+        ? '    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")'
+        : "    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'";
 
     _adjustFile(
       gradleFile,
@@ -257,7 +257,10 @@ dependencies {}
         // Desugaring is required for interactive_media_ads.
         RegExp(r'compileOptions\s+{$'): <String>[
           'compileOptions {',
-          'coreLibraryDesugaringEnabled true',
+          if (gradleFileIsKotlin)
+            'isCoreLibraryDesugaringEnabled = true'
+          else
+            'coreLibraryDesugaringEnabled true',
         ],
         // Tests for https://github.com/flutter/flutter/issues/43383
         // Handling of 'dependencies' is more complex since it hasn't been very
