@@ -254,6 +254,7 @@ dependencies {}
         }
       },
       regexReplacements: <RegExp, List<String>>{
+        // Desugaring is required for interactive_media_ads.
         RegExp(r'compileOptions\s+{$'): <String>[
           'compileOptions {',
           if (gradleFileIsKotlin)
