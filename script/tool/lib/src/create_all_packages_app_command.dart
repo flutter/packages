@@ -254,7 +254,7 @@ dependencies {}
         }
       },
       regexReplacements: <RegExp, List<String>>{
-        RegExp(r'^compileOptions\s+{$'): <String>[
+        RegExp(r'compileOptions\s+{$'): <String>[
           'compileOptions {',
           if (gradleFileIsKotlin)
             'coreLibraryDesugaringEnabled = true'
