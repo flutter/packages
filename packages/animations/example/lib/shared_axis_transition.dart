@@ -81,21 +81,21 @@ class _SharedAxisTransitionDemoState extends State<SharedAxisTransitionDemo> {
               onChanged: (SharedAxisTransitionType? newValue) {
                 _updateTransitionType(newValue);
               },
-              child: Row(
+              child: const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Radio<SharedAxisTransitionType>(
                     value: SharedAxisTransitionType.horizontal,
                   ),
-                  const Text('X'),
+                  Text('X'),
                   Radio<SharedAxisTransitionType>(
                     value: SharedAxisTransitionType.vertical,
                   ),
-                  const Text('Y'),
+                  Text('Y'),
                   Radio<SharedAxisTransitionType>(
                     value: SharedAxisTransitionType.scaled,
                   ),
-                  const Text('Z'),
+                  Text('Z'),
                 ],
               ),
             ),
