@@ -27,7 +27,7 @@ android {
         }
     }
     lint {
-        disable +="InvalidPackage"
+        disable += "InvalidPackage"
     }
 
     testOptions {
