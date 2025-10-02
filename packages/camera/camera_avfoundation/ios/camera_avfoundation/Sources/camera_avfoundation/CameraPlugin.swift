@@ -163,28 +163,28 @@ extension CameraPlugin: FCPCameraApi {
   {
     switch device.position {
     case .back:
-      return FCPPlatformCameraLensDirection.back
+      return .back
     case .front:
-      return FCPPlatformCameraLensDirection.front
+      return .front
     case .unspecified:
-      return FCPPlatformCameraLensDirection.external
+      return .external
     @unknown default:
-      return FCPPlatformCameraLensDirection.external
+      return .external
     }
   }
 
   private func platformLensType(for device: FLTCaptureDevice) -> FCPPlatformCameraLensType {
     switch device.deviceType {
-    case AVCaptureDevice.DeviceType.builtInWideAngleCamera:
-      return FCPPlatformCameraLensType.wide
-    case AVCaptureDevice.DeviceType.builtInTelephotoCamera:
-      return FCPPlatformCameraLensType.telephoto
-    case AVCaptureDevice.DeviceType.builtInUltraWideCamera:
-      return FCPPlatformCameraLensType.ultraWide
-    case AVCaptureDevice.DeviceType.builtInDualWideCamera:
-      return FCPPlatformCameraLensType.wide
+    case .builtInWideAngleCamera:
+      return .wide
+    case .builtInTelephotoCamera:
+      return .telephoto
+    case .builtInUltraWideCamera:
+      return .ultraWide
+    case .builtInDualWideCamera:
+      return .wide
     default:
-      return FCPPlatformCameraLensType.unknown
+      return .unknown
     }
   }
 
