@@ -18,6 +18,7 @@ class FakeController extends ValueNotifier<CameraValue>
     name: '',
     lensDirection: CameraLensDirection.back,
     sensorOrientation: 0,
+    lensType: CameraLensType.ultraWide,
   );
 
   @override

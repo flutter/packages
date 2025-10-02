@@ -24,6 +24,9 @@ NS_ASSUME_NONNULL_BEGIN
 // Position/Orientation
 @property(nonatomic, readonly) AVCaptureDevicePosition position;
 
+// Lens type
+@property(nonatomic, readonly) AVCaptureDeviceType deviceType;
+
 // Format/Configuration
 @property(nonatomic, retain) NSObject<FLTCaptureDeviceFormat> *activeFormat;
 @property(nonatomic, readonly) NSArray<NSObject<FLTCaptureDeviceFormat> *> *formats;
