@@ -37,18 +37,18 @@ public class ImageProxyUtils {
     vBuffer.rewind();
 
     int ySize = yBuffer.remaining();
-    byte[] nv21Buffer = new byte[ySize + (width * height / 2)];
+    byte[] nv21Bytes = new byte[ySize + (width * height / 2)];
     int position = 0;
 
     int yRowStride = yPlane.getRowStride();
     if (yRowStride == width) {
       // If no padding, copy entire Y plane at once.
-      yBuffer.get(nv21Buffer, 0, ySize);
+      yBuffer.get(nv21Bytes, 0, ySize);
       position = ySize;
     } else {
       // Copy row by row if padding exists.
       for (int row = 0; row < height; row++) {
-        yBuffer.get(nv21Buffer, position, width);
+        yBuffer.get(nv21Bytes, position, width);
         position += width;
         if (row < height - 1) {
           yBuffer.position(yBuffer.position() - width + yRowStride);
@@ -73,11 +73,11 @@ public class ImageProxyUtils {
         int vPixelIndex = col * vPixelStride;
         int uPixelIndex = col * uPixelStride;
 
-        nv21Buffer[position++] = vRowBuffer[vPixelIndex]; // V (Cr)
-        nv21Buffer[position++] = uRowBuffer[uPixelIndex]; // U (Cb)
+        nv21Bytes[position++] = vRowBuffer[vPixelIndex]; // V (Cr)
+        nv21Bytes[position++] = uRowBuffer[uPixelIndex]; // U (Cb)
       }
     }
 
-    return ByteBuffer.wrap(nv21Buffer);
+    return ByteBuffer.wrap(nv21Bytes);
   }
 }
