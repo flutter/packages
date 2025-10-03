@@ -584,28 +584,26 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
         showInSnackBar('No camera found.');
       });
       return const Text('None');
-    } else {
-      for (final CameraDescription cameraDescription in _cameras) {
-        toggles.add(
-          SizedBox(
-            width: 90.0,
-            child: RadioListTile<CameraDescription>(
-              title: Icon(getCameraLensIcon(cameraDescription.lensDirection)),
-              value: cameraDescription,
-            ),
-          ),
-        );
-      }
     }
 
     final bool isRecording = controller?.value.isRecordingVideo ?? false;
 
+    for (final CameraDescription cameraDescription in _cameras) {
+      toggles.add(
+        SizedBox(
+          width: 90.0,
+          child: RadioListTile<CameraDescription>(
+            title: Icon(getCameraLensIcon(cameraDescription.lensDirection)),
+            value: cameraDescription,
+            enabled: !isRecording,
+          ),
+        ),
+      );
+    }
+
     return RadioGroup<CameraDescription>(
       groupValue: controller?.description,
       onChanged: (CameraDescription? description) {
-        if (isRecording) {
-          return;
-        }
         if (description != null) {
           onNewCameraSelected(description);
         }
