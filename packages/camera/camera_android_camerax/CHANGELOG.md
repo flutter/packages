@@ -1,7 +1,3 @@
-## 0.6.23+1
-
-* Updates examples to use the new RadioGroup API instead of deprecated Radio parameters.
-
 ## 0.6.23
 
 * Converts NV21-compatible streamed images to NV21 when requested. In doing so,

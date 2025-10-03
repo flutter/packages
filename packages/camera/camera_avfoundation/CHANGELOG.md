@@ -1,7 +1,3 @@
-## 0.9.21+5
-
-* Updates examples to use the new RadioGroup API instead of deprecated Radio parameters.
-
 ## 0.9.21+4
 
 * Migrates `updateOrientation` and `setCaptureSessionPreset` methods to Swift.

@@ -1,7 +1,3 @@
-## 0.10.10+9
-
-* Updates examples to use the new RadioGroup API instead of deprecated Radio parameters.
-
 ## 0.10.10+8
 
 * Restores compileSdk version to flutter.compileSdkVersion.
