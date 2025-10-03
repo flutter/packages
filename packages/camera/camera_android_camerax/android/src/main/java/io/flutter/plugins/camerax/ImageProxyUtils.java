@@ -31,7 +31,7 @@ public class ImageProxyUtils {
     ByteBuffer uBuffer = uPlane.getBuffer();
     ByteBuffer vBuffer = vPlane.getBuffer();
 
-    // Rewind buffers to start to ensure full read
+    // Rewind buffers to start to ensure full read.
     yBuffer.rewind();
     uBuffer.rewind();
     vBuffer.rewind();
@@ -42,11 +42,11 @@ public class ImageProxyUtils {
 
     int yRowStride = yPlane.getRowStride();
     if (yRowStride == width) {
-      // If no padding, copy entire Y plane at once
+      // If no padding, copy entire Y plane at once.
       yBuffer.get(nv21Buffer, 0, ySize);
       position = ySize;
     } else {
-      // Copy row by row if padding exists
+      // Copy row by row if padding exists.
       for (int row = 0; row < height; row++) {
         yBuffer.get(nv21Buffer, position, width);
         position += width;
@@ -65,7 +65,7 @@ public class ImageProxyUtils {
     byte[] vRowBuffer = new byte[vRowStride];
 
     for (int row = 0; row < height / 2; row++) {
-      // Read full row from U and V planes into temporary buffers
+      // Read full row from U and V planes into temporary buffers.
       uBuffer.get(uRowBuffer, 0, Math.min(uBuffer.remaining(), uRowStride));
       vBuffer.get(vRowBuffer, 0, Math.min(vBuffer.remaining(), vRowStride));
 
