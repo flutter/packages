@@ -1,5 +1,5 @@
-group 'io.flutter.plugins.urllauncher'
-version '1.0-SNAPSHOT'
+group = 'io.flutter.plugins.urllauncher'
+version = '1.0-SNAPSHOT'
 
 buildscript {
     repositories {
@@ -23,7 +23,7 @@ apply plugin: 'com.android.library'
 
 android {
     buildFeatures {
-        buildConfig true
+        buildConfig = true
     }
     namespace = "io.flutter.plugins.urllauncher"
     compileSdk = flutter.compileSdkVersion
@@ -39,8 +39,8 @@ android {
     }
 
     lintOptions {
-        checkAllWarnings true
-        warningsAsErrors true
+        checkAllWarnings = true
+        warningsAsErrors = true
         disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency', 'NewerVersionAvailable'
     }
 
