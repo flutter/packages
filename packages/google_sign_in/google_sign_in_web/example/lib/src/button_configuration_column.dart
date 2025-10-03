@@ -169,14 +169,12 @@ Widget _renderRadioListTileCard<T extends Enum>({
   T? selected,
   void Function(T?)? onChanged,
 }) {
-  final void Function(T?) handleChange = onChanged ?? (_) {};
-
   return _renderConfigCard(
     title: title,
     children: <Widget>[
       RadioGroup<T>(
         groupValue: selected,
-        onChanged: (T? v) => handleChange(v),
+        onChanged: (T? v) => (onChanged ?? (_) {})(v),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children:
@@ -186,6 +184,7 @@ Widget _renderRadioListTileCard<T extends Enum>({
                       value: value,
                       selected: value == selected,
                       title: Text(value.name),
+                      enabled: onChanged != null,
                       dense: true,
                     ),
                   )
