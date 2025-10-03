@@ -36,6 +36,10 @@ android {
         jvmTarget = '11'
     }
 
+    lint {
+        baseline = file("lint-baseline.xml")
+    }
+
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
     }
