@@ -18,55 +18,66 @@ public class ImageProxyUtils {
    */
   @NonNull
   public static ByteBuffer planesToNV21(@NonNull List<PlaneProxy> planes, int width, int height) {
-    if (!areUVPlanesNV21(planes, width, height)) {
+    if (planes.size() < 3) {
       throw new IllegalArgumentException(
-          "Provided UV planes are not in NV21 layout and thus cannot be converted.");
+          "The plane list must contain at least 3 planes (Y, U, V).");
     }
 
-    int imageSize = width * height;
-    int nv21Size = imageSize + 2 * (imageSize / 4);
-    byte[] nv21Bytes = new byte[nv21Size];
+    PlaneProxy yPlane = planes.get(0);
+    PlaneProxy uPlane = planes.get(1);
+    PlaneProxy vPlane = planes.get(2);
 
-    // Copy Y plane.
-    ByteBuffer yBuffer = planes.get(0).getBuffer();
+    ByteBuffer yBuffer = yPlane.getBuffer();
+    ByteBuffer uBuffer = uPlane.getBuffer();
+    ByteBuffer vBuffer = vPlane.getBuffer();
+
+    // Rewind buffers to start to ensure full read
     yBuffer.rewind();
-    yBuffer.get(nv21Bytes, 0, imageSize);
-
-    // Copy interleaved VU plane (NV21 layout).
-    ByteBuffer vBuffer = planes.get(2).getBuffer();
-    ByteBuffer uBuffer = planes.get(1).getBuffer();
-
-    vBuffer.rewind();
     uBuffer.rewind();
-    vBuffer.get(nv21Bytes, imageSize, 1);
-    uBuffer.get(nv21Bytes, imageSize + 1, 2 * imageSize / 4 - 1);
+    vBuffer.rewind();
 
-    return ByteBuffer.wrap(nv21Bytes);
-  }
+    int ySize = yBuffer.remaining();
+    byte[] nv21Buffer = new byte[ySize + (width * height / 2)];
+    int position = 0;
 
-  public static boolean areUVPlanesNV21(@NonNull List<PlaneProxy> planes, int width, int height) {
-    int imageSize = width * height;
+    int yRowStride = yPlane.getRowStride();
+    if (yRowStride == width) {
+      // If no padding, copy entire Y plane at once
+      yBuffer.get(nv21Buffer, 0, ySize);
+      position = ySize;
+    } else {
+      // Copy row by row if padding exists
+      for (int row = 0; row < height; row++) {
+        yBuffer.get(nv21Buffer, position, width);
+        position += width;
+        if (row < height - 1) {
+          yBuffer.position(yBuffer.position() - width + yRowStride);
+        }
+      }
+    }
 
-    ByteBuffer uBuffer = planes.get(1).getBuffer();
-    ByteBuffer vBuffer = planes.get(2).getBuffer();
+    int uRowStride = uPlane.getRowStride();
+    int vRowStride = vPlane.getRowStride();
+    int uPixelStride = uPlane.getPixelStride();
+    int vPixelStride = vPlane.getPixelStride();
 
-    // Backup buffer properties.
-    int vBufferPosition = vBuffer.position();
-    int uBufferLimit = uBuffer.limit();
+    byte[] uRowBuffer = new byte[uRowStride];
+    byte[] vRowBuffer = new byte[vRowStride];
 
-    // Advance the V buffer by 1 byte, since the U buffer will not contain the first V value.
-    vBuffer.position(vBufferPosition + 1);
-    // Chop off the last byte of the U buffer, since the V buffer will not contain the last U value.
-    uBuffer.limit(uBufferLimit - 1);
+    for (int row = 0; row < height / 2; row++) {
+      // Read full row from U and V planes into temporary buffers
+      uBuffer.get(uRowBuffer, 0, Math.min(uBuffer.remaining(), uRowStride));
+      vBuffer.get(vRowBuffer, 0, Math.min(vBuffer.remaining(), vRowStride));
 
-    // Check that the buffers are equal and have the expected number of elements.
-    boolean areNV21 =
-        (vBuffer.remaining() == (2 * imageSize / 4 - 2)) && (vBuffer.compareTo(uBuffer) == 0);
+      for (int col = 0; col < width / 2; col++) {
+        int vPixelIndex = col * vPixelStride;
+        int uPixelIndex = col * uPixelStride;
 
-    // Restore buffers to their initial state.
-    vBuffer.position(vBufferPosition);
-    uBuffer.limit(uBufferLimit);
+        nv21Buffer[position++] = vRowBuffer[vPixelIndex]; // V (Cr)
+        nv21Buffer[position++] = uRowBuffer[uPixelIndex]; // U (Cb)
+      }
+    }
 
-    return areNV21;
+    return ByteBuffer.wrap(nv21Buffer);
   }
 }
