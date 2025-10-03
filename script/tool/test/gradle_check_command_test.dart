@@ -45,7 +45,7 @@ void main() {
     bool warningsConfigured = true,
     bool useDeprecatedCompileSdkVersion = false,
     bool usePropertyAssignment = true,
-    String compileSdk = '33',
+    String compileSdk = '36',
   }) {
     final File buildGradle = package
         .platformDirectory(FlutterPlatform.android)
@@ -997,12 +997,14 @@ dependencies {
   });
 
   group('compileSdk check', () {
-    test('passes if set to a number', () async {
+    test('passes if set to a version higher than flutter.compileSdkVersion',
+        () async {
       const String packageName = 'a_package';
       final RepositoryPackage package =
           createFakePackage(packageName, packagesDir, isFlutter: true);
+      // Current flutter.compileSdkVersion is 36.
       writeFakePluginBuildGradle(package,
-          includeLanguageVersion: true, compileSdk: '35');
+          includeLanguageVersion: true, compileSdk: '37');
       writeFakeManifest(package);
       final RepositoryPackage example = package.getExamples().first;
       writeFakeExampleBuildGradles(example, pluginName: packageName);
@@ -1040,6 +1042,37 @@ dependencies {
         output,
         containsAllInOrder(<Matcher>[
           contains('Validating android/build.gradle'),
+        ]),
+      );
+    });
+
+    test('fails if set to a version lower than flutter.compileSdkVersion',
+        () async {
+      const String packageName = 'a_package';
+      final RepositoryPackage package =
+          createFakePackage(packageName, packagesDir, isFlutter: true);
+      // Current flutter.compileSdkVersion is 36.
+      const String minCompileSdkVersion = '36';
+      const String testCompileSdkVersion = '35';
+      writeFakePluginBuildGradle(package,
+          includeLanguageVersion: true, compileSdk: testCompileSdkVersion);
+      writeFakeManifest(package);
+      final RepositoryPackage example = package.getExamples().first;
+      writeFakeExampleBuildGradles(example, pluginName: packageName);
+      writeFakeManifest(example, isApp: true);
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['gradle-check'], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('compileSdk version $testCompileSdkVersion is too low. '
+              'Minimum required version is $minCompileSdkVersion.'),
         ]),
       );
     });
