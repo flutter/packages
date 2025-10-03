@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
+		33C8DADB2E8D711500A9B7CA /* TemporaryObjCStub.m in Sources */ = {isa = PBXBuildFile; fileRef = 33C8DADA2E8D711500A9B7CA /* TemporaryObjCStub.m */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
 		78A318202AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 78A3181F2AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage */; };
 		8F0EDFD32E1F4967001938E6 /* ProxyAPIRegistrarTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F0EDFD22E1F4967001938E6 /* ProxyAPIRegistrarTests.swift */; };
@@ -90,6 +91,8 @@
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
 		14B8C759112CB6E8AA62F003 /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
 		185E08CFEB8AE9D939566DE6 /* libPods-Runner.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Runner.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		33C8DAD92E8D711500A9B7CA /* TemporaryObjCStub.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TemporaryObjCStub.h; sourceTree = "<group>"; };
+		33C8DADA2E8D711500A9B7CA /* TemporaryObjCStub.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TemporaryObjCStub.m; sourceTree = "<group>"; };
 		3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppFrameworkInfo.plist; path = Flutter/AppFrameworkInfo.plist; sourceTree = "<group>"; };
 		4AA20286555659E34ACB3BE5 /* Pods-Runner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"; sourceTree = "<group>"; };
 		56443D345A163E3A65320207 /* Pods-RunnerTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -180,6 +183,8 @@
 		68BDCAEA23C3F7CB00D9C032 /* RunnerTests */ = {
 			isa = PBXGroup;
 			children = (
+				33C8DAD92E8D711500A9B7CA /* TemporaryObjCStub.h */,
+				33C8DADA2E8D711500A9B7CA /* TemporaryObjCStub.m */,
 				8F0EDFD22E1F4967001938E6 /* ProxyAPIRegistrarTests.swift */,
 				8FEC64812DA2C6DC00C48569 /* GetTrustResultResponseProxyAPITests.swift */,
 				8FEC64822DA2C6DC00C48569 /* SecCertificateProxyAPITests.swift */,
@@ -569,6 +574,7 @@
 				8F1488EC2D2DE27000191744 /* FrameInfoProxyAPITests.swift in Sources */,
 				8F1488ED2D2DE27000191744 /* ErrorProxyAPITests.swift in Sources */,
 				8F1488EE2D2DE27000191744 /* NSObjectProxyAPITests.swift in Sources */,
+				33C8DADB2E8D711500A9B7CA /* TemporaryObjCStub.m in Sources */,
 				8F1488EF2D2DE27000191744 /* NavigationResponseProxyAPITests.swift in Sources */,
 				8FEC64852DA2C6DC00C48569 /* GetTrustResultResponseProxyAPITests.swift in Sources */,
 				8FEC64862DA2C6DC00C48569 /* WebpagePreferencesProxyAPITests.swift in Sources */,

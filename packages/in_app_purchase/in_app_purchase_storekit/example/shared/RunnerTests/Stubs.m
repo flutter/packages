@@ -607,6 +607,11 @@
   }
 }
 
+// TODO(stuartmorgan): Make this NSObject<FlutterSceneLifeCycleDelegate> once
+// FlutterSceneLifeCycleDelegate has reached stable.
+- (void)addSceneDelegate:(nonnull NSObject *)delegate {
+}
+
 @end
 
 // This FlutterBinaryMessenger is a protocol, so to make a stub it has to be implemented.
