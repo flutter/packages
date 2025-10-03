@@ -1,3 +1,7 @@
+## 0.9.22+1
+
+* Updates examples to use the new RadioGroup API instead of deprecated Radio parameters.
+
 ## 0.9.22
 
 * Adds lensType in the PlatformCameraDescription
