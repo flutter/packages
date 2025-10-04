@@ -1,4 +1,4 @@
-## NEXT
+## 2.9.0
 
 * Implements `getAudioTracks()` and `selectAudioTrack()` methods for Android using ExoPlayer.
 
