@@ -10,7 +10,6 @@ import androidx.media3.common.Player;
 import androidx.media3.exoplayer.ExoPlayer;
 
 public abstract class ExoPlayerEventListener implements Player.Listener {
-  private boolean isBuffering = false;
   private boolean isInitialized = false;
   protected final ExoPlayer exoPlayer;
   protected final VideoPlayerCallbacks events;
@@ -47,47 +46,34 @@ public abstract class ExoPlayerEventListener implements Player.Listener {
     this.events = events;
   }
 
-  private void setBuffering(boolean buffering) {
-    if (isBuffering == buffering) {
-      return;
-    }
-    isBuffering = buffering;
-    if (buffering) {
-      events.onBufferingStart();
-    } else {
-      events.onBufferingEnd();
-    }
-  }
-
   protected abstract void sendInitialized();
 
   @Override
   public void onPlaybackStateChanged(final int playbackState) {
+    PlatformPlaybackState platformState = PlatformPlaybackState.UNKNOWN;
     switch (playbackState) {
       case Player.STATE_BUFFERING:
-        setBuffering(true);
-        events.onBufferingUpdate(exoPlayer.getBufferedPosition());
+        platformState = PlatformPlaybackState.BUFFERING;
         break;
       case Player.STATE_READY:
+        platformState = PlatformPlaybackState.READY;
         if (!isInitialized) {
           isInitialized = true;
           sendInitialized();
         }
         break;
       case Player.STATE_ENDED:
-        events.onCompleted();
+        platformState = PlatformPlaybackState.ENDED;
         break;
       case Player.STATE_IDLE:
+        platformState = PlatformPlaybackState.IDLE;
         break;
     }
-    if (playbackState != Player.STATE_BUFFERING) {
-      setBuffering(false);
-    }
+    events.onPlaybackStateChanged(platformState);
   }
 
   @Override
   public void onPlayerError(@NonNull final PlaybackException error) {
-    setBuffering(false);
     if (error.errorCode == PlaybackException.ERROR_CODE_BEHIND_LIVE_WINDOW) {
       // See
       // https://exoplayer.dev/live-streaming.html#behindlivewindowexception-and-error_code_behind_live_window
