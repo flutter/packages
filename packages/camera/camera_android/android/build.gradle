@@ -1,5 +1,5 @@
-group 'io.flutter.plugins.camera'
-version '1.0-SNAPSHOT'
+group = 'io.flutter.plugins.camera'
+version = '1.0-SNAPSHOT'
 def args = ["-Xlint:deprecation","-Xlint:unchecked"]
 
 buildscript {
@@ -28,7 +28,7 @@ apply plugin: 'com.android.library'
 
 android {
 buildFeatures {
-        buildConfig true
+        buildConfig = true
     }
     namespace = "io.flutter.plugins.camera"
     compileSdk = flutter.compileSdkVersion
@@ -38,8 +38,8 @@ buildFeatures {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     lintOptions {
-        checkAllWarnings true
-        warningsAsErrors true
+        checkAllWarnings = true
+        warningsAsErrors = true
         disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency', 'NewerVersionAvailable'
     }
     compileOptions {

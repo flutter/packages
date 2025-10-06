@@ -1,5 +1,5 @@
-group 'io.flutter.plugins.sharedpreferences'
-version '1.0-SNAPSHOT'
+group = 'io.flutter.plugins.sharedpreferences'
+version = '1.0-SNAPSHOT'
 
 buildscript {
     ext.kotlin_version = '2.2.10'
@@ -53,10 +53,11 @@ android {
         minSdkVersion 21
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-    lintOptions {
-        checkAllWarnings true
-        warningsAsErrors true
+    lint {
+        checkAllWarnings = true
+        warningsAsErrors = true
         disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency', 'NewerVersionAvailable'
+        baseline = file("lint-baseline.xml")
     }
     dependencies {
         implementation("androidx.datastore:datastore:1.1.7")
