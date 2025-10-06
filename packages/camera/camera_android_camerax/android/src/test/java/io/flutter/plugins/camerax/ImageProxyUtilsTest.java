@@ -100,31 +100,31 @@ public class ImageProxyUtilsTest {
 
   @Test
   public void areUVPlanesNV21_handlesVBufferAtLimitGracefully() {
-    int width = 4;
-    int height = 2;
+    int width = 1280;
+    int height = 720;
 
-    byte[] yData = new byte[width * height]; // dummy Y data
+    // --- Mock Y plane ---
+    byte[] yData = new byte[width * height];
     PlaneProxy yPlane = mock(PlaneProxy.class);
     ByteBuffer yBuffer = ByteBuffer.wrap(yData);
     when(yPlane.getBuffer()).thenReturn(yBuffer);
     when(yPlane.getPixelStride()).thenReturn(1);
     when(yPlane.getRowStride()).thenReturn(width);
 
-    // UV planes
-    ByteBuffer vBuffer = ByteBuffer.allocate(4);
-    vBuffer.position(vBuffer.limit()); // position == limit
-    ByteBuffer uBuffer = ByteBuffer.allocate(4);
-
+    // --- Mock U plane ---
+    ByteBuffer uBuffer = ByteBuffer.allocate(width * height / 4);
     PlaneProxy uPlane = mock(PlaneProxy.class);
-    PlaneProxy vPlane = mock(PlaneProxy.class);
     when(uPlane.getBuffer()).thenReturn(uBuffer);
-    when(vPlane.getBuffer()).thenReturn(vBuffer);
-
-    // Provide safe pixelStride/rowStride
     when(uPlane.getPixelStride()).thenReturn(1);
-    when(uPlane.getRowStride()).thenReturn(2);
+    when(uPlane.getRowStride()).thenReturn(width / 2);
+
+    // --- Mock V plane ---
+    ByteBuffer vBuffer = ByteBuffer.allocate(width * height / 4);
+    vBuffer.position(vBuffer.limit()); // position == limit
+    PlaneProxy vPlane = mock(PlaneProxy.class);
+    when(vPlane.getBuffer()).thenReturn(vBuffer);
     when(vPlane.getPixelStride()).thenReturn(1);
-    when(vPlane.getRowStride()).thenReturn(2);
+    when(vPlane.getRowStride()).thenReturn(width / 2);
 
     List<PlaneProxy> planes = Arrays.asList(yPlane, uPlane, vPlane);
 
