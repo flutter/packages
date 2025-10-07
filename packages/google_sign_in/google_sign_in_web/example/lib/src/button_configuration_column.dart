@@ -174,7 +174,7 @@ Widget _renderRadioListTileCard<T extends Enum>({
     children: <Widget>[
       RadioGroup<T>(
         groupValue: selected,
-        onChanged: (T? v) => onChanged?.call(v),
+        onChanged: onChanged ?? (_) {},
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children:
