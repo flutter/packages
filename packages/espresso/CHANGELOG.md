@@ -1,11 +1,15 @@
-## 0.4.0+16
+## 0.4.0+17
 
 * Bumps `com.google.guava:guava` from `33.4.8-android` to `33.5.0-android`.
 
-## 0.4.0+15
+## 0.4.0+16
 
 * Updates Java compatibility version to 17.
 * Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
+
+## 0.4.0+15
+
+* Resolves Gradle 9 deprecations.
 
 ## 0.4.0+14
 

@@ -2,6 +2,10 @@
 
 * Adds support for accessing data for an ad. See `AdEvent.ad`.
 
+## 0.2.7+1
+
+* Resolves Gradle 9 deprecations.
+
 ## 0.2.7
 
 * Adds support to retrieve content time offsets at which ad breaks are scheduled. See

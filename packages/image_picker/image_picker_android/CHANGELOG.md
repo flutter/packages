@@ -1,3 +1,7 @@
+## 0.8.13+4
+
+* Resolves Gradle 9 deprecations.
+
 ## 0.8.13+3
 
 * Bumps androidx.exifinterface:exifinterface from 1.3.7 to 1.4.1.

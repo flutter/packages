@@ -1,7 +1,11 @@
-## 1.0.24
+## 1.0.25
 
 * Updates Java compatibility version to 17.
 * Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
+
+## 1.0.24
+
+* Resolves Gradle 9 deprecations.
 
 ## 1.0.23
 
