@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -241,6 +241,14 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
       'Check https://developers.google.com/identity/protocols/googlescopes '
       'for a list of valid OAuth 2.0 scopes.',
     );
+  }
+
+  @override
+  Future<void> clearAuthorizationToken(
+    ClearAuthorizationTokenParams params,
+  ) async {
+    await initialized;
+    return _gisClient.clearAuthorizationToken(params.accessToken);
   }
 
   @override

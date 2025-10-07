@@ -1,3 +1,12 @@
+## 0.2.8
+
+* Adds support for accessing data for an ad. See `AdEvent.ad`.
+
+## 0.2.7
+
+* Adds support to retrieve content time offsets at which ad breaks are scheduled. See
+  `AdsManager.adCuePoints`
+
 ## 0.2.6+7
 
 * Updates Android `PlatformAdDisplayContainer` implementation to support preloading ads.

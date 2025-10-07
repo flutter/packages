@@ -1,3 +1,11 @@
+## 4.10.4
+
+* Adds a README section about enabling geolocation.
+
+## 4.10.3
+
+* Updates Java compatibility version to 17.
+
 ## 4.10.2
 
 * Updates minimum supported SDK version to Flutter 3.35.
