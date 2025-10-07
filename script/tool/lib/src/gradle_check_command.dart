@@ -405,16 +405,16 @@ for more details.''';
         .childFile('build.gradle')
         .readAsLinesSync();
     if (!gradleBuildContents.any((String line) =>
-            line.contains('checkAllWarnings true') && !_isCommented(line)) ||
+            line.contains('checkAllWarnings = true') && !_isCommented(line)) ||
         !gradleBuildContents.any((String line) =>
-            line.contains('warningsAsErrors true') && !_isCommented(line))) {
+            line.contains('warningsAsErrors = true') && !_isCommented(line))) {
       printError('${indentation}This package is not configured to enable all '
           'Gradle-driven lint warnings and treat them as errors. '
           'Please add the following to the lintOptions section of '
           'android/build.gradle:');
       print('''
-        checkAllWarnings true
-        warningsAsErrors true
+        checkAllWarnings = true
+        warningsAsErrors = true
 ''');
       return false;
     }

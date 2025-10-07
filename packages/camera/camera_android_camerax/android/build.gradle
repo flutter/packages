@@ -1,5 +1,5 @@
-group 'io.flutter.plugins.camerax'
-version '1.0'
+group = 'io.flutter.plugins.camerax'
+version = '1.0'
 
 buildscript {
     ext.kotlin_version = '2.2.10'
@@ -63,8 +63,8 @@ android {
     }
 
     lint {
-        checkAllWarnings true
-        warningsAsErrors true
+        checkAllWarnings = true
+        warningsAsErrors = true
         disable 'AndroidGradlePluginVersion', 'GradleDependency', 'InvalidPackage', 'NewerVersionAvailable'
         baseline = file("lint-baseline.xml")
     }
