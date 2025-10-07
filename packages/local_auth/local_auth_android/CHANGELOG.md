@@ -1,3 +1,7 @@
+## 1.0.54
+
+* Bumps `androidx.fragment:fragment` from `1.8.8` to `1.8.9`.
+
 ## 1.0.53
 
 * Removes obsolete code related to supporting SDK <24.
