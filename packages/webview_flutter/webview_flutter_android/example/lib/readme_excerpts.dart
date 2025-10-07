@@ -21,3 +21,22 @@ Future<void> enablePaymentRequest() async {
   }
   // #enddocregion payment_request_example
 }
+
+/// Example function for README demonstration of geolocation permissions for
+/// a use case where the content is always trusted (for example, it only shows
+/// content from a domain controlled by the app developer) and geolocation
+/// should always be allowed.
+Future<void> setGeolocationPermissionsPrompt() async {
+  final PlatformWebViewController controller = PlatformWebViewController(
+    AndroidWebViewControllerCreationParams(),
+  );
+  final AndroidWebViewController androidController =
+      controller as AndroidWebViewController;
+  // #docregion geolocation_example
+  await androidController.setGeolocationPermissionsPromptCallbacks(
+    onShowPrompt: (GeolocationPermissionsRequestParams request) async {
+      return const GeolocationPermissionsResponse(allow: true, retain: true);
+    },
+  );
+  // #enddocregion geolocation_example
+}
