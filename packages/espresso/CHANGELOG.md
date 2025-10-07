@@ -1,3 +1,7 @@
+## 0.4.0+16
+
+* Bumps `com.google.guava:guava` from `33.4.8-android` to `33.5.0-android`.
+
 ## 0.4.0+15
 
 * Updates Java compatibility version to 17.
