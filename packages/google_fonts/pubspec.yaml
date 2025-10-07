@@ -30,7 +30,7 @@ topics:
   - fonts
 
 screenshots:
- - description: 'Google Fonts and Flutter logos.'
-   path: screenshots/logo_mashup.png
- - description: 'Using hot reload to change the font family.'
-   path: screenshots/hot_reload.gif
+  - description: "Google Fonts and Flutter logos."
+    path: screenshots/logo_mashup.png
+  - description: "Using hot reload to change the font family."
+    path: screenshots/hot_reload.gif
