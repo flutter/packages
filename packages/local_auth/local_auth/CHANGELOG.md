@@ -1,7 +1,19 @@
-## NEXT
+## 3.0.0
 
+* **BREAKING CHANGES:**
+  * Throws `LocalAuthException`s rather than `PlatformException`s for most
+    failures cases, allowing structured error handling using the specific
+    `LocalAuthExceptionCode` values.
+  * Replaces `AuthenticationOptions` in `authenticate` with specific parameters.
+    * `AuthenticationOptions.stickyAuth` corresponds to
+      `persistAcrossBackgrounding`.
+    * `AuthenticationOptions.useErrorDialogs` has no replacement, as specific
+      error-handling UI should be up to plugin clients to determine. Callers
+      should use the new structured error codes to detect and handle failure
+      modes that used to have native dialogs.
 * Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
-* Updates README to reflect that only Android API 24+ is supported.
+* Updates README to reflect that Android older than API 24 and iOS older than
+  13.0 are no longer supported.
 
 ## 2.3.0
 
