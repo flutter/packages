@@ -72,6 +72,7 @@ bool _isStringToStringFunction(
 /// Returns the custom codec for the annotation.
 String? _getCustomCodec(ElementAnnotation annotation, String name) {
   final ExecutableElement2? executableElement =
+      // ignore: experimental_member_use
       annotation.computeConstantValue()?.getField(name)?.toFunctionValue2();
   if (_isStringToStringFunction(executableElement, name)) {
     return executableElement!.displayName;
@@ -188,10 +189,12 @@ T? getNodeDeclaration<T extends AstNode>(InterfaceElement2 element) {
   }
 
   final ParsedLibraryResult parsedLibrary =
+      // ignore: experimental_member_use
       session.getParsedLibraryByElement2(element.library2)
           as ParsedLibraryResult;
   final FragmentDeclarationResult? declaration = parsedLibrary
-      .getFragmentDeclaration(element.firstFragment);
+  // ignore: experimental_member_use
+  .getFragmentDeclaration(element.firstFragment);
   final AstNode? node = declaration?.node;
 
   return node is T ? node : null;
@@ -684,6 +687,7 @@ class _TypeHelperJson extends _TypeHelperWithHelper {
 
     final MethodElement2? toJsonMethod = type.lookUpMethod3(
       'toJson',
+      // ignore: experimental_member_use
       type.element3.library2,
     );
     if (toJsonMethod == null ||
@@ -698,6 +702,7 @@ class _TypeHelperJson extends _TypeHelperWithHelper {
       return _matchesType(type.typeArguments.first);
     }
 
+    // ignore: experimental_member_use
     final ConstructorElement2? fromJsonMethod = type.element3
         .getNamedConstructor2('fromJson');
 
@@ -711,6 +716,7 @@ class _TypeHelperJson extends _TypeHelperWithHelper {
       throw InvalidGenerationSourceError(
         'The parameter type '
         '`${type.getDisplayString(withNullability: false)}` not have a supported fromJson definition.',
+        // ignore: experimental_member_use
         element: type.element3,
       );
     }
@@ -741,6 +747,7 @@ class _TypeHelperJson extends _TypeHelperWithHelper {
 
   bool _isNestedTemplate(InterfaceType type) {
     // check if has fromJson constructor
+    // ignore: experimental_member_use
     final ConstructorElement2? fromJsonMethod = type.element3
         .getNamedConstructor2('fromJson');
     if (fromJsonMethod == null || !fromJsonMethod.isPublic) {
@@ -764,6 +771,7 @@ class _TypeHelperJson extends _TypeHelperWithHelper {
       throw InvalidGenerationSourceError(
         'The parameter type '
         '`${type.getDisplayString(withNullability: false)}` not have a supported fromJson definition.',
+        // ignore: experimental_member_use
         element: type.element3,
       );
     }
@@ -782,6 +790,7 @@ class _TypeHelperJson extends _TypeHelperWithHelper {
       throw InvalidGenerationSourceError(
         'The parameter type '
         '`${type.getDisplayString(withNullability: false)}` not have a supported fromJson definition.',
+        // ignore: experimental_member_use
         element: type.element3,
       );
     }
