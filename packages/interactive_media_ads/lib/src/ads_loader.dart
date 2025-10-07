@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -150,6 +150,11 @@ class AdsManager {
 
   /// Implementation of [PlatformAdsManager] for the current platform.
   final PlatformAdsManager platform;
+
+  /// List of content time offsets at which ad breaks are scheduled.
+  ///
+  /// The list will be empty for single ads or if no ad breaks are scheduled.
+  List<Duration> get adCuePoints => platform.adCuePoints;
 
   /// Initializes the ad experience using default rendering settings.
   Future<void> init({AdsRenderingSettings? settings}) {

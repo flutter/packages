@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -45,7 +45,7 @@ void main() {
     bool warningsConfigured = true,
     bool useDeprecatedCompileSdkVersion = false,
     bool usePropertyAssignment = true,
-    String compileSdk = '33',
+    String compileSdk = '36',
   }) {
     final File buildGradle = package
         .platformDirectory(FlutterPlatform.android)
@@ -54,8 +54,8 @@ void main() {
 
     const String warningConfig = '''
     lintOptions {
-        checkAllWarnings true
-        warningsAsErrors true
+        checkAllWarnings = true
+        warningsAsErrors = true
         disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency', 'NewerVersionAvailable'
         baseline file("lint-baseline.xml")
     }
@@ -69,11 +69,11 @@ java {
 
 ''';
     final String sourceCompat =
-        '${commentSourceLanguage ? '// ' : ''}sourceCompatibility JavaVersion.VERSION_11';
+        '${commentSourceLanguage ? '// ' : ''}sourceCompatibility = JavaVersion.VERSION_11';
     final String targetCompat =
-        '${commentSourceLanguage ? '// ' : ''}targetCompatibility JavaVersion.VERSION_11';
+        '${commentSourceLanguage ? '// ' : ''}targetCompatibility = JavaVersion.VERSION_11';
     final String namespace =
-        "    ${commentNamespace ? '// ' : ''}namespace '$_defaultFakeNamespace'";
+        "    ${commentNamespace ? '// ' : ''}namespace = '$_defaultFakeNamespace'";
 
     buildGradle.writeAsStringSync('''
 group 'dev.flutter.plugins.fake'
@@ -264,7 +264,7 @@ flutter {
 }
 
 dependencies {
-    testImplementation 'fake.package:fake:1.0.0'
+    testImplementation("fake.package:fake:1.0.0")
 }
 ''');
   }
@@ -274,7 +274,7 @@ dependencies {
     required String pluginName,
     bool includeNamespace = true,
     bool commentNamespace = false,
-    bool includeNameSpaceAsDeclaration = false,
+    bool includeNameSpaceAsDeclaration = true,
     bool warningsConfigured = true,
     String? kotlinVersion,
     bool includeBuildArtifactHub = true,
@@ -608,14 +608,14 @@ dependencies {
     );
   });
 
-  test('passes when namespace is declared with "=" declaration', () async {
+  test('fails when namespace is declared without "=" declaration', () async {
     const String pluginName = 'a_plugin';
     final RepositoryPackage package = createFakePlugin(pluginName, packagesDir);
     writeFakePluginBuildGradle(package, includeLanguageVersion: true);
     writeFakeManifest(package);
     final RepositoryPackage example = package.getExamples().first;
     writeFakeExampleBuildGradles(example,
-        pluginName: pluginName, includeNameSpaceAsDeclaration: true);
+        pluginName: pluginName, includeNameSpaceAsDeclaration: false);
     writeFakeManifest(example, isApp: true);
 
     final List<String> output = await runCapturingPrint(
@@ -997,12 +997,14 @@ dependencies {
   });
 
   group('compileSdk check', () {
-    test('passes if set to a number', () async {
+    test('passes if set to a version higher than flutter.compileSdkVersion',
+        () async {
       const String packageName = 'a_package';
       final RepositoryPackage package =
           createFakePackage(packageName, packagesDir, isFlutter: true);
+      // Current flutter.compileSdkVersion is 36.
       writeFakePluginBuildGradle(package,
-          includeLanguageVersion: true, compileSdk: '35');
+          includeLanguageVersion: true, compileSdk: '37');
       writeFakeManifest(package);
       final RepositoryPackage example = package.getExamples().first;
       writeFakeExampleBuildGradles(example, pluginName: packageName);
@@ -1040,6 +1042,37 @@ dependencies {
         output,
         containsAllInOrder(<Matcher>[
           contains('Validating android/build.gradle'),
+        ]),
+      );
+    });
+
+    test('fails if set to a version lower than flutter.compileSdkVersion',
+        () async {
+      const String packageName = 'a_package';
+      final RepositoryPackage package =
+          createFakePackage(packageName, packagesDir, isFlutter: true);
+      // Current flutter.compileSdkVersion is 36.
+      const String minCompileSdkVersion = '36';
+      const String testCompileSdkVersion = '35';
+      writeFakePluginBuildGradle(package,
+          includeLanguageVersion: true, compileSdk: testCompileSdkVersion);
+      writeFakeManifest(package);
+      final RepositoryPackage example = package.getExamples().first;
+      writeFakeExampleBuildGradles(example, pluginName: packageName);
+      writeFakeManifest(example, isApp: true);
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['gradle-check'], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('compileSdk version $testCompileSdkVersion is too low. '
+              'Minimum required version is $minCompileSdkVersion.'),
         ]),
       );
     });

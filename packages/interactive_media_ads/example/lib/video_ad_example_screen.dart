@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -70,6 +70,7 @@ class _VideoAdExampleScreenState extends State<VideoAdExampleScreen>
       _adsLoader = AdsLoader(
         container: container,
         onAdsLoaded: (OnAdsLoadedData data) {
+          debugPrint('OnAdsLoaded: (cuePoints: ${data.manager.adCuePoints})');
           final AdsManager manager = data.manager;
           _adsManager = data.manager;
 
