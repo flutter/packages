@@ -1,3 +1,8 @@
+## 7.3.0
+
+* Updates Java compatibility version to 17.
+* If required, Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
+
 ## 7.2.0
 
 * Adds support for `disconnect`.

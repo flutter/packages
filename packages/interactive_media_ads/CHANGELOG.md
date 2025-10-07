@@ -1,3 +1,8 @@
+## 0.2.8
+
+* Updates Java compatibility version to 17.
+* If required, Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
+
 ## 0.2.7
 
 * Adds support to retrieve content time offsets at which ad breaks are scheduled. See

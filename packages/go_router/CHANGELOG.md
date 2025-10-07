@@ -1,3 +1,8 @@
+## 16.3.0
+
+* Updates Java compatibility version to 17.
+* If required, Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
+
 ## 16.2.4
 
 - Fix Android Cold Start deep link with empty path losing scheme and authority.

@@ -1,3 +1,8 @@
+## 4.11.0
+
+* Updates Java compatibility version to 17.
+* If required, Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
+
 ## 4.10.3
 
 * Updates Java compatibility version to 17.

@@ -1,3 +1,8 @@
+## 1.1.0
+
+* Updates Java compatibility version to 17.
+* If required, Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
+
 ## 1.0.4
 
 * Updates the example app and README examples to work on iOS.

@@ -1,3 +1,8 @@
+## 0.6.24
+
+* Updates Java compatibility version to 17.
+* If required, Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
+
 ## 0.6.23
 
 * Converts NV21-compatible streamed images to NV21 when requested. In doing so,

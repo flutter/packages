@@ -1,6 +1,6 @@
-## NEXT
+## 2.6.0
 
-* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+* Updates Java compatibility version to 17. If required, Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
 * Updates README to indicate that Andoid SDK <21 is no longer supported.
 
 ## 2.5.3

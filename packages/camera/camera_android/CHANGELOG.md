@@ -1,3 +1,8 @@
+## 0.10.11
+
+* Updates Java compatibility version to 17.
+* If required, Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
+
 ## 0.10.10+8
 
 * Restores compileSdk version to flutter.compileSdkVersion.

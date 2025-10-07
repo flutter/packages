@@ -1,3 +1,8 @@
+## 2.19.0
+
+* Updates Java compatibility version to 17.
+* If required, Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
+
 ## 2.18.2
 
 * Bumps com.android.tools.build:gradle to 8.12.1.
