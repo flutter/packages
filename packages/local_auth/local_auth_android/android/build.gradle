@@ -1,5 +1,5 @@
-group 'io.flutter.plugins.localauth'
-version '1.0-SNAPSHOT'
+group = 'io.flutter.plugins.localauth'
+version = '1.0-SNAPSHOT'
 
 buildscript {
     repositories {
@@ -36,8 +36,8 @@ android {
     }
 
     lintOptions {
-        checkAllWarnings true
-        warningsAsErrors true
+        checkAllWarnings = true
+        warningsAsErrors = true
         disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency', 'NewerVersionAvailable'
     }
 
