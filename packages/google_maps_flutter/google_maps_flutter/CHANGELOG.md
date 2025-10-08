@@ -1,4 +1,4 @@
-## NEXT
+## 2.13.2
 
 * Adds a check that raises `MapUsedAfterWidgetDisposedError`
   when map controller is used after its widget has been disposed.
