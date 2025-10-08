@@ -90,8 +90,9 @@ class ArgumentDecoders {
   const ArgumentDecoders._();
 
   /// This is a workaround for https://github.com/dart-lang/sdk/issues/47021
+  // ignore: unused_field
   static const ArgumentDecoders __ =
-      ArgumentDecoders._(); // ignore: unused_field
+      ArgumentDecoders._();
 
   // (in alphabetical order)
 
