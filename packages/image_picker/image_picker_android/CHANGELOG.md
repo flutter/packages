@@ -1,3 +1,7 @@
+## 0.8.13+5
+
+* Fixes typo in limit parameter validation error message.
+
 ## 0.8.13+4
 
 * Resolves Gradle 9 deprecations.
