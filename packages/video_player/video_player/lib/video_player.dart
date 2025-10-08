@@ -188,10 +188,9 @@ class VideoPlayerValue {
       volume: volume ?? this.volume,
       playbackSpeed: playbackSpeed ?? this.playbackSpeed,
       rotationCorrection: rotationCorrection ?? this.rotationCorrection,
-      errorDescription:
-          errorDescription != _defaultErrorDescription
-              ? errorDescription
-              : this.errorDescription,
+      errorDescription: errorDescription != _defaultErrorDescription
+          ? errorDescription
+          : this.errorDescription,
       isCompleted: isCompleted ?? this.isCompleted,
     );
   }
@@ -906,11 +905,11 @@ class _VideoPlayerState extends State<VideoPlayer> {
     return _playerId == VideoPlayerController.kUninitializedPlayerId
         ? Container()
         : _VideoPlayerWithRotation(
-          rotation: widget.controller.value.rotationCorrection,
-          child: _videoPlayerPlatform.buildViewWithOptions(
-            VideoViewOptions(playerId: _playerId),
-          ),
-        );
+            rotation: widget.controller.value.rotationCorrection,
+            child: _videoPlayerPlatform.buildViewWithOptions(
+              VideoViewOptions(playerId: _playerId),
+            ),
+          );
   }
 }
 

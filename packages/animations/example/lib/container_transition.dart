@@ -84,10 +84,9 @@ class _OpenContainerTransformDemoState
                     onPressed: (int index) {
                       setModalState(() {
                         setState(() {
-                          _transitionType =
-                              index == 0
-                                  ? ContainerTransitionType.fade
-                                  : ContainerTransitionType.fadeThrough;
+                          _transitionType = index == 0
+                              ? ContainerTransitionType.fade
+                              : ContainerTransitionType.fadeThrough;
                         });
                       });
                     },

@@ -64,7 +64,10 @@ void main() {
   test('gen one enum', () {
     final Enum anEnum = Enum(
       name: 'Foobar',
-      members: <EnumMember>[EnumMember(name: 'one'), EnumMember(name: 'two')],
+      members: <EnumMember>[
+        EnumMember(name: 'one'),
+        EnumMember(name: 'two'),
+      ],
     );
     final Root root = Root(
       apis: <Api>[],
@@ -872,7 +875,10 @@ void main() {
   test('gen one enum class', () {
     final Enum anEnum = Enum(
       name: 'Enum1',
-      members: <EnumMember>[EnumMember(name: 'one'), EnumMember(name: 'two')],
+      members: <EnumMember>[
+        EnumMember(name: 'one'),
+        EnumMember(name: 'two'),
+      ],
     );
     final Class classDefinition = Class(
       name: 'EnumClass',

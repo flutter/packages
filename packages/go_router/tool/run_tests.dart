@@ -19,8 +19,9 @@ import 'package:path/path.dart' as p;
 // that references `go_router`, and running `dart fix --compare-to-golden`
 // on the temp directory.
 Future<void> main(List<String> args) async {
-  final Directory goRouterPackageRoot =
-      File.fromUri(Platform.script).parent.parent;
+  final Directory goRouterPackageRoot = File.fromUri(
+    Platform.script,
+  ).parent.parent;
 
   final Directory testTempDir = await Directory.systemTemp.createTemp();
 
@@ -72,7 +73,8 @@ Future<void> _prepareTemplate({
   // The pubspec.yaml file to create.
   final File targetPubspecFile = File(p.join(testTempDir.path, 'pubspec.yaml'));
 
-  final String targetYaml = '''
+  final String targetYaml =
+      '''
 name: test_fixes
 publish_to: "none"
 version: 1.0.0

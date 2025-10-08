@@ -154,10 +154,9 @@ void main() {
         ) async {
           timesCalled++;
           return BillingResultWrapper(
-            responseCode:
-                timesCalled == 1
-                    ? BillingResponse.serviceDisconnected
-                    : BillingResponse.ok,
+            responseCode: timesCalled == 1
+                ? BillingResponse.serviceDisconnected
+                : BillingResponse.ok,
           );
         });
         verify(mockApi.startConnection(any, any, any)).called(1);

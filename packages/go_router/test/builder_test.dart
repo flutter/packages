@@ -381,9 +381,8 @@ void main() {
         routes: <RouteBase>[
           GoRoute(
             path: '/',
-            builder:
-                (BuildContext context, GoRouterState state) =>
-                    const Scaffold(body: Center(child: Text('Home'))),
+            builder: (BuildContext context, GoRouterState state) =>
+                const Scaffold(body: Center(child: Text('Home'))),
           ),
         ],
       );
@@ -405,9 +404,8 @@ void main() {
         routes: <RouteBase>[
           GoRoute(
             path: '/',
-            builder:
-                (BuildContext context, GoRouterState state) =>
-                    const Scaffold(body: Center(child: Text('Home'))),
+            builder: (BuildContext context, GoRouterState state) =>
+                const Scaffold(body: Center(child: Text('Home'))),
           ),
         ],
         requestFocus: false,
@@ -434,7 +432,10 @@ class _HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
-        children: <Widget>[const Text('Home Screen'), Expanded(child: child)],
+        children: <Widget>[
+          const Text('Home Screen'),
+          Expanded(child: child),
+        ],
       ),
     );
   }

@@ -44,18 +44,19 @@ class _SharedAxisTransitionDemoState extends State<SharedAxisTransitionDemo> {
             Expanded(
               child: PageTransitionSwitcher(
                 reverse: !_isLoggedIn,
-                transitionBuilder: (
-                  Widget child,
-                  Animation<double> animation,
-                  Animation<double> secondaryAnimation,
-                ) {
-                  return SharedAxisTransition(
-                    animation: animation,
-                    secondaryAnimation: secondaryAnimation,
-                    transitionType: _transitionType!,
-                    child: child,
-                  );
-                },
+                transitionBuilder:
+                    (
+                      Widget child,
+                      Animation<double> animation,
+                      Animation<double> secondaryAnimation,
+                    ) {
+                      return SharedAxisTransition(
+                        animation: animation,
+                        secondaryAnimation: secondaryAnimation,
+                        transitionType: _transitionType!,
+                        child: child,
+                      );
+                    },
                 child: _isLoggedIn ? _CoursePage() : _SignInPage(),
               ),
             ),

@@ -1299,8 +1299,8 @@ class StatefulNavigationShell extends StatefulWidget {
 
   /// Gets the state for the nearest stateful shell route in the Widget tree.
   static StatefulNavigationShellState of(BuildContext context) {
-    final StatefulNavigationShellState? shellState =
-        context.findAncestorStateOfType<StatefulNavigationShellState>();
+    final StatefulNavigationShellState? shellState = context
+        .findAncestorStateOfType<StatefulNavigationShellState>();
     assert(shellState != null);
     return shellState!;
   }
@@ -1309,8 +1309,8 @@ class StatefulNavigationShell extends StatefulWidget {
   ///
   /// Returns null if no stateful shell route is found.
   static StatefulNavigationShellState? maybeOf(BuildContext context) {
-    final StatefulNavigationShellState? shellState =
-        context.findAncestorStateOfType<StatefulNavigationShellState>();
+    final StatefulNavigationShellState? shellState = context
+        .findAncestorStateOfType<StatefulNavigationShellState>();
     return shellState;
   }
 
@@ -1492,8 +1492,9 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
   /// the branch (see [StatefulShellBranch.initialLocation]).
   void goBranch(int index, {bool initialLocation = false}) {
     assert(index >= 0 && index < route.branches.length);
-    final RouteMatchList? matchList =
-        initialLocation ? null : _matchListForBranch(index);
+    final RouteMatchList? matchList = initialLocation
+        ? null
+        : _matchListForBranch(index);
     if (matchList != null && matchList.isNotEmpty) {
       _router.restore(matchList);
     } else {
@@ -1528,18 +1529,16 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> children =
-        route.branches
-            .map(
-              (StatefulShellBranch branch) => _BranchNavigatorProxy(
-                key: ObjectKey(branch),
-                branch: branch,
-                navigatorForBranch:
-                    (StatefulShellBranch branch) =>
-                        _branchState[branch]?.navigator,
-              ),
-            )
-            .toList();
+    final List<Widget> children = route.branches
+        .map(
+          (StatefulShellBranch branch) => _BranchNavigatorProxy(
+            key: ObjectKey(branch),
+            branch: branch,
+            navigatorForBranch: (StatefulShellBranch branch) =>
+                _branchState[branch]?.navigator,
+          ),
+        )
+        .toList();
 
     return widget.containerBuilder(context, widget, children);
   }
@@ -1649,16 +1648,12 @@ class _IndexedStackedRouteBranchContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> stackItems =
-        children
-            .mapIndexed(
-              (int index, Widget child) => _buildRouteBranchContainer(
-                context,
-                currentIndex == index,
-                child,
-              ),
-            )
-            .toList();
+    final List<Widget> stackItems = children
+        .mapIndexed(
+          (int index, Widget child) =>
+              _buildRouteBranchContainer(context, currentIndex == index, child),
+        )
+        .toList();
 
     return IndexedStack(index: currentIndex, children: stackItems);
   }

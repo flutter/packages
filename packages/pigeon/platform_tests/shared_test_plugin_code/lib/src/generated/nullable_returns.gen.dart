@@ -62,8 +62,9 @@ class NullableReturnHostApi {
     BinaryMessenger? binaryMessenger,
     String messageChannelSuffix = '',
   }) : pigeonVar_binaryMessenger = binaryMessenger,
-       pigeonVar_messageChannelSuffix =
-           messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+           ? '.$messageChannelSuffix'
+           : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -106,8 +107,9 @@ abstract class NullableReturnFlutterApi {
     BinaryMessenger? binaryMessenger,
     String messageChannelSuffix = '',
   }) {
-    messageChannelSuffix =
-        messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+    messageChannelSuffix = messageChannelSuffix.isNotEmpty
+        ? '.$messageChannelSuffix'
+        : '';
     {
       final BasicMessageChannel<Object?>
       pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -143,8 +145,9 @@ class NullableArgHostApi {
     BinaryMessenger? binaryMessenger,
     String messageChannelSuffix = '',
   }) : pigeonVar_binaryMessenger = binaryMessenger,
-       pigeonVar_messageChannelSuffix =
-           messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+           ? '.$messageChannelSuffix'
+           : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -194,8 +197,9 @@ abstract class NullableArgFlutterApi {
     BinaryMessenger? binaryMessenger,
     String messageChannelSuffix = '',
   }) {
-    messageChannelSuffix =
-        messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+    messageChannelSuffix = messageChannelSuffix.isNotEmpty
+        ? '.$messageChannelSuffix'
+        : '';
     {
       final BasicMessageChannel<Object?>
       pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -237,8 +241,9 @@ class NullableCollectionReturnHostApi {
     BinaryMessenger? binaryMessenger,
     String messageChannelSuffix = '',
   }) : pigeonVar_binaryMessenger = binaryMessenger,
-       pigeonVar_messageChannelSuffix =
-           messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+           ? '.$messageChannelSuffix'
+           : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -281,8 +286,9 @@ abstract class NullableCollectionReturnFlutterApi {
     BinaryMessenger? binaryMessenger,
     String messageChannelSuffix = '',
   }) {
-    messageChannelSuffix =
-        messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+    messageChannelSuffix = messageChannelSuffix.isNotEmpty
+        ? '.$messageChannelSuffix'
+        : '';
     {
       final BasicMessageChannel<Object?>
       pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -318,8 +324,9 @@ class NullableCollectionArgHostApi {
     BinaryMessenger? binaryMessenger,
     String messageChannelSuffix = '',
   }) : pigeonVar_binaryMessenger = binaryMessenger,
-       pigeonVar_messageChannelSuffix =
-           messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+           ? '.$messageChannelSuffix'
+           : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -369,8 +376,9 @@ abstract class NullableCollectionArgFlutterApi {
     BinaryMessenger? binaryMessenger,
     String messageChannelSuffix = '',
   }) {
-    messageChannelSuffix =
-        messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+    messageChannelSuffix = messageChannelSuffix.isNotEmpty
+        ? '.$messageChannelSuffix'
+        : '';
     {
       final BasicMessageChannel<Object?>
       pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -387,8 +395,8 @@ abstract class NullableCollectionArgFlutterApi {
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.NullableCollectionArgFlutterApi.doit was null.',
           );
           final List<Object?> args = (message as List<Object?>?)!;
-          final List<String?>? arg_x =
-              (args[0] as List<Object?>?)?.cast<String?>();
+          final List<String?>? arg_x = (args[0] as List<Object?>?)
+              ?.cast<String?>();
           try {
             final List<String?> output = api.doit(arg_x);
             return wrapResponse(result: output);

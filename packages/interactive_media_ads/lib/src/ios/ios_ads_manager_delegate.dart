@@ -52,10 +52,10 @@ final class IOSAdsManagerDelegate extends PlatformAdsManagerDelegate {
 
   late final IOSAdsManagerDelegateCreationParams _iosParams =
       params is IOSAdsManagerDelegateCreationParams
-          ? params as IOSAdsManagerDelegateCreationParams
-          : IOSAdsManagerDelegateCreationParams.fromPlatformAdsManagerDelegateCreationParams(
-            params,
-          );
+      ? params as IOSAdsManagerDelegateCreationParams
+      : IOSAdsManagerDelegateCreationParams.fromPlatformAdsManagerDelegateCreationParams(
+          params,
+        );
 
   // This value is created in a static method because the callback methods for
   // any wrapped classes must not reference the encapsulating object. This is to

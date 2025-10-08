@@ -68,15 +68,16 @@ void main() {
                 ).thenAnswer((_) async => mockCompanionAdSlot);
                 return mockFactory;
               },
-              newCompanionAdSlotClickListener: ({
-                required void Function(ima.CompanionAdSlotClickListener)
-                onCompanionAdClick,
-              }) {
-                return ima.CompanionAdSlotClickListener.pigeon_detached(
-                  onCompanionAdClick: onCompanionAdClick,
-                  pigeon_instanceManager: _TestInstanceManager(),
-                );
-              },
+              newCompanionAdSlotClickListener:
+                  ({
+                    required void Function(ima.CompanionAdSlotClickListener)
+                    onCompanionAdClick,
+                  }) {
+                    return ima.CompanionAdSlotClickListener.pigeon_detached(
+                      onCompanionAdClick: onCompanionAdClick,
+                      pigeon_instanceManager: _TestInstanceManager(),
+                    );
+                  },
             ),
           );
 

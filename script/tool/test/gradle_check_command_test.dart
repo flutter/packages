@@ -1256,7 +1256,8 @@ dependencies {
       expect(
         output,
         containsAllInOrder(<Matcher>[
-          contains('build.gradle(.kts) sets jvmTarget then it must use JavaVersion syntax'),
+          contains(
+              'build.gradle(.kts) sets jvmTarget then it must use JavaVersion syntax'),
         ]),
       );
     });

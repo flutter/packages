@@ -103,8 +103,9 @@ void main() {
       instanceManager.addHostCreatedInstance(object, 0);
 
       expect(instanceManager.removeWeakReference(object), 0);
-      final CopyableObject copy =
-          instanceManager.getInstanceWithWeakReference(0)!;
+      final CopyableObject copy = instanceManager.getInstanceWithWeakReference(
+        0,
+      )!;
       expect(identical(object, copy), isFalse);
     });
 
@@ -148,8 +149,8 @@ void main() {
       instanceManager.addHostCreatedInstance(object, 0);
       instanceManager.removeWeakReference(object);
 
-      final CopyableObject newWeakCopy =
-          instanceManager.getInstanceWithWeakReference(0)!;
+      final CopyableObject newWeakCopy = instanceManager
+          .getInstanceWithWeakReference(0)!;
       expect(identical(object, newWeakCopy), isFalse);
     });
 

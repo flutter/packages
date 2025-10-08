@@ -142,8 +142,9 @@ class RouteConfiguration {
             // Recursively search for the first GoRoute descendant. Will
             // throw assertion error if not found.
             final GoRoute? route = branch.defaultRoute;
-            final String? initialLocation =
-                route != null ? locationForRoute(route) : null;
+            final String? initialLocation = route != null
+                ? locationForRoute(route)
+                : null;
             assert(
               initialLocation != null,
               'The default location of a StatefulShellBranch must be '
@@ -587,13 +588,16 @@ class RouteConfiguration {
         index,
         routes.length,
       );
-      final String decorationString =
-          decoration.map((_DecorationType e) => e.toString()).join();
+      final String decorationString = decoration
+          .map((_DecorationType e) => e.toString())
+          .join();
       String path = parentFullpath;
       if (route is GoRoute) {
         path = concatenatePaths(parentFullpath, route.path);
-        final String? screenName =
-            route.builder?.runtimeType.toString().split('=> ').last;
+        final String? screenName = route.builder?.runtimeType
+            .toString()
+            .split('=> ')
+            .last;
         sb.writeln(
           '$decorationString$path '
           '${screenName == null ? '' : '($screenName)'}',

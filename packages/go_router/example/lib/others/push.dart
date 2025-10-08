@@ -23,14 +23,13 @@ class App extends StatelessWidget {
     routes: <GoRoute>[
       GoRoute(
         path: '/',
-        builder:
-            (BuildContext context, GoRouterState state) =>
-                const Page1ScreenWithPush(),
+        builder: (BuildContext context, GoRouterState state) =>
+            const Page1ScreenWithPush(),
       ),
       GoRoute(
         path: '/page2',
-        builder:
-            (BuildContext context, GoRouterState state) => Page2ScreenWithPush(
+        builder: (BuildContext context, GoRouterState state) =>
+            Page2ScreenWithPush(
               int.parse(state.uri.queryParameters['push-count']!),
             ),
       ),
@@ -87,8 +86,8 @@ class Page2ScreenWithPush extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(8),
             child: ElevatedButton(
-              onPressed:
-                  () => context.push('/page2?push-count=${pushCount + 1}'),
+              onPressed: () =>
+                  context.push('/page2?push-count=${pushCount + 1}'),
               child: const Text('Push page 2 (again)'),
             ),
           ),

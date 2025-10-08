@@ -517,8 +517,8 @@ class PigeonInstanceManager {
       final PigeonInternalProxyApiBaseClass? strongInstance =
           _strongInstances[identifier];
       if (strongInstance != null) {
-        final PigeonInternalProxyApiBaseClass copy =
-            strongInstance.pigeon_copy();
+        final PigeonInternalProxyApiBaseClass copy = strongInstance
+            .pigeon_copy();
         _identifiers[copy] = identifier;
         _weakInstances[identifier] =
             WeakReference<PigeonInternalProxyApiBaseClass>(copy);
@@ -2278,9 +2278,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterThrowError was null, expected non-null ProxyApiTestClass.',
           );
           try {
-            final Object? output = (flutterThrowError ??
-                    arg_pigeon_instance!.flutterThrowError)
-                ?.call(arg_pigeon_instance!);
+            final Object? output =
+                (flutterThrowError ?? arg_pigeon_instance!.flutterThrowError)
+                    ?.call(arg_pigeon_instance!);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -2359,9 +2359,11 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoBool was null, expected non-null bool.',
           );
           try {
-            final bool output = (flutterEchoBool ??
-                    arg_pigeon_instance!.flutterEchoBool)
-                .call(arg_pigeon_instance!, arg_aBool!);
+            final bool output =
+                (flutterEchoBool ?? arg_pigeon_instance!.flutterEchoBool).call(
+                  arg_pigeon_instance!,
+                  arg_aBool!,
+                );
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -2402,9 +2404,11 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoInt was null, expected non-null int.',
           );
           try {
-            final int output = (flutterEchoInt ??
-                    arg_pigeon_instance!.flutterEchoInt)
-                .call(arg_pigeon_instance!, arg_anInt!);
+            final int output =
+                (flutterEchoInt ?? arg_pigeon_instance!.flutterEchoInt).call(
+                  arg_pigeon_instance!,
+                  arg_anInt!,
+                );
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -2445,9 +2449,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoDouble was null, expected non-null double.',
           );
           try {
-            final double output = (flutterEchoDouble ??
-                    arg_pigeon_instance!.flutterEchoDouble)
-                .call(arg_pigeon_instance!, arg_aDouble!);
+            final double output =
+                (flutterEchoDouble ?? arg_pigeon_instance!.flutterEchoDouble)
+                    .call(arg_pigeon_instance!, arg_aDouble!);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -2488,9 +2492,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoString was null, expected non-null String.',
           );
           try {
-            final String output = (flutterEchoString ??
-                    arg_pigeon_instance!.flutterEchoString)
-                .call(arg_pigeon_instance!, arg_aString!);
+            final String output =
+                (flutterEchoString ?? arg_pigeon_instance!.flutterEchoString)
+                    .call(arg_pigeon_instance!, arg_aString!);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -2531,9 +2535,10 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoUint8List was null, expected non-null Uint8List.',
           );
           try {
-            final Uint8List output = (flutterEchoUint8List ??
-                    arg_pigeon_instance!.flutterEchoUint8List)
-                .call(arg_pigeon_instance!, arg_aList!);
+            final Uint8List output =
+                (flutterEchoUint8List ??
+                        arg_pigeon_instance!.flutterEchoUint8List)
+                    .call(arg_pigeon_instance!, arg_aList!);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -2568,16 +2573,18 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             arg_pigeon_instance != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoList was null, expected non-null ProxyApiTestClass.',
           );
-          final List<Object?>? arg_aList =
-              (args[1] as List<Object?>?)?.cast<Object?>();
+          final List<Object?>? arg_aList = (args[1] as List<Object?>?)
+              ?.cast<Object?>();
           assert(
             arg_aList != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoList was null, expected non-null List<Object?>.',
           );
           try {
-            final List<Object?> output = (flutterEchoList ??
-                    arg_pigeon_instance!.flutterEchoList)
-                .call(arg_pigeon_instance!, arg_aList!);
+            final List<Object?> output =
+                (flutterEchoList ?? arg_pigeon_instance!.flutterEchoList).call(
+                  arg_pigeon_instance!,
+                  arg_aList!,
+                );
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -2619,9 +2626,10 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoProxyApiList was null, expected non-null List<ProxyApiTestClass?>.',
           );
           try {
-            final List<ProxyApiTestClass?> output = (flutterEchoProxyApiList ??
-                    arg_pigeon_instance!.flutterEchoProxyApiList)
-                .call(arg_pigeon_instance!, arg_aList!);
+            final List<ProxyApiTestClass?> output =
+                (flutterEchoProxyApiList ??
+                        arg_pigeon_instance!.flutterEchoProxyApiList)
+                    .call(arg_pigeon_instance!, arg_aList!);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -2663,9 +2671,11 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoMap was null, expected non-null Map<String?, Object?>.',
           );
           try {
-            final Map<String?, Object?> output = (flutterEchoMap ??
-                    arg_pigeon_instance!.flutterEchoMap)
-                .call(arg_pigeon_instance!, arg_aMap!);
+            final Map<String?, Object?> output =
+                (flutterEchoMap ?? arg_pigeon_instance!.flutterEchoMap).call(
+                  arg_pigeon_instance!,
+                  arg_aMap!,
+                );
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -2752,9 +2762,11 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoEnum was null, expected non-null ProxyApiTestEnum.',
           );
           try {
-            final ProxyApiTestEnum output = (flutterEchoEnum ??
-                    arg_pigeon_instance!.flutterEchoEnum)
-                .call(arg_pigeon_instance!, arg_anEnum!);
+            final ProxyApiTestEnum output =
+                (flutterEchoEnum ?? arg_pigeon_instance!.flutterEchoEnum).call(
+                  arg_pigeon_instance!,
+                  arg_anEnum!,
+                );
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -2796,9 +2808,10 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoProxyApi was null, expected non-null ProxyApiSuperClass.',
           );
           try {
-            final ProxyApiSuperClass output = (flutterEchoProxyApi ??
-                    arg_pigeon_instance!.flutterEchoProxyApi)
-                .call(arg_pigeon_instance!, arg_aProxyApi!);
+            final ProxyApiSuperClass output =
+                (flutterEchoProxyApi ??
+                        arg_pigeon_instance!.flutterEchoProxyApi)
+                    .call(arg_pigeon_instance!, arg_aProxyApi!);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -2835,9 +2848,10 @@ class ProxyApiTestClass extends ProxyApiSuperClass
           );
           final bool? arg_aBool = (args[1] as bool?);
           try {
-            final bool? output = (flutterEchoNullableBool ??
-                    arg_pigeon_instance!.flutterEchoNullableBool)
-                ?.call(arg_pigeon_instance!, arg_aBool);
+            final bool? output =
+                (flutterEchoNullableBool ??
+                        arg_pigeon_instance!.flutterEchoNullableBool)
+                    ?.call(arg_pigeon_instance!, arg_aBool);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -2874,9 +2888,10 @@ class ProxyApiTestClass extends ProxyApiSuperClass
           );
           final int? arg_anInt = (args[1] as int?);
           try {
-            final int? output = (flutterEchoNullableInt ??
-                    arg_pigeon_instance!.flutterEchoNullableInt)
-                ?.call(arg_pigeon_instance!, arg_anInt);
+            final int? output =
+                (flutterEchoNullableInt ??
+                        arg_pigeon_instance!.flutterEchoNullableInt)
+                    ?.call(arg_pigeon_instance!, arg_anInt);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -2913,9 +2928,10 @@ class ProxyApiTestClass extends ProxyApiSuperClass
           );
           final double? arg_aDouble = (args[1] as double?);
           try {
-            final double? output = (flutterEchoNullableDouble ??
-                    arg_pigeon_instance!.flutterEchoNullableDouble)
-                ?.call(arg_pigeon_instance!, arg_aDouble);
+            final double? output =
+                (flutterEchoNullableDouble ??
+                        arg_pigeon_instance!.flutterEchoNullableDouble)
+                    ?.call(arg_pigeon_instance!, arg_aDouble);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -2952,9 +2968,10 @@ class ProxyApiTestClass extends ProxyApiSuperClass
           );
           final String? arg_aString = (args[1] as String?);
           try {
-            final String? output = (flutterEchoNullableString ??
-                    arg_pigeon_instance!.flutterEchoNullableString)
-                ?.call(arg_pigeon_instance!, arg_aString);
+            final String? output =
+                (flutterEchoNullableString ??
+                        arg_pigeon_instance!.flutterEchoNullableString)
+                    ?.call(arg_pigeon_instance!, arg_aString);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -2991,9 +3008,10 @@ class ProxyApiTestClass extends ProxyApiSuperClass
           );
           final Uint8List? arg_aList = (args[1] as Uint8List?);
           try {
-            final Uint8List? output = (flutterEchoNullableUint8List ??
-                    arg_pigeon_instance!.flutterEchoNullableUint8List)
-                ?.call(arg_pigeon_instance!, arg_aList);
+            final Uint8List? output =
+                (flutterEchoNullableUint8List ??
+                        arg_pigeon_instance!.flutterEchoNullableUint8List)
+                    ?.call(arg_pigeon_instance!, arg_aList);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -3028,12 +3046,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             arg_pigeon_instance != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableList was null, expected non-null ProxyApiTestClass.',
           );
-          final List<Object?>? arg_aList =
-              (args[1] as List<Object?>?)?.cast<Object?>();
+          final List<Object?>? arg_aList = (args[1] as List<Object?>?)
+              ?.cast<Object?>();
           try {
-            final List<Object?>? output = (flutterEchoNullableList ??
-                    arg_pigeon_instance!.flutterEchoNullableList)
-                ?.call(arg_pigeon_instance!, arg_aList);
+            final List<Object?>? output =
+                (flutterEchoNullableList ??
+                        arg_pigeon_instance!.flutterEchoNullableList)
+                    ?.call(arg_pigeon_instance!, arg_aList);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -3071,9 +3090,10 @@ class ProxyApiTestClass extends ProxyApiSuperClass
           final Map<String?, Object?>? arg_aMap =
               (args[1] as Map<Object?, Object?>?)?.cast<String?, Object?>();
           try {
-            final Map<String?, Object?>? output = (flutterEchoNullableMap ??
-                    arg_pigeon_instance!.flutterEchoNullableMap)
-                ?.call(arg_pigeon_instance!, arg_aMap);
+            final Map<String?, Object?>? output =
+                (flutterEchoNullableMap ??
+                        arg_pigeon_instance!.flutterEchoNullableMap)
+                    ?.call(arg_pigeon_instance!, arg_aMap);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -3110,9 +3130,10 @@ class ProxyApiTestClass extends ProxyApiSuperClass
           );
           final ProxyApiTestEnum? arg_anEnum = (args[1] as ProxyApiTestEnum?);
           try {
-            final ProxyApiTestEnum? output = (flutterEchoNullableEnum ??
-                    arg_pigeon_instance!.flutterEchoNullableEnum)
-                ?.call(arg_pigeon_instance!, arg_anEnum);
+            final ProxyApiTestEnum? output =
+                (flutterEchoNullableEnum ??
+                        arg_pigeon_instance!.flutterEchoNullableEnum)
+                    ?.call(arg_pigeon_instance!, arg_anEnum);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -3150,9 +3171,10 @@ class ProxyApiTestClass extends ProxyApiSuperClass
           final ProxyApiSuperClass? arg_aProxyApi =
               (args[1] as ProxyApiSuperClass?);
           try {
-            final ProxyApiSuperClass? output = (flutterEchoNullableProxyApi ??
-                    arg_pigeon_instance!.flutterEchoNullableProxyApi)
-                ?.call(arg_pigeon_instance!, arg_aProxyApi);
+            final ProxyApiSuperClass? output =
+                (flutterEchoNullableProxyApi ??
+                        arg_pigeon_instance!.flutterEchoNullableProxyApi)
+                    ?.call(arg_pigeon_instance!, arg_aProxyApi);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -3230,9 +3252,10 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoAsyncString was null, expected non-null String.',
           );
           try {
-            final String output = await (flutterEchoAsyncString ??
-                    arg_pigeon_instance!.flutterEchoAsyncString)
-                .call(arg_pigeon_instance!, arg_aString!);
+            final String output =
+                await (flutterEchoAsyncString ??
+                        arg_pigeon_instance!.flutterEchoAsyncString)
+                    .call(arg_pigeon_instance!, arg_aString!);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);

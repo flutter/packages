@@ -29,16 +29,13 @@ class _AppState extends State<App> {
         routes: <RouteBase>[
           ShellRoute(
             restorationScopeId: 'onboardingShell',
-            pageBuilder: (
-              BuildContext context,
-              GoRouterState state,
-              Widget child,
-            ) {
-              return MaterialPage<void>(
-                restorationId: 'onboardingPage',
-                child: OnboardingScaffold(child: child),
-              );
-            },
+            pageBuilder:
+                (BuildContext context, GoRouterState state, Widget child) {
+                  return MaterialPage<void>(
+                    restorationId: 'onboardingPage',
+                    child: OnboardingScaffold(child: child),
+                  );
+                },
             routes: <GoRoute>[
               GoRoute(
                 path: 'welcome',

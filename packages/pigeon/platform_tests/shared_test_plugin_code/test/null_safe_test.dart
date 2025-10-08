@@ -26,10 +26,9 @@ void main() {
       TestWidgetsFlutterBinding.ensureInitialized();
 
   test('with values filled', () {
-    final FlutterSearchReply reply =
-        FlutterSearchReply()
-          ..result = 'foo'
-          ..error = 'bar';
+    final FlutterSearchReply reply = FlutterSearchReply()
+      ..result = 'foo'
+      ..error = 'bar';
     final List<Object?> encoded = reply.encode() as List<Object?>;
     final FlutterSearchReply decoded = FlutterSearchReply.decode(encoded);
     expect(reply.result, decoded.result);
@@ -37,10 +36,9 @@ void main() {
   });
 
   test('with null value', () {
-    final FlutterSearchReply reply =
-        FlutterSearchReply()
-          ..result = 'foo'
-          ..error = null;
+    final FlutterSearchReply reply = FlutterSearchReply()
+      ..result = 'foo'
+      ..error = null;
     final List<Object?> encoded = reply.encode() as List<Object?>;
     final FlutterSearchReply decoded = FlutterSearchReply.decode(encoded);
     expect(reply.result, decoded.result);
@@ -68,8 +66,8 @@ void main() {
 
   test('send/receive list classes', () async {
     final FlutterSearchRequest request = FlutterSearchRequest()..query = 'hey';
-    final FlutterSearchRequests requests =
-        FlutterSearchRequests()..requests = <FlutterSearchRequest>[request];
+    final FlutterSearchRequests requests = FlutterSearchRequests()
+      ..requests = <FlutterSearchRequest>[request];
     final BinaryMessenger mockMessenger = MockBinaryMessenger();
     echoOneArgument(
       mockMessenger,

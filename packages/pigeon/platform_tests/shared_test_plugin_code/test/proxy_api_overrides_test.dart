@@ -36,8 +36,8 @@ void main() {
   });
 
   test('pigeon_reset sets constructor overrides to null', () {
-    PigeonOverrides.proxyApiSuperClass_new =
-        () => ProxyApiSuperClass.pigeon_detached();
+    PigeonOverrides.proxyApiSuperClass_new = () =>
+        ProxyApiSuperClass.pigeon_detached();
 
     PigeonOverrides.pigeon_reset();
     expect(PigeonOverrides.proxyApiSuperClass_new, isNull);

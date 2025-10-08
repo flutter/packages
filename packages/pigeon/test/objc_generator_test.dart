@@ -3883,7 +3883,10 @@ void main() {
   test('header of FlutterApi uses correct enum name with prefix', () {
     final Enum enum1 = Enum(
       name: 'Enum1',
-      members: <EnumMember>[EnumMember(name: 'one'), EnumMember(name: 'two')],
+      members: <EnumMember>[
+        EnumMember(name: 'one'),
+        EnumMember(name: 'two'),
+      ],
     );
     final Root root = Root(
       apis: <Api>[
@@ -3933,7 +3936,10 @@ void main() {
   test('source of FlutterApi uses correct enum name with prefix', () {
     final Enum enum1 = Enum(
       name: 'Enum1',
-      members: <EnumMember>[EnumMember(name: 'one'), EnumMember(name: 'two')],
+      members: <EnumMember>[
+        EnumMember(name: 'one'),
+        EnumMember(name: 'two'),
+      ],
     );
     final Root root = Root(
       apis: <Api>[
@@ -3983,7 +3989,10 @@ void main() {
   test('header of HostApi uses correct enum name with prefix', () {
     final Enum enum1 = Enum(
       name: 'Enum1',
-      members: <EnumMember>[EnumMember(name: 'one'), EnumMember(name: 'two')],
+      members: <EnumMember>[
+        EnumMember(name: 'one'),
+        EnumMember(name: 'two'),
+      ],
     );
     final TypeDeclaration enumType = TypeDeclaration(
       baseName: 'Enum1',
@@ -4034,7 +4043,10 @@ void main() {
   test('source of HostApi uses correct enum name with prefix', () {
     final Enum enum1 = Enum(
       name: 'Enum1',
-      members: <EnumMember>[EnumMember(name: 'one'), EnumMember(name: 'two')],
+      members: <EnumMember>[
+        EnumMember(name: 'one'),
+        EnumMember(name: 'two'),
+      ],
     );
     final TypeDeclaration enumType = TypeDeclaration(
       baseName: 'Enum1',

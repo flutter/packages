@@ -36,10 +36,9 @@ RegExp patternToRegExp(
     }
     final String name = match[1]!;
     final String? optionalPattern = match[2];
-    final String regex =
-        optionalPattern != null
-            ? _escapeGroup(optionalPattern, name)
-            : '(?<$name>[^/]+)';
+    final String regex = optionalPattern != null
+        ? _escapeGroup(optionalPattern, name)
+        : '(?<$name>[^/]+)';
     buffer.write(regex);
     parameters.add(name);
     start = match.end;
@@ -150,21 +149,20 @@ String canonicalUri(String loc) {
   // /login?from=/ => /login?from=/
   canon =
       uri.path.endsWith('/') &&
-              uri.path != '/' &&
-              !uri.hasQuery &&
-              !uri.hasFragment
-          ? canon.substring(0, canon.length - 1)
-          : canon;
+          uri.path != '/' &&
+          !uri.hasQuery &&
+          !uri.hasFragment
+      ? canon.substring(0, canon.length - 1)
+      : canon;
 
   // replace '/?', except for first occurrence, from path only
   // /login/?from=/ => /login?from=/
   // /?from=/ => /?from=/
-  final int pathStartIndex =
-      uri.host.isNotEmpty
-          ? uri.toString().indexOf(uri.host) + uri.host.length
-          : uri.hasScheme
-          ? uri.toString().indexOf(uri.scheme) + uri.scheme.length
-          : 0;
+  final int pathStartIndex = uri.host.isNotEmpty
+      ? uri.toString().indexOf(uri.host) + uri.host.length
+      : uri.hasScheme
+      ? uri.toString().indexOf(uri.scheme) + uri.scheme.length
+      : 0;
   if (pathStartIndex < canon.length) {
     canon = canon.replaceFirst('/?', '?', pathStartIndex + 1);
   }
@@ -179,10 +177,9 @@ String? fullPathForRoute(
   List<RouteBase> routes,
 ) {
   for (final RouteBase route in routes) {
-    final String fullPath =
-        (route is GoRoute)
-            ? concatenatePaths(parentFullpath, route.path)
-            : parentFullpath;
+    final String fullPath = (route is GoRoute)
+        ? concatenatePaths(parentFullpath, route.path)
+        : parentFullpath;
 
     if (route == targetRoute) {
       return fullPath;

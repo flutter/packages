@@ -62,8 +62,9 @@ class PrimitiveHostApi {
     BinaryMessenger? binaryMessenger,
     String messageChannelSuffix = '',
   }) : pigeonVar_binaryMessenger = binaryMessenger,
-       pigeonVar_messageChannelSuffix =
-           messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+           ? '.$messageChannelSuffix'
+           : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -386,8 +387,9 @@ abstract class PrimitiveFlutterApi {
     BinaryMessenger? binaryMessenger,
     String messageChannelSuffix = '',
   }) {
-    messageChannelSuffix =
-        messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+    messageChannelSuffix = messageChannelSuffix.isNotEmpty
+        ? '.$messageChannelSuffix'
+        : '';
     {
       final BasicMessageChannel<Object?>
       pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -643,8 +645,8 @@ abstract class PrimitiveFlutterApi {
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aBoolList was null.',
           );
           final List<Object?> args = (message as List<Object?>?)!;
-          final List<bool?>? arg_value =
-              (args[0] as List<Object?>?)?.cast<bool?>();
+          final List<bool?>? arg_value = (args[0] as List<Object?>?)
+              ?.cast<bool?>();
           assert(
             arg_value != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aBoolList was null, expected non-null List<bool?>.',

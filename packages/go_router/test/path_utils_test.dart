@@ -111,8 +111,10 @@ void main() {
 
   test('concatenateUris', () {
     void verify(String pathA, String pathB, String expected) {
-      final String result =
-          concatenateUris(Uri.parse(pathA), Uri.parse(pathB)).toString();
+      final String result = concatenateUris(
+        Uri.parse(pathA),
+        Uri.parse(pathB),
+      ).toString();
       expect(result, expected);
     }
 

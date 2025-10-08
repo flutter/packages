@@ -197,25 +197,22 @@ class EventAllNullableTypes {
       objectList: (result[19] as List<Object?>?)?.cast<Object?>(),
       listList: (result[20] as List<Object?>?)?.cast<List<Object?>?>(),
       mapList: (result[21] as List<Object?>?)?.cast<Map<Object?, Object?>?>(),
-      recursiveClassList:
-          (result[22] as List<Object?>?)?.cast<EventAllNullableTypes?>(),
+      recursiveClassList: (result[22] as List<Object?>?)
+          ?.cast<EventAllNullableTypes?>(),
       map: result[23] as Map<Object?, Object?>?,
-      stringMap:
-          (result[24] as Map<Object?, Object?>?)?.cast<String?, String?>(),
+      stringMap: (result[24] as Map<Object?, Object?>?)
+          ?.cast<String?, String?>(),
       intMap: (result[25] as Map<Object?, Object?>?)?.cast<int?, int?>(),
-      enumMap:
-          (result[26] as Map<Object?, Object?>?)
-              ?.cast<EventEnum?, EventEnum?>(),
-      objectMap:
-          (result[27] as Map<Object?, Object?>?)?.cast<Object?, Object?>(),
-      listMap:
-          (result[28] as Map<Object?, Object?>?)?.cast<int?, List<Object?>?>(),
-      mapMap:
-          (result[29] as Map<Object?, Object?>?)
-              ?.cast<int?, Map<Object?, Object?>?>(),
-      recursiveClassMap:
-          (result[30] as Map<Object?, Object?>?)
-              ?.cast<int?, EventAllNullableTypes?>(),
+      enumMap: (result[26] as Map<Object?, Object?>?)
+          ?.cast<EventEnum?, EventEnum?>(),
+      objectMap: (result[27] as Map<Object?, Object?>?)
+          ?.cast<Object?, Object?>(),
+      listMap: (result[28] as Map<Object?, Object?>?)
+          ?.cast<int?, List<Object?>?>(),
+      mapMap: (result[29] as Map<Object?, Object?>?)
+          ?.cast<int?, Map<Object?, Object?>?>(),
+      recursiveClassMap: (result[30] as Map<Object?, Object?>?)
+          ?.cast<int?, EventAllNullableTypes?>(),
     );
   }
 

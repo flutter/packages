@@ -21,18 +21,19 @@ class _FadeScaleTransitionDemoState extends State<FadeScaleTransitionDemo>
 
   @override
   void initState() {
-    _controller = AnimationController(
-      value: 0.0,
-      duration: const Duration(milliseconds: 150),
-      reverseDuration: const Duration(milliseconds: 75),
-      vsync: this,
-    )..addStatusListener((AnimationStatus status) {
-      setState(() {
-        // setState needs to be called to trigger a rebuild because
-        // the 'HIDE FAB'/'SHOW FAB' button needs to be updated based
-        // the latest value of [_controller.status].
-      });
-    });
+    _controller =
+        AnimationController(
+          value: 0.0,
+          duration: const Duration(milliseconds: 150),
+          reverseDuration: const Duration(milliseconds: 75),
+          vsync: this,
+        )..addStatusListener((AnimationStatus status) {
+          setState(() {
+            // setState needs to be called to trigger a rebuild because
+            // the 'HIDE FAB'/'SHOW FAB' button needs to be updated based
+            // the latest value of [_controller.status].
+          });
+        });
     super.initState();
   }
 
@@ -99,10 +100,9 @@ class _FadeScaleTransitionDemoState extends State<FadeScaleTransitionDemo>
                       _controller.forward();
                     }
                   },
-                  child:
-                      _isAnimationRunningForwardsOrComplete
-                          ? const Text('HIDE FAB')
-                          : const Text('SHOW FAB'),
+                  child: _isAnimationRunningForwardsOrComplete
+                      ? const Text('HIDE FAB')
+                      : const Text('SHOW FAB'),
                 ),
               ],
             ),

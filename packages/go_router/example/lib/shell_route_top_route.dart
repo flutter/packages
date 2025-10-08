@@ -178,13 +178,13 @@ class ScaffoldWithNavBar extends StatelessWidget {
   /// The [Scaffold]'s default back button cannot be used because it doesn't
   /// have the context of the current child.
   Widget? _buildLeadingButton(BuildContext context) {
-    final RouteMatchList currentConfiguration =
-        GoRouter.of(context).routerDelegate.currentConfiguration;
+    final RouteMatchList currentConfiguration = GoRouter.of(
+      context,
+    ).routerDelegate.currentConfiguration;
     final RouteMatch lastMatch = currentConfiguration.last;
-    final Uri location =
-        lastMatch is ImperativeRouteMatch
-            ? lastMatch.matches.uri
-            : currentConfiguration.uri;
+    final Uri location = lastMatch is ImperativeRouteMatch
+        ? lastMatch.matches.uri
+        : currentConfiguration.uri;
     final bool canPop = location.pathSegments.length > 1;
     return canPop ? BackButton(onPressed: GoRouter.of(context).pop) : null;
   }

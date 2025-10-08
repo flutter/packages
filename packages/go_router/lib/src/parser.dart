@@ -71,17 +71,15 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
       final RouteMatchList matchList = _routeMatchListCodec.decode(
         state as Map<Object?, Object?>,
       );
-      return debugParserFuture = _redirect(
-        context,
-        matchList,
-      ).then<RouteMatchList>((RouteMatchList value) {
-        if (value.isError && onParserException != null) {
-          // TODO(chunhtai): Figure out what to return if context is invalid.
-          // ignore: use_build_context_synchronously
-          return onParserException!(context, value);
-        }
-        return value;
-      });
+      return debugParserFuture = _redirect(context, matchList)
+          .then<RouteMatchList>((RouteMatchList value) {
+            if (value.isError && onParserException != null) {
+              // TODO(chunhtai): Figure out what to return if context is invalid.
+              // ignore: use_build_context_synchronously
+              return onParserException!(context, value);
+            }
+            return value;
+          });
     }
 
     Uri uri = routeInformation.uri;
@@ -99,32 +97,30 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
       log('No initial matches: ${routeInformation.uri.path}');
     }
 
-    return debugParserFuture = _redirect(
-      context,
-      initialMatches,
-    ).then<RouteMatchList>((RouteMatchList matchList) {
-      if (matchList.isError && onParserException != null) {
-        // TODO(chunhtai): Figure out what to return if context is invalid.
-        // ignore: use_build_context_synchronously
-        return onParserException!(context, matchList);
-      }
+    return debugParserFuture = _redirect(context, initialMatches)
+        .then<RouteMatchList>((RouteMatchList matchList) {
+          if (matchList.isError && onParserException != null) {
+            // TODO(chunhtai): Figure out what to return if context is invalid.
+            // ignore: use_build_context_synchronously
+            return onParserException!(context, matchList);
+          }
 
-      assert(() {
-        if (matchList.isNotEmpty) {
-          assert(
-            !matchList.last.route.redirectOnly,
-            'A redirect-only route must redirect to location different from itself.\n The offending route: ${matchList.last.route}',
+          assert(() {
+            if (matchList.isNotEmpty) {
+              assert(
+                !matchList.last.route.redirectOnly,
+                'A redirect-only route must redirect to location different from itself.\n The offending route: ${matchList.last.route}',
+              );
+            }
+            return true;
+          }());
+          return _updateRouteMatchList(
+            matchList,
+            baseRouteMatchList: state.baseRouteMatchList,
+            completer: state.completer,
+            type: state.type,
           );
-        }
-        return true;
-      }());
-      return _updateRouteMatchList(
-        matchList,
-        baseRouteMatchList: state.baseRouteMatchList,
-        completer: state.completer,
-        type: state.type,
-      );
-    });
+        });
   }
 
   @override

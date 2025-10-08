@@ -810,8 +810,10 @@ if (self.wrapped == nil) {
     required String dartPackageName,
   }) {
     const String codecName = 'PigeonCodec';
-    final List<EnumeratedType> enumeratedTypes =
-        getEnumeratedTypes(root, excludeSealedClasses: true).toList();
+    final List<EnumeratedType> enumeratedTypes = getEnumeratedTypes(
+      root,
+      excludeSealedClasses: true,
+    ).toList();
     final String readerWriterName =
         '${generatorOptions.prefix}${toUpperCamelCase(generatorOptions.fileSpecificClassNameComponent ?? '')}${codecName}ReaderWriter';
     final String readerName =
@@ -868,22 +870,19 @@ if (self.wrapped == nil) {
     indent.addScoped('{', '}', () {
       indent.write('');
       for (final EnumeratedType customType in enumeratedTypes) {
-        final String encodeString =
-            customType.type == CustomTypes.customClass
-                ? '[value toList]'
-                : '(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])';
-        final String valueString =
-            customType.enumeration < maximumCodecFieldKey
-                ? encodeString
-                : '[wrap toList]';
-        final String className =
-            customType.type == CustomTypes.customClass
-                ? _className(generatorOptions.prefix, customType.name)
-                : _enumName(
-                  customType.name,
-                  prefix: generatorOptions.prefix,
-                  box: true,
-                );
+        final String encodeString = customType.type == CustomTypes.customClass
+            ? '[value toList]'
+            : '(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])';
+        final String valueString = customType.enumeration < maximumCodecFieldKey
+            ? encodeString
+            : '[wrap toList]';
+        final String className = customType.type == CustomTypes.customClass
+            ? _className(generatorOptions.prefix, customType.name)
+            : _enumName(
+                customType.name,
+                prefix: generatorOptions.prefix,
+                box: true,
+              );
         indent.addScoped(
           'if ([value isKindOfClass:[$className class]]) {',
           '} else ',
@@ -893,8 +892,8 @@ if (self.wrapped == nil) {
             }
             final int enumeration =
                 customType.enumeration < maximumCodecFieldKey
-                    ? customType.enumeration
-                    : maximumCodecFieldKey;
+                ? customType.enumeration
+                : maximumCodecFieldKey;
             if (customType.enumeration >= maximumCodecFieldKey) {
               indent.writeln(
                 '${_className(generatorOptions.prefix, _overflowClassName)} *wrap = [${_className(generatorOptions.prefix, _overflowClassName)} makeWithType:${customType.enumeration - maximumCodecFieldKey} wrapped:$encodeString];',
@@ -1234,8 +1233,9 @@ static FlutterError *createConnectionError(NSString *channelName) {
     }
 
     // TODO(gaaclarke): Incorporate this into _getSelectorComponents.
-    final String lastSelectorComponent =
-        func.isAsynchronous ? 'completion' : 'error';
+    final String lastSelectorComponent = func.isAsynchronous
+        ? 'completion'
+        : 'error';
     final String selector = _getSelector(func, lastSelectorComponent);
     indent.writeln(
       'NSCAssert([api respondsToSelector:@selector($selector)], @"$apiName api (%@) doesn\'t respond to @selector($selector)", api);',
@@ -1271,10 +1271,9 @@ static FlutterError *createConnectionError(NSString *channelName) {
       if (func.isAsynchronous) {
         writeAsyncBindings(selectorComponents, callSignature, returnType);
       } else {
-        final String syncCall =
-            func.parameters.isEmpty
-                ? '[api ${selectorComponents.first}:&error]'
-                : '[api $callSignature error:&error]';
+        final String syncCall = func.parameters.isEmpty
+            ? '[api ${selectorComponents.first}:&error]'
+            : '[api $callSignature error:&error]';
         writeSyncBindings(syncCall, returnType);
       }
     });
@@ -1504,25 +1503,22 @@ void _writeObjcSourceClassInitializerDeclaration(
       classDefinition,
     )) {
       final String label = isFirst ? _capitalize(field.name) : field.name;
-      final void Function(String) printer =
-          isFirst
-              ? indent.add
-              : (String x) {
-                indent.newln();
-                indent.write(x);
-              };
+      final void Function(String) printer = isFirst
+          ? indent.add
+          : (String x) {
+              indent.newln();
+              indent.write(x);
+            };
       isFirst = false;
       final HostDatatype hostDatatype = getFieldHostDatatype(
         field,
         (TypeDeclaration x) =>
             _objcTypeStringForPrimitiveDartType(prefix, x, beforeString: true),
-        customResolver:
-            field.type.isEnum
-                ? (String x) =>
-                    field.type.isNullable
-                        ? _enumName(x, suffix: ' *', prefix: prefix, box: true)
-                        : _enumName(x, prefix: prefix)
-                : (String x) => '${_className(prefix, x)} *',
+        customResolver: field.type.isEnum
+            ? (String x) => field.type.isNullable
+                  ? _enumName(x, suffix: ' *', prefix: prefix, box: true)
+                  : _enumName(x, prefix: prefix)
+            : (String x) => '${_className(prefix, x)} *',
       );
       final String nullable = field.type.isNullable ? 'nullable ' : '';
       printer('$label:($nullable${hostDatatype.datatype})${field.name}');
@@ -1692,15 +1688,13 @@ String? _objcTypeStringForPrimitiveDartType(
 }) {
   final _ObjcType? objcType;
   if (forceBox || type.isNullable) {
-    objcType =
-        _objcTypeForNullableDartTypeMap.containsKey(type.baseName)
-            ? _objcTypeForDartType(classPrefix, type)
-            : null;
+    objcType = _objcTypeForNullableDartTypeMap.containsKey(type.baseName)
+        ? _objcTypeForDartType(classPrefix, type)
+        : null;
   } else {
-    objcType =
-        _objcTypeForNonNullableDartTypeMap.containsKey(type.baseName)
-            ? _objcTypeForDartType(classPrefix, type)
-            : null;
+    objcType = _objcTypeForNonNullableDartTypeMap.containsKey(type.baseName)
+        ? _objcTypeForDartType(classPrefix, type)
+        : null;
   }
   return beforeString ? objcType?.beforeString : objcType?.toString();
 }
@@ -1718,16 +1712,16 @@ _ObjcType _objcTypeForDartType(
   );
   return primitiveType == null
       ? _ObjcType(
-        baseName: _className(classPrefix, field.baseName),
-        // Non-nullable enums are non-pointer types.
-        isPointer: !field.isEnum || (field.isNullable || forceBox),
-      )
+          baseName: _className(classPrefix, field.baseName),
+          // Non-nullable enums are non-pointer types.
+          isPointer: !field.isEnum || (field.isNullable || forceBox),
+        )
       : field.typeArguments.isEmpty
       ? primitiveType
       : _ObjcType(
-        baseName:
-            '${primitiveType.baseName}<${_flattenTypeArguments(classPrefix, field.typeArguments)}>',
-      );
+          baseName:
+              '${primitiveType.baseName}<${_flattenTypeArguments(classPrefix, field.typeArguments)}>',
+        );
 }
 
 /// Maps a type to a properties memory semantics (ie strong, copy).
@@ -1775,8 +1769,8 @@ Iterable<String> _getSelectorComponents(
     final bool hasArguments = it.moveNext();
     final String namePostfix =
         (lastSelectorComponent.isNotEmpty && func.parameters.isEmpty)
-            ? 'With${_capitalize(lastSelectorComponent)}'
-            : '';
+        ? 'With${_capitalize(lastSelectorComponent)}'
+        : '';
     yield '${func.name}${hasArguments ? _capitalize(func.parameters[0].name) : namePostfix}';
     while (it.moveNext()) {
       yield it.current.name;
@@ -1991,10 +1985,9 @@ void _writeDataClassDeclaration(
       field,
       (TypeDeclaration x) =>
           _objcTypeStringForPrimitiveDartType(prefix, x, beforeString: true),
-      customResolver:
-          field.type.isEnum
-              ? (String x) => _enumName(x, prefix: prefix)
-              : (String x) => '${_className(prefix, x)} *',
+      customResolver: field.type.isEnum
+          ? (String x) => _enumName(x, prefix: prefix)
+          : (String x) => '${_className(prefix, x)} *',
     );
     late final String propertyType;
     addDocumentationComments(
@@ -2008,15 +2001,14 @@ void _writeDataClassDeclaration(
       isEnum: field.type.isEnum,
     );
     final String nullability = field.type.isNullable ? ', nullable' : '';
-    final String fieldType =
-        field.type.isEnum && field.type.isNullable
-            ? _enumName(
-              field.type.baseName,
-              suffix: ' *',
-              prefix: generatorOptions.prefix,
-              box: field.type.isNullable,
-            )
-            : hostDatatype.datatype;
+    final String fieldType = field.type.isEnum && field.type.isNullable
+        ? _enumName(
+            field.type.baseName,
+            suffix: ' *',
+            prefix: generatorOptions.prefix,
+            box: field.type.isNullable,
+          )
+        : hostDatatype.datatype;
     indent.writeln(
       '@property(nonatomic, $propertyType$nullability) $fieldType ${field.name};',
     );

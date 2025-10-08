@@ -18,8 +18,8 @@ void main() {
     final List<GoRoute> routes = <GoRoute>[
       GoRoute(
         path: '/page-0',
-        builder:
-            (BuildContext context, GoRouterState state) => const Placeholder(),
+        builder: (BuildContext context, GoRouterState state) =>
+            const Placeholder(),
       ),
     ];
 
@@ -36,8 +36,8 @@ void main() {
   test('RouteMatchList compares', () async {
     final GoRoute route = GoRoute(
       path: '/page-0',
-      builder:
-          (BuildContext context, GoRouterState state) => const Placeholder(),
+      builder: (BuildContext context, GoRouterState state) =>
+          const Placeholder(),
     );
     final Map<String, String> params1 = <String, String>{};
     final List<RouteMatchBase> match1 = RouteMatchBase.match(
@@ -82,15 +82,13 @@ void main() {
       routes: <GoRoute>[
         GoRoute(
           path: '/a',
-          builder:
-              (BuildContext context, GoRouterState state) =>
-                  const Placeholder(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const Placeholder(),
         ),
         GoRoute(
           path: '/b',
-          builder:
-              (BuildContext context, GoRouterState state) =>
-                  const Placeholder(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const Placeholder(),
         ),
       ],
       redirectLimit: 0,

@@ -80,12 +80,11 @@ Future<void> main(List<String> arguments) async {
     exit(0);
   }
 
-  final List<File> libFiles =
-      Directory('lib')
-          .listSync(recursive: true)
-          .whereType<File>()
-          .where((File file) => file.path.endsWith('.dart'))
-          .toList();
+  final List<File> libFiles = Directory('lib')
+      .listSync(recursive: true)
+      .whereType<File>()
+      .where((File file) => file.path.endsWith('.dart'))
+      .toList();
   final Set<LcovLine> flakyLines = <LcovLine>{};
   final Set<LcovLine> deadLines = <LcovLine>{};
   for (final File file in libFiles) {

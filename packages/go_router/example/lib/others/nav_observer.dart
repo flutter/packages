@@ -26,22 +26,20 @@ class App extends StatelessWidget {
       GoRoute(
         // if there's no name, path will be used as name for observers
         path: '/',
-        builder:
-            (BuildContext context, GoRouterState state) => const Page1Screen(),
+        builder: (BuildContext context, GoRouterState state) =>
+            const Page1Screen(),
         routes: <GoRoute>[
           GoRoute(
             name: 'page2',
             path: 'page2/:p1',
-            builder:
-                (BuildContext context, GoRouterState state) =>
-                    const Page2Screen(),
+            builder: (BuildContext context, GoRouterState state) =>
+                const Page2Screen(),
             routes: <GoRoute>[
               GoRoute(
                 name: 'page3',
                 path: 'page3',
-                builder:
-                    (BuildContext context, GoRouterState state) =>
-                        const Page3Screen(),
+                builder: (BuildContext context, GoRouterState state) =>
+                    const Page3Screen(),
               ),
             ],
           ),
@@ -107,12 +105,11 @@ class Page1Screen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           ElevatedButton(
-            onPressed:
-                () => context.goNamed(
-                  'page2',
-                  pathParameters: <String, String>{'p1': 'pv1'},
-                  queryParameters: <String, String>{'q1': 'qv1'},
-                ),
+            onPressed: () => context.goNamed(
+              'page2',
+              pathParameters: <String, String>{'p1': 'pv1'},
+              queryParameters: <String, String>{'q1': 'qv1'},
+            ),
             child: const Text('Go to page 2'),
           ),
         ],
@@ -134,11 +131,10 @@ class Page2Screen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           ElevatedButton(
-            onPressed:
-                () => context.goNamed(
-                  'page3',
-                  pathParameters: <String, String>{'p1': 'pv2'},
-                ),
+            onPressed: () => context.goNamed(
+              'page3',
+              pathParameters: <String, String>{'p1': 'pv2'},
+            ),
             child: const Text('Go to page 3'),
           ),
         ],

@@ -43,15 +43,15 @@ base class IOSContentProgressProvider extends PlatformContentProgressProvider {
   ///
   /// This allows the SDK to track progress of the content video.
   @internal
-  late final ima.IMAContentPlayhead contentPlayhead =
-      _iosParams._proxy.newIMAContentPlayhead();
+  late final ima.IMAContentPlayhead contentPlayhead = _iosParams._proxy
+      .newIMAContentPlayhead();
 
   late final IOSContentProgressProviderCreationParams _iosParams =
       params is IOSContentProgressProviderCreationParams
-          ? params as IOSContentProgressProviderCreationParams
-          : IOSContentProgressProviderCreationParams.fromPlatformContentProgressProviderCreationParams(
-            params,
-          );
+      ? params as IOSContentProgressProviderCreationParams
+      : IOSContentProgressProviderCreationParams.fromPlatformContentProgressProviderCreationParams(
+          params,
+        );
 
   @override
   Future<void> setProgress({

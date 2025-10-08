@@ -70,14 +70,13 @@ void main() {
         <RouteBase>[
           GoRoute(
             path: '/error',
-            builder:
-                (_, GoRouterState state) => Text('redirected ${state.extra}'),
+            builder: (_, GoRouterState state) =>
+                Text('redirected ${state.extra}'),
           ),
         ],
         tester,
-        onException:
-            (_, GoRouterState state, GoRouter router) =>
-                router.go('/error', extra: state.uri.toString()),
+        onException: (_, GoRouterState state, GoRouter router) =>
+            router.go('/error', extra: state.uri.toString()),
       );
       expect(find.text('redirected /'), findsOneWidget);
 
@@ -95,9 +94,8 @@ void main() {
           ),
         ],
         tester,
-        onException:
-            (_, GoRouterState state, GoRouter router) =>
-                router.go('/error', extra: state.extra),
+        onException: (_, GoRouterState state, GoRouter router) =>
+            router.go('/error', extra: state.extra),
       );
       expect(find.text('extra: null'), findsOneWidget);
 

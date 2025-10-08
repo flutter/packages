@@ -39,13 +39,13 @@ class App extends StatelessWidget {
     routes: <GoRoute>[
       GoRoute(
         path: '/',
-        builder:
-            (BuildContext context, GoRouterState state) => const HomeScreen(),
+        builder: (BuildContext context, GoRouterState state) =>
+            const HomeScreen(),
       ),
       GoRoute(
         path: '/login',
-        builder:
-            (BuildContext context, GoRouterState state) => const LoginScreen(),
+        builder: (BuildContext context, GoRouterState state) =>
+            const LoginScreen(),
       ),
     ],
 
@@ -89,12 +89,11 @@ class _LoginScreenState extends State<LoginScreen>
   @override
   void initState() {
     super.initState();
-    controller = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 1),
-    )..addListener(() {
-      setState(() {});
-    });
+    controller =
+        AnimationController(vsync: this, duration: const Duration(seconds: 1))
+          ..addListener(() {
+            setState(() {});
+          });
     controller.repeat();
   }
 

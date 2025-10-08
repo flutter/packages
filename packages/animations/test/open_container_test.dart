@@ -1508,15 +1508,13 @@ void main() {
         closedBuilder: (BuildContext context, VoidCallback action) {
           return GestureDetector(onTap: action, child: const Text('Closed'));
         },
-        openBuilder: (
-          BuildContext context,
-          CloseContainerActionCallback<bool> action,
-        ) {
-          return GestureDetector(
-            onTap: () => action(returnValue: true),
-            child: const Text('Open'),
-          );
-        },
+        openBuilder:
+            (BuildContext context, CloseContainerActionCallback<bool> action) {
+              return GestureDetector(
+                onTap: () => action(returnValue: true),
+                child: const Text('Open'),
+              );
+            },
       );
 
       await tester.pumpWidget(_boilerplate(child: openContainer));
@@ -1548,23 +1546,20 @@ void main() {
       closedBuilder: (BuildContext context, VoidCallback action) {
         return Text('Close', key: closedBuilderKey);
       },
-      openBuilder: (
-        BuildContext context,
-        CloseContainerActionCallback<bool> action,
-      ) {
-        return const Text('Open');
-      },
+      openBuilder:
+          (BuildContext context, CloseContainerActionCallback<bool> action) {
+            return const Text('Open');
+          },
     );
 
     await tester.pumpWidget(_boilerplate(child: openContainer));
 
-    final Finder closedBuilderMaterial =
-        find
-            .ancestor(
-              of: find.byKey(closedBuilderKey),
-              matching: find.byType(Material),
-            )
-            .first;
+    final Finder closedBuilderMaterial = find
+        .ancestor(
+          of: find.byKey(closedBuilderKey),
+          matching: find.byType(Material),
+        )
+        .first;
 
     final Material material = tester.widget<Material>(closedBuilderMaterial);
     expect(material.clipBehavior, Clip.antiAlias);
@@ -1576,24 +1571,21 @@ void main() {
       closedBuilder: (BuildContext context, VoidCallback action) {
         return Text('Close', key: closedBuilderKey);
       },
-      openBuilder: (
-        BuildContext context,
-        CloseContainerActionCallback<bool> action,
-      ) {
-        return const Text('Open');
-      },
+      openBuilder:
+          (BuildContext context, CloseContainerActionCallback<bool> action) {
+            return const Text('Open');
+          },
       clipBehavior: Clip.none,
     );
 
     await tester.pumpWidget(_boilerplate(child: openContainer));
 
-    final Finder closedBuilderMaterial =
-        find
-            .ancestor(
-              of: find.byKey(closedBuilderKey),
-              matching: find.byType(Material),
-            )
-            .first;
+    final Finder closedBuilderMaterial = find
+        .ancestor(
+          of: find.byKey(closedBuilderKey),
+          matching: find.byType(Material),
+        )
+        .first;
 
     final Material material = tester.widget<Material>(closedBuilderMaterial);
     expect(material.clipBehavior, Clip.none);
@@ -1777,8 +1769,9 @@ void main() {
 
     // Expect the last route pushed to the navigator to contain RouteSettings
     // equal to the RouteSettings passed to the OpenContainer
-    final ModalRoute<dynamic> modalRoute =
-        ModalRoute.of(tester.element(find.text('Open')))!;
+    final ModalRoute<dynamic> modalRoute = ModalRoute.of(
+      tester.element(find.text('Open')),
+    )!;
     expect(modalRoute.settings, routeSettings);
   });
 }
@@ -1891,35 +1884,34 @@ class __RemoveOpenContainerExampleState
     return removeOpenContainerWidget
         ? const Text('Container has been removed')
         : OpenContainer(
-          closedBuilder:
-              (BuildContext context, VoidCallback action) => Column(
-                children: <Widget>[
-                  const Text('Closed'),
-                  ElevatedButton(
-                    onPressed: action,
-                    child: const Text('Open the container'),
-                  ),
-                ],
-              ),
-          openBuilder:
-              (BuildContext context, VoidCallback action) => Column(
-                children: <Widget>[
-                  const Text('Open'),
-                  ElevatedButton(
-                    onPressed: action,
-                    child: const Text('Close the container'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        removeOpenContainerWidget = true;
-                      });
-                    },
-                    child: const Text('Remove the container'),
-                  ),
-                ],
-              ),
-        );
+            closedBuilder: (BuildContext context, VoidCallback action) =>
+                Column(
+                  children: <Widget>[
+                    const Text('Closed'),
+                    ElevatedButton(
+                      onPressed: action,
+                      child: const Text('Open the container'),
+                    ),
+                  ],
+                ),
+            openBuilder: (BuildContext context, VoidCallback action) => Column(
+              children: <Widget>[
+                const Text('Open'),
+                ElevatedButton(
+                  onPressed: action,
+                  child: const Text('Close the container'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      removeOpenContainerWidget = true;
+                    });
+                  },
+                  child: const Text('Remove the container'),
+                ),
+              ],
+            ),
+          );
   }
 }
 
