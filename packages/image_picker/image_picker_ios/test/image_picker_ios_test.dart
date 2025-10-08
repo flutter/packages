@@ -13,7 +13,6 @@ import 'test_api.g.dart';
 @immutable
 class _LoggedMethodCall {
   const _LoggedMethodCall(this.name, {required this.arguments});
-
   final String name;
   final Map<String, Object?> arguments;
 
