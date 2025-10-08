@@ -340,7 +340,7 @@ final class DefaultCamera: NSObject, Camera {
 
   func setUpCaptureSessionForAudioIfNeeded() {
     // Don't setup audio twice or we will lose the audio.
-    guard !mediaSettings.enableAudio || !isAudioSetup else { return }
+    guard mediaSettings.enableAudio && !isAudioSetup else { return }
 
     let audioDevice = audioCaptureDeviceFactory()
     do {
