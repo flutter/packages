@@ -1854,21 +1854,45 @@ void main() {
           () => picker.getMultiImageWithOptions(
             options: MultiImagePickerOptions.createAndValidate(limit: -1),
           ),
-          throwsArgumentError,
+          throwsA(
+            isA<ArgumentError>()
+                .having((ArgumentError error) => error.name, 'name', 'limit')
+                .having(
+                  (ArgumentError error) => error.message,
+                  'message',
+                  'cannot be lower than 2',
+                ),
+          ),
         );
 
         expect(
           () => picker.getMultiImageWithOptions(
             options: MultiImagePickerOptions.createAndValidate(limit: 0),
           ),
-          throwsArgumentError,
+          throwsA(
+            isA<ArgumentError>()
+                .having((ArgumentError error) => error.name, 'name', 'limit')
+                .having(
+                  (ArgumentError error) => error.message,
+                  'message',
+                  'cannot be lower than 2',
+                ),
+          ),
         );
 
         expect(
           () => picker.getMultiImageWithOptions(
             options: MultiImagePickerOptions.createAndValidate(limit: 1),
           ),
-          throwsArgumentError,
+          throwsA(
+            isA<ArgumentError>()
+                .having((ArgumentError error) => error.name, 'name', 'limit')
+                .having(
+                  (ArgumentError error) => error.message,
+                  'message',
+                  'cannot be lower than 2',
+                ),
+          ),
         );
       });
 
