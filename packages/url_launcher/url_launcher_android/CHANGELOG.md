@@ -1,6 +1,10 @@
+## 6.3.24
+
+* Resolves Gradle 9 deprecations. 
+
 ## 6.3.23
 
-* Updates Java compatibility version to 17. 
+* Updates Java compatibility version to 17.
 
 ## 6.3.22
 

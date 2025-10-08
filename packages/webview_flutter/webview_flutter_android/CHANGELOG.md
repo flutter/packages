@@ -1,3 +1,7 @@
+## 4.10.5
+
+* Resolves Gradle 9 deprecations.
+
 ## 4.10.4
 
 * Adds a README section about enabling geolocation.
