@@ -782,14 +782,45 @@ void main() {
         () => picker.getMedia(
           options: const MediaOptions(allowMultiple: true, limit: -1),
         ),
-        throwsArgumentError,
+        throwsA(
+          isA<ArgumentError>()
+              .having((ArgumentError error) => error.name, 'name', 'limit')
+              .having(
+                (ArgumentError error) => error.message,
+                'message',
+                'cannot be lower than 2',
+              ),
+        ),
       );
 
       expect(
         () => picker.getMedia(
           options: const MediaOptions(allowMultiple: true, limit: 0),
         ),
-        throwsArgumentError,
+        throwsA(
+          isA<ArgumentError>()
+              .having((ArgumentError error) => error.name, 'name', 'limit')
+              .having(
+                (ArgumentError error) => error.message,
+                'message',
+                'cannot be lower than 2',
+              ),
+        ),
+      );
+
+      expect(
+        () => picker.getMedia(
+          options: const MediaOptions(allowMultiple: true, limit: 1),
+        ),
+        throwsA(
+          isA<ArgumentError>()
+              .having((ArgumentError error) => error.name, 'name', 'limit')
+              .having(
+                (ArgumentError error) => error.message,
+                'message',
+                'cannot be lower than 2',
+              ),
+        ),
       );
     });
 
