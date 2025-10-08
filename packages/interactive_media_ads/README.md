@@ -67,8 +67,8 @@ android {
 // ···
     compileOptions {
         coreLibraryDesugaringEnabled true
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     // ···
 }
@@ -236,41 +236,40 @@ Widget build(BuildContext context) {
     body: Center(
       child: SizedBox(
         width: 300,
-        child:
-            !_contentVideoController.value.isInitialized
-                ? Container()
-                : AspectRatio(
-                  aspectRatio: _contentVideoController.value.aspectRatio,
-                  child: Stack(
-                    children: <Widget>[
-                      // The display container must be on screen before any Ads can be
-                      // loaded and can't be removed between ads. This handles clicks for
-                      // ads.
-                      _adDisplayContainer,
-                      if (_shouldShowContentVideo)
-                        VideoPlayer(_contentVideoController),
-                    ],
-                  ),
+        child: !_contentVideoController.value.isInitialized
+            ? Container()
+            : AspectRatio(
+                aspectRatio: _contentVideoController.value.aspectRatio,
+                child: Stack(
+                  children: <Widget>[
+                    // The display container must be on screen before any Ads can be
+                    // loaded and can't be removed between ads. This handles clicks for
+                    // ads.
+                    _adDisplayContainer,
+                    if (_shouldShowContentVideo)
+                      VideoPlayer(_contentVideoController),
+                  ],
                 ),
+              ),
       ),
     ),
     floatingActionButton:
         _contentVideoController.value.isInitialized && _shouldShowContentVideo
-            ? FloatingActionButton(
-              onPressed: () {
-                setState(() {
-                  _contentVideoController.value.isPlaying
-                      ? _contentVideoController.pause()
-                      : _contentVideoController.play();
-                });
-              },
-              child: Icon(
+        ? FloatingActionButton(
+            onPressed: () {
+              setState(() {
                 _contentVideoController.value.isPlaying
-                    ? Icons.pause
-                    : Icons.play_arrow,
-              ),
-            )
-            : null,
+                    ? _contentVideoController.pause()
+                    : _contentVideoController.play();
+              });
+            },
+            child: Icon(
+              _contentVideoController.value.isPlaying
+                  ? Icons.pause
+                  : Icons.play_arrow,
+            ),
+          )
+        : null,
   );
 }
 
