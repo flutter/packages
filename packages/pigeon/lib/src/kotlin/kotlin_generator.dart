@@ -1031,6 +1031,15 @@ if (wrapped == null) {
             });
             indent.newln();
 
+            indent.format('''
+              fun logNewInstanceFailure(apiName: String, value: Any, exception: Throwable?) {
+                Log.w(
+                  "${proxyApiCodecName(const InternalKotlinOptions(kotlinOut: ''))}",
+                  "Failed to create new Dart proxy instance of \$apiName: \$value. \$exception"
+                )
+              }
+              ''');
+
             enumerate(sortedApis, (int index, AstProxyApi api) {
               final String className =
                   api.kotlinOptions?.fullClassName ?? api.name;
@@ -1043,7 +1052,11 @@ if (wrapped == null) {
 
               indent.format('''
                   ${index > 0 ? ' else ' : ''}if (${versionCheck}value is $className) {
-                    registrar.get$hostProxyApiPrefix${api.name}().${classMemberNamePrefix}newInstance(value) { }
+                    registrar.get$hostProxyApiPrefix${api.name}().${classMemberNamePrefix}newInstance(value) {
+                      if (it.isFailure) {
+                        logNewInstanceFailure("${api.name}", value, it.exceptionOrNull())
+                      }
+                    }
                   }''');
             });
             indent.newln();
