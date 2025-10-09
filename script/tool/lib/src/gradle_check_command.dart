@@ -360,14 +360,18 @@ build.gradle "namespace" must match the "package" attribute in AndroidManifest.x
     final bool hasLanguageVersion = gradleLines.any((String line) =>
         line.contains('languageVersion') && !_isCommented(line));
     final bool hasCompabilityVersions = gradleLines.any((String line) =>
-            line.contains('sourceCompatibility = JavaVersion.VERSION_$requiredJavaVersion') && !_isCommented(line)) &&
+            line.contains(
+                'sourceCompatibility = JavaVersion.VERSION_$requiredJavaVersion') &&
+            !_isCommented(line)) &&
         // Newer toolchains default targetCompatibility to the same value as
         // sourceCompatibility, but older toolchains require it to be set
         // explicitly. The exact version cutoff (and of which piece of the
         // toolchain; likely AGP) is unknown; for context see
         // https://github.com/flutter/flutter/issues/125482
         gradleLines.any((String line) =>
-            line.contains('targetCompatibility = JavaVersion.VERSION_$requiredJavaVersion') && !_isCommented(line));
+            line.contains(
+                'targetCompatibility = JavaVersion.VERSION_$requiredJavaVersion') &&
+            !_isCommented(line));
     if (!hasLanguageVersion && !hasCompabilityVersions) {
       const String javaErrorMessage = '''
 build.gradle(.kts) must set an explicit Java compatibility version.
@@ -395,7 +399,8 @@ for more details.''';
           '$indentation${javaErrorMessage.split('\n').join('\n$indentation')}');
       return false;
     }
-    bool isKotlinOptions(String line) => line.contains('kotlinOptions') && !_isCommented(line);
+    bool isKotlinOptions(String line) =>
+        line.contains('kotlinOptions') && !_isCommented(line);
     final bool hasKotlinOptions = gradleLines.any(isKotlinOptions);
     final bool kotlinOptionsUsesJavaVersion = gradleLines.any((String line) =>
         line.contains('jvmTarget = JavaVersion.VERSION_$requiredJavaVersion') &&
@@ -404,8 +409,11 @@ for more details.''';
     if (hasKotlinOptions && !kotlinOptionsUsesJavaVersion) {
       // Bad lines contains the first 4 lines including the kotlinOptions section.
       String badLines = '';
-      final int startIndex = gradleLines.indexOf(gradleLines.firstWhere(isKotlinOptions));
-      for(int i = startIndex; i < math.min(startIndex + 4, gradleLines.length); i++) {
+      final int startIndex =
+          gradleLines.indexOf(gradleLines.firstWhere(isKotlinOptions));
+      for (int i = startIndex;
+          i < math.min(startIndex + 4, gradleLines.length);
+          i++) {
         badLines += '${gradleLines[i]}\n';
       }
       final String kotlinErrorMessage = '''
