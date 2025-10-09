@@ -1,3 +1,7 @@
+## 0.2.8+2
+
+* Updates Java compatibility version to 17.
+
 ## 0.2.8+1
 
 * Resolves Gradle 9 deprecations.
