@@ -55,3 +55,5 @@ and then deleting everything but `android/` from it:
   from version 1.9.0 to 2.1.0. If a user runs into an error with the AGP version,
   the warning is clear on how to upgrade the version to one that we support.
 - Modifies `gradle.properties` to not set android.enableJetifier=true.
+- Update `app/build.gradle` to enable library desugaring to support
+  `interactive_media_ads` plugin.

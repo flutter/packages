@@ -239,6 +239,11 @@ dependencies {}
         ? '    implementation("androidx.lifecycle:lifecycle-runtime:2.2.0-rc01")'
         : "    implementation 'androidx.lifecycle:lifecycle-runtime:2.2.0-rc01'";
 
+    // Desugaring is required for interactive_media_ads.
+    final String desugaringDependency = gradleFileIsKotlin
+        ? '    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")'
+        : "    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'";
+
     _adjustFile(
       gradleFile,
       replacements: <String, List<String>>{
@@ -249,6 +254,14 @@ dependencies {}
         }
       },
       regexReplacements: <RegExp, List<String>>{
+        // Desugaring is required for interactive_media_ads.
+        RegExp(r'compileOptions\s+{$'): <String>[
+          'compileOptions {',
+          if (gradleFileIsKotlin)
+            'isCoreLibraryDesugaringEnabled = true'
+          else
+            'coreLibraryDesugaringEnabled true',
+        ],
         // Tests for https://github.com/flutter/flutter/issues/43383
         // Handling of 'dependencies' is more complex since it hasn't been very
         // stable across template versions.
@@ -256,12 +269,14 @@ dependencies {}
         RegExp(r'^dependencies\s+{\s*}$'): <String>[
           'dependencies {',
           lifecycleDependency,
+          desugaringDependency,
           '}',
         ],
         // - Handle a normal dependencies section.
         RegExp(r'^dependencies\s+{$'): <String>[
           'dependencies {',
           lifecycleDependency,
+          desugaringDependency,
         ],
         // - See below for handling of the case where there is no dependencies
         // section.

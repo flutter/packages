@@ -68,12 +68,9 @@ class AdsRequest {
   final PlatformAdsRequest platform;
 
   /// The URL from which ads will be requested.
-  String get adTagUrl => switch (platform) {
+  String? get adTagUrl => switch (platform) {
     final PlatformAdsRequestWithAdTagUrl request => request.adTagUrl,
-    // TODO(bparrishMines): This returns an empty string rather than null
-    // to prevent a breaking change. This should be updated to return null
-    // on the next major release.
-    PlatformAdsRequestWithAdsResponse() => '',
+    PlatformAdsRequestWithAdsResponse() => null,
   };
 
   /// Specifies a VAST, VMAP, or ad rules response to be used instead of making
