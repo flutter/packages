@@ -40,10 +40,9 @@ class AnimateCameraState extends State<AnimateCamera> {
 
   void _toggleAnimationDuration() {
     setState(() {
-      _cameraUpdateAnimationDuration =
-          _cameraUpdateAnimationDuration != null
-              ? null
-              : const Duration(seconds: _durationSeconds);
+      _cameraUpdateAnimationDuration = _cameraUpdateAnimationDuration != null
+          ? null
+          : const Duration(seconds: _durationSeconds);
     });
   }
 
