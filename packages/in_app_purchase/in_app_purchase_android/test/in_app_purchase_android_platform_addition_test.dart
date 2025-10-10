@@ -76,8 +76,8 @@ void main() {
       when(
         mockApi.getBillingConfigAsync(),
       ).thenAnswer((_) async => platformBillingConfigFromWrapper(expected));
-      final String countryCode =
-          await iapAndroidPlatformAddition.getCountryCode();
+      final String countryCode = await iapAndroidPlatformAddition
+          .getCountryCode();
 
       expect(countryCode, equals(expectedCountryCode));
     });
@@ -133,8 +133,8 @@ void main() {
         ),
       );
 
-      final BillingResultWrapper result =
-          await iapAndroidPlatformAddition.isAlternativeBillingOnlyAvailable();
+      final BillingResultWrapper result = await iapAndroidPlatformAddition
+          .isAlternativeBillingOnlyAvailable();
 
       expect(result, equals(expected));
     });
@@ -153,8 +153,8 @@ void main() {
       when(
         mockApi.showAlternativeBillingOnlyInformationDialog(),
       ).thenAnswer((_) async => convertToPigeonResult(expected));
-      final BillingResultWrapper result =
-          await iapAndroidPlatformAddition.isAlternativeBillingOnlyAvailable();
+      final BillingResultWrapper result = await iapAndroidPlatformAddition
+          .isAlternativeBillingOnlyAvailable();
 
       expect(result, equals(expected));
     });

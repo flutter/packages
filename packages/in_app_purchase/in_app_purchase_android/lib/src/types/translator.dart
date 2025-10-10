@@ -19,13 +19,12 @@ class Translator {
       originalExternalTransactionId:
           detailsWrapper.originalExternalTransactionId,
       externalTransactionToken: detailsWrapper.externalTransactionToken,
-      products:
-          detailsWrapper.products
-              .map(
-                (UserChoiceDetailsProductWrapper e) =>
-                    convertToUserChoiceDetailsProduct(e),
-              )
-              .toList(),
+      products: detailsWrapper.products
+          .map(
+            (UserChoiceDetailsProductWrapper e) =>
+                convertToUserChoiceDetailsProduct(e),
+          )
+          .toList(),
     );
   }
 

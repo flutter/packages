@@ -454,8 +454,8 @@ class PigeonInstanceManager {
       final PigeonInternalProxyApiBaseClass? strongInstance =
           _strongInstances[identifier];
       if (strongInstance != null) {
-        final PigeonInternalProxyApiBaseClass copy =
-            strongInstance.pigeon_copy();
+        final PigeonInternalProxyApiBaseClass copy = strongInstance
+            .pigeon_copy();
         _identifiers[copy] = identifier;
         _weakInstances[identifier] =
             WeakReference<PigeonInternalProxyApiBaseClass>(copy);
@@ -3899,8 +3899,8 @@ class IMAAdsManager extends NSObject {
             arg_pigeon_instanceIdentifier != null,
             'Argument for dev.flutter.pigeon.interactive_media_ads.IMAAdsManager.pigeon_newInstance was null, expected non-null int.',
           );
-          final List<double>? arg_adCuePoints =
-              (args[1] as List<Object?>?)?.cast<double>();
+          final List<double>? arg_adCuePoints = (args[1] as List<Object?>?)
+              ?.cast<double>();
           assert(
             arg_adCuePoints != null,
             'Argument for dev.flutter.pigeon.interactive_media_ads.IMAAdsManager.pigeon_newInstance was null, expected non-null List<double>.',
@@ -6671,8 +6671,8 @@ class IMAAd extends NSObject {
             arg_dealID != null,
             'Argument for dev.flutter.pigeon.interactive_media_ads.IMAAd.pigeon_newInstance was null, expected non-null String.',
           );
-          final List<String>? arg_wrapperAdIDs =
-              (args[25] as List<Object?>?)?.cast<String>();
+          final List<String>? arg_wrapperAdIDs = (args[25] as List<Object?>?)
+              ?.cast<String>();
           assert(
             arg_wrapperAdIDs != null,
             'Argument for dev.flutter.pigeon.interactive_media_ads.IMAAd.pigeon_newInstance was null, expected non-null List<String>.',
@@ -6683,8 +6683,8 @@ class IMAAd extends NSObject {
             arg_wrapperCreativeIDs != null,
             'Argument for dev.flutter.pigeon.interactive_media_ads.IMAAd.pigeon_newInstance was null, expected non-null List<String>.',
           );
-          final List<String>? arg_wrapperSystems =
-              (args[27] as List<Object?>?)?.cast<String>();
+          final List<String>? arg_wrapperSystems = (args[27] as List<Object?>?)
+              ?.cast<String>();
           assert(
             arg_wrapperSystems != null,
             'Argument for dev.flutter.pigeon.interactive_media_ads.IMAAd.pigeon_newInstance was null, expected non-null List<String>.',

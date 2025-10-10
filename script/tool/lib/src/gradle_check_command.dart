@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:math' as math;
+
 import 'package:collection/collection.dart';
 import 'package:file/file.dart';
 import 'package:meta/meta.dart';
@@ -354,33 +356,38 @@ build.gradle "namespace" must match the "package" attribute in AndroidManifest.x
   /// than using whatever the client's local toolchaing defaults to (which can
   /// lead to compile errors that show up for clients, but not in CI).
   bool _validateCompatibilityVersions(List<String> gradleLines) {
+    const String requiredJavaVersion = '17';
     final bool hasLanguageVersion = gradleLines.any((String line) =>
         line.contains('languageVersion') && !_isCommented(line));
     final bool hasCompabilityVersions = gradleLines.any((String line) =>
-            line.contains('sourceCompatibility') && !_isCommented(line)) &&
+            line.contains(
+                'sourceCompatibility = JavaVersion.VERSION_$requiredJavaVersion') &&
+            !_isCommented(line)) &&
         // Newer toolchains default targetCompatibility to the same value as
         // sourceCompatibility, but older toolchains require it to be set
         // explicitly. The exact version cutoff (and of which piece of the
         // toolchain; likely AGP) is unknown; for context see
         // https://github.com/flutter/flutter/issues/125482
         gradleLines.any((String line) =>
-            line.contains('targetCompatibility') && !_isCommented(line));
+            line.contains(
+                'targetCompatibility = JavaVersion.VERSION_$requiredJavaVersion') &&
+            !_isCommented(line));
     if (!hasLanguageVersion && !hasCompabilityVersions) {
-      const String errorMessage = '''
-build.gradle must set an explicit Java compatibility version.
+      const String javaErrorMessage = '''
+build.gradle(.kts) must set an explicit Java compatibility version.
 
 This can be done either via "sourceCompatibility"/"targetCompatibility":
     android {
         compileOptions {
-            sourceCompatibility = JavaVersion.VERSION_11
-            targetCompatibility = JavaVersion.VERSION_11
+            sourceCompatibility = JavaVersion.VERSION_$requiredJavaVersion
+            targetCompatibility = JavaVersion.VERSION_$requiredJavaVersion
         }
     }
 
 or "toolchain":
     java {
         toolchain {
-            languageVersion = JavaLanguageVersion.of(11)
+            languageVersion = JavaLanguageVersion.of($requiredJavaVersion)
         }
     }
 
@@ -389,9 +396,42 @@ https://docs.gradle.org/current/userguide/java_plugin.html#toolchain_and_compati
 for more details.''';
 
       printError(
-          '$indentation${errorMessage.split('\n').join('\n$indentation')}');
+          '$indentation${javaErrorMessage.split('\n').join('\n$indentation')}');
       return false;
     }
+    bool isKotlinOptions(String line) =>
+        line.contains('kotlinOptions') && !_isCommented(line);
+    final bool hasKotlinOptions = gradleLines.any(isKotlinOptions);
+    final bool kotlinOptionsUsesJavaVersion = gradleLines.any((String line) =>
+        line.contains('jvmTarget = JavaVersion.VERSION_$requiredJavaVersion') &&
+        !_isCommented(line));
+    // Either does not set kotlinOptions or does and uses non-string based syntax.
+    if (hasKotlinOptions && !kotlinOptionsUsesJavaVersion) {
+      // Bad lines contains the first 4 lines including the kotlinOptions section.
+      String badLines = '';
+      final int startIndex =
+          gradleLines.indexOf(gradleLines.firstWhere(isKotlinOptions));
+      for (int i = startIndex;
+          i < math.min(startIndex + 4, gradleLines.length);
+          i++) {
+        badLines += '${gradleLines[i]}\n';
+      }
+      final String kotlinErrorMessage = '''
+If build.gradle(.kts) sets jvmTarget then it must use JavaVersion syntax.
+  Good:
+    android {
+      kotlinOptions {
+          jvmTarget = JavaVersion.VERSION_$requiredJavaVersion.toString()
+      }
+    }
+  BAD:
+    $badLines
+''';
+      printError(
+          '$indentation${kotlinErrorMessage.split('\n').join('\n$indentation')}');
+      return false;
+    }
+
     return true;
   }
 

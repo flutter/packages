@@ -105,8 +105,8 @@ base class AndroidAdsRenderingSettings extends PlatformAdsRenderingSettings {
 
   late final AndroidAdsRenderingSettingsCreationParams _androidParams =
       params is AndroidAdsRenderingSettingsCreationParams
-          ? params as AndroidAdsRenderingSettingsCreationParams
-          : AndroidAdsRenderingSettingsCreationParams.fromPlatformAdsRenderingSettingsCreationParams(
-            params,
-          );
+      ? params as AndroidAdsRenderingSettingsCreationParams
+      : AndroidAdsRenderingSettingsCreationParams.fromPlatformAdsRenderingSettingsCreationParams(
+          params,
+        );
 }
