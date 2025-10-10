@@ -120,7 +120,8 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
   /// Sets whether the video should continue to play in the background.
   Future<void> setAllowBackgroundPlayback(bool allowBackgroundPlayback) {
     throw UnimplementedError(
-        'setAllowBackgroundPlayback() has not been implemented.');
+      'setAllowBackgroundPlayback() has not been implemented.',
+    );
   }
 
   /// Sets additional options on web.
