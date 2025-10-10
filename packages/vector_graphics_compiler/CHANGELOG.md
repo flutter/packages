@@ -1,4 +1,4 @@
-## 1.1.20
+## 2.0.0
 
 * Add build hook helper to allow for transforming assets through hooks.
 
