@@ -63,10 +63,8 @@ base class IOSAdsLoader extends PlatformAdsLoader {
 
   late final IOSAdsLoaderCreationParams _iosParams =
       params is IOSAdsLoaderCreationParams
-          ? params as IOSAdsLoaderCreationParams
-          : IOSAdsLoaderCreationParams.fromPlatformAdsLoaderCreationParams(
-            params,
-          );
+      ? params as IOSAdsLoaderCreationParams
+      : IOSAdsLoaderCreationParams.fromPlatformAdsLoaderCreationParams(params);
 
   @override
   Future<void> contentComplete() {
@@ -79,9 +77,9 @@ base class IOSAdsLoader extends PlatformAdsLoader {
         (_iosParams.container as IOSAdDisplayContainer).adDisplayContainer!;
     final IMAContentPlayhead? contentProgressProvider =
         request.contentProgressProvider != null
-            ? (request.contentProgressProvider! as IOSContentProgressProvider)
-                .contentPlayhead
-            : null;
+        ? (request.contentProgressProvider! as IOSContentProgressProvider)
+              .contentPlayhead
+        : null;
 
     final IMAAdsRequest adsRequest = switch (request) {
       final PlatformAdsRequestWithAdTagUrl request => IMAAdsRequest(

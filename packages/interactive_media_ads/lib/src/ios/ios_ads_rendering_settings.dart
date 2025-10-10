@@ -78,13 +78,13 @@ base class IOSAdsRenderingSettings extends PlatformAdsRenderingSettings {
 
   /// The native iOS IMAAdsRenderingSettings.
   @internal
-  late final IMAAdsRenderingSettings nativeSettings =
-      _iosParams._proxy.newIMAAdsRenderingSettings();
+  late final IMAAdsRenderingSettings nativeSettings = _iosParams._proxy
+      .newIMAAdsRenderingSettings();
 
   late final IOSAdsRenderingSettingsCreationParams _iosParams =
       params is IOSAdsRenderingSettingsCreationParams
-          ? params as IOSAdsRenderingSettingsCreationParams
-          : IOSAdsRenderingSettingsCreationParams.fromPlatformAdsRenderingSettingsCreationParams(
-            params,
-          );
+      ? params as IOSAdsRenderingSettingsCreationParams
+      : IOSAdsRenderingSettingsCreationParams.fromPlatformAdsRenderingSettingsCreationParams(
+          params,
+        );
 }

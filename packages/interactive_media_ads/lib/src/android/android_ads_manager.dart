@@ -43,12 +43,9 @@ class AndroidAdsManager extends PlatformAdsManager {
   Future<void> init({PlatformAdsRenderingSettings? settings}) async {
     ima.AdsRenderingSettings? nativeSettings;
     if (settings != null) {
-      nativeSettings =
-          settings is AndroidAdsRenderingSettings
-              ? await settings.nativeSettings
-              : await AndroidAdsRenderingSettings(
-                settings.params,
-              ).nativeSettings;
+      nativeSettings = settings is AndroidAdsRenderingSettings
+          ? await settings.nativeSettings
+          : await AndroidAdsRenderingSettings(settings.params).nativeSettings;
     }
 
     await _manager.init(nativeSettings);
@@ -142,35 +139,32 @@ PlatformAd _asPlatformAd(ima.Ad ad) {
     creativeId: ad.creativeId,
     dealId: ad.dealId,
     description: ad.description,
-    duration:
-        ad.duration == -1
-            ? null
-            : Duration(
-              milliseconds:
-                  (ad.duration * Duration.millisecondsPerSecond).round(),
-            ),
+    duration: ad.duration == -1
+        ? null
+        : Duration(
+            milliseconds: (ad.duration * Duration.millisecondsPerSecond)
+                .round(),
+          ),
     height: ad.height,
-    skipTimeOffset:
-        ad.skipTimeOffset == -1
-            ? null
-            : Duration(
-              milliseconds:
-                  (ad.skipTimeOffset * Duration.millisecondsPerSecond).round(),
-            ),
+    skipTimeOffset: ad.skipTimeOffset == -1
+        ? null
+        : Duration(
+            milliseconds: (ad.skipTimeOffset * Duration.millisecondsPerSecond)
+                .round(),
+          ),
     surveyUrl: ad.surveyUrl,
     title: ad.title,
     traffickingParameters: ad.traffickingParameters,
-    uiElements:
-        ad.uiElements
-            .map((ima.UiElement element) {
-              return switch (element) {
-                ima.UiElement.adAttribution => AdUIElement.adAttribution,
-                ima.UiElement.countdown => AdUIElement.countdown,
-                ima.UiElement.unknown => null,
-              };
-            })
-            .whereType<AdUIElement>()
-            .toSet(),
+    uiElements: ad.uiElements
+        .map((ima.UiElement element) {
+          return switch (element) {
+            ima.UiElement.adAttribution => AdUIElement.adAttribution,
+            ima.UiElement.countdown => AdUIElement.countdown,
+            ima.UiElement.unknown => null,
+          };
+        })
+        .whereType<AdUIElement>()
+        .toSet(),
     universalAdIds: ad.universalAdIds.map(_asPlatformUniversalAdId).toList(),
     vastMediaBitrate: ad.vastMediaBitrate,
     vastMediaHeight: ad.vastMediaHeight,
@@ -184,18 +178,17 @@ PlatformAd _asPlatformAd(ima.Ad ad) {
 PlatformAdPodInfo _asPlatformAdInfo(ima.AdPodInfo adPodInfo) {
   return PlatformAdPodInfo(
     adPosition: adPodInfo.adPosition,
-    maxDuration:
-        adPodInfo.maxDuration == -1
-            ? null
-            : Duration(
-              milliseconds:
-                  (adPodInfo.maxDuration * Duration.millisecondsPerSecond)
-                      .round(),
-            ),
+    maxDuration: adPodInfo.maxDuration == -1
+        ? null
+        : Duration(
+            milliseconds:
+                (adPodInfo.maxDuration * Duration.millisecondsPerSecond)
+                    .round(),
+          ),
     podIndex: adPodInfo.podIndex,
     timeOffset: Duration(
-      milliseconds:
-          (adPodInfo.timeOffset * Duration.millisecondsPerSecond).round(),
+      milliseconds: (adPodInfo.timeOffset * Duration.millisecondsPerSecond)
+          .round(),
     ),
     totalAds: adPodInfo.totalAds,
     isBumper: adPodInfo.isBumper,
@@ -215,11 +208,11 @@ PlatformUniversalAdId _asPlatformUniversalAdId(
   ima.UniversalAdId universalAdId,
 ) {
   return PlatformUniversalAdId(
-    adIdValue:
-        universalAdId.adIdValue == 'unknown' ? null : universalAdId.adIdValue,
-    adIdRegistry:
-        universalAdId.adIdRegistry == 'unknown'
-            ? null
-            : universalAdId.adIdRegistry,
+    adIdValue: universalAdId.adIdValue == 'unknown'
+        ? null
+        : universalAdId.adIdValue,
+    adIdRegistry: universalAdId.adIdRegistry == 'unknown'
+        ? null
+        : universalAdId.adIdRegistry,
   );
 }

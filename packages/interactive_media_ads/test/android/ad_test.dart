@@ -31,18 +31,21 @@ void main() {
       late final void Function(ima.AdEventListener, ima.AdEvent)
       onAdEventCallback;
 
-      ima.PigeonOverrides.adEventListener_new = ({
-        required void Function(ima.AdEventListener, ima.AdEvent) onAdEvent,
-      }) {
-        onAdEventCallback = onAdEvent;
-        return MockAdEventListener();
-      };
+      ima.PigeonOverrides.adEventListener_new =
+          ({
+            required void Function(ima.AdEventListener, ima.AdEvent) onAdEvent,
+          }) {
+            onAdEventCallback = onAdEvent;
+            return MockAdEventListener();
+          };
 
-      ima.PigeonOverrides.adErrorListener_new = ({
-        required void Function(ima.AdErrorListener, ima.AdErrorEvent) onAdError,
-      }) {
-        return MockAdErrorListener();
-      };
+      ima.PigeonOverrides.adErrorListener_new =
+          ({
+            required void Function(ima.AdErrorListener, ima.AdErrorEvent)
+            onAdError,
+          }) {
+            return MockAdErrorListener();
+          };
 
       final AndroidAdsManager adsManager = AndroidAdsManager(mockAdsManager);
 
@@ -79,18 +82,21 @@ void main() {
       late final void Function(ima.AdEventListener, ima.AdEvent)
       onAdEventCallback;
 
-      ima.PigeonOverrides.adEventListener_new = ({
-        required void Function(ima.AdEventListener, ima.AdEvent) onAdEvent,
-      }) {
-        onAdEventCallback = onAdEvent;
-        return MockAdEventListener();
-      };
+      ima.PigeonOverrides.adEventListener_new =
+          ({
+            required void Function(ima.AdEventListener, ima.AdEvent) onAdEvent,
+          }) {
+            onAdEventCallback = onAdEvent;
+            return MockAdEventListener();
+          };
 
-      ima.PigeonOverrides.adErrorListener_new = ({
-        required void Function(ima.AdErrorListener, ima.AdErrorEvent) onAdError,
-      }) {
-        return MockAdErrorListener();
-      };
+      ima.PigeonOverrides.adErrorListener_new =
+          ({
+            required void Function(ima.AdErrorListener, ima.AdErrorEvent)
+            onAdError,
+          }) {
+            return MockAdErrorListener();
+          };
 
       final AndroidAdsManager adsManager = AndroidAdsManager(mockAdsManager);
 
@@ -124,18 +130,21 @@ void main() {
       late final void Function(ima.AdEventListener, ima.AdEvent)
       onAdEventCallback;
 
-      ima.PigeonOverrides.adEventListener_new = ({
-        required void Function(ima.AdEventListener, ima.AdEvent) onAdEvent,
-      }) {
-        onAdEventCallback = onAdEvent;
-        return MockAdEventListener();
-      };
+      ima.PigeonOverrides.adEventListener_new =
+          ({
+            required void Function(ima.AdEventListener, ima.AdEvent) onAdEvent,
+          }) {
+            onAdEventCallback = onAdEvent;
+            return MockAdEventListener();
+          };
 
-      ima.PigeonOverrides.adErrorListener_new = ({
-        required void Function(ima.AdErrorListener, ima.AdErrorEvent) onAdError,
-      }) {
-        return MockAdErrorListener();
-      };
+      ima.PigeonOverrides.adErrorListener_new =
+          ({
+            required void Function(ima.AdErrorListener, ima.AdErrorEvent)
+            onAdError,
+          }) {
+            return MockAdErrorListener();
+          };
 
       final AndroidAdsManager adsManager = AndroidAdsManager(mockAdsManager);
 

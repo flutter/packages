@@ -1173,12 +1173,10 @@ class MockSurfaceAndroidViewController extends _i1.Mock
   _i4.PointTransformer get pointTransformer =>
       (super.noSuchMethod(
             Invocation.getter(#pointTransformer),
-            returnValue:
-                (_i3.Offset position) =>
-                    _FakeOffset_17(this, Invocation.getter(#pointTransformer)),
-            returnValueForMissingStub:
-                (_i3.Offset position) =>
-                    _FakeOffset_17(this, Invocation.getter(#pointTransformer)),
+            returnValue: (_i3.Offset position) =>
+                _FakeOffset_17(this, Invocation.getter(#pointTransformer)),
+            returnValueForMissingStub: (_i3.Offset position) =>
+                _FakeOffset_17(this, Invocation.getter(#pointTransformer)),
           )
           as _i4.PointTransformer);
 

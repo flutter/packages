@@ -122,16 +122,14 @@ AdsManager createAdsManager(PlatformAdsManager platformManager) {
         onRequestAds: (PlatformAdsRequest request) async {},
       );
     },
-    onCreatePlatformAdsManagerDelegate: (
-      PlatformAdsManagerDelegateCreationParams params,
-    ) {
-      throw UnimplementedError();
-    },
-    onCreatePlatformAdDisplayContainer: (
-      PlatformAdDisplayContainerCreationParams params,
-    ) {
-      throw UnimplementedError();
-    },
+    onCreatePlatformAdsManagerDelegate:
+        (PlatformAdsManagerDelegateCreationParams params) {
+          throw UnimplementedError();
+        },
+    onCreatePlatformAdDisplayContainer:
+        (PlatformAdDisplayContainerCreationParams params) {
+          throw UnimplementedError();
+        },
     onCreatePlatformContentProgressProvider: (_) => throw UnimplementedError(),
   );
 
