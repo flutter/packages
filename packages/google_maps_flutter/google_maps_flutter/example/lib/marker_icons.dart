@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -16,7 +16,7 @@ import 'page.dart';
 
 class MarkerIconsPage extends GoogleMapExampleAppPage {
   const MarkerIconsPage({Key? key})
-      : super(const Icon(Icons.image), 'Marker icons', key: key);
+    : super(const Icon(Icons.image), 'Marker icons', key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -33,13 +33,7 @@ class MarkerIconsBody extends StatefulWidget {
 
 const LatLng _kMapCenter = LatLng(52.4478, -3.5402);
 
-enum _MarkerSizeOption {
-  original,
-  width30,
-  height40,
-  size30x60,
-  size120x60,
-}
+enum _MarkerSizeOption { original, width30, height40, size30x60, size120x60 }
 
 class MarkerIconsBodyState extends State<MarkerIconsBody> {
   final Size _markerAssetImageSize = const Size(48, 48);
@@ -62,75 +56,82 @@ class MarkerIconsBodyState extends State<MarkerIconsBody> {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        Column(children: <Widget>[
-          Center(
-            child: SizedBox(
-              width: 350.0,
-              height: 300.0,
-              child: GoogleMap(
-                initialCameraPosition: const CameraPosition(
-                  target: _kMapCenter,
-                  zoom: 7.0,
+        Column(
+          children: <Widget>[
+            Center(
+              child: SizedBox(
+                width: 350.0,
+                height: 300.0,
+                child: GoogleMap(
+                  initialCameraPosition: const CameraPosition(
+                    target: _kMapCenter,
+                    zoom: 7.0,
+                  ),
+                  markers: _markers,
+                  onMapCreated: _onMapCreated,
                 ),
-                markers: _markers,
-                onMapCreated: _onMapCreated,
               ),
             ),
-          ),
-          TextButton(
-            onPressed: () => _toggleScaling(context),
-            child: Text(_scalingEnabled
-                ? 'Disable auto scaling'
-                : 'Enable auto scaling'),
-          ),
-          if (_scalingEnabled) ...<Widget>[
-            Container(
-              width: referenceSize.width,
-              height: referenceSize.height,
-              decoration: BoxDecoration(
-                border: Border.all(),
+            TextButton(
+              onPressed: () => _toggleScaling(context),
+              child: Text(
+                _scalingEnabled
+                    ? 'Disable auto scaling'
+                    : 'Enable auto scaling',
               ),
             ),
-            Text(
-                'Reference box with size of ${referenceSize.width} x ${referenceSize.height} in logical pixels.'),
-            const SizedBox(height: 10),
-            Image.asset(
-              'assets/red_square.png',
-              scale: _mipMapsEnabled ? null : 1.0,
-            ),
-            const Text('Asset image rendered with flutter'),
-            const SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                const Text('Marker size:'),
-                const SizedBox(width: 10),
-                DropdownButton<_MarkerSizeOption>(
-                  value: _currentSizeOption,
-                  onChanged: (_MarkerSizeOption? newValue) {
-                    if (newValue != null) {
-                      setState(() {
-                        _currentSizeOption = newValue;
-                        _updateMarkerImages(context);
-                      });
-                    }
-                  },
-                  items:
-                      _MarkerSizeOption.values.map((_MarkerSizeOption option) {
-                    return DropdownMenuItem<_MarkerSizeOption>(
-                      value: option,
-                      child: Text(_getMarkerSizeOptionName(option)),
-                    );
-                  }).toList(),
-                )
-              ],
+            if (_scalingEnabled) ...<Widget>[
+              Container(
+                width: referenceSize.width,
+                height: referenceSize.height,
+                decoration: BoxDecoration(border: Border.all()),
+              ),
+              Text(
+                'Reference box with size of ${referenceSize.width} x ${referenceSize.height} in logical pixels.',
+              ),
+              const SizedBox(height: 10),
+              Image.asset(
+                'assets/red_square.png',
+                scale: _mipMapsEnabled ? null : 1.0,
+              ),
+              const Text('Asset image rendered with flutter'),
+              const SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  const Text('Marker size:'),
+                  const SizedBox(width: 10),
+                  DropdownButton<_MarkerSizeOption>(
+                    value: _currentSizeOption,
+                    onChanged: (_MarkerSizeOption? newValue) {
+                      if (newValue != null) {
+                        setState(() {
+                          _currentSizeOption = newValue;
+                          _updateMarkerImages(context);
+                        });
+                      }
+                    },
+                    items:
+                        _MarkerSizeOption.values.map((
+                          _MarkerSizeOption option,
+                        ) {
+                          return DropdownMenuItem<_MarkerSizeOption>(
+                            value: option,
+                            child: Text(_getMarkerSizeOptionName(option)),
+                          );
+                        }).toList(),
+                  ),
+                ],
+              ),
+            ],
+            TextButton(
+              onPressed: () => _toggleMipMaps(context),
+              child: Text(
+                _mipMapsEnabled ? 'Disable mipmaps' : 'Enable mipmaps',
+              ),
             ),
           ],
-          TextButton(
-            onPressed: () => _toggleMipMaps(context),
-            child: Text(_mipMapsEnabled ? 'Disable mipmaps' : 'Enable mipmaps'),
-          ),
-        ])
+        ),
       ],
     );
   }
@@ -178,12 +179,15 @@ class MarkerIconsBodyState extends State<MarkerIconsBody> {
     if (width != null && height != null) {
       return Size(width, height);
     } else if (width != null) {
-      return Size(width,
-          width * _markerAssetImageSize.height / _markerAssetImageSize.width);
+      return Size(
+        width,
+        width * _markerAssetImageSize.height / _markerAssetImageSize.width,
+      );
     } else if (height != null) {
       return Size(
-          height * _markerAssetImageSize.width / _markerAssetImageSize.height,
-          height);
+        height * _markerAssetImageSize.width / _markerAssetImageSize.height,
+        height,
+      );
     } else {
       return _markerAssetImageSize;
     }
@@ -206,8 +210,10 @@ class MarkerIconsBodyState extends State<MarkerIconsBody> {
   }
 
   Marker _createAssetMarker(int index) {
-    final LatLng position =
-        LatLng(_kMapCenter.latitude - (index * 0.5), _kMapCenter.longitude - 1);
+    final LatLng position = LatLng(
+      _kMapCenter.latitude - (index * 0.5),
+      _kMapCenter.longitude - 1,
+    );
 
     return Marker(
       markerId: MarkerId('marker_asset_$index'),
@@ -217,8 +223,10 @@ class MarkerIconsBodyState extends State<MarkerIconsBody> {
   }
 
   Marker _createBytesMarker(int index) {
-    final LatLng position =
-        LatLng(_kMapCenter.latitude - (index * 0.5), _kMapCenter.longitude + 1);
+    final LatLng position = LatLng(
+      _kMapCenter.latitude - (index * 0.5),
+      _kMapCenter.longitude + 1,
+    );
 
     return Marker(
       markerId: MarkerId('marker_bytes_$index'),
@@ -252,9 +260,7 @@ class MarkerIconsBodyState extends State<MarkerIconsBody> {
     AssetMapBitmap assetMapBitmap;
     if (_mipMapsEnabled) {
       final ImageConfiguration imageConfiguration =
-          createLocalImageConfiguration(
-        context,
-      );
+          createLocalImageConfiguration(context);
 
       assetMapBitmap = await AssetMapBitmap.create(
         imageConfiguration,
@@ -281,16 +287,18 @@ class MarkerIconsBodyState extends State<MarkerIconsBody> {
   }
 
   Future<void> _updateMarkerBytesImage(BuildContext context) async {
-    final double? devicePixelRatio =
-        MediaQuery.maybeDevicePixelRatioOf(context);
+    final double? devicePixelRatio = MediaQuery.maybeDevicePixelRatioOf(
+      context,
+    );
 
     final Size bitmapLogicalSize = _getMarkerReferenceSize();
     final double? imagePixelRatio = _scalingEnabled ? devicePixelRatio : null;
 
     // Create canvasSize with physical marker size
     final Size canvasSize = Size(
-        bitmapLogicalSize.width * (imagePixelRatio ?? 1.0),
-        bitmapLogicalSize.height * (imagePixelRatio ?? 1.0));
+      bitmapLogicalSize.width * (imagePixelRatio ?? 1.0),
+      bitmapLogicalSize.height * (imagePixelRatio ?? 1.0),
+    );
 
     final ByteData bytes = await createCustomMarkerIconImage(size: canvasSize);
 
@@ -300,12 +308,14 @@ class MarkerIconsBodyState extends State<MarkerIconsBody> {
             ? _getCurrentMarkerSize()
             : (null, null);
 
-    final BytesMapBitmap bitmap = BytesMapBitmap(bytes.buffer.asUint8List(),
-        imagePixelRatio: imagePixelRatio,
-        width: width,
-        height: height,
-        bitmapScaling:
-            _scalingEnabled ? MapBitmapScaling.auto : MapBitmapScaling.none);
+    final BytesMapBitmap bitmap = BytesMapBitmap(
+      bytes.buffer.asUint8List(),
+      imagePixelRatio: imagePixelRatio,
+      width: width,
+      height: height,
+      bitmapScaling:
+          _scalingEnabled ? MapBitmapScaling.auto : MapBitmapScaling.none,
+    );
 
     _updateBytesBitmap(bitmap);
   }

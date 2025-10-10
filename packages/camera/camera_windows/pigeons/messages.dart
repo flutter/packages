@@ -1,17 +1,18 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import 'package:pigeon/pigeon.dart';
 
-@ConfigurePigeon(PigeonOptions(
-  dartOut: 'lib/src/messages.g.dart',
-  cppOptions: CppOptions(namespace: 'camera_windows'),
-  cppHeaderOut: 'windows/messages.g.h',
-  cppSourceOut: 'windows/messages.g.cpp',
-  copyrightHeader: 'pigeons/copyright.txt',
-))
-
+@ConfigurePigeon(
+  PigeonOptions(
+    dartOut: 'lib/src/messages.g.dart',
+    cppOptions: CppOptions(namespace: 'camera_windows'),
+    cppHeaderOut: 'windows/messages.g.h',
+    cppSourceOut: 'windows/messages.g.cpp',
+    copyrightHeader: 'pigeons/copyright.txt',
+  ),
+)
 /// Pigeon version of platform interface's ResolutionPreset.
 enum PlatformResolutionPreset { low, medium, high, veryHigh, ultraHigh, max }
 

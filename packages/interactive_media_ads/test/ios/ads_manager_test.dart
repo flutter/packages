@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -58,9 +58,9 @@ void main() {
         mockAdsRenderingSettings.setLoadVideoTimeout(9.0),
         mockAdsRenderingSettings.setMimeTypes(<String>['value']),
         mockAdsRenderingSettings.setPlayAdsAfterTime(5.0),
-        mockAdsRenderingSettings.setUIElements(
-          <ima.UIElementType>[ima.UIElementType.countdown],
-        ),
+        mockAdsRenderingSettings.setUIElements(<ima.UIElementType>[
+          ima.UIElementType.countdown,
+        ]),
         mockAdsManager.initialize(mockAdsRenderingSettings),
       ]);
     });
@@ -116,16 +116,18 @@ void main() {
             ima.IMAAdsManagerDelegate,
             ima.IMAAdsManager,
             ima.IMAAdEvent,
-          ) didReceiveAdEvent,
+          )
+          didReceiveAdEvent,
           required void Function(
             ima.IMAAdsManagerDelegate,
             ima.IMAAdsManager,
             ima.IMAAdError,
-          ) didReceiveAdError,
+          )
+          didReceiveAdError,
           required void Function(ima.IMAAdsManagerDelegate, ima.IMAAdsManager)
-              didRequestContentPause,
+          didRequestContentPause,
           required void Function(ima.IMAAdsManagerDelegate, ima.IMAAdsManager)
-              didRequestContentResume,
+          didRequestContentResume,
         }) {
           delegate = ima.IMAAdsManagerDelegate.pigeon_detached(
             didReceiveAdEvent: didReceiveAdEvent,
@@ -140,11 +142,23 @@ void main() {
         },
       );
 
-      adsManager.setAdsManagerDelegate(IOSAdsManagerDelegate(
-        IOSAdsManagerDelegateCreationParams(proxy: imaProxy),
-      ));
+      adsManager.setAdsManagerDelegate(
+        IOSAdsManagerDelegate(
+          IOSAdsManagerDelegateCreationParams(proxy: imaProxy),
+        ),
+      );
 
       verify(mockAdsManager.setDelegate(delegate));
+    });
+
+    test('adCuePoints', () {
+      final MockIMAAdsManager mockAdsManager = MockIMAAdsManager();
+
+      final List<double> cuePoints = <double>[1.0];
+      when(mockAdsManager.adCuePoints).thenReturn(cuePoints);
+      final IOSAdsManager adsManager = IOSAdsManager(mockAdsManager);
+
+      expect(adsManager.adCuePoints, <Duration>[const Duration(seconds: 1)]);
     });
   });
 }

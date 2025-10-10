@@ -1,12 +1,14 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 package dev.flutter.packages.interactive_media_ads
 
 import android.content.Context
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import androidx.annotation.ChecksSdkIntAtLeast
 import io.flutter.plugin.common.BinaryMessenger
 
 /**
@@ -20,6 +22,12 @@ open class ProxyApiRegistrar(binaryMessenger: BinaryMessenger, var context: Cont
   // of waiting for the main thread to run it.
   internal open fun runOnMainThread(callback: Runnable) {
     Handler(Looper.getMainLooper()).post { callback.run() }
+  }
+
+  // Interface for an injectable SDK version checker.
+  @ChecksSdkIntAtLeast(parameter = 0)
+  open fun sdkIsAtLeast(version: Int): Boolean {
+    return Build.VERSION.SDK_INT >= version
   }
 
   override fun getPigeonApiBaseDisplayContainer(): PigeonApiBaseDisplayContainer {

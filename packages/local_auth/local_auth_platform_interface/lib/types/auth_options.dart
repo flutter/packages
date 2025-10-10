@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -21,6 +21,9 @@ class AuthenticationOptions {
   /// take the user to settings to add one. Anything that is not user fixable,
   /// such as no biometric sensor on device, will still result in
   /// a [PlatformException].
+  // This parameter still exists for backwards compatibility with local_auth
+  // 2.x, but implementers targeting local_auth 3.x or later should ignore it,
+  // as it will always be false.
   final bool useErrorDialogs;
 
   /// Used when the application goes into background for any reason while the
@@ -53,9 +56,9 @@ class AuthenticationOptions {
 
   @override
   int get hashCode => Object.hash(
-        useErrorDialogs,
-        stickyAuth,
-        sensitiveTransaction,
-        biometricOnly,
-      );
+    useErrorDialogs,
+    stickyAuth,
+    sensitiveTransaction,
+    biometricOnly,
+  );
 }

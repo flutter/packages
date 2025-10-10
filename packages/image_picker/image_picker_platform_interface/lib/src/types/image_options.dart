@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -56,7 +56,10 @@ class ImageOptions {
     this.requestFullMetadata = true,
   }) {
     _validateOptions(
-        maxWidth: maxWidth, maxHeight: maxHeight, imageQuality: imageQuality);
+      maxWidth: maxWidth,
+      maxHeight: maxHeight,
+      imageQuality: imageQuality,
+    );
   }
 
   /// The maximum width of the image, in pixels.
@@ -86,11 +89,17 @@ class ImageOptions {
   final bool requestFullMetadata;
 
   /// Validates that all values are within required ranges. Throws if not.
-  static void _validateOptions(
-      {double? maxWidth, final double? maxHeight, int? imageQuality}) {
+  static void _validateOptions({
+    double? maxWidth,
+    final double? maxHeight,
+    int? imageQuality,
+  }) {
     if (imageQuality != null && (imageQuality < 0 || imageQuality > 100)) {
       throw ArgumentError.value(
-          imageQuality, 'imageQuality', 'must be between 0 and 100');
+        imageQuality,
+        'imageQuality',
+        'must be between 0 and 100',
+      );
     }
     if (maxWidth != null && maxWidth < 0) {
       throw ArgumentError.value(maxWidth, 'maxWidth', 'cannot be negative');

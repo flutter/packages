@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -74,7 +74,9 @@ void main() {
     expect(initializedGroundOverlays.first, equals(go1));
     expect(initializedGroundOverlays.last, equals(go2));
     expect(
-        map.groundOverlayUpdates.last.groundOverlayIdsToRemove.isEmpty, true);
+      map.groundOverlayUpdates.last.groundOverlayIdsToRemove.isEmpty,
+      true,
+    );
     expect(map.groundOverlayUpdates.last.groundOverlaysToChange.isEmpty, true);
   });
 
@@ -120,7 +122,9 @@ void main() {
     expect(addedMarker, equals(go2));
 
     expect(
-        map.groundOverlayUpdates.last.groundOverlayIdsToRemove.isEmpty, true);
+      map.groundOverlayUpdates.last.groundOverlayIdsToRemove.isEmpty,
+      true,
+    );
 
     expect(map.groundOverlayUpdates.last.groundOverlaysToChange.isEmpty, true);
   });
@@ -144,8 +148,10 @@ void main() {
 
     final PlatformMapStateRecorder map = platform.lastCreatedMap;
     expect(map.groundOverlayUpdates.last.groundOverlayIdsToRemove.length, 1);
-    expect(map.groundOverlayUpdates.last.groundOverlayIdsToRemove.first,
-        equals(go1.groundOverlayId));
+    expect(
+      map.groundOverlayUpdates.last.groundOverlayIdsToRemove.first,
+      equals(go1.groundOverlayId),
+    );
 
     expect(map.groundOverlayUpdates.last.groundOverlaysToChange.isEmpty, true);
     expect(map.groundOverlayUpdates.last.groundOverlaysToAdd.isEmpty, true);
@@ -172,11 +178,15 @@ void main() {
 
     final PlatformMapStateRecorder map = platform.lastCreatedMap;
     expect(map.groundOverlayUpdates.last.groundOverlaysToChange.length, 1);
-    expect(map.groundOverlayUpdates.last.groundOverlaysToChange.first,
-        equals(go2));
+    expect(
+      map.groundOverlayUpdates.last.groundOverlaysToChange.first,
+      equals(go2),
+    );
 
     expect(
-        map.groundOverlayUpdates.last.groundOverlayIdsToRemove.isEmpty, true);
+      map.groundOverlayUpdates.last.groundOverlayIdsToRemove.isEmpty,
+      true,
+    );
     expect(map.groundOverlayUpdates.last.groundOverlaysToAdd.isEmpty, true);
   });
 
@@ -223,7 +233,9 @@ void main() {
 
     expect(map.groundOverlayUpdates.last.groundOverlaysToChange, cur);
     expect(
-        map.groundOverlayUpdates.last.groundOverlayIdsToRemove.isEmpty, true);
+      map.groundOverlayUpdates.last.groundOverlayIdsToRemove.isEmpty,
+      true,
+    );
     expect(map.groundOverlayUpdates.last.groundOverlaysToAdd.isEmpty, true);
   });
 
@@ -290,12 +302,18 @@ void main() {
     expect(map.groundOverlayUpdates.last.groundOverlaysToAdd.length, 1);
     expect(map.groundOverlayUpdates.last.groundOverlayIdsToRemove.length, 1);
 
-    expect(map.groundOverlayUpdates.last.groundOverlaysToChange.first,
-        equals(go2));
     expect(
-        map.groundOverlayUpdates.last.groundOverlaysToAdd.first, equals(go1));
-    expect(map.groundOverlayUpdates.last.groundOverlayIdsToRemove.first,
-        equals(go3.groundOverlayId));
+      map.groundOverlayUpdates.last.groundOverlaysToChange.first,
+      equals(go2),
+    );
+    expect(
+      map.groundOverlayUpdates.last.groundOverlaysToAdd.first,
+      equals(go1),
+    );
+    expect(
+      map.groundOverlayUpdates.last.groundOverlayIdsToRemove.first,
+      equals(go3.groundOverlayId),
+    );
   });
 
   testWidgets('Partial Update', (WidgetTester tester) async {
@@ -354,10 +372,14 @@ void main() {
 
     final PlatformMapStateRecorder map = platform.lastCreatedMap;
 
-    expect(map.groundOverlayUpdates.last.groundOverlaysToChange,
-        <GroundOverlay>{go3});
     expect(
-        map.groundOverlayUpdates.last.groundOverlayIdsToRemove.isEmpty, true);
+      map.groundOverlayUpdates.last.groundOverlaysToChange,
+      <GroundOverlay>{go3},
+    );
+    expect(
+      map.groundOverlayUpdates.last.groundOverlayIdsToRemove.isEmpty,
+      true,
+    );
     expect(map.groundOverlayUpdates.last.groundOverlaysToAdd.isEmpty, true);
   });
 
@@ -375,9 +397,7 @@ void main() {
       zIndex: 10,
     );
     final Set<GroundOverlay> prev = <GroundOverlay>{go1};
-    go1 = go1.copyWith(
-      onTapParam: () {},
-    );
+    go1 = go1.copyWith(onTapParam: () {});
     final Set<GroundOverlay> cur = <GroundOverlay>{go1};
 
     await tester.pumpWidget(_mapWithMarkers(prev));
@@ -387,7 +407,9 @@ void main() {
 
     expect(map.groundOverlayUpdates.last.groundOverlaysToChange.isEmpty, true);
     expect(
-        map.groundOverlayUpdates.last.groundOverlayIdsToRemove.isEmpty, true);
+      map.groundOverlayUpdates.last.groundOverlayIdsToRemove.isEmpty,
+      true,
+    );
     expect(map.groundOverlayUpdates.last.groundOverlaysToAdd.isEmpty, true);
   });
 
@@ -453,18 +475,24 @@ void main() {
     expect(map.groundOverlayUpdates.length, 3);
 
     expect(map.groundOverlayUpdates[0].groundOverlaysToChange.isEmpty, true);
-    expect(map.groundOverlayUpdates[0].groundOverlaysToAdd,
-        <GroundOverlay>{go1, go2});
+    expect(map.groundOverlayUpdates[0].groundOverlaysToAdd, <GroundOverlay>{
+      go1,
+      go2,
+    });
     expect(map.groundOverlayUpdates[0].groundOverlayIdsToRemove.isEmpty, true);
 
     expect(map.groundOverlayUpdates[1].groundOverlaysToChange.isEmpty, true);
+    expect(map.groundOverlayUpdates[1].groundOverlaysToAdd, <GroundOverlay>{
+      go3,
+    });
     expect(
-        map.groundOverlayUpdates[1].groundOverlaysToAdd, <GroundOverlay>{go3});
-    expect(map.groundOverlayUpdates[1].groundOverlayIdsToRemove,
-        <GroundOverlayId>{go2.groundOverlayId});
+      map.groundOverlayUpdates[1].groundOverlayIdsToRemove,
+      <GroundOverlayId>{go2.groundOverlayId},
+    );
 
-    expect(map.groundOverlayUpdates[2].groundOverlaysToChange,
-        <GroundOverlay>{go3updated});
+    expect(map.groundOverlayUpdates[2].groundOverlaysToChange, <GroundOverlay>{
+      go3updated,
+    });
     expect(map.groundOverlayUpdates[2].groundOverlaysToAdd.isEmpty, true);
     expect(map.groundOverlayUpdates[2].groundOverlayIdsToRemove.isEmpty, true);
 

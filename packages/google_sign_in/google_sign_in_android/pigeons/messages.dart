@@ -1,106 +1,232 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import 'package:pigeon/pigeon.dart';
 
-@ConfigurePigeon(PigeonOptions(
-  dartOut: 'lib/src/messages.g.dart',
-  javaOut:
-      'android/src/main/java/io/flutter/plugins/googlesignin/Messages.java',
-  javaOptions: JavaOptions(package: 'io.flutter.plugins.googlesignin'),
-  copyrightHeader: 'pigeons/copyright.txt',
-))
+@ConfigurePigeon(
+  PigeonOptions(
+    dartOut: 'lib/src/messages.g.dart',
+    kotlinOut:
+        'android/src/main/kotlin/io/flutter/plugins/googlesignin/Messages.kt',
+    kotlinOptions: KotlinOptions(package: 'io.flutter.plugins.googlesignin'),
+    copyrightHeader: 'pigeons/copyright.txt',
+  ),
+)
+/// The information necessary to build an authorization request.
+///
+/// Corresponds to the native AuthorizationRequest object, but only contains
+/// the fields used by this plugin.
+class PlatformAuthorizationRequest {
+  PlatformAuthorizationRequest({required this.scopes, this.hostedDomain});
+  List<String> scopes;
+  String? hostedDomain;
+  String? accountEmail;
 
-/// Pigeon version of SignInOption.
-enum SignInType {
-  /// Default configuration.
-  standard,
-
-  /// Recommended configuration for game sign in.
-  games,
+  /// If set, adds a call to requestOfflineAccess(this string, true);
+  String? serverClientIdForForcedRefreshToken;
 }
 
-/// Pigeon version of SignInInitParams.
+/// The information necessary to build a credential request.
 ///
-/// See SignInInitParams for details.
-class InitParams {
-  /// The parameters to use when initializing the sign in process.
-  const InitParams({
-    this.scopes = const <String>[],
-    this.signInType = SignInType.standard,
-    this.hostedDomain,
-    this.clientId,
+/// Combines the parts of the native GetCredentialRequest and CredentialOption
+/// classes that are used for this plugin.
+class GetCredentialRequestParams {
+  GetCredentialRequestParams({
+    required this.useButtonFlow,
+    required this.googleIdOptionParams,
     this.serverClientId,
-    this.forceCodeForRefreshToken = false,
-    this.forceAccountName,
+    this.hostedDomain,
+    this.nonce,
   });
 
-  final List<String> scopes;
-  final SignInType signInType;
-  final String? hostedDomain;
-  final String? clientId;
-  final String? serverClientId;
-  final bool forceCodeForRefreshToken;
-  final String? forceAccountName;
+  /// Whether to use the Sign in with Google button flow
+  /// (GetSignInWithGoogleOption), corresponding to an explicit sign-in request,
+  /// or not (GetGoogleIdOption), corresponding to an implicit potential
+  /// sign-in.
+  bool useButtonFlow;
+
+  /// Parameters specific to GetGoogleIdOption.
+  ///
+  /// Ignored if useButtonFlow is true.
+  GetCredentialRequestGoogleIdOptionParams googleIdOptionParams;
+
+  String? serverClientId;
+  String? hostedDomain;
+  String? nonce;
 }
 
-/// Pigeon version of GoogleSignInUserData.
-///
-/// See GoogleSignInUserData for details.
-class UserData {
-  UserData({
-    required this.email,
-    required this.id,
-    this.displayName,
-    this.photoUrl,
-    this.idToken,
-    this.serverAuthCode,
+class GetCredentialRequestGoogleIdOptionParams {
+  GetCredentialRequestGoogleIdOptionParams({
+    required this.filterToAuthorized,
+    required this.autoSelectEnabled,
   });
 
-  final String? displayName;
-  final String email;
-  final String id;
-  final String? photoUrl;
-  final String? idToken;
-  final String? serverAuthCode;
+  bool filterToAuthorized;
+  bool autoSelectEnabled;
+}
+
+/// Parameters for revoking authorization.
+///
+/// Corresponds to the native RevokeAccessRequest.
+/// https://developers.google.com/android/reference/com/google/android/gms/auth/api/identity/RevokeAccessRequest
+class PlatformRevokeAccessRequest {
+  PlatformRevokeAccessRequest({
+    required this.accountEmail,
+    required this.scopes,
+  });
+
+  /// The email for the Google account to revoke authorizations for.
+  String accountEmail;
+
+  /// A list of requested scopes.
+  ///
+  /// Per docs, all granted scopes will be revoked, not only the ones passed
+  /// here. However, at least one currently-granted scope must be provided.
+  List<String> scopes;
+}
+
+/// Pigeon equivalent of the native GoogleIdTokenCredential.
+class PlatformGoogleIdTokenCredential {
+  String? displayName;
+  String? familyName;
+  String? givenName;
+  late String id;
+  late String idToken;
+  String? profilePictureUri;
+}
+
+enum GetCredentialFailureType {
+  /// Indicates that a credential was returned, but it was not of the expected
+  /// type.
+  unexpectedCredentialType,
+
+  /// Indicates that a server client ID was not provided.
+  missingServerClientId,
+
+  /// Indicates that the user needs to be prompted for authorization, but there
+  /// is no current activity to prompt in.
+  noActivity,
+
+  // Types from https://developer.android.com/reference/android/credentials/GetCredentialException
+  /// The request was internally interrupted.
+  interrupted,
+
+  /// The request was canceled by the user.
+  canceled,
+
+  /// No matching credential was found.
+  noCredential,
+
+  /// The provider was not properly configured.
+  providerConfigurationIssue,
+
+  /// The credential manager is not supported on this device.
+  unsupported,
+
+  /// The request failed for an unknown reason.
+  unknown,
+}
+
+/// The response from a `getCredential` call.
+///
+/// This is not the same as a native GetCredentialResponse since modeling the
+/// response type hierarchy and two-part callback in this interface layer would
+/// add a lot of complexity that is not needed for the plugin's use case. It is
+/// instead a processed version of the results of those callbacks.
+sealed class GetCredentialResult {}
+
+/// An authentication failure.
+class GetCredentialFailure extends GetCredentialResult {
+  /// The type of failure.
+  late GetCredentialFailureType type;
+
+  /// The message associated with the failure, if any.
+  String? message;
+
+  /// Extra details about the failure, if any.
+  String? details;
+}
+
+/// A successful authentication result.
+class GetCredentialSuccess extends GetCredentialResult {
+  late PlatformGoogleIdTokenCredential credential;
+}
+
+enum AuthorizeFailureType {
+  /// Indicates that the requested types are not currently authorized.
+  ///
+  /// This is returned only if promptIfUnauthorized is false, indicating that
+  /// the user would need to be prompted for authorization.
+  unauthorized,
+
+  /// Indicates that the call to AuthorizationClient.authorize itself failed.
+  authorizeFailure,
+
+  /// Corresponds to SendIntentException, indicating that the pending intent is
+  /// no longer available.
+  pendingIntentException,
+
+  /// Corresponds to an SendIntentException in onActivityResult, indicating that
+  /// either authorization failed, or the result was not available for some
+  /// reason.
+  apiException,
+
+  /// Indicates that the user needs to be prompted for authorization, but there
+  /// is no current activity to prompt in.
+  noActivity,
+}
+
+/// The response from an `authorize` call.
+sealed class AuthorizeResult {}
+
+/// An authorization failure
+class AuthorizeFailure extends AuthorizeResult {
+  /// The type of failure.
+  late AuthorizeFailureType type;
+
+  /// The message associated with the failure, if any.
+  String? message;
+
+  /// Extra details about the failure, if any.
+  String? details;
+}
+
+/// A successful authorization result.
+///
+/// Corresponds to a native AuthorizationResult.
+class PlatformAuthorizationResult extends AuthorizeResult {
+  String? accessToken;
+  String? serverAuthCode;
+  late List<String> grantedScopes;
 }
 
 @HostApi()
 abstract class GoogleSignInApi {
-  /// Initializes a sign in request with the given parameters.
-  void init(InitParams params);
+  /// Returns the server client ID parsed from google-services.json by the
+  /// google-services Gradle script, if any.
+  String? getGoogleServicesJsonServerClientId();
 
-  /// Starts a silent sign in.
+  /// Requests an authentication credential (sign in) via CredentialManager's
+  /// getCredential.
   @async
-  UserData signInSilently();
+  GetCredentialResult getCredential(GetCredentialRequestParams params);
 
-  /// Starts a sign in with user interaction.
+  /// Clears CredentialManager credential state.
   @async
-  UserData signIn();
+  void clearCredentialState();
 
-  /// Requests the access token for the current sign in.
+  /// Clears the authorization cache for the given token.
   @async
-  @TaskQueue(type: TaskQueueType.serialBackgroundThread)
-  String getAccessToken(String email, bool shouldRecoverAuth);
+  void clearAuthorizationToken(String token);
 
-  /// Signs out the current user.
+  /// Requests authorization tokens via AuthorizationClient.
   @async
-  void signOut();
+  AuthorizeResult authorize(
+    PlatformAuthorizationRequest params, {
+    required bool promptIfUnauthorized,
+  });
 
-  /// Revokes scope grants to the application.
   @async
-  void disconnect();
-
-  /// Returns whether the user is currently signed in.
-  bool isSignedIn();
-
-  /// Clears the authentication caching for the given token, requiring a
-  /// new sign in.
-  @TaskQueue(type: TaskQueueType.serialBackgroundThread)
-  void clearAuthCache(String token);
-
-  /// Requests access to the given scopes.
-  @async
-  bool requestScopes(List<String> scopes);
+  void revokeAccess(PlatformRevokeAccessRequest params);
 }

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -23,9 +23,7 @@ const Duration jsCompatibleTimeUnset = Duration(
 /// If the `videoDuration` is `NaN`, this will return null.
 Duration? convertNumVideoDurationToPluginDuration(num duration) {
   if (duration.isFinite) {
-    return Duration(
-      milliseconds: (duration * 1000).round(),
-    );
+    return Duration(milliseconds: (duration * 1000).round());
   } else if (duration.isInfinite) {
     return jsCompatibleTimeUnset;
   }

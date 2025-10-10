@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -66,7 +66,8 @@ void _parseAnItem(
 ) {
   final String name = item[kNameKey] as String;
   final Map<String, String> timeUnitMap = <String, String>{
-    if (item.containsKey(_kTimeUnitKey)) kUnitKey: item[_kTimeUnitKey] as String
+    if (item.containsKey(_kTimeUnitKey))
+      kUnitKey: item[_kTimeUnitKey] as String,
   };
   for (final String subResult in item.keys) {
     if (!_kNonNumericalValueSubResults.contains(subResult)) {
@@ -76,7 +77,8 @@ void _parseAnItem(
       } catch (e) {
         // ignore: avoid_print
         print(
-            '$subResult: ${item[subResult]} (${(item[subResult] as Object?).runtimeType}) is not a number');
+          '$subResult: ${item[subResult]} (${(item[subResult] as Object?).runtimeType}) is not a number',
+        );
         rethrow;
       }
 
@@ -88,7 +90,8 @@ void _parseAnItem(
           <String, String?>{kNameKey: name, kSubResultKey: subResult}
             ..addAll(context)
             ..addAll(
-                subResult.endsWith('time') ? timeUnitMap : <String, String>{}),
+              subResult.endsWith('time') ? timeUnitMap : <String, String>{},
+            ),
         ),
       );
     }

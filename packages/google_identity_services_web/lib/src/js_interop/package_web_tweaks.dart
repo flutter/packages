@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -30,9 +30,7 @@ extension TrustedTypeSrcAttribute on web.HTMLScriptElement {
 extension CreateScriptUrlNoArgs on web.TrustedTypePolicy {
   /// Allows calling `createScriptURL` with only the `input` argument.
   @JS('createScriptURL')
-  external web.TrustedScriptURL createScriptURLNoArgs(
-    String input,
-  );
+  external web.TrustedScriptURL createScriptURLNoArgs(String input);
 }
 
 /// This extension gives web.HTMLScriptElement a nullable getter to the

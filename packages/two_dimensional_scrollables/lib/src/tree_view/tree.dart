@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -34,9 +34,9 @@ class TreeViewNode<T> {
     T content, {
     List<TreeViewNode<T>>? children,
     bool expanded = false,
-  })  : _expanded = children != null && children.isNotEmpty && expanded,
-        _content = content,
-        _children = children ?? <TreeViewNode<T>>[];
+  }) : _expanded = children != null && children.isNotEmpty && expanded,
+       _content = content,
+       _children = children ?? <TreeViewNode<T>>[];
 
   /// The subject matter of the node.
   ///
@@ -322,8 +322,10 @@ class TreeView<T> extends StatefulWidget {
     this.clipBehavior = Clip.hardEdge,
     this.addAutomaticKeepAlives = true,
     this.addRepaintBoundaries = true,
-  }) : assert(verticalDetails.direction == AxisDirection.down &&
-            horizontalDetails.direction == AxisDirection.right);
+  }) : assert(
+         verticalDetails.direction == AxisDirection.down &&
+             horizontalDetails.direction == AxisDirection.right,
+       );
 
   /// The list of [TreeViewNode]s that may be displayed in the [TreeView].
   ///
@@ -527,15 +529,17 @@ class TreeView<T> extends StatefulWidget {
     required TreeViewNode<Object?> node,
     required Widget child,
   }) {
-    return Builder(builder: (BuildContext context) {
-      return GestureDetector(
-        behavior: HitTestBehavior.translucent,
-        onTap: () {
-          TreeViewController.of(context).toggleNode(node);
-        },
-        child: child,
-      );
-    });
+    return Builder(
+      builder: (BuildContext context) {
+        return GestureDetector(
+          behavior: HitTestBehavior.translucent,
+          onTap: () {
+            TreeViewController.of(context).toggleNode(node);
+          },
+          child: child,
+        );
+      },
+    );
   }
 
   /// Returns the fixed height, default [TreeRow] for rows in the tree,
@@ -543,9 +547,7 @@ class TreeView<T> extends StatefulWidget {
   ///
   /// Used by [TreeView.treeRowBuilder].
   static TreeRow defaultTreeRowBuilder(TreeViewNode<Object?> node) {
-    return const TreeRow(
-      extent: FixedTreeRowExtent(_kDefaultRowExtent),
-    );
+    return const TreeRow(extent: FixedTreeRowExtent(_kDefaultRowExtent));
   }
 
   /// Default builder for the widget representing a given [TreeViewNode] in the
@@ -570,29 +572,32 @@ class TreeView<T> extends StatefulWidget {
     final int index = TreeViewController.of(context).getActiveIndexFor(node)!;
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Row(children: <Widget>[
-        // Icon for parent nodes
-        TreeView.wrapChildToToggleNode(
-          node: node,
-          child: SizedBox.square(
-            dimension: 30.0,
-            child: node.children.isNotEmpty
-                ? AnimatedRotation(
-                    key: ValueKey<int>(index),
-                    turns: node.isExpanded ? 0.25 : 0.0,
-                    duration: animationDuration,
-                    curve: animationCurve,
-                    // Renders a unicode right-facing arrow. >
-                    child: const Icon(IconData(0x25BA), size: 14),
-                  )
-                : null,
+      child: Row(
+        children: <Widget>[
+          // Icon for parent nodes
+          TreeView.wrapChildToToggleNode(
+            node: node,
+            child: SizedBox.square(
+              dimension: 30.0,
+              child:
+                  node.children.isNotEmpty
+                      ? AnimatedRotation(
+                        key: ValueKey<int>(index),
+                        turns: node.isExpanded ? 0.25 : 0.0,
+                        duration: animationDuration,
+                        curve: animationCurve,
+                        // Renders a unicode right-facing arrow. >
+                        child: const Icon(IconData(0x25BA), size: 14),
+                      )
+                      : null,
+            ),
           ),
-        ),
-        // Spacer
-        const SizedBox(width: 8.0),
-        // Content
-        Text(node.content.toString()),
-      ]),
+          // Spacer
+          const SizedBox(width: 8.0),
+          // Content
+          Text(node.content.toString()),
+        ],
+      ),
     );
   }
 
@@ -601,11 +606,12 @@ class TreeView<T> extends StatefulWidget {
 }
 
 // Used in TreeViewState for code simplicity.
-typedef _AnimationRecord = ({
-  AnimationController controller,
-  CurvedAnimation animation,
-  UniqueKey key,
-});
+typedef _AnimationRecord =
+    ({
+      AnimationController controller,
+      CurvedAnimation animation,
+      UniqueKey key,
+    });
 
 class _TreeViewState<T> extends State<TreeView<T>>
     with TickerProviderStateMixin, TreeViewStateMixin<T> {
@@ -898,12 +904,13 @@ class _TreeViewState<T> extends State<TreeView<T>>
 
       final AnimationController controller =
           _currentAnimationForParent[node]?.controller ??
-              AnimationController(
-                value: node._expanded ? 0.0 : 1.0,
-                vsync: this,
-                duration: widget.toggleAnimationStyle?.duration ??
-                    TreeView.defaultAnimationDuration,
-              );
+          AnimationController(
+            value: node._expanded ? 0.0 : 1.0,
+            vsync: this,
+            duration:
+                widget.toggleAnimationStyle?.duration ??
+                TreeView.defaultAnimationDuration,
+          );
       controller
         ..addStatusListener((AnimationStatus status) {
           switch (status) {
@@ -939,7 +946,8 @@ class _TreeViewState<T> extends State<TreeView<T>>
 
       final CurvedAnimation newAnimation = CurvedAnimation(
         parent: controller,
-        curve: widget.toggleAnimationStyle?.curve ??
+        curve:
+            widget.toggleAnimationStyle?.curve ??
             TreeView.defaultAnimationCurve,
       );
       _currentAnimationForParent[node] = (
@@ -980,15 +988,16 @@ class _TreeView extends TwoDimensionalScrollView {
     required this.indentation,
     required int rowCount,
     bool addAutomaticKeepAlives = true,
-  })  : assert(verticalDetails.direction == AxisDirection.down),
-        assert(horizontalDetails.direction == AxisDirection.right),
-        super(
-            delegate: TreeRowBuilderDelegate(
-          nodeBuilder: nodeBuilder,
-          rowBuilder: rowBuilder,
-          rowCount: rowCount,
-          addAutomaticKeepAlives: addAutomaticKeepAlives,
-        ));
+  }) : assert(verticalDetails.direction == AxisDirection.down),
+       assert(horizontalDetails.direction == AxisDirection.right),
+       super(
+         delegate: TreeRowBuilderDelegate(
+           nodeBuilder: nodeBuilder,
+           rowBuilder: rowBuilder,
+           rowCount: rowCount,
+           addAutomaticKeepAlives: addAutomaticKeepAlives,
+         ),
+       );
 
   final Map<UniqueKey, TreeViewNodesAnimation> activeAnimations;
   final Map<int, int> rowDepths;
@@ -1032,10 +1041,12 @@ class TreeViewport extends TwoDimensionalViewport {
     required this.activeAnimations,
     required this.rowDepths,
     required this.indentation,
-  })  : assert(verticalAxisDirection == AxisDirection.down &&
-            horizontalAxisDirection == AxisDirection.right),
-        // This is fixed as there is currently only one traversal pattern, https://github.com/flutter/flutter/issues/148357
-        super(mainAxis: Axis.vertical);
+  }) : assert(
+         verticalAxisDirection == AxisDirection.down &&
+             horizontalAxisDirection == AxisDirection.right,
+       ),
+       // This is fixed as there is currently only one traversal pattern, https://github.com/flutter/flutter/issues/148357
+       super(mainAxis: Axis.vertical);
 
   /// The currently active [TreeViewNode] animations.
   ///

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 import 'dart:js_interop';
@@ -61,7 +61,7 @@ class _FlexHtmlElementView extends State<FlexHtmlElementView> {
           'Resizing: ',
           widget.viewType,
           size.width,
-          size.height
+          size.height,
         ].join(' ');
         web.console.debug(log.toJS);
       }
@@ -110,12 +110,7 @@ class _FlexHtmlElementView extends State<FlexHtmlElementView> {
   void _registerListeners(web.Element root) {
     _mutationObserver = web.MutationObserver(_onMutationRecords.toJS);
     // Monitor the size of the child element, whenever it's created...
-    _mutationObserver!.observe(
-      root,
-      web.MutationObserverInit(
-        childList: true,
-      ),
-    );
+    _mutationObserver!.observe(root, web.MutationObserverInit(childList: true));
   }
 
   @override
@@ -123,16 +118,17 @@ class _FlexHtmlElementView extends State<FlexHtmlElementView> {
     return SizedBox.fromSize(
       size: _lastReportedSize ?? widget.initialSize ?? const Size(1, 1),
       child: HtmlElementView(
-          viewType: widget.viewType,
-          onPlatformViewCreated: (int viewId) {
-            final ElementCreatedCallback? callback = widget.onElementCreated;
-            final web.Element root =
-                ui_web.platformViewRegistry.getViewById(viewId) as web.Element;
-            _registerListeners(root);
-            if (callback != null) {
-              callback(root);
-            }
-          }),
+        viewType: widget.viewType,
+        onPlatformViewCreated: (int viewId) {
+          final ElementCreatedCallback? callback = widget.onElementCreated;
+          final web.Element root =
+              ui_web.platformViewRegistry.getViewById(viewId) as web.Element;
+          _registerListeners(root);
+          if (callback != null) {
+            callback(root);
+          }
+        },
+      ),
     );
   }
 }

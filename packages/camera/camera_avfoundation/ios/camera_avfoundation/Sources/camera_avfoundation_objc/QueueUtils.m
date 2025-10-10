@@ -1,10 +1,8 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 #import "./include/camera_avfoundation/QueueUtils.h"
-
-const char *FLTCaptureSessionQueueSpecific = "capture_session_queue";
 
 void FLTEnsureToRunOnMainQueue(dispatch_block_t block) {
   if (!NSThread.isMainThread) {
@@ -12,8 +10,4 @@ void FLTEnsureToRunOnMainQueue(dispatch_block_t block) {
   } else {
     block();
   }
-}
-
-void FLTDispatchQueueSetSpecific(dispatch_queue_t queue, const void *key) {
-  dispatch_queue_set_specific(queue, key, (void *)key, NULL);
 }

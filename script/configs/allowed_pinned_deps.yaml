@@ -19,3 +19,7 @@
 # audited before passing them on to clients as transitive updates, to mitigated
 # the risk of the package being compromised.
 - xml
+
+# Already used by flutter_tools, so doesn't add any additional team-level
+# maintenance risk. Could require forking in the future.
+- mustache_template

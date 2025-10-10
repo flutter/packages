@@ -1,26 +1,21 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import 'package:pigeon/pigeon.dart';
 
-@ConfigurePigeon(PigeonOptions(
-  dartOut: 'lib/src/messages.g.dart',
-  javaOut:
-      'android/src/main/java/io/flutter/plugins/quickactions/Messages.java',
-  javaOptions: JavaOptions(
-    package: 'io.flutter.plugins.quickactions',
+@ConfigurePigeon(
+  PigeonOptions(
+    dartOut: 'lib/src/messages.g.dart',
+    javaOut:
+        'android/src/main/java/io/flutter/plugins/quickactions/Messages.java',
+    javaOptions: JavaOptions(package: 'io.flutter.plugins.quickactions'),
+    copyrightHeader: 'pigeons/copyright.txt',
   ),
-  copyrightHeader: 'pigeons/copyright.txt',
-))
-
+)
 /// Home screen quick-action shortcut item.
 class ShortcutItemMessage {
-  ShortcutItemMessage(
-    this.type,
-    this.localizedTitle,
-    this.icon,
-  );
+  ShortcutItemMessage(this.type, this.localizedTitle, this.icon);
 
   /// The identifier of this item; should be unique within the app.
   String type;

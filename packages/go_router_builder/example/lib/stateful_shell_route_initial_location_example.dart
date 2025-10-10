@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -6,6 +6,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+
+import 'separate_file_route.dart';
 
 part 'stateful_shell_route_initial_location_example.g.dart';
 
@@ -15,9 +17,8 @@ class App extends StatelessWidget {
   App({super.key});
 
   @override
-  Widget build(BuildContext context) => MaterialApp.router(
-        routerConfig: _router,
-      );
+  Widget build(BuildContext context) =>
+      MaterialApp.router(routerConfig: _router);
 
   final GoRouter _router = GoRouter(
     routes: $appRoutes,
@@ -29,32 +30,25 @@ class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: const Text('foo')),
-      );
+  Widget build(BuildContext context) =>
+      Scaffold(appBar: AppBar(title: const Text('foo')));
 }
 
 @TypedStatefulShellRoute<MainShellRouteData>(
   branches: <TypedStatefulShellBranch<StatefulShellBranchData>>[
     TypedStatefulShellBranch<HomeShellBranchData>(
       routes: <TypedRoute<RouteData>>[
-        TypedGoRoute<HomeRouteData>(
-          path: '/home',
-        ),
+        TypedGoRoute<HomeRouteData>(path: '/home'),
       ],
     ),
     TypedStatefulShellBranch<NotificationsShellBranchData>(
       routes: <TypedRoute<RouteData>>[
-        TypedGoRoute<NotificationsRouteData>(
-          path: '/notifications/:section',
-        ),
+        TypedGoRoute<NotificationsRouteData>(path: '/notifications/:section'),
       ],
     ),
     TypedStatefulShellBranch<OrdersShellBranchData>(
       routes: <TypedRoute<RouteData>>[
-        TypedGoRoute<OrdersRouteData>(
-          path: '/orders',
-        ),
+        TypedGoRoute<OrdersRouteData>(path: '/orders'),
       ],
     ),
   ],
@@ -68,9 +62,7 @@ class MainShellRouteData extends StatefulShellRouteData {
     GoRouterState state,
     StatefulNavigationShell navigationShell,
   ) {
-    return MainPageView(
-      navigationShell: navigationShell,
-    );
+    return MainPageView(navigationShell: navigationShell);
   }
 }
 
@@ -88,7 +80,7 @@ class OrdersShellBranchData extends StatefulShellBranchData {
   const OrdersShellBranchData();
 }
 
-class HomeRouteData extends GoRouteData {
+class HomeRouteData extends GoRouteData with $HomeRouteData {
   const HomeRouteData();
 
   @override
@@ -97,41 +89,21 @@ class HomeRouteData extends GoRouteData {
   }
 }
 
-enum NotificationsPageSection {
-  latest,
-  old,
-  archive,
-}
+enum NotificationsPageSection { latest, old, archive }
 
-class NotificationsRouteData extends GoRouteData {
-  const NotificationsRouteData({
-    required this.section,
-  });
+class NotificationsRouteData extends GoRouteData with $NotificationsRouteData {
+  const NotificationsRouteData({required this.section});
 
   final NotificationsPageSection section;
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return NotificationsPageView(
-      section: section,
-    );
-  }
-}
-
-class OrdersRouteData extends GoRouteData {
-  const OrdersRouteData();
-
-  @override
-  Widget build(BuildContext context, GoRouterState state) {
-    return const OrdersPageView(label: 'Orders page');
+    return NotificationsPageView(section: section);
   }
 }
 
 class MainPageView extends StatelessWidget {
-  const MainPageView({
-    required this.navigationShell,
-    super.key,
-  });
+  const MainPageView({required this.navigationShell, super.key});
 
   final StatefulNavigationShell navigationShell;
 
@@ -142,18 +114,12 @@ class MainPageView extends StatelessWidget {
       body: navigationShell,
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(
             icon: Icon(Icons.favorite),
             label: 'Notifications',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.list),
-            label: 'Orders',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.list), label: 'Orders'),
         ],
         currentIndex: navigationShell.currentIndex,
         onTap: (int index) => _onTap(context, index),
@@ -170,26 +136,18 @@ class MainPageView extends StatelessWidget {
 }
 
 class HomePageView extends StatelessWidget {
-  const HomePageView({
-    required this.label,
-    super.key,
-  });
+  const HomePageView({required this.label, super.key});
 
   final String label;
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Text(label),
-    );
+    return Center(child: Text(label));
   }
 }
 
 class NotificationsPageView extends StatelessWidget {
-  const NotificationsPageView({
-    super.key,
-    required this.section,
-  });
+  const NotificationsPageView({super.key, required this.section});
 
   final NotificationsPageSection section;
 
@@ -203,37 +161,20 @@ class NotificationsPageView extends StatelessWidget {
           TabBar(
             tabs: <Tab>[
               Tab(
-                child: Text(
-                  'Latest',
-                  style: TextStyle(color: Colors.black87),
-                ),
+                child: Text('Latest', style: TextStyle(color: Colors.black87)),
               ),
+              Tab(child: Text('Old', style: TextStyle(color: Colors.black87))),
               Tab(
-                child: Text(
-                  'Old',
-                  style: TextStyle(color: Colors.black87),
-                ),
-              ),
-              Tab(
-                child: Text(
-                  'Archive',
-                  style: TextStyle(color: Colors.black87),
-                ),
+                child: Text('Archive', style: TextStyle(color: Colors.black87)),
               ),
             ],
           ),
           Expanded(
             child: TabBarView(
               children: <Widget>[
-                NotificationsSubPageView(
-                  label: 'Latest notifications',
-                ),
-                NotificationsSubPageView(
-                  label: 'Old notifications',
-                ),
-                NotificationsSubPageView(
-                  label: 'Archived notifications',
-                ),
+                NotificationsSubPageView(label: 'Latest notifications'),
+                NotificationsSubPageView(label: 'Old notifications'),
+                NotificationsSubPageView(label: 'Archived notifications'),
               ],
             ),
           ),
@@ -244,33 +185,12 @@ class NotificationsPageView extends StatelessWidget {
 }
 
 class NotificationsSubPageView extends StatelessWidget {
-  const NotificationsSubPageView({
-    required this.label,
-    super.key,
-  });
+  const NotificationsSubPageView({required this.label, super.key});
 
   final String label;
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Text(label),
-    );
-  }
-}
-
-class OrdersPageView extends StatelessWidget {
-  const OrdersPageView({
-    required this.label,
-    super.key,
-  });
-
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text(label),
-    );
+    return Center(child: Text(label));
   }
 }

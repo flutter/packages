@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -42,8 +42,9 @@ void main() {
     }
 
     void stubDataState({
-      AsyncState<List<String>> allKeys =
-          const AsyncState<List<String>>.data(<String>[]),
+      AsyncState<List<String>> allKeys = const AsyncState<List<String>>.data(
+        <String>[],
+      ),
       SelectedSharedPreferencesKey? selectedKey,
       bool editing = false,
     }) {
@@ -57,9 +58,7 @@ void main() {
     }
 
     testWidgets('should show loading state', (WidgetTester tester) async {
-      stubDataState(
-        allKeys: const AsyncState<List<String>>.loading(),
-      );
+      stubDataState(allKeys: const AsyncState<List<String>>.loading());
       await pumpKeysPanel(tester);
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
@@ -77,12 +76,11 @@ void main() {
       expect(find.byType(ErrorPanel), findsOneWidget);
     });
 
-    testWidgets('should show keys list with all keys',
-        (WidgetTester tester) async {
+    testWidgets('should show keys list with all keys', (
+      WidgetTester tester,
+    ) async {
       const List<String> allKeys = <String>['key1', 'key2'];
-      stubDataState(
-        allKeys: const AsyncState<List<String>>.data(allKeys),
-      );
+      stubDataState(allKeys: const AsyncState<List<String>>.data(allKeys));
 
       await pumpKeysPanel(tester);
 
@@ -91,115 +89,108 @@ void main() {
       }
     });
 
-    testWidgets(
-      'only selected key should be highlighted',
-      (WidgetTester tester) async {
-        const String selectedKey = 'selectedKey';
-        const List<String> keys = <String>['key1', selectedKey, 'key2'];
+    testWidgets('only selected key should be highlighted', (
+      WidgetTester tester,
+    ) async {
+      const String selectedKey = 'selectedKey';
+      const List<String> keys = <String>['key1', selectedKey, 'key2'];
 
-        stubDataState(
-          allKeys: const AsyncState<List<String>>.data(keys),
-          selectedKey: const SelectedSharedPreferencesKey(
-            key: selectedKey,
-            value: AsyncState<SharedPreferencesData>.loading(),
-          ),
-        );
+      stubDataState(
+        allKeys: const AsyncState<List<String>>.data(keys),
+        selectedKey: const SelectedSharedPreferencesKey(
+          key: selectedKey,
+          value: AsyncState<SharedPreferencesData>.loading(),
+        ),
+      );
 
-        await pumpKeysPanel(tester);
+      await pumpKeysPanel(tester);
 
-        final Element selectedKeyElement =
-            tester.element(find.text(selectedKey));
-        final ColorScheme colorScheme =
-            Theme.of(selectedKeyElement).colorScheme;
+      final Element selectedKeyElement = tester.element(find.text(selectedKey));
+      final ColorScheme colorScheme = Theme.of(selectedKeyElement).colorScheme;
 
-        Color? bgColorFor(String key) {
-          final Container? container = tester
-              .element(find.text(key))
-              .findAncestorWidgetOfExactType<Container>();
-          return container?.color;
-        }
+      Color? bgColorFor(String key) {
+        final Container? container =
+            tester
+                .element(find.text(key))
+                .findAncestorWidgetOfExactType<Container>();
+        return container?.color;
+      }
 
-        for (final String key in <String>[...keys]..remove(selectedKey)) {
-          expect(
-            bgColorFor(key),
-            isNot(equals(colorScheme.selectedRowBackgroundColor)),
-          );
-        }
+      for (final String key in <String>[...keys]..remove(selectedKey)) {
         expect(
-          bgColorFor(selectedKey),
-          equals(colorScheme.selectedRowBackgroundColor),
+          bgColorFor(key),
+          isNot(equals(colorScheme.selectedRowBackgroundColor)),
         );
-      },
-    );
+      }
+      expect(
+        bgColorFor(selectedKey),
+        equals(colorScheme.selectedRowBackgroundColor),
+      );
+    });
 
-    testWidgets(
-      'should start searching when clicking the search icon',
-      (WidgetTester tester) async {
-        stubDataState();
-        await pumpKeysPanel(tester);
+    testWidgets('should start searching when clicking the search icon', (
+      WidgetTester tester,
+    ) async {
+      stubDataState();
+      await pumpKeysPanel(tester);
 
-        await tester.tap(find.byIcon(Icons.search));
-        await tester.pumpAndSettle();
+      await tester.tap(find.byIcon(Icons.search));
+      await tester.pumpAndSettle();
 
-        expect(find.byType(TextField), findsOneWidget);
-      },
-    );
+      expect(find.byType(TextField), findsOneWidget);
+    });
 
-    testWidgets(
-      'should stop searching when clicking the close icon',
-      (WidgetTester tester) async {
-        stubDataState();
-        await pumpKeysPanel(tester);
-        await tester.tap(find.byIcon(Icons.search));
-        await tester.pumpAndSettle();
+    testWidgets('should stop searching when clicking the close icon', (
+      WidgetTester tester,
+    ) async {
+      stubDataState();
+      await pumpKeysPanel(tester);
+      await tester.tap(find.byIcon(Icons.search));
+      await tester.pumpAndSettle();
 
-        await tester.tap(find.byIcon(Icons.close));
-        await tester.pumpAndSettle();
+      await tester.tap(find.byIcon(Icons.close));
+      await tester.pumpAndSettle();
 
-        expect(find.byType(TextField), findsNothing);
-      },
-    );
+      expect(find.byType(TextField), findsNothing);
+    });
 
-    testWidgets(
-      'should filter keys when searching',
-      (WidgetTester tester) async {
-        stubDataState();
-        await pumpKeysPanel(tester);
-        await tester.tap(find.byIcon(Icons.search));
-        await tester.pumpAndSettle();
+    testWidgets('should filter keys when searching', (
+      WidgetTester tester,
+    ) async {
+      stubDataState();
+      await pumpKeysPanel(tester);
+      await tester.tap(find.byIcon(Icons.search));
+      await tester.pumpAndSettle();
 
-        await tester.enterText(find.byType(TextField), 'key2');
+      await tester.enterText(find.byType(TextField), 'key2');
 
-        verify(notifierMock.filter('key2')).called(1);
-      },
-    );
+      verify(notifierMock.filter('key2')).called(1);
+    });
 
-    testWidgets(
-      'should refresh on refresh icon clicked',
-      (WidgetTester tester) async {
-        stubDataState();
-        await pumpKeysPanel(tester);
+    testWidgets('should refresh on refresh icon clicked', (
+      WidgetTester tester,
+    ) async {
+      stubDataState();
+      await pumpKeysPanel(tester);
 
-        await tester.tap(find.byIcon(Icons.refresh));
-        await tester.pumpAndSettle();
+      await tester.tap(find.byIcon(Icons.refresh));
+      await tester.pumpAndSettle();
 
-        verify(notifierMock.fetchAllKeys()).called(1);
-      },
-    );
+      verify(notifierMock.fetchAllKeys()).called(1);
+    });
 
-    testWidgets(
-      'should select key on key clicked',
-      (WidgetTester tester) async {
-        const String keyToSelect = 'keyToSelect';
-        stubDataState(
-          allKeys: const AsyncState<List<String>>.data(<String>[keyToSelect]),
-        );
-        await pumpKeysPanel(tester);
+    testWidgets('should select key on key clicked', (
+      WidgetTester tester,
+    ) async {
+      const String keyToSelect = 'keyToSelect';
+      stubDataState(
+        allKeys: const AsyncState<List<String>>.data(<String>[keyToSelect]),
+      );
+      await pumpKeysPanel(tester);
 
-        await tester.tap(find.text(keyToSelect));
+      await tester.tap(find.text(keyToSelect));
 
-        verify(notifierMock.selectKey(keyToSelect)).called(1);
-      },
-    );
+      verify(notifierMock.selectKey(keyToSelect)).called(1);
+    });
   });
 }

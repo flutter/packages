@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -44,9 +44,12 @@ class Tessellator extends Visitor<Node, void>
 
   @override
   Node visitParentNode(ParentNode parentNode, void data) {
-    return ParentNode(SvgAttributes.empty, children: <Node>[
-      for (final Node child in parentNode.children) child.accept(this, data)
-    ]);
+    return ParentNode(
+      SvgAttributes.empty,
+      children: <Node>[
+        for (final Node child in parentNode.children) child.accept(this, data),
+      ],
+    );
   }
 
   @override
@@ -68,14 +71,13 @@ class Tessellator extends Visitor<Node, void>
 
   @override
   Node visitResolvedTextPositionNode(
-      ResolvedTextPositionNode textPositionNode, void data) {
-    return ResolvedTextPositionNode(
-      textPositionNode.textPosition,
-      <Node>[
-        for (final Node child in textPositionNode.children)
-          child.accept(this, data)
-      ],
-    );
+    ResolvedTextPositionNode textPositionNode,
+    void data,
+  ) {
+    return ResolvedTextPositionNode(textPositionNode.textPosition, <Node>[
+      for (final Node child in textPositionNode.children)
+        child.accept(this, data),
+    ]);
   }
 
   @override
@@ -117,21 +119,23 @@ class Tessellator extends Visitor<Node, void>
       if (rawVertices.isNotEmpty) {
         final Vertices vertices = Vertices.fromFloat32List(rawVertices);
         final IndexedVertices indexedVertices = vertices.createIndex();
-        children.add(ResolvedVerticesNode(
-          paint: Paint(blendMode: pathNode.paint.blendMode, fill: fill),
-          vertices: indexedVertices,
-          bounds: pathNode.bounds,
-        ));
+        children.add(
+          ResolvedVerticesNode(
+            paint: Paint(blendMode: pathNode.paint.blendMode, fill: fill),
+            vertices: indexedVertices,
+            bounds: pathNode.bounds,
+          ),
+        );
       }
     }
     if (stroke != null) {
-      children.add(ResolvedPathNode(
-          paint: Paint(
-            blendMode: pathNode.paint.blendMode,
-            stroke: stroke,
-          ),
+      children.add(
+        ResolvedPathNode(
+          paint: Paint(blendMode: pathNode.paint.blendMode, stroke: stroke),
           bounds: pathNode.bounds,
-          path: pathNode.path));
+          path: pathNode.path,
+        ),
+      );
     }
     if (children.isEmpty) {
       return Node.empty;
@@ -149,11 +153,13 @@ class Tessellator extends Visitor<Node, void>
 
   @override
   Node visitSaveLayerNode(SaveLayerNode layerNode, void data) {
-    return SaveLayerNode(SvgAttributes.empty,
-        paint: layerNode.paint,
-        children: <Node>[
-          for (final Node child in layerNode.children) child.accept(this, data),
-        ]);
+    return SaveLayerNode(
+      SvgAttributes.empty,
+      paint: layerNode.paint,
+      children: <Node>[
+        for (final Node child in layerNode.children) child.accept(this, data),
+      ],
+    );
   }
 
   @override
@@ -277,91 +283,88 @@ base class _PathBuilder extends ffi.Opaque {}
 typedef _CreatePathBuilderType = ffi.Pointer<_PathBuilder> Function();
 typedef _create_path_builder_type = ffi.Pointer<_PathBuilder> Function();
 
-final _CreatePathBuilderType _createPathFn =
-    _dylib.lookupFunction<_create_path_builder_type, _CreatePathBuilderType>(
-  'CreatePathBuilder',
-);
+final _CreatePathBuilderType _createPathFn = _dylib
+    .lookupFunction<_create_path_builder_type, _CreatePathBuilderType>(
+      'CreatePathBuilder',
+    );
 
 typedef _MoveToType = void Function(ffi.Pointer<_PathBuilder>, double, double);
-typedef _move_to_type = ffi.Void Function(
-  ffi.Pointer<_PathBuilder>,
-  ffi.Float,
-  ffi.Float,
-);
+typedef _move_to_type =
+    ffi.Void Function(ffi.Pointer<_PathBuilder>, ffi.Float, ffi.Float);
 
 final _MoveToType _moveToFn = _dylib.lookupFunction<_move_to_type, _MoveToType>(
   'MoveTo',
 );
 
 typedef _LineToType = void Function(ffi.Pointer<_PathBuilder>, double, double);
-typedef _line_to_type = ffi.Void Function(
-  ffi.Pointer<_PathBuilder>,
-  ffi.Float,
-  ffi.Float,
-);
+typedef _line_to_type =
+    ffi.Void Function(ffi.Pointer<_PathBuilder>, ffi.Float, ffi.Float);
 
 final _LineToType _lineToFn = _dylib.lookupFunction<_line_to_type, _LineToType>(
   'LineTo',
 );
 
-typedef _CubicToType = void Function(
-  ffi.Pointer<_PathBuilder>,
-  double,
-  double,
-  double,
-  double,
-  double,
-  double,
-);
-typedef _cubic_to_type = ffi.Void Function(
-  ffi.Pointer<_PathBuilder>,
-  ffi.Float,
-  ffi.Float,
-  ffi.Float,
-  ffi.Float,
-  ffi.Float,
-  ffi.Float,
-);
+typedef _CubicToType =
+    void Function(
+      ffi.Pointer<_PathBuilder>,
+      double,
+      double,
+      double,
+      double,
+      double,
+      double,
+    );
+typedef _cubic_to_type =
+    ffi.Void Function(
+      ffi.Pointer<_PathBuilder>,
+      ffi.Float,
+      ffi.Float,
+      ffi.Float,
+      ffi.Float,
+      ffi.Float,
+      ffi.Float,
+    );
 
-final _CubicToType _cubicToFn =
-    _dylib.lookupFunction<_cubic_to_type, _CubicToType>('CubicTo');
+final _CubicToType _cubicToFn = _dylib
+    .lookupFunction<_cubic_to_type, _CubicToType>('CubicTo');
 
 typedef _CloseType = void Function(ffi.Pointer<_PathBuilder>, bool);
 typedef _close_type = ffi.Void Function(ffi.Pointer<_PathBuilder>, ffi.Bool);
 
-final _CloseType _closeFn =
-    _dylib.lookupFunction<_close_type, _CloseType>('Close');
-
-typedef _TessellateType = ffi.Pointer<_Vertices> Function(
-  ffi.Pointer<_PathBuilder>,
-  int,
-  double,
-  double,
-  double,
-);
-typedef _tessellate_type = ffi.Pointer<_Vertices> Function(
-  ffi.Pointer<_PathBuilder>,
-  ffi.Int,
-  ffi.Float,
-  ffi.Float,
-  ffi.Float,
+final _CloseType _closeFn = _dylib.lookupFunction<_close_type, _CloseType>(
+  'Close',
 );
 
-final _TessellateType _tessellateFn =
-    _dylib.lookupFunction<_tessellate_type, _TessellateType>('Tessellate');
+typedef _TessellateType =
+    ffi.Pointer<_Vertices> Function(
+      ffi.Pointer<_PathBuilder>,
+      int,
+      double,
+      double,
+      double,
+    );
+typedef _tessellate_type =
+    ffi.Pointer<_Vertices> Function(
+      ffi.Pointer<_PathBuilder>,
+      ffi.Int,
+      ffi.Float,
+      ffi.Float,
+      ffi.Float,
+    );
+
+final _TessellateType _tessellateFn = _dylib
+    .lookupFunction<_tessellate_type, _TessellateType>('Tessellate');
 
 typedef _DestroyType = void Function(ffi.Pointer<_PathBuilder>);
 typedef _destroy_type = ffi.Void Function(ffi.Pointer<_PathBuilder>);
 
-final _DestroyType _destroyFn =
-    _dylib.lookupFunction<_destroy_type, _DestroyType>(
-  'DestroyPathBuilder',
-);
+final _DestroyType _destroyFn = _dylib
+    .lookupFunction<_destroy_type, _DestroyType>('DestroyPathBuilder');
 
 typedef _DestroyVerticesType = void Function(ffi.Pointer<_Vertices>);
 typedef _destroy_vertices_type = ffi.Void Function(ffi.Pointer<_Vertices>);
 
-final _DestroyVerticesType _destroyVerticesFn =
-    _dylib.lookupFunction<_destroy_vertices_type, _DestroyVerticesType>(
-  'DestroyVertices',
-);
+final _DestroyVerticesType _destroyVerticesFn = _dylib
+    .lookupFunction<_destroy_vertices_type, _DestroyVerticesType>(
+      'DestroyVertices',
+    );

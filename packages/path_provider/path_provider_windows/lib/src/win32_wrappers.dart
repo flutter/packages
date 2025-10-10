@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -52,33 +52,38 @@ final DynamicLibrary _dllVersion = DynamicLibrary.open('version.dll');
 final DynamicLibrary _dllShell32 = DynamicLibrary.open('shell32.dll');
 
 // https://learn.microsoft.com/windows/win32/api/shlobj_core/nf-shlobj_core-shgetknownfolderpath
-typedef _FFITypeSHGetKnownFolderPath = HRESULT Function(
-    Pointer<GUID>, DWORD, HANDLE, PWSTR);
-typedef FFITypeSHGetKnownFolderPathDart = int Function(
-    Pointer<GUID>, int, int, Pointer<Pointer<Utf16>>);
+typedef _FFITypeSHGetKnownFolderPath =
+    HRESULT Function(Pointer<GUID>, DWORD, HANDLE, PWSTR);
+typedef FFITypeSHGetKnownFolderPathDart =
+    int Function(Pointer<GUID>, int, int, Pointer<Pointer<Utf16>>);
 // ignore: non_constant_identifier_names
-final FFITypeSHGetKnownFolderPathDart SHGetKnownFolderPath =
-    _dllShell32.lookupFunction<_FFITypeSHGetKnownFolderPath,
-        FFITypeSHGetKnownFolderPathDart>('SHGetKnownFolderPath');
+final FFITypeSHGetKnownFolderPathDart SHGetKnownFolderPath = _dllShell32
+    .lookupFunction<
+      _FFITypeSHGetKnownFolderPath,
+      FFITypeSHGetKnownFolderPathDart
+    >('SHGetKnownFolderPath');
 
 // https://learn.microsoft.com/windows/win32/api/winver/nf-winver-getfileversioninfow
-typedef _FFITypeGetFileVersionInfoW = BOOL Function(
-    LPCWSTR, DWORD, DWORD, LPVOID);
-typedef FFITypeGetFileVersionInfoW = int Function(
-    Pointer<Utf16>, int, int, Pointer<NativeType>);
+typedef _FFITypeGetFileVersionInfoW =
+    BOOL Function(LPCWSTR, DWORD, DWORD, LPVOID);
+typedef FFITypeGetFileVersionInfoW =
+    int Function(Pointer<Utf16>, int, int, Pointer<NativeType>);
 // ignore: non_constant_identifier_names
 final FFITypeGetFileVersionInfoW GetFileVersionInfo = _dllVersion
     .lookupFunction<_FFITypeGetFileVersionInfoW, FFITypeGetFileVersionInfoW>(
-        'GetFileVersionInfoW');
+      'GetFileVersionInfoW',
+    );
 
 // https://learn.microsoft.com/windows/win32/api/winver/nf-winver-getfileversioninfosizew
 typedef _FFITypeGetFileVersionInfoSizeW = DWORD Function(LPCWSTR, LPDWORD);
-typedef FFITypeGetFileVersionInfoSizeW = int Function(
-    Pointer<Utf16>, Pointer<Uint32>);
+typedef FFITypeGetFileVersionInfoSizeW =
+    int Function(Pointer<Utf16>, Pointer<Uint32>);
 // ignore: non_constant_identifier_names
-final FFITypeGetFileVersionInfoSizeW GetFileVersionInfoSize =
-    _dllVersion.lookupFunction<_FFITypeGetFileVersionInfoSizeW,
-        FFITypeGetFileVersionInfoSizeW>('GetFileVersionInfoSizeW');
+final FFITypeGetFileVersionInfoSizeW GetFileVersionInfoSize = _dllVersion
+    .lookupFunction<
+      _FFITypeGetFileVersionInfoSizeW,
+      FFITypeGetFileVersionInfoSizeW
+    >('GetFileVersionInfoSizeW');
 
 // https://learn.microsoft.com/windows/win32/api/errhandlingapi/nf-errhandlingapi-getlasterror
 typedef _FFITypeGetLastError = DWORD Function();
@@ -91,18 +96,25 @@ final FFITypeGetLastError GetLastError = _dllKernel32
 typedef _FFITypeGetModuleFileNameW = DWORD Function(HMODULE, LPWSTR, DWORD);
 typedef FFITypeGetModuleFileNameW = int Function(int, Pointer<Utf16>, int);
 // ignore: non_constant_identifier_names
-final FFITypeGetModuleFileNameW GetModuleFileName = _dllKernel32.lookupFunction<
-    _FFITypeGetModuleFileNameW,
-    FFITypeGetModuleFileNameW>('GetModuleFileNameW');
+final FFITypeGetModuleFileNameW GetModuleFileName = _dllKernel32
+    .lookupFunction<_FFITypeGetModuleFileNameW, FFITypeGetModuleFileNameW>(
+      'GetModuleFileNameW',
+    );
 
 // https://learn.microsoft.com/windows/win32/api/winver/nf-winver-verqueryvaluew
 typedef _FFITypeVerQueryValueW = BOOL Function(LPCVOID, LPCWSTR, LPVOID, PUINT);
-typedef FFITypeVerQueryValueW = int Function(
-    Pointer<NativeType>, Pointer<Utf16>, Pointer<NativeType>, Pointer<Uint32>);
+typedef FFITypeVerQueryValueW =
+    int Function(
+      Pointer<NativeType>,
+      Pointer<Utf16>,
+      Pointer<NativeType>,
+      Pointer<Uint32>,
+    );
 // ignore: non_constant_identifier_names
-final FFITypeVerQueryValueW VerQueryValue =
-    _dllVersion.lookupFunction<_FFITypeVerQueryValueW, FFITypeVerQueryValueW>(
-        'VerQueryValueW');
+final FFITypeVerQueryValueW VerQueryValue = _dllVersion
+    .lookupFunction<_FFITypeVerQueryValueW, FFITypeVerQueryValueW>(
+      'VerQueryValueW',
+    );
 
 // https://learn.microsoft.com/windows/win32/api/fileapi/nf-fileapi-gettemppathw
 typedef _FFITypeGetTempPathW = DWORD Function(DWORD, LPWSTR);

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -99,15 +99,7 @@ class AffineMatrix {
     if (x == 1 && y == 1) {
       return this;
     }
-    return AffineMatrix(
-      a * x,
-      b * x,
-      c * y,
-      d * y,
-      e,
-      f,
-      _m4_10 * x,
-    );
+    return AffineMatrix(a * x, b * x, c * y, d * y, e, f, _m4_10 * x);
   }
 
   /// Creates a new affine matrix, translated along the x and y axis.
@@ -125,28 +117,32 @@ class AffineMatrix {
 
   /// Creates a new affine matrix, skewed along the x axis.
   AffineMatrix xSkewed(double x) {
-    return multiplied(AffineMatrix(
-      identity.a,
-      identity.b,
-      math.tan(x),
-      identity.d,
-      identity.e,
-      identity.f,
-      identity._m4_10,
-    ));
+    return multiplied(
+      AffineMatrix(
+        identity.a,
+        identity.b,
+        math.tan(x),
+        identity.d,
+        identity.e,
+        identity.f,
+        identity._m4_10,
+      ),
+    );
   }
 
   /// Creates a new affine matrix, skewed along the y axis.
   AffineMatrix ySkewed(double y) {
-    return multiplied(AffineMatrix(
-      identity.a,
-      math.tan(y),
-      identity.c,
-      identity.d,
-      identity.e,
-      identity.f,
-      identity._m4_10,
-    ));
+    return multiplied(
+      AffineMatrix(
+        identity.a,
+        math.tan(y),
+        identity.c,
+        identity.d,
+        identity.e,
+        identity.f,
+        identity._m4_10,
+      ),
+    );
   }
 
   /// Creates a new affine matrix of this concatenated with `other`.

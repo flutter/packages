@@ -1,15 +1,15 @@
-group 'io.flutter.plugins.webviewflutter'
-version '1.0-SNAPSHOT'
+group = 'io.flutter.plugins.webviewflutter'
+version = '1.0-SNAPSHOT'
 
 buildscript {
-    ext.kotlin_version = '2.1.10'
+    ext.kotlin_version = '2.2.10'
     repositories {
         google()
         mavenCentral()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.9.0'
+        classpath 'com.android.tools.build:gradle:8.12.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -25,36 +25,37 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    namespace 'io.flutter.plugins.webviewflutter'
+    namespace = "io.flutter.plugins.webviewflutter"
     compileSdk = flutter.compileSdkVersion
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = '11'
+        jvmTarget = JavaVersion.VERSION_17.toString()
     }
 
     defaultConfig {
-        minSdkVersion 21
+        minSdkVersion 24
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    lintOptions {
-        checkAllWarnings true
-        warningsAsErrors true
+    lint {
+        checkAllWarnings = true
+        warningsAsErrors = true
         disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency', 'NewerVersionAvailable'
+        baseline = file("lint-baseline.xml")
     }
 
     dependencies {
-        implementation 'androidx.annotation:annotation:1.9.1'
-        implementation 'androidx.webkit:webkit:1.12.1'
-        testImplementation 'junit:junit:4.13.2'
-        testImplementation 'org.mockito:mockito-core:5.17.0'
-        testImplementation 'org.mockito:mockito-inline:5.2.0'
-        testImplementation 'androidx.test:core:1.6.1'
+        implementation("androidx.annotation:annotation:1.9.1")
+        implementation("androidx.webkit:webkit:1.14.0")
+        testImplementation("junit:junit:4.13.2")
+        testImplementation("org.mockito:mockito-core:5.19.0")
+        testImplementation("org.mockito:mockito-inline:5.2.0")
+        testImplementation("androidx.test:core:1.7.0")
     }
 
     testOptions {

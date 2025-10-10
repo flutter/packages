@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -15,22 +15,21 @@ void main() {
     expect(find.byType(SnackBar), findsOneWidget);
   });
 
-  testWidgets(
-    'CameraDescription toggles will not overflow',
-    (WidgetTester tester) async {
-      WidgetsFlutterBinding.ensureInitialized();
-      // Adds 10 fake camera descriptions.
-      for (int i = 0; i < 10; i++) {
-        cameras.add(
-          CameraDescription(
-            name: 'camera_$i',
-            lensDirection: CameraLensDirection.back,
-            sensorOrientation: 90,
-          ),
-        );
-      }
-      await tester.pumpWidget(const CameraApp());
-      await tester.pumpAndSettle();
-    },
-  );
+  testWidgets('CameraDescription toggles will not overflow', (
+    WidgetTester tester,
+  ) async {
+    WidgetsFlutterBinding.ensureInitialized();
+    // Adds 10 fake camera descriptions.
+    for (int i = 0; i < 10; i++) {
+      cameras.add(
+        CameraDescription(
+          name: 'camera_$i',
+          lensDirection: CameraLensDirection.back,
+          sensorOrientation: 90,
+        ),
+      );
+    }
+    await tester.pumpWidget(const CameraApp());
+    await tester.pumpAndSettle();
+  });
 }

@@ -1,5 +1,5 @@
 #!/bin/bash
-# Copyright 2013 The Flutter Authors. All rights reserved.
+# Copyright 2013 The Flutter Authors
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -29,7 +29,6 @@ pushd packages/rfw
 
 # Update the subpackages so that the analysis doesn't get confused.
 pushd example/remote; flutter packages get; popd
-pushd example/wasm; flutter packages get; popd
 pushd test_coverage; dart pub get; popd
 
 flutter analyze --no-fatal-infos

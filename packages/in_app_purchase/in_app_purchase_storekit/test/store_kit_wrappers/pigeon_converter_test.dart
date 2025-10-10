@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 import 'package:flutter_test/flutter_test.dart';
@@ -9,37 +9,46 @@ import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
 
 void main() {
   final SKPriceLocaleWrapper locale = SKPriceLocaleWrapper(
-      currencySymbol: r'$', currencyCode: 'USD', countryCode: 'USA');
+    currencySymbol: r'$',
+    currencyCode: 'USD',
+    countryCode: 'USA',
+  );
 
   final SKProductSubscriptionPeriodWrapper subPeriod =
       SKProductSubscriptionPeriodWrapper(
-          numberOfUnits: 1, unit: SKSubscriptionPeriodUnit.month);
+        numberOfUnits: 1,
+        unit: SKSubscriptionPeriodUnit.month,
+      );
 
   final SKProductDiscountWrapper discount = SKProductDiscountWrapper(
-      price: '0.99',
-      priceLocale: locale,
-      numberOfPeriods: 1,
-      paymentMode: SKProductDiscountPaymentMode.payUpFront,
-      subscriptionPeriod: subPeriod,
-      identifier: 'discount',
-      type: SKProductDiscountType.subscription);
+    price: '0.99',
+    priceLocale: locale,
+    numberOfPeriods: 1,
+    paymentMode: SKProductDiscountPaymentMode.payUpFront,
+    subscriptionPeriod: subPeriod,
+    identifier: 'discount',
+    type: SKProductDiscountType.subscription,
+  );
 
   final SKProductWrapper product = SKProductWrapper(
-      productIdentifier: 'fake_product',
-      localizedTitle: 'title',
-      localizedDescription: 'description',
-      priceLocale: locale,
-      price: '3.99',
-      subscriptionGroupIdentifier: 'sub_group',
-      discounts: <SKProductDiscountWrapper>[discount]);
+    productIdentifier: 'fake_product',
+    localizedTitle: 'title',
+    localizedDescription: 'description',
+    priceLocale: locale,
+    price: '3.99',
+    subscriptionGroupIdentifier: 'sub_group',
+    discounts: <SKProductDiscountWrapper>[discount],
+  );
 
   final SkProductResponseWrapper productResponse = SkProductResponseWrapper(
-      products: <SKProductWrapper>[product],
-      invalidProductIdentifiers: const <String>['invalid_identifier']);
+    products: <SKProductWrapper>[product],
+    invalidProductIdentifiers: const <String>['invalid_identifier'],
+  );
 
   test('test SKPriceLocale pigeon converters', () {
-    final SKPriceLocaleMessage msg =
-        SKPriceLocaleWrapper.convertToPigeon(locale);
+    final SKPriceLocaleMessage msg = SKPriceLocaleWrapper.convertToPigeon(
+      locale,
+    );
     expect(msg.currencySymbol, r'$');
     expect(msg.currencyCode, 'USD');
     expect(msg.countryCode, 'USA');
@@ -108,13 +117,14 @@ void main() {
 
   test('test AppStoreProduct2Details conversion', () {
     final SK2Product product = SK2Product(
-        id: '123',
-        displayName: 'name',
-        displayPrice: '0.99',
-        description: 'description',
-        price: 9.99,
-        type: SK2ProductType.consumable,
-        priceLocale: SK2PriceLocale(currencyCode: 'USD', currencySymbol: r'$'));
+      id: '123',
+      displayName: 'name',
+      displayPrice: '0.99',
+      description: 'description',
+      price: 9.99,
+      type: SK2ProductType.consumable,
+      priceLocale: SK2PriceLocale(currencyCode: 'USD', currencySymbol: r'$'),
+    );
 
     final AppStoreProduct2Details details =
         AppStoreProduct2Details.fromSK2Product(product);

@@ -1,0 +1,36 @@
+name: google_fonts
+description: A Flutter package to use fonts from fonts.google.com. Supports HTTP fetching, caching, and asset bundling.
+repository: https://github.com/flutter/packages/tree/main/packages/google_fonts
+issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+google_fonts%22
+version: 6.3.2
+
+environment:
+  sdk: ^3.7.0
+  flutter: ">=3.29.0"
+
+dependencies:
+  crypto: ^3.0.0
+  flutter:
+    sdk: flutter
+  http: ^1.0.0
+  path_provider: ^2.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  mockito: ^5.0.0
+  mustache_template: 2.0.0
+  path_provider_platform_interface: ^2.0.1
+  plugin_platform_interface: ^2.1.7
+  protobuf: ">=2.0.1 <5.0.0"
+  test: ^1.19.5
+
+topics:
+  - font
+  - fonts
+
+screenshots:
+ - description: 'Google Fonts and Flutter logos.'
+   path: screenshots/logo_mashup.png
+ - description: 'Using hot reload to change the font family.'
+   path: screenshots/hot_reload.gif

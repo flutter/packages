@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -121,7 +121,7 @@
   [self setConsumeTapEvents:platformMarker.consumeTapEvents];
   [self setPosition:FGMGetCoordinateForPigeonLatLng(platformMarker.position)];
   [self setRotation:platformMarker.rotation];
-  [self setZIndex:platformMarker.zIndex];
+  [self setZIndex:(int)platformMarker.zIndex];
   FGMPlatformInfoWindow *infoWindow = platformMarker.infoWindow;
   [self setInfoWindowAnchor:FGMGetCGPointForPigeonPoint(infoWindow.anchor)];
   if (infoWindow.title) {

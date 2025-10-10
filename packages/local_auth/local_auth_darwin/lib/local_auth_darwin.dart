@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -23,9 +23,8 @@ class LocalAuthDarwin extends LocalAuthPlatform {
   LocalAuthDarwin({
     @visibleForTesting LocalAuthApi? api,
     @visibleForTesting bool? overrideUseMacOSAuthMessages,
-  })  : _api = api ?? LocalAuthApi(),
-        _useMacOSAuthMessages =
-            overrideUseMacOSAuthMessages ?? Platform.isMacOS;
+  }) : _api = api ?? LocalAuthApi(),
+       _useMacOSAuthMessages = overrideUseMacOSAuthMessages ?? Platform.isMacOS;
 
   /// Registers this class as the default instance of [LocalAuthPlatform].
   static void registerWith() {
@@ -43,13 +42,15 @@ class LocalAuthDarwin extends LocalAuthPlatform {
   }) async {
     assert(localizedReason.isNotEmpty);
     final AuthResultDetails resultDetails = await _api.authenticate(
-        AuthOptions(
-            biometricOnly: options.biometricOnly,
-            sticky: options.stickyAuth,
-            useErrorDialogs: options.useErrorDialogs),
-        _useMacOSAuthMessages
-            ? _pigeonStringsFromMacOSAuthMessages(localizedReason, authMessages)
-            : _pigeonStringsFromiOSAuthMessages(localizedReason, authMessages));
+      AuthOptions(
+        biometricOnly: options.biometricOnly,
+        sticky: options.stickyAuth,
+        useErrorDialogs: options.useErrorDialogs,
+      ),
+      _useMacOSAuthMessages
+          ? _pigeonStringsFromMacOSAuthMessages(localizedReason, authMessages)
+          : _pigeonStringsFromiOSAuthMessages(localizedReason, authMessages),
+    );
     // TODO(stuartmorgan): Replace this with structured errors, coordinated
     // across all platform implementations, per
     // https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#platform-exception-handling
@@ -62,19 +63,40 @@ class LocalAuthDarwin extends LocalAuthPlatform {
         return false;
       case AuthResult.errorNotAvailable:
         throw PlatformException(
-            code: 'NotAvailable',
-            message: resultDetails.errorMessage,
-            details: resultDetails.errorDetails);
+          code: 'NotAvailable',
+          message: resultDetails.errorMessage,
+          details: resultDetails.errorDetails,
+        );
       case AuthResult.errorNotEnrolled:
         throw PlatformException(
-            code: 'NotEnrolled',
-            message: resultDetails.errorMessage,
-            details: resultDetails.errorDetails);
+          code: 'NotEnrolled',
+          message: resultDetails.errorMessage,
+          details: resultDetails.errorDetails,
+        );
       case AuthResult.errorPasscodeNotSet:
         throw PlatformException(
-            code: 'PasscodeNotSet',
-            message: resultDetails.errorMessage,
-            details: resultDetails.errorDetails);
+          code: 'PasscodeNotSet',
+          message: resultDetails.errorMessage,
+          details: resultDetails.errorDetails,
+        );
+      case AuthResult.errorUserCancelled:
+        throw PlatformException(
+          code: 'UserCancelled',
+          message: resultDetails.errorMessage,
+          details: resultDetails.errorDetails,
+        );
+      case AuthResult.errorBiometricNotAvailable:
+        throw PlatformException(
+          code: 'BiometricNotAvailable',
+          message: resultDetails.errorMessage,
+          details: resultDetails.errorDetails,
+        );
+      case AuthResult.errorUserFallback:
+        throw PlatformException(
+          code: 'UserFallback',
+          message: resultDetails.errorMessage,
+          details: resultDetails.errorDetails,
+        );
     }
   }
 
@@ -104,7 +126,9 @@ class LocalAuthDarwin extends LocalAuthPlatform {
   Future<bool> stopAuthentication() async => false;
 
   AuthStrings _pigeonStringsFromiOSAuthMessages(
-      String localizedReason, Iterable<AuthMessages> messagesList) {
+    String localizedReason,
+    Iterable<AuthMessages> messagesList,
+  ) {
     IOSAuthMessages? messages;
     for (final AuthMessages entry in messagesList) {
       if (entry is IOSAuthMessages) {
@@ -126,7 +150,9 @@ class LocalAuthDarwin extends LocalAuthPlatform {
   }
 
   AuthStrings _pigeonStringsFromMacOSAuthMessages(
-      String localizedReason, Iterable<AuthMessages> messagesList) {
+    String localizedReason,
+    Iterable<AuthMessages> messagesList,
+  ) {
     MacOSAuthMessages? messages;
     for (final AuthMessages entry in messagesList) {
       if (entry is MacOSAuthMessages) {

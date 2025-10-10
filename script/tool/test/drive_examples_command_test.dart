@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -66,7 +66,7 @@ void main() {
       final List<String> devices = <String>[
         if (hasIOSDevice) '{"id": "$_fakeIOSDevice", "targetPlatform": "ios"}',
         if (hasAndroidDevice)
-          '{"id": "$_fakeAndroidDevice", "targetPlatform": "android-x86"}',
+          '{"id": "$_fakeAndroidDevice", "targetPlatform": "android-x64"}',
       ];
       final String output =
           '''${includeBanner ? updateBanner : ''}[${devices.join(',')}]''';

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -12,10 +12,7 @@ import 'package:flutter/foundation.dart' show immutable, objectRuntimeType;
 @immutable
 class ScreenCoordinate {
   /// Creates an immutable representation of a point coordinate in the [GoogleMap]'s view.
-  const ScreenCoordinate({
-    required this.x,
-    required this.y,
-  });
+  const ScreenCoordinate({required this.x, required this.y});
 
   /// Represents the number of pixels from the left of the [GoogleMap].
   final int x;
@@ -25,10 +22,7 @@ class ScreenCoordinate {
 
   /// Converts this object to something serializable in JSON.
   Object toJson() {
-    return <String, int>{
-      'x': x,
-      'y': y,
-    };
+    return <String, int>{'x': x, 'y': y};
   }
 
   @override

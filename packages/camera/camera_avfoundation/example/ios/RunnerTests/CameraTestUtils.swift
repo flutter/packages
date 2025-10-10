@@ -1,14 +1,14 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import XCTest
 
-// Import Objectice-C part of the implementation when SwiftPM is used.
+@testable import camera_avfoundation
+
+// Import Objective-C part of the implementation when SwiftPM is used.
 #if canImport(camera_avfoundation_objc)
   import camera_avfoundation_objc
-#else
-  import camera_avfoundation
 #endif
 
 /// Utils for creating default class instances used in tests
@@ -81,16 +81,16 @@ enum CameraTestUtils {
     return configuration
   }
 
-  static func createTestCamera(_ configuration: FLTCamConfiguration) -> FLTCam {
-    return FLTCam(configuration: configuration, error: nil)
+  static func createTestCamera(_ configuration: FLTCamConfiguration) -> DefaultCamera {
+    return (try? DefaultCamera(configuration: configuration))!
   }
 
-  static func createTestCamera() -> FLTCam {
+  static func createTestCamera() -> DefaultCamera {
     return createTestCamera(createTestCameraConfiguration())
   }
 
   static func createCameraWithCaptureSessionQueue(_ captureSessionQueue: DispatchQueue)
-    -> FLTCam
+    -> DefaultCamera
   {
     let configuration = createTestCameraConfiguration()
     configuration.captureSessionQueue = captureSessionQueue

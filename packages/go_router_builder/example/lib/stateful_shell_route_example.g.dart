@@ -8,73 +8,77 @@ part of 'stateful_shell_route_example.dart';
 // GoRouterGenerator
 // **************************************************************************
 
-List<RouteBase> get $appRoutes => [
-      $myShellRouteData,
-    ];
+List<RouteBase> get $appRoutes => [$myShellRouteData];
 
 RouteBase get $myShellRouteData => StatefulShellRouteData.$route(
-      restorationScopeId: MyShellRouteData.$restorationScopeId,
-      navigatorContainerBuilder: MyShellRouteData.$navigatorContainerBuilder,
-      factory: $MyShellRouteDataExtension._fromState,
-      branches: [
-        StatefulShellBranchData.$branch(
-          routes: [
-            GoRouteData.$route(
-              path: '/detailsA',
-              factory: $DetailsARouteDataExtension._fromState,
-            ),
-          ],
-        ),
-        StatefulShellBranchData.$branch(
-          navigatorKey: BranchBData.$navigatorKey,
-          restorationScopeId: BranchBData.$restorationScopeId,
-          routes: [
-            GoRouteData.$route(
-              path: '/detailsB',
-              factory: $DetailsBRouteDataExtension._fromState,
-            ),
-          ],
+  restorationScopeId: MyShellRouteData.$restorationScopeId,
+  navigatorContainerBuilder: MyShellRouteData.$navigatorContainerBuilder,
+  factory: $MyShellRouteDataExtension._fromState,
+  branches: [
+    StatefulShellBranchData.$branch(
+      routes: [
+        GoRouteData.$route(
+          path: '/detailsA',
+          factory: $DetailsARouteData._fromState,
         ),
       ],
-    );
+    ),
+    StatefulShellBranchData.$branch(
+      navigatorKey: BranchBData.$navigatorKey,
+      restorationScopeId: BranchBData.$restorationScopeId,
+      routes: [
+        GoRouteData.$route(
+          path: '/detailsB',
+          factory: $DetailsBRouteData._fromState,
+        ),
+      ],
+    ),
+  ],
+);
 
 extension $MyShellRouteDataExtension on MyShellRouteData {
   static MyShellRouteData _fromState(GoRouterState state) =>
       const MyShellRouteData();
 }
 
-extension $DetailsARouteDataExtension on DetailsARouteData {
+mixin $DetailsARouteData on GoRouteData {
   static DetailsARouteData _fromState(GoRouterState state) =>
       const DetailsARouteData();
 
-  String get location => GoRouteData.$location(
-        '/detailsA',
-      );
+  @override
+  String get location => GoRouteData.$location('/detailsA');
 
+  @override
   void go(BuildContext context) => context.go(location);
 
+  @override
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
+  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
 
+  @override
   void replace(BuildContext context) => context.replace(location);
 }
 
-extension $DetailsBRouteDataExtension on DetailsBRouteData {
+mixin $DetailsBRouteData on GoRouteData {
   static DetailsBRouteData _fromState(GoRouterState state) =>
       const DetailsBRouteData();
 
-  String get location => GoRouteData.$location(
-        '/detailsB',
-      );
+  @override
+  String get location => GoRouteData.$location('/detailsB');
 
+  @override
   void go(BuildContext context) => context.go(location);
 
+  @override
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
+  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
 
+  @override
   void replace(BuildContext context) => context.replace(location);
 }

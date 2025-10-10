@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -7,12 +7,16 @@ import 'package:flutter_test/flutter_test.dart';
 
 /// Sets [_TolerantGoldenFileComparator] as the default golden file comparator
 /// in tests.
-void setUpTolerantComparator(
-    {required String testPath, required double precisionTolerance}) {
+void setUpTolerantComparator({
+  required String testPath,
+  required double precisionTolerance,
+}) {
   final GoldenFileComparator oldComparator = goldenFileComparator;
   final _TolerantGoldenFileComparator newComparator =
-      _TolerantGoldenFileComparator(Uri.parse(testPath),
-          precisionTolerance: precisionTolerance);
+      _TolerantGoldenFileComparator(
+        Uri.parse(testPath),
+        precisionTolerance: precisionTolerance,
+      );
 
   goldenFileComparator = newComparator;
 
@@ -23,11 +27,11 @@ class _TolerantGoldenFileComparator extends LocalFileComparator {
   _TolerantGoldenFileComparator(
     super.testFile, {
     required double precisionTolerance,
-  })  : assert(
-          0 <= precisionTolerance && precisionTolerance <= 1,
-          'precisionTolerance must be between 0 and 1',
-        ),
-        _precisionTolerance = precisionTolerance;
+  }) : assert(
+         0 <= precisionTolerance && precisionTolerance <= 1,
+         'precisionTolerance must be between 0 and 1',
+       ),
+       _precisionTolerance = precisionTolerance;
 
   /// How much the golden image can differ from the test image.
   ///

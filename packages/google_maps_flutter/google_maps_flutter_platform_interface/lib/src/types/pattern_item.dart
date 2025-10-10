@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -17,10 +17,10 @@ enum PatternItemType {
 }
 
 String _patternItemTypeToJson(PatternItemType itemType) => switch (itemType) {
-      PatternItemType.dot => 'dot',
-      PatternItemType.dash => 'dash',
-      PatternItemType.gap => 'gap',
-    };
+  PatternItemType.dot => 'dot',
+  PatternItemType.dash => 'dash',
+  PatternItemType.gap => 'gap',
+};
 
 /// Item used in the stroke pattern for a Polyline.
 @immutable
@@ -36,7 +36,9 @@ class PatternItem {
   static PatternItem dash(double length) {
     assert(length >= 0.0);
     return VariableLengthPatternItem._(
-        patternItemType: PatternItemType.dash, length: length);
+      patternItemType: PatternItemType.dash,
+      length: length,
+    );
   }
 
   /// A gap used in the stroke pattern for a [Polyline].
@@ -45,32 +47,30 @@ class PatternItem {
   static PatternItem gap(double length) {
     assert(length >= 0.0);
     return VariableLengthPatternItem._(
-        patternItemType: PatternItemType.gap, length: length);
+      patternItemType: PatternItemType.gap,
+      length: length,
+    );
   }
 
   /// The type of rendering used for an item in a pattern.
   final PatternItemType type;
 
   /// Converts this object to something serializable in JSON.
-  Object toJson() => <Object>[
-        _patternItemTypeToJson(type),
-      ];
+  Object toJson() => <Object>[_patternItemTypeToJson(type)];
 }
 
 /// A pattern item with a length, i.e. a dash or gap.
 @immutable
 class VariableLengthPatternItem extends PatternItem {
-  const VariableLengthPatternItem._(
-      {required PatternItemType patternItemType, required this.length})
-      : super._(patternItemType);
+  const VariableLengthPatternItem._({
+    required PatternItemType patternItemType,
+    required this.length,
+  }) : super._(patternItemType);
 
   /// The length in pixels of a dash or gap.
   final double length;
 
   /// Converts this object to something serializable in JSON.
   @override
-  Object toJson() => <Object>[
-        _patternItemTypeToJson(type),
-        length,
-      ];
+  Object toJson() => <Object>[_patternItemTypeToJson(type), length];
 }

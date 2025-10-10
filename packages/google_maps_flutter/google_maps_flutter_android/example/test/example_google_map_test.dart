@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -75,8 +75,10 @@ void main() {
     const Marker m1 = Marker(markerId: MarkerId('marker_1'));
     const Marker m2 = Marker(markerId: MarkerId('marker_2'));
     const Marker m3 = Marker(markerId: MarkerId('marker_3'));
-    const Marker m3updated =
-        Marker(markerId: MarkerId('marker_3'), draggable: true);
+    const Marker m3updated = Marker(
+      markerId: MarkerId('marker_3'),
+      draggable: true,
+    );
 
     // First remove one and add another, then update the new one.
     await tester.pumpWidget(_mapWithObjects(markers: <Marker>{m1, m2}));
@@ -107,16 +109,21 @@ void main() {
 
     const Polygon p1 = Polygon(polygonId: PolygonId('polygon_1'));
     const Polygon p2 = Polygon(polygonId: PolygonId('polygon_2'));
-    const Polygon p3 =
-        Polygon(polygonId: PolygonId('polygon_3'), strokeWidth: 1);
-    const Polygon p3updated =
-        Polygon(polygonId: PolygonId('polygon_3'), strokeWidth: 2);
+    const Polygon p3 = Polygon(
+      polygonId: PolygonId('polygon_3'),
+      strokeWidth: 1,
+    );
+    const Polygon p3updated = Polygon(
+      polygonId: PolygonId('polygon_3'),
+      strokeWidth: 2,
+    );
 
     // First remove one and add another, then update the new one.
     await tester.pumpWidget(_mapWithObjects(polygons: <Polygon>{p1, p2}));
     await tester.pumpWidget(_mapWithObjects(polygons: <Polygon>{p1, p3}));
-    await tester
-        .pumpWidget(_mapWithObjects(polygons: <Polygon>{p1, p3updated}));
+    await tester.pumpWidget(
+      _mapWithObjects(polygons: <Polygon>{p1, p3updated}),
+    );
 
     final PlatformMapStateRecorder map = platform.lastCreatedMap;
 
@@ -142,16 +149,21 @@ void main() {
 
     const Polyline p1 = Polyline(polylineId: PolylineId('polyline_1'));
     const Polyline p2 = Polyline(polylineId: PolylineId('polyline_2'));
-    const Polyline p3 =
-        Polyline(polylineId: PolylineId('polyline_3'), width: 1);
-    const Polyline p3updated =
-        Polyline(polylineId: PolylineId('polyline_3'), width: 2);
+    const Polyline p3 = Polyline(
+      polylineId: PolylineId('polyline_3'),
+      width: 1,
+    );
+    const Polyline p3updated = Polyline(
+      polylineId: PolylineId('polyline_3'),
+      width: 2,
+    );
 
     // First remove one and add another, then update the new one.
     await tester.pumpWidget(_mapWithObjects(polylines: <Polyline>{p1, p2}));
     await tester.pumpWidget(_mapWithObjects(polylines: <Polyline>{p1, p3}));
-    await tester
-        .pumpWidget(_mapWithObjects(polylines: <Polyline>{p1, p3updated}));
+    await tester.pumpWidget(
+      _mapWithObjects(polylines: <Polyline>{p1, p3updated}),
+    );
 
     final PlatformMapStateRecorder map = platform.lastCreatedMap;
 
@@ -163,8 +175,9 @@ void main() {
 
     expect(map.polylineUpdates[1].polylinesToChange.isEmpty, true);
     expect(map.polylineUpdates[1].polylinesToAdd, <Polyline>{p3});
-    expect(map.polylineUpdates[1].polylineIdsToRemove,
-        <PolylineId>{p2.polylineId});
+    expect(map.polylineUpdates[1].polylineIdsToRemove, <PolylineId>{
+      p2.polylineId,
+    });
 
     expect(map.polylineUpdates[2].polylinesToChange, <Polyline>{p3updated});
     expect(map.polylineUpdates[2].polylinesToAdd.isEmpty, true);

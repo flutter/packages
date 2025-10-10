@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -292,13 +292,13 @@ class VideoEvent {
 
   @override
   int get hashCode => Object.hash(
-        eventType,
-        duration,
-        size,
-        rotationCorrection,
-        buffered,
-        isPlaying,
-      );
+    eventType,
+    duration,
+    size,
+    rotationCorrection,
+    buffered,
+    isPlaying,
+  );
 }
 
 /// Type of the event.
@@ -435,6 +435,7 @@ class VideoPlayerWebOptions {
     this.controls = const VideoPlayerWebOptionsControls.disabled(),
     this.allowContextMenu = true,
     this.allowRemotePlayback = true,
+    this.poster,
   });
 
   /// Additional settings for how control options are displayed
@@ -445,6 +446,9 @@ class VideoPlayerWebOptions {
 
   /// Whether remote playback is allowed
   final bool allowRemotePlayback;
+
+  /// The URL of the poster image to be displayed before the video starts
+  final Uri? poster;
 }
 
 /// [VideoPlayerWebOptions] can be used to set how control options are displayed
@@ -460,11 +464,11 @@ class VideoPlayerWebOptionsControls {
 
   /// Disables control options. Default behavior.
   const VideoPlayerWebOptionsControls.disabled()
-      : enabled = false,
-        allowDownload = false,
-        allowFullscreen = false,
-        allowPlaybackRate = false,
-        allowPictureInPicture = false;
+    : enabled = false,
+      allowDownload = false,
+      allowFullscreen = false,
+      allowPlaybackRate = false,
+      allowPictureInPicture = false;
 
   /// Whether native controls are enabled
   final bool enabled;
@@ -510,9 +514,7 @@ class VideoPlayerWebOptionsControls {
 @immutable
 class VideoViewOptions {
   /// Constructs an instance of [VideoViewOptions].
-  const VideoViewOptions({
-    required this.playerId,
-  });
+  const VideoViewOptions({required this.playerId});
 
   /// The identifier of the video player.
   final int playerId;

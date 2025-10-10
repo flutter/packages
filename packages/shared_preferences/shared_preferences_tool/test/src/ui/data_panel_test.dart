@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -50,12 +50,13 @@ void main() {
         SharedPreferencesState(
           allKeys: const AsyncState<List<String>>.data(<String>[selectedKey]),
           editing: editing,
-          selectedKey: state == null
-              ? null
-              : SelectedSharedPreferencesKey(
-                  key: selectedKey,
-                  value: state,
-                ),
+          selectedKey:
+              state == null
+                  ? null
+                  : SelectedSharedPreferencesKey(
+                    key: selectedKey,
+                    value: state,
+                  ),
         ),
       );
     }
@@ -130,8 +131,11 @@ void main() {
     });
 
     testWidgets('should show string list value', (WidgetTester tester) async {
-      stubDataState(const SharedPreferencesData.stringList(
-          value: <String>['value1', 'value2']));
+      stubDataState(
+        const SharedPreferencesData.stringList(
+          value: <String>['value1', 'value2'],
+        ),
+      );
       await pumpDataPanel(tester);
 
       expect(find.text('Type: List<String>'), findsOneWidget);
@@ -155,60 +159,55 @@ void main() {
       verify(notifierMock.startEditing()).called(1);
     });
 
-    testWidgets(
-      'on remove should show confirmation modal',
-      (WidgetTester tester) async {
-        stubDataState(const SharedPreferencesData.string(value: 'value'));
-        await pumpDataPanel(tester);
+    testWidgets('on remove should show confirmation modal', (
+      WidgetTester tester,
+    ) async {
+      stubDataState(const SharedPreferencesData.string(value: 'value'));
+      await pumpDataPanel(tester);
 
-        await tester.tap(find.text('Remove'));
-        await tester.pumpAndSettle();
+      await tester.tap(find.text('Remove'));
+      await tester.pumpAndSettle();
 
-        expect(
-          find.text('Are you sure you want to remove selectedTestKey?'),
-          findsOneWidget,
-        );
-        expect(find.text('CANCEL'), findsOneWidget);
-        expect(find.text('REMOVE'), findsOneWidget);
-      },
-    );
+      expect(
+        find.text('Are you sure you want to remove selectedTestKey?'),
+        findsOneWidget,
+      );
+      expect(find.text('CANCEL'), findsOneWidget);
+      expect(find.text('REMOVE'), findsOneWidget);
+    });
 
-    testWidgets(
-      'on removed confirmed should remove key',
-      (WidgetTester tester) async {
-        const SharedPreferencesData value = SharedPreferencesData.string(
-          value: 'value',
-        );
-        stubDataState(value);
-        await pumpDataPanel(tester);
-        await tester.tap(find.text('Remove'));
-        await tester.pumpAndSettle();
+    testWidgets('on removed confirmed should remove key', (
+      WidgetTester tester,
+    ) async {
+      const SharedPreferencesData value = SharedPreferencesData.string(
+        value: 'value',
+      );
+      stubDataState(value);
+      await pumpDataPanel(tester);
+      await tester.tap(find.text('Remove'));
+      await tester.pumpAndSettle();
 
-        await tester.tap(find.text('REMOVE'));
+      await tester.tap(find.text('REMOVE'));
 
-        verify(
-          notifierMock.deleteSelectedKey(),
-        ).called(1);
-      },
-    );
+      verify(notifierMock.deleteSelectedKey()).called(1);
+    });
 
-    testWidgets(
-      'on remove canceled should cancel remove',
-      (WidgetTester tester) async {
-        stubDataState(const SharedPreferencesData.string(value: 'value'));
-        await pumpDataPanel(tester);
-        await tester.tap(find.text('Remove'));
-        await tester.pumpAndSettle();
+    testWidgets('on remove canceled should cancel remove', (
+      WidgetTester tester,
+    ) async {
+      stubDataState(const SharedPreferencesData.string(value: 'value'));
+      await pumpDataPanel(tester);
+      await tester.tap(find.text('Remove'));
+      await tester.pumpAndSettle();
 
-        await tester.tap(find.text('CANCEL'));
-        await tester.pumpAndSettle();
+      await tester.tap(find.text('CANCEL'));
+      await tester.pumpAndSettle();
 
-        expect(
-          find.text('Are you sure you want to remove selectedTestKey?'),
-          findsNothing,
-        );
-      },
-    );
+      expect(
+        find.text('Are you sure you want to remove selectedTestKey?'),
+        findsNothing,
+      );
+    });
 
     testWidgets('should show editing state', (WidgetTester tester) async {
       stubDataState(
@@ -220,163 +219,152 @@ void main() {
       expect(find.text('Cancel'), findsOneWidget);
     });
 
-    testWidgets(
-      'should show string editing state',
-      (WidgetTester tester) async {
-        const String value = 'value';
-        stubDataState(
-          const SharedPreferencesData.string(value: value),
-          editing: true,
-        );
-        await pumpDataPanel(tester);
+    testWidgets('should show string editing state', (
+      WidgetTester tester,
+    ) async {
+      const String value = 'value';
+      stubDataState(
+        const SharedPreferencesData.string(value: value),
+        editing: true,
+      );
+      await pumpDataPanel(tester);
 
-        expect(find.text('Type: String'), findsOneWidget);
-        expect(find.text('Value:'), findsOneWidget);
-        expect(find.text(value), findsOneWidget);
-        expect(find.byType(TextField), findsOneWidget);
-      },
-    );
+      expect(find.text('Type: String'), findsOneWidget);
+      expect(find.text('Value:'), findsOneWidget);
+      expect(find.text(value), findsOneWidget);
+      expect(find.byType(TextField), findsOneWidget);
+    });
 
-    testWidgets(
-      'should show int editing state',
-      (WidgetTester tester) async {
-        const int value = 42;
-        stubDataState(
-          const SharedPreferencesData.int(value: value),
-          editing: true,
-        );
-        await pumpDataPanel(tester);
+    testWidgets('should show int editing state', (WidgetTester tester) async {
+      const int value = 42;
+      stubDataState(
+        const SharedPreferencesData.int(value: value),
+        editing: true,
+      );
+      await pumpDataPanel(tester);
 
-        expect(find.text('Type: int'), findsOneWidget);
-        expect(find.text('Value:'), findsOneWidget);
-        expect(find.text('$value'), findsOneWidget);
-        expect(find.byType(TextField), findsOneWidget);
-        expect(
-          tester.textInputFormatterPattern,
-          equals(RegExp(r'^-?\d*').toString()),
-        );
-      },
-    );
+      expect(find.text('Type: int'), findsOneWidget);
+      expect(find.text('Value:'), findsOneWidget);
+      expect(find.text('$value'), findsOneWidget);
+      expect(find.byType(TextField), findsOneWidget);
+      expect(
+        tester.textInputFormatterPattern,
+        equals(RegExp(r'^-?\d*').toString()),
+      );
+    });
 
-    testWidgets(
-      'should show double editing state',
-      (WidgetTester tester) async {
-        const double value = 42.0;
-        stubDataState(
-          const SharedPreferencesData.double(value: value),
-          editing: true,
-        );
-        await pumpDataPanel(tester);
+    testWidgets('should show double editing state', (
+      WidgetTester tester,
+    ) async {
+      const double value = 42.0;
+      stubDataState(
+        const SharedPreferencesData.double(value: value),
+        editing: true,
+      );
+      await pumpDataPanel(tester);
 
-        expect(find.text('Type: double'), findsOneWidget);
-        expect(find.text('Value:'), findsOneWidget);
-        expect(find.text('$value'), findsOneWidget);
-        expect(find.byType(TextField), findsOneWidget);
-        expect(
-          tester.textInputFormatterPattern,
-          equals(RegExp(r'^-?\d*\.?\d*').toString()),
-        );
-      },
-    );
+      expect(find.text('Type: double'), findsOneWidget);
+      expect(find.text('Value:'), findsOneWidget);
+      expect(find.text('$value'), findsOneWidget);
+      expect(find.byType(TextField), findsOneWidget);
+      expect(
+        tester.textInputFormatterPattern,
+        equals(RegExp(r'^-?\d*\.?\d*').toString()),
+      );
+    });
 
-    testWidgets(
-      'should show boolean editing state',
-      (WidgetTester tester) async {
-        const bool value = true;
-        stubDataState(
-          const SharedPreferencesData.bool(value: value),
-          editing: true,
-        );
-        await pumpDataPanel(tester);
+    testWidgets('should show boolean editing state', (
+      WidgetTester tester,
+    ) async {
+      const bool value = true;
+      stubDataState(
+        const SharedPreferencesData.bool(value: value),
+        editing: true,
+      );
+      await pumpDataPanel(tester);
 
-        expect(find.text('Type: bool'), findsOneWidget);
-        expect(find.text('Value:'), findsOneWidget);
-        expect(find.byType(DropdownMenu<bool>), findsOneWidget);
-      },
-    );
+      expect(find.text('Type: bool'), findsOneWidget);
+      expect(find.text('Value:'), findsOneWidget);
+      expect(find.byType(DropdownMenu<bool>), findsOneWidget);
+    });
 
-    testWidgets(
-      'should show string list editing state',
-      (WidgetTester tester) async {
-        stubDataState(
-          const SharedPreferencesData.stringList(
-            value: <String>['value1', 'value2'],
-          ),
-          editing: true,
-        );
-        await pumpDataPanel(tester);
+    testWidgets('should show string list editing state', (
+      WidgetTester tester,
+    ) async {
+      stubDataState(
+        const SharedPreferencesData.stringList(
+          value: <String>['value1', 'value2'],
+        ),
+        editing: true,
+      );
+      await pumpDataPanel(tester);
 
-        expect(find.text('Type: List<String>'), findsOneWidget);
-        expect(find.text('Value:'), findsOneWidget);
-        expect(find.text('value1'), findsOneWidget);
-        expect(find.text('value2'), findsOneWidget);
-        expect(find.byType(TextField), findsNWidgets(2));
-        // Finds 3 add buttons:
-        // +
-        // value1
-        // +
-        // value2
-        // +
-        expect(find.byIcon(Icons.add), findsNWidgets(3));
-      },
-    );
+      expect(find.text('Type: List<String>'), findsOneWidget);
+      expect(find.text('Value:'), findsOneWidget);
+      expect(find.text('value1'), findsOneWidget);
+      expect(find.text('value2'), findsOneWidget);
+      expect(find.byType(TextField), findsNWidgets(2));
+      // Finds 3 add buttons:
+      // +
+      // value1
+      // +
+      // value2
+      // +
+      expect(find.byIcon(Icons.add), findsNWidgets(3));
+    });
 
-    testWidgets(
-      'should show apply changes button on value changed',
-      (WidgetTester tester) async {
-        stubDataState(
-          const SharedPreferencesData.string(value: 'value'),
-          editing: true,
-        );
-        await pumpDataPanel(tester);
+    testWidgets('should show apply changes button on value changed', (
+      WidgetTester tester,
+    ) async {
+      stubDataState(
+        const SharedPreferencesData.string(value: 'value'),
+        editing: true,
+      );
+      await pumpDataPanel(tester);
 
-        await tester.enterText(find.byType(TextField), 'newValue');
+      await tester.enterText(find.byType(TextField), 'newValue');
+      await tester.pumpAndSettle();
+
+      expect(find.text('Apply changes'), findsOneWidget);
+    });
+
+    testWidgets('pressing an add button on the string list editing state '
+        'should add element in the right index', (WidgetTester tester) async {
+      stubDataState(
+        const SharedPreferencesData.stringList(
+          value: <String>['value1', 'value2'],
+        ),
+        editing: true,
+      );
+      await pumpDataPanel(tester);
+
+      for (int i = 0; i < 3; i++) {
+        await tester.tap(find.byIcon(Icons.add).at(i));
         await tester.pumpAndSettle();
+        await tester.enterText(find.byType(TextField).at(i), '$i');
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('Apply changes'));
+        await tester.pumpAndSettle();
+      }
 
-        expect(find.text('Apply changes'), findsOneWidget);
-      },
-    );
-
-    testWidgets(
-      'pressing an add button on the string list editing state '
-      'should add element in the right index',
-      (WidgetTester tester) async {
-        stubDataState(
+      verifyInOrder(<Future<void>>[
+        notifierMock.changeValue(
           const SharedPreferencesData.stringList(
-            value: <String>['value1', 'value2'],
+            value: <String>['0', 'value1', 'value2'],
           ),
-          editing: true,
-        );
-        await pumpDataPanel(tester);
-
-        for (int i = 0; i < 3; i++) {
-          await tester.tap(find.byIcon(Icons.add).at(i));
-          await tester.pumpAndSettle();
-          await tester.enterText(find.byType(TextField).at(i), '$i');
-          await tester.pumpAndSettle();
-          await tester.tap(find.text('Apply changes'));
-          await tester.pumpAndSettle();
-        }
-
-        verifyInOrder(<Future<void>>[
-          notifierMock.changeValue(
-            const SharedPreferencesData.stringList(
-              value: <String>['0', 'value1', 'value2'],
-            ),
+        ),
+        notifierMock.changeValue(
+          const SharedPreferencesData.stringList(
+            value: <String>['0', '1', 'value1', 'value2'],
           ),
-          notifierMock.changeValue(
-            const SharedPreferencesData.stringList(
-              value: <String>['0', '1', 'value1', 'value2'],
-            ),
+        ),
+        notifierMock.changeValue(
+          const SharedPreferencesData.stringList(
+            value: <String>['0', '1', '2', 'value1', 'value2'],
           ),
-          notifierMock.changeValue(
-            const SharedPreferencesData.stringList(
-              value: <String>['0', '1', '2', 'value1', 'value2'],
-            ),
-          ),
-        ]);
-      },
-    );
+        ),
+      ]);
+    });
   });
 }
 

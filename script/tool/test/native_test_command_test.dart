@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -21,7 +21,7 @@ import 'mocks.dart';
 import 'util.dart';
 
 const String _allAbiFlag =
-    '-Ptarget-platform=android-arm,android-arm64,android-x64,android-x86';
+    '-Ptarget-platform=android-arm,android-arm64,android-x64';
 
 const String _androidIntegrationTestFilter =
     '-Pandroid.testInstrumentationRunnerArguments.'

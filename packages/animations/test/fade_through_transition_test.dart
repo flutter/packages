@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -8,38 +8,37 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets(
-      'FadeThroughPageTransitionsBuilder builds a FadeThroughTransition',
-      (WidgetTester tester) async {
-    final AnimationController animation = AnimationController(
-      vsync: const TestVSync(),
-    );
-    final AnimationController secondaryAnimation = AnimationController(
-      vsync: const TestVSync(),
-    );
+    'FadeThroughPageTransitionsBuilder builds a FadeThroughTransition',
+    (WidgetTester tester) async {
+      final AnimationController animation = AnimationController(
+        vsync: const TestVSync(),
+      );
+      final AnimationController secondaryAnimation = AnimationController(
+        vsync: const TestVSync(),
+      );
 
-    await tester.pumpWidget(
+      await tester.pumpWidget(
         const FadeThroughPageTransitionsBuilder().buildTransitions<void>(
-      null,
-      null,
-      animation,
-      secondaryAnimation,
-      const Placeholder(),
-    ));
+          null,
+          null,
+          animation,
+          secondaryAnimation,
+          const Placeholder(),
+        ),
+      );
 
-    expect(find.byType(FadeThroughTransition), findsOneWidget);
-  });
+      expect(find.byType(FadeThroughTransition), findsOneWidget);
+    },
+  );
 
-  testWidgets('FadeThroughTransition runs forward',
-      (WidgetTester tester) async {
+  testWidgets('FadeThroughTransition runs forward', (
+    WidgetTester tester,
+  ) async {
     final GlobalKey<NavigatorState> navigator = GlobalKey<NavigatorState>();
     const String bottomRoute = '/';
     const String topRoute = '/a';
 
-    await tester.pumpWidget(
-      _TestWidget(
-        navigatorKey: navigator,
-      ),
-    );
+    await tester.pumpWidget(_TestWidget(navigatorKey: navigator));
     expect(find.text(bottomRoute), findsOneWidget);
     expect(_getScale(bottomRoute, tester), 1.0);
     expect(_getOpacity(bottomRoute, tester), 1.0);
@@ -114,17 +113,14 @@ void main() {
     expect(find.text(topRoute), findsOneWidget);
   });
 
-  testWidgets('FadeThroughTransition runs backwards',
-      (WidgetTester tester) async {
+  testWidgets('FadeThroughTransition runs backwards', (
+    WidgetTester tester,
+  ) async {
     final GlobalKey<NavigatorState> navigator = GlobalKey<NavigatorState>();
     const String bottomRoute = '/';
     const String topRoute = '/a';
 
-    await tester.pumpWidget(
-      _TestWidget(
-        navigatorKey: navigator,
-      ),
-    );
+    await tester.pumpWidget(_TestWidget(navigatorKey: navigator));
     navigator.currentState!.pushNamed('/a');
     await tester.pumpAndSettle();
 
@@ -207,17 +203,14 @@ void main() {
     expect(find.text(bottomRoute), findsOneWidget);
   });
 
-  testWidgets('FadeThroughTransition does not jump when interrupted',
-      (WidgetTester tester) async {
+  testWidgets('FadeThroughTransition does not jump when interrupted', (
+    WidgetTester tester,
+  ) async {
     final GlobalKey<NavigatorState> navigator = GlobalKey<NavigatorState>();
     const String bottomRoute = '/';
     const String topRoute = '/a';
 
-    await tester.pumpWidget(
-      _TestWidget(
-        navigatorKey: navigator,
-      ),
-    );
+    await tester.pumpWidget(_TestWidget(navigatorKey: navigator));
     expect(find.text(bottomRoute), findsOneWidget);
     expect(find.text(topRoute), findsNothing);
 
@@ -275,8 +268,9 @@ void main() {
     expect(find.text(bottomRoute), findsOneWidget);
   });
 
-  testWidgets('State is not lost when transitioning',
-      (WidgetTester tester) async {
+  testWidgets('State is not lost when transitioning', (
+    WidgetTester tester,
+  ) async {
     final GlobalKey<NavigatorState> navigator = GlobalKey<NavigatorState>();
     const String bottomRoute = '/';
     const String topRoute = '/a';
@@ -293,8 +287,9 @@ void main() {
       ),
     );
 
-    final _StatefulTestWidgetState bottomState =
-        tester.state(find.byKey(const ValueKey<String?>(bottomRoute)));
+    final _StatefulTestWidgetState bottomState = tester.state(
+      find.byKey(const ValueKey<String?>(bottomRoute)),
+    );
     expect(bottomState.widget.name, bottomRoute);
 
     navigator.currentState!.pushNamed(topRoute);
@@ -322,10 +317,9 @@ void main() {
 
     await tester.pumpAndSettle();
     expect(
-      tester.state(find.byKey(
-        const ValueKey<String?>(bottomRoute),
-        skipOffstage: false,
-      )),
+      tester.state(
+        find.byKey(const ValueKey<String?>(bottomRoute), skipOffstage: false),
+      ),
       bottomState,
     );
     expect(
@@ -372,16 +366,18 @@ void main() {
       vsync: const TestVSync(),
       duration: const Duration(milliseconds: 300),
     );
-    await tester.pumpWidget(Directionality(
-      textDirection: TextDirection.ltr,
-      child: Center(
-        child: FadeThroughTransition(
-          animation: animation,
-          secondaryAnimation: secondaryAnimation,
-          child: const _StatefulTestWidget(name: 'Foo'),
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: Center(
+          child: FadeThroughTransition(
+            animation: animation,
+            secondaryAnimation: secondaryAnimation,
+            child: const _StatefulTestWidget(name: 'Foo'),
+          ),
         ),
       ),
-    ));
+    );
     final State<StatefulWidget> state = tester.state(
       find.byType(_StatefulTestWidget),
     );
@@ -476,9 +472,9 @@ class _TestWidget extends StatelessWidget {
             return contentBuilder != null
                 ? contentBuilder!(settings)
                 : Center(
-                    key: ValueKey<String?>(settings.name),
-                    child: Text(settings.name!),
-                  );
+                  key: ValueKey<String?>(settings.name),
+                  child: Text(settings.name!),
+                );
           },
         );
       },

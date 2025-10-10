@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -83,6 +83,9 @@ ImageFormatGroup _asImageFormatGroup(dynamic rawFormat) {
       // android.graphics.ImageFormat.YUV_420_888
       case 35:
         return ImageFormatGroup.yuv420;
+      // android.graphics.ImageFormat.NV21
+      case 17:
+        return ImageFormatGroup.nv21;
       // android.graphics.ImageFormat.JPEG
       case 256:
         return ImageFormatGroup.jpeg;

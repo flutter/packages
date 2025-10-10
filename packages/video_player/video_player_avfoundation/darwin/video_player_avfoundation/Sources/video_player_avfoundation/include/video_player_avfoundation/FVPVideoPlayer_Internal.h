@@ -1,16 +1,12 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 #import <AVFoundation/AVFoundation.h>
 #import "FVPAVFactory.h"
+#import "FVPVideoEventListener.h"
 #import "FVPVideoPlayer.h"
-
-#if TARGET_OS_OSX
-#import <FlutterMacOS/FlutterMacOS.h>
-#else
-#import <Flutter/Flutter.h>
-#endif
+#import "FVPViewProvider.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -18,10 +14,8 @@ NS_ASSUME_NONNULL_BEGIN
 @interface FVPVideoPlayer ()
 /// The AVPlayerItemVideoOutput associated with this video player.
 @property(nonatomic, readonly) AVPlayerItemVideoOutput *videoOutput;
-/// The plugin registrar, to obtain view information from.
-@property(nonatomic, readonly) NSObject<FlutterPluginRegistrar> *registrar;
-/// The Flutter event sink used to send events to the Flutter engine.
-@property(nonatomic) FlutterEventSink eventSink;
+/// The view provider, to obtain view information from.
+@property(nonatomic, readonly, nullable) NSObject<FVPViewProvider> *viewProvider;
 /// The preferred transform for the video. It can be used to handle the rotation of the video.
 @property(nonatomic) CGAffineTransform preferredTransform;
 /// The target playback speed requested by the plugin client.
@@ -31,18 +25,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// Indicates whether the video player has been initialized.
 @property(nonatomic, readonly) BOOL isInitialized;
 
-/// Initializes a new instance of FVPVideoPlayer with the given AVPlayerItem, frame updater, display
-/// link, AV factory, and registrar.
-- (instancetype)initWithPlayerItem:(AVPlayerItem *)item
-                         avFactory:(id<FVPAVFactory>)avFactory
-                         registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
-
 /// Updates the playing state of the video player.
 - (void)updatePlayingState;
-
-/// Returns the absolute file path for a given asset name.
-/// This method attempts to locate the specified asset within the app bundle.
-+ (NSString *)absolutePathForAssetName:(NSString *)assetName;
 @end
 
 NS_ASSUME_NONNULL_END
