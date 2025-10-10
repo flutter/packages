@@ -4,6 +4,7 @@
 
 // ignore_for_file: only_throw_errors
 
+import 'dart:async';
 import 'dart:js_interop';
 import 'dart:js_interop_unsafe';
 
@@ -980,6 +981,56 @@ void main() {
           cameraService.mapOrientationTypeToDeviceOrientation('unknown'),
           equals(DeviceOrientation.portraitUp),
         );
+      });
+    });
+
+    group('camera image stream', () {
+      setUp(() {
+        cameraService = cameraService..jsUtil = jsUtil;
+      });
+      testWidgets('returns true if broswer has OffscreenCanvas '
+          'otherwise false', (WidgetTester widgetTester) async {
+        for (final bool supportsOffscreenCanvas in <bool>[true, false]) {
+          when(
+            jsUtil.hasProperty(window, 'OffscreenCanvas'.toJS),
+          ).thenReturn(supportsOffscreenCanvas);
+          final bool hasOffScreenCanvas =
+              cameraService.hasPropertyOffScreenCanvas();
+          expect(
+            hasOffScreenCanvas,
+            supportsOffscreenCanvas ? isTrue : isFalse,
+          );
+        }
+      });
+      testWidgets('returns Camera Image of Size '
+          'when videoElement is of Size '
+          'regardless of OffscreenCanvas support', (
+        WidgetTester widgetTester,
+      ) async {
+        const Size size = Size(10, 10);
+        final Completer<void> completer = Completer<void>();
+        final web.VideoElement videoElement =
+            getVideoElementWithBlankStream(size)
+              ..onLoadedMetadata.listen((_) {
+                completer.complete();
+              })
+              ..load();
+        await completer.future;
+        for (final bool supportsOffscreenCanvas in <bool>[true, false]) {
+          when(
+            jsUtil.hasProperty(window, 'OffscreenCanvas'.toJS),
+          ).thenReturn(supportsOffscreenCanvas);
+          final CameraImageData cameraImageData = cameraService.takeFrame(
+            videoElement,
+          );
+          expect(
+            size,
+            Size(
+              cameraImageData.width.toDouble(),
+              cameraImageData.height.toDouble(),
+            ),
+          );
+        }
       });
     });
   });
