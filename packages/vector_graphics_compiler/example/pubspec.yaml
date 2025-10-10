@@ -1,6 +1,8 @@
 name: example
 description: Example project using hooks.
-publish_to: "none"
+publish_to: none
+
+resolution: workspace
 
 environment:
   sdk: ^3.8.0
@@ -9,10 +11,8 @@ dependencies:
   flutter:
     sdk: flutter
   hooks: ^0.19.3
-  vector_graphics:
-    path: ../../vector_graphics
-  vector_graphics_compiler:
-    path: ../
+  vector_graphics: any
+  vector_graphics_compiler: any
 
 dev_dependencies:
   flutter_test:

@@ -10,6 +10,9 @@ executables:
 environment:
   sdk: ^3.10.0-215.0.dev
 
+workspace:
+  - example
+
 dependencies:
   args: ^2.3.0
   data_assets: ^0.19.1
@@ -47,3 +50,7 @@ platforms:
 topics:
   - svg
   - vector-graphics
+
+flutter:
+  config:
+    data-assets: true
