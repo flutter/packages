@@ -126,12 +126,12 @@ class Scanner {
     if (_c == _EOF) {
       return '';
     }
-    final int start = _offset;
+
+    final StringBuffer buffer = StringBuffer();
     while (_peek() != _EOF && test(_peek())) {
-      _read();
+      buffer.writeCharCode(_read());
     }
-    final int end = _peek() == _EOF ? _source.length : _offset;
-    return _source.substring(start, end);
+    return buffer.toString();
   }
 
   void _expect(int expectedCharCode) {

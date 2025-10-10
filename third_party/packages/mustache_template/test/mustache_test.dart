@@ -24,6 +24,12 @@ void main() {
       ).renderString(<dynamic, dynamic>{});
       expect(output, equals('__'));
     });
+    test('Emoji', () {
+      final String output = parse(
+        'Hello! 🖖👍🏽\nBye! 🏳️‍🌈',
+      ).renderString(<dynamic, dynamic>{});
+      expect(output, equals('Hello! 🖖👍🏽\nBye! 🏳️‍🌈'));
+    });
   });
   group('Section', () {
     test('Map', () {

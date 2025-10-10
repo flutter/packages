@@ -2,7 +2,7 @@ name: mustache_template
 description: A templating library that implements the Mustache template specification
 repository: https://github.com/flutter/packages/tree/main/third_party/packages/mustache_template
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+mustache_template%22
-version: 2.0.1
+version: 2.0.2
 
 environment:
   sdk: ^3.7.0
