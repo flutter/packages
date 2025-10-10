@@ -226,7 +226,9 @@ void main() {
         blendMode: BlendMode.multiply,
         fill: Fill(color: Color(0x98ffffff), shader: gradient1),
       ),
-      Paint(fill: Fill(color: Color(0x98ffffff), shader: gradient2)),
+      Paint(
+        fill: Fill(color: Color(0x98ffffff), shader: gradient2),
+      ),
     ]);
 
     expect(instructions.commands, const <DrawCommand>[
