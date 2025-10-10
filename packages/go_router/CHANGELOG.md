@@ -1,3 +1,8 @@
+## 16.2.5
+
+- `ShellRoute` will auto merge the `observers` passed into `GoRouter`.
+- Adds `mergeObservers` to `ShellRouteBase`, `ShellRoute`, `StatefulShellRoute`, `ShellRouteData.$route`.
+
 ## 16.2.4
 
 - Fix Android Cold Start deep link with empty path losing scheme and authority.
