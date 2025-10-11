@@ -47,10 +47,12 @@ public class ImageProxyUtils {
       position = ySize;
     } else {
       // Copy row by row if padding exists.
-      for (int row = 0; row < height; row++) {
-        yBuffer.get(nv21Bytes, position, width);
+      byte[] row = new byte[width];
+      for (int rowIndex = 0; rowIndex < height; rowIndex++) {
+        yBuffer.get(row, 0, width);
+        System.arraycopy(row, 0, nv21Bytes, position, width);
         position += width;
-        if (row < height - 1) {
+        if (rowIndex < height - 1) {
           yBuffer.position(yBuffer.position() - width + yRowStride);
         }
       }
@@ -64,17 +66,19 @@ public class ImageProxyUtils {
     byte[] uRowBuffer = new byte[uRowStride];
     byte[] vRowBuffer = new byte[vRowStride];
 
+    // Read full row from U and V planes into temporary buffers.
     for (int row = 0; row < height / 2; row++) {
-      // Read full row from U and V planes into temporary buffers.
-      uBuffer.get(uRowBuffer, 0, Math.min(uBuffer.remaining(), uRowStride));
-      vBuffer.get(vRowBuffer, 0, Math.min(vBuffer.remaining(), vRowStride));
+      int uRemaining = Math.min(uBuffer.remaining(), uRowStride);
+      int vRemaining = Math.min(vBuffer.remaining(), vRowStride);
+
+      uBuffer.get(uRowBuffer, 0, uRemaining);
+      vBuffer.get(vRowBuffer, 0, vRemaining);
 
       for (int col = 0; col < width / 2; col++) {
-        int vPixelIndex = col * vPixelStride;
-        int uPixelIndex = col * uPixelStride;
-
-        nv21Bytes[position++] = vRowBuffer[vPixelIndex]; // V (Cr)
-        nv21Bytes[position++] = uRowBuffer[uPixelIndex]; // U (Cb)
+        int vIndex = col * vPixelStride;
+        int uIndex = col * uPixelStride;
+        nv21Bytes[position++] = vRowBuffer[vIndex];
+        nv21Bytes[position++] = uRowBuffer[uIndex];
       }
     }
 
