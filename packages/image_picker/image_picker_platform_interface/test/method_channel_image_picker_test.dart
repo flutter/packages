@@ -1073,7 +1073,7 @@ void main() {
         );
       });
 
-      test('does not accept a invalid imageQuality argument', () {
+      test('does not accept an invalid imageQuality argument', () {
         returnValue = <String>['0', '1'];
         expect(
           () => picker.getMedia(
