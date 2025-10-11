@@ -1096,7 +1096,7 @@ void main() {
         );
       });
 
-      test('does not accept a invalid limit argument', () {
+      test('does not accept an invalid limit argument', () {
         returnValue = <String>['0', '1'];
 
         final Matcher throwsLimitArgumentError = throwsA(
