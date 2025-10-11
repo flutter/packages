@@ -7,8 +7,8 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
+import 'package:vector_graphics_compiler/src/util/isolate_processor.dart';
 
-import '../bin/util/isolate_processor.dart';
 import '../bin/vector_graphics_compiler.dart' as cli;
 
 void main() {
@@ -105,24 +105,22 @@ void main() {
       final Directory outDir = Directory(outTestDir);
 
       if (inputDir.existsSync() && outDir.existsSync()) {
-        final List<String> inputTestFiles =
-            inputDir
-                .listSync(recursive: true)
-                .whereType<File>()
-                .where((File element) => element.path.endsWith('svg'))
-                .map((File e) => p.basenameWithoutExtension(e.path))
-                .toList();
+        final List<String> inputTestFiles = inputDir
+            .listSync(recursive: true)
+            .whereType<File>()
+            .where((File element) => element.path.endsWith('svg'))
+            .map((File e) => p.basenameWithoutExtension(e.path))
+            .toList();
 
-        final List<String> outTestFiles =
-            outDir
-                .listSync(recursive: true)
-                .whereType<File>()
-                .where((File element) => element.path.endsWith('vec'))
-                .map(
-                  (File e) =>
-                      p.withoutExtension(p.basenameWithoutExtension(e.path)),
-                )
-                .toList();
+        final List<String> outTestFiles = outDir
+            .listSync(recursive: true)
+            .whereType<File>()
+            .where((File element) => element.path.endsWith('vec'))
+            .map(
+              (File e) =>
+                  p.withoutExtension(p.basenameWithoutExtension(e.path)),
+            )
+            .toList();
 
         if (listEquals(inputTestFiles, outTestFiles)) {
           passed = true;

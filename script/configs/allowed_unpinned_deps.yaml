@@ -29,6 +29,7 @@
 - convert
 - crypto
 - dart_style
+- data_assets
 - devtools_app_shared
 - devtools_extensions
 - fake_async
@@ -37,6 +38,7 @@
 - file_testing
 - gcloud
 - graphs
+- hooks
 - html
 - http
 - intl
