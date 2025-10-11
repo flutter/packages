@@ -109,16 +109,28 @@ class WebWebViewController extends PlatformWebViewController {
   Future<void> loadHtmlString(String html, {String? baseUrl}) {
     final Completer<void> loading = Completer<void>();
 
+    // Load listener for load completion
     _webWebViewParams.iFrame.addEventListener(
       'load',
       () {
-        _webWebViewParams.iFrame.contentDocument?.write(html.toJS);
-        loading.complete();
+        try {
+          _webWebViewParams.iFrame.contentDocument?.write(html.toJS);
+        } finally {
+          loading.complete();
+        }
       }.toJS,
       AddEventListenerOptions(once: true),
     );
+
+    // Initiate load
     _webWebViewParams.iFrame.src = baseUrl ?? 'about:blank';
 
+    // Time out in case load listener is not triggered
+    Future<void>.delayed(
+      const Duration(minutes: 3),
+    ).then<void>((_) => loading.complete());
+
+    // Return future completion
     return loading.future;
   }
 
@@ -147,23 +159,38 @@ class WebWebViewController extends PlatformWebViewController {
     final web.HTMLScriptElement script =
         document.createElement('script') as web.HTMLScriptElement;
 
+    // Load listener for script completion
     script.addEventListener(
       'load',
       () {
-        body.removeChild(script);
-        run.complete();
+        try {
+          body.removeChild(script);
+        } finally {
+          run.complete();
+        }
       }.toJS,
       AddEventListenerOptions(once: true),
     );
 
-    script.src = Uri.dataFromString(
-      javaScript,
-      mimeType: 'text/javascript',
-      encoding: utf8,
-    ).toString();
+    // Prepare script
+    script.src =
+        Uri.dataFromString(
+          javaScript,
+          mimeType: 'text/javascript',
+          encoding: utf8,
+        ).toString();
 
+    // Initiate script execution
     body.appendChild(script);
 
+    // Time out in case load listener is not triggered
+    unawaited(
+      Future<void>.delayed(
+        const Duration(seconds: 3),
+      ).then<void>((_) => run.complete()),
+    );
+
+    // Return future completion
     await run.future;
   }
 
