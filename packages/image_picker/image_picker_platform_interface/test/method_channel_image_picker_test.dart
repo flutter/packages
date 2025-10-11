@@ -1098,7 +1098,6 @@ void main() {
 
       test('does not accept an invalid limit argument', () {
         returnValue = <String>['0', '1'];
-
         final Matcher throwsLimitArgumentError = throwsA(
           isA<ArgumentError>()
               .having((ArgumentError error) => error.name, 'name', 'limit')
@@ -1837,7 +1836,6 @@ void main() {
 
       test('does not accept an invalid limit argument', () {
         returnValue = <dynamic>['0', '1'];
-
         final Matcher throwsLimitArgumentError = throwsA(
           isA<ArgumentError>()
               .having((ArgumentError error) => error.name, 'name', 'limit')
