@@ -14,12 +14,5 @@ enum VideoStabilizationMode {
   level2,
 
   /// Most stabilized video with the most latency.
-  level3;
-
-  /// Returns the video stabilization mode for a given String.
-  factory VideoStabilizationMode.fromString(String str) {
-    return VideoStabilizationMode.values.firstWhere(
-      (VideoStabilizationMode mode) => mode.name == str,
-    );
-  }
+  level3,
 }

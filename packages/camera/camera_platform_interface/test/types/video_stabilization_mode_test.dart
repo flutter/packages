@@ -20,23 +20,4 @@ void main() {
     expect(values[2], VideoStabilizationMode.level2);
     expect(values[3], VideoStabilizationMode.level3);
   });
-
-  test('deserializeVideoStabilizationMode() should deserialize correctly', () {
-    expect(
-      VideoStabilizationMode.fromString('off'),
-      VideoStabilizationMode.off,
-    );
-    expect(
-      VideoStabilizationMode.fromString('level1'),
-      VideoStabilizationMode.level1,
-    );
-    expect(
-      VideoStabilizationMode.fromString('level2'),
-      VideoStabilizationMode.level2,
-    );
-    expect(
-      VideoStabilizationMode.fromString('level3'),
-      VideoStabilizationMode.level3,
-    );
-  });
 }

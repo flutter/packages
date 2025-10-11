@@ -712,18 +712,15 @@ class CameraController extends ValueNotifier<CameraValue> {
 
   /// Set the video stabilization mode for the selected camera.
   ///
-  /// When [allowFallback] is true (default) the camera will
-  /// be set to the best video stabilization mode up to,
-  /// and including, [mode].
+  /// When [allowFallback] is true (default) the camera will be set to the best
+  /// video stabilization mode up to, and including, [mode].
   ///
-  /// When [allowFallback] is false and if
-  /// [mode] is not one of the supported modes
-  /// (see [getSupportedVideoStabilizationModes]),
-  /// then it throws an [ArgumentError].
+  /// When [allowFallback] is false and if [mode] is not one of the supported
+  /// modes (see [getSupportedVideoStabilizationModes]), then it throws an
+  /// [ArgumentError].
   ///
-  /// This feature is only available on Android
-  /// (when using camera_android_camerax package)
-  /// and iOS. It is a no-op on all other platforms.
+  /// This feature is only available if [getSupportedVideoStabilizationModes]
+  /// returns at least one value other than [VideoStabilizationMode.off].
   Future<void> setVideoStabilizationMode(
     VideoStabilizationMode mode, {
     bool allowFallback = true,
@@ -760,43 +757,29 @@ class CameraController extends ValueNotifier<CameraValue> {
         .instance
         .getSupportedVideoStabilizationModes(_cameraId);
 
-    // In this case the device doesn't report any
-    // available stabilization mode available and
-    // if either it can fallback or if the requested mode
-    // is off, then this returns null to signal that
-    // there is nothing to be done.
-    if (supportedModes.isEmpty &&
-        (allowFallback || requestedMode == VideoStabilizationMode.off)) {
-      return null;
-    }
-
     // If it can't fallback and the specific
-    // requested mode isn't available, then it throws.
+    // requested mode isn't available, then...
     if (!allowFallback && !supportedModes.contains(requestedMode)) {
+      // if the request is off, it is a no-op
+      if (requestedMode == VideoStabilizationMode.off) {
+        return null;
+      }
+      // otherwise, it throws.
       throw ArgumentError('Unavailable video stabilization mode.', 'mode');
     }
 
-    // The following assumes that [VideoStabilizationMode.off] will
-    // always be present if any other level is reported by the device.
-    // It iterates through all the modes returned by the device,
-    // looking for the highest mode, up to [mode].
-    VideoStabilizationMode requestMode = VideoStabilizationMode.off;
-    for (final VideoStabilizationMode supportedMode in supportedModes) {
-      if (supportedMode.index <= requestedMode.index &&
-          supportedMode.index >= requestMode.index) {
-        requestMode = supportedMode;
-      }
+    VideoStabilizationMode? fallbackMode = requestedMode;
+    while (fallbackMode != null && !supportedModes.contains(fallbackMode)) {
+      fallbackMode = CameraPlatform.getFallbackVideoStabilizationMode(
+        fallbackMode,
+      );
     }
 
-    return requestMode;
+    return fallbackMode;
   }
 
   /// Gets a list of video stabilization modes that are supported
   /// for the selected camera.
-  ///
-  /// Will return the list of supported video stabilization modes
-  /// on Android (when using camera_android_camerax package) and
-  /// on iOS.
   ///
   /// [VideoStabilizationMode.off] will always be listed.
   Future<Iterable<VideoStabilizationMode>>

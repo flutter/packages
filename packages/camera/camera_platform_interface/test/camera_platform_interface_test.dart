@@ -531,6 +531,42 @@ void main() {
         expect(cameraPlatform.supportsImageStreaming(), false);
       },
     );
+
+    test('getFallbackViewStabilizationMode returns level2 for mode level3', () {
+      final VideoStabilizationMode? fallbackMode =
+          CameraPlatform.getFallbackVideoStabilizationMode(
+            VideoStabilizationMode.level3,
+          );
+
+      expect(fallbackMode, VideoStabilizationMode.level2);
+    });
+
+    test('getFallbackViewStabilizationMode returns level1 for mode level2', () {
+      final VideoStabilizationMode? fallbackMode =
+          CameraPlatform.getFallbackVideoStabilizationMode(
+            VideoStabilizationMode.level2,
+          );
+
+      expect(fallbackMode, VideoStabilizationMode.level1);
+    });
+
+    test('getFallbackViewStabilizationMode returns off for mode level1', () {
+      final VideoStabilizationMode? fallbackMode =
+          CameraPlatform.getFallbackVideoStabilizationMode(
+            VideoStabilizationMode.level1,
+          );
+
+      expect(fallbackMode, VideoStabilizationMode.off);
+    });
+
+    test('getFallbackViewStabilizationMode returns null for mode off', () {
+      final VideoStabilizationMode? fallbackMode =
+          CameraPlatform.getFallbackVideoStabilizationMode(
+            VideoStabilizationMode.off,
+          );
+
+      expect(fallbackMode, null);
+    });
   });
 
   group('exports', () {
