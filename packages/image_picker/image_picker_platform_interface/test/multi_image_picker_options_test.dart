@@ -14,7 +14,7 @@ void main() {
       );
     });
 
-    test('createAndValidate throw error for to small limit', () {
+    test('createAndValidate throws error for too small limit', () {
       final Matcher throwsLimitArgumentError = throwsA(
         isA<ArgumentError>()
             .having((ArgumentError error) => error.name, 'name', 'limit')
