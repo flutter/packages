@@ -44,10 +44,9 @@ void main() {
 
     final SharedPreferencesAsyncAndroidOptions emptyOptions =
         SharedPreferencesAsyncAndroidOptions(
-          backend:
-              useDataStore
-                  ? SharedPreferencesAndroidBackendLibrary.DataStore
-                  : SharedPreferencesAndroidBackendLibrary.SharedPreferences,
+          backend: useDataStore
+              ? SharedPreferencesAndroidBackendLibrary.DataStore
+              : SharedPreferencesAndroidBackendLibrary.SharedPreferences,
         );
 
     test('set and get String with $backend', () async {
@@ -337,9 +336,9 @@ class _FakeSharedPreferencesApi implements SharedPreferencesAsyncApi {
     return value == null
         ? null
         : StringListResult(
-          jsonEncodedValue: value as String?,
-          type: StringListLookupResultType.jsonEncoded,
-        );
+            jsonEncodedValue: value as String?,
+            type: StringListLookupResultType.jsonEncoded,
+          );
   }
 
   @override

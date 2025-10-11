@@ -32,6 +32,7 @@ class MockCaptureDevice: NSObject, FLTCaptureDevice {
 
   var uniqueID = ""
   var position = AVCaptureDevice.Position.unspecified
+  var deviceType = AVCaptureDevice.DeviceType.builtInWideAngleCamera
 
   var activeFormat: FLTCaptureDeviceFormat {
     get {
