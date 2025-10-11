@@ -13,7 +13,7 @@ import 'match.dart';
 import 'misc/errors.dart';
 import 'path_utils.dart';
 import 'route.dart';
-import 'router.dart';
+import 'router.dart' show OnEnter, RoutingConfig;
 import 'state.dart';
 
 /// The signature of the redirect callback.
@@ -89,7 +89,7 @@ class RouteConfiguration {
       } else if (route is ShellRoute) {
         _debugCheckParentNavigatorKeys(
           route.routes,
-          <GlobalKey<NavigatorState>>[...allowedKeys..add(route.navigatorKey)],
+          <GlobalKey<NavigatorState>>[...allowedKeys, route.navigatorKey],
         );
       } else if (route is StatefulShellRoute) {
         for (final StatefulShellBranch branch in route.branches) {
@@ -141,16 +141,18 @@ class RouteConfiguration {
           if (branch.initialLocation == null) {
             // Recursively search for the first GoRoute descendant. Will
             // throw assertion error if not found.
-            final GoRoute? route = branch.defaultRoute;
+            final GoRoute? defaultGoRoute = branch.defaultRoute;
             final String? initialLocation =
-                route != null ? locationForRoute(route) : null;
+                defaultGoRoute != null
+                    ? locationForRoute(defaultGoRoute)
+                    : null;
             assert(
               initialLocation != null,
               'The default location of a StatefulShellBranch must be '
               'derivable from GoRoute descendant',
             );
             assert(
-              route!.pathParameters.isEmpty,
+              defaultGoRoute!.pathParameters.isEmpty,
               'The default location of a StatefulShellBranch cannot be '
               'a parameterized route',
             );
@@ -234,6 +236,7 @@ class RouteConfiguration {
       extra: matchList.extra,
       pageKey: const ValueKey<String>('topLevel'),
       topRoute: matchList.lastOrNull?.route,
+      error: matchList.error,
     );
   }
 
@@ -243,11 +246,26 @@ class RouteConfiguration {
   /// The list of top level routes used by [GoRouterDelegate].
   List<RouteBase> get routes => _routingConfig.value.routes;
 
-  /// Top level page redirect.
+  /// Legacy top level page redirect.
+  ///
+  /// This is handled via [applyTopLegacyRedirect] and runs at most once per navigation.
   GoRouterRedirect get topRedirect => _routingConfig.value.redirect;
+
+  /// Top level page on enter.
+  OnEnter? get topOnEnter => _routingConfig.value.onEnter;
 
   /// The limit for the number of consecutive redirects.
   int get redirectLimit => _routingConfig.value.redirectLimit;
+
+  /// Normalizes a URI by ensuring it has a valid path and removing trailing slashes.
+  static Uri normalizeUri(Uri uri) {
+    if (uri.hasEmptyPath) {
+      return uri.replace(path: '/');
+    } else if (uri.path.length > 1 && uri.path.endsWith('/')) {
+      return uri.replace(path: uri.path.substring(0, uri.path.length - 1));
+    }
+    return uri;
+  }
 
   /// The global key for top level navigator.
   final GlobalKey<NavigatorState> navigatorKey;
@@ -263,6 +281,8 @@ class RouteConfiguration {
   ///    topic.
   ///  * [extra_codec](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/extra_codec.dart)
   ///    example.
+  ///  * [topOnEnter] for navigation interception.
+  ///  * [topRedirect] for legacy redirections.
   final Codec<Object?, Object?>? extraCodec;
 
   final Map<String, _NamedPath> _nameToPath = <String, _NamedPath>{};
@@ -375,8 +395,10 @@ class RouteConfiguration {
     return const <RouteMatchBase>[];
   }
 
-  /// Processes redirects by returning a new [RouteMatchList] representing the new
-  /// location.
+  /// Processes route-level redirects by returning a new [RouteMatchList] representing the new location.
+  ///
+  /// This method now handles ONLY route-level redirects.
+  /// Top-level redirects are handled by applyTopLegacyRedirect.
   FutureOr<RouteMatchList> redirect(
     BuildContext context,
     FutureOr<RouteMatchList> prevMatchListFuture, {
@@ -384,13 +406,12 @@ class RouteConfiguration {
   }) {
     FutureOr<RouteMatchList> processRedirect(RouteMatchList prevMatchList) {
       final String prevLocation = prevMatchList.uri.toString();
-      FutureOr<RouteMatchList> processTopLevelRedirect(
-        String? topRedirectLocation,
-      ) {
-        if (topRedirectLocation != null &&
-            topRedirectLocation != prevLocation) {
+
+      FutureOr<RouteMatchList> finish(String? routeRedirectLocation) {
+        if (routeRedirectLocation != null &&
+            routeRedirectLocation != prevLocation) {
           final RouteMatchList newMatch = _getNewMatches(
-            topRedirectLocation,
+            routeRedirectLocation,
             prevMatchList.uri,
             redirectHistory,
           );
@@ -399,65 +420,65 @@ class RouteConfiguration {
           }
           return redirect(context, newMatch, redirectHistory: redirectHistory);
         }
-
-        FutureOr<RouteMatchList> processRouteLevelRedirect(
-          String? routeRedirectLocation,
-        ) {
-          if (routeRedirectLocation != null &&
-              routeRedirectLocation != prevLocation) {
-            final RouteMatchList newMatch = _getNewMatches(
-              routeRedirectLocation,
-              prevMatchList.uri,
-              redirectHistory,
-            );
-
-            if (newMatch.isError) {
-              return newMatch;
-            }
-            return redirect(
-              context,
-              newMatch,
-              redirectHistory: redirectHistory,
-            );
-          }
-          return prevMatchList;
-        }
-
-        final List<RouteMatchBase> routeMatches = <RouteMatchBase>[];
-        prevMatchList.visitRouteMatches((RouteMatchBase match) {
-          if (match.route.redirect != null) {
-            routeMatches.add(match);
-          }
-          return true;
-        });
-        final FutureOr<String?> routeLevelRedirectResult =
-            _getRouteLevelRedirect(context, prevMatchList, routeMatches, 0);
-
-        if (routeLevelRedirectResult is String?) {
-          return processRouteLevelRedirect(routeLevelRedirectResult);
-        }
-        return routeLevelRedirectResult.then<RouteMatchList>(
-          processRouteLevelRedirect,
-        );
+        return prevMatchList;
       }
 
-      redirectHistory.add(prevMatchList);
-      // Check for top-level redirect
-      final FutureOr<String?> topRedirectResult = _routingConfig.value.redirect(
+      // Route-level redirects only.
+      final List<RouteMatchBase> routeMatches = <RouteMatchBase>[];
+      prevMatchList.visitRouteMatches((RouteMatchBase match) {
+        if (match.route.redirect != null) {
+          routeMatches.add(match);
+        }
+        return true;
+      });
+      final FutureOr<String?> routeLevel = _getRouteLevelRedirect(
         context,
-        buildTopLevelGoRouterState(prevMatchList),
+        prevMatchList,
+        routeMatches,
+        0,
       );
-
-      if (topRedirectResult is String?) {
-        return processTopLevelRedirect(topRedirectResult);
+      if (routeLevel is String?) {
+        return finish(routeLevel);
       }
-      return topRedirectResult.then<RouteMatchList>(processTopLevelRedirect);
+      return routeLevel.then<RouteMatchList>(finish);
     }
 
     if (prevMatchListFuture is RouteMatchList) {
       return processRedirect(prevMatchListFuture);
     }
     return prevMatchListFuture.then<RouteMatchList>(processRedirect);
+  }
+
+  /// Applies the legacy top-level redirect to [prevMatchList] and returns the
+  /// resulting matches. Returns [prevMatchList] when no redirect happens.
+  /// Shares [redirectHistory] with later route-level redirects for proper loop detection.
+  ///
+  /// Note: Legacy top-level redirect is executed at most once per navigation,
+  /// before route-level redirects. It does not re-evaluate if it redirects to
+  /// a location that would itself trigger another top-level redirect.
+  FutureOr<RouteMatchList> applyTopLegacyRedirect(
+    BuildContext context,
+    RouteMatchList prevMatchList, {
+    required List<RouteMatchList> redirectHistory,
+  }) {
+    final String prevLocation = prevMatchList.uri.toString();
+    FutureOr<RouteMatchList> done(String? topLocation) {
+      if (topLocation != null && topLocation != prevLocation) {
+        final RouteMatchList newMatch = _getNewMatches(
+          topLocation,
+          prevMatchList.uri,
+          redirectHistory,
+        );
+        return newMatch;
+      }
+      return prevMatchList;
+    }
+
+    final FutureOr<String?> res = _routingConfig.value.redirect(
+      context,
+      buildTopLevelGoRouterState(prevMatchList),
+    );
+    return res is String? ? done(res) : res.then<RouteMatchList>(done);
   }
 
   FutureOr<String?> _getRouteLevelRedirect(
@@ -495,8 +516,14 @@ class RouteConfiguration {
     List<RouteMatchList> redirectHistory,
   ) {
     try {
-      final RouteMatchList newMatch = findMatch(Uri.parse(newLocation));
-      _addRedirect(redirectHistory, newMatch, previousLocation);
+      // Normalize the URI to avoid trailing slash inconsistencies
+      final Uri uri = normalizeUri(Uri.parse(newLocation));
+
+      final RouteMatchList newMatch = findMatch(uri);
+      // Only add successful matches to redirect history
+      if (!newMatch.isError) {
+        _addRedirect(redirectHistory, newMatch);
+      }
       return newMatch;
     } on GoException catch (e) {
       log('Redirection exception: ${e.message}');
@@ -507,17 +534,14 @@ class RouteConfiguration {
   /// Adds the redirect to [redirects] if it is valid.
   ///
   /// Throws if a loop is detected or the redirection limit is reached.
-  void _addRedirect(
-    List<RouteMatchList> redirects,
-    RouteMatchList newMatch,
-    Uri prevLocation,
-  ) {
+  void _addRedirect(List<RouteMatchList> redirects, RouteMatchList newMatch) {
     if (redirects.contains(newMatch)) {
       throw GoException(
         'redirect loop detected ${_formatRedirectionHistory(<RouteMatchList>[...redirects, newMatch])}',
       );
     }
-    if (redirects.length > _routingConfig.value.redirectLimit) {
+    // Check limit before adding (redirects should only contain actual redirects, not the initial location)
+    if (redirects.length >= _routingConfig.value.redirectLimit) {
       throw GoException(
         'too many redirects ${_formatRedirectionHistory(<RouteMatchList>[...redirects, newMatch])}',
       );

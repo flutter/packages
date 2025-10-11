@@ -1,3 +1,7 @@
+## 16.3.0
+
+- Adds a top-level `onEnter` callback with access to current and next route states.
+
 ## 16.2.4
 
 - Fix Android Cold Start deep link with empty path losing scheme and authority.
