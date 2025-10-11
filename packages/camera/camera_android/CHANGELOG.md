@@ -1,3 +1,7 @@
+## 0.10.10+9
+
+* Resolves Gradle 9 deprecations.
+
 ## 0.10.10+8
 
 * Restores compileSdk version to flutter.compileSdkVersion.
