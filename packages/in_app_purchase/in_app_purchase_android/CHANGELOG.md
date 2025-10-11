@@ -1,3 +1,7 @@
+## 0.4.0+5
+
+* Resolves Gradle 9 deprecations.
+
 ## 0.4.0+4
 
 * Bumps com.android.tools.build:gradle to 8.12.1.
