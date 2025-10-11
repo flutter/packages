@@ -1056,7 +1056,7 @@ abstract class CompanionAd {
   late final int height;
 
   /// The URL for the static resource of this companion.
-  late final String resourceValue;
+  late final String? resourceValue;
 
   /// The width of the companion in pixels.
   ///
@@ -1155,7 +1155,7 @@ abstract class Ad {
   /// trafficking.
   late final String traffickingParameters;
 
-  /// Te set of ad UI elements rendered by the IMA SDK for this ad.
+  /// The set of ad UI elements rendered by the IMA SDK for this ad.
   late final List<UiElement> uiElements;
 
   /// The list of all universal ad IDs for this ad.
