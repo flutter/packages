@@ -196,6 +196,12 @@
     - any-glob-to-any-file:
       - packages/xdg_directories/**/*
 
+'p: two_dimensional_scrollables':
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/two_dimensional_scrollables/**/*
+      
+
 'platform-android':
   - changed-files:
     - any-glob-to-any-file:
