@@ -1237,51 +1237,37 @@ void main() {
       );
     });
 
-    test('does not accept a invalid limit argument', () {
+    test('does not accept an invalid limit argument', () {
       log.returnValue = <String>['0', '1'];
+      final Matcher throwsLimitArgumentError = throwsA(
+        isA<ArgumentError>()
+            .having((ArgumentError error) => error.name, 'name', 'limit')
+            .having(
+              (ArgumentError error) => error.message,
+              'message',
+              'cannot be lower than 2',
+            ),
+      );
+
       expect(
         () => picker.getMedia(
           options: const MediaOptions(allowMultiple: true, limit: -1),
         ),
-        throwsA(
-          isA<ArgumentError>()
-              .having((ArgumentError error) => error.name, 'name', 'limit')
-              .having(
-                (ArgumentError error) => error.message,
-                'message',
-                'cannot be lower than 2',
-              ),
-        ),
+        throwsLimitArgumentError,
       );
 
       expect(
         () => picker.getMedia(
           options: const MediaOptions(allowMultiple: true, limit: 0),
         ),
-        throwsA(
-          isA<ArgumentError>()
-              .having((ArgumentError error) => error.name, 'name', 'limit')
-              .having(
-                (ArgumentError error) => error.message,
-                'message',
-                'cannot be lower than 2',
-              ),
-        ),
+        throwsLimitArgumentError,
       );
 
       expect(
         () => picker.getMedia(
           options: const MediaOptions(allowMultiple: true, limit: 1),
         ),
-        throwsA(
-          isA<ArgumentError>()
-              .having((ArgumentError error) => error.name, 'name', 'limit')
-              .having(
-                (ArgumentError error) => error.message,
-                'message',
-                'cannot be lower than 2',
-              ),
-        ),
+        throwsLimitArgumentError,
       );
     });
 
@@ -1933,20 +1919,37 @@ void main() {
       );
     });
 
-    test('does not accept a invalid limit argument', () {
+    test('does not accept an invalid limit argument', () {
       log.returnValue = <String>['0', '1'];
+      final Matcher throwsLimitArgumentError = throwsA(
+        isA<ArgumentError>()
+            .having((ArgumentError error) => error.name, 'name', 'limit')
+            .having(
+              (ArgumentError error) => error.message,
+              'message',
+              'cannot be lower than 2',
+            ),
+      );
+
       expect(
         () => picker.getMultiImageWithOptions(
           options: const MultiImagePickerOptions(limit: -1),
         ),
-        throwsArgumentError,
+        throwsLimitArgumentError,
       );
 
       expect(
         () => picker.getMultiImageWithOptions(
           options: const MultiImagePickerOptions(limit: 0),
         ),
-        throwsArgumentError,
+        throwsLimitArgumentError,
+      );
+
+      expect(
+        () => picker.getMultiImageWithOptions(
+          options: const MultiImagePickerOptions(limit: 1),
+        ),
+        throwsLimitArgumentError,
       );
     });
 
