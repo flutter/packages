@@ -1,3 +1,7 @@
+## 2.8.15
+
+* Resolves Gradle 9 deprecations.
+
 ## 2.8.14
 
 * Restructures internal logic for player creation and tracking.

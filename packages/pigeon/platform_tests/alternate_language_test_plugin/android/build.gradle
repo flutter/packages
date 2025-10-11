@@ -1,5 +1,5 @@
-group 'com.example.alternate_language_test_plugin'
-version '1.0'
+group = 'com.example.alternate_language_test_plugin'
+version = '1.0'
 
 buildscript {
     repositories {
@@ -47,8 +47,8 @@ android {
     }
 
     lintOptions {
-        checkAllWarnings true
-        warningsAsErrors true
+        checkAllWarnings = true
+        warningsAsErrors = true
         disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency', 'NewerVersionAvailable'
     }
 

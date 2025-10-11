@@ -54,8 +54,8 @@ void main() {
 
     const String warningConfig = '''
     lintOptions {
-        checkAllWarnings true
-        warningsAsErrors true
+        checkAllWarnings = true
+        warningsAsErrors = true
         disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency', 'NewerVersionAvailable'
         baseline file("lint-baseline.xml")
     }

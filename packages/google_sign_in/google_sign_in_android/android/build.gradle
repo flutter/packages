@@ -1,5 +1,5 @@
-group 'io.flutter.plugins.googlesignin'
-version '1.0-SNAPSHOT'
+group = 'io.flutter.plugins.googlesignin'
+version = '1.0-SNAPSHOT'
 
 buildscript {
     ext.kotlin_version = '2.2.10'
@@ -46,10 +46,11 @@ android {
         main.java.srcDirs += 'src/main/kotlin'
     }
 
-    lintOptions {
-        checkAllWarnings true
-        warningsAsErrors true
+    lint {
+        checkAllWarnings = true
+        warningsAsErrors = true
         disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency', 'NewerVersionAvailable'
+        baseline = file("lint-baseline.xml")
     }
 
 
