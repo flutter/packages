@@ -1,3 +1,7 @@
+## 0.9.22+1
+
+* Fixes crash on iOS when `enableAudio` is false.
+
 ## 0.9.22
 
 * Adds lensType in the PlatformCameraDescription

@@ -1,3 +1,7 @@
+## 7.2.1
+
+* Resolves Gradle 9 deprecations.
+
 ## 7.2.0
 
 * Adds support for `disconnect`.
