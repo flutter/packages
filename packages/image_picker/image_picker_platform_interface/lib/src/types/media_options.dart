@@ -54,7 +54,7 @@ class MediaOptions {
     }
 
     if (limit != null && limit < 2) {
-      throw ArgumentError.value(limit, 'limit', 'cannot be lower then 2');
+      throw ArgumentError.value(limit, 'limit', 'cannot be lower than 2');
     }
   }
 }
