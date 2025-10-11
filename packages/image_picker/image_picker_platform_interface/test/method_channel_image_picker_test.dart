@@ -1837,49 +1837,36 @@ void main() {
 
       test('does not accept an invalid limit argument', () {
         returnValue = <dynamic>['0', '1'];
+
+        final Matcher throwsLimitArgumentError = throwsA(
+          isA<ArgumentError>()
+              .having((ArgumentError error) => error.name, 'name', 'limit')
+              .having(
+                (ArgumentError error) => error.message,
+                'message',
+                'cannot be lower than 2',
+              ),
+        );
+
         expect(
           () => picker.getMultiImageWithOptions(
             options: MultiImagePickerOptions.createAndValidate(limit: -1),
           ),
-          throwsA(
-            isA<ArgumentError>()
-                .having((ArgumentError error) => error.name, 'name', 'limit')
-                .having(
-                  (ArgumentError error) => error.message,
-                  'message',
-                  'cannot be lower than 2',
-                ),
-          ),
+          throwsLimitArgumentError,
         );
 
         expect(
           () => picker.getMultiImageWithOptions(
             options: MultiImagePickerOptions.createAndValidate(limit: 0),
           ),
-          throwsA(
-            isA<ArgumentError>()
-                .having((ArgumentError error) => error.name, 'name', 'limit')
-                .having(
-                  (ArgumentError error) => error.message,
-                  'message',
-                  'cannot be lower than 2',
-                ),
-          ),
+          throwsLimitArgumentError,
         );
 
         expect(
           () => picker.getMultiImageWithOptions(
             options: MultiImagePickerOptions.createAndValidate(limit: 1),
           ),
-          throwsA(
-            isA<ArgumentError>()
-                .having((ArgumentError error) => error.name, 'name', 'limit')
-                .having(
-                  (ArgumentError error) => error.message,
-                  'message',
-                  'cannot be lower than 2',
-                ),
-          ),
+          throwsLimitArgumentError,
         );
       });
 
