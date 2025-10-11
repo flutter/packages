@@ -44,22 +44,18 @@ void main() {
           WebWebViewControllerCreationParams(),
         );
 
-        await controller.loadHtmlString('test html');
+        await controller.loadHtmlString('test #html');
         expect(
           (controller.params as WebWebViewControllerCreationParams).iFrame.src,
-          'data:text/html;charset=utf-8,${Uri.encodeFull('test html')}',
+          'about:blank',
         );
-      });
-
-      test('loadHtmlString escapes "#" correctly', () async {
-        final WebWebViewController controller = WebWebViewController(
-          WebWebViewControllerCreationParams(),
-        );
-
-        await controller.loadHtmlString('#');
         expect(
-          (controller.params as WebWebViewControllerCreationParams).iFrame.src,
-          contains('%23'),
+          (controller.params as WebWebViewControllerCreationParams)
+              .iFrame
+              .contentDocument!
+              .body!
+              .innerHTML,
+          'test #html',
         );
       });
     });
