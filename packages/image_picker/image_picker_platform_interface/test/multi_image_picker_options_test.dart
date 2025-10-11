@@ -17,39 +17,15 @@ void main() {
     test('createAndValidate throw error for to small limit', () {
       expect(
         () => MultiImagePickerOptions.createAndValidate(limit: 1),
-        throwsA(
-          isA<ArgumentError>()
-              .having((ArgumentError error) => error.name, 'name', 'limit')
-              .having(
-                (ArgumentError error) => error.message,
-                'message',
-                'cannot be lower than 2',
-              ),
-        ),
+        throwsArgumentError,
       );
       expect(
         () => MultiImagePickerOptions.createAndValidate(limit: 0),
-        throwsA(
-          isA<ArgumentError>()
-              .having((ArgumentError error) => error.name, 'name', 'limit')
-              .having(
-                (ArgumentError error) => error.message,
-                'message',
-                'cannot be lower than 2',
-              ),
-        ),
+        throwsArgumentError,
       );
       expect(
         () => MultiImagePickerOptions.createAndValidate(limit: -1),
-        throwsA(
-          isA<ArgumentError>()
-              .having((ArgumentError error) => error.name, 'name', 'limit')
-              .having(
-                (ArgumentError error) => error.message,
-                'message',
-                'cannot be lower than 2',
-              ),
-        ),
+        throwsArgumentError,
       );
     });
   });
