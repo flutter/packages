@@ -28,41 +28,27 @@ void main() {
     });
 
     test('createAndValidate throw error for to small limit', () {
+      final Matcher throwsLimitArgumentError = throwsA(
+        isA<ArgumentError>()
+            .having((ArgumentError error) => error.name, 'name', 'limit')
+            .having(
+              (ArgumentError error) => error.message,
+              'message',
+              'cannot be lower than 2',
+            ),
+      );
+
       expect(
         () => MediaOptions.createAndValidate(allowMultiple: true, limit: 1),
-        throwsA(
-          isA<ArgumentError>()
-              .having((ArgumentError error) => error.name, 'name', 'limit')
-              .having(
-                (ArgumentError error) => error.message,
-                'message',
-                'cannot be lower than 2',
-              ),
-        ),
+        throwsLimitArgumentError,
       );
       expect(
         () => MediaOptions.createAndValidate(allowMultiple: true, limit: 0),
-        throwsA(
-          isA<ArgumentError>()
-              .having((ArgumentError error) => error.name, 'name', 'limit')
-              .having(
-                (ArgumentError error) => error.message,
-                'message',
-                'cannot be lower than 2',
-              ),
-        ),
+        throwsLimitArgumentError,
       );
       expect(
         () => MediaOptions.createAndValidate(allowMultiple: true, limit: -1),
-        throwsA(
-          isA<ArgumentError>()
-              .having((ArgumentError error) => error.name, 'name', 'limit')
-              .having(
-                (ArgumentError error) => error.message,
-                'message',
-                'cannot be lower than 2',
-              ),
-        ),
+        throwsLimitArgumentError,
       );
     });
 

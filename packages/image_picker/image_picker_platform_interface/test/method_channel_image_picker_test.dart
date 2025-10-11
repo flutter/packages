@@ -1098,6 +1098,17 @@ void main() {
 
       test('does not accept a invalid limit argument', () {
         returnValue = <String>['0', '1'];
+
+        final Matcher throwsLimitArgumentError = throwsA(
+          isA<ArgumentError>()
+              .having((ArgumentError error) => error.name, 'name', 'limit')
+              .having(
+                (ArgumentError error) => error.message,
+                'message',
+                'cannot be lower than 2',
+              ),
+        );
+
         expect(
           () => picker.getMedia(
             options: MediaOptions.createAndValidate(
@@ -1105,15 +1116,7 @@ void main() {
               limit: -1,
             ),
           ),
-          throwsA(
-            isA<ArgumentError>()
-                .having((ArgumentError error) => error.name, 'name', 'limit')
-                .having(
-                  (ArgumentError error) => error.message,
-                  'message',
-                  'cannot be lower than 2',
-                ),
-          ),
+          throwsLimitArgumentError,
         );
 
         expect(
@@ -1123,15 +1126,7 @@ void main() {
               limit: 0,
             ),
           ),
-          throwsA(
-            isA<ArgumentError>()
-                .having((ArgumentError error) => error.name, 'name', 'limit')
-                .having(
-                  (ArgumentError error) => error.message,
-                  'message',
-                  'cannot be lower than 2',
-                ),
-          ),
+          throwsLimitArgumentError,
         );
 
         expect(
@@ -1141,15 +1136,7 @@ void main() {
               limit: 1,
             ),
           ),
-          throwsA(
-            isA<ArgumentError>()
-                .having((ArgumentError error) => error.name, 'name', 'limit')
-                .having(
-                  (ArgumentError error) => error.message,
-                  'message',
-                  'cannot be lower than 2',
-                ),
-          ),
+          throwsLimitArgumentError,
         );
       });
 
