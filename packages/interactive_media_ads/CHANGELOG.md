@@ -1,3 +1,7 @@
+## 0.2.8+1
+
+* Resolves Gradle 9 deprecations.
+
 ## 0.2.8
 
 * Adds support for accessing data for an ad. See `AdEvent.ad`.

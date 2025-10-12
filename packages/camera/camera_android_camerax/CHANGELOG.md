@@ -1,6 +1,10 @@
-## 0.6.23+1
+## 0.6.23+2
 
 * Updates examples to use the new RadioGroup API instead of deprecated Radio parameters.
+
+## 0.6.23+1
+
+* Resolves Gradle 9 deprecations.
 
 ## 0.6.23
 

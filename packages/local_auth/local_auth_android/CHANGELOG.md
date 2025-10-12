@@ -1,3 +1,7 @@
+## 1.0.55
+
+* Resolves Gradle 9 deprecations.
+
 ## 1.0.54
 
 * Bumps `androidx.fragment:fragment` from `1.8.8` to `1.8.9`.
