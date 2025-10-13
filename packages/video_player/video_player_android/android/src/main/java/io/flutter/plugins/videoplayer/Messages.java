@@ -1297,7 +1297,7 @@ public class Messages {
     /** Gets the available audio tracks for the video. */
     @NonNull
     NativeAudioTrackData getAudioTracks();
-    /** Selects an audio track by its ID. */
+    /** Selects which audio track is chosen for playback from its [trackId] */
     void selectAudioTrack(@NonNull String trackId);
 
     /** The codec used by VideoPlayerInstanceApi. */

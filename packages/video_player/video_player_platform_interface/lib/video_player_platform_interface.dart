@@ -134,7 +134,7 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
     throw UnimplementedError('getAudioTracks() has not been implemented.');
   }
 
-  /// Selects an audio track by its ID.
+  /// Selects which audio track is chosen for playback from its [trackId]
   Future<void> selectAudioTrack(int playerId, String trackId) {
     throw UnimplementedError('selectAudioTrack() has not been implemented.');
   }

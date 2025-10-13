@@ -903,7 +903,7 @@ class VideoPlayerInstanceApi {
     }
   }
 
-  /// Selects an audio track by its ID.
+  /// Selects which audio track is chosen for playback from its [trackId]
   Future<void> selectAudioTrack(String trackId) async {
     final String pigeonVar_channelName =
         'dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.selectAudioTrack$pigeonVar_messageChannelSuffix';

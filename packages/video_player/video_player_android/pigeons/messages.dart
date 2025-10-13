@@ -144,6 +144,6 @@ abstract class VideoPlayerInstanceApi {
   /// Gets the available audio tracks for the video.
   NativeAudioTrackData getAudioTracks();
 
-  /// Selects an audio track by its ID.
+  /// Selects which audio track is chosen for playback from its [trackId]
   void selectAudioTrack(String trackId);
 }

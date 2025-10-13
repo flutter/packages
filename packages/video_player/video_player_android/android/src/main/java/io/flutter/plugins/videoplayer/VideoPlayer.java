@@ -190,7 +190,11 @@ public abstract class VideoPlayer implements Messages.VideoPlayerInstanceApi {
       // Parse the trackId (format: "groupIndex_trackIndex")
       String[] parts = trackId.split("_");
       if (parts.length != 2) {
-        Log.w("VideoPlayer", "Cannot select audio track: invalid trackId format '" + trackId + "'. Expected format: 'groupIndex_trackIndex'");
+        Log.w(
+            "VideoPlayer",
+            "Cannot select audio track: invalid trackId format '"
+                + trackId
+                + "'. Expected format: 'groupIndex_trackIndex'");
         return;
       }
 
@@ -201,7 +205,13 @@ public abstract class VideoPlayer implements Messages.VideoPlayerInstanceApi {
       Tracks tracks = exoPlayer.getCurrentTracks();
 
       if (groupIndex >= tracks.getGroups().size()) {
-        Log.w("VideoPlayer", "Cannot select audio track: groupIndex " + groupIndex + " is out of bounds (available groups: " + tracks.getGroups().size() + ")");
+        Log.w(
+            "VideoPlayer",
+            "Cannot select audio track: groupIndex "
+                + groupIndex
+                + " is out of bounds (available groups: "
+                + tracks.getGroups().size()
+                + ")");
         return;
       }
 
@@ -210,9 +220,21 @@ public abstract class VideoPlayer implements Messages.VideoPlayerInstanceApi {
       // Verify it's an audio track and the track index is valid
       if (group.getType() != C.TRACK_TYPE_AUDIO || trackIndex >= group.length) {
         if (group.getType() != C.TRACK_TYPE_AUDIO) {
-          Log.w("VideoPlayer", "Cannot select audio track: group at index " + groupIndex + " is not an audio track (type: " + group.getType() + ")");
+          Log.w(
+              "VideoPlayer",
+              "Cannot select audio track: group at index "
+                  + groupIndex
+                  + " is not an audio track (type: "
+                  + group.getType()
+                  + ")");
         } else {
-          Log.w("VideoPlayer", "Cannot select audio track: trackIndex " + trackIndex + " is out of bounds (available tracks in group: " + group.length + ")");
+          Log.w(
+              "VideoPlayer",
+              "Cannot select audio track: trackIndex "
+                  + trackIndex
+                  + " is out of bounds (available tracks in group: "
+                  + group.length
+                  + ")");
         }
         return;
       }
@@ -226,7 +248,9 @@ public abstract class VideoPlayer implements Messages.VideoPlayerInstanceApi {
           trackSelector.buildUponParameters().setOverrideForType(override).build());
 
     } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
-      Log.w("VideoPlayer", "Cannot select audio track: invalid trackId format '" + trackId + "'. " + e.getMessage());
+      Log.w(
+          "VideoPlayer",
+          "Cannot select audio track: invalid trackId format '" + trackId + "'. " + e.getMessage());
     }
   }
 

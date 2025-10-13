@@ -836,7 +836,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     return _videoPlayerPlatform.getAudioTracks(_playerId);
   }
 
-  /// Selects an audio track by its ID.
+  /// Selects which audio track is chosen for playback from its [trackId]
   ///
   /// The [trackId] should match the ID of one of the tracks returned by
   /// [getAudioTracks]. If the track ID is not found or invalid, the
