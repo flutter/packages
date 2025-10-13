@@ -7,6 +7,7 @@ package io.flutter.plugins.videoplayer;
 import static androidx.media3.common.Player.REPEAT_MODE_ALL;
 import static androidx.media3.common.Player.REPEAT_MODE_OFF;
 
+import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.media3.common.AudioAttributes;
@@ -181,6 +182,7 @@ public abstract class VideoPlayer implements Messages.VideoPlayerInstanceApi {
   @Override
   public void selectAudioTrack(@NonNull String trackId) {
     if (trackSelector == null) {
+      Log.w("VideoPlayer", "Cannot select audio track: track selector is null");
       return;
     }
 
@@ -188,6 +190,7 @@ public abstract class VideoPlayer implements Messages.VideoPlayerInstanceApi {
       // Parse the trackId (format: "groupIndex_trackIndex")
       String[] parts = trackId.split("_");
       if (parts.length != 2) {
+        Log.w("VideoPlayer", "Cannot select audio track: invalid trackId format '" + trackId + "'. Expected format: 'groupIndex_trackIndex'");
         return;
       }
 
@@ -198,6 +201,7 @@ public abstract class VideoPlayer implements Messages.VideoPlayerInstanceApi {
       Tracks tracks = exoPlayer.getCurrentTracks();
 
       if (groupIndex >= tracks.getGroups().size()) {
+        Log.w("VideoPlayer", "Cannot select audio track: groupIndex " + groupIndex + " is out of bounds (available groups: " + tracks.getGroups().size() + ")");
         return;
       }
 
@@ -205,6 +209,11 @@ public abstract class VideoPlayer implements Messages.VideoPlayerInstanceApi {
 
       // Verify it's an audio track and the track index is valid
       if (group.getType() != C.TRACK_TYPE_AUDIO || trackIndex >= group.length) {
+        if (group.getType() != C.TRACK_TYPE_AUDIO) {
+          Log.w("VideoPlayer", "Cannot select audio track: group at index " + groupIndex + " is not an audio track (type: " + group.getType() + ")");
+        } else {
+          Log.w("VideoPlayer", "Cannot select audio track: trackIndex " + trackIndex + " is out of bounds (available tracks in group: " + group.length + ")");
+        }
         return;
       }
 
@@ -217,7 +226,7 @@ public abstract class VideoPlayer implements Messages.VideoPlayerInstanceApi {
           trackSelector.buildUponParameters().setOverrideForType(override).build());
 
     } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
-      // Invalid trackId format, ignore
+      Log.w("VideoPlayer", "Cannot select audio track: invalid trackId format '" + trackId + "'. " + e.getMessage());
     }
   }
 
