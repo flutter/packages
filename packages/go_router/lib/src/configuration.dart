@@ -450,7 +450,10 @@ class RouteConfiguration {
   }
 
   /// Applies the legacy top-level redirect to [prevMatchList] and returns the
-  /// resulting matches. Returns [prevMatchList] when no redirect happens.
+  /// resulting matches.
+  ///
+  /// Returns [prevMatchList] when no redirect happens.
+  ///
   /// Shares [redirectHistory] with later route-level redirects for proper loop detection.
   ///
   /// Note: Legacy top-level redirect is executed at most once per navigation,
