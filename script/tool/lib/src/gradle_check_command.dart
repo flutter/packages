@@ -372,8 +372,8 @@ build.gradle must set an explicit Java compatibility version.
 This can be done either via "sourceCompatibility"/"targetCompatibility":
     android {
         compileOptions {
-            sourceCompatibility JavaVersion.VERSION_11
-            targetCompatibility JavaVersion.VERSION_11
+            sourceCompatibility = JavaVersion.VERSION_11
+            targetCompatibility = JavaVersion.VERSION_11
         }
     }
 
@@ -405,16 +405,16 @@ for more details.''';
         .childFile('build.gradle')
         .readAsLinesSync();
     if (!gradleBuildContents.any((String line) =>
-            line.contains('checkAllWarnings true') && !_isCommented(line)) ||
+            line.contains('checkAllWarnings = true') && !_isCommented(line)) ||
         !gradleBuildContents.any((String line) =>
-            line.contains('warningsAsErrors true') && !_isCommented(line))) {
+            line.contains('warningsAsErrors = true') && !_isCommented(line))) {
       printError('${indentation}This package is not configured to enable all '
           'Gradle-driven lint warnings and treat them as errors. '
           'Please add the following to the lintOptions section of '
           'android/build.gradle:');
       print('''
-        checkAllWarnings true
-        warningsAsErrors true
+        checkAllWarnings = true
+        warningsAsErrors = true
 ''');
       return false;
     }
@@ -427,6 +427,7 @@ for more details.''';
     final RegExp legacySettingPattern = RegExp(r'^\s*compileSdkVersion');
     final String? compileSdkLine = gradleLines
         .firstWhereOrNull((String line) => linePattern.hasMatch(line));
+
     if (compileSdkLine == null) {
       // Equals regex not found check for method pattern.
       final RegExp compileSpacePattern = RegExp(r'^\s*compileSdk');
@@ -465,6 +466,28 @@ for more details.''';
             'supports $minFlutterVersion.\n'
             "${indentation}Please update the package's minimum Flutter SDK "
             'version to at least 3.27.');
+        return false;
+      }
+    } else {
+      // Extract compileSdkVersion and check if it is higher than flutter.compileSdkVersion.
+      final RegExp numericVersionPattern = RegExp(r'=\s*(\d+)');
+      final RegExpMatch? versionMatch =
+          numericVersionPattern.firstMatch(compileSdkLine);
+
+      if (versionMatch != null) {
+        final int compileSdkVersion = int.parse(versionMatch.group(1)!);
+        const int minCompileSdkVersion = 36;
+
+        if (compileSdkVersion < minCompileSdkVersion) {
+          printError(
+              '${indentation}compileSdk version $compileSdkVersion is too low. '
+              'Minimum required version is $minCompileSdkVersion.\n'
+              "${indentation}Please update this package's compileSdkVersion to at least "
+              '$minCompileSdkVersion or use flutter.compileSdkVersion.');
+          return false;
+        }
+      } else {
+        printError('${indentation}Unable to parse compileSdk version number.');
         return false;
       }
     }

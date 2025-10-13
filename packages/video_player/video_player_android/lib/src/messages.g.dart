@@ -36,9 +36,6 @@ bool _deepEquals(Object? a, Object? b) {
   return a == b;
 }
 
-/// Pigeon equivalent of VideoViewType.
-enum PlatformVideoViewType { textureView, platformView }
-
 /// Pigeon equivalent of video_platform_interface's VideoFormat.
 enum PlatformVideoFormat { dash, hls, ss }
 
@@ -79,13 +76,12 @@ class PlatformVideoViewCreationParams {
   int get hashCode => Object.hashAll(_toList());
 }
 
-class CreateMessage {
-  CreateMessage({
+class CreationOptions {
+  CreationOptions({
     required this.uri,
     this.formatHint,
     required this.httpHeaders,
     this.userAgent,
-    this.viewType,
   });
 
   String uri;
@@ -96,32 +92,69 @@ class CreateMessage {
 
   String? userAgent;
 
-  PlatformVideoViewType? viewType;
-
   List<Object?> _toList() {
-    return <Object?>[uri, formatHint, httpHeaders, userAgent, viewType];
+    return <Object?>[uri, formatHint, httpHeaders, userAgent];
   }
 
   Object encode() {
     return _toList();
   }
 
-  static CreateMessage decode(Object result) {
+  static CreationOptions decode(Object result) {
     result as List<Object?>;
-    return CreateMessage(
+    return CreationOptions(
       uri: result[0]! as String,
       formatHint: result[1] as PlatformVideoFormat?,
       httpHeaders:
           (result[2] as Map<Object?, Object?>?)!.cast<String, String>(),
       userAgent: result[3] as String?,
-      viewType: result[4] as PlatformVideoViewType?,
     );
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! CreateMessage || other.runtimeType != runtimeType) {
+    if (other is! CreationOptions || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
+}
+
+class TexturePlayerIds {
+  TexturePlayerIds({required this.playerId, required this.textureId});
+
+  int playerId;
+
+  int textureId;
+
+  List<Object?> _toList() {
+    return <Object?>[playerId, textureId];
+  }
+
+  Object encode() {
+    return _toList();
+  }
+
+  static TexturePlayerIds decode(Object result) {
+    result as List<Object?>;
+    return TexturePlayerIds(
+      playerId: result[0]! as int,
+      textureId: result[1]! as int,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! TexturePlayerIds || other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -378,16 +411,16 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
-    } else if (value is PlatformVideoViewType) {
+    } else if (value is PlatformVideoFormat) {
       buffer.putUint8(129);
       writeValue(buffer, value.index);
-    } else if (value is PlatformVideoFormat) {
-      buffer.putUint8(130);
-      writeValue(buffer, value.index);
     } else if (value is PlatformVideoViewCreationParams) {
+      buffer.putUint8(130);
+      writeValue(buffer, value.encode());
+    } else if (value is CreationOptions) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
-    } else if (value is CreateMessage) {
+    } else if (value is TexturePlayerIds) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
     } else if (value is PlaybackState) {
@@ -412,14 +445,13 @@ class _PigeonCodec extends StandardMessageCodec {
     switch (type) {
       case 129:
         final int? value = readValue(buffer) as int?;
-        return value == null ? null : PlatformVideoViewType.values[value];
-      case 130:
-        final int? value = readValue(buffer) as int?;
         return value == null ? null : PlatformVideoFormat.values[value];
-      case 131:
+      case 130:
         return PlatformVideoViewCreationParams.decode(readValue(buffer)!);
+      case 131:
+        return CreationOptions.decode(readValue(buffer)!);
       case 132:
-        return CreateMessage.decode(readValue(buffer)!);
+        return TexturePlayerIds.decode(readValue(buffer)!);
       case 133:
         return PlaybackState.decode(readValue(buffer)!);
       case 134:
@@ -475,9 +507,9 @@ class AndroidVideoPlayerApi {
     }
   }
 
-  Future<int> create(CreateMessage msg) async {
+  Future<int> createForPlatformView(CreationOptions options) async {
     final String pigeonVar_channelName =
-        'dev.flutter.pigeon.video_player_android.AndroidVideoPlayerApi.create$pigeonVar_messageChannelSuffix';
+        'dev.flutter.pigeon.video_player_android.AndroidVideoPlayerApi.createForPlatformView$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
@@ -485,7 +517,7 @@ class AndroidVideoPlayerApi {
           binaryMessenger: pigeonVar_binaryMessenger,
         );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[msg],
+      <Object?>[options],
     );
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
@@ -504,6 +536,38 @@ class AndroidVideoPlayerApi {
       );
     } else {
       return (pigeonVar_replyList[0] as int?)!;
+    }
+  }
+
+  Future<TexturePlayerIds> createForTextureView(CreationOptions options) async {
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.video_player_android.AndroidVideoPlayerApi.createForTextureView$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[options],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as TexturePlayerIds?)!;
     }
   }
 

@@ -1,5 +1,5 @@
-group 'io.flutter.plugins.flutter_plugin_android_lifecycle'
-version '1.0'
+group = 'io.flutter.plugins.flutter_plugin_android_lifecycle'
+version = '1.0'
 
 buildscript {
     repositories {
@@ -32,13 +32,13 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
 
     lintOptions {
-        checkAllWarnings true
-        warningsAsErrors true
+        checkAllWarnings = true
+        warningsAsErrors = true
         disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency', 'NewerVersionAvailable'
     }
 

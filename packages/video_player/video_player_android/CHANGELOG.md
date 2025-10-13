@@ -2,6 +2,14 @@
 
 * Implements `getAudioTracks()` and `selectAudioTrack()` methods for Android using ExoPlayer.
 
+## 2.8.15
+
+* Resolves Gradle 9 deprecations.
+
+## 2.8.14
+
+* Restructures internal logic for player creation and tracking.
+
 ## 2.8.13
 
 * Bumps com.android.tools.build:gradle to 8.12.1.

@@ -226,4 +226,49 @@ void main() {
 
     expect(duration, lessThan(recordingTime - timePaused));
   }, skip: skipFor157181);
+
+  testWidgets('Set description while recording captures full video', (
+    WidgetTester tester,
+  ) async {
+    final List<CameraDescription> cameras = await availableCameras();
+    if (cameras.length < 2) {
+      return;
+    }
+
+    final CameraController controller = CameraController(
+      cameras[0],
+      mediaSettings: const MediaSettings(
+        resolutionPreset: ResolutionPreset.medium,
+        enableAudio: true,
+      ),
+    );
+    await controller.initialize();
+    await controller.prepareForVideoRecording();
+
+    await controller.startVideoRecording();
+
+    await controller.setDescription(cameras[1]);
+
+    await tester.pumpAndSettle(const Duration(seconds: 4));
+
+    await controller.setDescription(cameras[0]);
+
+    await tester.pumpAndSettle(const Duration(seconds: 1));
+
+    final XFile file = await controller.stopVideoRecording();
+
+    final File videoFile = File(file.path);
+    final VideoPlayerController videoController = VideoPlayerController.file(
+      videoFile,
+    );
+    await videoController.initialize();
+    final int duration = videoController.value.duration.inMilliseconds;
+    await videoController.dispose();
+
+    expect(
+      duration,
+      greaterThanOrEqualTo(const Duration(seconds: 4).inMilliseconds),
+    );
+    await controller.dispose();
+  });
 }

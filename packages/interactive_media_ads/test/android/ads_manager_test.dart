@@ -142,7 +142,7 @@ void main() {
       await adsManager.setAdsManagerDelegate(
         AndroidAdsManagerDelegate(
           PlatformAdsManagerDelegateCreationParams(
-            onAdEvent: expectAsync1((AdEvent event) {
+            onAdEvent: expectAsync1((PlatformAdEvent event) {
               expect(event.type, AdEventType.allAdsCompleted);
               expect(event.adData, <String, String>{'hello': 'world'});
             }),

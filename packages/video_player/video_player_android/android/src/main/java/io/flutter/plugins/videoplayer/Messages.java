@@ -66,18 +66,6 @@ public class Messages {
   @Retention(CLASS)
   @interface CanIgnoreReturnValue {}
 
-  /** Pigeon equivalent of VideoViewType. */
-  public enum PlatformVideoViewType {
-    TEXTURE_VIEW(0),
-    PLATFORM_VIEW(1);
-
-    final int index;
-
-    PlatformVideoViewType(final int index) {
-      this.index = index;
-    }
-  }
-
   /** Pigeon equivalent of video_platform_interface's VideoFormat. */
   public enum PlatformVideoFormat {
     DASH(0),
@@ -164,7 +152,7 @@ public class Messages {
   }
 
   /** Generated class from Pigeon that represents data sent in messages. */
-  public static final class CreateMessage {
+  public static final class CreationOptions {
     private @NonNull String uri;
 
     public @NonNull String getUri() {
@@ -211,18 +199,8 @@ public class Messages {
       this.userAgent = setterArg;
     }
 
-    private @Nullable PlatformVideoViewType viewType;
-
-    public @Nullable PlatformVideoViewType getViewType() {
-      return viewType;
-    }
-
-    public void setViewType(@Nullable PlatformVideoViewType setterArg) {
-      this.viewType = setterArg;
-    }
-
     /** Constructor is non-public to enforce null safety; use Builder. */
-    CreateMessage() {}
+    CreationOptions() {}
 
     @Override
     public boolean equals(Object o) {
@@ -232,17 +210,16 @@ public class Messages {
       if (o == null || getClass() != o.getClass()) {
         return false;
       }
-      CreateMessage that = (CreateMessage) o;
+      CreationOptions that = (CreationOptions) o;
       return uri.equals(that.uri)
           && Objects.equals(formatHint, that.formatHint)
           && httpHeaders.equals(that.httpHeaders)
-          && Objects.equals(userAgent, that.userAgent)
-          && Objects.equals(viewType, that.viewType);
+          && Objects.equals(userAgent, that.userAgent);
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(uri, formatHint, httpHeaders, userAgent, viewType);
+      return Objects.hash(uri, formatHint, httpHeaders, userAgent);
     }
 
     public static final class Builder {
@@ -279,38 +256,28 @@ public class Messages {
         return this;
       }
 
-      private @Nullable PlatformVideoViewType viewType;
-
-      @CanIgnoreReturnValue
-      public @NonNull Builder setViewType(@Nullable PlatformVideoViewType setterArg) {
-        this.viewType = setterArg;
-        return this;
-      }
-
-      public @NonNull CreateMessage build() {
-        CreateMessage pigeonReturn = new CreateMessage();
+      public @NonNull CreationOptions build() {
+        CreationOptions pigeonReturn = new CreationOptions();
         pigeonReturn.setUri(uri);
         pigeonReturn.setFormatHint(formatHint);
         pigeonReturn.setHttpHeaders(httpHeaders);
         pigeonReturn.setUserAgent(userAgent);
-        pigeonReturn.setViewType(viewType);
         return pigeonReturn;
       }
     }
 
     @NonNull
     ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<>(5);
+      ArrayList<Object> toListResult = new ArrayList<>(4);
       toListResult.add(uri);
       toListResult.add(formatHint);
       toListResult.add(httpHeaders);
       toListResult.add(userAgent);
-      toListResult.add(viewType);
       return toListResult;
     }
 
-    static @NonNull CreateMessage fromList(@NonNull ArrayList<Object> pigeonVar_list) {
-      CreateMessage pigeonResult = new CreateMessage();
+    static @NonNull CreationOptions fromList(@NonNull ArrayList<Object> pigeonVar_list) {
+      CreationOptions pigeonResult = new CreationOptions();
       Object uri = pigeonVar_list.get(0);
       pigeonResult.setUri((String) uri);
       Object formatHint = pigeonVar_list.get(1);
@@ -319,8 +286,98 @@ public class Messages {
       pigeonResult.setHttpHeaders((Map<String, String>) httpHeaders);
       Object userAgent = pigeonVar_list.get(3);
       pigeonResult.setUserAgent((String) userAgent);
-      Object viewType = pigeonVar_list.get(4);
-      pigeonResult.setViewType((PlatformVideoViewType) viewType);
+      return pigeonResult;
+    }
+  }
+
+  /** Generated class from Pigeon that represents data sent in messages. */
+  public static final class TexturePlayerIds {
+    private @NonNull Long playerId;
+
+    public @NonNull Long getPlayerId() {
+      return playerId;
+    }
+
+    public void setPlayerId(@NonNull Long setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"playerId\" is null.");
+      }
+      this.playerId = setterArg;
+    }
+
+    private @NonNull Long textureId;
+
+    public @NonNull Long getTextureId() {
+      return textureId;
+    }
+
+    public void setTextureId(@NonNull Long setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"textureId\" is null.");
+      }
+      this.textureId = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    TexturePlayerIds() {}
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      TexturePlayerIds that = (TexturePlayerIds) o;
+      return playerId.equals(that.playerId) && textureId.equals(that.textureId);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(playerId, textureId);
+    }
+
+    public static final class Builder {
+
+      private @Nullable Long playerId;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setPlayerId(@NonNull Long setterArg) {
+        this.playerId = setterArg;
+        return this;
+      }
+
+      private @Nullable Long textureId;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setTextureId(@NonNull Long setterArg) {
+        this.textureId = setterArg;
+        return this;
+      }
+
+      public @NonNull TexturePlayerIds build() {
+        TexturePlayerIds pigeonReturn = new TexturePlayerIds();
+        pigeonReturn.setPlayerId(playerId);
+        pigeonReturn.setTextureId(textureId);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<>(2);
+      toListResult.add(playerId);
+      toListResult.add(textureId);
+      return toListResult;
+    }
+
+    static @NonNull TexturePlayerIds fromList(@NonNull ArrayList<Object> pigeonVar_list) {
+      TexturePlayerIds pigeonResult = new TexturePlayerIds();
+      Object playerId = pigeonVar_list.get(0);
+      pigeonResult.setPlayerId((Long) playerId);
+      Object textureId = pigeonVar_list.get(1);
+      pigeonResult.setTextureId((Long) textureId);
       return pigeonResult;
     }
   }
@@ -975,17 +1032,14 @@ public class Messages {
         case (byte) 129:
           {
             Object value = readValue(buffer);
-            return value == null ? null : PlatformVideoViewType.values()[((Long) value).intValue()];
-          }
-        case (byte) 130:
-          {
-            Object value = readValue(buffer);
             return value == null ? null : PlatformVideoFormat.values()[((Long) value).intValue()];
           }
-        case (byte) 131:
+        case (byte) 130:
           return PlatformVideoViewCreationParams.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 131:
+          return CreationOptions.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 132:
-          return CreateMessage.fromList((ArrayList<Object>) readValue(buffer));
+          return TexturePlayerIds.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 133:
           return PlaybackState.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 134:
@@ -1001,18 +1055,18 @@ public class Messages {
 
     @Override
     protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value) {
-      if (value instanceof PlatformVideoViewType) {
+      if (value instanceof PlatformVideoFormat) {
         stream.write(129);
-        writeValue(stream, value == null ? null : ((PlatformVideoViewType) value).index);
-      } else if (value instanceof PlatformVideoFormat) {
-        stream.write(130);
         writeValue(stream, value == null ? null : ((PlatformVideoFormat) value).index);
       } else if (value instanceof PlatformVideoViewCreationParams) {
-        stream.write(131);
+        stream.write(130);
         writeValue(stream, ((PlatformVideoViewCreationParams) value).toList());
-      } else if (value instanceof CreateMessage) {
+      } else if (value instanceof CreationOptions) {
+        stream.write(131);
+        writeValue(stream, ((CreationOptions) value).toList());
+      } else if (value instanceof TexturePlayerIds) {
         stream.write(132);
-        writeValue(stream, ((CreateMessage) value).toList());
+        writeValue(stream, ((TexturePlayerIds) value).toList());
       } else if (value instanceof PlaybackState) {
         stream.write(133);
         writeValue(stream, ((PlaybackState) value).toList());
@@ -1037,7 +1091,10 @@ public class Messages {
     void initialize();
 
     @NonNull
-    Long create(@NonNull CreateMessage msg);
+    Long createForPlatformView(@NonNull CreationOptions options);
+
+    @NonNull
+    TexturePlayerIds createForTextureView(@NonNull CreationOptions options);
 
     void dispose(@NonNull Long playerId);
 
@@ -1091,7 +1148,7 @@ public class Messages {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.video_player_android.AndroidVideoPlayerApi.create"
+                "dev.flutter.pigeon.video_player_android.AndroidVideoPlayerApi.createForPlatformView"
                     + messageChannelSuffix,
                 getCodec());
         if (api != null) {
@@ -1099,9 +1156,34 @@ public class Messages {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                CreateMessage msgArg = (CreateMessage) args.get(0);
+                CreationOptions optionsArg = (CreationOptions) args.get(0);
                 try {
-                  Long output = api.create(msgArg);
+                  Long output = api.createForPlatformView(optionsArg);
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  wrapped = wrapError(exception);
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.video_player_android.AndroidVideoPlayerApi.createForTextureView"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                CreationOptions optionsArg = (CreationOptions) args.get(0);
+                try {
+                  TexturePlayerIds output = api.createForTextureView(optionsArg);
                   wrapped.add(0, output);
                 } catch (Throwable exception) {
                   wrapped = wrapError(exception);

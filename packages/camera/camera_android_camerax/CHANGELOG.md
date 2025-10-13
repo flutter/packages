@@ -1,3 +1,16 @@
+## 0.6.23+1
+
+* Resolves Gradle 9 deprecations.
+
+## 0.6.23
+
+* Converts NV21-compatible streamed images to NV21 when requested. In doing so,
+this plugin should now be compatible with [google_ml_kit_flutter](https://github.com/flutter-ml/google_ml_kit_flutter/tree/master).
+
+## 0.6.22
+
+* Implements `setDescriptionWhileRecording`.
+
 ## 0.6.21+2
 
 * Bumps com.google.guava:guava from 33.4.8-android to 33.5.0-android.
