@@ -84,10 +84,8 @@ class AdsRequest {
   /// based on content progress (cue points).
   ContentProgressProvider? get contentProgressProvider =>
       platform.contentProgressProvider != null
-          ? ContentProgressProvider.fromPlatform(
-            platform.contentProgressProvider!,
-          )
-          : null;
+      ? ContentProgressProvider.fromPlatform(platform.contentProgressProvider!)
+      : null;
 
   /// Notifies the SDK whether the player intends to start the content and ad in
   /// response to a user action or whether it will be automatically played.
