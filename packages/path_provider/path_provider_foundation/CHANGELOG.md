@@ -1,5 +1,6 @@
-## NEXT
+## 2.4.3
 
+* Updates minimum supported version to iOS 13 and macOS 10.15.
 * Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
 
 ## 2.4.2

@@ -1,5 +1,6 @@
-## NEXT
+## 0.5.3+3
 
+* Updates minimum supported version to iOS 13.
 * Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
 
 ## 0.5.3+2

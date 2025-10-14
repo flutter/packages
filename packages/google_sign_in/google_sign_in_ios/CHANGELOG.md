@@ -1,3 +1,7 @@
+## 6.2.2
+
+* Updates minimum supported version to iOS 13.
+
 ## 6.2.1
 
 * Fixes a bug that would cause `serverAuthorizationTokensForScopes` to
