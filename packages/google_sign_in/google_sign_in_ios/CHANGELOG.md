@@ -1,6 +1,7 @@
 ## 6.2.2
 
 * Updates minimum supported version to iOS 13.
+* Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
 
 ## 6.2.1
 
