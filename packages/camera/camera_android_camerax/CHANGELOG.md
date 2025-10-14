@@ -1,3 +1,7 @@
+## 0.6.24
+
+* Fixes `IllegalArgumentException` that could occur during image streaming.
+
 ## 0.6.23+1
 
 * Resolves Gradle 9 deprecations.
