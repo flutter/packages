@@ -1216,6 +1216,39 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
 }
 
 class NITestsClass: NSObject, NIHostIntegrationCoreApi {
+  func echoStringMap(stringMap: [String?: String?]) throws -> [String?: String?] {
+    return stringMap
+  }
+
+//  func echoIntMap(intMap: [Int64?: Int64?]) throws -> [Int64?: Int64?] {
+//    return intMap
+//  }
+
+  func echoStringList(stringList: [String?]) throws -> [String?] {
+    return stringList
+  }
+
+  func echoIntList(intList: [Int64?]) throws -> [Int64?] {
+    return intList
+  }
+
+  func echoDoubleList(doubleList: [Double?]) throws -> [Double?] {
+    return doubleList
+  }
+
+  func echoBoolList(boolList: [Bool?]) throws -> [Bool?] {
+    return boolList
+  }
+
+  func extractNestedNullableString(wrapper: NIAllClassesWrapper) throws -> String? {
+    return wrapper.allNullableTypesWithoutRecursion?.aNullableString
+  }
+
+  func createNestedNullableString(nullableString: String?) throws -> NIAllClassesWrapper {
+    return NIAllClassesWrapper(
+      allNullableTypesWithoutRecursion: .init(aNullableString: nullableString))
+  }
+
   func echoClassWrapper(wrapper: NIAllClassesWrapper) throws -> NIAllClassesWrapper {
     return wrapper
   }

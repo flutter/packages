@@ -52,10 +52,10 @@ class NIAllTypes {
     // This name is in a different format than the others to ensure that name
     // collision with the word 'list' doesn't occur in the generated files.
     required this.list,
-    // required this.stringList,
-    // required this.intList,
-    // required this.doubleList,
-    // required this.boolList,
+    required this.stringList,
+    required this.intList,
+    required this.doubleList,
+    required this.boolList,
     // required this.enumList,
     // required this.objectList,
     // required this.listList,
@@ -63,7 +63,7 @@ class NIAllTypes {
 
     // Maps
     required this.map,
-    // required this.stringMap,
+    required this.stringMap,
     // required this.intMap,
     // required this.enumMap,
     // required this.objectMap,
@@ -86,10 +86,10 @@ class NIAllTypes {
 
   // Lists
   List list;
-  // List<String> stringList;
-  // List<int> intList;
-  // List<double> doubleList;
-  // List<bool> boolList;
+  List<String> stringList;
+  List<int> intList;
+  List<double> doubleList;
+  List<bool> boolList;
   // List<NIAnEnum> enumList;
   // List<Object> objectList;
   // List<List<Object?>> listList;
@@ -97,7 +97,7 @@ class NIAllTypes {
 
   // Maps
   Map map;
-  // Map<String, String> stringMap;
+  Map<String, String> stringMap;
   // Map<int, int> intMap;
   // Map<NIAnEnum, NIAnEnum> enumMap;
   // Map<Object, Object> objectMap;
@@ -207,10 +207,10 @@ class NIAllNullableTypesWithoutRecursion {
 //     // This name is in a different format than the others to ensure that name
 //     // collision with the word 'list' doesn't occur in the generated files.
     this.list,
-//     this.stringList,
-//     this.intList,
-//     this.doubleList,
-//     this.boolList,
+    // this.stringList,
+    // this.intList,
+    // this.doubleList,
+    // this.boolList,
 //     this.enumList,
 //     this.objectList,
 //     this.listList,
@@ -241,10 +241,10 @@ class NIAllNullableTypesWithoutRecursion {
 
 //   // Lists
   List? list;
-//   List<String?>? stringList;
-//   List<int?>? intList;
-//   List<double?>? doubleList;
-//   List<bool?>? boolList;
+  // List<String?>? stringList;
+  // List<int?>? intList;
+  // List<double?>? doubleList;
+  // List<bool?>? boolList;
 //   List<NIAnEnum?>? enumList;
 //   List<Object?>? objectList;
 //   List<List<Object?>?>? listList;
@@ -358,6 +358,26 @@ abstract class NIHostIntegrationCoreApi {
   // @SwiftFunction('echo(_:)')
   List<Object?> echoList(List<Object?> list);
 
+  /// Returns the passed list, to test serialization and deserialization.
+  @ObjCSelector('echoStringList:')
+  // @SwiftFunction('echo(stringList:)')
+  List<String?> echoStringList(List<String?> stringList);
+
+  /// Returns the passed list, to test serialization and deserialization.
+  @ObjCSelector('echoIntList:')
+  // @SwiftFunction('echo(intList:)')
+  List<int?> echoIntList(List<int?> intList);
+
+  /// Returns the passed list, to test serialization and deserialization.
+  @ObjCSelector('echoDoubleList:')
+  // @SwiftFunction('echo(doubleList:)')
+  List<double?> echoDoubleList(List<double?> doubleList);
+
+  /// Returns the passed list, to test serialization and deserialization.
+  @ObjCSelector('echoBoolList:')
+  // @SwiftFunction('echo(boolList:)')
+  List<bool?> echoBoolList(List<bool?> boolList);
+
   // /// Returns the passed list, to test serialization and deserialization.
   // @ObjCSelector('echoEnumList:')
   // @SwiftFunction('echo(enumList:)')
@@ -384,14 +404,14 @@ abstract class NIHostIntegrationCoreApi {
   // @SwiftFunction('echo(_:)')
   Map<Object?, Object?> echoMap(Map<Object?, Object?> map);
 
-  // /// Returns the passed map, to test serialization and deserialization.
-  // @ObjCSelector('echoStringMap:')
+  /// Returns the passed map, to test serialization and deserialization.
+  @ObjCSelector('echoStringMap:')
   // @SwiftFunction('echo(stringMap:)')
-  // Map<String?, String?> echoStringMap(Map<String?, String?> stringMap);
+  Map<String?, String?> echoStringMap(Map<String?, String?> stringMap);
 
-  // /// Returns the passed map, to test serialization and deserialization.
+  /// Returns the passed map, to test serialization and deserialization.
   // @ObjCSelector('echoIntMap:')
-  // @SwiftFunction('echo(intMap:)')
+  // // @SwiftFunction('echo(intMap:)')
   // Map<int?, int?> echoIntMap(Map<int?, int?> intMap);
 
   // /// Returns the passed map, to test serialization and deserialization.
@@ -469,19 +489,19 @@ abstract class NIHostIntegrationCoreApi {
   NIAllNullableTypesWithoutRecursion? echoAllNullableTypesWithoutRecursion(
       NIAllNullableTypesWithoutRecursion? everything);
 
-  // /// Returns the inner `aString` value from the wrapped object, to test
-  // /// sending of nested objects.
-  // @ObjCSelector('extractNestedNullableStringFrom:')
+  /// Returns the inner `aString` value from the wrapped object, to test
+  /// sending of nested objects.
+  @ObjCSelector('extractNestedNullableStringFrom:')
   // @SwiftFunction('extractNestedNullableString(from:)')
-  // String? extractNestedNullableString(NIAllClassesWrapper wrapper);
+  String? extractNestedNullableString(NIAllClassesWrapper wrapper);
 
-  // /// Returns the inner `aString` value from the wrapped object, to test
-  // /// sending of nested objects.
-  // @ObjCSelector('createNestedObjectWithNullableString:')
+  /// Returns the inner `aString` value from the wrapped object, to test
+  /// sending of nested objects.
+  @ObjCSelector('createNestedObjectWithNullableString:')
   // @SwiftFunction('createNestedObject(with:)')
-  // NIAllClassesWrapper createNestedNullableString(String? nullableString);
+  NIAllClassesWrapper createNestedNullableString(String? nullableString);
 
-  // /// Returns passed in arguments of multiple types.
+  /// Returns passed in arguments of multiple types.
   // @ObjCSelector('sendMultipleNullableTypesABool:anInt:aString:')
   // @SwiftFunction('sendMultipleNullableTypes(aBool:anInt:aString:)')
   // NIAllNullableTypes sendMultipleNullableTypes(

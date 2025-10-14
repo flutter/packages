@@ -875,3 +875,17 @@ bool isCollectionType(TypeDeclaration type) {
 String wrapConditionally(String toWrap, String start, String end, bool wrap) {
   return wrap ? '$start$toWrap$end' : toWrap;
 }
+
+/// Sorts collections by how generic they are.
+int sortByObjectCount(TypeDeclaration a, TypeDeclaration b) {
+  int aTotal = 0;
+  int bTotal = 0;
+
+  aTotal += a.getFullName(withNullable: false).split('?').length;
+  bTotal += b.getFullName(withNullable: false).split('?').length;
+
+  aTotal += a.getFullName(withNullable: false).split('Object').length * 100;
+  bTotal += b.getFullName(withNullable: false).split('Object').length * 100;
+
+  return aTotal < bTotal ? -1 : 1;
+}

@@ -288,13 +288,13 @@ class SwiftGenerator extends StructuredGenerator<InternalSwiftOptions> {
 
 @available(iOS 13, macOS 16.0.0, *)
 class _PigeonFfiCodec {
-  static func readValue(value: NSObject?, type: String?) -> Any? {
+  static func readValue(value: NSObject?, type: String? = nil) -> Any? {
     if (isNullish(value)) {
       return nil
     }
     if (value is NSNumber) {
       if (type == "int") {
-        return (value as! NSNumber).intValue
+        return (value as! NSNumber).int64Value
       } else if (type == "double") {
         return (value as! NSNumber).doubleValue
       } else if (type == "bool") {
@@ -333,15 +333,15 @@ class _PigeonFfiCodec {
       //   return list
     if (value is NSMutableArray || value is NSArray) {
       var res: Array<Any?> = []
-      for item in (value as! NSMutableArray) {
-          res.append(readValue(value: item as? NSObject, type: nil))
+      for item in (value as! NSArray) {
+          res.append(readValue(value: item as? NSObject))
       }
       return res
     }
     if (value is NSDictionary) {
       var res: Dictionary<AnyHashable?, Any?> = Dictionary()
       for (key, value) in (value as! NSDictionary) {
-          res[readValue(value: key as? NSObject, type: nil) as? AnyHashable] = readValue(value: value as? NSObject, type: nil)
+          res[readValue(value: key as? NSObject) as? AnyHashable] = readValue(value: value as? NSObject)
       }
       return res
     } 
@@ -358,17 +358,17 @@ class _PigeonFfiCodec {
     if (isNullish(value)) {
       return PigeonInternalNull()
     }
-    if (value is Bool || value is Double || value is Int${root.enums.map((Enum enumDefinition) {
+    if (value is Bool || value is Double || value is Int || value is Int64${root.enums.map((Enum enumDefinition) {
       return ' || value is ${enumDefinition.name}';
     }).join()}) {
       if (isObject) {
-        return wrapNumber(number: value as! NSNumber, type: numberCodec(number: value!))
+        return wrapNumber(number: value!)
       }
       if (value is Bool) {
         return (value as! Bool) ? Int(1) : Int(0)
       } else if (value is Double) {
         return value
-      } else if (value is Int) {
+      } else if (value is Int || value is Int64) {
         return value
       }
       ${root.enums.map((Enum enumDefinition) {
@@ -409,14 +409,14 @@ class _PigeonFfiCodec {
     if (value is [Any]) {
       let res: NSMutableArray = NSMutableArray()
       for item in (value as! [Any]) {
-        res.add(writeValue(value: item) as! NSObject)
+        res.add(isNullish(item) ? PigeonInternalNull() : writeValue(value: item, isObject: true) as! NSObject)
       }
       return res
     }
     if (value is [AnyHashable: Any]) {
       let res: NSMutableDictionary = NSMutableDictionary()
       for (key, value) in (value as! [AnyHashable: Any]) {
-         res.setObject(writeValue(value: value) as! NSObject, forKey: writeValue(value: key) as! NSCopying)
+         res.setObject(isNullish(key) ? PigeonInternalNull() : writeValue(value: value, isObject: true) as! NSObject, forKey: writeValue(value: key, isObject: true) as! NSCopying)
       }
       return res
     }
@@ -758,12 +758,12 @@ if (wrapped == nil) {
     addDocumentationComments(
         indent, classDefinition.documentationComments, _docCommentSpec,
         generatorComments: generatedComments);
+    indent.writeln('@available(iOS 13, macOS 16.0.0, *)');
     _writeDataClassSignature(indent, classDefinition, useFfi: true);
     indent.writeScoped('', '}', () {
       if (classDefinition.isSealed) {
         return;
       }
-      indent.writeln('@available(iOS 13, macOS 16.0.0, *)');
       indent.writeScoped(
           'static func fromSwift(_ ${varNamePrefix}Class: ${classDefinition.name}?) -> ${classDefinition.name}Bridge? {',
           '}', () {
@@ -779,7 +779,7 @@ if (wrapped == nil) {
       });
       indent.writeScoped('func toSwift() -> ${classDefinition.name} {', '}',
           () {
-        indent.writeScoped('return ${classDefinition.name}(', ')', () {
+        indent.writeScoped('return ${classDefinition.name} (', ')', () {
           for (final NamedType field in classDefinition.fields) {
             indent.writeln(
                 '${field.name}: ${_varToSwift(field.name, field.type)},');
@@ -792,23 +792,25 @@ if (wrapped == nil) {
   /////////// THESE NEED TO BE RECONCILED
   // TODO
 
-  String _varToObjc(String varName, TypeDeclaration type) {
-    final String nullable = type.isNullable ? '?' : '';
+  String _varToObjc(String varName, TypeDeclaration type,
+      {bool forceNullable = false}) {
+    final String nullable = type.isNullable || forceNullable ? '?' : '';
     switch (type.baseName) {
       case 'int':
       case 'double':
       case 'bool':
-        return type.isNullable ? _numberToObjc(varName, getter: '!') : varName;
+        return type.isNullable || forceNullable
+            ? _numberToObjc(varName, getter: '!')
+            : varName;
       case 'String':
         return '$varName as NSString$nullable';
       case 'List':
-        return '_PigeonFfiCodec.writeValue(value: $varName, isObject: true) as${type.isNullable ? '?' : '!'} [NSObject]';
       case 'Map':
-        return '_PigeonFfiCodec.writeValue(value: $varName, isObject: true) as${type.isNullable ? '?' : '!'} [NSObject: NSObject]';
+        return '_PigeonFfiCodec.writeValue(value: $varName) as${type.isNullable || forceNullable ? '?' : '!'} ${_swiftTypeForBuiltinDartType(type, useFfi: true)}';
       case 'Object':
         return '$varName as! NSObject$nullable';
       default:
-        if (type.isEnum && type.isNullable) {
+        if (type.isEnum && type.isNullable || forceNullable) {
           return _numberToObjc(varName, getter: '!.rawValue');
         }
         if (type.isClass) {
@@ -821,32 +823,37 @@ if (wrapped == nil) {
   String _numberToObjc(String varName, {String getter = ''}) =>
       'isNullish($varName) ? nil : NSNumber(value: $varName$getter)';
 
-  String _varToSwift(String varName, TypeDeclaration type) {
+  String _varToSwift(String varName, TypeDeclaration type,
+      {bool forceNullable = false}) {
     final String nullable = type.isNullable ? '?' : '';
     switch (type.baseName) {
       case 'int':
-        return type.isNullable
+        return type.isNullable || forceNullable
             ? 'isNullish($varName) ? nil : $varName!.int64Value'
             : varName;
       case 'double':
-        return type.isNullable
+        return type.isNullable || forceNullable
             ? 'isNullish($varName) ? nil : $varName!.doubleValue'
             : varName;
       case 'bool':
-        return type.isNullable
+        return type.isNullable || forceNullable
             ? 'isNullish($varName) ? nil : $varName!.boolValue'
             : varName;
       case 'String':
         return '$varName as String$nullable';
+      case 'List':
+      case 'Map':
+        return '_PigeonFfiCodec.readValue(value: $varName as NSObject$nullable) as${type.isNullable || forceNullable ? '?' : '!'} ${_swiftTypeForBuiltinDartType(type)}';
       default:
         if (type.isEnum) {
-          return type.isNullable
+          return type.isNullable || forceNullable
               ? 'isNullish($varName) ? nil : ${type.baseName}.init(rawValue: $varName!.intValue)'
               : varName;
         }
         if (type.isClass) {
-          final String checkNullish =
-              type.isNullable ? 'isNullish($varName) ? nil : ' : '';
+          final String checkNullish = type.isNullable || forceNullable
+              ? 'isNullish($varName) ? nil : '
+              : '';
           return '$checkNullish$varName${nullable.isEmpty ? '' : '!'}.toSwift()';
         }
         return varName;
@@ -864,25 +871,29 @@ if (wrapped == nil) {
       return '$checkNullish${param.name}$nullable.toSwift()';
     }
     if (param.type.baseName == 'Object') {
-      return ' _PigeonFfiCodec.readValue(value: ${param.name} as? NSObject, type: nil) as Any';
+      return ' _PigeonFfiCodec.readValue(value: ${param.name} as? NSObject) as Any';
     }
     return '${param.name}${_conversionToObjcRequired(param.type) ? '$nullable.${toLowerCamelCase(_swiftTypeForBuiltinDartType(param.type)!)}Value' : ''}';
   }
 
   String _swiftToFfiConversion(TypeDeclaration type, String toConvert) {
+    if (type.isVoid) {
+      return toConvert;
+    }
     if (type.isEnum) {
       return 'NSNumber(value: $toConvert.rawValue)';
-    } else if (type.baseName == 'Object') {
-      return '_PigeonFfiCodec.writeValue(value: $toConvert, isObject: true)';
+    }
+    if (type.baseName == 'Object') {
+      return '_PigeonFfiCodec.writeValue(value: $toConvert, isObject: true) as? NSObject';
     }
     final String nullable = type.isNullable ? '?' : '';
     if (_conversionToObjcRequired(type)) {
       if (type.isClass) {
         return '${type.baseName}Bridge.fromSwift($toConvert)';
       }
-      return '$toConvert as$nullable ${_ffiTypeForBuiltinDartType(type)}';
+      return '$toConvert as$nullable ${_ffiTypeForBuiltinDartType(type, forceNullable: true)}';
     }
-    return toConvert;
+    return _varToObjc(toConvert, type, forceNullable: true);
   }
   //////////
 
@@ -1131,15 +1142,15 @@ if (wrapped == nil) {
               if (method.returnType.isNullable && method.returnType.isEnum) {
                 indent.writeln(
                     'let res = try api!.${method.name}(${method.parameters.map((NamedType param) {
-                  return '${param.name}: ${_ffiToSwiftConversion(param)}';
+                  return '${param.name}: ${_varToSwift(param.name, param.type)}';
                 }).join(', ')})?.rawValue');
                 indent.writeln(
                     'return isNullish(res) ? nil : NSNumber(value: res!)');
               } else {
                 indent.writeln(
                     'return try ${_swiftToFfiConversion(method.returnType, 'api!.${method.name}(${method.parameters.map((NamedType param) {
-                          return '${param.name}: ${_ffiToSwiftConversion(param)}';
-                        }).join(', ')})')}${method.returnType.baseName == 'List' || method.returnType.baseName == 'Map' ? ' as? ${_ffiTypeForBuiltinGenericDartType(method.returnType)}' : ''}');
+                          return '${param.name}: ${_varToSwift(param.name, param.type)}';
+                        }).join(', ')})')}');
               }
             },
             addTrailingNewline: false,
@@ -1761,11 +1772,18 @@ if (wrapped == nil) {
 
   void _writeIsNullish(Indent indent, {bool useFfi = false}) {
     indent.newln();
-    indent.write('private func isNullish(_ value: Any?) -> Bool ');
-    indent.addScoped('{', '}', () {
-      indent.writeln(
-          'return value is NSNull || value == nil${useFfi ? ' || value is PigeonInternalNull' : ''}');
-    });
+    indent.format('''
+      private func isNullish(_ value: Any?) -> Bool {
+        guard let innerValue = value else {
+            return true
+        }
+        
+        if case Optional<Any>.some(Optional<Any>.none) = value {
+            return true
+        }
+
+        return innerValue is NSNull${useFfi ? ' || innerValue is PigeonInternalNull' : ''}
+      }''');
   }
 
   void _writeWrapResult(Indent indent) {
@@ -1830,8 +1848,9 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
 
   void _writeNumberWrapper(Root root, Indent indent) {
     indent.newln();
-    indent.writeScoped('@objc class NumberWrapper: NSObject {', '}', () {
-      indent.writeScoped('@objc init(', ')', () {
+    indent.writeScoped('@objc class NumberWrapper: NSObject, NSCopying {', '}',
+        () {
+      indent.writeScoped('@objc required init(', ')', () {
         indent.writeln('number: NSNumber,');
         indent.writeln('type: Int,');
       }, addTrailingNewline: false);
@@ -1839,38 +1858,68 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
         indent.writeln('self.number = number');
         indent.writeln('self.type = type');
       });
+      indent.writeScoped('func copy(with zone: NSZone? = nil) -> Any {', '}',
+          () {
+        indent.writeln('return Self(number: number, type: type)');
+      });
+
       indent.writeln('@objc var number: NSNumber');
       indent.writeln('@objc var type: Int');
     });
     indent.newln();
     indent.writeScoped(
-        'private func wrapNumber(number: NSNumber, type: Int) -> NumberWrapper {',
-        '}', () {
-      indent.writeln('return NumberWrapper(number: number, type: type)');
-    });
-    indent.newln();
-    indent.writeScoped(
-        'private func unwrapNumber<T>(wrappedNumber: NumberWrapper) -> T {',
-        '}', () {
-      indent.writeScoped('switch (wrappedNumber.type) {', '}', () {
+        'private func wrapNumber(number: Any) -> NumberWrapper {', '}', () {
+      indent.writeScoped('switch number {', '}', () {
         int caseNum = 4;
         indent.format('''
-    case 1:
-        return wrappedNumber.number.intValue as! T
-    case 2:
-        return wrappedNumber.number.doubleValue as! T
-    case 3:
-        return wrappedNumber.number.boolValue as! T''');
+    case _ as Int:
+        return NumberWrapper(number:NSNumber(value: number as! Int), type: 1)
+    case _ as Int64:
+        return NumberWrapper(number:NSNumber(value: number as! Int64), type: 1)
+    case _ as Double:
+        return NumberWrapper(number: NSNumber(value: number as! Double), type: 2)
+    case _ as Float:
+        return NumberWrapper(number: NSNumber(value: number as! Float), type: 2)
+    case _ as Bool:
+        return NumberWrapper(number: NSNumber(value: number as! Bool), type: 3)
+''');
         for (final Enum anEnum in root.enums) {
-          indent.writeln('case ${caseNum++}:');
+          indent.writeln('case _ as ${anEnum.name}:');
           indent.inc();
           indent.writeln(
-              'return ${anEnum.name}(rawValue: wrappedNumber.number.intValue) as! T');
+              'return NumberWrapper(number: NSNumber(value: (number as! ${anEnum.name}).rawValue), type: ${caseNum++})');
           indent.dec();
         }
         indent.writeln('default:');
         indent.inc();
-        indent.writeln('return wrappedNumber.number.intValue as! T');
+        indent.writeln(
+            'return NumberWrapper(number: NSNumber(value: 0), type: 0)');
+        indent.dec();
+      });
+    });
+    indent.newln();
+    indent.writeScoped(
+        'private func unwrapNumber(wrappedNumber: NumberWrapper) -> Any {', '}',
+        () {
+      indent.writeScoped('switch (wrappedNumber.type) {', '}', () {
+        int caseNum = 4;
+        indent.format('''
+    case 1:
+        return wrappedNumber.number.int64Value
+    case 2:
+        return wrappedNumber.number.doubleValue
+    case 3:
+        return wrappedNumber.number.boolValue''');
+        for (final Enum anEnum in root.enums) {
+          indent.writeln('case ${caseNum++}:');
+          indent.inc();
+          indent.writeln(
+              'return ${anEnum.name}(rawValue: wrappedNumber.number.intValue)!');
+          indent.dec();
+        }
+        indent.writeln('default:');
+        indent.inc();
+        indent.writeln('return wrappedNumber.number.int64Value');
         indent.dec();
       });
     });
@@ -3300,43 +3349,46 @@ String _flattenFfiTypeArguments(List<TypeDeclaration> args) {
 
 String _swiftTypeForBuiltinGenericDartType(TypeDeclaration type,
     {bool useFfi = false}) {
+  if (useFfi) {
+    return _ffiTypeForBuiltinGenericDartType(type);
+  }
   if (type.typeArguments.isEmpty) {
     if (type.baseName == 'List') {
-      return useFfi ? '[NSObject]' : '[Any?]';
+      return '[Any?]';
     } else if (type.baseName == 'Map') {
-      return useFfi ? '[NSObject: NSObject]' : '[AnyHashable?: Any?]';
+      return '[AnyHashable?: Any?]';
     } else {
-      return useFfi ? 'NSObject' : 'Any';
+      return 'Any';
     }
   } else {
     if (type.baseName == 'List') {
-      return '[${_nullSafeSwiftTypeForDartType(type.typeArguments.first, useFfi: useFfi)}]';
+      return '[${_nullSafeSwiftTypeForDartType(type.typeArguments.first)}]';
     } else if (type.baseName == 'Map') {
-      return '[${_nullSafeSwiftTypeForDartType(type.typeArguments.first, mapKey: true, useFfi: useFfi)}: ${_nullSafeSwiftTypeForDartType(type.typeArguments.last)}]';
+      return '[${_nullSafeSwiftTypeForDartType(type.typeArguments.first, mapKey: true)}: ${_nullSafeSwiftTypeForDartType(type.typeArguments.last)}]';
     } else {
-      return '${type.baseName}<${_flattenSwiftTypeArguments(type.typeArguments, useFfi: useFfi)}>';
+      return '${type.baseName}<${_flattenSwiftTypeArguments(type.typeArguments)}>';
     }
   }
 }
 
 String _ffiTypeForBuiltinGenericDartType(TypeDeclaration type) {
-  if (type.typeArguments.isEmpty) {
-    if (type.baseName == 'List') {
-      return '[NSObject]';
-    } else if (type.baseName == 'Map') {
-      return '[NSObject: NSObject]';
-    } else {
-      return 'NSObject';
-    }
+  // if (type.typeArguments.isEmpty) {
+  if (type.baseName == 'List') {
+    return '[NSObject]';
+  } else if (type.baseName == 'Map') {
+    return '[NSObject: NSObject]';
   } else {
-    if (type.baseName == 'List') {
-      return '[${_nullSafeFfiTypeForDartType(type.typeArguments.first, collectionSubType: true)}]';
-    } else if (type.baseName == 'Map') {
-      return '[${_nullSafeFfiTypeForDartType(type.typeArguments.first, collectionSubType: true)}: ${_nullSafeFfiTypeForDartType(type.typeArguments.last, collectionSubType: true)}]';
-    } else {
-      return '${type.baseName}<${_flattenFfiTypeArguments(type.typeArguments)}>';
-    }
+    return 'NSObject';
   }
+  // } else {
+  //   if (type.baseName == 'List') {
+  //     return '[${_nullSafeFfiTypeForDartType(type.typeArguments.first, collectionSubType: true)}]';
+  //   } else if (type.baseName == 'Map') {
+  //     return '[${_nullSafeFfiTypeForDartType(type.typeArguments.first, collectionSubType: true)}: ${_nullSafeFfiTypeForDartType(type.typeArguments.last, collectionSubType: true)}]';
+  //   } else {
+  //     return '${type.baseName}<${_flattenFfiTypeArguments(type.typeArguments)}>';
+  //   }
+  // }
 }
 
 String? _swiftTypeForBuiltinDartType(
@@ -3357,19 +3409,6 @@ String? _swiftTypeForBuiltinDartType(
     'Float64List': 'FlutterStandardTypedData',
     'Object': 'Any',
   };
-  const Map<String, String> ffiTypeForDartTypeMap = <String, String>{
-    'void': 'Void',
-    'bool': 'NSNumber',
-    'String': 'NSString',
-    'int': 'NSNumber',
-    'double': 'NSNumber',
-    'Uint8List': 'idkWhatToDoHereYet',
-    'Int32List': 'idkWhatToDoHereYet',
-    'Int64List': 'idkWhatToDoHereYet',
-    'Float32List': 'idkWhatToDoHereYet',
-    'Float64List': 'idkWhatToDoHereYet',
-    'Object': 'NSObject',
-  };
   if (mapKey && type.baseName == 'Object') {
     return useFfi ? 'NSObject' : 'AnyHashable';
   } else if (swiftTypeForDartTypeMap.containsKey(type.baseName)) {
@@ -3381,7 +3420,7 @@ String? _swiftTypeForBuiltinDartType(
       return swiftTypeForDartTypeMap[type.baseName];
     }
     return useFfi
-        ? ffiTypeForDartTypeMap[type.baseName]
+        ? _ffiTypeForBuiltinDartType(type)
         : swiftTypeForDartTypeMap[type.baseName];
   } else if (type.baseName == 'List' || type.baseName == 'Map') {
     return _swiftTypeForBuiltinGenericDartType(type, useFfi: useFfi);
@@ -3398,7 +3437,7 @@ String? _ffiTypeForBuiltinDartType(
   const Map<String, String> ffiTypeForDartTypeMap = <String, String>{
     'void': 'Void',
     'bool': 'NSNumber',
-    'String': 'String',
+    'String': 'NSString',
     'int': 'NSNumber',
     'double': 'NSNumber',
     'Uint8List': 'FlutterStandardTypedData',
@@ -3406,11 +3445,19 @@ String? _ffiTypeForBuiltinDartType(
     'Int64List': 'FlutterStandardTypedData',
     'Float32List': 'FlutterStandardTypedData',
     'Float64List': 'FlutterStandardTypedData',
-    'Object': 'Any',
+    'Object': 'NSObject',
   };
   if (type.baseName == 'Object' && collectionSubType) {
     return 'NSObject';
   } else if (ffiTypeForDartTypeMap.containsKey(type.baseName)) {
+    if (!type.isNullable &&
+        !forceNullable &&
+        !collectionSubType &&
+        (type.baseName == 'int' ||
+            type.baseName == 'double' ||
+            type.baseName == 'bool')) {
+      return _swiftTypeForDartType(type);
+    }
     return ffiTypeForDartTypeMap[type.baseName];
   } else if (type.baseName == 'List' || type.baseName == 'Map') {
     return _ffiTypeForBuiltinGenericDartType(type);
@@ -3464,7 +3511,7 @@ String _nullSafeSwiftTypeForDartType(
 
 String _nullSafeFfiTypeForDartType(TypeDeclaration type,
     {bool collectionSubType = false, bool forceNullable = false}) {
-  return '${_ffiTypeForDartType(type, collectionSubType: collectionSubType, forceNullable: forceNullable)}${(type.isNullable && type.baseName != 'Object') || forceNullable ? '?' : ''}';
+  return '${_ffiTypeForDartType(type, collectionSubType: collectionSubType, forceNullable: forceNullable)}${(type.isNullable && type.baseName != 'Object' && !collectionSubType) || forceNullable ? '?' : ''}';
 }
 
 String _getMethodSignature({

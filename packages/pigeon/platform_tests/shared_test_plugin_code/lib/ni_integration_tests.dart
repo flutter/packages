@@ -248,21 +248,21 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(classWrapper, receivedClassWrapper);
     });
 
-//     testWidgets(
-//         'Arguments of multiple types serialize and deserialize correctly',
-//         (WidgetTester _) async {
-//       final NIHostIntegrationCoreApiForNativeInterop? api =
-//           NIHostIntegrationCoreApiForNativeInterop.getInstance();
-//       const String aNullableString = 'this is a String';
-//       const bool aNullableBool = false;
-//       const int aNullableInt = regularInt;
+    // testWidgets(
+    //     'Arguments of multiple types serialize and deserialize correctly',
+    //     (WidgetTester _) async {
+    //   final NIHostIntegrationCoreApiForNativeInterop? api =
+    //       NIHostIntegrationCoreApiForNativeInterop.getInstance();
+    //   const String aNullableString = 'this is a String';
+    //   const bool aNullableBool = false;
+    //   const int aNullableInt = regularInt;
 
-//       final NIAllNullableTypes echoObject = api!.sendMultipleNullableTypes(
-//           aNullableBool, aNullableInt, aNullableString);
-//       expect(echoObject.aNullableInt, aNullableInt);
-//       expect(echoObject.aNullableBool, aNullableBool);
-//       expect(echoObject.aNullableString, aNullableString);
-//     });
+    //   final NIAllNullableTypes echoObject = api!.sendMultipleNullableTypes(
+    //       aNullableBool, aNullableInt, aNullableString);
+    //   expect(echoObject.aNullableInt, aNullableInt);
+    //   expect(echoObject.aNullableBool, aNullableBool);
+    //   expect(echoObject.aNullableString, aNullableString);
+    // });
 
 //     testWidgets(
 //         'Arguments of multiple null types serialize and deserialize correctly',
@@ -277,35 +277,35 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 //       expect(echoNullFilledClass.aNullableString, null);
 //     });
 
-//     testWidgets(
-//         'Arguments of multiple types serialize and deserialize correctly (WithoutRecursion)',
-//         (WidgetTester _) async {
-//       final NIHostIntegrationCoreApiForNativeInterop? api =
-//           NIHostIntegrationCoreApiForNativeInterop.getInstance();
-//       const String aNullableString = 'this is a String';
-//       const bool aNullableBool = false;
-//       const int aNullableInt = regularInt;
+    testWidgets(
+        'Arguments of multiple types serialize and deserialize correctly (WithoutRecursion)',
+        (WidgetTester _) async {
+      final NIHostIntegrationCoreApiForNativeInterop? api =
+          NIHostIntegrationCoreApiForNativeInterop.getInstance();
+      const String aNullableString = 'this is a String';
+      const bool aNullableBool = false;
+      const int aNullableInt = regularInt;
 
-//       final NIAllNullableTypesWithoutRecursion echoObject = api!
-//           .sendMultipleNullableTypesWithoutRecursion(
-//               aNullableBool, aNullableInt, aNullableString);
-//       expect(echoObject.aNullableInt, aNullableInt);
-//       expect(echoObject.aNullableBool, aNullableBool);
-//       expect(echoObject.aNullableString, aNullableString);
-//     });
+      final NIAllNullableTypesWithoutRecursion echoObject = api!
+          .sendMultipleNullableTypesWithoutRecursion(
+              aNullableBool, aNullableInt, aNullableString);
+      expect(echoObject.aNullableInt, aNullableInt);
+      expect(echoObject.aNullableBool, aNullableBool);
+      expect(echoObject.aNullableString, aNullableString);
+    });
 
-//     testWidgets(
-//         'Arguments of multiple null types serialize and deserialize correctly (WithoutRecursion)',
-//         (WidgetTester _) async {
-//       final NIHostIntegrationCoreApiForNativeInterop? api =
-//           NIHostIntegrationCoreApiForNativeInterop.getInstance();
+    testWidgets(
+        'Arguments of multiple null types serialize and deserialize correctly (WithoutRecursion)',
+        (WidgetTester _) async {
+      final NIHostIntegrationCoreApiForNativeInterop? api =
+          NIHostIntegrationCoreApiForNativeInterop.getInstance();
 
-//       final NIAllNullableTypesWithoutRecursion echoNullFilledClass =
-//           api!.sendMultipleNullableTypesWithoutRecursion(null, null, null);
-//       expect(echoNullFilledClass.aNullableInt, null);
-//       expect(echoNullFilledClass.aNullableBool, null);
-//       expect(echoNullFilledClass.aNullableString, null);
-//     });
+      final NIAllNullableTypesWithoutRecursion echoNullFilledClass =
+          api!.sendMultipleNullableTypesWithoutRecursion(null, null, null);
+      expect(echoNullFilledClass.aNullableInt, null);
+      expect(echoNullFilledClass.aNullableBool, null);
+      expect(echoNullFilledClass.aNullableString, null);
+    });
 
     testWidgets('Int serialize and deserialize correctly',
         (WidgetTester _) async {
@@ -398,6 +398,42 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
       final List<Object?> echoObject = api!.echoList(list);
       expect(listEquals(echoObject, list), true);
+    });
+
+    testWidgets('string lists serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final NIHostIntegrationCoreApiForNativeInterop? api =
+          NIHostIntegrationCoreApiForNativeInterop.getInstance();
+
+      final List<String?> echoObject = api!.echoStringList(stringList);
+      expect(listEquals(echoObject, stringList), true);
+    });
+
+    testWidgets('int lists serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final NIHostIntegrationCoreApiForNativeInterop? api =
+          NIHostIntegrationCoreApiForNativeInterop.getInstance();
+
+      final List<int?> echoObject = api!.echoIntList(intList);
+      expect(listEquals(echoObject, intList), true);
+    });
+
+    testWidgets('double lists serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final NIHostIntegrationCoreApiForNativeInterop? api =
+          NIHostIntegrationCoreApiForNativeInterop.getInstance();
+
+      final List<double?> echoObject = api!.echoDoubleList(doubleList);
+      expect(listEquals(echoObject, doubleList), true);
+    });
+
+    testWidgets('bool lists serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final NIHostIntegrationCoreApiForNativeInterop? api =
+          NIHostIntegrationCoreApiForNativeInterop.getInstance();
+
+      final List<bool?> echoObject = api!.echoBoolList(boolList);
+      expect(listEquals(echoObject, boolList), true);
     });
 
 //     testWidgets('enum lists serialize and deserialize correctly',

@@ -85,7 +85,12 @@ data class NIAllTypes(
     val aString: String,
     val anObject: Any,
     val list: List<Any?>,
-    val map: Map<Any, Any?>
+    val stringList: List<String>,
+    val intList: List<Long>,
+    val doubleList: List<Double>,
+    val boolList: List<Boolean>,
+    val map: Map<Any, Any?>,
+    val stringMap: Map<String, String>
 ) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): NIAllTypes {
@@ -98,9 +103,28 @@ data class NIAllTypes(
       val aString = pigeonVar_list[6] as String
       val anObject = pigeonVar_list[7] as Any
       val list = pigeonVar_list[8] as List<Any?>
-      val map = pigeonVar_list[9] as Map<Any, Any?>
+      val stringList = pigeonVar_list[9] as List<String>
+      val intList = pigeonVar_list[10] as List<Long>
+      val doubleList = pigeonVar_list[11] as List<Double>
+      val boolList = pigeonVar_list[12] as List<Boolean>
+      val map = pigeonVar_list[13] as Map<Any, Any?>
+      val stringMap = pigeonVar_list[14] as Map<String, String>
       return NIAllTypes(
-          aBool, anInt, anInt64, aDouble, anEnum, anotherEnum, aString, anObject, list, map)
+          aBool,
+          anInt,
+          anInt64,
+          aDouble,
+          anEnum,
+          anotherEnum,
+          aString,
+          anObject,
+          list,
+          stringList,
+          intList,
+          doubleList,
+          boolList,
+          map,
+          stringMap)
     }
   }
 
@@ -115,7 +139,12 @@ data class NIAllTypes(
         aString,
         anObject,
         list,
+        stringList,
+        intList,
+        doubleList,
+        boolList,
         map,
+        stringMap,
     )
   }
 
@@ -135,7 +164,12 @@ data class NIAllTypes(
         aString == other.aString &&
         anObject == other.anObject &&
         deepEqualsNiTests(list, other.list) &&
-        deepEqualsNiTests(map, other.map)
+        deepEqualsNiTests(stringList, other.stringList) &&
+        deepEqualsNiTests(intList, other.intList) &&
+        deepEqualsNiTests(doubleList, other.doubleList) &&
+        deepEqualsNiTests(boolList, other.boolList) &&
+        deepEqualsNiTests(map, other.map) &&
+        deepEqualsNiTests(stringMap, other.stringMap)
   }
 
   override fun hashCode(): Int = toList().hashCode()
@@ -287,9 +321,22 @@ abstract class NIHostIntegrationCoreApi {
   abstract fun echoObject(anObject: Any): Any
   /** Returns the passed list, to test serialization and deserialization. */
   abstract fun echoList(list: List<Any?>): List<Any?>
+  /** Returns the passed list, to test serialization and deserialization. */
+  abstract fun echoStringList(stringList: List<String?>): List<String?>
+  /** Returns the passed list, to test serialization and deserialization. */
+  abstract fun echoIntList(intList: List<Long?>): List<Long?>
+  /** Returns the passed list, to test serialization and deserialization. */
+  abstract fun echoDoubleList(doubleList: List<Double?>): List<Double?>
+  /** Returns the passed list, to test serialization and deserialization. */
+  abstract fun echoBoolList(boolList: List<Boolean?>): List<Boolean?>
   /** Returns the passed map, to test serialization and deserialization. */
   abstract fun echoMap(map: Map<Any?, Any?>): Map<Any?, Any?>
-  /** Returns the passed class to test nested class serialization and deserialization. */
+  /** Returns the passed map, to test serialization and deserialization. */
+  abstract fun echoStringMap(stringMap: Map<String?, String?>): Map<String?, String?>
+  /**
+   * Returns the passed map, to test serialization and deserialization. Returns the passed class to
+   * test nested class serialization and deserialization.
+   */
   abstract fun echoClassWrapper(wrapper: NIAllClassesWrapper): NIAllClassesWrapper
   /** Returns the passed enum to test serialization and deserialization. */
   abstract fun echoEnum(anEnum: NIAnEnum): NIAnEnum
@@ -302,7 +349,15 @@ abstract class NIHostIntegrationCoreApi {
   abstract fun echoAllNullableTypesWithoutRecursion(
       everything: NIAllNullableTypesWithoutRecursion?
   ): NIAllNullableTypesWithoutRecursion?
-
+  /**
+   * Returns the inner `aString` value from the wrapped object, to test sending of nested objects.
+   */
+  abstract fun extractNestedNullableString(wrapper: NIAllClassesWrapper): String?
+  /**
+   * Returns the inner `aString` value from the wrapped object, to test sending of nested objects.
+   */
+  abstract fun createNestedNullableString(nullableString: String?): NIAllClassesWrapper
+  /** Returns passed in arguments of multiple types. */
   abstract fun sendMultipleNullableTypesWithoutRecursion(
       aNullableBool: Boolean?,
       aNullableInt: Long?,
@@ -433,6 +488,50 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
     }
     error("NIHostIntegrationCoreApi has not been set")
   }
+  /** Returns the passed list, to test serialization and deserialization. */
+  override fun echoStringList(stringList: List<String?>): List<String?> {
+    api?.let {
+      try {
+        return api!!.echoStringList(stringList)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed list, to test serialization and deserialization. */
+  override fun echoIntList(intList: List<Long?>): List<Long?> {
+    api?.let {
+      try {
+        return api!!.echoIntList(intList)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed list, to test serialization and deserialization. */
+  override fun echoDoubleList(doubleList: List<Double?>): List<Double?> {
+    api?.let {
+      try {
+        return api!!.echoDoubleList(doubleList)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed list, to test serialization and deserialization. */
+  override fun echoBoolList(boolList: List<Boolean?>): List<Boolean?> {
+    api?.let {
+      try {
+        return api!!.echoBoolList(boolList)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
   /** Returns the passed map, to test serialization and deserialization. */
   override fun echoMap(map: Map<Any?, Any?>): Map<Any?, Any?> {
     api?.let {
@@ -444,7 +543,21 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
     }
     error("NIHostIntegrationCoreApi has not been set")
   }
-  /** Returns the passed class to test nested class serialization and deserialization. */
+  /** Returns the passed map, to test serialization and deserialization. */
+  override fun echoStringMap(stringMap: Map<String?, String?>): Map<String?, String?> {
+    api?.let {
+      try {
+        return api!!.echoStringMap(stringMap)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /**
+   * Returns the passed map, to test serialization and deserialization. Returns the passed class to
+   * test nested class serialization and deserialization.
+   */
   override fun echoClassWrapper(wrapper: NIAllClassesWrapper): NIAllClassesWrapper {
     api?.let {
       try {
@@ -493,7 +606,33 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
     }
     error("NIHostIntegrationCoreApi has not been set")
   }
-
+  /**
+   * Returns the inner `aString` value from the wrapped object, to test sending of nested objects.
+   */
+  override fun extractNestedNullableString(wrapper: NIAllClassesWrapper): String? {
+    api?.let {
+      try {
+        return api!!.extractNestedNullableString(wrapper)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /**
+   * Returns the inner `aString` value from the wrapped object, to test sending of nested objects.
+   */
+  override fun createNestedNullableString(nullableString: String?): NIAllClassesWrapper {
+    api?.let {
+      try {
+        return api!!.createNestedNullableString(nullableString)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns passed in arguments of multiple types. */
   override fun sendMultipleNullableTypesWithoutRecursion(
       aNullableBool: Boolean?,
       aNullableInt: Long?,

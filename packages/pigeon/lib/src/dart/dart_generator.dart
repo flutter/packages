@@ -325,7 +325,6 @@ class _FfiType {
       return 'ffi_bridge.${type.baseName}.values[$name]';
     }
     if (!type.isNullable &&
-        classField &&
         (type.baseName == 'int' ||
             type.baseName == 'double' ||
             type.baseName == 'bool')) {
@@ -344,6 +343,13 @@ class _FfiType {
     if (type.baseName == 'Object') {
       return 'ObjCObjectBase?';
     }
+    // final String name = !(type.isNullable || forceUnwrap || forceNullable) &&
+    //             type.baseName == 'int' ||
+    //         type.baseName == 'double' ||
+    //         type.baseName == 'bool' ||
+    //         type.baseName == 'String'
+    //     ? type.baseName
+    //     : ffiName;
     return '$ffiName${_getNullableSymbol(forceNullable || type.isNullable)}';
   }
 
@@ -1467,7 +1473,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
           indent.newln();
           indent.writeln('@override');
           String signature = method.isAsynchronous
-              ? 'JObject'
+              ? 'NSObject'
               : ffiReturnType.getFfiCallReturnType(false);
           signature += ' ${method.name}(';
           signature += _getMethodParameterSignature(
@@ -2419,19 +2425,6 @@ ${api.name}({
     }
   }
 
-  int _sortByObjectCount(TypeDeclaration a, TypeDeclaration b) {
-    int aTotal = 0;
-    int bTotal = 0;
-
-    aTotal += a.getFullName(withNullable: false).split('?').length;
-    bTotal += b.getFullName(withNullable: false).split('?').length;
-
-    aTotal += a.getFullName(withNullable: false).split('Object').length * 100;
-    bTotal += b.getFullName(withNullable: false).split('Object').length * 100;
-
-    return aTotal < bTotal ? -1 : 1;
-  }
-
   void _writeJniCodec(Indent indent, Root root) {
     indent.newln();
     indent.format('''
@@ -2548,7 +2541,7 @@ class _PigeonJniCodec {
         array[i] = value[i];
       }
       return array as T;
-    ${root.lists.values.sorted(_sortByObjectCount).map((TypeDeclaration list) {
+    ${root.lists.values.sorted(sortByObjectCount).map((TypeDeclaration list) {
       if (list.typeArguments.isEmpty ||
           list.typeArguments.first.baseName == 'Object') {
         return '';
@@ -2576,7 +2569,7 @@ class _PigeonJniCodec {
         res.add(writeValue(value[i]));
       }
       return res as T;
-    ${root.maps.entries.sorted((MapEntry<String, TypeDeclaration> a, MapEntry<String, TypeDeclaration> b) => _sortByObjectCount(a.value, b.value)).map((MapEntry<String, TypeDeclaration> mapType) {
+    ${root.maps.entries.sorted((MapEntry<String, TypeDeclaration> a, MapEntry<String, TypeDeclaration> b) => sortByObjectCount(a.value, b.value)).map((MapEntry<String, TypeDeclaration> mapType) {
       if (mapType.value.typeArguments.isEmpty ||
           (mapType.value.typeArguments.first.baseName == 'Object' &&
               mapType.value.typeArguments.last.baseName == 'Object')) {
@@ -2696,19 +2689,17 @@ class _PigeonFfiCodec {
     if (value == null || ffi_bridge.PigeonInternalNull.isInstance(value)) {
       return null;
     } else if (NSNumber.isInstance(value)) {
-      value as NSNumber;
+      final NSNumber numValue = NSNumber.castFrom(value);
       switch (outType) {
-        case const (int):
-          return value.longValue;
         case const (double):
-          return value.doubleValue;
+          return numValue.doubleValue;
         case const (bool):
-          return value.boolValue;
+          return numValue.boolValue;
         ${root.enums.map((Enum enumDefinition) => '''
 case const (${enumDefinition.name}):
-          return ${enumDefinition.name}.fromNSNumber(value);''').join('\n')}
+          return ${enumDefinition.name}.fromNSNumber(numValue);''').join('\n')}
         default:
-          throw ArgumentError.value(value);
+          return numValue.longValue;
       }
     } else if (NSString.isInstance(value)) {
       return (NSString.castFrom(value)).toDartString();
@@ -2819,12 +2810,44 @@ case const (${enumDefinition.name}):
     //     array[i] = value[i];
     //   }
     //   return array as T;
+    ${root.lists.values.sorted(sortByObjectCount).map((TypeDeclaration list) {
+      if (list.typeArguments.isEmpty ||
+          list.typeArguments.first.baseName == 'Object') {
+        return '';
+      }
+      final _FfiType ffiType = _FfiType.fromTypeDeclaration(list);
+      return '''
+    } else if (value is ${ffiType.type.getFullName(withNullable: false)} && isTypeOrNullableType<${ffiType.fullFfiName}>(T)) {
+      final NSMutableArray res = NSMutableArray();
+      for (final ${ffiType.dartCollectionTypes} entry in value) {
+        res.add(entry == null ? ffi_bridge.PigeonInternalNull() : writeValue<${ffiType.subTypeOne?.ffiName ?? 'ObjCObjectBase'}>(entry));
+      }
+      return res as T;
+        ''';
+    }).join()}
     } else if (value is List) {
       final NSMutableArray res = NSMutableArray();
       for (int i = 0; i < value.length; i++) {
-        res.add(writeValue(value[i]));
+        res.add(value[i] == null ? ffi_bridge.PigeonInternalNull() : writeValue(value[i]));
       }
       return res as T;
+    ${root.maps.entries.sorted((MapEntry<String, TypeDeclaration> a, MapEntry<String, TypeDeclaration> b) => sortByObjectCount(a.value, b.value)).map((MapEntry<String, TypeDeclaration> mapType) {
+      if (mapType.value.typeArguments.isEmpty ||
+          (mapType.value.typeArguments.first.baseName == 'Object' &&
+              mapType.value.typeArguments.last.baseName == 'Object')) {
+        return '';
+      }
+      final _FfiType ffiType = _FfiType.fromTypeDeclaration(mapType.value);
+      return '''
+    } else if (value is ${ffiType.type.getFullName(withNullable: false)} && isTypeOrNullableType<${ffiType.fullFfiName}>(T)) {
+      final NSMutableDictionary res = NSMutableDictionary();
+      for (final MapEntry${ffiType.dartCollectionTypeAnnotations} entry in value.entries) {
+        res[writeValue(entry.key)] = 
+            writeValue(entry.value);
+      }
+      return res as T;
+        ''';
+    }).join()}
     } else if (value is Map) {
       final NSMutableDictionary res = NSMutableDictionary();
       for (final MapEntry<Object?, Object?> entry in value.entries) {
