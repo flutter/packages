@@ -149,10 +149,97 @@ class InstanceManagerTest {
     assertFalse(finalizerRan)
   }
 
+  @Test
+  fun containsInstanceAndGetIdentifierForStrongReferenceUseIdentityComparison() {
+    val instanceManager: ProxyApiTestsPigeonInstanceManager = createInstanceManager()
+    instanceManager.stopFinalizationListener()
+
+    // Create two objects that are equal.
+    val testString = "aString"
+    val testObject1 = TestDataClass(testString)
+    val testObject2 = TestDataClass(testString)
+    assertEquals(testObject1, testObject2)
+
+    val identifier1 = instanceManager.addHostCreatedInstance(testObject1)
+    assertFalse(instanceManager.containsInstance(testObject2))
+    assertNull(instanceManager.getIdentifierForStrongReference(testObject2))
+
+    val identifier2 = instanceManager.addHostCreatedInstance(testObject2)
+    assertTrue(instanceManager.containsInstance(testObject1))
+    assertTrue(instanceManager.containsInstance(testObject2))
+    assertEquals(identifier1, instanceManager.getIdentifierForStrongReference(testObject1))
+    assertEquals(identifier2, instanceManager.getIdentifierForStrongReference(testObject2))
+  }
+
+  @Test
+  fun addingTwoDartCreatedInstancesThatAreEqual() {
+    val instanceManager: ProxyApiTestsPigeonInstanceManager = createInstanceManager()
+    instanceManager.stopFinalizationListener()
+
+    // Create two objects that are equal.
+    val testString = "aString"
+    val testObject1 = TestDataClass(testString)
+    val testObject2 = TestDataClass(testString)
+    assertEquals(testObject1, testObject2)
+
+    instanceManager.addDartCreatedInstance(testObject1, 0)
+    instanceManager.addDartCreatedInstance(testObject2, 1)
+
+    assertEquals(testObject1, instanceManager.getInstance(0))
+    assertEquals(testObject2, instanceManager.getInstance(1))
+    assertEquals(0L, instanceManager.getIdentifierForStrongReference(testObject1))
+    assertEquals(1L, instanceManager.getIdentifierForStrongReference(testObject2))
+  }
+
+  @Test
+  fun identityWeakReferencesAreEqualWithSameInstance() {
+    val testObject = Any()
+
+    assertEquals(
+        ProxyApiTestsPigeonInstanceManager.IdentityWeakReference(testObject),
+        ProxyApiTestsPigeonInstanceManager.IdentityWeakReference(testObject))
+  }
+
+  @Test
+  fun identityWeakReferenceRemainsEqualAfterGetReturnsNull() {
+    var testObject: Any? = Any()
+
+    val reference = ProxyApiTestsPigeonInstanceManager.IdentityWeakReference(testObject!!)
+
+    // To allow for object to be garbage collected.
+    @Suppress("UNUSED_VALUE")
+    testObject = null
+    Runtime.getRuntime().gc()
+
+    assertNull(reference.get())
+    assertEquals(reference, reference)
+  }
+
+  @Test
+  fun identityWeakReferencesAreNotEqualAfterGetReturnsNull() {
+    var testObject1: Any? = Any()
+    var testObject2: Any? = Any()
+
+    val reference1 = ProxyApiTestsPigeonInstanceManager.IdentityWeakReference(testObject1!!)
+    val reference2 = ProxyApiTestsPigeonInstanceManager.IdentityWeakReference(testObject2!!)
+
+    // To allow for object to be garbage collected.
+    @Suppress("UNUSED_VALUE")
+    testObject1 = null
+    testObject2 = null
+    Runtime.getRuntime().gc()
+
+    assertNull(reference1.get())
+    assertNull(reference2.get())
+    assertFalse(reference1 == reference2)
+  }
+
   private fun createInstanceManager(): ProxyApiTestsPigeonInstanceManager {
     return ProxyApiTestsPigeonInstanceManager.create(
         object : ProxyApiTestsPigeonInstanceManager.PigeonFinalizationListener {
           override fun onFinalize(identifier: Long) {}
         })
   }
+
+  data class TestDataClass(val value: String)
 }

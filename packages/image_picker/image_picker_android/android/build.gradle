@@ -1,5 +1,5 @@
-group 'io.flutter.plugins.imagepicker'
-version '1.0-SNAPSHOT'
+group = 'io.flutter.plugins.imagepicker'
+version = '1.0-SNAPSHOT'
 
 buildscript {
     repositories {
@@ -30,8 +30,8 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     lintOptions {
-        checkAllWarnings true
-        warningsAsErrors true
+        checkAllWarnings = true
+        warningsAsErrors = true
         disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency', 'NewerVersionAvailable'
     }
     dependencies {
@@ -47,8 +47,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     testOptions {
