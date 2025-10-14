@@ -9,6 +9,7 @@
   enabled won't build with the current or future IMA versions. To enable app desugaring, see
   `README.md`.
 * **Breaking Change** Updates `AdsRequest.adTagUrl` to return `null` when an ad tag is not set.
+
 ## 0.2.8+1
 
 * Resolves Gradle 9 deprecations.
