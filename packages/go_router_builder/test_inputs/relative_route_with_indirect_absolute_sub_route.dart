@@ -1,19 +1,19 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import 'package:go_router/go_router.dart';
 
-mixin _$HomeRoute {}
-mixin _$ShellRoute {}
-mixin _$RelativeRoute {}
-mixin _$AbsoluteRoute {}
+mixin $HomeRoute {}
+mixin $ShellRoute {}
+mixin $RelativeRoute {}
+mixin $AbsoluteRoute {}
 
 @TypedGoRoute<HomeRoute>(
   path: '/',
   routes: <TypedRoute<RouteData>>[relativeRoute],
 )
-class HomeRoute extends GoRouteData with _$HomeRoute {
+class HomeRoute extends GoRouteData with $HomeRoute {
   const HomeRoute();
 }
 
@@ -31,14 +31,14 @@ const TypedGoRoute<AbsoluteRoute> absoluteRoute = TypedGoRoute<AbsoluteRoute>(
   path: 'absolute-route',
 );
 
-class RelativeRoute extends RelativeGoRouteData with _$RelativeRoute {
+class RelativeRoute extends RelativeGoRouteData with $RelativeRoute {
   const RelativeRoute();
 }
 
-class ShellRoute extends ShellRouteData with _$ShellRoute {
+class ShellRoute extends ShellRouteData with $ShellRoute {
   const ShellRoute();
 }
 
-class AbsoluteRoute extends GoRouteData with _$AbsoluteRoute {
+class AbsoluteRoute extends GoRouteData with $AbsoluteRoute {
   const AbsoluteRoute();
 }

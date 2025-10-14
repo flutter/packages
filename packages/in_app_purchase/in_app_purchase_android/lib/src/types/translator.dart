@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -19,13 +19,12 @@ class Translator {
       originalExternalTransactionId:
           detailsWrapper.originalExternalTransactionId,
       externalTransactionToken: detailsWrapper.externalTransactionToken,
-      products:
-          detailsWrapper.products
-              .map(
-                (UserChoiceDetailsProductWrapper e) =>
-                    convertToUserChoiceDetailsProduct(e),
-              )
-              .toList(),
+      products: detailsWrapper.products
+          .map(
+            (UserChoiceDetailsProductWrapper e) =>
+                convertToUserChoiceDetailsProduct(e),
+          )
+          .toList(),
     );
   }
 

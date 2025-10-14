@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -3371,7 +3371,7 @@ void main() {
         final GoRouter router = await createRouter(routes, tester);
         expect(
           router.routeInformationProvider.value.uri.toString(),
-          '/?param=1',
+          'https://domain.com/?param=1',
         );
         TestWidgetsFlutterBinding.instance.platformDispatcher
             .clearDefaultRouteNameTestValue();

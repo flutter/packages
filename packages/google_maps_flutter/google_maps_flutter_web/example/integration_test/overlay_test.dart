@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -41,9 +41,9 @@ void main() {
         tileOverlay: const TileOverlay(tileOverlayId: id),
       );
 
-      final gmaps.Size size = controller.gmMapType.tileSize;
-      expect(size.width, TileOverlayController.logicalTileSize);
-      expect(size.height, TileOverlayController.logicalTileSize);
+      final gmaps.Size? size = controller.gmMapType.tileSize;
+      expect(size?.width, TileOverlayController.logicalTileSize);
+      expect(size?.height, TileOverlayController.logicalTileSize);
       expect(
         controller.gmMapType.getTile(gmaps.Point(0, 0), 0, document),
         null,

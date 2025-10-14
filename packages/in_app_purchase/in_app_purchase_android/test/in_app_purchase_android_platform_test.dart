@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -114,10 +114,9 @@ void main() {
             debugMessage: '',
           );
         });
-        final PurchaseDetails purchase =
-            GooglePlayPurchaseDetails.fromPurchase(
-              dummyUnacknowledgedPurchase,
-            ).first;
+        final PurchaseDetails purchase = GooglePlayPurchaseDetails.fromPurchase(
+          dummyUnacknowledgedPurchase,
+        ).first;
         final BillingResultWrapper result = await iapAndroidPlatform
             .completePurchase(purchase);
         verify(mockApi.acknowledgePurchase(any)).called(2);
@@ -379,8 +378,9 @@ void main() {
         final GooglePlayPurchaseParam purchaseParam = GooglePlayPurchaseParam(
           offerToken:
               productDetails.subscriptionOfferDetails?.first.offerIdToken,
-          productDetails:
-              GooglePlayProductDetails.fromProductDetails(productDetails).first,
+          productDetails: GooglePlayProductDetails.fromProductDetails(
+            productDetails,
+          ).first,
           applicationUserName: accountId,
         );
         final bool launchResult = await iapAndroidPlatform.buyNonConsumable(
@@ -443,8 +443,9 @@ void main() {
         subscription.cancel();
       }, onDone: () {});
       final GooglePlayPurchaseParam purchaseParam = GooglePlayPurchaseParam(
-        productDetails:
-            GooglePlayProductDetails.fromProductDetails(productDetails).first,
+        productDetails: GooglePlayProductDetails.fromProductDetails(
+          productDetails,
+        ).first,
         applicationUserName: accountId,
       );
       final bool launchResult = await iapAndroidPlatform.buyNonConsumable(
@@ -491,8 +492,9 @@ void main() {
         subscription.cancel();
       }, onDone: () {});
       final GooglePlayPurchaseParam purchaseParam = GooglePlayPurchaseParam(
-        productDetails:
-            GooglePlayProductDetails.fromProductDetails(productDetails).first,
+        productDetails: GooglePlayProductDetails.fromProductDetails(
+          productDetails,
+        ).first,
         applicationUserName: accountId,
       );
       await iapAndroidPlatform.buyNonConsumable(purchaseParam: purchaseParam);
@@ -572,8 +574,9 @@ void main() {
           subscription.cancel();
         }, onDone: () {});
         final GooglePlayPurchaseParam purchaseParam = GooglePlayPurchaseParam(
-          productDetails:
-              GooglePlayProductDetails.fromProductDetails(productDetails).first,
+          productDetails: GooglePlayProductDetails.fromProductDetails(
+            productDetails,
+          ).first,
           applicationUserName: accountId,
         );
         final bool launchResult = await iapAndroidPlatform.buyConsumable(
@@ -609,10 +612,9 @@ void main() {
 
         final bool result = await iapAndroidPlatform.buyNonConsumable(
           purchaseParam: GooglePlayPurchaseParam(
-            productDetails:
-                GooglePlayProductDetails.fromProductDetails(
-                  dummyOneTimeProductDetails,
-                ).first,
+            productDetails: GooglePlayProductDetails.fromProductDetails(
+              dummyOneTimeProductDetails,
+            ).first,
           ),
         );
 
@@ -636,10 +638,9 @@ void main() {
 
         final bool result = await iapAndroidPlatform.buyConsumable(
           purchaseParam: GooglePlayPurchaseParam(
-            productDetails:
-                GooglePlayProductDetails.fromProductDetails(
-                  dummyOneTimeProductDetails,
-                ).first,
+            productDetails: GooglePlayProductDetails.fromProductDetails(
+              dummyOneTimeProductDetails,
+            ).first,
           ),
         );
 
@@ -710,8 +711,9 @@ void main() {
         subscription.cancel();
       }, onDone: () {});
       final GooglePlayPurchaseParam purchaseParam = GooglePlayPurchaseParam(
-        productDetails:
-            GooglePlayProductDetails.fromProductDetails(productDetails).first,
+        productDetails: GooglePlayProductDetails.fromProductDetails(
+          productDetails,
+        ).first,
         applicationUserName: accountId,
       );
       await iapAndroidPlatform.buyConsumable(purchaseParam: purchaseParam);
@@ -793,8 +795,9 @@ void main() {
           subscription.cancel();
         }, onDone: () {});
         final GooglePlayPurchaseParam purchaseParam = GooglePlayPurchaseParam(
-          productDetails:
-              GooglePlayProductDetails.fromProductDetails(productDetails).first,
+          productDetails: GooglePlayProductDetails.fromProductDetails(
+            productDetails,
+          ).first,
           applicationUserName: accountId,
         );
         await iapAndroidPlatform.buyConsumable(
@@ -872,8 +875,9 @@ void main() {
           subscription.cancel();
         }, onDone: () {});
         final GooglePlayPurchaseParam purchaseParam = GooglePlayPurchaseParam(
-          productDetails:
-              GooglePlayProductDetails.fromProductDetails(productDetails).first,
+          productDetails: GooglePlayProductDetails.fromProductDetails(
+            productDetails,
+          ).first,
           applicationUserName: accountId,
         );
         await iapAndroidPlatform.buyConsumable(purchaseParam: purchaseParam);
@@ -921,14 +925,14 @@ void main() {
           subscription.cancel();
         }, onDone: () {});
         final GooglePlayPurchaseParam purchaseParam = GooglePlayPurchaseParam(
-          productDetails:
-              GooglePlayProductDetails.fromProductDetails(productDetails).first,
+          productDetails: GooglePlayProductDetails.fromProductDetails(
+            productDetails,
+          ).first,
           applicationUserName: accountId,
           changeSubscriptionParam: ChangeSubscriptionParam(
-            oldPurchaseDetails:
-                GooglePlayPurchaseDetails.fromPurchase(
-                  dummyUnacknowledgedPurchase,
-                ).first,
+            oldPurchaseDetails: GooglePlayPurchaseDetails.fromPurchase(
+              dummyUnacknowledgedPurchase,
+            ).first,
             replacementMode: ReplacementMode.deferred,
           ),
         );

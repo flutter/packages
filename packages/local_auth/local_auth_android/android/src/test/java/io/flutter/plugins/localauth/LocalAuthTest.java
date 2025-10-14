@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -341,14 +341,6 @@ public class LocalAuthTest {
   }
 
   @Test
-  @Config(sdk = 22)
-  public void isDeviceSecure_returnsFalseOnBelowApi23() {
-    final LocalAuthPlugin plugin = new LocalAuthPlugin();
-    assertFalse(plugin.isDeviceSecure());
-  }
-
-  @Test
-  @Config(sdk = 23)
   public void isDeviceSecure_returnsTrueIfDeviceIsSecure() {
     final LocalAuthPlugin plugin = new LocalAuthPlugin();
     KeyguardManager mockKeyguardManager = mock(KeyguardManager.class);

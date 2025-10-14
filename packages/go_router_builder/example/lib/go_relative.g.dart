@@ -12,21 +12,19 @@ List<RouteBase> get $appRoutes => [$homeRoute];
 
 RouteBase get $homeRoute => GoRouteData.$route(
   path: '/',
-  factory: _$HomeRoute._fromState,
+  factory: $HomeRoute._fromState,
   routes: [
     GoRouteData.$route(
       path: '/dashboard',
-      factory: _$DashboardRoute._fromState,
+      factory: $DashboardRoute._fromState,
       routes: [
         RelativeGoRouteData.$route(
           path: 'details/:detailId',
-
-          factory: _$DetailsRoute._fromState,
+          factory: $DetailsRoute._fromState,
           routes: [
             RelativeGoRouteData.$route(
               path: 'settings/:settingId',
-
-              factory: _$SettingsRoute._fromState,
+              factory: $SettingsRoute._fromState,
             ),
           ],
         ),
@@ -34,20 +32,18 @@ RouteBase get $homeRoute => GoRouteData.$route(
     ),
     RelativeGoRouteData.$route(
       path: 'details/:detailId',
-
-      factory: _$DetailsRoute._fromState,
+      factory: $DetailsRoute._fromState,
       routes: [
         RelativeGoRouteData.$route(
           path: 'settings/:settingId',
-
-          factory: _$SettingsRoute._fromState,
+          factory: $SettingsRoute._fromState,
         ),
       ],
     ),
   ],
 );
 
-mixin _$HomeRoute on GoRouteData {
+mixin $HomeRoute on GoRouteData {
   static HomeRoute _fromState(GoRouterState state) => HomeRoute();
 
   @override
@@ -67,7 +63,7 @@ mixin _$HomeRoute on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-mixin _$DashboardRoute on GoRouteData {
+mixin $DashboardRoute on GoRouteData {
   static DashboardRoute _fromState(GoRouterState state) => DashboardRoute();
 
   @override
@@ -87,7 +83,7 @@ mixin _$DashboardRoute on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-mixin _$DetailsRoute on RelativeGoRouteData {
+mixin $DetailsRoute on RelativeGoRouteData {
   static DetailsRoute _fromState(GoRouterState state) =>
       DetailsRoute(detailId: state.pathParameters['detailId']!);
 
@@ -117,7 +113,7 @@ mixin _$DetailsRoute on RelativeGoRouteData {
       context.replace(relativeLocation);
 }
 
-mixin _$SettingsRoute on RelativeGoRouteData {
+mixin $SettingsRoute on RelativeGoRouteData {
   static SettingsRoute _fromState(GoRouterState state) =>
       SettingsRoute(settingId: state.pathParameters['settingId']!);
 

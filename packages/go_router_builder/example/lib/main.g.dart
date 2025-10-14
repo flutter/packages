@@ -12,19 +12,19 @@ List<RouteBase> get $appRoutes => [$homeRoute, $loginRoute];
 
 RouteBase get $homeRoute => GoRouteData.$route(
   path: '/',
-  factory: _$HomeRoute._fromState,
+  factory: $HomeRoute._fromState,
   routes: [
     GoRouteData.$route(
       path: 'family/:fid',
-      factory: _$FamilyRoute._fromState,
+      factory: $FamilyRoute._fromState,
       routes: [
         GoRouteData.$route(
           path: 'person/:pid',
-          factory: _$PersonRoute._fromState,
+          factory: $PersonRoute._fromState,
           routes: [
             GoRouteData.$route(
               path: 'details/:details',
-              factory: _$PersonDetailsRoute._fromState,
+              factory: $PersonDetailsRoute._fromState,
             ),
           ],
         ),
@@ -32,12 +32,12 @@ RouteBase get $homeRoute => GoRouteData.$route(
     ),
     GoRouteData.$route(
       path: 'family-count/:count',
-      factory: _$FamilyCountRoute._fromState,
+      factory: $FamilyCountRoute._fromState,
     ),
   ],
 );
 
-mixin _$HomeRoute on GoRouteData {
+mixin $HomeRoute on GoRouteData {
   static HomeRoute _fromState(GoRouterState state) => const HomeRoute();
 
   @override
@@ -57,7 +57,7 @@ mixin _$HomeRoute on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-mixin _$FamilyRoute on GoRouteData {
+mixin $FamilyRoute on GoRouteData {
   static FamilyRoute _fromState(GoRouterState state) =>
       FamilyRoute(state.pathParameters['fid']!);
 
@@ -81,7 +81,7 @@ mixin _$FamilyRoute on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-mixin _$PersonRoute on GoRouteData {
+mixin $PersonRoute on GoRouteData {
   static PersonRoute _fromState(GoRouterState state) => PersonRoute(
     state.pathParameters['fid']!,
     int.parse(state.pathParameters['pid']!),
@@ -108,7 +108,7 @@ mixin _$PersonRoute on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-mixin _$PersonDetailsRoute on GoRouteData {
+mixin $PersonDetailsRoute on GoRouteData {
   static PersonDetailsRoute _fromState(GoRouterState state) =>
       PersonDetailsRoute(
         state.pathParameters['fid']!,
@@ -146,7 +146,7 @@ const _$PersonDetailsEnumMap = {
   PersonDetails.favoriteSport: 'favorite-sport',
 };
 
-mixin _$FamilyCountRoute on GoRouteData {
+mixin $FamilyCountRoute on GoRouteData {
   static FamilyCountRoute _fromState(GoRouterState state) =>
       FamilyCountRoute(int.parse(state.pathParameters['count']!));
 
@@ -177,9 +177,9 @@ extension<T extends Enum> on Map<T, String> {
 }
 
 RouteBase get $loginRoute =>
-    GoRouteData.$route(path: '/login', factory: _$LoginRoute._fromState);
+    GoRouteData.$route(path: '/login', factory: $LoginRoute._fromState);
 
-mixin _$LoginRoute on GoRouteData {
+mixin $LoginRoute on GoRouteData {
   static LoginRoute _fromState(GoRouterState state) =>
       LoginRoute(fromPage: state.uri.queryParameters['from-page']);
 

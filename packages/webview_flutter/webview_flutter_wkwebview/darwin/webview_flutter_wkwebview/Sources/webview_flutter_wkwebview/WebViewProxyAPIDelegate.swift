@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -17,9 +17,7 @@ class WebViewImpl: WKWebView {
     super.init(frame: frame, configuration: configuration)
     #if os(iOS)
       scrollView.contentInsetAdjustmentBehavior = .never
-      if #available(iOS 13.0, *) {
-        scrollView.automaticallyAdjustsScrollIndicatorInsets = false
-      }
+      scrollView.automaticallyAdjustsScrollIndicatorInsets = false
     #endif
   }
 

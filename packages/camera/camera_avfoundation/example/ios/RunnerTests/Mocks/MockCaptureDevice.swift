@@ -1,10 +1,10 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import camera_avfoundation
 
-// Import Objectice-C part of the implementation when SwiftPM is used.
+// Import Objective-C part of the implementation when SwiftPM is used.
 #if canImport(camera_avfoundation_objc)
   import camera_avfoundation_objc
 #endif
@@ -32,6 +32,7 @@ class MockCaptureDevice: NSObject, FLTCaptureDevice {
 
   var uniqueID = ""
   var position = AVCaptureDevice.Position.unspecified
+  var deviceType = AVCaptureDevice.DeviceType.builtInWideAngleCamera
 
   var activeFormat: FLTCaptureDeviceFormat {
     get {

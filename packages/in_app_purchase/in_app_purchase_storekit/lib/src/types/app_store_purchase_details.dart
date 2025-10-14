@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -38,10 +38,9 @@ class AppStorePurchaseDetails extends PurchaseDetails {
         transaction.transactionState,
         transaction.error,
       ),
-      transactionDate:
-          transaction.transactionTimeStamp != null
-              ? (transaction.transactionTimeStamp! * 1000).toInt().toString()
-              : null,
+      transactionDate: transaction.transactionTimeStamp != null
+          ? (transaction.transactionTimeStamp! * 1000).toInt().toString()
+          : null,
       verificationData: PurchaseVerificationData(
         localVerificationData: base64EncodedReceipt,
         serverVerificationData: base64EncodedReceipt,

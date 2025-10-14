@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -139,23 +139,24 @@ Future<void> main() async {
                 controller: PlatformWebViewController(
                   AndroidWebViewControllerCreationParams(
                     androidWebViewProxy: AndroidWebViewProxy(
-                      newWebView: ({
-                        void Function(
-                          android_webkit.WebView,
-                          int,
-                          int,
-                          int,
-                          int,
-                        )?
-                        onScrollChanged,
-                      }) {
-                        final android_webkit.WebView webView =
-                            android_webkit.WebView(
-                              onScrollChanged: onScrollChanged,
-                            );
-                        finalizer.attach(webView, webViewToken);
-                        return webView;
-                      },
+                      newWebView:
+                          ({
+                            void Function(
+                              android_webkit.WebView,
+                              int,
+                              int,
+                              int,
+                              int,
+                            )?
+                            onScrollChanged,
+                          }) {
+                            final android_webkit.WebView webView =
+                                android_webkit.WebView(
+                                  onScrollChanged: onScrollChanged,
+                                );
+                            finalizer.attach(webView, webViewToken);
+                            return webView;
+                          },
                     ),
                   ),
                 ),
@@ -387,7 +388,8 @@ Future<void> main() async {
       final String base64VideoData = base64Encode(
         Uint8List.view(videoData.buffer),
       );
-      final String videoTest = '''
+      final String videoTest =
+          '''
           <!DOCTYPE html><html>
           <head><title>Video auto play</title>
             <style>
@@ -654,7 +656,8 @@ Future<void> main() async {
       final String base64AudioData = base64Encode(
         Uint8List.view(audioData.buffer),
       );
-      final String audioTest = '''
+      final String audioTest =
+          '''
         <!DOCTYPE html><html>
         <head><title>Audio auto play</title>
           <script type="text/javascript">
@@ -1458,7 +1461,8 @@ Future<void> main() async {
       const Utf8Encoder().convert(iframe),
     );
 
-    final String openWindowTest = '''
+    final String openWindowTest =
+        '''
         <!DOCTYPE html>
         <html>
         <head>

@@ -1,8 +1,9 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:collection';
 
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
@@ -79,8 +80,8 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
 
   // The `ViewGroup` used to create the native `ima.AdDisplayContainer`. The
   // `View` that handles playing an ad is added as a child to this `ViewGroup`.
-  late final ima.FrameLayout _frameLayout =
-      _androidParams._imaProxy.newFrameLayout();
+  late final ima.FrameLayout _frameLayout = _androidParams._imaProxy
+      .newFrameLayout();
 
   // Handles loading and displaying an ad.
   late ima.VideoView _videoView;
@@ -110,8 +111,9 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
   @internal
   ima.AdDisplayContainer? adDisplayContainer;
 
-  // Currently loaded ad.
-  ima.AdMediaInfo? _loadedAdMediaInfo;
+  // Queue of ads to be played.
+  final Queue<ima.AdMediaInfo> _loadedAdMediaInfoQueue =
+      Queue<ima.AdMediaInfo>();
 
   // The saved ad position, used to resume ad playback following an ad
   // click-through.
@@ -130,37 +132,14 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
 
   late final AndroidAdDisplayContainerCreationParams _androidParams =
       params is AndroidAdDisplayContainerCreationParams
-          ? params as AndroidAdDisplayContainerCreationParams
-          : AndroidAdDisplayContainerCreationParams.fromPlatformAdDisplayContainerCreationParams(
-            params,
-          );
+      ? params as AndroidAdDisplayContainerCreationParams
+      : AndroidAdDisplayContainerCreationParams.fromPlatformAdDisplayContainerCreationParams(
+          params,
+        );
 
   @override
   Widget build(BuildContext context) {
-    return AndroidViewWidget(
-      key: params.key,
-      view: _frameLayout,
-      platformViewsServiceProxy: _androidParams._platformViewsProxy,
-      layoutDirection: params.layoutDirection,
-      onPlatformViewCreated: () async {
-        adDisplayContainer = await _androidParams._imaProxy
-            .createAdDisplayContainerImaSdkFactory(
-              _frameLayout,
-              _videoAdPlayer,
-            );
-        final Iterable<ima.CompanionAdSlot> nativeCompanionSlots =
-            await Future.wait(
-              _androidParams.companionSlots.map((PlatformCompanionAdSlot slot) {
-                return (slot as AndroidCompanionAdSlot)
-                    .getNativeCompanionAdSlot();
-              }),
-            );
-        await adDisplayContainer!.setCompanionSlots(
-          nativeCompanionSlots.toList(),
-        );
-        params.onContainerAdded(this);
-      },
-    );
+    return _AdPlayer(this);
   }
 
   // Clears the current `MediaPlayer` and resets any saved position of an ad.
@@ -171,11 +150,21 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
     _savedAdPosition = 0;
   }
 
-  // Clear state to before ad is loaded and replace current VideoView with a new
-  // one.
-  void _resetState() {
+  // Resets the state to before an ad is loaded and releases references to all
+  // ads and callbacks.
+  void _release() {
+    _resetStateForNextAd();
+    _loadedAdMediaInfoQueue.clear();
+    videoAdPlayerCallbacks.clear();
+  }
+
+  // Clears the state to before ad is loaded and replace current VideoView with
+  // a new one.
+  void _resetStateForNextAd() {
     _stopAdProgressTracking();
 
+    // The `VideoView` is replaced to clear the last frame of the last loaded
+    // ad. See https://stackoverflow.com/questions/25660994/clear-video-frame-from-surfaceview-on-video-complete.
     _frameLayout.removeView(_videoView);
     _videoView = _setUpVideoView(
       WeakReference<AndroidAdDisplayContainer>(this),
@@ -183,9 +172,10 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
     _frameLayout.addView(_videoView);
 
     _clearMediaPlayer();
-    _loadedAdMediaInfo = null;
+    if (_loadedAdMediaInfoQueue.isNotEmpty) {
+      _loadedAdMediaInfoQueue.removeFirst();
+    }
     _adDuration = null;
-    _startPlayerWhenVideoIsPrepared = true;
   }
 
   // Starts periodically updating the IMA SDK the progress of the currently
@@ -211,7 +201,8 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
           await Future.wait(<Future<void>>[
             _videoAdPlayer.setAdProgress(currentProgress),
 
-            if (_loadedAdMediaInfo case final ima.AdMediaInfo loadedAdMediaInfo)
+            if (_loadedAdMediaInfoQueue.firstOrNull
+                case final ima.AdMediaInfo loadedAdMediaInfo)
               ...videoAdPlayerCallbacks.map(
                 (ima.VideoAdPlayerCallback callback) =>
                     callback.onAdProgress(loadedAdMediaInfo, currentProgress),
@@ -228,6 +219,17 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
     _adProgressTimer = null;
   }
 
+  /// Load the first ad in the queue.
+  Future<void> _loadCurrentAd() {
+    _startPlayerWhenVideoIsPrepared = false;
+    return Future.wait(<Future<void>>[
+      // Audio focus is set to none to prevent the `VideoView` from requesting
+      // focus while loading the app in the background.
+      _videoView.setAudioFocusRequest(ima.AudioManagerAudioFocus.none),
+      _videoView.setVideoUri(_loadedAdMediaInfoQueue.first.url),
+    ]);
+  }
+
   // This value is created in a static method because the callback methods for
   // any wrapped classes must not reference the encapsulating object. This is to
   // prevent a circular reference that prevents garbage collection.
@@ -242,15 +244,15 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
           container._stopAdProgressTracking();
           for (final ima.VideoAdPlayerCallback callback
               in container.videoAdPlayerCallbacks) {
-            callback.onEnded(container._loadedAdMediaInfo!);
+            callback.onEnded(container._loadedAdMediaInfoQueue.first);
           }
         }
       },
       onPrepared: (_, ima.MediaPlayer player) async {
         final AndroidAdDisplayContainer? container = weakThis.target;
         if (container != null) {
-          container._adDuration = await player.getDuration();
           container._mediaPlayer = player;
+          container._adDuration = await player.getDuration();
           if (container._savedAdPosition > 0) {
             await player.seekTo(container._savedAdPosition);
           }
@@ -267,10 +269,8 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
           container._clearMediaPlayer();
           for (final ima.VideoAdPlayerCallback callback
               in container.videoAdPlayerCallbacks) {
-            callback.onError(container._loadedAdMediaInfo!);
+            callback.onError(container._loadedAdMediaInfoQueue.first);
           }
-          container._loadedAdMediaInfo = null;
-          container._adDuration = null;
         }
       },
     );
@@ -290,7 +290,13 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
         weakThis.target?.videoAdPlayerCallbacks.remove(callback);
       },
       loadAd: (_, ima.AdMediaInfo adMediaInfo, __) {
-        weakThis.target?._loadedAdMediaInfo = adMediaInfo;
+        final AndroidAdDisplayContainer? container = weakThis.target;
+        if (container != null) {
+          container._loadedAdMediaInfoQueue.add(adMediaInfo);
+          if (container._loadedAdMediaInfoQueue.length == 1) {
+            container._loadCurrentAd();
+          }
+        }
       },
       pauseAd: (_, __) async {
         final AndroidAdDisplayContainer? container = weakThis.target;
@@ -300,20 +306,129 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
           // app is returned to the foreground.
           container._startPlayerWhenVideoIsPrepared = false;
           await player.pause();
-          container._savedAdPosition =
-              await container._videoView.getCurrentPosition();
+          container._savedAdPosition = await container._videoView
+              .getCurrentPosition();
           container._stopAdProgressTracking();
+          await Future.wait(<Future<void>>[
+            for (final ima.VideoAdPlayerCallback callback
+                in container.videoAdPlayerCallbacks)
+              callback.onPause(container._loadedAdMediaInfoQueue.first),
+          ]);
         }
       },
       playAd: (_, ima.AdMediaInfo adMediaInfo) {
         final AndroidAdDisplayContainer? container = weakThis.target;
         if (container != null) {
+          assert(container._loadedAdMediaInfoQueue.first == adMediaInfo);
+
+          container._videoView.setAudioFocusRequest(
+            ima.AudioManagerAudioFocus.gain,
+          );
+
+          if (container._mediaPlayer != null) {
+            container._mediaPlayer!.start().then(
+              (_) => container._startAdProgressTracking(),
+            );
+          }
           container._startPlayerWhenVideoIsPrepared = true;
-          container._videoView.setVideoUri(adMediaInfo.url);
+
+          for (final ima.VideoAdPlayerCallback callback
+              in container.videoAdPlayerCallbacks) {
+            if (container._savedAdPosition == 0) {
+              callback.onPlay(adMediaInfo);
+            } else {
+              callback.onResume(adMediaInfo);
+            }
+          }
         }
       },
-      release: (_) => weakThis.target?._resetState(),
-      stopAd: (_, __) => weakThis.target?._resetState(),
+      release: (_) => weakThis.target?._release(),
+      stopAd: (_, __) {
+        final AndroidAdDisplayContainer? container = weakThis.target;
+        if (container != null) {
+          container._resetStateForNextAd();
+          if (container._loadedAdMediaInfoQueue.isNotEmpty) {
+            container._loadCurrentAd();
+          }
+        }
+      },
+    );
+  }
+}
+
+// Widget for displaying the native ViewGroup of the AdDisplayContainer.
+//
+// When the app is sent to the background, the state of the underlying native
+// `VideoView` is not maintained. So this widget uses `WidgetsBindingObserver`
+// to listen and react to lifecycle events.
+class _AdPlayer extends StatefulWidget {
+  _AdPlayer(this.container) : super(key: container._androidParams.key);
+
+  final AndroidAdDisplayContainer container;
+
+  @override
+  State<StatefulWidget> createState() => _AdPlayerState();
+}
+
+class _AdPlayerState extends State<_AdPlayer> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    WidgetsBinding.instance.removeObserver(this);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    final AndroidAdDisplayContainer container = widget.container;
+    switch (state) {
+      case AppLifecycleState.resumed:
+        if (container._loadedAdMediaInfoQueue.isNotEmpty) {
+          container._loadCurrentAd();
+        }
+      case AppLifecycleState.paused:
+        container._mediaPlayer = null;
+      case AppLifecycleState.inactive:
+      case AppLifecycleState.hidden:
+      case AppLifecycleState.detached:
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AndroidViewWidget(
+      view: widget.container._frameLayout,
+      platformViewsServiceProxy:
+          widget.container._androidParams._platformViewsProxy,
+      layoutDirection: widget.container._androidParams.layoutDirection,
+      onPlatformViewCreated: () async {
+        final ima.AdDisplayContainer nativeContainer = await widget
+            .container
+            ._androidParams
+            ._imaProxy
+            .createAdDisplayContainerImaSdkFactory(
+              widget.container._frameLayout,
+              widget.container._videoAdPlayer,
+            );
+        final Iterable<ima.CompanionAdSlot> nativeCompanionSlots =
+            await Future.wait(
+              widget.container._androidParams.companionSlots.map((
+                PlatformCompanionAdSlot slot,
+              ) {
+                return (slot as AndroidCompanionAdSlot)
+                    .getNativeCompanionAdSlot();
+              }),
+            );
+        await nativeContainer.setCompanionSlots(nativeCompanionSlots.toList());
+
+        widget.container.adDisplayContainer = nativeContainer;
+        widget.container.params.onContainerAdded(widget.container);
+      },
     );
   }
 }

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -59,8 +59,8 @@ class SKPaymentQueueWrapper {
 
   /// Calls [`-[SKPaymentQueue transactions]`](https://developer.apple.com/documentation/storekit/skpaymentqueue/1506026-transactions?language=objc).
   Future<List<SKPaymentTransactionWrapper>> transactions() async {
-    final List<SKPaymentTransactionMessage?> pigeonMsgs =
-        await _hostApi.transactions();
+    final List<SKPaymentTransactionMessage?> pigeonMsgs = await _hostApi
+        .transactions();
     return pigeonMsgs
         .map(
           (SKPaymentTransactionMessage? msg) =>
@@ -378,7 +378,7 @@ class SKError {
   ///
   /// Any key of the map must be a valid [NSErrorUserInfoKey](https://developer.apple.com/documentation/foundation/nserroruserinfokey?language=objc).
   @JsonKey(defaultValue: <String, dynamic>{})
-  final Map<String?, Object?>? userInfo;
+  final Map<String, Object?>? userInfo;
 
   @override
   bool operator ==(Object other) {

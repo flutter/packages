@@ -74,6 +74,11 @@
     - any-glob-to-any-file:
       - packages/google_indentity_services_web/**
 
+'p: google_fonts':
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/google_fonts/**
+
 'p: google_maps_flutter':
   - changed-files:
     - any-glob-to-any-file:

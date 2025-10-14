@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -139,8 +139,8 @@ Future<void> main() async {
     late final android.PigeonInstanceManager instanceManager;
     instanceManager = android.PigeonInstanceManager(
       onWeakReferenceRemoved: (int identifier) {
-        final android.PigeonInternalProxyApiBaseClass instance =
-            instanceManager.getInstanceWithWeakReference(identifier)!;
+        final android.PigeonInternalProxyApiBaseClass instance = instanceManager
+            .getInstanceWithWeakReference(identifier)!;
         if (instance is android.WebView && !webViewGCCompleter.isCompleted) {
           webViewGCCompleter.complete();
         }
@@ -411,7 +411,8 @@ Future<void> main() async {
       final String base64VideoData = base64Encode(
         Uint8List.view(videoData.buffer),
       );
-      final String videoTest = '''
+      final String videoTest =
+          '''
         <!DOCTYPE html><html>
         <head><title>Video auto play</title>
           <script type="text/javascript">
@@ -624,7 +625,8 @@ Future<void> main() async {
       final String base64AudioData = base64Encode(
         Uint8List.view(audioData.buffer),
       );
-      final String audioTest = '''
+      final String audioTest =
+          '''
         <!DOCTYPE html><html>
         <head><title>Audio auto play</title>
           <script type="text/javascript">
@@ -1441,7 +1443,8 @@ Future<void> main() async {
       const Utf8Encoder().convert(iframe),
     );
 
-    final String openWindowTest = '''
+    final String openWindowTest =
+        '''
         <!DOCTYPE html>
         <html>
         <head>

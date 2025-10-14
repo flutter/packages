@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -311,8 +311,8 @@ void main() {
               )?
               onScaleChanged,
             }) => mockWebViewClient ?? MockWebViewClient(),
-        instanceFlutterAssetManager:
-            () => mockFlutterAssetManager ?? MockFlutterAssetManager(),
+        instanceFlutterAssetManager: () =>
+            mockFlutterAssetManager ?? MockFlutterAssetManager(),
         newJavaScriptChannel:
             ({
               required String channelName,
@@ -977,27 +977,28 @@ void main() {
       onShowFileChooserCallback;
       final MockWebChromeClient mockWebChromeClient = MockWebChromeClient();
       final AndroidWebViewController controller = createControllerWithMocks(
-        createWebChromeClient: ({
-          dynamic onProgressChanged,
-          Future<List<String>> Function(
-            android_webview.WebChromeClient,
-            android_webview.WebView webView,
-            android_webview.FileChooserParams params,
-          )?
-          onShowFileChooser,
-          dynamic onGeolocationPermissionsShowPrompt,
-          dynamic onGeolocationPermissionsHidePrompt,
-          dynamic onPermissionRequest,
-          dynamic onShowCustomView,
-          dynamic onHideCustomView,
-          dynamic onConsoleMessage,
-          dynamic onJsAlert,
-          dynamic onJsConfirm,
-          dynamic onJsPrompt,
-        }) {
-          onShowFileChooserCallback = onShowFileChooser!;
-          return mockWebChromeClient;
-        },
+        createWebChromeClient:
+            ({
+              dynamic onProgressChanged,
+              Future<List<String>> Function(
+                android_webview.WebChromeClient,
+                android_webview.WebView webView,
+                android_webview.FileChooserParams params,
+              )?
+              onShowFileChooser,
+              dynamic onGeolocationPermissionsShowPrompt,
+              dynamic onGeolocationPermissionsHidePrompt,
+              dynamic onPermissionRequest,
+              dynamic onShowCustomView,
+              dynamic onHideCustomView,
+              dynamic onConsoleMessage,
+              dynamic onJsAlert,
+              dynamic onJsConfirm,
+              dynamic onJsPrompt,
+            }) {
+              onShowFileChooserCallback = onShowFileChooser!;
+              return mockWebChromeClient;
+            },
       );
 
       late final FileSelectorParams fileSelectorParams;
@@ -1040,35 +1041,37 @@ void main() {
 
       final MockWebChromeClient mockWebChromeClient = MockWebChromeClient();
       final AndroidWebViewController controller = createControllerWithMocks(
-        createWebChromeClient: ({
-          dynamic onProgressChanged,
-          dynamic onShowFileChooser,
-          void Function(
-            android_webview.WebChromeClient,
-            String origin,
-            android_webview.GeolocationPermissionsCallback callback,
-          )?
-          onGeolocationPermissionsShowPrompt,
-          void Function(android_webview.WebChromeClient instance)?
-          onGeolocationPermissionsHidePrompt,
-          dynamic onPermissionRequest,
-          dynamic onShowCustomView,
-          dynamic onHideCustomView,
-          dynamic onConsoleMessage,
-          dynamic onJsAlert,
-          dynamic onJsConfirm,
-          dynamic onJsPrompt,
-        }) {
-          onGeoPermissionHandle =
-              onGeolocationPermissionsShowPrompt!
-                  as Future<void> Function(
-                    android_webview.WebChromeClient,
-                    String origin,
-                    android_webview.GeolocationPermissionsCallback callback,
-                  );
-          onGeoPermissionHidePromptHandle = onGeolocationPermissionsHidePrompt!;
-          return mockWebChromeClient;
-        },
+        createWebChromeClient:
+            ({
+              dynamic onProgressChanged,
+              dynamic onShowFileChooser,
+              void Function(
+                android_webview.WebChromeClient,
+                String origin,
+                android_webview.GeolocationPermissionsCallback callback,
+              )?
+              onGeolocationPermissionsShowPrompt,
+              void Function(android_webview.WebChromeClient instance)?
+              onGeolocationPermissionsHidePrompt,
+              dynamic onPermissionRequest,
+              dynamic onShowCustomView,
+              dynamic onHideCustomView,
+              dynamic onConsoleMessage,
+              dynamic onJsAlert,
+              dynamic onJsConfirm,
+              dynamic onJsPrompt,
+            }) {
+              onGeoPermissionHandle =
+                  onGeolocationPermissionsShowPrompt!
+                      as Future<void> Function(
+                        android_webview.WebChromeClient,
+                        String origin,
+                        android_webview.GeolocationPermissionsCallback callback,
+                      );
+              onGeoPermissionHidePromptHandle =
+                  onGeolocationPermissionsHidePrompt!;
+              return mockWebChromeClient;
+            },
       );
 
       String testValue = 'origin';
@@ -1117,29 +1120,30 @@ void main() {
 
       final MockWebChromeClient mockWebChromeClient = MockWebChromeClient();
       final AndroidWebViewController controller = createControllerWithMocks(
-        createWebChromeClient: ({
-          dynamic onProgressChanged,
-          dynamic onShowFileChooser,
-          dynamic onGeolocationPermissionsShowPrompt,
-          dynamic onGeolocationPermissionsHidePrompt,
-          dynamic onPermissionRequest,
-          dynamic onJsAlert,
-          dynamic onJsConfirm,
-          dynamic onJsPrompt,
-          void Function(
-            android_webview.WebChromeClient instance,
-            android_webview.View view,
-            android_webview.CustomViewCallback callback,
-          )?
-          onShowCustomView,
-          void Function(android_webview.WebChromeClient instance)?
-          onHideCustomView,
-          dynamic onConsoleMessage,
-        }) {
-          onShowCustomViewHandle = onShowCustomView!;
-          onHideCustomViewHandle = onHideCustomView!;
-          return mockWebChromeClient;
-        },
+        createWebChromeClient:
+            ({
+              dynamic onProgressChanged,
+              dynamic onShowFileChooser,
+              dynamic onGeolocationPermissionsShowPrompt,
+              dynamic onGeolocationPermissionsHidePrompt,
+              dynamic onPermissionRequest,
+              dynamic onJsAlert,
+              dynamic onJsConfirm,
+              dynamic onJsPrompt,
+              void Function(
+                android_webview.WebChromeClient instance,
+                android_webview.View view,
+                android_webview.CustomViewCallback callback,
+              )?
+              onShowCustomView,
+              void Function(android_webview.WebChromeClient instance)?
+              onHideCustomView,
+              dynamic onConsoleMessage,
+            }) {
+              onShowCustomViewHandle = onShowCustomView!;
+              onHideCustomViewHandle = onHideCustomView!;
+              return mockWebChromeClient;
+            },
       );
 
       final android_webview.View testView = android_webview
@@ -1148,12 +1152,10 @@ void main() {
       bool hideCustomViewCalled = false;
 
       await controller.setCustomWidgetCallbacks(
-        onShowCustomWidget: (
-          Widget widget,
-          OnHideCustomWidgetCallback callback,
-        ) async {
-          showCustomViewCalled = true;
-        },
+        onShowCustomWidget:
+            (Widget widget, OnHideCustomWidgetCallback callback) async {
+              showCustomViewCalled = true;
+            },
         onHideCustomWidget: () {
           hideCustomViewCalled = true;
         },
@@ -1182,26 +1184,27 @@ void main() {
 
       final MockWebChromeClient mockWebChromeClient = MockWebChromeClient();
       final AndroidWebViewController controller = createControllerWithMocks(
-        createWebChromeClient: ({
-          dynamic onProgressChanged,
-          dynamic onShowFileChooser,
-          dynamic onGeolocationPermissionsShowPrompt,
-          dynamic onGeolocationPermissionsHidePrompt,
-          void Function(
-            android_webview.WebChromeClient instance,
-            android_webview.PermissionRequest request,
-          )?
-          onPermissionRequest,
-          dynamic onShowCustomView,
-          dynamic onHideCustomView,
-          dynamic onConsoleMessage,
-          dynamic onJsAlert,
-          dynamic onJsConfirm,
-          dynamic onJsPrompt,
-        }) {
-          onPermissionRequestCallback = onPermissionRequest!;
-          return mockWebChromeClient;
-        },
+        createWebChromeClient:
+            ({
+              dynamic onProgressChanged,
+              dynamic onShowFileChooser,
+              dynamic onGeolocationPermissionsShowPrompt,
+              dynamic onGeolocationPermissionsHidePrompt,
+              void Function(
+                android_webview.WebChromeClient instance,
+                android_webview.PermissionRequest request,
+              )?
+              onPermissionRequest,
+              dynamic onShowCustomView,
+              dynamic onHideCustomView,
+              dynamic onConsoleMessage,
+              dynamic onJsAlert,
+              dynamic onJsConfirm,
+              dynamic onJsPrompt,
+            }) {
+              onPermissionRequestCallback = onPermissionRequest!;
+              return mockWebChromeClient;
+            },
       );
 
       late final PlatformWebViewPermissionRequest permissionRequest;
@@ -1246,26 +1249,27 @@ void main() {
 
         final MockWebChromeClient mockWebChromeClient = MockWebChromeClient();
         final AndroidWebViewController controller = createControllerWithMocks(
-          createWebChromeClient: ({
-            dynamic onProgressChanged,
-            dynamic onShowFileChooser,
-            dynamic onGeolocationPermissionsShowPrompt,
-            dynamic onGeolocationPermissionsHidePrompt,
-            void Function(
-              android_webview.WebChromeClient instance,
-              android_webview.PermissionRequest request,
-            )?
-            onPermissionRequest,
-            dynamic onShowCustomView,
-            dynamic onHideCustomView,
-            dynamic onConsoleMessage,
-            dynamic onJsAlert,
-            dynamic onJsConfirm,
-            dynamic onJsPrompt,
-          }) {
-            onPermissionRequestCallback = onPermissionRequest!;
-            return mockWebChromeClient;
-          },
+          createWebChromeClient:
+              ({
+                dynamic onProgressChanged,
+                dynamic onShowFileChooser,
+                dynamic onGeolocationPermissionsShowPrompt,
+                dynamic onGeolocationPermissionsHidePrompt,
+                void Function(
+                  android_webview.WebChromeClient instance,
+                  android_webview.PermissionRequest request,
+                )?
+                onPermissionRequest,
+                dynamic onShowCustomView,
+                dynamic onHideCustomView,
+                dynamic onConsoleMessage,
+                dynamic onJsAlert,
+                dynamic onJsConfirm,
+                dynamic onJsPrompt,
+              }) {
+                onPermissionRequestCallback = onPermissionRequest!;
+                return mockWebChromeClient;
+              },
         );
 
         bool callbackCalled = false;
@@ -1307,28 +1311,29 @@ void main() {
         final MockWebChromeClient mockWebChromeClient = MockWebChromeClient();
 
         final AndroidWebViewController controller = createControllerWithMocks(
-          createWebChromeClient: ({
-            dynamic onProgressChanged,
-            dynamic onShowFileChooser,
-            dynamic onGeolocationPermissionsShowPrompt,
-            dynamic onGeolocationPermissionsHidePrompt,
-            dynamic onPermissionRequest,
-            dynamic onShowCustomView,
-            dynamic onHideCustomView,
-            Future<void> Function(
-              android_webview.WebChromeClient,
-              android_webview.WebView,
-              String url,
-              String message,
-            )?
-            onJsAlert,
-            dynamic onJsConfirm,
-            dynamic onJsPrompt,
-            dynamic onConsoleMessage,
-          }) {
-            onJsAlertCallback = onJsAlert!;
-            return mockWebChromeClient;
-          },
+          createWebChromeClient:
+              ({
+                dynamic onProgressChanged,
+                dynamic onShowFileChooser,
+                dynamic onGeolocationPermissionsShowPrompt,
+                dynamic onGeolocationPermissionsHidePrompt,
+                dynamic onPermissionRequest,
+                dynamic onShowCustomView,
+                dynamic onHideCustomView,
+                Future<void> Function(
+                  android_webview.WebChromeClient,
+                  android_webview.WebView,
+                  String url,
+                  String message,
+                )?
+                onJsAlert,
+                dynamic onJsConfirm,
+                dynamic onJsPrompt,
+                dynamic onConsoleMessage,
+              }) {
+                onJsAlertCallback = onJsAlert!;
+                return mockWebChromeClient;
+              },
         );
 
         late final String message;
@@ -1361,28 +1366,29 @@ void main() {
         final MockWebChromeClient mockWebChromeClient = MockWebChromeClient();
 
         final AndroidWebViewController controller = createControllerWithMocks(
-          createWebChromeClient: ({
-            dynamic onProgressChanged,
-            dynamic onShowFileChooser,
-            dynamic onGeolocationPermissionsShowPrompt,
-            dynamic onGeolocationPermissionsHidePrompt,
-            dynamic onPermissionRequest,
-            dynamic onShowCustomView,
-            dynamic onHideCustomView,
-            dynamic onJsAlert,
-            Future<bool> Function(
-              android_webview.WebChromeClient,
-              android_webview.WebView,
-              String url,
-              String message,
-            )?
-            onJsConfirm,
-            dynamic onJsPrompt,
-            dynamic onConsoleMessage,
-          }) {
-            onJsConfirmCallback = onJsConfirm!;
-            return mockWebChromeClient;
-          },
+          createWebChromeClient:
+              ({
+                dynamic onProgressChanged,
+                dynamic onShowFileChooser,
+                dynamic onGeolocationPermissionsShowPrompt,
+                dynamic onGeolocationPermissionsHidePrompt,
+                dynamic onPermissionRequest,
+                dynamic onShowCustomView,
+                dynamic onHideCustomView,
+                dynamic onJsAlert,
+                Future<bool> Function(
+                  android_webview.WebChromeClient,
+                  android_webview.WebView,
+                  String url,
+                  String message,
+                )?
+                onJsConfirm,
+                dynamic onJsPrompt,
+                dynamic onConsoleMessage,
+              }) {
+                onJsConfirmCallback = onJsConfirm!;
+                return mockWebChromeClient;
+              },
         );
 
         late final String message;
@@ -1418,29 +1424,30 @@ void main() {
         final MockWebChromeClient mockWebChromeClient = MockWebChromeClient();
 
         final AndroidWebViewController controller = createControllerWithMocks(
-          createWebChromeClient: ({
-            dynamic onProgressChanged,
-            dynamic onShowFileChooser,
-            dynamic onGeolocationPermissionsShowPrompt,
-            dynamic onGeolocationPermissionsHidePrompt,
-            dynamic onPermissionRequest,
-            dynamic onShowCustomView,
-            dynamic onHideCustomView,
-            dynamic onJsAlert,
-            dynamic onJsConfirm,
-            Future<String?> Function(
-              android_webview.WebChromeClient,
-              android_webview.WebView,
-              String url,
-              String message,
-              String defaultText,
-            )?
-            onJsPrompt,
-            dynamic onConsoleMessage,
-          }) {
-            onJsPromptCallback = onJsPrompt!;
-            return mockWebChromeClient;
-          },
+          createWebChromeClient:
+              ({
+                dynamic onProgressChanged,
+                dynamic onShowFileChooser,
+                dynamic onGeolocationPermissionsShowPrompt,
+                dynamic onGeolocationPermissionsHidePrompt,
+                dynamic onPermissionRequest,
+                dynamic onShowCustomView,
+                dynamic onHideCustomView,
+                dynamic onJsAlert,
+                dynamic onJsConfirm,
+                Future<String?> Function(
+                  android_webview.WebChromeClient,
+                  android_webview.WebView,
+                  String url,
+                  String message,
+                  String defaultText,
+                )?
+                onJsPrompt,
+                dynamic onConsoleMessage,
+              }) {
+                onJsPromptCallback = onJsPrompt!;
+                return mockWebChromeClient;
+              },
         );
 
         late final String message;
@@ -1480,26 +1487,27 @@ void main() {
 
       final MockWebChromeClient mockWebChromeClient = MockWebChromeClient();
       final AndroidWebViewController controller = createControllerWithMocks(
-        createWebChromeClient: ({
-          dynamic onProgressChanged,
-          dynamic onShowFileChooser,
-          dynamic onGeolocationPermissionsShowPrompt,
-          dynamic onGeolocationPermissionsHidePrompt,
-          dynamic onPermissionRequest,
-          dynamic onShowCustomView,
-          dynamic onHideCustomView,
-          dynamic onJsAlert,
-          dynamic onJsConfirm,
-          dynamic onJsPrompt,
-          void Function(
-            android_webview.WebChromeClient,
-            android_webview.ConsoleMessage,
-          )?
-          onConsoleMessage,
-        }) {
-          onConsoleMessageCallback = onConsoleMessage!;
-          return mockWebChromeClient;
-        },
+        createWebChromeClient:
+            ({
+              dynamic onProgressChanged,
+              dynamic onShowFileChooser,
+              dynamic onGeolocationPermissionsShowPrompt,
+              dynamic onGeolocationPermissionsHidePrompt,
+              dynamic onPermissionRequest,
+              dynamic onShowCustomView,
+              dynamic onHideCustomView,
+              dynamic onJsAlert,
+              dynamic onJsConfirm,
+              dynamic onJsPrompt,
+              void Function(
+                android_webview.WebChromeClient,
+                android_webview.ConsoleMessage,
+              )?
+              onConsoleMessage,
+            }) {
+              onConsoleMessageCallback = onConsoleMessage!;
+              return mockWebChromeClient;
+            },
       );
 
       final Map<String, JavaScriptLogLevel> logs =
@@ -2079,13 +2087,11 @@ void main() {
     final AndroidWebViewController controller = createControllerWithMocks(
       mockWebView: mockWebView,
       mockSettings: mockSettings,
-      setPaymentRequestEnabled: (
-        android_webview.WebSettings settings,
-        bool enabled,
-      ) async {
-        capturedSettings = settings;
-        capturedEnabled = enabled;
-      },
+      setPaymentRequestEnabled:
+          (android_webview.WebSettings settings, bool enabled) async {
+            capturedSettings = settings;
+            capturedEnabled = enabled;
+          },
     );
 
     await controller.setPaymentRequestEnabled(expectedEnabled);
@@ -2252,27 +2258,28 @@ void main() {
       instanceManager.addDartCreatedInstance(mockWebView);
 
       final AndroidWebViewController controller = createControllerWithMocks(
-        createWebChromeClient: ({
-          dynamic onProgressChanged,
-          dynamic onShowFileChooser,
-          dynamic onGeolocationPermissionsShowPrompt,
-          dynamic onGeolocationPermissionsHidePrompt,
-          dynamic onPermissionRequest,
-          void Function(
-            android_webview.WebChromeClient instance,
-            android_webview.View view,
-            android_webview.CustomViewCallback callback,
-          )?
-          onShowCustomView,
-          dynamic onHideCustomView,
-          dynamic onConsoleMessage,
-          dynamic onJsAlert,
-          dynamic onJsConfirm,
-          dynamic onJsPrompt,
-        }) {
-          onShowCustomViewCallback = onShowCustomView;
-          return mockWebChromeClient;
-        },
+        createWebChromeClient:
+            ({
+              dynamic onProgressChanged,
+              dynamic onShowFileChooser,
+              dynamic onGeolocationPermissionsShowPrompt,
+              dynamic onGeolocationPermissionsHidePrompt,
+              dynamic onPermissionRequest,
+              void Function(
+                android_webview.WebChromeClient instance,
+                android_webview.View view,
+                android_webview.CustomViewCallback callback,
+              )?
+              onShowCustomView,
+              dynamic onHideCustomView,
+              dynamic onConsoleMessage,
+              dynamic onJsAlert,
+              dynamic onJsConfirm,
+              dynamic onJsPrompt,
+            }) {
+              onShowCustomViewCallback = onShowCustomView;
+              return mockWebChromeClient;
+            },
         mockWebView: mockWebView,
       );
 
@@ -2580,7 +2587,6 @@ class TestWebViewClient extends android_webview.WebViewClient {
     super.onReceivedHttpError,
     super.onReceivedRequestError,
     super.onReceivedRequestErrorCompat,
-    super.onReceivedError,
     super.requestLoading,
     super.urlLoading,
     super.doUpdateVisitedHistory,

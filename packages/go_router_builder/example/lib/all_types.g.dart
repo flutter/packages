@@ -12,64 +12,64 @@ List<RouteBase> get $appRoutes => [$allTypesBaseRoute];
 
 RouteBase get $allTypesBaseRoute => GoRouteData.$route(
   path: '/',
-  factory: _$AllTypesBaseRoute._fromState,
+  factory: $AllTypesBaseRoute._fromState,
   routes: [
     GoRouteData.$route(
       path: 'big-int-route/:requiredBigIntField',
-      factory: _$BigIntRoute._fromState,
+      factory: $BigIntRoute._fromState,
     ),
     GoRouteData.$route(
       path: 'bool-route/:requiredBoolField',
-      factory: _$BoolRoute._fromState,
+      factory: $BoolRoute._fromState,
     ),
     GoRouteData.$route(
       path: 'date-time-route/:requiredDateTimeField',
-      factory: _$DateTimeRoute._fromState,
+      factory: $DateTimeRoute._fromState,
     ),
     GoRouteData.$route(
       path: 'double-route/:requiredDoubleField',
-      factory: _$DoubleRoute._fromState,
+      factory: $DoubleRoute._fromState,
     ),
     GoRouteData.$route(
       path: 'int-route/:requiredIntField',
-      factory: _$IntRoute._fromState,
+      factory: $IntRoute._fromState,
     ),
     GoRouteData.$route(
       path: 'num-route/:requiredNumField',
-      factory: _$NumRoute._fromState,
+      factory: $NumRoute._fromState,
     ),
     GoRouteData.$route(
       path: 'double-route/:requiredDoubleField',
-      factory: _$DoubleRoute._fromState,
+      factory: $DoubleRoute._fromState,
     ),
     GoRouteData.$route(
       path: 'enum-route/:requiredEnumField',
-      factory: _$EnumRoute._fromState,
+      factory: $EnumRoute._fromState,
     ),
     GoRouteData.$route(
       path: 'enhanced-enum-route/:requiredEnumField',
-      factory: _$EnhancedEnumRoute._fromState,
+      factory: $EnhancedEnumRoute._fromState,
     ),
     GoRouteData.$route(
       path: 'string-route/:requiredStringField',
-      factory: _$StringRoute._fromState,
+      factory: $StringRoute._fromState,
     ),
     GoRouteData.$route(
       path: 'uri-route/:requiredUriField',
-      factory: _$UriRoute._fromState,
+      factory: $UriRoute._fromState,
     ),
     GoRouteData.$route(
       path: 'iterable-route',
-      factory: _$IterableRoute._fromState,
+      factory: $IterableRoute._fromState,
     ),
     GoRouteData.$route(
       path: 'iterable-route-with-default-values',
-      factory: _$IterableRouteWithDefaultValues._fromState,
+      factory: $IterableRouteWithDefaultValues._fromState,
     ),
   ],
 );
 
-mixin _$AllTypesBaseRoute on GoRouteData {
+mixin $AllTypesBaseRoute on GoRouteData {
   static AllTypesBaseRoute _fromState(GoRouterState state) =>
       const AllTypesBaseRoute();
 
@@ -90,7 +90,7 @@ mixin _$AllTypesBaseRoute on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-mixin _$BigIntRoute on GoRouteData {
+mixin $BigIntRoute on GoRouteData {
   static BigIntRoute _fromState(GoRouterState state) => BigIntRoute(
     requiredBigIntField: BigInt.parse(
       state.pathParameters['requiredBigIntField']!,
@@ -127,7 +127,7 @@ mixin _$BigIntRoute on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-mixin _$BoolRoute on GoRouteData {
+mixin $BoolRoute on GoRouteData {
   static BoolRoute _fromState(GoRouterState state) => BoolRoute(
     requiredBoolField: _$boolConverter(
       state.pathParameters['requiredBoolField']!,
@@ -173,7 +173,7 @@ mixin _$BoolRoute on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-mixin _$DateTimeRoute on GoRouteData {
+mixin $DateTimeRoute on GoRouteData {
   static DateTimeRoute _fromState(GoRouterState state) => DateTimeRoute(
     requiredDateTimeField: DateTime.parse(
       state.pathParameters['requiredDateTimeField']!,
@@ -210,7 +210,7 @@ mixin _$DateTimeRoute on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-mixin _$DoubleRoute on GoRouteData {
+mixin $DoubleRoute on GoRouteData {
   static DoubleRoute _fromState(GoRouterState state) => DoubleRoute(
     requiredDoubleField: double.parse(
       state.pathParameters['requiredDoubleField']!,
@@ -257,7 +257,7 @@ mixin _$DoubleRoute on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-mixin _$IntRoute on GoRouteData {
+mixin $IntRoute on GoRouteData {
   static IntRoute _fromState(GoRouterState state) => IntRoute(
     requiredIntField: int.parse(state.pathParameters['requiredIntField']!),
     intField: _$convertMapValue(
@@ -301,7 +301,7 @@ mixin _$IntRoute on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-mixin _$NumRoute on GoRouteData {
+mixin $NumRoute on GoRouteData {
   static NumRoute _fromState(GoRouterState state) => NumRoute(
     requiredNumField: num.parse(state.pathParameters['requiredNumField']!),
     numField: _$convertMapValue(
@@ -345,7 +345,7 @@ mixin _$NumRoute on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-mixin _$EnumRoute on GoRouteData {
+mixin $EnumRoute on GoRouteData {
   static EnumRoute _fromState(GoRouterState state) => EnumRoute(
     requiredEnumField:
         _$PersonDetailsEnumMap._$fromName(
@@ -399,7 +399,7 @@ const _$PersonDetailsEnumMap = {
   PersonDetails.favoriteSport: 'favorite-sport',
 };
 
-mixin _$EnhancedEnumRoute on GoRouteData {
+mixin $EnhancedEnumRoute on GoRouteData {
   static EnhancedEnumRoute _fromState(GoRouterState state) => EnhancedEnumRoute(
     requiredEnumField:
         _$SportDetailsEnumMap._$fromName(
@@ -454,7 +454,7 @@ const _$SportDetailsEnumMap = {
   SportDetails.hockey: 'hockey',
 };
 
-mixin _$StringRoute on GoRouteData {
+mixin $StringRoute on GoRouteData {
   static StringRoute _fromState(GoRouterState state) => StringRoute(
     requiredStringField: state.pathParameters['requiredStringField']!,
     stringField: state.uri.queryParameters['string-field'],
@@ -489,7 +489,7 @@ mixin _$StringRoute on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-mixin _$UriRoute on GoRouteData {
+mixin $UriRoute on GoRouteData {
   static UriRoute _fromState(GoRouterState state) => UriRoute(
     requiredUriField: Uri.parse(state.pathParameters['requiredUriField']!),
     uriField: _$convertMapValue(
@@ -523,7 +523,7 @@ mixin _$UriRoute on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-mixin _$IterableRoute on GoRouteData {
+mixin $IterableRoute on GoRouteData {
   static IterableRoute _fromState(GoRouterState state) => IterableRoute(
     intIterableField:
         state.uri.queryParametersAll['int-iterable-field']
@@ -691,7 +691,7 @@ const _$CookingRecipeEnumMap = {
   CookingRecipe.tacos: 'tacos',
 };
 
-mixin _$IterableRouteWithDefaultValues on GoRouteData {
+mixin $IterableRouteWithDefaultValues on GoRouteData {
   static IterableRouteWithDefaultValues _fromState(GoRouterState state) =>
       IterableRouteWithDefaultValues(
         intIterableField:

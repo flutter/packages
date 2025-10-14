@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -95,6 +95,22 @@ gmaps.MapOptions _configurationAndStyleToGmapsOptions(
     options.gestureHandling = WebGestureHandling.auto.name;
   }
 
+  if (configuration.webCameraControlEnabled != null) {
+    options.cameraControl = configuration.webCameraControlEnabled;
+  }
+
+  if (configuration.webCameraControlPosition != null) {
+    final gmaps.ControlPosition? controlPosition = _toControlPosition(
+      configuration.webCameraControlPosition!,
+    );
+
+    if (controlPosition != null) {
+      options.cameraControlOptions = gmaps.CameraControlOptions(
+        position: controlPosition,
+      );
+    }
+  }
+
   if (configuration.fortyFiveDegreeImageryEnabled != null) {
     options.rotateControl = configuration.fortyFiveDegreeImageryEnabled;
   }
@@ -105,8 +121,10 @@ gmaps.MapOptions _configurationAndStyleToGmapsOptions(
   options.fullscreenControl = false;
   options.streetViewControl = false;
 
-  // See updateMapConfiguration for why this is not using configuration.style.
-  options.styles = styles;
+  // If using cloud map, do not set options.styles
+  if (configuration.cloudMapId == null) {
+    options.styles = styles;
+  }
 
   options.mapId = configuration.cloudMapId;
 
@@ -786,4 +804,60 @@ gmaps.LatLng _pixelToLatLng(gmaps.Map map, int x, int y) {
   );
 
   return projection.fromPointToLatLng(point)!;
+}
+
+/// Converts a [WebCameraControlPosition] to [gmaps.ControlPosition].
+gmaps.ControlPosition? _toControlPosition(
+  WebCameraControlPosition webCameraControlPosition,
+) {
+  switch (webCameraControlPosition) {
+    case WebCameraControlPosition.blockEndInlineCenter:
+      return gmaps.ControlPosition.BLOCK_END_INLINE_CENTER;
+    case WebCameraControlPosition.blockEndInlineEnd:
+      return gmaps.ControlPosition.BLOCK_END_INLINE_END;
+    case WebCameraControlPosition.blockEndInlineStart:
+      return gmaps.ControlPosition.BLOCK_END_INLINE_START;
+    case WebCameraControlPosition.blockStartInlineCenter:
+      return gmaps.ControlPosition.BLOCK_START_INLINE_CENTER;
+    case WebCameraControlPosition.blockStartInlineEnd:
+      return gmaps.ControlPosition.BLOCK_START_INLINE_END;
+    case WebCameraControlPosition.blockStartInlineStart:
+      return gmaps.ControlPosition.BLOCK_START_INLINE_START;
+    case WebCameraControlPosition.bottomCenter:
+      return gmaps.ControlPosition.BOTTOM_CENTER;
+    case WebCameraControlPosition.bottomLeft:
+      return gmaps.ControlPosition.BOTTOM_LEFT;
+    case WebCameraControlPosition.bottomRight:
+      return gmaps.ControlPosition.BOTTOM_RIGHT;
+    case WebCameraControlPosition.inlineEndBlockCenter:
+      return gmaps.ControlPosition.INLINE_END_BLOCK_CENTER;
+    case WebCameraControlPosition.inlineEndBlockEnd:
+      return gmaps.ControlPosition.INLINE_END_BLOCK_END;
+    case WebCameraControlPosition.inlineEndBlockStart:
+      return gmaps.ControlPosition.INLINE_END_BLOCK_START;
+    case WebCameraControlPosition.inlineStartBlockCenter:
+      return gmaps.ControlPosition.INLINE_START_BLOCK_CENTER;
+    case WebCameraControlPosition.inlineStartBlockEnd:
+      return gmaps.ControlPosition.INLINE_START_BLOCK_END;
+    case WebCameraControlPosition.inlineStartBlockStart:
+      return gmaps.ControlPosition.INLINE_START_BLOCK_START;
+    case WebCameraControlPosition.leftBottom:
+      return gmaps.ControlPosition.LEFT_BOTTOM;
+    case WebCameraControlPosition.leftCenter:
+      return gmaps.ControlPosition.LEFT_CENTER;
+    case WebCameraControlPosition.leftTop:
+      return gmaps.ControlPosition.LEFT_TOP;
+    case WebCameraControlPosition.rightBottom:
+      return gmaps.ControlPosition.RIGHT_BOTTOM;
+    case WebCameraControlPosition.rightCenter:
+      return gmaps.ControlPosition.RIGHT_CENTER;
+    case WebCameraControlPosition.rightTop:
+      return gmaps.ControlPosition.RIGHT_TOP;
+    case WebCameraControlPosition.topCenter:
+      return gmaps.ControlPosition.TOP_CENTER;
+    case WebCameraControlPosition.topLeft:
+      return gmaps.ControlPosition.TOP_LEFT;
+    case WebCameraControlPosition.topRight:
+      return gmaps.ControlPosition.TOP_RIGHT;
+  }
 }

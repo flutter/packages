@@ -1,6 +1,34 @@
-## 6.3.19
+## 6.3.25
 
 * Bumps androidx.core:core from 1.13.1 to 1.17.0.
+
+## 6.3.24
+
+* Resolves Gradle 9 deprecations. 
+
+## 6.3.23
+
+* Updates Java compatibility version to 17.
+
+## 6.3.22
+
+* Adds support for `externalNonBrowserApplication` on API 30+.
+
+## 6.3.21
+
+* Updates minimum supported SDK version to Flutter 3.35.
+* Removes obsolete code related to supporting SDK <24.
+
+## 6.3.20
+
+* Restore SDK 21-23 support, as the previous change was intended
+  to require Flutter 3.35, but didn't.
+
+## 6.3.19
+
+* **Retracted** due to not including the Flutter min SDK change.
+* Updates minimum supported SDK version to Flutter 3.35.
+* Removes obsolete code related to supporting SDK <24.
 
 ## 6.3.18
 

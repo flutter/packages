@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -76,12 +76,9 @@ class SkProductResponseWrapper {
     SKProductsResponseMessage msg,
   ) {
     return SkProductResponseWrapper(
-      products:
-          msg.products!
-              .map(
-                (SKProductMessage e) => SKProductWrapper.convertFromPigeon(e),
-              )
-              .toList(),
+      products: msg.products!
+          .map((SKProductMessage e) => SKProductWrapper.convertFromPigeon(e))
+          .toList(),
       invalidProductIdentifiers: msg.invalidProductIdentifiers ?? <String>[],
     );
   }
@@ -92,10 +89,9 @@ class SkProductResponseWrapper {
     SkProductResponseWrapper wrapper,
   ) {
     return SKProductsResponseMessage(
-      products:
-          wrapper.products
-              .map((SKProductWrapper e) => SKProductWrapper.convertToPigeon(e))
-              .toList(),
+      products: wrapper.products
+          .map((SKProductWrapper e) => SKProductWrapper.convertToPigeon(e))
+          .toList(),
       invalidProductIdentifiers: wrapper.invalidProductIdentifiers,
     );
   }
@@ -388,7 +384,7 @@ class SKProductDiscountWrapper {
   /// A string used to uniquely identify a discount offer for a product.
   ///
   /// You set up offers and their identifiers in App Store Connect.
-  @JsonKey(defaultValue: null)
+  @JsonKey()
   final String? identifier;
 
   /// Values representing the types of discount offers an app can present.
@@ -539,7 +535,7 @@ class SKProductWrapper {
   /// and their units and duration do not have to be matched.
   final SKProductDiscountWrapper? introductoryPrice;
 
-  /// An array of subscription offers available for the auto-renewable subscription (available on iOS 12.2 and higher).
+  /// An array of subscription offers available for the auto-renewable subscription.
   ///
   /// This property lists all promotional offers set up in App Store Connect. If
   /// no promotional offers have been set up, this field returns an empty list.
@@ -591,27 +587,22 @@ class SKProductWrapper {
       priceLocale: SKPriceLocaleWrapper.convertFromPigeon(msg.priceLocale),
       price: msg.price,
       subscriptionGroupIdentifier: msg.subscriptionGroupIdentifier,
-      subscriptionPeriod:
-          msg.subscriptionPeriod != null
-              ? SKProductSubscriptionPeriodWrapper.convertFromPigeon(
-                msg.subscriptionPeriod!,
-              )
-              : null,
-      introductoryPrice:
-          msg.introductoryPrice != null
-              ? SKProductDiscountWrapper.convertFromPigeon(
-                msg.introductoryPrice!,
-              )
-              : null,
-      discounts:
-          msg.discounts != null
-              ? msg.discounts!
-                  .map(
-                    (SKProductDiscountMessage e) =>
-                        SKProductDiscountWrapper.convertFromPigeon(e),
-                  )
-                  .toList()
-              : <SKProductDiscountWrapper>[],
+      subscriptionPeriod: msg.subscriptionPeriod != null
+          ? SKProductSubscriptionPeriodWrapper.convertFromPigeon(
+              msg.subscriptionPeriod!,
+            )
+          : null,
+      introductoryPrice: msg.introductoryPrice != null
+          ? SKProductDiscountWrapper.convertFromPigeon(msg.introductoryPrice!)
+          : null,
+      discounts: msg.discounts != null
+          ? msg.discounts!
+                .map(
+                  (SKProductDiscountMessage e) =>
+                      SKProductDiscountWrapper.convertFromPigeon(e),
+                )
+                .toList()
+          : <SKProductDiscountWrapper>[],
     );
   }
 
@@ -624,25 +615,20 @@ class SKProductWrapper {
       priceLocale: SKPriceLocaleWrapper.convertToPigeon(wrapper.priceLocale),
       price: wrapper.price,
       subscriptionGroupIdentifier: wrapper.subscriptionGroupIdentifier,
-      subscriptionPeriod:
-          wrapper.subscriptionPeriod != null
-              ? SKProductSubscriptionPeriodWrapper.convertToPigeon(
-                wrapper.subscriptionPeriod!,
-              )
-              : null,
-      introductoryPrice:
-          wrapper.introductoryPrice != null
-              ? SKProductDiscountWrapper.convertToPigeon(
-                wrapper.introductoryPrice!,
-              )
-              : null,
-      discounts:
-          wrapper.discounts
-              .map(
-                (SKProductDiscountWrapper e) =>
-                    SKProductDiscountWrapper.convertToPigeon(e),
-              )
-              .toList(),
+      subscriptionPeriod: wrapper.subscriptionPeriod != null
+          ? SKProductSubscriptionPeriodWrapper.convertToPigeon(
+              wrapper.subscriptionPeriod!,
+            )
+          : null,
+      introductoryPrice: wrapper.introductoryPrice != null
+          ? SKProductDiscountWrapper.convertToPigeon(wrapper.introductoryPrice!)
+          : null,
+      discounts: wrapper.discounts
+          .map(
+            (SKProductDiscountWrapper e) =>
+                SKProductDiscountWrapper.convertToPigeon(e),
+          )
+          .toList(),
     );
   }
 }
@@ -650,9 +636,8 @@ class SKProductWrapper {
 /// Object that indicates the locale of the price
 ///
 /// It is a thin wrapper of [NSLocale](https://developer.apple.com/documentation/foundation/nslocale?language=objc).
-// TODO(cyanglaz): NSLocale is a complex object, want to see the actual need of getting this expanded.
-//                 Matching android to only get the currencySymbol for now.
-//                 https://github.com/flutter/flutter/issues/26610
+// This intentionally only exposes fields that there has been a demonstrated
+// need for; see discussion in https://github.com/flutter/plugins/pull/3897.
 @JsonSerializable()
 @immutable
 class SKPriceLocaleWrapper {

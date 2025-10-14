@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -25,7 +25,7 @@ class CaseSensitivityApp extends StatelessWidget {
 }
 
 @TypedGoRoute<CaseSensitiveRoute>(path: '/case-sensitive')
-class CaseSensitiveRoute extends GoRouteData with _$CaseSensitiveRoute {
+class CaseSensitiveRoute extends GoRouteData with $CaseSensitiveRoute {
   const CaseSensitiveRoute();
 
   @override
@@ -37,7 +37,7 @@ class CaseSensitiveRoute extends GoRouteData with _$CaseSensitiveRoute {
   path: '/not-case-sensitive',
   caseSensitive: false,
 )
-class NotCaseSensitiveRoute extends GoRouteData with _$NotCaseSensitiveRoute {
+class NotCaseSensitiveRoute extends GoRouteData with $NotCaseSensitiveRoute {
   const NotCaseSensitiveRoute();
 
   @override

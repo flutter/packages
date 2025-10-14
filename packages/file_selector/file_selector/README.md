@@ -38,6 +38,7 @@ Please also take a look at our [example][example] app.
 const XTypeGroup typeGroup = XTypeGroup(
   label: 'images',
   extensions: <String>['jpg', 'png'],
+  uniformTypeIdentifiers: <String>['public.jpeg', 'public.png'],
 );
 final XFile? file = await openFile(
   acceptedTypeGroups: <XTypeGroup>[typeGroup],
@@ -51,10 +52,12 @@ final XFile? file = await openFile(
 const XTypeGroup jpgsTypeGroup = XTypeGroup(
   label: 'JPEGs',
   extensions: <String>['jpg', 'jpeg'],
+  uniformTypeIdentifiers: <String>['public.jpeg'],
 );
 const XTypeGroup pngTypeGroup = XTypeGroup(
   label: 'PNGs',
   extensions: <String>['png'],
+  uniformTypeIdentifiers: <String>['public.png'],
 );
 final List<XFile> files = await openFiles(
   acceptedTypeGroups: <XTypeGroup>[jpgsTypeGroup, pngTypeGroup],

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -610,9 +610,7 @@ class LocalAuthPluginTests: XCTestCase {
       viewProvider: viewProvider)
 
     stubAuthContext.expectBiometrics = true
-    if #available(iOS 11, macOS 10.15, *) {
-      stubAuthContext.biometryType = .faceID
-    }
+    stubAuthContext.biometryType = .faceID
 
     let result = try plugin.getEnrolledBiometrics()
     XCTAssertEqual(result.count, 1)

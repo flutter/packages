@@ -1,3 +1,20 @@
+## 1.0.56
+
+* Updates Java compatibility version to 17 and minimum supported SDK version to Flutter 3.35/Dart 3.9.
+
+## 1.0.55
+
+* Resolves Gradle 9 deprecations.
+
+## 1.0.54
+
+* Bumps `androidx.fragment:fragment` from `1.8.8` to `1.8.9`.
+
+## 1.0.53
+
+* Removes obsolete code related to supporting SDK <24.
+* Updates minimum supported SDK version to Flutter 3.35.
+
 ## 1.0.52
 
 * Bumps com.android.tools.build:gradle to 8.12.1.

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -310,6 +310,46 @@ void main() {
         expect(events[4], isA<CameraIdleEvent>());
       });
 
+      testWidgets('stops listening to map events once disposed', (
+        WidgetTester tester,
+      ) async {
+        controller =
+            createController()
+              ..debugSetOverrides(
+                createMap: (_, __) => map,
+                circles: circles,
+                heatmaps: heatmaps,
+                markers: markers,
+                polygons: polygons,
+                polylines: polylines,
+                groundOverlays: groundOverlays,
+              )
+              ..init();
+
+        controller.dispose();
+
+        // Trigger events on the map, and verify they've been broadcast to the stream
+        final Stream<MapEvent<Object?>> capturedEvents = stream.stream.take(5);
+
+        gmaps.event.trigger(
+          map,
+          'click',
+          gmaps.MapMouseEvent()..latLng = gmaps.LatLng(0, 0),
+        );
+        gmaps.event.trigger(
+          map,
+          'rightclick',
+          gmaps.MapMouseEvent()..latLng = gmaps.LatLng(0, 0),
+        );
+        // The following line causes 2 events
+        gmaps.event.trigger(map, 'bounds_changed');
+        gmaps.event.trigger(map, 'idle');
+
+        final List<MapEvent<Object?>> events = await capturedEvents.toList();
+
+        expect(events, isEmpty);
+      });
+
       testWidgets("binds geometry controllers to map's", (
         WidgetTester tester,
       ) async {
@@ -522,6 +562,57 @@ void main() {
 
           expect(capturedOptions, isNotNull);
           expect(capturedOptions!.gestureHandling, 'greedy');
+        });
+
+        testWidgets('translates webCameraControlEnabled option', (
+          WidgetTester tester,
+        ) async {
+          gmaps.MapOptions? capturedOptions;
+          controller = createController(
+            mapConfiguration: const MapConfiguration(
+              zoomGesturesEnabled: false,
+              webCameraControlEnabled: true,
+            ),
+          );
+          controller.debugSetOverrides(
+            createMap: (_, gmaps.MapOptions options) {
+              capturedOptions = options;
+              return map;
+            },
+          );
+
+          controller.init();
+
+          expect(capturedOptions, isNotNull);
+          expect(capturedOptions!.cameraControl, isTrue);
+        });
+
+        testWidgets('translates webCameraControlPosition option', (
+          WidgetTester tester,
+        ) async {
+          gmaps.MapOptions? capturedOptions;
+          controller = createController(
+            mapConfiguration: const MapConfiguration(
+              zoomGesturesEnabled: false,
+              webCameraControlEnabled: true,
+              webCameraControlPosition: WebCameraControlPosition.bottomLeft,
+            ),
+          );
+          controller.debugSetOverrides(
+            createMap: (_, gmaps.MapOptions options) {
+              capturedOptions = options;
+              return map;
+            },
+          );
+
+          controller.init();
+
+          expect(capturedOptions, isNotNull);
+          expect(capturedOptions!.cameraControl, isTrue);
+          expect(
+            capturedOptions!.cameraControlOptions?.position,
+            gmaps.ControlPosition.BOTTOM_LEFT,
+          );
         });
 
         testWidgets('translates cameraTargetBounds option', (

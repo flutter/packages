@@ -1,3 +1,20 @@
+## 0.10.10+10
+
+* Updates Java compatibility version to 17.
+
+## 0.10.10+9
+
+* Resolves Gradle 9 deprecations.
+
+## 0.10.10+8
+
+* Restores compileSdk version to flutter.compileSdkVersion.
+
+## 0.10.10+7
+
+* Updates minimum supported SDK version to Flutter 3.35.
+* Removes code for supporting API 21-23.
+
 ## 0.10.10+6
 
 * Bumps com.android.tools.build:gradle to 8.12.1.
