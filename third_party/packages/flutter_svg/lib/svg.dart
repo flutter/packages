@@ -10,7 +10,7 @@ import 'src/loaders.dart';
 import 'src/utilities/file.dart';
 
 export 'package:vector_graphics/vector_graphics.dart'
-    show BytesLoader, PictureInfo, VectorGraphicUtilities, vg;
+    show AssetBytesLoader, BytesLoader, PictureInfo, VectorGraphicUtilities, vg;
 
 export 'src/cache.dart';
 export 'src/default_theme.dart';
@@ -443,6 +443,36 @@ class SvgPicture extends StatelessWidget {
          string,
          theme: theme,
          colorMapper: colorMapper,
+       ),
+       colorFilter = colorFilter ?? _getColorFilter(color, colorBlendMode);
+
+  /// TODO: Add doc comment.
+  SvgPicture.precompiled(
+    String assetName, {
+    super.key,
+    this.matchTextDirection = false,
+    AssetBundle? bundle,
+    String? package,
+    this.width,
+    this.height,
+    this.fit = BoxFit.contain,
+    this.alignment = Alignment.center,
+    this.allowDrawingOutsideViewBox = false,
+    this.placeholderBuilder,
+    this.semanticsLabel,
+    this.excludeFromSemantics = false,
+    this.clipBehavior = Clip.hardEdge,
+    this.errorBuilder,
+    ui.ColorFilter? colorFilter,
+    @Deprecated('Use colorFilter instead.') ui.Color? color,
+    @Deprecated('Use colorFilter instead.')
+    ui.BlendMode colorBlendMode = ui.BlendMode.srcIn,
+    @Deprecated('This no longer does anything.') bool cacheColorFilter = false,
+    this.renderingStrategy = RenderingStrategy.picture,
+  }) : bytesLoader = AssetBytesLoader(
+         assetName,
+         packageName: package,
+         assetBundle: bundle,
        ),
        colorFilter = colorFilter ?? _getColorFilter(color, colorBlendMode);
 
