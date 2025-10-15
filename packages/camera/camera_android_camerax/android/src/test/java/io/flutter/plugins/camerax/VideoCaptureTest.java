@@ -1,107 +1,64 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 package io.flutter.plugins.camerax;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-import android.view.Surface;
-import androidx.camera.video.Recorder;
 import androidx.camera.video.VideoCapture;
-import io.flutter.plugin.common.BinaryMessenger;
-import java.util.Objects;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
+import androidx.camera.video.VideoOutput;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
+import org.mockito.stubbing.Answer;
 import org.robolectric.RobolectricTestRunner;
 
 @RunWith(RobolectricTestRunner.class)
 public class VideoCaptureTest {
-  @Rule public MockitoRule mockitoRule = MockitoJUnit.rule();
+  @SuppressWarnings({"unchecked", "rawtypes"})
+  @Test
+  public void withOutput_createsVideoCaptureWithVideoOutput() {
+    final PigeonApiVideoCapture api = new TestProxyApiRegistrar().getPigeonApiVideoCapture();
 
-  @Mock public BinaryMessenger mockBinaryMessenger;
-  @Mock public Recorder mockRecorder;
-  @Mock public VideoCaptureFlutterApiImpl mockVideoCaptureFlutterApi;
-  @Mock public VideoCapture<Recorder> mockVideoCapture;
+    final VideoCapture<VideoOutput> instance = mock(VideoCapture.class);
+    final VideoOutput videoOutput = mock(VideoOutput.class);
 
-  InstanceManager testInstanceManager;
+    try (MockedStatic<VideoCapture> mockedCamera2CameraInfo =
+        Mockito.mockStatic(VideoCapture.class)) {
+      mockedCamera2CameraInfo
+          .when(() -> VideoCapture.withOutput(videoOutput))
+          .thenAnswer((Answer<VideoCapture>) invocation -> instance);
 
-  @Before
-  public void setUp() {
-    testInstanceManager = spy(InstanceManager.create(identifier -> {}));
+      assertEquals(api.withOutput(videoOutput), instance);
+    }
   }
 
-  @After
-  public void tearDown() {
-    testInstanceManager.stopFinalizationListener();
-  }
-
+  @SuppressWarnings("unchecked")
   @Test
   public void getOutput_returnsAssociatedRecorder() {
-    final Long recorderId = 5L;
-    final Long videoCaptureId = 6L;
-    VideoCapture<Recorder> videoCapture = VideoCapture.withOutput(mockRecorder);
+    final PigeonApiVideoCapture api = new TestProxyApiRegistrar().getPigeonApiVideoCapture();
 
-    testInstanceManager.addDartCreatedInstance(mockRecorder, recorderId);
-    testInstanceManager.addDartCreatedInstance(videoCapture, videoCaptureId);
+    final VideoCapture<VideoOutput> instance = mock(VideoCapture.class);
+    final VideoOutput value = mock(VideoOutput.class);
+    when(instance.getOutput()).thenReturn(value);
 
-    VideoCaptureHostApiImpl videoCaptureHostApi =
-        new VideoCaptureHostApiImpl(mockBinaryMessenger, testInstanceManager);
-    assertEquals(videoCaptureHostApi.getOutput(videoCaptureId), recorderId);
-    testInstanceManager.remove(recorderId);
-    testInstanceManager.remove(videoCaptureId);
+    assertEquals(value, api.getOutput(instance));
   }
 
-  @Test
   @SuppressWarnings("unchecked")
-  public void withOutput_returnsNewVideoCaptureWithAssociatedRecorder() {
-    final Long recorderId = 5L;
-    testInstanceManager.addDartCreatedInstance(mockRecorder, recorderId);
-
-    VideoCaptureHostApiImpl videoCaptureHostApi =
-        new VideoCaptureHostApiImpl(mockBinaryMessenger, testInstanceManager);
-    VideoCaptureHostApiImpl spyVideoCaptureApi = spy(videoCaptureHostApi);
-    final Long videoCaptureId = videoCaptureHostApi.withOutput(recorderId);
-    VideoCapture<Recorder> videoCapture = testInstanceManager.getInstance(videoCaptureId);
-    assertEquals(videoCapture.getOutput(), mockRecorder);
-
-    testInstanceManager.remove(recorderId);
-    testInstanceManager.remove(videoCaptureId);
-  }
-
   @Test
   public void setTargetRotation_makesCallToSetTargetRotation() {
-    final VideoCaptureHostApiImpl hostApi =
-        new VideoCaptureHostApiImpl(mockBinaryMessenger, testInstanceManager);
-    final long instanceIdentifier = 62;
-    final int targetRotation = Surface.ROTATION_270;
+    final PigeonApiVideoCapture api = new TestProxyApiRegistrar().getPigeonApiVideoCapture();
 
-    testInstanceManager.addDartCreatedInstance(mockVideoCapture, instanceIdentifier);
+    final VideoCapture<VideoOutput> instance = mock(VideoCapture.class);
+    final long rotation = 0;
+    api.setTargetRotation(instance, rotation);
 
-    hostApi.setTargetRotation(instanceIdentifier, Long.valueOf(targetRotation));
-
-    verify(mockVideoCapture).setTargetRotation(targetRotation);
-  }
-
-  @Test
-  public void flutterApiCreateTest() {
-    final VideoCaptureFlutterApiImpl spyVideoCaptureFlutterApi =
-        spy(new VideoCaptureFlutterApiImpl(mockBinaryMessenger, testInstanceManager));
-    spyVideoCaptureFlutterApi.create(mockVideoCapture, reply -> {});
-
-    final long identifier =
-        Objects.requireNonNull(
-            testInstanceManager.getIdentifierForStrongReference(mockVideoCapture));
-    verify(spyVideoCaptureFlutterApi).create(eq(identifier), any());
+    verify(instance).setTargetRotation((int) rotation);
   }
 }

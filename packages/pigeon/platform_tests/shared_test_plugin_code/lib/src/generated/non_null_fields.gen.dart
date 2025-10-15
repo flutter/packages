@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -19,8 +19,11 @@ PlatformException _createConnectionError(String channelName) {
   );
 }
 
-List<Object?> wrapResponse(
-    {Object? result, PlatformException? error, bool empty = false}) {
+List<Object?> wrapResponse({
+  Object? result,
+  PlatformException? error,
+  bool empty = false,
+}) {
   if (empty) {
     return <Object?>[];
   }
@@ -33,35 +36,30 @@ List<Object?> wrapResponse(
 bool _deepEquals(Object? a, Object? b) {
   if (a is List && b is List) {
     return a.length == b.length &&
-        a.indexed
-            .every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
+        a.indexed.every(
+          ((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]),
+        );
   }
   if (a is Map && b is Map) {
-    final Iterable<Object?> keys = (a as Map<Object?, Object?>).keys;
     return a.length == b.length &&
-        keys.every((Object? key) =>
-            (b as Map<Object?, Object?>).containsKey(key) &&
-            _deepEquals(a[key], b[key]));
+        a.entries.every(
+          (MapEntry<Object?, Object?> entry) =>
+              (b as Map<Object?, Object?>).containsKey(entry.key) &&
+              _deepEquals(entry.value, b[entry.key]),
+        );
   }
   return a == b;
 }
 
-enum ReplyType {
-  success,
-  error;
-}
+enum ReplyType { success, error }
 
 class NonNullFieldSearchRequest {
-  NonNullFieldSearchRequest({
-    required this.query,
-  });
+  NonNullFieldSearchRequest({required this.query});
 
   String query;
 
   List<Object?> _toList() {
-    return <Object?>[
-      query,
-    ];
+    return <Object?>[query];
   }
 
   Object encode() {
@@ -70,9 +68,7 @@ class NonNullFieldSearchRequest {
 
   static NonNullFieldSearchRequest decode(Object result) {
     result as List<Object?>;
-    return NonNullFieldSearchRequest(
-      query: result[0]! as String,
-    );
+    return NonNullFieldSearchRequest(query: result[0]! as String);
   }
 
   @override
@@ -85,7 +81,7 @@ class NonNullFieldSearchRequest {
     if (identical(this, other)) {
       return true;
     }
-    return query == other.query;
+    return _deepEquals(encode(), other.encode());
   }
 
   @override
@@ -94,20 +90,14 @@ class NonNullFieldSearchRequest {
 }
 
 class ExtraData {
-  ExtraData({
-    required this.detailA,
-    required this.detailB,
-  });
+  ExtraData({required this.detailA, required this.detailB});
 
   String detailA;
 
   String detailB;
 
   List<Object?> _toList() {
-    return <Object?>[
-      detailA,
-      detailB,
-    ];
+    return <Object?>[detailA, detailB];
   }
 
   Object encode() {
@@ -131,7 +121,7 @@ class ExtraData {
     if (identical(this, other)) {
       return true;
     }
-    return detailA == other.detailA && detailB == other.detailB;
+    return _deepEquals(encode(), other.encode());
   }
 
   @override
@@ -159,13 +149,7 @@ class NonNullFieldSearchReply {
   ReplyType type;
 
   List<Object?> _toList() {
-    return <Object?>[
-      result,
-      error,
-      indices,
-      extraData,
-      type,
-    ];
+    return <Object?>[result, error, indices, extraData, type];
   }
 
   Object encode() {
@@ -192,11 +176,7 @@ class NonNullFieldSearchReply {
     if (identical(this, other)) {
       return true;
     }
-    return result == other.result &&
-        error == other.error &&
-        _deepEquals(indices, other.indices) &&
-        extraData == other.extraData &&
-        type == other.type;
+    return _deepEquals(encode(), other.encode());
   }
 
   @override
@@ -253,9 +233,10 @@ class NonNullFieldHostApi {
   NonNullFieldHostApi({
     BinaryMessenger? binaryMessenger,
     String messageChannelSuffix = '',
-  })  : pigeonVar_binaryMessenger = binaryMessenger,
-        pigeonVar_messageChannelSuffix =
-            messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+  }) : pigeonVar_binaryMessenger = binaryMessenger,
+       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+           ? '.$messageChannelSuffix'
+           : '';
 
   final BinaryMessenger? pigeonVar_binaryMessenger;
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -263,17 +244,19 @@ class NonNullFieldHostApi {
   final String pigeonVar_messageChannelSuffix;
 
   Future<NonNullFieldSearchReply> search(
-      NonNullFieldSearchRequest nested) async {
+    NonNullFieldSearchRequest nested,
+  ) async {
     final String pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NonNullFieldHostApi.search$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[nested],
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[nested]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -305,26 +288,31 @@ abstract class NonNullFieldFlutterApi {
     BinaryMessenger? binaryMessenger,
     String messageChannelSuffix = '',
   }) {
-    messageChannelSuffix =
-        messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+    messageChannelSuffix = messageChannelSuffix.isNotEmpty
+        ? '.$messageChannelSuffix'
+        : '';
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.NonNullFieldFlutterApi.search$messageChannelSuffix',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.pigeon_integration_tests.NonNullFieldFlutterApi.search$messageChannelSuffix',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.pigeon_integration_tests.NonNullFieldFlutterApi.search was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.pigeon_integration_tests.NonNullFieldFlutterApi.search was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final NonNullFieldSearchRequest? arg_request =
               (args[0] as NonNullFieldSearchRequest?);
-          assert(arg_request != null,
-              'Argument for dev.flutter.pigeon.pigeon_integration_tests.NonNullFieldFlutterApi.search was null, expected non-null NonNullFieldSearchRequest.');
+          assert(
+            arg_request != null,
+            'Argument for dev.flutter.pigeon.pigeon_integration_tests.NonNullFieldFlutterApi.search was null, expected non-null NonNullFieldSearchRequest.',
+          );
           try {
             final NonNullFieldSearchReply output = api.search(arg_request!);
             return wrapResponse(result: output);
@@ -332,7 +320,8 @@ abstract class NonNullFieldFlutterApi {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }

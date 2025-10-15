@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -16,11 +16,18 @@ import 'interactive_media_ads_proxy.dart';
 class AndroidAdsManager extends PlatformAdsManager {
   /// Constructs an [AndroidAdsManager].
   @internal
-  AndroidAdsManager(
-    ima.AdsManager manager, {
-    InteractiveMediaAdsProxy? proxy,
-  })  : _manager = manager,
-        _proxy = proxy ?? const InteractiveMediaAdsProxy();
+  AndroidAdsManager(ima.AdsManager manager, {InteractiveMediaAdsProxy? proxy})
+    : _manager = manager,
+      _proxy = proxy ?? const InteractiveMediaAdsProxy(),
+      super(
+        adCuePoints: List<Duration>.unmodifiable(
+          manager.adCuePoints.map((double seconds) {
+            return Duration(
+              milliseconds: (seconds * Duration.millisecondsPerSecond).round(),
+            );
+          }),
+        ),
+      );
 
   final ima.AdsManager _manager;
   final InteractiveMediaAdsProxy _proxy;
@@ -86,10 +93,11 @@ class AndroidAdsManager extends PlatformAdsManager {
       proxy.newAdEventListener(
         onAdEvent: (_, ima.AdEvent event) {
           weakThis.target?._managerDelegate?.params.onAdEvent?.call(
-            AdEvent(
+            PlatformAdEvent(
               type: toInterfaceEventType(event.type),
               adData:
                   event.adData?.cast<String, String>() ?? <String, String>{},
+              ad: event.ad != null ? _asPlatformAd(event.ad!) : null,
             ),
           );
         },
@@ -112,4 +120,99 @@ class AndroidAdsManager extends PlatformAdsManager {
       ),
     );
   }
+}
+
+PlatformAd _asPlatformAd(ima.Ad ad) {
+  return PlatformAd(
+    adId: ad.adId,
+    adPodInfo: _asPlatformAdInfo(ad.adPodInfo),
+    adSystem: ad.adSystem,
+    wrapperCreativeIds: ad.adWrapperCreativeIds,
+    wrapperIds: ad.adWrapperIds,
+    wrapperSystems: ad.adWrapperSystems,
+    advertiserName: ad.advertiserName,
+    companionAds: List<PlatformCompanionAd>.unmodifiable(
+      ad.companionAds.map(_asPlatformCompanionAd),
+    ),
+    contentType: ad.contentType,
+    creativeAdId: ad.creativeAdId,
+    creativeId: ad.creativeId,
+    dealId: ad.dealId,
+    description: ad.description,
+    duration: ad.duration == -1
+        ? null
+        : Duration(
+            milliseconds: (ad.duration * Duration.millisecondsPerSecond)
+                .round(),
+          ),
+    height: ad.height,
+    skipTimeOffset: ad.skipTimeOffset == -1
+        ? null
+        : Duration(
+            milliseconds: (ad.skipTimeOffset * Duration.millisecondsPerSecond)
+                .round(),
+          ),
+    surveyUrl: ad.surveyUrl,
+    title: ad.title,
+    traffickingParameters: ad.traffickingParameters,
+    uiElements: ad.uiElements
+        .map((ima.UiElement element) {
+          return switch (element) {
+            ima.UiElement.adAttribution => AdUIElement.adAttribution,
+            ima.UiElement.countdown => AdUIElement.countdown,
+            ima.UiElement.unknown => null,
+          };
+        })
+        .whereType<AdUIElement>()
+        .toSet(),
+    universalAdIds: ad.universalAdIds.map(_asPlatformUniversalAdId).toList(),
+    vastMediaBitrate: ad.vastMediaBitrate,
+    vastMediaHeight: ad.vastMediaHeight,
+    vastMediaWidth: ad.vastMediaWidth,
+    width: ad.width,
+    isLinear: ad.isLinear,
+    isSkippable: ad.isSkippable,
+  );
+}
+
+PlatformAdPodInfo _asPlatformAdInfo(ima.AdPodInfo adPodInfo) {
+  return PlatformAdPodInfo(
+    adPosition: adPodInfo.adPosition,
+    maxDuration: adPodInfo.maxDuration == -1
+        ? null
+        : Duration(
+            milliseconds:
+                (adPodInfo.maxDuration * Duration.millisecondsPerSecond)
+                    .round(),
+          ),
+    podIndex: adPodInfo.podIndex,
+    timeOffset: Duration(
+      milliseconds: (adPodInfo.timeOffset * Duration.millisecondsPerSecond)
+          .round(),
+    ),
+    totalAds: adPodInfo.totalAds,
+    isBumper: adPodInfo.isBumper,
+  );
+}
+
+PlatformCompanionAd _asPlatformCompanionAd(ima.CompanionAd ad) {
+  return PlatformCompanionAd(
+    apiFramework: ad.apiFramework,
+    height: ad.height == 0 ? null : ad.height,
+    resourceValue: ad.resourceValue,
+    width: ad.width == 0 ? null : ad.width,
+  );
+}
+
+PlatformUniversalAdId _asPlatformUniversalAdId(
+  ima.UniversalAdId universalAdId,
+) {
+  return PlatformUniversalAdId(
+    adIdValue: universalAdId.adIdValue == 'unknown'
+        ? null
+        : universalAdId.adIdValue,
+    adIdRegistry: universalAdId.adIdRegistry == 'unknown'
+        ? null
+        : universalAdId.adIdRegistry,
+  );
 }

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -8,11 +8,7 @@ import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 
-enum PersonDetails {
-  hobbies,
-  favoriteFood,
-  favoriteSport,
-}
+enum PersonDetails { hobbies, favoriteFood, favoriteSport }
 
 enum SportDetails {
   volleyball(
@@ -38,8 +34,7 @@ enum SportDetails {
     playerPerTeam: 6,
     accessory: 'Hockey sticks',
     hasNet: true,
-  ),
-  ;
+  );
 
   const SportDetails({
     required this.accessory,
@@ -55,11 +50,7 @@ enum SportDetails {
 }
 
 /// An enum used only in iterables.
-enum CookingRecipe {
-  burger,
-  pizza,
-  tacos,
-}
+enum CookingRecipe { burger, pizza, tacos }
 
 /// sample Person class
 class Person {
@@ -85,9 +76,9 @@ class Family {
   final List<Person> people;
 
   Person person(int pid) => people.singleWhere(
-        (Person p) => p.id == pid,
-        orElse: () => throw Exception('unknown person $pid for family $id'),
-      );
+    (Person p) => p.id == pid,
+    orElse: () => throw Exception('unknown person $pid for family $id'),
+  );
 }
 
 final List<Family> familyData = <Family>[
@@ -95,11 +86,16 @@ final List<Family> familyData = <Family>[
     id: 'f1',
     name: 'Sells',
     people: <Person>[
-      Person(id: 1, name: 'Chris', age: 52, details: <PersonDetails, String>{
-        PersonDetails.hobbies: 'coding',
-        PersonDetails.favoriteFood: 'all of the above',
-        PersonDetails.favoriteSport: 'football?'
-      }),
+      Person(
+        id: 1,
+        name: 'Chris',
+        age: 52,
+        details: <PersonDetails, String>{
+          PersonDetails.hobbies: 'coding',
+          PersonDetails.favoriteFood: 'all of the above',
+          PersonDetails.favoriteSport: 'football?',
+        },
+      ),
       Person(id: 2, name: 'John', age: 27),
       Person(id: 3, name: 'Tom', age: 26),
     ],
@@ -141,9 +137,9 @@ Family familyById(String fid) => familyData.family(fid);
 
 extension on List<Family> {
   Family family(String fid) => singleWhere(
-        (Family f) => f.id == fid,
-        orElse: () => throw Exception('unknown family $fid'),
-      );
+    (Family f) => f.id == fid,
+    orElse: () => throw Exception('unknown family $fid'),
+  );
 }
 
 class LoginInfo extends ChangeNotifier {

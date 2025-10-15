@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -15,9 +15,7 @@ void main() {
         const Color currentColor = Color(0xFFB0E3BE);
 
         expect(
-          SvgTheme(
-            currentColor: currentColor,
-          ).currentColor,
+          SvgTheme(currentColor: currentColor).currentColor,
           equals(currentColor),
         );
       });
@@ -26,62 +24,37 @@ void main() {
         const double fontSize = 14.0;
 
         expect(
-          SvgTheme(
-            currentColor: Color(0xFFB0E3BE),
-          ).fontSize,
+          SvgTheme(currentColor: Color(0xFFB0E3BE)).fontSize,
           equals(fontSize),
         );
       });
 
-      test(
-          'sets fontSize to 14 '
+      test('sets fontSize to 14 '
           'by default', () {
-        expect(
-          SvgTheme(),
-          equals(
-            SvgTheme(),
-          ),
-        );
+        expect(SvgTheme(), equals(SvgTheme()));
       });
 
       test('sets xHeight', () {
         const double xHeight = 8.0;
 
         expect(
-          SvgTheme(
-            fontSize: 26.0,
-            xHeight: xHeight,
-          ).xHeight,
+          SvgTheme(fontSize: 26.0, xHeight: xHeight).xHeight,
           equals(xHeight),
         );
       });
 
-      test(
-          'sets xHeight as fontSize divided by 2 '
+      test('sets xHeight as fontSize divided by 2 '
           'by default', () {
         const double fontSize = 16.0;
 
-        expect(
-          SvgTheme(
-            fontSize: fontSize,
-          ).xHeight,
-          equals(fontSize / 2),
-        );
+        expect(SvgTheme(fontSize: fontSize).xHeight, equals(fontSize / 2));
       });
     });
 
     test('supports value equality', () {
       expect(
-        SvgTheme(
-          currentColor: Color(0xFF6F2173),
-          xHeight: 6.0,
-        ),
-        equals(
-          SvgTheme(
-            currentColor: Color(0xFF6F2173),
-            xHeight: 6.0,
-          ),
-        ),
+        SvgTheme(currentColor: Color(0xFF6F2173), xHeight: 6.0),
+        equals(SvgTheme(currentColor: Color(0xFF6F2173), xHeight: 6.0)),
       );
     });
   });

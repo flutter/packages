@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -70,22 +70,21 @@ class AdUnitConfiguration {
     bool? isFullWidthResponsive = true,
     bool? isAdTest,
   }) : _adUnitParams = <String, String>{
-          AdUnitParams.AD_SLOT: adSlot,
-          if (adFormat != null) AdUnitParams.AD_FORMAT: adFormat.toString(),
-          if (adLayout != null) AdUnitParams.AD_LAYOUT: adLayout.toString(),
-          if (adLayoutKey != null) AdUnitParams.AD_LAYOUT_KEY: adLayoutKey,
-          if (isFullWidthResponsive != null)
-            AdUnitParams.FULL_WIDTH_RESPONSIVE:
-                isFullWidthResponsive.toString(),
-          if (matchedContentUiType != null)
-            AdUnitParams.MATCHED_CONTENT_UI_TYPE:
-                matchedContentUiType.toString(),
-          if (columnsNum != null)
-            AdUnitParams.MATCHED_CONTENT_COLUMNS_NUM: columnsNum.toString(),
-          if (rowsNum != null)
-            AdUnitParams.MATCHED_CONTENT_ROWS_NUM: rowsNum.toString(),
-          if (isAdTest != null && isAdTest) AdUnitParams.AD_TEST: 'on',
-        };
+         AdUnitParams.AD_SLOT: adSlot,
+         if (adFormat != null) AdUnitParams.AD_FORMAT: adFormat.toString(),
+         if (adLayout != null) AdUnitParams.AD_LAYOUT: adLayout.toString(),
+         if (adLayoutKey != null) AdUnitParams.AD_LAYOUT_KEY: adLayoutKey,
+         if (isFullWidthResponsive != null)
+           AdUnitParams.FULL_WIDTH_RESPONSIVE: isFullWidthResponsive.toString(),
+         if (matchedContentUiType != null)
+           AdUnitParams.MATCHED_CONTENT_UI_TYPE:
+               matchedContentUiType.toString(),
+         if (columnsNum != null)
+           AdUnitParams.MATCHED_CONTENT_COLUMNS_NUM: columnsNum.toString(),
+         if (rowsNum != null)
+           AdUnitParams.MATCHED_CONTENT_ROWS_NUM: rowsNum.toString(),
+         if (isAdTest != null && isAdTest) AdUnitParams.AD_TEST: 'on',
+       };
 
   /// Creates a configuration object for a Multiplex ad.
   ///
@@ -107,13 +106,14 @@ class AdUnitConfiguration {
     bool isFullWidthResponsive = true,
     bool isAdTest = kDebugMode,
   }) : this._internal(
-            adSlot: adSlot,
-            adFormat: adFormat,
-            matchedContentUiType: matchedContentUiType,
-            rowsNum: rowsNum,
-            columnsNum: columnsNum,
-            isFullWidthResponsive: isFullWidthResponsive,
-            isAdTest: isAdTest);
+         adSlot: adSlot,
+         adFormat: adFormat,
+         matchedContentUiType: matchedContentUiType,
+         rowsNum: rowsNum,
+         columnsNum: columnsNum,
+         isFullWidthResponsive: isFullWidthResponsive,
+         isAdTest: isAdTest,
+       );
 
   /// Creates a configuration object for an In-feed ad.
   ///
@@ -131,11 +131,12 @@ class AdUnitConfiguration {
     bool isFullWidthResponsive = true,
     bool isAdTest = kDebugMode,
   }) : this._internal(
-            adSlot: adSlot,
-            adFormat: adFormat,
-            adLayoutKey: adLayoutKey,
-            isFullWidthResponsive: isFullWidthResponsive,
-            isAdTest: isAdTest);
+         adSlot: adSlot,
+         adFormat: adFormat,
+         adLayoutKey: adLayoutKey,
+         isFullWidthResponsive: isFullWidthResponsive,
+         isAdTest: isAdTest,
+       );
 
   /// Creates a configuration object for an In-article ad.
   ///
@@ -153,11 +154,12 @@ class AdUnitConfiguration {
     bool isFullWidthResponsive = true,
     bool isAdTest = kDebugMode,
   }) : this._internal(
-            adSlot: adSlot,
-            adFormat: adFormat,
-            adLayout: adLayout,
-            isFullWidthResponsive: isFullWidthResponsive,
-            isAdTest: isAdTest);
+         adSlot: adSlot,
+         adFormat: adFormat,
+         adLayout: adLayout,
+         isFullWidthResponsive: isFullWidthResponsive,
+         isAdTest: isAdTest,
+       );
 
   /// Creates a configuration object for a Display ad.
   ///
@@ -173,10 +175,11 @@ class AdUnitConfiguration {
     bool isFullWidthResponsive = true,
     bool isAdTest = kDebugMode,
   }) : this._internal(
-            adSlot: adSlot,
-            adFormat: adFormat,
-            isFullWidthResponsive: isFullWidthResponsive,
-            isAdTest: isAdTest);
+         adSlot: adSlot,
+         adFormat: adFormat,
+         isFullWidthResponsive: isFullWidthResponsive,
+         isAdTest: isAdTest,
+       );
 
   Map<String, String> _adUnitParams;
 

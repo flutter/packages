@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -22,6 +22,7 @@ void main() {
 
 // Auto-consume must be true on iOS.
 // To try without auto-consume on another platform, change `true` to `false` here.
+// ignore: no_literal_bool_comparisons
 final bool _kAutoConsume = Platform.isIOS || true;
 
 const String _kConsumableId = 'consumable';
@@ -56,14 +57,17 @@ class _MyAppState extends State<_MyApp> {
   void initState() {
     final Stream<List<PurchaseDetails>> purchaseUpdated =
         _inAppPurchase.purchaseStream;
-    _subscription =
-        purchaseUpdated.listen((List<PurchaseDetails> purchaseDetailsList) {
-      _listenToPurchaseUpdated(purchaseDetailsList);
-    }, onDone: () {
-      _subscription.cancel();
-    }, onError: (Object error) {
-      // handle error here.
-    });
+    _subscription = purchaseUpdated.listen(
+      (List<PurchaseDetails> purchaseDetailsList) {
+        _listenToPurchaseUpdated(purchaseDetailsList);
+      },
+      onDone: () {
+        _subscription.cancel();
+      },
+      onError: (Object error) {
+        // handle error here.
+      },
+    );
     initStoreInfo();
     super.initState();
   }
@@ -90,8 +94,8 @@ class _MyAppState extends State<_MyApp> {
       await iosPlatformAddition.setDelegate(ExamplePaymentQueueDelegate());
     }
 
-    final ProductDetailsResponse productDetailResponse =
-        await _inAppPurchase.queryProductDetails(_kProductIds.toSet());
+    final ProductDetailsResponse productDetailResponse = await _inAppPurchase
+        .queryProductDetails(_kProductIds.toSet());
     if (productDetailResponse.error != null) {
       setState(() {
         _queryProductError = productDetailResponse.error!.message;
@@ -158,9 +162,7 @@ class _MyAppState extends State<_MyApp> {
         ),
       );
     } else {
-      stack.add(Center(
-        child: Text(_queryProductError!),
-      ));
+      stack.add(Center(child: Text(_queryProductError!)));
     }
     if (_purchasePending) {
       stack.add(
@@ -170,9 +172,7 @@ class _MyAppState extends State<_MyApp> {
               opacity: 0.3,
               child: ModalBarrier(dismissible: false, color: Colors.grey),
             ),
-            Center(
-              child: CircularProgressIndicator(),
-            ),
+            Center(child: CircularProgressIndicator()),
           ],
         ),
       );
@@ -180,12 +180,8 @@ class _MyAppState extends State<_MyApp> {
 
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(
-          title: const Text('IAP Example'),
-        ),
-        body: Stack(
-          children: stack,
-        ),
+        appBar: AppBar(title: const Text('IAP Example')),
+        body: Stack(children: stack),
       ),
     );
   }
@@ -195,12 +191,14 @@ class _MyAppState extends State<_MyApp> {
       return const Card(child: ListTile(title: Text('Trying to connect...')));
     }
     final Widget storeHeader = ListTile(
-      leading: Icon(_isAvailable ? Icons.check : Icons.block,
-          color: _isAvailable
-              ? Colors.green
-              : ThemeData.light().colorScheme.error),
-      title:
-          Text('The store is ${_isAvailable ? 'available' : 'unavailable'}.'),
+      leading: Icon(
+        _isAvailable ? Icons.check : Icons.block,
+        color:
+            _isAvailable ? Colors.green : ThemeData.light().colorScheme.error,
+      ),
+      title: Text(
+        'The store is ${_isAvailable ? 'available' : 'unavailable'}.',
+      ),
     );
     final List<Widget> children = <Widget>[storeHeader];
 
@@ -208,10 +206,13 @@ class _MyAppState extends State<_MyApp> {
       children.addAll(<Widget>[
         const Divider(),
         ListTile(
-          title: Text('Not connected',
-              style: TextStyle(color: ThemeData.light().colorScheme.error)),
+          title: Text(
+            'Not connected',
+            style: TextStyle(color: ThemeData.light().colorScheme.error),
+          ),
           subtitle: const Text(
-              'Unable to connect to the payments processor. Has this app been configured correctly? See the example README for instructions.'),
+            'Unable to connect to the payments processor. Has this app been configured correctly? See the example README for instructions.',
+          ),
         ),
       ]);
     }
@@ -221,9 +222,11 @@ class _MyAppState extends State<_MyApp> {
   Card _buildProductList() {
     if (_loading) {
       return const Card(
-          child: ListTile(
-              leading: CircularProgressIndicator(),
-              title: Text('Fetching products...')));
+        child: ListTile(
+          leading: CircularProgressIndicator(),
+          title: Text('Fetching products...'),
+        ),
+      );
     }
     if (!_isAvailable) {
       return const Card();
@@ -231,11 +234,17 @@ class _MyAppState extends State<_MyApp> {
     const ListTile productHeader = ListTile(title: Text('Products for Sale'));
     final List<ListTile> productList = <ListTile>[];
     if (_notFoundIds.isNotEmpty) {
-      productList.add(ListTile(
-          title: Text('[${_notFoundIds.join(", ")}] not found',
-              style: TextStyle(color: ThemeData.light().colorScheme.error)),
+      productList.add(
+        ListTile(
+          title: Text(
+            '[${_notFoundIds.join(", ")}] not found',
+            style: TextStyle(color: ThemeData.light().colorScheme.error),
+          ),
           subtitle: const Text(
-              'This app needs special configuration to run. Please see example/README.md for instructions.')));
+            'This app needs special configuration to run. Please see example/README.md for instructions.',
+          ),
+        ),
+      );
     }
 
     // This loading previous purchases code is just a demo. Please do not use this as it is.
@@ -243,113 +252,124 @@ class _MyAppState extends State<_MyApp> {
     // We recommend that you use your own server to verify the purchase data.
     final Map<String, PurchaseDetails> purchases =
         Map<String, PurchaseDetails>.fromEntries(
-            _purchases.map((PurchaseDetails purchase) {
-      if (purchase.pendingCompletePurchase) {
-        _inAppPurchase.completePurchase(purchase);
-      }
-      return MapEntry<String, PurchaseDetails>(purchase.productID, purchase);
-    }));
-    productList.addAll(_products.map(
-      (ProductDetails productDetails) {
+          _purchases.map((PurchaseDetails purchase) {
+            if (purchase.pendingCompletePurchase) {
+              _inAppPurchase.completePurchase(purchase);
+            }
+            return MapEntry<String, PurchaseDetails>(
+              purchase.productID,
+              purchase,
+            );
+          }),
+        );
+    productList.addAll(
+      _products.map((ProductDetails productDetails) {
         final PurchaseDetails? previousPurchase = purchases[productDetails.id];
         return ListTile(
-          title: Text(
-            productDetails.title,
-          ),
-          subtitle: Text(
-            productDetails.description,
-          ),
-          trailing: previousPurchase != null && Platform.isIOS
-              ? IconButton(
-                  onPressed: () => confirmPriceChange(context),
-                  icon: const Icon(Icons.upgrade))
-              : TextButton(
-                  style: TextButton.styleFrom(
-                    backgroundColor: Colors.green[800],
-                    foregroundColor: Colors.white,
-                  ),
-                  onPressed: () {
-                    late PurchaseParam purchaseParam;
+          title: Text(productDetails.title),
+          subtitle: Text(productDetails.description),
+          trailing:
+              previousPurchase != null && Platform.isIOS
+                  ? IconButton(
+                    onPressed: () => confirmPriceChange(context),
+                    icon: const Icon(Icons.upgrade),
+                  )
+                  : TextButton(
+                    style: TextButton.styleFrom(
+                      backgroundColor: Colors.green[800],
+                      foregroundColor: Colors.white,
+                    ),
+                    onPressed: () {
+                      late PurchaseParam purchaseParam;
 
-                    if (Platform.isAndroid) {
-                      // NOTE: If you are making a subscription purchase/upgrade/downgrade, we recommend you to
-                      // verify the latest status of you your subscription by using server side receipt validation
-                      // and update the UI accordingly. The subscription purchase status shown
-                      // inside the app may not be accurate.
-                      final GooglePlayPurchaseDetails? oldSubscription =
-                          _getOldSubscription(productDetails, purchases);
+                      if (Platform.isAndroid) {
+                        // NOTE: If you are making a subscription purchase/upgrade/downgrade, we recommend you to
+                        // verify the latest status of you your subscription by using server side receipt validation
+                        // and update the UI accordingly. The subscription purchase status shown
+                        // inside the app may not be accurate.
+                        final GooglePlayPurchaseDetails? oldSubscription =
+                            _getOldSubscription(productDetails, purchases);
 
-                      purchaseParam = GooglePlayPurchaseParam(
+                        purchaseParam = GooglePlayPurchaseParam(
                           productDetails: productDetails,
-                          changeSubscriptionParam: (oldSubscription != null)
-                              ? ChangeSubscriptionParam(
-                                  oldPurchaseDetails: oldSubscription,
-                                  replacementMode:
-                                      ReplacementMode.withTimeProration,
-                                )
-                              : null);
-                    } else {
-                      purchaseParam = PurchaseParam(
-                        productDetails: productDetails,
-                      );
-                    }
+                          changeSubscriptionParam:
+                              (oldSubscription != null)
+                                  ? ChangeSubscriptionParam(
+                                    oldPurchaseDetails: oldSubscription,
+                                    replacementMode:
+                                        ReplacementMode.withTimeProration,
+                                  )
+                                  : null,
+                        );
+                      } else {
+                        purchaseParam = PurchaseParam(
+                          productDetails: productDetails,
+                        );
+                      }
 
-                    if (productDetails.id == _kConsumableId) {
-                      _inAppPurchase.buyConsumable(
+                      if (productDetails.id == _kConsumableId) {
+                        _inAppPurchase.buyConsumable(
                           purchaseParam: purchaseParam,
-                          autoConsume: _kAutoConsume);
-                    } else {
-                      _inAppPurchase.buyNonConsumable(
-                          purchaseParam: purchaseParam);
-                    }
-                  },
-                  child: Text(productDetails.price),
-                ),
+                          autoConsume: _kAutoConsume,
+                        );
+                      } else {
+                        _inAppPurchase.buyNonConsumable(
+                          purchaseParam: purchaseParam,
+                        );
+                      }
+                    },
+                    child: Text(productDetails.price),
+                  ),
         );
-      },
-    ));
+      }),
+    );
 
     return Card(
-        child: Column(
-            children: <Widget>[productHeader, const Divider()] + productList));
+      child: Column(
+        children: <Widget>[productHeader, const Divider()] + productList,
+      ),
+    );
   }
 
   Card _buildConsumableBox() {
     if (_loading) {
       return const Card(
-          child: ListTile(
-              leading: CircularProgressIndicator(),
-              title: Text('Fetching consumables...')));
+        child: ListTile(
+          leading: CircularProgressIndicator(),
+          title: Text('Fetching consumables...'),
+        ),
+      );
     }
     if (!_isAvailable || _notFoundIds.contains(_kConsumableId)) {
       return const Card();
     }
-    const ListTile consumableHeader =
-        ListTile(title: Text('Purchased consumables'));
-    final List<Widget> tokens = _consumables.map((String id) {
-      return GridTile(
-        child: IconButton(
-          icon: const Icon(
-            Icons.stars,
-            size: 42.0,
-            color: Colors.orange,
-          ),
-          splashColor: Colors.yellowAccent,
-          onPressed: () => consume(id),
-        ),
-      );
-    }).toList();
+    const ListTile consumableHeader = ListTile(
+      title: Text('Purchased consumables'),
+    );
+    final List<Widget> tokens =
+        _consumables.map((String id) {
+          return GridTile(
+            child: IconButton(
+              icon: const Icon(Icons.stars, size: 42.0, color: Colors.orange),
+              splashColor: Colors.yellowAccent,
+              onPressed: () => consume(id),
+            ),
+          );
+        }).toList();
     return Card(
-        child: Column(children: <Widget>[
-      consumableHeader,
-      const Divider(),
-      GridView.count(
-        crossAxisCount: 5,
-        shrinkWrap: true,
-        padding: const EdgeInsets.all(16.0),
-        children: tokens,
-      )
-    ]));
+      child: Column(
+        children: <Widget>[
+          consumableHeader,
+          const Divider(),
+          GridView.count(
+            crossAxisCount: 5,
+            shrinkWrap: true,
+            padding: const EdgeInsets.all(16.0),
+            children: tokens,
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildRestoreButton() {
@@ -423,7 +443,8 @@ class _MyAppState extends State<_MyApp> {
   }
 
   Future<void> _listenToPurchaseUpdated(
-      List<PurchaseDetails> purchaseDetailsList) async {
+    List<PurchaseDetails> purchaseDetailsList,
+  ) async {
     for (final PurchaseDetails purchaseDetails in purchaseDetailsList) {
       if (purchaseDetails.status == PurchaseStatus.pending) {
         showPendingUI();
@@ -443,8 +464,10 @@ class _MyAppState extends State<_MyApp> {
         if (Platform.isAndroid) {
           if (!_kAutoConsume && purchaseDetails.productID == _kConsumableId) {
             final InAppPurchaseAndroidPlatformAddition androidAddition =
-                _inAppPurchase.getPlatformAddition<
-                    InAppPurchaseAndroidPlatformAddition>();
+                _inAppPurchase
+                    .getPlatformAddition<
+                      InAppPurchaseAndroidPlatformAddition
+                    >();
             await androidAddition.consumePurchase(purchaseDetails);
           }
         }
@@ -469,7 +492,9 @@ class _MyAppState extends State<_MyApp> {
   }
 
   GooglePlayPurchaseDetails? _getOldSubscription(
-      ProductDetails productDetails, Map<String, PurchaseDetails> purchases) {
+    ProductDetails productDetails,
+    Map<String, PurchaseDetails> purchases,
+  ) {
     // This is just to demonstrate a subscription upgrade or downgrade.
     // This method assumes that you have only 2 subscriptions under a group, 'subscription_silver' & 'subscription_gold'.
     // The 'subscription_silver' subscription can be upgraded to 'subscription_gold' and
@@ -499,7 +524,9 @@ class _MyAppState extends State<_MyApp> {
 class ExamplePaymentQueueDelegate implements SKPaymentQueueDelegateWrapper {
   @override
   bool shouldContinueTransaction(
-      SKPaymentTransactionWrapper transaction, SKStorefrontWrapper storefront) {
+    SKPaymentTransactionWrapper transaction,
+    SKStorefrontWrapper storefront,
+  ) {
     return true;
   }
 

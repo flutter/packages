@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -33,7 +33,6 @@ extension LoadRequestMethodExtensions on LoadRequestMethod {
 /// Platform specific implementations can add additional fields by extending
 /// this class.
 ///
-/// {@tool sample}
 /// This example demonstrates how to extend the [LoadRequestParams] to
 /// provide additional platform specific parameters.
 ///
@@ -62,7 +61,6 @@ extension LoadRequestMethodExtensions on LoadRequestMethod {
 ///   final Uri? historyUrl;
 /// }
 /// ```
-/// {@end-tool}
 @immutable
 class LoadRequestParams {
   /// Used by the platform implementation to create a new [LoadRequestParams].

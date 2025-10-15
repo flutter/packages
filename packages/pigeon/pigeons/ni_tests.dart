@@ -6,24 +6,18 @@
 
 import 'package:pigeon/pigeon.dart';
 
-@ConfigurePigeon(PigeonOptions(
-  dartOptions: DartOptions(),
-  kotlinOptions: KotlinOptions(useJni: true),
-  swiftOptions: SwiftOptions(useFfi: true, ffiModuleName: 'test_plugin'),
-))
-enum NIAnEnum {
-  one,
-  two,
-  three,
-  fortyTwo,
-  fourHundredTwentyTwo,
-}
+@ConfigurePigeon(
+  PigeonOptions(
+    dartOptions: DartOptions(),
+    kotlinOptions: KotlinOptions(useJni: true),
+    swiftOptions: SwiftOptions(useFfi: true, ffiModuleName: 'test_plugin'),
+  ),
+)
+enum NIAnEnum { one, two, three, fortyTwo, fourHundredTwentyTwo }
 
 // Enums require special logic, having multiple ensures that the logic can be
 // replicated without collision.
-enum NIAnotherEnum {
-  justInCase,
-}
+enum NIAnotherEnum { justInCase }
 
 // // This exists to show that unused data classes still generate.
 // class NIUnusedClass {
@@ -194,70 +188,70 @@ class NIAllNullableTypesWithoutRecursion {
     this.aNullableInt,
     this.aNullableInt64,
     this.aNullableDouble,
-//     this.aNullableByteArray,
-//     this.aNullable4ByteArray,
-//     this.aNullable8ByteArray,
-//     this.aNullableFloatArray,
+    //     this.aNullableByteArray,
+    //     this.aNullable4ByteArray,
+    //     this.aNullable8ByteArray,
+    //     this.aNullableFloatArray,
     this.aNullableEnum,
     this.anotherNullableEnum,
     this.aNullableString,
     this.aNullableObject,
 
-//     // Lists
-//     // This name is in a different format than the others to ensure that name
-//     // collision with the word 'list' doesn't occur in the generated files.
+    //     // Lists
+    //     // This name is in a different format than the others to ensure that name
+    //     // collision with the word 'list' doesn't occur in the generated files.
     this.list,
     // this.stringList,
     // this.intList,
     // this.doubleList,
     // this.boolList,
-//     this.enumList,
-//     this.objectList,
-//     this.listList,
-//     this.mapList,
+    //     this.enumList,
+    //     this.objectList,
+    //     this.listList,
+    //     this.mapList,
 
-//     // Maps
+    //     // Maps
     this.map,
-//     this.stringMap,
-//     this.intMap,
-//     this.enumMap,
-//     this.objectMap,
-//     this.listMap,
-//     this.mapMap,
+    //     this.stringMap,
+    //     this.intMap,
+    //     this.enumMap,
+    //     this.objectMap,
+    //     this.listMap,
+    //     this.mapMap,
   );
 
   bool? aNullableBool;
   int? aNullableInt;
   int? aNullableInt64;
   double? aNullableDouble;
-//   Uint8List? aNullableByteArray;
-//   Int32List? aNullable4ByteArray;
-//   Int64List? aNullable8ByteArray;
-//   Float64List? aNullableFloatArray;
+  //   Uint8List? aNullableByteArray;
+  //   Int32List? aNullable4ByteArray;
+  //   Int64List? aNullable8ByteArray;
+  //   Float64List? aNullableFloatArray;
   NIAnEnum? aNullableEnum;
   NIAnotherEnum? anotherNullableEnum;
   String? aNullableString;
   Object? aNullableObject;
 
-//   // Lists
+  //   // Lists
   List? list;
   // List<String?>? stringList;
   // List<int?>? intList;
   // List<double?>? doubleList;
   // List<bool?>? boolList;
-//   List<NIAnEnum?>? enumList;
-//   List<Object?>? objectList;
-//   List<List<Object?>?>? listList;
-//   List<Map<Object?, Object?>?>? mapList;
+  //   List<NIAnEnum?>? enumList;
+  //   List<Object?>? objectList;
+  //   List<List<Object?>?>? listList;
+  //   List<Map<Object?, Object?>?>? mapList;
 
-//   // Maps
+  //   // Maps
   Map? map;
-//   Map<String?, String?>? stringMap;
-//   Map<int?, int?>? intMap;
-//   Map<NIAnEnum?, NIAnEnum?>? enumMap;
-//   Map<Object?, Object?>? objectMap;
-//   Map<int?, List<Object?>?>? listMap;
-//   Map<int?, Map<Object?, Object?>?>? mapMap;
+  //   Map<String?, String?>? stringMap;
+  //   Map<int?, int?>? intMap;
+  //   Map<NIAnEnum?, NIAnEnum?>? enumMap;
+  //   Map<Object?, Object?>? objectMap;
+  //   Map<int?, List<Object?>?>? listMap;
+  //   Map<int?, Map<Object?, Object?>?>? mapMap;
 }
 
 /// A class for testing nested class handling.
@@ -487,7 +481,8 @@ abstract class NIHostIntegrationCoreApi {
   @ObjCSelector('echoAllNullableTypesWithoutRecursion:')
   // @SwiftFunction('echo(_:)')
   NIAllNullableTypesWithoutRecursion? echoAllNullableTypesWithoutRecursion(
-      NIAllNullableTypesWithoutRecursion? everything);
+    NIAllNullableTypesWithoutRecursion? everything,
+  );
 
   /// Returns the inner `aString` value from the wrapped object, to test
   /// sending of nested objects.
@@ -512,7 +507,10 @@ abstract class NIHostIntegrationCoreApi {
   // @SwiftFunction(
   //     'sendMultipleNullableTypesWithoutRecursion(aBool:anInt:aString:)')
   NIAllNullableTypesWithoutRecursion sendMultipleNullableTypesWithoutRecursion(
-      bool? aNullableBool, int? aNullableInt, String? aNullableString);
+    bool? aNullableBool,
+    int? aNullableInt,
+    String? aNullableString,
+  );
 
   /// Returns passed in int.
   @ObjCSelector('echoNullableInt:')

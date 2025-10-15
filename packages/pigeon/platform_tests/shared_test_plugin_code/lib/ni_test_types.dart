@@ -12,40 +12,15 @@ const int biggerThanBigInt = 3000000000;
 const int regularInt = 42;
 const double doublePi = 3.14159;
 
-final List<Object> nonNullList = <Object>[
-  'Thing 1',
-  2,
-  true,
-  3.14,
-];
+final List<Object> nonNullList = <Object>['Thing 1', 2, true, 3.14];
 
-final List<String> nonNullStringList = <String>[
-  'Thing 1',
-  '2',
-  'true',
-  '3.14',
-];
+final List<String> nonNullStringList = <String>['Thing 1', '2', 'true', '3.14'];
 
-final List<int> nonNullIntList = <int>[
-  1,
-  2,
-  3,
-  4,
-];
+final List<int> nonNullIntList = <int>[1, 2, 3, 4];
 
-final List<double> nonNullDoubleList = <double>[
-  1,
-  2.99999,
-  3,
-  3.14,
-];
+final List<double> nonNullDoubleList = <double>[1, 2.99999, 3, 3.14];
 
-final List<bool> nonNullBoolList = <bool>[
-  true,
-  false,
-  true,
-  false,
-];
+final List<bool> nonNullBoolList = <bool>[true, false, true, false];
 
 final List<NIAnEnum> nonNullEnumList = <NIAnEnum>[
   NIAnEnum.one,
@@ -78,12 +53,7 @@ final Map<String, String> nonNullStringMap = <String, String>{
   'd': 'false',
 };
 
-final Map<int, int> nonNullIntMap = <int, int>{
-  0: 0,
-  1: 1,
-  2: 3,
-  4: -1,
-};
+final Map<int, int> nonNullIntMap = <int, int>{0: 0, 1: 1, 2: 3, 4: -1};
 
 final Map<double, double> nonNullDoubleMap = <double, double>{
   0.0: 0,
@@ -92,11 +62,7 @@ final Map<double, double> nonNullDoubleMap = <double, double>{
   -.4: -0.2,
 };
 
-final Map<int, bool> nonNullBoolMap = <int, bool>{
-  0: true,
-  1: false,
-  2: true,
-};
+final Map<int, bool> nonNullBoolMap = <int, bool>{0: true, 1: false, 2: true};
 
 final Map<NIAnEnum, NIAnEnum> nonNullEnumMap = <NIAnEnum, NIAnEnum>{
   NIAnEnum.one: NIAnEnum.one,
@@ -132,13 +98,7 @@ final List<Map<Object, Object>> nonNullMapList = <Map<Object, Object>>[
   nonNullEnumMap,
 ];
 
-final List<Object?> list = <Object?>[
-  'Thing 1',
-  2,
-  true,
-  3.14,
-  null,
-];
+final List<Object?> list = <Object?>['Thing 1', 2, true, 3.14, null];
 
 final List<String?> stringList = <String?>[
   'Thing 1',
@@ -148,29 +108,11 @@ final List<String?> stringList = <String?>[
   null,
 ];
 
-final List<int?> intList = <int?>[
-  1,
-  2,
-  3,
-  4,
-  null,
-];
+final List<int?> intList = <int?>[1, 2, 3, 4, null];
 
-final List<double?> doubleList = <double?>[
-  1,
-  2.99999,
-  3,
-  3.14,
-  null,
-];
+final List<double?> doubleList = <double?>[1, 2.99999, 3, 3.14, null];
 
-final List<bool?> boolList = <bool?>[
-  true,
-  false,
-  true,
-  false,
-  null,
-];
+final List<bool?> boolList = <bool?>[true, false, true, false, null];
 
 final List<NIAnEnum?> enumList = <NIAnEnum?>[
   NIAnEnum.one,
@@ -178,7 +120,7 @@ final List<NIAnEnum?> enumList = <NIAnEnum?>[
   NIAnEnum.three,
   NIAnEnum.fortyTwo,
   NIAnEnum.fourHundredTwentyTwo,
-  null
+  null,
 ];
 
 final List<List<Object?>?> listList = <List<Object?>?>[
@@ -188,7 +130,7 @@ final List<List<Object?>?> listList = <List<Object?>?>[
   doubleList,
   boolList,
   enumList,
-  null
+  null,
 ];
 
 final Map<Object?, Object?> map = <Object?, Object?>{
@@ -205,23 +147,17 @@ final Map<String?, String?> stringMap = <String?, String?>{
   'c': 'three',
   'd': 'false',
   'e': 'null',
-  'f': null
+  'f': null,
 };
 
-final Map<int?, int?> intMap = <int?, int?>{
-  0: 0,
-  1: 1,
-  2: 3,
-  4: -1,
-  5: null,
-};
+final Map<int?, int?> intMap = <int?, int?>{0: 0, 1: 1, 2: 3, 4: -1, 5: null};
 
 final Map<double?, double?> doubleMap = <double?, double?>{
   0.0: 0,
   1.1: 2.0,
   3: 0.3,
   -.4: -0.2,
-  1111111111111111.11111111111111111111111111111111111111111111: null
+  1111111111111111.11111111111111111111111111111111111111111111: null,
 };
 
 final Map<int?, bool?> boolMap = <int?, bool?>{
@@ -246,7 +182,7 @@ final Map<int?, List<Object?>?> listMap = <int?, List<Object?>?>{
   4: intList,
   5: boolList,
   6: enumList,
-  7: null
+  7: null,
 };
 
 final Map<int?, Map<Object?, Object?>?> mapMap = <int?, Map<Object?, Object?>?>{
@@ -256,7 +192,7 @@ final Map<int?, Map<Object?, Object?>?> mapMap = <int?, Map<Object?, Object?>?>{
   4: intMap,
   5: boolMap,
   6: enumMap,
-  7: null
+  7: null,
 };
 
 final List<Map<Object?, Object?>?> mapList = <Map<Object?, Object?>?>[
@@ -266,12 +202,11 @@ final List<Map<Object?, Object?>?> mapList = <Map<Object?, Object?>?>[
   intMap,
   boolMap,
   enumMap,
-  null
+  null,
 ];
 
 final NIAllNullableTypesWithoutRecursion
-    genericNIAllNullableTypesWithoutRecursion =
-    NIAllNullableTypesWithoutRecursion(
+genericNIAllNullableTypesWithoutRecursion = NIAllNullableTypesWithoutRecursion(
   aNullableBool: true,
   aNullableInt: regularInt,
   aNullableInt64: biggerThanBigInt,
@@ -449,12 +384,12 @@ final NIAllTypes genericNIAllTypes = NIAllTypes(
 
 NIAllClassesWrapper classWrapperMaker() {
   return NIAllClassesWrapper(
-//     allNullableTypes: recursiveNIAllNullableTypes,
+    //     allNullableTypes: recursiveNIAllNullableTypes,
     allNullableTypesWithoutRecursion: genericNIAllNullableTypesWithoutRecursion,
     allTypes: genericNIAllTypes,
-//     classList: allTypesClassList,
-//     classMap: allTypesClassMap,
-//     nullableClassList: allNullableTypesWithoutRecursionClassList,
-//     nullableClassMap: allNullableTypesWithoutRecursionClassMap,
+    //     classList: allTypesClassList,
+    //     classMap: allTypesClassMap,
+    //     nullableClassList: allNullableTypesWithoutRecursionClassList,
+    //     nullableClassMap: allNullableTypesWithoutRecursionClassMap,
   );
 }

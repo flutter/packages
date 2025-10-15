@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -20,18 +20,24 @@ void main() {
     expect(AffineMatrix.identity.scaled(2.0).scaleStrokeWidth(1), 2);
     expect(AffineMatrix.identity.scaled(2.0).scaleStrokeWidth(2), 4);
     expect(
-        AffineMatrix.identity.scaled(2.0).rotated(1.2).scaleStrokeWidth(1), 2);
+      AffineMatrix.identity.scaled(2.0).rotated(1.2).scaleStrokeWidth(1),
+      2,
+    );
     expect(
-        AffineMatrix.identity.scaled(2.0).rotated(1.2).scaleStrokeWidth(2), 4);
+      AffineMatrix.identity.scaled(2.0).rotated(1.2).scaleStrokeWidth(2),
+      4,
+    );
 
     expect(AffineMatrix.identity.scaled(2.0, 1.0).scaleStrokeWidth(1), 1.5);
     expect(AffineMatrix.identity.scaled(2.0, 1.0).scaleStrokeWidth(2), 3);
     expect(
-        AffineMatrix.identity.scaled(2.0, 1.0).rotated(1.2).scaleStrokeWidth(1),
-        1.5);
+      AffineMatrix.identity.scaled(2.0, 1.0).rotated(1.2).scaleStrokeWidth(1),
+      1.5,
+    );
     expect(
-        AffineMatrix.identity.scaled(2.0, 1.0).rotated(1.2).scaleStrokeWidth(2),
-        3);
+      AffineMatrix.identity.scaled(2.0, 1.0).rotated(1.2).scaleStrokeWidth(2),
+      3,
+    );
   });
 
   test('Parse rotate and scale', () {
@@ -72,10 +78,7 @@ void main() {
       matrix4_1.scaled(2.0, 3.0).storage,
     );
 
-    expect(
-      matrix1.scaled(2).toMatrix4(),
-      matrix4_1.scaled(2.0, 2.0).storage,
-    );
+    expect(matrix1.scaled(2).toMatrix4(), matrix4_1.scaled(2.0, 2.0).storage);
   });
 
   test('Scale and multiply', () {
@@ -102,10 +105,7 @@ void main() {
 
     final Matrix4 matrix4_1 = Matrix4.fromFloat64List(matrix1.toMatrix4());
     matrix4_1.translate(2.0, 3.0);
-    expect(
-      matrix1.translated(2, 3).toMatrix4(),
-      matrix4_1.storage,
-    );
+    expect(matrix1.translated(2, 3).toMatrix4(), matrix4_1.storage);
   });
 
   test('Rotate', () {
@@ -113,10 +113,7 @@ void main() {
 
     final Matrix4 matrix4_1 = Matrix4.fromFloat64List(matrix1.toMatrix4())
       ..rotateZ(31.0);
-    expect(
-      matrix1.rotated(31).toMatrix4(),
-      matrix4_1.storage,
-    );
+    expect(matrix1.rotated(31).toMatrix4(), matrix4_1.storage);
   });
 
   test('transformRect', () {
@@ -124,10 +121,7 @@ void main() {
     const Rect rectangle20x20 = Rect.fromLTRB(10, 20, 30, 40);
 
     // Identity
-    expect(
-      AffineMatrix.identity.transformRect(rectangle20x20),
-      rectangle20x20,
-    );
+    expect(AffineMatrix.identity.transformRect(rectangle20x20), rectangle20x20);
 
     // 2D Scaling
     expect(
@@ -145,8 +139,9 @@ void main() {
     expect(rotatedRect.bottom - 30, lessThan(epsillon));
 
     // Translation
-    final Rect shiftedRect =
-        AffineMatrix.identity.translated(10, 20).transformRect(rectangle20x20);
+    final Rect shiftedRect = AffineMatrix.identity
+        .translated(10, 20)
+        .transformRect(rectangle20x20);
 
     expect(shiftedRect.left, rectangle20x20.left + 10);
     expect(shiftedRect.top, rectangle20x20.top + 20);

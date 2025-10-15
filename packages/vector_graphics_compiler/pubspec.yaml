@@ -2,13 +2,13 @@ name: vector_graphics_compiler
 description: A compiler to convert SVGs to the binary format used by `package:vector_graphics`.
 repository: https://github.com/flutter/packages/tree/main/packages/vector_graphics_compiler
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+vector_graphics%22
-version: 1.1.16
+version: 1.1.19
 
 executables:
   vector_graphics_compiler:
 
 environment:
-  sdk: ^3.4.0
+  sdk: ^3.7.0
 
 dependencies:
   args: ^2.3.0
@@ -23,7 +23,7 @@ dependencies:
   # - Audit the package's source diffs between the current max version listed
   #   here and the target version.
   # - Update the max version here to exactly the audited version.
-  xml: ">=6.3.0 <=6.5.0"
+  xml: ">=6.3.0 <=6.6.1"
 
 dev_dependencies:
   flutter:

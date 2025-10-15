@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -17,13 +17,13 @@ class FlutterEngineMetricPoint extends MetricPoint {
     String gitRevision, {
     Map<String, String> moreTags = const <String, String>{},
   }) : super(
-          value,
-          <String, String>{
-            kNameKey: name,
-            kGithubRepoKey: kFlutterEngineRepo,
-            kGitRevisionKey: gitRevision,
-          }..addAll(moreTags),
-        );
+         value,
+         <String, String>{
+           kNameKey: name,
+           kGithubRepoKey: kFlutterEngineRepo,
+           kGitRevisionKey: gitRevision,
+         }..addAll(moreTags),
+       );
 }
 
 /// All Flutter performance metrics (framework, engine, ...) should be written
@@ -33,27 +33,38 @@ class FlutterDestination extends MetricDestination {
 
   /// Creates a [FlutterDestination] from service account JSON.
   static Future<FlutterDestination> makeFromCredentialsJson(
-      Map<String, dynamic> json,
-      {bool isTesting = false}) async {
+    Map<String, dynamic> json, {
+    bool isTesting = false,
+  }) async {
     final SkiaPerfDestination skiaPerfDestination =
-        await SkiaPerfDestination.makeFromGcpCredentials(json,
-            isTesting: isTesting);
+        await SkiaPerfDestination.makeFromGcpCredentials(
+          json,
+          isTesting: isTesting,
+        );
     return FlutterDestination._(skiaPerfDestination);
   }
 
   /// Creates a [FlutterDestination] from an OAuth access token.
   static Future<FlutterDestination> makeFromAccessToken(
-      String accessToken, String projectId,
-      {bool isTesting = false}) async {
+    String accessToken,
+    String projectId, {
+    bool isTesting = false,
+  }) async {
     final SkiaPerfDestination skiaPerfDestination =
-        await SkiaPerfDestination.makeFromAccessToken(accessToken, projectId,
-            isTesting: isTesting);
+        await SkiaPerfDestination.makeFromAccessToken(
+          accessToken,
+          projectId,
+          isTesting: isTesting,
+        );
     return FlutterDestination._(skiaPerfDestination);
   }
 
   @override
   Future<void> update(
-      List<MetricPoint> points, DateTime commitTime, String taskName) async {
+    List<MetricPoint> points,
+    DateTime commitTime,
+    String taskName,
+  ) async {
     await _skiaPerfDestination.update(points, commitTime, taskName);
   }
 

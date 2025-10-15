@@ -41,8 +41,11 @@ class InternalJnigenYamlOptions extends InternalOptions {
 class JnigenYamlGenerator extends Generator<InternalJnigenYamlOptions> {
   @override
   void generate(
-      InternalJnigenYamlOptions generatorOptions, Root root, StringSink sink,
-      {required String dartPackageName}) {
+    InternalJnigenYamlOptions generatorOptions,
+    Root root,
+    StringSink sink, {
+    required String dartPackageName,
+  }) {
     final Indent indent = Indent(sink);
 
     indent.format('''

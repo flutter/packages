@@ -1,49 +1,54 @@
 RouteBase get $listRoute => GoRouteData.$route(
       path: '/list-route',
-      factory: $ListRouteExtension._fromState,
+      factory: $ListRoute._fromState,
     );
 
-extension $ListRouteExtension on ListRoute {
+mixin $ListRoute on GoRouteData {
   static ListRoute _fromState(GoRouterState state) => ListRoute(
-        ids: (state.uri.queryParametersAll['ids']
-                    ?.map(int.parse)
-                    .cast<int>()
-                    ?.toList() as List<int>)
-                ?.toList() ??
-            const [],
-        nullableIds: (state.uri.queryParametersAll['nullable-ids']
+        ids: state.uri.queryParametersAll['ids']
                 ?.map(int.parse)
                 .cast<int>()
-                ?.toList() as List<int>?)
-            ?.toList(),
-        idsWithDefaultValue: (state
-                    .uri.queryParametersAll['ids-with-default-value']
-                    ?.map(int.parse)
-                    .cast<int>()
-                    ?.toList() as List<int>?)
-                ?.toList() ??
+                .toList() ??
+            const [],
+        nullableIds: state.uri.queryParametersAll['nullable-ids']
+            ?.map(int.parse)
+            .cast<int>()
+            .toList(),
+        idsWithDefaultValue: state
+                .uri.queryParametersAll['ids-with-default-value']
+                ?.map(int.parse)
+                .cast<int>()
+                .toList() ??
             const <int>[0],
       );
 
+  ListRoute get _self => this as ListRoute;
+
+  @override
   String get location => GoRouteData.$location(
         '/list-route',
         queryParams: {
-          'ids': ids.map((e) => e.toString()).toList(),
-          if (nullableIds != null)
-            'nullable-ids': nullableIds?.map((e) => e.toString()).toList(),
-          if (!_$iterablesEqual(idsWithDefaultValue, const <int>[0]))
+          'ids': _self.ids.map((e) => e.toString()).toList(),
+          if (_self.nullableIds != null)
+            'nullable-ids':
+                _self.nullableIds?.map((e) => e.toString()).toList(),
+          if (!_$iterablesEqual(_self.idsWithDefaultValue, const <int>[0]))
             'ids-with-default-value':
-                idsWithDefaultValue.map((e) => e.toString()).toList(),
+                _self.idsWithDefaultValue.map((e) => e.toString()).toList(),
         },
       );
 
+  @override
   void go(BuildContext context) => context.go(location);
 
+  @override
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
+  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
 
+  @override
   void replace(BuildContext context) => context.replace(location);
 }
 

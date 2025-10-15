@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -23,7 +23,11 @@ final RegExp _parameterRegExp = RegExp(r':(\w+)(\((?:\\.|[^\\()])+\))?');
 /// To extract the path parameter values from a [RegExpMatch], pass the
 /// [RegExpMatch] into [extractPathParameters] with the `parameters` that are
 /// used for generating the [RegExp].
-RegExp patternToRegExp(String pattern, List<String> parameters) {
+RegExp patternToRegExp(
+  String pattern,
+  List<String> parameters, {
+  required bool caseSensitive,
+}) {
   final StringBuffer buffer = StringBuffer('^');
   int start = 0;
   for (final RegExpMatch match in _parameterRegExp.allMatches(pattern)) {
@@ -32,9 +36,10 @@ RegExp patternToRegExp(String pattern, List<String> parameters) {
     }
     final String name = match[1]!;
     final String? optionalPattern = match[2];
-    final String regex = optionalPattern != null
-        ? _escapeGroup(optionalPattern, name)
-        : '(?<$name>[^/]+)';
+    final String regex =
+        optionalPattern != null
+            ? _escapeGroup(optionalPattern, name)
+            : '(?<$name>[^/]+)';
     buffer.write(regex);
     parameters.add(name);
     start = match.end;
@@ -47,12 +52,14 @@ RegExp patternToRegExp(String pattern, List<String> parameters) {
   if (!pattern.endsWith('/')) {
     buffer.write(r'(?=/|$)');
   }
-  return RegExp(buffer.toString(), caseSensitive: false);
+  return RegExp(buffer.toString(), caseSensitive: caseSensitive);
 }
 
 String _escapeGroup(String group, [String? name]) {
   final String escapedGroup = group.replaceFirstMapped(
-      RegExp(r'[:=!]'), (Match match) => '\\${match[0]}');
+    RegExp(r'[:=!]'),
+    (Match match) => '\\${match[0]}',
+  );
   if (name != null) {
     return '(?<$name>$escapedGroup)';
   }
@@ -94,10 +101,12 @@ String patternToPath(String pattern, Map<String, String> pathParameters) {
 /// The [parameters] should originate from the call to [patternToRegExp] that
 /// creates the [RegExp].
 Map<String, String> extractPathParameters(
-    List<String> parameters, RegExpMatch match) {
+  List<String> parameters,
+  RegExpMatch match,
+) {
   return <String, String>{
     for (int i = 0; i < parameters.length; ++i)
-      parameters[i]: match.namedGroup(parameters[i])!
+      parameters[i]: match.namedGroup(parameters[i])!,
   };
 }
 
@@ -108,7 +117,7 @@ Map<String, String> extractPathParameters(
 String concatenatePaths(String parentPath, String childPath) {
   final Iterable<String> segments = <String>[
     ...parentPath.split('/'),
-    ...childPath.split('/')
+    ...childPath.split('/'),
   ].where((String segment) => segment.isNotEmpty);
   return '/${segments.join('/')}';
 }
@@ -139,19 +148,21 @@ String canonicalUri(String loc) {
   // /profile/ => /profile
   // / => /
   // /login?from=/ => /login?from=/
-  canon = uri.path.endsWith('/') &&
-          uri.path != '/' &&
-          !uri.hasQuery &&
-          !uri.hasFragment
-      ? canon.substring(0, canon.length - 1)
-      : canon;
+  canon =
+      uri.path.endsWith('/') &&
+              uri.path != '/' &&
+              !uri.hasQuery &&
+              !uri.hasFragment
+          ? canon.substring(0, canon.length - 1)
+          : canon;
 
   // replace '/?', except for first occurrence, from path only
   // /login/?from=/ => /login?from=/
   // /?from=/ => /?from=/
-  final int pathStartIndex = uri.host.isNotEmpty
-      ? uri.toString().indexOf(uri.host) + uri.host.length
-      : uri.hasScheme
+  final int pathStartIndex =
+      uri.host.isNotEmpty
+          ? uri.toString().indexOf(uri.host) + uri.host.length
+          : uri.hasScheme
           ? uri.toString().indexOf(uri.scheme) + uri.scheme.length
           : 0;
   if (pathStartIndex < canon.length) {
@@ -163,17 +174,24 @@ String canonicalUri(String loc) {
 
 /// Builds an absolute path for the provided route.
 String? fullPathForRoute(
-    RouteBase targetRoute, String parentFullpath, List<RouteBase> routes) {
+  RouteBase targetRoute,
+  String parentFullpath,
+  List<RouteBase> routes,
+) {
   for (final RouteBase route in routes) {
-    final String fullPath = (route is GoRoute)
-        ? concatenatePaths(parentFullpath, route.path)
-        : parentFullpath;
+    final String fullPath =
+        (route is GoRoute)
+            ? concatenatePaths(parentFullpath, route.path)
+            : parentFullpath;
 
     if (route == targetRoute) {
       return fullPath;
     } else {
-      final String? subRoutePath =
-          fullPathForRoute(targetRoute, fullPath, route.routes);
+      final String? subRoutePath = fullPathForRoute(
+        targetRoute,
+        fullPath,
+        route.routes,
+      );
       if (subRoutePath != null) {
         return subRoutePath;
       }

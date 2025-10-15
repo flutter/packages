@@ -1,6 +1,13 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+
+import camera_avfoundation
+
+// Import Objective-C part of the implementation when SwiftPM is used.
+#if canImport(camera_avfoundation_objc)
+  import camera_avfoundation_objc
+#endif
 
 /// Mock implementation of `FLTCaptureSession` protocol which allows injecting a custom
 /// implementation.
@@ -15,6 +22,9 @@ final class MockCaptureSession: NSObject, FLTCaptureSession {
   var _sessionPreset = AVCaptureSession.Preset.high
   var inputs = [AVCaptureInput]()
   var outputs = [AVCaptureOutput]()
+
+  private(set) var addedAudioOutputCount: Int = 0
+
   var automaticallyConfiguresApplicationAudioSession = false
 
   var sessionPreset: AVCaptureSession.Preset {
@@ -54,7 +64,12 @@ final class MockCaptureSession: NSObject, FLTCaptureSession {
 
   func addInput(_: FLTCaptureInput) {}
 
-  func addOutput(_: AVCaptureOutput) {}
+  func addOutput(_ output: AVCaptureOutput) {
+
+    if output is AVCaptureAudioDataOutput {
+      addedAudioOutputCount += 1
+    }
+  }
 
   func removeInput(_: FLTCaptureInput) {}
 

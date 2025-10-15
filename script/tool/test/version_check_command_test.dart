@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -787,8 +787,8 @@ void main() {
       });
 
       test(
-          'fails if a version change is missing from a change that does not '
-          'pass the exemption check', () async {
+          'fails if a version and CHANGELOG change is missing from a change '
+          'that does not pass the exemption check', () async {
         final RepositoryPackage plugin =
             createFakePlugin('plugin', packagesDir, version: '1.0.0');
 
@@ -819,6 +819,8 @@ packages/plugin/lib/plugin.dart
           output,
           containsAllInOrder(<Matcher>[
             contains('No version change found'),
+            contains('No CHANGELOG change found.'),
+            contains('"update-release-info" command'),
             contains('plugin:\n'
                 '    Missing version change'),
           ]),

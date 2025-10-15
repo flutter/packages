@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -19,11 +19,12 @@ void main() {
     late Directory packagesDir;
     late CommandRunner<void> runner;
     late RecordingProcessRunner processRunner;
+    late RecordingProcessRunner gitProcessRunner;
 
     setUp(() {
       mockPlatform = MockPlatform();
       final GitDir gitDir;
-      (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) =
+      (:packagesDir, :processRunner, :gitProcessRunner, :gitDir) =
           configureBaseCommandMocks(platform: mockPlatform);
       final BuildExamplesCommand command = BuildExamplesCommand(
         packagesDir,
@@ -164,16 +165,25 @@ void main() {
           ]));
     });
 
-    test('building for iOS with CocoaPods on master channel', () async {
+    test('building for iOS with CocoaPods', () async {
       mockPlatform.isMacOS = true;
-      mockPlatform.environment['CHANNEL'] = 'master';
 
       final RepositoryPackage plugin = createFakePlugin('plugin', packagesDir,
           platformSupport: <String, PlatformDetails>{
             platformIOS: const PlatformDetails(PlatformSupport.inline),
           });
 
-      final Directory pluginExampleDirectory = getExampleDir(plugin);
+      final RepositoryPackage example = plugin.getExamples().first;
+      final String originalPubspecContents =
+          example.pubspecFile.readAsStringSync();
+      String? buildTimePubspecContents;
+      processRunner
+              .mockProcessesForExecutable[getFlutterCommand(mockPlatform)] =
+          <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(), <String>['build'], () {
+          buildTimePubspecContents = example.pubspecFile.readAsStringSync();
+        })
+      ];
 
       final List<String> output = await runCapturingPrint(runner, <String>[
         'build-examples',
@@ -189,14 +199,17 @@ void main() {
         ]),
       );
 
+      // Ensure that SwiftPM was disabled for the package.
+      expect(originalPubspecContents,
+          isNot(contains('enable-swift-package-manager: false')));
+      expect(buildTimePubspecContents,
+          contains('enable-swift-package-manager: false'));
+      // And that it was undone after.
+      expect(example.pubspecFile.readAsStringSync(), originalPubspecContents);
+
       expect(
         processRunner.recordedCalls,
         orderedEquals(<ProcessCall>[
-          ProcessCall(
-            getFlutterCommand(mockPlatform),
-            const <String>['config', '--no-enable-swift-package-manager'],
-            null,
-          ),
           ProcessCall(
             getFlutterCommand(mockPlatform),
             const <String>[
@@ -205,23 +218,31 @@ void main() {
               '--no-codesign',
               '--enable-experiment=exp1'
             ],
-            pluginExampleDirectory.path,
+            example.path,
           ),
         ]),
       );
     });
 
-    test('building for iOS with Swift Package Manager on master channel',
-        () async {
+    test('building for iOS with Swift Package Manager', () async {
       mockPlatform.isMacOS = true;
-      mockPlatform.environment['CHANNEL'] = 'master';
 
       final RepositoryPackage plugin = createFakePlugin('plugin', packagesDir,
           platformSupport: <String, PlatformDetails>{
             platformIOS: const PlatformDetails(PlatformSupport.inline),
           });
 
-      final Directory pluginExampleDirectory = getExampleDir(plugin);
+      final RepositoryPackage example = plugin.getExamples().first;
+      final String originalPubspecContents =
+          example.pubspecFile.readAsStringSync();
+      String? buildTimePubspecContents;
+      processRunner
+              .mockProcessesForExecutable[getFlutterCommand(mockPlatform)] =
+          <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(), <String>['build'], () {
+          buildTimePubspecContents = example.pubspecFile.readAsStringSync();
+        })
+      ];
 
       final List<String> output = await runCapturingPrint(runner, <String>[
         'build-examples',
@@ -237,54 +258,13 @@ void main() {
         ]),
       );
 
-      expect(
-        processRunner.recordedCalls,
-        orderedEquals(<ProcessCall>[
-          ProcessCall(
-            getFlutterCommand(mockPlatform),
-            const <String>['config', '--enable-swift-package-manager'],
-            null,
-          ),
-          ProcessCall(
-            getFlutterCommand(mockPlatform),
-            const <String>[
-              'build',
-              'ios',
-              '--no-codesign',
-              '--enable-experiment=exp1'
-            ],
-            pluginExampleDirectory.path,
-          ),
-        ]),
-      );
-    });
-
-    test(
-        'building for iOS with CocoaPods on stable channel does not disable SPM',
-        () async {
-      mockPlatform.isMacOS = true;
-      mockPlatform.environment['CHANNEL'] = 'stable';
-
-      final RepositoryPackage plugin = createFakePlugin('plugin', packagesDir,
-          platformSupport: <String, PlatformDetails>{
-            platformIOS: const PlatformDetails(PlatformSupport.inline),
-          });
-
-      final Directory pluginExampleDirectory = getExampleDir(plugin);
-
-      final List<String> output = await runCapturingPrint(runner, <String>[
-        'build-examples',
-        '--ios',
-        '--enable-experiment=exp1',
-        '--no-swift-package-manager',
-      ]);
-
-      expect(
-        output,
-        containsAllInOrder(<String>[
-          '\nBUILDING plugin/example for iOS',
-        ]),
-      );
+      // Ensure that SwiftPM was enabled for the package.
+      expect(originalPubspecContents,
+          isNot(contains('enable-swift-package-manager: true')));
+      expect(buildTimePubspecContents,
+          contains('enable-swift-package-manager: true'));
+      // And that it was undone after.
+      expect(example.pubspecFile.readAsStringSync(), originalPubspecContents);
 
       expect(
         processRunner.recordedCalls,
@@ -297,51 +277,7 @@ void main() {
               '--no-codesign',
               '--enable-experiment=exp1'
             ],
-            pluginExampleDirectory.path,
-          ),
-        ]),
-      );
-    });
-
-    test(
-        'building for iOS with Swift Package Manager on stable channel does not enable SPM',
-        () async {
-      mockPlatform.isMacOS = true;
-      mockPlatform.environment['CHANNEL'] = 'stable';
-
-      final RepositoryPackage plugin = createFakePlugin('plugin', packagesDir,
-          platformSupport: <String, PlatformDetails>{
-            platformIOS: const PlatformDetails(PlatformSupport.inline),
-          });
-
-      final Directory pluginExampleDirectory = getExampleDir(plugin);
-
-      final List<String> output = await runCapturingPrint(runner, <String>[
-        'build-examples',
-        '--ios',
-        '--enable-experiment=exp1',
-        '--swift-package-manager',
-      ]);
-
-      expect(
-        output,
-        containsAllInOrder(<String>[
-          '\nBUILDING plugin/example for iOS',
-        ]),
-      );
-
-      expect(
-        processRunner.recordedCalls,
-        orderedEquals(<ProcessCall>[
-          ProcessCall(
-            getFlutterCommand(mockPlatform),
-            const <String>[
-              'build',
-              'ios',
-              '--no-codesign',
-              '--enable-experiment=exp1'
-            ],
-            pluginExampleDirectory.path,
+            example.path,
           ),
         ]),
       );
@@ -444,16 +380,25 @@ void main() {
           ]));
     });
 
-    test('building for macOS with CocoaPods on master channel', () async {
+    test('building for macOS with CocoaPods', () async {
       mockPlatform.isMacOS = true;
-      mockPlatform.environment['CHANNEL'] = 'master';
 
       final RepositoryPackage plugin = createFakePlugin('plugin', packagesDir,
           platformSupport: <String, PlatformDetails>{
             platformMacOS: const PlatformDetails(PlatformSupport.inline),
           });
 
-      final Directory pluginExampleDirectory = getExampleDir(plugin);
+      final RepositoryPackage example = plugin.getExamples().first;
+      final String originalPubspecContents =
+          example.pubspecFile.readAsStringSync();
+      String? buildTimePubspecContents;
+      processRunner
+              .mockProcessesForExecutable[getFlutterCommand(mockPlatform)] =
+          <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(), <String>['build'], () {
+          buildTimePubspecContents = example.pubspecFile.readAsStringSync();
+        })
+      ];
 
       final List<String> output = await runCapturingPrint(runner,
           <String>['build-examples', '--macos', '--no-swift-package-manager']);
@@ -465,37 +410,48 @@ void main() {
         ]),
       );
 
+      // Ensure that SwiftPM was enabled for the package.
+      expect(originalPubspecContents,
+          isNot(contains('enable-swift-package-manager: false')));
+      expect(buildTimePubspecContents,
+          contains('enable-swift-package-manager: false'));
+      // And that it was undone after.
+      expect(example.pubspecFile.readAsStringSync(), originalPubspecContents);
+
       expect(
         processRunner.recordedCalls,
         orderedEquals(<ProcessCall>[
-          ProcessCall(
-            getFlutterCommand(mockPlatform),
-            const <String>['config', '--no-enable-swift-package-manager'],
-            null,
-          ),
           ProcessCall(
             getFlutterCommand(mockPlatform),
             const <String>[
               'build',
               'macos',
             ],
-            pluginExampleDirectory.path,
+            example.path,
           ),
         ]),
       );
     });
 
-    test('building for macOS with Swift Package Manager on master channel',
-        () async {
+    test('building for macOS with Swift Package Manager', () async {
       mockPlatform.isMacOS = true;
-      mockPlatform.environment['CHANNEL'] = 'master';
 
       final RepositoryPackage plugin = createFakePlugin('plugin', packagesDir,
           platformSupport: <String, PlatformDetails>{
             platformMacOS: const PlatformDetails(PlatformSupport.inline),
           });
 
-      final Directory pluginExampleDirectory = getExampleDir(plugin);
+      final RepositoryPackage example = plugin.getExamples().first;
+      final String originalPubspecContents =
+          example.pubspecFile.readAsStringSync();
+      String? buildTimePubspecContents;
+      processRunner
+              .mockProcessesForExecutable[getFlutterCommand(mockPlatform)] =
+          <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(), <String>['build'], () {
+          buildTimePubspecContents = example.pubspecFile.readAsStringSync();
+        })
+      ];
 
       final List<String> output = await runCapturingPrint(runner,
           <String>['build-examples', '--macos', '--swift-package-manager']);
@@ -507,48 +463,13 @@ void main() {
         ]),
       );
 
-      expect(
-        processRunner.recordedCalls,
-        orderedEquals(<ProcessCall>[
-          ProcessCall(
-            getFlutterCommand(mockPlatform),
-            const <String>['config', '--enable-swift-package-manager'],
-            null,
-          ),
-          ProcessCall(
-            getFlutterCommand(mockPlatform),
-            const <String>[
-              'build',
-              'macos',
-            ],
-            pluginExampleDirectory.path,
-          ),
-        ]),
-      );
-    });
-
-    test(
-        'building for macOS with CocoaPods on stable channel does not disable SPM',
-        () async {
-      mockPlatform.isMacOS = true;
-      mockPlatform.environment['CHANNEL'] = 'stable';
-
-      final RepositoryPackage plugin = createFakePlugin('plugin', packagesDir,
-          platformSupport: <String, PlatformDetails>{
-            platformMacOS: const PlatformDetails(PlatformSupport.inline),
-          });
-
-      final Directory pluginExampleDirectory = getExampleDir(plugin);
-
-      final List<String> output = await runCapturingPrint(runner,
-          <String>['build-examples', '--macos', '--no-swift-package-manager']);
-
-      expect(
-        output,
-        containsAllInOrder(<String>[
-          '\nBUILDING plugin/example for macOS',
-        ]),
-      );
+      // Ensure that SwiftPM was enabled for the package.
+      expect(originalPubspecContents,
+          isNot(contains('enable-swift-package-manager: true')));
+      expect(buildTimePubspecContents,
+          contains('enable-swift-package-manager: true'));
+      // And that it was undone after.
+      expect(example.pubspecFile.readAsStringSync(), originalPubspecContents);
 
       expect(
         processRunner.recordedCalls,
@@ -559,45 +480,7 @@ void main() {
               'build',
               'macos',
             ],
-            pluginExampleDirectory.path,
-          ),
-        ]),
-      );
-    });
-
-    test(
-        'building for macOS with Swift Package Manager on stable channel does not enable SPM',
-        () async {
-      mockPlatform.isMacOS = true;
-      mockPlatform.environment['CHANNEL'] = 'stable';
-
-      final RepositoryPackage plugin = createFakePlugin('plugin', packagesDir,
-          platformSupport: <String, PlatformDetails>{
-            platformMacOS: const PlatformDetails(PlatformSupport.inline),
-          });
-
-      final Directory pluginExampleDirectory = getExampleDir(plugin);
-
-      final List<String> output = await runCapturingPrint(runner,
-          <String>['build-examples', '--macos', '--swift-package-manager']);
-
-      expect(
-        output,
-        containsAllInOrder(<String>[
-          '\nBUILDING plugin/example for macOS',
-        ]),
-      );
-
-      expect(
-        processRunner.recordedCalls,
-        orderedEquals(<ProcessCall>[
-          ProcessCall(
-            getFlutterCommand(mockPlatform),
-            const <String>[
-              'build',
-              'macos',
-            ],
-            pluginExampleDirectory.path,
+            example.path,
           ),
         ]),
       );
@@ -997,6 +880,73 @@ void main() {
                 const <String>['build', 'macos', 'test argument'],
                 pluginExampleDirectory.path),
           ]));
+    });
+
+    group('file filtering', () {
+      const List<String> files = <String>[
+        'pubspec.yaml',
+        'foo.dart',
+        'foo.java',
+        'foo.kt',
+        'foo.m',
+        'foo.swift',
+        'foo.cc',
+        'foo.cpp',
+        'foo.h',
+      ];
+      for (final String file in files) {
+        test('runs command for changes to $file', () async {
+          createFakePackage('package_a', packagesDir);
+
+          gitProcessRunner.mockProcessesForExecutable['git-diff'] =
+              <FakeProcessInfo>[
+            FakeProcessInfo(MockProcess(stdout: '''
+packages/package_a/$file
+''')),
+          ];
+
+          // The target platform is irrelevant here; because this repo's
+          // packages are fully federated, there's no need to distinguish
+          // the ignore list by target (e.g., skipping iOS tests if only Java or
+          // Kotlin files change), because package-level filering will already
+          // accomplish the same goal.
+          final List<String> output = await runCapturingPrint(
+              runner, <String>['build-examples', '--web']);
+
+          expect(
+              output,
+              containsAllInOrder(<Matcher>[
+                contains('Running for package_a'),
+              ]));
+        });
+      }
+
+      test('skips commands if all files should be ignored', () async {
+        createFakePackage('package_a', packagesDir);
+
+        gitProcessRunner.mockProcessesForExecutable['git-diff'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: '''
+README.md
+CODEOWNERS
+packages/package_a/CHANGELOG.md
+''')),
+        ];
+
+        final List<String> output =
+            await runCapturingPrint(runner, <String>['build-examples']);
+
+        expect(
+            output,
+            isNot(containsAllInOrder(<Matcher>[
+              contains('Running for package_a'),
+            ])));
+        expect(
+            output,
+            containsAllInOrder(<Matcher>[
+              contains('SKIPPING ALL PACKAGES'),
+            ]));
+      });
     });
   });
 }

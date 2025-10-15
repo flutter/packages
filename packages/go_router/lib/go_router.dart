@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -11,6 +11,7 @@ export 'src/configuration.dart';
 export 'src/delegate.dart';
 export 'src/information_provider.dart';
 export 'src/match.dart' hide RouteMatchListCodec;
+export 'src/misc/custom_parameter.dart';
 export 'src/misc/errors.dart';
 export 'src/misc/extensions.dart';
 export 'src/misc/inherited_router.dart';

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -25,5 +25,23 @@ class URLCredentialProxyAPIDelegate: PigeonApiDelegateURLCredential {
       nativePersistence = .synchronizable
     }
     return URLCredential(user: user, password: password, persistence: nativePersistence)
+  }
+
+  func withUserAsync(
+    pigeonApi: PigeonApiURLCredential, user: String, password: String,
+    persistence: UrlCredentialPersistence,
+    completion: @escaping (Result<URLCredential, Error>) -> Void
+  ) {
+    completion(
+      Result.success(
+        try! withUser(
+          pigeonApi: pigeonApi, user: user, password: password, persistence: persistence)))
+  }
+
+  func serverTrustAsync(
+    pigeonApi: PigeonApiURLCredential, trust: SecTrustWrapper,
+    completion: @escaping (Result<URLCredential, Error>) -> Void
+  ) {
+    completion(Result.success(URLCredential(trust: trust.value)))
   }
 }

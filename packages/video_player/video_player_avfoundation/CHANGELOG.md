@@ -1,3 +1,42 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
+## 2.8.4
+
+* Simplifies native code.
+
+## 2.8.3
+
+* Removes calls to self from init and dealloc, for maintainability.
+
+## 2.8.2
+
+* Restructure internals of Dart notification of video player events.
+
+## 2.8.1
+
+* Restructures internal logic to move more code to Dart.
+
+## 2.8.0
+
+* Adds platform view support for macOS.
+
+## 2.7.3
+
+* Restructures the communication between Dart and native code.
+
+## 2.7.2
+
+* Uses `CADisplayLink` on macOS 14.0+.
+* Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+* Refactors native code for improved testing.
+
+## 2.7.1
+
+* Adds possibility to play videos at more than 30 FPS.
+* Fixes playing state not updating in some paths.
+
 ## 2.7.0
 
 * Adds support for platform views as an optional way of displaying a video.

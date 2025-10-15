@@ -1,3 +1,13 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+* Updates README to reflect that only Android API 24+ is supported.
+
+## 0.11.2
+
+* Fixes overflowed toggles in the camera example.
+* Fixes `CameraLensType` export.
+
 ## 0.11.1
 
 * Adds API support query for image streaming.

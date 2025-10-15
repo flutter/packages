@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -16,12 +16,13 @@ void main() {
       );
 
       expect(
-          caption.toString(),
-          'Caption('
-          'number: 1, '
-          'start: 0:00:01.000000, '
-          'end: 0:00:02.000000, '
-          'text: caption)');
+        caption.toString(),
+        'Caption('
+        'number: 1, '
+        'start: 0:00:01.000000, '
+        'end: 0:00:02.000000, '
+        'text: caption)',
+      );
     });
   });
 }

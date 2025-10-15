@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -156,28 +156,33 @@ class _WebViewExampleState extends State<WebViewExample> {
   void initState() {
     super.initState();
 
-    _controller = PlatformWebViewController(
-      WebKitWebViewControllerCreationParams(allowsInlineMediaPlayback: true),
-    )
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setPlatformNavigationDelegate(
-        PlatformNavigationDelegate(
-          const PlatformNavigationDelegateCreationParams(),
-        )
-          ..setOnProgress((int progress) {
-            debugPrint('WebView is loading (progress : $progress%)');
-          })
-          ..setOnPageStarted((String url) {
-            debugPrint('Page started loading: $url');
-          })
-          ..setOnPageFinished((String url) {
-            debugPrint('Page finished loading: $url');
-          })
-          ..setOnHttpError((HttpResponseError error) {
-            debugPrint('Error occurred on page: ${error.response?.statusCode}');
-          })
-          ..setOnWebResourceError((WebResourceError error) {
-            debugPrint('''
+    _controller =
+        PlatformWebViewController(
+            WebKitWebViewControllerCreationParams(
+              allowsInlineMediaPlayback: true,
+            ),
+          )
+          ..setJavaScriptMode(JavaScriptMode.unrestricted)
+          ..setPlatformNavigationDelegate(
+            PlatformNavigationDelegate(
+                const PlatformNavigationDelegateCreationParams(),
+              )
+              ..setOnProgress((int progress) {
+                debugPrint('WebView is loading (progress : $progress%)');
+              })
+              ..setOnPageStarted((String url) {
+                debugPrint('Page started loading: $url');
+              })
+              ..setOnPageFinished((String url) {
+                debugPrint('Page finished loading: $url');
+              })
+              ..setOnHttpError((HttpResponseError error) {
+                debugPrint(
+                  'Error occurred on page: ${error.response?.statusCode}',
+                );
+              })
+              ..setOnWebResourceError((WebResourceError error) {
+                debugPrint('''
 Page resource error:
   code: ${error.errorCode}
   description: ${error.description}
@@ -185,45 +190,54 @@ Page resource error:
   isForMainFrame: ${error.isForMainFrame}
   url: ${error.url}
           ''');
-          })
-          ..setOnNavigationRequest((NavigationRequest request) {
-            if (request.url.startsWith('https://www.youtube.com/')) {
-              debugPrint('blocking navigation to ${request.url}');
-              return NavigationDecision.prevent;
-            }
-            debugPrint('allowing navigation to ${request.url}');
-            return NavigationDecision.navigate;
-          })
-          ..setOnUrlChange((UrlChange change) {
-            debugPrint('url change to ${change.url}');
-          })
-          ..setOnHttpAuthRequest((HttpAuthRequest request) {
-            openDialog(request);
-          }),
-      )
-      ..addJavaScriptChannel(JavaScriptChannelParams(
-        name: 'Toaster',
-        onMessageReceived: (JavaScriptMessage message) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(message.message)),
-          );
-        },
-      ))
-      ..setOnPlatformPermissionRequest(
-        (PlatformWebViewPermissionRequest request) {
-          debugPrint(
-            'requesting permissions for ${request.types.map((WebViewPermissionResourceType type) => type.name)}',
-          );
-          request.grant();
-        },
-      );
+              })
+              ..setOnNavigationRequest((NavigationRequest request) {
+                if (request.url.startsWith('https://www.youtube.com/')) {
+                  debugPrint('blocking navigation to ${request.url}');
+                  return NavigationDecision.prevent;
+                }
+                debugPrint('allowing navigation to ${request.url}');
+                return NavigationDecision.navigate;
+              })
+              ..setOnUrlChange((UrlChange change) {
+                debugPrint('url change to ${change.url}');
+              })
+              ..setOnHttpAuthRequest((HttpAuthRequest request) {
+                openDialog(request);
+              })
+              ..setOnSSlAuthError((PlatformSslAuthError error) {
+                debugPrint(
+                  'SSL error from ${(error as WebKitSslAuthError).host}',
+                );
+                error.cancel();
+              }),
+          )
+          ..addJavaScriptChannel(
+            JavaScriptChannelParams(
+              name: 'Toaster',
+              onMessageReceived: (JavaScriptMessage message) {
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(content: Text(message.message)));
+              },
+            ),
+          )
+          ..setOnPlatformPermissionRequest((
+            PlatformWebViewPermissionRequest request,
+          ) {
+            debugPrint(
+              'requesting permissions for ${request.types.map((WebViewPermissionResourceType type) => type.name)}',
+            );
+            request.grant();
+          });
 
     // setBackgroundColor and setOnScrollPositionChange are not supported on
     // macOS.
     if (Platform.isIOS) {
       _controller.setBackgroundColor(const Color(0x80000000));
-      _controller.setOnScrollPositionChange(
-          (ScrollPositionChange scrollPositionChange) {
+      _controller.setOnScrollPositionChange((
+        ScrollPositionChange scrollPositionChange,
+      ) {
         debugPrint(
           'Scroll position change to x = ${scrollPositionChange.x}, y = ${scrollPositionChange.y}',
         );
@@ -258,9 +272,9 @@ Page resource error:
       onPressed: () async {
         final String? url = await _controller.currentUrl();
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Favorited $url')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('Favorited $url')));
         }
       },
       child: const Icon(Icons.favorite),
@@ -349,10 +363,11 @@ class SampleMenu extends StatelessWidget {
     super.key,
     required this.webViewController,
     PlatformWebViewCookieManager? cookieManager,
-  }) : cookieManager = cookieManager ??
-            PlatformWebViewCookieManager(
-              const PlatformWebViewCookieManagerCreationParams(),
-            );
+  }) : cookieManager =
+           cookieManager ??
+           PlatformWebViewCookieManager(
+             const PlatformWebViewCookieManagerCreationParams(),
+           );
 
   final PlatformWebViewController webViewController;
   late final PlatformWebViewCookieManager cookieManager;
@@ -474,9 +489,9 @@ class SampleMenu extends StatelessWidget {
   }
 
   Future<void> _loadFlutterDev() {
-    return webViewController.loadRequest(LoadRequestParams(
-      uri: Uri.parse('https://flutter.dev'),
-    ));
+    return webViewController.loadRequest(
+      LoadRequestParams(uri: Uri.parse('https://flutter.dev')),
+    );
   }
 
   Future<void> _onShowUserAgent() {
@@ -488,19 +503,19 @@ class SampleMenu extends StatelessWidget {
   }
 
   Future<void> _onListCookies(BuildContext context) async {
-    final String cookies = await webViewController
-        .runJavaScriptReturningResult('document.cookie') as String;
+    final String cookies =
+        await webViewController.runJavaScriptReturningResult('document.cookie')
+            as String;
     if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            const Text('Cookies:'),
-            _getCookieList(cookies),
-          ],
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[const Text('Cookies:'), _getCookieList(cookies)],
+          ),
         ),
-      ));
+      );
     }
   }
 
@@ -509,26 +524,28 @@ class SampleMenu extends StatelessWidget {
       'caches.open("test_caches_entry"); localStorage["test_localStorage"] = "dummy_entry";',
     );
     if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Added a test entry to cache.'),
-      ));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Added a test entry to cache.')),
+      );
     }
   }
 
   Future<void> _onListCache() {
-    return webViewController.runJavaScript('caches.keys()'
-        // ignore: missing_whitespace_between_adjacent_strings
-        '.then((cacheKeys) => JSON.stringify({"cacheKeys" : cacheKeys, "localStorage" : localStorage}))'
-        '.then((caches) => Toaster.postMessage(caches))');
+    return webViewController.runJavaScript(
+      'caches.keys()'
+      // ignore: missing_whitespace_between_adjacent_strings
+      '.then((cacheKeys) => JSON.stringify({"cacheKeys" : cacheKeys, "localStorage" : localStorage}))'
+      '.then((caches) => Toaster.postMessage(caches))',
+    );
   }
 
   Future<void> _onClearCache(BuildContext context) async {
     await webViewController.clearCache();
     await webViewController.clearLocalStorage();
     if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Cache cleared.'),
-      ));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Cache cleared.')));
     }
   }
 
@@ -539,9 +556,9 @@ class SampleMenu extends StatelessWidget {
       message = 'There are no cookies.';
     }
     if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(message),
-      ));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(message)));
     }
   }
 
@@ -550,9 +567,7 @@ class SampleMenu extends StatelessWidget {
       const Utf8Encoder().convert(kNavigationExamplePage),
     );
     return webViewController.loadRequest(
-      LoadRequestParams(
-        uri: Uri.parse('data:text/html;base64,$contentBase64'),
-      ),
+      LoadRequestParams(uri: Uri.parse('data:text/html;base64,$contentBase64')),
     );
   }
 
@@ -565,21 +580,23 @@ class SampleMenu extends StatelessWidget {
         path: '/anything',
       ),
     );
-    await webViewController.loadRequest(LoadRequestParams(
-      uri: Uri.parse('https://httpbin.org/anything'),
-    ));
+    await webViewController.loadRequest(
+      LoadRequestParams(uri: Uri.parse('https://httpbin.org/anything')),
+    );
   }
 
   Future<void> _onDoPostRequest() {
-    return webViewController.loadRequest(LoadRequestParams(
-      uri: Uri.parse('https://httpbin.org/post'),
-      method: LoadRequestMethod.post,
-      headers: const <String, String>{
-        'foo': 'bar',
-        'Content-Type': 'text/plain',
-      },
-      body: Uint8List.fromList('Test Body'.codeUnits),
-    ));
+    return webViewController.loadRequest(
+      LoadRequestParams(
+        uri: Uri.parse('https://httpbin.org/post'),
+        method: LoadRequestMethod.post,
+        headers: const <String, String>{
+          'foo': 'bar',
+          'Content-Type': 'text/plain',
+        },
+        body: Uint8List.fromList('Test Body'.codeUnits),
+      ),
+    );
   }
 
   Future<void> _onLoadLocalFileExample() async {
@@ -600,21 +617,27 @@ class SampleMenu extends StatelessWidget {
   }
 
   Future<void> _onJavaScriptAlertExample(BuildContext context) {
-    webViewController.setOnJavaScriptAlertDialog(
-        (JavaScriptAlertDialogRequest request) async {
+    webViewController.setOnJavaScriptAlertDialog((
+      JavaScriptAlertDialogRequest request,
+    ) async {
       await _showAlert(context, request.message);
     });
 
-    webViewController.setOnJavaScriptConfirmDialog(
-        (JavaScriptConfirmDialogRequest request) async {
+    webViewController.setOnJavaScriptConfirmDialog((
+      JavaScriptConfirmDialogRequest request,
+    ) async {
       final bool result = await _showConfirm(context, request.message);
       return result;
     });
 
-    webViewController.setOnJavaScriptTextInputDialog(
-        (JavaScriptTextInputDialogRequest request) async {
-      final String result =
-          await _showTextInput(context, request.message, request.defaultText);
+    webViewController.setOnJavaScriptTextInputDialog((
+      JavaScriptTextInputDialogRequest request,
+    ) async {
+      final String result = await _showTextInput(
+        context,
+        request.message,
+        request.defaultText,
+      );
       return result;
     });
 
@@ -626,8 +649,9 @@ class SampleMenu extends StatelessWidget {
       return Container();
     }
     final List<String> cookieList = cookies.split(';');
-    final Iterable<Text> cookieWidgets =
-        cookieList.map((String cookie) => Text(cookie));
+    final Iterable<Text> cookieWidgets = cookieList.map(
+      (String cookie) => Text(cookie),
+    );
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       mainAxisSize: MainAxisSize.min,
@@ -638,7 +662,8 @@ class SampleMenu extends StatelessWidget {
   static Future<String> _prepareLocalFile() async {
     final String tmpDir = (await getTemporaryDirectory()).path;
     final File indexFile = File(
-        <String>{tmpDir, 'www', 'index.html'}.join(Platform.pathSeparator));
+      <String>{tmpDir, 'www', 'index.html'}.join(Platform.pathSeparator),
+    );
 
     await indexFile.create(recursive: true);
     await indexFile.writeAsString(kLocalExamplePage);
@@ -647,18 +672,21 @@ class SampleMenu extends StatelessWidget {
   }
 
   Future<void> _onLogExample() {
-    webViewController
-        .setOnConsoleMessage((JavaScriptConsoleMessage consoleMessage) {
+    webViewController.setOnConsoleMessage((
+      JavaScriptConsoleMessage consoleMessage,
+    ) {
       debugPrint(
-          '== JS == ${consoleMessage.level.name}: ${consoleMessage.message}');
+        '== JS == ${consoleMessage.level.name}: ${consoleMessage.message}',
+      );
     });
 
     return webViewController.loadHtmlString(kLogExamplePage);
   }
 
   Future<void> _promptForUrl(BuildContext context) {
-    final TextEditingController urlTextController =
-        TextEditingController(text: 'https://');
+    final TextEditingController urlTextController = TextEditingController(
+      text: 'https://',
+    );
 
     return showDialog<String>(
       context: context,
@@ -676,9 +704,7 @@ class SampleMenu extends StatelessWidget {
                 if (urlTextController.text.isNotEmpty) {
                   final Uri? uri = Uri.tryParse(urlTextController.text);
                   if (uri != null && uri.scheme.isNotEmpty) {
-                    webViewController.loadRequest(
-                      LoadRequestParams(uri: uri),
-                    );
+                    webViewController.loadRequest(LoadRequestParams(uri: uri));
                     Navigator.pop(context);
                   }
                 }
@@ -693,60 +719,70 @@ class SampleMenu extends StatelessWidget {
 
   Future<void> _showAlert(BuildContext context, String message) async {
     return showDialog<void>(
-        context: context,
-        builder: (BuildContext ctx) {
-          return AlertDialog(
-            content: Text(message),
-            actions: <Widget>[
-              TextButton(
-                  onPressed: () {
-                    Navigator.of(ctx).pop();
-                  },
-                  child: const Text('OK'))
-            ],
-          );
-        });
+      context: context,
+      builder: (BuildContext ctx) {
+        return AlertDialog(
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(ctx).pop();
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Future<bool> _showConfirm(BuildContext context, String message) async {
     return await showDialog<bool>(
-            context: context,
-            builder: (BuildContext ctx) {
-              return AlertDialog(
-                content: Text(message),
-                actions: <Widget>[
-                  TextButton(
-                      onPressed: () {
-                        Navigator.of(ctx).pop(false);
-                      },
-                      child: const Text('Cancel')),
-                  TextButton(
-                      onPressed: () {
-                        Navigator.of(ctx).pop(true);
-                      },
-                      child: const Text('OK')),
-                ],
-              );
-            }) ??
+          context: context,
+          builder: (BuildContext ctx) {
+            return AlertDialog(
+              content: Text(message),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(ctx).pop(false);
+                  },
+                  child: const Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(ctx).pop(true);
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            );
+          },
+        ) ??
         false;
   }
 
   Future<String> _showTextInput(
-      BuildContext context, String message, String? defaultText) async {
+    BuildContext context,
+    String message,
+    String? defaultText,
+  ) async {
     return await showDialog<String>(
-            context: context,
-            builder: (BuildContext ctx) {
-              return AlertDialog(
-                content: Text(message),
-                actions: <Widget>[
-                  TextButton(
-                      onPressed: () {
-                        Navigator.of(ctx).pop('Text test');
-                      },
-                      child: const Text('Enter')),
-                ],
-              );
-            }) ??
+          context: context,
+          builder: (BuildContext ctx) {
+            return AlertDialog(
+              content: Text(message),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(ctx).pop('Text test');
+                  },
+                  child: const Text('Enter'),
+                ),
+              ],
+            );
+          },
+        ) ??
         '';
   }
 }

@@ -8,117 +8,136 @@ part of 'main.dart';
 // GoRouterGenerator
 // **************************************************************************
 
-List<RouteBase> get $appRoutes => [
-      $homeRoute,
-      $loginRoute,
-    ];
+List<RouteBase> get $appRoutes => [$homeRoute, $loginRoute];
 
 RouteBase get $homeRoute => GoRouteData.$route(
-      path: '/',
-      factory: $HomeRouteExtension._fromState,
+  path: '/',
+  factory: $HomeRoute._fromState,
+  routes: [
+    GoRouteData.$route(
+      path: 'family/:fid',
+      factory: $FamilyRoute._fromState,
       routes: [
         GoRouteData.$route(
-          path: 'family/:fid',
-          factory: $FamilyRouteExtension._fromState,
+          path: 'person/:pid',
+          factory: $PersonRoute._fromState,
           routes: [
             GoRouteData.$route(
-              path: 'person/:pid',
-              factory: $PersonRouteExtension._fromState,
-              routes: [
-                GoRouteData.$route(
-                  path: 'details/:details',
-                  factory: $PersonDetailsRouteExtension._fromState,
-                ),
-              ],
+              path: 'details/:details',
+              factory: $PersonDetailsRoute._fromState,
             ),
           ],
         ),
-        GoRouteData.$route(
-          path: 'family-count/:count',
-          factory: $FamilyCountRouteExtension._fromState,
-        ),
       ],
-    );
+    ),
+    GoRouteData.$route(
+      path: 'family-count/:count',
+      factory: $FamilyCountRoute._fromState,
+    ),
+  ],
+);
 
-extension $HomeRouteExtension on HomeRoute {
+mixin $HomeRoute on GoRouteData {
   static HomeRoute _fromState(GoRouterState state) => const HomeRoute();
 
-  String get location => GoRouteData.$location(
-        '/',
-      );
+  @override
+  String get location => GoRouteData.$location('/');
 
+  @override
   void go(BuildContext context) => context.go(location);
 
+  @override
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
+  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
 
+  @override
   void replace(BuildContext context) => context.replace(location);
 }
 
-extension $FamilyRouteExtension on FamilyRoute {
-  static FamilyRoute _fromState(GoRouterState state) => FamilyRoute(
-        state.pathParameters['fid']!,
-      );
+mixin $FamilyRoute on GoRouteData {
+  static FamilyRoute _fromState(GoRouterState state) =>
+      FamilyRoute(state.pathParameters['fid']!);
 
-  String get location => GoRouteData.$location(
-        '/family/${Uri.encodeComponent(fid)}',
-      );
+  FamilyRoute get _self => this as FamilyRoute;
 
+  @override
+  String get location =>
+      GoRouteData.$location('/family/${Uri.encodeComponent(_self.fid)}');
+
+  @override
   void go(BuildContext context) => context.go(location);
 
+  @override
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
+  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
 
+  @override
   void replace(BuildContext context) => context.replace(location);
 }
 
-extension $PersonRouteExtension on PersonRoute {
+mixin $PersonRoute on GoRouteData {
   static PersonRoute _fromState(GoRouterState state) => PersonRoute(
-        state.pathParameters['fid']!,
-        int.parse(state.pathParameters['pid']!)!,
-      );
+    state.pathParameters['fid']!,
+    int.parse(state.pathParameters['pid']!),
+  );
 
+  PersonRoute get _self => this as PersonRoute;
+
+  @override
   String get location => GoRouteData.$location(
-        '/family/${Uri.encodeComponent(fid)}/person/${Uri.encodeComponent(pid.toString())}',
-      );
+    '/family/${Uri.encodeComponent(_self.fid)}/person/${Uri.encodeComponent(_self.pid.toString())}',
+  );
 
+  @override
   void go(BuildContext context) => context.go(location);
 
+  @override
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
+  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
 
+  @override
   void replace(BuildContext context) => context.replace(location);
 }
 
-extension $PersonDetailsRouteExtension on PersonDetailsRoute {
+mixin $PersonDetailsRoute on GoRouteData {
   static PersonDetailsRoute _fromState(GoRouterState state) =>
       PersonDetailsRoute(
         state.pathParameters['fid']!,
-        int.parse(state.pathParameters['pid']!)!,
+        int.parse(state.pathParameters['pid']!),
         _$PersonDetailsEnumMap._$fromName(state.pathParameters['details']!)!,
         $extra: state.extra as int?,
       );
 
+  PersonDetailsRoute get _self => this as PersonDetailsRoute;
+
+  @override
   String get location => GoRouteData.$location(
-        '/family/${Uri.encodeComponent(fid)}/person/${Uri.encodeComponent(pid.toString())}/details/${Uri.encodeComponent(_$PersonDetailsEnumMap[details]!)}',
-      );
+    '/family/${Uri.encodeComponent(_self.fid)}/person/${Uri.encodeComponent(_self.pid.toString())}/details/${Uri.encodeComponent(_$PersonDetailsEnumMap[_self.details]!)}',
+  );
 
-  void go(BuildContext context) => context.go(location, extra: $extra);
+  @override
+  void go(BuildContext context) => context.go(location, extra: _self.$extra);
 
+  @override
   Future<T?> push<T>(BuildContext context) =>
-      context.push<T>(location, extra: $extra);
+      context.push<T>(location, extra: _self.$extra);
 
+  @override
   void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location, extra: $extra);
+      context.pushReplacement(location, extra: _self.$extra);
 
+  @override
   void replace(BuildContext context) =>
-      context.replace(location, extra: $extra);
+      context.replace(location, extra: _self.$extra);
 }
 
 const _$PersonDetailsEnumMap = {
@@ -127,22 +146,28 @@ const _$PersonDetailsEnumMap = {
   PersonDetails.favoriteSport: 'favorite-sport',
 };
 
-extension $FamilyCountRouteExtension on FamilyCountRoute {
-  static FamilyCountRoute _fromState(GoRouterState state) => FamilyCountRoute(
-        int.parse(state.pathParameters['count']!)!,
-      );
+mixin $FamilyCountRoute on GoRouteData {
+  static FamilyCountRoute _fromState(GoRouterState state) =>
+      FamilyCountRoute(int.parse(state.pathParameters['count']!));
 
+  FamilyCountRoute get _self => this as FamilyCountRoute;
+
+  @override
   String get location => GoRouteData.$location(
-        '/family-count/${Uri.encodeComponent(count.toString())}',
-      );
+    '/family-count/${Uri.encodeComponent(_self.count.toString())}',
+  );
 
+  @override
   void go(BuildContext context) => context.go(location);
 
+  @override
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
+  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
 
+  @override
   void replace(BuildContext context) => context.replace(location);
 }
 
@@ -151,29 +176,31 @@ extension<T extends Enum> on Map<T, String> {
       entries.where((element) => element.value == value).firstOrNull?.key;
 }
 
-RouteBase get $loginRoute => GoRouteData.$route(
-      path: '/login',
-      factory: $LoginRouteExtension._fromState,
-    );
+RouteBase get $loginRoute =>
+    GoRouteData.$route(path: '/login', factory: $LoginRoute._fromState);
 
-extension $LoginRouteExtension on LoginRoute {
-  static LoginRoute _fromState(GoRouterState state) => LoginRoute(
-        fromPage: state.uri.queryParameters['from-page'],
-      );
+mixin $LoginRoute on GoRouteData {
+  static LoginRoute _fromState(GoRouterState state) =>
+      LoginRoute(fromPage: state.uri.queryParameters['from-page']);
 
+  LoginRoute get _self => this as LoginRoute;
+
+  @override
   String get location => GoRouteData.$location(
-        '/login',
-        queryParams: {
-          if (fromPage != null) 'from-page': fromPage,
-        },
-      );
+    '/login',
+    queryParams: {if (_self.fromPage != null) 'from-page': _self.fromPage},
+  );
 
+  @override
   void go(BuildContext context) => context.go(location);
 
+  @override
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
+  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
 
+  @override
   void replace(BuildContext context) => context.replace(location);
 }

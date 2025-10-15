@@ -1,118 +1,95 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 package io.flutter.plugins.camerax;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import android.content.Context;
 import android.view.Surface;
 import androidx.camera.core.ImageAnalysis;
+import androidx.camera.core.ImageAnalysis.Analyzer;
 import androidx.camera.core.resolutionselector.ResolutionSelector;
-import androidx.test.core.app.ApplicationProvider;
-import io.flutter.plugin.common.BinaryMessenger;
+import androidx.core.content.ContextCompat;
 import java.util.concurrent.Executor;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
+import org.mockito.stubbing.Answer;
 import org.robolectric.RobolectricTestRunner;
 
 @RunWith(RobolectricTestRunner.class)
 public class ImageAnalysisTest {
-  @Rule public MockitoRule mockitoRule = MockitoJUnit.rule();
-  @Mock public ImageAnalysis mockImageAnalysis;
-  @Mock public BinaryMessenger mockBinaryMessenger;
+  @Test
+  public void pigeon_defaultConstructor_createsExpectedImageAnalysisInstance() {
+    final PigeonApiImageAnalysis api = new TestProxyApiRegistrar().getPigeonApiImageAnalysis();
 
-  InstanceManager instanceManager;
-  private Context context;
+    final ResolutionSelector mockResolutionSelector = new ResolutionSelector.Builder().build();
+    final long targetResolution = Surface.ROTATION_0;
+    final long outputImageFormat = ImageAnalysis.OUTPUT_IMAGE_FORMAT_NV21;
+    final ImageAnalysis imageAnalysis =
+        api.pigeon_defaultConstructor(mockResolutionSelector, targetResolution, outputImageFormat);
 
-  @Before
-  public void setUp() {
-    instanceManager = InstanceManager.create(identifier -> {});
-    context = ApplicationProvider.getApplicationContext();
-  }
-
-  @After
-  public void tearDown() {
-    instanceManager.stopFinalizationListener();
+    assertEquals(imageAnalysis.getResolutionSelector(), mockResolutionSelector);
+    assertEquals(imageAnalysis.getTargetRotation(), Surface.ROTATION_0);
+    assertEquals(imageAnalysis.getOutputImageFormat(), ImageAnalysis.OUTPUT_IMAGE_FORMAT_NV21);
   }
 
   @Test
-  public void hostApiCreate_createsExpectedImageAnalysisInstanceWithExpectedIdentifier() {
-    final ImageAnalysisHostApiImpl hostApi =
-        new ImageAnalysisHostApiImpl(mockBinaryMessenger, instanceManager, context);
-    final CameraXProxy mockCameraXProxy = mock(CameraXProxy.class);
-    final ImageAnalysis.Builder mockImageAnalysisBuilder = mock(ImageAnalysis.Builder.class);
-    final ResolutionSelector mockResolutionSelector = mock(ResolutionSelector.class);
-    final long instanceIdentifier = 0;
-    final long mockResolutionSelectorId = 25;
-    final int targetRotation = Surface.ROTATION_90;
+  public void resolutionSelector_returnsExpectedResolutionSelector() {
+    final PigeonApiImageAnalysis api = new TestProxyApiRegistrar().getPigeonApiImageAnalysis();
 
-    hostApi.cameraXProxy = mockCameraXProxy;
-    instanceManager.addDartCreatedInstance(mockResolutionSelector, mockResolutionSelectorId);
+    final ImageAnalysis instance = mock(ImageAnalysis.class);
+    final androidx.camera.core.resolutionselector.ResolutionSelector value =
+        mock(ResolutionSelector.class);
+    when(instance.getResolutionSelector()).thenReturn(value);
 
-    when(mockCameraXProxy.createImageAnalysisBuilder()).thenReturn(mockImageAnalysisBuilder);
-    when(mockImageAnalysisBuilder.build()).thenReturn(mockImageAnalysis);
-
-    hostApi.create(instanceIdentifier, Long.valueOf(targetRotation), mockResolutionSelectorId);
-
-    verify(mockImageAnalysisBuilder).setTargetRotation(targetRotation);
-    verify(mockImageAnalysisBuilder).setResolutionSelector(mockResolutionSelector);
-    assertEquals(instanceManager.getInstance(instanceIdentifier), mockImageAnalysis);
+    assertEquals(value, api.resolutionSelector(instance));
   }
 
   @Test
   public void setAnalyzer_makesCallToSetAnalyzerOnExpectedImageAnalysisInstance() {
-    final ImageAnalysisHostApiImpl hostApi =
-        new ImageAnalysisHostApiImpl(mockBinaryMessenger, instanceManager, context);
+    final PigeonApiImageAnalysis api = new TestProxyApiRegistrar().getPigeonApiImageAnalysis();
 
-    final ImageAnalysis.Analyzer mockAnalyzer = mock(ImageAnalysis.Analyzer.class);
-    final long analyzerIdentifier = 10;
-    final long instanceIdentifier = 94;
+    final ImageAnalysis instance = mock(ImageAnalysis.class);
+    final androidx.camera.core.ImageAnalysis.Analyzer analyzer = mock(Analyzer.class);
 
-    instanceManager.addDartCreatedInstance(mockAnalyzer, analyzerIdentifier);
-    instanceManager.addDartCreatedInstance(mockImageAnalysis, instanceIdentifier);
+    try (MockedStatic<ContextCompat> mockedContextCompat =
+        Mockito.mockStatic(ContextCompat.class)) {
+      mockedContextCompat
+          .when(() -> ContextCompat.getMainExecutor(any()))
+          .thenAnswer((Answer<Executor>) invocation -> mock(Executor.class));
 
-    hostApi.setAnalyzer(instanceIdentifier, analyzerIdentifier);
+      api.setAnalyzer(instance, analyzer);
 
-    verify(mockImageAnalysis).setAnalyzer(any(Executor.class), eq(mockAnalyzer));
+      verify(instance).setAnalyzer(any(), eq(analyzer));
+    }
   }
 
   @Test
   public void clearAnalyzer_makesCallToClearAnalyzerOnExpectedImageAnalysisInstance() {
-    final ImageAnalysisHostApiImpl hostApi =
-        new ImageAnalysisHostApiImpl(mockBinaryMessenger, instanceManager, context);
-    final long instanceIdentifier = 22;
+    final PigeonApiImageAnalysis api = new TestProxyApiRegistrar().getPigeonApiImageAnalysis();
 
-    instanceManager.addDartCreatedInstance(mockImageAnalysis, instanceIdentifier);
+    final ImageAnalysis instance = mock(ImageAnalysis.class);
+    api.clearAnalyzer(instance);
 
-    hostApi.clearAnalyzer(instanceIdentifier);
-
-    verify(mockImageAnalysis).clearAnalyzer();
+    verify(instance).clearAnalyzer();
   }
 
   @Test
   public void setTargetRotation_makesCallToSetTargetRotation() {
-    final ImageAnalysisHostApiImpl hostApi =
-        new ImageAnalysisHostApiImpl(mockBinaryMessenger, instanceManager, context);
-    final long instanceIdentifier = 32;
-    final int targetRotation = Surface.ROTATION_180;
+    final PigeonApiImageAnalysis api = new TestProxyApiRegistrar().getPigeonApiImageAnalysis();
 
-    instanceManager.addDartCreatedInstance(mockImageAnalysis, instanceIdentifier);
+    final ImageAnalysis instance = mock(ImageAnalysis.class);
+    final long rotation = Surface.ROTATION_180;
+    api.setTargetRotation(instance, rotation);
 
-    hostApi.setTargetRotation(instanceIdentifier, Long.valueOf(targetRotation));
-
-    verify(mockImageAnalysis).setTargetRotation(targetRotation);
+    verify(instance).setTargetRotation(Surface.ROTATION_180);
   }
 }

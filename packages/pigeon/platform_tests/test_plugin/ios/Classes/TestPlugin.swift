@@ -1220,9 +1220,9 @@ class NITestsClass: NSObject, NIHostIntegrationCoreApi {
     return stringMap
   }
 
-//  func echoIntMap(intMap: [Int64?: Int64?]) throws -> [Int64?: Int64?] {
-//    return intMap
-//  }
+  //  func echoIntMap(intMap: [Int64?: Int64?]) throws -> [Int64?: Int64?] {
+  //    return intMap
+  //  }
 
   func echoStringList(stringList: [String?]) throws -> [String?] {
     return stringList

@@ -1,3 +1,45 @@
+## 26.0.2
+
+* [kotlin] Fixes support for classes that override equals and hashCode for ProxyApis.
+* [kotlin] Adds error message log when a new Dart proxy instance fails to be created.
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
+## 26.0.1
+
+* Improves documentation of `ProxyApi` annotation and internal Dart ProxyAPI helper functions.
+* Moves helper functions for generating Dart portion of ProxyAPIs.
+
+## 26.0.0
+
+* **Breaking Change** [dart] Changes name of constructors used to create subclasses of ProxyApis to
+  `pigeon_**original_name**`.
+* [dart] Adds ProxyApi overrides classes to be used in Flutter unit tests.
+
+## 25.5.0
+
+* [dart] Changes the default InstanceManager and its initialization to no longer make a message call
+  when used in a Flutter unit test.
+
+## 25.4.0
+
+* [gobject] Adds type id constants in header files so that they can be used by the user.
+* Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+
+## 25.3.2
+
+* [dart] Fixes null pointer crashes/exceptions caused by premature finalization of Dart instances
+  for ProxyApis.
+
+## 25.3.1
+
+* [kotlin] Fixes Kotlin InstanceManager not properly removing callbacks from handler.
+* [kotlin] Fixes `SyntheticAccessor` lint caused by private utility methods.
+
+## 25.3.0
+
+* [swift] Adds equality methods to generated data classes.
+* [dart, kotlin] Shortens equality methods.
+
 ## 25.2.0
 
 * [kotlin] Adds equality methods to generated data classes.

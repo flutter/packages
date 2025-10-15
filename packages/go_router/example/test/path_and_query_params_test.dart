@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -18,15 +18,19 @@ void main() {
     ByteData message = const JSONMethodCodec().encodeMethodCall(
       MethodCall('pushRouteInformation', testRouteInformation),
     );
-    await tester.binding.defaultBinaryMessenger
-        .handlePlatformMessage('flutter/navigation', message, (_) {});
+    await tester.binding.defaultBinaryMessenger.handlePlatformMessage(
+      'flutter/navigation',
+      message,
+      (_) {},
+    );
 
     await tester.pumpAndSettle();
     // 'Chris' should be higher than 'Tom'.
     expect(
-        tester.getCenter(find.text('Jane')).dy <
-            tester.getCenter(find.text('John')).dy,
-        isTrue);
+      tester.getCenter(find.text('Jane')).dy <
+          tester.getCenter(find.text('John')).dy,
+      isTrue,
+    );
 
     testRouteInformation = <String, dynamic>{
       'location': '/family/f1?privacy=false',
@@ -34,14 +38,18 @@ void main() {
     message = const JSONMethodCodec().encodeMethodCall(
       MethodCall('pushRouteInformation', testRouteInformation),
     );
-    await tester.binding.defaultBinaryMessenger
-        .handlePlatformMessage('flutter/navigation', message, (_) {});
+    await tester.binding.defaultBinaryMessenger.handlePlatformMessage(
+      'flutter/navigation',
+      message,
+      (_) {},
+    );
 
     await tester.pumpAndSettle();
     // 'Chris' should be lower than 'Tom'.
     expect(
-        tester.getCenter(find.text('Jane')).dy >
-            tester.getCenter(find.text('John')).dy,
-        isTrue);
+      tester.getCenter(find.text('Jane')).dy >
+          tester.getCenter(find.text('John')).dy,
+      isTrue,
+    );
   });
 }

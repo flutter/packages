@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -13,8 +13,8 @@ const String _transformCommandAtom = r' *,?([^(]+)\(([^)]*)\)';
 final RegExp _transformValidator = RegExp('^($_transformCommandAtom)*\$');
 final RegExp _transformCommand = RegExp(_transformCommandAtom);
 
-typedef _MatrixParser = AffineMatrix Function(
-    List<double> params, AffineMatrix current);
+typedef _MatrixParser =
+    AffineMatrix Function(List<double> params, AffineMatrix current);
 
 const Map<String, _MatrixParser> _matrixParsers = <String, _MatrixParser>{
   'matrix': _parseSvgMatrix,
@@ -93,19 +93,31 @@ AffineMatrix _parseSvgMatrix(List<double> params, AffineMatrix current) {
   final double e = params[4];
   final double f = params[5];
 
-  return AffineMatrix(a, b, c, d, e, f).multiplied(current);
+  return AffineMatrix(a, b, c, d, e, f, 1.0).multiplied(current);
 }
 
 AffineMatrix _parseSvgSkewX(List<double> params, AffineMatrix current) {
   assert(params.isNotEmpty);
-  return AffineMatrix(1.0, 0.0, tan(params.first), 1.0, 0.0, 0.0)
-      .multiplied(current);
+  return AffineMatrix(
+    1.0,
+    0.0,
+    tan(params.first),
+    1.0,
+    0.0,
+    0.0,
+  ).multiplied(current);
 }
 
 AffineMatrix _parseSvgSkewY(List<double> params, AffineMatrix current) {
   assert(params.isNotEmpty);
-  return AffineMatrix(1.0, tan(params.first), 0.0, 1.0, 0.0, 0.0)
-      .multiplied(current);
+  return AffineMatrix(
+    1.0,
+    tan(params.first),
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+  ).multiplied(current);
 }
 
 AffineMatrix _parseSvgTranslate(List<double> params, AffineMatrix current) {
@@ -132,10 +144,14 @@ AffineMatrix _parseSvgRotate(List<double> params, AffineMatrix current) {
   if (params.length > 1) {
     final double x = params[1];
     final double y = params.length == 3 ? params[2] : x;
-    return AffineMatrix(1.0, 0.0, 0.0, 1.0, x, y)
-        .multiplied(rotate)
-        .translated(-x, -y)
-        .multiplied(current);
+    return AffineMatrix(
+      1.0,
+      0.0,
+      0.0,
+      1.0,
+      x,
+      y,
+    ).multiplied(rotate).translated(-x, -y).multiplied(current);
   } else {
     return rotate.multiplied(current);
   }
@@ -170,8 +186,11 @@ bool isPercentage(String? val) => val?.endsWith('%') ?? false;
 /// Parses value from the form '25%', 0.25 or 25.0 as a double.
 /// Note: Percentage or decimals will be multiplied by the total
 /// view box size, where as doubles will be returned as is.
-double? parsePatternUnitToDouble(String rawValue, String mode,
-    {ViewportNode? viewBox}) {
+double? parsePatternUnitToDouble(
+  String rawValue,
+  String mode, {
+  ViewportNode? viewBox,
+}) {
   double? value;
   double? viewBoxValue;
   if (viewBox != null) {
@@ -183,7 +202,8 @@ double? parsePatternUnitToDouble(String rawValue, String mode,
   }
 
   if (rawValue.contains('%')) {
-    value = ((double.parse(rawValue.substring(0, rawValue.length - 1))) / 100) *
+    value =
+        ((double.parse(rawValue.substring(0, rawValue.length - 1))) / 100) *
         viewBoxValue!;
   } else if (rawValue.startsWith('0.')) {
     value = (double.parse(rawValue)) * viewBoxValue!;

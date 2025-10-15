@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -36,14 +36,15 @@ class LocalAuthentication {
   /// authentication (e.g. lack of relevant hardware). This might throw
   /// [PlatformException] with error code [otherOperatingSystem] on the iOS
   /// simulator.
-  Future<bool> authenticate(
-      {required String localizedReason,
-      Iterable<AuthMessages> authMessages = const <AuthMessages>[
-        IOSAuthMessages(),
-        AndroidAuthMessages(),
-        WindowsAuthMessages()
-      ],
-      AuthenticationOptions options = const AuthenticationOptions()}) {
+  Future<bool> authenticate({
+    required String localizedReason,
+    Iterable<AuthMessages> authMessages = const <AuthMessages>[
+      IOSAuthMessages(),
+      AndroidAuthMessages(),
+      WindowsAuthMessages(),
+    ],
+    AuthenticationOptions options = const AuthenticationOptions(),
+  }) {
     return LocalAuthPlatform.instance.authenticate(
       localizedReason: localizedReason,
       authMessages: authMessages,

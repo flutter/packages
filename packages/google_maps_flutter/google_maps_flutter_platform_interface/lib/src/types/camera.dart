@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -62,11 +62,11 @@ class CameraPosition {
   ///
   /// Mainly for internal use when calling [CameraUpdate.newCameraPosition].
   Object toMap() => <String, Object>{
-        'bearing': bearing,
-        'target': target.toJson(),
-        'tilt': tilt,
-        'zoom': zoom,
-      };
+    'bearing': bearing,
+    'target': target.toJson(),
+    'tilt': tilt,
+    'zoom': zoom,
+  };
 
   /// Deserializes [CameraPosition] from a map.
   ///
@@ -219,7 +219,7 @@ abstract class CameraUpdate {
 class CameraUpdateNewCameraPosition extends CameraUpdate {
   /// Creates a camera move.
   const CameraUpdateNewCameraPosition(this.cameraPosition)
-      : super._(CameraUpdateType.newCameraPosition);
+    : super._(CameraUpdateType.newCameraPosition);
 
   /// The new camera position.
   final CameraPosition cameraPosition;
@@ -231,7 +231,7 @@ class CameraUpdateNewCameraPosition extends CameraUpdate {
 class CameraUpdateNewLatLng extends CameraUpdate {
   /// Creates a camera move to latitude and longitude.
   const CameraUpdateNewLatLng(this.latLng)
-      : super._(CameraUpdateType.newLatLng);
+    : super._(CameraUpdateType.newLatLng);
 
   /// New latitude and longitude of the camera..
   final LatLng latLng;
@@ -243,7 +243,7 @@ class CameraUpdateNewLatLng extends CameraUpdate {
 class CameraUpdateNewLatLngBounds extends CameraUpdate {
   /// Creates a camera move to a bounding range.
   const CameraUpdateNewLatLngBounds(this.bounds, this.padding)
-      : super._(CameraUpdateType.newLatLngBounds);
+    : super._(CameraUpdateType.newLatLngBounds);
 
   /// The northeast and southwest bounding coordinates.
   final LatLngBounds bounds;
@@ -258,7 +258,7 @@ class CameraUpdateNewLatLngBounds extends CameraUpdate {
 class CameraUpdateNewLatLngZoom extends CameraUpdate {
   /// Creates a camera move with coordinates and zoom level.
   const CameraUpdateNewLatLngZoom(this.latLng, this.zoom)
-      : super._(CameraUpdateType.newLatLngZoom);
+    : super._(CameraUpdateType.newLatLngZoom);
 
   /// New coordinates of the camera.
   final LatLng latLng;
@@ -273,7 +273,7 @@ class CameraUpdateNewLatLngZoom extends CameraUpdate {
 class CameraUpdateScrollBy extends CameraUpdate {
   /// Creates a camera scroll.
   const CameraUpdateScrollBy(this.dx, this.dy)
-      : super._(CameraUpdateType.scrollBy);
+    : super._(CameraUpdateType.scrollBy);
 
   /// Scroll delta x.
   final double dx;
@@ -288,7 +288,7 @@ class CameraUpdateScrollBy extends CameraUpdate {
 class CameraUpdateZoomBy extends CameraUpdate {
   /// Creates a relative camera zoom.
   const CameraUpdateZoomBy(this.amount, [this.focus])
-      : super._(CameraUpdateType.zoomBy);
+    : super._(CameraUpdateType.zoomBy);
 
   /// Change in camera zoom amount.
   final double amount;
@@ -296,13 +296,14 @@ class CameraUpdateZoomBy extends CameraUpdate {
   /// Optional point around which the zoom is focused.
   final Offset? focus;
   @override
-  Object toJson() => (focus == null)
-      ? <Object>['zoomBy', amount]
-      : <Object>[
-          'zoomBy',
-          amount,
-          <double>[focus!.dx, focus!.dy]
-        ];
+  Object toJson() =>
+      (focus == null)
+          ? <Object>['zoomBy', amount]
+          : <Object>[
+            'zoomBy',
+            amount,
+            <double>[focus!.dx, focus!.dy],
+          ];
 }
 
 /// Defines a camera zoom in.

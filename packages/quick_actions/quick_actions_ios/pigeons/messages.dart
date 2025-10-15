@@ -1,15 +1,17 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import 'package:pigeon/pigeon.dart';
 
-@ConfigurePigeon(PigeonOptions(
-  dartOut: 'lib/messages.g.dart',
-  swiftOut: 'ios/quick_actions_ios/Sources/quick_actions_ios/messages.g.swift',
-  copyrightHeader: 'pigeons/copyright.txt',
-))
-
+@ConfigurePigeon(
+  PigeonOptions(
+    dartOut: 'lib/messages.g.dart',
+    swiftOut:
+        'ios/quick_actions_ios/Sources/quick_actions_ios/messages.g.swift',
+    copyrightHeader: 'pigeons/copyright.txt',
+  ),
+)
 /// Home screen quick-action shortcut item.
 class ShortcutItemMessage {
   ShortcutItemMessage(

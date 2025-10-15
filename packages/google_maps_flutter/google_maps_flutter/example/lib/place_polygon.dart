@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -11,7 +11,7 @@ import 'page.dart';
 
 class PlacePolygonPage extends GoogleMapExampleAppPage {
   const PlacePolygonPage({Key? key})
-      : super(const Icon(Icons.linear_scale), 'Place polygon', key: key);
+    : super(const Icon(Icons.linear_scale), 'Place polygon', key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -107,18 +107,14 @@ class PlacePolygonBodyState extends State<PlacePolygonBody> {
   void _toggleGeodesic(PolygonId polygonId) {
     final Polygon polygon = polygons[polygonId]!;
     setState(() {
-      polygons[polygonId] = polygon.copyWith(
-        geodesicParam: !polygon.geodesic,
-      );
+      polygons[polygonId] = polygon.copyWith(geodesicParam: !polygon.geodesic);
     });
   }
 
   void _toggleVisible(PolygonId polygonId) {
     final Polygon polygon = polygons[polygonId]!;
     setState(() {
-      polygons[polygonId] = polygon.copyWith(
-        visibleParam: !polygon.visible,
-      );
+      polygons[polygonId] = polygon.copyWith(visibleParam: !polygon.visible);
     });
   }
 
@@ -152,17 +148,16 @@ class PlacePolygonBodyState extends State<PlacePolygonBody> {
   void _addHoles(PolygonId polygonId) {
     final Polygon polygon = polygons[polygonId]!;
     setState(() {
-      polygons[polygonId] =
-          polygon.copyWith(holesParam: _createHoles(polygonId));
+      polygons[polygonId] = polygon.copyWith(
+        holesParam: _createHoles(polygonId),
+      );
     });
   }
 
   void _removeHoles(PolygonId polygonId) {
     final Polygon polygon = polygons[polygonId]!;
     setState(() {
-      polygons[polygonId] = polygon.copyWith(
-        holesParam: <List<LatLng>>[],
-      );
+      polygons[polygonId] = polygon.copyWith(holesParam: <List<LatLng>>[]);
     });
   }
 
@@ -196,26 +191,26 @@ class PlacePolygonBodyState extends State<PlacePolygonBody> {
                   children: <Widget>[
                     Column(
                       children: <Widget>[
+                        TextButton(onPressed: _add, child: const Text('add')),
                         TextButton(
-                          onPressed: _add,
-                          child: const Text('add'),
-                        ),
-                        TextButton(
-                          onPressed: (selectedId == null)
-                              ? null
-                              : () => _remove(selectedId),
+                          onPressed:
+                              (selectedId == null)
+                                  ? null
+                                  : () => _remove(selectedId),
                           child: const Text('remove'),
                         ),
                         TextButton(
-                          onPressed: (selectedId == null)
-                              ? null
-                              : () => _toggleVisible(selectedId),
+                          onPressed:
+                              (selectedId == null)
+                                  ? null
+                                  : () => _toggleVisible(selectedId),
                           child: const Text('toggle visible'),
                         ),
                         TextButton(
-                          onPressed: (selectedId == null)
-                              ? null
-                              : () => _toggleGeodesic(selectedId),
+                          onPressed:
+                              (selectedId == null)
+                                  ? null
+                                  : () => _toggleGeodesic(selectedId),
                           child: const Text('toggle geodesic'),
                         ),
                       ],
@@ -223,43 +218,48 @@ class PlacePolygonBodyState extends State<PlacePolygonBody> {
                     Column(
                       children: <Widget>[
                         TextButton(
-                          onPressed: (selectedId == null)
-                              ? null
-                              : (polygons[selectedId]!.holes.isNotEmpty
+                          onPressed:
+                              (selectedId == null)
                                   ? null
-                                  : () => _addHoles(selectedId)),
+                                  : (polygons[selectedId]!.holes.isNotEmpty
+                                      ? null
+                                      : () => _addHoles(selectedId)),
                           child: const Text('add holes'),
                         ),
                         TextButton(
-                          onPressed: (selectedId == null)
-                              ? null
-                              : (polygons[selectedId]!.holes.isEmpty
+                          onPressed:
+                              (selectedId == null)
                                   ? null
-                                  : () => _removeHoles(selectedId)),
+                                  : (polygons[selectedId]!.holes.isEmpty
+                                      ? null
+                                      : () => _removeHoles(selectedId)),
                           child: const Text('remove holes'),
                         ),
                         TextButton(
-                          onPressed: (selectedId == null)
-                              ? null
-                              : () => _changeWidth(selectedId),
+                          onPressed:
+                              (selectedId == null)
+                                  ? null
+                                  : () => _changeWidth(selectedId),
                           child: const Text('change stroke width'),
                         ),
                         TextButton(
-                          onPressed: (selectedId == null)
-                              ? null
-                              : () => _changeStrokeColor(selectedId),
+                          onPressed:
+                              (selectedId == null)
+                                  ? null
+                                  : () => _changeStrokeColor(selectedId),
                           child: const Text('change stroke color'),
                         ),
                         TextButton(
-                          onPressed: (selectedId == null)
-                              ? null
-                              : () => _changeFillColor(selectedId),
+                          onPressed:
+                              (selectedId == null)
+                                  ? null
+                                  : () => _changeFillColor(selectedId),
                           child: const Text('change fill color'),
                         ),
                       ],
-                    )
+                    ),
                   ],
-                )
+                ),
               ],
             ),
           ),

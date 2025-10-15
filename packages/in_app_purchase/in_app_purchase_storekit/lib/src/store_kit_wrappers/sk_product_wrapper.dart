@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -25,8 +25,10 @@ class SkProductResponseWrapper {
   // TODO(stuartmorgan): Temporarily ignore const warning in other parts of the
   // federated package, and remove this.
   // ignore: prefer_const_constructors_in_immutables
-  SkProductResponseWrapper(
-      {required this.products, required this.invalidProductIdentifiers});
+  SkProductResponseWrapper({
+    required this.products,
+    required this.invalidProductIdentifiers,
+  });
 
   /// Constructing an instance from a map from the Objective-C layer.
   ///
@@ -60,8 +62,10 @@ class SkProductResponseWrapper {
     }
     return other is SkProductResponseWrapper &&
         const DeepCollectionEquality().equals(other.products, products) &&
-        const DeepCollectionEquality()
-            .equals(other.invalidProductIdentifiers, invalidProductIdentifiers);
+        const DeepCollectionEquality().equals(
+          other.invalidProductIdentifiers,
+          invalidProductIdentifiers,
+        );
   }
 
   @override
@@ -69,7 +73,8 @@ class SkProductResponseWrapper {
 
   /// Convert from [SkProductResponseMessage] to [SkProductResponseWrapper]
   static SkProductResponseWrapper convertFromPigeon(
-      SKProductsResponseMessage msg) {
+    SKProductsResponseMessage msg,
+  ) {
     return SkProductResponseWrapper(
       products: msg.products!
           .map((SKProductMessage e) => SKProductWrapper.convertFromPigeon(e))
@@ -81,12 +86,14 @@ class SkProductResponseWrapper {
   /// Convert from [SkProductResponseWrapper] to [SkProductResponseWrapper]
   @visibleForTesting
   static SKProductsResponseMessage convertToPigeon(
-      SkProductResponseWrapper wrapper) {
+    SkProductResponseWrapper wrapper,
+  ) {
     return SKProductsResponseMessage(
-        products: wrapper.products
-            .map((SKProductWrapper e) => SKProductWrapper.convertToPigeon(e))
-            .toList(),
-        invalidProductIdentifiers: wrapper.invalidProductIdentifiers);
+      products: wrapper.products
+          .map((SKProductWrapper e) => SKProductWrapper.convertToPigeon(e))
+          .toList(),
+      invalidProductIdentifiers: wrapper.invalidProductIdentifiers,
+    );
   }
 }
 
@@ -102,11 +109,9 @@ enum SKSubscriptionPeriodUnit {
 
   /// An interval lasting one month.
   @JsonValue(1)
-
   /// An interval lasting one week.
   week,
   @JsonValue(2)
-
   /// An interval lasting one month.
   month,
 
@@ -116,7 +121,8 @@ enum SKSubscriptionPeriodUnit {
 
   /// Convert from [SKSubscriptionPeriodUnitMessage] to [SKSubscriptionPeriodUnit]
   static SKSubscriptionPeriodUnit convertFromPigeon(
-      SKSubscriptionPeriodUnitMessage msg) {
+    SKSubscriptionPeriodUnitMessage msg,
+  ) {
     switch (msg) {
       case SKSubscriptionPeriodUnitMessage.day:
         return SKSubscriptionPeriodUnit.day;
@@ -132,7 +138,8 @@ enum SKSubscriptionPeriodUnit {
   /// Convert from [SKSubscriptionPeriodUnit] to [SKSubscriptionPeriodUnitMessage]
   @visibleForTesting
   static SKSubscriptionPeriodUnitMessage convertToPigeon(
-      SKSubscriptionPeriodUnit msg) {
+    SKSubscriptionPeriodUnit msg,
+  ) {
     switch (msg) {
       case SKSubscriptionPeriodUnit.day:
         return SKSubscriptionPeriodUnitMessage.day;
@@ -157,17 +164,22 @@ class SKProductSubscriptionPeriodWrapper {
   // TODO(stuartmorgan): Temporarily ignore const warning in other parts of the
   // federated package, and remove this.
   // ignore: prefer_const_constructors_in_immutables
-  SKProductSubscriptionPeriodWrapper(
-      {required this.numberOfUnits, required this.unit});
+  SKProductSubscriptionPeriodWrapper({
+    required this.numberOfUnits,
+    required this.unit,
+  });
 
   /// Constructing an instance from a map from the Objective-C layer.
   ///
   /// This method should only be used with `map` values returned by [SKProductDiscountWrapper.fromJson] or [SKProductWrapper.fromJson].
   factory SKProductSubscriptionPeriodWrapper.fromJson(
-      Map<String, dynamic>? map) {
+    Map<String, dynamic>? map,
+  ) {
     if (map == null) {
       return SKProductSubscriptionPeriodWrapper(
-          numberOfUnits: 0, unit: SKSubscriptionPeriodUnit.day);
+        numberOfUnits: 0,
+        unit: SKSubscriptionPeriodUnit.day,
+      );
     }
     return _$SKProductSubscriptionPeriodWrapperFromJson(map);
   }
@@ -200,19 +212,23 @@ class SKProductSubscriptionPeriodWrapper {
 
   /// Convert from [SKProductSubscriptionPeriodMessage] to [SKProductSubscriptionPeriodWrapper]
   static SKProductSubscriptionPeriodWrapper convertFromPigeon(
-      SKProductSubscriptionPeriodMessage msg) {
+    SKProductSubscriptionPeriodMessage msg,
+  ) {
     return SKProductSubscriptionPeriodWrapper(
-        numberOfUnits: msg.numberOfUnits,
-        unit: SKSubscriptionPeriodUnit.convertFromPigeon(msg.unit));
+      numberOfUnits: msg.numberOfUnits,
+      unit: SKSubscriptionPeriodUnit.convertFromPigeon(msg.unit),
+    );
   }
 
   /// Convert from [SKProductSubscriptionPeriodWrapper] to [SKProductSubscriptionPeriodMessage]
   @visibleForTesting
   static SKProductSubscriptionPeriodMessage convertToPigeon(
-      SKProductSubscriptionPeriodWrapper wrapper) {
+    SKProductSubscriptionPeriodWrapper wrapper,
+  ) {
     return SKProductSubscriptionPeriodMessage(
-        numberOfUnits: wrapper.numberOfUnits,
-        unit: SKSubscriptionPeriodUnit.convertToPigeon(wrapper.unit));
+      numberOfUnits: wrapper.numberOfUnits,
+      unit: SKSubscriptionPeriodUnit.convertToPigeon(wrapper.unit),
+    );
   }
 }
 
@@ -240,7 +256,8 @@ enum SKProductDiscountPaymentMode {
 
   /// Convert from [SKProductDiscountPaymentModeMessage] to [SKProductDiscountPaymentModeWrapper]
   static SKProductDiscountPaymentMode convertFromPigeon(
-      SKProductDiscountPaymentModeMessage msg) {
+    SKProductDiscountPaymentModeMessage msg,
+  ) {
     switch (msg) {
       case SKProductDiscountPaymentModeMessage.payAsYouGo:
         return SKProductDiscountPaymentMode.payAsYouGo;
@@ -256,7 +273,8 @@ enum SKProductDiscountPaymentMode {
   /// Convert from [SKProductDiscountPaymentModeMessage] to [SKProductDiscountPaymentMode]
   @visibleForTesting
   static SKProductDiscountPaymentModeMessage convertToPigeon(
-      SKProductDiscountPaymentMode wrapper) {
+    SKProductDiscountPaymentMode wrapper,
+  ) {
     switch (wrapper) {
       case SKProductDiscountPaymentMode.payAsYouGo:
         return SKProductDiscountPaymentModeMessage.payAsYouGo;
@@ -289,7 +307,8 @@ enum SKProductDiscountType {
 
   /// Convert from [SKProductDiscountTypeMessage] to [SKProductDiscountType]
   static SKProductDiscountType convertFromPigeon(
-      SKProductDiscountTypeMessage msg) {
+    SKProductDiscountTypeMessage msg,
+  ) {
     switch (msg) {
       case SKProductDiscountTypeMessage.introductory:
         return SKProductDiscountType.introductory;
@@ -301,7 +320,8 @@ enum SKProductDiscountType {
   /// Convert from [SKProductDiscountType] to [SKProductDiscountTypeMessage]
   @visibleForTesting
   static SKProductDiscountTypeMessage convertToPigeon(
-      SKProductDiscountType wrapper) {
+    SKProductDiscountType wrapper,
+  ) {
     switch (wrapper) {
       case SKProductDiscountType.introductory:
         return SKProductDiscountTypeMessage.introductory;
@@ -321,14 +341,15 @@ class SKProductDiscountWrapper {
   // TODO(stuartmorgan): Temporarily ignore const warning in other parts of the
   // federated package, and remove this.
   // ignore: prefer_const_constructors_in_immutables
-  SKProductDiscountWrapper(
-      {required this.price,
-      required this.priceLocale,
-      required this.numberOfPeriods,
-      required this.paymentMode,
-      required this.subscriptionPeriod,
-      required this.identifier,
-      required this.type});
+  SKProductDiscountWrapper({
+    required this.price,
+    required this.priceLocale,
+    required this.numberOfPeriods,
+    required this.paymentMode,
+    required this.subscriptionPeriod,
+    required this.identifier,
+    required this.type,
+  });
 
   /// Constructing an instance from a map from the Objective-C layer.
   ///
@@ -363,7 +384,7 @@ class SKProductDiscountWrapper {
   /// A string used to uniquely identify a discount offer for a product.
   ///
   /// You set up offers and their identifiers in App Store Connect.
-  @JsonKey(defaultValue: null)
+  @JsonKey()
   final String? identifier;
 
   /// Values representing the types of discount offers an app can present.
@@ -389,39 +410,53 @@ class SKProductDiscountWrapper {
   }
 
   @override
-  int get hashCode => Object.hash(price, priceLocale, numberOfPeriods,
-      paymentMode, subscriptionPeriod, identifier, type);
+  int get hashCode => Object.hash(
+    price,
+    priceLocale,
+    numberOfPeriods,
+    paymentMode,
+    subscriptionPeriod,
+    identifier,
+    type,
+  );
 
   /// Convert from [SKProductDiscountMessage] to [SKProductDiscountWrapper]
   static SKProductDiscountWrapper convertFromPigeon(
-      SKProductDiscountMessage msg) {
+    SKProductDiscountMessage msg,
+  ) {
     return SKProductDiscountWrapper(
-        price: msg.price,
-        priceLocale: SKPriceLocaleWrapper.convertFromPigeon(msg.priceLocale),
-        numberOfPeriods: msg.numberOfPeriods,
-        paymentMode:
-            SKProductDiscountPaymentMode.convertFromPigeon(msg.paymentMode),
-        subscriptionPeriod:
-            SKProductSubscriptionPeriodWrapper.convertFromPigeon(
-                msg.subscriptionPeriod),
-        identifier: msg.identifier,
-        type: SKProductDiscountType.convertFromPigeon(msg.type));
+      price: msg.price,
+      priceLocale: SKPriceLocaleWrapper.convertFromPigeon(msg.priceLocale),
+      numberOfPeriods: msg.numberOfPeriods,
+      paymentMode: SKProductDiscountPaymentMode.convertFromPigeon(
+        msg.paymentMode,
+      ),
+      subscriptionPeriod: SKProductSubscriptionPeriodWrapper.convertFromPigeon(
+        msg.subscriptionPeriod,
+      ),
+      identifier: msg.identifier,
+      type: SKProductDiscountType.convertFromPigeon(msg.type),
+    );
   }
 
   /// Convert from [SKProductDiscountWrapper] to [SKProductDiscountMessage]
   @visibleForTesting
   static SKProductDiscountMessage convertToPigeon(
-      SKProductDiscountWrapper wrapper) {
+    SKProductDiscountWrapper wrapper,
+  ) {
     return SKProductDiscountMessage(
-        price: wrapper.price,
-        priceLocale: SKPriceLocaleWrapper.convertToPigeon(wrapper.priceLocale),
-        numberOfPeriods: wrapper.numberOfPeriods,
-        paymentMode:
-            SKProductDiscountPaymentMode.convertToPigeon(wrapper.paymentMode),
-        subscriptionPeriod: SKProductSubscriptionPeriodWrapper.convertToPigeon(
-            wrapper.subscriptionPeriod),
-        identifier: wrapper.identifier,
-        type: SKProductDiscountType.convertToPigeon(wrapper.type));
+      price: wrapper.price,
+      priceLocale: SKPriceLocaleWrapper.convertToPigeon(wrapper.priceLocale),
+      numberOfPeriods: wrapper.numberOfPeriods,
+      paymentMode: SKProductDiscountPaymentMode.convertToPigeon(
+        wrapper.paymentMode,
+      ),
+      subscriptionPeriod: SKProductSubscriptionPeriodWrapper.convertToPigeon(
+        wrapper.subscriptionPeriod,
+      ),
+      identifier: wrapper.identifier,
+      type: SKProductDiscountType.convertToPigeon(wrapper.type),
+    );
   }
 }
 
@@ -500,7 +535,7 @@ class SKProductWrapper {
   /// and their units and duration do not have to be matched.
   final SKProductDiscountWrapper? introductoryPrice;
 
-  /// An array of subscription offers available for the auto-renewable subscription (available on iOS 12.2 and higher).
+  /// An array of subscription offers available for the auto-renewable subscription.
   ///
   /// This property lists all promotional offers set up in App Store Connect. If
   /// no promotional offers have been set up, this field returns an empty list.
@@ -532,70 +567,77 @@ class SKProductWrapper {
 
   @override
   int get hashCode => Object.hash(
-      productIdentifier,
-      localizedTitle,
-      localizedDescription,
-      priceLocale,
-      subscriptionGroupIdentifier,
-      price,
-      subscriptionPeriod,
-      introductoryPrice,
-      discounts);
+    productIdentifier,
+    localizedTitle,
+    localizedDescription,
+    priceLocale,
+    subscriptionGroupIdentifier,
+    price,
+    subscriptionPeriod,
+    introductoryPrice,
+    discounts,
+  );
 
   /// Convert from [SKProductMessage] to [SKProductWrapper]
   static SKProductWrapper convertFromPigeon(SKProductMessage msg) {
     return SKProductWrapper(
-        productIdentifier: msg.productIdentifier,
-        localizedTitle: msg.localizedTitle,
-        localizedDescription: msg.localizedDescription ?? '',
-        priceLocale: SKPriceLocaleWrapper.convertFromPigeon(msg.priceLocale),
-        price: msg.price,
-        subscriptionGroupIdentifier: msg.subscriptionGroupIdentifier,
-        subscriptionPeriod: msg.subscriptionPeriod != null
-            ? SKProductSubscriptionPeriodWrapper.convertFromPigeon(
-                msg.subscriptionPeriod!)
-            : null,
-        introductoryPrice: msg.introductoryPrice != null
-            ? SKProductDiscountWrapper.convertFromPigeon(msg.introductoryPrice!)
-            : null,
-        discounts: msg.discounts != null
-            ? msg.discounts!
-                .map((SKProductDiscountMessage e) =>
-                    SKProductDiscountWrapper.convertFromPigeon(e))
+      productIdentifier: msg.productIdentifier,
+      localizedTitle: msg.localizedTitle,
+      localizedDescription: msg.localizedDescription ?? '',
+      priceLocale: SKPriceLocaleWrapper.convertFromPigeon(msg.priceLocale),
+      price: msg.price,
+      subscriptionGroupIdentifier: msg.subscriptionGroupIdentifier,
+      subscriptionPeriod: msg.subscriptionPeriod != null
+          ? SKProductSubscriptionPeriodWrapper.convertFromPigeon(
+              msg.subscriptionPeriod!,
+            )
+          : null,
+      introductoryPrice: msg.introductoryPrice != null
+          ? SKProductDiscountWrapper.convertFromPigeon(msg.introductoryPrice!)
+          : null,
+      discounts: msg.discounts != null
+          ? msg.discounts!
+                .map(
+                  (SKProductDiscountMessage e) =>
+                      SKProductDiscountWrapper.convertFromPigeon(e),
+                )
                 .toList()
-            : <SKProductDiscountWrapper>[]);
+          : <SKProductDiscountWrapper>[],
+    );
   }
 
   /// Convert from [SKProductWrapper] to [SKProductMessage]
   static SKProductMessage convertToPigeon(SKProductWrapper wrapper) {
     return SKProductMessage(
-        productIdentifier: wrapper.productIdentifier,
-        localizedTitle: wrapper.localizedTitle,
-        localizedDescription: wrapper.localizedDescription,
-        priceLocale: SKPriceLocaleWrapper.convertToPigeon(wrapper.priceLocale),
-        price: wrapper.price,
-        subscriptionGroupIdentifier: wrapper.subscriptionGroupIdentifier,
-        subscriptionPeriod: wrapper.subscriptionPeriod != null
-            ? SKProductSubscriptionPeriodWrapper.convertToPigeon(
-                wrapper.subscriptionPeriod!)
-            : null,
-        introductoryPrice: wrapper.introductoryPrice != null
-            ? SKProductDiscountWrapper.convertToPigeon(
-                wrapper.introductoryPrice!)
-            : null,
-        discounts: wrapper.discounts
-            .map((SKProductDiscountWrapper e) =>
-                SKProductDiscountWrapper.convertToPigeon(e))
-            .toList());
+      productIdentifier: wrapper.productIdentifier,
+      localizedTitle: wrapper.localizedTitle,
+      localizedDescription: wrapper.localizedDescription,
+      priceLocale: SKPriceLocaleWrapper.convertToPigeon(wrapper.priceLocale),
+      price: wrapper.price,
+      subscriptionGroupIdentifier: wrapper.subscriptionGroupIdentifier,
+      subscriptionPeriod: wrapper.subscriptionPeriod != null
+          ? SKProductSubscriptionPeriodWrapper.convertToPigeon(
+              wrapper.subscriptionPeriod!,
+            )
+          : null,
+      introductoryPrice: wrapper.introductoryPrice != null
+          ? SKProductDiscountWrapper.convertToPigeon(wrapper.introductoryPrice!)
+          : null,
+      discounts: wrapper.discounts
+          .map(
+            (SKProductDiscountWrapper e) =>
+                SKProductDiscountWrapper.convertToPigeon(e),
+          )
+          .toList(),
+    );
   }
 }
 
 /// Object that indicates the locale of the price
 ///
 /// It is a thin wrapper of [NSLocale](https://developer.apple.com/documentation/foundation/nslocale?language=objc).
-// TODO(cyanglaz): NSLocale is a complex object, want to see the actual need of getting this expanded.
-//                 Matching android to only get the currencySymbol for now.
-//                 https://github.com/flutter/flutter/issues/26610
+// This intentionally only exposes fields that there has been a demonstrated
+// need for; see discussion in https://github.com/flutter/plugins/pull/3897.
 @JsonSerializable()
 @immutable
 class SKPriceLocaleWrapper {
@@ -615,7 +657,10 @@ class SKPriceLocaleWrapper {
   factory SKPriceLocaleWrapper.fromJson(Map<String, dynamic>? map) {
     if (map == null) {
       return SKPriceLocaleWrapper(
-          currencyCode: '', currencySymbol: '', countryCode: '');
+        currencyCode: '',
+        currencySymbol: '',
+        countryCode: '',
+      );
     }
     return _$SKPriceLocaleWrapperFromJson(map);
   }
@@ -651,17 +696,19 @@ class SKPriceLocaleWrapper {
   /// Convert from [SKPriceLocaleMessage] to [SKPriceLocaleWrapper]
   static SKPriceLocaleWrapper convertFromPigeon(SKPriceLocaleMessage msg) {
     return SKPriceLocaleWrapper(
-        currencySymbol: msg.currencySymbol,
-        currencyCode: msg.currencyCode,
-        countryCode: msg.countryCode);
+      currencySymbol: msg.currencySymbol,
+      currencyCode: msg.currencyCode,
+      countryCode: msg.countryCode,
+    );
   }
 
   /// Convert from [SKPriceLocaleWrapper] to [SKPriceLocaleMessage]
   @visibleForTesting
   static SKPriceLocaleMessage convertToPigeon(SKPriceLocaleWrapper msg) {
     return SKPriceLocaleMessage(
-        currencySymbol: msg.currencySymbol,
-        currencyCode: msg.currencyCode,
-        countryCode: msg.countryCode);
+      currencySymbol: msg.currencySymbol,
+      currencyCode: msg.currencyCode,
+      countryCode: msg.countryCode,
+    );
   }
 }

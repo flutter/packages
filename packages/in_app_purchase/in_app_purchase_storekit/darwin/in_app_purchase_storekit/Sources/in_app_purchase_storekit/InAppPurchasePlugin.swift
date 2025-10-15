@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -34,17 +34,15 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, FIAInAppPurchaseAPI {
   // This should be an Task, but Task is on available >= iOS 13
   private var _updateListenerTask: Any?
 
-  @available(iOS 13.0, *)
   var updateListenerTask: Task<(), Never> {
     return self._updateListenerTask as! Task<(), Never>
   }
 
-  @available(iOS 13.0, *)
   func setListenerTaskAsTask(task: Task<(), Never>) {
     self._updateListenerTask = task
   }
 
-  var transactionCallbackAPI: InAppPurchase2CallbackAPI? = nil
+  var transactionCallbackAPI: InAppPurchase2CallbackAPIProtocol? = nil
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     #if os(iOS)
@@ -136,7 +134,7 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, FIAInAppPurchaseAPI {
   public func storefrontWithError(_ error: AutoreleasingUnsafeMutablePointer<FlutterError?>)
     -> FIASKStorefrontMessage?
   {
-    if #available(iOS 13.0, *), let storefront = getPaymentQueueHandler().storefront {
+    if let storefront = getPaymentQueueHandler().storefront {
       return FIAObjectTranslator.convertStorefront(toPigeon: storefront)
     }
     return nil
@@ -175,10 +173,8 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, FIAInAppPurchaseAPI {
         self.productsCache[product.productIdentifier] = product
       }
 
-      if #available(iOS 12.2, *) {
-        if let responseMessage = FIAObjectTranslator.convertProductsResponse(toPigeon: response) {
-          completion(responseMessage, nil)
-        }
+      if let responseMessage = FIAObjectTranslator.convertProductsResponse(toPigeon: response) {
+        completion(responseMessage, nil)
       }
       self.requestHandlers.remove(handler)
     }
@@ -209,23 +205,21 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, FIAInAppPurchaseAPI {
     payment.quantity = paymentMap["quantity"] as? Int ?? 1
     payment.simulatesAskToBuyInSandbox = paymentMap["simulatesAskToBuyInSandbox"] as? Bool ?? false
 
-    if #available(iOS 12.2, *) {
-      if let paymentDiscountMap = paymentMap["paymentDiscount"] as? [String: Any],
-        !paymentDiscountMap.isEmpty
+    if let paymentDiscountMap = paymentMap["paymentDiscount"] as? [String: Any],
+      !paymentDiscountMap.isEmpty
+    {
+      var invalidError: NSString?
+      if let paymentDiscount = FIAObjectTranslator.getSKPaymentDiscount(
+        fromMap: paymentDiscountMap, withError: &invalidError)
       {
-        var invalidError: NSString?
-        if let paymentDiscount = FIAObjectTranslator.getSKPaymentDiscount(
-          fromMap: paymentDiscountMap, withError: &invalidError)
-        {
-          payment.paymentDiscount = paymentDiscount
-        } else if let invalidError = invalidError {
-          error.pointee = FlutterError(
-            code: "storekit_invalid_payment_discount_object",
-            message:
-              "You have requested a payment and specified a payment discount with invalid properties. \(invalidError)",
-            details: paymentMap)
-          return
-        }
+        payment.paymentDiscount = paymentDiscount
+      } else if let invalidError = invalidError {
+        error.pointee = FlutterError(
+          code: "storekit_invalid_payment_discount_object",
+          message:
+            "You have requested a payment and specified a payment discount with invalid properties. \(invalidError)",
+          details: paymentMap)
+        return
       }
     }
 
@@ -342,22 +336,20 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, FIAInAppPurchaseAPI {
     _ error: AutoreleasingUnsafeMutablePointer<FlutterError?>
   ) {
     #if os(iOS)
-      if #available(iOS 13.0, *) {
-        guard let messenger = registrar?.messenger() else {
-          fatalError("registrar.messenger can not be nil.")
-        }
-        paymentQueueDelegateCallbackChannel = FlutterMethodChannel(
-          name: "plugins.flutter.io/in_app_purchase_payment_queue_delegate",
-          binaryMessenger: messenger)
-
-        guard let unwrappedChannel = paymentQueueDelegateCallbackChannel else {
-          fatalError("paymentQueueDelegateCallbackChannel can not be nil.")
-        }
-        paymentQueueDelegate = FIAPPaymentQueueDelegate(
-          methodChannel: DefaultMethodChannel(channel: unwrappedChannel))
-
-        getPaymentQueueHandler().delegate = paymentQueueDelegate as? SKPaymentQueueDelegate
+      guard let messenger = registrar?.messenger() else {
+        fatalError("registrar.messenger can not be nil.")
       }
+      paymentQueueDelegateCallbackChannel = FlutterMethodChannel(
+        name: "plugins.flutter.io/in_app_purchase_payment_queue_delegate",
+        binaryMessenger: messenger)
+
+      guard let unwrappedChannel = paymentQueueDelegateCallbackChannel else {
+        fatalError("paymentQueueDelegateCallbackChannel can not be nil.")
+      }
+      paymentQueueDelegate = FIAPPaymentQueueDelegate(
+        methodChannel: DefaultMethodChannel(channel: unwrappedChannel))
+
+      getPaymentQueueHandler().delegate = paymentQueueDelegate as? SKPaymentQueueDelegate
     #endif
   }
 
@@ -365,11 +357,9 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, FIAInAppPurchaseAPI {
     _ error: AutoreleasingUnsafeMutablePointer<FlutterError?>
   ) {
     #if os(iOS)
-      if #available(iOS 13.0, *) {
-        paymentQueueDelegateCallbackChannel = nil
-        getPaymentQueueHandler().delegate = nil
-        paymentQueueDelegate = nil
-      }
+      paymentQueueDelegateCallbackChannel = nil
+      getPaymentQueueHandler().delegate = nil
+      paymentQueueDelegate = nil
     #endif
   }
 

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -20,9 +20,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'URL Launcher',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: ThemeData(primarySwatch: Colors.blue),
       home: const MyHomePage(title: 'URL Launcher'),
     );
   }
@@ -163,9 +161,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     const String toLaunch = 'https://www.cylog.org/headers/';
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
+      appBar: AppBar(title: Text(widget.title)),
       body: ListView(
         children: <Widget>[
           Column(
@@ -174,14 +170,17 @@ class _MyHomePageState extends State<MyHomePage> {
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: TextField(
-                    onChanged: (String text) => _phone = text,
-                    decoration: const InputDecoration(
-                        hintText: 'Input the phone number to launch')),
+                  onChanged: (String text) => _phone = text,
+                  decoration: const InputDecoration(
+                    hintText: 'Input the phone number to launch',
+                  ),
+                ),
               ),
               ElevatedButton(
-                onPressed: () => setState(() {
-                  _launched = _makePhoneCall('tel:$_phone');
-                }),
+                onPressed:
+                    () => setState(() {
+                      _launched = _makePhoneCall('tel:$_phone');
+                    }),
                 child: const Text('Make phone call'),
               ),
               const Padding(
@@ -189,46 +188,53 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: Text(toLaunch),
               ),
               ElevatedButton(
-                onPressed: () => setState(() {
-                  _launched = _launchInBrowser(toLaunch);
-                }),
+                onPressed:
+                    () => setState(() {
+                      _launched = _launchInBrowser(toLaunch);
+                    }),
                 child: const Text('Launch in browser'),
               ),
               const Padding(padding: EdgeInsets.all(16.0)),
               ElevatedButton(
-                onPressed: () => setState(() {
-                  _launched = _launchInWebViewOrVC(toLaunch);
-                }),
+                onPressed:
+                    () => setState(() {
+                      _launched = _launchInWebViewOrVC(toLaunch);
+                    }),
                 child: const Text('Launch in app'),
               ),
               ElevatedButton(
-                onPressed: () => setState(() {
-                  _launched = _launchInWebViewWithJavaScript(toLaunch);
-                }),
+                onPressed:
+                    () => setState(() {
+                      _launched = _launchInWebViewWithJavaScript(toLaunch);
+                    }),
                 child: const Text('Launch in app(JavaScript ON)'),
               ),
               ElevatedButton(
-                onPressed: () => setState(() {
-                  _launched = _launchInWebViewWithDomStorage(toLaunch);
-                }),
+                onPressed:
+                    () => setState(() {
+                      _launched = _launchInWebViewWithDomStorage(toLaunch);
+                    }),
                 child: const Text('Launch in app(DOM storage ON)'),
               ),
               const Padding(padding: EdgeInsets.all(16.0)),
               ElevatedButton(
-                onPressed: () => setState(() {
-                  _launched = _launchUniversalLinkIos(toLaunch);
-                }),
+                onPressed:
+                    () => setState(() {
+                      _launched = _launchUniversalLinkIos(toLaunch);
+                    }),
                 child: const Text(
-                    'Launch a universal link in a native app, fallback to Safari.(Youtube)'),
+                  'Launch a universal link in a native app, fallback to Safari.(Youtube)',
+                ),
               ),
               const Padding(padding: EdgeInsets.all(16.0)),
               ElevatedButton(
-                onPressed: () => setState(() {
-                  _launched = _launchInWebViewOrVC(toLaunch);
-                  Timer(const Duration(seconds: 5), () {
-                    UrlLauncherPlatform.instance.closeWebView();
-                  });
-                }),
+                onPressed:
+                    () => setState(() {
+                      _launched = _launchInWebViewOrVC(toLaunch);
+                      Timer(const Duration(seconds: 5), () {
+                        UrlLauncherPlatform.instance.closeWebView();
+                      });
+                    }),
                 child: const Text('Launch in app + close after 5 seconds'),
               ),
               const Padding(padding: EdgeInsets.all(16.0)),

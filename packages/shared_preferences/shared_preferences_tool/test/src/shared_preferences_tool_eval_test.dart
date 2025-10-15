@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -15,11 +15,11 @@ typedef _Event = (String eventKind, Map<String, Object?> eventData);
 // ignore: subtype_of_sealed_class
 class _FakeEvalOnDartLibrary extends EvalOnDartLibrary {
   _FakeEvalOnDartLibrary(VmService vmService)
-      : super(
-          'fake_library',
-          vmService,
-          serviceManager: ServiceManager<VmService>(),
-        );
+    : super(
+        'fake_library',
+        vmService,
+        serviceManager: ServiceManager<VmService>(),
+      );
 
   final List<_Event> eventLog = <_Event>[];
 
@@ -32,14 +32,7 @@ class _FakeEvalOnDartLibrary extends EvalOnDartLibrary {
     Map<String, String>? scope,
     bool shouldLogError = true,
   }) async {
-    eventLog.add(
-      (
-        'eval',
-        <String, Object?>{
-          'expression': expression,
-        },
-      ),
-    );
+    eventLog.add(('eval', <String, Object?>{'expression': expression}));
     return onEval();
   }
 }
@@ -97,14 +90,8 @@ void main() {
 
       final KeysResult allKeys = await sharedPreferencesToolEval.fetchAllKeys();
 
-      expect(
-        allKeys.asyncKeys,
-        equals(expectedAsyncKeys),
-      );
-      expect(
-        allKeys.legacyKeys,
-        equals(expectedLegacyKeys),
-      );
+      expect(allKeys.asyncKeys, equals(expectedAsyncKeys));
+      expect(allKeys.legacyKeys, equals(expectedLegacyKeys));
     });
 
     test('should fetch int value', () async {
@@ -113,22 +100,15 @@ void main() {
       stubEvalMethod(
         eventKind: 'value',
         method: "requestValue('$key', false)",
-        response: <String, Object?>{
-          'value': expectedValue,
-          'kind': 'int',
-        },
+        response: <String, Object?>{'value': expectedValue, 'kind': 'int'},
       );
 
-      final SharedPreferencesData data =
-          await sharedPreferencesToolEval.fetchValue(key, false);
+      final SharedPreferencesData data = await sharedPreferencesToolEval
+          .fetchValue(key, false);
 
       expect(
         data,
-        equals(
-          const SharedPreferencesData.int(
-            value: expectedValue,
-          ),
-        ),
+        equals(const SharedPreferencesData.int(value: expectedValue)),
       );
     });
 
@@ -138,22 +118,15 @@ void main() {
       stubEvalMethod(
         eventKind: 'value',
         method: "requestValue('$key', false)",
-        response: <String, Object?>{
-          'value': expectedValue,
-          'kind': 'bool',
-        },
+        response: <String, Object?>{'value': expectedValue, 'kind': 'bool'},
       );
 
-      final SharedPreferencesData data =
-          await sharedPreferencesToolEval.fetchValue(key, false);
+      final SharedPreferencesData data = await sharedPreferencesToolEval
+          .fetchValue(key, false);
 
       expect(
         data,
-        equals(
-          const SharedPreferencesData.bool(
-            value: expectedValue,
-          ),
-        ),
+        equals(const SharedPreferencesData.bool(value: expectedValue)),
       );
     });
 
@@ -163,22 +136,15 @@ void main() {
       stubEvalMethod(
         eventKind: 'value',
         method: "requestValue('$key', false)",
-        response: <String, Object?>{
-          'value': expectedValue,
-          'kind': 'double',
-        },
+        response: <String, Object?>{'value': expectedValue, 'kind': 'double'},
       );
 
-      final SharedPreferencesData data =
-          await sharedPreferencesToolEval.fetchValue(key, false);
+      final SharedPreferencesData data = await sharedPreferencesToolEval
+          .fetchValue(key, false);
 
       expect(
         data,
-        equals(
-          const SharedPreferencesData.double(
-            value: expectedValue,
-          ),
-        ),
+        equals(const SharedPreferencesData.double(value: expectedValue)),
       );
     });
 
@@ -188,22 +154,15 @@ void main() {
       stubEvalMethod(
         eventKind: 'value',
         method: "requestValue('$key', false)",
-        response: <String, Object?>{
-          'value': expectedValue,
-          'kind': 'String',
-        },
+        response: <String, Object?>{'value': expectedValue, 'kind': 'String'},
       );
 
-      final SharedPreferencesData data =
-          await sharedPreferencesToolEval.fetchValue(key, false);
+      final SharedPreferencesData data = await sharedPreferencesToolEval
+          .fetchValue(key, false);
 
       expect(
         data,
-        equals(
-          const SharedPreferencesData.string(
-            value: expectedValue,
-          ),
-        ),
+        equals(const SharedPreferencesData.string(value: expectedValue)),
       );
     });
 
@@ -219,16 +178,12 @@ void main() {
         },
       );
 
-      final SharedPreferencesData data =
-          await sharedPreferencesToolEval.fetchValue(key, true);
+      final SharedPreferencesData data = await sharedPreferencesToolEval
+          .fetchValue(key, true);
 
       expect(
         data,
-        equals(
-          const SharedPreferencesData.stringList(
-            value: expectedValue,
-          ),
-        ),
+        equals(const SharedPreferencesData.stringList(value: expectedValue)),
       );
     });
 
@@ -237,10 +192,7 @@ void main() {
       stubEvalMethod(
         eventKind: 'value',
         method: "requestValue('$key', true)",
-        response: <String, Object?>{
-          'value': 'error',
-          'kind': 'SomeClass',
-        },
+        response: <String, Object?>{'value': 'error', 'kind': 'SomeClass'},
       );
 
       expect(
@@ -265,14 +217,9 @@ void main() {
       );
 
       expect(eval.eventLog.length, equals(1));
-      final (
-        String eventKind,
-        Map<String, Object?> eventData,
-      ) = eval.eventLog.first;
-      expect(
-        eventKind,
-        equals('eval'),
-      );
+      final (String eventKind, Map<String, Object?> eventData) =
+          eval.eventLog.first;
+      expect(eventKind, equals('eval'));
       expect(
         eventData,
         equals(<String, Object?>{
@@ -290,10 +237,7 @@ void main() {
         response: <String, Object?>{},
       );
 
-      await sharedPreferencesToolEval.deleteKey(
-        key,
-        false,
-      );
+      await sharedPreferencesToolEval.deleteKey(key, false);
 
       expect(eval.eventLog.length, equals(1));
     });

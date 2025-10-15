@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -47,8 +47,9 @@ void main() {
       controller = MiniController.asset(_videoAssetKey);
     });
 
-    testWidgets('registers expected implementation',
-        (WidgetTester tester) async {
+    testWidgets('registers expected implementation', (
+      WidgetTester tester,
+    ) async {
       AVFoundationVideoPlayer.registerWith();
       expect(VideoPlayerPlatform.instance, isA<AVFoundationVideoPlayer>());
     });
@@ -58,8 +59,10 @@ void main() {
 
       expect(controller.value.isInitialized, true);
       expect(await controller.position, Duration.zero);
-      expect(controller.value.duration,
-          const Duration(seconds: 7, milliseconds: 540));
+      expect(
+        controller.value.duration,
+        const Duration(seconds: 7, milliseconds: 540),
+      );
     });
 
     testWidgets('can be played', (WidgetTester tester) async {
@@ -71,27 +74,21 @@ void main() {
       expect(await controller.position, greaterThan(Duration.zero));
     });
 
-    testWidgets(
-      'can seek',
-      (WidgetTester tester) async {
-        await controller.initialize();
+    testWidgets('can seek', (WidgetTester tester) async {
+      await controller.initialize();
 
-        await controller.seekTo(const Duration(seconds: 3));
+      await controller.seekTo(const Duration(seconds: 3));
 
-        expect(controller.value.position, const Duration(seconds: 3));
-      },
-    );
+      expect(controller.value.position, const Duration(seconds: 3));
+    });
 
-    testWidgets(
-      'can seek to end',
-      (WidgetTester tester) async {
-        await controller.initialize();
+    testWidgets('can seek to end', (WidgetTester tester) async {
+      await controller.initialize();
 
-        await controller.seekTo(controller.value.duration);
+      await controller.seekTo(controller.value.duration);
 
-        expect(controller.value.duration, controller.value.position);
-      },
-    );
+      expect(controller.value.duration, controller.value.position);
+    });
 
     testWidgets('can be paused', (WidgetTester tester) async {
       await controller.initialize();
@@ -108,7 +105,9 @@ void main() {
       // fix it if possible. Is AVPlayer's pause method internally async?
       const Duration allowableDelta = Duration(milliseconds: 10);
       expect(
-          await controller.position, lessThan(pausedPosition + allowableDelta));
+        await controller.position,
+        lessThan(pausedPosition + allowableDelta),
+      );
     });
   });
 
@@ -126,8 +125,9 @@ void main() {
       controller = MiniController.file(file);
     });
 
-    testWidgets('test video player using static file() method as constructor',
-        (WidgetTester tester) async {
+    testWidgets('test video player using static file() method as constructor', (
+      WidgetTester tester,
+    ) async {
       await controller.initialize();
 
       await controller.play();
@@ -143,38 +143,41 @@ void main() {
       controller = MiniController.network(videoUrl);
     });
 
-    testWidgets('reports buffering status', (WidgetTester tester) async {
-      await controller.initialize();
+    testWidgets(
+      'reports buffering status',
+      (WidgetTester tester) async {
+        await controller.initialize();
 
-      final Completer<void> started = Completer<void>();
-      final Completer<void> ended = Completer<void>();
-      controller.addListener(() {
-        if (!started.isCompleted && controller.value.isBuffering) {
-          started.complete();
-        }
-        if (started.isCompleted &&
-            !controller.value.isBuffering &&
-            !ended.isCompleted) {
-          ended.complete();
-        }
-      });
+        final Completer<void> started = Completer<void>();
+        final Completer<void> ended = Completer<void>();
+        controller.addListener(() {
+          if (!started.isCompleted && controller.value.isBuffering) {
+            started.complete();
+          }
+          if (started.isCompleted &&
+              !controller.value.isBuffering &&
+              !ended.isCompleted) {
+            ended.complete();
+          }
+        });
 
-      await controller.play();
-      await controller.seekTo(const Duration(seconds: 5));
-      await tester.pumpAndSettle(_playDuration);
-      await controller.pause();
+        await controller.play();
+        await controller.seekTo(const Duration(seconds: 5));
+        await tester.pumpAndSettle(_playDuration);
+        await controller.pause();
 
-      // TODO(stuartmorgan): Switch to _controller.position once seekTo is
-      // fixed on the native side to wait for completion, so this is testing
-      // the native code rather than the MiniController position cache.
-      expect(controller.value.position, greaterThan(Duration.zero));
+        // TODO(stuartmorgan): Switch to _controller.position once seekTo is
+        // fixed on the native side to wait for completion, so this is testing
+        // the native code rather than the MiniController position cache.
+        expect(controller.value.position, greaterThan(Duration.zero));
 
-      await expectLater(started.future, completes);
-      await expectLater(ended.future, completes);
-    },
-        // TODO(stuartmorgan): Skipped on iOS without explanation in main
-        // package. Needs investigation.
-        skip: true);
+        await expectLater(started.future, completes);
+        await expectLater(ended.future, completes);
+      },
+      // TODO(stuartmorgan): Skipped on iOS without explanation in main
+      // package. Needs investigation.
+      skip: true,
+    );
 
     testWidgets('live stream duration != 0', (WidgetTester tester) async {
       final MiniController livestreamController = MiniController.network(
@@ -185,12 +188,15 @@ void main() {
       expect(livestreamController.value.isInitialized, true);
       // Live streams should have either a positive duration or C.TIME_UNSET if the duration is unknown
       // See https://exoplayer.dev/doc/reference/com/google/android/exoplayer2/Player.html#getDuration--
-      expect(livestreamController.value.duration,
-          (Duration duration) => duration != Duration.zero);
+      expect(
+        livestreamController.value.duration,
+        (Duration duration) => duration != Duration.zero,
+      );
     });
 
-    testWidgets('rotated m3u8 has correct aspect ratio',
-        (WidgetTester tester) async {
+    testWidgets('rotated m3u8 has correct aspect ratio', (
+      WidgetTester tester,
+    ) async {
       // Some m3u8 files contain rotation data that may incorrectly invert the aspect ratio.
       // More info [here](https://github.com/flutter/flutter/issues/109116).
       final MiniController livestreamController = MiniController.network(
@@ -199,8 +205,10 @@ void main() {
       await livestreamController.initialize();
 
       expect(livestreamController.value.isInitialized, true);
-      expect(livestreamController.value.size.width,
-          lessThan(livestreamController.value.size.height));
+      expect(
+        livestreamController.value.size.width,
+        lessThan(livestreamController.value.size.height),
+      );
     });
   });
 }

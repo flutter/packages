@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -63,8 +63,11 @@ void testValidPackages() {
         result[3].validUntil,
         text: '',
       ),
-      PtrResourceRecord('_services._dns-sd._udp.local', result[4].validUntil,
-          domainName: '_udisks-ssh._tcp.local'),
+      PtrResourceRecord(
+        '_services._dns-sd._udp.local',
+        result[4].validUntil,
+        domainName: '_udisks-ssh._tcp.local',
+      ),
       PtrResourceRecord(
         '_workstation._tcp.local',
         result[5].validUntil,
@@ -145,25 +148,27 @@ void testValidPackages() {
   });
 
   // Fixes https://github.com/flutter/flutter/issues/31854
-  test('Can decode packages without question and with answer and additional',
-      () {
-    final List<ResourceRecord> result =
-        decodeMDnsResponse(packetWithoutQuestionWithAnArCount)!;
-    expect(result, isNotNull);
-    expect(result.length, 2);
-    expect(result, <ResourceRecord>[
-      PtrResourceRecord(
-        '_______________.____._____',
-        result[0].validUntil,
-        domainName: '______________________._______________.____._____',
-      ),
-      TxtResourceRecord(
-        '______________________.____________.____._____',
-        result[1].validUntil,
-        text: 'model=MacBookPro14,3\nosxvers=18\necolor=225,225,223\n',
-      ),
-    ]);
-  });
+  test(
+    'Can decode packages without question and with answer and additional',
+    () {
+      final List<ResourceRecord> result =
+          decodeMDnsResponse(packetWithoutQuestionWithAnArCount)!;
+      expect(result, isNotNull);
+      expect(result.length, 2);
+      expect(result, <ResourceRecord>[
+        PtrResourceRecord(
+          '_______________.____._____',
+          result[0].validUntil,
+          domainName: '______________________._______________.____._____',
+        ),
+        TxtResourceRecord(
+          '______________________.____________.____._____',
+          result[1].validUntil,
+          text: 'model=MacBookPro14,3\nosxvers=18\necolor=225,225,223\n',
+        ),
+      ]);
+    },
+  );
 
   test('Can decode packages with a long text resource', () {
     final List<ResourceRecord> result = decodeMDnsResponse(packetWithLongTxt)!;
@@ -200,8 +205,10 @@ void testBadPackages() {
 
 void testPTRRData() {
   test('Can read FQDN from PTR data', () {
-    expect('sgjesse-macbookpro2 [78:31:c1:b8:55:38]._workstation._tcp.local',
-        readFQDN(ptrRData));
+    expect(
+      'sgjesse-macbookpro2 [78:31:c1:b8:55:38]._workstation._tcp.local',
+      readFQDN(ptrRData),
+    );
     expect('fletch-agent._fletch_agent._tcp.local', readFQDN(ptrRData2));
   });
 }
@@ -268,7 +275,7 @@ const List<int> package1 = <int>[
   0xc0,
   0xa8,
   0x01,
-  0xbf
+  0xbf,
 ];
 
 // Two addresses.
@@ -333,7 +340,7 @@ const List<int> package2 = <int>[
   0xa9,
   0xfe,
   0x5f,
-  0x53
+  0x53,
 ];
 
 // Eight mixed answers.
@@ -585,7 +592,7 @@ const List<int> package3 = <int>[
   0x00,
   0x02,
   0xc0,
-  0x2c
+  0x2c,
 ];
 
 /// Contains compressed domain names where a there is a cycle amongst the
@@ -621,7 +628,7 @@ const List<int> cycle = <int>[
   0xc0,
   0xa8,
   0x01,
-  0xbf
+  0xbf,
 ];
 
 const List<int> packagePtrResponse = <int>[
@@ -807,7 +814,7 @@ const List<int> packagePtrResponse = <int>[
   0xa9,
   0xfe,
   0xa7,
-  0xac
+  0xac,
 ];
 
 const List<int> ptrRData = <int>[
@@ -875,7 +882,7 @@ const List<int> ptrRData = <int>[
   0x63,
   0x61,
   0x6c,
-  0x00
+  0x00,
 ];
 
 const List<int> ptrRData2 = <int>[
@@ -917,7 +924,7 @@ const List<int> ptrRData2 = <int>[
   0x63,
   0x61,
   0x6c,
-  0x00
+  0x00,
 ];
 
 const List<int> srvRData = <int>[
@@ -940,7 +947,7 @@ const List<int> srvRData = <int>[
   0x63,
   0x61,
   0x6c,
-  0x00
+  0x00,
 ];
 
 const List<int> packetWithQuestionAnArCount = <int>[
@@ -1637,5 +1644,5 @@ const List<int> nonUtf8Package = <int>[
   0x00,
   0x02,
   0xc0,
-  0x2c
+  0x2c,
 ];

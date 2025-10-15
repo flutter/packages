@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -8,12 +8,13 @@ import 'dart:ui_web' as ui_web;
 import 'package:flutter/material.dart';
 
 /// The html.Element that will be rendered underneath the flutter UI.
-html.Element htmlElement = html.DivElement()
-  ..style.width = '100%'
-  ..style.height = '100%'
-  ..style.backgroundColor = '#fabada'
-  ..style.cursor = 'auto'
-  ..id = 'background-html-view';
+html.Element htmlElement =
+    html.DivElement()
+      ..style.width = '100%'
+      ..style.height = '100%'
+      ..style.backgroundColor = '#fabada'
+      ..style.cursor = 'auto'
+      ..id = 'background-html-view';
 
 // See other examples commented out below...
 
@@ -55,8 +56,6 @@ class NativeWidget extends StatelessWidget {
       (int viewId) => htmlElement,
     );
 
-    return const HtmlElementView(
-      viewType: _htmlElementViewType,
-    );
+    return const HtmlElementView(viewType: _htmlElementViewType);
   }
 }

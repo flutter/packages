@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -72,7 +72,8 @@ abstract class InAppPurchasePlatform extends PlatformInterface {
   /// Console](https://play.google.com/) for Android.
   Future<ProductDetailsResponse> queryProductDetails(Set<String> identifiers) =>
       throw UnimplementedError(
-          'queryProductDetails() had not been implemented.');
+        'queryProductDetails() had not been implemented.',
+      );
 
   /// Buy a non consumable product or subscription.
   ///
@@ -149,8 +150,7 @@ abstract class InAppPurchasePlatform extends PlatformInterface {
   Future<bool> buyConsumable({
     required PurchaseParam purchaseParam,
     bool autoConsume = true,
-  }) =>
-      throw UnimplementedError('buyConsumable() has not been implemented.');
+  }) => throw UnimplementedError('buyConsumable() has not been implemented.');
 
   /// Mark that purchased content has been delivered to the user.
   ///

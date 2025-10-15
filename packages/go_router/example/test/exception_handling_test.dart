@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -12,7 +12,9 @@ void main() {
 
     await tester.tap(find.text('Simulates user entering unknown url'));
     await tester.pumpAndSettle();
-    expect(find.text("Can't find a page for: /some-unknown-route"),
-        findsOneWidget);
+    expect(
+      find.text("Can't find a page for: /some-unknown-route"),
+      findsOneWidget,
+    );
   });
 }

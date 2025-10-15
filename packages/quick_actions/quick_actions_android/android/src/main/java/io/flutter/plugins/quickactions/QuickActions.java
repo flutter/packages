@@ -1,9 +1,10 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 package io.flutter.plugins.quickactions;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
@@ -121,6 +122,7 @@ final class QuickActions implements AndroidQuickActionsApi {
     return launchAction;
   }
 
+  @SuppressLint("UseRequiresApi")
   @TargetApi(Build.VERSION_CODES.N_MR1)
   private List<ShortcutInfoCompat> shortcutItemMessageToShortcutInfo(
       @NonNull List<ShortcutItemMessage> shortcuts) {

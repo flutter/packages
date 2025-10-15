@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -34,15 +34,18 @@ class AppStorePurchaseDetails extends PurchaseDetails {
       productID: transaction.payment.productIdentifier,
       purchaseID: transaction.transactionIdentifier,
       skPaymentTransaction: transaction,
-      status: const SKTransactionStatusConverter()
-          .toPurchaseStatus(transaction.transactionState, transaction.error),
+      status: const SKTransactionStatusConverter().toPurchaseStatus(
+        transaction.transactionState,
+        transaction.error,
+      ),
       transactionDate: transaction.transactionTimeStamp != null
           ? (transaction.transactionTimeStamp! * 1000).toInt().toString()
           : null,
       verificationData: PurchaseVerificationData(
-          localVerificationData: base64EncodedReceipt,
-          serverVerificationData: base64EncodedReceipt,
-          source: kIAPSource),
+        localVerificationData: base64EncodedReceipt,
+        serverVerificationData: base64EncodedReceipt,
+        source: kIAPSource,
+      ),
     );
 
     if (purchaseDetails.status == PurchaseStatus.error ||
@@ -82,12 +85,13 @@ class AppStorePurchaseDetails extends PurchaseDetails {
 /// AppStore, when using Storekit2
 class SK2PurchaseDetails extends PurchaseDetails {
   /// Creates new instance of [SK2PurchaseDetails]
-  SK2PurchaseDetails(
-      {required super.productID,
-      required super.purchaseID,
-      required super.verificationData,
-      required super.transactionDate,
-      required super.status});
+  SK2PurchaseDetails({
+    required super.productID,
+    required super.purchaseID,
+    required super.verificationData,
+    required super.transactionDate,
+    required super.status,
+  });
 
   @override
   bool get pendingCompletePurchase => status == PurchaseStatus.purchased;

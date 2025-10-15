@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -16,8 +16,10 @@ const LatLng kInitialMapCenter = LatLng(0, 0);
 const double kInitialZoomLevel = 5;
 
 /// Initial camera position
-const CameraPosition kInitialCameraPosition =
-    CameraPosition(target: kInitialMapCenter, zoom: kInitialZoomLevel);
+const CameraPosition kInitialCameraPosition = CameraPosition(
+  target: kInitialMapCenter,
+  zoom: kInitialZoomLevel,
+);
 
 // Dummy map ID
 const String kCloudMapId = '000000000000000'; // Dummy map ID.
@@ -33,8 +35,11 @@ final bool isAndroid =
 const bool isWeb = kIsWeb;
 
 /// Pumps a [map] widget in [tester] of a certain [size], then waits until it settles.
-Future<void> pumpMap(WidgetTester tester, GoogleMap map,
-    [Size size = const Size.square(200)]) async {
+Future<void> pumpMap(
+  WidgetTester tester,
+  GoogleMap map, [
+  Size size = const Size.square(200),
+]) async {
   await tester.pumpWidget(wrapMap(map, size));
   await tester.pumpAndSettle();
 }
@@ -45,12 +50,7 @@ Future<void> pumpMap(WidgetTester tester, GoogleMap map,
 Widget wrapMap(GoogleMap map, [Size size = const Size.square(200)]) {
   return MaterialApp(
     home: Scaffold(
-      body: Center(
-        child: SizedBox.fromSize(
-          size: size,
-          child: map,
-        ),
-      ),
+      body: Center(child: SizedBox.fromSize(size: size, child: map)),
     ),
   );
 }

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -10,6 +10,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Browser;
 import android.util.Log;
@@ -80,7 +81,10 @@ final class UrlLauncher implements UrlLauncherApi {
   }
 
   @Override
-  public @NonNull Boolean launchUrl(@NonNull String url, @NonNull Map<String, String> headers) {
+  public @NonNull Boolean launchUrl(
+      @NonNull String url,
+      @NonNull Map<String, String> headers,
+      @NonNull Boolean requireNonBrowser) {
     ensureActivity();
     assert activity != null;
 
@@ -88,6 +92,9 @@ final class UrlLauncher implements UrlLauncherApi {
         new Intent(Intent.ACTION_VIEW)
             .setData(Uri.parse(url))
             .putExtra(Browser.EXTRA_HEADERS, extractBundle(headers));
+    if (requireNonBrowser && Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+      launchIntent.addFlags(Intent.FLAG_ACTIVITY_REQUIRE_NON_BROWSER);
+    }
     try {
       activity.startActivity(launchIntent);
     } catch (ActivityNotFoundException e) {

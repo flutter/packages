@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -14,8 +14,10 @@ import 'paint.dart';
 Uint8List dumpToDebugFormat(Uint8List bytes) {
   const VectorGraphicsCodec codec = VectorGraphicsCodec();
   final _DebugVectorGraphicsListener listener = _DebugVectorGraphicsListener();
-  final DecodeResponse response =
-      codec.decode(bytes.buffer.asByteData(), listener);
+  final DecodeResponse response = codec.decode(
+    bytes.buffer.asByteData(),
+    listener,
+  );
   if (!response.complete) {
     codec.decode(bytes.buffer.asByteData(), listener, response: response);
   }
@@ -37,10 +39,17 @@ class _DebugVectorGraphicsListener extends VectorGraphicsCodecListener {
   }
 
   @override
-  void onDrawImage(int imageId, double x, double y, double width, double height,
-      Float64List? transform) {
+  void onDrawImage(
+    int imageId,
+    double x,
+    double y,
+    double width,
+    double height,
+    Float64List? transform,
+  ) {
     buffer.writeln(
-        'DrawImage: id:$imageId (Rect.fromLTWH($x, $y, $width, $height), transform: $transform)');
+      'DrawImage: id:$imageId (Rect.fromLTWH($x, $y, $width, $height), transform: $transform)',
+    );
   }
 
   @override
@@ -53,7 +62,8 @@ class _DebugVectorGraphicsListener extends VectorGraphicsCodecListener {
   @override
   void onDrawText(int textId, int? fillId, int? strokeId, int? patternId) {
     buffer.writeln(
-        'DrawText: id:$textId (fill: $fillId, stroke: $strokeId, pattern: $patternId)');
+      'DrawText: id:$textId (fill: $fillId, stroke: $strokeId, pattern: $patternId)',
+    );
   }
 
   @override
@@ -69,12 +79,21 @@ class _DebugVectorGraphicsListener extends VectorGraphicsCodecListener {
     VectorGraphicsErrorListener? onError,
   }) {
     buffer.writeln(
-        'StoreImage: id:$imageId (format:$format, byteLength:${data.lengthInBytes}');
+      'StoreImage: id:$imageId (format:$format, byteLength:${data.lengthInBytes}',
+    );
   }
 
   @override
-  void onLinearGradient(double fromX, double fromY, double toX, double toY,
-      Int32List colors, Float32List? offsets, int tileMode, int id) {
+  void onLinearGradient(
+    double fromX,
+    double fromY,
+    double toX,
+    double toY,
+    Int32List colors,
+    Float32List? offsets,
+    int tileMode,
+    int id,
+  ) {
     buffer.writeln(
       'StoreGradient: id:$id Linear(\n'
       '  from: ($fromX, $fromY)\n'
@@ -105,11 +124,13 @@ class _DebugVectorGraphicsListener extends VectorGraphicsCodecListener {
     // Fill
     if (paintStyle == 0) {
       buffer.writeln(
-          'StorePaint: id:$id Fill(${_intToColor(color)}, blendMode: ${BlendMode.values[blendMode].name}, shader: $shaderId)');
+        'StorePaint: id:$id Fill(${_intToColor(color)}, blendMode: ${BlendMode.values[blendMode].name}, shader: $shaderId)',
+      );
     } else {
       buffer.writeln(
-          'StorePaint: id:$id Stroke(${_intToColor(color)}, strokeCap: $strokeCap, $strokeJoin: $strokeJoin, '
-          'blendMode: ${BlendMode.values[blendMode].name}, strokeMiterLimit: $strokeMiterLimit, strokeWidth: $strokeWidth, shader: $shaderId)');
+        'StorePaint: id:$id Stroke(${_intToColor(color)}, strokeCap: $strokeCap, $strokeJoin: $strokeJoin, '
+        'blendMode: ${BlendMode.values[blendMode].name}, strokeMiterLimit: $strokeMiterLimit, strokeWidth: $strokeWidth, shader: $shaderId)',
+      );
     }
   }
 
@@ -120,7 +141,13 @@ class _DebugVectorGraphicsListener extends VectorGraphicsCodecListener {
 
   @override
   void onPathCubicTo(
-      double x1, double y1, double x2, double y2, double x3, double y3) {
+    double x1,
+    double y1,
+    double x2,
+    double y2,
+    double x3,
+    double y3,
+  ) {
     buffer.writeln('  cubicTo(($x1, $y1), ($x2, $y2), ($x3, $y3)');
   }
 
@@ -141,29 +168,38 @@ class _DebugVectorGraphicsListener extends VectorGraphicsCodecListener {
 
   @override
   void onPathStart(int id, int fillType) {
-    buffer
-        .writeln('PathStart: id:$id ${fillType == 0 ? 'nonZero' : 'evenOdd'}');
+    buffer.writeln(
+      'PathStart: id:$id ${fillType == 0 ? 'nonZero' : 'evenOdd'}',
+    );
   }
 
   @override
-  void onPatternStart(int patternId, double x, double y, double width,
-      double height, Float64List transform) {
+  void onPatternStart(
+    int patternId,
+    double x,
+    double y,
+    double width,
+    double height,
+    Float64List transform,
+  ) {
     buffer.writeln(
-        'StorePattern: $patternId (Rect.fromLTWH($x, $y, $width, $height), transform: $transform)');
+      'StorePattern: $patternId (Rect.fromLTWH($x, $y, $width, $height), transform: $transform)',
+    );
   }
 
   @override
   void onRadialGradient(
-      double centerX,
-      double centerY,
-      double radius,
-      double? focalX,
-      double? focalY,
-      Int32List colors,
-      Float32List? offsets,
-      Float64List? transform,
-      int tileMode,
-      int id) {
+    double centerX,
+    double centerY,
+    double radius,
+    double? focalX,
+    double? focalY,
+    Int32List colors,
+    Float32List? offsets,
+    Float64List? transform,
+    int tileMode,
+    int id,
+  ) {
     final bool hasFocal = focalX != null;
     buffer.writeln(
       'StoreGradient: id:$id Radial(\n'
@@ -205,7 +241,8 @@ class _DebugVectorGraphicsListener extends VectorGraphicsCodecListener {
     int id,
   ) {
     buffer.writeln(
-        'RecordText: id:$id ($text, ($xAnchorMultiplier x-anchoring), weight: $fontWeight, size: $fontSize, decoration: $decoration, decorationStyle: $decorationStyle, decorationColor: 0x${decorationColor.toRadixString(16)}, family: $fontFamily)');
+      'RecordText: id:$id ($text, ($xAnchorMultiplier x-anchoring), weight: $fontWeight, size: $fontSize, decoration: $decoration, decorationStyle: $decorationStyle, decorationColor: 0x${decorationColor.toRadixString(16)}, family: $fontFamily)',
+    );
   }
 
   @override
@@ -219,7 +256,8 @@ class _DebugVectorGraphicsListener extends VectorGraphicsCodecListener {
     Float64List? transform,
   ) {
     buffer.writeln(
-        'StoreTextPosition: id:$id (($x, $y) d($dx, $dy), reset: $reset, transform: $transform)');
+      'StoreTextPosition: id:$id (($x, $y) d($dx, $dy), reset: $reset, transform: $transform)',
+    );
   }
 
   @override

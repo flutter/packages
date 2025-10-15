@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -39,39 +39,45 @@ class WebWebViewControllerCreationParams
 
   /// The underlying element used as the WebView.
   @visibleForTesting
-  final web.HTMLIFrameElement iFrame = web.HTMLIFrameElement()
-    ..id = 'webView${_nextIFrameId++}'
-    ..style.width = '100%'
-    ..style.height = '100%'
-    ..style.border = 'none';
+  final web.HTMLIFrameElement iFrame =
+      web.HTMLIFrameElement()
+        ..id = 'webView${_nextIFrameId++}'
+        ..style.width = '100%'
+        ..style.height = '100%'
+        ..style.border = 'none';
 }
 
 /// An implementation of [PlatformWebViewController] using Flutter for Web API.
 class WebWebViewController extends PlatformWebViewController {
   /// Constructs a [WebWebViewController].
   WebWebViewController(PlatformWebViewControllerCreationParams params)
-      : super.implementation(params is WebWebViewControllerCreationParams
+    : super.implementation(
+        params is WebWebViewControllerCreationParams
             ? params
-            : WebWebViewControllerCreationParams
-                .fromPlatformWebViewControllerCreationParams(params));
+            : WebWebViewControllerCreationParams.fromPlatformWebViewControllerCreationParams(
+              params,
+            ),
+      );
 
   WebWebViewControllerCreationParams get _webWebViewParams =>
       params as WebWebViewControllerCreationParams;
 
   @override
   Future<void> loadHtmlString(String html, {String? baseUrl}) async {
-    _webWebViewParams.iFrame.src = Uri.dataFromString(
-      html,
-      mimeType: 'text/html',
-      encoding: utf8,
-    ).toString();
+    _webWebViewParams.iFrame.src =
+        Uri.dataFromString(
+          html,
+          mimeType: 'text/html',
+          encoding: utf8,
+        ).toString();
   }
 
   @override
   Future<void> loadRequest(LoadRequestParams params) async {
     if (!params.uri.hasScheme) {
       throw ArgumentError(
-          'LoadRequestParams#uri is required to have a scheme.');
+        'LoadRequestParams#uri is required to have a scheme.',
+      );
     }
 
     if (params.headers.isEmpty &&
@@ -87,21 +93,23 @@ class WebWebViewController extends PlatformWebViewController {
   Future<void> _updateIFrameFromXhr(LoadRequestParams params) async {
     final web.Response response =
         await _webWebViewParams.httpRequestFactory.request(
-      params.uri.toString(),
-      method: params.method.serialize(),
-      requestHeaders: params.headers,
-      sendData: params.body,
-    ) as web.Response;
+              params.uri.toString(),
+              method: params.method.serialize(),
+              requestHeaders: params.headers,
+              sendData: params.body,
+            )
+            as web.Response;
 
     final String header = response.headers.get('content-type') ?? 'text/html';
     final ContentType contentType = ContentType.parse(header);
     final Encoding encoding = Encoding.getByName(contentType.charset) ?? utf8;
 
-    _webWebViewParams.iFrame.src = Uri.dataFromString(
-      (await response.text().toDart).toDart,
-      mimeType: contentType.mimeType,
-      encoding: encoding,
-    ).toString();
+    _webWebViewParams.iFrame.src =
+        Uri.dataFromString(
+          (await response.text().toDart).toDart,
+          mimeType: contentType.mimeType,
+          encoding: encoding,
+        ).toString();
   }
 }
 
@@ -109,7 +117,7 @@ class WebWebViewController extends PlatformWebViewController {
 class WebWebViewWidget extends PlatformWebViewWidget {
   /// Constructs a [WebWebViewWidget].
   WebWebViewWidget(PlatformWebViewWidgetCreationParams params)
-      : super.implementation(params) {
+    : super.implementation(params) {
     final WebWebViewController controller =
         params.controller as WebWebViewController;
     ui_web.platformViewRegistry.registerViewFactory(
@@ -122,10 +130,11 @@ class WebWebViewWidget extends PlatformWebViewWidget {
   Widget build(BuildContext context) {
     return HtmlElementView(
       key: params.key,
-      viewType: (params.controller as WebWebViewController)
-          ._webWebViewParams
-          .iFrame
-          .id,
+      viewType:
+          (params.controller as WebWebViewController)
+              ._webWebViewParams
+              .iFrame
+              .id,
     );
   }
 }

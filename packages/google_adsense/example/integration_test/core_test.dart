@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -45,44 +45,55 @@ void main() async {
       expect(injected.async, true);
     });
 
-    testWidgets('sets AdSenseCodeParameters in script tag.',
-        (WidgetTester _) async {
+    testWidgets('sets AdSenseCodeParameters in script tag.', (
+      WidgetTester _,
+    ) async {
       final web.HTMLElement target = web.HTMLDivElement();
 
-      await adSense.initialize(testClient,
-          jsLoaderTarget: target,
-          adSenseCodeParameters: AdSenseCodeParameters(
-            adHost: 'test-adHost',
-            admobInterstitialSlot: 'test-admobInterstitialSlot',
-            admobRewardedSlot: 'test-admobRewardedSlot',
-            adChannel: 'test-adChannel',
-            adbreakTest: 'test-adbreakTest',
-            tagForChildDirectedTreatment: 'test-tagForChildDirectedTreatment',
-            tagForUnderAgeOfConsent: 'test-tagForUnderAgeOfConsent',
-            adFrequencyHint: 'test-adFrequencyHint',
-          ));
+      await adSense.initialize(
+        testClient,
+        jsLoaderTarget: target,
+        adSenseCodeParameters: AdSenseCodeParameters(
+          adHost: 'test-adHost',
+          admobInterstitialSlot: 'test-admobInterstitialSlot',
+          admobRewardedSlot: 'test-admobRewardedSlot',
+          adChannel: 'test-adChannel',
+          adbreakTest: 'test-adbreakTest',
+          tagForChildDirectedTreatment: 'test-tagForChildDirectedTreatment',
+          tagForUnderAgeOfConsent: 'test-tagForUnderAgeOfConsent',
+          adFrequencyHint: 'test-adFrequencyHint',
+        ),
+      );
 
       final web.HTMLScriptElement injected =
           target.lastElementChild! as web.HTMLScriptElement;
 
       expect(injected.dataset['adHost'], 'test-adHost');
-      expect(injected.dataset['admobInterstitialSlot'],
-          'test-admobInterstitialSlot');
+      expect(
+        injected.dataset['admobInterstitialSlot'],
+        'test-admobInterstitialSlot',
+      );
       expect(injected.dataset['admobRewardedSlot'], 'test-admobRewardedSlot');
       expect(injected.dataset['adChannel'], 'test-adChannel');
       expect(injected.dataset['adbreakTest'], 'test-adbreakTest');
-      expect(injected.dataset['tagForChildDirectedTreatment'],
-          'test-tagForChildDirectedTreatment');
-      expect(injected.dataset['tagForUnderAgeOfConsent'],
-          'test-tagForUnderAgeOfConsent');
+      expect(
+        injected.dataset['tagForChildDirectedTreatment'],
+        'test-tagForChildDirectedTreatment',
+      );
+      expect(
+        injected.dataset['tagForUnderAgeOfConsent'],
+        'test-tagForUnderAgeOfConsent',
+      );
       expect(injected.dataset['adFrequencyHint'], 'test-adFrequencyHint');
     });
 
-    testWidgets('Skips initialization if script is already present.',
-        (WidgetTester _) async {
-      final web.HTMLScriptElement script = web.HTMLScriptElement()
-        ..id = 'previously-injected'
-        ..src = testScriptUrl;
+    testWidgets('Skips initialization if script is already present.', (
+      WidgetTester _,
+    ) async {
+      final web.HTMLScriptElement script =
+          web.HTMLScriptElement()
+            ..id = 'previously-injected'
+            ..src = testScriptUrl;
       final web.HTMLElement target = web.HTMLDivElement()..appendChild(script);
 
       await adSense.initialize(testClient, jsLoaderTarget: target);
@@ -91,8 +102,9 @@ void main() async {
       expect(target.firstElementChild?.id, 'previously-injected');
     });
 
-    testWidgets('Skips initialization if adsense object is already present.',
-        (WidgetTester _) async {
+    testWidgets('Skips initialization if adsense object is already present.', (
+      WidgetTester _,
+    ) async {
       final web.HTMLElement target = web.HTMLDivElement();
 
       // Write an empty noop object

@@ -1,10 +1,10 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import 'package:flutter/cupertino.dart';
 
-import 'platform_interface/platform_ad_display_container.dart';
+import 'companion_ad_slot.dart';
 import 'platform_interface/platform_interface.dart';
 
 /// A [Widget] for displaying loaded ads.
@@ -37,18 +37,22 @@ class AdDisplayContainer extends StatelessWidget {
   AdDisplayContainer({
     Key? key,
     required void Function(AdDisplayContainer container) onContainerAdded,
+    Iterable<CompanionAdSlot> companionSlots = const <CompanionAdSlot>[],
     TextDirection layoutDirection = TextDirection.ltr,
   }) : this.fromPlatformCreationParams(
-          key: key,
-          params: PlatformAdDisplayContainerCreationParams(
-            onContainerAdded: (PlatformAdDisplayContainer container) {
-              onContainerAdded(AdDisplayContainer.fromPlatform(
-                platform: container,
-              ));
-            },
-            layoutDirection: layoutDirection,
-          ),
-        );
+         key: key,
+         params: PlatformAdDisplayContainerCreationParams(
+           onContainerAdded: (PlatformAdDisplayContainer container) {
+             onContainerAdded(
+               AdDisplayContainer.fromPlatform(platform: container),
+             );
+           },
+           companionSlots: companionSlots.map(
+             (CompanionAdSlot slot) => slot.platform,
+           ),
+           layoutDirection: layoutDirection,
+         ),
+       );
 
   /// Constructs an [AdDisplayContainer] from creation params for a specific platform.
   ///
@@ -81,9 +85,9 @@ class AdDisplayContainer extends StatelessWidget {
     Key? key,
     required PlatformAdDisplayContainerCreationParams params,
   }) : this.fromPlatform(
-          key: key,
-          platform: PlatformAdDisplayContainer(params),
-        );
+         key: key,
+         platform: PlatformAdDisplayContainer(params),
+       );
 
   /// Constructs an [AdDisplayContainer] from a specific platform
   /// implementation.
@@ -96,6 +100,12 @@ class AdDisplayContainer extends StatelessWidget {
   /// platform view hierarchy.
   void Function(PlatformAdDisplayContainer container) get onContainerAdded =>
       platform.params.onContainerAdded;
+
+  /// List of companion ad slots.
+  Iterable<CompanionAdSlot> get companionSlots =>
+      platform.params.companionSlots.map(
+        (PlatformCompanionAdSlot slot) => CompanionAdSlot.fromPlatform(slot),
+      );
 
   /// The layout direction to use for the embedded AdDisplayContainer.
   TextDirection get layoutDirection => platform.params.layoutDirection;
