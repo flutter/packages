@@ -7,3 +7,7 @@
 # TODO(loicsharma): Remove once AppAuth-iOS's warnings are fixed.
 # See: https://github.com/flutter/flutter/issues/162342
 - google_sign_in_ios
+# TODO(stuartmorgan): Remove once there's a non-deprecated codepath for getting
+# the view controller available on stable.
+# See https://github.com/flutter/flutter/issues/104117
+- url_launcher_ios
