@@ -23,8 +23,14 @@ import 'package:video_player_android/src/messages.g.dart' as _i2;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-class _FakePlaybackState_0 extends _i1.SmartFake implements _i2.PlaybackState {
-  _FakePlaybackState_0(Object parent, Invocation parentInvocation)
+class _FakeTexturePlayerIds_0 extends _i1.SmartFake
+    implements _i2.TexturePlayerIds {
+  _FakeTexturePlayerIds_0(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
+class _FakePlaybackState_1 extends _i1.SmartFake implements _i2.PlaybackState {
+  _FakePlaybackState_1(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
@@ -58,13 +64,34 @@ class MockAndroidVideoPlayerApi extends _i1.Mock
           as _i4.Future<void>);
 
   @override
-  _i4.Future<int> create(_i2.CreateMessage? msg) =>
+  _i4.Future<int> createForPlatformView(_i2.CreationOptions? options) =>
       (super.noSuchMethod(
-            Invocation.method(#create, [msg]),
+            Invocation.method(#createForPlatformView, [options]),
             returnValue: _i4.Future<int>.value(0),
             returnValueForMissingStub: _i4.Future<int>.value(0),
           )
           as _i4.Future<int>);
+
+  @override
+  _i4.Future<_i2.TexturePlayerIds> createForTextureView(
+    _i2.CreationOptions? options,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#createForTextureView, [options]),
+            returnValue: _i4.Future<_i2.TexturePlayerIds>.value(
+              _FakeTexturePlayerIds_0(
+                this,
+                Invocation.method(#createForTextureView, [options]),
+              ),
+            ),
+            returnValueForMissingStub: _i4.Future<_i2.TexturePlayerIds>.value(
+              _FakeTexturePlayerIds_0(
+                this,
+                Invocation.method(#createForTextureView, [options]),
+              ),
+            ),
+          )
+          as _i4.Future<_i2.TexturePlayerIds>);
 
   @override
   _i4.Future<void> dispose(int? playerId) =>
@@ -161,18 +188,18 @@ class MockVideoPlayerInstanceApi extends _i1.Mock
           as _i4.Future<void>);
 
   @override
-  _i4.Future<void> seekTo(int? position) =>
+  _i4.Future<void> pause() =>
       (super.noSuchMethod(
-            Invocation.method(#seekTo, [position]),
+            Invocation.method(#pause, []),
             returnValue: _i4.Future<void>.value(),
             returnValueForMissingStub: _i4.Future<void>.value(),
           )
           as _i4.Future<void>);
 
   @override
-  _i4.Future<void> pause() =>
+  _i4.Future<void> seekTo(int? position) =>
       (super.noSuchMethod(
-            Invocation.method(#pause, []),
+            Invocation.method(#seekTo, [position]),
             returnValue: _i4.Future<void>.value(),
             returnValueForMissingStub: _i4.Future<void>.value(),
           )
@@ -183,13 +210,13 @@ class MockVideoPlayerInstanceApi extends _i1.Mock
       (super.noSuchMethod(
             Invocation.method(#getPlaybackState, []),
             returnValue: _i4.Future<_i2.PlaybackState>.value(
-              _FakePlaybackState_0(
+              _FakePlaybackState_1(
                 this,
                 Invocation.method(#getPlaybackState, []),
               ),
             ),
             returnValueForMissingStub: _i4.Future<_i2.PlaybackState>.value(
-              _FakePlaybackState_0(
+              _FakePlaybackState_1(
                 this,
                 Invocation.method(#getPlaybackState, []),
               ),

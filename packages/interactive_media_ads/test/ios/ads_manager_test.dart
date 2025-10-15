@@ -111,35 +111,42 @@ void main() {
 
       late final ima.IMAAdsManagerDelegate delegate;
       final InteractiveMediaAdsProxy imaProxy = InteractiveMediaAdsProxy(
-        newIMAAdsManagerDelegate: ({
-          required void Function(
-            ima.IMAAdsManagerDelegate,
-            ima.IMAAdsManager,
-            ima.IMAAdEvent,
-          )
-          didReceiveAdEvent,
-          required void Function(
-            ima.IMAAdsManagerDelegate,
-            ima.IMAAdsManager,
-            ima.IMAAdError,
-          )
-          didReceiveAdError,
-          required void Function(ima.IMAAdsManagerDelegate, ima.IMAAdsManager)
-          didRequestContentPause,
-          required void Function(ima.IMAAdsManagerDelegate, ima.IMAAdsManager)
-          didRequestContentResume,
-        }) {
-          delegate = ima.IMAAdsManagerDelegate.pigeon_detached(
-            didReceiveAdEvent: didReceiveAdEvent,
-            didReceiveAdError: didReceiveAdError,
-            didRequestContentPause: didRequestContentPause,
-            didRequestContentResume: didRequestContentResume,
-            pigeon_instanceManager: ima.PigeonInstanceManager(
-              onWeakReferenceRemoved: (_) {},
-            ),
-          );
-          return delegate;
-        },
+        newIMAAdsManagerDelegate:
+            ({
+              required void Function(
+                ima.IMAAdsManagerDelegate,
+                ima.IMAAdsManager,
+                ima.IMAAdEvent,
+              )
+              didReceiveAdEvent,
+              required void Function(
+                ima.IMAAdsManagerDelegate,
+                ima.IMAAdsManager,
+                ima.IMAAdError,
+              )
+              didReceiveAdError,
+              required void Function(
+                ima.IMAAdsManagerDelegate,
+                ima.IMAAdsManager,
+              )
+              didRequestContentPause,
+              required void Function(
+                ima.IMAAdsManagerDelegate,
+                ima.IMAAdsManager,
+              )
+              didRequestContentResume,
+            }) {
+              delegate = ima.IMAAdsManagerDelegate.pigeon_detached(
+                didReceiveAdEvent: didReceiveAdEvent,
+                didReceiveAdError: didReceiveAdError,
+                didRequestContentPause: didRequestContentPause,
+                didRequestContentResume: didRequestContentResume,
+                pigeon_instanceManager: ima.PigeonInstanceManager(
+                  onWeakReferenceRemoved: (_) {},
+                ),
+              );
+              return delegate;
+            },
       );
 
       adsManager.setAdsManagerDelegate(
@@ -149,6 +156,16 @@ void main() {
       );
 
       verify(mockAdsManager.setDelegate(delegate));
+    });
+
+    test('adCuePoints', () {
+      final MockIMAAdsManager mockAdsManager = MockIMAAdsManager();
+
+      final List<double> cuePoints = <double>[1.0];
+      when(mockAdsManager.adCuePoints).thenReturn(cuePoints);
+      final IOSAdsManager adsManager = IOSAdsManager(mockAdsManager);
+
+      expect(adsManager.adCuePoints, <Duration>[const Duration(seconds: 1)]);
     });
   });
 }

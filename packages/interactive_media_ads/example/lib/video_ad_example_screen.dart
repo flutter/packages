@@ -70,6 +70,7 @@ class _VideoAdExampleScreenState extends State<VideoAdExampleScreen>
       _adsLoader = AdsLoader(
         container: container,
         onAdsLoaded: (OnAdsLoadedData data) {
+          debugPrint('OnAdsLoaded: (cuePoints: ${data.manager.adCuePoints})');
           final AdsManager manager = data.manager;
           _adsManager = data.manager;
 

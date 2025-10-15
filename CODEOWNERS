@@ -6,8 +6,8 @@
 
 packages/animations/**                                   @hannah-hyj
 packages/camera/**                                       @bparrishMines
-packages/cross_file/**                                   @stuartmorgan
-packages/extension_google_sign_in_as_googleapis_auth/**  @stuartmorgan
+packages/cross_file/**                                   @stuartmorgan-g
+packages/extension_google_sign_in_as_googleapis_auth/**  @stuartmorgan-g
 packages/file_selector/**                                @stuartmorgan-g
 packages/flutter_lints/**                                @chunhtai
 packages/flutter_template_images/**                      @stuartmorgan-g
@@ -92,7 +92,7 @@ packages/google_sign_in/google_sign_in_ios/**                 @LongCatIsLooong
 packages/image_picker/image_picker_ios/**                     @vashworth @louisehsu
 packages/image_picker/image_picker_macos/**                   @vashworth @louisehsu
 packages/in_app_purchase/in_app_purchase_storekit/**          @louisehsu @LongCatIsLooong
-packages/local_auth/local_auth_darwin/**                      @vashworth
+packages/local_auth/local_auth_darwin/**                      @vashworth @okorohelijah
 packages/path_provider/path_provider_foundation/**            @vashworth
 packages/pointer_interceptor/pointer_interceptor_ios/**       @louisehsu @hellohuanlin
 packages/quick_actions/quick_actions_ios/**                   @LongCatIsLooong @hellohuanlin

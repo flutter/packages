@@ -69,8 +69,8 @@ final class AndroidImaSettings extends PlatformImaSettings {
   }
 
   Future<ImaSdkSettings> _createSettings() async {
-    final ImaSdkSettings settings =
-        await ImaSdkFactory.instance.createImaSdkSettings();
+    final ImaSdkSettings settings = await ImaSdkFactory.instance
+        .createImaSdkSettings();
     if (params.language case final String language) {
       await settings.setLanguage(language);
     }

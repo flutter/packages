@@ -23,17 +23,17 @@ if (flutterVersionName == null) {
 }
 
 android {
-    namespace 'dev.flutter.packages.two_dimensional_scrollables.example'
+    namespace = "dev.flutter.packages.two_dimensional_scrollables.example"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = '11'
+        jvmTarget = JavaVersion.VERSION_17.toString()
     }
 
     sourceSets {
@@ -55,12 +55,12 @@ android {
         release {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig signingConfigs.debug
+            signingConfig = signingConfigs.debug
         }
     }
-    namespace 'com.example.example'
+    namespace = 'com.example.example'
 }
 
 flutter {
-    source '../..'
+    source = '../..'
 }

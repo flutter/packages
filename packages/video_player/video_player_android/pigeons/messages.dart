@@ -13,9 +13,6 @@ import 'package:pigeon/pigeon.dart';
     copyrightHeader: 'pigeons/copyright.txt',
   ),
 )
-/// Pigeon equivalent of VideoViewType.
-enum PlatformVideoViewType { textureView, platformView }
-
 /// Pigeon equivalent of video_platform_interface's VideoFormat.
 enum PlatformVideoFormat { dash, hls, ss }
 
@@ -26,13 +23,19 @@ class PlatformVideoViewCreationParams {
   final int playerId;
 }
 
-class CreateMessage {
-  CreateMessage({required this.uri, required this.httpHeaders});
+class CreationOptions {
+  CreationOptions({required this.uri, required this.httpHeaders});
   String uri;
   PlatformVideoFormat? formatHint;
   Map<String, String> httpHeaders;
   String? userAgent;
-  PlatformVideoViewType? viewType;
+}
+
+class TexturePlayerIds {
+  TexturePlayerIds({required this.playerId, required this.textureId});
+
+  final int playerId;
+  final int textureId;
 }
 
 class PlaybackState {
@@ -48,7 +51,11 @@ class PlaybackState {
 @HostApi()
 abstract class AndroidVideoPlayerApi {
   void initialize();
-  int create(CreateMessage msg);
+  // Creates a new player using a platform view for rendering and returns its
+  // ID.
+  int createForPlatformView(CreationOptions options);
+  // Creates a new player using a texture for rendering and returns its IDs.
+  TexturePlayerIds createForTextureView(CreationOptions options);
   void dispose(int playerId);
   void setMixWithOthers(bool mixWithOthers);
   String getLookupKeyForAsset(String asset, String? packageName);

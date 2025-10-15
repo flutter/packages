@@ -147,6 +147,7 @@ class TestAdsManager extends PlatformAdsManager {
     this.onPause,
     this.onResume,
     this.onSkip,
+    super.adCuePoints = const <Duration>[],
   });
 
   Future<void> Function({PlatformAdsRenderingSettings? settings})? onInit;
