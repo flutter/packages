@@ -21,6 +21,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -475,6 +476,551 @@ public class Messages {
     }
   }
 
+  /**
+   * Represents an audio track in a video.
+   *
+   * <p>Generated class from Pigeon that represents data sent in messages.
+   */
+  public static final class AudioTrackMessage {
+    private @NonNull String id;
+
+    public @NonNull String getId() {
+      return id;
+    }
+
+    public void setId(@NonNull String setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"id\" is null.");
+      }
+      this.id = setterArg;
+    }
+
+    private @NonNull String label;
+
+    public @NonNull String getLabel() {
+      return label;
+    }
+
+    public void setLabel(@NonNull String setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"label\" is null.");
+      }
+      this.label = setterArg;
+    }
+
+    private @NonNull String language;
+
+    public @NonNull String getLanguage() {
+      return language;
+    }
+
+    public void setLanguage(@NonNull String setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"language\" is null.");
+      }
+      this.language = setterArg;
+    }
+
+    private @NonNull Boolean isSelected;
+
+    public @NonNull Boolean getIsSelected() {
+      return isSelected;
+    }
+
+    public void setIsSelected(@NonNull Boolean setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"isSelected\" is null.");
+      }
+      this.isSelected = setterArg;
+    }
+
+    private @Nullable Long bitrate;
+
+    public @Nullable Long getBitrate() {
+      return bitrate;
+    }
+
+    public void setBitrate(@Nullable Long setterArg) {
+      this.bitrate = setterArg;
+    }
+
+    private @Nullable Long sampleRate;
+
+    public @Nullable Long getSampleRate() {
+      return sampleRate;
+    }
+
+    public void setSampleRate(@Nullable Long setterArg) {
+      this.sampleRate = setterArg;
+    }
+
+    private @Nullable Long channelCount;
+
+    public @Nullable Long getChannelCount() {
+      return channelCount;
+    }
+
+    public void setChannelCount(@Nullable Long setterArg) {
+      this.channelCount = setterArg;
+    }
+
+    private @Nullable String codec;
+
+    public @Nullable String getCodec() {
+      return codec;
+    }
+
+    public void setCodec(@Nullable String setterArg) {
+      this.codec = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    AudioTrackMessage() {}
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      AudioTrackMessage that = (AudioTrackMessage) o;
+      return id.equals(that.id)
+          && label.equals(that.label)
+          && language.equals(that.language)
+          && isSelected.equals(that.isSelected)
+          && Objects.equals(bitrate, that.bitrate)
+          && Objects.equals(sampleRate, that.sampleRate)
+          && Objects.equals(channelCount, that.channelCount)
+          && Objects.equals(codec, that.codec);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(
+          id, label, language, isSelected, bitrate, sampleRate, channelCount, codec);
+    }
+
+    public static final class Builder {
+
+      private @Nullable String id;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setId(@NonNull String setterArg) {
+        this.id = setterArg;
+        return this;
+      }
+
+      private @Nullable String label;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setLabel(@NonNull String setterArg) {
+        this.label = setterArg;
+        return this;
+      }
+
+      private @Nullable String language;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setLanguage(@NonNull String setterArg) {
+        this.language = setterArg;
+        return this;
+      }
+
+      private @Nullable Boolean isSelected;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setIsSelected(@NonNull Boolean setterArg) {
+        this.isSelected = setterArg;
+        return this;
+      }
+
+      private @Nullable Long bitrate;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setBitrate(@Nullable Long setterArg) {
+        this.bitrate = setterArg;
+        return this;
+      }
+
+      private @Nullable Long sampleRate;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setSampleRate(@Nullable Long setterArg) {
+        this.sampleRate = setterArg;
+        return this;
+      }
+
+      private @Nullable Long channelCount;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setChannelCount(@Nullable Long setterArg) {
+        this.channelCount = setterArg;
+        return this;
+      }
+
+      private @Nullable String codec;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setCodec(@Nullable String setterArg) {
+        this.codec = setterArg;
+        return this;
+      }
+
+      public @NonNull AudioTrackMessage build() {
+        AudioTrackMessage pigeonReturn = new AudioTrackMessage();
+        pigeonReturn.setId(id);
+        pigeonReturn.setLabel(label);
+        pigeonReturn.setLanguage(language);
+        pigeonReturn.setIsSelected(isSelected);
+        pigeonReturn.setBitrate(bitrate);
+        pigeonReturn.setSampleRate(sampleRate);
+        pigeonReturn.setChannelCount(channelCount);
+        pigeonReturn.setCodec(codec);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<>(8);
+      toListResult.add(id);
+      toListResult.add(label);
+      toListResult.add(language);
+      toListResult.add(isSelected);
+      toListResult.add(bitrate);
+      toListResult.add(sampleRate);
+      toListResult.add(channelCount);
+      toListResult.add(codec);
+      return toListResult;
+    }
+
+    static @NonNull AudioTrackMessage fromList(@NonNull ArrayList<Object> pigeonVar_list) {
+      AudioTrackMessage pigeonResult = new AudioTrackMessage();
+      Object id = pigeonVar_list.get(0);
+      pigeonResult.setId((String) id);
+      Object label = pigeonVar_list.get(1);
+      pigeonResult.setLabel((String) label);
+      Object language = pigeonVar_list.get(2);
+      pigeonResult.setLanguage((String) language);
+      Object isSelected = pigeonVar_list.get(3);
+      pigeonResult.setIsSelected((Boolean) isSelected);
+      Object bitrate = pigeonVar_list.get(4);
+      pigeonResult.setBitrate((Long) bitrate);
+      Object sampleRate = pigeonVar_list.get(5);
+      pigeonResult.setSampleRate((Long) sampleRate);
+      Object channelCount = pigeonVar_list.get(6);
+      pigeonResult.setChannelCount((Long) channelCount);
+      Object codec = pigeonVar_list.get(7);
+      pigeonResult.setCodec((String) codec);
+      return pigeonResult;
+    }
+  }
+
+  /**
+   * Raw audio track data from ExoPlayer Format objects.
+   *
+   * <p>Generated class from Pigeon that represents data sent in messages.
+   */
+  public static final class ExoPlayerAudioTrackData {
+    private @NonNull String trackId;
+
+    public @NonNull String getTrackId() {
+      return trackId;
+    }
+
+    public void setTrackId(@NonNull String setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"trackId\" is null.");
+      }
+      this.trackId = setterArg;
+    }
+
+    private @Nullable String label;
+
+    public @Nullable String getLabel() {
+      return label;
+    }
+
+    public void setLabel(@Nullable String setterArg) {
+      this.label = setterArg;
+    }
+
+    private @Nullable String language;
+
+    public @Nullable String getLanguage() {
+      return language;
+    }
+
+    public void setLanguage(@Nullable String setterArg) {
+      this.language = setterArg;
+    }
+
+    private @NonNull Boolean isSelected;
+
+    public @NonNull Boolean getIsSelected() {
+      return isSelected;
+    }
+
+    public void setIsSelected(@NonNull Boolean setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"isSelected\" is null.");
+      }
+      this.isSelected = setterArg;
+    }
+
+    private @Nullable Long bitrate;
+
+    public @Nullable Long getBitrate() {
+      return bitrate;
+    }
+
+    public void setBitrate(@Nullable Long setterArg) {
+      this.bitrate = setterArg;
+    }
+
+    private @Nullable Long sampleRate;
+
+    public @Nullable Long getSampleRate() {
+      return sampleRate;
+    }
+
+    public void setSampleRate(@Nullable Long setterArg) {
+      this.sampleRate = setterArg;
+    }
+
+    private @Nullable Long channelCount;
+
+    public @Nullable Long getChannelCount() {
+      return channelCount;
+    }
+
+    public void setChannelCount(@Nullable Long setterArg) {
+      this.channelCount = setterArg;
+    }
+
+    private @Nullable String codec;
+
+    public @Nullable String getCodec() {
+      return codec;
+    }
+
+    public void setCodec(@Nullable String setterArg) {
+      this.codec = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    ExoPlayerAudioTrackData() {}
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      ExoPlayerAudioTrackData that = (ExoPlayerAudioTrackData) o;
+      return trackId.equals(that.trackId)
+          && Objects.equals(label, that.label)
+          && Objects.equals(language, that.language)
+          && isSelected.equals(that.isSelected)
+          && Objects.equals(bitrate, that.bitrate)
+          && Objects.equals(sampleRate, that.sampleRate)
+          && Objects.equals(channelCount, that.channelCount)
+          && Objects.equals(codec, that.codec);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(
+          trackId, label, language, isSelected, bitrate, sampleRate, channelCount, codec);
+    }
+
+    public static final class Builder {
+
+      private @Nullable String trackId;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setTrackId(@NonNull String setterArg) {
+        this.trackId = setterArg;
+        return this;
+      }
+
+      private @Nullable String label;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setLabel(@Nullable String setterArg) {
+        this.label = setterArg;
+        return this;
+      }
+
+      private @Nullable String language;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setLanguage(@Nullable String setterArg) {
+        this.language = setterArg;
+        return this;
+      }
+
+      private @Nullable Boolean isSelected;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setIsSelected(@NonNull Boolean setterArg) {
+        this.isSelected = setterArg;
+        return this;
+      }
+
+      private @Nullable Long bitrate;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setBitrate(@Nullable Long setterArg) {
+        this.bitrate = setterArg;
+        return this;
+      }
+
+      private @Nullable Long sampleRate;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setSampleRate(@Nullable Long setterArg) {
+        this.sampleRate = setterArg;
+        return this;
+      }
+
+      private @Nullable Long channelCount;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setChannelCount(@Nullable Long setterArg) {
+        this.channelCount = setterArg;
+        return this;
+      }
+
+      private @Nullable String codec;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setCodec(@Nullable String setterArg) {
+        this.codec = setterArg;
+        return this;
+      }
+
+      public @NonNull ExoPlayerAudioTrackData build() {
+        ExoPlayerAudioTrackData pigeonReturn = new ExoPlayerAudioTrackData();
+        pigeonReturn.setTrackId(trackId);
+        pigeonReturn.setLabel(label);
+        pigeonReturn.setLanguage(language);
+        pigeonReturn.setIsSelected(isSelected);
+        pigeonReturn.setBitrate(bitrate);
+        pigeonReturn.setSampleRate(sampleRate);
+        pigeonReturn.setChannelCount(channelCount);
+        pigeonReturn.setCodec(codec);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<>(8);
+      toListResult.add(trackId);
+      toListResult.add(label);
+      toListResult.add(language);
+      toListResult.add(isSelected);
+      toListResult.add(bitrate);
+      toListResult.add(sampleRate);
+      toListResult.add(channelCount);
+      toListResult.add(codec);
+      return toListResult;
+    }
+
+    static @NonNull ExoPlayerAudioTrackData fromList(@NonNull ArrayList<Object> pigeonVar_list) {
+      ExoPlayerAudioTrackData pigeonResult = new ExoPlayerAudioTrackData();
+      Object trackId = pigeonVar_list.get(0);
+      pigeonResult.setTrackId((String) trackId);
+      Object label = pigeonVar_list.get(1);
+      pigeonResult.setLabel((String) label);
+      Object language = pigeonVar_list.get(2);
+      pigeonResult.setLanguage((String) language);
+      Object isSelected = pigeonVar_list.get(3);
+      pigeonResult.setIsSelected((Boolean) isSelected);
+      Object bitrate = pigeonVar_list.get(4);
+      pigeonResult.setBitrate((Long) bitrate);
+      Object sampleRate = pigeonVar_list.get(5);
+      pigeonResult.setSampleRate((Long) sampleRate);
+      Object channelCount = pigeonVar_list.get(6);
+      pigeonResult.setChannelCount((Long) channelCount);
+      Object codec = pigeonVar_list.get(7);
+      pigeonResult.setCodec((String) codec);
+      return pigeonResult;
+    }
+  }
+
+  /**
+   * Container for raw audio track data from Android ExoPlayer.
+   *
+   * <p>Generated class from Pigeon that represents data sent in messages.
+   */
+  public static final class NativeAudioTrackData {
+    /** ExoPlayer-based tracks */
+    private @Nullable List<ExoPlayerAudioTrackData> exoPlayerTracks;
+
+    public @Nullable List<ExoPlayerAudioTrackData> getExoPlayerTracks() {
+      return exoPlayerTracks;
+    }
+
+    public void setExoPlayerTracks(@Nullable List<ExoPlayerAudioTrackData> setterArg) {
+      this.exoPlayerTracks = setterArg;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      NativeAudioTrackData that = (NativeAudioTrackData) o;
+      return Objects.equals(exoPlayerTracks, that.exoPlayerTracks);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(exoPlayerTracks);
+    }
+
+    public static final class Builder {
+
+      private @Nullable List<ExoPlayerAudioTrackData> exoPlayerTracks;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setExoPlayerTracks(
+          @Nullable List<ExoPlayerAudioTrackData> setterArg) {
+        this.exoPlayerTracks = setterArg;
+        return this;
+      }
+
+      public @NonNull NativeAudioTrackData build() {
+        NativeAudioTrackData pigeonReturn = new NativeAudioTrackData();
+        pigeonReturn.setExoPlayerTracks(exoPlayerTracks);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<>(1);
+      toListResult.add(exoPlayerTracks);
+      return toListResult;
+    }
+
+    static @NonNull NativeAudioTrackData fromList(@NonNull ArrayList<Object> pigeonVar_list) {
+      NativeAudioTrackData pigeonResult = new NativeAudioTrackData();
+      Object exoPlayerTracks = pigeonVar_list.get(0);
+      pigeonResult.setExoPlayerTracks((List<ExoPlayerAudioTrackData>) exoPlayerTracks);
+      return pigeonResult;
+    }
+  }
+
   private static class PigeonCodec extends StandardMessageCodec {
     public static final PigeonCodec INSTANCE = new PigeonCodec();
 
@@ -496,6 +1042,12 @@ public class Messages {
           return TexturePlayerIds.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 133:
           return PlaybackState.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 134:
+          return AudioTrackMessage.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 135:
+          return ExoPlayerAudioTrackData.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 136:
+          return NativeAudioTrackData.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
       }
@@ -518,6 +1070,15 @@ public class Messages {
       } else if (value instanceof PlaybackState) {
         stream.write(133);
         writeValue(stream, ((PlaybackState) value).toList());
+      } else if (value instanceof AudioTrackMessage) {
+        stream.write(134);
+        writeValue(stream, ((AudioTrackMessage) value).toList());
+      } else if (value instanceof ExoPlayerAudioTrackData) {
+        stream.write(135);
+        writeValue(stream, ((ExoPlayerAudioTrackData) value).toList());
+      } else if (value instanceof NativeAudioTrackData) {
+        stream.write(136);
+        writeValue(stream, ((NativeAudioTrackData) value).toList());
       } else {
         super.writeValue(stream, value);
       }
@@ -733,6 +1294,11 @@ public class Messages {
      */
     @NonNull
     PlaybackState getPlaybackState();
+    /** Gets the available audio tracks for the video. */
+    @NonNull
+    NativeAudioTrackData getAudioTracks();
+    /** Selects which audio track is chosen for playback from its [trackId] */
+    void selectAudioTrack(@NonNull String trackId);
 
     /** The codec used by VideoPlayerInstanceApi. */
     static @NonNull MessageCodec<Object> getCodec() {
@@ -912,6 +1478,54 @@ public class Messages {
                 try {
                   PlaybackState output = api.getPlaybackState();
                   wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  wrapped = wrapError(exception);
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.getAudioTracks"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                try {
+                  NativeAudioTrackData output = api.getAudioTracks();
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  wrapped = wrapError(exception);
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.selectAudioTrack"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                String trackIdArg = (String) args.get(0);
+                try {
+                  api.selectAudioTrack(trackIdArg);
+                  wrapped.add(0, null);
                 } catch (Throwable exception) {
                   wrapped = wrapError(exception);
                 }
