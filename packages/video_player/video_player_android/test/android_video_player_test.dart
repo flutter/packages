@@ -498,6 +498,24 @@ void main() {
       });
     });
 
+    group('setAllowBackgroundPlayback', () {
+      test('passes true', () async {
+        final (AndroidVideoPlayer player, MockAndroidVideoPlayerApi api, _) =
+            setUpMockPlayer(playerId: 1);
+        await player.setAllowBackgroundPlayback(true);
+
+        verify(api.setAllowBackgroundPlayback(true));
+      });
+
+      test('passes false', () async {
+        final (AndroidVideoPlayer player, MockAndroidVideoPlayerApi api, _) =
+            setUpMockPlayer(playerId: 1);
+        await player.setAllowBackgroundPlayback(false);
+
+        verify(api.setAllowBackgroundPlayback(false));
+      });
+    });
+
     test('setVolume', () async {
       final (
         AndroidVideoPlayer player,

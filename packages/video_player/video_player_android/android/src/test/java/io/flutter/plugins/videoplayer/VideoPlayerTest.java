@@ -217,4 +217,27 @@ public final class VideoPlayerTest {
 
     verify(mockExoPlayer).release();
   }
+
+  @Test
+  public void loadsAndPreparesProvidedMediaWithoutWakeModeByDefault() {
+    VideoPlayerOptions options = new VideoPlayerOptions();
+
+    VideoPlayer videoPlayer = createVideoPlayer(options);
+
+    verify(mockExoPlayer, never()).setWakeMode(anyInt());
+
+    videoPlayer.dispose();
+  }
+
+  @Test
+  public void loadsAndPreparesProvidedMediaWakeModeWhenAllowBackgroundPlaybackSet() {
+    VideoPlayerOptions options = new VideoPlayerOptions();
+    options.allowBackgroundPlayback = true;
+
+    VideoPlayer videoPlayer = createVideoPlayer(options);
+
+    verify(mockExoPlayer).setWakeMode(C.WAKE_MODE_NETWORK);
+
+    videoPlayer.dispose();
+  }
 }

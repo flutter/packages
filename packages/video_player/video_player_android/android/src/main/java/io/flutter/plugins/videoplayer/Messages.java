@@ -539,6 +539,8 @@ public class Messages {
 
     void setMixWithOthers(@NonNull Boolean mixWithOthers);
 
+    void setAllowBackgroundPlayback(@NonNull Boolean allowBackgroundPlayback);
+
     @NonNull
     String getLookupKeyForAsset(@NonNull String asset, @Nullable String packageName);
 
@@ -673,6 +675,31 @@ public class Messages {
                 Boolean mixWithOthersArg = (Boolean) args.get(0);
                 try {
                   api.setMixWithOthers(mixWithOthersArg);
+                  wrapped.add(0, null);
+                } catch (Throwable exception) {
+                  wrapped = wrapError(exception);
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.video_player_android.AndroidVideoPlayerApi.setAllowBackgroundPlayback"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Boolean allowBackgroundPlaybackArg = (Boolean) args.get(0);
+                try {
+                  api.setAllowBackgroundPlayback(allowBackgroundPlaybackArg);
                   wrapped.add(0, null);
                 } catch (Throwable exception) {
                   wrapped = wrapError(exception);

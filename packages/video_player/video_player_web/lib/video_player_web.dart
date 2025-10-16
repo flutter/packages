@@ -90,12 +90,11 @@ class VideoPlayerPlugin extends VideoPlayerPlatform {
         );
     }
 
-    final web.HTMLVideoElement videoElement =
-        web.HTMLVideoElement()
-          ..id = 'videoElement-$playerId'
-          ..style.border = 'none'
-          ..style.height = '100%'
-          ..style.width = '100%';
+    final web.HTMLVideoElement videoElement = web.HTMLVideoElement()
+      ..id = 'videoElement-$playerId'
+      ..style.border = 'none'
+      ..style.height = '100%'
+      ..style.width = '100%';
 
     // TODO(hterkelsen): Use initialization parameters once they are available
     ui_web.platformViewRegistry.registerViewFactory(
@@ -170,4 +169,9 @@ class VideoPlayerPlugin extends VideoPlayerPlatform {
   /// Sets the audio mode to mix with other sources (ignored).
   @override
   Future<void> setMixWithOthers(bool mixWithOthers) => Future<void>.value();
+
+  /// Sets the audio mode to allow background playback (ignored).
+  @override
+  Future<void> setAllowBackgroundPlayback(bool allowBackgroundPlayback) =>
+      Future<void>.value();
 }

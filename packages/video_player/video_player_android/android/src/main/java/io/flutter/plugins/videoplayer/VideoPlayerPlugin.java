@@ -197,6 +197,11 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
         : flutterState.keyForAssetAndPackageName.get(asset, packageName);
   }
 
+  @Override
+  public void setAllowBackgroundPlayback(@NonNull Boolean allowBackgroundPlayback) {
+    options.allowBackgroundPlayback = allowBackgroundPlayback;
+  }
+
   private interface KeyForAssetFn {
     String get(String asset);
   }
