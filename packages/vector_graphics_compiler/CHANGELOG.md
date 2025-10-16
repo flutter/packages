@@ -1,3 +1,7 @@
+## 2.0.0
+
+* Add build hook helper to allow for transforming assets through hooks.
+
 ## 1.1.19
 
 * Updates allowed version range of `xml` to include up to 6.6.1.
