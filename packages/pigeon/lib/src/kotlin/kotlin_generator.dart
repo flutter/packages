@@ -253,7 +253,7 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
       indent.addScoped('{', '}', () {
         indent.write('fun ofRaw(raw: Int): ${anEnum.name}? ');
         indent.addScoped('{', '}', () {
-          indent.writeln('return values().firstOrNull { it.raw == raw }');
+          indent.writeln('return entries.firstOrNull { it.raw == raw }');
         });
       });
     });
