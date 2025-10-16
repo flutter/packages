@@ -1,6 +1,10 @@
-## 0.10.10+10
+## 0.10.10+11
 
 * Updates examples to use the new RadioGroup API instead of deprecated Radio parameters.
+
+## 0.10.10+10
+
+* Updates Java compatibility version to 17.
 
 ## 0.10.10+9
 
