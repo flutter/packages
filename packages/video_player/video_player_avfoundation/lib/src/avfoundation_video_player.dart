@@ -263,7 +263,7 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
-  Future<bool> isAudioTrackSupportAvailable() async {
+  bool isAudioTrackSupportAvailable() {
     // iOS/macOS with AVFoundation supports audio track selection
     return true;
   }

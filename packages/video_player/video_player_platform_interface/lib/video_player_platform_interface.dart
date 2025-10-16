@@ -147,10 +147,11 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
   ///
   /// Returns `true` if [getAudioTracks] and [selectAudioTrack] are supported,
   /// `false` otherwise.
-  Future<bool> isAudioTrackSupportAvailable() {
-    throw UnimplementedError(
-      'isAudioTrackSupportAvailable() has not been implemented.',
-    );
+  ///
+  /// The default implementation returns `false`. Platform implementations
+  /// should override this to return `true` if they support audio track selection.
+  bool isAudioTrackSupportAvailable() {
+    return false;
   }
 }
 

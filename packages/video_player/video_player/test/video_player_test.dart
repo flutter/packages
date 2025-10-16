@@ -125,7 +125,7 @@ class FakeController extends ValueNotifier<VideoPlayerValue>
   }
 
   @override
-  Future<bool> isAudioTrackSupportAvailable() async {
+  bool isAudioTrackSupportAvailable() {
     // Return true for testing purposes
     return true;
   }
@@ -1865,7 +1865,7 @@ class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
   }
 
   @override
-  Future<bool> isAudioTrackSupportAvailable() async {
+  bool isAudioTrackSupportAvailable() {
     calls.add('isAudioTrackSupportAvailable');
     return true; // Return true for testing purposes
   }

@@ -184,7 +184,7 @@ class VideoPlayerPlugin extends VideoPlayerPlatform {
   }
 
   @override
-  Future<bool> isAudioTrackSupportAvailable() async {
+  bool isAudioTrackSupportAvailable() {
     // Not supported in web platform currently
     return false;
   }

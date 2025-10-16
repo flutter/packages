@@ -250,7 +250,7 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
-  Future<bool> isAudioTrackSupportAvailable() async {
+  bool isAudioTrackSupportAvailable() {
     // Android with ExoPlayer supports audio track selection
     return true;
   }

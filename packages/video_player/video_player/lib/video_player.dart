@@ -976,14 +976,14 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   ///
   /// Example usage:
   /// ```dart
-  /// if (await controller.isAudioTrackSupportAvailable()) {
+  /// if (controller.isAudioTrackSupportAvailable()) {
   ///   final tracks = await controller.getAudioTracks();
   ///   // Show audio track selection UI
   /// } else {
   ///   // Hide audio track selection UI or show unsupported message
   /// }
   /// ```
-  Future<bool> isAudioTrackSupportAvailable() async {
+  bool isAudioTrackSupportAvailable() {
     return _videoPlayerPlatform.isAudioTrackSupportAvailable();
   }
 

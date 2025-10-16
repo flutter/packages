@@ -38,11 +38,11 @@ void main() {
   );
 
   test(
-    'default implementation isAudioTrackSupportAvailable throws unimplemented',
-    () async {
-      await expectLater(
-        () => initialInstance.isAudioTrackSupportAvailable(),
-        throwsUnimplementedError,
+    'default implementation isAudioTrackSupportAvailable returns false',
+    () {
+      expect(
+        initialInstance.isAudioTrackSupportAvailable(),
+        false,
       );
     },
   );
