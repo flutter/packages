@@ -100,14 +100,8 @@ public final class TextureVideoPlayer extends VideoPlayer implements SurfaceProd
 
   @RestrictTo(RestrictTo.Scope.LIBRARY)
   public void onSurfaceCleanup() {
-    if (options == null || !options.allowBackgroundPlayback) {
-      savedStateDuring = ExoPlayerState.save(exoPlayer);
-      exoPlayer.release();
-    } else {
-      savedStateDuring = null;
       exoPlayer.setVideoSurface(null);
       needsSurface = true;
-    }
   }
 
   public void dispose() {
