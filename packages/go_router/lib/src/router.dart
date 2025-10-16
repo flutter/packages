@@ -13,6 +13,7 @@ import 'delegate.dart';
 import 'information_provider.dart';
 import 'logging.dart';
 import 'match.dart';
+import 'misc/constants.dart';
 import 'misc/inherited_router.dart';
 import 'on_enter.dart';
 import 'parser.dart';
@@ -266,6 +267,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
       _routingConfig,
       navigatorKey: navigatorKey,
       extraCodec: extraCodec,
+      router: this,
     );
 
     final ParserExceptionHandler? parserExceptionHandler;
@@ -595,24 +597,27 @@ class GoRouter implements RouterConfig<RouteMatchList> {
   }
 
   /// Find the current GoRouter in the widget tree.
-  ///
-  /// This method throws when it is called during redirects.
   static GoRouter of(BuildContext context) {
-    final GoRouter? inherited = maybeOf(context);
-    assert(inherited != null, 'No GoRouter found in context');
-    return inherited!;
+    final GoRouter? router = maybeOf(context);
+    if (router == null) {
+      throw FlutterError('No GoRouter found in context');
+    }
+    return router;
   }
 
   /// The current GoRouter in the widget tree, if any.
-  ///
-  /// This method returns null when it is called during redirects.
   static GoRouter? maybeOf(BuildContext context) {
     final InheritedGoRouter? inherited =
         context
                 .getElementForInheritedWidgetOfExactType<InheritedGoRouter>()
                 ?.widget
             as InheritedGoRouter?;
-    return inherited?.goRouter;
+    if (inherited != null) {
+      return inherited.goRouter;
+    }
+
+    // Check if we're in a redirect context
+    return Zone.current[currentRouterKey] as GoRouter?;
   }
 
   /// Disposes resource created by this object.
