@@ -1,6 +1,6 @@
-## 0.11.2+1
+## 0.12.0
 
-* Implement setDescriptionWhileRecording with android camerax (Fixes flutter/flutter#148013).
+* Adds support to disable persistent recording on Android. See `CameraController.startVideoRecording(enablePersistentRecording)`.
 * Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
 * Updates README to reflect that only Android API 24+ is supported.
 
