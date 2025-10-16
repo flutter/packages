@@ -1,3 +1,7 @@
+## 0.8.13+6
+
+* Fixes an Android issue where `pickMedia` allowed non-image files to be selected.
+
 ## 0.8.13+5
 
 * Updates Java compatibility version to 17 and minimum supported SDK version to Flutter 3.35/Dart 3.9.
