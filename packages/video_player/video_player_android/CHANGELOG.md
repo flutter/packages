@@ -1,3 +1,11 @@
+## 2.8.16
+
+* Updates Java compatibility version to 17 and minimum supported SDK version to Flutter 3.35/Dart 3.9.
+
+## 2.8.15
+
+* Resolves Gradle 9 deprecations.
+
 ## 2.8.14
 
 * Restructures internal logic for player creation and tracking.

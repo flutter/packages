@@ -67,7 +67,6 @@ public class GoogleSignInTest {
   @Mock ActivityPluginBinding mockActivityPluginBinding;
   @Mock PendingIntent mockAuthorizationIntent;
   @Mock IntentSender mockAuthorizationIntentSender;
-  @Mock AuthorizeResult mockAuthorizeResult;
   @Mock CredentialManager mockCredentialManager;
   @Mock AuthorizationClient mockAuthorizationClient;
   @Mock CustomCredential mockGenericCredential;
