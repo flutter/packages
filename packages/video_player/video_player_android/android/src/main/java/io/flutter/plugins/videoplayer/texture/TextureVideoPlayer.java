@@ -40,32 +40,20 @@ public final class TextureVideoPlayer extends VideoPlayer implements SurfaceProd
    * @return a video player instance.
    */
   @NonNull
-  public static TextureVideoPlayer create(
-      @NonNull Context context,
-      @NonNull VideoPlayerCallbacks events,
-      @NonNull SurfaceProducer surfaceProducer,
-      @NonNull VideoAsset asset,
-      @NonNull VideoPlayerOptions options) {
-    return new TextureVideoPlayer(
-        events,
-        surfaceProducer,
-        asset.getMediaItem(),
-        options,
-        () -> {
-          ExoPlayer.Builder builder =
-              new ExoPlayer.Builder(context)
-                  .setMediaSourceFactory(asset.getMediaSourceFactory(context));
-          return builder.build();
-        });
+  public static TextureVideoPlayer create(@NonNull Context context,
+      @NonNull VideoPlayerCallbacks events, @NonNull SurfaceProducer surfaceProducer,
+      @NonNull VideoAsset asset, @NonNull VideoPlayerOptions options) {
+    return new TextureVideoPlayer(events, surfaceProducer, asset.getMediaItem(), options, () -> {
+      ExoPlayer.Builder builder = new ExoPlayer.Builder(context).setMediaSourceFactory(
+          asset.getMediaSourceFactory(context));
+      return builder.build();
+    });
   }
 
   @VisibleForTesting
-  public TextureVideoPlayer(
-      @NonNull VideoPlayerCallbacks events,
-      @NonNull SurfaceProducer surfaceProducer,
-      @NonNull MediaItem mediaItem,
-      @NonNull VideoPlayerOptions options,
-      @NonNull ExoPlayerProvider exoPlayerProvider) {
+  public TextureVideoPlayer(@NonNull VideoPlayerCallbacks events,
+      @NonNull SurfaceProducer surfaceProducer, @NonNull MediaItem mediaItem,
+      @NonNull VideoPlayerOptions options, @NonNull ExoPlayerProvider exoPlayerProvider) {
     super(events, mediaItem, options, surfaceProducer, exoPlayerProvider);
 
     surfaceProducer.setCallback(this);
@@ -100,8 +88,8 @@ public final class TextureVideoPlayer extends VideoPlayer implements SurfaceProd
 
   @RestrictTo(RestrictTo.Scope.LIBRARY)
   public void onSurfaceCleanup() {
-      exoPlayer.setVideoSurface(null);
-      needsSurface = true;
+    exoPlayer.setVideoSurface(null);
+    needsSurface = true;
   }
 
   public void dispose() {

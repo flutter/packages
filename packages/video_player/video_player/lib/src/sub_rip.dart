@@ -13,7 +13,7 @@ class SubRipCaptionFile extends ClosedCaptionFile {
   /// the SubRip file format.
   /// * See: https://en.wikipedia.org/wiki/SubRip
   SubRipCaptionFile(this.fileContents)
-      : _captions = _parseCaptionsFromSubRipString(fileContents);
+    : _captions = _parseCaptionsFromSubRipString(fileContents);
 
   /// The entire body of the SubRip file.
   // TODO(cyanglaz): Remove this public member as it doesn't seem need to exist.

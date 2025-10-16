@@ -16,7 +16,7 @@ class WebVTTCaptionFile extends ClosedCaptionFile {
   /// the WebVTT file format.
   /// * See: https://en.wikipedia.org/wiki/WebVTT
   WebVTTCaptionFile(String fileContents)
-      : _captions = _parseCaptionsFromWebVTTString(fileContents);
+    : _captions = _parseCaptionsFromWebVTTString(fileContents);
 
   @override
   List<Caption> get captions => _captions;

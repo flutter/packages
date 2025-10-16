@@ -343,9 +343,9 @@ void main() {
       test('network url with hint', () async {
         final VideoPlayerController controller =
             VideoPlayerController.networkUrl(
-          Uri.parse('https://127.0.0.1'),
-          formatHint: VideoFormat.dash,
-        );
+              Uri.parse('https://127.0.0.1'),
+              formatHint: VideoFormat.dash,
+            );
         addTearDown(controller.dispose);
         await controller.initialize();
 
@@ -363,9 +363,9 @@ void main() {
       test('network url with some headers', () async {
         final VideoPlayerController controller =
             VideoPlayerController.networkUrl(
-          Uri.parse('https://127.0.0.1'),
-          httpHeaders: <String, String>{'Authorization': 'Bearer token'},
-        );
+              Uri.parse('https://127.0.0.1'),
+              httpHeaders: <String, String>{'Authorization': 'Bearer token'},
+            );
         addTearDown(controller.dispose);
         await controller.initialize();
 
@@ -773,9 +773,9 @@ void main() {
       test('works when position updates', () async {
         final VideoPlayerController controller =
             VideoPlayerController.networkUrl(
-          _localhostUri,
-          closedCaptionFile: _loadClosedCaption(),
-        );
+              _localhostUri,
+              closedCaptionFile: _loadClosedCaption(),
+            );
 
         await controller.initialize();
         await controller.play();
@@ -813,9 +813,9 @@ void main() {
       test('works when seeking', () async {
         final VideoPlayerController controller =
             VideoPlayerController.networkUrl(
-          _localhostUri,
-          closedCaptionFile: _loadClosedCaption(),
-        );
+              _localhostUri,
+              closedCaptionFile: _loadClosedCaption(),
+            );
         addTearDown(controller.dispose);
 
         await controller.initialize();
@@ -847,9 +847,9 @@ void main() {
       test('works when seeking with captionOffset positive', () async {
         final VideoPlayerController controller =
             VideoPlayerController.networkUrl(
-          _localhostUri,
-          closedCaptionFile: _loadClosedCaption(),
-        );
+              _localhostUri,
+              closedCaptionFile: _loadClosedCaption(),
+            );
         addTearDown(controller.dispose);
 
         await controller.initialize();
@@ -885,9 +885,9 @@ void main() {
       test('works when seeking with captionOffset negative', () async {
         final VideoPlayerController controller =
             VideoPlayerController.networkUrl(
-          _localhostUri,
-          closedCaptionFile: _loadClosedCaption(),
-        );
+              _localhostUri,
+              closedCaptionFile: _loadClosedCaption(),
+            );
         addTearDown(controller.dispose);
 
         await controller.initialize();
@@ -941,9 +941,9 @@ void main() {
       test('setClosedCaptionFile removes/changes caption file', () async {
         final VideoPlayerController controller =
             VideoPlayerController.networkUrl(
-          _localhostUri,
-          closedCaptionFile: _loadClosedCaption(),
-        );
+              _localhostUri,
+              closedCaptionFile: _loadClosedCaption(),
+            );
         addTearDown(controller.dispose);
 
         await controller.initialize();
