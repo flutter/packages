@@ -319,10 +319,9 @@ class _PlayerInstance {
 
       _eventStreamController.add(
         VideoEvent(
-          eventType:
-              buffering
-                  ? VideoEventType.bufferingStart
-                  : VideoEventType.bufferingEnd,
+          eventType: buffering
+              ? VideoEventType.bufferingStart
+              : VideoEventType.bufferingEnd,
         ),
       );
       // Trigger an extra buffer position check, so that clients have an

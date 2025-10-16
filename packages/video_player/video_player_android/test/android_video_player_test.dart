@@ -53,8 +53,8 @@ void main() {
     final AndroidVideoPlayer player = AndroidVideoPlayer(
       pluginApi: pluginApi,
       playerApiProvider: (_) => instanceApi,
-      videoEventStreamProvider:
-          (_) => streamController.stream.asBroadcastStream(),
+      videoEventStreamProvider: (_) =>
+          streamController.stream.asBroadcastStream(),
     );
     player.ensurePlayerInitialized(
       playerId,
@@ -72,33 +72,24 @@ void main() {
 
   group('AndroidVideoPlayer', () {
     test('init', () async {
-      final (
-        AndroidVideoPlayer player,
-        MockAndroidVideoPlayerApi api,
-        _,
-      ) = setUpMockPlayer(playerId: 1);
+      final (AndroidVideoPlayer player, MockAndroidVideoPlayerApi api, _) =
+          setUpMockPlayer(playerId: 1);
       await player.init();
 
       verify(api.initialize());
     });
 
     test('dispose', () async {
-      final (
-        AndroidVideoPlayer player,
-        MockAndroidVideoPlayerApi api,
-        _,
-      ) = setUpMockPlayer(playerId: 1);
+      final (AndroidVideoPlayer player, MockAndroidVideoPlayerApi api, _) =
+          setUpMockPlayer(playerId: 1);
       await player.dispose(1);
 
       verify(api.dispose(1));
     });
 
     test('create with asset', () async {
-      final (
-        AndroidVideoPlayer player,
-        MockAndroidVideoPlayerApi api,
-        _,
-      ) = setUpMockPlayer(playerId: 1, textureId: 100);
+      final (AndroidVideoPlayer player, MockAndroidVideoPlayerApi api, _) =
+          setUpMockPlayer(playerId: 1, textureId: 100);
       const int newPlayerId = 2;
       when(api.createForTextureView(any)).thenAnswer(
         (_) async => TexturePlayerIds(playerId: newPlayerId, textureId: 100),
@@ -133,11 +124,8 @@ void main() {
     });
 
     test('create with network', () async {
-      final (
-        AndroidVideoPlayer player,
-        MockAndroidVideoPlayerApi api,
-        _,
-      ) = setUpMockPlayer(playerId: 1, textureId: 100);
+      final (AndroidVideoPlayer player, MockAndroidVideoPlayerApi api, _) =
+          setUpMockPlayer(playerId: 1, textureId: 100);
       const int newPlayerId = 2;
       when(api.createForTextureView(any)).thenAnswer(
         (_) async => TexturePlayerIds(playerId: newPlayerId, textureId: 100),
@@ -168,11 +156,8 @@ void main() {
     });
 
     test('create with network passes headers', () async {
-      final (
-        AndroidVideoPlayer player,
-        MockAndroidVideoPlayerApi api,
-        _,
-      ) = setUpMockPlayer(playerId: 1, textureId: 100);
+      final (AndroidVideoPlayer player, MockAndroidVideoPlayerApi api, _) =
+          setUpMockPlayer(playerId: 1, textureId: 100);
       when(
         api.createForTextureView(any),
       ).thenAnswer((_) async => TexturePlayerIds(playerId: 2, textureId: 100));
@@ -196,11 +181,8 @@ void main() {
     });
 
     test('create with network sets a default user agent', () async {
-      final (
-        AndroidVideoPlayer player,
-        MockAndroidVideoPlayerApi api,
-        _,
-      ) = setUpMockPlayer(playerId: 1, textureId: 100);
+      final (AndroidVideoPlayer player, MockAndroidVideoPlayerApi api, _) =
+          setUpMockPlayer(playerId: 1, textureId: 100);
       when(
         api.createForTextureView(any),
       ).thenAnswer((_) async => TexturePlayerIds(playerId: 2, textureId: 100));
@@ -221,11 +203,8 @@ void main() {
     });
 
     test('create with network uses user agent from headers', () async {
-      final (
-        AndroidVideoPlayer player,
-        MockAndroidVideoPlayerApi api,
-        _,
-      ) = setUpMockPlayer(playerId: 1, textureId: 100);
+      final (AndroidVideoPlayer player, MockAndroidVideoPlayerApi api, _) =
+          setUpMockPlayer(playerId: 1, textureId: 100);
       when(
         api.createForTextureView(any),
       ).thenAnswer((_) async => TexturePlayerIds(playerId: 2, textureId: 100));
@@ -250,11 +229,8 @@ void main() {
     });
 
     test('create with file', () async {
-      final (
-        AndroidVideoPlayer player,
-        MockAndroidVideoPlayerApi api,
-        _,
-      ) = setUpMockPlayer(playerId: 1, textureId: 100);
+      final (AndroidVideoPlayer player, MockAndroidVideoPlayerApi api, _) =
+          setUpMockPlayer(playerId: 1, textureId: 100);
       when(
         api.createForTextureView(any),
       ).thenAnswer((_) async => TexturePlayerIds(playerId: 2, textureId: 100));
@@ -276,11 +252,8 @@ void main() {
     });
 
     test('create with file passes headers', () async {
-      final (
-        AndroidVideoPlayer player,
-        MockAndroidVideoPlayerApi api,
-        _,
-      ) = setUpMockPlayer(playerId: 1, textureId: 100);
+      final (AndroidVideoPlayer player, MockAndroidVideoPlayerApi api, _) =
+          setUpMockPlayer(playerId: 1, textureId: 100);
       when(
         api.createForTextureView(any),
       ).thenAnswer((_) async => TexturePlayerIds(playerId: 2, textureId: 100));
@@ -305,11 +278,8 @@ void main() {
     });
 
     test('createWithOptions with asset', () async {
-      final (
-        AndroidVideoPlayer player,
-        MockAndroidVideoPlayerApi api,
-        _,
-      ) = setUpMockPlayer(playerId: 1, textureId: 100);
+      final (AndroidVideoPlayer player, MockAndroidVideoPlayerApi api, _) =
+          setUpMockPlayer(playerId: 1, textureId: 100);
       const int newPlayerId = 2;
       when(api.createForTextureView(any)).thenAnswer(
         (_) async => TexturePlayerIds(playerId: newPlayerId, textureId: 100),
@@ -347,11 +317,8 @@ void main() {
     });
 
     test('createWithOptions with network', () async {
-      final (
-        AndroidVideoPlayer player,
-        MockAndroidVideoPlayerApi api,
-        _,
-      ) = setUpMockPlayer(playerId: 1, textureId: 100);
+      final (AndroidVideoPlayer player, MockAndroidVideoPlayerApi api, _) =
+          setUpMockPlayer(playerId: 1, textureId: 100);
       const int newPlayerId = 2;
       when(api.createForTextureView(any)).thenAnswer(
         (_) async => TexturePlayerIds(playerId: newPlayerId, textureId: 100),
@@ -385,11 +352,8 @@ void main() {
     });
 
     test('createWithOptions with network passes headers', () async {
-      final (
-        AndroidVideoPlayer player,
-        MockAndroidVideoPlayerApi api,
-        _,
-      ) = setUpMockPlayer(playerId: 1, textureId: 100);
+      final (AndroidVideoPlayer player, MockAndroidVideoPlayerApi api, _) =
+          setUpMockPlayer(playerId: 1, textureId: 100);
       const int newPlayerId = 2;
       when(api.createForTextureView(any)).thenAnswer(
         (_) async => TexturePlayerIds(playerId: newPlayerId, textureId: 100),
@@ -419,11 +383,8 @@ void main() {
     });
 
     test('createWithOptions with file', () async {
-      final (
-        AndroidVideoPlayer player,
-        MockAndroidVideoPlayerApi api,
-        _,
-      ) = setUpMockPlayer(playerId: 1, textureId: 100);
+      final (AndroidVideoPlayer player, MockAndroidVideoPlayerApi api, _) =
+          setUpMockPlayer(playerId: 1, textureId: 100);
       const int newPlayerId = 2;
       when(api.createForTextureView(any)).thenAnswer(
         (_) async => TexturePlayerIds(playerId: newPlayerId, textureId: 100),
@@ -451,11 +412,8 @@ void main() {
     });
 
     test('createWithOptions with file passes headers', () async {
-      final (
-        AndroidVideoPlayer player,
-        MockAndroidVideoPlayerApi api,
-        _,
-      ) = setUpMockPlayer(playerId: 1, textureId: 100);
+      final (AndroidVideoPlayer player, MockAndroidVideoPlayerApi api, _) =
+          setUpMockPlayer(playerId: 1, textureId: 100);
       when(
         api.createForTextureView(any),
       ).thenAnswer((_) async => TexturePlayerIds(playerId: 2, textureId: 100));
@@ -484,11 +442,8 @@ void main() {
     });
 
     test('createWithOptions with platform view', () async {
-      final (
-        AndroidVideoPlayer player,
-        MockAndroidVideoPlayerApi api,
-        _,
-      ) = setUpMockPlayer(playerId: 1);
+      final (AndroidVideoPlayer player, MockAndroidVideoPlayerApi api, _) =
+          setUpMockPlayer(playerId: 1);
       const int newPlayerId = 2;
       when(api.createForPlatformView(any)).thenAnswer((_) async => newPlayerId);
 
@@ -518,7 +473,9 @@ void main() {
         AndroidVideoPlayer player,
         _,
         MockVideoPlayerInstanceApi playerApi,
-      ) = setUpMockPlayer(playerId: 1);
+      ) = setUpMockPlayer(
+        playerId: 1,
+      );
       await player.setLooping(1, true);
 
       verify(playerApi.setLooping(true));
@@ -529,7 +486,9 @@ void main() {
         AndroidVideoPlayer player,
         _,
         MockVideoPlayerInstanceApi playerApi,
-      ) = setUpMockPlayer(playerId: 1);
+      ) = setUpMockPlayer(
+        playerId: 1,
+      );
       await player.play(1);
 
       verify(playerApi.play());
@@ -540,7 +499,9 @@ void main() {
         AndroidVideoPlayer player,
         _,
         MockVideoPlayerInstanceApi playerApi,
-      ) = setUpMockPlayer(playerId: 1);
+      ) = setUpMockPlayer(
+        playerId: 1,
+      );
       await player.pause(1);
 
       verify(playerApi.pause());
@@ -548,22 +509,16 @@ void main() {
 
     group('setMixWithOthers', () {
       test('passes true', () async {
-        final (
-          AndroidVideoPlayer player,
-          MockAndroidVideoPlayerApi api,
-          _,
-        ) = setUpMockPlayer(playerId: 1);
+        final (AndroidVideoPlayer player, MockAndroidVideoPlayerApi api, _) =
+            setUpMockPlayer(playerId: 1);
         await player.setMixWithOthers(true);
 
         verify(api.setMixWithOthers(true));
       });
 
       test('passes false', () async {
-        final (
-          AndroidVideoPlayer player,
-          MockAndroidVideoPlayerApi api,
-          _,
-        ) = setUpMockPlayer(playerId: 1);
+        final (AndroidVideoPlayer player, MockAndroidVideoPlayerApi api, _) =
+            setUpMockPlayer(playerId: 1);
         await player.setMixWithOthers(false);
 
         verify(api.setMixWithOthers(false));
@@ -575,7 +530,9 @@ void main() {
         AndroidVideoPlayer player,
         _,
         MockVideoPlayerInstanceApi playerApi,
-      ) = setUpMockPlayer(playerId: 1);
+      ) = setUpMockPlayer(
+        playerId: 1,
+      );
       const double volume = 0.7;
       await player.setVolume(1, volume);
 
@@ -587,7 +544,9 @@ void main() {
         AndroidVideoPlayer player,
         _,
         MockVideoPlayerInstanceApi playerApi,
-      ) = setUpMockPlayer(playerId: 1);
+      ) = setUpMockPlayer(
+        playerId: 1,
+      );
       const double speed = 1.5;
       await player.setPlaybackSpeed(1, speed);
 
@@ -599,7 +558,9 @@ void main() {
         AndroidVideoPlayer player,
         _,
         MockVideoPlayerInstanceApi playerApi,
-      ) = setUpMockPlayer(playerId: 1);
+      ) = setUpMockPlayer(
+        playerId: 1,
+      );
       const int positionMilliseconds = 12345;
       await player.seekTo(
         1,
@@ -614,7 +575,9 @@ void main() {
         AndroidVideoPlayer player,
         _,
         MockVideoPlayerInstanceApi playerApi,
-      ) = setUpMockPlayer(playerId: 1);
+      ) = setUpMockPlayer(
+        playerId: 1,
+      );
       const int positionMilliseconds = 12345;
       when(
         playerApi.getCurrentPosition(),
@@ -637,7 +600,9 @@ void main() {
           _,
           _,
           StreamController<PlatformVideoEvent> streamController,
-        ) = setUpMockPlayerWithStream(playerId: playerId);
+        ) = setUpMockPlayerWithStream(
+          playerId: playerId,
+        );
 
         events.forEach(streamController.add);
 

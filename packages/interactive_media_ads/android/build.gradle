@@ -1,5 +1,5 @@
-group 'dev.flutter.packages.interactive_media_ads'
-version '1.0-SNAPSHOT'
+group = 'dev.flutter.packages.interactive_media_ads'
+version = '1.0-SNAPSHOT'
 
 buildscript {
     ext.kotlin_version = '2.2.10'
@@ -30,12 +30,12 @@ android {
     compileSdk = flutter.compileSdkVersion
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = '11'
+        jvmTarget = JavaVersion.VERSION_17.toString()
     }
 
     sourceSets {
@@ -50,7 +50,7 @@ android {
     dependencies {
         implementation("androidx.annotation:annotation:1.9.1")
         implementation("androidx.core:core-ktx:1.13.0")
-        implementation("com.google.ads.interactivemedia.v3:interactivemedia:3.36.0")
+        implementation("com.google.ads.interactivemedia.v3:interactivemedia:3.37.0")
         testImplementation("junit:junit:4.13.2")
         testImplementation("org.jetbrains.kotlin:kotlin-test")
         testImplementation("org.mockito.kotlin:mockito-kotlin:6.0.0")
@@ -58,10 +58,11 @@ android {
         testImplementation("androidx.test:core:1.7.0")
     }
 
-    lintOptions {
-        checkAllWarnings true
-        warningsAsErrors true
+    lint {
+        checkAllWarnings = true
+        warningsAsErrors = true
         disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency', 'NewerVersionAvailable'
+        baseline = file("lint-baseline.xml")
     }
 
     testOptions {
