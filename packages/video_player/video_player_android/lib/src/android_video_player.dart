@@ -62,8 +62,8 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
   @override
   Future<void> dispose(int playerId) async {
     final _PlayerInstance? player = _players.remove(playerId);
-    await _api.dispose(playerId);
     await player?.dispose();
+    await _api.dispose(playerId);
   }
 
   @override
