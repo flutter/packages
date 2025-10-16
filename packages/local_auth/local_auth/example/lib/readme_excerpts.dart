@@ -60,8 +60,8 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> getEnrolledBiometrics() async {
     // #docregion Enrolled
-    final List<BiometricType> availableBiometrics =
-        await auth.getAvailableBiometrics();
+    final List<BiometricType> availableBiometrics = await auth
+        .getAvailableBiometrics();
 
     if (availableBiometrics.isNotEmpty) {
       // Some biometrics are enrolled.

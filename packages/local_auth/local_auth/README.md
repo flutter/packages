@@ -50,8 +50,8 @@ types and only check that some biometric is enrolled:
 
 <?code-excerpt "readme_excerpts.dart (Enrolled)"?>
 ```dart
-final List<BiometricType> availableBiometrics =
-    await auth.getAvailableBiometrics();
+final List<BiometricType> availableBiometrics = await auth
+    .getAvailableBiometrics();
 
 if (availableBiometrics.isNotEmpty) {
   // Some biometrics are enrolled.

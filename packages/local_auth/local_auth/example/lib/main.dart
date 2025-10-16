@@ -34,11 +34,9 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     auth.isDeviceSupported().then(
       (bool isSupported) => setState(
-        () =>
-            _supportState =
-                isSupported
-                    ? _SupportState.supported
-                    : _SupportState.unsupported,
+        () => _supportState = isSupported
+            ? _SupportState.supported
+            : _SupportState.unsupported,
       ),
     );
   }
