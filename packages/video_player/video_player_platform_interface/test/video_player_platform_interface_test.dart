@@ -27,20 +27,17 @@ void main() {
     );
   });
 
-  test('default implementation selectAudioTrack throws unimplemented',
-      () async {
-    await expectLater(
-      () => initialInstance.selectAudioTrack(1, 'trackId'),
-      throwsUnimplementedError,
-    );
-  });
-
   test(
-      'default implementation isAudioTrackSupportAvailable throws unimplemented',
-      () async {
-    await expectLater(
-      () => initialInstance.isAudioTrackSupportAvailable(),
-      throwsUnimplementedError,
-    );
+    'default implementation selectAudioTrack throws unimplemented',
+    () async {
+      await expectLater(
+        () => initialInstance.selectAudioTrack(1, 'trackId'),
+        throwsUnimplementedError,
+      );
+    },
+  );
+
+  test('default implementation isAudioTrackSupportAvailable returns false', () {
+    expect(initialInstance.isAudioTrackSupportAvailable(), false);
   });
 }

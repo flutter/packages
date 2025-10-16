@@ -134,7 +134,7 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
     throw UnimplementedError('getAudioTracks() has not been implemented.');
   }
 
-  /// Selects an audio track by its ID.
+  /// Selects which audio track is chosen for playback from its [trackId]
   Future<void> selectAudioTrack(int playerId, String trackId) {
     throw UnimplementedError('selectAudioTrack() has not been implemented.');
   }
@@ -147,10 +147,11 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
   ///
   /// Returns `true` if [getAudioTracks] and [selectAudioTrack] are supported,
   /// `false` otherwise.
-  Future<bool> isAudioTrackSupportAvailable() {
-    throw UnimplementedError(
-      'isAudioTrackSupportAvailable() has not been implemented.',
-    );
+  ///
+  /// The default implementation returns `false`. Platform implementations
+  /// should override this to return `true` if they support audio track selection.
+  bool isAudioTrackSupportAvailable() {
+    return false;
   }
 }
 
@@ -580,10 +581,12 @@ class VideoAudioTrack {
   final String id;
 
   /// Human-readable label for the track.
-  final String label;
+  /// May be null if not available from the platform.
+  final String? label;
 
   /// Language code of the audio track (e.g., 'en', 'es', 'und').
-  final String language;
+  /// May be null if not available from the platform.
+  final String? language;
 
   /// Whether this track is currently selected.
   final bool isSelected;
