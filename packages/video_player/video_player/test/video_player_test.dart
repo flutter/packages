@@ -10,7 +10,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:video_player/video_player.dart';
-import 'package:video_player_platform_interface/video_player_platform_interface.dart';
+import 'package:video_player_platform_interface/video_player_platform_interface.dart'
+    hide VideoAudioTrack;
+import 'package:video_player_platform_interface/video_player_platform_interface.dart'
+    as platform_interface
+    show VideoAudioTrack;
 
 const String _localhost = 'https://127.0.0.1';
 final Uri _localhostUri = Uri.parse(_localhost);
@@ -1823,16 +1827,18 @@ class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
   }
 
   @override
-  Future<List<VideoAudioTrack>> getAudioTracks(int playerId) async {
+  Future<List<platform_interface.VideoAudioTrack>> getAudioTracks(
+    int playerId,
+  ) async {
     calls.add('getAudioTracks');
-    return <VideoAudioTrack>[
-      const VideoAudioTrack(
+    return <platform_interface.VideoAudioTrack>[
+      const platform_interface.VideoAudioTrack(
         id: 'track_1',
         label: 'English',
         language: 'en',
         isSelected: true,
       ),
-      const VideoAudioTrack(
+      const platform_interface.VideoAudioTrack(
         id: 'track_2',
         label: 'Spanish',
         language: 'es',
@@ -1842,7 +1848,7 @@ class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
         channelCount: 2,
         codec: 'aac',
       ),
-      const VideoAudioTrack(
+      const platform_interface.VideoAudioTrack(
         id: 'track_3',
         label: 'French',
         language: 'fr',

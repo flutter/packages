@@ -8,6 +8,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:video_player_platform_interface/video_player_platform_interface.dart';
+import 'package:video_player_platform_interface/video_player_platform_interface.dart'
+    as platform_interface;
 
 import 'src/closed_caption_file.dart';
 
@@ -15,7 +17,6 @@ export 'package:video_player_platform_interface/video_player_platform_interface.
     show
         DataSourceType,
         DurationRange,
-        VideoAudioTrack,
         VideoFormat,
         VideoPlayerOptions,
         VideoPlayerWebOptions,
@@ -23,6 +24,108 @@ export 'package:video_player_platform_interface/video_player_platform_interface.
         VideoViewType;
 
 export 'src/closed_caption_file.dart';
+
+/// Represents an audio track in a video with its metadata.
+@immutable
+class VideoAudioTrack {
+  /// Constructs an instance of [VideoAudioTrack].
+  const VideoAudioTrack({
+    required this.id,
+    required this.label,
+    required this.language,
+    required this.isSelected,
+    this.bitrate,
+    this.sampleRate,
+    this.channelCount,
+    this.codec,
+  });
+
+  /// Unique identifier for the audio track.
+  final String id;
+
+  /// Human-readable label for the track.
+  final String label;
+
+  /// Language code of the audio track (e.g., 'en', 'es', 'und').
+  final String language;
+
+  /// Whether this track is currently selected.
+  final bool isSelected;
+
+  /// Bitrate of the audio track in bits per second.
+  /// May be null if not available from the platform.
+  final int? bitrate;
+
+  /// Sample rate of the audio track in Hz.
+  /// May be null if not available from the platform.
+  final int? sampleRate;
+
+  /// Number of audio channels.
+  /// May be null if not available from the platform.
+  final int? channelCount;
+
+  /// Audio codec used (e.g., 'aac', 'mp3', 'ac3').
+  /// May be null if not available from the platform.
+  final String? codec;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        other is VideoAudioTrack &&
+            runtimeType == other.runtimeType &&
+            id == other.id &&
+            label == other.label &&
+            language == other.language &&
+            isSelected == other.isSelected &&
+            bitrate == other.bitrate &&
+            sampleRate == other.sampleRate &&
+            channelCount == other.channelCount &&
+            codec == other.codec;
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    label,
+    language,
+    isSelected,
+    bitrate,
+    sampleRate,
+    channelCount,
+    codec,
+  );
+
+  @override
+  String toString() =>
+      'VideoAudioTrack('
+      'id: $id, '
+      'label: $label, '
+      'language: $language, '
+      'isSelected: $isSelected, '
+      'bitrate: $bitrate, '
+      'sampleRate: $sampleRate, '
+      'channelCount: $channelCount, '
+      'codec: $codec)';
+}
+
+/// Converts a platform interface [VideoAudioTrack] to the public API type.
+///
+/// This internal method is used to decouple the public API from the
+/// platform interface implementation.
+VideoAudioTrack _convertPlatformAudioTrack(
+  platform_interface.VideoAudioTrack platformTrack,
+) {
+  return VideoAudioTrack(
+    id: platformTrack.id,
+    label: platformTrack.label,
+    language: platformTrack.language,
+    isSelected: platformTrack.isSelected,
+    bitrate: platformTrack.bitrate,
+    sampleRate: platformTrack.sampleRate,
+    channelCount: platformTrack.channelCount,
+    codec: platformTrack.codec,
+  );
+}
 
 VideoPlayerPlatform? _lastVideoPlayerPlatform;
 
@@ -833,7 +936,9 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     if (!value.isInitialized) {
       return <VideoAudioTrack>[];
     }
-    return _videoPlayerPlatform.getAudioTracks(_playerId);
+    final List<platform_interface.VideoAudioTrack> platformTracks =
+        await _videoPlayerPlatform.getAudioTracks(_playerId);
+    return platformTracks.map(_convertPlatformAudioTrack).toList();
   }
 
   /// Selects which audio track is chosen for playback from its [trackId]
