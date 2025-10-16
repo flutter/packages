@@ -52,10 +52,10 @@ final class IOSAdsManagerDelegate extends PlatformAdsManagerDelegate {
 
   late final IOSAdsManagerDelegateCreationParams _iosParams =
       params is IOSAdsManagerDelegateCreationParams
-          ? params as IOSAdsManagerDelegateCreationParams
-          : IOSAdsManagerDelegateCreationParams.fromPlatformAdsManagerDelegateCreationParams(
-            params,
-          );
+      ? params as IOSAdsManagerDelegateCreationParams
+      : IOSAdsManagerDelegateCreationParams.fromPlatformAdsManagerDelegateCreationParams(
+          params,
+        );
 
   // This value is created in a static method because the callback methods for
   // any wrapped classes must not reference the encapsulating object. This is to
@@ -119,35 +119,32 @@ PlatformAd _asPlatformAd(ima.IMAAd ad) {
     creativeId: ad.creativeID,
     dealId: ad.dealID,
     description: ad.adDescription,
-    duration:
-        ad.duration == -1
-            ? null
-            : Duration(
-              milliseconds:
-                  (ad.duration * Duration.millisecondsPerSecond).round(),
-            ),
+    duration: ad.duration == -1
+        ? null
+        : Duration(
+            milliseconds: (ad.duration * Duration.millisecondsPerSecond)
+                .round(),
+          ),
     height: ad.height,
-    skipTimeOffset:
-        ad.skipTimeOffset == -1
-            ? null
-            : Duration(
-              milliseconds:
-                  (ad.skipTimeOffset * Duration.millisecondsPerSecond).round(),
-            ),
+    skipTimeOffset: ad.skipTimeOffset == -1
+        ? null
+        : Duration(
+            milliseconds: (ad.skipTimeOffset * Duration.millisecondsPerSecond)
+                .round(),
+          ),
     surveyUrl: ad.surveyURL,
     title: ad.adTitle,
     traffickingParameters: ad.traffickingParameters,
-    uiElements:
-        ad.uiElements
-            .map((ima.UIElementType element) {
-              return switch (element) {
-                ima.UIElementType.adAttribution => AdUIElement.adAttribution,
-                ima.UIElementType.countdown => AdUIElement.countdown,
-                ima.UIElementType.unknown => null,
-              };
-            })
-            .whereType<AdUIElement>()
-            .toSet(),
+    uiElements: ad.uiElements
+        .map((ima.UIElementType element) {
+          return switch (element) {
+            ima.UIElementType.adAttribution => AdUIElement.adAttribution,
+            ima.UIElementType.countdown => AdUIElement.countdown,
+            ima.UIElementType.unknown => null,
+          };
+        })
+        .whereType<AdUIElement>()
+        .toSet(),
     universalAdIds: ad.universalAdIDs.map(_asPlatformUniversalAdId).toList(),
     vastMediaBitrate: ad.vastMediaBitrate,
     vastMediaHeight: ad.vastMediaHeight,
@@ -161,18 +158,17 @@ PlatformAd _asPlatformAd(ima.IMAAd ad) {
 PlatformAdPodInfo _asPlatformAdInfo(ima.IMAAdPodInfo adPodInfo) {
   return PlatformAdPodInfo(
     adPosition: adPodInfo.adPosition,
-    maxDuration:
-        adPodInfo.maxDuration == -1
-            ? null
-            : Duration(
-              milliseconds:
-                  (adPodInfo.maxDuration * Duration.millisecondsPerSecond)
-                      .round(),
-            ),
+    maxDuration: adPodInfo.maxDuration == -1
+        ? null
+        : Duration(
+            milliseconds:
+                (adPodInfo.maxDuration * Duration.millisecondsPerSecond)
+                    .round(),
+          ),
     podIndex: adPodInfo.podIndex,
     timeOffset: Duration(
-      milliseconds:
-          (adPodInfo.timeOffset * Duration.millisecondsPerSecond).round(),
+      milliseconds: (adPodInfo.timeOffset * Duration.millisecondsPerSecond)
+          .round(),
     ),
     totalAds: adPodInfo.totalAds,
     isBumper: adPodInfo.isBumper,
@@ -192,11 +188,11 @@ PlatformUniversalAdId _asPlatformUniversalAdId(
   ima.IMAUniversalAdID universalAdId,
 ) {
   return PlatformUniversalAdId(
-    adIdValue:
-        universalAdId.adIDValue == 'unknown' ? null : universalAdId.adIDValue,
-    adIdRegistry:
-        universalAdId.adIDRegistry == 'unknown'
-            ? null
-            : universalAdId.adIDRegistry,
+    adIdValue: universalAdId.adIDValue == 'unknown'
+        ? null
+        : universalAdId.adIDValue,
+    adIdRegistry: universalAdId.adIDRegistry == 'unknown'
+        ? null
+        : universalAdId.adIDRegistry,
   );
 }
