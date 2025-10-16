@@ -57,7 +57,8 @@ extension type Descriptor._(JSObject _) implements JSObject {
   factory Descriptor.accessor({
     void Function(JSAny? value)? set,
     JSAny? Function()? get,
-  }) => Descriptor._accessor(set: set?.toJS, get: get?.toJS);
+  }) =>
+      Descriptor._accessor(set: set?.toJS, get: get?.toJS);
 
   external factory Descriptor._accessor({
     // JSBoolean configurable,

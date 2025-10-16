@@ -56,8 +56,8 @@ void main() {
     });
 
     testWidgets('live stream duration != 0', (WidgetTester tester) async {
-      final VideoPlayerController
-      networkController = VideoPlayerController.networkUrl(
+      final VideoPlayerController networkController =
+          VideoPlayerController.networkUrl(
         Uri.parse(
           'https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.m3u8',
         ),
@@ -312,8 +312,8 @@ void main() {
       skip:
           // MEDIA_ELEMENT_ERROR on web, see https://github.com/flutter/flutter/issues/169219
           kIsWeb ||
-          // Hanging on Android, see https://github.com/flutter/flutter/issues/160797
-          defaultTargetPlatform == TargetPlatform.android,
+              // Hanging on Android, see https://github.com/flutter/flutter/issues/160797
+              defaultTargetPlatform == TargetPlatform.android,
     );
   });
 
