@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -38,8 +38,9 @@ void main() {
     test('getTemporaryPath', () async {
       final PathProviderFoundation pathProvider = PathProviderFoundation();
       final String temporaryPath = p.join(testRoot.path, 'temporary', 'path');
-      when(mockApi.getDirectoryPath(DirectoryType.temp))
-          .thenReturn(temporaryPath);
+      when(
+        mockApi.getDirectoryPath(DirectoryType.temp),
+      ).thenReturn(temporaryPath);
 
       final String? path = await pathProvider.getTemporaryPath();
 
@@ -49,10 +50,15 @@ void main() {
 
     test('getApplicationSupportPath', () async {
       final PathProviderFoundation pathProvider = PathProviderFoundation();
-      final String applicationSupportPath =
-          p.join(testRoot.path, 'application', 'support', 'path');
-      when(mockApi.getDirectoryPath(DirectoryType.applicationSupport))
-          .thenReturn(applicationSupportPath);
+      final String applicationSupportPath = p.join(
+        testRoot.path,
+        'application',
+        'support',
+        'path',
+      );
+      when(
+        mockApi.getDirectoryPath(DirectoryType.applicationSupport),
+      ).thenReturn(applicationSupportPath);
 
       final String? path = await pathProvider.getApplicationSupportPath();
 
@@ -60,24 +66,32 @@ void main() {
       expect(path, applicationSupportPath);
     });
 
-    test('getApplicationSupportPath creates the directory if necessary',
-        () async {
-      final PathProviderFoundation pathProvider = PathProviderFoundation();
-      final String applicationSupportPath =
-          p.join(testRoot.path, 'application', 'support', 'path');
-      when(mockApi.getDirectoryPath(DirectoryType.applicationSupport))
-          .thenReturn(applicationSupportPath);
+    test(
+      'getApplicationSupportPath creates the directory if necessary',
+      () async {
+        final PathProviderFoundation pathProvider = PathProviderFoundation();
+        final String applicationSupportPath = p.join(
+          testRoot.path,
+          'application',
+          'support',
+          'path',
+        );
+        when(
+          mockApi.getDirectoryPath(DirectoryType.applicationSupport),
+        ).thenReturn(applicationSupportPath);
 
-      final String? path = await pathProvider.getApplicationSupportPath();
+        final String? path = await pathProvider.getApplicationSupportPath();
 
-      expect(Directory(path!).existsSync(), isTrue);
-    });
+        expect(Directory(path!).existsSync(), isTrue);
+      },
+    );
 
     test('getLibraryPath', () async {
       final PathProviderFoundation pathProvider = PathProviderFoundation();
       final String libraryPath = p.join(testRoot.path, 'library', 'path');
-      when(mockApi.getDirectoryPath(DirectoryType.library))
-          .thenReturn(libraryPath);
+      when(
+        mockApi.getDirectoryPath(DirectoryType.library),
+      ).thenReturn(libraryPath);
 
       final String? path = await pathProvider.getLibraryPath();
 
@@ -87,10 +101,15 @@ void main() {
 
     test('getApplicationDocumentsPath', () async {
       final PathProviderFoundation pathProvider = PathProviderFoundation();
-      final String applicationDocumentsPath =
-          p.join(testRoot.path, 'application', 'documents', 'path');
-      when(mockApi.getDirectoryPath(DirectoryType.applicationDocuments))
-          .thenReturn(applicationDocumentsPath);
+      final String applicationDocumentsPath = p.join(
+        testRoot.path,
+        'application',
+        'documents',
+        'path',
+      );
+      when(
+        mockApi.getDirectoryPath(DirectoryType.applicationDocuments),
+      ).thenReturn(applicationDocumentsPath);
 
       final String? path = await pathProvider.getApplicationDocumentsPath();
 
@@ -100,10 +119,15 @@ void main() {
 
     test('getApplicationCachePath', () async {
       final PathProviderFoundation pathProvider = PathProviderFoundation();
-      final String applicationCachePath =
-          p.join(testRoot.path, 'application', 'cache', 'path');
-      when(mockApi.getDirectoryPath(DirectoryType.applicationCache))
-          .thenReturn(applicationCachePath);
+      final String applicationCachePath = p.join(
+        testRoot.path,
+        'application',
+        'cache',
+        'path',
+      );
+      when(
+        mockApi.getDirectoryPath(DirectoryType.applicationCache),
+      ).thenReturn(applicationCachePath);
 
       final String? path = await pathProvider.getApplicationCachePath();
 
@@ -111,24 +135,32 @@ void main() {
       expect(path, applicationCachePath);
     });
 
-    test('getApplicationCachePath creates the directory if necessary',
-        () async {
-      final PathProviderFoundation pathProvider = PathProviderFoundation();
-      final String applicationCachePath =
-          p.join(testRoot.path, 'application', 'cache', 'path');
-      when(mockApi.getDirectoryPath(DirectoryType.applicationCache))
-          .thenReturn(applicationCachePath);
+    test(
+      'getApplicationCachePath creates the directory if necessary',
+      () async {
+        final PathProviderFoundation pathProvider = PathProviderFoundation();
+        final String applicationCachePath = p.join(
+          testRoot.path,
+          'application',
+          'cache',
+          'path',
+        );
+        when(
+          mockApi.getDirectoryPath(DirectoryType.applicationCache),
+        ).thenReturn(applicationCachePath);
 
-      final String? path = await pathProvider.getApplicationCachePath();
+        final String? path = await pathProvider.getApplicationCachePath();
 
-      expect(Directory(path!).existsSync(), isTrue);
-    });
+        expect(Directory(path!).existsSync(), isTrue);
+      },
+    );
 
     test('getDownloadsPath', () async {
       final PathProviderFoundation pathProvider = PathProviderFoundation();
       final String downloadsPath = p.join(testRoot.path, 'downloads', 'path');
-      when(mockApi.getDirectoryPath(DirectoryType.downloads))
-          .thenReturn(downloadsPath);
+      when(
+        mockApi.getDirectoryPath(DirectoryType.downloads),
+      ).thenReturn(downloadsPath);
 
       final String? result = await pathProvider.getDownloadsPath();
 
@@ -144,38 +176,46 @@ void main() {
     test('getExternalStoragePath throws', () async {
       final PathProviderFoundation pathProvider = PathProviderFoundation();
       expect(
-          pathProvider.getExternalStoragePath(), throwsA(isUnsupportedError));
+        pathProvider.getExternalStoragePath(),
+        throwsA(isUnsupportedError),
+      );
     });
 
     test('getExternalStoragePaths throws', () async {
       final PathProviderFoundation pathProvider = PathProviderFoundation();
       expect(
-          pathProvider.getExternalStoragePaths(), throwsA(isUnsupportedError));
+        pathProvider.getExternalStoragePaths(),
+        throwsA(isUnsupportedError),
+      );
     });
 
     test('getContainerPath', () async {
-      final PathProviderFoundation pathProvider =
-          PathProviderFoundation(platform: FakePlatformProvider(isIOS: true));
+      final PathProviderFoundation pathProvider = PathProviderFoundation(
+        platform: FakePlatformProvider(isIOS: true),
+      );
       const String appGroupIdentifier = 'group.example.test';
 
       final String containerPath = p.join(testRoot.path, 'container', 'path');
-      when(mockApi.getContainerPath(appGroupIdentifier))
-          .thenReturn(containerPath);
+      when(
+        mockApi.getContainerPath(appGroupIdentifier),
+      ).thenReturn(containerPath);
 
       final String? result = await pathProvider.getContainerPath(
-          appGroupIdentifier: appGroupIdentifier);
+        appGroupIdentifier: appGroupIdentifier,
+      );
 
       verify(mockApi.getContainerPath(appGroupIdentifier));
       expect(result, containerPath);
     });
 
     test('getContainerPath throws on macOS', () async {
-      final PathProviderFoundation pathProvider =
-          PathProviderFoundation(platform: FakePlatformProvider(isIOS: false));
+      final PathProviderFoundation pathProvider = PathProviderFoundation(
+        platform: FakePlatformProvider(isIOS: false),
+      );
       expect(
-          pathProvider.getContainerPath(
-              appGroupIdentifier: 'group.example.test'),
-          throwsA(isUnsupportedError));
+        pathProvider.getContainerPath(appGroupIdentifier: 'group.example.test'),
+        throwsA(isUnsupportedError),
+      );
     });
   });
 }

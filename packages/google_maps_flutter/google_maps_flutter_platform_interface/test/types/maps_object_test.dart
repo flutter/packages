@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -19,12 +19,13 @@ void main() {
     const TestMapsObject object2 = TestMapsObject(id2, data: 2);
     const TestMapsObject object3 = TestMapsObject(id3);
     expect(
-        keyByMapsObjectId(<TestMapsObject>{object1, object2, object3}),
-        <MapsObjectId<TestMapsObject>, TestMapsObject>{
-          id1: object1,
-          id2: object2,
-          id3: object3,
-        });
+      keyByMapsObjectId(<TestMapsObject>{object1, object2, object3}),
+      <MapsObjectId<TestMapsObject>, TestMapsObject>{
+        id1: object1,
+        id2: object2,
+        id3: object3,
+      },
+    );
   });
 
   test('serializeMapsObjectSet', () async {
@@ -35,11 +36,12 @@ void main() {
     const TestMapsObject object2 = TestMapsObject(id2, data: 2);
     const TestMapsObject object3 = TestMapsObject(id3);
     expect(
-        serializeMapsObjectSet(<TestMapsObject>{object1, object2, object3}),
-        <Map<String, Object>>[
-          <String, Object>{'id': '1'},
-          <String, Object>{'id': '2'},
-          <String, Object>{'id': '3'}
-        ]);
+      serializeMapsObjectSet(<TestMapsObject>{object1, object2, object3}),
+      <Map<String, Object>>[
+        <String, Object>{'id': '1'},
+        <String, Object>{'id': '2'},
+        <String, Object>{'id': '3'},
+      ],
+    );
   });
 }

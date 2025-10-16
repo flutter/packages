@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -11,7 +11,7 @@ import 'page.dart';
 
 class HeatmapPage extends GoogleMapExampleAppPage {
   const HeatmapPage({Key? key})
-      : super(const Icon(Icons.map), 'Heatmaps', key: key);
+    : super(const Icon(Icons.map), 'Heatmaps', key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +43,7 @@ class HeatmapBodyState extends State<HeatmapBody> {
     const WeightedLatLng(LatLng(37.785, -122.441)),
     const WeightedLatLng(LatLng(37.785, -122.439)),
     const WeightedLatLng(LatLng(37.785, -122.437)),
-    const WeightedLatLng(LatLng(37.785, -122.435))
+    const WeightedLatLng(LatLng(37.785, -122.435)),
   ];
 
   List<WeightedLatLng> disabledPoints = <WeightedLatLng>[];
@@ -95,42 +95,26 @@ class HeatmapBodyState extends State<HeatmapBody> {
             width: 350.0,
             height: 300.0,
             child: GoogleMap(
-                initialCameraPosition: const CameraPosition(
-                  target: sanFrancisco,
-                  zoom: 13,
+              initialCameraPosition: const CameraPosition(
+                target: sanFrancisco,
+                zoom: 13,
+              ),
+              heatmaps: <Heatmap>{
+                Heatmap(
+                  heatmapId: const HeatmapId('test'),
+                  data: enabledPoints,
+                  gradient: const HeatmapGradient(<HeatmapGradientColor>[
+                    HeatmapGradientColor(Color.fromARGB(255, 0, 255, 255), 0.2),
+                    HeatmapGradientColor(Color.fromARGB(255, 0, 63, 255), 0.4),
+                    HeatmapGradientColor(Color.fromARGB(255, 0, 0, 191), 0.6),
+                    HeatmapGradientColor(Color.fromARGB(255, 63, 0, 91), 0.8),
+                    HeatmapGradientColor(Color.fromARGB(255, 255, 0, 0), 1),
+                  ]),
+                  maxIntensity: 1,
+                  radius: HeatmapRadius.fromPixels(radius),
                 ),
-                heatmaps: <Heatmap>{
-                  Heatmap(
-                    heatmapId: const HeatmapId('test'),
-                    data: enabledPoints,
-                    gradient: const HeatmapGradient(
-                      <HeatmapGradientColor>[
-                        HeatmapGradientColor(
-                          Color.fromARGB(255, 0, 255, 255),
-                          0.2,
-                        ),
-                        HeatmapGradientColor(
-                          Color.fromARGB(255, 0, 63, 255),
-                          0.4,
-                        ),
-                        HeatmapGradientColor(
-                          Color.fromARGB(255, 0, 0, 191),
-                          0.6,
-                        ),
-                        HeatmapGradientColor(
-                          Color.fromARGB(255, 63, 0, 91),
-                          0.8,
-                        ),
-                        HeatmapGradientColor(
-                          Color.fromARGB(255, 255, 0, 0),
-                          1,
-                        ),
-                      ],
-                    ),
-                    maxIntensity: 1,
-                    radius: HeatmapRadius.fromPixels(radius),
-                  )
-                }),
+              },
+            ),
           ),
         ),
         Expanded(
@@ -153,9 +137,9 @@ class HeatmapBodyState extends State<HeatmapBody> {
                           child: const Text('Remove point'),
                         ),
                       ],
-                    )
+                    ),
                   ],
-                )
+                ),
               ],
             ),
           ),

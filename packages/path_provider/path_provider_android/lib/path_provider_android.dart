@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -6,7 +6,8 @@ import 'package:path_provider_platform_interface/path_provider_platform_interfac
 import 'messages.g.dart' as messages;
 
 messages.StorageDirectory _convertStorageDirectory(
-    StorageDirectory? directory) {
+  StorageDirectory? directory,
+) {
   switch (directory) {
     case null:
       return messages.StorageDirectory.root;
@@ -86,8 +87,9 @@ class PathProviderAndroid extends PathProviderPlatform {
 
   @override
   Future<String?> getDownloadsPath() async {
-    final List<String> paths =
-        await _getExternalStoragePaths(type: StorageDirectory.downloads);
+    final List<String> paths = await _getExternalStoragePaths(
+      type: StorageDirectory.downloads,
+    );
     return paths.isEmpty ? null : paths.first;
   }
 

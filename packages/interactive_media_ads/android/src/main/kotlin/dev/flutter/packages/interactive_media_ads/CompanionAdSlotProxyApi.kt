@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -46,5 +46,9 @@ class CompanionAdSlotProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
 
   override fun setSize(pigeon_instance: CompanionAdSlot, width: Long, height: Long) {
     pigeon_instance.setSize(width.toInt(), height.toInt())
+  }
+
+  override fun setFluidSize(pigeon_instance: CompanionAdSlot) {
+    pigeon_instance.setSize(CompanionAdSlot.FLUID_SIZE, CompanionAdSlot.FLUID_SIZE)
   }
 }

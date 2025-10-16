@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -66,13 +66,13 @@ class IOSAuthMessages extends AuthMessages {
 
   @override
   int get hashCode => Object.hash(
-        super.hashCode,
-        lockOut,
-        goToSettingsButton,
-        goToSettingsDescription,
-        cancelButton,
-        localizedFallbackTitle,
-      );
+    super.hashCode,
+    lockOut,
+    goToSettingsButton,
+    goToSettingsDescription,
+    cancelButton,
+    localizedFallbackTitle,
+  );
 }
 
 // Default Strings for IOSAuthMessages plugin. Currently supports English.
@@ -80,28 +80,36 @@ class IOSAuthMessages extends AuthMessages {
 
 /// Message shown on a button that the user can click to go to settings pages
 /// from the current dialog.
-String get goToSettings => Intl.message('Go to settings',
-    desc: 'Message shown on a button that the user can click to go to '
-        'settings pages from the current dialog. Maximum 30 characters.');
+String get goToSettings => Intl.message(
+  'Go to settings',
+  desc:
+      'Message shown on a button that the user can click to go to '
+      'settings pages from the current dialog. Maximum 30 characters.',
+);
 
 /// Message advising the user to re-enable biometrics on their device.
 /// It shows in a dialog on iOS.
 String get iOSLockOut => Intl.message(
-    'Biometric authentication is disabled. Please lock and unlock your screen to '
-    'enable it.',
-    desc: 'Message advising the user to re-enable biometrics on their device.');
+  'Biometric authentication is disabled. Please lock and unlock your screen to '
+  'enable it.',
+  desc: 'Message advising the user to re-enable biometrics on their device.',
+);
 
 /// Message advising the user to go to the settings and configure Biometrics
 /// for their device.
 String get iOSGoToSettingsDescription => Intl.message(
-    'Biometric authentication is not set up on your device. Please either enable '
-    'Touch ID or Face ID on your phone.',
-    desc:
-        'Message advising the user to go to the settings and configure Biometrics '
-        'for their device.');
+  'Biometric authentication is not set up on your device. Please either enable '
+  'Touch ID or Face ID on your phone.',
+  desc:
+      'Message advising the user to go to the settings and configure Biometrics '
+      'for their device.',
+);
 
 /// Message shown on a button that the user can click to leave the current
 /// dialog.
-String get iOSOkButton => Intl.message('OK',
-    desc: 'Message showed on a button that the user can click to leave the '
-        'current dialog. Maximum 30 characters.');
+String get iOSOkButton => Intl.message(
+  'OK',
+  desc:
+      'Message showed on a button that the user can click to leave the '
+      'current dialog. Maximum 30 characters.',
+);

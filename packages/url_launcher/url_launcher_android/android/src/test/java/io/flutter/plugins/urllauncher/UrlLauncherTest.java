@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -30,6 +30,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
 
 @RunWith(RobolectricTestRunner.class)
 public class UrlLauncherTest {
@@ -88,7 +89,7 @@ public class UrlLauncherTest {
     Messages.FlutterError exception =
         assertThrows(
             Messages.FlutterError.class,
-            () -> api.launchUrl("https://flutter.dev", new HashMap<>()));
+            () -> api.launchUrl("https://flutter.dev", new HashMap<>(), false));
     assertEquals("NO_ACTIVITY", exception.code);
   }
 
@@ -100,11 +101,30 @@ public class UrlLauncherTest {
     api.setActivity(activity);
     doThrow(new ActivityNotFoundException()).when(activity).startActivity(any());
 
-    api.launchUrl("https://flutter.dev", new HashMap<>());
+    api.launchUrl("https://flutter.dev", new HashMap<>(), false);
 
     final ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
     verify(activity).startActivity(intentCaptor.capture());
     assertEquals(url, intentCaptor.getValue().getData().toString());
+    assertEquals(0, intentCaptor.getValue().getFlags() & Intent.FLAG_ACTIVITY_REQUIRE_NON_BROWSER);
+  }
+
+  @Config(minSdk = 30)
+  @Test
+  public void launch_setsRequireNonBrowserWhenRequested() {
+    Activity activity = mock(Activity.class);
+    String url = "https://flutter.dev";
+    UrlLauncher api = new UrlLauncher(ApplicationProvider.getApplicationContext());
+    api.setActivity(activity);
+    doThrow(new ActivityNotFoundException()).when(activity).startActivity(any());
+
+    api.launchUrl("https://flutter.dev", new HashMap<>(), true);
+
+    final ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
+    verify(activity).startActivity(intentCaptor.capture());
+    assertEquals(
+        Intent.FLAG_ACTIVITY_REQUIRE_NON_BROWSER,
+        intentCaptor.getValue().getFlags() & Intent.FLAG_ACTIVITY_REQUIRE_NON_BROWSER);
   }
 
   @Test
@@ -114,7 +134,7 @@ public class UrlLauncherTest {
     api.setActivity(activity);
     doThrow(new ActivityNotFoundException()).when(activity).startActivity(any());
 
-    boolean result = api.launchUrl("https://flutter.dev", new HashMap<>());
+    boolean result = api.launchUrl("https://flutter.dev", new HashMap<>(), false);
 
     assertFalse(result);
   }
@@ -125,7 +145,7 @@ public class UrlLauncherTest {
     UrlLauncher api = new UrlLauncher(ApplicationProvider.getApplicationContext());
     api.setActivity(activity);
 
-    boolean result = api.launchUrl("https://flutter.dev", new HashMap<>());
+    boolean result = api.launchUrl("https://flutter.dev", new HashMap<>(), false);
 
     assertTrue(result);
   }

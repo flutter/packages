@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -31,5 +31,15 @@ class URLProtectionSpaceProxyAPIDelegate: PigeonApiDelegateURLProtectionSpace {
     pigeonApi: PigeonApiURLProtectionSpace, pigeonInstance: URLProtectionSpace
   ) throws -> String? {
     return pigeonInstance.authenticationMethod
+  }
+
+  func getServerTrust(pigeonApi: PigeonApiURLProtectionSpace, pigeonInstance: URLProtectionSpace)
+    throws -> SecTrustWrapper?
+  {
+    if let serverTrust = pigeonInstance.serverTrust {
+      return SecTrustWrapper(value: serverTrust)
+    }
+
+    return nil
   }
 }

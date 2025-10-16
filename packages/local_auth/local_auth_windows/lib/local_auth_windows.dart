@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -15,9 +15,8 @@ export 'package:local_auth_windows/types/auth_messages_windows.dart';
 /// The implementation of [LocalAuthPlatform] for Windows.
 class LocalAuthWindows extends LocalAuthPlatform {
   /// Creates a new plugin implementation instance.
-  LocalAuthWindows({
-    @visibleForTesting LocalAuthApi? api,
-  }) : _api = api ?? LocalAuthApi();
+  LocalAuthWindows({@visibleForTesting LocalAuthApi? api})
+    : _api = api ?? LocalAuthApi();
 
   final LocalAuthApi _api;
 
@@ -36,7 +35,8 @@ class LocalAuthWindows extends LocalAuthPlatform {
 
     if (options.biometricOnly) {
       throw UnsupportedError(
-          "Windows doesn't support the biometricOnly parameter.");
+        "Windows doesn't support the biometricOnly parameter.",
+      );
     }
 
     return _api.authenticate(localizedReason);

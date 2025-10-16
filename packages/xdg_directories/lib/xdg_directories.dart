@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -52,9 +52,12 @@ class _DefaultProcessRunner implements XdgProcessRunner {
   const _DefaultProcessRunner();
 
   @override
-  ProcessResult runSync(String executable, List<String> arguments,
-      {Encoding? stdoutEncoding = systemEncoding,
-      Encoding? stderrEncoding = systemEncoding}) {
+  ProcessResult runSync(
+    String executable,
+    List<String> arguments, {
+    Encoding? stdoutEncoding = systemEncoding,
+    Encoding? stderrEncoding = systemEncoding,
+  }) {
     return Process.runSync(
       executable,
       arguments,
@@ -76,18 +79,24 @@ set xdgProcessRunner(XdgProcessRunner processRunner) {
 XdgProcessRunner _processRunner = const _DefaultProcessRunner();
 
 List<Directory> _directoryListFromEnvironment(
-    String envVar, List<Directory> fallback) {
+  String envVar,
+  List<Directory> fallback,
+) {
   ArgumentError.checkNotNull(envVar);
   ArgumentError.checkNotNull(fallback);
   final String? value = _getenv(envVar);
   if (value == null || value.isEmpty) {
     return fallback;
   }
-  return value.split(':').where((String value) {
-    return value.isNotEmpty;
-  }).map<Directory>((String entry) {
-    return Directory(entry);
-  }).toList();
+  return value
+      .split(':')
+      .where((String value) {
+        return value.isNotEmpty;
+      })
+      .map<Directory>((String entry) {
+        return Directory(entry);
+      })
+      .toList();
 }
 
 Directory? _directoryFromEnvironment(String envVar) {
@@ -100,7 +109,9 @@ Directory? _directoryFromEnvironment(String envVar) {
 }
 
 Directory _directoryFromEnvironmentWithFallback(
-    String envVar, String fallback) {
+  String envVar,
+  String fallback,
+) {
   ArgumentError.checkNotNull(envVar);
   final String? value = _getenv(envVar);
   if (value == null || value.isEmpty) {
@@ -116,8 +127,9 @@ Directory _getDirectory(String subdir) {
   final String? homeDir = _getenv('HOME');
   if (homeDir == null || homeDir.isEmpty) {
     throw StateError(
-        'The "HOME" environment variable is not set. This package (and POSIX) '
-        'requires that HOME be set.');
+      'The "HOME" environment variable is not set. This package (and POSIX) '
+      'requires that HOME be set.',
+    );
   }
   return Directory(path.joinAll(<String>[homeDir, subdir]));
 }
@@ -136,10 +148,9 @@ Directory get cacheHome =>
 ///
 /// Throws [StateError] if the HOME environment variable is not set.
 List<Directory> get configDirs {
-  return _directoryListFromEnvironment(
-    'XDG_CONFIG_DIRS',
-    <Directory>[Directory('/etc/xdg')],
-  );
+  return _directoryListFromEnvironment('XDG_CONFIG_DIRS', <Directory>[
+    Directory('/etc/xdg'),
+  ]);
 }
 
 /// The a single base directory relative to which user-specific
@@ -154,10 +165,10 @@ Directory get configHome =>
 ///
 /// Throws [StateError] if the HOME environment variable is not set.
 List<Directory> get dataDirs {
-  return _directoryListFromEnvironment(
-    'XDG_DATA_DIRS',
-    <Directory>[Directory('/usr/local/share'), Directory('/usr/share')],
-  );
+  return _directoryListFromEnvironment('XDG_DATA_DIRS', <Directory>[
+    Directory('/usr/local/share'),
+    Directory('/usr/share'),
+  ]);
 }
 
 /// The base directory relative to which user-specific data files should be
@@ -189,11 +200,9 @@ Directory get stateHome =>
 Directory? getUserDirectory(String dirName) {
   final ProcessResult result;
   try {
-    result = _processRunner.runSync(
-      'xdg-user-dir',
-      <String>[dirName],
-      stdoutEncoding: utf8,
-    );
+    result = _processRunner.runSync('xdg-user-dir', <String>[
+      dirName,
+    ], stdoutEncoding: utf8);
   } on ProcessException catch (e) {
     // Silently return null if it's missing, otherwise pass the exception up.
     if (e.errorCode == _noSuchFileError) {
@@ -221,8 +230,9 @@ Set<String> getUserDirectoryNames() {
     return const <String>{};
   }
   final Set<String> result = <String>{};
-  final RegExp dirRegExp =
-      RegExp(r'^\s*XDG_(?<dirname>[^=]*)_DIR\s*=\s*(?<dir>.*)\s*$');
+  final RegExp dirRegExp = RegExp(
+    r'^\s*XDG_(?<dirname>[^=]*)_DIR\s*=\s*(?<dir>.*)\s*$',
+  );
   for (final String line in contents) {
     final RegExpMatch? match = dirRegExp.firstMatch(line);
     if (match == null) {

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -19,8 +19,11 @@ PlatformException _createConnectionError(String channelName) {
   );
 }
 
-List<Object?> wrapResponse(
-    {Object? result, PlatformException? error, bool empty = false}) {
+List<Object?> wrapResponse({
+  Object? result,
+  PlatformException? error,
+  bool empty = false,
+}) {
   if (empty) {
     return <Object?>[];
   }
@@ -28,6 +31,24 @@ List<Object?> wrapResponse(
     return <Object?>[result];
   }
   return <Object?>[error.code, error.message, error.details];
+}
+
+bool _deepEquals(Object? a, Object? b) {
+  if (a is List && b is List) {
+    return a.length == b.length &&
+        a.indexed.every(
+          ((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]),
+        );
+  }
+  if (a is Map && b is Map) {
+    return a.length == b.length &&
+        a.entries.every(
+          (MapEntry<Object?, Object?> entry) =>
+              (b as Map<Object?, Object?>).containsKey(entry.key) &&
+              _deepEquals(entry.value, b[entry.key]),
+        );
+  }
+  return a == b;
 }
 
 /// This comment is to test enum documentation comments.
@@ -47,17 +68,13 @@ enum EnumState {
 
 /// This comment is to test class documentation comments.
 class DataWithEnum {
-  DataWithEnum({
-    this.state,
-  });
+  DataWithEnum({this.state});
 
   /// This comment is to test field documentation comments.
   EnumState? state;
 
   List<Object?> _toList() {
-    return <Object?>[
-      state,
-    ];
+    return <Object?>[state];
   }
 
   Object encode() {
@@ -66,9 +83,7 @@ class DataWithEnum {
 
   static DataWithEnum decode(Object result) {
     result as List<Object?>;
-    return DataWithEnum(
-      state: result[0] as EnumState?,
-    );
+    return DataWithEnum(state: result[0] as EnumState?);
   }
 
   @override
@@ -80,7 +95,7 @@ class DataWithEnum {
     if (identical(this, other)) {
       return true;
     }
-    return state == other.state;
+    return _deepEquals(encode(), other.encode());
   }
 
   @override
@@ -131,6 +146,7 @@ class EnumApi2Host {
   })  : pigeonVar_binaryMessenger = binaryMessenger,
         pigeonVar_messageChannelSuffix =
             messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+  final BinaryMessenger? pigeonVar_binaryMessenger;
 
   final BinaryMessenger? pigeonVar_binaryMessenger;
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -147,8 +163,9 @@ class EnumApi2Host {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[data]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[data],
+    );
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -185,22 +202,26 @@ abstract class EnumApi2Flutter {
     messageChannelSuffix =
         messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.EnumApi2Flutter.echo$messageChannelSuffix',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?> pigeonVar_channel =
+          BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.pigeon_integration_tests.EnumApi2Flutter.echo$messageChannelSuffix',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.pigeon_integration_tests.EnumApi2Flutter.echo was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.pigeon_integration_tests.EnumApi2Flutter.echo was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final DataWithEnum? arg_data = (args[0] as DataWithEnum?);
-          assert(arg_data != null,
-              'Argument for dev.flutter.pigeon.pigeon_integration_tests.EnumApi2Flutter.echo was null, expected non-null DataWithEnum.');
+          assert(
+            arg_data != null,
+            'Argument for dev.flutter.pigeon.pigeon_integration_tests.EnumApi2Flutter.echo was null, expected non-null DataWithEnum.',
+          );
           try {
             final DataWithEnum output = api.echo(arg_data!);
             return wrapResponse(result: output);
@@ -208,7 +229,8 @@ abstract class EnumApi2Flutter {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -56,8 +56,12 @@ Future<void> migrateLegacySharedPreferencesToSharedPreferencesAsyncIfNecessary({
       case const (List<dynamic>):
         try {
           await sharedPreferencesAsyncInstance.setStringList(
-              key, (value! as List<Object?>).cast<String>());
-        } on TypeError catch (_) {} // Pass over Lists containing non-String values.
+            key,
+            (value! as List<Object?>).cast<String>(),
+          );
+        } on TypeError catch (
+          _
+        ) {} // Pass over Lists containing non-String values.
     }
   }
 

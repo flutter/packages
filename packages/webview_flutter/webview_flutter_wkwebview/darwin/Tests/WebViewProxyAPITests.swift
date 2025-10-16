@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -278,6 +278,18 @@ class WebViewProxyAPITests: XCTestCase {
     XCTAssertFalse(instance.isInspectable)
   }
 
+  @MainActor func testSetAllowsLinkPreview() {
+    let registrar = TestProxyApiRegistrar()
+    let api = webViewProxyAPI(forRegistrar: registrar)
+
+    let instance = TestViewWKWebView()
+    let allow: Bool = true
+    try? api.pigeonDelegate.setAllowsLinkPreview(
+      pigeonApi: api, pigeonInstance: instance, allow: allow)
+
+    XCTAssertEqual(instance.allowsLinkPreview, allow)
+  }
+
   @MainActor func testGetCustomUserAgent() {
     let registrar = TestProxyApiRegistrar()
     let api = webViewProxyAPI(forRegistrar: registrar)
@@ -299,7 +311,6 @@ class WebViewProxyAPITests: XCTestCase {
       XCTAssertEqual(webView.scrollView.contentInsetAdjustmentBehavior, .never)
     }
 
-    @available(iOS 13.0, *)
     @MainActor
     func testScrollViewsAutomaticallyAdjustsScrollIndicatorInsetsShouldbeFalse() {
       let registrar = TestProxyApiRegistrar()

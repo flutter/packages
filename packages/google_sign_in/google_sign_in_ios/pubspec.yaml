@@ -2,11 +2,11 @@ name: google_sign_in_ios
 description: iOS implementation of the google_sign_in plugin.
 repository: https://github.com/flutter/packages/tree/main/packages/google_sign_in/google_sign_in_ios
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+google_sign_in%22
-version: 5.8.1
+version: 6.2.1
 
 environment:
-  sdk: ^3.4.0
-  flutter: ">=3.22.0"
+  sdk: ^3.7.0
+  flutter: ">=3.29.0"
 
 flutter:
   plugin:
@@ -24,7 +24,7 @@ flutter:
 dependencies:
   flutter:
     sdk: flutter
-  google_sign_in_platform_interface: ^2.5.0
+  google_sign_in_platform_interface: ^3.1.0
 
 dev_dependencies:
   build_runner: ^2.4.6

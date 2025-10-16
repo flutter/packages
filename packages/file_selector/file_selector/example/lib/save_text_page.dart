@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -23,9 +23,10 @@ class SaveTextPage extends StatelessWidget {
     // only be done in cases where the application can likely predict where the
     // file will be saved. In most cases, this parameter should not be provided,
     // and in the web, path_provider shouldn't even be called.
-    final String? initialDirectory = kIsWeb
-        ? null
-        : (await path_provider.getApplicationDocumentsDirectory()).path;
+    final String? initialDirectory =
+        kIsWeb
+            ? null
+            : (await path_provider.getApplicationDocumentsDirectory()).path;
     final FileSaveLocation? result = await getSaveLocation(
       initialDirectory: initialDirectory,
       suggestedName: fileName,
@@ -38,8 +39,11 @@ class SaveTextPage extends StatelessWidget {
     final String text = _contentController.text;
     final Uint8List fileData = Uint8List.fromList(text.codeUnits);
     const String fileMimeType = 'text/plain';
-    final XFile textFile =
-        XFile.fromData(fileData, mimeType: fileMimeType, name: fileName);
+    final XFile textFile = XFile.fromData(
+      fileData,
+      mimeType: fileMimeType,
+      name: fileName,
+    );
 
     await textFile.saveTo(result.path);
   }
@@ -47,9 +51,7 @@ class SaveTextPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Save text into a file'),
-      ),
+      appBar: AppBar(title: const Text('Save text into a file')),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -83,9 +85,7 @@ class SaveTextPage extends StatelessWidget {
                 foregroundColor: Colors.white,
               ),
               onPressed: _isIOS ? null : () => _saveFile(),
-              child: const Text(
-                'Press to save a text file.',
-              ),
+              child: const Text('Press to save a text file.'),
             ),
           ],
         ),

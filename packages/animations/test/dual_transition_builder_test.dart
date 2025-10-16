@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -12,36 +12,31 @@ void main() {
       duration: const Duration(milliseconds: 300),
     );
 
-    await tester.pumpWidget(Center(
-      child: DualTransitionBuilder(
-        animation: controller,
-        forwardBuilder: (
-          BuildContext context,
-          Animation<double> animation,
-          Widget? child,
-        ) {
-          return ScaleTransition(
-            scale: animation,
-            child: child,
-          );
-        },
-        reverseBuilder: (
-          BuildContext context,
-          Animation<double> animation,
-          Widget? child,
-        ) {
-          return FadeTransition(
-            opacity: Tween<double>(begin: 1.0, end: 0.0).animate(animation),
-            child: child,
-          );
-        },
-        child: Container(
-          color: Colors.green,
-          height: 100,
-          width: 100,
+    await tester.pumpWidget(
+      Center(
+        child: DualTransitionBuilder(
+          animation: controller,
+          forwardBuilder: (
+            BuildContext context,
+            Animation<double> animation,
+            Widget? child,
+          ) {
+            return ScaleTransition(scale: animation, child: child);
+          },
+          reverseBuilder: (
+            BuildContext context,
+            Animation<double> animation,
+            Widget? child,
+          ) {
+            return FadeTransition(
+              opacity: Tween<double>(begin: 1.0, end: 0.0).animate(animation),
+              child: child,
+            );
+          },
+          child: Container(color: Colors.green, height: 100, width: 100),
         ),
       ),
-    ));
+    );
     expect(_getScale(tester), 0.0);
     expect(_getOpacity(tester), 1.0);
 
@@ -80,37 +75,37 @@ void main() {
       duration: const Duration(milliseconds: 300),
     );
 
-    await tester.pumpWidget(Directionality(
-      textDirection: TextDirection.ltr,
-      child: Center(
-        child: DualTransitionBuilder(
-          animation: controller,
-          forwardBuilder: (
-            BuildContext context,
-            Animation<double> animation,
-            Widget? child,
-          ) {
-            return ScaleTransition(
-              scale: animation,
-              child: child,
-            );
-          },
-          reverseBuilder: (
-            BuildContext context,
-            Animation<double> animation,
-            Widget? child,
-          ) {
-            return FadeTransition(
-              opacity: Tween<double>(begin: 1.0, end: 0.0).animate(animation),
-              child: child,
-            );
-          },
-          child: const _StatefulTestWidget(name: 'Foo'),
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: Center(
+          child: DualTransitionBuilder(
+            animation: controller,
+            forwardBuilder: (
+              BuildContext context,
+              Animation<double> animation,
+              Widget? child,
+            ) {
+              return ScaleTransition(scale: animation, child: child);
+            },
+            reverseBuilder: (
+              BuildContext context,
+              Animation<double> animation,
+              Widget? child,
+            ) {
+              return FadeTransition(
+                opacity: Tween<double>(begin: 1.0, end: 0.0).animate(animation),
+                child: child,
+              );
+            },
+            child: const _StatefulTestWidget(name: 'Foo'),
+          ),
         ),
       ),
-    ));
-    final State<StatefulWidget> state =
-        tester.state(find.byType(_StatefulTestWidget));
+    );
+    final State<StatefulWidget> state = tester.state(
+      find.byType(_StatefulTestWidget),
+    );
     expect(state, isNotNull);
 
     controller.forward();
@@ -138,42 +133,38 @@ void main() {
     expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
   });
 
-  testWidgets('does not jump when interrupted - forward',
-      (WidgetTester tester) async {
+  testWidgets('does not jump when interrupted - forward', (
+    WidgetTester tester,
+  ) async {
     final AnimationController controller = AnimationController(
       vsync: const TestVSync(),
       duration: const Duration(milliseconds: 300),
     );
-    await tester.pumpWidget(Center(
-      child: DualTransitionBuilder(
-        animation: controller,
-        forwardBuilder: (
-          BuildContext context,
-          Animation<double> animation,
-          Widget? child,
-        ) {
-          return ScaleTransition(
-            scale: animation,
-            child: child,
-          );
-        },
-        reverseBuilder: (
-          BuildContext context,
-          Animation<double> animation,
-          Widget? child,
-        ) {
-          return FadeTransition(
-            opacity: Tween<double>(begin: 1.0, end: 0.0).animate(animation),
-            child: child,
-          );
-        },
-        child: Container(
-          color: Colors.green,
-          height: 100,
-          width: 100,
+    await tester.pumpWidget(
+      Center(
+        child: DualTransitionBuilder(
+          animation: controller,
+          forwardBuilder: (
+            BuildContext context,
+            Animation<double> animation,
+            Widget? child,
+          ) {
+            return ScaleTransition(scale: animation, child: child);
+          },
+          reverseBuilder: (
+            BuildContext context,
+            Animation<double> animation,
+            Widget? child,
+          ) {
+            return FadeTransition(
+              opacity: Tween<double>(begin: 1.0, end: 0.0).animate(animation),
+              child: child,
+            );
+          },
+          child: Container(color: Colors.green, height: 100, width: 100),
         ),
       ),
-    ));
+    );
     expect(_getScale(tester), 0.0);
     expect(_getOpacity(tester), 1.0);
 
@@ -203,43 +194,39 @@ void main() {
     expect(_getOpacity(tester), 1.0);
   });
 
-  testWidgets('does not jump when interrupted - reverse',
-      (WidgetTester tester) async {
+  testWidgets('does not jump when interrupted - reverse', (
+    WidgetTester tester,
+  ) async {
     final AnimationController controller = AnimationController(
       value: 1.0,
       vsync: const TestVSync(),
       duration: const Duration(milliseconds: 300),
     );
-    await tester.pumpWidget(Center(
-      child: DualTransitionBuilder(
-        animation: controller,
-        forwardBuilder: (
-          BuildContext context,
-          Animation<double> animation,
-          Widget? child,
-        ) {
-          return ScaleTransition(
-            scale: animation,
-            child: child,
-          );
-        },
-        reverseBuilder: (
-          BuildContext context,
-          Animation<double> animation,
-          Widget? child,
-        ) {
-          return FadeTransition(
-            opacity: Tween<double>(begin: 1.0, end: 0.0).animate(animation),
-            child: child,
-          );
-        },
-        child: Container(
-          color: Colors.green,
-          height: 100,
-          width: 100,
+    await tester.pumpWidget(
+      Center(
+        child: DualTransitionBuilder(
+          animation: controller,
+          forwardBuilder: (
+            BuildContext context,
+            Animation<double> animation,
+            Widget? child,
+          ) {
+            return ScaleTransition(scale: animation, child: child);
+          },
+          reverseBuilder: (
+            BuildContext context,
+            Animation<double> animation,
+            Widget? child,
+          ) {
+            return FadeTransition(
+              opacity: Tween<double>(begin: 1.0, end: 0.0).animate(animation),
+              child: child,
+            );
+          },
+          child: Container(color: Colors.green, height: 100, width: 100),
         ),
       ),
-    ));
+    );
     expect(_getScale(tester), 1.0);
     expect(_getOpacity(tester), 1.0);
 

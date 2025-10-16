@@ -4,7 +4,7 @@ Provides bindings for Espresso tests of Flutter Android apps.
 
 |             | Android |
 |-------------|---------|
-| **Support** | SDK 16+ |
+| **Support** | SDK 21+ |
 
 ## Installation
 
@@ -18,11 +18,11 @@ Add the following dependencies in android/app/build.gradle:
 
 ```groovy
 dependencies {
-    testImplementation 'junit:junit:4.13.2'
-    testImplementation "com.google.truth:truth:1.1.3"
-    androidTestImplementation 'androidx.test:runner:1.6.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
-    api 'androidx.test:core:1.2.0'
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("com.google.truth:truth:1.1.3")
+    androidTestImplementation("androidx.test:runner:1.6.1")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
+    api("androidx.test:core:1.2.0")
 }
 ```
 

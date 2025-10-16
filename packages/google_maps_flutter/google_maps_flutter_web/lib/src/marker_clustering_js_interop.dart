@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -13,11 +13,8 @@ import 'dart:js_interop';
 import 'package:google_maps/google_maps.dart' as gmaps;
 
 /// A typedef representing a callback function for handling cluster tap events.
-typedef ClusterClickHandler = void Function(
-  gmaps.MapMouseEvent,
-  MarkerClustererCluster,
-  gmaps.Map,
-);
+typedef ClusterClickHandler =
+    void Function(gmaps.MapMouseEvent, MarkerClustererCluster, gmaps.Map);
 
 /// The [MarkerClustererOptions] object used to initialize [MarkerClusterer].
 ///
@@ -30,16 +27,20 @@ extension type MarkerClustererOptions._(JSObject _) implements JSObject {
     gmaps.Map? map,
     List<gmaps.Marker>? markers,
     ClusterClickHandler? onClusterClick,
-  }) =>
-      MarkerClustererOptions._js(
-        map: map as JSAny?,
-        markers: markers?.cast<JSAny>().toJS ?? JSArray<JSAny>(),
-        onClusterClick: onClusterClick != null
+  }) => MarkerClustererOptions._js(
+    map: map as JSAny?,
+    markers: markers?.cast<JSAny>().toJS ?? JSArray<JSAny>(),
+    onClusterClick:
+        onClusterClick != null
             ? ((JSAny event, MarkerClustererCluster cluster, JSAny map) =>
-                onClusterClick(event as gmaps.MapMouseEvent, cluster,
-                    map as gmaps.Map)).toJS
+                    onClusterClick(
+                      event as gmaps.MapMouseEvent,
+                      cluster,
+                      map as gmaps.Map,
+                    ))
+                .toJS
             : null,
-      );
+  );
 
   external factory MarkerClustererOptions._js({
     JSAny? map,
@@ -155,7 +156,9 @@ extension type MarkerClusterer._(JSObject _) implements JSObject {
 /// Creates [MarkerClusterer] object with given [gmaps.Map] and
 /// [ClusterClickHandler].
 MarkerClusterer createMarkerClusterer(
-    gmaps.Map map, ClusterClickHandler onClusterClickHandler) {
+  gmaps.Map map,
+  ClusterClickHandler onClusterClickHandler,
+) {
   final MarkerClustererOptions options = MarkerClustererOptions(
     map: map,
     onClusterClick: onClusterClickHandler,

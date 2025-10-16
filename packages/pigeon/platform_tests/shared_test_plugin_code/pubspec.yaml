@@ -4,8 +4,8 @@ version: 0.0.1
 publish_to: none
 
 environment:
-  sdk: ^3.4.0
-  flutter: ">=3.22.0"
+  sdk: ^3.9.0
+  flutter: ">=3.35.0"
 
 dependencies:
   build_runner: ^2.1.10
@@ -30,3 +30,6 @@ dependencies:
       url: https://github.com/dart-lang/native/
       path: pkgs/objective_c
       ref: d3c3acb4c67331e5b22010555f7d4f19d4fb5689
+
+dev_dependencies:
+  leak_tracker: any

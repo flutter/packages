@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -38,14 +38,16 @@ void main() {
 
   group('openFile', () {
     test('works as expected with no arguments', () async {
-      when(mockApi.displayOpenPanel(any))
-          .thenAnswer((_) async => <String>['foo']);
+      when(
+        mockApi.displayOpenPanel(any),
+      ).thenAnswer((_) async => <String>['foo']);
 
       final XFile? file = await plugin.openFile();
 
       expect(file!.path, 'foo');
-      final VerificationResult result =
-          verify(mockApi.displayOpenPanel(captureAny));
+      final VerificationResult result = verify(
+        mockApi.displayOpenPanel(captureAny),
+      );
       final OpenPanelOptions options = result.captured[0] as OpenPanelOptions;
       expect(options.allowsMultipleSelection, false);
       expect(options.canChooseFiles, true);
@@ -73,30 +75,39 @@ void main() {
       );
 
       const XTypeGroup groupTwo = XTypeGroup(
-          label: 'image',
-          extensions: <String>['jpg'],
-          mimeTypes: <String>['image/jpg'],
-          uniformTypeIdentifiers: <String>['public.image'],
-          webWildCards: <String>['image/*']);
+        label: 'image',
+        extensions: <String>['jpg'],
+        mimeTypes: <String>['image/jpg'],
+        uniformTypeIdentifiers: <String>['public.image'],
+        webWildCards: <String>['image/*'],
+      );
 
       await plugin.openFile(acceptedTypeGroups: <XTypeGroup>[group, groupTwo]);
 
-      final VerificationResult result =
-          verify(mockApi.displayOpenPanel(captureAny));
+      final VerificationResult result = verify(
+        mockApi.displayOpenPanel(captureAny),
+      );
       final OpenPanelOptions options = result.captured[0] as OpenPanelOptions;
-      expect(options.baseOptions.allowedFileTypes!.extensions,
-          <String>['txt', 'jpg']);
-      expect(options.baseOptions.allowedFileTypes!.mimeTypes,
-          <String>['text/plain', 'image/jpg']);
-      expect(options.baseOptions.allowedFileTypes!.utis,
-          <String>['public.text', 'public.image']);
+      expect(options.baseOptions.allowedFileTypes!.extensions, <String>[
+        'txt',
+        'jpg',
+      ]);
+      expect(options.baseOptions.allowedFileTypes!.mimeTypes, <String>[
+        'text/plain',
+        'image/jpg',
+      ]);
+      expect(options.baseOptions.allowedFileTypes!.utis, <String>[
+        'public.text',
+        'public.image',
+      ]);
     });
 
     test('passes initialDirectory correctly', () async {
       await plugin.openFile(initialDirectory: '/example/directory');
 
-      final VerificationResult result =
-          verify(mockApi.displayOpenPanel(captureAny));
+      final VerificationResult result = verify(
+        mockApi.displayOpenPanel(captureAny),
+      );
       final OpenPanelOptions options = result.captured[0] as OpenPanelOptions;
       expect(options.baseOptions.directoryPath, '/example/directory');
     });
@@ -104,8 +115,9 @@ void main() {
     test('passes confirmButtonText correctly', () async {
       await plugin.openFile(confirmButtonText: 'Open File');
 
-      final VerificationResult result =
-          verify(mockApi.displayOpenPanel(captureAny));
+      final VerificationResult result = verify(
+        mockApi.displayOpenPanel(captureAny),
+      );
       final OpenPanelOptions options = result.captured[0] as OpenPanelOptions;
       expect(options.baseOptions.prompt, 'Open File');
     });
@@ -117,31 +129,34 @@ void main() {
       );
 
       await expectLater(
-          plugin.openFile(acceptedTypeGroups: <XTypeGroup>[group]),
-          throwsArgumentError);
+        plugin.openFile(acceptedTypeGroups: <XTypeGroup>[group]),
+        throwsArgumentError,
+      );
     });
 
     test('allows a wildcard group', () async {
-      const XTypeGroup group = XTypeGroup(
-        label: 'text',
-      );
+      const XTypeGroup group = XTypeGroup(label: 'text');
 
       await expectLater(
-          plugin.openFile(acceptedTypeGroups: <XTypeGroup>[group]), completes);
+        plugin.openFile(acceptedTypeGroups: <XTypeGroup>[group]),
+        completes,
+      );
     });
   });
 
   group('openFiles', () {
     test('works as expected with no arguments', () async {
-      when(mockApi.displayOpenPanel(any))
-          .thenAnswer((_) async => <String>['foo', 'bar']);
+      when(
+        mockApi.displayOpenPanel(any),
+      ).thenAnswer((_) async => <String>['foo', 'bar']);
 
       final List<XFile> files = await plugin.openFiles();
 
       expect(files[0].path, 'foo');
       expect(files[1].path, 'bar');
-      final VerificationResult result =
-          verify(mockApi.displayOpenPanel(captureAny));
+      final VerificationResult result = verify(
+        mockApi.displayOpenPanel(captureAny),
+      );
       final OpenPanelOptions options = result.captured[0] as OpenPanelOptions;
       expect(options.allowsMultipleSelection, true);
       expect(options.canChooseFiles, true);
@@ -169,30 +184,39 @@ void main() {
       );
 
       const XTypeGroup groupTwo = XTypeGroup(
-          label: 'image',
-          extensions: <String>['jpg'],
-          mimeTypes: <String>['image/jpg'],
-          uniformTypeIdentifiers: <String>['public.image'],
-          webWildCards: <String>['image/*']);
+        label: 'image',
+        extensions: <String>['jpg'],
+        mimeTypes: <String>['image/jpg'],
+        uniformTypeIdentifiers: <String>['public.image'],
+        webWildCards: <String>['image/*'],
+      );
 
       await plugin.openFiles(acceptedTypeGroups: <XTypeGroup>[group, groupTwo]);
 
-      final VerificationResult result =
-          verify(mockApi.displayOpenPanel(captureAny));
+      final VerificationResult result = verify(
+        mockApi.displayOpenPanel(captureAny),
+      );
       final OpenPanelOptions options = result.captured[0] as OpenPanelOptions;
-      expect(options.baseOptions.allowedFileTypes!.extensions,
-          <String>['txt', 'jpg']);
-      expect(options.baseOptions.allowedFileTypes!.mimeTypes,
-          <String>['text/plain', 'image/jpg']);
-      expect(options.baseOptions.allowedFileTypes!.utis,
-          <String>['public.text', 'public.image']);
+      expect(options.baseOptions.allowedFileTypes!.extensions, <String>[
+        'txt',
+        'jpg',
+      ]);
+      expect(options.baseOptions.allowedFileTypes!.mimeTypes, <String>[
+        'text/plain',
+        'image/jpg',
+      ]);
+      expect(options.baseOptions.allowedFileTypes!.utis, <String>[
+        'public.text',
+        'public.image',
+      ]);
     });
 
     test('passes initialDirectory correctly', () async {
       await plugin.openFiles(initialDirectory: '/example/directory');
 
-      final VerificationResult result =
-          verify(mockApi.displayOpenPanel(captureAny));
+      final VerificationResult result = verify(
+        mockApi.displayOpenPanel(captureAny),
+      );
       final OpenPanelOptions options = result.captured[0] as OpenPanelOptions;
       expect(options.baseOptions.directoryPath, '/example/directory');
     });
@@ -200,8 +224,9 @@ void main() {
     test('passes confirmButtonText correctly', () async {
       await plugin.openFiles(confirmButtonText: 'Open File');
 
-      final VerificationResult result =
-          verify(mockApi.displayOpenPanel(captureAny));
+      final VerificationResult result = verify(
+        mockApi.displayOpenPanel(captureAny),
+      );
       final OpenPanelOptions options = result.captured[0] as OpenPanelOptions;
       expect(options.baseOptions.prompt, 'Open File');
     });
@@ -213,17 +238,18 @@ void main() {
       );
 
       await expectLater(
-          plugin.openFiles(acceptedTypeGroups: <XTypeGroup>[group]),
-          throwsArgumentError);
+        plugin.openFiles(acceptedTypeGroups: <XTypeGroup>[group]),
+        throwsArgumentError,
+      );
     });
 
     test('allows a wildcard group', () async {
-      const XTypeGroup group = XTypeGroup(
-        label: 'text',
-      );
+      const XTypeGroup group = XTypeGroup(label: 'text');
 
       await expectLater(
-          plugin.openFiles(acceptedTypeGroups: <XTypeGroup>[group]), completes);
+        plugin.openFiles(acceptedTypeGroups: <XTypeGroup>[group]),
+        completes,
+      );
     });
   });
 
@@ -234,8 +260,9 @@ void main() {
       final String? path = await plugin.getSavePath();
 
       expect(path, 'foo');
-      final VerificationResult result =
-          verify(mockApi.displaySavePanel(captureAny));
+      final VerificationResult result = verify(
+        mockApi.displaySavePanel(captureAny),
+      );
       final SavePanelOptions options = result.captured[0] as SavePanelOptions;
       expect(options.allowedFileTypes, null);
       expect(options.directoryPath, null);
@@ -260,30 +287,38 @@ void main() {
       );
 
       const XTypeGroup groupTwo = XTypeGroup(
-          label: 'image',
-          extensions: <String>['jpg'],
-          mimeTypes: <String>['image/jpg'],
-          uniformTypeIdentifiers: <String>['public.image'],
-          webWildCards: <String>['image/*']);
+        label: 'image',
+        extensions: <String>['jpg'],
+        mimeTypes: <String>['image/jpg'],
+        uniformTypeIdentifiers: <String>['public.image'],
+        webWildCards: <String>['image/*'],
+      );
 
-      await plugin
-          .getSavePath(acceptedTypeGroups: <XTypeGroup>[group, groupTwo]);
+      await plugin.getSavePath(
+        acceptedTypeGroups: <XTypeGroup>[group, groupTwo],
+      );
 
-      final VerificationResult result =
-          verify(mockApi.displaySavePanel(captureAny));
+      final VerificationResult result = verify(
+        mockApi.displaySavePanel(captureAny),
+      );
       final SavePanelOptions options = result.captured[0] as SavePanelOptions;
       expect(options.allowedFileTypes!.extensions, <String>['txt', 'jpg']);
-      expect(options.allowedFileTypes!.mimeTypes,
-          <String>['text/plain', 'image/jpg']);
-      expect(options.allowedFileTypes!.utis,
-          <String>['public.text', 'public.image']);
+      expect(options.allowedFileTypes!.mimeTypes, <String>[
+        'text/plain',
+        'image/jpg',
+      ]);
+      expect(options.allowedFileTypes!.utis, <String>[
+        'public.text',
+        'public.image',
+      ]);
     });
 
     test('passes initialDirectory correctly', () async {
       await plugin.getSavePath(initialDirectory: '/example/directory');
 
-      final VerificationResult result =
-          verify(mockApi.displaySavePanel(captureAny));
+      final VerificationResult result = verify(
+        mockApi.displaySavePanel(captureAny),
+      );
       final SavePanelOptions options = result.captured[0] as SavePanelOptions;
       expect(options.directoryPath, '/example/directory');
     });
@@ -291,8 +326,9 @@ void main() {
     test('passes confirmButtonText correctly', () async {
       await plugin.getSavePath(confirmButtonText: 'Open File');
 
-      final VerificationResult result =
-          verify(mockApi.displaySavePanel(captureAny));
+      final VerificationResult result = verify(
+        mockApi.displaySavePanel(captureAny),
+      );
       final SavePanelOptions options = result.captured[0] as SavePanelOptions;
       expect(options.prompt, 'Open File');
     });
@@ -304,41 +340,42 @@ void main() {
       );
 
       await expectLater(
-          plugin.getSavePath(acceptedTypeGroups: <XTypeGroup>[group]),
-          throwsArgumentError);
+        plugin.getSavePath(acceptedTypeGroups: <XTypeGroup>[group]),
+        throwsArgumentError,
+      );
     });
 
     test('allows a wildcard group', () async {
-      const XTypeGroup group = XTypeGroup(
-        label: 'text',
-      );
+      const XTypeGroup group = XTypeGroup(label: 'text');
 
       await expectLater(
-          plugin.getSavePath(acceptedTypeGroups: <XTypeGroup>[group]),
-          completes);
+        plugin.getSavePath(acceptedTypeGroups: <XTypeGroup>[group]),
+        completes,
+      );
     });
 
     test('ignores all type groups if any of them is a wildcard', () async {
-      await plugin.getSavePath(acceptedTypeGroups: <XTypeGroup>[
-        const XTypeGroup(
-          label: 'text',
-          extensions: <String>['txt'],
-          mimeTypes: <String>['text/plain'],
-          uniformTypeIdentifiers: <String>['public.text'],
-        ),
-        const XTypeGroup(
-          label: 'image',
-          extensions: <String>['jpg'],
-          mimeTypes: <String>['image/jpg'],
-          uniformTypeIdentifiers: <String>['public.image'],
-        ),
-        const XTypeGroup(
-          label: 'any',
-        ),
-      ]);
+      await plugin.getSavePath(
+        acceptedTypeGroups: <XTypeGroup>[
+          const XTypeGroup(
+            label: 'text',
+            extensions: <String>['txt'],
+            mimeTypes: <String>['text/plain'],
+            uniformTypeIdentifiers: <String>['public.text'],
+          ),
+          const XTypeGroup(
+            label: 'image',
+            extensions: <String>['jpg'],
+            mimeTypes: <String>['image/jpg'],
+            uniformTypeIdentifiers: <String>['public.image'],
+          ),
+          const XTypeGroup(label: 'any'),
+        ],
+      );
 
-      final VerificationResult result =
-          verify(mockApi.displaySavePanel(captureAny));
+      final VerificationResult result = verify(
+        mockApi.displaySavePanel(captureAny),
+      );
       final SavePanelOptions options = result.captured[0] as SavePanelOptions;
       expect(options.allowedFileTypes, null);
     });
@@ -351,8 +388,9 @@ void main() {
       final FileSaveLocation? location = await plugin.getSaveLocation();
 
       expect(location?.path, 'foo');
-      final VerificationResult result =
-          verify(mockApi.displaySavePanel(captureAny));
+      final VerificationResult result = verify(
+        mockApi.displaySavePanel(captureAny),
+      );
       final SavePanelOptions options = result.captured[0] as SavePanelOptions;
       expect(options.allowedFileTypes, null);
       expect(options.directoryPath, null);
@@ -377,42 +415,54 @@ void main() {
       );
 
       const XTypeGroup groupTwo = XTypeGroup(
-          label: 'image',
-          extensions: <String>['jpg'],
-          mimeTypes: <String>['image/jpg'],
-          uniformTypeIdentifiers: <String>['public.image'],
-          webWildCards: <String>['image/*']);
+        label: 'image',
+        extensions: <String>['jpg'],
+        mimeTypes: <String>['image/jpg'],
+        uniformTypeIdentifiers: <String>['public.image'],
+        webWildCards: <String>['image/*'],
+      );
 
-      await plugin
-          .getSaveLocation(acceptedTypeGroups: <XTypeGroup>[group, groupTwo]);
+      await plugin.getSaveLocation(
+        acceptedTypeGroups: <XTypeGroup>[group, groupTwo],
+      );
 
-      final VerificationResult result =
-          verify(mockApi.displaySavePanel(captureAny));
+      final VerificationResult result = verify(
+        mockApi.displaySavePanel(captureAny),
+      );
       final SavePanelOptions options = result.captured[0] as SavePanelOptions;
       expect(options.allowedFileTypes!.extensions, <String>['txt', 'jpg']);
-      expect(options.allowedFileTypes!.mimeTypes,
-          <String>['text/plain', 'image/jpg']);
-      expect(options.allowedFileTypes!.utis,
-          <String>['public.text', 'public.image']);
+      expect(options.allowedFileTypes!.mimeTypes, <String>[
+        'text/plain',
+        'image/jpg',
+      ]);
+      expect(options.allowedFileTypes!.utis, <String>[
+        'public.text',
+        'public.image',
+      ]);
     });
 
     test('passes initialDirectory correctly', () async {
       await plugin.getSaveLocation(
-          options:
-              const SaveDialogOptions(initialDirectory: '/example/directory'));
+        options: const SaveDialogOptions(
+          initialDirectory: '/example/directory',
+        ),
+      );
 
-      final VerificationResult result =
-          verify(mockApi.displaySavePanel(captureAny));
+      final VerificationResult result = verify(
+        mockApi.displaySavePanel(captureAny),
+      );
       final SavePanelOptions options = result.captured[0] as SavePanelOptions;
       expect(options.directoryPath, '/example/directory');
     });
 
     test('passes confirmButtonText correctly', () async {
       await plugin.getSaveLocation(
-          options: const SaveDialogOptions(confirmButtonText: 'Open File'));
+        options: const SaveDialogOptions(confirmButtonText: 'Open File'),
+      );
 
-      final VerificationResult result =
-          verify(mockApi.displaySavePanel(captureAny));
+      final VerificationResult result = verify(
+        mockApi.displaySavePanel(captureAny),
+      );
       final SavePanelOptions options = result.captured[0] as SavePanelOptions;
       expect(options.prompt, 'Open File');
     });
@@ -424,41 +474,42 @@ void main() {
       );
 
       await expectLater(
-          plugin.getSaveLocation(acceptedTypeGroups: <XTypeGroup>[group]),
-          throwsArgumentError);
+        plugin.getSaveLocation(acceptedTypeGroups: <XTypeGroup>[group]),
+        throwsArgumentError,
+      );
     });
 
     test('allows a wildcard group', () async {
-      const XTypeGroup group = XTypeGroup(
-        label: 'text',
-      );
+      const XTypeGroup group = XTypeGroup(label: 'text');
 
       await expectLater(
-          plugin.getSaveLocation(acceptedTypeGroups: <XTypeGroup>[group]),
-          completes);
+        plugin.getSaveLocation(acceptedTypeGroups: <XTypeGroup>[group]),
+        completes,
+      );
     });
 
     test('ignores all type groups if any of them is a wildcard', () async {
-      await plugin.getSaveLocation(acceptedTypeGroups: <XTypeGroup>[
-        const XTypeGroup(
-          label: 'text',
-          extensions: <String>['txt'],
-          mimeTypes: <String>['text/plain'],
-          uniformTypeIdentifiers: <String>['public.text'],
-        ),
-        const XTypeGroup(
-          label: 'image',
-          extensions: <String>['jpg'],
-          mimeTypes: <String>['image/jpg'],
-          uniformTypeIdentifiers: <String>['public.image'],
-        ),
-        const XTypeGroup(
-          label: 'any',
-        ),
-      ]);
+      await plugin.getSaveLocation(
+        acceptedTypeGroups: <XTypeGroup>[
+          const XTypeGroup(
+            label: 'text',
+            extensions: <String>['txt'],
+            mimeTypes: <String>['text/plain'],
+            uniformTypeIdentifiers: <String>['public.text'],
+          ),
+          const XTypeGroup(
+            label: 'image',
+            extensions: <String>['jpg'],
+            mimeTypes: <String>['image/jpg'],
+            uniformTypeIdentifiers: <String>['public.image'],
+          ),
+          const XTypeGroup(label: 'any'),
+        ],
+      );
 
-      final VerificationResult result =
-          verify(mockApi.displaySavePanel(captureAny));
+      final VerificationResult result = verify(
+        mockApi.displaySavePanel(captureAny),
+      );
       final SavePanelOptions options = result.captured[0] as SavePanelOptions;
       expect(options.allowedFileTypes, null);
     });
@@ -466,14 +517,16 @@ void main() {
 
   group('getDirectoryPath', () {
     test('works as expected with no arguments', () async {
-      when(mockApi.displayOpenPanel(any))
-          .thenAnswer((_) async => <String>['foo']);
+      when(
+        mockApi.displayOpenPanel(any),
+      ).thenAnswer((_) async => <String>['foo']);
 
       final String? path = await plugin.getDirectoryPath();
 
       expect(path, 'foo');
-      final VerificationResult result =
-          verify(mockApi.displayOpenPanel(captureAny));
+      final VerificationResult result = verify(
+        mockApi.displayOpenPanel(captureAny),
+      );
       final OpenPanelOptions options = result.captured[0] as OpenPanelOptions;
       expect(options.allowsMultipleSelection, false);
       expect(options.canChooseFiles, false);
@@ -495,8 +548,9 @@ void main() {
     test('passes initialDirectory correctly', () async {
       await plugin.getDirectoryPath(initialDirectory: '/example/directory');
 
-      final VerificationResult result =
-          verify(mockApi.displayOpenPanel(captureAny));
+      final VerificationResult result = verify(
+        mockApi.displayOpenPanel(captureAny),
+      );
       final OpenPanelOptions options = result.captured[0] as OpenPanelOptions;
       expect(options.baseOptions.directoryPath, '/example/directory');
     });
@@ -504,8 +558,9 @@ void main() {
     test('passes confirmButtonText correctly', () async {
       await plugin.getDirectoryPath(confirmButtonText: 'Open File');
 
-      final VerificationResult result =
-          verify(mockApi.displayOpenPanel(captureAny));
+      final VerificationResult result = verify(
+        mockApi.displayOpenPanel(captureAny),
+      );
       final OpenPanelOptions options = result.captured[0] as OpenPanelOptions;
       expect(options.baseOptions.prompt, 'Open File');
     });
@@ -513,15 +568,24 @@ void main() {
 
   group('getDirectoryPaths', () {
     test('works as expected with no arguments', () async {
-      when(mockApi.displayOpenPanel(any)).thenAnswer((_) async =>
-          <String>['firstDirectory', 'secondDirectory', 'thirdDirectory']);
+      when(mockApi.displayOpenPanel(any)).thenAnswer(
+        (_) async => <String>[
+          'firstDirectory',
+          'secondDirectory',
+          'thirdDirectory',
+        ],
+      );
 
       final List<String> path = await plugin.getDirectoryPaths();
 
-      expect(path,
-          <String>['firstDirectory', 'secondDirectory', 'thirdDirectory']);
-      final VerificationResult result =
-          verify(mockApi.displayOpenPanel(captureAny));
+      expect(path, <String>[
+        'firstDirectory',
+        'secondDirectory',
+        'thirdDirectory',
+      ]);
+      final VerificationResult result = verify(
+        mockApi.displayOpenPanel(captureAny),
+      );
       final OpenPanelOptions options = result.captured[0] as OpenPanelOptions;
       expect(options.allowsMultipleSelection, true);
       expect(options.canChooseFiles, false);
@@ -543,8 +607,9 @@ void main() {
     test('passes confirmButtonText correctly', () async {
       await plugin.getDirectoryPaths(confirmButtonText: 'Select directories');
 
-      final VerificationResult result =
-          verify(mockApi.displayOpenPanel(captureAny));
+      final VerificationResult result = verify(
+        mockApi.displayOpenPanel(captureAny),
+      );
       final OpenPanelOptions options = result.captured[0] as OpenPanelOptions;
       expect(options.baseOptions.prompt, 'Select directories');
     });
@@ -552,8 +617,9 @@ void main() {
     test('passes initialDirectory correctly', () async {
       await plugin.getDirectoryPaths(initialDirectory: '/example/directory');
 
-      final VerificationResult result =
-          verify(mockApi.displayOpenPanel(captureAny));
+      final VerificationResult result = verify(
+        mockApi.displayOpenPanel(captureAny),
+      );
       final OpenPanelOptions options = result.captured[0] as OpenPanelOptions;
       expect(options.baseOptions.directoryPath, '/example/directory');
     });

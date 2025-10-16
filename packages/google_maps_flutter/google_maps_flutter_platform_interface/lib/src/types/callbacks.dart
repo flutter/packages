@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -35,8 +35,9 @@ class ArgumentCallbacks<T> {
     if (length == 1) {
       _callbacks[0].call(argument);
     } else if (0 < length) {
-      for (final ArgumentCallback<T> callback
-          in List<ArgumentCallback<T>>.from(_callbacks)) {
+      for (final ArgumentCallback<T> callback in List<ArgumentCallback<T>>.from(
+        _callbacks,
+      )) {
         callback(argument);
       }
     }

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -87,6 +87,18 @@ class ScrollViewProxyAPIDelegate: PigeonApiDelegateUIScrollView {
       pigeonApi: PigeonApiUIScrollView, pigeonInstance: UIScrollView, value: Bool
     ) throws {
       pigeonInstance.alwaysBounceHorizontal = value
+    }
+
+    func setShowsVerticalScrollIndicator(
+      pigeonApi: PigeonApiUIScrollView, pigeonInstance: UIScrollView, value: Bool
+    ) throws {
+      pigeonInstance.showsVerticalScrollIndicator = value
+    }
+
+    func setShowsHorizontalScrollIndicator(
+      pigeonApi: PigeonApiUIScrollView, pigeonInstance: UIScrollView, value: Bool
+    ) throws {
+      pigeonInstance.showsHorizontalScrollIndicator = value
     }
   #endif
 }

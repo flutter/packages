@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -13,27 +13,24 @@ import 'package:path/path.dart' as p;
 import 'package:url_launcher/url_launcher.dart';
 
 void main() => runApp(
-      const MaterialApp(
-        home: Material(
-          child: Center(
-            child: ElevatedButton(
-              onPressed: _openFile,
-              child: Text('Open File'),
-            ),
-          ),
-        ),
+  const MaterialApp(
+    home: Material(
+      child: Center(
+        child: ElevatedButton(onPressed: _openFile, child: Text('Open File')),
       ),
-    );
+    ),
+  ),
+);
 
 Future<void> _openFile() async {
   // Prepare a file within tmp
   final String tempFilePath = p.joinAll(<String>[
     ...p.split(Directory.systemTemp.path),
-    'flutter_url_launcher_example.txt'
+    'flutter_url_launcher_example.txt',
   ]);
   final File testFile = File(tempFilePath);
   await testFile.writeAsString('Hello, world!');
-// #docregion file
+  // #docregion file
   final String filePath = testFile.absolute.path;
   final Uri uri = Uri.file(filePath);
 
@@ -43,5 +40,5 @@ Future<void> _openFile() async {
   if (!await launchUrl(uri)) {
     throw Exception('Could not launch $uri');
   }
-// #enddocregion file
+  // #enddocregion file
 }

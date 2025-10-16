@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -22,20 +22,25 @@ void main() {
       widgetFactoryNumber++;
     });
 
-    testWidgets('empty case, calls onElementCreated',
-        (WidgetTester tester) async {
+    testWidgets('empty case, calls onElementCreated', (
+      WidgetTester tester,
+    ) async {
       final Completer<Object> viewCreatedCompleter = Completer<Object>();
 
-      await pumpResizableWidget(tester, onElementCreated: (Object view) {
-        viewCreatedCompleter.complete(view);
-      });
+      await pumpResizableWidget(
+        tester,
+        onElementCreated: (Object view) {
+          viewCreatedCompleter.complete(view);
+        },
+      );
       await tester.pumpAndSettle();
 
       await expectLater(viewCreatedCompleter.future, completes);
     });
 
-    testWidgets('empty case, renders with initial size',
-        (WidgetTester tester) async {
+    testWidgets('empty case, renders with initial size', (
+      WidgetTester tester,
+    ) async {
       const Size initialSize = Size(160, 100);
 
       final Element element = await pumpResizableWidget(
@@ -49,8 +54,9 @@ void main() {
       expect(element.size!.height, initialSize.height);
     });
 
-    testWidgets('initialSize null, adopts size of injected element',
-        (WidgetTester tester) async {
+    testWidgets('initialSize null, adopts size of injected element', (
+      WidgetTester tester,
+    ) async {
       const Size childSize = Size(300, 40);
 
       final web.HTMLDivElement resizable =
@@ -68,8 +74,9 @@ void main() {
       expect(element.size!.height, childSize.height);
     });
 
-    testWidgets('with initialSize, adopts size of injected element',
-        (WidgetTester tester) async {
+    testWidgets('with initialSize, adopts size of injected element', (
+      WidgetTester tester,
+    ) async {
       const Size initialSize = Size(160, 100);
       const Size newSize = Size(300, 40);
 
@@ -89,16 +96,18 @@ void main() {
       expect(element.size!.height, newSize.height);
     });
 
-    testWidgets('with injected element that resizes, follows resizes',
-        (WidgetTester tester) async {
+    testWidgets('with injected element that resizes, follows resizes', (
+      WidgetTester tester,
+    ) async {
       const Size initialSize = Size(160, 100);
       final Size expandedSize = initialSize * 2;
       final Size contractedSize = initialSize / 2;
 
-      final web.HTMLDivElement resizable = web.document.createElement('div')
-          as web.HTMLDivElement
-        ..setAttribute(
-            'style', 'width: 100%; height: 100%; background: #fabada;');
+      final web.HTMLDivElement resizable =
+          web.document.createElement('div') as web.HTMLDivElement..setAttribute(
+            'style',
+            'width: 100%; height: 100%; background: #fabada;',
+          );
 
       final Element element = await pumpResizableWidget(
         tester,
@@ -137,11 +146,13 @@ Future<Element> pumpResizableWidget(
   void Function(Object)? onElementCreated,
   Size? initialSize,
 }) async {
-  await tester.pumpWidget(ResizableFromJs(
-    instanceId: widgetFactoryNumber,
-    onElementCreated: onElementCreated,
-    initialSize: initialSize,
-  ));
+  await tester.pumpWidget(
+    ResizableFromJs(
+      instanceId: widgetFactoryNumber,
+      onElementCreated: onElementCreated,
+      initialSize: initialSize,
+    ),
+  );
   // Needed for JS to have time to kick-off.
   await tester.pump();
 
@@ -164,8 +175,10 @@ class ResizableFromJs extends StatelessWidget {
       (int viewId) {
         final web.HTMLDivElement element =
             web.document.createElement('div') as web.HTMLDivElement;
-        element.setAttribute('style',
-            'width: 100%; height: 100%; overflow: hidden; background: red;');
+        element.setAttribute(
+          'style',
+          'width: 100%; height: 100%; overflow: hidden; background: red;',
+        );
         element.id = 'test_element_$viewId';
         return element;
       },
@@ -195,8 +208,10 @@ class ResizableFromJs extends StatelessWidget {
 
 /// Resizes `resizable` to `size`.
 void resize(web.HTMLElement resizable, Size size) {
-  resizable.setAttribute('style',
-      'width: ${size.width}px; height: ${size.height}px; background: #fabada');
+  resizable.setAttribute(
+    'style',
+    'width: ${size.width}px; height: ${size.height}px; background: #fabada',
+  );
 }
 
 /// Returns an `onElementCreated` callback that injects [element].

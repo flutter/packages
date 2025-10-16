@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -9,12 +9,6 @@ import XCTest
 class MockEnumApi2Host: EnumApi2Host {
   func echo(data: DataWithEnum) -> DataWithEnum {
     return data
-  }
-}
-
-extension test_plugin.DataWithEnum: Swift.Equatable {
-  public static func == (lhs: DataWithEnum, rhs: DataWithEnum) -> Bool {
-    lhs.state == rhs.state
   }
 }
 

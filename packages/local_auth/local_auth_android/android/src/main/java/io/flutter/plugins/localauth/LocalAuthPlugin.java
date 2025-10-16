@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -172,7 +172,7 @@ public class LocalAuthPlugin implements FlutterPlugin, ActivityAware, LocalAuthA
   @VisibleForTesting
   public boolean isDeviceSecure() {
     if (keyguardManager == null) return false;
-    return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && keyguardManager.isDeviceSecure());
+    return keyguardManager.isDeviceSecure();
   }
 
   private boolean canAuthenticateWithBiometrics() {

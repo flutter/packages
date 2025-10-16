@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -12,10 +12,7 @@ import 'package:webview_flutter_wkwebview/src/webkit_proxy.dart';
 
 import 'web_kit_cookie_manager_test.mocks.dart';
 
-@GenerateMocks(<Type>[
-  WKHTTPCookieStore,
-  WKWebsiteDataStore,
-])
+@GenerateMocks(<Type>[WKHTTPCookieStore, WKWebsiteDataStore])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -30,33 +27,37 @@ void main() {
     setUp(() {
       mockWebsiteDataStore = MockWKWebsiteDataStore();
       mockWKHttpCookieStore = MockWKHTTPCookieStore();
-      when(mockWebsiteDataStore.httpCookieStore)
-          .thenReturn(mockWKHttpCookieStore);
+      when(
+        mockWebsiteDataStore.httpCookieStore,
+      ).thenReturn(mockWKHttpCookieStore);
 
       cookieManager = WKWebViewCookieManager(
         websiteDataStore: mockWebsiteDataStore,
         webKitProxy: WebKitProxy(
-          newHTTPCookie: ({
-            required Map<HttpCookiePropertyKey, Object> properties,
-          }) {
-            cookieProperties = properties;
-            return cookie = HTTPCookie.pigeon_detached(
-              pigeon_instanceManager: TestInstanceManager(),
-            );
-          },
+          newHTTPCookie:
+              ({required Map<HttpCookiePropertyKey, Object> properties}) {
+                cookieProperties = properties;
+                return cookie = HTTPCookie.pigeon_detached(
+                  pigeon_instanceManager: TestInstanceManager(),
+                );
+              },
         ),
       );
     });
 
     test('clearCookies', () async {
-      when(mockWebsiteDataStore.removeDataOfTypes(
-              <WebsiteDataType>[WebsiteDataType.cookies], any))
-          .thenAnswer((_) => Future<bool>.value(true));
+      when(
+        mockWebsiteDataStore.removeDataOfTypes(<WebsiteDataType>[
+          WebsiteDataType.cookies,
+        ], any),
+      ).thenAnswer((_) => Future<bool>.value(true));
       expect(cookieManager.clearCookies(), completion(true));
 
-      when(mockWebsiteDataStore.removeDataOfTypes(
-              <WebsiteDataType>[WebsiteDataType.cookies], any))
-          .thenAnswer((_) => Future<bool>.value(false));
+      when(
+        mockWebsiteDataStore.removeDataOfTypes(<WebsiteDataType>[
+          WebsiteDataType.cookies,
+        ], any),
+      ).thenAnswer((_) => Future<bool>.value(false));
       expect(cookieManager.clearCookies(), completion(false));
     });
 
@@ -66,15 +67,12 @@ void main() {
       );
 
       verify(mockWKHttpCookieStore.setCookie(cookie));
-      expect(
-        cookieProperties,
-        <HttpCookiePropertyKey, Object>{
-          HttpCookiePropertyKey.name: 'a',
-          HttpCookiePropertyKey.value: 'b',
-          HttpCookiePropertyKey.domain: 'c',
-          HttpCookiePropertyKey.path: 'd',
-        },
-      );
+      expect(cookieProperties, <HttpCookiePropertyKey, Object>{
+        HttpCookiePropertyKey.name: 'a',
+        HttpCookiePropertyKey.value: 'b',
+        HttpCookiePropertyKey.domain: 'c',
+        HttpCookiePropertyKey.path: 'd',
+      });
     });
 
     test('setCookie throws argument error with invalid path', () async {

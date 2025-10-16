@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -20,8 +20,9 @@ void main() {
       api.returnValue = true;
 
       final bool result = await plugin.authenticate(
-          authMessages: <AuthMessages>[const WindowsAuthMessages()],
-          localizedReason: 'My localized reason');
+        authMessages: <AuthMessages>[const WindowsAuthMessages()],
+        localizedReason: 'My localized reason',
+      );
 
       expect(result, true);
       expect(api.passedReason, 'My localized reason');
@@ -31,8 +32,9 @@ void main() {
       api.returnValue = false;
 
       final bool result = await plugin.authenticate(
-          authMessages: <AuthMessages>[const WindowsAuthMessages()],
-          localizedReason: 'My localized reason');
+        authMessages: <AuthMessages>[const WindowsAuthMessages()],
+        localizedReason: 'My localized reason',
+      );
 
       expect(result, false);
       expect(api.passedReason, 'My localized reason');
@@ -40,11 +42,13 @@ void main() {
 
     test('authenticate throws for biometricOnly', () async {
       expect(
-          plugin.authenticate(
-              authMessages: <AuthMessages>[const WindowsAuthMessages()],
-              localizedReason: 'My localized reason',
-              options: const AuthenticationOptions(biometricOnly: true)),
-          throwsA(isUnsupportedError));
+        plugin.authenticate(
+          authMessages: <AuthMessages>[const WindowsAuthMessages()],
+          localizedReason: 'My localized reason',
+          options: const AuthenticationOptions(biometricOnly: true),
+        ),
+        throwsA(isUnsupportedError),
+      );
     });
 
     test('isDeviceSupported handles supported', () async {
@@ -79,14 +83,19 @@ void main() {
       expect(result, false);
     });
 
-    test('getEnrolledBiometrics returns expected values when supported',
-        () async {
-      api.returnValue = true;
+    test(
+      'getEnrolledBiometrics returns expected values when supported',
+      () async {
+        api.returnValue = true;
 
-      final List<BiometricType> result = await plugin.getEnrolledBiometrics();
+        final List<BiometricType> result = await plugin.getEnrolledBiometrics();
 
-      expect(result, <BiometricType>[BiometricType.weak, BiometricType.strong]);
-    });
+        expect(result, <BiometricType>[
+          BiometricType.weak,
+          BiometricType.strong,
+        ]);
+      },
+    );
 
     test('getEnrolledBiometrics returns nothing when unsupported', () async {
       api.returnValue = false;

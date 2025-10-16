@@ -8,72 +8,83 @@ part of 'sk_product_wrapper.dart';
 
 SkProductResponseWrapper _$SkProductResponseWrapperFromJson(Map json) =>
     SkProductResponseWrapper(
-      products: (json['products'] as List<dynamic>?)
-              ?.map((e) => SKProductWrapper.fromJson(
-                  Map<String, dynamic>.from(e as Map)))
+      products:
+          (json['products'] as List<dynamic>?)
+              ?.map(
+                (e) => SKProductWrapper.fromJson(
+                  Map<String, dynamic>.from(e as Map),
+                ),
+              )
               .toList() ??
           [],
       invalidProductIdentifiers:
           (json['invalidProductIdentifiers'] as List<dynamic>?)
-                  ?.map((e) => e as String)
-                  .toList() ??
-              [],
+              ?.map((e) => e as String)
+              .toList() ??
+          [],
     );
 
 SKProductSubscriptionPeriodWrapper _$SKProductSubscriptionPeriodWrapperFromJson(
-        Map json) =>
-    SKProductSubscriptionPeriodWrapper(
-      numberOfUnits: json['numberOfUnits'] as int? ?? 0,
-      unit: const SKSubscriptionPeriodUnitConverter()
-          .fromJson(json['unit'] as int?),
-    );
+  Map json,
+) => SKProductSubscriptionPeriodWrapper(
+  numberOfUnits: (json['numberOfUnits'] as num?)?.toInt() ?? 0,
+  unit: const SKSubscriptionPeriodUnitConverter().fromJson(
+    (json['unit'] as num?)?.toInt(),
+  ),
+);
 
 SKProductDiscountWrapper _$SKProductDiscountWrapperFromJson(Map json) =>
     SKProductDiscountWrapper(
       price: json['price'] as String? ?? '',
-      priceLocale:
-          SKPriceLocaleWrapper.fromJson((json['priceLocale'] as Map?)?.map(
-        (k, e) => MapEntry(k as String, e),
-      )),
-      numberOfPeriods: json['numberOfPeriods'] as int? ?? 0,
-      paymentMode: const SKProductDiscountPaymentModeConverter()
-          .fromJson(json['paymentMode'] as int?),
+      priceLocale: SKPriceLocaleWrapper.fromJson(
+        (json['priceLocale'] as Map?)?.map((k, e) => MapEntry(k as String, e)),
+      ),
+      numberOfPeriods: (json['numberOfPeriods'] as num?)?.toInt() ?? 0,
+      paymentMode: const SKProductDiscountPaymentModeConverter().fromJson(
+        (json['paymentMode'] as num?)?.toInt(),
+      ),
       subscriptionPeriod: SKProductSubscriptionPeriodWrapper.fromJson(
-          (json['subscriptionPeriod'] as Map?)?.map(
-        (k, e) => MapEntry(k as String, e),
-      )),
-      identifier: json['identifier'] as String? ?? null,
-      type:
-          const SKProductDiscountTypeConverter().fromJson(json['type'] as int?),
+        (json['subscriptionPeriod'] as Map?)?.map(
+          (k, e) => MapEntry(k as String, e),
+        ),
+      ),
+      identifier: json['identifier'] as String?,
+      type: const SKProductDiscountTypeConverter().fromJson(
+        (json['type'] as num?)?.toInt(),
+      ),
     );
 
 SKProductWrapper _$SKProductWrapperFromJson(Map json) => SKProductWrapper(
-      productIdentifier: json['productIdentifier'] as String? ?? '',
-      localizedTitle: json['localizedTitle'] as String? ?? '',
-      localizedDescription: json['localizedDescription'] as String? ?? '',
-      priceLocale:
-          SKPriceLocaleWrapper.fromJson((json['priceLocale'] as Map?)?.map(
-        (k, e) => MapEntry(k as String, e),
-      )),
-      subscriptionGroupIdentifier:
-          json['subscriptionGroupIdentifier'] as String?,
-      price: json['price'] as String? ?? '',
-      subscriptionPeriod: json['subscriptionPeriod'] == null
-          ? null
-          : SKProductSubscriptionPeriodWrapper.fromJson(
-              (json['subscriptionPeriod'] as Map?)?.map(
-              (k, e) => MapEntry(k as String, e),
-            )),
-      introductoryPrice: json['introductoryPrice'] == null
-          ? null
-          : SKProductDiscountWrapper.fromJson(
-              Map<String, dynamic>.from(json['introductoryPrice'] as Map)),
-      discounts: (json['discounts'] as List<dynamic>?)
-              ?.map((e) => SKProductDiscountWrapper.fromJson(
-                  Map<String, dynamic>.from(e as Map)))
-              .toList() ??
-          [],
-    );
+  productIdentifier: json['productIdentifier'] as String? ?? '',
+  localizedTitle: json['localizedTitle'] as String? ?? '',
+  localizedDescription: json['localizedDescription'] as String? ?? '',
+  priceLocale: SKPriceLocaleWrapper.fromJson(
+    (json['priceLocale'] as Map?)?.map((k, e) => MapEntry(k as String, e)),
+  ),
+  subscriptionGroupIdentifier: json['subscriptionGroupIdentifier'] as String?,
+  price: json['price'] as String? ?? '',
+  subscriptionPeriod: json['subscriptionPeriod'] == null
+      ? null
+      : SKProductSubscriptionPeriodWrapper.fromJson(
+          (json['subscriptionPeriod'] as Map?)?.map(
+            (k, e) => MapEntry(k as String, e),
+          ),
+        ),
+  introductoryPrice: json['introductoryPrice'] == null
+      ? null
+      : SKProductDiscountWrapper.fromJson(
+          Map<String, dynamic>.from(json['introductoryPrice'] as Map),
+        ),
+  discounts:
+      (json['discounts'] as List<dynamic>?)
+          ?.map(
+            (e) => SKProductDiscountWrapper.fromJson(
+              Map<String, dynamic>.from(e as Map),
+            ),
+          )
+          .toList() ??
+      [],
+);
 
 SKPriceLocaleWrapper _$SKPriceLocaleWrapperFromJson(Map json) =>
     SKPriceLocaleWrapper(

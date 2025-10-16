@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -49,36 +49,36 @@ class SurfaceAndroidWebView extends AndroidWebView {
       onBuildWidget: (WebViewAndroidPlatformController controller) {
         return PlatformViewLink(
           viewType: 'plugins.flutter.io/webview',
-          surfaceFactory: (
-            BuildContext context,
-            PlatformViewController controller,
-          ) {
-            return AndroidViewSurface(
-              controller: controller as AndroidViewController,
-              gestureRecognizers: gestureRecognizers ??
-                  const <Factory<OneSequenceGestureRecognizer>>{},
-              hitTestBehavior: PlatformViewHitTestBehavior.opaque,
-            );
-          },
+          surfaceFactory:
+              (BuildContext context, PlatformViewController controller) {
+                return AndroidViewSurface(
+                  controller: controller as AndroidViewController,
+                  gestureRecognizers:
+                      gestureRecognizers ??
+                      const <Factory<OneSequenceGestureRecognizer>>{},
+                  hitTestBehavior: PlatformViewHitTestBehavior.opaque,
+                );
+              },
           onCreatePlatformView: (PlatformViewCreationParams params) {
             final Color? backgroundColor = creationParams.backgroundColor;
             return _createViewController(
-              // On some Android devices, transparent backgrounds can cause
-              // rendering issues on the non hybrid composition
-              // AndroidViewSurface. This switches the WebView to Hybrid
-              // Composition when the background color is not 100% opaque.
-              hybridComposition:
-                  backgroundColor != null && backgroundColor.opacity < 1.0,
-              id: params.id,
-              viewType: 'plugins.flutter.io/webview',
-              // WebView content is not affected by the Android view's layout direction,
-              // we explicitly set it here so that the widget doesn't require an ambient
-              // directionality.
-              layoutDirection:
-                  Directionality.maybeOf(context) ?? TextDirection.ltr,
-              webViewIdentifier:
-                  instanceManager.getIdentifier(controller.webView)!,
-            )
+                // On some Android devices, transparent backgrounds can cause
+                // rendering issues on the non hybrid composition
+                // AndroidViewSurface. This switches the WebView to Hybrid
+                // Composition when the background color is not 100% opaque.
+                hybridComposition:
+                    backgroundColor != null && backgroundColor.opacity < 1.0,
+                id: params.id,
+                viewType: 'plugins.flutter.io/webview',
+                // WebView content is not affected by the Android view's layout direction,
+                // we explicitly set it here so that the widget doesn't require an ambient
+                // directionality.
+                layoutDirection:
+                    Directionality.maybeOf(context) ?? TextDirection.ltr,
+                webViewIdentifier: instanceManager.getIdentifier(
+                  controller.webView,
+                )!,
+              )
               ..addOnPlatformViewCreatedListener(params.onPlatformViewCreated)
               ..addOnPlatformViewCreatedListener((int id) {
                 if (onWebViewPlatformCreated != null) {

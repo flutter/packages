@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -30,29 +30,33 @@ Future<void> main() async {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   final HttpServer server = await HttpServer.bind(InternetAddress.anyIPv4, 0);
-  unawaited(server.forEach((HttpRequest request) {
-    if (request.uri.path == '/hello.txt') {
-      request.response.writeln('Hello, world.');
-    } else if (request.uri.path == '/secondary.txt') {
-      request.response.writeln('How are you today?');
-    } else if (request.uri.path == '/headers') {
-      request.response.writeln('${request.headers}');
-    } else if (request.uri.path == '/favicon.ico') {
-      request.response.statusCode = HttpStatus.notFound;
-    } else if (request.uri.path == '/http-basic-authentication') {
-      final bool isAuthenticating = request.headers['Authorization'] != null;
-      if (isAuthenticating) {
-        request.response.writeln('Authorized');
+  unawaited(
+    server.forEach((HttpRequest request) {
+      if (request.uri.path == '/hello.txt') {
+        request.response.writeln('Hello, world.');
+      } else if (request.uri.path == '/secondary.txt') {
+        request.response.writeln('How are you today?');
+      } else if (request.uri.path == '/headers') {
+        request.response.writeln('${request.headers}');
+      } else if (request.uri.path == '/favicon.ico') {
+        request.response.statusCode = HttpStatus.notFound;
+      } else if (request.uri.path == '/http-basic-authentication') {
+        final bool isAuthenticating = request.headers['Authorization'] != null;
+        if (isAuthenticating) {
+          request.response.writeln('Authorized');
+        } else {
+          request.response.headers.add(
+            'WWW-Authenticate',
+            'Basic realm="Test realm"',
+          );
+          request.response.statusCode = HttpStatus.unauthorized;
+        }
       } else {
-        request.response.headers
-            .add('WWW-Authenticate', 'Basic realm="Test realm"');
-        request.response.statusCode = HttpStatus.unauthorized;
+        fail('unexpected request: ${request.method} ${request.uri}');
       }
-    } else {
-      fail('unexpected request: ${request.method} ${request.uri}');
-    }
-    request.response.close();
-  }));
+      request.response.close();
+    }),
+  );
   final String prefixUrl = 'http://${server.address.address}:${server.port}';
   final String primaryUrl = '$prefixUrl/hello.txt';
   final String secondaryUrl = '$prefixUrl/secondary.txt';
@@ -70,17 +74,17 @@ Future<void> main() async {
     );
     await delegate.setOnPageFinished((_) => pageFinished.complete());
     await controller.setPlatformNavigationDelegate(delegate);
-    await controller.loadRequest(
-      LoadRequestParams(uri: Uri.parse(primaryUrl)),
-    );
+    await controller.loadRequest(LoadRequestParams(uri: Uri.parse(primaryUrl)));
 
-    await tester.pumpWidget(Builder(
-      builder: (BuildContext context) {
-        return PlatformWebViewWidget(
-          PlatformWebViewWidgetCreationParams(controller: controller),
-        ).build(context);
-      },
-    ));
+    await tester.pumpWidget(
+      Builder(
+        builder: (BuildContext context) {
+          return PlatformWebViewWidget(
+            PlatformWebViewWidgetCreationParams(controller: controller),
+          ).build(context);
+        },
+      ),
+    );
 
     await pageFinished.future;
 
@@ -89,27 +93,31 @@ Future<void> main() async {
   });
 
   testWidgets(
-      'withWeakRefenceTo allows encapsulating class to be garbage collected',
-      (WidgetTester tester) async {
-    final Completer<int> gcCompleter = Completer<int>();
-    final android_webkit.PigeonInstanceManager instanceManager =
-        android_webkit.PigeonInstanceManager(
-      onWeakReferenceRemoved: gcCompleter.complete,
-    );
+    'withWeakRefenceTo allows encapsulating class to be garbage collected',
+    (WidgetTester tester) async {
+      final Completer<int> gcCompleter = Completer<int>();
+      final android_webkit.PigeonInstanceManager instanceManager =
+          android_webkit.PigeonInstanceManager(
+            onWeakReferenceRemoved: gcCompleter.complete,
+          );
 
-    ClassWithCallbackClass? instance = ClassWithCallbackClass();
-    instanceManager.addHostCreatedInstance(instance.callbackClass, 0);
-    instance = null;
+      ClassWithCallbackClass? instance = ClassWithCallbackClass();
+      instanceManager.addHostCreatedInstance(instance.callbackClass, 0);
+      instance = null;
 
-    // Force garbage collection.
-    await IntegrationTestWidgetsFlutterBinding.instance
-        .watchPerformance(() async {
-      await tester.pumpAndSettle();
-    });
+      // Force garbage collection.
+      await IntegrationTestWidgetsFlutterBinding.instance.watchPerformance(
+        () async {
+          await tester.pumpAndSettle();
+        },
+      );
 
-    final int gcIdentifier = await gcCompleter.future;
-    expect(gcIdentifier, 0);
-  }, timeout: const Timeout(Duration(seconds: 10)), skip: skipFor159500);
+      final int gcIdentifier = await gcCompleter.future;
+      expect(gcIdentifier, 0);
+    },
+    timeout: const Timeout(Duration(seconds: 10)),
+    skip: skipFor159500,
+  );
 
   testWidgets(
     'WebView is released by garbage collection',
@@ -130,17 +138,26 @@ Future<void> main() async {
               AndroidWebViewWidgetCreationParams(
                 controller: PlatformWebViewController(
                   AndroidWebViewControllerCreationParams(
-                    androidWebViewProxy: AndroidWebViewProxy(newWebView: ({
-                      void Function(android_webkit.WebView, int, int, int, int)?
-                          onScrollChanged,
-                    }) {
-                      final android_webkit.WebView webView =
-                          android_webkit.WebView(
-                        onScrollChanged: onScrollChanged,
-                      );
-                      finalizer.attach(webView, webViewToken);
-                      return webView;
-                    }),
+                    androidWebViewProxy: AndroidWebViewProxy(
+                      newWebView:
+                          ({
+                            void Function(
+                              android_webkit.WebView,
+                              int,
+                              int,
+                              int,
+                              int,
+                            )?
+                            onScrollChanged,
+                          }) {
+                            final android_webkit.WebView webView =
+                                android_webkit.WebView(
+                                  onScrollChanged: onScrollChanged,
+                                );
+                            finalizer.attach(webView, webViewToken);
+                            return webView;
+                          },
+                    ),
                   ),
                 ),
               ),
@@ -166,10 +183,11 @@ Future<void> main() async {
       await tester.pumpAndSettle();
 
       // Force garbage collection.
-      await IntegrationTestWidgetsFlutterBinding.instance
-          .watchPerformance(() async {
-        await tester.pumpAndSettle();
-      });
+      await IntegrationTestWidgetsFlutterBinding.instance.watchPerformance(
+        () async {
+          await tester.pumpAndSettle();
+        },
+      );
 
       await tester.pumpAndSettle();
       await expectLater(webViewGCCompleter.future, completes);
@@ -192,13 +210,15 @@ Future<void> main() async {
     await controller.setPlatformNavigationDelegate(delegate);
     await controller.loadRequest(LoadRequestParams(uri: Uri.parse(primaryUrl)));
 
-    await tester.pumpWidget(Builder(
-      builder: (BuildContext context) {
-        return PlatformWebViewWidget(
-          PlatformWebViewWidgetCreationParams(controller: controller),
-        ).build(context);
-      },
-    ));
+    await tester.pumpWidget(
+      Builder(
+        builder: (BuildContext context) {
+          return PlatformWebViewWidget(
+            PlatformWebViewWidgetCreationParams(controller: controller),
+          ).build(context);
+        },
+      ),
+    );
 
     await pageFinished.future;
 
@@ -210,7 +230,7 @@ Future<void> main() async {
 
   testWidgets('loadRequest with headers', (WidgetTester tester) async {
     final Map<String, String> headers = <String, String>{
-      'test_header': 'flutter_test_header'
+      'test_header': 'flutter_test_header',
     };
 
     final StreamController<String> pageLoads = StreamController<String>();
@@ -225,25 +245,26 @@ Future<void> main() async {
     await delegate.setOnPageFinished((String url) => pageLoads.add(url));
     await controller.setPlatformNavigationDelegate(delegate);
     await controller.loadRequest(
-      LoadRequestParams(
-        uri: Uri.parse(headersUrl),
-        headers: headers,
+      LoadRequestParams(uri: Uri.parse(headersUrl), headers: headers),
+    );
+
+    await tester.pumpWidget(
+      Builder(
+        builder: (BuildContext context) {
+          return PlatformWebViewWidget(
+            PlatformWebViewWidgetCreationParams(controller: controller),
+          ).build(context);
+        },
       ),
     );
 
-    await tester.pumpWidget(Builder(
-      builder: (BuildContext context) {
-        return PlatformWebViewWidget(
-          PlatformWebViewWidgetCreationParams(controller: controller),
-        ).build(context);
-      },
-    ));
-
     await pageLoads.stream.firstWhere((String url) => url == headersUrl);
 
-    final String content = await controller.runJavaScriptReturningResult(
-      'document.documentElement.innerText',
-    ) as String;
+    final String content =
+        await controller.runJavaScriptReturningResult(
+              'document.documentElement.innerText',
+            )
+            as String;
     expect(content.contains('flutter_test_header'), isTrue);
   });
 
@@ -274,13 +295,15 @@ Future<void> main() async {
       'data:text/html;charset=utf-8;base64,PCFET0NUWVBFIGh0bWw+',
     );
 
-    await tester.pumpWidget(Builder(
-      builder: (BuildContext context) {
-        return PlatformWebViewWidget(
-          PlatformWebViewWidgetCreationParams(controller: controller),
-        ).build(context);
-      },
-    ));
+    await tester.pumpWidget(
+      Builder(
+        builder: (BuildContext context) {
+          return PlatformWebViewWidget(
+            PlatformWebViewWidgetCreationParams(controller: controller),
+          ).build(context);
+        },
+      ),
+    );
 
     await pageFinished.future;
 
@@ -294,16 +317,18 @@ Future<void> main() async {
     final Completer<void> onPageFinished = Completer<void>();
 
     bool resizeButtonTapped = false;
-    await tester.pumpWidget(ResizableWebView(
-      onResize: () {
-        if (resizeButtonTapped) {
-          buttonTapResizeCompleter.complete();
-        } else {
-          initialResizeCompleter.complete();
-        }
-      },
-      onPageFinished: () => onPageFinished.complete(),
-    ));
+    await tester.pumpWidget(
+      ResizableWebView(
+        onResize: () {
+          if (resizeButtonTapped) {
+            buttonTapResizeCompleter.complete();
+          } else {
+            initialResizeCompleter.complete();
+          }
+        },
+        onPageFinished: () => onPageFinished.complete(),
+      ),
+    );
 
     await onPageFinished.future;
     // Wait for a potential call to resize after page is loaded.
@@ -334,16 +359,19 @@ Future<void> main() async {
     await delegate.setOnPageFinished((_) => pageFinished.complete());
     await controller.setPlatformNavigationDelegate(delegate);
 
-    await controller
-        .loadRequest(LoadRequestParams(uri: Uri.parse('about:blank')));
+    await controller.loadRequest(
+      LoadRequestParams(uri: Uri.parse('about:blank')),
+    );
 
-    await tester.pumpWidget(Builder(
-      builder: (BuildContext context) {
-        return PlatformWebViewWidget(
-          PlatformWebViewWidgetCreationParams(controller: controller),
-        ).build(context);
-      },
-    ));
+    await tester.pumpWidget(
+      Builder(
+        builder: (BuildContext context) {
+          return PlatformWebViewWidget(
+            PlatformWebViewWidgetCreationParams(controller: controller),
+          ).build(context);
+        },
+      ),
+    );
 
     await pageFinished.future;
 
@@ -354,11 +382,14 @@ Future<void> main() async {
   group('Video playback policy', () {
     late String videoTestBase64;
     setUpAll(() async {
-      final ByteData videoData =
-          await rootBundle.load('assets/sample_video.mp4');
-      final String base64VideoData =
-          base64Encode(Uint8List.view(videoData.buffer));
-      final String videoTest = '''
+      final ByteData videoData = await rootBundle.load(
+        'assets/sample_video.mp4',
+      );
+      final String base64VideoData = base64Encode(
+        Uint8List.view(videoData.buffer),
+      );
+      final String videoTest =
+          '''
           <!DOCTYPE html><html>
           <head><title>Video auto play</title>
             <style>
@@ -438,13 +469,15 @@ Future<void> main() async {
         ),
       );
 
-      await tester.pumpWidget(Builder(
-        builder: (BuildContext context) {
-          return PlatformWebViewWidget(
-            PlatformWebViewWidgetCreationParams(controller: controller),
-          ).build(context);
-        },
-      ));
+      await tester.pumpWidget(
+        Builder(
+          builder: (BuildContext context) {
+            return PlatformWebViewWidget(
+              PlatformWebViewWidgetCreationParams(controller: controller),
+            ).build(context);
+          },
+        ),
+      );
 
       await pageLoaded.future;
 
@@ -471,13 +504,15 @@ Future<void> main() async {
         ),
       );
 
-      await tester.pumpWidget(Builder(
-        builder: (BuildContext context) {
-          return PlatformWebViewWidget(
-            PlatformWebViewWidgetCreationParams(controller: controller),
-          ).build(context);
-        },
-      ));
+      await tester.pumpWidget(
+        Builder(
+          builder: (BuildContext context) {
+            return PlatformWebViewWidget(
+              PlatformWebViewWidgetCreationParams(controller: controller),
+            ).build(context);
+          },
+        ),
+      );
 
       await pageLoaded.future;
 
@@ -522,21 +557,29 @@ Future<void> main() async {
         ),
       );
 
-      await tester.pumpWidget(Builder(
-        builder: (BuildContext context) {
-          return PlatformWebViewWidget(
-            PlatformWebViewWidgetCreationParams(controller: controller),
-          ).build(context);
-        },
-      ));
+      await tester.pumpWidget(
+        Builder(
+          builder: (BuildContext context) {
+            return PlatformWebViewWidget(
+              PlatformWebViewWidgetCreationParams(controller: controller),
+            ).build(context);
+          },
+        ),
+      );
 
       await pageLoaded.future;
 
       // Makes sure we get the correct event that indicates the video is actually playing.
       await videoPlaying.future;
 
-      final bool fullScreen = await controller
-          .runJavaScriptReturningResult('isFullScreen();') as bool;
+      Object fullScreen = await controller.runJavaScriptReturningResult(
+        'isFullScreen();',
+      );
+
+      if (fullScreen is String) {
+        fullScreen = fullScreen == 'true';
+      }
+
       expect(fullScreen, false);
     });
 
@@ -555,13 +598,15 @@ Future<void> main() async {
       );
       await delegate.setOnPageFinished((_) => pageLoaded.complete());
       await controller.setPlatformNavigationDelegate(delegate);
-      await controller.setCustomWidgetCallbacks(onHideCustomWidget: () {
-        fullscreenExited.complete();
-      }, onShowCustomWidget:
-          (Widget webView, void Function() onHideCustomView) {
-        fullscreenEntered.complete();
-        onHideCustomView();
-      });
+      await controller.setCustomWidgetCallbacks(
+        onHideCustomWidget: () {
+          fullscreenExited.complete();
+        },
+        onShowCustomWidget: (Widget webView, void Function() onHideCustomView) {
+          fullscreenEntered.complete();
+          onHideCustomView();
+        },
+      );
 
       await controller.loadRequest(
         LoadRequestParams(
@@ -571,16 +616,18 @@ Future<void> main() async {
         ),
       );
 
-      await tester.pumpWidget(Builder(
-        builder: (BuildContext context) {
-          return PlatformWebViewWidget(
-            PlatformWebViewWidgetCreationParams(
-              key: const Key('webview_widget'),
-              controller: controller,
-            ),
-          ).build(context);
-        },
-      ));
+      await tester.pumpWidget(
+        Builder(
+          builder: (BuildContext context) {
+            return PlatformWebViewWidget(
+              PlatformWebViewWidgetCreationParams(
+                key: const Key('webview_widget'),
+                controller: controller,
+              ),
+            ).build(context);
+          },
+        ),
+      );
 
       await pageLoaded.future;
 
@@ -603,11 +650,14 @@ Future<void> main() async {
   group('Audio playback policy', () {
     late String audioTestBase64;
     setUpAll(() async {
-      final ByteData audioData =
-          await rootBundle.load('assets/sample_audio.ogg');
-      final String base64AudioData =
-          base64Encode(Uint8List.view(audioData.buffer));
-      final String audioTest = '''
+      final ByteData audioData = await rootBundle.load(
+        'assets/sample_audio.ogg',
+      );
+      final String base64AudioData = base64Encode(
+        Uint8List.view(audioData.buffer),
+      );
+      final String audioTest =
+          '''
         <!DOCTYPE html><html>
         <head><title>Audio auto play</title>
           <script type="text/javascript">
@@ -653,13 +703,15 @@ Future<void> main() async {
         ),
       );
 
-      await tester.pumpWidget(Builder(
-        builder: (BuildContext context) {
-          return PlatformWebViewWidget(
-            PlatformWebViewWidgetCreationParams(controller: controller),
-          ).build(context);
-        },
-      ));
+      await tester.pumpWidget(
+        Builder(
+          builder: (BuildContext context) {
+            return PlatformWebViewWidget(
+              PlatformWebViewWidgetCreationParams(controller: controller),
+            ).build(context);
+          },
+        ),
+      );
 
       await pageLoaded.future;
 
@@ -685,13 +737,15 @@ Future<void> main() async {
         ),
       );
 
-      await tester.pumpWidget(Builder(
-        builder: (BuildContext context) {
-          return PlatformWebViewWidget(
-            PlatformWebViewWidgetCreationParams(controller: controller),
-          ).build(context);
-        },
-      ));
+      await tester.pumpWidget(
+        Builder(
+          builder: (BuildContext context) {
+            return PlatformWebViewWidget(
+              PlatformWebViewWidgetCreationParams(controller: controller),
+            ).build(context);
+          },
+        ),
+      );
 
       await pageLoaded.future;
 
@@ -710,8 +764,9 @@ Future<void> main() async {
         </body>
         </html>
       ''';
-    final String getTitleTestBase64 =
-        base64Encode(const Utf8Encoder().convert(getTitleTest));
+    final String getTitleTestBase64 = base64Encode(
+      const Utf8Encoder().convert(getTitleTest),
+    );
     final Completer<void> pageLoaded = Completer<void>();
 
     final PlatformWebViewController controller = PlatformWebViewController(
@@ -732,13 +787,15 @@ Future<void> main() async {
       ),
     );
 
-    await tester.pumpWidget(Builder(
-      builder: (BuildContext context) {
-        return PlatformWebViewWidget(
-          PlatformWebViewWidgetCreationParams(controller: controller),
-        ).build(context);
-      },
-    ));
+    await tester.pumpWidget(
+      Builder(
+        builder: (BuildContext context) {
+          return PlatformWebViewWidget(
+            PlatformWebViewWidgetCreationParams(controller: controller),
+          ).build(context);
+        },
+      ),
+    );
 
     await pageLoaded.future;
 
@@ -753,8 +810,9 @@ Future<void> main() async {
   });
 
   group('Programmatic Scroll', () {
-    testWidgets('setAndGetAndListenScrollPosition',
-        (WidgetTester tester) async {
+    testWidgets('setAndGetAndListenScrollPosition', (
+      WidgetTester tester,
+    ) async {
       const String scrollTestPage = '''
         <!DOCTYPE html>
         <html>
@@ -776,8 +834,9 @@ Future<void> main() async {
         </html>
       ''';
 
-      final String scrollTestPageBase64 =
-          base64Encode(const Utf8Encoder().convert(scrollTestPage));
+      final String scrollTestPageBase64 = base64Encode(
+        const Utf8Encoder().convert(scrollTestPage),
+      );
 
       final Completer<void> pageLoaded = Completer<void>();
       ScrollPositionChange? recordedPosition;
@@ -790,8 +849,9 @@ Future<void> main() async {
       );
       await delegate.setOnPageFinished((_) => pageLoaded.complete());
       await controller.setPlatformNavigationDelegate(delegate);
-      await controller.setOnScrollPositionChange(
-          (ScrollPositionChange contentOffsetChange) {
+      await controller.setOnScrollPositionChange((
+        ScrollPositionChange contentOffsetChange,
+      ) {
         recordedPosition = contentOffsetChange;
       });
 
@@ -803,13 +863,15 @@ Future<void> main() async {
         ),
       );
 
-      await tester.pumpWidget(Builder(
-        builder: (BuildContext context) {
-          return PlatformWebViewWidget(
-            PlatformWebViewWidgetCreationParams(controller: controller),
-          ).build(context);
-        },
-      ));
+      await tester.pumpWidget(
+        Builder(
+          builder: (BuildContext context) {
+            return PlatformWebViewWidget(
+              PlatformWebViewWidgetCreationParams(controller: controller),
+            ).build(context);
+          },
+        ),
+      );
 
       await pageLoaded.future;
 
@@ -846,7 +908,8 @@ Future<void> main() async {
 
   group('NavigationDelegate', () {
     const String blankPage = '<!DOCTYPE html><head></head><body></body></html>';
-    final String blankPageEncoded = 'data:text/html;charset=utf-8;base64,'
+    final String blankPageEncoded =
+        'data:text/html;charset=utf-8;base64,'
         '${base64Encode(const Utf8Encoder().convert(blankPage))}';
 
     testWidgets('can allow requests', (WidgetTester tester) async {
@@ -860,8 +923,9 @@ Future<void> main() async {
         const PlatformNavigationDelegateCreationParams(),
       );
       await delegate.setOnPageFinished((_) => pageLoaded.complete());
-      await delegate
-          .setOnNavigationRequest((NavigationRequest navigationRequest) {
+      await delegate.setOnNavigationRequest((
+        NavigationRequest navigationRequest,
+      ) {
         return navigationRequest.url.contains('youtube.com')
             ? NavigationDecision.prevent
             : NavigationDecision.navigate;
@@ -872,13 +936,15 @@ Future<void> main() async {
         LoadRequestParams(uri: Uri.parse(blankPageEncoded)),
       );
 
-      await tester.pumpWidget(Builder(
-        builder: (BuildContext context) {
-          return PlatformWebViewWidget(
-            PlatformWebViewWidgetCreationParams(controller: controller),
-          ).build(context);
-        },
-      ));
+      await tester.pumpWidget(
+        Builder(
+          builder: (BuildContext context) {
+            return PlatformWebViewWidget(
+              PlatformWebViewWidgetCreationParams(controller: controller),
+            ).build(context);
+          },
+        ),
+      );
 
       await pageLoaded.future; // Wait for initial page load.
 
@@ -910,26 +976,26 @@ Future<void> main() async {
         LoadRequestParams(uri: Uri.parse('https://www.notawebsite..com')),
       );
 
-      await tester.pumpWidget(Builder(
-        builder: (BuildContext context) {
-          return PlatformWebViewWidget(
-            PlatformWebViewWidgetCreationParams(controller: controller),
-          ).build(context);
-        },
-      ));
+      await tester.pumpWidget(
+        Builder(
+          builder: (BuildContext context) {
+            return PlatformWebViewWidget(
+              PlatformWebViewWidgetCreationParams(controller: controller),
+            ).build(context);
+          },
+        ),
+      );
 
       final WebResourceError error = await errorCompleter.future;
       expect(error, isNotNull);
 
       expect(error.errorType, isNotNull);
-      expect(
-        error.url?.startsWith('https://www.notawebsite..com'),
-        isTrue,
-      );
+      expect(error.url?.startsWith('https://www.notawebsite..com'), isTrue);
     });
 
-    testWidgets('onWebResourceError is not called with valid url',
-        (WidgetTester tester) async {
+    testWidgets('onWebResourceError is not called with valid url', (
+      WidgetTester tester,
+    ) async {
       final Completer<WebResourceError> errorCompleter =
           Completer<WebResourceError>();
       final Completer<void> pageFinishCompleter = Completer<void>();
@@ -954,13 +1020,15 @@ Future<void> main() async {
         ),
       );
 
-      await tester.pumpWidget(Builder(
-        builder: (BuildContext context) {
-          return PlatformWebViewWidget(
-            PlatformWebViewWidgetCreationParams(controller: controller),
-          ).build(context);
-        },
-      ));
+      await tester.pumpWidget(
+        Builder(
+          builder: (BuildContext context) {
+            return PlatformWebViewWidget(
+              PlatformWebViewWidgetCreationParams(controller: controller),
+            ).build(context);
+          },
+        ),
+      );
 
       expect(errorCompleter.future, doesNotComplete);
       await pageFinishCompleter.future;
@@ -985,13 +1053,15 @@ Future<void> main() async {
         LoadRequestParams(uri: Uri.parse('$prefixUrl/favicon.ico')),
       );
 
-      await tester.pumpWidget(Builder(
-        builder: (BuildContext context) {
-          return PlatformWebViewWidget(
-            PlatformWebViewWidgetCreationParams(controller: controller),
-          ).build(context);
-        },
-      ));
+      await tester.pumpWidget(
+        Builder(
+          builder: (BuildContext context) {
+            return PlatformWebViewWidget(
+              PlatformWebViewWidgetCreationParams(controller: controller),
+            ).build(context);
+          },
+        ),
+      );
 
       final HttpResponseError error = await errorCompleter.future;
 
@@ -999,8 +1069,9 @@ Future<void> main() async {
       expect(error.response?.statusCode, 404);
     });
 
-    testWidgets('onHttpError is not called when no HTTP error is received',
-        (WidgetTester tester) async {
+    testWidgets('onHttpError is not called when no HTTP error is received', (
+      WidgetTester tester,
+    ) async {
       const String testPage = '''
         <!DOCTYPE html><html>
         </head>
@@ -1023,19 +1094,19 @@ Future<void> main() async {
       await delegate.setOnHttpError((HttpResponseError error) {
         errorCompleter.complete(error);
       });
-      await delegate.setOnPageFinished(
-        (_) => pageFinishCompleter.complete(),
-      );
+      await delegate.setOnPageFinished((_) => pageFinishCompleter.complete());
       await controller.setPlatformNavigationDelegate(delegate);
       await controller.loadHtmlString(testPage);
 
-      await tester.pumpWidget(Builder(
-        builder: (BuildContext context) {
-          return PlatformWebViewWidget(
-            PlatformWebViewWidgetCreationParams(controller: controller),
-          ).build(context);
-        },
-      ));
+      await tester.pumpWidget(
+        Builder(
+          builder: (BuildContext context) {
+            return PlatformWebViewWidget(
+              PlatformWebViewWidgetCreationParams(controller: controller),
+            ).build(context);
+          },
+        ),
+      );
 
       expect(errorCompleter.future, doesNotComplete);
       await pageFinishCompleter.future;
@@ -1052,36 +1123,43 @@ Future<void> main() async {
         const PlatformNavigationDelegateCreationParams(),
       );
       await delegate.setOnPageFinished((_) => pageLoaded.complete());
-      await delegate
-          .setOnNavigationRequest((NavigationRequest navigationRequest) {
+      await delegate.setOnNavigationRequest((
+        NavigationRequest navigationRequest,
+      ) {
         return navigationRequest.url.contains('youtube.com')
             ? NavigationDecision.prevent
             : NavigationDecision.navigate;
       });
       await controller.setPlatformNavigationDelegate(delegate);
 
-      await controller
-          .loadRequest(LoadRequestParams(uri: Uri.parse(blankPageEncoded)));
+      await controller.loadRequest(
+        LoadRequestParams(uri: Uri.parse(blankPageEncoded)),
+      );
 
-      await tester.pumpWidget(Builder(
-        builder: (BuildContext context) {
-          return PlatformWebViewWidget(
-            PlatformWebViewWidgetCreationParams(controller: controller),
-          ).build(context);
-        },
-      ));
+      await tester.pumpWidget(
+        Builder(
+          builder: (BuildContext context) {
+            return PlatformWebViewWidget(
+              PlatformWebViewWidgetCreationParams(controller: controller),
+            ).build(context);
+          },
+        ),
+      );
 
       await pageLoaded.future; // Wait for initial page load.
 
       pageLoaded = Completer<void>();
-      await controller
-          .runJavaScript('location.href = "https://www.youtube.com/"');
+      await controller.runJavaScript(
+        'location.href = "https://www.youtube.com/"',
+      );
 
       // There should never be any second page load, since our new URL is
       // blocked. Still wait for a potential page change for some time in order
       // to give the test a chance to fail.
-      await pageLoaded.future
-          .timeout(const Duration(milliseconds: 500), onTimeout: () => false);
+      await pageLoaded.future.timeout(
+        const Duration(milliseconds: 500),
+        onTimeout: () => false,
+      );
       final String? currentUrl = await controller.currentUrl();
       expect(currentUrl, isNot(contains('youtube.com')));
     });
@@ -1097,25 +1175,30 @@ Future<void> main() async {
         const PlatformNavigationDelegateCreationParams(),
       );
       await delegate.setOnPageFinished((_) => pageLoaded.complete());
-      await delegate
-          .setOnNavigationRequest((NavigationRequest navigationRequest) async {
+      await delegate.setOnNavigationRequest((
+        NavigationRequest navigationRequest,
+      ) async {
         NavigationDecision decision = NavigationDecision.prevent;
         decision = await Future<NavigationDecision>.delayed(
-            const Duration(milliseconds: 10),
-            () => NavigationDecision.navigate);
+          const Duration(milliseconds: 10),
+          () => NavigationDecision.navigate,
+        );
         return decision;
       });
       await controller.setPlatformNavigationDelegate(delegate);
-      await controller
-          .loadRequest(LoadRequestParams(uri: Uri.parse(blankPageEncoded)));
+      await controller.loadRequest(
+        LoadRequestParams(uri: Uri.parse(blankPageEncoded)),
+      );
 
-      await tester.pumpWidget(Builder(
-        builder: (BuildContext context) {
-          return PlatformWebViewWidget(
-            PlatformWebViewWidgetCreationParams(controller: controller),
-          ).build(context);
-        },
-      ));
+      await tester.pumpWidget(
+        Builder(
+          builder: (BuildContext context) {
+            return PlatformWebViewWidget(
+              PlatformWebViewWidgetCreationParams(controller: controller),
+            ).build(context);
+          },
+        ),
+      );
 
       await pageLoaded.future; // Wait for initial page load.
 
@@ -1139,16 +1222,19 @@ Future<void> main() async {
       );
       await delegate.setOnPageFinished((_) => pageLoaded.complete());
       await controller.setPlatformNavigationDelegate(delegate);
-      await controller
-          .loadRequest(LoadRequestParams(uri: Uri.parse(blankPageEncoded)));
+      await controller.loadRequest(
+        LoadRequestParams(uri: Uri.parse(blankPageEncoded)),
+      );
 
-      await tester.pumpWidget(Builder(
-        builder: (BuildContext context) {
-          return PlatformWebViewWidget(
-            PlatformWebViewWidgetCreationParams(controller: controller),
-          ).build(context);
-        },
-      ));
+      await tester.pumpWidget(
+        Builder(
+          builder: (BuildContext context) {
+            return PlatformWebViewWidget(
+              PlatformWebViewWidgetCreationParams(controller: controller),
+            ).build(context);
+          },
+        ),
+      );
 
       await pageLoaded.future;
       await delegate.setOnPageFinished((_) {});
@@ -1163,8 +1249,9 @@ Future<void> main() async {
       await expectLater(urlChangeCompleter.future, completion(primaryUrl));
     });
 
-    testWidgets('can receive updates to history state',
-        (WidgetTester tester) async {
+    testWidgets('can receive updates to history state', (
+      WidgetTester tester,
+    ) async {
       final Completer<void> pageLoaded = Completer<void>();
 
       final PlatformWebViewController controller = PlatformWebViewController(
@@ -1176,16 +1263,19 @@ Future<void> main() async {
       );
       await delegate.setOnPageFinished((_) => pageLoaded.complete());
       await controller.setPlatformNavigationDelegate(delegate);
-      await controller
-          .loadRequest(LoadRequestParams(uri: Uri.parse(primaryUrl)));
+      await controller.loadRequest(
+        LoadRequestParams(uri: Uri.parse(primaryUrl)),
+      );
 
-      await tester.pumpWidget(Builder(
-        builder: (BuildContext context) {
-          return PlatformWebViewWidget(
-            PlatformWebViewWidgetCreationParams(controller: controller),
-          ).build(context);
-        },
-      ));
+      await tester.pumpWidget(
+        Builder(
+          builder: (BuildContext context) {
+            return PlatformWebViewWidget(
+              PlatformWebViewWidgetCreationParams(controller: controller),
+            ).build(context);
+          },
+        ),
+      );
 
       await pageLoaded.future;
       await delegate.setOnPageFinished((_) {});
@@ -1203,8 +1293,9 @@ Future<void> main() async {
     });
   });
 
-  testWidgets('can receive HTTP basic auth requests',
-      (WidgetTester tester) async {
+  testWidgets('can receive HTTP basic auth requests', (
+    WidgetTester tester,
+  ) async {
     final Completer<void> authRequested = Completer<void>();
     final PlatformWebViewController controller = PlatformWebViewController(
       const PlatformWebViewControllerCreationParams(),
@@ -1212,10 +1303,11 @@ Future<void> main() async {
 
     final PlatformNavigationDelegate navigationDelegate =
         PlatformNavigationDelegate(
-      const PlatformNavigationDelegateCreationParams(),
-    );
+          const PlatformNavigationDelegateCreationParams(),
+        );
     await navigationDelegate.setOnHttpAuthRequest(
-        (HttpAuthRequest request) => authRequested.complete());
+      (HttpAuthRequest request) => authRequested.complete(),
+    );
     await controller.setPlatformNavigationDelegate(navigationDelegate);
 
     // Clear cache so that the auth request is always received and we don't get
@@ -1239,8 +1331,9 @@ Future<void> main() async {
     await expectLater(authRequested.future, completes);
   });
 
-  testWidgets('can reply to HTTP basic auth requests',
-      (WidgetTester tester) async {
+  testWidgets('can reply to HTTP basic auth requests', (
+    WidgetTester tester,
+  ) async {
     final Completer<void> pageFinished = Completer<void>();
     final PlatformWebViewController controller = PlatformWebViewController(
       const PlatformWebViewControllerCreationParams(),
@@ -1248,8 +1341,8 @@ Future<void> main() async {
 
     final PlatformNavigationDelegate navigationDelegate =
         PlatformNavigationDelegate(
-      const PlatformNavigationDelegateCreationParams(),
-    );
+          const PlatformNavigationDelegateCreationParams(),
+        );
     await navigationDelegate.setOnPageFinished((_) => pageFinished.complete());
     await navigationDelegate.setOnHttpAuthRequest(
       (HttpAuthRequest request) => request.onProceed(
@@ -1279,8 +1372,9 @@ Future<void> main() async {
     await expectLater(pageFinished.future, completes);
   });
 
-  testWidgets('target _blank opens in same window',
-      (WidgetTester tester) async {
+  testWidgets('target _blank opens in same window', (
+    WidgetTester tester,
+  ) async {
     final Completer<void> pageLoaded = Completer<void>();
 
     final PlatformWebViewController controller = PlatformWebViewController(
@@ -1293,13 +1387,15 @@ Future<void> main() async {
     await delegate.setOnPageFinished((_) => pageLoaded.complete());
     await controller.setPlatformNavigationDelegate(delegate);
 
-    await tester.pumpWidget(Builder(
-      builder: (BuildContext context) {
-        return PlatformWebViewWidget(
-          PlatformWebViewWidgetCreationParams(controller: controller),
-        ).build(context);
-      },
-    ));
+    await tester.pumpWidget(
+      Builder(
+        builder: (BuildContext context) {
+          return PlatformWebViewWidget(
+            PlatformWebViewWidgetCreationParams(controller: controller),
+          ).build(context);
+        },
+      ),
+    );
 
     await controller.runJavaScript('window.open("$primaryUrl", "_blank")');
     await pageLoaded.future;
@@ -1307,51 +1403,49 @@ Future<void> main() async {
     expect(currentUrl, primaryUrl);
   });
 
-  testWidgets(
-    'can open new window and go back',
-    (WidgetTester tester) async {
-      Completer<void> pageLoaded = Completer<void>();
+  testWidgets('can open new window and go back', (WidgetTester tester) async {
+    Completer<void> pageLoaded = Completer<void>();
 
-      final PlatformWebViewController controller = PlatformWebViewController(
-        const PlatformWebViewControllerCreationParams(),
-      );
-      await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
-      final PlatformNavigationDelegate delegate = PlatformNavigationDelegate(
-        const PlatformNavigationDelegateCreationParams(),
-      );
-      await delegate.setOnPageFinished((_) => pageLoaded.complete());
-      await controller.setPlatformNavigationDelegate(delegate);
-      await controller
-          .loadRequest(LoadRequestParams(uri: Uri.parse(primaryUrl)));
+    final PlatformWebViewController controller = PlatformWebViewController(
+      const PlatformWebViewControllerCreationParams(),
+    );
+    await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
+    final PlatformNavigationDelegate delegate = PlatformNavigationDelegate(
+      const PlatformNavigationDelegateCreationParams(),
+    );
+    await delegate.setOnPageFinished((_) => pageLoaded.complete());
+    await controller.setPlatformNavigationDelegate(delegate);
+    await controller.loadRequest(LoadRequestParams(uri: Uri.parse(primaryUrl)));
 
-      await tester.pumpWidget(Builder(
+    await tester.pumpWidget(
+      Builder(
         builder: (BuildContext context) {
           return PlatformWebViewWidget(
             PlatformWebViewWidgetCreationParams(controller: controller),
           ).build(context);
         },
-      ));
+      ),
+    );
 
-      expect(controller.currentUrl(), completion(primaryUrl));
-      await pageLoaded.future;
-      pageLoaded = Completer<void>();
+    expect(controller.currentUrl(), completion(primaryUrl));
+    await pageLoaded.future;
+    pageLoaded = Completer<void>();
 
-      await controller.runJavaScript('window.open("$secondaryUrl")');
-      await pageLoaded.future;
-      pageLoaded = Completer<void>();
-      expect(controller.currentUrl(), completion(secondaryUrl));
+    await controller.runJavaScript('window.open("$secondaryUrl")');
+    await pageLoaded.future;
+    pageLoaded = Completer<void>();
+    expect(controller.currentUrl(), completion(secondaryUrl));
 
-      expect(controller.canGoBack(), completion(true));
-      await controller.goBack();
-      await pageLoaded.future;
-      await expectLater(controller.currentUrl(), completion(primaryUrl));
-    },
-  );
+    expect(controller.canGoBack(), completion(true));
+    await controller.goBack();
+    await pageLoaded.future;
+    await expectLater(controller.currentUrl(), completion(primaryUrl));
+  });
 
-  testWidgets(
-    'JavaScript does not run in parent window',
-    (WidgetTester tester) async {
-      const String iframe = '''
+  testWidgets('JavaScript does not run in parent window', (
+    WidgetTester tester,
+  ) async {
+    const String iframe = '''
         <!DOCTYPE html>
         <script>
           window.onload = () => {
@@ -1363,10 +1457,12 @@ Future<void> main() async {
           };
         </script>
       ''';
-      final String iframeTestBase64 =
-          base64Encode(const Utf8Encoder().convert(iframe));
+    final String iframeTestBase64 = base64Encode(
+      const Utf8Encoder().convert(iframe),
+    );
 
-      final String openWindowTest = '''
+    final String openWindowTest =
+        '''
         <!DOCTYPE html>
         <html>
         <head>
@@ -1379,48 +1475,52 @@ Future<void> main() async {
         </body>
         </html>
       ''';
-      final String openWindowTestBase64 =
-          base64Encode(const Utf8Encoder().convert(openWindowTest));
+    final String openWindowTestBase64 = base64Encode(
+      const Utf8Encoder().convert(openWindowTest),
+    );
 
-      final Completer<void> pageLoadCompleter = Completer<void>();
+    final Completer<void> pageLoadCompleter = Completer<void>();
 
-      final PlatformWebViewController controller = PlatformWebViewController(
-        const PlatformWebViewControllerCreationParams(),
-      );
-      await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
-      final PlatformNavigationDelegate delegate = PlatformNavigationDelegate(
-        const PlatformNavigationDelegateCreationParams(),
-      );
-      await delegate.setOnPageFinished((_) => pageLoadCompleter.complete());
-      await controller.setPlatformNavigationDelegate(delegate);
-      await controller.loadRequest(
-        LoadRequestParams(
-          uri: Uri.parse(
-            'data:text/html;charset=utf-8;base64,$openWindowTestBase64',
-          ),
+    final PlatformWebViewController controller = PlatformWebViewController(
+      const PlatformWebViewControllerCreationParams(),
+    );
+    await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
+    final PlatformNavigationDelegate delegate = PlatformNavigationDelegate(
+      const PlatformNavigationDelegateCreationParams(),
+    );
+    await delegate.setOnPageFinished((_) => pageLoadCompleter.complete());
+    await controller.setPlatformNavigationDelegate(delegate);
+    await controller.loadRequest(
+      LoadRequestParams(
+        uri: Uri.parse(
+          'data:text/html;charset=utf-8;base64,$openWindowTestBase64',
         ),
-      );
+      ),
+    );
 
-      await tester.pumpWidget(Builder(
+    await tester.pumpWidget(
+      Builder(
         builder: (BuildContext context) {
           return PlatformWebViewWidget(
             PlatformWebViewWidgetCreationParams(controller: controller),
           ).build(context);
         },
-      ));
+      ),
+    );
 
-      await pageLoadCompleter.future;
+    await pageLoadCompleter.future;
 
-      final bool iframeLoaded =
-          await controller.runJavaScriptReturningResult('iframeLoaded') as bool;
-      expect(iframeLoaded, true);
+    final bool iframeLoaded =
+        await controller.runJavaScriptReturningResult('iframeLoaded') as bool;
+    expect(iframeLoaded, true);
 
-      final String elementText = await controller.runJavaScriptReturningResult(
-        'document.querySelector("p") && document.querySelector("p").textContent',
-      ) as String;
-      expect(elementText, 'null');
-    },
-  );
+    final String elementText =
+        await controller.runJavaScriptReturningResult(
+              'document.querySelector("p") && document.querySelector("p").textContent',
+            )
+            as String;
+    expect(elementText, 'null');
+  });
 
   testWidgets(
     '`AndroidWebViewController` can be reused with a new `AndroidWebViewWidget`',
@@ -1435,120 +1535,131 @@ Future<void> main() async {
       );
       await delegate.setOnPageFinished((_) => pageLoaded.complete());
       await controller.setPlatformNavigationDelegate(delegate);
-      await controller
-          .loadRequest(LoadRequestParams(uri: Uri.parse(primaryUrl)));
+      await controller.loadRequest(
+        LoadRequestParams(uri: Uri.parse(primaryUrl)),
+      );
 
-      await tester.pumpWidget(Builder(
-        builder: (BuildContext context) {
-          return PlatformWebViewWidget(
-            PlatformWebViewWidgetCreationParams(controller: controller),
-          ).build(context);
-        },
-      ));
+      await tester.pumpWidget(
+        Builder(
+          builder: (BuildContext context) {
+            return PlatformWebViewWidget(
+              PlatformWebViewWidgetCreationParams(controller: controller),
+            ).build(context);
+          },
+        ),
+      );
 
       await pageLoaded.future;
 
       await tester.pumpWidget(Container());
       await tester.pumpAndSettle();
 
-      await tester.pumpWidget(Builder(
-        builder: (BuildContext context) {
-          return PlatformWebViewWidget(
-            PlatformWebViewWidgetCreationParams(controller: controller),
-          ).build(context);
-        },
-      ));
+      await tester.pumpWidget(
+        Builder(
+          builder: (BuildContext context) {
+            return PlatformWebViewWidget(
+              PlatformWebViewWidgetCreationParams(controller: controller),
+            ).build(context);
+          },
+        ),
+      );
 
       pageLoaded = Completer<void>();
       await controller.loadRequest(
         LoadRequestParams(uri: Uri.parse(primaryUrl)),
       );
-      await expectLater(
-        pageLoaded.future,
-        completes,
-      );
+      await expectLater(pageLoaded.future, completes);
     },
   );
 
-  testWidgets('can receive JavaScript alert dialogs',
-      (WidgetTester tester) async {
+  testWidgets('can receive JavaScript alert dialogs', (
+    WidgetTester tester,
+  ) async {
     final PlatformWebViewController controller = PlatformWebViewController(
       const PlatformWebViewControllerCreationParams(),
     );
 
     final Completer<String> alertMessage = Completer<String>();
-    await controller.setOnJavaScriptAlertDialog(
-      (JavaScriptAlertDialogRequest request) async {
-        alertMessage.complete(request.message);
-      },
-    );
+    await controller.setOnJavaScriptAlertDialog((
+      JavaScriptAlertDialogRequest request,
+    ) async {
+      alertMessage.complete(request.message);
+    });
 
     await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
     await controller.loadRequest(LoadRequestParams(uri: Uri.parse(primaryUrl)));
 
-    await tester.pumpWidget(Builder(
-      builder: (BuildContext context) {
-        return PlatformWebViewWidget(
-          PlatformWebViewWidgetCreationParams(controller: controller),
-        ).build(context);
-      },
-    ));
+    await tester.pumpWidget(
+      Builder(
+        builder: (BuildContext context) {
+          return PlatformWebViewWidget(
+            PlatformWebViewWidgetCreationParams(controller: controller),
+          ).build(context);
+        },
+      ),
+    );
 
     await controller.runJavaScript('alert("alert message")');
     await expectLater(alertMessage.future, completion('alert message'));
   });
 
-  testWidgets('can receive JavaScript confirm dialogs',
-      (WidgetTester tester) async {
+  testWidgets('can receive JavaScript confirm dialogs', (
+    WidgetTester tester,
+  ) async {
     final PlatformWebViewController controller = PlatformWebViewController(
       const PlatformWebViewControllerCreationParams(),
     );
 
     final Completer<String> confirmMessage = Completer<String>();
-    await controller.setOnJavaScriptConfirmDialog(
-      (JavaScriptConfirmDialogRequest request) async {
-        confirmMessage.complete(request.message);
-        return true;
-      },
-    );
+    await controller.setOnJavaScriptConfirmDialog((
+      JavaScriptConfirmDialogRequest request,
+    ) async {
+      confirmMessage.complete(request.message);
+      return true;
+    });
 
     await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
     await controller.loadRequest(LoadRequestParams(uri: Uri.parse(primaryUrl)));
 
-    await tester.pumpWidget(Builder(
-      builder: (BuildContext context) {
-        return PlatformWebViewWidget(
-          PlatformWebViewWidgetCreationParams(controller: controller),
-        ).build(context);
-      },
-    ));
+    await tester.pumpWidget(
+      Builder(
+        builder: (BuildContext context) {
+          return PlatformWebViewWidget(
+            PlatformWebViewWidgetCreationParams(controller: controller),
+          ).build(context);
+        },
+      ),
+    );
 
     await controller.runJavaScript('confirm("confirm message")');
     await expectLater(confirmMessage.future, completion('confirm message'));
   });
 
-  testWidgets('can receive JavaScript prompt dialogs',
-      (WidgetTester tester) async {
+  testWidgets('can receive JavaScript prompt dialogs', (
+    WidgetTester tester,
+  ) async {
     final PlatformWebViewController controller = PlatformWebViewController(
       const PlatformWebViewControllerCreationParams(),
     );
 
-    await controller.setOnJavaScriptTextInputDialog(
-      (JavaScriptTextInputDialogRequest request) async {
-        return 'return message';
-      },
-    );
+    await controller.setOnJavaScriptTextInputDialog((
+      JavaScriptTextInputDialogRequest request,
+    ) async {
+      return 'return message';
+    });
 
     await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
     await controller.loadRequest(LoadRequestParams(uri: Uri.parse(primaryUrl)));
 
-    await tester.pumpWidget(Builder(
-      builder: (BuildContext context) {
-        return PlatformWebViewWidget(
-          PlatformWebViewWidgetCreationParams(controller: controller),
-        ).build(context);
-      },
-    ));
+    await tester.pumpWidget(
+      Builder(
+        builder: (BuildContext context) {
+          return PlatformWebViewWidget(
+            PlatformWebViewWidgetCreationParams(controller: controller),
+          ).build(context);
+        },
+      ),
+    );
 
     final Object promptResponse = await controller.runJavaScriptReturningResult(
       'prompt("input message", "default text")',
@@ -1557,8 +1668,9 @@ Future<void> main() async {
   });
 
   group('Logging', () {
-    testWidgets('can receive console log messages',
-        (WidgetTester tester) async {
+    testWidgets('can receive console log messages', (
+      WidgetTester tester,
+    ) async {
       const String testPage = '''
           <!DOCTYPE html>
           <html>
@@ -1578,22 +1690,27 @@ Future<void> main() async {
       await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
 
       await controller.setOnConsoleMessage((JavaScriptConsoleMessage message) {
-        debugMessageReceived
-            .complete('${message.level.name}:${message.message}');
+        debugMessageReceived.complete(
+          '${message.level.name}:${message.message}',
+        );
       });
 
       await controller.loadHtmlString(testPage);
 
-      await tester.pumpWidget(Builder(
-        builder: (BuildContext context) {
-          return PlatformWebViewWidget(
-            PlatformWebViewWidgetCreationParams(controller: controller),
-          ).build(context);
-        },
-      ));
+      await tester.pumpWidget(
+        Builder(
+          builder: (BuildContext context) {
+            return PlatformWebViewWidget(
+              PlatformWebViewWidgetCreationParams(controller: controller),
+            ).build(context);
+          },
+        ),
+      );
 
       await expectLater(
-          debugMessageReceived.future, completion('debug:Debug message'));
+        debugMessageReceived.future,
+        completion('debug:Debug message'),
+      );
     });
   });
 }
@@ -1613,30 +1730,29 @@ class ResizableWebView extends StatefulWidget {
 }
 
 class ResizableWebViewState extends State<ResizableWebView> {
-  late final PlatformWebViewController controller = PlatformWebViewController(
-    const PlatformWebViewControllerCreationParams(),
-  )
-    ..setJavaScriptMode(JavaScriptMode.unrestricted)
-    ..setPlatformNavigationDelegate(
-      PlatformNavigationDelegate(
-        const PlatformNavigationDelegateCreationParams(),
-      )..setOnPageFinished((_) => widget.onPageFinished()),
-    )
-    ..addJavaScriptChannel(
-      JavaScriptChannelParams(
-        name: 'Resize',
-        onMessageReceived: (_) {
-          widget.onResize();
-        },
-      ),
-    )
-    ..loadRequest(
-      LoadRequestParams(
-        uri: Uri.parse(
-          'data:text/html;charset=utf-8;base64,${base64Encode(const Utf8Encoder().convert(resizePage))}',
-        ),
-      ),
-    );
+  late final PlatformWebViewController controller =
+      PlatformWebViewController(const PlatformWebViewControllerCreationParams())
+        ..setJavaScriptMode(JavaScriptMode.unrestricted)
+        ..setPlatformNavigationDelegate(
+          PlatformNavigationDelegate(
+            const PlatformNavigationDelegateCreationParams(),
+          )..setOnPageFinished((_) => widget.onPageFinished()),
+        )
+        ..addJavaScriptChannel(
+          JavaScriptChannelParams(
+            name: 'Resize',
+            onMessageReceived: (_) {
+              widget.onResize();
+            },
+          ),
+        )
+        ..loadRequest(
+          LoadRequestParams(
+            uri: Uri.parse(
+              'data:text/html;charset=utf-8;base64,${base64Encode(const Utf8Encoder().convert(resizePage))}',
+            ),
+          ),
+        );
 
   double webViewWidth = 200;
   double webViewHeight = 200;
@@ -1703,16 +1819,15 @@ class CopyableObjectWithCallback
 class ClassWithCallbackClass {
   ClassWithCallbackClass() {
     callbackClass = CopyableObjectWithCallback(
-      withWeakReferenceTo(
-        this,
-        (WeakReference<ClassWithCallbackClass> weakReference) {
-          return () {
-            // Weak reference to `this` in callback.
-            // ignore: unnecessary_statements
-            weakReference;
-          };
-        },
-      ),
+      withWeakReferenceTo(this, (
+        WeakReference<ClassWithCallbackClass> weakReference,
+      ) {
+        return () {
+          // Weak reference to `this` in callback.
+          // ignore: unnecessary_statements
+          weakReference;
+        };
+      }),
     );
   }
 

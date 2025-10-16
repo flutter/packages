@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.app.Application.ActivityLifecycleCallbacks;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.Lifecycle.Event;
@@ -31,7 +32,7 @@ public class ProxyLifecycleProvider implements ActivityLifecycleCallbacks, Lifec
   }
 
   @Override
-  public void onActivityCreated(@NonNull Activity activity, @NonNull Bundle savedInstanceState) {
+  public void onActivityCreated(@NonNull Activity activity, @Nullable Bundle savedInstanceState) {
     if (activity.hashCode() != registrarActivityHashCode) {
       return;
     }

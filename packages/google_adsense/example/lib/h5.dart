@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -169,17 +169,15 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             Text(
               'Interstitial Ad Status:',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
             Text('Last Status: ${_lastInterstitialInfo?.breakStatus}'),
             const Divider(),
             PaddedCard(
               children: <Widget>[
-                const Text(
-                  '🪙 Available coins:',
-                ),
+                const Text('🪙 Available coins:'),
                 Text(
                   '$_coins',
                   style: Theme.of(context).textTheme.displayLarge,
@@ -199,9 +197,9 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             Text(
               'Rewarded Ad Status:',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
             Text('Requested? $_adBreakRequested'),
             Text('Available? $adBreakAvailable'),
@@ -227,9 +225,7 @@ class PaddedCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 16),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-        child: Column(
-          children: children,
-        ),
+        child: Column(children: children),
       ),
     );
   }

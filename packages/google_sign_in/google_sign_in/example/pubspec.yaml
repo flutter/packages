@@ -3,8 +3,8 @@ description: Example of Google Sign-In plugin.
 publish_to: none
 
 environment:
-  sdk: ^3.4.0
-  flutter: ">=3.22.0"
+  sdk: ^3.7.0
+  flutter: ">=3.29.0"
 
 dependencies:
   flutter:
@@ -16,7 +16,7 @@ dependencies:
     # The example app is bundled with the plugin so we use a path dependency on
     # the parent directory to use the current plugin's version.
     path: ../
-  google_sign_in_web: ^0.12.3
+  google_sign_in_web: ^1.1.0
   http: ">=0.13.0 <2.0.0"
 
 dev_dependencies:

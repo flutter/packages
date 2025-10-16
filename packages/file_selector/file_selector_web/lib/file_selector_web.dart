@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -19,7 +19,7 @@ class FileSelectorWeb extends FileSelectorPlatform {
   /// to interact with the DOM.
   /// overrides parameter allows for testing to override functions
   FileSelectorWeb({@visibleForTesting DomHelper? domHelper})
-      : _domHelper = domHelper ?? DomHelper();
+    : _domHelper = domHelper ?? DomHelper();
 
   final DomHelper _domHelper;
 
@@ -34,8 +34,9 @@ class FileSelectorWeb extends FileSelectorPlatform {
     String? initialDirectory,
     String? confirmButtonText,
   }) async {
-    final List<XFile> files =
-        await _openFiles(acceptedTypeGroups: acceptedTypeGroups);
+    final List<XFile> files = await _openFiles(
+      acceptedTypeGroups: acceptedTypeGroups,
+    );
     return files.isNotEmpty ? files.first : null;
   }
 
@@ -57,8 +58,7 @@ class FileSelectorWeb extends FileSelectorPlatform {
     String? initialDirectory,
     String? suggestedName,
     String? confirmButtonText,
-  }) async =>
-      '';
+  }) async => '';
 
   @override
   Future<FileSaveLocation?> getSaveLocation({
@@ -74,17 +74,13 @@ class FileSelectorWeb extends FileSelectorPlatform {
   Future<String?> getDirectoryPath({
     String? initialDirectory,
     String? confirmButtonText,
-  }) async =>
-      null;
+  }) async => null;
 
   Future<List<XFile>> _openFiles({
     List<XTypeGroup>? acceptedTypeGroups,
     bool multiple = false,
   }) async {
     final String accept = acceptedTypesToString(acceptedTypeGroups);
-    return _domHelper.getFiles(
-      accept: accept,
-      multiple: multiple,
-    );
+    return _domHelper.getFiles(accept: accept, multiple: multiple);
   }
 }

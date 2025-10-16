@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -11,15 +11,10 @@ import 'package:flutter/widgets.dart';
 /// Defines the leading and trailing padding values of a [Span].
 class SpanPadding {
   /// Creates a padding configuration for a [Span].
-  const SpanPadding({
-    this.leading = 0.0,
-    this.trailing = 0.0,
-  });
+  const SpanPadding({this.leading = 0.0, this.trailing = 0.0});
 
   /// Creates padding where both the [leading] and [trailing] are `value`.
-  const SpanPadding.all(double value)
-      : leading = value,
-        trailing = value;
+  const SpanPadding.all(double value) : leading = value, trailing = value;
 
   /// The leading amount of pixels to pad a [Span] by.
   ///
@@ -229,9 +224,7 @@ class FractionalSpanExtent extends SpanExtent {
   /// Creates a [FractionalSpanExtent].
   ///
   /// The provided [fraction] value must be equal to or greater than zero.
-  const FractionalSpanExtent(
-    this.fraction,
-  ) : assert(fraction >= 0.0);
+  const FractionalSpanExtent(this.fraction) : assert(fraction >= 0.0);
 
   /// The fraction of the [SpanExtentDelegate.viewportExtent] that the
   /// span should occupy.
@@ -297,19 +290,15 @@ class CombiningSpanExtent extends SpanExtent {
 /// Returns the larger pixel extent of the two provided [SpanExtent].
 class MaxSpanExtent extends CombiningSpanExtent {
   /// Creates a [MaxSpanExtent].
-  const MaxSpanExtent(
-    SpanExtent extent1,
-    SpanExtent extent2,
-  ) : super(extent1, extent2, math.max);
+  const MaxSpanExtent(SpanExtent extent1, SpanExtent extent2)
+    : super(extent1, extent2, math.max);
 }
 
 /// Returns the smaller pixel extent of the two provided [SpanExtent].
 class MinSpanExtent extends CombiningSpanExtent {
   /// Creates a [MinSpanExtent].
-  const MinSpanExtent(
-    SpanExtent extent1,
-    SpanExtent extent2,
-  ) : super(extent1, extent2, math.min);
+  const MinSpanExtent(SpanExtent extent1, SpanExtent extent2)
+    : super(extent1, extent2, math.min);
 }
 
 /// A decoration for a [Span].
@@ -346,7 +335,6 @@ class SpanDecoration {
   /// This same row decoration will consume any padding from the column spans so
   /// as to decorate the row as one continuous span.
   ///
-  /// {@tool snippet}
   /// This example illustrates how [consumeSpanPadding] affects
   /// [SpanDecoration.color]. By default, the color of the decoration
   /// consumes the padding, coloring the row fully by including the padding
@@ -379,7 +367,6 @@ class SpanDecoration {
   ///   },
   /// );
   /// ```
-  /// {@end-tool}
   final bool consumeSpanPadding;
 
   /// Called to draw the decoration around a span.
@@ -396,16 +383,14 @@ class SpanDecoration {
   /// cells.
   void paint(SpanDecorationPaintDetails details) {
     if (color != null) {
-      final Paint paint = Paint()
-        ..color = color!
-        ..isAntiAlias = borderRadius != null;
+      final Paint paint =
+          Paint()
+            ..color = color!
+            ..isAntiAlias = borderRadius != null;
       if (borderRadius == null || borderRadius == BorderRadius.zero) {
         details.canvas.drawRect(details.rect, paint);
       } else {
-        details.canvas.drawRRect(
-          borderRadius!.toRRect(details.rect),
-          paint,
-        );
+        details.canvas.drawRRect(borderRadius!.toRRect(details.rect), paint);
       }
     }
     if (border != null) {
@@ -453,10 +438,7 @@ class SpanBorder {
   /// cell representing the pinned column and separately with another
   /// [SpanDecorationPaintDetails.rect] containing all the other unpinned
   /// cells.
-  void paint(
-    SpanDecorationPaintDetails details,
-    BorderRadius? borderRadius,
-  ) {
+  void paint(SpanDecorationPaintDetails details, BorderRadius? borderRadius) {
     final AxisDirection axisDirection = details.axisDirection;
     switch (axisDirectionToAxis(axisDirection)) {
       case Axis.horizontal:
@@ -464,21 +446,13 @@ class SpanBorder {
           top: axisDirection == AxisDirection.right ? leading : trailing,
           bottom: axisDirection == AxisDirection.right ? trailing : leading,
         );
-        border.paint(
-          details.canvas,
-          details.rect,
-          borderRadius: borderRadius,
-        );
+        border.paint(details.canvas, details.rect, borderRadius: borderRadius);
       case Axis.vertical:
         final Border border = Border(
           left: axisDirection == AxisDirection.down ? leading : trailing,
           right: axisDirection == AxisDirection.down ? trailing : leading,
         );
-        border.paint(
-          details.canvas,
-          details.rect,
-          borderRadius: borderRadius,
-        );
+        border.paint(details.canvas, details.rect, borderRadius: borderRadius);
     }
   }
 }

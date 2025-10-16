@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -12,11 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
 void main() {
-  runApp(
-    MaterialApp(
-      home: _App(),
-    ),
-  );
+  runApp(MaterialApp(home: _App()));
 }
 
 class _App extends StatelessWidget {
@@ -40,15 +36,12 @@ class _App extends StatelessWidget {
                   ),
                 );
               },
-            )
+            ),
           ],
           bottom: const TabBar(
             isScrollable: true,
             tabs: <Widget>[
-              Tab(
-                icon: Icon(Icons.cloud),
-                text: 'Remote',
-              ),
+              Tab(icon: Icon(Icons.cloud), text: 'Remote'),
               Tab(icon: Icon(Icons.insert_drive_file), text: 'Asset'),
               Tab(icon: Icon(Icons.list), text: 'List example'),
             ],
@@ -56,9 +49,19 @@ class _App extends StatelessWidget {
         ),
         body: TabBarView(
           children: <Widget>[
-            _BumbleBeeRemoteVideo(),
-            _ButterFlyAssetVideo(),
-            _ButterFlyAssetVideoInList(),
+            _ViewTypeTabBar(
+              builder:
+                  (VideoViewType viewType) => _BumbleBeeRemoteVideo(viewType),
+            ),
+            _ViewTypeTabBar(
+              builder:
+                  (VideoViewType viewType) => _ButterFlyAssetVideo(viewType),
+            ),
+            _ViewTypeTabBar(
+              builder:
+                  (VideoViewType viewType) =>
+                      _ButterFlyAssetVideoInList(viewType),
+            ),
           ],
         ),
       ),
@@ -66,7 +69,62 @@ class _App extends StatelessWidget {
   }
 }
 
+class _ViewTypeTabBar extends StatefulWidget {
+  const _ViewTypeTabBar({required this.builder});
+
+  final Widget Function(VideoViewType) builder;
+
+  @override
+  State<_ViewTypeTabBar> createState() => _ViewTypeTabBarState();
+}
+
+class _ViewTypeTabBarState extends State<_ViewTypeTabBar>
+    with SingleTickerProviderStateMixin {
+  late final TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        TabBar(
+          controller: _tabController,
+          isScrollable: true,
+          tabs: const <Widget>[
+            Tab(icon: Icon(Icons.texture), text: 'Texture view'),
+            Tab(icon: Icon(Icons.construction), text: 'Platform view'),
+          ],
+        ),
+        Expanded(
+          child: TabBarView(
+            controller: _tabController,
+            children: <Widget>[
+              widget.builder(VideoViewType.textureView),
+              widget.builder(VideoViewType.platformView),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class _ButterFlyAssetVideoInList extends StatelessWidget {
+  const _ButterFlyAssetVideoInList(this.viewType);
+
+  final VideoViewType viewType;
+
   @override
   Widget build(BuildContext context) {
     return ListView(
@@ -79,23 +137,28 @@ class _ButterFlyAssetVideoInList extends StatelessWidget {
         const _ExampleCard(title: 'Item f'),
         const _ExampleCard(title: 'Item g'),
         Card(
-            child: Column(children: <Widget>[
-          Column(
+          child: Column(
             children: <Widget>[
-              const ListTile(
-                leading: Icon(Icons.cake),
-                title: Text('Video video'),
+              Column(
+                children: <Widget>[
+                  const ListTile(
+                    leading: Icon(Icons.cake),
+                    title: Text('Video video'),
+                  ),
+                  Stack(
+                    alignment:
+                        FractionalOffset.bottomRight +
+                        const FractionalOffset(-0.1, -0.1),
+                    children: <Widget>[
+                      _ButterFlyAssetVideo(viewType),
+                      Image.asset('assets/flutter-mark-square-64.png'),
+                    ],
+                  ),
+                ],
               ),
-              Stack(
-                  alignment: FractionalOffset.bottomRight +
-                      const FractionalOffset(-0.1, -0.1),
-                  children: <Widget>[
-                    _ButterFlyAssetVideo(),
-                    Image.asset('assets/flutter-mark-square-64.png'),
-                  ]),
             ],
           ),
-        ])),
+        ),
         const _ExampleCard(title: 'Item h'),
         const _ExampleCard(title: 'Item i'),
         const _ExampleCard(title: 'Item j'),
@@ -150,6 +213,10 @@ class _ExampleCard extends StatelessWidget {
 }
 
 class _ButterFlyAssetVideo extends StatefulWidget {
+  const _ButterFlyAssetVideo(this.viewType);
+
+  final VideoViewType viewType;
+
   @override
   _ButterFlyAssetVideoState createState() => _ButterFlyAssetVideoState();
 }
@@ -160,7 +227,10 @@ class _ButterFlyAssetVideoState extends State<_ButterFlyAssetVideo> {
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.asset('assets/Butterfly-209.mp4');
+    _controller = VideoPlayerController.asset(
+      'assets/Butterfly-209.mp4',
+      viewType: widget.viewType,
+    );
 
     _controller.addListener(() {
       setState(() {});
@@ -181,9 +251,7 @@ class _ButterFlyAssetVideoState extends State<_ButterFlyAssetVideo> {
     return SingleChildScrollView(
       child: Column(
         children: <Widget>[
-          Container(
-            padding: const EdgeInsets.only(top: 20.0),
-          ),
+          Container(padding: const EdgeInsets.only(top: 20.0)),
           const Text('With assets mp4'),
           Container(
             padding: const EdgeInsets.all(20),
@@ -206,6 +274,10 @@ class _ButterFlyAssetVideoState extends State<_ButterFlyAssetVideo> {
 }
 
 class _BumbleBeeRemoteVideo extends StatefulWidget {
+  const _BumbleBeeRemoteVideo(this.viewType);
+
+  final VideoViewType viewType;
+
   @override
   _BumbleBeeRemoteVideoState createState() => _BumbleBeeRemoteVideoState();
 }
@@ -214,10 +286,12 @@ class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
   late VideoPlayerController _controller;
 
   Future<ClosedCaptionFile> _loadCaptions() async {
-    final String fileContents = await DefaultAssetBundle.of(context)
-        .loadString('assets/bumble_bee_captions.vtt');
+    final String fileContents = await DefaultAssetBundle.of(
+      context,
+    ).loadString('assets/bumble_bee_captions.vtt');
     return WebVTTCaptionFile(
-        fileContents); // For vtt files, use WebVTTCaptionFile
+      fileContents,
+    ); // For vtt files, use WebVTTCaptionFile
   }
 
   @override
@@ -225,9 +299,11 @@ class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
     super.initState();
     _controller = VideoPlayerController.networkUrl(
       Uri.parse(
-          'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4'),
+        'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4',
+      ),
       closedCaptionFile: _loadCaptions(),
       videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true),
+      viewType: widget.viewType,
     );
 
     _controller.addListener(() {
@@ -305,19 +381,20 @@ class _ControlsOverlay extends StatelessWidget {
         AnimatedSwitcher(
           duration: const Duration(milliseconds: 50),
           reverseDuration: const Duration(milliseconds: 200),
-          child: controller.value.isPlaying
-              ? const SizedBox.shrink()
-              : const ColoredBox(
-                  color: Colors.black26,
-                  child: Center(
-                    child: Icon(
-                      Icons.play_arrow,
-                      color: Colors.white,
-                      size: 100.0,
-                      semanticLabel: 'Play',
+          child:
+              controller.value.isPlaying
+                  ? const SizedBox.shrink()
+                  : const ColoredBox(
+                    color: Colors.black26,
+                    child: Center(
+                      child: Icon(
+                        Icons.play_arrow,
+                        color: Colors.white,
+                        size: 100.0,
+                        semanticLabel: 'Play',
+                      ),
                     ),
                   ),
-                ),
         ),
         GestureDetector(
           onTap: () {
@@ -338,7 +415,7 @@ class _ControlsOverlay extends StatelessWidget {
                   PopupMenuItem<Duration>(
                     value: offsetDuration,
                     child: Text('${offsetDuration.inMilliseconds}ms'),
-                  )
+                  ),
               ];
             },
             child: Padding(
@@ -364,10 +441,7 @@ class _ControlsOverlay extends StatelessWidget {
             itemBuilder: (BuildContext context) {
               return <PopupMenuItem<double>>[
                 for (final double speed in _examplePlaybackRates)
-                  PopupMenuItem<double>(
-                    value: speed,
-                    child: Text('${speed}x'),
-                  )
+                  PopupMenuItem<double>(value: speed, child: Text('${speed}x')),
               ];
             },
             child: Padding(
@@ -400,8 +474,9 @@ class _PlayerVideoAndPopPageState extends State<_PlayerVideoAndPopPage> {
   void initState() {
     super.initState();
 
-    _videoPlayerController =
-        VideoPlayerController.asset('assets/Butterfly-209.mp4');
+    _videoPlayerController = VideoPlayerController.asset(
+      'assets/Butterfly-209.mp4',
+    );
     _videoPlayerController.addListener(() {
       if (startedPlaying && !_videoPlayerController.value.isPlaying) {
         Navigator.pop(context);

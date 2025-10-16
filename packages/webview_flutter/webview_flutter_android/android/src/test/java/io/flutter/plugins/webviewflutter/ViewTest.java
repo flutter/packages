@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -48,5 +48,38 @@ public class ViewTest {
 
     assertEquals(value.getX(), api.getScrollPosition(instance).getX());
     assertEquals(value.getY(), api.getScrollPosition(instance).getY());
+  }
+
+  @Test
+  public void setVerticalScrollBarEnabled() {
+    final PigeonApiView api = new TestProxyApiRegistrar().getPigeonApiView();
+
+    final View instance = mock(View.class);
+    final boolean enabled = true;
+    api.setVerticalScrollBarEnabled(instance, enabled);
+
+    verify(instance).setVerticalScrollBarEnabled(enabled);
+  }
+
+  @Test
+  public void setHorizontalScrollBarEnabled() {
+    final PigeonApiView api = new TestProxyApiRegistrar().getPigeonApiView();
+
+    final View instance = mock(View.class);
+    final boolean enabled = false;
+    api.setHorizontalScrollBarEnabled(instance, enabled);
+
+    verify(instance).setHorizontalScrollBarEnabled(enabled);
+  }
+
+  @Test
+  public void setOverScrollMode() {
+    final PigeonApiView api = new TestProxyApiRegistrar().getPigeonApiView();
+
+    final View instance = mock(View.class);
+    final OverScrollMode mode = io.flutter.plugins.webviewflutter.OverScrollMode.ALWAYS;
+    api.setOverScrollMode(instance, mode);
+
+    verify(instance).setOverScrollMode(View.OVER_SCROLL_ALWAYS);
   }
 }

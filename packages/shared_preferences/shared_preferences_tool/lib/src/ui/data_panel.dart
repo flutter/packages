@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -40,30 +40,22 @@ class _DataPanelState extends State<DataPanel> {
     return RoundedOutlinedBorder(
       clip: true,
       child: switch (selectedKeyData) {
-        null => const Center(
-            child: Text('Select a key to view its data.'),
-          ),
+        null => const Center(child: Text('Select a key to view its data.')),
         AsyncStateLoading<SharedPreferencesData>() => const Center(
-            child: CircularProgressIndicator(),
-          ),
+          child: CircularProgressIndicator(),
+        ),
         final AsyncStateError<SharedPreferencesData> value => ErrorPanel(
-            error: value.error,
-            stackTrace: value.stackTrace,
-          ),
+          error: value.error,
+          stackTrace: value.stackTrace,
+        ),
         AsyncStateData<SharedPreferencesData>(
           data: final SharedPreferencesData data,
         ) =>
           Column(
             children: <Widget>[
-              _Header(
-                currentValue: currentValue,
-                data: data,
-              ),
+              _Header(currentValue: currentValue, data: data),
               Expanded(
-                child: _Content(
-                  data: data,
-                  setCurrentValue: _setCurrentValue,
-                ),
+                child: _Content(data: data, setCurrentValue: _setCurrentValue),
               ),
             ],
           ),
@@ -73,10 +65,7 @@ class _DataPanelState extends State<DataPanel> {
 }
 
 class _Header extends StatelessWidget {
-  const _Header({
-    required this.currentValue,
-    required this.data,
-  });
+  const _Header({required this.currentValue, required this.data});
 
   final String? currentValue;
   final SharedPreferencesData data;
@@ -93,10 +82,7 @@ class _Header extends StatelessWidget {
       roundedTopBorder: false,
       includeTopBorder: false,
       tall: true,
-      title: Text(
-        selectedKey,
-        style: Theme.of(context).textTheme.titleSmall,
-      ),
+      title: Text(selectedKey, style: Theme.of(context).textTheme.titleSmall),
       actions: <Widget>[
         if (editing) ...<Widget>[
           DevToolsButton(
@@ -134,18 +120,19 @@ class _Header extends StatelessWidget {
                   context.sharedPreferencesStateNotifier;
               showDialog<void>(
                 context: context,
-                builder: (BuildContext context) => _ConfirmRemoveDialog(
-                  selectedKey: selectedKey,
-                  notifier: notifier,
-                ),
+                builder:
+                    (BuildContext context) => _ConfirmRemoveDialog(
+                      selectedKey: selectedKey,
+                      notifier: notifier,
+                    ),
               );
             },
             label: 'Remove',
           ),
           const SizedBox(width: denseRowSpacing),
           DevToolsButton(
-            onPressed: () =>
-                context.sharedPreferencesStateNotifier.startEditing(),
+            onPressed:
+                () => context.sharedPreferencesStateNotifier.startEditing(),
             label: 'Edit',
           ),
         ],
@@ -167,9 +154,7 @@ class _ConfirmRemoveDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return DevToolsDialog(
       title: const Text('Remove Key'),
-      content: Text(
-        'Are you sure you want to remove $selectedKey?',
-      ),
+      content: Text('Are you sure you want to remove $selectedKey?'),
       actions: <Widget>[
         const DialogCancelButton(),
         DialogTextButton(
@@ -191,10 +176,7 @@ class _ConfirmRemoveDialog extends StatelessWidget {
 }
 
 class _Content extends StatelessWidget {
-  const _Content({
-    required this.data,
-    required this.setCurrentValue,
-  });
+  const _Content({required this.data, required this.setCurrentValue});
 
   final SharedPreferencesData data;
   final ValueChanged<String> setCurrentValue;
@@ -217,36 +199,32 @@ class _Content extends StatelessWidget {
                 const SizedBox(height: denseSpacing),
                 switch (data) {
                   final SharedPreferencesDataBool state => _EditBoolean(
-                      initialValue: state.value,
-                      setCurrentValue: setCurrentValue,
-                    ),
+                    initialValue: state.value,
+                    setCurrentValue: setCurrentValue,
+                  ),
                   final SharedPreferencesDataStringList state =>
                     _EditStringList(
                       initialData: state.value,
                       onChanged: setCurrentValue,
                     ),
                   _ => TextFormField(
-                      autofocus: true,
-                      initialValue: data.valueAsString,
-                      inputFormatters: switch (data) {
-                        SharedPreferencesDataInt() => <TextInputFormatter>[
-                            FilteringTextInputFormatter.allow(
-                              RegExp(r'^-?\d*'),
-                            ),
-                          ],
-                        SharedPreferencesDataDouble() => <TextInputFormatter>[
-                            FilteringTextInputFormatter.allow(
-                              RegExp(r'^-?\d*\.?\d*'),
-                            ),
-                          ],
-                        _ => <TextInputFormatter>[],
-                      },
-                      onChanged: setCurrentValue,
-                    )
+                    autofocus: true,
+                    initialValue: data.valueAsString,
+                    inputFormatters: switch (data) {
+                      SharedPreferencesDataInt() => <TextInputFormatter>[
+                        FilteringTextInputFormatter.allow(RegExp(r'^-?\d*')),
+                      ],
+                      SharedPreferencesDataDouble() => <TextInputFormatter>[
+                        FilteringTextInputFormatter.allow(
+                          RegExp(r'^-?\d*\.?\d*'),
+                        ),
+                      ],
+                      _ => <TextInputFormatter>[],
+                    },
+                    onChanged: setCurrentValue,
+                  ),
                 },
-              ] else ...<Widget>[
-                Text('Value: ${data.valueAsString}'),
-              ],
+              ] else ...<Widget>[Text('Value: ${data.valueAsString}')],
             ],
           ),
         ),
@@ -272,24 +250,15 @@ class _EditBoolean extends StatelessWidget {
         setCurrentValue(value.toString());
       },
       dropdownMenuEntries: const <DropdownMenuEntry<bool>>[
-        DropdownMenuEntry<bool>(
-          label: 'true',
-          value: true,
-        ),
-        DropdownMenuEntry<bool>(
-          label: 'false',
-          value: false,
-        ),
+        DropdownMenuEntry<bool>(label: 'true', value: true),
+        DropdownMenuEntry<bool>(label: 'false', value: false),
       ],
     );
   }
 }
 
 class _EditStringList extends StatefulWidget {
-  const _EditStringList({
-    required this.initialData,
-    required this.onChanged,
-  });
+  const _EditStringList({required this.initialData, required this.onChanged});
 
   final List<String> initialData;
   final ValueChanged<String> onChanged;
@@ -310,11 +279,9 @@ class _EditStringListState extends State<_EditStringList> {
   }
 
   void _updateValue() {
-    widget.onChanged(jsonEncode(
-      <String>[
-        for (final (_, String value) in _currentList) value,
-      ],
-    ));
+    widget.onChanged(
+      jsonEncode(<String>[for (final (_, String value) in _currentList) value]),
+    );
   }
 
   @override
@@ -334,9 +301,7 @@ class _EditStringListState extends State<_EditStringList> {
         for (final (int index, (int keyValue, String str))
             in _currentList.indexed) ...<Widget>[
           if (index > 0) const SizedBox(height: largeSpacing),
-          _AddListElement(
-            onPressed: () => _addElementAt(index),
-          ),
+          _AddListElement(onPressed: () => _addElementAt(index)),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: densePadding),
             child: Row(
@@ -361,44 +326,31 @@ class _EditStringListState extends State<_EditStringList> {
                     });
                     _updateValue();
                   },
-                )
+                ),
               ],
             ),
           ),
         ],
         const SizedBox(height: largeSpacing),
-        _AddListElement(
-          onPressed: () => _addElementAt(_currentList.length),
-        ),
+        _AddListElement(onPressed: () => _addElementAt(_currentList.length)),
       ],
     );
   }
 }
 
 class _AddListElement extends StatelessWidget {
-  const _AddListElement({
-    required this.onPressed,
-  });
+  const _AddListElement({required this.onPressed});
 
   final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: DevToolsButton(
-        icon: Icons.add,
-        onPressed: onPressed,
-      ),
-    );
+    return Center(child: DevToolsButton(icon: Icons.add, onPressed: onPressed));
   }
 }
 
 extension on BuildContext {
   void showSnackBar(String message) {
-    ScaffoldMessenger.of(this).showSnackBar(
-      SnackBar(
-        content: Text(message),
-      ),
-    );
+    ScaffoldMessenger.of(this).showSnackBar(SnackBar(content: Text(message)));
   }
 }

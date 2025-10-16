@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -8,8 +8,6 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.Before;
@@ -93,7 +91,7 @@ public final class VideoPlayerEventCallbacksTest {
   }
 
   @Test
-  public void onBufferingUpdateProvidesAListWithASingleRange() {
+  public void onBufferingUpdateProvidesPosition() {
     eventCallbacks.onBufferingUpdate(10L);
 
     verify(mockEventSink).success(eventCaptor.capture());
@@ -101,7 +99,7 @@ public final class VideoPlayerEventCallbacksTest {
     Map<String, Object> actual = eventCaptor.getValue();
     Map<String, Object> expected = new HashMap<>();
     expected.put("event", "bufferingUpdate");
-    expected.put("values", Collections.singletonList(Arrays.asList(0, 10L)));
+    expected.put("position", 10L);
     assertEquals(expected, actual);
   }
 

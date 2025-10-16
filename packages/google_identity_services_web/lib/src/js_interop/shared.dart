@@ -1,13 +1,20 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 /// Attempts to retrieve an enum value from [haystack] if [needle] is not null.
+///
+/// Returns `null` if no enum value in [haystack] matches [needle].
 T? maybeEnum<T extends Enum>(String? needle, List<T> haystack) {
   if (needle == null) {
     return null;
   }
-  return haystack.byName(needle);
+  for (final T value in haystack) {
+    if (value.name == needle) {
+      return value;
+    }
+  }
+  return null;
 }
 
 /// The type of several functions from the library, that don't receive

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -17,13 +17,8 @@ export 'adsbygoogle_js_interop.dart';
 typedef MockAdConfig = ({Size size, String adStatus});
 
 /// Returns a function that generates a "push" function for [mockAdsByGoogle].
-PushFn mockAd({
-  Size size = Size.zero,
-  String adStatus = AdStatus.FILLED,
-}) {
-  return mockAds(
-    <MockAdConfig>[(size: size, adStatus: adStatus)],
-  );
+PushFn mockAd({Size size = Size.zero, String adStatus = AdStatus.FILLED}) {
+  return mockAds(<MockAdConfig>[(size: size, adStatus: adStatus)]);
 }
 
 /// Returns a function that handles a bunch of ad units at once. Can be used with [mockAdsByGoogle].
@@ -40,10 +35,11 @@ PushFn mockAds(List<MockAdConfig> adConfigs) {
 
       final (:Size size, :String adStatus) = adConfigs[i];
 
-      final web.HTMLElement fakeAd = web.HTMLDivElement()
-        ..style.width = '${size.width}px'
-        ..style.height = '${size.height}px'
-        ..style.background = '#fabada';
+      final web.HTMLElement fakeAd =
+          web.HTMLDivElement()
+            ..style.width = '${size.width}px'
+            ..style.height = '${size.height}px'
+            ..style.background = '#fabada';
 
       // AdSense seems to be setting the width/height on the `ins` of the injected ad too.
       adTarget

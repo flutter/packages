@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -9,8 +9,9 @@ import 'package:flutter/services.dart';
 import 'shared_preferences_platform_interface.dart';
 import 'types.dart';
 
-const MethodChannel _kChannel =
-    MethodChannel('plugins.flutter.io/shared_preferences');
+const MethodChannel _kChannel = MethodChannel(
+  'plugins.flutter.io/shared_preferences',
+);
 
 /// Wraps NSUserDefaults (on iOS) and SharedPreferences (on Android), providing
 /// a persistent store for simple data.
@@ -20,10 +21,9 @@ class MethodChannelSharedPreferencesStore
     extends SharedPreferencesStorePlatform {
   @override
   Future<bool> remove(String key) async {
-    return (await _kChannel.invokeMethod<bool>(
-      'remove',
-      <String, dynamic>{'key': key},
-    ))!;
+    return (await _kChannel.invokeMethod<bool>('remove', <String, dynamic>{
+      'key': key,
+    }))!;
   }
 
   @override
@@ -43,9 +43,7 @@ class MethodChannelSharedPreferencesStore
   @Deprecated('Use clearWithParameters instead')
   Future<bool> clearWithPrefix(String prefix) async {
     return clearWithParameters(
-      ClearParameters(
-        filter: PreferencesFilter(prefix: prefix),
-      ),
+      ClearParameters(filter: PreferencesFilter(prefix: prefix)),
     );
   }
 
@@ -74,22 +72,21 @@ class MethodChannelSharedPreferencesStore
     Set<String>? allowList,
   }) async {
     return getAllWithParameters(
-      GetAllParameters(
-        filter: PreferencesFilter(prefix: prefix),
-      ),
+      GetAllParameters(filter: PreferencesFilter(prefix: prefix)),
     );
   }
 
   @override
   Future<Map<String, Object>> getAllWithParameters(
-      GetAllParameters parameters) async {
+    GetAllParameters parameters,
+  ) async {
     final PreferencesFilter filter = parameters.filter;
     final List<String>? allowListAsList = filter.allowList?.toList();
     return await _kChannel.invokeMapMethod<String, Object>(
           'getAllWithParameters',
           <String, dynamic>{
             'prefix': filter.prefix,
-            'allowList': allowListAsList
+            'allowList': allowListAsList,
           },
         ) ??
         <String, Object>{};

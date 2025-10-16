@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -113,10 +113,7 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
-              'Last click on: $_lastClick',
-              key: const Key('last-clicked'),
-            ),
+            Text('Last click on: $_lastClick', key: const Key('last-clicked')),
             Container(
               color: Colors.black,
               width: _containerWidth,
@@ -141,15 +138,17 @@ class _MyHomePageState extends State<MyHomePage> {
                         },
                       ),
                       PointerInterceptorWeb().buildWidget(
-                          intercepting: false,
-                          child: ElevatedButton(
-                            key: const Key('wrapped-transparent-button'),
-                            child:
-                                const Text('Never calls onPressed transparent'),
-                            onPressed: () {
-                              _clickedOn('wrapped-transparent-button');
-                            },
-                          )),
+                        intercepting: false,
+                        child: ElevatedButton(
+                          key: const Key('wrapped-transparent-button'),
+                          child: const Text(
+                            'Never calls onPressed transparent',
+                          ),
+                          onPressed: () {
+                            _clickedOn('wrapped-transparent-button');
+                          },
+                        ),
+                      ),
                       PointerInterceptorPlatform.instance.buildWidget(
                         child: ElevatedButton(
                           key: const Key('clickable-button'),
@@ -224,8 +223,6 @@ class HtmlElement extends StatelessWidget {
       }.toJS,
     );
 
-    return const HtmlElementView(
-      viewType: _htmlElementViewType,
-    );
+    return const HtmlElementView(viewType: _htmlElementViewType);
   }
 }

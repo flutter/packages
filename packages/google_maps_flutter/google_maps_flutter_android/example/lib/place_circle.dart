@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -12,7 +12,7 @@ import 'page.dart';
 
 class PlaceCirclePage extends GoogleMapExampleAppPage {
   const PlaceCirclePage({Key? key})
-      : super(const Icon(Icons.linear_scale), 'Place circle', key: key);
+    : super(const Icon(Icons.linear_scale), 'Place circle', key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -108,9 +108,7 @@ class PlaceCircleBodyState extends State<PlaceCircleBody> {
   void _toggleVisible(CircleId circleId) {
     final Circle circle = circles[circleId]!;
     setState(() {
-      circles[circleId] = circle.copyWith(
-        visibleParam: !circle.visible,
-      );
+      circles[circleId] = circle.copyWith(visibleParam: !circle.visible);
     });
   }
 
@@ -171,10 +169,7 @@ class PlaceCircleBodyState extends State<PlaceCircleBody> {
                   children: <Widget>[
                     Column(
                       children: <Widget>[
-                        TextButton(
-                          onPressed: _add,
-                          child: const Text('add'),
-                        ),
+                        TextButton(onPressed: _add, child: const Text('add')),
                         TextButton(
                           onPressed: (selectedId == null)
                               ? null
@@ -210,9 +205,9 @@ class PlaceCircleBodyState extends State<PlaceCircleBody> {
                           child: const Text('change fill color'),
                         ),
                       ],
-                    )
+                    ),
                   ],
-                )
+                ),
               ],
             ),
           ),

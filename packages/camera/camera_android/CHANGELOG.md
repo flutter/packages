@@ -1,3 +1,37 @@
+## 0.10.10+10
+
+* Updates Java compatibility version to 17.
+
+## 0.10.10+9
+
+* Resolves Gradle 9 deprecations.
+
+## 0.10.10+8
+
+* Restores compileSdk version to flutter.compileSdkVersion.
+
+## 0.10.10+7
+
+* Updates minimum supported SDK version to Flutter 3.35.
+* Removes code for supporting API 21-23.
+
+## 0.10.10+6
+
+* Bumps com.android.tools.build:gradle to 8.12.1.
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
+## 0.10.10+5
+
+* Updates kotlin version to 2.2.0 to enable gradle 8.11 support.
+
+## 0.10.10+4
+
+* Fix flutter#166533 - prevent startImageStream OOM error when main thread paused.
+
+## 0.10.10+3
+
+* Waits for the creation of the capture session when initializing the camera to avoid thread race conditions.
+
 ## 0.10.10+2
 
 * Don't set the FPS range unless video recording. It can cause dark image previews on some devices becuse the auto exposure algorithm is more constrained after fixing the min/max FPS range to the same value. This change has the side effect that providing the `fps` parameter will not affect the camera preview when not video recording. And if you need a lower frame rate in your image streaming handler, you can skip frames by checking the time it passed since the last frame.

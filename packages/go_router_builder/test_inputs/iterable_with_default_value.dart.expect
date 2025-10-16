@@ -1,32 +1,38 @@
 RouteBase get $iterableDefaultValueRoute => GoRouteData.$route(
       path: '/iterable-default-value-route',
-      factory: $IterableDefaultValueRouteExtension._fromState,
+      factory: $IterableDefaultValueRoute._fromState,
     );
 
-extension $IterableDefaultValueRouteExtension on IterableDefaultValueRoute {
+mixin $IterableDefaultValueRoute on GoRouteData {
   static IterableDefaultValueRoute _fromState(GoRouterState state) =>
       IterableDefaultValueRoute(
-        param: (state.uri.queryParametersAll['param']
-                ?.map(int.parse)
-                .cast<int>() as Iterable<int>?) ??
-            const <int>[0],
+        param:
+            state.uri.queryParametersAll['param']?.map(int.parse).cast<int>() ??
+                const <int>[0],
       );
 
+  IterableDefaultValueRoute get _self => this as IterableDefaultValueRoute;
+
+  @override
   String get location => GoRouteData.$location(
         '/iterable-default-value-route',
         queryParams: {
-          if (!_$iterablesEqual(param, const <int>[0]))
-            'param': param.map((e) => e.toString()).toList(),
+          if (!_$iterablesEqual(_self.param, const <int>[0]))
+            'param': _self.param.map((e) => e.toString()).toList(),
         },
       );
 
+  @override
   void go(BuildContext context) => context.go(location);
 
+  @override
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
+  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
 
+  @override
   void replace(BuildContext context) => context.replace(location);
 }
 

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -42,12 +42,43 @@ class ${kotlinInstanceManagerClassName(options)}(private val finalizationListene
     fun onFinalize(identifier: Long)
   }
 
-  private val identifiers = java.util.WeakHashMap<Any, Long>()
-  private val weakInstances = HashMap<Long, java.lang.ref.WeakReference<Any>>()
+  // Extends WeakReference and overrides the `equals` and `hashCode` methods using identity rather
+  // than equality.
+  //
+  // Two `IdentityWeakReference`s are equal if either
+  // 1: `get()` returns the identical nonnull value for both references.
+  // 2: `get()` returns null for both references and the references are identical.
+  class IdentityWeakReference<T : Any> : java.lang.ref.WeakReference<T> {
+    private val savedHashCode: Int
+
+    constructor(instance: T) : this(instance, null)
+
+    constructor(instance: T, queue: java.lang.ref.ReferenceQueue<T>?) : super(instance, queue) {
+      savedHashCode = System.identityHashCode(instance)
+    }
+
+    override fun equals(other: Any?): Boolean {
+      val instance = get()
+      if (instance != null) {
+        return other is IdentityWeakReference<*> && other.get() === instance
+      }
+      return other === this
+    }
+
+    override fun hashCode(): Int {
+      return savedHashCode
+    }
+  }
+
+  private val identifiers = java.util.WeakHashMap<IdentityWeakReference<Any>, Long>()
+  private val weakInstances = HashMap<Long, IdentityWeakReference<Any>>()
   private val strongInstances = HashMap<Long, Any>()
   private val referenceQueue = java.lang.ref.ReferenceQueue<Any>()
-  private val weakReferencesToIdentifiers = HashMap<java.lang.ref.WeakReference<Any>, Long>()
+  private val weakReferencesToIdentifiers = HashMap<IdentityWeakReference<Any>, Long>()
   private val handler = android.os.Handler(android.os.Looper.getMainLooper())
+  private val releaseAllFinalizedInstancesRunnable = Runnable {
+    this.releaseAllFinalizedInstances()
+  }
   private var nextIdentifier: Long = minHostCreatedIdentifier
   private var hasFinalizationListenerStopped = false
 
@@ -57,16 +88,13 @@ class ${kotlinInstanceManagerClassName(options)}(private val finalizationListene
    */
   var clearFinalizedWeakReferencesInterval: Long = 3000
     set(value) {
-      handler.removeCallbacks { this.releaseAllFinalizedInstances() }
+      handler.removeCallbacks(releaseAllFinalizedInstancesRunnable)
       field = value
       releaseAllFinalizedInstances()
     }
 
   init {
-    handler.postDelayed(
-      { releaseAllFinalizedInstances() },
-      clearFinalizedWeakReferencesInterval
-    )
+    handler.postDelayed(releaseAllFinalizedInstancesRunnable, clearFinalizedWeakReferencesInterval)
   }
 
   companion object {
@@ -112,9 +140,12 @@ class ${kotlinInstanceManagerClassName(options)}(private val finalizationListene
    */
   fun getIdentifierForStrongReference(instance: Any?): Long? {
     logWarningIfFinalizationListenerHasStopped()
-    val identifier = identifiers[instance]
+    if (instance == null) {
+      return null
+    }
+    val identifier = identifiers[IdentityWeakReference(instance)]
     if (identifier != null) {
-      strongInstances[identifier] = instance!!
+      strongInstances[identifier] = instance
     }
     return identifier
   }
@@ -136,7 +167,9 @@ class ${kotlinInstanceManagerClassName(options)}(private val finalizationListene
   /**
    * Adds a new unique instance that was instantiated from the host platform.
    *
-   * [identifier] must be >= 0 and unique.
+   * If the manager contains [instance], this returns the corresponding identifier. If the
+   * manager does not contain [instance], this adds the instance and returns a unique
+   * identifier for that [instance].
    */
   fun addHostCreatedInstance(instance: Any): Long {
     logWarningIfFinalizationListenerHasStopped()
@@ -149,14 +182,14 @@ class ${kotlinInstanceManagerClassName(options)}(private val finalizationListene
   /** Retrieves the instance associated with identifier, if present, otherwise `null`. */
   fun <T> getInstance(identifier: Long): T? {
     logWarningIfFinalizationListenerHasStopped()
-    val instance = weakInstances[identifier] as java.lang.ref.WeakReference<T>?
+    val instance = weakInstances[identifier] as IdentityWeakReference<T>?
     return instance?.get()
   }
 
   /** Returns whether this manager contains the given `instance`. */
   fun containsInstance(instance: Any?): Boolean {
     logWarningIfFinalizationListenerHasStopped()
-    return identifiers.containsKey(instance)
+    return instance != null && identifiers.containsKey(IdentityWeakReference(instance))
   }
 
   /**
@@ -167,7 +200,7 @@ class ${kotlinInstanceManagerClassName(options)}(private val finalizationListene
    * longer be called and methods will log a warning.
    */
   fun stopFinalizationListener() {
-    handler.removeCallbacks { this.releaseAllFinalizedInstances() }
+    handler.removeCallbacks(releaseAllFinalizedInstancesRunnable)
     hasFinalizationListenerStopped = true
   }
 
@@ -197,8 +230,8 @@ class ${kotlinInstanceManagerClassName(options)}(private val finalizationListene
     if (hasFinalizationListenerStopped()) {
       return
     }
-    var reference: java.lang.ref.WeakReference<Any>?
-    while ((referenceQueue.poll() as java.lang.ref.WeakReference<Any>?).also { reference = it } != null) {
+    var reference: IdentityWeakReference<Any>?
+    while ((referenceQueue.poll() as IdentityWeakReference<Any>?).also { reference = it } != null) {
       val identifier = weakReferencesToIdentifiers.remove(reference)
       if (identifier != null) {
         weakInstances.remove(identifier)
@@ -206,10 +239,7 @@ class ${kotlinInstanceManagerClassName(options)}(private val finalizationListene
         finalizationListener.onFinalize(identifier)
       }
     }
-    handler.postDelayed(
-      { releaseAllFinalizedInstances() },
-      clearFinalizedWeakReferencesInterval
-    )
+    handler.postDelayed(releaseAllFinalizedInstancesRunnable, clearFinalizedWeakReferencesInterval)
   }
 
   private fun addInstance(instance: Any, identifier: Long) {
@@ -217,8 +247,8 @@ class ${kotlinInstanceManagerClassName(options)}(private val finalizationListene
     require(!weakInstances.containsKey(identifier)) {
       "Identifier has already been added: \$identifier"
     }
-    val weakReference = java.lang.ref.WeakReference(instance, referenceQueue)
-    identifiers[instance] = identifier
+    val weakReference = IdentityWeakReference(instance, referenceQueue)
+    identifiers[weakReference] = identifier
     weakInstances[identifier] = weakReference
     weakReferencesToIdentifiers[weakReference] = identifier
     strongInstances[identifier] = instance

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -40,6 +40,7 @@ VectorInstructions parseWithoutOptimizers(
   String key = '',
   bool warningsAsErrors = false,
   SvgTheme theme = const SvgTheme(),
+  ColorMapper? colorMapper,
 }) {
   return parse(
     xml,
@@ -49,6 +50,7 @@ VectorInstructions parseWithoutOptimizers(
     enableClippingOptimizer: false,
     enableMaskingOptimizer: false,
     enableOverdrawOptimizer: false,
+    colorMapper: colorMapper,
   );
 }
 
@@ -100,8 +102,9 @@ void _encodeShader(
       fromY: shader.from.y,
       toX: shader.to.x,
       toY: shader.to.y,
-      colors: Int32List.fromList(
-          <int>[for (final Color color in shader.colors!) color.value]),
+      colors: Int32List.fromList(<int>[
+        for (final Color color in shader.colors!) color.value,
+      ]),
       offsets: Float32List.fromList(shader.offsets!),
       tileMode: shader.tileMode!.index,
     );
@@ -113,8 +116,9 @@ void _encodeShader(
       radius: shader.radius,
       focalX: shader.focalPoint?.x,
       focalY: shader.focalPoint?.y,
-      colors: Int32List.fromList(
-          <int>[for (final Color color in shader.colors!) color.value]),
+      colors: Int32List.fromList(<int>[
+        for (final Color color in shader.colors!) color.value,
+      ]),
       offsets: Float32List.fromList(shader.offsets!),
       tileMode: shader.tileMode!.index,
       transform: _encodeMatrix(shader.transform),
@@ -300,7 +304,11 @@ Uint8List _encodeInstructions(
             instructions.vertices[command.objectId!];
         final int fillId = fillIds[command.paintId]!;
         codec.writeDrawVertices(
-            buffer, vertices.vertices, vertices.indices, fillId);
+          buffer,
+          vertices.vertices,
+          vertices.indices,
+          fillId,
+        );
       case DrawCommandType.saveLayer:
         codec.writeSaveLayer(buffer, fillIds[command.paintId]!);
       case DrawCommandType.restore:

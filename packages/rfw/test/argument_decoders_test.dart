@@ -1,8 +1,9 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 // This file is hand-formatted.
+// ignore_for_file: no_literal_bool_comparisons
 
 import 'dart:ui' as ui;
 
@@ -383,20 +384,21 @@ void main() {
       skip: !runGoldens || true,
     );
     expect(find.byType(DecoratedBox), findsNWidgets(6));
-    const String matrix = kIsWeb ? '1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1'
-                                 : '1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0';
+
+    final DecorationImage assetImage = (tester.widgetList<DecoratedBox>(find.byType(DecoratedBox)).toList()[1].decoration as BoxDecoration).image!;
+    expect(assetImage.image, isA<AssetImage>());
+    expect((assetImage.image as AssetImage).assetName, 'asset');
     expect(
-      (tester.widgetList<DecoratedBox>(find.byType(DecoratedBox)).toList()[1].decoration as BoxDecoration).image.toString(),
-      'DecorationImage(AssetImage(bundle: null, name: "asset"), ' // this just seemed like the easiest way to check all this...
-      'ColorFilter.matrix([$matrix]), '
-      'Alignment.center, centerSlice: Rect.fromLTRB(5.0, 8.0, 105.0, 78.0), scale 1.0, opacity 1.0, FilterQuality.none)',
-    );
-    expect(
-      (tester.widgetList<DecoratedBox>(find.byType(DecoratedBox)).toList()[0].decoration as BoxDecoration).image.toString(),
-      'DecorationImage(NetworkImage("x-invalid://", scale: 1.0), '
-      'ColorFilter.mode(${const Color(0xff8811ff)}, BlendMode.xor), Alignment.center, scale 1.0, '
-      'opacity 1.0, FilterQuality.high)',
-    );
+        assetImage.colorFilter,
+        const ColorFilter.matrix(<double>[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]));
+    expect(assetImage.centerSlice, const Rect.fromLTRB(5.0, 8.0, 105.0, 78.0));
+    expect(assetImage.filterQuality, FilterQuality.none);
+
+    final DecorationImage networkImage = (tester.widgetList<DecoratedBox>(find.byType(DecoratedBox)).toList()[0].decoration as BoxDecoration).image!;
+    expect(networkImage.image, isA<NetworkImage>());
+    expect((networkImage.image as NetworkImage).url, 'x-invalid://');
+    expect(networkImage.colorFilter, const ColorFilter.mode(Color(0xFF8811FF), BlendMode.xor));
+    expect(networkImage.filterQuality, FilterQuality.high);
 
     ArgumentDecoders.colorFilterDecoders['custom'] = (DataSource source, List<Object> key) {
       return const ColorFilter.mode(Color(0x12345678), BlendMode.xor);

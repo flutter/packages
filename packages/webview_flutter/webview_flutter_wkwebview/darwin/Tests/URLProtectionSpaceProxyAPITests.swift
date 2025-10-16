@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -56,4 +56,34 @@ class ProtectionSpaceProxyAPITests: XCTestCase {
     XCTAssertEqual(value, instance.authenticationMethod)
   }
 
+  func testGetServerTrust() {
+    let registrar = TestProxyApiRegistrar()
+    let api = registrar.apiDelegate.pigeonApiURLProtectionSpace(registrar)
+
+    let instance = TestProtectionSpace(
+      host: "host", port: 23, protocol: "protocol", realm: "realm", authenticationMethod: "myMethod"
+    )
+    let value = try? api.pigeonDelegate.getServerTrust(pigeonApi: api, pigeonInstance: instance)
+
+    XCTAssertEqual(value!.value, instance.serverTrust)
+  }
+}
+
+class TestProtectionSpace: URLProtectionSpace, @unchecked Sendable {
+  var serverTrustVal: SecTrust?
+
+  override var serverTrust: SecTrust? {
+    if serverTrustVal == nil {
+      let url = FlutterAssetManager().urlForAsset("assets/test_cert.der")!
+
+      let certificateData = NSData(contentsOf: url)
+      let dummyCertificate: SecCertificate! = SecCertificateCreateWithData(nil, certificateData!)
+
+      var trust: SecTrust?
+      SecTrustCreateWithCertificates(
+        [dummyCertificate] as AnyObject, SecPolicyCreateBasicX509(), &trust)
+      serverTrustVal = trust!
+    }
+    return serverTrustVal
+  }
 }

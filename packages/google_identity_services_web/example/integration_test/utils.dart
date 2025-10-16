@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -30,12 +30,13 @@ ExpectConfigValueFn createExpectConfigValue(JSObject config) {
     } else if (matcher is List) {
       final List<Object?> old = matcher;
       matcher = isA<JSAny?>().having(
-          (JSAny? p0) => (p0 as JSArray<JSAny>?)
-              ?.toDart
-              .map((JSAny? e) => e.dartify())
-              .toList(),
-          'Array with matching values',
-          old);
+        (JSAny? p0) =>
+            (p0 as JSArray<JSAny>?)?.toDart
+                .map((JSAny? e) => e.dartify())
+                .toList(),
+        'Array with matching values',
+        old,
+      );
     }
     expect(config[name], matcher, reason: name);
   };
@@ -44,8 +45,11 @@ ExpectConfigValueFn createExpectConfigValue(JSObject config) {
 /// A matcher that checks if: value typeof [thing] == true (in JS).
 ///
 /// See: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/typeof
-Matcher isAJs(String thing) => isA<JSAny?>()
-    .having((JSAny? p0) => p0.typeofEquals(thing), 'typeof "$thing"', isTrue);
+Matcher isAJs(String thing) => isA<JSAny?>().having(
+  (JSAny? p0) => p0.typeofEquals(thing),
+  'typeof "$thing"',
+  isTrue,
+);
 
 /// Installs mock-gis.js in the page.
 /// Returns a future that completes when the 'load' event of the script fires.
@@ -57,10 +61,11 @@ Future<void> installGisMock() {
   script.src = 'mock-gis.js';
   script.type = 'module';
   script.addEventListener(
-      'load',
-      (JSAny? _) {
-        completer.complete();
-      }.toJS);
+    'load',
+    (JSAny? _) {
+      completer.complete();
+    }.toJS,
+  );
 
   web.document.head!.appendChild(script);
   return completer.future;
@@ -70,11 +75,13 @@ Future<void> installGisMock() {
 Future<TokenResponse> fakeAuthZWithScopes(List<String> scopes) {
   final StreamController<TokenResponse> controller =
       StreamController<TokenResponse>();
-  final TokenClient client = oauth2.initTokenClient(TokenClientConfig(
-    client_id: 'for-tests',
-    callback: controller.add,
-    scope: scopes,
-  ));
+  final TokenClient client = oauth2.initTokenClient(
+    TokenClientConfig(
+      client_id: 'for-tests',
+      callback: controller.add,
+      scope: scopes,
+    ),
+  );
   setMockTokenResponse(client, 'some-non-null-auth-token-value');
   client.requestAccessToken();
   return controller.stream.first;
@@ -90,12 +97,15 @@ void setMockTokenResponse(TokenClient client, [String? authToken]) {
   client.setMockTokenResponse(authToken?.toJS);
 }
 
-/// Allows calling a `setMockCredentialResponse` method (set by mock-gis.js)
+/// Allows calling `setMockCredentialResponse` and `setMockMomentNotification`
+/// methods (set by mock-gis.js).
 extension on GoogleAccountsId {
   external void setMockCredentialResponse(
     JSString credential,
     JSString select_by, //ignore: non_constant_identifier_names
   );
+
+  external void setMockMomentNotification(JSString momentType, JSString reason);
 }
 
 /// Sets a mock credential response in `google.accounts.id`.
@@ -103,16 +113,27 @@ void setMockCredentialResponse([String value = 'default_value']) {
   _getGoogleAccountsId().setMockCredentialResponse(value.toJS, 'auto'.toJS);
 }
 
+/// Sets a mock moment notification in `google.accounts.id`.
+void setMockMomentNotification(String momentType, String reason) {
+  _getGoogleAccountsId().setMockMomentNotification(
+    momentType.toJS,
+    reason.toJS,
+  );
+}
+
 GoogleAccountsId _getGoogleAccountsId() {
   return _getDeepProperty<GoogleAccountsId>(
-      web.window as JSObject, 'google.accounts.id');
+    web.window as JSObject,
+    'google.accounts.id',
+  );
 }
 
 // Attempts to retrieve a deeply nested property from a jsObject (or die tryin')
 T _getDeepProperty<T>(JSObject jsObject, String deepProperty) {
   final List<String> properties = deepProperty.split('.');
   return properties.fold<JSObject?>(
-    jsObject,
-    (JSObject? jsObj, String prop) => jsObj?[prop] as JSObject?,
-  ) as T;
+        jsObject,
+        (JSObject? jsObj, String prop) => jsObj?[prop] as JSObject?,
+      )
+      as T;
 }

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 import 'dart:async';
@@ -120,7 +120,10 @@ class ImagePickerIOS extends ImagePickerPlatform {
     final int? imageQuality = options.imageOptions.imageQuality;
     if (imageQuality != null && (imageQuality < 0 || imageQuality > 100)) {
       throw ArgumentError.value(
-          imageQuality, 'imageQuality', 'must be between 0 and 100');
+        imageQuality,
+        'imageQuality',
+        'must be between 0 and 100',
+      );
     }
 
     final double? maxWidth = options.imageOptions.maxWidth;
@@ -153,7 +156,10 @@ class ImagePickerIOS extends ImagePickerPlatform {
     final int? imageQuality = options.imageQuality;
     if (imageQuality != null && (imageQuality < 0 || imageQuality > 100)) {
       throw ArgumentError.value(
-          imageQuality, 'imageQuality', 'must be between 0 and 100');
+        imageQuality,
+        'imageQuality',
+        'must be between 0 and 100',
+      );
     }
 
     final double? maxHeight = options.maxHeight;
@@ -178,15 +184,13 @@ class ImagePickerIOS extends ImagePickerPlatform {
   }
 
   @override
-  Future<List<XFile>> getMedia({
-    required MediaOptions options,
-  }) async {
+  Future<List<XFile>> getMedia({required MediaOptions options}) async {
     final MediaSelectionOptions mediaSelectionOptions =
         _mediaOptionsToMediaSelectionOptions(options);
 
-    return (await _hostApi.pickMedia(mediaSelectionOptions))
-        .map((String? path) => XFile(path!))
-        .toList();
+    return (await _hostApi.pickMedia(
+      mediaSelectionOptions,
+    )).map((String? path) => XFile(path!)).toList();
   }
 
   MaxSize _imageOptionsToMaxSizeWithValidation(ImageOptions imageOptions) {
@@ -196,7 +200,10 @@ class ImagePickerIOS extends ImagePickerPlatform {
 
     if (imageQuality != null && (imageQuality < 0 || imageQuality > 100)) {
       throw ArgumentError.value(
-          imageQuality, 'imageQuality', 'must be between 0 and 100');
+        imageQuality,
+        'imageQuality',
+        'must be between 0 and 100',
+      );
     }
 
     if (maxWidth != null && maxWidth < 0) {
@@ -211,9 +218,11 @@ class ImagePickerIOS extends ImagePickerPlatform {
   }
 
   MediaSelectionOptions _mediaOptionsToMediaSelectionOptions(
-      MediaOptions mediaOptions) {
-    final MaxSize maxSize =
-        _imageOptionsToMaxSizeWithValidation(mediaOptions.imageOptions);
+    MediaOptions mediaOptions,
+  ) {
+    final MaxSize maxSize = _imageOptionsToMaxSizeWithValidation(
+      mediaOptions.imageOptions,
+    );
 
     final bool allowMultiple = mediaOptions.allowMultiple;
     final int? limit = mediaOptions.limit;
@@ -259,10 +268,12 @@ class ImagePickerIOS extends ImagePickerPlatform {
     Duration? maxDuration,
   }) {
     return _hostApi.pickVideo(
-        SourceSpecification(
-            type: _convertSource(source),
-            camera: _convertCamera(preferredCameraDevice)),
-        maxDuration?.inSeconds);
+      SourceSpecification(
+        type: _convertSource(source),
+        camera: _convertCamera(preferredCameraDevice),
+      ),
+      maxDuration?.inSeconds,
+    );
   }
 
   @override
@@ -321,5 +332,15 @@ class ImagePickerIOS extends ImagePickerPlatform {
       preferredCameraDevice: preferredCameraDevice,
     );
     return path != null ? XFile(path) : null;
+  }
+
+  @override
+  Future<List<XFile>> getMultiVideoWithOptions({
+    MultiVideoPickerOptions options = const MultiVideoPickerOptions(),
+  }) async {
+    return (await _hostApi.pickMultiVideo(
+      options.maxDuration?.inSeconds,
+      options.limit,
+    )).map((String path) => XFile(path)).toList();
   }
 }

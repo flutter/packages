@@ -1,51 +1,53 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 package io.flutter.plugins.camerax;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import androidx.camera.core.resolutionselector.AspectRatioStrategy;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
 
 public class AspectRatioStrategyTest {
-  @Rule public MockitoRule mockitoRule = MockitoJUnit.rule();
-  @Mock public AspectRatioStrategy mockAspectRatioStrategy;
-  @Mock public AspectRatioStrategyHostApiImpl.AspectRatioStrategyProxy mockProxy;
+  @Test
+  public void pigeon_defaultConstructor_createsExpectedAspectRatioStrategyInstance() {
+    final PigeonApiAspectRatioStrategy api =
+        new TestProxyApiRegistrar().getPigeonApiAspectRatioStrategy();
 
-  InstanceManager instanceManager;
-
-  @Before
-  public void setUp() {
-    instanceManager = InstanceManager.create(identifier -> {});
-  }
-
-  @After
-  public void tearDown() {
-    instanceManager.stopFinalizationListener();
+    final AspectRatioStrategy instance =
+        api.pigeon_defaultConstructor(
+            io.flutter.plugins.camerax.AspectRatio.RATIO16TO9,
+            io.flutter.plugins.camerax.AspectRatioStrategyFallbackRule.AUTO);
+    assertEquals(instance.getPreferredAspectRatio(), androidx.camera.core.AspectRatio.RATIO_16_9);
+    assertEquals(instance.getFallbackRule(), AspectRatioStrategy.FALLBACK_RULE_AUTO);
   }
 
   @Test
-  public void hostApiCreate_createsExpectedAspectRatioStrategyInstance() {
-    final Long preferredAspectRatio = 0L;
-    final Long fallbackRule = 1L;
+  public void getFallbackRule_returnsFallbackRuleOfInstance() {
+    final PigeonApiAspectRatioStrategy api =
+        new TestProxyApiRegistrar().getPigeonApiAspectRatioStrategy();
 
-    when(mockProxy.create(preferredAspectRatio, fallbackRule)).thenReturn(mockAspectRatioStrategy);
+    final AspectRatioStrategy instance = mock(AspectRatioStrategy.class);
+    final AspectRatioStrategyFallbackRule value =
+        io.flutter.plugins.camerax.AspectRatioStrategyFallbackRule.AUTO;
+    when(instance.getFallbackRule()).thenReturn(AspectRatioStrategy.FALLBACK_RULE_AUTO);
 
-    final AspectRatioStrategyHostApiImpl hostApi =
-        new AspectRatioStrategyHostApiImpl(instanceManager, mockProxy);
+    assertEquals(value, api.getFallbackRule(instance));
+  }
 
-    final long instanceIdentifier = 0;
-    hostApi.create(instanceIdentifier, preferredAspectRatio, fallbackRule);
+  @Test
+  public void getPreferredAspectRatio_returnAspectRatioOfInstance() {
+    final PigeonApiAspectRatioStrategy api =
+        new TestProxyApiRegistrar().getPigeonApiAspectRatioStrategy();
 
-    assertEquals(instanceManager.getInstance(instanceIdentifier), mockAspectRatioStrategy);
+    final AspectRatioStrategy instance = mock(AspectRatioStrategy.class);
+    final AspectRatio value = io.flutter.plugins.camerax.AspectRatio.RATIO16TO9;
+    when(instance.getPreferredAspectRatio())
+        .thenReturn(androidx.camera.core.AspectRatio.RATIO_16_9);
+
+    assertEquals(value, api.getPreferredAspectRatio(instance));
   }
 }

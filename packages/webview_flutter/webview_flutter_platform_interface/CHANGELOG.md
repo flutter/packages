@@ -1,5 +1,30 @@
 ## NEXT
 
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
+## 2.14.0
+
+* Adds `PlatformWebViewController.loadFileWithParams(LoadFileParams)` to support loading local HTML files with platform-specific parameters.
+
+## 2.13.1
+
+* Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+* Fixes typo in API docs.
+
+## 2.13.0
+
+* Adds support to respond to recoverable SSL certificate errors. See `PlatformNavigationDelegate.setOnSSlAuthError`.
+
+## 2.12.0
+
+* Adds support to set whether to draw the scrollbar. See
+  `PlatformWebViewController.setVerticalScrollBarEnabled`,
+  `PlatformWebViewController.setHorizontalScrollBarEnabled`,
+  `PlatformWebViewController.supportsSetScrollBarsEnabled`.
+
+## 2.11.0
+
+* Adds support to set the over-scroll mode for the WebView. See `PlatformWebViewController.setOverScrollMode`.
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
 
 ## 2.10.0

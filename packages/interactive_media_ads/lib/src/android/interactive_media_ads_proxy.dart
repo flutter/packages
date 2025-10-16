@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -24,6 +24,7 @@ class InteractiveMediaAdsProxy {
     this.newAdsLoadedListener = AdsLoadedListener.new,
     this.newAdErrorListener = AdErrorListener.new,
     this.newAdEventListener = AdEventListener.new,
+    this.newCompanionAdSlotClickListener = CompanionAdSlotClickListener.new,
     this.createAdDisplayContainerImaSdkFactory =
         ImaSdkFactory.createAdDisplayContainer,
     this.instanceImaSdkFactory = _instanceImaSdkFactory,
@@ -38,7 +39,8 @@ class InteractiveMediaAdsProxy {
   final VideoProgressUpdate Function({
     required int currentTimeMs,
     required int durationMs,
-  }) newVideoProgressUpdate;
+  })
+  newVideoProgressUpdate;
 
   /// Constructs [FrameLayout].
   final FrameLayout Function() newFrameLayout;
@@ -46,40 +48,51 @@ class InteractiveMediaAdsProxy {
   /// Constructs [VideoView].
   final VideoView Function({
     required void Function(VideoView, MediaPlayer, int, int) onError,
-    void Function(VideoView, MediaPlayer)? onPrepared,
+    Future<void> Function(VideoView, MediaPlayer)? onPrepared,
     void Function(VideoView, MediaPlayer)? onCompletion,
-  }) newVideoView;
+  })
+  newVideoView;
 
   /// Constructs [VideoAdPlayer].
   final VideoAdPlayer Function({
     required void Function(VideoAdPlayer, VideoAdPlayerCallback) addCallback,
     required void Function(VideoAdPlayer, AdMediaInfo, AdPodInfo) loadAd,
-    required void Function(VideoAdPlayer, AdMediaInfo) pauseAd,
+    required Future<void> Function(VideoAdPlayer, AdMediaInfo) pauseAd,
     required void Function(VideoAdPlayer, AdMediaInfo) playAd,
     required void Function(VideoAdPlayer) release,
     required void Function(VideoAdPlayer, VideoAdPlayerCallback) removeCallback,
     required void Function(VideoAdPlayer, AdMediaInfo) stopAd,
-  }) newVideoAdPlayer;
+  })
+  newVideoAdPlayer;
 
   /// Constructs [AdsLoadedListener].
   final AdsLoadedListener Function({
     required void Function(AdsLoadedListener, AdsManagerLoadedEvent)
-        onAdsManagerLoaded,
-  }) newAdsLoadedListener;
+    onAdsManagerLoaded,
+  })
+  newAdsLoadedListener;
 
   /// Constructs [AdErrorListener].
   final AdErrorListener Function({
     required void Function(AdErrorListener, AdErrorEvent) onAdError,
-  }) newAdErrorListener;
+  })
+  newAdErrorListener;
 
   /// Constructs [AdEventListener].
   final AdEventListener Function({
     required void Function(AdEventListener, AdEvent) onAdEvent,
-  }) newAdEventListener;
+  })
+  newAdEventListener;
+
+  /// Constructs [CompanionAdSlotClickListener].
+  final CompanionAdSlotClickListener Function({
+    required void Function(CompanionAdSlotClickListener) onCompanionAdClick,
+  })
+  newCompanionAdSlotClickListener;
 
   /// Calls to [ImaSdkFactory.createAdDisplayContainer].
   final Future<AdDisplayContainer> Function(ViewGroup, VideoAdPlayer)
-      createAdDisplayContainerImaSdkFactory;
+  createAdDisplayContainerImaSdkFactory;
 
   /// Calls to [ImaSdkFactory.instance].
   final ImaSdkFactory Function() instanceImaSdkFactory;

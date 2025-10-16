@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -59,17 +59,20 @@ sealed class BenchmarkMetricComputation {
 
   /// The name for the computed value tracking the average value of the measured
   /// samples without outliers.
-  static const NamedMetricComputation average =
-      NamedMetricComputation._('average');
+  static const NamedMetricComputation average = NamedMetricComputation._(
+    'average',
+  );
 
   /// The name for the computed value tracking the average of outlier samples.
-  static const NamedMetricComputation outlierAverage =
-      NamedMetricComputation._('outlierAverage');
+  static const NamedMetricComputation outlierAverage = NamedMetricComputation._(
+    'outlierAverage',
+  );
 
   /// The name for the computed value tracking the outlier average divided by
   /// the clean average.
-  static const NamedMetricComputation outlierRatio =
-      NamedMetricComputation._('outlierRatio');
+  static const NamedMetricComputation outlierRatio = NamedMetricComputation._(
+    'outlierRatio',
+  );
 
   /// The name for the computed value tracking the noise as a multiple of the
   /// [average] value takes from clean samples.
@@ -77,30 +80,36 @@ sealed class BenchmarkMetricComputation {
 
   /// The name for the computed value tracking the 50th percentile value from
   /// the samples with outliers.
-  static const PercentileMetricComputation p50 =
-      PercentileMetricComputation._('p50', 0.5);
+  static const PercentileMetricComputation p50 = PercentileMetricComputation._(
+    'p50',
+    0.5,
+  );
 
   /// The name for the computed value tracking the 90th percentile value from
   /// the samples with outliers.
-  static const PercentileMetricComputation p90 =
-      PercentileMetricComputation._('p90', 0.9);
+  static const PercentileMetricComputation p90 = PercentileMetricComputation._(
+    'p90',
+    0.9,
+  );
 
   /// The name for the computed value tracking the 95th percentile value from
   /// the samples with outliers.
-  static const PercentileMetricComputation p95 =
-      PercentileMetricComputation._('p95', 0.95);
+  static const PercentileMetricComputation p95 = PercentileMetricComputation._(
+    'p95',
+    0.95,
+  );
 
   /// All of the computed vales for each [BenchmarkMetric].
   static const List<BenchmarkMetricComputation> values =
       <BenchmarkMetricComputation>[
-    average,
-    outlierAverage,
-    outlierRatio,
-    noise,
-    p50,
-    p90,
-    p95,
-  ];
+        average,
+        outlierAverage,
+        outlierRatio,
+        noise,
+        p50,
+        p90,
+        p95,
+      ];
 }
 
 /// A [BenchmarkMetricComputation] with a descriptive name.
@@ -111,7 +120,7 @@ final class NamedMetricComputation extends BenchmarkMetricComputation {
 /// A [BenchmarkMetricComputation] describing a percentile (p50, p90, etc.).
 final class PercentileMetricComputation extends BenchmarkMetricComputation {
   const PercentileMetricComputation._(super.name, this.percentile)
-      : assert(percentile >= 0.0 && percentile <= 1.0);
+    : assert(percentile >= 0.0 && percentile <= 1.0);
 
   /// The percentile value as a double.
   ///
@@ -122,15 +131,16 @@ final class PercentileMetricComputation extends BenchmarkMetricComputation {
   /// metric.
   static const List<PercentileMetricComputation> values =
       <PercentileMetricComputation>[
-    BenchmarkMetricComputation.p50,
-    BenchmarkMetricComputation.p90,
-    BenchmarkMetricComputation.p95,
-  ];
+        BenchmarkMetricComputation.p50,
+        BenchmarkMetricComputation.p90,
+        BenchmarkMetricComputation.p95,
+      ];
 
   /// The percentile values as doubles computed for each benchmark metric.
-  static List<double> percentilesAsDoubles = PercentileMetricComputation.values
-      .map((PercentileMetricComputation value) => value.percentile)
-      .toList();
+  static List<double> percentilesAsDoubles =
+      PercentileMetricComputation.values
+          .map((PercentileMetricComputation value) => value.percentile)
+          .toList();
 }
 
 /// The list of expected benchmark metrics for the current compilation mode, as

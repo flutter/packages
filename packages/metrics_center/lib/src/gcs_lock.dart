@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -28,7 +28,9 @@ class GcsLock {
   /// one may need to manually delete the lock file from GCS to unblock any
   /// [protectedRun] that may depend on it.
   Future<void> protectedRun(
-      String lockFileName, Future<void> Function() f) async {
+    String lockFileName,
+    Future<void> Function() f,
+  ) async {
     await _lock(lockFileName);
     try {
       await f();
@@ -50,8 +52,12 @@ class GcsLock {
     bool locked = false;
     while (!locked) {
       try {
-        await _api.objects.insert(object, _bucketName,
-            ifGenerationMatch: '0', uploadMedia: content);
+        await _api.objects.insert(
+          object,
+          _bucketName,
+          ifGenerationMatch: '0',
+          uploadMedia: content,
+        );
         locked = true;
       } on DetailedApiRequestError catch (e) {
         if (e.status == 412) {

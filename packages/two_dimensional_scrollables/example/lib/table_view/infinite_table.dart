@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -65,27 +65,25 @@ class _InfiniteExampleState extends State<InfiniteTableExample> {
               }
             });
           },
-          child: Text(
-            'Make rows ${_rowCount == null ? 'fixed' : 'infinite'}',
-          ),
+          child: Text('Make rows ${_rowCount == null ? 'fixed' : 'infinite'}'),
         ),
       ],
     );
   }
 
   TableViewCell _buildCell(BuildContext context, TableVicinity vicinity) {
-    final Color boxColor =
-        switch ((vicinity.row.isEven, vicinity.column.isEven)) {
+    final Color boxColor = switch ((
+      vicinity.row.isEven,
+      vicinity.column.isEven,
+    )) {
       (true, false) || (false, true) => Colors.white,
       (false, false) => Colors.indigo[100]!,
-      (true, true) => Colors.indigo[200]!
+      (true, true) => Colors.indigo[200]!,
     };
     return TableViewCell(
       child: ColoredBox(
         color: boxColor,
-        child: Center(
-          child: Text('${vicinity.column}:${vicinity.row}'),
-        ),
+        child: Center(child: Text('${vicinity.column}:${vicinity.row}')),
       ),
     );
   }

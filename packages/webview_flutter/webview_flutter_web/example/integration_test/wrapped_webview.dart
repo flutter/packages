@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -12,9 +12,10 @@ import 'package:webview_flutter_web_example/legacy/web_view.dart';
 Widget wrappedWebView(WebWebViewController controller) {
   return _wrapped(
     Builder(
-      builder: (BuildContext ctx) => PlatformWebViewWidget(
-        PlatformWebViewWidgetCreationParams(controller: controller),
-      ).build(ctx),
+      builder:
+          (BuildContext ctx) => PlatformWebViewWidget(
+            PlatformWebViewWidgetCreationParams(controller: controller),
+          ).build(ctx),
     ),
   );
 }
@@ -22,12 +23,7 @@ Widget wrappedWebView(WebWebViewController controller) {
 /// Returns a (legacy) webview widget for an [url], that calls [onCreated] when
 /// done, wrapped so it works in our integration tests.
 Widget wrappedLegacyWebView(String url, WebViewCreatedCallback onCreated) {
-  return _wrapped(
-    WebView(
-      initialUrl: url,
-      onWebViewCreated: onCreated,
-    ),
-  );
+  return _wrapped(WebView(initialUrl: url, onWebViewCreated: onCreated));
 }
 
 // Wraps a [child] widget in the scaffolding this test needs.
@@ -36,11 +32,7 @@ Widget _wrapped(Widget child) {
     home: Scaffold(
       body: Center(
         child: Container(
-          decoration: BoxDecoration(
-            border: Border.all(
-              color: Colors.red,
-            ),
-          ),
+          decoration: BoxDecoration(border: Border.all(color: Colors.red)),
           width: 320,
           height: 200,
           child: child,
