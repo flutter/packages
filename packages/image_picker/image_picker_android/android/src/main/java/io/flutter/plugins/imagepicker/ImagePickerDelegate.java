@@ -322,7 +322,7 @@ public class ImagePickerDelegate
       pickMediaIntent = new Intent(Intent.ACTION_GET_CONTENT);
       pickMediaIntent.setType("*/*");
       String[] mimeTypes = {"video/*", "image/*"};
-      pickMediaIntent.putExtra("CONTENT_TYPE", mimeTypes);
+      pickMediaIntent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
       pickMediaIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, generalOptions.getAllowMultiple());
     }
     activity.startActivityForResult(pickMediaIntent, REQUEST_CODE_CHOOSE_MEDIA_FROM_GALLERY);
