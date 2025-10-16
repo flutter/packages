@@ -12,7 +12,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
 import 'generated.dart';
-import 'ni_integration_tests.dart' as ffi_tests
+import 'ni_integration_tests.dart'
+    as ffi_tests
     show TargetGenerator, runPigeonIntegrationTests;
 import 'test_types.dart';
 
@@ -50,9 +51,10 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
   if (targetGenerator == TargetGenerator.kotlin ||
       targetGenerator == TargetGenerator.swift) {
     ffi_tests.runPigeonIntegrationTests(
-        targetGenerator == TargetGenerator.kotlin
-            ? ffi_tests.TargetGenerator.kotlin
-            : ffi_tests.TargetGenerator.swift);
+      targetGenerator == TargetGenerator.kotlin
+          ? ffi_tests.TargetGenerator.kotlin
+          : ffi_tests.TargetGenerator.swift,
+    );
   }
 
   group('Host sync API tests', () {
@@ -2993,8 +2995,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
     testWidgets('callFlutterEchoProxyApiMap', (_) async {
       final ProxyApiTestClass api = _createGenericProxyApiTestClass(
-        flutterEchoProxyApiMap:
-            (_, Map<String?, ProxyApiTestClass?> aMap) => aMap,
+        flutterEchoProxyApiMap: (_, Map<String?, ProxyApiTestClass?> aMap) =>
+            aMap,
       );
 
       final Map<String?, ProxyApiTestClass?> value =
@@ -3097,8 +3099,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
     testWidgets('callFlutterEchoNullableProxyApi', (_) async {
       final ProxyApiTestClass api = _createGenericProxyApiTestClass(
-        flutterEchoNullableProxyApi:
-            (_, ProxyApiSuperClass? aProxyApi) => aProxyApi,
+        flutterEchoNullableProxyApi: (_, ProxyApiSuperClass? aProxyApi) =>
+            aProxyApi,
       );
 
       expect(await api.callFlutterEchoNullableProxyApi(null), null);

@@ -58,7 +58,7 @@ class IntEvent extends PlatformEvent {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(encode(), other.encode());
+    return data == other.data;
   }
 
   @override
@@ -93,7 +93,7 @@ class StringEvent extends PlatformEvent {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(encode(), other.encode());
+    return data == other.data;
   }
 
   @override

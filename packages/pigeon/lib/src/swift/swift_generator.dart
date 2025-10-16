@@ -843,7 +843,12 @@ if (wrapped == nil) {
       generatorComments: generatedComments,
     );
     indent.writeln('@available(iOS 13, macOS 16.0.0, *)');
-    _writeDataClassSignature(indent, classDefinition, useFfi: true);
+    _writeDataClassSignature(
+      indent,
+      classDefinition,
+      useFfi: true,
+      hashable: false,
+    );
     indent.writeScoped('', '}', () {
       if (classDefinition.isSealed) {
         return;

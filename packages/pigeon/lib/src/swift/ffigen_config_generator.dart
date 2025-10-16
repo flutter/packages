@@ -41,8 +41,11 @@ class InternalFfigenConfigOptions extends InternalOptions {
 class FfigenConfigGenerator extends Generator<InternalFfigenConfigOptions> {
   @override
   void generate(
-      InternalFfigenConfigOptions generatorOptions, Root root, StringSink sink,
-      {required String dartPackageName}) {
+    InternalFfigenConfigOptions generatorOptions,
+    Root root,
+    StringSink sink, {
+    required String dartPackageName,
+  }) {
     final Indent indent = Indent(sink);
 
     indent.format('''
@@ -68,7 +71,8 @@ import 'package:swiftgen/swiftgen.dart';
           indent.writeln("'${dataClass.name}Bridge',");
         }
         indent.writeln(
-            "'${generatorOptions.swiftOptions.errorClassName ?? 'PigeonError'}'");
+          "'${generatorOptions.swiftOptions.errorClassName ?? 'PigeonError'}'",
+        );
         indent.dec();
       });
       indent.writeScoped('final List<String> enums = <String>[', '];', () {

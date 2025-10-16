@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -6,7 +6,52 @@
 // See also: https://pub.dev/packages/pigeon
 @file:Suppress("UNCHECKED_CAST", "ArrayInDataClass")
 
+import android.util.Log
 import androidx.annotation.Keep
+
+private object NiTestsPigeonUtils {
+
+  fun wrapResult(result: Any?): List<Any?> {
+    return listOf(result)
+  }
+
+  fun wrapError(exception: Throwable): List<Any?> {
+    return if (exception is NiTestsError) {
+      listOf(exception.code, exception.message, exception.details)
+    } else {
+      listOf(
+          exception.javaClass.simpleName,
+          exception.toString(),
+          "Cause: " + exception.cause + ", Stacktrace: " + Log.getStackTraceString(exception))
+    }
+  }
+
+  fun deepEquals(a: Any?, b: Any?): Boolean {
+    if (a is ByteArray && b is ByteArray) {
+      return a.contentEquals(b)
+    }
+    if (a is IntArray && b is IntArray) {
+      return a.contentEquals(b)
+    }
+    if (a is LongArray && b is LongArray) {
+      return a.contentEquals(b)
+    }
+    if (a is DoubleArray && b is DoubleArray) {
+      return a.contentEquals(b)
+    }
+    if (a is Array<*> && b is Array<*>) {
+      return a.size == b.size && a.indices.all { deepEquals(a[it], b[it]) }
+    }
+    if (a is List<*> && b is List<*>) {
+      return a.size == b.size && a.indices.all { deepEquals(a[it], b[it]) }
+    }
+    if (a is Map<*, *> && b is Map<*, *>) {
+      return a.size == b.size &&
+          a.all { (b as Map<Any?, Any?>).containsKey(it.key) && deepEquals(it.value, b[it.key]) }
+    }
+    return a == b
+  }
+}
 
 /**
  * Error class for passing custom error details to Flutter via a thrown PlatformException.
@@ -20,29 +65,6 @@ class NiTestsError(
     override val message: String? = null,
     val details: Any? = null
 ) : Throwable()
-
-private fun deepEqualsNiTests(a: Any?, b: Any?): Boolean {
-  if (a is ByteArray && b is ByteArray) {
-    return a.contentEquals(b)
-  }
-  if (a is IntArray && b is IntArray) {
-    return a.contentEquals(b)
-  }
-  if (a is LongArray && b is LongArray) {
-    return a.contentEquals(b)
-  }
-  if (a is DoubleArray && b is DoubleArray) {
-    return a.contentEquals(b)
-  }
-  if (a is Array<*> && b is Array<*>) {
-    return a.size == b.size && a.indices.all { deepEqualsNiTests(a[it], b[it]) }
-  }
-  if (a is Map<*, *> && b is Map<*, *>) {
-    return a.size == b.size &&
-        a.keys.all { (b as Map<Any?, Any?>).containsKey(it) && deepEqualsNiTests(a[it], b[it]) }
-  }
-  return a == b
-}
 
 const val defaultInstanceName = "PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u"
 
@@ -155,21 +177,7 @@ data class NIAllTypes(
     if (this === other) {
       return true
     }
-    return aBool == other.aBool &&
-        anInt == other.anInt &&
-        anInt64 == other.anInt64 &&
-        aDouble == other.aDouble &&
-        anEnum == other.anEnum &&
-        anotherEnum == other.anotherEnum &&
-        aString == other.aString &&
-        anObject == other.anObject &&
-        deepEqualsNiTests(list, other.list) &&
-        deepEqualsNiTests(stringList, other.stringList) &&
-        deepEqualsNiTests(intList, other.intList) &&
-        deepEqualsNiTests(doubleList, other.doubleList) &&
-        deepEqualsNiTests(boolList, other.boolList) &&
-        deepEqualsNiTests(map, other.map) &&
-        deepEqualsNiTests(stringMap, other.stringMap)
+    return NiTestsPigeonUtils.deepEquals(toList(), other.toList())
   }
 
   override fun hashCode(): Int = toList().hashCode()
@@ -242,16 +250,7 @@ data class NIAllNullableTypesWithoutRecursion(
     if (this === other) {
       return true
     }
-    return aNullableBool == other.aNullableBool &&
-        aNullableInt == other.aNullableInt &&
-        aNullableInt64 == other.aNullableInt64 &&
-        aNullableDouble == other.aNullableDouble &&
-        aNullableEnum == other.aNullableEnum &&
-        anotherNullableEnum == other.anotherNullableEnum &&
-        aNullableString == other.aNullableString &&
-        aNullableObject == other.aNullableObject &&
-        deepEqualsNiTests(list, other.list) &&
-        deepEqualsNiTests(map, other.map)
+    return NiTestsPigeonUtils.deepEquals(toList(), other.toList())
   }
 
   override fun hashCode(): Int = toList().hashCode()
@@ -293,8 +292,7 @@ data class NIAllClassesWrapper(
     if (this === other) {
       return true
     }
-    return allNullableTypesWithoutRecursion == other.allNullableTypesWithoutRecursion &&
-        allTypes == other.allTypes
+    return NiTestsPigeonUtils.deepEquals(toList(), other.toList())
   }
 
   override fun hashCode(): Int = toList().hashCode()

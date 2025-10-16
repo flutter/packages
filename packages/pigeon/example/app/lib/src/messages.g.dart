@@ -50,14 +50,7 @@ bool _deepEquals(Object? a, Object? b) {
   return a == b;
 }
 
-<<<<<<< HEAD
-enum Code {
-  one,
-  two;
-}
-=======
 enum Code { one, two }
->>>>>>> aed47f17c9b8e2b9ef9328f9b9ba09a6d38bff56
 
 class MessageData {
   MessageData({
@@ -102,7 +95,10 @@ class MessageData {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(encode(), other.encode());
+    return name == other.name &&
+        description == other.description &&
+        code == other.code &&
+        _deepEquals(data, other.data);
   }
 
   @override
@@ -149,16 +145,10 @@ class ExampleHostApi {
   ExampleHostApi({
     BinaryMessenger? binaryMessenger,
     String messageChannelSuffix = '',
-<<<<<<< HEAD
-  })  : pigeonVar_binaryMessenger = binaryMessenger,
-        pigeonVar_messageChannelSuffix =
-            messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
-=======
   }) : pigeonVar_binaryMessenger = binaryMessenger,
-       pigeonVar_messageChannelSuffix =
-           messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
-  final BinaryMessenger? pigeonVar_binaryMessenger;
->>>>>>> aed47f17c9b8e2b9ef9328f9b9ba09a6d38bff56
+       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+           ? '.$messageChannelSuffix'
+           : '';
 
   final BinaryMessenger? pigeonVar_binaryMessenger;
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -270,8 +260,9 @@ abstract class MessageFlutterApi {
     BinaryMessenger? binaryMessenger,
     String messageChannelSuffix = '',
   }) {
-    messageChannelSuffix =
-        messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+    messageChannelSuffix = messageChannelSuffix.isNotEmpty
+        ? '.$messageChannelSuffix'
+        : '';
     {
       final BasicMessageChannel<Object?>
       pigeonVar_channel = BasicMessageChannel<Object?>(

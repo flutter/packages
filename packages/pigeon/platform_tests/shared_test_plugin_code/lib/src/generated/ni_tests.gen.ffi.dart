@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -15,83 +15,115 @@ import 'package:objective_c/objective_c.dart' as objc;
 import 'package:ffi/ffi.dart' as pkg_ffi;
 
 @ffi.Native<
-    ffi.Pointer<objc.ObjCObject> Function(
-        ffi.Pointer<objc.ObjCObject>, ffi.Pointer<ffi.Void>)>()
+  ffi.Pointer<objc.ObjCObject> Function(
+    ffi.Pointer<objc.ObjCObject>,
+    ffi.Pointer<ffi.Void>,
+  )
+>()
 external ffi.Pointer<objc.ObjCObject> _test_plugin_protocolTrampoline_1mbt9g9(
   ffi.Pointer<objc.ObjCObject> target,
   ffi.Pointer<ffi.Void> arg0,
 );
 
-late final _class_NIAllClassesWrapperBridge =
-    objc.getClass("test_plugin.NIAllClassesWrapperBridge");
+late final _class_NIAllClassesWrapperBridge = objc.getClass(
+  "test_plugin.NIAllClassesWrapperBridge",
+);
 late final _sel_isKindOfClass_ = objc.registerName("isKindOfClass:");
 final _objc_msgSend_19nvye5 = objc.msgSendPointer
     .cast<
-        ffi.NativeFunction<
-            ffi.Bool Function(
-                ffi.Pointer<objc.ObjCObject>,
-                ffi.Pointer<objc.ObjCSelector>,
-                ffi.Pointer<objc.ObjCObject>)>>()
+      ffi.NativeFunction<
+        ffi.Bool Function(
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<objc.ObjCObject>,
+        )
+      >
+    >()
     .asFunction<
-        bool Function(ffi.Pointer<objc.ObjCObject>,
-            ffi.Pointer<objc.ObjCSelector>, ffi.Pointer<objc.ObjCObject>)>();
+      bool Function(
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<objc.ObjCObject>,
+      )
+    >();
 typedef instancetype = ffi.Pointer<objc.ObjCObject>;
 typedef Dartinstancetype = objc.ObjCObjectBase;
-late final _class_NIAllNullableTypesWithoutRecursionBridge =
-    objc.getClass("test_plugin.NIAllNullableTypesWithoutRecursionBridge");
+late final _class_NIAllNullableTypesWithoutRecursionBridge = objc.getClass(
+  "test_plugin.NIAllNullableTypesWithoutRecursionBridge",
+);
 late final _sel_initWithANullableBool_aNullableInt_aNullableInt64_aNullableDouble_aNullableEnum_anotherNullableEnum_aNullableString_aNullableObject_list_map_ =
     objc.registerName(
-        "initWithANullableBool:aNullableInt:aNullableInt64:aNullableDouble:aNullableEnum:anotherNullableEnum:aNullableString:aNullableObject:list:map:");
+      "initWithANullableBool:aNullableInt:aNullableInt64:aNullableDouble:aNullableEnum:anotherNullableEnum:aNullableString:aNullableObject:list:map:",
+    );
 final _objc_msgSend_l3ma9p = objc.msgSendPointer
     .cast<
-        ffi.NativeFunction<
-            ffi.Pointer<objc.ObjCObject> Function(
-                ffi.Pointer<objc.ObjCObject>,
-                ffi.Pointer<objc.ObjCSelector>,
-                ffi.Pointer<objc.ObjCObject>,
-                ffi.Pointer<objc.ObjCObject>,
-                ffi.Pointer<objc.ObjCObject>,
-                ffi.Pointer<objc.ObjCObject>,
-                ffi.Pointer<objc.ObjCObject>,
-                ffi.Pointer<objc.ObjCObject>,
-                ffi.Pointer<objc.ObjCObject>,
-                ffi.Pointer<objc.ObjCObject>,
-                ffi.Pointer<objc.ObjCObject>,
-                ffi.Pointer<objc.ObjCObject>)>>()
-    .asFunction<
+      ffi.NativeFunction<
         ffi.Pointer<objc.ObjCObject> Function(
-            ffi.Pointer<objc.ObjCObject>,
-            ffi.Pointer<objc.ObjCSelector>,
-            ffi.Pointer<objc.ObjCObject>,
-            ffi.Pointer<objc.ObjCObject>,
-            ffi.Pointer<objc.ObjCObject>,
-            ffi.Pointer<objc.ObjCObject>,
-            ffi.Pointer<objc.ObjCObject>,
-            ffi.Pointer<objc.ObjCObject>,
-            ffi.Pointer<objc.ObjCObject>,
-            ffi.Pointer<objc.ObjCObject>,
-            ffi.Pointer<objc.ObjCObject>,
-            ffi.Pointer<objc.ObjCObject>)>();
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCObject>,
+        )
+      >
+    >()
+    .asFunction<
+      ffi.Pointer<objc.ObjCObject> Function(
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCObject>,
+      )
+    >();
 late final _sel_aNullableBool = objc.registerName("aNullableBool");
 final _objc_msgSend_151sglz = objc.msgSendPointer
     .cast<
-        ffi.NativeFunction<
-            ffi.Pointer<objc.ObjCObject> Function(ffi.Pointer<objc.ObjCObject>,
-                ffi.Pointer<objc.ObjCSelector>)>>()
-    .asFunction<
+      ffi.NativeFunction<
         ffi.Pointer<objc.ObjCObject> Function(
-            ffi.Pointer<objc.ObjCObject>, ffi.Pointer<objc.ObjCSelector>)>();
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCSelector>,
+        )
+      >
+    >()
+    .asFunction<
+      ffi.Pointer<objc.ObjCObject> Function(
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCSelector>,
+      )
+    >();
 late final _sel_setANullableBool_ = objc.registerName("setANullableBool:");
 final _objc_msgSend_xtuoz7 = objc.msgSendPointer
     .cast<
-        ffi.NativeFunction<
-            ffi.Void Function(
-                ffi.Pointer<objc.ObjCObject>,
-                ffi.Pointer<objc.ObjCSelector>,
-                ffi.Pointer<objc.ObjCObject>)>>()
+      ffi.NativeFunction<
+        ffi.Void Function(
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<objc.ObjCObject>,
+        )
+      >
+    >()
     .asFunction<
-        void Function(ffi.Pointer<objc.ObjCObject>,
-            ffi.Pointer<objc.ObjCSelector>, ffi.Pointer<objc.ObjCObject>)>();
+      void Function(
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<objc.ObjCObject>,
+      )
+    >();
 late final _sel_aNullableInt = objc.registerName("aNullableInt");
 late final _sel_setANullableInt_ = objc.registerName("setANullableInt:");
 late final _sel_aNullableInt64 = objc.registerName("aNullableInt64");
@@ -101,8 +133,9 @@ late final _sel_setANullableDouble_ = objc.registerName("setANullableDouble:");
 late final _sel_aNullableEnum = objc.registerName("aNullableEnum");
 late final _sel_setANullableEnum_ = objc.registerName("setANullableEnum:");
 late final _sel_anotherNullableEnum = objc.registerName("anotherNullableEnum");
-late final _sel_setAnotherNullableEnum_ =
-    objc.registerName("setAnotherNullableEnum:");
+late final _sel_setAnotherNullableEnum_ = objc.registerName(
+  "setAnotherNullableEnum:",
+);
 late final _sel_aNullableString = objc.registerName("aNullableString");
 late final _sel_setANullableString_ = objc.registerName("setANullableString:");
 late final _sel_aNullableObject = objc.registerName("aNullableObject");
@@ -116,72 +149,100 @@ late final _sel_new = objc.registerName("new");
 late final _sel_allocWithZone_ = objc.registerName("allocWithZone:");
 final _objc_msgSend_1cwp428 = objc.msgSendPointer
     .cast<
-        ffi.NativeFunction<
-            ffi.Pointer<objc.ObjCObject> Function(ffi.Pointer<objc.ObjCObject>,
-                ffi.Pointer<objc.ObjCSelector>, ffi.Pointer<objc.NSZone>)>>()
+      ffi.NativeFunction<
+        ffi.Pointer<objc.ObjCObject> Function(
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<objc.NSZone>,
+        )
+      >
+    >()
     .asFunction<
-        ffi.Pointer<objc.ObjCObject> Function(ffi.Pointer<objc.ObjCObject>,
-            ffi.Pointer<objc.ObjCSelector>, ffi.Pointer<objc.NSZone>)>();
+      ffi.Pointer<objc.ObjCObject> Function(
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<objc.NSZone>,
+      )
+    >();
 late final _sel_alloc = objc.registerName("alloc");
 late final _sel_self = objc.registerName("self");
 ffi.Pointer<objc.ObjCObject> _ObjCBlock_objcObjCObject_ffiVoid_fnPtrTrampoline(
-        ffi.Pointer<objc.ObjCBlockImpl> block, ffi.Pointer<ffi.Void> arg0) =>
-    block.ref.target
-        .cast<
-            ffi.NativeFunction<
-                ffi.Pointer<objc.ObjCObject> Function(
-                    ffi.Pointer<ffi.Void> arg0)>>()
-        .asFunction<
-            ffi.Pointer<objc.ObjCObject> Function(
-                ffi.Pointer<ffi.Void>)>()(arg0);
+  ffi.Pointer<objc.ObjCBlockImpl> block,
+  ffi.Pointer<ffi.Void> arg0,
+) => block.ref.target
+    .cast<
+      ffi.NativeFunction<
+        ffi.Pointer<objc.ObjCObject> Function(ffi.Pointer<ffi.Void> arg0)
+      >
+    >()
+    .asFunction<
+      ffi.Pointer<objc.ObjCObject> Function(ffi.Pointer<ffi.Void>)
+    >()(arg0);
 ffi.Pointer<ffi.Void> _ObjCBlock_objcObjCObject_ffiVoid_fnPtrCallable =
     ffi.Pointer.fromFunction<
-                ffi.Pointer<objc.ObjCObject> Function(
-                    ffi.Pointer<objc.ObjCBlockImpl>, ffi.Pointer<ffi.Void>)>(
-            _ObjCBlock_objcObjCObject_ffiVoid_fnPtrTrampoline)
+          ffi.Pointer<objc.ObjCObject> Function(
+            ffi.Pointer<objc.ObjCBlockImpl>,
+            ffi.Pointer<ffi.Void>,
+          )
+        >(_ObjCBlock_objcObjCObject_ffiVoid_fnPtrTrampoline)
         .cast();
 ffi.Pointer<objc.ObjCObject>
-    _ObjCBlock_objcObjCObject_ffiVoid_closureTrampoline(
-            ffi.Pointer<objc.ObjCBlockImpl> block,
-            ffi.Pointer<ffi.Void> arg0) =>
-        (objc.getBlockClosure(block) as ffi.Pointer<objc.ObjCObject> Function(
-            ffi.Pointer<ffi.Void>))(arg0);
+_ObjCBlock_objcObjCObject_ffiVoid_closureTrampoline(
+  ffi.Pointer<objc.ObjCBlockImpl> block,
+  ffi.Pointer<ffi.Void> arg0,
+) =>
+    (objc.getBlockClosure(block)
+        as ffi.Pointer<objc.ObjCObject> Function(ffi.Pointer<ffi.Void>))(arg0);
 ffi.Pointer<ffi.Void> _ObjCBlock_objcObjCObject_ffiVoid_closureCallable =
     ffi.Pointer.fromFunction<
-                ffi.Pointer<objc.ObjCObject> Function(
-                    ffi.Pointer<objc.ObjCBlockImpl>, ffi.Pointer<ffi.Void>)>(
-            _ObjCBlock_objcObjCObject_ffiVoid_closureTrampoline)
+          ffi.Pointer<objc.ObjCObject> Function(
+            ffi.Pointer<objc.ObjCBlockImpl>,
+            ffi.Pointer<ffi.Void>,
+          )
+        >(_ObjCBlock_objcObjCObject_ffiVoid_closureTrampoline)
         .cast();
 
 /// Construction methods for `objc.ObjCBlock<ffi.Pointer<objc.ObjCObject> Function(ffi.Pointer<ffi.Void>)>`.
 abstract final class ObjCBlock_objcObjCObject_ffiVoid {
   /// Returns a block that wraps the given raw block pointer.
-  static objc
-      .ObjCBlock<ffi.Pointer<objc.ObjCObject> Function(ffi.Pointer<ffi.Void>)>
-      castFromPointer(ffi.Pointer<objc.ObjCBlockImpl> pointer,
-              {bool retain = false, bool release = false}) =>
-          objc.ObjCBlock<
-                  ffi.Pointer<objc.ObjCObject> Function(ffi.Pointer<ffi.Void>)>(
-              pointer,
-              retain: retain,
-              release: release);
+  static objc.ObjCBlock<
+    ffi.Pointer<objc.ObjCObject> Function(ffi.Pointer<ffi.Void>)
+  >
+  castFromPointer(
+    ffi.Pointer<objc.ObjCBlockImpl> pointer, {
+    bool retain = false,
+    bool release = false,
+  }) =>
+      objc.ObjCBlock<
+        ffi.Pointer<objc.ObjCObject> Function(ffi.Pointer<ffi.Void>)
+      >(pointer, retain: retain, release: release);
 
   /// Creates a block from a C function pointer.
   ///
   /// This block must be invoked by native code running on the same thread as
   /// the isolate that registered it. Invoking the block on the wrong thread
   /// will result in a crash.
-  static objc.ObjCBlock<ffi.Pointer<objc.ObjCObject> Function(ffi.Pointer<ffi.Void>)>
-      fromFunctionPointer(
-              ffi.Pointer<
-                      ffi.NativeFunction<
-                          ffi.Pointer<objc.ObjCObject> Function(
-                              ffi.Pointer<ffi.Void> arg0)>>
-                  ptr) =>
-          objc.ObjCBlock<ffi.Pointer<objc.ObjCObject> Function(ffi.Pointer<ffi.Void>)>(
-              objc.newPointerBlock(_ObjCBlock_objcObjCObject_ffiVoid_fnPtrCallable, ptr.cast()),
-              retain: false,
-              release: true);
+  static objc.ObjCBlock<
+    ffi.Pointer<objc.ObjCObject> Function(ffi.Pointer<ffi.Void>)
+  >
+  fromFunctionPointer(
+    ffi.Pointer<
+      ffi.NativeFunction<
+        ffi.Pointer<objc.ObjCObject> Function(ffi.Pointer<ffi.Void> arg0)
+      >
+    >
+    ptr,
+  ) =>
+      objc.ObjCBlock<
+        ffi.Pointer<objc.ObjCObject> Function(ffi.Pointer<ffi.Void>)
+      >(
+        objc.newPointerBlock(
+          _ObjCBlock_objcObjCObject_ffiVoid_fnPtrCallable,
+          ptr.cast(),
+        ),
+        retain: false,
+        release: true,
+      );
 
   /// Creates a block from a Dart function.
   ///
@@ -191,37 +252,51 @@ abstract final class ObjCBlock_objcObjCObject_ffiVoid {
   ///
   /// If `keepIsolateAlive` is true, this block will keep this isolate alive
   /// until it is garbage collected by both Dart and ObjC.
-  static objc
-      .ObjCBlock<ffi.Pointer<objc.ObjCObject> Function(ffi.Pointer<ffi.Void>)>
-      fromFunction(objc.ObjCObjectBase Function(ffi.Pointer<ffi.Void>) fn,
-              {bool keepIsolateAlive = true}) =>
-          objc.ObjCBlock<
-                  ffi.Pointer<objc.ObjCObject> Function(ffi.Pointer<ffi.Void>)>(
-              objc.newClosureBlock(
-                  _ObjCBlock_objcObjCObject_ffiVoid_closureCallable,
-                  (ffi.Pointer<ffi.Void> arg0) =>
-                      fn(arg0).ref.retainAndAutorelease(),
-                  keepIsolateAlive),
-              retain: false,
-              release: true);
+  static objc.ObjCBlock<
+    ffi.Pointer<objc.ObjCObject> Function(ffi.Pointer<ffi.Void>)
+  >
+  fromFunction(
+    objc.ObjCObjectBase Function(ffi.Pointer<ffi.Void>) fn, {
+    bool keepIsolateAlive = true,
+  }) =>
+      objc.ObjCBlock<
+        ffi.Pointer<objc.ObjCObject> Function(ffi.Pointer<ffi.Void>)
+      >(
+        objc.newClosureBlock(
+          _ObjCBlock_objcObjCObject_ffiVoid_closureCallable,
+          (ffi.Pointer<ffi.Void> arg0) => fn(arg0).ref.retainAndAutorelease(),
+          keepIsolateAlive,
+        ),
+        retain: false,
+        release: true,
+      );
 }
 
 /// Call operator for `objc.ObjCBlock<ffi.Pointer<objc.ObjCObject> Function(ffi.Pointer<ffi.Void>)>`.
-extension ObjCBlock_objcObjCObject_ffiVoid_CallExtension on objc
-    .ObjCBlock<ffi.Pointer<objc.ObjCObject> Function(ffi.Pointer<ffi.Void>)> {
+extension ObjCBlock_objcObjCObject_ffiVoid_CallExtension
+    on
+        objc.ObjCBlock<
+          ffi.Pointer<objc.ObjCObject> Function(ffi.Pointer<ffi.Void>)
+        > {
   objc.ObjCObjectBase call(ffi.Pointer<ffi.Void> arg0) => objc.ObjCObjectBase(
-      ref.pointer.ref.invoke
-          .cast<
-              ffi.NativeFunction<
-                  ffi.Pointer<objc.ObjCObject> Function(
-                      ffi.Pointer<objc.ObjCBlockImpl> block,
-                      ffi.Pointer<ffi.Void> arg0)>>()
-          .asFunction<
-              ffi.Pointer<objc.ObjCObject> Function(
-                  ffi.Pointer<objc.ObjCBlockImpl>,
-                  ffi.Pointer<ffi.Void>)>()(ref.pointer, arg0),
-      retain: true,
-      release: true);
+    ref.pointer.ref.invoke
+        .cast<
+          ffi.NativeFunction<
+            ffi.Pointer<objc.ObjCObject> Function(
+              ffi.Pointer<objc.ObjCBlockImpl> block,
+              ffi.Pointer<ffi.Void> arg0,
+            )
+          >
+        >()
+        .asFunction<
+          ffi.Pointer<objc.ObjCObject> Function(
+            ffi.Pointer<objc.ObjCBlockImpl>,
+            ffi.Pointer<ffi.Void>,
+          )
+        >()(ref.pointer, arg0),
+    retain: true,
+    release: true,
+  );
 }
 
 late final _sel_retain = objc.registerName("retain");
@@ -237,56 +312,77 @@ late final _sel_autorelease = objc.registerName("autorelease");
 /// macOS: introduced 16.0.0
 class NIAllNullableTypesWithoutRecursionBridge extends objc.NSObject {
   NIAllNullableTypesWithoutRecursionBridge._(
-      ffi.Pointer<objc.ObjCObject> pointer,
-      {bool retain = false,
-      bool release = false})
-      : super.castFromPointer(pointer, retain: retain, release: release) {
-    objc.checkOsVersionInternal('NIAllNullableTypesWithoutRecursionBridge',
-        iOS: (false, (13, 0, 0)), macOS: (false, (16, 0, 0)));
+    ffi.Pointer<objc.ObjCObject> pointer, {
+    bool retain = false,
+    bool release = false,
+  }) : super.castFromPointer(pointer, retain: retain, release: release) {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesWithoutRecursionBridge',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
   }
 
   /// Constructs a [NIAllNullableTypesWithoutRecursionBridge] that points to the same underlying object as [other].
   NIAllNullableTypesWithoutRecursionBridge.castFrom(objc.ObjCObjectBase other)
-      : this._(other.ref.pointer, retain: true, release: true);
+    : this._(other.ref.pointer, retain: true, release: true);
 
   /// Constructs a [NIAllNullableTypesWithoutRecursionBridge] that wraps the given raw object pointer.
   NIAllNullableTypesWithoutRecursionBridge.castFromPointer(
-      ffi.Pointer<objc.ObjCObject> other,
-      {bool retain = false,
-      bool release = false})
-      : this._(other, retain: retain, release: release);
+    ffi.Pointer<objc.ObjCObject> other, {
+    bool retain = false,
+    bool release = false,
+  }) : this._(other, retain: retain, release: release);
 
   /// Returns whether [obj] is an instance of [NIAllNullableTypesWithoutRecursionBridge].
   static bool isInstance(objc.ObjCObjectBase obj) {
-    return _objc_msgSend_19nvye5(obj.ref.pointer, _sel_isKindOfClass_,
-        _class_NIAllNullableTypesWithoutRecursionBridge);
+    return _objc_msgSend_19nvye5(
+      obj.ref.pointer,
+      _sel_isKindOfClass_,
+      _class_NIAllNullableTypesWithoutRecursionBridge,
+    );
   }
 
   /// new
   static NIAllNullableTypesWithoutRecursionBridge new$() {
     final _ret = _objc_msgSend_151sglz(
-        _class_NIAllNullableTypesWithoutRecursionBridge, _sel_new);
-    return NIAllNullableTypesWithoutRecursionBridge.castFromPointer(_ret,
-        retain: false, release: true);
+      _class_NIAllNullableTypesWithoutRecursionBridge,
+      _sel_new,
+    );
+    return NIAllNullableTypesWithoutRecursionBridge.castFromPointer(
+      _ret,
+      retain: false,
+      release: true,
+    );
   }
 
   /// allocWithZone:
   static NIAllNullableTypesWithoutRecursionBridge allocWithZone(
-      ffi.Pointer<objc.NSZone> zone) {
+    ffi.Pointer<objc.NSZone> zone,
+  ) {
     final _ret = _objc_msgSend_1cwp428(
-        _class_NIAllNullableTypesWithoutRecursionBridge,
-        _sel_allocWithZone_,
-        zone);
-    return NIAllNullableTypesWithoutRecursionBridge.castFromPointer(_ret,
-        retain: false, release: true);
+      _class_NIAllNullableTypesWithoutRecursionBridge,
+      _sel_allocWithZone_,
+      zone,
+    );
+    return NIAllNullableTypesWithoutRecursionBridge.castFromPointer(
+      _ret,
+      retain: false,
+      release: true,
+    );
   }
 
   /// alloc
   static NIAllNullableTypesWithoutRecursionBridge alloc() {
     final _ret = _objc_msgSend_151sglz(
-        _class_NIAllNullableTypesWithoutRecursionBridge, _sel_alloc);
-    return NIAllNullableTypesWithoutRecursionBridge.castFromPointer(_ret,
-        retain: false, release: true);
+      _class_NIAllNullableTypesWithoutRecursionBridge,
+      _sel_alloc,
+    );
+    return NIAllNullableTypesWithoutRecursionBridge.castFromPointer(
+      _ret,
+      retain: false,
+      release: true,
+    );
   }
 
   /// Returns a new instance of NIAllNullableTypesWithoutRecursionBridge constructed with the default `new` method.
@@ -300,44 +396,51 @@ extension NIAllNullableTypesWithoutRecursionBridge$Methods
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
   NIAllNullableTypesWithoutRecursionBridge initWithANullableBool(
-      objc.NSNumber? aNullableBool,
-      {objc.NSNumber? aNullableInt,
-      objc.NSNumber? aNullableInt64,
-      objc.NSNumber? aNullableDouble,
-      objc.NSNumber? aNullableEnum,
-      objc.NSNumber? anotherNullableEnum,
-      objc.NSString? aNullableString,
-      objc.NSObject? aNullableObject,
-      objc.NSArray? list,
-      objc.NSDictionary? map}) {
+    objc.NSNumber? aNullableBool, {
+    objc.NSNumber? aNullableInt,
+    objc.NSNumber? aNullableInt64,
+    objc.NSNumber? aNullableDouble,
+    objc.NSNumber? aNullableEnum,
+    objc.NSNumber? anotherNullableEnum,
+    objc.NSString? aNullableString,
+    objc.NSObject? aNullableObject,
+    objc.NSArray? list,
+    objc.NSDictionary? map,
+  }) {
     objc.checkOsVersionInternal(
-        'NIAllNullableTypesWithoutRecursionBridge.initWithANullableBool:aNullableInt:aNullableInt64:aNullableDouble:aNullableEnum:anotherNullableEnum:aNullableString:aNullableObject:list:map:',
-        iOS: (false, (13, 0, 0)),
-        macOS: (false, (16, 0, 0)));
+      'NIAllNullableTypesWithoutRecursionBridge.initWithANullableBool:aNullableInt:aNullableInt64:aNullableDouble:aNullableEnum:anotherNullableEnum:aNullableString:aNullableObject:list:map:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     final _ret = _objc_msgSend_l3ma9p(
-        this.ref.retainAndReturnPointer(),
-        _sel_initWithANullableBool_aNullableInt_aNullableInt64_aNullableDouble_aNullableEnum_anotherNullableEnum_aNullableString_aNullableObject_list_map_,
-        aNullableBool?.ref.pointer ?? ffi.nullptr,
-        aNullableInt?.ref.pointer ?? ffi.nullptr,
-        aNullableInt64?.ref.pointer ?? ffi.nullptr,
-        aNullableDouble?.ref.pointer ?? ffi.nullptr,
-        aNullableEnum?.ref.pointer ?? ffi.nullptr,
-        anotherNullableEnum?.ref.pointer ?? ffi.nullptr,
-        aNullableString?.ref.pointer ?? ffi.nullptr,
-        aNullableObject?.ref.pointer ?? ffi.nullptr,
-        list?.ref.pointer ?? ffi.nullptr,
-        map?.ref.pointer ?? ffi.nullptr);
-    return NIAllNullableTypesWithoutRecursionBridge.castFromPointer(_ret,
-        retain: false, release: true);
+      this.ref.retainAndReturnPointer(),
+      _sel_initWithANullableBool_aNullableInt_aNullableInt64_aNullableDouble_aNullableEnum_anotherNullableEnum_aNullableString_aNullableObject_list_map_,
+      aNullableBool?.ref.pointer ?? ffi.nullptr,
+      aNullableInt?.ref.pointer ?? ffi.nullptr,
+      aNullableInt64?.ref.pointer ?? ffi.nullptr,
+      aNullableDouble?.ref.pointer ?? ffi.nullptr,
+      aNullableEnum?.ref.pointer ?? ffi.nullptr,
+      anotherNullableEnum?.ref.pointer ?? ffi.nullptr,
+      aNullableString?.ref.pointer ?? ffi.nullptr,
+      aNullableObject?.ref.pointer ?? ffi.nullptr,
+      list?.ref.pointer ?? ffi.nullptr,
+      map?.ref.pointer ?? ffi.nullptr,
+    );
+    return NIAllNullableTypesWithoutRecursionBridge.castFromPointer(
+      _ret,
+      retain: false,
+      release: true,
+    );
   }
 
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
   objc.NSNumber? get aNullableBool {
     objc.checkOsVersionInternal(
-        'NIAllNullableTypesWithoutRecursionBridge.aNullableBool',
-        iOS: (false, (13, 0, 0)),
-        macOS: (false, (16, 0, 0)));
+      'NIAllNullableTypesWithoutRecursionBridge.aNullableBool',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_aNullableBool);
     return _ret.address == 0
         ? null
@@ -348,20 +451,25 @@ extension NIAllNullableTypesWithoutRecursionBridge$Methods
   /// macOS: introduced 16.0.0
   set aNullableBool(objc.NSNumber? value) {
     objc.checkOsVersionInternal(
-        'NIAllNullableTypesWithoutRecursionBridge.setANullableBool:',
-        iOS: (false, (13, 0, 0)),
-        macOS: (false, (16, 0, 0)));
-    _objc_msgSend_xtuoz7(this.ref.pointer, _sel_setANullableBool_,
-        value?.ref.pointer ?? ffi.nullptr);
+      'NIAllNullableTypesWithoutRecursionBridge.setANullableBool:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_xtuoz7(
+      this.ref.pointer,
+      _sel_setANullableBool_,
+      value?.ref.pointer ?? ffi.nullptr,
+    );
   }
 
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
   objc.NSNumber? get aNullableInt {
     objc.checkOsVersionInternal(
-        'NIAllNullableTypesWithoutRecursionBridge.aNullableInt',
-        iOS: (false, (13, 0, 0)),
-        macOS: (false, (16, 0, 0)));
+      'NIAllNullableTypesWithoutRecursionBridge.aNullableInt',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_aNullableInt);
     return _ret.address == 0
         ? null
@@ -372,20 +480,25 @@ extension NIAllNullableTypesWithoutRecursionBridge$Methods
   /// macOS: introduced 16.0.0
   set aNullableInt(objc.NSNumber? value) {
     objc.checkOsVersionInternal(
-        'NIAllNullableTypesWithoutRecursionBridge.setANullableInt:',
-        iOS: (false, (13, 0, 0)),
-        macOS: (false, (16, 0, 0)));
-    _objc_msgSend_xtuoz7(this.ref.pointer, _sel_setANullableInt_,
-        value?.ref.pointer ?? ffi.nullptr);
+      'NIAllNullableTypesWithoutRecursionBridge.setANullableInt:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_xtuoz7(
+      this.ref.pointer,
+      _sel_setANullableInt_,
+      value?.ref.pointer ?? ffi.nullptr,
+    );
   }
 
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
   objc.NSNumber? get aNullableInt64 {
     objc.checkOsVersionInternal(
-        'NIAllNullableTypesWithoutRecursionBridge.aNullableInt64',
-        iOS: (false, (13, 0, 0)),
-        macOS: (false, (16, 0, 0)));
+      'NIAllNullableTypesWithoutRecursionBridge.aNullableInt64',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_aNullableInt64);
     return _ret.address == 0
         ? null
@@ -396,20 +509,25 @@ extension NIAllNullableTypesWithoutRecursionBridge$Methods
   /// macOS: introduced 16.0.0
   set aNullableInt64(objc.NSNumber? value) {
     objc.checkOsVersionInternal(
-        'NIAllNullableTypesWithoutRecursionBridge.setANullableInt64:',
-        iOS: (false, (13, 0, 0)),
-        macOS: (false, (16, 0, 0)));
-    _objc_msgSend_xtuoz7(this.ref.pointer, _sel_setANullableInt64_,
-        value?.ref.pointer ?? ffi.nullptr);
+      'NIAllNullableTypesWithoutRecursionBridge.setANullableInt64:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_xtuoz7(
+      this.ref.pointer,
+      _sel_setANullableInt64_,
+      value?.ref.pointer ?? ffi.nullptr,
+    );
   }
 
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
   objc.NSNumber? get aNullableDouble {
     objc.checkOsVersionInternal(
-        'NIAllNullableTypesWithoutRecursionBridge.aNullableDouble',
-        iOS: (false, (13, 0, 0)),
-        macOS: (false, (16, 0, 0)));
+      'NIAllNullableTypesWithoutRecursionBridge.aNullableDouble',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_aNullableDouble);
     return _ret.address == 0
         ? null
@@ -420,20 +538,25 @@ extension NIAllNullableTypesWithoutRecursionBridge$Methods
   /// macOS: introduced 16.0.0
   set aNullableDouble(objc.NSNumber? value) {
     objc.checkOsVersionInternal(
-        'NIAllNullableTypesWithoutRecursionBridge.setANullableDouble:',
-        iOS: (false, (13, 0, 0)),
-        macOS: (false, (16, 0, 0)));
-    _objc_msgSend_xtuoz7(this.ref.pointer, _sel_setANullableDouble_,
-        value?.ref.pointer ?? ffi.nullptr);
+      'NIAllNullableTypesWithoutRecursionBridge.setANullableDouble:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_xtuoz7(
+      this.ref.pointer,
+      _sel_setANullableDouble_,
+      value?.ref.pointer ?? ffi.nullptr,
+    );
   }
 
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
   objc.NSNumber? get aNullableEnum {
     objc.checkOsVersionInternal(
-        'NIAllNullableTypesWithoutRecursionBridge.aNullableEnum',
-        iOS: (false, (13, 0, 0)),
-        macOS: (false, (16, 0, 0)));
+      'NIAllNullableTypesWithoutRecursionBridge.aNullableEnum',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_aNullableEnum);
     return _ret.address == 0
         ? null
@@ -444,22 +567,29 @@ extension NIAllNullableTypesWithoutRecursionBridge$Methods
   /// macOS: introduced 16.0.0
   set aNullableEnum(objc.NSNumber? value) {
     objc.checkOsVersionInternal(
-        'NIAllNullableTypesWithoutRecursionBridge.setANullableEnum:',
-        iOS: (false, (13, 0, 0)),
-        macOS: (false, (16, 0, 0)));
-    _objc_msgSend_xtuoz7(this.ref.pointer, _sel_setANullableEnum_,
-        value?.ref.pointer ?? ffi.nullptr);
+      'NIAllNullableTypesWithoutRecursionBridge.setANullableEnum:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_xtuoz7(
+      this.ref.pointer,
+      _sel_setANullableEnum_,
+      value?.ref.pointer ?? ffi.nullptr,
+    );
   }
 
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
   objc.NSNumber? get anotherNullableEnum {
     objc.checkOsVersionInternal(
-        'NIAllNullableTypesWithoutRecursionBridge.anotherNullableEnum',
-        iOS: (false, (13, 0, 0)),
-        macOS: (false, (16, 0, 0)));
-    final _ret =
-        _objc_msgSend_151sglz(this.ref.pointer, _sel_anotherNullableEnum);
+      'NIAllNullableTypesWithoutRecursionBridge.anotherNullableEnum',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    final _ret = _objc_msgSend_151sglz(
+      this.ref.pointer,
+      _sel_anotherNullableEnum,
+    );
     return _ret.address == 0
         ? null
         : objc.NSNumber.castFromPointer(_ret, retain: true, release: true);
@@ -469,20 +599,25 @@ extension NIAllNullableTypesWithoutRecursionBridge$Methods
   /// macOS: introduced 16.0.0
   set anotherNullableEnum(objc.NSNumber? value) {
     objc.checkOsVersionInternal(
-        'NIAllNullableTypesWithoutRecursionBridge.setAnotherNullableEnum:',
-        iOS: (false, (13, 0, 0)),
-        macOS: (false, (16, 0, 0)));
-    _objc_msgSend_xtuoz7(this.ref.pointer, _sel_setAnotherNullableEnum_,
-        value?.ref.pointer ?? ffi.nullptr);
+      'NIAllNullableTypesWithoutRecursionBridge.setAnotherNullableEnum:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_xtuoz7(
+      this.ref.pointer,
+      _sel_setAnotherNullableEnum_,
+      value?.ref.pointer ?? ffi.nullptr,
+    );
   }
 
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
   objc.NSString? get aNullableString {
     objc.checkOsVersionInternal(
-        'NIAllNullableTypesWithoutRecursionBridge.aNullableString',
-        iOS: (false, (13, 0, 0)),
-        macOS: (false, (16, 0, 0)));
+      'NIAllNullableTypesWithoutRecursionBridge.aNullableString',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_aNullableString);
     return _ret.address == 0
         ? null
@@ -493,20 +628,25 @@ extension NIAllNullableTypesWithoutRecursionBridge$Methods
   /// macOS: introduced 16.0.0
   set aNullableString(objc.NSString? value) {
     objc.checkOsVersionInternal(
-        'NIAllNullableTypesWithoutRecursionBridge.setANullableString:',
-        iOS: (false, (13, 0, 0)),
-        macOS: (false, (16, 0, 0)));
-    _objc_msgSend_xtuoz7(this.ref.pointer, _sel_setANullableString_,
-        value?.ref.pointer ?? ffi.nullptr);
+      'NIAllNullableTypesWithoutRecursionBridge.setANullableString:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_xtuoz7(
+      this.ref.pointer,
+      _sel_setANullableString_,
+      value?.ref.pointer ?? ffi.nullptr,
+    );
   }
 
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
   objc.NSObject? get aNullableObject {
     objc.checkOsVersionInternal(
-        'NIAllNullableTypesWithoutRecursionBridge.aNullableObject',
-        iOS: (false, (13, 0, 0)),
-        macOS: (false, (16, 0, 0)));
+      'NIAllNullableTypesWithoutRecursionBridge.aNullableObject',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_aNullableObject);
     return _ret.address == 0
         ? null
@@ -517,18 +657,25 @@ extension NIAllNullableTypesWithoutRecursionBridge$Methods
   /// macOS: introduced 16.0.0
   set aNullableObject(objc.NSObject? value) {
     objc.checkOsVersionInternal(
-        'NIAllNullableTypesWithoutRecursionBridge.setANullableObject:',
-        iOS: (false, (13, 0, 0)),
-        macOS: (false, (16, 0, 0)));
-    _objc_msgSend_xtuoz7(this.ref.pointer, _sel_setANullableObject_,
-        value?.ref.pointer ?? ffi.nullptr);
+      'NIAllNullableTypesWithoutRecursionBridge.setANullableObject:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_xtuoz7(
+      this.ref.pointer,
+      _sel_setANullableObject_,
+      value?.ref.pointer ?? ffi.nullptr,
+    );
   }
 
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
   objc.NSArray? get list {
-    objc.checkOsVersionInternal('NIAllNullableTypesWithoutRecursionBridge.list',
-        iOS: (false, (13, 0, 0)), macOS: (false, (16, 0, 0)));
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesWithoutRecursionBridge.list',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_list);
     return _ret.address == 0
         ? null
@@ -539,18 +686,25 @@ extension NIAllNullableTypesWithoutRecursionBridge$Methods
   /// macOS: introduced 16.0.0
   set list(objc.NSArray? value) {
     objc.checkOsVersionInternal(
-        'NIAllNullableTypesWithoutRecursionBridge.setList:',
-        iOS: (false, (13, 0, 0)),
-        macOS: (false, (16, 0, 0)));
+      'NIAllNullableTypesWithoutRecursionBridge.setList:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     _objc_msgSend_xtuoz7(
-        this.ref.pointer, _sel_setList_, value?.ref.pointer ?? ffi.nullptr);
+      this.ref.pointer,
+      _sel_setList_,
+      value?.ref.pointer ?? ffi.nullptr,
+    );
   }
 
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
   objc.NSDictionary? get map {
-    objc.checkOsVersionInternal('NIAllNullableTypesWithoutRecursionBridge.map',
-        iOS: (false, (13, 0, 0)), macOS: (false, (16, 0, 0)));
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesWithoutRecursionBridge.map',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_map);
     return _ret.address == 0
         ? null
@@ -561,47 +715,69 @@ extension NIAllNullableTypesWithoutRecursionBridge$Methods
   /// macOS: introduced 16.0.0
   set map(objc.NSDictionary? value) {
     objc.checkOsVersionInternal(
-        'NIAllNullableTypesWithoutRecursionBridge.setMap:',
-        iOS: (false, (13, 0, 0)),
-        macOS: (false, (16, 0, 0)));
+      'NIAllNullableTypesWithoutRecursionBridge.setMap:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     _objc_msgSend_xtuoz7(
-        this.ref.pointer, _sel_setMap_, value?.ref.pointer ?? ffi.nullptr);
+      this.ref.pointer,
+      _sel_setMap_,
+      value?.ref.pointer ?? ffi.nullptr,
+    );
   }
 
   /// init
   NIAllNullableTypesWithoutRecursionBridge init() {
-    objc.checkOsVersionInternal('NIAllNullableTypesWithoutRecursionBridge.init',
-        iOS: (false, (2, 0, 0)), macOS: (false, (10, 0, 0)));
-    final _ret =
-        _objc_msgSend_151sglz(this.ref.retainAndReturnPointer(), _sel_init);
-    return NIAllNullableTypesWithoutRecursionBridge.castFromPointer(_ret,
-        retain: false, release: true);
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesWithoutRecursionBridge.init',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    final _ret = _objc_msgSend_151sglz(
+      this.ref.retainAndReturnPointer(),
+      _sel_init,
+    );
+    return NIAllNullableTypesWithoutRecursionBridge.castFromPointer(
+      _ret,
+      retain: false,
+      release: true,
+    );
   }
 
   /// self
   NIAllNullableTypesWithoutRecursionBridge self() {
     final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_self);
-    return NIAllNullableTypesWithoutRecursionBridge.castFromPointer(_ret,
-        retain: true, release: true);
+    return NIAllNullableTypesWithoutRecursionBridge.castFromPointer(
+      _ret,
+      retain: true,
+      release: true,
+    );
   }
 
   /// retain
   NIAllNullableTypesWithoutRecursionBridge retain() {
     final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_retain);
-    return NIAllNullableTypesWithoutRecursionBridge.castFromPointer(_ret,
-        retain: true, release: true);
+    return NIAllNullableTypesWithoutRecursionBridge.castFromPointer(
+      _ret,
+      retain: true,
+      release: true,
+    );
   }
 
   /// autorelease
   NIAllNullableTypesWithoutRecursionBridge autorelease() {
     final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_autorelease);
-    return NIAllNullableTypesWithoutRecursionBridge.castFromPointer(_ret,
-        retain: true, release: true);
+    return NIAllNullableTypesWithoutRecursionBridge.castFromPointer(
+      _ret,
+      retain: true,
+      release: true,
+    );
   }
 }
 
-late final _class_NIAllTypesBridge =
-    objc.getClass("test_plugin.NIAllTypesBridge");
+late final _class_NIAllTypesBridge = objc.getClass(
+  "test_plugin.NIAllTypesBridge",
+);
 
 enum NIAnEnum {
   NIAnEnumOne(0),
@@ -614,13 +790,13 @@ enum NIAnEnum {
   const NIAnEnum(this.value);
 
   static NIAnEnum fromValue(int value) => switch (value) {
-        0 => NIAnEnumOne,
-        1 => NIAnEnumTwo,
-        2 => NIAnEnumThree,
-        3 => NIAnEnumFortyTwo,
-        4 => NIAnEnumFourHundredTwentyTwo,
-        _ => throw ArgumentError('Unknown value for NIAnEnum: $value'),
-      };
+    0 => NIAnEnumOne,
+    1 => NIAnEnumTwo,
+    2 => NIAnEnumThree,
+    3 => NIAnEnumFortyTwo,
+    4 => NIAnEnumFourHundredTwentyTwo,
+    _ => throw ArgumentError('Unknown value for NIAnEnum: $value'),
+  };
 }
 
 enum NIAnotherEnum {
@@ -630,154 +806,238 @@ enum NIAnotherEnum {
   const NIAnotherEnum(this.value);
 
   static NIAnotherEnum fromValue(int value) => switch (value) {
-        0 => NIAnotherEnumJustInCase,
-        _ => throw ArgumentError('Unknown value for NIAnotherEnum: $value'),
-      };
+    0 => NIAnotherEnumJustInCase,
+    _ => throw ArgumentError('Unknown value for NIAnotherEnum: $value'),
+  };
 }
 
 late final _sel_initWithABool_anInt_anInt64_aDouble_anEnum_anotherEnum_aString_anObject_list_stringList_intList_doubleList_boolList_map_stringMap_ =
     objc.registerName(
-        "initWithABool:anInt:anInt64:aDouble:anEnum:anotherEnum:aString:anObject:list:stringList:intList:doubleList:boolList:map:stringMap:");
+      "initWithABool:anInt:anInt64:aDouble:anEnum:anotherEnum:aString:anObject:list:stringList:intList:doubleList:boolList:map:stringMap:",
+    );
 final _objc_msgSend_4bkl1o = objc.msgSendPointer
     .cast<
-        ffi.NativeFunction<
-            ffi.Pointer<objc.ObjCObject> Function(
-                ffi.Pointer<objc.ObjCObject>,
-                ffi.Pointer<objc.ObjCSelector>,
-                ffi.Bool,
-                ffi.Int64,
-                ffi.Int64,
-                ffi.Double,
-                ffi.Long,
-                ffi.Long,
-                ffi.Pointer<objc.ObjCObject>,
-                ffi.Pointer<objc.ObjCObject>,
-                ffi.Pointer<objc.ObjCObject>,
-                ffi.Pointer<objc.ObjCObject>,
-                ffi.Pointer<objc.ObjCObject>,
-                ffi.Pointer<objc.ObjCObject>,
-                ffi.Pointer<objc.ObjCObject>,
-                ffi.Pointer<objc.ObjCObject>,
-                ffi.Pointer<objc.ObjCObject>)>>()
-    .asFunction<
+      ffi.NativeFunction<
         ffi.Pointer<objc.ObjCObject> Function(
-            ffi.Pointer<objc.ObjCObject>,
-            ffi.Pointer<objc.ObjCSelector>,
-            bool,
-            int,
-            int,
-            double,
-            int,
-            int,
-            ffi.Pointer<objc.ObjCObject>,
-            ffi.Pointer<objc.ObjCObject>,
-            ffi.Pointer<objc.ObjCObject>,
-            ffi.Pointer<objc.ObjCObject>,
-            ffi.Pointer<objc.ObjCObject>,
-            ffi.Pointer<objc.ObjCObject>,
-            ffi.Pointer<objc.ObjCObject>,
-            ffi.Pointer<objc.ObjCObject>,
-            ffi.Pointer<objc.ObjCObject>)>();
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Bool,
+          ffi.Int64,
+          ffi.Int64,
+          ffi.Double,
+          ffi.Long,
+          ffi.Long,
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCObject>,
+        )
+      >
+    >()
+    .asFunction<
+      ffi.Pointer<objc.ObjCObject> Function(
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCSelector>,
+        bool,
+        int,
+        int,
+        double,
+        int,
+        int,
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCObject>,
+      )
+    >();
 late final _sel_aBool = objc.registerName("aBool");
 final _objc_msgSend_91o635 = objc.msgSendPointer
     .cast<
-        ffi.NativeFunction<
-            ffi.Bool Function(ffi.Pointer<objc.ObjCObject>,
-                ffi.Pointer<objc.ObjCSelector>)>>()
+      ffi.NativeFunction<
+        ffi.Bool Function(
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCSelector>,
+        )
+      >
+    >()
     .asFunction<
-        bool Function(
-            ffi.Pointer<objc.ObjCObject>, ffi.Pointer<objc.ObjCSelector>)>();
+      bool Function(
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCSelector>,
+      )
+    >();
 late final _sel_setABool_ = objc.registerName("setABool:");
 final _objc_msgSend_1s56lr9 = objc.msgSendPointer
     .cast<
-        ffi.NativeFunction<
-            ffi.Void Function(ffi.Pointer<objc.ObjCObject>,
-                ffi.Pointer<objc.ObjCSelector>, ffi.Bool)>>()
+      ffi.NativeFunction<
+        ffi.Void Function(
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Bool,
+        )
+      >
+    >()
     .asFunction<
-        void Function(ffi.Pointer<objc.ObjCObject>,
-            ffi.Pointer<objc.ObjCSelector>, bool)>();
+      void Function(
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCSelector>,
+        bool,
+      )
+    >();
 late final _sel_anInt = objc.registerName("anInt");
 final _objc_msgSend_pysgoz = objc.msgSendPointer
     .cast<
-        ffi.NativeFunction<
-            ffi.Int64 Function(ffi.Pointer<objc.ObjCObject>,
-                ffi.Pointer<objc.ObjCSelector>)>>()
+      ffi.NativeFunction<
+        ffi.Int64 Function(
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCSelector>,
+        )
+      >
+    >()
     .asFunction<
-        int Function(
-            ffi.Pointer<objc.ObjCObject>, ffi.Pointer<objc.ObjCSelector>)>();
+      int Function(ffi.Pointer<objc.ObjCObject>, ffi.Pointer<objc.ObjCSelector>)
+    >();
 late final _sel_setAnInt_ = objc.registerName("setAnInt:");
 final _objc_msgSend_17gvxvj = objc.msgSendPointer
     .cast<
-        ffi.NativeFunction<
-            ffi.Void Function(ffi.Pointer<objc.ObjCObject>,
-                ffi.Pointer<objc.ObjCSelector>, ffi.Int64)>>()
+      ffi.NativeFunction<
+        ffi.Void Function(
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Int64,
+        )
+      >
+    >()
     .asFunction<
-        void Function(ffi.Pointer<objc.ObjCObject>,
-            ffi.Pointer<objc.ObjCSelector>, int)>();
+      void Function(
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCSelector>,
+        int,
+      )
+    >();
 late final _sel_anInt64 = objc.registerName("anInt64");
 late final _sel_setAnInt64_ = objc.registerName("setAnInt64:");
 late final _sel_aDouble = objc.registerName("aDouble");
 final _objc_msgSend_1ukqyt8 = objc.msgSendPointer
     .cast<
-        ffi.NativeFunction<
-            ffi.Double Function(ffi.Pointer<objc.ObjCObject>,
-                ffi.Pointer<objc.ObjCSelector>)>>()
+      ffi.NativeFunction<
+        ffi.Double Function(
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCSelector>,
+        )
+      >
+    >()
     .asFunction<
-        double Function(
-            ffi.Pointer<objc.ObjCObject>, ffi.Pointer<objc.ObjCSelector>)>();
+      double Function(
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCSelector>,
+      )
+    >();
 final _objc_msgSend_1ukqyt8Fpret = objc.msgSendFpretPointer
     .cast<
-        ffi.NativeFunction<
-            ffi.Double Function(ffi.Pointer<objc.ObjCObject>,
-                ffi.Pointer<objc.ObjCSelector>)>>()
+      ffi.NativeFunction<
+        ffi.Double Function(
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCSelector>,
+        )
+      >
+    >()
     .asFunction<
-        double Function(
-            ffi.Pointer<objc.ObjCObject>, ffi.Pointer<objc.ObjCSelector>)>();
+      double Function(
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCSelector>,
+      )
+    >();
 late final _sel_setADouble_ = objc.registerName("setADouble:");
 final _objc_msgSend_hwm8nu = objc.msgSendPointer
     .cast<
-        ffi.NativeFunction<
-            ffi.Void Function(ffi.Pointer<objc.ObjCObject>,
-                ffi.Pointer<objc.ObjCSelector>, ffi.Double)>>()
+      ffi.NativeFunction<
+        ffi.Void Function(
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Double,
+        )
+      >
+    >()
     .asFunction<
-        void Function(ffi.Pointer<objc.ObjCObject>,
-            ffi.Pointer<objc.ObjCSelector>, double)>();
+      void Function(
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCSelector>,
+        double,
+      )
+    >();
 late final _sel_anEnum = objc.registerName("anEnum");
 final _objc_msgSend_d3bb7e = objc.msgSendPointer
     .cast<
-        ffi.NativeFunction<
-            ffi.Long Function(ffi.Pointer<objc.ObjCObject>,
-                ffi.Pointer<objc.ObjCSelector>)>>()
+      ffi.NativeFunction<
+        ffi.Long Function(
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCSelector>,
+        )
+      >
+    >()
     .asFunction<
-        int Function(
-            ffi.Pointer<objc.ObjCObject>, ffi.Pointer<objc.ObjCSelector>)>();
+      int Function(ffi.Pointer<objc.ObjCObject>, ffi.Pointer<objc.ObjCSelector>)
+    >();
 late final _sel_setAnEnum_ = objc.registerName("setAnEnum:");
 final _objc_msgSend_15w00rc = objc.msgSendPointer
     .cast<
-        ffi.NativeFunction<
-            ffi.Void Function(ffi.Pointer<objc.ObjCObject>,
-                ffi.Pointer<objc.ObjCSelector>, ffi.Long)>>()
+      ffi.NativeFunction<
+        ffi.Void Function(
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Long,
+        )
+      >
+    >()
     .asFunction<
-        void Function(ffi.Pointer<objc.ObjCObject>,
-            ffi.Pointer<objc.ObjCSelector>, int)>();
+      void Function(
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCSelector>,
+        int,
+      )
+    >();
 late final _sel_anotherEnum = objc.registerName("anotherEnum");
 final _objc_msgSend_1otznu6 = objc.msgSendPointer
     .cast<
-        ffi.NativeFunction<
-            ffi.Long Function(ffi.Pointer<objc.ObjCObject>,
-                ffi.Pointer<objc.ObjCSelector>)>>()
+      ffi.NativeFunction<
+        ffi.Long Function(
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCSelector>,
+        )
+      >
+    >()
     .asFunction<
-        int Function(
-            ffi.Pointer<objc.ObjCObject>, ffi.Pointer<objc.ObjCSelector>)>();
+      int Function(ffi.Pointer<objc.ObjCObject>, ffi.Pointer<objc.ObjCSelector>)
+    >();
 late final _sel_setAnotherEnum_ = objc.registerName("setAnotherEnum:");
 final _objc_msgSend_ih63eg = objc.msgSendPointer
     .cast<
-        ffi.NativeFunction<
-            ffi.Void Function(ffi.Pointer<objc.ObjCObject>,
-                ffi.Pointer<objc.ObjCSelector>, ffi.Long)>>()
+      ffi.NativeFunction<
+        ffi.Void Function(
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Long,
+        )
+      >
+    >()
     .asFunction<
-        void Function(ffi.Pointer<objc.ObjCObject>,
-            ffi.Pointer<objc.ObjCSelector>, int)>();
+      void Function(
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCSelector>,
+        int,
+      )
+    >();
 late final _sel_aString = objc.registerName("aString");
 late final _sel_setAString_ = objc.registerName("setAString:");
 late final _sel_anObject = objc.registerName("anObject");
@@ -799,26 +1059,36 @@ late final _sel_setStringMap_ = objc.registerName("setStringMap:");
 /// iOS: introduced 13.0.0
 /// macOS: introduced 16.0.0
 class NIAllTypesBridge extends objc.NSObject {
-  NIAllTypesBridge._(ffi.Pointer<objc.ObjCObject> pointer,
-      {bool retain = false, bool release = false})
-      : super.castFromPointer(pointer, retain: retain, release: release) {
-    objc.checkOsVersionInternal('NIAllTypesBridge',
-        iOS: (false, (13, 0, 0)), macOS: (false, (16, 0, 0)));
+  NIAllTypesBridge._(
+    ffi.Pointer<objc.ObjCObject> pointer, {
+    bool retain = false,
+    bool release = false,
+  }) : super.castFromPointer(pointer, retain: retain, release: release) {
+    objc.checkOsVersionInternal(
+      'NIAllTypesBridge',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
   }
 
   /// Constructs a [NIAllTypesBridge] that points to the same underlying object as [other].
   NIAllTypesBridge.castFrom(objc.ObjCObjectBase other)
-      : this._(other.ref.pointer, retain: true, release: true);
+    : this._(other.ref.pointer, retain: true, release: true);
 
   /// Constructs a [NIAllTypesBridge] that wraps the given raw object pointer.
-  NIAllTypesBridge.castFromPointer(ffi.Pointer<objc.ObjCObject> other,
-      {bool retain = false, bool release = false})
-      : this._(other, retain: retain, release: release);
+  NIAllTypesBridge.castFromPointer(
+    ffi.Pointer<objc.ObjCObject> other, {
+    bool retain = false,
+    bool release = false,
+  }) : this._(other, retain: retain, release: release);
 
   /// Returns whether [obj] is an instance of [NIAllTypesBridge].
   static bool isInstance(objc.ObjCObjectBase obj) {
     return _objc_msgSend_19nvye5(
-        obj.ref.pointer, _sel_isKindOfClass_, _class_NIAllTypesBridge);
+      obj.ref.pointer,
+      _sel_isKindOfClass_,
+      _class_NIAllTypesBridge,
+    );
   }
 
   /// new
@@ -830,7 +1100,10 @@ class NIAllTypesBridge extends objc.NSObject {
   /// allocWithZone:
   static NIAllTypesBridge allocWithZone(ffi.Pointer<objc.NSZone> zone) {
     final _ret = _objc_msgSend_1cwp428(
-        _class_NIAllTypesBridge, _sel_allocWithZone_, zone);
+      _class_NIAllTypesBridge,
+      _sel_allocWithZone_,
+      zone,
+    );
     return NIAllTypesBridge.castFromPointer(_ret, retain: false, release: true);
   }
 
@@ -849,99 +1122,124 @@ extension NIAllTypesBridge$Methods on NIAllTypesBridge {
   ///
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
-  NIAllTypesBridge initWithABool(bool aBool,
-      {required int anInt,
-      required int anInt64,
-      required double aDouble,
-      required NIAnEnum anEnum,
-      required NIAnotherEnum anotherEnum,
-      required objc.NSString aString,
-      required objc.NSObject anObject,
-      required objc.NSArray list,
-      required objc.NSArray stringList,
-      required objc.NSArray intList,
-      required objc.NSArray doubleList,
-      required objc.NSArray boolList,
-      required objc.NSDictionary map,
-      required objc.NSDictionary stringMap}) {
+  NIAllTypesBridge initWithABool(
+    bool aBool, {
+    required int anInt,
+    required int anInt64,
+    required double aDouble,
+    required NIAnEnum anEnum,
+    required NIAnotherEnum anotherEnum,
+    required objc.NSString aString,
+    required objc.NSObject anObject,
+    required objc.NSArray list,
+    required objc.NSArray stringList,
+    required objc.NSArray intList,
+    required objc.NSArray doubleList,
+    required objc.NSArray boolList,
+    required objc.NSDictionary map,
+    required objc.NSDictionary stringMap,
+  }) {
     objc.checkOsVersionInternal(
-        'NIAllTypesBridge.initWithABool:anInt:anInt64:aDouble:anEnum:anotherEnum:aString:anObject:list:stringList:intList:doubleList:boolList:map:stringMap:',
-        iOS: (false, (13, 0, 0)),
-        macOS: (false, (16, 0, 0)));
+      'NIAllTypesBridge.initWithABool:anInt:anInt64:aDouble:anEnum:anotherEnum:aString:anObject:list:stringList:intList:doubleList:boolList:map:stringMap:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     final _ret = _objc_msgSend_4bkl1o(
-        this.ref.retainAndReturnPointer(),
-        _sel_initWithABool_anInt_anInt64_aDouble_anEnum_anotherEnum_aString_anObject_list_stringList_intList_doubleList_boolList_map_stringMap_,
-        aBool,
-        anInt,
-        anInt64,
-        aDouble,
-        anEnum.value,
-        anotherEnum.value,
-        aString.ref.pointer,
-        anObject.ref.pointer,
-        list.ref.pointer,
-        stringList.ref.pointer,
-        intList.ref.pointer,
-        doubleList.ref.pointer,
-        boolList.ref.pointer,
-        map.ref.pointer,
-        stringMap.ref.pointer);
+      this.ref.retainAndReturnPointer(),
+      _sel_initWithABool_anInt_anInt64_aDouble_anEnum_anotherEnum_aString_anObject_list_stringList_intList_doubleList_boolList_map_stringMap_,
+      aBool,
+      anInt,
+      anInt64,
+      aDouble,
+      anEnum.value,
+      anotherEnum.value,
+      aString.ref.pointer,
+      anObject.ref.pointer,
+      list.ref.pointer,
+      stringList.ref.pointer,
+      intList.ref.pointer,
+      doubleList.ref.pointer,
+      boolList.ref.pointer,
+      map.ref.pointer,
+      stringMap.ref.pointer,
+    );
     return NIAllTypesBridge.castFromPointer(_ret, retain: false, release: true);
   }
 
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
   bool get aBool {
-    objc.checkOsVersionInternal('NIAllTypesBridge.aBool',
-        iOS: (false, (13, 0, 0)), macOS: (false, (16, 0, 0)));
+    objc.checkOsVersionInternal(
+      'NIAllTypesBridge.aBool',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     return _objc_msgSend_91o635(this.ref.pointer, _sel_aBool);
   }
 
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
   set aBool(bool value) {
-    objc.checkOsVersionInternal('NIAllTypesBridge.setABool:',
-        iOS: (false, (13, 0, 0)), macOS: (false, (16, 0, 0)));
+    objc.checkOsVersionInternal(
+      'NIAllTypesBridge.setABool:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     _objc_msgSend_1s56lr9(this.ref.pointer, _sel_setABool_, value);
   }
 
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
   int get anInt {
-    objc.checkOsVersionInternal('NIAllTypesBridge.anInt',
-        iOS: (false, (13, 0, 0)), macOS: (false, (16, 0, 0)));
+    objc.checkOsVersionInternal(
+      'NIAllTypesBridge.anInt',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     return _objc_msgSend_pysgoz(this.ref.pointer, _sel_anInt);
   }
 
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
   set anInt(int value) {
-    objc.checkOsVersionInternal('NIAllTypesBridge.setAnInt:',
-        iOS: (false, (13, 0, 0)), macOS: (false, (16, 0, 0)));
+    objc.checkOsVersionInternal(
+      'NIAllTypesBridge.setAnInt:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     _objc_msgSend_17gvxvj(this.ref.pointer, _sel_setAnInt_, value);
   }
 
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
   int get anInt64 {
-    objc.checkOsVersionInternal('NIAllTypesBridge.anInt64',
-        iOS: (false, (13, 0, 0)), macOS: (false, (16, 0, 0)));
+    objc.checkOsVersionInternal(
+      'NIAllTypesBridge.anInt64',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     return _objc_msgSend_pysgoz(this.ref.pointer, _sel_anInt64);
   }
 
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
   set anInt64(int value) {
-    objc.checkOsVersionInternal('NIAllTypesBridge.setAnInt64:',
-        iOS: (false, (13, 0, 0)), macOS: (false, (16, 0, 0)));
+    objc.checkOsVersionInternal(
+      'NIAllTypesBridge.setAnInt64:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     _objc_msgSend_17gvxvj(this.ref.pointer, _sel_setAnInt64_, value);
   }
 
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
   double get aDouble {
-    objc.checkOsVersionInternal('NIAllTypesBridge.aDouble',
-        iOS: (false, (13, 0, 0)), macOS: (false, (16, 0, 0)));
+    objc.checkOsVersionInternal(
+      'NIAllTypesBridge.aDouble',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     return objc.useMsgSendVariants
         ? _objc_msgSend_1ukqyt8Fpret(this.ref.pointer, _sel_aDouble)
         : _objc_msgSend_1ukqyt8(this.ref.pointer, _sel_aDouble);
@@ -950,16 +1248,22 @@ extension NIAllTypesBridge$Methods on NIAllTypesBridge {
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
   set aDouble(double value) {
-    objc.checkOsVersionInternal('NIAllTypesBridge.setADouble:',
-        iOS: (false, (13, 0, 0)), macOS: (false, (16, 0, 0)));
+    objc.checkOsVersionInternal(
+      'NIAllTypesBridge.setADouble:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     _objc_msgSend_hwm8nu(this.ref.pointer, _sel_setADouble_, value);
   }
 
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
   NIAnEnum get anEnum {
-    objc.checkOsVersionInternal('NIAllTypesBridge.anEnum',
-        iOS: (false, (13, 0, 0)), macOS: (false, (16, 0, 0)));
+    objc.checkOsVersionInternal(
+      'NIAllTypesBridge.anEnum',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     final _ret = _objc_msgSend_d3bb7e(this.ref.pointer, _sel_anEnum);
     return NIAnEnum.fromValue(_ret);
   }
@@ -967,16 +1271,22 @@ extension NIAllTypesBridge$Methods on NIAllTypesBridge {
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
   set anEnum(NIAnEnum value) {
-    objc.checkOsVersionInternal('NIAllTypesBridge.setAnEnum:',
-        iOS: (false, (13, 0, 0)), macOS: (false, (16, 0, 0)));
+    objc.checkOsVersionInternal(
+      'NIAllTypesBridge.setAnEnum:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     _objc_msgSend_15w00rc(this.ref.pointer, _sel_setAnEnum_, value.value);
   }
 
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
   NIAnotherEnum get anotherEnum {
-    objc.checkOsVersionInternal('NIAllTypesBridge.anotherEnum',
-        iOS: (false, (13, 0, 0)), macOS: (false, (16, 0, 0)));
+    objc.checkOsVersionInternal(
+      'NIAllTypesBridge.anotherEnum',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     final _ret = _objc_msgSend_1otznu6(this.ref.pointer, _sel_anotherEnum);
     return NIAnotherEnum.fromValue(_ret);
   }
@@ -984,16 +1294,22 @@ extension NIAllTypesBridge$Methods on NIAllTypesBridge {
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
   set anotherEnum(NIAnotherEnum value) {
-    objc.checkOsVersionInternal('NIAllTypesBridge.setAnotherEnum:',
-        iOS: (false, (13, 0, 0)), macOS: (false, (16, 0, 0)));
+    objc.checkOsVersionInternal(
+      'NIAllTypesBridge.setAnotherEnum:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     _objc_msgSend_ih63eg(this.ref.pointer, _sel_setAnotherEnum_, value.value);
   }
 
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
   objc.NSString get aString {
-    objc.checkOsVersionInternal('NIAllTypesBridge.aString',
-        iOS: (false, (13, 0, 0)), macOS: (false, (16, 0, 0)));
+    objc.checkOsVersionInternal(
+      'NIAllTypesBridge.aString',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_aString);
     return objc.NSString.castFromPointer(_ret, retain: true, release: true);
   }
@@ -1001,16 +1317,22 @@ extension NIAllTypesBridge$Methods on NIAllTypesBridge {
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
   set aString(objc.NSString value) {
-    objc.checkOsVersionInternal('NIAllTypesBridge.setAString:',
-        iOS: (false, (13, 0, 0)), macOS: (false, (16, 0, 0)));
+    objc.checkOsVersionInternal(
+      'NIAllTypesBridge.setAString:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     _objc_msgSend_xtuoz7(this.ref.pointer, _sel_setAString_, value.ref.pointer);
   }
 
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
   objc.NSObject get anObject {
-    objc.checkOsVersionInternal('NIAllTypesBridge.anObject',
-        iOS: (false, (13, 0, 0)), macOS: (false, (16, 0, 0)));
+    objc.checkOsVersionInternal(
+      'NIAllTypesBridge.anObject',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_anObject);
     return objc.NSObject.castFromPointer(_ret, retain: true, release: true);
   }
@@ -1018,17 +1340,26 @@ extension NIAllTypesBridge$Methods on NIAllTypesBridge {
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
   set anObject(objc.NSObject value) {
-    objc.checkOsVersionInternal('NIAllTypesBridge.setAnObject:',
-        iOS: (false, (13, 0, 0)), macOS: (false, (16, 0, 0)));
+    objc.checkOsVersionInternal(
+      'NIAllTypesBridge.setAnObject:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     _objc_msgSend_xtuoz7(
-        this.ref.pointer, _sel_setAnObject_, value.ref.pointer);
+      this.ref.pointer,
+      _sel_setAnObject_,
+      value.ref.pointer,
+    );
   }
 
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
   objc.NSArray get list {
-    objc.checkOsVersionInternal('NIAllTypesBridge.list',
-        iOS: (false, (13, 0, 0)), macOS: (false, (16, 0, 0)));
+    objc.checkOsVersionInternal(
+      'NIAllTypesBridge.list',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_list);
     return objc.NSArray.castFromPointer(_ret, retain: true, release: true);
   }
@@ -1036,16 +1367,22 @@ extension NIAllTypesBridge$Methods on NIAllTypesBridge {
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
   set list(objc.NSArray value) {
-    objc.checkOsVersionInternal('NIAllTypesBridge.setList:',
-        iOS: (false, (13, 0, 0)), macOS: (false, (16, 0, 0)));
+    objc.checkOsVersionInternal(
+      'NIAllTypesBridge.setList:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     _objc_msgSend_xtuoz7(this.ref.pointer, _sel_setList_, value.ref.pointer);
   }
 
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
   objc.NSArray get stringList {
-    objc.checkOsVersionInternal('NIAllTypesBridge.stringList',
-        iOS: (false, (13, 0, 0)), macOS: (false, (16, 0, 0)));
+    objc.checkOsVersionInternal(
+      'NIAllTypesBridge.stringList',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_stringList);
     return objc.NSArray.castFromPointer(_ret, retain: true, release: true);
   }
@@ -1053,17 +1390,26 @@ extension NIAllTypesBridge$Methods on NIAllTypesBridge {
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
   set stringList(objc.NSArray value) {
-    objc.checkOsVersionInternal('NIAllTypesBridge.setStringList:',
-        iOS: (false, (13, 0, 0)), macOS: (false, (16, 0, 0)));
+    objc.checkOsVersionInternal(
+      'NIAllTypesBridge.setStringList:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     _objc_msgSend_xtuoz7(
-        this.ref.pointer, _sel_setStringList_, value.ref.pointer);
+      this.ref.pointer,
+      _sel_setStringList_,
+      value.ref.pointer,
+    );
   }
 
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
   objc.NSArray get intList {
-    objc.checkOsVersionInternal('NIAllTypesBridge.intList',
-        iOS: (false, (13, 0, 0)), macOS: (false, (16, 0, 0)));
+    objc.checkOsVersionInternal(
+      'NIAllTypesBridge.intList',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_intList);
     return objc.NSArray.castFromPointer(_ret, retain: true, release: true);
   }
@@ -1071,16 +1417,22 @@ extension NIAllTypesBridge$Methods on NIAllTypesBridge {
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
   set intList(objc.NSArray value) {
-    objc.checkOsVersionInternal('NIAllTypesBridge.setIntList:',
-        iOS: (false, (13, 0, 0)), macOS: (false, (16, 0, 0)));
+    objc.checkOsVersionInternal(
+      'NIAllTypesBridge.setIntList:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     _objc_msgSend_xtuoz7(this.ref.pointer, _sel_setIntList_, value.ref.pointer);
   }
 
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
   objc.NSArray get doubleList {
-    objc.checkOsVersionInternal('NIAllTypesBridge.doubleList',
-        iOS: (false, (13, 0, 0)), macOS: (false, (16, 0, 0)));
+    objc.checkOsVersionInternal(
+      'NIAllTypesBridge.doubleList',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_doubleList);
     return objc.NSArray.castFromPointer(_ret, retain: true, release: true);
   }
@@ -1088,17 +1440,26 @@ extension NIAllTypesBridge$Methods on NIAllTypesBridge {
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
   set doubleList(objc.NSArray value) {
-    objc.checkOsVersionInternal('NIAllTypesBridge.setDoubleList:',
-        iOS: (false, (13, 0, 0)), macOS: (false, (16, 0, 0)));
+    objc.checkOsVersionInternal(
+      'NIAllTypesBridge.setDoubleList:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     _objc_msgSend_xtuoz7(
-        this.ref.pointer, _sel_setDoubleList_, value.ref.pointer);
+      this.ref.pointer,
+      _sel_setDoubleList_,
+      value.ref.pointer,
+    );
   }
 
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
   objc.NSArray get boolList {
-    objc.checkOsVersionInternal('NIAllTypesBridge.boolList',
-        iOS: (false, (13, 0, 0)), macOS: (false, (16, 0, 0)));
+    objc.checkOsVersionInternal(
+      'NIAllTypesBridge.boolList',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_boolList);
     return objc.NSArray.castFromPointer(_ret, retain: true, release: true);
   }
@@ -1106,17 +1467,26 @@ extension NIAllTypesBridge$Methods on NIAllTypesBridge {
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
   set boolList(objc.NSArray value) {
-    objc.checkOsVersionInternal('NIAllTypesBridge.setBoolList:',
-        iOS: (false, (13, 0, 0)), macOS: (false, (16, 0, 0)));
+    objc.checkOsVersionInternal(
+      'NIAllTypesBridge.setBoolList:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     _objc_msgSend_xtuoz7(
-        this.ref.pointer, _sel_setBoolList_, value.ref.pointer);
+      this.ref.pointer,
+      _sel_setBoolList_,
+      value.ref.pointer,
+    );
   }
 
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
   objc.NSDictionary get map {
-    objc.checkOsVersionInternal('NIAllTypesBridge.map',
-        iOS: (false, (13, 0, 0)), macOS: (false, (16, 0, 0)));
+    objc.checkOsVersionInternal(
+      'NIAllTypesBridge.map',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_map);
     return objc.NSDictionary.castFromPointer(_ret, retain: true, release: true);
   }
@@ -1124,16 +1494,22 @@ extension NIAllTypesBridge$Methods on NIAllTypesBridge {
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
   set map(objc.NSDictionary value) {
-    objc.checkOsVersionInternal('NIAllTypesBridge.setMap:',
-        iOS: (false, (13, 0, 0)), macOS: (false, (16, 0, 0)));
+    objc.checkOsVersionInternal(
+      'NIAllTypesBridge.setMap:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     _objc_msgSend_xtuoz7(this.ref.pointer, _sel_setMap_, value.ref.pointer);
   }
 
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
   objc.NSDictionary get stringMap {
-    objc.checkOsVersionInternal('NIAllTypesBridge.stringMap',
-        iOS: (false, (13, 0, 0)), macOS: (false, (16, 0, 0)));
+    objc.checkOsVersionInternal(
+      'NIAllTypesBridge.stringMap',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_stringMap);
     return objc.NSDictionary.castFromPointer(_ret, retain: true, release: true);
   }
@@ -1141,18 +1517,29 @@ extension NIAllTypesBridge$Methods on NIAllTypesBridge {
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
   set stringMap(objc.NSDictionary value) {
-    objc.checkOsVersionInternal('NIAllTypesBridge.setStringMap:',
-        iOS: (false, (13, 0, 0)), macOS: (false, (16, 0, 0)));
+    objc.checkOsVersionInternal(
+      'NIAllTypesBridge.setStringMap:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     _objc_msgSend_xtuoz7(
-        this.ref.pointer, _sel_setStringMap_, value.ref.pointer);
+      this.ref.pointer,
+      _sel_setStringMap_,
+      value.ref.pointer,
+    );
   }
 
   /// init
   NIAllTypesBridge init() {
-    objc.checkOsVersionInternal('NIAllTypesBridge.init',
-        iOS: (false, (2, 0, 0)), macOS: (false, (10, 0, 0)));
-    final _ret =
-        _objc_msgSend_151sglz(this.ref.retainAndReturnPointer(), _sel_init);
+    objc.checkOsVersionInternal(
+      'NIAllTypesBridge.init',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    final _ret = _objc_msgSend_151sglz(
+      this.ref.retainAndReturnPointer(),
+      _sel_init,
+    );
     return NIAllTypesBridge.castFromPointer(_ret, retain: false, release: true);
   }
 
@@ -1175,26 +1562,33 @@ extension NIAllTypesBridge$Methods on NIAllTypesBridge {
   }
 }
 
-late final _sel_initWithAllNullableTypesWithoutRecursion_allTypes_ =
-    objc.registerName("initWithAllNullableTypesWithoutRecursion:allTypes:");
+late final _sel_initWithAllNullableTypesWithoutRecursion_allTypes_ = objc
+    .registerName("initWithAllNullableTypesWithoutRecursion:allTypes:");
 final _objc_msgSend_15qeuct = objc.msgSendPointer
     .cast<
-        ffi.NativeFunction<
-            ffi.Pointer<objc.ObjCObject> Function(
-                ffi.Pointer<objc.ObjCObject>,
-                ffi.Pointer<objc.ObjCSelector>,
-                ffi.Pointer<objc.ObjCObject>,
-                ffi.Pointer<objc.ObjCObject>)>>()
-    .asFunction<
+      ffi.NativeFunction<
         ffi.Pointer<objc.ObjCObject> Function(
-            ffi.Pointer<objc.ObjCObject>,
-            ffi.Pointer<objc.ObjCSelector>,
-            ffi.Pointer<objc.ObjCObject>,
-            ffi.Pointer<objc.ObjCObject>)>();
-late final _sel_allNullableTypesWithoutRecursion =
-    objc.registerName("allNullableTypesWithoutRecursion");
-late final _sel_setAllNullableTypesWithoutRecursion_ =
-    objc.registerName("setAllNullableTypesWithoutRecursion:");
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCObject>,
+        )
+      >
+    >()
+    .asFunction<
+      ffi.Pointer<objc.ObjCObject> Function(
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCObject>,
+      )
+    >();
+late final _sel_allNullableTypesWithoutRecursion = objc.registerName(
+  "allNullableTypesWithoutRecursion",
+);
+late final _sel_setAllNullableTypesWithoutRecursion_ = objc.registerName(
+  "setAllNullableTypesWithoutRecursion:",
+);
 late final _sel_allTypes = objc.registerName("allTypes");
 late final _sel_setAllTypes_ = objc.registerName("setAllTypes:");
 
@@ -1207,51 +1601,78 @@ late final _sel_setAllTypes_ = objc.registerName("setAllTypes:");
 /// iOS: introduced 13.0.0
 /// macOS: introduced 16.0.0
 class NIAllClassesWrapperBridge extends objc.NSObject {
-  NIAllClassesWrapperBridge._(ffi.Pointer<objc.ObjCObject> pointer,
-      {bool retain = false, bool release = false})
-      : super.castFromPointer(pointer, retain: retain, release: release) {
-    objc.checkOsVersionInternal('NIAllClassesWrapperBridge',
-        iOS: (false, (13, 0, 0)), macOS: (false, (16, 0, 0)));
+  NIAllClassesWrapperBridge._(
+    ffi.Pointer<objc.ObjCObject> pointer, {
+    bool retain = false,
+    bool release = false,
+  }) : super.castFromPointer(pointer, retain: retain, release: release) {
+    objc.checkOsVersionInternal(
+      'NIAllClassesWrapperBridge',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
   }
 
   /// Constructs a [NIAllClassesWrapperBridge] that points to the same underlying object as [other].
   NIAllClassesWrapperBridge.castFrom(objc.ObjCObjectBase other)
-      : this._(other.ref.pointer, retain: true, release: true);
+    : this._(other.ref.pointer, retain: true, release: true);
 
   /// Constructs a [NIAllClassesWrapperBridge] that wraps the given raw object pointer.
-  NIAllClassesWrapperBridge.castFromPointer(ffi.Pointer<objc.ObjCObject> other,
-      {bool retain = false, bool release = false})
-      : this._(other, retain: retain, release: release);
+  NIAllClassesWrapperBridge.castFromPointer(
+    ffi.Pointer<objc.ObjCObject> other, {
+    bool retain = false,
+    bool release = false,
+  }) : this._(other, retain: retain, release: release);
 
   /// Returns whether [obj] is an instance of [NIAllClassesWrapperBridge].
   static bool isInstance(objc.ObjCObjectBase obj) {
     return _objc_msgSend_19nvye5(
-        obj.ref.pointer, _sel_isKindOfClass_, _class_NIAllClassesWrapperBridge);
+      obj.ref.pointer,
+      _sel_isKindOfClass_,
+      _class_NIAllClassesWrapperBridge,
+    );
   }
 
   /// new
   static NIAllClassesWrapperBridge new$() {
-    final _ret =
-        _objc_msgSend_151sglz(_class_NIAllClassesWrapperBridge, _sel_new);
-    return NIAllClassesWrapperBridge.castFromPointer(_ret,
-        retain: false, release: true);
+    final _ret = _objc_msgSend_151sglz(
+      _class_NIAllClassesWrapperBridge,
+      _sel_new,
+    );
+    return NIAllClassesWrapperBridge.castFromPointer(
+      _ret,
+      retain: false,
+      release: true,
+    );
   }
 
   /// allocWithZone:
   static NIAllClassesWrapperBridge allocWithZone(
-      ffi.Pointer<objc.NSZone> zone) {
+    ffi.Pointer<objc.NSZone> zone,
+  ) {
     final _ret = _objc_msgSend_1cwp428(
-        _class_NIAllClassesWrapperBridge, _sel_allocWithZone_, zone);
-    return NIAllClassesWrapperBridge.castFromPointer(_ret,
-        retain: false, release: true);
+      _class_NIAllClassesWrapperBridge,
+      _sel_allocWithZone_,
+      zone,
+    );
+    return NIAllClassesWrapperBridge.castFromPointer(
+      _ret,
+      retain: false,
+      release: true,
+    );
   }
 
   /// alloc
   static NIAllClassesWrapperBridge alloc() {
-    final _ret =
-        _objc_msgSend_151sglz(_class_NIAllClassesWrapperBridge, _sel_alloc);
-    return NIAllClassesWrapperBridge.castFromPointer(_ret,
-        retain: false, release: true);
+    final _ret = _objc_msgSend_151sglz(
+      _class_NIAllClassesWrapperBridge,
+      _sel_alloc,
+    );
+    return NIAllClassesWrapperBridge.castFromPointer(
+      _ret,
+      retain: false,
+      release: true,
+    );
   }
 
   /// Returns a new instance of NIAllClassesWrapperBridge constructed with the default `new` method.
@@ -1264,57 +1685,75 @@ extension NIAllClassesWrapperBridge$Methods on NIAllClassesWrapperBridge {
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
   NIAllClassesWrapperBridge initWithAllNullableTypesWithoutRecursion(
-      NIAllNullableTypesWithoutRecursionBridge?
-          allNullableTypesWithoutRecursion,
-      {NIAllTypesBridge? allTypes}) {
+    NIAllNullableTypesWithoutRecursionBridge?
+    allNullableTypesWithoutRecursion, {
+    NIAllTypesBridge? allTypes,
+  }) {
     objc.checkOsVersionInternal(
-        'NIAllClassesWrapperBridge.initWithAllNullableTypesWithoutRecursion:allTypes:',
-        iOS: (false, (13, 0, 0)),
-        macOS: (false, (16, 0, 0)));
+      'NIAllClassesWrapperBridge.initWithAllNullableTypesWithoutRecursion:allTypes:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     final _ret = _objc_msgSend_15qeuct(
-        this.ref.retainAndReturnPointer(),
-        _sel_initWithAllNullableTypesWithoutRecursion_allTypes_,
-        allNullableTypesWithoutRecursion?.ref.pointer ?? ffi.nullptr,
-        allTypes?.ref.pointer ?? ffi.nullptr);
-    return NIAllClassesWrapperBridge.castFromPointer(_ret,
-        retain: false, release: true);
+      this.ref.retainAndReturnPointer(),
+      _sel_initWithAllNullableTypesWithoutRecursion_allTypes_,
+      allNullableTypesWithoutRecursion?.ref.pointer ?? ffi.nullptr,
+      allTypes?.ref.pointer ?? ffi.nullptr,
+    );
+    return NIAllClassesWrapperBridge.castFromPointer(
+      _ret,
+      retain: false,
+      release: true,
+    );
   }
 
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
   NIAllNullableTypesWithoutRecursionBridge?
-      get allNullableTypesWithoutRecursion {
+  get allNullableTypesWithoutRecursion {
     objc.checkOsVersionInternal(
-        'NIAllClassesWrapperBridge.allNullableTypesWithoutRecursion',
-        iOS: (false, (13, 0, 0)),
-        macOS: (false, (16, 0, 0)));
+      'NIAllClassesWrapperBridge.allNullableTypesWithoutRecursion',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     final _ret = _objc_msgSend_151sglz(
-        this.ref.pointer, _sel_allNullableTypesWithoutRecursion);
+      this.ref.pointer,
+      _sel_allNullableTypesWithoutRecursion,
+    );
     return _ret.address == 0
         ? null
-        : NIAllNullableTypesWithoutRecursionBridge.castFromPointer(_ret,
-            retain: true, release: true);
+        : NIAllNullableTypesWithoutRecursionBridge.castFromPointer(
+            _ret,
+            retain: true,
+            release: true,
+          );
   }
 
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
   set allNullableTypesWithoutRecursion(
-      NIAllNullableTypesWithoutRecursionBridge? value) {
+    NIAllNullableTypesWithoutRecursionBridge? value,
+  ) {
     objc.checkOsVersionInternal(
-        'NIAllClassesWrapperBridge.setAllNullableTypesWithoutRecursion:',
-        iOS: (false, (13, 0, 0)),
-        macOS: (false, (16, 0, 0)));
+      'NIAllClassesWrapperBridge.setAllNullableTypesWithoutRecursion:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     _objc_msgSend_xtuoz7(
-        this.ref.pointer,
-        _sel_setAllNullableTypesWithoutRecursion_,
-        value?.ref.pointer ?? ffi.nullptr);
+      this.ref.pointer,
+      _sel_setAllNullableTypesWithoutRecursion_,
+      value?.ref.pointer ?? ffi.nullptr,
+    );
   }
 
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
   NIAllTypesBridge? get allTypes {
-    objc.checkOsVersionInternal('NIAllClassesWrapperBridge.allTypes',
-        iOS: (false, (13, 0, 0)), macOS: (false, (16, 0, 0)));
+    objc.checkOsVersionInternal(
+      'NIAllClassesWrapperBridge.allTypes',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_allTypes);
     return _ret.address == 0
         ? null
@@ -1324,58 +1763,90 @@ extension NIAllClassesWrapperBridge$Methods on NIAllClassesWrapperBridge {
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
   set allTypes(NIAllTypesBridge? value) {
-    objc.checkOsVersionInternal('NIAllClassesWrapperBridge.setAllTypes:',
-        iOS: (false, (13, 0, 0)), macOS: (false, (16, 0, 0)));
+    objc.checkOsVersionInternal(
+      'NIAllClassesWrapperBridge.setAllTypes:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     _objc_msgSend_xtuoz7(
-        this.ref.pointer, _sel_setAllTypes_, value?.ref.pointer ?? ffi.nullptr);
+      this.ref.pointer,
+      _sel_setAllTypes_,
+      value?.ref.pointer ?? ffi.nullptr,
+    );
   }
 
   /// init
   NIAllClassesWrapperBridge init() {
-    objc.checkOsVersionInternal('NIAllClassesWrapperBridge.init',
-        iOS: (false, (2, 0, 0)), macOS: (false, (10, 0, 0)));
-    final _ret =
-        _objc_msgSend_151sglz(this.ref.retainAndReturnPointer(), _sel_init);
-    return NIAllClassesWrapperBridge.castFromPointer(_ret,
-        retain: false, release: true);
+    objc.checkOsVersionInternal(
+      'NIAllClassesWrapperBridge.init',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    final _ret = _objc_msgSend_151sglz(
+      this.ref.retainAndReturnPointer(),
+      _sel_init,
+    );
+    return NIAllClassesWrapperBridge.castFromPointer(
+      _ret,
+      retain: false,
+      release: true,
+    );
   }
 
   /// self
   NIAllClassesWrapperBridge self() {
     final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_self);
-    return NIAllClassesWrapperBridge.castFromPointer(_ret,
-        retain: true, release: true);
+    return NIAllClassesWrapperBridge.castFromPointer(
+      _ret,
+      retain: true,
+      release: true,
+    );
   }
 
   /// retain
   NIAllClassesWrapperBridge retain() {
     final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_retain);
-    return NIAllClassesWrapperBridge.castFromPointer(_ret,
-        retain: true, release: true);
+    return NIAllClassesWrapperBridge.castFromPointer(
+      _ret,
+      retain: true,
+      release: true,
+    );
   }
 
   /// autorelease
   NIAllClassesWrapperBridge autorelease() {
     final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_autorelease);
-    return NIAllClassesWrapperBridge.castFromPointer(_ret,
-        retain: true, release: true);
+    return NIAllClassesWrapperBridge.castFromPointer(
+      _ret,
+      retain: true,
+      release: true,
+    );
   }
 }
 
-late final _class_NIHostIntegrationCoreApiSetup =
-    objc.getClass("test_plugin.NIHostIntegrationCoreApiSetup");
-late final _sel_getInstanceWithName_ =
-    objc.registerName("getInstanceWithName:");
+late final _class_NIHostIntegrationCoreApiSetup = objc.getClass(
+  "test_plugin.NIHostIntegrationCoreApiSetup",
+);
+late final _sel_getInstanceWithName_ = objc.registerName(
+  "getInstanceWithName:",
+);
 final _objc_msgSend_1sotr3r = objc.msgSendPointer
     .cast<
-        ffi.NativeFunction<
-            ffi.Pointer<objc.ObjCObject> Function(
-                ffi.Pointer<objc.ObjCObject>,
-                ffi.Pointer<objc.ObjCSelector>,
-                ffi.Pointer<objc.ObjCObject>)>>()
+      ffi.NativeFunction<
+        ffi.Pointer<objc.ObjCObject> Function(
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<objc.ObjCObject>,
+        )
+      >
+    >()
     .asFunction<
-        ffi.Pointer<objc.ObjCObject> Function(ffi.Pointer<objc.ObjCObject>,
-            ffi.Pointer<objc.ObjCSelector>, ffi.Pointer<objc.ObjCObject>)>();
+      ffi.Pointer<objc.ObjCObject> Function(
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<objc.ObjCObject>,
+      )
+    >();
 late final _class_NiTestsError = objc.getClass("test_plugin.NiTestsError");
 late final _sel_code = objc.registerName("code");
 late final _sel_setCode_ = objc.registerName("setCode:");
@@ -1383,44 +1854,57 @@ late final _sel_message = objc.registerName("message");
 late final _sel_setMessage_ = objc.registerName("setMessage:");
 late final _sel_details = objc.registerName("details");
 late final _sel_setDetails_ = objc.registerName("setDetails:");
-late final _sel_initWithCode_message_details_ =
-    objc.registerName("initWithCode:message:details:");
+late final _sel_initWithCode_message_details_ = objc.registerName(
+  "initWithCode:message:details:",
+);
 final _objc_msgSend_11spmsz = objc.msgSendPointer
     .cast<
-        ffi.NativeFunction<
-            ffi.Pointer<objc.ObjCObject> Function(
-                ffi.Pointer<objc.ObjCObject>,
-                ffi.Pointer<objc.ObjCSelector>,
-                ffi.Pointer<objc.ObjCObject>,
-                ffi.Pointer<objc.ObjCObject>,
-                ffi.Pointer<objc.ObjCObject>)>>()
-    .asFunction<
+      ffi.NativeFunction<
         ffi.Pointer<objc.ObjCObject> Function(
-            ffi.Pointer<objc.ObjCObject>,
-            ffi.Pointer<objc.ObjCSelector>,
-            ffi.Pointer<objc.ObjCObject>,
-            ffi.Pointer<objc.ObjCObject>,
-            ffi.Pointer<objc.ObjCObject>)>();
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCObject>,
+        )
+      >
+    >()
+    .asFunction<
+      ffi.Pointer<objc.ObjCObject> Function(
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCObject>,
+      )
+    >();
 
 /// Error class for passing custom error details to Dart side.
 class NiTestsError extends objc.NSObject {
-  NiTestsError._(ffi.Pointer<objc.ObjCObject> pointer,
-      {bool retain = false, bool release = false})
-      : super.castFromPointer(pointer, retain: retain, release: release);
+  NiTestsError._(
+    ffi.Pointer<objc.ObjCObject> pointer, {
+    bool retain = false,
+    bool release = false,
+  }) : super.castFromPointer(pointer, retain: retain, release: release);
 
   /// Constructs a [NiTestsError] that points to the same underlying object as [other].
   NiTestsError.castFrom(objc.ObjCObjectBase other)
-      : this._(other.ref.pointer, retain: true, release: true);
+    : this._(other.ref.pointer, retain: true, release: true);
 
   /// Constructs a [NiTestsError] that wraps the given raw object pointer.
-  NiTestsError.castFromPointer(ffi.Pointer<objc.ObjCObject> other,
-      {bool retain = false, bool release = false})
-      : this._(other, retain: retain, release: release);
+  NiTestsError.castFromPointer(
+    ffi.Pointer<objc.ObjCObject> other, {
+    bool retain = false,
+    bool release = false,
+  }) : this._(other, retain: retain, release: release);
 
   /// Returns whether [obj] is an instance of [NiTestsError].
   static bool isInstance(objc.ObjCObjectBase obj) {
     return _objc_msgSend_19nvye5(
-        obj.ref.pointer, _sel_isKindOfClass_, _class_NiTestsError);
+      obj.ref.pointer,
+      _sel_isKindOfClass_,
+      _class_NiTestsError,
+    );
   }
 
   /// new
@@ -1431,8 +1915,11 @@ class NiTestsError extends objc.NSObject {
 
   /// allocWithZone:
   static NiTestsError allocWithZone(ffi.Pointer<objc.NSZone> zone) {
-    final _ret =
-        _objc_msgSend_1cwp428(_class_NiTestsError, _sel_allocWithZone_, zone);
+    final _ret = _objc_msgSend_1cwp428(
+      _class_NiTestsError,
+      _sel_allocWithZone_,
+      zone,
+    );
     return NiTestsError.castFromPointer(_ret, retain: false, release: true);
   }
 
@@ -1458,7 +1945,10 @@ extension NiTestsError$Methods on NiTestsError {
   /// setCode:
   set code(objc.NSString? value) {
     _objc_msgSend_xtuoz7(
-        this.ref.pointer, _sel_setCode_, value?.ref.pointer ?? ffi.nullptr);
+      this.ref.pointer,
+      _sel_setCode_,
+      value?.ref.pointer ?? ffi.nullptr,
+    );
   }
 
   /// message
@@ -1472,7 +1962,10 @@ extension NiTestsError$Methods on NiTestsError {
   /// setMessage:
   set message(objc.NSString? value) {
     _objc_msgSend_xtuoz7(
-        this.ref.pointer, _sel_setMessage_, value?.ref.pointer ?? ffi.nullptr);
+      this.ref.pointer,
+      _sel_setMessage_,
+      value?.ref.pointer ?? ffi.nullptr,
+    );
   }
 
   /// details
@@ -1486,27 +1979,39 @@ extension NiTestsError$Methods on NiTestsError {
   /// setDetails:
   set details(objc.NSString? value) {
     _objc_msgSend_xtuoz7(
-        this.ref.pointer, _sel_setDetails_, value?.ref.pointer ?? ffi.nullptr);
+      this.ref.pointer,
+      _sel_setDetails_,
+      value?.ref.pointer ?? ffi.nullptr,
+    );
   }
 
   /// init
   NiTestsError init() {
-    objc.checkOsVersionInternal('NiTestsError.init',
-        iOS: (false, (2, 0, 0)), macOS: (false, (10, 0, 0)));
-    final _ret =
-        _objc_msgSend_151sglz(this.ref.retainAndReturnPointer(), _sel_init);
+    objc.checkOsVersionInternal(
+      'NiTestsError.init',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    final _ret = _objc_msgSend_151sglz(
+      this.ref.retainAndReturnPointer(),
+      _sel_init,
+    );
     return NiTestsError.castFromPointer(_ret, retain: false, release: true);
   }
 
   /// initWithCode:message:details:
-  NiTestsError initWithCode(objc.NSString? code$1,
-      {objc.NSString? message$1, objc.NSString? details$1}) {
+  NiTestsError initWithCode(
+    objc.NSString? code$1, {
+    objc.NSString? message$1,
+    objc.NSString? details$1,
+  }) {
     final _ret = _objc_msgSend_11spmsz(
-        this.ref.retainAndReturnPointer(),
-        _sel_initWithCode_message_details_,
-        code$1?.ref.pointer ?? ffi.nullptr,
-        message$1?.ref.pointer ?? ffi.nullptr,
-        details$1?.ref.pointer ?? ffi.nullptr);
+      this.ref.retainAndReturnPointer(),
+      _sel_initWithCode_message_details_,
+      code$1?.ref.pointer ?? ffi.nullptr,
+      message$1?.ref.pointer ?? ffi.nullptr,
+      details$1?.ref.pointer ?? ffi.nullptr,
+    );
     return NiTestsError.castFromPointer(_ret, retain: false, release: true);
   }
 
@@ -1529,215 +2034,295 @@ extension NiTestsError$Methods on NiTestsError {
   }
 }
 
-late final _sel_noopWithWrappedError_ =
-    objc.registerName("noopWithWrappedError:");
-late final _sel_echoAllTypesWithEverything_wrappedError_ =
-    objc.registerName("echoAllTypesWithEverything:wrappedError:");
-late final _sel_echoIntWithAnInt_wrappedError_ =
-    objc.registerName("echoIntWithAnInt:wrappedError:");
+late final _sel_noopWithWrappedError_ = objc.registerName(
+  "noopWithWrappedError:",
+);
+late final _sel_echoAllTypesWithEverything_wrappedError_ = objc.registerName(
+  "echoAllTypesWithEverything:wrappedError:",
+);
+late final _sel_echoIntWithAnInt_wrappedError_ = objc.registerName(
+  "echoIntWithAnInt:wrappedError:",
+);
 final _objc_msgSend_1j962g9 = objc.msgSendPointer
     .cast<
-        ffi.NativeFunction<
-            ffi.Pointer<objc.ObjCObject> Function(
-                ffi.Pointer<objc.ObjCObject>,
-                ffi.Pointer<objc.ObjCSelector>,
-                ffi.Int64,
-                ffi.Pointer<objc.ObjCObject>)>>()
-    .asFunction<
+      ffi.NativeFunction<
         ffi.Pointer<objc.ObjCObject> Function(
-            ffi.Pointer<objc.ObjCObject>,
-            ffi.Pointer<objc.ObjCSelector>,
-            int,
-            ffi.Pointer<objc.ObjCObject>)>();
-late final _sel_echoDoubleWithADouble_wrappedError_ =
-    objc.registerName("echoDoubleWithADouble:wrappedError:");
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Int64,
+          ffi.Pointer<objc.ObjCObject>,
+        )
+      >
+    >()
+    .asFunction<
+      ffi.Pointer<objc.ObjCObject> Function(
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCSelector>,
+        int,
+        ffi.Pointer<objc.ObjCObject>,
+      )
+    >();
+late final _sel_echoDoubleWithADouble_wrappedError_ = objc.registerName(
+  "echoDoubleWithADouble:wrappedError:",
+);
 final _objc_msgSend_1ozwf6k = objc.msgSendPointer
     .cast<
-        ffi.NativeFunction<
-            ffi.Pointer<objc.ObjCObject> Function(
-                ffi.Pointer<objc.ObjCObject>,
-                ffi.Pointer<objc.ObjCSelector>,
-                ffi.Double,
-                ffi.Pointer<objc.ObjCObject>)>>()
-    .asFunction<
+      ffi.NativeFunction<
         ffi.Pointer<objc.ObjCObject> Function(
-            ffi.Pointer<objc.ObjCObject>,
-            ffi.Pointer<objc.ObjCSelector>,
-            double,
-            ffi.Pointer<objc.ObjCObject>)>();
-late final _sel_echoBoolWithABool_wrappedError_ =
-    objc.registerName("echoBoolWithABool:wrappedError:");
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Double,
+          ffi.Pointer<objc.ObjCObject>,
+        )
+      >
+    >()
+    .asFunction<
+      ffi.Pointer<objc.ObjCObject> Function(
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCSelector>,
+        double,
+        ffi.Pointer<objc.ObjCObject>,
+      )
+    >();
+late final _sel_echoBoolWithABool_wrappedError_ = objc.registerName(
+  "echoBoolWithABool:wrappedError:",
+);
 final _objc_msgSend_w1rg4f = objc.msgSendPointer
     .cast<
-        ffi.NativeFunction<
-            ffi.Pointer<objc.ObjCObject> Function(
-                ffi.Pointer<objc.ObjCObject>,
-                ffi.Pointer<objc.ObjCSelector>,
-                ffi.Bool,
-                ffi.Pointer<objc.ObjCObject>)>>()
-    .asFunction<
+      ffi.NativeFunction<
         ffi.Pointer<objc.ObjCObject> Function(
-            ffi.Pointer<objc.ObjCObject>,
-            ffi.Pointer<objc.ObjCSelector>,
-            bool,
-            ffi.Pointer<objc.ObjCObject>)>();
-late final _sel_echoStringWithAString_wrappedError_ =
-    objc.registerName("echoStringWithAString:wrappedError:");
-late final _sel_echoObjectWithAnObject_wrappedError_ =
-    objc.registerName("echoObjectWithAnObject:wrappedError:");
-late final _sel_echoListWithList_wrappedError_ =
-    objc.registerName("echoListWithList:wrappedError:");
-late final _sel_echoStringListWithStringList_wrappedError_ =
-    objc.registerName("echoStringListWithStringList:wrappedError:");
-late final _sel_echoIntListWithIntList_wrappedError_ =
-    objc.registerName("echoIntListWithIntList:wrappedError:");
-late final _sel_echoDoubleListWithDoubleList_wrappedError_ =
-    objc.registerName("echoDoubleListWithDoubleList:wrappedError:");
-late final _sel_echoBoolListWithBoolList_wrappedError_ =
-    objc.registerName("echoBoolListWithBoolList:wrappedError:");
-late final _sel_echoMapWithMap_wrappedError_ =
-    objc.registerName("echoMapWithMap:wrappedError:");
-late final _sel_echoStringMapWithStringMap_wrappedError_ =
-    objc.registerName("echoStringMapWithStringMap:wrappedError:");
-late final _sel_echoClassWrapperWithWrapper_wrappedError_ =
-    objc.registerName("echoClassWrapperWithWrapper:wrappedError:");
-late final _sel_echoEnumWithAnEnum_wrappedError_ =
-    objc.registerName("echoEnumWithAnEnum:wrappedError:");
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Bool,
+          ffi.Pointer<objc.ObjCObject>,
+        )
+      >
+    >()
+    .asFunction<
+      ffi.Pointer<objc.ObjCObject> Function(
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCSelector>,
+        bool,
+        ffi.Pointer<objc.ObjCObject>,
+      )
+    >();
+late final _sel_echoStringWithAString_wrappedError_ = objc.registerName(
+  "echoStringWithAString:wrappedError:",
+);
+late final _sel_echoObjectWithAnObject_wrappedError_ = objc.registerName(
+  "echoObjectWithAnObject:wrappedError:",
+);
+late final _sel_echoListWithList_wrappedError_ = objc.registerName(
+  "echoListWithList:wrappedError:",
+);
+late final _sel_echoStringListWithStringList_wrappedError_ = objc.registerName(
+  "echoStringListWithStringList:wrappedError:",
+);
+late final _sel_echoIntListWithIntList_wrappedError_ = objc.registerName(
+  "echoIntListWithIntList:wrappedError:",
+);
+late final _sel_echoDoubleListWithDoubleList_wrappedError_ = objc.registerName(
+  "echoDoubleListWithDoubleList:wrappedError:",
+);
+late final _sel_echoBoolListWithBoolList_wrappedError_ = objc.registerName(
+  "echoBoolListWithBoolList:wrappedError:",
+);
+late final _sel_echoMapWithMap_wrappedError_ = objc.registerName(
+  "echoMapWithMap:wrappedError:",
+);
+late final _sel_echoStringMapWithStringMap_wrappedError_ = objc.registerName(
+  "echoStringMapWithStringMap:wrappedError:",
+);
+late final _sel_echoClassWrapperWithWrapper_wrappedError_ = objc.registerName(
+  "echoClassWrapperWithWrapper:wrappedError:",
+);
+late final _sel_echoEnumWithAnEnum_wrappedError_ = objc.registerName(
+  "echoEnumWithAnEnum:wrappedError:",
+);
 final _objc_msgSend_1k0qzru = objc.msgSendPointer
     .cast<
-        ffi.NativeFunction<
-            ffi.Pointer<objc.ObjCObject> Function(
-                ffi.Pointer<objc.ObjCObject>,
-                ffi.Pointer<objc.ObjCSelector>,
-                ffi.Long,
-                ffi.Pointer<objc.ObjCObject>)>>()
-    .asFunction<
+      ffi.NativeFunction<
         ffi.Pointer<objc.ObjCObject> Function(
-            ffi.Pointer<objc.ObjCObject>,
-            ffi.Pointer<objc.ObjCSelector>,
-            int,
-            ffi.Pointer<objc.ObjCObject>)>();
-late final _sel_echoAnotherEnumWithAnotherEnum_wrappedError_ =
-    objc.registerName("echoAnotherEnumWithAnotherEnum:wrappedError:");
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Long,
+          ffi.Pointer<objc.ObjCObject>,
+        )
+      >
+    >()
+    .asFunction<
+      ffi.Pointer<objc.ObjCObject> Function(
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCSelector>,
+        int,
+        ffi.Pointer<objc.ObjCObject>,
+      )
+    >();
+late final _sel_echoAnotherEnumWithAnotherEnum_wrappedError_ = objc
+    .registerName("echoAnotherEnumWithAnotherEnum:wrappedError:");
 final _objc_msgSend_ladeuy = objc.msgSendPointer
     .cast<
-        ffi.NativeFunction<
-            ffi.Pointer<objc.ObjCObject> Function(
-                ffi.Pointer<objc.ObjCObject>,
-                ffi.Pointer<objc.ObjCSelector>,
-                ffi.Long,
-                ffi.Pointer<objc.ObjCObject>)>>()
-    .asFunction<
+      ffi.NativeFunction<
         ffi.Pointer<objc.ObjCObject> Function(
-            ffi.Pointer<objc.ObjCObject>,
-            ffi.Pointer<objc.ObjCSelector>,
-            int,
-            ffi.Pointer<objc.ObjCObject>)>();
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Long,
+          ffi.Pointer<objc.ObjCObject>,
+        )
+      >
+    >()
+    .asFunction<
+      ffi.Pointer<objc.ObjCObject> Function(
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCSelector>,
+        int,
+        ffi.Pointer<objc.ObjCObject>,
+      )
+    >();
 late final _sel_echoAllNullableTypesWithoutRecursionWithEverything_wrappedError_ =
     objc.registerName(
-        "echoAllNullableTypesWithoutRecursionWithEverything:wrappedError:");
-late final _sel_extractNestedNullableStringWithWrapper_wrappedError_ =
-    objc.registerName("extractNestedNullableStringWithWrapper:wrappedError:");
+      "echoAllNullableTypesWithoutRecursionWithEverything:wrappedError:",
+    );
+late final _sel_extractNestedNullableStringWithWrapper_wrappedError_ = objc
+    .registerName("extractNestedNullableStringWithWrapper:wrappedError:");
 late final _sel_createNestedNullableStringWithNullableString_wrappedError_ =
     objc.registerName(
-        "createNestedNullableStringWithNullableString:wrappedError:");
+      "createNestedNullableStringWithNullableString:wrappedError:",
+    );
 late final _sel_sendMultipleNullableTypesWithoutRecursionWithANullableBool_aNullableInt_aNullableString_wrappedError_ =
     objc.registerName(
-        "sendMultipleNullableTypesWithoutRecursionWithANullableBool:aNullableInt:aNullableString:wrappedError:");
+      "sendMultipleNullableTypesWithoutRecursionWithANullableBool:aNullableInt:aNullableString:wrappedError:",
+    );
 final _objc_msgSend_s92gih = objc.msgSendPointer
     .cast<
-        ffi.NativeFunction<
-            ffi.Pointer<objc.ObjCObject> Function(
-                ffi.Pointer<objc.ObjCObject>,
-                ffi.Pointer<objc.ObjCSelector>,
-                ffi.Pointer<objc.ObjCObject>,
-                ffi.Pointer<objc.ObjCObject>,
-                ffi.Pointer<objc.ObjCObject>,
-                ffi.Pointer<objc.ObjCObject>)>>()
-    .asFunction<
+      ffi.NativeFunction<
         ffi.Pointer<objc.ObjCObject> Function(
-            ffi.Pointer<objc.ObjCObject>,
-            ffi.Pointer<objc.ObjCSelector>,
-            ffi.Pointer<objc.ObjCObject>,
-            ffi.Pointer<objc.ObjCObject>,
-            ffi.Pointer<objc.ObjCObject>,
-            ffi.Pointer<objc.ObjCObject>)>();
-late final _sel_echoNullableIntWithANullableInt_wrappedError_ =
-    objc.registerName("echoNullableIntWithANullableInt:wrappedError:");
-late final _sel_echoNullableDoubleWithANullableDouble_wrappedError_ =
-    objc.registerName("echoNullableDoubleWithANullableDouble:wrappedError:");
-late final _sel_echoNullableBoolWithANullableBool_wrappedError_ =
-    objc.registerName("echoNullableBoolWithANullableBool:wrappedError:");
-late final _sel_echoNullableStringWithANullableString_wrappedError_ =
-    objc.registerName("echoNullableStringWithANullableString:wrappedError:");
-late final _sel_echoNullableObjectWithANullableObject_wrappedError_ =
-    objc.registerName("echoNullableObjectWithANullableObject:wrappedError:");
-late final _sel_echoNullableListWithANullableList_wrappedError_ =
-    objc.registerName("echoNullableListWithANullableList:wrappedError:");
-late final _sel_echoNullableMapWithMap_wrappedError_ =
-    objc.registerName("echoNullableMapWithMap:wrappedError:");
-late final _sel_echoNullableEnumWithAnEnum_wrappedError_ =
-    objc.registerName("echoNullableEnumWithAnEnum:wrappedError:");
-late final _sel_echoAnotherNullableEnumWithAnotherEnum_wrappedError_ =
-    objc.registerName("echoAnotherNullableEnumWithAnotherEnum:wrappedError:");
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCObject>,
+        )
+      >
+    >()
+    .asFunction<
+      ffi.Pointer<objc.ObjCObject> Function(
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCObject>,
+      )
+    >();
+late final _sel_echoNullableIntWithANullableInt_wrappedError_ = objc
+    .registerName("echoNullableIntWithANullableInt:wrappedError:");
+late final _sel_echoNullableDoubleWithANullableDouble_wrappedError_ = objc
+    .registerName("echoNullableDoubleWithANullableDouble:wrappedError:");
+late final _sel_echoNullableBoolWithANullableBool_wrappedError_ = objc
+    .registerName("echoNullableBoolWithANullableBool:wrappedError:");
+late final _sel_echoNullableStringWithANullableString_wrappedError_ = objc
+    .registerName("echoNullableStringWithANullableString:wrappedError:");
+late final _sel_echoNullableObjectWithANullableObject_wrappedError_ = objc
+    .registerName("echoNullableObjectWithANullableObject:wrappedError:");
+late final _sel_echoNullableListWithANullableList_wrappedError_ = objc
+    .registerName("echoNullableListWithANullableList:wrappedError:");
+late final _sel_echoNullableMapWithMap_wrappedError_ = objc.registerName(
+  "echoNullableMapWithMap:wrappedError:",
+);
+late final _sel_echoNullableEnumWithAnEnum_wrappedError_ = objc.registerName(
+  "echoNullableEnumWithAnEnum:wrappedError:",
+);
+late final _sel_echoAnotherNullableEnumWithAnotherEnum_wrappedError_ = objc
+    .registerName("echoAnotherNullableEnumWithAnotherEnum:wrappedError:");
 
 /// Generated setup class from Pigeon to register implemented NIHostIntegrationCoreApi classes.
 class NIHostIntegrationCoreApiSetup extends objc.NSObject {
-  NIHostIntegrationCoreApiSetup._(ffi.Pointer<objc.ObjCObject> pointer,
-      {bool retain = false, bool release = false})
-      : super.castFromPointer(pointer, retain: retain, release: release);
+  NIHostIntegrationCoreApiSetup._(
+    ffi.Pointer<objc.ObjCObject> pointer, {
+    bool retain = false,
+    bool release = false,
+  }) : super.castFromPointer(pointer, retain: retain, release: release);
 
   /// Constructs a [NIHostIntegrationCoreApiSetup] that points to the same underlying object as [other].
   NIHostIntegrationCoreApiSetup.castFrom(objc.ObjCObjectBase other)
-      : this._(other.ref.pointer, retain: true, release: true);
+    : this._(other.ref.pointer, retain: true, release: true);
 
   /// Constructs a [NIHostIntegrationCoreApiSetup] that wraps the given raw object pointer.
   NIHostIntegrationCoreApiSetup.castFromPointer(
-      ffi.Pointer<objc.ObjCObject> other,
-      {bool retain = false,
-      bool release = false})
-      : this._(other, retain: retain, release: release);
+    ffi.Pointer<objc.ObjCObject> other, {
+    bool retain = false,
+    bool release = false,
+  }) : this._(other, retain: retain, release: release);
 
   /// Returns whether [obj] is an instance of [NIHostIntegrationCoreApiSetup].
   static bool isInstance(objc.ObjCObjectBase obj) {
-    return _objc_msgSend_19nvye5(obj.ref.pointer, _sel_isKindOfClass_,
-        _class_NIHostIntegrationCoreApiSetup);
+    return _objc_msgSend_19nvye5(
+      obj.ref.pointer,
+      _sel_isKindOfClass_,
+      _class_NIHostIntegrationCoreApiSetup,
+    );
   }
 
   /// getInstanceWithName:
   static NIHostIntegrationCoreApiSetup? getInstanceWithName(
-      objc.NSString name) {
-    final _ret = _objc_msgSend_1sotr3r(_class_NIHostIntegrationCoreApiSetup,
-        _sel_getInstanceWithName_, name.ref.pointer);
+    objc.NSString name,
+  ) {
+    final _ret = _objc_msgSend_1sotr3r(
+      _class_NIHostIntegrationCoreApiSetup,
+      _sel_getInstanceWithName_,
+      name.ref.pointer,
+    );
     return _ret.address == 0
         ? null
-        : NIHostIntegrationCoreApiSetup.castFromPointer(_ret,
-            retain: true, release: true);
+        : NIHostIntegrationCoreApiSetup.castFromPointer(
+            _ret,
+            retain: true,
+            release: true,
+          );
   }
 
   /// new
   static NIHostIntegrationCoreApiSetup new$() {
-    final _ret =
-        _objc_msgSend_151sglz(_class_NIHostIntegrationCoreApiSetup, _sel_new);
-    return NIHostIntegrationCoreApiSetup.castFromPointer(_ret,
-        retain: false, release: true);
+    final _ret = _objc_msgSend_151sglz(
+      _class_NIHostIntegrationCoreApiSetup,
+      _sel_new,
+    );
+    return NIHostIntegrationCoreApiSetup.castFromPointer(
+      _ret,
+      retain: false,
+      release: true,
+    );
   }
 
   /// allocWithZone:
   static NIHostIntegrationCoreApiSetup allocWithZone(
-      ffi.Pointer<objc.NSZone> zone) {
+    ffi.Pointer<objc.NSZone> zone,
+  ) {
     final _ret = _objc_msgSend_1cwp428(
-        _class_NIHostIntegrationCoreApiSetup, _sel_allocWithZone_, zone);
-    return NIHostIntegrationCoreApiSetup.castFromPointer(_ret,
-        retain: false, release: true);
+      _class_NIHostIntegrationCoreApiSetup,
+      _sel_allocWithZone_,
+      zone,
+    );
+    return NIHostIntegrationCoreApiSetup.castFromPointer(
+      _ret,
+      retain: false,
+      release: true,
+    );
   }
 
   /// alloc
   static NIHostIntegrationCoreApiSetup alloc() {
-    final _ret =
-        _objc_msgSend_151sglz(_class_NIHostIntegrationCoreApiSetup, _sel_alloc);
-    return NIHostIntegrationCoreApiSetup.castFromPointer(_ret,
-        retain: false, release: true);
+    final _ret = _objc_msgSend_151sglz(
+      _class_NIHostIntegrationCoreApiSetup,
+      _sel_alloc,
+    );
+    return NIHostIntegrationCoreApiSetup.castFromPointer(
+      _ret,
+      retain: false,
+      release: true,
+    );
   }
 
   /// Returns a new instance of NIHostIntegrationCoreApiSetup constructed with the default `new` method.
@@ -1748,12 +2333,20 @@ extension NIHostIntegrationCoreApiSetup$Methods
     on NIHostIntegrationCoreApiSetup {
   /// init
   NIHostIntegrationCoreApiSetup init() {
-    objc.checkOsVersionInternal('NIHostIntegrationCoreApiSetup.init',
-        iOS: (false, (2, 0, 0)), macOS: (false, (10, 0, 0)));
-    final _ret =
-        _objc_msgSend_151sglz(this.ref.retainAndReturnPointer(), _sel_init);
-    return NIHostIntegrationCoreApiSetup.castFromPointer(_ret,
-        retain: false, release: true);
+    objc.checkOsVersionInternal(
+      'NIHostIntegrationCoreApiSetup.init',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    final _ret = _objc_msgSend_151sglz(
+      this.ref.retainAndReturnPointer(),
+      _sel_init,
+    );
+    return NIHostIntegrationCoreApiSetup.castFromPointer(
+      _ret,
+      retain: false,
+      release: true,
+    );
   }
 
   /// A no-op function taking no arguments and returning no value, to sanity
@@ -1763,28 +2356,36 @@ extension NIHostIntegrationCoreApiSetup$Methods
   /// macOS: introduced 16.0.0
   void noopWithWrappedError(NiTestsError wrappedError) {
     objc.checkOsVersionInternal(
-        'NIHostIntegrationCoreApiSetup.noopWithWrappedError:',
-        iOS: (false, (13, 0, 0)),
-        macOS: (false, (16, 0, 0)));
+      'NIHostIntegrationCoreApiSetup.noopWithWrappedError:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     _objc_msgSend_xtuoz7(
-        this.ref.pointer, _sel_noopWithWrappedError_, wrappedError.ref.pointer);
+      this.ref.pointer,
+      _sel_noopWithWrappedError_,
+      wrappedError.ref.pointer,
+    );
   }
 
   /// Returns the passed object, to test serialization and deserialization.
   ///
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
-  NIAllTypesBridge? echoAllTypesWithEverything(NIAllTypesBridge everything,
-      {required NiTestsError wrappedError}) {
+  NIAllTypesBridge? echoAllTypesWithEverything(
+    NIAllTypesBridge everything, {
+    required NiTestsError wrappedError,
+  }) {
     objc.checkOsVersionInternal(
-        'NIHostIntegrationCoreApiSetup.echoAllTypesWithEverything:wrappedError:',
-        iOS: (false, (13, 0, 0)),
-        macOS: (false, (16, 0, 0)));
+      'NIHostIntegrationCoreApiSetup.echoAllTypesWithEverything:wrappedError:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     final _ret = _objc_msgSend_15qeuct(
-        this.ref.pointer,
-        _sel_echoAllTypesWithEverything_wrappedError_,
-        everything.ref.pointer,
-        wrappedError.ref.pointer);
+      this.ref.pointer,
+      _sel_echoAllTypesWithEverything_wrappedError_,
+      everything.ref.pointer,
+      wrappedError.ref.pointer,
+    );
     return _ret.address == 0
         ? null
         : NIAllTypesBridge.castFromPointer(_ret, retain: true, release: true);
@@ -1794,14 +2395,21 @@ extension NIHostIntegrationCoreApiSetup$Methods
   ///
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
-  objc.NSNumber? echoIntWithAnInt(int anInt,
-      {required NiTestsError wrappedError}) {
+  objc.NSNumber? echoIntWithAnInt(
+    int anInt, {
+    required NiTestsError wrappedError,
+  }) {
     objc.checkOsVersionInternal(
-        'NIHostIntegrationCoreApiSetup.echoIntWithAnInt:wrappedError:',
-        iOS: (false, (13, 0, 0)),
-        macOS: (false, (16, 0, 0)));
-    final _ret = _objc_msgSend_1j962g9(this.ref.pointer,
-        _sel_echoIntWithAnInt_wrappedError_, anInt, wrappedError.ref.pointer);
+      'NIHostIntegrationCoreApiSetup.echoIntWithAnInt:wrappedError:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    final _ret = _objc_msgSend_1j962g9(
+      this.ref.pointer,
+      _sel_echoIntWithAnInt_wrappedError_,
+      anInt,
+      wrappedError.ref.pointer,
+    );
     return _ret.address == 0
         ? null
         : objc.NSNumber.castFromPointer(_ret, retain: true, release: true);
@@ -1811,17 +2419,21 @@ extension NIHostIntegrationCoreApiSetup$Methods
   ///
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
-  objc.NSNumber? echoDoubleWithADouble(double aDouble,
-      {required NiTestsError wrappedError}) {
+  objc.NSNumber? echoDoubleWithADouble(
+    double aDouble, {
+    required NiTestsError wrappedError,
+  }) {
     objc.checkOsVersionInternal(
-        'NIHostIntegrationCoreApiSetup.echoDoubleWithADouble:wrappedError:',
-        iOS: (false, (13, 0, 0)),
-        macOS: (false, (16, 0, 0)));
+      'NIHostIntegrationCoreApiSetup.echoDoubleWithADouble:wrappedError:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     final _ret = _objc_msgSend_1ozwf6k(
-        this.ref.pointer,
-        _sel_echoDoubleWithADouble_wrappedError_,
-        aDouble,
-        wrappedError.ref.pointer);
+      this.ref.pointer,
+      _sel_echoDoubleWithADouble_wrappedError_,
+      aDouble,
+      wrappedError.ref.pointer,
+    );
     return _ret.address == 0
         ? null
         : objc.NSNumber.castFromPointer(_ret, retain: true, release: true);
@@ -1831,14 +2443,21 @@ extension NIHostIntegrationCoreApiSetup$Methods
   ///
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
-  objc.NSNumber? echoBoolWithABool(bool aBool,
-      {required NiTestsError wrappedError}) {
+  objc.NSNumber? echoBoolWithABool(
+    bool aBool, {
+    required NiTestsError wrappedError,
+  }) {
     objc.checkOsVersionInternal(
-        'NIHostIntegrationCoreApiSetup.echoBoolWithABool:wrappedError:',
-        iOS: (false, (13, 0, 0)),
-        macOS: (false, (16, 0, 0)));
-    final _ret = _objc_msgSend_w1rg4f(this.ref.pointer,
-        _sel_echoBoolWithABool_wrappedError_, aBool, wrappedError.ref.pointer);
+      'NIHostIntegrationCoreApiSetup.echoBoolWithABool:wrappedError:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    final _ret = _objc_msgSend_w1rg4f(
+      this.ref.pointer,
+      _sel_echoBoolWithABool_wrappedError_,
+      aBool,
+      wrappedError.ref.pointer,
+    );
     return _ret.address == 0
         ? null
         : objc.NSNumber.castFromPointer(_ret, retain: true, release: true);
@@ -1848,17 +2467,21 @@ extension NIHostIntegrationCoreApiSetup$Methods
   ///
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
-  objc.NSString? echoStringWithAString(objc.NSString aString,
-      {required NiTestsError wrappedError}) {
+  objc.NSString? echoStringWithAString(
+    objc.NSString aString, {
+    required NiTestsError wrappedError,
+  }) {
     objc.checkOsVersionInternal(
-        'NIHostIntegrationCoreApiSetup.echoStringWithAString:wrappedError:',
-        iOS: (false, (13, 0, 0)),
-        macOS: (false, (16, 0, 0)));
+      'NIHostIntegrationCoreApiSetup.echoStringWithAString:wrappedError:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     final _ret = _objc_msgSend_15qeuct(
-        this.ref.pointer,
-        _sel_echoStringWithAString_wrappedError_,
-        aString.ref.pointer,
-        wrappedError.ref.pointer);
+      this.ref.pointer,
+      _sel_echoStringWithAString_wrappedError_,
+      aString.ref.pointer,
+      wrappedError.ref.pointer,
+    );
     return _ret.address == 0
         ? null
         : objc.NSString.castFromPointer(_ret, retain: true, release: true);
@@ -1868,17 +2491,21 @@ extension NIHostIntegrationCoreApiSetup$Methods
   ///
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
-  objc.NSObject? echoObjectWithAnObject(objc.NSObject anObject,
-      {required NiTestsError wrappedError}) {
+  objc.NSObject? echoObjectWithAnObject(
+    objc.NSObject anObject, {
+    required NiTestsError wrappedError,
+  }) {
     objc.checkOsVersionInternal(
-        'NIHostIntegrationCoreApiSetup.echoObjectWithAnObject:wrappedError:',
-        iOS: (false, (13, 0, 0)),
-        macOS: (false, (16, 0, 0)));
+      'NIHostIntegrationCoreApiSetup.echoObjectWithAnObject:wrappedError:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     final _ret = _objc_msgSend_15qeuct(
-        this.ref.pointer,
-        _sel_echoObjectWithAnObject_wrappedError_,
-        anObject.ref.pointer,
-        wrappedError.ref.pointer);
+      this.ref.pointer,
+      _sel_echoObjectWithAnObject_wrappedError_,
+      anObject.ref.pointer,
+      wrappedError.ref.pointer,
+    );
     return _ret.address == 0
         ? null
         : objc.NSObject.castFromPointer(_ret, retain: true, release: true);
@@ -1888,17 +2515,21 @@ extension NIHostIntegrationCoreApiSetup$Methods
   ///
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
-  objc.NSArray? echoListWithList(objc.NSArray list,
-      {required NiTestsError wrappedError}) {
+  objc.NSArray? echoListWithList(
+    objc.NSArray list, {
+    required NiTestsError wrappedError,
+  }) {
     objc.checkOsVersionInternal(
-        'NIHostIntegrationCoreApiSetup.echoListWithList:wrappedError:',
-        iOS: (false, (13, 0, 0)),
-        macOS: (false, (16, 0, 0)));
+      'NIHostIntegrationCoreApiSetup.echoListWithList:wrappedError:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     final _ret = _objc_msgSend_15qeuct(
-        this.ref.pointer,
-        _sel_echoListWithList_wrappedError_,
-        list.ref.pointer,
-        wrappedError.ref.pointer);
+      this.ref.pointer,
+      _sel_echoListWithList_wrappedError_,
+      list.ref.pointer,
+      wrappedError.ref.pointer,
+    );
     return _ret.address == 0
         ? null
         : objc.NSArray.castFromPointer(_ret, retain: true, release: true);
@@ -1908,17 +2539,21 @@ extension NIHostIntegrationCoreApiSetup$Methods
   ///
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
-  objc.NSArray? echoStringListWithStringList(objc.NSArray stringList,
-      {required NiTestsError wrappedError}) {
+  objc.NSArray? echoStringListWithStringList(
+    objc.NSArray stringList, {
+    required NiTestsError wrappedError,
+  }) {
     objc.checkOsVersionInternal(
-        'NIHostIntegrationCoreApiSetup.echoStringListWithStringList:wrappedError:',
-        iOS: (false, (13, 0, 0)),
-        macOS: (false, (16, 0, 0)));
+      'NIHostIntegrationCoreApiSetup.echoStringListWithStringList:wrappedError:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     final _ret = _objc_msgSend_15qeuct(
-        this.ref.pointer,
-        _sel_echoStringListWithStringList_wrappedError_,
-        stringList.ref.pointer,
-        wrappedError.ref.pointer);
+      this.ref.pointer,
+      _sel_echoStringListWithStringList_wrappedError_,
+      stringList.ref.pointer,
+      wrappedError.ref.pointer,
+    );
     return _ret.address == 0
         ? null
         : objc.NSArray.castFromPointer(_ret, retain: true, release: true);
@@ -1928,17 +2563,21 @@ extension NIHostIntegrationCoreApiSetup$Methods
   ///
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
-  objc.NSArray? echoIntListWithIntList(objc.NSArray intList,
-      {required NiTestsError wrappedError}) {
+  objc.NSArray? echoIntListWithIntList(
+    objc.NSArray intList, {
+    required NiTestsError wrappedError,
+  }) {
     objc.checkOsVersionInternal(
-        'NIHostIntegrationCoreApiSetup.echoIntListWithIntList:wrappedError:',
-        iOS: (false, (13, 0, 0)),
-        macOS: (false, (16, 0, 0)));
+      'NIHostIntegrationCoreApiSetup.echoIntListWithIntList:wrappedError:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     final _ret = _objc_msgSend_15qeuct(
-        this.ref.pointer,
-        _sel_echoIntListWithIntList_wrappedError_,
-        intList.ref.pointer,
-        wrappedError.ref.pointer);
+      this.ref.pointer,
+      _sel_echoIntListWithIntList_wrappedError_,
+      intList.ref.pointer,
+      wrappedError.ref.pointer,
+    );
     return _ret.address == 0
         ? null
         : objc.NSArray.castFromPointer(_ret, retain: true, release: true);
@@ -1948,17 +2587,21 @@ extension NIHostIntegrationCoreApiSetup$Methods
   ///
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
-  objc.NSArray? echoDoubleListWithDoubleList(objc.NSArray doubleList,
-      {required NiTestsError wrappedError}) {
+  objc.NSArray? echoDoubleListWithDoubleList(
+    objc.NSArray doubleList, {
+    required NiTestsError wrappedError,
+  }) {
     objc.checkOsVersionInternal(
-        'NIHostIntegrationCoreApiSetup.echoDoubleListWithDoubleList:wrappedError:',
-        iOS: (false, (13, 0, 0)),
-        macOS: (false, (16, 0, 0)));
+      'NIHostIntegrationCoreApiSetup.echoDoubleListWithDoubleList:wrappedError:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     final _ret = _objc_msgSend_15qeuct(
-        this.ref.pointer,
-        _sel_echoDoubleListWithDoubleList_wrappedError_,
-        doubleList.ref.pointer,
-        wrappedError.ref.pointer);
+      this.ref.pointer,
+      _sel_echoDoubleListWithDoubleList_wrappedError_,
+      doubleList.ref.pointer,
+      wrappedError.ref.pointer,
+    );
     return _ret.address == 0
         ? null
         : objc.NSArray.castFromPointer(_ret, retain: true, release: true);
@@ -1968,17 +2611,21 @@ extension NIHostIntegrationCoreApiSetup$Methods
   ///
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
-  objc.NSArray? echoBoolListWithBoolList(objc.NSArray boolList,
-      {required NiTestsError wrappedError}) {
+  objc.NSArray? echoBoolListWithBoolList(
+    objc.NSArray boolList, {
+    required NiTestsError wrappedError,
+  }) {
     objc.checkOsVersionInternal(
-        'NIHostIntegrationCoreApiSetup.echoBoolListWithBoolList:wrappedError:',
-        iOS: (false, (13, 0, 0)),
-        macOS: (false, (16, 0, 0)));
+      'NIHostIntegrationCoreApiSetup.echoBoolListWithBoolList:wrappedError:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     final _ret = _objc_msgSend_15qeuct(
-        this.ref.pointer,
-        _sel_echoBoolListWithBoolList_wrappedError_,
-        boolList.ref.pointer,
-        wrappedError.ref.pointer);
+      this.ref.pointer,
+      _sel_echoBoolListWithBoolList_wrappedError_,
+      boolList.ref.pointer,
+      wrappedError.ref.pointer,
+    );
     return _ret.address == 0
         ? null
         : objc.NSArray.castFromPointer(_ret, retain: true, release: true);
@@ -1988,17 +2635,21 @@ extension NIHostIntegrationCoreApiSetup$Methods
   ///
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
-  objc.NSDictionary? echoMapWithMap(objc.NSDictionary map,
-      {required NiTestsError wrappedError}) {
+  objc.NSDictionary? echoMapWithMap(
+    objc.NSDictionary map, {
+    required NiTestsError wrappedError,
+  }) {
     objc.checkOsVersionInternal(
-        'NIHostIntegrationCoreApiSetup.echoMapWithMap:wrappedError:',
-        iOS: (false, (13, 0, 0)),
-        macOS: (false, (16, 0, 0)));
+      'NIHostIntegrationCoreApiSetup.echoMapWithMap:wrappedError:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     final _ret = _objc_msgSend_15qeuct(
-        this.ref.pointer,
-        _sel_echoMapWithMap_wrappedError_,
-        map.ref.pointer,
-        wrappedError.ref.pointer);
+      this.ref.pointer,
+      _sel_echoMapWithMap_wrappedError_,
+      map.ref.pointer,
+      wrappedError.ref.pointer,
+    );
     return _ret.address == 0
         ? null
         : objc.NSDictionary.castFromPointer(_ret, retain: true, release: true);
@@ -2008,17 +2659,21 @@ extension NIHostIntegrationCoreApiSetup$Methods
   ///
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
-  objc.NSDictionary? echoStringMapWithStringMap(objc.NSDictionary stringMap,
-      {required NiTestsError wrappedError}) {
+  objc.NSDictionary? echoStringMapWithStringMap(
+    objc.NSDictionary stringMap, {
+    required NiTestsError wrappedError,
+  }) {
     objc.checkOsVersionInternal(
-        'NIHostIntegrationCoreApiSetup.echoStringMapWithStringMap:wrappedError:',
-        iOS: (false, (13, 0, 0)),
-        macOS: (false, (16, 0, 0)));
+      'NIHostIntegrationCoreApiSetup.echoStringMapWithStringMap:wrappedError:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     final _ret = _objc_msgSend_15qeuct(
-        this.ref.pointer,
-        _sel_echoStringMapWithStringMap_wrappedError_,
-        stringMap.ref.pointer,
-        wrappedError.ref.pointer);
+      this.ref.pointer,
+      _sel_echoStringMapWithStringMap_wrappedError_,
+      stringMap.ref.pointer,
+      wrappedError.ref.pointer,
+    );
     return _ret.address == 0
         ? null
         : objc.NSDictionary.castFromPointer(_ret, retain: true, release: true);
@@ -2030,38 +2685,48 @@ extension NIHostIntegrationCoreApiSetup$Methods
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
   NIAllClassesWrapperBridge? echoClassWrapperWithWrapper(
-      NIAllClassesWrapperBridge wrapper,
-      {required NiTestsError wrappedError}) {
+    NIAllClassesWrapperBridge wrapper, {
+    required NiTestsError wrappedError,
+  }) {
     objc.checkOsVersionInternal(
-        'NIHostIntegrationCoreApiSetup.echoClassWrapperWithWrapper:wrappedError:',
-        iOS: (false, (13, 0, 0)),
-        macOS: (false, (16, 0, 0)));
+      'NIHostIntegrationCoreApiSetup.echoClassWrapperWithWrapper:wrappedError:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     final _ret = _objc_msgSend_15qeuct(
-        this.ref.pointer,
-        _sel_echoClassWrapperWithWrapper_wrappedError_,
-        wrapper.ref.pointer,
-        wrappedError.ref.pointer);
+      this.ref.pointer,
+      _sel_echoClassWrapperWithWrapper_wrappedError_,
+      wrapper.ref.pointer,
+      wrappedError.ref.pointer,
+    );
     return _ret.address == 0
         ? null
-        : NIAllClassesWrapperBridge.castFromPointer(_ret,
-            retain: true, release: true);
+        : NIAllClassesWrapperBridge.castFromPointer(
+            _ret,
+            retain: true,
+            release: true,
+          );
   }
 
   /// Returns the passed enum to test serialization and deserialization.
   ///
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
-  objc.NSNumber? echoEnumWithAnEnum(NIAnEnum anEnum,
-      {required NiTestsError wrappedError}) {
+  objc.NSNumber? echoEnumWithAnEnum(
+    NIAnEnum anEnum, {
+    required NiTestsError wrappedError,
+  }) {
     objc.checkOsVersionInternal(
-        'NIHostIntegrationCoreApiSetup.echoEnumWithAnEnum:wrappedError:',
-        iOS: (false, (13, 0, 0)),
-        macOS: (false, (16, 0, 0)));
+      'NIHostIntegrationCoreApiSetup.echoEnumWithAnEnum:wrappedError:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     final _ret = _objc_msgSend_1k0qzru(
-        this.ref.pointer,
-        _sel_echoEnumWithAnEnum_wrappedError_,
-        anEnum.value,
-        wrappedError.ref.pointer);
+      this.ref.pointer,
+      _sel_echoEnumWithAnEnum_wrappedError_,
+      anEnum.value,
+      wrappedError.ref.pointer,
+    );
     return _ret.address == 0
         ? null
         : objc.NSNumber.castFromPointer(_ret, retain: true, release: true);
@@ -2071,17 +2736,21 @@ extension NIHostIntegrationCoreApiSetup$Methods
   ///
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
-  objc.NSNumber? echoAnotherEnumWithAnotherEnum(NIAnotherEnum anotherEnum,
-      {required NiTestsError wrappedError}) {
+  objc.NSNumber? echoAnotherEnumWithAnotherEnum(
+    NIAnotherEnum anotherEnum, {
+    required NiTestsError wrappedError,
+  }) {
     objc.checkOsVersionInternal(
-        'NIHostIntegrationCoreApiSetup.echoAnotherEnumWithAnotherEnum:wrappedError:',
-        iOS: (false, (13, 0, 0)),
-        macOS: (false, (16, 0, 0)));
+      'NIHostIntegrationCoreApiSetup.echoAnotherEnumWithAnotherEnum:wrappedError:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     final _ret = _objc_msgSend_ladeuy(
-        this.ref.pointer,
-        _sel_echoAnotherEnumWithAnotherEnum_wrappedError_,
-        anotherEnum.value,
-        wrappedError.ref.pointer);
+      this.ref.pointer,
+      _sel_echoAnotherEnumWithAnotherEnum_wrappedError_,
+      anotherEnum.value,
+      wrappedError.ref.pointer,
+    );
     return _ret.address == 0
         ? null
         : objc.NSNumber.castFromPointer(_ret, retain: true, release: true);
@@ -2093,22 +2762,28 @@ extension NIHostIntegrationCoreApiSetup$Methods
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
   NIAllNullableTypesWithoutRecursionBridge?
-      echoAllNullableTypesWithoutRecursionWithEverything(
-          NIAllNullableTypesWithoutRecursionBridge? everything,
-          {required NiTestsError wrappedError}) {
+  echoAllNullableTypesWithoutRecursionWithEverything(
+    NIAllNullableTypesWithoutRecursionBridge? everything, {
+    required NiTestsError wrappedError,
+  }) {
     objc.checkOsVersionInternal(
-        'NIHostIntegrationCoreApiSetup.echoAllNullableTypesWithoutRecursionWithEverything:wrappedError:',
-        iOS: (false, (13, 0, 0)),
-        macOS: (false, (16, 0, 0)));
+      'NIHostIntegrationCoreApiSetup.echoAllNullableTypesWithoutRecursionWithEverything:wrappedError:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     final _ret = _objc_msgSend_15qeuct(
-        this.ref.pointer,
-        _sel_echoAllNullableTypesWithoutRecursionWithEverything_wrappedError_,
-        everything?.ref.pointer ?? ffi.nullptr,
-        wrappedError.ref.pointer);
+      this.ref.pointer,
+      _sel_echoAllNullableTypesWithoutRecursionWithEverything_wrappedError_,
+      everything?.ref.pointer ?? ffi.nullptr,
+      wrappedError.ref.pointer,
+    );
     return _ret.address == 0
         ? null
-        : NIAllNullableTypesWithoutRecursionBridge.castFromPointer(_ret,
-            retain: true, release: true);
+        : NIAllNullableTypesWithoutRecursionBridge.castFromPointer(
+            _ret,
+            retain: true,
+            release: true,
+          );
   }
 
   /// Returns the inner <code>aString</code> value from the wrapped object, to test
@@ -2117,17 +2792,20 @@ extension NIHostIntegrationCoreApiSetup$Methods
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
   objc.NSString? extractNestedNullableStringWithWrapper(
-      NIAllClassesWrapperBridge wrapper,
-      {required NiTestsError wrappedError}) {
+    NIAllClassesWrapperBridge wrapper, {
+    required NiTestsError wrappedError,
+  }) {
     objc.checkOsVersionInternal(
-        'NIHostIntegrationCoreApiSetup.extractNestedNullableStringWithWrapper:wrappedError:',
-        iOS: (false, (13, 0, 0)),
-        macOS: (false, (16, 0, 0)));
+      'NIHostIntegrationCoreApiSetup.extractNestedNullableStringWithWrapper:wrappedError:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     final _ret = _objc_msgSend_15qeuct(
-        this.ref.pointer,
-        _sel_extractNestedNullableStringWithWrapper_wrappedError_,
-        wrapper.ref.pointer,
-        wrappedError.ref.pointer);
+      this.ref.pointer,
+      _sel_extractNestedNullableStringWithWrapper_wrappedError_,
+      wrapper.ref.pointer,
+      wrappedError.ref.pointer,
+    );
     return _ret.address == 0
         ? null
         : objc.NSString.castFromPointer(_ret, retain: true, release: true);
@@ -2139,21 +2817,27 @@ extension NIHostIntegrationCoreApiSetup$Methods
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
   NIAllClassesWrapperBridge? createNestedNullableStringWithNullableString(
-      objc.NSString? nullableString,
-      {required NiTestsError wrappedError}) {
+    objc.NSString? nullableString, {
+    required NiTestsError wrappedError,
+  }) {
     objc.checkOsVersionInternal(
-        'NIHostIntegrationCoreApiSetup.createNestedNullableStringWithNullableString:wrappedError:',
-        iOS: (false, (13, 0, 0)),
-        macOS: (false, (16, 0, 0)));
+      'NIHostIntegrationCoreApiSetup.createNestedNullableStringWithNullableString:wrappedError:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     final _ret = _objc_msgSend_15qeuct(
-        this.ref.pointer,
-        _sel_createNestedNullableStringWithNullableString_wrappedError_,
-        nullableString?.ref.pointer ?? ffi.nullptr,
-        wrappedError.ref.pointer);
+      this.ref.pointer,
+      _sel_createNestedNullableStringWithNullableString_wrappedError_,
+      nullableString?.ref.pointer ?? ffi.nullptr,
+      wrappedError.ref.pointer,
+    );
     return _ret.address == 0
         ? null
-        : NIAllClassesWrapperBridge.castFromPointer(_ret,
-            retain: true, release: true);
+        : NIAllClassesWrapperBridge.castFromPointer(
+            _ret,
+            retain: true,
+            release: true,
+          );
   }
 
   /// Returns passed in arguments of multiple types.
@@ -2161,43 +2845,53 @@ extension NIHostIntegrationCoreApiSetup$Methods
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
   NIAllNullableTypesWithoutRecursionBridge?
-      sendMultipleNullableTypesWithoutRecursionWithANullableBool(
-          objc.NSNumber? aNullableBool,
-          {objc.NSNumber? aNullableInt,
-          objc.NSString? aNullableString,
-          required NiTestsError wrappedError}) {
+  sendMultipleNullableTypesWithoutRecursionWithANullableBool(
+    objc.NSNumber? aNullableBool, {
+    objc.NSNumber? aNullableInt,
+    objc.NSString? aNullableString,
+    required NiTestsError wrappedError,
+  }) {
     objc.checkOsVersionInternal(
-        'NIHostIntegrationCoreApiSetup.sendMultipleNullableTypesWithoutRecursionWithANullableBool:aNullableInt:aNullableString:wrappedError:',
-        iOS: (false, (13, 0, 0)),
-        macOS: (false, (16, 0, 0)));
+      'NIHostIntegrationCoreApiSetup.sendMultipleNullableTypesWithoutRecursionWithANullableBool:aNullableInt:aNullableString:wrappedError:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     final _ret = _objc_msgSend_s92gih(
-        this.ref.pointer,
-        _sel_sendMultipleNullableTypesWithoutRecursionWithANullableBool_aNullableInt_aNullableString_wrappedError_,
-        aNullableBool?.ref.pointer ?? ffi.nullptr,
-        aNullableInt?.ref.pointer ?? ffi.nullptr,
-        aNullableString?.ref.pointer ?? ffi.nullptr,
-        wrappedError.ref.pointer);
+      this.ref.pointer,
+      _sel_sendMultipleNullableTypesWithoutRecursionWithANullableBool_aNullableInt_aNullableString_wrappedError_,
+      aNullableBool?.ref.pointer ?? ffi.nullptr,
+      aNullableInt?.ref.pointer ?? ffi.nullptr,
+      aNullableString?.ref.pointer ?? ffi.nullptr,
+      wrappedError.ref.pointer,
+    );
     return _ret.address == 0
         ? null
-        : NIAllNullableTypesWithoutRecursionBridge.castFromPointer(_ret,
-            retain: true, release: true);
+        : NIAllNullableTypesWithoutRecursionBridge.castFromPointer(
+            _ret,
+            retain: true,
+            release: true,
+          );
   }
 
   /// Returns passed in int.
   ///
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
-  objc.NSNumber? echoNullableIntWithANullableInt(objc.NSNumber? aNullableInt,
-      {required NiTestsError wrappedError}) {
+  objc.NSNumber? echoNullableIntWithANullableInt(
+    objc.NSNumber? aNullableInt, {
+    required NiTestsError wrappedError,
+  }) {
     objc.checkOsVersionInternal(
-        'NIHostIntegrationCoreApiSetup.echoNullableIntWithANullableInt:wrappedError:',
-        iOS: (false, (13, 0, 0)),
-        macOS: (false, (16, 0, 0)));
+      'NIHostIntegrationCoreApiSetup.echoNullableIntWithANullableInt:wrappedError:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     final _ret = _objc_msgSend_15qeuct(
-        this.ref.pointer,
-        _sel_echoNullableIntWithANullableInt_wrappedError_,
-        aNullableInt?.ref.pointer ?? ffi.nullptr,
-        wrappedError.ref.pointer);
+      this.ref.pointer,
+      _sel_echoNullableIntWithANullableInt_wrappedError_,
+      aNullableInt?.ref.pointer ?? ffi.nullptr,
+      wrappedError.ref.pointer,
+    );
     return _ret.address == 0
         ? null
         : objc.NSNumber.castFromPointer(_ret, retain: true, release: true);
@@ -2208,17 +2902,20 @@ extension NIHostIntegrationCoreApiSetup$Methods
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
   objc.NSNumber? echoNullableDoubleWithANullableDouble(
-      objc.NSNumber? aNullableDouble,
-      {required NiTestsError wrappedError}) {
+    objc.NSNumber? aNullableDouble, {
+    required NiTestsError wrappedError,
+  }) {
     objc.checkOsVersionInternal(
-        'NIHostIntegrationCoreApiSetup.echoNullableDoubleWithANullableDouble:wrappedError:',
-        iOS: (false, (13, 0, 0)),
-        macOS: (false, (16, 0, 0)));
+      'NIHostIntegrationCoreApiSetup.echoNullableDoubleWithANullableDouble:wrappedError:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     final _ret = _objc_msgSend_15qeuct(
-        this.ref.pointer,
-        _sel_echoNullableDoubleWithANullableDouble_wrappedError_,
-        aNullableDouble?.ref.pointer ?? ffi.nullptr,
-        wrappedError.ref.pointer);
+      this.ref.pointer,
+      _sel_echoNullableDoubleWithANullableDouble_wrappedError_,
+      aNullableDouble?.ref.pointer ?? ffi.nullptr,
+      wrappedError.ref.pointer,
+    );
     return _ret.address == 0
         ? null
         : objc.NSNumber.castFromPointer(_ret, retain: true, release: true);
@@ -2228,17 +2925,21 @@ extension NIHostIntegrationCoreApiSetup$Methods
   ///
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
-  objc.NSNumber? echoNullableBoolWithANullableBool(objc.NSNumber? aNullableBool,
-      {required NiTestsError wrappedError}) {
+  objc.NSNumber? echoNullableBoolWithANullableBool(
+    objc.NSNumber? aNullableBool, {
+    required NiTestsError wrappedError,
+  }) {
     objc.checkOsVersionInternal(
-        'NIHostIntegrationCoreApiSetup.echoNullableBoolWithANullableBool:wrappedError:',
-        iOS: (false, (13, 0, 0)),
-        macOS: (false, (16, 0, 0)));
+      'NIHostIntegrationCoreApiSetup.echoNullableBoolWithANullableBool:wrappedError:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     final _ret = _objc_msgSend_15qeuct(
-        this.ref.pointer,
-        _sel_echoNullableBoolWithANullableBool_wrappedError_,
-        aNullableBool?.ref.pointer ?? ffi.nullptr,
-        wrappedError.ref.pointer);
+      this.ref.pointer,
+      _sel_echoNullableBoolWithANullableBool_wrappedError_,
+      aNullableBool?.ref.pointer ?? ffi.nullptr,
+      wrappedError.ref.pointer,
+    );
     return _ret.address == 0
         ? null
         : objc.NSNumber.castFromPointer(_ret, retain: true, release: true);
@@ -2249,17 +2950,20 @@ extension NIHostIntegrationCoreApiSetup$Methods
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
   objc.NSString? echoNullableStringWithANullableString(
-      objc.NSString? aNullableString,
-      {required NiTestsError wrappedError}) {
+    objc.NSString? aNullableString, {
+    required NiTestsError wrappedError,
+  }) {
     objc.checkOsVersionInternal(
-        'NIHostIntegrationCoreApiSetup.echoNullableStringWithANullableString:wrappedError:',
-        iOS: (false, (13, 0, 0)),
-        macOS: (false, (16, 0, 0)));
+      'NIHostIntegrationCoreApiSetup.echoNullableStringWithANullableString:wrappedError:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     final _ret = _objc_msgSend_15qeuct(
-        this.ref.pointer,
-        _sel_echoNullableStringWithANullableString_wrappedError_,
-        aNullableString?.ref.pointer ?? ffi.nullptr,
-        wrappedError.ref.pointer);
+      this.ref.pointer,
+      _sel_echoNullableStringWithANullableString_wrappedError_,
+      aNullableString?.ref.pointer ?? ffi.nullptr,
+      wrappedError.ref.pointer,
+    );
     return _ret.address == 0
         ? null
         : objc.NSString.castFromPointer(_ret, retain: true, release: true);
@@ -2270,17 +2974,20 @@ extension NIHostIntegrationCoreApiSetup$Methods
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
   objc.NSObject? echoNullableObjectWithANullableObject(
-      objc.NSObject aNullableObject,
-      {required NiTestsError wrappedError}) {
+    objc.NSObject aNullableObject, {
+    required NiTestsError wrappedError,
+  }) {
     objc.checkOsVersionInternal(
-        'NIHostIntegrationCoreApiSetup.echoNullableObjectWithANullableObject:wrappedError:',
-        iOS: (false, (13, 0, 0)),
-        macOS: (false, (16, 0, 0)));
+      'NIHostIntegrationCoreApiSetup.echoNullableObjectWithANullableObject:wrappedError:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     final _ret = _objc_msgSend_15qeuct(
-        this.ref.pointer,
-        _sel_echoNullableObjectWithANullableObject_wrappedError_,
-        aNullableObject.ref.pointer,
-        wrappedError.ref.pointer);
+      this.ref.pointer,
+      _sel_echoNullableObjectWithANullableObject_wrappedError_,
+      aNullableObject.ref.pointer,
+      wrappedError.ref.pointer,
+    );
     return _ret.address == 0
         ? null
         : objc.NSObject.castFromPointer(_ret, retain: true, release: true);
@@ -2290,17 +2997,21 @@ extension NIHostIntegrationCoreApiSetup$Methods
   ///
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
-  objc.NSArray? echoNullableListWithANullableList(objc.NSArray? aNullableList,
-      {required NiTestsError wrappedError}) {
+  objc.NSArray? echoNullableListWithANullableList(
+    objc.NSArray? aNullableList, {
+    required NiTestsError wrappedError,
+  }) {
     objc.checkOsVersionInternal(
-        'NIHostIntegrationCoreApiSetup.echoNullableListWithANullableList:wrappedError:',
-        iOS: (false, (13, 0, 0)),
-        macOS: (false, (16, 0, 0)));
+      'NIHostIntegrationCoreApiSetup.echoNullableListWithANullableList:wrappedError:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     final _ret = _objc_msgSend_15qeuct(
-        this.ref.pointer,
-        _sel_echoNullableListWithANullableList_wrappedError_,
-        aNullableList?.ref.pointer ?? ffi.nullptr,
-        wrappedError.ref.pointer);
+      this.ref.pointer,
+      _sel_echoNullableListWithANullableList_wrappedError_,
+      aNullableList?.ref.pointer ?? ffi.nullptr,
+      wrappedError.ref.pointer,
+    );
     return _ret.address == 0
         ? null
         : objc.NSArray.castFromPointer(_ret, retain: true, release: true);
@@ -2310,17 +3021,21 @@ extension NIHostIntegrationCoreApiSetup$Methods
   ///
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
-  objc.NSDictionary? echoNullableMapWithMap(objc.NSDictionary? map,
-      {required NiTestsError wrappedError}) {
+  objc.NSDictionary? echoNullableMapWithMap(
+    objc.NSDictionary? map, {
+    required NiTestsError wrappedError,
+  }) {
     objc.checkOsVersionInternal(
-        'NIHostIntegrationCoreApiSetup.echoNullableMapWithMap:wrappedError:',
-        iOS: (false, (13, 0, 0)),
-        macOS: (false, (16, 0, 0)));
+      'NIHostIntegrationCoreApiSetup.echoNullableMapWithMap:wrappedError:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     final _ret = _objc_msgSend_15qeuct(
-        this.ref.pointer,
-        _sel_echoNullableMapWithMap_wrappedError_,
-        map?.ref.pointer ?? ffi.nullptr,
-        wrappedError.ref.pointer);
+      this.ref.pointer,
+      _sel_echoNullableMapWithMap_wrappedError_,
+      map?.ref.pointer ?? ffi.nullptr,
+      wrappedError.ref.pointer,
+    );
     return _ret.address == 0
         ? null
         : objc.NSDictionary.castFromPointer(_ret, retain: true, release: true);
@@ -2330,17 +3045,21 @@ extension NIHostIntegrationCoreApiSetup$Methods
   ///
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
-  objc.NSNumber? echoNullableEnumWithAnEnum(objc.NSNumber? anEnum,
-      {required NiTestsError wrappedError}) {
+  objc.NSNumber? echoNullableEnumWithAnEnum(
+    objc.NSNumber? anEnum, {
+    required NiTestsError wrappedError,
+  }) {
     objc.checkOsVersionInternal(
-        'NIHostIntegrationCoreApiSetup.echoNullableEnumWithAnEnum:wrappedError:',
-        iOS: (false, (13, 0, 0)),
-        macOS: (false, (16, 0, 0)));
+      'NIHostIntegrationCoreApiSetup.echoNullableEnumWithAnEnum:wrappedError:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     final _ret = _objc_msgSend_15qeuct(
-        this.ref.pointer,
-        _sel_echoNullableEnumWithAnEnum_wrappedError_,
-        anEnum?.ref.pointer ?? ffi.nullptr,
-        wrappedError.ref.pointer);
+      this.ref.pointer,
+      _sel_echoNullableEnumWithAnEnum_wrappedError_,
+      anEnum?.ref.pointer ?? ffi.nullptr,
+      wrappedError.ref.pointer,
+    );
     return _ret.address == 0
         ? null
         : objc.NSNumber.castFromPointer(_ret, retain: true, release: true);
@@ -2351,17 +3070,20 @@ extension NIHostIntegrationCoreApiSetup$Methods
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
   objc.NSNumber? echoAnotherNullableEnumWithAnotherEnum(
-      objc.NSNumber? anotherEnum,
-      {required NiTestsError wrappedError}) {
+    objc.NSNumber? anotherEnum, {
+    required NiTestsError wrappedError,
+  }) {
     objc.checkOsVersionInternal(
-        'NIHostIntegrationCoreApiSetup.echoAnotherNullableEnumWithAnotherEnum:wrappedError:',
-        iOS: (false, (13, 0, 0)),
-        macOS: (false, (16, 0, 0)));
+      'NIHostIntegrationCoreApiSetup.echoAnotherNullableEnumWithAnotherEnum:wrappedError:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     final _ret = _objc_msgSend_15qeuct(
-        this.ref.pointer,
-        _sel_echoAnotherNullableEnumWithAnotherEnum_wrappedError_,
-        anotherEnum?.ref.pointer ?? ffi.nullptr,
-        wrappedError.ref.pointer);
+      this.ref.pointer,
+      _sel_echoAnotherNullableEnumWithAnotherEnum_wrappedError_,
+      anotherEnum?.ref.pointer ?? ffi.nullptr,
+      wrappedError.ref.pointer,
+    );
     return _ret.address == 0
         ? null
         : objc.NSNumber.castFromPointer(_ret, retain: true, release: true);
@@ -2370,83 +3092,118 @@ extension NIHostIntegrationCoreApiSetup$Methods
   /// self
   NIHostIntegrationCoreApiSetup self() {
     final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_self);
-    return NIHostIntegrationCoreApiSetup.castFromPointer(_ret,
-        retain: true, release: true);
+    return NIHostIntegrationCoreApiSetup.castFromPointer(
+      _ret,
+      retain: true,
+      release: true,
+    );
   }
 
   /// retain
   NIHostIntegrationCoreApiSetup retain() {
     final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_retain);
-    return NIHostIntegrationCoreApiSetup.castFromPointer(_ret,
-        retain: true, release: true);
+    return NIHostIntegrationCoreApiSetup.castFromPointer(
+      _ret,
+      retain: true,
+      release: true,
+    );
   }
 
   /// autorelease
   NIHostIntegrationCoreApiSetup autorelease() {
     final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_autorelease);
-    return NIHostIntegrationCoreApiSetup.castFromPointer(_ret,
-        retain: true, release: true);
+    return NIHostIntegrationCoreApiSetup.castFromPointer(
+      _ret,
+      retain: true,
+      release: true,
+    );
   }
 }
 
 late final _class_NumberWrapper = objc.getClass("test_plugin.NumberWrapper");
-late final _sel_initWithNumber_type_ =
-    objc.registerName("initWithNumber:type:");
+late final _sel_initWithNumber_type_ = objc.registerName(
+  "initWithNumber:type:",
+);
 final _objc_msgSend_9slupp = objc.msgSendPointer
     .cast<
-        ffi.NativeFunction<
-            ffi.Pointer<objc.ObjCObject> Function(
-                ffi.Pointer<objc.ObjCObject>,
-                ffi.Pointer<objc.ObjCSelector>,
-                ffi.Pointer<objc.ObjCObject>,
-                ffi.Long)>>()
-    .asFunction<
+      ffi.NativeFunction<
         ffi.Pointer<objc.ObjCObject> Function(
-            ffi.Pointer<objc.ObjCObject>,
-            ffi.Pointer<objc.ObjCSelector>,
-            ffi.Pointer<objc.ObjCObject>,
-            int)>();
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Long,
+        )
+      >
+    >()
+    .asFunction<
+      ffi.Pointer<objc.ObjCObject> Function(
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<objc.ObjCObject>,
+        int,
+      )
+    >();
 late final _sel_copyWithZone_ = objc.registerName("copyWithZone:");
 late final _sel_number = objc.registerName("number");
 late final _sel_setNumber_ = objc.registerName("setNumber:");
 late final _sel_type = objc.registerName("type");
 final _objc_msgSend_1hz7y9r = objc.msgSendPointer
     .cast<
-        ffi.NativeFunction<
-            ffi.Long Function(ffi.Pointer<objc.ObjCObject>,
-                ffi.Pointer<objc.ObjCSelector>)>>()
+      ffi.NativeFunction<
+        ffi.Long Function(
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCSelector>,
+        )
+      >
+    >()
     .asFunction<
-        int Function(
-            ffi.Pointer<objc.ObjCObject>, ffi.Pointer<objc.ObjCSelector>)>();
+      int Function(ffi.Pointer<objc.ObjCObject>, ffi.Pointer<objc.ObjCSelector>)
+    >();
 late final _sel_setType_ = objc.registerName("setType:");
 final _objc_msgSend_4sp4xj = objc.msgSendPointer
     .cast<
-        ffi.NativeFunction<
-            ffi.Void Function(ffi.Pointer<objc.ObjCObject>,
-                ffi.Pointer<objc.ObjCSelector>, ffi.Long)>>()
+      ffi.NativeFunction<
+        ffi.Void Function(
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Long,
+        )
+      >
+    >()
     .asFunction<
-        void Function(ffi.Pointer<objc.ObjCObject>,
-            ffi.Pointer<objc.ObjCSelector>, int)>();
+      void Function(
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCSelector>,
+        int,
+      )
+    >();
 
 /// NumberWrapper
 class NumberWrapper extends objc.NSObject implements objc.NSCopying {
-  NumberWrapper._(ffi.Pointer<objc.ObjCObject> pointer,
-      {bool retain = false, bool release = false})
-      : super.castFromPointer(pointer, retain: retain, release: release);
+  NumberWrapper._(
+    ffi.Pointer<objc.ObjCObject> pointer, {
+    bool retain = false,
+    bool release = false,
+  }) : super.castFromPointer(pointer, retain: retain, release: release);
 
   /// Constructs a [NumberWrapper] that points to the same underlying object as [other].
   NumberWrapper.castFrom(objc.ObjCObjectBase other)
-      : this._(other.ref.pointer, retain: true, release: true);
+    : this._(other.ref.pointer, retain: true, release: true);
 
   /// Constructs a [NumberWrapper] that wraps the given raw object pointer.
-  NumberWrapper.castFromPointer(ffi.Pointer<objc.ObjCObject> other,
-      {bool retain = false, bool release = false})
-      : this._(other, retain: retain, release: release);
+  NumberWrapper.castFromPointer(
+    ffi.Pointer<objc.ObjCObject> other, {
+    bool retain = false,
+    bool release = false,
+  }) : this._(other, retain: retain, release: release);
 
   /// Returns whether [obj] is an instance of [NumberWrapper].
   static bool isInstance(objc.ObjCObjectBase obj) {
     return _objc_msgSend_19nvye5(
-        obj.ref.pointer, _sel_isKindOfClass_, _class_NumberWrapper);
+      obj.ref.pointer,
+      _sel_isKindOfClass_,
+      _class_NumberWrapper,
+    );
   }
 
   /// new
@@ -2457,8 +3214,11 @@ class NumberWrapper extends objc.NSObject implements objc.NSCopying {
 
   /// allocWithZone:
   static NumberWrapper allocWithZone(ffi.Pointer<objc.NSZone> zone) {
-    final _ret =
-        _objc_msgSend_1cwp428(_class_NumberWrapper, _sel_allocWithZone_, zone);
+    final _ret = _objc_msgSend_1cwp428(
+      _class_NumberWrapper,
+      _sel_allocWithZone_,
+      zone,
+    );
     return NumberWrapper.castFromPointer(_ret, retain: false, release: true);
   }
 
@@ -2475,15 +3235,22 @@ class NumberWrapper extends objc.NSObject implements objc.NSCopying {
 extension NumberWrapper$Methods on NumberWrapper {
   /// initWithNumber:type:
   NumberWrapper initWithNumber(objc.NSNumber number, {required int type}) {
-    final _ret = _objc_msgSend_9slupp(this.ref.retainAndReturnPointer(),
-        _sel_initWithNumber_type_, number.ref.pointer, type);
+    final _ret = _objc_msgSend_9slupp(
+      this.ref.retainAndReturnPointer(),
+      _sel_initWithNumber_type_,
+      number.ref.pointer,
+      type,
+    );
     return NumberWrapper.castFromPointer(_ret, retain: false, release: true);
   }
 
   /// copyWithZone:
   objc.ObjCObjectBase copyWithZone(ffi.Pointer<objc.NSZone> zone) {
-    final _ret =
-        _objc_msgSend_1cwp428(this.ref.pointer, _sel_copyWithZone_, zone);
+    final _ret = _objc_msgSend_1cwp428(
+      this.ref.pointer,
+      _sel_copyWithZone_,
+      zone,
+    );
     return objc.ObjCObjectBase(_ret, retain: false, release: true);
   }
 
@@ -2510,10 +3277,15 @@ extension NumberWrapper$Methods on NumberWrapper {
 
   /// init
   NumberWrapper init() {
-    objc.checkOsVersionInternal('NumberWrapper.init',
-        iOS: (false, (2, 0, 0)), macOS: (false, (10, 0, 0)));
-    final _ret =
-        _objc_msgSend_151sglz(this.ref.retainAndReturnPointer(), _sel_init);
+    objc.checkOsVersionInternal(
+      'NumberWrapper.init',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    final _ret = _objc_msgSend_151sglz(
+      this.ref.retainAndReturnPointer(),
+      _sel_init,
+    );
     return NumberWrapper.castFromPointer(_ret, retain: false, release: true);
   }
 
@@ -2536,50 +3308,70 @@ extension NumberWrapper$Methods on NumberWrapper {
   }
 }
 
-late final _class_PigeonInternalNull =
-    objc.getClass("test_plugin.PigeonInternalNull");
+late final _class_PigeonInternalNull = objc.getClass(
+  "test_plugin.PigeonInternalNull",
+);
 
 /// PigeonInternalNull
 class PigeonInternalNull extends objc.NSObject {
-  PigeonInternalNull._(ffi.Pointer<objc.ObjCObject> pointer,
-      {bool retain = false, bool release = false})
-      : super.castFromPointer(pointer, retain: retain, release: release);
+  PigeonInternalNull._(
+    ffi.Pointer<objc.ObjCObject> pointer, {
+    bool retain = false,
+    bool release = false,
+  }) : super.castFromPointer(pointer, retain: retain, release: release);
 
   /// Constructs a [PigeonInternalNull] that points to the same underlying object as [other].
   PigeonInternalNull.castFrom(objc.ObjCObjectBase other)
-      : this._(other.ref.pointer, retain: true, release: true);
+    : this._(other.ref.pointer, retain: true, release: true);
 
   /// Constructs a [PigeonInternalNull] that wraps the given raw object pointer.
-  PigeonInternalNull.castFromPointer(ffi.Pointer<objc.ObjCObject> other,
-      {bool retain = false, bool release = false})
-      : this._(other, retain: retain, release: release);
+  PigeonInternalNull.castFromPointer(
+    ffi.Pointer<objc.ObjCObject> other, {
+    bool retain = false,
+    bool release = false,
+  }) : this._(other, retain: retain, release: release);
 
   /// Returns whether [obj] is an instance of [PigeonInternalNull].
   static bool isInstance(objc.ObjCObjectBase obj) {
     return _objc_msgSend_19nvye5(
-        obj.ref.pointer, _sel_isKindOfClass_, _class_PigeonInternalNull);
+      obj.ref.pointer,
+      _sel_isKindOfClass_,
+      _class_PigeonInternalNull,
+    );
   }
 
   /// new
   static PigeonInternalNull new$() {
     final _ret = _objc_msgSend_151sglz(_class_PigeonInternalNull, _sel_new);
-    return PigeonInternalNull.castFromPointer(_ret,
-        retain: false, release: true);
+    return PigeonInternalNull.castFromPointer(
+      _ret,
+      retain: false,
+      release: true,
+    );
   }
 
   /// allocWithZone:
   static PigeonInternalNull allocWithZone(ffi.Pointer<objc.NSZone> zone) {
     final _ret = _objc_msgSend_1cwp428(
-        _class_PigeonInternalNull, _sel_allocWithZone_, zone);
-    return PigeonInternalNull.castFromPointer(_ret,
-        retain: false, release: true);
+      _class_PigeonInternalNull,
+      _sel_allocWithZone_,
+      zone,
+    );
+    return PigeonInternalNull.castFromPointer(
+      _ret,
+      retain: false,
+      release: true,
+    );
   }
 
   /// alloc
   static PigeonInternalNull alloc() {
     final _ret = _objc_msgSend_151sglz(_class_PigeonInternalNull, _sel_alloc);
-    return PigeonInternalNull.castFromPointer(_ret,
-        retain: false, release: true);
+    return PigeonInternalNull.castFromPointer(
+      _ret,
+      retain: false,
+      release: true,
+    );
   }
 
   /// Returns a new instance of PigeonInternalNull constructed with the default `new` method.
@@ -2589,32 +3381,49 @@ class PigeonInternalNull extends objc.NSObject {
 extension PigeonInternalNull$Methods on PigeonInternalNull {
   /// init
   PigeonInternalNull init() {
-    objc.checkOsVersionInternal('PigeonInternalNull.init',
-        iOS: (false, (2, 0, 0)), macOS: (false, (10, 0, 0)));
-    final _ret =
-        _objc_msgSend_151sglz(this.ref.retainAndReturnPointer(), _sel_init);
-    return PigeonInternalNull.castFromPointer(_ret,
-        retain: false, release: true);
+    objc.checkOsVersionInternal(
+      'PigeonInternalNull.init',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    final _ret = _objc_msgSend_151sglz(
+      this.ref.retainAndReturnPointer(),
+      _sel_init,
+    );
+    return PigeonInternalNull.castFromPointer(
+      _ret,
+      retain: false,
+      release: true,
+    );
   }
 
   /// self
   PigeonInternalNull self() {
     final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_self);
-    return PigeonInternalNull.castFromPointer(_ret,
-        retain: true, release: true);
+    return PigeonInternalNull.castFromPointer(
+      _ret,
+      retain: true,
+      release: true,
+    );
   }
 
   /// retain
   PigeonInternalNull retain() {
     final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_retain);
-    return PigeonInternalNull.castFromPointer(_ret,
-        retain: true, release: true);
+    return PigeonInternalNull.castFromPointer(
+      _ret,
+      retain: true,
+      release: true,
+    );
   }
 
   /// autorelease
   PigeonInternalNull autorelease() {
     final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_autorelease);
-    return PigeonInternalNull.castFromPointer(_ret,
-        retain: true, release: true);
+    return PigeonInternalNull.castFromPointer(
+      _ret,
+      retain: true,
+      release: true,
+    );
   }
 }

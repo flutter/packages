@@ -197,18 +197,18 @@ class EventAllNullableTypes {
       objectList: (result[19] as List<Object?>?)?.cast<Object?>(),
       listList: (result[20] as List<Object?>?)?.cast<List<Object?>?>(),
       mapList: (result[21] as List<Object?>?)?.cast<Map<Object?, Object?>?>(),
-      recursiveClassList:
-          (result[22] as List<Object?>?)?.cast<EventAllNullableTypes?>(),
+      recursiveClassList: (result[22] as List<Object?>?)
+          ?.cast<EventAllNullableTypes?>(),
       map: result[23] as Map<Object?, Object?>?,
-      stringMap:
-          (result[24] as Map<Object?, Object?>?)?.cast<String?, String?>(),
+      stringMap: (result[24] as Map<Object?, Object?>?)
+          ?.cast<String?, String?>(),
       intMap: (result[25] as Map<Object?, Object?>?)?.cast<int?, int?>(),
       enumMap: (result[26] as Map<Object?, Object?>?)
           ?.cast<EventEnum?, EventEnum?>(),
-      objectMap:
-          (result[27] as Map<Object?, Object?>?)?.cast<Object?, Object?>(),
-      listMap:
-          (result[28] as Map<Object?, Object?>?)?.cast<int?, List<Object?>?>(),
+      objectMap: (result[27] as Map<Object?, Object?>?)
+          ?.cast<Object?, Object?>(),
+      listMap: (result[28] as Map<Object?, Object?>?)
+          ?.cast<int?, List<Object?>?>(),
       mapMap: (result[29] as Map<Object?, Object?>?)
           ?.cast<int?, Map<Object?, Object?>?>(),
       recursiveClassMap: (result[30] as Map<Object?, Object?>?)
@@ -225,7 +225,37 @@ class EventAllNullableTypes {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(encode(), other.encode());
+    return aNullableBool == other.aNullableBool &&
+        aNullableInt == other.aNullableInt &&
+        aNullableInt64 == other.aNullableInt64 &&
+        aNullableDouble == other.aNullableDouble &&
+        _deepEquals(aNullableByteArray, other.aNullableByteArray) &&
+        _deepEquals(aNullable4ByteArray, other.aNullable4ByteArray) &&
+        _deepEquals(aNullable8ByteArray, other.aNullable8ByteArray) &&
+        _deepEquals(aNullableFloatArray, other.aNullableFloatArray) &&
+        aNullableEnum == other.aNullableEnum &&
+        anotherNullableEnum == other.anotherNullableEnum &&
+        aNullableString == other.aNullableString &&
+        aNullableObject == other.aNullableObject &&
+        allNullableTypes == other.allNullableTypes &&
+        _deepEquals(list, other.list) &&
+        _deepEquals(stringList, other.stringList) &&
+        _deepEquals(intList, other.intList) &&
+        _deepEquals(doubleList, other.doubleList) &&
+        _deepEquals(boolList, other.boolList) &&
+        _deepEquals(enumList, other.enumList) &&
+        _deepEquals(objectList, other.objectList) &&
+        _deepEquals(listList, other.listList) &&
+        _deepEquals(mapList, other.mapList) &&
+        _deepEquals(recursiveClassList, other.recursiveClassList) &&
+        _deepEquals(map, other.map) &&
+        _deepEquals(stringMap, other.stringMap) &&
+        _deepEquals(intMap, other.intMap) &&
+        _deepEquals(enumMap, other.enumMap) &&
+        _deepEquals(objectMap, other.objectMap) &&
+        _deepEquals(listMap, other.listMap) &&
+        _deepEquals(mapMap, other.mapMap) &&
+        _deepEquals(recursiveClassMap, other.recursiveClassMap);
   }
 
   @override
@@ -262,7 +292,7 @@ class IntEvent extends PlatformEvent {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(encode(), other.encode());
+    return value == other.value;
   }
 
   @override
@@ -297,7 +327,7 @@ class StringEvent extends PlatformEvent {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(encode(), other.encode());
+    return value == other.value;
   }
 
   @override
@@ -332,7 +362,7 @@ class BoolEvent extends PlatformEvent {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(encode(), other.encode());
+    return value == other.value;
   }
 
   @override
@@ -367,7 +397,7 @@ class DoubleEvent extends PlatformEvent {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(encode(), other.encode());
+    return value == other.value;
   }
 
   @override
@@ -402,7 +432,7 @@ class ObjectsEvent extends PlatformEvent {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(encode(), other.encode());
+    return value == other.value;
   }
 
   @override
@@ -437,7 +467,7 @@ class EnumEvent extends PlatformEvent {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(encode(), other.encode());
+    return value == other.value;
   }
 
   @override
@@ -472,7 +502,7 @@ class ClassEvent extends PlatformEvent {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(encode(), other.encode());
+    return value == other.value;
   }
 
   @override
