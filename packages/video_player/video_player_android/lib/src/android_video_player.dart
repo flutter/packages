@@ -229,8 +229,8 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
         tracks.add(
           VideoAudioTrack(
             id: track.trackId,
-            label: track.label ?? 'Unknown',
-            language: track.language ?? 'und',
+            label: track.label,
+            language: track.language,
             isSelected: track.isSelected,
             bitrate: track.bitrate,
             sampleRate: track.sampleRate,

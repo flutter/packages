@@ -159,8 +159,8 @@ public abstract class VideoPlayer implements Messages.VideoPlayerInstanceApi {
           Messages.ExoPlayerAudioTrackData audioTrack =
               new Messages.ExoPlayerAudioTrackData.Builder()
                   .setTrackId(groupIndex + "_" + trackIndex)
-                  .setLabel(format.label != null ? format.label : "")
-                  .setLanguage(format.language != null ? format.language : "und")
+                  .setLabel(format.label)
+                  .setLanguage(format.language)
                   .setIsSelected(isSelected)
                   .setBitrate(format.bitrate != Format.NO_VALUE ? (long) format.bitrate : null)
                   .setSampleRate(

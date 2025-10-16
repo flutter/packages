@@ -224,8 +224,8 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
         tracks.add(
           VideoAudioTrack(
             id: track.trackId.toString(),
-            label: track.label ?? 'Unknown',
-            language: track.language ?? 'und',
+            label: track.label,
+            language: track.language,
             isSelected: track.isSelected,
             bitrate: track.bitrate,
             sampleRate: track.sampleRate,
@@ -241,13 +241,13 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
       for (final MediaSelectionAudioTrackData track
           in nativeData.mediaSelectionTracks!) {
         final String trackId = 'media_selection_${track.index}';
-        final String label =
-            track.commonMetadataTitle ?? track.displayName ?? 'Unknown';
+        final String? label =
+            track.commonMetadataTitle ?? track.displayName;
         tracks.add(
           VideoAudioTrack(
             id: trackId,
             label: label,
-            language: track.languageCode ?? 'und',
+            language: track.languageCode,
             isSelected: track.isSelected,
           ),
         );

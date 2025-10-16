@@ -500,11 +500,11 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
         continue;
       }
 
-      NSString *displayName = option.displayName ?: @"";
+      NSString *displayName = option.displayName;
 
-      NSString *languageCode = @"und";
+      NSString *languageCode = nil;
       if (option.locale) {
-        languageCode = option.locale.languageCode ?: @"und";
+        languageCode = option.locale.languageCode;
       }
 
       NSString *commonMetadataTitle = nil;
@@ -542,13 +542,12 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
     AVAssetTrack *track = assetAudioTracks[i];
 
     // Extract metadata from the track
-    NSString *language = @"und";
-    NSString *label = @"";
+    NSString *language = nil;
+    NSString *label = nil;
 
     // Try to get language from track
-    NSString *trackLanguage = [track.languageCode length] > 0 ? track.languageCode : nil;
-    if (trackLanguage) {
-      language = trackLanguage;
+    if ([track.languageCode length] > 0) {
+      language = track.languageCode;
     }
 
     // Try to get label from metadata

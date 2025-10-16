@@ -580,10 +580,12 @@ class VideoAudioTrack {
   final String id;
 
   /// Human-readable label for the track.
-  final String label;
+  /// May be null if not available from the platform.
+  final String? label;
 
   /// Language code of the audio track (e.g., 'en', 'es', 'und').
-  final String language;
+  /// May be null if not available from the platform.
+  final String? language;
 
   /// Whether this track is currently selected.
   final bool isSelected;

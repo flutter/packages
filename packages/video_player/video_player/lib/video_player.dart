@@ -112,13 +112,17 @@ class VideoAudioTrack {
 ///
 /// This internal method is used to decouple the public API from the
 /// platform interface implementation.
+///
+/// Normalizes null values from the platform to provide a consistent API:
+/// - null label becomes 'Unknown'
+/// - null language becomes 'und' (undefined)
 VideoAudioTrack _convertPlatformAudioTrack(
   platform_interface.VideoAudioTrack platformTrack,
 ) {
   return VideoAudioTrack(
     id: platformTrack.id,
-    label: platformTrack.label,
-    language: platformTrack.language,
+    label: platformTrack.label ?? 'Unknown',
+    language: platformTrack.language ?? 'und',
     isSelected: platformTrack.isSelected,
     bitrate: platformTrack.bitrate,
     sampleRate: platformTrack.sampleRate,
