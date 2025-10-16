@@ -50,7 +50,7 @@ final class VideoPlayerEventCallbacks implements VideoPlayerCallbacks {
   }
 
   @Override
-  public void onPlaybackStateChanged(PlatformPlaybackState state) {
+  public void onPlaybackStateChanged(@NonNull PlatformPlaybackState state) {
     eventSink.success(new PlaybackStateChangeEvent(state));
   }
 
