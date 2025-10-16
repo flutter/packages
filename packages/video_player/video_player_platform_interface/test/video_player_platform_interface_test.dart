@@ -37,13 +37,7 @@ void main() {
     },
   );
 
-  test(
-    'default implementation isAudioTrackSupportAvailable returns false',
-    () {
-      expect(
-        initialInstance.isAudioTrackSupportAvailable(),
-        false,
-      );
-    },
-  );
+  test('default implementation isAudioTrackSupportAvailable returns false', () {
+    expect(initialInstance.isAudioTrackSupportAvailable(), false);
+  });
 }
