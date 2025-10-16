@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -24,18 +24,16 @@ void main() {
             AndroidContentProgressProviderCreationParams(
               proxy: InteractiveMediaAdsProxy(
                 newContentProgressProvider: () => mockContentProgressProvider,
-                newVideoProgressUpdate: ({
-                  required int currentTimeMs,
-                  required int durationMs,
-                }) {
-                  expect(currentTimeMs, 1000);
-                  expect(durationMs, 10000);
-                  return ima.VideoProgressUpdate.pigeon_detached(
-                    pigeon_instanceManager: ima.PigeonInstanceManager(
-                      onWeakReferenceRemoved: (_) {},
-                    ),
-                  );
-                },
+                newVideoProgressUpdate:
+                    ({required int currentTimeMs, required int durationMs}) {
+                      expect(currentTimeMs, 1000);
+                      expect(durationMs, 10000);
+                      return ima.VideoProgressUpdate.pigeon_detached(
+                        pigeon_instanceManager: ima.PigeonInstanceManager(
+                          onWeakReferenceRemoved: (_) {},
+                        ),
+                      );
+                    },
               ),
             ),
           );

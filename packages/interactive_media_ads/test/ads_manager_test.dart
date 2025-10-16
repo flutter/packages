@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -102,6 +102,15 @@ void main() {
     final AdsManager manager = createAdsManager(platformManager);
     await manager.destroy();
   });
+
+  test('adCuePoints', () async {
+    final TestAdsManager platformManager = TestAdsManager(
+      adCuePoints: const <Duration>[Duration(seconds: 5)],
+    );
+
+    final AdsManager manager = createAdsManager(platformManager);
+    expect(platformManager.adCuePoints, manager.adCuePoints);
+  });
 }
 
 AdsManager createAdsManager(PlatformAdsManager platformManager) {
@@ -113,16 +122,14 @@ AdsManager createAdsManager(PlatformAdsManager platformManager) {
         onRequestAds: (PlatformAdsRequest request) async {},
       );
     },
-    onCreatePlatformAdsManagerDelegate: (
-      PlatformAdsManagerDelegateCreationParams params,
-    ) {
-      throw UnimplementedError();
-    },
-    onCreatePlatformAdDisplayContainer: (
-      PlatformAdDisplayContainerCreationParams params,
-    ) {
-      throw UnimplementedError();
-    },
+    onCreatePlatformAdsManagerDelegate:
+        (PlatformAdsManagerDelegateCreationParams params) {
+          throw UnimplementedError();
+        },
+    onCreatePlatformAdDisplayContainer:
+        (PlatformAdDisplayContainerCreationParams params) {
+          throw UnimplementedError();
+        },
     onCreatePlatformContentProgressProvider: (_) => throw UnimplementedError(),
   );
 

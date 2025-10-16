@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -44,15 +44,16 @@ base class AndroidContentProgressProvider
   ///
   /// This allows the SDK to track progress of the content video.
   @internal
-  late final ima.ContentProgressProvider progressProvider =
-      _androidParams._proxy.newContentProgressProvider();
+  late final ima.ContentProgressProvider progressProvider = _androidParams
+      ._proxy
+      .newContentProgressProvider();
 
   late final AndroidContentProgressProviderCreationParams _androidParams =
       params is AndroidContentProgressProviderCreationParams
-          ? params as AndroidContentProgressProviderCreationParams
-          : AndroidContentProgressProviderCreationParams.fromPlatformContentProgressProviderCreationParams(
-            params,
-          );
+      ? params as AndroidContentProgressProviderCreationParams
+      : AndroidContentProgressProviderCreationParams.fromPlatformContentProgressProviderCreationParams(
+          params,
+        );
 
   @override
   Future<void> setProgress({

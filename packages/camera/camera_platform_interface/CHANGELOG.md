@@ -1,5 +1,7 @@
-## NEXT
+## 2.11.0
 
+* Adds a flag to configure a recording to be persistent across camera changes. See
+  `VideoCaptureOptions.enablePersistentRecording`.
 * Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
 
 ## 2.10.0

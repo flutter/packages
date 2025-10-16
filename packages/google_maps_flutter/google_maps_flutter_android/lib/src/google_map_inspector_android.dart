@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -53,8 +53,9 @@ class GoogleMapsInspectorAndroid extends GoogleMapsInspectorPlatform {
 
   @override
   Future<MinMaxZoomPreference> getMinMaxZoomLevels({required int mapId}) async {
-    final PlatformZoomRange zoomLevels =
-        await _inspectorProvider(mapId)!.getZoomRange();
+    final PlatformZoomRange zoomLevels = await _inspectorProvider(
+      mapId,
+    )!.getZoomRange();
     return MinMaxZoomPreference(zoomLevels.min, zoomLevels.max);
   }
 
@@ -196,8 +197,9 @@ class GoogleMapsInspectorAndroid extends GoogleMapsInspectorPlatform {
 
   @override
   Future<CameraPosition> getCameraPosition({required int mapId}) async {
-    final PlatformCameraPosition cameraPosition =
-        await _inspectorProvider(mapId)!.getCameraPosition();
+    final PlatformCameraPosition cameraPosition = await _inspectorProvider(
+      mapId,
+    )!.getCameraPosition();
     return CameraPosition(
       target: LatLng(
         cameraPosition.target.latitude,

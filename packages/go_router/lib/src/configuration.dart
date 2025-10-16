@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -10,6 +10,7 @@ import 'package:flutter/widgets.dart';
 
 import 'logging.dart';
 import 'match.dart';
+import 'misc/constants.dart';
 import 'misc/errors.dart';
 import 'path_utils.dart';
 import 'route.dart';
@@ -29,6 +30,7 @@ class RouteConfiguration {
     this._routingConfig, {
     required this.navigatorKey,
     this.extraCodec,
+    this.router,
   }) {
     _onRoutingTableChanged();
     _routingConfig.addListener(_onRoutingTableChanged);
@@ -265,6 +267,11 @@ class RouteConfiguration {
   ///    example.
   final Codec<Object?, Object?>? extraCodec;
 
+  /// The GoRouter instance that owns this configuration.
+  ///
+  /// This is used to provide access to the router during redirects.
+  final GoRouter? router;
+
   final Map<String, _NamedPath> _nameToPath = <String, _NamedPath>{};
 
   /// Looks up the url location by a [GoRoute]'s name.
@@ -430,23 +437,50 @@ class RouteConfiguration {
           }
           return true;
         });
-        final FutureOr<String?> routeLevelRedirectResult =
-            _getRouteLevelRedirect(context, prevMatchList, routeMatches, 0);
 
-        if (routeLevelRedirectResult is String?) {
-          return processRouteLevelRedirect(routeLevelRedirectResult);
+        try {
+          final FutureOr<String?> routeLevelRedirectResult =
+              _getRouteLevelRedirect(context, prevMatchList, routeMatches, 0);
+
+          if (routeLevelRedirectResult is String?) {
+            return processRouteLevelRedirect(routeLevelRedirectResult);
+          }
+          return routeLevelRedirectResult
+              .then<RouteMatchList>(processRouteLevelRedirect)
+              .catchError((Object error) {
+                final GoException goException =
+                    error is GoException
+                        ? error
+                        : GoException(
+                          'Exception during route redirect: $error',
+                        );
+                return _errorRouteMatchList(
+                  prevMatchList.uri,
+                  goException,
+                  extra: prevMatchList.extra,
+                );
+              });
+        } catch (exception) {
+          final GoException goException =
+              exception is GoException
+                  ? exception
+                  : GoException('Exception during route redirect: $exception');
+          return _errorRouteMatchList(
+            prevMatchList.uri,
+            goException,
+            extra: prevMatchList.extra,
+          );
         }
-        return routeLevelRedirectResult.then<RouteMatchList>(
-          processRouteLevelRedirect,
-        );
       }
 
       redirectHistory.add(prevMatchList);
       // Check for top-level redirect
-      final FutureOr<String?> topRedirectResult = _routingConfig.value.redirect(
-        context,
-        buildTopLevelGoRouterState(prevMatchList),
-      );
+      final FutureOr<String?> topRedirectResult = _runInRouterZone(() {
+        return _routingConfig.value.redirect(
+          context,
+          buildTopLevelGoRouterState(prevMatchList),
+        );
+      });
 
       if (topRedirectResult is String?) {
         return processTopLevelRedirect(topRedirectResult);
@@ -479,14 +513,33 @@ class RouteConfiguration {
           currentCheckIndex + 1,
         );
     final RouteBase route = match.route;
-    final FutureOr<String?> routeRedirectResult = route.redirect!.call(
-      context,
-      match.buildState(this, matchList),
-    );
-    if (routeRedirectResult is String?) {
-      return processRouteRedirect(routeRedirectResult);
+    try {
+      final FutureOr<String?> routeRedirectResult = _runInRouterZone(() {
+        return route.redirect!.call(context, match.buildState(this, matchList));
+      });
+      if (routeRedirectResult is String?) {
+        return processRouteRedirect(routeRedirectResult);
+      }
+      return routeRedirectResult.then<String?>(processRouteRedirect).catchError(
+        (Object error) {
+          // Convert any exception during async route redirect to a GoException
+          final GoException goException =
+              error is GoException
+                  ? error
+                  : GoException('Exception during route redirect: $error');
+          // Throw the GoException to be caught by the redirect handling chain
+          throw goException;
+        },
+      );
+    } catch (exception) {
+      // Convert any exception during route redirect to a GoException
+      final GoException goException =
+          exception is GoException
+              ? exception
+              : GoException('Exception during route redirect: $exception');
+      // Throw the GoException to be caught by the redirect handling chain
+      throw goException;
     }
-    return routeRedirectResult.then<String?>(processRouteRedirect);
   }
 
   RouteMatchList _getNewMatches(
@@ -498,9 +551,13 @@ class RouteConfiguration {
       final RouteMatchList newMatch = findMatch(Uri.parse(newLocation));
       _addRedirect(redirectHistory, newMatch, previousLocation);
       return newMatch;
-    } on GoException catch (e) {
-      log('Redirection exception: ${e.message}');
-      return _errorRouteMatchList(previousLocation, e);
+    } catch (exception) {
+      final GoException goException =
+          exception is GoException
+              ? exception
+              : GoException('Exception during redirect: $exception');
+      log('Redirection exception: ${goException.message}');
+      return _errorRouteMatchList(previousLocation, goException);
     }
   }
 
@@ -534,6 +591,39 @@ class RouteConfiguration {
           (RouteMatchList routeMatches) => routeMatches.uri.toString(),
         )
         .join(' => ');
+  }
+
+  /// Runs the given function in a Zone with the router context for redirects.
+  T _runInRouterZone<T>(T Function() callback) {
+    if (router == null) {
+      return callback();
+    }
+
+    T? result;
+    bool errorOccurred = false;
+
+    runZonedGuarded<void>(
+      () {
+        result = callback();
+      },
+      (Object error, StackTrace stack) {
+        errorOccurred = true;
+        // Convert any exception during redirect to a GoException and rethrow
+        final GoException goException =
+            error is GoException
+                ? error
+                : GoException('Exception during redirect: $error');
+        throw goException;
+      },
+      zoneValues: <Object?, Object?>{currentRouterKey: router},
+    );
+
+    if (errorOccurred) {
+      // This should not be reached since we rethrow in the error handler
+      throw GoException('Unexpected error in router zone');
+    }
+
+    return result as T;
   }
 
   /// Get the location for the provided route.

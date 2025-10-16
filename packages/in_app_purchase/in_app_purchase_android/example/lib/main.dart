@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -208,8 +208,9 @@ class _MyAppState extends State<_MyApp> {
     final Widget storeHeader = ListTile(
       leading: Icon(
         _isAvailable ? Icons.check : Icons.block,
-        color:
-            _isAvailable ? Colors.green : ThemeData.light().colorScheme.error,
+        color: _isAvailable
+            ? Colors.green
+            : ThemeData.light().colorScheme.error,
       ),
       title: Text(
         'The store is ${_isAvailable ? 'available' : 'unavailable'}.',
@@ -454,50 +455,48 @@ class _MyAppState extends State<_MyApp> {
         return ListTile(
           title: Text(productDetails.title),
           subtitle: Text(productDetails.description),
-          trailing:
-              previousPurchase != null
-                  ? const SizedBox.shrink()
-                  : TextButton(
-                    style: TextButton.styleFrom(
-                      backgroundColor: Colors.green[800],
-                      foregroundColor: Colors.white,
-                    ),
-                    onPressed: () {
-                      // NOTE: If you are making a subscription purchase/upgrade/downgrade, we recommend you to
-                      // verify the latest status of you your subscription by using server side receipt validation
-                      // and update the UI accordingly. The subscription purchase status shown
-                      // inside the app may not be accurate.
-                      final GooglePlayPurchaseDetails? oldSubscription =
-                          _getOldSubscription(
-                            productDetails as GooglePlayProductDetails,
-                            purchases,
-                          );
-                      final GooglePlayPurchaseParam purchaseParam =
-                          GooglePlayPurchaseParam(
-                            productDetails: productDetails,
-                            changeSubscriptionParam:
-                                oldSubscription != null
-                                    ? ChangeSubscriptionParam(
-                                      oldPurchaseDetails: oldSubscription,
-                                      replacementMode:
-                                          ReplacementMode.withTimeProration,
-                                    )
-                                    : null,
-                          );
-                      if (productDetails.id == _kConsumableId) {
-                        _inAppPurchasePlatform.buyConsumable(
-                          purchaseParam: purchaseParam,
-                          // ignore: avoid_redundant_argument_values
-                          autoConsume: _kAutoConsume,
-                        );
-                      } else {
-                        _inAppPurchasePlatform.buyNonConsumable(
-                          purchaseParam: purchaseParam,
-                        );
-                      }
-                    },
-                    child: Text(productDetails.price),
+          trailing: previousPurchase != null
+              ? const SizedBox.shrink()
+              : TextButton(
+                  style: TextButton.styleFrom(
+                    backgroundColor: Colors.green[800],
+                    foregroundColor: Colors.white,
                   ),
+                  onPressed: () {
+                    // NOTE: If you are making a subscription purchase/upgrade/downgrade, we recommend you to
+                    // verify the latest status of you your subscription by using server side receipt validation
+                    // and update the UI accordingly. The subscription purchase status shown
+                    // inside the app may not be accurate.
+                    final GooglePlayPurchaseDetails? oldSubscription =
+                        _getOldSubscription(
+                          productDetails as GooglePlayProductDetails,
+                          purchases,
+                        );
+                    final GooglePlayPurchaseParam purchaseParam =
+                        GooglePlayPurchaseParam(
+                          productDetails: productDetails,
+                          changeSubscriptionParam: oldSubscription != null
+                              ? ChangeSubscriptionParam(
+                                  oldPurchaseDetails: oldSubscription,
+                                  replacementMode:
+                                      ReplacementMode.withTimeProration,
+                                )
+                              : null,
+                        );
+                    if (productDetails.id == _kConsumableId) {
+                      _inAppPurchasePlatform.buyConsumable(
+                        purchaseParam: purchaseParam,
+                        // ignore: avoid_redundant_argument_values
+                        autoConsume: _kAutoConsume,
+                      );
+                    } else {
+                      _inAppPurchasePlatform.buyNonConsumable(
+                        purchaseParam: purchaseParam,
+                      );
+                    }
+                  },
+                  child: Text(productDetails.price),
+                ),
         );
       }),
     );
@@ -524,16 +523,15 @@ class _MyAppState extends State<_MyApp> {
     const ListTile consumableHeader = ListTile(
       title: Text('Purchased consumables'),
     );
-    final List<Widget> tokens =
-        _consumables.map((String id) {
-          return GridTile(
-            child: IconButton(
-              icon: const Icon(Icons.stars, size: 42.0, color: Colors.orange),
-              splashColor: Colors.yellowAccent,
-              onPressed: () => consume(id),
-            ),
-          );
-        }).toList();
+    final List<Widget> tokens = _consumables.map((String id) {
+      return GridTile(
+        child: IconButton(
+          icon: const Icon(Icons.stars, size: 42.0, color: Colors.orange),
+          splashColor: Colors.yellowAccent,
+          onPressed: () => consume(id),
+        ),
+      );
+    }).toList();
     return Card(
       child: Column(
         children: <Widget>[

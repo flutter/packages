@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -68,15 +68,16 @@ void main() {
                 ).thenAnswer((_) async => mockCompanionAdSlot);
                 return mockFactory;
               },
-              newCompanionAdSlotClickListener: ({
-                required void Function(ima.CompanionAdSlotClickListener)
-                onCompanionAdClick,
-              }) {
-                return ima.CompanionAdSlotClickListener.pigeon_detached(
-                  onCompanionAdClick: onCompanionAdClick,
-                  pigeon_instanceManager: _TestInstanceManager(),
-                );
-              },
+              newCompanionAdSlotClickListener:
+                  ({
+                    required void Function(ima.CompanionAdSlotClickListener)
+                    onCompanionAdClick,
+                  }) {
+                    return ima.CompanionAdSlotClickListener.pigeon_detached(
+                      onCompanionAdClick: onCompanionAdClick,
+                      pigeon_instanceManager: _TestInstanceManager(),
+                    );
+                  },
             ),
           );
 

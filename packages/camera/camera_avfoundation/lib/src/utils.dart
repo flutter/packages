@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -15,6 +15,7 @@ CameraDescription cameraDescriptionFromPlatform(
     name: camera.name,
     lensDirection: cameraLensDirectionFromPlatform(camera.lensDirection),
     sensorOrientation: 90,
+    lensType: cameraLensTypeFromPlatform(camera.lensType),
   );
 }
 
@@ -26,6 +27,16 @@ CameraLensDirection cameraLensDirectionFromPlatform(
     PlatformCameraLensDirection.front => CameraLensDirection.front,
     PlatformCameraLensDirection.back => CameraLensDirection.back,
     PlatformCameraLensDirection.external => CameraLensDirection.external,
+  };
+}
+
+/// Converts a Pigeon [PlatformCameraLensType] to a [CameraLensType].
+CameraLensType cameraLensTypeFromPlatform(PlatformCameraLensType type) {
+  return switch (type) {
+    PlatformCameraLensType.wide => CameraLensType.wide,
+    PlatformCameraLensType.telephoto => CameraLensType.telephoto,
+    PlatformCameraLensType.ultraWide => CameraLensType.ultraWide,
+    PlatformCameraLensType.unknown => CameraLensType.unknown,
   };
 }
 
