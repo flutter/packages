@@ -23,10 +23,10 @@ flutter:
 dependencies:
   flutter:
     sdk: flutter
-  local_auth_android: ^1.0.0
-  local_auth_darwin: ^1.4.0
-  local_auth_platform_interface: ^1.0.1
-  local_auth_windows: ^1.0.0
+  local_auth_android: ^2.0.0
+  local_auth_darwin: ^2.0.0
+  local_auth_platform_interface: ^1.1.0
+  local_auth_windows: ^2.0.0
 
 dev_dependencies:
   flutter_test:
@@ -38,7 +38,3 @@ topics:
   - authentication
   - biometrics
   - local-auth
-# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
-# See https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#changing-federated-plugins
-dependency_overrides:
-  local_auth_platform_interface: {path: ../../../packages/local_auth/local_auth_platform_interface}
