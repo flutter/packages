@@ -61,16 +61,15 @@ class AndroidViewWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return PlatformViewLink(
       viewType: _viewType,
-      surfaceFactory: (
-        BuildContext context,
-        PlatformViewController controller,
-      ) {
-        return AndroidViewSurface(
-          controller: controller as AndroidViewController,
-          hitTestBehavior: PlatformViewHitTestBehavior.opaque,
-          gestureRecognizers: const <Factory<OneSequenceGestureRecognizer>>{},
-        );
-      },
+      surfaceFactory:
+          (BuildContext context, PlatformViewController controller) {
+            return AndroidViewSurface(
+              controller: controller as AndroidViewController,
+              hitTestBehavior: PlatformViewHitTestBehavior.opaque,
+              gestureRecognizers:
+                  const <Factory<OneSequenceGestureRecognizer>>{},
+            );
+          },
       onCreatePlatformView: (PlatformViewCreationParams params) {
         return _initAndroidView(params)
           ..addOnPlatformViewCreatedListener((int id) {

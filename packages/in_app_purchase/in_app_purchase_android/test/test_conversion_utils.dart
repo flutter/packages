@@ -36,12 +36,12 @@ PlatformPurchase convertToPigeonPurchase(PurchaseWrapper purchase) {
     quantity: 99,
     accountIdentifiers:
         purchase.obfuscatedAccountId != null ||
-                purchase.obfuscatedProfileId != null
-            ? PlatformAccountIdentifiers(
-              obfuscatedAccountId: purchase.obfuscatedAccountId,
-              obfuscatedProfileId: purchase.obfuscatedProfileId,
-            )
-            : null,
+            purchase.obfuscatedProfileId != null
+        ? PlatformAccountIdentifiers(
+            obfuscatedAccountId: purchase.obfuscatedAccountId,
+            obfuscatedProfileId: purchase.obfuscatedProfileId,
+          )
+        : null,
   );
 }
 
@@ -58,10 +58,9 @@ PlatformProductDetails convertToPigeonProductDetails(
     oneTimePurchaseOfferDetails: _convertToPigeonOneTimePurchaseOfferDetails(
       details.oneTimePurchaseOfferDetails,
     ),
-    subscriptionOfferDetails:
-        details.subscriptionOfferDetails
-            ?.map(convertToPigeonSubscriptionOfferDetails)
-            .toList(),
+    subscriptionOfferDetails: details.subscriptionOfferDetails
+        ?.map(convertToPigeonSubscriptionOfferDetails)
+        .toList(),
   );
 }
 
@@ -73,8 +72,9 @@ PlatformSubscriptionOfferDetails convertToPigeonSubscriptionOfferDetails(
     offerId: details.offerId,
     offerToken: details.offerIdToken,
     offerTags: details.offerTags,
-    pricingPhases:
-        details.pricingPhases.map(convertToPigeonPricingPhase).toList(),
+    pricingPhases: details.pricingPhases
+        .map(convertToPigeonPricingPhase)
+        .toList(),
   );
 }
 
