@@ -11,6 +11,10 @@ import 'package:google_sign_in_web/src/flexible_size_html_element_view.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:web/web.dart' as web;
 
+// TODO(stuartmorgan): Re-enable this test, by renaming it not to end with
+// _disabled. It is currently extremely flaky on WASM, see
+// https://github.com/flutter/flutter/issues/176299
+
 /// Used to keep track of the number of HtmlElementView factories the test has registered.
 int widgetFactoryNumber = 0;
 
@@ -22,45 +26,37 @@ void main() {
       widgetFactoryNumber++;
     });
 
-    testWidgets(
-      'empty case, calls onElementCreated',
-      (WidgetTester tester) async {
-        final Completer<Object> viewCreatedCompleter = Completer<Object>();
+    testWidgets('empty case, calls onElementCreated', (
+      WidgetTester tester,
+    ) async {
+      final Completer<Object> viewCreatedCompleter = Completer<Object>();
 
-        await pumpResizableWidget(
-          tester,
-          onElementCreated: (Object view) {
-            viewCreatedCompleter.complete(view);
-          },
-        );
-        await tester.pumpAndSettle();
+      await pumpResizableWidget(
+        tester,
+        onElementCreated: (Object view) {
+          viewCreatedCompleter.complete(view);
+        },
+      );
+      await tester.pumpAndSettle();
 
-        await expectLater(viewCreatedCompleter.future, completes);
-      },
-      // Extremely flaky on WASM.
-      // See https://github.com/flutter/flutter/issues/176299
-      skip: true,
-    );
+      await expectLater(viewCreatedCompleter.future, completes);
+    });
 
-    testWidgets(
-      'empty case, renders with initial size',
-      (WidgetTester tester) async {
-        const Size initialSize = Size(160, 100);
+    testWidgets('empty case, renders with initial size', (
+      WidgetTester tester,
+    ) async {
+      const Size initialSize = Size(160, 100);
 
-        final Element element = await pumpResizableWidget(
-          tester,
-          initialSize: initialSize,
-        );
-        await tester.pumpAndSettle();
+      final Element element = await pumpResizableWidget(
+        tester,
+        initialSize: initialSize,
+      );
+      await tester.pumpAndSettle();
 
-        // Expect that the element matches the initialSize.
-        expect(element.size!.width, initialSize.width);
-        expect(element.size!.height, initialSize.height);
-      },
-      // Extremely flaky on WASM.
-      // See https://github.com/flutter/flutter/issues/176299
-      skip: true,
-    );
+      // Expect that the element matches the initialSize.
+      expect(element.size!.width, initialSize.width);
+      expect(element.size!.height, initialSize.height);
+    });
 
     testWidgets('initialSize null, adopts size of injected element', (
       WidgetTester tester,
