@@ -485,7 +485,7 @@ class SvgPicture extends StatelessWidget {
   ///
   /// To create the widget with an asset from a package, the [package] argument
   /// must be provided. For instance, suppose a package called `my_icons` has
-  /// `icons/heart.svg`.
+  /// `icons/heart.svg.vec`.
   ///
   /// Then to display the image, use:
   ///
