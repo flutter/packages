@@ -22,21 +22,25 @@ void main() {
       widgetFactoryNumber++;
     });
 
-    testWidgets('empty case, calls onElementCreated', (
-      WidgetTester tester,
-    ) async {
-      final Completer<Object> viewCreatedCompleter = Completer<Object>();
+    testWidgets(
+      'empty case, calls onElementCreated',
+      (WidgetTester tester) async {
+        final Completer<Object> viewCreatedCompleter = Completer<Object>();
 
-      await pumpResizableWidget(
-        tester,
-        onElementCreated: (Object view) {
-          viewCreatedCompleter.complete(view);
-        },
-      );
-      await tester.pumpAndSettle();
+        await pumpResizableWidget(
+          tester,
+          onElementCreated: (Object view) {
+            viewCreatedCompleter.complete(view);
+          },
+        );
+        await tester.pumpAndSettle();
 
-      await expectLater(viewCreatedCompleter.future, completes);
-    });
+        await expectLater(viewCreatedCompleter.future, completes);
+      },
+      // Extremely flaky on WASM.
+      // See https://github.com/flutter/flutter/issues/176299
+      skip: true,
+    );
 
     testWidgets('empty case, renders with initial size', (
       WidgetTester tester,
