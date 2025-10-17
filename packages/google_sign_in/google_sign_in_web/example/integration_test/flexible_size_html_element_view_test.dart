@@ -42,21 +42,25 @@ void main() {
       skip: true,
     );
 
-    testWidgets('empty case, renders with initial size', (
-      WidgetTester tester,
-    ) async {
-      const Size initialSize = Size(160, 100);
+    testWidgets(
+      'empty case, renders with initial size',
+      (WidgetTester tester) async {
+        const Size initialSize = Size(160, 100);
 
-      final Element element = await pumpResizableWidget(
-        tester,
-        initialSize: initialSize,
-      );
-      await tester.pumpAndSettle();
+        final Element element = await pumpResizableWidget(
+          tester,
+          initialSize: initialSize,
+        );
+        await tester.pumpAndSettle();
 
-      // Expect that the element matches the initialSize.
-      expect(element.size!.width, initialSize.width);
-      expect(element.size!.height, initialSize.height);
-    });
+        // Expect that the element matches the initialSize.
+        expect(element.size!.width, initialSize.width);
+        expect(element.size!.height, initialSize.height);
+      },
+      // Extremely flaky on WASM.
+      // See https://github.com/flutter/flutter/issues/176299
+      skip: true,
+    );
 
     testWidgets('initialSize null, adopts size of injected element', (
       WidgetTester tester,
