@@ -13,7 +13,6 @@ dependencies:
     sdk: flutter
   flutter_svg:
     path: ../
-  vector_graphics: ^1.1.13
 
 dev_dependencies:
   flutter_test:
