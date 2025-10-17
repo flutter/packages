@@ -1151,7 +1151,7 @@ const String simpleSvg = '''
 
 /// Precompiled SVG bytes for `svgStr` (Flutter logo).
 ///
-/// How to regenerate (from repo root):
+/// How to regenerate:
 /// 1. Save `svgStr` to `test/flutter_logo.svg`.
 /// 2. Compile: `dart run vector_graphics_compiler:vector_graphics_compiler -i
 ///    test/flutter_logo.svg -o test/flutter_logo.svg.vec`
