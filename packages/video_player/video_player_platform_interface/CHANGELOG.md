@@ -1,3 +1,7 @@
+## 6.6.0
+
+* Adds `VideoAudioTrack` class and `getAudioTracks()`, `selectAudioTrack()`, `isAudioTrackSupportAvailable()` methods to platform interface for audio track management.
+
 ## 6.5.0
 
 * Adds a `setAllowBackgroundPlayback` method to dynamically control background playback.
