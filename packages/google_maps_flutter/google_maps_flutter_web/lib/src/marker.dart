@@ -20,10 +20,10 @@ abstract class MarkerController<T, O> {
     LatLngCallback? onDragEnd,
     VoidCallback? onTap,
     ClusterManagerId? clusterManagerId,
-  })  : _marker = marker,
-        _infoWindow = infoWindow,
-        _consumeTapEvents = consumeTapEvents,
-        _clusterManagerId = clusterManagerId {
+  }) : _marker = marker,
+       _infoWindow = infoWindow,
+       _consumeTapEvents = consumeTapEvents,
+       _clusterManagerId = clusterManagerId {
     addMarkerListener(
       marker: marker,
       onDragStart: onDragStart,
@@ -62,10 +62,7 @@ abstract class MarkerController<T, O> {
   /// Updates the options of the wrapped marker object.
   ///
   /// This cannot be called after [remove].
-  void update(
-    O options, {
-    web.HTMLElement? newInfoWindowContent,
-  });
+  void update(O options, {web.HTMLElement? newInfoWindowContent});
 
   /// Initializes the listener for the wrapped marker object.
   void addMarkerListener({
@@ -114,6 +111,14 @@ class LegacyMarkerController
     super.clusterManagerId,
   });
 
+  /// List of active stream subscriptions for marker events.
+  ///
+  /// This list keeps track of all event subscriptions created for the marker,
+  /// including taps and different drag events.
+  /// These subscriptions should be disposed when the controller is disposed.
+  final List<StreamSubscription<dynamic>> _subscriptions =
+      <StreamSubscription<dynamic>>[];
+
   @override
   void addMarkerListener({
     required gmaps.Marker marker,
@@ -123,27 +128,29 @@ class LegacyMarkerController
     required VoidCallback? onTap,
   }) {
     if (onTap != null) {
-      marker.onClick.listen((gmaps.MapMouseEvent event) {
-        onTap.call();
-      });
+      _subscriptions.add(
+        marker.onClick.listen((gmaps.MapMouseEvent event) {
+          onTap.call();
+        }),
+      );
     }
     if (onDragStart != null) {
-      marker.onDragstart.listen((gmaps.MapMouseEvent event) {
+      _subscriptions.add(marker.onDragstart.listen((gmaps.MapMouseEvent event) {
         marker.position = event.latLng;
         onDragStart.call(event.latLng ?? _nullGmapsLatLng);
-      });
+      }));
     }
     if (onDrag != null) {
-      marker.onDrag.listen((gmaps.MapMouseEvent event) {
+      _subscriptions.add(marker.onDrag.listen((gmaps.MapMouseEvent event) {
         marker.position = event.latLng;
         onDrag.call(event.latLng ?? _nullGmapsLatLng);
-      });
+      }));
     }
     if (onDragEnd != null) {
-      marker.onDragend.listen((gmaps.MapMouseEvent event) {
+      _subscriptions.add(marker.onDragend.listen((gmaps.MapMouseEvent event) {
         marker.position = event.latLng;
         onDragEnd.call(event.latLng ?? _nullGmapsLatLng);
-      });
+      }));
     }
   }
 
@@ -153,6 +160,11 @@ class LegacyMarkerController
       _infoWindowShown = false;
       _marker!.map = null;
       _marker = null;
+      
+      for (final StreamSubscription<dynamic> sub in _subscriptions) {
+        sub.cancel();
+      }
+      _subscriptions.clear();
     }
   }
 
@@ -166,8 +178,10 @@ class LegacyMarkerController
   }
 
   @override
-  void update(gmaps.MarkerOptions options,
-      {web.HTMLElement? newInfoWindowContent}) {
+  void update(
+    gmaps.MarkerOptions options, {
+    web.HTMLElement? newInfoWindowContent,
+  }) {
     assert(_marker != null, 'Cannot `update` Marker after calling `remove`.');
     _marker!.options = options;
 
@@ -181,8 +195,12 @@ class LegacyMarkerController
 ///
 /// [gmaps.AdvancedMarkerElement] is a new class that is
 /// replacing [gmaps.Marker].
-class AdvancedMarkerController extends MarkerController<
-    gmaps.AdvancedMarkerElement, gmaps.AdvancedMarkerElementOptions> {
+class AdvancedMarkerController
+    extends
+        MarkerController<
+          gmaps.AdvancedMarkerElement,
+          gmaps.AdvancedMarkerElementOptions
+        > {
   /// Creates a `AdvancedMarkerController`, which wraps
   /// a [gmaps.AdvancedMarkerElement] object.
   AdvancedMarkerController({
@@ -196,6 +214,14 @@ class AdvancedMarkerController extends MarkerController<
     super.clusterManagerId,
   });
 
+  /// List of active stream subscriptions for marker events.
+  ///
+  /// This list keeps track of all event subscriptions created for the marker,
+  /// including taps and different drag events.
+  /// These subscriptions should be disposed when the controller is disposed.
+  final List<StreamSubscription<dynamic>> _subscriptions =
+      <StreamSubscription<dynamic>>[];
+
   @override
   void addMarkerListener({
     required gmaps.AdvancedMarkerElement marker,
@@ -205,27 +231,27 @@ class AdvancedMarkerController extends MarkerController<
     required VoidCallback? onTap,
   }) {
     if (onTap != null) {
-      marker.onClick.listen((gmaps.MapMouseEvent event) {
+      _subscriptions.add(marker.onClick.listen((gmaps.MapMouseEvent event) {
         onTap.call();
-      });
+      }));
     }
     if (onDragStart != null) {
-      marker.onDragstart.listen((gmaps.MapMouseEvent event) {
+      _subscriptions.add(marker.onDragstart.listen((gmaps.MapMouseEvent event) {
         marker.position = event.latLng;
         onDragStart.call(event.latLng ?? _nullGmapsLatLng);
-      });
+      }));
     }
     if (onDrag != null) {
-      marker.onDrag.listen((gmaps.MapMouseEvent event) {
+      _subscriptions.add(marker.onDrag.listen((gmaps.MapMouseEvent event) {
         marker.position = event.latLng;
         onDrag.call(event.latLng ?? _nullGmapsLatLng);
-      });
+      }));
     }
     if (onDragEnd != null) {
-      marker.onDragend.listen((gmaps.MapMouseEvent event) {
+      _subscriptions.add(marker.onDragend.listen((gmaps.MapMouseEvent event) {
         marker.position = event.latLng;
         onDragEnd.call(event.latLng ?? _nullGmapsLatLng);
-      });
+      }));
     }
   }
 
@@ -237,6 +263,11 @@ class AdvancedMarkerController extends MarkerController<
       _marker!.remove();
       _marker!.map = null;
       _marker = null;
+
+      for (final StreamSubscription<dynamic> sub in _subscriptions) {
+        sub.cancel();
+      }
+      _subscriptions.clear();
     }
   }
 
