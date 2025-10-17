@@ -53,4 +53,4 @@ If you are a team member that owns or is going to own a new package, or just wan
 - [Plugins and Packages Structure](https://github.com/flutter/flutter/blob/master/docs/ecosystem/Plugins-and-Packages-repository-structure.md)
   to learn how to create and maintain a package.
 - [Releases](https://github.com/flutter/flutter/blob/master/docs/ecosystem/release/README.md)
-  to learn types of release strategies you can choose and how to handle contribution and releases.
+  to learn about release strategies and how to handle contributions and releases.
