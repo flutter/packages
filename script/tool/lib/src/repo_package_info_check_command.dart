@@ -256,7 +256,9 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
               'Invalid value `${entry.value}` for key${_formatConfigPrefix(configPrefix)}');
         } else {
           _checkCiConfigEntries(entry.value as YamlMap,
-              errors: errors, syntax: syntaxValue as Map<String, dynamic>);
+              errors: errors,
+              syntax: syntaxValue as Map<String, dynamic>,
+              configPrefix: configPrefix);
         }
       }
     }
