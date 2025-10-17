@@ -24,7 +24,7 @@ abstract class MarkerController<T, O> {
         _infoWindow = infoWindow,
         _consumeTapEvents = consumeTapEvents,
         _clusterManagerId = clusterManagerId {
-    initializeMarkerListener(
+    addMarkerListener(
       marker: marker,
       onDragStart: onDragStart,
       onDrag: onDrag,
@@ -68,7 +68,7 @@ abstract class MarkerController<T, O> {
   });
 
   /// Initializes the listener for the wrapped marker object.
-  void initializeMarkerListener({
+  void addMarkerListener({
     required T marker,
     required LatLngCallback? onDragStart,
     required LatLngCallback? onDrag,
@@ -115,7 +115,7 @@ class LegacyMarkerController
   });
 
   @override
-  void initializeMarkerListener({
+  void addMarkerListener({
     required gmaps.Marker marker,
     required LatLngCallback? onDragStart,
     required LatLngCallback? onDrag,
@@ -197,7 +197,7 @@ class AdvancedMarkerController extends MarkerController<
   });
 
   @override
-  void initializeMarkerListener({
+  void addMarkerListener({
     required gmaps.AdvancedMarkerElement marker,
     required LatLngCallback? onDragStart,
     required LatLngCallback? onDrag,

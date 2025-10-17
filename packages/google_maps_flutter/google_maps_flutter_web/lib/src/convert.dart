@@ -474,7 +474,7 @@ Future<web.Node?> _advancedMarkerIconFromBitmapDescriptor(
         options.glyphColor = _getCssColor(circleGlyph.color);
       case final TextGlyph textGlyph:
         final web.Element element = web.document.createElement('p');
-        element.innerHTML = textGlyph.text.toJS;
+        element.text = textGlyph.text;
         if (textGlyph.textColor != null) {
           element.setAttribute(
             'style',
