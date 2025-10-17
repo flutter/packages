@@ -510,7 +510,8 @@ release:
       expect(
         output,
         containsAllInOrder(<Matcher>[
-          contains('Invalid value `1` for key `batch`'),
+          contains(
+              'Invalid value `1` for key `release.batch`, the possible values are [true, false]'),
         ]),
       );
     });
