@@ -46,8 +46,11 @@ use, and use auto-formatters:
   `clang-format`
 - [Swift](https://google.github.io/swift/) formatted with `swift-format`
 
-### Releasing
+### Package Owner
 
-If you are a team member landing a PR, or just want to know what the release
-process is for package changes, see [the release
-documentation](https://github.com/flutter/flutter/blob/master/docs/ecosystem/release/README.md).
+If you are a team member that owns or is going to own a new package, or just want to learn more:
+
+- [Plugins and Packages Structure](https://github.com/flutter/flutter/blob/master/docs/ecosystem/Plugins-and-Packages-repository-structure.md)
+  to learn how to create and maintain a package.
+- [Releases](https://github.com/flutter/flutter/blob/master/docs/ecosystem/release/README.md)
+  to learn types of release strategies you can choose and how to handle contribution and releases.
