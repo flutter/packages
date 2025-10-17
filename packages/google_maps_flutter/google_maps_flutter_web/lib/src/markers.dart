@@ -18,9 +18,9 @@ abstract class MarkersController<T, O> extends GeometryController {
   MarkersController({
     required StreamController<MapEvent<Object?>> stream,
     required ClusterManagersController<T> clusterManagersController,
-  })  : _streamController = stream,
-        _clusterManagersController = clusterManagersController,
-        _markerIdToController = <MarkerId, MarkerController<T, O>>{};
+  }) : _streamController = stream,
+       _clusterManagersController = clusterManagersController,
+       _markerIdToController = <MarkerId, MarkerController<T, O>>{};
 
   // A cache of [MarkerController]s indexed by their [MarkerId].
   final Map<MarkerId, MarkerController<T, O>> _markerIdToController;
@@ -52,7 +52,8 @@ abstract class MarkersController<T, O> extends GeometryController {
       // we make one...
       if (infoWindowOptions.content != null &&
           infoWindowOptions.content is web.HTMLElement) {
-        final web.HTMLElement content = infoWindowOptions.content! as web.HTMLElement;
+        final web.HTMLElement content =
+            infoWindowOptions.content! as web.HTMLElement;
 
         content.onclick =
             (JSAny? _) {
@@ -64,10 +65,15 @@ abstract class MarkersController<T, O> extends GeometryController {
     final MarkerController<T, O>? markerController =
         _markerIdToController[marker.markerId];
     final T? currentMarker = markerController?.marker;
-    final O markerOptions =
-        await _markerOptionsFromMarker(marker, currentMarker);
-    final MarkerController<T, O> controller =
-        await createMarkerController(marker, markerOptions, gmInfoWindow);
+    final O markerOptions = await _markerOptionsFromMarker(
+      marker,
+      currentMarker,
+    );
+    final MarkerController<T, O> controller = await createMarkerController(
+      marker,
+      markerOptions,
+      gmInfoWindow,
+    );
     _markerIdToController[marker.markerId] = controller;
   }
 
@@ -197,11 +203,13 @@ abstract class MarkersController<T, O> extends GeometryController {
 
   void _hideAllMarkerInfoWindow() {
     _markerIdToController.values
-        .where((MarkerController<T, O>? controller) =>
-            controller?.infoWindowShown ?? false)
+        .where(
+          (MarkerController<T, O>? controller) =>
+              controller?.infoWindowShown ?? false,
+        )
         .forEach((MarkerController<T, O> controller) {
-      controller.hideInfoWindow();
-    });
+          controller.hideInfoWindow();
+        });
   }
 }
 
@@ -252,8 +260,12 @@ class LegacyMarkersController
 }
 
 /// A [MarkersController] for the advanced [gmaps.AdvancedMarkerElement] class.
-class AdvancedMarkersController extends MarkersController<
-    gmaps.AdvancedMarkerElement, gmaps.AdvancedMarkerElementOptions> {
+class AdvancedMarkersController
+    extends
+        MarkersController<
+          gmaps.AdvancedMarkerElement,
+          gmaps.AdvancedMarkerElementOptions
+        > {
   /// Initialize the markers controller for advanced markers
   /// ([gmaps.AdvancedMarkerElement]).
   AdvancedMarkersController({
@@ -269,8 +281,9 @@ class AdvancedMarkersController extends MarkersController<
   ) async {
     assert(marker is AdvancedMarker, 'Marker must be an AdvancedMarker.');
 
-    final gmaps.AdvancedMarkerElement gmMarker =
-        gmaps.AdvancedMarkerElement(markerOptions);
+    final gmaps.AdvancedMarkerElement gmMarker = gmaps.AdvancedMarkerElement(
+      markerOptions,
+    );
     gmMarker.setAttribute('id', marker.markerId.value);
 
     if (marker.clusterManagerId != null) {

@@ -66,24 +66,27 @@ class GoogleMapController {
     // Advanced and legacy markers are handled differently so markers controller
     // and cluster manager need be initialized with the correct marker type.
     _clusterManagersController = switch (mapConfiguration.markerType) {
-      null ||
-      MarkerType.marker =>
-        ClusterManagersController<gmaps.Marker>(stream: _streamController),
+      null || MarkerType.marker => ClusterManagersController<gmaps.Marker>(
+        stream: _streamController,
+      ),
       MarkerType.advancedMarker =>
         ClusterManagersController<gmaps.AdvancedMarkerElement>(
-            stream: _streamController),
+          stream: _streamController,
+        ),
     };
     _markersController = switch (mapConfiguration.markerType) {
       null || MarkerType.marker => LegacyMarkersController(
-          stream: stream,
-          clusterManagersController: _clusterManagersController!
-              as ClusterManagersController<gmaps.Marker>,
-        ),
+        stream: stream,
+        clusterManagersController:
+            _clusterManagersController!
+                as ClusterManagersController<gmaps.Marker>,
+      ),
       MarkerType.advancedMarker => AdvancedMarkersController(
-          stream: stream,
-          clusterManagersController: _clusterManagersController!
-              as ClusterManagersController<gmaps.AdvancedMarkerElement>,
-        ),
+        stream: stream,
+        clusterManagersController:
+            _clusterManagersController!
+                as ClusterManagersController<gmaps.AdvancedMarkerElement>,
+      ),
     };
 
     _tileOverlaysController = TileOverlaysController();

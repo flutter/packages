@@ -32,10 +32,13 @@ void main() {
     setUp(() {
       events = StreamController<MapEvent<Object?>>();
 
-      clusterManagersController =
-          ClusterManagersController<gmaps.Marker>(stream: events);
+      clusterManagersController = ClusterManagersController<gmaps.Marker>(
+        stream: events,
+      );
       controller = LegacyMarkersController(
-          stream: events, clusterManagersController: clusterManagersController);
+        stream: events,
+        clusterManagersController: clusterManagersController,
+      );
       map = gmaps.Map(createDivElement());
       clusterManagersController.bindToMap(123, map);
       controller.bindToMap(123, map);

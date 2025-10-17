@@ -135,22 +135,28 @@ class LegacyMarkerController
       );
     }
     if (onDragStart != null) {
-      _subscriptions.add(marker.onDragstart.listen((gmaps.MapMouseEvent event) {
-        marker.position = event.latLng;
-        onDragStart.call(event.latLng ?? _nullGmapsLatLng);
-      }));
+      _subscriptions.add(
+        marker.onDragstart.listen((gmaps.MapMouseEvent event) {
+          marker.position = event.latLng;
+          onDragStart.call(event.latLng ?? _nullGmapsLatLng);
+        }),
+      );
     }
     if (onDrag != null) {
-      _subscriptions.add(marker.onDrag.listen((gmaps.MapMouseEvent event) {
-        marker.position = event.latLng;
-        onDrag.call(event.latLng ?? _nullGmapsLatLng);
-      }));
+      _subscriptions.add(
+        marker.onDrag.listen((gmaps.MapMouseEvent event) {
+          marker.position = event.latLng;
+          onDrag.call(event.latLng ?? _nullGmapsLatLng);
+        }),
+      );
     }
     if (onDragEnd != null) {
-      _subscriptions.add(marker.onDragend.listen((gmaps.MapMouseEvent event) {
-        marker.position = event.latLng;
-        onDragEnd.call(event.latLng ?? _nullGmapsLatLng);
-      }));
+      _subscriptions.add(
+        marker.onDragend.listen((gmaps.MapMouseEvent event) {
+          marker.position = event.latLng;
+          onDragEnd.call(event.latLng ?? _nullGmapsLatLng);
+        }),
+      );
     }
   }
 
@@ -160,7 +166,7 @@ class LegacyMarkerController
       _infoWindowShown = false;
       _marker!.map = null;
       _marker = null;
-      
+
       for (final StreamSubscription<dynamic> sub in _subscriptions) {
         sub.cancel();
       }
@@ -231,27 +237,35 @@ class AdvancedMarkerController
     required VoidCallback? onTap,
   }) {
     if (onTap != null) {
-      _subscriptions.add(marker.onClick.listen((gmaps.MapMouseEvent event) {
-        onTap.call();
-      }));
+      _subscriptions.add(
+        marker.onClick.listen((gmaps.MapMouseEvent event) {
+          onTap.call();
+        }),
+      );
     }
     if (onDragStart != null) {
-      _subscriptions.add(marker.onDragstart.listen((gmaps.MapMouseEvent event) {
-        marker.position = event.latLng;
-        onDragStart.call(event.latLng ?? _nullGmapsLatLng);
-      }));
+      _subscriptions.add(
+        marker.onDragstart.listen((gmaps.MapMouseEvent event) {
+          marker.position = event.latLng;
+          onDragStart.call(event.latLng ?? _nullGmapsLatLng);
+        }),
+      );
     }
     if (onDrag != null) {
-      _subscriptions.add(marker.onDrag.listen((gmaps.MapMouseEvent event) {
-        marker.position = event.latLng;
-        onDrag.call(event.latLng ?? _nullGmapsLatLng);
-      }));
+      _subscriptions.add(
+        marker.onDrag.listen((gmaps.MapMouseEvent event) {
+          marker.position = event.latLng;
+          onDrag.call(event.latLng ?? _nullGmapsLatLng);
+        }),
+      );
     }
     if (onDragEnd != null) {
-      _subscriptions.add(marker.onDragend.listen((gmaps.MapMouseEvent event) {
-        marker.position = event.latLng;
-        onDragEnd.call(event.latLng ?? _nullGmapsLatLng);
-      }));
+      _subscriptions.add(
+        marker.onDragend.listen((gmaps.MapMouseEvent event) {
+          marker.position = event.latLng;
+          onDragEnd.call(event.latLng ?? _nullGmapsLatLng);
+        }),
+      );
     }
   }
 

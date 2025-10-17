@@ -427,7 +427,10 @@ Future<Size?> _fetchBitmapSize(String url) async {
   final web.HTMLImageElement image = web.HTMLImageElement()..src = url;
 
   // Wait for the onLoad or onError event.
-  await Future.any(<Future<web.Event>>[image.onLoad.first, image.onError.first]);
+  await Future.any(<Future<web.Event>>[
+    image.onLoad.first,
+    image.onError.first,
+  ]);
 
   if (image.width == 0 || image.height == 0) {
     // Complete with null for invalid images.
@@ -483,7 +486,8 @@ Future<web.Node?> _advancedMarkerIconFromBitmapDescriptor(
         }
         options.glyph = element;
       case final BitmapGlyph bitmapGlyph:
-        final web.Node? glyphBitmap = await _advancedMarkerIconFromBitmapDescriptor(
+        final web.Node?
+        glyphBitmap = await _advancedMarkerIconFromBitmapDescriptor(
           bitmapGlyph.bitmap,
           // Always opaque, opacity is handled by the parent marker.
           opacity: 1.0,

@@ -25,18 +25,18 @@ class ClusterManagersController<T> extends GeometryController {
   ///
   /// The [stream] parameter is a required [StreamController] used for
   /// emitting map events.
-  ClusterManagersController(
-      {required StreamController<MapEvent<Object?>> stream})
-      : _streamController = stream,
-        _clusterManagerIdToMarkerClusterer =
-            <ClusterManagerId, MarkerClusterer<T>>{};
+  ClusterManagersController({
+    required StreamController<MapEvent<Object?>> stream,
+  }) : _streamController = stream,
+       _clusterManagerIdToMarkerClusterer =
+           <ClusterManagerId, MarkerClusterer<T>>{};
 
   // The stream over which cluster managers broadcast their events
   final StreamController<MapEvent<Object?>> _streamController;
 
   // A cache of [MarkerClusterer]s indexed by their [ClusterManagerId].
   final Map<ClusterManagerId, MarkerClusterer<T>>
-      _clusterManagerIdToMarkerClusterer;
+  _clusterManagerIdToMarkerClusterer;
 
   /// Adds a set of [ClusterManager] objects to the cache.
   void addClusterManagers(Set<ClusterManager> clusterManagersToAdd) {
@@ -46,8 +46,11 @@ class ClusterManagersController<T> extends GeometryController {
   void _addClusterManager(ClusterManager clusterManager) {
     final MarkerClusterer<T> markerClusterer = createMarkerClusterer<T>(
       googleMap,
-      (gmaps.MapMouseEvent event, MarkerClustererCluster<T> cluster,
-              gmaps.Map map) =>
+      (
+        gmaps.MapMouseEvent event,
+        MarkerClustererCluster<T> cluster,
+        gmaps.Map map,
+      ) =>
           _clusterClicked(clusterManager.clusterManagerId, event, cluster, map),
     );
 
@@ -72,10 +75,7 @@ class ClusterManagersController<T> extends GeometryController {
   }
 
   /// Adds given markers to the [MarkerClusterer] with given [ClusterManagerId].
-  void addItem(
-    ClusterManagerId clusterManagerId,
-    T marker,
-  ) {
+  void addItem(ClusterManagerId clusterManagerId, T marker) {
     final MarkerClusterer<T>? markerClusterer =
         _clusterManagerIdToMarkerClusterer[clusterManagerId];
     if (markerClusterer != null) {
@@ -86,10 +86,7 @@ class ClusterManagersController<T> extends GeometryController {
 
   /// Removes given marker from the [MarkerClusterer] with
   /// given [ClusterManagerId].
-  void removeItem(
-    ClusterManagerId clusterManagerId,
-    T? marker,
-  ) {
+  void removeItem(ClusterManagerId clusterManagerId, T? marker) {
     if (marker != null) {
       final MarkerClusterer<T>? markerClusterer =
           _clusterManagerIdToMarkerClusterer[clusterManagerId];
@@ -107,18 +104,21 @@ class ClusterManagersController<T> extends GeometryController {
         _clusterManagerIdToMarkerClusterer[clusterManagerId];
     if (markerClusterer != null) {
       return markerClusterer.clusters
-          .map((MarkerClustererCluster<T> cluster) =>
-              _convertCluster(clusterManagerId, cluster))
+          .map(
+            (MarkerClustererCluster<T> cluster) =>
+                _convertCluster(clusterManagerId, cluster),
+          )
           .toList();
     }
     return <Cluster>[];
   }
 
   void _clusterClicked(
-      ClusterManagerId clusterManagerId,
-      gmaps.MapMouseEvent event,
-      MarkerClustererCluster<T> markerClustererCluster,
-      gmaps.Map map) {
+    ClusterManagerId clusterManagerId,
+    gmaps.MapMouseEvent event,
+    MarkerClustererCluster<T> markerClustererCluster,
+    gmaps.Map map,
+  ) {
     if (markerClustererCluster.count > 0 &&
         markerClustererCluster.bounds != null) {
       final Cluster cluster = _convertCluster(
@@ -130,11 +130,14 @@ class ClusterManagersController<T> extends GeometryController {
   }
 
   /// Converts [MarkerClustererCluster] to [Cluster].
-  Cluster _convertCluster(ClusterManagerId clusterManagerId,
-      MarkerClustererCluster<T> markerClustererCluster) {
+  Cluster _convertCluster(
+    ClusterManagerId clusterManagerId,
+    MarkerClustererCluster<T> markerClustererCluster,
+  ) {
     final LatLng position = gmLatLngToLatLng(markerClustererCluster.position);
-    final LatLngBounds bounds =
-        gmLatLngBoundsToLatLngBounds(markerClustererCluster.bounds!);
+    final LatLngBounds bounds = gmLatLngBoundsToLatLngBounds(
+      markerClustererCluster.bounds!,
+    );
     final List<MarkerId> markerIds =
         markerClustererCluster.markers.map<MarkerId>(getMarkerId).toList();
 

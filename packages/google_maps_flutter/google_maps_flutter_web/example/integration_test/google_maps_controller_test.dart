@@ -493,7 +493,7 @@ void main() {
               zoomControlsEnabled: true,
               mapId: _kMapId,
               fortyFiveDegreeImageryEnabled: false,
-            )
+            ),
           );
           controller.debugSetOverrides(
             createMap: (_, gmaps.MapOptions options) {
@@ -508,9 +508,11 @@ void main() {
           expect(capturedOptions!.mapTypeId, gmaps.MapTypeId.SATELLITE);
           expect(capturedOptions!.zoomControl, true);
           expect(capturedOptions!.mapId, _kMapId);
-          expect(capturedOptions!.gestureHandling, 'auto',
-              reason:
-                  'by default the map handles zoom/pan gestures internally');
+          expect(
+            capturedOptions!.gestureHandling,
+            'auto',
+            reason: 'by default the map handles zoom/pan gestures internally',
+          );
           expect(capturedOptions!.rotateControl, false);
           expect(capturedOptions!.tilt, 0);
         });

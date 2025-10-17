@@ -25,7 +25,7 @@ import 'package:mockito/mockito.dart' as _i1;
 
 class _FakeTile_0 extends _i1.SmartFake implements _i2.Tile {
   _FakeTile_0(Object parent, Invocation parentInvocation)
-      : super(parent, parentInvocation);
+    : super(parent, parentInvocation);
 }
 
 /// A class which mocks [TileProvider].
@@ -35,12 +35,13 @@ class MockTileProvider extends _i1.Mock implements _i2.TileProvider {
   @override
   _i3.Future<_i2.Tile> getTile(int? x, int? y, int? zoom) =>
       (super.noSuchMethod(
-        Invocation.method(#getTile, [x, y, zoom]),
-        returnValue: _i3.Future<_i2.Tile>.value(
-          _FakeTile_0(this, Invocation.method(#getTile, [x, y, zoom])),
-        ),
-        returnValueForMissingStub: _i3.Future<_i2.Tile>.value(
-          _FakeTile_0(this, Invocation.method(#getTile, [x, y, zoom])),
-        ),
-      ) as _i3.Future<_i2.Tile>);
+            Invocation.method(#getTile, [x, y, zoom]),
+            returnValue: _i3.Future<_i2.Tile>.value(
+              _FakeTile_0(this, Invocation.method(#getTile, [x, y, zoom])),
+            ),
+            returnValueForMissingStub: _i3.Future<_i2.Tile>.value(
+              _FakeTile_0(this, Invocation.method(#getTile, [x, y, zoom])),
+            ),
+          )
+          as _i3.Future<_i2.Tile>);
 }
