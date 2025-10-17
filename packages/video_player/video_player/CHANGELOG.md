@@ -1,6 +1,6 @@
-## 2.10.1
+## NEXT
+
 * Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
-* Removes package namespace in example AndroidManifest.xml.
 
 ## 2.10.0
 
