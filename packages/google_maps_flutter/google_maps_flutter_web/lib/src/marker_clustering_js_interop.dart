@@ -13,11 +13,8 @@ import 'dart:js_interop';
 import 'package:google_maps/google_maps.dart' as gmaps;
 
 /// A typedef representing a callback function for handling cluster tap events.
-typedef ClusterClickHandler<T> = void Function(
-  gmaps.MapMouseEvent,
-  MarkerClustererCluster<T>,
-  gmaps.Map,
-);
+typedef ClusterClickHandler<T> =
+    void Function(gmaps.MapMouseEvent, MarkerClustererCluster<T>, gmaps.Map);
 
 /// The [MarkerClustererOptions] object used to initialize [MarkerClusterer].
 ///
@@ -30,14 +27,18 @@ extension type MarkerClustererOptions<T>._(JSObject _) implements JSObject {
     gmaps.Map? map,
     List<T>? markers,
     ClusterClickHandler<T>? onClusterClick,
-  }) =>
-      MarkerClustererOptions<T>._js(
-        map: map as JSAny?,
-        markers: markers?.cast<JSAny>().toJS ?? JSArray<JSAny>(),
-        onClusterClick: onClusterClick != null
+  }) => MarkerClustererOptions<T>._js(
+    map: map as JSAny?,
+    markers: markers?.cast<JSAny>().toJS ?? JSArray<JSAny>(),
+    onClusterClick:
+        onClusterClick != null
             ? ((JSAny event, MarkerClustererCluster<T> cluster, JSAny map) =>
-                onClusterClick(event as gmaps.MapMouseEvent, cluster,
-                    map as gmaps.Map)).toJS
+                    onClusterClick(
+                      event as gmaps.MapMouseEvent,
+                      cluster,
+                      map as gmaps.Map,
+                    ))
+                .toJS
             : null,
   );
 
@@ -154,7 +155,9 @@ extension type MarkerClusterer<T>._(JSObject _) implements JSObject {
 /// Creates [MarkerClusterer] object with given [gmaps.Map] and
 /// [ClusterClickHandler].
 MarkerClusterer<T> createMarkerClusterer<T>(
-    gmaps.Map map, ClusterClickHandler<T> onClusterClickHandler) {
+  gmaps.Map map,
+  ClusterClickHandler<T> onClusterClickHandler,
+) {
   final MarkerClustererOptions<T> options = MarkerClustererOptions<T>(
     map: map,
     onClusterClick: onClusterClickHandler,

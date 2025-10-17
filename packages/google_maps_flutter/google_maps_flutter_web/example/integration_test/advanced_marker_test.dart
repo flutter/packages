@@ -56,11 +56,7 @@ void main() {
       AdvancedMarkerController(marker: marker, onTap: onTap);
 
       // Trigger a click event...
-      gmaps.event.trigger(
-        marker,
-        'click',
-        gmaps.MapMouseEvent(),
-      );
+      gmaps.event.trigger(marker, 'click', gmaps.MapMouseEvent());
 
       // The event handling is now truly async. Wait for it...
       expect(await methodCalled, isTrue);
@@ -106,8 +102,9 @@ void main() {
     });
 
     testWidgets('update', (WidgetTester tester) async {
-      final AdvancedMarkerController controller =
-          AdvancedMarkerController(marker: marker);
+      final AdvancedMarkerController controller = AdvancedMarkerController(
+        marker: marker,
+      );
       final gmaps.AdvancedMarkerElementOptions options =
           gmaps.AdvancedMarkerElementOptions()
             ..collisionBehavior =
@@ -132,10 +129,12 @@ void main() {
       expect((position as gmaps.LatLngLiteral).lng, equals(54));
     });
 
-    testWidgets('infoWindow null, showInfoWindow.',
-        (WidgetTester tester) async {
-      final AdvancedMarkerController controller =
-          AdvancedMarkerController(marker: marker);
+    testWidgets('infoWindow null, showInfoWindow.', (
+      WidgetTester tester,
+    ) async {
+      final AdvancedMarkerController controller = AdvancedMarkerController(
+        marker: marker,
+      );
 
       controller.showInfoWindow();
 
@@ -179,8 +178,10 @@ void main() {
         final gmaps.InfoWindow infoWindow = gmaps.InfoWindow();
         final gmaps.Map map = gmaps.Map(createDivElement());
         marker.map = map;
-        controller =
-            AdvancedMarkerController(marker: marker, infoWindow: infoWindow);
+        controller = AdvancedMarkerController(
+          marker: marker,
+          infoWindow: infoWindow,
+        );
       });
 
       testWidgets('drops gmaps instance', (WidgetTester tester) async {
@@ -189,8 +190,9 @@ void main() {
         expect(controller.marker, isNull);
       });
 
-      testWidgets('cannot call update after remove',
-          (WidgetTester tester) async {
+      testWidgets('cannot call update after remove', (
+        WidgetTester tester,
+      ) async {
         final gmaps.AdvancedMarkerElementOptions options =
             gmaps.AdvancedMarkerElementOptions()..gmpDraggable = true;
 
@@ -201,8 +203,9 @@ void main() {
         }, throwsAssertionError);
       });
 
-      testWidgets('cannot call showInfoWindow after remove',
-          (WidgetTester tester) async {
+      testWidgets('cannot call showInfoWindow after remove', (
+        WidgetTester tester,
+      ) async {
         controller.remove();
 
         expect(() {
@@ -210,8 +213,9 @@ void main() {
         }, throwsAssertionError);
       });
 
-      testWidgets('cannot call hideInfoWindow after remove',
-          (WidgetTester tester) async {
+      testWidgets('cannot call hideInfoWindow after remove', (
+        WidgetTester tester,
+      ) async {
         controller.remove();
 
         expect(() {
