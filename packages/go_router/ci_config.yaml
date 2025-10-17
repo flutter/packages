@@ -1,0 +1,3 @@
+release:
+  # TODO(chunhtai): Opts in when ready.
+  batch: false
