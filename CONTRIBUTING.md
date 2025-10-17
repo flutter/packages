@@ -48,7 +48,7 @@ use, and use auto-formatters:
 
 ### Package Owner
 
-If you are a team member that owns or is going to own a new package, or just want to learn more:
+If you are a team member who owns or will own a new package, or just want to learn more:
 
 - [Plugins and Packages Structure](https://github.com/flutter/flutter/blob/master/docs/ecosystem/Plugins-and-Packages-repository-structure.md)
   to learn how to create and maintain a package.
