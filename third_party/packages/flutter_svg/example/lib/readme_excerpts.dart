@@ -70,7 +70,7 @@ Widget loadNetworkAssetWithPlaceholder() {
 // to sanity-check the structure of the example code.
 Widget loadPrecompiledAsset() {
   // #docregion PrecompiledAsset
-  final Widget svg = SvgPicture.precompiled('assets/flutter_logo.svg.vec');
+  final Widget svg = SvgPicture.precompiled('assets/foo.svg.vec');
   // #enddocregion PrecompiledAsset
   return svg;
 }
