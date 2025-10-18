@@ -2,11 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
 import 'dart:convert';
 import 'dart:js_interop';
 import 'dart:ui_web' as ui_web;
 
 import 'package:flutter/widgets.dart';
+import 'package:web/helpers.dart';
 import 'package:web/web.dart' as web;
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 
@@ -18,7 +20,7 @@ import 'http_request_factory.dart';
 @immutable
 class WebWebViewControllerCreationParams
     extends PlatformWebViewControllerCreationParams {
-  /// Creates a new [AndroidWebViewControllerCreationParams] instance.
+  /// Creates a new [WebWebViewControllerCreationParams] instance.
   WebWebViewControllerCreationParams({
     @visibleForTesting this.httpRequestFactory = const HttpRequestFactory(),
   }) : super();
@@ -45,6 +47,8 @@ class WebWebViewControllerCreationParams
         ..style.width = '100%'
         ..style.height = '100%'
         ..style.border = 'none';
+
+  final Duration _iFrameWaitDelay = const Duration(milliseconds: 100);
 }
 
 /// An implementation of [PlatformWebViewController] using Flutter for Web API.
@@ -62,14 +66,72 @@ class WebWebViewController extends PlatformWebViewController {
   WebWebViewControllerCreationParams get _webWebViewParams =>
       params as WebWebViewControllerCreationParams;
 
+  // Retrieves the iFrame's content body after attachment to DOM.
+  Future<web.HTMLBodyElement> _getIFrameBody() async {
+    final web.Document document = await _getIFrameDocument();
+
+    while (document.body == null) {
+      await Future<void>.delayed(_webWebViewParams._iFrameWaitDelay);
+    }
+
+    return document.body! as HTMLBodyElement;
+  }
+
+  // Retrieves the iFrame's content document after attachment to DOM.
+  Future<web.Document> _getIFrameDocument() async {
+    try {
+      // If the document is not yet available, wait for the 'load' event.
+      if (_webWebViewParams.iFrame.contentDocument == null) {
+        final Completer<void> completer = Completer<void>();
+        _webWebViewParams.iFrame.addEventListener(
+          'load',
+          (web.Event _) {
+            completer.complete();
+          }.toJS,
+          AddEventListenerOptions(once: true),
+        );
+        // If src is not set, the iframe will never load.
+        if (_webWebViewParams.iFrame.src.isEmpty) {
+          _webWebViewParams.iFrame.src = 'about:blank';
+        }
+        await completer.future;
+      }
+      // Test origin permission
+      _webWebViewParams.iFrame.contentDocument!.body;
+      // Return on success
+      return _webWebViewParams.iFrame.contentDocument!;
+    } catch (_) {
+      throw StateError('Web view origin mismatch');
+    }
+  }
+
   @override
-  Future<void> loadHtmlString(String html, {String? baseUrl}) async {
-    _webWebViewParams.iFrame.src =
-        Uri.dataFromString(
-          html,
-          mimeType: 'text/html',
-          encoding: utf8,
-        ).toString();
+  Future<void> loadHtmlString(String html, {String? baseUrl}) {
+    final Completer<void> loading = Completer<void>();
+
+    // Load listener for load completion
+    _webWebViewParams.iFrame.addEventListener(
+      'load',
+      () {
+        try {
+          _webWebViewParams.iFrame.contentDocument?.write(html.toJS);
+        } finally {
+          loading.complete();
+        }
+      }.toJS,
+      AddEventListenerOptions(once: true),
+    );
+
+    // Initiate load
+    _webWebViewParams.iFrame.src = baseUrl ?? 'about:blank';
+
+    // Time out in case load listener is not triggered
+    Future<void>.delayed(
+      const Duration(minutes: 3),
+    ).then<void>((_) => loading.complete());
+
+    // Return future completion
+    return loading.future;
   }
 
   @override
@@ -87,6 +149,49 @@ class WebWebViewController extends PlatformWebViewController {
     } else {
       await _updateIFrameFromXhr(params);
     }
+  }
+
+  @override
+  Future<void> runJavaScript(String javaScript) async {
+    final Completer<void> run = Completer<void>();
+    final web.Document document = await _getIFrameDocument();
+    final web.HTMLBodyElement body = await _getIFrameBody();
+    final web.HTMLScriptElement script =
+        document.createElement('script') as web.HTMLScriptElement;
+
+    // Load listener for script completion
+    script.addEventListener(
+      'load',
+      () {
+        try {
+          body.removeChild(script);
+        } finally {
+          run.complete();
+        }
+      }.toJS,
+      AddEventListenerOptions(once: true),
+    );
+
+    // Prepare script
+    script.src =
+        Uri.dataFromString(
+          javaScript,
+          mimeType: 'text/javascript',
+          encoding: utf8,
+        ).toString();
+
+    // Initiate script execution
+    body.appendChild(script);
+
+    // Time out in case load listener is not triggered
+    unawaited(
+      Future<void>.delayed(
+        const Duration(seconds: 3),
+      ).then<void>((_) => run.complete()),
+    );
+
+    // Return future completion
+    await run.future;
   }
 
   /// Performs an AJAX request defined by [params].
