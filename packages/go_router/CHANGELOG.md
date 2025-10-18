@@ -1,3 +1,7 @@
+## 16.3.0
+
+- Adds a top-level `onEnter` callback with access to current and next route states.
+
 ## 16.2.5
 
 - Fixes `GoRouter.of(context)` access inside redirect callbacks by providing router access through Zone-based context tracking.

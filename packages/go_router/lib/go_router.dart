@@ -15,9 +15,12 @@ export 'src/misc/custom_parameter.dart';
 export 'src/misc/errors.dart';
 export 'src/misc/extensions.dart';
 export 'src/misc/inherited_router.dart';
+export 'src/on_enter.dart'
+    show Allow, Block, OnEnterResult, OnEnterThenCallback;
 export 'src/pages/custom_transition_page.dart';
 export 'src/parser.dart';
 export 'src/route.dart';
 export 'src/route_data.dart' hide NoOpPage;
-export 'src/router.dart';
+export 'src/router.dart'
+    show GoExceptionHandler, GoRouter, OnEnter, RoutingConfig;
 export 'src/state.dart' hide GoRouterStateRegistry, GoRouterStateRegistryScope;
