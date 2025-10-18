@@ -1,3 +1,8 @@
+## 2.3.0
+
+* Adds `SvgPicture.precompiled` for loading precompiled vector graphics
+  assets without manually constructing an `AssetBytesLoader`.
+
 ## 2.2.1
 
 * Fixes message buffer access in SvgAssetLoader.

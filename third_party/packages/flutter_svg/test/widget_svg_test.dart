@@ -478,6 +478,28 @@ void main() {
     await _checkWidgetAndGolden(key, 'flutter_logo.asset.color_mapper.png');
   });
 
+  testWidgets('SvgPicture.precompiled', (WidgetTester tester) async {
+    final FakePrecompiledAssetBundle fakeAsset = FakePrecompiledAssetBundle();
+    final GlobalKey key = GlobalKey();
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: MediaQuery(
+          data: mediaQueryData,
+          child: DefaultAssetBundle(
+            bundle: fakeAsset,
+            child: RepaintBoundary(
+              key: key,
+              child: SvgPicture.precompiled('test.svg'),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await _checkWidgetAndGolden(key, 'flutter_logo.precompiled.png');
+  });
+
   testWidgets('SvgPicture.network', (WidgetTester tester) async {
     final GlobalKey key = GlobalKey();
     await tester.pumpWidget(
@@ -1098,6 +1120,13 @@ class FakeAssetBundle extends Fake implements AssetBundle {
   }
 }
 
+class FakePrecompiledAssetBundle extends Fake implements AssetBundle {
+  @override
+  Future<ByteData> load(String key) async {
+    return Uint8List.fromList(_precompiledSvgBytes).buffer.asByteData();
+  }
+}
+
 class FakeHttpClient extends Fake implements http.Client {
   FakeHttpClient([this.statusCode = 200]);
 
@@ -1119,6 +1148,18 @@ const String simpleSvg = '''
   <rect x="5" y="5" width="10" height="10"/>
 </svg>
 ''';
+
+/// Precompiled SVG bytes for `svgStr` (Flutter logo).
+///
+/// How to regenerate:
+/// 1. Save `svgStr` to `test/flutter_logo.svg`.
+/// 2. Compile: `dart run vector_graphics_compiler:vector_graphics_compiler -i
+///    test/flutter_logo.svg -o test/flutter_logo.svg.vec`
+/// 3. Encode: `base64 -i test/flutter_logo.svg.vec` (macOS)
+/// 4. Paste the output below and delete the temporary files.
+final Uint8List _precompiledSvgBytes = base64Decode(
+  'Yi2IAAEpAAAmQwAASkMnAADsCp9CGa0qQx3SpkKykC5DAgAAAAAAJmFhYQICAAAAzcxMPpqZWT8AJwEAAACfQs3MDkPNzPFCzcwOQwIAAAAAAACMYWFhAgIAAADNzEw+mplZPwAc9aVCzAMAAP//HKFHDf8DAQD//xz1pUL/AwIA//8c/////wMDAAAAHP////8DBAABABsBAAAEAAAAAAEBAQgAAAAAzcwWQmbmAEPNzBxBAADKQs3MyEJmZiZBMzMcQ2ZmJkEbAQEABAAAAAABAQEIAAAAMzMcQwAAvELNzMhCAAC8QgAAn0LNzOVCzczWQs3MDkMbAAIABQAAAAABAQEBCgAAAAAAAAAAn0IzsypDzczIQpqZP0MzMxxDmpk/QzMzHEOamT9DzczWQs3MDkMbAAMABQAAAAABAQEDCAAAAAAAAHilTkIC0Q5D7AqfQtPp5UIcw9ZCAtEOQ+wKn0IZrSpDGwAEAAUAAAAAAQEBAwgAAAAAAADsCp9CGa0qQxzD1kIC0Q5DTYreQpq0EkMd0qZCspAuQxsABQADAAAAAAEBBgAAAAAAAJ9CM7MqQ83M8UJmZhxDzczWQs3MDkMwHgAAAAD//x4BAAAA//8eAgABAP//HgMAAgD//x4EAAMA//8eBQAEAP//',
+);
 
 const String svgStr = '''
 <svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 166 202">
