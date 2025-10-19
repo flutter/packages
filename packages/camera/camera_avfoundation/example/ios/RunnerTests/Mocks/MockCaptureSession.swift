@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -22,6 +22,9 @@ final class MockCaptureSession: NSObject, FLTCaptureSession {
   var _sessionPreset = AVCaptureSession.Preset.high
   var inputs = [AVCaptureInput]()
   var outputs = [AVCaptureOutput]()
+
+  private(set) var addedAudioOutputCount: Int = 0
+
   var automaticallyConfiguresApplicationAudioSession = false
 
   var sessionPreset: AVCaptureSession.Preset {
@@ -61,7 +64,12 @@ final class MockCaptureSession: NSObject, FLTCaptureSession {
 
   func addInput(_: FLTCaptureInput) {}
 
-  func addOutput(_: AVCaptureOutput) {}
+  func addOutput(_ output: AVCaptureOutput) {
+
+    if output is AVCaptureAudioDataOutput {
+      addedAudioOutputCount += 1
+    }
+  }
 
   func removeInput(_: FLTCaptureInput) {}
 

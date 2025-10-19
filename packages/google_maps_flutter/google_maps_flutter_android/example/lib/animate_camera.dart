@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -40,10 +40,9 @@ class AnimateCameraState extends State<AnimateCamera> {
 
   void _toggleAnimationDuration() {
     setState(() {
-      _cameraUpdateAnimationDuration =
-          _cameraUpdateAnimationDuration != null
-              ? null
-              : const Duration(seconds: _durationSeconds);
+      _cameraUpdateAnimationDuration = _cameraUpdateAnimationDuration != null
+          ? null
+          : const Duration(seconds: _durationSeconds);
     });
   }
 

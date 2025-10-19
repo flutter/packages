@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -12,6 +12,7 @@ import 'configuration.dart';
 import 'information_provider.dart';
 import 'logging.dart';
 import 'match.dart';
+import 'misc/errors.dart';
 import 'router.dart';
 
 /// The function signature of [GoRouteInformationParser.onParserException].
@@ -170,15 +171,47 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
     BuildContext context,
     RouteMatchList routeMatch,
   ) {
-    final FutureOr<RouteMatchList> redirectedFuture = configuration.redirect(
-      context,
-      routeMatch,
-      redirectHistory: <RouteMatchList>[],
-    );
-    if (redirectedFuture is RouteMatchList) {
-      return SynchronousFuture<RouteMatchList>(redirectedFuture);
+    try {
+      final FutureOr<RouteMatchList> redirectedFuture = configuration.redirect(
+        context,
+        routeMatch,
+        redirectHistory: <RouteMatchList>[],
+      );
+      if (redirectedFuture is RouteMatchList) {
+        return SynchronousFuture<RouteMatchList>(redirectedFuture);
+      }
+      return redirectedFuture.catchError((Object error) {
+        // Convert any exception during redirect to a GoException
+        final GoException goException =
+            error is GoException
+                ? error
+                : GoException('Exception during redirect: $error');
+        // Return an error match list instead of throwing
+        return RouteMatchList(
+          matches: const <RouteMatch>[],
+          extra: routeMatch.extra,
+          error: goException,
+          uri: routeMatch.uri,
+          pathParameters: const <String, String>{},
+        );
+      });
+    } catch (exception) {
+      // Convert any exception during redirect to a GoException
+      final GoException goException =
+          exception is GoException
+              ? exception
+              : GoException('Exception during redirect: $exception');
+      // Return an error match list instead of throwing
+      return SynchronousFuture<RouteMatchList>(
+        RouteMatchList(
+          matches: const <RouteMatch>[],
+          extra: routeMatch.extra,
+          error: goException,
+          uri: routeMatch.uri,
+          pathParameters: const <String, String>{},
+        ),
+      );
     }
-    return redirectedFuture;
   }
 
   RouteMatchList _updateRouteMatchList(

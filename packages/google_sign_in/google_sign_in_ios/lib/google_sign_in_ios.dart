@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -18,6 +18,24 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
   final GoogleSignInApi _api;
 
   String? _nonce;
+
+  /// The last server auth code returned when authenticating or adding scopes.
+  ///
+  /// The SDK only returns an auth code when doing a new authentication or
+  /// when first adding new scopes; later calls to get refreshed tokens will not
+  /// provide the server auth code again. Because this plugin separates out
+  /// separate calls for authn, client authz, and server authz, the server auth
+  /// token needs to be cached when it was returned so that it can be returned
+  /// later in the session.
+  ///
+  /// There is a small risk of returning an expired server auth token this way,
+  /// but the plugin docs are clear that clients should obtain the server auth
+  /// token immediately, and not rely on it continuing to be valid later.
+  String? _cachedServerAuthCode;
+
+  /// The user identifier for the cached server auth code, to ensure that a
+  /// cached code isn't returned across users.
+  String? _cachedServerAuthCodeUserId;
 
   /// Registers this class as the default instance of [GoogleSignInPlatform].
   static void registerWith() {
@@ -70,7 +88,7 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
   Future<AuthenticationResults> authenticate(
     AuthenticateParameters params,
   ) async {
-    final SignInResult result = await _api.signIn(params.scopeHint, _nonce);
+    final SignInResult result = await _signIn(params.scopeHint, _nonce);
 
     // This should never happen; the corresponding native error code is
     // documented as being specific to restorePreviousSignIn.
@@ -100,6 +118,7 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
 
   @override
   Future<void> signOut(SignOutParams params) {
+    _updateAuthCodeCache(null);
     return _api.signOut();
   }
 
@@ -116,8 +135,9 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
   Future<ClientAuthorizationTokenData?> clientAuthorizationTokensForScopes(
     ClientAuthorizationTokensForScopesParameters params,
   ) async {
-    final String? accessToken =
-        (await _getAuthorizationTokens(params.request)).accessToken;
+    final String? accessToken = (await _getAuthorizationTokens(
+      params.request,
+    )).accessToken;
     return accessToken == null
         ? null
         : ClientAuthorizationTokenData(accessToken: accessToken);
@@ -127,11 +147,19 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
   Future<ServerAuthorizationTokenData?> serverAuthorizationTokensForScopes(
     ServerAuthorizationTokensForScopesParameters params,
   ) async {
-    final String? serverAuthCode =
-        (await _getAuthorizationTokens(params.request)).serverAuthCode;
+    final String? serverAuthCode = (await _getAuthorizationTokens(
+      params.request,
+    )).serverAuthCode;
     return serverAuthCode == null
         ? null
         : ServerAuthorizationTokenData(serverAuthCode: serverAuthCode);
+  }
+
+  @override
+  Future<void> clearAuthorizationToken(
+    ClearAuthorizationTokenParams params,
+  ) async {
+    // No-op; the iOS SDK handles token invalidation internally.
   }
 
   Future<({String? accessToken, String? serverAuthCode})>
@@ -148,7 +176,7 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
         // There's no existing sign-in to use, so return the results of the
         // combined authn+authz flow, if prompting is allowed.
         if (request.promptIfUnauthorized) {
-          result = await _api.signIn(request.scopes, _nonce);
+          result = await _signIn(request.scopes, _nonce);
           return _processAuthorizationResult(result);
         } else {
           // No existing authentication, and no prompting allowed, so return
@@ -164,10 +192,9 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
     }
 
     final bool useExistingAuthorization = !request.promptIfUnauthorized;
-    SignInResult result =
-        useExistingAuthorization
-            ? await _api.getRefreshedAuthorizationTokens(userId)
-            : await _api.addScopes(request.scopes, userId);
+    SignInResult result = useExistingAuthorization
+        ? await _api.getRefreshedAuthorizationTokens(userId)
+        : await _addScopes(request.scopes, userId);
     if (!useExistingAuthorization &&
         result.error?.type == GoogleSignInErrorCode.scopesAlreadyGranted) {
       // The Google Sign In SDK returns an error when requesting scopes that are
@@ -223,6 +250,28 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
     return _authorizationTokenDataFromSignInSuccess(result.success);
   }
 
+  Future<SignInResult> _signIn(List<String> scopeHint, String? nonce) async {
+    final SignInResult result = await _api.signIn(scopeHint, nonce);
+    _updateAuthCodeCache(result.success);
+    return result;
+  }
+
+  Future<SignInResult> _addScopes(List<String> scopes, String userId) async {
+    final SignInResult result = await _api.addScopes(scopes, userId);
+    // Don't clear the cache for GoogleSignInErrorCode.scopesAlreadyGranted
+    // since that indicates that nothing has changed. Otherwise, update the
+    // cache (with a new token on success, or clearing on failure).
+    if (result.error?.type != GoogleSignInErrorCode.scopesAlreadyGranted) {
+      _updateAuthCodeCache(result.success);
+    }
+    return result;
+  }
+
+  void _updateAuthCodeCache(SignInSuccess? success) {
+    _cachedServerAuthCode = success?.serverAuthCode;
+    _cachedServerAuthCodeUserId = success?.user.userId;
+  }
+
   AuthenticationResults _authenticationResultsFromSignInSuccess(
     SignInSuccess result,
   ) {
@@ -241,9 +290,15 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
 
   ({String? accessToken, String? serverAuthCode})
   _authorizationTokenDataFromSignInSuccess(SignInSuccess? result) {
+    // Check for a relevant cached auth code to add if needed.
+    final String? cachedAuthCode =
+        result != null && result.user.userId == _cachedServerAuthCodeUserId
+        ? _cachedServerAuthCode
+        : null;
+
     return (
       accessToken: result?.accessToken,
-      serverAuthCode: result?.serverAuthCode,
+      serverAuthCode: result?.serverAuthCode ?? cachedAuthCode,
     );
   }
 
@@ -261,14 +316,12 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
         GoogleSignInExceptionCode.userMismatch,
       // These should never be mapped to a GoogleSignInException; the caller
       // should handle them.
-      GoogleSignInErrorCode.noAuthInKeychain =>
-        throw StateError(
-          '_exceptionCodeForErrorPlatformErrorCode called with no auth.',
-        ),
-      GoogleSignInErrorCode.scopesAlreadyGranted =>
-        throw StateError(
-          '_exceptionCodeForErrorPlatformErrorCode called with scopes already granted.',
-        ),
+      GoogleSignInErrorCode.noAuthInKeychain => throw StateError(
+        '_exceptionCodeForErrorPlatformErrorCode called with no auth.',
+      ),
+      GoogleSignInErrorCode.scopesAlreadyGranted => throw StateError(
+        '_exceptionCodeForErrorPlatformErrorCode called with scopes already granted.',
+      ),
     };
   }
 }

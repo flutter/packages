@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -959,10 +959,109 @@ void main() {
     verify(mockApi.clearCredentialState());
   });
 
-  test('disconnect also signs out', () async {
-    await googleSignIn.disconnect(const DisconnectParams());
+  group('disconnect', () {
+    test('calls through with previously authorized accounts', () async {
+      // Populate the cache of users.
+      const String userEmail = 'user@example.com';
+      const String aScope = 'grantedScope';
+      when(mockApi.authorize(any, promptIfUnauthorized: false)).thenAnswer(
+        (_) async => PlatformAuthorizationResult(
+          grantedScopes: <String>[aScope],
+          accessToken: 'token',
+        ),
+      );
+      await googleSignIn.init(const InitParameters(serverClientId: 'id'));
+      await googleSignIn.clientAuthorizationTokensForScopes(
+        const ClientAuthorizationTokensForScopesParameters(
+          request: AuthorizationRequestDetails(
+            scopes: <String>[aScope],
+            userId: null,
+            email: userEmail,
+            promptIfUnauthorized: false,
+          ),
+        ),
+      );
 
-    verify(mockApi.clearCredentialState());
+      await googleSignIn.disconnect(const DisconnectParams());
+
+      final VerificationResult verification = verify(
+        mockApi.revokeAccess(captureAny),
+      );
+      final PlatformRevokeAccessRequest hostParams =
+          verification.captured[0] as PlatformRevokeAccessRequest;
+      expect(hostParams.accountEmail, userEmail);
+      expect(hostParams.scopes.first, aScope);
+    });
+
+    test(
+      'calls through with non-authorized accounts, using "openid"',
+      () async {
+        // Populate the cache of users.
+        when(mockApi.getCredential(any)).thenAnswer(
+          (_) async => GetCredentialSuccess(
+            credential: PlatformGoogleIdTokenCredential(
+              displayName: _testUser.displayName,
+              profilePictureUri: _testUser.photoUrl,
+              id: _testUser.email,
+              idToken: _testAuthnToken.idToken!,
+            ),
+          ),
+        );
+        await googleSignIn.init(const InitParameters(serverClientId: 'id'));
+        await googleSignIn.authenticate(const AuthenticateParameters());
+
+        await googleSignIn.disconnect(const DisconnectParams());
+
+        final VerificationResult verification = verify(
+          mockApi.revokeAccess(captureAny),
+        );
+        final PlatformRevokeAccessRequest hostParams =
+            verification.captured[0] as PlatformRevokeAccessRequest;
+        expect(hostParams.accountEmail, _testUser.email);
+        expect(hostParams.scopes.first, 'openid');
+      },
+    );
+
+    test('does not re-revoke for repeated disconnect', () async {
+      // Populate the cache of users.
+      const String userEmail = 'user@example.com';
+      const String aScope = 'grantedScope';
+      when(mockApi.authorize(any, promptIfUnauthorized: false)).thenAnswer(
+        (_) async => PlatformAuthorizationResult(
+          grantedScopes: <String>[aScope],
+          accessToken: 'token',
+        ),
+      );
+      await googleSignIn.init(const InitParameters(serverClientId: 'id'));
+      await googleSignIn.clientAuthorizationTokensForScopes(
+        const ClientAuthorizationTokensForScopesParameters(
+          request: AuthorizationRequestDetails(
+            scopes: <String>[aScope],
+            userId: null,
+            email: userEmail,
+            promptIfUnauthorized: false,
+          ),
+        ),
+      );
+
+      await googleSignIn.disconnect(const DisconnectParams());
+
+      verify(mockApi.revokeAccess(any));
+
+      reset(mockApi);
+
+      // Since no accounts have authorized since the last disconnect, this
+      // should not attempt to revoke anything.
+      await googleSignIn.disconnect(const DisconnectParams());
+
+      verifyNever(mockApi.revokeAccess(any));
+    });
+
+    test('also signs out', () async {
+      await googleSignIn.disconnect(const DisconnectParams());
+
+      verify(mockApi.clearCredentialState());
+    });
   });
 
   // Returning null triggers the app-facing package to create stream events,

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -2389,6 +2389,94 @@ void main() {
       expect(redirected, isTrue);
     });
 
+    testWidgets('error thrown during redirect can be caught by onException', (
+      WidgetTester tester,
+    ) async {
+      bool exceptionCaught = false;
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+          path: '/',
+          builder:
+              (BuildContext context, GoRouterState state) => const HomeScreen(),
+        ),
+        GoRoute(
+          path: '/login',
+          builder:
+              (BuildContext context, GoRouterState state) =>
+                  const LoginScreen(),
+        ),
+        GoRoute(
+          path: '/trigger-error',
+          builder:
+              (BuildContext context, GoRouterState state) =>
+                  const Text('should not reach here'),
+        ),
+      ];
+
+      final GoRouter router = await createRouter(
+        routes,
+        tester,
+        redirect: (BuildContext context, GoRouterState state) {
+          if (state.matchedLocation == '/trigger-error') {
+            throw Exception('Redirect error');
+          }
+          return null;
+        },
+        onException: (
+          BuildContext context,
+          GoRouterState state,
+          GoRouter router,
+        ) {
+          exceptionCaught = true;
+        },
+      );
+
+      expect(find.byType(HomeScreen), findsOneWidget);
+      expect(exceptionCaught, isFalse);
+
+      // Navigate to a route that will trigger an error in the redirect callback
+      router.go('/trigger-error');
+      await tester.pumpAndSettle();
+
+      // Verify the exception was caught
+      expect(exceptionCaught, isTrue);
+      // Should stay on the home screen since onException didn't navigate anywhere
+      expect(find.byType(HomeScreen), findsOneWidget);
+      expect(find.text('should not reach here'), findsNothing);
+    });
+
+    testWidgets('context extension methods work in redirects', (
+      WidgetTester tester,
+    ) async {
+      String? capturedNamedLocation;
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+          path: '/',
+          name: 'home',
+          builder:
+              (BuildContext context, GoRouterState state) => const HomeScreen(),
+        ),
+        GoRoute(
+          path: '/login',
+          name: 'login',
+          builder:
+              (BuildContext context, GoRouterState state) =>
+                  const LoginScreen(),
+        ),
+      ];
+
+      await createRouter(
+        routes,
+        tester,
+        redirect: (BuildContext context, GoRouterState state) {
+          capturedNamedLocation = context.namedLocation('login');
+          return state.matchedLocation == '/login' ? null : '/login';
+        },
+      );
+
+      expect(capturedNamedLocation, '/login');
+    });
+
     testWidgets('redirect can redirect to same path', (
       WidgetTester tester,
     ) async {
@@ -3371,7 +3459,7 @@ void main() {
         final GoRouter router = await createRouter(routes, tester);
         expect(
           router.routeInformationProvider.value.uri.toString(),
-          '/?param=1',
+          'https://domain.com/?param=1',
         );
         TestWidgetsFlutterBinding.instance.platformDispatcher
             .clearDefaultRouteNameTestValue();
