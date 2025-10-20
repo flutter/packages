@@ -1,6 +1,10 @@
-## 0.6.23+2
+# 0.6.23+3
 
 * Bumps camerax_version from 1.5.0 to 1.5.1.
+
+## 0.6.23+2
+
+* Updates Java compatibility version to 17 and minimum supported SDK version to Flutter 3.35/Dart 3.9.
 
 ## 0.6.23+1
 
