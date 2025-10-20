@@ -3,6 +3,10 @@
 * Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
 * Removes the wasm example.
 
+## 1.0.32
+* Adds support for the `Flexible` core widget.
+
+
 ## 1.0.31
 
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
