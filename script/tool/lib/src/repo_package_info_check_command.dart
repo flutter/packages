@@ -13,8 +13,8 @@ import 'common/repository_package.dart';
 const int _exitBadTableEntry = 3;
 const int _exitUnknownPackageEntry = 4;
 
-const Map<String, dynamic> _validCiConfigSyntax = <String, dynamic>{
-  'release': <String, dynamic>{
+const Map<String, Object?> _validCiConfigSyntax = <String, Object?>{
+  'release': <String, Object?>{
     'batch': <bool>{true, false}
   },
 };
@@ -117,8 +117,7 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
 
     // The content of ci_config.yaml must be valid if there is one.
     if (package.ciConfigFile.existsSync()) {
-      _validateCiConfig(package.ciConfigFile,
-          errors: errors, mainPackage: package);
+      errors.addAll(_validateCiConfig(package.ciConfigFile, mainPackage: package));
     }
 
     // Any published package should be in the README table.
@@ -203,35 +202,33 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
         : PackageResult.fail(errors);
   }
 
-  void _validateCiConfig(File ciConfig,
-      {required List<String> errors, required RepositoryPackage mainPackage}) {
+  List<String> _validateCiConfig(File ciConfig,
+      {required RepositoryPackage mainPackage}) {
     print('${indentation}Checking '
         '${getRelativePosixPath(ciConfig, from: mainPackage.directory)}...');
     final YamlMap config;
     try {
-      final dynamic yaml = loadYaml(ciConfig.readAsStringSync());
+      final Object? yaml = loadYaml(ciConfig.readAsStringSync());
       if (yaml is! YamlMap) {
         printError('${indentation}The ci_config.yaml file must be a map.');
-        errors.add('Root of config is not a map.');
-        return;
+        return <String>['Root of config is not a map.'];
       }
       config = yaml;
     } on YamlException catch (e) {
       printError(
           '${indentation}Invalid YAML in ${getRelativePosixPath(ciConfig, from: mainPackage.directory)}:');
       printError(e.toString());
-      errors.add('Invalid YAML');
-      return;
+      return <String>['Invalid YAML'];
     }
 
-    _checkCiConfigEntries(config, errors: errors, syntax: _validCiConfigSyntax);
+    return _checkCiConfigEntries(config, syntax: _validCiConfigSyntax);
   }
 
-  void _checkCiConfigEntries(YamlMap config,
-      {required List<String> errors,
-      required Map<String, dynamic> syntax,
+  List<String> _checkCiConfigEntries(YamlMap config,
+      {required Map<String, Object?> syntax,
       String configPrefix = ''}) {
-    for (final MapEntry<dynamic, dynamic> entry in config.entries) {
+    final List<String> errors = <String>[];
+    for (final MapEntry<Object?, Object?> entry in config.entries) {
       if (!syntax.containsKey(entry.key)) {
         printError(
             '${indentation}Unknown key `${entry.key}` in config${_formatConfigPrefix(configPrefix)}, the possible keys are ${syntax.keys.toList()}');
@@ -255,13 +252,13 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
           errors.add(
               'Invalid value `${entry.value}` for key${_formatConfigPrefix(configPrefix)}');
         } else {
-          _checkCiConfigEntries(entry.value as YamlMap,
-              errors: errors,
-              syntax: syntaxValue as Map<String, dynamic>,
-              configPrefix: configPrefix);
+          errors.addAll(_checkCiConfigEntries(entry.value as YamlMap,
+              syntax: syntaxValue as Map<String, Object?>,
+              configPrefix: configPrefix));
         }
       }
     }
+    return errors;
   }
 
   String _formatConfigPrefix(String configPrefix) =>

@@ -458,7 +458,7 @@ ${readmeTableEntry('a_package')}
       );
     });
 
-    test('unknown key', () async {
+    test('fails for unknown key', () async {
       final RepositoryPackage package =
           createFakePackage('a_package', packagesDir);
 
@@ -486,7 +486,7 @@ something: true
       );
     });
 
-    test('wrong value type for batch property in release', () async {
+    test('fails for invalid value type for batch property in release', () async {
       final RepositoryPackage package =
           createFakePackage('a_package', packagesDir);
 
