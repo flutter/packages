@@ -1,3 +1,7 @@
+## 0.6.23+2
+
+* Bumps camerax_version from 1.5.0 to 1.5.1.
+
 ## 0.6.23+1
 
 * Resolves Gradle 9 deprecations.
