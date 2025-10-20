@@ -286,31 +286,6 @@ void SetUpFVPAVFoundationVideoPlayerApiWithSuffix(id<FlutterBinaryMessenger> bin
   }
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:
-               [NSString stringWithFormat:@"%@%@",
-                                          @"dev.flutter.pigeon.video_player_avfoundation."
-                                          @"AVFoundationVideoPlayerApi.setAllowBackgroundPlayback",
-                                          messageChannelSuffix]
-        binaryMessenger:binaryMessenger
-                  codec:FVPGetMessagesCodec()];
-    if (api) {
-      NSCAssert([api respondsToSelector:@selector(setAllowBackgroundPlayback:error:)],
-                @"FVPAVFoundationVideoPlayerApi api (%@) doesn't respond to "
-                @"@selector(setAllowBackgroundPlayback:error:)",
-                api);
-      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray<id> *args = message;
-        BOOL arg_allowBackgroundPlayback = [GetNullableObjectAtIndex(args, 0) boolValue];
-        FlutterError *error;
-        [api setAllowBackgroundPlayback:arg_allowBackgroundPlayback error:&error];
-        callback(wrapResult(nil, error));
-      }];
-    } else {
-      [channel setMessageHandler:nil];
-    }
-  }
-  {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",
                                                    @"dev.flutter.pigeon.video_player_avfoundation."
                                                    @"AVFoundationVideoPlayerApi.getAssetUrl",

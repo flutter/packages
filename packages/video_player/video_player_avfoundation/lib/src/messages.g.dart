@@ -324,33 +324,6 @@ class AVFoundationVideoPlayerApi {
     }
   }
 
-  Future<void> setAllowBackgroundPlayback(bool allowBackgroundPlayback) async {
-    final String pigeonVar_channelName =
-        'dev.flutter.pigeon.video_player_avfoundation.AVFoundationVideoPlayerApi.setAllowBackgroundPlayback$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
-        BasicMessageChannel<Object?>(
-          pigeonVar_channelName,
-          pigeonChannelCodec,
-          binaryMessenger: pigeonVar_binaryMessenger,
-        );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[allowBackgroundPlayback],
-    );
-    final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return;
-    }
-  }
-
   Future<String?> getAssetUrl(String asset, String? package) async {
     final String pigeonVar_channelName =
         'dev.flutter.pigeon.video_player_avfoundation.AVFoundationVideoPlayerApi.getAssetUrl$pigeonVar_messageChannelSuffix';

@@ -55,8 +55,6 @@ NSObject<FlutterMessageCodec> *FVPGetMessagesCodec(void);
     createTexturePlayerWithOptions:(FVPCreationOptions *)creationOptions
                              error:(FlutterError *_Nullable *_Nonnull)error;
 - (void)setMixWithOthers:(BOOL)mixWithOthers error:(FlutterError *_Nullable *_Nonnull)error;
-- (void)setAllowBackgroundPlayback:(BOOL)allowBackgroundPlayback
-                             error:(FlutterError *_Nullable *_Nonnull)error;
 - (nullable NSString *)fileURLForAssetWithName:(NSString *)asset
                                        package:(nullable NSString *)package
                                          error:(FlutterError *_Nullable *_Nonnull)error;

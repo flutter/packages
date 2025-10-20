@@ -52,8 +52,6 @@ abstract class AVFoundationVideoPlayerApi {
   TexturePlayerIds createForTextureView(CreationOptions creationOptions);
   @ObjCSelector('setMixWithOthers:')
   void setMixWithOthers(bool mixWithOthers);
-  @ObjCSelector('setAllowBackgroundPlayback:')
-  void setAllowBackgroundPlayback(bool allowBackgroundPlayback);
   @ObjCSelector('fileURLForAssetWithName:package:')
   String? getAssetUrl(String asset, String? package);
 }

@@ -214,7 +214,8 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
 
   @override
   Future<void> setAllowBackgroundPlayback(bool allowBackgroundPlayback) {
-    return _api.setAllowBackgroundPlayback(allowBackgroundPlayback);
+    // No-op on iOS as background playback already works
+    return Future<void>.value();
   }
 
   @override

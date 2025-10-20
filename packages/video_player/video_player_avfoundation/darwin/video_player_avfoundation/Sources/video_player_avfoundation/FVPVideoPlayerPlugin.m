@@ -240,12 +240,6 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory
 #endif
 }
 
-- (void)setAllowBackgroundPlayback:(BOOL)allowBackgroundPlayback error:(FlutterError **)error {
-#if TARGET_OS_IOS
-  // Do nothing here, the background playback still works
-#endif
-}
-
 - (nullable NSString *)fileURLForAssetWithName:(NSString *)asset
                                        package:(nullable NSString *)package
                                          error:(FlutterError *_Nullable *_Nonnull)error {
