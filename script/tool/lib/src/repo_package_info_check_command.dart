@@ -117,7 +117,8 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
 
     // The content of ci_config.yaml must be valid if there is one.
     if (package.ciConfigFile.existsSync()) {
-      errors.addAll(_validateCiConfig(package.ciConfigFile, mainPackage: package));
+      errors.addAll(
+          _validateCiConfig(package.ciConfigFile, mainPackage: package));
     }
 
     // Any published package should be in the README table.
@@ -225,8 +226,7 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
   }
 
   List<String> _checkCiConfigEntries(YamlMap config,
-      {required Map<String, Object?> syntax,
-      String configPrefix = ''}) {
+      {required Map<String, Object?> syntax, String configPrefix = ''}) {
     final List<String> errors = <String>[];
     for (final MapEntry<Object?, Object?> entry in config.entries) {
       if (!syntax.containsKey(entry.key)) {
@@ -235,9 +235,9 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
         errors.add(
             'Unknown key `${entry.key}` in config${_formatConfigPrefix(configPrefix)}');
       } else {
-        final Object syntaxValue = syntax[entry.key] as Object;
+        final Object syntaxValue = syntax[entry.key]!;
         configPrefix = configPrefix.isEmpty
-            ? entry.key as String
+            ? entry.key! as String
             : '$configPrefix.${entry.key}';
         if (syntaxValue is Set) {
           if (!syntaxValue.contains(entry.value)) {
@@ -252,7 +252,7 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
           errors.add(
               'Invalid value `${entry.value}` for key${_formatConfigPrefix(configPrefix)}');
         } else {
-          errors.addAll(_checkCiConfigEntries(entry.value as YamlMap,
+          errors.addAll(_checkCiConfigEntries(entry.value! as YamlMap,
               syntax: syntaxValue as Map<String, Object?>,
               configPrefix: configPrefix));
         }
