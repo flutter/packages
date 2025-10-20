@@ -55,7 +55,7 @@ private object MessagesPigeonUtils {
     }
     if (a is Map<*, *> && b is Map<*, *>) {
       return a.size == b.size &&
-          a.all { (b as Map<Any?, Any?>).contains(it.key) && deepEquals(it.value, b[it.key]) }
+          a.all { (b as Map<Any?, Any?>).containsKey(it.key) && deepEquals(it.value, b[it.key]) }
     }
     return a == b
   }
@@ -412,6 +412,8 @@ interface AndroidVideoPlayerApi {
 
   fun setMixWithOthers(mixWithOthers: Boolean)
 
+  fun setAllowBackgroundPlayback(allowBackgroundPlayback: Boolean)
+
   fun getLookupKeyForAsset(asset: String, packageName: String?): String
 
   companion object {
@@ -530,6 +532,29 @@ interface AndroidVideoPlayerApi {
             val wrapped: List<Any?> =
                 try {
                   api.setMixWithOthers(mixWithOthersArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.video_player_android.AndroidVideoPlayerApi.setAllowBackgroundPlayback$separatedMessageChannelSuffix",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val allowBackgroundPlaybackArg = args[0] as Boolean
+            val wrapped: List<Any?> =
+                try {
+                  api.setAllowBackgroundPlayback(allowBackgroundPlaybackArg)
                   listOf(null)
                 } catch (exception: Throwable) {
                   MessagesPigeonUtils.wrapError(exception)
