@@ -36,6 +36,11 @@ public class ImageProxyUtils {
     uBuffer.rewind();
     vBuffer.rewind();
 
+    // Allocate a byte array for the NV21 frame.
+    // NV21 = Y plane + interleaved VU plane.
+    // Y = width * height; VU = (width * height) / 2 (4:2:0 subsampling).
+    // If the Y plane includes padding, ySize may be larger than width*height,
+    // but only the valid Y bytes are copied, so output size remains correct.
     int ySize = yBuffer.remaining();
     byte[] nv21Bytes = new byte[ySize + (width * height / 2)];
     int position = 0;
@@ -52,6 +57,9 @@ public class ImageProxyUtils {
         yBuffer.get(row, 0, width);
         System.arraycopy(row, 0, nv21Bytes, position, width);
         position += width;
+        // Adjust buffer position to start of next row.
+        // After reading 'width' bytes, move ahead by (yRowStride - width)
+        // to skip any padding bytes at the end of the current row.
         if (rowIndex < height - 1) {
           yBuffer.position(yBuffer.position() - width + yRowStride);
         }
@@ -74,6 +82,8 @@ public class ImageProxyUtils {
       uBuffer.get(uRowBuffer, 0, uRemaining);
       vBuffer.get(vRowBuffer, 0, vRemaining);
 
+      // Interleave V and U chroma data into the NV21 buffer.
+      // In NV21, chroma bytes follow the Y plane in repeating VU pairs (VUVU...).
       for (int col = 0; col < width / 2; col++) {
         int vIndex = col * vPixelStride;
         int uIndex = col * uPixelStride;
