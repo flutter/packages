@@ -17,7 +17,7 @@ import 'common/repository_package.dart';
 
 /// The lowest `ext.kotlin_version` that example apps are allowed to use.
 @visibleForTesting
-final Version minKotlinVersion = Version(1, 7, 10);
+final Version minKotlinVersion = Version(2, 1, 0);
 
 /// A command to enforce gradle file conventions and best practices.
 class GradleCheckCommand extends PackageLoopingCommand {
