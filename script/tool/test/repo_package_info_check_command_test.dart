@@ -486,7 +486,8 @@ something: true
       );
     });
 
-    test('fails for invalid value type for batch property in release', () async {
+    test('fails for invalid value type for batch property in release',
+        () async {
       final RepositoryPackage package =
           createFakePackage('a_package', packagesDir);
 
