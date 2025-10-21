@@ -461,8 +461,8 @@ class PigeonInstanceManager {
       final PigeonInternalProxyApiBaseClass? strongInstance =
           _strongInstances[identifier];
       if (strongInstance != null) {
-        final PigeonInternalProxyApiBaseClass copy =
-            strongInstance.pigeon_copy();
+        final PigeonInternalProxyApiBaseClass copy = strongInstance
+            .pigeon_copy();
         _identifiers[copy] = identifier;
         _weakInstances[identifier] =
             WeakReference<PigeonInternalProxyApiBaseClass>(copy);
@@ -2293,8 +2293,8 @@ class AdsManager extends BaseManager {
             arg_pigeon_instanceIdentifier != null,
             'Argument for dev.flutter.pigeon.interactive_media_ads.AdsManager.pigeon_newInstance was null, expected non-null int.',
           );
-          final List<double>? arg_adCuePoints =
-              (args[1] as List<Object?>?)?.cast<double>();
+          final List<double>? arg_adCuePoints = (args[1] as List<Object?>?)
+              ?.cast<double>();
           assert(
             arg_adCuePoints != null,
             'Argument for dev.flutter.pigeon.interactive_media_ads.AdsManager.pigeon_newInstance was null, expected non-null List<double>.',
@@ -7510,7 +7510,7 @@ class CompanionAd extends PigeonInternalProxyApiBaseClass {
     super.pigeon_instanceManager,
     this.apiFramework,
     required this.height,
-    required this.resourceValue,
+    this.resourceValue,
     required this.width,
   });
 
@@ -7523,7 +7523,7 @@ class CompanionAd extends PigeonInternalProxyApiBaseClass {
   final int height;
 
   /// The URL for the static resource of this companion.
-  final String resourceValue;
+  final String? resourceValue;
 
   /// The width of the companion in pixels.
   ///
@@ -7537,7 +7537,7 @@ class CompanionAd extends PigeonInternalProxyApiBaseClass {
     CompanionAd Function(
       String? apiFramework,
       int height,
-      String resourceValue,
+      String? resourceValue,
       int width,
     )?
     pigeon_newInstance,
@@ -7575,10 +7575,6 @@ class CompanionAd extends PigeonInternalProxyApiBaseClass {
             'Argument for dev.flutter.pigeon.interactive_media_ads.CompanionAd.pigeon_newInstance was null, expected non-null int.',
           );
           final String? arg_resourceValue = (args[3] as String?);
-          assert(
-            arg_resourceValue != null,
-            'Argument for dev.flutter.pigeon.interactive_media_ads.CompanionAd.pigeon_newInstance was null, expected non-null String.',
-          );
           final int? arg_width = (args[4] as int?);
           assert(
             arg_width != null,
@@ -7590,7 +7586,7 @@ class CompanionAd extends PigeonInternalProxyApiBaseClass {
                   pigeon_newInstance?.call(
                         arg_apiFramework,
                         arg_height!,
-                        arg_resourceValue!,
+                        arg_resourceValue,
                         arg_width!,
                       ) ??
                       CompanionAd.pigeon_detached(
@@ -7598,7 +7594,7 @@ class CompanionAd extends PigeonInternalProxyApiBaseClass {
                         pigeon_instanceManager: pigeon_instanceManager,
                         apiFramework: arg_apiFramework,
                         height: arg_height!,
-                        resourceValue: arg_resourceValue!,
+                        resourceValue: arg_resourceValue,
                         width: arg_width!,
                       ),
                   arg_pigeon_instanceIdentifier!,
@@ -7944,14 +7940,14 @@ class Ad extends PigeonInternalProxyApiBaseClass {
             arg_adWrapperCreativeIds != null,
             'Argument for dev.flutter.pigeon.interactive_media_ads.Ad.pigeon_newInstance was null, expected non-null List<String>.',
           );
-          final List<String>? arg_adWrapperIds =
-              (args[5] as List<Object?>?)?.cast<String>();
+          final List<String>? arg_adWrapperIds = (args[5] as List<Object?>?)
+              ?.cast<String>();
           assert(
             arg_adWrapperIds != null,
             'Argument for dev.flutter.pigeon.interactive_media_ads.Ad.pigeon_newInstance was null, expected non-null List<String>.',
           );
-          final List<String>? arg_adWrapperSystems =
-              (args[6] as List<Object?>?)?.cast<String>();
+          final List<String>? arg_adWrapperSystems = (args[6] as List<Object?>?)
+              ?.cast<String>();
           assert(
             arg_adWrapperSystems != null,
             'Argument for dev.flutter.pigeon.interactive_media_ads.Ad.pigeon_newInstance was null, expected non-null List<String>.',
@@ -8006,8 +8002,8 @@ class Ad extends PigeonInternalProxyApiBaseClass {
             arg_traffickingParameters != null,
             'Argument for dev.flutter.pigeon.interactive_media_ads.Ad.pigeon_newInstance was null, expected non-null String.',
           );
-          final List<UiElement>? arg_uiElements =
-              (args[20] as List<Object?>?)?.cast<UiElement>();
+          final List<UiElement>? arg_uiElements = (args[20] as List<Object?>?)
+              ?.cast<UiElement>();
           assert(
             arg_uiElements != null,
             'Argument for dev.flutter.pigeon.interactive_media_ads.Ad.pigeon_newInstance was null, expected non-null List<UiElement>.',

@@ -47,7 +47,9 @@ void main() {
         AVFoundationVideoPlayer player,
         MockAVFoundationVideoPlayerApi api,
         _,
-      ) = setUpMockPlayer(playerId: 1);
+      ) = setUpMockPlayer(
+        playerId: 1,
+      );
       await player.init();
 
       verify(api.initialize());
@@ -58,7 +60,9 @@ void main() {
         AVFoundationVideoPlayer player,
         _,
         MockVideoPlayerInstanceApi playerApi,
-      ) = setUpMockPlayer(playerId: 1);
+      ) = setUpMockPlayer(
+        playerId: 1,
+      );
       await player.dispose(1);
 
       verify(playerApi.dispose());
@@ -70,7 +74,9 @@ void main() {
         AVFoundationVideoPlayer player,
         MockAVFoundationVideoPlayerApi api,
         _,
-      ) = setUpMockPlayer(playerId: 1);
+      ) = setUpMockPlayer(
+        playerId: 1,
+      );
       const int newPlayerId = 2;
       const int textureId = 100;
       when(api.createForTextureView(any)).thenAnswer(
@@ -111,7 +117,9 @@ void main() {
           AVFoundationVideoPlayer player,
           MockAVFoundationVideoPlayerApi api,
           _,
-        ) = setUpMockPlayer(playerId: 1);
+        ) = setUpMockPlayer(
+          playerId: 1,
+        );
 
         const String asset = 'someAsset';
         const String package = 'somePackage';
@@ -135,7 +143,9 @@ void main() {
         AVFoundationVideoPlayer player,
         MockAVFoundationVideoPlayerApi api,
         _,
-      ) = setUpMockPlayer(playerId: 1);
+      ) = setUpMockPlayer(
+        playerId: 1,
+      );
       const int newPlayerId = 2;
       const int textureId = 100;
       when(api.createForTextureView(any)).thenAnswer(
@@ -171,7 +181,9 @@ void main() {
         AVFoundationVideoPlayer player,
         MockAVFoundationVideoPlayerApi api,
         _,
-      ) = setUpMockPlayer(playerId: 1);
+      ) = setUpMockPlayer(
+        playerId: 1,
+      );
       when(
         api.createForTextureView(any),
       ).thenAnswer((_) async => TexturePlayerIds(playerId: 2, textureId: 100));
@@ -199,7 +211,9 @@ void main() {
         AVFoundationVideoPlayer player,
         MockAVFoundationVideoPlayerApi api,
         _,
-      ) = setUpMockPlayer(playerId: 1);
+      ) = setUpMockPlayer(
+        playerId: 1,
+      );
       const int newPlayerId = 2;
       const int textureId = 100;
       when(api.createForTextureView(any)).thenAnswer(
@@ -229,7 +243,9 @@ void main() {
         AVFoundationVideoPlayer player,
         MockAVFoundationVideoPlayerApi api,
         _,
-      ) = setUpMockPlayer(playerId: 1);
+      ) = setUpMockPlayer(
+        playerId: 1,
+      );
       const int newPlayerId = 2;
       const int textureId = 100;
       when(api.createForTextureView(any)).thenAnswer(
@@ -270,7 +286,9 @@ void main() {
         AVFoundationVideoPlayer player,
         MockAVFoundationVideoPlayerApi api,
         _,
-      ) = setUpMockPlayer(playerId: 1);
+      ) = setUpMockPlayer(
+        playerId: 1,
+      );
       const int newPlayerId = 2;
       const int textureId = 100;
       when(api.createForTextureView(any)).thenAnswer(
@@ -309,7 +327,9 @@ void main() {
         AVFoundationVideoPlayer player,
         MockAVFoundationVideoPlayerApi api,
         _,
-      ) = setUpMockPlayer(playerId: 1);
+      ) = setUpMockPlayer(
+        playerId: 1,
+      );
       const int newPlayerId = 2;
       when(api.createForTextureView(any)).thenAnswer(
         (_) async => TexturePlayerIds(playerId: newPlayerId, textureId: 100),
@@ -343,7 +363,9 @@ void main() {
         AVFoundationVideoPlayer player,
         MockAVFoundationVideoPlayerApi api,
         _,
-      ) = setUpMockPlayer(playerId: 1);
+      ) = setUpMockPlayer(
+        playerId: 1,
+      );
       const int newPlayerId = 2;
       const int textureId = 100;
       when(api.createForTextureView(any)).thenAnswer(
@@ -377,7 +399,9 @@ void main() {
         AVFoundationVideoPlayer player,
         MockAVFoundationVideoPlayerApi api,
         _,
-      ) = setUpMockPlayer(playerId: 1);
+      ) = setUpMockPlayer(
+        playerId: 1,
+      );
       const int newPlayerId = 2;
       when(api.createForPlatformView(any)).thenAnswer((_) async => newPlayerId);
 
@@ -403,7 +427,9 @@ void main() {
         AVFoundationVideoPlayer player,
         _,
         MockVideoPlayerInstanceApi playerApi,
-      ) = setUpMockPlayer(playerId: 1);
+      ) = setUpMockPlayer(
+        playerId: 1,
+      );
       await player.setLooping(1, true);
 
       verify(playerApi.setLooping(true));
@@ -414,7 +440,9 @@ void main() {
         AVFoundationVideoPlayer player,
         _,
         MockVideoPlayerInstanceApi playerApi,
-      ) = setUpMockPlayer(playerId: 1);
+      ) = setUpMockPlayer(
+        playerId: 1,
+      );
       await player.play(1);
 
       verify(playerApi.play());
@@ -425,7 +453,9 @@ void main() {
         AVFoundationVideoPlayer player,
         _,
         MockVideoPlayerInstanceApi playerApi,
-      ) = setUpMockPlayer(playerId: 1);
+      ) = setUpMockPlayer(
+        playerId: 1,
+      );
       await player.pause(1);
 
       verify(playerApi.pause());
@@ -437,7 +467,9 @@ void main() {
           AVFoundationVideoPlayer player,
           MockAVFoundationVideoPlayerApi api,
           _,
-        ) = setUpMockPlayer(playerId: 1);
+        ) = setUpMockPlayer(
+          playerId: 1,
+        );
         await player.setMixWithOthers(true);
 
         verify(api.setMixWithOthers(true));
@@ -448,7 +480,9 @@ void main() {
           AVFoundationVideoPlayer player,
           MockAVFoundationVideoPlayerApi api,
           _,
-        ) = setUpMockPlayer(playerId: 1);
+        ) = setUpMockPlayer(
+          playerId: 1,
+        );
         await player.setMixWithOthers(false);
 
         verify(api.setMixWithOthers(false));
@@ -460,7 +494,9 @@ void main() {
         AVFoundationVideoPlayer player,
         _,
         MockVideoPlayerInstanceApi playerApi,
-      ) = setUpMockPlayer(playerId: 1);
+      ) = setUpMockPlayer(
+        playerId: 1,
+      );
       const double volume = 0.7;
       await player.setVolume(1, volume);
 
@@ -472,7 +508,9 @@ void main() {
         AVFoundationVideoPlayer player,
         _,
         MockVideoPlayerInstanceApi playerApi,
-      ) = setUpMockPlayer(playerId: 1);
+      ) = setUpMockPlayer(
+        playerId: 1,
+      );
       const double speed = 1.5;
       await player.setPlaybackSpeed(1, speed);
 
@@ -484,7 +522,9 @@ void main() {
         AVFoundationVideoPlayer player,
         _,
         MockVideoPlayerInstanceApi playerApi,
-      ) = setUpMockPlayer(playerId: 1);
+      ) = setUpMockPlayer(
+        playerId: 1,
+      );
       const int positionMilliseconds = 12345;
       await player.seekTo(
         1,
@@ -499,7 +539,9 @@ void main() {
         AVFoundationVideoPlayer player,
         _,
         MockVideoPlayerInstanceApi playerApi,
-      ) = setUpMockPlayer(playerId: 1);
+      ) = setUpMockPlayer(
+        playerId: 1,
+      );
       const int positionMilliseconds = 12345;
       when(
         playerApi.getPosition(),
@@ -514,7 +556,9 @@ void main() {
         AVFoundationVideoPlayer player,
         MockAVFoundationVideoPlayerApi api,
         _,
-      ) = setUpMockPlayer(playerId: 1);
+      ) = setUpMockPlayer(
+        playerId: 1,
+      );
       const String mockChannel = 'flutter.io/videoPlayer/videoEvents123';
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMessageHandler(mockChannel, (ByteData? message) async {

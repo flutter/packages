@@ -75,10 +75,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: Text(toLaunch),
               ),
               ElevatedButton(
-                onPressed:
-                    () => setState(() {
-                      _launched = _launchInBrowser(toLaunch);
-                    }),
+                onPressed: () => setState(() {
+                  _launched = _launchInBrowser(toLaunch);
+                }),
                 child: const Text('Launch in browser'),
               ),
               const Padding(padding: EdgeInsets.all(16.0)),
