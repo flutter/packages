@@ -561,7 +561,10 @@ class TypedRelativeGoRoute<T extends RelativeGoRouteData>
 @Target(<TargetKind>{TargetKind.library, TargetKind.classType})
 class TypedShellRoute<T extends ShellRouteData> extends TypedRoute<T> {
   /// Default const constructor
-  const TypedShellRoute({ this.notifyRootObserver = true,this.routes = const <TypedRoute<RouteData>>[]});
+  const TypedShellRoute({
+    this.notifyRootObserver = true,
+    this.routes = const <TypedRoute<RouteData>>[],
+  });
 
   /// Determines whether the observers should be merged.
   ///

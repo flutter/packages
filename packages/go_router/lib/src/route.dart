@@ -501,7 +501,7 @@ abstract class ShellRouteBase extends RouteBase {
     this.notifyRootObserver = true,
   }) : super._();
 
-  /// Whether to merge the observers of the GoRouter with the observers 
+  /// Whether to merge the observers of the GoRouter with the observers
   /// of the ShellRoute.
   ///
   /// When `true`, the observers of the GoRouter will be merged with
@@ -593,16 +593,14 @@ class ShellRouteContext {
     String? restorationScopeId,
   ) {
     final List<NavigatorObserver> effectiveObservers = <NavigatorObserver>[
-      ...?observers
+      ...?observers,
     ];
 
     if (notifyRootObserver) {
       final List<NavigatorObserver>? rootObservers =
           GoRouter.maybeOf(context)?.observers;
       if (rootObservers != null) {
-        effectiveObservers.add(_MergedNavigatorObserver(
-          rootObservers,
-        ));
+        effectiveObservers.add(_MergedNavigatorObserver(rootObservers));
       }
     }
 
@@ -1717,7 +1715,7 @@ class _IndexedStackedRouteBranchContainer extends StatelessWidget {
 }
 
 /// A wrapper that merges multiple [NavigatorObserver]s into a single observer.
-/// 
+///
 /// This is necessary because a [NavigatorObserver] can only be attached to one
 /// [NavigatorState] at a time.
 class _MergedNavigatorObserver extends NavigatorObserver {
@@ -1764,7 +1762,9 @@ class _MergedNavigatorObserver extends NavigatorObserver {
 
   @override
   void didStartUserGesture(
-      Route<dynamic> route, Route<dynamic>? previousRoute) {
+    Route<dynamic> route,
+    Route<dynamic>? previousRoute,
+  ) {
     for (final NavigatorObserver observer in observers) {
       observer.didStartUserGesture(route, previousRoute);
     }
