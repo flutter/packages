@@ -8,7 +8,7 @@ allprojects {
         }
 
         google()
-        jcenter()
+        mavenCentral()
     }
 }
 

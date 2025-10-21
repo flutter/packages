@@ -1,3 +1,12 @@
+## 0.5.2+1
+
+* Resolves Gradle 9 deprecations.
+
+## 0.5.2
+
+* Updates Java compatibility version to 17.
+* Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
+
 ## 0.5.1+17
 
 * Updates Pigeon to 26.x.

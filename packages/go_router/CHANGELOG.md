@@ -1,7 +1,12 @@
-## 16.2.5
+## 17.0.0
 
 - `ShellRoute` will auto merge the `observers` passed into `GoRouter`.
 - Adds `mergeObservers` to `ShellRouteBase`, `ShellRoute`, `StatefulShellRoute`, `ShellRouteData.$route`.
+
+## 16.2.5
+
+- Fixes `GoRouter.of(context)` access inside redirect callbacks by providing router access through Zone-based context tracking.
+- Adds support for using context extension methods (e.g., `context.namedLocation()`, `context.go()`) within redirect callbacks.
 
 ## 16.2.4
 

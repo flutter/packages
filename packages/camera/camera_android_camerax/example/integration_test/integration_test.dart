@@ -48,8 +48,9 @@ void main() {
   testWidgets('availableCameras only supports valid back or front cameras', (
     WidgetTester tester,
   ) async {
-    final List<CameraDescription> availableCameras =
-        await CameraPlatform.instance.availableCameras();
+    final List<CameraDescription> availableCameras = await CameraPlatform
+        .instance
+        .availableCameras();
 
     for (final CameraDescription cameraDescription in availableCameras) {
       expect(
@@ -63,8 +64,8 @@ void main() {
   testWidgets('Preview takes expected resolution from preset', (
     WidgetTester tester,
   ) async {
-    final List<CameraDescription> cameras =
-        await CameraPlatform.instance.availableCameras();
+    final List<CameraDescription> cameras = await CameraPlatform.instance
+        .availableCameras();
     if (cameras.isEmpty) {
       return;
     }
@@ -104,8 +105,8 @@ void main() {
   testWidgets('Images from streaming have expected resolution from preset', (
     WidgetTester tester,
   ) async {
-    final List<CameraDescription> cameras =
-        await CameraPlatform.instance.availableCameras();
+    final List<CameraDescription> cameras = await CameraPlatform.instance
+        .availableCameras();
     if (cameras.isEmpty) {
       return;
     }
