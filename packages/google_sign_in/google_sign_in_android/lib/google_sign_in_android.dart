@@ -252,8 +252,9 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
         scopes: request.scopes,
         accountEmail: email,
         hostedDomain: _hostedDomain,
-        serverClientIdForForcedRefreshToken:
-            requestOfflineAccess ? _serverClientId : null,
+        serverClientIdForForcedRefreshToken: requestOfflineAccess
+            ? _serverClientId
+            : null,
       ),
       promptIfUnauthorized: request.promptIfUnauthorized,
     );

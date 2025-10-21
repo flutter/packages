@@ -1,3 +1,7 @@
+## 2.0.32
+
+* Updates Java compatibility version to 17 and minimum supported SDK version to Flutter 3.35/Dart 3.9.
+
 ## 2.0.31
 
 * Resolves Gradle 9 deprecations.
