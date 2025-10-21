@@ -1,7 +1,7 @@
-## 0.12.0
+## 0.11.3
 
-* Adds support to disable persistent recording on Android. See `CameraController.startVideoRecording(enablePersistentRecording)`.
-* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+* Adds support to configure persistent recording on Android. See `CameraController.startVideoRecording(enablePersistentRecording)`.
+* Updates minimum supported SDK version to Flutter 3.35.0/Dart 3.9.
 * Updates README to reflect that only Android API 24+ is supported.
 
 ## 0.11.2
