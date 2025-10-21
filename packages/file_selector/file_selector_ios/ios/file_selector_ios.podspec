@@ -15,7 +15,7 @@ Displays the native iOS document picker.
   s.source           = { :http => 'https://github.com/flutter/packages/tree/main/packages/file_selector/file_selector_ios' }
   s.source_files = 'file_selector_ios/Sources/file_selector_ios/**/*.swift'
   s.dependency 'Flutter'
-  s.platform = :ios, '12.0'
+  s.platform = :ios, '13.0'
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
   s.swift_version = '5.0'
   s.xcconfig = {

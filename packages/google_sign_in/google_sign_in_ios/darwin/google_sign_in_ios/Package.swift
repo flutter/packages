@@ -9,7 +9,7 @@ import PackageDescription
 let package = Package(
   name: "google_sign_in_ios",
   platforms: [
-    .iOS("12.0"),
+    .iOS("13.0"),
     .macOS("10.15"),
   ],
   products: [
