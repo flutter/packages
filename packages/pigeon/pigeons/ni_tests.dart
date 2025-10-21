@@ -407,9 +407,9 @@ abstract class NIHostIntegrationCoreApi {
   Map<String?, String?> echoStringMap(Map<String?, String?> stringMap);
 
   /// Returns the passed map, to test serialization and deserialization.
-  // @ObjCSelector('echoIntMap:')
-  // // @SwiftFunction('echo(intMap:)')
-  // Map<int?, int?> echoIntMap(Map<int?, int?> intMap);
+  @ObjCSelector('echoIntMap:')
+  // @SwiftFunction('echo(intMap:)')
+  Map<int?, int?> echoIntMap(Map<int?, int?> intMap);
 
   // /// Returns the passed map, to test serialization and deserialization.
   // @ObjCSelector('echoEnumMap:')

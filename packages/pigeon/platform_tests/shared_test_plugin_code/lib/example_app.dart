@@ -53,7 +53,7 @@ class _ExampleAppState extends State<ExampleApp> {
       // final NIAllClassesWrapper receivedClassWrapper =
       //     api!.echoClassWrapper(classWrapper);
       // print(receivedClassWrapper);
-      api!.echoClassList(allNullableTypesWithoutRecursionList);
+      api!.echoIntMap(intMap);
     } catch (e) {
       setState(() {
         status = 'Failed: $e';

@@ -524,13 +524,14 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(mapEquals(echoObject, stringMap), true);
     });
 
-    //     testWidgets('int maps serialize and deserialize correctly',
-    //         (WidgetTester _) async {
-    //       final NIHostIntegrationCoreApiForNativeInterop? api =
-    //           NIHostIntegrationCoreApiForNativeInterop.getInstance();
-    //       final Map<int?, int?> echoObject = api!.echoIntMap(intMap);
-    //       expect(mapEquals(echoObject, intMap), true);
-    //     });
+    testWidgets('int maps serialize and deserialize correctly', (
+      WidgetTester _,
+    ) async {
+      final NIHostIntegrationCoreApiForNativeInterop? api =
+          NIHostIntegrationCoreApiForNativeInterop.getInstance();
+      final Map<int?, int?> echoObject = api!.echoIntMap(intMap);
+      expect(mapEquals(echoObject, intMap), true);
+    });
 
     //     testWidgets('enum maps serialize and deserialize correctly',
     //         (WidgetTester _) async {

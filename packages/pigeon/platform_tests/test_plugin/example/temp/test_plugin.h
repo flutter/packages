@@ -589,6 +589,12 @@ SWIFT_CLASS("_TtC11test_plugin29NIHostIntegrationCoreApiSetup")
     SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos, introduced = 16.0.0)
         SWIFT_AVAILABILITY(ios, introduced = 13);
 /// Returns the passed map, to test serialization and deserialization.
+- (NSDictionary<id<NSCopying>, NSObject *> *_Nullable)
+    echoIntMapWithIntMap:
+        (NSDictionary<id<NSCopying>, NSObject *> *_Nonnull)intMap
+            wrappedError:(NiTestsError *_Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos, introduced = 16.0.0)
+        SWIFT_AVAILABILITY(ios, introduced = 13);
 /// Returns the passed map, to test serialization and deserialization.
 - (NSDictionary<id<NSCopying>, NSObject *> *_Nullable)
     echoNonNullStringMapWithStringMap:

@@ -378,10 +378,9 @@ abstract class NIHostIntegrationCoreApi {
   abstract fun echoMap(map: Map<Any?, Any?>): Map<Any?, Any?>
   /** Returns the passed map, to test serialization and deserialization. */
   abstract fun echoStringMap(stringMap: Map<String?, String?>): Map<String?, String?>
-  /**
-   * Returns the passed map, to test serialization and deserialization. Returns the passed map, to
-   * test serialization and deserialization.
-   */
+  /** Returns the passed map, to test serialization and deserialization. */
+  abstract fun echoIntMap(intMap: Map<Long?, Long?>): Map<Long?, Long?>
+  /** Returns the passed map, to test serialization and deserialization. */
   abstract fun echoNonNullStringMap(stringMap: Map<String, String>): Map<String, String>
   /** Returns the passed class to test nested class serialization and deserialization. */
   abstract fun echoClassWrapper(wrapper: NIAllClassesWrapper): NIAllClassesWrapper
@@ -665,10 +664,18 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
     }
     error("NIHostIntegrationCoreApi has not been set")
   }
-  /**
-   * Returns the passed map, to test serialization and deserialization. Returns the passed map, to
-   * test serialization and deserialization.
-   */
+  /** Returns the passed map, to test serialization and deserialization. */
+  override fun echoIntMap(intMap: Map<Long?, Long?>): Map<Long?, Long?> {
+    api?.let {
+      try {
+        return api!!.echoIntMap(intMap)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed map, to test serialization and deserialization. */
   override fun echoNonNullStringMap(stringMap: Map<String, String>): Map<String, String> {
     api?.let {
       try {

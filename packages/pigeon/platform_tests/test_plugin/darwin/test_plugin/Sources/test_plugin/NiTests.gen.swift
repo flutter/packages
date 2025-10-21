@@ -888,6 +888,7 @@ protocol NIHostIntegrationCoreApi {
   /// Returns the passed map, to test serialization and deserialization.
   func echoStringMap(stringMap: [String?: String?]) throws -> [String?: String?]
   /// Returns the passed map, to test serialization and deserialization.
+  func echoIntMap(intMap: [Int64?: Int64?]) throws -> [Int64?: Int64?]
   /// Returns the passed map, to test serialization and deserialization.
   func echoNonNullStringMap(stringMap: [String: String]) throws -> [String: String]
   /// Returns the passed class to test nested class serialization and deserialization.
@@ -1280,6 +1281,26 @@ protocol NIHostIntegrationCoreApi {
     return nil
   }
   /// Returns the passed map, to test serialization and deserialization.
+  @available(iOS 13, macOS 16.0.0, *)
+  @objc func echoIntMap(intMap: [NSObject: NSObject], wrappedError: NiTestsError) -> [NSObject:
+    NSObject]?
+  {
+    do {
+      return try _PigeonFfiCodec.writeValue(
+        value: api!.echoIntMap(
+          intMap: _PigeonFfiCodec.readValue(value: intMap as NSObject) as! [Int64?: Int64?]))
+        as? [NSObject: NSObject]
+    } catch let error as NiTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
   /// Returns the passed map, to test serialization and deserialization.
   @available(iOS 13, macOS 16.0.0, *)
   @objc func echoNonNullStringMap(stringMap: [NSObject: NSObject], wrappedError: NiTestsError)

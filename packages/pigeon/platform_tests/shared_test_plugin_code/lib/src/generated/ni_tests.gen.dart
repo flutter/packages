@@ -292,6 +292,16 @@ class _PigeonJniCodec {
         res[writeValue(entry.key)] = writeValue(entry.value);
       }
       return res as T;
+    } else if (value is Map<int?, int?> &&
+        isTypeOrNullableType<JMap<JLong?, JLong?>>(T)) {
+      final JMap<JLong?, JLong?> res = JMap<JLong?, JLong?>.hash(
+        JLong.nullableType,
+        JLong.nullableType,
+      );
+      for (final MapEntry<int?, int?> entry in value.entries) {
+        res[writeValue(entry.key)] = writeValue(entry.value);
+      }
+      return res as T;
     } else if (value is Map<String?, String?> &&
         isTypeOrNullableType<JMap<JString?, JString?>>(T)) {
       final JMap<JString?, JString?> res = JMap<JString?, JString?>.hash(
@@ -619,6 +629,13 @@ class _PigeonFfiCodec {
         isTypeOrNullableType<NSDictionary>(T)) {
       final NSMutableDictionary res = NSMutableDictionary();
       for (final MapEntry<String, String> entry in value.entries) {
+        res[writeValue(entry.key)] = writeValue(entry.value);
+      }
+      return res as T;
+    } else if (value is Map<int?, int?> &&
+        isTypeOrNullableType<NSDictionary>(T)) {
+      final NSMutableDictionary res = NSMutableDictionary();
+      for (final MapEntry<int?, int?> entry in value.entries) {
         res[writeValue(entry.key)] = writeValue(entry.value);
       }
       return res as T;
@@ -1953,6 +1970,40 @@ class NIHostIntegrationCoreApiForNativeInterop {
           final Map<String?, String?> dartTypeRes =
               (_PigeonFfiCodec.readValue(res)! as Map<Object?, Object?>)
                   .cast<String?, String?>();
+          return dartTypeRes;
+        }
+      }
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    } catch (e) {
+      rethrow;
+    }
+    throw Exception("this shouldn't be possible");
+  }
+
+  Map<int?, int?> echoIntMap(Map<int?, int?> intMap) {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final NSDictionary? res = _ffiApi.echoIntMapWithIntMap(
+          _PigeonFfiCodec.writeValue<NSDictionary>(intMap),
+          wrappedError: error,
+        );
+        if (error.code != null) {
+          throw PlatformException(
+            code: error.code!.toDartString(),
+            message: error.message?.toDartString(),
+            details: error.details.toString(),
+          );
+        } else {
+          final Map<int?, int?> dartTypeRes =
+              (_PigeonFfiCodec.readValue(res)! as Map<Object?, Object?>)
+                  .cast<int?, int?>();
           return dartTypeRes;
         }
       }
@@ -3454,6 +3505,43 @@ class NIHostIntegrationCoreApi {
   }
 
   /// Returns the passed map, to test serialization and deserialization.
+  Future<Map<int?, int?>> echoIntMap(Map<int?, int?> intMap) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoIntMap(intMap);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoIntMap$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[intMap],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as Map<Object?, Object?>?)!
+          .cast<int?, int?>();
+    }
+  }
+
   /// Returns the passed map, to test serialization and deserialization.
   Future<Map<String, String>> echoNonNullStringMap(
     Map<String, String> stringMap,

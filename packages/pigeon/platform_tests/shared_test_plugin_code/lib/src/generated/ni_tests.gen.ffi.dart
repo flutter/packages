@@ -2468,6 +2468,9 @@ late final _sel_echoMapWithMap_wrappedError_ = objc.registerName(
 late final _sel_echoStringMapWithStringMap_wrappedError_ = objc.registerName(
   "echoStringMapWithStringMap:wrappedError:",
 );
+late final _sel_echoIntMapWithIntMap_wrappedError_ = objc.registerName(
+  "echoIntMapWithIntMap:wrappedError:",
+);
 late final _sel_echoNonNullStringMapWithStringMap_wrappedError_ = objc
     .registerName("echoNonNullStringMapWithStringMap:wrappedError:");
 late final _sel_echoClassWrapperWithWrapper_wrappedError_ = objc.registerName(
@@ -3102,6 +3105,29 @@ extension NIHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed map, to test serialization and deserialization.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  objc.NSDictionary? echoIntMapWithIntMap(
+    objc.NSDictionary intMap, {
+    required NiTestsError wrappedError,
+  }) {
+    objc.checkOsVersionInternal(
+      'NIHostIntegrationCoreApiSetup.echoIntMapWithIntMap:wrappedError:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    final _ret = _objc_msgSend_15qeuct(
+      this.ref.pointer,
+      _sel_echoIntMapWithIntMap_wrappedError_,
+      intMap.ref.pointer,
+      wrappedError.ref.pointer,
+    );
+    return _ret.address == 0
+        ? null
+        : objc.NSDictionary.castFromPointer(_ret, retain: true, release: true);
+  }
+
   /// Returns the passed map, to test serialization and deserialization.
   ///
   /// iOS: introduced 13.0.0

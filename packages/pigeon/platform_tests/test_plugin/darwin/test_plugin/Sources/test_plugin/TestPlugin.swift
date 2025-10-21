@@ -1216,6 +1216,10 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
 }
 
 class NITestsClass: NSObject, NIHostIntegrationCoreApi {
+  func echoIntMap(intMap: [Int64?: Int64?]) throws -> [Int64?: Int64?] {
+    return intMap
+  }
+
   func echoNonNullEnumList(enumList: [NIAnEnum]) throws -> [NIAnEnum] {
     return enumList
   }
