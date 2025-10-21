@@ -238,5 +238,23 @@ void main() {
         );
       });
     });
+
+    group('runJavaScript', () {
+      test('throws StateError on origin mismatch', () async {
+        final WebWebViewController controller = WebWebViewController(
+          WebWebViewControllerCreationParams(),
+        );
+        await controller.loadHtmlString(
+          '<html></html>',
+          baseUrl: 'https://flutter.dev',
+        );
+
+        await expectLater(
+          () async =>
+              controller.runJavaScript('console.log("StateError failed");'),
+          throwsA(const TypeMatcher<StateError>()),
+        );
+      });
+    });
   });
 }
