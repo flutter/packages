@@ -36,7 +36,7 @@ final class CameraSessionPresetsTests: XCTestCase {
 
     let configuration = CameraTestUtils.createTestCameraConfiguration()
     configuration.videoCaptureDeviceFactory = { _ in captureDeviceMock }
-    configuration.videoDimensionsForFormat = { format in
+    configuration.videoDimensionsConverter = { format in
       return CMVideoDimensions(width: 1, height: 1)
     }
     configuration.videoCaptureSession = videoSessionMock

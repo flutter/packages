@@ -21,7 +21,9 @@ typealias CaptureSessionFactory = () -> FLTCaptureSession
 
 typealias AssetWriterFactory = (_ assetUrl: URL, _ fileType: AVFileType) throws -> FLTAssetWriter
 
-typealias InputPixelBufferAdaptorFactory = (FLTAssetWriterInput, [String: Any]?) ->
+typealias InputPixelBufferAdaptorFactory = (
+  _ input: FLTAssetWriterInput, _ settings: [String: Any]?
+) ->
   FLTAssetWriterInputPixelBufferAdaptor
 
 /// Determines the video dimensions (width and height) for a given capture device format.
@@ -40,7 +42,7 @@ class CameraConfiguration {
   let captureDeviceInputFactory: FLTCaptureDeviceInputFactory
   var assetWriterFactory: AssetWriterFactory
   var inputPixelBufferAdaptorFactory: InputPixelBufferAdaptorFactory
-  var videoDimensionsForFormat: VideoDimensionsConverter
+  var videoDimensionsConverter: VideoDimensionsConverter
   var deviceOrientationProvider: FLTDeviceOrientationProviding
   let initialCameraName: String
   var orientation: UIDeviceOrientation
@@ -67,7 +69,7 @@ class CameraConfiguration {
     self.orientation = UIDevice.current.orientation
     self.deviceOrientationProvider = FLTDefaultDeviceOrientationProvider()
 
-    self.videoDimensionsForFormat = { format in
+    self.videoDimensionsConverter = { format in
       return CMVideoFormatDescriptionGetDimensions(format.formatDescription)
     }
 

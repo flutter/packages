@@ -55,7 +55,7 @@ final class DefaultCamera: NSObject, Camera {
 
   /// A wrapper for CMVideoFormatDescriptionGetDimensions.
   /// Allows for alternate implementations in tests.
-  private let videoDimensionsForFormat: VideoDimensionsConverter
+  private let videoDimensionsConverter: VideoDimensionsConverter
 
   private let deviceOrientationProvider: FLTDeviceOrientationProviding
   private let motionManager = CMMotionManager()
@@ -169,7 +169,7 @@ final class DefaultCamera: NSObject, Camera {
     captureDeviceInputFactory = configuration.captureDeviceInputFactory
     assetWriterFactory = configuration.assetWriterFactory
     inputPixelBufferAdaptorFactory = configuration.inputPixelBufferAdaptorFactory
-    videoDimensionsForFormat = configuration.videoDimensionsForFormat
+    videoDimensionsConverter = configuration.videoDimensionsConverter
     deviceOrientationProvider = configuration.deviceOrientationProvider
 
     captureDevice = videoCaptureDeviceFactory(configuration.initialCameraName)
@@ -214,7 +214,7 @@ final class DefaultCamera: NSObject, Camera {
       FLTSelectBestFormatForRequestedFrameRate(
         captureDevice,
         mediaSettings,
-        videoDimensionsForFormat)
+        videoDimensionsConverter)
 
       if let framesPerSecond = mediaSettings.framesPerSecond {
         // Set frame rate with 1/10 precision allowing non-integral values.
@@ -301,7 +301,7 @@ final class DefaultCamera: NSObject, Camera {
       }
     }
 
-    let size = videoDimensionsForFormat(captureDevice.activeFormat)
+    let size = videoDimensionsConverter(captureDevice.activeFormat)
     previewSize = CGSize(width: CGFloat(size.width), height: CGFloat(size.height))
     audioCaptureSession.sessionPreset = videoCaptureSession.sessionPreset
   }
@@ -318,7 +318,7 @@ final class DefaultCamera: NSObject, Camera {
     var isBestSubTypePreferred = false
 
     for format in captureDevice.formats {
-      let resolution = videoDimensionsForFormat(format)
+      let resolution = videoDimensionsConverter(format)
       let height = UInt(resolution.height)
       let width = UInt(resolution.width)
       let pixelCount = height * width
@@ -527,7 +527,7 @@ final class DefaultCamera: NSObject, Camera {
     let videoWriter: FLTAssetWriter
 
     do {
-      videoWriter = try assetWriterFactory(URL(fileURLWithPath: path), AVFileType.mp4)
+      videoWriter = try assetWriterFactory(URL(fileURLWithPath: path), .mp4)
       self.videoWriter = videoWriter
     } catch let error as NSError {
       reportErrorMessage(error.description)

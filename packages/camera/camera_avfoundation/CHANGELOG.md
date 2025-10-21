@@ -85,14 +85,14 @@
 ## 0.9.19+2
 
 * Adds the `Camera` Swift protocol.
-* Adds `DefaultCamera`, a `FLTCam`\*based implementation of the `Camera` protocol.
+* Adds `DefaultCamera`, a `FLTCam`-based implementation of the `Camera` protocol.
 * Migrates sample buffer delegates and `FlutterTexture` protocol implementations to `DefaultCamera`.
 
 ## 0.9.19+1
 
 * Adds `audioCaptureDeviceFactory` to `FLTCamConfiguration`.
-* Renames the `lockCaptureOrientation` method of Objective\*C type `FLTCam` when exported to Swift.
-* Renames arguments of the `captureOutput` method of Objective\*C type `FLTCam` when exported to Swift.
+* Renames the `lockCaptureOrientation` method of Objective-C type `FLTCam` when exported to Swift.
+* Renames arguments of the `captureOutput` method of Objective-C type `FLTCam` when exported to Swift.
 * Changes the `connection` argument type of the `captureOutput` method of the of `FLTCam` class to `AVCaptureConnection`.
 * Makes `minimum/maximumAvailableZoomFactor` and `minimum/maximumExposureOffset` fields of `FLTCam` readonly.
 * Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
@@ -114,7 +114,7 @@
 ## 0.9.18+12
 
 * Migrates test utils and mocks to Swift.
-* Renames the methods of Objective\*C type `FLTCaptureSession` when exported to Swift.
+* Renames the methods of Objective-C type `FLTCaptureSession` when exported to Swift.
 
 ## 0.9.18+11
 
@@ -182,7 +182,7 @@
 
 ## 0.9.17+4
 
-* Updates Pigeon for non\*nullable collection type support.
+* Updates Pigeon for non-nullable collection type support.
 * Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
 
 ## 0.9.17+3
@@ -215,12 +215,12 @@
 
 ## 0.9.16
 
-* Converts Dart*to*host communcation to Pigeon.
+* Converts Dart-to-host communcation to Pigeon.
 * Fixes a race condition in camera disposal.
 
 ## 0.9.15+4
 
-* Converts host*to*Dart communcation to Pigeon.
+* Converts host-to-Dart communcation to Pigeon.
 
 ## 0.9.15+3
 
@@ -266,7 +266,7 @@
 
 ## 0.9.13+8
 
-* Updates example app to use non\*deprecated video_player method.
+* Updates example app to use non-deprecated video_player method.
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
 
 ## 0.9.13+7
@@ -293,7 +293,7 @@
 
 ## 0.9.13+2
 
-* Removes obsolete null checks on non\*nullable values.
+* Removes obsolete null checks on non-nullable values.
 * Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
 
 ## 0.9.13+1
@@ -354,7 +354,7 @@
 
 ## 0.9.8+2
 
-* Fixes exception in registerWith caused by the switch to an in\*package method channel.
+* Fixes exception in registerWith caused by the switch to an in-package method channel.
 
 ## 0.9.8+1
 
