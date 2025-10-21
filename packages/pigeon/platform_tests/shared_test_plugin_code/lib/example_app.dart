@@ -45,7 +45,7 @@ class _ExampleAppState extends State<ExampleApp> {
           NIHostIntegrationCoreApiForNativeInterop.getInstance();
       // api!.noop();
       // api!.echoStringList(stringList);
-      api!.echoAllTypes(genericNIAllTypes);
+      // api!.echoAllTypes(genericNIAllTypes);
       // api!.echoAllNullableTypesWithoutRecursion(
       //     genericNIAllNullableTypesWithoutRecursion);
       // final NIAllClassesWrapper classWrapper = classWrapperMaker();
@@ -53,6 +53,7 @@ class _ExampleAppState extends State<ExampleApp> {
       // final NIAllClassesWrapper receivedClassWrapper =
       //     api!.echoClassWrapper(classWrapper);
       // print(receivedClassWrapper);
+      api!.echoClassList(allNullableTypesWithoutRecursionList);
     } catch (e) {
       setState(() {
         status = 'Failed: $e';

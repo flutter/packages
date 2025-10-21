@@ -50,7 +50,7 @@ class NIAllTypes {
     required this.intList,
     required this.doubleList,
     required this.boolList,
-    // required this.enumList,
+    required this.enumList,
     // required this.objectList,
     // required this.listList,
     // required this.mapList,
@@ -84,7 +84,7 @@ class NIAllTypes {
   List<int> intList;
   List<double> doubleList;
   List<bool> boolList;
-  // List<NIAnEnum> enumList;
+  List<NIAnEnum> enumList;
   // List<Object> objectList;
   // List<List<Object?>> listList;
   // List<Map<Object?, Object?>> mapList;
@@ -201,18 +201,18 @@ class NIAllNullableTypesWithoutRecursion {
     //     // This name is in a different format than the others to ensure that name
     //     // collision with the word 'list' doesn't occur in the generated files.
     this.list,
-    // this.stringList,
-    // this.intList,
-    // this.doubleList,
-    // this.boolList,
-    //     this.enumList,
+    this.stringList,
+    this.intList,
+    this.doubleList,
+    this.boolList,
+    this.enumList,
     //     this.objectList,
     //     this.listList,
     //     this.mapList,
 
     //     // Maps
     this.map,
-    //     this.stringMap,
+    this.stringMap,
     //     this.intMap,
     //     this.enumMap,
     //     this.objectMap,
@@ -235,18 +235,18 @@ class NIAllNullableTypesWithoutRecursion {
 
   //   // Lists
   List? list;
-  // List<String?>? stringList;
-  // List<int?>? intList;
-  // List<double?>? doubleList;
-  // List<bool?>? boolList;
-  //   List<NIAnEnum?>? enumList;
+  List<String?>? stringList;
+  List<int?>? intList;
+  List<double?>? doubleList;
+  List<bool?>? boolList;
+  List<NIAnEnum?>? enumList;
   //   List<Object?>? objectList;
   //   List<List<Object?>?>? listList;
   //   List<Map<Object?, Object?>?>? mapList;
 
   //   // Maps
   Map? map;
-  //   Map<String?, String?>? stringMap;
+  Map<String?, String?>? stringMap;
   //   Map<int?, int?>? intMap;
   //   Map<NIAnEnum?, NIAnEnum?>? enumMap;
   //   Map<Object?, Object?>? objectMap;
@@ -372,15 +372,17 @@ abstract class NIHostIntegrationCoreApi {
   // @SwiftFunction('echo(boolList:)')
   List<bool?> echoBoolList(List<bool?> boolList);
 
-  // /// Returns the passed list, to test serialization and deserialization.
-  // @ObjCSelector('echoEnumList:')
+  /// Returns the passed list, to test serialization and deserialization.
+  @ObjCSelector('echoEnumList:')
   // @SwiftFunction('echo(enumList:)')
-  // List<NIAnEnum?> echoEnumList(List<NIAnEnum?> enumList);
+  List<NIAnEnum?> echoEnumList(List<NIAnEnum?> enumList);
 
-  // /// Returns the passed list, to test serialization and deserialization.
-  // @ObjCSelector('echoClassList:')
+  /// Returns the passed list, to test serialization and deserialization.
+  @ObjCSelector('echoClassList:')
   // @SwiftFunction('echo(classList:)')
-  // List<NIAllNullableTypes?> echoClassList(List<NIAllNullableTypes?> classList);
+  List<NIAllNullableTypesWithoutRecursion?> echoClassList(
+    List<NIAllNullableTypesWithoutRecursion?> classList,
+  );
 
   // /// Returns the passed list, to test serialization and deserialization.
   // @ObjCSelector('echoNonNullEnumList:')
@@ -390,8 +392,8 @@ abstract class NIHostIntegrationCoreApi {
   // /// Returns the passed list, to test serialization and deserialization.
   // @ObjCSelector('echoNonNullClassList:')
   // @SwiftFunction('echoNonNull(classList:)')
-  // List<NIAllNullableTypes> echoNonNullClassList(
-  //     List<NIAllNullableTypes> classList);
+  // List<NIAllNullableTypesWithoutRecursion> echoNonNullClassList(
+  //     List<NIAllNullableTypesWithoutRecursion> classList);
 
   /// Returns the passed map, to test serialization and deserialization.
   @ObjCSelector('echoMap:')

@@ -209,6 +209,7 @@ struct NIAllTypes: Hashable {
   var intList: [Int64]
   var doubleList: [Double]
   var boolList: [Bool]
+  var enumList: [NIAnEnum]
   var map: [AnyHashable?: Any?]
   var stringMap: [String: String]
 
@@ -226,8 +227,9 @@ struct NIAllTypes: Hashable {
     let intList = pigeonVar_list[10] as! [Int64]
     let doubleList = pigeonVar_list[11] as! [Double]
     let boolList = pigeonVar_list[12] as! [Bool]
-    let map = pigeonVar_list[13] as! [AnyHashable?: Any?]
-    let stringMap = pigeonVar_list[14] as! [String: String]
+    let enumList = pigeonVar_list[13] as! [NIAnEnum]
+    let map = pigeonVar_list[14] as! [AnyHashable?: Any?]
+    let stringMap = pigeonVar_list[15] as! [String: String]
 
     return NIAllTypes(
       aBool: aBool,
@@ -243,6 +245,7 @@ struct NIAllTypes: Hashable {
       intList: intList,
       doubleList: doubleList,
       boolList: boolList,
+      enumList: enumList,
       map: map,
       stringMap: stringMap
     )
@@ -262,6 +265,7 @@ struct NIAllTypes: Hashable {
       intList,
       doubleList,
       boolList,
+      enumList,
       map,
       stringMap,
     ]
@@ -293,6 +297,7 @@ struct NIAllTypes: Hashable {
     intList: [NSObject],
     doubleList: [NSObject],
     boolList: [NSObject],
+    enumList: [NSObject],
     map: [NSObject: NSObject],
     stringMap: [NSObject: NSObject]
   ) {
@@ -309,6 +314,7 @@ struct NIAllTypes: Hashable {
     self.intList = intList
     self.doubleList = doubleList
     self.boolList = boolList
+    self.enumList = enumList
     self.map = map
     self.stringMap = stringMap
   }
@@ -325,6 +331,7 @@ struct NIAllTypes: Hashable {
   @objc var intList: [NSObject]
   @objc var doubleList: [NSObject]
   @objc var boolList: [NSObject]
+  @objc var enumList: [NSObject]
   @objc var map: [NSObject: NSObject]
   @objc var stringMap: [NSObject: NSObject]
 
@@ -346,6 +353,7 @@ struct NIAllTypes: Hashable {
       intList: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.intList) as! [NSObject],
       doubleList: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.doubleList) as! [NSObject],
       boolList: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.boolList) as! [NSObject],
+      enumList: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.enumList) as! [NSObject],
       map: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.map) as! [NSObject: NSObject],
       stringMap: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.stringMap)
         as! [NSObject: NSObject],
@@ -366,6 +374,7 @@ struct NIAllTypes: Hashable {
       intList: _PigeonFfiCodec.readValue(value: intList as NSObject) as! [Int64],
       doubleList: _PigeonFfiCodec.readValue(value: doubleList as NSObject) as! [Double],
       boolList: _PigeonFfiCodec.readValue(value: boolList as NSObject) as! [Bool],
+      enumList: _PigeonFfiCodec.readValue(value: enumList as NSObject) as! [NIAnEnum],
       map: _PigeonFfiCodec.readValue(value: map as NSObject) as! [AnyHashable?: Any?],
       stringMap: _PigeonFfiCodec.readValue(value: stringMap as NSObject) as! [String: String],
     )
@@ -388,7 +397,13 @@ struct NIAllNullableTypesWithoutRecursion: Hashable {
   var aNullableString: String? = nil
   var aNullableObject: Any? = nil
   var list: [Any?]? = nil
+  var stringList: [String?]? = nil
+  var intList: [Int64?]? = nil
+  var doubleList: [Double?]? = nil
+  var boolList: [Bool?]? = nil
+  var enumList: [NIAnEnum?]? = nil
   var map: [AnyHashable?: Any?]? = nil
+  var stringMap: [String?: String?]? = nil
 
   static func fromList(_ pigeonVar_list: [Any?]) -> NIAllNullableTypesWithoutRecursion? {
     let aNullableBool: Bool? = nilOrValue(pigeonVar_list[0])
@@ -400,7 +415,13 @@ struct NIAllNullableTypesWithoutRecursion: Hashable {
     let aNullableString: String? = nilOrValue(pigeonVar_list[6])
     let aNullableObject: Any? = pigeonVar_list[7]
     let list: [Any?]? = nilOrValue(pigeonVar_list[8])
-    let map: [AnyHashable?: Any?]? = nilOrValue(pigeonVar_list[9])
+    let stringList: [String?]? = nilOrValue(pigeonVar_list[9])
+    let intList: [Int64?]? = nilOrValue(pigeonVar_list[10])
+    let doubleList: [Double?]? = nilOrValue(pigeonVar_list[11])
+    let boolList: [Bool?]? = nilOrValue(pigeonVar_list[12])
+    let enumList: [NIAnEnum?]? = nilOrValue(pigeonVar_list[13])
+    let map: [AnyHashable?: Any?]? = nilOrValue(pigeonVar_list[14])
+    let stringMap: [String?: String?]? = nilOrValue(pigeonVar_list[15])
 
     return NIAllNullableTypesWithoutRecursion(
       aNullableBool: aNullableBool,
@@ -412,7 +433,13 @@ struct NIAllNullableTypesWithoutRecursion: Hashable {
       aNullableString: aNullableString,
       aNullableObject: aNullableObject,
       list: list,
-      map: map
+      stringList: stringList,
+      intList: intList,
+      doubleList: doubleList,
+      boolList: boolList,
+      enumList: enumList,
+      map: map,
+      stringMap: stringMap
     )
   }
   func toList() -> [Any?] {
@@ -426,7 +453,13 @@ struct NIAllNullableTypesWithoutRecursion: Hashable {
       aNullableString,
       aNullableObject,
       list,
+      stringList,
+      intList,
+      doubleList,
+      boolList,
+      enumList,
       map,
+      stringMap,
     ]
   }
   static func == (lhs: NIAllNullableTypesWithoutRecursion, rhs: NIAllNullableTypesWithoutRecursion)
@@ -457,7 +490,13 @@ struct NIAllNullableTypesWithoutRecursion: Hashable {
     aNullableString: NSString? = nil,
     aNullableObject: NSObject? = nil,
     list: [NSObject]? = nil,
-    map: [NSObject: NSObject]? = nil
+    stringList: [NSObject]? = nil,
+    intList: [NSObject]? = nil,
+    doubleList: [NSObject]? = nil,
+    boolList: [NSObject]? = nil,
+    enumList: [NSObject]? = nil,
+    map: [NSObject: NSObject]? = nil,
+    stringMap: [NSObject: NSObject]? = nil
   ) {
     self.aNullableBool = aNullableBool
     self.aNullableInt = aNullableInt
@@ -468,7 +507,13 @@ struct NIAllNullableTypesWithoutRecursion: Hashable {
     self.aNullableString = aNullableString
     self.aNullableObject = aNullableObject
     self.list = list
+    self.stringList = stringList
+    self.intList = intList
+    self.doubleList = doubleList
+    self.boolList = boolList
+    self.enumList = enumList
     self.map = map
+    self.stringMap = stringMap
   }
   @objc var aNullableBool: NSNumber? = nil
   @objc var aNullableInt: NSNumber? = nil
@@ -479,7 +524,13 @@ struct NIAllNullableTypesWithoutRecursion: Hashable {
   @objc var aNullableString: NSString? = nil
   @objc var aNullableObject: NSObject? = nil
   @objc var list: [NSObject]? = nil
+  @objc var stringList: [NSObject]? = nil
+  @objc var intList: [NSObject]? = nil
+  @objc var doubleList: [NSObject]? = nil
+  @objc var boolList: [NSObject]? = nil
+  @objc var enumList: [NSObject]? = nil
   @objc var map: [NSObject: NSObject]? = nil
+  @objc var stringMap: [NSObject: NSObject]? = nil
 
   static func fromSwift(_ pigeonVar_Class: NIAllNullableTypesWithoutRecursion?)
     -> NIAllNullableTypesWithoutRecursionBridge?
@@ -503,7 +554,14 @@ struct NIAllNullableTypesWithoutRecursion: Hashable {
       aNullableString: pigeonVar_Class!.aNullableString as NSString?,
       aNullableObject: pigeonVar_Class!.aNullableObject as! NSObject?,
       list: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.list) as? [NSObject],
+      stringList: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.stringList) as? [NSObject],
+      intList: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.intList) as? [NSObject],
+      doubleList: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.doubleList) as? [NSObject],
+      boolList: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.boolList) as? [NSObject],
+      enumList: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.enumList) as? [NSObject],
       map: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.map) as? [NSObject: NSObject],
+      stringMap: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.stringMap)
+        as? [NSObject: NSObject],
     )
   }
   func toSwift() -> NIAllNullableTypesWithoutRecursion {
@@ -519,7 +577,13 @@ struct NIAllNullableTypesWithoutRecursion: Hashable {
       aNullableString: aNullableString as String?,
       aNullableObject: aNullableObject,
       list: _PigeonFfiCodec.readValue(value: list as NSObject?) as? [Any?],
+      stringList: _PigeonFfiCodec.readValue(value: stringList as NSObject?) as? [String?],
+      intList: _PigeonFfiCodec.readValue(value: intList as NSObject?) as? [Int64?],
+      doubleList: _PigeonFfiCodec.readValue(value: doubleList as NSObject?) as? [Double?],
+      boolList: _PigeonFfiCodec.readValue(value: boolList as NSObject?) as? [Bool?],
+      enumList: _PigeonFfiCodec.readValue(value: enumList as NSObject?) as? [NIAnEnum?],
       map: _PigeonFfiCodec.readValue(value: map as NSObject?) as? [AnyHashable?: Any?],
+      stringMap: _PigeonFfiCodec.readValue(value: stringMap as NSObject?) as? [String?: String?],
     )
   }
 }
@@ -606,7 +670,7 @@ class _PigeonFfiCodec {
       return nil
     }
     if value is NSNumber {
-      if type == "int" {
+      if type == "int" || type == "int64" {
         return (value as! NSNumber).int64Value
       } else if type == "double" {
         return (value as! NSNumber).doubleValue
@@ -662,6 +726,13 @@ class _PigeonFfiCodec {
     }
     if value is NSString {
       return value as! NSString
+    } else if value is NIAllTypesBridge {
+      return (value! as! NIAllTypesBridge).toSwift()
+    } else if value is NIAllNullableTypesWithoutRecursionBridge {
+      return (value! as! NIAllNullableTypesWithoutRecursionBridge).toSwift()
+    } else if value is NIAllClassesWrapperBridge {
+      return (value! as! NIAllClassesWrapperBridge).toSwift()
+
     }
     return value
   }
@@ -737,6 +808,14 @@ class _PigeonFfiCodec {
     }
     if value is String {
       return value as! NSString
+    } else if value is NIAllTypes {
+      return NIAllTypesBridge.fromSwift(value as? NIAllTypes)
+    } else if value is NIAllNullableTypesWithoutRecursion {
+      return NIAllNullableTypesWithoutRecursionBridge.fromSwift(
+        value as? NIAllNullableTypesWithoutRecursion)
+    } else if value is NIAllClassesWrapper {
+      return NIAllClassesWrapperBridge.fromSwift(value as? NIAllClassesWrapper)
+
     }
     return value
   }
@@ -774,6 +853,11 @@ protocol NIHostIntegrationCoreApi {
   func echoDoubleList(doubleList: [Double?]) throws -> [Double?]
   /// Returns the passed list, to test serialization and deserialization.
   func echoBoolList(boolList: [Bool?]) throws -> [Bool?]
+  /// Returns the passed list, to test serialization and deserialization.
+  func echoEnumList(enumList: [NIAnEnum?]) throws -> [NIAnEnum?]
+  /// Returns the passed list, to test serialization and deserialization.
+  func echoClassList(classList: [NIAllNullableTypesWithoutRecursion?]) throws
+    -> [NIAllNullableTypesWithoutRecursion?]
   /// Returns the passed map, to test serialization and deserialization.
   func echoMap(map: [AnyHashable?: Any?]) throws -> [AnyHashable?: Any?]
   /// Returns the passed map, to test serialization and deserialization.
@@ -1028,6 +1112,44 @@ protocol NIHostIntegrationCoreApi {
         value: api!.echoBoolList(
           boolList: _PigeonFfiCodec.readValue(value: boolList as NSObject) as! [Bool?]))
         as? [NSObject]
+    } catch let error as NiTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
+  /// Returns the passed list, to test serialization and deserialization.
+  @available(iOS 13, macOS 16.0.0, *)
+  @objc func echoEnumList(enumList: [NSObject], wrappedError: NiTestsError) -> [NSObject]? {
+    do {
+      return try _PigeonFfiCodec.writeValue(
+        value: api!.echoEnumList(
+          enumList: _PigeonFfiCodec.readValue(value: enumList as NSObject) as! [NIAnEnum?]))
+        as? [NSObject]
+    } catch let error as NiTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
+  /// Returns the passed list, to test serialization and deserialization.
+  @available(iOS 13, macOS 16.0.0, *)
+  @objc func echoClassList(classList: [NSObject], wrappedError: NiTestsError) -> [NSObject]? {
+    do {
+      return try _PigeonFfiCodec.writeValue(
+        value: api!.echoClassList(
+          classList: _PigeonFfiCodec.readValue(value: classList as NSObject)
+            as! [NIAllNullableTypesWithoutRecursion?])) as? [NSObject]
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message

@@ -299,12 +299,12 @@ class _PigeonFfiCodec {
     if (isNullish(value)) {
       return nil
     }
-    if (value is NSNumber) {
-      if (type == "int") {
+    if value is NSNumber {
+      if type == "int" || type == "int64" {
         return (value as! NSNumber).int64Value
-      } else if (type == "double") {
+      } else if type == "double" {
         return (value as! NSNumber).doubleValue
-      } else if (type == "bool") {
+      } else if type == "bool" {
         return (value as! NSNumber).boolValue
       }
       ${root.enums.map((Enum enumDefinition) {
@@ -357,6 +357,12 @@ class _PigeonFfiCodec {
     }
     if (value is NSString) {
       return value as! NSString
+    ${root.classes.map((Class dataClass) {
+      return '''
+      } else if (value is ${dataClass.name}Bridge) {
+        return (value! as! ${dataClass.name}Bridge).toSwift();
+        ''';
+    }).join()}
     }
     return value
   }
@@ -429,6 +435,12 @@ class _PigeonFfiCodec {
     }
     if (value is String) {
       return value as! NSString
+    ${root.classes.map((Class dataClass) {
+      return '''
+      } else if (value is ${dataClass.name}) {
+        return ${dataClass.name}Bridge.fromSwift(value as? ${dataClass.name});
+        ''';
+    }).join()}
     }
     return value
   }

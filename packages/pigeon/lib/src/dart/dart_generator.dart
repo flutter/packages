@@ -279,7 +279,7 @@ class _FfiType {
       }
       return '${type.baseName}.values[$varName.index]';
     }
-    String asType = ' as ${getDartReturnType(true)}';
+    String asType = ' as ${getDartReturnType(forceUnwrap: true)}';
     String castCall = '';
     final String codecCall =
         '_PigeonFfiCodec.readValue($varName${type.isEnum ? ', ${type.baseName}' : ''})${_getForceNonNullSymbol(!type.isNullable)}';
@@ -341,15 +341,18 @@ class _FfiType {
     return '_PigeonFfiCodec.writeValue<${ffiType.ffiName}${_getNullableSymbol(type.isNullable && type.baseName != 'Object')}>($name)';
   }
 
-  String getFfiCallReturnType(bool forceUnwrap, {bool forceNullable = false}) {
-    if (type.isEnum && forceNullable) {
-      return 'NSNumber?';
+  String getFfiCallReturnType({
+    bool forceNullable = false,
+    bool forceNonNullable = false,
+  }) {
+    if (type.isEnum) {
+      return forceNullable ? 'NSNumber?' : 'ffi_bridge.NumberWrapper';
     }
     if (type.baseName == 'List') {
-      return 'NSArray?';
+      return forceNonNullable ? 'NSArray' : 'NSArray?';
     }
     if (type.baseName == 'Object') {
-      return 'ObjCObjectBase?';
+      return forceNonNullable ? 'ObjCObjectBase' : 'ObjCObjectBase?';
     }
     // final String name = !(type.isNullable || forceUnwrap || forceNullable) &&
     //             type.baseName == 'int' ||
@@ -358,10 +361,10 @@ class _FfiType {
     //         type.baseName == 'String'
     //     ? type.baseName
     //     : ffiName;
-    return '$ffiName${_getNullableSymbol(forceNullable || type.isNullable)}';
+    return '$ffiName${_getNullableSymbol((forceNullable || type.isNullable) && !forceNonNullable)}';
   }
 
-  String getDartReturnType(bool forceUnwrap) {
+  String getDartReturnType({required bool forceUnwrap}) {
     if (forceUnwrap || type.isNullable || nonNullableNeedsUnwrapping) {
       return '${type.baseName}$dartCollectionTypeAnnotations${_getNullableSymbol(type.isNullable)}';
     }
@@ -388,18 +391,18 @@ class _FfiType {
 
   String get dartCollectionTypes {
     if (type.baseName == 'List') {
-      return subTypeOne?.getDartReturnType(true) ?? 'Object?';
+      return subTypeOne?.getDartReturnType(forceUnwrap: true) ?? 'Object?';
     } else if (type.baseName == 'Map') {
-      return '${subTypeOne?.getDartReturnType(true) ?? 'Object?'}, ${subTypeTwo?.getDartReturnType(true) ?? 'Object?'}';
+      return '${subTypeOne?.getDartReturnType(forceUnwrap: true) ?? 'Object?'}, ${subTypeTwo?.getDartReturnType(forceUnwrap: true) ?? 'Object?'}';
     }
     return '';
   }
 
   String get ffiCollectionTypes {
     if (type.baseName == 'List') {
-      return subTypeOne?.getFfiCallReturnType(true) ?? 'JObject?';
+      return subTypeOne?.getFfiCallReturnType() ?? 'NSObject?';
     } else if (type.baseName == 'Map') {
-      return '${subTypeOne?.getFfiCallReturnType(true) ?? 'NSObject'}, ${subTypeTwo?.getFfiCallReturnType(true) ?? 'NSObject?'}';
+      return '${subTypeOne?.getFfiCallReturnType() ?? 'NSObject'}, ${subTypeTwo?.getFfiCallReturnType() ?? 'NSObject?'}';
     }
     return '';
   }
@@ -1488,7 +1491,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
           String signature =
               method.isAsynchronous
                   ? 'NSObject'
-                  : ffiReturnType.getFfiCallReturnType(false);
+                  : ffiReturnType.getFfiCallReturnType();
           signature += ' ${method.name}(';
           signature += _getMethodParameterSignature(
             method.parameters,
@@ -1750,7 +1753,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
                 final String methodCallReturnString =
                     returnType.type.isVoid || method.isAsynchronous
                         ? ''
-                        : 'final ${returnType.getFfiCallReturnType(method.isAsynchronous, forceNullable: true)} res = ';
+                        : 'final ${returnType.getFfiCallReturnType(forceNullable: true)} res = ';
                 indent.writeln(
                   'final ffi_bridge.${generatorOptions.ffiErrorClassName} error = ffi_bridge.${generatorOptions.ffiErrorClassName}();',
                 );
@@ -1773,7 +1776,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
                             ? '!'
                             : '';
                     indent.writeln(
-                      'final ${returnType.getDartReturnType(method.isAsynchronous)} dartTypeRes = ${returnType.getToDartCall(method.returnType, varName: 'res$forceRes', forceConversion: method.isAsynchronous)};',
+                      'final ${returnType.getDartReturnType(forceUnwrap: method.isAsynchronous)} dartTypeRes = ${returnType.getToDartCall(method.returnType, varName: 'res$forceRes', forceConversion: method.isAsynchronous)};',
                     );
                     indent.writeln('return dartTypeRes;');
                   } else {
@@ -2860,7 +2863,7 @@ case const (${enumDefinition.name}):
     } else if (value is ${ffiType.type.getFullName(withNullable: false)} && isTypeOrNullableType<${ffiType.fullFfiName}>(T)) {
       final NSMutableArray res = NSMutableArray();
       for (final ${ffiType.dartCollectionTypes} entry in value) {
-        res.add(entry == null ? ffi_bridge.PigeonInternalNull() : writeValue<${ffiType.subTypeOne?.ffiName ?? 'ObjCObjectBase'}>(entry));
+        res.add(${ffiType.subTypeOne!.type.isNullable ? 'entry == null ? ffi_bridge.PigeonInternalNull() : ' : ''}writeValue<${ffiType.subTypeOne?.getFfiCallReturnType(forceNonNullable: true) ?? 'ObjCObjectBase'}>(entry));
       }
       return res as T;
         ''';
@@ -3337,7 +3340,7 @@ String _getFfiMethodParameterSignature(
   for (final Parameter parameter in parameters) {
     final _FfiType ffiType = _FfiType.fromTypeDeclaration(parameter.type);
     signature +=
-        '${ffiType.getFfiCallReturnType(isAsynchronous)} ${parameter.name}${addTrailingComma || parameters.length > 1 ? ',' : ''}';
+        '${ffiType.getFfiCallReturnType()} ${parameter.name}${addTrailingComma || parameters.length > 1 ? ',' : ''}';
   }
   return signature;
 }

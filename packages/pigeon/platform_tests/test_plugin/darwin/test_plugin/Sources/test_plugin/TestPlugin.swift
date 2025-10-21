@@ -1216,13 +1216,19 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
 }
 
 class NITestsClass: NSObject, NIHostIntegrationCoreApi {
+  func echoEnumList(enumList: [NIAnEnum?]) throws -> [NIAnEnum?] {
+    return enumList
+  }
+
+  func echoClassList(classList: [NIAllNullableTypesWithoutRecursion?]) throws
+    -> [NIAllNullableTypesWithoutRecursion?]
+  {
+    return classList
+  }
+
   func echoStringMap(stringMap: [String?: String?]) throws -> [String?: String?] {
     return stringMap
   }
-
-  //  func echoIntMap(intMap: [Int64?: Int64?]) throws -> [Int64?: Int64?] {
-  //    return intMap
-  //  }
 
   func echoStringList(stringList: [String?]) throws -> [String?] {
     return stringList

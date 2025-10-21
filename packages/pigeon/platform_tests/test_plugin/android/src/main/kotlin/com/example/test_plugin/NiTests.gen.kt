@@ -111,6 +111,7 @@ data class NIAllTypes(
     val intList: List<Long>,
     val doubleList: List<Double>,
     val boolList: List<Boolean>,
+    val enumList: List<NIAnEnum>,
     val map: Map<Any, Any?>,
     val stringMap: Map<String, String>
 ) {
@@ -129,8 +130,9 @@ data class NIAllTypes(
       val intList = pigeonVar_list[10] as List<Long>
       val doubleList = pigeonVar_list[11] as List<Double>
       val boolList = pigeonVar_list[12] as List<Boolean>
-      val map = pigeonVar_list[13] as Map<Any, Any?>
-      val stringMap = pigeonVar_list[14] as Map<String, String>
+      val enumList = pigeonVar_list[13] as List<NIAnEnum>
+      val map = pigeonVar_list[14] as Map<Any, Any?>
+      val stringMap = pigeonVar_list[15] as Map<String, String>
       return NIAllTypes(
           aBool,
           anInt,
@@ -145,6 +147,7 @@ data class NIAllTypes(
           intList,
           doubleList,
           boolList,
+          enumList,
           map,
           stringMap)
     }
@@ -165,6 +168,7 @@ data class NIAllTypes(
         intList,
         doubleList,
         boolList,
+        enumList,
         map,
         stringMap,
     )
@@ -200,7 +204,13 @@ data class NIAllNullableTypesWithoutRecursion(
     val aNullableString: String? = null,
     val aNullableObject: Any? = null,
     val list: List<Any?>? = null,
-    val map: Map<Any, Any?>? = null
+    val stringList: List<String?>? = null,
+    val intList: List<Long?>? = null,
+    val doubleList: List<Double?>? = null,
+    val boolList: List<Boolean?>? = null,
+    val enumList: List<NIAnEnum?>? = null,
+    val map: Map<Any, Any?>? = null,
+    val stringMap: Map<String?, String?>? = null
 ) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): NIAllNullableTypesWithoutRecursion {
@@ -213,7 +223,13 @@ data class NIAllNullableTypesWithoutRecursion(
       val aNullableString = pigeonVar_list[6] as String?
       val aNullableObject = pigeonVar_list[7]
       val list = pigeonVar_list[8] as List<Any?>?
-      val map = pigeonVar_list[9] as Map<Any, Any?>?
+      val stringList = pigeonVar_list[9] as List<String?>?
+      val intList = pigeonVar_list[10] as List<Long?>?
+      val doubleList = pigeonVar_list[11] as List<Double?>?
+      val boolList = pigeonVar_list[12] as List<Boolean?>?
+      val enumList = pigeonVar_list[13] as List<NIAnEnum?>?
+      val map = pigeonVar_list[14] as Map<Any, Any?>?
+      val stringMap = pigeonVar_list[15] as Map<String?, String?>?
       return NIAllNullableTypesWithoutRecursion(
           aNullableBool,
           aNullableInt,
@@ -224,7 +240,13 @@ data class NIAllNullableTypesWithoutRecursion(
           aNullableString,
           aNullableObject,
           list,
-          map)
+          stringList,
+          intList,
+          doubleList,
+          boolList,
+          enumList,
+          map,
+          stringMap)
     }
   }
 
@@ -239,7 +261,13 @@ data class NIAllNullableTypesWithoutRecursion(
         aNullableString,
         aNullableObject,
         list,
+        stringList,
+        intList,
+        doubleList,
+        boolList,
+        enumList,
         map,
+        stringMap,
     )
   }
 
@@ -327,6 +355,12 @@ abstract class NIHostIntegrationCoreApi {
   abstract fun echoDoubleList(doubleList: List<Double?>): List<Double?>
   /** Returns the passed list, to test serialization and deserialization. */
   abstract fun echoBoolList(boolList: List<Boolean?>): List<Boolean?>
+  /** Returns the passed list, to test serialization and deserialization. */
+  abstract fun echoEnumList(enumList: List<NIAnEnum?>): List<NIAnEnum?>
+  /** Returns the passed list, to test serialization and deserialization. */
+  abstract fun echoClassList(
+      classList: List<NIAllNullableTypesWithoutRecursion?>
+  ): List<NIAllNullableTypesWithoutRecursion?>
   /** Returns the passed map, to test serialization and deserialization. */
   abstract fun echoMap(map: Map<Any?, Any?>): Map<Any?, Any?>
   /** Returns the passed map, to test serialization and deserialization. */
@@ -524,6 +558,30 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
     api?.let {
       try {
         return api!!.echoBoolList(boolList)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed list, to test serialization and deserialization. */
+  override fun echoEnumList(enumList: List<NIAnEnum?>): List<NIAnEnum?> {
+    api?.let {
+      try {
+        return api!!.echoEnumList(enumList)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed list, to test serialization and deserialization. */
+  override fun echoClassList(
+      classList: List<NIAllNullableTypesWithoutRecursion?>
+  ): List<NIAllNullableTypesWithoutRecursion?> {
+    api?.let {
+      try {
+        return api!!.echoClassList(classList)
       } catch (e: Exception) {
         throw e
       }

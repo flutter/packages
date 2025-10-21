@@ -219,16 +219,16 @@ genericNIAllNullableTypesWithoutRecursion = NIAllNullableTypesWithoutRecursion(
   // aNullableEnum: NIAnEnum.fourHundredTwentyTwo,
   aNullableObject: 'nullable',
   list: list,
-  // stringList: stringList,
-  // intList: intList,
-  // doubleList: doubleList,
-  // boolList: boolList,
-  // enumList: enumList,
+  stringList: stringList,
+  intList: intList,
+  doubleList: doubleList,
+  boolList: boolList,
+  enumList: enumList,
   // objectList: list,
   // listList: listList,
   // mapList: mapList,
   map: map,
-  // stringMap: stringMap,
+  stringMap: stringMap,
   // intMap: intMap,
   // enumMap: enumMap,
   // objectMap: map,
@@ -269,7 +269,7 @@ final NIAllTypes genericNIAllTypes = NIAllTypes(
   intList: nonNullIntList,
   doubleList: nonNullDoubleList,
   boolList: nonNullBoolList,
-  // enumList: nonNullEnumList,
+  enumList: nonNullEnumList,
   // objectList: nonNullList,
   // listList: nonNullListList,
   // mapList: nonNullMapList,
@@ -341,6 +341,13 @@ final NIAllTypes genericNIAllTypes = NIAllTypes(
 //   NIAllNullableTypes(),
 //   null,
 // ];
+
+final List<NIAllNullableTypesWithoutRecursion?>
+allNullableTypesWithoutRecursionList = <NIAllNullableTypesWithoutRecursion?>[
+  genericNIAllNullableTypesWithoutRecursion,
+  NIAllNullableTypesWithoutRecursion(),
+  null,
+];
 
 // final Map<int, NIAllNullableTypes?> allNullableTypesMap =
 //     <int, NIAllNullableTypes?>{
