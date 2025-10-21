@@ -1,3 +1,7 @@
+## 0.6.24
+
+* Change plugin to assume mp4 format for capture videos.
+
 ## 0.6.23+3
 
 * Bumps camerax_version from 1.5.0 to 1.5.1.
