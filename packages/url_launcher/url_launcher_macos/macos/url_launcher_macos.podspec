@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   s.resource_bundles = {'url_launcher_macos_privacy' => ['url_launcher_macos/Sources/url_launcher_macos/Resources/PrivacyInfo.xcprivacy']}
   s.dependency 'FlutterMacOS'
 
-  s.platform = :osx, '10.14'
+  s.platform = :osx, '10.15'
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
   s.swift_version = '5.0'
   end
