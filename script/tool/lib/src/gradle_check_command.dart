@@ -126,6 +126,9 @@ class GradleCheckCommand extends PackageLoopingCommand {
     // This is tracked as a variable rather than a sequence of &&s so that all
     // failures are reported at once, not just the first one.
     bool succeeded = true;
+    if (!_validateJavaKotlinCompileOptionsAlignment(lines)) {
+      succeeded = false;
+    }
     if (!_validateNamespace(package, contents, isExample: false)) {
       succeeded = false;
     }
@@ -133,9 +136,6 @@ class GradleCheckCommand extends PackageLoopingCommand {
       succeeded = false;
     }
     if (!_validateKotlinJvmCompatibility(lines)) {
-      succeeded = false;
-    }
-    if (!_validateJavaKotlinCompileOptionsAlignment(lines)) {
       succeeded = false;
     }
     if (!_validateGradleDrivenLintConfig(package, lines)) {
