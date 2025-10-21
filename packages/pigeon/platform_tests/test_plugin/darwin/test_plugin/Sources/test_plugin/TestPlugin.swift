@@ -1216,6 +1216,45 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
 }
 
 class NITestsClass: NSObject, NIHostIntegrationCoreApi {
+  func echoNonNullEnumList(enumList: [NIAnEnum]) throws -> [NIAnEnum] {
+    return enumList
+  }
+
+  func echoNonNullClassList(classList: [NIAllNullableTypesWithoutRecursion]) throws
+    -> [NIAllNullableTypesWithoutRecursion]
+  {
+    return classList
+  }
+
+  func echoNonNullStringMap(stringMap: [String: String]) throws -> [String: String] {
+    return stringMap
+  }
+
+  func sendMultipleNullableTypes(
+    aNullableBool: Bool?, aNullableInt: Int64?, aNullableString: String?
+  ) throws -> NIAllNullableTypesWithoutRecursion {
+    return NIAllNullableTypesWithoutRecursion(
+      aNullableBool: aNullableBool, aNullableInt: aNullableInt, aNullableString: aNullableString)
+  }
+
+  func echoNullableEnumList(enumList: [NIAnEnum?]?) throws -> [NIAnEnum?]? {
+    return enumList
+  }
+
+  func echoNullableClassList(classList: [NIAllNullableTypesWithoutRecursion?]?) throws
+    -> [NIAllNullableTypesWithoutRecursion?]?
+  {
+    return classList
+  }
+
+  func echoNullableStringMap(stringMap: [String?: String?]?) throws -> [String?: String?]? {
+    return stringMap
+  }
+
+  func echoNullableNonNullStringMap(stringMap: [String: String]?) throws -> [String: String]? {
+    return stringMap
+  }
+
   func echoEnumList(enumList: [NIAnEnum?]) throws -> [NIAnEnum?] {
     return enumList
   }
@@ -1252,7 +1291,7 @@ class NITestsClass: NSObject, NIHostIntegrationCoreApi {
 
   func createNestedNullableString(nullableString: String?) throws -> NIAllClassesWrapper {
     return NIAllClassesWrapper(
-      allNullableTypesWithoutRecursion: .init(aNullableString: nullableString))
+      allNullableTypesWithoutRecursion: .init(aNullableString: nullableString), classList: [])
   }
 
   func echoClassWrapper(wrapper: NIAllClassesWrapper) throws -> NIAllClassesWrapper {

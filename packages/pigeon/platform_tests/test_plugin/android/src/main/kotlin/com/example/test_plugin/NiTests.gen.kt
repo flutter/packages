@@ -295,14 +295,19 @@ data class NIAllNullableTypesWithoutRecursion(
  */
 data class NIAllClassesWrapper(
     val allNullableTypesWithoutRecursion: NIAllNullableTypesWithoutRecursion? = null,
-    val allTypes: NIAllTypes? = null
+    val allTypes: NIAllTypes? = null,
+    val classList: List<NIAllTypes?>,
+    val nullableClassList: List<NIAllNullableTypesWithoutRecursion?>? = null
 ) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): NIAllClassesWrapper {
       val allNullableTypesWithoutRecursion =
           pigeonVar_list[0] as NIAllNullableTypesWithoutRecursion?
       val allTypes = pigeonVar_list[1] as NIAllTypes?
-      return NIAllClassesWrapper(allNullableTypesWithoutRecursion, allTypes)
+      val classList = pigeonVar_list[2] as List<NIAllTypes?>
+      val nullableClassList = pigeonVar_list[3] as List<NIAllNullableTypesWithoutRecursion?>?
+      return NIAllClassesWrapper(
+          allNullableTypesWithoutRecursion, allTypes, classList, nullableClassList)
     }
   }
 
@@ -310,6 +315,8 @@ data class NIAllClassesWrapper(
     return listOf(
         allNullableTypesWithoutRecursion,
         allTypes,
+        classList,
+        nullableClassList,
     )
   }
 
@@ -361,14 +368,22 @@ abstract class NIHostIntegrationCoreApi {
   abstract fun echoClassList(
       classList: List<NIAllNullableTypesWithoutRecursion?>
   ): List<NIAllNullableTypesWithoutRecursion?>
+  /** Returns the passed list, to test serialization and deserialization. */
+  abstract fun echoNonNullEnumList(enumList: List<NIAnEnum>): List<NIAnEnum>
+  /** Returns the passed list, to test serialization and deserialization. */
+  abstract fun echoNonNullClassList(
+      classList: List<NIAllNullableTypesWithoutRecursion>
+  ): List<NIAllNullableTypesWithoutRecursion>
   /** Returns the passed map, to test serialization and deserialization. */
   abstract fun echoMap(map: Map<Any?, Any?>): Map<Any?, Any?>
   /** Returns the passed map, to test serialization and deserialization. */
   abstract fun echoStringMap(stringMap: Map<String?, String?>): Map<String?, String?>
   /**
-   * Returns the passed map, to test serialization and deserialization. Returns the passed class to
-   * test nested class serialization and deserialization.
+   * Returns the passed map, to test serialization and deserialization. Returns the passed map, to
+   * test serialization and deserialization.
    */
+  abstract fun echoNonNullStringMap(stringMap: Map<String, String>): Map<String, String>
+  /** Returns the passed class to test nested class serialization and deserialization. */
   abstract fun echoClassWrapper(wrapper: NIAllClassesWrapper): NIAllClassesWrapper
   /** Returns the passed enum to test serialization and deserialization. */
   abstract fun echoEnum(anEnum: NIAnEnum): NIAnEnum
@@ -389,7 +404,13 @@ abstract class NIHostIntegrationCoreApi {
    * Returns the inner `aString` value from the wrapped object, to test sending of nested objects.
    */
   abstract fun createNestedNullableString(nullableString: String?): NIAllClassesWrapper
-  /** Returns passed in arguments of multiple types. */
+
+  abstract fun sendMultipleNullableTypes(
+      aNullableBool: Boolean?,
+      aNullableInt: Long?,
+      aNullableString: String?
+  ): NIAllNullableTypesWithoutRecursion
+
   abstract fun sendMultipleNullableTypesWithoutRecursion(
       aNullableBool: Boolean?,
       aNullableInt: Long?,
@@ -407,8 +428,18 @@ abstract class NIHostIntegrationCoreApi {
   abstract fun echoNullableObject(aNullableObject: Any?): Any?
   /** Returns the passed list, to test serialization and deserialization. */
   abstract fun echoNullableList(aNullableList: List<Any?>?): List<Any?>?
+  /** Returns the passed list, to test serialization and deserialization. */
+  abstract fun echoNullableEnumList(enumList: List<NIAnEnum?>?): List<NIAnEnum?>?
+  /** Returns the passed list, to test serialization and deserialization. */
+  abstract fun echoNullableClassList(
+      classList: List<NIAllNullableTypesWithoutRecursion?>?
+  ): List<NIAllNullableTypesWithoutRecursion?>?
   /** Returns the passed map, to test serialization and deserialization. */
   abstract fun echoNullableMap(map: Map<Any?, Any?>?): Map<Any?, Any?>?
+  /** Returns the passed map, to test serialization and deserialization. */
+  abstract fun echoNullableStringMap(stringMap: Map<String?, String?>?): Map<String?, String?>?
+  /** Returns the passed map, to test serialization and deserialization. */
+  abstract fun echoNullableNonNullStringMap(stringMap: Map<String, String>?): Map<String, String>?
 
   abstract fun echoNullableEnum(anEnum: NIAnEnum?): NIAnEnum?
 
@@ -588,6 +619,30 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
     }
     error("NIHostIntegrationCoreApi has not been set")
   }
+  /** Returns the passed list, to test serialization and deserialization. */
+  override fun echoNonNullEnumList(enumList: List<NIAnEnum>): List<NIAnEnum> {
+    api?.let {
+      try {
+        return api!!.echoNonNullEnumList(enumList)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed list, to test serialization and deserialization. */
+  override fun echoNonNullClassList(
+      classList: List<NIAllNullableTypesWithoutRecursion>
+  ): List<NIAllNullableTypesWithoutRecursion> {
+    api?.let {
+      try {
+        return api!!.echoNonNullClassList(classList)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
   /** Returns the passed map, to test serialization and deserialization. */
   override fun echoMap(map: Map<Any?, Any?>): Map<Any?, Any?> {
     api?.let {
@@ -611,9 +666,20 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
     error("NIHostIntegrationCoreApi has not been set")
   }
   /**
-   * Returns the passed map, to test serialization and deserialization. Returns the passed class to
-   * test nested class serialization and deserialization.
+   * Returns the passed map, to test serialization and deserialization. Returns the passed map, to
+   * test serialization and deserialization.
    */
+  override fun echoNonNullStringMap(stringMap: Map<String, String>): Map<String, String> {
+    api?.let {
+      try {
+        return api!!.echoNonNullStringMap(stringMap)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed class to test nested class serialization and deserialization. */
   override fun echoClassWrapper(wrapper: NIAllClassesWrapper): NIAllClassesWrapper {
     api?.let {
       try {
@@ -688,7 +754,22 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
     }
     error("NIHostIntegrationCoreApi has not been set")
   }
-  /** Returns passed in arguments of multiple types. */
+
+  override fun sendMultipleNullableTypes(
+      aNullableBool: Boolean?,
+      aNullableInt: Long?,
+      aNullableString: String?
+  ): NIAllNullableTypesWithoutRecursion {
+    api?.let {
+      try {
+        return api!!.sendMultipleNullableTypes(aNullableBool, aNullableInt, aNullableString)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+
   override fun sendMultipleNullableTypesWithoutRecursion(
       aNullableBool: Boolean?,
       aNullableInt: Long?,
@@ -770,11 +851,57 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
     }
     error("NIHostIntegrationCoreApi has not been set")
   }
+  /** Returns the passed list, to test serialization and deserialization. */
+  override fun echoNullableEnumList(enumList: List<NIAnEnum?>?): List<NIAnEnum?>? {
+    api?.let {
+      try {
+        return api!!.echoNullableEnumList(enumList)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed list, to test serialization and deserialization. */
+  override fun echoNullableClassList(
+      classList: List<NIAllNullableTypesWithoutRecursion?>?
+  ): List<NIAllNullableTypesWithoutRecursion?>? {
+    api?.let {
+      try {
+        return api!!.echoNullableClassList(classList)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
   /** Returns the passed map, to test serialization and deserialization. */
   override fun echoNullableMap(map: Map<Any?, Any?>?): Map<Any?, Any?>? {
     api?.let {
       try {
         return api!!.echoNullableMap(map)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed map, to test serialization and deserialization. */
+  override fun echoNullableStringMap(stringMap: Map<String?, String?>?): Map<String?, String?>? {
+    api?.let {
+      try {
+        return api!!.echoNullableStringMap(stringMap)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed map, to test serialization and deserialization. */
+  override fun echoNullableNonNullStringMap(stringMap: Map<String, String>?): Map<String, String>? {
+    api?.let {
+      try {
+        return api!!.echoNullableNonNullStringMap(stringMap)
       } catch (e: Exception) {
         throw e
       }

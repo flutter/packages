@@ -339,18 +339,24 @@ typedef unsigned int swift_uint4 __attribute__((__ext_vector_type__(4)));
 /// data from Swift to Objective-C.
 SWIFT_CLASS("_TtC11test_plugin25NIAllClassesWrapperBridge")
 SWIFT_AVAILABILITY(macos, introduced = 16.0.0)
-SWIFT_AVAILABILITY(ios, introduced = 13)
-@interface NIAllClassesWrapperBridge : NSObject
+    SWIFT_AVAILABILITY(ios, introduced = 13)
+        @interface NIAllClassesWrapperBridge : NSObject
 - (nonnull instancetype)
     initWithAllNullableTypesWithoutRecursion:
         (NIAllNullableTypesWithoutRecursionBridge *_Nullable)
             allNullableTypesWithoutRecursion
                                     allTypes:
                                         (NIAllTypesBridge *_Nullable)allTypes
+                                   classList:
+                                       (NSArray<NSObject *> *_Nonnull)classList
+                           nullableClassList:
+                               (NSArray<NSObject *> *_Nullable)nullableClassList
     OBJC_DESIGNATED_INITIALIZER;
 @property(nonatomic, strong) NIAllNullableTypesWithoutRecursionBridge
     *_Nullable allNullableTypesWithoutRecursion;
 @property(nonatomic, strong) NIAllTypesBridge *_Nullable allTypes;
+@property(nonatomic, copy) NSArray<NSObject *> *_Nonnull classList;
+@property(nonatomic, copy) NSArray<NSObject *> *_Nullable nullableClassList;
 - (nonnull instancetype)init SWIFT_UNAVAILABLE;
 + (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
 @end
@@ -364,8 +370,8 @@ SWIFT_AVAILABILITY(ios, introduced = 13)
 /// from Swift to Objective-C.
 SWIFT_CLASS("_TtC11test_plugin40NIAllNullableTypesWithoutRecursionBridge")
 SWIFT_AVAILABILITY(macos, introduced = 16.0.0)
-SWIFT_AVAILABILITY(ios, introduced = 13)
-@interface NIAllNullableTypesWithoutRecursionBridge : NSObject
+    SWIFT_AVAILABILITY(ios, introduced = 13)
+        @interface NIAllNullableTypesWithoutRecursionBridge : NSObject
 - (nonnull instancetype)
     initWithANullableBool:(NSNumber *_Nullable)aNullableBool
              aNullableInt:(NSNumber *_Nullable)aNullableInt
@@ -414,7 +420,8 @@ enum NIAnotherEnum : NSInteger;
 /// Objective-C.
 SWIFT_CLASS("_TtC11test_plugin16NIAllTypesBridge")
 SWIFT_AVAILABILITY(macos, introduced = 16.0.0)
-SWIFT_AVAILABILITY(ios, introduced = 13) @interface NIAllTypesBridge : NSObject
+    SWIFT_AVAILABILITY(ios, introduced = 13) @interface NIAllTypesBridge
+    : NSObject
 - (nonnull instancetype)
     initWithABool:(BOOL)aBool
             anInt:(int64_t)anInt
@@ -556,6 +563,18 @@ SWIFT_CLASS("_TtC11test_plugin29NIHostIntegrationCoreApiSetup")
                   wrappedError:(NiTestsError *_Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos, introduced = 16.0.0)
         SWIFT_AVAILABILITY(ios, introduced = 13);
+/// Returns the passed list, to test serialization and deserialization.
+- (NSArray<NSObject *> *_Nullable)
+    echoNonNullEnumListWithEnumList:(NSArray<NSObject *> *_Nonnull)enumList
+                       wrappedError:(NiTestsError *_Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos, introduced = 16.0.0)
+        SWIFT_AVAILABILITY(ios, introduced = 13);
+/// Returns the passed list, to test serialization and deserialization.
+- (NSArray<NSObject *> *_Nullable)
+    echoNonNullClassListWithClassList:(NSArray<NSObject *> *_Nonnull)classList
+                         wrappedError:(NiTestsError *_Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos, introduced = 16.0.0)
+        SWIFT_AVAILABILITY(ios, introduced = 13);
 /// Returns the passed map, to test serialization and deserialization.
 - (NSDictionary<id<NSCopying>, NSObject *> *_Nullable)
     echoMapWithMap:(NSDictionary<id<NSCopying>, NSObject *> *_Nonnull)map
@@ -570,6 +589,13 @@ SWIFT_CLASS("_TtC11test_plugin29NIHostIntegrationCoreApiSetup")
     SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos, introduced = 16.0.0)
         SWIFT_AVAILABILITY(ios, introduced = 13);
 /// Returns the passed map, to test serialization and deserialization.
+/// Returns the passed map, to test serialization and deserialization.
+- (NSDictionary<id<NSCopying>, NSObject *> *_Nullable)
+    echoNonNullStringMapWithStringMap:
+        (NSDictionary<id<NSCopying>, NSObject *> *_Nonnull)stringMap
+                         wrappedError:(NiTestsError *_Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos, introduced = 16.0.0)
+        SWIFT_AVAILABILITY(ios, introduced = 13);
 /// Returns the passed class to test nested class serialization and
 /// deserialization.
 - (NIAllClassesWrapperBridge *_Nullable)
@@ -614,7 +640,16 @@ SWIFT_CLASS("_TtC11test_plugin29NIHostIntegrationCoreApiSetup")
                                         (NiTestsError *_Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos, introduced = 16.0.0)
         SWIFT_AVAILABILITY(ios, introduced = 13);
-/// Returns passed in arguments of multiple types.
+- (NIAllNullableTypesWithoutRecursionBridge *_Nullable)
+    sendMultipleNullableTypesWithANullableBool:
+        (NSNumber *_Nullable)aNullableBool
+                                  aNullableInt:(NSNumber *_Nullable)aNullableInt
+                               aNullableString:
+                                   (NSString *_Nullable)aNullableString
+                                  wrappedError:
+                                      (NiTestsError *_Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos, introduced = 16.0.0)
+        SWIFT_AVAILABILITY(ios, introduced = 13);
 - (NIAllNullableTypesWithoutRecursionBridge *_Nullable)
     sendMultipleNullableTypesWithoutRecursionWithANullableBool:
         (NSNumber *_Nullable)aNullableBool
@@ -666,11 +701,38 @@ SWIFT_CLASS("_TtC11test_plugin29NIHostIntegrationCoreApiSetup")
                          wrappedError:(NiTestsError *_Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos, introduced = 16.0.0)
         SWIFT_AVAILABILITY(ios, introduced = 13);
+/// Returns the passed list, to test serialization and deserialization.
+- (NSArray<NSObject *> *_Nullable)
+    echoNullableEnumListWithEnumList:(NSArray<NSObject *> *_Nullable)enumList
+                        wrappedError:(NiTestsError *_Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos, introduced = 16.0.0)
+        SWIFT_AVAILABILITY(ios, introduced = 13);
+/// Returns the passed list, to test serialization and deserialization.
+- (NSArray<NSObject *> *_Nullable)
+    echoNullableClassListWithClassList:(NSArray<NSObject *> *_Nullable)classList
+                          wrappedError:(NiTestsError *_Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos, introduced = 16.0.0)
+        SWIFT_AVAILABILITY(ios, introduced = 13);
 /// Returns the passed map, to test serialization and deserialization.
 - (NSDictionary<id<NSCopying>, NSObject *> *_Nullable)
     echoNullableMapWithMap:
         (NSDictionary<id<NSCopying>, NSObject *> *_Nullable)map
               wrappedError:(NiTestsError *_Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos, introduced = 16.0.0)
+        SWIFT_AVAILABILITY(ios, introduced = 13);
+/// Returns the passed map, to test serialization and deserialization.
+- (NSDictionary<id<NSCopying>, NSObject *> *_Nullable)
+    echoNullableStringMapWithStringMap:
+        (NSDictionary<id<NSCopying>, NSObject *> *_Nullable)stringMap
+                          wrappedError:(NiTestsError *_Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos, introduced = 16.0.0)
+        SWIFT_AVAILABILITY(ios, introduced = 13);
+/// Returns the passed map, to test serialization and deserialization.
+- (NSDictionary<id<NSCopying>, NSObject *> *_Nullable)
+    echoNullableNonNullStringMapWithStringMap:
+        (NSDictionary<id<NSCopying>, NSObject *> *_Nullable)stringMap
+                                 wrappedError:
+                                     (NiTestsError *_Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos, introduced = 16.0.0)
         SWIFT_AVAILABILITY(ios, introduced = 13);
 - (NSNumber *_Nullable)echoNullableEnumWithAnEnum:(NSNumber *_Nullable)anEnum

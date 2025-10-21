@@ -236,13 +236,13 @@ genericNIAllNullableTypesWithoutRecursion = NIAllNullableTypesWithoutRecursion(
   // mapMap: mapMap,
 );
 
-// final List<NIAllNullableTypesWithoutRecursion?>
-//     allNullableTypesWithoutRecursionClassList =
-//     <NIAllNullableTypesWithoutRecursion?>[
-//   genericNIAllNullableTypesWithoutRecursion,
-//   NIAllNullableTypesWithoutRecursion(),
-//   null,
-// ];
+final List<NIAllNullableTypesWithoutRecursion?>
+allNullableTypesWithoutRecursionClassList =
+    <NIAllNullableTypesWithoutRecursion?>[
+      genericNIAllNullableTypesWithoutRecursion,
+      NIAllNullableTypesWithoutRecursion(),
+      null,
+    ];
 
 // final Map<int, NIAllNullableTypesWithoutRecursion?>
 //     allNullableTypesWithoutRecursionClassMap =
@@ -284,10 +284,10 @@ final NIAllTypes genericNIAllTypes = NIAllTypes(
   // mapMap: nonNullMapMap,
 );
 
-// final List<NIAllTypes?> allTypesClassList = <NIAllTypes?>[
-//   genericNIAllTypes,
-//   null,
-// ];
+final List<NIAllTypes?> allTypesClassList = <NIAllTypes?>[
+  genericNIAllTypes,
+  null,
+];
 
 // final Map<int, NIAllTypes?> allTypesClassMap = <int, NIAllTypes?>{
 //   0: genericNIAllTypes,
@@ -394,9 +394,9 @@ NIAllClassesWrapper classWrapperMaker() {
     //     allNullableTypes: recursiveNIAllNullableTypes,
     allNullableTypesWithoutRecursion: genericNIAllNullableTypesWithoutRecursion,
     allTypes: genericNIAllTypes,
-    //     classList: allTypesClassList,
+    classList: allTypesClassList,
     //     classMap: allTypesClassMap,
-    //     nullableClassList: allNullableTypesWithoutRecursionClassList,
+    nullableClassList: allNullableTypesWithoutRecursionClassList,
     //     nullableClassMap: allNullableTypesWithoutRecursionClassMap,
   );
 }

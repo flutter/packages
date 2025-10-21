@@ -264,16 +264,16 @@ class NIAllClassesWrapper {
     // this.allNullableTypes,
     this.allNullableTypesWithoutRecursion,
     this.allTypes,
-    // this.classList,
+    this.classList,
+    this.nullableClassList,
     // this.classMap,
-    // this.nullableClassList,
     // this.nullableClassMap,
   );
   // NIAllNullableTypes allNullableTypes;
   NIAllNullableTypesWithoutRecursion? allNullableTypesWithoutRecursion;
   NIAllTypes? allTypes;
-  // List<NIAllTypes?> classList;
-  // List<NIAllNullableTypesWithoutRecursion?>? nullableClassList;
+  List<NIAllTypes?> classList;
+  List<NIAllNullableTypesWithoutRecursion?>? nullableClassList;
   // Map<int?, NIAllTypes?> classMap;
   // Map<int?, NIAllNullableTypesWithoutRecursion?>? nullableClassMap;
 }
@@ -384,16 +384,17 @@ abstract class NIHostIntegrationCoreApi {
     List<NIAllNullableTypesWithoutRecursion?> classList,
   );
 
-  // /// Returns the passed list, to test serialization and deserialization.
-  // @ObjCSelector('echoNonNullEnumList:')
+  /// Returns the passed list, to test serialization and deserialization.
+  @ObjCSelector('echoNonNullEnumList:')
   // @SwiftFunction('echoNonNull(enumList:)')
-  // List<NIAnEnum> echoNonNullEnumList(List<NIAnEnum> enumList);
+  List<NIAnEnum> echoNonNullEnumList(List<NIAnEnum> enumList);
 
-  // /// Returns the passed list, to test serialization and deserialization.
-  // @ObjCSelector('echoNonNullClassList:')
+  /// Returns the passed list, to test serialization and deserialization.
+  @ObjCSelector('echoNonNullClassList:')
   // @SwiftFunction('echoNonNull(classList:)')
-  // List<NIAllNullableTypesWithoutRecursion> echoNonNullClassList(
-  //     List<NIAllNullableTypesWithoutRecursion> classList);
+  List<NIAllNullableTypesWithoutRecursion> echoNonNullClassList(
+    List<NIAllNullableTypesWithoutRecursion> classList,
+  );
 
   /// Returns the passed map, to test serialization and deserialization.
   @ObjCSelector('echoMap:')
@@ -421,10 +422,10 @@ abstract class NIHostIntegrationCoreApi {
   // Map<int?, NIAllNullableTypes?> echoClassMap(
   //     Map<int?, NIAllNullableTypes?> classMap);
 
-  // /// Returns the passed map, to test serialization and deserialization.
-  // @ObjCSelector('echoNonNullStringMap:')
+  /// Returns the passed map, to test serialization and deserialization.
+  @ObjCSelector('echoNonNullStringMap:')
   // @SwiftFunction('echoNonNull(stringMap:)')
-  // Map<String, String> echoNonNullStringMap(Map<String, String> stringMap);
+  Map<String, String> echoNonNullStringMap(Map<String, String> stringMap);
 
   // /// Returns the passed map, to test serialization and deserialization.
   // @ObjCSelector('echoNonNullIntMap:')
@@ -498,11 +499,14 @@ abstract class NIHostIntegrationCoreApi {
   // @SwiftFunction('createNestedObject(with:)')
   NIAllClassesWrapper createNestedNullableString(String? nullableString);
 
-  /// Returns passed in arguments of multiple types.
-  // @ObjCSelector('sendMultipleNullableTypesABool:anInt:aString:')
+  // Returns passed in arguments of multiple types.
+  @ObjCSelector('sendMultipleNullableTypesABool:anInt:aString:')
   // @SwiftFunction('sendMultipleNullableTypes(aBool:anInt:aString:)')
-  // NIAllNullableTypes sendMultipleNullableTypes(
-  //     bool? aNullableBool, int? aNullableInt, String? aNullableString);
+  NIAllNullableTypesWithoutRecursion sendMultipleNullableTypes(
+    bool? aNullableBool,
+    int? aNullableInt,
+    String? aNullableString,
+  );
 
   // /// Returns passed in arguments of multiple types.
   @ObjCSelector('sendMultipleNullableTypesWithoutRecursionABool:anInt:aString:')
@@ -564,16 +568,17 @@ abstract class NIHostIntegrationCoreApi {
   // @SwiftFunction('echoNullable(_:)')
   List<Object?>? echoNullableList(List<Object?>? aNullableList);
 
-  // /// Returns the passed list, to test serialization and deserialization.
-  // @ObjCSelector('echoNullableEnumList:')
+  /// Returns the passed list, to test serialization and deserialization.
+  @ObjCSelector('echoNullableEnumList:')
   // @SwiftFunction('echoNullable(enumList:)')
-  // List<NIAnEnum?>? echoNullableEnumList(List<NIAnEnum?>? enumList);
+  List<NIAnEnum?>? echoNullableEnumList(List<NIAnEnum?>? enumList);
 
-  // /// Returns the passed list, to test serialization and deserialization.
-  // @ObjCSelector('echoNullableClassList:')
+  /// Returns the passed list, to test serialization and deserialization.
+  @ObjCSelector('echoNullableClassList:')
   // @SwiftFunction('echoNullable(classList:)')
-  // List<NIAllNullableTypes?>? echoNullableClassList(
-  //     List<NIAllNullableTypes?>? classList);
+  List<NIAllNullableTypesWithoutRecursion?>? echoNullableClassList(
+    List<NIAllNullableTypesWithoutRecursion?>? classList,
+  );
 
   // /// Returns the passed list, to test serialization and deserialization.
   // @ObjCSelector('echoNullableNonNullEnumList:')
@@ -591,11 +596,12 @@ abstract class NIHostIntegrationCoreApi {
   // @SwiftFunction('echoNullable(_:)')
   Map<Object?, Object?>? echoNullableMap(Map<Object?, Object?>? map);
 
-  // /// Returns the passed map, to test serialization and deserialization.
-  // @ObjCSelector('echoNullableStringMap:')
+  /// Returns the passed map, to test serialization and deserialization.
+  @ObjCSelector('echoNullableStringMap:')
   // @SwiftFunction('echoNullable(stringMap:)')
-  // Map<String?, String?>? echoNullableStringMap(
-  //     Map<String?, String?>? stringMap);
+  Map<String?, String?>? echoNullableStringMap(
+    Map<String?, String?>? stringMap,
+  );
 
   // /// Returns the passed map, to test serialization and deserialization.
   // @ObjCSelector('echoNullableIntMap:')
@@ -610,15 +616,17 @@ abstract class NIHostIntegrationCoreApi {
 
   // /// Returns the passed map, to test serialization and deserialization.
   // @ObjCSelector('echoNullableClassMap:')
-  // @SwiftFunction('echoNullable(classMap:)')
-  // Map<int?, NIAllNullableTypes?>? echoNullableClassMap(
-  //     Map<int?, NIAllNullableTypes?>? classMap);
+  // // @SwiftFunction('echoNullable(classMap:)')
+  // Map<int?, NIAllNullableTypesWithoutRecursion?>? echoNullableClassMap(
+  //   Map<int?, NIAllNullableTypesWithoutRecursion?>? classMap,
+  // );
 
-  // /// Returns the passed map, to test serialization and deserialization.
-  // @ObjCSelector('echoNullableNonNullStringMap:')
+  /// Returns the passed map, to test serialization and deserialization.
+  @ObjCSelector('echoNullableNonNullStringMap:')
   // @SwiftFunction('echoNullableNonNull(stringMap:)')
-  // Map<String, String>? echoNullableNonNullStringMap(
-  //     Map<String, String>? stringMap);
+  Map<String, String>? echoNullableNonNullStringMap(
+    Map<String, String>? stringMap,
+  );
 
   // /// Returns the passed map, to test serialization and deserialization.
   // @ObjCSelector('echoNullableNonNullIntMap:')
