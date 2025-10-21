@@ -314,7 +314,7 @@ abstract class ShellRouteData extends RouteData {
     GlobalKey<NavigatorState>? navigatorKey,
     GlobalKey<NavigatorState>? parentNavigatorKey,
     List<RouteBase> routes = const <RouteBase>[],
-    bool mergeObservers = true,
+    bool notifyRootObserver = true,
     List<NavigatorObserver>? observers,
     String? restorationScopeId,
   }) {
@@ -343,7 +343,7 @@ abstract class ShellRouteData extends RouteData {
       parentNavigatorKey: parentNavigatorKey,
       routes: routes,
       navigatorKey: navigatorKey,
-      mergeObservers: mergeObservers,
+      notifyRootObserver: notifyRootObserver,
       observers: observers,
       restorationScopeId: restorationScopeId,
       redirect: redirect,
@@ -561,12 +561,12 @@ class TypedRelativeGoRoute<T extends RelativeGoRouteData>
 @Target(<TargetKind>{TargetKind.library, TargetKind.classType})
 class TypedShellRoute<T extends ShellRouteData> extends TypedRoute<T> {
   /// Default const constructor
-  const TypedShellRoute({ this.mergeObservers = true,this.routes = const <TypedRoute<RouteData>>[]});
+  const TypedShellRoute({ this.notifyRootObserver = true,this.routes = const <TypedRoute<RouteData>>[]});
 
   /// Determines whether the observers should be merged.
   ///
-  /// See [ShellRouteBase.mergeObservers].
-  final bool mergeObservers;
+  /// See [ShellRouteBase.notifyRootObserver].
+  final bool notifyRootObserver;
 
   /// Child route definitions.
   ///
@@ -580,14 +580,14 @@ class TypedStatefulShellRoute<T extends StatefulShellRouteData>
     extends TypedRoute<T> {
   /// Default const constructor
   const TypedStatefulShellRoute({
-    this.mergeObservers = true,
+    this.notifyRootObserver = true,
     this.branches = const <TypedStatefulShellBranch<StatefulShellBranchData>>[],
   });
 
   /// Determines whether the observers should be merged.
   ///
-  /// See [ShellRouteBase.mergeObservers].
-  final bool mergeObservers;
+  /// See [ShellRouteBase.notifyRootObserver].
+  final bool notifyRootObserver;
 
   /// Child route definitions.
   ///

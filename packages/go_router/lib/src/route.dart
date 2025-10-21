@@ -13,7 +13,6 @@ import 'package:meta/meta.dart' as meta;
 
 import 'configuration.dart';
 import 'match.dart';
-import 'misc/merged_observer.dart';
 import 'path_utils.dart';
 import 'router.dart';
 import 'state.dart';
@@ -499,19 +498,17 @@ abstract class ShellRouteBase extends RouteBase {
     super.redirect,
     required super.routes,
     required super.parentNavigatorKey,
-    this.mergeObservers = true,
+    this.notifyRootObserver = true,
   }) : super._();
 
-  /// Whether to merge the observers of the shell route's parent with the
-  /// observers of the shell route.
+  /// Whether to merge the observers of the GoRouter with the observers 
+  /// of the ShellRoute.
   ///
-  /// When `true`, the observers of the shell route's parent will be merged with
-  /// the observers of the shell route.
+  /// When `true`, the observers of the GoRouter will be merged with
+  /// the observers of the ShellRoute.
   ///
-  /// Only effective for `observers` passed into `GoRouter`.
-  ///
-  /// Defaults to `false`.
-  final bool mergeObservers;
+  /// Defaults to `true`.
+  final bool notifyRootObserver;
 
   static void _debugCheckSubRouteParentNavigatorKeys(
     List<RouteBase> subRoutes,
@@ -592,18 +589,18 @@ class ShellRouteContext {
   Widget _buildNavigatorForCurrentRoute(
     BuildContext context,
     List<NavigatorObserver>? observers,
-    bool mergeObservers,
+    bool notifyRootObserver,
     String? restorationScopeId,
   ) {
     final List<NavigatorObserver> effectiveObservers = <NavigatorObserver>[
       ...?observers
     ];
 
-    if (mergeObservers) {
+    if (notifyRootObserver) {
       final List<NavigatorObserver>? rootObservers =
           GoRouter.maybeOf(context)?.observers;
       if (rootObservers != null) {
-        effectiveObservers.add(MergedNavigatorObserver(
+        effectiveObservers.add(_MergedNavigatorObserver(
           rootObservers,
         ));
       }
@@ -720,7 +717,7 @@ class ShellRoute extends ShellRouteBase {
     super.redirect,
     this.builder,
     this.pageBuilder,
-    super.mergeObservers,
+    super.notifyRootObserver,
     this.observers,
     required super.routes,
     super.parentNavigatorKey,
@@ -764,7 +761,7 @@ class ShellRoute extends ShellRouteBase {
       final Widget navigator = shellRouteContext._buildNavigatorForCurrentRoute(
         context,
         observers,
-        mergeObservers,
+        notifyRootObserver,
         restorationScopeId,
       );
       return builder!(context, state, navigator);
@@ -782,7 +779,7 @@ class ShellRoute extends ShellRouteBase {
       final Widget navigator = shellRouteContext._buildNavigatorForCurrentRoute(
         context,
         observers,
-        mergeObservers,
+        notifyRootObserver,
         restorationScopeId,
       );
       return pageBuilder!(context, state, navigator);
@@ -904,7 +901,7 @@ class StatefulShellRoute extends ShellRouteBase {
     super.redirect,
     this.builder,
     this.pageBuilder,
-    super.mergeObservers,
+    super.notifyRootObserver,
     required this.navigatorContainerBuilder,
     super.parentNavigatorKey,
     this.restorationScopeId,
@@ -935,7 +932,7 @@ class StatefulShellRoute extends ShellRouteBase {
   /// for a complete runnable example using StatefulShellRoute.indexedStack.
   StatefulShellRoute.indexedStack({
     required List<StatefulShellBranch> branches,
-    bool mergeObservers = true,
+    bool notifyRootObserver = true,
     GoRouterRedirect? redirect,
     StatefulShellRouteBuilder? builder,
     GlobalKey<NavigatorState>? parentNavigatorKey,
@@ -947,7 +944,7 @@ class StatefulShellRoute extends ShellRouteBase {
          redirect: redirect,
          builder: builder,
          pageBuilder: pageBuilder,
-         mergeObservers: mergeObservers,
+         notifyRootObserver: notifyRootObserver,
          parentNavigatorKey: parentNavigatorKey,
          restorationScopeId: restorationScopeId,
          navigatorContainerBuilder: _indexedStackContainerBuilder,
@@ -1055,7 +1052,7 @@ class StatefulShellRoute extends ShellRouteBase {
   ) => StatefulNavigationShell(
     shellRouteContext: shellRouteContext,
     router: GoRouter.of(context),
-    mergeObservers: mergeObservers,
+    notifyRootObserver: notifyRootObserver,
     containerBuilder: navigatorContainerBuilder,
   );
 
@@ -1245,7 +1242,7 @@ class StatefulNavigationShell extends StatefulWidget {
     required this.shellRouteContext,
     required GoRouter router,
     required this.containerBuilder,
-    this.mergeObservers = true,
+    this.notifyRootObserver = true,
   }) : assert(shellRouteContext.route is StatefulShellRoute),
        _router = router,
        currentIndex = _indexOfBranchNavigatorKey(
@@ -1270,8 +1267,8 @@ class StatefulNavigationShell extends StatefulWidget {
   /// Corresponds to the index in the branches field of [StatefulShellRoute].
   final int currentIndex;
 
-  /// Same to [ShellRoute.mergeObservers].
-  final bool mergeObservers;
+  /// Same to [ShellRoute.notifyRootObserver].
+  final bool notifyRootObserver;
 
   /// The associated [StatefulShellRoute].
   StatefulShellRoute get route => shellRouteContext.route as StatefulShellRoute;
@@ -1716,5 +1713,67 @@ class _IndexedStackedRouteBranchContainer extends StatelessWidget {
       offstage: !isActive,
       child: TickerMode(enabled: isActive, child: child),
     );
+  }
+}
+
+/// A wrapper that merges multiple [NavigatorObserver]s into a single observer.
+/// 
+/// This is necessary because a [NavigatorObserver] can only be attached to one
+/// [NavigatorState] at a time.
+class _MergedNavigatorObserver extends NavigatorObserver {
+  /// Default constructor for the merged navigator observer.
+  _MergedNavigatorObserver(this.observers);
+
+  /// The observers to be merged.
+  final List<NavigatorObserver> observers;
+
+  @override
+  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    for (final NavigatorObserver observer in observers) {
+      observer.didPush(route, previousRoute);
+    }
+  }
+
+  @override
+  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    for (final NavigatorObserver observer in observers) {
+      observer.didPop(route, previousRoute);
+    }
+  }
+
+  @override
+  void didRemove(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    for (final NavigatorObserver observer in observers) {
+      observer.didRemove(route, previousRoute);
+    }
+  }
+
+  @override
+  void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) {
+    for (final NavigatorObserver observer in observers) {
+      observer.didReplace(newRoute: newRoute, oldRoute: oldRoute);
+    }
+  }
+
+  @override
+  void didChangeTop(Route<dynamic> topRoute, Route<dynamic>? previousTopRoute) {
+    for (final NavigatorObserver observer in observers) {
+      observer.didChangeTop(topRoute, previousTopRoute);
+    }
+  }
+
+  @override
+  void didStartUserGesture(
+      Route<dynamic> route, Route<dynamic>? previousRoute) {
+    for (final NavigatorObserver observer in observers) {
+      observer.didStartUserGesture(route, previousRoute);
+    }
+  }
+
+  @override
+  void didStopUserGesture() {
+    for (final NavigatorObserver observer in observers) {
+      observer.didStopUserGesture();
+    }
   }
 }

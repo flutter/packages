@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -29,35 +28,58 @@ void main() {
     expect(shell.observers!.length, 1);
   });
 
-  testWidgets('observers should be merged', (WidgetTester tester) async {
-    final HeroController observer = HeroController();
-    final List<NavigatorObserver> observers = <NavigatorObserver>[observer];
-    addTearDown(observer.dispose);
+  testWidgets(
+    'GoRouter observers should be notified when navigating within ShellRoute',
+    (WidgetTester tester) async {
+      final MockObserver observer = MockObserver();
 
-    final GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
-    await createRouter(
-      <RouteBase>[
-        ShellRoute(
-          navigatorKey: navKey,
-          builder: (_, __, Widget child) => child,
-          routes: <RouteBase>[
-            GoRoute(
-              path: '/',
-              parentNavigatorKey: navKey,
-              builder: (_, __) => const Text('Home'),
-            ),
-          ],
-        ),
-      ],
-      tester,
-      observers: observers,
-    );
-    await tester.pumpAndSettle();
+      final GlobalKey<NavigatorState> root = GlobalKey<NavigatorState>(
+        debugLabel: 'root',
+      );
+      await createRouter(
+        <RouteBase>[
+          GoRoute(path: '/', builder: (_, __) => const Text('Home')),
+          ShellRoute(
+            builder: (_, __, Widget child) => child,
+            routes: <RouteBase>[
+              GoRoute(path: '/test1', builder: (_, __) => const Text('Test1')),
+              GoRoute(path: '/test2', builder: (_, __) => const Text('Test2')),
+            ],
+          ),
+        ],
+        tester,
+        navigatorKey: root,
+        observers: <NavigatorObserver>[observer],
+      );
+      await tester.pumpAndSettle();
 
-    final List<NavigatorObserver> shellRouteObservers =
-        navKey.currentState!.widget.observers;
-    final MergedNavigatorObserver mergedObservers =
-        shellRouteObservers.single as MergedNavigatorObserver;
-    expect(listEquals(observers, mergedObservers.observers), isTrue);
-  });
+      root.currentContext!.push('/test1');
+      await tester.pumpAndSettle();
+      expect(observer.getCallCount('/test1'), 1);
+
+      root.currentContext!.push('/test2');
+      await tester.pumpAndSettle();
+      expect(observer.getCallCount('/test2'), 1);
+    },
+  );
+}
+
+class MockObserver extends NavigatorObserver {
+  final Map<String, int> _callCounts = <String, int>{};
+
+  @override
+  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    final String? routeName = route.settings.name;
+    if (routeName != null) {
+      test(routeName);
+    }
+  }
+
+  void test(String name) {
+    _callCounts[name] = (_callCounts[name] ?? 0) + 1;
+  }
+
+  int getCallCount(String name) {
+    return _callCounts[name] ?? 0;
+  }
 }

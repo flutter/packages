@@ -15,7 +15,6 @@ export 'src/misc/custom_parameter.dart';
 export 'src/misc/errors.dart';
 export 'src/misc/extensions.dart';
 export 'src/misc/inherited_router.dart';
-export 'src/misc/merged_observer.dart';
 export 'src/pages/custom_transition_page.dart';
 export 'src/parser.dart';
 export 'src/route.dart';

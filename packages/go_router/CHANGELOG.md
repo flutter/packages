@@ -1,7 +1,8 @@
 ## 17.0.0
 
-- `ShellRoute` will auto merge the `observers` passed into `GoRouter`.
-- Adds `mergeObservers` to `ShellRouteBase`, `ShellRoute`, `StatefulShellRoute`, `ShellRouteData.$route`.
+- **BREAKING CHANGE**
+  - `ShellRoute` will auto merge the `observers` passed into `GoRouter`.
+  - Adds `notifyRootObserver` to `ShellRouteBase`, `ShellRoute`, `StatefulShellRoute`, `ShellRouteData.$route`.
 
 ## 16.2.5
 
