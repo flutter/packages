@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -64,10 +64,16 @@ import 'runtime.dart';
 ///    be supported. As a result, the following `ButtonBar` parameters are no longer
 ///    supported:
 ///
+// TODO(kallentu): Remove ignore and fix when stable is bumped.
+// https://github.com/flutter/flutter/issues/157620
+// ignore: missing_code_block_language_in_doc_comment
 ///    * `buttonMinWidth`
 ///    * `buttonHeight`
 ///    * `buttonAlignedDropdown`
 ///
+// TODO(kallentu): Remove ignore and fix when stable is bumped.
+// https://github.com/flutter/flutter/issues/157620
+// ignore: missing_code_block_language_in_doc_comment
 ///    It is recommended to use the [OverflowBar] widget.
 ///
 /// Some features are not supported:

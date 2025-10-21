@@ -1,22 +1,17 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import 'package:pigeon/pigeon.dart';
 
-@ConfigurePigeon(PigeonOptions(
-  dartOut: 'lib/src/messages.g.dart',
-  objcHeaderOut:
-      'darwin/local_auth_darwin/Sources/local_auth_darwin/include/local_auth_darwin/messages.g.h',
-  objcSourceOut:
-      'darwin/local_auth_darwin/Sources/local_auth_darwin/messages.g.m',
-  objcOptions: ObjcOptions(
-    headerIncludePath: './include/local_auth_darwin/messages.g.h',
-    prefix: 'FLAD', // Avoid runtime collisions with old local_auth_ios classes.
+@ConfigurePigeon(
+  PigeonOptions(
+    dartOut: 'lib/src/messages.g.dart',
+    swiftOut:
+        'darwin/local_auth_darwin/Sources/local_auth_darwin/messages.g.swift',
+    copyrightHeader: 'pigeons/copyright.txt',
   ),
-  copyrightHeader: 'pigeons/copyright.txt',
-))
-
+)
 /// Pigeon version of IOSAuthMessages, plus the authorization reason.
 ///
 /// See auth_messages_ios.dart for details.
@@ -24,17 +19,11 @@ class AuthStrings {
   /// Constructs a new instance.
   const AuthStrings({
     required this.reason,
-    required this.lockOut,
-    this.goToSettingsButton,
-    this.goToSettingsDescription,
     required this.cancelButton,
     required this.localizedFallbackTitle,
   });
 
   final String reason;
-  final String lockOut;
-  final String? goToSettingsButton;
-  final String? goToSettingsDescription;
   final String cancelButton;
   final String? localizedFallbackTitle;
 }
@@ -44,32 +33,42 @@ enum AuthResult {
   /// The user authenticated successfully.
   success,
 
-  /// The user failed to successfully authenticate.
-  failure,
+  /// Native UI needed to be displayed, but couldn't be.
+  uiUnavailable,
 
-  /// The authentication system was not available.
-  errorNotAvailable,
+  // LAError codes; see
+  // https://developer.apple.com/documentation/localauthentication/laerror-swift.struct/code
+  appCancel,
+  systemCancel,
+  userCancel,
+  biometryDisconnected,
+  biometryLockout,
+  biometryNotAvailable,
+  biometryNotEnrolled,
+  biometryNotPaired,
+  authenticationFailed,
+  invalidContext,
+  invalidDimensions,
+  notInteractive,
+  passcodeNotSet,
+  userFallback,
 
-  /// No biometrics are enrolled.
-  errorNotEnrolled,
-
-  /// No passcode is set.
-  errorPasscodeNotSet,
+  /// An error other than the expected types occurred.
+  unknownError,
 }
 
 class AuthOptions {
-  AuthOptions(
-      {required this.biometricOnly,
-      required this.sticky,
-      required this.useErrorDialogs});
+  AuthOptions({required this.biometricOnly, required this.sticky});
   final bool biometricOnly;
   final bool sticky;
-  final bool useErrorDialogs;
 }
 
 class AuthResultDetails {
-  AuthResultDetails(
-      {required this.result, this.errorMessage, this.errorDetails});
+  AuthResultDetails({
+    required this.result,
+    this.errorMessage,
+    this.errorDetails,
+  });
 
   /// The result of authenticating.
   final AuthResult result;
@@ -78,10 +77,6 @@ class AuthResultDetails {
   final String? errorMessage;
 
   /// System-provided error details, if any.
-  // TODO(stuartmorgan): Remove this when standardizing errors plugin-wide in
-  // a breaking change. This is here only to preserve the existing error format
-  // exactly for compatibility, in case clients were checking PlatformException
-  // details.
   final String? errorDetails;
 }
 
@@ -104,6 +99,5 @@ abstract class LocalAuthApi {
   /// Attempts to authenticate the user with the provided [options], and using
   /// [strings] for any UI.
   @async
-  @ObjCSelector('authenticateWithOptions:strings:')
   AuthResultDetails authenticate(AuthOptions options, AuthStrings strings);
 }

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -35,6 +35,8 @@ part 'src/circles.dart';
 part 'src/convert.dart';
 part 'src/google_maps_controller.dart';
 part 'src/google_maps_flutter_web.dart';
+part 'src/ground_overlay.dart';
+part 'src/ground_overlays.dart';
 part 'src/heatmap.dart';
 part 'src/heatmaps.dart';
 part 'src/marker.dart';

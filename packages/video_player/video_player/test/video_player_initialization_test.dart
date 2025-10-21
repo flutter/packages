@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -36,9 +36,7 @@ void main() {
 
     final VideoPlayerController controller = VideoPlayerController.networkUrl(
       Uri.parse('https://127.0.0.1'),
-      videoPlayerOptions: VideoPlayerOptions(
-        webOptions: expected,
-      ),
+      videoPlayerOptions: VideoPlayerOptions(webOptions: expected),
     );
     await controller.initialize();
 
@@ -52,9 +50,34 @@ void main() {
       reason: 'setWebOptions must be called exactly once.',
     );
     expect(
-      fakeVideoPlayerPlatform.webOptions[controller.textureId],
+      fakeVideoPlayerPlatform.webOptions[controller.playerId],
       expected,
       reason: 'web options must be passed to the platform',
     );
   }, skip: !kIsWeb);
+
+  test('video view type is applied', () async {
+    const VideoViewType expected = VideoViewType.platformView;
+
+    final VideoPlayerController controller = VideoPlayerController.networkUrl(
+      Uri.parse('https://127.0.0.1'),
+      viewType: expected,
+    );
+    await controller.initialize();
+
+    expect(
+      () {
+        fakeVideoPlayerPlatform.calls.singleWhere(
+          (String call) => call == 'createWithOptions',
+        );
+      },
+      returnsNormally,
+      reason: 'createWithOptions must be called exactly once.',
+    );
+    expect(
+      fakeVideoPlayerPlatform.viewTypes[controller.playerId],
+      expected,
+      reason: 'view type must be passed to the platform',
+    );
+  });
 }

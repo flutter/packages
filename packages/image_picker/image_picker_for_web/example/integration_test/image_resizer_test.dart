@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -11,7 +11,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:image_picker_for_web/src/image_resizer.dart';
 import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:web/helpers.dart';
 import 'package:web/web.dart' as web;
 
 //This is a sample 10x10 png image
@@ -27,86 +26,133 @@ void main() {
   setUp(() {
     imageResizer = ImageResizer();
     final web.Blob pngHtmlFile = _base64ToBlob(pngFileBase64Contents);
-    pngFile = XFile(web.URL.createObjectURL(pngHtmlFile),
-        name: 'pngImage.png', mimeType: 'image/png');
+    pngFile = XFile(
+      web.URL.createObjectURL(pngHtmlFile),
+      name: 'pngImage.png',
+      mimeType: 'image/png',
+    );
   });
 
   testWidgets('image is loaded correctly ', (WidgetTester tester) async {
-    final web.HTMLImageElement imageElement =
-        await imageResizer.loadImage(pngFile.path);
+    final web.HTMLImageElement imageElement = await imageResizer.loadImage(
+      pngFile.path,
+    );
     expect(imageElement.width, 10);
     expect(imageElement.height, 10);
   });
 
   testWidgets(
-      "canvas is loaded with image's width and height when max width and max height are null",
-      (WidgetTester widgetTester) async {
-    final web.HTMLImageElement imageElement =
-        await imageResizer.loadImage(pngFile.path);
-    final web.HTMLCanvasElement canvas =
-        imageResizer.resizeImageElement(imageElement, null, null);
-    expect(canvas.width, imageElement.width);
-    expect(canvas.height, imageElement.height);
-  });
+    "canvas is loaded with image's width and height when max width and max height are null",
+    (WidgetTester widgetTester) async {
+      final web.HTMLImageElement imageElement = await imageResizer.loadImage(
+        pngFile.path,
+      );
+      final web.HTMLCanvasElement canvas = imageResizer.resizeImageElement(
+        imageElement,
+        null,
+        null,
+      );
+      expect(canvas.width, imageElement.width);
+      expect(canvas.height, imageElement.height);
+    },
+  );
 
   testWidgets(
-      'canvas size is scaled when max width and max height are not null',
-      (WidgetTester widgetTester) async {
-    final web.HTMLImageElement imageElement =
-        await imageResizer.loadImage(pngFile.path);
-    final web.HTMLCanvasElement canvas =
-        imageResizer.resizeImageElement(imageElement, 8, 8);
-    expect(canvas.width, 8);
-    expect(canvas.height, 8);
-  });
+    'canvas size is scaled when max width and max height are not null',
+    (WidgetTester widgetTester) async {
+      final web.HTMLImageElement imageElement = await imageResizer.loadImage(
+        pngFile.path,
+      );
+      final web.HTMLCanvasElement canvas = imageResizer.resizeImageElement(
+        imageElement,
+        8,
+        8,
+      );
+      expect(canvas.width, 8);
+      expect(canvas.height, 8);
+    },
+  );
 
-  testWidgets('resized image is returned after converting canvas to file',
-      (WidgetTester widgetTester) async {
-    final web.HTMLImageElement imageElement =
-        await imageResizer.loadImage(pngFile.path);
-    final web.HTMLCanvasElement canvas =
-        imageResizer.resizeImageElement(imageElement, null, null);
-    final XFile resizedImage =
-        await imageResizer.writeCanvasToFile(pngFile, canvas, null);
+  testWidgets('resized image is returned after converting canvas to file', (
+    WidgetTester widgetTester,
+  ) async {
+    final web.HTMLImageElement imageElement = await imageResizer.loadImage(
+      pngFile.path,
+    );
+    final web.HTMLCanvasElement canvas = imageResizer.resizeImageElement(
+      imageElement,
+      null,
+      null,
+    );
+    final XFile resizedImage = await imageResizer.writeCanvasToFile(
+      pngFile,
+      canvas,
+      null,
+    );
     expect(resizedImage.name, 'scaled_${pngFile.name}');
   });
 
-  testWidgets('image is scaled when maxWidth is set',
-      (WidgetTester tester) async {
-    final XFile scaledImage =
-        await imageResizer.resizeImageIfNeeded(pngFile, 5, null, null);
+  testWidgets('image is scaled when maxWidth is set', (
+    WidgetTester tester,
+  ) async {
+    final XFile scaledImage = await imageResizer.resizeImageIfNeeded(
+      pngFile,
+      5,
+      null,
+      null,
+    );
     expect(scaledImage.name, 'scaled_${pngFile.name}');
     final Size scaledImageSize = await _getImageSize(scaledImage);
     expect(scaledImageSize, const Size(5, 5));
   });
 
-  testWidgets('image is scaled when maxHeight is set',
-      (WidgetTester tester) async {
-    final XFile scaledImage =
-        await imageResizer.resizeImageIfNeeded(pngFile, null, 6, null);
+  testWidgets('image is scaled when maxHeight is set', (
+    WidgetTester tester,
+  ) async {
+    final XFile scaledImage = await imageResizer.resizeImageIfNeeded(
+      pngFile,
+      null,
+      6,
+      null,
+    );
     expect(scaledImage.name, 'scaled_${pngFile.name}');
     final Size scaledImageSize = await _getImageSize(scaledImage);
     expect(scaledImageSize, const Size(6, 6));
   });
 
-  testWidgets('image is scaled when imageQuality is set',
-      (WidgetTester tester) async {
-    final XFile scaledImage =
-        await imageResizer.resizeImageIfNeeded(pngFile, null, null, 89);
+  testWidgets('image is scaled when imageQuality is set', (
+    WidgetTester tester,
+  ) async {
+    final XFile scaledImage = await imageResizer.resizeImageIfNeeded(
+      pngFile,
+      null,
+      null,
+      89,
+    );
     expect(scaledImage.name, 'scaled_${pngFile.name}');
   });
 
-  testWidgets('image is scaled when maxWidth,maxHeight,imageQuality are set',
-      (WidgetTester tester) async {
-    final XFile scaledImage =
-        await imageResizer.resizeImageIfNeeded(pngFile, 3, 4, 89);
+  testWidgets('image is scaled when maxWidth,maxHeight,imageQuality are set', (
+    WidgetTester tester,
+  ) async {
+    final XFile scaledImage = await imageResizer.resizeImageIfNeeded(
+      pngFile,
+      3,
+      4,
+      89,
+    );
     expect(scaledImage.name, 'scaled_${pngFile.name}');
   });
 
-  testWidgets('image is not scaled when maxWidth,maxHeight, is set',
-      (WidgetTester tester) async {
-    final XFile scaledImage =
-        await imageResizer.resizeImageIfNeeded(pngFile, null, null, null);
+  testWidgets('image is not scaled when maxWidth,maxHeight, is set', (
+    WidgetTester tester,
+  ) async {
+    final XFile scaledImage = await imageResizer.resizeImageIfNeeded(
+      pngFile,
+      null,
+      null,
+      null,
+    );
     expect(scaledImage.name, pngFile.name);
   });
 }
@@ -136,5 +182,5 @@ web.Blob _base64ToBlob(String data) {
     n--;
   }
 
-  return Blob(<JSUint8Array>[u8arr.toJS].toJS);
+  return web.Blob(<JSUint8Array>[u8arr.toJS].toJS);
 }

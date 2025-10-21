@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -8,12 +8,14 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'page.dart';
 
-const CameraPosition _kInitialPosition =
-    CameraPosition(target: LatLng(-33.852, 151.211), zoom: 11.0);
+const CameraPosition _kInitialPosition = CameraPosition(
+  target: LatLng(-33.852, 151.211),
+  zoom: 11.0,
+);
 
 class MapCoordinatesPage extends GoogleMapExampleAppPage {
   const MapCoordinatesPage({Key? key})
-      : super(const Icon(Icons.map), 'Map coordinates', key: key);
+    : super(const Icon(Icons.map), 'Map coordinates', key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -56,26 +58,21 @@ class _MapCoordinatesBodyState extends State<_MapCoordinatesBody> {
           Padding(
             padding: const EdgeInsets.all(10.0),
             child: Center(
-              child: SizedBox(
-                width: 300.0,
-                height: 200.0,
-                child: googleMap,
-              ),
+              child: SizedBox(width: 300.0, height: 200.0, child: googleMap),
             ),
           ),
           if (mapController != null)
             Center(
-              child: Text('VisibleRegion:'
-                  '\nnortheast: ${_visibleRegion.northeast},'
-                  '\nsouthwest: ${_visibleRegion.southwest}'),
+              child: Text(
+                'VisibleRegion:'
+                '\nnortheast: ${_visibleRegion.northeast},'
+                '\nsouthwest: ${_visibleRegion.southwest}',
+              ),
             ),
           // Add a block at the bottom of this list to allow validation that the visible region of the map
           // does not change when scrolled under the safe view on iOS.
           // https://github.com/flutter/flutter/issues/107913
-          const SizedBox(
-            width: 300,
-            height: 1000,
-          ),
+          const SizedBox(width: 300, height: 1000),
         ],
       ),
     );

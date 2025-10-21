@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -91,11 +91,12 @@ void main() {
     });
 
     for (final StorageDirectory? type in <StorageDirectory>[
-      ...StorageDirectory.values
+      ...StorageDirectory.values,
     ]) {
       test('getExternalStoragePaths (type: $type) android succeeds', () async {
-        final List<String>? result =
-            await pathProvider.getExternalStoragePaths(type: type);
+        final List<String>? result = await pathProvider.getExternalStoragePaths(
+          type: type,
+        );
         expect(result!.length, 1);
         expect(result.first, kExternalStoragePaths);
       });
@@ -106,8 +107,7 @@ void main() {
       expect(path, kExternalStoragePaths);
     });
 
-    test(
-        'getDownloadsPath returns null, when getExternalStoragePaths returns '
+    test('getDownloadsPath returns null, when getExternalStoragePaths returns '
         'an empty list', () async {
       final PathProviderAndroid pathProvider = PathProviderAndroid();
       TestPathProviderApi.setUp(_Api(returnsExternalStoragePaths: false));

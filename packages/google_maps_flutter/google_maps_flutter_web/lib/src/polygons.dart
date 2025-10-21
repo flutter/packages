@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -7,10 +7,9 @@ part of '../google_maps_flutter_web.dart';
 /// This class manages a set of [PolygonController]s associated to a [GoogleMapController].
 class PolygonsController extends GeometryController {
   /// Initializes the cache. The [StreamController] comes from the [GoogleMapController], and is shared with other controllers.
-  PolygonsController({
-    required StreamController<MapEvent<Object?>> stream,
-  })  : _streamController = stream,
-        _polygonIdToController = <PolygonId, PolygonController>{};
+  PolygonsController({required StreamController<MapEvent<Object?>> stream})
+    : _streamController = stream,
+      _polygonIdToController = <PolygonId, PolygonController>{};
 
   // A cache of [PolygonController]s indexed by their [PolygonId].
   final Map<PolygonId, PolygonController> _polygonIdToController;
@@ -30,16 +29,19 @@ class PolygonsController extends GeometryController {
   }
 
   void _addPolygon(Polygon polygon) {
-    final gmaps.PolygonOptions polygonOptions =
-        _polygonOptionsFromPolygon(googleMap, polygon);
+    final gmaps.PolygonOptions polygonOptions = _polygonOptionsFromPolygon(
+      googleMap,
+      polygon,
+    );
     final gmaps.Polygon gmPolygon = gmaps.Polygon(polygonOptions)
       ..map = googleMap;
     final PolygonController controller = PolygonController(
-        polygon: gmPolygon,
-        consumeTapEvents: polygon.consumeTapEvents,
-        onTap: () {
-          _onPolygonTap(polygon.polygonId);
-        });
+      polygon: gmPolygon,
+      consumeTapEvents: polygon.consumeTapEvents,
+      onTap: () {
+        _onPolygonTap(polygon.polygonId);
+      },
+    );
     _polygonIdToController[polygon.polygonId] = controller;
   }
 

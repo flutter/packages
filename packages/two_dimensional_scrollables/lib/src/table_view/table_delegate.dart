@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -24,10 +24,8 @@ typedef TableSpanBuilder = TableSpan? Function(int index);
 ///
 /// Used by [TableCellBuilderDelegate.builder] to build cells on demand for the
 /// table.
-typedef TableViewCellBuilder = TableViewCell Function(
-  BuildContext context,
-  TableVicinity vicinity,
-);
+typedef TableViewCellBuilder =
+    TableViewCell Function(BuildContext context, TableVicinity vicinity);
 
 /// A mixin that defines the model for a [TwoDimensionalChildDelegate] to be
 /// used with a [TableView].
@@ -150,24 +148,25 @@ class TableCellBuilderDelegate extends TwoDimensionalChildBuilderDelegate
     required TableViewCellBuilder cellBuilder,
     required TableSpanBuilder columnBuilder,
     required TableSpanBuilder rowBuilder,
-  })  : assert(pinnedColumnCount >= 0),
-        assert(pinnedRowCount >= 0),
-        assert(rowCount == null || rowCount >= 0),
-        assert(columnCount == null || columnCount >= 0),
-        assert(columnCount == null || pinnedColumnCount <= columnCount),
-        assert(rowCount == null || pinnedRowCount <= rowCount),
-        _rowBuilder = rowBuilder,
-        _columnBuilder = columnBuilder,
-        _pinnedColumnCount = pinnedColumnCount,
-        _pinnedRowCount = pinnedRowCount,
-        super(
-          builder: (BuildContext context, ChildVicinity vicinity) =>
-              cellBuilder(context, vicinity as TableVicinity),
-          maxXIndex: columnCount == null ? columnCount : columnCount - 1,
-          maxYIndex: rowCount == null ? rowCount : rowCount - 1,
-          // repaintBoundaries handled by TableViewCell
-          addRepaintBoundaries: false,
-        );
+  }) : assert(pinnedColumnCount >= 0),
+       assert(pinnedRowCount >= 0),
+       assert(rowCount == null || rowCount >= 0),
+       assert(columnCount == null || columnCount >= 0),
+       assert(columnCount == null || pinnedColumnCount <= columnCount),
+       assert(rowCount == null || pinnedRowCount <= rowCount),
+       _rowBuilder = rowBuilder,
+       _columnBuilder = columnBuilder,
+       _pinnedColumnCount = pinnedColumnCount,
+       _pinnedRowCount = pinnedRowCount,
+       super(
+         builder:
+             (BuildContext context, ChildVicinity vicinity) =>
+                 cellBuilder(context, vicinity as TableVicinity),
+         maxXIndex: columnCount == null ? columnCount : columnCount - 1,
+         maxYIndex: rowCount == null ? rowCount : rowCount - 1,
+         // repaintBoundaries handled by TableViewCell
+         addRepaintBoundaries: false,
+       );
 
   @override
   int? get columnCount => maxXIndex == null ? null : maxXIndex! + 1;
@@ -252,17 +251,17 @@ class TableCellListDelegate extends TwoDimensionalChildListDelegate
     required List<List<TableViewCell>> cells,
     required TableSpanBuilder columnBuilder,
     required TableSpanBuilder rowBuilder,
-  })  : assert(pinnedColumnCount >= 0),
-        assert(pinnedRowCount >= 0),
-        _columnBuilder = columnBuilder,
-        _rowBuilder = rowBuilder,
-        _pinnedColumnCount = pinnedColumnCount,
-        _pinnedRowCount = pinnedRowCount,
-        super(
-          children: cells,
-          // repaintBoundaries handled by TableViewCell
-          addRepaintBoundaries: false,
-        ) {
+  }) : assert(pinnedColumnCount >= 0),
+       assert(pinnedRowCount >= 0),
+       _columnBuilder = columnBuilder,
+       _rowBuilder = rowBuilder,
+       _pinnedColumnCount = pinnedColumnCount,
+       _pinnedRowCount = pinnedRowCount,
+       super(
+         children: cells,
+         // repaintBoundaries handled by TableViewCell
+         addRepaintBoundaries: false,
+       ) {
     // Even if there are merged cells, they should be represented by the same
     // child in each cell location. This ensures that no matter which direction
     // the merged cell scrolls into view from, we can build the correct child

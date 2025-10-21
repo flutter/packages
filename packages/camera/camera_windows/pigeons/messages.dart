@@ -1,17 +1,18 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import 'package:pigeon/pigeon.dart';
 
-@ConfigurePigeon(PigeonOptions(
-  dartOut: 'lib/src/messages.g.dart',
-  cppOptions: CppOptions(namespace: 'camera_windows'),
-  cppHeaderOut: 'windows/messages.g.h',
-  cppSourceOut: 'windows/messages.g.cpp',
-  copyrightHeader: 'pigeons/copyright.txt',
-))
-
+@ConfigurePigeon(
+  PigeonOptions(
+    dartOut: 'lib/src/messages.g.dart',
+    cppOptions: CppOptions(namespace: 'camera_windows'),
+    cppHeaderOut: 'windows/messages.g.h',
+    cppSourceOut: 'windows/messages.g.cpp',
+    copyrightHeader: 'pigeons/copyright.txt',
+  ),
+)
 /// Pigeon version of platform interface's ResolutionPreset.
 enum PlatformResolutionPreset { low, medium, high, veryHigh, ultraHigh, max }
 
@@ -70,14 +71,6 @@ abstract class CameraApi {
   @async
   String stopVideoRecording(int cameraId);
 
-  /// Starts the image stream for the given camera.
-  @async
-  void startImageStream(int cameraId);
-
-  /// Stops the image stream for the given camera.
-  @async
-  void stopImageStream(int cameraId);
-
   /// Starts the preview stream for the given camera.
   @async
   void pausePreview(int cameraId);
@@ -85,4 +78,13 @@ abstract class CameraApi {
   /// Resumes the preview stream for the given camera.
   @async
   void resumePreview(int cameraId);
+}
+
+@FlutterApi()
+abstract class CameraEventApi {
+  /// Called when the camera instance is closing on the native side.
+  void cameraClosing();
+
+  /// Called when a camera error occurs on the native side.
+  void error(String errorMessage);
 }

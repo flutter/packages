@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -154,8 +154,6 @@ class VersionCheckCommand extends PackageLoopingCommand {
   final PubVersionFinder _pubVersionFinder;
 
   late final GitVersionFinder _gitVersionFinder;
-  late final String _mergeBase;
-  late final List<String> _changedFiles;
 
   late final Set<String> _prLabels = _getPRLabels();
 
@@ -177,8 +175,6 @@ class VersionCheckCommand extends PackageLoopingCommand {
   @override
   Future<void> initializeRun() async {
     _gitVersionFinder = await retrieveVersionFinder();
-    _mergeBase = await _gitVersionFinder.getBaseSha();
-    _changedFiles = await _gitVersionFinder.getChangedFiles();
   }
 
   @override
@@ -279,7 +275,7 @@ ${indentation}HTTP response: ${pubVersionFinderResponse.httpResponse.body}
     final String gitPath = path.style == p.Style.windows
         ? p.posix.joinAll(path.split(relativePath))
         : relativePath;
-    return _gitVersionFinder.getPackageVersion(gitPath, gitRef: _mergeBase);
+    return _gitVersionFinder.getPackageVersion(gitPath, gitRef: baseSha);
   }
 
   /// Returns the state of the verison of [package] relative to the comparison
@@ -303,7 +299,7 @@ ${indentation}HTTP response: ${pubVersionFinderResponse.httpResponse.body}
             '$indentation${pubspec.name}: Current largest version on pub: $previousVersion');
       }
     } else {
-      previousVersionSource = _mergeBase;
+      previousVersionSource = baseSha;
       previousVersion =
           await _getPreviousVersionFromGit(package) ?? Version.none;
     }
@@ -535,7 +531,7 @@ ${indentation}The first version listed in CHANGELOG.md is $fromChangeLog.
   /// This should only be called if the version did not change.
   Future<String?> _checkForMissingChangeError(RepositoryPackage package) async {
     // Find the relative path to the current package, as it would appear at the
-    // beginning of a path reported by getChangedFiles() (which always uses
+    // beginning of a path reported by changedFiles (which always uses
     // Posix paths).
     final Directory gitRoot =
         packagesDir.fileSystem.directory((await gitDir).path);
@@ -543,7 +539,7 @@ ${indentation}The first version listed in CHANGELOG.md is $fromChangeLog.
         getRelativePosixPath(package.directory, from: gitRoot);
 
     final PackageChangeState state = await checkPackageChangeState(package,
-        changedPaths: _changedFiles,
+        changedPaths: changedFiles,
         relativePackagePath: relativePackagePath,
         git: await retrieveVersionFinder());
 
@@ -551,11 +547,14 @@ ${indentation}The first version listed in CHANGELOG.md is $fromChangeLog.
       return null;
     }
 
+    bool missingVersionChange = false;
+    bool missingChangelogChange = false;
     if (state.needsVersionChange) {
       if (_prLabels.contains(_missingVersionChangeOverrideLabel)) {
         logWarning('Ignoring lack of version change due to the '
             '"$_missingVersionChangeOverrideLabel" label.');
       } else {
+        missingVersionChange = true;
         printError(
             'No version change found, but the change to this package could '
             'not be verified to be exempt\n'
@@ -563,8 +562,7 @@ ${indentation}The first version listed in CHANGELOG.md is $fromChangeLog.
             'If this is a false positive, please comment in '
             'the PR to explain why the PR\n'
             'is exempt, and add (or ask your reviewer to add) the '
-            '"$_missingVersionChangeOverrideLabel" label.');
-        return 'Missing version change';
+            '"$_missingVersionChangeOverrideLabel" label.\n');
       }
     }
 
@@ -573,6 +571,7 @@ ${indentation}The first version listed in CHANGELOG.md is $fromChangeLog.
         logWarning('Ignoring lack of CHANGELOG update due to the '
             '"$_missingChangelogChangeOverrideLabel" label.');
       } else {
+        missingChangelogChange = true;
         printError('No CHANGELOG change found.\n'
             'If this PR needs an exemption from the standard policy of listing '
             'all changes in the CHANGELOG,\n'
@@ -580,9 +579,22 @@ ${indentation}The first version listed in CHANGELOG.md is $fromChangeLog.
             'ask your reviewer to add) the\n'
             '"$_missingChangelogChangeOverrideLabel" label.\n'
             'Otherwise, please add a NEXT entry in the CHANGELOG as described in '
-            'the contributing guide.');
-        return 'Missing CHANGELOG change';
+            'the contributing guide.\n');
       }
+    }
+
+    if (missingVersionChange && missingChangelogChange) {
+      printError('If this PR is not exempt, you can update version and '
+          'CHANGELOG with the "update-release-info" command.\\\n'
+          'See here for an example: '
+          'https://github.com/flutter/packages/blob/main/script/tool/README.md#update-changelog-and-version\\\n'
+          'For more details on versioning, check the contributing guide.');
+    }
+    if (missingVersionChange) {
+      return 'Missing version change';
+    }
+    if (missingChangelogChange) {
+      return 'Missing CHANGELOG change';
     }
 
     return null;

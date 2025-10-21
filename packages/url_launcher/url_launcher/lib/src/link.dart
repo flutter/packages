@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -125,20 +125,23 @@ class DefaultLinkDelegate extends StatelessWidget {
     try {
       success = await launchUrl(
         url,
-        mode: _useWebView
-            ? LaunchMode.inAppBrowserView
-            : LaunchMode.externalApplication,
+        mode:
+            _useWebView
+                ? LaunchMode.inAppBrowserView
+                : LaunchMode.externalApplication,
       );
     } on PlatformException {
       success = false;
     }
     if (!success) {
-      FlutterError.reportError(FlutterErrorDetails(
-        exception: 'Could not launch link $url',
-        stack: StackTrace.current,
-        library: 'url_launcher',
-        context: ErrorDescription('during launching a link'),
-      ));
+      FlutterError.reportError(
+        FlutterErrorDetails(
+          exception: 'Could not launch link $url',
+          stack: StackTrace.current,
+          library: 'url_launcher',
+          context: ErrorDescription('during launching a link'),
+        ),
+      );
     }
   }
 

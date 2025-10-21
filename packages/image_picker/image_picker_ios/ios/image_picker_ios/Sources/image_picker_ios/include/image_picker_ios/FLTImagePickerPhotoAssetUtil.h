@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -13,8 +13,6 @@ NS_ASSUME_NONNULL_BEGIN
 @interface FLTImagePickerPhotoAssetUtil : NSObject
 
 + (nullable PHAsset *)getAssetFromImagePickerInfo:(NSDictionary *)info;
-
-+ (nullable PHAsset *)getAssetFromPHPickerResult:(PHPickerResult *)result API_AVAILABLE(ios(14));
 
 // Saves video to temporary URL. Returns nil on failure;
 + (NSURL *)saveVideoFromURL:(NSURL *)videoURL;

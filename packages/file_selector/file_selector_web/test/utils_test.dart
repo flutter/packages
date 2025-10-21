@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -40,7 +40,9 @@ void main() {
       test('works with mime types', () {
         const List<XTypeGroup> acceptedTypes = <XTypeGroup>[
           XTypeGroup(
-              label: 'jpgs', mimeTypes: <String>['image/jpeg', 'image/jpg']),
+            label: 'jpgs',
+            mimeTypes: <String>['image/jpeg', 'image/jpg'],
+          ),
           XTypeGroup(label: 'pngs', mimeTypes: <String>['image/png']),
         ];
         final String accepts = acceptedTypesToString(acceptedTypes);
@@ -60,7 +62,9 @@ void main() {
       test('throws for a type group that does not support web', () {
         const List<XTypeGroup> acceptedTypes = <XTypeGroup>[
           XTypeGroup(
-              label: 'text', uniformTypeIdentifiers: <String>['public.text']),
+            label: 'text',
+            uniformTypeIdentifiers: <String>['public.text'],
+          ),
         ];
         expect(() => acceptedTypesToString(acceptedTypes), throwsArgumentError);
       });

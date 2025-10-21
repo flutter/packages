@@ -1,14 +1,3 @@
-buildscript {
-    repositories {
-        google()
-        mavenCentral()
-    }
-
-    dependencies {
-        classpath 'com.android.tools.build:gradle:8.5.1'
-    }
-}
-
 allprojects {
     repositories {
         // See https://github.com/flutter/flutter/blob/master/docs/ecosystem/Plugins-and-Packages-repository-structure.md#gradle-structure for more info.
@@ -50,7 +39,7 @@ gradle.projectsEvaluated {
             //   'GuardedBy': class file for
             //   javax.annotation.concurrent.GuardedBy not found
             dependencies {
-                implementation "com.google.code.findbugs:jsr305:3.0.2"
+                implementation("com.google.code.findbugs:jsr305:3.0.2")
             }
         }
     }

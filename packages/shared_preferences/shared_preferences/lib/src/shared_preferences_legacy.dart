@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -7,6 +7,8 @@ import 'dart:async';
 import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
 import 'package:shared_preferences_platform_interface/types.dart';
+
+import 'shared_preferences_devtools_extension_data.dart';
 
 /// Wraps NSUserDefaults (on iOS) and SharedPreferences (on Android), providing
 /// a persistent store for simple data.
@@ -28,7 +30,8 @@ class SharedPreferences {
   static SharedPreferencesStorePlatform get _store =>
       SharedPreferencesStorePlatform.instance;
 
-  /// Sets the prefix that is attached to all keys for all shared preferences.
+  /// Sets the prefix that is attached to all keys for all shared preferences
+  /// read or written via this class.
   ///
   /// This changes the inputs when adding data to preferences as well as
   /// setting the filter that determines what data will be returned
@@ -42,6 +45,9 @@ class SharedPreferences {
   /// incompatible with shared_preferences. The optional parameter
   /// [allowList] will cause the plugin to only return preferences that
   /// are both contained in the list AND match the provided prefix.
+  ///
+  /// If [prefix] is changed, and an [allowList] is used, the prefix must be included
+  /// on the keys added to the [allowList].
   ///
   /// No migration of existing preferences is performed by this method.
   /// If you set a different prefix, and have previously stored preferences,
@@ -193,10 +199,7 @@ class SharedPreferences {
       try {
         return _store.clearWithParameters(
           ClearParameters(
-            filter: PreferencesFilter(
-              prefix: _prefix,
-              allowList: _allowList,
-            ),
+            filter: PreferencesFilter(prefix: _prefix, allowList: _allowList),
           ),
         );
       } catch (e) {
@@ -232,10 +235,7 @@ Either update the implementation to support setPrefix, or do not call setPrefix.
         fromSystem.addAll(
           await _store.getAllWithParameters(
             GetAllParameters(
-              filter: PreferencesFilter(
-                prefix: _prefix,
-                allowList: _allowList,
-              ),
+              filter: PreferencesFilter(prefix: _prefix, allowList: _allowList),
             ),
           ),
         );
@@ -271,16 +271,25 @@ Either update the implementation to support setPrefix, or do not call setPrefix.
   /// If the singleton instance has been initialized already, it is nullified.
   @visibleForTesting
   static void setMockInitialValues(Map<String, Object> values) {
-    final Map<String, Object> newValues =
-        values.map<String, Object>((String key, Object value) {
+    final Map<String, Object> newValues = values.map<String, Object>((
+      String key,
+      Object value,
+    ) {
       String newKey = key;
       if (!key.startsWith(_prefix)) {
         newKey = '$_prefix$key';
       }
       return MapEntry<String, Object>(newKey, value);
     });
-    SharedPreferencesStorePlatform.instance =
-        InMemorySharedPreferencesStore.withData(newValues);
+    SharedPreferencesStorePlatform
+        .instance = InMemorySharedPreferencesStore.withData(newValues);
     _completer = null;
   }
 }
+
+// Include an unused import to ensure this library is included
+// when running `flutter run -d chrome`.
+// Check this discussion for more info: https://github.com/flutter/packages/pull/6749/files/6eb1b4fdce1eba107294770d581713658ff971e9#discussion_r1755375409
+// ignore: unused_element
+final bool _fieldToKeepDevtoolsExtensionReachable =
+    fieldToKeepDevtoolsExtensionLibraryAlive;

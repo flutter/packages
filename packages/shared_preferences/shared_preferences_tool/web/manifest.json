@@ -1,0 +1,11 @@
+{
+    "name": "shared_preferences_tool",
+    "short_name": "shared_preferences_tool",
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#0175C2",
+    "theme_color": "#0175C2",
+    "description": "A new Flutter project.",
+    "orientation": "portrait-primary",
+    "prefer_related_applications": false
+}

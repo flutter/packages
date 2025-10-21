@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -66,7 +66,7 @@ class Polyline implements MapsObject<Polyline> {
   /// polyline except the start and end vertices. See [JointType] for supported joint types. The default value is
   /// mitered.
   ///
-  /// Supported on Android only.
+  /// Not supported on all platforms.
   final JointType jointType;
 
   /// The stroke pattern for the polyline.
@@ -86,14 +86,14 @@ class Polyline implements MapsObject<Polyline> {
   ///
   /// The default start cap is ButtCap.
   ///
-  /// Supported on Android only.
+  /// Not supported on all platforms.
   final Cap startCap;
 
   /// The cap at the end vertex of the polyline.
   ///
   /// The default end cap is ButtCap.
   ///
-  /// Supported on Android only.
+  /// Not supported on all platforms.
   final Cap endCap;
 
   /// True if the polyline is visible.

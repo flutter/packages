@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -16,16 +16,10 @@ import androidx.annotation.Nullable;
  *
  * <p>See {@link androidx.media3.common.Player.Listener} for details.
  */
-interface VideoPlayerCallbacks {
+public interface VideoPlayerCallbacks {
   void onInitialized(int width, int height, long durationInMs, int rotationCorrectionInDegrees);
 
-  void onBufferingStart();
-
-  void onBufferingUpdate(long bufferedPosition);
-
-  void onBufferingEnd();
-
-  void onCompleted();
+  void onPlaybackStateChanged(@NonNull PlatformPlaybackState state);
 
   void onError(@NonNull String code, @Nullable String message, @Nullable Object details);
 

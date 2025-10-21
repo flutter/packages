@@ -1,8 +1,7 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 import 'package:file/file.dart';
-import 'package:file/memory.dart';
 import 'package:flutter_plugin_tools/src/common/git_version_finder.dart';
 import 'package:flutter_plugin_tools/src/common/package_state_utils.dart';
 import 'package:test/fake.dart';
@@ -11,12 +10,11 @@ import 'package:test/test.dart';
 import '../util.dart';
 
 void main() {
-  late FileSystem fileSystem;
   late Directory packagesDir;
 
   setUp(() {
-    fileSystem = MemoryFileSystem();
-    packagesDir = createPackagesDirectory(fileSystem: fileSystem);
+    (:packagesDir, processRunner: _, gitProcessRunner: _, gitDir: _) =
+        configureBaseCommandMocks();
   });
 
   group('checkPackageChangeState', () {
@@ -256,7 +254,7 @@ void main() {
 
     test(
         'does not requires changelog or version change for build.gradle '
-        'test-dependency-only changes', () async {
+        'test-dependency-only changes with space style', () async {
       final RepositoryPackage package =
           createFakePlugin('a_plugin', packagesDir);
 
@@ -283,7 +281,37 @@ void main() {
       expect(state.needsChangelogChange, false);
     });
 
-    test('requires changelog or version change for other build.gradle changes',
+    test(
+        'does not require changelog or version change for build.gradle '
+        'test-dependency-only changes with paren style', () async {
+      final RepositoryPackage package =
+          createFakePlugin('a_plugin', packagesDir);
+
+      const List<String> changedFiles = <String>[
+        'packages/a_plugin/android/build.gradle',
+      ];
+
+      final GitVersionFinder git = FakeGitVersionFinder(<String, List<String>>{
+        'packages/a_plugin/android/build.gradle': <String>[
+          '-  androidTestImplementation("androidx.test.espresso:espresso-core:3.2.0")',
+          '-  testImplementation("junit:junit:4.10.0")',
+          '+  androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")',
+          '+  testImplementation("junit:junit:4.13.2")',
+        ]
+      });
+
+      final PackageChangeState state = await checkPackageChangeState(package,
+          changedPaths: changedFiles,
+          relativePackagePath: 'packages/a_plugin/',
+          git: git);
+
+      expect(state.hasChanges, true);
+      expect(state.needsVersionChange, false);
+      expect(state.needsChangelogChange, false);
+    });
+
+    test(
+        'requires changelog or version change for other build.gradle changes with space style',
         () async {
       final RepositoryPackage package =
           createFakePlugin('a_plugin', packagesDir);
@@ -300,6 +328,37 @@ void main() {
           "+  testImplementation 'junit:junit:4.13.2'",
           "-  implementation 'com.google.android.gms:play-services-maps:18.0.0'",
           "+  implementation 'com.google.android.gms:play-services-maps:18.0.2'",
+        ]
+      });
+
+      final PackageChangeState state = await checkPackageChangeState(package,
+          changedPaths: changedFiles,
+          relativePackagePath: 'packages/a_plugin/',
+          git: git);
+
+      expect(state.hasChanges, true);
+      expect(state.needsVersionChange, true);
+      expect(state.needsChangelogChange, true);
+    });
+
+    test(
+        'requires changelog or version change for other build.gradle changes with paren style',
+        () async {
+      final RepositoryPackage package =
+          createFakePlugin('a_plugin', packagesDir);
+
+      const List<String> changedFiles = <String>[
+        'packages/a_plugin/android/build.gradle',
+      ];
+
+      final GitVersionFinder git = FakeGitVersionFinder(<String, List<String>>{
+        'packages/a_plugin/android/build.gradle': <String>[
+          '-  androidTestImplementation("androidx.test.espresso:espresso-core:3.2.0")',
+          '-  testImplementation("junit:junit:4.10.0")',
+          '+  androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")',
+          '+  testImplementation("junit:junit:4.13.2")',
+          '-  implementation("com.google.android.gms:play-services-maps:18.0.0")',
+          '+  implementation("com.google.android.gms:play-services-maps:18.0.2")',
         ]
       });
 

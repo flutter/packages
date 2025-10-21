@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -20,12 +20,7 @@ import 'shared.dart';
 external GoogleAccountsId get id;
 
 /// The Dart definition of the `google.accounts.id` global.
-@JS()
-@staticInterop
-abstract class GoogleAccountsId {}
-
-/// The `google.accounts.id` methods
-extension GoogleAccountsIdExtension on GoogleAccountsId {
+extension type GoogleAccountsId._(JSObject _) implements JSObject {
   /// An undocumented method.
   ///
   /// Try it with 'debug'.
@@ -100,12 +95,11 @@ extension GoogleAccountsIdExtension on GoogleAccountsId {
   ///
   /// Method: google.accounts.id.renderButton
   /// https://developers.google.com/identity/gsi/web/reference/js-reference#google.accounts.id.renderButton
-  void renderButton(
-    Object parent, [
-    GsiButtonConfiguration? options,
-  ]) {
-    assert(parent is JSObject,
-        'parent must be a JSObject. Use package:web to retrieve/create one.');
+  void renderButton(Object parent, [GsiButtonConfiguration? options]) {
+    assert(
+      parent is JSObject,
+      'parent must be a JSObject. Use package:web to retrieve/create one.',
+    );
     parent as JSObject;
     if (options == null) {
       return _renderButton(parent);
@@ -117,7 +111,9 @@ extension GoogleAccountsIdExtension on GoogleAccountsId {
   external void _renderButton(JSObject parent);
   @JS('renderButton')
   external void _renderButtonWithOptions(
-      JSObject parent, GsiButtonConfiguration options);
+    JSObject parent,
+    GsiButtonConfiguration options,
+  );
 
   /// Record when the user signs out of your website in cookies.
   ///
@@ -146,7 +142,9 @@ extension GoogleAccountsIdExtension on GoogleAccountsId {
   external void _jsStoreCredential(Credential credential);
   @JS('storeCredential')
   external void _jsStoreCredentialWithCallback(
-      Credential credential, JSFunction callback);
+    Credential credential,
+    JSFunction callback,
+  );
 
   /// Cancels the One Tap flow.
   ///
@@ -164,7 +162,8 @@ extension GoogleAccountsIdExtension on GoogleAccountsId {
   /// ID is the `sub` property of the [CredentialResponse.credential] payload.
   ///
   /// The optional [callback] is a function that gets called to report on the
-  /// success of the revocation call.
+  /// success of the revocation call. It must be a Dart function and not a JS
+  /// function.
   ///
   /// Method: google.accounts.id.revoke
   /// https://developers.google.com/identity/gsi/web/reference/js-reference#google.accounts.id.revoke
@@ -185,10 +184,7 @@ extension GoogleAccountsIdExtension on GoogleAccountsId {
 ///
 /// Data type: IdConfiguration
 /// https://developers.google.com/identity/gsi/web/reference/js-reference#IdConfiguration
-@JS()
-@anonymous
-@staticInterop
-abstract class IdConfiguration {
+extension type IdConfiguration._(JSObject _) implements JSObject {
   /// Constructs a IdConfiguration object in JavaScript.
   factory IdConfiguration({
     /// Your application's client ID, which is found and created in the Google
@@ -354,12 +350,7 @@ typedef PromptMomentListenerFn = void Function(PromptMomentNotification moment);
 ///
 /// Data type: PromptMomentNotification
 /// https://developers.google.com/identity/gsi/web/reference/js-reference#PromptMomentNotification
-@JS()
-@staticInterop
-abstract class PromptMomentNotification {}
-
-/// The methods of the [PromptMomentNotification] data type:
-extension PromptMomentNotificationExtension on PromptMomentNotification {
+extension type PromptMomentNotification._(JSObject _) implements JSObject {
   /// Is this notification for a display moment?
   bool isDisplayMoment() => _isDisplayMoment().toDart;
   @JS('isDisplayMoment')
@@ -393,7 +384,9 @@ extension PromptMomentNotificationExtension on PromptMomentNotification {
 
   /// The detailed reason why the UI isn't displayed.
   MomentNotDisplayedReason? getNotDisplayedReason() => maybeEnum(
-      _getNotDisplayedReason()?.toDart, MomentNotDisplayedReason.values);
+    _getNotDisplayedReason()?.toDart,
+    MomentNotDisplayedReason.values,
+  );
   @JS('getNotDisplayedReason')
   external JSString? _getNotDisplayedReason();
 
@@ -414,12 +407,7 @@ extension PromptMomentNotificationExtension on PromptMomentNotification {
 ///
 /// Data type: CredentialResponse
 /// https://developers.google.com/identity/gsi/web/reference/js-reference#CredentialResponse
-@JS()
-@staticInterop
-abstract class CredentialResponse {}
-
-/// The fields that are contained in the credential response object.
-extension CredentialResponseExtension on CredentialResponse {
+extension type CredentialResponse._(JSObject _) implements JSObject {
   /// The ClientID for this Credential.
   String? get client_id => _client_id?.toDart;
   @JS('client_id')
@@ -468,10 +456,7 @@ typedef CallbackFn = void Function(CredentialResponse credentialResponse);
 ///
 /// Data type: GsiButtonConfiguration
 /// https://developers.google.com/identity/gsi/web/reference/js-reference#GsiButtonConfiguration
-@JS()
-@anonymous
-@staticInterop
-abstract class GsiButtonConfiguration {
+extension type GsiButtonConfiguration._(JSObject _) implements JSObject {
   /// Constructs an options object for the [renderButton] method.
   factory GsiButtonConfiguration({
     /// The button type.
@@ -534,12 +519,7 @@ abstract class GsiButtonConfiguration {
 }
 
 /// The object passed as an optional parameter to `click_listener` function.
-@JS()
-@staticInterop
-abstract class GsiButtonData {}
-
-/// The fields that are contained in the button data.
-extension GsiButtonDataExtension on GsiButtonData {
+extension type GsiButtonData._(JSObject _) implements JSObject {
   /// Nonce
   String? get nonce => _nonce?.toDart;
   @JS('nonce')
@@ -564,24 +544,12 @@ typedef GsiButtonClickListenerFn = void Function(GsiButtonData? gsiButtonData);
 ///
 /// Data type: Credential
 /// https://developers.google.com/identity/gsi/web/reference/js-reference#type-Credential
-@JS()
-@anonymous
-@staticInterop
-abstract class Credential {
+extension type Credential._(JSObject _) implements JSObject {
   ///
-  factory Credential({
-    required String id,
-    required String password,
-  }) =>
-      Credential._toJS(
-        id: id.toJS,
-        password: password.toJS,
-      );
+  factory Credential({required String id, required String password}) =>
+      Credential._toJS(id: id.toJS, password: password.toJS);
 
-  external factory Credential._toJS({
-    JSString id,
-    JSString password,
-  });
+  external factory Credential._toJS({JSString id, JSString password});
 }
 
 /// The fields that are contained in the [Credential] object.
@@ -611,20 +579,14 @@ typedef NativeCallbackFn = void Function(Credential credential);
 
 /// The type of the `callback` function passed to [revoke], to be notified of
 /// the success of the revocation operation.
-typedef RevocationResponseHandlerFn = void Function(
-  RevocationResponse revocationResponse,
-);
+typedef RevocationResponseHandlerFn =
+    void Function(RevocationResponse revocationResponse);
 
 /// The parameter passed to the `callback` of the [revoke] function.
 ///
 /// Data type: RevocationResponse
 /// https://developers.google.com/identity/gsi/web/reference/js-reference#RevocationResponse
-@JS()
-@staticInterop
-abstract class RevocationResponse {}
-
-/// The fields that are contained in the [RevocationResponse] object.
-extension RevocationResponseExtension on RevocationResponse {
+extension type RevocationResponse._(JSObject _) implements JSObject {
   /// This field is a boolean value set to true if the revoke method call
   /// succeeded or false on failure.
   bool get successful => _successful.toDart;

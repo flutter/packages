@@ -1,15 +1,16 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import 'package:pigeon/pigeon.dart';
 
-@ConfigurePigeon(PigeonOptions(
-  dartOut: 'lib/src/messages.g.dart',
-  swiftOut: 'ios/url_launcher_ios/Sources/url_launcher_ios/messages.g.swift',
-  copyrightHeader: 'pigeons/copyright.txt',
-))
-
+@ConfigurePigeon(
+  PigeonOptions(
+    dartOut: 'lib/src/messages.g.dart',
+    swiftOut: 'ios/url_launcher_ios/Sources/url_launcher_ios/messages.g.swift',
+    copyrightHeader: 'pigeons/copyright.txt',
+  ),
+)
 /// Possible outcomes of launching a URL.
 enum LaunchResult {
   /// The URL was successfully launched (or could be, for `canLaunchUrl`).
@@ -32,6 +33,9 @@ enum InAppLoadResult {
 
   /// The URL could not be launched because it is invalid.
   invalidUrl,
+
+  /// The controller was closed before loading.
+  dismissed,
 }
 
 @HostApi()

@@ -1,3 +1,56 @@
+## 6.3.24
+
+* Resolves Gradle 9 deprecations. 
+
+## 6.3.23
+
+* Updates Java compatibility version to 17.
+
+## 6.3.22
+
+* Adds support for `externalNonBrowserApplication` on API 30+.
+
+## 6.3.21
+
+* Updates minimum supported SDK version to Flutter 3.35.
+* Removes obsolete code related to supporting SDK <24.
+
+## 6.3.20
+
+* Restore SDK 21-23 support, as the previous change was intended
+  to require Flutter 3.35, but didn't.
+
+## 6.3.19
+
+* **Retracted** due to not including the Flutter min SDK change.
+* Updates minimum supported SDK version to Flutter 3.35.
+* Removes obsolete code related to supporting SDK <24.
+
+## 6.3.18
+
+* Bumps com.android.tools.build:gradle to 8.12.1.
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
+## 6.3.17
+
+* Updates kotlin version to 2.2.0 to enable gradle 8.11 support.
+
+## 6.3.16
+
+* Removes obsolete code related to supporting SDK <21.
+
+## 6.3.15
+
+* Updates compileSdk 34 to flutter.compileSdkVersion.
+
+## 6.3.14
+
+* Bumps androidx.annotation:annotation from 1.9.0 to 1.9.1.
+
+## 6.3.13
+
+* Bumps androidx.annotation:annotation from 1.8.2 to 1.9.0.
+
 ## 6.3.12
 
 * Updates Java compatibility version to 11.

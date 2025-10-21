@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -11,8 +11,9 @@ void main() {
 
   group('DeviceOrientationChangedEvent tests', () {
     test('Constructor should initialize all properties', () {
-      const DeviceOrientationChangedEvent event =
-          DeviceOrientationChangedEvent(DeviceOrientation.portraitUp);
+      const DeviceOrientationChangedEvent event = DeviceOrientationChangedEvent(
+        DeviceOrientation.portraitUp,
+      );
 
       expect(event.orientation, DeviceOrientation.portraitUp);
     });
@@ -20,15 +21,16 @@ void main() {
     test('fromJson should initialize all properties', () {
       final DeviceOrientationChangedEvent event =
           DeviceOrientationChangedEvent.fromJson(const <String, dynamic>{
-        'orientation': 'portraitUp',
-      });
+            'orientation': 'portraitUp',
+          });
 
       expect(event.orientation, DeviceOrientation.portraitUp);
     });
 
     test('toJson should return a map with all fields', () {
-      const DeviceOrientationChangedEvent event =
-          DeviceOrientationChangedEvent(DeviceOrientation.portraitUp);
+      const DeviceOrientationChangedEvent event = DeviceOrientationChangedEvent(
+        DeviceOrientation.portraitUp,
+      );
 
       final Map<String, dynamic> jsonMap = event.toJson();
 
@@ -55,8 +57,9 @@ void main() {
     });
 
     test('hashCode should match hashCode of all properties', () {
-      const DeviceOrientationChangedEvent event =
-          DeviceOrientationChangedEvent(DeviceOrientation.portraitUp);
+      const DeviceOrientationChangedEvent event = DeviceOrientationChangedEvent(
+        DeviceOrientation.portraitUp,
+      );
       final int expectedHashCode = event.orientation.hashCode;
 
       expect(event.hashCode, expectedHashCode);

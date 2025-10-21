@@ -1,13 +1,11 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import 'package:flutter/foundation.dart';
 
 import 'platform_ads_manager_delegate.dart';
-
-/// Additional parameter passed to an [PlatformAdsManager] on initialization.
-base class AdsManagerInitParams {}
+import 'platform_ads_rendering_settings.dart';
 
 /// Additional parameter passed to an [PlatformAdsManager] when starting to play
 /// ads.
@@ -17,10 +15,15 @@ base class AdsManagerStartParams {}
 abstract class PlatformAdsManager {
   /// Creates a [PlatformAdsManager].
   @protected
-  PlatformAdsManager();
+  PlatformAdsManager({required this.adCuePoints});
+
+  /// List of content time offsets at which ad breaks are scheduled.
+  ///
+  /// The list will be empty if no ad breaks are scheduled.
+  final List<Duration> adCuePoints;
 
   /// Initializes the ad experience using default rendering settings.
-  Future<void> init(AdsManagerInitParams params);
+  Future<void> init({PlatformAdsRenderingSettings? settings});
 
   /// Starts playing the ads.
   Future<void> start(AdsManagerStartParams params);

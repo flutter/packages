@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -12,17 +12,22 @@ import 'package:go_router/src/match.dart';
 import 'test_helpers.dart';
 
 void main() {
-  testWidgets('RouteMatchList toString prints the fullPath',
-      (WidgetTester tester) async {
+  testWidgets('RouteMatchList toString prints the fullPath', (
+    WidgetTester tester,
+  ) async {
     final List<GoRoute> routes = <GoRoute>[
       GoRoute(
-          path: '/page-0',
-          builder: (BuildContext context, GoRouterState state) =>
-              const Placeholder()),
+        path: '/page-0',
+        builder:
+            (BuildContext context, GoRouterState state) => const Placeholder(),
+      ),
     ];
 
-    final GoRouter router =
-        await createRouter(routes, tester, initialLocation: '/page-0');
+    final GoRouter router = await createRouter(
+      routes,
+      tester,
+      initialLocation: '/page-0',
+    );
 
     final RouteMatchList matches = router.routerDelegate.currentConfiguration;
     expect(matches.toString(), contains('/page-0'));
@@ -31,8 +36,8 @@ void main() {
   test('RouteMatchList compares', () async {
     final GoRoute route = GoRoute(
       path: '/page-0',
-      builder: (BuildContext context, GoRouterState state) =>
-          const Placeholder(),
+      builder:
+          (BuildContext context, GoRouterState state) => const Placeholder(),
     );
     final Map<String, String> params1 = <String, String>{};
     final List<RouteMatchBase> match1 = RouteMatchBase.match(
@@ -77,13 +82,15 @@ void main() {
       routes: <GoRoute>[
         GoRoute(
           path: '/a',
-          builder: (BuildContext context, GoRouterState state) =>
-              const Placeholder(),
+          builder:
+              (BuildContext context, GoRouterState state) =>
+                  const Placeholder(),
         ),
         GoRoute(
           path: '/b',
-          builder: (BuildContext context, GoRouterState state) =>
-              const Placeholder(),
+          builder:
+              (BuildContext context, GoRouterState state) =>
+                  const Placeholder(),
         ),
       ],
       redirectLimit: 0,
@@ -94,10 +101,13 @@ void main() {
 
     final RouteMatchList list1 = configuration.findMatch(Uri.parse('/a'));
     final RouteMatchList list2 = configuration.findMatch(Uri.parse('/b'));
-    list1.push(ImperativeRouteMatch(
+    list1.push(
+      ImperativeRouteMatch(
         pageKey: const ValueKey<String>('/b-p0'),
         matches: list2,
-        completer: Completer<Object?>()));
+        completer: Completer<Object?>(),
+      ),
+    );
 
     final Map<Object?, Object?> encoded = codec.encode(list1);
     final RouteMatchList decoded = codec.decode(encoded);

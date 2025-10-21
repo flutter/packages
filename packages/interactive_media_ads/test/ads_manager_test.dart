@@ -1,6 +1,8 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+
+import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -11,12 +13,25 @@ import 'test_stubs.dart';
 
 void main() {
   test('init', () async {
+    final AdsRenderingSettings adsRenderingSettings =
+        AdsRenderingSettings.fromPlatform(
+          TestAdsRenderingSettings(
+            const PlatformAdsRenderingSettingsCreationParams(),
+          ),
+        );
+
+    final Completer<PlatformAdsRenderingSettings> settingsCompleter =
+        Completer<PlatformAdsRenderingSettings>();
+
     final TestAdsManager platformManager = TestAdsManager(
-      onInit: expectAsync1((_) async {}),
+      onInit: ({PlatformAdsRenderingSettings? settings}) async {
+        settingsCompleter.complete(settings);
+      },
     );
 
     final AdsManager manager = createAdsManager(platformManager);
-    await manager.init();
+    await manager.init(settings: adsRenderingSettings);
+    expect(await settingsCompleter.future, adsRenderingSettings.platform);
   });
 
   test('start', () async {
@@ -34,11 +49,13 @@ void main() {
     );
 
     final AdsManager manager = createAdsManager(platformManager);
-    await manager.setAdsManagerDelegate(AdsManagerDelegate.fromPlatform(
-      TestPlatformAdsManagerDelegate(
-        const PlatformAdsManagerDelegateCreationParams(),
+    await manager.setAdsManagerDelegate(
+      AdsManagerDelegate.fromPlatform(
+        TestPlatformAdsManagerDelegate(
+          const PlatformAdsManagerDelegateCreationParams(),
+        ),
       ),
-    ));
+    );
   });
 
   test('discardAdBreak', () async {
@@ -85,23 +102,34 @@ void main() {
     final AdsManager manager = createAdsManager(platformManager);
     await manager.destroy();
   });
+
+  test('adCuePoints', () async {
+    final TestAdsManager platformManager = TestAdsManager(
+      adCuePoints: const <Duration>[Duration(seconds: 5)],
+    );
+
+    final AdsManager manager = createAdsManager(platformManager);
+    expect(platformManager.adCuePoints, manager.adCuePoints);
+  });
 }
 
 AdsManager createAdsManager(PlatformAdsManager platformManager) {
   InteractiveMediaAdsPlatform.instance = TestInteractiveMediaAdsPlatform(
     onCreatePlatformAdsLoader: (PlatformAdsLoaderCreationParams params) {
-      return TestPlatformAdsLoader(params,
-          onContentComplete: () async {},
-          onRequestAds: (PlatformAdsRequest request) async {});
+      return TestPlatformAdsLoader(
+        params,
+        onContentComplete: () async {},
+        onRequestAds: (PlatformAdsRequest request) async {},
+      );
     },
     onCreatePlatformAdsManagerDelegate:
         (PlatformAdsManagerDelegateCreationParams params) {
-      throw UnimplementedError();
-    },
+          throw UnimplementedError();
+        },
     onCreatePlatformAdDisplayContainer:
         (PlatformAdDisplayContainerCreationParams params) {
-      throw UnimplementedError();
-    },
+          throw UnimplementedError();
+        },
     onCreatePlatformContentProgressProvider: (_) => throw UnimplementedError(),
   );
 
@@ -110,9 +138,7 @@ AdsManager createAdsManager(PlatformAdsManager platformManager) {
   final AdsLoader loader = AdsLoader(
     container: AdDisplayContainer.fromPlatform(
       platform: TestPlatformAdDisplayContainer(
-        PlatformAdDisplayContainerCreationParams(
-          onContainerAdded: (_) {},
-        ),
+        PlatformAdDisplayContainerCreationParams(onContainerAdded: (_) {}),
         onBuild: (_) => Container(),
       ),
     ),
@@ -122,9 +148,9 @@ AdsManager createAdsManager(PlatformAdsManager platformManager) {
     onAdsLoadError: (_) {},
   );
 
-  loader.platform.params.onAdsLoaded(PlatformOnAdsLoadedData(
-    manager: platformManager,
-  ));
+  loader.platform.params.onAdsLoaded(
+    PlatformOnAdsLoadedData(manager: platformManager),
+  );
 
   return manager;
 }

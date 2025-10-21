@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -25,7 +25,10 @@ bool isImageQualityValid(int imageQuality) {
 /// maxWidth is the maximum width of the scaled image
 /// maxHeight is the maximum height of the scaled image
 Size calculateSizeOfDownScaledImage(
-    Size imageSize, double? maxWidth, double? maxHeight) {
+  Size imageSize,
+  double? maxWidth,
+  double? maxHeight,
+) {
   final double widthFactor = maxWidth != null ? imageSize.width / maxWidth : 1;
   final double heightFactor =
       maxHeight != null ? imageSize.height / maxHeight : 1;

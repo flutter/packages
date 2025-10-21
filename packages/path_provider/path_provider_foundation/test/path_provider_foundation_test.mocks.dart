@@ -32,15 +32,13 @@ class MockTestPathProviderApi extends _i1.Mock
 
   @override
   String? getDirectoryPath(_i3.DirectoryType? type) =>
-      (super.noSuchMethod(Invocation.method(
-        #getDirectoryPath,
-        [type],
-      )) as String?);
+      (super.noSuchMethod(Invocation.method(#getDirectoryPath, [type]))
+          as String?);
 
   @override
   String? getContainerPath(String? appGroupIdentifier) =>
-      (super.noSuchMethod(Invocation.method(
-        #getContainerPath,
-        [appGroupIdentifier],
-      )) as String?);
+      (super.noSuchMethod(
+            Invocation.method(#getContainerPath, [appGroupIdentifier]),
+          )
+          as String?);
 }

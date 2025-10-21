@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -39,10 +39,7 @@ import 'web_resource_response.dart';
 @immutable
 class HttpResponseError {
   /// Used by the platform implementation to create a new [HttpResponseError].
-  const HttpResponseError({
-    this.request,
-    this.response,
-  });
+  const HttpResponseError({this.request, this.response});
 
   /// The associated request.
   final WebResourceRequest? request;

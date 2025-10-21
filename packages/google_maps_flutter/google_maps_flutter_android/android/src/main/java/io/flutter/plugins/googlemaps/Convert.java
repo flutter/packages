@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -29,6 +29,7 @@ import com.google.android.gms.maps.model.CustomCap;
 import com.google.android.gms.maps.model.Dash;
 import com.google.android.gms.maps.model.Dot;
 import com.google.android.gms.maps.model.Gap;
+import com.google.android.gms.maps.model.GroundOverlay;
 import com.google.android.gms.maps.model.JointType;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -40,6 +41,7 @@ import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.heatmaps.Gradient;
 import com.google.maps.android.heatmaps.WeightedLatLng;
 import io.flutter.FlutterInjector;
+import io.flutter.plugins.googlemaps.Messages.FlutterError;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -358,6 +360,14 @@ class Convert {
     return MAP_TYPE_NORMAL;
   }
 
+  // For now, suppress the deprecation warning for LEGACY; in theory using it
+  // no longer does anything, but since that's a server-side decision that could
+  // potentially change. Once enough time has passed that there's no plausible
+  // chance of the server honoring LEGACY again, that mapping can be removed and
+  // it can just return null, causing anyone still using the deprecated value
+  // in Dart to actually request the platform default (which is what the server
+  // is already doing in practice currently).
+  @SuppressWarnings("deprecation")
   static @Nullable MapsInitializer.Renderer toMapRendererType(
       @Nullable Messages.PlatformRendererType type) {
     if (type == null) {
@@ -847,6 +857,146 @@ class Convert {
 
   static Tile tileFromPigeon(Messages.PlatformTile tile) {
     return new Tile(tile.getWidth().intValue(), tile.getHeight().intValue(), tile.getData());
+  }
+
+  /**
+   * Set the options in the given ground overlay object to the given sink.
+   *
+   * @param groundOverlay the object expected to be a PlatformGroundOverlay containing the ground
+   *     overlay options.
+   * @param sink the GroundOverlaySink where the options will be set.
+   * @param assetManager An instance of Android's AssetManager, which provides access to any raw
+   *     asset files stored in the application's assets directory.
+   * @param density the density of the display, used to calculate pixel dimensions.
+   * @param wrapper the BitmapDescriptorFactoryWrapper to create BitmapDescriptor.
+   * @return the identifier of the ground overlay. The identifier is valid as long as the ground
+   *     overlay exists.
+   * @throws IllegalArgumentException if required fields are missing or invalid.
+   */
+  static @NonNull String interpretGroundOverlayOptions(
+      @NonNull Messages.PlatformGroundOverlay groundOverlay,
+      @NonNull GroundOverlaySink sink,
+      @NonNull AssetManager assetManager,
+      float density,
+      @NonNull BitmapDescriptorFactoryWrapper wrapper) {
+    sink.setTransparency(groundOverlay.getTransparency().floatValue());
+    sink.setZIndex(groundOverlay.getZIndex().floatValue());
+    sink.setVisible(groundOverlay.getVisible());
+    if (groundOverlay.getAnchor() != null) {
+      sink.setAnchor(
+          groundOverlay.getAnchor().getX().floatValue(),
+          groundOverlay.getAnchor().getY().floatValue());
+    }
+    sink.setBearing(groundOverlay.getBearing().floatValue());
+    sink.setClickable(groundOverlay.getClickable());
+    sink.setImage(toBitmapDescriptor(groundOverlay.getImage(), assetManager, density, wrapper));
+    if (groundOverlay.getPosition() != null) {
+      if (groundOverlay.getWidth() == null) {
+        throw new FlutterError(
+            "Invalid GroundOverlay",
+            "Width is required when using a ground overlay with a position.",
+            null);
+      }
+      sink.setPosition(
+          latLngFromPigeon(groundOverlay.getPosition()),
+          groundOverlay.getWidth().floatValue(),
+          groundOverlay.getHeight() != null ? groundOverlay.getHeight().floatValue() : null);
+    } else if (groundOverlay.getBounds() != null) {
+      sink.setPositionFromBounds(latLngBoundsFromPigeon(groundOverlay.getBounds()));
+    }
+    return groundOverlay.getGroundOverlayId();
+  }
+
+  /**
+   * Converts a GroundOverlay object to a PlatformGroundOverlay Pigeon object.
+   *
+   * @param groundOverlay the GroundOverlay object to convert.
+   * @param groundOverlayId the identifier of the GroundOverlay.
+   * @param isCreatedWithBounds indicates if the GroundOverlay was created with bounds.
+   * @return the converted PlatformGroundOverlay object.
+   */
+  static @NonNull Messages.PlatformGroundOverlay groundOverlayToPigeon(
+      @NonNull GroundOverlay groundOverlay,
+      @NonNull String groundOverlayId,
+      boolean isCreatedWithBounds) {
+
+    // Image is mandatory field on PlatformGroundOverlay (and it should be kept
+    // non-nullable), therefore image must be set for the object. The image is
+    // description either contains set of bytes, or path to asset. This info is
+    // converted to format google maps uses (BitmapDescription), and the original
+    // data is not stored on native code. Therefore placeholder image is used for
+    // the image field.
+    Messages.PlatformBitmap dummyImage =
+        new Messages.PlatformBitmap.Builder()
+            .setBitmap(
+                new Messages.PlatformBitmapBytesMap.Builder()
+                    .setByteData(new byte[] {0})
+                    .setImagePixelRatio(1.0)
+                    .setBitmapScaling(Messages.PlatformMapBitmapScaling.NONE)
+                    .build())
+            .build();
+
+    Messages.PlatformGroundOverlay.Builder builder =
+        new Messages.PlatformGroundOverlay.Builder()
+            .setGroundOverlayId(groundOverlayId)
+            .setImage(dummyImage)
+            .setWidth((double) groundOverlay.getWidth())
+            .setHeight((double) groundOverlay.getHeight())
+            .setBearing((double) groundOverlay.getBearing())
+            .setTransparency((double) groundOverlay.getTransparency())
+            .setZIndex((long) groundOverlay.getZIndex())
+            .setVisible(groundOverlay.isVisible())
+            .setClickable(groundOverlay.isClickable());
+
+    if (isCreatedWithBounds) {
+      builder.setBounds(Convert.latLngBoundsToPigeon(groundOverlay.getBounds()));
+    } else {
+      builder.setPosition(Convert.latLngToPigeon(groundOverlay.getPosition()));
+    }
+
+    builder.setAnchor(Convert.buildGroundOverlayAnchorForPigeon(groundOverlay));
+    return builder.build();
+  }
+
+  /**
+   * Builds a PlatformDoublePair representing the anchor point for a GroundOverlay.
+   *
+   * @param groundOverlay the GroundOverlay object.
+   * @return the PlatformDoublePair representing the anchor point.
+   */
+  @VisibleForTesting
+  public static @NonNull Messages.PlatformDoublePair buildGroundOverlayAnchorForPigeon(
+      @NonNull GroundOverlay groundOverlay) {
+    Messages.PlatformDoublePair.Builder anchorBuilder = new Messages.PlatformDoublePair.Builder();
+
+    // Position is overlays anchor point. Calculate normalized anchor point based on position and bounds.
+    LatLng position = groundOverlay.getPosition();
+    LatLngBounds bounds = groundOverlay.getBounds();
+
+    // Calculate normalized latitude.
+    double height = bounds.northeast.latitude - bounds.southwest.latitude;
+    double normalizedLatitude = 1.0 - ((position.latitude - bounds.southwest.latitude) / height);
+
+    // Constant for full circle degrees.
+    final double FULL_CIRCLE_DEGREES = 360.0;
+
+    // Calculate normalized longitude.
+    // For longitude, if the bounds cross the antimeridian (west > east),
+    // adjust the width accordingly.
+    double west = bounds.southwest.longitude;
+    double east = bounds.northeast.longitude;
+    double width = (west <= east) ? (east - west) : (FULL_CIRCLE_DEGREES - (west - east));
+
+    // Normalize the longitude of the anchor position relative to the western boundary.
+    // Handles cases where the ground overlay crosses the antimeridian.
+    double normalizedLongitude =
+        ((position.longitude < west ? position.longitude + FULL_CIRCLE_DEGREES : position.longitude)
+                - west)
+            / width;
+
+    anchorBuilder.setX(normalizedLongitude);
+    anchorBuilder.setY(normalizedLatitude);
+    return anchorBuilder.build();
   }
 
   static class BitmapDescriptorFactoryWrapper {

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -150,6 +150,14 @@ class CircleTapEvent extends MapEvent<CircleId> {
   ///
   /// The `value` of this event is a [CircleId] object that represents the tapped Circle.
   CircleTapEvent(super.mapId, super.circleId);
+}
+
+/// An event fired when a [GroundOverlay] is tapped.
+class GroundOverlayTapEvent extends MapEvent<GroundOverlayId> {
+  /// Build a GroundOverlayTap Event triggered from the map represented by `mapId`.
+  ///
+  /// The `value` of this event is a [GroundOverlayId] object that represents the tapped GroundOverlay.
+  GroundOverlayTapEvent(super.mapId, super.croundOverlayId);
 }
 
 /// An event fired when a Map is tapped.

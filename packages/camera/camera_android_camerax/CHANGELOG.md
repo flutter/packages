@@ -1,3 +1,143 @@
+## 0.6.23+3
+
+* Bumps camerax_version from 1.5.0 to 1.5.1.
+
+## 0.6.23+2
+
+* Updates Java compatibility version to 17 and minimum supported SDK version to Flutter 3.35/Dart 3.9.
+
+## 0.6.23+1
+
+* Resolves Gradle 9 deprecations.
+
+## 0.6.23
+
+* Converts NV21-compatible streamed images to NV21 when requested. In doing so,
+this plugin should now be compatible with [google_ml_kit_flutter](https://github.com/flutter-ml/google_ml_kit_flutter/tree/master).
+
+## 0.6.22
+
+* Implements `setDescriptionWhileRecording`.
+
+## 0.6.21+2
+
+* Bumps com.google.guava:guava from 33.4.8-android to 33.5.0-android.
+
+## 0.6.21+1
+
+* Updates to stable version of `androidx.camera` 1.5.
+
+## 0.6.21
+
+* Implements NV21 support for image streaming.
+
+## 0.6.20+3
+
+* Bumps com.google.guava:guava from 33.4.0-android to 33.4.8-android.
+
+## 0.6.20+2
+
+* Bumps com.android.tools.build:gradle to 8.12.1 and kotlin_version to 2.2.10.
+
+## 0.6.20+1
+
+* Updates kotlin version to 2.2.0 to enable gradle 8.11 support.
+
+## 0.6.20
+
+* Fixes pausing and resuming the camera preview.
+* Updates minimum supported SDK version to Flutter 3.32.8/Dart 3.8.1.
+
+## 0.6.19+1
+
+* Fixes incorrect camera switching by selecting a camera via its CameraInfo.
+
+## 0.6.19
+
+* Changes target rotation of captured images to current default display rotation to fix captured
+  photo orientation to upright.
+
+## 0.6.18+3
+
+* Fixes incorrect camera preview mirroring for front cameras of devices using the Impeller backend.
+
+## 0.6.18+2
+
+* Fixes premature garbage collection of native objects when app is under memory pressure.
+
+## 0.6.18+1
+
+* Makes Java style improvements.
+
+## 0.6.18
+
+* Adds support for the `MediaSettings.enableAudio` setting, which determines whether or not audio is
+  recorded during video recording.
+
+## 0.6.17+1
+
+* Replaces deprecated `onSurfaceDestroyed` with `onSurfaceCleanup`.
+
+## 0.6.17
+
+* Replaces `BroadcastReceiver` usage with an `OrientationEventListener` to detect changes in device
+  orientation to fix issue where some devices do not report changes in device configuration if it
+  is rotated between the same sort of orientation (landscape/portrait).
+
+## 0.6.16
+
+* Fixes incorrect camera preview rotation for landscape-oriented devices.
+* Fixes regression where `onDeviceOrientationChanged` was not triggering with an initial orientation
+  after calling `createCameraWithSettings`.
+
+## 0.6.15+2
+
+* Updates pigeon generated code to fix `ImplicitSamInstance` and `SyntheticAccessor` Kotlin lint
+  warnings.
+
+## 0.6.15+1
+
+* Ensures DeviceOrientationManager is stopped on dispose.
+
+## 0.6.15
+
+* Updates internal API wrapper to use ProxyApis.
+
+## 0.6.14+1
+
+* Updates compileSdk 34 to flutter.compileSdkVersion.
+
+## 0.6.14
+
+* Fixes incorrect camera preview rotation.
+
+## 0.6.13
+
+* Adds API support query for image streaming.
+
+## 0.6.12
+
+* Suppresses deprecation and removal warnings for
+  `TextureRegistry.SurfaceProducer.onSurfaceDestroyed`.
+* Removes logic added to correct the rotation of the camera preview, since it is no longer required.
+
+## 0.6.11
+
+* Replaces deprecated Android embedder APIs (`onSurfaceCreated` -> `onSurfaceAvailable`).
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+
+## 0.6.10+3
+
+* Bumps com.google.guava:guava from 33.3.1-android to 33.4.0-android.
+
+## 0.6.10+2
+
+* Bumps camerax_version from 1.3.4 to 1.4.1.
+
+## 0.6.10+1
+
+* Removes nonnull annotation from MeteringPointHostApiImpl#getDefaultPointSize.
+
 ## 0.6.10
 
 * Removes logic that explicitly removes `READ_EXTERNAL_STORAGE` permission that may be implied

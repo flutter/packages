@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -11,7 +11,11 @@
 #import "FLTRequestHandlerProtocol.h"
 #import "FLTTransactionCacheProtocol.h"
 
+#if __has_include(<in_app_purchase_storekit/in_app_purchase_storekit.h>)
 @import in_app_purchase_storekit;
+#else
+@import in_app_purchase_storekit_objc;
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 API_AVAILABLE(ios(11.2), macos(10.13.2))
@@ -83,7 +87,7 @@ API_AVAILABLE(ios(13.0), macos(10.15))
 @property(nonatomic, strong, nullable) id<SKPaymentTransactionObserver> observer;
 @property(nonatomic, strong, readwrite) SKStorefront *storefront API_AVAILABLE(ios(13.0));
 @property(nonatomic, strong, readwrite) NSArray<SKPaymentTransaction *> *transactions API_AVAILABLE(
-    ios(3.0), macos(10.7), watchos(6.2), visionos(1.0));
+    ios(3.0), macos(10.7), watchos(6.2));
 
 // Test Properties
 @property(nonatomic, assign)
@@ -156,6 +160,7 @@ API_AVAILABLE(ios(13.0), macos(10.15))
 @interface FlutterPluginRegistrarStub : NSObject <FlutterPluginRegistrar>
 
 // Stubs
+@property(nonatomic, weak, nullable) UIViewController *viewController;
 @property(nonatomic, copy, nullable) void (^addApplicationDelegateStub)(NSObject<FlutterPlugin> *);
 @property(nonatomic, copy, nullable) void (^addMethodCallDelegateStub)
     (NSObject<FlutterPlugin> *, FlutterMethodChannel *);

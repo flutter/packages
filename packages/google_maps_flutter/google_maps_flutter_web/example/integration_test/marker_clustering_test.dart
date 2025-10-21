@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -20,8 +20,9 @@ void main() {
       GoogleMapsInspectorPlatform.instance!;
 
   const LatLng mapCenter = LatLng(20, 20);
-  const CameraPosition initialCameraPosition =
-      CameraPosition(target: mapCenter);
+  const CameraPosition initialCameraPosition = CameraPosition(
+    target: mapCenter,
+  );
 
   group('MarkersController', () {
     const int testMapId = 33930;
@@ -36,44 +37,50 @@ void main() {
       // Create the marker with clusterManagerId.
       final Set<Marker> initialMarkers = <Marker>{
         const Marker(
-            markerId: MarkerId('1'),
-            position: mapCenter,
-            clusterManagerId: clusterManagerId),
+          markerId: MarkerId('1'),
+          position: mapCenter,
+          clusterManagerId: clusterManagerId,
+        ),
         const Marker(
-            markerId: MarkerId('2'),
-            position: mapCenter,
-            clusterManagerId: clusterManagerId),
+          markerId: MarkerId('2'),
+          position: mapCenter,
+          clusterManagerId: clusterManagerId,
+        ),
       };
 
       final Completer<int> mapIdCompleter = Completer<int>();
 
       await _pumpMap(
-          tester,
-          plugin.buildViewWithConfiguration(
-              testMapId, (int id) => mapIdCompleter.complete(id),
-              widgetConfiguration: const MapWidgetConfiguration(
-                initialCameraPosition: initialCameraPosition,
-                textDirection: TextDirection.ltr,
-              ),
-              mapObjects: MapObjects(
-                  clusterManagers: clusterManagers, markers: initialMarkers)));
+        tester,
+        plugin.buildViewWithConfiguration(
+          testMapId,
+          (int id) => mapIdCompleter.complete(id),
+          widgetConfiguration: const MapWidgetConfiguration(
+            initialCameraPosition: initialCameraPosition,
+            textDirection: TextDirection.ltr,
+          ),
+          mapObjects: MapObjects(
+            clusterManagers: clusterManagers,
+            markers: initialMarkers,
+          ),
+        ),
+      );
 
       final int mapId = await mapIdCompleter.future;
       expect(mapId, equals(testMapId));
 
       addTearDown(() => plugin.dispose(mapId: mapId));
 
-      final LatLng latlon = await plugin
-          .getLatLng(const ScreenCoordinate(x: 0, y: 0), mapId: mapId);
-      debugPrint(latlon.toString());
-
       final List<Cluster> clusters =
           await waitForValueMatchingPredicate<List<Cluster>>(
-                  tester,
-                  () async => inspector.getClusters(
-                      mapId: mapId, clusterManagerId: clusterManagerId),
-                  (List<Cluster> clusters) => clusters.isNotEmpty) ??
-              <Cluster>[];
+            tester,
+            () async => inspector.getClusters(
+              mapId: mapId,
+              clusterManagerId: clusterManagerId,
+            ),
+            (List<Cluster> clusters) => clusters.isNotEmpty,
+          ) ??
+          <Cluster>[];
 
       expect(clusters.length, 1);
       expect(clusters[0].markerIds.length, 2);
@@ -81,20 +88,25 @@ void main() {
       // Copy only the first marker with null clusterManagerId.
       // This means that both markers should be removed from the cluster.
       final Set<Marker> updatedMarkers = <Marker>{
-        _copyMarkerWithClusterManagerId(initialMarkers.first, null)
+        _copyMarkerWithClusterManagerId(initialMarkers.first, null),
       };
 
-      final MarkerUpdates markerUpdates =
-          MarkerUpdates.from(initialMarkers, updatedMarkers);
+      final MarkerUpdates markerUpdates = MarkerUpdates.from(
+        initialMarkers,
+        updatedMarkers,
+      );
       await plugin.updateMarkers(markerUpdates, mapId: mapId);
 
       final List<Cluster> updatedClusters =
           await waitForValueMatchingPredicate<List<Cluster>>(
-                  tester,
-                  () async => inspector.getClusters(
-                      mapId: mapId, clusterManagerId: clusterManagerId),
-                  (List<Cluster> clusters) => clusters.isNotEmpty) ??
-              <Cluster>[];
+            tester,
+            () async => inspector.getClusters(
+              mapId: mapId,
+              clusterManagerId: clusterManagerId,
+            ),
+            (List<Cluster> clusters) => clusters.isNotEmpty,
+          ) ??
+          <Cluster>[];
 
       expect(updatedClusters.length, 0);
     });
@@ -110,9 +122,12 @@ void main() {
 // This is useful for cases where the Maps SDK has some internally
 // asynchronous operation that we don't have visibility into (e.g., native UI
 // animations).
-Future<T?> waitForValueMatchingPredicate<T>(WidgetTester tester,
-    Future<T> Function() getValue, bool Function(T) predicate,
-    {int maxTries = 100}) async {
+Future<T?> waitForValueMatchingPredicate<T>(
+  WidgetTester tester,
+  Future<T> Function() getValue,
+  bool Function(T) predicate, {
+  int maxTries = 100,
+}) async {
   for (int i = 0; i < maxTries; i++) {
     final T value = await getValue();
     if (predicate(value)) {
@@ -124,7 +139,9 @@ Future<T?> waitForValueMatchingPredicate<T>(WidgetTester tester,
 }
 
 Marker _copyMarkerWithClusterManagerId(
-    Marker marker, ClusterManagerId? clusterManagerId) {
+  Marker marker,
+  ClusterManagerId? clusterManagerId,
+) {
   return Marker(
     markerId: marker.markerId,
     alpha: marker.alpha,
@@ -137,6 +154,7 @@ Marker _copyMarkerWithClusterManagerId(
     position: marker.position,
     rotation: marker.rotation,
     visible: marker.visible,
+    // ignore: deprecated_member_use
     zIndex: marker.zIndex,
     onTap: marker.onTap,
     onDragStart: marker.onDragStart,
@@ -147,8 +165,11 @@ Marker _copyMarkerWithClusterManagerId(
 }
 
 /// Pumps a [map] widget in [tester] of a certain [size], then waits until it settles.
-Future<void> _pumpMap(WidgetTester tester, Widget map,
-    [Size size = const Size.square(200)]) async {
+Future<void> _pumpMap(
+  WidgetTester tester,
+  Widget map, [
+  Size size = const Size.square(200),
+]) async {
   await tester.pumpWidget(_wrapMap(map, size));
   await tester.pumpAndSettle();
 }
@@ -159,12 +180,7 @@ Future<void> _pumpMap(WidgetTester tester, Widget map,
 Widget _wrapMap(Widget map, [Size size = const Size.square(200)]) {
   return MaterialApp(
     home: Scaffold(
-      body: Center(
-        child: SizedBox.fromSize(
-          size: size,
-          child: map,
-        ),
-      ),
+      body: Center(child: SizedBox.fromSize(size: size, child: map)),
     ),
   );
 }

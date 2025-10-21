@@ -1,13 +1,13 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
-import 'package:file/memory.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
 import 'package:flutter_plugin_tools/src/common/plugin_utils.dart';
 import 'package:flutter_plugin_tools/src/readme_check_command.dart';
+import 'package:git/git.dart';
 import 'package:test/test.dart';
 
 import 'mocks.dart';
@@ -15,21 +15,20 @@ import 'util.dart';
 
 void main() {
   late CommandRunner<void> runner;
-  late RecordingProcessRunner processRunner;
-  late FileSystem fileSystem;
   late MockPlatform mockPlatform;
   late Directory packagesDir;
 
   setUp(() {
-    fileSystem = MemoryFileSystem();
     mockPlatform = MockPlatform();
-    packagesDir = fileSystem.currentDirectory.childDirectory('packages');
-    createPackagesDirectory(parentDir: packagesDir.parent);
-    processRunner = RecordingProcessRunner();
+    final RecordingProcessRunner processRunner;
+    final GitDir gitDir;
+    (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) =
+        configureBaseCommandMocks(platform: mockPlatform);
     final ReadmeCheckCommand command = ReadmeCheckCommand(
       packagesDir,
       processRunner: processRunner,
       platform: mockPlatform,
+      gitDir: gitDir,
     );
 
     runner = CommandRunner<void>(

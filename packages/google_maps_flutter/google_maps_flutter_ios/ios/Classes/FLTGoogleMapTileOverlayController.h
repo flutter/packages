@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -13,9 +13,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// The layer managed by this controller instance.
 @property(readonly, nonatomic) GMSTileLayer *layer;
 
-- (instancetype)initWithTileLayer:(GMSTileLayer *)tileLayer
-                          mapView:(GMSMapView *)mapView
-                          options:(NSDictionary *)optionsData;
+- (instancetype)initWithTileOverlay:(FGMPlatformTileOverlay *)tileOverlay
+                          tileLayer:(GMSTileLayer *)tileLayer
+                            mapView:(GMSMapView *)mapView;
 - (void)removeTileOverlay;
 - (void)clearTileCache;
 @end

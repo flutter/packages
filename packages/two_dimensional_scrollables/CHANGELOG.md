@@ -1,5 +1,30 @@
 ## NEXT
 
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
+## 0.3.7
+
+* Fixes missing leading cache extent in TableView.
+
+## 0.3.6
+
+* Fixes typo in API docs.
+
+## 0.3.5
+
+* Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+* Updates the simple table sample to demonstrate different types of selection: single-cell
+selection, and multi-cell selection.
+
+## 0.3.4
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Fixes a bug where collapsing a node in a TreeView with other offscreen nodes would dereference a null value.
+
+## 0.3.3
+
+* Fixes an issue where collapsing nodes in the TreeView didn't work correctly.
+
 ## 0.3.2
 
 * Fixes a bug where the TreeView would not update correctly when the animation duration is zero.

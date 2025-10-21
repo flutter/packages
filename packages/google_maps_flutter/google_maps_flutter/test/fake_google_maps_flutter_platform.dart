@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -37,8 +37,11 @@ class FakeGoogleMapsFlutterPlatform extends GoogleMapsFlutterPlatform {
   final StreamController<MapEvent<dynamic>> mapEventStreamController =
       StreamController<MapEvent<dynamic>>.broadcast();
 
+  // Overrides completion of the init.
+  Completer<void>? initCompleter;
+
   @override
-  Future<void> init(int mapId) async {}
+  Future<void> init(int mapId) async => initCompleter?.future;
 
   @override
   Future<void> updateMapConfiguration(
@@ -113,6 +116,15 @@ class FakeGoogleMapsFlutterPlatform extends GoogleMapsFlutterPlatform {
   }
 
   @override
+  Future<void> updateGroundOverlays(
+    GroundOverlayUpdates groundOverlayUpdates, {
+    required int mapId,
+  }) async {
+    mapInstances[mapId]?.groundOverlayUpdates.add(groundOverlayUpdates);
+    await _fakeDelay();
+  }
+
+  @override
   Future<void> clearTileCache(
     TileOverlayId tileOverlayId, {
     required int mapId,
@@ -122,7 +134,28 @@ class FakeGoogleMapsFlutterPlatform extends GoogleMapsFlutterPlatform {
   Future<void> animateCamera(
     CameraUpdate cameraUpdate, {
     required int mapId,
-  }) async {}
+  }) async {
+    mapInstances[mapId]
+        ?.animateCameraConfiguration = CameraUpdateWithConfiguration(
+      cameraUpdate: cameraUpdate,
+      configuration: null,
+    );
+    await _fakeDelay();
+  }
+
+  @override
+  Future<void> animateCameraWithConfiguration(
+    CameraUpdate cameraUpdate,
+    CameraUpdateAnimationConfiguration configuration, {
+    required int mapId,
+  }) async {
+    mapInstances[mapId]
+        ?.animateCameraConfiguration = CameraUpdateWithConfiguration(
+      cameraUpdate: cameraUpdate,
+      configuration: configuration,
+    );
+    await _fakeDelay();
+  }
 
   @override
   Future<void> moveCamera(
@@ -131,17 +164,14 @@ class FakeGoogleMapsFlutterPlatform extends GoogleMapsFlutterPlatform {
   }) async {}
 
   @override
-  Future<void> setMapStyle(
-    String? mapStyle, {
-    required int mapId,
-  }) async {}
+  Future<void> setMapStyle(String? mapStyle, {required int mapId}) async {}
 
   @override
-  Future<LatLngBounds> getVisibleRegion({
-    required int mapId,
-  }) async {
+  Future<LatLngBounds> getVisibleRegion({required int mapId}) async {
     return LatLngBounds(
-        southwest: const LatLng(0, 0), northeast: const LatLng(0, 0));
+      southwest: const LatLng(0, 0),
+      northeast: const LatLng(0, 0),
+    );
   }
 
   @override
@@ -181,16 +211,12 @@ class FakeGoogleMapsFlutterPlatform extends GoogleMapsFlutterPlatform {
   }
 
   @override
-  Future<double> getZoomLevel({
-    required int mapId,
-  }) async {
+  Future<double> getZoomLevel({required int mapId}) async {
     return 0.0;
   }
 
   @override
-  Future<Uint8List?> takeSnapshot({
-    required int mapId,
-  }) async {
+  Future<Uint8List?> takeSnapshot({required int mapId}) async {
     return null;
   }
 
@@ -265,6 +291,11 @@ class FakeGoogleMapsFlutterPlatform extends GoogleMapsFlutterPlatform {
   }
 
   @override
+  Stream<GroundOverlayTapEvent> onGroundOverlayTap({required int mapId}) {
+    return mapEventStreamController.stream.whereType<GroundOverlayTapEvent>();
+  }
+
+  @override
   void dispose({required int mapId}) {
     disposed = true;
   }
@@ -281,9 +312,10 @@ class FakeGoogleMapsFlutterPlatform extends GoogleMapsFlutterPlatform {
     if (instance == null) {
       createdIds.add(creationId);
       mapInstances[creationId] = PlatformMapStateRecorder(
-          widgetConfiguration: widgetConfiguration,
-          mapConfiguration: mapConfiguration,
-          mapObjects: mapObjects);
+        widgetConfiguration: widgetConfiguration,
+        mapConfiguration: mapConfiguration,
+        mapObjects: mapObjects,
+      );
       onPlatformViewCreated(creationId);
     }
     return Container();
@@ -305,22 +337,36 @@ class PlatformMapStateRecorder {
     this.mapObjects = const MapObjects(),
     this.mapConfiguration = const MapConfiguration(),
   }) {
-    clusterManagerUpdates.add(ClusterManagerUpdates.from(
-        const <ClusterManager>{}, mapObjects.clusterManagers));
+    clusterManagerUpdates.add(
+      ClusterManagerUpdates.from(
+        const <ClusterManager>{},
+        mapObjects.clusterManagers,
+      ),
+    );
+    groundOverlayUpdates.add(
+      GroundOverlayUpdates.from(
+        const <GroundOverlay>{},
+        mapObjects.groundOverlays,
+      ),
+    );
     markerUpdates.add(MarkerUpdates.from(const <Marker>{}, mapObjects.markers));
-    polygonUpdates
-        .add(PolygonUpdates.from(const <Polygon>{}, mapObjects.polygons));
-    polylineUpdates
-        .add(PolylineUpdates.from(const <Polyline>{}, mapObjects.polylines));
+    polygonUpdates.add(
+      PolygonUpdates.from(const <Polygon>{}, mapObjects.polygons),
+    );
+    polylineUpdates.add(
+      PolylineUpdates.from(const <Polyline>{}, mapObjects.polylines),
+    );
     circleUpdates.add(CircleUpdates.from(const <Circle>{}, mapObjects.circles));
-    heatmapUpdates
-        .add(HeatmapUpdates.from(const <Heatmap>{}, mapObjects.heatmaps));
+    heatmapUpdates.add(
+      HeatmapUpdates.from(const <Heatmap>{}, mapObjects.heatmaps),
+    );
     tileOverlaySets.add(mapObjects.tileOverlays);
   }
 
   MapWidgetConfiguration widgetConfiguration;
   MapObjects mapObjects;
   MapConfiguration mapConfiguration;
+  CameraUpdateWithConfiguration? animateCameraConfiguration;
 
   final List<MarkerUpdates> markerUpdates = <MarkerUpdates>[];
   final List<PolygonUpdates> polygonUpdates = <PolygonUpdates>[];
@@ -330,4 +376,17 @@ class PlatformMapStateRecorder {
   final List<Set<TileOverlay>> tileOverlaySets = <Set<TileOverlay>>[];
   final List<ClusterManagerUpdates> clusterManagerUpdates =
       <ClusterManagerUpdates>[];
+  final List<GroundOverlayUpdates> groundOverlayUpdates =
+      <GroundOverlayUpdates>[];
+}
+
+/// Helper class to store animateCameraWithConfiguration data.
+class CameraUpdateWithConfiguration {
+  CameraUpdateWithConfiguration({
+    required this.cameraUpdate,
+    required this.configuration,
+  });
+
+  final CameraUpdate cameraUpdate;
+  final CameraUpdateAnimationConfiguration? configuration;
 }

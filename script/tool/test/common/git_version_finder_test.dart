@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -54,18 +54,6 @@ file2/file2.cc
     final List<String> changedFiles = await finder.getChangedFiles();
 
     expect(changedFiles, equals(<String>['file1/file1.cc', 'file2/file2.cc']));
-  });
-
-  test('get correct pubspec change based on git diff', () async {
-    gitDiffResponse = '''
-file1/pubspec.yaml
-file2/file2.cc
-''';
-    final GitVersionFinder finder =
-        GitVersionFinder(gitDir, baseSha: 'some base sha');
-    final List<String> changedFiles = await finder.getChangedPubSpecs();
-
-    expect(changedFiles, equals(<String>['file1/pubspec.yaml']));
   });
 
   test('use correct base sha if not specified', () async {

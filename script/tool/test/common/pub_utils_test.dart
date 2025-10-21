@@ -1,9 +1,8 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import 'package:file/file.dart';
-import 'package:file/memory.dart';
 import 'package:flutter_plugin_tools/src/common/pub_utils.dart';
 import 'package:test/test.dart';
 
@@ -11,14 +10,12 @@ import '../mocks.dart';
 import '../util.dart';
 
 void main() {
-  late FileSystem fileSystem;
   late Directory packagesDir;
   late RecordingProcessRunner processRunner;
 
   setUp(() {
-    fileSystem = MemoryFileSystem();
-    packagesDir = createPackagesDirectory(fileSystem: fileSystem);
-    processRunner = RecordingProcessRunner();
+    (:packagesDir, :processRunner, gitProcessRunner: _, gitDir: _) =
+        configureBaseCommandMocks();
   });
 
   test('runs with Dart for a non-Flutter package by default', () async {

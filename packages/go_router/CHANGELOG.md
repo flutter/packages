@@ -1,6 +1,123 @@
+## 16.2.5
+
+- Fixes `GoRouter.of(context)` access inside redirect callbacks by providing router access through Zone-based context tracking.
+- Adds support for using context extension methods (e.g., `context.namedLocation()`, `context.go()`) within redirect callbacks.
+
+## 16.2.4
+
+- Fix Android Cold Start deep link with empty path losing scheme and authority.
+
+## 16.2.3
+
+- Fixes an issue where iOS back gesture pops entire ShellRoute instead of the active sub-route.
+
+## 16.2.2
+
+- Fixes broken links in readme.
+
+## 16.2.1
+
+- Adds state restoration topic to documentation.
+
+## 16.2.0
+
+- Adds `RelativeGoRouteData` and `TypedRelativeGoRoute`.
+- Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
+## 16.1.0
+
+- Adds annotation for go_router_builder that enable custom string encoder/decoder [#110781](https://github.com/flutter/flutter/issues/110781). **Requires go_router_builder >= 3.1.0**.
+
+## 16.0.0
+
+- **BREAKING CHANGE**
+  - Bump major version for `GoRouteData` breaking changes.
+  - (Previously 15.2.4) Fixes routing to treat URLs with different cases (e.g., `/Home` vs `/home`) as distinct routes.
+  - (Previously 15.2.3) Updates Type-safe routes topic documentation to use the mixin from `go_router_builder` 3.0.0.
+  - (Previously 15.2.2) Fixes calling `PopScope.onPopInvokedWithResult` in branch routes.
+  - (Previously 15.2.1) Fixes Popping state and re-rendering scaffold at the same time doesn't update the URL on web.
+  - (Previously 15.2.0) `GoRouteData` now defines `.location`, `.go(context)`, `.push(context)`, `.pushReplacement(context)`, and `replace(context)` to be used for [Type-safe routing](https://pub.dev/documentation/go_router/latest/topics/Type-safe%20routes-topic.html). **Requires go_router_builder >= 3.0.0**.
+
+## 15.1.3
+
+- Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+- Fixes typo in API docs.
+
+## 15.1.2
+
+- Fixes focus request propagation from `GoRouter` to `Navigator` by properly handling the `requestFocus` parameter.
+
+## 15.1.1
+
+- Adds missing `caseSensitive` to `GoRouteData.$route`.
+
+## 15.1.0
+
+- Adds `caseSensitive` to `TypedGoRoute`.
+
+## 15.0.0
+
+- **BREAKING CHANGE**
+  - URLs are now case sensitive.
+  - Adds `caseSensitive` parameter to `GoRouter` (default to `true`).
+  - See [Migrating to 15.0.0](https://flutter.dev/go/go-router-v15-breaking-changes)
+
+## 14.8.1
+
+- Secured canPop method for the lack of matches in routerDelegate's configuration.
+
+## 14.8.0
+
+- Adds `preload` parameter to `StatefulShellBranchData.$branch`.
+
+## 14.7.2
+
+- Add missing `await` keyword to `onTap` callback in `navigation.md`.
+
+## 14.7.1
+
+- Fixes return type of current state getter on `GoRouter` and `GoRouterDelegate` to be non-nullable.
+
+## 14.7.0
+
+- Adds fragment support to GoRouter, enabling direct specification and automatic handling of fragments in routes.
+
+## 14.6.4
+
+- Rephrases readme.
+
+## 14.6.3
+
+- Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+- Updates readme.
+
+## 14.6.2
+
+- Replaces deprecated collection method usage.
+
+## 14.6.1
+
+- Fixed `PopScope`, and `WillPopScop` was not handled properly in the Root routes.
+
+## 14.6.0
+
+- Allows going to a path relatively by prefixing `./`
+
+## 14.5.0
+
+- Adds preload support to StatefulShellRoute, configurable via `preload` parameter on StatefulShellBranch.
+
+## 14.4.1
+
+- Adds `missing_code_block_language_in_doc_comment` lint.
+
+## 14.4.0
+
+- Adds current state getter on `GoRouter` that returns the current `GoRouterState`.
+
 ## 14.3.0
 
-- Added missing implementation for the routerNeglect parameter in GoRouter.
+- Adds missing implementation for the routerNeglect parameter in GoRouter.
 
 ## 14.2.9
 
@@ -8,7 +125,7 @@
 
 ## 14.2.8
 
-- Updated custom_stateful_shell_route example to better support swiping in TabView as well as demonstration of the use of PageView. 
+- Updated custom_stateful_shell_route example to better support swiping in TabView as well as demonstration of the use of PageView.
 
 ## 14.2.7
 
@@ -1112,3 +1229,4 @@
 ## 0.1.0
 
 - squatting on the package name (I'm not too proud to admit it)
+

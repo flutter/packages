@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -26,20 +26,42 @@ const String _format = 'format';
 const String _overflow = 'overflow';
 
 Future<void> main(List<String> args) async {
-  final ArgParser parser = ArgParser()
-    ..addMultiOption(_testFlag, abbr: 't', help: 'Only run specified tests.')
-    ..addFlag(_noGen,
-        abbr: 'g', help: 'Skips the generation step.', negatable: false)
-    ..addFlag(_format,
-        abbr: 'f', help: 'Formats generated test files before running tests.')
-    ..addFlag(_overflow,
-        help:
-            'Generates overflow files for integration tests, runs tests with and without overflow files.',
-        abbr: 'o')
-    ..addFlag(_listFlag,
-        negatable: false, abbr: 'l', help: 'List available tests.')
-    ..addFlag('help',
-        negatable: false, abbr: 'h', help: 'Print this reference.');
+  final ArgParser parser =
+      ArgParser()
+        ..addMultiOption(
+          _testFlag,
+          abbr: 't',
+          help: 'Only run specified tests.',
+        )
+        ..addFlag(
+          _noGen,
+          abbr: 'g',
+          help: 'Skips the generation step.',
+          negatable: false,
+        )
+        ..addFlag(
+          _format,
+          abbr: 'f',
+          help: 'Formats generated test files before running tests.',
+        )
+        ..addFlag(
+          _overflow,
+          help:
+              'Generates overflow files for integration tests, runs tests with and without overflow files.',
+          abbr: 'o',
+        )
+        ..addFlag(
+          _listFlag,
+          negatable: false,
+          abbr: 'l',
+          help: 'List available tests.',
+        )
+        ..addFlag(
+          'help',
+          negatable: false,
+          abbr: 'h',
+          help: 'Print this reference.',
+        );
 
   final ArgResults argResults = parser.parse(args);
   List<String> testsToRun = <String>[];
@@ -78,6 +100,7 @@ ${parser.usage}''');
       androidJavaIntegrationTests,
       androidKotlinIntegrationTests,
       androidJavaLint,
+      androidKotlinLint,
     ];
     const List<String> iOSTests = <String>[
       iOSObjCUnitTests,
@@ -92,7 +115,7 @@ ${parser.usage}''');
     const List<String> macOSTests = <String>[
       macOSObjCIntegrationTests,
       macOSSwiftUnitTests,
-      macOSSwiftIntegrationTests
+      macOSSwiftIntegrationTests,
     ];
     const List<String> windowsTests = <String>[
       windowsUnitTests,
@@ -107,16 +130,9 @@ ${parser.usage}''');
         ...macOSTests,
       ];
     } else if (Platform.isWindows) {
-      testsToRun = <String>[
-        ...dartTests,
-        ...windowsTests,
-      ];
+      testsToRun = <String>[...dartTests, ...windowsTests];
     } else if (Platform.isLinux) {
-      testsToRun = <String>[
-        ...dartTests,
-        ...androidTests,
-        ...linuxTests,
-      ];
+      testsToRun = <String>[...dartTests, ...androidTests, ...linuxTests];
     } else {
       print('Unsupported host platform.');
       exit(1);

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -12,6 +12,7 @@ final class URLLaunchSession: NSObject, SFSafariViewControllerDelegate {
 
   private let completion: OpenInSafariCompletionHandler
   private let url: URL
+  private var isLoadCompleted: Bool = false
 
   /// The Safari view controller used for displaying the URL.
   let safariViewController: SFSafariViewController
@@ -46,12 +47,16 @@ final class URLLaunchSession: NSObject, SFSafariViewControllerDelegate {
     } else {
       completion(.success(.failedToLoad))
     }
+    isLoadCompleted = true
   }
 
   /// Called when the user finishes using the Safari view controller.
   ///
   /// - Parameter controller: The Safari view controller.
   func safariViewControllerDidFinish(_ controller: SFSafariViewController) {
+    if !isLoadCompleted {
+      completion(.success(.dismissed))
+    }
     controller.dismiss(animated: true, completion: nil)
     didFinish?()
   }

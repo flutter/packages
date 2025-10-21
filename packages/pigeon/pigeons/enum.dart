@@ -1,13 +1,15 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import 'package:pigeon/pigeon.dart';
 
-@ConfigurePigeon(PigeonOptions(
-  objcOptions: ObjcOptions(prefix: 'PGN'),
-))
-
+@ConfigurePigeon(
+  PigeonOptions(
+    // This is here to test option merging.
+    objcOptions: ObjcOptions(prefix: 'ThisShouldntEndUpInTheOutput'),
+  ),
+)
 /// This comment is to test enum documentation comments.
 enum EnumState {
   /// This comment is to test enum member (Pending) documentation comments.
@@ -30,7 +32,6 @@ class DataWithEnum {
 }
 
 @HostApi()
-
 /// This comment is to test api documentation comments.
 abstract class EnumApi2Host {
   /// This comment is to test method documentation comments.
@@ -38,7 +39,6 @@ abstract class EnumApi2Host {
 }
 
 @FlutterApi()
-
 /// This comment is to test api documentation comments.
 abstract class EnumApi2Flutter {
   /// This comment is to test method documentation comments.

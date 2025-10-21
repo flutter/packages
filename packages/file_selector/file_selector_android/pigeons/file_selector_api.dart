@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -16,12 +16,25 @@ import 'package:pigeon/pigeon.dart';
     copyrightHeader: 'pigeons/copyright.txt',
   ),
 )
+enum FileSelectorExceptionCode {
+  securityException, // unused
+  ioException, // unused
+  illegalArgumentException,
+  illegalStateException, //unused
+}
+
+class FileSelectorNativeException {
+  late final FileSelectorExceptionCode fileSelectorExceptionCode;
+  late final String message;
+}
+
 class FileResponse {
   late final String path;
   late final String? mimeType;
   late final String? name;
   late final int size;
   late final Uint8List bytes;
+  late final FileSelectorNativeException? fileSelectorNativeException;
 }
 
 class FileTypes {

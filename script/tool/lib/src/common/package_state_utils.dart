@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -241,7 +241,7 @@ Future<bool> _isGradleTestDependencyChange(List<String> pathComponents,
   final List<String> diff = await git.getDiffContents(targetPath: repoPath);
   final RegExp changeLine = RegExp(r'^[+-] ');
   final RegExp testDependencyLine =
-      RegExp(r'^[+-]\s*(?:androidT|t)estImplementation\s');
+      RegExp(r'^[+-]\s*(?:androidT|t)estImplementation(?:\s|\()');
   bool foundTestDependencyChange = false;
   for (final String line in diff) {
     if (!changeLine.hasMatch(line) ||

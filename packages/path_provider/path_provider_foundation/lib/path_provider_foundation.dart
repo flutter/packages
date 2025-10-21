@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -31,8 +31,9 @@ class PathProviderFoundation extends PathProviderPlatform {
 
   @override
   Future<String?> getApplicationSupportPath() async {
-    final String? path =
-        await _pathProvider.getDirectoryPath(DirectoryType.applicationSupport);
+    final String? path = await _pathProvider.getDirectoryPath(
+      DirectoryType.applicationSupport,
+    );
     if (path != null) {
       // Ensure the directory exists before returning it, for consistency with
       // other platforms.
@@ -53,8 +54,9 @@ class PathProviderFoundation extends PathProviderPlatform {
 
   @override
   Future<String?> getApplicationCachePath() async {
-    final String? path =
-        await _pathProvider.getDirectoryPath(DirectoryType.applicationCache);
+    final String? path = await _pathProvider.getDirectoryPath(
+      DirectoryType.applicationCache,
+    );
     if (path != null) {
       // Ensure the directory exists before returning it, for consistency with
       // other platforms.
@@ -66,13 +68,15 @@ class PathProviderFoundation extends PathProviderPlatform {
   @override
   Future<String?> getExternalStoragePath() async {
     throw UnsupportedError(
-        'getExternalStoragePath is not supported on this platform');
+      'getExternalStoragePath is not supported on this platform',
+    );
   }
 
   @override
   Future<List<String>?> getExternalCachePaths() async {
     throw UnsupportedError(
-        'getExternalCachePaths is not supported on this platform');
+      'getExternalCachePaths is not supported on this platform',
+    );
   }
 
   @override
@@ -80,7 +84,8 @@ class PathProviderFoundation extends PathProviderPlatform {
     StorageDirectory? type,
   }) async {
     throw UnsupportedError(
-        'getExternalStoragePaths is not supported on this platform');
+      'getExternalStoragePaths is not supported on this platform',
+    );
   }
 
   @override
@@ -93,7 +98,8 @@ class PathProviderFoundation extends PathProviderPlatform {
   Future<String?> getContainerPath({required String appGroupIdentifier}) async {
     if (!_platformProvider.isIOS) {
       throw UnsupportedError(
-          'getContainerPath is not supported on this platform');
+        'getContainerPath is not supported on this platform',
+      );
     }
     return _pathProvider.getContainerPath(appGroupIdentifier);
   }

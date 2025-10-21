@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -165,6 +165,7 @@ void main() {
         'ios',
         workspace: 'A.xcworkspace',
         scheme: 'AScheme',
+        hostPlatform: MockPlatform(),
       );
 
       expect(exitCode, 0);
@@ -193,6 +194,7 @@ void main() {
           workspace: 'A.xcworkspace',
           scheme: 'AScheme',
           configuration: 'Debug',
+          hostPlatform: MockPlatform(),
           extraFlags: <String>['-a', '-b', 'c=d']);
 
       expect(exitCode, 0);
@@ -230,6 +232,7 @@ void main() {
         'ios',
         workspace: 'A.xcworkspace',
         scheme: 'AScheme',
+        hostPlatform: MockPlatform(),
       );
 
       expect(exitCode, 1);
@@ -264,6 +267,7 @@ void main() {
         'macos',
         workspace: 'A.xcworkspace',
         scheme: 'AScheme',
+        hostPlatform: MockPlatform(),
         actions: <String>['test'],
       );
 

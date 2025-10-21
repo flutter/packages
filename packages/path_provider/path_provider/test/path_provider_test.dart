@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -73,23 +73,31 @@ void main() {
     });
 
     test('getTemporaryDirectory throws on null', () async {
-      expect(getTemporaryDirectory(),
-          throwsA(isA<MissingPlatformDirectoryException>()));
+      expect(
+        getTemporaryDirectory(),
+        throwsA(isA<MissingPlatformDirectoryException>()),
+      );
     });
 
     test('getApplicationSupportDirectory throws on null', () async {
-      expect(getApplicationSupportDirectory(),
-          throwsA(isA<MissingPlatformDirectoryException>()));
+      expect(
+        getApplicationSupportDirectory(),
+        throwsA(isA<MissingPlatformDirectoryException>()),
+      );
     });
 
     test('getLibraryDirectory throws on null', () async {
-      expect(getLibraryDirectory(),
-          throwsA(isA<MissingPlatformDirectoryException>()));
+      expect(
+        getLibraryDirectory(),
+        throwsA(isA<MissingPlatformDirectoryException>()),
+      );
     });
 
     test('getApplicationDocumentsDirectory throws on null', () async {
-      expect(getApplicationDocumentsDirectory(),
-          throwsA(isA<MissingPlatformDirectoryException>()));
+      expect(
+        getApplicationDocumentsDirectory(),
+        throwsA(isA<MissingPlatformDirectoryException>()),
+      );
     });
 
     test('getExternalStorageDirectory passes null through', () async {

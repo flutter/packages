@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 import 'package:flutter/foundation.dart' show immutable;
@@ -17,10 +17,12 @@ class XTypeGroup {
     List<String>? uniformTypeIdentifiers,
     this.webWildCards,
     @Deprecated('Use uniformTypeIdentifiers instead') List<String>? macUTIs,
-  })  : _extensions = extensions,
-        assert(uniformTypeIdentifiers == null || macUTIs == null,
-            'Only one of uniformTypeIdentifiers or macUTIs can be non-null'),
-        uniformTypeIdentifiers = uniformTypeIdentifiers ?? macUTIs;
+  }) : _extensions = extensions,
+       assert(
+         uniformTypeIdentifiers == null || macUTIs == null,
+         'Only one of uniformTypeIdentifiers or macUTIs can be non-null',
+       ),
+       uniformTypeIdentifiers = uniformTypeIdentifiers ?? macUTIs;
 
   /// The 'name' or reference to this group of types.
   final String? label;
@@ -68,7 +70,8 @@ class XTypeGroup {
   @Deprecated('Use uniformTypeIdentifiers instead')
   List<String>? get macUTIs => uniformTypeIdentifiers;
 
-  static List<String>? _removeLeadingDots(List<String>? exts) => exts
-      ?.map((String ext) => ext.startsWith('.') ? ext.substring(1) : ext)
-      .toList();
+  static List<String>? _removeLeadingDots(List<String>? exts) =>
+      exts
+          ?.map((String ext) => ext.startsWith('.') ? ext.substring(1) : ext)
+          .toList();
 }

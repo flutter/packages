@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -66,7 +66,7 @@ class AppStoreProduct2Details extends ProductDetails {
       id: product.id,
       title: product.displayName,
       description: product.description,
-      price: product.priceLocale.currencySymbol + product.price.toString(),
+      price: product.displayPrice,
       rawPrice: product.price,
       currencyCode: product.priceLocale.currencyCode,
       currencySymbol: product.priceLocale.currencySymbol,

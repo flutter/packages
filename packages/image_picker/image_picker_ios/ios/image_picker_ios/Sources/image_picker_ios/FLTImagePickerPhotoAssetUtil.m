@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -12,12 +12,6 @@
 
 + (PHAsset *)getAssetFromImagePickerInfo:(NSDictionary *)info {
   return info[UIImagePickerControllerPHAsset];
-}
-
-+ (PHAsset *)getAssetFromPHPickerResult:(PHPickerResult *)result API_AVAILABLE(ios(14)) {
-  PHFetchResult *fetchResult = [PHAsset fetchAssetsWithLocalIdentifiers:@[ result.assetIdentifier ]
-                                                                options:nil];
-  return fetchResult.firstObject;
 }
 
 + (NSURL *)saveVideoFromURL:(NSURL *)videoURL {

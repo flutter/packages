@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -90,18 +90,15 @@ public final class QuickActionsPlugin: NSObject, FlutterPlugin, IOSQuickActionsA
     -> UIApplicationShortcutItem?
   {
 
-    let type = shortcut.type
-    let localizedTitle = shortcut.localizedTitle
-
     let icon = (shortcut.icon).map {
       UIApplicationShortcutIcon(templateImageName: $0)
     }
 
     // type and localizedTitle are required.
     return UIApplicationShortcutItem(
-      type: type,
-      localizedTitle: localizedTitle,
-      localizedSubtitle: nil,
+      type: shortcut.type,
+      localizedTitle: shortcut.localizedTitle,
+      localizedSubtitle: shortcut.localizedSubtitle,
       icon: icon,
       userInfo: nil)
   }

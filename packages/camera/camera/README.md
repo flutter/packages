@@ -8,7 +8,7 @@ A Flutter plugin for iOS, Android and Web allowing access to the device cameras.
 
 |                | Android | iOS       | Web                    |
 |----------------|---------|-----------|------------------------|
-| **Support**    | SDK 21+ | iOS 12.0+ | [See `camera_web `][1] |
+| **Support**    | SDK 24+ | iOS 12.0+ | [See `camera_web `][1] |
 
 ## Features
 
@@ -36,12 +36,6 @@ If editing `Info.plist` as text, add:
 ```
 
 ### Android
-
-Change the minimum Android sdk version to 21 (or higher) in your `android/app/build.gradle` file.
-
-```groovy
-minSdkVersion 21
-```
 
 The endorsed [`camera_android_camerax`][2] implementation of the camera plugin built with CameraX has
 better support for more devices than `camera_android`, but has some limitations; please see [this list][3]
@@ -131,23 +125,26 @@ class _CameraAppState extends State<CameraApp> {
   void initState() {
     super.initState();
     controller = CameraController(_cameras[0], ResolutionPreset.max);
-    controller.initialize().then((_) {
-      if (!mounted) {
-        return;
-      }
-      setState(() {});
-    }).catchError((Object e) {
-      if (e is CameraException) {
-        switch (e.code) {
-          case 'CameraAccessDenied':
-            // Handle access errors here.
-            break;
-          default:
-            // Handle other errors here.
-            break;
-        }
-      }
-    });
+    controller
+        .initialize()
+        .then((_) {
+          if (!mounted) {
+            return;
+          }
+          setState(() {});
+        })
+        .catchError((Object e) {
+          if (e is CameraException) {
+            switch (e.code) {
+              case 'CameraAccessDenied':
+                // Handle access errors here.
+                break;
+              default:
+                // Handle other errors here.
+                break;
+            }
+          }
+        });
   }
 
   @override
@@ -161,11 +158,10 @@ class _CameraAppState extends State<CameraApp> {
     if (!controller.value.isInitialized) {
       return Container();
     }
-    return MaterialApp(
-      home: CameraPreview(controller),
-    );
+    return MaterialApp(home: CameraPreview(controller));
   }
 }
+
 ```
 
 For a more elaborate usage example see [here](https://github.com/flutter/packages/tree/main/packages/camera/camera/example).

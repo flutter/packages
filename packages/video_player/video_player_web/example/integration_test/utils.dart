@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -27,22 +27,20 @@ void setInfinityDuration(web.HTMLVideoElement element) {
   DomObject.defineProperty(
     element,
     'duration',
-    Descriptor.data(
-      writable: true,
-      value: double.infinity.toJS,
-    ),
+    Descriptor.data(writable: true, value: double.infinity.toJS),
   );
 }
 
 /// Makes the `currentTime` setter throw an exception if used.
 void makeSetCurrentTimeThrow(web.HTMLVideoElement element) {
   DomObject.defineProperty(
-      element,
-      'currentTime',
-      Descriptor.accessor(
-        set: (JSAny? value) {
-          throw Exception('Unexpected call to currentTime with value: $value');
-        },
-        get: () => 100.toJS,
-      ));
+    element,
+    'currentTime',
+    Descriptor.accessor(
+      set: (JSAny? value) {
+        throw Exception('Unexpected call to currentTime with value: $value');
+      },
+      get: () => 100.toJS,
+    ),
+  );
 }

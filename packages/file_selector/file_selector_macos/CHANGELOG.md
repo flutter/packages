@@ -1,3 +1,17 @@
+## 0.9.4+5
+
+* Updates minimum supported version to macOS 10.15.
+* Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
+
+## 0.9.4+4
+
+* Updates to Pigeon 25.5.0.
+
+## 0.9.4+3
+
+* Updates configuration to not set `nameFieldStringValue` for `NSOpenPanel`.
+* Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+
 ## 0.9.4+2
 
 * Updates Pigeon for non-nullable collection type support.

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -27,15 +27,6 @@ class GitVersionFinder {
 
   /// The base branche used to find a merge point if baseSha is not provided.
   final String _baseBranch;
-
-  static bool _isPubspec(String file) {
-    return file.trim().endsWith('pubspec.yaml');
-  }
-
-  /// Get a list of all the pubspec.yaml file that is changed.
-  Future<List<String>> getChangedPubSpecs() async {
-    return (await getChangedFiles()).where(_isPubspec).toList();
-  }
 
   /// Get a list of all the changed files.
   Future<List<String>> getChangedFiles(

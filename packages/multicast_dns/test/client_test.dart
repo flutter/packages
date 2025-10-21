@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -13,37 +13,47 @@ void main() {
   test('Can inject datagram socket factory and configure mdns port', () async {
     late int lastPort;
     final FakeRawDatagramSocket datagramSocket = FakeRawDatagramSocket();
-    final MDnsClient client = MDnsClient(rawDatagramSocketFactory:
-        (dynamic host, int port,
-            {bool reuseAddress = true,
-            bool reusePort = true,
-            int ttl = 1}) async {
-      lastPort = port;
-      return datagramSocket;
-    });
+    final MDnsClient client = MDnsClient(
+      rawDatagramSocketFactory: (
+        dynamic host,
+        int port, {
+        bool reuseAddress = true,
+        bool reusePort = true,
+        int ttl = 1,
+      }) async {
+        lastPort = port;
+        return datagramSocket;
+      },
+    );
 
     await client.start(
-        mDnsPort: 1234,
-        interfacesFactory: (InternetAddressType type) async =>
-            <NetworkInterface>[]);
+      mDnsPort: 1234,
+      interfacesFactory:
+          (InternetAddressType type) async => <NetworkInterface>[],
+    );
 
     expect(lastPort, 1234);
   });
 
   test('Closes IPv4 sockets', () async {
     final FakeRawDatagramSocket datagramSocket = FakeRawDatagramSocket();
-    final MDnsClient client = MDnsClient(rawDatagramSocketFactory:
-        (dynamic host, int port,
-            {bool reuseAddress = true,
-            bool reusePort = true,
-            int ttl = 1}) async {
-      return datagramSocket;
-    });
+    final MDnsClient client = MDnsClient(
+      rawDatagramSocketFactory: (
+        dynamic host,
+        int port, {
+        bool reuseAddress = true,
+        bool reusePort = true,
+        int ttl = 1,
+      }) async {
+        return datagramSocket;
+      },
+    );
 
     await client.start(
-        mDnsPort: 1234,
-        interfacesFactory: (InternetAddressType type) async =>
-            <NetworkInterface>[]);
+      mDnsPort: 1234,
+      interfacesFactory:
+          (InternetAddressType type) async => <NetworkInterface>[],
+    );
     expect(datagramSocket.closed, false);
     client.stop();
     expect(datagramSocket.closed, true);
@@ -52,18 +62,23 @@ void main() {
   test('Closes IPv6 sockets', () async {
     final FakeRawDatagramSocket datagramSocket = FakeRawDatagramSocket();
     datagramSocket.address = InternetAddress.anyIPv6;
-    final MDnsClient client = MDnsClient(rawDatagramSocketFactory:
-        (dynamic host, int port,
-            {bool reuseAddress = true,
-            bool reusePort = true,
-            int ttl = 1}) async {
-      return datagramSocket;
-    });
+    final MDnsClient client = MDnsClient(
+      rawDatagramSocketFactory: (
+        dynamic host,
+        int port, {
+        bool reuseAddress = true,
+        bool reusePort = true,
+        int ttl = 1,
+      }) async {
+        return datagramSocket;
+      },
+    );
 
     await client.start(
-        mDnsPort: 1234,
-        interfacesFactory: (InternetAddressType type) async =>
-            <NetworkInterface>[]);
+      mDnsPort: 1234,
+      interfacesFactory:
+          (InternetAddressType type) async => <NetworkInterface>[],
+    );
     expect(datagramSocket.closed, false);
     client.stop();
     expect(datagramSocket.closed, true);
@@ -72,17 +87,22 @@ void main() {
   test('start() is idempotent', () async {
     final FakeRawDatagramSocket datagramSocket = FakeRawDatagramSocket();
     datagramSocket.address = InternetAddress.anyIPv4;
-    final MDnsClient client = MDnsClient(rawDatagramSocketFactory:
-        (dynamic host, int port,
-            {bool reuseAddress = true,
-            bool reusePort = true,
-            int ttl = 1}) async {
-      return datagramSocket;
-    });
+    final MDnsClient client = MDnsClient(
+      rawDatagramSocketFactory: (
+        dynamic host,
+        int port, {
+        bool reuseAddress = true,
+        bool reusePort = true,
+        int ttl = 1,
+      }) async {
+        return datagramSocket;
+      },
+    );
 
     await client.start(
-        interfacesFactory: (InternetAddressType type) async =>
-            <NetworkInterface>[]);
+      interfacesFactory:
+          (InternetAddressType type) async => <NetworkInterface>[],
+    );
     await client.start();
     await client.lookup(ResourceRecordQuery.serverPointer('_')).toList();
   });
@@ -92,13 +112,13 @@ void main() {
       <String, Object>{
         'name': 'IPv4',
         'datagramSocketType': InternetAddress.anyIPv4,
-        'interfacePrefix': '192.168.2.'
+        'interfacePrefix': '192.168.2.',
       },
       <String, Object>{
         'name': 'IPv6',
         'datagramSocketType': InternetAddress.anyIPv6,
-        'interfacePrefix': '2001:0db8:85a3:0000:0000:8a2e:7335:030'
-      }
+        'interfacePrefix': '2001:0db8:85a3:0000:0000:8a2e:7335:030',
+      },
     ];
 
     for (final Map<String, Object> testCase in testCases) {
@@ -109,29 +129,32 @@ void main() {
             testCase['datagramSocketType']! as InternetAddress;
 
         final List<dynamic> selectedInterfacesForSendingPackets = <dynamic>[];
-        final MDnsClient client = MDnsClient(rawDatagramSocketFactory:
-            (dynamic host, int port,
-                {bool reuseAddress = true,
-                bool reusePort = true,
-                int ttl = 1}) async {
-          selectedInterfacesForSendingPackets.add(host);
-          return datagramSocket;
-        });
+        final MDnsClient client = MDnsClient(
+          rawDatagramSocketFactory: (
+            dynamic host,
+            int port, {
+            bool reuseAddress = true,
+            bool reusePort = true,
+            int ttl = 1,
+          }) async {
+            selectedInterfacesForSendingPackets.add(host);
+            return datagramSocket;
+          },
+        );
 
         const int numberOfFakeInterfaces = 10;
         Future<Iterable<NetworkInterface>> fakeNetworkInterfacesFactory(
-            InternetAddressType type) async {
+          InternetAddressType type,
+        ) async {
           final List<NetworkInterface> fakeInterfaces = <NetworkInterface>[];
 
           // Generate "fake" interfaces
           for (int i = 0; i < numberOfFakeInterfaces; i++) {
-            fakeInterfaces.add(FakeNetworkInterface(
-              'inetfake$i',
-              <InternetAddress>[
-                InternetAddress("${testCase['interfacePrefix']! as String}$i")
-              ],
-              0,
-            ));
+            fakeInterfaces.add(
+              FakeNetworkInterface('inetfake$i', <InternetAddress>[
+                InternetAddress("${testCase['interfacePrefix']! as String}$i"),
+              ], 0),
+            );
           }
 
           // ignore: always_specify_types
@@ -142,21 +165,53 @@ void main() {
             testCase['datagramSocketType']! as InternetAddress;
 
         await client.start(
-            listenAddress: listenAddress,
-            mDnsPort: 1234,
-            interfacesFactory: fakeNetworkInterfacesFactory);
+          listenAddress: listenAddress,
+          mDnsPort: 1234,
+          interfacesFactory: fakeNetworkInterfacesFactory,
+        );
         client.stop();
 
         if (testCase['datagramSocketType'] == InternetAddress.anyIPv4) {
           expect(selectedInterfacesForSendingPackets.length, 1);
         } else {
           // + 1 because of unspecified address (::)
-          expect(selectedInterfacesForSendingPackets.length,
-              numberOfFakeInterfaces + 1);
+          expect(
+            selectedInterfacesForSendingPackets.length,
+            numberOfFakeInterfaces + 1,
+          );
         }
         expect(selectedInterfacesForSendingPackets[0], listenAddress.address);
       });
     }
+  });
+
+  test('Calls onError callback in case of socket error', () async {
+    final FakeRawDatagramSocketThatSendsError datagramSocket =
+        FakeRawDatagramSocketThatSendsError();
+    final MDnsClient client = MDnsClient(
+      rawDatagramSocketFactory: (
+        dynamic host,
+        int port, {
+        bool reuseAddress = true,
+        bool reusePort = true,
+        int ttl = 1,
+      }) async {
+        return datagramSocket;
+      },
+    );
+
+    final Completer<void> onErrorCalledCompleter = Completer<void>();
+    await client.start(
+      mDnsPort: 1234,
+      interfacesFactory:
+          (InternetAddressType type) async => <NetworkInterface>[],
+      onError: (Object e) {
+        expect(e, 'Error');
+        onErrorCalledCompleter.complete();
+      },
+    );
+
+    await onErrorCalledCompleter.future.timeout(const Duration(seconds: 5));
   });
 }
 
@@ -166,12 +221,17 @@ class FakeRawDatagramSocket extends Fake implements RawDatagramSocket {
 
   @override
   StreamSubscription<RawSocketEvent> listen(
-      void Function(RawSocketEvent event)? onData,
-      {Function? onError,
-      void Function()? onDone,
-      bool? cancelOnError}) {
-    return const Stream<RawSocketEvent>.empty().listen(onData,
-        onError: onError, cancelOnError: cancelOnError, onDone: onDone);
+    void Function(RawSocketEvent event)? onData, {
+    Function? onError,
+    void Function()? onDone,
+    bool? cancelOnError,
+  }) {
+    return const Stream<RawSocketEvent>.empty().listen(
+      onData,
+      onError: onError,
+      cancelOnError: cancelOnError,
+      onDone: onDone,
+    );
   }
 
   bool closed = false;
@@ -193,6 +253,27 @@ class FakeRawDatagramSocket extends Fake implements RawDatagramSocket {
   @override
   void setRawOption(RawSocketOption option) {
     // nothing to do here
+  }
+}
+
+class FakeRawDatagramSocketThatSendsError extends Fake
+    implements RawDatagramSocket {
+  @override
+  InternetAddress address = InternetAddress.anyIPv4;
+
+  @override
+  StreamSubscription<RawSocketEvent> listen(
+    void Function(RawSocketEvent event)? onData, {
+    Function? onError,
+    void Function()? onDone,
+    bool? cancelOnError,
+  }) {
+    return Stream<RawSocketEvent>.error('Error').listen(
+      onData,
+      onError: onError,
+      cancelOnError: cancelOnError,
+      onDone: onDone,
+    );
   }
 }
 

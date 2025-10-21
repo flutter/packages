@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -10,12 +10,11 @@ import 'package:test/test.dart';
 import '../util.dart';
 
 void main() {
-  late FileSystem fileSystem;
   late Directory packagesDir;
 
   setUp(() {
-    fileSystem = MemoryFileSystem();
-    packagesDir = createPackagesDirectory(fileSystem: fileSystem);
+    (:packagesDir, processRunner: _, gitProcessRunner: _, gitDir: _) =
+        configureBaseCommandMocks();
   });
 
   group('displayName', () {
@@ -49,7 +48,7 @@ void main() {
 
     test('always uses Posix-style paths', () async {
       final Directory windowsPackagesDir = createPackagesDirectory(
-          fileSystem: MemoryFileSystem(style: FileSystemStyle.windows));
+          MemoryFileSystem(style: FileSystemStyle.windows));
 
       expect(
         RepositoryPackage(windowsPackagesDir.childDirectory('foo')).displayName,

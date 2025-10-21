@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -217,4 +217,26 @@ TEST(FileSelectorPlugin, TestGetMultipleDirectories) {
             GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER);
   EXPECT_EQ(gtk_file_chooser_get_select_multiple(GTK_FILE_CHOOSER(dialog)),
             true);
+}
+
+static gint mock_run_dialog_cancel(GtkNativeDialog* dialog) {
+  return GTK_RESPONSE_CANCEL;
+}
+
+TEST(FileSelectorPlugin, TestGetDirectoryCancel) {
+  g_autoptr(FfsPlatformFileChooserOptions) options =
+      ffs_platform_file_chooser_options_new(nullptr, nullptr, nullptr, nullptr,
+                                            nullptr);
+
+  g_autoptr(GtkFileChooserNative) dialog = create_dialog_of_type(
+      nullptr,
+      FILE_SELECTOR_LINUX_PLATFORM_FILE_CHOOSER_ACTION_TYPE_CHOOSE_DIRECTORY,
+      options);
+
+  ASSERT_NE(dialog, nullptr);
+
+  g_autoptr(FfsFileSelectorApiShowFileChooserResponse) response =
+      show_file_chooser(dialog, mock_run_dialog_cancel);
+
+  EXPECT_NE(response, nullptr);
 }

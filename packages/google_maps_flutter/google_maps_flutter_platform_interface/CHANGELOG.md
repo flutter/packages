@@ -1,3 +1,34 @@
+## 2.14.0
+
+* Adds support for disabling or moving the camera control button on web.
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
+## 2.13.0
+
+* Adds Advanced marker support.
+
+## 2.12.1
+
+* Fixes the `zIndex` issue in the `copyWith` method.
+
+## 2.12.0
+
+* Deprecates `zIndex` parameter in `Marker` in favor of `zIndexInt`.
+* Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+
+## 2.11.1
+
+* Updates READMEs and API docs.
+
+## 2.11.0
+
+* Adds support for animating the camera with a duration.
+
+## 2.10.0
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Adds support for ground overlay.
+
 ## 2.9.5
 
 * Converts `BitmapDescriptor` to typesafe structures.

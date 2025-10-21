@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -16,10 +16,7 @@ import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platf
 
 /// Controller for a single ExampleGoogleMap instance running on the host platform.
 class ExampleGoogleMapController {
-  ExampleGoogleMapController._(
-    this._googleMapState, {
-    required this.mapId,
-  }) {
+  ExampleGoogleMapController._(this._googleMapState, {required this.mapId}) {
     _connectStreams(mapId);
   }
 
@@ -36,10 +33,7 @@ class ExampleGoogleMapController {
     _ExampleGoogleMapState googleMapState,
   ) async {
     await GoogleMapsFlutterPlatform.instance.init(id);
-    return ExampleGoogleMapController._(
-      googleMapState,
-      mapId: id,
-    );
+    return ExampleGoogleMapController._(googleMapState, mapId: id);
   }
 
   final _ExampleGoogleMapState _googleMapState;
@@ -51,8 +45,12 @@ class ExampleGoogleMapController {
           .listen((_) => _googleMapState.widget.onCameraMoveStarted!());
     }
     if (_googleMapState.widget.onCameraMove != null) {
-      GoogleMapsFlutterPlatform.instance.onCameraMove(mapId: mapId).listen(
-          (CameraMoveEvent e) => _googleMapState.widget.onCameraMove!(e.value));
+      GoogleMapsFlutterPlatform.instance
+          .onCameraMove(mapId: mapId)
+          .listen(
+            (CameraMoveEvent e) =>
+                _googleMapState.widget.onCameraMove!(e.value),
+          );
     }
     if (_googleMapState.widget.onCameraIdle != null) {
       GoogleMapsFlutterPlatform.instance
@@ -62,17 +60,29 @@ class ExampleGoogleMapController {
     GoogleMapsFlutterPlatform.instance
         .onMarkerTap(mapId: mapId)
         .listen((MarkerTapEvent e) => _googleMapState.onMarkerTap(e.value));
-    GoogleMapsFlutterPlatform.instance.onMarkerDragStart(mapId: mapId).listen(
-        (MarkerDragStartEvent e) =>
-            _googleMapState.onMarkerDragStart(e.value, e.position));
-    GoogleMapsFlutterPlatform.instance.onMarkerDrag(mapId: mapId).listen(
-        (MarkerDragEvent e) =>
-            _googleMapState.onMarkerDrag(e.value, e.position));
-    GoogleMapsFlutterPlatform.instance.onMarkerDragEnd(mapId: mapId).listen(
-        (MarkerDragEndEvent e) =>
-            _googleMapState.onMarkerDragEnd(e.value, e.position));
-    GoogleMapsFlutterPlatform.instance.onInfoWindowTap(mapId: mapId).listen(
-        (InfoWindowTapEvent e) => _googleMapState.onInfoWindowTap(e.value));
+    GoogleMapsFlutterPlatform.instance
+        .onMarkerDragStart(mapId: mapId)
+        .listen(
+          (MarkerDragStartEvent e) =>
+              _googleMapState.onMarkerDragStart(e.value, e.position),
+        );
+    GoogleMapsFlutterPlatform.instance
+        .onMarkerDrag(mapId: mapId)
+        .listen(
+          (MarkerDragEvent e) =>
+              _googleMapState.onMarkerDrag(e.value, e.position),
+        );
+    GoogleMapsFlutterPlatform.instance
+        .onMarkerDragEnd(mapId: mapId)
+        .listen(
+          (MarkerDragEndEvent e) =>
+              _googleMapState.onMarkerDragEnd(e.value, e.position),
+        );
+    GoogleMapsFlutterPlatform.instance
+        .onInfoWindowTap(mapId: mapId)
+        .listen(
+          (InfoWindowTapEvent e) => _googleMapState.onInfoWindowTap(e.value),
+        );
     GoogleMapsFlutterPlatform.instance
         .onPolylineTap(mapId: mapId)
         .listen((PolylineTapEvent e) => _googleMapState.onPolylineTap(e.value));
@@ -83,10 +93,19 @@ class ExampleGoogleMapController {
         .onCircleTap(mapId: mapId)
         .listen((CircleTapEvent e) => _googleMapState.onCircleTap(e.value));
     GoogleMapsFlutterPlatform.instance
+        .onGroundOverlayTap(mapId: mapId)
+        .listen(
+          (GroundOverlayTapEvent e) =>
+              _googleMapState.onGroundOverlayTap(e.value),
+        );
+    GoogleMapsFlutterPlatform.instance
         .onTap(mapId: mapId)
         .listen((MapTapEvent e) => _googleMapState.onTap(e.position));
-    GoogleMapsFlutterPlatform.instance.onLongPress(mapId: mapId).listen(
-        (MapLongPressEvent e) => _googleMapState.onLongPress(e.position));
+    GoogleMapsFlutterPlatform.instance
+        .onLongPress(mapId: mapId)
+        .listen(
+          (MapLongPressEvent e) => _googleMapState.onLongPress(e.position),
+        );
     GoogleMapsFlutterPlatform.instance
         .onClusterTap(mapId: mapId)
         .listen((ClusterTapEvent e) => _googleMapState.onClusterTap(e.value));
@@ -94,64 +113,96 @@ class ExampleGoogleMapController {
 
   /// Updates configuration options of the map user interface.
   Future<void> _updateMapConfiguration(MapConfiguration update) {
-    return GoogleMapsFlutterPlatform.instance
-        .updateMapConfiguration(update, mapId: mapId);
+    return GoogleMapsFlutterPlatform.instance.updateMapConfiguration(
+      update,
+      mapId: mapId,
+    );
   }
 
   /// Updates marker configuration.
   Future<void> _updateMarkers(MarkerUpdates markerUpdates) {
-    return GoogleMapsFlutterPlatform.instance
-        .updateMarkers(markerUpdates, mapId: mapId);
+    return GoogleMapsFlutterPlatform.instance.updateMarkers(
+      markerUpdates,
+      mapId: mapId,
+    );
   }
 
   /// Updates cluster manager configuration.
   Future<void> _updateClusterManagers(
-      ClusterManagerUpdates clusterManagerUpdates) {
-    return GoogleMapsFlutterPlatform.instance
-        .updateClusterManagers(clusterManagerUpdates, mapId: mapId);
+    ClusterManagerUpdates clusterManagerUpdates,
+  ) {
+    return GoogleMapsFlutterPlatform.instance.updateClusterManagers(
+      clusterManagerUpdates,
+      mapId: mapId,
+    );
+  }
+
+  /// Updates ground overlay configuration.
+  Future<void> _updateGroundOverlays(
+    GroundOverlayUpdates groundOverlayUpdates,
+  ) {
+    return GoogleMapsFlutterPlatform.instance.updateGroundOverlays(
+      groundOverlayUpdates,
+      mapId: mapId,
+    );
   }
 
   /// Updates polygon configuration.
   Future<void> _updatePolygons(PolygonUpdates polygonUpdates) {
-    return GoogleMapsFlutterPlatform.instance
-        .updatePolygons(polygonUpdates, mapId: mapId);
+    return GoogleMapsFlutterPlatform.instance.updatePolygons(
+      polygonUpdates,
+      mapId: mapId,
+    );
   }
 
   /// Updates polyline configuration.
   Future<void> _updatePolylines(PolylineUpdates polylineUpdates) {
-    return GoogleMapsFlutterPlatform.instance
-        .updatePolylines(polylineUpdates, mapId: mapId);
+    return GoogleMapsFlutterPlatform.instance.updatePolylines(
+      polylineUpdates,
+      mapId: mapId,
+    );
   }
 
   /// Updates circle configuration.
   Future<void> _updateCircles(CircleUpdates circleUpdates) {
-    return GoogleMapsFlutterPlatform.instance
-        .updateCircles(circleUpdates, mapId: mapId);
+    return GoogleMapsFlutterPlatform.instance.updateCircles(
+      circleUpdates,
+      mapId: mapId,
+    );
   }
 
   /// Updates tile overlays configuration.
   Future<void> _updateTileOverlays(Set<TileOverlay> newTileOverlays) {
-    return GoogleMapsFlutterPlatform.instance
-        .updateTileOverlays(newTileOverlays: newTileOverlays, mapId: mapId);
+    return GoogleMapsFlutterPlatform.instance.updateTileOverlays(
+      newTileOverlays: newTileOverlays,
+      mapId: mapId,
+    );
   }
 
   /// Clears the tile cache so that all tiles will be requested again from the
   /// [TileProvider].
   Future<void> clearTileCache(TileOverlayId tileOverlayId) async {
-    return GoogleMapsFlutterPlatform.instance
-        .clearTileCache(tileOverlayId, mapId: mapId);
+    return GoogleMapsFlutterPlatform.instance.clearTileCache(
+      tileOverlayId,
+      mapId: mapId,
+    );
   }
 
   /// Starts an animated change of the map camera position.
-  Future<void> animateCamera(CameraUpdate cameraUpdate) {
-    return GoogleMapsFlutterPlatform.instance
-        .animateCamera(cameraUpdate, mapId: mapId);
+  Future<void> animateCamera(CameraUpdate cameraUpdate, {Duration? duration}) {
+    return GoogleMapsFlutterPlatform.instance.animateCameraWithConfiguration(
+      cameraUpdate,
+      CameraUpdateAnimationConfiguration(duration: duration),
+      mapId: mapId,
+    );
   }
 
   /// Changes the map camera position.
   Future<void> moveCamera(CameraUpdate cameraUpdate) {
-    return GoogleMapsFlutterPlatform.instance
-        .moveCamera(cameraUpdate, mapId: mapId);
+    return GoogleMapsFlutterPlatform.instance.moveCamera(
+      cameraUpdate,
+      mapId: mapId,
+    );
   }
 
   /// Return [LatLngBounds] defining the region that is visible in a map.
@@ -161,32 +212,42 @@ class ExampleGoogleMapController {
 
   /// Return [ScreenCoordinate] of the [LatLng] in the current map view.
   Future<ScreenCoordinate> getScreenCoordinate(LatLng latLng) {
-    return GoogleMapsFlutterPlatform.instance
-        .getScreenCoordinate(latLng, mapId: mapId);
+    return GoogleMapsFlutterPlatform.instance.getScreenCoordinate(
+      latLng,
+      mapId: mapId,
+    );
   }
 
   /// Returns [LatLng] corresponding to the [ScreenCoordinate] in the current map view.
   Future<LatLng> getLatLng(ScreenCoordinate screenCoordinate) {
-    return GoogleMapsFlutterPlatform.instance
-        .getLatLng(screenCoordinate, mapId: mapId);
+    return GoogleMapsFlutterPlatform.instance.getLatLng(
+      screenCoordinate,
+      mapId: mapId,
+    );
   }
 
   /// Programmatically show the Info Window for a [Marker].
   Future<void> showMarkerInfoWindow(MarkerId markerId) {
-    return GoogleMapsFlutterPlatform.instance
-        .showMarkerInfoWindow(markerId, mapId: mapId);
+    return GoogleMapsFlutterPlatform.instance.showMarkerInfoWindow(
+      markerId,
+      mapId: mapId,
+    );
   }
 
   /// Programmatically hide the Info Window for a [Marker].
   Future<void> hideMarkerInfoWindow(MarkerId markerId) {
-    return GoogleMapsFlutterPlatform.instance
-        .hideMarkerInfoWindow(markerId, mapId: mapId);
+    return GoogleMapsFlutterPlatform.instance.hideMarkerInfoWindow(
+      markerId,
+      mapId: mapId,
+    );
   }
 
   /// Returns `true` when the [InfoWindow] is showing, `false` otherwise.
   Future<bool> isMarkerInfoWindowShown(MarkerId markerId) {
-    return GoogleMapsFlutterPlatform.instance
-        .isMarkerInfoWindowShown(markerId, mapId: mapId);
+    return GoogleMapsFlutterPlatform.instance.isMarkerInfoWindowShown(
+      markerId,
+      mapId: mapId,
+    );
   }
 
   /// Returns the current zoom level of the map
@@ -250,6 +311,7 @@ class ExampleGoogleMap extends StatefulWidget {
     this.clusterManagers = const <ClusterManager>{},
     this.onCameraMoveStarted,
     this.tileOverlays = const <TileOverlay>{},
+    this.groundOverlays = const <GroundOverlay>{},
     this.onCameraMove,
     this.onCameraIdle,
     this.onTap,
@@ -326,6 +388,9 @@ class ExampleGoogleMap extends StatefulWidget {
   /// Cluster Managers to be placed for the map.
   final Set<ClusterManager> clusterManagers;
 
+  /// Ground overlays to be initialized for the map.
+  final Set<GroundOverlay> groundOverlays;
+
   /// Called when the camera starts moving.
   final VoidCallback? onCameraMoveStarted;
 
@@ -387,6 +452,8 @@ class _ExampleGoogleMapState extends State<ExampleGoogleMap> {
   Map<CircleId, Circle> _circles = <CircleId, Circle>{};
   Map<ClusterManagerId, ClusterManager> _clusterManagers =
       <ClusterManagerId, ClusterManager>{};
+  Map<GroundOverlayId, GroundOverlay> _groundOverlays =
+      <GroundOverlayId, GroundOverlay>{};
   late MapConfiguration _mapConfiguration;
 
   @override
@@ -395,7 +462,8 @@ class _ExampleGoogleMapState extends State<ExampleGoogleMap> {
       _mapId,
       onPlatformViewCreated,
       widgetConfiguration: MapWidgetConfiguration(
-        textDirection: widget.layoutDirection ??
+        textDirection:
+            widget.layoutDirection ??
             Directionality.maybeOf(context) ??
             TextDirection.ltr,
         initialCameraPosition: widget.initialCameraPosition,
@@ -407,6 +475,7 @@ class _ExampleGoogleMapState extends State<ExampleGoogleMap> {
         polylines: widget.polylines,
         circles: widget.circles,
         clusterManagers: widget.clusterManagers,
+        groundOverlays: widget.groundOverlays,
       ),
       mapConfiguration: _mapConfiguration,
     );
@@ -421,12 +490,14 @@ class _ExampleGoogleMapState extends State<ExampleGoogleMap> {
     _polygons = keyByPolygonId(widget.polygons);
     _polylines = keyByPolylineId(widget.polylines);
     _circles = keyByCircleId(widget.circles);
+    _groundOverlays = keyByGroundOverlayId(widget.groundOverlays);
   }
 
   @override
   void dispose() {
-    _controller.future
-        .then((ExampleGoogleMapController controller) => controller.dispose());
+    _controller.future.then(
+      (ExampleGoogleMapController controller) => controller.dispose(),
+    );
     super.dispose();
   }
 
@@ -440,6 +511,7 @@ class _ExampleGoogleMapState extends State<ExampleGoogleMap> {
     _updatePolylines();
     _updateCircles();
     _updateTileOverlays();
+    _updateGroundOverlays();
   }
 
   Future<void> _updateOptions() async {
@@ -455,36 +527,67 @@ class _ExampleGoogleMapState extends State<ExampleGoogleMap> {
 
   Future<void> _updateMarkers() async {
     final ExampleGoogleMapController controller = await _controller.future;
-    unawaited(controller._updateMarkers(
-        MarkerUpdates.from(_markers.values.toSet(), widget.markers)));
+    unawaited(
+      controller._updateMarkers(
+        MarkerUpdates.from(_markers.values.toSet(), widget.markers),
+      ),
+    );
     _markers = keyByMarkerId(widget.markers);
   }
 
   Future<void> _updateClusterManagers() async {
     final ExampleGoogleMapController controller = await _controller.future;
-    unawaited(controller._updateClusterManagers(ClusterManagerUpdates.from(
-        _clusterManagers.values.toSet(), widget.clusterManagers)));
+    unawaited(
+      controller._updateClusterManagers(
+        ClusterManagerUpdates.from(
+          _clusterManagers.values.toSet(),
+          widget.clusterManagers,
+        ),
+      ),
+    );
     _clusterManagers = keyByClusterManagerId(widget.clusterManagers);
+  }
+
+  Future<void> _updateGroundOverlays() async {
+    final ExampleGoogleMapController controller = await _controller.future;
+    unawaited(
+      controller._updateGroundOverlays(
+        GroundOverlayUpdates.from(
+          _groundOverlays.values.toSet(),
+          widget.groundOverlays,
+        ),
+      ),
+    );
+    _groundOverlays = keyByGroundOverlayId(widget.groundOverlays);
   }
 
   Future<void> _updatePolygons() async {
     final ExampleGoogleMapController controller = await _controller.future;
-    unawaited(controller._updatePolygons(
-        PolygonUpdates.from(_polygons.values.toSet(), widget.polygons)));
+    unawaited(
+      controller._updatePolygons(
+        PolygonUpdates.from(_polygons.values.toSet(), widget.polygons),
+      ),
+    );
     _polygons = keyByPolygonId(widget.polygons);
   }
 
   Future<void> _updatePolylines() async {
     final ExampleGoogleMapController controller = await _controller.future;
-    unawaited(controller._updatePolylines(
-        PolylineUpdates.from(_polylines.values.toSet(), widget.polylines)));
+    unawaited(
+      controller._updatePolylines(
+        PolylineUpdates.from(_polylines.values.toSet(), widget.polylines),
+      ),
+    );
     _polylines = keyByPolylineId(widget.polylines);
   }
 
   Future<void> _updateCircles() async {
     final ExampleGoogleMapController controller = await _controller.future;
-    unawaited(controller._updateCircles(
-        CircleUpdates.from(_circles.values.toSet(), widget.circles)));
+    unawaited(
+      controller._updateCircles(
+        CircleUpdates.from(_circles.values.toSet(), widget.circles),
+      ),
+    );
     _circles = keyByCircleId(widget.circles);
   }
 
@@ -496,10 +599,10 @@ class _ExampleGoogleMapState extends State<ExampleGoogleMap> {
   Future<void> onPlatformViewCreated(int id) async {
     final ExampleGoogleMapController controller =
         await ExampleGoogleMapController._init(
-      id,
-      widget.initialCameraPosition,
-      this,
-    );
+          id,
+          widget.initialCameraPosition,
+          this,
+        );
     _controller.complete(controller);
     unawaited(_updateTileOverlays());
     widget.onMapCreated?.call(controller);
@@ -531,6 +634,10 @@ class _ExampleGoogleMapState extends State<ExampleGoogleMap> {
 
   void onCircleTap(CircleId circleId) {
     _circles[circleId]!.onTap?.call();
+  }
+
+  void onGroundOverlayTap(GroundOverlayId groundOverlayId) {
+    _groundOverlays[groundOverlayId]!.onTap?.call();
   }
 
   void onInfoWindowTap(MarkerId markerId) {

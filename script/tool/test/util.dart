@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -14,6 +14,7 @@ import 'package:flutter_plugin_tools/src/common/file_utils.dart';
 import 'package:flutter_plugin_tools/src/common/plugin_utils.dart';
 import 'package:flutter_plugin_tools/src/common/process_runner.dart';
 import 'package:flutter_plugin_tools/src/common/repository_package.dart';
+import 'package:git/git.dart';
 import 'package:meta/meta.dart';
 import 'package:path/path.dart' as p;
 import 'package:platform/platform.dart';
@@ -31,19 +32,11 @@ const String _defaultFlutterConstraint = '>=2.5.0';
 String getFlutterCommand(Platform platform) =>
     platform.isWindows ? 'flutter.bat' : 'flutter';
 
-/// Creates a packages directory in the given location.
-///
-/// If [parentDir] is set the packages directory will be created there,
-/// otherwise [fileSystem] must be provided and it will be created an arbitrary
-/// location in that filesystem.
-Directory createPackagesDirectory(
-    {Directory? parentDir, FileSystem? fileSystem}) {
-  assert(parentDir != null || fileSystem != null,
-      'One of parentDir or fileSystem must be provided');
-  assert(fileSystem == null || fileSystem is MemoryFileSystem,
-      'If using a real filesystem, parentDir must be provided');
+/// Creates a packages directory at an arbitrary location in the given
+/// filesystem.
+Directory createPackagesDirectory(FileSystem fileSystem) {
   final Directory packagesDir =
-      (parentDir ?? fileSystem!.currentDirectory).childDirectory('packages');
+      fileSystem.currentDirectory.childDirectory('packages');
   packagesDir.createSync();
   return packagesDir;
 }
@@ -357,7 +350,7 @@ Future<List<String>> runCapturingPrint(
 /// Information about a process to return from [RecordingProcessRunner].
 class FakeProcessInfo {
   const FakeProcessInfo(this.process,
-      [this.expectedInitialArgs = const <String>[]]);
+      [this.expectedInitialArgs = const <String>[], this.runCallback]);
 
   /// The process to return.
   final io.Process process;
@@ -367,6 +360,12 @@ class FakeProcessInfo {
   /// This does not have to be a full list of arguments, only enough of the
   /// start to ensure that the call is as expected.
   final List<String> expectedInitialArgs;
+
+  /// If present, a function to call when the process would be run.
+  ///
+  /// This can be used to validate state at specific points in a command run,
+  /// such as temporary file modifications.
+  final void Function()? runCallback;
 }
 
 /// A mock [ProcessRunner] which records process calls.
@@ -395,7 +394,7 @@ class RecordingProcessRunner extends ProcessRunner {
     bool exitOnError = false,
   }) async {
     recordedCalls.add(ProcessCall(executable, args, workingDir?.path));
-    final io.Process? processToReturn = _getProcessToReturn(executable, args);
+    final io.Process? processToReturn = _runFakeProcess(executable, args);
     final int exitCode =
         processToReturn == null ? 0 : await processToReturn.exitCode;
     if (exitOnError && (exitCode != 0)) {
@@ -418,7 +417,7 @@ class RecordingProcessRunner extends ProcessRunner {
   }) async {
     recordedCalls.add(ProcessCall(executable, args, workingDir?.path));
 
-    final io.Process? process = _getProcessToReturn(executable, args);
+    final io.Process? process = _runFakeProcess(executable, args);
     final List<String>? processStdout =
         await process?.stdout.transform(stdoutEncoding.decoder).toList();
     final String stdout = processStdout?.join() ?? '';
@@ -442,10 +441,12 @@ class RecordingProcessRunner extends ProcessRunner {
       {Directory? workingDirectory}) async {
     recordedCalls.add(ProcessCall(executable, args, workingDirectory?.path));
     return Future<io.Process>.value(
-        _getProcessToReturn(executable, args) ?? MockProcess());
+        _runFakeProcess(executable, args) ?? MockProcess());
   }
 
-  io.Process? _getProcessToReturn(String executable, List<String> args) {
+  /// Returns the fake process for the given executable and args after running
+  /// any callback it provides.
+  io.Process? _runFakeProcess(String executable, List<String> args) {
     final List<FakeProcessInfo> fakes =
         mockProcessesForExecutable[executable] ?? <FakeProcessInfo>[];
     if (fakes.isNotEmpty) {
@@ -457,6 +458,7 @@ class RecordingProcessRunner extends ProcessRunner {
             '[${fake.expectedInitialArgs.join(', ')}] but was called with '
             'arguments [${args.join(', ')}]');
       }
+      fake.runCallback?.call();
       return fake.process;
     }
     return null;
@@ -493,4 +495,46 @@ class ProcessCall {
     final List<String> command = <String>[executable, ...args];
     return '"${command.join(' ')}" in $workingDir';
   }
+}
+
+/// Sets up standard mocking common to most command unit test setUp methods,
+/// including a packages directory in an in-memory filesystem, and a mock
+/// process handling (including git commands sent by GitDir).
+///
+/// The returned GitDir instance forwards to a mock process runner, as described
+/// in [createForwardingMockGitDir]. This process runner is separate, so that
+/// tests can easily treat most git commands called as internal implementation
+/// details, and assert on the exact list of non-git commands that are run.
+({
+  Directory packagesDir,
+  RecordingProcessRunner processRunner,
+  RecordingProcessRunner gitProcessRunner,
+  GitDir gitDir,
+}) configureBaseCommandMocks({
+  Platform? platform,
+  RecordingProcessRunner? customProcessRunner,
+  RecordingProcessRunner? customGitProcessRunner,
+}) {
+  final FileSystem fileSystem = MemoryFileSystem(
+      style: (platform?.isWindows ?? false)
+          ? FileSystemStyle.windows
+          : FileSystemStyle.posix);
+  final Directory packagesDir = createPackagesDirectory(fileSystem);
+
+  final RecordingProcessRunner processRunner =
+      customProcessRunner ?? RecordingProcessRunner();
+
+  final RecordingProcessRunner gitProcessRunner =
+      customGitProcessRunner ?? RecordingProcessRunner();
+  final GitDir gitDir = createForwardingMockGitDir(
+    packagesDir: packagesDir,
+    processRunner: gitProcessRunner,
+  );
+
+  return (
+    packagesDir: packagesDir,
+    processRunner: processRunner,
+    gitProcessRunner: gitProcessRunner,
+    gitDir: gitDir,
+  );
 }

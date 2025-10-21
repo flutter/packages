@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -61,6 +61,9 @@ interface GoogleMapOptionsSink {
   void setInitialHeatmaps(@NonNull List<Messages.PlatformHeatmap> initialHeatmaps);
 
   void setInitialTileOverlays(@NonNull List<Messages.PlatformTileOverlay> initialTileOverlays);
+
+  void setInitialGroundOverlays(
+      @NonNull List<Messages.PlatformGroundOverlay> initialGroundOverlays);
 
   void setMapStyle(@Nullable String style);
 }

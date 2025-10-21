@@ -1,31 +1,26 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
-import 'package:file/memory.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
 import 'package:flutter_plugin_tools/src/repo_package_info_check_command.dart';
-import 'package:mockito/mockito.dart';
+import 'package:git/git.dart';
 import 'package:test/test.dart';
 
-import 'common/package_command_test.mocks.dart';
 import 'util.dart';
 
 void main() {
   late CommandRunner<void> runner;
-  late FileSystem fileSystem;
   late Directory root;
   late Directory packagesDir;
 
   setUp(() {
-    fileSystem = MemoryFileSystem();
-    root = fileSystem.currentDirectory;
-    packagesDir = root.childDirectory('packages');
-
-    final MockGitDir gitDir = MockGitDir();
-    when(gitDir.path).thenReturn(root.path);
+    final GitDir gitDir;
+    (:packagesDir, processRunner: _, gitProcessRunner: _, :gitDir) =
+        configureBaseCommandMocks();
+    root = packagesDir.fileSystem.currentDirectory;
 
     final RepoPackageInfoCheckCommand command = RepoPackageInfoCheckCommand(
       packagesDir,

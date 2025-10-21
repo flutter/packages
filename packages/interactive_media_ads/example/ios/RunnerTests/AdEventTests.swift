@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -41,6 +41,17 @@ final class AdEventTests: XCTestCase {
 
     XCTAssertEqual(value as! [String: String], ["my": "string"])
   }
+
+  func testAd() {
+    let registrar = TestProxyApiRegistrar()
+    let api = registrar.apiDelegate.pigeonApiIMAAdEvent(registrar)
+
+    let instance = TestAdEvent.customInit()
+    let value = try? api.pigeonDelegate.ad(pigeonApi: api, pigeonInstance: instance)
+
+    XCTAssertNotNil(value)
+    XCTAssertEqual(value, instance.ad)
+  }
 }
 
 class TestAdEvent: IMAAdEvent {
@@ -48,8 +59,11 @@ class TestAdEvent: IMAAdEvent {
   static func customInit() -> TestAdEvent {
     let instance =
       TestAdEvent.perform(NSSelectorFromString("new")).takeRetainedValue() as! TestAdEvent
+    instance._ad = TestAd.customInit()
     return instance
   }
+
+  var _ad: TestAd?
 
   override var type: IMAAdEventType {
     return .AD_BREAK_ENDED
@@ -61,5 +75,9 @@ class TestAdEvent: IMAAdEvent {
 
   override var adData: [String: Any]? {
     return ["my": "string"]
+  }
+
+  override var ad: IMAAd? {
+    return _ad!
   }
 }

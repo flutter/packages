@@ -1,6 +1,7 @@
-## NEXT
+## 2.0.0
 
-* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+* Switches to `LocalAuthException` for error reporting.
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
 
 ## 1.0.11
 

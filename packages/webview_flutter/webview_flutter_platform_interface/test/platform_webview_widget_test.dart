@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -20,8 +20,9 @@ void main() {
         MockWebViewControllerDelegate();
     final PlatformWebViewWidgetCreationParams params =
         PlatformWebViewWidgetCreationParams(controller: controller);
-    when(WebViewPlatform.instance!.createPlatformWebViewWidget(params))
-        .thenReturn(ImplementsWebViewWidgetDelegate());
+    when(
+      WebViewPlatform.instance!.createPlatformWebViewWidget(params),
+    ).thenReturn(ImplementsWebViewWidgetDelegate());
 
     expect(() {
       PlatformWebViewWidget(params);
@@ -40,8 +41,9 @@ void main() {
         MockWebViewControllerDelegate();
     final PlatformWebViewWidgetCreationParams params =
         PlatformWebViewWidgetCreationParams(controller: controller);
-    when(WebViewPlatform.instance!.createPlatformWebViewWidget(params))
-        .thenReturn(ExtendsWebViewWidgetDelegate(params));
+    when(
+      WebViewPlatform.instance!.createPlatformWebViewWidget(params),
+    ).thenReturn(ExtendsWebViewWidgetDelegate(params));
 
     expect(PlatformWebViewWidget(params), isNotNull);
   });
@@ -51,8 +53,9 @@ void main() {
         MockWebViewControllerDelegate();
     final PlatformWebViewWidgetCreationParams params =
         PlatformWebViewWidgetCreationParams(controller: controller);
-    when(WebViewPlatform.instance!.createPlatformWebViewWidget(params))
-        .thenReturn(MockWebViewWidgetDelegate());
+    when(
+      WebViewPlatform.instance!.createPlatformWebViewWidget(params),
+    ).thenReturn(MockWebViewWidgetDelegate());
 
     expect(PlatformWebViewWidget(params), isNotNull);
   });
@@ -72,8 +75,7 @@ class MockWebViewWidgetDelegate extends Mock
     with
         // ignore: prefer_mixin
         MockPlatformInterfaceMixin
-    implements
-        PlatformWebViewWidget {}
+    implements PlatformWebViewWidget {}
 
 class ExtendsWebViewWidgetDelegate extends PlatformWebViewWidget {
   ExtendsWebViewWidgetDelegate(super.params) : super.implementation();
@@ -81,7 +83,8 @@ class ExtendsWebViewWidgetDelegate extends PlatformWebViewWidget {
   @override
   Widget build(BuildContext context) {
     throw UnimplementedError(
-        'build is not implemented for ExtendedWebViewWidgetDelegate.');
+      'build is not implemented for ExtendedWebViewWidgetDelegate.',
+    );
   }
 }
 
@@ -89,5 +92,4 @@ class MockWebViewControllerDelegate extends Mock
     with
         // ignore: prefer_mixin
         MockPlatformInterfaceMixin
-    implements
-        PlatformWebViewController {}
+    implements PlatformWebViewController {}

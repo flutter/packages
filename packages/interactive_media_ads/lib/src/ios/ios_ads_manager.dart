@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -9,18 +9,30 @@ import 'package:meta/meta.dart';
 import '../platform_interface/platform_interface.dart';
 import 'interactive_media_ads.g.dart';
 import 'ios_ads_manager_delegate.dart';
+import 'ios_ads_rendering_settings.dart';
 
 /// Implementation of [PlatformAdsManager] for iOS.
 class IOSAdsManager extends PlatformAdsManager {
   /// Constructs an [IOSAdsManager].
   @internal
-  IOSAdsManager(IMAAdsManager manager) : _manager = manager;
+  IOSAdsManager(IMAAdsManager manager)
+    : _manager = manager,
+      super(
+        adCuePoints: List<Duration>.unmodifiable(
+          manager.adCuePoints.map((double seconds) {
+            return Duration(
+              milliseconds: (seconds * Duration.millisecondsPerSecond).round(),
+            );
+          }),
+        ),
+      );
 
   final IMAAdsManager _manager;
 
   // This must maintain a reference to the delegate because the native
   // `IMAAdsManagerDelegate.delegate` property is only a weak reference.
   // Therefore, this would be garbage collected without this explicit reference.
+  @pragma('vm:entry-point')
   // ignore: unused_field
   late IOSAdsManagerDelegate _delegate;
 
@@ -30,16 +42,23 @@ class IOSAdsManager extends PlatformAdsManager {
   }
 
   @override
-  Future<void> init(AdsManagerInitParams params) {
-    return _manager.initialize(null);
+  Future<void> init({PlatformAdsRenderingSettings? settings}) {
+    IMAAdsRenderingSettings? nativeSettings;
+    if (settings != null) {
+      nativeSettings = settings is IOSAdsRenderingSettings
+          ? settings.nativeSettings
+          : IOSAdsRenderingSettings(settings.params).nativeSettings;
+    }
+
+    return _manager.initialize(nativeSettings);
   }
 
   @override
   Future<void> setAdsManagerDelegate(PlatformAdsManagerDelegate delegate) {
     final IOSAdsManagerDelegate platformDelegate =
         delegate is IOSAdsManagerDelegate
-            ? delegate
-            : IOSAdsManagerDelegate(delegate.params);
+        ? delegate
+        : IOSAdsManagerDelegate(delegate.params);
     _delegate = platformDelegate;
     return _manager.setDelegate(platformDelegate.delegate);
   }

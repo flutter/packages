@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -1427,6 +1427,32 @@ CoreTestsPigeonTestTestMessage* core_tests_pigeon_test_test_message_new(
  */
 FlValue* core_tests_pigeon_test_test_message_get_test_list(
     CoreTestsPigeonTestTestMessage* object);
+
+G_DECLARE_FINAL_TYPE(CoreTestsPigeonTestMessageCodec,
+                     core_tests_pigeon_test_message_codec,
+                     CORE_TESTS_PIGEON_TEST, MESSAGE_CODEC,
+                     FlStandardMessageCodec)
+
+/**
+ * Custom type ID constants:
+ *
+ * Constants used to identify custom types in the codec.
+ * They are used in the codec to encode and decode custom types.
+ * They may be used in custom object creation functions to identify the type.
+ */
+extern const int core_tests_pigeon_test_an_enum_type_id;
+extern const int core_tests_pigeon_test_another_enum_type_id;
+extern const int core_tests_pigeon_test_unused_class_type_id;
+extern const int core_tests_pigeon_test_all_types_type_id;
+extern const int core_tests_pigeon_test_all_nullable_types_type_id;
+extern const int
+    core_tests_pigeon_test_all_nullable_types_without_recursion_type_id;
+extern const int core_tests_pigeon_test_all_classes_wrapper_type_id;
+extern const int core_tests_pigeon_test_test_message_type_id;
+
+G_DECLARE_FINAL_TYPE(CoreTestsPigeonTestHostIntegrationCoreApi,
+                     core_tests_pigeon_test_host_integration_core_api,
+                     CORE_TESTS_PIGEON_TEST, HOST_INTEGRATION_CORE_API, GObject)
 
 G_DECLARE_FINAL_TYPE(
     CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle,
@@ -3439,6 +3465,73 @@ CoreTestsPigeonTestHostIntegrationCoreApiEchoNamedNullableStringResponse*
 core_tests_pigeon_test_host_integration_core_api_echo_named_nullable_string_response_new_error(
     const gchar* code, const gchar* message, FlValue* details);
 
+G_DECLARE_FINAL_TYPE(
+    CoreTestsPigeonTestHostIntegrationCoreApiDefaultIsMainThreadResponse,
+    core_tests_pigeon_test_host_integration_core_api_default_is_main_thread_response,
+    CORE_TESTS_PIGEON_TEST,
+    HOST_INTEGRATION_CORE_API_DEFAULT_IS_MAIN_THREAD_RESPONSE, GObject)
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_default_is_main_thread_response_new:
+ *
+ * Creates a new response to HostIntegrationCoreApi.defaultIsMainThread.
+ *
+ * Returns: a new
+ * #CoreTestsPigeonTestHostIntegrationCoreApiDefaultIsMainThreadResponse
+ */
+CoreTestsPigeonTestHostIntegrationCoreApiDefaultIsMainThreadResponse*
+core_tests_pigeon_test_host_integration_core_api_default_is_main_thread_response_new(
+    gboolean return_value);
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_default_is_main_thread_response_new_error:
+ * @code: error code.
+ * @message: error message.
+ * @details: (allow-none): error details or %NULL.
+ *
+ * Creates a new error response to HostIntegrationCoreApi.defaultIsMainThread.
+ *
+ * Returns: a new
+ * #CoreTestsPigeonTestHostIntegrationCoreApiDefaultIsMainThreadResponse
+ */
+CoreTestsPigeonTestHostIntegrationCoreApiDefaultIsMainThreadResponse*
+core_tests_pigeon_test_host_integration_core_api_default_is_main_thread_response_new_error(
+    const gchar* code, const gchar* message, FlValue* details);
+
+G_DECLARE_FINAL_TYPE(
+    CoreTestsPigeonTestHostIntegrationCoreApiTaskQueueIsBackgroundThreadResponse,
+    core_tests_pigeon_test_host_integration_core_api_task_queue_is_background_thread_response,
+    CORE_TESTS_PIGEON_TEST,
+    HOST_INTEGRATION_CORE_API_TASK_QUEUE_IS_BACKGROUND_THREAD_RESPONSE, GObject)
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_task_queue_is_background_thread_response_new:
+ *
+ * Creates a new response to HostIntegrationCoreApi.taskQueueIsBackgroundThread.
+ *
+ * Returns: a new
+ * #CoreTestsPigeonTestHostIntegrationCoreApiTaskQueueIsBackgroundThreadResponse
+ */
+CoreTestsPigeonTestHostIntegrationCoreApiTaskQueueIsBackgroundThreadResponse*
+core_tests_pigeon_test_host_integration_core_api_task_queue_is_background_thread_response_new(
+    gboolean return_value);
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_task_queue_is_background_thread_response_new_error:
+ * @code: error code.
+ * @message: error message.
+ * @details: (allow-none): error details or %NULL.
+ *
+ * Creates a new error response to
+ * HostIntegrationCoreApi.taskQueueIsBackgroundThread.
+ *
+ * Returns: a new
+ * #CoreTestsPigeonTestHostIntegrationCoreApiTaskQueueIsBackgroundThreadResponse
+ */
+CoreTestsPigeonTestHostIntegrationCoreApiTaskQueueIsBackgroundThreadResponse*
+core_tests_pigeon_test_host_integration_core_api_task_queue_is_background_thread_response_new_error(
+    const gchar* code, const gchar* message, FlValue* details);
+
 /**
  * CoreTestsPigeonTestHostIntegrationCoreApiVTable:
  *
@@ -3744,6 +3837,10 @@ typedef struct {
       CoreTestsPigeonTestAnotherEnum* another_enum,
       CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
       gpointer user_data);
+  CoreTestsPigeonTestHostIntegrationCoreApiDefaultIsMainThreadResponse* (
+      *default_is_main_thread)(gpointer user_data);
+  CoreTestsPigeonTestHostIntegrationCoreApiTaskQueueIsBackgroundThreadResponse* (
+      *task_queue_is_background_thread)(gpointer user_data);
   void (*call_flutter_noop)(
       CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
       gpointer user_data);
@@ -11869,6 +11966,10 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_async_string_finish(
     CoreTestsPigeonTestFlutterIntegrationCoreApi* api, GAsyncResult* result,
     GError** error);
 
+G_DECLARE_FINAL_TYPE(CoreTestsPigeonTestHostTrivialApi,
+                     core_tests_pigeon_test_host_trivial_api,
+                     CORE_TESTS_PIGEON_TEST, HOST_TRIVIAL_API, GObject)
+
 G_DECLARE_FINAL_TYPE(CoreTestsPigeonTestHostTrivialApiNoopResponse,
                      core_tests_pigeon_test_host_trivial_api_noop_response,
                      CORE_TESTS_PIGEON_TEST, HOST_TRIVIAL_API_NOOP_RESPONSE,
@@ -11935,6 +12036,10 @@ void core_tests_pigeon_test_host_trivial_api_set_method_handlers(
  */
 void core_tests_pigeon_test_host_trivial_api_clear_method_handlers(
     FlBinaryMessenger* messenger, const gchar* suffix);
+
+G_DECLARE_FINAL_TYPE(CoreTestsPigeonTestHostSmallApi,
+                     core_tests_pigeon_test_host_small_api,
+                     CORE_TESTS_PIGEON_TEST, HOST_SMALL_API, GObject)
 
 G_DECLARE_FINAL_TYPE(CoreTestsPigeonTestHostSmallApiResponseHandle,
                      core_tests_pigeon_test_host_small_api_response_handle,

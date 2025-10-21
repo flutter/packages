@@ -1,9 +1,10 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 package com.example.alternate_language_test_plugin;
 
+import android.os.Looper;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.example.alternate_language_test_plugin.CoreTests.AllClassesWrapper;
@@ -613,6 +614,16 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   public void echoAnotherAsyncNullableEnum(
       @Nullable AnotherEnum anotherEnum, @NonNull NullableResult<AnotherEnum> result) {
     result.success(anotherEnum);
+  }
+
+  @Override
+  public @NonNull Boolean defaultIsMainThread() {
+    return Thread.currentThread() == Looper.getMainLooper().getThread();
+  }
+
+  @Override
+  public @NonNull Boolean taskQueueIsBackgroundThread() {
+    return Thread.currentThread() != Looper.getMainLooper().getThread();
   }
 
   @Override

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -81,6 +81,7 @@ public class ImagePickerDelegate
   @VisibleForTesting static final int REQUEST_CAMERA_IMAGE_PERMISSION = 2345;
   @VisibleForTesting static final int REQUEST_CODE_CHOOSE_MULTI_IMAGE_FROM_GALLERY = 2346;
   @VisibleForTesting static final int REQUEST_CODE_CHOOSE_MEDIA_FROM_GALLERY = 2347;
+  @VisibleForTesting static final int REQUEST_CODE_CHOOSE_MULTI_VIDEO_FROM_GALLERY = 2348;
 
   @VisibleForTesting static final int REQUEST_CODE_CHOOSE_VIDEO_FROM_GALLERY = 2352;
   @VisibleForTesting static final int REQUEST_CODE_TAKE_VIDEO_WITH_CAMERA = 2353;
@@ -474,6 +475,38 @@ public class ImagePickerDelegate
         pickMultiImageIntent, REQUEST_CODE_CHOOSE_MULTI_IMAGE_FROM_GALLERY);
   }
 
+  public void chooseMultiVideoFromGallery(
+      @NonNull VideoSelectionOptions options,
+      boolean usePhotoPicker,
+      int limit,
+      @NonNull Messages.Result<List<String>> result) {
+    if (!setPendingOptionsAndResult(null, options, result)) {
+      finishWithAlreadyActiveError(result);
+      return;
+    }
+
+    launchMultiPickVideoFromGalleryIntent(usePhotoPicker, limit);
+  }
+
+  private void launchMultiPickVideoFromGalleryIntent(Boolean usePhotoPicker, int limit) {
+    Intent pickMultiVideoIntent;
+    if (usePhotoPicker) {
+      pickMultiVideoIntent =
+          new ActivityResultContracts.PickMultipleVisualMedia(limit)
+              .createIntent(
+                  activity,
+                  new PickVisualMediaRequest.Builder()
+                      .setMediaType(ActivityResultContracts.PickVisualMedia.VideoOnly.INSTANCE)
+                      .build());
+    } else {
+      pickMultiVideoIntent = new Intent(Intent.ACTION_GET_CONTENT);
+      pickMultiVideoIntent.setType("video/*");
+      pickMultiVideoIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+    }
+    activity.startActivityForResult(
+        pickMultiVideoIntent, REQUEST_CODE_CHOOSE_MULTI_VIDEO_FROM_GALLERY);
+  }
+
   public void takeImageWithCamera(
       @NonNull ImageSelectionOptions options, @NonNull Messages.Result<List<String>> result) {
     if (!setPendingOptionsAndResult(options, null, result)) {
@@ -617,6 +650,9 @@ public class ImagePickerDelegate
       case REQUEST_CODE_CHOOSE_MULTI_IMAGE_FROM_GALLERY:
         handlerRunnable = () -> handleChooseMultiImageResult(resultCode, data);
         break;
+      case REQUEST_CODE_CHOOSE_MULTI_VIDEO_FROM_GALLERY:
+        handlerRunnable = () -> handleChooseMultiVideoResult(resultCode, data);
+        break;
       case REQUEST_CODE_TAKE_IMAGE_WITH_CAMERA:
         handlerRunnable = () -> handleCaptureImageResult(resultCode);
         break;
@@ -693,6 +729,24 @@ public class ImagePickerDelegate
     }
 
     // User cancelled choosing a picture.
+    finishWithSuccess(null);
+  }
+
+  private void handleChooseMultiVideoResult(int resultCode, Intent intent) {
+    if (resultCode == Activity.RESULT_OK && intent != null) {
+      ArrayList<MediaPath> paths = getPathsFromIntent(intent, false);
+      // If there's no valid Uri, return an error
+      if (paths == null) {
+        finishWithError(
+            "missing_valid_video_uri", "Cannot find at least one of the selected videos.");
+        return;
+      }
+
+      handleMediaResult(paths);
+      return;
+    }
+
+    // User cancelled choosing a video.
     finishWithSuccess(null);
   }
 
@@ -934,14 +988,9 @@ public class ImagePickerDelegate
   }
 
   private void useFrontCamera(Intent intent) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
-      intent.putExtra(
-          "android.intent.extras.CAMERA_FACING", CameraCharacteristics.LENS_FACING_FRONT);
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        intent.putExtra("android.intent.extra.USE_FRONT_CAMERA", true);
-      }
-    } else {
-      intent.putExtra("android.intent.extras.CAMERA_FACING", 1);
+    intent.putExtra("android.intent.extras.CAMERA_FACING", CameraCharacteristics.LENS_FACING_FRONT);
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+      intent.putExtra("android.intent.extra.USE_FRONT_CAMERA", true);
     }
   }
 }

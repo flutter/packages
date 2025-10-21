@@ -1,32 +1,18 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import 'package:flutter/foundation.dart';
-import 'package:json_annotation/json_annotation.dart';
 
 import '../../billing_client_wrappers.dart';
 
-// WARNING: Changes to `@JsonSerializable` classes need to be reflected in the
-// below generated file. Run `flutter packages pub run build_runner watch` to
-// rebuild and watch for further changes.
-part 'product_wrapper.g.dart';
-
 /// Dart wrapper around [`com.android.billingclient.api.Product`](https://developer.android.com/reference/com/android/billingclient/api/QueryProductDetailsParams.Product).
-@JsonSerializable(createToJson: true)
 @immutable
 class ProductWrapper {
   /// Creates a new [ProductWrapper].
-  const ProductWrapper({
-    required this.productId,
-    required this.productType,
-  });
-
-  /// Creates a JSON representation of this product.
-  Map<String, dynamic> toJson() => _$ProductWrapperToJson(this);
+  const ProductWrapper({required this.productId, required this.productType});
 
   /// The product identifier.
-  @JsonKey(defaultValue: '')
   final String productId;
 
   /// The product type.

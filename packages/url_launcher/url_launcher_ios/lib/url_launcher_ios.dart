@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -12,9 +12,8 @@ import 'src/messages.g.dart';
 /// An implementation of [UrlLauncherPlatform] for iOS.
 class UrlLauncherIOS extends UrlLauncherPlatform {
   /// Creates a new plugin implementation instance.
-  UrlLauncherIOS({
-    @visibleForTesting UrlLauncherApi? api,
-  }) : _hostApi = api ?? UrlLauncherApi();
+  UrlLauncherIOS({@visibleForTesting UrlLauncherApi? api})
+    : _hostApi = api ?? UrlLauncherApi();
 
   final UrlLauncherApi _hostApi;
 
@@ -57,13 +56,16 @@ class UrlLauncherIOS extends UrlLauncherPlatform {
       mode = PreferredLaunchMode.externalApplication;
     }
     return launchUrl(
-        url,
-        LaunchOptions(
-            mode: mode,
-            webViewConfiguration: InAppWebViewConfiguration(
-                enableDomStorage: enableDomStorage,
-                enableJavaScript: enableJavaScript,
-                headers: headers)));
+      url,
+      LaunchOptions(
+        mode: mode,
+        webViewConfiguration: InAppWebViewConfiguration(
+          enableDomStorage: enableDomStorage,
+          enableJavaScript: enableJavaScript,
+          headers: headers,
+        ),
+      ),
+    );
   }
 
   @override
@@ -90,11 +92,16 @@ class UrlLauncherIOS extends UrlLauncherPlatform {
 
     if (inApp) {
       return _mapInAppLoadResult(
-          await _hostApi.openUrlInSafariViewController(url),
-          url: url);
+        await _hostApi.openUrlInSafariViewController(url),
+        url: url,
+      );
     } else {
-      return _mapLaunchResult(await _hostApi.launchUrl(url,
-          options.mode == PreferredLaunchMode.externalNonBrowserApplication));
+      return _mapLaunchResult(
+        await _hostApi.launchUrl(
+          url,
+          options.mode == PreferredLaunchMode.externalNonBrowserApplication,
+        ),
+      );
     }
   }
 
@@ -141,6 +148,8 @@ class UrlLauncherIOS extends UrlLauncherPlatform {
         throw _failedSafariViewControllerLoadException(url);
       case InAppLoadResult.invalidUrl:
         throw _invalidUrlException();
+      case InAppLoadResult.dismissed:
+        return false;
     }
   }
 

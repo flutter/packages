@@ -1,12 +1,14 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 package dev.flutter.packages.interactive_media_ads
 
+import android.media.AudioManager
 import android.media.MediaPlayer
-import android.net.Uri
+import android.os.Build
 import android.widget.VideoView
+import androidx.core.net.toUri
 
 /**
  * ProxyApi implementation for [VideoView].
@@ -29,10 +31,25 @@ class VideoViewProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
   }
 
   override fun setVideoUri(pigeon_instance: VideoView, uri: String?) {
-    pigeon_instance.setVideoURI(if (uri != null) Uri.parse(uri) else null)
+    pigeon_instance.setVideoURI(uri?.toUri())
   }
 
   override fun getCurrentPosition(pigeon_instance: VideoView): Long {
     return pigeon_instance.currentPosition.toLong()
+  }
+
+  override fun setAudioFocusRequest(pigeon_instance: VideoView, focusGain: AudioManagerAudioFocus) {
+    if (pigeonRegistrar.sdkIsAtLeast(Build.VERSION_CODES.O)) {
+      pigeon_instance.setAudioFocusRequest(
+          when (focusGain) {
+            AudioManagerAudioFocus.GAIN -> AudioManager.AUDIOFOCUS_GAIN
+            AudioManagerAudioFocus.GAIN_TRANSIENT -> AudioManager.AUDIOFOCUS_GAIN_TRANSIENT
+            AudioManagerAudioFocus.GAIN_TRANSIENT_EXCLUSIVE ->
+                AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_EXCLUSIVE
+            AudioManagerAudioFocus.GAIN_TRANSIENT_MAY_DUCK ->
+                AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK
+            AudioManagerAudioFocus.NONE -> AudioManager.AUDIOFOCUS_NONE
+          })
+    }
   }
 }

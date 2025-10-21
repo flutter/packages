@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -8,6 +8,7 @@
 @import GoogleMaps;
 
 #import <OCMock/OCMock.h>
+#import "FGMCATransactionWrapper.h"
 #import "PartiallyMockedMapView.h"
 
 @interface FLTGoogleMapFactory (Test)
@@ -83,7 +84,114 @@
   size_t bitsPerComponent = CGImageGetBitsPerComponent(imageRef);
 
   // non wide gamut images use 8 bit format
-  XCTAssert(bitsPerComponent == 8);
+  XCTAssertEqual(bitsPerComponent, 8);
+  XCTAssertEqual(CGImageGetAlphaInfo(imageRef), kCGImageAlphaPremultipliedLast);
+}
+
+- (void)testAnimateCameraWithUpdate {
+  NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
+
+  CGRect frame = CGRectMake(0, 0, 100, 100);
+  GMSMapViewOptions *mapViewOptions = [[GMSMapViewOptions alloc] init];
+  mapViewOptions.frame = frame;
+
+  // Init camera with zero zoom.
+  mapViewOptions.camera = [[GMSCameraPosition alloc] initWithLatitude:0 longitude:0 zoom:0];
+
+  PartiallyMockedMapView *mapView = [[PartiallyMockedMapView alloc] initWithOptions:mapViewOptions];
+
+  FLTGoogleMapController *controller =
+      [[FLTGoogleMapController alloc] initWithMapView:mapView
+                                       viewIdentifier:0
+                                   creationParameters:[self emptyCreationParameters]
+                                            registrar:registrar];
+
+  id mapViewMock = OCMPartialMock(mapView);
+  id mockTransactionWrapper = OCMProtocolMock(@protocol(FGMCATransactionProtocol));
+  controller.callHandler.transactionWrapper = mockTransactionWrapper;
+
+  FGMPlatformCameraUpdateZoomTo *zoomTo = [FGMPlatformCameraUpdateZoomTo makeWithZoom:10.0];
+  FGMPlatformCameraUpdate *cameraUpdate = [FGMPlatformCameraUpdate makeWithCameraUpdate:zoomTo];
+  FlutterError *error = nil;
+
+  OCMReject([mockTransactionWrapper begin]);
+  OCMReject([mockTransactionWrapper commit]);
+  OCMExpect([mapViewMock animateWithCameraUpdate:[OCMArg any]]);
+  [controller.callHandler animateCameraWithUpdate:cameraUpdate duration:nil error:&error];
+  OCMVerifyAll(mapViewMock);
+  OCMVerifyAll(mockTransactionWrapper);
+}
+
+- (void)testAnimateCameraWithUpdateAndDuration {
+  NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
+
+  CGRect frame = CGRectMake(0, 0, 100, 100);
+  GMSMapViewOptions *mapViewOptions = [[GMSMapViewOptions alloc] init];
+  mapViewOptions.frame = frame;
+
+  // Init camera with zero zoom.
+  mapViewOptions.camera = [[GMSCameraPosition alloc] initWithLatitude:0 longitude:0 zoom:0];
+
+  PartiallyMockedMapView *mapView = [[PartiallyMockedMapView alloc] initWithOptions:mapViewOptions];
+
+  FLTGoogleMapController *controller =
+      [[FLTGoogleMapController alloc] initWithMapView:mapView
+                                       viewIdentifier:0
+                                   creationParameters:[self emptyCreationParameters]
+                                            registrar:registrar];
+
+  id mapViewMock = OCMPartialMock(mapView);
+  id mockTransactionWrapper = OCMProtocolMock(@protocol(FGMCATransactionProtocol));
+  controller.callHandler.transactionWrapper = mockTransactionWrapper;
+
+  FGMPlatformCameraUpdateZoomTo *zoomTo = [FGMPlatformCameraUpdateZoomTo makeWithZoom:10.0];
+  FGMPlatformCameraUpdate *cameraUpdate = [FGMPlatformCameraUpdate makeWithCameraUpdate:zoomTo];
+  FlutterError *error = nil;
+
+  NSNumber *durationMilliseconds = @100;
+  OCMExpect([mockTransactionWrapper begin]);
+  OCMExpect(
+      [mockTransactionWrapper setAnimationDuration:[durationMilliseconds doubleValue] / 1000]);
+  OCMExpect([mockTransactionWrapper commit]);
+  OCMExpect([mapViewMock animateWithCameraUpdate:[OCMArg any]]);
+  [controller.callHandler animateCameraWithUpdate:cameraUpdate
+                                         duration:durationMilliseconds
+                                            error:&error];
+  OCMVerifyAll(mapViewMock);
+  OCMVerifyAll(mockTransactionWrapper);
+}
+
+- (void)testInspectorAPICameraPosition {
+  NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
+
+  CGRect frame = CGRectMake(0, 0, 100, 100);
+  GMSMapViewOptions *mapViewOptions = [[GMSMapViewOptions alloc] init];
+  mapViewOptions.frame = frame;
+
+  // Init camera with specific position.
+  GMSCameraPosition *initialCameraPosition = [[GMSCameraPosition alloc] initWithLatitude:37.7749
+                                                                               longitude:-122.4194
+                                                                                    zoom:10];
+  mapViewOptions.camera = initialCameraPosition;
+
+  PartiallyMockedMapView *mapView = [[PartiallyMockedMapView alloc] initWithOptions:mapViewOptions];
+
+  FLTGoogleMapController *controller =
+      [[FLTGoogleMapController alloc] initWithMapView:mapView
+                                       viewIdentifier:0
+                                   creationParameters:[self emptyCreationParameters]
+                                            registrar:registrar];
+
+  FGMMapInspector *inspector = [[FGMMapInspector alloc] initWithMapController:controller
+                                                                    messenger:registrar.messenger
+                                                                 pigeonSuffix:@"0"];
+
+  FlutterError *error = nil;
+  FGMPlatformCameraPosition *cameraPosition = [inspector cameraPosition:&error];
+
+  XCTAssertEqual(cameraPosition.target.latitude, initialCameraPosition.target.latitude);
+  XCTAssertEqual(cameraPosition.target.longitude, initialCameraPosition.target.longitude);
+  XCTAssertEqual(cameraPosition.zoom, initialCameraPosition.zoom);
 }
 
 /// Creates an empty creation paramaters object for tests where the values don't matter, just that
@@ -103,7 +211,8 @@
                    initialPolylines:@[]
                     initialHeatmaps:@[]
                 initialTileOverlays:@[]
-             initialClusterManagers:@[]];
+             initialClusterManagers:@[]
+              initialGroundOverlays:@[]];
 }
 
 @end

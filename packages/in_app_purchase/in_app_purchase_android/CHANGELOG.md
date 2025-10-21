@@ -1,3 +1,51 @@
+## 0.4.0+6
+
+* Updates Java compatibility version to 17 and minimum supported SDK version to Flutter 3.35/Dart 3.9.
+
+## 0.4.0+5
+
+* Resolves Gradle 9 deprecations.
+
+## 0.4.0+4
+
+* Bumps com.android.tools.build:gradle to 8.12.1.
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
+## 0.4.0+3
+
+* Updates kotlin version to 2.2.0 to enable gradle 8.11 support.
+
+## 0.4.0+2
+
+* Adds support for setting the `offerToken` on `GooglePlayPurchaseParam`.
+
+## 0.4.0+1
+
+* Updates compileSdk 34 to flutter.compileSdkVersion.
+
+## 0.4.0
+
+* Updates Google Play Billing Library from 6.2.0 to 7.1.1.
+* **BREAKING CHANGES**:
+  * Removes the deprecated `ProrationMode` enum. `ReplacementMode` should be used instead.
+  * Removes the deprecated `BillingClientWrapper.enablePendingPurchases` method.
+  * Removes JSON serialization from Dart wrapper classes.
+  * Removes `subscriptionsOnVR` and `inAppItemsOnVR` from `BillingClientFeature`.
+* Adds `installmentPlanDetails` to `SubscriptionOfferDetailsWrapper`.
+* Adds APIs to support pending transactions for subscription prepaid plans (`PendingPurchasesParams`).
+
+## 0.3.6+13
+
+* Updates androidx.annotation:annotation to 1.9.1.
+
+## 0.3.6+12
+
+* Updates README to remove contributor-focused documentation.
+
+## 0.3.6+11
+
+* Bumps androidx.annotation:annotation from 1.8.2 to 1.9.0.
+
 ## 0.3.6+10
 
 * Updates Pigeon for non-nullable collection type support.

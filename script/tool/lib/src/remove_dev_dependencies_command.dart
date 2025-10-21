@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -15,7 +15,10 @@ import 'common/repository_package.dart';
 /// clients of the library, but not for development of the library.
 class RemoveDevDependenciesCommand extends PackageLoopingCommand {
   /// Creates a publish metadata updater command instance.
-  RemoveDevDependenciesCommand(super.packagesDir);
+  RemoveDevDependenciesCommand(
+    super.packagesDir, {
+    super.gitDir,
+  });
 
   @override
   final String name = 'remove-dev-dependencies';

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -11,6 +11,14 @@ open class ProxyApiDelegate: InteractiveMediaAdsLibraryPigeonProxyApiDelegate {
   func createUnknownEnumError(withEnum enumValue: Any) -> PigeonError {
     return PigeonError(
       code: "UnknownEnumError", message: "\(enumValue) doesn't represent a native value.",
+      details: nil)
+  }
+
+  /// Creates an error when the constructor of a class returns null.
+  func createConstructorNullError(type: Any.Type, parameters: [String: Any?]) -> PigeonError {
+    return PigeonError(
+      code: "ConstructorReturnedNullError",
+      message: "Failed to instantiate `\(String(describing: type))` with parameters: \(parameters)",
       details: nil)
   }
 
@@ -112,7 +120,7 @@ open class ProxyApiDelegate: InteractiveMediaAdsLibraryPigeonProxyApiDelegate {
   )
     -> PigeonApiIMAAdsRenderingSettings
   {
-    PigeonApiIMAAdsRenderingSettings(
+    return PigeonApiIMAAdsRenderingSettings(
       pigeonRegistrar: registrar, delegate: AdsRenderingSettingsProxyAPIDelegate())
   }
 
@@ -121,7 +129,53 @@ open class ProxyApiDelegate: InteractiveMediaAdsLibraryPigeonProxyApiDelegate {
   )
     -> PigeonApiIMAFriendlyObstruction
   {
-    PigeonApiIMAFriendlyObstruction(
+    return PigeonApiIMAFriendlyObstruction(
       pigeonRegistrar: registrar, delegate: FriendlyObstructionProxyAPIDelegate())
+  }
+
+  func pigeonApiIMACompanionAd(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiIMACompanionAd
+  {
+    return PigeonApiIMACompanionAd(
+      pigeonRegistrar: registrar, delegate: CompanionAdProxyAPIDelegate())
+  }
+
+  func pigeonApiIMACompanionAdSlot(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiIMACompanionAdSlot
+  {
+    return PigeonApiIMACompanionAdSlot(
+      pigeonRegistrar: registrar, delegate: CompanionAdSlotProxyAPIDelegate())
+  }
+
+  func pigeonApiIMACompanionDelegate(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiIMACompanionDelegate
+  {
+    return PigeonApiIMACompanionDelegate(
+      pigeonRegistrar: registrar, delegate: CompanionDelegateProxyAPIDelegate())
+  }
+
+  func pigeonApiIMAAdPodInfo(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiIMAAdPodInfo
+  {
+    return PigeonApiIMAAdPodInfo(pigeonRegistrar: registrar, delegate: AdPodInfoProxyAPIDelegate())
+  }
+
+  func pigeonApiIMASettings(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiIMASettings
+  {
+    return PigeonApiIMASettings(pigeonRegistrar: registrar, delegate: SettingsProxyAPIDelegate())
+  }
+
+  func pigeonApiIMAAd(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiIMAAd
+  {
+    return PigeonApiIMAAd(pigeonRegistrar: registrar, delegate: AdProxyAPIDelegate())
+  }
+
+  func pigeonApiIMAUniversalAdID(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiIMAUniversalAdID
+  {
+    return PigeonApiIMAUniversalAdID(
+      pigeonRegistrar: registrar, delegate: UniversalAdIDProxyAPIDelegate())
   }
 }
