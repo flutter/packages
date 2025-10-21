@@ -126,9 +126,6 @@ class GradleCheckCommand extends PackageLoopingCommand {
     // This is tracked as a variable rather than a sequence of &&s so that all
     // failures are reported at once, not just the first one.
     bool succeeded = true;
-    if (!_validateJavaKotlinCompileOptionsAlignment(lines)) {
-      succeeded = false;
-    }
     if (!_validateNamespace(package, contents, isExample: false)) {
       succeeded = false;
     }
@@ -136,6 +133,9 @@ class GradleCheckCommand extends PackageLoopingCommand {
       succeeded = false;
     }
     if (!_validateKotlinJvmCompatibility(lines)) {
+      succeeded = false;
+    }
+    if (!_validateJavaKotlinCompileOptionsAlignment(lines)) {
       succeeded = false;
     }
     if (!_validateGradleDrivenLintConfig(package, lines)) {
@@ -462,6 +462,15 @@ If build.gradle(.kts) sets jvmTarget then it must use JavaVersion syntax.
     }
     if (javaVersions.isNotEmpty) {
       final int version = int.parse(javaVersions.first);
+      if (!javaVersions.every((String element) => element == '$version')) {
+        const String javaVersionAlignmentError = '''
+If build.gradle(.kts) uses JavaVersion.* versions must be the same.
+''';
+        printError(
+            '$indentation${javaVersionAlignmentError.split('\n').join('\n$indentation')}');
+        return false;
+      }
+
       if (version < _minimumJavaVersion) {
         final String minimumJavaVersionError = '''
 build.gradle(.kts) uses "JavaVersion.VERSION_$version".
@@ -469,14 +478,6 @@ Which is below the minimum required. Use at least "JavaVersion.VERSION_$_minimum
 ''';
         printError(
             '$indentation${minimumJavaVersionError.split('\n').join('\n$indentation')}');
-        return false;
-      }
-      if (!javaVersions.every((String element) => element == '$version')) {
-        const String javaVersionAlignmentError = '''
-If build.gradle(.kts) uses JavaVersion.* versions must be the same.
-''';
-        printError(
-            '$indentation${javaVersionAlignmentError.split('\n').join('\n$indentation')}');
         return false;
       }
     }

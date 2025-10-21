@@ -398,10 +398,13 @@ dependencies {
       () async {
     final RepositoryPackage package =
         createFakePlugin('a_plugin', packagesDir, examples: <String>[]);
-    writeFakePluginBuildGradle(package,
-        includeSourceCompat: true,
-        includeTargetCompat: true,
-        jvmTargetValue: 11);
+    writeFakePluginBuildGradle(
+      package,
+      includeSourceCompat: true,
+      includeTargetCompat: true,
+      jvmTargetValue: 11,
+      kotlinJvmValue: 11,
+    );
     writeFakeManifest(package);
 
     Error? commandError;
