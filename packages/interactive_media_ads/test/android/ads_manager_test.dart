@@ -124,12 +124,14 @@ void main() {
       onAdEventCallback;
 
       final InteractiveMediaAdsProxy proxy = InteractiveMediaAdsProxy(
-        newAdEventListener: ({
-          required void Function(ima.AdEventListener, ima.AdEvent) onAdEvent,
-        }) {
-          onAdEventCallback = onAdEvent;
-          return MockAdEventListener();
-        },
+        newAdEventListener:
+            ({
+              required void Function(ima.AdEventListener, ima.AdEvent)
+              onAdEvent,
+            }) {
+              onAdEventCallback = onAdEvent;
+              return MockAdEventListener();
+            },
         newAdErrorListener: ({required dynamic onAdError}) {
           return MockAdErrorListener();
         },
@@ -142,7 +144,7 @@ void main() {
       await adsManager.setAdsManagerDelegate(
         AndroidAdsManagerDelegate(
           PlatformAdsManagerDelegateCreationParams(
-            onAdEvent: expectAsync1((AdEvent event) {
+            onAdEvent: expectAsync1((PlatformAdEvent event) {
               expect(event.type, AdEventType.allAdsCompleted);
               expect(event.adData, <String, String>{'hello': 'world'});
             }),
@@ -166,13 +168,14 @@ void main() {
         newAdEventListener: ({required dynamic onAdEvent}) {
           return MockAdEventListener();
         },
-        newAdErrorListener: ({
-          required void Function(ima.AdErrorListener, ima.AdErrorEvent)
-          onAdError,
-        }) {
-          onAdErrorCallback = onAdError;
-          return MockAdErrorListener();
-        },
+        newAdErrorListener:
+            ({
+              required void Function(ima.AdErrorListener, ima.AdErrorEvent)
+              onAdError,
+            }) {
+              onAdErrorCallback = onAdError;
+              return MockAdErrorListener();
+            },
       );
 
       final AndroidAdsManager adsManager = AndroidAdsManager(
