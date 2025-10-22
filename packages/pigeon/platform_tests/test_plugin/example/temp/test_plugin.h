@@ -775,6 +775,7 @@ SWIFT_CLASS("_TtC11test_plugin13NumberWrapper")
     SWIFT_WARN_UNUSED_RESULT;
 @property(nonatomic, strong) NSNumber *_Nonnull number;
 @property(nonatomic) NSInteger type;
+@property(nonatomic, readonly) NSUInteger hash;
 - (nonnull instancetype)init SWIFT_UNAVAILABLE;
 + (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
 @end

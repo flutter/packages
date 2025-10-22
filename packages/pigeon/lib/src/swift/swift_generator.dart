@@ -2126,6 +2126,22 @@ func deepHash${generatorOptions.fileSpecificClassNameComponent}(value: Any?, has
 
         indent.writeln('@objc var number: NSNumber');
         indent.writeln('@objc var type: Int');
+        indent.format('''
+          static func == (lhs: NumberWrapper, rhs: NumberWrapper) -> Bool {
+            return lhs.number == rhs.number && lhs.type == rhs.type
+          }
+            
+          override func isEqual(_ object: Any?) -> Bool {
+            guard let other = object as? NumberWrapper else {
+              return false
+            }
+            return self == other
+          }
+          
+          override var hash: Int {
+            return number.hashValue ^ type.hashValue
+          }
+    ''');
       },
     );
     indent.newln();

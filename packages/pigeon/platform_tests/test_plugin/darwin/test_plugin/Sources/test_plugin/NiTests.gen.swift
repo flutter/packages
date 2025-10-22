@@ -41,6 +41,21 @@ import Foundation
   }
   @objc var number: NSNumber
   @objc var type: Int
+  static func == (lhs: NumberWrapper, rhs: NumberWrapper) -> Bool {
+    return lhs.number == rhs.number && lhs.type == rhs.type
+  }
+
+  override func isEqual(_ object: Any?) -> Bool {
+    guard let other = object as? NumberWrapper else {
+      return false
+    }
+    return self == other
+  }
+
+  override var hash: Int {
+    return number.hashValue ^ type.hashValue
+  }
+
 }
 
 private func wrapNumber(number: Any) -> NumberWrapper {

@@ -3778,6 +3778,19 @@ final _objc_msgSend_4sp4xj = objc.msgSendPointer
         int,
       )
     >();
+late final _sel_hash = objc.registerName("hash");
+final _objc_msgSend_xw2lbc = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.UnsignedLong Function(
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCSelector>,
+        )
+      >
+    >()
+    .asFunction<
+      int Function(ffi.Pointer<objc.ObjCObject>, ffi.Pointer<objc.ObjCSelector>)
+    >();
 
 /// NumberWrapper
 class NumberWrapper extends objc.NSObject implements objc.NSCopying {
@@ -3874,6 +3887,11 @@ extension NumberWrapper$Methods on NumberWrapper {
   /// setType:
   set type(int value) {
     _objc_msgSend_4sp4xj(this.ref.pointer, _sel_setType_, value);
+  }
+
+  /// hash
+  int get hash {
+    return _objc_msgSend_xw2lbc(this.ref.pointer, _sel_hash);
   }
 
   /// init
