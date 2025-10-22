@@ -1,6 +1,11 @@
-## 0.9.22+2
+## 0.9.22+3
 
 * Updates examples to use the new RadioGroup API instead of deprecated Radio parameters.
+
+## 0.9.22+2
+
+* Migrates `FLTCamConfiguration`, `FLTCamMediaSettingsAVWrapper` classes to Swift.
+* Migrates `FLTCaptureOutput`, `FLTCapturePhotoOutput`, `FLTCaptureVideoDataOutput` protocols to Swift.
 
 ## 0.9.22+1
 
