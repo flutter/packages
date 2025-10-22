@@ -435,32 +435,11 @@ class GoogleMapController {
   /// errors.
   ///
   /// To facilitate debugging, this guard function
-  /// raises [MapUsedAfterWidgetDisposedError].
+  /// raises a use-after-disposed [StateError].
   void _checkWidgetMountedOrThrow() {
     if (!_googleMapState.mounted) {
-      throw MapUsedAfterWidgetDisposedError(mapId: mapId);
+      throw StateError('GoogleMapController for map ID $mapId was used after '
+          'the associated GoogleMap widget had already been disposed.');
     }
-  }
-}
-
-/// Error thrown when any [GoogleMapController] method is called after
-/// its associated [GoogleMap] widget has been disposed.
-///
-/// To avoid this error:
-///
-/// 1. Set the map controller field to `null` in your widget state's
-///    `dispose()` method, or
-/// 2. Check the [State.mounted] state before each use of the controller.
-class MapUsedAfterWidgetDisposedError extends Error {
-  /// Creates the use-after-disposed error for the provided [mapId].
-  MapUsedAfterWidgetDisposedError({required this.mapId});
-
-  /// The map ID of the map for which this error is being raised.
-  final int mapId;
-
-  @override
-  String toString() {
-    return 'GoogleMapController for map ID $mapId was used after '
-        'the associated GoogleMap widget had already been disposed.';
   }
 }
