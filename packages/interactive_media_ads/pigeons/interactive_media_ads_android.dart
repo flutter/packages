@@ -1197,7 +1197,7 @@ abstract class CompanionAdSlotClickListener {
   late final void Function() onCompanionAdClick;
 }
 
-/// A companion ad slot for which the SDK should retrieve ads.
+/// A companion ad slot for the SDK to render ads.
 ///
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/CompanionAdSlot.html.
 @ProxyApi(
@@ -1205,12 +1205,25 @@ abstract class CompanionAdSlotClickListener {
     fullClassName: 'com.google.ads.interactivemedia.v3.api.CompanionAdSlot',
   ),
 )
-abstract class CompanionAdSlot {
+abstract class CompanionAdSlot extends AdSlot {
   /// Registers a listener for companion clicks.
   void addClickListener(CompanionAdSlotClickListener clickListener);
 
+  /// Removes a listener for companion clicks.
+  void removeClickListener(CompanionAdSlotClickListener clickListener);
+}
+
+/// An ad slot for the SDK to render ads.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdSlot.html.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'com.google.ads.interactivemedia.v3.api.AdSlot',
+  ),
+)
+abstract class AdSlot {
   /// Returns the ViewGroup into which the companion will be rendered.
-  ViewGroup getContainer();
+  ViewGroup? getContainer();
 
   /// Returns the height of the companion slot.
   int getHeight();
@@ -1220,9 +1233,6 @@ abstract class CompanionAdSlot {
 
   /// Returns true if the companion slot is filled, false otherwise.
   bool isFilled();
-
-  /// Removes a listener for companion clicks.
-  void removeClickListener(CompanionAdSlotClickListener clickListener);
 
   /// Sets the ViewGroup into which the companion will be rendered.
   ///
