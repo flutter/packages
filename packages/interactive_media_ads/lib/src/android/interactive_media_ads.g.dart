@@ -8567,7 +8567,7 @@ class AdSlot extends PigeonInternalProxyApiBaseClass {
     }
   }
 
-  /// Returns the height of the companion slot.
+  /// Returns the height of the ad slot.
   Future<int> getHeight() async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecAdSlot;
@@ -8603,7 +8603,7 @@ class AdSlot extends PigeonInternalProxyApiBaseClass {
     }
   }
 
-  /// Returns the width of the companion slot.
+  /// Returns the width of the ad slot.
   Future<int> getWidth() async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecAdSlot;
@@ -8639,7 +8639,7 @@ class AdSlot extends PigeonInternalProxyApiBaseClass {
     }
   }
 
-  /// Returns true if the companion slot is filled, false otherwise.
+  /// Returns true if the ad slot is filled, false otherwise.
   Future<bool> isFilled() async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecAdSlot;
@@ -8675,7 +8675,7 @@ class AdSlot extends PigeonInternalProxyApiBaseClass {
     }
   }
 
-  /// Sets the ViewGroup into which the companion will be rendered.
+  /// Sets the ad slot's ViewGroup instance for the SDK to render ads.
   ///
   /// Required.
   Future<void> setContainer(ViewGroup container) async {
@@ -8708,7 +8708,7 @@ class AdSlot extends PigeonInternalProxyApiBaseClass {
     }
   }
 
-  /// Sets the size of the slot.
+  /// Sets the size of the ad slot.
   ///
   /// Only companions matching the slot size will be displayed in the slot.
   Future<void> setSize(int width, int height) async {
@@ -8741,7 +8741,7 @@ class AdSlot extends PigeonInternalProxyApiBaseClass {
     }
   }
 
-  /// Sets the size of the slot as fluid.
+  /// Sets the size of the ad slot as fluid.
   ///
   /// This is a convenience method that sets both parameters of [setSize] to
   /// [CompanionAdSlot.FLUID_SIZE](https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/CompanionAdSlot#FLUID_SIZE()).
