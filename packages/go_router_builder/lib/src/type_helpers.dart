@@ -795,9 +795,11 @@ class _TypeHelperJson extends _TypeHelperWithHelper {
     }
 
     final FunctionType functionType = secondParam.type as FunctionType;
+    // ignore: experimental_member_use
     if (functionType.formalParameters.length != 1 ||
         functionType.returnType.getDisplayString() !=
             type.element.typeParameters.first.displayName ||
+        // ignore: experimental_member_use
         functionType.formalParameters[0].type.getDisplayString() != 'Object?') {
       throw InvalidGenerationSourceError(
         'The parameter type '
