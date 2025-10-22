@@ -229,7 +229,7 @@ void main() {
       expect(location?.path, expectedSavePath);
     });
 
-    test('sets to disable the creation of new directories', () async {
+    test('sets the directory creation control flag', () async {
       const bool canCreateDirectories = false;
       fakePlatformImplementation
         ..setExpectations(canCreateDirectories: canCreateDirectories)
@@ -292,7 +292,7 @@ void main() {
       expect(directoryPath, expectedDirectoryPath);
     });
 
-    test('sets to enable de creation of new directories', () async {
+    test('sets the directory creation control flag', () async {
       const bool canCreateDirectories = true;
       fakePlatformImplementation
         ..setExpectations(canCreateDirectories: canCreateDirectories)
@@ -355,7 +355,7 @@ void main() {
       );
       expect(directoryPaths, expectedDirectoryPaths);
     });
-    test('sets to enable de creation of new directories', () async {
+    test('sets the directory creation control flag', () async {
       const bool canCreateDirectories = true;
       fakePlatformImplementation
         ..setExpectations(canCreateDirectories: canCreateDirectories)

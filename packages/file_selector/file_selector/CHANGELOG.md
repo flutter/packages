@@ -1,6 +1,6 @@
 ## 1.1.0
 
-* Adds `canCreateDirectories` param to `getDirectoryPath` and `getDirectoryPaths` to control the visibility of the New Folder button in file dialogs on supported platforms.
+* Adds `canCreateDirectories` param to `getSaveLocation`, `getDirectoryPath` and `getDirectoryPaths` to control whether users can create directories during location selection.
 
 ## 1.0.4
 

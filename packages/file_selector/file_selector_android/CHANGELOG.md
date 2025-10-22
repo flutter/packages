@@ -1,3 +1,7 @@
+## 0.5.3
+
+* Adds `getDirectoryPathWithOptions` and `getDirectoryPathsWithOptions` implementations.
+
 ## 0.5.2+1
 
 * Resolves Gradle 9 deprecations.
