@@ -1,6 +1,6 @@
 ## 2.0.2
 
-* Emoji support.
+* Adds emoji support.
 
 ## 2.0.1
 
