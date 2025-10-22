@@ -1,6 +1,6 @@
-## 2.13.2
+## 2.14.0
 
-* Adds a check that raises `MapUsedAfterWidgetDisposedError`
+* Adds a check that raises a `StateError`
   when map controller is used after its widget has been disposed.
 
 ## 2.13.1
