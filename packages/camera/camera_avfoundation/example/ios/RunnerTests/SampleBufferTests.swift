@@ -60,7 +60,7 @@ private class FakeMediaSettingsAVWrapper: FLTCamMediaSettingsAVWrapper {
   }
 
   override func recommendedVideoSettingsForAssetWriter(
-    withFileType fileType: AVFileType, for output: FLTCaptureVideoDataOutput
+    withFileType fileType: AVFileType, for output: CaptureVideoDataOutput
   ) -> [String: Any]? {
     return [:]
   }
@@ -87,7 +87,7 @@ final class CameraSampleBufferTests: XCTestCase {
       enableAudio: true)
     configuration.mediaSettingsWrapper = FakeMediaSettingsAVWrapper(inputMock: input)
 
-    configuration.assetWriterFactory = { url, fileType, error in
+    configuration.assetWriterFactory = { url, fileType in
       return assetWriter
     }
     configuration.inputPixelBufferAdaptorFactory = { input, settings in
