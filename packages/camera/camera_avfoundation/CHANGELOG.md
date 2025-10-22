@@ -1,3 +1,8 @@
+## 0.9.22+2
+
+* Migrates `FLTCamConfiguration`, `FLTCamMediaSettingsAVWrapper` classes to Swift.
+* Migrates `FLTCaptureOutput`, `FLTCapturePhotoOutput`, `FLTCaptureVideoDataOutput` protocols to Swift.
+
 ## 0.9.22+1
 
 * Fixes crash on iOS when `enableAudio` is false.

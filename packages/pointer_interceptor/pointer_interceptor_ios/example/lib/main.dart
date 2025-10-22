@@ -53,10 +53,9 @@ class _PointerInterceptorIOSExampleState
             PointerInterceptorPlatform.instance.buildWidget(
               child: TextButton(
                 style: TextButton.styleFrom(foregroundColor: Colors.red),
-                child:
-                    _buttonTapped
-                        ? const Text('Tapped')
-                        : const Text('Initial'),
+                child: _buttonTapped
+                    ? const Text('Tapped')
+                    : const Text('Initial'),
                 onPressed: () {
                   setState(() {
                     _buttonTapped = !_buttonTapped;

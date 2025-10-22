@@ -24,18 +24,16 @@ void main() {
             AndroidContentProgressProviderCreationParams(
               proxy: InteractiveMediaAdsProxy(
                 newContentProgressProvider: () => mockContentProgressProvider,
-                newVideoProgressUpdate: ({
-                  required int currentTimeMs,
-                  required int durationMs,
-                }) {
-                  expect(currentTimeMs, 1000);
-                  expect(durationMs, 10000);
-                  return ima.VideoProgressUpdate.pigeon_detached(
-                    pigeon_instanceManager: ima.PigeonInstanceManager(
-                      onWeakReferenceRemoved: (_) {},
-                    ),
-                  );
-                },
+                newVideoProgressUpdate:
+                    ({required int currentTimeMs, required int durationMs}) {
+                      expect(currentTimeMs, 1000);
+                      expect(durationMs, 10000);
+                      return ima.VideoProgressUpdate.pigeon_detached(
+                        pigeon_instanceManager: ima.PigeonInstanceManager(
+                          onWeakReferenceRemoved: (_) {},
+                        ),
+                      );
+                    },
               ),
             ),
           );

@@ -1,3 +1,14 @@
+## 2.0.0
+
+* **BREAKING CHANGES:**
+  * Switches to `LocalAuthException` for error reporting.
+  * Removes support for `useErrorDialogs`.
+  * Renames `biometricHint` to `signInHint` to reflect its usage.
+
+## 1.0.56
+
+* Updates Java compatibility version to 17 and minimum supported SDK version to Flutter 3.35/Dart 3.9.
+
 ## 1.0.55
 
 * Resolves Gradle 9 deprecations.

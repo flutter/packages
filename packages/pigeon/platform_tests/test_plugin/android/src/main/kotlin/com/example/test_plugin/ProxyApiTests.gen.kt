@@ -75,11 +75,39 @@ class ProxyApiTestsPigeonInstanceManager(
     fun onFinalize(identifier: Long)
   }
 
-  private val identifiers = java.util.WeakHashMap<Any, Long>()
-  private val weakInstances = HashMap<Long, java.lang.ref.WeakReference<Any>>()
+  // Extends WeakReference and overrides the `equals` and `hashCode` methods using identity rather
+  // than equality.
+  //
+  // Two `IdentityWeakReference`s are equal if either
+  // 1: `get()` returns the identical nonnull value for both references.
+  // 2: `get()` returns null for both references and the references are identical.
+  class IdentityWeakReference<T : Any> : java.lang.ref.WeakReference<T> {
+    private val savedHashCode: Int
+
+    constructor(instance: T) : this(instance, null)
+
+    constructor(instance: T, queue: java.lang.ref.ReferenceQueue<T>?) : super(instance, queue) {
+      savedHashCode = System.identityHashCode(instance)
+    }
+
+    override fun equals(other: Any?): Boolean {
+      val instance = get()
+      if (instance != null) {
+        return other is IdentityWeakReference<*> && other.get() === instance
+      }
+      return other === this
+    }
+
+    override fun hashCode(): Int {
+      return savedHashCode
+    }
+  }
+
+  private val identifiers = java.util.WeakHashMap<IdentityWeakReference<Any>, Long>()
+  private val weakInstances = HashMap<Long, IdentityWeakReference<Any>>()
   private val strongInstances = HashMap<Long, Any>()
   private val referenceQueue = java.lang.ref.ReferenceQueue<Any>()
-  private val weakReferencesToIdentifiers = HashMap<java.lang.ref.WeakReference<Any>, Long>()
+  private val weakReferencesToIdentifiers = HashMap<IdentityWeakReference<Any>, Long>()
   private val handler = android.os.Handler(android.os.Looper.getMainLooper())
   private val releaseAllFinalizedInstancesRunnable = Runnable {
     this.releaseAllFinalizedInstances()
@@ -144,9 +172,12 @@ class ProxyApiTestsPigeonInstanceManager(
    */
   fun getIdentifierForStrongReference(instance: Any?): Long? {
     logWarningIfFinalizationListenerHasStopped()
-    val identifier = identifiers[instance]
+    if (instance == null) {
+      return null
+    }
+    val identifier = identifiers[IdentityWeakReference(instance)]
     if (identifier != null) {
-      strongInstances[identifier] = instance!!
+      strongInstances[identifier] = instance
     }
     return identifier
   }
@@ -185,14 +216,14 @@ class ProxyApiTestsPigeonInstanceManager(
   /** Retrieves the instance associated with identifier, if present, otherwise `null`. */
   fun <T> getInstance(identifier: Long): T? {
     logWarningIfFinalizationListenerHasStopped()
-    val instance = weakInstances[identifier] as java.lang.ref.WeakReference<T>?
+    val instance = weakInstances[identifier] as IdentityWeakReference<T>?
     return instance?.get()
   }
 
   /** Returns whether this manager contains the given `instance`. */
   fun containsInstance(instance: Any?): Boolean {
     logWarningIfFinalizationListenerHasStopped()
-    return identifiers.containsKey(instance)
+    return instance != null && identifiers.containsKey(IdentityWeakReference(instance))
   }
 
   /**
@@ -233,9 +264,8 @@ class ProxyApiTestsPigeonInstanceManager(
     if (hasFinalizationListenerStopped()) {
       return
     }
-    var reference: java.lang.ref.WeakReference<Any>?
-    while ((referenceQueue.poll() as java.lang.ref.WeakReference<Any>?).also { reference = it } !=
-        null) {
+    var reference: IdentityWeakReference<Any>?
+    while ((referenceQueue.poll() as IdentityWeakReference<Any>?).also { reference = it } != null) {
       val identifier = weakReferencesToIdentifiers.remove(reference)
       if (identifier != null) {
         weakInstances.remove(identifier)
@@ -251,8 +281,8 @@ class ProxyApiTestsPigeonInstanceManager(
     require(!weakInstances.containsKey(identifier)) {
       "Identifier has already been added: $identifier"
     }
-    val weakReference = java.lang.ref.WeakReference(instance, referenceQueue)
-    identifiers[instance] = identifier
+    val weakReference = IdentityWeakReference(instance, referenceQueue)
+    identifiers[weakReference] = identifier
     weakInstances[identifier] = weakReference
     weakReferencesToIdentifiers[weakReference] = identifier
     strongInstances[identifier] = instance
@@ -460,14 +490,36 @@ private class ProxyApiTestsPigeonProxyApiBaseCodec(
       return
     }
 
+    fun logNewInstanceFailure(apiName: String, value: Any, exception: Throwable?) {
+      Log.w(
+          "PigeonProxyApiBaseCodec",
+          "Failed to create new Dart proxy instance of $apiName: $value. $exception")
+    }
+
     if (value is ProxyApiTestClass) {
-      registrar.getPigeonApiProxyApiTestClass().pigeon_newInstance(value) {}
+      registrar.getPigeonApiProxyApiTestClass().pigeon_newInstance(value) {
+        if (it.isFailure) {
+          logNewInstanceFailure("ProxyApiTestClass", value, it.exceptionOrNull())
+        }
+      }
     } else if (value is com.example.test_plugin.ProxyApiSuperClass) {
-      registrar.getPigeonApiProxyApiSuperClass().pigeon_newInstance(value) {}
+      registrar.getPigeonApiProxyApiSuperClass().pigeon_newInstance(value) {
+        if (it.isFailure) {
+          logNewInstanceFailure("ProxyApiSuperClass", value, it.exceptionOrNull())
+        }
+      }
     } else if (value is ProxyApiInterface) {
-      registrar.getPigeonApiProxyApiInterface().pigeon_newInstance(value) {}
+      registrar.getPigeonApiProxyApiInterface().pigeon_newInstance(value) {
+        if (it.isFailure) {
+          logNewInstanceFailure("ProxyApiInterface", value, it.exceptionOrNull())
+        }
+      }
     } else if (android.os.Build.VERSION.SDK_INT >= 25 && value is ClassWithApiRequirement) {
-      registrar.getPigeonApiClassWithApiRequirement().pigeon_newInstance(value) {}
+      registrar.getPigeonApiClassWithApiRequirement().pigeon_newInstance(value) {
+        if (it.isFailure) {
+          logNewInstanceFailure("ClassWithApiRequirement", value, it.exceptionOrNull())
+        }
+      }
     }
 
     when {
