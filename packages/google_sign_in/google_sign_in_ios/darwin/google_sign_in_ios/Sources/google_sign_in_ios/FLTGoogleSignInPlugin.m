@@ -93,6 +93,73 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
   }
 }
 
+@interface FSIGIDSignInWrapper : NSObject <FSIGIDSignIn>
+
+- (instancetype)init;
+
+@end
+
+@implementation FSIGIDSignInWrapper
+
+- (instancetype)init {
+  self = [super init];
+  if (self) {
+    _signIn = GIDSignIn.sharedInstance;
+  }
+  return self;
+}
+
+- (BOOL)handleURL:(NSURL *)url {
+  return [_signIn handleURL:url];
+}
+
+- (void)restorePreviousSignInWithCompletion:
+    (nullable void (^)(GIDGoogleUser *_Nullable user, NSError *_Nullable error))completion {
+  [_signIn restorePreviousSignInWithCompletion:completion];
+}
+
+- (void)signOut {
+  [_signIn signOut];
+}
+
+- (void)disconnectWithCompletion:(nullable void (^)(NSError *_Nullable error))completion {
+  [_signIn disconnectWithCompletion:completion];
+}
+
+#if TARGET_OS_IOS || TARGET_OS_MACCATALYST
+
+- (void)signInWithPresentingViewController:(UIViewController *)presentingViewController
+                                      hint:(nullable NSString *)hint
+                          additionalScopes:(nullable NSArray<NSString *> *)additionalScopes
+                                     nonce:(nullable NSString *)nonce
+                                completion:
+                                    (nullable void (^)(GIDSignInResult *_Nullable signInResult,
+                                                       NSError *_Nullable error))completion {
+  [_signIn signInWithPresentingViewController:presentingViewController
+                                         hint:hint
+                             additionalScopes:additionalScopes
+                                        nonce:nonce
+                                   completion:completion];
+}
+
+#elif TARGET_OS_OSX
+- (void)signInWithPresentingWindow:(NSWindow *)presentingWindow
+                              hint:(nullable NSString *)hint
+                  additionalScopes:(nullable NSArray<NSString *> *)additionalScopes
+                             nonce:(nullable NSString *)nonce
+                        completion:(nullable void (^)(GIDSignInResult *_Nullable signInResult,
+                                                      NSError *_Nullable error))completion {
+  [_signIn signInWithPresentingWindow:presentingWindow
+                                 hint:hint
+                     additionalScopes:additionalScopes
+                                nonce:nonce
+                           completion:completion];
+}
+
+#endif
+
+@end
+
 @interface FLTGoogleSignInPlugin ()
 
 // The contents of GoogleService-Info.plist, if it exists.
