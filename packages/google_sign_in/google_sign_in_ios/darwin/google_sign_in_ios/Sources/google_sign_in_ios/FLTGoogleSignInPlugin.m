@@ -93,6 +93,8 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
   }
 }
 
+#pragma mark - FSIGIDSignIn
+
 @interface FSIGIDSignInWrapper : NSObject <FSIGIDSignIn>
 
 - (instancetype)init;
@@ -143,6 +145,7 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
 }
 
 #elif TARGET_OS_OSX
+
 - (void)signInWithPresentingWindow:(NSWindow *)presentingWindow
                               hint:(nullable NSString *)hint
                   additionalScopes:(nullable NSArray<NSString *> *)additionalScopes
@@ -157,6 +160,8 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
 }
 
 #endif
+
+#pragma mark -
 
 @end
 
@@ -179,17 +184,17 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
 }
 
 - (instancetype)initWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
-  return [self initWithSignIn:GIDSignIn.sharedInstance registrar:registrar];
+  return [self initWithSignIn:[[FSIGIDSignInWrapper alloc] init] registrar:registrar];
 }
 
-- (instancetype)initWithSignIn:(GIDSignIn *)signIn
+- (instancetype)initWithSignIn:(NSObject<FSIGIDSignIn> *)signIn
                      registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   return [self initWithSignIn:signIn
                     registrar:registrar
       googleServiceProperties:FSILoadGoogleServiceInfo()];
 }
 
-- (instancetype)initWithSignIn:(GIDSignIn *)signIn
+- (instancetype)initWithSignIn:(NSObject<FSIGIDSignIn> *)signIn
                      registrar:(NSObject<FlutterPluginRegistrar> *)registrar
        googleServiceProperties:(nullable NSDictionary<NSString *, id> *)googleServiceProperties {
   self = [super init];
