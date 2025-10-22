@@ -43,7 +43,16 @@ void main() {
             builder: (_, __, Widget child) => child,
             routes: <RouteBase>[
               GoRoute(path: '/test1', builder: (_, __) => const Text('Test1')),
-              GoRoute(path: '/test2', builder: (_, __) => const Text('Test2')),
+            ],
+          ),
+          StatefulShellRoute.indexedStack(
+            builder: (_, __, Widget child) => child,
+            branches: <StatefulShellBranch>[
+              StatefulShellBranch(
+                routes: <RouteBase>[
+                  GoRoute(path: '/test2', builder: (_, __) => const Text('Test2')),
+                ],
+              ),
             ],
           ),
         ],

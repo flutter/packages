@@ -1461,7 +1461,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
       branchState.navigator = shellRouteContext._buildNavigatorForCurrentRoute(
         context,
         branch.observers,
-        false,
+        widget.notifyRootObserver,
         branch.restorationScopeId,
       );
     }
