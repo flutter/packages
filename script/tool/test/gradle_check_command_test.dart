@@ -700,7 +700,7 @@ dependencies {
     );
   });
 
-  test('fails when namespace is declared without \"=\" declaration', () async {
+  test('fails when namespace is declared without "=" declaration', () async {
     const String pluginName = 'a_plugin';
     final RepositoryPackage package = createFakePlugin(pluginName, packagesDir);
     writeFakePluginBuildGradle(package, includeLanguageVersion: true);
