@@ -1,3 +1,7 @@
+## 0.9.22+5
+
+* Migrates `FLTCaptureDevice`, `FLTCaptureSession`, and `FLTFormatUtils` classes to Swift.
+
 ## 0.9.22+4
 
 * Migrates `FLTCameraDeviceDiscovering` and `FLTDeviceOrientationProviding` classes to Swift.
