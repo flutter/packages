@@ -501,7 +501,7 @@ abstract class ShellRouteBase extends RouteBase {
     this.notifyRootObserver = true,
   }) : super._();
 
-  /// Whether to merge the observers of the GoRouter with the observers
+  /// Whether navigation changes will notify the GoRouter's observers.
   /// of the ShellRoute.
   ///
   /// When `true`, navigation changes within this shell route will notify the GoRouter's observers.
