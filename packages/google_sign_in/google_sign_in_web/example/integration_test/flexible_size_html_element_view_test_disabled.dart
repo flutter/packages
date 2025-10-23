@@ -11,6 +11,10 @@ import 'package:google_sign_in_web/src/flexible_size_html_element_view.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:web/web.dart' as web;
 
+// TODO(stuartmorgan): Re-enable this test, by renaming it not to end with
+// _disabled. It is currently extremely flaky on WASM, see
+// https://github.com/flutter/flutter/issues/176299
+
 /// Used to keep track of the number of HtmlElementView factories the test has registered.
 int widgetFactoryNumber = 0;
 
