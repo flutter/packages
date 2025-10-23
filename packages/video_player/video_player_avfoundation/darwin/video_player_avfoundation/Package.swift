@@ -9,8 +9,8 @@ import PackageDescription
 let package = Package(
   name: "video_player_avfoundation",
   platforms: [
-    .iOS("12.0"),
-    .macOS("10.14"),
+    .iOS("13.0"),
+    .macOS("10.15"),
   ],
   products: [
     .library(name: "video-player-avfoundation", targets: ["video_player_avfoundation"])

@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:file/file.dart';
+import 'package:yaml/yaml.dart';
 
 import 'common/core.dart';
 import 'common/output_utils.dart';
@@ -11,6 +12,12 @@ import 'common/repository_package.dart';
 
 const int _exitBadTableEntry = 3;
 const int _exitUnknownPackageEntry = 4;
+
+const Map<String, Object?> _validCiConfigSyntax = <String, Object?>{
+  'release': <String, Object?>{
+    'batch': <bool>{true, false}
+  },
+};
 
 /// A command to verify repository-level metadata about packages, such as
 /// repo README and CODEOWNERS entries.
@@ -108,6 +115,12 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
       errors.add('Missing CODEOWNERS entry');
     }
 
+    // The content of ci_config.yaml must be valid if there is one.
+    if (package.ciConfigFile.existsSync()) {
+      errors.addAll(
+          _validateCiConfig(package.ciConfigFile, mainPackage: package));
+    }
+
     // Any published package should be in the README table.
     // For federated plugins, only the app-facing package is listed.
     if (package.isPublishable() &&
@@ -189,6 +202,67 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
         ? PackageResult.success()
         : PackageResult.fail(errors);
   }
+
+  List<String> _validateCiConfig(File ciConfig,
+      {required RepositoryPackage mainPackage}) {
+    print('${indentation}Checking '
+        '${getRelativePosixPath(ciConfig, from: mainPackage.directory)}...');
+    final YamlMap config;
+    try {
+      final Object? yaml = loadYaml(ciConfig.readAsStringSync());
+      if (yaml is! YamlMap) {
+        printError('${indentation}The ci_config.yaml file must be a map.');
+        return <String>['Root of config is not a map.'];
+      }
+      config = yaml;
+    } on YamlException catch (e) {
+      printError(
+          '${indentation}Invalid YAML in ${getRelativePosixPath(ciConfig, from: mainPackage.directory)}:');
+      printError(e.toString());
+      return <String>['Invalid YAML'];
+    }
+
+    return _checkCiConfigEntries(config, syntax: _validCiConfigSyntax);
+  }
+
+  List<String> _checkCiConfigEntries(YamlMap config,
+      {required Map<String, Object?> syntax, String configPrefix = ''}) {
+    final List<String> errors = <String>[];
+    for (final MapEntry<Object?, Object?> entry in config.entries) {
+      if (!syntax.containsKey(entry.key)) {
+        printError(
+            '${indentation}Unknown key `${entry.key}` in config${_formatConfigPrefix(configPrefix)}, the possible keys are ${syntax.keys.toList()}');
+        errors.add(
+            'Unknown key `${entry.key}` in config${_formatConfigPrefix(configPrefix)}');
+      } else {
+        final Object syntaxValue = syntax[entry.key]!;
+        configPrefix = configPrefix.isEmpty
+            ? entry.key! as String
+            : '$configPrefix.${entry.key}';
+        if (syntaxValue is Set) {
+          if (!syntaxValue.contains(entry.value)) {
+            printError(
+                '${indentation}Invalid value `${entry.value}` for key${_formatConfigPrefix(configPrefix)}, the possible values are ${syntaxValue.toList()}');
+            errors.add(
+                'Invalid value `${entry.value}` for key${_formatConfigPrefix(configPrefix)}');
+          }
+        } else if (entry.value is! YamlMap) {
+          printError(
+              '${indentation}Invalid value `${entry.value}` for key${_formatConfigPrefix(configPrefix)}, the value must be a map');
+          errors.add(
+              'Invalid value `${entry.value}` for key${_formatConfigPrefix(configPrefix)}');
+        } else {
+          errors.addAll(_checkCiConfigEntries(entry.value! as YamlMap,
+              syntax: syntaxValue as Map<String, Object?>,
+              configPrefix: configPrefix));
+        }
+      }
+    }
+    return errors;
+  }
+
+  String _formatConfigPrefix(String configPrefix) =>
+      configPrefix.isEmpty ? '' : ' `$configPrefix`';
 
   String _prTagForPackage(String packageName) => 'p: $packageName';
 

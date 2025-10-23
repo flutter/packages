@@ -16,7 +16,7 @@ public final class CameraPlugin: NSObject, FlutterPlugin {
   private let globalEventAPI: FCPCameraGlobalEventApi
   private let deviceDiscoverer: FLTCameraDeviceDiscovering
   private let permissionManager: FLTCameraPermissionManager
-  private let captureDeviceFactory: CaptureDeviceFactory
+  private let captureDeviceFactory: VideoCaptureDeviceFactory
   private let captureSessionFactory: CaptureSessionFactory
   private let captureDeviceInputFactory: FLTCaptureDeviceInputFactory
 
@@ -52,7 +52,7 @@ public final class CameraPlugin: NSObject, FlutterPlugin {
     globalAPI: FCPCameraGlobalEventApi,
     deviceDiscoverer: FLTCameraDeviceDiscovering,
     permissionManager: FLTCameraPermissionManager,
-    deviceFactory: @escaping CaptureDeviceFactory,
+    deviceFactory: @escaping VideoCaptureDeviceFactory,
     captureSessionFactory: @escaping CaptureSessionFactory,
     captureDeviceInputFactory: FLTCaptureDeviceInputFactory,
     captureSessionQueue: DispatchQueue
@@ -251,7 +251,7 @@ extension CameraPlugin: FCPCameraApi {
   ) {
     let mediaSettingsAVWrapper = FLTCamMediaSettingsAVWrapper()
 
-    let camConfiguration = FLTCamConfiguration(
+    let camConfiguration = CameraConfiguration(
       mediaSettings: settings,
       mediaSettingsWrapper: mediaSettingsAVWrapper,
       captureDeviceFactory: captureDeviceFactory,

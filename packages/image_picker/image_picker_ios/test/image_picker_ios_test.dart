@@ -293,7 +293,7 @@ void main() {
       ]);
     });
 
-    test('does not accept a invalid imageQuality argument', () {
+    test('does not accept an invalid imageQuality argument', () {
       expect(
         () => picker.pickImage(imageQuality: -1, source: ImageSource.gallery),
         throwsArgumentError,
@@ -487,7 +487,7 @@ void main() {
       expect(() => picker.pickMultiImage(maxHeight: -1.0), throwsArgumentError);
     });
 
-    test('does not accept a invalid imageQuality argument', () {
+    test('does not accept an invalid imageQuality argument', () {
       expect(
         () => picker.pickMultiImage(imageQuality: -1),
         throwsArgumentError,
@@ -760,7 +760,7 @@ void main() {
       ]);
     });
 
-    test('does not accept a invalid imageQuality argument', () {
+    test('does not accept an invalid imageQuality argument', () {
       expect(
         () => picker.getImage(imageQuality: -1, source: ImageSource.gallery),
         throwsArgumentError,
@@ -955,7 +955,7 @@ void main() {
       expect(() => picker.getMultiImage(maxHeight: -1.0), throwsArgumentError);
     });
 
-    test('does not accept a invalid imageQuality argument', () {
+    test('does not accept an invalid imageQuality argument', () {
       log.returnValue = <String>['0', '1'];
       expect(() => picker.getMultiImage(imageQuality: -1), throwsArgumentError);
 
@@ -1214,7 +1214,7 @@ void main() {
       );
     });
 
-    test('does not accept a invalid imageQuality argument', () {
+    test('does not accept an invalid imageQuality argument', () {
       log.returnValue = <String>['0', '1'];
       expect(
         () => picker.getMedia(
@@ -1237,20 +1237,37 @@ void main() {
       );
     });
 
-    test('does not accept a invalid limit argument', () {
+    test('does not accept an invalid limit argument', () {
       log.returnValue = <String>['0', '1'];
+      final Matcher throwsLimitArgumentError = throwsA(
+        isA<ArgumentError>()
+            .having((ArgumentError error) => error.name, 'name', 'limit')
+            .having(
+              (ArgumentError error) => error.message,
+              'message',
+              'cannot be lower than 2',
+            ),
+      );
+
       expect(
         () => picker.getMedia(
           options: const MediaOptions(allowMultiple: true, limit: -1),
         ),
-        throwsArgumentError,
+        throwsLimitArgumentError,
       );
 
       expect(
         () => picker.getMedia(
           options: const MediaOptions(allowMultiple: true, limit: 0),
         ),
-        throwsArgumentError,
+        throwsLimitArgumentError,
+      );
+
+      expect(
+        () => picker.getMedia(
+          options: const MediaOptions(allowMultiple: true, limit: 1),
+        ),
+        throwsLimitArgumentError,
       );
     });
 
@@ -1563,7 +1580,7 @@ void main() {
       ]);
     });
 
-    test('does not accept a invalid imageQuality argument', () {
+    test('does not accept an invalid imageQuality argument', () {
       expect(
         () => picker.getImageFromSource(
           source: ImageSource.gallery,
@@ -1881,7 +1898,7 @@ void main() {
       );
     });
 
-    test('does not accept a invalid imageQuality argument', () {
+    test('does not accept an invalid imageQuality argument', () {
       log.returnValue = <String>['0', '1'];
       expect(
         () => picker.getMultiImageWithOptions(
@@ -1902,20 +1919,37 @@ void main() {
       );
     });
 
-    test('does not accept a invalid limit argument', () {
+    test('does not accept an invalid limit argument', () {
       log.returnValue = <String>['0', '1'];
+      final Matcher throwsLimitArgumentError = throwsA(
+        isA<ArgumentError>()
+            .having((ArgumentError error) => error.name, 'name', 'limit')
+            .having(
+              (ArgumentError error) => error.message,
+              'message',
+              'cannot be lower than 2',
+            ),
+      );
+
       expect(
         () => picker.getMultiImageWithOptions(
           options: const MultiImagePickerOptions(limit: -1),
         ),
-        throwsArgumentError,
+        throwsLimitArgumentError,
       );
 
       expect(
         () => picker.getMultiImageWithOptions(
           options: const MultiImagePickerOptions(limit: 0),
         ),
-        throwsArgumentError,
+        throwsLimitArgumentError,
+      );
+
+      expect(
+        () => picker.getMultiImageWithOptions(
+          options: const MultiImagePickerOptions(limit: 1),
+        ),
+        throwsLimitArgumentError,
       );
     });
 
