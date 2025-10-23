@@ -566,7 +566,8 @@ class TypedShellRoute<T extends ShellRouteData> extends TypedRoute<T> {
     this.routes = const <TypedRoute<RouteData>>[],
   });
 
-  /// Determines whether the observers should be merged.
+  /// Whether navigation changes within this shell route will notify the
+  /// GoRouter's observers.
   ///
   /// See [ShellRouteBase.notifyRootObserver].
   final bool notifyRootObserver;
@@ -587,7 +588,8 @@ class TypedStatefulShellRoute<T extends StatefulShellRouteData>
     this.branches = const <TypedStatefulShellBranch<StatefulShellBranchData>>[],
   });
 
-  /// Determines whether the observers should be merged.
+  /// Whether navigation changes within this shell route will notify the
+  /// GoRouter's observers.
   ///
   /// See [ShellRouteBase.notifyRootObserver].
   final bool notifyRootObserver;
