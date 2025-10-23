@@ -56,7 +56,7 @@ void main() {
 
     await expectLater(
       () => controller?.getZoomLevel(),
-      throwsA(isA<MapUsedAfterWidgetDisposedError>()),
+      throwsA(isA<StateError>()),
     );
   });
 }

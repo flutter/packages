@@ -438,8 +438,10 @@ class GoogleMapController {
   /// raises a use-after-disposed [StateError].
   void _checkWidgetMountedOrThrow() {
     if (!_googleMapState.mounted) {
-      throw StateError('GoogleMapController for map ID $mapId was used after '
-          'the associated GoogleMap widget had already been disposed.');
+      throw StateError(
+        'GoogleMapController for map ID $mapId was used after '
+        'the associated GoogleMap widget had already been disposed.',
+      );
     }
   }
 }
