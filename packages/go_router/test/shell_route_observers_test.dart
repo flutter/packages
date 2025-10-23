@@ -50,7 +50,10 @@ void main() {
             branches: <StatefulShellBranch>[
               StatefulShellBranch(
                 routes: <RouteBase>[
-                  GoRoute(path: '/test2', builder: (_, __) => const Text('Test2')),
+                  GoRoute(
+                    path: '/test2',
+                    builder: (_, __) => const Text('Test2'),
+                  ),
                 ],
               ),
             ],
