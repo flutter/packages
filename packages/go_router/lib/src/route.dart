@@ -504,7 +504,7 @@ abstract class ShellRouteBase extends RouteBase {
   /// Whether to merge the observers of the GoRouter with the observers
   /// of the ShellRoute.
   ///
-  /// When `true`, the observers of the GoRouter will be merged with
+  /// When `true`, navigation changes within this shell route will notify the GoRouter's observers.
   /// the observers of the ShellRoute.
   ///
   /// Defaults to `true`.
