@@ -53,13 +53,8 @@ void main() {
     expect(find.text(initialString), findsOneWidget);
   });
 
-  // TODO(hgraceb): Remove when minimum flutter version includes
-  // https://github.com/flutter/flutter/pull/176519
   testWidgets(
     'Restores state correctly',
-    experimentalLeakTesting: LeakTesting.settings.withIgnored(
-      classes: const <String>['TestRestorationManager', 'RestorationBucket'],
-    ),
     (WidgetTester tester) async {
       const String initialString = 'some string';
       const String empty = 'empty';
@@ -86,6 +81,11 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text(initialString), findsOneWidget);
     },
+    // TODO(hgraceb): Remove when minimum flutter version includes
+    // https://github.com/flutter/flutter/pull/176519
+    experimentalLeakTesting: LeakTesting.settings.withIgnored(
+      classes: const <String>['TestRestorationManager', 'RestorationBucket'],
+    ),
   );
 }
 
