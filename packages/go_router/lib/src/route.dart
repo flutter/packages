@@ -1265,7 +1265,9 @@ class StatefulNavigationShell extends StatefulWidget {
   /// Corresponds to the index in the branches field of [StatefulShellRoute].
   final int currentIndex;
 
-  /// Same to [ShellRoute.notifyRootObserver].
+  /// Whether navigation changes will notify the GoRouter's observers.
+  ///
+  /// Same as [ShellRoute.notifyRootObserver].
   final bool notifyRootObserver;
 
   /// The associated [StatefulShellRoute].
