@@ -2,6 +2,10 @@
 
 * Change plugin to assume mp4 format for capture videos.
 
+## 0.6.23+5
+
+* Fixes `IllegalArgumentException` that could occur during image streaming when using NV21.
+
 ## 0.6.23+4
 
 * Updates examples to use the new RadioGroup API instead of deprecated Radio parameters.
