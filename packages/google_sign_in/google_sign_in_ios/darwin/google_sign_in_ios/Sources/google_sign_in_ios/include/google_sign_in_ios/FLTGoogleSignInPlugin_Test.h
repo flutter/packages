@@ -9,6 +9,7 @@
 #import <GoogleSignIn/GoogleSignIn.h>
 
 #import "FSIGoogleSignInProtocols.h"
+#import "FSIViewProvider.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -23,16 +24,16 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic)
     NSMutableDictionary<NSString *, NSObject<FSIGIDGoogleUser> *> *usersByIdentifier;
 
-/// Inject @c FlutterPluginRegistrar for testing.
-- (instancetype)initWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar;
+/// Inject view provider for testing.
+- (instancetype)initWithViewProvider:(NSObject<FSIViewProvider> *)viewProvider;
 
 /// Inject @c NSObject<FSIGIDSignIn> for testing.
 - (instancetype)initWithSignIn:(NSObject<FSIGIDSignIn> *)signIn
-                     registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
+                  viewProvider:(NSObject<FSIViewProvider> *)viewProvider;
 
 /// Inject @c NSObject<FSIGIDSignIn> and @c googleServiceProperties for testing.
 - (instancetype)initWithSignIn:(NSObject<FSIGIDSignIn> *)signIn
-                     registrar:(NSObject<FlutterPluginRegistrar> *)registrar
+                  viewProvider:(NSObject<FSIViewProvider> *)viewProvider
        googleServiceProperties:(nullable NSDictionary<NSString *, id> *)googleServiceProperties
     NS_DESIGNATED_INITIALIZER;
 

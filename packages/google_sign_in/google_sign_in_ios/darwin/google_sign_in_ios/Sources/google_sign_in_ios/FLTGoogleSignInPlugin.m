@@ -8,6 +8,7 @@
 #import <GoogleSignIn/GoogleSignIn.h>
 
 #import "FSIGoogleSignInProtocols.h"
+#import "FSIViewProvider.h"
 
 // The key within `GoogleService-Info.plist` used to hold the application's
 // client id.  See https://developers.google.com/identity/sign-in/ios/start
@@ -98,6 +99,17 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
 // TODO(stuarmorgan): Replace these with protocol extensions when migrating to Swift.
 #pragma mark - Passthrough Wrappers
 
+/// Implementation of @c FSIViewProvider that passes through to the registrar.
+@interface FSIDefaultViewProvider : NSObject <FSIViewProvider>
+/// Returns a provider backed by the given registrar.
+- (instancetype)initWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar
+    NS_DESIGNATED_INITIALIZER;
+- (instancetype)init NS_UNAVAILABLE;
+
+/// The registrar backing the provider.
+@property(strong, readonly) NSObject<FlutterPluginRegistrar> *registrar;
+@end
+
 /// Implementation of @c FSIGIDSignIn that passes through to GIDSignIn.
 @interface FSIGIDSignInWrapper : NSObject <FSIGIDSignIn>
 
@@ -151,6 +163,31 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
 @end
 
 #pragma mark -
+
+@implementation FSIDefaultViewProvider
+- (instancetype)initWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
+  self = [super init];
+  if (self) {
+    _registrar = registrar;
+  }
+  return self;
+}
+
+#if TARGET_OS_OSX
+- (NSView *)view {
+  return self.registrar.view;
+}
+#else
+- (UIViewController *)viewController {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+  // TODO(stuartmorgan) Provide a non-deprecated codepath. See
+  // https://github.com/flutter/flutter/issues/104117
+  return UIApplication.sharedApplication.keyWindow.rootViewController;
+#pragma clang diagnostic pop
+}
+#endif
+@end
 
 @implementation FSIGIDSignInWrapper
 
@@ -406,37 +443,38 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
 // The contents of GoogleService-Info.plist, if it exists.
 @property(nonatomic, nullable) NSDictionary<NSString *, id> *googleServiceProperties;
 
-// The plugin registrar, for querying views.
-@property(nonatomic, nonnull) id<FlutterPluginRegistrar> registrar;
+// The view provider, to access the current Flutter view.
+@property(nonatomic, nonnull) NSObject<FSIViewProvider> *viewProvider;
 
 @end
 
 @implementation FLTGoogleSignInPlugin
 
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
-  FLTGoogleSignInPlugin *instance = [[FLTGoogleSignInPlugin alloc] initWithRegistrar:registrar];
+  FLTGoogleSignInPlugin *instance = [[FLTGoogleSignInPlugin alloc]
+      initWithViewProvider:[[FSIDefaultViewProvider alloc] initWithRegistrar:registrar]];
   [registrar addApplicationDelegate:instance];
   SetUpFSIGoogleSignInApi(registrar.messenger, instance);
 }
 
-- (instancetype)initWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
-  return [self initWithSignIn:[[FSIGIDSignInWrapper alloc] init] registrar:registrar];
+- (instancetype)initWithViewProvider:(NSObject<FSIViewProvider> *)viewProvider {
+  return [self initWithSignIn:[[FSIGIDSignInWrapper alloc] init] viewProvider:viewProvider];
 }
 
 - (instancetype)initWithSignIn:(NSObject<FSIGIDSignIn> *)signIn
-                     registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
+                  viewProvider:(NSObject<FSIViewProvider> *)viewProvider {
   return [self initWithSignIn:signIn
-                    registrar:registrar
+                 viewProvider:viewProvider
       googleServiceProperties:FSILoadGoogleServiceInfo()];
 }
 
 - (instancetype)initWithSignIn:(NSObject<FSIGIDSignIn> *)signIn
-                     registrar:(NSObject<FlutterPluginRegistrar> *)registrar
+                  viewProvider:(NSObject<FSIViewProvider> *)viewProvider
        googleServiceProperties:(nullable NSDictionary<NSString *, id> *)googleServiceProperties {
   self = [super init];
   if (self) {
     _signIn = signIn;
-    _registrar = registrar;
+    _viewProvider = viewProvider;
     _googleServiceProperties = googleServiceProperties;
     _usersByIdentifier = [[NSMutableDictionary alloc] init];
 
@@ -587,7 +625,7 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
             completion:(void (^)(NSObject<FSIGIDSignInResult> *_Nullable signInResult,
                                  NSError *_Nullable error))completion {
 #if TARGET_OS_OSX
-  [self.signIn signInWithPresentingWindow:self.registrar.view.window
+  [self.signIn signInWithPresentingWindow:self.viewProvider.view.window
                                      hint:hint
                          additionalScopes:additionalScopes
                                     nonce:nonce
@@ -607,7 +645,7 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
              completion:(void (^)(NSObject<FSIGIDSignInResult> *_Nullable signInResult,
                                   NSError *_Nullable error))completion {
 #if TARGET_OS_OSX
-  [user addScopes:scopes presentingWindow:self.registrar.view.window completion:completion];
+  [user addScopes:scopes presentingWindow:self.viewProvider.view.window completion:completion];
 #else
   [user addScopes:scopes presentingViewController:[self topViewController] completion:completion];
 #endif
@@ -686,13 +724,7 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
 #if TARGET_OS_IOS
 
 - (UIViewController *)topViewController {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-  // TODO(stuartmorgan) Provide a non-deprecated codepath. See
-  // https://github.com/flutter/flutter/issues/104117
-  return [self topViewControllerFromViewController:[UIApplication sharedApplication]
-                                                       .keyWindow.rootViewController];
-#pragma clang diagnostic pop
+  return [self topViewControllerFromViewController:self.viewProvider.viewController];
 }
 
 /// This method recursively iterate through the view hierarchy

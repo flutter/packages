@@ -16,8 +16,19 @@
 #endif
 @import GoogleSignIn;
 
-// OCMock library doesn't generate a valid modulemap.
-#import <OCMock/OCMock.h>
+/// Test implementation of @c FSIViewProvider.
+@interface TestViewProvider : NSObject <FSIViewProvider>
+#if TARGET_OS_OSX
+/// The view containing the Flutter content.
+@property(nonatomic, nullable) NSView *view
+#else
+/// The view controller containing the Flutter content.
+@property(nonatomic, nullable) UIViewController *viewController;
+#endif
+    @end
+
+@implementation TestViewProvider
+@end
 
 /// Test implementation of @c FSIGIDSignIn.
 @interface TestSignIn : NSObject <FSIGIDSignIn>
@@ -234,7 +245,7 @@
 
 @interface FLTGoogleSignInPluginTest : XCTestCase
 
-@property(strong, nonatomic) NSObject<FlutterPluginRegistrar> *mockPluginRegistrar;
+@property(strong, nonatomic) TestViewProvider *viewProvider;
 @property(strong, nonatomic) FLTGoogleSignInPlugin *plugin;
 @property(strong, nonatomic) TestSignIn *fakeSignIn;
 @property(strong, nonatomic) NSDictionary<NSString *, id> *googleServiceInfo;
@@ -245,12 +256,12 @@
 
 - (void)setUp {
   [super setUp];
-  self.mockPluginRegistrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
+  self.viewProvider = [[TestViewProvider alloc] init];
 
   self.fakeSignIn = [[TestSignIn alloc] init];
 
   self.plugin = [[FLTGoogleSignInPlugin alloc] initWithSignIn:self.fakeSignIn
-                                                    registrar:self.mockPluginRegistrar];
+                                                 viewProvider:self.viewProvider];
 
   NSString *plistPath =
       [[NSBundle bundleForClass:[self class]] pathForResource:@"GoogleService-Info"
@@ -281,7 +292,7 @@
 - (void)testInitNoClientIdNoError {
   // Init plugin without GoogleService-Info.plist.
   self.plugin = [[FLTGoogleSignInPlugin alloc] initWithSignIn:self.fakeSignIn
-                                                    registrar:self.mockPluginRegistrar
+                                                 viewProvider:self.viewProvider
                                       googleServiceProperties:nil];
 
   // init call does not provide a clientId.
@@ -296,7 +307,7 @@
 
 - (void)testInitGoogleServiceInfoPlist {
   self.plugin = [[FLTGoogleSignInPlugin alloc] initWithSignIn:self.fakeSignIn
-                                                    registrar:self.mockPluginRegistrar
+                                                 viewProvider:self.viewProvider
                                       googleServiceProperties:self.googleServiceInfo];
   FSIPlatformConfigurationParams *params =
       [FSIPlatformConfigurationParams makeWithClientId:nil
@@ -317,7 +328,7 @@
 - (void)testInitDynamicClientIdNullDomain {
   // Init plugin without GoogleService-Info.plist.
   self.plugin = [[FLTGoogleSignInPlugin alloc] initWithSignIn:self.fakeSignIn
-                                                    registrar:self.mockPluginRegistrar
+                                                 viewProvider:self.viewProvider
                                       googleServiceProperties:nil];
 
   FSIPlatformConfigurationParams *params =
@@ -335,7 +346,7 @@
 
 - (void)testInitDynamicServerClientIdNullDomain {
   self.plugin = [[FLTGoogleSignInPlugin alloc] initWithSignIn:self.fakeSignIn
-                                                    registrar:self.mockPluginRegistrar
+                                                 viewProvider:self.viewProvider
                                       googleServiceProperties:self.googleServiceInfo];
   FSIPlatformConfigurationParams *params =
       [FSIPlatformConfigurationParams makeWithClientId:nil
@@ -412,7 +423,7 @@
 
 - (void)testSignIn {
   self.plugin = [[FLTGoogleSignInPlugin alloc] initWithSignIn:self.fakeSignIn
-                                                    registrar:self.mockPluginRegistrar
+                                                 viewProvider:self.viewProvider
                                       googleServiceProperties:self.googleServiceInfo];
   TestGoogleUser *fakeUser = [[TestGoogleUser alloc] init];
   fakeUser.userID = @"mockID";
