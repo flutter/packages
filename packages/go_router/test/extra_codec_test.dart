@@ -58,7 +58,7 @@ void main() {
   testWidgets(
     'Restores state correctly',
     experimentalLeakTesting: LeakTesting.settings.withIgnored(
-      classes: <String>['TestRestorationManager', 'RestorationBucket'],
+      classes: const <String>['TestRestorationManager', 'RestorationBucket'],
     ),
     (WidgetTester tester) async {
       const String initialString = 'some string';
