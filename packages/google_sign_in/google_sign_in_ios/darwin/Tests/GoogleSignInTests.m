@@ -26,9 +26,9 @@
 @property(nonatomic, nullable) NSException *exception;
 
 // Results to use in completion callbacks.
-@property(nonatomic, nullable) GIDGoogleUser *user;
+@property(nonatomic, nullable) NSObject<FSIGIDGoogleUser> *user;
 @property(nonatomic, nullable) NSError *error;
-@property(nonatomic, nullable) GIDSignInResult *signInResult;
+@property(nonatomic, nullable) NSObject<FSIGIDSignInResult> *signInResult;
 
 // Passed parameters.
 @property(nonatomic, copy, nullable) NSString *hint;
@@ -53,7 +53,8 @@
 }
 
 - (void)restorePreviousSignInWithCompletion:
-    (nullable void (^)(GIDGoogleUser *_Nullable user, NSError *_Nullable error))completion {
+    (nullable void (^)(NSObject<FSIGIDGoogleUser> *_Nullable user,
+                       NSError *_Nullable error))completion {
   if (self.exception) {
     @throw self.exception;
   }
@@ -80,9 +81,9 @@
                                       hint:(nullable NSString *)hint
                           additionalScopes:(nullable NSArray<NSString *> *)additionalScopes
                                      nonce:(nullable NSString *)nonce
-                                completion:
-                                    (nullable void (^)(GIDSignInResult *_Nullable signInResult,
-                                                       NSError *_Nullable error))completion {
+                                completion:(nullable void (^)(
+                                               NSObject<FSIGIDSignInResult> *_Nullable signInResult,
+                                               NSError *_Nullable error))completion {
   if (self.exception) {
     @throw self.exception;
   }
@@ -99,8 +100,9 @@
                               hint:(nullable NSString *)hint
                   additionalScopes:(nullable NSArray<NSString *> *)additionalScopes
                              nonce:(nullable NSString *)nonce
-                        completion:(nullable void (^)(GIDSignInResult *_Nullable signInResult,
-                                                      NSError *_Nullable error))completion {
+                        completion:
+                            (nullable void (^)(NSObject<FSIGIDSignInResult> *_Nullable signInResult,
+                                               NSError *_Nullable error))completion {
   if (self.exception) {
     @throw self.exception;
   }

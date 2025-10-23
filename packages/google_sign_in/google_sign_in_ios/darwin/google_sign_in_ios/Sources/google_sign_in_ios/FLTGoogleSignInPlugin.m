@@ -7,6 +7,8 @@
 
 #import <GoogleSignIn/GoogleSignIn.h>
 
+#import "FSIGoogleSignInProtocols.h"
+
 // The key within `GoogleService-Info.plist` used to hold the application's
 // client id.  See https://developers.google.com/identity/sign-in/ios/start
 // for more info.
@@ -93,7 +95,8 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
   }
 }
 
-#pragma mark - FSIGIDSignIn
+// TODO(stuarmorgan): Replace these with protocol extensions when migrating to Swift.
+#pragma mark - Passthrough Wrappers
 
 /// Implementation of @c FSIGIDSignIn that passes through to GIDSignIn.
 @interface FSIGIDSignInWrapper : NSObject <FSIGIDSignIn>
@@ -102,6 +105,52 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
 @property(strong, readonly) GIDSignIn *signIn;
 
 @end
+
+/// A wrapper around the GIDSignInResult methods used by the plugin, to allow injecting an alternate
+/// implementation in unit tests.
+@interface FSIGIDSignInResultWrapper : NSObject <FSIGIDSignInResult>
+
+- (instancetype)initWithResult:(nullable GIDSignInResult *)result;
+
+/// The underlying GIDSignInResult instance.
+@property(nonatomic, nullable) GIDSignInResult *result;
+
+@end
+
+/// A wrapper around the GIDGoogleUser methods used by the plugin, to allow injecting an alternate
+/// implementation in unit tests.
+@interface FSIGIDGoogleUserWrapper : NSObject <FSIGIDGoogleUser>
+
+- (instancetype)initWithUser:(nullable GIDGoogleUser *)user;
+
+/// The underlying GIDGoogleUser instance.
+@property(nonatomic, nullable) GIDGoogleUser *user;
+
+@end
+
+/// A wrapper around the GIDProfileData methods used by the plugin, to allow injecting an alternate
+/// implementation in unit tests.
+@interface FSIGIDProfileDataWrapper : NSObject <FSIGIDProfileData>
+
+- (instancetype)initWithProfileData:(nullable GIDProfileData *)profileData;
+
+/// The underlying GIDProfileData instance.
+@property(nonatomic, nullable) GIDProfileData *profileData;
+
+@end
+
+/// A wrapper around the GIDToken methods used by the plugin, to allow injecting an alternate
+/// implementation in unit tests.
+@interface FSIGIDTokenWrapper : NSObject <FSIGIDToken>
+
+- (instancetype)initWithToken:(nullable GIDToken *)token;
+
+/// The underlying GIDToken instance.
+@property(nonatomic, nullable) GIDToken *token;
+
+@end
+
+#pragma mark -
 
 @implementation FSIGIDSignInWrapper
 
@@ -118,8 +167,13 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
 }
 
 - (void)restorePreviousSignInWithCompletion:
-    (nullable void (^)(GIDGoogleUser *_Nullable user, NSError *_Nullable error))completion {
-  [self.signIn restorePreviousSignInWithCompletion:completion];
+    (nullable void (^)(NSObject<FSIGIDGoogleUser> *_Nullable user,
+                       NSError *_Nullable error))completion {
+  [self.signIn restorePreviousSignInWithCompletion:^(GIDGoogleUser *user, NSError *error) {
+    if (completion) {
+      completion([[FSIGIDGoogleUserWrapper alloc] initWithUser:user], error);
+    }
+  }];
 }
 
 - (void)signOut {
@@ -136,14 +190,20 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
                                       hint:(nullable NSString *)hint
                           additionalScopes:(nullable NSArray<NSString *> *)additionalScopes
                                      nonce:(nullable NSString *)nonce
-                                completion:
-                                    (nullable void (^)(GIDSignInResult *_Nullable signInResult,
-                                                       NSError *_Nullable error))completion {
+                                completion:(nullable void (^)(
+                                               NSObject<FSIGIDSignInResult> *_Nullable signInResult,
+                                               NSError *_Nullable error))completion {
   [self.signIn signInWithPresentingViewController:presentingViewController
                                              hint:hint
                                  additionalScopes:additionalScopes
                                             nonce:nonce
-                                       completion:completion];
+                                       completion:^(GIDSignInResult *result, NSError *error) {
+                                         if (completion) {
+                                           completion([[FSIGIDSignInResultWrapper alloc]
+                                                          initWithResult:result],
+                                                      error);
+                                         }
+                                       }];
 }
 
 #elif TARGET_OS_OSX
@@ -152,20 +212,194 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
                               hint:(nullable NSString *)hint
                   additionalScopes:(nullable NSArray<NSString *> *)additionalScopes
                              nonce:(nullable NSString *)nonce
-                        completion:(nullable void (^)(GIDSignInResult *_Nullable signInResult,
-                                                      NSError *_Nullable error))completion {
-  [self.signIn signInWithPresentingWindow:presentingWindow
-                                     hint:hint
-                         additionalScopes:additionalScopes
-                                    nonce:nonce
-                               completion:completion];
+                        completion:
+                            (nullable void (^)(NSObject<FSIGIDSignInResult> *_Nullable signInResult,
+                                               NSError *_Nullable error))completion {
+  [self.signIn
+      signInWithPresentingWindow:presentingWindow
+                            hint:hint
+                additionalScopes:additionalScopes
+                           nonce:nonce
+                      completion:^(GIDSignInResult *result, NSError *error) {
+                        if (completion) {
+                          completion([[FSIGIDSignInResultWrapper alloc] initWithResult:result],
+                                     error);
+                        }
+                      }];
 }
 
 #endif
 
+@end
+
 #pragma mark -
 
+@implementation FSIGIDSignInResultWrapper
+
+- (instancetype)initWithResult:(GIDSignInResult *)result {
+  if (result == nil) {
+    return nil;
+  }
+  self = [super init];
+  if (self) {
+    _result = result;
+  }
+  return self;
+}
+
+- (NSObject<FSIGIDGoogleUser> *)user {
+  return [[FSIGIDGoogleUserWrapper alloc] initWithUser:self.result.user];
+}
+
+- (NSString *)serverAuthCode {
+  return self.result.serverAuthCode;
+}
+
 @end
+
+#pragma mark -
+
+@implementation FSIGIDGoogleUserWrapper
+
+- (instancetype)initWithUser:(GIDGoogleUser *)user {
+  if (user == nil) {
+    return nil;
+  }
+  self = [super init];
+  if (self) {
+    _user = user;
+  }
+  return self;
+}
+
+- (NSString *)userID {
+  return self.user.userID;
+}
+
+- (NSObject<FSIGIDProfileData> *)profile {
+  return [[FSIGIDProfileDataWrapper alloc] initWithProfileData:self.user.profile];
+}
+
+- (NSArray<NSString *> *)grantedScopes {
+  return self.user.grantedScopes;
+}
+
+- (NSObject<FSIGIDToken> *)accessToken {
+  return [[FSIGIDTokenWrapper alloc] initWithToken:self.user.accessToken];
+}
+
+- (NSObject<FSIGIDToken> *)refreshToken {
+  return [[FSIGIDTokenWrapper alloc] initWithToken:self.user.refreshToken];
+}
+
+- (NSObject<FSIGIDToken> *)idToken {
+  return [[FSIGIDTokenWrapper alloc] initWithToken:self.user.idToken];
+}
+
+- (void)refreshTokensIfNeededWithCompletion:(void (^)(NSObject<FSIGIDGoogleUser> *_Nullable user,
+                                                      NSError *_Nullable error))completion {
+  [self.user refreshTokensIfNeededWithCompletion:^(GIDGoogleUser *user, NSError *error) {
+    if (completion) {
+      completion([[FSIGIDGoogleUserWrapper alloc] initWithUser:user], error);
+    }
+  }];
+}
+
+#if TARGET_OS_IOS || TARGET_OS_MACCATALYST
+
+- (void)addScopes:(NSArray<NSString *> *)scopes
+    presentingViewController:(UIViewController *)presentingViewController
+                  completion:
+                      (nullable void (^)(NSObject<FSIGIDSignInResult> *_Nullable signInResult,
+                                         NSError *_Nullable error))completion {
+  [self.user addScopes:scopes
+      presentingViewController:presentingViewController
+                    completion:^(GIDSignInResult *result, NSError *error) {
+                      if (completion) {
+                        completion([[FSIGIDSignInResultWrapper alloc] initWithResult:result],
+                                   error);
+                      }
+                    }];
+}
+
+#elif TARGET_OS_OSX
+
+- (void)addScopes:(NSArray<NSString *> *)scopes
+    presentingWindow:(NSWindow *)presentingWindow
+          completion:(nullable void (^)(NSObject<FSIGIDSignInResult> *_Nullable signInResult,
+                                        NSError *_Nullable error))completion {
+  [self.user addScopes:scopes
+      presentingWindow:presentingWindow
+            completion:^(GIDSignInResult *result, NSError *error) {
+              if (completion) {
+                completion([[FSIGIDSignInResultWrapper alloc] initWithResult:result], error);
+              }
+            }];
+}
+
+#endif
+
+@end
+
+#pragma mark -
+
+@implementation FSIGIDProfileDataWrapper
+
+- (instancetype)initWithProfileData:(GIDProfileData *)profileData {
+  if (profileData == nil) {
+    return nil;
+  }
+  self = [super init];
+  if (self) {
+    _profileData = profileData;
+  }
+  return self;
+}
+
+- (NSString *)email {
+  return self.profileData.email;
+}
+
+- (NSString *)name {
+  return self.profileData.name;
+}
+
+- (BOOL)hasImage {
+  return self.profileData.hasImage;
+}
+
+- (NSURL *)imageURLWithDimension:(NSUInteger)dimension {
+  return [self.profileData imageURLWithDimension:dimension];
+}
+
+@end
+
+#pragma mark -
+
+@implementation FSIGIDTokenWrapper
+
+- (instancetype)initWithToken:(GIDToken *)token {
+  if (token == nil) {
+    return nil;
+  }
+  self = [super init];
+  if (self) {
+    _token = token;
+  }
+  return self;
+}
+
+- (NSString *)tokenString {
+  return self.token.tokenString;
+}
+
+- (NSDate *)expirationDate {
+  return self.token.expirationDate;
+}
+
+@end
+
+#pragma mark -
 
 @interface FLTGoogleSignInPlugin ()
 
@@ -247,7 +481,7 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
 - (void)restorePreviousSignInWithCompletion:(nonnull void (^)(FSISignInResult *_Nullable,
                                                               FlutterError *_Nullable))completion {
   __weak typeof(self) weakSelf = self;
-  [self.signIn restorePreviousSignInWithCompletion:^(GIDGoogleUser *_Nullable user,
+  [self.signIn restorePreviousSignInWithCompletion:^(NSObject<FSIGIDGoogleUser> *_Nullable user,
                                                      NSError *_Nullable error) {
     [weakSelf handleAuthResultWithUser:user serverAuthCode:nil error:error completion:completion];
   }];
@@ -262,7 +496,8 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
     [self signInWithHint:nil
         additionalScopes:scopeHint
                    nonce:nonce
-              completion:^(GIDSignInResult *_Nullable signInResult, NSError *_Nullable error) {
+              completion:^(NSObject<FSIGIDSignInResult> *_Nullable signInResult,
+                           NSError *_Nullable error) {
                 [weakSelf handleAuthResultWithUser:signInResult.user
                                     serverAuthCode:signInResult.serverAuthCode
                                              error:error
@@ -276,7 +511,7 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
 - (void)refreshedAuthorizationTokensForUser:(NSString *)userId
                                  completion:(nonnull void (^)(FSISignInResult *_Nullable,
                                                               FlutterError *_Nullable))completion {
-  GIDGoogleUser *user = self.usersByIdentifier[userId];
+  NSObject<FSIGIDGoogleUser> *user = self.usersByIdentifier[userId];
   if (user == nil) {
     completion(
         [FSISignInResult
@@ -289,7 +524,7 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
   }
 
   __weak typeof(self) weakSelf = self;
-  [user refreshTokensIfNeededWithCompletion:^(GIDGoogleUser *_Nullable refreshedUser,
+  [user refreshTokensIfNeededWithCompletion:^(NSObject<FSIGIDGoogleUser> *_Nullable refreshedUser,
                                               NSError *_Nullable error) {
     [weakSelf handleAuthResultWithUser:refreshedUser
                         serverAuthCode:nil
@@ -302,7 +537,7 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
           forUser:(nonnull NSString *)userId
        completion:
            (nonnull void (^)(FSISignInResult *_Nullable, FlutterError *_Nullable))completion {
-  GIDGoogleUser *user = self.usersByIdentifier[userId];
+  NSObject<FSIGIDGoogleUser> *user = self.usersByIdentifier[userId];
   if (user == nil) {
     completion(
         [FSISignInResult
@@ -318,7 +553,8 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
     __weak typeof(self) weakSelf = self;
     [self addScopes:scopes
         forGoogleSignInUser:user
-                 completion:^(GIDSignInResult *_Nullable signInResult, NSError *_Nullable error) {
+                 completion:^(NSObject<FSIGIDSignInResult> *_Nullable signInResult,
+                              NSError *_Nullable error) {
                    [weakSelf handleAuthResultWithUser:signInResult.user
                                        serverAuthCode:signInResult.serverAuthCode
                                                 error:error
@@ -348,7 +584,7 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
 - (void)signInWithHint:(nullable NSString *)hint
       additionalScopes:(nullable NSArray<NSString *> *)additionalScopes
                  nonce:(nullable NSString *)nonce
-            completion:(void (^)(GIDSignInResult *_Nullable signInResult,
+            completion:(void (^)(NSObject<FSIGIDSignInResult> *_Nullable signInResult,
                                  NSError *_Nullable error))completion {
 #if TARGET_OS_OSX
   [self.signIn signInWithPresentingWindow:self.registrar.view.window
@@ -367,8 +603,8 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
 
 // Wraps the iOS and macOS scope addition methods.
 - (void)addScopes:(nonnull NSArray<NSString *> *)scopes
-    forGoogleSignInUser:(nonnull GIDGoogleUser *)user
-             completion:(void (^)(GIDSignInResult *_Nullable signInResult,
+    forGoogleSignInUser:(nonnull NSObject<FSIGIDGoogleUser> *)user
+             completion:(void (^)(NSObject<FSIGIDSignInResult> *_Nullable signInResult,
                                   NSError *_Nullable error))completion {
 #if TARGET_OS_OSX
   [user addScopes:scopes presentingWindow:self.registrar.view.window completion:completion];
@@ -397,7 +633,7 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
                                         openIDRealm:nil];
 }
 
-- (void)handleAuthResultWithUser:(nullable GIDGoogleUser *)user
+- (void)handleAuthResultWithUser:(nullable NSObject<FSIGIDGoogleUser> *)user
                   serverAuthCode:(nullable NSString *)serverAuthCode
                            error:(nullable NSError *)error
                       completion:(void (^)(FSISignInResult *_Nullable,
@@ -422,7 +658,7 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
   }
 }
 
-- (void)didSignInForUser:(nonnull GIDGoogleUser *)user
+- (void)didSignInForUser:(nonnull NSObject<FSIGIDGoogleUser> *)user
       withServerAuthCode:(nullable NSString *)serverAuthCode
               completion:(void (^)(FSISignInResult *_Nullable, FlutterError *_Nullable))completion {
   self.usersByIdentifier[user.userID] = user;

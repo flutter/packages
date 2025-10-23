@@ -20,7 +20,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property(strong, readonly) NSObject<FSIGIDSignIn> *signIn;
 
 // A mapping of user IDs to GIDGoogleUser instances to use for follow-up calls.
-@property(nonatomic) NSMutableDictionary<NSString *, GIDGoogleUser *> *usersByIdentifier;
+@property(nonatomic)
+    NSMutableDictionary<NSString *, NSObject<FSIGIDGoogleUser> *> *usersByIdentifier;
 
 /// Inject @c FlutterPluginRegistrar for testing.
 - (instancetype)initWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar;
