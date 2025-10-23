@@ -1,4 +1,5 @@
 {
+  "originHash" : "0f98c30e05c97f0caa8ab4c3349224fd47a71a9a8e72026c1139364b9ed49230",
   "pins" : [
     {
       "identity" : "app-check",
@@ -55,14 +56,6 @@
       }
     },
     {
-      "identity" : "ocmock",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/erikdoe/ocmock",
-      "state" : {
-        "revision" : "fe1661a3efed11831a6452f4b1a0c5e6ddc08c3d"
-      }
-    },
-    {
       "identity" : "promises",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/google/promises.git",
@@ -72,5 +65,5 @@
       }
     }
   ],
-  "version" : 2
+  "version" : 3
 }
