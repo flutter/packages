@@ -19,6 +19,80 @@
 // OCMock library doesn't generate a valid modulemap.
 #import <OCMock/OCMock.h>
 
+@interface TestSignIn : NSObject<FSIGIDSignIn>
+// Results to use in completion callbacks.
+@property (nonatomic, nullable) GIDGoogleUser *user;
+@property (nonatomic, nullable) NSError *error;
+@property (nonatomic, nullable) GIDSignInResult *signInResult;
+
+// Passed parameters.
+@property(nonatomic, copy, nullable) NSString *hint;
+@property(nonatomic, copy, nullable) NSArray<NSString *> *additionalScopes;
+@property(nonatomic, copy, nullable) NSString *nonce;
+#if TARGET_OS_IOS || TARGET_OS_MACCATALYST
+@property(nonatomic, nullable) UIViewController *presentingViewController;
+#else
+@property(nonatomic, nullable) NSWindow *presentingWindow;
+#endif
+
+@end
+
+@implementation TestSignIn
+@synthesize configuration;
+
+- (BOOL)handleURL:(NSURL *)url {
+  return YES;
+}
+
+- (void)restorePreviousSignInWithCompletion:(nullable void (^)(GIDGoogleUser *_Nullable user,
+                                                               NSError *_Nullable error))completion {
+  if (completion) {
+    completion(self.user, self.error);
+  }
+}
+
+- (void)signOut {
+}
+
+- (void)disconnectWithCompletion:(nullable void (^)(NSError *_Nullable error))completion {
+  if (completion) {
+    completion(self.error);
+  }
+}
+
+- (void)signInWithPresentingViewController:(UIViewController *)presentingViewController
+                                      hint:(nullable NSString *)hint
+                          additionalScopes:(nullable NSArray<NSString *> *)additionalScopes
+                                     nonce:(nullable NSString *)nonce
+                                completion:
+                                    (nullable void (^)(GIDSignInResult *_Nullable signInResult,
+                                                       NSError *_Nullable error))completion {
+  self.presentingViewController = presentingViewController;
+  self.hint = hint;
+  self.additionalScopes = additionalScopes;
+  self.nonce = nonce;
+  if (completion) {
+    completion(self.signInResult, self.error);
+  }
+}
+
+- (void)signInWithPresentingWindow:(NSWindow *)presentingWindow
+                              hint:(nullable NSString *)hint
+                  additionalScopes:(nullable NSArray<NSString *> *)additionalScopes
+                             nonce:(nullable NSString *)nonce
+                        completion:(nullable void (^)(GIDSignInResult *_Nullable signInResult,
+                                                      NSError *_Nullable error))completion {
+  self.presentingWindow = presentingWindow;
+  self.hint = hint;
+  self.additionalScopes = additionalScopes;
+  self.nonce = nonce;
+  if (completion) {
+    completion(self.signInResult, self.error);
+  }
+}
+
+@end
+
 @interface FLTGoogleSignInPluginTest : XCTestCase
 
 @property(strong, nonatomic) NSObject<FlutterBinaryMessenger> *mockBinaryMessenger;
