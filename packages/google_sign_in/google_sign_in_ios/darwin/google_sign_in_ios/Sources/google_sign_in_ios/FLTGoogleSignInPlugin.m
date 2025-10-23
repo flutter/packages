@@ -95,9 +95,11 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
 
 #pragma mark - FSIGIDSignIn
 
+/// Implementation of @c FSIGIDSignIn that passes through to GIDSignIn.
 @interface FSIGIDSignInWrapper : NSObject <FSIGIDSignIn>
 
-- (instancetype)init;
+/// The underlying GIDSignIn instance.
+@property(strong, readonly) GIDSignIn *signIn;
 
 @end
 
@@ -112,20 +114,20 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
 }
 
 - (BOOL)handleURL:(NSURL *)url {
-  return [_signIn handleURL:url];
+  return [self.signIn handleURL:url];
 }
 
 - (void)restorePreviousSignInWithCompletion:
     (nullable void (^)(GIDGoogleUser *_Nullable user, NSError *_Nullable error))completion {
-  [_signIn restorePreviousSignInWithCompletion:completion];
+  [self.signIn restorePreviousSignInWithCompletion:completion];
 }
 
 - (void)signOut {
-  [_signIn signOut];
+  [self.signIn signOut];
 }
 
 - (void)disconnectWithCompletion:(nullable void (^)(NSError *_Nullable error))completion {
-  [_signIn disconnectWithCompletion:completion];
+  [self.signIn disconnectWithCompletion:completion];
 }
 
 #if TARGET_OS_IOS || TARGET_OS_MACCATALYST
@@ -137,11 +139,11 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
                                 completion:
                                     (nullable void (^)(GIDSignInResult *_Nullable signInResult,
                                                        NSError *_Nullable error))completion {
-  [_signIn signInWithPresentingViewController:presentingViewController
-                                         hint:hint
-                             additionalScopes:additionalScopes
-                                        nonce:nonce
-                                   completion:completion];
+  [self.signIn signInWithPresentingViewController:presentingViewController
+                                             hint:hint
+                                 additionalScopes:additionalScopes
+                                            nonce:nonce
+                                       completion:completion];
 }
 
 #elif TARGET_OS_OSX
@@ -152,11 +154,11 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
                              nonce:(nullable NSString *)nonce
                         completion:(nullable void (^)(GIDSignInResult *_Nullable signInResult,
                                                       NSError *_Nullable error))completion {
-  [_signIn signInWithPresentingWindow:presentingWindow
-                                 hint:hint
-                     additionalScopes:additionalScopes
-                                nonce:nonce
-                           completion:completion];
+  [self.signIn signInWithPresentingWindow:presentingWindow
+                                     hint:hint
+                         additionalScopes:additionalScopes
+                                    nonce:nonce
+                               completion:completion];
 }
 
 #endif
