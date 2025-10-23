@@ -53,10 +53,10 @@ void main() {
     expect(find.text(initialString), findsOneWidget);
   });
 
+  // TODO(hgraceb): Remove when minimum flutter version includes
+  // https://github.com/flutter/flutter/pull/176519
   testWidgets(
     'Restores state correctly',
-    // TODO(Flop): Remove when minimum flutter version includes
-    // https://github.com/flutter/flutter/pull/176519
     experimentalLeakTesting: LeakTesting.settings.withIgnored(
       classes: <String>['TestRestorationManager', 'RestorationBucket'],
     ),
