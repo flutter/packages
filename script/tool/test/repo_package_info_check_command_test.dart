@@ -408,4 +408,113 @@ ${readmeTableEntry(packageName)}
               '    Missing CODEOWNERS entry')
         ]));
   });
+
+  group('ci_config check', () {
+    test('control test', () async {
+      final RepositoryPackage package =
+          createFakePackage('a_package', packagesDir);
+
+      root.childFile('README.md').writeAsStringSync('''
+${readmeTableHeader()}
+${readmeTableEntry('a_package')}
+''');
+      writeCodeOwners(<RepositoryPackage>[package]);
+
+      package.ciConfigFile.writeAsStringSync('''
+release:
+  batch: false
+    ''');
+
+      final List<String> output =
+          await runCapturingPrint(runner, <String>['repo-package-info-check']);
+
+      expect(
+        output,
+        containsAll(<Matcher>[
+          contains('  Checking ci_config.yaml...'),
+          contains('No issues found!'),
+        ]),
+      );
+    });
+
+    test('missing ci_config file is ok', () async {
+      final RepositoryPackage package =
+          createFakePackage('a_package', packagesDir);
+
+      root.childFile('README.md').writeAsStringSync('''
+${readmeTableHeader()}
+${readmeTableEntry('a_package')}
+''');
+      writeCodeOwners(<RepositoryPackage>[package]);
+
+      final List<String> output =
+          await runCapturingPrint(runner, <String>['repo-package-info-check']);
+
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('No issues found!'),
+        ]),
+      );
+    });
+
+    test('fails for unknown key', () async {
+      final RepositoryPackage package =
+          createFakePackage('a_package', packagesDir);
+
+      root.childFile('README.md').writeAsStringSync('''
+${readmeTableHeader()}
+${readmeTableEntry('a_package')}
+''');
+      writeCodeOwners(<RepositoryPackage>[package]);
+      package.ciConfigFile.writeAsStringSync('''
+something: true
+    ''');
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['repo-package-info-check'], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Unknown key `something` in config, the possible keys are'),
+        ]),
+      );
+    });
+
+    test('fails for invalid value type for batch property in release',
+        () async {
+      final RepositoryPackage package =
+          createFakePackage('a_package', packagesDir);
+
+      root.childFile('README.md').writeAsStringSync('''
+${readmeTableHeader()}
+${readmeTableEntry('a_package')}
+''');
+      writeCodeOwners(<RepositoryPackage>[package]);
+      package.ciConfigFile.writeAsStringSync('''
+release:
+  batch: 1
+    ''');
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['repo-package-info-check'], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains(
+              'Invalid value `1` for key `release.batch`, the possible values are [true, false]'),
+        ]),
+      );
+    });
+  });
 }

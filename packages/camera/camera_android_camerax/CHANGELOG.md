@@ -1,6 +1,10 @@
 ## 0.6.24
 
-* Fixes `IllegalArgumentException` that could occur during image streaming.
+* Fixes `IllegalArgumentException` that could occur during image streaming when using NV21.
+
+## 0.6.23+4
+
+* Updates examples to use the new RadioGroup API instead of deprecated Radio parameters.
 
 ## 0.6.23+3
 

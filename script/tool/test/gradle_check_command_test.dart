@@ -50,7 +50,9 @@ void main() {
     String compileSdk = '36',
     bool includeKotlinOptions = true,
     bool commentKotlinOptions = false,
-    bool useDeprecatedJvmTarget = false,
+    bool useDeprecatedJvmTargetStyle = false,
+    int jvmTargetValue = 17,
+    int kotlinJvmValue = 17,
   }) {
     final File buildGradle = package
         .platformDirectory(FlutterPlatform.android)
@@ -74,16 +76,17 @@ java {
 
 ''';
     final String sourceCompat =
-        '${commentSourceLanguage ? '// ' : ''}sourceCompatibility = JavaVersion.VERSION_17';
+        '${commentSourceLanguage ? '// ' : ''}sourceCompatibility = JavaVersion.VERSION_$jvmTargetValue';
     final String targetCompat =
-        '${commentSourceLanguage ? '// ' : ''}targetCompatibility = JavaVersion.VERSION_17';
+        '${commentSourceLanguage ? '// ' : ''}targetCompatibility = JavaVersion.VERSION_$jvmTargetValue';
     final String namespace =
         "    ${commentNamespace ? '// ' : ''}namespace = '$_defaultFakeNamespace'";
-    final String jvmTarget =
-        useDeprecatedJvmTarget ? '17' : 'JavaVersion.VERSION_17.toString()';
+    final String kotlinJvmTarget = useDeprecatedJvmTargetStyle
+        ? '$jvmTargetValue'
+        : 'JavaVersion.VERSION_$kotlinJvmValue.toString()';
     final String kotlinConfig = '''
     ${commentKotlinOptions ? '//' : ''}kotlinOptions {
-        ${commentKotlinOptions ? '//' : ''}jvmTarget = $jvmTarget
+        ${commentKotlinOptions ? '//' : ''}jvmTarget = $kotlinJvmTarget
     ${commentKotlinOptions ? '//' : ''}}''';
 
     buildGradle.writeAsStringSync('''
@@ -387,6 +390,87 @@ dependencies {
       output,
       containsAllInOrder(<Matcher>[
         contains(javaIncompatabilityIndicator),
+      ]),
+    );
+  });
+
+  test('fails when sourceCompatibility/targetCompatibility are below minimum',
+      () async {
+    final RepositoryPackage package =
+        createFakePlugin('a_plugin', packagesDir, examples: <String>[]);
+    writeFakePluginBuildGradle(
+      package,
+      includeSourceCompat: true,
+      includeTargetCompat: true,
+      jvmTargetValue: 11,
+      kotlinJvmValue: 11,
+    );
+    writeFakeManifest(package);
+
+    Error? commandError;
+    final List<String> output = await runCapturingPrint(
+        runner, <String>['gradle-check'], errorHandler: (Error e) {
+      commandError = e;
+    });
+
+    expect(commandError, isA<ToolExit>());
+    expect(
+      output,
+      containsAllInOrder(<Matcher>[
+        contains(
+            'Which is below the minimum required. Use at least "JavaVersion.VERSION_'),
+      ]),
+    );
+  });
+
+  test('fails when compatibility values do not match kotlinOptions', () async {
+    final RepositoryPackage package =
+        createFakePlugin('a_plugin', packagesDir, examples: <String>[]);
+    writeFakePluginBuildGradle(
+      package,
+      includeSourceCompat: true,
+      includeTargetCompat: true,
+      jvmTargetValue: 21,
+      // ignore: avoid_redundant_argument_values
+      kotlinJvmValue: 17,
+    );
+    writeFakeManifest(package);
+
+    Error? commandError;
+    final List<String> output = await runCapturingPrint(
+        runner, <String>['gradle-check'], errorHandler: (Error e) {
+      commandError = e;
+    });
+
+    expect(commandError, isA<ToolExit>());
+    expect(
+      output,
+      containsAllInOrder(<Matcher>[
+        contains(
+            'If build.gradle(.kts) uses JavaVersion.* versions must be the same.'),
+      ]),
+    );
+  });
+
+  test('passes when jvmValues are higher than minimim', () async {
+    final RepositoryPackage package =
+        createFakePlugin('a_plugin', packagesDir, examples: <String>[]);
+    writeFakePluginBuildGradle(
+      package,
+      includeSourceCompat: true,
+      includeTargetCompat: true,
+      jvmTargetValue: 21,
+      kotlinJvmValue: 21,
+    );
+    writeFakeManifest(package);
+
+    final List<String> output =
+        await runCapturingPrint(runner, <String>['gradle-check']);
+
+    expect(
+      output,
+      containsAllInOrder(<Matcher>[
+        contains('Validating android/build.gradle'),
       ]),
     );
   });
@@ -1242,7 +1326,7 @@ dependencies {
       writeFakePluginBuildGradle(
         package,
         includeLanguageVersion: true,
-        useDeprecatedJvmTarget: true,
+        useDeprecatedJvmTargetStyle: true,
       );
       writeFakeManifest(package);
 
