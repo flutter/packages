@@ -73,16 +73,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)addScopes:(NSArray<NSString *> *)scopes
     presentingViewController:(UIViewController *)presentingViewController
-                  completion:
-                      (nullable void (^)(NSObject<FSIGIDSignInResult> *_Nullable signInResult,
-                                         NSError *_Nullable error))completion
+                  completion:(nullable void (^)(NSObject<FSIGIDSignInResult> *_Nullable result,
+                                                NSError *_Nullable error))completion
     NS_EXTENSION_UNAVAILABLE("The add scopes flow is not supported in App Extensions.");
 
 #elif TARGET_OS_OSX
 
 - (void)addScopes:(NSArray<NSString *> *)scopes
     presentingWindow:(NSWindow *)presentingWindow
-          completion:(nullable void (^)(NSObject<FSIGIDSignInResult> *_Nullable signInResult,
+          completion:(nullable void (^)(NSObject<FSIGIDSignInResult> *_Nullable result,
                                         NSError *_Nullable error))completion;
 
 #endif
