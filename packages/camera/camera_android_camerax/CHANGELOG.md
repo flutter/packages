@@ -1,4 +1,4 @@
-## 0.6.24
+## 0.6.23+5
 
 * Fixes `IllegalArgumentException` that could occur during image streaming when using NV21.
 
