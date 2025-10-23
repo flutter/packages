@@ -28,8 +28,8 @@ final class CameraSessionPresetsTests: XCTestCase {
     }
     let captureFormatMock = MockCaptureDeviceFormat()
     let captureDeviceMock = MockCaptureDevice()
-    captureDeviceMock.formats = [captureFormatMock]
-    captureDeviceMock.activeFormat = captureFormatMock
+    captureDeviceMock.fltFormats = [captureFormatMock]
+    captureDeviceMock.fltActiveFormat = captureFormatMock
     captureDeviceMock.lockForConfigurationStub = {
       lockForConfigurationExpectation.fulfill()
     }
