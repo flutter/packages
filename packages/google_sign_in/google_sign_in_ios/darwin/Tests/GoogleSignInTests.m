@@ -234,7 +234,6 @@
 
 @interface FLTGoogleSignInPluginTest : XCTestCase
 
-@property(strong, nonatomic) NSObject<FlutterBinaryMessenger> *mockBinaryMessenger;
 @property(strong, nonatomic) NSObject<FlutterPluginRegistrar> *mockPluginRegistrar;
 @property(strong, nonatomic) FLTGoogleSignInPlugin *plugin;
 @property(strong, nonatomic) TestSignIn *fakeSignIn;
@@ -246,15 +245,12 @@
 
 - (void)setUp {
   [super setUp];
-  self.mockBinaryMessenger = OCMProtocolMock(@protocol(FlutterBinaryMessenger));
   self.mockPluginRegistrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
 
   self.fakeSignIn = [[TestSignIn alloc] init];
 
-  OCMStub(self.mockPluginRegistrar.messenger).andReturn(self.mockBinaryMessenger);
   self.plugin = [[FLTGoogleSignInPlugin alloc] initWithSignIn:self.fakeSignIn
                                                     registrar:self.mockPluginRegistrar];
-  [FLTGoogleSignInPlugin registerWithRegistrar:self.mockPluginRegistrar];
 
   NSString *plistPath =
       [[NSBundle bundleForClass:[self class]] pathForResource:@"GoogleService-Info"
