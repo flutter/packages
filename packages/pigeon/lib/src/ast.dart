@@ -522,6 +522,24 @@ class TypeDeclaration {
   /// Associated [AstProxyApi], if any.
   final AstProxyApi? associatedProxyApi;
 
+  /// Returns the full annotated name of the type.
+  String getFullName({bool withNullable = true}) {
+    if (baseName == 'List' || baseName == 'Map') {
+      return '$baseName<$typeArgumentsString>${isNullable && withNullable ? '?' : ''}';
+    }
+    return '$baseName${isNullable && withNullable ? '?' : ''}';
+  }
+
+  /// Returns the Type Arguments in annotation form.
+  String get typeArgumentsString {
+    if (baseName == 'List') {
+      return typeArguments.firstOrNull?.getFullName() ?? 'Object?';
+    } else if (baseName == 'Map') {
+      return '${typeArguments.firstOrNull?.getFullName() ?? 'Object?'}, ${typeArguments.lastOrNull?.getFullName() ?? 'Object?'}';
+    }
+    return '';
+  }
+
   @override
   int get hashCode {
     // This has to be implemented because TypeDeclaration is used as a Key to a
@@ -553,32 +571,35 @@ class TypeDeclaration {
 
   /// Returns duplicated `TypeDeclaration` with attached `associatedEnum` value.
   TypeDeclaration copyWithEnum(Enum enumDefinition) {
-    return TypeDeclaration(
+    final TypeDeclaration newType = TypeDeclaration(
       baseName: baseName,
       isNullable: isNullable,
       associatedEnum: enumDefinition,
       typeArguments: typeArguments,
     );
+    return newType;
   }
 
   /// Returns duplicated `TypeDeclaration` with attached `associatedClass` value.
   TypeDeclaration copyWithClass(Class classDefinition) {
-    return TypeDeclaration(
+    final TypeDeclaration newType = TypeDeclaration(
       baseName: baseName,
       isNullable: isNullable,
       associatedClass: classDefinition,
       typeArguments: typeArguments,
     );
+    return newType;
   }
 
   /// Returns duplicated `TypeDeclaration` with attached `associatedProxyApi` value.
   TypeDeclaration copyWithProxyApi(AstProxyApi proxyApiDefinition) {
-    return TypeDeclaration(
+    final TypeDeclaration newType = TypeDeclaration(
       baseName: baseName,
       isNullable: isNullable,
       associatedProxyApi: proxyApiDefinition,
       typeArguments: typeArguments,
     );
+    return newType;
   }
 
   /// Returns duplicated `TypeDeclaration` with attached `associatedProxyApi` value.
@@ -826,6 +847,8 @@ class Root extends Node {
     required this.classes,
     required this.apis,
     required this.enums,
+    this.lists = const <String, TypeDeclaration>{},
+    this.maps = const <String, TypeDeclaration>{},
     this.containsHostApi = false,
     this.containsFlutterApi = false,
     this.containsProxyApi = false,
@@ -834,7 +857,13 @@ class Root extends Node {
 
   /// Factory function for generating an empty root, usually used when early errors are encountered.
   factory Root.makeEmpty() {
-    return Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+    return Root(
+      apis: <Api>[],
+      classes: <Class>[],
+      enums: <Enum>[],
+      lists: <String, TypeDeclaration>{},
+      maps: <String, TypeDeclaration>{},
+    );
   }
 
   /// All the classes contained in the AST.
@@ -845,6 +874,12 @@ class Root extends Node {
 
   /// All of the enums contained in the AST.
   List<Enum> enums;
+
+  /// All of the lists contained in the AST.
+  Map<String, TypeDeclaration> lists;
+
+  /// All of the maps contained in the AST.
+  Map<String, TypeDeclaration> maps;
 
   /// Whether the root has any Host API definitions.
   bool containsHostApi;
@@ -868,6 +903,6 @@ class Root extends Node {
 
   @override
   String toString() {
-    return '(Root classes:$classes apis:$apis enums:$enums)';
+    return '(Root classes:$classes apis:$apis enums:$enums lists:$lists maps:$maps containsHostApi:$containsHostApi containsFlutterApi:$containsFlutterApi containsProxyApi:$containsProxyApi)';
   }
 }

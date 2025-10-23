@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:collection/collection.dart' show mergeMaps;
 import 'package:pigeon/src/ast.dart';
 import 'package:pigeon/src/generator_tools.dart';
 import 'package:test/test.dart';

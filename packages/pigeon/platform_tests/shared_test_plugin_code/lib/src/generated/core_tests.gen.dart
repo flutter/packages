@@ -82,7 +82,7 @@ class UnusedClass {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(encode(), other.encode());
+    return aField == other.aField;
   }
 
   @override
@@ -245,11 +245,10 @@ class AllTypes {
       intMap: (result[23] as Map<Object?, Object?>?)!.cast<int, int>(),
       enumMap: (result[24] as Map<Object?, Object?>?)!.cast<AnEnum, AnEnum>(),
       objectMap: (result[25] as Map<Object?, Object?>?)!.cast<Object, Object>(),
-      listMap:
-          (result[26] as Map<Object?, Object?>?)!.cast<int, List<Object?>>(),
-      mapMap:
-          (result[27] as Map<Object?, Object?>?)!
-              .cast<int, Map<Object?, Object?>>(),
+      listMap: (result[26] as Map<Object?, Object?>?)!
+          .cast<int, List<Object?>>(),
+      mapMap: (result[27] as Map<Object?, Object?>?)!
+          .cast<int, Map<Object?, Object?>>(),
     );
   }
 
@@ -262,7 +261,34 @@ class AllTypes {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(encode(), other.encode());
+    return aBool == other.aBool &&
+        anInt == other.anInt &&
+        anInt64 == other.anInt64 &&
+        aDouble == other.aDouble &&
+        _deepEquals(aByteArray, other.aByteArray) &&
+        _deepEquals(a4ByteArray, other.a4ByteArray) &&
+        _deepEquals(a8ByteArray, other.a8ByteArray) &&
+        _deepEquals(aFloatArray, other.aFloatArray) &&
+        anEnum == other.anEnum &&
+        anotherEnum == other.anotherEnum &&
+        aString == other.aString &&
+        anObject == other.anObject &&
+        _deepEquals(list, other.list) &&
+        _deepEquals(stringList, other.stringList) &&
+        _deepEquals(intList, other.intList) &&
+        _deepEquals(doubleList, other.doubleList) &&
+        _deepEquals(boolList, other.boolList) &&
+        _deepEquals(enumList, other.enumList) &&
+        _deepEquals(objectList, other.objectList) &&
+        _deepEquals(listList, other.listList) &&
+        _deepEquals(mapList, other.mapList) &&
+        _deepEquals(map, other.map) &&
+        _deepEquals(stringMap, other.stringMap) &&
+        _deepEquals(intMap, other.intMap) &&
+        _deepEquals(enumMap, other.enumMap) &&
+        _deepEquals(objectMap, other.objectMap) &&
+        _deepEquals(listMap, other.listMap) &&
+        _deepEquals(mapMap, other.mapMap);
   }
 
   @override
@@ -433,23 +459,21 @@ class AllNullableTypes {
       objectList: (result[19] as List<Object?>?)?.cast<Object?>(),
       listList: (result[20] as List<Object?>?)?.cast<List<Object?>?>(),
       mapList: (result[21] as List<Object?>?)?.cast<Map<Object?, Object?>?>(),
-      recursiveClassList:
-          (result[22] as List<Object?>?)?.cast<AllNullableTypes?>(),
+      recursiveClassList: (result[22] as List<Object?>?)
+          ?.cast<AllNullableTypes?>(),
       map: result[23] as Map<Object?, Object?>?,
-      stringMap:
-          (result[24] as Map<Object?, Object?>?)?.cast<String?, String?>(),
+      stringMap: (result[24] as Map<Object?, Object?>?)
+          ?.cast<String?, String?>(),
       intMap: (result[25] as Map<Object?, Object?>?)?.cast<int?, int?>(),
       enumMap: (result[26] as Map<Object?, Object?>?)?.cast<AnEnum?, AnEnum?>(),
-      objectMap:
-          (result[27] as Map<Object?, Object?>?)?.cast<Object?, Object?>(),
-      listMap:
-          (result[28] as Map<Object?, Object?>?)?.cast<int?, List<Object?>?>(),
-      mapMap:
-          (result[29] as Map<Object?, Object?>?)
-              ?.cast<int?, Map<Object?, Object?>?>(),
-      recursiveClassMap:
-          (result[30] as Map<Object?, Object?>?)
-              ?.cast<int?, AllNullableTypes?>(),
+      objectMap: (result[27] as Map<Object?, Object?>?)
+          ?.cast<Object?, Object?>(),
+      listMap: (result[28] as Map<Object?, Object?>?)
+          ?.cast<int?, List<Object?>?>(),
+      mapMap: (result[29] as Map<Object?, Object?>?)
+          ?.cast<int?, Map<Object?, Object?>?>(),
+      recursiveClassMap: (result[30] as Map<Object?, Object?>?)
+          ?.cast<int?, AllNullableTypes?>(),
     );
   }
 
@@ -462,7 +486,37 @@ class AllNullableTypes {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(encode(), other.encode());
+    return aNullableBool == other.aNullableBool &&
+        aNullableInt == other.aNullableInt &&
+        aNullableInt64 == other.aNullableInt64 &&
+        aNullableDouble == other.aNullableDouble &&
+        _deepEquals(aNullableByteArray, other.aNullableByteArray) &&
+        _deepEquals(aNullable4ByteArray, other.aNullable4ByteArray) &&
+        _deepEquals(aNullable8ByteArray, other.aNullable8ByteArray) &&
+        _deepEquals(aNullableFloatArray, other.aNullableFloatArray) &&
+        aNullableEnum == other.aNullableEnum &&
+        anotherNullableEnum == other.anotherNullableEnum &&
+        aNullableString == other.aNullableString &&
+        aNullableObject == other.aNullableObject &&
+        allNullableTypes == other.allNullableTypes &&
+        _deepEquals(list, other.list) &&
+        _deepEquals(stringList, other.stringList) &&
+        _deepEquals(intList, other.intList) &&
+        _deepEquals(doubleList, other.doubleList) &&
+        _deepEquals(boolList, other.boolList) &&
+        _deepEquals(enumList, other.enumList) &&
+        _deepEquals(objectList, other.objectList) &&
+        _deepEquals(listList, other.listList) &&
+        _deepEquals(mapList, other.mapList) &&
+        _deepEquals(recursiveClassList, other.recursiveClassList) &&
+        _deepEquals(map, other.map) &&
+        _deepEquals(stringMap, other.stringMap) &&
+        _deepEquals(intMap, other.intMap) &&
+        _deepEquals(enumMap, other.enumMap) &&
+        _deepEquals(objectMap, other.objectMap) &&
+        _deepEquals(listMap, other.listMap) &&
+        _deepEquals(mapMap, other.mapMap) &&
+        _deepEquals(recursiveClassMap, other.recursiveClassMap);
   }
 
   @override
@@ -623,17 +677,16 @@ class AllNullableTypesWithoutRecursion {
       listList: (result[19] as List<Object?>?)?.cast<List<Object?>?>(),
       mapList: (result[20] as List<Object?>?)?.cast<Map<Object?, Object?>?>(),
       map: result[21] as Map<Object?, Object?>?,
-      stringMap:
-          (result[22] as Map<Object?, Object?>?)?.cast<String?, String?>(),
+      stringMap: (result[22] as Map<Object?, Object?>?)
+          ?.cast<String?, String?>(),
       intMap: (result[23] as Map<Object?, Object?>?)?.cast<int?, int?>(),
       enumMap: (result[24] as Map<Object?, Object?>?)?.cast<AnEnum?, AnEnum?>(),
-      objectMap:
-          (result[25] as Map<Object?, Object?>?)?.cast<Object?, Object?>(),
-      listMap:
-          (result[26] as Map<Object?, Object?>?)?.cast<int?, List<Object?>?>(),
-      mapMap:
-          (result[27] as Map<Object?, Object?>?)
-              ?.cast<int?, Map<Object?, Object?>?>(),
+      objectMap: (result[25] as Map<Object?, Object?>?)
+          ?.cast<Object?, Object?>(),
+      listMap: (result[26] as Map<Object?, Object?>?)
+          ?.cast<int?, List<Object?>?>(),
+      mapMap: (result[27] as Map<Object?, Object?>?)
+          ?.cast<int?, Map<Object?, Object?>?>(),
     );
   }
 
@@ -647,7 +700,34 @@ class AllNullableTypesWithoutRecursion {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(encode(), other.encode());
+    return aNullableBool == other.aNullableBool &&
+        aNullableInt == other.aNullableInt &&
+        aNullableInt64 == other.aNullableInt64 &&
+        aNullableDouble == other.aNullableDouble &&
+        _deepEquals(aNullableByteArray, other.aNullableByteArray) &&
+        _deepEquals(aNullable4ByteArray, other.aNullable4ByteArray) &&
+        _deepEquals(aNullable8ByteArray, other.aNullable8ByteArray) &&
+        _deepEquals(aNullableFloatArray, other.aNullableFloatArray) &&
+        aNullableEnum == other.aNullableEnum &&
+        anotherNullableEnum == other.anotherNullableEnum &&
+        aNullableString == other.aNullableString &&
+        aNullableObject == other.aNullableObject &&
+        _deepEquals(list, other.list) &&
+        _deepEquals(stringList, other.stringList) &&
+        _deepEquals(intList, other.intList) &&
+        _deepEquals(doubleList, other.doubleList) &&
+        _deepEquals(boolList, other.boolList) &&
+        _deepEquals(enumList, other.enumList) &&
+        _deepEquals(objectList, other.objectList) &&
+        _deepEquals(listList, other.listList) &&
+        _deepEquals(mapList, other.mapList) &&
+        _deepEquals(map, other.map) &&
+        _deepEquals(stringMap, other.stringMap) &&
+        _deepEquals(intMap, other.intMap) &&
+        _deepEquals(enumMap, other.enumMap) &&
+        _deepEquals(objectMap, other.objectMap) &&
+        _deepEquals(listMap, other.listMap) &&
+        _deepEquals(mapMap, other.mapMap);
   }
 
   @override
@@ -709,13 +789,11 @@ class AllClassesWrapper {
           result[1] as AllNullableTypesWithoutRecursion?,
       allTypes: result[2] as AllTypes?,
       classList: (result[3] as List<Object?>?)!.cast<AllTypes?>(),
-      nullableClassList:
-          (result[4] as List<Object?>?)
-              ?.cast<AllNullableTypesWithoutRecursion?>(),
+      nullableClassList: (result[4] as List<Object?>?)
+          ?.cast<AllNullableTypesWithoutRecursion?>(),
       classMap: (result[5] as Map<Object?, Object?>?)!.cast<int?, AllTypes?>(),
-      nullableClassMap:
-          (result[6] as Map<Object?, Object?>?)
-              ?.cast<int?, AllNullableTypesWithoutRecursion?>(),
+      nullableClassMap: (result[6] as Map<Object?, Object?>?)
+          ?.cast<int?, AllNullableTypesWithoutRecursion?>(),
     );
   }
 
@@ -728,7 +806,14 @@ class AllClassesWrapper {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(encode(), other.encode());
+    return allNullableTypes == other.allNullableTypes &&
+        allNullableTypesWithoutRecursion ==
+            other.allNullableTypesWithoutRecursion &&
+        allTypes == other.allTypes &&
+        _deepEquals(classList, other.classList) &&
+        _deepEquals(nullableClassList, other.nullableClassList) &&
+        _deepEquals(classMap, other.classMap) &&
+        _deepEquals(nullableClassMap, other.nullableClassMap);
   }
 
   @override
@@ -764,7 +849,7 @@ class TestMessage {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(encode(), other.encode());
+    return _deepEquals(testList, other.testList);
   }
 
   @override
@@ -838,17 +923,18 @@ class _PigeonCodec extends StandardMessageCodec {
 /// The core interface that each host language plugin must implement in
 /// platform_test integration tests.
 class HostIntegrationCoreApi {
-  /// Constructor for [HostIntegrationCoreApi].  The [binaryMessenger] named argument is
-  /// available for dependency injection.  If it is left null, the default
+  /// Constructor for [HostIntegrationCoreApi]. The [binaryMessenger] named argument is
+  /// available for dependency injection. If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
   HostIntegrationCoreApi({
     BinaryMessenger? binaryMessenger,
     String messageChannelSuffix = '',
   }) : pigeonVar_binaryMessenger = binaryMessenger,
-       pigeonVar_messageChannelSuffix =
-           messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
-  final BinaryMessenger? pigeonVar_binaryMessenger;
+       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+           ? '.$messageChannelSuffix'
+           : '';
 
+  final BinaryMessenger? pigeonVar_binaryMessenger;
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
 
   final String pigeonVar_messageChannelSuffix;
@@ -5842,8 +5928,9 @@ abstract class FlutterIntegrationCoreApi {
     BinaryMessenger? binaryMessenger,
     String messageChannelSuffix = '',
   }) {
-    messageChannelSuffix =
-        messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+    messageChannelSuffix = messageChannelSuffix.isNotEmpty
+        ? '.$messageChannelSuffix'
+        : '';
     {
       final BasicMessageChannel<Object?>
       pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -6274,8 +6361,8 @@ abstract class FlutterIntegrationCoreApi {
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoList was null.',
           );
           final List<Object?> args = (message as List<Object?>?)!;
-          final List<Object?>? arg_list =
-              (args[0] as List<Object?>?)?.cast<Object?>();
+          final List<Object?>? arg_list = (args[0] as List<Object?>?)
+              ?.cast<Object?>();
           assert(
             arg_list != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoList was null, expected non-null List<Object?>.',
@@ -6309,8 +6396,8 @@ abstract class FlutterIntegrationCoreApi {
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoEnumList was null.',
           );
           final List<Object?> args = (message as List<Object?>?)!;
-          final List<AnEnum?>? arg_enumList =
-              (args[0] as List<Object?>?)?.cast<AnEnum?>();
+          final List<AnEnum?>? arg_enumList = (args[0] as List<Object?>?)
+              ?.cast<AnEnum?>();
           assert(
             arg_enumList != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoEnumList was null, expected non-null List<AnEnum?>.',
@@ -6381,8 +6468,8 @@ abstract class FlutterIntegrationCoreApi {
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNonNullEnumList was null.',
           );
           final List<Object?> args = (message as List<Object?>?)!;
-          final List<AnEnum>? arg_enumList =
-              (args[0] as List<Object?>?)?.cast<AnEnum>();
+          final List<AnEnum>? arg_enumList = (args[0] as List<Object?>?)
+              ?.cast<AnEnum>();
           assert(
             arg_enumList != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNonNullEnumList was null, expected non-null List<AnEnum>.',
@@ -6670,8 +6757,8 @@ abstract class FlutterIntegrationCoreApi {
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNonNullIntMap was null.',
           );
           final List<Object?> args = (message as List<Object?>?)!;
-          final Map<int, int>? arg_intMap =
-              (args[0] as Map<Object?, Object?>?)?.cast<int, int>();
+          final Map<int, int>? arg_intMap = (args[0] as Map<Object?, Object?>?)
+              ?.cast<int, int>();
           assert(
             arg_intMap != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNonNullIntMap was null, expected non-null Map<int, int>.',
@@ -6998,8 +7085,8 @@ abstract class FlutterIntegrationCoreApi {
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableList was null.',
           );
           final List<Object?> args = (message as List<Object?>?)!;
-          final List<Object?>? arg_list =
-              (args[0] as List<Object?>?)?.cast<Object?>();
+          final List<Object?>? arg_list = (args[0] as List<Object?>?)
+              ?.cast<Object?>();
           try {
             final List<Object?>? output = api.echoNullableList(arg_list);
             return wrapResponse(result: output);
@@ -7029,8 +7116,8 @@ abstract class FlutterIntegrationCoreApi {
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableEnumList was null.',
           );
           final List<Object?> args = (message as List<Object?>?)!;
-          final List<AnEnum?>? arg_enumList =
-              (args[0] as List<Object?>?)?.cast<AnEnum?>();
+          final List<AnEnum?>? arg_enumList = (args[0] as List<Object?>?)
+              ?.cast<AnEnum?>();
           try {
             final List<AnEnum?>? output = api.echoNullableEnumList(
               arg_enumList,
@@ -7095,8 +7182,8 @@ abstract class FlutterIntegrationCoreApi {
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableNonNullEnumList was null.',
           );
           final List<Object?> args = (message as List<Object?>?)!;
-          final List<AnEnum>? arg_enumList =
-              (args[0] as List<Object?>?)?.cast<AnEnum>();
+          final List<AnEnum>? arg_enumList = (args[0] as List<Object?>?)
+              ?.cast<AnEnum>();
           try {
             final List<AnEnum>? output = api.echoNullableNonNullEnumList(
               arg_enumList,
@@ -7353,8 +7440,8 @@ abstract class FlutterIntegrationCoreApi {
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableNonNullIntMap was null.',
           );
           final List<Object?> args = (message as List<Object?>?)!;
-          final Map<int, int>? arg_intMap =
-              (args[0] as Map<Object?, Object?>?)?.cast<int, int>();
+          final Map<int, int>? arg_intMap = (args[0] as Map<Object?, Object?>?)
+              ?.cast<int, int>();
           try {
             final Map<int, int>? output = api.echoNullableNonNullIntMap(
               arg_intMap,
@@ -7561,17 +7648,18 @@ abstract class FlutterIntegrationCoreApi {
 
 /// An API that can be implemented for minimal, compile-only tests.
 class HostTrivialApi {
-  /// Constructor for [HostTrivialApi].  The [binaryMessenger] named argument is
-  /// available for dependency injection.  If it is left null, the default
+  /// Constructor for [HostTrivialApi]. The [binaryMessenger] named argument is
+  /// available for dependency injection. If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
   HostTrivialApi({
     BinaryMessenger? binaryMessenger,
     String messageChannelSuffix = '',
   }) : pigeonVar_binaryMessenger = binaryMessenger,
-       pigeonVar_messageChannelSuffix =
-           messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
-  final BinaryMessenger? pigeonVar_binaryMessenger;
+       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+           ? '.$messageChannelSuffix'
+           : '';
 
+  final BinaryMessenger? pigeonVar_binaryMessenger;
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
 
   final String pigeonVar_messageChannelSuffix;
@@ -7604,17 +7692,18 @@ class HostTrivialApi {
 
 /// A simple API implemented in some unit tests.
 class HostSmallApi {
-  /// Constructor for [HostSmallApi].  The [binaryMessenger] named argument is
-  /// available for dependency injection.  If it is left null, the default
+  /// Constructor for [HostSmallApi]. The [binaryMessenger] named argument is
+  /// available for dependency injection. If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
   HostSmallApi({
     BinaryMessenger? binaryMessenger,
     String messageChannelSuffix = '',
   }) : pigeonVar_binaryMessenger = binaryMessenger,
-       pigeonVar_messageChannelSuffix =
-           messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
-  final BinaryMessenger? pigeonVar_binaryMessenger;
+       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+           ? '.$messageChannelSuffix'
+           : '';
 
+  final BinaryMessenger? pigeonVar_binaryMessenger;
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
 
   final String pigeonVar_messageChannelSuffix;
@@ -7690,8 +7779,9 @@ abstract class FlutterSmallApi {
     BinaryMessenger? binaryMessenger,
     String messageChannelSuffix = '',
   }) {
-    messageChannelSuffix =
-        messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+    messageChannelSuffix = messageChannelSuffix.isNotEmpty
+        ? '.$messageChannelSuffix'
+        : '';
     {
       final BasicMessageChannel<Object?>
       pigeonVar_channel = BasicMessageChannel<Object?>(

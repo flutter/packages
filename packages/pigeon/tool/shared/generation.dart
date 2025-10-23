@@ -35,6 +35,13 @@ const Map<String, Set<GeneratorLanguage>> _unsupportedFiles =
         GeneratorLanguage.java,
         GeneratorLanguage.objc,
       },
+      'ni_tests': <GeneratorLanguage>{
+        GeneratorLanguage.swift,
+        GeneratorLanguage.cpp,
+        GeneratorLanguage.gobject,
+        GeneratorLanguage.java,
+        GeneratorLanguage.objc,
+      },
     };
 
 String _snakeToPascalCase(String snake) {
@@ -94,6 +101,7 @@ Future<int> generateTestPigeons({
     'nullable_returns',
     'primitive',
     'proxy_api_tests',
+    'ni_tests',
   };
 
   const String testPluginName = 'test_plugin';
@@ -146,6 +154,8 @@ Future<int> generateTestPigeons({
               : '$outputBase/android/src/main/kotlin/com/example/test_plugin/$pascalCaseName.gen.kt',
       kotlinPackage: 'com.example.test_plugin',
       kotlinErrorClassName: kotlinErrorName,
+      kotlinUseJni: input == 'ni_tests',
+      kotlinAppDirectory: '$outputBase/example',
       kotlinIncludeErrorClass: input != 'primitive',
       // iOS/macOS
       swiftOut:
@@ -229,7 +239,9 @@ Future<int> runPigeon({
   String? kotlinOut,
   String? kotlinPackage,
   String? kotlinErrorClassName,
+  bool kotlinUseJni = false,
   bool kotlinIncludeErrorClass = true,
+  String kotlinAppDirectory = '',
   bool swiftIncludeErrorClass = true,
   String? swiftOut,
   String? swiftErrorClassName,
@@ -304,6 +316,8 @@ Future<int> runPigeon({
         package: kotlinPackage,
         errorClassName: kotlinErrorClassName,
         includeErrorClass: kotlinIncludeErrorClass,
+        useJni: kotlinUseJni,
+        appDirectory: kotlinAppDirectory,
       ),
       objcHeaderOut: objcHeaderOut,
       objcSourceOut: objcSourceOut,
