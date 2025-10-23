@@ -1049,7 +1049,6 @@ class StatefulShellRoute extends ShellRouteBase {
   ) => StatefulNavigationShell(
     shellRouteContext: shellRouteContext,
     router: GoRouter.of(context),
-    notifyRootObserver: notifyRootObserver,
     containerBuilder: navigatorContainerBuilder,
   );
 
@@ -1239,7 +1238,6 @@ class StatefulNavigationShell extends StatefulWidget {
     required this.shellRouteContext,
     required GoRouter router,
     required this.containerBuilder,
-    this.notifyRootObserver = true,
   }) : assert(shellRouteContext.route is StatefulShellRoute),
        _router = router,
        currentIndex = _indexOfBranchNavigatorKey(
@@ -1263,11 +1261,6 @@ class StatefulNavigationShell extends StatefulWidget {
   ///
   /// Corresponds to the index in the branches field of [StatefulShellRoute].
   final int currentIndex;
-
-  /// Whether navigation changes will notify the GoRouter's observers.
-  ///
-  /// Same as [ShellRoute.notifyRootObserver].
-  final bool notifyRootObserver;
 
   /// The associated [StatefulShellRoute].
   StatefulShellRoute get route => shellRouteContext.route as StatefulShellRoute;
@@ -1462,7 +1455,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
       branchState.navigator = shellRouteContext._buildNavigatorForCurrentRoute(
         context,
         branch.observers,
-        widget.notifyRootObserver,
+        route.notifyRootObserver,
         branch.restorationScopeId,
       );
     }
