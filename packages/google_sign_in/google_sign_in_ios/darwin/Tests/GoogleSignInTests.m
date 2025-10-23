@@ -20,7 +20,7 @@
 @interface TestViewProvider : NSObject <FSIViewProvider>
 #if TARGET_OS_OSX
 /// The view containing the Flutter content.
-@property(nonatomic, nullable) NSView *view
+@property(nonatomic, nullable) NSView *view;
 #else
 /// The view controller containing the Flutter content.
 @property(nonatomic, nullable) UIViewController *viewController;
@@ -227,7 +227,7 @@
     presentingWindow:(NSWindow *)presentingWindow
           completion:(nullable void (^)(NSObject<FSIGIDSignInResult> *_Nullable result,
                                         NSError *_Nullable error))completion {
-  self.scopes = scopes;
+  self.requestedScopes = scopes;
   self.presentingWindow = presentingWindow;
   if (self.exception) {
     @throw self.exception;
