@@ -3,6 +3,10 @@
 - **BREAKING CHANGE**
   - `ShellRoute` will auto merge the `observers` passed into `GoRouter`.
   - Adds `notifyRootObserver` to `ShellRouteBase`, `ShellRoute`, `StatefulShellRoute`, `ShellRouteData.$route`.
+  
+## 16.3.0
+
+- Adds a top-level `onEnter` callback with access to current and next route states.
 
 ## 16.2.5
 
