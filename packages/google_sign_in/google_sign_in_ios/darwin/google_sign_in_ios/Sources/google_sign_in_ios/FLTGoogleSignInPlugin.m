@@ -199,6 +199,14 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
   return self;
 }
 
+- (GIDConfiguration *)configuration {
+  return self.signIn.configuration;
+}
+
+- (void)setConfiguration:(GIDConfiguration *)configuration {
+  self.signIn.configuration = configuration;
+}
+
 - (BOOL)handleURL:(NSURL *)url {
   return [self.signIn handleURL:url];
 }
