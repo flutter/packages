@@ -119,6 +119,11 @@
     - any-glob-to-any-file:
       - packages/multicast_dns/**/*
 
+'p: mustache_template':
+  - changed-files:
+    - any-glob-to-any-file:
+      - third_party/packages/mustache_template/**/*
+
 'p: path_parsing':
   - changed-files:
     - any-glob-to-any-file:
@@ -163,6 +168,11 @@
   - changed-files:
     - any-glob-to-any-file:
       - packages/standard_message_codec/**/*
+
+'p: two_dimensional_scrollables':
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/two_dimensional_scrollables/**/*
 
 'p: url_launcher':
   - changed-files:
