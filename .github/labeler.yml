@@ -67,17 +67,17 @@
 'p: google_adsense':
   - changed-files:
     - any-glob-to-any-file:
-      - packages/google_adsense/**
+      - packages/google_adsense/**/*
 
 'p: google_identity_services':
   - changed-files:
     - any-glob-to-any-file:
-      - packages/google_indentity_services_web/**
+      - packages/google_indentity_services_web/**/*
 
 'p: google_fonts':
   - changed-files:
     - any-glob-to-any-file:
-      - packages/google_fonts/**
+      - packages/google_fonts/**/*
 
 'p: google_maps_flutter':
   - changed-files:
@@ -264,6 +264,6 @@
       - packages/flutter_lints/**/*
       - packages/go_router/**/*
       - packages/go_router_builder/**/*
-      - packages/google_fonts/**
+      - packages/google_fonts/**/*
       - packages/two_dimensional_scrollables/**/*
       - third_party/packages/cupertino_icons/**/*
