@@ -170,4 +170,9 @@ class VideoPlayerPlugin extends VideoPlayerPlatform {
   /// Sets the audio mode to mix with other sources (ignored).
   @override
   Future<void> setMixWithOthers(bool mixWithOthers) => Future<void>.value();
+
+  /// Sets the audio mode to allow background playback (ignored).
+  @override
+  Future<void> setAllowBackgroundPlayback(bool allowBackgroundPlayback) =>
+      Future<void>.value();
 }

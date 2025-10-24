@@ -83,6 +83,7 @@ abstract class AndroidVideoPlayerApi {
   TexturePlayerIds createForTextureView(CreationOptions options);
   void dispose(int playerId);
   void setMixWithOthers(bool mixWithOthers);
+  void setAllowBackgroundPlayback(bool allowBackgroundPlayback);
   String getLookupKeyForAsset(String asset, String? packageName);
 }
 

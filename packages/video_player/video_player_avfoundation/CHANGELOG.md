@@ -1,3 +1,7 @@
+## 2.9.0
+
+* Implements background playback functionality using allowBackgroundPlayback option.
+
 ## 2.8.5
 
 * Updates minimum supported version to iOS 13 and macOS 10.15.
