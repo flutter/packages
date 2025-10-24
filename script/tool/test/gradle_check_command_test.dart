@@ -710,16 +710,19 @@ dependencies {
         pluginName: pluginName, includeNameSpaceAsDeclaration: false);
     writeFakeManifest(example, isApp: true);
 
+    Error? commandError;
     final List<String> output = await runCapturingPrint(
         runner, <String>['gradle-check'], errorHandler: (Error e) {
-      print((e as ToolExit).stackTrace);
+      commandError = e;
     });
 
+    expect(commandError, isA<ToolExit>());
     expect(
         output,
         containsAllInOrder(
           <Matcher>[
-            contains('Validating android/app/build.gradle'),
+            contains('build.gradle must set a "namespace"'),
+            contains('The following packages had errors:'),
           ],
         ));
   });
