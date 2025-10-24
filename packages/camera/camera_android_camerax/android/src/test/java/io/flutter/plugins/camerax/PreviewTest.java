@@ -36,8 +36,9 @@ public class PreviewTest {
 
     final ResolutionSelector mockResolutionSelector = new ResolutionSelector.Builder().build();
     final long targetResolution = Surface.ROTATION_0;
+    final long targetFps = 30;
     final Preview instance =
-        api.pigeon_defaultConstructor(mockResolutionSelector, targetResolution);
+        api.pigeon_defaultConstructor(mockResolutionSelector, targetResolution, targetFps);
 
     assertEquals(instance.getResolutionSelector(), mockResolutionSelector);
     assertEquals(instance.getTargetRotation(), Surface.ROTATION_0);

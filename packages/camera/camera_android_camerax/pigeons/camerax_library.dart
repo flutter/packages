@@ -18,6 +18,7 @@ import 'package:pigeon/pigeon.dart';
     ),
   ),
 )
+
 /// Immutable class for describing width and height dimensions in pixels.
 ///
 /// See https://developer.android.com/reference/android/util/Size.html.
@@ -416,7 +417,7 @@ abstract class DeviceOrientationManager {
   ),
 )
 abstract class Preview extends UseCase {
-  Preview(int? targetRotation);
+  Preview(int? targetRotation, int? targetFps);
 
   late final ResolutionSelector? resolutionSelector;
 
@@ -455,7 +456,7 @@ abstract class Preview extends UseCase {
 )
 abstract class VideoCapture extends UseCase {
   /// Create a `VideoCapture` associated with the given `VideoOutput`.
-  VideoCapture.withOutput(VideoOutput videoOutput);
+  VideoCapture.withOutput(VideoOutput videoOutput, int? targetFps);
 
   /// Gets the VideoOutput associated with this VideoCapture.
   VideoOutput getOutput();
@@ -803,7 +804,7 @@ abstract class ZoomState {
   ),
 )
 abstract class ImageAnalysis extends UseCase {
-  ImageAnalysis(int? targetRotation, int? outputImageFormat);
+  ImageAnalysis(int? targetRotation, int? targetFps, int? outputImageFormat);
 
   late final ResolutionSelector? resolutionSelector;
 
