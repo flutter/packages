@@ -8,30 +8,32 @@
 
 #import <GoogleSignIn/GoogleSignIn.h>
 
-NS_ASSUME_NONNULL_BEGIN
+#import "FSIGoogleSignInProtocols.h"
+#import "FSIViewProvider.h"
 
-@class GIDSignIn;
+NS_ASSUME_NONNULL_BEGIN
 
 /// Methods exposed for unit testing.
 @interface FLTGoogleSignInPlugin ()
 
 // Instance used to manage Google Sign In authentication including
 // sign in, sign out, and requesting additional scopes.
-@property(strong, readonly) GIDSignIn *signIn;
+@property(strong, readonly) NSObject<FSIGIDSignIn> *signIn;
 
 // A mapping of user IDs to GIDGoogleUser instances to use for follow-up calls.
-@property(nonatomic) NSMutableDictionary<NSString *, GIDGoogleUser *> *usersByIdentifier;
+@property(nonatomic)
+    NSMutableDictionary<NSString *, NSObject<FSIGIDGoogleUser> *> *usersByIdentifier;
 
-/// Inject @c FlutterPluginRegistrar for testing.
-- (instancetype)initWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar;
+/// Inject view provider for testing.
+- (instancetype)initWithViewProvider:(NSObject<FSIViewProvider> *)viewProvider;
 
-/// Inject @c GIDSignIn for testing.
-- (instancetype)initWithSignIn:(GIDSignIn *)signIn
-                     registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
+/// Inject @c NSObject<FSIGIDSignIn> for testing.
+- (instancetype)initWithSignIn:(NSObject<FSIGIDSignIn> *)signIn
+                  viewProvider:(NSObject<FSIViewProvider> *)viewProvider;
 
-/// Inject @c GIDSignIn and @c googleServiceProperties for testing.
-- (instancetype)initWithSignIn:(GIDSignIn *)signIn
-                     registrar:(NSObject<FlutterPluginRegistrar> *)registrar
+/// Inject @c NSObject<FSIGIDSignIn> and @c googleServiceProperties for testing.
+- (instancetype)initWithSignIn:(NSObject<FSIGIDSignIn> *)signIn
+                  viewProvider:(NSObject<FSIViewProvider> *)viewProvider
        googleServiceProperties:(nullable NSDictionary<NSString *, id> *)googleServiceProperties
     NS_DESIGNATED_INITIALIZER;
 
