@@ -138,7 +138,7 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
     // All packages should have an auto-applied label. For plugins, only the
     // group needs a rule, so check the app-facing package.
     if (!(package.isFederated && !package.isAppFacing) &&
-        !(_autoLabeledPackages.contains(packageName))) {
+        !_autoLabeledPackages.contains(packageName)) {
       printError('${indentation}Missing a rule in .github/labeler.yml.');
       errors.add('Missing auto-labeler entry');
     }
