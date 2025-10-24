@@ -122,7 +122,8 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
 /// implementation in unit tests.
 @interface FSIGIDSignInResultWrapper : NSObject <FSIGIDSignInResult>
 
-- (instancetype)initWithResult:(nullable GIDSignInResult *)result;
+- (instancetype)initWithResult:(nullable GIDSignInResult *)result NS_DESIGNATED_INITIALIZER;
+- (instancetype)init NS_UNAVAILABLE;
 
 /// The underlying GIDSignInResult instance.
 @property(nonatomic, nullable) GIDSignInResult *result;
@@ -133,7 +134,8 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
 /// implementation in unit tests.
 @interface FSIGIDGoogleUserWrapper : NSObject <FSIGIDGoogleUser>
 
-- (instancetype)initWithUser:(nullable GIDGoogleUser *)user;
+- (instancetype)initWithUser:(nullable GIDGoogleUser *)user NS_DESIGNATED_INITIALIZER;
+- (instancetype)init NS_UNAVAILABLE;
 
 /// The underlying GIDGoogleUser instance.
 @property(nonatomic, nullable) GIDGoogleUser *user;
@@ -144,7 +146,9 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
 /// implementation in unit tests.
 @interface FSIGIDProfileDataWrapper : NSObject <FSIGIDProfileData>
 
-- (instancetype)initWithProfileData:(nullable GIDProfileData *)profileData;
+- (instancetype)initWithProfileData:(nullable GIDProfileData *)profileData
+    NS_DESIGNATED_INITIALIZER;
+- (instancetype)init NS_UNAVAILABLE;
 
 /// The underlying GIDProfileData instance.
 @property(nonatomic, nullable) GIDProfileData *profileData;
@@ -155,7 +159,8 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
 /// implementation in unit tests.
 @interface FSIGIDTokenWrapper : NSObject <FSIGIDToken>
 
-- (instancetype)initWithToken:(nullable GIDToken *)token;
+- (instancetype)initWithToken:(nullable GIDToken *)token NS_DESIGNATED_INITIALIZER;
+- (instancetype)init NS_UNAVAILABLE;
 
 /// The underlying GIDToken instance.
 @property(nonatomic, nullable) GIDToken *token;
