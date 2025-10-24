@@ -60,7 +60,22 @@ ${subpaths.map((String subpath) => 'packages/$subpath/** @someone').join('\n')}
         '[![GitHub pull requests by-label](https://img.shields.io/github/issues-pr/flutter/packages/$encodedTag?label=)](https://github.com/flutter/packages/labels/$encodedTag) |';
   }
 
-  test('passes for correct README coverage', () async {
+  void writeAutoLabelerYaml(List<RepositoryPackage> packages) {
+    final File labelerYaml =
+        root.childDirectory('.github').childFile('labeler.yml');
+    labelerYaml.createSync(recursive: true);
+    labelerYaml.writeAsStringSync(packages.map((RepositoryPackage p) {
+      final bool isThirdParty = p.path.contains('third_party/');
+      return '''
+-p: ${p.directory.basename}
+  - changed-files:
+    - any-glob-to-any-file:
+      - ${isThirdParty ? 'third_party/' : ''}packages/${p.directory.basename}/**/*
+''';
+    }).join('\n\n'));
+  }
+
+  test('passes for correct coverage', () async {
     final List<RepositoryPackage> packages = <RepositoryPackage>[
       createFakePackage('a_package', packagesDir),
     ];
@@ -69,6 +84,7 @@ ${subpaths.map((String subpath) => 'packages/$subpath/** @someone').join('\n')}
 ${readmeTableHeader()}
 ${readmeTableEntry('a_package')}
 ''');
+    writeAutoLabelerYaml(packages);
     writeCodeOwners(packages);
 
     final List<String> output =
@@ -93,6 +109,7 @@ ${readmeTableEntry('a_package')}
 ${readmeTableHeader()}
 ${readmeTableEntry(pluginName)}
 ''');
+    writeAutoLabelerYaml(<RepositoryPackage>[packages.first]);
     writeCodeOwners(packages);
 
     final List<String> output =
@@ -111,6 +128,7 @@ ${readmeTableEntry(pluginName)}
 ${readmeTableHeader()}
 ${readmeTableEntry('another_package')}
 ''');
+    writeAutoLabelerYaml(packages);
     writeCodeOwners(packages);
 
     Error? commandError;
@@ -137,6 +155,7 @@ ${readmeTableEntry('another_package')}
 ${readmeTableHeader()}
 ${readmeTableEntry('another_package')}
 ''');
+    writeAutoLabelerYaml(packages);
     writeCodeOwners(packages);
 
     Error? commandError;
@@ -173,6 +192,7 @@ ${readmeTableEntry('another_package')}
 ${readmeTableHeader()}
 $entry
 ''');
+    writeAutoLabelerYaml(packages);
     writeCodeOwners(packages);
 
     Error? commandError;
@@ -212,6 +232,7 @@ $entry
 ${readmeTableHeader()}
 $entry
 ''');
+    writeAutoLabelerYaml(packages);
     writeCodeOwners(packages);
 
     Error? commandError;
@@ -250,6 +271,7 @@ $entry
 ${readmeTableHeader()}
 $entry
 ''');
+    writeAutoLabelerYaml(packages);
     writeCodeOwners(packages);
 
     Error? commandError;
@@ -288,6 +310,7 @@ $entry
 ${readmeTableHeader()}
 $entry
 ''');
+    writeAutoLabelerYaml(packages);
     writeCodeOwners(packages);
 
     Error? commandError;
@@ -326,6 +349,7 @@ $entry
 ${readmeTableHeader()}
 $entry
 ''');
+    writeAutoLabelerYaml(packages);
     writeCodeOwners(packages);
 
     Error? commandError;
@@ -364,6 +388,7 @@ $entry
 ${readmeTableHeader()}
 $entry
 ''');
+    writeAutoLabelerYaml(packages);
     writeCodeOwners(packages);
 
     Error? commandError;
@@ -385,12 +410,15 @@ $entry
 
   test('fails for missing CODEOWNER', () async {
     const String packageName = 'a_package';
-    createFakePackage(packageName, packagesDir);
+    final List<RepositoryPackage> packages = <RepositoryPackage>[
+      createFakePackage('a_package', packagesDir),
+    ];
 
     root.childFile('README.md').writeAsStringSync('''
 ${readmeTableHeader()}
 ${readmeTableEntry(packageName)}
 ''');
+    writeAutoLabelerYaml(packages);
     writeCodeOwners(<RepositoryPackage>[]);
 
     Error? commandError;
@@ -409,6 +437,35 @@ ${readmeTableEntry(packageName)}
         ]));
   });
 
+  test('fails for missing auto-labeler entry', () async {
+    const String packageName = 'a_package';
+    final List<RepositoryPackage> packages = <RepositoryPackage>[
+      createFakePackage('a_package', packagesDir),
+    ];
+
+    root.childFile('README.md').writeAsStringSync('''
+${readmeTableHeader()}
+${readmeTableEntry(packageName)}
+''');
+    writeAutoLabelerYaml(<RepositoryPackage>[]);
+    writeCodeOwners(packages);
+
+    Error? commandError;
+    final List<String> output = await runCapturingPrint(
+        runner, <String>['repo-package-info-check'], errorHandler: (Error e) {
+      commandError = e;
+    });
+
+    expect(commandError, isA<ToolExit>());
+    expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Missing a rule in .github/labeler.yml.'),
+          contains('a_package:\n'
+              '    Missing auto-labeler entry')
+        ]));
+  });
+
   group('ci_config check', () {
     test('control test', () async {
       final RepositoryPackage package =
@@ -418,6 +475,7 @@ ${readmeTableEntry(packageName)}
 ${readmeTableHeader()}
 ${readmeTableEntry('a_package')}
 ''');
+      writeAutoLabelerYaml(<RepositoryPackage>[package]);
       writeCodeOwners(<RepositoryPackage>[package]);
 
       package.ciConfigFile.writeAsStringSync('''
@@ -445,6 +503,7 @@ release:
 ${readmeTableHeader()}
 ${readmeTableEntry('a_package')}
 ''');
+      writeAutoLabelerYaml(<RepositoryPackage>[package]);
       writeCodeOwners(<RepositoryPackage>[package]);
 
       final List<String> output =
@@ -466,6 +525,7 @@ ${readmeTableEntry('a_package')}
 ${readmeTableHeader()}
 ${readmeTableEntry('a_package')}
 ''');
+      writeAutoLabelerYaml(<RepositoryPackage>[package]);
       writeCodeOwners(<RepositoryPackage>[package]);
       package.ciConfigFile.writeAsStringSync('''
 something: true
@@ -495,6 +555,7 @@ something: true
 ${readmeTableHeader()}
 ${readmeTableEntry('a_package')}
 ''');
+      writeAutoLabelerYaml(<RepositoryPackage>[package]);
       writeCodeOwners(<RepositoryPackage>[package]);
       package.ciConfigFile.writeAsStringSync('''
 release:
