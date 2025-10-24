@@ -107,14 +107,14 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
 - (instancetype)init NS_UNAVAILABLE;
 
 /// The registrar backing the provider.
-@property(strong, readonly) NSObject<FlutterPluginRegistrar> *registrar;
+@property(readonly) NSObject<FlutterPluginRegistrar> *registrar;
 @end
 
 /// Implementation of @c FSIGIDSignIn that passes through to GIDSignIn.
 @interface FSIGIDSignInWrapper : NSObject <FSIGIDSignIn>
 
 /// The underlying GIDSignIn instance.
-@property(strong, readonly) GIDSignIn *signIn;
+@property(readonly) GIDSignIn *signIn;
 
 @end
 

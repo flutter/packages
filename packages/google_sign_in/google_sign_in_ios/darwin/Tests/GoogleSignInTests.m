@@ -25,7 +25,7 @@
 /// The view controller containing the Flutter content.
 @property(nonatomic, nullable) UIViewController *viewController;
 #endif
-    @end
+@end
 
 @implementation TestViewProvider
 @end
@@ -131,13 +131,14 @@
 
 /// Test implementation of @c FSIGIDProfileData.
 @interface TestProfileData : NSObject <FSIGIDProfileData>
-@property(strong, nonatomic) NSString *email;
-@property(strong, nonatomic) NSString *name;
+@property(nonatomic, readwrite) NSString *email;
+@property(nonatomic, readwrite) NSString *name;
 /// A URL to return from imageURLWithDimension:.
-@property(strong, nonatomic) NSURL *imageURL;
+@property(nonatomic) NSURL *imageURL;
 @end
 
-@implementation TestProfileData
+@implementation TestProfileData {
+}
 
 - (BOOL)hasImage {
   return self.imageURL != nil;
@@ -150,8 +151,8 @@
 
 /// Test implementation of @c FSIGIDToken.
 @interface TestToken : NSObject <FSIGIDToken>
-@property(strong, nonatomic) NSString *tokenString;
-@property(strong, nonatomic) NSDate *expirationDate;
+@property(nonatomic, readwrite) NSString *tokenString;
+@property(nonatomic, readwrite) NSDate *expirationDate;
 @end
 
 @implementation TestToken
@@ -159,8 +160,8 @@
 
 /// Test implementation of @c FSIGIDSignInResult.
 @interface TestSignInResult : NSObject <FSIGIDSignInResult>
-@property(strong, nonatomic) NSObject<FSIGIDGoogleUser> *user;
-@property(strong, nonatomic, nullable) NSString *serverAuthCode;
+@property(nonatomic, readwrite) NSObject<FSIGIDGoogleUser> *user;
+@property(nonatomic, readwrite, nullable) NSString *serverAuthCode;
 @end
 
 @implementation TestSignInResult
@@ -168,28 +169,28 @@
 
 /// Test implementation of @c FSIGIDGoogleUser.
 @interface TestGoogleUser : NSObject <FSIGIDGoogleUser>
-@property(strong, nonatomic, nullable) NSString *userID;
-@property(strong, nonatomic, nullable) NSObject<FSIGIDProfileData> *profile;
-@property(strong, nonatomic, nullable) NSArray<NSString *> *grantedScopes;
-@property(strong, nonatomic) NSObject<FSIGIDToken> *accessToken;
-@property(strong, nonatomic) NSObject<FSIGIDToken> *refreshToken;
-@property(strong, nonatomic, nullable) NSObject<FSIGIDToken> *idToken;
+@property(nonatomic, readwrite, nullable) NSString *userID;
+@property(nonatomic, readwrite, nullable) NSObject<FSIGIDProfileData> *profile;
+@property(nonatomic, readwrite, nullable) NSArray<NSString *> *grantedScopes;
+@property(nonatomic, readwrite) NSObject<FSIGIDToken> *accessToken;
+@property(nonatomic, readwrite) NSObject<FSIGIDToken> *refreshToken;
+@property(nonatomic, readwrite, nullable) NSObject<FSIGIDToken> *idToken;
 
 /// An exception to throw from methods.
 @property(nonatomic, nullable) NSException *exception;
 
 /// The result to return from addScopes:presentingViewController:completion:.
-@property(strong, nonatomic, nullable) NSObject<FSIGIDSignInResult> *result;
+@property(nonatomic, nullable) NSObject<FSIGIDSignInResult> *result;
 
 /// The error to return from methods.
-@property(strong, nonatomic, nullable) NSError *error;
+@property(nonatomic, nullable) NSError *error;
 
 // Values passed as parameters.
-@property(strong, nonatomic, nullable) NSArray<NSString *> *requestedScopes;
+@property(nonatomic, copy, nullable) NSArray<NSString *> *requestedScopes;
 #if TARGET_OS_IOS || TARGET_OS_MACCATALYST
-@property(strong, nonatomic, nullable) UIViewController *presentingViewController;
+@property(nonatomic, nullable) UIViewController *presentingViewController;
 #else
-@property(strong, nonatomic, nullable) NSWindow *presentingWindow;
+@property(nonatomic, nullable) NSWindow *presentingWindow;
 #endif
 @end
 
@@ -245,10 +246,10 @@
 
 @interface FLTGoogleSignInPluginTest : XCTestCase
 
-@property(strong, nonatomic) TestViewProvider *viewProvider;
-@property(strong, nonatomic) FLTGoogleSignInPlugin *plugin;
-@property(strong, nonatomic) TestSignIn *fakeSignIn;
-@property(strong, nonatomic) NSDictionary<NSString *, id> *googleServiceInfo;
+@property(nonatomic) TestViewProvider *viewProvider;
+@property(nonatomic) FLTGoogleSignInPlugin *plugin;
+@property(nonatomic) TestSignIn *fakeSignIn;
+@property(nonatomic, copy) NSDictionary<NSString *, id> *googleServiceInfo;
 
 @end
 
