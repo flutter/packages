@@ -337,7 +337,8 @@ class CameraController extends ValueNotifier<CameraValue> {
           (CameraInitializedEvent event) => event.focusPointSupported,
         ),
       );
-    } on PlatformException catch (e) {
+    } on PlatformException catch (e, stacktrace) {
+      print(stacktrace);
       throw CameraException(e.code, e.message);
     }
 

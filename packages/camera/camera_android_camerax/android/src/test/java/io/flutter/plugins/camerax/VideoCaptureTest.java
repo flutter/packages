@@ -13,9 +13,6 @@ import androidx.camera.video.VideoCapture;
 import androidx.camera.video.VideoOutput;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
-import org.mockito.stubbing.Answer;
 import org.robolectric.RobolectricTestRunner;
 
 @RunWith(RobolectricTestRunner.class)
@@ -25,17 +22,11 @@ public class VideoCaptureTest {
   public void withOutput_createsVideoCaptureWithVideoOutput() {
     final PigeonApiVideoCapture api = new TestProxyApiRegistrar().getPigeonApiVideoCapture();
 
-    final VideoCapture<VideoOutput> instance = mock(VideoCapture.class);
     final VideoOutput videoOutput = mock(VideoOutput.class);
+    final long targetFps = 30;
 
-    try (MockedStatic<VideoCapture> mockedCamera2CameraInfo =
-        Mockito.mockStatic(VideoCapture.class)) {
-      mockedCamera2CameraInfo
-          .when(() -> VideoCapture.withOutput(videoOutput))
-          .thenAnswer((Answer<VideoCapture>) invocation -> instance);
-
-      assertEquals(api.withOutput(videoOutput), instance);
-    }
+    final VideoCapture videoCapture = api.withOutput(videoOutput, targetFps);
+    assertEquals(videoCapture.getOutput(), videoOutput);
   }
 
   @SuppressWarnings("unchecked")

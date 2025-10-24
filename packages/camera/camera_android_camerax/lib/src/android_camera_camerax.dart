@@ -288,6 +288,8 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// The preset resolution selector for the camera.
   ResolutionSelector? _presetResolutionSelector;
 
+  int? _targetFps;
+
   /// The ID of the surface texture that the camera preview is drawn to.
   late int _flutterSurfaceTextureId;
 
@@ -408,6 +410,9 @@ class AndroidCameraCameraX extends CameraPlatform {
     _presetResolutionSelector = _getResolutionSelectorFromPreset(
       mediaSettings?.resolutionPreset,
     );
+
+    _targetFps = mediaSettings?.fps;
+
     final QualitySelector? presetQualitySelector =
         _getQualitySelectorFromPreset(mediaSettings?.resolutionPreset);
 
@@ -418,6 +423,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     // Configure Preview instance.
     preview = proxy.newPreview(
       resolutionSelector: _presetResolutionSelector,
+      targetFps: _targetFps,
       /* use CameraX default target rotation */ targetRotation: null,
     );
     _flutterSurfaceTextureId = await preview!.setSurfaceProvider(
@@ -433,7 +439,10 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     // Configure VideoCapture and Recorder instances.
     recorder = proxy.newRecorder(qualitySelector: presetQualitySelector);
-    videoCapture = proxy.withOutputVideoCapture(videoOutput: recorder!);
+    videoCapture = proxy.withOutputVideoCapture(
+      videoOutput: recorder!,
+      targetFps: _targetFps,
+    );
 
     // Retrieve info required for correcting the rotation of the camera preview
     // if necessary.
@@ -480,6 +489,7 @@ class AndroidCameraCameraX extends CameraPlatform {
         _imageAnalysisOutputFormatFromImageFormatGroup(imageFormatGroup);
     imageAnalysis = proxy.newImageAnalysis(
       resolutionSelector: _presetResolutionSelector,
+      targetFps: _targetFps,
       outputImageFormat: _imageAnalysisOutputImageFormat,
       /* use CameraX default target rotation */ targetRotation: null,
     );
