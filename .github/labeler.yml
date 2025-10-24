@@ -67,17 +67,17 @@
 'p: google_adsense':
   - changed-files:
     - any-glob-to-any-file:
-      - packages/google_adsense/**
+      - packages/google_adsense/**/*
 
 'p: google_identity_services':
   - changed-files:
     - any-glob-to-any-file:
-      - packages/google_indentity_services_web/**
+      - packages/google_indentity_services_web/**/*
 
 'p: google_fonts':
   - changed-files:
     - any-glob-to-any-file:
-      - packages/google_fonts/**
+      - packages/google_fonts/**/*
 
 'p: google_maps_flutter':
   - changed-files:
@@ -164,6 +164,11 @@
     - any-glob-to-any-file:
       - packages/standard_message_codec/**/*
 
+'p: two_dimensional_scrollables':
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/two_dimensional_scrollables/**/*
+
 'p: url_launcher':
   - changed-files:
     - any-glob-to-any-file:
@@ -243,3 +248,22 @@
       - packages/*/*_windows/**/*
       - packages/**/windows/**/*
 
+'triage-engine':
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/vector_graphics/**/*
+      - packages/vector_graphics_codec/**/*
+      - packages/vector_graphics_compiler/**/*
+      - third_party/packages/flutter_svg/**/*
+      - third_party/packages/flutter_svg_test/**/*
+
+'triage-framework':
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/animations/**/*
+      - packages/flutter_lints/**/*
+      - packages/go_router/**/*
+      - packages/go_router_builder/**/*
+      - packages/google_fonts/**/*
+      - packages/two_dimensional_scrollables/**/*
+      - third_party/packages/cupertino_icons/**/*
