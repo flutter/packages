@@ -581,10 +581,12 @@ class VideoAudioTrack {
   final String id;
 
   /// Human-readable label for the track.
+  ///
   /// May be null if not available from the platform.
   final String? label;
 
   /// Language code of the audio track (e.g., 'en', 'es', 'und').
+  ///
   /// May be null if not available from the platform.
   final String? language;
 
@@ -592,18 +594,22 @@ class VideoAudioTrack {
   final bool isSelected;
 
   /// Bitrate of the audio track in bits per second.
+  ///
   /// May be null if not available from the platform.
   final int? bitrate;
 
   /// Sample rate of the audio track in Hz.
+  ///
   /// May be null if not available from the platform.
   final int? sampleRate;
 
   /// Number of audio channels.
+  ///
   /// May be null if not available from the platform.
   final int? channelCount;
 
   /// Audio codec used (e.g., 'aac', 'mp3', 'ac3').
+  ///
   /// May be null if not available from the platform.
   final String? codec;
 
