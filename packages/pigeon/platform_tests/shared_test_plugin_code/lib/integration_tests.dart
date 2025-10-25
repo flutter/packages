@@ -12,6 +12,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
 import 'generated.dart';
+import 'ni_integration_tests.dart'
+    as ffi_tests
+    show TargetGenerator, runPigeonIntegrationTests;
 import 'test_types.dart';
 
 /// Possible host languages that test can target.
@@ -44,6 +47,10 @@ const Set<TargetGenerator> proxyApiSupportedLanguages = <TargetGenerator>{
 /// Sets up and runs the integration tests.
 void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+
+  if (targetGenerator == TargetGenerator.kotlin) {
+    ffi_tests.runPigeonIntegrationTests(ffi_tests.TargetGenerator.kotlin);
+  }
 
   group('Host sync API tests', () {
     testWidgets('basic void->void call works', (WidgetTester _) async {
@@ -2983,8 +2990,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
     testWidgets('callFlutterEchoProxyApiMap', (_) async {
       final ProxyApiTestClass api = _createGenericProxyApiTestClass(
-        flutterEchoProxyApiMap:
-            (_, Map<String?, ProxyApiTestClass?> aMap) => aMap,
+        flutterEchoProxyApiMap: (_, Map<String?, ProxyApiTestClass?> aMap) =>
+            aMap,
       );
 
       final Map<String?, ProxyApiTestClass?> value =
@@ -3087,8 +3094,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
     testWidgets('callFlutterEchoNullableProxyApi', (_) async {
       final ProxyApiTestClass api = _createGenericProxyApiTestClass(
-        flutterEchoNullableProxyApi:
-            (_, ProxyApiSuperClass? aProxyApi) => aProxyApi,
+        flutterEchoNullableProxyApi: (_, ProxyApiSuperClass? aProxyApi) =>
+            aProxyApi,
       );
 
       expect(await api.callFlutterEchoNullableProxyApi(null), null);

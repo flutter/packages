@@ -427,7 +427,7 @@ class PigeonOptions {
   /// Overrides any non-null parameters from [options] into this to make a new
   /// [PigeonOptions].
   PigeonOptions merge(PigeonOptions options) {
-    return PigeonOptions.fromMap(mergeMaps(toMap(), options.toMap()));
+    return PigeonOptions.fromMap(mergePigeonMaps(toMap(), options.toMap()));
   }
 
   /// Returns provided or deduced package name, throws `Exception` if none found.
@@ -723,6 +723,7 @@ ${_argParser.usage}''';
           JavaGeneratorAdapter(),
           SwiftGeneratorAdapter(),
           KotlinGeneratorAdapter(),
+          JnigenYamlGeneratorAdapter(),
           CppGeneratorAdapter(),
           GObjectGeneratorAdapter(),
           DartTestGeneratorAdapter(),
@@ -751,7 +752,7 @@ ${_argParser.usage}''';
 
     if (parseResults.pigeonOptions != null && mergeDefinitionFileOptions) {
       options = PigeonOptions.fromMap(
-        mergeMaps(options.toMap(), parseResults.pigeonOptions!),
+        mergePigeonMaps(options.toMap(), parseResults.pigeonOptions!),
       );
     }
 
