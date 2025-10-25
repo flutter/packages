@@ -1,5 +1,6 @@
-## NEXT
+## 0.2.7
 
+* Fixes initializing video preview with latest webcam driver [#140014](https://github.com/flutter/flutter/issues/140014)
 * Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
 
 ## 0.2.6+2
