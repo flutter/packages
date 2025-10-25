@@ -138,4 +138,18 @@ class XFile extends XFileBase {
           .map((List<int> chunk) => Uint8List.fromList(chunk));
     }
   }
+
+  @override
+  // ignore: avoid_slow_async_io
+  Future<bool> exists() => _file.exists();
+
+  @override
+  Future<bool> delete() async {
+    try {
+      await _file.delete();
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
 }

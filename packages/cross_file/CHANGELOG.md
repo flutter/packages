@@ -2,6 +2,11 @@
 
 * Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
 
+## 0.3.5+3
+
+* Adds `exists()` implementation.
+* Adds `delete()` implementation.
+
 ## 0.3.4+2
 
 * Adds support for `web: ^1.0.0`.

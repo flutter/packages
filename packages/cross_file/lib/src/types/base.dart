@@ -86,4 +86,14 @@ abstract class XFileBase {
   Future<DateTime> lastModified() {
     throw UnimplementedError('lastModified() has not been implemented.');
   }
+
+  /// Check whether the CrossFile exists
+  Future<bool> exists() {
+    throw UnimplementedError('exists() has not been implemented.');
+  }
+
+  /// Delete the CrossFile
+  Future<bool> delete() {
+    throw UnimplementedError('delete() has not been implemented.');
+  }
 }

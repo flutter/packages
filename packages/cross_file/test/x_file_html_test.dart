@@ -63,6 +63,23 @@ void main() {
     test('Stream can be sliced', () async {
       expect(await file.openRead(2, 5).first, equals(bytes.sublist(2, 5)));
     });
+
+    test('exists() returns true when blob exists', () async {
+      expect(await file.exists(), isTrue);
+    });
+
+    test('delete() revokes ObjectURL and returns true', () async {
+      final XFile fileToDelete = XFile.fromData(bytes);
+      expect(await fileToDelete.exists(), isTrue);
+
+      final bool deleted = await fileToDelete.delete();
+      expect(deleted, isTrue);
+
+      // After delete, the blob should not be accessible
+      expect(() async {
+        await fileToDelete.readAsBytes();
+      }, throwsException);
+    });
   });
 
   group('Blob backend', () {
@@ -84,6 +101,23 @@ void main() {
       expect(() async {
         await file.readAsBytes();
       }, throwsException);
+    });
+
+    test('exists() returns false after ObjectURL is revoked', () async {
+      final XFile fileToRevoke = XFile(textFileUrl);
+      expect(await fileToRevoke.exists(), isTrue);
+
+      html.URL.revokeObjectURL(fileToRevoke.path);
+      expect(await fileToRevoke.exists(), isFalse);
+    });
+
+    test('delete() returns false when blob is not cached', () async {
+      final XFile fileWithoutBlob = XFile(textFileUrl);
+      // Read to ensure we're testing the uncached path
+      await fileWithoutBlob.readAsBytes();
+
+      final bool deleted = await fileWithoutBlob.delete();
+      expect(deleted, isFalse);
     });
   });
 

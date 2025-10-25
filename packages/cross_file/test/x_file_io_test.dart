@@ -75,6 +75,37 @@ void main() {
     test('nullability is correct', () async {
       expect(_ensureNonnullPathArgument('a/path'), isNotNull);
     });
+
+    test('exists() returns true for existing file', () async {
+      final XFile file = XFile(textFilePath);
+      expect(await file.exists(), isTrue);
+    });
+
+    test('exists() returns false for non-existing file', () async {
+      final XFile file = XFile('/non/existent/path.txt');
+      expect(await file.exists(), isFalse);
+    });
+
+    test('delete() removes file and returns true', () async {
+      final Directory tempDir = Directory.systemTemp.createTempSync();
+      final File targetFile = File('${tempDir.path}/deleteMe.txt');
+      targetFile.writeAsStringSync('Delete this');
+
+      final XFile file = XFile(targetFile.path);
+      expect(await file.exists(), isTrue);
+
+      final bool deleted = await file.delete();
+      expect(deleted, isTrue);
+      expect(targetFile.existsSync(), isFalse);
+
+      await tempDir.delete(recursive: true);
+    });
+
+    test('delete() returns false for non-existing file', () async {
+      final XFile file = XFile('/non/existent/path.txt');
+      final bool deleted = await file.delete();
+      expect(deleted, isFalse);
+    });
   });
 
   group('Create with data', () {
