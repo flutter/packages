@@ -238,9 +238,8 @@ class CameraXLibraryPigeonInstanceManager(
       return
     }
     var reference: java.lang.ref.WeakReference<Any>?
-    while (
-        (referenceQueue.poll() as java.lang.ref.WeakReference<Any>?).also { reference = it } != null
-    ) {
+    while ((referenceQueue.poll() as java.lang.ref.WeakReference<Any>?).also { reference = it } !=
+        null) {
       val identifier = weakReferencesToIdentifiers.remove(reference)
       if (identifier != null) {
         weakInstances.remove(identifier)
@@ -386,8 +385,7 @@ abstract class CameraXLibraryPigeonProxyApiRegistrar(val binaryMessenger: Binary
                   }
                 }
               }
-            }
-        )
+            })
   }
 
   /**
@@ -864,38 +862,35 @@ private class CameraXLibraryPigeonProxyApiBaseCodec(
         }
         return instance
       }
-
       else -> super.readValueOfType(type, buffer)
     }
   }
 
   override fun writeValue(stream: ByteArrayOutputStream, value: Any?) {
-    if (
-        value is Boolean ||
-            value is ByteArray ||
-            value is Double ||
-            value is DoubleArray ||
-            value is FloatArray ||
-            value is Int ||
-            value is IntArray ||
-            value is List<*> ||
-            value is Long ||
-            value is LongArray ||
-            value is Map<*, *> ||
-            value is String ||
-            value is InfoSupportedHardwareLevel ||
-            value is AspectRatio ||
-            value is CameraStateType ||
-            value is LiveDataSupportedType ||
-            value is VideoQuality ||
-            value is MeteringMode ||
-            value is LensFacing ||
-            value is CameraXFlashMode ||
-            value is ResolutionStrategyFallbackRule ||
-            value is AspectRatioStrategyFallbackRule ||
-            value is CameraStateErrorCode ||
-            value == null
-    ) {
+    if (value is Boolean ||
+        value is ByteArray ||
+        value is Double ||
+        value is DoubleArray ||
+        value is FloatArray ||
+        value is Int ||
+        value is IntArray ||
+        value is List<*> ||
+        value is Long ||
+        value is LongArray ||
+        value is Map<*, *> ||
+        value is String ||
+        value is InfoSupportedHardwareLevel ||
+        value is AspectRatio ||
+        value is CameraStateType ||
+        value is LiveDataSupportedType ||
+        value is VideoQuality ||
+        value is MeteringMode ||
+        value is LensFacing ||
+        value is CameraXFlashMode ||
+        value is ResolutionStrategyFallbackRule ||
+        value is AspectRatioStrategyFallbackRule ||
+        value is CameraStateErrorCode ||
+        value == null) {
       super.writeValue(stream, value)
       return
     }
@@ -1013,11 +1008,9 @@ private class CameraXLibraryPigeonProxyApiBaseCodec(
         stream.write(128)
         writeValue(stream, registrar.instanceManager.getIdentifierForStrongReference(value))
       }
-
       else ->
           throw IllegalArgumentException(
-              "Unsupported value: '$value' of type '${value.javaClass.name}'"
-          )
+              "Unsupported value: '$value' of type '${value.javaClass.name}'")
     }
   }
 }
@@ -1368,51 +1361,40 @@ private open class CameraXLibraryPigeonCodec : StandardMessageCodec() {
       129.toByte() -> {
         return (readValue(buffer) as Long?)?.let { InfoSupportedHardwareLevel.ofRaw(it.toInt()) }
       }
-
       130.toByte() -> {
         return (readValue(buffer) as Long?)?.let { AspectRatio.ofRaw(it.toInt()) }
       }
-
       131.toByte() -> {
         return (readValue(buffer) as Long?)?.let { CameraStateType.ofRaw(it.toInt()) }
       }
-
       132.toByte() -> {
         return (readValue(buffer) as Long?)?.let { LiveDataSupportedType.ofRaw(it.toInt()) }
       }
-
       133.toByte() -> {
         return (readValue(buffer) as Long?)?.let { VideoQuality.ofRaw(it.toInt()) }
       }
-
       134.toByte() -> {
         return (readValue(buffer) as Long?)?.let { MeteringMode.ofRaw(it.toInt()) }
       }
-
       135.toByte() -> {
         return (readValue(buffer) as Long?)?.let { LensFacing.ofRaw(it.toInt()) }
       }
-
       136.toByte() -> {
         return (readValue(buffer) as Long?)?.let { CameraXFlashMode.ofRaw(it.toInt()) }
       }
-
       137.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
           ResolutionStrategyFallbackRule.ofRaw(it.toInt())
         }
       }
-
       138.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
           AspectRatioStrategyFallbackRule.ofRaw(it.toInt())
         }
       }
-
       139.toByte() -> {
         return (readValue(buffer) as Long?)?.let { CameraStateErrorCode.ofRaw(it.toInt()) }
       }
-
       else -> super.readValueOfType(type, buffer)
     }
   }
@@ -1423,57 +1405,46 @@ private open class CameraXLibraryPigeonCodec : StandardMessageCodec() {
         stream.write(129)
         writeValue(stream, value.raw)
       }
-
       is AspectRatio -> {
         stream.write(130)
         writeValue(stream, value.raw)
       }
-
       is CameraStateType -> {
         stream.write(131)
         writeValue(stream, value.raw)
       }
-
       is LiveDataSupportedType -> {
         stream.write(132)
         writeValue(stream, value.raw)
       }
-
       is VideoQuality -> {
         stream.write(133)
         writeValue(stream, value.raw)
       }
-
       is MeteringMode -> {
         stream.write(134)
         writeValue(stream, value.raw)
       }
-
       is LensFacing -> {
         stream.write(135)
         writeValue(stream, value.raw)
       }
-
       is CameraXFlashMode -> {
         stream.write(136)
         writeValue(stream, value.raw)
       }
-
       is ResolutionStrategyFallbackRule -> {
         stream.write(137)
         writeValue(stream, value.raw)
       }
-
       is AspectRatioStrategyFallbackRule -> {
         stream.write(138)
         writeValue(stream, value.raw)
       }
-
       is CameraStateErrorCode -> {
         stream.write(139)
         writeValue(stream, value.raw)
       }
-
       else -> super.writeValue(stream, value)
     }
   }
@@ -1537,8 +1508,8 @@ abstract class PigeonApiCameraSize(
   fun pigeon_newInstance(pigeon_instanceArg: android.util.Size, callback: (Result<Unit>) -> Unit) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", ""))
-      )
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
     } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       callback(Result.success(Unit))
     } else {
@@ -1554,8 +1525,7 @@ abstract class PigeonApiCameraSize(
         if (it is List<*>) {
           if (it.size > 1) {
             callback(
-                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?))
-            )
+                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
           } else {
             callback(Result.success(Unit))
           }
@@ -1588,8 +1558,8 @@ abstract class PigeonApiResolutionInfo(
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", ""))
-      )
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
     } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       callback(Result.success(Unit))
     } else {
@@ -1605,8 +1575,7 @@ abstract class PigeonApiResolutionInfo(
         if (it is List<*>) {
           if (it.size > 1) {
             callback(
-                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?))
-            )
+                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
           } else {
             callback(Result.success(Unit))
           }
@@ -1681,8 +1650,8 @@ abstract class PigeonApiCameraIntegerRange(
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", ""))
-      )
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
     } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       callback(Result.success(Unit))
     } else {
@@ -1699,8 +1668,7 @@ abstract class PigeonApiCameraIntegerRange(
         if (it is List<*>) {
           if (it.size > 1) {
             callback(
-                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?))
-            )
+                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
           } else {
             callback(Result.success(Unit))
           }
@@ -1729,8 +1697,8 @@ open class PigeonApiVideoRecordEvent(
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", ""))
-      )
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
     } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       callback(Result.success(Unit))
     } else {
@@ -1745,8 +1713,7 @@ open class PigeonApiVideoRecordEvent(
         if (it is List<*>) {
           if (it.size > 1) {
             callback(
-                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?))
-            )
+                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
           } else {
             callback(Result.success(Unit))
           }
@@ -1775,8 +1742,8 @@ open class PigeonApiVideoRecordEventStart(
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", ""))
-      )
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
     } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       callback(Result.success(Unit))
     } else {
@@ -1791,8 +1758,7 @@ open class PigeonApiVideoRecordEventStart(
         if (it is List<*>) {
           if (it.size > 1) {
             callback(
-                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?))
-            )
+                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
           } else {
             callback(Result.success(Unit))
           }
@@ -1829,8 +1795,8 @@ open class PigeonApiVideoRecordEventFinalize(
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", ""))
-      )
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
     } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       callback(Result.success(Unit))
     } else {
@@ -1845,8 +1811,7 @@ open class PigeonApiVideoRecordEventFinalize(
         if (it is List<*>) {
           if (it.size > 1) {
             callback(
-                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?))
-            )
+                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
           } else {
             callback(Result.success(Unit))
           }
@@ -1920,8 +1885,8 @@ abstract class PigeonApiMeteringPoint(
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", ""))
-      )
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
     } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       callback(Result.success(Unit))
     } else {
@@ -1935,8 +1900,7 @@ abstract class PigeonApiMeteringPoint(
         if (it is List<*>) {
           if (it.size > 1) {
             callback(
-                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?))
-            )
+                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
           } else {
             callback(Result.success(Unit))
           }
@@ -1999,8 +1963,8 @@ abstract class PigeonApiObserver(open val pigeonRegistrar: CameraXLibraryPigeonP
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", ""))
-      )
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
     } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       callback(Result.success(Unit))
     } else {
@@ -2010,9 +1974,7 @@ abstract class PigeonApiObserver(open val pigeonRegistrar: CameraXLibraryPigeonP
                   "new-instance-error",
                   "Attempting to create a new Dart instance of Observer, but the class has a nonnull callback method.",
                   "",
-              )
-          )
-      )
+              )))
     }
   }
 
@@ -2024,8 +1986,8 @@ abstract class PigeonApiObserver(open val pigeonRegistrar: CameraXLibraryPigeonP
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", ""))
-      )
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
       return
     }
     val binaryMessenger = pigeonRegistrar.binaryMessenger
@@ -2137,8 +2099,8 @@ abstract class PigeonApiCameraInfo(
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", ""))
-      )
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
     } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       callback(Result.success(Unit))
     } else {
@@ -2154,8 +2116,7 @@ abstract class PigeonApiCameraInfo(
         if (it is List<*>) {
           if (it.size > 1) {
             callback(
-                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?))
-            )
+                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
           } else {
             callback(Result.success(Unit))
           }
@@ -2315,8 +2276,8 @@ abstract class PigeonApiCameraSelector(
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", ""))
-      )
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
     } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       callback(Result.success(Unit))
     } else {
@@ -2331,8 +2292,7 @@ abstract class PigeonApiCameraSelector(
         if (it is List<*>) {
           if (it.size > 1) {
             callback(
-                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?))
-            )
+                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
           } else {
             callback(Result.success(Unit))
           }
@@ -2548,8 +2508,8 @@ abstract class PigeonApiProcessCameraProvider(
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", ""))
-      )
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
     } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       callback(Result.success(Unit))
     } else {
@@ -2564,8 +2524,7 @@ abstract class PigeonApiProcessCameraProvider(
         if (it is List<*>) {
           if (it.size > 1) {
             callback(
-                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?))
-            )
+                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
           } else {
             callback(Result.success(Unit))
           }
@@ -2592,8 +2551,8 @@ open class PigeonApiUseCase(open val pigeonRegistrar: CameraXLibraryPigeonProxyA
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", ""))
-      )
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
     } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       callback(Result.success(Unit))
     } else {
@@ -2607,8 +2566,7 @@ open class PigeonApiUseCase(open val pigeonRegistrar: CameraXLibraryPigeonProxyA
         if (it is List<*>) {
           if (it.size > 1) {
             callback(
-                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?))
-            )
+                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
           } else {
             callback(Result.success(Unit))
           }
@@ -2676,8 +2634,8 @@ abstract class PigeonApiCamera(open val pigeonRegistrar: CameraXLibraryPigeonPro
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", ""))
-      )
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
     } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       callback(Result.success(Unit))
     } else {
@@ -2692,8 +2650,7 @@ abstract class PigeonApiCamera(open val pigeonRegistrar: CameraXLibraryPigeonPro
         if (it is List<*>) {
           if (it.size > 1) {
             callback(
-                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?))
-            )
+                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
           } else {
             callback(Result.success(Unit))
           }
@@ -2822,8 +2779,8 @@ abstract class PigeonApiSystemServicesManager(
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", ""))
-      )
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
     } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       callback(Result.success(Unit))
     } else {
@@ -2833,9 +2790,7 @@ abstract class PigeonApiSystemServicesManager(
                   "new-instance-error",
                   "Attempting to create a new Dart instance of SystemServicesManager, but the class has a nonnull callback method.",
                   "",
-              )
-          )
-      )
+              )))
     }
   }
 
@@ -2846,8 +2801,8 @@ abstract class PigeonApiSystemServicesManager(
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", ""))
-      )
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
       return
     }
     val binaryMessenger = pigeonRegistrar.binaryMessenger
@@ -2886,8 +2841,8 @@ abstract class PigeonApiCameraPermissionsError(
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", ""))
-      )
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
     } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       callback(Result.success(Unit))
     } else {
@@ -2904,8 +2859,7 @@ abstract class PigeonApiCameraPermissionsError(
         if (it is List<*>) {
           if (it.size > 1) {
             callback(
-                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?))
-            )
+                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
           } else {
             callback(Result.success(Unit))
           }
@@ -3075,8 +3029,8 @@ abstract class PigeonApiDeviceOrientationManager(
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", ""))
-      )
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
     } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       callback(Result.success(Unit))
     } else {
@@ -3086,9 +3040,7 @@ abstract class PigeonApiDeviceOrientationManager(
                   "new-instance-error",
                   "Attempting to create a new Dart instance of DeviceOrientationManager, but the class has a nonnull callback method.",
                   "",
-              )
-          )
-      )
+              )))
     }
   }
 
@@ -3099,8 +3051,8 @@ abstract class PigeonApiDeviceOrientationManager(
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", ""))
-      )
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
       return
     }
     val binaryMessenger = pigeonRegistrar.binaryMessenger
@@ -3340,8 +3292,8 @@ abstract class PigeonApiPreview(open val pigeonRegistrar: CameraXLibraryPigeonPr
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", ""))
-      )
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
     } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       callback(Result.success(Unit))
     } else {
@@ -3356,8 +3308,7 @@ abstract class PigeonApiPreview(open val pigeonRegistrar: CameraXLibraryPigeonPr
         if (it is List<*>) {
           if (it.size > 1) {
             callback(
-                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?))
-            )
+                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
           } else {
             callback(Result.success(Unit))
           }
@@ -3493,8 +3444,8 @@ abstract class PigeonApiVideoCapture(
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", ""))
-      )
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
     } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       callback(Result.success(Unit))
     } else {
@@ -3508,8 +3459,7 @@ abstract class PigeonApiVideoCapture(
         if (it is List<*>) {
           if (it.size > 1) {
             callback(
-                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?))
-            )
+                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
           } else {
             callback(Result.success(Unit))
           }
@@ -3542,8 +3492,8 @@ open class PigeonApiVideoOutput(open val pigeonRegistrar: CameraXLibraryPigeonPr
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", ""))
-      )
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
     } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       callback(Result.success(Unit))
     } else {
@@ -3557,8 +3507,7 @@ open class PigeonApiVideoOutput(open val pigeonRegistrar: CameraXLibraryPigeonPr
         if (it is List<*>) {
           if (it.size > 1) {
             callback(
-                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?))
-            )
+                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
           } else {
             callback(Result.success(Unit))
           }
@@ -3743,8 +3692,8 @@ abstract class PigeonApiRecorder(open val pigeonRegistrar: CameraXLibraryPigeonP
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", ""))
-      )
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
     } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       callback(Result.success(Unit))
     } else {
@@ -3758,8 +3707,7 @@ abstract class PigeonApiRecorder(open val pigeonRegistrar: CameraXLibraryPigeonP
         if (it is List<*>) {
           if (it.size > 1) {
             callback(
-                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?))
-            )
+                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
           } else {
             callback(Result.success(Unit))
           }
@@ -3831,8 +3779,8 @@ abstract class PigeonApiVideoRecordEventListener(
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", ""))
-      )
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
     } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       callback(Result.success(Unit))
     } else {
@@ -3842,9 +3790,7 @@ abstract class PigeonApiVideoRecordEventListener(
                   "new-instance-error",
                   "Attempting to create a new Dart instance of VideoRecordEventListener, but the class has a nonnull callback method.",
                   "",
-              )
-          )
-      )
+              )))
     }
   }
 
@@ -3855,8 +3801,8 @@ abstract class PigeonApiVideoRecordEventListener(
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", ""))
-      )
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
       return
     }
     val binaryMessenger = pigeonRegistrar.binaryMessenger
@@ -4000,8 +3946,8 @@ abstract class PigeonApiPendingRecording(
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", ""))
-      )
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
     } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       callback(Result.success(Unit))
     } else {
@@ -4016,8 +3962,7 @@ abstract class PigeonApiPendingRecording(
         if (it is List<*>) {
           if (it.size > 1) {
             callback(
-                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?))
-            )
+                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
           } else {
             callback(Result.success(Unit))
           }
@@ -4163,8 +4108,8 @@ abstract class PigeonApiRecording(open val pigeonRegistrar: CameraXLibraryPigeon
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", ""))
-      )
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
     } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       callback(Result.success(Unit))
     } else {
@@ -4178,8 +4123,7 @@ abstract class PigeonApiRecording(open val pigeonRegistrar: CameraXLibraryPigeon
         if (it is List<*>) {
           if (it.size > 1) {
             callback(
-                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?))
-            )
+                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
           } else {
             callback(Result.success(Unit))
           }
@@ -4350,8 +4294,8 @@ abstract class PigeonApiImageCapture(
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", ""))
-      )
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
     } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       callback(Result.success(Unit))
     } else {
@@ -4366,8 +4310,7 @@ abstract class PigeonApiImageCapture(
         if (it is List<*>) {
           if (it.size > 1) {
             callback(
-                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?))
-            )
+                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
           } else {
             callback(Result.success(Unit))
           }
@@ -4535,8 +4478,8 @@ abstract class PigeonApiResolutionStrategy(
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", ""))
-      )
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
     } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       callback(Result.success(Unit))
     } else {
@@ -4551,8 +4494,7 @@ abstract class PigeonApiResolutionStrategy(
         if (it is List<*>) {
           if (it.size > 1) {
             callback(
-                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?))
-            )
+                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
           } else {
             callback(Result.success(Unit))
           }
@@ -4675,8 +4617,8 @@ abstract class PigeonApiResolutionSelector(
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", ""))
-      )
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
     } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       callback(Result.success(Unit))
     } else {
@@ -4693,8 +4635,7 @@ abstract class PigeonApiResolutionSelector(
         if (it is List<*>) {
           if (it.size > 1) {
             callback(
-                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?))
-            )
+                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
           } else {
             callback(Result.success(Unit))
           }
@@ -4895,8 +4836,8 @@ abstract class PigeonApiAspectRatioStrategy(
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", ""))
-      )
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
     } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       callback(Result.success(Unit))
     } else {
@@ -4911,8 +4852,7 @@ abstract class PigeonApiAspectRatioStrategy(
         if (it is List<*>) {
           if (it.size > 1) {
             callback(
-                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?))
-            )
+                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
           } else {
             callback(Result.success(Unit))
           }
@@ -4949,8 +4889,8 @@ abstract class PigeonApiCameraState(
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", ""))
-      )
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
     } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       callback(Result.success(Unit))
     } else {
@@ -4966,8 +4906,7 @@ abstract class PigeonApiCameraState(
         if (it is List<*>) {
           if (it.size > 1) {
             callback(
-                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?))
-            )
+                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
           } else {
             callback(Result.success(Unit))
           }
@@ -5007,8 +4946,8 @@ abstract class PigeonApiExposureState(
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", ""))
-      )
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
     } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       callback(Result.success(Unit))
     } else {
@@ -5021,20 +4960,19 @@ abstract class PigeonApiExposureState(
       val channelName = "dev.flutter.pigeon.camera_android_camerax.ExposureState.pigeon_newInstance"
       val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
       channel.send(
-          listOf(pigeon_identifierArg, exposureCompensationRangeArg, exposureCompensationStepArg)
-      ) {
-        if (it is List<*>) {
-          if (it.size > 1) {
-            callback(
-                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?))
-            )
-          } else {
-            callback(Result.success(Unit))
+          listOf(pigeon_identifierArg, exposureCompensationRangeArg, exposureCompensationStepArg)) {
+            if (it is List<*>) {
+              if (it.size > 1) {
+                callback(
+                    Result.failure(
+                        CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
+              } else {
+                callback(Result.success(Unit))
+              }
+            } else {
+              callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
+            }
           }
-        } else {
-          callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
-        }
-      }
     }
   }
 }
@@ -5060,8 +4998,8 @@ abstract class PigeonApiZoomState(open val pigeonRegistrar: CameraXLibraryPigeon
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", ""))
-      )
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
     } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       callback(Result.success(Unit))
     } else {
@@ -5077,8 +5015,7 @@ abstract class PigeonApiZoomState(open val pigeonRegistrar: CameraXLibraryPigeon
         if (it is List<*>) {
           if (it.size > 1) {
             callback(
-                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?))
-            )
+                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
           } else {
             callback(Result.success(Unit))
           }
@@ -5251,8 +5188,8 @@ abstract class PigeonApiImageAnalysis(
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", ""))
-      )
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
     } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       callback(Result.success(Unit))
     } else {
@@ -5267,8 +5204,7 @@ abstract class PigeonApiImageAnalysis(
         if (it is List<*>) {
           if (it.size > 1) {
             callback(
-                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?))
-            )
+                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
           } else {
             callback(Result.success(Unit))
           }
@@ -5337,8 +5273,8 @@ abstract class PigeonApiAnalyzer(open val pigeonRegistrar: CameraXLibraryPigeonP
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", ""))
-      )
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
     } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       callback(Result.success(Unit))
     } else {
@@ -5348,9 +5284,7 @@ abstract class PigeonApiAnalyzer(open val pigeonRegistrar: CameraXLibraryPigeonP
                   "new-instance-error",
                   "Attempting to create a new Dart instance of Analyzer, but the class has a nonnull callback method.",
                   "",
-              )
-          )
-      )
+              )))
     }
   }
 
@@ -5362,8 +5296,8 @@ abstract class PigeonApiAnalyzer(open val pigeonRegistrar: CameraXLibraryPigeonP
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", ""))
-      )
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
       return
     }
     val binaryMessenger = pigeonRegistrar.binaryMessenger
@@ -5406,8 +5340,8 @@ abstract class PigeonApiCameraStateStateError(
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", ""))
-      )
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
     } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       callback(Result.success(Unit))
     } else {
@@ -5423,8 +5357,7 @@ abstract class PigeonApiCameraStateStateError(
         if (it is List<*>) {
           if (it.size > 1) {
             callback(
-                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?))
-            )
+                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
           } else {
             callback(Result.success(Unit))
           }
@@ -5557,8 +5490,8 @@ abstract class PigeonApiLiveData(open val pigeonRegistrar: CameraXLibraryPigeonP
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", ""))
-      )
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
     } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       callback(Result.success(Unit))
     } else {
@@ -5573,8 +5506,7 @@ abstract class PigeonApiLiveData(open val pigeonRegistrar: CameraXLibraryPigeonP
         if (it is List<*>) {
           if (it.size > 1) {
             callback(
-                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?))
-            )
+                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
           } else {
             callback(Result.success(Unit))
           }
@@ -5674,8 +5606,8 @@ abstract class PigeonApiImageProxy(
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", ""))
-      )
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
     } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       callback(Result.success(Unit))
     } else {
@@ -5692,8 +5624,7 @@ abstract class PigeonApiImageProxy(
         if (it is List<*>) {
           if (it.size > 1) {
             callback(
-                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?))
-            )
+                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
           } else {
             callback(Result.success(Unit))
           }
@@ -5754,8 +5685,8 @@ abstract class PigeonApiImageProxyUtils(
   fun pigeon_newInstance(pigeon_instanceArg: ImageProxyUtils, callback: (Result<Unit>) -> Unit) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", ""))
-      )
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
     } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       callback(Result.success(Unit))
     } else {
@@ -5770,8 +5701,7 @@ abstract class PigeonApiImageProxyUtils(
         if (it is List<*>) {
           if (it.size > 1) {
             callback(
-                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?))
-            )
+                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
           } else {
             callback(Result.success(Unit))
           }
@@ -5809,8 +5739,8 @@ abstract class PigeonApiPlaneProxy(
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", ""))
-      )
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
     } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       callback(Result.success(Unit))
     } else {
@@ -5827,8 +5757,7 @@ abstract class PigeonApiPlaneProxy(
         if (it is List<*>) {
           if (it.size > 1) {
             callback(
-                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?))
-            )
+                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
           } else {
             callback(Result.success(Unit))
           }
@@ -5965,8 +5894,8 @@ abstract class PigeonApiQualitySelector(
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", ""))
-      )
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
     } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       callback(Result.success(Unit))
     } else {
@@ -5981,8 +5910,7 @@ abstract class PigeonApiQualitySelector(
         if (it is List<*>) {
           if (it.size > 1) {
             callback(
-                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?))
-            )
+                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
           } else {
             callback(Result.success(Unit))
           }
@@ -6159,8 +6087,8 @@ abstract class PigeonApiFallbackStrategy(
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", ""))
-      )
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
     } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       callback(Result.success(Unit))
     } else {
@@ -6175,8 +6103,7 @@ abstract class PigeonApiFallbackStrategy(
         if (it is List<*>) {
           if (it.size > 1) {
             callback(
-                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?))
-            )
+                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
           } else {
             callback(Result.success(Unit))
           }
@@ -6375,8 +6302,8 @@ abstract class PigeonApiCameraControl(
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", ""))
-      )
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
     } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       callback(Result.success(Unit))
     } else {
@@ -6390,8 +6317,7 @@ abstract class PigeonApiCameraControl(
         if (it is List<*>) {
           if (it.size > 1) {
             callback(
-                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?))
-            )
+                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
           } else {
             callback(Result.success(Unit))
           }
@@ -6620,8 +6546,8 @@ abstract class PigeonApiFocusMeteringActionBuilder(
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", ""))
-      )
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
     } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       callback(Result.success(Unit))
     } else {
@@ -6636,8 +6562,7 @@ abstract class PigeonApiFocusMeteringActionBuilder(
         if (it is List<*>) {
           if (it.size > 1) {
             callback(
-                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?))
-            )
+                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
           } else {
             callback(Result.success(Unit))
           }
@@ -6686,8 +6611,8 @@ abstract class PigeonApiFocusMeteringAction(
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", ""))
-      )
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
     } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       callback(Result.success(Unit))
     } else {
@@ -6709,20 +6634,19 @@ abstract class PigeonApiFocusMeteringAction(
               meteringPointsAfArg,
               meteringPointsAwbArg,
               isAutoCancelEnabledArg,
-          )
-      ) {
-        if (it is List<*>) {
-          if (it.size > 1) {
-            callback(
-                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?))
-            )
-          } else {
-            callback(Result.success(Unit))
+          )) {
+            if (it is List<*>) {
+              if (it.size > 1) {
+                callback(
+                    Result.failure(
+                        CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
+              } else {
+                callback(Result.success(Unit))
+              }
+            } else {
+              callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
+            }
           }
-        } else {
-          callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
-        }
-      }
     }
   }
 }
@@ -6747,8 +6671,8 @@ abstract class PigeonApiFocusMeteringResult(
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", ""))
-      )
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
     } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       callback(Result.success(Unit))
     } else {
@@ -6764,8 +6688,7 @@ abstract class PigeonApiFocusMeteringResult(
         if (it is List<*>) {
           if (it.size > 1) {
             callback(
-                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?))
-            )
+                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
           } else {
             callback(Result.success(Unit))
           }
@@ -6838,8 +6761,8 @@ abstract class PigeonApiCaptureRequest(
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", ""))
-      )
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
     } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       callback(Result.success(Unit))
     } else {
@@ -6854,8 +6777,7 @@ abstract class PigeonApiCaptureRequest(
         if (it is List<*>) {
           if (it.size > 1) {
             callback(
-                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?))
-            )
+                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
           } else {
             callback(Result.success(Unit))
           }
@@ -6885,8 +6807,8 @@ open class PigeonApiCaptureRequestKey(
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", ""))
-      )
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
     } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       callback(Result.success(Unit))
     } else {
@@ -6901,8 +6823,7 @@ open class PigeonApiCaptureRequestKey(
         if (it is List<*>) {
           if (it.size > 1) {
             callback(
-                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?))
-            )
+                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
           } else {
             callback(Result.success(Unit))
           }
@@ -7005,8 +6926,8 @@ abstract class PigeonApiCaptureRequestOptions(
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", ""))
-      )
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
     } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       callback(Result.success(Unit))
     } else {
@@ -7021,8 +6942,7 @@ abstract class PigeonApiCaptureRequestOptions(
         if (it is List<*>) {
           if (it.size > 1) {
             callback(
-                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?))
-            )
+                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
           } else {
             callback(Result.success(Unit))
           }
@@ -7127,8 +7047,8 @@ abstract class PigeonApiCamera2CameraControl(
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", ""))
-      )
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
     } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       callback(Result.success(Unit))
     } else {
@@ -7143,8 +7063,7 @@ abstract class PigeonApiCamera2CameraControl(
         if (it is List<*>) {
           if (it.size > 1) {
             callback(
-                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?))
-            )
+                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
           } else {
             callback(Result.success(Unit))
           }
@@ -7214,8 +7133,8 @@ abstract class PigeonApiResolutionFilter(
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", ""))
-      )
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
     } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       callback(Result.success(Unit))
     } else {
@@ -7230,8 +7149,7 @@ abstract class PigeonApiResolutionFilter(
         if (it is List<*>) {
           if (it.size > 1) {
             callback(
-                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?))
-            )
+                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
           } else {
             callback(Result.success(Unit))
           }
@@ -7263,8 +7181,8 @@ open class PigeonApiCameraCharacteristicsKey(
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", ""))
-      )
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
     } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       callback(Result.success(Unit))
     } else {
@@ -7279,8 +7197,7 @@ open class PigeonApiCameraCharacteristicsKey(
         if (it is List<*>) {
           if (it.size > 1) {
             callback(
-                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?))
-            )
+                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
           } else {
             callback(Result.success(Unit))
           }
@@ -7392,8 +7309,8 @@ abstract class PigeonApiCameraCharacteristics(
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", ""))
-      )
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
     } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       callback(Result.success(Unit))
     } else {
@@ -7408,8 +7325,7 @@ abstract class PigeonApiCameraCharacteristics(
         if (it is List<*>) {
           if (it.size > 1) {
             callback(
-                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?))
-            )
+                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
           } else {
             callback(Result.success(Unit))
           }
@@ -7537,8 +7453,8 @@ abstract class PigeonApiCamera2CameraInfo(
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", ""))
-      )
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
     } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       callback(Result.success(Unit))
     } else {
@@ -7553,8 +7469,7 @@ abstract class PigeonApiCamera2CameraInfo(
         if (it is List<*>) {
           if (it.size > 1) {
             callback(
-                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?))
-            )
+                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
           } else {
             callback(Result.success(Unit))
           }
@@ -7659,8 +7574,8 @@ abstract class PigeonApiMeteringPointFactory(
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", ""))
-      )
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
     } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       callback(Result.success(Unit))
     } else {
@@ -7675,8 +7590,7 @@ abstract class PigeonApiMeteringPointFactory(
         if (it is List<*>) {
           if (it.size > 1) {
             callback(
-                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?))
-            )
+                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
           } else {
             callback(Result.success(Unit))
           }
@@ -7760,8 +7674,8 @@ abstract class PigeonApiDisplayOrientedMeteringPointFactory(
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", ""))
-      )
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
     } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       callback(Result.success(Unit))
     } else {
@@ -7776,8 +7690,7 @@ abstract class PigeonApiDisplayOrientedMeteringPointFactory(
         if (it is List<*>) {
           if (it.size > 1) {
             callback(
-                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?))
-            )
+                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
           } else {
             callback(Result.success(Unit))
           }

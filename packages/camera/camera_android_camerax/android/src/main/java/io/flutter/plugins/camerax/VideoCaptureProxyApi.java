@@ -6,7 +6,6 @@ package io.flutter.plugins.camerax;
 
 import android.hardware.camera2.CaptureRequest;
 import android.util.Range;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.OptIn;
@@ -33,10 +32,9 @@ class VideoCaptureProxyApi extends PigeonApiVideoCapture {
 
     if (targetFps != null) {
       Range<Integer> targetFpsRange = new Range<>(targetFps.intValue(), targetFps.intValue());
-      Camera2Interop.Extender<VideoCapture<VideoOutput>> extender = new Camera2Interop.Extender<>(builder);
-      extender.setCaptureRequestOption(
-          CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, targetFpsRange
-      );
+      Camera2Interop.Extender<VideoCapture<VideoOutput>> extender =
+          new Camera2Interop.Extender<>(builder);
+      extender.setCaptureRequestOption(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, targetFpsRange);
     }
 
     return builder.build();
