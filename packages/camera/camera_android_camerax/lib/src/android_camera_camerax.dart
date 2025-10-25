@@ -288,6 +288,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// The preset resolution selector for the camera.
   ResolutionSelector? _presetResolutionSelector;
 
+  /// The configured target FPS for the camera.
   int? _targetFps;
 
   /// The ID of the surface texture that the camera preview is drawn to.
