@@ -520,9 +520,11 @@ HRESULT CaptureControllerImpl::FindBaseMediaTypesForSource(
     photo_source_stream_index_ = video_source_stream_index_;
   }
 
-  hr = GetMediaSourceStreamIndex(source, &audio_source_stream_index_, PlatformStreamCategory::audio);
-  if (FAILED(hr)) {
-    return E_FAIL;
+  if (media_settings_.enable_audio()) {
+    hr = GetMediaSourceStreamIndex(source, &audio_source_stream_index_, PlatformStreamCategory::audio);
+    if (FAILED(hr)) {
+      return E_FAIL;
+    }
   }
 
   // Find base media type for previewing.
