@@ -35,7 +35,8 @@ public class ImageAnalysisTest {
     final long targetFps = 30;
     final long outputImageFormat = ImageAnalysis.OUTPUT_IMAGE_FORMAT_NV21;
     final ImageAnalysis imageAnalysis =
-        api.pigeon_defaultConstructor(mockResolutionSelector, targetResolution, targetFps, outputImageFormat);
+        api.pigeon_defaultConstructor(
+            mockResolutionSelector, targetResolution, targetFps, outputImageFormat);
 
     assertEquals(imageAnalysis.getResolutionSelector(), mockResolutionSelector);
     assertEquals(imageAnalysis.getTargetRotation(), Surface.ROTATION_0);

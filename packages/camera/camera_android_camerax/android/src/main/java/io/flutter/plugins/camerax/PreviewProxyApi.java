@@ -58,9 +58,7 @@ class PreviewProxyApi extends PigeonApiPreview {
     if (targetFps != null) {
       Range<Integer> targetFpsRange = new Range<>(targetFps.intValue(), targetFps.intValue());
       Camera2Interop.Extender<Preview> extender = new Camera2Interop.Extender<>(builder);
-      extender.setCaptureRequestOption(
-          CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, targetFpsRange
-      );
+      extender.setCaptureRequestOption(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, targetFpsRange);
     }
 
     return builder.build();
