@@ -1,3 +1,7 @@
+## 26.0.3
+
+* [kotlin] Removes all `containsKey` and replaces with `contains`.
+
 ## 26.0.2
 
 * [kotlin] Fixes support for classes that override equals and hashCode for ProxyApis.
