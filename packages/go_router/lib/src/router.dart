@@ -235,7 +235,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
     String? initialLocation,
     this.overridePlatformDefaultLocation = false,
     Object? initialExtra,
-    List<NavigatorObserver>? observers,
+    this.observers,
     bool debugLogDiagnostics = false,
     GlobalKey<NavigatorState>? navigatorKey,
     String? restorationScopeId,
@@ -368,6 +368,9 @@ class GoRouter implements RouterConfig<RouteMatchList> {
   /// The route information parser used by [GoRouter].
   @override
   late final GoRouteInformationParser routeInformationParser;
+
+  /// The navigator observers used by [GoRouter].
+  final List<NavigatorObserver>? observers;
 
   void _handleRoutingConfigChanged() {
     // Reparse is needed to update its builder
