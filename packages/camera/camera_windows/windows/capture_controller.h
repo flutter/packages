@@ -214,9 +214,9 @@ class CaptureControllerImpl : public CaptureController,
 
   uint32_t preview_frame_width_ = 0;
   uint32_t preview_frame_height_ = 0;
-  DWORD video_source_stream_index_ = (DWORD) MF_CAPTURE_ENGINE_MEDIASOURCE;
-  DWORD photo_source_stream_index_ = (DWORD) MF_CAPTURE_ENGINE_MEDIASOURCE;
-  DWORD audio_source_stream_index_ = (DWORD) MF_CAPTURE_ENGINE_MEDIASOURCE;
+  DWORD video_source_stream_index_ = (DWORD)MF_CAPTURE_ENGINE_MEDIASOURCE;
+  DWORD photo_source_stream_index_ = (DWORD)MF_CAPTURE_ENGINE_MEDIASOURCE;
+  DWORD audio_source_stream_index_ = (DWORD)MF_CAPTURE_ENGINE_MEDIASOURCE;
   UINT dx_device_reset_token_ = 0;
   std::unique_ptr<RecordHandler> record_handler_;
   std::unique_ptr<PreviewHandler> preview_handler_;

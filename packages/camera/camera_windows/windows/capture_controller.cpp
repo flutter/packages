@@ -402,10 +402,8 @@ uint32_t CaptureControllerImpl::GetMaxPreviewHeight() const {
 enum class PlatformStreamCategory { video, photo, audio };
 
 HRESULT GetMediaSourceStreamIndex(
-  IMFCaptureSource* source,
-  DWORD* source_stream_index,
-  PlatformStreamCategory target_stream_category
-) {
+    IMFCaptureSource* source, DWORD* source_stream_index,
+    PlatformStreamCategory target_stream_category) {
   DWORD stream_count = 0;
   HRESULT hr = source->GetDeviceStreamCount(&stream_count);
   if (FAILED(hr)) {
@@ -421,10 +419,13 @@ HRESULT GetMediaSourceStreamIndex(
 
     if ((target_stream_category == PlatformStreamCategory::video &&
          (stream_category == MF_CAPTURE_ENGINE_STREAM_CATEGORY_VIDEO_PREVIEW ||
-          stream_category == MF_CAPTURE_ENGINE_STREAM_CATEGORY_VIDEO_CAPTURE)) ||
+          stream_category ==
+              MF_CAPTURE_ENGINE_STREAM_CATEGORY_VIDEO_CAPTURE)) ||
         (target_stream_category == PlatformStreamCategory::photo &&
-         (stream_category == MF_CAPTURE_ENGINE_STREAM_CATEGORY_PHOTO_DEPENDENT ||
-          stream_category == MF_CAPTURE_ENGINE_STREAM_CATEGORY_PHOTO_INDEPENDENT)) ||
+         (stream_category ==
+              MF_CAPTURE_ENGINE_STREAM_CATEGORY_PHOTO_DEPENDENT ||
+          stream_category ==
+              MF_CAPTURE_ENGINE_STREAM_CATEGORY_PHOTO_INDEPENDENT)) ||
         (target_stream_category == PlatformStreamCategory::audio &&
          stream_category == MF_CAPTURE_ENGINE_STREAM_CATEGORY_AUDIO)) {
       *source_stream_index = stream_index;
@@ -509,30 +510,32 @@ HRESULT CaptureControllerImpl::FindBaseMediaTypes() {
 HRESULT CaptureControllerImpl::FindBaseMediaTypesForSource(
     IMFCaptureSource* source) {
   HRESULT hr;
-  hr = GetMediaSourceStreamIndex(source, &video_source_stream_index_, PlatformStreamCategory::video);
+  hr = GetMediaSourceStreamIndex(source, &video_source_stream_index_,
+                                 PlatformStreamCategory::video);
   if (FAILED(hr)) {
     return E_FAIL;
   }
 
-  hr = GetMediaSourceStreamIndex(source, &photo_source_stream_index_, PlatformStreamCategory::photo);
+  hr = GetMediaSourceStreamIndex(source, &photo_source_stream_index_,
+                                 PlatformStreamCategory::photo);
   if (FAILED(hr)) {
     // Use the same source stream for photo as video on fail
     photo_source_stream_index_ = video_source_stream_index_;
   }
 
   if (media_settings_.enable_audio()) {
-    hr = GetMediaSourceStreamIndex(source, &audio_source_stream_index_, PlatformStreamCategory::audio);
+    hr = GetMediaSourceStreamIndex(source, &audio_source_stream_index_,
+                                   PlatformStreamCategory::audio);
     if (FAILED(hr)) {
       return E_FAIL;
     }
   }
 
   // Find base media type for previewing.
-  if (!FindBestMediaType(
-          video_source_stream_index_,
-          source, base_preview_media_type_.GetAddressOf(),
-          GetMaxPreviewHeight(), &preview_frame_width_,
-          &preview_frame_height_)) {
+  if (!FindBestMediaType(video_source_stream_index_, source,
+                         base_preview_media_type_.GetAddressOf(),
+                         GetMaxPreviewHeight(), &preview_frame_width_,
+                         &preview_frame_height_)) {
     return E_FAIL;
   }
 
@@ -543,10 +546,9 @@ HRESULT CaptureControllerImpl::FindBaseMediaTypesForSource(
   }
 
   // Find base media type for record and photo capture.
-  if (!FindBestMediaType(
-          video_source_stream_index_,
-          source, base_capture_media_type_.GetAddressOf(), 0xffffffff, nullptr,
-          nullptr)) {
+  if (!FindBestMediaType(video_source_stream_index_, source,
+                         base_capture_media_type_.GetAddressOf(), 0xffffffff,
+                         nullptr, nullptr)) {
     return E_FAIL;
   }
   return S_OK;
@@ -583,10 +585,9 @@ void CaptureControllerImpl::StartRecord(const std::string& file_path) {
 
   // Check MF_CAPTURE_ENGINE_RECORD_STARTED event handling for response
   // process.
-  hr = record_handler_->StartRecord(file_path, capture_engine_.Get(),
-                                    base_capture_media_type_.Get(),
-                                    video_source_stream_index_,
-                                    audio_source_stream_index_);
+  hr = record_handler_->StartRecord(
+      file_path, capture_engine_.Get(), base_capture_media_type_.Get(),
+      video_source_stream_index_, audio_source_stream_index_);
   if (FAILED(hr)) {
     // Destroy record handler on error cases to make sure state is resetted.
     record_handler_ = nullptr;
@@ -672,10 +673,9 @@ void CaptureControllerImpl::StartPreview() {
 
   // Check MF_CAPTURE_ENGINE_PREVIEW_STARTED event handling for response
   // process.
-  hr = preview_handler_->StartPreview(capture_engine_.Get(),
-                                      base_preview_media_type_.Get(),
-                                      video_source_stream_index_,
-                                      capture_engine_callback_handler_.Get());
+  hr = preview_handler_->StartPreview(
+      capture_engine_.Get(), base_preview_media_type_.Get(),
+      video_source_stream_index_, capture_engine_callback_handler_.Get());
 
   if (FAILED(hr)) {
     // Destroy preview handler on error cases to make sure state is resetted.
