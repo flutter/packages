@@ -191,9 +191,9 @@ HRESULT RecordHandler::InitRecordSink(IMFCaptureEngine* capture_engine,
   }
 
   DWORD video_record_sink_stream_index;
-  hr = record_sink_->AddStream(
-      video_source_stream_index,
-      video_record_media_type.Get(), nullptr, &video_record_sink_stream_index);
+  hr = record_sink_->AddStream(video_source_stream_index,
+                               video_record_media_type.Get(), nullptr,
+                               &video_record_sink_stream_index);
   if (FAILED(hr)) {
     return hr;
   }
@@ -212,10 +212,9 @@ HRESULT RecordHandler::InitRecordSink(IMFCaptureEngine* capture_engine,
       }
 
       DWORD audio_record_sink_stream_index;
-      hr = record_sink_->AddStream(
-          audio_source_stream_index,
-          audio_record_media_type.Get(), nullptr,
-          &audio_record_sink_stream_index);
+      hr = record_sink_->AddStream(audio_source_stream_index,
+                                   audio_record_media_type.Get(), nullptr,
+                                   &audio_record_sink_stream_index);
     }
 
     if (FAILED(hr)) {
@@ -241,10 +240,9 @@ HRESULT RecordHandler::StartRecord(const std::string& file_path,
   recording_start_timestamp_us_ = -1;
   recording_duration_us_ = 0;
 
-  HRESULT hr = InitRecordSink(capture_engine,
-                              base_media_type,
-                              video_source_stream_index,
-                              audio_source_stream_index);
+  HRESULT hr =
+      InitRecordSink(capture_engine, base_media_type, video_source_stream_index,
+                     audio_source_stream_index);
   if (FAILED(hr)) {
     return hr;
   }
