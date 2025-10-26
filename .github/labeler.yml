@@ -72,7 +72,7 @@
 'p: google_identity_services':
   - changed-files:
     - any-glob-to-any-file:
-      - packages/google_indentity_services_web/**/*
+      - packages/google_identity_services_web/**/*
 
 'p: google_fonts':
   - changed-files:
@@ -118,6 +118,11 @@
   - changed-files:
     - any-glob-to-any-file:
       - packages/multicast_dns/**/*
+
+'p: mustache_template':
+  - changed-files:
+    - any-glob-to-any-file:
+      - third_party/packages/mustache_template/**/*
 
 'p: path_parsing':
   - changed-files:
