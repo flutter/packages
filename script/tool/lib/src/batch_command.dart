@@ -15,9 +15,12 @@ import 'common/output_utils.dart';
 import 'common/package_command.dart';
 import 'common/repository_package.dart';
 
-const int _exitPackageMalformed = 2;
+const int _kExitPackageMalformed = 2;
+const int _kGitFailedToPush = 3;
+
 const String _kRemote = 'origin';
 const String _kMainBranch = 'main';
+const String _kTemplateFileName = 'template.yaml';
 
 /// A command to create a pull request for a single package release.
 class BatchCommand extends PackageCommand {
@@ -60,7 +63,7 @@ class BatchCommand extends PackageCommand {
     final UnreleasedChanges unreleasedChanges =
         await _getUnreleasedChanges(package);
     if (unreleasedChanges.entries.isEmpty) {
-      print('No unreleased changes found for $packageName.');
+      printError('No unreleased changes found for $packageName.');
       return;
     }
 
@@ -70,7 +73,7 @@ class BatchCommand extends PackageCommand {
         _getReleaseInfo(unreleasedChanges.entries, pubspec.version!);
 
     if (releaseInfo.newVersion == null) {
-      print('No version change specified in unreleased changelog for '
+      printError('No version change specified in unreleased changelog for '
           '$packageName.');
       return;
     }
@@ -95,12 +98,12 @@ class BatchCommand extends PackageCommand {
         package.directory.childDirectory('unreleased');
     if (!unreleasedDir.existsSync()) {
       printError('No unreleased folder found for ${package.displayName}.');
-      throw ToolExit(_exitPackageMalformed);
+      throw ToolExit(_kExitPackageMalformed);
     }
     final List<File> unreleasedFiles = unreleasedDir
         .listSync()
         .whereType<File>()
-        .where((File f) => f.basename.endsWith('.yaml'))
+        .where((File f) => f.basename.endsWith('.yaml') && f.basename != _kTemplateFileName)
         .toList();
     try {
       final List<UnreleasedEntry> entries = unreleasedFiles
@@ -110,7 +113,7 @@ class BatchCommand extends PackageCommand {
       return UnreleasedChanges(entries, unreleasedFiles);
     } on FormatException catch (e) {
       printError('Malformed unreleased changelog file: $e');
-      throw ToolExit(_exitPackageMalformed);
+      throw ToolExit(_kExitPackageMalformed);
     }
   }
 
@@ -126,7 +129,7 @@ class BatchCommand extends PackageCommand {
         VersionChange.values[versionIndex];
 
     Version? newVersion;
-    print('Effective version change: $effectiveVersionChange');
+    printError('Effective version change: $effectiveVersionChange');
     switch (effectiveVersionChange) {
       case VersionChange.skip:
         break;
@@ -157,34 +160,41 @@ class BatchCommand extends PackageCommand {
       required String packageName,
       required String branchName,
       required List<File> unreleasedFiles}) async {
+    final io.ProcessResult deleteBranchResult =
+        await repository.runCommand(<String>['branch', '-D', branchName]);
+    if (deleteBranchResult.exitCode != 0) {
+      printError('Failed to delete branch $branchName: ${deleteBranchResult.stderr}');
+      throw ToolExit(_kGitFailedToPush);
+    }
+
     final io.ProcessResult checkoutResult = await repository.runCommand(
         <String>['checkout', '-b', branchName, '$_kRemote/$_kMainBranch']);
     if (checkoutResult.exitCode != 0) {
-      print('Failed to checkout branch $branchName: ${checkoutResult.stderr}');
-      throw ToolExit(checkoutResult.exitCode);
+      printError('Failed to checkout branch $branchName: ${checkoutResult.stderr}');
+      throw ToolExit(_kGitFailedToPush);
     }
 
     for (final File file in unreleasedFiles) {
       final io.ProcessResult rmResult =
           await repository.runCommand(<String>['rm', file.path]);
       if (rmResult.exitCode != 0) {
-        print('Failed to rm ${file.path}: ${rmResult.stderr}');
-        throw ToolExit(rmResult.exitCode);
+        printError('Failed to rm ${file.path}: ${rmResult.stderr}');
+        throw ToolExit(_kGitFailedToPush);
       }
     }
 
     final io.ProcessResult commitResult = await repository.runCommand(
         <String>['commit', '-m', '$packageName: Prepare for release']);
     if (commitResult.exitCode != 0) {
-      print('Failed to commit: ${commitResult.stderr}');
-      throw ToolExit(commitResult.exitCode);
+      printError('Failed to commit: ${commitResult.stderr}');
+      throw ToolExit(_kGitFailedToPush);
     }
 
     final io.ProcessResult pushResult =
         await repository.runCommand(<String>['push', 'origin', branchName]);
     if (pushResult.exitCode != 0) {
-      print('Failed to push to $branchName: ${pushResult.stderr}');
-      throw ToolExit(pushResult.exitCode);
+      printError('Failed to push to $branchName: ${pushResult.stderr}');
+      throw ToolExit(_kGitFailedToPush);
     }
   }
 }
