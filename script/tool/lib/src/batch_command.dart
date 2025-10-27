@@ -19,8 +19,6 @@ import 'common/repository_package.dart';
 const int _kExitPackageMalformed = 2;
 const int _kGitFailedToPush = 3;
 
-const String _kRemote = 'origin';
-const String _kMainBranch = 'main';
 const String _kTemplateFileName = 'template.yaml';
 
 /// A command to create a pull request for a single package release.
@@ -174,7 +172,7 @@ class BatchCommand extends PackageCommand {
     }
 
     final io.ProcessResult checkoutResult = await repository.runCommand(
-        <String>['checkout', '-b', branchName, '$_kRemote/$_kMainBranch']);
+        <String>['checkout', '-b', branchName]);
     if (checkoutResult.exitCode != 0) {
       printError(
           'Failed to checkout branch $branchName: ${checkoutResult.stderr}');
