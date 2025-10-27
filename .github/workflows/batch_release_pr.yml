@@ -1,14 +1,14 @@
-name: "Creates Batch Release PR"
+name: "Creates Batch Release for go_router package"
 
 on:
-  schedule:
-    # Runs at 00:00 UTC every day
-    - cron: '0 0 * * *'
-  workflow_dispatch:
+  repository_dispatch:
+    types: [batch_release_pr]
 
 jobs:
   create_release_pr:
     runs-on: ubuntu-latest
+    env:
+      BRANCH_NAME: ${{ github.event.client_payload.package }}-${{ github.run_id }}-${{ github.run_attempt }}
     steps:
       - name: checkout repository
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
@@ -25,4 +25,17 @@ jobs:
         run: |
           git config --global user.name ${{ secrets.USER_NAME }}
           git config --global user.email ${{ secrets.USER_EMAIL }}
-          dart ./script/tool/lib/src/main.dart batch
+          dart ./script/tool/lib/src/main.dart batch --package=${{ github.event.client_payload.package }} --branch=${{ env.BRANCH_NAME }}"
+      - name: Give tool a minute to create the branch
+        run: sleep 60s
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "Batch release PR for ${{ github.event.client_payload.package }} package"
+          title: "Batch Release PR for ${{ github.event.client_payload.package }} package"
+          body: "This PR was created automatically to batch release the ${{ github.event.client_payload.package }} package."
+          branch: ${{ env.BRANCH_NAME }}
+          base: release
+
+
