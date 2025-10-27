@@ -9,6 +9,7 @@ import 'package:file/file.dart';
 import 'package:git/git.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:yaml/yaml.dart';
+import 'package:yaml_edit/yaml_edit.dart';
 
 import 'common/core.dart';
 import 'common/output_utils.dart';
@@ -79,10 +80,12 @@ class BatchCommand extends PackageCommand {
     }
 
     await _pushBranch(
-        repository: repository,
-        packageName: packageName,
-        branchName: branchName,
-        unreleasedFiles: unreleasedChanges.files);
+      repository: repository,
+      package: package,
+      branchName: branchName,
+      unreleasedFiles: unreleasedChanges.files,
+      releaseInfo: releaseInfo,
+    );
   }
 
   Future<RepositoryPackage> _getPackage(String packageName) async {
@@ -155,24 +158,62 @@ class BatchCommand extends PackageCommand {
     return ReleaseInfo(newVersion, changelogs);
   }
 
-  Future<void> _pushBranch(
-      {required GitDir repository,
-      required String packageName,
-      required String branchName,
-      required List<File> unreleasedFiles}) async {
+  Future<void> _pushBranch({
+    required GitDir repository,
+    required RepositoryPackage package,
+    required String branchName,
+    required List<File> unreleasedFiles,
+    required ReleaseInfo releaseInfo,
+  }) async {
     final io.ProcessResult deleteBranchResult =
         await repository.runCommand(<String>['branch', '-D', branchName]);
     if (deleteBranchResult.exitCode != 0) {
-      printError('Failed to delete branch $branchName: ${deleteBranchResult.stderr}');
+      printError(
+          'Failed to delete branch $branchName: ${deleteBranchResult.stderr}');
       throw ToolExit(_kGitFailedToPush);
     }
 
     final io.ProcessResult checkoutResult = await repository.runCommand(
         <String>['checkout', '-b', branchName, '$_kRemote/$_kMainBranch']);
     if (checkoutResult.exitCode != 0) {
-      printError('Failed to checkout branch $branchName: ${checkoutResult.stderr}');
+      printError(
+          'Failed to checkout branch $branchName: ${checkoutResult.stderr}');
       throw ToolExit(_kGitFailedToPush);
     }
+
+    // Update pubspec.yaml.
+    final YamlEditor editablePubspec =
+        YamlEditor(package.pubspecFile.readAsStringSync());
+    editablePubspec.update(<String>['version'], releaseInfo.newVersion.toString());
+    package.pubspecFile.writeAsStringSync(editablePubspec.toString());
+
+    // Update CHANGELOG.md.
+    final String newHeader = '## ${releaseInfo.newVersion}';
+    final List<String> newEntries = releaseInfo.changelogs
+        .map((String line) => '- $line')
+        .toList();
+
+    final List<String> changelogLines = package.changelogFile.readAsLinesSync();
+    final StringBuffer newChangelog = StringBuffer();
+
+    bool inserted = false;
+    for (final String line in changelogLines) {
+      if (!inserted && line.startsWith('## ')) {
+        newChangelog.writeln(newHeader);
+        newChangelog.writeln();
+        newChangelog.writeln(newEntries.join('\n'));
+        newChangelog.writeln();
+        inserted = true;
+      }
+      newChangelog.writeln(line);
+    }
+
+    if (!inserted) {
+      printError("Can't parse existing CHANGELOG.md.");
+      throw ToolExit(_kExitPackageMalformed);
+    }
+
+    package.changelogFile.writeAsStringSync(newChangelog.toString());
 
     for (final File file in unreleasedFiles) {
       final io.ProcessResult rmResult =
@@ -183,8 +224,18 @@ class BatchCommand extends PackageCommand {
       }
     }
 
-    final io.ProcessResult commitResult = await repository.runCommand(
-        <String>['commit', '-m', '$packageName: Prepare for release']);
+    final io.ProcessResult addResult = await repository
+        .runCommand(<String>['add', package.pubspecFile.path, package.changelogFile.path]);
+    if (addResult.exitCode != 0) {
+      printError('Failed to git add: ${addResult.stderr}');
+      throw ToolExit(_kGitFailedToPush);
+    }
+
+    final io.ProcessResult commitResult = await repository.runCommand(<String>[
+      'commit',
+      '-m',
+      '${package.displayName}: Prepare for release'
+    ]);
     if (commitResult.exitCode != 0) {
       printError('Failed to commit: ${commitResult.stderr}');
       throw ToolExit(_kGitFailedToPush);
