@@ -57,8 +57,10 @@ class BatchCommand extends PackageCommand {
 
     final GitDir repository = await gitDir;
 
+    print('Fetching package "$packageName"...');
     final RepositoryPackage package = await _getPackage(packageName);
 
+    print('Checking for unreleased changes...');
     final UnreleasedChanges unreleasedChanges =
         await _getUnreleasedChanges(package);
     if (unreleasedChanges.entries.isEmpty) {
@@ -68,6 +70,7 @@ class BatchCommand extends PackageCommand {
 
     final Pubspec pubspec =
         Pubspec.parse(package.pubspecFile.readAsStringSync());
+    print('Determining release version...');
     final ReleaseInfo releaseInfo =
         _getReleaseInfo(unreleasedChanges.entries, pubspec.version!);
 
@@ -77,6 +80,7 @@ class BatchCommand extends PackageCommand {
       return;
     }
 
+    print('Creating and pushing release branch...');
     await _pushBranch(
       repository: repository,
       package: package,
@@ -130,7 +134,6 @@ class BatchCommand extends PackageCommand {
         VersionChange.values[versionIndex];
 
     Version? newVersion;
-    printError('Effective version change: $effectiveVersionChange');
     switch (effectiveVersionChange) {
       case VersionChange.skip:
         break;
@@ -163,6 +166,7 @@ class BatchCommand extends PackageCommand {
     required List<File> unreleasedFiles,
     required ReleaseInfo releaseInfo,
   }) async {
+    print('  Deleting old branch "$branchName"...');
     final io.ProcessResult deleteBranchResult =
         await repository.runCommand(<String>['branch', '-D', branchName]);
     if (deleteBranchResult.exitCode != 0) {
@@ -171,6 +175,7 @@ class BatchCommand extends PackageCommand {
       throw ToolExit(_kGitFailedToPush);
     }
 
+    print('  Creating new branch "$branchName"...');
     final io.ProcessResult checkoutResult = await repository.runCommand(
         <String>['checkout', '-b', branchName]);
     if (checkoutResult.exitCode != 0) {
@@ -179,12 +184,14 @@ class BatchCommand extends PackageCommand {
       throw ToolExit(_kGitFailedToPush);
     }
 
+    print('  Updating pubspec.yaml to version ${releaseInfo.newVersion}...');
     // Update pubspec.yaml.
     final YamlEditor editablePubspec =
         YamlEditor(package.pubspecFile.readAsStringSync());
     editablePubspec.update(<String>['version'], releaseInfo.newVersion.toString());
     package.pubspecFile.writeAsStringSync(editablePubspec.toString());
 
+    print('  Updating CHANGELOG.md...');
     // Update CHANGELOG.md.
     final String newHeader = '## ${releaseInfo.newVersion}';
     final List<String> newEntries = releaseInfo.changelogs
@@ -213,6 +220,7 @@ class BatchCommand extends PackageCommand {
 
     package.changelogFile.writeAsStringSync(newChangelog.toString());
 
+    print('  Removing unreleased change files...');
     for (final File file in unreleasedFiles) {
       final io.ProcessResult rmResult =
           await repository.runCommand(<String>['rm', file.path]);
@@ -222,6 +230,7 @@ class BatchCommand extends PackageCommand {
       }
     }
 
+    print('  Staging changes...');
     final io.ProcessResult addResult = await repository
         .runCommand(<String>['add', package.pubspecFile.path, package.changelogFile.path]);
     if (addResult.exitCode != 0) {
@@ -229,6 +238,7 @@ class BatchCommand extends PackageCommand {
       throw ToolExit(_kGitFailedToPush);
     }
 
+    print('  Committing changes...');
     final io.ProcessResult commitResult = await repository.runCommand(<String>[
       'commit',
       '-m',
@@ -239,8 +249,9 @@ class BatchCommand extends PackageCommand {
       throw ToolExit(_kGitFailedToPush);
     }
 
+    print('  Pushing to remote...');
     final io.ProcessResult pushResult =
-        await repository.runCommand(<String>['push', 'origin', branchName]);
+        await repository.runCommand(<String>['push', 'origin', branchName, '--force']);
     if (pushResult.exitCode != 0) {
       printError('Failed to push to $branchName: ${pushResult.stderr}');
       throw ToolExit(_kGitFailedToPush);
