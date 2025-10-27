@@ -3,161 +3,267 @@
 // found in the LICENSE file.
 
 import 'dart:io' as io;
+import 'dart:math' as math;
 
-import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
-import 'package:github/github.dart';
+import 'package:git/git.dart';
+import 'package:pub_semver/pub_semver.dart';
 import 'package:yaml/yaml.dart';
 
 import 'common/core.dart';
-import 'common/process_runner.dart';
+import 'common/output_utils.dart';
+import 'common/package_command.dart';
 import 'common/repository_package.dart';
 
-const String _baseBranch = 'release';
-const String _headBranch = 'main';
+const int _exitPackageMalformed = 2;
+const String _kRemote = 'origin';
+const String _kMainBranch = 'main';
 
-/// A command to create a pull request for a batch release.
-class BatchCommand extends Command<void> {
+/// A command to create a pull request for a single package release.
+class BatchCommand extends PackageCommand {
   /// Creates a new `batch` command.
-  BatchCommand(this.packagesDir);
-
-  /// The directory containing the packages.
-  final Directory packagesDir;
+  BatchCommand(
+    super.packagesDir, {
+    super.processRunner,
+    super.platform,
+    super.gitDir,
+  }) {
+    argParser.addOption(
+      'package',
+      mandatory: true,
+      abbr: 'p',
+      help: 'The package to create a release PR for.',
+    );
+    argParser.addOption(
+      'branch',
+      mandatory: true,
+      abbr: 'b',
+      help: 'The branch to push the release PR to.',
+    );
+  }
 
   @override
   final String name = 'batch';
 
   @override
-  final String description =
-      'Creates a batch release PR based on unreleased changes.';
+  final String description = 'Creates a release PR for a single package.';
 
   @override
   Future<void> run() async {
-    final String? githubToken = io.Platform.environment['GITHUB_TOKEN'];
-    if (githubToken == null) {
-      print('This command requires a GITHUB_TOKEN environment variable.');
-      throw ToolExit(1);
-    }
+    final String packageName = argResults!['package'] as String;
+    final String branchName = argResults!['branch'] as String;
 
-    final ProcessRunner processRunner = ProcessRunner();
-    final String remote = await processRunner.runAndExitOnError(
-        'git', <String>['remote', 'get-url', 'origin'],
-        workingDir: packagesDir.parent.parent); // run git from root
-    final RepositorySlug slug = RepositorySlug.fromUrl(remote);
+    final GitDir repository = await gitDir;
 
-    final ReleaseInfo releaseInfo = await _getReleaseInfo();
+    final RepositoryPackage package = await _getPackage(packageName);
 
-    if (releaseInfo.packagesToRelease.isEmpty) {
-      print(
-          'No packages with unreleased changes are configured for batch releases.');
+    final UnreleasedChanges unreleasedChanges =
+        await _getUnreleasedChanges(package);
+    if (unreleasedChanges.entries.isEmpty) {
+      print('No unreleased changes found for $packageName.');
       return;
     }
 
-    final String prTitle =
-        'chore: Batch release for ${releaseInfo.packagesToRelease.length} packages';
+    final Pubspec pubspec =
+        Pubspec.parse(package.pubspecFile.readAsStringSync());
+    final ReleaseInfo releaseInfo =
+        _getReleaseInfo(unreleasedChanges.entries, pubspec.version!);
 
-    final GitHub github = GitHub(auth: Authentication.withToken(githubToken));
+    if (releaseInfo.newVersion == null) {
+      print('No version change specified in unreleased changelog for '
+          '$packageName.');
+      return;
+    }
 
+    await _pushBranch(
+        repository: repository,
+        packageName: packageName,
+        branchName: branchName,
+        unreleasedFiles: unreleasedChanges.files);
+  }
+
+  Future<RepositoryPackage> _getPackage(String packageName) async {
+    return getTargetPackages()
+        .map<RepositoryPackage>(
+            (PackageEnumerationEntry entry) => entry.package)
+        .firstWhere((RepositoryPackage p) => p.displayName.split('/').last == packageName);
+  }
+
+  Future<UnreleasedChanges> _getUnreleasedChanges(
+      RepositoryPackage package) async {
+    final Directory unreleasedDir =
+        package.directory.childDirectory('unreleased');
+    if (!unreleasedDir.existsSync()) {
+      printError('No unreleased folder found for ${package.displayName}.');
+      throw ToolExit(_exitPackageMalformed);
+    }
+    final List<File> unreleasedFiles = unreleasedDir
+        .listSync()
+        .whereType<File>()
+        .where((File f) => f.basename.endsWith('.yaml'))
+        .toList();
     try {
-      final PullRequest pr = await github.pullRequests.create(
-        slug,
-        CreatePullRequest(
-          prTitle,
-          _headBranch,
-          _baseBranch,
-          body: releaseInfo.prBody,
-        ),
-      );
-      print('Successfully created pull request: ${pr.htmlUrl}');
-    } on GitHubError catch (e) {
-      if (e.toString().contains('A pull request already exists')) {
-        print('A pull request already exists for these branches. Nothing to do.');
-      } else {
-        print('Failed to create pull request: $e');
-        throw ToolExit(1);
-      }
-    } catch (e) {
-      print('An unexpected error occurred: $e');
-      throw ToolExit(1);
-    } finally {
-      github.dispose();
+      final List<UnreleasedEntry> entries = unreleasedFiles
+          .map<UnreleasedEntry>(
+              (File f) => UnreleasedEntry.parse(f.readAsStringSync()))
+          .toList();
+      return UnreleasedChanges(entries, unreleasedFiles);
+    } on FormatException catch (e) {
+      printError('Malformed unreleased changelog file: $e');
+      throw ToolExit(_exitPackageMalformed);
     }
   }
 
-  Future<ReleaseInfo> _getReleaseInfo() async {
-    final List<RepositoryPackage> packages = 
-        await getPackages(packagesDir).toList();
-    final List<RepositoryPackage> packagesToRelease = <RepositoryPackage>[];
-    final StringBuffer prBody = StringBuffer();
+  ReleaseInfo _getReleaseInfo(
+      List<UnreleasedEntry> unreleasedEntries, Version oldVersion) {
+    final List<String> changelogs = <String>[];
+    int versionIndex = VersionChange.skip.index;
+    for (final UnreleasedEntry entry in unreleasedEntries) {
+      changelogs.addAll(entry.changelog);
+      versionIndex = math.min(versionIndex, entry.version.index);
+    }
+    final VersionChange effectiveVersionChange =
+        VersionChange.values[versionIndex];
 
-    prBody.writeln('The following packages are included in this batch release:');
-    prBody.writeln();
+    Version? newVersion;
+    print('Effective version change: $effectiveVersionChange');
+    switch (effectiveVersionChange) {
+      case VersionChange.skip:
+        break;
+      case VersionChange.major:
+        newVersion = Version(
+          oldVersion.major + 1,
+          0,
+          0,
+        );
+      case VersionChange.minor:
+        newVersion = Version(
+          oldVersion.major,
+          oldVersion.minor + 1,
+          0,
+        );
+      case VersionChange.patch:
+        newVersion = Version(
+          oldVersion.major,
+          oldVersion.minor,
+          oldVersion.patch + 1,
+        );
+    }
+    return ReleaseInfo(newVersion, changelogs);
+  }
 
-    for (final RepositoryPackage package in packages) {
-      final File ciConfig = package.directory.childFile('ci_config.yaml');
-      if (!ciConfig.existsSync()) {
-        continue;
-      }
-
-      try {
-        final dynamic yaml = loadYaml(ciConfig.readAsStringSync());
-        if (yaml['release']?['batch'] != true) {
-          continue;
-        }
-      } on YamlException catch (e) {
-        print('Error parsing ${ciConfig.path}: $e');
-        continue;
-      }
-
-      final Directory unreleasedDir = 
-          package.directory.childDirectory('unreleased');
-      if (!unreleasedDir.existsSync()) {
-        continue;
-      }
-
-      final List<FileSystemEntity> unreleasedFiles = unreleasedDir.listSync() 
-        ..removeWhere((FileSystemEntity entity) => entity.basename == '.gitkeep');
-      if (unreleasedFiles.isEmpty) {
-        continue;
-      }
-
-      packagesToRelease.add(package);
-      prBody.writeln('### ${package.displayName}');
-      for (final FileSystemEntity file in unreleasedFiles) {
-        if (file is File) {
-          prBody.writeln(file.readAsStringSync());
-        }
-      }
-      prBody.writeln();
+  Future<void> _pushBranch(
+      {required GitDir repository,
+      required String packageName,
+      required String branchName,
+      required List<File> unreleasedFiles}) async {
+    final io.ProcessResult checkoutResult = await repository.runCommand(
+        <String>['checkout', '-b', branchName, '$_kRemote/$_kMainBranch']);
+    if (checkoutResult.exitCode != 0) {
+      print('Failed to checkout branch $branchName: ${checkoutResult.stderr}');
+      throw ToolExit(checkoutResult.exitCode);
     }
 
-    return ReleaseInfo(packagesToRelease, prBody.toString());
+    for (final File file in unreleasedFiles) {
+      final io.ProcessResult rmResult =
+          await repository.runCommand(<String>['rm', file.path]);
+      if (rmResult.exitCode != 0) {
+        print('Failed to rm ${file.path}: ${rmResult.stderr}');
+        throw ToolExit(rmResult.exitCode);
+      }
+    }
+
+    final io.ProcessResult commitResult = await repository.runCommand(
+        <String>['commit', '-m', '$packageName: Prepare for release']);
+    if (commitResult.exitCode != 0) {
+      print('Failed to commit: ${commitResult.stderr}');
+      throw ToolExit(commitResult.exitCode);
+    }
+
+    final io.ProcessResult pushResult =
+        await repository.runCommand(<String>['push', 'origin', branchName]);
+    if (pushResult.exitCode != 0) {
+      print('Failed to push to $branchName: ${pushResult.stderr}');
+      throw ToolExit(pushResult.exitCode);
+    }
   }
 }
 
-/// A data class to hold information about a pending release.
+/// A data class for unreleased changes.
+class UnreleasedChanges {
+  /// Creates a new instance.
+  UnreleasedChanges(this.entries, this.files);
+
+  /// The parsed unreleased entries.
+  final List<UnreleasedEntry> entries;
+
+  /// The files that the unreleased entries were parsed from.
+  final List<File> files;
+}
+
+/// A data class for processed release information.
 class ReleaseInfo {
-  /// Creates a new ReleaseInfo.
-  const ReleaseInfo(this.packagesToRelease, this.prBody);
+  /// Creates a new instance.
+  ReleaseInfo(this.newVersion, this.changelogs);
 
-  /// The packages that are part of this release.
-  final List<RepositoryPackage> packagesToRelease;
+  /// The new version for the release, or null if there is no version change.
+  final Version? newVersion;
 
-  /// The generated pull request body.
-  final String prBody;
+  /// The combined changelog entries.
+  final List<String> changelogs;
 }
 
+/// The type of version change for a release.
+enum VersionChange {
+  /// A major version change (e.g., 1.2.3 -> 2.0.0).
+  major,
 
-/// Extension to get a [RepositorySlug] from a git remote URL.
-extension on RepositorySlug {
-  /// Creates a [RepositorySlug] from a git remote URL.
-  static RepositorySlug fromUrl(String remoteUrl) {
-    final Uri remoteUri = Uri.parse(remoteUrl.trim());
-    final List<String> pathSegments = remoteUri.pathSegments;
-    // The path for https is e.g., /flutter/packages.git, and for git is
-    // e.g., flutter/packages.git.
-    final String owner = pathSegments[pathSegments.length - 2];
-    final String name = pathSegments.last.replaceAll('.git', '');
-    return RepositorySlug(owner, name);
+  /// A minor version change (e.g., 1.2.3 -> 1.3.0).
+  minor,
+
+  /// A patch version change (e.g., 1.2.3 -> 1.2.4).
+  patch,
+
+  /// No version change.
+  skip,
+}
+
+/// Represents a single entry in the unreleased changelog.
+class UnreleasedEntry {
+  /// Creates a new unreleased entry.
+  UnreleasedEntry({required this.changelog, required this.version});
+
+  /// Creates an UnreleasedEntry from a YAML string.
+  factory UnreleasedEntry.parse(String yamlContent) {
+    final dynamic yaml = loadYaml(yamlContent);
+    if (yaml is! YamlMap) {
+      throw FormatException('Expected a YAML map, but found ${yaml.runtimeType}.');
+    }
+
+    final dynamic changelogYaml = yaml['changelog'];
+    if (changelogYaml is! YamlList) {
+      throw FormatException('Expected "changelog" to be a list, but found ${changelogYaml.runtimeType}.');
+    }
+    final List<String> changelog = changelogYaml.nodes
+        .map((YamlNode node) => node.value as String)
+        .toList();
+
+    final String? versionString = yaml['version'] as String?;
+    if (versionString == null) {
+      throw const FormatException('Missing "version" key.');
+    }
+    final VersionChange version = VersionChange.values.firstWhere(
+      (VersionChange e) => e.name == versionString,
+      orElse: () =>
+          throw FormatException('Invalid version type: $versionString'),
+    );
+
+    return UnreleasedEntry(changelog: changelog, version: version);
   }
+
+  /// The changelog messages for this entry.
+  final List<String> changelog;
+
+  /// The type of version change for this entry.
+  final VersionChange version;
 }
