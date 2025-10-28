@@ -186,7 +186,7 @@ class BranchForBatchReleaseCommand extends PackageCommand {
 
     newChangelog.writeln(newHeader);
     newChangelog.writeln();
-    newChangelog.writeln(newEntries.join());
+    newChangelog.writeln(newEntries.join('\n'));
     newChangelog.writeln();
     newChangelog.write(oldChangelogContent);
 
@@ -288,7 +288,7 @@ class PendingChangelogEntry {
       throw FormatException(
           'Expected "changelog" to be a string, but found ${changelogYaml.runtimeType}.');
     }
-    final String changelog = changelogYaml;
+    final String changelog = changelogYaml.trim();
 
     final String? versionString = yaml['version'] as String?;
     if (versionString == null) {
