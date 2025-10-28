@@ -116,30 +116,30 @@ public class AudioTracksTest {
     when(mockExoPlayer.getCurrentTracks()).thenReturn(mockTracks);
 
     // Test the method
-    Messages.NativeAudioTrackData nativeData = videoPlayer.getAudioTracks();
-    List<Messages.ExoPlayerAudioTrackData> result = nativeData.getExoPlayerTracks();
+    NativeAudioTrackData nativeData = videoPlayer.getAudioTracks();
+    List<ExoPlayerAudioTrackData> result = nativeData.getExoPlayerTracks();
 
     // Verify results
     assertNotNull(result);
     assertEquals(2, result.size());
 
     // Verify first track
-    Messages.ExoPlayerAudioTrackData track1 = result.get(0);
+    ExoPlayerAudioTrackData track1 = result.get(0);
     assertEquals("0_0", track1.getTrackId());
     assertEquals("English", track1.getLabel());
     assertEquals("en", track1.getLanguage());
-    assertTrue(track1.getIsSelected());
+    assertTrue(track1.isSelected());
     assertEquals(Long.valueOf(128000), track1.getBitrate());
     assertEquals(Long.valueOf(48000), track1.getSampleRate());
     assertEquals(Long.valueOf(2), track1.getChannelCount());
     assertEquals("mp4a.40.2", track1.getCodec());
 
     // Verify second track
-    Messages.ExoPlayerAudioTrackData track2 = result.get(1);
+    ExoPlayerAudioTrackData track2 = result.get(1);
     assertEquals("1_0", track2.getTrackId());
     assertEquals("Español", track2.getLabel());
     assertEquals("es", track2.getLanguage());
-    assertFalse(track2.getIsSelected());
+    assertFalse(track2.isSelected());
     assertEquals(Long.valueOf(96000), track2.getBitrate());
     assertEquals(Long.valueOf(44100), track2.getSampleRate());
     assertEquals(Long.valueOf(2), track2.getChannelCount());
@@ -196,11 +196,11 @@ public class AudioTracksTest {
     assertNotNull(result);
     assertEquals(1, result.size());
 
-    Messages.ExoPlayerAudioTrackData track = result.get(0);
+    ExoPlayerAudioTrackData track = result.get(0);
     assertEquals("0_0", track.getTrackId());
     assertNull(track.getLabel()); // Null values should be preserved
     assertNull(track.getLanguage()); // Null values should be preserved
-    assertFalse(track.getIsSelected());
+    assertFalse(track.isSelected());
     assertNull(track.getBitrate());
     assertNull(track.getSampleRate());
     assertNull(track.getChannelCount());
@@ -247,8 +247,8 @@ public class AudioTracksTest {
     assertEquals(2, result.size());
 
     // Verify track IDs are unique
-    Messages.ExoPlayerAudioTrackData track1 = result.get(0);
-    Messages.ExoPlayerAudioTrackData track2 = result.get(1);
+    ExoPlayerAudioTrackData track1 = result.get(0);
+    ExoPlayerAudioTrackData track2 = result.get(1);
     assertEquals("0_0", track1.getTrackId());
     assertEquals("0_1", track2.getTrackId());
     assertNotEquals(track1.getTrackId(), track2.getTrackId());
