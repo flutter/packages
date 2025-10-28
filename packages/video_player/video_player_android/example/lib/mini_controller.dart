@@ -444,11 +444,11 @@ class _VideoPlayerState extends State<VideoPlayer> {
     return _playerId == MiniController.kUninitializedPlayerId
         ? Container()
         : _VideoPlayerWithRotation(
-          rotation: widget.controller.value.rotationCorrection,
-          child: _platform.buildViewWithOptions(
-            VideoViewOptions(playerId: _playerId),
-          ),
-        );
+            rotation: widget.controller.value.rotationCorrection,
+            child: _platform.buildViewWithOptions(
+              VideoViewOptions(playerId: _playerId),
+            ),
+          );
   }
 }
 

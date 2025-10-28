@@ -9,7 +9,7 @@ package io.flutter.plugins
  * a native java unit test or a java class with a dart integration.
  *
  * See: https://github.com/flutter/flutter/blob/master/docs/ecosystem/testing/Plugin-Tests.md#enabling-android-ui-tests
- * for more infomation.
+ * for more information.
  */
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.CLASS)

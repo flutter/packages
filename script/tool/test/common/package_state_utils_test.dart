@@ -254,7 +254,7 @@ void main() {
 
     test(
         'does not requires changelog or version change for build.gradle '
-        'test-dependency-only changes', () async {
+        'test-dependency-only changes with space style', () async {
       final RepositoryPackage package =
           createFakePlugin('a_plugin', packagesDir);
 
@@ -281,7 +281,37 @@ void main() {
       expect(state.needsChangelogChange, false);
     });
 
-    test('requires changelog or version change for other build.gradle changes',
+    test(
+        'does not require changelog or version change for build.gradle '
+        'test-dependency-only changes with paren style', () async {
+      final RepositoryPackage package =
+          createFakePlugin('a_plugin', packagesDir);
+
+      const List<String> changedFiles = <String>[
+        'packages/a_plugin/android/build.gradle',
+      ];
+
+      final GitVersionFinder git = FakeGitVersionFinder(<String, List<String>>{
+        'packages/a_plugin/android/build.gradle': <String>[
+          '-  androidTestImplementation("androidx.test.espresso:espresso-core:3.2.0")',
+          '-  testImplementation("junit:junit:4.10.0")',
+          '+  androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")',
+          '+  testImplementation("junit:junit:4.13.2")',
+        ]
+      });
+
+      final PackageChangeState state = await checkPackageChangeState(package,
+          changedPaths: changedFiles,
+          relativePackagePath: 'packages/a_plugin/',
+          git: git);
+
+      expect(state.hasChanges, true);
+      expect(state.needsVersionChange, false);
+      expect(state.needsChangelogChange, false);
+    });
+
+    test(
+        'requires changelog or version change for other build.gradle changes with space style',
         () async {
       final RepositoryPackage package =
           createFakePlugin('a_plugin', packagesDir);
@@ -298,6 +328,37 @@ void main() {
           "+  testImplementation 'junit:junit:4.13.2'",
           "-  implementation 'com.google.android.gms:play-services-maps:18.0.0'",
           "+  implementation 'com.google.android.gms:play-services-maps:18.0.2'",
+        ]
+      });
+
+      final PackageChangeState state = await checkPackageChangeState(package,
+          changedPaths: changedFiles,
+          relativePackagePath: 'packages/a_plugin/',
+          git: git);
+
+      expect(state.hasChanges, true);
+      expect(state.needsVersionChange, true);
+      expect(state.needsChangelogChange, true);
+    });
+
+    test(
+        'requires changelog or version change for other build.gradle changes with paren style',
+        () async {
+      final RepositoryPackage package =
+          createFakePlugin('a_plugin', packagesDir);
+
+      const List<String> changedFiles = <String>[
+        'packages/a_plugin/android/build.gradle',
+      ];
+
+      final GitVersionFinder git = FakeGitVersionFinder(<String, List<String>>{
+        'packages/a_plugin/android/build.gradle': <String>[
+          '-  androidTestImplementation("androidx.test.espresso:espresso-core:3.2.0")',
+          '-  testImplementation("junit:junit:4.10.0")',
+          '+  androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")',
+          '+  testImplementation("junit:junit:4.13.2")',
+          '-  implementation("com.google.android.gms:play-services-maps:18.0.0")',
+          '+  implementation("com.google.android.gms:play-services-maps:18.0.2")',
         ]
       });
 

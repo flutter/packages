@@ -14,9 +14,9 @@ public final class CameraPlugin: NSObject, FlutterPlugin {
   private let registry: FlutterTextureRegistry
   private let messenger: FlutterBinaryMessenger
   private let globalEventAPI: FCPCameraGlobalEventApi
-  private let deviceDiscoverer: FLTCameraDeviceDiscovering
+  private let deviceDiscoverer: CameraDeviceDiscoverer
   private let permissionManager: FLTCameraPermissionManager
-  private let captureDeviceFactory: CaptureDeviceFactory
+  private let captureDeviceFactory: VideoCaptureDeviceFactory
   private let captureSessionFactory: CaptureSessionFactory
   private let captureDeviceInputFactory: FLTCaptureDeviceInputFactory
 
@@ -31,7 +31,7 @@ public final class CameraPlugin: NSObject, FlutterPlugin {
       registry: registrar.textures(),
       messenger: registrar.messenger(),
       globalAPI: FCPCameraGlobalEventApi(binaryMessenger: registrar.messenger()),
-      deviceDiscoverer: FLTDefaultCameraDeviceDiscoverer(),
+      deviceDiscoverer: DefaultCameraDeviceDiscoverer(),
       permissionManager: FLTCameraPermissionManager(
         permissionService: FLTDefaultPermissionService()),
       deviceFactory: { name in
@@ -50,9 +50,9 @@ public final class CameraPlugin: NSObject, FlutterPlugin {
     registry: FlutterTextureRegistry,
     messenger: FlutterBinaryMessenger,
     globalAPI: FCPCameraGlobalEventApi,
-    deviceDiscoverer: FLTCameraDeviceDiscovering,
+    deviceDiscoverer: CameraDeviceDiscoverer,
     permissionManager: FLTCameraPermissionManager,
-    deviceFactory: @escaping CaptureDeviceFactory,
+    deviceFactory: @escaping VideoCaptureDeviceFactory,
     captureSessionFactory: @escaping CaptureSessionFactory,
     captureDeviceInputFactory: FLTCaptureDeviceInputFactory,
     captureSessionQueue: DispatchQueue
@@ -145,27 +145,46 @@ extension CameraPlugin: FCPCameraApi {
       var reply: [FCPPlatformCameraDescription] = []
 
       for device in devices {
-        var lensFacing: FCPPlatformCameraLensDirection
-
-        switch device.position {
-        case .back:
-          lensFacing = .back
-        case .front:
-          lensFacing = .front
-        case .unspecified:
-          lensFacing = .external
-        @unknown default:
-          lensFacing = .external
-        }
-
+        let lensFacing = strongSelf.platformLensDirection(for: device)
+        let lensType = strongSelf.platformLensType(for: device)
         let cameraDescription = FCPPlatformCameraDescription.make(
           withName: device.uniqueID,
-          lensDirection: lensFacing
+          lensDirection: lensFacing,
+          lensType: lensType
         )
         reply.append(cameraDescription)
       }
 
       completion(reply, nil)
+    }
+  }
+
+  private func platformLensDirection(for device: FLTCaptureDevice) -> FCPPlatformCameraLensDirection
+  {
+    switch device.position {
+    case .back:
+      return .back
+    case .front:
+      return .front
+    case .unspecified:
+      return .external
+    @unknown default:
+      return .external
+    }
+  }
+
+  private func platformLensType(for device: FLTCaptureDevice) -> FCPPlatformCameraLensType {
+    switch device.deviceType {
+    case .builtInWideAngleCamera:
+      return .wide
+    case .builtInTelephotoCamera:
+      return .telephoto
+    case .builtInUltraWideCamera:
+      return .ultraWide
+    case .builtInDualWideCamera:
+      return .wide
+    default:
+      return .unknown
     }
   }
 
@@ -232,7 +251,7 @@ extension CameraPlugin: FCPCameraApi {
   ) {
     let mediaSettingsAVWrapper = FLTCamMediaSettingsAVWrapper()
 
-    let camConfiguration = FLTCamConfiguration(
+    let camConfiguration = CameraConfiguration(
       mediaSettings: settings,
       mediaSettingsWrapper: mediaSettingsAVWrapper,
       captureDeviceFactory: captureDeviceFactory,

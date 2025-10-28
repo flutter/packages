@@ -26,8 +26,8 @@ enum CameraTestUtils {
       enableAudio: true)
   }
 
-  /// Creates a test `FLTCamConfiguration` with a default mock setup.
-  static func createTestCameraConfiguration() -> FLTCamConfiguration {
+  /// Creates a test `CameraConfiguration` with a default mock setup.
+  static func createTestCameraConfiguration() -> CameraConfiguration {
     let captureSessionQueue = DispatchQueue(label: "capture_session_queue")
 
     let videoSessionMock = MockCaptureSession()
@@ -56,7 +56,7 @@ enum CameraTestUtils {
       currentFormat = format
     }
 
-    let configuration = FLTCamConfiguration(
+    let configuration = CameraConfiguration(
       mediaSettings: createDefaultMediaSettings(
         resolutionPreset: FCPPlatformResolutionPreset.medium),
       mediaSettingsWrapper: FLTCamMediaSettingsAVWrapper(),
@@ -72,7 +72,7 @@ enum CameraTestUtils {
     configuration.audioCaptureSession = audioSessionMock
     configuration.orientation = .portrait
 
-    configuration.assetWriterFactory = { _, _, _ in MockAssetWriter() }
+    configuration.assetWriterFactory = { _, _ in MockAssetWriter() }
 
     configuration.inputPixelBufferAdaptorFactory = { _, _ in
       MockAssetWriterInputPixelBufferAdaptor()
@@ -81,7 +81,7 @@ enum CameraTestUtils {
     return configuration
   }
 
-  static func createTestCamera(_ configuration: FLTCamConfiguration) -> DefaultCamera {
+  static func createTestCamera(_ configuration: CameraConfiguration) -> DefaultCamera {
     return (try? DefaultCamera(configuration: configuration))!
   }
 
