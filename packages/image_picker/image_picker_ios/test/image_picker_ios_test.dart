@@ -3,12 +3,11 @@
 // found in the LICENSE file.
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/src/services/binary_messenger.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:image_picker_ios/image_picker_ios.dart';
 import 'package:image_picker_ios/src/messages.g.dart';
 import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
-
-import 'test_api.g.dart';
 
 @immutable
 class _LoggedMethodCall {
@@ -32,7 +31,7 @@ class _LoggedMethodCall {
   }
 }
 
-class _ApiLogger implements TestHostImagePickerApi {
+class _ApiLogger implements ImagePickerApi {
   // The value to return from future calls.
   dynamic returnValue = '';
   final List<_LoggedMethodCall> calls = <_LoggedMethodCall>[];
@@ -137,17 +136,25 @@ class _ApiLogger implements TestHostImagePickerApi {
     );
     return returnValue as List<String>;
   }
+
+  @override
+  // ignore: non_constant_identifier_names
+  BinaryMessenger? get pigeonVar_binaryMessenger => null;
+
+  @override
+  // ignore: non_constant_identifier_names
+  String get pigeonVar_messageChannelSuffix => '';
 }
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  final ImagePickerIOS picker = ImagePickerIOS();
+  late ImagePickerIOS picker;
   late _ApiLogger log;
 
   setUp(() {
     log = _ApiLogger();
-    TestHostImagePickerApi.setUp(log);
+    picker = ImagePickerIOS(api: log);
   });
 
   test('registration', () async {
