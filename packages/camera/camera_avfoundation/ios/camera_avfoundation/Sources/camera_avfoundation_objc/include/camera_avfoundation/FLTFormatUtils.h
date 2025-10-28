@@ -2,11 +2,15 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "FLTCamConfiguration.h"
 #import "FLTCaptureDevice.h"
 #import "FLTCaptureDeviceFormat.h"
+#import "messages.g.h"
 
 NS_ASSUME_NONNULL_BEGIN
+
+/// Determines the video dimensions (width and height) for a given capture device format.
+/// Used in tests to mock CMVideoFormatDescriptionGetDimensions.
+typedef CMVideoDimensions (^VideoDimensionsForFormat)(NSObject<FLTCaptureDeviceFormat> *);
 
 // Finds format with same resolution as current activeFormat in captureDevice for which
 // bestFrameRateForFormat returned frame rate closest to mediaSettings.framesPerSecond.
