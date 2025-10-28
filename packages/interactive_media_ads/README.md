@@ -11,7 +11,7 @@ a separate video player positioned on top of the app's content video player.
 
 |             | Android | iOS   |
 |-------------|---------|-------|
-| **Support** | SDK 21+ | 12.0+ |
+| **Support** | SDK 21+ | 13.0+ |
 
 **NOTE:**
 * Background Audio ads and Google Dynamic Ad Insertion methods are currently not supported.
@@ -236,41 +236,40 @@ Widget build(BuildContext context) {
     body: Center(
       child: SizedBox(
         width: 300,
-        child:
-            !_contentVideoController.value.isInitialized
-                ? Container()
-                : AspectRatio(
-                  aspectRatio: _contentVideoController.value.aspectRatio,
-                  child: Stack(
-                    children: <Widget>[
-                      // The display container must be on screen before any Ads can be
-                      // loaded and can't be removed between ads. This handles clicks for
-                      // ads.
-                      _adDisplayContainer,
-                      if (_shouldShowContentVideo)
-                        VideoPlayer(_contentVideoController),
-                    ],
-                  ),
+        child: !_contentVideoController.value.isInitialized
+            ? Container()
+            : AspectRatio(
+                aspectRatio: _contentVideoController.value.aspectRatio,
+                child: Stack(
+                  children: <Widget>[
+                    // The display container must be on screen before any Ads can be
+                    // loaded and can't be removed between ads. This handles clicks for
+                    // ads.
+                    _adDisplayContainer,
+                    if (_shouldShowContentVideo)
+                      VideoPlayer(_contentVideoController),
+                  ],
                 ),
+              ),
       ),
     ),
     floatingActionButton:
         _contentVideoController.value.isInitialized && _shouldShowContentVideo
-            ? FloatingActionButton(
-              onPressed: () {
-                setState(() {
-                  _contentVideoController.value.isPlaying
-                      ? _contentVideoController.pause()
-                      : _contentVideoController.play();
-                });
-              },
-              child: Icon(
+        ? FloatingActionButton(
+            onPressed: () {
+              setState(() {
                 _contentVideoController.value.isPlaying
-                    ? Icons.pause
-                    : Icons.play_arrow,
-              ),
-            )
-            : null,
+                    ? _contentVideoController.pause()
+                    : _contentVideoController.play();
+              });
+            },
+            child: Icon(
+              _contentVideoController.value.isPlaying
+                  ? Icons.pause
+                  : Icons.play_arrow,
+            ),
+          )
+        : null,
   );
 }
 

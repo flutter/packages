@@ -9,8 +9,8 @@ import PackageDescription
 let package = Package(
   name: "shared_preferences_foundation",
   platforms: [
-    .iOS("12.0"),
-    .macOS("10.14"),
+    .iOS("13.0"),
+    .macOS("10.15"),
   ],
   products: [
     .library(name: "shared-preferences-foundation", targets: ["shared_preferences_foundation"])
