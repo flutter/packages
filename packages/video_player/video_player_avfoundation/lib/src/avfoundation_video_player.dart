@@ -188,10 +188,9 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
         ),
         'completed' => VideoEvent(eventType: VideoEventType.completed),
         'bufferingUpdate' => VideoEvent(
-          buffered:
-              (map['values'] as List<dynamic>)
-                  .map<DurationRange>(_toDurationRange)
-                  .toList(),
+          buffered: (map['values'] as List<dynamic>)
+              .map<DurationRange>(_toDurationRange)
+              .toList(),
           eventType: VideoEventType.bufferingUpdate,
         ),
         'bufferingStart' => VideoEvent(
@@ -214,8 +213,9 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
 
   @override
   Future<List<VideoAudioTrack>> getAudioTracks(int playerId) async {
-    final NativeAudioTrackData nativeData =
-        await _playerWith(id: playerId).getAudioTracks();
+    final NativeAudioTrackData nativeData = await _playerWith(
+      id: playerId,
+    ).getAudioTracks();
     final List<VideoAudioTrack> tracks = <VideoAudioTrack>[];
 
     // Convert asset tracks to VideoAudioTrack
@@ -282,10 +282,9 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
         textureId: textureId,
       ),
       VideoPlayerPlatformViewState() => _buildPlatformView(playerId),
-      null =>
-        throw Exception(
-          'Could not find corresponding view type for playerId: $playerId',
-        ),
+      null => throw Exception(
+        'Could not find corresponding view type for playerId: $playerId',
+      ),
     };
   }
 

@@ -13,6 +13,8 @@ import androidx.media3.common.MediaItem;
 import androidx.media3.common.Tracks;
 import androidx.media3.exoplayer.ExoPlayer;
 import com.google.common.collect.ImmutableList;
+import io.flutter.plugins.videoplayer.ExoPlayerAudioTrackData;
+import io.flutter.plugins.videoplayer.NativeAudioTrackData;
 import io.flutter.view.TextureRegistry;
 import java.lang.reflect.Field;
 import java.util.List;
@@ -156,8 +158,8 @@ public class AudioTracksTest {
     when(mockExoPlayer.getCurrentTracks()).thenReturn(mockTracks);
 
     // Test the method
-    Messages.NativeAudioTrackData nativeData = videoPlayer.getAudioTracks();
-    List<Messages.ExoPlayerAudioTrackData> result = nativeData.getExoPlayerTracks();
+    NativeAudioTrackData nativeData = videoPlayer.getAudioTracks();
+    List<ExoPlayerAudioTrackData> result = nativeData.getExoPlayerTracks();
 
     // Verify results
     assertNotNull(result);
@@ -189,8 +191,8 @@ public class AudioTracksTest {
     when(mockExoPlayer.getCurrentTracks()).thenReturn(mockTracks);
 
     // Test the method
-    Messages.NativeAudioTrackData nativeData = videoPlayer.getAudioTracks();
-    List<Messages.ExoPlayerAudioTrackData> result = nativeData.getExoPlayerTracks();
+    NativeAudioTrackData nativeData = videoPlayer.getAudioTracks();
+    List<ExoPlayerAudioTrackData> result = nativeData.getExoPlayerTracks();
 
     // Verify results
     assertNotNull(result);
@@ -239,8 +241,8 @@ public class AudioTracksTest {
     when(mockExoPlayer.getCurrentTracks()).thenReturn(mockTracks);
 
     // Test the method
-    Messages.NativeAudioTrackData nativeData = videoPlayer.getAudioTracks();
-    List<Messages.ExoPlayerAudioTrackData> result = nativeData.getExoPlayerTracks();
+    NativeAudioTrackData nativeData = videoPlayer.getAudioTracks();
+    List<ExoPlayerAudioTrackData> result = nativeData.getExoPlayerTracks();
 
     // Verify results
     assertNotNull(result);
@@ -276,8 +278,8 @@ public class AudioTracksTest {
     when(mockExoPlayer.getCurrentTracks()).thenReturn(mockTracks);
 
     // Test the method
-    Messages.NativeAudioTrackData nativeData = videoPlayer.getAudioTracks();
-    List<Messages.ExoPlayerAudioTrackData> result = nativeData.getExoPlayerTracks();
+    NativeAudioTrackData nativeData = videoPlayer.getAudioTracks();
+    List<ExoPlayerAudioTrackData> result = nativeData.getExoPlayerTracks();
 
     // Verify results
     assertNotNull(result);
@@ -311,14 +313,14 @@ public class AudioTracksTest {
     when(mockExoPlayer.getCurrentTracks()).thenReturn(mockTracks);
 
     // Test the method
-    Messages.NativeAudioTrackData nativeData = videoPlayer.getAudioTracks();
-    List<Messages.ExoPlayerAudioTrackData> result = nativeData.getExoPlayerTracks();
+    NativeAudioTrackData nativeData = videoPlayer.getAudioTracks();
+    List<ExoPlayerAudioTrackData> result = nativeData.getExoPlayerTracks();
 
     // Verify results
     assertNotNull(result);
     assertEquals(1, result.size());
 
-    Messages.ExoPlayerAudioTrackData track = result.get(0);
+    ExoPlayerAudioTrackData track = result.get(0);
     assertEquals(Long.valueOf(1536000), track.getBitrate());
     assertEquals(Long.valueOf(96000), track.getSampleRate());
     assertEquals(Long.valueOf(8), track.getChannelCount());
@@ -347,8 +349,8 @@ public class AudioTracksTest {
 
     // Measure performance
     long startTime = System.currentTimeMillis();
-    Messages.NativeAudioTrackData nativeData = videoPlayer.getAudioTracks();
-    List<Messages.ExoPlayerAudioTrackData> result = nativeData.getExoPlayerTracks();
+    NativeAudioTrackData nativeData = videoPlayer.getAudioTracks();
+    List<ExoPlayerAudioTrackData> result = nativeData.getExoPlayerTracks();
     long endTime = System.currentTimeMillis();
 
     // Verify results
