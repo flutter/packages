@@ -287,7 +287,8 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
     case AVPlayerItemStatusReadyToPlay:
       if (!_isInitialized) {
         [item addOutput:_videoOutput];
-        [self reportInitializedIfReadyToPlay];
+        [self reportInitialized];
+        [self updatePlayingState];
       }
       break;
   }
@@ -361,14 +362,13 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   [self.eventListener videoPlayerDidErrorWithMessage:message];
 }
 
-- (void)reportInitializedIfReadyToPlay {
+- (void)reportInitialized {
   AVPlayerItem *currentItem = self.player.currentItem;
   NSAssert(currentItem.status == AVPlayerItemStatusReadyToPlay,
            @"reportInitializedIfReadyToPlay was called when the item wasn't ready to play.");
   NSAssert(!_isInitialized, @"reportInitializedIfReadyToPlay should only be called once.");
 
   _isInitialized = YES;
-  [self updatePlayingState];
   [self.eventListener videoPlayerDidInitializeWithDuration:self.duration
                                                       size:currentItem.presentationSize];
 }

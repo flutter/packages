@@ -1,8 +1,3 @@
-## 2.8.14
-
-* Fixes an issue in the example app that some widgets stop updating after GlobalKey reparenting.
-* Updates the `VideoProgressIndicator` widget in the example app to handle zero-duration videos.
-
 ## 2.8.13
 
 * Bumps com.android.tools.build:gradle to 8.12.1.
