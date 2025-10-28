@@ -186,7 +186,7 @@ class BranchForBatchReleaseCommand extends PackageCommand {
 
     newChangelog.writeln(newHeader);
     newChangelog.writeln();
-    newChangelog.writeln(newEntries.join('\n'));
+    newChangelog.writeln(newEntries.join());
     newChangelog.writeln();
     newChangelog.write(oldChangelogContent);
 
