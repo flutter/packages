@@ -9,6 +9,7 @@ import 'package:file/file.dart';
 import 'package:file/local.dart';
 
 import 'analyze_command.dart';
+import 'branch_for_batch_release_command.dart';
 import 'build_examples_command.dart';
 import 'common/core.dart';
 import 'create_all_packages_app_command.dart';
@@ -38,7 +39,6 @@ import 'update_excerpts_command.dart';
 import 'update_min_sdk_command.dart';
 import 'update_release_info_command.dart';
 import 'version_check_command.dart';
-import 'batch_command.dart';
 
 void main(List<String> args) {
   const FileSystem fileSystem = LocalFileSystem();
@@ -88,7 +88,7 @@ void main(List<String> args) {
     ..addCommand(UpdateMinSdkCommand(packagesDir))
     ..addCommand(UpdateReleaseInfoCommand(packagesDir))
     ..addCommand(VersionCheckCommand(packagesDir))
-    ..addCommand(BatchCommand(packagesDir));
+    ..addCommand(BranchForBatchReleaseCommand(packagesDir));
 
   commandRunner.run(args).catchError((Object e) {
     final ToolExit toolExit = e as ToolExit;

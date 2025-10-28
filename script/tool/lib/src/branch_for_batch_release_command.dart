@@ -21,21 +21,15 @@ const int _kGitFailedToPush = 3;
 
 const String _kTemplateFileName = 'template.yaml';
 
-/// A command to create a pull request for a single package release.
-class BatchCommand extends PackageCommand {
-  /// Creates a new `batch` command.
-  BatchCommand(
+/// A command to create a remote branch with release changes for a single package.
+class BranchForBatchReleaseCommand extends PackageCommand {
+  /// Creates a new `branch-for-batch-release` command.
+  BranchForBatchReleaseCommand(
     super.packagesDir, {
     super.processRunner,
     super.platform,
     super.gitDir,
   }) {
-    argParser.addOption(
-      'package',
-      mandatory: true,
-      abbr: 'p',
-      help: 'The package to create a release PR for.',
-    );
     argParser.addOption(
       'branch',
       mandatory: true,
@@ -45,38 +39,42 @@ class BatchCommand extends PackageCommand {
   }
 
   @override
-  final String name = 'batch';
+  final String name = 'branch-for-batch-release';
 
   @override
   final String description = 'Creates a release PR for a single package.';
 
   @override
   Future<void> run() async {
-    final String packageName = argResults!['package'] as String;
     final String branchName = argResults!['branch'] as String;
+
+    final List<RepositoryPackage> packages = await getTargetPackages()
+        .map((PackageEnumerationEntry e) => e.package)
+        .toList();
+    if (packages.length != 1) {
+      printError('Exactly one package must be specified.');
+      throw ToolExit(2);
+    }
+    final RepositoryPackage package = packages.single;
 
     final GitDir repository = await gitDir;
 
-    print('Fetching package "$packageName"...');
-    final RepositoryPackage package = await _getPackage(packageName);
-
-    print('Checking for unreleased changes...');
-    final UnreleasedChanges unreleasedChanges =
-        await _getUnreleasedChanges(package);
-    if (unreleasedChanges.entries.isEmpty) {
-      printError('No unreleased changes found for $packageName.');
+    print('Parsing package "${package.displayName}"...');
+    final PendingChangelogs pendingChangelogs =
+        await _getPendingChangelogs(package);
+    if (pendingChangelogs.entries.isEmpty) {
+      print('No pending changelogs found for ${package.displayName}.');
       return;
     }
 
     final Pubspec pubspec =
         Pubspec.parse(package.pubspecFile.readAsStringSync());
-    print('Determining release version...');
     final ReleaseInfo releaseInfo =
-        _getReleaseInfo(unreleasedChanges.entries, pubspec.version!);
+        _getReleaseInfo(pendingChangelogs.entries, pubspec.version!);
 
     if (releaseInfo.newVersion == null) {
-      printError('No version change specified in unreleased changelog for '
-          '$packageName.');
+      print('No version change specified in pending changelogs for '
+          '${package.displayName}.');
       return;
     }
 
@@ -85,49 +83,44 @@ class BatchCommand extends PackageCommand {
       repository: repository,
       package: package,
       branchName: branchName,
-      unreleasedFiles: unreleasedChanges.files,
+      pendingChangelogFiles: pendingChangelogs.files,
       releaseInfo: releaseInfo,
     );
   }
 
-  Future<RepositoryPackage> _getPackage(String packageName) async {
-    return getTargetPackages()
-        .map<RepositoryPackage>(
-            (PackageEnumerationEntry entry) => entry.package)
-        .firstWhere((RepositoryPackage p) => p.displayName.split('/').last == packageName);
-  }
-
-  Future<UnreleasedChanges> _getUnreleasedChanges(
+  Future<PendingChangelogs> _getPendingChangelogs(
       RepositoryPackage package) async {
-    final Directory unreleasedDir =
-        package.directory.childDirectory('unreleased');
-    if (!unreleasedDir.existsSync()) {
-      printError('No unreleased folder found for ${package.displayName}.');
+    final Directory pendingChangelogsDir =
+        package.directory.childDirectory('pending_changelogs');
+    if (!pendingChangelogsDir.existsSync()) {
+      printError(
+          'No pending_changelogs folder found for ${package.displayName}.');
       throw ToolExit(_kExitPackageMalformed);
     }
-    final List<File> unreleasedFiles = unreleasedDir
+    final List<File> pendingChangelogFiles = pendingChangelogsDir
         .listSync()
         .whereType<File>()
-        .where((File f) => f.basename.endsWith('.yaml') && f.basename != _kTemplateFileName)
+        .where((File f) =>
+            f.basename.endsWith('.yaml') && f.basename != _kTemplateFileName)
         .toList();
     try {
-      final List<UnreleasedEntry> entries = unreleasedFiles
-          .map<UnreleasedEntry>(
-              (File f) => UnreleasedEntry.parse(f.readAsStringSync()))
+      final List<PendingChangelogEntry> entries = pendingChangelogFiles
+          .map<PendingChangelogEntry>(
+              (File f) => PendingChangelogEntry.parse(f.readAsStringSync()))
           .toList();
-      return UnreleasedChanges(entries, unreleasedFiles);
+      return PendingChangelogs(entries, pendingChangelogFiles);
     } on FormatException catch (e) {
-      printError('Malformed unreleased changelog file: $e');
+      printError('Malformed pending changelog file: $e');
       throw ToolExit(_kExitPackageMalformed);
     }
   }
 
   ReleaseInfo _getReleaseInfo(
-      List<UnreleasedEntry> unreleasedEntries, Version oldVersion) {
+      List<PendingChangelogEntry> pendingChangelogEntries, Version oldVersion) {
     final List<String> changelogs = <String>[];
     int versionIndex = VersionChange.skip.index;
-    for (final UnreleasedEntry entry in unreleasedEntries) {
-      changelogs.addAll(entry.changelog);
+    for (final PendingChangelogEntry entry in pendingChangelogEntries) {
+      changelogs.add(entry.changelog);
       versionIndex = math.min(versionIndex, entry.version.index);
     }
     final VersionChange effectiveVersionChange =
@@ -163,24 +156,15 @@ class BatchCommand extends PackageCommand {
     required GitDir repository,
     required RepositoryPackage package,
     required String branchName,
-    required List<File> unreleasedFiles,
+    required List<File> pendingChangelogFiles,
     required ReleaseInfo releaseInfo,
   }) async {
-    print('  Deleting old branch "$branchName"...');
-    final io.ProcessResult deleteBranchResult =
-        await repository.runCommand(<String>['branch', '-D', branchName]);
-    if (deleteBranchResult.exitCode != 0) {
-      printError(
-          'Failed to delete branch $branchName: ${deleteBranchResult.stderr}');
-      throw ToolExit(_kGitFailedToPush);
-    }
-
     print('  Creating new branch "$branchName"...');
-    final io.ProcessResult checkoutResult = await repository.runCommand(
-        <String>['checkout', '-b', branchName]);
+    final io.ProcessResult checkoutResult =
+        await repository.runCommand(<String>['checkout', '-b', branchName]);
     if (checkoutResult.exitCode != 0) {
       printError(
-          'Failed to checkout branch $branchName: ${checkoutResult.stderr}');
+          'Failed to create branch $branchName: ${checkoutResult.stderr}');
       throw ToolExit(_kGitFailedToPush);
     }
 
@@ -188,40 +172,28 @@ class BatchCommand extends PackageCommand {
     // Update pubspec.yaml.
     final YamlEditor editablePubspec =
         YamlEditor(package.pubspecFile.readAsStringSync());
-    editablePubspec.update(<String>['version'], releaseInfo.newVersion.toString());
+    editablePubspec
+        .update(<String>['version'], releaseInfo.newVersion.toString());
     package.pubspecFile.writeAsStringSync(editablePubspec.toString());
 
     print('  Updating CHANGELOG.md...');
     // Update CHANGELOG.md.
     final String newHeader = '## ${releaseInfo.newVersion}';
-    final List<String> newEntries = releaseInfo.changelogs
-        .map((String line) => '- $line')
-        .toList();
+    final List<String> newEntries = releaseInfo.changelogs;
 
-    final List<String> changelogLines = package.changelogFile.readAsLinesSync();
+    final String oldChangelogContent = package.changelogFile.readAsStringSync();
     final StringBuffer newChangelog = StringBuffer();
 
-    bool inserted = false;
-    for (final String line in changelogLines) {
-      if (!inserted && line.startsWith('## ')) {
-        newChangelog.writeln(newHeader);
-        newChangelog.writeln();
-        newChangelog.writeln(newEntries.join('\n'));
-        newChangelog.writeln();
-        inserted = true;
-      }
-      newChangelog.writeln(line);
-    }
-
-    if (!inserted) {
-      printError("Can't parse existing CHANGELOG.md.");
-      throw ToolExit(_kExitPackageMalformed);
-    }
+    newChangelog.writeln(newHeader);
+    newChangelog.writeln();
+    newChangelog.writeln(newEntries.join('\n'));
+    newChangelog.writeln();
+    newChangelog.write(oldChangelogContent);
 
     package.changelogFile.writeAsStringSync(newChangelog.toString());
 
-    print('  Removing unreleased change files...');
-    for (final File file in unreleasedFiles) {
+    print('  Removing pending changelog files...');
+    for (final File file in pendingChangelogFiles) {
       final io.ProcessResult rmResult =
           await repository.runCommand(<String>['rm', file.path]);
       if (rmResult.exitCode != 0) {
@@ -231,8 +203,8 @@ class BatchCommand extends PackageCommand {
     }
 
     print('  Staging changes...');
-    final io.ProcessResult addResult = await repository
-        .runCommand(<String>['add', package.pubspecFile.path, package.changelogFile.path]);
+    final io.ProcessResult addResult = await repository.runCommand(
+        <String>['add', package.pubspecFile.path, package.changelogFile.path]);
     if (addResult.exitCode != 0) {
       printError('Failed to git add: ${addResult.stderr}');
       throw ToolExit(_kGitFailedToPush);
@@ -250,8 +222,8 @@ class BatchCommand extends PackageCommand {
     }
 
     print('  Pushing to remote...');
-    final io.ProcessResult pushResult =
-        await repository.runCommand(<String>['push', 'origin', branchName, '--force']);
+    final io.ProcessResult pushResult = await repository
+        .runCommand(<String>['push', 'origin', branchName, '--force']);
     if (pushResult.exitCode != 0) {
       printError('Failed to push to $branchName: ${pushResult.stderr}');
       throw ToolExit(_kGitFailedToPush);
@@ -259,15 +231,15 @@ class BatchCommand extends PackageCommand {
   }
 }
 
-/// A data class for unreleased changes.
-class UnreleasedChanges {
+/// A data class for pending changelogs.
+class PendingChangelogs {
   /// Creates a new instance.
-  UnreleasedChanges(this.entries, this.files);
+  PendingChangelogs(this.entries, this.files);
 
-  /// The parsed unreleased entries.
-  final List<UnreleasedEntry> entries;
+  /// The parsed pending changelog entries.
+  final List<PendingChangelogEntry> entries;
 
-  /// The files that the unreleased entries were parsed from.
+  /// The files that the pending changelog entries were parsed from.
   final List<File> files;
 }
 
@@ -298,25 +270,25 @@ enum VersionChange {
   skip,
 }
 
-/// Represents a single entry in the unreleased changelog.
-class UnreleasedEntry {
-  /// Creates a new unreleased entry.
-  UnreleasedEntry({required this.changelog, required this.version});
+/// Represents a single entry in the pending changelog.
+class PendingChangelogEntry {
+  /// Creates a new pending changelog entry.
+  PendingChangelogEntry({required this.changelog, required this.version});
 
-  /// Creates an UnreleasedEntry from a YAML string.
-  factory UnreleasedEntry.parse(String yamlContent) {
+  /// Creates a PendingChangelogEntry from a YAML string.
+  factory PendingChangelogEntry.parse(String yamlContent) {
     final dynamic yaml = loadYaml(yamlContent);
     if (yaml is! YamlMap) {
-      throw FormatException('Expected a YAML map, but found ${yaml.runtimeType}.');
+      throw FormatException(
+          'Expected a YAML map, but found ${yaml.runtimeType}.');
     }
 
     final dynamic changelogYaml = yaml['changelog'];
-    if (changelogYaml is! YamlList) {
-      throw FormatException('Expected "changelog" to be a list, but found ${changelogYaml.runtimeType}.');
+    if (changelogYaml is! String) {
+      throw FormatException(
+          'Expected "changelog" to be a string, but found ${changelogYaml.runtimeType}.');
     }
-    final List<String> changelog = changelogYaml.nodes
-        .map((YamlNode node) => node.value as String)
-        .toList();
+    final String changelog = changelogYaml;
 
     final String? versionString = yaml['version'] as String?;
     if (versionString == null) {
@@ -328,11 +300,11 @@ class UnreleasedEntry {
           throw FormatException('Invalid version type: $versionString'),
     );
 
-    return UnreleasedEntry(changelog: changelog, version: version);
+    return PendingChangelogEntry(changelog: changelog, version: version);
   }
 
   /// The changelog messages for this entry.
-  final List<String> changelog;
+  final String changelog;
 
   /// The type of version change for this entry.
   final VersionChange version;

@@ -25,9 +25,7 @@ jobs:
         run: |
           git config --global user.name ${{ secrets.USER_NAME }}
           git config --global user.email ${{ secrets.USER_EMAIL }}
-          dart ./script/tool/lib/src/main.dart batch --package=${{ github.event.client_payload.package }} --branch=${{ env.BRANCH_NAME }}"
-      - name: Give tool a minute to create the branch
-        run: sleep 60s
+          dart ./script/tool/lib/src/main.dart branch-for-batch-release --packages=${{ github.event.client_payload.package }} --branch=${{ env.BRANCH_NAME }}"
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v7
         with:
