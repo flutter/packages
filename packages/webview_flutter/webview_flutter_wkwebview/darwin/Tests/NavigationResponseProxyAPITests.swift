@@ -36,6 +36,10 @@ class TestNavigationResponse: WKNavigationResponse {
 
   let testResponse = URLResponse()
 
+  private override init() {
+    super.init()
+  }
+
   override var isForMainFrame: Bool {
     return true
   }
