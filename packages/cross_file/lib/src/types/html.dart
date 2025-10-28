@@ -176,6 +176,28 @@ class XFile extends XFileBase {
     return readAsBytes().then(encoding.decode);
   }
 
+  @override
+  Future<bool> exists() async {
+    try {
+      await _blob;
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  @override
+  Future<bool> delete() async {
+    // On web, deleting a file is not possible.
+    // However, we can revoke the ObjectUrl to free up memory.
+    if (_browserBlob != null) {
+      URL.revokeObjectURL(_path);
+      _browserBlob = null;
+      return true;
+    }
+    return false;
+  }
+
   // TODO(dit): https://github.com/flutter/flutter/issues/91867 Implement openRead properly.
   @override
   Stream<Uint8List> openRead([int? start, int? end]) async* {
