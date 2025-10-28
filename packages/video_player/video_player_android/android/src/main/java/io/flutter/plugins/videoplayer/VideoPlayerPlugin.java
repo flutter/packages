@@ -12,12 +12,6 @@ import io.flutter.FlutterInjector;
 import io.flutter.Log;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugin.common.EventChannel;
-import io.flutter.plugins.videoplayer.Messages.AndroidVideoPlayerApi;
-import io.flutter.plugins.videoplayer.Messages.CreationOptions;
-import io.flutter.plugins.videoplayer.Messages.PlatformVideoFormat;
-import io.flutter.plugins.videoplayer.Messages.TexturePlayerIds;
-import io.flutter.plugins.videoplayer.Messages.VideoPlayerInstanceApi;
 import io.flutter.plugins.videoplayer.platformview.PlatformVideoViewFactory;
 import io.flutter.plugins.videoplayer.platformview.PlatformViewVideoPlayer;
 import io.flutter.plugins.videoplayer.texture.TextureVideoPlayer;
@@ -85,14 +79,15 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
   }
 
   @Override
-  public @NonNull Long createForPlatformView(@NonNull CreationOptions options) {
+  public long createForPlatformView(@NonNull CreationOptions options) {
     final VideoAsset videoAsset = videoAssetWithOptions(options);
 
     long id = nextPlayerIdentifier++;
+    final String streamInstance = Long.toString(id);
     VideoPlayer videoPlayer =
         PlatformViewVideoPlayer.create(
             flutterState.applicationContext,
-            VideoPlayerEventCallbacks.bindTo(createEventChannel(id)),
+            VideoPlayerEventCallbacks.bindTo(flutterState.binaryMessenger, streamInstance),
             videoAsset,
             sharedOptions);
 
@@ -105,17 +100,18 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
     final VideoAsset videoAsset = videoAssetWithOptions(options);
 
     long id = nextPlayerIdentifier++;
+    final String streamInstance = Long.toString(id);
     TextureRegistry.SurfaceProducer handle = flutterState.textureRegistry.createSurfaceProducer();
     VideoPlayer videoPlayer =
         TextureVideoPlayer.create(
             flutterState.applicationContext,
-            VideoPlayerEventCallbacks.bindTo(createEventChannel(id)),
+            VideoPlayerEventCallbacks.bindTo(flutterState.binaryMessenger, streamInstance),
             handle,
             videoAsset,
             sharedOptions);
 
     registerPlayerInstance(videoPlayer, id);
-    return new TexturePlayerIds.Builder().setPlayerId(id).setTextureId(handle.id()).build();
+    return new TexturePlayerIds(id, handle.id());
   }
 
   private @NonNull VideoAsset videoAssetWithOptions(@NonNull CreationOptions options) {
@@ -150,16 +146,11 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
     // disposed.
     BinaryMessenger messenger = flutterState.binaryMessenger;
     final String channelSuffix = Long.toString(id);
-    VideoPlayerInstanceApi.setUp(messenger, channelSuffix, player);
-    player.setDisposeHandler(() -> VideoPlayerInstanceApi.setUp(messenger, channelSuffix, null));
+    VideoPlayerInstanceApi.Companion.setUp(messenger, player, channelSuffix);
+    player.setDisposeHandler(
+        () -> VideoPlayerInstanceApi.Companion.setUp(messenger, null, channelSuffix));
 
     videoPlayers.put(id, player);
-  }
-
-  @NonNull
-  private EventChannel createEventChannel(long id) {
-    return new EventChannel(
-        flutterState.binaryMessenger, "flutter.io/videoPlayer/videoEvents" + id);
   }
 
   @NonNull
@@ -179,14 +170,14 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
   }
 
   @Override
-  public void dispose(@NonNull Long playerId) {
+  public void dispose(long playerId) {
     VideoPlayer player = getPlayer(playerId);
     player.dispose();
     videoPlayers.remove(playerId);
   }
 
   @Override
-  public void setMixWithOthers(@NonNull Boolean mixWithOthers) {
+  public void setMixWithOthers(boolean mixWithOthers) {
     sharedOptions.mixWithOthers = mixWithOthers;
   }
 
@@ -226,11 +217,11 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
     }
 
     void startListening(VideoPlayerPlugin methodCallHandler, BinaryMessenger messenger) {
-      AndroidVideoPlayerApi.setUp(messenger, methodCallHandler);
+      AndroidVideoPlayerApi.Companion.setUp(messenger, methodCallHandler);
     }
 
     void stopListening(BinaryMessenger messenger) {
-      AndroidVideoPlayerApi.setUp(messenger, null);
+      AndroidVideoPlayerApi.Companion.setUp(messenger, null);
     }
   }
 }
