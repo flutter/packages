@@ -176,27 +176,17 @@ public final class VideoPlayerTest {
   }
 
   @Test
-  public void getCurrentPosition() {
+  public void getPlaybackState() {
     VideoPlayer videoPlayer = createVideoPlayer();
 
     final long playbackPosition = 20L;
-    when(mockExoPlayer.getCurrentPosition()).thenReturn(playbackPosition);
-
-    final Long position = videoPlayer.getCurrentPosition();
-    assertEquals(playbackPosition, position.longValue());
-
-    videoPlayer.dispose();
-  }
-
-  @Test
-  public void getBufferedPosition() {
-    VideoPlayer videoPlayer = createVideoPlayer();
-
     final long bufferedPosition = 10L;
+    when(mockExoPlayer.getCurrentPosition()).thenReturn(playbackPosition);
     when(mockExoPlayer.getBufferedPosition()).thenReturn(bufferedPosition);
 
-    final Long position = videoPlayer.getBufferedPosition();
-    assertEquals(bufferedPosition, position.longValue());
+    final Messages.PlaybackState state = videoPlayer.getPlaybackState();
+    assertEquals(playbackPosition, state.getPlayPosition().longValue());
+    assertEquals(bufferedPosition, state.getBufferPosition().longValue());
 
     videoPlayer.dispose();
   }

@@ -1,9 +1,6 @@
-## 2.8.17
+## 2.9.0
 
-* Moves video event processing logic to Dart, and fixes an issue where buffer
-  range would not be updated for a paused video.
-* Switches to Kotlin for Pigeon-generated code.
-* Adopts type-safe event channels for internal communication.
+* Implements `getAudioTracks()` and `selectAudioTrack()` methods for Android using ExoPlayer.
 
 ## 2.8.16
 

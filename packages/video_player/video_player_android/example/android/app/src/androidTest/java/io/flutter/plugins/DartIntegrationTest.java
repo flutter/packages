@@ -14,7 +14,7 @@ import java.lang.annotation.Target;
  * a native java unit test or a java class with a dart integration.
  *
  * See: https://github.com/flutter/flutter/blob/master/docs/ecosystem/testing/Plugin-Tests.md#enabling-android-ui-tests
- * for more information.
+ * for more infomation.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

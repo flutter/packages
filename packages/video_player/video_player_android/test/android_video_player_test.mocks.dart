@@ -29,6 +29,11 @@ class _FakeTexturePlayerIds_0 extends _i1.SmartFake
     : super(parent, parentInvocation);
 }
 
+class _FakePlaybackState_1 extends _i1.SmartFake implements _i2.PlaybackState {
+  _FakePlaybackState_1(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
 /// A class which mocks [AndroidVideoPlayerApi].
 ///
 /// See the documentation for Mockito's code generation for more information.
@@ -201,20 +206,21 @@ class MockVideoPlayerInstanceApi extends _i1.Mock
           as _i4.Future<void>);
 
   @override
-  _i4.Future<int> getCurrentPosition() =>
+  _i4.Future<_i2.PlaybackState> getPlaybackState() =>
       (super.noSuchMethod(
-            Invocation.method(#getCurrentPosition, []),
-            returnValue: _i4.Future<int>.value(0),
-            returnValueForMissingStub: _i4.Future<int>.value(0),
+            Invocation.method(#getPlaybackState, []),
+            returnValue: _i4.Future<_i2.PlaybackState>.value(
+              _FakePlaybackState_1(
+                this,
+                Invocation.method(#getPlaybackState, []),
+              ),
+            ),
+            returnValueForMissingStub: _i4.Future<_i2.PlaybackState>.value(
+              _FakePlaybackState_1(
+                this,
+                Invocation.method(#getPlaybackState, []),
+              ),
+            ),
           )
-          as _i4.Future<int>);
-
-  @override
-  _i4.Future<int> getBufferedPosition() =>
-      (super.noSuchMethod(
-            Invocation.method(#getBufferedPosition, []),
-            returnValue: _i4.Future<int>.value(0),
-            returnValueForMissingStub: _i4.Future<int>.value(0),
-          )
-          as _i4.Future<int>);
+          as _i4.Future<_i2.PlaybackState>);
 }

@@ -11,6 +11,8 @@ import android.content.Context;
 import android.util.LongSparseArray;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.platform.PlatformViewRegistry;
+import io.flutter.plugins.videoplayer.Messages.CreationOptions;
+import io.flutter.plugins.videoplayer.Messages.TexturePlayerIds;
 import io.flutter.plugins.videoplayer.platformview.PlatformVideoViewFactory;
 import io.flutter.plugins.videoplayer.platformview.PlatformViewVideoPlayer;
 import io.flutter.plugins.videoplayer.texture.TextureVideoPlayer;
@@ -77,11 +79,10 @@ public class VideoPlayerPluginTest {
           .thenReturn(mock(PlatformViewVideoPlayer.class));
 
       final CreationOptions options =
-          new CreationOptions(
-              "https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4",
-              null,
-              new HashMap<>(),
-              null);
+          new CreationOptions.Builder()
+              .setUri("https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4")
+              .setHttpHeaders(new HashMap<>())
+              .build();
 
       final long playerId = plugin.createForPlatformView(options);
 
@@ -99,11 +100,10 @@ public class VideoPlayerPluginTest {
           .thenReturn(mock(TextureVideoPlayer.class));
 
       final CreationOptions options =
-          new CreationOptions(
-              "https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4",
-              null,
-              new HashMap<>(),
-              null);
+          new CreationOptions.Builder()
+              .setUri("https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4")
+              .setHttpHeaders(new HashMap<>())
+              .build();
 
       final TexturePlayerIds ids = plugin.createForTextureView(options);
 

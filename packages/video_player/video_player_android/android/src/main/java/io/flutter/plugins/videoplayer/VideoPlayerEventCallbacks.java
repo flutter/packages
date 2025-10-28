@@ -7,20 +7,19 @@ package io.flutter.plugins.videoplayer;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
-import io.flutter.plugin.common.BinaryMessenger;
+import io.flutter.plugin.common.EventChannel;
+import java.util.HashMap;
+import java.util.Map;
 
 final class VideoPlayerEventCallbacks implements VideoPlayerCallbacks {
-  private final QueuingEventSink eventSink;
+  private final EventChannel.EventSink eventSink;
 
-  static VideoPlayerEventCallbacks bindTo(
-      @NonNull BinaryMessenger binaryMessenger, @NonNull String identifier) {
+  static VideoPlayerEventCallbacks bindTo(EventChannel eventChannel) {
     QueuingEventSink eventSink = new QueuingEventSink();
-    VideoEventsStreamHandler.Companion.register(
-        binaryMessenger,
-        new VideoEventsStreamHandler() {
+    eventChannel.setStreamHandler(
+        new EventChannel.StreamHandler() {
           @Override
-          public void onListen(
-              Object arguments, @NonNull PigeonEventSink<PlatformVideoEvent> events) {
+          public void onListen(Object arguments, EventChannel.EventSink events) {
             eventSink.setDelegate(events);
           }
 
@@ -28,30 +27,60 @@ final class VideoPlayerEventCallbacks implements VideoPlayerCallbacks {
           public void onCancel(Object arguments) {
             eventSink.setDelegate(null);
           }
-        },
-        identifier);
+        });
     return VideoPlayerEventCallbacks.withSink(eventSink);
   }
 
   @VisibleForTesting
-  static VideoPlayerEventCallbacks withSink(QueuingEventSink eventSink) {
+  static VideoPlayerEventCallbacks withSink(EventChannel.EventSink eventSink) {
     return new VideoPlayerEventCallbacks(eventSink);
   }
 
-  private VideoPlayerEventCallbacks(QueuingEventSink eventSink) {
+  private VideoPlayerEventCallbacks(EventChannel.EventSink eventSink) {
     this.eventSink = eventSink;
   }
 
   @Override
   public void onInitialized(
       int width, int height, long durationInMs, int rotationCorrectionInDegrees) {
-    eventSink.success(
-        new InitializationEvent(durationInMs, width, height, rotationCorrectionInDegrees));
+    Map<String, Object> event = new HashMap<>();
+    event.put("event", "initialized");
+    event.put("width", width);
+    event.put("height", height);
+    event.put("duration", durationInMs);
+    if (rotationCorrectionInDegrees != 0) {
+      event.put("rotationCorrection", rotationCorrectionInDegrees);
+    }
+    eventSink.success(event);
   }
 
   @Override
-  public void onPlaybackStateChanged(@NonNull PlatformPlaybackState state) {
-    eventSink.success(new PlaybackStateChangeEvent(state));
+  public void onBufferingStart() {
+    Map<String, Object> event = new HashMap<>();
+    event.put("event", "bufferingStart");
+    eventSink.success(event);
+  }
+
+  @Override
+  public void onBufferingUpdate(long bufferedPosition) {
+    Map<String, Object> event = new HashMap<>();
+    event.put("event", "bufferingUpdate");
+    event.put("position", bufferedPosition);
+    eventSink.success(event);
+  }
+
+  @Override
+  public void onBufferingEnd() {
+    Map<String, Object> event = new HashMap<>();
+    event.put("event", "bufferingEnd");
+    eventSink.success(event);
+  }
+
+  @Override
+  public void onCompleted() {
+    Map<String, Object> event = new HashMap<>();
+    event.put("event", "completed");
+    eventSink.success(event);
   }
 
   @Override
@@ -61,6 +90,9 @@ final class VideoPlayerEventCallbacks implements VideoPlayerCallbacks {
 
   @Override
   public void onIsPlayingStateUpdate(boolean isPlaying) {
-    eventSink.success(new IsPlayingStateEvent(isPlaying));
+    Map<String, Object> event = new HashMap<>();
+    event.put("event", "isPlayingStateUpdate");
+    event.put("isPlaying", isPlaying);
+    eventSink.success(event);
   }
 }

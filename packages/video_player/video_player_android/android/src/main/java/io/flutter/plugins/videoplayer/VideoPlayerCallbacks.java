@@ -19,7 +19,13 @@ import androidx.annotation.Nullable;
 public interface VideoPlayerCallbacks {
   void onInitialized(int width, int height, long durationInMs, int rotationCorrectionInDegrees);
 
-  void onPlaybackStateChanged(@NonNull PlatformPlaybackState state);
+  void onBufferingStart();
+
+  void onBufferingUpdate(long bufferedPosition);
+
+  void onBufferingEnd();
+
+  void onCompleted();
 
   void onError(@NonNull String code, @Nullable String message, @Nullable Object details);
 

@@ -4,23 +4,22 @@
 
 import 'dart:async';
 
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:video_player_platform_interface/video_player_platform_interface.dart';
 
-import 'messages.g.dart' hide videoEvents;
-import 'messages.g.dart' as pigeon show videoEvents;
+import 'messages.g.dart';
 import 'platform_view_player.dart';
+
+/// The string to append a player ID to in order to construct the event channel
+/// name for the event channel used to receive player state updates.
+///
+/// Must match the string used to create the EventChannel on the Java side.
+const String _videoEventChannelNameBase = 'flutter.io/videoPlayer/videoEvents';
 
 /// The non-test implementation of `_apiProvider`.
 VideoPlayerInstanceApi _productionApiProvider(int playerId) {
   return VideoPlayerInstanceApi(messageChannelSuffix: playerId.toString());
-}
-
-/// The non-test implementation of `_videoEventStreamProvider`.
-Stream<PlatformVideoEvent> _productionVideoEventStreamProvider(
-  String streamIdentifier,
-) {
-  return pigeon.videoEvents(instanceName: streamIdentifier);
 }
 
 /// An Android implementation of [VideoPlayerPlatform] that uses the
@@ -31,21 +30,13 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
     @visibleForTesting AndroidVideoPlayerApi? pluginApi,
     @visibleForTesting
     VideoPlayerInstanceApi Function(int playerId)? playerApiProvider,
-    Stream<PlatformVideoEvent> Function(String streamIdentifier)?
-    videoEventStreamProvider,
   }) : _api = pluginApi ?? AndroidVideoPlayerApi(),
-       _playerApiProvider = playerApiProvider ?? _productionApiProvider,
-       _videoEventStreamProvider =
-           videoEventStreamProvider ?? _productionVideoEventStreamProvider;
+       _playerApiProvider = playerApiProvider ?? _productionApiProvider;
 
   final AndroidVideoPlayerApi _api;
   // A method to create VideoPlayerInstanceApi instances, which can be
-  // overridden for testing.
+  //overridden for testing.
   final VideoPlayerInstanceApi Function(int playerId) _playerApiProvider;
-  // A method to create video event stream instances, which can be
-  // overridden for testing.
-  final Stream<PlatformVideoEvent> Function(String streamIdentifier)
-  _videoEventStreamProvider;
 
   final Map<int, _PlayerInstance> _players = <int, _PlayerInstance>{};
 
@@ -62,8 +53,8 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
   @override
   Future<void> dispose(int playerId) async {
     final _PlayerInstance? player = _players.remove(playerId);
-    await player?.dispose();
     await _api.dispose(playerId);
+    await player?.dispose();
   }
 
   @override
@@ -152,10 +143,11 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
   @visibleForTesting
   void ensurePlayerInitialized(int playerId, VideoPlayerViewState viewState) {
     _players.putIfAbsent(playerId, () {
+      final String eventChannelName = '$_videoEventChannelNameBase$playerId';
       return _PlayerInstance(
         _playerApiProvider(playerId),
         viewState,
-        videoEventStream: _videoEventStreamProvider(playerId.toString()),
+        eventChannelName: eventChannelName,
       );
     });
   }
@@ -225,6 +217,44 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
     return _api.setMixWithOthers(mixWithOthers);
   }
 
+  @override
+  Future<List<VideoAudioTrack>> getAudioTracks(int playerId) async {
+    final NativeAudioTrackData nativeData =
+        await _playerWith(id: playerId).getAudioTracks();
+    final List<VideoAudioTrack> tracks = <VideoAudioTrack>[];
+
+    // Convert ExoPlayer tracks to VideoAudioTrack
+    if (nativeData.exoPlayerTracks != null) {
+      for (final ExoPlayerAudioTrackData track in nativeData.exoPlayerTracks!) {
+        tracks.add(
+          VideoAudioTrack(
+            id: track.trackId,
+            label: track.label,
+            language: track.language,
+            isSelected: track.isSelected,
+            bitrate: track.bitrate,
+            sampleRate: track.sampleRate,
+            channelCount: track.channelCount,
+            codec: track.codec,
+          ),
+        );
+      }
+    }
+
+    return tracks;
+  }
+
+  @override
+  Future<void> selectAudioTrack(int playerId, String trackId) {
+    return _playerWith(id: playerId).selectAudioTrack(trackId);
+  }
+
+  @override
+  bool isAudioTrackSupportAvailable() {
+    // Android with ExoPlayer supports audio track selection
+    return true;
+  }
+
   _PlayerInstance _playerWith({required int id}) {
     final _PlayerInstance? player = _players[id];
     return player ?? (throw StateError('No active player with ID $id.'));
@@ -253,25 +283,23 @@ class _PlayerInstance {
   _PlayerInstance(
     this._api,
     this.viewState, {
-    required Stream<PlatformVideoEvent> videoEventStream,
+    required String eventChannelName,
   }) {
-    _eventSubscription = videoEventStream.listen(
+    _eventChannel = EventChannel(eventChannelName);
+    _eventSubscription = _eventChannel.receiveBroadcastStream().listen(
       _onStreamEvent,
       onError: (Object e) {
-        _setBuffering(false);
         _eventStreamController.addError(e);
       },
     );
   }
 
   final VideoPlayerInstanceApi _api;
+  late final EventChannel _eventChannel;
   final StreamController<VideoEvent> _eventStreamController =
       StreamController<VideoEvent>();
   late final StreamSubscription<dynamic> _eventSubscription;
-  bool _isDisposed = false;
-  Timer? _bufferPollingTimer;
   int _lastBufferPosition = -1;
-  bool _isBuffering = false;
 
   final VideoPlayerViewState viewState;
 
@@ -300,43 +328,38 @@ class _PlayerInstance {
   }
 
   Future<Duration> getPosition() async {
-    return Duration(milliseconds: await _api.getCurrentPosition());
+    final PlaybackState state = await _api.getPlaybackState();
+    // TODO(stuartmorgan): Move this logic. This is a workaround for the fact
+    //  that ExoPlayer doesn't have any way to observe buffer position
+    //  changes, so polling is required. To minimize platform channel overhead,
+    //  that's combined with getting the position, but this relies on the fact
+    //  that the app-facing package polls getPosition frequently, which makes
+    //  this fragile (for instance, as of writing, this won't be called while
+    //  the video is paused). It should instead be called on its own timer,
+    //  independent of higher-level package logic.
+    _updateBufferingState(state.bufferPosition);
+    return Duration(milliseconds: state.playPosition);
   }
 
   Stream<VideoEvent> videoEvents() {
     return _eventStreamController.stream;
   }
 
-  Future<void> dispose() async {
-    _isDisposed = true;
-    _bufferPollingTimer?.cancel();
-    await _eventSubscription.cancel();
+  Future<NativeAudioTrackData> getAudioTracks() {
+    return _api.getAudioTracks();
   }
 
-  void _setBuffering(bool buffering) {
-    if (buffering != _isBuffering) {
-      _isBuffering = buffering;
+  Future<void> selectAudioTrack(String trackId) {
+    return _api.selectAudioTrack(trackId);
+  }
 
-      _eventStreamController.add(
-        VideoEvent(
-          eventType: buffering
-              ? VideoEventType.bufferingStart
-              : VideoEventType.bufferingEnd,
-        ),
-      );
-      // Trigger an extra buffer position check, so that clients have an
-      // accurate reporting of the current buffering state.
-      _api.getBufferedPosition().then((int position) {
-        if (!_isDisposed) {
-          _updateBufferPosition(position);
-        }
-      });
-    }
+  Future<void> dispose() async {
+    await _eventSubscription.cancel();
   }
 
   /// Sends a buffering update if the buffer position has changed since the
   /// last check.
-  void _updateBufferPosition(int bufferPosition) {
+  void _updateBufferingState(int bufferPosition) {
     if (bufferPosition != _lastBufferPosition) {
       _lastBufferPosition = bufferPosition;
       _eventStreamController.add(
@@ -348,62 +371,31 @@ class _PlayerInstance {
     }
   }
 
-  void _onStreamEvent(PlatformVideoEvent event) {
-    switch (event) {
-      case InitializationEvent _:
-        _eventStreamController.add(
-          VideoEvent(
-            eventType: VideoEventType.initialized,
-            duration: Duration(milliseconds: event.duration),
-            size: Size(event.width.toDouble(), event.height.toDouble()),
-            rotationCorrection: event.rotationCorrection,
-          ),
-        );
-
-        // Start polling for buffer position, since there is no buffer position
-        // event to listen to.
-        _bufferPollingTimer = Timer.periodic(const Duration(seconds: 1), (
-          Timer timer,
-        ) async {
-          final int position = await _api.getBufferedPosition();
-          if (!_isDisposed) {
-            _updateBufferPosition(position);
-          }
-        });
-      case IsPlayingStateEvent _:
-        _eventStreamController.add(
-          VideoEvent(
-            eventType: VideoEventType.isPlayingStateUpdate,
-            isPlaying: event.isPlaying,
-          ),
-        );
-      case PlaybackStateChangeEvent _:
-        switch (event.state) {
-          case PlatformPlaybackState.idle:
-            // This is currently only used for buffering below.
-            break;
-          case PlatformPlaybackState.buffering:
-            _setBuffering(true);
-          case PlatformPlaybackState.ready:
-            // On the Dart side, this is only used for buffering below. On the
-            // native side it drives the 'initialized' event; that can't
-            // currently be moved here since gathering the initialization state
-            // should be synchronous with the state change.
-            break;
-          case PlatformPlaybackState.ended:
-            _eventStreamController.add(
-              VideoEvent(eventType: VideoEventType.completed),
-            );
-          case PlatformPlaybackState.unknown:
-            // Ignore unknown states. This isn't an error since the media
-            // framework could add new states in the future.
-            break;
-        }
-        // Any state other than buffering should end the buffering state.
-        if (event.state != PlatformPlaybackState.buffering) {
-          _setBuffering(false);
-        }
-    }
+  void _onStreamEvent(dynamic event) {
+    final Map<dynamic, dynamic> map = event as Map<dynamic, dynamic>;
+    _eventStreamController.add(switch (map['event']) {
+      'initialized' => VideoEvent(
+        eventType: VideoEventType.initialized,
+        duration: Duration(milliseconds: map['duration'] as int),
+        size: Size(
+          (map['width'] as num?)?.toDouble() ?? 0.0,
+          (map['height'] as num?)?.toDouble() ?? 0.0,
+        ),
+        rotationCorrection: map['rotationCorrection'] as int? ?? 0,
+      ),
+      'completed' => VideoEvent(eventType: VideoEventType.completed),
+      'bufferingUpdate' => VideoEvent(
+        eventType: VideoEventType.bufferingUpdate,
+        buffered: _bufferRangeForPosition(map['position'] as int),
+      ),
+      'bufferingStart' => VideoEvent(eventType: VideoEventType.bufferingStart),
+      'bufferingEnd' => VideoEvent(eventType: VideoEventType.bufferingEnd),
+      'isPlayingStateUpdate' => VideoEvent(
+        eventType: VideoEventType.isPlayingStateUpdate,
+        isPlaying: map['isPlaying'] as bool,
+      ),
+      _ => VideoEvent(eventType: VideoEventType.unknown),
+    });
   }
 
   // Turns a single buffer position, which is what ExoPlayer reports, into the
