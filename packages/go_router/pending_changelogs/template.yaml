@@ -1,6 +1,6 @@
 # Use this file as template to draft a unreleased changelog file.
 # Make a copy of this file in the same directory, rename it, and fill in the details.
-changelog:
-  - <change log item 1>
-  - <change log item 2>
+changelog: |
+  - Can include a list of changes.
+  - with markdown supported.
 version: <major|minor|patch|skip>
