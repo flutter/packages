@@ -141,8 +141,8 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
 
   @UnstableApi
   @Override
-  public @NonNull Messages.NativeAudioTrackData getAudioTracks() {
-    List<Messages.ExoPlayerAudioTrackData> audioTracks = new ArrayList<>();
+  public @NonNull NativeAudioTrackData getAudioTracks() {
+    List<ExoPlayerAudioTrackData> audioTracks = new ArrayList<>();
 
     // Get the current tracks from ExoPlayer
     Tracks tracks = exoPlayer.getCurrentTracks();
@@ -157,27 +157,23 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
           Format format = group.getTrackFormat(trackIndex);
           boolean isSelected = group.isTrackSelected(trackIndex);
 
-          // Create AudioTrackMessage with metadata
-          Messages.ExoPlayerAudioTrackData audioTrack =
-              new Messages.ExoPlayerAudioTrackData.Builder()
-                  .setTrackId(groupIndex + "_" + trackIndex)
-                  .setLabel(format.label)
-                  .setLanguage(format.language)
-                  .setIsSelected(isSelected)
-                  .setBitrate(format.bitrate != Format.NO_VALUE ? (long) format.bitrate : null)
-                  .setSampleRate(
-                      format.sampleRate != Format.NO_VALUE ? (long) format.sampleRate : null)
-                  .setChannelCount(
-                      format.channelCount != Format.NO_VALUE ? (long) format.channelCount : null)
-                  .setCodec(format.codecs != null ? format.codecs : null)
-                  .build();
+          // Create audio track data with metadata
+          ExoPlayerAudioTrackData audioTrack =
+              new ExoPlayerAudioTrackData(
+                  groupIndex + "_" + trackIndex,
+                  format.label,
+                  format.language,
+                  isSelected,
+                  format.bitrate != Format.NO_VALUE ? (long) format.bitrate : null,
+                  format.sampleRate != Format.NO_VALUE ? (long) format.sampleRate : null,
+                  format.channelCount != Format.NO_VALUE ? (long) format.channelCount : null,
+                  format.codecs != null ? format.codecs : null);
 
           audioTracks.add(audioTrack);
         }
       }
     }
-
-    return new Messages.NativeAudioTrackData.Builder().setExoPlayerTracks(audioTracks).build();
+    return new NativeAudioTrackData(audioTracks);
   }
 
   @UnstableApi
