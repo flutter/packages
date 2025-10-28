@@ -10,7 +10,7 @@ import PackageDescription
 let package = Package(
   name: "url_launcher_ios",
   platforms: [
-    .iOS("12.0")
+    .iOS("13.0")
   ],
   products: [
     .library(name: "url-launcher-ios", targets: ["url_launcher_ios"])

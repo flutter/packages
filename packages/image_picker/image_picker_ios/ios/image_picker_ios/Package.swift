@@ -9,7 +9,7 @@ import PackageDescription
 let package = Package(
   name: "image_picker_ios",
   platforms: [
-    .iOS("12.0")
+    .iOS("13.0")
   ],
   products: [
     .library(name: "image-picker-ios", targets: ["image_picker_ios"])

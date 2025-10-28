@@ -72,6 +72,20 @@ class RouteInformationState<T> {
 
   /// The type of navigation.
   final NavigatingType type;
+
+  /// Factory constructor for 'go' navigation type.
+  static RouteInformationState<void> go({Object? extra}) =>
+      RouteInformationState<void>(extra: extra, type: NavigatingType.go);
+
+  /// Factory constructor for 'restore' navigation type.
+  static RouteInformationState<void> restore({
+    required RouteMatchList base,
+    Object? extra,
+  }) => RouteInformationState<void>(
+    extra: extra ?? base.extra,
+    baseRouteMatchList: base,
+    type: NavigatingType.restore,
+  );
 }
 
 /// The [RouteInformationProvider] created by go_router.
@@ -253,7 +267,7 @@ class GoRouteInformationProvider extends RouteInformationProvider
     } else {
       _value = RouteInformation(
         uri: routeInformation.uri,
-        state: RouteInformationState<void>(type: NavigatingType.go),
+        state: RouteInformationState.go(),
       );
       _valueInEngine = _kEmptyRouteInformation;
     }

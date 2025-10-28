@@ -3,7 +3,5 @@
 // found in the LICENSE file.
 
 export 'package:local_auth/src/local_auth.dart' show LocalAuthentication;
-export 'package:local_auth_platform_interface/types/auth_options.dart'
-    show AuthenticationOptions;
-export 'package:local_auth_platform_interface/types/biometric_type.dart'
-    show BiometricType;
+export 'package:local_auth_platform_interface/local_auth_platform_interface.dart'
+    show BiometricType, LocalAuthException, LocalAuthExceptionCode;
