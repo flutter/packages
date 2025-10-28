@@ -47,7 +47,7 @@ final class DefaultCamera: NSObject, Camera {
   private let audioCaptureSession: FLTCaptureSession
 
   /// A wrapper for AVCaptureDevice creation to allow for dependency injection in tests.
-  private let captureDeviceFactory: CaptureDeviceFactory
+  private let videoCaptureDeviceFactory: VideoCaptureDeviceFactory
   private let audioCaptureDeviceFactory: AudioCaptureDeviceFactory
   private let captureDeviceInputFactory: FLTCaptureDeviceInputFactory
   private let assetWriterFactory: AssetWriterFactory
@@ -55,16 +55,16 @@ final class DefaultCamera: NSObject, Camera {
 
   /// A wrapper for CMVideoFormatDescriptionGetDimensions.
   /// Allows for alternate implementations in tests.
-  private let videoDimensionsForFormat: VideoDimensionsForFormat
+  private let videoDimensionsConverter: VideoDimensionsConverter
 
-  private let deviceOrientationProvider: FLTDeviceOrientationProviding
+  private let deviceOrientationProvider: DeviceOrientationProvider
   private let motionManager = CMMotionManager()
 
   private(set) var captureDevice: FLTCaptureDevice
   // Setter exposed for tests.
-  var captureVideoOutput: FLTCaptureVideoDataOutput
+  var captureVideoOutput: CaptureVideoDataOutput
   // Setter exposed for tests.
-  var capturePhotoOutput: FLTCapturePhotoOutput
+  var capturePhotoOutput: CapturePhotoOutput
   private var captureVideoInput: FLTCaptureInput
 
   private var videoWriter: FLTAssetWriter?
@@ -135,13 +135,12 @@ final class DefaultCamera: NSObject, Camera {
     captureDevice: FLTCaptureDevice,
     videoFormat: FourCharCode,
     captureDeviceInputFactory: FLTCaptureDeviceInputFactory
-  ) throws -> (FLTCaptureInput, FLTCaptureVideoDataOutput, AVCaptureConnection) {
+  ) throws -> (FLTCaptureInput, CaptureVideoDataOutput, AVCaptureConnection) {
     // Setup video capture input.
     let captureVideoInput = try captureDeviceInputFactory.deviceInput(with: captureDevice)
 
     // Setup video capture output.
-    let captureVideoOutput = FLTDefaultCaptureVideoDataOutput(
-      captureVideoOutput: AVCaptureVideoDataOutput())
+    let captureVideoOutput = AVCaptureVideoDataOutput()
     captureVideoOutput.videoSettings = [
       kCVPixelBufferPixelFormatTypeKey as String: videoFormat
     ]
@@ -159,25 +158,25 @@ final class DefaultCamera: NSObject, Camera {
     return (captureVideoInput, captureVideoOutput, connection)
   }
 
-  init(configuration: FLTCamConfiguration) throws {
+  init(configuration: CameraConfiguration) throws {
     captureSessionQueue = configuration.captureSessionQueue
     mediaSettings = configuration.mediaSettings
     mediaSettingsAVWrapper = configuration.mediaSettingsWrapper
     videoCaptureSession = configuration.videoCaptureSession
     audioCaptureSession = configuration.audioCaptureSession
-    captureDeviceFactory = configuration.captureDeviceFactory
+    videoCaptureDeviceFactory = configuration.videoCaptureDeviceFactory
     audioCaptureDeviceFactory = configuration.audioCaptureDeviceFactory
     captureDeviceInputFactory = configuration.captureDeviceInputFactory
     assetWriterFactory = configuration.assetWriterFactory
     inputPixelBufferAdaptorFactory = configuration.inputPixelBufferAdaptorFactory
-    videoDimensionsForFormat = configuration.videoDimensionsForFormat
+    videoDimensionsConverter = configuration.videoDimensionsConverter
     deviceOrientationProvider = configuration.deviceOrientationProvider
 
-    captureDevice = captureDeviceFactory(configuration.initialCameraName)
+    captureDevice = videoCaptureDeviceFactory(configuration.initialCameraName)
     flashMode = captureDevice.hasFlash ? .auto : .off
 
-    capturePhotoOutput = FLTDefaultCapturePhotoOutput(photoOutput: AVCapturePhotoOutput())
-    capturePhotoOutput.highResolutionCaptureEnabled = true
+    capturePhotoOutput = AVCapturePhotoOutput()
+    capturePhotoOutput.isHighResolutionCaptureEnabled = true
 
     videoCaptureSession.automaticallyConfiguresApplicationAudioSession = false
     audioCaptureSession.automaticallyConfiguresApplicationAudioSession = false
@@ -215,7 +214,7 @@ final class DefaultCamera: NSObject, Camera {
       FLTSelectBestFormatForRequestedFrameRate(
         captureDevice,
         mediaSettings,
-        videoDimensionsForFormat)
+        videoDimensionsConverter)
 
       if let framesPerSecond = mediaSettings.framesPerSecond {
         // Set frame rate with 1/10 precision allowing non-integral values.
@@ -302,7 +301,7 @@ final class DefaultCamera: NSObject, Camera {
       }
     }
 
-    let size = videoDimensionsForFormat(captureDevice.activeFormat)
+    let size = videoDimensionsConverter(captureDevice.activeFormat)
     previewSize = CGSize(width: CGFloat(size.width), height: CGFloat(size.height))
     audioCaptureSession.sessionPreset = videoCaptureSession.sessionPreset
   }
@@ -319,7 +318,7 @@ final class DefaultCamera: NSObject, Camera {
     var isBestSubTypePreferred = false
 
     for format in captureDevice.formats {
-      let resolution = videoDimensionsForFormat(format)
+      let resolution = videoDimensionsConverter(format)
       let height = UInt(resolution.height)
       let width = UInt(resolution.width)
       let pixelCount = height * width
@@ -525,13 +524,13 @@ final class DefaultCamera: NSObject, Camera {
   private func setupWriter(forPath path: String) -> Bool {
     setUpCaptureSessionForAudioIfNeeded()
 
-    var error: NSError?
-    videoWriter = assetWriterFactory(URL(fileURLWithPath: path), AVFileType.mp4, &error)
+    let videoWriter: FLTAssetWriter
 
-    guard let videoWriter = videoWriter else {
-      if let error = error {
-        reportErrorMessage(error.description)
-      }
+    do {
+      videoWriter = try assetWriterFactory(URL(fileURLWithPath: path), .mp4)
+      self.videoWriter = videoWriter
+    } catch let error as NSError {
+      reportErrorMessage(error.description)
       return false
     }
 
@@ -748,9 +747,9 @@ final class DefaultCamera: NSObject, Camera {
   }
 
   private func updateOrientation(
-    _ orientation: UIDeviceOrientation, forCaptureOutput captureOutput: FLTCaptureOutput
+    _ orientation: UIDeviceOrientation, forCaptureOutput captureOutput: CaptureOutput
   ) {
-    if let connection = captureOutput.connection(withMediaType: .video),
+    if let connection = captureOutput.connection(with: .video),
       connection.isVideoOrientationSupported
     {
       connection.videoOrientation = videoOrientation(forDeviceOrientation: orientation)
@@ -859,7 +858,7 @@ final class DefaultCamera: NSObject, Camera {
       return
     }
 
-    let orientation = deviceOrientationProvider.orientation()
+    let orientation = deviceOrientationProvider.orientation
     try? captureDevice.lockForConfiguration()
     // A nil point resets to the center.
     captureDevice.setFocusPointOfInterest(
@@ -989,7 +988,7 @@ final class DefaultCamera: NSObject, Camera {
         return
       }
       let avFlashMode = FCPGetAVCaptureFlashModeForPigeonFlashMode(mode)
-      guard capturePhotoOutput.supportedFlashModes.contains(NSNumber(value: avFlashMode.rawValue))
+      guard capturePhotoOutput.supportedFlashModes.contains(avFlashMode)
       else {
         completion(
           FlutterError(
@@ -1031,9 +1030,9 @@ final class DefaultCamera: NSObject, Camera {
       return
     }
 
-    captureDevice = captureDeviceFactory(cameraName)
+    captureDevice = videoCaptureDeviceFactory(cameraName)
 
-    let oldConnection = captureVideoOutput.connection(withMediaType: .video)
+    let oldConnection = captureVideoOutput.connection(with: .video)
 
     // Stop video capture from the old output.
     captureVideoOutput.setSampleBufferDelegate(nil, queue: nil)

@@ -1,3 +1,7 @@
+## 0.3.0+3
+
+* Bumps `com.google.ads.interactivemedia.v3:interactivemedia` from 3.37.0 to 3.38.0.
+
 ## 0.3.0+2
 
 * Updates minimum supported version to iOS 13.
