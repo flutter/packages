@@ -18,7 +18,7 @@ final class FLTCamSetFlashModeTests: XCTestCase {
     let mockCapturePhotoOutput = MockCapturePhotoOutput()
 
     let configuration = CameraTestUtils.createTestCameraConfiguration()
-    configuration.captureDeviceFactory = { _ in mockDevice }
+    configuration.videoCaptureDeviceFactory = { _ in mockDevice }
     let camera = CameraTestUtils.createTestCamera(configuration)
     camera.capturePhotoOutput = mockCapturePhotoOutput
 
@@ -87,9 +87,7 @@ final class FLTCamSetFlashModeTests: XCTestCase {
   func testSetFlashModeWithNonTorchMode_setsTrochModeOff_ifTorchModeIsEnabled() {
     let (camera, mockDevice, mockCapturePhotoOutput) = createCamera()
 
-    mockCapturePhotoOutput.supportedFlashModes = [
-      NSNumber(value: AVCaptureDevice.FlashMode.auto.rawValue)
-    ]
+    mockCapturePhotoOutput.supportedFlashModes = [.auto]
 
     mockDevice.hasFlash = true
     // Torch mode is enabled

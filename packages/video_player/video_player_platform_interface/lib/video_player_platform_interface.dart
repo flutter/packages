@@ -119,9 +119,7 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
 
   /// Sets whether the video should continue to play in the background.
   Future<void> setAllowBackgroundPlayback(bool allowBackgroundPlayback) {
-    throw UnimplementedError(
-      'setAllowBackgroundPlayback() has not been implemented.',
-    );
+    throw UnimplementedError('setAllowBackgroundPlayback() has not been implemented.');
   }
 
   /// Sets additional options on web.
@@ -317,14 +315,8 @@ class VideoEvent {
   }
 
   @override
-  int get hashCode => Object.hash(
-    eventType,
-    duration,
-    size,
-    rotationCorrection,
-    buffered,
-    isPlaying,
-  );
+  int get hashCode =>
+      Object.hash(eventType, duration, size, rotationCorrection, buffered, isPlaying);
 }
 
 /// Type of the event.
@@ -550,10 +542,7 @@ class VideoViewOptions {
 @immutable
 class VideoCreationOptions {
   /// Constructs an instance of [VideoCreationOptions].
-  const VideoCreationOptions({
-    required this.dataSource,
-    required this.viewType,
-  });
+  const VideoCreationOptions({required this.dataSource, required this.viewType});
 
   /// The data source used to create the player.
   final DataSource dataSource;
@@ -581,10 +570,12 @@ class VideoAudioTrack {
   final String id;
 
   /// Human-readable label for the track.
+  ///
   /// May be null if not available from the platform.
   final String? label;
 
   /// Language code of the audio track (e.g., 'en', 'es', 'und').
+  ///
   /// May be null if not available from the platform.
   final String? language;
 
@@ -592,18 +583,22 @@ class VideoAudioTrack {
   final bool isSelected;
 
   /// Bitrate of the audio track in bits per second.
+  ///
   /// May be null if not available from the platform.
   final int? bitrate;
 
   /// Sample rate of the audio track in Hz.
+  ///
   /// May be null if not available from the platform.
   final int? sampleRate;
 
   /// Number of audio channels.
+  ///
   /// May be null if not available from the platform.
   final int? channelCount;
 
   /// Audio codec used (e.g., 'aac', 'mp3', 'ac3').
+  ///
   /// May be null if not available from the platform.
   final String? codec;
 

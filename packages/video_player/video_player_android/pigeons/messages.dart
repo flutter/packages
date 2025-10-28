@@ -7,14 +7,48 @@ import 'package:pigeon/pigeon.dart';
 @ConfigurePigeon(
   PigeonOptions(
     dartOut: 'lib/src/messages.g.dart',
-    javaOut:
-        'android/src/main/java/io/flutter/plugins/videoplayer/Messages.java',
-    javaOptions: JavaOptions(package: 'io.flutter.plugins.videoplayer'),
+    kotlinOut: 'android/src/main/kotlin/io/flutter/plugins/videoplayer/Messages.kt',
+    kotlinOptions: KotlinOptions(package: 'io.flutter.plugins.videoplayer'),
     copyrightHeader: 'pigeons/copyright.txt',
   ),
 )
 /// Pigeon equivalent of video_platform_interface's VideoFormat.
 enum PlatformVideoFormat { dash, hls, ss }
+
+/// Pigeon equivalent of Player's playback state.
+/// https://developer.android.com/media/media3/exoplayer/listening-to-player-events#playback-state
+enum PlatformPlaybackState { idle, buffering, ready, ended, unknown }
+
+sealed class PlatformVideoEvent {}
+
+/// Sent when the video is initialized and ready to play.
+class InitializationEvent extends PlatformVideoEvent {
+  /// The video duration in milliseconds.
+  late final int duration;
+
+  /// The width of the video in pixels.
+  late final int width;
+
+  /// The height of the video in pixels.
+  late final int height;
+
+  /// The rotation that should be applied during playback.
+  late final int rotationCorrection;
+}
+
+/// Sent when the video state changes.
+///
+/// Corresponds to ExoPlayer's onPlaybackStateChanged.
+class PlaybackStateChangeEvent extends PlatformVideoEvent {
+  late final PlatformPlaybackState state;
+}
+
+/// Sent when the video starts or stops playing.
+///
+/// Corresponds to ExoPlayer's onIsPlayingChanged.
+class IsPlayingStateEvent extends PlatformVideoEvent {
+  late final bool isPlaying;
+}
 
 /// Information passed to the platform view creation.
 class PlatformVideoViewCreationParams {
@@ -135,15 +169,20 @@ abstract class VideoPlayerInstanceApi {
   /// Seeks to the given playback position, in milliseconds.
   void seekTo(int position);
 
-  /// Returns the current playback state.
-  ///
-  /// This is combined into a single call to minimize platform channel calls for
-  /// state that needs to be polled frequently.
-  PlaybackState getPlaybackState();
+  /// Returns the current playback position, in milliseconds.
+  int getCurrentPosition();
+
+  /// Returns the current buffer position, in milliseconds.
+  int getBufferedPosition();
 
   /// Gets the available audio tracks for the video.
   NativeAudioTrackData getAudioTracks();
 
   /// Selects which audio track is chosen for playback from its [trackId]
   void selectAudioTrack(String trackId);
+}
+
+@EventChannelApi()
+abstract class VideoEventChannel {
+  PlatformVideoEvent videoEvents();
 }
