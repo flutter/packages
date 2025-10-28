@@ -14,7 +14,7 @@ public final class CameraPlugin: NSObject, FlutterPlugin {
   private let registry: FlutterTextureRegistry
   private let messenger: FlutterBinaryMessenger
   private let globalEventAPI: FCPCameraGlobalEventApi
-  private let deviceDiscoverer: FLTCameraDeviceDiscovering
+  private let deviceDiscoverer: CameraDeviceDiscoverer
   private let permissionManager: FLTCameraPermissionManager
   private let captureDeviceFactory: VideoCaptureDeviceFactory
   private let captureSessionFactory: CaptureSessionFactory
@@ -31,7 +31,7 @@ public final class CameraPlugin: NSObject, FlutterPlugin {
       registry: registrar.textures(),
       messenger: registrar.messenger(),
       globalAPI: FCPCameraGlobalEventApi(binaryMessenger: registrar.messenger()),
-      deviceDiscoverer: FLTDefaultCameraDeviceDiscoverer(),
+      deviceDiscoverer: DefaultCameraDeviceDiscoverer(),
       permissionManager: FLTCameraPermissionManager(
         permissionService: FLTDefaultPermissionService()),
       deviceFactory: { name in
@@ -50,7 +50,7 @@ public final class CameraPlugin: NSObject, FlutterPlugin {
     registry: FlutterTextureRegistry,
     messenger: FlutterBinaryMessenger,
     globalAPI: FCPCameraGlobalEventApi,
-    deviceDiscoverer: FLTCameraDeviceDiscovering,
+    deviceDiscoverer: CameraDeviceDiscoverer,
     permissionManager: FLTCameraPermissionManager,
     deviceFactory: @escaping VideoCaptureDeviceFactory,
     captureSessionFactory: @escaping CaptureSessionFactory,
