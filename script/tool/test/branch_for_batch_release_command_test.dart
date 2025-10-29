@@ -67,6 +67,7 @@ version: 1.0.0
     required List<String> expectedOutput,
     String? expectedVersion,
     List<String> expectedChangelogSnippets = const <String>[],
+    List<ProcessCall> expectedGitCommands = const <ProcessCall>[],
   }) async {
     for (final MapEntry<String, String> entry in changelogs.entries) {
       createChangelogFile(entry.key, entry.value);
@@ -89,6 +90,7 @@ version: 1.0.0
         expect(changelogContent, contains(snippet));
       }
     }
+    expect(gitProcessRunner.recordedCalls, orderedEquals(expectedGitCommands));
   }
 
   group('happy path', () {
@@ -108,6 +110,23 @@ version: minor
           '  Creating new branch "release-branch"...',
           '  Updating pubspec.yaml to version 1.1.0...',
           '  Updating CHANGELOG.md...',
+        ],
+        expectedGitCommands: <ProcessCall>[
+          const ProcessCall(
+              'git-checkout', <String>['-b', 'release-branch'], null),
+          const ProcessCall('git-rm',
+              <String>['/packages/a_package/pending_changelogs/a.yaml'], null),
+          const ProcessCall(
+              'git-add',
+              <String>[
+                '/packages/a_package/pubspec.yaml',
+                '/packages/a_package/CHANGELOG.md'
+              ],
+              null),
+          const ProcessCall('git-commit',
+              <String>['-m', 'a_package: Prepare for release'], null),
+          const ProcessCall(
+              'git-push', <String>['origin', 'release-branch'], null),
         ],
       );
     });
@@ -129,6 +148,23 @@ version: major
           '  Updating pubspec.yaml to version 2.0.0...',
           '  Updating CHANGELOG.md...',
         ],
+        expectedGitCommands: <ProcessCall>[
+          const ProcessCall(
+              'git-checkout', <String>['-b', 'release-branch'], null),
+          const ProcessCall('git-rm',
+              <String>['/packages/a_package/pending_changelogs/a.yaml'], null),
+          const ProcessCall(
+              'git-add',
+              <String>[
+                '/packages/a_package/pubspec.yaml',
+                '/packages/a_package/CHANGELOG.md'
+              ],
+              null),
+          const ProcessCall('git-commit',
+              <String>['-m', 'a_package: Prepare for release'], null),
+          const ProcessCall(
+              'git-push', <String>['origin', 'release-branch'], null),
+        ],
       );
     });
 
@@ -148,6 +184,23 @@ version: patch
           '  Creating new branch "release-branch"...',
           '  Updating pubspec.yaml to version 1.0.1...',
           '  Updating CHANGELOG.md...',
+        ],
+        expectedGitCommands: <ProcessCall>[
+          const ProcessCall(
+              'git-checkout', <String>['-b', 'release-branch'], null),
+          const ProcessCall('git-rm',
+              <String>['/packages/a_package/pending_changelogs/a.yaml'], null),
+          const ProcessCall(
+              'git-add',
+              <String>[
+                '/packages/a_package/pubspec.yaml',
+                '/packages/a_package/CHANGELOG.md'
+              ],
+              null),
+          const ProcessCall('git-commit',
+              <String>['-m', 'a_package: Prepare for release'], null),
+          const ProcessCall(
+              'git-push', <String>['origin', 'release-branch'], null),
         ],
       );
     });
@@ -175,6 +228,25 @@ version: major
           '  Creating new branch "release-branch"...',
           '  Updating pubspec.yaml to version 2.0.0...',
           '  Updating CHANGELOG.md...',
+        ],
+        expectedGitCommands: <ProcessCall>[
+          const ProcessCall(
+              'git-checkout', <String>['-b', 'release-branch'], null),
+          const ProcessCall('git-rm',
+              <String>['/packages/a_package/pending_changelogs/a.yaml'], null),
+          const ProcessCall('git-rm',
+              <String>['/packages/a_package/pending_changelogs/b.yaml'], null),
+          const ProcessCall(
+              'git-add',
+              <String>[
+                '/packages/a_package/pubspec.yaml',
+                '/packages/a_package/CHANGELOG.md'
+              ],
+              null),
+          const ProcessCall('git-commit',
+              <String>['-m', 'a_package: Prepare for release'], null),
+          const ProcessCall(
+              'git-push', <String>['origin', 'release-branch'], null),
         ],
       );
     });
