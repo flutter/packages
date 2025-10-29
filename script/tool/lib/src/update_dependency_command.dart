@@ -507,5 +507,4 @@ class _AndroidDepdencyType {
   static const String gradle = 'gradle';
   static const String compileSdk = 'compileSdk';
   static const String compileSdkForExamples = 'compileSdkForExamples';
-  static const String agpForExamples = 'agpForExamples';
 }
