@@ -80,7 +80,7 @@ class BranchForBatchReleaseCommand extends PackageCommand {
 
     print('Creating and pushing release branch...');
     await _pushBranch(
-      repository: repository,
+      git: repository,
       package: package,
       branchName: branchName,
       pendingChangelogFiles: pendingChangelogs.files,
@@ -153,7 +153,7 @@ class BranchForBatchReleaseCommand extends PackageCommand {
   }
 
   Future<void> _pushBranch({
-    required GitDir repository,
+    required GitDir git,
     required RepositoryPackage package,
     required String branchName,
     required List<File> pendingChangelogFiles,
@@ -161,7 +161,7 @@ class BranchForBatchReleaseCommand extends PackageCommand {
   }) async {
     print('  Creating new branch "$branchName"...');
     final io.ProcessResult checkoutResult =
-        await repository.runCommand(<String>['checkout', '-b', branchName]);
+        await git.runCommand(<String>['checkout', '-b', branchName]);
     if (checkoutResult.exitCode != 0) {
       printError(
           'Failed to create branch $branchName: ${checkoutResult.stderr}');
@@ -195,7 +195,7 @@ class BranchForBatchReleaseCommand extends PackageCommand {
     print('  Removing pending changelog files...');
     for (final File file in pendingChangelogFiles) {
       final io.ProcessResult rmResult =
-          await repository.runCommand(<String>['rm', file.path]);
+          await git.runCommand(<String>['rm', file.path]);
       if (rmResult.exitCode != 0) {
         printError('Failed to rm ${file.path}: ${rmResult.stderr}');
         throw ToolExit(_kGitFailedToPush);
@@ -203,7 +203,7 @@ class BranchForBatchReleaseCommand extends PackageCommand {
     }
 
     print('  Staging changes...');
-    final io.ProcessResult addResult = await repository.runCommand(
+    final io.ProcessResult addResult = await git.runCommand(
         <String>['add', package.pubspecFile.path, package.changelogFile.path]);
     if (addResult.exitCode != 0) {
       printError('Failed to git add: ${addResult.stderr}');
@@ -211,7 +211,7 @@ class BranchForBatchReleaseCommand extends PackageCommand {
     }
 
     print('  Committing changes...');
-    final io.ProcessResult commitResult = await repository.runCommand(<String>[
+    final io.ProcessResult commitResult = await git.runCommand(<String>[
       'commit',
       '-m',
       '${package.displayName}: Prepare for release'
@@ -222,8 +222,8 @@ class BranchForBatchReleaseCommand extends PackageCommand {
     }
 
     print('  Pushing to remote...');
-    final io.ProcessResult pushResult = await repository
-        .runCommand(<String>['push', 'origin', branchName, '--force']);
+    final io.ProcessResult pushResult =
+        await git.runCommand(<String>['push', 'origin', branchName]);
     if (pushResult.exitCode != 0) {
       printError('Failed to push to $branchName: ${pushResult.stderr}');
       throw ToolExit(_kGitFailedToPush);
