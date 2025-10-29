@@ -22,8 +22,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.MockedStatic;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 
 public class ImageSaverTests {
 
@@ -32,7 +30,7 @@ public class ImageSaverTests {
   ImageSaver.Callback mockCallback;
   ImageSaver imageSaver;
   Image.Plane mockPlane;
-  ByteBuffer mockBuffer;
+  ByteBuffer byteBuffer;
   MockedStatic<ImageSaver.FileOutputStreamFactory> mockFileOutputStreamFactory;
   FileOutputStream mockFileOutputStream;
 
@@ -43,11 +41,11 @@ public class ImageSaverTests {
     when(mockFile.getAbsolutePath()).thenReturn("absolute/path");
     mockPlane = mock(Image.Plane.class);
     byte[] desiredContent = {0x42, 0x00, 0x13};
-    mockBuffer = ByteBuffer.wrap(desiredContent);
+    byteBuffer = ByteBuffer.wrap(desiredContent);
 
     // Set up mocked image dependency
     mockImage = mock(Image.class);
-    when(mockPlane.getBuffer()).thenReturn(mockBuffer);
+    when(mockPlane.getBuffer()).thenReturn(byteBuffer);
     when(mockImage.getPlanes()).thenReturn(new Image.Plane[] {mockPlane});
 
     // Set up mocked FileOutputStream
