@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -34,14 +34,16 @@ class InAppPurchaseStoreKitPlatformAddition
     try {
       final String receipt = await SKReceiptManager.retrieveReceiptData();
       return PurchaseVerificationData(
-          localVerificationData: receipt,
-          serverVerificationData: receipt,
-          source: kIAPSource);
+        localVerificationData: receipt,
+        serverVerificationData: receipt,
+        source: kIAPSource,
+      );
     } catch (e) {
       // ignore: avoid_print
       print(
-          'Something is wrong while fetching the receipt, this normally happens when the app is '
-          'running on a simulator: $e');
+        'Something is wrong while fetching the receipt, this normally happens when the app is '
+        'running on a simulator: $e',
+      );
       return null;
     }
   }

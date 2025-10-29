@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -70,6 +70,7 @@ class CameraXProxy {
         _infoSupportedHardwareLevelCameraCharacteristics,
     this.sensorOrientationCameraCharacteristics =
         _sensorOrientationCameraCharacteristics,
+    this.getNv21BufferImageProxyUtils = ImageProxyUtils.getNv21Buffer,
   });
 
   /// Handles adding support for generic classes.
@@ -108,6 +109,7 @@ class CameraXProxy {
   /// Constructs [CameraSelector].
   final CameraSelector Function({
     LensFacing? requireLensFacing,
+    CameraInfo? cameraInfoForFilter,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
   })
@@ -206,6 +208,7 @@ class CameraXProxy {
   /// Constructs [ImageAnalysis].
   final ImageAnalysis Function({
     int? targetRotation,
+    int? outputImageFormat,
     ResolutionSelector? resolutionSelector,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
@@ -373,6 +376,16 @@ class CameraXProxy {
   /// Calls to [CameraCharacteristics.sensorOrientation].
   final CameraCharacteristicsKey Function()
   sensorOrientationCameraCharacteristics;
+
+  /// Calls to [ImageProxyUtils.getNv21Buffer].
+  final Future<Uint8List?> Function(
+    int imageWidth,
+    int imageHeight,
+    List<PlaneProxy> planes, {
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+  })
+  getNv21BufferImageProxyUtils;
 
   static CameraSelector _defaultBackCameraCameraSelector() =>
       CameraSelector.defaultBackCamera;

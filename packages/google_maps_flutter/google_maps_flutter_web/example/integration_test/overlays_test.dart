@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -23,8 +23,9 @@ import 'overlays_test.mocks.dart';
 
 MockTileProvider neverTileProvider() {
   final MockTileProvider tileProvider = MockTileProvider();
-  when(tileProvider.getTile(any, any, any))
-      .thenAnswer((_) => Completer<Tile>().future);
+  when(
+    tileProvider.getTile(any, any, any),
+  ).thenAnswer((_) => Completer<Tile>().future);
   return tileProvider;
 }
 
@@ -51,15 +52,16 @@ void main() {
       controller.googleMap = map;
 
       tileProviders = <MockTileProvider>[
-        for (int i = 0; i < 3; ++i) neverTileProvider()
+        for (int i = 0; i < 3; ++i) neverTileProvider(),
       ];
 
       tileOverlays = <TileOverlay>[
         for (int i = 0; i < 3; ++i)
           TileOverlay(
-              tileOverlayId: TileOverlayId('$i'),
-              tileProvider: tileProviders[i],
-              zIndex: i)
+            tileOverlayId: TileOverlayId('$i'),
+            tileProvider: tileProviders[i],
+            zIndex: i,
+          ),
       ];
     });
 
@@ -97,8 +99,9 @@ void main() {
       verifyNoMoreInteractions(tileProviders[2]);
 
       // Re-enable overlay 0.
-      controller.changeTileOverlays(
-          <TileOverlay>{tileOverlays[0].copyWith(visibleParam: true)});
+      controller.changeTileOverlays(<TileOverlay>{
+        tileOverlays[0].copyWith(visibleParam: true),
+      });
 
       probeTiles();
 
@@ -113,17 +116,18 @@ void main() {
     });
 
     testWidgets(
-        'updating the z index of a hidden layer does not make it visible',
-        (WidgetTester tester) async {
-      controller.addTileOverlays(<TileOverlay>{...tileOverlays});
+      'updating the z index of a hidden layer does not make it visible',
+      (WidgetTester tester) async {
+        controller.addTileOverlays(<TileOverlay>{...tileOverlays});
 
-      controller.changeTileOverlays(<TileOverlay>{
-        tileOverlays[0].copyWith(zIndexParam: -1, visibleParam: false),
-      });
+        controller.changeTileOverlays(<TileOverlay>{
+          tileOverlays[0].copyWith(zIndexParam: -1, visibleParam: false),
+        });
 
-      probeTiles();
-      verifyZeroInteractions(tileProviders[0]);
-    });
+        probeTiles();
+        verifyZeroInteractions(tileProviders[0]);
+      },
+    );
 
     testWidgets('removeTileOverlays', (WidgetTester tester) async {
       controller.addTileOverlays(<TileOverlay>{...tileOverlays});
@@ -143,19 +147,23 @@ void main() {
     testWidgets('clearTileCache', (WidgetTester tester) async {
       final Completer<GoogleMapController> controllerCompleter =
           Completer<GoogleMapController>();
-      await tester.pumpWidget(MaterialApp(
+      await tester.pumpWidget(
+        MaterialApp(
           home: Scaffold(
-              body: GoogleMap(
-        initialCameraPosition: const CameraPosition(
-          target: LatLng(43.3078, -5.6958),
-          zoom: 14,
+            body: GoogleMap(
+              initialCameraPosition: const CameraPosition(
+                target: LatLng(43.3078, -5.6958),
+                zoom: 14,
+              ),
+              tileOverlays: <TileOverlay>{...tileOverlays.take(2)},
+              onMapCreated: (GoogleMapController value) {
+                controllerCompleter.complete(value);
+                addTearDown(() => value.dispose());
+              },
+            ),
+          ),
         ),
-        tileOverlays: <TileOverlay>{...tileOverlays.take(2)},
-        onMapCreated: (GoogleMapController value) {
-          controllerCompleter.complete(value);
-          addTearDown(() => value.dispose());
-        },
-      ))));
+      );
 
       // This is needed to kick-off the rendering of the JS Map flutter widget
       await tester.pump();

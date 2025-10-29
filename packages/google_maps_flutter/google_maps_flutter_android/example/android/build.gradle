@@ -39,7 +39,7 @@ gradle.projectsEvaluated {
             //   'GuardedBy': class file for
             //   javax.annotation.concurrent.GuardedBy not found
             dependencies {
-                implementation "com.google.code.findbugs:jsr305:3.0.2"
+                implementation("com.google.code.findbugs:jsr305:3.0.2")
             }
         }
     }

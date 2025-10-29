@@ -1,3 +1,12 @@
+## NEXT
+
+* Updates examples to use the new RadioGroup API instead of deprecated Radio parameters.
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
+## 0.3.7
+
+* Fixes missing leading cache extent in TableView.
+
 ## 0.3.6
 
 * Fixes typo in API docs.

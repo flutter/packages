@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -7,7 +7,7 @@ import XCTest
 
 @testable import camera_avfoundation
 
-// Import Objectice-C part of the implementation when SwiftPM is used.
+// Import Objective-C part of the implementation when SwiftPM is used.
 #if canImport(camera_avfoundation_objc)
   import camera_avfoundation_objc
 #endif
@@ -24,15 +24,15 @@ final class PhotoCaptureTests: XCTestCase {
     let errorExpectation = expectation(
       description: "Must send error to result if save photo delegate completes with error.")
     let captureSessionQueue = DispatchQueue(label: "capture_session_queue")
-    FLTDispatchQueueSetSpecific(captureSessionQueue, FLTCaptureSessionQueueSpecific)
+    captureSessionQueue.setSpecific(
+      key: captureSessionQueueSpecificKey, value: captureSessionQueueSpecificValue)
     let cam = createCam(with: captureSessionQueue)
     let error = NSError(domain: "test", code: 0, userInfo: nil)
 
     let mockOutput = MockCapturePhotoOutput()
     mockOutput.capturePhotoWithSettingsStub = { settings, photoDelegate in
       let delegate =
-        cam.inProgressSavePhotoDelegates.object(forKey: settings.uniqueID)
-        as? FLTSavePhotoDelegate
+        cam.inProgressSavePhotoDelegates[settings.uniqueID]
       // Completion runs on IO queue.
       let ioQueue = DispatchQueue(label: "io_queue")
       ioQueue.async {
@@ -57,15 +57,15 @@ final class PhotoCaptureTests: XCTestCase {
     let pathExpectation = expectation(
       description: "Must send file path to result if save photo delegate completes with file path.")
     let captureSessionQueue = DispatchQueue(label: "capture_session_queue")
-    FLTDispatchQueueSetSpecific(captureSessionQueue, FLTCaptureSessionQueueSpecific)
+    captureSessionQueue.setSpecific(
+      key: captureSessionQueueSpecificKey, value: captureSessionQueueSpecificValue)
     let cam = createCam(with: captureSessionQueue)
     let filePath = "test"
 
     let mockOutput = MockCapturePhotoOutput()
     mockOutput.capturePhotoWithSettingsStub = { settings, photoDelegate in
       let delegate =
-        cam.inProgressSavePhotoDelegates.object(forKey: settings.uniqueID)
-        as? FLTSavePhotoDelegate
+        cam.inProgressSavePhotoDelegates[settings.uniqueID]
       // Completion runs on IO queue.
       let ioQueue = DispatchQueue(label: "io_queue")
       ioQueue.async {
@@ -90,7 +90,8 @@ final class PhotoCaptureTests: XCTestCase {
       description: "Test must set extension to heif if availablePhotoCodecTypes contains HEVC.")
 
     let captureSessionQueue = DispatchQueue(label: "capture_session_queue")
-    FLTDispatchQueueSetSpecific(captureSessionQueue, FLTCaptureSessionQueueSpecific)
+    captureSessionQueue.setSpecific(
+      key: captureSessionQueueSpecificKey, value: captureSessionQueueSpecificValue)
     let cam = createCam(with: captureSessionQueue)
     cam.setImageFileFormat(FCPPlatformImageFileFormat.heif)
 
@@ -98,8 +99,7 @@ final class PhotoCaptureTests: XCTestCase {
     mockOutput.availablePhotoCodecTypes = [AVVideoCodecType.hevc]
     mockOutput.capturePhotoWithSettingsStub = { settings, photoDelegate in
       let delegate =
-        cam.inProgressSavePhotoDelegates.object(forKey: settings.uniqueID)
-        as? FLTSavePhotoDelegate
+        cam.inProgressSavePhotoDelegates[settings.uniqueID]
       // Completion runs on IO queue.
       let ioQueue = DispatchQueue(label: "io_queue")
       ioQueue.async {
@@ -125,15 +125,15 @@ final class PhotoCaptureTests: XCTestCase {
         "Test must set extension to jpg if availablePhotoCodecTypes does not contain HEVC.")
 
     let captureSessionQueue = DispatchQueue(label: "capture_session_queue")
-    FLTDispatchQueueSetSpecific(captureSessionQueue, FLTCaptureSessionQueueSpecific)
+    captureSessionQueue.setSpecific(
+      key: captureSessionQueueSpecificKey, value: captureSessionQueueSpecificValue)
     let cam = createCam(with: captureSessionQueue)
     cam.setImageFileFormat(FCPPlatformImageFileFormat.heif)
 
     let mockOutput = MockCapturePhotoOutput()
     mockOutput.capturePhotoWithSettingsStub = { settings, photoDelegate in
       let delegate =
-        cam.inProgressSavePhotoDelegates.object(forKey: settings.uniqueID)
-        as? FLTSavePhotoDelegate
+        cam.inProgressSavePhotoDelegates[settings.uniqueID]
       // Completion runs on IO queue.
       let ioQueue = DispatchQueue(label: "io_queue")
       ioQueue.async {
@@ -170,18 +170,18 @@ final class PhotoCaptureTests: XCTestCase {
     }
 
     let captureSessionQueue = DispatchQueue(label: "capture_session_queue")
-    FLTDispatchQueueSetSpecific(captureSessionQueue, FLTCaptureSessionQueueSpecific)
+    captureSessionQueue.setSpecific(
+      key: captureSessionQueueSpecificKey, value: captureSessionQueueSpecificValue)
     let configuration = CameraTestUtils.createTestCameraConfiguration()
     configuration.captureSessionQueue = captureSessionQueue
-    configuration.captureDeviceFactory = { _ in captureDeviceMock }
+    configuration.videoCaptureDeviceFactory = { _ in captureDeviceMock }
     let cam = CameraTestUtils.createTestCamera(configuration)
 
     let filePath = "test"
     let mockOutput = MockCapturePhotoOutput()
     mockOutput.capturePhotoWithSettingsStub = { settings, photoDelegate in
       let delegate =
-        cam.inProgressSavePhotoDelegates.object(forKey: settings.uniqueID)
-        as? FLTSavePhotoDelegate
+        cam.inProgressSavePhotoDelegates[settings.uniqueID]
       // Completion runs on IO queue.
       let ioQueue = DispatchQueue(label: "io_queue")
       ioQueue.async {

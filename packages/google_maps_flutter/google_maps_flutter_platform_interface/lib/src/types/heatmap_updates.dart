@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -10,10 +10,8 @@ import 'types.dart';
 // (Do not re-export)
 class HeatmapUpdates extends MapsObjectUpdates<Heatmap> {
   /// Computes [HeatmapUpdates] given previous and current [Heatmap]s.
-  HeatmapUpdates.from(
-    super.previous,
-    super.current,
-  ) : super.from(objectName: 'heatmap');
+  HeatmapUpdates.from(super.previous, super.current)
+    : super.from(objectName: 'heatmap');
 
   /// Set of Heatmaps to be added in this update.
   Set<Heatmap> get heatmapsToAdd => objectsToAdd;

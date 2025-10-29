@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -7,7 +7,7 @@ import XCTest
 
 @testable import camera_avfoundation
 
-// Import Objectice-C part of the implementation when SwiftPM is used.
+// Import Objective-C part of the implementation when SwiftPM is used.
 #if canImport(camera_avfoundation_objc)
   import camera_avfoundation_objc
 #endif
@@ -18,7 +18,7 @@ final class FLTCamSetFlashModeTests: XCTestCase {
     let mockCapturePhotoOutput = MockCapturePhotoOutput()
 
     let configuration = CameraTestUtils.createTestCameraConfiguration()
-    configuration.captureDeviceFactory = { _ in mockDevice }
+    configuration.videoCaptureDeviceFactory = { _ in mockDevice }
     let camera = CameraTestUtils.createTestCamera(configuration)
     camera.capturePhotoOutput = mockCapturePhotoOutput
 
@@ -87,9 +87,7 @@ final class FLTCamSetFlashModeTests: XCTestCase {
   func testSetFlashModeWithNonTorchMode_setsTrochModeOff_ifTorchModeIsEnabled() {
     let (camera, mockDevice, mockCapturePhotoOutput) = createCamera()
 
-    mockCapturePhotoOutput.supportedFlashModes = [
-      NSNumber(value: AVCaptureDevice.FlashMode.auto.rawValue)
-    ]
+    mockCapturePhotoOutput.supportedFlashModes = [.auto]
 
     mockDevice.hasFlash = true
     // Torch mode is enabled

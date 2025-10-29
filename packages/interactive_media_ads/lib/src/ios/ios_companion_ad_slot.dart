@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -20,8 +20,8 @@ final class IOSCompanionAdSlotCreationParams
     required super.size,
     super.onClicked,
     @visibleForTesting InteractiveMediaAdsProxy? proxy,
-  })  : _proxy = proxy ?? const InteractiveMediaAdsProxy(),
-        super();
+  }) : _proxy = proxy ?? const InteractiveMediaAdsProxy(),
+       super();
 
   /// Creates an [IOSCompanionAdSlotCreationParams] from an instance of
   /// [PlatformCompanionAdSlotCreationParams].
@@ -44,8 +44,9 @@ base class IOSCompanionAdSlot extends PlatformCompanionAdSlot {
   /// Constructs an [IOSCompanionAdSlot].
   IOSCompanionAdSlot(super.params) : super.implementation();
 
-  late final IOSCompanionAdSlotCreationParams _iosParams =
-      _initIOSParams(params);
+  late final IOSCompanionAdSlotCreationParams _iosParams = _initIOSParams(
+    params,
+  );
 
   // View used to display the Ad.
   late final UIView _view = _iosParams._proxy.newUIView();
@@ -76,8 +77,9 @@ base class IOSCompanionAdSlot extends PlatformCompanionAdSlot {
       return params;
     }
 
-    return IOSCompanionAdSlotCreationParams
-        .fromPlatformCompanionAdSlotCreationParamsSize(params);
+    return IOSCompanionAdSlotCreationParams.fromPlatformCompanionAdSlotCreationParamsSize(
+      params,
+    );
   }
 
   IMACompanionAdSlot _initCompanionAdSlot() {
@@ -88,8 +90,9 @@ base class IOSCompanionAdSlot extends PlatformCompanionAdSlot {
           width: size.width,
           height: size.height,
         ),
-      CompanionAdSlotSizeFluid() =>
-        _iosParams._proxy.newIMACompanionAdSlot(view: _view),
+      CompanionAdSlotSizeFluid() => _iosParams._proxy.newIMACompanionAdSlot(
+        view: _view,
+      ),
     };
 
     if (params.onClicked != null) {

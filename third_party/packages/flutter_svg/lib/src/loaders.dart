@@ -100,9 +100,17 @@ class _DelegateVgColorMapper extends vg.ColorMapper {
 
   @override
   vg.Color substitute(
-      String? id, String elementName, String attributeName, vg.Color color) {
+    String? id,
+    String elementName,
+    String attributeName,
+    vg.Color color,
+  ) {
     final Color substituteColor = colorMapper.substitute(
-        id, elementName, attributeName, Color(color.value));
+      id,
+      elementName,
+      attributeName,
+      Color(color.value),
+    );
     return vg.Color(substituteColor.value);
   }
 }
@@ -112,10 +120,7 @@ class _DelegateVgColorMapper extends vg.ColorMapper {
 @immutable
 abstract class SvgLoader<T> extends BytesLoader {
   /// See class doc.
-  const SvgLoader({
-    this.theme,
-    this.colorMapper,
-  });
+  const SvgLoader({this.theme, this.colorMapper});
 
   /// The theme to determine currentColor and font sizing attributes.
   final SvgTheme? theme;
@@ -151,22 +156,27 @@ abstract class SvgLoader<T> extends BytesLoader {
   Future<ByteData> _load(BuildContext? context) {
     final SvgTheme theme = getTheme(context);
     return prepareMessage(context).then((T? message) {
-      return compute((T? message) {
-        return vg
-            .encodeSvg(
-              xml: provideSvg(message),
-              theme: theme.toVgTheme(),
-              colorMapper: colorMapper == null
-                  ? null
-                  : _DelegateVgColorMapper(colorMapper!),
-              debugName: 'Svg loader',
-              enableClippingOptimizer: false,
-              enableMaskingOptimizer: false,
-              enableOverdrawOptimizer: false,
-            )
-            .buffer
-            .asByteData();
-      }, message, debugLabel: 'Load Bytes');
+      return compute(
+        (T? message) {
+          return vg
+              .encodeSvg(
+                xml: provideSvg(message),
+                theme: theme.toVgTheme(),
+                colorMapper:
+                    colorMapper == null
+                        ? null
+                        : _DelegateVgColorMapper(colorMapper!),
+                debugName: 'Svg loader',
+                enableClippingOptimizer: false,
+                enableMaskingOptimizer: false,
+                enableOverdrawOptimizer: false,
+              )
+              .buffer
+              .asByteData();
+        },
+        message,
+        debugLabel: 'Load Bytes',
+      );
     });
   }
 
@@ -224,11 +234,7 @@ class SvgCacheKey {
 /// vector_graphics binary representation.
 class SvgStringLoader extends SvgLoader<void> {
   /// See class doc.
-  const SvgStringLoader(
-    this._svg, {
-    super.theme,
-    super.colorMapper,
-  });
+  const SvgStringLoader(this._svg, {super.theme, super.colorMapper});
 
   final String _svg;
 
@@ -254,11 +260,7 @@ class SvgStringLoader extends SvgLoader<void> {
 /// representation.
 class SvgBytesLoader extends SvgLoader<void> {
   /// See class doc.
-  const SvgBytesLoader(
-    this.bytes, {
-    super.theme,
-    super.colorMapper,
-  });
+  const SvgBytesLoader(this.bytes, {super.theme, super.colorMapper});
 
   /// The UTF-8 encoded XML bytes.
   final Uint8List bytes;
@@ -282,11 +284,7 @@ class SvgBytesLoader extends SvgLoader<void> {
 /// a vector_graphics binary representation.
 class SvgFileLoader extends SvgLoader<void> {
   /// See class doc.
-  const SvgFileLoader(
-    this.file, {
-    super.theme,
-    super.colorMapper,
-  });
+  const SvgFileLoader(this.file, {super.theme, super.colorMapper});
 
   /// The file containing the SVG data to decode and render.
   final File file;
@@ -381,7 +379,7 @@ class SvgAssetLoader extends SvgLoader<ByteData> {
 
   @override
   String provideSvg(ByteData? message) =>
-      utf8.decode(message!.buffer.asUint8List(), allowMalformed: true);
+      utf8.decode(Uint8List.sublistView(message!), allowMalformed: true);
 
   @override
   SvgCacheKey cacheKey(BuildContext? context) {
@@ -438,8 +436,10 @@ class SvgNetworkLoader extends SvgLoader<Uint8List> {
   @override
   Future<Uint8List?> prepareMessage(BuildContext? context) async {
     final http.Client client = _httpClient ?? http.Client();
-    final http.Response response =
-        await client.get(Uri.parse(url), headers: headers);
+    final http.Response response = await client.get(
+      Uri.parse(url),
+      headers: headers,
+    );
     if (_httpClient == null) {
       client.close();
     }

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -33,9 +33,7 @@ class GetDirectoryPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Open a text file'),
-      ),
+      appBar: AppBar(title: const Text('Open a text file')),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -46,9 +44,7 @@ class GetDirectoryPage extends StatelessWidget {
                 foregroundColor: Colors.white,
               ),
               onPressed: _isIOS ? null : () => _getDirectoryPath(context),
-              child: const Text(
-                'Press to ask user to choose a directory.',
-              ),
+              child: const Text('Press to ask user to choose a directory.'),
             ),
           ],
         ),
@@ -70,9 +66,7 @@ class TextDisplay extends StatelessWidget {
     return AlertDialog(
       title: const Text('Selected Directory'),
       content: Scrollbar(
-        child: SingleChildScrollView(
-          child: Text(directoryPath),
-        ),
+        child: SingleChildScrollView(child: Text(directoryPath)),
       ),
       actions: <Widget>[
         TextButton(

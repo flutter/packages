@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -64,7 +64,8 @@ class InfoWindow {
     );
   }
 
-  Object _toJson() {
+  /// Converts this object to something serializable in JSON.
+  Object toJson() {
     final Map<String, Object> json = <String, Object>{};
 
     void addIfPresent(String fieldName, Object? value) {
@@ -117,6 +118,8 @@ class MarkerId extends MapsObjectId<Marker> {
 /// A marker icon is drawn oriented against the device's screen rather than
 /// the map's surface; that is, it will not necessarily change orientation
 /// due to map rotations, tilting, or zooming.
+///
+/// Deprecated on the web in favor of [AdvancedMarker].
 @immutable
 class Marker implements MapsObject<Marker> {
   /// Creates a set of marker configuration options.
@@ -161,10 +164,12 @@ class Marker implements MapsObject<Marker> {
     this.onDrag,
     this.onDragStart,
     this.onDragEnd,
-  })  : assert(0.0 <= alpha && alpha <= 1.0),
-        assert(zIndex == 0.0 || zIndexInt == 0,
-            'Only one of zIndex and zIndexInt can be provided'),
-        _zIndexNum = zIndexInt == 0 ? zIndex : zIndexInt;
+  }) : assert(0.0 <= alpha && alpha <= 1.0),
+       assert(
+         zIndex == 0.0 || zIndexInt == 0,
+         'Only one of zIndex and zIndexInt can be provided',
+       ),
+       _zIndexNum = zIndexInt == 0 ? zIndex : zIndexInt;
 
   /// Uniquely identifies a [Marker].
   final MarkerId markerId;
@@ -280,8 +285,10 @@ class Marker implements MapsObject<Marker> {
     ValueChanged<LatLng>? onDragEndParam,
     ClusterManagerId? clusterManagerIdParam,
   }) {
-    assert(zIndexParam == null || zIndexIntParam == null,
-        'Only one of zIndexParam and zIndexIntParam can be provided');
+    assert(
+      zIndexParam == null || zIndexIntParam == null,
+      'Only one of zIndexParam and zIndexIntParam can be provided',
+    );
     return Marker(
       markerId: markerId,
       alpha: alphaParam ?? alpha,
@@ -325,7 +332,7 @@ class Marker implements MapsObject<Marker> {
     addIfPresent('draggable', draggable);
     addIfPresent('flat', flat);
     addIfPresent('icon', icon.toJson());
-    addIfPresent('infoWindow', infoWindow._toJson());
+    addIfPresent('infoWindow', infoWindow.toJson());
     addIfPresent('position', position.toJson());
     addIfPresent('rotation', rotation);
     addIfPresent('visible', visible);

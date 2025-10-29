@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -57,7 +57,8 @@ abstract class GoogleSignInPlatform extends PlatformInterface {
   /// This may be silent, or may show minimal UI, depending on the platform and
   /// the context.
   Future<AuthenticationResults?>? attemptLightweightAuthentication(
-      AttemptLightweightAuthenticationParameters params);
+    AttemptLightweightAuthenticationParameters params,
+  );
 
   /// Returns true if the platform implementation supports the [authenticate]
   /// method.
@@ -86,14 +87,23 @@ abstract class GoogleSignInPlatform extends PlatformInterface {
   /// This should only return null if prompting would be necessary but [params]
   /// do not allow it, otherwise any failure should return an error.
   Future<ClientAuthorizationTokenData?> clientAuthorizationTokensForScopes(
-      ClientAuthorizationTokensForScopesParameters params);
+    ClientAuthorizationTokensForScopesParameters params,
+  );
 
   /// Returns the tokens used to authenticate other API calls from a server.
   ///
   /// This should only return null if prompting would be necessary but [params]
   /// do not allow it, otherwise any failure should return an error.
   Future<ServerAuthorizationTokenData?> serverAuthorizationTokensForScopes(
-      ServerAuthorizationTokensForScopesParameters params);
+    ServerAuthorizationTokensForScopesParameters params,
+  );
+
+  /// Clears any token cache for the given access token.
+  Future<void> clearAuthorizationToken(ClearAuthorizationTokenParams params) {
+    throw UnimplementedError(
+      'clearAuthorizationToken() has not been implemented.',
+    );
+  }
 
   /// Signs out previously signed in accounts.
   Future<void> signOut(SignOutParams params);
@@ -131,7 +141,8 @@ class _PlaceholderImplementation extends GoogleSignInPlatform {
 
   @override
   Future<AuthenticationResults?> attemptLightweightAuthentication(
-      AttemptLightweightAuthenticationParameters params) {
+    AttemptLightweightAuthenticationParameters params,
+  ) {
     throw UnimplementedError();
   }
 
@@ -152,13 +163,20 @@ class _PlaceholderImplementation extends GoogleSignInPlatform {
 
   @override
   Future<ClientAuthorizationTokenData?> clientAuthorizationTokensForScopes(
-      ClientAuthorizationTokensForScopesParameters params) {
+    ClientAuthorizationTokensForScopesParameters params,
+  ) {
     throw UnimplementedError();
   }
 
   @override
   Future<ServerAuthorizationTokenData?> serverAuthorizationTokensForScopes(
-      ServerAuthorizationTokensForScopesParameters params) {
+    ServerAuthorizationTokensForScopesParameters params,
+  ) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> clearAuthorizationToken(ClearAuthorizationTokenParams params) {
     throw UnimplementedError();
   }
 

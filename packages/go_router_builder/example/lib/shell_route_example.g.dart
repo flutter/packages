@@ -8,37 +8,26 @@ part of 'shell_route_example.dart';
 // GoRouterGenerator
 // **************************************************************************
 
-List<RouteBase> get $appRoutes => [
-      $myShellRouteData,
-      $loginRoute,
-    ];
+List<RouteBase> get $appRoutes => [$myShellRouteData, $loginRoute];
 
 RouteBase get $myShellRouteData => ShellRouteData.$route(
-      factory: $MyShellRouteDataExtension._fromState,
-      routes: [
-        GoRouteData.$route(
-          path: '/foo',
-          factory: _$FooRouteData._fromState,
-        ),
-        GoRouteData.$route(
-          path: '/bar',
-          factory: _$BarRouteData._fromState,
-        ),
-      ],
-    );
+  factory: $MyShellRouteDataExtension._fromState,
+  routes: [
+    GoRouteData.$route(path: '/foo', factory: $FooRouteData._fromState),
+    GoRouteData.$route(path: '/bar', factory: $BarRouteData._fromState),
+  ],
+);
 
 extension $MyShellRouteDataExtension on MyShellRouteData {
   static MyShellRouteData _fromState(GoRouterState state) =>
       const MyShellRouteData();
 }
 
-mixin _$FooRouteData on GoRouteData {
+mixin $FooRouteData on GoRouteData {
   static FooRouteData _fromState(GoRouterState state) => const FooRouteData();
 
   @override
-  String get location => GoRouteData.$location(
-        '/foo',
-      );
+  String get location => GoRouteData.$location('/foo');
 
   @override
   void go(BuildContext context) => context.go(location);
@@ -54,13 +43,11 @@ mixin _$FooRouteData on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-mixin _$BarRouteData on GoRouteData {
+mixin $BarRouteData on GoRouteData {
   static BarRouteData _fromState(GoRouterState state) => const BarRouteData();
 
   @override
-  String get location => GoRouteData.$location(
-        '/bar',
-      );
+  String get location => GoRouteData.$location('/bar');
 
   @override
   void go(BuildContext context) => context.go(location);
@@ -76,18 +63,14 @@ mixin _$BarRouteData on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-RouteBase get $loginRoute => GoRouteData.$route(
-      path: '/login',
-      factory: _$LoginRoute._fromState,
-    );
+RouteBase get $loginRoute =>
+    GoRouteData.$route(path: '/login', factory: $LoginRoute._fromState);
 
-mixin _$LoginRoute on GoRouteData {
+mixin $LoginRoute on GoRouteData {
   static LoginRoute _fromState(GoRouterState state) => const LoginRoute();
 
   @override
-  String get location => GoRouteData.$location(
-        '/login',
-      );
+  String get location => GoRouteData.$location('/login');
 
   @override
   void go(BuildContext context) => context.go(location);

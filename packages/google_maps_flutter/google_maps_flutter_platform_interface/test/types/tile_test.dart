@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -15,20 +15,13 @@ void main() {
       final Uint8List data = Uint8List.fromList(<int>[0, 1]);
       final Tile tile = Tile(100, 200, data);
       final Object json = tile.toJson();
-      expect(json, <String, Object>{
-        'width': 100,
-        'height': 200,
-        'data': data,
-      });
+      expect(json, <String, Object>{'width': 100, 'height': 200, 'data': data});
     });
 
     test('toJson handles null data', () async {
       const Tile tile = Tile(0, 0, null);
       final Object json = tile.toJson();
-      expect(json, <String, Object>{
-        'width': 0,
-        'height': 0,
-      });
+      expect(json, <String, Object>{'width': 0, 'height': 0});
     });
   });
 }

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -297,6 +297,41 @@ public class ImagePickerPluginTest {
         GENERAL_OPTIONS_DONT_ALLOW_MULTIPLE_DONT_USE_PHOTO_PICKER,
         mockResult);
     verify(mockImagePickerDelegate).setCameraDevice(eq(ImagePickerDelegate.CameraDevice.FRONT));
+  }
+
+  @Test
+  public void pickVideos_invokesChooseMultiVideoFromGallery() {
+    plugin.pickVideos(
+        SOURCE_GALLERY,
+        DEFAULT_VIDEO_OPTIONS,
+        GENERAL_OPTIONS_ALLOW_MULTIPLE_DONT_USE_PHOTO_PICKER,
+        mockResult);
+    verify(mockImagePickerDelegate)
+        .chooseMultiVideoFromGallery(any(), eq(false), eq(Integer.MAX_VALUE), any());
+    verifyNoInteractions(mockResult);
+  }
+
+  @Test
+  public void pickVideos_usingPhotoPicker_invokesChooseMultiVideoFromGallery() {
+    plugin.pickVideos(
+        SOURCE_GALLERY,
+        DEFAULT_VIDEO_OPTIONS,
+        GENERAL_OPTIONS_ALLOW_MULTIPLE_USE_PHOTO_PICKER,
+        mockResult);
+    verify(mockImagePickerDelegate)
+        .chooseMultiVideoFromGallery(any(), eq(true), eq(Integer.MAX_VALUE), any());
+    verifyNoInteractions(mockResult);
+  }
+
+  @Test
+  public void pickVideos_withLimit5_invokesChooseMultiVideoFromGallery() {
+    plugin.pickVideos(
+        SOURCE_GALLERY,
+        DEFAULT_VIDEO_OPTIONS,
+        GENERAL_OPTIONS_ALLOW_MULTIPLE_DONT_USE_PHOTO_PICKER_WITH_LIMIT,
+        mockResult);
+    verify(mockImagePickerDelegate).chooseMultiVideoFromGallery(any(), eq(false), eq(5), any());
+    verifyNoInteractions(mockResult);
   }
 
   @Test

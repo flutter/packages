@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -8,8 +8,9 @@ import 'package:flutter/services.dart';
 import '../platform_interface/quick_actions_platform.dart';
 import '../types/types.dart';
 
-const MethodChannel _channel =
-    MethodChannel('plugins.flutter.io/quick_actions');
+const MethodChannel _channel = MethodChannel(
+  'plugins.flutter.io/quick_actions',
+);
 
 /// An implementation of [QuickActionsPlatform] that uses method channels.
 class MethodChannelQuickActions extends QuickActionsPlatform {
@@ -23,8 +24,9 @@ class MethodChannelQuickActions extends QuickActionsPlatform {
       assert(call.method == 'launch');
       handler(call.arguments as String);
     });
-    final String? action =
-        await channel.invokeMethod<String?>('getLaunchAction');
+    final String? action = await channel.invokeMethod<String?>(
+      'getLaunchAction',
+    );
     if (action != null) {
       handler(action);
     }

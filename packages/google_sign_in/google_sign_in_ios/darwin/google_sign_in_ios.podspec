@@ -16,15 +16,14 @@ Enables Google Sign-In in Flutter apps.
   s.public_header_files = 'google_sign_in_ios/Sources/google_sign_in_ios/include/**/*.h'
   s.module_map = 'google_sign_in_ios/Sources/google_sign_in_ios/include/FLTGoogleSignInPlugin.modulemap'
 
-  # AppAuth and GTMSessionFetcher are GoogleSignIn transitive dependencies.
-  # Depend on versions which defines modules.
-  s.dependency 'AppAuth', '>= 1.7.4'
+  # GTMSessionFetcher is a GoogleSignIn transitive dependency, added here as a
+  # direct dependency to ensure a version which defines modules.
   s.dependency 'GTMSessionFetcher', '>= 3.4.0'
-  s.dependency 'GoogleSignIn', '~> 8.0'
+  s.dependency 'GoogleSignIn', '~> 9.0'
   s.static_framework = true
   s.ios.dependency 'Flutter'
   s.osx.dependency 'FlutterMacOS'
-  s.ios.deployment_target = '12.0'
+  s.ios.deployment_target = '13.0'
   s.osx.deployment_target = '10.15'
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
 

@@ -1,5 +1,5 @@
-group 'io.flutter.plugins.inapppurchase'
-version '1.0-SNAPSHOT'
+group = 'io.flutter.plugins.inapppurchase'
+version = '1.0-SNAPSHOT'
 
 buildscript {
     repositories {
@@ -8,7 +8,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.5.1'
+        classpath 'com.android.tools.build:gradle:8.12.1'
     }
 }
 
@@ -23,25 +23,25 @@ apply plugin: 'com.android.library'
 
 android {
     buildFeatures {
-        buildConfig true
+        buildConfig = true
     }
 
-    namespace 'io.flutter.plugins.inapppurchase'
+    namespace = "io.flutter.plugins.inapppurchase"
 
     compileSdk = flutter.compileSdkVersion
 
     defaultConfig {
-        minSdk 21
+        minSdk = 21
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     lintOptions {
-        checkAllWarnings true
-        warningsAsErrors true
+        checkAllWarnings = true
+        warningsAsErrors = true
         disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency', 'NewerVersionAvailable'
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
 
@@ -59,13 +59,13 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.annotation:annotation:1.9.1'
-    implementation 'com.android.billingclient:billing:7.1.1'
-    testImplementation 'junit:junit:4.13.2'
-    testImplementation 'org.json:json:20250107'
-    testImplementation 'org.mockito:mockito-core:5.17.0'
-    testImplementation 'androidx.test:core:1.6.1'
-    testImplementation 'org.robolectric:robolectric:4.14.1'
-    androidTestImplementation 'androidx.test:runner:1.6.2'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
+    implementation("androidx.annotation:annotation:1.9.1")
+    implementation("com.android.billingclient:billing:7.1.1")
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.json:json:20250517")
+    testImplementation("org.mockito:mockito-core:5.19.0")
+    testImplementation("androidx.test:core:1.7.0")
+    testImplementation("org.robolectric:robolectric:4.15.1")
+    androidTestImplementation("androidx.test:runner:1.7.0")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.7.0")
 }

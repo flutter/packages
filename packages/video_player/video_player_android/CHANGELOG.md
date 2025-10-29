@@ -1,3 +1,42 @@
+## 2.8.17
+
+* Moves video event processing logic to Dart, and fixes an issue where buffer
+  range would not be updated for a paused video.
+* Switches to Kotlin for Pigeon-generated code.
+* Adopts type-safe event channels for internal communication.
+
+## 2.8.16
+
+* Updates Java compatibility version to 17 and minimum supported SDK version to Flutter 3.35/Dart 3.9.
+
+## 2.8.15
+
+* Resolves Gradle 9 deprecations.
+
+## 2.8.14
+
+* Restructures internal logic for player creation and tracking.
+
+## 2.8.13
+
+* Bumps com.android.tools.build:gradle to 8.12.1.
+
+## 2.8.12
+
+* Moves buffer position update event generation to Dart.
+
+## 2.8.11
+
+* Updates kotlin version to 2.2.0 to enable gradle 8.11 support.
+
+## 2.8.10
+
+* Restructures internal logic to move more code to Dart.
+
+## 2.8.9
+
+* Restructures the communication between Dart and Java code.
+
 ## 2.8.8
 
 * * Updates Media3-ExoPlayer to 1.5.1.

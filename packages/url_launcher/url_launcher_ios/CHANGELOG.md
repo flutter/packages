@@ -1,3 +1,9 @@
+## 6.3.5
+
+* Updates minimum supported version to iOS 13.
+* Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
+* Fixes integration test button text matcher to work on iOS 26.
+
 ## 6.3.4
 
 * Updates to Pigeon 25.5.0.

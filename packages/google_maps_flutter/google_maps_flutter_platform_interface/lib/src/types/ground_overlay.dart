@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -102,16 +102,24 @@ class GroundOverlay implements MapsObject<GroundOverlay> {
     this.clickable = true,
     this.onTap,
     this.zoomLevel,
-  })  : assert(transparency >= 0.0 && transparency <= 1.0),
-        assert(bearing >= 0.0 && bearing <= 360.0),
-        assert((position == null) != (bounds == null),
-            'Either position or bounds must be given, but not both'),
-        assert(position == null || (width == null || width > 0),
-            'Width must be null or greater than 0 when position is used'),
-        assert(position == null || (height == null || height > 0),
-            'Height must be null or greater than 0 when position is used'),
-        assert(image.bitmapScaling == MapBitmapScaling.none,
-            'The provided image must have its bitmapScaling property set to MapBitmapScaling.none.');
+  }) : assert(transparency >= 0.0 && transparency <= 1.0),
+       assert(bearing >= 0.0 && bearing <= 360.0),
+       assert(
+         (position == null) != (bounds == null),
+         'Either position or bounds must be given, but not both',
+       ),
+       assert(
+         position == null || (width == null || width > 0),
+         'Width must be null or greater than 0 when position is used',
+       ),
+       assert(
+         position == null || (height == null || height > 0),
+         'Height must be null or greater than 0 when position is used',
+       ),
+       assert(
+         image.bitmapScaling == MapBitmapScaling.none,
+         'The provided image must have its bitmapScaling property set to MapBitmapScaling.none.',
+       );
 
   /// Creates a [GroundOverlay] fitted to the specified [bounds] with the
   /// provided [image].
@@ -317,7 +325,9 @@ class GroundOverlay implements MapsObject<GroundOverlay> {
     addIfPresent('width', width);
     addIfPresent('height', height);
     addIfPresent(
-        'anchor', anchor != null ? <Object>[anchor!.dx, anchor!.dy] : null);
+      'anchor',
+      anchor != null ? <Object>[anchor!.dx, anchor!.dy] : null,
+    );
     addIfPresent('bearing', bearing);
     addIfPresent('transparency', transparency);
     addIfPresent('zIndex', zIndex);
@@ -382,18 +392,18 @@ class GroundOverlay implements MapsObject<GroundOverlay> {
 
   @override
   int get hashCode => Object.hash(
-        groundOverlayId,
-        image,
-        position,
-        bounds,
-        width,
-        height,
-        anchor,
-        bearing,
-        transparency,
-        zIndex,
-        visible,
-        clickable,
-        zoomLevel,
-      );
+    groundOverlayId,
+    image,
+    position,
+    bounds,
+    width,
+    height,
+    anchor,
+    bearing,
+    transparency,
+    zIndex,
+    visible,
+    clickable,
+    zoomLevel,
+  );
 }

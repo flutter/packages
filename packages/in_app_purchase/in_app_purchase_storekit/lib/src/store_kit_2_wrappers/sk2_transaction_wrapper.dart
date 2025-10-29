@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -17,18 +17,19 @@ InAppPurchase2API _hostApi = InAppPurchase2API();
 /// SKPayment and SKTransaction in StoreKit1
 class SK2Transaction {
   /// Creates a new instance of [SK2Transaction]
-  SK2Transaction(
-      {required this.id,
-      required this.originalId,
-      required this.productId,
-      required this.purchaseDate,
-      this.expirationDate,
-      this.quantity = 1,
-      required this.appAccountToken,
-      this.subscriptionGroupID,
-      this.price,
-      this.error,
-      this.jsonRepresentation});
+  SK2Transaction({
+    required this.id,
+    required this.originalId,
+    required this.productId,
+    required this.purchaseDate,
+    this.expirationDate,
+    this.quantity = 1,
+    required this.appAccountToken,
+    this.subscriptionGroupID,
+    this.price,
+    this.error,
+    this.jsonRepresentation,
+  });
 
   /// The unique identifier for the transaction.
   final String id;
@@ -79,8 +80,9 @@ class SK2Transaction {
   /// A sequence that emits all the customer’s transactions for your app.
   static Future<List<SK2Transaction>> transactions() async {
     final List<SK2TransactionMessage> msgs = await _hostApi.transactions();
-    final List<SK2Transaction> transactions =
-        msgs.map((SK2TransactionMessage e) => e.convertFromPigeon()).toList();
+    final List<SK2Transaction> transactions = msgs
+        .map((SK2TransactionMessage e) => e.convertFromPigeon())
+        .toList();
     return transactions;
   }
 
@@ -104,13 +106,14 @@ class SK2Transaction {
 extension on SK2TransactionMessage {
   SK2Transaction convertFromPigeon() {
     return SK2Transaction(
-        id: id.toString(),
-        originalId: originalId.toString(),
-        productId: productId,
-        purchaseDate: purchaseDate,
-        expirationDate: expirationDate,
-        appAccountToken: appAccountToken,
-        jsonRepresentation: jsonRepresentation);
+      id: id.toString(),
+      originalId: originalId.toString(),
+      productId: productId,
+      purchaseDate: purchaseDate,
+      expirationDate: expirationDate,
+      appAccountToken: appAccountToken,
+      jsonRepresentation: jsonRepresentation,
+    );
   }
 
   PurchaseDetails convertToDetails() {
@@ -121,10 +124,11 @@ extension on SK2TransactionMessage {
       // receipt isn’t necessary with SK2 as a Transaction can only be returned
       // from validated purchases.
       verificationData: PurchaseVerificationData(
-          localVerificationData: jsonRepresentation ?? '',
-          // receiptData is the JWS representation of the transaction
-          serverVerificationData: receiptData ?? '',
-          source: kIAPSource),
+        localVerificationData: jsonRepresentation ?? '',
+        // receiptData is the JWS representation of the transaction
+        serverVerificationData: receiptData ?? '',
+        source: kIAPSource,
+      ),
       transactionDate: purchaseDate,
       // Note that with SK2, any transactions that *can* be returned will
       // require to be finished, and are already purchased.
@@ -146,8 +150,10 @@ class SK2TransactionObserverWrapper implements InAppPurchase2CallbackAPI {
 
   @override
   void onTransactionsUpdated(List<SK2TransactionMessage> newTransactions) {
-    transactionsCreatedController.add(newTransactions
-        .map((SK2TransactionMessage e) => e.convertToDetails())
-        .toList());
+    transactionsCreatedController.add(
+      newTransactions
+          .map((SK2TransactionMessage e) => e.convertToDetails())
+          .toList(),
+    );
   }
 }

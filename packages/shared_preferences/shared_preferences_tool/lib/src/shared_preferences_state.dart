@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -11,7 +11,6 @@ import 'async_state.dart';
 const Object _undefined = Object();
 
 @immutable
-
 /// A class that represents the state of the shared preferences tool.
 class SharedPreferencesState {
   /// Default constructor for [SharedPreferencesState].
@@ -42,24 +41,26 @@ class SharedPreferencesState {
     SelectedSharedPreferencesKey? selectedKey,
     bool editing,
     bool legacyApi,
-  }) get copyWith => ({
-        Object allKeys = _undefined,
-        Object? selectedKey = _undefined,
-        Object editing = _undefined,
-        Object legacyApi = _undefined,
-      }) {
-        return SharedPreferencesState(
-          allKeys: allKeys == _undefined
+  })
+  get copyWith => ({
+    Object allKeys = _undefined,
+    Object? selectedKey = _undefined,
+    Object editing = _undefined,
+    Object legacyApi = _undefined,
+  }) {
+    return SharedPreferencesState(
+      allKeys:
+          allKeys == _undefined
               ? this.allKeys
               : allKeys as AsyncState<List<String>>,
-          selectedKey: selectedKey == _undefined
+      selectedKey:
+          selectedKey == _undefined
               ? this.selectedKey
               : selectedKey as SelectedSharedPreferencesKey?,
-          editing: editing == _undefined ? this.editing : editing as bool,
-          legacyApi:
-              legacyApi == _undefined ? this.legacyApi : legacyApi as bool,
-        );
-      };
+      editing: editing == _undefined ? this.editing : editing as bool,
+      legacyApi: legacyApi == _undefined ? this.legacyApi : legacyApi as bool,
+    );
+  };
 
   @override
   bool operator ==(Object other) {
@@ -72,12 +73,7 @@ class SharedPreferencesState {
   }
 
   @override
-  int get hashCode => Object.hash(
-        allKeys,
-        selectedKey,
-        editing,
-        legacyApi,
-      );
+  int get hashCode => Object.hash(allKeys, selectedKey, editing, legacyApi);
 
   @override
   String toString() {
@@ -86,15 +82,11 @@ class SharedPreferencesState {
 }
 
 @immutable
-
 /// A class that represents the selected key and its value in the shared
 /// preferences of the target debug session.
 class SelectedSharedPreferencesKey {
   /// Default constructor for [SelectedSharedPreferencesKey].
-  const SelectedSharedPreferencesKey({
-    required this.key,
-    required this.value,
-  });
+  const SelectedSharedPreferencesKey({required this.key, required this.value});
 
   /// The user selected key.
   final String key;
@@ -125,27 +117,22 @@ abstract interface class _SharedPreferencesData<T> {
 }
 
 @immutable
-
 /// A class that represents the data of a shared preference in the target
 /// debug session.
 sealed class SharedPreferencesData implements _SharedPreferencesData<Object> {
   const SharedPreferencesData();
 
-  const factory SharedPreferencesData.string({
-    required String value,
-  }) = SharedPreferencesDataString._;
+  const factory SharedPreferencesData.string({required String value}) =
+      SharedPreferencesDataString._;
 
-  const factory SharedPreferencesData.int({
-    required int value,
-  }) = SharedPreferencesDataInt._;
+  const factory SharedPreferencesData.int({required int value}) =
+      SharedPreferencesDataInt._;
 
-  const factory SharedPreferencesData.double({
-    required double value,
-  }) = SharedPreferencesDataDouble._;
+  const factory SharedPreferencesData.double({required double value}) =
+      SharedPreferencesDataDouble._;
 
-  const factory SharedPreferencesData.bool({
-    required bool value,
-  }) = SharedPreferencesDataBool._;
+  const factory SharedPreferencesData.bool({required bool value}) =
+      SharedPreferencesDataBool._;
 
   const factory SharedPreferencesData.stringList({
     required List<String> value,
@@ -154,10 +141,8 @@ sealed class SharedPreferencesData implements _SharedPreferencesData<Object> {
   /// The string representation of the value.
   String get valueAsString {
     return switch (this) {
-      final SharedPreferencesDataStringList data => '\n${<String>[
-          for (final (int index, String str) in data.value.indexed)
-            '$index -> $str',
-        ].join('\n')}',
+      final SharedPreferencesDataStringList data =>
+        '\n${<String>[for (final (int index, String str) in data.value.indexed) '$index -> $str'].join('\n')}',
       _ => '$value',
     };
   }
@@ -179,17 +164,21 @@ sealed class SharedPreferencesData implements _SharedPreferencesData<Object> {
   /// preference value.
   SharedPreferencesData changeValue(String newValue) {
     return switch (this) {
-      SharedPreferencesDataString() =>
-        SharedPreferencesData.string(value: newValue),
-      SharedPreferencesDataInt() =>
-        SharedPreferencesData.int(value: int.parse(newValue)),
-      SharedPreferencesDataDouble() =>
-        SharedPreferencesData.double(value: double.parse(newValue)),
-      SharedPreferencesDataBool() =>
-        SharedPreferencesData.bool(value: bool.parse(newValue)),
+      SharedPreferencesDataString() => SharedPreferencesData.string(
+        value: newValue,
+      ),
+      SharedPreferencesDataInt() => SharedPreferencesData.int(
+        value: int.parse(newValue),
+      ),
+      SharedPreferencesDataDouble() => SharedPreferencesData.double(
+        value: double.parse(newValue),
+      ),
+      SharedPreferencesDataBool() => SharedPreferencesData.bool(
+        value: bool.parse(newValue),
+      ),
       SharedPreferencesDataStringList() => SharedPreferencesData.stringList(
-          value: (jsonDecode(newValue) as List<dynamic>).cast(),
-        ),
+        value: (jsonDecode(newValue) as List<dynamic>).cast(),
+      ),
     };
   }
 
@@ -216,9 +205,7 @@ sealed class SharedPreferencesData implements _SharedPreferencesData<Object> {
 
 /// A class that represents a shared preference with a string value.
 class SharedPreferencesDataString extends SharedPreferencesData {
-  const SharedPreferencesDataString._({
-    required this.value,
-  });
+  const SharedPreferencesDataString._({required this.value});
 
   /// The string value of the shared preference.
   @override
@@ -227,9 +214,7 @@ class SharedPreferencesDataString extends SharedPreferencesData {
 
 /// A class that represents a shared preference with an integer value.
 class SharedPreferencesDataInt extends SharedPreferencesData {
-  const SharedPreferencesDataInt._({
-    required this.value,
-  });
+  const SharedPreferencesDataInt._({required this.value});
 
   /// The integer value of the shared preference.
   @override
@@ -238,9 +223,7 @@ class SharedPreferencesDataInt extends SharedPreferencesData {
 
 /// A class that represents a shared preference with a double value.
 class SharedPreferencesDataDouble extends SharedPreferencesData {
-  const SharedPreferencesDataDouble._({
-    required this.value,
-  });
+  const SharedPreferencesDataDouble._({required this.value});
 
   /// The double value of the shared preference.
   @override
@@ -249,9 +232,7 @@ class SharedPreferencesDataDouble extends SharedPreferencesData {
 
 /// A class that represents a shared preference with a boolean value.
 class SharedPreferencesDataBool extends SharedPreferencesData {
-  const SharedPreferencesDataBool._({
-    required this.value,
-  });
+  const SharedPreferencesDataBool._({required this.value});
 
   /// The boolean value of the shared preference.
   @override
@@ -260,9 +241,7 @@ class SharedPreferencesDataBool extends SharedPreferencesData {
 
 /// A class that represents a shared preference with a list of string values.
 class SharedPreferencesDataStringList extends SharedPreferencesData {
-  const SharedPreferencesDataStringList._({
-    required this.value,
-  });
+  const SharedPreferencesDataStringList._({required this.value});
 
   /// The list of string values of the shared preference.
   @override

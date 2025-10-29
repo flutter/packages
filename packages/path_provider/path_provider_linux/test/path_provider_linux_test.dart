@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 import 'package:flutter_test/flutter_test.dart';
@@ -37,20 +37,28 @@ void main() {
 
   test('getApplicationSupportPath', () async {
     final PathProviderPlatform plugin = PathProviderLinux.private(
-        executableName: 'path_provider_linux_test_binary',
-        applicationId: 'com.example.Test');
+      executableName: 'path_provider_linux_test_binary',
+      applicationId: 'com.example.Test',
+    );
     // Note this will fail if ${xdg.dataHome.path}/path_provider_linux_test_binary exists on the local filesystem.
-    expect(await plugin.getApplicationSupportPath(),
-        '${xdg.dataHome.path}/com.example.Test');
+    expect(
+      await plugin.getApplicationSupportPath(),
+      '${xdg.dataHome.path}/com.example.Test',
+    );
   });
 
-  test('getApplicationSupportPath uses executable name if no application Id',
-      () async {
-    final PathProviderPlatform plugin = PathProviderLinux.private(
-        executableName: 'path_provider_linux_test_binary');
-    expect(await plugin.getApplicationSupportPath(),
-        '${xdg.dataHome.path}/path_provider_linux_test_binary');
-  });
+  test(
+    'getApplicationSupportPath uses executable name if no application Id',
+    () async {
+      final PathProviderPlatform plugin = PathProviderLinux.private(
+        executableName: 'path_provider_linux_test_binary',
+      );
+      expect(
+        await plugin.getApplicationSupportPath(),
+        '${xdg.dataHome.path}/path_provider_linux_test_binary',
+      );
+    },
+  );
 
   test('getApplicationDocumentsPath', () async {
     final PathProviderPlatform plugin = PathProviderPlatform.instance;
@@ -59,9 +67,12 @@ void main() {
 
   test('getApplicationCachePath', () async {
     final PathProviderPlatform plugin = PathProviderLinux.private(
-        executableName: 'path_provider_linux_test_binary');
-    expect(await plugin.getApplicationCachePath(),
-        '${xdg.cacheHome.path}/path_provider_linux_test_binary');
+      executableName: 'path_provider_linux_test_binary',
+    );
+    expect(
+      await plugin.getApplicationCachePath(),
+      '${xdg.cacheHome.path}/path_provider_linux_test_binary',
+    );
   });
 
   test('getDownloadsPath', () async {

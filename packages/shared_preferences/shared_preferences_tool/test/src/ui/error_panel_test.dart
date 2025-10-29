@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -12,27 +12,23 @@ import 'package:shared_preferences_tool/src/ui/error_panel.dart';
 
 void main() {
   group('ErrorPanel', () {
-    testWidgets(
-      'should show error and stacktrace',
-      (WidgetTester tester) async {
-        const String error = 'error';
-        final StackTrace stackTrace = StackTrace.current;
+    testWidgets('should show error and stacktrace', (
+      WidgetTester tester,
+    ) async {
+      const String error = 'error';
+      final StackTrace stackTrace = StackTrace.current;
 
-        await tester.pumpWidget(
-          DevToolsExtension(
-            requiresRunningApplication: false,
-            child: Directionality(
-              textDirection: TextDirection.ltr,
-              child: ErrorPanel(
-                error: error,
-                stackTrace: stackTrace,
-              ),
-            ),
+      await tester.pumpWidget(
+        DevToolsExtension(
+          requiresRunningApplication: false,
+          child: Directionality(
+            textDirection: TextDirection.ltr,
+            child: ErrorPanel(error: error, stackTrace: stackTrace),
           ),
-        );
+        ),
+      );
 
-        expect(find.text('Error:\n$error\n\n$stackTrace'), findsOneWidget);
-      },
-    );
+      expect(find.text('Error:\n$error\n\n$stackTrace'), findsOneWidget);
+    });
   });
 }

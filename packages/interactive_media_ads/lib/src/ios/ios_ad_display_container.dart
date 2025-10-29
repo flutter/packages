@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -22,8 +22,8 @@ final class IOSAdDisplayContainerCreationParams
     required super.onContainerAdded,
     super.companionSlots,
     @visibleForTesting InteractiveMediaAdsProxy? imaProxy,
-  })  : _imaProxy = imaProxy ?? const InteractiveMediaAdsProxy(),
-        super();
+  }) : _imaProxy = imaProxy ?? const InteractiveMediaAdsProxy(),
+       super();
 
   /// Creates a [IOSAdDisplayContainerCreationParams] from an instance of
   /// [PlatformAdDisplayContainerCreationParams].
@@ -62,9 +62,10 @@ base class IOSAdDisplayContainer extends PlatformAdDisplayContainer {
 
   late final IOSAdDisplayContainerCreationParams _iosParams =
       params is IOSAdDisplayContainerCreationParams
-          ? params as IOSAdDisplayContainerCreationParams
-          : IOSAdDisplayContainerCreationParams
-              .fromPlatformAdDisplayContainerCreationParams(params);
+      ? params as IOSAdDisplayContainerCreationParams
+      : IOSAdDisplayContainerCreationParams.fromPlatformAdDisplayContainerCreationParams(
+          params,
+        );
 
   @override
   Widget build(BuildContext context) {
@@ -84,8 +85,9 @@ base class IOSAdDisplayContainer extends PlatformAdDisplayContainer {
         params.onContainerAdded(this);
       },
       layoutDirection: params.layoutDirection,
-      creationParams: _controller.view.pigeon_instanceManager
-          .getIdentifier(_controller.view),
+      creationParams: _controller.view.pigeon_instanceManager.getIdentifier(
+        _controller.view,
+      ),
       creationParamsCodec: const StandardMessageCodec(),
     );
   }

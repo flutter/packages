@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -103,7 +103,7 @@ public class PreviewTest {
         ArgumentCaptor.forClass(TextureRegistry.SurfaceProducer.Callback.class);
 
     when(mockSurfaceRequest.getResolution()).thenReturn(new Size(5, 6));
-    when(mockSurfaceProducer.getSurface()).thenReturn(mock(Surface.class));
+    when(mockSurfaceProducer.getForcedNewSurface()).thenReturn(mock(Surface.class));
 
     final Preview.SurfaceProvider previewSurfaceProvider =
         api.createSurfaceProvider(mockSurfaceProducer, mockSystemServicesManager);
@@ -155,7 +155,7 @@ public class PreviewTest {
 
     when(mockSurfaceRequest.getResolution())
         .thenReturn(new Size(resolutionWidth, resolutionHeight));
-    when(mockSurfaceProducer.getSurface()).thenReturn(mockSurface);
+    when(mockSurfaceProducer.getForcedNewSurface()).thenReturn(mockSurface);
 
     final ArgumentCaptor<Surface> surfaceCaptor = ArgumentCaptor.forClass(Surface.class);
     final ArgumentCaptor<Consumer<SurfaceRequest.Result>> consumerCaptor =

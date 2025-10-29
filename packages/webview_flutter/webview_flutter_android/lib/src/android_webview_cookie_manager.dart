@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -25,7 +25,8 @@ class AndroidWebViewCookieManagerCreationParams
 
   /// Creates a [AndroidWebViewCookieManagerCreationParams] instance based on [PlatformWebViewCookieManagerCreationParams].
   factory AndroidWebViewCookieManagerCreationParams.fromPlatformWebViewCookieManagerCreationParams(
-      PlatformWebViewCookieManagerCreationParams params) {
+    PlatformWebViewCookieManagerCreationParams params,
+  ) {
     return AndroidWebViewCookieManagerCreationParams._(params);
   }
 }
@@ -36,13 +37,14 @@ class AndroidWebViewCookieManager extends PlatformWebViewCookieManager {
   AndroidWebViewCookieManager(
     PlatformWebViewCookieManagerCreationParams params, {
     CookieManager? cookieManager,
-  })  : _cookieManager = cookieManager ?? CookieManager.instance,
-        super.implementation(
-          params is AndroidWebViewCookieManagerCreationParams
-              ? params
-              : AndroidWebViewCookieManagerCreationParams
-                  .fromPlatformWebViewCookieManagerCreationParams(params),
-        );
+  }) : _cookieManager = cookieManager ?? CookieManager.instance,
+       super.implementation(
+         params is AndroidWebViewCookieManagerCreationParams
+             ? params
+             : AndroidWebViewCookieManagerCreationParams.fromPlatformWebViewCookieManagerCreationParams(
+                 params,
+               ),
+       );
 
   final CookieManager _cookieManager;
 
@@ -55,7 +57,8 @@ class AndroidWebViewCookieManager extends PlatformWebViewCookieManager {
   Future<void> setCookie(WebViewCookie cookie) {
     if (!_isValidPath(cookie.path)) {
       throw ArgumentError(
-          'The path property for the provided cookie was not given a legal value.');
+        'The path property for the provided cookie was not given a legal value.',
+      );
     }
     return _cookieManager.setCookie(
       cookie.domain,

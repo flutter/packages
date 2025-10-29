@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -14,8 +14,9 @@ import 'fake_google_maps_flutter_platform.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('Subscriptions are canceled on dispose',
-      (WidgetTester tester) async {
+  testWidgets('Subscriptions are canceled on dispose', (
+    WidgetTester tester,
+  ) async {
     final FakeGoogleMapsFlutterPlatform platform =
         FakeGoogleMapsFlutterPlatform();
 
@@ -28,15 +29,12 @@ void main() {
       onMapCreated: (GoogleMapController controller) {
         controllerCompleter.complete(controller);
       },
-      initialCameraPosition: const CameraPosition(
-        target: LatLng(0, 0),
-      ),
+      initialCameraPosition: const CameraPosition(target: LatLng(0, 0)),
     );
 
-    await tester.pumpWidget(Directionality(
-      textDirection: TextDirection.ltr,
-      child: googleMap,
-    ));
+    await tester.pumpWidget(
+      Directionality(textDirection: TextDirection.ltr, child: googleMap),
+    );
 
     await tester.pump();
 
@@ -49,10 +47,9 @@ void main() {
     expect(platform.mapEventStreamController.hasListener, true);
 
     // Remove the map from the widget tree.
-    await tester.pumpWidget(const Directionality(
-      textDirection: TextDirection.ltr,
-      child: SizedBox(),
-    ));
+    await tester.pumpWidget(
+      const Directionality(textDirection: TextDirection.ltr, child: SizedBox()),
+    );
 
     await tester.binding.runAsync(() async {
       await tester.pump();

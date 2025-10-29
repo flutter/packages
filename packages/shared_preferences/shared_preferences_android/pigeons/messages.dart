@@ -1,18 +1,22 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import 'package:pigeon/pigeon.dart';
 
-@ConfigurePigeon(PigeonOptions(
-  input: 'pigeons/messages.dart',
-  javaOut:
-      'android/src/main/java/io/flutter/plugins/sharedpreferences/Messages.java',
-  javaOptions: JavaOptions(
-      className: 'Messages', package: 'io.flutter.plugins.sharedpreferences'),
-  dartOut: 'lib/src/messages.g.dart',
-  copyrightHeader: 'pigeons/copyright.txt',
-))
+@ConfigurePigeon(
+  PigeonOptions(
+    input: 'pigeons/messages.dart',
+    javaOut:
+        'android/src/main/java/io/flutter/plugins/sharedpreferences/Messages.java',
+    javaOptions: JavaOptions(
+      className: 'Messages',
+      package: 'io.flutter.plugins.sharedpreferences',
+    ),
+    dartOut: 'lib/src/messages.g.dart',
+    copyrightHeader: 'pigeons/copyright.txt',
+  ),
+)
 @HostApi(dartHostTestHandler: 'TestSharedPreferencesApi')
 abstract class SharedPreferencesApi {
   /// Removes property from shared preferences data set.
@@ -47,15 +51,9 @@ abstract class SharedPreferencesApi {
 
   /// Removes all properties from shared preferences data set with matching prefix.
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
-  bool clear(
-    String prefix,
-    List<String>? allowList,
-  );
+  bool clear(String prefix, List<String>? allowList);
 
   /// Gets all properties from shared preferences data set with matching prefix.
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
-  Map<String, Object> getAll(
-    String prefix,
-    List<String>? allowList,
-  );
+  Map<String, Object> getAll(String prefix, List<String>? allowList);
 }

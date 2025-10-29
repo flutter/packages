@@ -1,15 +1,15 @@
-group 'dev.flutter.packages.interactive_media_ads'
-version '1.0-SNAPSHOT'
+group = 'dev.flutter.packages.interactive_media_ads'
+version = '1.0-SNAPSHOT'
 
 buildscript {
-    ext.kotlin_version = '2.1.10'
+    ext.kotlin_version = '2.2.10'
     repositories {
         google()
         mavenCentral()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.9.0'
+        classpath 'com.android.tools.build:gradle:8.12.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -25,17 +25,17 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    namespace 'dev.flutter.packages.interactive_media_ads'
+    namespace = "dev.flutter.packages.interactive_media_ads"
 
     compileSdk = flutter.compileSdkVersion
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = '11'
+        jvmTarget = JavaVersion.VERSION_17.toString()
     }
 
     sourceSets {
@@ -44,24 +44,25 @@ android {
     }
 
     defaultConfig {
-        minSdk 21
+        minSdkVersion 24
     }
 
     dependencies {
-        implementation 'androidx.annotation:annotation:1.9.1'
-        implementation 'androidx.core:core-ktx:1.13.0'
-        implementation 'com.google.ads.interactivemedia.v3:interactivemedia:3.36.0'
-        testImplementation 'junit:junit:4.13.2'
-        testImplementation 'org.jetbrains.kotlin:kotlin-test'
-        testImplementation "org.mockito.kotlin:mockito-kotlin:5.4.0"
-        testImplementation 'org.mockito:mockito-inline:5.2.0'
-        testImplementation 'androidx.test:core:1.6.1'
+        implementation("androidx.annotation:annotation:1.9.1")
+        implementation("androidx.core:core-ktx:1.13.0")
+        implementation("com.google.ads.interactivemedia.v3:interactivemedia:3.38.0")
+        testImplementation("junit:junit:4.13.2")
+        testImplementation("org.jetbrains.kotlin:kotlin-test")
+        testImplementation("org.mockito.kotlin:mockito-kotlin:6.1.0")
+        testImplementation("org.mockito:mockito-inline:5.2.0")
+        testImplementation("androidx.test:core:1.7.0")
     }
 
-    lintOptions {
-        checkAllWarnings true
-        warningsAsErrors true
+    lint {
+        checkAllWarnings = true
+        warningsAsErrors = true
         disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency', 'NewerVersionAvailable'
+        baseline = file("lint-baseline.xml")
     }
 
     testOptions {

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -29,8 +29,10 @@ export 'src/button_configuration.dart'
 
 // Asserts that the instance of the platform is for the web.
 GoogleSignInPlugin get _plugin {
-  assert(GoogleSignInPlatform.instance is GoogleSignInPlugin,
-      'The current GoogleSignInPlatform instance is not for web.');
+  assert(
+    GoogleSignInPlatform.instance is GoogleSignInPlugin,
+    'The current GoogleSignInPlatform instance is not for web.',
+  );
 
   return GoogleSignInPlatform.instance as GoogleSignInPlugin;
 }

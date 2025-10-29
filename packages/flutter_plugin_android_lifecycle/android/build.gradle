@@ -1,5 +1,5 @@
-group 'io.flutter.plugins.flutter_plugin_android_lifecycle'
-version '1.0'
+group = 'io.flutter.plugins.flutter_plugin_android_lifecycle'
+version = '1.0'
 
 buildscript {
     repositories {
@@ -8,7 +8,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.5.1'
+        classpath 'com.android.tools.build:gradle:8.12.1'
     }
 }
 
@@ -22,7 +22,7 @@ rootProject.allprojects {
 apply plugin: 'com.android.library'
 
 android {
-    namespace 'io.flutter.plugins.flutter_plugin_android_lifecycle'
+    namespace = "io.flutter.plugins.flutter_plugin_android_lifecycle"
     compileSdk = flutter.compileSdkVersion
 
     defaultConfig {
@@ -32,18 +32,18 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     lintOptions {
-        checkAllWarnings true
-        warningsAsErrors true
+        checkAllWarnings = true
+        warningsAsErrors = true
         disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency', 'NewerVersionAvailable'
     }
 
     dependencies {
-        implementation "androidx.annotation:annotation:1.9.1"
+        implementation("androidx.annotation:annotation:1.9.1")
     }
 
 
@@ -61,6 +61,6 @@ android {
 }
 
 dependencies {
-    testImplementation 'junit:junit:4.13.2'
-    testImplementation 'org.mockito:mockito-core:5.17.0'
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.mockito:mockito-core:5.19.0")
 }

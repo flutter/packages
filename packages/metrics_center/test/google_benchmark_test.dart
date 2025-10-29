@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -11,13 +11,21 @@ import 'utility.dart';
 
 void main() {
   test('GoogleBenchmarkParser parses example json.', () async {
-    final List<MetricPoint> points =
-        await GoogleBenchmarkParser.parse('test/example_google_benchmark.json');
-    expect(points.length, 9);
-    expectSetMatch(
-      points.map((MetricPoint p) => p.value),
-      <double>[101, 101, 4460, 4460, 6548, 6548, 3.8, 3.89, 4.89],
+    final List<MetricPoint> points = await GoogleBenchmarkParser.parse(
+      'test/example_google_benchmark.json',
     );
+    expect(points.length, 9);
+    expectSetMatch(points.map((MetricPoint p) => p.value), <double>[
+      101,
+      101,
+      4460,
+      4460,
+      6548,
+      6548,
+      3.8,
+      3.89,
+      4.89,
+    ]);
     expectSetMatch(
       points.map((MetricPoint p) => p.tags[kSubResultKey]),
       <String>[
@@ -28,16 +36,13 @@ void main() {
         'rms',
       ],
     );
-    expectSetMatch(
-      points.map((MetricPoint p) => p.tags[kNameKey]),
-      <String>[
-        'BM_PaintRecordInit',
-        'SkParagraphFixture/ShortLayout',
-        'SkParagraphFixture/TextBigO_BigO',
-        'ParagraphFixture/TextBigO_BigO',
-        'ParagraphFixture/TextBigO_RMS',
-      ],
-    );
+    expectSetMatch(points.map((MetricPoint p) => p.tags[kNameKey]), <String>[
+      'BM_PaintRecordInit',
+      'SkParagraphFixture/ShortLayout',
+      'SkParagraphFixture/TextBigO_BigO',
+      'ParagraphFixture/TextBigO_BigO',
+      'ParagraphFixture/TextBigO_RMS',
+    ]);
     for (final MetricPoint p in points) {
       expect(p.tags.containsKey('host_name'), false);
       expect(p.tags.containsKey('load_avg'), false);

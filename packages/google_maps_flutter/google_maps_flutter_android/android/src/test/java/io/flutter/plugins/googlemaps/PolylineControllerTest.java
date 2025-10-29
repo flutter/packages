@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -7,7 +7,7 @@ package io.flutter.plugins.googlemaps;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 
-import com.google.android.gms.internal.maps.zzaj;
+import com.google.android.gms.internal.maps.zzar;
 import com.google.android.gms.maps.model.Polyline;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -16,7 +16,7 @@ public class PolylineControllerTest {
 
   @Test
   public void controller_SetsStrokeDensity() {
-    final zzaj z = mock(zzaj.class);
+    final zzar z = mock(zzar.class);
     final Polyline polyline = spy(new Polyline(z));
 
     final float density = 5;

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -7,7 +7,7 @@ import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'default_method_channel_platform.dart';
 import 'types/types.dart';
 
-export 'package:local_auth_platform_interface/types/types.dart';
+export 'types/types.dart';
 
 /// The interface that implementations of local_auth must implement.
 ///
@@ -40,7 +40,13 @@ abstract class LocalAuthPlatform extends PlatformInterface {
   /// Authenticates the user with biometrics available on the device while also
   /// allowing the user to use device authentication - pin, pattern, passcode.
   ///
-  /// Returns true if the user successfully authenticated, false otherwise.
+  /// Returns true if the user successfully authenticated. Returns false if
+  /// the authentication completes, but the user failed the challenge with no
+  /// further effects. Platform implementations should throw a
+  /// [LocalAuthException] for any other outcome, such as errors, cancelation,
+  /// or lockout. This may mean that for some platforms, the implementation will
+  /// never return false (e.g., if the only standard outcomes are success,
+  /// cancelation, or temporary lockout due to too many retries).
   ///
   /// [localizedReason] is the message to show to user while prompting them
   /// for authentication. This is typically along the lines of: 'Please scan
@@ -50,11 +56,6 @@ abstract class LocalAuthPlatform extends PlatformInterface {
   /// customize messages in the dialogs.
   ///
   /// Provide [options] for configuring further authentication related options.
-  ///
-  /// Throws a [PlatformException] if there were technical problems with local
-  /// authentication (e.g. lack of relevant hardware). This might throw
-  /// [PlatformException] with error code [otherOperatingSystem] on the iOS
-  /// simulator.
   Future<bool> authenticate({
     required String localizedReason,
     required Iterable<AuthMessages> authMessages,
@@ -80,7 +81,8 @@ abstract class LocalAuthPlatform extends PlatformInterface {
   /// - BiometricType.weak
   Future<List<BiometricType>> getEnrolledBiometrics() async {
     throw UnimplementedError(
-        'getAvailableBiometrics() has not been implemented.');
+      'getAvailableBiometrics() has not been implemented.',
+    );
   }
 
   /// Returns true if device is capable of checking biometrics or is able to

@@ -1,5 +1,5 @@
-group 'io.flutter.plugins.pathprovider'
-version '1.0-SNAPSHOT'
+group = 'io.flutter.plugins.pathprovider'
+version = '1.0-SNAPSHOT'
 
 buildscript {
     repositories {
@@ -8,7 +8,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.5.0'
+        classpath 'com.android.tools.build:gradle:8.12.1'
     }
 }
 
@@ -22,7 +22,7 @@ rootProject.allprojects {
 apply plugin: 'com.android.library'
 
 android {
-    namespace 'io.flutter.plugins.pathprovider'
+    namespace = "io.flutter.plugins.pathprovider"
     compileSdk = flutter.compileSdkVersion
 
     defaultConfig {
@@ -30,13 +30,13 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     lintOptions {
-        checkAllWarnings true
-        warningsAsErrors true
+        checkAllWarnings = true
+        warningsAsErrors = true
         disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency', 'NewerVersionAvailable'
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
 
@@ -54,6 +54,6 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.annotation:annotation:1.9.1'
-    testImplementation 'junit:junit:4.13.2'
+    implementation("androidx.annotation:annotation:1.9.1")
+    testImplementation("junit:junit:4.13.2")
 }

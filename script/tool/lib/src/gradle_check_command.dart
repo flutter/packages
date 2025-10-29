@@ -1,6 +1,8 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+
+import 'dart:math' as math;
 
 import 'package:collection/collection.dart';
 import 'package:file/file.dart';
@@ -24,6 +26,8 @@ class GradleCheckCommand extends PackageLoopingCommand {
     super.packagesDir, {
     super.gitDir,
   });
+
+  static const int _minimumJavaVersion = 17;
 
   @override
   final String name = 'gradle-check';
@@ -126,6 +130,12 @@ class GradleCheckCommand extends PackageLoopingCommand {
       succeeded = false;
     }
     if (!_validateCompatibilityVersions(lines)) {
+      succeeded = false;
+    }
+    if (!_validateKotlinJvmCompatibility(lines)) {
+      succeeded = false;
+    }
+    if (!_validateJavaKotlinCompileOptionsAlignment(lines)) {
       succeeded = false;
     }
     if (!_validateGradleDrivenLintConfig(package, lines)) {
@@ -294,12 +304,11 @@ plugins {
   /// compatibility with apps that use AGP 8+.
   bool _validateNamespace(RepositoryPackage package, String gradleContents,
       {required bool isExample}) {
-    // Regex to validate that either of the following namespace definitions
-    // are found (where the single quotes can be single or double):
-    //  - namespace 'dev.flutter.foo'
+    // Regex to validate that the following namespace definition
+    // is found (where the single quotes can be single or double):
     //  - namespace = 'dev.flutter.foo'
     final RegExp nameSpaceRegex =
-        RegExp('^\\s*namespace\\s+=?\\s*[\'"](.*?)[\'"]', multiLine: true);
+        RegExp('^\\s*namespace\\s+=\\s*[\'"](.*?)[\'"]', multiLine: true);
     final RegExpMatch? nameSpaceRegexMatch =
         nameSpaceRegex.firstMatch(gradleContents);
 
@@ -308,7 +317,7 @@ plugins {
 build.gradle must set a "namespace":
 
     android {
-        namespace 'dev.flutter.foo'
+        namespace = "dev.flutter.foo"
     }
 
 The value must match the "package" attribute in AndroidManifest.xml, if one is
@@ -358,30 +367,32 @@ build.gradle "namespace" must match the "package" attribute in AndroidManifest.x
     final bool hasLanguageVersion = gradleLines.any((String line) =>
         line.contains('languageVersion') && !_isCommented(line));
     final bool hasCompabilityVersions = gradleLines.any((String line) =>
-            line.contains('sourceCompatibility') && !_isCommented(line)) &&
+            line.contains('sourceCompatibility = JavaVersion.VERSION_') &&
+            !_isCommented(line)) &&
         // Newer toolchains default targetCompatibility to the same value as
         // sourceCompatibility, but older toolchains require it to be set
         // explicitly. The exact version cutoff (and of which piece of the
         // toolchain; likely AGP) is unknown; for context see
         // https://github.com/flutter/flutter/issues/125482
         gradleLines.any((String line) =>
-            line.contains('targetCompatibility') && !_isCommented(line));
+            line.contains('targetCompatibility = JavaVersion.VERSION_') &&
+            !_isCommented(line));
     if (!hasLanguageVersion && !hasCompabilityVersions) {
-      const String errorMessage = '''
-build.gradle must set an explicit Java compatibility version.
+      const String javaErrorMessage = '''
+build.gradle(.kts) must set an explicit Java compatibility version.
 
 This can be done either via "sourceCompatibility"/"targetCompatibility":
     android {
         compileOptions {
-            sourceCompatibility JavaVersion.VERSION_11
-            targetCompatibility JavaVersion.VERSION_11
+            sourceCompatibility = JavaVersion.VERSION_$_minimumJavaVersion
+            targetCompatibility = JavaVersion.VERSION_$_minimumJavaVersion
         }
     }
 
 or "toolchain":
     java {
         toolchain {
-            languageVersion = JavaLanguageVersion.of(11)
+            languageVersion = JavaLanguageVersion.of($_minimumJavaVersion)
         }
     }
 
@@ -390,9 +401,87 @@ https://docs.gradle.org/current/userguide/java_plugin.html#toolchain_and_compati
 for more details.''';
 
       printError(
-          '$indentation${errorMessage.split('\n').join('\n$indentation')}');
+          '$indentation${javaErrorMessage.split('\n').join('\n$indentation')}');
       return false;
     }
+
+    return true;
+  }
+
+  bool _validateKotlinJvmCompatibility(List<String> gradleLines) {
+    bool isKotlinOptions(String line) =>
+        line.contains('kotlinOptions') && !_isCommented(line);
+    final bool hasKotlinOptions = gradleLines.any(isKotlinOptions);
+    final bool kotlinOptionsUsesJavaVersion = gradleLines.any((String line) =>
+        line.contains('jvmTarget = JavaVersion.VERSION_') &&
+        !_isCommented(line));
+    // Either does not set kotlinOptions or does and uses non-string based syntax.
+    if (hasKotlinOptions && !kotlinOptionsUsesJavaVersion) {
+      // Bad lines contains the first 4 lines including the kotlinOptions section.
+      String badLines = '';
+      final int startIndex =
+          gradleLines.indexOf(gradleLines.firstWhere(isKotlinOptions));
+      for (int i = startIndex;
+          i < math.min(startIndex + 4, gradleLines.length);
+          i++) {
+        badLines += '${gradleLines[i]}\n';
+      }
+      final String kotlinErrorMessage = '''
+If build.gradle(.kts) sets jvmTarget then it must use JavaVersion syntax.
+  Good:
+    android {
+      kotlinOptions {
+          jvmTarget = JavaVersion.VERSION_$_minimumJavaVersion.toString()
+      }
+    }
+  BAD:
+    $badLines
+''';
+      printError(
+          '$indentation${kotlinErrorMessage.split('\n').join('\n$indentation')}');
+      return false;
+    }
+    // No error condition.
+    return true;
+  }
+
+  bool _validateJavaKotlinCompileOptionsAlignment(List<String> gradleLines) {
+    final List<String> javaVersions = <String>[];
+    // Some java versions have the format VERSION_1_8 but we dont need to handle those
+    // because they are below the minimum.
+    final RegExp javaVersionMatcher =
+        RegExp(r'JavaVersion.VERSION_(?<javaVersion>\d+)');
+    for (final String line in gradleLines) {
+      final RegExpMatch? match = javaVersionMatcher.firstMatch(line);
+      if (!_isCommented(line) && match != null) {
+        final String? foundVersion = match.namedGroup('javaVersion');
+        if (foundVersion != null) {
+          javaVersions.add(foundVersion);
+        }
+      }
+    }
+    if (javaVersions.isNotEmpty) {
+      final int version = int.parse(javaVersions.first);
+      if (!javaVersions.every((String element) => element == '$version')) {
+        const String javaVersionAlignmentError = '''
+If build.gradle(.kts) uses JavaVersion.* versions must be the same.
+''';
+        printError(
+            '$indentation${javaVersionAlignmentError.split('\n').join('\n$indentation')}');
+        return false;
+      }
+
+      if (version < _minimumJavaVersion) {
+        final String minimumJavaVersionError = '''
+build.gradle(.kts) uses "JavaVersion.VERSION_$version".
+Which is below the minimum required. Use at least "JavaVersion.VERSION_$_minimumJavaVersion".
+''';
+        printError(
+            '$indentation${minimumJavaVersionError.split('\n').join('\n$indentation')}');
+        return false;
+      }
+    }
+
     return true;
   }
 
@@ -406,16 +495,16 @@ for more details.''';
         .childFile('build.gradle')
         .readAsLinesSync();
     if (!gradleBuildContents.any((String line) =>
-            line.contains('checkAllWarnings true') && !_isCommented(line)) ||
+            line.contains('checkAllWarnings = true') && !_isCommented(line)) ||
         !gradleBuildContents.any((String line) =>
-            line.contains('warningsAsErrors true') && !_isCommented(line))) {
+            line.contains('warningsAsErrors = true') && !_isCommented(line))) {
       printError('${indentation}This package is not configured to enable all '
           'Gradle-driven lint warnings and treat them as errors. '
           'Please add the following to the lintOptions section of '
           'android/build.gradle:');
       print('''
-        checkAllWarnings true
-        warningsAsErrors true
+        checkAllWarnings = true
+        warningsAsErrors = true
 ''');
       return false;
     }
@@ -428,6 +517,7 @@ for more details.''';
     final RegExp legacySettingPattern = RegExp(r'^\s*compileSdkVersion');
     final String? compileSdkLine = gradleLines
         .firstWhereOrNull((String line) => linePattern.hasMatch(line));
+
     if (compileSdkLine == null) {
       // Equals regex not found check for method pattern.
       final RegExp compileSpacePattern = RegExp(r'^\s*compileSdk');
@@ -466,6 +556,28 @@ for more details.''';
             'supports $minFlutterVersion.\n'
             "${indentation}Please update the package's minimum Flutter SDK "
             'version to at least 3.27.');
+        return false;
+      }
+    } else {
+      // Extract compileSdkVersion and check if it is higher than flutter.compileSdkVersion.
+      final RegExp numericVersionPattern = RegExp(r'=\s*(\d+)');
+      final RegExpMatch? versionMatch =
+          numericVersionPattern.firstMatch(compileSdkLine);
+
+      if (versionMatch != null) {
+        final int compileSdkVersion = int.parse(versionMatch.group(1)!);
+        const int minCompileSdkVersion = 36;
+
+        if (compileSdkVersion < minCompileSdkVersion) {
+          printError(
+              '${indentation}compileSdk version $compileSdkVersion is too low. '
+              'Minimum required version is $minCompileSdkVersion.\n'
+              "${indentation}Please update this package's compileSdkVersion to at least "
+              '$minCompileSdkVersion or use flutter.compileSdkVersion.');
+          return false;
+        }
+      } else {
+        printError('${indentation}Unable to parse compileSdk version number.');
         return false;
       }
     }

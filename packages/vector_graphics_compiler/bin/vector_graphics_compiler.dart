@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -13,99 +13,113 @@ import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 
 import 'util/isolate_processor.dart';
 
-final ArgParser argParser = ArgParser()
-  ..addOption(
-    'current-color',
-    help: 'The value (in ARGB format or a named SVG color) of the '
-        '"currentColor" attribute.',
-    valueHelp: '0xFF000000',
-    defaultsTo: '0xFF000000',
-  )
-  ..addOption(
-    'font-size',
-    help: 'The basis for font size based values (i.e. em, ex).',
-    valueHelp: '14',
-    defaultsTo: '14',
-  )
-  ..addOption(
-    'x-height',
-    help: 'The x-height or corpus size of the font. If unspecified, defaults '
-        'to half of font-size.',
-    valueHelp: '7',
-  )
-  ..addOption(
-    'libtessellator',
-    help: 'The path to a libtessellator dynamic library',
-    valueHelp: 'path/to/libtessellator.dylib',
-    hide: true,
-  )
-  ..addOption(
-    'libpathops',
-    help: 'The path to a libpathops dynamic library',
-    valueHelp: 'path/to/libpath_ops.dylib',
-    hide: true,
-  )
-  ..addFlag(
-    'tessellate',
-    help: 'Convert path fills into a tessellated shape. This will improve '
-        'raster times at the cost of slightly larger file sizes.',
-  )
-  ..addFlag(
-    'optimize-masks',
-    help: 'Allows for masking optimizer to be enabled or disabled',
-    defaultsTo: true,
-  )
-  ..addFlag(
-    'optimize-clips',
-    help: 'Allows for clipping optimizer to be enabled or disabled',
-    defaultsTo: true,
-  )
-  ..addFlag(
-    'optimize-overdraw',
-    help: 'Allows for overdraw optimizer to be enabled or disabled',
-    defaultsTo: true,
-  )
-  ..addOption(
-    'input-dir',
-    help: 'The path to a directory containing one or more SVGs. '
-        'Only includes files that end with .svg. '
-        'Cannot be combined with --input or --output.',
-  )
-  ..addOption(
-    'out-dir',
-    help: 'The output directory  path '
-        'use it with --input-dir to specific the output dirictory',
-  )
-  ..addOption(
-    'input',
-    abbr: 'i',
-    help: 'The path to a file containing a single SVG',
-  )
-  ..addOption('concurrency',
-      abbr: 'k',
-      help: 'The maximum number of SVG processing isolates to spawn at once. '
-          'If not provided, defaults to the number of cores.')
-  ..addFlag('dump-debug',
-      help:
-          'Dump a human readable debugging format alongside the compiled asset',
-      hide: true)
-  ..addOption(
-    'output',
-    abbr: 'o',
-    help:
-        'The path to a file where the resulting vector_graphic will be written.\n'
-        'If not provided, defaults to <input-file>.vec',
-  )
-  ..addFlag('use-half-precision-control-points',
-      help:
-          'Convert path control points into  IEEE 754-2008 half precision floating point values.\n'
-          'This reduces file size at the cost of lost precision at larger values.');
+final ArgParser argParser =
+    ArgParser()
+      ..addOption(
+        'current-color',
+        help:
+            'The value (in ARGB format or a named SVG color) of the '
+            '"currentColor" attribute.',
+        valueHelp: '0xFF000000',
+        defaultsTo: '0xFF000000',
+      )
+      ..addOption(
+        'font-size',
+        help: 'The basis for font size based values (i.e. em, ex).',
+        valueHelp: '14',
+        defaultsTo: '14',
+      )
+      ..addOption(
+        'x-height',
+        help:
+            'The x-height or corpus size of the font. If unspecified, defaults '
+            'to half of font-size.',
+        valueHelp: '7',
+      )
+      ..addOption(
+        'libtessellator',
+        help: 'The path to a libtessellator dynamic library',
+        valueHelp: 'path/to/libtessellator.dylib',
+        hide: true,
+      )
+      ..addOption(
+        'libpathops',
+        help: 'The path to a libpathops dynamic library',
+        valueHelp: 'path/to/libpath_ops.dylib',
+        hide: true,
+      )
+      ..addFlag(
+        'tessellate',
+        help:
+            'Convert path fills into a tessellated shape. This will improve '
+            'raster times at the cost of slightly larger file sizes.',
+      )
+      ..addFlag(
+        'optimize-masks',
+        help: 'Allows for masking optimizer to be enabled or disabled',
+        defaultsTo: true,
+      )
+      ..addFlag(
+        'optimize-clips',
+        help: 'Allows for clipping optimizer to be enabled or disabled',
+        defaultsTo: true,
+      )
+      ..addFlag(
+        'optimize-overdraw',
+        help: 'Allows for overdraw optimizer to be enabled or disabled',
+        defaultsTo: true,
+      )
+      ..addOption(
+        'input-dir',
+        help:
+            'The path to a directory containing one or more SVGs. '
+            'Only includes files that end with .svg. '
+            'Cannot be combined with --input or --output.',
+      )
+      ..addOption(
+        'out-dir',
+        help:
+            'The output directory  path '
+            'use it with --input-dir to specific the output dirictory',
+      )
+      ..addOption(
+        'input',
+        abbr: 'i',
+        help: 'The path to a file containing a single SVG',
+      )
+      ..addOption(
+        'concurrency',
+        abbr: 'k',
+        help:
+            'The maximum number of SVG processing isolates to spawn at once. '
+            'If not provided, defaults to the number of cores.',
+      )
+      ..addFlag(
+        'dump-debug',
+        help:
+            'Dump a human readable debugging format alongside the compiled asset',
+        hide: true,
+      )
+      ..addOption(
+        'output',
+        abbr: 'o',
+        help:
+            'The path to a file where the resulting vector_graphic will be written.\n'
+            'If not provided, defaults to <input-file>.vec',
+      )
+      ..addFlag(
+        'use-half-precision-control-points',
+        help:
+            'Convert path control points into  IEEE 754-2008 half precision floating point values.\n'
+            'This reduces file size at the cost of lost precision at larger values.',
+      );
 
 void validateOptions(ArgResults results) {
   if (results.wasParsed('input-dir') &&
       (results.wasParsed('input') || results.wasParsed('output'))) {
     print(
-        '--input-dir cannot be combined with --input and/or --output options.');
+      '--input-dir cannot be combined with --input and/or --output options.',
+    );
     exit(1);
   }
   if (!results.wasParsed('input') && !results.wasParsed('input-dir')) {
@@ -123,9 +137,10 @@ SvgTheme _parseTheme(ArgResults results) {
   return SvgTheme(
     currentColor: currentColor,
     fontSize: double.tryParse(results['font-size'] as String) ?? 14,
-    xHeight: results.wasParsed('x-height')
-        ? double.tryParse(results['x-height'] as String)
-        : null,
+    xHeight:
+        results.wasParsed('x-height')
+            ? double.tryParse(results['x-height'] as String)
+            : null,
   );
 }
 

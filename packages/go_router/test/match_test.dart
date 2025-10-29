@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -11,10 +11,7 @@ import 'package:go_router/go_router.dart';
 void main() {
   group('RouteMatch', () {
     test('simple', () {
-      final GoRoute route = GoRoute(
-        path: '/users/:userId',
-        builder: _builder,
-      );
+      final GoRoute route = GoRoute(path: '/users/:userId', builder: _builder);
       final Map<String, String> pathParameters = <String, String>{};
       final List<RouteMatchBase> matches = RouteMatchBase.match(
         route: route,
@@ -33,12 +30,7 @@ void main() {
     test('ShellRoute has a unique pageKey', () {
       final ShellRoute route = ShellRoute(
         builder: _shellBuilder,
-        routes: <GoRoute>[
-          GoRoute(
-            path: '/users/:userId',
-            builder: _builder,
-          ),
-        ],
+        routes: <GoRoute>[GoRoute(path: '/users/:userId', builder: _builder)],
       );
       final Map<String, String> pathParameters = <String, String>{};
       final List<RouteMatchBase> matches = RouteMatchBase.match(
@@ -54,12 +46,7 @@ void main() {
     test('ShellRoute Match has stable unique key', () {
       final ShellRoute route = ShellRoute(
         builder: _shellBuilder,
-        routes: <GoRoute>[
-          GoRoute(
-            path: '/users/:userId',
-            builder: _builder,
-          ),
-        ],
+        routes: <GoRoute>[GoRoute(path: '/users/:userId', builder: _builder)],
       );
       final Map<String, String> pathParameters = <String, String>{};
       final List<RouteMatchBase> matches1 = RouteMatchBase.match(
@@ -80,10 +67,7 @@ void main() {
     });
 
     test('GoRoute Match has stable unique key', () {
-      final GoRoute route = GoRoute(
-        path: '/users/:userId',
-        builder: _builder,
-      );
+      final GoRoute route = GoRoute(path: '/users/:userId', builder: _builder);
       final Map<String, String> pathParameters = <String, String>{};
       final List<RouteMatchBase> matches1 = RouteMatchBase.match(
         route: route,
@@ -160,11 +144,7 @@ void main() {
     expect(matches.length, 4);
     expect(
       matches[0].route,
-      isA<GoRoute>().having(
-        (GoRoute route) => route.path,
-        'path',
-        '/',
-      ),
+      isA<GoRoute>().having((GoRoute route) => route.path, 'path', '/'),
     );
     expect(
       matches[1].route,
@@ -176,44 +156,38 @@ void main() {
     );
     expect(
       matches[2].route,
-      isA<GoRoute>().having(
-        (GoRoute route) => route.path,
-        'path',
-        'b',
-      ),
+      isA<GoRoute>().having((GoRoute route) => route.path, 'path', 'b'),
     );
     expect(
       matches[3].route,
-      isA<GoRoute>().having(
-        (GoRoute route) => route.path,
-        'path',
-        'd',
-      ),
+      isA<GoRoute>().having((GoRoute route) => route.path, 'path', 'd'),
     );
   });
 
   group('ImperativeRouteMatch', () {
     final RouteMatchList matchList1 = RouteMatchList(
-        matches: <RouteMatch>[
-          RouteMatch(
-            route: GoRoute(path: '/', builder: (_, __) => const Text('hi')),
-            matchedLocation: '/',
-            pageKey: const ValueKey<String>('dummy'),
-          ),
-        ],
-        uri: Uri.parse('/'),
-        pathParameters: const <String, String>{});
+      matches: <RouteMatch>[
+        RouteMatch(
+          route: GoRoute(path: '/', builder: (_, __) => const Text('hi')),
+          matchedLocation: '/',
+          pageKey: const ValueKey<String>('dummy'),
+        ),
+      ],
+      uri: Uri.parse('/'),
+      pathParameters: const <String, String>{},
+    );
 
     final RouteMatchList matchList2 = RouteMatchList(
-        matches: <RouteMatch>[
-          RouteMatch(
-            route: GoRoute(path: '/a', builder: (_, __) => const Text('a')),
-            matchedLocation: '/a',
-            pageKey: const ValueKey<String>('dummy'),
-          ),
-        ],
-        uri: Uri.parse('/a'),
-        pathParameters: const <String, String>{});
+      matches: <RouteMatch>[
+        RouteMatch(
+          route: GoRoute(path: '/a', builder: (_, __) => const Text('a')),
+          matchedLocation: '/a',
+          pageKey: const ValueKey<String>('dummy'),
+        ),
+      ],
+      uri: Uri.parse('/a'),
+      pathParameters: const <String, String>{},
+    );
 
     const ValueKey<String> key1 = ValueKey<String>('key1');
     const ValueKey<String> key2 = ValueKey<String>('key2');
@@ -223,30 +197,54 @@ void main() {
 
     test('can equal and has', () async {
       ImperativeRouteMatch match1 = ImperativeRouteMatch(
-          pageKey: key1, matches: matchList1, completer: completer1);
+        pageKey: key1,
+        matches: matchList1,
+        completer: completer1,
+      );
       ImperativeRouteMatch match2 = ImperativeRouteMatch(
-          pageKey: key1, matches: matchList1, completer: completer1);
+        pageKey: key1,
+        matches: matchList1,
+        completer: completer1,
+      );
       expect(match1 == match2, isTrue);
       expect(match1.hashCode == match2.hashCode, isTrue);
 
       match1 = ImperativeRouteMatch(
-          pageKey: key1, matches: matchList1, completer: completer1);
+        pageKey: key1,
+        matches: matchList1,
+        completer: completer1,
+      );
       match2 = ImperativeRouteMatch(
-          pageKey: key2, matches: matchList1, completer: completer1);
+        pageKey: key2,
+        matches: matchList1,
+        completer: completer1,
+      );
       expect(match1 == match2, isFalse);
       expect(match1.hashCode == match2.hashCode, isFalse);
 
       match1 = ImperativeRouteMatch(
-          pageKey: key1, matches: matchList1, completer: completer1);
+        pageKey: key1,
+        matches: matchList1,
+        completer: completer1,
+      );
       match2 = ImperativeRouteMatch(
-          pageKey: key1, matches: matchList2, completer: completer1);
+        pageKey: key1,
+        matches: matchList2,
+        completer: completer1,
+      );
       expect(match1 == match2, isFalse);
       expect(match1.hashCode == match2.hashCode, isFalse);
 
       match1 = ImperativeRouteMatch(
-          pageKey: key1, matches: matchList1, completer: completer1);
+        pageKey: key1,
+        matches: matchList1,
+        completer: completer1,
+      );
       match2 = ImperativeRouteMatch(
-          pageKey: key1, matches: matchList1, completer: completer2);
+        pageKey: key1,
+        matches: matchList1,
+        completer: completer2,
+      );
       expect(match1 == match2, isFalse);
       expect(match1.hashCode == match2.hashCode, isFalse);
     });

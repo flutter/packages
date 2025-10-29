@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -61,16 +61,15 @@ class AndroidViewWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return PlatformViewLink(
       viewType: _viewType,
-      surfaceFactory: (
-        BuildContext context,
-        PlatformViewController controller,
-      ) {
-        return AndroidViewSurface(
-          controller: controller as AndroidViewController,
-          hitTestBehavior: PlatformViewHitTestBehavior.opaque,
-          gestureRecognizers: const <Factory<OneSequenceGestureRecognizer>>{},
-        );
-      },
+      surfaceFactory:
+          (BuildContext context, PlatformViewController controller) {
+            return AndroidViewSurface(
+              controller: controller as AndroidViewController,
+              hitTestBehavior: PlatformViewHitTestBehavior.opaque,
+              gestureRecognizers:
+                  const <Factory<OneSequenceGestureRecognizer>>{},
+            );
+          },
       onCreatePlatformView: (PlatformViewCreationParams params) {
         return _initAndroidView(params)
           ..addOnPlatformViewCreatedListener((int id) {

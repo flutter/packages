@@ -8,9 +8,9 @@ the user.
 On supported devices, this includes authentication with biometrics such as
 fingerprint or facial recognition.
 
-|             | Android   | iOS   | macOS  | Windows     |
-|-------------|-----------|-------|--------|-------------|
-| **Support** | SDK 21+\* | 12.0+ | 10.14+ | Windows 10+ |
+|             | Android | iOS   | macOS  | Windows     |
+|-------------|---------|-------|--------|-------------|
+| **Support** | SDK 24+ | 13.0+ | 10.14+ | Windows 10+ |
 
 ## Usage
 
@@ -50,8 +50,8 @@ types and only check that some biometric is enrolled:
 
 <?code-excerpt "readme_excerpts.dart (Enrolled)"?>
 ```dart
-final List<BiometricType> availableBiometrics =
-    await auth.getAvailableBiometrics();
+final List<BiometricType> availableBiometrics = await auth
+    .getAvailableBiometrics();
 
 if (availableBiometrics.isNotEmpty) {
   // Some biometrics are enrolled.
@@ -66,69 +66,34 @@ if (availableBiometrics.contains(BiometricType.strong) ||
 
 ### Options
 
+#### Requiring Biometrics
+
 The `authenticate()` method uses biometric authentication when possible, but
-also allows fallback to pin, pattern, or passcode.
-
-<?code-excerpt "readme_excerpts.dart (AuthAny)"?>
-```dart
-try {
-  final bool didAuthenticate = await auth.authenticate(
-      localizedReason: 'Please authenticate to show account balance');
-  // ···
-} on PlatformException {
-  // ...
-}
-```
-
-To require biometric authentication, pass `AuthenticationOptions` with
-`biometricOnly` set to `true`.
+by default also allows fallback to pin, pattern, or passcode. To require
+biometric authentication, set `biometricOnly` to `true`.
 
 <?code-excerpt "readme_excerpts.dart (AuthBioOnly)"?>
 ```dart
 final bool didAuthenticate = await auth.authenticate(
-    localizedReason: 'Please authenticate to show account balance',
-    options: const AuthenticationOptions(biometricOnly: true));
+  localizedReason: 'Please authenticate to show account balance',
+  biometricOnly: true,
+);
 ```
 
 *Note*: `biometricOnly` is not supported on Windows since the Windows implementation's underlying API (Windows Hello) doesn't support selecting the authentication method.
 
-#### Dialogs
+#### Background Handling
 
-The plugin provides default dialogs for the following cases:
+On mobile platforms, authentication may be canceled by the system if the app
+is backgrounded. This might happen if the user receives a phone call before
+they get a chance to authenticate, for example. Setting
+`persistAcrossBackgrounding` to true will cause the plugin to instead wait until
+the app is foregrounded again, retry the authentication, and only return once
+that new attempt completes.
 
-1. Passcode/PIN/Pattern Not Set: The user has not yet configured a passcode on
-   iOS or PIN/pattern on Android.
-2. Biometrics Not Enrolled: The user has not enrolled any biometrics on the
-   device.
+#### Dialog customization
 
-If a user does not have the necessary authentication enrolled when
-`authenticate` is called, they will be given the option to enroll at that point,
-or cancel authentication.
-
-If you don't want to use the default dialogs, set the `useErrorDialogs` option
-to `false` to have `authenticate` immediately return an error in those cases.
-
-<?code-excerpt "readme_excerpts.dart (NoErrorDialogs)"?>
-```dart
-import 'package:local_auth/error_codes.dart' as auth_error;
-// ···
-    try {
-      final bool didAuthenticate = await auth.authenticate(
-          localizedReason: 'Please authenticate to show account balance',
-          options: const AuthenticationOptions(useErrorDialogs: false));
-      // ···
-    } on PlatformException catch (e) {
-      if (e.code == auth_error.notAvailable) {
-        // Add handling of no hardware here.
-      } else if (e.code == auth_error.notEnrolled) {
-        // ...
-      } else {
-        // ...
-      }
-    }
-```
-
-If you want to customize the messages in the dialogs, you can pass
+If you want to customize the messages in the system dialogs, you can pass
 `AuthMessages` for each platform you support. These are platform-specific, so
 you will need to import the platform-specific implementation packages. For
 instance, to customize Android and iOS:
@@ -139,16 +104,15 @@ import 'package:local_auth_android/local_auth_android.dart';
 import 'package:local_auth_darwin/local_auth_darwin.dart';
 // ···
     final bool didAuthenticate = await auth.authenticate(
-        localizedReason: 'Please authenticate to show account balance',
-        authMessages: const <AuthMessages>[
-          AndroidAuthMessages(
-            signInTitle: 'Oops! Biometric authentication required!',
-            cancelButton: 'No thanks',
-          ),
-          IOSAuthMessages(
-            cancelButton: 'No thanks',
-          ),
-        ]);
+      localizedReason: 'Please authenticate to show account balance',
+      authMessages: const <AuthMessages>[
+        AndroidAuthMessages(
+          signInTitle: 'Oops! Biometric authentication required!',
+          cancelButton: 'No thanks',
+        ),
+        IOSAuthMessages(cancelButton: 'No thanks'),
+      ],
+    );
 ```
 
 See the platform-specific classes for details about what can be customized on
@@ -156,28 +120,26 @@ each platform.
 
 ### Exceptions
 
-`authenticate` throws `PlatformException`s in many error cases. See
-`error_codes.dart` for known error codes that you may want to have specific
-handling for. For example:
+`authenticate` throws `LocalAuthException`s in most failure cases. See
+`LocalAuthExceptionCodes` for known error codes that you may want to have
+specific handling for. For example:
 
 <?code-excerpt "readme_excerpts.dart (ErrorHandling)"?>
 ```dart
-import 'package:flutter/services.dart';
-import 'package:local_auth/error_codes.dart' as auth_error;
 import 'package:local_auth/local_auth.dart';
 // ···
   final LocalAuthentication auth = LocalAuthentication();
   // ···
     try {
       final bool didAuthenticate = await auth.authenticate(
-          localizedReason: 'Please authenticate to show account balance',
-          options: const AuthenticationOptions(useErrorDialogs: false));
+        localizedReason: 'Please authenticate to show account balance',
+      );
       // ···
-    } on PlatformException catch (e) {
-      if (e.code == auth_error.notEnrolled) {
+    } on LocalAuthException catch (e) {
+      if (e.code == LocalAuthExceptionCode.noBiometricHardware) {
         // Add handling of no hardware here.
-      } else if (e.code == auth_error.lockedOut ||
-          e.code == auth_error.permanentlyLockedOut) {
+      } else if (e.code == LocalAuthExceptionCode.temporaryLockout ||
+          e.code == LocalAuthExceptionCode.biometricLockout) {
         // ...
       } else {
         // ...
@@ -200,12 +162,9 @@ app has not been updated to use Face ID.
 
 ## Android Integration
 
-\* The plugin will build and run on SDK 21+, but `isDeviceSupported()` will
-always return false before SDK 23 (Android 6.0).
-
 ### Activity Changes
 
-Note that `local_auth` requires the use of a `FragmentActivity` instead of an
+`local_auth` requires the use of a `FragmentActivity` instead of an
 `Activity`. To update your application:
 
 * If you are using `FlutterActivity` directly, change it to
@@ -287,12 +246,3 @@ the Android theme directly in `android/app/src/main/AndroidManifest.xml`:
 	</application>
 ...
 ```
-
-## Sticky Auth
-
-You can set the `stickyAuth` option on the plugin to true so that plugin does not
-return failure if the app is put to background by the system. This might happen
-if the user receives a phone call before they get a chance to authenticate. With
-`stickyAuth` set to false, this would result in plugin returning failure result
-to the Dart app. If set to true, the plugin will retry authenticating when the
-app resumes.

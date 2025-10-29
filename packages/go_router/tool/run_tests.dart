@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -39,28 +39,20 @@ Future<void> main(List<String> args) async {
   );
 
   // Run dart pub get in the temp directory to set it up.
-  final int pubGetStatusCode = await _runProcess(
-    'dart',
-    <String>[
-      'pub',
-      'get',
-    ],
-    workingDirectory: testTempDir.path,
-  );
+  final int pubGetStatusCode = await _runProcess('dart', <String>[
+    'pub',
+    'get',
+  ], workingDirectory: testTempDir.path);
 
   if (pubGetStatusCode != 0) {
     await cleanUpAndExit(pubGetStatusCode);
   }
 
   // Run dart fix --compare-to-golden in the temp directory.
-  final int dartFixStatusCode = await _runProcess(
-    'dart',
-    <String>[
-      'fix',
-      '--compare-to-golden',
-    ],
-    workingDirectory: testTempDir.path,
-  );
+  final int dartFixStatusCode = await _runProcess('dart', <String>[
+    'fix',
+    '--compare-to-golden',
+  ], workingDirectory: testTempDir.path);
 
   await cleanUpAndExit(dartFixStatusCode);
 }
@@ -70,8 +62,9 @@ Future<void> _prepareTemplate({
   required Directory testTempDir,
 }) async {
   // The src test_fixes directory.
-  final Directory testFixesSrcDir =
-      Directory(p.join(packageRoot.path, 'test_fixes'));
+  final Directory testFixesSrcDir = Directory(
+    p.join(packageRoot.path, 'test_fixes'),
+  );
 
   // Copy from src `test_fixes/` to the temp directory.
   await io.copyPath(testFixesSrcDir.path, testTempDir.path);
@@ -110,10 +103,8 @@ Future<int> _runProcess(
   List<String> arguments, {
   String? workingDirectory,
 }) async {
-  final Process process = await _streamOutput(Process.start(
-    command,
-    arguments,
-    workingDirectory: workingDirectory,
-  ));
+  final Process process = await _streamOutput(
+    Process.start(command, arguments, workingDirectory: workingDirectory),
+  );
   return process.exitCode;
 }

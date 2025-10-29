@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -27,20 +27,20 @@ void main() {
       final MockCompanionAdSlot mockCompanionAdSlot = MockCompanionAdSlot();
       final AndroidCompanionAdSlotCreationParams params =
           AndroidCompanionAdSlotCreationParams(
-        size: CompanionAdSlotSize.fixed(width: 300, height: 400),
-        proxy: InteractiveMediaAdsProxy(
-          newFrameLayout: () {
-            return frameLayout;
-          },
-          instanceImaSdkFactory: () {
-            final MockImaSdkFactory mockFactory = MockImaSdkFactory();
-            when(mockFactory.createCompanionAdSlot()).thenAnswer(
-              (_) async => mockCompanionAdSlot,
-            );
-            return mockFactory;
-          },
-        ),
-      );
+            size: CompanionAdSlotSize.fixed(width: 300, height: 400),
+            proxy: InteractiveMediaAdsProxy(
+              newFrameLayout: () {
+                return frameLayout;
+              },
+              instanceImaSdkFactory: () {
+                final MockImaSdkFactory mockFactory = MockImaSdkFactory();
+                when(
+                  mockFactory.createCompanionAdSlot(),
+                ).thenAnswer((_) async => mockCompanionAdSlot);
+                return mockFactory;
+              },
+            ),
+          );
 
       final AndroidCompanionAdSlot adSlot = AndroidCompanionAdSlot(params);
       await adSlot.getNativeCompanionAdSlot();
@@ -53,41 +53,42 @@ void main() {
       final MockCompanionAdSlot mockCompanionAdSlot = MockCompanionAdSlot();
       final AndroidCompanionAdSlotCreationParams params =
           AndroidCompanionAdSlotCreationParams(
-        size: CompanionAdSlotSize.fixed(width: 300, height: 400),
-        onClicked: expectAsync0(() {}),
-        proxy: InteractiveMediaAdsProxy(
-          newFrameLayout: () {
-            return ima.FrameLayout.pigeon_detached(
-              pigeon_instanceManager: _TestInstanceManager(),
-            );
-          },
-          instanceImaSdkFactory: () {
-            final MockImaSdkFactory mockFactory = MockImaSdkFactory();
-            when(mockFactory.createCompanionAdSlot()).thenAnswer(
-              (_) async => mockCompanionAdSlot,
-            );
-            return mockFactory;
-          },
-          newCompanionAdSlotClickListener: ({
-            required void Function(
-              ima.CompanionAdSlotClickListener,
-            ) onCompanionAdClick,
-          }) {
-            return ima.CompanionAdSlotClickListener.pigeon_detached(
-              onCompanionAdClick: onCompanionAdClick,
-              pigeon_instanceManager: _TestInstanceManager(),
-            );
-          },
-        ),
-      );
+            size: CompanionAdSlotSize.fixed(width: 300, height: 400),
+            onClicked: expectAsync0(() {}),
+            proxy: InteractiveMediaAdsProxy(
+              newFrameLayout: () {
+                return ima.FrameLayout.pigeon_detached(
+                  pigeon_instanceManager: _TestInstanceManager(),
+                );
+              },
+              instanceImaSdkFactory: () {
+                final MockImaSdkFactory mockFactory = MockImaSdkFactory();
+                when(
+                  mockFactory.createCompanionAdSlot(),
+                ).thenAnswer((_) async => mockCompanionAdSlot);
+                return mockFactory;
+              },
+              newCompanionAdSlotClickListener:
+                  ({
+                    required void Function(ima.CompanionAdSlotClickListener)
+                    onCompanionAdClick,
+                  }) {
+                    return ima.CompanionAdSlotClickListener.pigeon_detached(
+                      onCompanionAdClick: onCompanionAdClick,
+                      pigeon_instanceManager: _TestInstanceManager(),
+                    );
+                  },
+            ),
+          );
 
       final AndroidCompanionAdSlot adSlot = AndroidCompanionAdSlot(params);
       await adSlot.getNativeCompanionAdSlot();
 
       final ima.CompanionAdSlotClickListener clickListener =
-          verify(mockCompanionAdSlot.addClickListener(captureAny))
-              .captured
-              .single as ima.CompanionAdSlotClickListener;
+          verify(
+                mockCompanionAdSlot.addClickListener(captureAny),
+              ).captured.single
+              as ima.CompanionAdSlotClickListener;
 
       clickListener.onCompanionAdClick(clickListener);
     });

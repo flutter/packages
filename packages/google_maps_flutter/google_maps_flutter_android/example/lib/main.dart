@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -55,11 +55,14 @@ class MapsDemo extends StatelessWidget {
   const MapsDemo({super.key});
 
   void _pushPage(BuildContext context, GoogleMapExampleAppPage page) {
-    Navigator.of(context).push(MaterialPageRoute<void>(
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
         builder: (_) => Scaffold(
-              appBar: AppBar(title: Text(page.title)),
-              body: page,
-            )));
+          appBar: AppBar(title: Text(page.title)),
+          body: page,
+        ),
+      ),
+    );
   }
 
   @override
@@ -85,7 +88,8 @@ void main() {
 
 Completer<AndroidMapRenderer?>? _initializedRendererCompleter;
 
-/// Initializes map renderer to the `latest` renderer type.
+/// Initializes map renderer to the `latest` renderer type, and calls
+/// [GoogleMapsFlutterAndroid.warmup()].
 ///
 /// The renderer must be requested before creating GoogleMap instances,
 /// as the renderer can be initialized only once per application context.
@@ -100,11 +104,17 @@ Future<AndroidMapRenderer?> initializeMapRenderer() async {
 
   WidgetsFlutterBinding.ensureInitialized();
 
-  final GoogleMapsFlutterPlatform platform = GoogleMapsFlutterPlatform.instance;
-  unawaited((platform as GoogleMapsFlutterAndroid)
-      .initializeWithRenderer(AndroidMapRenderer.latest)
-      .then((AndroidMapRenderer initializedRenderer) =>
-          completer.complete(initializedRenderer)));
+  final GoogleMapsFlutterAndroid platform =
+      GoogleMapsFlutterPlatform.instance as GoogleMapsFlutterAndroid;
+  unawaited(
+    platform
+        .initializeWithRenderer(AndroidMapRenderer.latest)
+        .then(
+          (AndroidMapRenderer initializedRenderer) =>
+              completer.complete(initializedRenderer),
+        )
+        .then((_) => platform.warmup()),
+  );
 
   return completer.future;
 }

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -47,16 +47,17 @@ void main() {
       api.canLaunch = true;
 
       expect(
-          await plugin.launch(
-            'http://example.com/',
-            useSafariVC: true,
-            useWebView: false,
-            enableJavaScript: false,
-            enableDomStorage: false,
-            universalLinksOnly: false,
-            headers: const <String, String>{},
-          ),
-          true);
+        await plugin.launch(
+          'http://example.com/',
+          useSafariVC: true,
+          useWebView: false,
+          enableJavaScript: false,
+          enableDomStorage: false,
+          universalLinksOnly: false,
+          headers: const <String, String>{},
+        ),
+        true,
+      );
       expect(api.argument, 'http://example.com/');
     });
 
@@ -64,16 +65,17 @@ void main() {
       api.canLaunch = false;
 
       expect(
-          await plugin.launch(
-            'http://example.com/',
-            useSafariVC: true,
-            useWebView: false,
-            enableJavaScript: false,
-            enableDomStorage: false,
-            universalLinksOnly: false,
-            headers: const <String, String>{},
-          ),
-          false);
+        await plugin.launch(
+          'http://example.com/',
+          useSafariVC: true,
+          useWebView: false,
+          enableJavaScript: false,
+          enableDomStorage: false,
+          universalLinksOnly: false,
+          headers: const <String, String>{},
+        ),
+        false,
+      );
       expect(api.argument, 'http://example.com/');
     });
 
@@ -81,16 +83,17 @@ void main() {
       api.throwError = true;
 
       await expectLater(
-          plugin.launch(
-            'http://example.com/',
-            useSafariVC: true,
-            useWebView: false,
-            enableJavaScript: false,
-            enableDomStorage: false,
-            universalLinksOnly: false,
-            headers: const <String, String>{},
-          ),
-          throwsA(isA<PlatformException>()));
+        plugin.launch(
+          'http://example.com/',
+          useSafariVC: true,
+          useWebView: false,
+          enableJavaScript: false,
+          enableDomStorage: false,
+          universalLinksOnly: false,
+          headers: const <String, String>{},
+        ),
+        throwsA(isA<PlatformException>()),
+      );
       expect(api.argument, 'http://example.com/');
     });
   });
@@ -98,40 +101,51 @@ void main() {
   group('supportsMode', () {
     test('returns true for platformDefault', () async {
       final UrlLauncherWindows launcher = UrlLauncherWindows(api: api);
-      expect(await launcher.supportsMode(PreferredLaunchMode.platformDefault),
-          true);
+      expect(
+        await launcher.supportsMode(PreferredLaunchMode.platformDefault),
+        true,
+      );
     });
 
     test('returns true for external application', () async {
       final UrlLauncherWindows launcher = UrlLauncherWindows(api: api);
       expect(
-          await launcher.supportsMode(PreferredLaunchMode.externalApplication),
-          true);
+        await launcher.supportsMode(PreferredLaunchMode.externalApplication),
+        true,
+      );
     });
 
     test('returns false for other modes', () async {
       final UrlLauncherWindows launcher = UrlLauncherWindows(api: api);
       expect(
-          await launcher
-              .supportsMode(PreferredLaunchMode.externalNonBrowserApplication),
-          false);
-      expect(await launcher.supportsMode(PreferredLaunchMode.inAppBrowserView),
-          false);
+        await launcher.supportsMode(
+          PreferredLaunchMode.externalNonBrowserApplication,
+        ),
+        false,
+      );
       expect(
-          await launcher.supportsMode(PreferredLaunchMode.inAppWebView), false);
+        await launcher.supportsMode(PreferredLaunchMode.inAppBrowserView),
+        false,
+      );
+      expect(
+        await launcher.supportsMode(PreferredLaunchMode.inAppWebView),
+        false,
+      );
     });
   });
 
   test('supportsCloseForMode returns false', () async {
     final UrlLauncherWindows launcher = UrlLauncherWindows(api: api);
     expect(
-        await launcher
-            .supportsCloseForMode(PreferredLaunchMode.platformDefault),
-        false);
+      await launcher.supportsCloseForMode(PreferredLaunchMode.platformDefault),
+      false,
+    );
     expect(
-        await launcher
-            .supportsCloseForMode(PreferredLaunchMode.externalApplication),
-        false);
+      await launcher.supportsCloseForMode(
+        PreferredLaunchMode.externalApplication,
+      ),
+      false,
+    );
   });
 }
 

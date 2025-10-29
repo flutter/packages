@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -61,92 +61,108 @@ void runTests() {
         expect(coordinate.y, (rect.center.dy - rect.topLeft.dy).round());
       } else {
         expect(
-            coordinate.x,
-            ((rect.center.dx - rect.topLeft.dx) * tester.view.devicePixelRatio)
-                .round());
+          coordinate.x,
+          ((rect.center.dx - rect.topLeft.dx) * tester.view.devicePixelRatio)
+              .round(),
+        );
         expect(
-            coordinate.y,
-            ((rect.center.dy - rect.topLeft.dy) * tester.view.devicePixelRatio)
-                .round());
+          coordinate.y,
+          ((rect.center.dy - rect.topLeft.dy) * tester.view.devicePixelRatio)
+              .round(),
+        );
       }
       await tester.binding.setSurfaceSize(null);
     },
     // Android doesn't like the layout required for the web, so we skip web in this test.
     // The equivalent web test already exists here:
     // https://github.com/flutter/packages/blob/c43cc13498a1a1c4f3d1b8af2add9ce7c15bd6d0/packages/google_maps_flutter/google_maps_flutter_web/example/integration_test/projection_test.dart#L78
-    skip: isWeb ||
+    skip:
+        isWeb ||
         // TODO(stuartmorgan): Re-enable; see https://github.com/flutter/flutter/issues/139825
         isIOS ||
         // TODO(tarrinneal): Re-enable; see https://github.com/flutter/flutter/issues/160115
         isAndroid,
   );
 
-  testWidgets('testGetVisibleRegion', (WidgetTester tester) async {
-    final Key key = GlobalKey();
-    final LatLngBounds zeroLatLngBounds = LatLngBounds(
-        southwest: const LatLng(0, 0), northeast: const LatLng(0, 0));
+  testWidgets(
+    'testGetVisibleRegion',
+    (WidgetTester tester) async {
+      final Key key = GlobalKey();
+      final LatLngBounds zeroLatLngBounds = LatLngBounds(
+        southwest: const LatLng(0, 0),
+        northeast: const LatLng(0, 0),
+      );
 
-    final Completer<GoogleMapController> mapControllerCompleter =
-        Completer<GoogleMapController>();
+      final Completer<GoogleMapController> mapControllerCompleter =
+          Completer<GoogleMapController>();
 
-    await pumpMap(
-      tester,
-      GoogleMap(
-        key: key,
-        initialCameraPosition: kInitialCameraPosition,
-        onMapCreated: (GoogleMapController controller) {
-          mapControllerCompleter.complete(controller);
-        },
-      ),
-    );
-    await tester.pumpAndSettle();
-    final GoogleMapController mapController =
-        await mapControllerCompleter.future;
+      await pumpMap(
+        tester,
+        GoogleMap(
+          key: key,
+          initialCameraPosition: kInitialCameraPosition,
+          onMapCreated: (GoogleMapController controller) {
+            mapControllerCompleter.complete(controller);
+          },
+        ),
+      );
+      await tester.pumpAndSettle();
+      final GoogleMapController mapController =
+          await mapControllerCompleter.future;
 
-    // Wait for the visible region to be non-zero.
-    final LatLngBounds firstVisibleRegion =
-        await waitForValueMatchingPredicate<LatLngBounds>(
-                tester,
-                () => mapController.getVisibleRegion(),
-                (LatLngBounds bounds) => bounds != zeroLatLngBounds) ??
-            zeroLatLngBounds;
-    expect(firstVisibleRegion, isNot(zeroLatLngBounds));
-    expect(firstVisibleRegion.contains(kInitialMapCenter), isTrue);
+      // Wait for the visible region to be non-zero.
+      final LatLngBounds firstVisibleRegion =
+          await waitForValueMatchingPredicate<LatLngBounds>(
+            tester,
+            () => mapController.getVisibleRegion(),
+            (LatLngBounds bounds) => bounds != zeroLatLngBounds,
+          ) ??
+          zeroLatLngBounds;
+      expect(firstVisibleRegion, isNot(zeroLatLngBounds));
+      expect(firstVisibleRegion.contains(kInitialMapCenter), isTrue);
 
-    // Making a new `LatLngBounds` about (10, 10) distance south west to the `firstVisibleRegion`.
-    // The size of the `LatLngBounds` is 10 by 10.
-    final LatLng southWest = LatLng(firstVisibleRegion.southwest.latitude - 20,
-        firstVisibleRegion.southwest.longitude - 20);
-    final LatLng northEast = LatLng(firstVisibleRegion.southwest.latitude - 10,
-        firstVisibleRegion.southwest.longitude - 10);
-    final LatLng newCenter = LatLng(
-      (northEast.latitude + southWest.latitude) / 2,
-      (northEast.longitude + southWest.longitude) / 2,
-    );
+      // Making a new `LatLngBounds` about (10, 10) distance south west to the `firstVisibleRegion`.
+      // The size of the `LatLngBounds` is 10 by 10.
+      final LatLng southWest = LatLng(
+        firstVisibleRegion.southwest.latitude - 20,
+        firstVisibleRegion.southwest.longitude - 20,
+      );
+      final LatLng northEast = LatLng(
+        firstVisibleRegion.southwest.latitude - 10,
+        firstVisibleRegion.southwest.longitude - 10,
+      );
+      final LatLng newCenter = LatLng(
+        (northEast.latitude + southWest.latitude) / 2,
+        (northEast.longitude + southWest.longitude) / 2,
+      );
 
-    expect(firstVisibleRegion.contains(northEast), isFalse);
-    expect(firstVisibleRegion.contains(southWest), isFalse);
+      expect(firstVisibleRegion.contains(northEast), isFalse);
+      expect(firstVisibleRegion.contains(southWest), isFalse);
 
-    final LatLngBounds latLngBounds =
-        LatLngBounds(southwest: southWest, northeast: northEast);
+      final LatLngBounds latLngBounds = LatLngBounds(
+        southwest: southWest,
+        northeast: northEast,
+      );
 
-    // TODO(iskakaushik): non-zero padding is needed for some device configurations
-    // https://github.com/flutter/flutter/issues/30575
-    const double padding = 0;
-    await mapController
-        .moveCamera(CameraUpdate.newLatLngBounds(latLngBounds, padding));
-    await tester.pumpAndSettle(const Duration(seconds: 3));
+      // TODO(iskakaushik): non-zero padding is needed for some device configurations
+      // https://github.com/flutter/flutter/issues/30575
+      const double padding = 0;
+      await mapController.moveCamera(
+        CameraUpdate.newLatLngBounds(latLngBounds, padding),
+      );
+      await tester.pumpAndSettle(const Duration(seconds: 3));
 
-    final LatLngBounds secondVisibleRegion =
-        await mapController.getVisibleRegion();
+      final LatLngBounds secondVisibleRegion =
+          await mapController.getVisibleRegion();
 
-    expect(secondVisibleRegion, isNot(zeroLatLngBounds));
+      expect(secondVisibleRegion, isNot(zeroLatLngBounds));
 
-    expect(firstVisibleRegion, isNot(secondVisibleRegion));
-    expect(secondVisibleRegion.contains(newCenter), isTrue);
-  },
-      // TODO(stuartmorgan): Re-enable; see https://github.com/flutter/flutter/issues/139825
-      skip: isIOS);
+      expect(firstVisibleRegion, isNot(secondVisibleRegion));
+      expect(secondVisibleRegion.contains(newCenter), isTrue);
+    },
+    // TODO(stuartmorgan): Re-enable; see https://github.com/flutter/flutter/issues/139825
+    skip: isIOS,
+  );
 
   testWidgets('testSetMapStyle valid Json String', (WidgetTester tester) async {
     final Key key = GlobalKey();
@@ -172,8 +188,9 @@ void runTests() {
     await controller.setMapStyle(mapStyle);
   });
 
-  testWidgets('testSetMapStyle invalid Json String',
-      (WidgetTester tester) async {
+  testWidgets('testSetMapStyle invalid Json String', (
+    WidgetTester tester,
+  ) async {
     final Key key = GlobalKey();
     final Completer<GoogleMapController> controllerCompleter =
         Completer<GoogleMapController>();
@@ -246,8 +263,9 @@ void runTests() {
     await Future<void>.delayed(const Duration(seconds: 1));
 
     final LatLngBounds visibleRegion = await controller.getVisibleRegion();
-    final LatLng topLeft =
-        await controller.getLatLng(const ScreenCoordinate(x: 0, y: 0));
+    final LatLng topLeft = await controller.getLatLng(
+      const ScreenCoordinate(x: 0, y: 0),
+    );
     final LatLng northWest = LatLng(
       visibleRegion.northeast.latitude,
       visibleRegion.southwest.longitude,
@@ -256,74 +274,81 @@ void runTests() {
     expect(topLeft, northWest);
   });
 
-  testWidgets('testGetZoomLevel', (WidgetTester tester) async {
-    final Key key = GlobalKey();
-    final Completer<GoogleMapController> controllerCompleter =
-        Completer<GoogleMapController>();
+  testWidgets(
+    'testGetZoomLevel',
+    (WidgetTester tester) async {
+      final Key key = GlobalKey();
+      final Completer<GoogleMapController> controllerCompleter =
+          Completer<GoogleMapController>();
 
-    await pumpMap(
-      tester,
-      GoogleMap(
-        key: key,
-        initialCameraPosition: kInitialCameraPosition,
-        onMapCreated: (GoogleMapController controller) {
-          controllerCompleter.complete(controller);
-        },
-      ),
-    );
-    final GoogleMapController controller = await controllerCompleter.future;
+      await pumpMap(
+        tester,
+        GoogleMap(
+          key: key,
+          initialCameraPosition: kInitialCameraPosition,
+          onMapCreated: (GoogleMapController controller) {
+            controllerCompleter.complete(controller);
+          },
+        ),
+      );
+      final GoogleMapController controller = await controllerCompleter.future;
 
-    await tester.pumpAndSettle();
-    // TODO(cyanglaz): Remove this after we added `mapRendered` callback, and `mapControllerCompleter.complete(controller)` above should happen
-    // in `mapRendered`.
-    // https://github.com/flutter/flutter/issues/54758
-    await Future<void>.delayed(const Duration(seconds: 1));
+      await tester.pumpAndSettle();
+      // TODO(cyanglaz): Remove this after we added `mapRendered` callback, and `mapControllerCompleter.complete(controller)` above should happen
+      // in `mapRendered`.
+      // https://github.com/flutter/flutter/issues/54758
+      await Future<void>.delayed(const Duration(seconds: 1));
 
-    double zoom = await controller.getZoomLevel();
-    expect(zoom, kInitialZoomLevel);
+      double zoom = await controller.getZoomLevel();
+      expect(zoom, kInitialZoomLevel);
 
-    await controller.moveCamera(CameraUpdate.zoomTo(7));
-    await tester.pumpAndSettle();
-    zoom = await controller.getZoomLevel();
-    expect(zoom, equals(7));
-  },
-      // TODO(stuartmorgan): Re-enable; see https://github.com/flutter/flutter/issues/139825
-      skip: isIOS);
+      await controller.moveCamera(CameraUpdate.zoomTo(7));
+      await tester.pumpAndSettle();
+      zoom = await controller.getZoomLevel();
+      expect(zoom, equals(7));
+    },
+    // TODO(stuartmorgan): Re-enable; see https://github.com/flutter/flutter/issues/139825
+    skip: isIOS,
+  );
 
-  testWidgets('testScreenCoordinate', (WidgetTester tester) async {
-    final Key key = GlobalKey();
-    final Completer<GoogleMapController> controllerCompleter =
-        Completer<GoogleMapController>();
+  testWidgets(
+    'testScreenCoordinate',
+    (WidgetTester tester) async {
+      final Key key = GlobalKey();
+      final Completer<GoogleMapController> controllerCompleter =
+          Completer<GoogleMapController>();
 
-    await pumpMap(
-      tester,
-      GoogleMap(
-        key: key,
-        initialCameraPosition: kInitialCameraPosition,
-        onMapCreated: (GoogleMapController controller) {
-          controllerCompleter.complete(controller);
-        },
-      ),
-    );
-    final GoogleMapController controller = await controllerCompleter.future;
+      await pumpMap(
+        tester,
+        GoogleMap(
+          key: key,
+          initialCameraPosition: kInitialCameraPosition,
+          onMapCreated: (GoogleMapController controller) {
+            controllerCompleter.complete(controller);
+          },
+        ),
+      );
+      final GoogleMapController controller = await controllerCompleter.future;
 
-    await tester.pumpAndSettle();
-    // TODO(cyanglaz): Remove this after we added `mapRendered` callback, and `mapControllerCompleter.complete(controller)` above should happen
-    // in `mapRendered`.
-    // https://github.com/flutter/flutter/issues/54758
-    await Future<void>.delayed(const Duration(seconds: 1));
+      await tester.pumpAndSettle();
+      // TODO(cyanglaz): Remove this after we added `mapRendered` callback, and `mapControllerCompleter.complete(controller)` above should happen
+      // in `mapRendered`.
+      // https://github.com/flutter/flutter/issues/54758
+      await Future<void>.delayed(const Duration(seconds: 1));
 
-    final LatLngBounds visibleRegion = await controller.getVisibleRegion();
-    final LatLng northWest = LatLng(
-      visibleRegion.northeast.latitude,
-      visibleRegion.southwest.longitude,
-    );
-    final ScreenCoordinate topLeft =
-        await controller.getScreenCoordinate(northWest);
-    expect(topLeft, const ScreenCoordinate(x: 0, y: 0));
-  },
-      // TODO(stuartmorgan): Re-enable; see https://github.com/flutter/flutter/issues/139825
-      skip: isIOS);
+      final LatLngBounds visibleRegion = await controller.getVisibleRegion();
+      final LatLng northWest = LatLng(
+        visibleRegion.northeast.latitude,
+        visibleRegion.southwest.longitude,
+      );
+      final ScreenCoordinate topLeft = await controller.getScreenCoordinate(
+        northWest,
+      );
+      expect(topLeft, const ScreenCoordinate(x: 0, y: 0));
+    },
+    // TODO(stuartmorgan): Re-enable; see https://github.com/flutter/flutter/issues/139825
+    skip: isIOS,
+  );
 
   testWidgets('testResizeWidget', (WidgetTester tester) async {
     final Completer<GoogleMapController> controllerCompleter =
@@ -368,8 +393,9 @@ void runTests() {
 
   testWidgets('testToggleInfoWindow', (WidgetTester tester) async {
     const Marker marker = Marker(
-        markerId: MarkerId('marker'),
-        infoWindow: InfoWindow(title: 'InfoWindow'));
+      markerId: MarkerId('marker'),
+      infoWindow: InfoWindow(title: 'InfoWindow'),
+    );
     final Set<Marker> markers = <Marker>{marker};
 
     final Completer<GoogleMapController> controllerCompleter =
@@ -395,17 +421,20 @@ void runTests() {
     // re-evaluated when that issue is fixed.
     await Future<void>.delayed(const Duration(seconds: 1));
 
-    bool iwVisibleStatus =
-        await controller.isMarkerInfoWindowShown(marker.markerId);
+    bool iwVisibleStatus = await controller.isMarkerInfoWindowShown(
+      marker.markerId,
+    );
     expect(iwVisibleStatus, false);
 
     await controller.showMarkerInfoWindow(marker.markerId);
     // The Maps SDK doesn't always return true for whether it is shown
     // immediately after showing it, so wait for it to report as shown.
-    iwVisibleStatus = await waitForValueMatchingPredicate<bool>(
-            tester,
-            () => controller.isMarkerInfoWindowShown(marker.markerId),
-            (bool visible) => visible) ??
+    iwVisibleStatus =
+        await waitForValueMatchingPredicate<bool>(
+          tester,
+          () => controller.isMarkerInfoWindowShown(marker.markerId),
+          (bool visible) => visible,
+        ) ??
         false;
     expect(iwVisibleStatus, true);
 
@@ -417,11 +446,9 @@ void runTests() {
   testWidgets('markerWithAssetMapBitmap', (WidgetTester tester) async {
     final Set<Marker> markers = <Marker>{
       Marker(
-          markerId: const MarkerId('1'),
-          icon: AssetMapBitmap(
-            'assets/red_square.png',
-            imagePixelRatio: 1.0,
-          )),
+        markerId: const MarkerId('1'),
+        icon: AssetMapBitmap('assets/red_square.png', imagePixelRatio: 1.0),
+      ),
     };
     await pumpMap(
       tester,
@@ -438,11 +465,12 @@ void runTests() {
     );
     final Set<Marker> markers = <Marker>{
       Marker(
-          markerId: const MarkerId('1'),
-          icon: await AssetMapBitmap.create(
-            imageConfiguration,
-            'assets/red_square.png',
-          )),
+        markerId: const MarkerId('1'),
+        icon: await AssetMapBitmap.create(
+          imageConfiguration,
+          'assets/red_square.png',
+        ),
+      ),
     };
     await pumpMap(
       tester,
@@ -481,13 +509,14 @@ void runTests() {
     );
     final Set<Marker> markers = <Marker>{
       Marker(
-          markerId: const MarkerId('1'),
-          // Intentionally testing the deprecated code path.
-          // ignore: deprecated_member_use
-          icon: await BitmapDescriptor.fromAssetImage(
-            imageConfiguration,
-            'assets/red_square.png',
-          )),
+        markerId: const MarkerId('1'),
+        // Intentionally testing the deprecated code path.
+        // ignore: deprecated_member_use
+        icon: await BitmapDescriptor.fromAssetImage(
+          imageConfiguration,
+          'assets/red_square.png',
+        ),
+      ),
     };
     await pumpMap(
       tester,
@@ -505,13 +534,11 @@ void runTests() {
     final Uint8List bytes = const Base64Decoder().convert(iconImageBase64);
     final Set<Marker> markers = <Marker>{
       Marker(
-          markerId: const MarkerId('1'),
-          // Intentionally testing the deprecated code path.
-          // ignore: deprecated_member_use
-          icon: BitmapDescriptor.fromBytes(
-            bytes,
-            size: const Size(100, 100),
-          )),
+        markerId: const MarkerId('1'),
+        // Intentionally testing the deprecated code path.
+        // ignore: deprecated_member_use
+        icon: BitmapDescriptor.fromBytes(bytes, size: const Size(100, 100)),
+      ),
     };
     await pumpMap(
       tester,
@@ -524,53 +551,53 @@ void runTests() {
     await tester.pumpAndSettle();
   });
 
-  testWidgets('testTakeSnapshot', (WidgetTester tester) async {
-    final Completer<GoogleMapController> controllerCompleter =
-        Completer<GoogleMapController>();
-
-    await pumpMap(
-      tester,
-      GoogleMap(
-        initialCameraPosition: kInitialCameraPosition,
-        onMapCreated: (GoogleMapController controller) {
-          controllerCompleter.complete(controller);
-        },
-      ),
-    );
-    await tester.pumpAndSettle(const Duration(seconds: 3));
-    final GoogleMapController controller = await controllerCompleter.future;
-
-    final Uint8List? bytes = await controller.takeSnapshot();
-    expect(bytes?.isNotEmpty, true);
-  },
-      // TODO(cyanglaz): un-skip the test when we can test this on CI with API key enabled.
-      // https://github.com/flutter/flutter/issues/57057
-      // https://github.com/flutter/flutter/issues/139825
-      skip: isAndroid || isWeb || isIOS);
-
   testWidgets(
-    'testCloudMapId',
+    'testTakeSnapshot',
     (WidgetTester tester) async {
-      final Completer<int> mapIdCompleter = Completer<int>();
-      final Key key = GlobalKey();
+      final Completer<GoogleMapController> controllerCompleter =
+          Completer<GoogleMapController>();
 
       await pumpMap(
         tester,
         GoogleMap(
-          key: key,
           initialCameraPosition: kInitialCameraPosition,
           onMapCreated: (GoogleMapController controller) {
-            mapIdCompleter.complete(controller.mapId);
+            controllerCompleter.complete(controller);
           },
-          cloudMapId: kCloudMapId,
         ),
       );
-      await tester.pumpAndSettle();
+      await tester.pumpAndSettle(const Duration(seconds: 3));
+      final GoogleMapController controller = await controllerCompleter.future;
 
-      // Await mapIdCompleter to finish to make sure map can be created with cloudMapId
-      await mapIdCompleter.future;
+      final Uint8List? bytes = await controller.takeSnapshot();
+      expect(bytes?.isNotEmpty, true);
     },
+    // TODO(cyanglaz): un-skip the test when we can test this on CI with API key enabled.
+    // https://github.com/flutter/flutter/issues/57057
+    // https://github.com/flutter/flutter/issues/139825
+    skip: isAndroid || isWeb || isIOS,
   );
+
+  testWidgets('testCloudMapId', (WidgetTester tester) async {
+    final Completer<int> mapIdCompleter = Completer<int>();
+    final Key key = GlobalKey();
+
+    await pumpMap(
+      tester,
+      GoogleMap(
+        key: key,
+        initialCameraPosition: kInitialCameraPosition,
+        onMapCreated: (GoogleMapController controller) {
+          mapIdCompleter.complete(controller.mapId);
+        },
+        cloudMapId: kCloudMapId,
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    // Await mapIdCompleter to finish to make sure map can be created with cloudMapId
+    await mapIdCompleter.future;
+  });
 
   testWidgets('getStyleError reports last error', (WidgetTester tester) async {
     final Key key = GlobalKey();
@@ -605,9 +632,12 @@ void runTests() {
 /// This is useful for cases where the Maps SDK has some internally
 /// asynchronous operation that we don't have visibility into (e.g., native UI
 /// animations).
-Future<T?> waitForValueMatchingPredicate<T>(WidgetTester tester,
-    Future<T> Function() getValue, bool Function(T) predicate,
-    {int maxTries = 100}) async {
+Future<T?> waitForValueMatchingPredicate<T>(
+  WidgetTester tester,
+  Future<T> Function() getValue,
+  bool Function(T) predicate, {
+  int maxTries = 100,
+}) async {
   for (int i = 0; i < maxTries; i++) {
     final T value = await getValue();
     if (predicate(value)) {

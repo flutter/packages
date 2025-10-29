@@ -9,13 +9,16 @@ part of 'sk_payment_transaction_wrappers.dart';
 SKPaymentTransactionWrapper _$SKPaymentTransactionWrapperFromJson(Map json) =>
     SKPaymentTransactionWrapper(
       payment: SKPaymentWrapper.fromJson(
-          Map<String, dynamic>.from(json['payment'] as Map)),
-      transactionState: const SKTransactionStatusConverter()
-          .fromJson(json['transactionState'] as int?),
+        Map<String, dynamic>.from(json['payment'] as Map),
+      ),
+      transactionState: const SKTransactionStatusConverter().fromJson(
+        (json['transactionState'] as num?)?.toInt(),
+      ),
       originalTransaction: json['originalTransaction'] == null
           ? null
           : SKPaymentTransactionWrapper.fromJson(
-              Map<String, dynamic>.from(json['originalTransaction'] as Map)),
+              Map<String, dynamic>.from(json['originalTransaction'] as Map),
+            ),
       transactionTimeStamp: (json['transactionTimeStamp'] as num?)?.toDouble(),
       transactionIdentifier: json['transactionIdentifier'] as String?,
       error: json['error'] == null
@@ -24,13 +27,14 @@ SKPaymentTransactionWrapper _$SKPaymentTransactionWrapperFromJson(Map json) =>
     );
 
 Map<String, dynamic> _$SKPaymentTransactionWrapperToJson(
-        SKPaymentTransactionWrapper instance) =>
-    <String, dynamic>{
-      'transactionState': const SKTransactionStatusConverter()
-          .toJson(instance.transactionState),
-      'payment': instance.payment,
-      'originalTransaction': instance.originalTransaction,
-      'transactionTimeStamp': instance.transactionTimeStamp,
-      'transactionIdentifier': instance.transactionIdentifier,
-      'error': instance.error,
-    };
+  SKPaymentTransactionWrapper instance,
+) => <String, dynamic>{
+  'transactionState': const SKTransactionStatusConverter().toJson(
+    instance.transactionState,
+  ),
+  'payment': instance.payment,
+  'originalTransaction': instance.originalTransaction,
+  'transactionTimeStamp': instance.transactionTimeStamp,
+  'transactionIdentifier': instance.transactionIdentifier,
+  'error': instance.error,
+};

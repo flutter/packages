@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -143,7 +143,9 @@ void main() {
         )
         ..setResponse(true);
       expect(
-          await launchUrl(url, mode: LaunchMode.externalApplication), isTrue);
+        await launchUrl(url, mode: LaunchMode.externalApplication),
+        isTrue,
+      );
     });
 
     test('external non-browser only', () async {
@@ -161,8 +163,9 @@ void main() {
         )
         ..setResponse(true);
       expect(
-          await launchUrl(url, mode: LaunchMode.externalNonBrowserApplication),
-          isTrue);
+        await launchUrl(url, mode: LaunchMode.externalNonBrowserApplication),
+        isTrue,
+      );
     });
 
     test('in-app webview without javascript', () async {
@@ -180,11 +183,15 @@ void main() {
         )
         ..setResponse(true);
       expect(
-          await launchUrl(url,
-              mode: LaunchMode.inAppWebView,
-              webViewConfiguration:
-                  const WebViewConfiguration(enableJavaScript: false)),
-          isTrue);
+        await launchUrl(
+          url,
+          mode: LaunchMode.inAppWebView,
+          webViewConfiguration: const WebViewConfiguration(
+            enableJavaScript: false,
+          ),
+        ),
+        isTrue,
+      );
     });
 
     test('in-app browser view with show title', () async {
@@ -202,12 +209,13 @@ void main() {
         )
         ..setResponse(true);
       expect(
-          await launchUrl(
-            url,
-            mode: LaunchMode.inAppBrowserView,
-            browserConfiguration: const BrowserConfiguration(showTitle: true),
-          ),
-          isTrue);
+        await launchUrl(
+          url,
+          mode: LaunchMode.inAppBrowserView,
+          browserConfiguration: const BrowserConfiguration(showTitle: true),
+        ),
+        isTrue,
+      );
     });
 
     test('in-app webview without DOM storage', () async {
@@ -225,11 +233,15 @@ void main() {
         )
         ..setResponse(true);
       expect(
-          await launchUrl(url,
-              mode: LaunchMode.inAppWebView,
-              webViewConfiguration:
-                  const WebViewConfiguration(enableDomStorage: false)),
-          isTrue);
+        await launchUrl(
+          url,
+          mode: LaunchMode.inAppWebView,
+          webViewConfiguration: const WebViewConfiguration(
+            enableDomStorage: false,
+          ),
+        ),
+        isTrue,
+      );
     });
 
     test('in-app webview with headers', () async {
@@ -247,18 +259,25 @@ void main() {
         )
         ..setResponse(true);
       expect(
-          await launchUrl(url,
-              mode: LaunchMode.inAppWebView,
-              webViewConfiguration: const WebViewConfiguration(
-                  headers: <String, String>{'key': 'value'})),
-          isTrue);
+        await launchUrl(
+          url,
+          mode: LaunchMode.inAppWebView,
+          webViewConfiguration: const WebViewConfiguration(
+            headers: <String, String>{'key': 'value'},
+          ),
+        ),
+        isTrue,
+      );
     });
 
     test('cannot launch a non-web URL in a webview', () async {
       expect(
-          () async => launchUrl(Uri(scheme: 'tel', path: '555-555-5555'),
-              mode: LaunchMode.inAppWebView),
-          throwsA(isA<ArgumentError>()));
+        () async => launchUrl(
+          Uri(scheme: 'tel', path: '555-555-5555'),
+          mode: LaunchMode.inAppWebView,
+        ),
+        throwsA(isA<ArgumentError>()),
+      );
     });
 
     test('non-web URL with default options', () async {
@@ -304,7 +323,9 @@ void main() {
       mock.setResponse(true);
 
       expect(
-          await supportsCloseForLaunchMode(LaunchMode.inAppBrowserView), true);
+        await supportsCloseForLaunchMode(LaunchMode.inAppBrowserView),
+        true,
+      );
       expect(mock.launchMode, PreferredLaunchMode.inAppBrowserView);
     });
 
@@ -312,7 +333,9 @@ void main() {
       mock.setResponse(false);
 
       expect(
-          await supportsCloseForLaunchMode(LaunchMode.inAppBrowserView), false);
+        await supportsCloseForLaunchMode(LaunchMode.inAppBrowserView),
+        false,
+      );
       expect(mock.launchMode, PreferredLaunchMode.inAppBrowserView);
     });
   });

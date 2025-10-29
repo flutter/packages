@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -39,18 +39,21 @@ void main() {
       expect(followLink, isNull);
     });
 
-    testWidgets('calls url_launcher for external URLs with blank target',
-        (WidgetTester tester) async {
+    testWidgets('calls url_launcher for external URLs with blank target', (
+      WidgetTester tester,
+    ) async {
       FollowLink? followLink;
 
-      await tester.pumpWidget(Link(
-        uri: Uri.parse('http://example.com/foobar'),
-        target: LinkTarget.blank,
-        builder: (BuildContext context, FollowLink? followLink2) {
-          followLink = followLink2;
-          return Container();
-        },
-      ));
+      await tester.pumpWidget(
+        Link(
+          uri: Uri.parse('http://example.com/foobar'),
+          target: LinkTarget.blank,
+          builder: (BuildContext context, FollowLink? followLink2) {
+            followLink = followLink2;
+            return Container();
+          },
+        ),
+      );
 
       mock
         ..setLaunchExpectations(
@@ -71,18 +74,21 @@ void main() {
       expect(mock.launchCalled, isTrue);
     });
 
-    testWidgets('calls url_launcher for external URLs with self target',
-        (WidgetTester tester) async {
+    testWidgets('calls url_launcher for external URLs with self target', (
+      WidgetTester tester,
+    ) async {
       FollowLink? followLink;
 
-      await tester.pumpWidget(Link(
-        uri: Uri.parse('http://example.com/foobar'),
-        target: LinkTarget.self,
-        builder: (BuildContext context, FollowLink? followLink2) {
-          followLink = followLink2;
-          return Container();
-        },
-      ));
+      await tester.pumpWidget(
+        Link(
+          uri: Uri.parse('http://example.com/foobar'),
+          target: LinkTarget.self,
+          builder: (BuildContext context, FollowLink? followLink2) {
+            followLink = followLink2;
+            return Container();
+          },
+        ),
+      );
 
       mock
         ..setLaunchExpectations(
@@ -103,23 +109,27 @@ void main() {
       expect(mock.launchCalled, isTrue);
     });
 
-    testWidgets('pushes to framework for internal route names',
-        (WidgetTester tester) async {
+    testWidgets('pushes to framework for internal route names', (
+      WidgetTester tester,
+    ) async {
       final Uri uri = Uri.parse('/foo/bar');
       FollowLink? followLink;
 
-      await tester.pumpWidget(MaterialApp(
-        routes: <String, WidgetBuilder>{
-          '/': (BuildContext context) => Link(
-                uri: uri,
-                builder: (BuildContext context, FollowLink? followLink2) {
-                  followLink = followLink2;
-                  return Container();
-                },
-              ),
-          '/foo/bar': (BuildContext context) => Container(),
-        },
-      ));
+      await tester.pumpWidget(
+        MaterialApp(
+          routes: <String, WidgetBuilder>{
+            '/':
+                (BuildContext context) => Link(
+                  uri: uri,
+                  builder: (BuildContext context, FollowLink? followLink2) {
+                    followLink = followLink2;
+                    return Container();
+                  },
+                ),
+            '/foo/bar': (BuildContext context) => Container(),
+          },
+        ),
+      );
 
       bool frameworkCalled = false;
       final Future<ByteData> Function(Object?, String) originalPushFunction =

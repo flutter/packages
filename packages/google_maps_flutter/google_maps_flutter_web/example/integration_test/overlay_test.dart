@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -41,9 +41,9 @@ void main() {
         tileOverlay: const TileOverlay(tileOverlayId: id),
       );
 
-      final gmaps.Size size = controller.gmMapType.tileSize;
-      expect(size.width, TileOverlayController.logicalTileSize);
-      expect(size.height, TileOverlayController.logicalTileSize);
+      final gmaps.Size? size = controller.gmMapType.tileSize;
+      expect(size?.width, TileOverlayController.logicalTileSize);
+      expect(size?.height, TileOverlayController.logicalTileSize);
       expect(
         controller.gmMapType.getTile(gmaps.Point(0, 0), 0, document),
         null,
@@ -58,8 +58,9 @@ void main() {
         ),
       );
 
-      final HTMLImageElement img = controller.gmMapType
-          .getTile(gmaps.Point(0, 0), 0, document)! as HTMLImageElement;
+      final HTMLImageElement img =
+          controller.gmMapType.getTile(gmaps.Point(0, 0), 0, document)!
+              as HTMLImageElement;
       expect(img.naturalWidth, 0);
       expect(img.naturalHeight, 0);
       expect((img.hidden! as JSBoolean).toDart, true);
@@ -81,8 +82,9 @@ void main() {
         ),
       );
       {
-        final HTMLImageElement img = controller.gmMapType
-            .getTile(gmaps.Point(0, 0), 0, document)! as HTMLImageElement;
+        final HTMLImageElement img =
+            controller.gmMapType.getTile(gmaps.Point(0, 0), 0, document)!
+                as HTMLImageElement;
         await null; // let `getTile` `then` complete
         expect(
           img.src,
@@ -91,13 +93,13 @@ void main() {
         );
       }
 
-      controller.update(const TileOverlay(
-        tileOverlayId: id,
-        tileProvider: TestTileProvider(),
-      ));
+      controller.update(
+        const TileOverlay(tileOverlayId: id, tileProvider: TestTileProvider()),
+      );
       {
-        final HTMLImageElement img = controller.gmMapType
-            .getTile(gmaps.Point(0, 0), 0, document)! as HTMLImageElement;
+        final HTMLImageElement img =
+            controller.gmMapType.getTile(gmaps.Point(0, 0), 0, document)!
+                as HTMLImageElement;
 
         await img.onLoad.first;
 
