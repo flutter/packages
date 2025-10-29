@@ -176,10 +176,7 @@ void main() {
 
       expect(result?.path, '/foo.mp4');
       expect(api.passedSelectionType, _SelectionType.video);
-      expect(api.passedMaxSize?.width, null);
-      expect(api.passedMaxSize?.height, null);
-      expect(api.passedImageQuality, null);
-      expect(api.passedLimit, null);
+      expect(api.passedMaxDurationSeconds, null);
     });
 
     test('passes the camera source argument correctly', () async {
@@ -231,7 +228,6 @@ void main() {
       expect(api.passedMaxSize?.width, null);
       expect(api.passedMaxSize?.height, null);
       expect(api.passedImageQuality, null);
-      expect(api.passedLimit, null);
     });
 
     test('passes the camera image source argument correctly', () async {
@@ -390,7 +386,7 @@ void main() {
       expect(api.passedMediaSelectionOptions?.maxSize.width, null);
       expect(api.passedMediaSelectionOptions?.maxSize.height, null);
       expect(api.passedMediaSelectionOptions?.imageQuality, null);
-      expect(api.passedLimit, null);
+      expect(api.passedMediaSelectionOptions?.limit, null);
     });
 
     test('passes the width and height arguments correctly', () async {
@@ -628,7 +624,6 @@ void main() {
       expect(api.passedMaxSize?.width, null);
       expect(api.passedMaxSize?.height, null);
       expect(api.passedImageQuality, null);
-      expect(api.passedLimit, null);
     });
 
     test('passes the camera image source argument correctly', () async {
