@@ -153,6 +153,15 @@ void main() {
       PigeonInstanceManager? pigeon_instanceManager,
     })?
     newPreview,
+    VideoCapture Function({
+      required VideoOutput videoOutput,
+      int? targetFps,
+      // ignore: non_constant_identifier_names
+      BinaryMessenger? pigeon_binaryMessenger,
+      // ignore: non_constant_identifier_names
+      PigeonInstanceManager? pigeon_instanceManager,
+    })?
+    withOutputVideoCapture,
     ImageAnalysis Function({
       // ignore: non_constant_identifier_names
       BinaryMessenger? pigeon_binaryMessenger,
@@ -274,6 +283,7 @@ void main() {
             return mockRecorder;
           },
       withOutputVideoCapture:
+          withOutputVideoCapture ??
           ({
             required VideoOutput videoOutput,
             int? targetFps,
@@ -2090,6 +2100,101 @@ void main() {
 
       expect(camera.sensorOrientationDegrees, testSensorOrientation);
       expect(camera.enableRecordingAudio, isTrue);
+    },
+  );
+
+  test(
+    'createCamera and initializeCamera sets targetFps as expected',
+    () async {
+      final AndroidCameraCameraX camera = AndroidCameraCameraX();
+      const CameraLensDirection testLensDirection = CameraLensDirection.back;
+      const int testSensorOrientation = 90;
+      const CameraDescription testCameraDescription = CameraDescription(
+        name: 'cameraName',
+        lensDirection: testLensDirection,
+        sensorOrientation: testSensorOrientation,
+      );
+      const int fastTargetFps = 60;
+      const int testCameraId = 12;
+      final MockCamera mockCamera = MockCamera();
+
+      // Mock/Detached objects for (typically attached) objects created by
+      // createCamera.
+      final MockProcessCameraProvider mockProcessCameraProvider =
+          MockProcessCameraProvider();
+      final MockCameraInfo mockCameraInfo = MockCameraInfo();
+
+      when(
+        mockProcessCameraProvider.bindToLifecycle(any, any),
+      ).thenAnswer((_) async => mockCamera);
+      when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
+      when(
+        mockCameraInfo.getCameraState(),
+      ).thenAnswer((_) async => MockLiveCameraState());
+      camera.processCameraProvider = mockProcessCameraProvider;
+
+      int? targetPreviewFps;
+      int? targetVideoCaptureFps;
+      int? targetImageAnalysisFps;
+
+      camera.proxy = getProxyForTestingUseCaseConfiguration(
+        mockProcessCameraProvider,
+        newPreview:
+            ({
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+              ResolutionSelector? resolutionSelector,
+              int? targetFps,
+              int? targetRotation,
+            }) {
+              targetPreviewFps = targetFps;
+              final MockPreview mockPreview = MockPreview();
+              final ResolutionInfo testResolutionInfo =
+                  ResolutionInfo.pigeon_detached(resolution: MockCameraSize());
+              when(
+                mockPreview.getResolutionInfo(),
+              ).thenAnswer((_) async => testResolutionInfo);
+              return mockPreview;
+            },
+        withOutputVideoCapture:
+            ({
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+              int? targetFps,
+              required VideoOutput videoOutput,
+            }) {
+              targetVideoCaptureFps = targetFps;
+              return MockVideoCapture();
+            },
+        newImageAnalysis:
+            ({
+              int? outputImageFormat,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+              ResolutionSelector? resolutionSelector,
+              int? targetFps,
+              int? targetRotation,
+            }) {
+              targetImageAnalysisFps = targetFps;
+              return MockImageAnalysis();
+            },
+      );
+
+      await camera.createCameraWithSettings(
+        testCameraDescription,
+        const MediaSettings(fps: fastTargetFps),
+      );
+      await camera.initializeCamera(testCameraId);
+
+      expect(targetPreviewFps, fastTargetFps);
+      expect(targetVideoCaptureFps, fastTargetFps);
+      expect(targetImageAnalysisFps, fastTargetFps);
     },
   );
 
