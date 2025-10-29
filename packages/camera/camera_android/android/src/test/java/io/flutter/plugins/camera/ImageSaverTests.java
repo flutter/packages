@@ -40,8 +40,8 @@ public class ImageSaverTests {
     mockFile = mock(File.class);
     when(mockFile.getAbsolutePath()).thenReturn("absolute/path");
     mockPlane = mock(Image.Plane.class);
-    byte[] desiredContent = {0x42, 0x00, 0x13};
-    byteBuffer = ByteBuffer.wrap(desiredContent);
+    byte[] testData = {0x42, 0x00, 0x13};
+    byteBuffer = ByteBuffer.wrap(testData);
 
     // Set up mocked image dependency
     mockImage = mock(Image.class);
