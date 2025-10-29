@@ -248,17 +248,14 @@ void main() {
         maxWidth: 10.0,
         maxHeight: 20.0,
       );
-      
+
       expect(api.passedMaxSize?.width, 10);
       expect(api.passedMaxSize?.height, 20);
     });
 
     test('passes image quality argument correctly', () async {
-      await picker.getImage(
-        source: ImageSource.camera,
-        imageQuality: 70,
-      );
-      
+      await picker.getImage(source: ImageSource.camera, imageQuality: 70);
+
       expect(api.passedImageQuality, 70);
     });
 
@@ -408,9 +405,7 @@ void main() {
       await picker.getMedia(
         options: MediaOptions(
           allowMultiple: true,
-          imageOptions: ImageOptions.createAndValidate(
-            imageQuality: 70,
-          ),
+          imageOptions: ImageOptions.createAndValidate(imageQuality: 70),
         ),
       );
 
@@ -643,7 +638,7 @@ void main() {
         source: ImageSource.camera,
         options: const ImagePickerOptions(maxWidth: 10.0, maxHeight: 20.0),
       );
-      
+
       expect(api.passedMaxSize?.width, 10);
       expect(api.passedMaxSize?.height, 20);
     });
