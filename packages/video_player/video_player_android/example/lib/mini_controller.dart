@@ -552,13 +552,12 @@ class _VideoProgressIndicatorState extends State<VideoProgressIndicator> {
       final int duration = controller.value.duration.inMilliseconds;
       final int position = controller.value.position.inMilliseconds;
 
-      final double maxBuffering =
-          duration == 0.0
-              ? 0.0
-              : controller.value.buffered
-                      .map((DurationRange range) => range.end.inMilliseconds)
-                      .fold(0, math.max) /
-                  duration;
+      final double maxBuffering = duration == 0.0
+          ? 0.0
+          : controller.value.buffered
+                    .map((DurationRange range) => range.end.inMilliseconds)
+                    .fold(0, math.max) /
+                duration;
 
       progressIndicator = Stack(
         fit: StackFit.passthrough,
