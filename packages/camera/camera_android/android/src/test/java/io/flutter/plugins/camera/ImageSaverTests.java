@@ -42,20 +42,8 @@ public class ImageSaverTests {
     mockFile = mock(File.class);
     when(mockFile.getAbsolutePath()).thenReturn("absolute/path");
     mockPlane = mock(Image.Plane.class);
-    mockBuffer = mock(ByteBuffer.class);
-    when(mockBuffer.remaining()).thenReturn(3);
-    when(mockBuffer.get(any()))
-        .thenAnswer(
-            new Answer<Object>() {
-              @Override
-              public Object answer(InvocationOnMock invocation) throws Throwable {
-                byte[] bytes = invocation.getArgument(0);
-                bytes[0] = 0x42;
-                bytes[1] = 0x00;
-                bytes[2] = 0x13;
-                return mockBuffer;
-              }
-            });
+    byte[] desiredContent = {0x42, 0x00, 0x13};
+    mockBuffer = ByteBuffer.wrap(desiredContent);
 
     // Set up mocked image dependency
     mockImage = mock(Image.class);
