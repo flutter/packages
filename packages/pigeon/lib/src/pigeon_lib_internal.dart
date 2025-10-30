@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// ignore_for_file: avoid_print
-
 import 'dart:convert';
 import 'dart:io';
 
@@ -23,6 +21,7 @@ import 'dart/dart_generator.dart';
 import 'generator_tools.dart';
 import 'gobject/gobject_generator.dart';
 import 'java/java_generator.dart';
+import 'kotlin/jnigen_yaml_generator.dart';
 import 'kotlin/kotlin_generator.dart';
 import 'objc/objc_generator.dart';
 import 'pigeon_lib.dart';
@@ -33,6 +32,7 @@ class InternalPigeonOptions {
   /// Creates a instance of InternalPigeonOptions
   const InternalPigeonOptions({
     required this.input,
+    required this.appDirectory,
     required this.objcOptions,
     required this.javaOptions,
     required this.swiftOptions,
@@ -51,6 +51,7 @@ class InternalPigeonOptions {
     PigeonOptions options,
     Iterable<String>? copyrightHeader,
   ) : input = options.input,
+      appDirectory = options.appDirectory,
       objcOptions =
           (options.objcHeaderOut == null || options.objcSourceOut == null)
               ? null
@@ -118,6 +119,7 @@ class InternalPigeonOptions {
                 dartOut: options.dartOut,
                 testOut: options.dartTestOut,
                 copyrightHeader: copyrightHeader,
+                useJni: options.kotlinOptions?.useJni ?? false,
               ),
       copyrightHeader =
           options.copyrightHeader != null
@@ -150,6 +152,9 @@ class InternalPigeonOptions {
 
   /// Path to the file which will be processed.
   final String? input;
+
+  /// Path to the app directory.
+  final String? appDirectory;
 
   /// Options that control how Dart will be generated.
   final InternalDartOptions? dartOptions;
@@ -690,6 +695,54 @@ class KotlinGeneratorAdapter implements GeneratorAdapter {
         options.kotlinOptions?.kotlinOut,
         basePath: options.basePath ?? '',
       );
+
+  @override
+  List<Error> validate(InternalPigeonOptions options, Root root) => <Error>[];
+}
+
+/// A [GeneratorAdapter] that generates JnigenYaml source code.
+class JnigenYamlGeneratorAdapter implements GeneratorAdapter {
+  /// Constructor for [JnigenYamlGeneratorAdapter].
+  JnigenYamlGeneratorAdapter({
+    this.fileTypeList = const <FileType>[FileType.na],
+  });
+
+  @override
+  List<FileType> fileTypeList;
+
+  @override
+  void generate(
+    StringSink sink,
+    InternalPigeonOptions options,
+    Root root,
+    FileType fileType,
+  ) {
+    if (options.kotlinOptions == null || options.dartOptions == null) {
+      return;
+    }
+    final JnigenYamlGenerator generator = JnigenYamlGenerator();
+    final InternalJnigenYamlOptions jnigenYamlOptions =
+        InternalJnigenYamlOptions(
+          options.dartOptions!,
+          options.kotlinOptions!,
+          options.basePath,
+          options.appDirectory,
+        );
+
+    generator.generate(
+      jnigenYamlOptions,
+      root,
+      sink,
+      dartPackageName: options.dartPackageName,
+    );
+  }
+
+  @override
+  IOSink? shouldGenerate(InternalPigeonOptions options, FileType _) =>
+      options.kotlinOptions?.kotlinOut != null &&
+              (options.kotlinOptions?.useJni ?? false)
+          ? _openSink('jnigen.yaml', basePath: options.appDirectory ?? '')
+          : null;
 
   @override
   List<Error> validate(InternalPigeonOptions options, Root root) => <Error>[];
@@ -1303,6 +1356,10 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
   ParseResults results() {
     _storeCurrentApi();
     _storeCurrentClass();
+    final Map<String, TypeDeclaration> referencedLists =
+        <String, TypeDeclaration>{};
+    final Map<String, TypeDeclaration> referencedMaps =
+        <String, TypeDeclaration>{};
 
     final Map<TypeDeclaration, List<int>> referencedTypes = getReferencedTypes(
       _apis,
@@ -1319,6 +1376,7 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     }
 
     final List<Enum> referencedEnums = List<Enum>.from(_enums);
+
     bool containsHostApi = false;
     bool containsFlutterApi = false;
     bool containsProxyApi = false;
@@ -1335,17 +1393,13 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         case AstEventChannelApi():
           containsEventChannel = true;
       }
+      if (containsEventChannel &&
+          containsFlutterApi &&
+          containsProxyApi &&
+          containsHostApi) {
+        break;
+      }
     }
-
-    final Root completeRoot = Root(
-      apis: _apis,
-      classes: _classes,
-      enums: referencedEnums,
-      containsHostApi: containsHostApi,
-      containsFlutterApi: containsFlutterApi,
-      containsProxyApi: containsProxyApi,
-      containsEventChannel: containsEventChannel,
-    );
 
     final List<Error> totalErrors = List<Error>.from(_errors);
 
@@ -1408,6 +1462,30 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         api.interfaces = newInterfaceSet;
       }
     }
+
+    final Map<TypeDeclaration, List<int>> referencedTypesAfterAssoc =
+        getReferencedTypes(_apis, _classes);
+
+    for (final TypeDeclaration type in referencedTypesAfterAssoc.keys) {
+      if (type.baseName == 'List') {
+        referencedLists[type.getFullName(withNullable: false)] = type;
+      } else if (type.baseName == 'Map') {
+        referencedMaps[type.getFullName(withNullable: false)] = type;
+      }
+    }
+
+    final Root completeRoot = Root(
+      apis: _apis,
+      classes: _classes,
+      enums: referencedEnums,
+      lists: referencedLists,
+      maps: referencedMaps,
+      containsHostApi: containsHostApi,
+      containsFlutterApi: containsFlutterApi,
+      containsProxyApi: containsProxyApi,
+      containsEventChannel: containsEventChannel,
+    );
+
     final List<Error> validateErrors = _validateAst(completeRoot, source);
     totalErrors.addAll(validateErrors);
 
@@ -1415,7 +1493,13 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       root:
           totalErrors.isEmpty
               ? completeRoot
-              : Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]),
+              : Root(
+                apis: <Api>[],
+                classes: <Class>[],
+                enums: <Enum>[],
+                lists: <String, TypeDeclaration>{},
+                maps: <String, TypeDeclaration>{},
+              ),
       errors: totalErrors,
       pigeonOptions: _pigeonOptions,
     );

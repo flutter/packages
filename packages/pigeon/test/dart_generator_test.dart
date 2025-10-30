@@ -81,7 +81,7 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('enum Foobar'));
     expect(code, contains('  one,'));
-    expect(code, contains('  two,'));
+    expect(code, contains('  two;'));
   });
 
   test('gen one host api', () {

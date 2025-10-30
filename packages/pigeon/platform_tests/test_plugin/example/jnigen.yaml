@@ -1,0 +1,30 @@
+android_sdk_config:
+  add_gradle_deps: true
+  android_example: './'
+
+summarizer:
+  backend: asm
+
+output:
+  dart:
+    path: ../../shared_test_plugin_code/lib/src/generated/ni_tests.gen.jni.dart
+    structure: single_file
+
+log_level: all
+
+classes:
+  - 'NIHostIntegrationCoreApi'
+  - 'NIHostIntegrationCoreApiRegistrar'
+  - 'NIHostTrivialApi'
+  - 'NIHostTrivialApiRegistrar'
+  - 'NIHostSmallApi'
+  - 'NIHostSmallApiRegistrar'
+  - 'NIFlutterIntegrationCoreApi'
+  - 'NIFlutterIntegrationCoreApiRegistrar'
+  - 'NIUnusedClass'
+  - 'NIAllTypes'
+  - 'NIAllNullableTypes'
+  - 'NIAllNullableTypesWithoutRecursion'
+  - 'NIAllClassesWrapper'
+  - 'NIAnEnum'
+  - 'NIAnotherEnum'

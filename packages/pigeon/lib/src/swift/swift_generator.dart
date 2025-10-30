@@ -74,7 +74,7 @@ class SwiftOptions {
   /// Overrides any non-null parameters from [options] into this to make a new
   /// [SwiftOptions].
   SwiftOptions merge(SwiftOptions options) {
-    return SwiftOptions.fromList(mergeMaps(toMap(), options.toMap()));
+    return SwiftOptions.fromList(mergePigeonMaps(toMap(), options.toMap()));
   }
 }
 
