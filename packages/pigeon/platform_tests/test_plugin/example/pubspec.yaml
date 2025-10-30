@@ -8,10 +8,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  shared_test_plugin_code:
-    path: ../../shared_test_plugin_code
-  test_plugin:
-    path: ../
   jni:
     git:
       url: https://github.com/dart-lang/native/
@@ -23,6 +19,10 @@ dependencies:
       path: pkgs/jnigen
       ref: d3c3acb4c67331e5b22010555f7d4f19d4fb5689
   pub_semver: ^2.2.0
+  shared_test_plugin_code:
+    path: ../../shared_test_plugin_code
+  test_plugin:
+    path: ../
 
 dev_dependencies:
   flutter_test:
