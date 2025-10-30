@@ -138,7 +138,8 @@ ${response.httpResponse.body}
         printError('A version must be provided to update this dependency.');
         throw ToolExit(_exitNoTargetVersion);
       } else if (_targetAndroidDependency == _AndroidDepdencyType.gradle) {
-        final RegExp validGradleVersionPattern = RegExp(r'^\d\.\d{1,2}(?:\.\d)?$');
+        final RegExp validGradleVersionPattern =
+            RegExp(r'^\d\.\d{1,2}(?:\.\d)?$');
         final bool isValidGradleVersion =
             validGradleVersionPattern.stringMatch(version) == version;
         if (!isValidGradleVersion) {
