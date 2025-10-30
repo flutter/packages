@@ -10,7 +10,7 @@ import PackageDescription
 let package = Package(
   name: "interactive_media_ads",
   platforms: [
-    .iOS("12.0")
+    .iOS("13.0")
   ],
   products: [
     .library(name: "interactive-media-ads", targets: ["interactive_media_ads"])

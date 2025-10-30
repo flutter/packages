@@ -60,6 +60,9 @@ class RepositoryPackage {
   /// The package's top-level README.
   File get authorsFile => directory.childFile('AUTHORS');
 
+  /// The package's top-level ci_config.yaml.
+  File get ciConfigFile => directory.childFile('ci_config.yaml');
+
   /// The lib directory containing the package's code.
   Directory get libDirectory => directory.childDirectory('lib');
 
