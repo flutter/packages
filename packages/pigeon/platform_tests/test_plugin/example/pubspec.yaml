@@ -12,12 +12,24 @@ dependencies:
     path: ../../shared_test_plugin_code
   test_plugin:
     path: ../
+  jni:
+    git:
+      url: https://github.com/dart-lang/native/
+      path: pkgs/jni
+      ref: d3c3acb4c67331e5b22010555f7d4f19d4fb5689
+  jnigen:
+    git:
+      url: https://github.com/dart-lang/native/
+      path: pkgs/jnigen
+      ref: d3c3acb4c67331e5b22010555f7d4f19d4fb5689
+  pub_semver: ^2.2.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   integration_test:
     sdk: flutter
+  logging: ^1.3.0
 
 flutter:
   uses-material-design: true

@@ -20,6 +20,8 @@ analyzer:
     # Ignore generated files
     - '**/*.pb.dart'
     - '**/*.g.dart'
+    - '**/*.gen.jni.dart'
+    - '**/*.gen.ffi.dart'
     - '**/*.mocks.dart' # Mockito @GenerateMocks
 
 linter:

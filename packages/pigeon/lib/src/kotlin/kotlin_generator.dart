@@ -41,6 +41,8 @@ class KotlinOptions {
   const KotlinOptions({
     this.package,
     this.copyrightHeader,
+    this.useJni = false,
+    this.appDirectory,
     this.errorClassName,
     this.includeErrorClass = true,
     this.fileSpecificClassNameComponent,
@@ -51,6 +53,12 @@ class KotlinOptions {
 
   /// A copyright header that will get prepended to generated code.
   final Iterable<String>? copyrightHeader;
+
+  /// Whether to use Jni when possible.
+  final bool useJni;
+
+  /// The directory that the app exists in, this is required for Jni APIs.
+  final String? appDirectory;
 
   /// The name of the error class used for passing custom error parameters.
   final String? errorClassName;
@@ -69,6 +77,8 @@ class KotlinOptions {
   static KotlinOptions fromMap(Map<String, Object> map) {
     return KotlinOptions(
       package: map['package'] as String?,
+      useJni: map['useJni'] as bool? ?? false,
+      appDirectory: map['appDirectory'] as String?,
       copyrightHeader: map['copyrightHeader'] as Iterable<String>?,
       errorClassName: map['errorClassName'] as String?,
       includeErrorClass: map['includeErrorClass'] as bool? ?? true,
@@ -82,6 +92,8 @@ class KotlinOptions {
   Map<String, Object> toMap() {
     final Map<String, Object> result = <String, Object>{
       if (package != null) 'package': package!,
+      if (useJni) 'useJni': useJni,
+      if (appDirectory != null) 'appDirectory': appDirectory!,
       if (copyrightHeader != null) 'copyrightHeader': copyrightHeader!,
       if (errorClassName != null) 'errorClassName': errorClassName!,
       'includeErrorClass': includeErrorClass,
@@ -94,11 +106,11 @@ class KotlinOptions {
   /// Overrides any non-null parameters from [options] into this to make a new
   /// [KotlinOptions].
   KotlinOptions merge(KotlinOptions options) {
-    return KotlinOptions.fromMap(mergeMaps(toMap(), options.toMap()));
+    return KotlinOptions.fromMap(mergePigeonMaps(toMap(), options.toMap()));
   }
 }
 
-///
+/// Options that control how Kotlin code will be generated.
 class InternalKotlinOptions extends InternalOptions {
   /// Creates a [InternalKotlinOptions] object
   const InternalKotlinOptions({
@@ -107,6 +119,8 @@ class InternalKotlinOptions extends InternalOptions {
     this.copyrightHeader,
     this.errorClassName,
     this.includeErrorClass = true,
+    this.useJni = false,
+    this.appDirectory,
     this.fileSpecificClassNameComponent,
   });
 
@@ -119,6 +133,8 @@ class InternalKotlinOptions extends InternalOptions {
        copyrightHeader = options.copyrightHeader ?? copyrightHeader,
        errorClassName = options.errorClassName,
        includeErrorClass = options.includeErrorClass,
+       useJni = options.useJni,
+       appDirectory = options.appDirectory,
        fileSpecificClassNameComponent =
            options.fileSpecificClassNameComponent ??
            kotlinOut.split('/').lastOrNull?.split('.').first;
@@ -140,6 +156,12 @@ class InternalKotlinOptions extends InternalOptions {
   /// This should only ever be set to false if you have another generated
   /// Kotlin file in the same directory.
   final bool includeErrorClass;
+
+  /// Whether to use Jni for generating kotlin interop code.
+  final bool useJni;
+
+  /// The directory that the app exists in, this is required for Jni APIs.
+  final String? appDirectory;
 
   /// A String to augment class names to avoid cross file collisions.
   final String? fileSpecificClassNameComponent;
@@ -202,11 +224,14 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
     required String dartPackageName,
   }) {
     indent.newln();
-    if (generatorOptions.package != null) {
+    if (generatorOptions.package != null && !generatorOptions.useJni) {
       indent.writeln('package ${generatorOptions.package}');
     }
     indent.newln();
     indent.writeln('import android.util.Log');
+    if (generatorOptions.useJni) {
+      indent.writeln('import androidx.annotation.Keep');
+    }
     indent.writeln('import io.flutter.plugin.common.BasicMessageChannel');
     indent.writeln('import io.flutter.plugin.common.BinaryMessenger');
     indent.writeln('import io.flutter.plugin.common.EventChannel');
@@ -253,7 +278,7 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
       indent.addScoped('{', '}', () {
         indent.write('fun ofRaw(raw: Int): ${anEnum.name}? ');
         indent.addScoped('{', '}', () {
-          indent.writeln('return values().firstOrNull { it.raw == raw }');
+          indent.writeln('return entries.firstOrNull { it.raw == raw }');
         });
       });
     });
@@ -470,6 +495,12 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
     Indent indent, {
     required String dartPackageName,
   }) {
+    if (generatorOptions.useJni &&
+        !root.containsEventChannel &&
+        !root.containsFlutterApi &&
+        !root.containsProxyApi) {
+      return;
+    }
     final List<EnumeratedType> enumeratedTypes =
         getEnumeratedTypes(root, excludeSealedClasses: true).toList();
 
@@ -652,6 +683,42 @@ if (wrapped == null) {
     });
   }
 
+  void _writeJniFlutterApi(
+    InternalKotlinOptions generatorOptions,
+    Root root,
+    Indent indent,
+    AstFlutterApi api, {
+    required String dartPackageName,
+  }) {
+    indent.format('''
+val registered${api.name}: MutableMap<String, ${api.name}> = mutableMapOf()
+class ${api.name}Registrar() {
+  /// Map that stores instances
+
+  fun registerInstance(api: ${api.name}, name: String = defaultInstanceName) {
+    registered${api.name}[name] = api
+  }
+
+  fun getInstance(name: String = defaultInstanceName): ${api.name}? {
+    return registered${api.name}[name]
+  }
+}
+''');
+    indent.writeScoped('interface ${api.name} {', '}', () {
+      for (final Method method in api.methods) {
+        _writeMethodDeclaration(
+          indent,
+          name: method.name,
+          documentationComments: method.documentationComments,
+          returnType: method.returnType,
+          parameters: method.parameters,
+          isAsynchronous: method.isAsynchronous,
+          useJni: true,
+        );
+      }
+    });
+  }
+
   /// Writes the code for a flutter [Api], [api].
   /// Example:
   /// class Foo(private val binaryMessenger: BinaryMessenger) {
@@ -674,7 +741,16 @@ if (wrapped == null) {
       _docCommentSpec,
       generatorComments: generatedMessages,
     );
-
+    if (generatorOptions.useJni) {
+      _writeJniFlutterApi(
+        generatorOptions,
+        root,
+        indent,
+        api,
+        dartPackageName: dartPackageName,
+      );
+      return;
+    }
     final String apiName = api.name;
     indent.write(
       'class $apiName(private val binaryMessenger: BinaryMessenger, private val messageChannelSuffix: String = "") ',
@@ -726,6 +802,85 @@ if (wrapped == null) {
     });
   }
 
+  void _writeJniHostApi(
+    InternalKotlinOptions generatorOptions,
+    Root root,
+    Indent indent,
+    AstHostApi api, {
+    required String dartPackageName,
+  }) {
+    indent.writeln(
+      'val ${api.name}Instances: MutableMap<String, ${api.name}Registrar> = mutableMapOf()',
+    );
+    indent.writeln('@Keep');
+    indent.writeScoped('abstract class ${api.name} {', '}', () {
+      for (final Method method in api.methods) {
+        _writeMethodDeclaration(
+          indent,
+          name: method.name,
+          documentationComments: method.documentationComments,
+          returnType: method.returnType,
+          parameters: method.parameters,
+          isAsynchronous: method.isAsynchronous,
+          useJni: true,
+          isAbstract: true,
+        );
+      }
+    });
+
+    indent.writeln('@Keep');
+    indent.writeScoped('class ${api.name}Registrar : ${api.name}() {', '}', () {
+      indent.writeln('var api: ${api.name}? = null');
+
+      indent.writeScoped('fun register(', '):', () {
+        indent.writeln('api: ${api.name},');
+        indent.writeln('name: String = defaultInstanceName');
+      }, addTrailingNewline: false);
+      indent.writeScoped(' ${api.name}Registrar {', '}', () {
+        indent.writeln('this.api = api');
+        indent.writeln('${api.name}Instances[name] = this');
+        indent.writeln('return this');
+      });
+
+      indent.writeln('@Keep');
+      indent.writeScoped(
+        'fun getInstance(name: String): ${api.name}Registrar? {',
+        '}',
+        () {
+          indent.writeln('return ${api.name}Instances[name]');
+        },
+      );
+
+      for (final Method method in api.methods) {
+        _writeMethodDeclaration(
+          indent,
+          name: method.name,
+          documentationComments: method.documentationComments,
+          returnType: method.returnType,
+          parameters: method.parameters,
+          isAsynchronous: method.isAsynchronous,
+          isOverride: true,
+          useJni: true,
+        );
+        final String argNames = method.parameters
+            .map((Parameter arg) => arg.name)
+            .join(', ');
+        indent.addScoped(' {', '}', () {
+          indent.writeScoped('api?.let {', '}', () {
+            indent.writeScoped('try {', '}', () {
+              indent.writeln('return api!!.${method.name}($argNames)');
+            }, addTrailingNewline: false);
+            indent.addScoped(' catch (e: Exception) {', '}', () {
+              indent.writeln('throw e');
+            });
+          });
+
+          indent.writeln('error("${api.name} has not been set")');
+        });
+      }
+    });
+  }
+
   /// Write the kotlin code that represents a host [Api], [api].
   /// Example:
   /// interface Foo {
@@ -743,6 +898,16 @@ if (wrapped == null) {
     AstHostApi api, {
     required String dartPackageName,
   }) {
+    if (generatorOptions.useJni) {
+      _writeJniHostApi(
+        generatorOptions,
+        root,
+        indent,
+        api,
+        dartPackageName: dartPackageName,
+      );
+      return;
+    }
     final String apiName = api.name;
 
     const List<String> generatedMessages = <String>[
@@ -1377,6 +1542,11 @@ fun deepEquals(a: Any?, b: Any?): Boolean {
     if (generatorOptions.includeErrorClass) {
       _writeErrorClass(generatorOptions, indent);
     }
+    if (generatorOptions.useJni) {
+      indent.writeln(
+        'const val defaultInstanceName = "PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u"',
+      );
+    }
   }
 
   static void _writeMethodDeclaration(
@@ -1389,6 +1559,8 @@ fun deepEquals(a: Any?, b: Any?): Boolean {
     bool isAsynchronous = false,
     bool isOpen = false,
     bool isAbstract = false,
+    bool isOverride = false,
+    bool useJni = false,
     String Function(int index, NamedType type) getArgumentName =
         _getArgumentName,
   }) {
@@ -1418,20 +1590,26 @@ fun deepEquals(a: Any?, b: Any?): Boolean {
     }
 
     final String openKeyword = isOpen ? 'open ' : '';
-    final String abstractKeyword = isAbstract ? 'abstract ' : '';
+    final String inheritanceKeyword =
+        isAbstract
+            ? 'abstract '
+            : isOverride
+            ? 'override '
+            : '';
+    final String suspendKeyword = isAsynchronous && useJni ? 'suspend ' : '';
 
-    if (isAsynchronous) {
+    if (isAsynchronous && !useJni) {
       argSignature.add('callback: (Result<$resultType>) -> Unit');
       indent.writeln(
-        '$openKeyword${abstractKeyword}fun $name(${argSignature.join(', ')})',
+        '$openKeyword$inheritanceKeyword${suspendKeyword}fun $name(${argSignature.join(', ')})',
       );
     } else if (returnType.isVoid) {
       indent.writeln(
-        '$openKeyword${abstractKeyword}fun $name(${argSignature.join(', ')})',
+        '$openKeyword$inheritanceKeyword${suspendKeyword}fun $name(${argSignature.join(', ')})',
       );
     } else {
       indent.writeln(
-        '$openKeyword${abstractKeyword}fun $name(${argSignature.join(', ')}): $returnTypeString',
+        '$openKeyword$inheritanceKeyword${suspendKeyword}fun $name(${argSignature.join(', ')}): $returnTypeString',
       );
     }
   }

@@ -81,7 +81,7 @@ enum class Code(val raw: Int) {
 
   companion object {
     fun ofRaw(raw: Int): Code? {
-      return values().firstOrNull { it.raw == raw }
+      return entries.firstOrNull { it.raw == raw }
     }
   }
 }
