@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -16,12 +16,12 @@ class LatLng {
   /// The longitude is normalized to the half-open interval from -180.0
   /// (inclusive) to +180.0 (exclusive).
   const LatLng(double latitude, double longitude)
-      : latitude =
-            latitude < -90.0 ? -90.0 : (90.0 < latitude ? 90.0 : latitude),
-        // Avoids normalization if possible to prevent unnecessary loss of precision
-        longitude = longitude >= -180 && longitude < 180
-            ? longitude
-            : (longitude + 180.0) % 360.0 - 180.0;
+    : latitude = latitude < -90.0 ? -90.0 : (90.0 < latitude ? 90.0 : latitude),
+      // Avoids normalization if possible to prevent unnecessary loss of precision
+      longitude =
+          longitude >= -180 && longitude < 180
+              ? longitude
+              : (longitude + 180.0) % 360.0 - 180.0;
 
   /// The latitude in degrees between -90.0 and 90.0, both inclusive.
   final double latitude;
@@ -74,7 +74,7 @@ class LatLngBounds {
   /// The latitude of the southwest corner cannot be larger than the
   /// latitude of the northeast corner.
   LatLngBounds({required this.southwest, required this.northeast})
-      : assert(southwest.latitude <= northeast.latitude);
+    : assert(southwest.latitude <= northeast.latitude);
 
   /// The southwest corner of the rectangle.
   final LatLng southwest;

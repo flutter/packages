@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -28,18 +28,25 @@ class OverdrawOptimizer extends Visitor<_Result, Node>
 
   /// Removes overlap between top and bottom path from bottom.
   ResolvedPathNode removeOverlap(
-      ResolvedPathNode bottomPathNode, ResolvedPathNode topPathNode) {
+    ResolvedPathNode bottomPathNode,
+    ResolvedPathNode topPathNode,
+  ) {
     final path_ops.Path topPathOpsPath = toPathOpsPath(topPathNode.path);
     final path_ops.Path bottomPathOpsPath = toPathOpsPath(bottomPathNode.path);
-    final path_ops.Path intersection =
-        bottomPathOpsPath.applyOp(topPathOpsPath, path_ops.PathOp.intersect);
-    final path_ops.Path newBottomPath =
-        bottomPathOpsPath.applyOp(intersection, path_ops.PathOp.difference);
+    final path_ops.Path intersection = bottomPathOpsPath.applyOp(
+      topPathOpsPath,
+      path_ops.PathOp.intersect,
+    );
+    final path_ops.Path newBottomPath = bottomPathOpsPath.applyOp(
+      intersection,
+      path_ops.PathOp.difference,
+    );
     final Path newPath = toVectorGraphicsPath(newBottomPath);
     final ResolvedPathNode newPathNode = ResolvedPathNode(
-        paint: bottomPathNode.paint,
-        bounds: bottomPathNode.bounds,
-        path: newPath);
+      paint: bottomPathNode.paint,
+      bounds: bottomPathNode.bounds,
+      path: newPath,
+    );
 
     bottomPathOpsPath.dispose();
     topPathOpsPath.dispose();
@@ -66,50 +73,68 @@ class OverdrawOptimizer extends Visitor<_Result, Node>
     final double g = ((1 - a0) * a1 * g1 + a0 * g0) / a;
     final double b = ((1 - a0) * a1 * b1 + a0 * b0) / a;
 
-    final Color overlapColor =
-        Color.fromARGB((a * 255).round(), r.round(), g.round(), b.round());
+    final Color overlapColor = Color.fromARGB(
+      (a * 255).round(),
+      r.round(),
+      g.round(),
+      b.round(),
+    );
     return overlapColor;
   }
 
   /// Resolves overlapping between top and bottom path on
   /// nodes where opacity is not 1 or null.
   List<ResolvedPathNode> resolveOpacityOverlap(
-      ResolvedPathNode bottomPathNode, ResolvedPathNode topPathNode) {
+    ResolvedPathNode bottomPathNode,
+    ResolvedPathNode topPathNode,
+  ) {
     final Color? bottomColor = bottomPathNode.paint.fill?.color;
     final Color? topColor = topPathNode.paint.fill?.color;
     if (bottomColor != null && topColor != null) {
       final Color overlapColor = calculateOverlapColor(bottomColor, topColor);
       final path_ops.Path topPathOpsPath = toPathOpsPath(topPathNode.path);
-      final path_ops.Path bottomPathOpsPath =
-          toPathOpsPath(bottomPathNode.path);
-      final path_ops.Path intersection =
-          bottomPathOpsPath.applyOp(topPathOpsPath, path_ops.PathOp.intersect);
-      final path_ops.Path newBottomPath =
-          bottomPathOpsPath.applyOp(intersection, path_ops.PathOp.difference);
-      final path_ops.Path newTopPath =
-          topPathOpsPath.applyOp(intersection, path_ops.PathOp.difference);
+      final path_ops.Path bottomPathOpsPath = toPathOpsPath(
+        bottomPathNode.path,
+      );
+      final path_ops.Path intersection = bottomPathOpsPath.applyOp(
+        topPathOpsPath,
+        path_ops.PathOp.intersect,
+      );
+      final path_ops.Path newBottomPath = bottomPathOpsPath.applyOp(
+        intersection,
+        path_ops.PathOp.difference,
+      );
+      final path_ops.Path newTopPath = topPathOpsPath.applyOp(
+        intersection,
+        path_ops.PathOp.difference,
+      );
 
       final Path newBottomVGPath = toVectorGraphicsPath(newBottomPath);
       final Path newTopVGPath = toVectorGraphicsPath(newTopPath);
       final Path newOverlapVGPath = toVectorGraphicsPath(intersection);
 
       final ResolvedPathNode newBottomPathNode = ResolvedPathNode(
-          paint: bottomPathNode.paint,
-          bounds: bottomPathNode.bounds,
-          path: newBottomVGPath);
+        paint: bottomPathNode.paint,
+        bounds: bottomPathNode.bounds,
+        path: newBottomVGPath,
+      );
       final ResolvedPathNode newTopPathNode = ResolvedPathNode(
-          paint: topPathNode.paint,
-          bounds: bottomPathNode.bounds,
-          path: newTopVGPath);
+        paint: topPathNode.paint,
+        bounds: bottomPathNode.bounds,
+        path: newTopVGPath,
+      );
       final ResolvedPathNode newOverlapPathNode = ResolvedPathNode(
-          paint: Paint(
-              blendMode: bottomPathNode.paint.blendMode,
-              stroke: bottomPathNode.paint.stroke,
-              fill: Fill(
-                  color: overlapColor,
-                  shader: bottomPathNode.paint.fill?.shader)),
-          bounds: bottomPathNode.bounds,
-          path: newOverlapVGPath);
+        paint: Paint(
+          blendMode: bottomPathNode.paint.blendMode,
+          stroke: bottomPathNode.paint.stroke,
+          fill: Fill(
+            color: overlapColor,
+            shader: bottomPathNode.paint.fill?.shader,
+          ),
+        ),
+        bounds: bottomPathNode.bounds,
+        path: newOverlapVGPath,
+      );
 
       bottomPathOpsPath.dispose();
       topPathOpsPath.dispose();
@@ -119,7 +144,7 @@ class OverdrawOptimizer extends Visitor<_Result, Node>
       return <ResolvedPathNode>[
         newBottomPathNode,
         newTopPathNode,
-        newOverlapPathNode
+        newOverlapPathNode,
       ];
     }
     return <ResolvedPathNode>[bottomPathNode, topPathNode];
@@ -189,7 +214,7 @@ class OverdrawOptimizer extends Visitor<_Result, Node>
               /// will be used.
               if (child.paint.fill?.color.a == 255) {
                 newChildList[lastPathNodeIndex] = <Node>[
-                  removeOverlap(lastPathNode, child)
+                  removeOverlap(lastPathNode, child),
                 ];
                 lastPathNode = child;
                 lastPathNodeIndex = index;
@@ -200,8 +225,9 @@ class OverdrawOptimizer extends Visitor<_Result, Node>
                 /// Note: The "top" and "intersection" path nodes that
                 /// are returned will not be further optimized.
                 newChildList[lastPathNodeIndex] = resolveOpacityOverlap(
-                    newChildList[lastPathNodeIndex].first as ResolvedPathNode,
-                    child);
+                  newChildList[lastPathNodeIndex].first as ResolvedPathNode,
+                  child,
+                );
                 newChildList[index] = <Node>[];
                 lastPathNode = null;
                 lastPathNodeIndex = null;
@@ -239,8 +265,13 @@ class OverdrawOptimizer extends Visitor<_Result, Node>
       /// If group opacity is set, the parent nodes children cannot be optimized.
       return _Result(parentNode);
     }
-    final _Result result = _Result(ParentNode(parentNode.attributes,
-        children: newChildren, precalculatedTransform: parentNode.transform));
+    final _Result result = _Result(
+      ParentNode(
+        parentNode.attributes,
+        children: newChildren,
+        precalculatedTransform: parentNode.transform,
+      ),
+    );
 
     return result;
   }
@@ -262,9 +293,10 @@ class OverdrawOptimizer extends Visitor<_Result, Node>
   _Result visitResolvedMaskNode(ResolvedMaskNode maskNode, void data) {
     final _Result childResult = maskNode.child.accept(this, maskNode);
     final ResolvedMaskNode newMaskNode = ResolvedMaskNode(
-        child: childResult.node,
-        mask: maskNode.mask,
-        blendMode: maskNode.blendMode);
+      child: childResult.node,
+      mask: maskNode.mask,
+      blendMode: maskNode.blendMode,
+    );
     final _Result result = _Result(newMaskNode);
     result.children.add(childResult.node);
     return result;
@@ -274,8 +306,10 @@ class OverdrawOptimizer extends Visitor<_Result, Node>
   // ignore: library_private_types_in_public_api
   _Result visitResolvedClipNode(ResolvedClipNode clipNode, Node data) {
     final _Result childResult = clipNode.child.accept(this, clipNode);
-    final ResolvedClipNode newClipNode =
-        ResolvedClipNode(clips: clipNode.clips, child: childResult.node);
+    final ResolvedClipNode newClipNode = ResolvedClipNode(
+      clips: clipNode.clips,
+      child: childResult.node,
+    );
     final _Result result = _Result(newClipNode);
     result.children.add(childResult.node);
 
@@ -297,7 +331,9 @@ class OverdrawOptimizer extends Visitor<_Result, Node>
   @override
   // ignore: library_private_types_in_public_api
   _Result visitResolvedVerticesNode(
-      ResolvedVerticesNode verticesNode, Node data) {
+    ResolvedVerticesNode verticesNode,
+    Node data,
+  ) {
     return _Result(verticesNode);
   }
 
@@ -309,8 +345,11 @@ class OverdrawOptimizer extends Visitor<_Result, Node>
       final _Result childResult = child.accept(this, layerNode);
       newChildren.add(childResult.node);
     }
-    final SaveLayerNode newLayerNode = SaveLayerNode(layerNode.attributes,
-        paint: layerNode.paint, children: newChildren);
+    final SaveLayerNode newLayerNode = SaveLayerNode(
+      layerNode.attributes,
+      paint: layerNode.paint,
+      children: newChildren,
+    );
 
     final _Result result = _Result(newLayerNode);
     result.children.addAll(newChildren);
@@ -320,7 +359,9 @@ class OverdrawOptimizer extends Visitor<_Result, Node>
   @override
   // ignore: library_private_types_in_public_api
   _Result visitResolvedImageNode(
-      ResolvedImageNode resolvedImageNode, Node data) {
+    ResolvedImageNode resolvedImageNode,
+    Node data,
+  ) {
     return _Result(resolvedImageNode);
   }
 
@@ -329,8 +370,10 @@ class OverdrawOptimizer extends Visitor<_Result, Node>
   _Result visitViewportNode(ViewportNode viewportNode, void data) {
     final List<Node> children = <Node>[];
 
-    final ParentNode parentNode = ParentNode(SvgAttributes.empty,
-        children: viewportNode.children.toList());
+    final ParentNode parentNode = ParentNode(
+      SvgAttributes.empty,
+      children: viewportNode.children.toList(),
+    );
 
     final _Result childResult = parentNode.accept(this, viewportNode);
     children.addAll((childResult.node as ParentNode).children);
@@ -357,15 +400,14 @@ class OverdrawOptimizer extends Visitor<_Result, Node>
   @override
   // ignore: library_private_types_in_public_api
   _Result visitResolvedTextPositionNode(
-      ResolvedTextPositionNode textPositionNode, void data) {
+    ResolvedTextPositionNode textPositionNode,
+    void data,
+  ) {
     return _Result(
-      ResolvedTextPositionNode(
-        textPositionNode.textPosition,
-        <Node>[
-          for (final Node child in textPositionNode.children)
-            child.accept(this, data).node
-        ],
-      ),
+      ResolvedTextPositionNode(textPositionNode.textPosition, <Node>[
+        for (final Node child in textPositionNode.children)
+          child.accept(this, data).node,
+      ]),
     );
   }
 }

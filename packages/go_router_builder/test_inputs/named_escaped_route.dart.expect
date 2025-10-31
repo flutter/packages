@@ -1,10 +1,10 @@
 RouteBase get $namedEscapedRoute => GoRouteData.$route(
       path: '/named-route',
       name: r'named$Route',
-      factory: _$NamedEscapedRoute._fromState,
+      factory: $NamedEscapedRoute._fromState,
     );
 
-mixin _$NamedEscapedRoute on GoRouteData {
+mixin $NamedEscapedRoute on GoRouteData {
   static NamedEscapedRoute _fromState(GoRouterState state) =>
       NamedEscapedRoute();
 

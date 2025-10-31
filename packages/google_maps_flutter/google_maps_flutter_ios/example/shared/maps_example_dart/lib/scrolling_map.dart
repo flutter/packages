@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -16,7 +16,7 @@ const LatLng _center = LatLng(32.080664, 34.9563837);
 
 class ScrollingMapPage extends GoogleMapExampleAppPage {
   const ScrollingMapPage({Key? key})
-      : super(const Icon(Icons.map), 'Scrolling map', key: key);
+    : super(const Icon(Icons.map), 'Scrolling map', key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -70,8 +70,9 @@ class ScrollingMapBody extends StatelessWidget {
                 const Text("This map doesn't consume the vertical drags."),
                 const Padding(
                   padding: EdgeInsets.only(bottom: 12.0),
-                  child:
-                      Text('It still gets other gestures (e.g scale or tap).'),
+                  child: Text(
+                    'It still gets other gestures (e.g scale or tap).',
+                  ),
                 ),
                 Center(
                   child: SizedBox(
@@ -85,22 +86,19 @@ class ScrollingMapBody extends StatelessWidget {
                       markers: <Marker>{
                         Marker(
                           markerId: const MarkerId('test_marker_id'),
-                          position: LatLng(
-                            _center.latitude,
-                            _center.longitude,
-                          ),
+                          position: LatLng(_center.latitude, _center.longitude),
                           infoWindow: const InfoWindow(
                             title: 'An interesting location',
                             snippet: '*',
                           ),
                         ),
                       },
-                      gestureRecognizers: <Factory<
-                          OneSequenceGestureRecognizer>>{
-                        Factory<OneSequenceGestureRecognizer>(
-                          () => ScaleGestureRecognizer(),
-                        ),
-                      },
+                      gestureRecognizers:
+                          <Factory<OneSequenceGestureRecognizer>>{
+                            Factory<OneSequenceGestureRecognizer>(
+                              () => ScaleGestureRecognizer(),
+                            ),
+                          },
                     ),
                   ),
                 ),

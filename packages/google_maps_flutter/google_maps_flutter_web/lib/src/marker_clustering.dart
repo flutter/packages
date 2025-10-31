@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -22,18 +22,18 @@ class ClusterManagersController extends GeometryController {
   ///
   /// The [stream] parameter is a required [StreamController] used for
   /// emitting map events.
-  ClusterManagersController(
-      {required StreamController<MapEvent<Object?>> stream})
-      : _streamController = stream,
-        _clusterManagerIdToMarkerClusterer =
-            <ClusterManagerId, MarkerClusterer>{};
+  ClusterManagersController({
+    required StreamController<MapEvent<Object?>> stream,
+  }) : _streamController = stream,
+       _clusterManagerIdToMarkerClusterer =
+           <ClusterManagerId, MarkerClusterer>{};
 
   // The stream over which cluster managers broadcast their events
   final StreamController<MapEvent<Object?>> _streamController;
 
   // A cache of [MarkerClusterer]s indexed by their [ClusterManagerId].
   final Map<ClusterManagerId, MarkerClusterer>
-      _clusterManagerIdToMarkerClusterer;
+  _clusterManagerIdToMarkerClusterer;
 
   /// Adds a set of [ClusterManager] objects to the cache.
   void addClusterManagers(Set<ClusterManager> clusterManagersToAdd) {
@@ -42,11 +42,14 @@ class ClusterManagersController extends GeometryController {
 
   void _addClusterManager(ClusterManager clusterManager) {
     final MarkerClusterer markerClusterer = createMarkerClusterer(
-        googleMap,
-        (gmaps.MapMouseEvent event, MarkerClustererCluster cluster,
-                gmaps.Map map) =>
-            _clusterClicked(
-                clusterManager.clusterManagerId, event, cluster, map));
+      googleMap,
+      (
+        gmaps.MapMouseEvent event,
+        MarkerClustererCluster cluster,
+        gmaps.Map map,
+      ) =>
+          _clusterClicked(clusterManager.clusterManagerId, event, cluster, map),
+    );
 
     _clusterManagerIdToMarkerClusterer[clusterManager.clusterManagerId] =
         markerClusterer;
@@ -99,37 +102,48 @@ class ClusterManagersController extends GeometryController {
         _clusterManagerIdToMarkerClusterer[clusterManagerId];
     if (markerClusterer != null) {
       return markerClusterer.clusters
-          .map((MarkerClustererCluster cluster) =>
-              _convertCluster(clusterManagerId, cluster))
+          .map(
+            (MarkerClustererCluster cluster) =>
+                _convertCluster(clusterManagerId, cluster),
+          )
           .toList();
     }
     return <Cluster>[];
   }
 
   void _clusterClicked(
-      ClusterManagerId clusterManagerId,
-      gmaps.MapMouseEvent event,
-      MarkerClustererCluster markerClustererCluster,
-      gmaps.Map map) {
+    ClusterManagerId clusterManagerId,
+    gmaps.MapMouseEvent event,
+    MarkerClustererCluster markerClustererCluster,
+    gmaps.Map map,
+  ) {
     if (markerClustererCluster.count > 0 &&
         markerClustererCluster.bounds != null) {
-      final Cluster cluster =
-          _convertCluster(clusterManagerId, markerClustererCluster);
+      final Cluster cluster = _convertCluster(
+        clusterManagerId,
+        markerClustererCluster,
+      );
       _streamController.add(ClusterTapEvent(mapId, cluster));
     }
   }
 
   /// Converts [MarkerClustererCluster] to [Cluster].
-  Cluster _convertCluster(ClusterManagerId clusterManagerId,
-      MarkerClustererCluster markerClustererCluster) {
+  Cluster _convertCluster(
+    ClusterManagerId clusterManagerId,
+    MarkerClustererCluster markerClustererCluster,
+  ) {
     final LatLng position = gmLatLngToLatLng(markerClustererCluster.position);
-    final LatLngBounds bounds =
-        gmLatLngBoundsTolatLngBounds(markerClustererCluster.bounds!);
+    final LatLngBounds bounds = gmLatLngBoundsTolatLngBounds(
+      markerClustererCluster.bounds!,
+    );
 
-    final List<MarkerId> markerIds = markerClustererCluster.markers
-        .map<MarkerId>((gmaps.Marker marker) =>
-            MarkerId((marker.get('markerId')! as JSString).toDart))
-        .toList();
+    final List<MarkerId> markerIds =
+        markerClustererCluster.markers
+            .map<MarkerId>(
+              (gmaps.Marker marker) =>
+                  MarkerId((marker.get('markerId')! as JSString).toDart),
+            )
+            .toList();
     return Cluster(
       clusterManagerId,
       markerIds,

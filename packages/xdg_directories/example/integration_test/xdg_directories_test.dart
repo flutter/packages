@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -18,20 +18,26 @@ void main() {
     expect(find.textContaining(dataHome.path), findsWidgets);
     expect(find.textContaining(configHome.path), findsWidgets);
     expect(
-        find.textContaining(
-            dataDirs.map((Directory directory) => directory.path).join('\n')),
-        findsWidgets);
+      find.textContaining(
+        dataDirs.map((Directory directory) => directory.path).join('\n'),
+      ),
+      findsWidgets,
+    );
     expect(
-        find.textContaining(
-            configDirs.map((Directory directory) => directory.path).join('\n')),
-        findsWidgets);
+      find.textContaining(
+        configDirs.map((Directory directory) => directory.path).join('\n'),
+      ),
+      findsWidgets,
+    );
 
     expect(
       find.textContaining(cacheHome.path, skipOffstage: false),
       findsWidgets,
     );
 
-    expect(find.textContaining(runtimeDir?.path ?? '', skipOffstage: false),
-        findsWidgets);
+    expect(
+      find.textContaining(runtimeDir?.path ?? '', skipOffstage: false),
+      findsWidgets,
+    );
   });
 }

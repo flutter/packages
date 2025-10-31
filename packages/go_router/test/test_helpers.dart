@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -23,9 +23,7 @@ Future<GoRouter> createGoRouter(WidgetTester tester) async {
       ),
     ],
   );
-  await tester.pumpWidget(MaterialApp.router(
-    routerConfig: goRouter,
-  ));
+  await tester.pumpWidget(MaterialApp.router(routerConfig: goRouter));
   return goRouter;
 }
 
@@ -33,14 +31,13 @@ Widget fakeNavigationBuilder(
   BuildContext context,
   GoRouterState state,
   Widget child,
-) =>
-    child;
+) => child;
 
 class GoRouterNamedLocationSpy extends GoRouter {
   GoRouterNamedLocationSpy({required List<RouteBase> routes})
-      : super.routingConfig(
-            routingConfig:
-                ConstantRoutingConfig(RoutingConfig(routes: routes)));
+    : super.routingConfig(
+        routingConfig: ConstantRoutingConfig(RoutingConfig(routes: routes)),
+      );
 
   String? name;
   Map<String, String>? pathParameters;
@@ -48,10 +45,12 @@ class GoRouterNamedLocationSpy extends GoRouter {
   String? fragment;
 
   @override
-  String namedLocation(String name,
-      {Map<String, String> pathParameters = const <String, String>{},
-      Map<String, dynamic> queryParameters = const <String, dynamic>{},
-      String? fragment}) {
+  String namedLocation(
+    String name, {
+    Map<String, String> pathParameters = const <String, String>{},
+    Map<String, dynamic> queryParameters = const <String, dynamic>{},
+    String? fragment,
+  }) {
     this.name = name;
     this.pathParameters = pathParameters;
     this.queryParameters = queryParameters;
@@ -62,9 +61,9 @@ class GoRouterNamedLocationSpy extends GoRouter {
 
 class GoRouterGoSpy extends GoRouter {
   GoRouterGoSpy({required List<RouteBase> routes})
-      : super.routingConfig(
-            routingConfig:
-                ConstantRoutingConfig(RoutingConfig(routes: routes)));
+    : super.routingConfig(
+        routingConfig: ConstantRoutingConfig(RoutingConfig(routes: routes)),
+      );
 
   String? myLocation;
   Object? extra;
@@ -78,9 +77,9 @@ class GoRouterGoSpy extends GoRouter {
 
 class GoRouterGoNamedSpy extends GoRouter {
   GoRouterGoNamedSpy({required List<RouteBase> routes})
-      : super.routingConfig(
-            routingConfig:
-                ConstantRoutingConfig(RoutingConfig(routes: routes)));
+    : super.routingConfig(
+        routingConfig: ConstantRoutingConfig(RoutingConfig(routes: routes)),
+      );
 
   String? name;
   Map<String, String>? pathParameters;
@@ -106,9 +105,9 @@ class GoRouterGoNamedSpy extends GoRouter {
 
 class GoRouterPushSpy extends GoRouter {
   GoRouterPushSpy({required List<RouteBase> routes})
-      : super.routingConfig(
-            routingConfig:
-                ConstantRoutingConfig(RoutingConfig(routes: routes)));
+    : super.routingConfig(
+        routingConfig: ConstantRoutingConfig(RoutingConfig(routes: routes)),
+      );
 
   String? myLocation;
   Object? extra;
@@ -123,9 +122,9 @@ class GoRouterPushSpy extends GoRouter {
 
 class GoRouterPushNamedSpy extends GoRouter {
   GoRouterPushNamedSpy({required List<RouteBase> routes})
-      : super.routingConfig(
-            routingConfig:
-                ConstantRoutingConfig(RoutingConfig(routes: routes)));
+    : super.routingConfig(
+        routingConfig: ConstantRoutingConfig(RoutingConfig(routes: routes)),
+      );
 
   String? name;
   Map<String, String>? pathParameters;
@@ -149,9 +148,9 @@ class GoRouterPushNamedSpy extends GoRouter {
 
 class GoRouterPopSpy extends GoRouter {
   GoRouterPopSpy({required List<RouteBase> routes})
-      : super.routingConfig(
-            routingConfig:
-                ConstantRoutingConfig(RoutingConfig(routes: routes)));
+    : super.routingConfig(
+        routingConfig: ConstantRoutingConfig(RoutingConfig(routes: routes)),
+      );
 
   bool popped = false;
   Object? poppedResult;
@@ -305,8 +304,8 @@ class DummyStatefulWidgetState extends State<DummyStatefulWidget> {
   int counter = 0;
 
   void increment() => setState(() {
-        counter++;
-      });
+    counter++;
+  });
 
   @override
   Widget build(BuildContext context) => Container();
@@ -322,7 +321,8 @@ class DummyRestorableStatefulWidget extends StatefulWidget {
 }
 
 class DummyRestorableStatefulWidgetState
-    extends State<DummyRestorableStatefulWidget> with RestorationMixin {
+    extends State<DummyRestorableStatefulWidget>
+    with RestorationMixin {
   final RestorableInt _counter = RestorableInt(0);
 
   @override
@@ -331,8 +331,8 @@ class DummyRestorableStatefulWidgetState
   int get counter => _counter.value;
 
   void increment([int count = 1]) => setState(() {
-        _counter.value += count;
-      });
+    _counter.value += count;
+  });
 
   @override
   void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
@@ -352,19 +352,32 @@ class DummyRestorableStatefulWidgetState
 }
 
 Future<void> simulateAndroidBackButton(WidgetTester tester) async {
-  final ByteData message =
-      const JSONMethodCodec().encodeMethodCall(const MethodCall('popRoute'));
-  await tester.binding.defaultBinaryMessenger
-      .handlePlatformMessage('flutter/navigation', message, (_) {});
+  final ByteData message = const JSONMethodCodec().encodeMethodCall(
+    const MethodCall('popRoute'),
+  );
+  await tester.binding.defaultBinaryMessenger.handlePlatformMessage(
+    'flutter/navigation',
+    message,
+    (_) {},
+  );
 }
 
-GoRouterPageBuilder createPageBuilder(
-        {String? restorationId, required Widget child}) =>
+Future<void> simulateIosBackGesture(WidgetTester tester) async {
+  await tester.dragFrom(const Offset(0, 300), const Offset(500, 300));
+}
+
+GoRouterPageBuilder createPageBuilder({
+  String? restorationId,
+  required Widget child,
+}) =>
     (BuildContext context, GoRouterState state) =>
         MaterialPage<dynamic>(restorationId: restorationId, child: child);
 
-StatefulShellRouteBuilder mockStackedShellBuilder = (BuildContext context,
-    GoRouterState state, StatefulNavigationShell navigationShell) {
+StatefulShellRouteBuilder mockStackedShellBuilder = (
+  BuildContext context,
+  GoRouterState state,
+  StatefulNavigationShell navigationShell,
+) {
   return navigationShell;
 };
 
@@ -392,18 +405,23 @@ RouteConfiguration createRouteConfiguration({
   required int redirectLimit,
 }) {
   return RouteConfiguration(
-      ConstantRoutingConfig(RoutingConfig(
+    ConstantRoutingConfig(
+      RoutingConfig(
         routes: routes,
         redirect: topRedirect,
         redirectLimit: redirectLimit,
-      )),
-      navigatorKey: navigatorKey);
+      ),
+    ),
+    navigatorKey: navigatorKey,
+  );
 }
 
 class SimpleDependencyProvider extends InheritedNotifier<SimpleDependency> {
-  const SimpleDependencyProvider(
-      {super.key, required SimpleDependency dependency, required super.child})
-      : super(notifier: dependency);
+  const SimpleDependencyProvider({
+    super.key,
+    required SimpleDependency dependency,
+    required super.child,
+  }) : super(notifier: dependency);
 
   static SimpleDependency of(BuildContext context) {
     final SimpleDependencyProvider result =

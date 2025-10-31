@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -32,16 +32,18 @@ void main() {
 
   group('openFile', () {
     setUp(() {
-      when(mockApi.showOpenDialog(any, any, any))
-          .thenReturn(FileDialogResult(paths: <String>['foo']));
+      when(
+        mockApi.showOpenDialog(any, any, any),
+      ).thenReturn(FileDialogResult(paths: <String>['foo']));
     });
 
     test('simple call works', () async {
       final XFile? file = await plugin.openFile();
 
       expect(file!.path, 'foo');
-      final VerificationResult result =
-          verify(mockApi.showOpenDialog(captureAny, null, null));
+      final VerificationResult result = verify(
+        mockApi.showOpenDialog(captureAny, null, null),
+      );
       final SelectionOptions options = result.captured[0] as SelectionOptions;
       expect(options.allowMultiple, false);
       expect(options.selectFolders, false);
@@ -62,15 +64,17 @@ void main() {
 
       await plugin.openFile(acceptedTypeGroups: <XTypeGroup>[group, groupTwo]);
 
-      final VerificationResult result =
-          verify(mockApi.showOpenDialog(captureAny, null, null));
+      final VerificationResult result = verify(
+        mockApi.showOpenDialog(captureAny, null, null),
+      );
       final SelectionOptions options = result.captured[0] as SelectionOptions;
       expect(
-          _typeGroupListsMatch(options.allowedTypes, <TypeGroup>[
-            TypeGroup(label: 'text', extensions: <String>['txt']),
-            TypeGroup(label: 'image', extensions: <String>['jpg']),
-          ]),
-          true);
+        _typeGroupListsMatch(options.allowedTypes, <TypeGroup>[
+          TypeGroup(label: 'text', extensions: <String>['txt']),
+          TypeGroup(label: 'image', extensions: <String>['jpg']),
+        ]),
+        true,
+      );
     });
 
     test('passes initialDirectory correctly', () async {
@@ -92,24 +96,26 @@ void main() {
       );
 
       await expectLater(
-          plugin.openFile(acceptedTypeGroups: <XTypeGroup>[group]),
-          throwsArgumentError);
+        plugin.openFile(acceptedTypeGroups: <XTypeGroup>[group]),
+        throwsArgumentError,
+      );
     });
 
     test('allows a wildcard group', () async {
-      const XTypeGroup group = XTypeGroup(
-        label: 'text',
-      );
+      const XTypeGroup group = XTypeGroup(label: 'text');
 
       await expectLater(
-          plugin.openFile(acceptedTypeGroups: <XTypeGroup>[group]), completes);
+        plugin.openFile(acceptedTypeGroups: <XTypeGroup>[group]),
+        completes,
+      );
     });
   });
 
   group('openFiles', () {
     setUp(() {
-      when(mockApi.showOpenDialog(any, any, any))
-          .thenReturn(FileDialogResult(paths: <String>['foo', 'bar']));
+      when(
+        mockApi.showOpenDialog(any, any, any),
+      ).thenReturn(FileDialogResult(paths: <String>['foo', 'bar']));
     });
 
     test('simple call works', () async {
@@ -117,8 +123,9 @@ void main() {
 
       expect(file[0].path, 'foo');
       expect(file[1].path, 'bar');
-      final VerificationResult result =
-          verify(mockApi.showOpenDialog(captureAny, null, null));
+      final VerificationResult result = verify(
+        mockApi.showOpenDialog(captureAny, null, null),
+      );
       final SelectionOptions options = result.captured[0] as SelectionOptions;
       expect(options.allowMultiple, true);
       expect(options.selectFolders, false);
@@ -139,15 +146,17 @@ void main() {
 
       await plugin.openFiles(acceptedTypeGroups: <XTypeGroup>[group, groupTwo]);
 
-      final VerificationResult result =
-          verify(mockApi.showOpenDialog(captureAny, null, null));
+      final VerificationResult result = verify(
+        mockApi.showOpenDialog(captureAny, null, null),
+      );
       final SelectionOptions options = result.captured[0] as SelectionOptions;
       expect(
-          _typeGroupListsMatch(options.allowedTypes, <TypeGroup>[
-            TypeGroup(label: 'text', extensions: <String>['txt']),
-            TypeGroup(label: 'image', extensions: <String>['jpg']),
-          ]),
-          true);
+        _typeGroupListsMatch(options.allowedTypes, <TypeGroup>[
+          TypeGroup(label: 'text', extensions: <String>['txt']),
+          TypeGroup(label: 'image', extensions: <String>['jpg']),
+        ]),
+        true,
+      );
     });
 
     test('passes initialDirectory correctly', () async {
@@ -169,32 +178,35 @@ void main() {
       );
 
       await expectLater(
-          plugin.openFiles(acceptedTypeGroups: <XTypeGroup>[group]),
-          throwsArgumentError);
+        plugin.openFiles(acceptedTypeGroups: <XTypeGroup>[group]),
+        throwsArgumentError,
+      );
     });
 
     test('allows a wildcard group', () async {
-      const XTypeGroup group = XTypeGroup(
-        label: 'text',
-      );
+      const XTypeGroup group = XTypeGroup(label: 'text');
 
       await expectLater(
-          plugin.openFiles(acceptedTypeGroups: <XTypeGroup>[group]), completes);
+        plugin.openFiles(acceptedTypeGroups: <XTypeGroup>[group]),
+        completes,
+      );
     });
   });
 
   group('getDirectoryPath', () {
     setUp(() {
-      when(mockApi.showOpenDialog(any, any, any))
-          .thenReturn(FileDialogResult(paths: <String>['foo']));
+      when(
+        mockApi.showOpenDialog(any, any, any),
+      ).thenReturn(FileDialogResult(paths: <String>['foo']));
     });
 
     test('simple call works', () async {
       final String? path = await plugin.getDirectoryPath();
 
       expect(path, 'foo');
-      final VerificationResult result =
-          verify(mockApi.showOpenDialog(captureAny, null, null));
+      final VerificationResult result = verify(
+        mockApi.showOpenDialog(captureAny, null, null),
+      );
       final SelectionOptions options = result.captured[0] as SelectionOptions;
       expect(options.allowMultiple, false);
       expect(options.selectFolders, true);
@@ -215,8 +227,9 @@ void main() {
 
   group('getDirectoryPaths', () {
     setUp(() {
-      when(mockApi.showOpenDialog(any, any, any))
-          .thenReturn(FileDialogResult(paths: <String>['foo', 'bar']));
+      when(
+        mockApi.showOpenDialog(any, any, any),
+      ).thenReturn(FileDialogResult(paths: <String>['foo', 'bar']));
     });
 
     test('simple call works', () async {
@@ -224,8 +237,9 @@ void main() {
 
       expect(paths[0], 'foo');
       expect(paths[1], 'bar');
-      final VerificationResult result =
-          verify(mockApi.showOpenDialog(captureAny, null, null));
+      final VerificationResult result = verify(
+        mockApi.showOpenDialog(captureAny, null, null),
+      );
       final SelectionOptions options = result.captured[0] as SelectionOptions;
       expect(options.allowMultiple, true);
       expect(options.selectFolders, true);
@@ -246,8 +260,9 @@ void main() {
 
   group('getSaveLocation', () {
     setUp(() {
-      when(mockApi.showSaveDialog(any, any, any, any))
-          .thenReturn(FileDialogResult(paths: <String>['foo']));
+      when(
+        mockApi.showSaveDialog(any, any, any, any),
+      ).thenReturn(FileDialogResult(paths: <String>['foo']));
     });
 
     test('simple call works', () async {
@@ -255,8 +270,9 @@ void main() {
 
       expect(location?.path, 'foo');
       expect(location?.activeFilter, null);
-      final VerificationResult result =
-          verify(mockApi.showSaveDialog(captureAny, null, null, null));
+      final VerificationResult result = verify(
+        mockApi.showSaveDialog(captureAny, null, null, null),
+      );
       final SelectionOptions options = result.captured[0] as SelectionOptions;
       expect(options.allowMultiple, false);
       expect(options.selectFolders, false);
@@ -275,23 +291,27 @@ void main() {
         mimeTypes: <String>['image/jpg'],
       );
 
-      await plugin
-          .getSaveLocation(acceptedTypeGroups: <XTypeGroup>[group, groupTwo]);
+      await plugin.getSaveLocation(
+        acceptedTypeGroups: <XTypeGroup>[group, groupTwo],
+      );
 
-      final VerificationResult result =
-          verify(mockApi.showSaveDialog(captureAny, null, null, null));
+      final VerificationResult result = verify(
+        mockApi.showSaveDialog(captureAny, null, null, null),
+      );
       final SelectionOptions options = result.captured[0] as SelectionOptions;
       expect(
-          _typeGroupListsMatch(options.allowedTypes, <TypeGroup>[
-            TypeGroup(label: 'text', extensions: <String>['txt']),
-            TypeGroup(label: 'image', extensions: <String>['jpg']),
-          ]),
-          true);
+        _typeGroupListsMatch(options.allowedTypes, <TypeGroup>[
+          TypeGroup(label: 'text', extensions: <String>['txt']),
+          TypeGroup(label: 'image', extensions: <String>['jpg']),
+        ]),
+        true,
+      );
     });
 
     test('returns the selected type group correctly', () async {
-      when(mockApi.showSaveDialog(any, any, any, any)).thenReturn(
-          FileDialogResult(paths: <String>['foo'], typeGroupIndex: 1));
+      when(
+        mockApi.showSaveDialog(any, any, any, any),
+      ).thenReturn(FileDialogResult(paths: <String>['foo'], typeGroupIndex: 1));
       const XTypeGroup group = XTypeGroup(
         label: 'text',
         extensions: <String>['txt'],
@@ -304,8 +324,9 @@ void main() {
         mimeTypes: <String>['image/jpg'],
       );
 
-      final FileSaveLocation? result = await plugin
-          .getSaveLocation(acceptedTypeGroups: <XTypeGroup>[group, groupTwo]);
+      final FileSaveLocation? result = await plugin.getSaveLocation(
+        acceptedTypeGroups: <XTypeGroup>[group, groupTwo],
+      );
 
       verify(mockApi.showSaveDialog(captureAny, null, null, null));
 
@@ -314,22 +335,26 @@ void main() {
 
     test('passes initialDirectory correctly', () async {
       await plugin.getSaveLocation(
-          options:
-              const SaveDialogOptions(initialDirectory: '/example/directory'));
+        options: const SaveDialogOptions(
+          initialDirectory: '/example/directory',
+        ),
+      );
 
       verify(mockApi.showSaveDialog(any, '/example/directory', null, null));
     });
 
     test('passes suggestedName correctly', () async {
       await plugin.getSaveLocation(
-          options: const SaveDialogOptions(suggestedName: 'baz.txt'));
+        options: const SaveDialogOptions(suggestedName: 'baz.txt'),
+      );
 
       verify(mockApi.showSaveDialog(any, null, 'baz.txt', null));
     });
 
     test('passes confirmButtonText correctly', () async {
       await plugin.getSaveLocation(
-          options: const SaveDialogOptions(confirmButtonText: 'Save File'));
+        options: const SaveDialogOptions(confirmButtonText: 'Save File'),
+      );
 
       verify(mockApi.showSaveDialog(any, null, null, 'Save File'));
     });
@@ -341,33 +366,35 @@ void main() {
       );
 
       await expectLater(
-          plugin.getSaveLocation(acceptedTypeGroups: <XTypeGroup>[group]),
-          throwsArgumentError);
+        plugin.getSaveLocation(acceptedTypeGroups: <XTypeGroup>[group]),
+        throwsArgumentError,
+      );
     });
 
     test('allows a wildcard group', () async {
-      const XTypeGroup group = XTypeGroup(
-        label: 'text',
-      );
+      const XTypeGroup group = XTypeGroup(label: 'text');
 
       await expectLater(
-          plugin.getSaveLocation(acceptedTypeGroups: <XTypeGroup>[group]),
-          completes);
+        plugin.getSaveLocation(acceptedTypeGroups: <XTypeGroup>[group]),
+        completes,
+      );
     });
   });
 
   group('getSavePath (deprecated)', () {
     setUp(() {
-      when(mockApi.showSaveDialog(any, any, any, any))
-          .thenReturn(FileDialogResult(paths: <String>['foo']));
+      when(
+        mockApi.showSaveDialog(any, any, any, any),
+      ).thenReturn(FileDialogResult(paths: <String>['foo']));
     });
 
     test('simple call works', () async {
       final String? path = await plugin.getSavePath();
 
       expect(path, 'foo');
-      final VerificationResult result =
-          verify(mockApi.showSaveDialog(captureAny, null, null, null));
+      final VerificationResult result = verify(
+        mockApi.showSaveDialog(captureAny, null, null, null),
+      );
       final SelectionOptions options = result.captured[0] as SelectionOptions;
       expect(options.allowMultiple, false);
       expect(options.selectFolders, false);
@@ -386,18 +413,21 @@ void main() {
         mimeTypes: <String>['image/jpg'],
       );
 
-      await plugin
-          .getSavePath(acceptedTypeGroups: <XTypeGroup>[group, groupTwo]);
+      await plugin.getSavePath(
+        acceptedTypeGroups: <XTypeGroup>[group, groupTwo],
+      );
 
-      final VerificationResult result =
-          verify(mockApi.showSaveDialog(captureAny, null, null, null));
+      final VerificationResult result = verify(
+        mockApi.showSaveDialog(captureAny, null, null, null),
+      );
       final SelectionOptions options = result.captured[0] as SelectionOptions;
       expect(
-          _typeGroupListsMatch(options.allowedTypes, <TypeGroup>[
-            TypeGroup(label: 'text', extensions: <String>['txt']),
-            TypeGroup(label: 'image', extensions: <String>['jpg']),
-          ]),
-          true);
+        _typeGroupListsMatch(options.allowedTypes, <TypeGroup>[
+          TypeGroup(label: 'text', extensions: <String>['txt']),
+          TypeGroup(label: 'image', extensions: <String>['jpg']),
+        ]),
+        true,
+      );
     });
 
     test('passes initialDirectory correctly', () async {
@@ -425,18 +455,18 @@ void main() {
       );
 
       await expectLater(
-          plugin.getSavePath(acceptedTypeGroups: <XTypeGroup>[group]),
-          throwsArgumentError);
+        plugin.getSavePath(acceptedTypeGroups: <XTypeGroup>[group]),
+        throwsArgumentError,
+      );
     });
 
     test('allows a wildcard group', () async {
-      const XTypeGroup group = XTypeGroup(
-        label: 'text',
-      );
+      const XTypeGroup group = XTypeGroup(label: 'text');
 
       await expectLater(
-          plugin.getSavePath(acceptedTypeGroups: <XTypeGroup>[group]),
-          completes);
+        plugin.getSavePath(acceptedTypeGroups: <XTypeGroup>[group]),
+        completes,
+      );
     });
   });
 }

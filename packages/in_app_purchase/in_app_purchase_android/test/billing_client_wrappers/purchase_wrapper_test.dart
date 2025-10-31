@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -58,49 +58,67 @@ void main() {
 
       expect(details[0].purchaseID, dummyMultipleProductsPurchase.orderId);
       expect(details[0].productID, dummyMultipleProductsPurchase.products[0]);
-      expect(details[0].transactionDate,
-          dummyMultipleProductsPurchase.purchaseTime.toString());
+      expect(
+        details[0].transactionDate,
+        dummyMultipleProductsPurchase.purchaseTime.toString(),
+      );
       expect(details[0].verificationData, isNotNull);
       expect(details[0].verificationData.source, kIAPSource);
-      expect(details[0].verificationData.localVerificationData,
-          dummyMultipleProductsPurchase.originalJson);
-      expect(details[0].verificationData.serverVerificationData,
-          dummyMultipleProductsPurchase.purchaseToken);
+      expect(
+        details[0].verificationData.localVerificationData,
+        dummyMultipleProductsPurchase.originalJson,
+      );
+      expect(
+        details[0].verificationData.serverVerificationData,
+        dummyMultipleProductsPurchase.purchaseToken,
+      );
       expect(details[0].billingClientPurchase, dummyMultipleProductsPurchase);
       expect(details[0].pendingCompletePurchase, false);
 
       expect(details[1].purchaseID, dummyMultipleProductsPurchase.orderId);
       expect(details[1].productID, dummyMultipleProductsPurchase.products[1]);
-      expect(details[1].transactionDate,
-          dummyMultipleProductsPurchase.purchaseTime.toString());
+      expect(
+        details[1].transactionDate,
+        dummyMultipleProductsPurchase.purchaseTime.toString(),
+      );
       expect(details[1].verificationData, isNotNull);
       expect(details[1].verificationData.source, kIAPSource);
-      expect(details[1].verificationData.localVerificationData,
-          dummyMultipleProductsPurchase.originalJson);
-      expect(details[1].verificationData.serverVerificationData,
-          dummyMultipleProductsPurchase.purchaseToken);
+      expect(
+        details[1].verificationData.localVerificationData,
+        dummyMultipleProductsPurchase.originalJson,
+      );
+      expect(
+        details[1].verificationData.serverVerificationData,
+        dummyMultipleProductsPurchase.purchaseToken,
+      );
       expect(details[1].billingClientPurchase, dummyMultipleProductsPurchase);
       expect(details[1].pendingCompletePurchase, false);
     });
 
     test(
-        'fromPurchase() should return set pendingCompletePurchase to true for unacknowledged purchase',
-        () {
-      final GooglePlayPurchaseDetails details =
-          GooglePlayPurchaseDetails.fromPurchase(dummyUnacknowledgedPurchase)
-              .first;
+      'fromPurchase() should return set pendingCompletePurchase to true for unacknowledged purchase',
+      () {
+        final GooglePlayPurchaseDetails details =
+            GooglePlayPurchaseDetails.fromPurchase(
+              dummyUnacknowledgedPurchase,
+            ).first;
 
-      expect(details.purchaseID, dummyPurchase.orderId);
-      expect(details.productID, dummyPurchase.products.first);
-      expect(details.transactionDate, dummyPurchase.purchaseTime.toString());
-      expect(details.verificationData, isNotNull);
-      expect(details.verificationData.source, kIAPSource);
-      expect(details.verificationData.localVerificationData,
-          dummyPurchase.originalJson);
-      expect(details.verificationData.serverVerificationData,
-          dummyPurchase.purchaseToken);
-      expect(details.billingClientPurchase, dummyUnacknowledgedPurchase);
-      expect(details.pendingCompletePurchase, true);
-    });
+        expect(details.purchaseID, dummyPurchase.orderId);
+        expect(details.productID, dummyPurchase.products.first);
+        expect(details.transactionDate, dummyPurchase.purchaseTime.toString());
+        expect(details.verificationData, isNotNull);
+        expect(details.verificationData.source, kIAPSource);
+        expect(
+          details.verificationData.localVerificationData,
+          dummyPurchase.originalJson,
+        );
+        expect(
+          details.verificationData.serverVerificationData,
+          dummyPurchase.purchaseToken,
+        );
+        expect(details.billingClientPurchase, dummyUnacknowledgedPurchase);
+        expect(details.pendingCompletePurchase, true);
+      },
+    );
   });
 }

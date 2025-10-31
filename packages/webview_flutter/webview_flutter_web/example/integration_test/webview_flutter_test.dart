@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -19,13 +19,9 @@ Future<void> main() async {
     final WebWebViewController controller = WebWebViewController(
       const PlatformWebViewControllerCreationParams(),
     );
-    await controller.loadRequest(
-      LoadRequestParams(uri: Uri.parse(fakeUrl)),
-    );
+    await controller.loadRequest(LoadRequestParams(uri: Uri.parse(fakeUrl)));
 
-    await tester.pumpWidget(
-      wrappedWebView(controller),
-    );
+    await tester.pumpWidget(wrappedWebView(controller));
     // Pump 2 frames so the framework injects the platform view into the DOM.
     // The duration of the second pump is set so the browser has some idle time
     // to actually show the contents of the iFrame.
@@ -47,9 +43,7 @@ Future<void> main() async {
       'data:text/html;charset=utf-8,${Uri.encodeFull('test html')}',
     );
 
-    await tester.pumpWidget(
-      wrappedWebView(controller),
-    );
+    await tester.pumpWidget(wrappedWebView(controller));
     // Pump 2 frames so the framework injects the platform view into the DOM.
     // The duration of the second pump is set so the browser has some idle time
     // to actually show the contents of the iFrame.

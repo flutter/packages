@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -31,10 +31,14 @@ class XFile extends XFileBase {
     @visibleForTesting CrossFileTestOverrides? overrides,
   }) {
     throw UnimplementedError(
-        'CrossFile is not available in your current platform.');
+      'CrossFile is not available in your current platform.',
+    );
   }
 
-  /// Construct a CrossFile object from its data
+  /// Construct a CrossFile object from its data.
+  ///
+  /// On the web, the [path] is ignored if the [bytes] are provided,
+  /// as the underlying Blob URL is used as the path.
   XFile.fromData(
     Uint8List bytes, {
     String? mimeType,
@@ -45,7 +49,8 @@ class XFile extends XFileBase {
     @visibleForTesting CrossFileTestOverrides? overrides,
   }) : super(path) {
     throw UnimplementedError(
-        'CrossFile is not available in your current platform.');
+      'CrossFile is not available in your current platform.',
+    );
   }
 }
 

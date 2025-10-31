@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -14,20 +14,16 @@ import 'package:web_benchmarks/src/common.dart';
 import 'test_infra/common.dart';
 
 Future<void> main() async {
-  test(
-    'Can run a web benchmark',
-    () async {
-      await _runBenchmarks(
-        benchmarkNames: <String>[
-          BenchmarkName.appNavigate.name,
-          BenchmarkName.appScroll.name,
-          BenchmarkName.appTap.name,
-        ],
-        entryPoint: 'benchmark/test_infra/client/app_client.dart',
-      );
-    },
-    timeout: Timeout.none,
-  );
+  test('Can run a web benchmark', () async {
+    await _runBenchmarks(
+      benchmarkNames: <String>[
+        BenchmarkName.appNavigate.name,
+        BenchmarkName.appScroll.name,
+        BenchmarkName.appTap.name,
+      ],
+      entryPoint: 'benchmark/test_infra/client/app_client.dart',
+    );
+  }, timeout: Timeout.none);
 
   test(
     'Can run a web benchmark with an alternate benchmarkPath',
@@ -46,35 +42,32 @@ Future<void> main() async {
       // The runner puts an `expectedUrl` metric in the results so that we can
       // verify the initial page value that should be passed on initial load
       // and on reloads.
-      final BenchmarkScore expectedUrlScore = scores!
-          .firstWhere((BenchmarkScore score) => score.metric == 'expectedUrl');
+      final BenchmarkScore expectedUrlScore = scores!.firstWhere(
+        (BenchmarkScore score) => score.metric == 'expectedUrl',
+      );
       expect(expectedUrlScore.value, 1);
     },
     timeout: Timeout.none,
   );
 
-  test(
-    'Can run a web benchmark with wasm',
-    () async {
-      final BenchmarkResults results = await _runBenchmarks(
-        benchmarkNames: <String>[BenchmarkName.simpleCompilationCheck.name],
-        entryPoint:
-            'benchmark/test_infra/client/simple_compilation_client.dart',
-        compilationOptions: const CompilationOptions.wasm(),
-      );
+  test('Can run a web benchmark with wasm', () async {
+    final BenchmarkResults results = await _runBenchmarks(
+      benchmarkNames: <String>[BenchmarkName.simpleCompilationCheck.name],
+      entryPoint: 'benchmark/test_infra/client/simple_compilation_client.dart',
+      compilationOptions: const CompilationOptions.wasm(),
+    );
 
-      // The runner puts an `isWasm` metric in the results so that we can verify
-      // we are running with the correct compiler and renderer.
-      final List<BenchmarkScore>? scores =
-          results.scores[BenchmarkName.simpleCompilationCheck.name];
-      expect(scores, isNotNull);
+    // The runner puts an `isWasm` metric in the results so that we can verify
+    // we are running with the correct compiler and renderer.
+    final List<BenchmarkScore>? scores =
+        results.scores[BenchmarkName.simpleCompilationCheck.name];
+    expect(scores, isNotNull);
 
-      final BenchmarkScore isWasmScore = scores!
-          .firstWhere((BenchmarkScore score) => score.metric == 'isWasm');
-      expect(isWasmScore.value, 1);
-    },
-    timeout: Timeout.none,
-  );
+    final BenchmarkScore isWasmScore = scores!.firstWhere(
+      (BenchmarkScore score) => score.metric == 'isWasm',
+    );
+    expect(isWasmScore.value, 1);
+  }, timeout: Timeout.none);
 }
 
 Future<BenchmarkResults> _runBenchmarks({
@@ -92,25 +85,30 @@ Future<BenchmarkResults> _runBenchmarks({
   );
 
   final List<String> expectedMetrics =
-      expectedBenchmarkMetrics(useWasm: compilationOptions.useWasm)
-          .map((BenchmarkMetric metric) => metric.label)
-          .toList();
+      expectedBenchmarkMetrics(
+        useWasm: compilationOptions.useWasm,
+      ).map((BenchmarkMetric metric) => metric.label).toList();
 
   for (final String benchmarkName in benchmarkNames) {
     for (final String metricName in expectedMetrics) {
       for (final BenchmarkMetricComputation computation
           in BenchmarkMetricComputation.values) {
         expect(
-            taskResult.scores[benchmarkName]!.where((BenchmarkScore score) =>
-                score.metric == '$metricName.${computation.name}'),
-            hasLength(1),
-            reason: 'Expected to find a metric named '
-                '$metricName.${computation.name}');
+          taskResult.scores[benchmarkName]!.where(
+            (BenchmarkScore score) =>
+                score.metric == '$metricName.${computation.name}',
+          ),
+          hasLength(1),
+          reason:
+              'Expected to find a metric named '
+              '$metricName.${computation.name}',
+        );
       }
     }
     expect(
-      taskResult.scores[benchmarkName]!
-          .where((BenchmarkScore score) => score.metric == totalUiFrameAverage),
+      taskResult.scores[benchmarkName]!.where(
+        (BenchmarkScore score) => score.metric == totalUiFrameAverage,
+      ),
       hasLength(1),
     );
   }

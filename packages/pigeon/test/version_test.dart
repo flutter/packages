@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -14,8 +14,11 @@ void main() {
     final RegExp regex = RegExp(r'version:\s*(.*?) #');
     final RegExpMatch? match = regex.firstMatch(pubspec);
     expect(match, isNotNull);
-    expect(pigeonVersion, match?.group(1)?.trim(),
-        reason:
-            'Update lib/src/generator_tools.dart pigeonVersion to the value in the pubspec');
+    expect(
+      pigeonVersion,
+      match?.group(1)?.trim(),
+      reason:
+          'Update lib/src/generator_tools.dart pigeonVersion to the value in the pubspec',
+    );
   });
 }

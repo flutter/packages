@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -19,8 +19,10 @@ class MyApp extends StatelessWidget {
           title: const Text('Sample flutter_plugin_android_lifecycle usage'),
         ),
         body: const Center(
-            child: Text(
-                'This plugin only provides Android Lifecycle API\n for other Android plugins.')),
+          child: Text(
+            'This plugin only provides Android Lifecycle API\n for other Android plugins.',
+          ),
+        ),
       ),
     );
   }

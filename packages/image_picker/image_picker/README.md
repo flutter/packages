@@ -8,7 +8,7 @@ and taking new pictures with the camera.
 
 |             | Android | iOS     | Linux | macOS  | Web                             | Windows     |
 |-------------|---------|---------|-------|--------|---------------------------------|-------------|
-| **Support** | SDK 21+ | iOS 12+ | Any   | 10.14+ | [See `image_picker_for_web`](https://pub.dev/packages/image_picker_for_web#limitations-on-the-web-platform) | Windows 10+ |
+| **Support** | SDK 24+ | iOS 12+ | Any   | 10.14+ | [See `image_picker_for_web`](https://pub.dev/packages/image_picker_for_web#limitations-on-the-web-platform) | Windows 10+ |
 
 ## Setup
 
@@ -37,9 +37,6 @@ microphone, if you intend to record videos. This is called
 _Privacy - Microphone Usage Description_ in the visual editor.
 
 ### Android
-
-Starting with version **0.8.1** the Android implementation support to pick
-(multiple) images on Android 4.3 or higher.
 
 No configuration required - the plugin should work out of the box. It is however
 highly recommended to prepare for Android killing the application when low on memory. How to prepare for this is discussed in the
@@ -124,16 +121,18 @@ import 'package:image_picker_platform_interface/image_picker_platform_interface.
 // ···
 class MyCameraDelegate extends ImagePickerCameraDelegate {
   @override
-  Future<XFile?> takePhoto(
-      {ImagePickerCameraDelegateOptions options =
-          const ImagePickerCameraDelegateOptions()}) async {
+  Future<XFile?> takePhoto({
+    ImagePickerCameraDelegateOptions options =
+        const ImagePickerCameraDelegateOptions(),
+  }) async {
     return _takeAPhoto(options.preferredCameraDevice);
   }
 
   @override
-  Future<XFile?> takeVideo(
-      {ImagePickerCameraDelegateOptions options =
-          const ImagePickerCameraDelegateOptions()}) async {
+  Future<XFile?> takeVideo({
+    ImagePickerCameraDelegateOptions options =
+        const ImagePickerCameraDelegateOptions(),
+  }) async {
     return _takeAVideo(options.preferredCameraDevice);
   }
 }
@@ -172,8 +171,9 @@ final XFile? image = await picker.pickImage(source: ImageSource.gallery);
 // Capture a photo.
 final XFile? photo = await picker.pickImage(source: ImageSource.camera);
 // Pick a video.
-final XFile? galleryVideo =
-    await picker.pickVideo(source: ImageSource.gallery);
+final XFile? galleryVideo = await picker.pickVideo(
+  source: ImageSource.gallery,
+);
 // Capture a video.
 final XFile? cameraVideo = await picker.pickVideo(source: ImageSource.camera);
 // Pick multiple images.

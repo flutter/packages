@@ -28,64 +28,68 @@ import 'package:mockito/src/dummies.dart' as _i3;
 /// See the documentation for Mockito's code generation for more information.
 class MockGoogleSignInApi extends _i1.Mock implements _i2.GoogleSignInApi {
   @override
-  String get pigeonVar_messageChannelSuffix => (super.noSuchMethod(
-        Invocation.getter(#pigeonVar_messageChannelSuffix),
-        returnValue: _i3.dummyValue<String>(
-          this,
-          Invocation.getter(#pigeonVar_messageChannelSuffix),
-        ),
-        returnValueForMissingStub: _i3.dummyValue<String>(
-          this,
-          Invocation.getter(#pigeonVar_messageChannelSuffix),
-        ),
-      ) as String);
+  String get pigeonVar_messageChannelSuffix =>
+      (super.noSuchMethod(
+            Invocation.getter(#pigeonVar_messageChannelSuffix),
+            returnValue: _i3.dummyValue<String>(
+              this,
+              Invocation.getter(#pigeonVar_messageChannelSuffix),
+            ),
+            returnValueForMissingStub: _i3.dummyValue<String>(
+              this,
+              Invocation.getter(#pigeonVar_messageChannelSuffix),
+            ),
+          )
+          as String);
 
   @override
   _i4.Future<String?> getGoogleServicesJsonServerClientId() =>
       (super.noSuchMethod(
-        Invocation.method(
-          #getGoogleServicesJsonServerClientId,
-          [],
-        ),
-        returnValue: _i4.Future<String?>.value(),
-        returnValueForMissingStub: _i4.Future<String?>.value(),
-      ) as _i4.Future<String?>);
+            Invocation.method(#getGoogleServicesJsonServerClientId, []),
+            returnValue: _i4.Future<String?>.value(),
+            returnValueForMissingStub: _i4.Future<String?>.value(),
+          )
+          as _i4.Future<String?>);
 
   @override
   _i4.Future<_i2.GetCredentialResult> getCredential(
-          _i2.GetCredentialRequestParams? params) =>
+    _i2.GetCredentialRequestParams? params,
+  ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #getCredential,
-          [params],
-        ),
-        returnValue: _i4.Future<_i2.GetCredentialResult>.value(
-            _i3.dummyValue<_i2.GetCredentialResult>(
-          this,
-          Invocation.method(
-            #getCredential,
-            [params],
-          ),
-        )),
-        returnValueForMissingStub: _i4.Future<_i2.GetCredentialResult>.value(
-            _i3.dummyValue<_i2.GetCredentialResult>(
-          this,
-          Invocation.method(
-            #getCredential,
-            [params],
-          ),
-        )),
-      ) as _i4.Future<_i2.GetCredentialResult>);
+            Invocation.method(#getCredential, [params]),
+            returnValue: _i4.Future<_i2.GetCredentialResult>.value(
+              _i3.dummyValue<_i2.GetCredentialResult>(
+                this,
+                Invocation.method(#getCredential, [params]),
+              ),
+            ),
+            returnValueForMissingStub:
+                _i4.Future<_i2.GetCredentialResult>.value(
+                  _i3.dummyValue<_i2.GetCredentialResult>(
+                    this,
+                    Invocation.method(#getCredential, [params]),
+                  ),
+                ),
+          )
+          as _i4.Future<_i2.GetCredentialResult>);
 
   @override
-  _i4.Future<void> clearCredentialState() => (super.noSuchMethod(
-        Invocation.method(
-          #clearCredentialState,
-          [],
-        ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+  _i4.Future<void> clearCredentialState() =>
+      (super.noSuchMethod(
+            Invocation.method(#clearCredentialState, []),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
+
+  @override
+  _i4.Future<void> clearAuthorizationToken(String? token) =>
+      (super.noSuchMethod(
+            Invocation.method(#clearAuthorizationToken, [token]),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
 
   @override
   _i4.Future<_i2.AuthorizeResult> authorize(
@@ -93,28 +97,40 @@ class MockGoogleSignInApi extends _i1.Mock implements _i2.GoogleSignInApi {
     required bool? promptIfUnauthorized,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #authorize,
-          [params],
-          {#promptIfUnauthorized: promptIfUnauthorized},
-        ),
-        returnValue: _i4.Future<_i2.AuthorizeResult>.value(
-            _i3.dummyValue<_i2.AuthorizeResult>(
-          this,
-          Invocation.method(
-            #authorize,
-            [params],
-            {#promptIfUnauthorized: promptIfUnauthorized},
-          ),
-        )),
-        returnValueForMissingStub: _i4.Future<_i2.AuthorizeResult>.value(
-            _i3.dummyValue<_i2.AuthorizeResult>(
-          this,
-          Invocation.method(
-            #authorize,
-            [params],
-            {#promptIfUnauthorized: promptIfUnauthorized},
-          ),
-        )),
-      ) as _i4.Future<_i2.AuthorizeResult>);
+            Invocation.method(
+              #authorize,
+              [params],
+              {#promptIfUnauthorized: promptIfUnauthorized},
+            ),
+            returnValue: _i4.Future<_i2.AuthorizeResult>.value(
+              _i3.dummyValue<_i2.AuthorizeResult>(
+                this,
+                Invocation.method(
+                  #authorize,
+                  [params],
+                  {#promptIfUnauthorized: promptIfUnauthorized},
+                ),
+              ),
+            ),
+            returnValueForMissingStub: _i4.Future<_i2.AuthorizeResult>.value(
+              _i3.dummyValue<_i2.AuthorizeResult>(
+                this,
+                Invocation.method(
+                  #authorize,
+                  [params],
+                  {#promptIfUnauthorized: promptIfUnauthorized},
+                ),
+              ),
+            ),
+          )
+          as _i4.Future<_i2.AuthorizeResult>);
+
+  @override
+  _i4.Future<void> revokeAccess(_i2.PlatformRevokeAccessRequest? params) =>
+      (super.noSuchMethod(
+            Invocation.method(#revokeAccess, [params]),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
 }

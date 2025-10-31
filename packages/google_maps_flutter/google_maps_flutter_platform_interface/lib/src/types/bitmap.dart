@@ -1,9 +1,10 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import 'dart:async' show Future;
 import 'dart:typed_data' show Uint8List;
+import 'dart:ui';
 
 import 'package:flutter/foundation.dart' show kIsWeb, visibleForTesting;
 import 'package:flutter/material.dart'
@@ -32,10 +33,10 @@ enum MapBitmapScaling {
 /// Convert a string from provided JSON to a MapBitmapScaling enum.
 @visibleForTesting
 MapBitmapScaling mapBitmapScalingFromString(String mode) => switch (mode) {
-      'auto' => MapBitmapScaling.auto,
-      'none' => MapBitmapScaling.none,
-      _ => throw ArgumentError('Unrecognized MapBitmapScaling $mode', 'mode'),
-    };
+  'auto' => MapBitmapScaling.auto,
+  'none' => MapBitmapScaling.none,
+  _ => throw ArgumentError('Unrecognized MapBitmapScaling $mode', 'mode'),
+};
 
 // The default pixel ratio for custom bitmaps.
 const double _naturalPixelRatio = 1.0;
@@ -52,6 +53,8 @@ const double _naturalPixelRatio = 1.0;
 /// a default marker icon.
 /// Use the [BitmapDescriptor.defaultMarkerWithHue] to create a
 /// [BitmapDescriptor] for a default marker icon with a hue value.
+/// Use the [BitmapDescriptor.pinConfig] to create a custom icon for
+/// [AdvancedMarker].
 abstract class BitmapDescriptor {
   const BitmapDescriptor._();
 
@@ -85,7 +88,9 @@ abstract class BitmapDescriptor {
           assert(jsonList[2] != null && jsonList[2] is String);
           assert((jsonList[2] as String).isNotEmpty);
           return AssetBitmap(
-              name: jsonList[1] as String, package: jsonList[2] as String);
+            name: jsonList[1] as String,
+            package: jsonList[2] as String,
+          );
         }
         return AssetBitmap(name: jsonList[1] as String);
       case _fromAssetImage:
@@ -98,13 +103,18 @@ abstract class BitmapDescriptor {
           assert((jsonList[3] as List<dynamic>).length == 2);
           final List<dynamic> sizeList = jsonList[3] as List<dynamic>;
           return AssetImageBitmap(
-              name: jsonList[1] as String,
-              scale: jsonList[2] as double,
-              size: Size((sizeList[0] as num).toDouble(),
-                  (sizeList[1] as num).toDouble()));
+            name: jsonList[1] as String,
+            scale: jsonList[2] as double,
+            size: Size(
+              (sizeList[0] as num).toDouble(),
+              (sizeList[1] as num).toDouble(),
+            ),
+          );
         }
         return AssetImageBitmap(
-            name: jsonList[1] as String, scale: jsonList[2] as double);
+          name: jsonList[1] as String,
+          scale: jsonList[2] as double,
+        );
       case AssetMapBitmap.type:
         assert(jsonList.length == 2);
         assert(jsonList[1] != null && jsonList[1] is Map<String, dynamic>);
@@ -122,12 +132,15 @@ abstract class BitmapDescriptor {
             jsonMap.containsKey('width') ? jsonMap['width'] as double : null;
         final double? height =
             jsonMap.containsKey('height') ? jsonMap['height'] as double : null;
-        return AssetMapBitmap(jsonMap['assetName'] as String,
-            bitmapScaling:
-                mapBitmapScalingFromString(jsonMap['bitmapScaling'] as String),
-            imagePixelRatio: jsonMap['imagePixelRatio'] as double,
-            width: width,
-            height: height);
+        return AssetMapBitmap(
+          jsonMap['assetName'] as String,
+          bitmapScaling: mapBitmapScalingFromString(
+            jsonMap['bitmapScaling'] as String,
+          ),
+          imagePixelRatio: jsonMap['imagePixelRatio'] as double,
+          width: width,
+          height: height,
+        );
       case BytesMapBitmap.type:
         assert(jsonList.length == 2);
         assert(jsonList[1] != null && jsonList[1] is Map<String, dynamic>);
@@ -145,12 +158,15 @@ abstract class BitmapDescriptor {
             jsonMap.containsKey('width') ? jsonMap['width'] as double : null;
         final double? height =
             jsonMap.containsKey('height') ? jsonMap['height'] as double : null;
-        return BytesMapBitmap(jsonMap['byteData'] as Uint8List,
-            bitmapScaling:
-                mapBitmapScalingFromString(jsonMap['bitmapScaling'] as String),
-            width: width,
-            height: height,
-            imagePixelRatio: jsonMap['imagePixelRatio'] as double);
+        return BytesMapBitmap(
+          jsonMap['byteData'] as Uint8List,
+          bitmapScaling: mapBitmapScalingFromString(
+            jsonMap['bitmapScaling'] as String,
+          ),
+          width: width,
+          height: height,
+          imagePixelRatio: jsonMap['imagePixelRatio'] as double,
+        );
       default:
         break;
     }
@@ -208,6 +224,9 @@ abstract class BitmapDescriptor {
   /// Creates a BitmapDescriptor that refers to a colorization of the default
   /// marker image. For convenience, there is a predefined set of hue values.
   /// See e.g. [hueYellow].
+  ///
+  /// Doesn't work with [AdvancedMarker]s, [BitmapDescriptor.pinConfig] should
+  /// be used instead.
   static BitmapDescriptor defaultMarkerWithHue(double hue) {
     assert(0.0 <= hue && hue < 360.0);
     return DefaultMarker(hue: hue);
@@ -233,15 +252,20 @@ abstract class BitmapDescriptor {
     if (!mipmaps && devicePixelRatio != null) {
       return AssetImageBitmap(name: assetName, scale: devicePixelRatio);
     }
-    final AssetImage assetImage =
-        AssetImage(assetName, package: package, bundle: bundle);
-    final AssetBundleImageKey assetBundleImageKey =
-        await assetImage.obtainKey(configuration);
+    final AssetImage assetImage = AssetImage(
+      assetName,
+      package: package,
+      bundle: bundle,
+    );
+    final AssetBundleImageKey assetBundleImageKey = await assetImage.obtainKey(
+      configuration,
+    );
     final Size? size = kIsWeb ? configuration.size : null;
     return AssetImageBitmap(
-        name: assetBundleImageKey.name,
-        scale: assetBundleImageKey.scale,
-        size: size);
+      name: assetBundleImageKey.name,
+      scale: assetBundleImageKey.scale,
+      size: size,
+    );
   }
 
   /// Creates a BitmapDescriptor using an array of bytes that must be encoded
@@ -252,8 +276,10 @@ abstract class BitmapDescriptor {
   /// `size` is not required (and ignored, if passed) in other platforms.
   @Deprecated('Use BitmapDescriptor.bytes method instead.')
   static BitmapDescriptor fromBytes(Uint8List byteData, {Size? size}) {
-    assert(byteData.isNotEmpty,
-        'Cannot create BitmapDescriptor with empty byteData');
+    assert(
+      byteData.isNotEmpty,
+      'Cannot create BitmapDescriptor with empty byteData',
+    );
     return BytesBitmap(byteData: byteData, size: size);
   }
 
@@ -330,6 +356,28 @@ abstract class BitmapDescriptor {
     );
   }
 
+  /// Creates a [BitmapDescriptor] that can be used to customize
+  /// [AdvancedMarker]'s pin.
+  ///
+  /// [backgroundColor] is the color of the pin's background.
+  /// [borderColor] is the color of the pin's border.
+  /// [glyph] is the pin's glyph to be displayed on the pin.
+  ///
+  /// See [PinConfig] for more information on the parameters.
+  ///
+  /// Returns a new [PinConfig] instance.
+  static BitmapDescriptor pinConfig({
+    Color? backgroundColor,
+    Color? borderColor,
+    AdvancedMarkerGlyph? glyph,
+  }) {
+    return PinConfig(
+      backgroundColor: backgroundColor,
+      borderColor: borderColor,
+      glyph: glyph,
+    );
+  }
+
   /// Convert the object to a Json format.
   Object toJson();
 }
@@ -343,9 +391,10 @@ class DefaultMarker extends BitmapDescriptor {
   final num? hue;
 
   @override
-  Object toJson() => (hue == null)
-      ? const <Object>[BitmapDescriptor._defaultMarker]
-      : <Object>[BitmapDescriptor._defaultMarker, hue!];
+  Object toJson() =>
+      (hue == null)
+          ? const <Object>[BitmapDescriptor._defaultMarker]
+          : <Object>[BitmapDescriptor._defaultMarker, hue!];
 }
 
 /// A BitmapDescriptor using an array of bytes that must be encoded
@@ -358,7 +407,7 @@ class BytesBitmap extends BitmapDescriptor {
   /// `size` is not required (and ignored, if passed) in other platforms.
   @Deprecated('Use BytesMapBitmap instead')
   const BytesBitmap({required Uint8List byteData, Size? size})
-      : this._(byteData, kIsWeb ? size : null);
+    : this._(byteData, kIsWeb ? size : null);
 
   @Deprecated('Use BytesMapBitmap instead')
   const BytesBitmap._(this.byteData, this.size) : super._();
@@ -371,10 +420,10 @@ class BytesBitmap extends BitmapDescriptor {
 
   @override
   Object toJson() => <Object>[
-        BitmapDescriptor._fromBytes,
-        byteData,
-        if (size != null) <Object>[size!.width, size!.height]
-      ];
+    BitmapDescriptor._fromBytes,
+    byteData,
+    if (size != null) <Object>[size!.width, size!.height],
+  ];
 }
 
 /// A bitmap specified by a name and optional package.
@@ -390,10 +439,10 @@ class AssetBitmap extends BitmapDescriptor {
 
   @override
   Object toJson() => <Object>[
-        BitmapDescriptor._fromAsset,
-        name,
-        if (package != null) package!
-      ];
+    BitmapDescriptor._fromAsset,
+    name,
+    if (package != null) package!,
+  ];
 }
 
 /// A [BitmapDescriptor] from an asset image.
@@ -406,7 +455,7 @@ class AssetImageBitmap extends BitmapDescriptor {
   /// and scales the images to the right resolution depending on the dpi.
   @Deprecated('Use AssetMapBitmap instead')
   const AssetImageBitmap({required this.name, required this.scale, this.size})
-      : super._();
+    : super._();
 
   /// Name of the image asset.
   final String name;
@@ -419,11 +468,11 @@ class AssetImageBitmap extends BitmapDescriptor {
 
   @override
   Object toJson() => <Object>[
-        BitmapDescriptor._fromAssetImage,
-        name,
-        scale,
-        if (size != null) <Object>[size!.width, size!.height]
-      ];
+    BitmapDescriptor._fromAssetImage,
+    name,
+    scale,
+    if (size != null) <Object>[size!.width, size!.height],
+  ];
 }
 
 /// Represents a [BitmapDescriptor] base class for map bitmaps.
@@ -637,12 +686,12 @@ class AssetMapBitmap extends MapBitmap {
     double? width,
     double? height,
   }) : this._(
-          assetName: assetName,
-          bitmapScaling: bitmapScaling,
-          imagePixelRatio: imagePixelRatio ?? _naturalPixelRatio,
-          width: width,
-          height: height,
-        );
+         assetName: assetName,
+         bitmapScaling: bitmapScaling,
+         imagePixelRatio: imagePixelRatio ?? _naturalPixelRatio,
+         width: width,
+         height: height,
+       );
 
   /// Internal constructor for creating a [AssetMapBitmap].
   AssetMapBitmap._({
@@ -651,14 +700,20 @@ class AssetMapBitmap extends MapBitmap {
     required super.bitmapScaling,
     super.width,
     super.height,
-  })  : assert(assetName.isNotEmpty, 'The asset name must not be empty.'),
-        assert(imagePixelRatio > 0.0,
-            'The imagePixelRatio must be greater than 0.'),
-        assert(bitmapScaling != MapBitmapScaling.none || width == null,
-            'If bitmapScaling is set to MapBitmapScaling.none, width parameter cannot be used.'),
-        assert(bitmapScaling != MapBitmapScaling.none || height == null,
-            'If bitmapScaling is set to MapBitmapScaling.none, height parameter cannot be used.'),
-        super._();
+  }) : assert(assetName.isNotEmpty, 'The asset name must not be empty.'),
+       assert(
+         imagePixelRatio > 0.0,
+         'The imagePixelRatio must be greater than 0.',
+       ),
+       assert(
+         bitmapScaling != MapBitmapScaling.none || width == null,
+         'If bitmapScaling is set to MapBitmapScaling.none, width parameter cannot be used.',
+       ),
+       assert(
+         bitmapScaling != MapBitmapScaling.none || height == null,
+         'If bitmapScaling is set to MapBitmapScaling.none, height parameter cannot be used.',
+       ),
+       super._();
 
   /// The type of the [BitmapDescriptor] object, used for the
   /// JSON serialization.
@@ -753,30 +808,35 @@ class AssetMapBitmap extends MapBitmap {
     MapBitmapScaling bitmapScaling = MapBitmapScaling.auto,
   }) async {
     assert(assetName.isNotEmpty, 'The asset name must not be empty.');
-    final AssetImage assetImage =
-        AssetImage(assetName, package: package, bundle: bundle);
-    final AssetBundleImageKey assetBundleImageKey =
-        await assetImage.obtainKey(configuration);
+    final AssetImage assetImage = AssetImage(
+      assetName,
+      package: package,
+      bundle: bundle,
+    );
+    final AssetBundleImageKey assetBundleImageKey = await assetImage.obtainKey(
+      configuration,
+    );
 
     return AssetMapBitmap._(
-        assetName: assetBundleImageKey.name,
-        imagePixelRatio: imagePixelRatio ?? assetBundleImageKey.scale,
-        bitmapScaling: bitmapScaling,
-        width: width ?? configuration.size?.width,
-        height: height ?? configuration.size?.height);
+      assetName: assetBundleImageKey.name,
+      imagePixelRatio: imagePixelRatio ?? assetBundleImageKey.scale,
+      bitmapScaling: bitmapScaling,
+      width: width ?? configuration.size?.width,
+      height: height ?? configuration.size?.height,
+    );
   }
 
   @override
   Object toJson() => <Object>[
-        type,
-        <String, Object?>{
-          'assetName': assetName,
-          'bitmapScaling': bitmapScaling.name,
-          'imagePixelRatio': imagePixelRatio,
-          if (width != null) 'width': width,
-          if (height != null) 'height': height,
-        }
-      ];
+    type,
+    <String, Object?>{
+      'assetName': assetName,
+      'bitmapScaling': bitmapScaling.name,
+      'imagePixelRatio': imagePixelRatio,
+      if (width != null) 'width': width,
+      if (height != null) 'height': height,
+    },
+  ];
 }
 
 /// Represents a [BitmapDescriptor] that is created from an array of bytes
@@ -925,16 +985,23 @@ class BytesMapBitmap extends MapBitmap {
     super.width,
     super.height,
     double? imagePixelRatio,
-  })  : assert(byteData.isNotEmpty,
-            'Cannot create BitmapDescriptor with empty byteData.'),
-        assert(
-            bitmapScaling != MapBitmapScaling.none || imagePixelRatio == null,
-            'If bitmapScaling is set to MapBitmapScaling.none, imagePixelRatio parameter cannot be used.'),
-        assert(bitmapScaling != MapBitmapScaling.none || width == null,
-            'If bitmapScaling is set to MapBitmapScaling.none, width parameter cannot be used.'),
-        assert(bitmapScaling != MapBitmapScaling.none || height == null,
-            'If bitmapScaling is set to MapBitmapScaling.none, height parameter cannot be used.'),
-        super._(imagePixelRatio: imagePixelRatio ?? _naturalPixelRatio);
+  }) : assert(
+         byteData.isNotEmpty,
+         'Cannot create BitmapDescriptor with empty byteData.',
+       ),
+       assert(
+         bitmapScaling != MapBitmapScaling.none || imagePixelRatio == null,
+         'If bitmapScaling is set to MapBitmapScaling.none, imagePixelRatio parameter cannot be used.',
+       ),
+       assert(
+         bitmapScaling != MapBitmapScaling.none || width == null,
+         'If bitmapScaling is set to MapBitmapScaling.none, width parameter cannot be used.',
+       ),
+       assert(
+         bitmapScaling != MapBitmapScaling.none || height == null,
+         'If bitmapScaling is set to MapBitmapScaling.none, height parameter cannot be used.',
+       ),
+       super._(imagePixelRatio: imagePixelRatio ?? _naturalPixelRatio);
 
   /// The type of the MapBitmap object, used for the JSON serialization.
   static const String type = 'bytes';
@@ -944,13 +1011,169 @@ class BytesMapBitmap extends MapBitmap {
 
   @override
   Object toJson() => <Object>[
-        type,
-        <String, Object?>{
-          'byteData': byteData,
-          'bitmapScaling': bitmapScaling.name,
-          'imagePixelRatio': imagePixelRatio,
-          if (width != null) 'width': width,
-          if (height != null) 'height': height,
-        }
-      ];
+    type,
+    <String, Object?>{
+      'byteData': byteData,
+      'bitmapScaling': bitmapScaling.name,
+      'imagePixelRatio': imagePixelRatio,
+      if (width != null) 'width': width,
+      if (height != null) 'height': height,
+    },
+  ];
+}
+
+/// Represents a [BitmapDescriptor] that is created from a pin configuration.
+/// Can only be used with [AdvancedMarker]s.
+///
+/// The [backgroundColor] and [borderColor] are used to define the color of the
+/// standard pin marker.
+///
+/// The [glyph] parameter is used to define the glyph that is displayed on the
+/// pin marker (default glyph is a circle).
+///
+/// The following example demonstrates how to change colors of the default map
+/// pin to white and blue:
+///
+/// ```dart
+/// PinConfig(
+///   backgroundColor: Colors.blue,
+///   borderColor: Colors.white,
+///   glyph: CircleGlyph(color: Colors.blue)
+/// )
+/// ```
+///
+/// The following example demonstrates how to customize a marker pin by showing
+/// a short text on the pin:
+///
+/// ```dart
+/// PinConfig(
+///   backgroundColor: Colors.blue,
+///   glyph: TextGlyph(text: 'Pin', textColor: Colors.white)
+/// )
+/// ```
+///
+/// The following example demonstrates how to customize a marker pin by showing
+/// a custom image on the pin:
+///
+/// ```dart
+/// PinConfig(
+///   glyph: BitmapGlyph(
+///     bitmap: BitmapDescriptor.asset(
+///       ImageConfiguration(size: Size(12, 12)),
+///       'assets/cat.png'
+///    )
+/// )
+/// ```
+///
+class PinConfig extends BitmapDescriptor {
+  /// Constructs a [PinConfig] that is created from a pin configuration.
+  ///
+  /// The [backgroundColor] and [borderColor] are used to define the color of
+  /// the standard pin marker.
+  ///
+  /// The [glyph] parameter is used to define the glyph that is displayed on the
+  /// pin marker.
+  ///
+  /// At least one of the parameters must not be null.
+  const PinConfig({this.backgroundColor, this.borderColor, this.glyph})
+    : assert(
+        backgroundColor != null || borderColor != null || glyph != null,
+        'Cannot create PinConfig with all parameters being null.',
+      ),
+      super._();
+
+  /// The type of the MapBitmap object, used for the JSON serialization.
+  static const String type = 'pinConfig';
+
+  /// The background color of the pin.
+  final Color? backgroundColor;
+
+  /// The border color of the pin.
+  final Color? borderColor;
+
+  /// The glyph that is displayed on the pin marker. If null, the default
+  /// circular glyph is used.
+  ///
+  /// Can be one of the following:
+  /// * [CircleGlyph] to define a circular glyph with a custom color.
+  /// * [BitmapGlyph] to define a glyph with a specified bitmap.
+  /// * [TextGlyph] to define a glyph with a specified text and its color.
+  final AdvancedMarkerGlyph? glyph;
+
+  @override
+  Object toJson() => <Object>[
+    type,
+    <String, Object?>{
+      if (backgroundColor != null) 'backgroundColor': backgroundColor?.value,
+      if (borderColor != null) 'borderColor': borderColor?.value,
+      if (glyph != null) 'glyph': glyph?.toJson(),
+    },
+  ];
+}
+
+/// Defines a glyph (the element at the center of an [AdvancedMarker] icon).
+sealed class AdvancedMarkerGlyph extends BitmapDescriptor {
+  const AdvancedMarkerGlyph._() : super._();
+}
+
+/// Defines a circular glyph with a given color.
+class CircleGlyph extends AdvancedMarkerGlyph {
+  /// Constructs a glyph instance, using the default circle, but with
+  /// a custom color.
+  const CircleGlyph({required this.color}) : super._();
+
+  /// Color of the circular icon.
+  final Color color;
+
+  @override
+  Object toJson() => <Object>[
+    'circleGlyph',
+    <String, Object>{'color': color.value},
+  ];
+}
+
+/// Defines a glyph instance with a specified bitmap.
+class BitmapGlyph extends AdvancedMarkerGlyph {
+  /// Constructs a glyph with the specified [bitmap].
+  ///
+  /// [bitmap] is the image to be displayed in the center of the glyph. Must not
+  /// be an [AdvancedMarkerGlyph].
+  const BitmapGlyph({required this.bitmap})
+    : assert(
+        bitmap is! AdvancedMarkerGlyph,
+        'BitmapDescriptor cannot be an AdvancedMarkerGlyph.',
+      ),
+      super._();
+
+  /// Bitmap image to be displayed in the center of the glyph.
+  final BitmapDescriptor bitmap;
+
+  @override
+  Object toJson() => <Object>[
+    'bitmapGlyph',
+    <String, Object>{'bitmap': bitmap.toJson()},
+  ];
+}
+
+/// Defines a glyph instance with a specified text and color.
+class TextGlyph extends AdvancedMarkerGlyph {
+  /// Constructs a glyph with the specified [text] and [textColor].
+  const TextGlyph({required this.text, this.textColor}) : super._();
+
+  /// Text to be displayed in the glyph.
+  final String text;
+
+  /// Color of the text.
+  final Color? textColor;
+
+  @override
+  Object toJson() {
+    return <Object>[
+      'textGlyph',
+      <String, Object>{
+        'text': text,
+        if (textColor != null) 'textColor': textColor!.value,
+      },
+    ];
+  }
 }

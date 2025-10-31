@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -93,7 +93,7 @@ abstract class TransformableNode extends Node {
 abstract class AttributedNode extends TransformableNode {
   /// Constructs a new tree node with [attributes].
   AttributedNode(this.attributes, {AffineMatrix? precalculatedTransform})
-      : super(precalculatedTransform ?? attributes.transform);
+    : super(precalculatedTransform ?? attributes.transform);
 
   /// A collection of painting attributes.
   ///
@@ -117,9 +117,7 @@ class ViewportNode extends ParentNode {
     required this.height,
     required AffineMatrix transform,
     super.children,
-  }) : super(
-          precalculatedTransform: transform,
-        );
+  }) : super(precalculatedTransform: transform);
 
   /// The width of the viewport in pixels.
   final double width;
@@ -216,16 +214,16 @@ class ParentNode extends AttributedNode {
   /// required.
   Paint? createLayerPaint() {
     final double? fillOpacity = attributes.fill?.opacity;
-    final bool needsLayer = (attributes.blendMode != null) ||
+    final bool needsLayer =
+        (attributes.blendMode != null) ||
         (fillOpacity != null && fillOpacity != 1.0 && fillOpacity != 0.0);
 
     if (needsLayer) {
       return Paint(
         blendMode: attributes.blendMode,
-        fill: attributes.fill?.toFill(Rect.largest, transform) ??
-            Fill(
-              color: Color.opaqueBlack.withOpacity(fillOpacity ?? 1.0),
-            ),
+        fill:
+            attributes.fill?.toFill(Rect.largest, transform) ??
+            Fill(color: Color.opaqueBlack.withOpacity(fillOpacity ?? 1.0)),
       );
     }
     return null;
@@ -257,21 +255,24 @@ class TextPositionNode extends ParentNode {
 
     final bool hasXY = x != null && y != null;
     final bool hasDxDy = dx != null && dy != null;
-    final bool consumeTransform = computedTransform == AffineMatrix.identity ||
+    final bool consumeTransform =
+        computedTransform == AffineMatrix.identity ||
         (computedTransform.encodableInRect && (hasXY || hasDxDy));
 
     if (hasXY) {
-      final Point baseline = consumeTransform
-          ? computedTransform.transformPoint(Point(x, y))
-          : Point(x, y);
+      final Point baseline =
+          consumeTransform
+              ? computedTransform.transformPoint(Point(x, y))
+              : Point(x, y);
       x = baseline.x;
       y = baseline.y;
     }
 
     if (hasDxDy) {
-      final Point baseline = consumeTransform
-          ? computedTransform.transformPoint(Point(dx, dy))
-          : Point(dx, dy);
+      final Point baseline =
+          consumeTransform
+              ? computedTransform.transformPoint(Point(dx, dy))
+              : Point(dx, dy);
       dx = baseline.x;
       dy = baseline.y;
     }
@@ -304,11 +305,8 @@ class TextPositionNode extends ParentNode {
 /// A parent node that applies a save layer to its children.
 class SaveLayerNode extends ParentNode {
   /// Create a new [SaveLayerNode]
-  SaveLayerNode(
-    super.attributes, {
-    required this.paint,
-    super.children,
-  }) : super(precalculatedTransform: AffineMatrix.identity);
+  SaveLayerNode(super.attributes, {required this.paint, super.children})
+    : super(precalculatedTransform: AffineMatrix.identity);
 
   /// The paint to apply to the saved layer.
   final Paint paint;
@@ -431,11 +429,7 @@ class PathNode extends AttributedNode {
     if (fill == null && stroke == null) {
       return null;
     }
-    return Paint(
-      blendMode: attributes.blendMode,
-      fill: fill,
-      stroke: stroke,
-    );
+    return Paint(blendMode: attributes.blendMode, fill: fill, stroke: stroke);
   }
 
   @override
@@ -465,11 +459,7 @@ class PathNode extends AttributedNode {
 class DeferredNode extends AttributedNode {
   /// Creates a new deferred node with [attributes] that will call [resolver]
   /// with [refId] when visited.
-  DeferredNode(
-    super.attributes, {
-    required this.refId,
-    required this.resolver,
-  });
+  DeferredNode(super.attributes, {required this.refId, required this.resolver});
 
   /// The reference id to pass to [resolver].
   final String refId;
@@ -507,27 +497,23 @@ class DeferredNode extends AttributedNode {
 /// parents applied.
 class TextNode extends AttributedNode {
   /// Create a new [TextNode] with the given [text].
-  TextNode(
-    this.text,
-    super.attributes,
-  );
+  TextNode(this.text, super.attributes);
 
   /// The text this node contains.
   final String text;
 
   /// Compute the [Paint] that this text node uses.
   Paint? computePaint(Rect bounds, AffineMatrix transform) {
-    final Fill? fill = attributes.fill
-        ?.toFill(bounds, transform, defaultColor: Color.opaqueBlack);
+    final Fill? fill = attributes.fill?.toFill(
+      bounds,
+      transform,
+      defaultColor: Color.opaqueBlack,
+    );
     final Stroke? stroke = attributes.stroke?.toStroke(bounds, transform);
     if (fill == null && stroke == null) {
       return null;
     }
-    return Paint(
-      blendMode: attributes.blendMode,
-      fill: fill,
-      stroke: stroke,
-    );
+    return Paint(blendMode: attributes.blendMode, fill: fill, stroke: stroke);
   }
 
   /// Compute the [TextConfig] that this text node uses.
@@ -551,13 +537,14 @@ class TextNode extends AttributedNode {
     SvgAttributes newAttributes, {
     bool replace = false,
   }) {
-    final SvgAttributes resolvedAttributes = replace
-        ? newAttributes.applyParent(attributes, transformOverride: transform)
-        : attributes.applyParent(newAttributes);
-    return TextNode(
-      text,
-      resolvedAttributes,
-    );
+    final SvgAttributes resolvedAttributes =
+        replace
+            ? newAttributes.applyParent(
+              attributes,
+              transformOverride: transform,
+            )
+            : attributes.applyParent(newAttributes);
+    return TextNode(text, resolvedAttributes);
   }
 
   @override
@@ -575,11 +562,7 @@ class TextNode extends AttributedNode {
 /// parents applied.
 class ImageNode extends AttributedNode {
   /// Create a new [ImageNode] with the given [text].
-  ImageNode(
-    this.data,
-    this.format,
-    super.attributes,
-  );
+  ImageNode(this.data, this.format, super.attributes);
 
   /// The image data this node contains.
   final Uint8List data;

@@ -1,11 +1,10 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import 'dart:io';
 
 import 'package:flutter/foundation.dart' show visibleForTesting;
-import 'package:flutter/services.dart';
 import 'package:local_auth_platform_interface/local_auth_platform_interface.dart';
 
 import 'src/messages.g.dart';
@@ -23,9 +22,8 @@ class LocalAuthDarwin extends LocalAuthPlatform {
   LocalAuthDarwin({
     @visibleForTesting LocalAuthApi? api,
     @visibleForTesting bool? overrideUseMacOSAuthMessages,
-  })  : _api = api ?? LocalAuthApi(),
-        _useMacOSAuthMessages =
-            overrideUseMacOSAuthMessages ?? Platform.isMacOS;
+  }) : _api = api ?? LocalAuthApi(),
+       _useMacOSAuthMessages = overrideUseMacOSAuthMessages ?? Platform.isMacOS;
 
   /// Registers this class as the default instance of [LocalAuthPlatform].
   static void registerWith() {
@@ -43,39 +41,57 @@ class LocalAuthDarwin extends LocalAuthPlatform {
   }) async {
     assert(localizedReason.isNotEmpty);
     final AuthResultDetails resultDetails = await _api.authenticate(
-        AuthOptions(
-            biometricOnly: options.biometricOnly,
-            sticky: options.stickyAuth,
-            useErrorDialogs: options.useErrorDialogs),
-        _useMacOSAuthMessages
-            ? _pigeonStringsFromMacOSAuthMessages(localizedReason, authMessages)
-            : _pigeonStringsFromiOSAuthMessages(localizedReason, authMessages));
-    // TODO(stuartmorgan): Replace this with structured errors, coordinated
-    // across all platform implementations, per
-    // https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#platform-exception-handling
-    // The PlatformExceptions thrown here are for compatibiilty with the
-    // previous Objective-C implementation.
+      AuthOptions(
+        biometricOnly: options.biometricOnly,
+        sticky: options.stickyAuth,
+      ),
+      _useMacOSAuthMessages
+          ? _pigeonStringsFromMacOSAuthMessages(localizedReason, authMessages)
+          : _pigeonStringsFromiOSAuthMessages(localizedReason, authMessages),
+    );
+    LocalAuthExceptionCode code;
     switch (resultDetails.result) {
       case AuthResult.success:
         return true;
-      case AuthResult.failure:
+      case AuthResult.authenticationFailed:
         return false;
-      case AuthResult.errorNotAvailable:
-        throw PlatformException(
-            code: 'NotAvailable',
-            message: resultDetails.errorMessage,
-            details: resultDetails.errorDetails);
-      case AuthResult.errorNotEnrolled:
-        throw PlatformException(
-            code: 'NotEnrolled',
-            message: resultDetails.errorMessage,
-            details: resultDetails.errorDetails);
-      case AuthResult.errorPasscodeNotSet:
-        throw PlatformException(
-            code: 'PasscodeNotSet',
-            message: resultDetails.errorMessage,
-            details: resultDetails.errorDetails);
+      case AuthResult.appCancel:
+        // If the plugin client intentionally canceled authentication, no need
+        // to return a specific error.
+        return false;
+      case AuthResult.uiUnavailable:
+        code = LocalAuthExceptionCode.uiUnavailable;
+      case AuthResult.systemCancel:
+        code = LocalAuthExceptionCode.systemCanceled;
+      case AuthResult.userCancel:
+        code = LocalAuthExceptionCode.userCanceled;
+      case AuthResult.biometryDisconnected:
+        code = LocalAuthExceptionCode.biometricHardwareTemporarilyUnavailable;
+      case AuthResult.biometryLockout:
+        code = LocalAuthExceptionCode.biometricLockout;
+      case AuthResult.biometryNotAvailable:
+      // Treated as no hardware since docs suggest that this means that there is
+      // no known device; paired but not connected is biometryDisconnected.
+      case AuthResult.biometryNotPaired:
+        code = LocalAuthExceptionCode.noBiometricHardware;
+      case AuthResult.biometryNotEnrolled:
+        code = LocalAuthExceptionCode.noBiometricsEnrolled;
+      case AuthResult.invalidContext:
+      case AuthResult.invalidDimensions:
+      case AuthResult.notInteractive:
+        code = LocalAuthExceptionCode.uiUnavailable;
+      case AuthResult.passcodeNotSet:
+        code = LocalAuthExceptionCode.noCredentialsSet;
+      case AuthResult.userFallback:
+        code = LocalAuthExceptionCode.userRequestedFallback;
+      case AuthResult.unknownError:
+        code = LocalAuthExceptionCode.unknownError;
     }
+    throw LocalAuthException(
+      code: code,
+      description: resultDetails.errorMessage,
+      details: resultDetails.errorDetails,
+    );
   }
 
   @override
@@ -104,7 +120,9 @@ class LocalAuthDarwin extends LocalAuthPlatform {
   Future<bool> stopAuthentication() async => false;
 
   AuthStrings _pigeonStringsFromiOSAuthMessages(
-      String localizedReason, Iterable<AuthMessages> messagesList) {
+    String localizedReason,
+    Iterable<AuthMessages> messagesList,
+  ) {
     IOSAuthMessages? messages;
     for (final AuthMessages entry in messagesList) {
       if (entry is IOSAuthMessages) {
@@ -114,19 +132,15 @@ class LocalAuthDarwin extends LocalAuthPlatform {
     }
     return AuthStrings(
       reason: localizedReason,
-      lockOut: messages?.lockOut ?? iOSLockOut,
-      goToSettingsButton: messages?.goToSettingsButton ?? goToSettings,
-      goToSettingsDescription:
-          messages?.goToSettingsDescription ?? iOSGoToSettingsDescription,
-      // TODO(stuartmorgan): The default's name is confusing here for legacy
-      // reasons; this should be fixed as part of some future breaking change.
-      cancelButton: messages?.cancelButton ?? iOSOkButton,
+      cancelButton: messages?.cancelButton ?? iOSCancelButton,
       localizedFallbackTitle: messages?.localizedFallbackTitle,
     );
   }
 
   AuthStrings _pigeonStringsFromMacOSAuthMessages(
-      String localizedReason, Iterable<AuthMessages> messagesList) {
+    String localizedReason,
+    Iterable<AuthMessages> messagesList,
+  ) {
     MacOSAuthMessages? messages;
     for (final AuthMessages entry in messagesList) {
       if (entry is MacOSAuthMessages) {
@@ -136,9 +150,6 @@ class LocalAuthDarwin extends LocalAuthPlatform {
     }
     return AuthStrings(
       reason: localizedReason,
-      lockOut: messages?.lockOut ?? macOSLockOut,
-      goToSettingsDescription:
-          messages?.goToSettingsDescription ?? macOSGoToSettingsDescription,
       cancelButton: messages?.cancelButton ?? macOSCancelButton,
       localizedFallbackTitle: messages?.localizedFallbackTitle,
     );

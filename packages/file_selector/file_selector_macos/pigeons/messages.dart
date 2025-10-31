@@ -1,17 +1,18 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 import 'package:pigeon/pigeon.dart';
 
-@ConfigurePigeon(PigeonOptions(
-  input: 'pigeons/messages.dart',
-  swiftOut:
-      'macos/file_selector_macos/Sources/file_selector_macos/messages.g.swift',
-  dartOut: 'lib/src/messages.g.dart',
-  dartTestOut: 'test/messages_test.g.dart',
-  copyrightHeader: 'pigeons/copyright.txt',
-))
-
+@ConfigurePigeon(
+  PigeonOptions(
+    input: 'pigeons/messages.dart',
+    swiftOut:
+        'macos/file_selector_macos/Sources/file_selector_macos/messages.g.swift',
+    dartOut: 'lib/src/messages.g.dart',
+    dartTestOut: 'test/messages_test.g.dart',
+    copyrightHeader: 'pigeons/copyright.txt',
+  ),
+)
 /// A Pigeon representation of the macOS portion of an `XTypeGroup`.
 class AllowedTypes {
   const AllowedTypes({

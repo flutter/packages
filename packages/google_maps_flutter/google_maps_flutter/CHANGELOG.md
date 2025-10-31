@@ -1,3 +1,13 @@
+## 2.13.1
+
+* Fixes exception when dispose is called while asynchronous update from
+  `didUpdateWidget` is executed.
+
+## 2.13.0
+
+* Adds support for camera control button on web.
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
 ## 2.12.3
 
 * Updates the example app to use the zIndexInt param instead of the deprecated zIndex.

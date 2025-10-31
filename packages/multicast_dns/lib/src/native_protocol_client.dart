@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -50,7 +50,7 @@ class ResourceRecordCache {
             SplayTreeMap<String, List<ResourceRecord>>();
 
         _cache[record.resourceRecordType]![record.name] = <ResourceRecord>[
-          record
+          record,
         ];
       } else {
         _cache[record.resourceRecordType]![record.name]!.add(record);
@@ -60,7 +60,10 @@ class ResourceRecordCache {
 
   /// Get a record from this cache.
   void lookup<T extends ResourceRecord>(
-      String name, int type, List<T> results) {
+    String name,
+    int type,
+    List<T> results,
+  ) {
     assert(ResourceRecordType.debugAssertValid(type));
     final int time = DateTime.now().millisecondsSinceEpoch;
     final SplayTreeMap<String, List<ResourceRecord>>? candidates = _cache[type];
@@ -72,8 +75,9 @@ class ResourceRecordCache {
     if (candidateRecords == null) {
       return;
     }
-    candidateRecords
-        .removeWhere((ResourceRecord candidate) => candidate.validUntil < time);
+    candidateRecords.removeWhere(
+      (ResourceRecord candidate) => candidate.validUntil < time,
+    );
     results.addAll(candidateRecords.cast<T>());
   }
 }

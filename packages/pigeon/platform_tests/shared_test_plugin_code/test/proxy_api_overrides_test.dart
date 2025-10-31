@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -40,10 +40,7 @@ void main() {
         () => ProxyApiSuperClass.pigeon_detached();
 
     PigeonOverrides.pigeon_reset();
-    expect(
-      PigeonOverrides.proxyApiSuperClass_new,
-      isNull,
-    );
+    expect(PigeonOverrides.proxyApiSuperClass_new, isNull);
   });
 
   test('pigeon_reset sets attached field overrides to null', () {

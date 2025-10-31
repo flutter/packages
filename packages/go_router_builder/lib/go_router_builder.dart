@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -21,7 +21,5 @@ import 'src/go_router_generator.dart';
 /// `go_router`.
 ///
 /// Not meant to be invoked by hand-authored code.
-Builder goRouterBuilder(BuilderOptions options) => SharedPartBuilder(
-      const <Generator>[GoRouterGenerator()],
-      'go_router',
-    );
+Builder goRouterBuilder(BuilderOptions options) =>
+    SharedPartBuilder(const <Generator>[GoRouterGenerator()], 'go_router');

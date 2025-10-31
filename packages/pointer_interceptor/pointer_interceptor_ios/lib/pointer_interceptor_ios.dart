@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -15,16 +15,18 @@ class PointerInterceptorIOS extends PointerInterceptorPlatform {
 
   @override
   Widget buildWidget({required Widget child, bool debug = false, Key? key}) {
-    return Stack(alignment: Alignment.center, children: <Widget>[
-      Positioned.fill(
+    return Stack(
+      alignment: Alignment.center,
+      children: <Widget>[
+        Positioned.fill(
           child: UiKitView(
-        viewType: 'plugins.flutter.dev/pointer_interceptor_ios',
-        creationParams: <String, bool>{
-          'debug': debug,
-        },
-        creationParamsCodec: const StandardMessageCodec(),
-      )),
-      child
-    ]);
+            viewType: 'plugins.flutter.dev/pointer_interceptor_ios',
+            creationParams: <String, bool>{'debug': debug},
+            creationParamsCodec: const StandardMessageCodec(),
+          ),
+        ),
+        child,
+      ],
+    );
   }
 }

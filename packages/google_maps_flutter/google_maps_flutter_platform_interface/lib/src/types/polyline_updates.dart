@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -11,7 +11,7 @@ import 'types.dart';
 class PolylineUpdates extends MapsObjectUpdates<Polyline> {
   /// Computes [PolylineUpdates] given previous and current [Polyline]s.
   PolylineUpdates.from(super.previous, super.current)
-      : super.from(objectName: 'polyline');
+    : super.from(objectName: 'polyline');
 
   /// Set of Polylines to be added in this update.
   Set<Polyline> get polylinesToAdd => objectsToAdd;

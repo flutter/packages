@@ -1,7 +1,7 @@
 // swift-tools-version: 5.9
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -10,7 +10,7 @@ import PackageDescription
 let package = Package(
   name: "in_app_purchase_storekit",
   platforms: [
-    .iOS(.v12),
+    .iOS(.v13),
     .macOS(.v10_15),
   ],
   products: [

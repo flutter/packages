@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -19,10 +19,7 @@ class Credentials {
 /// The sign-in screen.
 class SignInScreen extends StatefulWidget {
   /// Creates a sign-in screen.
-  const SignInScreen({
-    required this.onSignIn,
-    super.key,
-  });
+  const SignInScreen({required this.onSignIn, super.key});
 
   /// Called when users sign in with [Credentials].
   final ValueChanged<Credentials> onSignIn;
@@ -37,41 +34,46 @@ class _SignInScreenState extends State<SignInScreen> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        body: Center(
-          child: Card(
-            child: Container(
-              constraints: BoxConstraints.loose(const Size(600, 600)),
-              padding: const EdgeInsets.all(8),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Text('Sign in',
-                      style: Theme.of(context).textTheme.headlineMedium),
-                  TextField(
-                    decoration: const InputDecoration(labelText: 'Username'),
-                    controller: _usernameController,
-                  ),
-                  TextField(
-                    decoration: const InputDecoration(labelText: 'Password'),
-                    obscureText: true,
-                    controller: _passwordController,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: TextButton(
-                      onPressed: () async {
-                        widget.onSignIn(Credentials(
-                            _usernameController.value.text,
-                            _passwordController.value.text));
-                      },
-                      child: const Text('Sign in'),
-                    ),
-                  ),
-                ],
+    body: Center(
+      child: Card(
+        child: Container(
+          constraints: BoxConstraints.loose(const Size(600, 600)),
+          padding: const EdgeInsets.all(8),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Text(
+                'Sign in',
+                style: Theme.of(context).textTheme.headlineMedium,
               ),
-            ),
+              TextField(
+                decoration: const InputDecoration(labelText: 'Username'),
+                controller: _usernameController,
+              ),
+              TextField(
+                decoration: const InputDecoration(labelText: 'Password'),
+                obscureText: true,
+                controller: _passwordController,
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: TextButton(
+                  onPressed: () async {
+                    widget.onSignIn(
+                      Credentials(
+                        _usernameController.value.text,
+                        _passwordController.value.text,
+                      ),
+                    );
+                  },
+                  child: const Text('Sign in'),
+                ),
+              ),
+            ],
           ),
         ),
-      );
+      ),
+    ),
+  );
 }

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -11,11 +11,12 @@
 /// * [PurchaseDetails] for error happened in purchase.
 class IAPError {
   /// Creates a new IAP error object with the given error details.
-  IAPError(
-      {required this.source,
-      required this.code,
-      required this.message,
-      this.details});
+  IAPError({
+    required this.source,
+    required this.code,
+    required this.message,
+    this.details,
+  });
 
   /// Which source is the error on.
   final String source;

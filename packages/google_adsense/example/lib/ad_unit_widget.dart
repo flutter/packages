@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -56,15 +56,13 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              const Text(
-                'Responsive Ad Constrained by width of 150px:',
-              ),
+              const Text('Responsive Ad Constrained by width of 150px:'),
               Container(
                 constraints: const BoxConstraints(maxWidth: 150),
                 padding: const EdgeInsets.only(bottom: 10),
                 child:
-                    // #docregion adUnit
-                    AdUnitWidget(
+                // #docregion adUnit
+                AdUnitWidget(
                   configuration: AdUnitConfiguration.displayAdUnit(
                     // TODO: Replace with your Ad Unit ID
                     adSlot: '1234567890',
@@ -79,8 +77,10 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               // #docregion constraints
               Container(
-                constraints:
-                    const BoxConstraints(maxHeight: 100, maxWidth: 1200),
+                constraints: const BoxConstraints(
+                  maxHeight: 100,
+                  maxWidth: 1200,
+                ),
                 padding: const EdgeInsets.only(bottom: 10),
                 child: AdUnitWidget(
                   configuration: AdUnitConfiguration.displayAdUnit(
@@ -92,9 +92,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
               // #enddocregion constraints
-              const Text(
-                'Fixed 125x125 size Ad:',
-              ),
+              const Text('Fixed 125x125 size Ad:'),
               Container(
                 height: 125,
                 width: 125,

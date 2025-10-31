@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -18,10 +18,11 @@ const String kInvalidAlternativeBillingReportingDetailsErrorMessage =
 class AlternativeBillingOnlyReportingDetailsWrapper
     implements HasBillingResponse {
   /// Constructs the object with [responseCode] and [debugMessage].
-  const AlternativeBillingOnlyReportingDetailsWrapper(
-      {required this.responseCode,
-      this.debugMessage,
-      this.externalTransactionToken = ''});
+  const AlternativeBillingOnlyReportingDetailsWrapper({
+    required this.responseCode,
+    this.debugMessage,
+    this.externalTransactionToken = '',
+  });
 
   /// Response code returned in the Play Billing API calls.
   @override

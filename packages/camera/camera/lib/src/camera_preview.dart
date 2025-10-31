@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -48,16 +48,13 @@ class CameraPreview extends StatelessWidget {
       return child;
     }
 
-    return RotatedBox(
-      quarterTurns: _getQuarterTurns(),
-      child: child,
-    );
+    return RotatedBox(quarterTurns: _getQuarterTurns(), child: child);
   }
 
   bool _isLandscape() {
     return <DeviceOrientation>[
       DeviceOrientation.landscapeLeft,
-      DeviceOrientation.landscapeRight
+      DeviceOrientation.landscapeRight,
     ].contains(_getApplicableOrientation());
   }
 
@@ -75,7 +72,7 @@ class CameraPreview extends StatelessWidget {
     return controller.value.isRecordingVideo
         ? controller.value.recordingOrientation!
         : (controller.value.previewPauseOrientation ??
-            controller.value.lockedCaptureOrientation ??
-            controller.value.deviceOrientation);
+              controller.value.lockedCaptureOrientation ??
+              controller.value.deviceOrientation);
   }
 }

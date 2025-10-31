@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -15,8 +15,10 @@ import 'package:web/web.dart' as web;
 
 const String expectedStringContents = 'Hello, world!';
 final Uint8List bytes = utf8.encode(expectedStringContents);
-final web.File textFile =
-    web.File(<JSUint8Array>[bytes.toJS].toJS, 'hello.txt');
+final web.File textFile = web.File(
+  <JSUint8Array>[bytes.toJS].toJS,
+  'hello.txt',
+);
 final String textFileUrl = web.URL.createObjectURL(textFile);
 
 void main() {
@@ -36,7 +38,9 @@ void main() {
 
     test('Stream can be sliced', () async {
       expect(
-          await pickedFile.openRead(2, 5).first, equals(bytes.sublist(2, 5)));
+        await pickedFile.openRead(2, 5).first,
+        equals(bytes.sublist(2, 5)),
+      );
     });
   });
 }

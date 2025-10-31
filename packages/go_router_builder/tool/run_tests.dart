@@ -1,11 +1,11 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import 'dart:io';
 import 'dart:isolate';
 
-import 'package:analyzer/dart/element/element.dart';
+import 'package:analyzer/dart/element/element2.dart';
 import 'package:build/build.dart';
 import 'package:build_test/build_test.dart';
 import 'package:dart_style/dart_style.dart' as dart_style;
@@ -19,32 +19,37 @@ import 'package:test/test.dart';
 const GoRouterGenerator generator = GoRouterGenerator();
 
 Future<void> main() async {
-  final dart_style.DartFormatter formatter =
-      dart_style.DartFormatter(languageVersion: await _packageVersion());
+  final dart_style.DartFormatter formatter = dart_style.DartFormatter(
+    languageVersion: await _packageVersion(),
+  );
   final Directory dir = Directory('test_inputs');
-  final List<File> testFiles = dir
-      .listSync()
-      .whereType<File>()
-      .where((File f) => f.path.endsWith('.dart'))
-      .toList();
+  final List<File> testFiles =
+      dir
+          .listSync()
+          .whereType<File>()
+          .where((File f) => f.path.endsWith('.dart'))
+          .toList();
   for (final File file in testFiles) {
     final String fileName = file.path.split('/').last;
     final File expectFile = File(p.join('${file.path}.expect'));
     if (!expectFile.existsSync()) {
-      throw Exception('A text input must have a .expect file. '
-          'Found test input $fileName with out an expect file.');
+      throw Exception(
+        'A text input must have a .expect file. '
+        'Found test input $fileName with out an expect file.',
+      );
     }
     final String expectResult = expectFile.readAsStringSync().trim();
     test('verify $fileName', () async {
-      final String targetLibraryAssetId = '__test__|${file.path}';
-      final LibraryElement element = await resolveSources<LibraryElement>(
-        <String, String>{
-          targetLibraryAssetId: file.readAsStringSync(),
-        },
+      // Normalize path separators for cross-platform compatibility
+      final String path = file.path.replaceAll(r'\', '/');
+      final String targetLibraryAssetId = '__test__|$path';
+      final LibraryElement2 element = await resolveSources<LibraryElement2>(
+        <String, String>{targetLibraryAssetId: file.readAsStringSync()},
         (Resolver resolver) async {
           final AssetId assetId = AssetId.parse(targetLibraryAssetId);
           return resolver.libraryFor(assetId);
         },
+        readAllSourcesFromFilesystem: true,
       );
       final LibraryReader reader = LibraryReader(element);
       final Set<String> results = <String>{};
@@ -55,18 +60,18 @@ Future<void> main() async {
         return;
       }
 
-      final String generated = formatter
-          .format(results.join('\n\n'))
-          .trim()
-          .replaceAll('\r\n', '\n');
-      expect(generated, equals(expectResult.replaceAll('\r\n', '\n')));
+      // Apply consistent formatting to both generated and expected code for comparison.
+      final String generated = formatter.format(results.join('\n\n').trim());
+      final String expected = formatter.format(expectResult.trim());
+      expect(generated, equals(expected));
     }, timeout: const Timeout(Duration(seconds: 100)));
   }
 }
 
 Future<Version> _packageVersion() async {
-  final PackageConfig packageConfig =
-      await loadPackageConfigUri(Isolate.packageConfigSync!);
+  final PackageConfig packageConfig = await loadPackageConfigUri(
+    Isolate.packageConfigSync!,
+  );
   final Uri pkgUri = Platform.script.resolve('../pubspec.yaml');
   final Package? package = packageConfig.packageOf(pkgUri);
   if (package == null) {

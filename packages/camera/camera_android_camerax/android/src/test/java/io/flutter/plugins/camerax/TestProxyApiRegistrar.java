@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -7,9 +7,9 @@ package io.flutter.plugins.camerax;
 import static org.mockito.Mockito.mock;
 
 import android.content.Context;
+import androidx.annotation.NonNull;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.view.TextureRegistry;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * Test implementation of `ProxyApiRegistrar` that provides mocks, instantly runs callbacks instead

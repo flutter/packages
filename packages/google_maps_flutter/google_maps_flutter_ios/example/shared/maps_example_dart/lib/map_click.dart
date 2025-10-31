@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -10,12 +10,14 @@ import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platf
 import 'example_google_map.dart';
 import 'page.dart';
 
-const CameraPosition _kInitialPosition =
-    CameraPosition(target: LatLng(-33.852, 151.211), zoom: 11.0);
+const CameraPosition _kInitialPosition = CameraPosition(
+  target: LatLng(-33.852, 151.211),
+  zoom: 11.0,
+);
 
 class MapClickPage extends GoogleMapExampleAppPage {
   const MapClickPage({Key? key})
-      : super(const Icon(Icons.mouse), 'Map click', key: key);
+    : super(const Icon(Icons.mouse), 'Map click', key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -58,11 +60,7 @@ class _MapClickBodyState extends State<_MapClickBody> {
       Padding(
         padding: const EdgeInsets.all(10.0),
         child: Center(
-          child: SizedBox(
-            width: 300.0,
-            height: 200.0,
-            child: googleMap,
-          ),
+          child: SizedBox(width: 300.0, height: 200.0, child: googleMap),
         ),
       ),
     ];
@@ -70,26 +68,28 @@ class _MapClickBodyState extends State<_MapClickBody> {
     if (mapController != null) {
       final String lastTap = 'Tap:\n${_lastTap ?? ""}\n';
       final String lastLongPress = 'Long press:\n${_lastLongPress ?? ""}';
-      columnChildren.add(Center(
+      columnChildren.add(
+        Center(child: Text(lastTap, textAlign: TextAlign.center)),
+      );
+      columnChildren.add(
+        Center(
           child: Text(
-        lastTap,
-        textAlign: TextAlign.center,
-      )));
-      columnChildren.add(Center(
+            _lastTap != null ? 'Tapped' : '',
+            textAlign: TextAlign.center,
+          ),
+        ),
+      );
+      columnChildren.add(
+        Center(child: Text(lastLongPress, textAlign: TextAlign.center)),
+      );
+      columnChildren.add(
+        Center(
           child: Text(
-        _lastTap != null ? 'Tapped' : '',
-        textAlign: TextAlign.center,
-      )));
-      columnChildren.add(Center(
-          child: Text(
-        lastLongPress,
-        textAlign: TextAlign.center,
-      )));
-      columnChildren.add(Center(
-          child: Text(
-        _lastLongPress != null ? 'Long pressed' : '',
-        textAlign: TextAlign.center,
-      )));
+            _lastLongPress != null ? 'Long pressed' : '',
+            textAlign: TextAlign.center,
+          ),
+        ),
+      );
     }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,

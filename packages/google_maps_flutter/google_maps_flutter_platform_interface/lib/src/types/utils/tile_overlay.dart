@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -7,9 +7,11 @@ import 'maps_object.dart';
 
 /// Converts an [Iterable] of TileOverlay in a Map of TileOverlayId -> TileOverlay.
 Map<TileOverlayId, TileOverlay> keyTileOverlayId(
-    Iterable<TileOverlay> tileOverlays) {
-  return keyByMapsObjectId<TileOverlay>(tileOverlays)
-      .cast<TileOverlayId, TileOverlay>();
+  Iterable<TileOverlay> tileOverlays,
+) {
+  return keyByMapsObjectId<TileOverlay>(
+    tileOverlays,
+  ).cast<TileOverlayId, TileOverlay>();
 }
 
 /// Converts a Set of TileOverlays into something serializable in JSON.

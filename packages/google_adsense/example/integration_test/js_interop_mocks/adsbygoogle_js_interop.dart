@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -19,13 +19,15 @@ external set _adsbygoogle(JSAny? value);
 ///
 /// `push` will run in the next tick (`Timer.run`) to ensure async behavior.
 void mockAdsByGoogle(PushFn push) {
-  _adsbygoogle = <String, Object>{
-    'push': (JSAny? params) {
-      Timer.run(() {
-        push(params);
-      });
-    }.toJS,
-  }.jsify();
+  _adsbygoogle =
+      <String, Object>{
+        'push':
+            (JSAny? params) {
+              Timer.run(() {
+                push(params);
+              });
+            }.toJS,
+      }.jsify();
 }
 
 /// Sets `adsbygoogle` to null.

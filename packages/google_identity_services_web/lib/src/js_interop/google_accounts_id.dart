@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -95,12 +95,11 @@ extension type GoogleAccountsId._(JSObject _) implements JSObject {
   ///
   /// Method: google.accounts.id.renderButton
   /// https://developers.google.com/identity/gsi/web/reference/js-reference#google.accounts.id.renderButton
-  void renderButton(
-    Object parent, [
-    GsiButtonConfiguration? options,
-  ]) {
-    assert(parent is JSObject,
-        'parent must be a JSObject. Use package:web to retrieve/create one.');
+  void renderButton(Object parent, [GsiButtonConfiguration? options]) {
+    assert(
+      parent is JSObject,
+      'parent must be a JSObject. Use package:web to retrieve/create one.',
+    );
     parent as JSObject;
     if (options == null) {
       return _renderButton(parent);
@@ -112,7 +111,9 @@ extension type GoogleAccountsId._(JSObject _) implements JSObject {
   external void _renderButton(JSObject parent);
   @JS('renderButton')
   external void _renderButtonWithOptions(
-      JSObject parent, GsiButtonConfiguration options);
+    JSObject parent,
+    GsiButtonConfiguration options,
+  );
 
   /// Record when the user signs out of your website in cookies.
   ///
@@ -141,7 +142,9 @@ extension type GoogleAccountsId._(JSObject _) implements JSObject {
   external void _jsStoreCredential(Credential credential);
   @JS('storeCredential')
   external void _jsStoreCredentialWithCallback(
-      Credential credential, JSFunction callback);
+    Credential credential,
+    JSFunction callback,
+  );
 
   /// Cancels the One Tap flow.
   ///
@@ -381,7 +384,9 @@ extension type PromptMomentNotification._(JSObject _) implements JSObject {
 
   /// The detailed reason why the UI isn't displayed.
   MomentNotDisplayedReason? getNotDisplayedReason() => maybeEnum(
-      _getNotDisplayedReason()?.toDart, MomentNotDisplayedReason.values);
+    _getNotDisplayedReason()?.toDart,
+    MomentNotDisplayedReason.values,
+  );
   @JS('getNotDisplayedReason')
   external JSString? _getNotDisplayedReason();
 
@@ -541,19 +546,10 @@ typedef GsiButtonClickListenerFn = void Function(GsiButtonData? gsiButtonData);
 /// https://developers.google.com/identity/gsi/web/reference/js-reference#type-Credential
 extension type Credential._(JSObject _) implements JSObject {
   ///
-  factory Credential({
-    required String id,
-    required String password,
-  }) =>
-      Credential._toJS(
-        id: id.toJS,
-        password: password.toJS,
-      );
+  factory Credential({required String id, required String password}) =>
+      Credential._toJS(id: id.toJS, password: password.toJS);
 
-  external factory Credential._toJS({
-    JSString id,
-    JSString password,
-  });
+  external factory Credential._toJS({JSString id, JSString password});
 }
 
 /// The fields that are contained in the [Credential] object.
@@ -583,9 +579,8 @@ typedef NativeCallbackFn = void Function(Credential credential);
 
 /// The type of the `callback` function passed to [revoke], to be notified of
 /// the success of the revocation operation.
-typedef RevocationResponseHandlerFn = void Function(
-  RevocationResponse revocationResponse,
-);
+typedef RevocationResponseHandlerFn =
+    void Function(RevocationResponse revocationResponse);
 
 /// The parameter passed to the `callback` of the [revoke] function.
 ///

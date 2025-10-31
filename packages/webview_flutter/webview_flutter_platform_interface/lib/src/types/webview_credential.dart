@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -11,10 +11,7 @@ import '../types/http_auth_request.dart';
 @immutable
 class WebViewCredential {
   /// Creates a [WebViewCredential].
-  const WebViewCredential({
-    required this.user,
-    required this.password,
-  });
+  const WebViewCredential({required this.user, required this.password});
 
   /// The user name.
   final String user;

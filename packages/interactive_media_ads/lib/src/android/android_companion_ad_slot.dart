@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -22,10 +22,10 @@ final class AndroidCompanionAdSlotCreationParams
     super.onClicked,
     @visibleForTesting InteractiveMediaAdsProxy? proxy,
     @visibleForTesting PlatformViewsServiceProxy? platformViewsProxy,
-  })  : _proxy = proxy ?? const InteractiveMediaAdsProxy(),
-        _platformViewsProxy =
-            platformViewsProxy ?? const PlatformViewsServiceProxy(),
-        super();
+  }) : _proxy = proxy ?? const InteractiveMediaAdsProxy(),
+       _platformViewsProxy =
+           platformViewsProxy ?? const PlatformViewsServiceProxy(),
+       super();
 
   /// Creates a  [AndroidCompanionAdSlotCreationParams] from an instance of
   /// [PlatformCompanionAdSlotCreationParams].
@@ -55,8 +55,8 @@ base class AndroidCompanionAdSlot extends PlatformCompanionAdSlot {
       _initAndroidParams(params);
 
   // ViewGroup used to display the Ad.
-  late final ima.ViewGroup _frameLayout =
-      _androidParams._proxy.newFrameLayout();
+  late final ima.ViewGroup _frameLayout = _androidParams._proxy
+      .newFrameLayout();
 
   late final Future<ima.CompanionAdSlot> _adSlotFuture = _initCompanionAdSlot();
 
@@ -81,8 +81,9 @@ base class AndroidCompanionAdSlot extends PlatformCompanionAdSlot {
       return params;
     }
 
-    return AndroidCompanionAdSlotCreationParams
-        .fromPlatformCompanionAdSlotCreationParamsSize(params);
+    return AndroidCompanionAdSlotCreationParams.fromPlatformCompanionAdSlotCreationParamsSize(
+      params,
+    );
   }
 
   Future<ima.CompanionAdSlot> _initCompanionAdSlot() async {
@@ -93,8 +94,10 @@ base class AndroidCompanionAdSlot extends PlatformCompanionAdSlot {
     await Future.wait(<Future<void>>[
       adSlot.setContainer(_frameLayout),
       switch (params.size) {
-        final CompanionAdSlotSizeFixed size =>
-          adSlot.setSize(size.width, size.height),
+        final CompanionAdSlotSizeFixed size => adSlot.setSize(
+          size.width,
+          size.height,
+        ),
         CompanionAdSlotSizeFluid() => adSlot.setFluidSize(),
       },
       if (params.onClicked != null)
@@ -116,9 +119,9 @@ base class AndroidCompanionAdSlot extends PlatformCompanionAdSlot {
   ) {
     return weakThis.target!._androidParams._proxy
         .newCompanionAdSlotClickListener(
-      onCompanionAdClick: (_) {
-        weakThis.target?.params.onClicked!.call();
-      },
-    );
+          onCompanionAdClick: (_) {
+            weakThis.target?.params.onClicked!.call();
+          },
+        );
   }
 }

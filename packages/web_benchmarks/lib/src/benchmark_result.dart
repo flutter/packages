@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -7,11 +7,7 @@ class BenchmarkScore {
   /// Creates a benchmark score.
   ///
   /// [metric] and [value] must not be null.
-  BenchmarkScore({
-    required this.metric,
-    required this.value,
-    this.delta,
-  });
+  BenchmarkScore({required this.metric, required this.value, this.delta});
 
   /// Deserializes a JSON object to create a [BenchmarkScore] object.
   factory BenchmarkScore.parse(Map<String, Object?> json) {
@@ -80,8 +76,10 @@ class BenchmarkResults {
 
   /// Serializes benchmark metrics to JSON.
   Map<String, List<Map<String, Object?>>> toJson() {
-    return scores.map<String, List<Map<String, Object?>>>(
-        (String benchmarkName, List<BenchmarkScore> scores) {
+    return scores.map<String, List<Map<String, Object?>>>((
+      String benchmarkName,
+      List<BenchmarkScore> scores,
+    ) {
       return MapEntry<String, List<Map<String, Object?>>>(
         benchmarkName,
         scores.map((BenchmarkScore score) => score.toJson()).toList(),

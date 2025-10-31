@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -28,7 +28,7 @@ class ImagePickerWindows extends CameraDelegatingImagePickerPlatform {
     'gif',
     'tif',
     'tiff',
-    'apng'
+    'apng',
   ];
 
   /// List of video extensions used when picking videos
@@ -41,7 +41,7 @@ class ImagePickerWindows extends CameraDelegatingImagePickerPlatform {
     'webm',
     'avi',
     'mpeg',
-    'mpg'
+    'mpg',
   ];
 
   /// The file selector used to prompt the user to select images or videos.
@@ -64,12 +64,14 @@ class ImagePickerWindows extends CameraDelegatingImagePickerPlatform {
     CameraDevice preferredCameraDevice = CameraDevice.rear,
   }) async {
     final XFile? file = await getImageFromSource(
-        source: source,
-        options: ImagePickerOptions(
-            maxWidth: maxWidth,
-            maxHeight: maxHeight,
-            imageQuality: imageQuality,
-            preferredCameraDevice: preferredCameraDevice));
+      source: source,
+      options: ImagePickerOptions(
+        maxWidth: maxWidth,
+        maxHeight: maxHeight,
+        imageQuality: imageQuality,
+        preferredCameraDevice: preferredCameraDevice,
+      ),
+    );
     if (file != null) {
       return PickedFile(file.path);
     }
@@ -85,9 +87,10 @@ class ImagePickerWindows extends CameraDelegatingImagePickerPlatform {
     Duration? maxDuration,
   }) async {
     final XFile? file = await getVideo(
-        source: source,
-        preferredCameraDevice: preferredCameraDevice,
-        maxDuration: maxDuration);
+      source: source,
+      preferredCameraDevice: preferredCameraDevice,
+      maxDuration: maxDuration,
+    );
     if (file != null) {
       return PickedFile(file.path);
     }
@@ -105,12 +108,14 @@ class ImagePickerWindows extends CameraDelegatingImagePickerPlatform {
     CameraDevice preferredCameraDevice = CameraDevice.rear,
   }) async {
     return getImageFromSource(
-        source: source,
-        options: ImagePickerOptions(
-            maxWidth: maxWidth,
-            maxHeight: maxHeight,
-            imageQuality: imageQuality,
-            preferredCameraDevice: preferredCameraDevice));
+      source: source,
+      options: ImagePickerOptions(
+        maxWidth: maxWidth,
+        maxHeight: maxHeight,
+        imageQuality: imageQuality,
+        preferredCameraDevice: preferredCameraDevice,
+      ),
+    );
   }
 
   // [ImagePickerOptions] options are not currently supported. If any
@@ -127,10 +132,13 @@ class ImagePickerWindows extends CameraDelegatingImagePickerPlatform {
       case ImageSource.camera:
         return super.getImageFromSource(source: source);
       case ImageSource.gallery:
-        const XTypeGroup typeGroup =
-            XTypeGroup(label: 'Images', extensions: imageFormats);
-        final XFile? file = await fileSelector
-            .openFile(acceptedTypeGroups: <XTypeGroup>[typeGroup]);
+        const XTypeGroup typeGroup = XTypeGroup(
+          label: 'Images',
+          extensions: imageFormats,
+        );
+        final XFile? file = await fileSelector.openFile(
+          acceptedTypeGroups: <XTypeGroup>[typeGroup],
+        );
         return file;
     }
     // Ensure that there's a fallback in case a new source is added.
@@ -153,14 +161,18 @@ class ImagePickerWindows extends CameraDelegatingImagePickerPlatform {
     switch (source) {
       case ImageSource.camera:
         return super.getVideo(
-            source: source,
-            preferredCameraDevice: preferredCameraDevice,
-            maxDuration: maxDuration);
+          source: source,
+          preferredCameraDevice: preferredCameraDevice,
+          maxDuration: maxDuration,
+        );
       case ImageSource.gallery:
-        const XTypeGroup typeGroup =
-            XTypeGroup(label: 'Videos', extensions: videoFormats);
-        final XFile? file = await fileSelector
-            .openFile(acceptedTypeGroups: <XTypeGroup>[typeGroup]);
+        const XTypeGroup typeGroup = XTypeGroup(
+          label: 'Videos',
+          extensions: videoFormats,
+        );
+        final XFile? file = await fileSelector.openFile(
+          acceptedTypeGroups: <XTypeGroup>[typeGroup],
+        );
         return file;
     }
     // Ensure that there's a fallback in case a new source is added.
@@ -177,10 +189,27 @@ class ImagePickerWindows extends CameraDelegatingImagePickerPlatform {
     double? maxHeight,
     int? imageQuality,
   }) async {
-    const XTypeGroup typeGroup =
-        XTypeGroup(label: 'Images', extensions: imageFormats);
-    final List<XFile> files = await fileSelector
-        .openFiles(acceptedTypeGroups: <XTypeGroup>[typeGroup]);
+    const XTypeGroup typeGroup = XTypeGroup(
+      label: 'Images',
+      extensions: imageFormats,
+    );
+    final List<XFile> files = await fileSelector.openFiles(
+      acceptedTypeGroups: <XTypeGroup>[typeGroup],
+    );
+    return files;
+  }
+
+  @override
+  Future<List<XFile>> getMultiVideoWithOptions({
+    MultiVideoPickerOptions options = const MultiVideoPickerOptions(),
+  }) async {
+    const XTypeGroup typeGroup = XTypeGroup(
+      label: 'Videos',
+      extensions: videoFormats,
+    );
+    final List<XFile> files = await fileSelector.openFiles(
+      acceptedTypeGroups: <XTypeGroup>[typeGroup],
+    );
     return files;
   }
 
@@ -190,20 +219,21 @@ class ImagePickerWindows extends CameraDelegatingImagePickerPlatform {
   @override
   Future<List<XFile>> getMedia({required MediaOptions options}) async {
     const XTypeGroup typeGroup = XTypeGroup(
-        label: 'images and videos',
-        extensions: <String>[...imageFormats, ...videoFormats]);
+      label: 'images and videos',
+      extensions: <String>[...imageFormats, ...videoFormats],
+    );
 
     List<XFile> files;
 
     if (options.allowMultiple) {
-      files = await fileSelector
-          .openFiles(acceptedTypeGroups: <XTypeGroup>[typeGroup]);
+      files = await fileSelector.openFiles(
+        acceptedTypeGroups: <XTypeGroup>[typeGroup],
+      );
     } else {
-      final XFile? file = await fileSelector
-          .openFile(acceptedTypeGroups: <XTypeGroup>[typeGroup]);
-      files = <XFile>[
-        if (file != null) file,
-      ];
+      final XFile? file = await fileSelector.openFile(
+        acceptedTypeGroups: <XTypeGroup>[typeGroup],
+      );
+      files = <XFile>[if (file != null) file];
     }
     return files;
   }

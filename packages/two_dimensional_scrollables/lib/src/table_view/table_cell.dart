@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -17,10 +17,8 @@ import 'table.dart';
 class TableVicinity extends ChildVicinity {
   /// Creates a reference to a child in a [TableView], with the [xIndex] and
   /// [yIndex] converted to terms of [row] and [column].
-  const TableVicinity({
-    required int row,
-    required int column,
-  }) : super(xIndex: column, yIndex: row);
+  const TableVicinity({required int row, required int column})
+    : super(xIndex: column, yIndex: row);
 
   /// The row index of the child in the [TableView].
   ///
@@ -37,14 +35,8 @@ class TableVicinity extends ChildVicinity {
 
   /// Returns a new [TableVicinity], copying over the row and column fields with
   /// those provided, or maintaining the original values.
-  TableVicinity copyWith({
-    int? row,
-    int? column,
-  }) {
-    return TableVicinity(
-      row: row ?? this.row,
-      column: column ?? this.column,
-    );
+  TableVicinity copyWith({int? row, int? column}) {
+    return TableVicinity(row: row ?? this.row, column: column ?? this.column);
   }
 
   @override
@@ -87,11 +79,13 @@ class TableViewParentData extends TwoDimensionalViewportParentData {
       mergeDetails += ', merged';
     }
     if (rowMergeStart != null) {
-      mergeDetails += ', rowMergeStart=$rowMergeStart, '
+      mergeDetails +=
+          ', rowMergeStart=$rowMergeStart, '
           'rowMergeSpan=$rowMergeSpan';
     }
     if (columnMergeStart != null) {
-      mergeDetails += ', columnMergeStart=$columnMergeStart, '
+      mergeDetails +=
+          ', columnMergeStart=$columnMergeStart, '
           'columnMergeSpan=$columnMergeSpan';
     }
     return super.toString() + mergeDetails;
@@ -117,20 +111,20 @@ class TableViewCell extends StatelessWidget {
     this.columnMergeSpan,
     this.addRepaintBoundaries = true,
     required this.child,
-  })  : assert(
-          (rowMergeStart == null && rowMergeSpan == null) ||
-              (rowMergeStart != null && rowMergeSpan != null),
-          'Row merge start and span must both be set, or both unset.',
-        ),
-        assert(rowMergeStart == null || rowMergeStart >= 0),
-        assert(rowMergeSpan == null || rowMergeSpan > 0),
-        assert(
-          (columnMergeStart == null && columnMergeSpan == null) ||
-              (columnMergeStart != null && columnMergeSpan != null),
-          'Column merge start and span must both be set, or both unset.',
-        ),
-        assert(columnMergeStart == null || columnMergeStart >= 0),
-        assert(columnMergeSpan == null || columnMergeSpan > 0);
+  }) : assert(
+         (rowMergeStart == null && rowMergeSpan == null) ||
+             (rowMergeStart != null && rowMergeSpan != null),
+         'Row merge start and span must both be set, or both unset.',
+       ),
+       assert(rowMergeStart == null || rowMergeStart >= 0),
+       assert(rowMergeSpan == null || rowMergeSpan > 0),
+       assert(
+         (columnMergeStart == null && columnMergeSpan == null) ||
+             (columnMergeStart != null && columnMergeSpan != null),
+         'Column merge start and span must both be set, or both unset.',
+       ),
+       assert(columnMergeStart == null || columnMergeStart >= 0),
+       assert(columnMergeSpan == null || columnMergeSpan > 0);
 
   /// The child contained in this cell of the [TableView].
   final Widget child;

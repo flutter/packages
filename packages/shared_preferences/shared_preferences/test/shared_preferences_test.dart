@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -67,38 +67,30 @@ void main() {
       preferences.setBool('bool', testBool2),
       preferences.setInt('int', testInt2),
       preferences.setDouble('double', testDouble2),
-      preferences.setStringList('List', testList2)
+      preferences.setStringList('List', testList2),
     ]);
-    expect(
-      store.log,
-      <Matcher>[
-        isMethodCall('setValue', arguments: <dynamic>[
-          'String',
-          'flutter.String',
-          testString2,
-        ]),
-        isMethodCall('setValue', arguments: <dynamic>[
-          'Bool',
-          'flutter.bool',
-          testBool2,
-        ]),
-        isMethodCall('setValue', arguments: <dynamic>[
-          'Int',
-          'flutter.int',
-          testInt2,
-        ]),
-        isMethodCall('setValue', arguments: <dynamic>[
-          'Double',
-          'flutter.double',
-          testDouble2,
-        ]),
-        isMethodCall('setValue', arguments: <dynamic>[
-          'StringList',
-          'flutter.List',
-          testList2,
-        ]),
-      ],
-    );
+    expect(store.log, <Matcher>[
+      isMethodCall(
+        'setValue',
+        arguments: <dynamic>['String', 'flutter.String', testString2],
+      ),
+      isMethodCall(
+        'setValue',
+        arguments: <dynamic>['Bool', 'flutter.bool', testBool2],
+      ),
+      isMethodCall(
+        'setValue',
+        arguments: <dynamic>['Int', 'flutter.int', testInt2],
+      ),
+      isMethodCall(
+        'setValue',
+        arguments: <dynamic>['Double', 'flutter.double', testDouble2],
+      ),
+      isMethodCall(
+        'setValue',
+        arguments: <dynamic>['StringList', 'flutter.List', testList2],
+      ),
+    ]);
     store.log.clear();
 
     expect(preferences.getString('String'), testString2);
@@ -113,15 +105,13 @@ void main() {
     const String key = 'testKey';
     await preferences.remove(key);
     expect(
-        store.log,
-        List<Matcher>.filled(
-          1,
-          isMethodCall(
-            'remove',
-            arguments: 'flutter.$key',
-          ),
-          growable: true,
-        ));
+      store.log,
+      List<Matcher>.filled(
+        1,
+        isMethodCall('remove', arguments: 'flutter.$key'),
+        growable: true,
+      ),
+    );
   });
 
   test('containsKey', () async {
@@ -162,7 +152,7 @@ void main() {
 
   test('string list type is dynamic (usually from method channel)', () async {
     SharedPreferences.setMockInitialValues(<String, Object>{
-      'dynamic_list': <dynamic>['1', '2']
+      'dynamic_list': <dynamic>['1', '2'],
     });
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final List<String>? value = prefs.getStringList('dynamic_list');
@@ -174,16 +164,18 @@ void main() {
     const String prefixedKey = 'flutter.$key';
 
     test('test 1', () async {
-      SharedPreferences.setMockInitialValues(
-          <String, Object>{prefixedKey: 'my string'});
+      SharedPreferences.setMockInitialValues(<String, Object>{
+        prefixedKey: 'my string',
+      });
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       final String? value = prefs.getString(key);
       expect(value, 'my string');
     });
 
     test('test 2', () async {
-      SharedPreferences.setMockInitialValues(
-          <String, Object>{prefixedKey: 'my other string'});
+      SharedPreferences.setMockInitialValues(<String, Object>{
+        prefixedKey: 'my other string',
+      });
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       final String? value = prefs.getString(key);
       expect(value, 'my other string');
@@ -204,9 +196,7 @@ void main() {
   });
 
   test('calling mock initial values with non-prefixed keys succeeds', () async {
-    SharedPreferences.setMockInitialValues(<String, Object>{
-      'test': 'foo',
-    });
+    SharedPreferences.setMockInitialValues(<String, Object>{'test': 'foo'});
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? value = prefs.getString('test');
     expect(value, 'foo');
@@ -314,9 +304,9 @@ void main() {
     }
     expect(err, isA<UnimplementedError>());
     expect(
-        err.toString(),
-        contains(
-            "Shared Preferences doesn't yet support the setPrefix method"));
+      err.toString(),
+      contains("Shared Preferences doesn't yet support the setPrefix method"),
+    );
   });
 
   test(
@@ -342,7 +332,7 @@ void main() {
 
 class FakeSharedPreferencesStore extends SharedPreferencesStorePlatform {
   FakeSharedPreferencesStore(Map<String, Object> data)
-      : backend = InMemorySharedPreferencesStore.withData(data);
+    : backend = InMemorySharedPreferencesStore.withData(data);
 
   final InMemorySharedPreferencesStore backend;
   final List<MethodCall> log = <MethodCall>[];
@@ -367,7 +357,8 @@ class FakeSharedPreferencesStore extends SharedPreferencesStorePlatform {
 
   @override
   Future<Map<String, Object>> getAllWithParameters(
-      GetAllParameters parameters) {
+    GetAllParameters parameters,
+  ) {
     log.add(const MethodCall('getAllWithParameters'));
     return backend.getAllWithParameters(parameters);
   }
@@ -440,7 +431,8 @@ class ThrowingSharedPreferencesStore extends SharedPreferencesStorePlatform {
 
   @override
   Future<Map<String, Object>> getAllWithParameters(
-      GetAllParameters parameters) {
+    GetAllParameters parameters,
+  ) {
     throw StateError('State Error');
   }
 }

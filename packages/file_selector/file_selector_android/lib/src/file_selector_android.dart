@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -13,7 +13,7 @@ import 'types/native_illegal_argument_exception.dart';
 /// An implementation of [FileSelectorPlatform] for Android.
 class FileSelectorAndroid extends FileSelectorPlatform {
   FileSelectorAndroid({@visibleForTesting FileSelectorApi? api})
-      : _api = api ?? FileSelectorApi();
+    : _api = api ?? FileSelectorApi();
 
   final FileSelectorApi _api;
 
@@ -103,14 +103,16 @@ class FileSelectorAndroid extends FileSelectorPlatform {
   /// Translates a [FileSelectorExceptionCode] to its corresponding error and
   /// handles throwing.
   void _resolveErrorCodeAndMaybeThrow(
-      FileSelectorNativeException fileSelectorNativeException) {
+    FileSelectorNativeException fileSelectorNativeException,
+  ) {
     switch (fileSelectorNativeException.fileSelectorExceptionCode) {
       case FileSelectorExceptionCode.illegalArgumentException:
         throw NativeIllegalArgumentException(
-            fileSelectorNativeException.message);
+          fileSelectorNativeException.message,
+        );
       case (FileSelectorExceptionCode.illegalStateException ||
-            FileSelectorExceptionCode.ioException ||
-            FileSelectorExceptionCode.securityException):
+          FileSelectorExceptionCode.ioException ||
+          FileSelectorExceptionCode.securityException):
       // unused for now
     }
   }

@@ -11,11 +11,10 @@ a separate video player positioned on top of the app's content video player.
 
 |             | Android | iOS   |
 |-------------|---------|-------|
-| **Support** | SDK 21+ | 12.0+ |
+| **Support** | SDK 21+ | 13.0+ |
 
 **NOTE:**
-* Companion ads, Background Audio ads and Google Dynamic Ad Insertion methods are currently not
-  supported.
+* Background Audio ads and Google Dynamic Ad Insertion methods are currently not supported.
 
 ## IMA client-side overview
 
@@ -37,9 +36,13 @@ initialization and playback.
 This guide demonstrates how to integrate the IMA SDK into a new `Widget` using the [video_player][7]
 plugin to display content.
 
-### 1. Add Android Required Permissions
+### 1. Update Android App
 
-If building on Android, add the user permissions required by the IMA SDK for requesting ads in
+If not building for Android, skip this step.
+
+#### Update Android Manifest
+
+Add the user permissions required by the IMA SDK for requesting ads in
 `android/app/src/main/AndroidManifest.xml`.
 
 <?code-excerpt "example/android/app/src/main/AndroidManifest.xml (android_manifest)"?>
@@ -48,6 +51,32 @@ If building on Android, add the user permissions required by the IMA SDK for req
     <!-- Required permissions for the IMA SDK -->
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+```
+
+#### Update Android App-level Gradle
+
+The IMA SDK requires library desugaring enabled, which you must do by setting
+`coreLibraryDesugaringEnabled true` and adding
+`coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'` as a dependency in the
+`android/app/build.gradle` file. For more details, see
+[Java 11+ APIs available through desugaring with the nio specification](https://developer.android.com/studio/write/java11-nio-support-table).
+
+<?code-excerpt "example/android/app/build.gradle (android_desugaring)"?>
+```groovy
+android {
+// ···
+    compileOptions {
+        coreLibraryDesugaringEnabled true
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+    // ···
+}
+// ···
+dependencies {
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
+    // ···
+}
 ```
 
 ### 2. Add Imports
@@ -111,7 +140,9 @@ class _AdExampleWidgetState extends State<AdExampleWidget>
   Widget build(BuildContext context) {
     // ···
   }
+
 }
+
 ```
 
 ### 4. Add the Video Players
@@ -130,29 +161,31 @@ late final AdDisplayContainer _adDisplayContainer = AdDisplayContainer(
         final AdsManager manager = data.manager;
         _adsManager = data.manager;
 
-        manager.setAdsManagerDelegate(AdsManagerDelegate(
-          onAdEvent: (AdEvent event) {
-            debugPrint('OnAdEvent: ${event.type} => ${event.adData}');
-            switch (event.type) {
-              case AdEventType.loaded:
-                manager.start();
-              case AdEventType.contentPauseRequested:
-                _pauseContent();
-              case AdEventType.contentResumeRequested:
-                _resumeContent();
-              case AdEventType.allAdsCompleted:
-                manager.destroy();
-                _adsManager = null;
-              case AdEventType.clicked:
-              case AdEventType.complete:
-              case _:
-            }
-          },
-          onAdErrorEvent: (AdErrorEvent event) {
-            debugPrint('AdErrorEvent: ${event.error.message}');
-            _resumeContent();
-          },
-        ));
+        manager.setAdsManagerDelegate(
+          AdsManagerDelegate(
+            onAdEvent: (AdEvent event) {
+              debugPrint('OnAdEvent: ${event.type} => ${event.adData}');
+              switch (event.type) {
+                case AdEventType.loaded:
+                  manager.start();
+                case AdEventType.contentPauseRequested:
+                  _pauseContent();
+                case AdEventType.contentResumeRequested:
+                  _resumeContent();
+                case AdEventType.allAdsCompleted:
+                  manager.destroy();
+                  _adsManager = null;
+                case AdEventType.clicked:
+                case AdEventType.complete:
+                case _:
+              }
+            },
+            onAdErrorEvent: (AdErrorEvent event) {
+              debugPrint('AdErrorEvent: ${event.error.message}');
+              _resumeContent();
+            },
+          ),
+        );
 
         manager.init(settings: AdsRenderingSettings(enablePreloading: true));
       },
@@ -172,21 +205,22 @@ late final AdDisplayContainer _adDisplayContainer = AdDisplayContainer(
 void initState() {
   super.initState();
   // ···
-  _contentVideoController = VideoPlayerController.networkUrl(
-    Uri.parse(
-      'https://storage.googleapis.com/gvabox/media/samples/stock.mp4',
-    ),
-  )
-    ..addListener(() {
-      if (_contentVideoController.value.isCompleted) {
-        _adsLoader.contentComplete();
-      }
-      setState(() {});
-    })
-    ..initialize().then((_) {
-      // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
-      setState(() {});
-    });
+  _contentVideoController =
+      VideoPlayerController.networkUrl(
+          Uri.parse(
+            'https://storage.googleapis.com/gvabox/media/samples/stock.mp4',
+          ),
+        )
+        ..addListener(() {
+          if (_contentVideoController.value.isCompleted) {
+            _adsLoader.contentComplete();
+          }
+          setState(() {});
+        })
+        ..initialize().then((_) {
+          // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
+          setState(() {});
+        });
 }
 ```
 
@@ -213,7 +247,7 @@ Widget build(BuildContext context) {
                     // ads.
                     _adDisplayContainer,
                     if (_shouldShowContentVideo)
-                      VideoPlayer(_contentVideoController)
+                      VideoPlayer(_contentVideoController),
                   ],
                 ),
               ),
@@ -221,23 +255,24 @@ Widget build(BuildContext context) {
     ),
     floatingActionButton:
         _contentVideoController.value.isInitialized && _shouldShowContentVideo
-            ? FloatingActionButton(
-                onPressed: () {
-                  setState(() {
-                    _contentVideoController.value.isPlaying
-                        ? _contentVideoController.pause()
-                        : _contentVideoController.play();
-                  });
-                },
-                child: Icon(
-                  _contentVideoController.value.isPlaying
-                      ? Icons.pause
-                      : Icons.play_arrow,
-                ),
-              )
-            : null,
+        ? FloatingActionButton(
+            onPressed: () {
+              setState(() {
+                _contentVideoController.value.isPlaying
+                    ? _contentVideoController.pause()
+                    : _contentVideoController.play();
+              });
+            },
+            child: Icon(
+              _contentVideoController.value.isPlaying
+                  ? Icons.pause
+                  : Icons.play_arrow,
+            ),
+          )
+        : null,
   );
 }
+
 ```
 
 ### 6. Request Ads
@@ -247,10 +282,12 @@ Handle requesting ads and add event listeners to handle when content should be d
 <?code-excerpt "example/lib/readme_example.dart (request_ads)"?>
 ```dart
 Future<void> _requestAds(AdDisplayContainer container) {
-  return _adsLoader.requestAds(AdsRequest(
-    adTagUrl: _adTagUrl,
-    contentProgressProvider: _contentProgressProvider,
-  ));
+  return _adsLoader.requestAds(
+    AdsRequest(
+      adTagUrl: _adTagUrl,
+      contentProgressProvider: _contentProgressProvider,
+    ),
+  );
 }
 
 Future<void> _resumeContent() async {
