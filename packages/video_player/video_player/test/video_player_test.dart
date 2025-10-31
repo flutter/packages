@@ -1057,13 +1057,16 @@ void main() {
         await controller.initialize();
         const Duration initDuration = Duration(milliseconds: 100);
         controller.value = controller.value.copyWith(duration: initDuration);
-        
+
         final StreamController<VideoEvent> fakeVideoEventStream =
             fakeVideoPlayerPlatform.streams[controller.playerId]!;
 
         const Duration updatedDuration = Duration(milliseconds: 200);
         fakeVideoEventStream.add(
-          VideoEvent(eventType: VideoEventType.durationUpdate, duration: updatedDuration),
+          VideoEvent(
+            eventType: VideoEventType.durationUpdate,
+            duration: updatedDuration,
+          ),
         );
 
         await tester.pumpAndSettle();

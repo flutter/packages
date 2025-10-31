@@ -349,7 +349,7 @@ enum VideoEventType {
   /// The video stopped to buffer.
   bufferingEnd,
 
-  /// The video duration has updated. 
+  /// The video duration has updated.
   durationUpdate,
 
   /// The playback state of the video has changed.
