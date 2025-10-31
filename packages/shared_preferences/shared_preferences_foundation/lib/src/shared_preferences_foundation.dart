@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:flutter/services.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
 import 'package:shared_preferences_platform_interface/types.dart';
@@ -12,7 +13,11 @@ typedef _Setter = Future<void> Function(String key, Object value);
 
 /// iOS and macOS implementation of shared_preferences.
 class SharedPreferencesFoundation extends SharedPreferencesStorePlatform {
-  final LegacyUserDefaultsApi _api = LegacyUserDefaultsApi();
+  /// Creates an instance of [SharedPreferencesFoundation].
+  SharedPreferencesFoundation({@visibleForTesting LegacyUserDefaultsApi? api})
+    : _api = api ?? LegacyUserDefaultsApi();
+
+  final LegacyUserDefaultsApi _api;
 
   static const String _defaultPrefix = 'flutter.';
 
