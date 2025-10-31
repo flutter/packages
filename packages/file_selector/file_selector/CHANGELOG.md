@@ -1,3 +1,7 @@
+## 1.1.0
+
+* Adds `canCreateDirectories` param to `getSaveLocation`, `getDirectoryPath` and `getDirectoryPaths` to control whether users can create directories during location selection.
+
 ## 1.0.4
 
 * Updates the example app and README examples to work on iOS.
