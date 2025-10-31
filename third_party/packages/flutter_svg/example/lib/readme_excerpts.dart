@@ -12,9 +12,6 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-// #docregion PrecompiledAsset
-import 'package:vector_graphics/vector_graphics.dart';
-// #enddocregion PrecompiledAsset
 
 /// Loads an SVG asset.
 Widget loadAsset() {
@@ -73,7 +70,7 @@ Widget loadNetworkAssetWithPlaceholder() {
 // to sanity-check the structure of the example code.
 Widget loadPrecompiledAsset() {
   // #docregion PrecompiledAsset
-  const Widget svg = SvgPicture(AssetBytesLoader('assets/foo.svg.vec'));
+  final Widget svg = SvgPicture.precompiled('assets/foo.svg.vec');
   // #enddocregion PrecompiledAsset
   return svg;
 }

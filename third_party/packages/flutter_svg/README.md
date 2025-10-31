@@ -150,14 +150,12 @@ clipping, masking, and overdraw. The SVG compilation is provided by
 dart run vector_graphics_compiler -i assets/foo.svg -o assets/foo.svg.vec
 ```
 
-The output `foo.svg.vec` can be loaded using the default constructor of
-`SvgPicture`.
+The output `foo.svg.vec` can be loaded using the `SvgPicture.precompiled`
+constructor.
 
 <?code-excerpt "example/lib/readme_excerpts.dart (PrecompiledAsset)"?>
 ```dart
-import 'package:vector_graphics/vector_graphics.dart';
-// ···
-  const Widget svg = SvgPicture(AssetBytesLoader('assets/foo.svg.vec'));
+final Widget svg = SvgPicture.precompiled('assets/foo.svg.vec');
 ```
 
 ### Check SVG compatibility
