@@ -19,27 +19,27 @@ private class FakeMediaSettingsAVWrapper: FLTCamMediaSettingsAVWrapper {
     self.inputMock = inputMock
   }
 
-  override func lockDevice(_ captureDevice: FLTCaptureDevice) throws {
+  override func lockDevice(_ captureDevice: CaptureDevice) throws {
     // No-op.
   }
 
-  override func unlockDevice(_ captureDevice: FLTCaptureDevice) {
+  override func unlockDevice(_ captureDevice: CaptureDevice) {
     // No-op.
   }
 
-  override func beginConfiguration(for videoCaptureSession: FLTCaptureSession) {
+  override func beginConfiguration(for videoCaptureSession: CaptureSession) {
     // No-op.
   }
 
-  override func commitConfiguration(for videoCaptureSession: FLTCaptureSession) {
+  override func commitConfiguration(for videoCaptureSession: CaptureSession) {
     // No-op.
   }
 
-  override func setMinFrameDuration(_ duration: CMTime, on captureDevice: FLTCaptureDevice) {
+  override func setMinFrameDuration(_ duration: CMTime, on captureDevice: CaptureDevice) {
     // No-op.
   }
 
-  override func setMaxFrameDuration(_ duration: CMTime, on captureDevice: FLTCaptureDevice) {
+  override func setMaxFrameDuration(_ duration: CMTime, on captureDevice: CaptureDevice) {
     // No-op.
   }
 
