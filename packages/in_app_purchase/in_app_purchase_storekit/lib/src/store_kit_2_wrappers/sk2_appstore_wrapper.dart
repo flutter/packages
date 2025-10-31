@@ -2,9 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import '../../store_kit_2_wrappers.dart';
-
-InAppPurchase2API _hostApi = InAppPurchase2API();
+import '../in_app_purchase_apis.dart';
 
 /// Wrapper for StoreKit2's AppStore
 /// (https://developer.apple.com/documentation/storekit/appstore)
@@ -13,7 +11,7 @@ final class AppStore {
   /// Returns a bool that indicates whether the person can make purchases.
   /// https://developer.apple.com/documentation/storekit/appstore/3822277-canmakepayments
   Future<bool> canMakePayments() {
-    return _hostApi.canMakePayments();
+    return hostApi2.canMakePayments();
   }
 
   /// Dart wrapper for StoreKit2's sync()
@@ -21,6 +19,6 @@ final class AppStore {
   /// Will initiate an authentication pop up.
   /// https://developer.apple.com/documentation/storekit/appstore/sync()
   Future<void> sync() {
-    return _hostApi.sync();
+    return hostApi2.sync();
   }
 }
