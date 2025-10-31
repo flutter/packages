@@ -62,7 +62,7 @@ class NavigationDelegateProxyAPITests: XCTestCase {
     let registrar = TestProxyApiRegistrar()
     let instance = NavigationDelegateImpl(api: api, registrar: registrar)
     let webView = WKWebView(frame: .zero)
-    let navigationResponse = TestNavigationResponse()
+    let navigationResponse = TestNavigationResponse.instance
 
     var result: WKNavigationResponsePolicy?
     let callbackExpectation = expectation(description: "Wait for callback.")
