@@ -307,6 +307,242 @@ class TexturePlayerIds {
   int get hashCode => Object.hashAll(_toList());
 }
 
+class PlaybackState {
+  PlaybackState({required this.playPosition, required this.bufferPosition});
+
+  /// The current playback position, in milliseconds.
+  int playPosition;
+
+  /// The current buffer position, in milliseconds.
+  int bufferPosition;
+
+  List<Object?> _toList() {
+    return <Object?>[playPosition, bufferPosition];
+  }
+
+  Object encode() {
+    return _toList();
+  }
+
+  static PlaybackState decode(Object result) {
+    result as List<Object?>;
+    return PlaybackState(
+      playPosition: result[0]! as int,
+      bufferPosition: result[1]! as int,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PlaybackState || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
+}
+
+/// Represents an audio track in a video.
+class AudioTrackMessage {
+  AudioTrackMessage({
+    required this.id,
+    required this.label,
+    required this.language,
+    required this.isSelected,
+    this.bitrate,
+    this.sampleRate,
+    this.channelCount,
+    this.codec,
+  });
+
+  String id;
+
+  String label;
+
+  String language;
+
+  bool isSelected;
+
+  int? bitrate;
+
+  int? sampleRate;
+
+  int? channelCount;
+
+  String? codec;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      id,
+      label,
+      language,
+      isSelected,
+      bitrate,
+      sampleRate,
+      channelCount,
+      codec,
+    ];
+  }
+
+  Object encode() {
+    return _toList();
+  }
+
+  static AudioTrackMessage decode(Object result) {
+    result as List<Object?>;
+    return AudioTrackMessage(
+      id: result[0]! as String,
+      label: result[1]! as String,
+      language: result[2]! as String,
+      isSelected: result[3]! as bool,
+      bitrate: result[4] as int?,
+      sampleRate: result[5] as int?,
+      channelCount: result[6] as int?,
+      codec: result[7] as String?,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! AudioTrackMessage || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
+}
+
+/// Raw audio track data from ExoPlayer Format objects.
+class ExoPlayerAudioTrackData {
+  ExoPlayerAudioTrackData({
+    required this.trackId,
+    this.label,
+    this.language,
+    required this.isSelected,
+    this.bitrate,
+    this.sampleRate,
+    this.channelCount,
+    this.codec,
+  });
+
+  String trackId;
+
+  String? label;
+
+  String? language;
+
+  bool isSelected;
+
+  int? bitrate;
+
+  int? sampleRate;
+
+  int? channelCount;
+
+  String? codec;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      trackId,
+      label,
+      language,
+      isSelected,
+      bitrate,
+      sampleRate,
+      channelCount,
+      codec,
+    ];
+  }
+
+  Object encode() {
+    return _toList();
+  }
+
+  static ExoPlayerAudioTrackData decode(Object result) {
+    result as List<Object?>;
+    return ExoPlayerAudioTrackData(
+      trackId: result[0]! as String,
+      label: result[1] as String?,
+      language: result[2] as String?,
+      isSelected: result[3]! as bool,
+      bitrate: result[4] as int?,
+      sampleRate: result[5] as int?,
+      channelCount: result[6] as int?,
+      codec: result[7] as String?,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! ExoPlayerAudioTrackData || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
+}
+
+/// Container for raw audio track data from Android ExoPlayer.
+class NativeAudioTrackData {
+  NativeAudioTrackData({this.exoPlayerTracks});
+
+  /// ExoPlayer-based tracks
+  List<ExoPlayerAudioTrackData>? exoPlayerTracks;
+
+  List<Object?> _toList() {
+    return <Object?>[exoPlayerTracks];
+  }
+
+  Object encode() {
+    return _toList();
+  }
+
+  static NativeAudioTrackData decode(Object result) {
+    result as List<Object?>;
+    return NativeAudioTrackData(
+      exoPlayerTracks: (result[0] as List<Object?>?)
+          ?.cast<ExoPlayerAudioTrackData>(),
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! NativeAudioTrackData || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
+}
+
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
@@ -338,6 +574,18 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is TexturePlayerIds) {
       buffer.putUint8(136);
       writeValue(buffer, value.encode());
+    } else if (value is PlaybackState) {
+      buffer.putUint8(137);
+      writeValue(buffer, value.encode());
+    } else if (value is AudioTrackMessage) {
+      buffer.putUint8(138);
+      writeValue(buffer, value.encode());
+    } else if (value is ExoPlayerAudioTrackData) {
+      buffer.putUint8(139);
+      writeValue(buffer, value.encode());
+    } else if (value is NativeAudioTrackData) {
+      buffer.putUint8(140);
+      writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
     }
@@ -364,6 +612,14 @@ class _PigeonCodec extends StandardMessageCodec {
         return CreationOptions.decode(readValue(buffer)!);
       case 136:
         return TexturePlayerIds.decode(readValue(buffer)!);
+      case 137:
+        return PlaybackState.decode(readValue(buffer)!);
+      case 138:
+        return AudioTrackMessage.decode(readValue(buffer)!);
+      case 139:
+        return ExoPlayerAudioTrackData.decode(readValue(buffer)!);
+      case 140:
+        return NativeAudioTrackData.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -807,6 +1063,65 @@ class VideoPlayerInstanceApi {
       );
     } else {
       return (pigeonVar_replyList[0] as int?)!;
+    }
+  }
+
+  /// Gets the available audio tracks for the video.
+  Future<NativeAudioTrackData> getAudioTracks() async {
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.getAudioTracks$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as NativeAudioTrackData?)!;
+    }
+  }
+
+  /// Selects which audio track is chosen for playback from its [trackId]
+  Future<void> selectAudioTrack(String trackId) async {
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.selectAudioTrack$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[trackId],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return;
     }
   }
 }
