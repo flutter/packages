@@ -1049,6 +1049,27 @@ void main() {
         expect(controller.value.isBuffering, isFalse);
         await tester.runAsync(controller.dispose);
       });
+
+      testWidgets('buffering status', (WidgetTester tester) async {
+        final VideoPlayerController controller =
+            VideoPlayerController.networkUrl(_localhostUri);
+
+        await controller.initialize();
+        const Duration initDuration = Duration(milliseconds: 100);
+        controller.value = controller.value.copyWith(duration: initDuration);
+        
+        final StreamController<VideoEvent> fakeVideoEventStream =
+            fakeVideoPlayerPlatform.streams[controller.playerId]!;
+
+        const Duration updatedDuration = Duration(milliseconds: 200);
+        fakeVideoEventStream.add(
+          VideoEvent(eventType: VideoEventType.durationUpdate, duration: updatedDuration),
+        );
+
+        await tester.pumpAndSettle();
+        expect(controller.value.duration, updatedDuration);
+        await tester.runAsync(controller.dispose);
+      });
     });
   });
 
