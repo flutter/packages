@@ -7,6 +7,7 @@
 
 import 'dart:async';
 import 'dart:io';
+import 'dart:math' as math show max;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -433,9 +434,9 @@ class _VideoPlayerState extends State<VideoPlayer> {
   }
 
   @override
-  void deactivate() {
-    super.deactivate();
+  void dispose() {
     widget.controller.removeListener(_listener);
+    super.dispose();
   }
 
   @override
@@ -535,9 +536,9 @@ class _VideoProgressIndicatorState extends State<VideoProgressIndicator> {
   }
 
   @override
-  void deactivate() {
+  void dispose() {
     controller.removeListener(listener);
-    super.deactivate();
+    super.dispose();
   }
 
   @override
@@ -546,29 +547,28 @@ class _VideoProgressIndicatorState extends State<VideoProgressIndicator> {
     const Color bufferedColor = Color.fromRGBO(50, 50, 200, 0.2);
     const Color backgroundColor = Color.fromRGBO(200, 200, 200, 0.5);
 
-    Widget progressIndicator;
+    final Widget progressIndicator;
     if (controller.value.isInitialized) {
       final int duration = controller.value.duration.inMilliseconds;
       final int position = controller.value.position.inMilliseconds;
 
-      int maxBuffering = 0;
-      for (final DurationRange range in controller.value.buffered) {
-        final int end = range.end.inMilliseconds;
-        if (end > maxBuffering) {
-          maxBuffering = end;
-        }
-      }
+      final double maxBuffering = duration == 0.0
+          ? 0.0
+          : controller.value.buffered
+                    .map((DurationRange range) => range.end.inMilliseconds)
+                    .fold(0, math.max) /
+                duration;
 
       progressIndicator = Stack(
         fit: StackFit.passthrough,
         children: <Widget>[
           LinearProgressIndicator(
-            value: maxBuffering / duration,
+            value: maxBuffering,
             valueColor: const AlwaysStoppedAnimation<Color>(bufferedColor),
             backgroundColor: backgroundColor,
           ),
           LinearProgressIndicator(
-            value: position / duration,
+            value: duration == 0.0 ? 0.0 : position / duration,
             valueColor: const AlwaysStoppedAnimation<Color>(playedColor),
             backgroundColor: Colors.transparent,
           ),
