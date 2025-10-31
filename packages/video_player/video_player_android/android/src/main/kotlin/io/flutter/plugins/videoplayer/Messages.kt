@@ -55,7 +55,7 @@ private object MessagesPigeonUtils {
     }
     if (a is Map<*, *> && b is Map<*, *>) {
       return a.size == b.size &&
-          a.all { (b as Map<Any?, Any?>).contains(it.key) && deepEquals(it.value, b[it.key]) }
+          a.all { (b as Map<Any?, Any?>).containsKey(it.key) && deepEquals(it.value, b[it.key]) }
     }
     return a == b
   }
@@ -326,6 +326,188 @@ data class TexturePlayerIds(val playerId: Long, val textureId: Long) {
   override fun hashCode(): Int = toList().hashCode()
 }
 
+/** Generated class from Pigeon that represents data sent in messages. */
+data class PlaybackState(
+    /** The current playback position, in milliseconds. */
+    val playPosition: Long,
+    /** The current buffer position, in milliseconds. */
+    val bufferPosition: Long
+) {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): PlaybackState {
+      val playPosition = pigeonVar_list[0] as Long
+      val bufferPosition = pigeonVar_list[1] as Long
+      return PlaybackState(playPosition, bufferPosition)
+    }
+  }
+
+  fun toList(): List<Any?> {
+    return listOf(
+        playPosition,
+        bufferPosition,
+    )
+  }
+
+  override fun equals(other: Any?): Boolean {
+    if (other !is PlaybackState) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return MessagesPigeonUtils.deepEquals(toList(), other.toList())
+  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/**
+ * Represents an audio track in a video.
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ */
+data class AudioTrackMessage(
+    val id: String,
+    val label: String,
+    val language: String,
+    val isSelected: Boolean,
+    val bitrate: Long? = null,
+    val sampleRate: Long? = null,
+    val channelCount: Long? = null,
+    val codec: String? = null
+) {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): AudioTrackMessage {
+      val id = pigeonVar_list[0] as String
+      val label = pigeonVar_list[1] as String
+      val language = pigeonVar_list[2] as String
+      val isSelected = pigeonVar_list[3] as Boolean
+      val bitrate = pigeonVar_list[4] as Long?
+      val sampleRate = pigeonVar_list[5] as Long?
+      val channelCount = pigeonVar_list[6] as Long?
+      val codec = pigeonVar_list[7] as String?
+      return AudioTrackMessage(
+          id, label, language, isSelected, bitrate, sampleRate, channelCount, codec)
+    }
+  }
+
+  fun toList(): List<Any?> {
+    return listOf(
+        id,
+        label,
+        language,
+        isSelected,
+        bitrate,
+        sampleRate,
+        channelCount,
+        codec,
+    )
+  }
+
+  override fun equals(other: Any?): Boolean {
+    if (other !is AudioTrackMessage) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return MessagesPigeonUtils.deepEquals(toList(), other.toList())
+  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/**
+ * Raw audio track data from ExoPlayer Format objects.
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ */
+data class ExoPlayerAudioTrackData(
+    val trackId: String,
+    val label: String? = null,
+    val language: String? = null,
+    val isSelected: Boolean,
+    val bitrate: Long? = null,
+    val sampleRate: Long? = null,
+    val channelCount: Long? = null,
+    val codec: String? = null
+) {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): ExoPlayerAudioTrackData {
+      val trackId = pigeonVar_list[0] as String
+      val label = pigeonVar_list[1] as String?
+      val language = pigeonVar_list[2] as String?
+      val isSelected = pigeonVar_list[3] as Boolean
+      val bitrate = pigeonVar_list[4] as Long?
+      val sampleRate = pigeonVar_list[5] as Long?
+      val channelCount = pigeonVar_list[6] as Long?
+      val codec = pigeonVar_list[7] as String?
+      return ExoPlayerAudioTrackData(
+          trackId, label, language, isSelected, bitrate, sampleRate, channelCount, codec)
+    }
+  }
+
+  fun toList(): List<Any?> {
+    return listOf(
+        trackId,
+        label,
+        language,
+        isSelected,
+        bitrate,
+        sampleRate,
+        channelCount,
+        codec,
+    )
+  }
+
+  override fun equals(other: Any?): Boolean {
+    if (other !is ExoPlayerAudioTrackData) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return MessagesPigeonUtils.deepEquals(toList(), other.toList())
+  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/**
+ * Container for raw audio track data from Android ExoPlayer.
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ */
+data class NativeAudioTrackData(
+    /** ExoPlayer-based tracks */
+    val exoPlayerTracks: List<ExoPlayerAudioTrackData>? = null
+) {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): NativeAudioTrackData {
+      val exoPlayerTracks = pigeonVar_list[0] as List<ExoPlayerAudioTrackData>?
+      return NativeAudioTrackData(exoPlayerTracks)
+    }
+  }
+
+  fun toList(): List<Any?> {
+    return listOf(
+        exoPlayerTracks,
+    )
+  }
+
+  override fun equals(other: Any?): Boolean {
+    if (other !is NativeAudioTrackData) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return MessagesPigeonUtils.deepEquals(toList(), other.toList())
+  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
 private open class MessagesPigeonCodec : StandardMessageCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
     return when (type) {
@@ -354,6 +536,18 @@ private open class MessagesPigeonCodec : StandardMessageCodec() {
       }
       136.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { TexturePlayerIds.fromList(it) }
+      }
+      137.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let { PlaybackState.fromList(it) }
+      }
+      138.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let { AudioTrackMessage.fromList(it) }
+      }
+      139.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let { ExoPlayerAudioTrackData.fromList(it) }
+      }
+      140.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let { NativeAudioTrackData.fromList(it) }
       }
       else -> super.readValueOfType(type, buffer)
     }
@@ -391,6 +585,22 @@ private open class MessagesPigeonCodec : StandardMessageCodec() {
       }
       is TexturePlayerIds -> {
         stream.write(136)
+        writeValue(stream, value.toList())
+      }
+      is PlaybackState -> {
+        stream.write(137)
+        writeValue(stream, value.toList())
+      }
+      is AudioTrackMessage -> {
+        stream.write(138)
+        writeValue(stream, value.toList())
+      }
+      is ExoPlayerAudioTrackData -> {
+        stream.write(139)
+        writeValue(stream, value.toList())
+      }
+      is NativeAudioTrackData -> {
+        stream.write(140)
         writeValue(stream, value.toList())
       }
       else -> super.writeValue(stream, value)
@@ -584,6 +794,10 @@ interface VideoPlayerInstanceApi {
   fun getCurrentPosition(): Long
   /** Returns the current buffer position, in milliseconds. */
   fun getBufferedPosition(): Long
+  /** Gets the available audio tracks for the video. */
+  fun getAudioTracks(): NativeAudioTrackData
+  /** Selects which audio track is chosen for playback from its [trackId] */
+  fun selectAudioTrack(trackId: String)
 
   companion object {
     /** The codec used by VideoPlayerInstanceApi. */
@@ -765,6 +979,49 @@ interface VideoPlayerInstanceApi {
             val wrapped: List<Any?> =
                 try {
                   listOf(api.getBufferedPosition())
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.getAudioTracks$separatedMessageChannelSuffix",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { _, reply ->
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.getAudioTracks())
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.selectAudioTrack$separatedMessageChannelSuffix",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val trackIdArg = args[0] as String
+            val wrapped: List<Any?> =
+                try {
+                  api.selectAudioTrack(trackIdArg)
+                  listOf(null)
                 } catch (exception: Throwable) {
                   MessagesPigeonUtils.wrapError(exception)
                 }
