@@ -1050,7 +1050,7 @@ void main() {
         await tester.runAsync(controller.dispose);
       });
 
-      testWidgets('buffering status', (WidgetTester tester) async {
+      testWidgets('duration update', (WidgetTester tester) async {
         final VideoPlayerController controller =
             VideoPlayerController.networkUrl(_localhostUri);
 
