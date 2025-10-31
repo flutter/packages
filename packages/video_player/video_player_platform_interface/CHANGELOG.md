@@ -1,3 +1,7 @@
+## 6.7.0
+
+* Add new `VideoEventType` type `durationUpdate`
+
 ## 6.6.0
 
 * Adds `VideoAudioTrack` class and `getAudioTracks()`, `selectAudioTrack()`, `isAudioTrackSupportAvailable()` methods for audio track management.
