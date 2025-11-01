@@ -45,13 +45,15 @@
     fromPlatformCircle:(FGMPlatformCircle *)platformCircle
            withMapView:(GMSMapView *)mapView {
   circle.tappable = platformCircle.consumeTapEvents;
-  circle.map = platformCircle.visible ? mapView : nil;
   circle.zIndex = platformCircle.zIndex;
   circle.position = FGMGetCoordinateForPigeonLatLng(platformCircle.center);
   circle.radius = platformCircle.radius;
   circle.strokeColor = FGMGetColorForRGBA(platformCircle.strokeColor);
   circle.strokeWidth = platformCircle.strokeWidth;
   circle.fillColor = FGMGetColorForRGBA(platformCircle.fillColor);
+
+  // This must be done last, to avoid visual flickers of default property values.
+  circle.map = platformCircle.visible ? mapView : nil;
 }
 
 @end

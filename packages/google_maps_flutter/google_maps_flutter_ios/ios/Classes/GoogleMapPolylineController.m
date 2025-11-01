@@ -42,7 +42,6 @@
     fromPlatformPolyline:(FGMPlatformPolyline *)platformPolyline
              withMapView:(GMSMapView *)mapView {
   polyline.tappable = platformPolyline.consumesTapEvents;
-  polyline.map = platformPolyline.visible ? mapView : nil;
   polyline.zIndex = (int)platformPolyline.zIndex;
   GMSMutablePath *path =
       FGMGetPathFromPoints(FGMGetPointsForPigeonLatLngs(platformPolyline.points));
@@ -54,6 +53,9 @@
   polyline.spans =
       GMSStyleSpans(path, FGMGetStrokeStylesFromPatterns(platformPolyline.patterns, strokeColor),
                     FGMGetSpanLengthsFromPatterns(platformPolyline.patterns), kGMSLengthRhumb);
+
+  // This must be done last, to avoid visual flickers of default property values.
+  polyline.map = platformPolyline.visible ? mapView : nil;
 }
 
 @end

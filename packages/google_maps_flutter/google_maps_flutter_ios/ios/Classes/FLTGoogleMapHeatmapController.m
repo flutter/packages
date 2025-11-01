@@ -86,6 +86,7 @@
   }
 
   // The map must be set each time for options to update.
+  // This must be done last, to avoid visual flickers of default property values.
   heatmapTileLayer.map = mapView;
 }
 @end

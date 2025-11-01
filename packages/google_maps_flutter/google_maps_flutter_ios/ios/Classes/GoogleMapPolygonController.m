@@ -53,7 +53,6 @@ static NSArray<GMSMutablePath *> *FMGPathHolesFromLocationHoles(
     fromPlatformPolygon:(FGMPlatformPolygon *)platformPolygon
             withMapView:(GMSMapView *)mapView {
   polygon.tappable = platformPolygon.consumesTapEvents;
-  polygon.map = platformPolygon.visible ? mapView : nil;
   polygon.zIndex = (int)platformPolygon.zIndex;
   polygon.path = FGMGetPathFromPoints(FGMGetPointsForPigeonLatLngs(platformPolygon.points));
   polygon.holes =
@@ -61,6 +60,9 @@ static NSArray<GMSMutablePath *> *FMGPathHolesFromLocationHoles(
   polygon.fillColor = FGMGetColorForRGBA(platformPolygon.fillColor);
   polygon.strokeColor = FGMGetColorForRGBA(platformPolygon.strokeColor);
   polygon.strokeWidth = platformPolygon.strokeWidth;
+
+  // This must be done last, to avoid visual flickers of default property values.
+  polygon.map = platformPolygon.visible ? mapView : nil;
 }
 
 @end

@@ -72,6 +72,8 @@
     groundOverlay.position = CLLocationCoordinate2DMake(platformGroundOverlay.position.latitude,
                                                         platformGroundOverlay.position.longitude);
   }
+
+  // This must be done last, to avoid visual flickers of default property values.
   groundOverlay.map = platformGroundOverlay.visible ? mapView : nil;
 }
 

@@ -47,11 +47,13 @@
 + (void)updateTileLayer:(GMSTileLayer *)tileLayer
     fromPlatformTileOverlay:(FGMPlatformTileOverlay *)platformOverlay
                 withMapView:(GMSMapView *)mapView {
-  tileLayer.map = platformOverlay.visible ? mapView : nil;
   tileLayer.opacity = 1.0 - platformOverlay.transparency;
   tileLayer.zIndex = (int)platformOverlay.zIndex;
   tileLayer.fadeIn = platformOverlay.fadeIn;
   tileLayer.tileSize = platformOverlay.tileSize;
+
+  // This must be done last, to avoid visual flickers of default property values.
+  tileLayer.map = platformOverlay.visible ? mapView : nil;
 }
 
 @end
