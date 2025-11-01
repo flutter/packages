@@ -108,6 +108,15 @@ void main() {
       );
     });
 
+    testWidgets('serializes to true when no constraints are provided',
+        (WidgetTester tester) async {
+      const VideoConstraints videoConstraints = VideoConstraints();
+      expect(
+        videoConstraints.toMediaStreamConstraints().dartify(),
+        isTrue,
+      );
+    });
+
     testWidgets('supports value equality', (WidgetTester tester) async {
       expect(
         VideoConstraints(
