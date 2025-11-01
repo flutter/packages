@@ -3314,6 +3314,7 @@ class Preview extends UseCase {
     super.pigeon_instanceManager,
     this.resolutionSelector,
     int? targetRotation,
+    int? targetFps,
   }) : super.pigeon_detached() {
     final int pigeonVar_instanceIdentifier = pigeon_instanceManager
         .addDartCreatedInstance(this);
@@ -3333,6 +3334,7 @@ class Preview extends UseCase {
         pigeonVar_instanceIdentifier,
         resolutionSelector,
         targetRotation,
+        targetFps,
       ],
     );
     () async {
@@ -3622,6 +3624,7 @@ class VideoCapture extends UseCase {
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
     required VideoOutput videoOutput,
+    int? targetFps,
   }) : super.pigeon_detached() {
     final int pigeonVar_instanceIdentifier = pigeon_instanceManager
         .addDartCreatedInstance(this);
@@ -3637,7 +3640,7 @@ class VideoCapture extends UseCase {
           binaryMessenger: pigeonVar_binaryMessenger,
         );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[pigeonVar_instanceIdentifier, videoOutput],
+      <Object?>[pigeonVar_instanceIdentifier, videoOutput, targetFps],
     );
     () async {
       final List<Object?>? pigeonVar_replyList =
@@ -5967,6 +5970,7 @@ class ImageAnalysis extends UseCase {
     super.pigeon_instanceManager,
     this.resolutionSelector,
     int? targetRotation,
+    int? targetFps,
     int? outputImageFormat,
   }) : super.pigeon_detached() {
     final int pigeonVar_instanceIdentifier = pigeon_instanceManager
@@ -5987,6 +5991,7 @@ class ImageAnalysis extends UseCase {
           pigeonVar_instanceIdentifier,
           resolutionSelector,
           targetRotation,
+          targetFps,
           outputImageFormat,
         ]);
     () async {
@@ -6793,7 +6798,7 @@ class ImageProxy extends PigeonInternalProxyApiBaseClass {
   }
 }
 
-/// Utils for working with [ImageProxy]s.
+/// Utilities for working with [ImageProxy]s.
 class ImageProxyUtils extends PigeonInternalProxyApiBaseClass {
   /// Constructs [ImageProxyUtils] without creating the associated native object.
   ///
@@ -6863,8 +6868,7 @@ class ImageProxyUtils extends PigeonInternalProxyApiBaseClass {
     }
   }
 
-  /// Returns a single Byte Buffer that is representative of the [planes]
-  /// that are NV21 compatible.
+  /// Returns a single buffer that is representative of three NV21-compatible [planes].
   static Future<Uint8List> getNv21Buffer(
     int imageWidth,
     int imageHeight,

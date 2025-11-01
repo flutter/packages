@@ -1,3 +1,7 @@
+## 0.6.25
+
+* Use `MediaSettings::fps` for camera preview, image streaming, and video recording.
+
 ## 0.6.24
 
 * Change plugin to assume mp4 format for capture videos.
