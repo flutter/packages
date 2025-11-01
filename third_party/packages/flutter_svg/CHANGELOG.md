@@ -1,3 +1,7 @@
+## 2.2.2
+
+* Fixes typo of `allowDrawingOutsideViewBox` in doc comments.
+
 ## 2.2.1
 
 * Fixes message buffer access in SvgAssetLoader.

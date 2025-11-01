@@ -65,7 +65,7 @@ class SvgPicture extends StatelessWidget {
   /// If `matchTextDirection` is set to true, the picture will be flipped
   /// horizontally in [TextDirection.rtl] contexts.
   ///
-  /// The `allowDrawingOutsideOfViewBox` parameter should be used with caution -
+  /// The `allowDrawingOutsideViewBox` parameter should be used with caution -
   /// if set to true, it will not clip the canvas used internally to the view box,
   /// meaning the picture may draw beyond the intended area and lead to undefined
   /// behavior or additional memory overhead.
@@ -116,7 +116,7 @@ class SvgPicture extends StatelessWidget {
   /// If `matchTextDirection` is set to true, the picture will be flipped
   /// horizontally in [TextDirection.rtl] contexts.
   ///
-  /// The `allowDrawingOutsideOfViewBox` parameter should be used with caution -
+  /// The `allowDrawingOutsideViewBox` parameter should be used with caution -
   /// if set to true, it will not clip the canvas used internally to the view box,
   /// meaning the picture may draw beyond the intended area and lead to undefined
   /// behavior or additional memory overhead.
@@ -222,7 +222,7 @@ class SvgPicture extends StatelessWidget {
   /// If `matchTextDirection` is set to true, the picture will be flipped
   /// horizontally in [TextDirection.rtl] contexts.
   ///
-  /// The `allowDrawingOutsideOfViewBox` parameter should be used with caution -
+  /// The `allowDrawingOutsideViewBox` parameter should be used with caution -
   /// if set to true, it will not clip the canvas used internally to the view box,
   /// meaning the picture may draw beyond the intended area and lead to undefined
   /// behavior or additional memory overhead.
@@ -287,7 +287,7 @@ class SvgPicture extends StatelessWidget {
   /// If `matchTextDirection` is set to true, the picture will be flipped
   /// horizontally in [TextDirection.rtl] contexts.
   ///
-  /// The `allowDrawingOutsideOfViewBox` parameter should be used with caution -
+  /// The `allowDrawingOutsideViewBox` parameter should be used with caution -
   /// if set to true, it will not clip the canvas used internally to the view box,
   /// meaning the picture may draw beyond the intended area and lead to undefined
   /// behavior or additional memory overhead.
@@ -346,7 +346,7 @@ class SvgPicture extends StatelessWidget {
   /// If `matchTextDirection` is set to true, the picture will be flipped
   /// horizontally in [TextDirection.rtl] contexts.
   ///
-  /// The `allowDrawingOutsideOfViewBox` parameter should be used with caution -
+  /// The `allowDrawingOutsideViewBox` parameter should be used with caution -
   /// if set to true, it will not clip the canvas used internally to the view box,
   /// meaning the picture may draw beyond the intended area and lead to undefined
   /// behavior or additional memory overhead.
@@ -402,7 +402,7 @@ class SvgPicture extends StatelessWidget {
   /// If `matchTextDirection` is set to true, the picture will be flipped
   /// horizontally in [TextDirection.rtl] contexts.
   ///
-  /// The `allowDrawingOutsideOfViewBox` parameter should be used with caution -
+  /// The `allowDrawingOutsideViewBox` parameter should be used with caution -
   /// if set to true, it will not clip the canvas used internally to the view box,
   /// meaning the picture may draw beyond the intended area and lead to undefined
   /// behavior or additional memory overhead.
