@@ -7,6 +7,8 @@
 
 #import "messages.g.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 // Defines circle controllable by Flutter.
 @interface FLTGoogleMapCircleController : NSObject
 - (instancetype)initCircleWithPlatformCircle:(FGMPlatformCircle *)circle
@@ -24,3 +26,5 @@
 - (void)didTapCircleWithIdentifier:(NSString *)identifier;
 - (bool)hasCircleWithIdentifier:(NSString *)identifier;
 @end
+
+NS_ASSUME_NONNULL_END
