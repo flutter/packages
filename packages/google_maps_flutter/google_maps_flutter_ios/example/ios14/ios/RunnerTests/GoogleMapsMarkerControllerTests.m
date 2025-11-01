@@ -9,15 +9,22 @@
 
 #import <OCMock/OCMock.h>
 #import <google_maps_flutter_ios/messages.g.h>
+
 #import "PartiallyMockedMapView.h"
+
+/// A GMSMarker that ensures that property updates are made before the map is set.
+@interface PropertyOrderValidatingMarker : GMSMarker {
+}
+@property(nonatomic) BOOL hasSetMap;
+@end
 
 @interface GoogleMapsMarkerControllerTests : XCTestCase
 @end
 
 @implementation GoogleMapsMarkerControllerTests
 
-/// Returns a mocked map view for use with marker controllers.
-- (GMSMapView *)mockedMapView {
+/// Returns a simple map view for use with marker controllers.
++ (GMSMapView *)mapView {
   GMSMapViewOptions *mapViewOptions = [[GMSMapViewOptions alloc] init];
   mapViewOptions.frame = CGRectMake(0, 0, 100, 100);
   mapViewOptions.camera = [[GMSCameraPosition alloc] initWithLatitude:0 longitude:0 zoom:0];
@@ -41,7 +48,7 @@
 }
 
 - (void)testSetsMarkerNumericProperties {
-  GMSMapView *mapView = [self mockedMapView];
+  GMSMapView *mapView = [GoogleMapsMarkerControllerTests mapView];
   FLTMarkersController *controller = [self markersControllerWithMapView:mapView];
 
   NSString *markerIdentifier = @"marker";
@@ -88,7 +95,7 @@
 // Boolean properties are tested individually to ensure they aren't accidentally cross-assigned from
 // another property.
 - (void)testSetsDraggable {
-  GMSMapView *mapView = [self mockedMapView];
+  GMSMapView *mapView = [GoogleMapsMarkerControllerTests mapView];
   FLTMarkersController *controller = [self markersControllerWithMapView:mapView];
 
   NSString *markerIdentifier = @"marker";
@@ -120,7 +127,7 @@
 // Boolean properties are tested individually to ensure they aren't accidentally cross-assigned from
 // another property.
 - (void)testSetsFlat {
-  GMSMapView *mapView = [self mockedMapView];
+  GMSMapView *mapView = [GoogleMapsMarkerControllerTests mapView];
   FLTMarkersController *controller = [self markersControllerWithMapView:mapView];
 
   NSString *markerIdentifier = @"marker";
@@ -152,7 +159,7 @@
 // Boolean properties are tested individually to ensure they aren't accidentally cross-assigned from
 // another property.
 - (void)testSetsVisible {
-  GMSMapView *mapView = [self mockedMapView];
+  GMSMapView *mapView = [GoogleMapsMarkerControllerTests mapView];
   FLTMarkersController *controller = [self markersControllerWithMapView:mapView];
 
   NSString *markerIdentifier = @"marker";
@@ -183,7 +190,7 @@
 }
 
 - (void)testSetsMarkerInfoWindowProperties {
-  GMSMapView *mapView = [self mockedMapView];
+  GMSMapView *mapView = [GoogleMapsMarkerControllerTests mapView];
   FLTMarkersController *controller = [self markersControllerWithMapView:mapView];
 
   NSString *markerIdentifier = @"marker";
@@ -222,4 +229,135 @@
   XCTAssertEqual(marker.snippet, snippet);
 }
 
+- (void)testUpdateMarkerSetsVisibilityLast {
+  PropertyOrderValidatingMarker *marker = [[PropertyOrderValidatingMarker alloc] init];
+  [FLTGoogleMapMarkerController
+                   updateMarker:marker
+             fromPlatformMarker:[FGMPlatformMarker
+                                       makeWithAlpha:1.0
+                                              anchor:[FGMPlatformPoint makeWithX:0 y:0]
+                                    consumeTapEvents:YES
+                                           draggable:YES
+                                                flat:YES
+                                                icon:[self placeholderBitmap]
+                                          infoWindow:[FGMPlatformInfoWindow
+                                                         makeWithTitle:@"info title"
+                                                               snippet:@"info snippet"
+                                                                anchor:[FGMPlatformPoint
+                                                                           makeWithX:0
+                                                                                   y:0]]
+                                            position:[FGMPlatformLatLng makeWithLatitude:0
+                                                                               longitude:0]
+                                            rotation:0
+                                             visible:YES
+                                              zIndex:0
+                                            markerId:@"marker"
+                                    clusterManagerId:nil]
+                    withMapView:[GoogleMapsMarkerControllerTests mapView]
+                      registrar:nil
+                    screenScale:1
+      usingOpacityForVisibility:NO];
+  XCTAssertTrue(marker.hasSetMap);
+}
+
+@end
+
+@implementation PropertyOrderValidatingMarker
+
+- (void)setPosition:(CLLocationCoordinate2D)position {
+  XCTAssertFalse(self.hasSetMap, @"Property set after map was set.");
+  super.position = position;
+}
+
+- (void)setSnippet:(NSString *)snippet {
+  XCTAssertFalse(self.hasSetMap, @"Property set after map was set.");
+  super.snippet = snippet;
+}
+
+- (void)setIcon:(UIImage *)icon {
+  XCTAssertFalse(self.hasSetMap, @"Property set after map was set.");
+  super.icon = icon;
+}
+
+- (void)setIconView:(UIView *)iconView {
+  XCTAssertFalse(self.hasSetMap, @"Property set after map was set.");
+  super.iconView = iconView;
+}
+
+- (void)setTracksViewChanges:(BOOL)tracksViewChanges {
+  XCTAssertFalse(self.hasSetMap, @"Property set after map was set.");
+  super.tracksViewChanges = tracksViewChanges;
+}
+
+- (void)setTracksInfoWindowChanges:(BOOL)tracksInfoWindowChanges {
+  XCTAssertFalse(self.hasSetMap, @"Property set after map was set.");
+  super.tracksInfoWindowChanges = tracksInfoWindowChanges;
+}
+
+- (void)setGroundAnchor:(CGPoint)groundAnchor {
+  XCTAssertFalse(self.hasSetMap, @"Property set after map was set.");
+  super.groundAnchor = groundAnchor;
+}
+
+- (void)setInfoWindowAnchor:(CGPoint)infoWindowAnchor {
+  XCTAssertFalse(self.hasSetMap, @"Property set after map was set.");
+  super.infoWindowAnchor = infoWindowAnchor;
+}
+
+- (void)setAppearAnimation:(GMSMarkerAnimation)appearAnimation {
+  XCTAssertFalse(self.hasSetMap, @"Property set after map was set.");
+  super.appearAnimation = appearAnimation;
+}
+
+- (void)setDraggable:(BOOL)draggable {
+  XCTAssertFalse(self.hasSetMap, @"Property set after map was set.");
+  super.draggable = draggable;
+}
+
+- (void)setFlat:(BOOL)flat {
+  XCTAssertFalse(self.hasSetMap, @"Property set after map was set.");
+  super.flat = flat;
+}
+
+- (void)setRotation:(CLLocationDegrees)rotation {
+  XCTAssertFalse(self.hasSetMap, @"Property set after map was set.");
+  super.rotation = rotation;
+}
+
+- (void)setOpacity:(float)opacity {
+  XCTAssertFalse(self.hasSetMap, @"Property set after map was set.");
+  super.opacity = opacity;
+}
+
+- (void)setPanoramaView:(GMSPanoramaView *)panoramaView {
+  XCTAssertFalse(self.hasSetMap, @"Property set after map was set.");
+  super.panoramaView = panoramaView;
+}
+
+- (void)setTitle:(NSString *)title {
+  XCTAssertFalse(self.hasSetMap, @"Property set after map was set.");
+  super.title = title;
+}
+
+- (void)setTappable:(BOOL)tappable {
+  XCTAssertFalse(self.hasSetMap, @"Property set after map was set.");
+  super.tappable = tappable;
+}
+
+- (void)setZIndex:(int)zIndex {
+  XCTAssertFalse(self.hasSetMap, @"Property set after map was set.");
+  super.zIndex = zIndex;
+}
+
+- (void)setUserData:(id)userData {
+  XCTAssertFalse(self.hasSetMap, @"Property set after map was set.");
+  super.userData = userData;
+}
+
+- (void)setMap:(GMSMapView *)map {
+  // Don't actually set the map, since that requires more test setup.
+  if (map) {
+    self.hasSetMap = YES;
+  }
+}
 @end
