@@ -112,7 +112,7 @@ public class ResolutionFeature extends CameraFeature<ResolutionPreset> {
   }
 
   @Override
-  public boolean checkIsSupported() {
+  public final boolean checkIsSupported() {
     return cameraId >= 0;
   }
 
