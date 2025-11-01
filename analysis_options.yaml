@@ -114,7 +114,7 @@ linter:
     # - matching_super_parameters # blocked on https://github.com/dart-lang/language/issues/2509
     - missing_code_block_language_in_doc_comment
     - missing_whitespace_between_adjacent_strings
-    - no_adjacent_strings_in_list
+    # - no_adjacent_strings_in_list # conflicts with prefer_adjacent_string_concatenation
     - no_default_cases
     - no_duplicate_case_values
     - no_leading_underscores_for_library_prefixes
