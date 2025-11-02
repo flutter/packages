@@ -9,6 +9,7 @@ import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
@@ -23,12 +24,18 @@ import android.content.res.Resources;
 import android.view.Display;
 import android.view.OrientationEventListener;
 import android.view.Surface;
+import android.view.WindowManager;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import io.flutter.embedding.engine.systemchannels.PlatformChannel.DeviceOrientation;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.Robolectric;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.android.controller.ActivityController;
 
+@RunWith(RobolectricTestRunner.class)
 public class DeviceOrientationManagerTest {
   private Activity mockActivity;
   private Display mockDisplay;
@@ -198,5 +205,63 @@ public class DeviceOrientationManagerTest {
     Display display = deviceOrientationManager.getDisplay();
 
     assertEquals(mockDisplay, display);
+  }
+
+  @Test
+  @SuppressWarnings("deprecation")
+  public void getDisplay_shouldReturnNull_whenActivityDestroyed() {
+    ActivityController<Activity> controller = Robolectric.buildActivity(Activity.class);
+    Activity destroyedActivity = spy(controller.get());
+
+    doReturn(true).when(destroyedActivity).isDestroyed();
+    doReturn(false).when(destroyedActivity).isFinishing();
+
+    WindowManager destroyedWM = mock(WindowManager.class);
+    Display mockDisplay = mock(Display.class);
+    when(destroyedWM.getDefaultDisplay()).thenReturn(mockDisplay);
+    doReturn(destroyedWM).when(destroyedActivity).getWindowManager();
+
+    TestProxyApiRegistrar proxyApiRegistrar =
+        new TestProxyApiRegistrar() {
+          @NonNull
+          @Override
+          public Context getContext() {
+            return destroyedActivity;
+          }
+        };
+    when(mockApi.getPigeonRegistrar()).thenReturn(proxyApiRegistrar);
+
+    DeviceOrientationManager manager = new DeviceOrientationManager(mockApi);
+
+    assertNull(manager.getDisplay());
+  }
+
+  @Test
+  @SuppressWarnings("deprecation")
+  public void getDisplay_shouldReturnNull_whenActivityFinishing() {
+    ActivityController<Activity> controller = Robolectric.buildActivity(Activity.class);
+    Activity finishingActivity = spy(controller.get());
+
+    doReturn(false).when(finishingActivity).isDestroyed();
+    doReturn(true).when(finishingActivity).isFinishing();
+
+    WindowManager finishingWM = mock(WindowManager.class);
+    Display mockDisplay = mock(Display.class);
+    when(finishingWM.getDefaultDisplay()).thenReturn(mockDisplay);
+    doReturn(finishingWM).when(finishingActivity).getWindowManager();
+
+    TestProxyApiRegistrar proxyFinishing =
+        new TestProxyApiRegistrar() {
+          @NonNull
+          @Override
+          public Context getContext() {
+            return finishingActivity;
+          }
+        };
+    when(mockApi.getPigeonRegistrar()).thenReturn(proxyFinishing);
+
+    DeviceOrientationManager manager = new DeviceOrientationManager(mockApi);
+
+    assertNull(manager.getDisplay());
   }
 }
