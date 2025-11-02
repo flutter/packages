@@ -455,7 +455,40 @@ ${indentation}The first version listed in CHANGELOG.md is $fromChangeLog.
       }
     }
 
+    // Check for blank lines between list items in the version section.
+    final Match? blankLineMatch = _findBlankLineInList(lines.join('\n'));
+    if (blankLineMatch != null) {
+      final String offendingLines = blankLineMatch
+          .group(0)!
+          .split('\n')
+          .map((String line) => '$indentation  $line') // Add extra indentation
+          .join('\n');
+
+      printError(
+          '${indentation}Blank lines found between list items in CHANGELOG.\n'
+              '${indentation}This creates multiple separate lists on pub.dev.\n'
+              '${indentation}Remove blank lines to keep all items in a single list.\n'
+              '${indentation}The problematic section found is:\n'
+              '$offendingLines');
+      return false;
+    }
+
     return true;
+  }
+
+  /// Validates that there are no blank lines between list items within
+  /// the changelog using a regex.
+  ///
+  /// Returns the first invalid match found, or null if validation passes.
+  Match? _findBlankLineInList(String changelogContent) {
+    // This regex requires the multiLine flag to be true.
+    final RegExp blankLineInListRegex = RegExp(
+        r'(^[ \t]*[*+-].*$\n)((^[ \t]*$\n)+)(^[ \t]*[*+-].*$)',
+        multiLine: true);
+
+    // If the regex finds a match, it means there is an error (a blank line
+    // between list items).
+    return blankLineInListRegex.firstMatch(changelogContent);
   }
 
   Pubspec? _tryParsePubspec(RepositoryPackage package) {
