@@ -73,6 +73,8 @@ static NSDictionary<NSString *, NSValue *> *FVPGetPlayerItemObservations(void) {
 @implementation FVPVideoPlayer {
   // Whether or not player and player item listeners have ever been registered.
   BOOL _listenersRegistered;
+  // Cached media selection options for audio tracks (HLS streams)
+  NSArray<AVMediaSelectionOption *> *_cachedAudioSelectionOptions;
 }
 
 - (instancetype)initWithPlayerItem:(AVPlayerItem *)item
@@ -151,6 +153,9 @@ static NSDictionary<NSString *, NSValue *> *FVPGetPlayerItemObservations(void) {
     FVPRemoveKeyValueObservers(self, FVPGetPlayerItemObservations(), self.player.currentItem);
     FVPRemoveKeyValueObservers(self, FVPGetPlayerObservations(), self.player);
   }
+  
+  // Clear cached audio selection options
+  _cachedAudioSelectionOptions = nil;
 
   [self.player replaceCurrentItemWithPlayerItem:nil];
 
@@ -478,13 +483,14 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   AVMediaSelectionGroup *audioGroup =
       [asset mediaSelectionGroupForMediaCharacteristic:AVMediaCharacteristicAudible];
   if (audioGroup && audioGroup.options.count > 0) {
+    // Cache the options array for later use in selectAudioTrack
+    _cachedAudioSelectionOptions = audioGroup.options;
+    
     NSMutableArray<FVPMediaSelectionAudioTrackData *> *mediaSelectionTracks =
         [[NSMutableArray alloc] init];
     AVMediaSelectionOption *currentSelection = nil;
     if (@available(iOS 11.0, *)) {
-      AVMediaSelection *currentMediaSelection = currentItem.currentMediaSelection;
-      currentSelection =
-          [currentMediaSelection selectedMediaOptionInMediaSelectionGroup:audioGroup];
+      currentSelection = [currentItem selectedMediaOptionInMediaSelectionGroup:audioGroup];
     } else {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
@@ -664,15 +670,16 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 
   // Check if this is a media selection track (for HLS streams)
   if ([trackId hasPrefix:@"media_selection_"]) {
-    AVMediaSelectionGroup *audioGroup =
-        [asset mediaSelectionGroupForMediaCharacteristic:AVMediaCharacteristicAudible];
-    if (audioGroup && audioGroup.options.count > 0) {
-      // Parse the track ID to get the index
-      NSString *indexString = [trackId substringFromIndex:[@"media_selection_" length]];
-      NSInteger index = [indexString integerValue];
-
-      if (index >= 0 && index < audioGroup.options.count) {
-        AVMediaSelectionOption *option = audioGroup.options[index];
+    // Parse the track ID to get the index
+    NSString *indexString = [trackId substringFromIndex:[@"media_selection_" length]];
+    NSInteger index = [indexString integerValue];
+    
+    // Validate that we have cached options and the index is valid
+    if (_cachedAudioSelectionOptions && index >= 0 && index < _cachedAudioSelectionOptions.count) {
+      AVMediaSelectionOption *option = _cachedAudioSelectionOptions[index];
+      AVMediaSelectionGroup *audioGroup =
+          [asset mediaSelectionGroupForMediaCharacteristic:AVMediaCharacteristicAudible];
+      if (audioGroup) {
         [currentItem selectMediaOption:option inMediaSelectionGroup:audioGroup];
       }
     }
