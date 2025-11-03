@@ -311,6 +311,7 @@ class _PlayerInstance {
   Timer? _bufferPollingTimer;
   int _lastBufferPosition = -1;
   bool _isBuffering = false;
+  Completer<void>? _audioTrackSelectionCompleter;
 
   final VideoPlayerViewState viewState;
 
@@ -350,8 +351,24 @@ class _PlayerInstance {
     return _api.getAudioTracks();
   }
 
-  Future<void> selectAudioTrack(String trackId) {
-    return _api.selectAudioTrack(trackId);
+  Future<void> selectAudioTrack(String trackId) async {
+    // Create a completer to wait for the track selection to complete
+    _audioTrackSelectionCompleter = Completer<void>();
+
+    try {
+      await _api.selectAudioTrack(trackId);
+
+      // Wait for the onTracksChanged event from ExoPlayer with a timeout
+      await _audioTrackSelectionCompleter!.future.timeout(
+        const Duration(seconds: 5),
+        onTimeout: () {
+          // If we timeout, just continue - the track may still have been selected
+          // This is a fallback in case the event doesn't arrive for some reason
+        },
+      );
+    } finally {
+      _audioTrackSelectionCompleter = null;
+    }
   }
 
   Future<void> dispose() async {
@@ -449,6 +466,13 @@ class _PlayerInstance {
         // Any state other than buffering should end the buffering state.
         if (event.state != PlatformPlaybackState.buffering) {
           _setBuffering(false);
+        }
+      case AudioTrackChangedEvent _:
+        // Complete the audio track selection completer if it exists
+        // This signals that the track selection has completed
+        if (_audioTrackSelectionCompleter != null &&
+            !_audioTrackSelectionCompleter!.isCompleted) {
+          _audioTrackSelectionCompleter!.complete();
         }
     }
   }

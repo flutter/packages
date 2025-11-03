@@ -956,13 +956,9 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     if (_isDisposedOrNotInitialized) {
       throw Exception('VideoPlayerController is disposed or not initialized');
     }
+    // The platform implementation (e.g., Android) will wait for the track
+    // selection to complete by listening to platform-specific events
     await _videoPlayerPlatform.selectAudioTrack(_playerId, trackId);
-
-    if (!kIsWeb && Platform.isAndroid) {
-      // Add a small delay to allow ExoPlayer to process the track selection change
-      // This is needed because ExoPlayer's track selection update is asynchronous
-      await Future<void>.delayed(const Duration(milliseconds: 100));
-    }
   }
 
   /// Returns whether audio track selection is supported on this platform.

@@ -51,6 +51,15 @@ class IsPlayingStateEvent extends PlatformVideoEvent {
   late final bool isPlaying;
 }
 
+/// Sent when audio tracks change.
+///
+/// This includes when the selected audio track changes after calling selectAudioTrack.
+/// Corresponds to ExoPlayer's onTracksChanged.
+class AudioTrackChangedEvent extends PlatformVideoEvent {
+  /// The ID of the newly selected audio track, if any.
+  late final String? selectedTrackId;
+}
+
 /// Information passed to the platform view creation.
 class PlatformVideoViewCreationParams {
   const PlatformVideoViewCreationParams({required this.playerId});

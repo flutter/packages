@@ -226,6 +226,44 @@ data class IsPlayingStateEvent(val isPlaying: Boolean) : PlatformVideoEvent() {
 }
 
 /**
+ * Sent when audio tracks change.
+ *
+ * This includes when the selected audio track changes after calling selectAudioTrack. Corresponds
+ * to ExoPlayer's onTracksChanged.
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ */
+data class AudioTrackChangedEvent(
+    /** The ID of the newly selected audio track, if any. */
+    val selectedTrackId: String? = null
+) : PlatformVideoEvent() {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): AudioTrackChangedEvent {
+      val selectedTrackId = pigeonVar_list[0] as String?
+      return AudioTrackChangedEvent(selectedTrackId)
+    }
+  }
+
+  fun toList(): List<Any?> {
+    return listOf(
+        selectedTrackId,
+    )
+  }
+
+  override fun equals(other: Any?): Boolean {
+    if (other !is AudioTrackChangedEvent) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return MessagesPigeonUtils.deepEquals(toList(), other.toList())
+  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/**
  * Information passed to the platform view creation.
  *
  * Generated class from Pigeon that represents data sent in messages.
@@ -527,26 +565,29 @@ private open class MessagesPigeonCodec : StandardMessageCodec() {
         return (readValue(buffer) as? List<Any?>)?.let { IsPlayingStateEvent.fromList(it) }
       }
       134.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let { AudioTrackChangedEvent.fromList(it) }
+      }
+      135.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
           PlatformVideoViewCreationParams.fromList(it)
         }
       }
-      135.toByte() -> {
+      136.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { CreationOptions.fromList(it) }
       }
-      136.toByte() -> {
+      137.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { TexturePlayerIds.fromList(it) }
       }
-      137.toByte() -> {
+      138.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { PlaybackState.fromList(it) }
       }
-      138.toByte() -> {
+      139.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { AudioTrackMessage.fromList(it) }
       }
-      139.toByte() -> {
+      140.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { ExoPlayerAudioTrackData.fromList(it) }
       }
-      140.toByte() -> {
+      141.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { NativeAudioTrackData.fromList(it) }
       }
       else -> super.readValueOfType(type, buffer)
@@ -575,32 +616,36 @@ private open class MessagesPigeonCodec : StandardMessageCodec() {
         stream.write(133)
         writeValue(stream, value.toList())
       }
-      is PlatformVideoViewCreationParams -> {
+      is AudioTrackChangedEvent -> {
         stream.write(134)
         writeValue(stream, value.toList())
       }
-      is CreationOptions -> {
+      is PlatformVideoViewCreationParams -> {
         stream.write(135)
         writeValue(stream, value.toList())
       }
-      is TexturePlayerIds -> {
+      is CreationOptions -> {
         stream.write(136)
         writeValue(stream, value.toList())
       }
-      is PlaybackState -> {
+      is TexturePlayerIds -> {
         stream.write(137)
         writeValue(stream, value.toList())
       }
-      is AudioTrackMessage -> {
+      is PlaybackState -> {
         stream.write(138)
         writeValue(stream, value.toList())
       }
-      is ExoPlayerAudioTrackData -> {
+      is AudioTrackMessage -> {
         stream.write(139)
         writeValue(stream, value.toList())
       }
-      is NativeAudioTrackData -> {
+      is ExoPlayerAudioTrackData -> {
         stream.write(140)
+        writeValue(stream, value.toList())
+      }
+      is NativeAudioTrackData -> {
+        stream.write(141)
         writeValue(stream, value.toList())
       }
       else -> super.writeValue(stream, value)

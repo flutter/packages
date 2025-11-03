@@ -13,8 +13,6 @@ import androidx.media3.common.MediaItem;
 import androidx.media3.common.Tracks;
 import androidx.media3.exoplayer.ExoPlayer;
 import com.google.common.collect.ImmutableList;
-import io.flutter.plugins.videoplayer.ExoPlayerAudioTrackData;
-import io.flutter.plugins.videoplayer.NativeAudioTrackData;
 import io.flutter.view.TextureRegistry;
 import java.lang.reflect.Field;
 import java.util.List;
