@@ -10,8 +10,8 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.os.ext.SdkExtensions;
 import android.provider.MediaStore;
-import androidx.activity.result.contract.ActivityResultContracts;
 import java.util.Arrays;
 
 final class ImagePickerUtils {
@@ -67,7 +67,9 @@ final class ImagePickerUtils {
    */
   @SuppressLint({"NewApi", "ClassVerificationFailure"})
   static int getMaxItems() {
-    if (ActivityResultContracts.PickVisualMedia.isSystemPickerAvailable$activity_release()) {
+    if (Build.VERSION.SDK_INT >= 33
+        || (Build.VERSION.SDK_INT >= 30
+            && SdkExtensions.getExtensionVersion(Build.VERSION_CODES.R) >= 2)) {
       return MediaStore.getPickImagesMaxLimit();
     } else {
       return Integer.MAX_VALUE;

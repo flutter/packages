@@ -44,13 +44,13 @@ android {
     }
 
     defaultConfig {
-        minSdk 21
+        minSdkVersion 24
     }
 
     dependencies {
         implementation("androidx.annotation:annotation:1.9.1")
         implementation("androidx.core:core-ktx:1.13.0")
-        implementation("com.google.ads.interactivemedia.v3:interactivemedia:3.37.0")
+        implementation("com.google.ads.interactivemedia.v3:interactivemedia:3.38.0")
         testImplementation("junit:junit:4.13.2")
         testImplementation("org.jetbrains.kotlin:kotlin-test")
         testImplementation("org.mockito.kotlin:mockito-kotlin:6.1.0")
