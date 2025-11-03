@@ -130,6 +130,10 @@ class VersionCheckCommand extends PackageLoopingCommand {
         hide: true);
   }
 
+  static final RegExp _blankLineInListRegex = RegExp(
+      r'(^[ \t]*[*+-].*$\n)((^[ \t]*$\n)+)(^[ \t]*[*+-].*$)',
+      multiLine: true);
+
   static const String _againstPubFlag = 'against-pub';
   static const String _prLabelsArg = 'pr-labels';
   static const String _checkForMissingChanges = 'check-for-missing-changes';
@@ -377,7 +381,8 @@ ${indentation}HTTP response: ${pubVersionFinderResponse.httpResponse.body}
 
     // get first version from CHANGELOG
     final File changelog = package.changelogFile;
-    final List<String> lines = changelog.readAsLinesSync();
+    final String changelogContent = changelog.readAsStringSync();
+    final List<String> lines = changelogContent.split('\n');
     String? firstLineWithText;
     final Iterator<String> iterator = lines.iterator;
     while (iterator.moveNext()) {
@@ -456,7 +461,7 @@ ${indentation}The first version listed in CHANGELOG.md is $fromChangeLog.
     }
 
     // Check for blank lines between list items in the version section.
-    final Match? blankLineMatch = _findBlankLineInList(lines.join('\n'));
+    final Match? blankLineMatch = _findBlankLineInList(changelogContent);
     if (blankLineMatch != null) {
       final String offendingLines = blankLineMatch
           .group(0)!
@@ -481,14 +486,9 @@ ${indentation}The first version listed in CHANGELOG.md is $fromChangeLog.
   ///
   /// Returns the first invalid match found, or null if validation passes.
   Match? _findBlankLineInList(String changelogContent) {
-    // This regex requires the multiLine flag to be true.
-    final RegExp blankLineInListRegex = RegExp(
-        r'(^[ \t]*[*+-].*$\n)((^[ \t]*$\n)+)(^[ \t]*[*+-].*$)',
-        multiLine: true);
-
     // If the regex finds a match, it means there is an error (a blank line
     // between list items).
-    return blankLineInListRegex.firstMatch(changelogContent);
+    return _blankLineInListRegex.firstMatch(changelogContent);
   }
 
   Pubspec? _tryParsePubspec(RepositoryPackage package) {
