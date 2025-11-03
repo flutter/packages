@@ -145,7 +145,7 @@ public class ProxyApiRegistrar extends CameraXLibraryPigeonProxyApiRegistrar {
   @Nullable
   Display getDisplay() {
     Activity activity = getActivity();
-    if (activity == null || activity.isDestroyed() || activity.isFinishing()) {
+    if (activity == null || activity.isDestroyed()) {
       return null;
     }
 

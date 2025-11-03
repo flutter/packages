@@ -209,13 +209,6 @@ public class DeviceOrientationManagerTest {
     assertEquals(deviceOrientationManager.getDefaultRotation(), Surface.ROTATION_0);
   }
 
-  @Test
-  public void getDisplay_shouldReturnNull_whenActivityFinishing() {
-    final DeviceOrientationManager deviceOrientationManager = createManager(false, true);
-    assertNull(deviceOrientationManager.getDisplay());
-    assertEquals(deviceOrientationManager.getDefaultRotation(), Surface.ROTATION_0);
-  }
-
   @SuppressWarnings("deprecation")
   private DeviceOrientationManager createManager(boolean destroyed, boolean finishing) {
     FakeActivity activity = new FakeActivity();
