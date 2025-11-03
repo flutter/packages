@@ -17,6 +17,8 @@ const String _defaultFakeNamespace = 'dev.flutter.foo';
 void main() {
   late CommandRunner<void> runner;
   late Directory packagesDir;
+  const String javaIncompatabilityIndicator =
+      'build.gradle(.kts) must set an explicit Java compatibility version.';
 
   setUp(() {
     final GitDir gitDir;
@@ -46,6 +48,11 @@ void main() {
     bool useDeprecatedCompileSdkVersion = false,
     bool usePropertyAssignment = true,
     String compileSdk = '36',
+    bool includeKotlinOptions = true,
+    bool commentKotlinOptions = false,
+    bool useDeprecatedJvmTargetStyle = false,
+    int jvmTargetValue = 17,
+    int kotlinJvmValue = 17,
   }) {
     final File buildGradle = package
         .platformDirectory(FlutterPlatform.android)
@@ -69,11 +76,18 @@ java {
 
 ''';
     final String sourceCompat =
-        '${commentSourceLanguage ? '// ' : ''}sourceCompatibility = JavaVersion.VERSION_11';
+        '${commentSourceLanguage ? '// ' : ''}sourceCompatibility = JavaVersion.VERSION_$jvmTargetValue';
     final String targetCompat =
-        '${commentSourceLanguage ? '// ' : ''}targetCompatibility = JavaVersion.VERSION_11';
+        '${commentSourceLanguage ? '// ' : ''}targetCompatibility = JavaVersion.VERSION_$jvmTargetValue';
     final String namespace =
         "    ${commentNamespace ? '// ' : ''}namespace = '$_defaultFakeNamespace'";
+    final String kotlinJvmTarget = useDeprecatedJvmTargetStyle
+        ? '$jvmTargetValue'
+        : 'JavaVersion.VERSION_$kotlinJvmValue.toString()';
+    final String kotlinConfig = '''
+    ${commentKotlinOptions ? '//' : ''}kotlinOptions {
+        ${commentKotlinOptions ? '//' : ''}jvmTarget = $kotlinJvmTarget
+    ${commentKotlinOptions ? '//' : ''}}''';
 
     buildGradle.writeAsStringSync('''
 group 'dev.flutter.plugins.fake'
@@ -101,6 +115,7 @@ ${warningsConfigured ? warningConfig : ''}
         ${includeSourceCompat ? sourceCompat : ''}
         ${includeTargetCompat ? targetCompat : ''}
     }
+    ${includeKotlinOptions ? kotlinConfig : ''}
     testOptions {
         unitTests.includeAndroidResources = true
     }
@@ -351,8 +366,7 @@ dependencies {
     expect(
       output,
       containsAllInOrder(<Matcher>[
-        contains(
-            'build.gradle must set an explicit Java compatibility version.'),
+        contains(javaIncompatabilityIndicator),
       ]),
     );
   });
@@ -375,8 +389,88 @@ dependencies {
     expect(
       output,
       containsAllInOrder(<Matcher>[
+        contains(javaIncompatabilityIndicator),
+      ]),
+    );
+  });
+
+  test('fails when sourceCompatibility/targetCompatibility are below minimum',
+      () async {
+    final RepositoryPackage package =
+        createFakePlugin('a_plugin', packagesDir, examples: <String>[]);
+    writeFakePluginBuildGradle(
+      package,
+      includeSourceCompat: true,
+      includeTargetCompat: true,
+      jvmTargetValue: 11,
+      kotlinJvmValue: 11,
+    );
+    writeFakeManifest(package);
+
+    Error? commandError;
+    final List<String> output = await runCapturingPrint(
+        runner, <String>['gradle-check'], errorHandler: (Error e) {
+      commandError = e;
+    });
+
+    expect(commandError, isA<ToolExit>());
+    expect(
+      output,
+      containsAllInOrder(<Matcher>[
         contains(
-            'build.gradle must set an explicit Java compatibility version.'),
+            'Which is below the minimum required. Use at least "JavaVersion.VERSION_'),
+      ]),
+    );
+  });
+
+  test('fails when compatibility values do not match kotlinOptions', () async {
+    final RepositoryPackage package =
+        createFakePlugin('a_plugin', packagesDir, examples: <String>[]);
+    writeFakePluginBuildGradle(
+      package,
+      includeSourceCompat: true,
+      includeTargetCompat: true,
+      jvmTargetValue: 21,
+      // ignore: avoid_redundant_argument_values
+      kotlinJvmValue: 17,
+    );
+    writeFakeManifest(package);
+
+    Error? commandError;
+    final List<String> output = await runCapturingPrint(
+        runner, <String>['gradle-check'], errorHandler: (Error e) {
+      commandError = e;
+    });
+
+    expect(commandError, isA<ToolExit>());
+    expect(
+      output,
+      containsAllInOrder(<Matcher>[
+        contains(
+            'If build.gradle(.kts) uses JavaVersion.* versions must be the same.'),
+      ]),
+    );
+  });
+
+  test('passes when jvmValues are higher than minimim', () async {
+    final RepositoryPackage package =
+        createFakePlugin('a_plugin', packagesDir, examples: <String>[]);
+    writeFakePluginBuildGradle(
+      package,
+      includeSourceCompat: true,
+      includeTargetCompat: true,
+      jvmTargetValue: 21,
+      kotlinJvmValue: 21,
+    );
+    writeFakeManifest(package);
+
+    final List<String> output =
+        await runCapturingPrint(runner, <String>['gradle-check']);
+
+    expect(
+      output,
+      containsAllInOrder(<Matcher>[
+        contains('Validating android/build.gradle'),
       ]),
     );
   });
@@ -457,8 +551,7 @@ dependencies {
     expect(
       output,
       containsAllInOrder(<Matcher>[
-        contains(
-            'build.gradle must set an explicit Java compatibility version.'),
+        contains(javaIncompatabilityIndicator),
       ]),
     );
   });
@@ -480,8 +573,7 @@ dependencies {
     expect(
       output,
       containsAllInOrder(<Matcher>[
-        contains(
-            'build.gradle must set an explicit Java compatibility version.'),
+        contains(javaIncompatabilityIndicator),
       ]),
     );
   });
@@ -618,16 +710,19 @@ dependencies {
         pluginName: pluginName, includeNameSpaceAsDeclaration: false);
     writeFakeManifest(example, isApp: true);
 
+    Error? commandError;
     final List<String> output = await runCapturingPrint(
         runner, <String>['gradle-check'], errorHandler: (Error e) {
-      print((e as ToolExit).stackTrace);
+      commandError = e;
     });
 
+    expect(commandError, isA<ToolExit>());
     expect(
         output,
         containsAllInOrder(
           <Matcher>[
-            contains('Validating android/app/build.gradle'),
+            contains('build.gradle must set a "namespace"'),
+            contains('The following packages had errors:'),
           ],
         ));
   });
@@ -1158,6 +1253,98 @@ dependencies {
         output,
         containsAllInOrder(<Matcher>[
           contains('No "compileSdk =" found. Please use property assignment.'),
+        ]),
+      );
+    });
+  });
+
+  group('kotlinOptions check', () {
+    test('passes when kotlin options are specified', () async {
+      final RepositoryPackage package =
+          createFakePlugin('a_plugin', packagesDir, examples: <String>[]);
+      writeFakePluginBuildGradle(
+        package,
+        includeLanguageVersion: true,
+        // ignore: avoid_redundant_argument_values ensure codepath is tested if defaults change.
+        includeKotlinOptions: true,
+      );
+      writeFakeManifest(package);
+
+      final List<String> output =
+          await runCapturingPrint(runner, <String>['gradle-check']);
+
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Validating android/build.gradle'),
+        ]),
+      );
+    });
+
+    test('passes when kotlin options are not specified', () async {
+      final RepositoryPackage package =
+          createFakePlugin('a_plugin', packagesDir, examples: <String>[]);
+      writeFakePluginBuildGradle(
+        package,
+        includeLanguageVersion: true,
+        includeKotlinOptions: false,
+      );
+      writeFakeManifest(package);
+
+      final List<String> output =
+          await runCapturingPrint(runner, <String>['gradle-check']);
+
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Validating android/build.gradle'),
+        ]),
+      );
+    });
+
+    test('passes when kotlin options commented out', () async {
+      final RepositoryPackage package =
+          createFakePlugin('a_plugin', packagesDir, examples: <String>[]);
+      writeFakePluginBuildGradle(
+        package,
+        includeLanguageVersion: true,
+        commentKotlinOptions: true,
+      );
+      writeFakeManifest(package);
+
+      final List<String> output =
+          await runCapturingPrint(runner, <String>['gradle-check']);
+
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Validating android/build.gradle'),
+        ]),
+      );
+    });
+
+    test('fails when kotlin options uses string jvm version', () async {
+      final RepositoryPackage package =
+          createFakePlugin('a_plugin', packagesDir, examples: <String>[]);
+      writeFakePluginBuildGradle(
+        package,
+        includeLanguageVersion: true,
+        useDeprecatedJvmTargetStyle: true,
+      );
+      writeFakeManifest(package);
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['gradle-check'], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains(
+              'build.gradle(.kts) sets jvmTarget then it must use JavaVersion syntax'),
         ]),
       );
     });

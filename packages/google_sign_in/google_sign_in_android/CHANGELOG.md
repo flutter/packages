@@ -1,3 +1,11 @@
+## 7.2.2
+
+* Updates Java compatibility version to 17 and minimum supported SDK version to Flutter 3.35/Dart 3.9.
+
+## 7.2.1
+
+* Resolves Gradle 9 deprecations.
+
 ## 7.2.0
 
 * Adds support for `disconnect`.

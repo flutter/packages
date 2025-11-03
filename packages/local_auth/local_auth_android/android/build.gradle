@@ -31,8 +31,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     lintOptions {
@@ -58,7 +58,7 @@ android {
 dependencies {
     api("androidx.core:core:1.13.1")
     api("androidx.biometric:biometric:1.1.0")
-    api("androidx.fragment:fragment:1.8.8")
+    api("androidx.fragment:fragment:1.8.9")
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.mockito:mockito-inline:5.2.0")
     testImplementation("org.robolectric:robolectric:4.15.1")
