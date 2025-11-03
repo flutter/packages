@@ -1,3 +1,7 @@
+## 0.8.13+7
+
+* Removes reference to internal `isSystemPickerAvailable$activity_release()` method.
+
 ## 0.8.13+6
 
 * Fixes typo in limit parameter validation error message.
