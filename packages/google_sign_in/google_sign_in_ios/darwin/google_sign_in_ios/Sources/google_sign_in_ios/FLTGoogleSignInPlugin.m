@@ -97,6 +97,7 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
 }
 
 // TODO(stuarmorgan): Replace these with protocol extensions when migrating to Swift.
+// https://github.com/flutter/flutter/issues/119103
 #pragma mark - Passthrough Wrappers
 
 /// Implementation of @c FSIViewProvider that passes through to the registrar.
