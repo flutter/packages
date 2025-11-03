@@ -36,7 +36,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// Implementation of @c FSIGIDSignInResult that passes through to GIDSignInResult.
 @interface FSIGIDSignInResultWrapper : NSObject <FSIGIDSignInResult>
 
-- (nullable instancetype)initWithResult:(nullable GIDSignInResult *)result NS_DESIGNATED_INITIALIZER;
+- (nullable instancetype)initWithResult:(nullable GIDSignInResult *)result
+    NS_DESIGNATED_INITIALIZER;
 - (instancetype)init NS_UNAVAILABLE;
 
 /// The underlying GIDSignInResult instance.
