@@ -191,7 +191,7 @@ public class DeviceOrientationManager {
       // fallback and prevents crashes until a valid Activity is attached again.
       Log.w(
           "DeviceOrientationManager",
-          "Cannot get display: Activity may be null (destroyed, finishing, or not yet attached) due to a race condition.");
+          "Cannot get display: Activity may be null (destroyed or not yet attached) due to a race condition.");
       return Surface.ROTATION_0;
     }
 
