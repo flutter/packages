@@ -580,14 +580,9 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
           NSString *className = NSStringFromClass([formatDescObj class]);
 
           // Only process objects that are clearly Core Media format descriptions
-          // This works for both real CMFormatDescription objects and properly configured mock
-          // objects
           if ([className hasPrefix:@"CMAudioFormatDescription"] ||
               [className hasPrefix:@"CMVideoFormatDescription"] ||
-              [className hasPrefix:@"CMFormatDescription"] ||
-              [formatDescObj
-                  isKindOfClass:[NSObject
-                                    class]]) {  // Allow mock objects that inherit from NSObject
+              [className hasPrefix:@"CMFormatDescription"]) {
 
             CMFormatDescriptionRef formatDesc = (__bridge CMFormatDescriptionRef)formatDescObj;
 

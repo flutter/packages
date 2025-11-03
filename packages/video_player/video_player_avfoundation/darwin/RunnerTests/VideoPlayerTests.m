@@ -1058,13 +1058,9 @@
   OCMStub([mockTrack2 languageCode]).andReturn(@"es");
   OCMStub([mockTrack2 estimatedDataRate]).andReturn(96000.0f);
 
-  // Mock format descriptions for track 1
-  id mockFormatDesc1 = OCMClassMock([NSObject class]);
-  AudioStreamBasicDescription asbd1 = {0};
-  asbd1.mSampleRate = 48000.0;
-  asbd1.mChannelsPerFrame = 2;
-
-  OCMStub([mockTrack1 formatDescriptions]).andReturn(@[ mockFormatDesc1 ]);
+  // Mock empty format descriptions to avoid Core Media crashes in test environment
+  OCMStub([mockTrack1 formatDescriptions]).andReturn(@[]);
+  OCMStub([mockTrack2 formatDescriptions]).andReturn(@[]);
 
   // Mock the asset to return our tracks
   NSArray *mockTracks = @[ mockTrack1, mockTrack2 ];
