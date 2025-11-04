@@ -4,5 +4,8 @@
 # found in the LICENSE file.
 set -e
 
+# Ensure that 'main' is present for diffing.
+git fetch origin main
+
 cd script/tool
 dart pub get
