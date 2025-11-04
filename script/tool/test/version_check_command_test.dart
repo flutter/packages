@@ -424,7 +424,7 @@ void main() {
     test('Fail if CHANGELOG list items have a blank line', () async {
       const String version = '1.0.1';
       final RepositoryPackage plugin =
-      createFakePlugin('plugin', packagesDir, version: version);
+          createFakePlugin('plugin', packagesDir, version: version);
 
       // Blank line breaks the list items.
       const String changelog = '''
@@ -436,15 +436,15 @@ void main() {
 ''';
       plugin.changelogFile.writeAsStringSync(changelog);
       gitProcessRunner.mockProcessesForExecutable['git-show'] =
-      <FakeProcessInfo>[
+          <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
       ];
       Error? commandError;
       final List<String> output = await runCapturingPrint(
           runner, <String>['version-check', '--base-sha=main'],
           errorHandler: (Error e) {
-            commandError = e;
-          });
+        commandError = e;
+      });
 
       expect(commandError, isA<ToolExit>());
       expect(
@@ -459,13 +459,13 @@ void main() {
     });
 
     test('Fail if CHANGELOG list items have a blank line with nested items',
-            () async {
-          const String version = '1.0.1';
-          final RepositoryPackage plugin =
+        () async {
+      const String version = '1.0.1';
+      final RepositoryPackage plugin =
           createFakePlugin('plugin', packagesDir, version: version);
 
-          // Blank line in nested list items.
-          const String changelog = '''
+      // Blank line in nested list items.
+      const String changelog = '''
 ## $version
 * Top level item.
   * Nested item A.
@@ -473,29 +473,29 @@ void main() {
   * Nested item B.
 * Another top level item.
 ''';
-          plugin.changelogFile.writeAsStringSync(changelog);
-          gitProcessRunner.mockProcessesForExecutable['git-show'] =
+      plugin.changelogFile.writeAsStringSync(changelog);
+      gitProcessRunner.mockProcessesForExecutable['git-show'] =
           <FakeProcessInfo>[
-            FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
-          ];
-          Error? commandError;
-          final List<String> output = await runCapturingPrint(
-              runner, <String>['version-check', '--base-sha=main'],
-              errorHandler: (Error e) {
-                commandError = e;
-              });
+        FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
+      ];
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['version-check', '--base-sha=main'],
+          errorHandler: (Error e) {
+        commandError = e;
+      });
 
-          expect(commandError, isA<ToolExit>());
-          expect(
-            output,
-            containsAllInOrder(<Matcher>[
-              contains('Running for plugin'),
-              contains('1.0.0 -> 1.0.1'),
-              contains('Blank lines found between list items in CHANGELOG.'),
-              contains('CHANGELOG.md failed validation.'),
-            ]),
-          );
-        });
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Running for plugin'),
+          contains('1.0.0 -> 1.0.1'),
+          contains('Blank lines found between list items in CHANGELOG.'),
+          contains('CHANGELOG.md failed validation.'),
+        ]),
+      );
+    });
     // END OF NEW TESTS
 
     test(
