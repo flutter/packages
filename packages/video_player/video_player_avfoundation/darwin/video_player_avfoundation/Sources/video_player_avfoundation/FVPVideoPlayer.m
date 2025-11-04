@@ -489,8 +489,9 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
     NSMutableArray<FVPMediaSelectionAudioTrackData *> *mediaSelectionTracks =
         [[NSMutableArray alloc] init];
     AVMediaSelectionOption *currentSelection = nil;
-    if (@available(iOS 11.0, *)) {
-      currentSelection = [currentItem selectedMediaOptionInMediaSelectionGroup:audioGroup];
+    if (@available(iOS 11.0, macOS 10.13, *)) {
+      AVMediaSelection *mediaSelection = currentItem.currentMediaSelection;
+      currentSelection = [mediaSelection selectedMediaOptionInMediaSelectionGroup:audioGroup];
     } else {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
