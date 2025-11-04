@@ -6,6 +6,7 @@ set -e
 
 # Ensure that 'main' is present for diffing.
 git fetch origin main
+git branch main origin/main
 
 cd script/tool
 dart pub get
