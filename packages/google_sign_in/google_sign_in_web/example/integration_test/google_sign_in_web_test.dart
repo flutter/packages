@@ -70,8 +70,20 @@ void main() {
       await plugin.init(
         const InitParameters(clientId: 'some-non-null-client-id'),
       );
+    });
 
-      expect(plugin.initialized, completes);
+    testWidgets('throws if init is called twice', (_) async {
+      await plugin.init(
+        const InitParameters(clientId: 'some-non-null-client-id'),
+      );
+
+      // Calling init() a second time should throw state error
+      expect(
+        () => plugin.init(
+          const InitParameters(clientId: 'some-non-null-client-id'),
+        ),
+        throwsStateError,
+      );
     });
 
     testWidgets('asserts clientId is not null', (_) async {
