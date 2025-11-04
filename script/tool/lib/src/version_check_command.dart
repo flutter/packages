@@ -131,7 +131,7 @@ class VersionCheckCommand extends PackageLoopingCommand {
   }
 
   static final RegExp _blankLineInListRegex = RegExp(
-      r'(^[ \t]*[*+-].*$\n)((^[ \t]*$\n)+)(^[ \t]*[*+-].*$)',
+      r'(^[ \t]*[*+-]\s.*$\n)((^[ \t]*$\n)+)(^[ \t]*[*+-]\s.*$)',
       multiLine: true);
 
   static const String _againstPubFlag = 'against-pub';
