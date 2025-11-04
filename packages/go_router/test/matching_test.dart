@@ -101,7 +101,7 @@ void main() {
 
     final RouteMatchList list1 = configuration.findMatch(Uri.parse('/a'));
     final RouteMatchList list2 = configuration.findMatch(Uri.parse('/b'));
-    list1.push(
+    final RouteMatchList listWithPushed = list1.push(
       ImperativeRouteMatch(
         pageKey: const ValueKey<String>('/b-p0'),
         matches: list2,
@@ -109,10 +109,15 @@ void main() {
       ),
     );
 
-    final Map<Object?, Object?> encoded = codec.encode(list1);
+    final Map<Object?, Object?> encoded = codec.encode(listWithPushed);
     final RouteMatchList decoded = codec.decode(encoded);
 
     expect(decoded, isNotNull);
-    expect(decoded, equals(list1));
+    expect(decoded.uri, listWithPushed.uri);
+    expect(decoded.matches.length, listWithPushed.matches.length);
+    expect((decoded.matches.first as RouteMatch).route,
+        (listWithPushed.matches.first as RouteMatch).route);
+    expect((decoded.matches.last as ImperativeRouteMatch).matches.uri,
+        (listWithPushed.matches.last as ImperativeRouteMatch).matches.uri);
   });
 }

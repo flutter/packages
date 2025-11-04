@@ -52,6 +52,13 @@ abstract class RouteMatchBase with Diagnosticable {
     RouteMatchList matches,
   );
 
+  /// A key that is used to force a rebuild of the navigator.
+  ///
+  /// When the [GoRouter.refresh] is called, a new unique key is generated
+  /// and passed to the [RouteMatchBase] of the current route. This is useful
+  /// when the route needs to be rebuilt with new data.
+  ValueKey<String>? get refreshKey;
+
   /// Generates a list of [RouteMatchBase] objects by matching the `route` and
   /// its sub-routes with `uri`.
   ///
@@ -181,6 +188,9 @@ abstract class RouteMatchBase with Diagnosticable {
       matches: subRouteMatches!.remove(null)!,
       matchedLocation: remainingLocation,
       pageKey: ValueKey<String>(route.hashCode.toString()),
+      refreshKey: ValueKey<String>(
+        DateTime.now().millisecondsSinceEpoch.toString(),
+      ),
       navigatorKey: navigatorKeyUsed,
     );
     subRouteMatches
@@ -248,6 +258,9 @@ abstract class RouteMatchBase with Diagnosticable {
             route: route,
             matchedLocation: newMatchedLocation,
             pageKey: ValueKey<String>(newMatchedPath),
+            refreshKey: ValueKey<String>(
+              DateTime.now().millisecondsSinceEpoch.toString(),
+            ),
           ),
         ],
       };
@@ -289,6 +302,9 @@ abstract class RouteMatchBase with Diagnosticable {
             route: route,
             matchedLocation: newMatchedLocation,
             pageKey: ValueKey<String>(newMatchedPath),
+            refreshKey: ValueKey<String>(
+              DateTime.now().millisecondsSinceEpoch.toString(),
+            ),
           ),
         );
     return subRouteMatches;
@@ -311,6 +327,7 @@ class RouteMatch extends RouteMatchBase {
     required this.route,
     required this.matchedLocation,
     required this.pageKey,
+    this.refreshKey,
   });
 
   /// The matched route.
@@ -323,6 +340,25 @@ class RouteMatch extends RouteMatchBase {
   @override
   final ValueKey<String> pageKey;
 
+  /// A key that is used to force a rebuild of the navigator.
+  @override
+  final ValueKey<String>? refreshKey;
+
+  /// Creates a copy of this RouteMatch with the given fields replaced with the new values.
+  RouteMatch copyWith({
+    GoRoute? route,
+    String? matchedLocation,
+    ValueKey<String>? pageKey,
+    ValueKey<String>? refreshKey,
+  }) {
+    return RouteMatch(
+      route: route ?? this.route,
+      matchedLocation: matchedLocation ?? this.matchedLocation,
+      pageKey: pageKey ?? this.pageKey,
+      refreshKey: refreshKey ?? this.refreshKey,
+    );
+  }
+
   @override
   bool operator ==(Object other) {
     if (other.runtimeType != runtimeType) {
@@ -331,11 +367,12 @@ class RouteMatch extends RouteMatchBase {
     return other is RouteMatch &&
         route == other.route &&
         matchedLocation == other.matchedLocation &&
-        pageKey == other.pageKey;
+        pageKey == other.pageKey &&
+        refreshKey == other.refreshKey;
   }
 
   @override
-  int get hashCode => Object.hash(route, matchedLocation, pageKey);
+  int get hashCode => Object.hash(route, matchedLocation, pageKey, refreshKey);
 
   @override
   GoRouterState buildState(
@@ -369,6 +406,7 @@ class ShellRouteMatch extends RouteMatchBase {
     required this.matchedLocation,
     required this.pageKey,
     required this.navigatorKey,
+    this.refreshKey,
   }) : assert(matches.isNotEmpty);
 
   @override
@@ -393,6 +431,10 @@ class ShellRouteMatch extends RouteMatchBase {
 
   @override
   final ValueKey<String> pageKey;
+
+  /// A key that is used to force a rebuild of the navigator.
+  @override
+  final ValueKey<String>? refreshKey;
 
   @override
   GoRouterState buildState(
@@ -430,6 +472,7 @@ class ShellRouteMatch extends RouteMatchBase {
       matchedLocation: matchedLocation,
       pageKey: pageKey,
       navigatorKey: navigatorKey,
+      refreshKey: refreshKey,
     );
   }
 
@@ -454,6 +497,8 @@ class ImperativeRouteMatch extends RouteMatch {
     required super.pageKey,
     required this.matches,
     required this.completer,
+    /// A key that is used to force a rebuild of the navigator.
+    super.refreshKey,
   }) : super(
          route: _getsLastRouteFromMatches(matches),
          matchedLocation: _getsMatchedLocationFromMatches(matches),
@@ -919,6 +964,7 @@ class RouteMatchListCodec extends Codec<RouteMatchList, Map<Object?, Object?>> {
   static const String _extraKey = 'state';
   static const String _imperativeMatchesKey = 'imperativeMatches';
   static const String _pageKey = 'pageKey';
+  static const String _refreshKey = 'refreshKey';
   static const String _codecKey = 'codec';
   static const String _jsonCodecName = 'json';
   static const String _customCodecName = 'custom';
@@ -953,6 +999,7 @@ class _RouteMatchListEncoder
                 e.matches.uri.toString(),
                 e.matches.extra,
                 pageKey: e.pageKey.value,
+                refreshKey: e.refreshKey?.value,
               ),
             )
             .toList();
@@ -969,6 +1016,7 @@ class _RouteMatchListEncoder
     Object? extra, {
     List<Map<Object?, Object?>>? imperativeMatches,
     String? pageKey,
+    String? refreshKey,
   }) {
     Map<String, Object?> encodedExtra;
     if (configuration.extraCodec != null) {
@@ -1003,6 +1051,7 @@ class _RouteMatchListEncoder
       if (imperativeMatches != null)
         RouteMatchListCodec._imperativeMatchesKey: imperativeMatches,
       if (pageKey != null) RouteMatchListCodec._pageKey: pageKey,
+      if (refreshKey != null) RouteMatchListCodec._refreshKey: refreshKey,
     };
   }
 }
@@ -1047,12 +1096,18 @@ class _RouteMatchListDecoder
         final ValueKey<String> pageKey = ValueKey<String>(
           encodedImperativeMatch[RouteMatchListCodec._pageKey]! as String,
         );
+        final String? refreshKeyValue =
+            encodedImperativeMatch[RouteMatchListCodec._refreshKey] as String?;
+        final ValueKey<String>? refreshKey = refreshKeyValue == null
+            ? null
+            : ValueKey<String>(refreshKeyValue);
         final ImperativeRouteMatch imperativeMatch = ImperativeRouteMatch(
           pageKey: pageKey,
           // TODO(chunhtai): Figure out a way to preserve future.
           // https://github.com/flutter/flutter/issues/128122.
           completer: Completer<Object?>(),
           matches: imperativeMatchList,
+          refreshKey: refreshKey,
         );
         matchList = matchList.push(imperativeMatch);
       }

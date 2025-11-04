@@ -588,12 +588,52 @@ class GoRouter implements RouterConfig<RouteMatchList> {
   }
 
   /// Refresh the route.
+  ///
+  /// This is a more reliable way to force a refresh of the route than just
+  /// calling `notifyListeners` on the `refreshListenable`. It works by
+  /// creating a new `RouteMatchList` with a new unique `refreshKey` and then
+  /// calling `setNewRoutePath` on the `routerDelegate`. This forces the
+  /// `Navigator` to rebuild its pages, which is useful when you want to
+  /// refresh the route with new data.
   void refresh() {
     assert(() {
       log('refreshing ${routerDelegate.currentConfiguration.uri}');
       return true;
     }());
-    routeInformationProvider.notifyListeners();
+    final RouteMatchList currentConfiguration =
+        routerDelegate.currentConfiguration;
+    final ValueKey<String> refreshKey = ValueKey<String>(
+      DateTime.now().microsecondsSinceEpoch.toString(),
+    );
+
+    List<RouteMatchBase> refreshMatches(
+      List<RouteMatchBase> matches,
+      ValueKey<String> key,
+    ) {
+      return matches.map((RouteMatchBase match) {
+        if (match is ShellRouteMatch) {
+          return match.copyWith(matches: refreshMatches(match.matches, key));
+        }
+        if (match is RouteMatch) {
+          return match.copyWith(refreshKey: key);
+        }
+        return match;
+      }).toList();
+    }
+
+    final List<RouteMatchBase> newMatches = refreshMatches(
+      currentConfiguration.matches,
+      refreshKey,
+    );
+
+    final RouteMatchList newConfiguration = RouteMatchList(
+      matches: newMatches,
+      uri: currentConfiguration.uri,
+      pathParameters: currentConfiguration.pathParameters,
+      extra: currentConfiguration.extra,
+    );
+
+    routerDelegate.setNewRoutePath(newConfiguration);
   }
 
   /// Find the current GoRouter in the widget tree.
