@@ -29,6 +29,7 @@ public class PlatformViewVideoPlayer extends VideoPlayer {
       @NonNull VideoPlayerOptions options,
       @NonNull ExoPlayerProvider exoPlayerProvider) {
     super(events, mediaItem, options, /* surfaceProducer */ null, exoPlayerProvider);
+    exoPlayer.addListener(createExoPlayerEventListener(exoPlayer, surfaceProducer));
   }
 
   /**
@@ -59,8 +60,7 @@ public class PlatformViewVideoPlayer extends VideoPlayer {
   }
 
   @NonNull
-  @Override
-  protected ExoPlayerEventListener createExoPlayerEventListener(
+  private ExoPlayerEventListener createExoPlayerEventListener(
       @NonNull ExoPlayer exoPlayer, @Nullable SurfaceProducer surfaceProducer) {
     return new PlatformViewExoPlayerEventListener(exoPlayer, videoPlayerEvents);
   }

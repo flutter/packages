@@ -54,17 +54,12 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
     exoPlayer = exoPlayerProvider.get();
     exoPlayer.setMediaItem(mediaItem);
     exoPlayer.prepare();
-    exoPlayer.addListener(createExoPlayerEventListener(exoPlayer, surfaceProducer));
     setAudioAttributes(exoPlayer, options.mixWithOthers);
   }
 
   public void setDisposeHandler(@Nullable DisposeHandler handler) {
     disposeHandler = handler;
   }
-
-  @NonNull
-  protected abstract ExoPlayerEventListener createExoPlayerEventListener(
-      @NonNull ExoPlayer exoPlayer, @Nullable SurfaceProducer surfaceProducer);
 
   private static void setAudioAttributes(ExoPlayer exoPlayer, boolean isMixMode) {
     exoPlayer.setAudioAttributes(
