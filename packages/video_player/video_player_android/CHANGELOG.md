@@ -1,3 +1,7 @@
+## 2.8.17+1
+
+* Bumps `exoplayer_version` from 1.5.1 to 1.8.0.
+
 ## 2.8.17
 
 * Moves video event processing logic to Dart, and fixes an issue where buffer
