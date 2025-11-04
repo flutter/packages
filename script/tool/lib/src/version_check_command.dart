@@ -471,10 +471,10 @@ ${indentation}The first version listed in CHANGELOG.md is $fromChangeLog.
 
       printError(
           '${indentation}Blank lines found between list items in CHANGELOG.\n'
-              '${indentation}This creates multiple separate lists on pub.dev.\n'
-              '${indentation}Remove blank lines to keep all items in a single list.\n'
-              '${indentation}The problematic section found is:\n'
-              '$offendingLines');
+          '${indentation}This creates multiple separate lists on pub.dev.\n'
+          '${indentation}Remove blank lines to keep all items in a single list.\n'
+          '${indentation}The problematic section found is:\n'
+          '$offendingLines');
       return false;
     }
 
