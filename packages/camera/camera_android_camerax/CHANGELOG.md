@@ -2,7 +2,6 @@
 
 * Fix crash in `DeviceOrientationManager` caused by `UnsupportedOperationException` when `getDisplay()` is called on a null or destroyed Activity during rotation.
 
-
 ## 0.6.24
 
 * Change plugin to assume mp4 format for capture videos.
