@@ -218,7 +218,7 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
         pageToRouteMatchBase[page] = match;
         registry[page] = match.buildState(
           widget.configuration,
-          widget.matchList,
+          match is ImperativeRouteMatch ? match.matches : widget.matchList,
         );
       }
     }
@@ -245,7 +245,7 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
     final GoRouterPageBuilder? pageBuilder = match.route.pageBuilder;
     final GoRouterState state = match.buildState(
       widget.configuration,
-      widget.matchList,
+      match is ImperativeRouteMatch ? match.matches : widget.matchList,
     );
     if (pageBuilder != null) {
       final Page<Object?> page = pageBuilder(context, state);

@@ -600,8 +600,13 @@ class GoRouter implements RouterConfig<RouteMatchList> {
       log('refreshing ${routerDelegate.currentConfiguration.uri}');
       return true;
     }());
-    final RouteMatchList currentConfiguration =
-        routerDelegate.currentConfiguration;
+    RouteMatchList currentConfiguration = routerDelegate.currentConfiguration;
+    if (currentConfiguration.matches.isNotEmpty) {
+      final RouteMatchBase lastMatch = currentConfiguration.matches.last;
+      if (lastMatch is ImperativeRouteMatch) {
+        currentConfiguration = lastMatch.matches;
+      }
+    }
     final ValueKey<String> refreshKey = ValueKey<String>(
       DateTime.now().microsecondsSinceEpoch.toString(),
     );
