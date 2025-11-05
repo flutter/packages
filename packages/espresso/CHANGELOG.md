@@ -1,3 +1,7 @@
+## 0.4.0+18
+
+*  Bumps `com.squareup.okhttp3:okhttp` from 5.1.0 to 5.3.0.
+
 ## 0.4.0+17
 
 * Resolves Gradle 9 deprecations.
