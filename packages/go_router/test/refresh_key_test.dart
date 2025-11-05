@@ -21,7 +21,7 @@ void main() {
             (BuildContext context, GoRouterState state) => const Placeholder(),
       );
 
-      final ValueKey<String> originalRefreshKey = ValueKey<String>(
+      const ValueKey<String> originalRefreshKey = ValueKey<String>(
         'original-key',
       );
       final RouteMatch original = RouteMatch(
@@ -47,10 +47,10 @@ void main() {
             (BuildContext context, GoRouterState state) => const Placeholder(),
       );
 
-      final ValueKey<String> originalRefreshKey = ValueKey<String>(
+      const ValueKey<String> originalRefreshKey = ValueKey<String>(
         'original-key',
       );
-      final ValueKey<String> newRefreshKey = ValueKey<String>('new-key');
+      const ValueKey<String> newRefreshKey = ValueKey<String>('new-key');
 
       final RouteMatch original = RouteMatch(
         route: route,
@@ -206,7 +206,7 @@ void main() {
         pageKey: const ValueKey<String>('child-key'),
       );
 
-      final ValueKey<String> originalRefreshKey = ValueKey<String>(
+      const ValueKey<String> originalRefreshKey = ValueKey<String>(
         'shell-refresh-key',
       );
       final ShellRouteMatch original = ShellRouteMatch(
@@ -242,7 +242,7 @@ void main() {
       );
 
       final RouteMatchList matchList = configuration.findMatch(Uri.parse('/a'));
-      final ValueKey<String> refreshKey = ValueKey<String>('imperative-key');
+      const ValueKey<String> refreshKey = ValueKey<String>('imperative-key');
 
       final ImperativeRouteMatch imperativeMatch = ImperativeRouteMatch(
         pageKey: const ValueKey<String>('page-key'),
@@ -281,7 +281,7 @@ void main() {
       final RouteMatchList list1 = configuration.findMatch(Uri.parse('/a'));
       final RouteMatchList list2 = configuration.findMatch(Uri.parse('/b'));
 
-      final ValueKey<String> refreshKey = ValueKey<String>('test-refresh-key');
+      const ValueKey<String> refreshKey = ValueKey<String>('test-refresh-key');
       final ImperativeRouteMatch imperativeMatch = ImperativeRouteMatch(
         pageKey: const ValueKey<String>('/b-p0'),
         matches: list2,
@@ -373,7 +373,7 @@ void main() {
       final RouteMatchList list1 = configuration.findMatch(Uri.parse('/a'));
       final RouteMatchList list2 = configuration.findMatch(Uri.parse('/b'));
 
-      final ValueKey<String> refreshKey = ValueKey<String>('preserved-key');
+      const ValueKey<String> refreshKey = ValueKey<String>('preserved-key');
       final ImperativeRouteMatch imperativeMatch = ImperativeRouteMatch(
         pageKey: const ValueKey<String>('/b-p0'),
         matches: list2,

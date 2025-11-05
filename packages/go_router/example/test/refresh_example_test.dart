@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
-import '../lib/refresh_example.dart';
+import 'package:go_router_examples/refresh_example.dart';
 
 void main() {
   group('Refresh Function Tests', () {
@@ -23,13 +23,15 @@ void main() {
       await tester.pumpAndSettle();
 
       final GoRouter router = getRouter(tester);
-      final dynamic matchesBefore = router.routerDelegate.currentConfiguration;
+      final RouteMatchList matchesBefore =
+          router.routerDelegate.currentConfiguration;
 
       await tester.pump(const Duration(milliseconds: 10));
       router.refresh();
       await tester.pump();
 
-      final dynamic matchesAfter = router.routerDelegate.currentConfiguration;
+      final RouteMatchList matchesAfter =
+          router.routerDelegate.currentConfiguration;
 
       // Verify that configuration changed
       expect(matchesAfter, isNot(same(matchesBefore)));
@@ -67,13 +69,13 @@ void main() {
 
       expect(find.text('Nested 456'), findsOneWidget);
 
-      final dynamic matchesBefore =
+      final RouteMatchList matchesBefore =
           getRouter(tester).routerDelegate.currentConfiguration;
 
       getRouter(tester).refresh();
       await tester.pump();
 
-      final dynamic matchesAfter =
+      final RouteMatchList matchesAfter =
           getRouter(tester).routerDelegate.currentConfiguration;
 
       expect(matchesAfter.pathParameters['id'], equals('456'));
@@ -111,13 +113,13 @@ void main() {
       getRouter(tester).go('/simple?test=value&count=5');
       await tester.pumpAndSettle();
 
-      final dynamic matchesBefore =
+      final RouteMatchList matchesBefore =
           getRouter(tester).routerDelegate.currentConfiguration;
 
       getRouter(tester).refresh();
       await tester.pump();
 
-      final dynamic matchesAfter =
+      final RouteMatchList matchesAfter =
           getRouter(tester).routerDelegate.currentConfiguration;
 
       expect(matchesAfter.uri.queryParameters['test'], equals('value'));
@@ -193,13 +195,13 @@ void main() {
 
       expect(find.text('Detail'), findsOneWidget);
 
-      final dynamic matchesBefore =
+      final RouteMatchList matchesBefore =
           getRouter(tester).routerDelegate.currentConfiguration;
 
       getRouter(tester).refresh();
       await tester.pump();
 
-      final dynamic matchesAfter =
+      final RouteMatchList matchesAfter =
           getRouter(tester).routerDelegate.currentConfiguration;
 
       expect(matchesAfter.matches.length, equals(matchesBefore.matches.length));
@@ -215,7 +217,7 @@ void main() {
       getRouter(tester).go('/simple');
       await tester.pumpAndSettle();
 
-      getRouter(tester).push('/nested/222');
+      await getRouter(tester).push('/nested/222');
       await tester.pumpAndSettle();
 
       expect(find.text('Nested 222'), findsOneWidget);
@@ -234,14 +236,14 @@ void main() {
       getRouter(tester).go('/simple', extra: extraData);
       await tester.pumpAndSettle();
 
-      final dynamic matchesBefore =
+      final RouteMatchList matchesBefore =
           getRouter(tester).routerDelegate.currentConfiguration;
       expect(matchesBefore.extra, equals(extraData));
 
       getRouter(tester).refresh();
       await tester.pump();
 
-      final dynamic matchesAfter =
+      final RouteMatchList matchesAfter =
           getRouter(tester).routerDelegate.currentConfiguration;
       expect(matchesAfter.extra, equals(extraData));
     });
@@ -357,13 +359,13 @@ void main() {
       getRouter(tester).go('/nested/555?query=test#fragment');
       await tester.pumpAndSettle();
 
-      final dynamic matchesBefore =
+      final RouteMatchList matchesBefore =
           getRouter(tester).routerDelegate.currentConfiguration;
 
       getRouter(tester).refresh();
       await tester.pump();
 
-      final dynamic matchesAfter =
+      final RouteMatchList matchesAfter =
           getRouter(tester).routerDelegate.currentConfiguration;
 
       expect(matchesAfter.uri.path, equals(matchesBefore.uri.path));
