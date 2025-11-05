@@ -198,6 +198,19 @@ class RepositoryPackage {
     return null;
   }
 
+  /// Returns all Dart package folders (e.g., examples) under this package.
+  Stream<RepositoryPackage> getSubpackages(
+      {bool includeExamples = true}) async* {
+    yield* directory
+        .list(recursive: true, followLinks: false)
+        .where(isPackage)
+        .map((FileSystemEntity directory) =>
+            // isPackage guarantees that this cast is valid.
+            RepositoryPackage(directory as Directory))
+        .where((RepositoryPackage p) =>
+            includeExamples || (p.directory.basename != 'example'));
+  }
+
   /// Returns true if the package is not marked as "publish_to: none".
   bool isPublishable() {
     return parsePubspec().publishTo != 'none';
