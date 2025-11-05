@@ -25,4 +25,7 @@ extern FCPPlatformDeviceOrientation FCPGetPigeonDeviceOrientationForOrientation(
 /// Gets VideoFormat from its Pigeon representation.
 extern OSType FCPGetPixelFormatForPigeonFormat(FCPPlatformImageFormatGroup imageFormat);
 
+extern AVCaptureVideoStabilizationMode getAvCaptureVideoStabilizationMode(
+    FCPPlatformVideoStabilizationMode videoStabilizationMode);
+
 NS_ASSUME_NONNULL_END

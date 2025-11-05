@@ -25,6 +25,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// Corresponds to the `supportsVideoOrientation` property of `AVCaptureConnection`
 @property(nonatomic, readonly, getter=isVideoOrientationSupported) BOOL supportsVideoOrientation;
 
+/// Corresponds to the `preferredVideoStabilizationMode` property of `AVCaptureConnection`
+@property(nonatomic) AVCaptureVideoStabilizationMode preferredVideoStabilizationMode;
+
 @end
 
 /// A default implementation of the `FLTCaptureConnection` protocol. It wraps an instance
