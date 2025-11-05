@@ -62,11 +62,11 @@ public final class VideoPlayerTest {
         @Nullable SurfaceProducer surfaceProducer,
         @NonNull ExoPlayerProvider exoPlayerProvider) {
       super(events, mediaItem, options, surfaceProducer, exoPlayerProvider);
-      exoPlayer.addListener(createExoPlayerEventListener(exoPlayer, surfaceProducer));
     }
 
     @NonNull
-    private ExoPlayerEventListener createExoPlayerEventListener(
+    @Override
+    protected ExoPlayerEventListener createExoPlayerEventListener(
         @NonNull ExoPlayer exoPlayer, @Nullable SurfaceProducer surfaceProducer) {
       // Use platform view implementation for testing.
       return new PlatformViewExoPlayerEventListener(exoPlayer, mockEvents);

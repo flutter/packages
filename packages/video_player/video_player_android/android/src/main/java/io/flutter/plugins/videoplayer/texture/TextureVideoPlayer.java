@@ -67,7 +67,6 @@ public final class TextureVideoPlayer extends VideoPlayer implements SurfaceProd
       @NonNull VideoPlayerOptions options,
       @NonNull ExoPlayerProvider exoPlayerProvider) {
     super(events, mediaItem, options, surfaceProducer, exoPlayerProvider);
-    exoPlayer.addListener(createExoPlayerEventListener(exoPlayer, surfaceProducer));
 
     surfaceProducer.setCallback(this);
 
@@ -77,7 +76,8 @@ public final class TextureVideoPlayer extends VideoPlayer implements SurfaceProd
   }
 
   @NonNull
-  private ExoPlayerEventListener createExoPlayerEventListener(
+  @Override
+  protected ExoPlayerEventListener createExoPlayerEventListener(
       @NonNull ExoPlayer exoPlayer, @Nullable SurfaceProducer surfaceProducer) {
     if (surfaceProducer == null) {
       throw new IllegalArgumentException(
