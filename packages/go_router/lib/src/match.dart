@@ -303,7 +303,7 @@ abstract class RouteMatchBase with Diagnosticable {
             matchedLocation: newMatchedLocation,
             pageKey: ValueKey<String>(newMatchedPath),
             refreshKey: ValueKey<String>(
-              DateTime.now().millisecondsSinceEpoch.toString(),
+              DateTime.now().microsecondsSinceEpoch.toString(),
             ),
           ),
         );
