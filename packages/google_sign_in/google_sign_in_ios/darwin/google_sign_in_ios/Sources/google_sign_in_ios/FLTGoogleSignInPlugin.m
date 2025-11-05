@@ -7,6 +7,10 @@
 
 #import <GoogleSignIn/GoogleSignIn.h>
 
+#import "./include/google_sign_in_ios/FSIGoogleSignInProtocols.h"
+#import "./include/google_sign_in_ios/FSIViewProvider.h"
+#import "./include/google_sign_in_ios/WrapperProtocolImplementations.h"
+
 // The key within `GoogleService-Info.plist` used to hold the application's
 // client id.  See https://developers.google.com/identity/sign-in/ios/start
 // for more info.
@@ -93,42 +97,45 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
   }
 }
 
+#pragma mark -
+
 @interface FLTGoogleSignInPlugin ()
 
 // The contents of GoogleService-Info.plist, if it exists.
 @property(nonatomic, nullable) NSDictionary<NSString *, id> *googleServiceProperties;
 
-// The plugin registrar, for querying views.
-@property(nonatomic, nonnull) id<FlutterPluginRegistrar> registrar;
+// The view provider, to access the current Flutter view.
+@property(nonatomic, nonnull) NSObject<FSIViewProvider> *viewProvider;
 
 @end
 
 @implementation FLTGoogleSignInPlugin
 
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
-  FLTGoogleSignInPlugin *instance = [[FLTGoogleSignInPlugin alloc] initWithRegistrar:registrar];
+  FLTGoogleSignInPlugin *instance = [[FLTGoogleSignInPlugin alloc]
+      initWithViewProvider:[[FSIDefaultViewProvider alloc] initWithRegistrar:registrar]];
   [registrar addApplicationDelegate:instance];
   SetUpFSIGoogleSignInApi(registrar.messenger, instance);
 }
 
-- (instancetype)initWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
-  return [self initWithSignIn:GIDSignIn.sharedInstance registrar:registrar];
+- (instancetype)initWithViewProvider:(NSObject<FSIViewProvider> *)viewProvider {
+  return [self initWithSignIn:[[FSIGIDSignInWrapper alloc] init] viewProvider:viewProvider];
 }
 
-- (instancetype)initWithSignIn:(GIDSignIn *)signIn
-                     registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
+- (instancetype)initWithSignIn:(NSObject<FSIGIDSignIn> *)signIn
+                  viewProvider:(NSObject<FSIViewProvider> *)viewProvider {
   return [self initWithSignIn:signIn
-                    registrar:registrar
+                 viewProvider:viewProvider
       googleServiceProperties:FSILoadGoogleServiceInfo()];
 }
 
-- (instancetype)initWithSignIn:(GIDSignIn *)signIn
-                     registrar:(NSObject<FlutterPluginRegistrar> *)registrar
+- (instancetype)initWithSignIn:(NSObject<FSIGIDSignIn> *)signIn
+                  viewProvider:(NSObject<FSIViewProvider> *)viewProvider
        googleServiceProperties:(nullable NSDictionary<NSString *, id> *)googleServiceProperties {
   self = [super init];
   if (self) {
     _signIn = signIn;
-    _registrar = registrar;
+    _viewProvider = viewProvider;
     _googleServiceProperties = googleServiceProperties;
     _usersByIdentifier = [[NSMutableDictionary alloc] init];
 
@@ -173,7 +180,7 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
 - (void)restorePreviousSignInWithCompletion:(nonnull void (^)(FSISignInResult *_Nullable,
                                                               FlutterError *_Nullable))completion {
   __weak typeof(self) weakSelf = self;
-  [self.signIn restorePreviousSignInWithCompletion:^(GIDGoogleUser *_Nullable user,
+  [self.signIn restorePreviousSignInWithCompletion:^(NSObject<FSIGIDGoogleUser> *_Nullable user,
                                                      NSError *_Nullable error) {
     [weakSelf handleAuthResultWithUser:user serverAuthCode:nil error:error completion:completion];
   }];
@@ -188,7 +195,8 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
     [self signInWithHint:nil
         additionalScopes:scopeHint
                    nonce:nonce
-              completion:^(GIDSignInResult *_Nullable signInResult, NSError *_Nullable error) {
+              completion:^(NSObject<FSIGIDSignInResult> *_Nullable signInResult,
+                           NSError *_Nullable error) {
                 [weakSelf handleAuthResultWithUser:signInResult.user
                                     serverAuthCode:signInResult.serverAuthCode
                                              error:error
@@ -202,7 +210,7 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
 - (void)refreshedAuthorizationTokensForUser:(NSString *)userId
                                  completion:(nonnull void (^)(FSISignInResult *_Nullable,
                                                               FlutterError *_Nullable))completion {
-  GIDGoogleUser *user = self.usersByIdentifier[userId];
+  NSObject<FSIGIDGoogleUser> *user = self.usersByIdentifier[userId];
   if (user == nil) {
     completion(
         [FSISignInResult
@@ -215,7 +223,7 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
   }
 
   __weak typeof(self) weakSelf = self;
-  [user refreshTokensIfNeededWithCompletion:^(GIDGoogleUser *_Nullable refreshedUser,
+  [user refreshTokensIfNeededWithCompletion:^(NSObject<FSIGIDGoogleUser> *_Nullable refreshedUser,
                                               NSError *_Nullable error) {
     [weakSelf handleAuthResultWithUser:refreshedUser
                         serverAuthCode:nil
@@ -228,7 +236,7 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
           forUser:(nonnull NSString *)userId
        completion:
            (nonnull void (^)(FSISignInResult *_Nullable, FlutterError *_Nullable))completion {
-  GIDGoogleUser *user = self.usersByIdentifier[userId];
+  NSObject<FSIGIDGoogleUser> *user = self.usersByIdentifier[userId];
   if (user == nil) {
     completion(
         [FSISignInResult
@@ -244,7 +252,8 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
     __weak typeof(self) weakSelf = self;
     [self addScopes:scopes
         forGoogleSignInUser:user
-                 completion:^(GIDSignInResult *_Nullable signInResult, NSError *_Nullable error) {
+                 completion:^(NSObject<FSIGIDSignInResult> *_Nullable signInResult,
+                              NSError *_Nullable error) {
                    [weakSelf handleAuthResultWithUser:signInResult.user
                                        serverAuthCode:signInResult.serverAuthCode
                                                 error:error
@@ -274,10 +283,10 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
 - (void)signInWithHint:(nullable NSString *)hint
       additionalScopes:(nullable NSArray<NSString *> *)additionalScopes
                  nonce:(nullable NSString *)nonce
-            completion:(void (^)(GIDSignInResult *_Nullable signInResult,
+            completion:(void (^)(NSObject<FSIGIDSignInResult> *_Nullable signInResult,
                                  NSError *_Nullable error))completion {
 #if TARGET_OS_OSX
-  [self.signIn signInWithPresentingWindow:self.registrar.view.window
+  [self.signIn signInWithPresentingWindow:self.viewProvider.view.window
                                      hint:hint
                          additionalScopes:additionalScopes
                                     nonce:nonce
@@ -293,11 +302,11 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
 
 // Wraps the iOS and macOS scope addition methods.
 - (void)addScopes:(nonnull NSArray<NSString *> *)scopes
-    forGoogleSignInUser:(nonnull GIDGoogleUser *)user
-             completion:(void (^)(GIDSignInResult *_Nullable signInResult,
+    forGoogleSignInUser:(nonnull NSObject<FSIGIDGoogleUser> *)user
+             completion:(void (^)(NSObject<FSIGIDSignInResult> *_Nullable signInResult,
                                   NSError *_Nullable error))completion {
 #if TARGET_OS_OSX
-  [user addScopes:scopes presentingWindow:self.registrar.view.window completion:completion];
+  [user addScopes:scopes presentingWindow:self.viewProvider.view.window completion:completion];
 #else
   [user addScopes:scopes presentingViewController:[self topViewController] completion:completion];
 #endif
@@ -323,7 +332,7 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
                                         openIDRealm:nil];
 }
 
-- (void)handleAuthResultWithUser:(nullable GIDGoogleUser *)user
+- (void)handleAuthResultWithUser:(nullable NSObject<FSIGIDGoogleUser> *)user
                   serverAuthCode:(nullable NSString *)serverAuthCode
                            error:(nullable NSError *)error
                       completion:(void (^)(FSISignInResult *_Nullable,
@@ -348,7 +357,7 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
   }
 }
 
-- (void)didSignInForUser:(nonnull GIDGoogleUser *)user
+- (void)didSignInForUser:(nonnull NSObject<FSIGIDGoogleUser> *)user
       withServerAuthCode:(nullable NSString *)serverAuthCode
               completion:(void (^)(FSISignInResult *_Nullable, FlutterError *_Nullable))completion {
   self.usersByIdentifier[user.userID] = user;
@@ -376,13 +385,7 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
 #if TARGET_OS_IOS
 
 - (UIViewController *)topViewController {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-  // TODO(stuartmorgan) Provide a non-deprecated codepath. See
-  // https://github.com/flutter/flutter/issues/104117
-  return [self topViewControllerFromViewController:[UIApplication sharedApplication]
-                                                       .keyWindow.rootViewController];
-#pragma clang diagnostic pop
+  return [self topViewControllerFromViewController:self.viewProvider.viewController];
 }
 
 /// This method recursively iterate through the view hierarchy
