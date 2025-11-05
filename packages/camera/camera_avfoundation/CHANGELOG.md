@@ -1,3 +1,7 @@
+## 0.10.0
+
+* Adds video stabilization.
+
 ## 0.9.22+7
 
 * Migrates `FLTCaptureConnection`, `FLTCaptureDeviceFormat` and `FLTAssetWriter` classes to Swift.
