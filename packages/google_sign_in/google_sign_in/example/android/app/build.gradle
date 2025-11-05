@@ -23,7 +23,7 @@ if (flutterVersionName == null) {
 }
 
 android {
-    namespace 'io.flutter.plugins.googlesigninexample'
+    namespace = "io.flutter.plugins.googlesigninexample"
     compileSdk = flutter.compileSdkVersion
 
 
@@ -40,7 +40,7 @@ android {
         release {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig signingConfigs.debug
+            signingConfig = signingConfigs.debug
         }
     }
 
@@ -53,13 +53,13 @@ android {
 }
 
 flutter {
-    source '../..'
+    source = '../..'
 }
 
 dependencies {
-    implementation 'com.google.android.gms:play-services-auth:16.0.1'
-    testImplementation'junit:junit:4.12'
-    androidTestImplementation 'androidx.test:runner:1.2.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
-    api 'androidx.test:core:1.4.0'
+    implementation("com.google.android.gms:play-services-auth:16.0.1")
+    testImplementation("junit:junit:4.12")
+    androidTestImplementation("androidx.test:runner:1.2.0")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.2.0")
+    api("androidx.test:core:1.4.0")
 }

@@ -1,7 +1,16 @@
+## 26.0.4
+
+* [kotlin] Serialize custom enums as `Long` instead of `Int` to avoid `ClassCastException` on decoding.
+
+## 26.0.3
+
+* [kotlin] Removes all `containsKey` and replaces with `contains`.
+
 ## 26.0.2
 
+* [kotlin] Fixes support for classes that override equals and hashCode for ProxyApis.
+* [kotlin] Adds error message log when a new Dart proxy instance fails to be created.
 * Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
-* [kotlin] Serialize custom enums as `Long` instead of `Int` to avoid `ClassCastException` on decoding.
 
 ## 26.0.1
 

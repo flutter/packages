@@ -623,7 +623,7 @@ abstract class RouteBaseConfig {
   }) {
     assert(!reader.isNull, 'reader should not be null');
     final InterfaceType type = reader.objectValue.type! as InterfaceType;
-    final String typeName = type.element.name;
+    final String typeName = type.element.displayName;
 
     if (isAncestorRelative && typeName == 'TypedGoRoute') {
       throw InvalidGenerationSourceError(
@@ -645,6 +645,7 @@ abstract class RouteBaseConfig {
     }
 
     // TODO(kevmoo): validate that this MUST be a subtype of `GoRouteData`
+    // ignore: experimental_member_use
     final InterfaceElement2 classElement = typeParamType.element3;
 
     final RouteBaseConfig value;
@@ -941,10 +942,11 @@ $routeDataClassName.$dataConvertionFunctionName(
 String _enumMapConst(InterfaceType type) {
   assert(type.isEnum);
 
-  final String enumName = type.element.name;
+  final String enumName = type.element.displayName;
 
   final StringBuffer buffer = StringBuffer('const ${enumMapName(type)} = {');
 
+  // ignore: experimental_member_use
   for (final FieldElement2 enumField in type.element3.fields2.where(
     (FieldElement2 element) => element.isEnumConstant,
   )) {
