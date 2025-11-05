@@ -189,7 +189,7 @@ abstract class RouteMatchBase with Diagnosticable {
       matchedLocation: remainingLocation,
       pageKey: ValueKey<String>(route.hashCode.toString()),
       refreshKey: ValueKey<String>(
-        DateTime.now().millisecondsSinceEpoch.toString(),
+        DateTime.now().microsecondsSinceEpoch.toString(),
       ),
       navigatorKey: navigatorKeyUsed,
     );
