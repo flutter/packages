@@ -1,6 +1,6 @@
 ## 16.3.1
 
-- Fixes `GoRouter.of(context).refresh()` not update build widget
+- Fixes an issue where `GoRouter.refresh()` did not trigger a widget rebuild.
 
 ## 16.3.0
 
