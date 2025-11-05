@@ -1,3 +1,7 @@
+## 16.3.1
+
+- Fixes `GoRouter.of(context).refresh()` not update build widget
+
 ## 16.3.0
 
 - Adds a top-level `onEnter` callback with access to current and next route states.
