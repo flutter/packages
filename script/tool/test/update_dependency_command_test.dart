@@ -610,7 +610,7 @@ dev_dependencies:
     group('gradle', () {
       final List<String> invalidGradleVersionsFormat = <String>[
         '81',
-        '81.1',
+        '811.1',
         '8.123',
         '8.12.12'
       ];
@@ -635,7 +635,7 @@ dev_dependencies:
             containsAllInOrder(<Matcher>[
               contains('''
 A version with a valid format (maximum 2-3 numbers separated by 1-2 periods) must be provided.
-            1. The first number must have a single digit
+            1. The first number must have one or two digits
             2. The second number must have one or two digits
             3. If present, the third number must have a single digit'''),
             ]),

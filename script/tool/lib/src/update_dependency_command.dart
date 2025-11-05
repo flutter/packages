@@ -139,13 +139,13 @@ ${response.httpResponse.body}
         throw ToolExit(_exitNoTargetVersion);
       } else if (_targetAndroidDependency == _AndroidDepdencyType.gradle) {
         final RegExp validGradleVersionPattern =
-            RegExp(r'^\d\.\d{1,2}(?:\.\d)?$');
+            RegExp(r'^\d{1,2}\.\d{1,2}(?:\.\d)?$');
         final bool isValidGradleVersion =
             validGradleVersionPattern.stringMatch(version) == version;
         if (!isValidGradleVersion) {
           printError('''
 A version with a valid format (maximum 2-3 numbers separated by 1-2 periods) must be provided.
-            1. The first number must have a single digit
+            1. The first number must have one or two digits
             2. The second number must have one or two digits
             3. If present, the third number must have a single digit''');
           throw ToolExit(_exitInvalidTargetVersion);
