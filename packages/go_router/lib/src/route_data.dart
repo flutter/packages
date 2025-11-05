@@ -314,6 +314,7 @@ abstract class ShellRouteData extends RouteData {
     GlobalKey<NavigatorState>? navigatorKey,
     GlobalKey<NavigatorState>? parentNavigatorKey,
     List<RouteBase> routes = const <RouteBase>[],
+    bool notifyRootObserver = true,
     List<NavigatorObserver>? observers,
     String? restorationScopeId,
   }) {
@@ -342,6 +343,7 @@ abstract class ShellRouteData extends RouteData {
       parentNavigatorKey: parentNavigatorKey,
       routes: routes,
       navigatorKey: navigatorKey,
+      notifyRootObserver: notifyRootObserver,
       observers: observers,
       restorationScopeId: restorationScopeId,
       redirect: redirect,
@@ -559,7 +561,16 @@ class TypedRelativeGoRoute<T extends RelativeGoRouteData>
 @Target(<TargetKind>{TargetKind.library, TargetKind.classType})
 class TypedShellRoute<T extends ShellRouteData> extends TypedRoute<T> {
   /// Default const constructor
-  const TypedShellRoute({this.routes = const <TypedRoute<RouteData>>[]});
+  const TypedShellRoute({
+    this.notifyRootObserver = true,
+    this.routes = const <TypedRoute<RouteData>>[],
+  });
+
+  /// Whether navigation changes within this shell route will notify the
+  /// GoRouter's observers.
+  ///
+  /// See [ShellRouteBase.notifyRootObserver].
+  final bool notifyRootObserver;
 
   /// Child route definitions.
   ///
@@ -573,8 +584,15 @@ class TypedStatefulShellRoute<T extends StatefulShellRouteData>
     extends TypedRoute<T> {
   /// Default const constructor
   const TypedStatefulShellRoute({
+    this.notifyRootObserver = true,
     this.branches = const <TypedStatefulShellBranch<StatefulShellBranchData>>[],
   });
+
+  /// Whether navigation changes within this shell route will notify the
+  /// GoRouter's observers.
+  ///
+  /// See [ShellRouteBase.notifyRootObserver].
+  final bool notifyRootObserver;
 
   /// Child route definitions.
   ///
