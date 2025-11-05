@@ -43,6 +43,7 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
     void onDispose();
   }
 
+  @SuppressWarnings("this-escape")
   public VideoPlayer(
       @NonNull VideoPlayerCallbacks events,
       @NonNull MediaItem mediaItem,
