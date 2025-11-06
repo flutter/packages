@@ -125,12 +125,23 @@ class FormatCommand extends PackageLoopingCommand {
       relativeTo: package.directory,
     );
     if (getBoolArg(_dartArg)) {
+      final List<RepositoryPackage> packagesToGet = <RepositoryPackage>[
+        package,
+        ...package.getSubpackages(includeExamples: false)
+      ];
       // Ensure that .dart_tool exists, since without it `dart` doesn't know
-      // the lanugage version, so the formatter may give different output.
-      if (!package.directory.childDirectory('.dart_tool').existsSync()) {
-        if (!await runPubGet(package, processRunner, super.platform)) {
-          printError('Unable to fetch dependencies.');
-          return PackageResult.fail(<String>['unable to fetch dependencies']);
+      // the lanugage version, so the formatter may give different output. This
+      // must be done for every sub-package to avoid inconsistent results if
+      // sub-packages have different language versions.
+      for (final RepositoryPackage p in packagesToGet) {
+        // TODO(stuartmorgan): Consider validating the language version captured
+        //  in .dart_tool against pubspec.yaml, so that changing the min SDK
+        //  version will always re-trigger correct formatting when run locally.
+        if (!p.directory.childDirectory('.dart_tool').existsSync()) {
+          if (!await runPubGet(p, processRunner, platform)) {
+            printError('Unable to fetch dependencies.');
+            return PackageResult.fail(<String>['unable to fetch dependencies']);
+          }
         }
       }
 

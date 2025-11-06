@@ -267,7 +267,7 @@ class AnalyzeCommand extends PackageLoopingCommand {
     // directory.
     final List<RepositoryPackage> packagesToGet = <RepositoryPackage>[
       package,
-      if (!libOnly) ...await package.getSubpackages().toList(),
+      if (!libOnly) ...package.getSubpackages(),
     ];
     for (final RepositoryPackage packageToGet in packagesToGet) {
       if (packageToGet.directory.basename != 'example' ||

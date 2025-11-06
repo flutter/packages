@@ -563,9 +563,10 @@ abstract class PackageCommand extends Command<void> {
     await for (final PackageEnumerationEntry package
         in getTargetPackages(filterExcluded: filterExcluded)) {
       yield package;
-      yield* package.package.getSubpackages().map(
-          (RepositoryPackage subPackage) =>
-              PackageEnumerationEntry(subPackage, excluded: package.excluded));
+      yield* Stream<PackageEnumerationEntry>.fromIterable(package.package
+          .getSubpackages()
+          .map((RepositoryPackage subPackage) =>
+              PackageEnumerationEntry(subPackage, excluded: package.excluded)));
     }
   }
 

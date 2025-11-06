@@ -232,7 +232,7 @@ class FetchDepsCommand extends PackageLoopingCommand {
   Future<bool> _fetchDartPackages(RepositoryPackage package) async {
     final List<RepositoryPackage> packagesToGet = <RepositoryPackage>[
       package,
-      ...await package.getSubpackages(includeExamples: false).toList()
+      ...package.getSubpackages(includeExamples: false)
     ];
     for (final RepositoryPackage p in packagesToGet) {
       if (!await runPubGet(p, processRunner, platform)) {

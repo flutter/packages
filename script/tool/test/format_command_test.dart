@@ -87,98 +87,162 @@ void main() {
     ];
   }
 
-  test('formats .dart files', () async {
-    const List<String> files = <String>[
-      'lib/a.dart',
-      'lib/src/b.dart',
-      'lib/src/c.dart',
-    ];
-    final RepositoryPackage plugin = createFakePlugin(
-      'a_plugin',
-      packagesDir,
-      extraFiles: files,
-    );
-    fakePubGet(plugin);
+  group('dart format', () {
+    test('formats .dart files', () async {
+      const List<String> files = <String>[
+        'lib/a.dart',
+        'lib/src/b.dart',
+        'lib/src/c.dart',
+      ];
+      final RepositoryPackage plugin = createFakePlugin(
+        'a_plugin',
+        packagesDir,
+        extraFiles: files,
+      );
+      fakePubGet(plugin);
 
-    await runCapturingPrint(runner, <String>['format']);
+      await runCapturingPrint(runner, <String>['format']);
 
-    expect(
-        processRunner.recordedCalls,
-        orderedEquals(<ProcessCall>[
-          ProcessCall('dart', const <String>['format', ...files], plugin.path),
-        ]));
-  });
-
-  test('does not format .dart files with pragma', () async {
-    const List<String> formattedFiles = <String>[
-      'lib/a.dart',
-      'lib/src/b.dart',
-      'lib/src/c.dart',
-    ];
-    const String unformattedFile = 'lib/src/d.dart';
-    final RepositoryPackage plugin = createFakePlugin(
-      'a_plugin',
-      packagesDir,
-      extraFiles: <String>[
-        ...formattedFiles,
-        unformattedFile,
-      ],
-    );
-    fakePubGet(plugin);
-
-    final p.Context posixContext = p.posix;
-    childFileWithSubcomponents(
-            plugin.directory, posixContext.split(unformattedFile))
-        .writeAsStringSync(
-            '// copyright bla bla\n// This file is hand-formatted.\ncode...');
-
-    await runCapturingPrint(runner, <String>['format']);
-
-    expect(
-        processRunner.recordedCalls,
-        orderedEquals(<ProcessCall>[
-          ProcessCall(
-              'dart', const <String>['format', ...formattedFiles], plugin.path),
-        ]));
-  });
-
-  test('fails if dart format fails', () async {
-    const List<String> files = <String>[
-      'lib/a.dart',
-      'lib/src/b.dart',
-      'lib/src/c.dart',
-    ];
-    final RepositoryPackage plugin =
-        createFakePlugin('a_plugin', packagesDir, extraFiles: files);
-    fakePubGet(plugin);
-
-    processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
-      FakeProcessInfo(MockProcess(exitCode: 1), <String>['format'])
-    ];
-    Error? commandError;
-    final List<String> output = await runCapturingPrint(
-        runner, <String>['format'], errorHandler: (Error e) {
-      commandError = e;
+      expect(
+          processRunner.recordedCalls,
+          orderedEquals(<ProcessCall>[
+            ProcessCall(
+                'dart', const <String>['format', ...files], plugin.path),
+          ]));
     });
 
-    expect(commandError, isA<ToolExit>());
-    expect(
-        output,
-        containsAllInOrder(<Matcher>[
-          contains('Failed to format Dart files: exit code 1.'),
-        ]));
-  });
+    test('does not format .dart files with pragma', () async {
+      const List<String> formattedFiles = <String>[
+        'lib/a.dart',
+        'lib/src/b.dart',
+        'lib/src/c.dart',
+      ];
+      const String unformattedFile = 'lib/src/d.dart';
+      final RepositoryPackage plugin = createFakePlugin(
+        'a_plugin',
+        packagesDir,
+        extraFiles: <String>[
+          ...formattedFiles,
+          unformattedFile,
+        ],
+      );
+      fakePubGet(plugin);
 
-  test('skips dart if --no-dart flag is provided', () async {
-    const List<String> files = <String>[
-      'lib/a.dart',
-    ];
-    final RepositoryPackage plugin =
-        createFakePlugin('a_plugin', packagesDir, extraFiles: files);
-    fakePubGet(plugin);
+      final p.Context posixContext = p.posix;
+      childFileWithSubcomponents(
+              plugin.directory, posixContext.split(unformattedFile))
+          .writeAsStringSync(
+              '// copyright bla bla\n// This file is hand-formatted.\ncode...');
 
-    await runCapturingPrint(runner, <String>['format', '--no-dart']);
-    expect(processRunner.recordedCalls, orderedEquals(<ProcessCall>[]));
+      await runCapturingPrint(runner, <String>['format']);
+
+      expect(
+          processRunner.recordedCalls,
+          orderedEquals(<ProcessCall>[
+            ProcessCall('dart', const <String>['format', ...formattedFiles],
+                plugin.path),
+          ]));
+    });
+
+    test('fails if dart format fails', () async {
+      const List<String> files = <String>[
+        'lib/a.dart',
+        'lib/src/b.dart',
+        'lib/src/c.dart',
+      ];
+      final RepositoryPackage plugin =
+          createFakePlugin('a_plugin', packagesDir, extraFiles: files);
+      fakePubGet(plugin);
+
+      processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(exitCode: 1), <String>['format'])
+      ];
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['format'], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('Failed to format Dart files: exit code 1.'),
+          ]));
+    });
+
+    test('skips dart if --no-dart flag is provided', () async {
+      const List<String> files = <String>[
+        'lib/a.dart',
+      ];
+      final RepositoryPackage plugin =
+          createFakePlugin('a_plugin', packagesDir, extraFiles: files);
+      fakePubGet(plugin);
+
+      await runCapturingPrint(runner, <String>['format', '--no-dart']);
+      expect(processRunner.recordedCalls, orderedEquals(<ProcessCall>[]));
+    });
+
+    test('runs pub get if necessary', () async {
+      const List<String> files = <String>[
+        'lib/a.dart',
+        'lib/src/b.dart',
+        'lib/src/c.dart',
+      ];
+      final RepositoryPackage plugin = createFakePlugin(
+        'a_plugin',
+        packagesDir,
+        extraFiles: files,
+      );
+
+      await runCapturingPrint(runner, <String>['format']);
+
+      expect(
+          processRunner.recordedCalls,
+          orderedEquals(<ProcessCall>[
+            ProcessCall(
+              'flutter',
+              const <String>['pub', 'get'],
+              plugin.directory.path,
+            ),
+            ProcessCall(
+                'dart', const <String>['format', ...files], plugin.path),
+          ]));
+    });
+
+    test('runs pub get in subpackages if necessary', () async {
+      const List<String> files = <String>[
+        'lib/a.dart',
+        'lib/src/b.dart',
+        'lib/src/c.dart',
+      ];
+      final RepositoryPackage plugin = createFakePlugin(
+        'a_plugin',
+        packagesDir,
+        extraFiles: files,
+      );
+      final RepositoryPackage subpackage = createFakePackage(
+          'subpackage', plugin.directory.childDirectory('extras'));
+
+      await runCapturingPrint(runner, <String>['format']);
+
+      expect(
+          processRunner.recordedCalls,
+          orderedEquals(<ProcessCall>[
+            ProcessCall(
+              'flutter',
+              const <String>['pub', 'get'],
+              plugin.directory.path,
+            ),
+            ProcessCall(
+              'dart',
+              const <String>['pub', 'get'],
+              subpackage.directory.path,
+            ),
+            ProcessCall(
+                'dart', const <String>['format', ...files], plugin.path),
+          ]));
+    });
   });
 
   test('formats .java files', () async {

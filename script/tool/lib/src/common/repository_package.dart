@@ -199,10 +199,9 @@ class RepositoryPackage {
   }
 
   /// Returns all Dart package folders (e.g., examples) under this package.
-  Stream<RepositoryPackage> getSubpackages(
-      {bool includeExamples = true}) async* {
-    yield* directory
-        .list(recursive: true, followLinks: false)
+  Iterable<RepositoryPackage> getSubpackages({bool includeExamples = true}) {
+    return directory
+        .listSync(recursive: true, followLinks: false)
         .where(isPackage)
         .map((FileSystemEntity directory) =>
             // isPackage guarantees that this cast is valid.
