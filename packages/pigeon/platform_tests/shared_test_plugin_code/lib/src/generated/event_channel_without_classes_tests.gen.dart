@@ -12,7 +12,6 @@ import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;
 import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer;
 import 'package:flutter/services.dart';
 
-
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
@@ -34,16 +33,19 @@ class _PigeonCodec extends StandardMessageCodec {
   }
 }
 
-const StandardMethodCodec pigeonMethodCodec = StandardMethodCodec(_PigeonCodec());
+const StandardMethodCodec pigeonMethodCodec = StandardMethodCodec(
+  _PigeonCodec(),
+);
 
-Stream<int> streamIntsAgain( {String instanceName = ''}) {
+Stream<int> streamIntsAgain({String instanceName = ''}) {
   if (instanceName.isNotEmpty) {
     instanceName = '.$instanceName';
   }
-  final EventChannel streamIntsAgainChannel =
-      EventChannel('dev.flutter.pigeon.pigeon_integration_tests.EventChannelMethods.streamIntsAgain$instanceName', pigeonMethodCodec);
+  final EventChannel streamIntsAgainChannel = EventChannel(
+    'dev.flutter.pigeon.pigeon_integration_tests.EventChannelMethods.streamIntsAgain$instanceName',
+    pigeonMethodCodec,
+  );
   return streamIntsAgainChannel.receiveBroadcastStream().map((dynamic event) {
     return event as int;
   });
 }
-    

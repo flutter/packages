@@ -19,7 +19,11 @@ PlatformException _createConnectionError(String channelName) {
   );
 }
 
-List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty = false}) {
+List<Object?> wrapResponse({
+  Object? result,
+  PlatformException? error,
+  bool empty = false,
+}) {
   if (empty) {
     return <Object?>[];
   }
@@ -28,20 +32,24 @@ List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty
   }
   return <Object?>[error.code, error.message, error.details];
 }
+
 bool _deepEquals(Object? a, Object? b) {
   if (a is List && b is List) {
     return a.length == b.length &&
-        a.indexed
-        .every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
+        a.indexed.every(
+          ((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]),
+        );
   }
   if (a is Map && b is Map) {
-    return a.length == b.length && a.entries.every((MapEntry<Object?, Object?> entry) =>
-        (b as Map<Object?, Object?>).containsKey(entry.key) &&
-        _deepEquals(entry.value, b[entry.key]));
+    return a.length == b.length &&
+        a.entries.every(
+          (MapEntry<Object?, Object?> entry) =>
+              (b as Map<Object?, Object?>).containsKey(entry.key) &&
+              _deepEquals(entry.value, b[entry.key]),
+        );
   }
   return a == b;
 }
-
 
 /// This comment is to test enum documentation comments.
 ///
@@ -50,21 +58,13 @@ bool _deepEquals(Object? a, Object? b) {
 /// ////////////////////////
 /// This comment also tests comments that start with '/'
 /// ////////////////////////
-enum MessageRequestState {
-  pending,
-  success,
-  failure,
-}
+enum MessageRequestState { pending, success, failure }
 
 /// This comment is to test class documentation comments.
 ///
 /// This comment also tests multiple line comments.
 class MessageSearchRequest {
-  MessageSearchRequest({
-    this.query,
-    this.anInt,
-    this.aBool,
-  });
+  MessageSearchRequest({this.query, this.anInt, this.aBool});
 
   /// This comment is to test field documentation comments.
   String? query;
@@ -76,15 +76,12 @@ class MessageSearchRequest {
   bool? aBool;
 
   List<Object?> _toList() {
-    return <Object?>[
-      query,
-      anInt,
-      aBool,
-    ];
+    return <Object?>[query, anInt, aBool];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static MessageSearchRequest decode(Object result) {
     result as List<Object?>;
@@ -109,17 +106,12 @@ class MessageSearchRequest {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// This comment is to test class documentation comments.
 class MessageSearchReply {
-  MessageSearchReply({
-    this.result,
-    this.error,
-    this.state,
-  });
+  MessageSearchReply({this.result, this.error, this.state});
 
   /// This comment is to test field documentation comments.
   ///
@@ -133,15 +125,12 @@ class MessageSearchReply {
   MessageRequestState? state;
 
   List<Object?> _toList() {
-    return <Object?>[
-      result,
-      error,
-      state,
-    ];
+    return <Object?>[result, error, state];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static MessageSearchReply decode(Object result) {
     result as List<Object?>;
@@ -166,33 +155,27 @@ class MessageSearchReply {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// This comment is to test class documentation comments.
 class MessageNested {
-  MessageNested({
-    this.request,
-  });
+  MessageNested({this.request});
 
   /// This comment is to test field documentation comments.
   MessageSearchRequest? request;
 
   List<Object?> _toList() {
-    return <Object?>[
-      request,
-    ];
+    return <Object?>[request];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static MessageNested decode(Object result) {
     result as List<Object?>;
-    return MessageNested(
-      request: result[0] as MessageSearchRequest?,
-    );
+    return MessageNested(request: result[0] as MessageSearchRequest?);
   }
 
   @override
@@ -209,10 +192,8 @@ class MessageNested {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
-
 
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
@@ -221,16 +202,16 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
-    }    else if (value is MessageRequestState) {
+    } else if (value is MessageRequestState) {
       buffer.putUint8(129);
       writeValue(buffer, value.index);
-    }    else if (value is MessageSearchRequest) {
+    } else if (value is MessageSearchRequest) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    }    else if (value is MessageSearchReply) {
+    } else if (value is MessageSearchReply) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
-    }    else if (value is MessageNested) {
+    } else if (value is MessageNested) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
     } else {
@@ -241,14 +222,14 @@ class _PigeonCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 129: 
+      case 129:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : MessageRequestState.values[value];
-      case 130: 
+      case 130:
         return MessageSearchRequest.decode(readValue(buffer)!);
-      case 131: 
+      case 131:
         return MessageSearchReply.decode(readValue(buffer)!);
-      case 132: 
+      case 132:
         return MessageNested.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -263,9 +244,13 @@ class MessageApi {
   /// Constructor for [MessageApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  MessageApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
-      : pigeonVar_binaryMessenger = binaryMessenger,
-        pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+  MessageApi({
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) : pigeonVar_binaryMessenger = binaryMessenger,
+       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+           ? '.$messageChannelSuffix'
+           : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -276,12 +261,14 @@ class MessageApi {
   ///
   /// This comment also tests multiple line comments.
   Future<void> initialize() async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.pigeon_integration_tests.MessageApi.initialize$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.MessageApi.initialize$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
@@ -300,13 +287,17 @@ class MessageApi {
 
   /// This comment is to test method documentation comments.
   Future<MessageSearchReply> search(MessageSearchRequest request) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.pigeon_integration_tests.MessageApi.search$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.MessageApi.search$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[request],
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[request]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -333,9 +324,13 @@ class MessageNestedApi {
   /// Constructor for [MessageNestedApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  MessageNestedApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
-      : pigeonVar_binaryMessenger = binaryMessenger,
-        pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+  MessageNestedApi({
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) : pigeonVar_binaryMessenger = binaryMessenger,
+       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+           ? '.$messageChannelSuffix'
+           : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -346,13 +341,17 @@ class MessageNestedApi {
   ///
   /// This comment also tests multiple line comments.
   Future<MessageSearchReply> search(MessageNested nested) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.pigeon_integration_tests.MessageNestedApi.search$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.MessageNestedApi.search$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[nested],
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[nested]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -381,29 +380,45 @@ abstract class MessageFlutterSearchApi {
   /// This comment is to test method documentation comments.
   MessageSearchReply search(MessageSearchRequest request);
 
-  static void setUp(MessageFlutterSearchApi? api, {BinaryMessenger? binaryMessenger, String messageChannelSuffix = '',}) {
-    messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+  static void setUp(
+    MessageFlutterSearchApi? api, {
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) {
+    messageChannelSuffix = messageChannelSuffix.isNotEmpty
+        ? '.$messageChannelSuffix'
+        : '';
     {
-      final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.MessageFlutterSearchApi.search$messageChannelSuffix', pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.pigeon_integration_tests.MessageFlutterSearchApi.search$messageChannelSuffix',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-          'Argument for dev.flutter.pigeon.pigeon_integration_tests.MessageFlutterSearchApi.search was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.pigeon_integration_tests.MessageFlutterSearchApi.search was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
-          final MessageSearchRequest? arg_request = (args[0] as MessageSearchRequest?);
-          assert(arg_request != null,
-              'Argument for dev.flutter.pigeon.pigeon_integration_tests.MessageFlutterSearchApi.search was null, expected non-null MessageSearchRequest.');
+          final MessageSearchRequest? arg_request =
+              (args[0] as MessageSearchRequest?);
+          assert(
+            arg_request != null,
+            'Argument for dev.flutter.pigeon.pigeon_integration_tests.MessageFlutterSearchApi.search was null, expected non-null MessageSearchRequest.',
+          );
           try {
             final MessageSearchReply output = api.search(arg_request!);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }

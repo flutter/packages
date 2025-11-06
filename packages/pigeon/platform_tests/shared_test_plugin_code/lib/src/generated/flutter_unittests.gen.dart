@@ -18,42 +18,41 @@ PlatformException _createConnectionError(String channelName) {
     message: 'Unable to establish connection on channel: "$channelName".',
   );
 }
+
 bool _deepEquals(Object? a, Object? b) {
   if (a is List && b is List) {
     return a.length == b.length &&
-        a.indexed
-        .every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
+        a.indexed.every(
+          ((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]),
+        );
   }
   if (a is Map && b is Map) {
-    return a.length == b.length && a.entries.every((MapEntry<Object?, Object?> entry) =>
-        (b as Map<Object?, Object?>).containsKey(entry.key) &&
-        _deepEquals(entry.value, b[entry.key]));
+    return a.length == b.length &&
+        a.entries.every(
+          (MapEntry<Object?, Object?> entry) =>
+              (b as Map<Object?, Object?>).containsKey(entry.key) &&
+              _deepEquals(entry.value, b[entry.key]),
+        );
   }
   return a == b;
 }
 
-
 class FlutterSearchRequest {
-  FlutterSearchRequest({
-    this.query,
-  });
+  FlutterSearchRequest({this.query});
 
   String? query;
 
   List<Object?> _toList() {
-    return <Object?>[
-      query,
-    ];
+    return <Object?>[query];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static FlutterSearchRequest decode(Object result) {
     result as List<Object?>;
-    return FlutterSearchRequest(
-      query: result[0] as String?,
-    );
+    return FlutterSearchRequest(query: result[0] as String?);
   }
 
   @override
@@ -70,29 +69,23 @@ class FlutterSearchRequest {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class FlutterSearchReply {
-  FlutterSearchReply({
-    this.result,
-    this.error,
-  });
+  FlutterSearchReply({this.result, this.error});
 
   String? result;
 
   String? error;
 
   List<Object?> _toList() {
-    return <Object?>[
-      result,
-      error,
-    ];
+    return <Object?>[result, error];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static FlutterSearchReply decode(Object result) {
     result as List<Object?>;
@@ -116,31 +109,25 @@ class FlutterSearchReply {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class FlutterSearchRequests {
-  FlutterSearchRequests({
-    this.requests,
-  });
+  FlutterSearchRequests({this.requests});
 
   List<Object?>? requests;
 
   List<Object?> _toList() {
-    return <Object?>[
-      requests,
-    ];
+    return <Object?>[requests];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static FlutterSearchRequests decode(Object result) {
     result as List<Object?>;
-    return FlutterSearchRequests(
-      requests: result[0] as List<Object?>?,
-    );
+    return FlutterSearchRequests(requests: result[0] as List<Object?>?);
   }
 
   @override
@@ -157,31 +144,25 @@ class FlutterSearchRequests {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class FlutterSearchReplies {
-  FlutterSearchReplies({
-    this.replies,
-  });
+  FlutterSearchReplies({this.replies});
 
   List<Object?>? replies;
 
   List<Object?> _toList() {
-    return <Object?>[
-      replies,
-    ];
+    return <Object?>[replies];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static FlutterSearchReplies decode(Object result) {
     result as List<Object?>;
-    return FlutterSearchReplies(
-      replies: result[0] as List<Object?>?,
-    );
+    return FlutterSearchReplies(replies: result[0] as List<Object?>?);
   }
 
   @override
@@ -198,10 +179,8 @@ class FlutterSearchReplies {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
-
 
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
@@ -210,16 +189,16 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
-    }    else if (value is FlutterSearchRequest) {
+    } else if (value is FlutterSearchRequest) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
-    }    else if (value is FlutterSearchReply) {
+    } else if (value is FlutterSearchReply) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    }    else if (value is FlutterSearchRequests) {
+    } else if (value is FlutterSearchRequests) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
-    }    else if (value is FlutterSearchReplies) {
+    } else if (value is FlutterSearchReplies) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
     } else {
@@ -230,13 +209,13 @@ class _PigeonCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 129: 
+      case 129:
         return FlutterSearchRequest.decode(readValue(buffer)!);
-      case 130: 
+      case 130:
         return FlutterSearchReply.decode(readValue(buffer)!);
-      case 131: 
+      case 131:
         return FlutterSearchRequests.decode(readValue(buffer)!);
-      case 132: 
+      case 132:
         return FlutterSearchReplies.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -249,8 +228,10 @@ class Api {
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
   Api({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
-      : pigeonVar_binaryMessenger = binaryMessenger,
-        pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+    : pigeonVar_binaryMessenger = binaryMessenger,
+      pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+          ? '.$messageChannelSuffix'
+          : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -258,13 +239,17 @@ class Api {
   final String pigeonVar_messageChannelSuffix;
 
   Future<FlutterSearchReply> search(FlutterSearchRequest request) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.pigeon_integration_tests.Api.search$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.Api.search$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[request],
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[request]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -286,13 +271,17 @@ class Api {
   }
 
   Future<FlutterSearchReplies> doSearches(FlutterSearchRequests request) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.pigeon_integration_tests.Api.doSearches$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.Api.doSearches$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[request],
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[request]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -314,13 +303,17 @@ class Api {
   }
 
   Future<FlutterSearchRequests> echo(FlutterSearchRequests requests) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.pigeon_integration_tests.Api.echo$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.Api.echo$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[requests],
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[requests]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -342,13 +335,17 @@ class Api {
   }
 
   Future<int> anInt(int value) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.pigeon_integration_tests.Api.anInt$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.Api.anInt$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[value],
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[value]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
