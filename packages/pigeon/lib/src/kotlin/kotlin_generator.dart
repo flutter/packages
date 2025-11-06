@@ -1506,7 +1506,7 @@ fun deepEquals(a: Any?, b: Any?): Boolean {
   }
   if (a is Map<*, *> && b is Map<*, *>) {
     return a.size == b.size && a.all {
-        (b as Map<Any?, Any?>).containsKey(it.key) &&
+        (b as Map<Any?, Any?>).contains(it.key) &&
         deepEquals(it.value, b[it.key])
     }
   }
