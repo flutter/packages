@@ -120,7 +120,6 @@
 ## 0.8.6+2
 
 * Updates `NSPhotoLibraryUsageDescription` description in README.
-
 * Updates minimum Flutter version to 3.0.
 
 ## 0.8.6+1

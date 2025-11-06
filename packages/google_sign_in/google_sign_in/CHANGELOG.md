@@ -183,7 +183,6 @@ For every platform other than `web`, this version should be identical to `5.4.4`
 ## 5.1.0
 
 * Add reAuthenticate option to signInSilently to allow re-authentication to be requested
-
 * Updated Android lint settings.
 
 ## 5.0.7

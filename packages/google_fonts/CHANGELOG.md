@@ -306,7 +306,6 @@
   - `Wix Madefor Display`
   - `Wix Madefor Text`
   - `Ysabeau`
-
 - Removed fonts:
   - `Arima Madurai`
   - `Fredoka One`

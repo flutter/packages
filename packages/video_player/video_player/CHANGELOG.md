@@ -593,14 +593,12 @@ DefaultHttpDataSourceFactory by default.
 ## 0.10.0+8
 
 * iOS: Fix an issue where the player sends initialization message incorrectly.
-
 * Fix a few other IDE warnings.
 
 
 ## 0.10.0+7
 
 * Android: Fix issue where buffering status in percentage instead of milliseconds
-
 * Android: Update buffering status everytime we notify for position change
 
 ## 0.10.0+6
