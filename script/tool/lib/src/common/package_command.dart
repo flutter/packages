@@ -563,21 +563,11 @@ abstract class PackageCommand extends Command<void> {
     await for (final PackageEnumerationEntry package
         in getTargetPackages(filterExcluded: filterExcluded)) {
       yield package;
-      yield* getSubpackages(package.package).map(
-          (RepositoryPackage subPackage) =>
-              PackageEnumerationEntry(subPackage, excluded: package.excluded));
+      yield* Stream<PackageEnumerationEntry>.fromIterable(package.package
+          .getSubpackages()
+          .map((RepositoryPackage subPackage) =>
+              PackageEnumerationEntry(subPackage, excluded: package.excluded)));
     }
-  }
-
-  /// Returns all Dart package folders (e.g., examples) under the given package.
-  Stream<RepositoryPackage> getSubpackages(RepositoryPackage package,
-      {bool filterExcluded = true}) async* {
-    yield* package.directory
-        .list(recursive: true, followLinks: false)
-        .where(isPackage)
-        .map((FileSystemEntity directory) =>
-            // isPackage guarantees that this cast is valid.
-            RepositoryPackage(directory as Directory));
   }
 
   /// Returns the files contained, recursively, within the packages
