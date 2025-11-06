@@ -137,16 +137,14 @@ class _MyHomePageState extends State<MyHomePage> {
             if (Platform.isAndroid || Platform.isIOS)
               StreamBuilder<String>(
                 stream: getEventStream(),
-                builder: (
-                  BuildContext context,
-                  AsyncSnapshot<String> snapshot,
-                ) {
-                  if (snapshot.hasData) {
-                    return Text(snapshot.data ?? '');
-                  } else {
-                    return const CircularProgressIndicator();
-                  }
-                },
+                builder:
+                    (BuildContext context, AsyncSnapshot<String> snapshot) {
+                      if (snapshot.hasData) {
+                        return Text(snapshot.data ?? '');
+                      } else {
+                        return const CircularProgressIndicator();
+                      }
+                    },
               )
             else
               const Text('event channels are not supported on this platform'),

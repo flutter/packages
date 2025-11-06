@@ -57,7 +57,7 @@ final class DefaultCamera: NSObject, Camera {
   /// Allows for alternate implementations in tests.
   private let videoDimensionsConverter: VideoDimensionsConverter
 
-  private let deviceOrientationProvider: FLTDeviceOrientationProviding
+  private let deviceOrientationProvider: DeviceOrientationProvider
   private let motionManager = CMMotionManager()
 
   private(set) var captureDevice: FLTCaptureDevice
@@ -858,7 +858,7 @@ final class DefaultCamera: NSObject, Camera {
       return
     }
 
-    let orientation = deviceOrientationProvider.orientation()
+    let orientation = deviceOrientationProvider.orientation
     try? captureDevice.lockForConfiguration()
     // A nil point resets to the center.
     captureDevice.setFocusPointOfInterest(

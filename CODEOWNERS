@@ -103,11 +103,11 @@ packages/video_player/video_player_avfoundation/**            @LongCatIsLooong @
 packages/webview_flutter/webview_flutter_wkwebview/**         @louisehsu
 
 # - Linux
-packages/file_selector/file_selector_linux/**                 @stuartmorgan-g
-packages/image_picker/image_picker_linux/**                   @stuartmorgan-g
-packages/path_provider/path_provider_linux/**                 @stuartmorgan-g
-packages/shared_preferences/shared_preferences_linux/**       @stuartmorgan-g
-packages/url_launcher/url_launcher_linux/**                   @stuartmorgan-g
+packages/file_selector/file_selector_linux/**                 @robert-ancell @stuartmorgan-g
+packages/image_picker/image_picker_linux/**                   @robert-ancell @stuartmorgan-g
+packages/path_provider/path_provider_linux/**                 @robert-ancell @stuartmorgan-g
+packages/shared_preferences/shared_preferences_linux/**       @robert-ancell @stuartmorgan-g
+packages/url_launcher/url_launcher_linux/**                   @robert-ancell @stuartmorgan-g
 
 # - Windows
 packages/camera/camera_windows/**                             @stuartmorgan-g
