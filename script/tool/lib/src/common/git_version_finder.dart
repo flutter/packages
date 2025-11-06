@@ -15,7 +15,7 @@ class GitVersionFinder {
       : assert(baseSha == null || baseBranch == null,
             'At most one of baseSha and baseBranch can be provided'),
         _baseSha = baseSha,
-        _baseBranch = baseBranch ?? 'FETCH_HEAD';
+        _baseBranch = baseBranch ?? 'main';
 
   /// The top level directory of the git repo.
   ///
