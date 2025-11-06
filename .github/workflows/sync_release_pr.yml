@@ -1,7 +1,9 @@
 name: "Sync Release to Main"
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - 'release' 
 
 jobs:
   create_sync_pr:
