@@ -1,6 +1,12 @@
-## 16.3.1
+## 17.0.1
 
 - Fixes an issue where `GoRouter.refresh()` did not trigger a widget rebuild.
+
+## 17.0.0
+
+- **BREAKING CHANGE**
+  - `ShellRoute`'s navigating changes notify `GoRouter`'s observers by default.
+  - Adds `notifyRootObserver` to `ShellRouteBase`, `ShellRoute`, `StatefulShellRoute`, `ShellRouteData.$route`, `TypedShellRoute`, `TypedStatefulShellRoute`.
 
 ## 16.3.0
 

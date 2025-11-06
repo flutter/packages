@@ -176,6 +176,7 @@ Future<GoRouter> createRouter(
   GoExceptionHandler? onException,
   bool requestFocus = true,
   bool overridePlatformDefaultLocation = false,
+  List<NavigatorObserver>? observers,
 }) async {
   final GoRouter goRouter = GoRouter(
     routes: routes,
@@ -190,6 +191,7 @@ Future<GoRouter> createRouter(
     restorationScopeId: restorationScopeId,
     requestFocus: requestFocus,
     overridePlatformDefaultLocation: overridePlatformDefaultLocation,
+    observers: observers,
   );
   addTearDown(goRouter.dispose);
   await tester.pumpWidget(
