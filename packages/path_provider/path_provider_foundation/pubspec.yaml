@@ -18,14 +18,14 @@ flutter:
         dartPluginClass: PathProviderFoundation
 
 dependencies:
-  ffi: ^2.1.3
+  ffi: ^2.1.4
   flutter:
     sdk: flutter
-  objective_c: ^8.0.0
+  objective_c: ^9.0.0
   path_provider_platform_interface: ^2.1.0
 
 dev_dependencies:
-  ffigen: ^19.0.0
+  ffigen: ^20.0.0
   flutter_test:
     sdk: flutter
 

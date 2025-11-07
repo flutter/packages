@@ -24,8 +24,8 @@ dev_dependencies:
     sdk: flutter
   integration_test:
     sdk: flutter
-  mockito: ^5.4.4
-  objective_c: ^8.0.0
+  mockito: ^5.5.0
+  objective_c: ^9.0.0
   path: ^1.8.0
 
 flutter:

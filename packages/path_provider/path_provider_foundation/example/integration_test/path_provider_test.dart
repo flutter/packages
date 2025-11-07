@@ -17,8 +17,7 @@ import 'path_provider_test.mocks.dart';
 
 @GenerateNiceMocks(<MockSpec<Object>>[
   MockSpec<FoundationFFI>(),
-  MockSpec<NSBundle>(),
-  MockSpec<NSFileManager>(),
+  MockSpec<ObjCObject>(),
   MockSpec<PathProviderPlatformProvider>(),
 ])
 void main() {
@@ -150,7 +149,7 @@ void main() {
       final String? path = await pathProvider.getTemporaryPath();
 
       // On macOS, the bundle ID should be appended to the path.
-      expect(path, '$temporaryPath/com.example.pathProviderFoundationExample');
+      expect(path, '$temporaryPath/dev.flutter.plugins.pathProviderExample');
     });
 
     testWidgets('getApplicationSupportPath iOS', (_) async {
@@ -205,7 +204,7 @@ void main() {
       // On macOS, the bundle ID should be appended to the path.
       expect(
         path,
-        '$applicationSupportPath/com.example.pathProviderFoundationExample',
+        '$applicationSupportPath/dev.flutter.plugins.pathProviderExample',
       );
     });
 
@@ -338,7 +337,7 @@ void main() {
       // On macOS, the bundle ID should be appended to the path.
       expect(
         path,
-        '$applicationCachePath/com.example.pathProviderFoundationExample',
+        '$applicationCachePath/dev.flutter.plugins.pathProviderExample',
       );
     });
 
@@ -394,19 +393,15 @@ void main() {
     }, variant: platformVariants);
 
     testWidgets('getContainerPath', (_) async {
-      final MockFoundationFFI mockFfiLib = MockFoundationFFI();
-      final MockNSFileManager mockFileManager = MockNSFileManager();
-      final PathProviderFoundation pathProvider = PathProviderFoundation(
-        ffiLib: mockFfiLib,
-        fileManagerProvider: () => mockFileManager,
-        platform: FakePlatformProvider(isIOS: true),
-      );
-
       final String containerPath = p.join(testRoot.path, 'container', 'path');
       final NSURL containerUrl = NSURL.fileURLWithPath(NSString(containerPath));
-      when(
-        mockFileManager.containerURLForSecurityApplicationGroupIdentifier(any),
-      ).thenReturn(containerUrl);
+
+      final MockFoundationFFI mockFfiLib = MockFoundationFFI();
+      final PathProviderFoundation pathProvider = PathProviderFoundation(
+        ffiLib: mockFfiLib,
+        containerURLForSecurityApplicationGroupIdentifier: (_) => containerUrl,
+        platform: FakePlatformProvider(isIOS: true),
+      );
 
       const String appGroupIdentifier = 'group.example.test';
       final String? result = await pathProvider.getContainerPath(

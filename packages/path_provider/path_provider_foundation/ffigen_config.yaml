@@ -1,4 +1,3 @@
-
 name: FoundationFFI
 description: Bindings for NSFileManager.
 language: objc
@@ -11,14 +10,9 @@ exclude-all-by-default: true
 include-transitive-objc-categories: false
 objc-interfaces:
   include:
-    - 'NSBundle'
     - 'NSFileManager'
     - 'NSURL'
   member-filter:
-    NSBundle:
-      include:
-        - "bundleIdentifier"
-        - "mainBundle"
     NSFileManager:
       include:
         - "containerURLForSecurityApplicationGroupIdentifier:"

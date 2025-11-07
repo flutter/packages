@@ -84,7 +84,7 @@ class FakeFoundationFFI implements FoundationFFI {
   // ignore: non_constant_identifier_names
   NSArray NSSearchPathForDirectoriesInDomains(
     NSSearchPathDirectory directory,
-    NSSearchPathDomainMask domainMask,
+    int domainMask,
     bool expandTilde,
   ) {
     throw UnimplementedError();

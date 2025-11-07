@@ -17,15 +17,19 @@ class PathProviderFoundation extends PathProviderPlatform {
   PathProviderFoundation({
     @visibleForTesting PathProviderPlatformProvider? platform,
     @visibleForTesting FoundationFFI? ffiLib,
-    @visibleForTesting NSFileManager Function()? fileManagerProvider,
+    @visibleForTesting
+    NSURL? Function(NSString)?
+    containerURLForSecurityApplicationGroupIdentifier,
   }) : _platformProvider = platform ?? PathProviderPlatformProvider(),
        _ffiLib = ffiLib ?? _lib,
-       _fileManagerProvider =
-           fileManagerProvider ?? _defaultFileManagerProvider;
+       _containerURLForSecurityApplicationGroupIdentifier =
+           containerURLForSecurityApplicationGroupIdentifier ??
+           _sharedNSFileManagerContainerURLForSecurityApplicationGroupIdentifier;
 
   final PathProviderPlatformProvider _platformProvider;
   final FoundationFFI _ffiLib;
-  final NSFileManager Function() _fileManagerProvider;
+  final NSURL? Function(NSString)
+  _containerURLForSecurityApplicationGroupIdentifier;
 
   /// Registers this class as the default instance of [PathProviderPlatform].
   static void registerWith() {
@@ -109,12 +113,9 @@ class PathProviderFoundation extends PathProviderPlatform {
         'getContainerPath is not supported on this platform',
       );
     }
-    return _fileManagerProvider()
-        .containerURLForSecurityApplicationGroupIdentifier(
-          NSString(appGroupIdentifier),
-        )
-        ?.path
-        ?.toDartString();
+    return _containerURLForSecurityApplicationGroupIdentifier(
+      NSString(appGroupIdentifier),
+    )?.path?.toDartString();
   }
 
   String? _getDirectoryPath(NSSearchPathDirectory directory) {
@@ -131,8 +132,9 @@ class PathProviderFoundation extends PathProviderPlatform {
             NSBundle.getMainBundle().bundleIdentifier;
         if (bundleIdentifier != null) {
           final NSURL basePathURL = NSURL.fileURLWithPath(path);
-          path =
-              basePathURL.URLByAppendingPathComponent(bundleIdentifier)?.path;
+          path = basePathURL.URLByAppendingPathComponent(
+            bundleIdentifier,
+          )?.path;
         }
       }
     }
@@ -146,8 +148,8 @@ class PathProviderFoundation extends PathProviderPlatform {
       NSSearchPathDomainMask.NSUserDomainMask,
       true,
     );
-    final ObjCObjectBase? first = paths.firstObject;
-    return first == null ? null : NSString.castFrom(first);
+    final ObjCObject? first = paths.firstObject;
+    return first == null ? null : NSString.as(first);
   }
 }
 
@@ -161,8 +163,10 @@ class PathProviderPlatformProvider {
   bool get isMacOS => Platform.isMacOS;
 }
 
-NSFileManager _defaultFileManagerProvider() =>
-    NSFileManager.getDefaultManager();
+NSURL? _sharedNSFileManagerContainerURLForSecurityApplicationGroupIdentifier(
+  NSString groupIdentifier,
+) => NSFileManager.getDefaultManager()
+    .containerURLForSecurityApplicationGroupIdentifier(groupIdentifier);
 
 final ffi.DynamicLibrary _dylib = () {
   return ffi.DynamicLibrary.open(
