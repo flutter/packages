@@ -1,3 +1,7 @@
+## 2.9.0
+
+* Implements `getAudioTracks()` and `selectAudioTrack()` methods for Android using ExoPlayer.
+
 ## 2.8.17
 
 * Moves video event processing logic to Dart, and fixes an issue where buffer
