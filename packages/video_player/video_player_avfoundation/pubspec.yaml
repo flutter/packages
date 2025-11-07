@@ -24,7 +24,7 @@ flutter:
 dependencies:
   flutter:
     sdk: flutter
-  video_player_platform_interface: ^6.3.0
+  video_player_platform_interface: ^6.6.0
 
 dev_dependencies:
   build_runner: ^2.3.3
