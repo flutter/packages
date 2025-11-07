@@ -336,22 +336,23 @@ gmaps.Size? _gmSizeFromIconConfig(List<Object?> iconConfig, int sizeIndex) {
 
 // Sets the size and style of the [icon] element.
 void _setIconStyle({
-  required web.Element icon,
+  required web.HTMLImageElement icon,
   required gmaps.Size? size,
   required double? opacity,
   required bool? isVisible,
 }) {
-  icon.setAttribute(
-    'style',
-    <String>[
-      if (size != null) ...<String>[
-        'width: ${size.width.toStringAsFixed(1)}px;',
-        'height: ${size.height.toStringAsFixed(1)}px;',
-      ],
-      if (opacity != null) 'opacity: $opacity;',
-      if (isVisible != null) 'visibility: ${isVisible ? 'visible' : 'hidden'};',
-    ].join(' '),
-  );
+  final web.CSSStyleDeclaration iconStyle = icon.style;
+  if (size != null) {
+    iconStyle
+      ..width = '${size.width.toStringAsFixed(1)}px'
+      ..height = '${size.height.toStringAsFixed(1)}px';
+  }
+  if (opacity != null) {
+    iconStyle.opacity = opacity.toString();
+  }
+  if (isVisible != null) {
+    iconStyle.visibility = isVisible ? 'visible' : 'hidden';
+  }
 }
 
 void _setIconAnchor({
@@ -476,13 +477,10 @@ Future<web.Node?> _advancedMarkerIconFromBitmapDescriptor(
       case final CircleGlyph circleGlyph:
         options.glyphColor = _getCssColor(circleGlyph.color);
       case final TextGlyph textGlyph:
-        final web.Element element = web.document.createElement('p');
+        final web.HTMLParagraphElement element = web.HTMLParagraphElement();
         element.text = textGlyph.text;
         if (textGlyph.textColor != null) {
-          element.setAttribute(
-            'style',
-            'color: ${_getCssColor(textGlyph.textColor!)}',
-          );
+          element.style.color = _getCssColor(textGlyph.textColor!);
         }
         options.glyph = element;
       case final BitmapGlyph bitmapGlyph:
@@ -526,8 +524,7 @@ Future<web.Node?> _advancedMarkerIconFromBitmapDescriptor(
       _ => throw UnimplementedError(),
     };
 
-    final web.Element icon = web.document.createElement('img')
-      ..setAttribute('src', url);
+    final web.HTMLImageElement icon = web.HTMLImageElement()..src = url;
 
     final gmaps.Size? size = switch (bitmapDescriptor.bitmapScaling) {
       MapBitmapScaling.auto => await _getBitmapSize(bitmapDescriptor, url),
@@ -550,10 +547,9 @@ Future<web.Node?> _advancedMarkerIconFromBitmapDescriptor(
     assert(iconConfig.length >= 2);
     // iconConfig[2] contains the DPIs of the screen, but that information is
     // already encoded in the iconConfig[1]
-    final web.Element icon = web.document.createElement('img')..setAttribute(
-      'src',
-      ui_web.assetManager.getAssetUrl(iconConfig[1]! as String),
-    );
+    final web.HTMLImageElement icon =
+        web.HTMLImageElement()
+          ..src = ui_web.assetManager.getAssetUrl(iconConfig[1]! as String);
 
     final gmaps.Size? size = _gmSizeFromIconConfig(iconConfig, 3);
     _setIconStyle(
@@ -578,8 +574,8 @@ Future<web.Node?> _advancedMarkerIconFromBitmapDescriptor(
     // See https://github.com/dart-lang/web/issues/180
     blob = web.Blob(<JSUint8Array>[(bytes as Uint8List).toJS].toJS);
 
-    final web.Element icon = web.document.createElement('img')
-      ..setAttribute('src', web.URL.createObjectURL(blob as JSObject));
+    final web.HTMLImageElement icon =
+        web.HTMLImageElement()..src = web.URL.createObjectURL(blob as JSObject);
 
     final gmaps.Size? size = _gmSizeFromIconConfig(iconConfig, 2);
     _setIconStyle(
