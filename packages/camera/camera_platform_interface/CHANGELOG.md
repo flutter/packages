@@ -1,3 +1,7 @@
+## 2.12.0
+
+* Adds support for video stabilization.
+
 ## 2.11.0
 
 * Adds a flag to configure a recording to be persistent across camera changes. See

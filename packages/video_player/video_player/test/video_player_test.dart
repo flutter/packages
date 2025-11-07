@@ -10,7 +10,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:video_player/video_player.dart';
-import 'package:video_player_platform_interface/video_player_platform_interface.dart';
+import 'package:video_player_platform_interface/video_player_platform_interface.dart'
+    hide VideoAudioTrack;
+import 'package:video_player_platform_interface/video_player_platform_interface.dart'
+    as platform_interface
+    show VideoAudioTrack;
 
 const String _localhost = 'https://127.0.0.1';
 final Uri _localhostUri = Uri.parse(_localhost);
@@ -84,6 +88,54 @@ class FakeController extends ValueNotifier<VideoPlayerValue>
   Future<void> setClosedCaptionFile(
     Future<ClosedCaptionFile>? closedCaptionFile,
   ) async {}
+
+  @override
+  Future<List<VideoAudioTrack>> getAudioTracks() async {
+    return <VideoAudioTrack>[
+      const VideoAudioTrack(
+        groupIndex: 0,
+        trackIndex: 0,
+        label: 'English',
+        language: 'en',
+        isSelected: true,
+      ),
+      const VideoAudioTrack(
+        groupIndex: 0,
+        trackIndex: 1,
+        label: 'Spanish',
+        language: 'es',
+        isSelected: false,
+        bitrate: 128000,
+        sampleRate: 44100,
+        channelCount: 2,
+        codec: 'aac',
+      ),
+      const VideoAudioTrack(
+        groupIndex: 1,
+        trackIndex: 0,
+        label: 'French',
+        language: 'fr',
+        isSelected: false,
+        bitrate: 96000,
+      ),
+    ];
+  }
+
+  @override
+  Future<void> selectAudioTrack(VideoAudioTrack track) async {
+    // Store the selected track indices for verification in tests
+    selectedGroupIndex = track.groupIndex;
+    selectedTrackIndex = track.trackIndex;
+  }
+
+  @override
+  bool isAudioTrackSupportAvailable() {
+    // Return true for testing purposes
+    return true;
+  }
+
+  int? selectedGroupIndex;
+  int? selectedTrackIndex;
 }
 
 Future<ClosedCaptionFile> _loadClosedCaption() async =>
@@ -766,6 +818,249 @@ void main() {
         expect(controller.value.position, controller.value.duration);
         expect(controller.value.isPlaying, isFalse);
         await tester.runAsync(controller.dispose);
+      });
+    });
+
+    group('audio tracks', () {
+      test('getAudioTracks returns list of tracks', () async {
+        final VideoPlayerController controller =
+            VideoPlayerController.networkUrl(_localhostUri);
+        addTearDown(controller.dispose);
+
+        await controller.initialize();
+        final List<VideoAudioTrack> tracks = await controller.getAudioTracks();
+
+        expect(tracks.length, 3);
+        expect(tracks[0].groupIndex, 0);
+        expect(tracks[0].trackIndex, 0);
+        expect(tracks[0].label, 'English');
+        expect(tracks[0].language, 'en');
+        expect(tracks[0].isSelected, true);
+        expect(tracks[0].bitrate, null);
+        expect(tracks[0].sampleRate, null);
+        expect(tracks[0].channelCount, null);
+        expect(tracks[0].codec, null);
+
+        expect(tracks[1].groupIndex, 0);
+        expect(tracks[1].trackIndex, 1);
+        expect(tracks[1].label, 'Spanish');
+        expect(tracks[1].language, 'es');
+        expect(tracks[1].isSelected, false);
+        expect(tracks[1].bitrate, 128000);
+        expect(tracks[1].sampleRate, 44100);
+        expect(tracks[1].channelCount, 2);
+        expect(tracks[1].codec, 'aac');
+
+        expect(tracks[2].groupIndex, 1);
+        expect(tracks[2].trackIndex, 0);
+        expect(tracks[2].label, 'French');
+        expect(tracks[2].language, 'fr');
+        expect(tracks[2].isSelected, false);
+        expect(tracks[2].bitrate, 96000);
+        expect(tracks[2].sampleRate, null);
+        expect(tracks[2].channelCount, null);
+        expect(tracks[2].codec, null);
+      });
+
+      test('getAudioTracks before initialization returns empty list', () async {
+        final VideoPlayerController controller =
+            VideoPlayerController.networkUrl(_localhostUri);
+        addTearDown(controller.dispose);
+
+        final List<VideoAudioTrack> tracks = await controller.getAudioTracks();
+        expect(tracks, isEmpty);
+      });
+
+      test('selectAudioTrack works with valid indices', () async {
+        final VideoPlayerController controller =
+            VideoPlayerController.networkUrl(_localhostUri);
+        addTearDown(controller.dispose);
+
+        await controller.initialize();
+        final tracks = await controller.getAudioTracks();
+        await controller.selectAudioTrack(
+          tracks[1],
+        ); // Select second track (0, 1)
+
+        // Verify the platform recorded the selection
+        final key = '${controller.playerId}_0_1';
+        expect(
+          fakeVideoPlayerPlatform.selectedAudioTracks.containsKey(key),
+          isTrue,
+        );
+        expect(
+          fakeVideoPlayerPlatform.selectedAudioTracks[key]!['groupIndex'],
+          0,
+        );
+        expect(
+          fakeVideoPlayerPlatform.selectedAudioTracks[key]!['trackIndex'],
+          1,
+        );
+      });
+
+      test('selectAudioTrack before initialization throws', () async {
+        final VideoPlayerController controller =
+            VideoPlayerController.networkUrl(_localhostUri);
+        addTearDown(controller.dispose);
+
+        const track = VideoAudioTrack(
+          groupIndex: 0,
+          trackIndex: 0,
+          label: 'Test',
+          language: 'en',
+          isSelected: false,
+        );
+        expect(
+          () => controller.selectAudioTrack(track),
+          throwsA(isA<Exception>()),
+        );
+      });
+
+      test('selectAudioTrack with zero indices', () async {
+        final VideoPlayerController controller =
+            VideoPlayerController.networkUrl(_localhostUri);
+        addTearDown(controller.dispose);
+
+        await controller.initialize();
+        final tracks = await controller.getAudioTracks();
+        await controller.selectAudioTrack(
+          tracks[0],
+        ); // Select first track (0, 0)
+
+        final key = '${controller.playerId}_0_0';
+        expect(
+          fakeVideoPlayerPlatform.selectedAudioTracks[key]!['groupIndex'],
+          0,
+        );
+        expect(
+          fakeVideoPlayerPlatform.selectedAudioTracks[key]!['trackIndex'],
+          0,
+        );
+      });
+
+      test('multiple track selections update correctly', () async {
+        final VideoPlayerController controller =
+            VideoPlayerController.networkUrl(_localhostUri);
+        addTearDown(controller.dispose);
+
+        await controller.initialize();
+        final tracks = await controller.getAudioTracks();
+
+        await controller.selectAudioTrack(
+          tracks[0],
+        ); // Select first track (0, 0)
+        String key = '${controller.playerId}_0_0';
+        expect(
+          fakeVideoPlayerPlatform.selectedAudioTracks[key]!['groupIndex'],
+          0,
+        );
+        expect(
+          fakeVideoPlayerPlatform.selectedAudioTracks[key]!['trackIndex'],
+          0,
+        );
+
+        await controller.selectAudioTrack(
+          tracks[1],
+        ); // Select second track (0, 1)
+        key = '${controller.playerId}_0_1';
+        expect(
+          fakeVideoPlayerPlatform.selectedAudioTracks[key]!['groupIndex'],
+          0,
+        );
+        expect(
+          fakeVideoPlayerPlatform.selectedAudioTracks[key]!['trackIndex'],
+          1,
+        );
+      });
+    });
+
+    group('VideoAudioTrack', () {
+      test('equality works correctly', () {
+        const VideoAudioTrack track1 = VideoAudioTrack(
+          groupIndex: 0,
+          trackIndex: 0,
+          label: 'English',
+          language: 'en',
+          isSelected: true,
+        );
+
+        const VideoAudioTrack track2 = VideoAudioTrack(
+          groupIndex: 0,
+          trackIndex: 0,
+          label: 'English',
+          language: 'en',
+          isSelected: true,
+        );
+
+        const VideoAudioTrack track3 = VideoAudioTrack(
+          groupIndex: 0,
+          trackIndex: 1,
+          label: 'Spanish',
+          language: 'es',
+          isSelected: false,
+        );
+
+        expect(track1, equals(track2));
+        expect(track1, isNot(equals(track3)));
+      });
+
+      test('hashCode works correctly', () {
+        const VideoAudioTrack track1 = VideoAudioTrack(
+          groupIndex: 0,
+          trackIndex: 0,
+          label: 'English',
+          language: 'en',
+          isSelected: true,
+        );
+
+        const VideoAudioTrack track2 = VideoAudioTrack(
+          groupIndex: 0,
+          trackIndex: 0,
+          label: 'English',
+          language: 'en',
+          isSelected: true,
+        );
+
+        expect(track1.hashCode, equals(track2.hashCode));
+      });
+
+      test('toString works correctly', () {
+        const VideoAudioTrack track = VideoAudioTrack(
+          groupIndex: 0,
+          trackIndex: 0,
+          label: 'English',
+          language: 'en',
+          isSelected: true,
+          bitrate: 128000,
+          sampleRate: 44100,
+          channelCount: 2,
+          codec: 'aac',
+        );
+
+        final String trackString = track.toString();
+        expect(trackString, contains('0')); // groupIndex
+        expect(trackString, contains('English'));
+        expect(trackString, contains('en'));
+        expect(trackString, contains('true'));
+        expect(trackString, contains('128000'));
+        expect(trackString, contains('44100'));
+        expect(trackString, contains('2'));
+        expect(trackString, contains('aac'));
+      });
+
+      test('optional fields can be null', () {
+        const VideoAudioTrack track = VideoAudioTrack(
+          groupIndex: 0,
+          trackIndex: 0,
+          label: 'English',
+          language: 'en',
+          isSelected: true,
+        );
+
+        expect(track.bitrate, null);
+        expect(track.sampleRate, null);
+        expect(track.channelCount, null);
+        expect(track.codec, null);
       });
     });
 
@@ -1587,4 +1882,61 @@ class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
     calls.add('setWebOptions');
     webOptions[playerId] = options;
   }
+
+  @override
+  Future<List<platform_interface.VideoAudioTrack>> getAudioTracks(
+    int playerId,
+  ) async {
+    calls.add('getAudioTracks');
+    return <platform_interface.VideoAudioTrack>[
+      const platform_interface.VideoAudioTrack(
+        groupIndex: 0,
+        trackIndex: 0,
+        label: 'English',
+        language: 'en',
+        isSelected: true,
+      ),
+      const platform_interface.VideoAudioTrack(
+        groupIndex: 0,
+        trackIndex: 1,
+        label: 'Spanish',
+        language: 'es',
+        isSelected: false,
+        bitrate: 128000,
+        sampleRate: 44100,
+        channelCount: 2,
+        codec: 'aac',
+      ),
+      const platform_interface.VideoAudioTrack(
+        groupIndex: 1,
+        trackIndex: 0,
+        label: 'French',
+        language: 'fr',
+        isSelected: false,
+        bitrate: 96000,
+      ),
+    ];
+  }
+
+  @override
+  Future<void> selectAudioTrack(
+    int playerId,
+    platform_interface.VideoAudioTrack track,
+  ) async {
+    calls.add('selectAudioTrack');
+    final String key = '${playerId}_${track.groupIndex}_${track.trackIndex}';
+    selectedAudioTracks[key] = {
+      'groupIndex': track.groupIndex,
+      'trackIndex': track.trackIndex,
+    };
+  }
+
+  @override
+  bool isAudioTrackSupportAvailable() {
+    calls.add('isAudioTrackSupportAvailable');
+    return true; // Return true for testing purposes
+  }
+
+  final Map<String, Map<String, int>> selectedAudioTracks =
+      <String, Map<String, int>>{};
 }

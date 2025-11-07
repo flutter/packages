@@ -188,10 +188,9 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
         ),
         'completed' => VideoEvent(eventType: VideoEventType.completed),
         'bufferingUpdate' => VideoEvent(
-          buffered:
-              (map['values'] as List<dynamic>)
-                  .map<DurationRange>(_toDurationRange)
-                  .toList(),
+          buffered: (map['values'] as List<dynamic>)
+              .map<DurationRange>(_toDurationRange)
+              .toList(),
           eventType: VideoEventType.bufferingUpdate,
         ),
         'bufferingStart' => VideoEvent(
@@ -213,6 +212,66 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
+  Future<List<VideoAudioTrack>> getAudioTracks(int playerId) async {
+    final NativeAudioTrackData nativeData = await _playerWith(
+      id: playerId,
+    ).getAudioTracks();
+    final List<VideoAudioTrack> tracks = <VideoAudioTrack>[];
+
+    // Convert asset tracks to VideoAudioTrack
+    // Note: AVFoundation doesn't have track groups like ExoPlayer, so we use groupIndex=0
+    if (nativeData.assetTracks != null) {
+      for (final AssetAudioTrackData track in nativeData.assetTracks!) {
+        tracks.add(
+          VideoAudioTrack(
+            groupIndex: 0,
+            trackIndex: track.trackId,
+            label: track.label,
+            language: track.language,
+            isSelected: track.isSelected,
+            bitrate: track.bitrate,
+            sampleRate: track.sampleRate,
+            channelCount: track.channelCount,
+            codec: track.codec,
+          ),
+        );
+      }
+    }
+
+    // Convert media selection tracks to VideoAudioTrack (for HLS streams)
+    // Note: AVFoundation doesn't have track groups like ExoPlayer, so we use groupIndex=0
+    if (nativeData.mediaSelectionTracks != null) {
+      for (final MediaSelectionAudioTrackData track
+          in nativeData.mediaSelectionTracks!) {
+        final String? label = track.commonMetadataTitle ?? track.displayName;
+        tracks.add(
+          VideoAudioTrack(
+            groupIndex: 0,
+            trackIndex: track.index,
+            label: label,
+            language: track.languageCode,
+            isSelected: track.isSelected,
+          ),
+        );
+      }
+    }
+
+    return tracks;
+  }
+
+  @override
+  Future<void> selectAudioTrack(int playerId, VideoAudioTrack track) {
+    // AVFoundation doesn't have track groups, so we only use trackIndex (groupIndex is ignored)
+    return _playerWith(id: playerId).selectAudioTrack(track.trackIndex);
+  }
+
+  @override
+  bool isAudioTrackSupportAvailable() {
+    // iOS/macOS with AVFoundation supports audio track selection
+    return true;
+  }
+
+  @override
   Widget buildView(int playerId) {
     return buildViewWithOptions(VideoViewOptions(playerId: playerId));
   }
@@ -227,10 +286,9 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
         textureId: textureId,
       ),
       VideoPlayerPlatformViewState() => _buildPlatformView(playerId),
-      null =>
-        throw Exception(
-          'Could not find corresponding view type for playerId: $playerId',
-        ),
+      null => throw Exception(
+        'Could not find corresponding view type for playerId: $playerId',
+      ),
     };
   }
 

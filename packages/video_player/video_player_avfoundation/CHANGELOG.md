@@ -1,6 +1,12 @@
-## NEXT
+## 2.9.0
 
+* Implements `getAudioTracks()` and `selectAudioTrack()` methods.
 * Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
+## 2.8.5
+
+* Updates minimum supported version to iOS 13 and macOS 10.15.
+* Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
 
 ## 2.8.4
 

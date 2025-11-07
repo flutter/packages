@@ -1,3 +1,14 @@
+## 2.9.0
+
+* Implements `getAudioTracks()` and `selectAudioTrack()` methods for Android using ExoPlayer.
+
+## 2.8.17
+
+* Moves video event processing logic to Dart, and fixes an issue where buffer
+  range would not be updated for a paused video.
+* Switches to Kotlin for Pigeon-generated code.
+* Adopts type-safe event channels for internal communication.
+
 ## 2.8.16
 
 * Updates Java compatibility version to 17 and minimum supported SDK version to Flutter 3.35/Dart 3.9.
