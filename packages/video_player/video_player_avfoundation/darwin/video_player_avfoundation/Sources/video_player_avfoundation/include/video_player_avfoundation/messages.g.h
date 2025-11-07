@@ -156,7 +156,9 @@ extern void SetUpFVPAVFoundationVideoPlayerApiWithSuffix(
 - (void)disposeWithError:(FlutterError *_Nullable *_Nonnull)error;
 /// @return `nil` only when `error != nil`.
 - (nullable FVPNativeAudioTrackData *)getAudioTracks:(FlutterError *_Nullable *_Nonnull)error;
-- (void)selectAudioTrack:(NSString *)trackId error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)selectAudioTrackWithType:(NSString *)trackType
+                         trackId:(NSInteger)trackId
+                           error:(FlutterError *_Nullable *_Nonnull)error;
 @end
 
 extern void SetUpFVPVideoPlayerInstanceApi(id<FlutterBinaryMessenger> binaryMessenger,

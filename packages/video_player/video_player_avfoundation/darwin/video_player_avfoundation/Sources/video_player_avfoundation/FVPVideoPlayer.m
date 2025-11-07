@@ -153,7 +153,7 @@ static NSDictionary<NSString *, NSValue *> *FVPGetPlayerItemObservations(void) {
     FVPRemoveKeyValueObservers(self, FVPGetPlayerItemObservations(), self.player.currentItem);
     FVPRemoveKeyValueObservers(self, FVPGetPlayerObservations(), self.player);
   }
-  
+
   // Clear cached audio selection options
   _cachedAudioSelectionOptions = nil;
 
@@ -485,7 +485,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   if (audioGroup && audioGroup.options.count > 0) {
     // Cache the options array for later use in selectAudioTrack
     _cachedAudioSelectionOptions = audioGroup.options;
-    
+
     NSMutableArray<FVPMediaSelectionAudioTrackData *> *mediaSelectionTracks =
         [[NSMutableArray alloc] init];
     AVMediaSelectionOption *currentSelection = nil;
@@ -584,7 +584,6 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
           if ([className hasPrefix:@"CMAudioFormatDescription"] ||
               [className hasPrefix:@"CMVideoFormatDescription"] ||
               [className hasPrefix:@"CMFormatDescription"]) {
-
             CMFormatDescriptionRef formatDesc = (__bridge CMFormatDescriptionRef)formatDescObj;
 
             // Validate the format description reference before using Core Media APIs
@@ -655,8 +654,9 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   return [FVPNativeAudioTrackData makeWithAssetTracks:assetTracks mediaSelectionTracks:nil];
 }
 
-- (void)selectAudioTrack:(nonnull NSString *)trackId
-                   error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+- (void)selectAudioTrackWithType:(nonnull NSString *)trackType
+                         trackId:(NSInteger)trackId
+                           error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
   AVPlayerItem *currentItem = _player.currentItem;
   if (!currentItem || !currentItem.asset) {
     return;
@@ -665,14 +665,11 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   AVAsset *asset = currentItem.asset;
 
   // Check if this is a media selection track (for HLS streams)
-  if ([trackId hasPrefix:@"media_selection_"]) {
-    // Parse the track ID to get the index
-    NSString *indexString = [trackId substringFromIndex:[@"media_selection_" length]];
-    NSInteger index = [indexString integerValue];
-    
-    // Validate that we have cached options and the index is valid
-    if (_cachedAudioSelectionOptions && index >= 0 && index < _cachedAudioSelectionOptions.count) {
-      AVMediaSelectionOption *option = _cachedAudioSelectionOptions[index];
+  if ([trackType isEqualToString:@"mediaSelection"]) {
+    // Validate that we have cached options and the trackId (index) is valid
+    if (_cachedAudioSelectionOptions && trackId >= 0 &&
+        trackId < (NSInteger)_cachedAudioSelectionOptions.count) {
+      AVMediaSelectionOption *option = _cachedAudioSelectionOptions[trackId];
       AVMediaSelectionGroup *audioGroup =
           [asset mediaSelectionGroupForMediaCharacteristic:AVMediaCharacteristicAudible];
       if (audioGroup) {

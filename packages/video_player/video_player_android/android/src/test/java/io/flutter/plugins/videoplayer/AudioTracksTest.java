@@ -125,7 +125,8 @@ public class AudioTracksTest {
 
     // Verify first track
     ExoPlayerAudioTrackData track1 = result.get(0);
-    assertEquals("0_0", track1.getTrackId());
+    assertEquals(0L, track1.getGroupIndex());
+    assertEquals(0L, track1.getTrackIndex());
     assertEquals("English", track1.getLabel());
     assertEquals("en", track1.getLanguage());
     assertTrue(track1.isSelected());
@@ -136,7 +137,8 @@ public class AudioTracksTest {
 
     // Verify second track
     ExoPlayerAudioTrackData track2 = result.get(1);
-    assertEquals("1_0", track2.getTrackId());
+    assertEquals(1L, track2.getGroupIndex());
+    assertEquals(0L, track2.getTrackIndex());
     assertEquals("Español", track2.getLabel());
     assertEquals("es", track2.getLanguage());
     assertFalse(track2.isSelected());
@@ -197,7 +199,8 @@ public class AudioTracksTest {
     assertEquals(1, result.size());
 
     ExoPlayerAudioTrackData track = result.get(0);
-    assertEquals("0_0", track.getTrackId());
+    assertEquals(0L, track.getGroupIndex());
+    assertEquals(0L, track.getTrackIndex());
     assertNull(track.getLabel()); // Null values should be preserved
     assertNull(track.getLanguage()); // Null values should be preserved
     assertFalse(track.isSelected());
@@ -246,12 +249,16 @@ public class AudioTracksTest {
     assertNotNull(result);
     assertEquals(2, result.size());
 
-    // Verify track IDs are unique
+    // Verify track indices are correct
     ExoPlayerAudioTrackData track1 = result.get(0);
     ExoPlayerAudioTrackData track2 = result.get(1);
-    assertEquals("0_0", track1.getTrackId());
-    assertEquals("0_1", track2.getTrackId());
-    assertNotEquals(track1.getTrackId(), track2.getTrackId());
+    assertEquals(0L, track1.getGroupIndex());
+    assertEquals(0L, track1.getTrackIndex());
+    assertEquals(0L, track2.getGroupIndex());
+    assertEquals(1L, track2.getTrackIndex());
+    // Tracks have same group but different track indices
+    assertEquals(track1.getGroupIndex(), track2.getGroupIndex());
+    assertNotEquals(track1.getTrackIndex(), track2.getTrackIndex());
   }
 
   @Test

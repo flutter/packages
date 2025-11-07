@@ -258,7 +258,22 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
 
   @override
   Future<void> selectAudioTrack(int playerId, String trackId) {
-    return _playerWith(id: playerId).selectAudioTrack(trackId);
+    // Parse the trackId to determine type and extract the integer ID
+    String trackType;
+    int numericTrackId;
+
+    if (trackId.startsWith('media_selection_')) {
+      trackType = 'mediaSelection';
+      numericTrackId = int.parse(trackId.substring('media_selection_'.length));
+    } else {
+      // Asset track - the trackId is just the integer as a string
+      trackType = 'asset';
+      numericTrackId = int.parse(trackId);
+    }
+
+    return _playerWith(
+      id: playerId,
+    ).selectAudioTrack(trackType, numericTrackId);
   }
 
   @override

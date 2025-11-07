@@ -160,7 +160,8 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
           // Create audio track data with metadata
           ExoPlayerAudioTrackData audioTrack =
               new ExoPlayerAudioTrackData(
-                  groupIndex + "_" + trackIndex,
+                  (long) groupIndex,
+                  (long) trackIndex,
                   format.label,
                   format.language,
                   isSelected,
@@ -178,26 +179,13 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
 
   @UnstableApi
   @Override
-  public void selectAudioTrack(@NonNull String trackId) {
+  public void selectAudioTrack(long groupIndex, long trackIndex) {
     if (trackSelector == null) {
       Log.w("VideoPlayer", "Cannot select audio track: track selector is null");
       return;
     }
 
     try {
-      // Parse the trackId (format: "groupIndex_trackIndex")
-      String[] parts = trackId.split("_");
-      if (parts.length != 2) {
-        Log.w(
-            "VideoPlayer",
-            "Cannot select audio track: invalid trackId format '"
-                + trackId
-                + "'. Expected format: 'groupIndex_trackIndex'");
-        return;
-      }
-
-      int groupIndex = Integer.parseInt(parts[0]);
-      int trackIndex = Integer.parseInt(parts[1]);
 
       // Get current tracks
       Tracks tracks = exoPlayer.getCurrentTracks();
@@ -213,10 +201,10 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
         return;
       }
 
-      Tracks.Group group = tracks.getGroups().get(groupIndex);
+      Tracks.Group group = tracks.getGroups().get((int) groupIndex);
 
       // Verify it's an audio track and the track index is valid
-      if (group.getType() != C.TRACK_TYPE_AUDIO || trackIndex >= group.length) {
+      if (group.getType() != C.TRACK_TYPE_AUDIO || (int) trackIndex >= group.length) {
         if (group.getType() != C.TRACK_TYPE_AUDIO) {
           Log.w(
               "VideoPlayer",
@@ -239,16 +227,21 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
 
       // Get the track group and create a selection override
       TrackGroup trackGroup = group.getMediaTrackGroup();
-      TrackSelectionOverride override = new TrackSelectionOverride(trackGroup, trackIndex);
+      TrackSelectionOverride override = new TrackSelectionOverride(trackGroup, (int) trackIndex);
 
       // Apply the track selection override
       trackSelector.setParameters(
           trackSelector.buildUponParameters().setOverrideForType(override).build());
 
-    } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
+    } catch (ArrayIndexOutOfBoundsException e) {
       Log.w(
           "VideoPlayer",
-          "Cannot select audio track: invalid trackId format '" + trackId + "'. " + e.getMessage());
+          "Cannot select audio track: invalid indices (groupIndex: "
+              + groupIndex
+              + ", trackIndex: "
+              + trackIndex
+              + "). "
+              + e.getMessage());
     }
   }
 
