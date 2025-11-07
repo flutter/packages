@@ -475,7 +475,9 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
 
     void writeEncodeLogic(EnumeratedType customType) {
       final String encodeString =
-          customType.type == CustomTypes.customClass ? 'toList()' : 'raw';
+          customType.type == CustomTypes.customClass
+              ? 'toList()'
+              : 'raw.toLong()';
       final String valueString =
           customType.enumeration < maximumCodecFieldKey
               ? 'value.$encodeString'
@@ -1341,7 +1343,7 @@ fun deepEquals(a: Any?, b: Any?): Boolean {
   }
   if (a is Map<*, *> && b is Map<*, *>) {
     return a.size == b.size && a.all {
-        (b as Map<Any?, Any?>).containsKey(it.key) &&
+        (b as Map<Any?, Any?>).contains(it.key) &&
         deepEquals(it.value, b[it.key])
     }
   }
