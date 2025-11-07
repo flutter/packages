@@ -3,8 +3,7 @@
 
 [![pub package](https://img.shields.io/pub/v/image_picker.svg)](https://pub.dev/packages/image_picker)
 
-A Flutter plugin for iOS and Android for picking images from the image library,
-and taking new pictures with the camera.
+A Flutter plugin for picking images from the image library, and taking new pictures with the camera.
 
 |             | Android | iOS     | Linux | macOS  | Web                             | Windows     |
 |-------------|---------|---------|-------|--------|---------------------------------|-------------|
