@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -13,7 +13,7 @@ import 'package:pigeon/pigeon.dart';
     copyrightHeader: 'pigeons/copyright.txt',
   ),
 )
-/// The information necessary to build a an authorization request.
+/// The information necessary to build an authorization request.
 ///
 /// Corresponds to the native AuthorizationRequest object, but only contains
 /// the fields used by this plugin.
@@ -36,6 +36,7 @@ class GetCredentialRequestParams {
     required this.useButtonFlow,
     required this.googleIdOptionParams,
     this.serverClientId,
+    this.hostedDomain,
     this.nonce,
   });
 
@@ -51,6 +52,7 @@ class GetCredentialRequestParams {
   GetCredentialRequestGoogleIdOptionParams googleIdOptionParams;
 
   String? serverClientId;
+  String? hostedDomain;
   String? nonce;
 }
 
@@ -62,6 +64,26 @@ class GetCredentialRequestGoogleIdOptionParams {
 
   bool filterToAuthorized;
   bool autoSelectEnabled;
+}
+
+/// Parameters for revoking authorization.
+///
+/// Corresponds to the native RevokeAccessRequest.
+/// https://developers.google.com/android/reference/com/google/android/gms/auth/api/identity/RevokeAccessRequest
+class PlatformRevokeAccessRequest {
+  PlatformRevokeAccessRequest({
+    required this.accountEmail,
+    required this.scopes,
+  });
+
+  /// The email for the Google account to revoke authorizations for.
+  String accountEmail;
+
+  /// A list of requested scopes.
+  ///
+  /// Per docs, all granted scopes will be revoked, not only the ones passed
+  /// here. However, at least one currently-granted scope must be provided.
+  List<String> scopes;
 }
 
 /// Pigeon equivalent of the native GoogleIdTokenCredential.
@@ -194,10 +216,17 @@ abstract class GoogleSignInApi {
   @async
   void clearCredentialState();
 
+  /// Clears the authorization cache for the given token.
+  @async
+  void clearAuthorizationToken(String token);
+
   /// Requests authorization tokens via AuthorizationClient.
   @async
   AuthorizeResult authorize(
     PlatformAuthorizationRequest params, {
     required bool promptIfUnauthorized,
   });
+
+  @async
+  void revokeAccess(PlatformRevokeAccessRequest params);
 }

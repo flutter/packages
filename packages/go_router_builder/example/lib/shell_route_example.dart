@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -47,7 +47,7 @@ class MyShellRouteData extends ShellRouteData {
   }
 }
 
-class FooRouteData extends GoRouteData with _$FooRouteData {
+class FooRouteData extends GoRouteData with $FooRouteData {
   const FooRouteData();
 
   @override
@@ -56,7 +56,7 @@ class FooRouteData extends GoRouteData with _$FooRouteData {
   }
 }
 
-class BarRouteData extends GoRouteData with _$BarRouteData {
+class BarRouteData extends GoRouteData with $BarRouteData {
   const BarRouteData();
 
   @override
@@ -121,7 +121,7 @@ class BarScreen extends StatelessWidget {
 }
 
 @TypedGoRoute<LoginRoute>(path: '/login')
-class LoginRoute extends GoRouteData with _$LoginRoute {
+class LoginRoute extends GoRouteData with $LoginRoute {
   const LoginRoute();
 
   @override

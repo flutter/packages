@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -9,10 +9,6 @@
 
 import 'package:flutter/material.dart';
 // #docregion ErrorHandling
-import 'package:flutter/services.dart';
-// #docregion NoErrorDialogs
-import 'package:local_auth/error_codes.dart' as auth_error;
-// #enddocregion NoErrorDialogs
 // #docregion CanCheck
 import 'package:local_auth/local_auth.dart';
 // #enddocregion CanCheck
@@ -64,8 +60,8 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> getEnrolledBiometrics() async {
     // #docregion Enrolled
-    final List<BiometricType> availableBiometrics =
-        await auth.getAvailableBiometrics();
+    final List<BiometricType> availableBiometrics = await auth
+        .getAvailableBiometrics();
 
     if (availableBiometrics.isNotEmpty) {
       // Some biometrics are enrolled.
@@ -79,51 +75,14 @@ class _MyAppState extends State<MyApp> {
     // #enddocregion Enrolled
   }
 
-  Future<void> authenticate() async {
-    // #docregion AuthAny
-    try {
-      final bool didAuthenticate = await auth.authenticate(
-        localizedReason: 'Please authenticate to show account balance',
-      );
-      // #enddocregion AuthAny
-      print(didAuthenticate);
-      // #docregion AuthAny
-    } on PlatformException {
-      // ...
-    }
-    // #enddocregion AuthAny
-  }
-
   Future<void> authenticateWithBiometrics() async {
     // #docregion AuthBioOnly
     final bool didAuthenticate = await auth.authenticate(
       localizedReason: 'Please authenticate to show account balance',
-      options: const AuthenticationOptions(biometricOnly: true),
+      biometricOnly: true,
     );
     // #enddocregion AuthBioOnly
     print(didAuthenticate);
-  }
-
-  Future<void> authenticateWithoutDialogs() async {
-    // #docregion NoErrorDialogs
-    try {
-      final bool didAuthenticate = await auth.authenticate(
-        localizedReason: 'Please authenticate to show account balance',
-        options: const AuthenticationOptions(useErrorDialogs: false),
-      );
-      // #enddocregion NoErrorDialogs
-      print(didAuthenticate ? 'Success!' : 'Failure');
-      // #docregion NoErrorDialogs
-    } on PlatformException catch (e) {
-      if (e.code == auth_error.notAvailable) {
-        // Add handling of no hardware here.
-      } else if (e.code == auth_error.notEnrolled) {
-        // ...
-      } else {
-        // ...
-      }
-    }
-    // #enddocregion NoErrorDialogs
   }
 
   Future<void> authenticateWithErrorHandling() async {
@@ -131,16 +90,15 @@ class _MyAppState extends State<MyApp> {
     try {
       final bool didAuthenticate = await auth.authenticate(
         localizedReason: 'Please authenticate to show account balance',
-        options: const AuthenticationOptions(useErrorDialogs: false),
       );
       // #enddocregion ErrorHandling
       print(didAuthenticate ? 'Success!' : 'Failure');
       // #docregion ErrorHandling
-    } on PlatformException catch (e) {
-      if (e.code == auth_error.notEnrolled) {
+    } on LocalAuthException catch (e) {
+      if (e.code == LocalAuthExceptionCode.noBiometricHardware) {
         // Add handling of no hardware here.
-      } else if (e.code == auth_error.lockedOut ||
-          e.code == auth_error.permanentlyLockedOut) {
+      } else if (e.code == LocalAuthExceptionCode.temporaryLockout ||
+          e.code == LocalAuthExceptionCode.biometricLockout) {
         // ...
       } else {
         // ...

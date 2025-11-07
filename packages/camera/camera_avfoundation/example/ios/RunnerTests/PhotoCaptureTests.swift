@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -7,7 +7,7 @@ import XCTest
 
 @testable import camera_avfoundation
 
-// Import Objectice-C part of the implementation when SwiftPM is used.
+// Import Objective-C part of the implementation when SwiftPM is used.
 #if canImport(camera_avfoundation_objc)
   import camera_avfoundation_objc
 #endif
@@ -32,8 +32,7 @@ final class PhotoCaptureTests: XCTestCase {
     let mockOutput = MockCapturePhotoOutput()
     mockOutput.capturePhotoWithSettingsStub = { settings, photoDelegate in
       let delegate =
-        cam.inProgressSavePhotoDelegates.object(forKey: settings.uniqueID)
-        as? FLTSavePhotoDelegate
+        cam.inProgressSavePhotoDelegates[settings.uniqueID]
       // Completion runs on IO queue.
       let ioQueue = DispatchQueue(label: "io_queue")
       ioQueue.async {
@@ -66,8 +65,7 @@ final class PhotoCaptureTests: XCTestCase {
     let mockOutput = MockCapturePhotoOutput()
     mockOutput.capturePhotoWithSettingsStub = { settings, photoDelegate in
       let delegate =
-        cam.inProgressSavePhotoDelegates.object(forKey: settings.uniqueID)
-        as? FLTSavePhotoDelegate
+        cam.inProgressSavePhotoDelegates[settings.uniqueID]
       // Completion runs on IO queue.
       let ioQueue = DispatchQueue(label: "io_queue")
       ioQueue.async {
@@ -101,8 +99,7 @@ final class PhotoCaptureTests: XCTestCase {
     mockOutput.availablePhotoCodecTypes = [AVVideoCodecType.hevc]
     mockOutput.capturePhotoWithSettingsStub = { settings, photoDelegate in
       let delegate =
-        cam.inProgressSavePhotoDelegates.object(forKey: settings.uniqueID)
-        as? FLTSavePhotoDelegate
+        cam.inProgressSavePhotoDelegates[settings.uniqueID]
       // Completion runs on IO queue.
       let ioQueue = DispatchQueue(label: "io_queue")
       ioQueue.async {
@@ -136,8 +133,7 @@ final class PhotoCaptureTests: XCTestCase {
     let mockOutput = MockCapturePhotoOutput()
     mockOutput.capturePhotoWithSettingsStub = { settings, photoDelegate in
       let delegate =
-        cam.inProgressSavePhotoDelegates.object(forKey: settings.uniqueID)
-        as? FLTSavePhotoDelegate
+        cam.inProgressSavePhotoDelegates[settings.uniqueID]
       // Completion runs on IO queue.
       let ioQueue = DispatchQueue(label: "io_queue")
       ioQueue.async {
@@ -178,15 +174,14 @@ final class PhotoCaptureTests: XCTestCase {
       key: captureSessionQueueSpecificKey, value: captureSessionQueueSpecificValue)
     let configuration = CameraTestUtils.createTestCameraConfiguration()
     configuration.captureSessionQueue = captureSessionQueue
-    configuration.captureDeviceFactory = { _ in captureDeviceMock }
+    configuration.videoCaptureDeviceFactory = { _ in captureDeviceMock }
     let cam = CameraTestUtils.createTestCamera(configuration)
 
     let filePath = "test"
     let mockOutput = MockCapturePhotoOutput()
     mockOutput.capturePhotoWithSettingsStub = { settings, photoDelegate in
       let delegate =
-        cam.inProgressSavePhotoDelegates.object(forKey: settings.uniqueID)
-        as? FLTSavePhotoDelegate
+        cam.inProgressSavePhotoDelegates[settings.uniqueID]
       // Completion runs on IO queue.
       let ioQueue = DispatchQueue(label: "io_queue")
       ioQueue.async {

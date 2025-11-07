@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -103,8 +103,9 @@ void main() {
       instanceManager.addHostCreatedInstance(object, 0);
 
       expect(instanceManager.removeWeakReference(object), 0);
-      final CopyableObject copy =
-          instanceManager.getInstanceWithWeakReference(0)!;
+      final CopyableObject copy = instanceManager.getInstanceWithWeakReference(
+        0,
+      )!;
       expect(identical(object, copy), isFalse);
     });
 
@@ -148,8 +149,8 @@ void main() {
       instanceManager.addHostCreatedInstance(object, 0);
       instanceManager.removeWeakReference(object);
 
-      final CopyableObject newWeakCopy =
-          instanceManager.getInstanceWithWeakReference(0)!;
+      final CopyableObject newWeakCopy = instanceManager
+          .getInstanceWithWeakReference(0)!;
       expect(identical(object, newWeakCopy), isFalse);
     });
 

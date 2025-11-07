@@ -19,7 +19,7 @@ specific mode, you can set it explicitly.
 
 ### Texture Layer Hybrid Composition
 
-This is the current default mode for versions >=23. This is a new display mode used by most
+This is the current default mode, and is the display mode used by most
 plugins starting with Flutter 3.0. This is more performant than Hybrid Composition, but has some
 limitations from using an Android [SurfaceTexture](https://developer.android.com/reference/android/graphics/SurfaceTexture).
 See:
@@ -28,11 +28,11 @@ See:
 
 ### Hybrid Composition
 
-This is the current default mode for versions <23. It ensures that the WebView will display and work
-as expected, at the cost of some performance. See:
+This ensures that the WebView will display and work as expected in the edge cases noted above, at
+the cost of some performance. See:
 * https://docs.flutter.dev/platform-integration/android/platform-views#performance
 
-This can be configured for versions >=23 with
+This can be configured with
 `AndroidWebViewWidgetCreationParams.displayWithHybridComposition`. See https://pub.dev/packages/webview_flutter#platform-specific-features
 for more details on setting platform-specific features in the main plugin.
 
@@ -105,6 +105,29 @@ androidController.setCustomWidgetCallbacks(
   },
 );
 ```
+
+## Geolocation
+
+By default, WebView does not allow geolocation requests. To allow them, call
+`setGeolocationPermissionsPromptCallbacks` on the `AndroidWebViewController` to
+configure a prompt handler. For example, to unconditionally allow all requests:
+
+<?code-excerpt "example/lib/readme_excerpts.dart (geolocation_example)"?>
+```dart
+await androidController.setGeolocationPermissionsPromptCallbacks(
+  onShowPrompt: (GeolocationPermissionsRequestParams request) async {
+    return const GeolocationPermissionsResponse(allow: true, retain: true);
+  },
+);
+```
+
+**Important:** Geolocation requests should only be allowed unconditionally if
+the web view content is restricted to domains you control or trust. If you are
+showing untrusted content, the `onShowPrompt` implementation should request
+permission from the user before responding.
+
+Your application must have geolocation permissions granted in order for the
+WebView to have access to geolocation.
 
 ## Contributing
 

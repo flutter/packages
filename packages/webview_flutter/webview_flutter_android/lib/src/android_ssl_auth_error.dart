@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -29,8 +29,8 @@ class AndroidSslAuthError extends PlatformSslAuthError {
     required android.SslErrorHandler handler,
   }) async {
     final android.SslCertificate certificate = error.certificate;
-    final android.X509Certificate? x509Certificate =
-        await certificate.getX509Certificate();
+    final android.X509Certificate? x509Certificate = await certificate
+        .getX509Certificate();
 
     final android.SslErrorType errorType = await error.getPrimaryError();
     final String errorDescription = switch (errorType) {
@@ -47,8 +47,9 @@ class AndroidSslAuthError extends PlatformSslAuthError {
 
     return AndroidSslAuthError._(
       certificate: X509Certificate(
-        data:
-            x509Certificate != null ? await x509Certificate.getEncoded() : null,
+        data: x509Certificate != null
+            ? await x509Certificate.getEncoded()
+            : null,
       ),
       handler: handler,
       description: errorDescription,

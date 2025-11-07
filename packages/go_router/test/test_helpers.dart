@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -176,6 +176,7 @@ Future<GoRouter> createRouter(
   GoExceptionHandler? onException,
   bool requestFocus = true,
   bool overridePlatformDefaultLocation = false,
+  List<NavigatorObserver>? observers,
 }) async {
   final GoRouter goRouter = GoRouter(
     routes: routes,
@@ -190,6 +191,7 @@ Future<GoRouter> createRouter(
     restorationScopeId: restorationScopeId,
     requestFocus: requestFocus,
     overridePlatformDefaultLocation: overridePlatformDefaultLocation,
+    observers: observers,
   );
   addTearDown(goRouter.dispose);
   await tester.pumpWidget(
@@ -360,6 +362,10 @@ Future<void> simulateAndroidBackButton(WidgetTester tester) async {
     message,
     (_) {},
   );
+}
+
+Future<void> simulateIosBackGesture(WidgetTester tester) async {
+  await tester.dragFrom(const Offset(0, 300), const Offset(500, 300));
 }
 
 GoRouterPageBuilder createPageBuilder({

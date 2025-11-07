@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -8,11 +8,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:in_app_purchase_platform_interface/in_app_purchase_platform_interface.dart';
 import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
+import 'package:in_app_purchase_storekit/src/in_app_purchase_apis.dart';
 import 'package:in_app_purchase_storekit/store_kit_2_wrappers.dart';
 
 import 'fakes/fake_storekit_platform.dart';
-import 'sk2_test_api.g.dart';
-import 'test_api.g.dart';
 
 void main() {
   final SK2Product dummyProductWrapper = SK2Product(
@@ -33,8 +32,10 @@ void main() {
   late InAppPurchaseStoreKitPlatform iapStoreKitPlatform;
 
   setUpAll(() {
-    TestInAppPurchase2Api.setUp(fakeStoreKit2Platform);
-    TestInAppPurchaseApi.setUp(fakeStoreKitPlatform);
+    setInAppPurchaseHostApis(
+      api: fakeStoreKitPlatform,
+      api2: fakeStoreKit2Platform,
+    );
   });
 
   setUp(() {
@@ -399,7 +400,7 @@ void main() {
     setUp(() async {
       fakeStoreKit2Platform = FakeStoreKit2Platform();
       fakeStoreKit2Platform.reset();
-      TestInAppPurchase2Api.setUp(fakeStoreKit2Platform);
+      setInAppPurchaseHostApis(api2: fakeStoreKit2Platform);
       await InAppPurchaseStoreKitPlatform.enableStoreKit2();
     });
 
@@ -537,7 +538,7 @@ void main() {
     setUp(() async {
       fakeStoreKit2Platform = FakeStoreKit2Platform();
       fakeStoreKit2Platform.reset();
-      TestInAppPurchase2Api.setUp(fakeStoreKit2Platform);
+      setInAppPurchaseHostApis(api2: fakeStoreKit2Platform);
       await InAppPurchaseStoreKitPlatform.enableStoreKit2();
     });
 

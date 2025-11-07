@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -34,11 +34,9 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     LocalAuthPlatform.instance.isDeviceSupported().then(
       (bool isSupported) => setState(
-        () =>
-            _supportState =
-                isSupported
-                    ? _SupportState.supported
-                    : _SupportState.unsupported,
+        () => _supportState = isSupported
+            ? _SupportState.supported
+            : _SupportState.unsupported,
       ),
     );
   }
@@ -46,8 +44,8 @@ class _MyAppState extends State<MyApp> {
   Future<void> _checkBiometrics() async {
     late bool deviceSupportsBiometrics;
     try {
-      deviceSupportsBiometrics =
-          await LocalAuthPlatform.instance.deviceSupportsBiometrics();
+      deviceSupportsBiometrics = await LocalAuthPlatform.instance
+          .deviceSupportsBiometrics();
     } on PlatformException catch (e) {
       deviceSupportsBiometrics = false;
       print(e);
@@ -64,8 +62,8 @@ class _MyAppState extends State<MyApp> {
   Future<void> _getEnrolledBiometrics() async {
     late List<BiometricType> availableBiometrics;
     try {
-      availableBiometrics =
-          await LocalAuthPlatform.instance.getEnrolledBiometrics();
+      availableBiometrics = await LocalAuthPlatform.instance
+          .getEnrolledBiometrics();
     } on PlatformException catch (e) {
       availableBiometrics = <BiometricType>[];
       print(e);
@@ -94,11 +92,21 @@ class _MyAppState extends State<MyApp> {
       setState(() {
         _isAuthenticating = false;
       });
+    } on LocalAuthException catch (e) {
+      print(e);
+      setState(() {
+        _isAuthenticating = false;
+        if (e.code != LocalAuthExceptionCode.userCanceled &&
+            e.code != LocalAuthExceptionCode.systemCanceled) {
+          _authorized = 'Error - ${e.code.name}: ${e.description}';
+        }
+      });
+      return;
     } on PlatformException catch (e) {
       print(e);
       setState(() {
         _isAuthenticating = false;
-        _authorized = 'Error - ${e.message}';
+        _authorized = 'Unexpected Error - ${e.message}';
       });
       return;
     }
@@ -131,11 +139,21 @@ class _MyAppState extends State<MyApp> {
         _isAuthenticating = false;
         _authorized = 'Authenticating';
       });
+    } on LocalAuthException catch (e) {
+      print(e);
+      setState(() {
+        _isAuthenticating = false;
+        if (e.code != LocalAuthExceptionCode.userCanceled &&
+            e.code != LocalAuthExceptionCode.systemCanceled) {
+          _authorized = 'Error - ${e.code.name}: ${e.description}';
+        }
+      });
+      return;
     } on PlatformException catch (e) {
       print(e);
       setState(() {
         _isAuthenticating = false;
-        _authorized = 'Error - ${e.message}';
+        _authorized = 'Unexpected Error - ${e.message}';
       });
       return;
     }

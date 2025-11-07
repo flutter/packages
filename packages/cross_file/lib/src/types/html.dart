@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -64,12 +64,8 @@ class XFile extends XFileBase {
        _lastModified = lastModified ?? DateTime.fromMillisecondsSinceEpoch(0),
        _name = name ?? '',
        super(path) {
-    if (path == null) {
-      _browserBlob = _createBlobFromBytes(bytes, mimeType);
-      _path = URL.createObjectURL(_browserBlob!);
-    } else {
-      _path = path;
-    }
+    _browserBlob = _createBlobFromBytes(bytes, mimeType);
+    _path = URL.createObjectURL(_browserBlob!);
   }
 
   // Initializes a Blob from a bunch of `bytes` and an optional `mimeType`.

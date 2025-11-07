@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -22,8 +22,8 @@ class GetMultipleDirectoriesPage extends StatelessWidget {
     if (context.mounted) {
       await showDialog<void>(
         context: context,
-        builder:
-            (BuildContext context) => TextDisplay(directoriesPaths.join('\n')),
+        builder: (BuildContext context) =>
+            TextDisplay(directoriesPaths.join('\n')),
       );
     }
   }

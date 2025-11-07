@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -55,8 +55,8 @@ base class AndroidCompanionAdSlot extends PlatformCompanionAdSlot {
       _initAndroidParams(params);
 
   // ViewGroup used to display the Ad.
-  late final ima.ViewGroup _frameLayout =
-      _androidParams._proxy.newFrameLayout();
+  late final ima.ViewGroup _frameLayout = _androidParams._proxy
+      .newFrameLayout();
 
   late final Future<ima.CompanionAdSlot> _adSlotFuture = _initCompanionAdSlot();
 
@@ -87,10 +87,9 @@ base class AndroidCompanionAdSlot extends PlatformCompanionAdSlot {
   }
 
   Future<ima.CompanionAdSlot> _initCompanionAdSlot() async {
-    final ima.CompanionAdSlot adSlot =
-        await _androidParams._proxy
-            .instanceImaSdkFactory()
-            .createCompanionAdSlot();
+    final ima.CompanionAdSlot adSlot = await _androidParams._proxy
+        .instanceImaSdkFactory()
+        .createCompanionAdSlot();
 
     await Future.wait(<Future<void>>[
       adSlot.setContainer(_frameLayout),

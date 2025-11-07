@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -1838,10 +1838,9 @@ class MockCameraPlatform extends Mock
   Future<int> createCameraWithSettings(
     CameraDescription cameraDescription,
     MediaSettings? mediaSettings,
-  ) =>
-      mockPlatformException
-          ? throw PlatformException(code: 'foo', message: 'bar')
-          : Future<int>.value(mockInitializeCamera);
+  ) => mockPlatformException
+      ? throw PlatformException(code: 'foo', message: 'bar')
+      : Future<int>.value(mockInitializeCamera);
 
   @override
   Future<int> createCamera(
@@ -1869,10 +1868,9 @@ class MockCameraPlatform extends Mock
       );
 
   @override
-  Future<XFile> takePicture(int cameraId) =>
-      mockPlatformException
-          ? throw PlatformException(code: 'foo', message: 'bar')
-          : Future<XFile>.value(mockTakePicture);
+  Future<XFile> takePicture(int cameraId) => mockPlatformException
+      ? throw PlatformException(code: 'foo', message: 'bar')
+      : Future<XFile>.value(mockTakePicture);
 
   @override
   Future<void> prepareForVideoRecording() async =>

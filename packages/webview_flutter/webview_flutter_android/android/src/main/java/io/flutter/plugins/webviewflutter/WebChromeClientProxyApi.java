@@ -1,11 +1,10 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 package io.flutter.plugins.webviewflutter;
 
 import android.net.Uri;
-import android.os.Build;
 import android.os.Message;
 import android.view.View;
 import android.webkit.ConsoleMessage;
@@ -20,7 +19,6 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.annotation.VisibleForTesting;
 import java.util.List;
 import java.util.Objects;
@@ -278,22 +276,11 @@ public class WebChromeClientProxyApi extends PigeonApiWebChromeClient {
 
       final WebViewClient windowWebViewClient =
           new WebViewClient() {
-            @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public boolean shouldOverrideUrlLoading(
                 @NonNull WebView windowWebView, @NonNull WebResourceRequest request) {
               if (!webViewClient.shouldOverrideUrlLoading(view, request)) {
                 view.loadUrl(request.getUrl().toString());
-              }
-              return true;
-            }
-
-            // Legacy codepath for < N.
-            @Override
-            @SuppressWarnings({"deprecation", "RedundantSuppression"})
-            public boolean shouldOverrideUrlLoading(WebView windowWebView, String url) {
-              if (!webViewClient.shouldOverrideUrlLoading(view, url)) {
-                view.loadUrl(url);
               }
               return true;
             }

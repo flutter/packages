@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -18,6 +18,7 @@ class FakeController extends ValueNotifier<CameraValue>
     name: '',
     lensDirection: CameraLensDirection.back,
     sensorOrientation: 0,
+    lensType: CameraLensType.ultraWide,
   );
 
   @override
@@ -111,6 +112,7 @@ class FakeController extends ValueNotifier<CameraValue>
   @override
   Future<void> startVideoRecording({
     onLatestImageAvailable? onAvailable,
+    bool enablePersistentRecording = true,
   }) async {}
 
   @override

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -48,7 +48,7 @@ class InteractiveMediaAdsProxy {
   /// Constructs [VideoView].
   final VideoView Function({
     required void Function(VideoView, MediaPlayer, int, int) onError,
-    void Function(VideoView, MediaPlayer)? onPrepared,
+    Future<void> Function(VideoView, MediaPlayer)? onPrepared,
     void Function(VideoView, MediaPlayer)? onCompletion,
   })
   newVideoView;
@@ -57,7 +57,7 @@ class InteractiveMediaAdsProxy {
   final VideoAdPlayer Function({
     required void Function(VideoAdPlayer, VideoAdPlayerCallback) addCallback,
     required void Function(VideoAdPlayer, AdMediaInfo, AdPodInfo) loadAd,
-    required void Function(VideoAdPlayer, AdMediaInfo) pauseAd,
+    required Future<void> Function(VideoAdPlayer, AdMediaInfo) pauseAd,
     required void Function(VideoAdPlayer, AdMediaInfo) playAd,
     required void Function(VideoAdPlayer) release,
     required void Function(VideoAdPlayer, VideoAdPlayerCallback) removeCallback,

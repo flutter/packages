@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -62,10 +62,10 @@ base class IOSAdDisplayContainer extends PlatformAdDisplayContainer {
 
   late final IOSAdDisplayContainerCreationParams _iosParams =
       params is IOSAdDisplayContainerCreationParams
-          ? params as IOSAdDisplayContainerCreationParams
-          : IOSAdDisplayContainerCreationParams.fromPlatformAdDisplayContainerCreationParams(
-            params,
-          );
+      ? params as IOSAdDisplayContainerCreationParams
+      : IOSAdDisplayContainerCreationParams.fromPlatformAdDisplayContainerCreationParams(
+          params,
+        );
 
   @override
   Widget build(BuildContext context) {
@@ -76,11 +76,10 @@ base class IOSAdDisplayContainer extends PlatformAdDisplayContainer {
         adDisplayContainer = _iosParams._imaProxy.newIMAAdDisplayContainer(
           adContainer: _controller.view,
           adContainerViewController: _controller,
-          companionSlots:
-              _iosParams.companionSlots
-                  .cast<IOSCompanionAdSlot>()
-                  .map((IOSCompanionAdSlot slot) => slot.nativeCompanionAdSlot)
-                  .toList(),
+          companionSlots: _iosParams.companionSlots
+              .cast<IOSCompanionAdSlot>()
+              .map((IOSCompanionAdSlot slot) => slot.nativeCompanionAdSlot)
+              .toList(),
         );
         await _viewDidAppearCompleter.future;
         params.onContainerAdded(this);

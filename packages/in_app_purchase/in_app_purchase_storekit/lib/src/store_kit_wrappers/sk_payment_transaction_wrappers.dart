@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -240,10 +240,9 @@ class SKPaymentTransactionWrapper {
       transactionState: SKPaymentTransactionStateWrapper.convertFromPigeon(
         msg.transactionState,
       ),
-      originalTransaction:
-          msg.originalTransaction == null
-              ? null
-              : convertFromPigeon(msg.originalTransaction!),
+      originalTransaction: msg.originalTransaction == null
+          ? null
+          : convertFromPigeon(msg.originalTransaction!),
       transactionTimeStamp: msg.transactionTimeStamp,
       transactionIdentifier: msg.transactionIdentifier,
       error: msg.error == null ? null : SKError.convertFromPigeon(msg.error!),

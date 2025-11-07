@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -13,5 +13,9 @@ import org.mockito.kotlin.mock
 class TestProxyApiRegistrar : ProxyApiRegistrar(mock(), mock()) {
   override fun runOnMainThread(callback: Runnable) {
     callback.run()
+  }
+
+  override fun sdkIsAtLeast(version: Int): Boolean {
+    return true
   }
 }

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -171,19 +171,27 @@ Widget _renderRadioListTileCard<T extends Enum>({
 }) {
   return _renderConfigCard(
     title: title,
-    children:
-        values
-            .map(
-              (T value) => RadioListTile<T>(
-                value: value,
-                groupValue: selected,
-                onChanged: onChanged,
-                selected: value == selected,
-                title: Text(value.name),
-                dense: true,
-              ),
-            )
-            .toList(),
+    children: <Widget>[
+      RadioGroup<T>(
+        groupValue: selected,
+        onChanged: onChanged ?? (_) {},
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children:
+              values
+                  .map(
+                    (T value) => RadioListTile<T>(
+                      value: value,
+                      selected: value == selected,
+                      title: Text(value.name),
+                      enabled: onChanged != null,
+                      dense: true,
+                    ),
+                  )
+                  .toList(),
+        ),
+      ),
+    ],
   );
 }
 

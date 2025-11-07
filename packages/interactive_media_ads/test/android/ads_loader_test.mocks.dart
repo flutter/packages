@@ -434,6 +434,15 @@ class MockAdsLoadedListener extends _i1.Mock implements _i2.AdsLoadedListener {
 /// See the documentation for Mockito's code generation for more information.
 class MockAdsManager extends _i1.Mock implements _i2.AdsManager {
   @override
+  List<double> get adCuePoints =>
+      (super.noSuchMethod(
+            Invocation.getter(#adCuePoints),
+            returnValue: <double>[],
+            returnValueForMissingStub: <double>[],
+          )
+          as List<double>);
+
+  @override
   _i2.PigeonInstanceManager get pigeon_instanceManager =>
       (super.noSuchMethod(
             Invocation.getter(#pigeon_instanceManager),
@@ -474,17 +483,6 @@ class MockAdsManager extends _i1.Mock implements _i2.AdsManager {
             returnValueForMissingStub: _i5.Future<void>.value(),
           )
           as _i5.Future<void>);
-
-  @override
-  _i5.Future<List<double>> getAdCuePoints() =>
-      (super.noSuchMethod(
-            Invocation.method(#getAdCuePoints, []),
-            returnValue: _i5.Future<List<double>>.value(<double>[]),
-            returnValueForMissingStub: _i5.Future<List<double>>.value(
-              <double>[],
-            ),
-          )
-          as _i5.Future<List<double>>);
 
   @override
   _i5.Future<void> resume() =>
@@ -1187,21 +1185,21 @@ class MockVideoAdPlayer extends _i1.Mock implements _i2.VideoAdPlayer {
           as void Function(_i2.VideoAdPlayer, _i2.AdMediaInfo, _i2.AdPodInfo));
 
   @override
-  void Function(_i2.VideoAdPlayer, _i2.AdMediaInfo) get pauseAd =>
+  _i5.Future<void> Function(_i2.VideoAdPlayer, _i2.AdMediaInfo) get pauseAd =>
       (super.noSuchMethod(
             Invocation.getter(#pauseAd),
             returnValue:
                 (
                   _i2.VideoAdPlayer pigeon_instance,
                   _i2.AdMediaInfo adMediaInfo,
-                ) {},
+                ) => _i5.Future<void>.value(),
             returnValueForMissingStub:
                 (
                   _i2.VideoAdPlayer pigeon_instance,
                   _i2.AdMediaInfo adMediaInfo,
-                ) {},
+                ) => _i5.Future<void>.value(),
           )
-          as void Function(_i2.VideoAdPlayer, _i2.AdMediaInfo));
+          as _i5.Future<void> Function(_i2.VideoAdPlayer, _i2.AdMediaInfo));
 
   @override
   void Function(_i2.VideoAdPlayer, _i2.AdMediaInfo) get playAd =>
@@ -1507,6 +1505,17 @@ class MockVideoView extends _i1.Mock implements _i2.VideoView {
           as _i5.Future<int>);
 
   @override
+  _i5.Future<void> setAudioFocusRequest(
+    _i2.AudioManagerAudioFocus? focusGain,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#setAudioFocusRequest, [focusGain]),
+            returnValue: _i5.Future<void>.value(),
+            returnValueForMissingStub: _i5.Future<void>.value(),
+          )
+          as _i5.Future<void>);
+
+  @override
   _i2.VideoView pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
@@ -1558,12 +1567,10 @@ class MockSurfaceAndroidViewController extends _i1.Mock
   _i4.PointTransformer get pointTransformer =>
       (super.noSuchMethod(
             Invocation.getter(#pointTransformer),
-            returnValue:
-                (_i3.Offset position) =>
-                    _FakeOffset_18(this, Invocation.getter(#pointTransformer)),
-            returnValueForMissingStub:
-                (_i3.Offset position) =>
-                    _FakeOffset_18(this, Invocation.getter(#pointTransformer)),
+            returnValue: (_i3.Offset position) =>
+                _FakeOffset_18(this, Invocation.getter(#pointTransformer)),
+            returnValueForMissingStub: (_i3.Offset position) =>
+                _FakeOffset_18(this, Invocation.getter(#pointTransformer)),
           )
           as _i4.PointTransformer);
 

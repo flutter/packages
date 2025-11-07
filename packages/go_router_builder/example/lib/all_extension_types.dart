@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -40,7 +40,7 @@ part 'all_extension_types.g.dart';
   ],
 )
 @immutable
-class AllTypesBaseRoute extends GoRouteData with _$AllTypesBaseRoute {
+class AllTypesBaseRoute extends GoRouteData with $AllTypesBaseRoute {
   const AllTypesBaseRoute();
 
   @override
@@ -59,7 +59,7 @@ extension type const UriExtension(Uri value) {}
 extension type const PersonDetailsExtension(PersonDetails value) {}
 extension type const SportDetailsExtension(SportDetails value) {}
 
-class BigIntExtensionRoute extends GoRouteData with _$BigIntExtensionRoute {
+class BigIntExtensionRoute extends GoRouteData with $BigIntExtensionRoute {
   const BigIntExtensionRoute({
     required this.requiredBigIntField,
     this.bigIntField,
@@ -82,7 +82,7 @@ class BigIntExtensionRoute extends GoRouteData with _$BigIntExtensionRoute {
   );
 }
 
-class BoolExtensionRoute extends GoRouteData with _$BoolExtensionRoute {
+class BoolExtensionRoute extends GoRouteData with $BoolExtensionRoute {
   const BoolExtensionRoute({
     required this.requiredBoolField,
     this.boolField,
@@ -108,7 +108,7 @@ class BoolExtensionRoute extends GoRouteData with _$BoolExtensionRoute {
   );
 }
 
-class DateTimeExtensionRoute extends GoRouteData with _$DateTimeExtensionRoute {
+class DateTimeExtensionRoute extends GoRouteData with $DateTimeExtensionRoute {
   const DateTimeExtensionRoute({
     required this.requiredDateTimeField,
     this.dateTimeField,
@@ -131,7 +131,7 @@ class DateTimeExtensionRoute extends GoRouteData with _$DateTimeExtensionRoute {
   );
 }
 
-class DoubleExtensionRoute extends GoRouteData with _$DoubleExtensionRoute {
+class DoubleExtensionRoute extends GoRouteData with $DoubleExtensionRoute {
   const DoubleExtensionRoute({
     required this.requiredDoubleField,
     this.doubleField,
@@ -157,7 +157,7 @@ class DoubleExtensionRoute extends GoRouteData with _$DoubleExtensionRoute {
   );
 }
 
-class IntExtensionRoute extends GoRouteData with _$IntExtensionRoute {
+class IntExtensionRoute extends GoRouteData with $IntExtensionRoute {
   const IntExtensionRoute({
     required this.requiredIntField,
     this.intField,
@@ -183,7 +183,7 @@ class IntExtensionRoute extends GoRouteData with _$IntExtensionRoute {
   );
 }
 
-class NumExtensionRoute extends GoRouteData with _$NumExtensionRoute {
+class NumExtensionRoute extends GoRouteData with $NumExtensionRoute {
   const NumExtensionRoute({
     required this.requiredNumField,
     this.numField,
@@ -209,7 +209,7 @@ class NumExtensionRoute extends GoRouteData with _$NumExtensionRoute {
   );
 }
 
-class EnumExtensionRoute extends GoRouteData with _$EnumExtensionRoute {
+class EnumExtensionRoute extends GoRouteData with $EnumExtensionRoute {
   const EnumExtensionRoute({
     required this.requiredEnumField,
     this.enumField,
@@ -239,7 +239,7 @@ class EnumExtensionRoute extends GoRouteData with _$EnumExtensionRoute {
 }
 
 class EnhancedEnumExtensionRoute extends GoRouteData
-    with _$EnhancedEnumExtensionRoute {
+    with $EnhancedEnumExtensionRoute {
   const EnhancedEnumExtensionRoute({
     required this.requiredEnumField,
     this.enumField,
@@ -268,7 +268,7 @@ class EnhancedEnumExtensionRoute extends GoRouteData
   );
 }
 
-class StringExtensionRoute extends GoRouteData with _$StringExtensionRoute {
+class StringExtensionRoute extends GoRouteData with $StringExtensionRoute {
   const StringExtensionRoute({
     required this.requiredStringField,
     this.stringField,
@@ -294,7 +294,7 @@ class StringExtensionRoute extends GoRouteData with _$StringExtensionRoute {
   );
 }
 
-class UriExtensionRoute extends GoRouteData with _$UriExtensionRoute {
+class UriExtensionRoute extends GoRouteData with $UriExtensionRoute {
   const UriExtensionRoute({required this.requiredUriField, this.uriField});
 
   final UriExtension requiredUriField;

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -962,11 +962,223 @@ void main() {
     });
 
     test(
-      'passes success data to caller when refreshing existing auth',
+      'returns cached token from authn when refreshing existing authz',
+      () async {
+        final UserData userData = UserData(
+          displayName: _testUser.displayName,
+          email: _testUser.email,
+          userId: _testUser.id,
+          photoUrl: _testUser.photoUrl,
+          idToken: '',
+        );
+        const List<String> scopes = <String>['a', 'b'];
+        const String accessToken = 'accessToken';
+        const String serverAuthCode = 'authCode';
+        when(mockApi.signIn(scopes, null)).thenAnswer(
+          (_) async => SignInResult(
+            success: SignInSuccess(
+              user: userData,
+              accessToken: accessToken,
+              serverAuthCode: serverAuthCode,
+              grantedScopes: <String>[],
+            ),
+          ),
+        );
+        when(mockApi.getRefreshedAuthorizationTokens(_testUser.id)).thenAnswer(
+          (_) async => SignInResult(
+            success: SignInSuccess(
+              user: userData,
+              accessToken: accessToken,
+              // serverAuthCode will always be null for getRefreshedAuthorizationTokens.
+              grantedScopes: scopes,
+            ),
+          ),
+        );
+
+        await googleSignIn.authenticate(
+          const AuthenticateParameters(scopeHint: scopes),
+        );
+        final ServerAuthorizationTokenData? result = await googleSignIn
+            .serverAuthorizationTokensForScopes(
+              ServerAuthorizationTokensForScopesParameters(
+                request: AuthorizationRequestDetails(
+                  scopes: scopes,
+                  userId: _testUser.id,
+                  email: _testUser.email,
+                  promptIfUnauthorized: false,
+                ),
+              ),
+            );
+
+        expect(result?.serverAuthCode, serverAuthCode);
+      },
+    );
+
+    test('does not return cached token from authn if user changes', () async {
+      const List<String> scopes = <String>['a', 'b'];
+      const String accessToken = 'accessToken';
+      const String serverAuthCode = 'authCode';
+      final UserData previousUser = UserData(
+        displayName: 'Previous user',
+        email: 'previous.user@gmail.com',
+        userId: 'different_id',
+        photoUrl: _testUser.photoUrl,
+        idToken: '',
+      );
+      final UserData newUser = UserData(
+        displayName: _testUser.displayName,
+        email: _testUser.email,
+        userId: _testUser.id,
+        photoUrl: _testUser.photoUrl,
+        idToken: '',
+      );
+      when(mockApi.signIn(scopes, null)).thenAnswer(
+        (_) async => SignInResult(
+          success: SignInSuccess(
+            user: previousUser,
+            accessToken: accessToken,
+            serverAuthCode: serverAuthCode,
+            grantedScopes: <String>[],
+          ),
+        ),
+      );
+      when(mockApi.getRefreshedAuthorizationTokens(newUser.userId)).thenAnswer(
+        (_) async => SignInResult(
+          success: SignInSuccess(
+            user: newUser,
+            accessToken: accessToken,
+            // serverAuthCode will always be null for getRefreshedAuthorizationTokens.
+            grantedScopes: scopes,
+          ),
+        ),
+      );
+
+      await googleSignIn.authenticate(
+        const AuthenticateParameters(scopeHint: scopes),
+      );
+      final ServerAuthorizationTokenData? result = await googleSignIn
+          .serverAuthorizationTokensForScopes(
+            ServerAuthorizationTokensForScopesParameters(
+              request: AuthorizationRequestDetails(
+                scopes: scopes,
+                userId: newUser.userId,
+                email: newUser.email,
+                promptIfUnauthorized: false,
+              ),
+            ),
+          );
+
+      expect(result, null);
+    });
+
+    test('does not return cached token from authn after signOut', () async {
+      const List<String> scopes = <String>['a', 'b'];
+      const String accessToken = 'accessToken';
+      const String serverAuthCode = 'authCode';
+      final UserData userData = UserData(
+        displayName: _testUser.displayName,
+        email: _testUser.email,
+        userId: _testUser.id,
+        photoUrl: _testUser.photoUrl,
+        idToken: '',
+      );
+      when(mockApi.signIn(scopes, null)).thenAnswer(
+        (_) async => SignInResult(
+          success: SignInSuccess(
+            user: userData,
+            accessToken: accessToken,
+            serverAuthCode: serverAuthCode,
+            grantedScopes: <String>[],
+          ),
+        ),
+      );
+      when(mockApi.getRefreshedAuthorizationTokens(userData.userId)).thenAnswer(
+        (_) async => SignInResult(
+          success: SignInSuccess(
+            user: userData,
+            accessToken: accessToken,
+            // serverAuthCode will always be null for getRefreshedAuthorizationTokens.
+            grantedScopes: scopes,
+          ),
+        ),
+      );
+
+      await googleSignIn.authenticate(
+        const AuthenticateParameters(scopeHint: scopes),
+      );
+      await googleSignIn.signOut(const SignOutParams());
+      final ServerAuthorizationTokenData? result = await googleSignIn
+          .serverAuthorizationTokensForScopes(
+            ServerAuthorizationTokensForScopesParameters(
+              request: AuthorizationRequestDetails(
+                scopes: scopes,
+                userId: userData.userId,
+                email: userData.email,
+                promptIfUnauthorized: false,
+              ),
+            ),
+          );
+
+      expect(result, null);
+    });
+
+    test('does not return cached token from authn after disconnect', () async {
+      const List<String> scopes = <String>['a', 'b'];
+      const String accessToken = 'accessToken';
+      const String serverAuthCode = 'authCode';
+      final UserData userData = UserData(
+        displayName: _testUser.displayName,
+        email: _testUser.email,
+        userId: _testUser.id,
+        photoUrl: _testUser.photoUrl,
+        idToken: '',
+      );
+      when(mockApi.signIn(scopes, null)).thenAnswer(
+        (_) async => SignInResult(
+          success: SignInSuccess(
+            user: userData,
+            accessToken: accessToken,
+            serverAuthCode: serverAuthCode,
+            grantedScopes: <String>[],
+          ),
+        ),
+      );
+      when(mockApi.getRefreshedAuthorizationTokens(userData.userId)).thenAnswer(
+        (_) async => SignInResult(
+          success: SignInSuccess(
+            user: userData,
+            accessToken: accessToken,
+            // serverAuthCode will always be null for getRefreshedAuthorizationTokens.
+            grantedScopes: scopes,
+          ),
+        ),
+      );
+
+      await googleSignIn.authenticate(
+        const AuthenticateParameters(scopeHint: scopes),
+      );
+      await googleSignIn.disconnect(const DisconnectParams());
+      final ServerAuthorizationTokenData? result = await googleSignIn
+          .serverAuthorizationTokensForScopes(
+            ServerAuthorizationTokensForScopesParameters(
+              request: AuthorizationRequestDetails(
+                scopes: scopes,
+                userId: userData.userId,
+                email: userData.email,
+                promptIfUnauthorized: false,
+              ),
+            ),
+          );
+
+      expect(result, null);
+    });
+
+    test(
+      'passes returned data to caller when calling addScopes without cache',
       () async {
         const List<String> scopes = <String>['a', 'b'];
         const String serverAuthCode = 'authCode';
-        when(mockApi.getRefreshedAuthorizationTokens(_testUser.id)).thenAnswer(
+        when(mockApi.addScopes(scopes, _testUser.id)).thenAnswer(
           (_) async => SignInResult(
             success: SignInSuccess(
               user: UserData(
@@ -990,7 +1202,7 @@ void main() {
                   scopes: scopes,
                   userId: _testUser.id,
                   email: _testUser.email,
-                  promptIfUnauthorized: false,
+                  promptIfUnauthorized: true,
                 ),
               ),
             );
@@ -999,45 +1211,77 @@ void main() {
       },
     );
 
-    test('passes success data to caller when calling addScopes', () async {
+    test(
+      'passes returned data to caller when calling addScopes, not cached data',
+      () async {
+        const List<String> scopes = <String>['a', 'b'];
+        final UserData userData = UserData(
+          displayName: _testUser.displayName,
+          email: _testUser.email,
+          userId: _testUser.id,
+          photoUrl: _testUser.photoUrl,
+          idToken: 'idToken',
+        );
+        const String serverAuthCode = 'authCode';
+        when(mockApi.signIn(<String>[], null)).thenAnswer(
+          (_) async => SignInResult(
+            success: SignInSuccess(
+              user: userData,
+              accessToken: 'token',
+              serverAuthCode: 'no-scope-auth-code',
+              grantedScopes: <String>[],
+            ),
+          ),
+        );
+        when(mockApi.addScopes(scopes, _testUser.id)).thenAnswer(
+          (_) async => SignInResult(
+            success: SignInSuccess(
+              user: userData,
+              accessToken: 'token',
+              serverAuthCode: serverAuthCode,
+              grantedScopes: scopes,
+            ),
+          ),
+        );
+
+        await googleSignIn.authenticate(const AuthenticateParameters());
+        final ServerAuthorizationTokenData? result = await googleSignIn
+            .serverAuthorizationTokensForScopes(
+              ServerAuthorizationTokensForScopesParameters(
+                request: AuthorizationRequestDetails(
+                  scopes: scopes,
+                  userId: _testUser.id,
+                  email: _testUser.email,
+                  promptIfUnauthorized: true,
+                ),
+              ),
+            );
+
+        expect(result?.serverAuthCode, serverAuthCode);
+      },
+    );
+
+    test('successfully returns cached token if addScopes indicates the '
+        'requested scopes are already granted', () async {
       const List<String> scopes = <String>['a', 'b'];
       const String serverAuthCode = 'authCode';
-      when(mockApi.addScopes(scopes, _testUser.id)).thenAnswer(
+      final UserData userData = UserData(
+        displayName: _testUser.displayName,
+        email: _testUser.email,
+        userId: _testUser.id,
+        photoUrl: _testUser.photoUrl,
+        idToken: 'idToken',
+      );
+      when(mockApi.signIn(scopes, null)).thenAnswer(
         (_) async => SignInResult(
           success: SignInSuccess(
-            user: UserData(
-              displayName: _testUser.displayName,
-              email: _testUser.email,
-              userId: _testUser.id,
-              photoUrl: _testUser.photoUrl,
-              idToken: 'idToken',
-            ),
+            user: userData,
             accessToken: 'token',
             serverAuthCode: serverAuthCode,
             grantedScopes: scopes,
           ),
         ),
       );
-
-      final ServerAuthorizationTokenData? result = await googleSignIn
-          .serverAuthorizationTokensForScopes(
-            ServerAuthorizationTokensForScopesParameters(
-              request: AuthorizationRequestDetails(
-                scopes: scopes,
-                userId: _testUser.id,
-                email: _testUser.email,
-                promptIfUnauthorized: true,
-              ),
-            ),
-          );
-
-      expect(result?.serverAuthCode, serverAuthCode);
-    });
-
-    test('successfully returns refreshed tokens if addScopes indicates the '
-        'requested scopes are already granted', () async {
-      const List<String> scopes = <String>['a', 'b'];
-      const String serverAuthCode = 'authCode';
       when(mockApi.addScopes(scopes, _testUser.id)).thenAnswer(
         (_) async => SignInResult(
           error: SignInFailure(
@@ -1048,20 +1292,17 @@ void main() {
       when(mockApi.getRefreshedAuthorizationTokens(_testUser.id)).thenAnswer(
         (_) async => SignInResult(
           success: SignInSuccess(
-            user: UserData(
-              displayName: _testUser.displayName,
-              email: _testUser.email,
-              userId: _testUser.id,
-              photoUrl: _testUser.photoUrl,
-              idToken: 'idToken',
-            ),
+            user: userData,
             accessToken: 'token',
-            serverAuthCode: serverAuthCode,
+            // serverAuthCode will always be null for getRefreshedAuthorizationTokens.
             grantedScopes: scopes,
           ),
         ),
       );
 
+      await googleSignIn.authenticate(
+        const AuthenticateParameters(scopeHint: scopes),
+      );
       final ServerAuthorizationTokenData? result = await googleSignIn
           .serverAuthorizationTokensForScopes(
             ServerAuthorizationTokensForScopesParameters(
@@ -1081,27 +1322,40 @@ void main() {
     });
 
     test(
-      'returns null if re-using existing auth and scopes are missing',
+      'returns null if re-using existing authz and scopes are missing',
       () async {
         const List<String> requestedScopes = <String>['a', 'b'];
         const List<String> grantedScopes = <String>['a'];
         const String accessToken = 'token';
-        when(mockApi.addScopes(requestedScopes, _testUser.id)).thenAnswer(
+        final UserData userData = UserData(
+          displayName: _testUser.displayName,
+          email: _testUser.email,
+          userId: _testUser.id,
+          photoUrl: _testUser.photoUrl,
+          idToken: 'idToken',
+        );
+        when(mockApi.signIn(<String>[], null)).thenAnswer(
           (_) async => SignInResult(
             success: SignInSuccess(
-              user: UserData(
-                displayName: _testUser.displayName,
-                email: _testUser.email,
-                userId: _testUser.id,
-                photoUrl: _testUser.photoUrl,
-                idToken: 'idToken',
-              ),
+              user: userData,
+              accessToken: 'token',
+              serverAuthCode: 'no-scope-auth-code',
+              grantedScopes: <String>[],
+            ),
+          ),
+        );
+        when(mockApi.getRefreshedAuthorizationTokens(_testUser.id)).thenAnswer(
+          (_) async => SignInResult(
+            success: SignInSuccess(
+              user: userData,
               accessToken: accessToken,
+              serverAuthCode: 'wrong-scope-auth-code',
               grantedScopes: grantedScopes,
             ),
           ),
         );
 
+        await googleSignIn.authenticate(const AuthenticateParameters());
         final ServerAuthorizationTokenData? result = await googleSignIn
             .serverAuthorizationTokensForScopes(
               ServerAuthorizationTokensForScopesParameters(
@@ -1109,7 +1363,7 @@ void main() {
                   scopes: requestedScopes,
                   userId: _testUser.id,
                   email: _testUser.email,
-                  promptIfUnauthorized: true,
+                  promptIfUnauthorized: false,
                 ),
               ),
             );
@@ -1230,6 +1484,14 @@ void main() {
     await googleSignIn.disconnect(const DisconnectParams());
 
     verifyInOrder(<Future<void>>[mockApi.disconnect(), mockApi.signOut()]);
+  });
+
+  test('clearAuthorizationToken no-ops without error', () async {
+    await googleSignIn.clearAuthorizationToken(
+      const ClearAuthorizationTokenParams(accessToken: 'any token'),
+    );
+
+    verifyZeroInteractions(mockApi);
   });
 
   // Returning null triggers the app-facing package to create stream events,

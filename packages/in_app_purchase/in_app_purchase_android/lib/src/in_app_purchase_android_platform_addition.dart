@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -96,29 +96,27 @@ class InAppPurchaseAndroidPlatformAddition
       ];
     }
 
-    final Set<String> errorCodeSet =
-        responses
-            .where(
-              (PurchasesResultWrapper response) =>
-                  response.responseCode != BillingResponse.ok,
-            )
-            .map(
-              (PurchasesResultWrapper response) =>
-                  response.responseCode.toString(),
-            )
-            .toSet();
+    final Set<String> errorCodeSet = responses
+        .where(
+          (PurchasesResultWrapper response) =>
+              response.responseCode != BillingResponse.ok,
+        )
+        .map(
+          (PurchasesResultWrapper response) => response.responseCode.toString(),
+        )
+        .toSet();
 
-    final String errorMessage =
-        errorCodeSet.isNotEmpty ? errorCodeSet.join(', ') : '';
+    final String errorMessage = errorCodeSet.isNotEmpty
+        ? errorCodeSet.join(', ')
+        : '';
 
-    final List<GooglePlayPurchaseDetails> pastPurchases =
-        responses
-            .expand((PurchasesResultWrapper response) => response.purchasesList)
-            .expand(
-              (PurchaseWrapper purchaseWrapper) =>
-                  GooglePlayPurchaseDetails.fromPurchase(purchaseWrapper),
-            )
-            .toList();
+    final List<GooglePlayPurchaseDetails> pastPurchases = responses
+        .expand((PurchasesResultWrapper response) => response.purchasesList)
+        .expand(
+          (PurchaseWrapper purchaseWrapper) =>
+              GooglePlayPurchaseDetails.fromPurchase(purchaseWrapper),
+        )
+        .toList();
 
     IAPError? error;
     if (exception != null) {

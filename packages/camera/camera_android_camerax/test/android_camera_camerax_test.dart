@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -114,9 +114,9 @@ void main() {
     return cameraClosingEventSent && cameraErrorSent;
   }
 
-  /// CameraXProxy for testing functionality related to the camera resolution
-  /// preset (setting expected ResolutionSelectors, QualitySelectors, etc.).
-  CameraXProxy getProxyForTestingResolutionPreset(
+  /// CameraXProxy for testing functionality related to the configuration
+  /// of CameraX UseCases.
+  CameraXProxy getProxyForTestingUseCaseConfiguration(
     MockProcessCameraProvider mockProcessCameraProvider, {
     ResolutionFilter Function({
       required CameraSize preferredSize,
@@ -152,6 +152,34 @@ void main() {
       PigeonInstanceManager? pigeon_instanceManager,
     })?
     newPreview,
+    ImageAnalysis Function({
+      // ignore: non_constant_identifier_names
+      BinaryMessenger? pigeon_binaryMessenger,
+      // ignore: non_constant_identifier_names
+      PigeonInstanceManager? pigeon_instanceManager,
+      ResolutionSelector? resolutionSelector,
+      int? outputImageFormat,
+      int? targetRotation,
+    })?
+    newImageAnalysis,
+    Analyzer Function({
+      required void Function(Analyzer, ImageProxy) analyze,
+      // ignore: non_constant_identifier_names
+      BinaryMessenger? pigeon_binaryMessenger,
+      // ignore: non_constant_identifier_names
+      PigeonInstanceManager? pigeon_instanceManager,
+    })?
+    newAnalyzer,
+    Future<Uint8List?> Function(
+      int imageWidth,
+      int imageHeight,
+      List<PlaneProxy> planes, {
+      // ignore: non_constant_identifier_names
+      BinaryMessenger? pigeon_binaryMessenger,
+      // ignore: non_constant_identifier_names
+      PigeonInstanceManager? pigeon_instanceManager,
+    })?
+    getNv21BufferImageProxyUtils,
   }) {
     late final CameraXProxy proxy;
     final AspectRatioStrategy ratio_4_3FallbackAutoStrategyAspectRatioStrategy =
@@ -199,10 +227,15 @@ void main() {
             PigeonInstanceManager? pigeon_instanceManager,
           }) {
             final MockPreview mockPreview = MockPreview();
+            final ResolutionInfo testResolutionInfo =
+                ResolutionInfo.pigeon_detached(resolution: MockCameraSize());
             when(
               mockPreview.surfaceProducerHandlesCropAndRotation(),
             ).thenAnswer((_) async => false);
             when(mockPreview.resolutionSelector).thenReturn(resolutionSelector);
+            when(
+              mockPreview.getResolutionInfo(),
+            ).thenAnswer((_) async => testResolutionInfo);
             return mockPreview;
           },
       newImageCapture:
@@ -248,8 +281,10 @@ void main() {
             return MockVideoCapture();
           },
       newImageAnalysis:
+          newImageAnalysis ??
           ({
             int? targetRotation,
+            int? outputImageFormat,
             ResolutionSelector? resolutionSelector,
             // ignore: non_constant_identifier_names
             BinaryMessenger? pigeon_binaryMessenger,
@@ -449,6 +484,30 @@ void main() {
             PigeonInstanceManager? pigeon_instanceManager,
           }) {
             return MockFallbackStrategy();
+          },
+      newAnalyzer:
+          newAnalyzer ??
+          ({
+            required void Function(Analyzer, ImageProxy) analyze,
+            // ignore: non_constant_identifier_names
+            BinaryMessenger? pigeon_binaryMessenger,
+            // ignore: non_constant_identifier_names
+            PigeonInstanceManager? pigeon_instanceManager,
+          }) {
+            return MockAnalyzer();
+          },
+      getNv21BufferImageProxyUtils:
+          getNv21BufferImageProxyUtils ??
+          (
+            int imageWidth,
+            int imageHeight,
+            List<PlaneProxy> planes, {
+            // ignore: non_constant_identifier_names
+            BinaryMessenger? pigeon_binaryMessenger,
+            // ignore: non_constant_identifier_names
+            PigeonInstanceManager? pigeon_instanceManager,
+          }) {
+            return Future<Uint8List>.value(Uint8List(0));
           },
     );
 
@@ -874,6 +933,7 @@ void main() {
         newImageAnalysis:
             ({
               int? targetRotation,
+              int? outputImageFormat,
               ResolutionSelector? resolutionSelector,
               // ignore: non_constant_identifier_names
               BinaryMessenger? pigeon_binaryMessenger,
@@ -1082,22 +1142,463 @@ void main() {
 
       // Verify the camera's Preview instance has its surface provider set.
       verify(camera.preview!.setSurfaceProvider(mockSystemServicesManager));
-
-      // Verify the camera state observer is updated.
-      expect(
-        await testCameraClosingObserver(
-          camera,
-          testSurfaceTextureId,
-          verify(mockLiveCameraState.observe(captureAny)).captured.single
-              as Observer<CameraState>,
-        ),
-        isTrue,
-      );
     },
   );
 
   test(
-    'createCamera binds Preview and ImageCapture use cases to ProcessCameraProvider instance',
+    'createCamera and initializeCamera properly set preset resolution selection strategy for non-video capture use cases',
+    () async {
+      final AndroidCameraCameraX camera = AndroidCameraCameraX();
+      const CameraLensDirection testLensDirection = CameraLensDirection.back;
+      const int testSensorOrientation = 90;
+      const CameraDescription testCameraDescription = CameraDescription(
+        name: 'cameraName',
+        lensDirection: testLensDirection,
+        sensorOrientation: testSensorOrientation,
+      );
+      const bool enableAudio = true;
+      final MockCamera mockCamera = MockCamera();
+
+      // Mock/Detached objects for (typically attached) objects created by
+      // createCamera.
+      final MockProcessCameraProvider mockProcessCameraProvider =
+          MockProcessCameraProvider();
+      final MockCameraInfo mockCameraInfo = MockCameraInfo();
+
+      when(
+        mockProcessCameraProvider.bindToLifecycle(any, any),
+      ).thenAnswer((_) async => mockCamera);
+      when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
+      when(
+        mockCameraInfo.getCameraState(),
+      ).thenAnswer((_) async => MockLiveCameraState());
+      camera.processCameraProvider = mockProcessCameraProvider;
+
+      // Tell plugin to create mock/detached objects for testing createCamera
+      // as needed.
+      camera.proxy = getProxyForTestingUseCaseConfiguration(
+        mockProcessCameraProvider,
+      );
+
+      // Test non-null resolution presets.
+      for (final ResolutionPreset resolutionPreset in ResolutionPreset.values) {
+        final int flutterSurfaceTextureId = await camera.createCamera(
+          testCameraDescription,
+          resolutionPreset,
+          enableAudio: enableAudio,
+        );
+        await camera.initializeCamera(flutterSurfaceTextureId);
+
+        late final CameraSize? expectedBoundSize;
+        final PigeonInstanceManager testInstanceManager = PigeonInstanceManager(
+          onWeakReferenceRemoved: (_) {},
+        );
+        switch (resolutionPreset) {
+          case ResolutionPreset.low:
+            expectedBoundSize = CameraSize.pigeon_detached(
+              width: 320,
+              height: 240,
+              pigeon_instanceManager: testInstanceManager,
+            );
+          case ResolutionPreset.medium:
+            expectedBoundSize = CameraSize.pigeon_detached(
+              width: 720,
+              height: 480,
+              pigeon_instanceManager: testInstanceManager,
+            );
+          case ResolutionPreset.high:
+            expectedBoundSize = CameraSize.pigeon_detached(
+              width: 1280,
+              height: 720,
+              pigeon_instanceManager: testInstanceManager,
+            );
+          case ResolutionPreset.veryHigh:
+            expectedBoundSize = CameraSize.pigeon_detached(
+              width: 1920,
+              height: 1080,
+              pigeon_instanceManager: testInstanceManager,
+            );
+          case ResolutionPreset.ultraHigh:
+            expectedBoundSize = CameraSize.pigeon_detached(
+              width: 3840,
+              height: 2160,
+              pigeon_instanceManager: testInstanceManager,
+            );
+          case ResolutionPreset.max:
+            continue;
+        }
+
+        final CameraSize? previewSize = await camera
+            .preview!
+            .resolutionSelector!
+            .resolutionStrategy!
+            .getBoundSize();
+        expect(previewSize?.width, equals(expectedBoundSize.width));
+        expect(previewSize?.height, equals(expectedBoundSize.height));
+        expect(
+          await camera.preview!.resolutionSelector!.resolutionStrategy!
+              .getFallbackRule(),
+          ResolutionStrategyFallbackRule.closestLowerThenHigher,
+        );
+
+        final CameraSize? imageCaptureSize = await camera
+            .imageCapture!
+            .resolutionSelector!
+            .resolutionStrategy!
+            .getBoundSize();
+        expect(imageCaptureSize?.width, equals(expectedBoundSize.width));
+        expect(imageCaptureSize?.height, equals(expectedBoundSize.height));
+        expect(
+          await camera.imageCapture!.resolutionSelector!.resolutionStrategy!
+              .getFallbackRule(),
+          ResolutionStrategyFallbackRule.closestLowerThenHigher,
+        );
+
+        final CameraSize? imageAnalysisSize = await camera
+            .imageAnalysis!
+            .resolutionSelector!
+            .resolutionStrategy!
+            .getBoundSize();
+        expect(imageAnalysisSize?.width, equals(expectedBoundSize.width));
+        expect(imageAnalysisSize?.height, equals(expectedBoundSize.height));
+        expect(
+          await camera.imageAnalysis!.resolutionSelector!.resolutionStrategy!
+              .getFallbackRule(),
+          ResolutionStrategyFallbackRule.closestLowerThenHigher,
+        );
+      }
+
+      // Test max case.
+      await camera.createCamera(
+        testCameraDescription,
+        ResolutionPreset.max,
+        enableAudio: true,
+      );
+
+      expect(
+        camera.preview!.resolutionSelector!.resolutionStrategy,
+        equals(camera.proxy.highestAvailableStrategyResolutionStrategy()),
+      );
+      expect(
+        camera.imageCapture!.resolutionSelector!.resolutionStrategy,
+        equals(camera.proxy.highestAvailableStrategyResolutionStrategy()),
+      );
+      expect(
+        camera.imageAnalysis!.resolutionSelector!.resolutionStrategy,
+        equals(camera.proxy.highestAvailableStrategyResolutionStrategy()),
+      );
+
+      // Test null case.
+      final int flutterSurfaceTextureId = await camera.createCamera(
+        testCameraDescription,
+        null,
+      );
+      await camera.initializeCamera(flutterSurfaceTextureId);
+
+      expect(camera.preview!.resolutionSelector, isNull);
+      expect(camera.imageCapture!.resolutionSelector, isNull);
+      expect(camera.imageAnalysis!.resolutionSelector, isNull);
+    },
+  );
+
+  test(
+    'createCamera and initializeCamera properly set filter for resolution preset for non-video capture use cases',
+    () async {
+      final AndroidCameraCameraX camera = AndroidCameraCameraX();
+      const CameraLensDirection testLensDirection = CameraLensDirection.front;
+      const int testSensorOrientation = 180;
+      const CameraDescription testCameraDescription = CameraDescription(
+        name: 'cameraName',
+        lensDirection: testLensDirection,
+        sensorOrientation: testSensorOrientation,
+      );
+      const bool enableAudio = true;
+      final MockCamera mockCamera = MockCamera();
+
+      // Mock/Detached objects for (typically attached) objects created by
+      // createCamera.
+      final MockProcessCameraProvider mockProcessCameraProvider =
+          MockProcessCameraProvider();
+      final MockCameraInfo mockCameraInfo = MockCameraInfo();
+
+      // Tell plugin to create mock/detached objects for testing createCamera
+      // as needed.
+      CameraSize? lastSetPreferredSize;
+      camera.proxy = getProxyForTestingUseCaseConfiguration(
+        mockProcessCameraProvider,
+        createWithOnePreferredSizeResolutionFilter:
+            ({
+              required CameraSize preferredSize,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              lastSetPreferredSize = preferredSize;
+              return MockResolutionFilter();
+            },
+      );
+
+      when(
+        mockProcessCameraProvider.bindToLifecycle(any, any),
+      ).thenAnswer((_) async => mockCamera);
+      when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
+      when(
+        mockCameraInfo.getCameraState(),
+      ).thenAnswer((_) async => MockLiveCameraState());
+      camera.processCameraProvider = mockProcessCameraProvider;
+
+      // Test non-null resolution presets.
+      for (final ResolutionPreset resolutionPreset in ResolutionPreset.values) {
+        final int flutterSurfaceTextureId = await camera.createCamera(
+          testCameraDescription,
+          resolutionPreset,
+          enableAudio: enableAudio,
+        );
+        await camera.initializeCamera(flutterSurfaceTextureId);
+
+        CameraSize? expectedPreferredResolution;
+        final PigeonInstanceManager testInstanceManager = PigeonInstanceManager(
+          onWeakReferenceRemoved: (_) {},
+        );
+        switch (resolutionPreset) {
+          case ResolutionPreset.low:
+            expectedPreferredResolution = CameraSize.pigeon_detached(
+              width: 320,
+              height: 240,
+              pigeon_instanceManager: testInstanceManager,
+            );
+          case ResolutionPreset.medium:
+            expectedPreferredResolution = CameraSize.pigeon_detached(
+              width: 720,
+              height: 480,
+              pigeon_instanceManager: testInstanceManager,
+            );
+          case ResolutionPreset.high:
+            expectedPreferredResolution = CameraSize.pigeon_detached(
+              width: 1280,
+              height: 720,
+              pigeon_instanceManager: testInstanceManager,
+            );
+          case ResolutionPreset.veryHigh:
+            expectedPreferredResolution = CameraSize.pigeon_detached(
+              width: 1920,
+              height: 1080,
+              pigeon_instanceManager: testInstanceManager,
+            );
+          case ResolutionPreset.ultraHigh:
+            expectedPreferredResolution = CameraSize.pigeon_detached(
+              width: 3840,
+              height: 2160,
+              pigeon_instanceManager: testInstanceManager,
+            );
+          case ResolutionPreset.max:
+            expectedPreferredResolution = null;
+        }
+
+        if (expectedPreferredResolution == null) {
+          expect(camera.preview!.resolutionSelector!.resolutionFilter, isNull);
+          expect(
+            camera.imageCapture!.resolutionSelector!.resolutionFilter,
+            isNull,
+          );
+          expect(
+            camera.imageAnalysis!.resolutionSelector!.resolutionFilter,
+            isNull,
+          );
+          continue;
+        }
+
+        expect(
+          lastSetPreferredSize?.width,
+          equals(expectedPreferredResolution.width),
+        );
+        expect(
+          lastSetPreferredSize?.height,
+          equals(expectedPreferredResolution.height),
+        );
+
+        final CameraSize? imageCaptureSize = await camera
+            .imageCapture!
+            .resolutionSelector!
+            .resolutionStrategy!
+            .getBoundSize();
+        expect(
+          imageCaptureSize?.width,
+          equals(expectedPreferredResolution.width),
+        );
+        expect(
+          imageCaptureSize?.height,
+          equals(expectedPreferredResolution.height),
+        );
+
+        final CameraSize? imageAnalysisSize = await camera
+            .imageAnalysis!
+            .resolutionSelector!
+            .resolutionStrategy!
+            .getBoundSize();
+        expect(
+          imageAnalysisSize?.width,
+          equals(expectedPreferredResolution.width),
+        );
+        expect(
+          imageAnalysisSize?.height,
+          equals(expectedPreferredResolution.height),
+        );
+      }
+
+      // Test null case.
+      final int flutterSurfaceTextureId = await camera.createCamera(
+        testCameraDescription,
+        null,
+      );
+      await camera.initializeCamera(flutterSurfaceTextureId);
+
+      expect(camera.preview!.resolutionSelector, isNull);
+      expect(camera.imageCapture!.resolutionSelector, isNull);
+      expect(camera.imageAnalysis!.resolutionSelector, isNull);
+    },
+  );
+
+  test(
+    'createCamera and initializeCamera properly set aspect ratio based on preset resolution for non-video capture use cases',
+    () async {
+      final AndroidCameraCameraX camera = AndroidCameraCameraX();
+      const CameraLensDirection testLensDirection = CameraLensDirection.back;
+      const int testSensorOrientation = 90;
+      const CameraDescription testCameraDescription = CameraDescription(
+        name: 'cameraName',
+        lensDirection: testLensDirection,
+        sensorOrientation: testSensorOrientation,
+      );
+      const bool enableAudio = true;
+      const int testCameraId = 12;
+      final MockCamera mockCamera = MockCamera();
+
+      // Mock/Detached objects for (typically attached) objects created by
+      // createCamera.
+      final MockProcessCameraProvider mockProcessCameraProvider =
+          MockProcessCameraProvider();
+      final MockCameraInfo mockCameraInfo = MockCameraInfo();
+
+      // Tell plugin to create mock/detached objects for testing createCamera
+      // as needed.
+      camera.proxy = getProxyForTestingUseCaseConfiguration(
+        mockProcessCameraProvider,
+      );
+      when(
+        mockProcessCameraProvider.bindToLifecycle(any, any),
+      ).thenAnswer((_) async => mockCamera);
+      when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
+      when(
+        mockCameraInfo.getCameraState(),
+      ).thenAnswer((_) async => MockLiveCameraState());
+      camera.processCameraProvider = mockProcessCameraProvider;
+
+      // Test non-null resolution presets.
+      for (final ResolutionPreset resolutionPreset in ResolutionPreset.values) {
+        final int flutterSurfaceTextureId = await camera.createCamera(
+          testCameraDescription,
+          resolutionPreset,
+          enableAudio: enableAudio,
+        );
+        await camera.initializeCamera(flutterSurfaceTextureId);
+
+        AspectRatio? expectedAspectRatio;
+        AspectRatioStrategyFallbackRule? expectedFallbackRule;
+        switch (resolutionPreset) {
+          case ResolutionPreset.low:
+            expectedAspectRatio = AspectRatio.ratio4To3;
+            expectedFallbackRule = AspectRatioStrategyFallbackRule.auto;
+          case ResolutionPreset.high:
+          case ResolutionPreset.veryHigh:
+          case ResolutionPreset.ultraHigh:
+            expectedAspectRatio = AspectRatio.ratio16To9;
+            expectedFallbackRule = AspectRatioStrategyFallbackRule.auto;
+          case ResolutionPreset.medium:
+          // Medium resolution preset uses aspect ratio 3:2 which is unsupported
+          // by CameraX.
+          case ResolutionPreset.max:
+        }
+
+        if (expectedAspectRatio == null) {
+          expect(
+            await camera.preview!.resolutionSelector!.getAspectRatioStrategy(),
+            equals(
+              camera.proxy.ratio_4_3FallbackAutoStrategyAspectRatioStrategy(),
+            ),
+          );
+          expect(
+            await camera.imageCapture!.resolutionSelector!
+                .getAspectRatioStrategy(),
+            equals(
+              camera.proxy.ratio_4_3FallbackAutoStrategyAspectRatioStrategy(),
+            ),
+          );
+          expect(
+            await camera.imageAnalysis!.resolutionSelector!
+                .getAspectRatioStrategy(),
+            equals(
+              camera.proxy.ratio_4_3FallbackAutoStrategyAspectRatioStrategy(),
+            ),
+          );
+          continue;
+        }
+
+        final AspectRatioStrategy previewStrategy = await camera
+            .preview!
+            .resolutionSelector!
+            .getAspectRatioStrategy();
+        final AspectRatioStrategy imageCaptureStrategy = await camera
+            .imageCapture!
+            .resolutionSelector!
+            .getAspectRatioStrategy();
+        final AspectRatioStrategy imageAnalysisStrategy = await camera
+            .imageCapture!
+            .resolutionSelector!
+            .getAspectRatioStrategy();
+
+        // Check aspect ratio.
+        expect(
+          await previewStrategy.getPreferredAspectRatio(),
+          equals(expectedAspectRatio),
+        );
+        expect(
+          await imageCaptureStrategy.getPreferredAspectRatio(),
+          equals(expectedAspectRatio),
+        );
+        expect(
+          await imageAnalysisStrategy.getPreferredAspectRatio(),
+          equals(expectedAspectRatio),
+        );
+
+        // Check fallback rule.
+        expect(
+          await previewStrategy.getFallbackRule(),
+          equals(expectedFallbackRule),
+        );
+        expect(
+          await imageCaptureStrategy.getFallbackRule(),
+          equals(expectedFallbackRule),
+        );
+        expect(
+          await imageAnalysisStrategy.getFallbackRule(),
+          equals(expectedFallbackRule),
+        );
+      }
+
+      // Test null case.
+      await camera.createCamera(testCameraDescription, null);
+      await camera.initializeCamera(testCameraId);
+
+      expect(camera.preview!.resolutionSelector, isNull);
+      expect(camera.imageCapture!.resolutionSelector, isNull);
+      expect(camera.imageAnalysis!.resolutionSelector, isNull);
+    },
+  );
+
+  test(
+    'createCamera and initializeCamera binds Preview, ImageCapture, and ImageAnalysis use cases to ProcessCameraProvider instance',
     () async {
       final AndroidCameraCameraX camera = AndroidCameraCameraX();
       const CameraLensDirection testLensDirection = CameraLensDirection.back;
@@ -1169,6 +1670,11 @@ void main() {
               // ignore: non_constant_identifier_names
               PigeonInstanceManager? pigeon_instanceManager,
             }) {
+              final ResolutionInfo testResolutionInfo =
+                  ResolutionInfo.pigeon_detached(resolution: MockCameraSize());
+              when(
+                mockPreview.getResolutionInfo(),
+              ).thenAnswer((_) async => testResolutionInfo);
               return mockPreview;
             },
         newImageCapture:
@@ -1208,6 +1714,7 @@ void main() {
         newImageAnalysis:
             ({
               int? targetRotation,
+              int? outputImageFormat,
               ResolutionSelector? resolutionSelector,
               // ignore: non_constant_identifier_names
               BinaryMessenger? pigeon_binaryMessenger,
@@ -1368,7 +1875,7 @@ void main() {
 
       camera.processCameraProvider = mockProcessCameraProvider;
 
-      await camera.createCameraWithSettings(
+      final int flutterSurfaceTextureId = await camera.createCameraWithSettings(
         testCameraDescription,
         const MediaSettings(
           resolutionPreset: testResolutionPreset,
@@ -1378,6 +1885,7 @@ void main() {
           enableAudio: enableAudio,
         ),
       );
+      await camera.initializeCamera(flutterSurfaceTextureId);
 
       // Verify expected UseCases were bound.
       verify(
@@ -1396,442 +1904,6 @@ void main() {
       // Verify preview has been marked as bound to the camera lifecycle by
       // createCamera.
       expect(camera.previewInitiallyBound, isTrue);
-    },
-  );
-
-  test(
-    'createCamera properly sets preset resolution selection strategy for non-video capture use cases',
-    () async {
-      final AndroidCameraCameraX camera = AndroidCameraCameraX();
-      const CameraLensDirection testLensDirection = CameraLensDirection.back;
-      const int testSensorOrientation = 90;
-      const CameraDescription testCameraDescription = CameraDescription(
-        name: 'cameraName',
-        lensDirection: testLensDirection,
-        sensorOrientation: testSensorOrientation,
-      );
-      const bool enableAudio = true;
-      final MockCamera mockCamera = MockCamera();
-
-      // Mock/Detached objects for (typically attached) objects created by
-      // createCamera.
-      final MockProcessCameraProvider mockProcessCameraProvider =
-          MockProcessCameraProvider();
-      final MockCameraInfo mockCameraInfo = MockCameraInfo();
-
-      when(
-        mockProcessCameraProvider.bindToLifecycle(any, any),
-      ).thenAnswer((_) async => mockCamera);
-      when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
-      when(
-        mockCameraInfo.getCameraState(),
-      ).thenAnswer((_) async => MockLiveCameraState());
-      camera.processCameraProvider = mockProcessCameraProvider;
-
-      // Tell plugin to create mock/detached objects for testing createCamera
-      // as needed.
-      camera.proxy = getProxyForTestingResolutionPreset(
-        mockProcessCameraProvider,
-      );
-
-      // Test non-null resolution presets.
-      for (final ResolutionPreset resolutionPreset in ResolutionPreset.values) {
-        await camera.createCamera(
-          testCameraDescription,
-          resolutionPreset,
-          enableAudio: enableAudio,
-        );
-
-        late final CameraSize? expectedBoundSize;
-        final PigeonInstanceManager testInstanceManager = PigeonInstanceManager(
-          onWeakReferenceRemoved: (_) {},
-        );
-        switch (resolutionPreset) {
-          case ResolutionPreset.low:
-            expectedBoundSize = CameraSize.pigeon_detached(
-              width: 320,
-              height: 240,
-              pigeon_instanceManager: testInstanceManager,
-            );
-          case ResolutionPreset.medium:
-            expectedBoundSize = CameraSize.pigeon_detached(
-              width: 720,
-              height: 480,
-              pigeon_instanceManager: testInstanceManager,
-            );
-          case ResolutionPreset.high:
-            expectedBoundSize = CameraSize.pigeon_detached(
-              width: 1280,
-              height: 720,
-              pigeon_instanceManager: testInstanceManager,
-            );
-          case ResolutionPreset.veryHigh:
-            expectedBoundSize = CameraSize.pigeon_detached(
-              width: 1920,
-              height: 1080,
-              pigeon_instanceManager: testInstanceManager,
-            );
-          case ResolutionPreset.ultraHigh:
-            expectedBoundSize = CameraSize.pigeon_detached(
-              width: 3840,
-              height: 2160,
-              pigeon_instanceManager: testInstanceManager,
-            );
-          case ResolutionPreset.max:
-            continue;
-        }
-
-        final CameraSize? previewSize = await camera
-            .preview!
-            .resolutionSelector!
-            .resolutionStrategy!
-            .getBoundSize();
-        expect(previewSize?.width, equals(expectedBoundSize.width));
-        expect(previewSize?.height, equals(expectedBoundSize.height));
-        expect(
-          await camera.preview!.resolutionSelector!.resolutionStrategy!
-              .getFallbackRule(),
-          ResolutionStrategyFallbackRule.closestLowerThenHigher,
-        );
-
-        final CameraSize? imageCaptureSize = await camera
-            .imageCapture!
-            .resolutionSelector!
-            .resolutionStrategy!
-            .getBoundSize();
-        expect(imageCaptureSize?.width, equals(expectedBoundSize.width));
-        expect(imageCaptureSize?.height, equals(expectedBoundSize.height));
-        expect(
-          await camera.imageCapture!.resolutionSelector!.resolutionStrategy!
-              .getFallbackRule(),
-          ResolutionStrategyFallbackRule.closestLowerThenHigher,
-        );
-
-        final CameraSize? imageAnalysisSize = await camera
-            .imageAnalysis!
-            .resolutionSelector!
-            .resolutionStrategy!
-            .getBoundSize();
-        expect(imageAnalysisSize?.width, equals(expectedBoundSize.width));
-        expect(imageAnalysisSize?.height, equals(expectedBoundSize.height));
-        expect(
-          await camera.imageAnalysis!.resolutionSelector!.resolutionStrategy!
-              .getFallbackRule(),
-          ResolutionStrategyFallbackRule.closestLowerThenHigher,
-        );
-      }
-
-      // Test max case.
-      await camera.createCamera(
-        testCameraDescription,
-        ResolutionPreset.max,
-        enableAudio: true,
-      );
-
-      expect(
-        camera.preview!.resolutionSelector!.resolutionStrategy,
-        equals(camera.proxy.highestAvailableStrategyResolutionStrategy()),
-      );
-      expect(
-        camera.imageCapture!.resolutionSelector!.resolutionStrategy,
-        equals(camera.proxy.highestAvailableStrategyResolutionStrategy()),
-      );
-      expect(
-        camera.imageAnalysis!.resolutionSelector!.resolutionStrategy,
-        equals(camera.proxy.highestAvailableStrategyResolutionStrategy()),
-      );
-
-      // Test null case.
-      await camera.createCamera(testCameraDescription, null);
-      expect(camera.preview!.resolutionSelector, isNull);
-      expect(camera.imageCapture!.resolutionSelector, isNull);
-      expect(camera.imageAnalysis!.resolutionSelector, isNull);
-    },
-  );
-
-  test(
-    'createCamera properly sets filter for resolution preset for non-video capture use cases',
-    () async {
-      final AndroidCameraCameraX camera = AndroidCameraCameraX();
-      const CameraLensDirection testLensDirection = CameraLensDirection.front;
-      const int testSensorOrientation = 180;
-      const CameraDescription testCameraDescription = CameraDescription(
-        name: 'cameraName',
-        lensDirection: testLensDirection,
-        sensorOrientation: testSensorOrientation,
-      );
-      const bool enableAudio = true;
-      final MockCamera mockCamera = MockCamera();
-
-      // Mock/Detached objects for (typically attached) objects created by
-      // createCamera.
-      final MockProcessCameraProvider mockProcessCameraProvider =
-          MockProcessCameraProvider();
-      final MockCameraInfo mockCameraInfo = MockCameraInfo();
-
-      // Tell plugin to create mock/detached objects for testing createCamera
-      // as needed.
-      CameraSize? lastSetPreferredSize;
-      camera.proxy = getProxyForTestingResolutionPreset(
-        mockProcessCameraProvider,
-        createWithOnePreferredSizeResolutionFilter:
-            ({
-              required CameraSize preferredSize,
-              // ignore: non_constant_identifier_names
-              BinaryMessenger? pigeon_binaryMessenger,
-              // ignore: non_constant_identifier_names
-              PigeonInstanceManager? pigeon_instanceManager,
-            }) {
-              lastSetPreferredSize = preferredSize;
-              return MockResolutionFilter();
-            },
-      );
-
-      when(
-        mockProcessCameraProvider.bindToLifecycle(any, any),
-      ).thenAnswer((_) async => mockCamera);
-      when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
-      when(
-        mockCameraInfo.getCameraState(),
-      ).thenAnswer((_) async => MockLiveCameraState());
-      camera.processCameraProvider = mockProcessCameraProvider;
-
-      // Test non-null resolution presets.
-      for (final ResolutionPreset resolutionPreset in ResolutionPreset.values) {
-        await camera.createCamera(
-          testCameraDescription,
-          resolutionPreset,
-          enableAudio: enableAudio,
-        );
-
-        CameraSize? expectedPreferredResolution;
-        final PigeonInstanceManager testInstanceManager = PigeonInstanceManager(
-          onWeakReferenceRemoved: (_) {},
-        );
-        switch (resolutionPreset) {
-          case ResolutionPreset.low:
-            expectedPreferredResolution = CameraSize.pigeon_detached(
-              width: 320,
-              height: 240,
-              pigeon_instanceManager: testInstanceManager,
-            );
-          case ResolutionPreset.medium:
-            expectedPreferredResolution = CameraSize.pigeon_detached(
-              width: 720,
-              height: 480,
-              pigeon_instanceManager: testInstanceManager,
-            );
-          case ResolutionPreset.high:
-            expectedPreferredResolution = CameraSize.pigeon_detached(
-              width: 1280,
-              height: 720,
-              pigeon_instanceManager: testInstanceManager,
-            );
-          case ResolutionPreset.veryHigh:
-            expectedPreferredResolution = CameraSize.pigeon_detached(
-              width: 1920,
-              height: 1080,
-              pigeon_instanceManager: testInstanceManager,
-            );
-          case ResolutionPreset.ultraHigh:
-            expectedPreferredResolution = CameraSize.pigeon_detached(
-              width: 3840,
-              height: 2160,
-              pigeon_instanceManager: testInstanceManager,
-            );
-          case ResolutionPreset.max:
-            expectedPreferredResolution = null;
-        }
-
-        if (expectedPreferredResolution == null) {
-          expect(camera.preview!.resolutionSelector!.resolutionFilter, isNull);
-          expect(
-            camera.imageCapture!.resolutionSelector!.resolutionFilter,
-            isNull,
-          );
-          expect(
-            camera.imageAnalysis!.resolutionSelector!.resolutionFilter,
-            isNull,
-          );
-          continue;
-        }
-
-        expect(
-          lastSetPreferredSize?.width,
-          equals(expectedPreferredResolution.width),
-        );
-        expect(
-          lastSetPreferredSize?.height,
-          equals(expectedPreferredResolution.height),
-        );
-
-        final CameraSize? imageCaptureSize = await camera
-            .imageCapture!
-            .resolutionSelector!
-            .resolutionStrategy!
-            .getBoundSize();
-        expect(
-          imageCaptureSize?.width,
-          equals(expectedPreferredResolution.width),
-        );
-        expect(
-          imageCaptureSize?.height,
-          equals(expectedPreferredResolution.height),
-        );
-
-        final CameraSize? imageAnalysisSize = await camera
-            .imageAnalysis!
-            .resolutionSelector!
-            .resolutionStrategy!
-            .getBoundSize();
-        expect(
-          imageAnalysisSize?.width,
-          equals(expectedPreferredResolution.width),
-        );
-        expect(
-          imageAnalysisSize?.height,
-          equals(expectedPreferredResolution.height),
-        );
-      }
-
-      // Test null case.
-      await camera.createCamera(testCameraDescription, null);
-      expect(camera.preview!.resolutionSelector, isNull);
-      expect(camera.imageCapture!.resolutionSelector, isNull);
-      expect(camera.imageAnalysis!.resolutionSelector, isNull);
-    },
-  );
-
-  test(
-    'createCamera properly sets aspect ratio based on preset resolution for non-video capture use cases',
-    () async {
-      final AndroidCameraCameraX camera = AndroidCameraCameraX();
-      const CameraLensDirection testLensDirection = CameraLensDirection.back;
-      const int testSensorOrientation = 90;
-      const CameraDescription testCameraDescription = CameraDescription(
-        name: 'cameraName',
-        lensDirection: testLensDirection,
-        sensorOrientation: testSensorOrientation,
-      );
-      const bool enableAudio = true;
-      final MockCamera mockCamera = MockCamera();
-
-      // Mock/Detached objects for (typically attached) objects created by
-      // createCamera.
-      final MockProcessCameraProvider mockProcessCameraProvider =
-          MockProcessCameraProvider();
-      final MockCameraInfo mockCameraInfo = MockCameraInfo();
-
-      // Tell plugin to create mock/detached objects for testing createCamera
-      // as needed.
-      camera.proxy = getProxyForTestingResolutionPreset(
-        mockProcessCameraProvider,
-      );
-      when(
-        mockProcessCameraProvider.bindToLifecycle(any, any),
-      ).thenAnswer((_) async => mockCamera);
-      when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
-      when(
-        mockCameraInfo.getCameraState(),
-      ).thenAnswer((_) async => MockLiveCameraState());
-      camera.processCameraProvider = mockProcessCameraProvider;
-
-      // Test non-null resolution presets.
-      for (final ResolutionPreset resolutionPreset in ResolutionPreset.values) {
-        await camera.createCamera(
-          testCameraDescription,
-          resolutionPreset,
-          enableAudio: enableAudio,
-        );
-
-        AspectRatio? expectedAspectRatio;
-        AspectRatioStrategyFallbackRule? expectedFallbackRule;
-        switch (resolutionPreset) {
-          case ResolutionPreset.low:
-            expectedAspectRatio = AspectRatio.ratio4To3;
-            expectedFallbackRule = AspectRatioStrategyFallbackRule.auto;
-          case ResolutionPreset.high:
-          case ResolutionPreset.veryHigh:
-          case ResolutionPreset.ultraHigh:
-            expectedAspectRatio = AspectRatio.ratio16To9;
-            expectedFallbackRule = AspectRatioStrategyFallbackRule.auto;
-          case ResolutionPreset.medium:
-          // Medium resolution preset uses aspect ratio 3:2 which is unsupported
-          // by CameraX.
-          case ResolutionPreset.max:
-        }
-
-        if (expectedAspectRatio == null) {
-          expect(
-            await camera.preview!.resolutionSelector!.getAspectRatioStrategy(),
-            equals(
-              camera.proxy.ratio_4_3FallbackAutoStrategyAspectRatioStrategy(),
-            ),
-          );
-          expect(
-            await camera.imageCapture!.resolutionSelector!
-                .getAspectRatioStrategy(),
-            equals(
-              camera.proxy.ratio_4_3FallbackAutoStrategyAspectRatioStrategy(),
-            ),
-          );
-          expect(
-            await camera.imageAnalysis!.resolutionSelector!
-                .getAspectRatioStrategy(),
-            equals(
-              camera.proxy.ratio_4_3FallbackAutoStrategyAspectRatioStrategy(),
-            ),
-          );
-          continue;
-        }
-
-        final AspectRatioStrategy previewStrategy = await camera
-            .preview!
-            .resolutionSelector!
-            .getAspectRatioStrategy();
-        final AspectRatioStrategy imageCaptureStrategy = await camera
-            .imageCapture!
-            .resolutionSelector!
-            .getAspectRatioStrategy();
-        final AspectRatioStrategy imageAnalysisStrategy = await camera
-            .imageCapture!
-            .resolutionSelector!
-            .getAspectRatioStrategy();
-
-        // Check aspect ratio.
-        expect(
-          await previewStrategy.getPreferredAspectRatio(),
-          equals(expectedAspectRatio),
-        );
-        expect(
-          await imageCaptureStrategy.getPreferredAspectRatio(),
-          equals(expectedAspectRatio),
-        );
-        expect(
-          await imageAnalysisStrategy.getPreferredAspectRatio(),
-          equals(expectedAspectRatio),
-        );
-
-        // Check fallback rule.
-        expect(
-          await previewStrategy.getFallbackRule(),
-          equals(expectedFallbackRule),
-        );
-        expect(
-          await imageCaptureStrategy.getFallbackRule(),
-          equals(expectedFallbackRule),
-        );
-        expect(
-          await imageAnalysisStrategy.getFallbackRule(),
-          equals(expectedFallbackRule),
-        );
-      }
-
-      // Test null case.
-      await camera.createCamera(testCameraDescription, null);
-      expect(camera.preview!.resolutionSelector, isNull);
-      expect(camera.imageCapture!.resolutionSelector, isNull);
-      expect(camera.imageAnalysis!.resolutionSelector, isNull);
     },
   );
 
@@ -1862,7 +1934,7 @@ void main() {
       FallbackStrategy? setFallbackStrategy;
       final MockFallbackStrategy mockFallbackStrategy = MockFallbackStrategy();
       final MockQualitySelector mockQualitySelector = MockQualitySelector();
-      camera.proxy = getProxyForTestingResolutionPreset(
+      camera.proxy = getProxyForTestingUseCaseConfiguration(
         mockProcessCameraProvider,
         lowerQualityOrHigherThanFallbackStrategy:
             ({
@@ -1968,7 +2040,7 @@ void main() {
       // The proxy needed for this test is the same as testing resolution
       // presets except for mocking the retrieval of the sensor and current
       // UI orientation.
-      camera.proxy = getProxyForTestingResolutionPreset(
+      camera.proxy = getProxyForTestingUseCaseConfiguration(
         mockProcessCameraProvider,
         newPreview:
             ({
@@ -2166,6 +2238,7 @@ void main() {
         newImageAnalysis:
             ({
               int? targetRotation,
+              int? outputImageFormat,
               ResolutionSelector? resolutionSelector,
               // ignore: non_constant_identifier_names
               BinaryMessenger? pigeon_binaryMessenger,
@@ -2404,6 +2477,176 @@ void main() {
     },
   );
 
+  test('initializeCamera sets camera state observer as expected', () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    const CameraLensDirection testLensDirection = CameraLensDirection.back;
+    const int testSensorOrientation = 90;
+    const CameraDescription testCameraDescription = CameraDescription(
+      name: 'cameraName',
+      lensDirection: testLensDirection,
+      sensorOrientation: testSensorOrientation,
+    );
+    const bool enableAudio = true;
+    final MockCamera mockCamera = MockCamera();
+    const int testSurfaceTextureId = 244;
+
+    // Mock/Detached objects for (typically attached) objects created by
+    // createCamera.
+    final MockProcessCameraProvider mockProcessCameraProvider =
+        MockProcessCameraProvider();
+    final MockCameraInfo mockCameraInfo = MockCameraInfo();
+    final MockLiveCameraState mockLiveCameraState = MockLiveCameraState();
+    final MockPreview mockPreview = MockPreview();
+    final ResolutionInfo testResolutionInfo = ResolutionInfo.pigeon_detached(
+      resolution: MockCameraSize(),
+    );
+
+    when(
+      mockProcessCameraProvider.bindToLifecycle(any, any),
+    ).thenAnswer((_) async => mockCamera);
+    when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
+    when(
+      mockCameraInfo.getCameraState(),
+    ).thenAnswer((_) async => mockLiveCameraState);
+    when(
+      mockPreview.getResolutionInfo(),
+    ).thenAnswer((_) async => testResolutionInfo);
+    when(
+      mockPreview.setSurfaceProvider(any),
+    ).thenAnswer((_) async => testSurfaceTextureId);
+    camera.processCameraProvider = mockProcessCameraProvider;
+
+    // Tell plugin to create mock/detached objects for testing createCamera
+    // as needed.
+    camera.proxy = getProxyForTestingUseCaseConfiguration(
+      mockProcessCameraProvider,
+      newPreview:
+          ({
+            // ignore: non_constant_identifier_names
+            BinaryMessenger? pigeon_binaryMessenger,
+            // ignore: non_constant_identifier_names
+            PigeonInstanceManager? pigeon_instanceManager,
+            ResolutionSelector? resolutionSelector,
+            int? targetRotation,
+          }) => mockPreview,
+    );
+
+    // Create and initialize camera.
+    await camera.createCameraWithSettings(
+      testCameraDescription,
+      const MediaSettings(enableAudio: enableAudio),
+    );
+    await camera.initializeCamera(testSurfaceTextureId);
+
+    // Verify the camera state observer is updated.
+    expect(
+      await testCameraClosingObserver(
+        camera,
+        testSurfaceTextureId,
+        verify(mockLiveCameraState.observe(captureAny)).captured.single
+            as Observer<CameraState>,
+      ),
+      isTrue,
+    );
+  });
+
+  test(
+    'initializeCamera sets image format of ImageAnalysis use case as expected',
+    () async {
+      final AndroidCameraCameraX camera = AndroidCameraCameraX();
+      const CameraLensDirection testLensDirection = CameraLensDirection.back;
+      const int testSensorOrientation = 90;
+      const CameraDescription testCameraDescription = CameraDescription(
+        name: 'cameraName',
+        lensDirection: testLensDirection,
+        sensorOrientation: testSensorOrientation,
+      );
+      const bool enableAudio = true;
+      final MockCamera mockCamera = MockCamera();
+      const int testSurfaceTextureId = 244;
+
+      // Mock/Detached objects for (typically attached) objects created by
+      // createCamera.
+      final MockProcessCameraProvider mockProcessCameraProvider =
+          MockProcessCameraProvider();
+      final MockCameraInfo mockCameraInfo = MockCameraInfo();
+      final MockLiveCameraState mockLiveCameraState = MockLiveCameraState();
+      final MockPreview mockPreview = MockPreview();
+      final ResolutionInfo testResolutionInfo = ResolutionInfo.pigeon_detached(
+        resolution: MockCameraSize(),
+      );
+      final MockImageAnalysis mockImageAnalysis = MockImageAnalysis();
+
+      // Configure mocks for camera initialization.
+      when(
+        mockProcessCameraProvider.bindToLifecycle(any, any),
+      ).thenAnswer((_) async => mockCamera);
+      when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
+      when(
+        mockCameraInfo.getCameraState(),
+      ).thenAnswer((_) async => mockLiveCameraState);
+      when(
+        mockPreview.getResolutionInfo(),
+      ).thenAnswer((_) async => testResolutionInfo);
+      when(
+        mockPreview.setSurfaceProvider(any),
+      ).thenAnswer((_) async => testSurfaceTextureId);
+      camera.processCameraProvider = mockProcessCameraProvider;
+
+      for (final ImageFormatGroup imageFormatGroup in ImageFormatGroup.values) {
+        // Get CameraX image format constant for imageFormatGroup.
+        final int? cameraXImageFormat = switch (imageFormatGroup) {
+          ImageFormatGroup.yuv420 =>
+            AndroidCameraCameraX.imageAnalysisOutputImageFormatYuv420_888,
+          ImageFormatGroup.nv21 =>
+            AndroidCameraCameraX.imageAnalysisOutputImageFormatNv21,
+          _ => null,
+        };
+        // Tell plugin to create mock/detached objects for testing createCamera
+        // as needed.
+        int? imageAnalysisOutputImageFormat;
+        camera.proxy = getProxyForTestingUseCaseConfiguration(
+          mockProcessCameraProvider,
+          newImageAnalysis:
+              ({
+                // ignore: non_constant_identifier_names
+                BinaryMessenger? pigeon_binaryMessenger,
+                // ignore: non_constant_identifier_names
+                PigeonInstanceManager? pigeon_instanceManager,
+                ResolutionSelector? resolutionSelector,
+                int? targetRotation,
+                int? outputImageFormat,
+              }) {
+                imageAnalysisOutputImageFormat = outputImageFormat;
+                return mockImageAnalysis;
+              },
+          newPreview:
+              ({
+                // ignore: non_constant_identifier_names
+                BinaryMessenger? pigeon_binaryMessenger,
+                // ignore: non_constant_identifier_names
+                PigeonInstanceManager? pigeon_instanceManager,
+                ResolutionSelector? resolutionSelector,
+                int? targetRotation,
+              }) => mockPreview,
+        );
+
+        // Create and initialize camera.
+        await camera.createCameraWithSettings(
+          testCameraDescription,
+          const MediaSettings(enableAudio: enableAudio),
+        );
+        await camera.initializeCamera(
+          testSurfaceTextureId,
+          imageFormatGroup: imageFormatGroup,
+        );
+
+        // Test image format group is set as expected.
+        expect(imageAnalysisOutputImageFormat, cameraXImageFormat);
+      }
+    },
+  );
+
   test('initializeCamera sends expected CameraInitializedEvent', () async {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
 
@@ -2506,6 +2749,7 @@ void main() {
       newImageAnalysis:
           ({
             int? targetRotation,
+            int? outputImageFormat,
             ResolutionSelector? resolutionSelector,
             // ignore: non_constant_identifier_names
             BinaryMessenger? pigeon_binaryMessenger,
@@ -3067,7 +3311,7 @@ void main() {
         camera.captureOrientationLocked = true;
 
         // Tell plugin to create detached Observer when camera info updated.
-        const String outputPath = '/temp/REC123.temp';
+        const String outputPath = '/temp/REC123.mp4';
         camera.proxy = CameraXProxy(
           newObserver:
               <T>({
@@ -3106,7 +3350,7 @@ void main() {
                 when(
                   mockSystemServicesManager.getTempFilePath(
                     camera.videoPrefix,
-                    '.temp',
+                    '.mp4',
                   ),
                 ).thenAnswer((_) async => outputPath);
                 return mockSystemServicesManager;
@@ -3144,6 +3388,9 @@ void main() {
         when(
           mockPendingRecording.withAudioEnabled(!enableAudio),
         ).thenAnswer((_) async => mockPendingRecordingWithAudio);
+        when(
+          mockPendingRecording.asPersistentRecording(),
+        ).thenAnswer((_) async => mockPendingRecording);
         when(
           mockPendingRecordingWithAudio.start(any),
         ).thenAnswer((_) async => mockRecording);
@@ -3233,7 +3480,7 @@ void main() {
         camera.captureOrientationLocked = true;
 
         // Tell plugin to create detached Observer when camera info updated.
-        const String outputPath = '/temp/REC123.temp';
+        const String outputPath = '/temp/REC123.mp4';
         camera.proxy = CameraXProxy(
           newObserver:
               <T>({
@@ -3272,7 +3519,7 @@ void main() {
                 when(
                   mockSystemServicesManager.getTempFilePath(
                     camera.videoPrefix,
-                    '.temp',
+                    '.mp4',
                   ),
                 ).thenAnswer((_) async => outputPath);
                 return mockSystemServicesManager;
@@ -3309,6 +3556,9 @@ void main() {
         ).thenAnswer((_) async => mockPendingRecording);
         when(
           mockPendingRecording.withAudioEnabled(!camera.enableRecordingAudio),
+        ).thenAnswer((_) async => mockPendingRecording);
+        when(
+          mockPendingRecording.asPersistentRecording(),
         ).thenAnswer((_) async => mockPendingRecording);
         when(
           mockPendingRecording.start(any),
@@ -3357,7 +3607,7 @@ void main() {
         verify(
           camera.systemServicesManager.getTempFilePath(
             camera.videoPrefix,
-            '.temp',
+            '.mp4',
           ),
         ).called(1);
         verifyNoMoreInteractions(camera.systemServicesManager);
@@ -3365,6 +3615,7 @@ void main() {
         verifyNoMoreInteractions(camera.recorder);
         verify(mockPendingRecording.start(any)).called(1);
         verify(mockPendingRecording.withAudioEnabled(any)).called(1);
+        verify(mockPendingRecording.asPersistentRecording()).called(1);
         verifyNoMoreInteractions(mockPendingRecording);
       },
     );
@@ -3399,7 +3650,7 @@ void main() {
         camera.captureOrientationLocked = true;
 
         // Tell plugin to create detached Analyzer for testing.
-        const String outputPath = '/temp/REC123.temp';
+        const String outputPath = '/temp/REC123.mp4';
         camera.proxy = CameraXProxy(
           newObserver:
               <T>({
@@ -3438,7 +3689,7 @@ void main() {
                 when(
                   mockSystemServicesManager.getTempFilePath(
                     camera.videoPrefix,
-                    '.temp',
+                    '.mp4',
                   ),
                 ).thenAnswer((_) async => outputPath);
                 return mockSystemServicesManager;
@@ -3500,6 +3751,9 @@ void main() {
           mockPendingRecording.withAudioEnabled(!camera.enableRecordingAudio),
         ).thenAnswer((_) async => mockPendingRecording);
         when(
+          mockPendingRecording.asPersistentRecording(),
+        ).thenAnswer((_) async => mockPendingRecording);
+        when(
           mockProcessCameraProvider.bindToLifecycle(any, any),
         ).thenAnswer((_) => Future<Camera>.value(camera.camera));
         when(
@@ -3553,7 +3807,7 @@ void main() {
         camera.enableRecordingAudio = false;
 
         // Tell plugin to mock call to get current video orientation and mock Camera2CameraInfo retrieval.
-        const String outputPath = '/temp/REC123.temp';
+        const String outputPath = '/temp/REC123.mp4';
         camera.proxy = CameraXProxy(
           newObserver:
               <T>({
@@ -3594,7 +3848,7 @@ void main() {
                 when(
                   mockSystemServicesManager.getTempFilePath(
                     camera.videoPrefix,
-                    '.temp',
+                    '.mp4',
                   ),
                 ).thenAnswer((_) async => outputPath);
                 return mockSystemServicesManager;
@@ -3647,6 +3901,9 @@ void main() {
         ).thenAnswer((_) async => mockPendingRecording);
         when(
           mockPendingRecording.withAudioEnabled(!camera.enableRecordingAudio),
+        ).thenAnswer((_) async => mockPendingRecording);
+        when(
+          mockPendingRecording.asPersistentRecording(),
         ).thenAnswer((_) async => mockPendingRecording);
         when(
           mockPendingRecording.start(any),
@@ -3904,31 +4161,648 @@ void main() {
       },
     );
 
-    test(
-      'setDescriptionWhileRecording does not make any calls involving starting video recording',
-      () async {
-        // TODO(camsim99): Modify test when implemented, see https://github.com/flutter/flutter/issues/148013.
-        final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    test('setDescriptionWhileRecording changes the camera description', () async {
+      final AndroidCameraCameraX camera = AndroidCameraCameraX();
+      final MockRecording mockRecording = MockRecording();
+      final MockPendingRecording mockPendingRecording = MockPendingRecording();
+      final MockRecorder mockRecorder = MockRecorder();
 
-        // Set directly for test versus calling createCamera.
-        camera.processCameraProvider = MockProcessCameraProvider();
-        camera.recorder = MockRecorder();
-        camera.videoCapture = MockVideoCapture();
-        camera.camera = MockCamera();
+      const int testSensorOrientation = 90;
+      const CameraDescription testBackCameraDescription = CameraDescription(
+        name: 'Camera 0',
+        lensDirection: CameraLensDirection.back,
+        sensorOrientation: testSensorOrientation,
+      );
+      const CameraDescription testFrontCameraDescription = CameraDescription(
+        name: 'Camera 1',
+        lensDirection: CameraLensDirection.front,
+        sensorOrientation: testSensorOrientation,
+      );
 
-        await camera.setDescriptionWhileRecording(
-          const CameraDescription(
-            name: 'fakeCameraName',
-            lensDirection: CameraLensDirection.back,
-            sensorOrientation: 90,
+      // Mock/Detached objects for (typically attached) objects created by
+      // createCamera.
+      final MockProcessCameraProvider mockProcessCameraProvider =
+          MockProcessCameraProvider();
+      final MockPreview mockPreview = MockPreview();
+      final MockCamera mockCamera = MockCamera();
+      final MockCamera newMockCamera = MockCamera();
+      final MockLiveCameraState mockLiveCameraState = MockLiveCameraState();
+      final MockLiveCameraState newMockLiveCameraState = MockLiveCameraState();
+      final MockCameraInfo mockCameraInfo = MockCameraInfo();
+      final MockCameraControl mockCameraControl = MockCameraControl();
+      final MockImageCapture mockImageCapture = MockImageCapture();
+      final MockImageAnalysis mockImageAnalysis = MockImageAnalysis();
+      final MockVideoCapture mockVideoCapture = MockVideoCapture();
+      final MockCameraSelector mockBackCameraSelector = MockCameraSelector();
+      final MockCameraSelector mockFrontCameraSelector = MockCameraSelector();
+      final MockCameraInfo mockFrontCameraInfo = MockCameraInfo();
+      final MockCameraInfo mockBackCameraInfo = MockCameraInfo();
+      final MockCameraCharacteristicsKey mockCameraCharacteristicsKey =
+          MockCameraCharacteristicsKey();
+
+      const String outputPath = 'file/output.mp4';
+
+      camera.proxy = CameraXProxy(
+        newPreview:
+            ({
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+              ResolutionSelector? resolutionSelector,
+              int? targetRotation,
+            }) {
+              when(
+                mockPreview.setSurfaceProvider(any),
+              ).thenAnswer((_) async => 19);
+              final ResolutionInfo testResolutionInfo =
+                  ResolutionInfo.pigeon_detached(resolution: MockCameraSize());
+              when(
+                mockPreview.surfaceProducerHandlesCropAndRotation(),
+              ).thenAnswer((_) async => false);
+              when(
+                mockPreview.resolutionSelector,
+              ).thenReturn(resolutionSelector);
+              when(
+                mockPreview.getResolutionInfo(),
+              ).thenAnswer((_) async => testResolutionInfo);
+              return mockPreview;
+            },
+        newImageCapture:
+            ({
+              CameraXFlashMode? flashMode,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+              ResolutionSelector? resolutionSelector,
+              int? targetRotation,
+            }) {
+              return mockImageCapture;
+            },
+        newRecorder:
+            ({
+              int? aspectRatio,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+              QualitySelector? qualitySelector,
+              int? targetVideoEncodingBitRate,
+            }) {
+              when(
+                mockRecorder.prepareRecording(outputPath),
+              ).thenAnswer((_) async => mockPendingRecording);
+              return mockRecorder;
+            },
+        withOutputVideoCapture:
+            ({
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+              required VideoOutput videoOutput,
+            }) {
+              return mockVideoCapture;
+            },
+        newImageAnalysis:
+            ({
+              int? outputImageFormat,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+              ResolutionSelector? resolutionSelector,
+              int? targetRotation,
+            }) {
+              return mockImageAnalysis;
+            },
+        newCameraSelector:
+            ({
+              LensFacing? requireLensFacing,
+              CameraInfo? cameraInfoForFilter,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              if (cameraInfoForFilter == mockFrontCameraInfo) {
+                return mockFrontCameraSelector;
+              }
+              return mockBackCameraSelector;
+            },
+        newDeviceOrientationManager:
+            ({
+              required void Function(DeviceOrientationManager, String)
+              onDeviceOrientationChanged,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              final MockDeviceOrientationManager manager =
+                  MockDeviceOrientationManager();
+              when(manager.getUiOrientation()).thenAnswer((_) async {
+                return 'PORTRAIT_UP';
+              });
+              return manager;
+            },
+        fromCamera2CameraInfo:
+            ({
+              required CameraInfo cameraInfo,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              final MockCamera2CameraInfo camera2cameraInfo =
+                  MockCamera2CameraInfo();
+              when(
+                camera2cameraInfo.getCameraCharacteristic(any),
+              ).thenAnswer((_) async => InfoSupportedHardwareLevel.limited);
+              return camera2cameraInfo;
+            },
+        sensorOrientationCameraCharacteristics: () {
+          return mockCameraCharacteristicsKey;
+        },
+        newObserver:
+            <T>({
+              required void Function(Observer<T>, T) onChanged,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return Observer<T>.detached(
+                onChanged: onChanged,
+                pigeon_instanceManager: PigeonInstanceManager(
+                  onWeakReferenceRemoved: (_) {},
+                ),
+              );
+            },
+        newSystemServicesManager:
+            ({
+              required void Function(SystemServicesManager, String)
+              onCameraError,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              final MockSystemServicesManager mockSystemServicesManager =
+                  MockSystemServicesManager();
+              when(
+                mockSystemServicesManager.getTempFilePath(
+                  camera.videoPrefix,
+                  '.mp4',
+                ),
+              ).thenAnswer((_) async => outputPath);
+              return mockSystemServicesManager;
+            },
+        newVideoRecordEventListener:
+            ({
+              required void Function(VideoRecordEventListener, VideoRecordEvent)
+              onEvent,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return VideoRecordEventListener.pigeon_detached(
+                onEvent: onEvent,
+                pigeon_instanceManager: PigeonInstanceManager(
+                  onWeakReferenceRemoved: (_) {},
+                ),
+              );
+            },
+        infoSupportedHardwareLevelCameraCharacteristics: () {
+          return MockCameraCharacteristicsKey();
+        },
+      );
+
+      // mock functions
+      when(mockProcessCameraProvider.getAvailableCameraInfos()).thenAnswer(
+        (_) async => <MockCameraInfo>[mockBackCameraInfo, mockFrontCameraInfo],
+      );
+      when(
+        mockProcessCameraProvider.bindToLifecycle(any, any),
+      ).thenAnswer((_) async => mockCamera);
+      when(
+        mockBackCameraSelector.filter(<MockCameraInfo>[mockBackCameraInfo]),
+      ).thenAnswer((_) async => <MockCameraInfo>[mockBackCameraInfo]);
+      when(
+        mockBackCameraSelector.filter(<MockCameraInfo>[mockFrontCameraInfo]),
+      ).thenAnswer((_) async => <MockCameraInfo>[mockFrontCameraInfo]);
+      when(
+        mockFrontCameraSelector.filter(<MockCameraInfo>[mockBackCameraInfo]),
+      ).thenAnswer((_) async => <MockCameraInfo>[mockBackCameraInfo]);
+      when(
+        mockFrontCameraSelector.filter(<MockCameraInfo>[mockFrontCameraInfo]),
+      ).thenAnswer((_) async => <MockCameraInfo>[mockFrontCameraInfo]);
+
+      camera.processCameraProvider = mockProcessCameraProvider;
+      camera.liveCameraState = mockLiveCameraState;
+      camera.enableRecordingAudio = false;
+      when(
+        mockPendingRecording.withAudioEnabled(any),
+      ).thenAnswer((_) async => mockPendingRecording);
+      when(
+        mockPendingRecording.asPersistentRecording(),
+      ).thenAnswer((_) async => mockPendingRecording);
+      when(
+        mockPendingRecording.start(any),
+      ).thenAnswer((_) async => mockRecording);
+      when(
+        camera.processCameraProvider!.isBound(mockImageCapture),
+      ).thenAnswer((_) async => true);
+      when(
+        camera.processCameraProvider!.isBound(mockImageAnalysis),
+      ).thenAnswer((_) async => true);
+      when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
+      when(mockCamera.cameraControl).thenAnswer((_) => mockCameraControl);
+      when(
+        camera.processCameraProvider?.bindToLifecycle(
+          mockFrontCameraSelector,
+          <UseCase>[
+            mockVideoCapture,
+            mockPreview,
+            mockImageCapture,
+            mockImageAnalysis,
+          ],
+        ),
+      ).thenAnswer((_) async => newMockCamera);
+      when(
+        newMockCamera.getCameraInfo(),
+      ).thenAnswer((_) async => mockCameraInfo);
+      when(newMockCamera.cameraControl).thenReturn(mockCameraControl);
+      when(
+        mockCameraInfo.getCameraState(),
+      ).thenAnswer((_) async => newMockLiveCameraState);
+
+      // Simulate video recording being started so startVideoRecording completes.
+      AndroidCameraCameraX.videoRecordingEventStreamController.add(
+        VideoRecordEventStart.pigeon_detached(
+          pigeon_instanceManager: PigeonInstanceManager(
+            onWeakReferenceRemoved: (_) {},
           ),
+        ),
+      );
+
+      await camera.availableCameras();
+
+      final int flutterSurfaceTextureId = await camera.createCameraWithSettings(
+        testBackCameraDescription,
+        const MediaSettings(enableAudio: true),
+      );
+      await camera.initializeCamera(flutterSurfaceTextureId);
+
+      await camera.startVideoCapturing(
+        VideoCaptureOptions(flutterSurfaceTextureId),
+      );
+      await camera.setDescriptionWhileRecording(testFrontCameraDescription);
+
+      //verify front camera selected and camera properties updated
+      verify(camera.processCameraProvider?.unbindAll()).called(2);
+      verify(
+        camera.processCameraProvider?.bindToLifecycle(
+          mockFrontCameraSelector,
+          <UseCase>[
+            mockVideoCapture,
+            mockPreview,
+            mockImageCapture,
+            mockImageAnalysis,
+          ],
+        ),
+      ).called(1);
+      expect(camera.camera, equals(newMockCamera));
+      expect(camera.cameraInfo, equals(mockCameraInfo));
+      expect(camera.cameraControl, equals(mockCameraControl));
+      verify(mockLiveCameraState.removeObservers());
+      for (final dynamic observer in verify(
+        newMockLiveCameraState.observe(captureAny),
+      ).captured) {
+        expect(
+          await testCameraClosingObserver(
+            camera,
+            flutterSurfaceTextureId,
+            observer as Observer<dynamic>,
+          ),
+          isTrue,
         );
-        verifyNoMoreInteractions(camera.processCameraProvider);
-        verifyNoMoreInteractions(camera.recorder);
-        verifyNoMoreInteractions(camera.videoCapture);
-        verifyNoMoreInteractions(camera.camera);
-      },
-    );
+      }
+
+      //verify back camera selected
+      await camera.setDescriptionWhileRecording(testBackCameraDescription);
+      verify(
+        camera.processCameraProvider?.bindToLifecycle(
+          mockBackCameraSelector,
+          <UseCase>[
+            mockVideoCapture,
+            mockPreview,
+            mockImageCapture,
+            mockImageAnalysis,
+          ],
+        ),
+      ).called(1);
+    });
+
+    test('setDescriptionWhileRecording does not resume paused preview', () async {
+      final AndroidCameraCameraX camera = AndroidCameraCameraX();
+      final MockRecording mockRecording = MockRecording();
+      final MockPendingRecording mockPendingRecording = MockPendingRecording();
+      final MockRecorder mockRecorder = MockRecorder();
+
+      const int testSensorOrientation = 90;
+      const CameraDescription testBackCameraDescription = CameraDescription(
+        name: 'Camera 0',
+        lensDirection: CameraLensDirection.back,
+        sensorOrientation: testSensorOrientation,
+      );
+      const CameraDescription testFrontCameraDescription = CameraDescription(
+        name: 'Camera 1',
+        lensDirection: CameraLensDirection.front,
+        sensorOrientation: testSensorOrientation,
+      );
+
+      // Mock/Detached objects for (typically attached) objects created by
+      // createCamera.
+      final MockProcessCameraProvider mockProcessCameraProvider =
+          MockProcessCameraProvider();
+      final MockPreview mockPreview = MockPreview();
+      final MockCamera mockCamera = MockCamera();
+      final MockCameraInfo mockCameraInfo = MockCameraInfo();
+      final MockCameraControl mockCameraControl = MockCameraControl();
+      final MockImageCapture mockImageCapture = MockImageCapture();
+      final MockImageAnalysis mockImageAnalysis = MockImageAnalysis();
+      final MockVideoCapture mockVideoCapture = MockVideoCapture();
+      final MockCameraSelector mockBackCameraSelector = MockCameraSelector();
+      final MockCameraSelector mockFrontCameraSelector = MockCameraSelector();
+      final MockCameraInfo mockFrontCameraInfo = MockCameraInfo();
+      final MockCameraInfo mockBackCameraInfo = MockCameraInfo();
+      final MockCameraCharacteristicsKey mockCameraCharacteristicsKey =
+          MockCameraCharacteristicsKey();
+
+      const String outputPath = 'file/output.mp4';
+
+      camera.proxy = CameraXProxy(
+        newPreview:
+            ({
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+              ResolutionSelector? resolutionSelector,
+              int? targetRotation,
+            }) {
+              when(
+                mockPreview.setSurfaceProvider(any),
+              ).thenAnswer((_) async => 19);
+              final ResolutionInfo testResolutionInfo =
+                  ResolutionInfo.pigeon_detached(resolution: MockCameraSize());
+              when(
+                mockPreview.surfaceProducerHandlesCropAndRotation(),
+              ).thenAnswer((_) async => false);
+              when(
+                mockPreview.resolutionSelector,
+              ).thenReturn(resolutionSelector);
+              when(
+                mockPreview.getResolutionInfo(),
+              ).thenAnswer((_) async => testResolutionInfo);
+              return mockPreview;
+            },
+        newImageCapture:
+            ({
+              CameraXFlashMode? flashMode,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+              ResolutionSelector? resolutionSelector,
+              int? targetRotation,
+            }) {
+              return mockImageCapture;
+            },
+        newRecorder:
+            ({
+              int? aspectRatio,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+              QualitySelector? qualitySelector,
+              int? targetVideoEncodingBitRate,
+            }) {
+              when(
+                mockRecorder.prepareRecording(outputPath),
+              ).thenAnswer((_) async => mockPendingRecording);
+              return mockRecorder;
+            },
+        withOutputVideoCapture:
+            ({
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+              required VideoOutput videoOutput,
+            }) {
+              return mockVideoCapture;
+            },
+        newImageAnalysis:
+            ({
+              int? outputImageFormat,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+              ResolutionSelector? resolutionSelector,
+              int? targetRotation,
+            }) {
+              return mockImageAnalysis;
+            },
+        newCameraSelector:
+            ({
+              LensFacing? requireLensFacing,
+              CameraInfo? cameraInfoForFilter,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              if (cameraInfoForFilter == mockFrontCameraInfo) {
+                return mockFrontCameraSelector;
+              }
+              return mockBackCameraSelector;
+            },
+        newDeviceOrientationManager:
+            ({
+              required void Function(DeviceOrientationManager, String)
+              onDeviceOrientationChanged,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              final MockDeviceOrientationManager manager =
+                  MockDeviceOrientationManager();
+              when(manager.getUiOrientation()).thenAnswer((_) async {
+                return 'PORTRAIT_UP';
+              });
+              return manager;
+            },
+        fromCamera2CameraInfo:
+            ({
+              required CameraInfo cameraInfo,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              final MockCamera2CameraInfo camera2cameraInfo =
+                  MockCamera2CameraInfo();
+              when(
+                camera2cameraInfo.getCameraCharacteristic(any),
+              ).thenAnswer((_) async => InfoSupportedHardwareLevel.limited);
+              return camera2cameraInfo;
+            },
+        sensorOrientationCameraCharacteristics: () {
+          return mockCameraCharacteristicsKey;
+        },
+        newObserver:
+            <T>({
+              required void Function(Observer<T>, T) onChanged,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return Observer<T>.detached(
+                onChanged: onChanged,
+                pigeon_instanceManager: PigeonInstanceManager(
+                  onWeakReferenceRemoved: (_) {},
+                ),
+              );
+            },
+        newSystemServicesManager:
+            ({
+              required void Function(SystemServicesManager, String)
+              onCameraError,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              final MockSystemServicesManager mockSystemServicesManager =
+                  MockSystemServicesManager();
+              when(
+                mockSystemServicesManager.getTempFilePath(
+                  camera.videoPrefix,
+                  '.mp4',
+                ),
+              ).thenAnswer((_) async => outputPath);
+              return mockSystemServicesManager;
+            },
+        newVideoRecordEventListener:
+            ({
+              required void Function(VideoRecordEventListener, VideoRecordEvent)
+              onEvent,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return VideoRecordEventListener.pigeon_detached(
+                onEvent: onEvent,
+                pigeon_instanceManager: PigeonInstanceManager(
+                  onWeakReferenceRemoved: (_) {},
+                ),
+              );
+            },
+        infoSupportedHardwareLevelCameraCharacteristics: () {
+          return MockCameraCharacteristicsKey();
+        },
+      );
+
+      // mock functions
+      when(mockProcessCameraProvider.getAvailableCameraInfos()).thenAnswer(
+        (_) async => <MockCameraInfo>[mockBackCameraInfo, mockFrontCameraInfo],
+      );
+      when(
+        mockProcessCameraProvider.bindToLifecycle(any, any),
+      ).thenAnswer((_) async => mockCamera);
+      when(
+        mockBackCameraSelector.filter(<MockCameraInfo>[mockBackCameraInfo]),
+      ).thenAnswer((_) async => <MockCameraInfo>[mockBackCameraInfo]);
+      when(
+        mockBackCameraSelector.filter(<MockCameraInfo>[mockFrontCameraInfo]),
+      ).thenAnswer((_) async => <MockCameraInfo>[mockFrontCameraInfo]);
+      when(
+        mockFrontCameraSelector.filter(<MockCameraInfo>[mockBackCameraInfo]),
+      ).thenAnswer((_) async => <MockCameraInfo>[mockBackCameraInfo]);
+      when(
+        mockFrontCameraSelector.filter(<MockCameraInfo>[mockFrontCameraInfo]),
+      ).thenAnswer((_) async => <MockCameraInfo>[mockFrontCameraInfo]);
+
+      camera.processCameraProvider = mockProcessCameraProvider;
+      camera.enableRecordingAudio = false;
+      when(
+        mockPendingRecording.withAudioEnabled(any),
+      ).thenAnswer((_) async => mockPendingRecording);
+      when(
+        mockPendingRecording.asPersistentRecording(),
+      ).thenAnswer((_) async => mockPendingRecording);
+      when(
+        mockPendingRecording.start(any),
+      ).thenAnswer((_) async => mockRecording);
+      when(
+        camera.processCameraProvider!.isBound(mockImageCapture),
+      ).thenAnswer((_) async => true);
+      when(
+        camera.processCameraProvider!.isBound(mockImageAnalysis),
+      ).thenAnswer((_) async => true);
+      when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
+      when(
+        mockCameraInfo.getCameraState(),
+      ).thenAnswer((_) async => MockLiveCameraState());
+      when(
+        mockCameraInfo.getCameraState(),
+      ).thenAnswer((_) async => MockLiveCameraState());
+      when(mockCamera.cameraControl).thenAnswer((_) => mockCameraControl);
+
+      // Simulate video recording being started so startVideoRecording completes.
+      AndroidCameraCameraX.videoRecordingEventStreamController.add(
+        VideoRecordEventStart.pigeon_detached(
+          pigeon_instanceManager: PigeonInstanceManager(
+            onWeakReferenceRemoved: (_) {},
+          ),
+        ),
+      );
+
+      await camera.availableCameras();
+
+      final int flutterSurfaceTextureId = await camera.createCameraWithSettings(
+        testBackCameraDescription,
+        const MediaSettings(enableAudio: true),
+      );
+      await camera.initializeCamera(flutterSurfaceTextureId);
+
+      await camera.startVideoCapturing(
+        VideoCaptureOptions(flutterSurfaceTextureId),
+      );
+
+      // pause the preview
+      await camera.pausePreview(flutterSurfaceTextureId);
+
+      await camera.setDescriptionWhileRecording(testFrontCameraDescription);
+
+      // verify preview not bound to lifecycle
+      verify(camera.processCameraProvider?.unbindAll()).called(2);
+      verify(
+        camera.processCameraProvider?.bindToLifecycle(
+          mockFrontCameraSelector,
+          <UseCase>[mockVideoCapture, mockImageCapture, mockImageAnalysis],
+        ),
+      ).called(1);
+    });
   });
 
   test(
@@ -4585,6 +5459,117 @@ void main() {
       expect(imageData.width, equals(imageWidth));
 
       await onStreamedFrameAvailableSubscription.cancel();
+    },
+  );
+  test(
+    'onStreamedFrameAvailable emits NV21 CameraImageData with correct format and single plane when initialized with NV21',
+    () async {
+      final AndroidCameraCameraX camera = AndroidCameraCameraX();
+      const int cameraId = 42;
+      final MockProcessCameraProvider mockProcessCameraProvider =
+          MockProcessCameraProvider();
+      final MockImageAnalysis mockImageAnalysis = MockImageAnalysis();
+      final MockCamera mockCamera = MockCamera();
+      final MockCameraInfo mockCameraInfo = MockCameraInfo();
+      final MockImageProxy mockImageProxy = MockImageProxy();
+      final MockPlaneProxy mockPlane = MockPlaneProxy();
+      final List<MockPlaneProxy> mockPlanes = <MockPlaneProxy>[
+        mockPlane,
+        mockPlane,
+        mockPlane,
+      ];
+      final Uint8List testNv21Buffer = Uint8List(10);
+
+      // Mock use case bindings and related Camera objects.
+      when(
+        mockProcessCameraProvider.bindToLifecycle(any, any),
+      ).thenAnswer((_) async => mockCamera);
+      when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
+      when(
+        mockCameraInfo.getCameraState(),
+      ).thenAnswer((_) async => MockLiveCameraState());
+
+      // Set up CameraXProxy with ImageAnalysis specifics needed for testing its Analyzer.
+      camera.proxy = getProxyForTestingUseCaseConfiguration(
+        mockProcessCameraProvider,
+        newAnalyzer:
+            ({
+              required void Function(Analyzer, ImageProxy) analyze,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) {
+              return Analyzer.pigeon_detached(
+                analyze: analyze,
+                pigeon_instanceManager: PigeonInstanceManager(
+                  onWeakReferenceRemoved: (_) {},
+                ),
+              );
+            },
+        newImageAnalysis:
+            ({
+              int? outputImageFormat,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+              ResolutionSelector? resolutionSelector,
+              int? targetRotation,
+            }) => mockImageAnalysis,
+        getNv21BufferImageProxyUtils:
+            (
+              int imageWidth,
+              int imageHeight,
+              List<PlaneProxy> planes, {
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+            }) => Future<Uint8List>.value(testNv21Buffer),
+      );
+
+      // Create and initialize camera with NV21.
+      await camera.createCamera(
+        const CameraDescription(
+          name: 'test',
+          lensDirection: CameraLensDirection.back,
+          sensorOrientation: 0,
+        ),
+        ResolutionPreset.low,
+      );
+      await camera.initializeCamera(
+        cameraId,
+        imageFormatGroup: ImageFormatGroup.nv21,
+      );
+
+      // Create mock ImageProxy with theoretical underlying NV21 format but with three
+      // planes still in YUV_420_888 format that should get transformed to testNv21Buffer.
+      when(mockImageProxy.getPlanes()).thenAnswer((_) async => mockPlanes);
+
+      // Set up listener to receive mock ImageProxy.
+      final Completer<CameraImageData> imageDataCompleter =
+          Completer<CameraImageData>();
+      final StreamSubscription<CameraImageData> subscription = camera
+          .onStreamedFrameAvailable(cameraId)
+          .listen((CameraImageData imageData) {
+            imageDataCompleter.complete(imageData);
+          });
+
+      await untilCalled(mockImageAnalysis.setAnalyzer(any));
+      final Analyzer capturedAnalyzer =
+          verify(mockImageAnalysis.setAnalyzer(captureAny)).captured.single
+              as Analyzer;
+      capturedAnalyzer.analyze(MockAnalyzer(), mockImageProxy);
+
+      final CameraImageData imageData = await imageDataCompleter.future;
+
+      expect(imageData.format.raw, AndroidCameraCameraX.imageProxyFormatNv21);
+      expect(imageData.format.group, ImageFormatGroup.nv21);
+      expect(imageData.planes.length, 1);
+      expect(imageData.planes[0].bytes, testNv21Buffer);
+
+      await subscription.cancel();
     },
   );
 
@@ -6615,7 +7600,7 @@ void main() {
       camera.captureOrientationLocked = true;
 
       // Tell plugin to create detached Observer when camera info updated.
-      const String outputPath = '/temp/REC123.temp';
+      const String outputPath = '/temp/REC123.mp4';
       camera.proxy = CameraXProxy(
         newObserver:
             <T>({
@@ -6654,7 +7639,7 @@ void main() {
               when(
                 mockSystemServicesManager.getTempFilePath(
                   camera.videoPrefix,
-                  '.temp',
+                  '.mp4',
                 ),
               ).thenAnswer((_) async => outputPath);
               return mockSystemServicesManager;
@@ -6688,6 +7673,9 @@ void main() {
       ).thenAnswer((_) async => mockPendingRecording);
       when(
         mockPendingRecording.withAudioEnabled(!camera.enableRecordingAudio),
+      ).thenAnswer((_) async => mockPendingRecording);
+      when(
+        mockPendingRecording.asPersistentRecording(),
       ).thenAnswer((_) async => mockPendingRecording);
       when(
         mockPendingRecording.start(any),
@@ -6756,7 +7744,7 @@ void main() {
       camera.captureOrientationLocked = true;
 
       // Tell plugin to create detached Observer when camera info updated.
-      const String outputPath = '/temp/REC123.temp';
+      const String outputPath = '/temp/REC123.mp4';
       camera.proxy = CameraXProxy(
         newObserver:
             <T>({
@@ -6795,7 +7783,7 @@ void main() {
               when(
                 mockSystemServicesManager.getTempFilePath(
                   camera.videoPrefix,
-                  '.temp',
+                  '.mp4',
                 ),
               ).thenAnswer((_) async => outputPath);
               return mockSystemServicesManager;
@@ -6829,6 +7817,9 @@ void main() {
       ).thenAnswer((_) async => mockPendingRecording);
       when(
         mockPendingRecording.withAudioEnabled(!camera.enableRecordingAudio),
+      ).thenAnswer((_) async => mockPendingRecording);
+      when(
+        mockPendingRecording.asPersistentRecording(),
       ).thenAnswer((_) async => mockPendingRecording);
       when(
         mockPendingRecording.start(any),
@@ -6897,7 +7888,7 @@ void main() {
       camera.captureOrientationLocked = true;
 
       // Tell plugin to create detached Observer when camera info updated.
-      const String outputPath = '/temp/REC123.temp';
+      const String outputPath = '/temp/REC123.mp4';
       camera.proxy = CameraXProxy(
         newObserver:
             <T>({
@@ -6936,7 +7927,7 @@ void main() {
               when(
                 mockSystemServicesManager.getTempFilePath(
                   camera.videoPrefix,
-                  '.temp',
+                  '.mp4',
                 ),
               ).thenAnswer((_) async => outputPath);
               return mockSystemServicesManager;
@@ -6970,6 +7961,9 @@ void main() {
       ).thenAnswer((_) async => mockPendingRecording);
       when(
         mockPendingRecording.withAudioEnabled(!camera.enableRecordingAudio),
+      ).thenAnswer((_) async => mockPendingRecording);
+      when(
+        mockPendingRecording.asPersistentRecording(),
       ).thenAnswer((_) async => mockPendingRecording);
       when(
         mockPendingRecording.start(any),
@@ -7043,7 +8037,7 @@ void main() {
       camera.captureOrientationLocked = true;
 
       // Tell plugin to create detached Observer when camera info updated.
-      const String outputPath = '/temp/REC123.temp';
+      const String outputPath = '/temp/REC123.mp4';
       camera.proxy = CameraXProxy(
         newAnalyzer:
             ({
@@ -7097,7 +8091,7 @@ void main() {
               when(
                 mockSystemServicesManager.getTempFilePath(
                   camera.videoPrefix,
-                  '.temp',
+                  '.mp4',
                 ),
               ).thenAnswer((_) async => outputPath);
               return mockSystemServicesManager;
@@ -7131,6 +8125,9 @@ void main() {
       ).thenAnswer((_) async => mockPendingRecording);
       when(
         mockPendingRecording.withAudioEnabled(!camera.enableRecordingAudio),
+      ).thenAnswer((_) async => mockPendingRecording);
+      when(
+        mockPendingRecording.asPersistentRecording(),
       ).thenAnswer((_) async => mockPendingRecording);
       when(
         mockPendingRecording.start(any),
@@ -7208,7 +8205,7 @@ void main() {
       camera.captureOrientationLocked = true;
 
       // Tell plugin to create detached Observer when camera info updated.
-      const String outputPath = '/temp/REC123.temp';
+      const String outputPath = '/temp/REC123.mp4';
       camera.proxy = CameraXProxy(
         newAnalyzer:
             ({
@@ -7262,7 +8259,7 @@ void main() {
               when(
                 mockSystemServicesManager.getTempFilePath(
                   camera.videoPrefix,
-                  '.temp',
+                  '.mp4',
                 ),
               ).thenAnswer((_) async => outputPath);
               return mockSystemServicesManager;
@@ -7296,6 +8293,9 @@ void main() {
       ).thenAnswer((_) async => mockPendingRecording);
       when(
         mockPendingRecording.withAudioEnabled(!camera.enableRecordingAudio),
+      ).thenAnswer((_) async => mockPendingRecording);
+      when(
+        mockPendingRecording.asPersistentRecording(),
       ).thenAnswer((_) async => mockPendingRecording);
       when(
         mockPendingRecording.start(any),
@@ -7365,7 +8365,7 @@ void main() {
       camera.captureOrientationLocked = true;
 
       // Tell plugin to create detached Observer when camera info updated.
-      const String outputPath = '/temp/REC123.temp';
+      const String outputPath = '/temp/REC123.mp4';
       camera.proxy = CameraXProxy(
         newAnalyzer:
             ({
@@ -7419,7 +8419,7 @@ void main() {
               when(
                 mockSystemServicesManager.getTempFilePath(
                   camera.videoPrefix,
-                  '.temp',
+                  '.mp4',
                 ),
               ).thenAnswer((_) async => outputPath);
               return mockSystemServicesManager;
@@ -7453,6 +8453,9 @@ void main() {
       ).thenAnswer((_) async => mockPendingRecording);
       when(
         mockPendingRecording.withAudioEnabled(!camera.enableRecordingAudio),
+      ).thenAnswer((_) async => mockPendingRecording);
+      when(
+        mockPendingRecording.asPersistentRecording(),
       ).thenAnswer((_) async => mockPendingRecording);
       when(
         mockPendingRecording.start(any),

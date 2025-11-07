@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -57,6 +57,10 @@ void otherDoc(BuildContext context) {
   }
   // #enddocregion tapWithExtra
 
+  // #docregion goRelative
+  void onTapRelative() => const DetailsRoute().goRelative(context);
+  // #enddocregion goRelative
+
   final LoginInfo loginInfo = LoginInfo();
 
   final GoRouter routerWithRedirect = GoRouter(
@@ -85,7 +89,7 @@ void otherDoc(BuildContext context) {
   ],
 )
 // #docregion HomeRoute
-class HomeRoute extends GoRouteData with _$HomeRoute {
+class HomeRoute extends GoRouteData with $HomeRoute {
   const HomeRoute();
 
   @override
@@ -105,7 +109,7 @@ class RedirectRoute extends GoRouteData {
 
 // #docregion login
 @TypedGoRoute<LoginRoute>(path: '/login')
-class LoginRoute extends GoRouteData with _$LoginRoute {
+class LoginRoute extends GoRouteData with $LoginRoute {
   LoginRoute({this.from});
   final String? from;
 
@@ -139,7 +143,7 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-class FamilyRoute extends GoRouteData with _$FamilyRoute {
+class FamilyRoute extends GoRouteData with $FamilyRoute {
   const FamilyRoute({this.fid});
 
   final String? fid;
@@ -207,7 +211,7 @@ class LoginScreen extends StatelessWidget {
 
 // #docregion MyRoute
 @TypedGoRoute<MyRoute>(path: '/my-route')
-class MyRoute extends GoRouteData with _$MyRoute {
+class MyRoute extends GoRouteData with $MyRoute {
   MyRoute({this.queryParameter = 'defaultValue'});
   final String queryParameter;
 
@@ -230,7 +234,7 @@ class MyScreen extends StatelessWidget {
 
 @TypedGoRoute<PersonRouteWithExtra>(path: '/person')
 // #docregion PersonRouteWithExtra
-class PersonRouteWithExtra extends GoRouteData with _$PersonRouteWithExtra {
+class PersonRouteWithExtra extends GoRouteData with $PersonRouteWithExtra {
   PersonRouteWithExtra(this.$extra);
   final Person? $extra;
 
@@ -254,7 +258,7 @@ class PersonScreen extends StatelessWidget {
 // #docregion HotdogRouteWithEverything
 @TypedGoRoute<HotdogRouteWithEverything>(path: '/:ketchup')
 class HotdogRouteWithEverything extends GoRouteData
-    with _$HotdogRouteWithEverything {
+    with $HotdogRouteWithEverything {
   HotdogRouteWithEverything(this.ketchup, this.mustard, this.$extra);
   final bool ketchup; // A required path parameter.
   final String? mustard; // An optional query parameter.
@@ -285,7 +289,7 @@ class HotdogScreen extends StatelessWidget {
 enum BookKind { all, popular, recent }
 
 @TypedGoRoute<BooksRoute>(path: '/books')
-class BooksRoute extends GoRouteData with _$BooksRoute {
+class BooksRoute extends GoRouteData with $BooksRoute {
   BooksRoute({this.kind = BookKind.popular});
   final BookKind kind;
 
@@ -308,7 +312,7 @@ class BooksScreen extends StatelessWidget {
 
 @TypedGoRoute<MyMaterialRouteWithKey>(path: '/my-material-route-with-key')
 // #docregion MyMaterialRouteWithKey
-class MyMaterialRouteWithKey extends GoRouteData with _$MyMaterialRouteWithKey {
+class MyMaterialRouteWithKey extends GoRouteData with $MyMaterialRouteWithKey {
   const MyMaterialRouteWithKey();
   static const LocalKey _key = ValueKey<String>('my-route-with-key');
   @override
@@ -342,7 +346,7 @@ class MyShellRoutePage extends StatelessWidget {
 
 @TypedGoRoute<FancyRoute>(path: '/fancy')
 // #docregion FancyRoute
-class FancyRoute extends GoRouteData with _$FancyRoute {
+class FancyRoute extends GoRouteData with $FancyRoute {
   const FancyRoute();
   @override
   CustomTransitionPage<void> buildPage(
@@ -386,7 +390,7 @@ class MyShellRouteData extends ShellRouteData {
 }
 
 // For GoRoutes:
-class MyGoRouteData extends GoRouteData with _$MyGoRouteData {
+class MyGoRouteData extends GoRouteData with $MyGoRouteData {
   const MyGoRouteData();
 
   static final GlobalKey<NavigatorState> $parentNavigatorKey = rootNavigatorKey;
@@ -396,3 +400,23 @@ class MyGoRouteData extends GoRouteData with _$MyGoRouteData {
 }
 
 // #enddocregion MyShellRouteData
+
+// #docregion relativeRoute
+@TypedRelativeGoRoute<DetailsRoute>(path: 'details')
+class DetailsRoute extends RelativeGoRouteData with $DetailsRoute {
+  const DetailsRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const DetailsScreen();
+}
+// #enddocregion relativeRoute
+
+class DetailsScreen extends StatelessWidget {
+  const DetailsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container();
+  }
+}

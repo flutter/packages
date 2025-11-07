@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -87,7 +87,7 @@ class BranchBData extends StatefulShellBranchData {
   static const String $restorationScopeId = 'restorationScopeId';
 }
 
-class DetailsARouteData extends GoRouteData with _$DetailsARouteData {
+class DetailsARouteData extends GoRouteData with $DetailsARouteData {
   const DetailsARouteData();
 
   @override
@@ -96,7 +96,7 @@ class DetailsARouteData extends GoRouteData with _$DetailsARouteData {
   }
 }
 
-class DetailsBRouteData extends GoRouteData with _$DetailsBRouteData {
+class DetailsBRouteData extends GoRouteData with $DetailsBRouteData {
   const DetailsBRouteData();
 
   @override

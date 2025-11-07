@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -160,9 +160,9 @@ class GooglePlayProductDetails extends ProductDetails {
   /// object was contructed for, or `null` if it was not a subscription.
   String? get offerToken =>
       subscriptionIndex != null &&
-              productDetails.subscriptionOfferDetails != null
-          ? productDetails
-              .subscriptionOfferDetails![subscriptionIndex!]
-              .offerIdToken
-          : null;
+          productDetails.subscriptionOfferDetails != null
+      ? productDetails
+            .subscriptionOfferDetails![subscriptionIndex!]
+            .offerIdToken
+      : null;
 }

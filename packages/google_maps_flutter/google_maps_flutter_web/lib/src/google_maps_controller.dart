@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -139,6 +139,11 @@ class GoogleMapController {
   TileOverlaysController? _tileOverlaysController;
   GroundOverlaysController? _groundOverlaysController;
 
+  StreamSubscription<void>? _onClickSubscription;
+  StreamSubscription<void>? _onRightClickSubscription;
+  StreamSubscription<void>? _onBoundsChangedSubscription;
+  StreamSubscription<void>? _onIdleSubscription;
+
   // Keeps track if _attachGeometryControllers has been called or not.
   bool _controllersBoundToMap = false;
 
@@ -247,32 +252,48 @@ class GoogleMapController {
   void _attachMapEvents(gmaps.Map map) {
     map.onTilesloaded.first.then((void _) {
       // Report the map as ready to go the first time the tiles load
-      _streamController.add(WebMapReadyEvent(_mapId));
+      if (!_streamController.isClosed) {
+        _streamController.add(WebMapReadyEvent(_mapId));
+      }
     });
-    map.onClick.listen((gmaps.MapMouseEventOrIconMouseEvent event) {
+    _onClickSubscription = map.onClick.listen((
+      gmaps.MapMouseEventOrIconMouseEvent event,
+    ) {
       assert(event.latLng != null);
-      _streamController.add(
-        MapTapEvent(_mapId, gmLatLngToLatLng(event.latLng!)),
-      );
+      if (!_streamController.isClosed) {
+        _streamController.add(
+          MapTapEvent(_mapId, gmLatLngToLatLng(event.latLng!)),
+        );
+      }
     });
-    map.onRightclick.listen((gmaps.MapMouseEvent event) {
+    _onRightClickSubscription = map.onRightclick.listen((
+      gmaps.MapMouseEvent event,
+    ) {
       assert(event.latLng != null);
-      _streamController.add(
-        MapLongPressEvent(_mapId, gmLatLngToLatLng(event.latLng!)),
-      );
+      if (!_streamController.isClosed) {
+        _streamController.add(
+          MapLongPressEvent(_mapId, gmLatLngToLatLng(event.latLng!)),
+        );
+      }
     });
-    map.onBoundsChanged.listen((void _) {
+    _onBoundsChangedSubscription = map.onBoundsChanged.listen((void _) {
       if (!_mapIsMoving) {
         _mapIsMoving = true;
-        _streamController.add(CameraMoveStartedEvent(_mapId));
+        if (!_streamController.isClosed) {
+          _streamController.add(CameraMoveStartedEvent(_mapId));
+        }
       }
-      _streamController.add(
-        CameraMoveEvent(_mapId, _gmViewportToCameraPosition(map)),
-      );
+      if (!_streamController.isClosed) {
+        _streamController.add(
+          CameraMoveEvent(_mapId, _gmViewportToCameraPosition(map)),
+        );
+      }
     });
-    map.onIdle.listen((void _) {
+    _onIdleSubscription = map.onIdle.listen((void _) {
       _mapIsMoving = false;
-      _streamController.add(CameraIdleEvent(_mapId));
+      if (!_streamController.isClosed) {
+        _streamController.add(CameraIdleEvent(_mapId));
+      }
     });
   }
 
@@ -648,6 +669,14 @@ class GoogleMapController {
     _clusterManagersController = null;
     _tileOverlaysController = null;
     _groundOverlaysController = null;
+    _onClickSubscription?.cancel();
+    _onClickSubscription = null;
+    _onRightClickSubscription?.cancel();
+    _onRightClickSubscription = null;
+    _onBoundsChangedSubscription?.cancel();
+    _onBoundsChangedSubscription = null;
+    _onIdleSubscription?.cancel();
+    _onIdleSubscription = null;
     _streamController.close();
   }
 }

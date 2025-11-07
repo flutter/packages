@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -84,6 +84,19 @@ public class PendingRecordingTest {
   }
 
   @Test
+  public void asPersistentRecording_returnsPersistentRecordingInstance() {
+    final PigeonApiPendingRecording api =
+        new TestProxyApiRegistrar().getPigeonApiPendingRecording();
+    final PendingRecording instance = mock(PendingRecording.class);
+    final PendingRecording persistentInstance = mock(PendingRecording.class);
+
+    when(instance.asPersistentRecording()).thenReturn(persistentInstance);
+
+    assertEquals(persistentInstance, api.asPersistentRecording(instance));
+    verify(instance).asPersistentRecording();
+  }
+
+  @Test
   public void start_callsStartOnInstance() {
     final PigeonApiPendingRecording api =
         new TestProxyApiRegistrar().getPigeonApiPendingRecording();
@@ -98,7 +111,7 @@ public class PendingRecordingTest {
           .when(() -> ContextCompat.getMainExecutor(any()))
           .thenAnswer((Answer<Executor>) invocation -> mock(Executor.class));
 
-      when(instance.start(any(), any())).thenReturn(value);
+      when(instance.start(any(Executor.class), any())).thenReturn(value);
 
       assertEquals(value, api.start(instance, listener));
     }

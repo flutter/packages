@@ -1,9 +1,6 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-//
-// Note: the code in this file is taken directly from the official Google MLKit example:
-// https://github.com/googlesamples/mlkit
 
 package io.flutter.plugins.camera.media;
 
@@ -28,8 +25,6 @@ public class ImageStreamReaderUtils {
    * NV21 format. This happens if the planes share the same buffer, the V buffer is one position
    * before the U buffer and the planes have a pixelStride of 2. If this is case, we can just copy
    * them to the NV21 array.
-   *
-   * <p>https://github.com/googlesamples/mlkit/blob/master/android/vision-quickstart/app/src/main/java/com/google/mlkit/vision/demo/BitmapUtils.java
    */
   @NonNull
   public ByteBuffer yuv420ThreePlanesToNV21(
@@ -60,23 +55,7 @@ public class ImageStreamReaderUtils {
     return ByteBuffer.wrap(out);
   }
 
-  /**
-   * Copyright 2020 Google LLC. All rights reserved.
-   *
-   * <p>Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
-   * except in compliance with the License. You may obtain a copy of the License at
-   *
-   * <p>http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * <p>Unless required by applicable law or agreed to in writing, software distributed under the
-   * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
-   * either express or implied. See the License for the specific language governing permissions and
-   * limitations under the License.
-   *
-   * <p>Checks if the UV plane buffers of a YUV_420_888 image are in the NV21 format.
-   *
-   * <p>https://github.com/googlesamples/mlkit/blob/master/android/vision-quickstart/app/src/main/java/com/google/mlkit/vision/demo/BitmapUtils.java
-   */
+  /** Checks if the UV plane buffers of a YUV_420_888 image are in the NV21 format. */
   private static boolean areUVPlanesNV21(@NonNull Image.Plane[] planes, int width, int height) {
     int imageSize = width * height;
 
@@ -104,24 +83,10 @@ public class ImageStreamReaderUtils {
   }
 
   /**
-   * Copyright 2020 Google LLC. All rights reserved.
-   *
-   * <p>Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
-   * except in compliance with the License. You may obtain a copy of the License at
-   *
-   * <p>http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * <p>Unless required by applicable law or agreed to in writing, software distributed under the
-   * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
-   * either express or implied. See the License for the specific language governing permissions and
-   * limitations under the License.
-   *
-   * <p>Unpack an image plane into a byte array.
+   * Unpack an image plane into a byte array.
    *
    * <p>The input plane data will be copied in 'out', starting at 'offset' and every pixel will be
    * spaced by 'pixelStride'. Note that there is no row padding on the output.
-   *
-   * <p>https://github.com/googlesamples/mlkit/blob/master/android/vision-quickstart/app/src/main/java/com/google/mlkit/vision/demo/BitmapUtils.java
    */
   private static void unpackPlane(
       @NonNull Image.Plane plane, int width, int height, byte[] out, int offset, int pixelStride)
