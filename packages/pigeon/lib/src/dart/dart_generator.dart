@@ -2440,7 +2440,7 @@ ${api.name}({
         proxyApis: root.apis.whereType(),
       );
     }
-    if (generatorOptions.useJni || generatorOptions.useFfi) {
+    if (usesNativeInterop(generatorOptions)) {
       if (generatorOptions.useJni) {
         _writeJniCodec(indent, root);
       }

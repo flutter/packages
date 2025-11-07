@@ -38,6 +38,7 @@ See the API documentation for details on the following topics:
 - [State restoration](https://pub.dev/documentation/go_router/latest/topics/State%20restoration-topic.html)
 
 ## Migration Guides
+- [Migrating to 17.0.0](https://flutter.dev/go/go-router-v17-breaking-changes).
 - [Migrating to 16.0.0](https://flutter.dev/go/go-router-v16-breaking-changes).
 - [Migrating to 15.0.0](https://flutter.dev/go/go-router-v15-breaking-changes).
 - [Migrating to 14.0.0](https://flutter.dev/go/go-router-v14-breaking-changes).

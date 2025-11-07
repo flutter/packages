@@ -49,7 +49,7 @@ id objc_retainBlock(id);
 typedef id (^ProtocolTrampoline)(void *sel);
 __attribute__((visibility("default"))) __attribute__((used)) id
 _test_plugin_protocolTrampoline_1mbt9g9(id target, void *sel) {
-  return ((ProtocolTrampoline)((id (*)(id, SEL, SEL))objc_msgSend)(
+  return ((ProtocolTrampoline)((id(*)(id, SEL, SEL))objc_msgSend)(
       target, @selector(getDOBJCDartProtocolMethodForSelector:), sel))(sel);
 }
 #undef BLOCKING_BLOCK_IMPL

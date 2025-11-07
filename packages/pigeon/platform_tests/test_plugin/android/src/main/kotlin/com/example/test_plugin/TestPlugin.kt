@@ -963,11 +963,29 @@ class NIIntegrationTests : NIHostIntegrationCoreApi() {
     return list
   }
 
+  override fun echoStringList(stringList: List<String?>): List<String?> {
+    return stringList
+  }
+
+  override fun echoIntList(intList: List<Long?>): List<Long?> {
+    return intList
+  }
+
+  override fun echoDoubleList(doubleList: List<Double?>): List<Double?> {
+    return doubleList
+  }
+
+  override fun echoBoolList(boolList: List<Boolean?>): List<Boolean?> {
+    return boolList
+  }
+
   override fun echoEnumList(enumList: List<NIAnEnum?>): List<NIAnEnum?> {
     return enumList
   }
 
-  override fun echoClassList(classList: List<NIAllNullableTypes?>): List<NIAllNullableTypes?> {
+  override fun echoClassList(
+      classList: List<NIAllNullableTypesWithoutRecursion?>
+  ): List<NIAllNullableTypesWithoutRecursion?> {
     return classList
   }
 
@@ -975,7 +993,9 @@ class NIIntegrationTests : NIHostIntegrationCoreApi() {
     return enumList
   }
 
-  override fun echoNonNullClassList(classList: List<NIAllNullableTypes>): List<NIAllNullableTypes> {
+  override fun echoNonNullClassList(
+      classList: List<NIAllNullableTypesWithoutRecursion>
+  ): List<NIAllNullableTypesWithoutRecursion> {
     return classList
   }
 
@@ -1068,8 +1088,8 @@ class NIIntegrationTests : NIHostIntegrationCoreApi() {
       aNullableBool: Boolean?,
       aNullableInt: Long?,
       aNullableString: String?
-  ): NIAllNullableTypes {
-    return NIAllNullableTypes(
+  ): NIAllNullableTypesWithoutRecursion {
+    return NIAllNullableTypesWithoutRecursion(
         aNullableBool = aNullableBool,
         aNullableInt = aNullableInt,
         aNullableString = aNullableString)
@@ -1131,8 +1151,8 @@ class NIIntegrationTests : NIHostIntegrationCoreApi() {
   }
 
   override fun echoNullableClassList(
-      classList: List<NIAllNullableTypes?>?
-  ): List<NIAllNullableTypes?>? {
+      classList: List<NIAllNullableTypesWithoutRecursion?>?
+  ): List<NIAllNullableTypesWithoutRecursion?>? {
     return classList
   }
 
@@ -1165,8 +1185,8 @@ class NIIntegrationTests : NIHostIntegrationCoreApi() {
   }
 
   override fun echoNullableClassMap(
-      classMap: Map<Long?, NIAllNullableTypes?>?
-  ): Map<Long?, NIAllNullableTypes?>? {
+      classMap: Map<Long?, NIAllNullableTypesWithoutRecursion?>?
+  ): Map<Long?, NIAllNullableTypesWithoutRecursion?>? {
     return classMap
   }
 

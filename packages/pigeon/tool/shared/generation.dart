@@ -135,10 +135,10 @@ Future<int> generateTestPigeons({
 
     final String? swiftErrorClassName =
         swiftErrorUseDefaultErrorName ? null : '${pascalCaseName}Error';
-
     // Generate the default language test plugin output.
     int generateCode = await runPigeon(
       input: './pigeons/$input.dart',
+      appDirectory: '$outputBase/example/',
       dartOut: '$sharedDartOutputBase/lib/src/generated/$input.gen.dart',
       dartTestOut:
           input == 'message'
@@ -154,7 +154,6 @@ Future<int> generateTestPigeons({
       kotlinPackage: 'com.example.test_plugin',
       kotlinErrorClassName: kotlinErrorName,
       kotlinUseJni: input == 'ni_tests',
-      kotlinAppDirectory: '$outputBase/example',
       kotlinIncludeErrorClass: input != 'primitive',
       // iOS/macOS
       swiftOut:
@@ -237,6 +236,7 @@ Future<int> generateTestPigeons({
 
 Future<int> runPigeon({
   required String input,
+  String? appDirectory,
   String? kotlinOut,
   String? kotlinPackage,
   String? kotlinErrorClassName,
@@ -301,6 +301,7 @@ Future<int> runPigeon({
   final int result = await Pigeon.runWithOptions(
     PigeonOptions(
       input: input,
+      appDirectory: appDirectory,
       copyrightHeader: copyrightHeader,
       dartOut: dartOut,
       dartTestOut: dartTestOut,
@@ -320,7 +321,6 @@ Future<int> runPigeon({
         errorClassName: kotlinErrorClassName,
         includeErrorClass: kotlinIncludeErrorClass,
         useJni: kotlinUseJni,
-        appDirectory: kotlinAppDirectory,
       ),
       objcHeaderOut: objcHeaderOut,
       objcSourceOut: objcSourceOut,

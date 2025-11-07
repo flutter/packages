@@ -66,7 +66,7 @@ void main() {
       '2': <String, Object>{'1': '1', '2': '2', '3': '3'},
       '3': '3',
     };
-    expect(_equalMaps(expected, mergeMaps(source, modification)), isTrue);
+    expect(_equalMaps(expected, mergePigeonMaps(source, modification)), isTrue);
   });
 
   test('get codec types from all classes and enums', () {

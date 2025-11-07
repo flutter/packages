@@ -33,6 +33,7 @@ class InternalPigeonOptions {
   /// Creates a instance of InternalPigeonOptions
   const InternalPigeonOptions({
     required this.input,
+    required this.appDirectory,
     required this.objcOptions,
     required this.javaOptions,
     required this.swiftOptions,
@@ -51,6 +52,7 @@ class InternalPigeonOptions {
     PigeonOptions options,
     Iterable<String>? copyrightHeader,
   ) : input = options.input,
+      appDirectory = options.appDirectory,
       objcOptions =
           (options.objcHeaderOut == null || options.objcSourceOut == null)
               ? null
@@ -153,6 +155,9 @@ class InternalPigeonOptions {
 
   /// Path to the file which will be processed.
   final String? input;
+
+  /// Path to the app directory.
+  final String? appDirectory;
 
   /// Options that control how Dart will be generated.
   final InternalDartOptions? dartOptions;
@@ -777,8 +782,7 @@ class JnigenYamlGeneratorAdapter implements GeneratorAdapter {
           options.dartOptions!,
           options.kotlinOptions!,
           options.basePath,
-          options.dartOptions?.dartOut,
-          options.kotlinOptions!.appDirectory,
+          options.appDirectory,
         );
 
     generator.generate(
@@ -793,10 +797,7 @@ class JnigenYamlGeneratorAdapter implements GeneratorAdapter {
   IOSink? shouldGenerate(InternalPigeonOptions options, FileType _) =>
       options.kotlinOptions?.kotlinOut != null &&
               (options.kotlinOptions?.useJni ?? false)
-          ? _openSink(
-            'jnigen.yaml',
-            basePath: options.kotlinOptions?.appDirectory ?? '',
-          )
+          ? _openSink('jnigen.yaml', basePath: options.appDirectory ?? '')
           : null;
 
   @override

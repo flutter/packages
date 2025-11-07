@@ -237,6 +237,7 @@ class PigeonOptions {
   /// Creates a instance of PigeonOptions
   const PigeonOptions({
     this.input,
+    this.appDirectory,
     this.dartOut,
     this.dartTestOut,
     this.objcHeaderOut,
@@ -264,6 +265,9 @@ class PigeonOptions {
 
   /// Path to the file which will be processed.
   final String? input;
+
+  /// The directory that the app exists in, this is required for Jni and Ffi APIs.
+  final String? appDirectory;
 
   /// Path to the Dart file that will be generated.
   final String? dartOut;
@@ -339,6 +343,7 @@ class PigeonOptions {
   static PigeonOptions fromMap(Map<String, Object> map) {
     return PigeonOptions(
       input: map['input'] as String?,
+      appDirectory: map['appDirectory'] as String?,
       dartOut: map['dartOut'] as String?,
       dartTestOut: map['dartTestOut'] as String?,
       objcHeaderOut: map['objcHeaderOut'] as String?,
@@ -397,6 +402,7 @@ class PigeonOptions {
   Map<String, Object> toMap() {
     final Map<String, Object> result = <String, Object>{
       if (input != null) 'input': input!,
+      if (appDirectory != null) 'appDirectory': appDirectory!,
       if (dartOut != null) 'dartOut': dartOut!,
       if (dartTestOut != null) 'dartTestOut': dartTestOut!,
       if (objcHeaderOut != null) 'objcHeaderOut': objcHeaderOut!,

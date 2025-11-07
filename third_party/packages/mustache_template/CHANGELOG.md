@@ -1,3 +1,7 @@
+## 2.0.2
+
+* Adds emoji support.
+
 ## 2.0.1
 
 * Transfers the package source from https://github.com/jonahwilliams/mustache

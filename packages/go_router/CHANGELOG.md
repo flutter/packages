@@ -1,3 +1,13 @@
+## 17.0.0
+
+- **BREAKING CHANGE**
+  - `ShellRoute`'s navigating changes notify `GoRouter`'s observers by default.
+  - Adds `notifyRootObserver` to `ShellRouteBase`, `ShellRoute`, `StatefulShellRoute`, `ShellRouteData.$route`, `TypedShellRoute`, `TypedStatefulShellRoute`.
+
+## 16.3.0
+
+- Adds a top-level `onEnter` callback with access to current and next route states.
+
 ## 16.2.5
 
 - Fixes `GoRouter.of(context)` access inside redirect callbacks by providing router access through Zone-based context tracking.

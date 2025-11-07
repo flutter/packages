@@ -17,8 +17,7 @@ class InternalJnigenYamlOptions extends InternalOptions {
     this.dartOptions,
     this.kotlinOptions,
     this.basePath,
-    this.dartOut,
-    this.exampleAppDirectory,
+    this.appDirectory,
   );
 
   /// Dart options.
@@ -30,11 +29,8 @@ class InternalJnigenYamlOptions extends InternalOptions {
   /// A base path to be prepended to all provided output paths.
   final String? basePath;
 
-  /// Dart output path.
-  final String? dartOut;
-
-  /// Android example app directory.
-  final String? exampleAppDirectory;
+  /// App directory.
+  final String? appDirectory;
 }
 
 /// Generator for jnigen yaml configuration file.
@@ -51,17 +47,14 @@ class JnigenYamlGenerator extends Generator<InternalJnigenYamlOptions> {
     indent.format('''
       android_sdk_config:
         add_gradle_deps: true
-        android_example: '${generatorOptions.exampleAppDirectory ?? ''}'
-
-      # source_path:
-      #   - 'android/src/main/java'
+        android_example: './'
 
       summarizer:
         backend: asm
 
       output:
         dart:
-          path: ${path.posix.join(generatorOptions.basePath ?? '', path.withoutExtension(generatorOptions.dartOut ?? ''))}.jni.dart
+          path: ${path.relative(path.withoutExtension(generatorOptions.dartOptions.dartOut ?? './lib/pigeons/'), from: generatorOptions.appDirectory ?? './')}.jni.dart
           structure: single_file
 
       log_level: all
