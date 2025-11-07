@@ -134,8 +134,11 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
     throw UnimplementedError('getAudioTracks() has not been implemented.');
   }
 
-  /// Selects which audio track is chosen for playback from its [trackId]
-  Future<void> selectAudioTrack(int playerId, String trackId) {
+  /// Selects which audio track is chosen for playback.
+  ///
+  /// The [track] parameter should be one of the tracks returned by [getAudioTracks].
+  /// Platform implementations will extract the necessary indices from the track object.
+  Future<void> selectAudioTrack(int playerId, VideoAudioTrack track) {
     throw UnimplementedError('selectAudioTrack() has not been implemented.');
   }
 
@@ -567,7 +570,8 @@ class VideoCreationOptions {
 class VideoAudioTrack {
   /// Constructs an instance of [VideoAudioTrack].
   const VideoAudioTrack({
-    required this.id,
+    required this.groupIndex,
+    required this.trackIndex,
     required this.label,
     required this.language,
     required this.isSelected,
@@ -577,8 +581,11 @@ class VideoAudioTrack {
     this.codec,
   });
 
-  /// Unique identifier for the audio track.
-  final String id;
+  /// The group index of the audio track.
+  final int groupIndex;
+
+  /// The track index within the group.
+  final int trackIndex;
 
   /// Human-readable label for the track.
   ///
@@ -618,7 +625,8 @@ class VideoAudioTrack {
     return identical(this, other) ||
         other is VideoAudioTrack &&
             runtimeType == other.runtimeType &&
-            id == other.id &&
+            groupIndex == other.groupIndex &&
+            trackIndex == other.trackIndex &&
             label == other.label &&
             language == other.language &&
             isSelected == other.isSelected &&
@@ -630,7 +638,8 @@ class VideoAudioTrack {
 
   @override
   int get hashCode => Object.hash(
-    id,
+    groupIndex,
+    trackIndex,
     label,
     language,
     isSelected,
@@ -643,7 +652,8 @@ class VideoAudioTrack {
   @override
   String toString() =>
       'VideoAudioTrack('
-      'id: $id, '
+      'groupIndex: $groupIndex, '
+      'trackIndex: $trackIndex, '
       'label: $label, '
       'language: $language, '
       'isSelected: $isSelected, '

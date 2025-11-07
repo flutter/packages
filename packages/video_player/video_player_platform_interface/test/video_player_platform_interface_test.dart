@@ -30,8 +30,15 @@ void main() {
   test(
     'default implementation selectAudioTrack throws unimplemented',
     () async {
+      const VideoAudioTrack track = VideoAudioTrack(
+        groupIndex: 0,
+        trackIndex: 0,
+        label: 'Test',
+        language: 'en',
+        isSelected: false,
+      );
       await expectLater(
-        () => initialInstance.selectAudioTrack(1, 'trackId'),
+        () => initialInstance.selectAudioTrack(1, track),
         throwsUnimplementedError,
       );
     },
