@@ -1810,10 +1810,9 @@ ${api.name}({
         proxyApis: root.apis.whereType(),
       );
     }
+    
     if (generatorOptions.useJni) {
-      if (generatorOptions.useJni) {
-        _writeJniCodec(indent, root);
-      }
+      _writeJniCodec(indent, root);
 
       indent.writeln('bool isType<T>(Type t) => T == t;');
 
