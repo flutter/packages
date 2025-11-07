@@ -183,13 +183,16 @@ class IsPlayingStateEvent extends PlatformVideoEvent {
 /// This includes when the selected audio track changes after calling selectAudioTrack.
 /// Corresponds to ExoPlayer's onTracksChanged.
 class AudioTrackChangedEvent extends PlatformVideoEvent {
-  AudioTrackChangedEvent({this.selectedTrackId});
+  AudioTrackChangedEvent({this.selectedGroupIndex, this.selectedTrackIndex});
 
-  /// The ID of the newly selected audio track, if any.
-  String? selectedTrackId;
+  /// The group index of the newly selected audio track, if any.
+  int? selectedGroupIndex;
+
+  /// The track index of the newly selected audio track, if any.
+  int? selectedTrackIndex;
 
   List<Object?> _toList() {
-    return <Object?>[selectedTrackId];
+    return <Object?>[selectedGroupIndex, selectedTrackIndex];
   }
 
   Object encode() {
@@ -198,7 +201,10 @@ class AudioTrackChangedEvent extends PlatformVideoEvent {
 
   static AudioTrackChangedEvent decode(Object result) {
     result as List<Object?>;
-    return AudioTrackChangedEvent(selectedTrackId: result[0] as String?);
+    return AudioTrackChangedEvent(
+      selectedGroupIndex: result[0] as int?,
+      selectedTrackIndex: result[1] as int?,
+    );
   }
 
   @override
@@ -469,7 +475,8 @@ class AudioTrackMessage {
 /// Raw audio track data from ExoPlayer Format objects.
 class ExoPlayerAudioTrackData {
   ExoPlayerAudioTrackData({
-    required this.trackId,
+    required this.groupIndex,
+    required this.trackIndex,
     this.label,
     this.language,
     required this.isSelected,
@@ -479,7 +486,9 @@ class ExoPlayerAudioTrackData {
     this.codec,
   });
 
-  String trackId;
+  int groupIndex;
+
+  int trackIndex;
 
   String? label;
 
@@ -497,7 +506,8 @@ class ExoPlayerAudioTrackData {
 
   List<Object?> _toList() {
     return <Object?>[
-      trackId,
+      groupIndex,
+      trackIndex,
       label,
       language,
       isSelected,
@@ -515,14 +525,15 @@ class ExoPlayerAudioTrackData {
   static ExoPlayerAudioTrackData decode(Object result) {
     result as List<Object?>;
     return ExoPlayerAudioTrackData(
-      trackId: result[0]! as String,
-      label: result[1] as String?,
-      language: result[2] as String?,
-      isSelected: result[3]! as bool,
-      bitrate: result[4] as int?,
-      sampleRate: result[5] as int?,
-      channelCount: result[6] as int?,
-      codec: result[7] as String?,
+      groupIndex: result[0]! as int,
+      trackIndex: result[1]! as int,
+      label: result[2] as String?,
+      language: result[3] as String?,
+      isSelected: result[4]! as bool,
+      bitrate: result[5] as int?,
+      sampleRate: result[6] as int?,
+      channelCount: result[7] as int?,
+      codec: result[8] as String?,
     );
   }
 
@@ -1142,8 +1153,8 @@ class VideoPlayerInstanceApi {
     }
   }
 
-  /// Selects which audio track is chosen for playback from its [trackId]
-  Future<void> selectAudioTrack(String trackId) async {
+  /// Selects which audio track is chosen for playback from its group and track indices.
+  Future<void> selectAudioTrack(int groupIndex, int trackIndex) async {
     final String pigeonVar_channelName =
         'dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.selectAudioTrack$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
@@ -1153,7 +1164,7 @@ class VideoPlayerInstanceApi {
           binaryMessenger: pigeonVar_binaryMessenger,
         );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[trackId],
+      <Object?>[groupIndex, trackIndex],
     );
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;

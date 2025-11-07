@@ -25,5 +25,5 @@ public interface VideoPlayerCallbacks {
 
   void onIsPlayingStateUpdate(boolean isPlaying);
 
-  void onAudioTrackChanged(@Nullable String selectedTrackId);
+  void onAudioTrackChanged(@Nullable Long selectedGroupIndex, @Nullable Long selectedTrackIndex);
 }

@@ -743,9 +743,9 @@ void SetUpFVPVideoPlayerInstanceApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
-        NSString *arg_trackId = GetNullableObjectAtIndex(args, 0);
+        NSInteger arg_trackIndex = [GetNullableObjectAtIndex(args, 0) integerValue];
         FlutterError *error;
-        [api selectAudioTrack:arg_trackId error:&error];
+        [api selectAudioTrack:arg_trackIndex error:&error];
         callback(wrapResult(nil, error));
       }];
     } else {

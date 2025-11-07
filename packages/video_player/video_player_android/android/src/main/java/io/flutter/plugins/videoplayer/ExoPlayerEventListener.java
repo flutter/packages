@@ -95,25 +95,29 @@ public abstract class ExoPlayerEventListener implements Player.Listener {
   @Override
   public void onTracksChanged(@NonNull Tracks tracks) {
     // Find the currently selected audio track and notify
-    String selectedTrackId = findSelectedAudioTrackId(tracks);
-    events.onAudioTrackChanged(selectedTrackId);
+    Long[] selectedTrackIndices = findSelectedAudioTrackIndices(tracks);
+    if (selectedTrackIndices != null) {
+      events.onAudioTrackChanged(selectedTrackIndices[0], selectedTrackIndices[1]);
+    } else {
+      events.onAudioTrackChanged(null, null);
+    }
   }
 
   /**
-   * Finds the ID of the currently selected audio track.
+   * Finds the indices of the currently selected audio track.
    *
    * @param tracks The current tracks
-   * @return The track ID in format "groupIndex_trackIndex", or null if no audio track is selected
+   * @return An array with [groupIndex, trackIndex], or null if no audio track is selected
    */
   @Nullable
-  private String findSelectedAudioTrackId(@NonNull Tracks tracks) {
+  private Long[] findSelectedAudioTrackIndices(@NonNull Tracks tracks) {
     int groupIndex = 0;
     for (Tracks.Group group : tracks.getGroups()) {
       if (group.getType() == C.TRACK_TYPE_AUDIO && group.isSelected()) {
         // Find the selected track within this group
         for (int i = 0; i < group.length; i++) {
           if (group.isTrackSelected(i)) {
-            return groupIndex + "_" + i;
+            return new Long[] {(long) groupIndex, (long) i};
           }
         }
       }

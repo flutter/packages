@@ -237,7 +237,8 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
       for (final ExoPlayerAudioTrackData track in nativeData.exoPlayerTracks!) {
         tracks.add(
           VideoAudioTrack(
-            id: track.trackId,
+            groupIndex: track.groupIndex!,
+            trackIndex: track.trackIndex!,
             label: track.label,
             language: track.language,
             isSelected: track.isSelected,
@@ -254,8 +255,11 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
-  Future<void> selectAudioTrack(int playerId, String trackId) {
-    return _playerWith(id: playerId).selectAudioTrack(trackId);
+  Future<void> selectAudioTrack(int playerId, VideoAudioTrack track) {
+    // Extract groupIndex and trackIndex from the track object for Android's ExoPlayer
+    return _playerWith(
+      id: playerId,
+    ).selectAudioTrack(track.groupIndex, track.trackIndex);
   }
 
   @override
@@ -351,12 +355,12 @@ class _PlayerInstance {
     return _api.getAudioTracks();
   }
 
-  Future<void> selectAudioTrack(String trackId) async {
+  Future<void> selectAudioTrack(int groupIndex, int trackIndex) async {
     // Create a completer to wait for the track selection to complete
     _audioTrackSelectionCompleter = Completer<void>();
 
     try {
-      await _api.selectAudioTrack(trackId);
+      await _api.selectAudioTrack(groupIndex, trackIndex);
 
       // Wait for the onTracksChanged event from ExoPlayer with a timeout
       await _audioTrackSelectionCompleter!.future.timeout(

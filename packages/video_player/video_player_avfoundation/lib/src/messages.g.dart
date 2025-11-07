@@ -894,7 +894,7 @@ class VideoPlayerInstanceApi {
     }
   }
 
-  Future<void> selectAudioTrack(String trackId) async {
+  Future<void> selectAudioTrack(int trackIndex) async {
     final String pigeonVar_channelName =
         'dev.flutter.pigeon.video_player_avfoundation.VideoPlayerInstanceApi.selectAudioTrack$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
@@ -904,7 +904,7 @@ class VideoPlayerInstanceApi {
           binaryMessenger: pigeonVar_binaryMessenger,
         );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[trackId],
+      <Object?>[trackIndex],
     );
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;

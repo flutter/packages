@@ -106,14 +106,14 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
     }
   }
 
-  Future<void> _selectAudioTrack(String trackId) async {
+  Future<void> _selectAudioTrack(VideoAudioTrack track) async {
     final VideoPlayerController? controller = _controller;
     if (controller == null) {
       return;
     }
 
     try {
-      await controller.selectAudioTrack(trackId);
+      await controller.selectAudioTrack(track);
 
       // Reload tracks to update selection status
       await _loadAudioTracks();
@@ -121,9 +121,13 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
       if (!mounted) {
         return;
       }
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Selected audio track: $trackId')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Selected audio track: ${track.label.isNotEmpty ? track.label : "Track ${track.groupIndex}_${track.trackIndex}"}',
+          ),
+        ),
+      );
     } catch (e) {
       if (!mounted) {
         return;
@@ -348,7 +352,9 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
           ),
         ),
         title: Text(
-          track.label.isNotEmpty ? track.label : 'Track ${track.id}',
+          track.label.isNotEmpty
+              ? track.label
+              : 'Track ${track.groupIndex}_${track.trackIndex}',
           style: TextStyle(
             fontWeight: track.isSelected ? FontWeight.bold : FontWeight.normal,
           ),
@@ -356,7 +362,7 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text('ID: ${track.id}'),
+            Text('Group: ${track.groupIndex}, Track: ${track.trackIndex}'),
             Text('Language: ${track.language}'),
             if (track.codec != null) Text('Codec: ${track.codec}'),
             if (track.bitrate != null) Text('Bitrate: ${track.bitrate} bps'),
@@ -370,7 +376,7 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
             track.isSelected
                 ? const Icon(Icons.radio_button_checked, color: Colors.green)
                 : const Icon(Icons.radio_button_unchecked),
-        onTap: track.isSelected ? null : () => _selectAudioTrack(track.id),
+        onTap: track.isSelected ? null : () => _selectAudioTrack(track),
       ),
     );
   }

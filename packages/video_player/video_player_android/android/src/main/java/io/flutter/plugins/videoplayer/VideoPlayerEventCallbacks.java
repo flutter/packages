@@ -65,7 +65,8 @@ final class VideoPlayerEventCallbacks implements VideoPlayerCallbacks {
   }
 
   @Override
-  public void onAudioTrackChanged(@Nullable String selectedTrackId) {
-    eventSink.success(new AudioTrackChangedEvent(selectedTrackId));
+  public void onAudioTrackChanged(
+      @Nullable Long selectedGroupIndex, @Nullable Long selectedTrackIndex) {
+    eventSink.success(new AudioTrackChangedEvent(selectedGroupIndex, selectedTrackIndex));
   }
 }

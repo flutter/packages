@@ -234,19 +234,23 @@ data class IsPlayingStateEvent(val isPlaying: Boolean) : PlatformVideoEvent() {
  * Generated class from Pigeon that represents data sent in messages.
  */
 data class AudioTrackChangedEvent(
-    /** The ID of the newly selected audio track, if any. */
-    val selectedTrackId: String? = null
+    /** The group index of the newly selected audio track, if any. */
+    val selectedGroupIndex: Long? = null,
+    /** The track index of the newly selected audio track, if any. */
+    val selectedTrackIndex: Long? = null
 ) : PlatformVideoEvent() {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): AudioTrackChangedEvent {
-      val selectedTrackId = pigeonVar_list[0] as String?
-      return AudioTrackChangedEvent(selectedTrackId)
+      val selectedGroupIndex = pigeonVar_list[0] as Long?
+      val selectedTrackIndex = pigeonVar_list[1] as Long?
+      return AudioTrackChangedEvent(selectedGroupIndex, selectedTrackIndex)
     }
   }
 
   fun toList(): List<Any?> {
     return listOf(
-        selectedTrackId,
+        selectedGroupIndex,
+        selectedTrackIndex,
     )
   }
 
@@ -461,7 +465,8 @@ data class AudioTrackMessage(
  * Generated class from Pigeon that represents data sent in messages.
  */
 data class ExoPlayerAudioTrackData(
-    val trackId: String,
+    val groupIndex: Long,
+    val trackIndex: Long,
     val label: String? = null,
     val language: String? = null,
     val isSelected: Boolean,
@@ -472,22 +477,32 @@ data class ExoPlayerAudioTrackData(
 ) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): ExoPlayerAudioTrackData {
-      val trackId = pigeonVar_list[0] as String
-      val label = pigeonVar_list[1] as String?
-      val language = pigeonVar_list[2] as String?
-      val isSelected = pigeonVar_list[3] as Boolean
-      val bitrate = pigeonVar_list[4] as Long?
-      val sampleRate = pigeonVar_list[5] as Long?
-      val channelCount = pigeonVar_list[6] as Long?
-      val codec = pigeonVar_list[7] as String?
+      val groupIndex = pigeonVar_list[0] as Long
+      val trackIndex = pigeonVar_list[1] as Long
+      val label = pigeonVar_list[2] as String?
+      val language = pigeonVar_list[3] as String?
+      val isSelected = pigeonVar_list[4] as Boolean
+      val bitrate = pigeonVar_list[5] as Long?
+      val sampleRate = pigeonVar_list[6] as Long?
+      val channelCount = pigeonVar_list[7] as Long?
+      val codec = pigeonVar_list[8] as String?
       return ExoPlayerAudioTrackData(
-          trackId, label, language, isSelected, bitrate, sampleRate, channelCount, codec)
+          groupIndex,
+          trackIndex,
+          label,
+          language,
+          isSelected,
+          bitrate,
+          sampleRate,
+          channelCount,
+          codec)
     }
   }
 
   fun toList(): List<Any?> {
     return listOf(
-        trackId,
+        groupIndex,
+        trackIndex,
         label,
         language,
         isSelected,
@@ -841,8 +856,8 @@ interface VideoPlayerInstanceApi {
   fun getBufferedPosition(): Long
   /** Gets the available audio tracks for the video. */
   fun getAudioTracks(): NativeAudioTrackData
-  /** Selects which audio track is chosen for playback from its [trackId] */
-  fun selectAudioTrack(trackId: String)
+  /** Selects which audio track is chosen for playback from its group and track indices. */
+  fun selectAudioTrack(groupIndex: Long, trackIndex: Long)
 
   companion object {
     /** The codec used by VideoPlayerInstanceApi. */
@@ -1062,10 +1077,11 @@ interface VideoPlayerInstanceApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val trackIdArg = args[0] as String
+            val groupIndexArg = args[0] as Long
+            val trackIndexArg = args[1] as Long
             val wrapped: List<Any?> =
                 try {
-                  api.selectAudioTrack(trackIdArg)
+                  api.selectAudioTrack(groupIndexArg, trackIndexArg)
                   listOf(null)
                 } catch (exception: Throwable) {
                   MessagesPigeonUtils.wrapError(exception)

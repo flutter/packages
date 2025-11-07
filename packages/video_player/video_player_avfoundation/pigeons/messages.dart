@@ -149,5 +149,5 @@ abstract class VideoPlayerInstanceApi {
   @ObjCSelector('getAudioTracks')
   NativeAudioTrackData getAudioTracks();
   @ObjCSelector('selectAudioTrack:')
-  void selectAudioTrack(String trackId);
+  void selectAudioTrack(int trackIndex);
 }

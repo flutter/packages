@@ -219,11 +219,13 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
     final List<VideoAudioTrack> tracks = <VideoAudioTrack>[];
 
     // Convert asset tracks to VideoAudioTrack
+    // Note: AVFoundation doesn't have track groups like ExoPlayer, so we use groupIndex=0
     if (nativeData.assetTracks != null) {
       for (final AssetAudioTrackData track in nativeData.assetTracks!) {
         tracks.add(
           VideoAudioTrack(
-            id: track.trackId.toString(),
+            groupIndex: 0,
+            trackIndex: track.trackId,
             label: track.label,
             language: track.language,
             isSelected: track.isSelected,
@@ -237,14 +239,15 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
     }
 
     // Convert media selection tracks to VideoAudioTrack (for HLS streams)
+    // Note: AVFoundation doesn't have track groups like ExoPlayer, so we use groupIndex=0
     if (nativeData.mediaSelectionTracks != null) {
       for (final MediaSelectionAudioTrackData track
           in nativeData.mediaSelectionTracks!) {
-        final String trackId = 'media_selection_${track.index}';
         final String? label = track.commonMetadataTitle ?? track.displayName;
         tracks.add(
           VideoAudioTrack(
-            id: trackId,
+            groupIndex: 0,
+            trackIndex: track.index,
             label: label,
             language: track.languageCode,
             isSelected: track.isSelected,
@@ -257,8 +260,9 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
-  Future<void> selectAudioTrack(int playerId, String trackId) {
-    return _playerWith(id: playerId).selectAudioTrack(trackId);
+  Future<void> selectAudioTrack(int playerId, VideoAudioTrack track) {
+    // AVFoundation doesn't have track groups, so we only use trackIndex (groupIndex is ignored)
+    return _playerWith(id: playerId).selectAudioTrack(track.trackIndex);
   }
 
   @override

@@ -56,8 +56,11 @@ class IsPlayingStateEvent extends PlatformVideoEvent {
 /// This includes when the selected audio track changes after calling selectAudioTrack.
 /// Corresponds to ExoPlayer's onTracksChanged.
 class AudioTrackChangedEvent extends PlatformVideoEvent {
-  /// The ID of the newly selected audio track, if any.
-  late final String? selectedTrackId;
+  /// The group index of the newly selected audio track, if any.
+  late final int? selectedGroupIndex;
+
+  /// The track index of the newly selected audio track, if any.
+  late final int? selectedTrackIndex;
 }
 
 /// Information passed to the platform view creation.
@@ -118,7 +121,8 @@ class AudioTrackMessage {
 /// Raw audio track data from ExoPlayer Format objects.
 class ExoPlayerAudioTrackData {
   ExoPlayerAudioTrackData({
-    required this.trackId,
+    required this.groupIndex,
+    required this.trackIndex,
     this.label,
     this.language,
     required this.isSelected,
@@ -128,7 +132,8 @@ class ExoPlayerAudioTrackData {
     this.codec,
   });
 
-  String trackId;
+  int groupIndex;
+  int trackIndex;
   String? label;
   String? language;
   bool isSelected;
@@ -188,8 +193,8 @@ abstract class VideoPlayerInstanceApi {
   /// Gets the available audio tracks for the video.
   NativeAudioTrackData getAudioTracks();
 
-  /// Selects which audio track is chosen for playback from its [trackId]
-  void selectAudioTrack(String trackId);
+  /// Selects which audio track is chosen for playback from its group and track indices.
+  void selectAudioTrack(int groupIndex, int trackIndex);
 }
 
 @EventChannelApi()

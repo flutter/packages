@@ -30,7 +30,8 @@ export 'src/closed_caption_file.dart';
 class VideoAudioTrack {
   /// Constructs an instance of [VideoAudioTrack].
   const VideoAudioTrack({
-    required this.id,
+    required this.groupIndex,
+    required this.trackIndex,
     required this.label,
     required this.language,
     required this.isSelected,
@@ -40,8 +41,11 @@ class VideoAudioTrack {
     this.codec,
   });
 
-  /// Unique identifier for the audio track.
-  final String id;
+  /// The group index of the audio track.
+  final int groupIndex;
+
+  /// The track index within the group.
+  final int trackIndex;
 
   /// Human-readable label for the track.
   final String label;
@@ -73,7 +77,8 @@ class VideoAudioTrack {
     return identical(this, other) ||
         other is VideoAudioTrack &&
             runtimeType == other.runtimeType &&
-            id == other.id &&
+            groupIndex == other.groupIndex &&
+            trackIndex == other.trackIndex &&
             label == other.label &&
             language == other.language &&
             isSelected == other.isSelected &&
@@ -85,7 +90,8 @@ class VideoAudioTrack {
 
   @override
   int get hashCode => Object.hash(
-    id,
+    groupIndex,
+    trackIndex,
     label,
     language,
     isSelected,
@@ -98,7 +104,8 @@ class VideoAudioTrack {
   @override
   String toString() =>
       'VideoAudioTrack('
-      'id: $id, '
+      'groupIndex: $groupIndex, '
+      'trackIndex: $trackIndex, '
       'label: $label, '
       'language: $language, '
       'isSelected: $isSelected, '
@@ -120,7 +127,8 @@ VideoAudioTrack _convertPlatformAudioTrack(
   platform_interface.VideoAudioTrack platformTrack,
 ) {
   return VideoAudioTrack(
-    id: platformTrack.id,
+    groupIndex: platformTrack.groupIndex,
+    trackIndex: platformTrack.trackIndex,
     label: platformTrack.label ?? 'Unknown',
     language: platformTrack.language ?? 'und',
     isSelected: platformTrack.isSelected,
@@ -945,20 +953,27 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     return platformTracks.map(_convertPlatformAudioTrack).toList();
   }
 
-  /// Selects which audio track is chosen for playback from its [trackId]
+  /// Selects which audio track is chosen for playback.
   ///
-  /// The [trackId] should match the ID of one of the tracks returned by
-  /// [getAudioTracks]. If the track ID is not found or invalid, the
-  /// platform may ignore the request or throw an exception.
-  ///
-  /// Throws an exception if the video player is disposed or not initialized.
-  Future<void> selectAudioTrack(String trackId) async {
+  /// The [track] parameter should be one of the tracks returned by [getAudioTracks].
+  Future<void> selectAudioTrack(VideoAudioTrack track) async {
     if (_isDisposedOrNotInitialized) {
       throw Exception('VideoPlayerController is disposed or not initialized');
     }
-    // The platform implementation (e.g., Android) will wait for the track
-    // selection to complete by listening to platform-specific events
-    await _videoPlayerPlatform.selectAudioTrack(_playerId, trackId);
+    // Convert the public VideoAudioTrack to platform interface VideoAudioTrack
+    final platform_interface.VideoAudioTrack platformTrack =
+        platform_interface.VideoAudioTrack(
+          groupIndex: track.groupIndex,
+          trackIndex: track.trackIndex,
+          label: track.label,
+          language: track.language,
+          isSelected: track.isSelected,
+          bitrate: track.bitrate,
+          sampleRate: track.sampleRate,
+          channelCount: track.channelCount,
+          codec: track.codec,
+        );
+    await _videoPlayerPlatform.selectAudioTrack(_playerId, platformTrack);
   }
 
   /// Returns whether audio track selection is supported on this platform.
