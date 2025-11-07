@@ -1,4 +1,4 @@
-## 6.7.0
+## NEXT
 
 * Add new `VideoEventType` type `durationUpdate`
 
