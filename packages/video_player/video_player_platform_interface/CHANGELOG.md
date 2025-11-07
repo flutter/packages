@@ -1,3 +1,10 @@
+## 7.0.0
+
+* **BREAKING CHANGE**: Refactors audio track identification system:
+  * `VideoAudioTrack.id` (String) replaced with separate `groupIndex` (int) and `trackIndex` (int) properties.
+  * `selectAudioTrack(int playerId, String trackId)` changed to `selectAudioTrack(int playerId, VideoAudioTrack track)` - now accepts the full track object instead of separate parameters.
+  * This change provides better type safety and a more intuitive API for audio track selection.
+
 ## 6.6.0
 
 * Adds `VideoAudioTrack` class and `getAudioTracks()`, `selectAudioTrack()`, `isAudioTrackSupportAvailable()` methods for audio track management.
