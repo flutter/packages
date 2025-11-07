@@ -111,7 +111,6 @@ class ClusterManagersController
    * advanced markers and MarkerClusterRenderer is used for default markers.
    */
   private void initializeRenderer(ClusterManager<MarkerBuilder> clusterManager) {
-    final ClusterRenderer<MarkerBuilder> renderer = clusterManager.getRenderer();
     final ClusterRenderer<MarkerBuilder> clusterRenderer =
         markerType == PlatformMarkerType.ADVANCED_MARKER
             ? new AdvancedMarkerClusterRenderer<>(context, googleMap, clusterManager, this)

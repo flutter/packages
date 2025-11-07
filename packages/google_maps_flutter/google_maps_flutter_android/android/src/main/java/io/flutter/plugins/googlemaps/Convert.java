@@ -733,8 +733,9 @@ class Convert {
         return AdvancedMarkerOptions.CollisionBehavior.OPTIONAL_AND_HIDES_LOWER_PRIORITY;
       case REQUIRED_AND_HIDES_OPTIONAL:
         return AdvancedMarkerOptions.CollisionBehavior.REQUIRED_AND_HIDES_OPTIONAL;
+      default:
+        return AdvancedMarkerOptions.CollisionBehavior.REQUIRED;
     }
-    return AdvancedMarkerOptions.CollisionBehavior.REQUIRED;
   }
 
   static String interpretPolylineOptions(
