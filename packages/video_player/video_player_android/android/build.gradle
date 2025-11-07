@@ -50,7 +50,7 @@ android {
     }
 
     dependencies {
-        def exoplayer_version = "1.5.1"
+        def exoplayer_version = "1.8.0"
         implementation("androidx.media3:media3-exoplayer:${exoplayer_version}")
         implementation("androidx.media3:media3-exoplayer-hls:${exoplayer_version}")
         implementation("androidx.media3:media3-exoplayer-dash:${exoplayer_version}")
