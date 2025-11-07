@@ -323,6 +323,19 @@ void main() {
     verify(api.clearTileCache(tileOverlayId));
   });
 
+  test('isAdvancedMarkersAvailable calls through', () async {
+    const int mapId = 1;
+    final (GoogleMapsFlutterAndroid maps, MockMapsApi api) = setUpMockMap(
+      mapId: mapId,
+    );
+    when(api.isAdvancedMarkersAvailable()).thenAnswer((_) async => true);
+
+    await maps.isAdvancedMarkersAvailable(mapId: mapId);
+    final bool isAdvancedMarkersAvailable = await api
+        .isAdvancedMarkersAvailable();
+    expect(isAdvancedMarkersAvailable, isTrue);
+  });
+
   test('updateMapConfiguration passes expected arguments', () async {
     const int mapId = 1;
     final (GoogleMapsFlutterAndroid maps, MockMapsApi api) = setUpMockMap(
@@ -606,6 +619,116 @@ void main() {
       expect(firstAdded.zIndex, object3.zIndex);
       expect(firstAdded.markerId, object3.markerId.value);
       expect(firstAdded.clusterManagerId, object3.clusterManagerId?.value);
+    }
+  });
+
+  test('updateMarkers passes expected arguments (AdvancedMarkers)', () async {
+    const int mapId = 1;
+    final (GoogleMapsFlutterAndroid maps, MockMapsApi api) = setUpMockMap(
+      mapId: mapId,
+    );
+
+    final AdvancedMarker object1 = AdvancedMarker(
+      markerId: const MarkerId('1'),
+    );
+    final AdvancedMarker object2old = AdvancedMarker(
+      markerId: const MarkerId('2'),
+    );
+    final AdvancedMarker object2new = object2old.copyWith(
+      rotationParam: 42,
+      collisionBehaviorParam:
+          MarkerCollisionBehavior.optionalAndHidesLowerPriority,
+    );
+    final AdvancedMarker object3 = AdvancedMarker(
+      markerId: const MarkerId('3'),
+      collisionBehavior: MarkerCollisionBehavior.requiredAndHidesOptional,
+    );
+    await maps.updateMarkers(
+      MarkerUpdates.from(
+        <AdvancedMarker>{object1, object2old},
+        <AdvancedMarker>{object2new, object3},
+      ),
+      mapId: mapId,
+    );
+
+    final VerificationResult verification = verify(
+      api.updateMarkers(captureAny, captureAny, captureAny),
+    );
+    final List<PlatformMarker> toAdd =
+        verification.captured[0] as List<PlatformMarker>;
+    final List<PlatformMarker> toChange =
+        verification.captured[1] as List<PlatformMarker>;
+    final List<String> toRemove = verification.captured[2] as List<String>;
+    // Object one should be removed.
+    expect(toRemove.length, 1);
+    expect(toRemove.first, object1.markerId.value);
+    // Object two should be changed.
+    {
+      expect(toChange.length, 1);
+      final PlatformMarker firstChanged = toChange.first;
+      expect(firstChanged.alpha, object2new.alpha);
+      expect(firstChanged.anchor.x, object2new.anchor.dx);
+      expect(firstChanged.anchor.y, object2new.anchor.dy);
+      expect(firstChanged.consumeTapEvents, object2new.consumeTapEvents);
+      expect(firstChanged.draggable, object2new.draggable);
+      expect(firstChanged.flat, object2new.flat);
+      expect(
+        firstChanged.icon.bitmap.runtimeType,
+        GoogleMapsFlutterAndroid.platformBitmapFromBitmapDescriptor(
+          object2new.icon,
+        ).bitmap.runtimeType,
+      );
+      expect(firstChanged.infoWindow.title, object2new.infoWindow.title);
+      expect(firstChanged.infoWindow.snippet, object2new.infoWindow.snippet);
+      expect(firstChanged.infoWindow.anchor.x, object2new.infoWindow.anchor.dx);
+      expect(firstChanged.infoWindow.anchor.y, object2new.infoWindow.anchor.dy);
+      expect(firstChanged.position.latitude, object2new.position.latitude);
+      expect(firstChanged.position.longitude, object2new.position.longitude);
+      expect(firstChanged.rotation, object2new.rotation);
+      expect(firstChanged.visible, object2new.visible);
+      expect(firstChanged.zIndex, object2new.zIndex);
+      expect(firstChanged.markerId, object2new.markerId.value);
+      expect(firstChanged.clusterManagerId, object2new.clusterManagerId?.value);
+      expect(
+        firstChanged.collisionBehavior,
+        platformMarkerCollisionBehaviorFromMarkerCollisionBehavior(
+          object2new.collisionBehavior,
+        ),
+      );
+    }
+    // Object 3 should be added.
+    {
+      expect(toAdd.length, 1);
+      final PlatformMarker firstAdded = toAdd.first;
+      expect(firstAdded.alpha, object3.alpha);
+      expect(firstAdded.anchor.x, object3.anchor.dx);
+      expect(firstAdded.anchor.y, object3.anchor.dy);
+      expect(firstAdded.consumeTapEvents, object3.consumeTapEvents);
+      expect(firstAdded.draggable, object3.draggable);
+      expect(firstAdded.flat, object3.flat);
+      expect(
+        firstAdded.icon.bitmap.runtimeType,
+        GoogleMapsFlutterAndroid.platformBitmapFromBitmapDescriptor(
+          object3.icon,
+        ).bitmap.runtimeType,
+      );
+      expect(firstAdded.infoWindow.title, object3.infoWindow.title);
+      expect(firstAdded.infoWindow.snippet, object3.infoWindow.snippet);
+      expect(firstAdded.infoWindow.anchor.x, object3.infoWindow.anchor.dx);
+      expect(firstAdded.infoWindow.anchor.y, object3.infoWindow.anchor.dy);
+      expect(firstAdded.position.latitude, object3.position.latitude);
+      expect(firstAdded.position.longitude, object3.position.longitude);
+      expect(firstAdded.rotation, object3.rotation);
+      expect(firstAdded.visible, object3.visible);
+      expect(firstAdded.zIndex, object3.zIndex);
+      expect(firstAdded.markerId, object3.markerId.value);
+      expect(firstAdded.clusterManagerId, object3.clusterManagerId?.value);
+      expect(
+        firstAdded.collisionBehavior,
+        platformMarkerCollisionBehaviorFromMarkerCollisionBehavior(
+          object3.collisionBehavior,
+        ),
+      );
     }
   });
 
@@ -1517,7 +1640,7 @@ void main() {
                       as PlatformMapViewCreationParams?;
               if (creationParams != null) {
                 final String? passedMapId =
-                    creationParams.mapConfiguration.cloudMapId;
+                    creationParams.mapConfiguration.mapId;
                 if (passedMapId != null) {
                   passedCloudMapIdCompleter.complete(passedMapId);
                 }
@@ -1537,6 +1660,8 @@ void main() {
           initialCameraPosition: CameraPosition(target: LatLng(0, 0), zoom: 1),
           textDirection: TextDirection.ltr,
         ),
+        // Deprecated cloudMapId is used to test that creation params have
+        // the correct mapId.
         mapConfiguration: const MapConfiguration(cloudMapId: cloudMapId),
       ),
     );
@@ -1545,6 +1670,99 @@ void main() {
       await passedCloudMapIdCompleter.future,
       cloudMapId,
       reason: 'Should pass cloudMapId on PlatformView creation message',
+    );
+  });
+
+  testWidgets('mapId is passed', (WidgetTester tester) async {
+    const String mapId = '000000000000000'; // Dummy map ID.
+    final Completer<String> passedMapIdCompleter = Completer<String>();
+
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(SystemChannels.platform_views, (
+          MethodCall methodCall,
+        ) async {
+          if (methodCall.method == 'create') {
+            final Map<String, dynamic> args = Map<String, dynamic>.from(
+              methodCall.arguments as Map<dynamic, dynamic>,
+            );
+            if (args.containsKey('params')) {
+              final Uint8List paramsUint8List = args['params'] as Uint8List;
+              final ByteData byteData = ByteData.sublistView(paramsUint8List);
+              final PlatformMapViewCreationParams? creationParams =
+                  MapsApi.pigeonChannelCodec.decodeMessage(byteData)
+                      as PlatformMapViewCreationParams?;
+              if (creationParams != null) {
+                final String? passedMapId =
+                    creationParams.mapConfiguration.mapId;
+                if (passedMapId != null) {
+                  passedMapIdCompleter.complete(passedMapId);
+                }
+              }
+            }
+          }
+          return 0;
+        });
+
+    final GoogleMapsFlutterAndroid maps = GoogleMapsFlutterAndroid();
+
+    await tester.pumpWidget(
+      maps.buildViewWithConfiguration(
+        1,
+        (int id) {},
+        widgetConfiguration: const MapWidgetConfiguration(
+          initialCameraPosition: CameraPosition(target: LatLng(0, 0), zoom: 1),
+          textDirection: TextDirection.ltr,
+        ),
+        mapConfiguration: const MapConfiguration(mapId: mapId),
+      ),
+    );
+
+    expect(
+      await passedMapIdCompleter.future,
+      mapId,
+      reason: 'Should pass mapId on PlatformView creation message',
+    );
+  });
+
+  test('Correct marker type is passed to platform view', () async {
+    final GoogleMapsFlutterAndroid maps = GoogleMapsFlutterAndroid();
+    final Widget widget = maps.buildViewWithConfiguration(
+      1,
+      (int _) {},
+      widgetConfiguration: const MapWidgetConfiguration(
+        initialCameraPosition: CameraPosition(target: LatLng(0, 0), zoom: 1),
+        textDirection: TextDirection.ltr,
+      ),
+      mapConfiguration: const MapConfiguration(
+        markerType: MarkerType.advancedMarker,
+      ),
+    );
+
+    expect(widget, isA<AndroidView>());
+    final dynamic creationParams = (widget as AndroidView).creationParams;
+    expect(creationParams, isA<PlatformMapViewCreationParams>());
+    expect(
+      (creationParams as PlatformMapViewCreationParams)
+          .mapConfiguration
+          .markerType,
+      PlatformMarkerType.advancedMarker,
+    );
+
+    final Widget widget2 = maps.buildViewWithConfiguration(
+      1,
+      (int _) {},
+      widgetConfiguration: const MapWidgetConfiguration(
+        initialCameraPosition: CameraPosition(target: LatLng(0, 0), zoom: 1),
+        textDirection: TextDirection.ltr,
+      ),
+      mapConfiguration: const MapConfiguration(markerType: MarkerType.marker),
+    );
+    expect(widget2, isA<AndroidView>());
+    expect(
+      ((widget2 as AndroidView).creationParams as PlatformMapViewCreationParams)
+          .mapConfiguration
+          .markerType,
+      PlatformMarkerType.marker,
     );
   });
 }
