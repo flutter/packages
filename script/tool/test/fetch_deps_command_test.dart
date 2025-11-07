@@ -67,6 +67,41 @@ void main() {
             ]));
       });
 
+      test('runs pub get in non-example sub-packages', () async {
+        final RepositoryPackage plugin = createFakePlugin(
+            'plugin1', packagesDir, platformSupport: <String, PlatformDetails>{
+          platformIOS: const PlatformDetails(PlatformSupport.inline)
+        });
+        final RepositoryPackage subpackage = createFakePackage(
+            'subpackage', plugin.directory.childDirectory('extras'));
+
+        final List<String> output =
+            await runCapturingPrint(runner, <String>['fetch-deps']);
+
+        expect(
+          processRunner.recordedCalls,
+          orderedEquals(<ProcessCall>[
+            ProcessCall(
+              'flutter',
+              const <String>['pub', 'get'],
+              plugin.directory.path,
+            ),
+            ProcessCall(
+              'dart',
+              const <String>['pub', 'get'],
+              subpackage.directory.path,
+            ),
+          ]),
+        );
+
+        expect(
+            output,
+            containsAllInOrder(<Matcher>[
+              contains('Running for plugin1'),
+              contains('No issues found!'),
+            ]));
+      });
+
       test('fails if pub get fails', () async {
         createFakePlugin('plugin1', packagesDir,
             platformSupport: <String, PlatformDetails>{
