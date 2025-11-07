@@ -449,7 +449,7 @@ class _AdvancedMarkersCapabilityStatusState
   }
 
   void _checkCapabilityIfNeeded() {
-    final GoogleMapController? controller = widget.controller;
+    final ExampleGoogleMapController? controller = widget.controller;
     if (controller != null &&
         _isAdvancedMarkersAvailable == null &&
         !_isFetching) {
