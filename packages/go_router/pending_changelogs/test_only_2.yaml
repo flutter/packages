@@ -1,6 +1,5 @@
 # This file is for test purposes only.
 # TODO(chuntai): remove this file before publishing.
 changelog: |
-  - Added 'batch' option to CI config for go_router package.
-  - Updated GitHub Actions workflow for batch releases of go_router.
-version: major
+  - Adds some other features
+version: minor

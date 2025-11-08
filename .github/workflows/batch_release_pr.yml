@@ -1,4 +1,4 @@
-name: "Creates Batch Release for go_router package"
+name: "Creates Batch Release for A Package"
 
 on:
   repository_dispatch:
@@ -19,14 +19,14 @@ jobs:
         run: |
           git config --global user.name ${{ secrets.USER_NAME }}
           git config --global user.email ${{ secrets.USER_EMAIL }}
-          dart ./script/tool/lib/src/main.dart branch-for-batch-release --packages=${{ github.event.client_payload.package }} --branch=${{ env.BRANCH_NAME }}"
+          dart ./script/tool/lib/src/main.dart branch-for-batch-release --packages=${{ github.event.client_payload.package }} --branch=${{ env.BRANCH_NAME }} --remote=origin
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "Batch release PR for ${{ github.event.client_payload.package }} package"
-          title: "Batch Release PR for ${{ github.event.client_payload.package }} package"
-          body: "This PR was created automatically to batch release the ${{ github.event.client_payload.package }} package."
+          commit-message: "[${{ github.event.client_payload.package }}] Batch release"
+          title: "[${{ github.event.client_payload.package }}] Batch release"
+          body: "This PR was created automatically to batch release the `${{ github.event.client_payload.package }}`."
           branch: ${{ env.BRANCH_NAME }}
           base: release
 
