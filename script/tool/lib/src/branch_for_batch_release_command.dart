@@ -16,9 +16,11 @@ import 'common/output_utils.dart';
 import 'common/package_command.dart';
 import 'common/repository_package.dart';
 
-const int _kExitPackageMalformed = 2;
-const int _kGitFailedToPush = 3;
+const int _kExitPackageMalformed = 3;
+const int _kGitFailedToPush = 4;
 
+// The template file name used to draft a pending changelog file.
+// This file will not be picked up by the batch release process.
 const String _kTemplateFileName = 'template.yaml';
 
 /// A command to create a remote branch with release changes for a single package.
@@ -46,7 +48,8 @@ class BranchForBatchReleaseCommand extends PackageCommand {
 
   @override
   Future<void> run() async {
-    final String branchName = argResults!['branch'] as String;
+    final String branchName = getStringArg('branch');
+    final String remoteName = getStringArg('remote');
 
     final List<RepositoryPackage> packages = await getTargetPackages()
         .map((PackageEnumerationEntry e) => e.package)
@@ -60,7 +63,7 @@ class BranchForBatchReleaseCommand extends PackageCommand {
     final GitDir repository = await gitDir;
 
     print('Parsing package "${package.displayName}"...');
-    final PendingChangelogs pendingChangelogs =
+    final _PendingChangelogs pendingChangelogs =
         await _getPendingChangelogs(package);
     if (pendingChangelogs.entries.isEmpty) {
       print('No pending changelogs found for ${package.displayName}.');
@@ -69,7 +72,12 @@ class BranchForBatchReleaseCommand extends PackageCommand {
 
     final Pubspec pubspec =
         Pubspec.parse(package.pubspecFile.readAsStringSync());
-    final ReleaseInfo releaseInfo =
+    if (pubspec.version == null || pubspec.version!.major < 1) {
+      printError(
+          'This script only supports packages with version >= 1.0.0. Current version: ${pubspec.version}. Package: ${package.displayName}.');
+      throw ToolExit(_kExitPackageMalformed);
+    }
+    final _ReleaseInfo releaseInfo =
         _getReleaseInfo(pendingChangelogs.entries, pubspec.version!);
 
     if (releaseInfo.newVersion == null) {
@@ -78,17 +86,17 @@ class BranchForBatchReleaseCommand extends PackageCommand {
       return;
     }
 
-    print('Creating and pushing release branch...');
-    await _pushBranch(
+    await _createReleaseBranch(
       git: repository,
       package: package,
       branchName: branchName,
       pendingChangelogFiles: pendingChangelogs.files,
       releaseInfo: releaseInfo,
+      remoteName: remoteName,
     );
   }
 
-  Future<PendingChangelogs> _getPendingChangelogs(
+  Future<_PendingChangelogs> _getPendingChangelogs(
       RepositoryPackage package) async {
     final Directory pendingChangelogsDir =
         package.directory.childDirectory('pending_changelogs');
@@ -104,60 +112,47 @@ class BranchForBatchReleaseCommand extends PackageCommand {
             f.basename.endsWith('.yaml') && f.basename != _kTemplateFileName)
         .toList();
     try {
-      final List<PendingChangelogEntry> entries = pendingChangelogFiles
-          .map<PendingChangelogEntry>(
-              (File f) => PendingChangelogEntry.parse(f.readAsStringSync()))
+      final List<_PendingChangelogEntry> entries = pendingChangelogFiles
+          .map<_PendingChangelogEntry>(
+              (File f) => _PendingChangelogEntry.parse(f.readAsStringSync()))
           .toList();
-      return PendingChangelogs(entries, pendingChangelogFiles);
+      return _PendingChangelogs(entries, pendingChangelogFiles);
     } on FormatException catch (e) {
       printError('Malformed pending changelog file: $e');
       throw ToolExit(_kExitPackageMalformed);
     }
   }
 
-  ReleaseInfo _getReleaseInfo(
-      List<PendingChangelogEntry> pendingChangelogEntries, Version oldVersion) {
+  _ReleaseInfo _getReleaseInfo(
+      List<_PendingChangelogEntry> pendingChangelogEntries,
+      Version oldVersion) {
     final List<String> changelogs = <String>[];
-    int versionIndex = VersionChange.skip.index;
-    for (final PendingChangelogEntry entry in pendingChangelogEntries) {
+    int versionIndex = _VersionChange.skip.index;
+    for (final _PendingChangelogEntry entry in pendingChangelogEntries) {
       changelogs.add(entry.changelog);
       versionIndex = math.min(versionIndex, entry.version.index);
     }
-    final VersionChange effectiveVersionChange =
-        VersionChange.values[versionIndex];
+    final _VersionChange effectiveVersionChange =
+        _VersionChange.values[versionIndex];
 
-    Version? newVersion;
-    switch (effectiveVersionChange) {
-      case VersionChange.skip:
-        break;
-      case VersionChange.major:
-        newVersion = Version(
-          oldVersion.major + 1,
-          0,
-          0,
-        );
-      case VersionChange.minor:
-        newVersion = Version(
-          oldVersion.major,
-          oldVersion.minor + 1,
-          0,
-        );
-      case VersionChange.patch:
-        newVersion = Version(
-          oldVersion.major,
-          oldVersion.minor,
-          oldVersion.patch + 1,
-        );
-    }
-    return ReleaseInfo(newVersion, changelogs);
+    final Version? newVersion = switch (effectiveVersionChange) {
+      _VersionChange.skip => null,
+      _VersionChange.major => Version(oldVersion.major + 1, 0, 0),
+      _VersionChange.minor =>
+        Version(oldVersion.major, oldVersion.minor + 1, 0),
+      _VersionChange.patch =>
+        Version(oldVersion.major, oldVersion.minor, oldVersion.patch + 1),
+    };
+    return _ReleaseInfo(newVersion, changelogs);
   }
 
-  Future<void> _pushBranch({
+  Future<void> _createReleaseBranch({
     required GitDir git,
     required RepositoryPackage package,
     required String branchName,
     required List<File> pendingChangelogFiles,
-    required ReleaseInfo releaseInfo,
+    required _ReleaseInfo releaseInfo,
+    required String remoteName,
   }) async {
     print('  Creating new branch "$branchName"...');
     final io.ProcessResult checkoutResult =
@@ -168,16 +163,23 @@ class BranchForBatchReleaseCommand extends PackageCommand {
       throw ToolExit(_kGitFailedToPush);
     }
 
-    print('  Updating pubspec.yaml to version ${releaseInfo.newVersion}...');
-    // Update pubspec.yaml.
+    _updatePubspec(package, releaseInfo.newVersion!);
+    _updateChangelog(package, releaseInfo);
+    await _removePendingChangelogs(git, pendingChangelogFiles);
+    await _stageAndCommitChanges(git, package);
+    await _pushBranch(git, remoteName, branchName);
+  }
+
+  void _updatePubspec(RepositoryPackage package, Version newVersion) {
+    print('  Updating pubspec.yaml to version $newVersion...');
     final YamlEditor editablePubspec =
         YamlEditor(package.pubspecFile.readAsStringSync());
-    editablePubspec
-        .update(<String>['version'], releaseInfo.newVersion.toString());
+    editablePubspec.update(<String>['version'], newVersion.toString());
     package.pubspecFile.writeAsStringSync(editablePubspec.toString());
+  }
 
+  void _updateChangelog(RepositoryPackage package, _ReleaseInfo releaseInfo) {
     print('  Updating CHANGELOG.md...');
-    // Update CHANGELOG.md.
     final String newHeader = '## ${releaseInfo.newVersion}';
     final List<String> newEntries = releaseInfo.changelogs;
 
@@ -191,7 +193,10 @@ class BranchForBatchReleaseCommand extends PackageCommand {
     newChangelog.write(oldChangelogContent);
 
     package.changelogFile.writeAsStringSync(newChangelog.toString());
+  }
 
+  Future<void> _removePendingChangelogs(
+      GitDir git, List<File> pendingChangelogFiles) async {
     print('  Removing pending changelog files...');
     for (final File file in pendingChangelogFiles) {
       final io.ProcessResult rmResult =
@@ -201,7 +206,10 @@ class BranchForBatchReleaseCommand extends PackageCommand {
         throw ToolExit(_kGitFailedToPush);
       }
     }
+  }
 
+  Future<void> _stageAndCommitChanges(
+      GitDir git, RepositoryPackage package) async {
     print('  Staging changes...');
     final io.ProcessResult addResult = await git.runCommand(
         <String>['add', package.pubspecFile.path, package.changelogFile.path]);
@@ -220,10 +228,13 @@ class BranchForBatchReleaseCommand extends PackageCommand {
       printError('Failed to commit: ${commitResult.stderr}');
       throw ToolExit(_kGitFailedToPush);
     }
+  }
 
+  Future<void> _pushBranch(
+      GitDir git, String remoteName, String branchName) async {
     print('  Pushing to remote...');
     final io.ProcessResult pushResult =
-        await git.runCommand(<String>['push', 'origin', branchName]);
+        await git.runCommand(<String>['push', remoteName, branchName]);
     if (pushResult.exitCode != 0) {
       printError('Failed to push to $branchName: ${pushResult.stderr}');
       throw ToolExit(_kGitFailedToPush);
@@ -232,21 +243,21 @@ class BranchForBatchReleaseCommand extends PackageCommand {
 }
 
 /// A data class for pending changelogs.
-class PendingChangelogs {
+class _PendingChangelogs {
   /// Creates a new instance.
-  PendingChangelogs(this.entries, this.files);
+  _PendingChangelogs(this.entries, this.files);
 
   /// The parsed pending changelog entries.
-  final List<PendingChangelogEntry> entries;
+  final List<_PendingChangelogEntry> entries;
 
   /// The files that the pending changelog entries were parsed from.
   final List<File> files;
 }
 
 /// A data class for processed release information.
-class ReleaseInfo {
+class _ReleaseInfo {
   /// Creates a new instance.
-  ReleaseInfo(this.newVersion, this.changelogs);
+  _ReleaseInfo(this.newVersion, this.changelogs);
 
   /// The new version for the release, or null if there is no version change.
   final Version? newVersion;
@@ -256,7 +267,7 @@ class ReleaseInfo {
 }
 
 /// The type of version change for a release.
-enum VersionChange {
+enum _VersionChange {
   /// A major version change (e.g., 1.2.3 -> 2.0.0).
   major,
 
@@ -271,12 +282,12 @@ enum VersionChange {
 }
 
 /// Represents a single entry in the pending changelog.
-class PendingChangelogEntry {
+class _PendingChangelogEntry {
   /// Creates a new pending changelog entry.
-  PendingChangelogEntry({required this.changelog, required this.version});
+  _PendingChangelogEntry({required this.changelog, required this.version});
 
   /// Creates a PendingChangelogEntry from a YAML string.
-  factory PendingChangelogEntry.parse(String yamlContent) {
+  factory _PendingChangelogEntry.parse(String yamlContent) {
     final dynamic yaml = loadYaml(yamlContent);
     if (yaml is! YamlMap) {
       throw FormatException(
@@ -294,18 +305,18 @@ class PendingChangelogEntry {
     if (versionString == null) {
       throw const FormatException('Missing "version" key.');
     }
-    final VersionChange version = VersionChange.values.firstWhere(
-      (VersionChange e) => e.name == versionString,
+    final _VersionChange version = _VersionChange.values.firstWhere(
+      (_VersionChange e) => e.name == versionString,
       orElse: () =>
           throw FormatException('Invalid version type: $versionString'),
     );
 
-    return PendingChangelogEntry(changelog: changelog, version: version);
+    return _PendingChangelogEntry(changelog: changelog, version: version);
   }
 
   /// The changelog messages for this entry.
   final String changelog;
 
   /// The type of version change for this entry.
-  final VersionChange version;
+  final _VersionChange version;
 }
