@@ -247,7 +247,7 @@ public class WebChromeClientProxyApi extends PigeonApiWebChromeClient {
      * <p>See https://issues.chromium.org/issues/40755557.
      */
     @Override
-    public Bitmap getDefaultVideoPoster() {
+    public @Nullable Bitmap getDefaultVideoPoster() {
       return Bitmap.createBitmap(1, 1, Config.ALPHA_8);
     }
 
