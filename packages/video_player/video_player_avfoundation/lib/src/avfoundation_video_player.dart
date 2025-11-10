@@ -212,6 +212,77 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
+  Future<List<VideoAudioTrack>> getAudioTracks(int playerId) async {
+    final NativeAudioTrackData nativeData = await _playerWith(
+      id: playerId,
+    ).getAudioTracks();
+    final List<VideoAudioTrack> tracks = <VideoAudioTrack>[];
+
+    // Convert asset tracks to VideoAudioTrack
+    if (nativeData.assetTracks != null) {
+      for (final AssetAudioTrackData track in nativeData.assetTracks!) {
+        tracks.add(
+          VideoAudioTrack(
+            id: track.trackId.toString(),
+            label: track.label,
+            language: track.language,
+            isSelected: track.isSelected,
+            bitrate: track.bitrate,
+            sampleRate: track.sampleRate,
+            channelCount: track.channelCount,
+            codec: track.codec,
+          ),
+        );
+      }
+    }
+
+    // Convert media selection tracks to VideoAudioTrack (for HLS streams)
+    if (nativeData.mediaSelectionTracks != null) {
+      for (final MediaSelectionAudioTrackData track
+          in nativeData.mediaSelectionTracks!) {
+        final String trackId = 'media_selection_${track.index}';
+        final String? label = track.commonMetadataTitle ?? track.displayName;
+        tracks.add(
+          VideoAudioTrack(
+            id: trackId,
+            label: label,
+            language: track.languageCode,
+            isSelected: track.isSelected,
+          ),
+        );
+      }
+    }
+
+    return tracks;
+  }
+
+  @override
+  Future<void> selectAudioTrack(int playerId, String trackId) {
+    // Parse the trackId to determine type and extract the integer ID
+    String trackType;
+    int numericTrackId;
+
+    if (trackId.startsWith('media_selection_')) {
+      trackType = 'mediaSelection';
+      numericTrackId = int.parse(trackId.substring('media_selection_'.length));
+    } else {
+      // Asset track - the trackId is just the integer as a string
+      trackType = 'asset';
+      numericTrackId = int.parse(trackId);
+    }
+
+    return _playerWith(
+      id: playerId,
+    ).selectAudioTrack(trackType, numericTrackId);
+  }
+
+  @override
+  bool isAudioTrackSupportAvailable() {
+    // iOS/macOS with AVFoundation supports audio track selection
+    return true;
+  }
+
+  @override
   Widget buildView(int playerId) {
     return buildViewWithOptions(VideoViewOptions(playerId: playerId));
   }
