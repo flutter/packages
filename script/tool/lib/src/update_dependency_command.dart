@@ -167,8 +167,7 @@ A version with a valid format (maximum 2-3 numbers separated by 1-2 periods) mus
             3. If present, the third number must have a single digit''');
           throw ToolExit(_exitInvalidTargetVersion);
         }
-      } else if (_targetAndroidDependency ==
-              _AndroidDepdencyType.compileSdk ||
+      } else if (_targetAndroidDependency == _AndroidDepdencyType.compileSdk ||
           _targetAndroidDependency ==
               _AndroidDepdencyType.compileSdkForExamples) {
         final RegExp validSdkVersion = RegExp(r'^\d{1,2}$');
@@ -277,8 +276,7 @@ A version with a valid format (maximum 2-3 numbers separated by 1-2 periods) mus
     } else if (_targetAndroidDependency == _AndroidDepdencyType.gradle ||
         _targetAndroidDependency ==
             _AndroidDepdencyType.compileSdkForExamples ||
-        _targetAndroidDependency ==
-            _AndroidDepdencyType.androidGradlePlugin) {
+        _targetAndroidDependency == _AndroidDepdencyType.androidGradlePlugin) {
       return _runForAndroidDependencyOnExamples(package);
     }
 
@@ -341,7 +339,8 @@ A version with a valid format (maximum 2-3 numbers separated by 1-2 periods) mus
           _AndroidDepdencyType.androidGradlePlugin) {
         filesToUpdate.add(androidDirectory.childFile('settings.gradle'));
         dependencyVersionPattern = RegExp(
-            r'^\s*id\s+"com\.android\.application"\s+version\s+"(\d{1,2}\.\d{1,2}(?:\.\d)?)"\s+apply\s+false\s*$', multiLine: true);
+            r'^\s*id\s+"com\.android\.application"\s+version\s+"(\d{1,2}\.\d{1,2}(?:\.\d)?)"\s+apply\s+false\s*$',
+            multiLine: true);
         newDependencyVersionEntry =
             'id "com.android.application" version "$_targetVersion" apply false';
       } else {
