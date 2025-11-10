@@ -1,3 +1,11 @@
+## 0.9.22+4
+
+* Migrates `FLTCameraDeviceDiscovering` and `FLTDeviceOrientationProviding` classes to Swift.
+
+## 0.9.22+3
+
+* Updates examples to use the new RadioGroup API instead of deprecated Radio parameters.
+
 ## 0.9.22+2
 
 * Migrates `FLTCamConfiguration`, `FLTCamMediaSettingsAVWrapper` classes to Swift.

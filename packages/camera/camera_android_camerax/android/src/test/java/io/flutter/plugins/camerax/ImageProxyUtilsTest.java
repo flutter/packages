@@ -5,9 +5,13 @@
 package io.flutter.plugins.camerax;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import androidx.camera.core.ImageProxy.PlaneProxy;
+import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.List;
@@ -35,18 +39,19 @@ public class ImageProxyUtilsTest {
     List<PlaneProxy> planes = Arrays.asList(yPlane, uPlane, vPlane);
 
     assertThrows(
-        IllegalArgumentException.class, () -> ImageProxyUtils.planesToNV21(planes, width, height));
+        BufferUnderflowException.class, () -> ImageProxyUtils.planesToNV21(planes, width, height));
   }
 
   @Test
   public void planesToNV21_returnsExpectedBufferWhenPlanesAreNV21Compatible() {
     int width = 4;
     int height = 2;
-    int imageSize = width * height; // 8
 
     // Y plane.
     byte[] y = new byte[] {0, 1, 2, 3, 4, 5, 6, 7};
     PlaneProxy yPlane = mockPlaneProxyWithData(y);
+    when(yPlane.getPixelStride()).thenReturn(1);
+    when(yPlane.getRowStride()).thenReturn(width);
 
     // U and V planes in NV21 format. Both have 2 bytes that are overlapping (5, 7).
     ByteBuffer vBuffer = ByteBuffer.wrap(new byte[] {9, 5, 7});
@@ -57,6 +62,12 @@ public class ImageProxyUtilsTest {
 
     Mockito.when(uPlane.getBuffer()).thenReturn(uBuffer);
     Mockito.when(vPlane.getBuffer()).thenReturn(vBuffer);
+
+    // Set pixelStride and rowStride for UV planes to trigger NV21 shortcut
+    Mockito.when(uPlane.getPixelStride()).thenReturn(2);
+    Mockito.when(uPlane.getRowStride()).thenReturn(width);
+    Mockito.when(vPlane.getPixelStride()).thenReturn(2);
+    Mockito.when(vPlane.getRowStride()).thenReturn(width);
 
     List<PlaneProxy> planes = Arrays.asList(yPlane, uPlane, vPlane);
 
@@ -87,11 +98,48 @@ public class ImageProxyUtilsTest {
     assertArrayEquals(expected, nv21);
   }
 
+  @Test
+  public void areUVPlanesNV21_handlesVBufferAtLimitGracefully() {
+    int width = 1280;
+    int height = 720;
+
+    // --- Mock Y plane ---
+    byte[] yData = new byte[width * height];
+    PlaneProxy yPlane = mock(PlaneProxy.class);
+    ByteBuffer yBuffer = ByteBuffer.wrap(yData);
+    when(yPlane.getBuffer()).thenReturn(yBuffer);
+    when(yPlane.getPixelStride()).thenReturn(1);
+    when(yPlane.getRowStride()).thenReturn(width);
+
+    // --- Mock U plane ---
+    ByteBuffer uBuffer = ByteBuffer.allocate(width * height / 4);
+    PlaneProxy uPlane = mock(PlaneProxy.class);
+    when(uPlane.getBuffer()).thenReturn(uBuffer);
+    when(uPlane.getPixelStride()).thenReturn(1);
+    when(uPlane.getRowStride()).thenReturn(width / 2);
+
+    // --- Mock V plane ---
+    ByteBuffer vBuffer = ByteBuffer.allocate(width * height / 4);
+    vBuffer.position(vBuffer.limit()); // position == limit
+    PlaneProxy vPlane = mock(PlaneProxy.class);
+    when(vPlane.getBuffer()).thenReturn(vBuffer);
+    when(vPlane.getPixelStride()).thenReturn(1);
+    when(vPlane.getRowStride()).thenReturn(width / 2);
+
+    List<PlaneProxy> planes = Arrays.asList(yPlane, uPlane, vPlane);
+
+    ByteBuffer nv21Buffer = ImageProxyUtils.planesToNV21(planes, width, height);
+    byte[] nv21 = new byte[nv21Buffer.remaining()];
+    nv21Buffer.get(nv21);
+
+    assertEquals(width * height + (width * height / 2), nv21.length);
+  }
+
   // Creates a mock PlaneProxy with a buffer (of zeroes) of the given size.
   private PlaneProxy mockPlaneProxy(int bufferSize) {
-    PlaneProxy plane = Mockito.mock(PlaneProxy.class);
+    PlaneProxy plane = mock(PlaneProxy.class);
     ByteBuffer buffer = ByteBuffer.allocate(bufferSize);
-    Mockito.when(plane.getBuffer()).thenReturn(buffer);
+    when(plane.getBuffer()).thenReturn(buffer);
     return plane;
   }
 
@@ -99,7 +147,13 @@ public class ImageProxyUtilsTest {
   private PlaneProxy mockPlaneProxyWithData(byte[] data) {
     PlaneProxy plane = Mockito.mock(PlaneProxy.class);
     ByteBuffer buffer = ByteBuffer.wrap(Arrays.copyOf(data, data.length));
-    Mockito.when(plane.getBuffer()).thenReturn(buffer);
+    when(plane.getBuffer()).thenReturn(buffer);
+
+    // Set pixelStride and rowStride to safe defaults for tests
+    // For Y plane: pixelStride = 1, rowStride = width (approximate)
+    when(plane.getPixelStride()).thenReturn(1);
+    when(plane.getRowStride()).thenReturn(data.length); // rowStride ≥ width
+
     return plane;
   }
 }

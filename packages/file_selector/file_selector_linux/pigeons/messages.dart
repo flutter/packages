@@ -58,7 +58,7 @@ class PlatformFileChooserOptions {
   final bool? createFolders;
 }
 
-@HostApi(dartHostTestHandler: 'TestFileSelectorApi')
+@HostApi()
 abstract class FileSelectorApi {
   /// Shows an file chooser with the given [type] and [options], returning the
   /// list of selected paths.

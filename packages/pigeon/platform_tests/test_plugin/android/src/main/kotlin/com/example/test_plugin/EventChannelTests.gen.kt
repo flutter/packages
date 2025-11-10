@@ -37,7 +37,7 @@ private object EventChannelTestsPigeonUtils {
     }
     if (a is Map<*, *> && b is Map<*, *>) {
       return a.size == b.size &&
-          a.all { (b as Map<Any?, Any?>).containsKey(it.key) && deepEquals(it.value, b[it.key]) }
+          a.all { (b as Map<Any?, Any?>).contains(it.key) && deepEquals(it.value, b[it.key]) }
     }
     return a == b
   }
@@ -477,11 +477,11 @@ private open class EventChannelTestsPigeonCodec : StandardMessageCodec() {
     when (value) {
       is EventEnum -> {
         stream.write(129)
-        writeValue(stream, value.raw)
+        writeValue(stream, value.raw.toLong())
       }
       is AnotherEventEnum -> {
         stream.write(130)
-        writeValue(stream, value.raw)
+        writeValue(stream, value.raw.toLong())
       }
       is EventAllNullableTypes -> {
         stream.write(131)
