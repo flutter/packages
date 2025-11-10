@@ -21,14 +21,58 @@ void main() {
   late CommandRunner<void> runner;
   late RepositoryPackage package;
 
-  // A helper function to create a changelog file with the given content.
-  void createChangelogFile(String name, String content) {
+  void createPendingChangelogFile(String name, String content) {
     final File pendingChangelog = package.directory
         .childDirectory('pending_changelogs')
         .childFile(name)
       ..createSync(recursive: true);
     pendingChangelog.writeAsStringSync(content);
   }
+
+  Future<List<String>> runBatchCommand(
+          {void Function(Error error)? errorHandler}) =>
+      runCapturingPrint(
+          runner,
+          <String>[
+            'branch-for-batch-release',
+            '--packages=a_package',
+            '--branch=release-branch',
+            '--remote=origin'
+          ],
+          errorHandler: errorHandler);
+
+  const List<ProcessCall> expectedGitCallsForABFiles = [
+    ProcessCall('git-checkout', <String>['-b', 'release-branch'], null),
+    ProcessCall('git-rm',
+        <String>['/packages/a_package/pending_changelogs/a.yaml'], null),
+    ProcessCall('git-rm',
+        <String>['/packages/a_package/pending_changelogs/b.yaml'], null),
+    ProcessCall(
+        'git-add',
+        <String>[
+          '/packages/a_package/pubspec.yaml',
+          '/packages/a_package/CHANGELOG.md'
+        ],
+        null),
+    ProcessCall('git-commit',
+        <String>['-m', '[a_package] Prepares for batch release'], null),
+    ProcessCall('git-push', <String>['origin', 'release-branch'], null),
+  ];
+  const List<ProcessCall> expectedGitCallsForAFiles = <ProcessCall>[
+    ProcessCall('git-checkout', <String>['-b', 'release-branch'], null),
+    ProcessCall('git-rm',
+        <String>['/packages/a_package/pending_changelogs/a.yaml'], null),
+    ProcessCall(
+        'git-add',
+        <String>[
+          '/packages/a_package/pubspec.yaml',
+          '/packages/a_package/CHANGELOG.md'
+        ],
+        null),
+    ProcessCall('git-commit',
+        <String>['-m', '[a_package] Prepares for batch release'], null),
+    ProcessCall('git-push', <String>['origin', 'release-branch'], null),
+  ];
 
   setUp(() {
     mockPlatform = MockPlatform();
@@ -62,203 +106,308 @@ version: 1.0.0
     package.directory.deleteSync(recursive: true);
   });
 
-  Future<List<String>> runBatchCommand() => runCapturingPrint(runner, <String>[
-        'branch-for-batch-release',
-        '--packages=a_package',
-        '--branch=release-branch',
-        '--remote=origin'
-      ]);
-
-  Future<void> testReleaseBranch({
-    required Map<String, String> changelogs,
-    required List<String> expectedOutput,
-    String? expectedVersion,
-    List<String> expectedChangelogSnippets = const <String>[],
-    List<ProcessCall> expectedGitCommands = const <ProcessCall>[],
-  }) async {
-    for (final MapEntry<String, String> entry in changelogs.entries) {
-      createChangelogFile(entry.key, entry.value);
-    }
-
-    final List<String> output = await runBatchCommand();
-
-    expect(output, containsAllInOrder(expectedOutput));
-
-    if (expectedVersion != null) {
-      expect(package.pubspecFile.readAsStringSync(),
-          contains('version: $expectedVersion'));
-      final String changelogContent = package.changelogFile.readAsStringSync();
-      expect(changelogContent, startsWith('## $expectedVersion'));
-      for (final String snippet in expectedChangelogSnippets) {
-        expect(changelogContent, contains(snippet));
-      }
-    }
-    expect(gitProcessRunner.recordedCalls, orderedEquals(expectedGitCommands));
-  }
-
   group('happy path', () {
     test('can bump minor', () async {
-      await testReleaseBranch(
-        changelogs: <String, String>{
-          'a.yaml': '''
+      createPendingChangelogFile('a.yaml', '''
 changelog: A new feature
 version: minor
-'''
-        },
-        expectedVersion: '1.1.0',
-        expectedChangelogSnippets: <String>['A new feature'],
-        expectedOutput: <String>[
-          'Parsing package "a_package"...',
-          '  Creating new branch "release-branch"...',
-          '  Pushing branch release-branch to remote origin...',
-        ],
-        expectedGitCommands: <ProcessCall>[
-          const ProcessCall(
-              'git-checkout', <String>['-b', 'release-branch'], null),
-          const ProcessCall('git-rm',
-              <String>['/packages/a_package/pending_changelogs/a.yaml'], null),
-          const ProcessCall(
-              'git-add',
-              <String>[
-                '/packages/a_package/pubspec.yaml',
-                '/packages/a_package/CHANGELOG.md'
-              ],
-              null),
-          const ProcessCall('git-commit',
-              <String>['-m', '[a_package] Prepares for batch release'], null),
-          const ProcessCall(
-              'git-push', <String>['origin', 'release-branch'], null),
-        ],
-      );
+''');
+
+      final List<String> output = await runBatchCommand();
+
+      expect(
+          output,
+          containsAllInOrder(<String>[
+            'Parsing package "a_package"...',
+            '  Creating new branch "release-branch"...',
+            '  Pushing branch release-branch to remote origin...',
+          ]));
+
+      expect(
+          package.pubspecFile.readAsStringSync(), contains('version: 1.1.0'));
+      final String changelogContent = package.changelogFile.readAsStringSync();
+      expect(changelogContent, startsWith('## 1.1.0'));
+      expect(changelogContent, contains('A new feature'));
+      expect(gitProcessRunner.recordedCalls,
+          orderedEquals(expectedGitCallsForAFiles));
     });
 
     test('can bump major', () async {
-      await testReleaseBranch(
-        changelogs: <String, String>{
-          'a.yaml': '''
+      createPendingChangelogFile('a.yaml', '''
 changelog: A new feature
 version: major
-'''
-        },
-        expectedVersion: '2.0.0',
-        expectedChangelogSnippets: <String>['A new feature'],
-        expectedOutput: <String>[
-          'Parsing package "a_package"...',
-          '  Creating new branch "release-branch"...',
-          '  Pushing branch release-branch to remote origin...',
-        ],
-        expectedGitCommands: <ProcessCall>[
-          const ProcessCall(
-              'git-checkout', <String>['-b', 'release-branch'], null),
-          const ProcessCall('git-rm',
-              <String>['/packages/a_package/pending_changelogs/a.yaml'], null),
-          const ProcessCall(
-              'git-add',
-              <String>[
-                '/packages/a_package/pubspec.yaml',
-                '/packages/a_package/CHANGELOG.md'
-              ],
-              null),
-          const ProcessCall('git-commit',
-              <String>['-m', '[a_package] Prepares for batch release'], null),
-          const ProcessCall(
-              'git-push', <String>['origin', 'release-branch'], null),
-        ],
-      );
+''');
+
+      final List<String> output = await runBatchCommand();
+
+      expect(
+          output,
+          containsAllInOrder(<String>[
+            'Parsing package "a_package"...',
+            '  Creating new branch "release-branch"...',
+            '  Pushing branch release-branch to remote origin...',
+          ]));
+
+      expect(
+          package.pubspecFile.readAsStringSync(), contains('version: 2.0.0'));
+      final String changelogContent = package.changelogFile.readAsStringSync();
+      expect(changelogContent, startsWith('## 2.0.0'));
+      expect(changelogContent, contains('A new feature'));
+      expect(gitProcessRunner.recordedCalls,
+          orderedEquals(expectedGitCallsForAFiles));
     });
 
     test('can bump patch', () async {
-      await testReleaseBranch(
-        changelogs: <String, String>{
-          'a.yaml': '''
+      createPendingChangelogFile('a.yaml', '''
 changelog: A new feature
 version: patch
-'''
-        },
-        expectedVersion: '1.0.1',
-        expectedChangelogSnippets: <String>['A new feature'],
-        expectedOutput: <String>[
-          'Parsing package "a_package"...',
-          '  Creating new branch "release-branch"...',
-          '  Pushing branch release-branch to remote origin...',
-        ],
-        expectedGitCommands: <ProcessCall>[
-          const ProcessCall(
-              'git-checkout', <String>['-b', 'release-branch'], null),
-          const ProcessCall('git-rm',
-              <String>['/packages/a_package/pending_changelogs/a.yaml'], null),
-          const ProcessCall(
-              'git-add',
-              <String>[
-                '/packages/a_package/pubspec.yaml',
-                '/packages/a_package/CHANGELOG.md'
-              ],
-              null),
-          const ProcessCall('git-commit',
-              <String>['-m', '[a_package] Prepares for batch release'], null),
-          const ProcessCall(
-              'git-push', <String>['origin', 'release-branch'], null),
-        ],
-      );
+''');
+
+      final List<String> output = await runBatchCommand();
+
+      expect(
+          output,
+          containsAllInOrder(<String>[
+            'Parsing package "a_package"...',
+            '  Creating new branch "release-branch"...',
+            '  Pushing branch release-branch to remote origin...',
+          ]));
+
+      expect(
+          package.pubspecFile.readAsStringSync(), contains('version: 1.0.1'));
+      final String changelogContent = package.changelogFile.readAsStringSync();
+      expect(changelogContent, startsWith('## 1.0.1'));
+      expect(changelogContent, contains('A new feature'));
+      expect(gitProcessRunner.recordedCalls,
+          orderedEquals(expectedGitCallsForAFiles));
     });
 
-    test('merges multiple changelogs', () async {
-      await testReleaseBranch(
-        changelogs: <String, String>{
-          'a.yaml': '''
+    test('merges multiple changelogs, minor and major', () async {
+      createPendingChangelogFile('a.yaml', '''
 changelog: A new feature
 version: minor
-''',
-          'b.yaml': '''
+''');
+      createPendingChangelogFile('b.yaml', '''
 changelog: A breaking change
 version: major
-'''
-        },
-        expectedVersion: '2.0.0',
-        expectedChangelogSnippets: <String>[
-          'A new feature',
-          'A breaking change'
-        ],
-        expectedOutput: <String>[
-          'Parsing package "a_package"...',
-          '  Creating new branch "release-branch"...',
-          '  Pushing branch release-branch to remote origin...',
-        ],
-        expectedGitCommands: <ProcessCall>[
-          const ProcessCall(
-              'git-checkout', <String>['-b', 'release-branch'], null),
-          const ProcessCall('git-rm',
-              <String>['/packages/a_package/pending_changelogs/a.yaml'], null),
-          const ProcessCall('git-rm',
-              <String>['/packages/a_package/pending_changelogs/b.yaml'], null),
-          const ProcessCall(
-              'git-add',
-              <String>[
-                '/packages/a_package/pubspec.yaml',
-                '/packages/a_package/CHANGELOG.md'
-              ],
-              null),
-          const ProcessCall('git-commit',
-              <String>['-m', '[a_package] Prepares for batch release'], null),
-          const ProcessCall(
-              'git-push', <String>['origin', 'release-branch'], null),
-        ],
-      );
+''');
+
+      final List<String> output = await runBatchCommand();
+
+      expect(
+          output,
+          containsAllInOrder(<String>[
+            'Parsing package "a_package"...',
+            '  Creating new branch "release-branch"...',
+            '  Pushing branch release-branch to remote origin...',
+          ]));
+
+      expect(
+          package.pubspecFile.readAsStringSync(), contains('version: 2.0.0'));
+      final String changelogContent = package.changelogFile.readAsStringSync();
+      expect(changelogContent, startsWith('## 2.0.0'));
+      expect(changelogContent, contains('A new feature'));
+      expect(changelogContent, contains('A breaking change'));
+      expect(gitProcessRunner.recordedCalls,
+          orderedEquals(expectedGitCallsForABFiles));
+    });
+
+    test('merges multiple changelogs, minor and patch', () async {
+      createPendingChangelogFile('a.yaml', '''
+changelog: A new feature
+version: minor
+''');
+      createPendingChangelogFile('b.yaml', '''
+changelog: A bug fix
+version: patch
+''');
+
+      final List<String> output = await runBatchCommand();
+
+      expect(
+          output,
+          containsAllInOrder(<String>[
+            'Parsing package "a_package"...',
+            '  Creating new branch "release-branch"...',
+            '  Pushing branch release-branch to remote origin...',
+          ]));
+
+      expect(
+          package.pubspecFile.readAsStringSync(), contains('version: 1.1.0'));
+      final String changelogContent = package.changelogFile.readAsStringSync();
+      expect(changelogContent, startsWith('## 1.1.0'));
+      expect(changelogContent, contains('A new feature'));
+      expect(changelogContent, contains('A bug fix'));
+      expect(gitProcessRunner.recordedCalls,
+          orderedEquals(expectedGitCallsForABFiles));
+    });
+
+    test('merges multiple changelogs, major and patch', () async {
+      createPendingChangelogFile('a.yaml', '''
+changelog: A breaking change
+version: major
+''');
+      createPendingChangelogFile('b.yaml', '''
+changelog: A bug fix
+version: patch
+''');
+
+      final List<String> output = await runBatchCommand();
+
+      expect(
+          output,
+          containsAllInOrder(<String>[
+            'Parsing package "a_package"...',
+            '  Creating new branch "release-branch"...',
+            '  Pushing branch release-branch to remote origin...',
+          ]));
+
+      expect(
+          package.pubspecFile.readAsStringSync(), contains('version: 2.0.0'));
+      final String changelogContent = package.changelogFile.readAsStringSync();
+      expect(changelogContent, startsWith('## 2.0.0'));
+      expect(changelogContent, contains('A breaking change'));
+      expect(changelogContent, contains('A bug fix'));
+      expect(gitProcessRunner.recordedCalls,
+          orderedEquals(expectedGitCallsForABFiles));
+    });
+
+    test('merges multiple changelogs, minor, major and patch', () async {
+      createPendingChangelogFile('a.yaml', '''
+changelog: A new feature
+version: minor
+''');
+      createPendingChangelogFile('b.yaml', '''
+changelog: A breaking change
+version: major
+''');
+      createPendingChangelogFile('c.yaml', '''
+changelog: A bug fix
+version: patch
+''');
+
+      final List<String> output = await runBatchCommand();
+
+      expect(
+          output,
+          containsAllInOrder(<String>[
+            'Parsing package "a_package"...',
+            '  Creating new branch "release-branch"...',
+            '  Pushing branch release-branch to remote origin...',
+          ]));
+
+      expect(
+          package.pubspecFile.readAsStringSync(), contains('version: 2.0.0'));
+      final String changelogContent = package.changelogFile.readAsStringSync();
+      expect(changelogContent, startsWith('## 2.0.0'));
+      expect(changelogContent, contains('A new feature'));
+      expect(changelogContent, contains('A breaking change'));
+      expect(changelogContent, contains('A bug fix'));
+      expect(
+          gitProcessRunner.recordedCalls,
+          orderedEquals(<ProcessCall>[
+            const ProcessCall(
+                'git-checkout', <String>['-b', 'release-branch'], null),
+            const ProcessCall(
+                'git-rm',
+                <String>['/packages/a_package/pending_changelogs/a.yaml'],
+                null),
+            const ProcessCall(
+                'git-rm',
+                <String>['/packages/a_package/pending_changelogs/b.yaml'],
+                null),
+            const ProcessCall(
+                'git-rm',
+                <String>['/packages/a_package/pending_changelogs/c.yaml'],
+                null),
+            const ProcessCall(
+                'git-add',
+                <String>[
+                  '/packages/a_package/pubspec.yaml',
+                  '/packages/a_package/CHANGELOG.md'
+                ],
+                null),
+            const ProcessCall('git-commit',
+                <String>['-m', '[a_package] Prepares for batch release'], null),
+            const ProcessCall(
+                'git-push', <String>['origin', 'release-branch'], null),
+          ]));
+    });
+
+    test('merges multiple changelogs with same version', () async {
+      createPendingChangelogFile('a.yaml', '''
+changelog: A new feature
+version: minor
+''');
+      createPendingChangelogFile('b.yaml', '''
+changelog: Another new feature
+version: minor
+''');
+
+      final List<String> output = await runBatchCommand();
+
+      expect(
+          output,
+          containsAllInOrder(<String>[
+            'Parsing package "a_package"...',
+            '  Creating new branch "release-branch"...',
+            '  Pushing branch release-branch to remote origin...',
+          ]));
+
+      expect(
+          package.pubspecFile.readAsStringSync(), contains('version: 1.1.0'));
+      final String changelogContent = package.changelogFile.readAsStringSync();
+      expect(changelogContent, startsWith('## 1.1.0'));
+      expect(changelogContent, contains('A new feature'));
+      expect(changelogContent, contains('Another new feature'));
+      expect(gitProcessRunner.recordedCalls,
+          orderedEquals(expectedGitCallsForABFiles));
+    });
+
+    test('mix of skip and other version changes', () async {
+      createPendingChangelogFile('a.yaml', '''
+changelog: A new feature
+version: minor
+''');
+      createPendingChangelogFile('b.yaml', '''
+changelog: A documentation update
+version: skip
+''');
+
+      final List<String> output = await runBatchCommand();
+
+      expect(
+          output,
+          containsAllInOrder(<String>[
+            'Parsing package "a_package"...',
+            '  Creating new branch "release-branch"...',
+            '  Pushing branch release-branch to remote origin...',
+          ]));
+
+      expect(
+          package.pubspecFile.readAsStringSync(), contains('version: 1.1.0'));
+      final String changelogContent = package.changelogFile.readAsStringSync();
+      expect(changelogContent, startsWith('## 1.1.0'));
+      expect(changelogContent, contains('A new feature'));
+      expect(changelogContent, contains('A documentation update'));
+      expect(gitProcessRunner.recordedCalls,
+          orderedEquals(expectedGitCallsForABFiles));
     });
 
     test('skips version update', () async {
-      await testReleaseBranch(
-        changelogs: <String, String>{
-          'a.yaml': '''
+      createPendingChangelogFile('a.yaml', '''
 changelog: A new feature
 version: skip
-'''
-        },
-        expectedOutput: <String>[
-          'Parsing package "a_package"...',
-          'No version change specified in pending changelogs for a_package.',
-        ],
-      );
+''');
+
+      final List<String> output = await runBatchCommand();
+
+      expect(
+          output,
+          containsAllInOrder(<String>[
+            'Parsing package "a_package"...',
+            'No version change specified in pending changelogs for a_package.',
+          ]));
       expect(
           package.pubspecFile.readAsStringSync(), contains('version: 1.0.0'));
       expect(package.changelogFile.readAsStringSync(), startsWith('## 1.0.0'));
@@ -266,13 +415,14 @@ version: skip
     });
 
     test('handles no changelog files', () async {
-      await testReleaseBranch(
-        changelogs: <String, String>{},
-        expectedOutput: <String>[
-          'Parsing package "a_package"...',
-          'No pending changelogs found for a_package.',
-        ],
-      );
+      final List<String> output = await runBatchCommand();
+
+      expect(
+          output,
+          containsAllInOrder(<String>[
+            'Parsing package "a_package"...',
+            'No pending changelogs found for a_package.',
+          ]));
       expect(
           package.pubspecFile.readAsStringSync(), contains('version: 1.0.0'));
       expect(package.changelogFile.readAsStringSync(), startsWith('## 1.0.0'));
@@ -280,21 +430,121 @@ version: skip
     });
   });
 
-  test('throw when github fails', () async {
-    createChangelogFile('a.yaml', '''
+  group('error handling', () {
+    test('throw when git-checkout fails', () async {
+      createPendingChangelogFile('a.yaml', '''
 changelog: A new feature
 version: major
 ''');
-    gitProcessRunner.mockProcessesForExecutable['git-rm'] = <FakeProcessInfo>[
-      FakeProcessInfo(MockProcess(stderr: 'error', exitCode: 1)),
-    ];
-    Object? error;
-    try {
-      await runBatchCommand();
-    } catch (e) {
-      error = e;
-    }
+      gitProcessRunner.mockProcessesForExecutable['git-checkout'] =
+          <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stderr: 'error', exitCode: 1)),
+      ];
+      final List<String> output =
+          await runBatchCommand(errorHandler: (Error e) {
+        expect(e, isA<ToolExit>());
+        expect((e as ToolExit).exitCode, 4);
+      });
 
-    expect(error, isA<ToolExit>());
+      expect(output.last,
+          contains('Failed to create branch release-branch: error'));
+    });
+
+    test('throw when git-rm fails', () async {
+      createPendingChangelogFile('a.yaml', '''
+changelog: A new feature
+version: major
+''');
+      gitProcessRunner.mockProcessesForExecutable['git-rm'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stderr: 'error', exitCode: 1)),
+      ];
+      final List<String> output =
+          await runBatchCommand(errorHandler: (Error e) {
+        expect(e, isA<ToolExit>());
+        expect((e as ToolExit).exitCode, 4);
+      });
+
+      expect(
+          output.last,
+          contains(
+              'Failed to rm /packages/a_package/pending_changelogs/a.yaml: error'));
+    });
+
+    test('throw when git-add fails', () async {
+      createPendingChangelogFile('a.yaml', '''
+changelog: A new feature
+version: major
+''');
+      gitProcessRunner.mockProcessesForExecutable['git-add'] =
+          <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stderr: 'error', exitCode: 1)),
+      ];
+      final List<String> output =
+          await runBatchCommand(errorHandler: (Error e) {
+        expect(e, isA<ToolExit>());
+        expect((e as ToolExit).exitCode, 4);
+      });
+
+      expect(output.last, contains('Failed to git add: error'));
+    });
+
+    test('throw when git-commit fails', () async {
+      createPendingChangelogFile('a.yaml', '''
+changelog: A new feature
+version: major
+''');
+      gitProcessRunner.mockProcessesForExecutable['git-commit'] =
+          <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stderr: 'error', exitCode: 1)),
+      ];
+      final List<String> output =
+          await runBatchCommand(errorHandler: (Error e) {
+        expect(e, isA<ToolExit>());
+        expect((e as ToolExit).exitCode, 4);
+      });
+
+      expect(output.last, contains('Failed to commit: error'));
+    });
+
+    test('throw when git-push fails', () async {
+      createPendingChangelogFile('a.yaml', '''
+changelog: A new feature
+version: major
+''');
+      gitProcessRunner.mockProcessesForExecutable['git-push'] =
+          <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stderr: 'error', exitCode: 1)),
+      ];
+      final List<String> output =
+          await runBatchCommand(errorHandler: (Error e) {
+        expect(e, isA<ToolExit>());
+        expect((e as ToolExit).exitCode, 4);
+      });
+
+      expect(output.last, contains('Failed to push to release-branch: error'));
+    });
+
+    test('throws for pre-1.0.0 packages', () async {
+      // Set a pre-1.0.0 version.
+      package.pubspecFile.writeAsStringSync('''
+name: a_package
+version: 0.5.0
+''');
+      createPendingChangelogFile('a.yaml', '''
+changelog: A new feature
+version: minor
+''');
+
+      final List<String> output =
+          await runBatchCommand(errorHandler: (Error e) {
+        expect(e, isA<ToolExit>());
+        expect((e as ToolExit).exitCode, 3);
+      });
+
+      expect(
+          output.last,
+          contains(
+              'This script only supports packages with version >= 1.0.0. Current version: 0.5.0. Package: a_package.'));
+    });
   });
 }
