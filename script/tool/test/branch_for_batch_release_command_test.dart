@@ -62,6 +62,13 @@ version: 1.0.0
     package.directory.deleteSync(recursive: true);
   });
 
+  Future<List<String>> runBatchCommand() => runCapturingPrint(runner, <String>[
+        'branch-for-batch-release',
+        '--packages=a_package',
+        '--branch=release-branch',
+        '--remote=origin'
+      ]);
+
   Future<void> testReleaseBranch({
     required Map<String, String> changelogs,
     required List<String> expectedOutput,
@@ -73,11 +80,7 @@ version: 1.0.0
       createChangelogFile(entry.key, entry.value);
     }
 
-    final List<String> output = await runCapturingPrint(runner, <String>[
-      'branch-for-batch-release',
-      '--packages=a_package',
-      '--branch=release-branch',
-    ]);
+    final List<String> output = await runBatchCommand();
 
     expect(output, containsAllInOrder(expectedOutput));
 
@@ -106,10 +109,8 @@ version: minor
         expectedChangelogSnippets: <String>['A new feature'],
         expectedOutput: <String>[
           'Parsing package "a_package"...',
-          'Creating and pushing release branch...',
           '  Creating new branch "release-branch"...',
-          '  Updating pubspec.yaml to version 1.1.0...',
-          '  Updating CHANGELOG.md...',
+          '  Pushing branch release-branch to remote origin...',
         ],
         expectedGitCommands: <ProcessCall>[
           const ProcessCall(
@@ -124,7 +125,7 @@ version: minor
               ],
               null),
           const ProcessCall('git-commit',
-              <String>['-m', 'a_package: Prepare for release'], null),
+              <String>['-m', '[a_package] Prepares for batch release'], null),
           const ProcessCall(
               'git-push', <String>['origin', 'release-branch'], null),
         ],
@@ -143,10 +144,8 @@ version: major
         expectedChangelogSnippets: <String>['A new feature'],
         expectedOutput: <String>[
           'Parsing package "a_package"...',
-          'Creating and pushing release branch...',
           '  Creating new branch "release-branch"...',
-          '  Updating pubspec.yaml to version 2.0.0...',
-          '  Updating CHANGELOG.md...',
+          '  Pushing branch release-branch to remote origin...',
         ],
         expectedGitCommands: <ProcessCall>[
           const ProcessCall(
@@ -161,7 +160,7 @@ version: major
               ],
               null),
           const ProcessCall('git-commit',
-              <String>['-m', 'a_package: Prepare for release'], null),
+              <String>['-m', '[a_package] Prepares for batch release'], null),
           const ProcessCall(
               'git-push', <String>['origin', 'release-branch'], null),
         ],
@@ -180,10 +179,8 @@ version: patch
         expectedChangelogSnippets: <String>['A new feature'],
         expectedOutput: <String>[
           'Parsing package "a_package"...',
-          'Creating and pushing release branch...',
           '  Creating new branch "release-branch"...',
-          '  Updating pubspec.yaml to version 1.0.1...',
-          '  Updating CHANGELOG.md...',
+          '  Pushing branch release-branch to remote origin...',
         ],
         expectedGitCommands: <ProcessCall>[
           const ProcessCall(
@@ -198,7 +195,7 @@ version: patch
               ],
               null),
           const ProcessCall('git-commit',
-              <String>['-m', 'a_package: Prepare for release'], null),
+              <String>['-m', '[a_package] Prepares for batch release'], null),
           const ProcessCall(
               'git-push', <String>['origin', 'release-branch'], null),
         ],
@@ -224,10 +221,8 @@ version: major
         ],
         expectedOutput: <String>[
           'Parsing package "a_package"...',
-          'Creating and pushing release branch...',
           '  Creating new branch "release-branch"...',
-          '  Updating pubspec.yaml to version 2.0.0...',
-          '  Updating CHANGELOG.md...',
+          '  Pushing branch release-branch to remote origin...',
         ],
         expectedGitCommands: <ProcessCall>[
           const ProcessCall(
@@ -244,7 +239,7 @@ version: major
               ],
               null),
           const ProcessCall('git-commit',
-              <String>['-m', 'a_package: Prepare for release'], null),
+              <String>['-m', '[a_package] Prepares for batch release'], null),
           const ProcessCall(
               'git-push', <String>['origin', 'release-branch'], null),
         ],
@@ -295,11 +290,7 @@ version: major
     ];
     Object? error;
     try {
-      await runCapturingPrint(runner, <String>[
-        'branch-for-batch-release',
-        '--packages=a_package',
-        '--branch=release-branch',
-      ]);
+      await runBatchCommand();
     } catch (e) {
       error = e;
     }
