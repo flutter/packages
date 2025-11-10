@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:js_interop';
+import 'dart:typed_data';
 
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/foundation.dart';
@@ -358,5 +359,75 @@ class CameraService {
       default:
         return DeviceOrientation.portraitUp;
     }
+  }
+
+  ///Used to check if browser has OffscreenCanvas capability
+  bool hasPropertyOffScreenCanvas() {
+    return jsUtil.hasProperty(window, 'OffscreenCanvas'.toJS);
+  }
+
+  ///Used in [takeFrame] if `OffscreenCanvas` is not supported
+  web.CanvasElement? _canvasElement;
+
+  ///Used in [takeFrame] if `OffscreenCanvas` is supported
+  web.OffscreenCanvas? _offscreenCanvas;
+
+  ///Returns frame at a specific time using video element
+  CameraImageData takeFrame(web.VideoElement videoElement) {
+    final int width = videoElement.videoWidth;
+    final int height = videoElement.videoHeight;
+    if (width == 0 || height == 0) {
+      throw Exception(
+        'Computed dimensions are zero: width=$width, height=$height',
+      );
+    }
+    late web.ImageData imageData;
+    if (hasPropertyOffScreenCanvas()) {
+      if (_offscreenCanvas == null ||
+          _offscreenCanvas!.width != width ||
+          _offscreenCanvas!.height != height) {
+        _offscreenCanvas = web.OffscreenCanvas(width, height);
+      }
+      final web.OffscreenCanvasRenderingContext2D context =
+          _offscreenCanvas!.getContext(
+                '2d',
+                <String, Object?>{'willReadFrequently': true}.jsify(),
+              )!
+              as web.OffscreenCanvasRenderingContext2D;
+      context.drawImage(videoElement, 0, 0);
+      imageData = context.getImageData(0, 0, width, height);
+    } else {
+      if (_canvasElement == null ||
+          _canvasElement!.width != width ||
+          _canvasElement!.height != height) {
+        _canvasElement =
+            web.CanvasElement()
+              ..height = height
+              ..width = width;
+      }
+      final web.CanvasRenderingContext2D context = _canvasElement!.context2D;
+
+      context.drawImageScaled(
+        videoElement,
+        0,
+        0,
+        width.toDouble(),
+        height.toDouble(),
+      );
+      imageData = context.getImageData(0, 0, width, height);
+    }
+    final ByteBuffer byteBuffer = imageData.data.toDart.buffer;
+
+    return CameraImageData(
+      format: const CameraImageFormat(ImageFormatGroup.unknown, raw: 0),
+      planes: <CameraImagePlane>[
+        CameraImagePlane(
+          bytes: byteBuffer.asUint8List(),
+          bytesPerRow: width * 4,
+        ),
+      ],
+      height: height,
+      width: width,
+    );
   }
 }
