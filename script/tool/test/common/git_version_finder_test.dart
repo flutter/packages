@@ -66,7 +66,7 @@ file2/file2.cc
     final GitVersionFinder finder = GitVersionFinder(gitDir);
     await finder.getChangedFiles();
     verify(gitDir.runCommand(
-        <String>['merge-base', '--fork-point', 'FETCH_HEAD', 'HEAD'],
+        <String>['merge-base', '--fork-point', 'main', 'HEAD'],
         throwOnError: false));
     verify(gitDir.runCommand(
         <String>['diff', '--name-only', mergeBaseResponse, 'HEAD']));
