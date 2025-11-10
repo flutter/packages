@@ -44,12 +44,15 @@ class UpdateDependencyCommand extends PackageLoopingCommand {
         help: 'An Android dependency to update.',
         allowed: <String>[
           _AndroidDepdencyType.gradle,
+          _AndroidDepdencyType.androidGradlePlugin,
           _AndroidDepdencyType.compileSdk,
           _AndroidDepdencyType.compileSdkForExamples,
         ],
         allowedHelp: <String, String>{
           _AndroidDepdencyType.gradle:
               'Updates Gradle version used in plugin example apps.',
+          _AndroidDepdencyType.androidGradlePlugin:
+              'Updates AGP version used in plugin example apps.',
           _AndroidDepdencyType.compileSdk:
               'Updates compileSdk version used to compile plugins.',
           _AndroidDepdencyType.compileSdkForExamples:
@@ -150,7 +153,22 @@ A version with a valid format (maximum 2-3 numbers separated by 1-2 periods) mus
             3. If present, the third number must have a single digit''');
           throw ToolExit(_exitInvalidTargetVersion);
         }
-      } else if (_targetAndroidDependency == _AndroidDepdencyType.compileSdk ||
+      } else if (_targetAndroidDependency ==
+          _AndroidDepdencyType.androidGradlePlugin) {
+        final RegExp validAGPVersionPattern =
+            RegExp(r'^\d{1,2}\.\d{1,2}(?:\.\d)?$');
+        final bool isValidAGPVersion =
+            validAGPVersionPattern.stringMatch(version) == version;
+        if (!isValidAGPVersion) {
+          printError('''
+A version with a valid format (maximum 2-3 numbers separated by 1-2 periods) must be provided.
+            1. The first number must have one or two digits
+            2. The second number must have one or two digits
+            3. If present, the third number must have a single digit''');
+          throw ToolExit(_exitInvalidTargetVersion);
+        }
+      } else if (_targetAndroidDependency ==
+              _AndroidDepdencyType.compileSdk ||
           _targetAndroidDependency ==
               _AndroidDepdencyType.compileSdkForExamples) {
         final RegExp validSdkVersion = RegExp(r'^\d{1,2}$');
@@ -258,7 +276,9 @@ A version with a valid format (maximum 2-3 numbers separated by 1-2 periods) mus
       return _runForCompileSdkVersion(package);
     } else if (_targetAndroidDependency == _AndroidDepdencyType.gradle ||
         _targetAndroidDependency ==
-            _AndroidDepdencyType.compileSdkForExamples) {
+            _AndroidDepdencyType.compileSdkForExamples ||
+        _targetAndroidDependency ==
+            _AndroidDepdencyType.androidGradlePlugin) {
       return _runForAndroidDependencyOnExamples(package);
     }
 
@@ -317,6 +337,13 @@ A version with a valid format (maximum 2-3 numbers separated by 1-2 periods) mus
         dependencyVersionPattern = RegExp(
             r'(compileSdk|compileSdkVersion) (\d{1,2}|flutter.compileSdkVersion)');
         newDependencyVersionEntry = 'compileSdk $_targetVersion';
+      } else if (_targetAndroidDependency ==
+          _AndroidDepdencyType.androidGradlePlugin) {
+        filesToUpdate.add(androidDirectory.childFile('settings.gradle'));
+        dependencyVersionPattern = RegExp(
+            r'^\s*id\s+"com\.android\.application"\s+version\s+"(\d{1,2}\.\d{1,2}(?:\.\d)?)"\s+apply\s+false\s*$', multiLine: true);
+        newDependencyVersionEntry =
+            'id "com.android.application" version "$_targetVersion" apply false';
       } else {
         printError(
             'Target Android dependency $_targetAndroidDependency is unrecognized.');
@@ -506,6 +533,7 @@ enum _PubDependencyType { normal, dev }
 
 class _AndroidDepdencyType {
   static const String gradle = 'gradle';
+  static const String androidGradlePlugin = 'androidGradlePlugin';
   static const String compileSdk = 'compileSdk';
   static const String compileSdkForExamples = 'compileSdkForExamples';
 }

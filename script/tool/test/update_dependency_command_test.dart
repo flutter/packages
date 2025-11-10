@@ -963,6 +963,99 @@ A version with a valid format (maximum 2-3 numbers separated by 1-2 periods) mus
           ]),
         );
       });
+
+      test(
+          'succeeds if example app has android/settings.gradle structure',
+              () async {
+            final RepositoryPackage package =
+            createFakePlugin('fake_plugin', packagesDir, extraFiles: <String>[
+              'example/android/settings.gradle'
+            ]);
+            const String newAGPVersion = '9.9';
+
+            final File gradleSettingsFile = package.directory
+                .childDirectory('example')
+                .childDirectory('android')
+                .childFile('settings.gradle');
+
+            gradleSettingsFile.writeAsStringSync(r'''
+...
+plugins {
+    id "dev.flutter.flutter-plugin-loader" version "1.0.0"
+    id "com.android.application" version "8.11.1" apply false
+...
+}
+...
+''');
+
+            await runCapturingPrint(runner, <String>[
+              'update-dependency',
+              '--packages',
+              package.displayName,
+              '--android-dependency',
+              'androidGradlePlugin',
+              '--version',
+              newAGPVersion,
+            ]);
+
+            final String updatedGradleSettingsContents =
+            gradleSettingsFile.readAsStringSync();
+
+            expect(
+                updatedGradleSettingsContents,
+                contains(
+                    r'id "com.android.application" version '
+                    '"$newAGPVersion" apply false'));
+          });
+
+      test(
+          'succeeds if one example app runs on Android and another does not',
+              () async {
+                final RepositoryPackage package = createFakePlugin(
+                    'fake_plugin', packagesDir, examples: <String>[
+                  'example_1',
+                  'example_2'
+                ], extraFiles: <String>[
+                  'example/example_2/android/settings.gradle'
+                ]);
+            const String newAGPVersion = '9.9';
+
+            final File gradleSettingsFile = package.directory
+                .childDirectory('example')
+                .childDirectory('example_2')
+                .childDirectory('android')
+                .childFile('settings.gradle');
+
+            gradleSettingsFile.writeAsStringSync(r'''
+...
+plugins {
+    id "dev.flutter.flutter-plugin-loader" version "1.0.0"
+    id "com.android.application" version "8.11.1" apply false
+...
+}
+...
+''');
+
+            await runCapturingPrint(runner, <String>[
+              'update-dependency',
+              '--packages',
+              package.displayName,
+              '--android-dependency',
+              'androidGradlePlugin',
+              '--version',
+              newAGPVersion,
+            ]);
+
+            final String updatedGradleSettingsContents =
+            gradleSettingsFile.readAsStringSync();
+
+            expect(
+                updatedGradleSettingsContents,
+                contains(
+                    r'id "com.android.application" version '
+                    '"$newAGPVersion" apply false'));
+          });
+
     });
 
     group('compileSdk/compileSdkForExamples', () {
