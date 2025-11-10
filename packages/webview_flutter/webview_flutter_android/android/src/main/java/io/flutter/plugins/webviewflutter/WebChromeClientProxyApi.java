@@ -4,6 +4,8 @@
 
 package io.flutter.plugins.webviewflutter;
 
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
 import android.net.Uri;
 import android.os.Message;
 import android.view.View;
@@ -238,6 +240,16 @@ public class WebChromeClientProxyApi extends PigeonApiWebChromeClient {
    */
   public static class SecureWebChromeClient extends WebChromeClient {
     @Nullable WebViewClient webViewClient;
+
+    /**
+     * Removes the gray Android player icon.
+     *
+     * <p>See https://issues.chromium.org/issues/40755557.
+     */
+    @Override
+    public Bitmap getDefaultVideoPoster() {
+      return Bitmap.createBitmap(1, 1, Config.ALPHA_8);
+    }
 
     @Override
     public boolean onCreateWindow(
