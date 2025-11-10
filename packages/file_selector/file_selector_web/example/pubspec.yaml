@@ -6,7 +6,7 @@ environment:
   flutter: ">=3.29.0"
 
 dependencies:
-  file_selector_platform_interface: ^2.6.0
+  file_selector_platform_interface: ^2.7.0
   file_selector_web:
     path: ../
   flutter:
@@ -18,7 +18,3 @@ dev_dependencies:
     sdk: flutter
   integration_test:
     sdk: flutter
-# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
-# See https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#changing-federated-plugins
-dependency_overrides:
-  file_selector_platform_interface: {path: ../../../../packages/file_selector/file_selector_platform_interface}

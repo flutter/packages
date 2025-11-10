@@ -18,7 +18,7 @@ flutter:
 
 dependencies:
   cross_file: ^0.3.1
-  file_selector_platform_interface: ^2.6.0
+  file_selector_platform_interface: ^2.7.0
   flutter:
     sdk: flutter
 
@@ -31,7 +31,3 @@ topics:
   - files
   - file-selection
   - file-selector
-# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
-# See https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#changing-federated-plugins
-dependency_overrides:
-  file_selector_platform_interface: {path: ../../../packages/file_selector/file_selector_platform_interface}
