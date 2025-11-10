@@ -487,19 +487,14 @@ void main() {
 
   group('getDirectoryPathWithOptions', () {
     test('works as expected with no arguments', () async {
-      when(
-        mockApi.displayOpenPanel(any),
-      ).thenAnswer((_) async => <String>['foo']);
+      api.result = <String>['foo'];
 
       final String? path = await plugin.getDirectoryPathWithOptions(
         const FileDialogOptions(),
       );
 
       expect(path, 'foo');
-      final VerificationResult result = verify(
-        mockApi.displayOpenPanel(captureAny),
-      );
-      final OpenPanelOptions options = result.captured[0] as OpenPanelOptions;
+      final OpenPanelOptions options = api.passedOpenPanelOptions!;
       expect(options.allowsMultipleSelection, false);
       expect(options.canChooseFiles, false);
       expect(options.canChooseDirectories, true);
@@ -511,11 +506,9 @@ void main() {
     });
 
     test('handles cancel', () async {
-      when(mockApi.displayOpenPanel(any)).thenAnswer((_) async => <String>[]);
+      api.result = <String>[];
 
-      final String? path = await plugin.getDirectoryPathWithOptions(
-        const FileDialogOptions(),
-      );
+      final String? path = await plugin.getDirectoryPath();
 
       expect(path, null);
     });
@@ -525,10 +518,7 @@ void main() {
         const FileDialogOptions(initialDirectory: '/example/directory'),
       );
 
-      final VerificationResult result = verify(
-        mockApi.displayOpenPanel(captureAny),
-      );
-      final OpenPanelOptions options = result.captured[0] as OpenPanelOptions;
+      final OpenPanelOptions options = api.passedOpenPanelOptions!;
       expect(options.baseOptions.directoryPath, '/example/directory');
     });
 
@@ -537,10 +527,7 @@ void main() {
         const FileDialogOptions(confirmButtonText: 'Open File'),
       );
 
-      final VerificationResult result = verify(
-        mockApi.displayOpenPanel(captureAny),
-      );
-      final OpenPanelOptions options = result.captured[0] as OpenPanelOptions;
+      final OpenPanelOptions options = api.passedOpenPanelOptions!;
       expect(options.baseOptions.prompt, 'Open File');
     });
 
@@ -549,10 +536,7 @@ void main() {
         const FileDialogOptions(canCreateDirectories: false),
       );
 
-      final VerificationResult result = verify(
-        mockApi.displayOpenPanel(captureAny),
-      );
-      final OpenPanelOptions options = result.captured[0] as OpenPanelOptions;
+      final OpenPanelOptions options = api.passedOpenPanelOptions!;
       expect(options.baseOptions.canCreateDirectories, false);
     });
   });
@@ -607,13 +591,11 @@ void main() {
 
   group('getDirectoryPathsWithOptions', () {
     test('works as expected with no arguments', () async {
-      when(mockApi.displayOpenPanel(any)).thenAnswer(
-        (_) async => <String>[
-          'firstDirectory',
-          'secondDirectory',
-          'thirdDirectory',
-        ],
-      );
+      api.result = <String>[
+        'firstDirectory',
+        'secondDirectory',
+        'thirdDirectory',
+      ];
 
       final List<String> path = await plugin.getDirectoryPathsWithOptions(
         const FileDialogOptions(),
@@ -624,10 +606,7 @@ void main() {
         'secondDirectory',
         'thirdDirectory',
       ]);
-      final VerificationResult result = verify(
-        mockApi.displayOpenPanel(captureAny),
-      );
-      final OpenPanelOptions options = result.captured[0] as OpenPanelOptions;
+      final OpenPanelOptions options = api.passedOpenPanelOptions!;
       expect(options.allowsMultipleSelection, true);
       expect(options.canChooseFiles, false);
       expect(options.canChooseDirectories, true);
@@ -639,7 +618,7 @@ void main() {
     });
 
     test('handles cancel', () async {
-      when(mockApi.displayOpenPanel(any)).thenAnswer((_) async => <String>[]);
+      api.result = <String>[];
 
       final List<String> paths = await plugin.getDirectoryPathsWithOptions(
         const FileDialogOptions(),
@@ -653,10 +632,7 @@ void main() {
         const FileDialogOptions(confirmButtonText: 'Select directories'),
       );
 
-      final VerificationResult result = verify(
-        mockApi.displayOpenPanel(captureAny),
-      );
-      final OpenPanelOptions options = result.captured[0] as OpenPanelOptions;
+      final OpenPanelOptions options = api.passedOpenPanelOptions!;
       expect(options.baseOptions.prompt, 'Select directories');
     });
 
@@ -665,10 +641,7 @@ void main() {
         const FileDialogOptions(initialDirectory: '/example/directory'),
       );
 
-      final VerificationResult result = verify(
-        mockApi.displayOpenPanel(captureAny),
-      );
-      final OpenPanelOptions options = result.captured[0] as OpenPanelOptions;
+      final OpenPanelOptions options = api.passedOpenPanelOptions!;
       expect(options.baseOptions.directoryPath, '/example/directory');
     });
 
@@ -677,10 +650,7 @@ void main() {
         const FileDialogOptions(canCreateDirectories: false),
       );
 
-      final VerificationResult result = verify(
-        mockApi.displayOpenPanel(captureAny),
-      );
-      final OpenPanelOptions options = result.captured[0] as OpenPanelOptions;
+      final OpenPanelOptions options = api.passedOpenPanelOptions!;
       expect(options.baseOptions.canCreateDirectories, false);
     });
   });
