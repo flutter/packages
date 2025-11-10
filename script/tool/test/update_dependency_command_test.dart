@@ -907,6 +907,63 @@ distributionUrl=https\://services.gradle.org/distributions/gradle-7.6.1-all.zip
                 'gradle-$newGradleVersion-all.zip'));
       });
     });
+    group('agp', () {
+      final List<String> invalidAGPVersionsFormat = <String>[
+        '81',
+        '811.1',
+        '8.123',
+        '8.12.12'
+      ];
+
+      for (final String AGPVersion in invalidAGPVersionsFormat) {
+        test('throws because AGPVersion: $AGPVersion is invalid', () async {
+          Error? commandError;
+          final List<String> output = await runCapturingPrint(runner, <String>[
+            'update-dependency',
+            '--android-dependency',
+            'androidGradlePlugin',
+            '--version',
+            AGPVersion,
+          ], errorHandler: (Error e) {
+            commandError = e;
+          });
+
+          expect(commandError, isA<ToolExit>());
+          expect(
+            output,
+            containsAllInOrder(<Matcher>[
+              contains('''
+A version with a valid format (maximum 2-3 numbers separated by 1-2 periods) must be provided.
+            1. The first number must have one or two digits
+            2. The second number must have one or two digits
+            3. If present, the third number must have a single digit'''),
+            ]),
+          );
+        });
+      }
+
+      test('skips if example app does not run on Android', () async {
+        final RepositoryPackage package =
+            createFakePlugin('fake_plugin', packagesDir);
+
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'update-dependency',
+          '--packages',
+          package.displayName,
+          '--android-dependency',
+          'androidGradlePlugin',
+          '--version',
+          '8.11.1',
+        ]);
+
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('SKIPPING: No example apps run on Android.'),
+          ]),
+        );
+      });
+    });
 
     group('compileSdk/compileSdkForExamples', () {
       // Tests if the compileSdk version is updated for the provided
