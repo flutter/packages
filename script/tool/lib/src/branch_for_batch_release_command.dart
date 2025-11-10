@@ -36,7 +36,13 @@ class BranchForBatchReleaseCommand extends PackageCommand {
       'branch',
       mandatory: true,
       abbr: 'b',
-      help: 'The branch to push the release PR to.',
+      help: 'The branch name to contain the release commit',
+    );
+    argParser.addOption(
+      'remote',
+      mandatory: true,
+      abbr: 'r',
+      help: 'The remote to push the branch to.',
     );
   }
 
@@ -86,7 +92,7 @@ class BranchForBatchReleaseCommand extends PackageCommand {
       return;
     }
 
-    await _createReleaseBranch(
+    await _generateCommitAndBranch(
       git: repository,
       package: package,
       branchName: branchName,
@@ -146,7 +152,7 @@ class BranchForBatchReleaseCommand extends PackageCommand {
     return _ReleaseInfo(newVersion, changelogs);
   }
 
-  Future<void> _createReleaseBranch({
+  Future<void> _generateCommitAndBranch({
     required GitDir git,
     required RepositoryPackage package,
     required String branchName,
@@ -171,7 +177,6 @@ class BranchForBatchReleaseCommand extends PackageCommand {
   }
 
   void _updatePubspec(RepositoryPackage package, Version newVersion) {
-    print('  Updating pubspec.yaml to version $newVersion...');
     final YamlEditor editablePubspec =
         YamlEditor(package.pubspecFile.readAsStringSync());
     editablePubspec.update(<String>['version'], newVersion.toString());
@@ -179,7 +184,6 @@ class BranchForBatchReleaseCommand extends PackageCommand {
   }
 
   void _updateChangelog(RepositoryPackage package, _ReleaseInfo releaseInfo) {
-    print('  Updating CHANGELOG.md...');
     final String newHeader = '## ${releaseInfo.newVersion}';
     final List<String> newEntries = releaseInfo.changelogs;
 
@@ -197,7 +201,6 @@ class BranchForBatchReleaseCommand extends PackageCommand {
 
   Future<void> _removePendingChangelogs(
       GitDir git, List<File> pendingChangelogFiles) async {
-    print('  Removing pending changelog files...');
     for (final File file in pendingChangelogFiles) {
       final io.ProcessResult rmResult =
           await git.runCommand(<String>['rm', file.path]);
@@ -210,7 +213,6 @@ class BranchForBatchReleaseCommand extends PackageCommand {
 
   Future<void> _stageAndCommitChanges(
       GitDir git, RepositoryPackage package) async {
-    print('  Staging changes...');
     final io.ProcessResult addResult = await git.runCommand(
         <String>['add', package.pubspecFile.path, package.changelogFile.path]);
     if (addResult.exitCode != 0) {
@@ -218,11 +220,10 @@ class BranchForBatchReleaseCommand extends PackageCommand {
       throw ToolExit(_kGitFailedToPush);
     }
 
-    print('  Committing changes...');
     final io.ProcessResult commitResult = await git.runCommand(<String>[
       'commit',
       '-m',
-      '${package.displayName}: Prepare for release'
+      '[${package.displayName}] Prepares for batch release'
     ]);
     if (commitResult.exitCode != 0) {
       printError('Failed to commit: ${commitResult.stderr}');
@@ -232,7 +233,7 @@ class BranchForBatchReleaseCommand extends PackageCommand {
 
   Future<void> _pushBranch(
       GitDir git, String remoteName, String branchName) async {
-    print('  Pushing to remote...');
+    print('  Pushing branch ${branchName} to remote ${remoteName}...');
     final io.ProcessResult pushResult =
         await git.runCommand(<String>['push', remoteName, branchName]);
     if (pushResult.exitCode != 0) {
