@@ -214,4 +214,14 @@ public class WebChromeClientTest {
     verify(mockApi)
         .onJsPrompt(eq(instance), eq(webView), eq(url), eq(message), eq(defaultValue), any());
   }
+
+  @Test
+  public void getDefaultVideoPoster() {
+    final WebChromeClientProxyApi mockApi = mock(WebChromeClientProxyApi.class);
+    when(mockApi.getPigeonRegistrar()).thenReturn(new TestProxyApiRegistrar());
+
+    final WebChromeClientImpl instance = new WebChromeClientImpl(mockApi);
+
+    assertNotNull(instance.getDefaultVideoPoster());
+  }
 }
