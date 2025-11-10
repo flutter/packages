@@ -19,9 +19,9 @@ void main() {
   late RecordingProcessRunner processRunner;
   late RecordingProcessRunner gitProcessRunner;
   late CommandRunner<void> runner;
-  late RepositoryPackage package;
 
-  void createPendingChangelogFile(String name, String content) {
+  void createPendingChangelogFile(
+      RepositoryPackage package, String name, String content) {
     final File pendingChangelog = package.directory
         .childDirectory('pending_changelogs')
         .childFile(name)
@@ -41,7 +41,24 @@ void main() {
           ],
           errorHandler: errorHandler);
 
-  const List<ProcessCall> expectedGitCallsForABFiles = [
+  RepositoryPackage createTestPackage() {
+    final RepositoryPackage package =
+        createFakePackage('a_package', packagesDir);
+
+    package.changelogFile.writeAsStringSync('''
+## 1.0.0
+
+- Old changes
+''');
+    package.pubspecFile.writeAsStringSync('''
+name: a_package
+version: 1.0.0
+''');
+    package.directory.childDirectory('pending_changelogs').createSync();
+    return package;
+  }
+
+  const List<ProcessCall> expectedGitCallsForABFiles = <ProcessCall>[
     ProcessCall('git-checkout', <String>['-b', 'release-branch'], null),
     ProcessCall('git-rm',
         <String>['/packages/a_package/pending_changelogs/a.yaml'], null),
@@ -88,27 +105,15 @@ void main() {
     runner = CommandRunner<void>('branch_for_batch_release_command',
         'Test for branch_for_batch_release_command');
     runner.addCommand(command);
-    package = createFakePackage('a_package', packagesDir);
-
-    package.changelogFile.writeAsStringSync('''
-## 1.0.0
-
-- Old changes
-''');
-    package.pubspecFile.writeAsStringSync('''
-name: a_package
-version: 1.0.0
-''');
-    package.directory.childDirectory('pending_changelogs').createSync();
-  });
-
-  tearDown(() {
-    package.directory.deleteSync(recursive: true);
   });
 
   group('happy path', () {
     test('can bump minor', () async {
-      createPendingChangelogFile('a.yaml', '''
+      final RepositoryPackage package = createTestPackage();
+      addTearDown(() {
+        package.directory.deleteSync(recursive: true);
+      });
+      createPendingChangelogFile(package, 'a.yaml', '''
 changelog: A new feature
 version: minor
 ''');
@@ -133,7 +138,11 @@ version: minor
     });
 
     test('can bump major', () async {
-      createPendingChangelogFile('a.yaml', '''
+      final RepositoryPackage package = createTestPackage();
+      addTearDown(() {
+        package.directory.deleteSync(recursive: true);
+      });
+      createPendingChangelogFile(package, 'a.yaml', '''
 changelog: A new feature
 version: major
 ''');
@@ -158,7 +167,11 @@ version: major
     });
 
     test('can bump patch', () async {
-      createPendingChangelogFile('a.yaml', '''
+      final RepositoryPackage package = createTestPackage();
+      addTearDown(() {
+        package.directory.deleteSync(recursive: true);
+      });
+      createPendingChangelogFile(package, 'a.yaml', '''
 changelog: A new feature
 version: patch
 ''');
@@ -183,11 +196,15 @@ version: patch
     });
 
     test('merges multiple changelogs, minor and major', () async {
-      createPendingChangelogFile('a.yaml', '''
+      final RepositoryPackage package = createTestPackage();
+      addTearDown(() {
+        package.directory.deleteSync(recursive: true);
+      });
+      createPendingChangelogFile(package, 'a.yaml', '''
 changelog: A new feature
 version: minor
 ''');
-      createPendingChangelogFile('b.yaml', '''
+      createPendingChangelogFile(package, 'b.yaml', '''
 changelog: A breaking change
 version: major
 ''');
@@ -213,11 +230,15 @@ version: major
     });
 
     test('merges multiple changelogs, minor and patch', () async {
-      createPendingChangelogFile('a.yaml', '''
+      final RepositoryPackage package = createTestPackage();
+      addTearDown(() {
+        package.directory.deleteSync(recursive: true);
+      });
+      createPendingChangelogFile(package, 'a.yaml', '''
 changelog: A new feature
 version: minor
 ''');
-      createPendingChangelogFile('b.yaml', '''
+      createPendingChangelogFile(package, 'b.yaml', '''
 changelog: A bug fix
 version: patch
 ''');
@@ -243,11 +264,15 @@ version: patch
     });
 
     test('merges multiple changelogs, major and patch', () async {
-      createPendingChangelogFile('a.yaml', '''
+      final RepositoryPackage package = createTestPackage();
+      addTearDown(() {
+        package.directory.deleteSync(recursive: true);
+      });
+      createPendingChangelogFile(package, 'a.yaml', '''
 changelog: A breaking change
 version: major
 ''');
-      createPendingChangelogFile('b.yaml', '''
+      createPendingChangelogFile(package, 'b.yaml', '''
 changelog: A bug fix
 version: patch
 ''');
@@ -273,15 +298,19 @@ version: patch
     });
 
     test('merges multiple changelogs, minor, major and patch', () async {
-      createPendingChangelogFile('a.yaml', '''
+      final RepositoryPackage package = createTestPackage();
+      addTearDown(() {
+        package.directory.deleteSync(recursive: true);
+      });
+      createPendingChangelogFile(package, 'a.yaml', '''
 changelog: A new feature
 version: minor
 ''');
-      createPendingChangelogFile('b.yaml', '''
+      createPendingChangelogFile(package, 'b.yaml', '''
 changelog: A breaking change
 version: major
 ''');
-      createPendingChangelogFile('c.yaml', '''
+      createPendingChangelogFile(package, 'c.yaml', '''
 changelog: A bug fix
 version: patch
 ''');
@@ -335,11 +364,15 @@ version: patch
     });
 
     test('merges multiple changelogs with same version', () async {
-      createPendingChangelogFile('a.yaml', '''
+      final RepositoryPackage package = createTestPackage();
+      addTearDown(() {
+        package.directory.deleteSync(recursive: true);
+      });
+      createPendingChangelogFile(package, 'a.yaml', '''
 changelog: A new feature
 version: minor
 ''');
-      createPendingChangelogFile('b.yaml', '''
+      createPendingChangelogFile(package, 'b.yaml', '''
 changelog: Another new feature
 version: minor
 ''');
@@ -365,11 +398,15 @@ version: minor
     });
 
     test('mix of skip and other version changes', () async {
-      createPendingChangelogFile('a.yaml', '''
+      final RepositoryPackage package = createTestPackage();
+      addTearDown(() {
+        package.directory.deleteSync(recursive: true);
+      });
+      createPendingChangelogFile(package, 'a.yaml', '''
 changelog: A new feature
 version: minor
 ''');
-      createPendingChangelogFile('b.yaml', '''
+      createPendingChangelogFile(package, 'b.yaml', '''
 changelog: A documentation update
 version: skip
 ''');
@@ -395,7 +432,11 @@ version: skip
     });
 
     test('skips version update', () async {
-      createPendingChangelogFile('a.yaml', '''
+      final RepositoryPackage package = createTestPackage();
+      addTearDown(() {
+        package.directory.deleteSync(recursive: true);
+      });
+      createPendingChangelogFile(package, 'a.yaml', '''
 changelog: A new feature
 version: skip
 ''');
@@ -415,6 +456,10 @@ version: skip
     });
 
     test('handles no changelog files', () async {
+      final RepositoryPackage package = createTestPackage();
+      addTearDown(() {
+        package.directory.deleteSync(recursive: true);
+      });
       final List<String> output = await runBatchCommand();
 
       expect(
@@ -432,7 +477,11 @@ version: skip
 
   group('error handling', () {
     test('throw when git-checkout fails', () async {
-      createPendingChangelogFile('a.yaml', '''
+      final RepositoryPackage package = createTestPackage();
+      addTearDown(() {
+        package.directory.deleteSync(recursive: true);
+      });
+      createPendingChangelogFile(package, 'a.yaml', '''
 changelog: A new feature
 version: major
 ''');
@@ -451,7 +500,11 @@ version: major
     });
 
     test('throw when git-rm fails', () async {
-      createPendingChangelogFile('a.yaml', '''
+      final RepositoryPackage package = createTestPackage();
+      addTearDown(() {
+        package.directory.deleteSync(recursive: true);
+      });
+      createPendingChangelogFile(package, 'a.yaml', '''
 changelog: A new feature
 version: major
 ''');
@@ -471,7 +524,11 @@ version: major
     });
 
     test('throw when git-add fails', () async {
-      createPendingChangelogFile('a.yaml', '''
+      final RepositoryPackage package = createTestPackage();
+      addTearDown(() {
+        package.directory.deleteSync(recursive: true);
+      });
+      createPendingChangelogFile(package, 'a.yaml', '''
 changelog: A new feature
 version: major
 ''');
@@ -489,7 +546,11 @@ version: major
     });
 
     test('throw when git-commit fails', () async {
-      createPendingChangelogFile('a.yaml', '''
+      final RepositoryPackage package = createTestPackage();
+      addTearDown(() {
+        package.directory.deleteSync(recursive: true);
+      });
+      createPendingChangelogFile(package, 'a.yaml', '''
 changelog: A new feature
 version: major
 ''');
@@ -507,7 +568,11 @@ version: major
     });
 
     test('throw when git-push fails', () async {
-      createPendingChangelogFile('a.yaml', '''
+      final RepositoryPackage package = createTestPackage();
+      addTearDown(() {
+        package.directory.deleteSync(recursive: true);
+      });
+      createPendingChangelogFile(package, 'a.yaml', '''
 changelog: A new feature
 version: major
 ''');
@@ -525,12 +590,25 @@ version: major
     });
 
     test('throws for pre-1.0.0 packages', () async {
+      final RepositoryPackage package =
+          createFakePackage('a_package', packagesDir);
+
+      addTearDown(() {
+        package.directory.deleteSync(recursive: true);
+      });
+
       // Set a pre-1.0.0 version.
+      package.changelogFile.writeAsStringSync('''
+## 0.5.0
+
+- Old changes
+''');
       package.pubspecFile.writeAsStringSync('''
 name: a_package
 version: 0.5.0
 ''');
-      createPendingChangelogFile('a.yaml', '''
+      package.directory.childDirectory('pending_changelogs').createSync();
+      createPendingChangelogFile(package, 'a.yaml', '''
 changelog: A new feature
 version: minor
 ''');

@@ -233,7 +233,7 @@ class BranchForBatchReleaseCommand extends PackageCommand {
 
   Future<void> _pushBranch(
       GitDir git, String remoteName, String branchName) async {
-    print('  Pushing branch ${branchName} to remote ${remoteName}...');
+    print('  Pushing branch $branchName to remote $remoteName...');
     final io.ProcessResult pushResult =
         await git.runCommand(<String>['push', remoteName, branchName]);
     if (pushResult.exitCode != 0) {
