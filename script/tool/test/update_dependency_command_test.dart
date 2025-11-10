@@ -607,15 +607,15 @@ dev_dependencies:
   });
 
   group('Android dependencies', () {
-    group('gradle', () {
-      final List<String> invalidGradleVersionsFormat = <String>[
-        '81',
-        '811.1',
-        '8.123',
-        '8.12.12'
-      ];
+    final List<String> invalidGradleAgpVersionsFormat = <String>[
+      '81',
+      '811.1',
+      '8.123',
+      '8.12.12'
+    ];
 
-      for (final String gradleVersion in invalidGradleVersionsFormat) {
+    group('gradle', () {
+      for (final String gradleVersion in invalidGradleAgpVersionsFormat) {
         test('throws because gradleVersion: $gradleVersion is invalid',
             () async {
           Error? commandError;
@@ -908,14 +908,7 @@ distributionUrl=https\://services.gradle.org/distributions/gradle-7.6.1-all.zip
       });
     });
     group('agp', () {
-      final List<String> invalidAgpVersionsFormat = <String>[
-        '81',
-        '811.1',
-        '8.123',
-        '8.12.12'
-      ];
-
-      for (final String agpVersion in invalidAgpVersionsFormat) {
+      for (final String agpVersion in invalidGradleAgpVersionsFormat) {
         test('throws because agpVersion: $agpVersion is invalid', () async {
           Error? commandError;
           final List<String> output = await runCapturingPrint(runner, <String>[
