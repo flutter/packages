@@ -908,22 +908,22 @@ distributionUrl=https\://services.gradle.org/distributions/gradle-7.6.1-all.zip
       });
     });
     group('agp', () {
-      final List<String> invalidAGPVersionsFormat = <String>[
+      final List<String> invalidAgpVersionsFormat = <String>[
         '81',
         '811.1',
         '8.123',
         '8.12.12'
       ];
 
-      for (final String AGPVersion in invalidAGPVersionsFormat) {
-        test('throws because AGPVersion: $AGPVersion is invalid', () async {
+      for (final String agpVersion in invalidAgpVersionsFormat) {
+        test('throws because agpVersion: $agpVersion is invalid', () async {
           Error? commandError;
           final List<String> output = await runCapturingPrint(runner, <String>[
             'update-dependency',
             '--android-dependency',
             'androidGradlePlugin',
             '--version',
-            AGPVersion,
+            agpVersion,
           ], errorHandler: (Error e) {
             commandError = e;
           });
@@ -971,7 +971,7 @@ A version with a valid format (maximum 2-3 numbers separated by 1-2 periods) mus
             createFakePlugin('fake_plugin', packagesDir, extraFiles: <String>[
               'example/android/settings.gradle'
             ]);
-            const String newAGPVersion = '9.9';
+            const String newAgpVersion = '9.9';
 
             final File gradleSettingsFile = package.directory
                 .childDirectory('example')
@@ -995,7 +995,7 @@ plugins {
               '--android-dependency',
               'androidGradlePlugin',
               '--version',
-              newAGPVersion,
+              newAgpVersion,
             ]);
 
             final String updatedGradleSettingsContents =
@@ -1005,7 +1005,7 @@ plugins {
                 updatedGradleSettingsContents,
                 contains(
                     r'id "com.android.application" version '
-                    '"$newAGPVersion" apply false'));
+                    '"$newAgpVersion" apply false'));
           });
 
       test(
@@ -1018,7 +1018,7 @@ plugins {
                 ], extraFiles: <String>[
                   'example/example_2/android/settings.gradle'
                 ]);
-            const String newAGPVersion = '9.9';
+            const String newAgpVersion = '9.9';
 
             final File gradleSettingsFile = package.directory
                 .childDirectory('example')
@@ -1043,7 +1043,7 @@ plugins {
               '--android-dependency',
               'androidGradlePlugin',
               '--version',
-              newAGPVersion,
+              newAgpVersion,
             ]);
 
             final String updatedGradleSettingsContents =
@@ -1053,7 +1053,7 @@ plugins {
                 updatedGradleSettingsContents,
                 contains(
                     r'id "com.android.application" version '
-                    '"$newAGPVersion" apply false'));
+                    '"$newAgpVersion" apply false'));
           });
 
     });
