@@ -475,7 +475,9 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
 
     void writeEncodeLogic(EnumeratedType customType) {
       final String encodeString =
-          customType.type == CustomTypes.customClass ? 'toList()' : 'raw';
+          customType.type == CustomTypes.customClass
+              ? 'toList()'
+              : 'raw.toLong()';
       final String valueString =
           customType.enumeration < maximumCodecFieldKey
               ? 'value.$encodeString'
