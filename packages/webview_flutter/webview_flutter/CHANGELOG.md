@@ -2,6 +2,7 @@
 
 * Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
 * Updates README to reflect that only Android API 24+ is supported.
+* Disables legacy Android video poster.
 
 ## 4.13.0
 
