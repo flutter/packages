@@ -3,6 +3,14 @@
 // found in the LICENSE file.
 
 import 'package:web/web.dart';
+import '../types/html.dart';
+
+/// Type definition for function that creates anchor elements
+typedef CreateAnchorElement =
+    HTMLAnchorElement Function(String href, String? suggestedName);
+
+/// Override for creating anchor elements for testing purposes
+CreateAnchorElement? anchorElementOverride;
 
 /// Create anchor element with download attribute
 HTMLAnchorElement createAnchorElement(String href, String? suggestedName) =>
@@ -34,4 +42,24 @@ Element ensureInitialized(String id) {
 /// (This is the same check used in flutter/engine)
 bool isSafari() {
   return window.navigator.vendor == 'Apple Computer, Inc.';
+}
+
+/// Saves the given [XFile] to user's device ("Save As" dialog).
+Future<void> saveFileAs(XFile file, String path) async {
+  // Create container element.
+  final Element target = ensureInitialized('__x_file_dom_element');
+
+  // Create <a> element.
+  final HTMLAnchorElement element =
+      anchorElementOverride != null
+          ? anchorElementOverride!(file.path, file.name)
+          : createAnchorElement(file.path, file.name);
+
+  // Clear existing children before appending new one.
+  while (target.children.length > 0) {
+    target.removeChild(target.children.item(0)!);
+  }
+
+  // Add and click.
+  addElementToContainerAndClick(target, element);
 }
