@@ -1,3 +1,7 @@
+## 6.3.25
+
+* Bumps androidx.core:core from 1.13.1 to 1.17.0.
+
 ## 6.3.24
 
 * Resolves Gradle 9 deprecations. 
