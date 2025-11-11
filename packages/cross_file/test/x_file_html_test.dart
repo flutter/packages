@@ -10,6 +10,7 @@ import 'dart:js_interop';
 import 'dart:typed_data';
 
 import 'package:cross_file/cross_file.dart';
+import 'package:cross_file/src/web_helpers/web_helpers.dart' as helpers;
 import 'package:test/test.dart';
 import 'package:web/web.dart' as html;
 
@@ -147,15 +148,9 @@ void main() {
         final html.HTMLAnchorElement mockAnchor =
             html.document.createElement('a') as html.HTMLAnchorElement;
 
-        final CrossFileTestOverrides overrides = CrossFileTestOverrides(
-          createAnchorElement: (_, __) => mockAnchor,
-        );
+        helpers.anchorElementOverride = (_, __) => mockAnchor;
 
-        final XFile file = XFile.fromData(
-          bytes,
-          name: textFile.name,
-          overrides: overrides,
-        );
+        final XFile file = XFile.fromData(bytes, name: textFile.name);
 
         bool clicked = false;
         mockAnchor.onClick.listen((html.MouseEvent event) => clicked = true);
