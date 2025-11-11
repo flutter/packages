@@ -218,7 +218,7 @@ public class WebChromeClientTest {
   }
 
   @Test
-  public void getDefaultVideoPoster() {
+  public void getDefaultVideoPosterSetsEmptyBitmap() {
     final WebChromeClientProxyApi mockApi = mock(WebChromeClientProxyApi.class);
     when(mockApi.getPigeonRegistrar()).thenReturn(new TestProxyApiRegistrar());
 
