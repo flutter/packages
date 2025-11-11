@@ -4,10 +4,10 @@
 
 This package uses [ffigen](https://pub.dev/packages/ffigen) to call Foundation
 methods, rather than using the standard Flutter plugin structure. To add new
-functionality to the FFI interface, update `ffigen_config.yaml`, then run:
+functionality to the FFI interface, update `tool/ffigen.dart`, then run:
 
 ```bash
-dart run ffigen --config ffigen_config.yaml
+dart run tool/ffigen.dart
 ```
 
 ### Configuration philosophy
