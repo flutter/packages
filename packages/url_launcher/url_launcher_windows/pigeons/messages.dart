@@ -13,7 +13,7 @@ import 'package:pigeon/pigeon.dart';
     copyrightHeader: 'pigeons/copyright.txt',
   ),
 )
-@HostApi(dartHostTestHandler: 'TestUrlLauncherApi')
+@HostApi()
 abstract class UrlLauncherApi {
   bool canLaunchUrl(String url);
   bool launchUrl(String url);
