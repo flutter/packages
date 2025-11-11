@@ -58,7 +58,7 @@ public class SensorOrientationFeature extends CameraFeature<Integer> {
   }
 
   @Override
-  public void setValue(@NonNull Integer value) {
+  public final void setValue(@NonNull Integer value) {
     this.currentSetting = value;
   }
 

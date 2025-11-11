@@ -1,3 +1,7 @@
+## 0.5.2+2
+
+* Removed mockito-inline and updated to mockito-core 5.17.0.
+
 ## 0.5.2+1
 
 * Resolves Gradle 9 deprecations.
