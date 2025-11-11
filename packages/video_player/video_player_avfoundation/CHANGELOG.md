@@ -1,3 +1,7 @@
+## NEXT
+
+* Add new `VideoEventType` type `durationUpdate`
+
 ## 2.8.5
 
 * Updates minimum supported version to iOS 13 and macOS 10.15.
