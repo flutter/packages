@@ -22,6 +22,9 @@ import org.robolectric.RobolectricTestRunner;
 
 @RunWith(RobolectricTestRunner.class)
 public class VideoCaptureTest {
+  // Due to Java's Type Erasure, we cannot get a class literal (e.g., Extender<T>.class) for a
+  // parameterized type. We must use the raw type (Extender.class) which forces the 'unchecked' and
+  // 'rawtypes' warnings. The runtime logic handles the type safely.
   @SuppressWarnings({"unchecked", "rawtypes"})
   @Test
   public void withOutput_createsVideoCaptureWithVideoOutput() {
