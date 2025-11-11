@@ -1,3 +1,7 @@
+## 0.3.6
+
+* Separate "Save As" implementation details from XFile web class
+
 ## 0.3.5
 
 * Fixes a bug where the bytes of an XFile, that is created using the `XFile.fromData` constructor, are ignored on web.
