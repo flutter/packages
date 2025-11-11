@@ -14,6 +14,8 @@ abstract base class PlatformXFile {
 
   final String path;
 
+  PlatformXFileExtension? get extension => null;
+
   Future<DateTime> lastModified();
 
   /// Reads the entire file contents as a list of bytes.
@@ -25,5 +27,7 @@ abstract base class PlatformXFile {
   /// The length of the file.
   Future<int> length();
 
-  Stream<Uint8List> openRead([int? start, int? end]);
+  Stream<List<int>> openRead([int? start, int? end]);
 }
+
+mixin PlatformXFileExtension {}

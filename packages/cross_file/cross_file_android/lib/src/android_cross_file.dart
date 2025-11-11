@@ -1,9 +1,5 @@
 import 'dart:convert';
-
 import 'dart:typed_data';
-
-import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
-import 'package:file/file.dart';
 
 base class AndroidXFile extends PlatformXFile with AndroidXFileExtension {
   AndroidXFile(super.path);
