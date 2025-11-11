@@ -85,12 +85,34 @@ void MockAvailableMediaTypes(MockCaptureEngine* engine,
             return S_OK;
           });
 
-  EXPECT_CALL(
-      *capture_source,
-      GetAvailableDeviceMediaType(
-          Eq((DWORD)
-                 MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_VIDEO_PREVIEW),
-          _, _))
+  EXPECT_CALL(*capture_source, GetDeviceStreamCount)
+      .WillRepeatedly([](DWORD* stream_count) {
+        *stream_count = 3;
+        return S_OK;
+      });
+
+  EXPECT_CALL(*capture_source, GetDeviceStreamCategory(Eq(0), _))
+      .WillRepeatedly([](DWORD source_stream_index,
+                         MF_CAPTURE_ENGINE_STREAM_CATEGORY* stream_category) {
+        *stream_category = MF_CAPTURE_ENGINE_STREAM_CATEGORY_VIDEO_PREVIEW;
+        return S_OK;
+      });
+
+  EXPECT_CALL(*capture_source, GetDeviceStreamCategory(Eq(1), _))
+      .WillRepeatedly([](DWORD source_stream_index,
+                         MF_CAPTURE_ENGINE_STREAM_CATEGORY* stream_category) {
+        *stream_category = MF_CAPTURE_ENGINE_STREAM_CATEGORY_VIDEO_CAPTURE;
+        return S_OK;
+      });
+
+  EXPECT_CALL(*capture_source, GetDeviceStreamCategory(Eq(2), _))
+      .WillRepeatedly([](DWORD source_stream_index,
+                         MF_CAPTURE_ENGINE_STREAM_CATEGORY* stream_category) {
+        *stream_category = MF_CAPTURE_ENGINE_STREAM_CATEGORY_AUDIO;
+        return S_OK;
+      });
+
+  EXPECT_CALL(*capture_source, GetAvailableDeviceMediaType(Eq(0), _, _))
       .WillRepeatedly([mock_preview_width, mock_preview_height](
                           DWORD stream_index, DWORD media_type_index,
                           IMFMediaType** media_type) {
@@ -103,11 +125,7 @@ void MockAvailableMediaTypes(MockCaptureEngine* engine,
         return S_OK;
       });
 
-  EXPECT_CALL(
-      *capture_source,
-      GetAvailableDeviceMediaType(
-          Eq((DWORD)MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_VIDEO_RECORD),
-          _, _))
+  EXPECT_CALL(*capture_source, GetAvailableDeviceMediaType(Eq(1), _, _))
       .WillRepeatedly([mock_preview_width, mock_preview_height](
                           DWORD stream_index, DWORD media_type_index,
                           IMFMediaType** media_type) {
@@ -159,6 +177,10 @@ void MockStartPreview(CaptureControllerImpl* capture_controller,
           Eq((DWORD)
                  MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_VIDEO_PREVIEW),
           _))
+      .Times(1)
+      .WillOnce(Return(S_OK));
+
+  EXPECT_CALL(*capture_source.Get(), SetCurrentDeviceMediaType(Eq((DWORD)0), _))
       .Times(1)
       .WillOnce(Return(S_OK));
 
@@ -781,16 +803,12 @@ TEST(CaptureController, StartRecordWithSettingsSuccess) {
 
   EXPECT_CALL(
       *record_sink.Get(),
-      AddStream(
-          Eq((DWORD)MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_VIDEO_RECORD),
-          WithFpsAndBitrate(kFps, kVideoBitrate), _, _))
+      AddStream(Eq((DWORD)0), WithFpsAndBitrate(kFps, kVideoBitrate), _, _))
       .Times(1)
       .WillRepeatedly(Return(S_OK));
 
-  EXPECT_CALL(
-      *record_sink.Get(),
-      AddStream(Eq((DWORD)MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_AUDIO),
-                WithAudioBitrate(kAudioBitrate), _, _))
+  EXPECT_CALL(*record_sink.Get(),
+              AddStream(Eq((DWORD)2), WithAudioBitrate(kAudioBitrate), _, _))
       .Times(1)
       .WillRepeatedly(Return(S_OK));
 
