@@ -7,14 +7,23 @@ package io.flutter.plugins.videoplayer;
 import static androidx.media3.common.Player.REPEAT_MODE_ALL;
 import static androidx.media3.common.Player.REPEAT_MODE_OFF;
 
+import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.media3.common.AudioAttributes;
 import androidx.media3.common.C;
+import androidx.media3.common.Format;
 import androidx.media3.common.MediaItem;
 import androidx.media3.common.PlaybackParameters;
+import androidx.media3.common.TrackGroup;
+import androidx.media3.common.TrackSelectionOverride;
+import androidx.media3.common.Tracks;
+import androidx.media3.common.util.UnstableApi;
 import androidx.media3.exoplayer.ExoPlayer;
+import androidx.media3.exoplayer.trackselection.DefaultTrackSelector;
 import io.flutter.view.TextureRegistry.SurfaceProducer;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A class responsible for managing video playback using {@link ExoPlayer}.
@@ -26,6 +35,7 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
   @Nullable protected final SurfaceProducer surfaceProducer;
   @Nullable private DisposeHandler disposeHandler;
   @NonNull protected ExoPlayer exoPlayer;
+  @UnstableApi @Nullable protected DefaultTrackSelector trackSelector;
 
   /** A closure-compatible signature since {@link java.util.function.Supplier} is API level 24. */
   public interface ExoPlayerProvider {
@@ -43,6 +53,7 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
     void onDispose();
   }
 
+  @UnstableApi
   public VideoPlayer(
       @NonNull VideoPlayerCallbacks events,
       @NonNull MediaItem mediaItem,
@@ -52,6 +63,12 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
     this.videoPlayerEvents = events;
     this.surfaceProducer = surfaceProducer;
     exoPlayer = exoPlayerProvider.get();
+
+    // Try to get the track selector from the ExoPlayer if it was built with one
+    if (exoPlayer.getTrackSelector() instanceof DefaultTrackSelector) {
+      trackSelector = (DefaultTrackSelector) exoPlayer.getTrackSelector();
+    }
+
     exoPlayer.setMediaItem(mediaItem);
     exoPlayer.prepare();
     exoPlayer.addListener(createExoPlayerEventListener(exoPlayer, surfaceProducer));
@@ -120,6 +137,112 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
   @NonNull
   public ExoPlayer getExoPlayer() {
     return exoPlayer;
+  }
+
+  @UnstableApi
+  @Override
+  public @NonNull NativeAudioTrackData getAudioTracks() {
+    List<ExoPlayerAudioTrackData> audioTracks = new ArrayList<>();
+
+    // Get the current tracks from ExoPlayer
+    Tracks tracks = exoPlayer.getCurrentTracks();
+
+    // Iterate through all track groups
+    for (int groupIndex = 0; groupIndex < tracks.getGroups().size(); groupIndex++) {
+      Tracks.Group group = tracks.getGroups().get(groupIndex);
+
+      // Only process audio tracks
+      if (group.getType() == C.TRACK_TYPE_AUDIO) {
+        for (int trackIndex = 0; trackIndex < group.length; trackIndex++) {
+          Format format = group.getTrackFormat(trackIndex);
+          boolean isSelected = group.isTrackSelected(trackIndex);
+
+          // Create audio track data with metadata
+          ExoPlayerAudioTrackData audioTrack =
+              new ExoPlayerAudioTrackData(
+                  (long) groupIndex,
+                  (long) trackIndex,
+                  format.label,
+                  format.language,
+                  isSelected,
+                  format.bitrate != Format.NO_VALUE ? (long) format.bitrate : null,
+                  format.sampleRate != Format.NO_VALUE ? (long) format.sampleRate : null,
+                  format.channelCount != Format.NO_VALUE ? (long) format.channelCount : null,
+                  format.codecs != null ? format.codecs : null);
+
+          audioTracks.add(audioTrack);
+        }
+      }
+    }
+    return new NativeAudioTrackData(audioTracks);
+  }
+
+  @UnstableApi
+  @Override
+  public void selectAudioTrack(long groupIndex, long trackIndex) {
+    if (trackSelector == null) {
+      Log.w("VideoPlayer", "Cannot select audio track: track selector is null");
+      return;
+    }
+
+    try {
+
+      // Get current tracks
+      Tracks tracks = exoPlayer.getCurrentTracks();
+
+      if (groupIndex >= tracks.getGroups().size()) {
+        Log.w(
+            "VideoPlayer",
+            "Cannot select audio track: groupIndex "
+                + groupIndex
+                + " is out of bounds (available groups: "
+                + tracks.getGroups().size()
+                + ")");
+        return;
+      }
+
+      Tracks.Group group = tracks.getGroups().get((int) groupIndex);
+
+      // Verify it's an audio track and the track index is valid
+      if (group.getType() != C.TRACK_TYPE_AUDIO || (int) trackIndex >= group.length) {
+        if (group.getType() != C.TRACK_TYPE_AUDIO) {
+          Log.w(
+              "VideoPlayer",
+              "Cannot select audio track: group at index "
+                  + groupIndex
+                  + " is not an audio track (type: "
+                  + group.getType()
+                  + ")");
+        } else {
+          Log.w(
+              "VideoPlayer",
+              "Cannot select audio track: trackIndex "
+                  + trackIndex
+                  + " is out of bounds (available tracks in group: "
+                  + group.length
+                  + ")");
+        }
+        return;
+      }
+
+      // Get the track group and create a selection override
+      TrackGroup trackGroup = group.getMediaTrackGroup();
+      TrackSelectionOverride override = new TrackSelectionOverride(trackGroup, (int) trackIndex);
+
+      // Apply the track selection override
+      trackSelector.setParameters(
+          trackSelector.buildUponParameters().setOverrideForType(override).build());
+
+    } catch (ArrayIndexOutOfBoundsException e) {
+      Log.w(
+          "VideoPlayer",
+          "Cannot select audio track: invalid indices (groupIndex: "
+              + groupIndex
+              + ", trackIndex: "
+              + trackIndex
+              + "). "
+              + e.getMessage());
+    }
   }
 
   public void dispose() {
