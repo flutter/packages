@@ -485,6 +485,62 @@ void main() {
     });
   });
 
+  group('getDirectoryPathWithOptions', () {
+    test('works as expected with no arguments', () async {
+      api.result = <String>['foo'];
+
+      final String? path = await plugin.getDirectoryPathWithOptions(
+        const FileDialogOptions(),
+      );
+
+      expect(path, 'foo');
+      final OpenPanelOptions options = api.passedOpenPanelOptions!;
+      expect(options.allowsMultipleSelection, false);
+      expect(options.canChooseFiles, false);
+      expect(options.canChooseDirectories, true);
+      expect(options.baseOptions.allowedFileTypes, null);
+      expect(options.baseOptions.directoryPath, null);
+      expect(options.baseOptions.nameFieldStringValue, null);
+      expect(options.baseOptions.canCreateDirectories, null);
+      expect(options.baseOptions.prompt, null);
+    });
+
+    test('handles cancel', () async {
+      api.result = <String>[];
+
+      final String? path = await plugin.getDirectoryPath();
+
+      expect(path, null);
+    });
+
+    test('passes initialDirectory correctly', () async {
+      await plugin.getDirectoryPathWithOptions(
+        const FileDialogOptions(initialDirectory: '/example/directory'),
+      );
+
+      final OpenPanelOptions options = api.passedOpenPanelOptions!;
+      expect(options.baseOptions.directoryPath, '/example/directory');
+    });
+
+    test('passes confirmButtonText correctly', () async {
+      await plugin.getDirectoryPathWithOptions(
+        const FileDialogOptions(confirmButtonText: 'Open File'),
+      );
+
+      final OpenPanelOptions options = api.passedOpenPanelOptions!;
+      expect(options.baseOptions.prompt, 'Open File');
+    });
+
+    test('passes canCreateDirectories correctly', () async {
+      await plugin.getDirectoryPathWithOptions(
+        const FileDialogOptions(canCreateDirectories: false),
+      );
+
+      final OpenPanelOptions options = api.passedOpenPanelOptions!;
+      expect(options.baseOptions.canCreateDirectories, false);
+    });
+  });
+
   group('getDirectoryPaths', () {
     test('works as expected with no arguments', () async {
       api.result = <String>[
@@ -530,6 +586,72 @@ void main() {
 
       final OpenPanelOptions options = api.passedOpenPanelOptions!;
       expect(options.baseOptions.directoryPath, '/example/directory');
+    });
+  });
+
+  group('getDirectoryPathsWithOptions', () {
+    test('works as expected with no arguments', () async {
+      api.result = <String>[
+        'firstDirectory',
+        'secondDirectory',
+        'thirdDirectory',
+      ];
+
+      final List<String> path = await plugin.getDirectoryPathsWithOptions(
+        const FileDialogOptions(),
+      );
+
+      expect(path, <String>[
+        'firstDirectory',
+        'secondDirectory',
+        'thirdDirectory',
+      ]);
+      final OpenPanelOptions options = api.passedOpenPanelOptions!;
+      expect(options.allowsMultipleSelection, true);
+      expect(options.canChooseFiles, false);
+      expect(options.canChooseDirectories, true);
+      expect(options.baseOptions.allowedFileTypes, null);
+      expect(options.baseOptions.directoryPath, null);
+      expect(options.baseOptions.nameFieldStringValue, null);
+      expect(options.baseOptions.canCreateDirectories, null);
+      expect(options.baseOptions.prompt, null);
+    });
+
+    test('handles cancel', () async {
+      api.result = <String>[];
+
+      final List<String> paths = await plugin.getDirectoryPathsWithOptions(
+        const FileDialogOptions(),
+      );
+
+      expect(paths, <String>[]);
+    });
+
+    test('passes confirmButtonText correctly', () async {
+      await plugin.getDirectoryPathsWithOptions(
+        const FileDialogOptions(confirmButtonText: 'Select directories'),
+      );
+
+      final OpenPanelOptions options = api.passedOpenPanelOptions!;
+      expect(options.baseOptions.prompt, 'Select directories');
+    });
+
+    test('passes initialDirectory correctly', () async {
+      await plugin.getDirectoryPathsWithOptions(
+        const FileDialogOptions(initialDirectory: '/example/directory'),
+      );
+
+      final OpenPanelOptions options = api.passedOpenPanelOptions!;
+      expect(options.baseOptions.directoryPath, '/example/directory');
+    });
+
+    test('passes canCreateDirectories correctly', () async {
+      await plugin.getDirectoryPathsWithOptions(
+        const FileDialogOptions(canCreateDirectories: false),
+      );
+
+      final OpenPanelOptions options = api.passedOpenPanelOptions!;
+      expect(options.baseOptions.canCreateDirectories, false);
     });
   });
 }
