@@ -26,17 +26,20 @@ final Map<int, String> _bitmapBlobUrlCache = <int, String>{};
 
 // Converts a [Color] into a valid CSS value #RRGGBB.
 String _getCssColor(Color color) {
-  return '#${color.value.toRadixString(16).padLeft(8, '0').substring(2)}';
+  return '#${color.toARGB32().toRadixString(16).padLeft(8, '0').substring(2)}';
 }
 
 // Extracts the opacity from a [Color].
 double _getCssOpacity(Color color) {
-  return color.opacity;
+  return color.a;
 }
 
 // Converts a [Color] into a valid CSS value rgba(R, G, B, A).
 String _getCssColorWithAlpha(Color color) {
-  return 'rgba(${color.red}, ${color.green}, ${color.blue}, ${(color.alpha / 255).toStringAsFixed(2)})';
+  return 'rgba(${(color.r * 255.0).round().clamp(0, 255)}, '
+      '${(color.g * 255.0).round().clamp(0, 255)}, '
+      '${(color.b * 255.0).round().clamp(0, 255)}, '
+      '${color.a.toStringAsFixed(2)})';
 }
 
 // Converts options from the plugin into gmaps.MapOptions that can be used by the JS SDK.
@@ -122,11 +125,11 @@ gmaps.MapOptions _configurationAndStyleToGmapsOptions(
   options.streetViewControl = false;
 
   // If using cloud map, do not set options.styles
-  if (configuration.cloudMapId == null) {
+  if (configuration.mapId == null) {
     options.styles = styles;
   }
 
-  options.mapId = configuration.cloudMapId;
+  options.mapId = configuration.mapId;
 
   return options;
 }
