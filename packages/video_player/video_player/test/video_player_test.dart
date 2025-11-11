@@ -172,6 +172,87 @@ void main() {
     );
   });
 
+  testWidgets(
+    'VideoPlayer still listens for controller changes when reparented',
+    (WidgetTester tester) async {
+      final FakeController controller = FakeController();
+      addTearDown(controller.dispose);
+      final GlobalKey videoKey = GlobalKey();
+      final Widget videoPlayer = KeyedSubtree(
+        key: videoKey,
+        child: VideoPlayer(controller),
+      );
+
+      await tester.pumpWidget(videoPlayer);
+      expect(find.byType(Texture), findsNothing);
+
+      // The VideoPlayer is reparented in the widget tree, before the
+      // underlying player is initialized.
+      await tester.pumpWidget(SizedBox(child: videoPlayer));
+      controller.playerId = 321;
+      controller.value = controller.value.copyWith(
+        duration: const Duration(milliseconds: 100),
+        isInitialized: true,
+      );
+
+      await tester.pump();
+      expect(
+        find.byWidgetPredicate(
+          (Widget widget) => widget is Texture && widget.textureId == 321,
+        ),
+        findsOneWidget,
+      );
+    },
+  );
+
+  testWidgets(
+    'VideoProgressIndicator still listens for controller changes after reparenting',
+    (WidgetTester tester) async {
+      final FakeController controller = FakeController();
+      addTearDown(controller.dispose);
+      final GlobalKey key = GlobalKey();
+      final Widget progressIndicator = VideoProgressIndicator(
+        key: key,
+        controller,
+        allowScrubbing: false,
+      );
+
+      controller.value = controller.value.copyWith(
+        duration: const Duration(milliseconds: 100),
+        position: const Duration(milliseconds: 50),
+        isInitialized: true,
+      );
+      await tester.pumpWidget(MaterialApp(home: progressIndicator));
+      await tester.pump();
+      await tester.pumpWidget(
+        MaterialApp(home: SizedBox(child: progressIndicator)),
+      );
+      expect((key.currentContext! as Element).dirty, isFalse);
+      // Verify that changing value dirties the widget tree.
+      controller.value = controller.value.copyWith(
+        position: const Duration(milliseconds: 100),
+      );
+      expect((key.currentContext! as Element).dirty, isTrue);
+    },
+  );
+
+  testWidgets('VideoPlayer does not crash after loading 0-duration videos', (
+    WidgetTester tester,
+  ) async {
+    final FakeController controller = FakeController();
+    addTearDown(controller.dispose);
+    controller.value = controller.value.copyWith(
+      duration: Duration.zero,
+      isInitialized: true,
+    );
+    await tester.pumpWidget(
+      MaterialApp(
+        home: VideoProgressIndicator(controller, allowScrubbing: false),
+      ),
+    );
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('non-zero rotationCorrection value is used', (
     WidgetTester tester,
   ) async {
