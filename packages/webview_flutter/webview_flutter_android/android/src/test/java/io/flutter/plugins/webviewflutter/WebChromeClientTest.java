@@ -224,7 +224,7 @@ public class WebChromeClientTest {
 
     final WebChromeClientImpl instance = new WebChromeClientImpl(mockApi);
     final Bitmap poster = instance.getDefaultVideoPoster();
-    
+
     assertNotNull(instance.getDefaultVideoPoster());
     assertEquals(1, poster.getWidth());
     assertEquals(1, poster.getHeight());
