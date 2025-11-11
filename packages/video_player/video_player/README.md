@@ -22,6 +22,15 @@ in `<project root>/ios/Runner/Info.plist`. See
 [Apple's documentation](https://developer.apple.com/documentation/bundleresources/information_property_list/nsapptransportsecurity)
 to determine the right combination of entries for your use case and supported iOS versions.
 
+If you plan to use background playback, you will also need to add the following permission in your Info.plist file.
+
+```xml
+<key>UIBackgroundModes</key>
+<array>
+  <string>audio</string>
+</array>
+```
+
 ### Android
 
 If you are using network-based videos, ensure that the following permission is present in your
@@ -29,6 +38,12 @@ Android Manifest file, located in `<project root>/android/app/src/main/AndroidMa
 
 ```xml
 <uses-permission android:name="android.permission.INTERNET"/>
+```
+
+If you plan to use background playback, you will also need to add the following permission in your Android Manifest file.
+
+```xml
+<uses-permission android:name="android.permission.WAKE_LOCK"/>
 ```
 
 ### macOS

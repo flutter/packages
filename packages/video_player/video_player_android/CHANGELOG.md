@@ -1,3 +1,7 @@
+## 2.9.0
+
+* Implements background playback functionality using allowBackgroundPlayback option.
+
 ## 2.8.17
 
 * Moves video event processing logic to Dart, and fixes an issue where buffer

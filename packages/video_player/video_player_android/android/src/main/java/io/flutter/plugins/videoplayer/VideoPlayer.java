@@ -56,6 +56,15 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
     exoPlayer.prepare();
     exoPlayer.addListener(createExoPlayerEventListener(exoPlayer, surfaceProducer));
     setAudioAttributes(exoPlayer, options.mixWithOthers);
+
+    if (options.allowBackgroundPlayback) {
+      // This flag allows playback to continue when the device is in Doze mode.
+      // WAKE_MODE_NETWORK is used to allow network streaming to continue.
+      exoPlayer.setWakeMode(C.WAKE_MODE_NETWORK);
+      exoPlayer.setAudioAttributes(
+          new AudioAttributes.Builder().setUsage(C.USAGE_MEDIA).build(),
+          /* handleAudioFocus= */ !options.mixWithOthers);
+    }
   }
 
   public void setDisposeHandler(@Nullable DisposeHandler handler) {
