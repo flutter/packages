@@ -129,7 +129,7 @@ abstract class PackageCommand extends Command<void> {
     argParser.addOption(_baseBranchArg,
         help: 'The base branch whose merge base is used as the base SHA if '
             '--$_baseShaArg is not provided. \n'
-            'If not specified, FETCH_HEAD is used as the base branch.');
+            'If not specified, "main" is used as the base branch.');
     argParser.addFlag(_logTimingArg,
         help: 'Logs timing information.\n\n'
             'Currently only logs per-package timing for multi-package commands, '
