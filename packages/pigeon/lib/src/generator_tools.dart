@@ -408,7 +408,7 @@ void addLines(Indent indent, Iterable<String> lines, {String? linePrefix}) {
 ///
 /// In other words, whenever there is a conflict over the value of a key path,
 /// [modification]'s value for that key path is selected.
-Map<String, Object> mergeMaps(
+Map<String, Object> mergePigeonMaps(
   Map<String, Object> base,
   Map<String, Object> modification,
 ) {
@@ -418,7 +418,7 @@ Map<String, Object> mergeMaps(
       final Object entryValue = entry.value;
       if (entryValue is Map<String, Object>) {
         assert(base[entry.key] is Map<String, Object>);
-        result[entry.key] = mergeMaps(
+        result[entry.key] = mergePigeonMaps(
           (base[entry.key] as Map<String, Object>?)!,
           entryValue,
         );
@@ -577,13 +577,13 @@ Map<TypeDeclaration, List<int>> getReferencedTypes(
       orElse: () => Class(name: '', fields: <NamedType>[]),
     );
     for (final NamedType field in aClass.fields) {
+      references.add(field.type, field.offset);
       if (_isUnseenCustomType(field.type, referencedTypeNames)) {
-        references.add(field.type, field.offset);
         classesToCheck.add(field.type.baseName);
       }
       for (final TypeDeclaration typeArg in field.type.typeArguments) {
+        references.add(typeArg, field.offset);
         if (_isUnseenCustomType(typeArg, referencedTypeNames)) {
-          references.add(typeArg, field.offset);
           classesToCheck.add(typeArg.baseName);
         }
       }
@@ -902,4 +902,23 @@ bool isCollectionType(TypeDeclaration type) {
       !type.isEnum &&
       !type.isProxyApi &&
       (type.baseName.contains('List') || type.baseName == 'Map');
+}
+
+/// Wraps provided [toWrap] with [start] and [end] if [wrap] is true.
+String wrapConditionally(String toWrap, String start, String end, bool wrap) {
+  return wrap ? '$start$toWrap$end' : toWrap;
+}
+
+/// Sorts collections by how generic they are.
+int sortByObjectCount(TypeDeclaration a, TypeDeclaration b) {
+  int aTotal = 0;
+  int bTotal = 0;
+
+  aTotal += a.getFullName(withNullable: false).split('?').length;
+  bTotal += b.getFullName(withNullable: false).split('?').length;
+
+  aTotal += a.getFullName(withNullable: false).split('Object').length * 100;
+  bTotal += b.getFullName(withNullable: false).split('Object').length * 100;
+
+  return aTotal < bTotal ? -1 : 1;
 }

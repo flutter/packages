@@ -832,8 +832,8 @@ class _PigeonCodec extends StandardMessageCodec {
 /// The core interface that each host language plugin must implement in
 /// platform_test integration tests.
 class HostIntegrationCoreApi {
-  /// Constructor for [HostIntegrationCoreApi].  The [binaryMessenger] named argument is
-  /// available for dependency injection.  If it is left null, the default
+  /// Constructor for [HostIntegrationCoreApi]. The [binaryMessenger] named argument is
+  /// available for dependency injection. If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
   HostIntegrationCoreApi({
     BinaryMessenger? binaryMessenger,
@@ -842,8 +842,8 @@ class HostIntegrationCoreApi {
        pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
            ? '.$messageChannelSuffix'
            : '';
-  final BinaryMessenger? pigeonVar_binaryMessenger;
 
+  final BinaryMessenger? pigeonVar_binaryMessenger;
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
 
   final String pigeonVar_messageChannelSuffix;
@@ -7557,8 +7557,8 @@ abstract class FlutterIntegrationCoreApi {
 
 /// An API that can be implemented for minimal, compile-only tests.
 class HostTrivialApi {
-  /// Constructor for [HostTrivialApi].  The [binaryMessenger] named argument is
-  /// available for dependency injection.  If it is left null, the default
+  /// Constructor for [HostTrivialApi]. The [binaryMessenger] named argument is
+  /// available for dependency injection. If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
   HostTrivialApi({
     BinaryMessenger? binaryMessenger,
@@ -7567,8 +7567,8 @@ class HostTrivialApi {
        pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
            ? '.$messageChannelSuffix'
            : '';
-  final BinaryMessenger? pigeonVar_binaryMessenger;
 
+  final BinaryMessenger? pigeonVar_binaryMessenger;
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
 
   final String pigeonVar_messageChannelSuffix;
@@ -7601,8 +7601,8 @@ class HostTrivialApi {
 
 /// A simple API implemented in some unit tests.
 class HostSmallApi {
-  /// Constructor for [HostSmallApi].  The [binaryMessenger] named argument is
-  /// available for dependency injection.  If it is left null, the default
+  /// Constructor for [HostSmallApi]. The [binaryMessenger] named argument is
+  /// available for dependency injection. If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
   HostSmallApi({
     BinaryMessenger? binaryMessenger,
@@ -7611,8 +7611,8 @@ class HostSmallApi {
        pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
            ? '.$messageChannelSuffix'
            : '';
-  final BinaryMessenger? pigeonVar_binaryMessenger;
 
+  final BinaryMessenger? pigeonVar_binaryMessenger;
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
 
   final String pigeonVar_messageChannelSuffix;

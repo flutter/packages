@@ -137,8 +137,8 @@ class _PigeonCodec extends StandardMessageCodec {
 
 /// This comment is to test api documentation comments.
 class EnumApi2Host {
-  /// Constructor for [EnumApi2Host].  The [binaryMessenger] named argument is
-  /// available for dependency injection.  If it is left null, the default
+  /// Constructor for [EnumApi2Host]. The [binaryMessenger] named argument is
+  /// available for dependency injection. If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
   EnumApi2Host({
     BinaryMessenger? binaryMessenger,
@@ -147,8 +147,8 @@ class EnumApi2Host {
        pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
            ? '.$messageChannelSuffix'
            : '';
-  final BinaryMessenger? pigeonVar_binaryMessenger;
 
+  final BinaryMessenger? pigeonVar_binaryMessenger;
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
 
   final String pigeonVar_messageChannelSuffix;

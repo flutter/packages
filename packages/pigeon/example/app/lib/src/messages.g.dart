@@ -136,8 +136,8 @@ class _PigeonCodec extends StandardMessageCodec {
 }
 
 class ExampleHostApi {
-  /// Constructor for [ExampleHostApi].  The [binaryMessenger] named argument is
-  /// available for dependency injection.  If it is left null, the default
+  /// Constructor for [ExampleHostApi]. The [binaryMessenger] named argument is
+  /// available for dependency injection. If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
   ExampleHostApi({
     BinaryMessenger? binaryMessenger,
@@ -146,8 +146,8 @@ class ExampleHostApi {
        pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
            ? '.$messageChannelSuffix'
            : '';
-  final BinaryMessenger? pigeonVar_binaryMessenger;
 
+  final BinaryMessenger? pigeonVar_binaryMessenger;
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
 
   final String pigeonVar_messageChannelSuffix;

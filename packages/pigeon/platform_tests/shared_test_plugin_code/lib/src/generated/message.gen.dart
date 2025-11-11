@@ -241,8 +241,8 @@ class _PigeonCodec extends StandardMessageCodec {
 ///
 /// This comment also tests multiple line comments.
 class MessageApi {
-  /// Constructor for [MessageApi].  The [binaryMessenger] named argument is
-  /// available for dependency injection.  If it is left null, the default
+  /// Constructor for [MessageApi]. The [binaryMessenger] named argument is
+  /// available for dependency injection. If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
   MessageApi({
     BinaryMessenger? binaryMessenger,
@@ -251,8 +251,8 @@ class MessageApi {
        pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
            ? '.$messageChannelSuffix'
            : '';
-  final BinaryMessenger? pigeonVar_binaryMessenger;
 
+  final BinaryMessenger? pigeonVar_binaryMessenger;
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
 
   final String pigeonVar_messageChannelSuffix;
@@ -321,8 +321,8 @@ class MessageApi {
 
 /// This comment is to test api documentation comments.
 class MessageNestedApi {
-  /// Constructor for [MessageNestedApi].  The [binaryMessenger] named argument is
-  /// available for dependency injection.  If it is left null, the default
+  /// Constructor for [MessageNestedApi]. The [binaryMessenger] named argument is
+  /// available for dependency injection. If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
   MessageNestedApi({
     BinaryMessenger? binaryMessenger,
@@ -331,8 +331,8 @@ class MessageNestedApi {
        pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
            ? '.$messageChannelSuffix'
            : '';
-  final BinaryMessenger? pigeonVar_binaryMessenger;
 
+  final BinaryMessenger? pigeonVar_binaryMessenger;
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
 
   final String pigeonVar_messageChannelSuffix;

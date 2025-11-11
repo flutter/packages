@@ -35,6 +35,13 @@ const Map<String, Set<GeneratorLanguage>> _unsupportedFiles =
         GeneratorLanguage.java,
         GeneratorLanguage.objc,
       },
+      'ni_tests': <GeneratorLanguage>{
+        GeneratorLanguage.swift,
+        GeneratorLanguage.cpp,
+        GeneratorLanguage.gobject,
+        GeneratorLanguage.java,
+        GeneratorLanguage.objc,
+      },
     };
 
 String _snakeToPascalCase(String snake) {
@@ -94,6 +101,7 @@ Future<int> generateTestPigeons({
     'nullable_returns',
     'primitive',
     'proxy_api_tests',
+    'ni_tests',
   };
 
   const String testPluginName = 'test_plugin';
@@ -128,10 +136,10 @@ Future<int> generateTestPigeons({
 
     final String? swiftErrorClassName =
         swiftErrorUseDefaultErrorName ? null : '${pascalCaseName}Error';
-
     // Generate the default language test plugin output.
     int generateCode = await runPigeon(
       input: './pigeons/$input.dart',
+      appDirectory: '$outputBase/example/',
       dartOut: '$sharedDartOutputBase/lib/src/generated/$input.gen.dart',
       dartTestOut:
           input == 'message'
@@ -146,6 +154,7 @@ Future<int> generateTestPigeons({
               : '$outputBase/android/src/main/kotlin/com/example/test_plugin/$pascalCaseName.gen.kt',
       kotlinPackage: 'com.example.test_plugin',
       kotlinErrorClassName: kotlinErrorName,
+      kotlinUseJni: input == 'ni_tests',
       kotlinIncludeErrorClass: input != 'primitive',
       // iOS/macOS
       swiftOut:
@@ -226,9 +235,11 @@ Future<int> generateTestPigeons({
 
 Future<int> runPigeon({
   required String input,
+  String? appDirectory,
   String? kotlinOut,
   String? kotlinPackage,
   String? kotlinErrorClassName,
+  bool kotlinUseJni = false,
   bool kotlinIncludeErrorClass = true,
   bool swiftIncludeErrorClass = true,
   String? swiftOut,
@@ -286,6 +297,7 @@ Future<int> runPigeon({
   final int result = await Pigeon.runWithOptions(
     PigeonOptions(
       input: input,
+      appDirectory: appDirectory,
       copyrightHeader: copyrightHeader,
       dartOut: dartOut,
       dartTestOut: dartTestOut,
@@ -304,6 +316,7 @@ Future<int> runPigeon({
         package: kotlinPackage,
         errorClassName: kotlinErrorClassName,
         includeErrorClass: kotlinIncludeErrorClass,
+        useJni: kotlinUseJni,
       ),
       objcHeaderOut: objcHeaderOut,
       objcSourceOut: objcSourceOut,
