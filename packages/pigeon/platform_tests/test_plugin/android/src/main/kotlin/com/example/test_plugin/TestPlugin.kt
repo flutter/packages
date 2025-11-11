@@ -4,17 +4,17 @@
 
 package com.example.test_plugin
 
-import NIAllClassesWrapper
 // import NIAllNullableTypes
+// import NIFlutterIntegrationCoreApiRegistrar
+// import NIHostSmallApi
+// import NIHostSmallApiRegistrar
+import NIAllClassesWrapper
 import NIAllNullableTypesWithoutRecursion
 import NIAllTypes
 import NIAnEnum
 import NIAnotherEnum
-// import NIFlutterIntegrationCoreApiRegistrar
 import NIHostIntegrationCoreApi
 import NIHostIntegrationCoreApiRegistrar
-// import NIHostSmallApi
-// import NIHostSmallApiRegistrar
 import android.os.Handler
 import android.os.Looper
 import io.flutter.embedding.engine.plugins.FlutterPlugin
@@ -1080,9 +1080,8 @@ class NIIntegrationTests : NIHostIntegrationCoreApi() {
   override fun createNestedNullableString(nullableString: String?): NIAllClassesWrapper {
     return NIAllClassesWrapper(
         NIAllNullableTypesWithoutRecursion(aNullableString = nullableString),
-        classList = arrayOf<NIAllTypes>().toList()
-    )
-        // classMap = HashMap())
+        classList = arrayOf<NIAllTypes>().toList())
+    // classMap = HashMap())
   }
 
   override fun sendMultipleNullableTypes(
@@ -1285,7 +1284,8 @@ class NIIntegrationTests : NIHostIntegrationCoreApi() {
   //   return map
   // }
   //
-  // override suspend fun echoAsyncStringMap(stringMap: Map<String?, String?>): Map<String?, String?> {
+  // override suspend fun echoAsyncStringMap(stringMap: Map<String?, String?>): Map<String?,
+  // String?> {
   //   return stringMap
   // }
   //
@@ -1421,7 +1421,8 @@ class NIIntegrationTests : NIHostIntegrationCoreApi() {
   //   return anEnum
   // }
   //
-  // override suspend fun echoAnotherAsyncNullableEnum(anotherEnum: NIAnotherEnum?): NIAnotherEnum? {
+  // override suspend fun echoAnotherAsyncNullableEnum(anotherEnum: NIAnotherEnum?): NIAnotherEnum?
+  // {
   //   return anotherEnum
   // }
   //
@@ -1444,7 +1445,8 @@ class NIIntegrationTests : NIHostIntegrationCoreApi() {
   // override fun callFlutterEchoNIAllNullableTypes(
   //     everything: NIAllNullableTypes?
   // ): NIAllNullableTypes? {
-  //   return NIFlutterIntegrationCoreApiRegistrar().getInstance()!!.echoNIAllNullableTypes(everything)
+  //   return
+  // NIFlutterIntegrationCoreApiRegistrar().getInstance()!!.echoNIAllNullableTypes(everything)
   // }
   //
   // override fun callFlutterSendMultipleNullableTypes(
@@ -1523,7 +1525,8 @@ class NIIntegrationTests : NIHostIntegrationCoreApi() {
   //   return NIFlutterIntegrationCoreApiRegistrar().getInstance()!!.echoMap(map)
   // }
   //
-  // override fun callFlutterEchoStringMap(stringMap: Map<String?, String?>): Map<String?, String?> {
+  // override fun callFlutterEchoStringMap(stringMap: Map<String?, String?>): Map<String?, String?>
+  // {
   //   return NIFlutterIntegrationCoreApiRegistrar().getInstance()!!.echoStringMap(stringMap)
   // }
   //
@@ -1604,10 +1607,12 @@ class NIIntegrationTests : NIHostIntegrationCoreApi() {
   // override fun callFlutterEchoNullableClassList(
   //     classList: List<NIAllNullableTypes?>?
   // ): List<NIAllNullableTypes?>? {
-  //   return NIFlutterIntegrationCoreApiRegistrar().getInstance()!!.echoNullableClassList(classList)
+  //   return
+  // NIFlutterIntegrationCoreApiRegistrar().getInstance()!!.echoNullableClassList(classList)
   // }
   //
-  // override fun callFlutterEchoNullableNonNullEnumList(enumList: List<NIAnEnum>?): List<NIAnEnum>? {
+  // override fun callFlutterEchoNullableNonNullEnumList(enumList: List<NIAnEnum>?): List<NIAnEnum>?
+  // {
   //   return NIFlutterIntegrationCoreApiRegistrar()
   //       .getInstance()!!
   //       .echoNullableNonNullEnumList(enumList)
@@ -1628,7 +1633,8 @@ class NIIntegrationTests : NIHostIntegrationCoreApi() {
   // override fun callFlutterEchoNullableStringMap(
   //     stringMap: Map<String?, String?>?
   // ): Map<String?, String?>? {
-  //   return NIFlutterIntegrationCoreApiRegistrar().getInstance()!!.echoNullableStringMap(stringMap)
+  //   return
+  // NIFlutterIntegrationCoreApiRegistrar().getInstance()!!.echoNullableStringMap(stringMap)
   // }
   //
   // override fun callFlutterEchoNullableIntMap(intMap: Map<Long?, Long?>?): Map<Long?, Long?>? {
@@ -1656,7 +1662,8 @@ class NIIntegrationTests : NIHostIntegrationCoreApi() {
   // }
   //
   // override fun callFlutterEchoNullableNonNullIntMap(intMap: Map<Long, Long>?): Map<Long, Long>? {
-  //   return NIFlutterIntegrationCoreApiRegistrar().getInstance()!!.echoNullableNonNullIntMap(intMap)
+  //   return
+  // NIFlutterIntegrationCoreApiRegistrar().getInstance()!!.echoNullableNonNullIntMap(intMap)
   // }
   //
   // override fun callFlutterEchoNullableNonNullEnumMap(

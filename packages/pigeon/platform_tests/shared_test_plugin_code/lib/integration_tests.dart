@@ -50,11 +50,11 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
   if (targetGenerator == TargetGenerator.kotlin ||
       targetGenerator == TargetGenerator.swift) {
-    // ffi_tests.runPigeonIntegrationTests(
-    //   targetGenerator == TargetGenerator.kotlin
-    //       ? ffi_tests.TargetGenerator.kotlin
-    //       : ffi_tests.TargetGenerator.swift,
-    // );
+    ffi_tests.runPigeonIntegrationTests(
+      targetGenerator == TargetGenerator.kotlin
+          ? ffi_tests.TargetGenerator.kotlin
+          : ffi_tests.TargetGenerator.swift,
+    );
   }
 
   group('Host sync API tests', () {
