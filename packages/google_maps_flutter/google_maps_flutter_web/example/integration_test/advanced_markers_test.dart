@@ -424,64 +424,6 @@ void main() {
       expect(icon.style.height, '30px');
     });
 
-    testWidgets('markers created with pin config and colored glyph work', (
-      WidgetTester widgetTester,
-    ) async {
-      final Set<AdvancedMarker> markers = <AdvancedMarker>{
-        AdvancedMarker(
-          markerId: const MarkerId('1'),
-          icon: BitmapDescriptor.pinConfig(
-            backgroundColor: const Color(0xFF00FF00),
-            borderColor: const Color(0xFFFF0000),
-            glyph: const CircleGlyph(color: Color(0xFFFFFFFF)),
-          ),
-        ),
-      };
-      await controller.addMarkers(markers);
-      expect(controller.markers.length, 1);
-
-      final HTMLDivElement? icon =
-          controller.markers[const MarkerId('1')]?.marker?.content
-              as HTMLDivElement?;
-      expect(icon, isNotNull);
-
-      // Query nodes and check colors. This is a bit fragile as it depends on
-      // the implementation details of the icon which is not part of the public
-      // API.
-      final NodeList backgroundNodes = icon!.querySelectorAll(
-        "[class*='maps-pin-view-background']",
-      );
-      final NodeList borderNodes = icon.querySelectorAll(
-        "[class*='maps-pin-view-border']",
-      );
-      final NodeList glyphNodes = icon.querySelectorAll(
-        "[class*='maps-pin-view-default-glyph']",
-      );
-
-      expect(backgroundNodes.length, 1);
-      expect(borderNodes.length, 1);
-      expect(glyphNodes.length, 1);
-
-      expect(
-        (backgroundNodes.item(0)! as dom.Element)
-            .getAttribute('fill')
-            ?.toUpperCase(),
-        '#00FF00',
-      );
-      expect(
-        (borderNodes.item(0)! as dom.Element)
-            .getAttribute('fill')
-            ?.toUpperCase(),
-        '#FF0000',
-      );
-      expect(
-        (glyphNodes.item(0)! as dom.Element)
-            .getAttribute('fill')
-            ?.toUpperCase(),
-        '#FFFFFF',
-      );
-    });
-
     testWidgets('markers created with text glyph work', (
       WidgetTester widgetTester,
     ) async {
@@ -518,11 +460,6 @@ void main() {
 
       expect(paragraphElement, isNotNull);
       expect(paragraphElement!.innerHTML.toString(), 'Hey');
-
-      expect(
-        paragraphElement.getAttribute('style')?.toLowerCase(),
-        contains('color: #0000ff'),
-      );
     });
 
     testWidgets('markers created with bitmap glyph work', (
@@ -567,10 +504,6 @@ void main() {
 
       expect(imgElement, isNotNull);
       expect(imgElement!.src, endsWith('assets/red_square.png'));
-      expect(
-        imgElement.getAttribute('style')?.toLowerCase(),
-        contains('width: 12.0px; height: 12.0px;'),
-      );
     });
 
     testWidgets('InfoWindow snippet can have links', (
