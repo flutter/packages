@@ -3778,6 +3778,7 @@ final _objc_msgSend_4sp4xj = objc.msgSendPointer
         int,
       )
     >();
+late final _sel_isEqual_ = objc.registerName("isEqual:");
 late final _sel_hash = objc.registerName("hash");
 final _objc_msgSend_xw2lbc = objc.msgSendPointer
     .cast<
@@ -3887,6 +3888,15 @@ extension NumberWrapper$Methods on NumberWrapper {
   /// setType:
   set type(int value) {
     _objc_msgSend_4sp4xj(this.ref.pointer, _sel_setType_, value);
+  }
+
+  /// isEqual:
+  bool isEqual(objc.ObjCObjectBase? object) {
+    return _objc_msgSend_19nvye5(
+      this.ref.pointer,
+      _sel_isEqual_,
+      object?.ref.pointer ?? ffi.nullptr,
+    );
   }
 
   /// hash
