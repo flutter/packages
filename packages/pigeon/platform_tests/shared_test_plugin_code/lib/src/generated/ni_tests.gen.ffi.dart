@@ -51,16 +51,18 @@ typedef Dartinstancetype = objc.ObjCObjectBase;
 late final _class_NIAllNullableTypesWithoutRecursionBridge = objc.getClass(
   "test_plugin.NIAllNullableTypesWithoutRecursionBridge",
 );
-late final _sel_initWithANullableBool_aNullableInt_aNullableInt64_aNullableDouble_aNullableEnum_anotherNullableEnum_aNullableString_aNullableObject_list_stringList_intList_doubleList_boolList_enumList_map_stringMap_ =
+late final _sel_initWithANullableBool_aNullableInt_aNullableInt64_aNullableDouble_aNullableEnum_anotherNullableEnum_aNullableString_aNullableObject_list_stringList_intList_doubleList_boolList_enumList_map_stringMap_intMap_enumMap_ =
     objc.registerName(
-      "initWithANullableBool:aNullableInt:aNullableInt64:aNullableDouble:aNullableEnum:anotherNullableEnum:aNullableString:aNullableObject:list:stringList:intList:doubleList:boolList:enumList:map:stringMap:",
+      "initWithANullableBool:aNullableInt:aNullableInt64:aNullableDouble:aNullableEnum:anotherNullableEnum:aNullableString:aNullableObject:list:stringList:intList:doubleList:boolList:enumList:map:stringMap:intMap:enumMap:",
     );
-final _objc_msgSend_1cy23hd = objc.msgSendPointer
+final _objc_msgSend_qi7ax9 = objc.msgSendPointer
     .cast<
       ffi.NativeFunction<
         ffi.Pointer<objc.ObjCObject> Function(
           ffi.Pointer<objc.ObjCObject>,
           ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCObject>,
           ffi.Pointer<objc.ObjCObject>,
           ffi.Pointer<objc.ObjCObject>,
           ffi.Pointer<objc.ObjCObject>,
@@ -84,6 +86,8 @@ final _objc_msgSend_1cy23hd = objc.msgSendPointer
       ffi.Pointer<objc.ObjCObject> Function(
         ffi.Pointer<objc.ObjCObject>,
         ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCObject>,
         ffi.Pointer<objc.ObjCObject>,
         ffi.Pointer<objc.ObjCObject>,
         ffi.Pointer<objc.ObjCObject>,
@@ -168,6 +172,10 @@ late final _sel_map = objc.registerName("map");
 late final _sel_setMap_ = objc.registerName("setMap:");
 late final _sel_stringMap = objc.registerName("stringMap");
 late final _sel_setStringMap_ = objc.registerName("setStringMap:");
+late final _sel_intMap = objc.registerName("intMap");
+late final _sel_setIntMap_ = objc.registerName("setIntMap:");
+late final _sel_enumMap = objc.registerName("enumMap");
+late final _sel_setEnumMap_ = objc.registerName("setEnumMap:");
 late final _sel_init = objc.registerName("init");
 late final _sel_new = objc.registerName("new");
 late final _sel_allocWithZone_ = objc.registerName("allocWithZone:");
@@ -415,7 +423,7 @@ class NIAllNullableTypesWithoutRecursionBridge extends objc.NSObject {
 
 extension NIAllNullableTypesWithoutRecursionBridge$Methods
     on NIAllNullableTypesWithoutRecursionBridge {
-  /// initWithANullableBool:aNullableInt:aNullableInt64:aNullableDouble:aNullableEnum:anotherNullableEnum:aNullableString:aNullableObject:list:stringList:intList:doubleList:boolList:enumList:map:stringMap:
+  /// initWithANullableBool:aNullableInt:aNullableInt64:aNullableDouble:aNullableEnum:anotherNullableEnum:aNullableString:aNullableObject:list:stringList:intList:doubleList:boolList:enumList:map:stringMap:intMap:enumMap:
   ///
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
@@ -436,15 +444,17 @@ extension NIAllNullableTypesWithoutRecursionBridge$Methods
     objc.NSArray? enumList,
     objc.NSDictionary? map,
     objc.NSDictionary? stringMap,
+    objc.NSDictionary? intMap,
+    objc.NSDictionary? enumMap,
   }) {
     objc.checkOsVersionInternal(
-      'NIAllNullableTypesWithoutRecursionBridge.initWithANullableBool:aNullableInt:aNullableInt64:aNullableDouble:aNullableEnum:anotherNullableEnum:aNullableString:aNullableObject:list:stringList:intList:doubleList:boolList:enumList:map:stringMap:',
+      'NIAllNullableTypesWithoutRecursionBridge.initWithANullableBool:aNullableInt:aNullableInt64:aNullableDouble:aNullableEnum:anotherNullableEnum:aNullableString:aNullableObject:list:stringList:intList:doubleList:boolList:enumList:map:stringMap:intMap:enumMap:',
       iOS: (false, (13, 0, 0)),
       macOS: (false, (16, 0, 0)),
     );
-    final _ret = _objc_msgSend_1cy23hd(
+    final _ret = _objc_msgSend_qi7ax9(
       this.ref.retainAndReturnPointer(),
-      _sel_initWithANullableBool_aNullableInt_aNullableInt64_aNullableDouble_aNullableEnum_anotherNullableEnum_aNullableString_aNullableObject_list_stringList_intList_doubleList_boolList_enumList_map_stringMap_,
+      _sel_initWithANullableBool_aNullableInt_aNullableInt64_aNullableDouble_aNullableEnum_anotherNullableEnum_aNullableString_aNullableObject_list_stringList_intList_doubleList_boolList_enumList_map_stringMap_intMap_enumMap_,
       aNullableBool?.ref.pointer ?? ffi.nullptr,
       aNullableInt?.ref.pointer ?? ffi.nullptr,
       aNullableInt64?.ref.pointer ?? ffi.nullptr,
@@ -461,6 +471,8 @@ extension NIAllNullableTypesWithoutRecursionBridge$Methods
       enumList?.ref.pointer ?? ffi.nullptr,
       map?.ref.pointer ?? ffi.nullptr,
       stringMap?.ref.pointer ?? ffi.nullptr,
+      intMap?.ref.pointer ?? ffi.nullptr,
+      enumMap?.ref.pointer ?? ffi.nullptr,
     );
     return NIAllNullableTypesWithoutRecursionBridge.castFromPointer(
       _ret,
@@ -936,6 +948,64 @@ extension NIAllNullableTypesWithoutRecursionBridge$Methods
     );
   }
 
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  objc.NSDictionary? get intMap {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesWithoutRecursionBridge.intMap',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_intMap);
+    return _ret.address == 0
+        ? null
+        : objc.NSDictionary.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  set intMap(objc.NSDictionary? value) {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesWithoutRecursionBridge.setIntMap:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_xtuoz7(
+      this.ref.pointer,
+      _sel_setIntMap_,
+      value?.ref.pointer ?? ffi.nullptr,
+    );
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  objc.NSDictionary? get enumMap {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesWithoutRecursionBridge.enumMap',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_enumMap);
+    return _ret.address == 0
+        ? null
+        : objc.NSDictionary.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  set enumMap(objc.NSDictionary? value) {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesWithoutRecursionBridge.setEnumMap:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_xtuoz7(
+      this.ref.pointer,
+      _sel_setEnumMap_,
+      value?.ref.pointer ?? ffi.nullptr,
+    );
+  }
+
   /// init
   NIAllNullableTypesWithoutRecursionBridge init() {
     objc.checkOsVersionInternal(
@@ -1021,11 +1091,11 @@ enum NIAnotherEnum {
   };
 }
 
-late final _sel_initWithABool_anInt_anInt64_aDouble_anEnum_anotherEnum_aString_anObject_list_stringList_intList_doubleList_boolList_enumList_map_stringMap_ =
+late final _sel_initWithABool_anInt_anInt64_aDouble_anEnum_anotherEnum_aString_anObject_list_stringList_intList_doubleList_boolList_enumList_map_stringMap_intMap_enumMap_ =
     objc.registerName(
-      "initWithABool:anInt:anInt64:aDouble:anEnum:anotherEnum:aString:anObject:list:stringList:intList:doubleList:boolList:enumList:map:stringMap:",
+      "initWithABool:anInt:anInt64:aDouble:anEnum:anotherEnum:aString:anObject:list:stringList:intList:doubleList:boolList:enumList:map:stringMap:intMap:enumMap:",
     );
-final _objc_msgSend_1pebqeq = objc.msgSendPointer
+final _objc_msgSend_1mc043a = objc.msgSendPointer
     .cast<
       ffi.NativeFunction<
         ffi.Pointer<objc.ObjCObject> Function(
@@ -1037,6 +1107,8 @@ final _objc_msgSend_1pebqeq = objc.msgSendPointer
           ffi.Double,
           ffi.Long,
           ffi.Long,
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCObject>,
           ffi.Pointer<objc.ObjCObject>,
           ffi.Pointer<objc.ObjCObject>,
           ffi.Pointer<objc.ObjCObject>,
@@ -1060,6 +1132,8 @@ final _objc_msgSend_1pebqeq = objc.msgSendPointer
         double,
         int,
         int,
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCObject>,
         ffi.Pointer<objc.ObjCObject>,
         ffi.Pointer<objc.ObjCObject>,
         ffi.Pointer<objc.ObjCObject>,
@@ -1320,7 +1394,7 @@ class NIAllTypesBridge extends objc.NSObject {
 }
 
 extension NIAllTypesBridge$Methods on NIAllTypesBridge {
-  /// initWithABool:anInt:anInt64:aDouble:anEnum:anotherEnum:aString:anObject:list:stringList:intList:doubleList:boolList:enumList:map:stringMap:
+  /// initWithABool:anInt:anInt64:aDouble:anEnum:anotherEnum:aString:anObject:list:stringList:intList:doubleList:boolList:enumList:map:stringMap:intMap:enumMap:
   ///
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
@@ -1341,15 +1415,17 @@ extension NIAllTypesBridge$Methods on NIAllTypesBridge {
     required objc.NSArray enumList,
     required objc.NSDictionary map,
     required objc.NSDictionary stringMap,
+    required objc.NSDictionary intMap,
+    required objc.NSDictionary enumMap,
   }) {
     objc.checkOsVersionInternal(
-      'NIAllTypesBridge.initWithABool:anInt:anInt64:aDouble:anEnum:anotherEnum:aString:anObject:list:stringList:intList:doubleList:boolList:enumList:map:stringMap:',
+      'NIAllTypesBridge.initWithABool:anInt:anInt64:aDouble:anEnum:anotherEnum:aString:anObject:list:stringList:intList:doubleList:boolList:enumList:map:stringMap:intMap:enumMap:',
       iOS: (false, (13, 0, 0)),
       macOS: (false, (16, 0, 0)),
     );
-    final _ret = _objc_msgSend_1pebqeq(
+    final _ret = _objc_msgSend_1mc043a(
       this.ref.retainAndReturnPointer(),
-      _sel_initWithABool_anInt_anInt64_aDouble_anEnum_anotherEnum_aString_anObject_list_stringList_intList_doubleList_boolList_enumList_map_stringMap_,
+      _sel_initWithABool_anInt_anInt64_aDouble_anEnum_anotherEnum_aString_anObject_list_stringList_intList_doubleList_boolList_enumList_map_stringMap_intMap_enumMap_,
       aBool,
       anInt,
       anInt64,
@@ -1366,6 +1442,8 @@ extension NIAllTypesBridge$Methods on NIAllTypesBridge {
       enumList.ref.pointer,
       map.ref.pointer,
       stringMap.ref.pointer,
+      intMap.ref.pointer,
+      enumMap.ref.pointer,
     );
     return NIAllTypesBridge.castFromPointer(_ret, retain: false, release: true);
   }
@@ -1758,6 +1836,52 @@ extension NIAllTypesBridge$Methods on NIAllTypesBridge {
       _sel_setStringMap_,
       value.ref.pointer,
     );
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  objc.NSDictionary get intMap {
+    objc.checkOsVersionInternal(
+      'NIAllTypesBridge.intMap',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_intMap);
+    return objc.NSDictionary.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  set intMap(objc.NSDictionary value) {
+    objc.checkOsVersionInternal(
+      'NIAllTypesBridge.setIntMap:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_xtuoz7(this.ref.pointer, _sel_setIntMap_, value.ref.pointer);
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  objc.NSDictionary get enumMap {
+    objc.checkOsVersionInternal(
+      'NIAllTypesBridge.enumMap',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_enumMap);
+    return objc.NSDictionary.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  set enumMap(objc.NSDictionary value) {
+    objc.checkOsVersionInternal(
+      'NIAllTypesBridge.setEnumMap:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_xtuoz7(this.ref.pointer, _sel_setEnumMap_, value.ref.pointer);
   }
 
   /// init
@@ -2471,8 +2595,17 @@ late final _sel_echoStringMapWithStringMap_wrappedError_ = objc.registerName(
 late final _sel_echoIntMapWithIntMap_wrappedError_ = objc.registerName(
   "echoIntMapWithIntMap:wrappedError:",
 );
+late final _sel_echoEnumMapWithEnumMap_wrappedError_ = objc.registerName(
+  "echoEnumMapWithEnumMap:wrappedError:",
+);
 late final _sel_echoNonNullStringMapWithStringMap_wrappedError_ = objc
     .registerName("echoNonNullStringMapWithStringMap:wrappedError:");
+late final _sel_echoNonNullIntMapWithIntMap_wrappedError_ = objc.registerName(
+  "echoNonNullIntMapWithIntMap:wrappedError:",
+);
+late final _sel_echoNonNullEnumMapWithEnumMap_wrappedError_ = objc.registerName(
+  "echoNonNullEnumMapWithEnumMap:wrappedError:",
+);
 late final _sel_echoClassWrapperWithWrapper_wrappedError_ = objc.registerName(
   "echoClassWrapperWithWrapper:wrappedError:",
 );
@@ -2553,13 +2686,24 @@ late final _sel_echoNullableEnumListWithEnumList_wrappedError_ = objc
     .registerName("echoNullableEnumListWithEnumList:wrappedError:");
 late final _sel_echoNullableClassListWithClassList_wrappedError_ = objc
     .registerName("echoNullableClassListWithClassList:wrappedError:");
+late final _sel_echoNullableNonNullEnumListWithEnumList_wrappedError_ = objc
+    .registerName("echoNullableNonNullEnumListWithEnumList:wrappedError:");
 late final _sel_echoNullableMapWithMap_wrappedError_ = objc.registerName(
   "echoNullableMapWithMap:wrappedError:",
 );
 late final _sel_echoNullableStringMapWithStringMap_wrappedError_ = objc
     .registerName("echoNullableStringMapWithStringMap:wrappedError:");
+late final _sel_echoNullableIntMapWithIntMap_wrappedError_ = objc.registerName(
+  "echoNullableIntMapWithIntMap:wrappedError:",
+);
+late final _sel_echoNullableEnumMapWithEnumMap_wrappedError_ = objc
+    .registerName("echoNullableEnumMapWithEnumMap:wrappedError:");
 late final _sel_echoNullableNonNullStringMapWithStringMap_wrappedError_ = objc
     .registerName("echoNullableNonNullStringMapWithStringMap:wrappedError:");
+late final _sel_echoNullableNonNullIntMapWithIntMap_wrappedError_ = objc
+    .registerName("echoNullableNonNullIntMapWithIntMap:wrappedError:");
+late final _sel_echoNullableNonNullEnumMapWithEnumMap_wrappedError_ = objc
+    .registerName("echoNullableNonNullEnumMapWithEnumMap:wrappedError:");
 late final _sel_echoNullableEnumWithAnEnum_wrappedError_ = objc.registerName(
   "echoNullableEnumWithAnEnum:wrappedError:",
 );
@@ -3132,6 +3276,30 @@ extension NIHostIntegrationCoreApiSetup$Methods
   ///
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
+  objc.NSDictionary? echoEnumMapWithEnumMap(
+    objc.NSDictionary enumMap, {
+    required NiTestsError wrappedError,
+  }) {
+    objc.checkOsVersionInternal(
+      'NIHostIntegrationCoreApiSetup.echoEnumMapWithEnumMap:wrappedError:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    final _ret = _objc_msgSend_15qeuct(
+      this.ref.pointer,
+      _sel_echoEnumMapWithEnumMap_wrappedError_,
+      enumMap.ref.pointer,
+      wrappedError.ref.pointer,
+    );
+    return _ret.address == 0
+        ? null
+        : objc.NSDictionary.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// Returns the passed map, to test serialization and deserialization.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
   objc.NSDictionary? echoNonNullStringMapWithStringMap(
     objc.NSDictionary stringMap, {
     required NiTestsError wrappedError,
@@ -3145,6 +3313,54 @@ extension NIHostIntegrationCoreApiSetup$Methods
       this.ref.pointer,
       _sel_echoNonNullStringMapWithStringMap_wrappedError_,
       stringMap.ref.pointer,
+      wrappedError.ref.pointer,
+    );
+    return _ret.address == 0
+        ? null
+        : objc.NSDictionary.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// Returns the passed map, to test serialization and deserialization.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  objc.NSDictionary? echoNonNullIntMapWithIntMap(
+    objc.NSDictionary intMap, {
+    required NiTestsError wrappedError,
+  }) {
+    objc.checkOsVersionInternal(
+      'NIHostIntegrationCoreApiSetup.echoNonNullIntMapWithIntMap:wrappedError:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    final _ret = _objc_msgSend_15qeuct(
+      this.ref.pointer,
+      _sel_echoNonNullIntMapWithIntMap_wrappedError_,
+      intMap.ref.pointer,
+      wrappedError.ref.pointer,
+    );
+    return _ret.address == 0
+        ? null
+        : objc.NSDictionary.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// Returns the passed map, to test serialization and deserialization.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  objc.NSDictionary? echoNonNullEnumMapWithEnumMap(
+    objc.NSDictionary enumMap, {
+    required NiTestsError wrappedError,
+  }) {
+    objc.checkOsVersionInternal(
+      'NIHostIntegrationCoreApiSetup.echoNonNullEnumMapWithEnumMap:wrappedError:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    final _ret = _objc_msgSend_15qeuct(
+      this.ref.pointer,
+      _sel_echoNonNullEnumMapWithEnumMap_wrappedError_,
+      enumMap.ref.pointer,
       wrappedError.ref.pointer,
     );
     return _ret.address == 0
@@ -3570,6 +3786,30 @@ extension NIHostIntegrationCoreApiSetup$Methods
         : objc.NSArray.castFromPointer(_ret, retain: true, release: true);
   }
 
+  /// Returns the passed list, to test serialization and deserialization.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  objc.NSArray? echoNullableNonNullEnumListWithEnumList(
+    objc.NSArray? enumList, {
+    required NiTestsError wrappedError,
+  }) {
+    objc.checkOsVersionInternal(
+      'NIHostIntegrationCoreApiSetup.echoNullableNonNullEnumListWithEnumList:wrappedError:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    final _ret = _objc_msgSend_15qeuct(
+      this.ref.pointer,
+      _sel_echoNullableNonNullEnumListWithEnumList_wrappedError_,
+      enumList?.ref.pointer ?? ffi.nullptr,
+      wrappedError.ref.pointer,
+    );
+    return _ret.address == 0
+        ? null
+        : objc.NSArray.castFromPointer(_ret, retain: true, release: true);
+  }
+
   /// Returns the passed map, to test serialization and deserialization.
   ///
   /// iOS: introduced 13.0.0
@@ -3622,6 +3862,54 @@ extension NIHostIntegrationCoreApiSetup$Methods
   ///
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
+  objc.NSDictionary? echoNullableIntMapWithIntMap(
+    objc.NSDictionary? intMap, {
+    required NiTestsError wrappedError,
+  }) {
+    objc.checkOsVersionInternal(
+      'NIHostIntegrationCoreApiSetup.echoNullableIntMapWithIntMap:wrappedError:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    final _ret = _objc_msgSend_15qeuct(
+      this.ref.pointer,
+      _sel_echoNullableIntMapWithIntMap_wrappedError_,
+      intMap?.ref.pointer ?? ffi.nullptr,
+      wrappedError.ref.pointer,
+    );
+    return _ret.address == 0
+        ? null
+        : objc.NSDictionary.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// Returns the passed map, to test serialization and deserialization.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  objc.NSDictionary? echoNullableEnumMapWithEnumMap(
+    objc.NSDictionary? enumMap, {
+    required NiTestsError wrappedError,
+  }) {
+    objc.checkOsVersionInternal(
+      'NIHostIntegrationCoreApiSetup.echoNullableEnumMapWithEnumMap:wrappedError:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    final _ret = _objc_msgSend_15qeuct(
+      this.ref.pointer,
+      _sel_echoNullableEnumMapWithEnumMap_wrappedError_,
+      enumMap?.ref.pointer ?? ffi.nullptr,
+      wrappedError.ref.pointer,
+    );
+    return _ret.address == 0
+        ? null
+        : objc.NSDictionary.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// Returns the passed map, to test serialization and deserialization.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
   objc.NSDictionary? echoNullableNonNullStringMapWithStringMap(
     objc.NSDictionary? stringMap, {
     required NiTestsError wrappedError,
@@ -3635,6 +3923,54 @@ extension NIHostIntegrationCoreApiSetup$Methods
       this.ref.pointer,
       _sel_echoNullableNonNullStringMapWithStringMap_wrappedError_,
       stringMap?.ref.pointer ?? ffi.nullptr,
+      wrappedError.ref.pointer,
+    );
+    return _ret.address == 0
+        ? null
+        : objc.NSDictionary.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// Returns the passed map, to test serialization and deserialization.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  objc.NSDictionary? echoNullableNonNullIntMapWithIntMap(
+    objc.NSDictionary? intMap, {
+    required NiTestsError wrappedError,
+  }) {
+    objc.checkOsVersionInternal(
+      'NIHostIntegrationCoreApiSetup.echoNullableNonNullIntMapWithIntMap:wrappedError:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    final _ret = _objc_msgSend_15qeuct(
+      this.ref.pointer,
+      _sel_echoNullableNonNullIntMapWithIntMap_wrappedError_,
+      intMap?.ref.pointer ?? ffi.nullptr,
+      wrappedError.ref.pointer,
+    );
+    return _ret.address == 0
+        ? null
+        : objc.NSDictionary.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// Returns the passed map, to test serialization and deserialization.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  objc.NSDictionary? echoNullableNonNullEnumMapWithEnumMap(
+    objc.NSDictionary? enumMap, {
+    required NiTestsError wrappedError,
+  }) {
+    objc.checkOsVersionInternal(
+      'NIHostIntegrationCoreApiSetup.echoNullableNonNullEnumMapWithEnumMap:wrappedError:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    final _ret = _objc_msgSend_15qeuct(
+      this.ref.pointer,
+      _sel_echoNullableNonNullEnumMapWithEnumMap_wrappedError_,
+      enumMap?.ref.pointer ?? ffi.nullptr,
       wrappedError.ref.pointer,
     );
     return _ret.address == 0

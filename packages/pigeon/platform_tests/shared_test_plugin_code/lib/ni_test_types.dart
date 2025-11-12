@@ -244,13 +244,13 @@ allNullableTypesWithoutRecursionClassList =
       null,
     ];
 
-// final Map<int, NIAllNullableTypesWithoutRecursion?>
-//     allNullableTypesWithoutRecursionClassMap =
-//     <int, NIAllNullableTypesWithoutRecursion?>{
-//   0: genericNIAllNullableTypesWithoutRecursion,
-//   1: NIAllNullableTypesWithoutRecursion(),
-//   2: null,
-// };
+final Map<int, NIAllNullableTypesWithoutRecursion?>
+allNullableTypesWithoutRecursionClassMap =
+    <int, NIAllNullableTypesWithoutRecursion?>{
+      0: genericNIAllNullableTypesWithoutRecursion,
+      1: NIAllNullableTypesWithoutRecursion(),
+      2: null,
+    };
 
 final NIAllTypes genericNIAllTypes = NIAllTypes(
   aBool: true,
@@ -275,10 +275,10 @@ final NIAllTypes genericNIAllTypes = NIAllTypes(
   // mapList: nonNullMapList,
   map: nonNullMap,
   stringMap: nonNullStringMap,
-  // intMap: nonNullIntMap,
+  intMap: nonNullIntMap,
   // doubleMap: nonNullDoubleMap,
   // boolMap: nonNullBoolMap,
-  // enumMap: nonNullEnumMap,
+  enumMap: nonNullEnumMap,
   // objectMap: nonNullMap,
   // listMap: nonNullListMap,
   // mapMap: nonNullMapMap,
@@ -335,6 +335,20 @@ final List<NIAllTypes?> allTypesClassList = <NIAllTypes?>[
 //   0: genericNIAllNullableTypes,
 //   1: NIAllNullableTypes(),
 // };
+
+final List<NIAllNullableTypesWithoutRecursion>
+nonNullNIAllNullableTypesWithoutRecursionList =
+    <NIAllNullableTypesWithoutRecursion>[
+      genericNIAllNullableTypesWithoutRecursion,
+      NIAllNullableTypesWithoutRecursion(),
+    ];
+
+final Map<int, NIAllNullableTypesWithoutRecursion>
+nonNullNIAllNullableTypesWithoutRecursionMap =
+    <int, NIAllNullableTypesWithoutRecursion>{
+      0: genericNIAllNullableTypesWithoutRecursion,
+      1: NIAllNullableTypesWithoutRecursion(),
+    };
 
 // final List<NIAllNullableTypes?> allNullableTypesList = <NIAllNullableTypes?>[
 //   genericNIAllNullableTypes,

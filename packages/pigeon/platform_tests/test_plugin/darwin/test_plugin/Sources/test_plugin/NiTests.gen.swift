@@ -227,6 +227,8 @@ struct NIAllTypes: Hashable {
   var enumList: [NIAnEnum]
   var map: [AnyHashable?: Any?]
   var stringMap: [String: String]
+  var intMap: [Int64: Int64]
+  var enumMap: [NIAnEnum: NIAnEnum]
 
   static func fromList(_ pigeonVar_list: [Any?]) -> NIAllTypes? {
     let aBool = pigeonVar_list[0] as! Bool
@@ -245,6 +247,8 @@ struct NIAllTypes: Hashable {
     let enumList = pigeonVar_list[13] as! [NIAnEnum]
     let map = pigeonVar_list[14] as! [AnyHashable?: Any?]
     let stringMap = pigeonVar_list[15] as! [String: String]
+    let intMap = pigeonVar_list[16] as! [Int64: Int64]
+    let enumMap = pigeonVar_list[17] as? [NIAnEnum: NIAnEnum]
 
     return NIAllTypes(
       aBool: aBool,
@@ -262,7 +266,9 @@ struct NIAllTypes: Hashable {
       boolList: boolList,
       enumList: enumList,
       map: map,
-      stringMap: stringMap
+      stringMap: stringMap,
+      intMap: intMap,
+      enumMap: enumMap!
     )
   }
   func toList() -> [Any?] {
@@ -283,6 +289,8 @@ struct NIAllTypes: Hashable {
       enumList,
       map,
       stringMap,
+      intMap,
+      enumMap,
     ]
   }
   static func == (lhs: NIAllTypes, rhs: NIAllTypes) -> Bool {
@@ -314,7 +322,9 @@ struct NIAllTypes: Hashable {
     boolList: [NSObject],
     enumList: [NSObject],
     map: [NSObject: NSObject],
-    stringMap: [NSObject: NSObject]
+    stringMap: [NSObject: NSObject],
+    intMap: [NSObject: NSObject],
+    enumMap: [NSObject: NSObject]
   ) {
     self.aBool = aBool
     self.anInt = anInt
@@ -332,6 +342,8 @@ struct NIAllTypes: Hashable {
     self.enumList = enumList
     self.map = map
     self.stringMap = stringMap
+    self.intMap = intMap
+    self.enumMap = enumMap
   }
   @objc var aBool: Bool
   @objc var anInt: Int64
@@ -349,6 +361,8 @@ struct NIAllTypes: Hashable {
   @objc var enumList: [NSObject]
   @objc var map: [NSObject: NSObject]
   @objc var stringMap: [NSObject: NSObject]
+  @objc var intMap: [NSObject: NSObject]
+  @objc var enumMap: [NSObject: NSObject]
 
   static func fromSwift(_ pigeonVar_Class: NIAllTypes?) -> NIAllTypesBridge? {
     if isNullish(pigeonVar_Class) {
@@ -372,6 +386,8 @@ struct NIAllTypes: Hashable {
       map: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.map) as! [NSObject: NSObject],
       stringMap: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.stringMap)
         as! [NSObject: NSObject],
+      intMap: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.intMap) as! [NSObject: NSObject],
+      enumMap: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.enumMap) as! [NSObject: NSObject],
     )
   }
   func toSwift() -> NIAllTypes {
@@ -392,6 +408,8 @@ struct NIAllTypes: Hashable {
       enumList: _PigeonFfiCodec.readValue(value: enumList as NSObject) as! [NIAnEnum],
       map: _PigeonFfiCodec.readValue(value: map as NSObject) as! [AnyHashable?: Any?],
       stringMap: _PigeonFfiCodec.readValue(value: stringMap as NSObject) as! [String: String],
+      intMap: _PigeonFfiCodec.readValue(value: intMap as NSObject) as! [Int64: Int64],
+      enumMap: _PigeonFfiCodec.readValue(value: enumMap as NSObject) as! [NIAnEnum: NIAnEnum],
     )
   }
 }
@@ -419,6 +437,8 @@ struct NIAllNullableTypesWithoutRecursion: Hashable {
   var enumList: [NIAnEnum?]? = nil
   var map: [AnyHashable?: Any?]? = nil
   var stringMap: [String?: String?]? = nil
+  var intMap: [Int64?: Int64?]? = nil
+  var enumMap: [NIAnEnum?: NIAnEnum?]? = nil
 
   static func fromList(_ pigeonVar_list: [Any?]) -> NIAllNullableTypesWithoutRecursion? {
     let aNullableBool: Bool? = nilOrValue(pigeonVar_list[0])
@@ -437,6 +457,8 @@ struct NIAllNullableTypesWithoutRecursion: Hashable {
     let enumList: [NIAnEnum?]? = nilOrValue(pigeonVar_list[13])
     let map: [AnyHashable?: Any?]? = nilOrValue(pigeonVar_list[14])
     let stringMap: [String?: String?]? = nilOrValue(pigeonVar_list[15])
+    let intMap: [Int64?: Int64?]? = nilOrValue(pigeonVar_list[16])
+    let enumMap: [NIAnEnum?: NIAnEnum?]? = pigeonVar_list[17] as? [NIAnEnum?: NIAnEnum?]
 
     return NIAllNullableTypesWithoutRecursion(
       aNullableBool: aNullableBool,
@@ -454,7 +476,9 @@ struct NIAllNullableTypesWithoutRecursion: Hashable {
       boolList: boolList,
       enumList: enumList,
       map: map,
-      stringMap: stringMap
+      stringMap: stringMap,
+      intMap: intMap,
+      enumMap: enumMap
     )
   }
   func toList() -> [Any?] {
@@ -475,6 +499,8 @@ struct NIAllNullableTypesWithoutRecursion: Hashable {
       enumList,
       map,
       stringMap,
+      intMap,
+      enumMap,
     ]
   }
   static func == (lhs: NIAllNullableTypesWithoutRecursion, rhs: NIAllNullableTypesWithoutRecursion)
@@ -511,7 +537,9 @@ struct NIAllNullableTypesWithoutRecursion: Hashable {
     boolList: [NSObject]? = nil,
     enumList: [NSObject]? = nil,
     map: [NSObject: NSObject]? = nil,
-    stringMap: [NSObject: NSObject]? = nil
+    stringMap: [NSObject: NSObject]? = nil,
+    intMap: [NSObject: NSObject]? = nil,
+    enumMap: [NSObject: NSObject]? = nil
   ) {
     self.aNullableBool = aNullableBool
     self.aNullableInt = aNullableInt
@@ -529,6 +557,8 @@ struct NIAllNullableTypesWithoutRecursion: Hashable {
     self.enumList = enumList
     self.map = map
     self.stringMap = stringMap
+    self.intMap = intMap
+    self.enumMap = enumMap
   }
   @objc var aNullableBool: NSNumber? = nil
   @objc var aNullableInt: NSNumber? = nil
@@ -546,6 +576,8 @@ struct NIAllNullableTypesWithoutRecursion: Hashable {
   @objc var enumList: [NSObject]? = nil
   @objc var map: [NSObject: NSObject]? = nil
   @objc var stringMap: [NSObject: NSObject]? = nil
+  @objc var intMap: [NSObject: NSObject]? = nil
+  @objc var enumMap: [NSObject: NSObject]? = nil
 
   static func fromSwift(_ pigeonVar_Class: NIAllNullableTypesWithoutRecursion?)
     -> NIAllNullableTypesWithoutRecursionBridge?
@@ -577,6 +609,8 @@ struct NIAllNullableTypesWithoutRecursion: Hashable {
       map: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.map) as? [NSObject: NSObject],
       stringMap: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.stringMap)
         as? [NSObject: NSObject],
+      intMap: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.intMap) as? [NSObject: NSObject],
+      enumMap: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.enumMap) as? [NSObject: NSObject],
     )
   }
   func toSwift() -> NIAllNullableTypesWithoutRecursion {
@@ -599,6 +633,8 @@ struct NIAllNullableTypesWithoutRecursion: Hashable {
       enumList: _PigeonFfiCodec.readValue(value: enumList as NSObject?) as? [NIAnEnum?],
       map: _PigeonFfiCodec.readValue(value: map as NSObject?) as? [AnyHashable?: Any?],
       stringMap: _PigeonFfiCodec.readValue(value: stringMap as NSObject?) as? [String?: String?],
+      intMap: _PigeonFfiCodec.readValue(value: intMap as NSObject?) as? [Int64?: Int64?],
+      enumMap: _PigeonFfiCodec.readValue(value: enumMap as NSObject?) as? [NIAnEnum?: NIAnEnum?],
     )
   }
 }
@@ -905,7 +941,13 @@ protocol NIHostIntegrationCoreApi {
   /// Returns the passed map, to test serialization and deserialization.
   func echoIntMap(intMap: [Int64?: Int64?]) throws -> [Int64?: Int64?]
   /// Returns the passed map, to test serialization and deserialization.
+  func echoEnumMap(enumMap: [NIAnEnum?: NIAnEnum?]) throws -> [NIAnEnum?: NIAnEnum?]
+  /// Returns the passed map, to test serialization and deserialization.
   func echoNonNullStringMap(stringMap: [String: String]) throws -> [String: String]
+  /// Returns the passed map, to test serialization and deserialization.
+  func echoNonNullIntMap(intMap: [Int64: Int64]) throws -> [Int64: Int64]
+  /// Returns the passed map, to test serialization and deserialization.
+  func echoNonNullEnumMap(enumMap: [NIAnEnum: NIAnEnum]) throws -> [NIAnEnum: NIAnEnum]
   /// Returns the passed class to test nested class serialization and deserialization.
   func echoClassWrapper(wrapper: NIAllClassesWrapper) throws -> NIAllClassesWrapper
   /// Returns the passed enum to test serialization and deserialization.
@@ -945,12 +987,22 @@ protocol NIHostIntegrationCoreApi {
   /// Returns the passed list, to test serialization and deserialization.
   func echoNullableClassList(classList: [NIAllNullableTypesWithoutRecursion?]?) throws
     -> [NIAllNullableTypesWithoutRecursion?]?
+  /// Returns the passed list, to test serialization and deserialization.
+  func echoNullableNonNullEnumList(enumList: [NIAnEnum]?) throws -> [NIAnEnum]?
   /// Returns the passed map, to test serialization and deserialization.
   func echoNullableMap(map: [AnyHashable?: Any?]?) throws -> [AnyHashable?: Any?]?
   /// Returns the passed map, to test serialization and deserialization.
   func echoNullableStringMap(stringMap: [String?: String?]?) throws -> [String?: String?]?
   /// Returns the passed map, to test serialization and deserialization.
+  func echoNullableIntMap(intMap: [Int64?: Int64?]?) throws -> [Int64?: Int64?]?
+  /// Returns the passed map, to test serialization and deserialization.
+  func echoNullableEnumMap(enumMap: [NIAnEnum?: NIAnEnum?]?) throws -> [NIAnEnum?: NIAnEnum?]?
+  /// Returns the passed map, to test serialization and deserialization.
   func echoNullableNonNullStringMap(stringMap: [String: String]?) throws -> [String: String]?
+  /// Returns the passed map, to test serialization and deserialization.
+  func echoNullableNonNullIntMap(intMap: [Int64: Int64]?) throws -> [Int64: Int64]?
+  /// Returns the passed map, to test serialization and deserialization.
+  func echoNullableNonNullEnumMap(enumMap: [NIAnEnum: NIAnEnum]?) throws -> [NIAnEnum: NIAnEnum]?
   func echoNullableEnum(anEnum: NIAnEnum?) throws -> NIAnEnum?
   func echoAnotherNullableEnum(anotherEnum: NIAnotherEnum?) throws -> NIAnotherEnum?
 }
@@ -1318,6 +1370,27 @@ protocol NIHostIntegrationCoreApi {
   }
   /// Returns the passed map, to test serialization and deserialization.
   @available(iOS 13, macOS 16.0.0, *)
+  @objc func echoEnumMap(enumMap: [NSObject: NSObject], wrappedError: NiTestsError) -> [NSObject:
+    NSObject]?
+  {
+    do {
+      return try _PigeonFfiCodec.writeValue(
+        value: api!.echoEnumMap(
+          enumMap: _PigeonFfiCodec.readValue(value: enumMap as NSObject) as! [NIAnEnum?: NIAnEnum?])
+      ) as? [NSObject: NSObject]
+    } catch let error as NiTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
+  /// Returns the passed map, to test serialization and deserialization.
+  @available(iOS 13, macOS 16.0.0, *)
   @objc func echoNonNullStringMap(stringMap: [NSObject: NSObject], wrappedError: NiTestsError)
     -> [NSObject: NSObject]?
   {
@@ -1325,6 +1398,48 @@ protocol NIHostIntegrationCoreApi {
       return try _PigeonFfiCodec.writeValue(
         value: api!.echoNonNullStringMap(
           stringMap: _PigeonFfiCodec.readValue(value: stringMap as NSObject) as! [String: String]))
+        as? [NSObject: NSObject]
+    } catch let error as NiTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
+  /// Returns the passed map, to test serialization and deserialization.
+  @available(iOS 13, macOS 16.0.0, *)
+  @objc func echoNonNullIntMap(intMap: [NSObject: NSObject], wrappedError: NiTestsError)
+    -> [NSObject: NSObject]?
+  {
+    do {
+      return try _PigeonFfiCodec.writeValue(
+        value: api!.echoNonNullIntMap(
+          intMap: _PigeonFfiCodec.readValue(value: intMap as NSObject) as! [Int64: Int64]))
+        as? [NSObject: NSObject]
+    } catch let error as NiTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
+  /// Returns the passed map, to test serialization and deserialization.
+  @available(iOS 13, macOS 16.0.0, *)
+  @objc func echoNonNullEnumMap(enumMap: [NSObject: NSObject], wrappedError: NiTestsError)
+    -> [NSObject: NSObject]?
+  {
+    do {
+      return try _PigeonFfiCodec.writeValue(
+        value: api!.echoNonNullEnumMap(
+          enumMap: _PigeonFfiCodec.readValue(value: enumMap as NSObject) as! [NIAnEnum: NIAnEnum]))
         as? [NSObject: NSObject]
     } catch let error as NiTestsError {
       wrappedError.code = error.code
@@ -1642,6 +1757,27 @@ protocol NIHostIntegrationCoreApi {
     }
     return nil
   }
+  /// Returns the passed list, to test serialization and deserialization.
+  @available(iOS 13, macOS 16.0.0, *)
+  @objc func echoNullableNonNullEnumList(enumList: [NSObject]?, wrappedError: NiTestsError)
+    -> [NSObject]?
+  {
+    do {
+      return try _PigeonFfiCodec.writeValue(
+        value: api!.echoNullableNonNullEnumList(
+          enumList: _PigeonFfiCodec.readValue(value: enumList as NSObject?) as? [NIAnEnum]))
+        as? [NSObject]
+    } catch let error as NiTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
   /// Returns the passed map, to test serialization and deserialization.
   @available(iOS 13, macOS 16.0.0, *)
   @objc func echoNullableMap(map: [NSObject: NSObject]?, wrappedError: NiTestsError) -> [NSObject:
@@ -1686,6 +1822,48 @@ protocol NIHostIntegrationCoreApi {
   }
   /// Returns the passed map, to test serialization and deserialization.
   @available(iOS 13, macOS 16.0.0, *)
+  @objc func echoNullableIntMap(intMap: [NSObject: NSObject]?, wrappedError: NiTestsError)
+    -> [NSObject: NSObject]?
+  {
+    do {
+      return try _PigeonFfiCodec.writeValue(
+        value: api!.echoNullableIntMap(
+          intMap: _PigeonFfiCodec.readValue(value: intMap as NSObject?) as? [Int64?: Int64?]))
+        as? [NSObject: NSObject]
+    } catch let error as NiTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
+  /// Returns the passed map, to test serialization and deserialization.
+  @available(iOS 13, macOS 16.0.0, *)
+  @objc func echoNullableEnumMap(enumMap: [NSObject: NSObject]?, wrappedError: NiTestsError)
+    -> [NSObject: NSObject]?
+  {
+    do {
+      return try _PigeonFfiCodec.writeValue(
+        value: api!.echoNullableEnumMap(
+          enumMap: _PigeonFfiCodec.readValue(value: enumMap as NSObject?) as? [NIAnEnum?: NIAnEnum?]
+        )) as? [NSObject: NSObject]
+    } catch let error as NiTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
+  /// Returns the passed map, to test serialization and deserialization.
+  @available(iOS 13, macOS 16.0.0, *)
   @objc func echoNullableNonNullStringMap(
     stringMap: [NSObject: NSObject]?, wrappedError: NiTestsError
   ) -> [NSObject: NSObject]? {
@@ -1693,6 +1871,48 @@ protocol NIHostIntegrationCoreApi {
       return try _PigeonFfiCodec.writeValue(
         value: api!.echoNullableNonNullStringMap(
           stringMap: _PigeonFfiCodec.readValue(value: stringMap as NSObject?) as? [String: String]))
+        as? [NSObject: NSObject]
+    } catch let error as NiTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
+  /// Returns the passed map, to test serialization and deserialization.
+  @available(iOS 13, macOS 16.0.0, *)
+  @objc func echoNullableNonNullIntMap(intMap: [NSObject: NSObject]?, wrappedError: NiTestsError)
+    -> [NSObject: NSObject]?
+  {
+    do {
+      return try _PigeonFfiCodec.writeValue(
+        value: api!.echoNullableNonNullIntMap(
+          intMap: _PigeonFfiCodec.readValue(value: intMap as NSObject?) as? [Int64: Int64]))
+        as? [NSObject: NSObject]
+    } catch let error as NiTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
+  /// Returns the passed map, to test serialization and deserialization.
+  @available(iOS 13, macOS 16.0.0, *)
+  @objc func echoNullableNonNullEnumMap(enumMap: [NSObject: NSObject]?, wrappedError: NiTestsError)
+    -> [NSObject: NSObject]?
+  {
+    do {
+      return try _PigeonFfiCodec.writeValue(
+        value: api!.echoNullableNonNullEnumMap(
+          enumMap: _PigeonFfiCodec.readValue(value: enumMap as NSObject?) as? [NIAnEnum: NIAnEnum]))
         as? [NSObject: NSObject]
     } catch let error as NiTestsError {
       wrappedError.code = error.code

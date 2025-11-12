@@ -84,33 +84,39 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     //       expect(allTypesNull, echoNullFilledClass);
     //     });
 
-    //     testWidgets('Classes with list of null serialize and deserialize correctly',
-    //         (WidgetTester _) async {
-    //       final NIHostIntegrationCoreApiForNativeInterop? api =
-    //           NIHostIntegrationCoreApiForNativeInterop.getInstance();
+    testWidgets(
+      'Classes with list of null serialize and deserialize correctly',
+      (WidgetTester _) async {
+        final NIHostIntegrationCoreApiForNativeInterop? api =
+            NIHostIntegrationCoreApiForNativeInterop.getInstance();
 
-    //       final NIAllNullableTypes listTypes =
-    //           NIAllNullableTypes(list: <String?>['String', null]);
+        final NIAllNullableTypesWithoutRecursion listTypes =
+            NIAllNullableTypesWithoutRecursion(list: <String?>['String', null]);
 
-    //       final NIAllNullableTypes? echoNullFilledClass =
-    //           api!.echoAllNullableTypes(listTypes);
+        final NIAllNullableTypesWithoutRecursion? echoNullFilledClass = api!
+            .echoAllNullableTypesWithoutRecursion(listTypes);
 
-    //       expect(listTypes, echoNullFilledClass);
-    //     });
+        expect(listTypes, echoNullFilledClass);
+      },
+    );
 
-    //     testWidgets('Classes with map of null serialize and deserialize correctly',
-    //         (WidgetTester _) async {
-    //       final NIHostIntegrationCoreApiForNativeInterop? api =
-    //           NIHostIntegrationCoreApiForNativeInterop.getInstance();
+    testWidgets(
+      'Classes with map of null serialize and deserialize correctly',
+      (WidgetTester _) async {
+        final NIHostIntegrationCoreApiForNativeInterop? api =
+            NIHostIntegrationCoreApiForNativeInterop.getInstance();
 
-    //       final NIAllNullableTypes listTypes = NIAllNullableTypes(
-    //           map: <String?, String?>{'String': 'string', 'null': null});
+        final NIAllNullableTypesWithoutRecursion listTypes =
+            NIAllNullableTypesWithoutRecursion(
+              map: <String?, String?>{'String': 'string', 'null': null},
+            );
 
-    //       final NIAllNullableTypes? echoNullFilledClass =
-    //           api!.echoAllNullableTypes(listTypes);
+        final NIAllNullableTypesWithoutRecursion? echoNullFilledClass = api!
+            .echoAllNullableTypesWithoutRecursion(listTypes);
 
-    //       expect(listTypes, echoNullFilledClass);
-    //     });
+        expect(listTypes, echoNullFilledClass);
+      },
+    );
 
     testWidgets(
       'all nullable datatypes without recursion serialize and deserialize correctly',
@@ -208,25 +214,33 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     //     //           e.details == 'details'));
     //     // });
 
-    //     testWidgets('nested objects can be sent correctly', (WidgetTester _) async {
-    //       final NIHostIntegrationCoreApiForNativeInterop? api =
-    //           NIHostIntegrationCoreApiForNativeInterop.getInstance();
-    //       final NIAllClassesWrapper classWrapper = classWrapperMaker();
-    //       final String? receivedString =
-    //           api!.extractNestedNullableString(classWrapper);
-    //       expect(receivedString, classWrapper.allNullableTypes.aNullableString);
-    //     });
+    testWidgets('nested objects can be sent correctly', (WidgetTester _) async {
+      final NIHostIntegrationCoreApiForNativeInterop? api =
+          NIHostIntegrationCoreApiForNativeInterop.getInstance();
+      final NIAllClassesWrapper classWrapper = classWrapperMaker();
+      final String? receivedString = api!.extractNestedNullableString(
+        classWrapper,
+      );
+      expect(
+        receivedString,
+        classWrapper.allNullableTypesWithoutRecursion?.aNullableString,
+      );
+    });
 
-    //     testWidgets('nested objects can be received correctly',
-    //         (WidgetTester _) async {
-    //       final NIHostIntegrationCoreApiForNativeInterop? api =
-    //           NIHostIntegrationCoreApiForNativeInterop.getInstance();
+    testWidgets('nested objects can be received correctly', (
+      WidgetTester _,
+    ) async {
+      final NIHostIntegrationCoreApiForNativeInterop? api =
+          NIHostIntegrationCoreApiForNativeInterop.getInstance();
 
-    //       const String sentString = 'Some string';
-    //       final NIAllClassesWrapper receivedObject =
-    //           api!.createNestedNullableString(sentString);
-    //       expect(receivedObject.allNullableTypes.aNullableString, sentString);
-    //     });
+      const String sentString = 'Some string';
+      final NIAllClassesWrapper receivedObject = api!
+          .createNestedNullableString(sentString);
+      expect(
+        receivedObject.allNullableTypesWithoutRecursion?.aNullableString,
+        sentString,
+      );
+    });
 
     testWidgets('nested classes can serialize and deserialize correctly', (
       WidgetTester _,
@@ -256,34 +270,40 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(classWrapper, receivedClassWrapper);
     });
 
-    // testWidgets(
-    //     'Arguments of multiple types serialize and deserialize correctly',
-    //     (WidgetTester _) async {
-    //   final NIHostIntegrationCoreApiForNativeInterop? api =
-    //       NIHostIntegrationCoreApiForNativeInterop.getInstance();
-    //   const String aNullableString = 'this is a String';
-    //   const bool aNullableBool = false;
-    //   const int aNullableInt = regularInt;
+    testWidgets(
+      'Arguments of multiple types serialize and deserialize correctly',
+      (WidgetTester _) async {
+        final NIHostIntegrationCoreApiForNativeInterop? api =
+            NIHostIntegrationCoreApiForNativeInterop.getInstance();
+        const String aNullableString = 'this is a String';
+        const bool aNullableBool = false;
+        const int aNullableInt = regularInt;
 
-    //   final NIAllNullableTypes echoObject = api!.sendMultipleNullableTypes(
-    //       aNullableBool, aNullableInt, aNullableString);
-    //   expect(echoObject.aNullableInt, aNullableInt);
-    //   expect(echoObject.aNullableBool, aNullableBool);
-    //   expect(echoObject.aNullableString, aNullableString);
-    // });
+        final NIAllNullableTypesWithoutRecursion echoObject = api!
+            .sendMultipleNullableTypesWithoutRecursion(
+              aNullableBool,
+              aNullableInt,
+              aNullableString,
+            );
+        expect(echoObject.aNullableInt, aNullableInt);
+        expect(echoObject.aNullableBool, aNullableBool);
+        expect(echoObject.aNullableString, aNullableString);
+      },
+    );
 
-    //     testWidgets(
-    //         'Arguments of multiple null types serialize and deserialize correctly',
-    //         (WidgetTester _) async {
-    //       final NIHostIntegrationCoreApiForNativeInterop? api =
-    //           NIHostIntegrationCoreApiForNativeInterop.getInstance();
+    testWidgets(
+      'Arguments of multiple null types serialize and deserialize correctly',
+      (WidgetTester _) async {
+        final NIHostIntegrationCoreApiForNativeInterop? api =
+            NIHostIntegrationCoreApiForNativeInterop.getInstance();
 
-    //       final NIAllNullableTypes echoNullFilledClass =
-    //           api!.sendMultipleNullableTypes(null, null, null);
-    //       expect(echoNullFilledClass.aNullableInt, null);
-    //       expect(echoNullFilledClass.aNullableBool, null);
-    //       expect(echoNullFilledClass.aNullableString, null);
-    //     });
+        final NIAllNullableTypesWithoutRecursion echoNullFilledClass = api!
+            .sendMultipleNullableTypes(null, null, null);
+        expect(echoNullFilledClass.aNullableInt, null);
+        expect(echoNullFilledClass.aNullableBool, null);
+        expect(echoNullFilledClass.aNullableString, null);
+      },
+    );
 
     testWidgets(
       'Arguments of multiple types serialize and deserialize correctly (WithoutRecursion)',
@@ -484,15 +504,17 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       }
     });
 
-    //     testWidgets('NonNull enum lists serialize and deserialize correctly',
-    //         (WidgetTester _) async {
-    //       final NIHostIntegrationCoreApiForNativeInterop? api =
-    //           NIHostIntegrationCoreApiForNativeInterop.getInstance();
+    testWidgets('NonNull enum lists serialize and deserialize correctly', (
+      WidgetTester _,
+    ) async {
+      final NIHostIntegrationCoreApiForNativeInterop? api =
+          NIHostIntegrationCoreApiForNativeInterop.getInstance();
 
-    //       final List<NIAnEnum> echoObject =
-    //           api!.echoNonNullEnumList(nonNullEnumList);
-    //       expect(listEquals(echoObject, nonNullEnumList), true);
-    //     });
+      final List<NIAnEnum> echoObject = api!.echoNonNullEnumList(
+        nonNullEnumList,
+      );
+      expect(listEquals(echoObject, nonNullEnumList), true);
+    });
 
     //     testWidgets('NonNull class lists serialize and deserialize correctly',
     //         (WidgetTester _) async {
@@ -533,13 +555,14 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(mapEquals(echoObject, intMap), true);
     });
 
-    //     testWidgets('enum maps serialize and deserialize correctly',
-    //         (WidgetTester _) async {
-    //       final NIHostIntegrationCoreApiForNativeInterop? api =
-    //           NIHostIntegrationCoreApiForNativeInterop.getInstance();
-    //       final Map<NIAnEnum?, NIAnEnum?> echoObject = api!.echoEnumMap(enumMap);
-    //       expect(mapEquals(echoObject, enumMap), true);
-    //     });
+    testWidgets('enum maps serialize and deserialize correctly', (
+      WidgetTester _,
+    ) async {
+      final NIHostIntegrationCoreApiForNativeInterop? api =
+          NIHostIntegrationCoreApiForNativeInterop.getInstance();
+      final Map<NIAnEnum?, NIAnEnum?> echoObject = api!.echoEnumMap(enumMap);
+      expect(mapEquals(echoObject, enumMap), true);
+    });
 
     //     testWidgets('class maps serialize and deserialize correctly',
     //         (WidgetTester _) async {
@@ -553,31 +576,36 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     //       }
     //     });
 
-    //     testWidgets('NonNull string maps serialize and deserialize correctly',
-    //         (WidgetTester _) async {
-    //       final NIHostIntegrationCoreApiForNativeInterop? api =
-    //           NIHostIntegrationCoreApiForNativeInterop.getInstance();
-    //       final Map<String, String> echoObject =
-    //           api!.echoNonNullStringMap(nonNullStringMap);
-    //       expect(mapEquals(echoObject, nonNullStringMap), true);
-    //     });
+    testWidgets('NonNull string maps serialize and deserialize correctly', (
+      WidgetTester _,
+    ) async {
+      final NIHostIntegrationCoreApiForNativeInterop? api =
+          NIHostIntegrationCoreApiForNativeInterop.getInstance();
+      final Map<String, String> echoObject = api!.echoNonNullStringMap(
+        nonNullStringMap,
+      );
+      expect(mapEquals(echoObject, nonNullStringMap), true);
+    });
 
-    //     testWidgets('NonNull int maps serialize and deserialize correctly',
-    //         (WidgetTester _) async {
-    //       final NIHostIntegrationCoreApiForNativeInterop? api =
-    //           NIHostIntegrationCoreApiForNativeInterop.getInstance();
-    //       final Map<int, int> echoObject = api!.echoNonNullIntMap(nonNullIntMap);
-    //       expect(mapEquals(echoObject, nonNullIntMap), true);
-    //     });
+    testWidgets('NonNull int maps serialize and deserialize correctly', (
+      WidgetTester _,
+    ) async {
+      final NIHostIntegrationCoreApiForNativeInterop? api =
+          NIHostIntegrationCoreApiForNativeInterop.getInstance();
+      final Map<int, int> echoObject = api!.echoNonNullIntMap(nonNullIntMap);
+      expect(mapEquals(echoObject, nonNullIntMap), true);
+    });
 
-    //     testWidgets('NonNull enum maps serialize and deserialize correctly',
-    //         (WidgetTester _) async {
-    //       final NIHostIntegrationCoreApiForNativeInterop? api =
-    //           NIHostIntegrationCoreApiForNativeInterop.getInstance();
-    //       final Map<NIAnEnum, NIAnEnum> echoObject =
-    //           api!.echoNonNullEnumMap(nonNullEnumMap);
-    //       expect(mapEquals(echoObject, nonNullEnumMap), true);
-    //     });
+    testWidgets('NonNull enum maps serialize and deserialize correctly', (
+      WidgetTester _,
+    ) async {
+      final NIHostIntegrationCoreApiForNativeInterop? api =
+          NIHostIntegrationCoreApiForNativeInterop.getInstance();
+      final Map<NIAnEnum, NIAnEnum> echoObject = api!.echoNonNullEnumMap(
+        nonNullEnumMap,
+      );
+      expect(mapEquals(echoObject, nonNullEnumMap), true);
+    });
 
     //     testWidgets('NonNull class maps serialize and deserialize correctly',
     //         (WidgetTester _) async {
@@ -824,94 +852,106 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(receivedNullObject, null);
     });
 
-    //     testWidgets('nullable lists serialize and deserialize correctly',
-    //         (WidgetTester _) async {
-    //       final NIHostIntegrationCoreApiForNativeInterop? api =
-    //           NIHostIntegrationCoreApiForNativeInterop.getInstance();
+    testWidgets('nullable lists serialize and deserialize correctly', (
+      WidgetTester _,
+    ) async {
+      final NIHostIntegrationCoreApiForNativeInterop? api =
+          NIHostIntegrationCoreApiForNativeInterop.getInstance();
 
-    //       final List<Object?>? echoObject = api!.echoNullableList(list);
-    //       expect(listEquals(echoObject, list), true);
-    //     });
+      final List<Object?>? echoObject = api!.echoNullableList(list);
+      expect(listEquals(echoObject, list), true);
+    });
 
-    //     testWidgets('nullable enum lists serialize and deserialize correctly',
-    //         (WidgetTester _) async {
-    //       final NIHostIntegrationCoreApiForNativeInterop? api =
-    //           NIHostIntegrationCoreApiForNativeInterop.getInstance();
+    testWidgets('nullable enum lists serialize and deserialize correctly', (
+      WidgetTester _,
+    ) async {
+      final NIHostIntegrationCoreApiForNativeInterop? api =
+          NIHostIntegrationCoreApiForNativeInterop.getInstance();
 
-    //       final List<NIAnEnum?>? echoObject = api!.echoNullableEnumList(enumList);
-    //       expect(listEquals(echoObject, enumList), true);
-    //     });
+      final List<NIAnEnum?>? echoObject = api!.echoNullableEnumList(enumList);
+      expect(listEquals(echoObject, enumList), true);
+    });
 
-    //     testWidgets('nullable lists serialize and deserialize correctly',
-    //         (WidgetTester _) async {
-    //       final NIHostIntegrationCoreApiForNativeInterop? api =
-    //           NIHostIntegrationCoreApiForNativeInterop.getInstance();
+    testWidgets('nullable lists serialize and deserialize correctly', (
+      WidgetTester _,
+    ) async {
+      final NIHostIntegrationCoreApiForNativeInterop? api =
+          NIHostIntegrationCoreApiForNativeInterop.getInstance();
 
-    //       final List<NIAllNullableTypes?>? echoObject =
-    //           api!.echoNullableClassList(allNullableTypesList);
-    //       for (final (int index, NIAllNullableTypes? value)
-    //           in echoObject!.indexed) {
-    //         expect(value, allNullableTypesList[index]);
-    //       }
-    //     });
+      final List<NIAllNullableTypesWithoutRecursion?>? echoObject = api!
+          .echoNullableClassList(allNullableTypesWithoutRecursionList);
+      for (final (int index, NIAllNullableTypesWithoutRecursion? value)
+          in echoObject!.indexed) {
+        expect(value, allNullableTypesWithoutRecursionList[index]);
+      }
+    });
 
-    //     testWidgets(
-    //         'nullable NonNull enum lists serialize and deserialize correctly',
-    //         (WidgetTester _) async {
-    //       final NIHostIntegrationCoreApiForNativeInterop? api =
-    //           NIHostIntegrationCoreApiForNativeInterop.getInstance();
+    testWidgets(
+      'nullable NonNull enum lists serialize and deserialize correctly',
+      (WidgetTester _) async {
+        final NIHostIntegrationCoreApiForNativeInterop? api =
+            NIHostIntegrationCoreApiForNativeInterop.getInstance();
 
-    //       final List<NIAnEnum?>? echoObject =
-    //           api!.echoNullableNonNullEnumList(nonNullEnumList);
-    //       expect(listEquals(echoObject, nonNullEnumList), true);
-    //     });
+        final List<NIAnEnum?>? echoObject = api!.echoNullableNonNullEnumList(
+          nonNullEnumList,
+        );
+        expect(listEquals(echoObject, nonNullEnumList), true);
+      },
+    );
 
-    //     testWidgets('nullable NonNull lists serialize and deserialize correctly',
-    //         (WidgetTester _) async {
-    //       final NIHostIntegrationCoreApiForNativeInterop? api =
-    //           NIHostIntegrationCoreApiForNativeInterop.getInstance();
+    testWidgets('nullable NonNull lists serialize and deserialize correctly', (
+      WidgetTester _,
+    ) async {
+      final NIHostIntegrationCoreApiForNativeInterop? api =
+          NIHostIntegrationCoreApiForNativeInterop.getInstance();
 
-    //       final List<NIAllNullableTypes?>? echoObject =
-    //           api!.echoNullableClassList(nonNullNIAllNullableTypesList);
-    //       for (final (int index, NIAllNullableTypes? value)
-    //           in echoObject!.indexed) {
-    //         expect(value, nonNullNIAllNullableTypesList[index]);
-    //       }
-    //     });
+      final List<NIAllNullableTypesWithoutRecursion?>? echoObject = api!
+          .echoNullableClassList(nonNullNIAllNullableTypesWithoutRecursionList);
+      for (final (int index, NIAllNullableTypesWithoutRecursion? value)
+          in echoObject!.indexed) {
+        expect(value, nonNullNIAllNullableTypesWithoutRecursionList[index]);
+      }
+    });
 
-    //     testWidgets('nullable maps serialize and deserialize correctly',
-    //         (WidgetTester _) async {
-    //       final NIHostIntegrationCoreApiForNativeInterop? api =
-    //           NIHostIntegrationCoreApiForNativeInterop.getInstance();
-    //       final Map<Object?, Object?>? echoObject = api!.echoNullableMap(map);
-    //       expect(mapEquals(echoObject, map), true);
-    //     });
+    testWidgets('nullable maps serialize and deserialize correctly', (
+      WidgetTester _,
+    ) async {
+      final NIHostIntegrationCoreApiForNativeInterop? api =
+          NIHostIntegrationCoreApiForNativeInterop.getInstance();
+      final Map<Object?, Object?>? echoObject = api!.echoNullableMap(map);
+      expect(mapEquals(echoObject, map), true);
+    });
 
-    //     testWidgets('nullable string maps serialize and deserialize correctly',
-    //         (WidgetTester _) async {
-    //       final NIHostIntegrationCoreApiForNativeInterop? api =
-    //           NIHostIntegrationCoreApiForNativeInterop.getInstance();
-    //       final Map<String?, String?>? echoObject =
-    //           api!.echoNullableStringMap(stringMap);
-    //       expect(mapEquals(echoObject, stringMap), true);
-    //     });
+    testWidgets('nullable string maps serialize and deserialize correctly', (
+      WidgetTester _,
+    ) async {
+      final NIHostIntegrationCoreApiForNativeInterop? api =
+          NIHostIntegrationCoreApiForNativeInterop.getInstance();
+      final Map<String?, String?>? echoObject = api!.echoNullableStringMap(
+        stringMap,
+      );
+      expect(mapEquals(echoObject, stringMap), true);
+    });
 
-    //     testWidgets('nullable int maps serialize and deserialize correctly',
-    //         (WidgetTester _) async {
-    //       final NIHostIntegrationCoreApiForNativeInterop? api =
-    //           NIHostIntegrationCoreApiForNativeInterop.getInstance();
-    //       final Map<int?, int?>? echoObject = api!.echoNullableIntMap(intMap);
-    //       expect(mapEquals(echoObject, intMap), true);
-    //     });
+    testWidgets('nullable int maps serialize and deserialize correctly', (
+      WidgetTester _,
+    ) async {
+      final NIHostIntegrationCoreApiForNativeInterop? api =
+          NIHostIntegrationCoreApiForNativeInterop.getInstance();
+      final Map<int?, int?>? echoObject = api!.echoNullableIntMap(intMap);
+      expect(mapEquals(echoObject, intMap), true);
+    });
 
-    //     testWidgets('nullable enum maps serialize and deserialize correctly',
-    //         (WidgetTester _) async {
-    //       final NIHostIntegrationCoreApiForNativeInterop? api =
-    //           NIHostIntegrationCoreApiForNativeInterop.getInstance();
-    //       final Map<NIAnEnum?, NIAnEnum?>? echoObject =
-    //           api!.echoNullableEnumMap(enumMap);
-    //       expect(mapEquals(echoObject, enumMap), true);
-    //     });
+    testWidgets('nullable enum maps serialize and deserialize correctly', (
+      WidgetTester _,
+    ) async {
+      final NIHostIntegrationCoreApiForNativeInterop? api =
+          NIHostIntegrationCoreApiForNativeInterop.getInstance();
+      final Map<NIAnEnum?, NIAnEnum?>? echoObject = api!.echoNullableEnumMap(
+        enumMap,
+      );
+      expect(mapEquals(echoObject, enumMap), true);
+    });
 
     //     testWidgets('nullable class maps serialize and deserialize correctly',
     //         (WidgetTester _) async {
@@ -925,34 +965,39 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     //       }
     //     });
 
-    //     testWidgets(
-    //         'nullable NonNull string maps serialize and deserialize correctly',
-    //         (WidgetTester _) async {
-    //       final NIHostIntegrationCoreApiForNativeInterop? api =
-    //           NIHostIntegrationCoreApiForNativeInterop.getInstance();
-    //       final Map<String?, String?>? echoObject =
-    //           api!.echoNullableNonNullStringMap(nonNullStringMap);
-    //       expect(mapEquals(echoObject, nonNullStringMap), true);
-    //     });
+    testWidgets(
+      'nullable NonNull string maps serialize and deserialize correctly',
+      (WidgetTester _) async {
+        final NIHostIntegrationCoreApiForNativeInterop? api =
+            NIHostIntegrationCoreApiForNativeInterop.getInstance();
+        final Map<String?, String?>? echoObject = api!
+            .echoNullableNonNullStringMap(nonNullStringMap);
+        expect(mapEquals(echoObject, nonNullStringMap), true);
+      },
+    );
 
-    //     testWidgets('nullable NonNull int maps serialize and deserialize correctly',
-    //         (WidgetTester _) async {
-    //       final NIHostIntegrationCoreApiForNativeInterop? api =
-    //           NIHostIntegrationCoreApiForNativeInterop.getInstance();
-    //       final Map<int?, int?>? echoObject =
-    //           api!.echoNullableNonNullIntMap(nonNullIntMap);
-    //       expect(mapEquals(echoObject, nonNullIntMap), true);
-    //     });
+    testWidgets(
+      'nullable NonNull int maps serialize and deserialize correctly',
+      (WidgetTester _) async {
+        final NIHostIntegrationCoreApiForNativeInterop? api =
+            NIHostIntegrationCoreApiForNativeInterop.getInstance();
+        final Map<int?, int?>? echoObject = api!.echoNullableNonNullIntMap(
+          nonNullIntMap,
+        );
+        expect(mapEquals(echoObject, nonNullIntMap), true);
+      },
+    );
 
-    //     testWidgets(
-    //         'nullable NonNull enum maps serialize and deserialize correctly',
-    //         (WidgetTester _) async {
-    //       final NIHostIntegrationCoreApiForNativeInterop? api =
-    //           NIHostIntegrationCoreApiForNativeInterop.getInstance();
-    //       final Map<NIAnEnum?, NIAnEnum?>? echoObject =
-    //           api!.echoNullableNonNullEnumMap(nonNullEnumMap);
-    //       expect(mapEquals(echoObject, nonNullEnumMap), true);
-    //     });
+    testWidgets(
+      'nullable NonNull enum maps serialize and deserialize correctly',
+      (WidgetTester _) async {
+        final NIHostIntegrationCoreApiForNativeInterop? api =
+            NIHostIntegrationCoreApiForNativeInterop.getInstance();
+        final Map<NIAnEnum?, NIAnEnum?>? echoObject = api!
+            .echoNullableNonNullEnumMap(nonNullEnumMap);
+        expect(mapEquals(echoObject, nonNullEnumMap), true);
+      },
+    );
 
     //     testWidgets(
     //         'nullable NonNull class maps serialize and deserialize correctly',
@@ -1001,72 +1046,81 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       },
     );
 
-    //     testWidgets('null lists serialize and deserialize correctly',
-    //         (WidgetTester _) async {
-    //       final NIHostIntegrationCoreApiForNativeInterop? api =
-    //           NIHostIntegrationCoreApiForNativeInterop.getInstance();
+    testWidgets('null lists serialize and deserialize correctly', (
+      WidgetTester _,
+    ) async {
+      final NIHostIntegrationCoreApiForNativeInterop? api =
+          NIHostIntegrationCoreApiForNativeInterop.getInstance();
 
-    //       final List<Object?>? echoObject = api!.echoNullableList(null);
-    //       expect(listEquals(echoObject, null), true);
-    //     });
+      final List<Object?>? echoObject = api!.echoNullableList(null);
+      expect(listEquals(echoObject, null), true);
+    });
 
-    //     testWidgets('null maps serialize and deserialize correctly',
-    //         (WidgetTester _) async {
-    //       final NIHostIntegrationCoreApiForNativeInterop? api =
-    //           NIHostIntegrationCoreApiForNativeInterop.getInstance();
+    testWidgets('null maps serialize and deserialize correctly', (
+      WidgetTester _,
+    ) async {
+      final NIHostIntegrationCoreApiForNativeInterop? api =
+          NIHostIntegrationCoreApiForNativeInterop.getInstance();
 
-    //       final Map<Object?, Object?>? echoObject = api!.echoNullableMap(null);
-    //       expect(mapEquals(echoObject, null), true);
-    //     });
+      final Map<Object?, Object?>? echoObject = api!.echoNullableMap(null);
+      expect(mapEquals(echoObject, null), true);
+    });
 
-    //     testWidgets('null string maps serialize and deserialize correctly',
-    //         (WidgetTester _) async {
-    //       final NIHostIntegrationCoreApiForNativeInterop? api =
-    //           NIHostIntegrationCoreApiForNativeInterop.getInstance();
+    testWidgets('null string maps serialize and deserialize correctly', (
+      WidgetTester _,
+    ) async {
+      final NIHostIntegrationCoreApiForNativeInterop? api =
+          NIHostIntegrationCoreApiForNativeInterop.getInstance();
 
-    //       final Map<String?, String?>? echoObject =
-    //           api!.echoNullableStringMap(null);
-    //       expect(mapEquals(echoObject, null), true);
-    //     });
+      final Map<String?, String?>? echoObject = api!.echoNullableStringMap(
+        null,
+      );
+      expect(mapEquals(echoObject, null), true);
+    });
 
-    //     testWidgets('null int maps serialize and deserialize correctly',
-    //         (WidgetTester _) async {
-    //       final NIHostIntegrationCoreApiForNativeInterop? api =
-    //           NIHostIntegrationCoreApiForNativeInterop.getInstance();
+    testWidgets('null int maps serialize and deserialize correctly', (
+      WidgetTester _,
+    ) async {
+      final NIHostIntegrationCoreApiForNativeInterop? api =
+          NIHostIntegrationCoreApiForNativeInterop.getInstance();
 
-    //       final Map<int?, int?>? echoObject = api!.echoNullableIntMap(null);
-    //       expect(mapEquals(echoObject, null), true);
-    //     });
+      final Map<int?, int?>? echoObject = api!.echoNullableIntMap(null);
+      expect(mapEquals(echoObject, null), true);
+    });
 
-    //     testWidgets('null enums serialize and deserialize correctly',
-    //         (WidgetTester _) async {
-    //       final NIHostIntegrationCoreApiForNativeInterop? api =
-    //           NIHostIntegrationCoreApiForNativeInterop.getInstance();
+    testWidgets('null enums serialize and deserialize correctly', (
+      WidgetTester _,
+    ) async {
+      final NIHostIntegrationCoreApiForNativeInterop? api =
+          NIHostIntegrationCoreApiForNativeInterop.getInstance();
 
-    //       const NIAnEnum? sentEnum = null;
-    //       final NIAnEnum? echoEnum = api!.echoNullableEnum(sentEnum);
-    //       expect(echoEnum, sentEnum);
-    //     });
+      const NIAnEnum? sentEnum = null;
+      final NIAnEnum? echoEnum = api!.echoNullableEnum(sentEnum);
+      expect(echoEnum, sentEnum);
+    });
 
-    //     testWidgets('null enums serialize and deserialize correctly (again)',
-    //         (WidgetTester _) async {
-    //       final NIHostIntegrationCoreApiForNativeInterop? api =
-    //           NIHostIntegrationCoreApiForNativeInterop.getInstance();
+    testWidgets('null enums serialize and deserialize correctly (again)', (
+      WidgetTester _,
+    ) async {
+      final NIHostIntegrationCoreApiForNativeInterop? api =
+          NIHostIntegrationCoreApiForNativeInterop.getInstance();
 
-    //       const NIAnotherEnum? sentEnum = null;
-    //       final NIAnotherEnum? echoEnum = api!.echoAnotherNullableEnum(sentEnum);
-    //       expect(echoEnum, sentEnum);
-    //     });
+      const NIAnotherEnum? sentEnum = null;
+      final NIAnotherEnum? echoEnum = api!.echoAnotherNullableEnum(sentEnum);
+      expect(echoEnum, sentEnum);
+    });
 
-    //     testWidgets('null classes serialize and deserialize correctly',
-    //         (WidgetTester _) async {
-    //       final NIHostIntegrationCoreApiForNativeInterop? api =
-    //           NIHostIntegrationCoreApiForNativeInterop.getInstance();
+    testWidgets('null classes serialize and deserialize correctly', (
+      WidgetTester _,
+    ) async {
+      final NIHostIntegrationCoreApiForNativeInterop? api =
+          NIHostIntegrationCoreApiForNativeInterop.getInstance();
 
-    //       final NIAllNullableTypes? echoObject = api!.echoAllNullableTypes(null);
+      final NIAllNullableTypesWithoutRecursion? echoObject = api!
+          .echoAllNullableTypesWithoutRecursion(null);
 
-    //       expect(echoObject, isNull);
-    //     });
+      expect(echoObject, isNull);
+    });
 
     //     testWidgets('optional nullable parameter', (WidgetTester _) async {
     //       final NIHostIntegrationCoreApiForNativeInterop? api =

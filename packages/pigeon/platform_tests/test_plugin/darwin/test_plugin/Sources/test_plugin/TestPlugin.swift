@@ -1216,6 +1216,38 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
 }
 
 class NITestsClass: NSObject, NIHostIntegrationCoreApi {
+  func echoEnumMap(enumMap: [NIAnEnum?: NIAnEnum?]) throws -> [NIAnEnum?: NIAnEnum?] {
+    return enumMap
+  }
+
+  func echoNonNullIntMap(intMap: [Int64: Int64]) throws -> [Int64: Int64] {
+    return intMap
+  }
+
+  func echoNonNullEnumMap(enumMap: [NIAnEnum: NIAnEnum]) throws -> [NIAnEnum: NIAnEnum] {
+    return enumMap
+  }
+
+  func echoNullableNonNullEnumList(enumList: [NIAnEnum]?) throws -> [NIAnEnum]? {
+    return enumList
+  }
+
+  func echoNullableIntMap(intMap: [Int64?: Int64?]?) throws -> [Int64?: Int64?]? {
+    return intMap
+  }
+
+  func echoNullableEnumMap(enumMap: [NIAnEnum?: NIAnEnum?]?) throws -> [NIAnEnum?: NIAnEnum?]? {
+    return enumMap
+  }
+
+  func echoNullableNonNullIntMap(intMap: [Int64: Int64]?) throws -> [Int64: Int64]? {
+    return intMap
+  }
+
+  func echoNullableNonNullEnumMap(enumMap: [NIAnEnum: NIAnEnum]?) throws -> [NIAnEnum: NIAnEnum]? {
+    return enumMap
+  }
+
   func echoIntMap(intMap: [Int64?: Int64?]) throws -> [Int64?: Int64?] {
     return intMap
   }
