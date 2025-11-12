@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
+
 ## 1.1.19
 
 * Updates allowed version range of `xml` to include up to 6.6.1.

@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
+
 ## 2.10.1
 
 * Fixes a bug where the `VideoPlayer` widget and `VideoProgressIndicator` widget would stop updating after GlobalKey reparenting.

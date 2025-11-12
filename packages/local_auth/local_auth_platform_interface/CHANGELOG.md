@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
+
 ## 1.1.0
 
 * Adds `LocalAuthException` to allow for consistent, structured exceptions

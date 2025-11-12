@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
+
 ## 1.0.4
 
 * Updates the example app and README examples to work on iOS.
