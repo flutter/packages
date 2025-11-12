@@ -3,8 +3,8 @@ description: Shared Dart code for the example apps.
 publish_to: none
 
 environment:
-  sdk: ^3.7.0
-  flutter: ">=3.29.0"
+  sdk: ^3.8.0
+  flutter: ">=3.32.0"
 
 dependencies:
   cupertino_icons: ^1.0.5
