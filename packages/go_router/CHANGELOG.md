@@ -1,3 +1,7 @@
+## 17.0.1
+
+- Fixes an issue where `GoRouter.refresh()` did not trigger a widget rebuild.
+
 ## 17.0.0
 
 - **BREAKING CHANGE**
