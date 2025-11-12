@@ -96,7 +96,10 @@ class ConfigurePigeon {
 /// generated host-platform interface.
 class HostApi {
   /// Parametric constructor for [HostApi].
-  const HostApi({this.dartHostTestHandler});
+  const HostApi({
+    @Deprecated('Mock/fake the generated Dart API instead.')
+    this.dartHostTestHandler,
+  });
 
   /// The name of an interface generated for tests. Implement this
   /// interface and invoke `[name of this handler].setup` to receive
@@ -111,6 +114,7 @@ class HostApi {
   /// testing.
   ///
   /// Defaults to `null` in which case no handler will be generated.
+  @Deprecated('Mock/fake the generated Dart API instead.')
   final String? dartHostTestHandler;
 }
 
@@ -238,7 +242,7 @@ class PigeonOptions {
   const PigeonOptions({
     this.input,
     this.dartOut,
-    this.dartTestOut,
+    @Deprecated('Mock/fake the generated Dart API instead.') this.dartTestOut,
     this.objcHeaderOut,
     this.objcSourceOut,
     this.objcOptions,
@@ -269,6 +273,7 @@ class PigeonOptions {
   final String? dartOut;
 
   /// Path to the Dart file that will be generated for test support classes.
+  @Deprecated('Mock/fake the generated Dart API instead.')
   final String? dartTestOut;
 
   /// Path to the ".h" Objective-C file will be generated.

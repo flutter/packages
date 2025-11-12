@@ -1,3 +1,10 @@
+## 26.1.0
+
+* Deprecates `dartHostTestHandler` and `dartTestOut`.
+  * If you have a use case where this cannot easily be replaced with a mock or
+    fake of the generated Dart API, please provide details in
+    https://github.com/flutter/flutter/issues/178322.
+
 ## 26.0.5
 
 * [kotlin] Serialize custom enums as `Long` instead of `Int` to avoid `ClassCastException` on decoding.
