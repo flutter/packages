@@ -117,13 +117,14 @@ class _TestAppState extends State<_TestApp> {
         },
         routes: <RouteBase>[
           StatefulShellRoute.indexedStack(
-            builder: (
-              BuildContext context,
-              GoRouterState state,
-              StatefulNavigationShell navigationShell,
-            ) {
-              return navigationShell;
-            },
+            builder:
+                (
+                  BuildContext context,
+                  GoRouterState state,
+                  StatefulNavigationShell navigationShell,
+                ) {
+                  return navigationShell;
+                },
             branches: <StatefulShellBranch>[
               StatefulShellBranch(
                 routes: <GoRoute>[

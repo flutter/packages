@@ -142,17 +142,15 @@ class WebLinkDelegateState extends State<WebLinkDelegate> {
               ..setUri(widget.link.uri)
               ..setTarget(widget.link.target);
           },
-          surfaceFactory: (
-            BuildContext context,
-            PlatformViewController controller,
-          ) {
-            return PlatformViewSurface(
-              controller: controller,
-              gestureRecognizers:
-                  const <Factory<OneSequenceGestureRecognizer>>{},
-              hitTestBehavior: PlatformViewHitTestBehavior.transparent,
-            );
-          },
+          surfaceFactory:
+              (BuildContext context, PlatformViewController controller) {
+                return PlatformViewSurface(
+                  controller: controller,
+                  gestureRecognizers:
+                      const <Factory<OneSequenceGestureRecognizer>>{},
+                  hitTestBehavior: PlatformViewHitTestBehavior.transparent,
+                );
+              },
         ),
       ),
     );

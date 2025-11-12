@@ -383,10 +383,9 @@ class SpanDecoration {
   /// cells.
   void paint(SpanDecorationPaintDetails details) {
     if (color != null) {
-      final Paint paint =
-          Paint()
-            ..color = color!
-            ..isAntiAlias = borderRadius != null;
+      final Paint paint = Paint()
+        ..color = color!
+        ..isAntiAlias = borderRadius != null;
       if (borderRadius == null || borderRadius == BorderRadius.zero) {
         details.canvas.drawRect(details.rect, paint);
       } else {

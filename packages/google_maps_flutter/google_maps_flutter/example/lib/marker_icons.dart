@@ -111,15 +111,14 @@ class MarkerIconsBodyState extends State<MarkerIconsBody> {
                         });
                       }
                     },
-                    items:
-                        _MarkerSizeOption.values.map((
-                          _MarkerSizeOption option,
-                        ) {
-                          return DropdownMenuItem<_MarkerSizeOption>(
-                            value: option,
-                            child: Text(_getMarkerSizeOptionName(option)),
-                          );
-                        }).toList(),
+                    items: _MarkerSizeOption.values.map((
+                      _MarkerSizeOption option,
+                    ) {
+                      return DropdownMenuItem<_MarkerSizeOption>(
+                        value: option,
+                        child: Text(_getMarkerSizeOptionName(option)),
+                      );
+                    }).toList(),
                   ),
                 ],
               ),
@@ -252,10 +251,12 @@ class MarkerIconsBodyState extends State<MarkerIconsBody> {
 
   Future<void> _updateMarkerAssetImage(BuildContext context) async {
     // Width and height are used only for custom size.
-    final (double? width, double? height) =
-        _scalingEnabled && _customSizeEnabled
-            ? _getCurrentMarkerSize()
-            : (null, null);
+    final (
+      double? width,
+      double? height,
+    ) = _scalingEnabled && _customSizeEnabled
+        ? _getCurrentMarkerSize()
+        : (null, null);
 
     AssetMapBitmap assetMapBitmap;
     if (_mipMapsEnabled) {
@@ -267,8 +268,9 @@ class MarkerIconsBodyState extends State<MarkerIconsBody> {
         'assets/red_square.png',
         width: width,
         height: height,
-        bitmapScaling:
-            _scalingEnabled ? MapBitmapScaling.auto : MapBitmapScaling.none,
+        bitmapScaling: _scalingEnabled
+            ? MapBitmapScaling.auto
+            : MapBitmapScaling.none,
       );
     } else {
       // Uses hardcoded asset path
@@ -278,8 +280,9 @@ class MarkerIconsBodyState extends State<MarkerIconsBody> {
         'assets/red_square.png',
         width: width,
         height: height,
-        bitmapScaling:
-            _scalingEnabled ? MapBitmapScaling.auto : MapBitmapScaling.none,
+        bitmapScaling: _scalingEnabled
+            ? MapBitmapScaling.auto
+            : MapBitmapScaling.none,
       );
     }
 
@@ -303,18 +306,21 @@ class MarkerIconsBodyState extends State<MarkerIconsBody> {
     final ByteData bytes = await createCustomMarkerIconImage(size: canvasSize);
 
     // Width and height are used only for custom size.
-    final (double? width, double? height) =
-        _scalingEnabled && _customSizeEnabled
-            ? _getCurrentMarkerSize()
-            : (null, null);
+    final (
+      double? width,
+      double? height,
+    ) = _scalingEnabled && _customSizeEnabled
+        ? _getCurrentMarkerSize()
+        : (null, null);
 
     final BytesMapBitmap bitmap = BytesMapBitmap(
       bytes.buffer.asUint8List(),
       imagePixelRatio: imagePixelRatio,
       width: width,
       height: height,
-      bitmapScaling:
-          _scalingEnabled ? MapBitmapScaling.auto : MapBitmapScaling.none,
+      bitmapScaling: _scalingEnabled
+          ? MapBitmapScaling.auto
+          : MapBitmapScaling.none,
     );
 
     _updateBytesBitmap(bitmap);

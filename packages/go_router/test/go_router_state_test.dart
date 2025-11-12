@@ -152,12 +152,11 @@ void main() {
         initialLocation: '/a',
       );
       expect(tester.widget<Text>(find.byKey(key)).data, '/a');
-      final GoRouterStateRegistry registry =
-          tester
-              .widget<GoRouterStateRegistryScope>(
-                find.byType(GoRouterStateRegistryScope),
-              )
-              .notifier!;
+      final GoRouterStateRegistry registry = tester
+          .widget<GoRouterStateRegistryScope>(
+            find.byType(GoRouterStateRegistryScope),
+          )
+          .notifier!;
       expect(registry.registry.length, 2);
       router.go('/');
       await tester.pump();
@@ -207,12 +206,11 @@ void main() {
         navigatorKey: nav,
       );
       expect(tester.widget<Text>(find.byKey(key)).data, '/a');
-      final GoRouterStateRegistry registry =
-          tester
-              .widget<GoRouterStateRegistryScope>(
-                find.byType(GoRouterStateRegistryScope),
-              )
-              .notifier!;
+      final GoRouterStateRegistry registry = tester
+          .widget<GoRouterStateRegistryScope>(
+            find.byType(GoRouterStateRegistryScope),
+          )
+          .notifier!;
       expect(registry.registry.length, 2);
       nav.currentState!.pop();
       await tester.pump();
@@ -292,25 +290,27 @@ void main() {
               routes: <RouteBase>[
                 StatefulShellRoute.indexedStack(
                   parentNavigatorKey: rootNavigatorKey,
-                  builder: (
-                    BuildContext context,
-                    GoRouterState state,
-                    StatefulNavigationShell navigationShell,
-                  ) {
-                    final String? routeName =
-                        GoRouterState.of(context).topRoute?.name;
-                    final String title = switch (routeName) {
-                      'a' => 'A',
-                      'b' => 'B',
-                      _ => 'Unknown',
-                    };
-                    return Column(
-                      children: <Widget>[
-                        Text(title),
-                        Expanded(child: navigationShell),
-                      ],
-                    );
-                  },
+                  builder:
+                      (
+                        BuildContext context,
+                        GoRouterState state,
+                        StatefulNavigationShell navigationShell,
+                      ) {
+                        final String? routeName = GoRouterState.of(
+                          context,
+                        ).topRoute?.name;
+                        final String title = switch (routeName) {
+                          'a' => 'A',
+                          'b' => 'B',
+                          _ => 'Unknown',
+                        };
+                        return Column(
+                          children: <Widget>[
+                            Text(title),
+                            Expanded(child: navigationShell),
+                          ],
+                        );
+                      },
                   branches: <StatefulShellBranch>[
                     StatefulShellBranch(
                       routes: <RouteBase>[

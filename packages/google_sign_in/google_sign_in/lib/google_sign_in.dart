@@ -236,8 +236,8 @@ class GoogleSignInAuthorizationClient {
     return tokens == null
         ? null
         : GoogleSignInServerAuthorization(
-          serverAuthCode: tokens.serverAuthCode,
-        );
+            serverAuthCode: tokens.serverAuthCode,
+          );
   }
 
   /// Removes the given [accessToken] from any local authorization caches.

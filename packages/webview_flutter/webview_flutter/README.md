@@ -21,27 +21,26 @@ You can now display a WebView by:
 
 <?code-excerpt "simple_example.dart (webview_controller)"?>
 ```dart
-controller =
-    WebViewController()
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setNavigationDelegate(
-        NavigationDelegate(
-          onProgress: (int progress) {
-            // Update loading bar.
-          },
-          onPageStarted: (String url) {},
-          onPageFinished: (String url) {},
-          onHttpError: (HttpResponseError error) {},
-          onWebResourceError: (WebResourceError error) {},
-          onNavigationRequest: (NavigationRequest request) {
-            if (request.url.startsWith('https://www.youtube.com/')) {
-              return NavigationDecision.prevent;
-            }
-            return NavigationDecision.navigate;
-          },
-        ),
-      )
-      ..loadRequest(Uri.parse('https://flutter.dev'));
+controller = WebViewController()
+  ..setJavaScriptMode(JavaScriptMode.unrestricted)
+  ..setNavigationDelegate(
+    NavigationDelegate(
+      onProgress: (int progress) {
+        // Update loading bar.
+      },
+      onPageStarted: (String url) {},
+      onPageFinished: (String url) {},
+      onHttpError: (HttpResponseError error) {},
+      onWebResourceError: (WebResourceError error) {},
+      onNavigationRequest: (NavigationRequest request) {
+        if (request.url.startsWith('https://www.youtube.com/')) {
+          return NavigationDecision.prevent;
+        }
+        return NavigationDecision.navigate;
+      },
+    ),
+  )
+  ..loadRequest(Uri.parse('https://flutter.dev'));
 ```
 
 2. Passing the controller to a [WebViewWidget](https://pub.dev/documentation/webview_flutter/latest/webview_flutter/WebViewWidget-class.html).

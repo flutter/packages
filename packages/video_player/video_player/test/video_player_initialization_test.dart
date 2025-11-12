@@ -15,8 +15,8 @@ void main() {
   late FakeVideoPlayerPlatform fakeVideoPlayerPlatform;
 
   setUp(() {
-    VideoPlayerPlatform.instance =
-        fakeVideoPlayerPlatform = FakeVideoPlayerPlatform();
+    VideoPlayerPlatform.instance = fakeVideoPlayerPlatform =
+        FakeVideoPlayerPlatform();
   });
 
   test('plugin initialized', () async {

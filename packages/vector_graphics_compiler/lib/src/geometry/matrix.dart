@@ -198,7 +198,8 @@ class AffineMatrix {
   }
 
   @override
-  String toString() => '''
+  String toString() =>
+      '''
 [ $a, $c, $e ]
 [ $b, $d, $f ]
 [ 0.0, 0.0, 1.0 ] // _m4_10 = $_m4_10

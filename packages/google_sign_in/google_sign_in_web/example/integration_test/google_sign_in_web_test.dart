@@ -212,18 +212,17 @@ void main() {
               ),
             );
 
-        final List<Object?> arguments =
-            mockito
-                .verify(
-                  mockGis.requestScopes(
-                    mockito.captureAny,
-                    promptIfUnauthorized: mockito.captureAnyNamed(
-                      'promptIfUnauthorized',
-                    ),
-                    userHint: mockito.captureAnyNamed('userHint'),
-                  ),
-                )
-                .captured;
+        final List<Object?> arguments = mockito
+            .verify(
+              mockGis.requestScopes(
+                mockito.captureAny,
+                promptIfUnauthorized: mockito.captureAnyNamed(
+                  'promptIfUnauthorized',
+                ),
+                userHint: mockito.captureAnyNamed('userHint'),
+              ),
+            )
+            .captured;
 
         expect(token?.accessToken, someAccessToken);
 
@@ -256,18 +255,17 @@ void main() {
               ),
             );
 
-        final List<Object?> arguments =
-            mockito
-                .verify(
-                  mockGis.requestScopes(
-                    mockito.captureAny,
-                    promptIfUnauthorized: mockito.captureAnyNamed(
-                      'promptIfUnauthorized',
-                    ),
-                    userHint: mockito.captureAnyNamed('userHint'),
-                  ),
-                )
-                .captured;
+        final List<Object?> arguments = mockito
+            .verify(
+              mockGis.requestScopes(
+                mockito.captureAny,
+                promptIfUnauthorized: mockito.captureAnyNamed(
+                  'promptIfUnauthorized',
+                ),
+                userHint: mockito.captureAnyNamed('userHint'),
+              ),
+            )
+            .captured;
 
         expect(token?.accessToken, someAccessToken);
 
@@ -319,10 +317,9 @@ void main() {
               ),
             );
 
-        final List<Object?> arguments =
-            mockito
-                .verify(mockGis.requestServerAuthCode(mockito.captureAny))
-                .captured;
+        final List<Object?> arguments = mockito
+            .verify(mockGis.requestServerAuthCode(mockito.captureAny))
+            .captured;
 
         expect(token?.serverAuthCode, someAuthCode);
 
@@ -365,10 +362,9 @@ void main() {
           const ClearAuthorizationTokenParams(accessToken: someToken),
         );
 
-        final List<Object?> arguments =
-            mockito
-                .verify(mockGis.clearAuthorizationToken(mockito.captureAny))
-                .captured;
+        final List<Object?> arguments = mockito
+            .verify(mockGis.clearAuthorizationToken(mockito.captureAny))
+            .captured;
 
         expect(arguments.first, someToken);
       });

@@ -121,10 +121,9 @@ class _AdUnitWidgetWebState extends State<AdUnitWidget>
     });
 
     // Adding ins inside of the adUnit
-    final web.HTMLDivElement adUnitDiv =
-        element as web.HTMLDivElement
-          ..id = 'adUnit${_adUnitCounter++}'
-          ..append(insElement);
+    final web.HTMLDivElement adUnitDiv = element as web.HTMLDivElement
+      ..id = 'adUnit${_adUnitCounter++}'
+      ..append(insElement);
 
     // Using Resize observer to detect element attached to DOM
     _adSenseResizeObserver.observe(adUnitDiv);
@@ -174,15 +173,17 @@ class _AdUnitWidgetWebState extends State<AdUnitWidget>
   }
 
   bool _isLoaded(web.HTMLElement target) {
-    final bool isLoaded =
-        target.dataset.getProperty(_adStatusKey).isDefinedAndNotNull;
+    final bool isLoaded = target.dataset
+        .getProperty(_adStatusKey)
+        .isDefinedAndNotNull;
     debugLog('Ad isLoaded: $isLoaded');
     return isLoaded;
   }
 
   bool _isFilled(web.HTMLElement target) {
-    final String? adStatus =
-        target.dataset.getProperty<JSString?>(_adStatusKey)?.toDart;
+    final String? adStatus = target.dataset
+        .getProperty<JSString?>(_adStatusKey)
+        ?.toDart;
     debugLog('Ad isFilled? $adStatus');
     if (adStatus == AdStatus.FILLED) {
       return true;

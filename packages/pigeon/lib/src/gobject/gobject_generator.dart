@@ -561,10 +561,9 @@ class GObjectHeaderGenerator
         else
           'Returns: a return value.',
       ], _docCommentSpec);
-      final String returnType =
-          _isNullablePrimitiveType(method.returnType)
-              ? '$primitiveType*'
-              : primitiveType;
+      final String returnType = _isNullablePrimitiveType(method.returnType)
+          ? '$primitiveType*'
+          : primitiveType;
       indent.writeln(
         '$returnType ${responseMethodPrefix}_get_return_value($responseClassName* response${_isNumericListType(method.returnType) ? ', size_t* return_value_length' : ''});',
       );
@@ -715,8 +714,9 @@ class GObjectHeaderGenerator
             '${className}ResponseHandle* response_handle',
           'gpointer user_data',
         ]);
-        final String returnType =
-            method.isAsynchronous ? 'void' : '$responseClassName*';
+        final String returnType = method.isAsynchronous
+            ? 'void'
+            : '$responseClassName*';
         indent.writeln("$returnType (*$methodName)(${methodArgs.join(', ')});");
       }
     });
@@ -1089,10 +1089,9 @@ class GObjectSourceGenerator
       final String customTypeId = _getCustomTypeId(module, customType);
 
       indent.newln();
-      final String valueType =
-          customType.type == CustomTypes.customClass
-              ? '$customTypeName*'
-              : 'FlValue*';
+      final String valueType = customType.type == CustomTypes.customClass
+          ? '$customTypeName*'
+          : 'FlValue*';
       indent.writeScoped(
         'static gboolean ${codecMethodPrefix}_write_$snakeCustomTypeName($_standardCodecName* codec, GByteArray* buffer, $valueType value, GError** error) {',
         '}',
@@ -1457,10 +1456,9 @@ class GObjectSourceGenerator
         );
 
         indent.newln();
-        final String returnType =
-            _isNullablePrimitiveType(method.returnType)
-                ? '$primitiveType*'
-                : primitiveType;
+        final String returnType = _isNullablePrimitiveType(method.returnType)
+            ? '$primitiveType*'
+            : primitiveType;
         indent.writeScoped(
           '$returnType ${responseMethodPrefix}_get_return_value($responseClassName* self${_isNumericListType(method.returnType) ? ', size_t* return_value_length' : ''}) {',
           '}',
@@ -2442,20 +2440,17 @@ String _makeFlValue(
   } else if (type.baseName == 'void') {
     value = 'fl_value_new_null()';
   } else if (type.baseName == 'bool') {
-    value =
-        type.isNullable
-            ? 'fl_value_new_bool(*$variableName)'
-            : 'fl_value_new_bool($variableName)';
+    value = type.isNullable
+        ? 'fl_value_new_bool(*$variableName)'
+        : 'fl_value_new_bool($variableName)';
   } else if (type.baseName == 'int') {
-    value =
-        type.isNullable
-            ? 'fl_value_new_int(*$variableName)'
-            : 'fl_value_new_int($variableName)';
+    value = type.isNullable
+        ? 'fl_value_new_int(*$variableName)'
+        : 'fl_value_new_int($variableName)';
   } else if (type.baseName == 'double') {
-    value =
-        type.isNullable
-            ? 'fl_value_new_float(*$variableName)'
-            : 'fl_value_new_float($variableName)';
+    value = type.isNullable
+        ? 'fl_value_new_float(*$variableName)'
+        : 'fl_value_new_float($variableName)';
   } else if (type.baseName == 'String') {
     value = 'fl_value_new_string($variableName)';
   } else if (type.baseName == 'Uint8List') {

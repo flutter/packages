@@ -61,13 +61,13 @@ class App extends StatelessWidget {
     routes: <GoRoute>[
       GoRoute(
         path: '/',
-        builder:
-            (BuildContext context, GoRouterState state) => const HomeScreen(),
+        builder: (BuildContext context, GoRouterState state) =>
+            const HomeScreen(),
       ),
       GoRoute(
         path: '/login',
-        builder:
-            (BuildContext context, GoRouterState state) => const LoginScreen(),
+        builder: (BuildContext context, GoRouterState state) =>
+            const LoginScreen(),
       ),
     ],
 

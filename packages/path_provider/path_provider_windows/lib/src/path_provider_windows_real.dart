@@ -50,8 +50,8 @@ class VersionInfoQuerier {
     if (versionInfo == null) {
       return null;
     }
-    final Pointer<Utf16> keyPath =
-        '\\StringFileInfo\\$language$encoding\\$key'.toNativeUtf16();
+    final Pointer<Utf16> keyPath = '\\StringFileInfo\\$language$encoding\\$key'
+        .toNativeUtf16();
     final Pointer<UINT> length = calloc<UINT>();
     final Pointer<Pointer<Utf16>> valueAddress = calloc<Pointer<Utf16>>();
     try {
@@ -189,8 +189,9 @@ class PathProviderWindows extends PathProviderPlatform {
     String? companyName;
     String? productName;
 
-    final Pointer<Utf16> moduleNameBuffer =
-        calloc<WCHAR>(MAX_PATH + 1).cast<Utf16>();
+    final Pointer<Utf16> moduleNameBuffer = calloc<WCHAR>(
+      MAX_PATH + 1,
+    ).cast<Utf16>();
     final Pointer<DWORD> unused = calloc<DWORD>();
     Pointer<BYTE>? infoBuffer;
     try {

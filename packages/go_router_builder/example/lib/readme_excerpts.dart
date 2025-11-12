@@ -356,14 +356,15 @@ class FancyRoute extends GoRouteData with $FancyRoute {
     return CustomTransitionPage<void>(
       key: state.pageKey,
       child: const MyPage(),
-      transitionsBuilder: (
-        BuildContext context,
-        Animation<double> animation,
-        Animation<double> secondaryAnimation,
-        Widget child,
-      ) {
-        return RotationTransition(turns: animation, child: child);
-      },
+      transitionsBuilder:
+          (
+            BuildContext context,
+            Animation<double> animation,
+            Animation<double> secondaryAnimation,
+            Widget child,
+          ) {
+            return RotationTransition(turns: animation, child: child);
+          },
     );
   }
 }

@@ -55,10 +55,9 @@ Future<void> loadWebSdk({
     }
   }
 
-  final web.HTMLScriptElement script =
-      web.HTMLScriptElement()
-        ..async = true
-        ..defer = true;
+  final web.HTMLScriptElement script = web.HTMLScriptElement()
+    ..async = true
+    ..defer = true;
   if (trustedUrl != null) {
     script.trustedSrc = trustedUrl;
   } else {

@@ -110,11 +110,10 @@ class _MyHomePageState extends State<_MyHomePage> {
       _painters.add(
         SvgPicture.network(
           uriName,
-          placeholderBuilder:
-              (BuildContext context) => Container(
-                padding: const EdgeInsets.all(30.0),
-                child: const CircularProgressIndicator(),
-              ),
+          placeholderBuilder: (BuildContext context) => Container(
+            padding: const EdgeInsets.all(30.0),
+            child: const CircularProgressIndicator(),
+          ),
         ),
       );
     }

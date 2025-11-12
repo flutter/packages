@@ -386,10 +386,9 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
   }) {
     final Map<TileOverlayId, TileOverlay>? currentTileOverlays =
         _tileOverlays[mapId];
-    final Set<TileOverlay> previousSet =
-        currentTileOverlays != null
-            ? currentTileOverlays.values.toSet()
-            : <TileOverlay>{};
+    final Set<TileOverlay> previousSet = currentTileOverlays != null
+        ? currentTileOverlays.values.toSet()
+        : <TileOverlay>{};
     final TileOverlayUpdates updates = TileOverlayUpdates.from(
       previousSet,
       newTileOverlays,
@@ -438,10 +437,9 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
 
   @override
   Future<void> setMapStyle(String? mapStyle, {required int mapId}) async {
-    final List<dynamic> successAndError =
-        (await channel(
-          mapId,
-        ).invokeMethod<List<dynamic>>('map#setStyle', mapStyle))!;
+    final List<dynamic> successAndError = (await channel(
+      mapId,
+    ).invokeMethod<List<dynamic>>('map#setStyle', mapStyle))!;
     final bool success = successAndError[0] as bool;
     if (!success) {
       throw MapStyleException(successAndError[1] as String);
@@ -450,10 +448,9 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
 
   @override
   Future<LatLngBounds> getVisibleRegion({required int mapId}) async {
-    final Map<String, dynamic> latLngBounds =
-        (await channel(
-          mapId,
-        ).invokeMapMethod<String, dynamic>('map#getVisibleRegion'))!;
+    final Map<String, dynamic> latLngBounds = (await channel(
+      mapId,
+    ).invokeMapMethod<String, dynamic>('map#getVisibleRegion'))!;
     final LatLng southwest = LatLng.fromJson(latLngBounds['southwest'])!;
     final LatLng northeast = LatLng.fromJson(latLngBounds['northeast'])!;
 
@@ -465,8 +462,8 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
     LatLng latLng, {
     required int mapId,
   }) async {
-    final Map<String, int> point =
-        (await channel(mapId).invokeMapMethod<String, int>(
+    final Map<String, int> point = (await channel(mapId)
+        .invokeMapMethod<String, int>(
           'map#getScreenCoordinate',
           latLng.toJson(),
         ))!;
@@ -479,11 +476,9 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
     ScreenCoordinate screenCoordinate, {
     required int mapId,
   }) async {
-    final List<dynamic> latLng =
-        (await channel(mapId).invokeMethod<List<dynamic>>(
-          'map#getLatLng',
-          screenCoordinate.toJson(),
-        ))!;
+    final List<dynamic> latLng = (await channel(
+      mapId,
+    ).invokeMethod<List<dynamic>>('map#getLatLng', screenCoordinate.toJson()))!;
     return LatLng(latLng[0] as double, latLng[1] as double);
   }
 
@@ -546,8 +541,8 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
     Map<String, dynamic> mapOptions = const <String, dynamic>{},
   }) {
     final Map<String, dynamic> creationParams = <String, dynamic>{
-      'initialCameraPosition':
-          widgetConfiguration.initialCameraPosition.toMap(),
+      'initialCameraPosition': widgetConfiguration.initialCameraPosition
+          .toMap(),
       'options': mapOptions,
       'markersToAdd': serializeMarkerSet(mapObjects.markers),
       'polygonsToAdd': serializePolygonSet(mapObjects.polygons),
@@ -561,16 +556,14 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
       if (useAndroidViewSurface) {
         return PlatformViewLink(
           viewType: 'plugins.flutter.io/google_maps',
-          surfaceFactory: (
-            BuildContext context,
-            PlatformViewController controller,
-          ) {
-            return AndroidViewSurface(
-              controller: controller as AndroidViewController,
-              gestureRecognizers: widgetConfiguration.gestureRecognizers,
-              hitTestBehavior: PlatformViewHitTestBehavior.opaque,
-            );
-          },
+          surfaceFactory:
+              (BuildContext context, PlatformViewController controller) {
+                return AndroidViewSurface(
+                  controller: controller as AndroidViewController,
+                  gestureRecognizers: widgetConfiguration.gestureRecognizers,
+                  hitTestBehavior: PlatformViewHitTestBehavior.opaque,
+                );
+              },
           onCreatePlatformView: (PlatformViewCreationParams params) {
             final SurfaceAndroidViewController controller =
                 PlatformViewsService.initSurfaceAndroidView(

@@ -144,10 +144,9 @@ class RouteConfiguration {
             // Recursively search for the first GoRoute descendant. Will
             // throw assertion error if not found.
             final GoRoute? defaultGoRoute = branch.defaultRoute;
-            final String? initialLocation =
-                defaultGoRoute != null
-                    ? locationForRoute(defaultGoRoute)
-                    : null;
+            final String? initialLocation = defaultGoRoute != null
+                ? locationForRoute(defaultGoRoute)
+                : null;
             assert(
               initialLocation != null,
               'The default location of a StatefulShellBranch must be '
@@ -451,10 +450,9 @@ class RouteConfiguration {
         return routeLevelRedirectResult
             .then<RouteMatchList>(processRouteLevelRedirect)
             .catchError((Object error) {
-              final GoException goException =
-                  error is GoException
-                      ? error
-                      : GoException('Exception during route redirect: $error');
+              final GoException goException = error is GoException
+                  ? error
+                  : GoException('Exception during route redirect: $error');
               return _errorRouteMatchList(
                 prevMatchList.uri,
                 goException,
@@ -462,10 +460,9 @@ class RouteConfiguration {
               );
             });
       } catch (exception) {
-        final GoException goException =
-            exception is GoException
-                ? exception
-                : GoException('Exception during route redirect: $exception');
+        final GoException goException = exception is GoException
+            ? exception
+            : GoException('Exception during route redirect: $exception');
         return _errorRouteMatchList(
           prevMatchList.uri,
           goException,
@@ -519,10 +516,9 @@ class RouteConfiguration {
         return done(res);
       }
       return res.then<RouteMatchList>(done).catchError((Object error) {
-        final GoException goException =
-            error is GoException
-                ? error
-                : GoException('Exception during redirect: $error');
+        final GoException goException = error is GoException
+            ? error
+            : GoException('Exception during redirect: $error');
         return _errorRouteMatchList(
           prevMatchList.uri,
           goException,
@@ -530,10 +526,9 @@ class RouteConfiguration {
         );
       });
     } catch (exception) {
-      final GoException goException =
-          exception is GoException
-              ? exception
-              : GoException('Exception during redirect: $exception');
+      final GoException goException = exception is GoException
+          ? exception
+          : GoException('Exception during redirect: $exception');
       return _errorRouteMatchList(
         prevMatchList.uri,
         goException,
@@ -571,20 +566,18 @@ class RouteConfiguration {
       return routeRedirectResult.then<String?>(processRouteRedirect).catchError(
         (Object error) {
           // Convert any exception during async route redirect to a GoException
-          final GoException goException =
-              error is GoException
-                  ? error
-                  : GoException('Exception during route redirect: $error');
+          final GoException goException = error is GoException
+              ? error
+              : GoException('Exception during route redirect: $error');
           // Throw the GoException to be caught by the redirect handling chain
           throw goException;
         },
       );
     } catch (exception) {
       // Convert any exception during route redirect to a GoException
-      final GoException goException =
-          exception is GoException
-              ? exception
-              : GoException('Exception during route redirect: $exception');
+      final GoException goException = exception is GoException
+          ? exception
+          : GoException('Exception during route redirect: $exception');
       // Throw the GoException to be caught by the redirect handling chain
       throw goException;
     }
@@ -606,10 +599,9 @@ class RouteConfiguration {
       }
       return newMatch;
     } catch (exception) {
-      final GoException goException =
-          exception is GoException
-              ? exception
-              : GoException('Exception during redirect: $exception');
+      final GoException goException = exception is GoException
+          ? exception
+          : GoException('Exception during redirect: $exception');
       log('Redirection exception: ${goException.message}');
       return _errorRouteMatchList(previousLocation, goException);
     }
@@ -660,10 +652,9 @@ class RouteConfiguration {
       (Object error, StackTrace stack) {
         errorOccurred = true;
         // Convert any exception during redirect to a GoException and rethrow
-        final GoException goException =
-            error is GoException
-                ? error
-                : GoException('Exception during redirect: $error');
+        final GoException goException = error is GoException
+            ? error
+            : GoException('Exception during redirect: $error');
         throw goException;
       },
       zoneValues: <Object?, Object?>{currentRouterKey: router},
@@ -728,13 +719,16 @@ class RouteConfiguration {
         index,
         routes.length,
       );
-      final String decorationString =
-          decoration.map((_DecorationType e) => e.toString()).join();
+      final String decorationString = decoration
+          .map((_DecorationType e) => e.toString())
+          .join();
       String path = parentFullpath;
       if (route is GoRoute) {
         path = concatenatePaths(parentFullpath, route.path);
-        final String? screenName =
-            route.builder?.runtimeType.toString().split('=> ').last;
+        final String? screenName = route.builder?.runtimeType
+            .toString()
+            .split('=> ')
+            .last;
         sb.writeln(
           '$decorationString$path '
           '${screenName == null ? '' : '($screenName)'}',

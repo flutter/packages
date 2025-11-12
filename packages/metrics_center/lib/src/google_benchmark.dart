@@ -82,8 +82,9 @@ void _parseAnItem(
         rethrow;
       }
 
-      final double? value =
-          rawValue is int ? rawValue.toDouble() : rawValue as double?;
+      final double? value = rawValue is int
+          ? rawValue.toDouble()
+          : rawValue as double?;
       points.add(
         MetricPoint(
           value,

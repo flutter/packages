@@ -31,17 +31,18 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
     routes: <RouteBase>[
       // #docregion configuration-builder
       StatefulShellRoute.indexedStack(
-        builder: (
-          BuildContext context,
-          GoRouterState state,
-          StatefulNavigationShell navigationShell,
-        ) {
-          // Return the widget that implements the custom shell (in this case
-          // using a BottomNavigationBar). The StatefulNavigationShell is passed
-          // to be able access the state of the shell and to navigate to other
-          // branches in a stateful way.
-          return ScaffoldWithNavBar(navigationShell: navigationShell);
-        },
+        builder:
+            (
+              BuildContext context,
+              GoRouterState state,
+              StatefulNavigationShell navigationShell,
+            ) {
+              // Return the widget that implements the custom shell (in this case
+              // using a BottomNavigationBar). The StatefulNavigationShell is passed
+              // to be able access the state of the shell and to navigate to other
+              // branches in a stateful way.
+              return ScaffoldWithNavBar(navigationShell: navigationShell);
+            },
         // #enddocregion configuration-builder
         // #docregion configuration-branches
         branches: <StatefulShellBranch>[
@@ -53,18 +54,16 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
                 // The screen to display as the root in the first tab of the
                 // bottom navigation bar.
                 path: '/a',
-                builder:
-                    (BuildContext context, GoRouterState state) =>
-                        const RootScreen(label: 'A', detailsPath: '/a/details'),
+                builder: (BuildContext context, GoRouterState state) =>
+                    const RootScreen(label: 'A', detailsPath: '/a/details'),
                 routes: <RouteBase>[
                   // The details screen to display stacked on navigator of the
                   // first tab. This will cover screen A but not the application
                   // shell (bottom navigation bar).
                   GoRoute(
                     path: 'details',
-                    builder:
-                        (BuildContext context, GoRouterState state) =>
-                            const DetailsScreen(label: 'A'),
+                    builder: (BuildContext context, GoRouterState state) =>
+                        const DetailsScreen(label: 'A'),
                   ),
                 ],
               ),
@@ -83,22 +82,20 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
                 // The screen to display as the root in the second tab of the
                 // bottom navigation bar.
                 path: '/b',
-                builder:
-                    (BuildContext context, GoRouterState state) =>
-                        const RootScreen(
-                          label: 'B',
-                          detailsPath: '/b/details/1',
-                          secondDetailsPath: '/b/details/2',
-                        ),
+                builder: (BuildContext context, GoRouterState state) =>
+                    const RootScreen(
+                      label: 'B',
+                      detailsPath: '/b/details/1',
+                      secondDetailsPath: '/b/details/2',
+                    ),
                 routes: <RouteBase>[
                   GoRoute(
                     path: 'details/:param',
-                    builder:
-                        (BuildContext context, GoRouterState state) =>
-                            DetailsScreen(
-                              label: 'B',
-                              param: state.pathParameters['param'],
-                            ),
+                    builder: (BuildContext context, GoRouterState state) =>
+                        DetailsScreen(
+                          label: 'B',
+                          param: state.pathParameters['param'],
+                        ),
                   ),
                 ],
               ),
@@ -112,15 +109,13 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
                 // The screen to display as the root in the third tab of the
                 // bottom navigation bar.
                 path: '/c',
-                builder:
-                    (BuildContext context, GoRouterState state) =>
-                        const RootScreen(label: 'C', detailsPath: '/c/details'),
+                builder: (BuildContext context, GoRouterState state) =>
+                    const RootScreen(label: 'C', detailsPath: '/c/details'),
                 routes: <RouteBase>[
                   GoRoute(
                     path: 'details',
-                    builder:
-                        (BuildContext context, GoRouterState state) =>
-                            DetailsScreen(label: 'C', extra: state.extra),
+                    builder: (BuildContext context, GoRouterState state) =>
+                        DetailsScreen(label: 'C', extra: state.extra),
                   ),
                 ],
               ),

@@ -50,13 +50,9 @@ void main() {
         SharedPreferencesState(
           allKeys: const AsyncState<List<String>>.data(<String>[selectedKey]),
           editing: editing,
-          selectedKey:
-              state == null
-                  ? null
-                  : SelectedSharedPreferencesKey(
-                    key: selectedKey,
-                    value: state,
-                  ),
+          selectedKey: state == null
+              ? null
+              : SelectedSharedPreferencesKey(key: selectedKey, value: state),
         ),
       );
     }

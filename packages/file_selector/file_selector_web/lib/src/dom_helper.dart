@@ -38,11 +38,10 @@ class DomHelper {
     );
 
     inputElement.onChange.first.then((_) {
-      final List<XFile> files =
-          Iterable<File>.generate(
-            inputElement.files!.length,
-            (int i) => inputElement.files!.item(i)!,
-          ).map(_convertFileToXFile).toList();
+      final List<XFile> files = Iterable<File>.generate(
+        inputElement.files!.length,
+        (int i) => inputElement.files!.item(i)!,
+      ).map(_convertFileToXFile).toList();
       inputElement.remove();
       completer.complete(files);
     });

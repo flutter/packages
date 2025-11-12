@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
+
 ## 4.1.1
 
 - Allow `analyzer: '>=7.4.0 <9.0.0'`.

@@ -109,17 +109,16 @@ void main() {
       setUp(() {
         when(cameraService.getFacingModeForVideoTrack(any)).thenReturn(null);
 
-        mockMediaDevices.enumerateDevices =
-            () {
-              return Future<JSArray<MediaDeviceInfo>>.value(
-                <MediaDeviceInfo>[].toJS,
-              ).toJS;
-            }.toJS;
+        mockMediaDevices.enumerateDevices = () {
+          return Future<JSArray<MediaDeviceInfo>>.value(
+            <MediaDeviceInfo>[].toJS,
+          ).toJS;
+        }.toJS;
       });
 
       testWidgets('requests video permissions', (WidgetTester tester) async {
-        final List<CameraDescription> _ =
-            await CameraPlatform.instance.availableCameras();
+        final List<CameraDescription> _ = await CameraPlatform.instance
+            .availableCameras();
 
         verify(
           cameraService.getMediaStreamForOptions(const CameraOptions()),
@@ -133,10 +132,9 @@ void main() {
             createJSInteropWrapper(mockVideoTrack) as MediaStreamTrack;
 
         bool videoTrackStopped = false;
-        mockVideoTrack.stop =
-            () {
-              videoTrackStopped = true;
-            }.toJS;
+        mockVideoTrack.stop = () {
+          videoTrackStopped = true;
+        }.toJS;
 
         when(
           cameraService.getMediaStreamForOptions(const CameraOptions()),
@@ -149,8 +147,8 @@ void main() {
           ),
         );
 
-        final List<CameraDescription> _ =
-            await CameraPlatform.instance.availableCameras();
+        final List<CameraDescription> _ = await CameraPlatform.instance
+            .availableCameras();
 
         expect(videoTrackStopped, isTrue);
       });
@@ -167,15 +165,14 @@ void main() {
                 )
                 as MediaDeviceInfo;
 
-        mockMediaDevices.enumerateDevices =
-            () {
-              return Future<JSArray<MediaDeviceInfo>>.value(
-                <MediaDeviceInfo>[videoDevice].toJS,
-              ).toJS;
-            }.toJS;
+        mockMediaDevices.enumerateDevices = () {
+          return Future<JSArray<MediaDeviceInfo>>.value(
+            <MediaDeviceInfo>[videoDevice].toJS,
+          ).toJS;
+        }.toJS;
 
-        final List<CameraDescription> _ =
-            await CameraPlatform.instance.availableCameras();
+        final List<CameraDescription> _ = await CameraPlatform.instance
+            .availableCameras();
 
         verify(
           cameraService.getMediaStreamForOptions(
@@ -199,15 +196,14 @@ void main() {
                 )
                 as MediaDeviceInfo;
 
-        mockMediaDevices.enumerateDevices =
-            () {
-              return Future<JSArray<MediaDeviceInfo>>.value(
-                <MediaDeviceInfo>[videoDevice].toJS,
-              ).toJS;
-            }.toJS;
+        mockMediaDevices.enumerateDevices = () {
+          return Future<JSArray<MediaDeviceInfo>>.value(
+            <MediaDeviceInfo>[videoDevice].toJS,
+          ).toJS;
+        }.toJS;
 
-        final List<CameraDescription> _ =
-            await CameraPlatform.instance.availableCameras();
+        final List<CameraDescription> _ = await CameraPlatform.instance
+            .availableCameras();
 
         verifyNever(
           cameraService.getMediaStreamForOptions(
@@ -250,15 +246,14 @@ void main() {
           ),
         ).thenAnswer((_) => Future<MediaStream>.value(videoStream));
 
-        mockMediaDevices.enumerateDevices =
-            () {
-              return Future<JSArray<MediaDeviceInfo>>.value(
-                <MediaDeviceInfo>[videoDevice].toJS,
-              ).toJS;
-            }.toJS;
+        mockMediaDevices.enumerateDevices = () {
+          return Future<JSArray<MediaDeviceInfo>>.value(
+            <MediaDeviceInfo>[videoDevice].toJS,
+          ).toJS;
+        }.toJS;
 
-        final List<CameraDescription> _ =
-            await CameraPlatform.instance.availableCameras();
+        final List<CameraDescription> _ = await CameraPlatform.instance
+            .availableCameras();
 
         verify(
           cameraService.getFacingModeForVideoTrack(
@@ -314,31 +309,30 @@ void main() {
 
         // Mock media devices to return two video input devices
         // and two audio devices.
-        mockMediaDevices.enumerateDevices =
-            () {
-              return Future<JSArray<MediaDeviceInfo>>.value(
-                <MediaDeviceInfo>[
-                  firstVideoDevice,
-                  createJSInteropWrapper(
-                        FakeMediaDeviceInfo(
-                          '2',
-                          'Audio Input 2',
-                          MediaDeviceKind.audioInput,
-                        ),
-                      )
-                      as MediaDeviceInfo,
-                  createJSInteropWrapper(
-                        FakeMediaDeviceInfo(
-                          '3',
-                          'Audio Output 3',
-                          MediaDeviceKind.audioOutput,
-                        ),
-                      )
-                      as MediaDeviceInfo,
-                  secondVideoDevice,
-                ].toJS,
-              ).toJS;
-            }.toJS;
+        mockMediaDevices.enumerateDevices = () {
+          return Future<JSArray<MediaDeviceInfo>>.value(
+            <MediaDeviceInfo>[
+              firstVideoDevice,
+              createJSInteropWrapper(
+                    FakeMediaDeviceInfo(
+                      '2',
+                      'Audio Input 2',
+                      MediaDeviceKind.audioInput,
+                    ),
+                  )
+                  as MediaDeviceInfo,
+              createJSInteropWrapper(
+                    FakeMediaDeviceInfo(
+                      '3',
+                      'Audio Output 3',
+                      MediaDeviceKind.audioOutput,
+                    ),
+                  )
+                  as MediaDeviceInfo,
+              secondVideoDevice,
+            ].toJS,
+          ).toJS;
+        }.toJS;
 
         // Mock camera service to return the first video stream
         // for the first video device.
@@ -384,8 +378,8 @@ void main() {
           cameraService.mapFacingModeToLensDirection('environment'),
         ).thenReturn(CameraLensDirection.back);
 
-        final List<CameraDescription> cameras =
-            await CameraPlatform.instance.availableCameras();
+        final List<CameraDescription> cameras = await CameraPlatform.instance
+            .availableCameras();
 
         // Expect two cameras and ignore two audio devices.
         expect(
@@ -428,12 +422,11 @@ void main() {
                 )
                 as MediaStream;
 
-        mockMediaDevices.enumerateDevices =
-            () {
-              return Future<JSArray<MediaDeviceInfo>>.value(
-                <MediaDeviceInfo>[videoDevice].toJS,
-              ).toJS;
-            }.toJS;
+        mockMediaDevices.enumerateDevices = () {
+          return Future<JSArray<MediaDeviceInfo>>.value(
+            <MediaDeviceInfo>[videoDevice].toJS,
+          ).toJS;
+        }.toJS;
 
         when(
           cameraService.getMediaStreamForOptions(
@@ -483,22 +476,20 @@ void main() {
         final List<bool> stops = List<bool>.generate(2, (_) => false);
         for (int i = 0; i < stops.length; i++) {
           final MockMediaStreamTrack track = MockMediaStreamTrack();
-          track.stop =
-              () {
-                stops[i] = true;
-              }.toJS;
+          track.stop = () {
+            stops[i] = true;
+          }.toJS;
           tracks.add(createJSInteropWrapper(track) as MediaStreamTrack);
         }
 
         final MediaStream videoStream =
             createJSInteropWrapper(FakeMediaStream(tracks)) as MediaStream;
 
-        mockMediaDevices.enumerateDevices =
-            () {
-              return Future<JSArray<MediaDeviceInfo>>.value(
-                <MediaDeviceInfo>[videoDevice].toJS,
-              ).toJS;
-            }.toJS;
+        mockMediaDevices.enumerateDevices = () {
+          return Future<JSArray<MediaDeviceInfo>>.value(
+            <MediaDeviceInfo>[videoDevice].toJS,
+          ).toJS;
+        }.toJS;
 
         when(
           cameraService.getMediaStreamForOptions(
@@ -508,8 +499,8 @@ void main() {
           ),
         ).thenAnswer((_) => Future<MediaStream>.value(videoStream));
 
-        final List<CameraDescription> _ =
-            await CameraPlatform.instance.availableCameras();
+        final List<CameraDescription> _ = await CameraPlatform.instance
+            .availableCameras();
 
         expect(stops.every((bool e) => e), isTrue);
       });
@@ -520,14 +511,13 @@ void main() {
         ) async {
           final DOMException exception = DOMException('UnknownError');
 
-          mockMediaDevices.enumerateDevices =
-              () {
-                throw exception;
-                // ignore: dead_code
-                return Future<JSArray<MediaDeviceInfo>>.value(
-                  <MediaDeviceInfo>[].toJS,
-                ).toJS;
-              }.toJS;
+          mockMediaDevices.enumerateDevices = () {
+            throw exception;
+            // ignore: dead_code
+            return Future<JSArray<MediaDeviceInfo>>.value(
+              <MediaDeviceInfo>[].toJS,
+            ).toJS;
+          }.toJS;
 
           expect(
             () => CameraPlatform.instance.availableCameras(),
@@ -971,11 +961,10 @@ void main() {
       testWidgets('requests full-screen mode '
           'on documentElement', (WidgetTester tester) async {
         int fullscreenCalls = 0;
-        mockDocumentElement.requestFullscreen =
-            ([FullscreenOptions? options]) {
-              fullscreenCalls++;
-              return Future<void>.value().toJS;
-            }.toJS;
+        mockDocumentElement.requestFullscreen = ([FullscreenOptions? options]) {
+          fullscreenCalls++;
+          return Future<void>.value().toJS;
+        }.toJS;
 
         await CameraPlatform.instance.lockCaptureOrientation(
           cameraId,
@@ -994,11 +983,10 @@ void main() {
         ).thenReturn(OrientationType.landscapeSecondary);
 
         final List<OrientationLockType> capturedTypes = <OrientationLockType>[];
-        mockScreenOrientation.lock =
-            (OrientationLockType orientation) {
-              capturedTypes.add(orientation);
-              return Future<void>.value().toJS;
-            }.toJS;
+        mockScreenOrientation.lock = (OrientationLockType orientation) {
+          capturedTypes.add(orientation);
+          return Future<void>.value().toJS;
+        }.toJS;
 
         await CameraPlatform.instance.lockCaptureOrientation(
           cameraId,
@@ -1044,12 +1032,11 @@ void main() {
         ) async {
           final DOMException exception = DOMException('NotAllowedError');
 
-          mockScreenOrientation.lock =
-              (OrientationLockType orientation) {
-                throw exception;
-                // ignore: dead_code
-                return Future<void>.value().toJS;
-              }.toJS;
+          mockScreenOrientation.lock = (OrientationLockType orientation) {
+            throw exception;
+            // ignore: dead_code
+            return Future<void>.value().toJS;
+          }.toJS;
 
           expect(
             () => CameraPlatform.instance.lockCaptureOrientation(
@@ -1079,10 +1066,9 @@ void main() {
         WidgetTester tester,
       ) async {
         int unlocks = 0;
-        mockScreenOrientation.unlock =
-            () {
-              unlocks++;
-            }.toJS;
+        mockScreenOrientation.unlock = () {
+          unlocks++;
+        }.toJS;
 
         await CameraPlatform.instance.unlockCaptureOrientation(cameraId);
 
@@ -1115,12 +1101,11 @@ void main() {
         ) async {
           final DOMException exception = DOMException('NotAllowedError');
 
-          mockScreenOrientation.unlock =
-              () {
-                throw exception;
-                // ignore: dead_code
-                return Future<void>.value().toJS;
-              }.toJS;
+          mockScreenOrientation.unlock = () {
+            throw exception;
+            // ignore: dead_code
+            return Future<void>.value().toJS;
+          }.toJS;
 
           expect(
             () => CameraPlatform.instance.unlockCaptureOrientation(cameraId),
@@ -3086,7 +3071,8 @@ void main() {
           final MockEventStreamProvider<Event> provider =
               MockEventStreamProvider<Event>();
           (CameraPlatform.instance as CameraPlugin)
-              .orientationOnChangeProvider = provider;
+                  .orientationOnChangeProvider =
+              provider;
           when(
             provider.forTarget(any),
           ).thenAnswer((_) => eventStreamController.stream);

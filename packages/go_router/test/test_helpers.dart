@@ -196,8 +196,9 @@ Future<GoRouter> createRouter(
   addTearDown(goRouter.dispose);
   await tester.pumpWidget(
     MaterialApp.router(
-      restorationScopeId:
-          restorationScopeId != null ? '$restorationScopeId-root' : null,
+      restorationScopeId: restorationScopeId != null
+          ? '$restorationScopeId-root'
+          : null,
       routerConfig: goRouter,
     ),
   );
@@ -230,8 +231,9 @@ Future<GoRouter> createRouterWithRoutingConfig(
   addTearDown(goRouter.dispose);
   await tester.pumpWidget(
     MaterialApp.router(
-      restorationScopeId:
-          restorationScopeId != null ? '$restorationScopeId-root' : null,
+      restorationScopeId: restorationScopeId != null
+          ? '$restorationScopeId-root'
+          : null,
       routerConfig: goRouter,
     ),
   );
@@ -375,13 +377,14 @@ GoRouterPageBuilder createPageBuilder({
     (BuildContext context, GoRouterState state) =>
         MaterialPage<dynamic>(restorationId: restorationId, child: child);
 
-StatefulShellRouteBuilder mockStackedShellBuilder = (
-  BuildContext context,
-  GoRouterState state,
-  StatefulNavigationShell navigationShell,
-) {
-  return navigationShell;
-};
+StatefulShellRouteBuilder mockStackedShellBuilder =
+    (
+      BuildContext context,
+      GoRouterState state,
+      StatefulNavigationShell navigationShell,
+    ) {
+      return navigationShell;
+    };
 
 /// A routing config that is never going to change.
 class ConstantRoutingConfig extends ValueListenable<RoutingConfig> {
@@ -426,8 +429,8 @@ class SimpleDependencyProvider extends InheritedNotifier<SimpleDependency> {
   }) : super(notifier: dependency);
 
   static SimpleDependency of(BuildContext context) {
-    final SimpleDependencyProvider result =
-        context.dependOnInheritedWidgetOfExactType<SimpleDependencyProvider>()!;
+    final SimpleDependencyProvider result = context
+        .dependOnInheritedWidgetOfExactType<SimpleDependencyProvider>()!;
     return result.notifier!;
   }
 }

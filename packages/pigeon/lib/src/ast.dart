@@ -91,10 +91,12 @@ class Method extends Node {
 
   @override
   String toString() {
-    final String objcSelectorStr =
-        objcSelector.isEmpty ? '' : ' objcSelector:$objcSelector';
-    final String swiftFunctionStr =
-        swiftFunction.isEmpty ? '' : ' swiftFunction:$swiftFunction';
+    final String objcSelectorStr = objcSelector.isEmpty
+        ? ''
+        : ' objcSelector:$objcSelector';
+    final String swiftFunctionStr = swiftFunction.isEmpty
+        ? ''
+        : ' swiftFunction:$swiftFunction';
     return '(Method name:$name returnType:$returnType parameters:$parameters isAsynchronous:$isAsynchronous$objcSelectorStr$swiftFunctionStr documentationComments:$documentationComments)';
   }
 }
@@ -254,8 +256,9 @@ class AstProxyApi extends Api {
       yield* proxyApi.flutterMethods.map((Method method) => (method, proxyApi));
     }
     if (superClass != null) {
-      final Set<AstProxyApi> interfaceApisFromSuperClasses =
-          superClass!.associatedProxyApi!._recursiveFindAllInterfaceApis();
+      final Set<AstProxyApi> interfaceApisFromSuperClasses = superClass!
+          .associatedProxyApi!
+          ._recursiveFindAllInterfaceApis();
       for (final AstProxyApi proxyApi in interfaceApisFromSuperClasses) {
         yield* proxyApi.methods.map((Method method) => (method, proxyApi));
       }
@@ -394,8 +397,9 @@ class Constructor extends Method {
 
   @override
   String toString() {
-    final String swiftFunctionStr =
-        swiftFunction.isEmpty ? '' : ' swiftFunction:$swiftFunction';
+    final String swiftFunctionStr = swiftFunction.isEmpty
+        ? ''
+        : ' swiftFunction:$swiftFunction';
     return '(Constructor name:$name parameters:$parameters $swiftFunctionStr documentationComments:$documentationComments)';
   }
 }
@@ -595,8 +599,9 @@ class TypeDeclaration {
 
   @override
   String toString() {
-    final String typeArgumentsStr =
-        typeArguments.isEmpty ? '' : ' typeArguments:$typeArguments';
+    final String typeArgumentsStr = typeArguments.isEmpty
+        ? ''
+        : ' typeArguments:$typeArguments';
     return '(TypeDeclaration baseName:$baseName isNullable:$isNullable$typeArgumentsStr isEnum:$isEnum isClass:$isClass isProxyApi:$isProxyApi)';
   }
 }

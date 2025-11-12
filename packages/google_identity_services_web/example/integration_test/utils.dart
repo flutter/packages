@@ -30,10 +30,9 @@ ExpectConfigValueFn createExpectConfigValue(JSObject config) {
     } else if (matcher is List) {
       final List<Object?> old = matcher;
       matcher = isA<JSAny?>().having(
-        (JSAny? p0) =>
-            (p0 as JSArray<JSAny>?)?.toDart
-                .map((JSAny? e) => e.dartify())
-                .toList(),
+        (JSAny? p0) => (p0 as JSArray<JSAny>?)?.toDart
+            .map((JSAny? e) => e.dartify())
+            .toList(),
         'Array with matching values',
         old,
       );

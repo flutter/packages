@@ -46,10 +46,9 @@ class MarkersController extends GeometryController {
           infoWindowOptions.content is HTMLElement) {
         final HTMLElement content = infoWindowOptions.content! as HTMLElement;
 
-        content.onclick =
-            (JSAny? _) {
-              _onInfoWindowTap(marker.markerId);
-            }.toJS;
+        content.onclick = (JSAny? _) {
+          _onInfoWindowTap(marker.markerId);
+        }.toJS;
       }
     }
 

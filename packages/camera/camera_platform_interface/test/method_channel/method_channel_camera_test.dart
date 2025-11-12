@@ -484,8 +484,8 @@ void main() {
 
       test('Should receive device orientation change events', () async {
         // Act
-        final Stream<DeviceOrientationChangedEvent> eventStream =
-            camera.onDeviceOrientationChanged();
+        final Stream<DeviceOrientationChangedEvent> eventStream = camera
+            .onDeviceOrientationChanged();
         final StreamQueue<DeviceOrientationChangedEvent> streamQueue =
             StreamQueue<DeviceOrientationChangedEvent>(eventStream);
 
@@ -576,8 +576,8 @@ void main() {
           );
 
           // Act
-          final List<CameraDescription> cameras =
-              await camera.availableCameras();
+          final List<CameraDescription> cameras = await camera
+              .availableCameras();
 
           // Assert
           expect(channel.log, <Matcher>[
