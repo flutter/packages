@@ -1,5 +1,6 @@
-## NEXT
+## 0.2.6+3
 
+* Removes usage of the deprecated and ignored `maxVideoDuration` in the example.
 * Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
 
 ## 0.2.6+2
