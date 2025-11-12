@@ -1216,6 +1216,36 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
 }
 
 class NITestsClass: NSObject, NIHostIntegrationCoreApi {
+  func echoNonNullClassMap(classMap: [Int64: NIAllNullableTypesWithoutRecursion]) throws -> [Int64:
+    NIAllNullableTypesWithoutRecursion]
+  {
+    return classMap
+  }
+
+  func echoClassMap(classMap: [Int64?: NIAllNullableTypesWithoutRecursion?]) throws -> [Int64?:
+    NIAllNullableTypesWithoutRecursion?]
+  {
+    return classMap
+  }
+
+  func echoNullableNonNullClassList(classList: [NIAllNullableTypesWithoutRecursion]?) throws
+    -> [NIAllNullableTypesWithoutRecursion]?
+  {
+    return classList
+  }
+
+  func echoNullableClassMap(classMap: [Int64?: NIAllNullableTypesWithoutRecursion?]?) throws
+    -> [Int64?: NIAllNullableTypesWithoutRecursion?]?
+  {
+    return classMap
+  }
+
+  func echoNullableNonNullClassMap(classMap: [Int64: NIAllNullableTypesWithoutRecursion]?) throws
+    -> [Int64: NIAllNullableTypesWithoutRecursion]?
+  {
+    return classMap
+  }
+
   func echoEnumMap(enumMap: [NIAnEnum?: NIAnEnum?]) throws -> [NIAnEnum?: NIAnEnum?] {
     return enumMap
   }
@@ -1327,7 +1357,8 @@ class NITestsClass: NSObject, NIHostIntegrationCoreApi {
 
   func createNestedNullableString(nullableString: String?) throws -> NIAllClassesWrapper {
     return NIAllClassesWrapper(
-      allNullableTypesWithoutRecursion: .init(aNullableString: nullableString), classList: [])
+      allNullableTypesWithoutRecursion: .init(aNullableString: nullableString), classList: [],
+      classMap: [:])
   }
 
   func echoClassWrapper(wrapper: NIAllClassesWrapper) throws -> NIAllClassesWrapper {

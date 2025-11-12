@@ -1917,16 +1917,18 @@ extension NIAllTypesBridge$Methods on NIAllTypesBridge {
   }
 }
 
-late final _sel_initWithAllNullableTypesWithoutRecursion_allTypes_classList_nullableClassList_ =
+late final _sel_initWithAllNullableTypesWithoutRecursion_allTypes_classList_nullableClassList_classMap_nullableClassMap_ =
     objc.registerName(
-      "initWithAllNullableTypesWithoutRecursion:allTypes:classList:nullableClassList:",
+      "initWithAllNullableTypesWithoutRecursion:allTypes:classList:nullableClassList:classMap:nullableClassMap:",
     );
-final _objc_msgSend_s92gih = objc.msgSendPointer
+final _objc_msgSend_x153qd = objc.msgSendPointer
     .cast<
       ffi.NativeFunction<
         ffi.Pointer<objc.ObjCObject> Function(
           ffi.Pointer<objc.ObjCObject>,
           ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCObject>,
           ffi.Pointer<objc.ObjCObject>,
           ffi.Pointer<objc.ObjCObject>,
           ffi.Pointer<objc.ObjCObject>,
@@ -1938,6 +1940,8 @@ final _objc_msgSend_s92gih = objc.msgSendPointer
       ffi.Pointer<objc.ObjCObject> Function(
         ffi.Pointer<objc.ObjCObject>,
         ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCObject>,
         ffi.Pointer<objc.ObjCObject>,
         ffi.Pointer<objc.ObjCObject>,
         ffi.Pointer<objc.ObjCObject>,
@@ -1957,6 +1961,12 @@ late final _sel_setClassList_ = objc.registerName("setClassList:");
 late final _sel_nullableClassList = objc.registerName("nullableClassList");
 late final _sel_setNullableClassList_ = objc.registerName(
   "setNullableClassList:",
+);
+late final _sel_classMap = objc.registerName("classMap");
+late final _sel_setClassMap_ = objc.registerName("setClassMap:");
+late final _sel_nullableClassMap = objc.registerName("nullableClassMap");
+late final _sel_setNullableClassMap_ = objc.registerName(
+  "setNullableClassMap:",
 );
 
 /// A class for testing nested class handling.
@@ -2047,7 +2057,7 @@ class NIAllClassesWrapperBridge extends objc.NSObject {
 }
 
 extension NIAllClassesWrapperBridge$Methods on NIAllClassesWrapperBridge {
-  /// initWithAllNullableTypesWithoutRecursion:allTypes:classList:nullableClassList:
+  /// initWithAllNullableTypesWithoutRecursion:allTypes:classList:nullableClassList:classMap:nullableClassMap:
   ///
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
@@ -2057,19 +2067,23 @@ extension NIAllClassesWrapperBridge$Methods on NIAllClassesWrapperBridge {
     NIAllTypesBridge? allTypes,
     required objc.NSArray classList,
     objc.NSArray? nullableClassList,
+    required objc.NSDictionary classMap,
+    objc.NSDictionary? nullableClassMap,
   }) {
     objc.checkOsVersionInternal(
-      'NIAllClassesWrapperBridge.initWithAllNullableTypesWithoutRecursion:allTypes:classList:nullableClassList:',
+      'NIAllClassesWrapperBridge.initWithAllNullableTypesWithoutRecursion:allTypes:classList:nullableClassList:classMap:nullableClassMap:',
       iOS: (false, (13, 0, 0)),
       macOS: (false, (16, 0, 0)),
     );
-    final _ret = _objc_msgSend_s92gih(
+    final _ret = _objc_msgSend_x153qd(
       this.ref.retainAndReturnPointer(),
-      _sel_initWithAllNullableTypesWithoutRecursion_allTypes_classList_nullableClassList_,
+      _sel_initWithAllNullableTypesWithoutRecursion_allTypes_classList_nullableClassList_classMap_nullableClassMap_,
       allNullableTypesWithoutRecursion?.ref.pointer ?? ffi.nullptr,
       allTypes?.ref.pointer ?? ffi.nullptr,
       classList.ref.pointer,
       nullableClassList?.ref.pointer ?? ffi.nullptr,
+      classMap.ref.pointer,
+      nullableClassMap?.ref.pointer ?? ffi.nullptr,
     );
     return NIAllClassesWrapperBridge.castFromPointer(
       _ret,
@@ -2201,6 +2215,62 @@ extension NIAllClassesWrapperBridge$Methods on NIAllClassesWrapperBridge {
     _objc_msgSend_xtuoz7(
       this.ref.pointer,
       _sel_setNullableClassList_,
+      value?.ref.pointer ?? ffi.nullptr,
+    );
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  objc.NSDictionary get classMap {
+    objc.checkOsVersionInternal(
+      'NIAllClassesWrapperBridge.classMap',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_classMap);
+    return objc.NSDictionary.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  set classMap(objc.NSDictionary value) {
+    objc.checkOsVersionInternal(
+      'NIAllClassesWrapperBridge.setClassMap:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_xtuoz7(
+      this.ref.pointer,
+      _sel_setClassMap_,
+      value.ref.pointer,
+    );
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  objc.NSDictionary? get nullableClassMap {
+    objc.checkOsVersionInternal(
+      'NIAllClassesWrapperBridge.nullableClassMap',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_nullableClassMap);
+    return _ret.address == 0
+        ? null
+        : objc.NSDictionary.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  set nullableClassMap(objc.NSDictionary? value) {
+    objc.checkOsVersionInternal(
+      'NIAllClassesWrapperBridge.setNullableClassMap:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_xtuoz7(
+      this.ref.pointer,
+      _sel_setNullableClassMap_,
       value?.ref.pointer ?? ffi.nullptr,
     );
   }
@@ -2598,6 +2668,9 @@ late final _sel_echoIntMapWithIntMap_wrappedError_ = objc.registerName(
 late final _sel_echoEnumMapWithEnumMap_wrappedError_ = objc.registerName(
   "echoEnumMapWithEnumMap:wrappedError:",
 );
+late final _sel_echoClassMapWithClassMap_wrappedError_ = objc.registerName(
+  "echoClassMapWithClassMap:wrappedError:",
+);
 late final _sel_echoNonNullStringMapWithStringMap_wrappedError_ = objc
     .registerName("echoNonNullStringMapWithStringMap:wrappedError:");
 late final _sel_echoNonNullIntMapWithIntMap_wrappedError_ = objc.registerName(
@@ -2606,6 +2679,8 @@ late final _sel_echoNonNullIntMapWithIntMap_wrappedError_ = objc.registerName(
 late final _sel_echoNonNullEnumMapWithEnumMap_wrappedError_ = objc.registerName(
   "echoNonNullEnumMapWithEnumMap:wrappedError:",
 );
+late final _sel_echoNonNullClassMapWithClassMap_wrappedError_ = objc
+    .registerName("echoNonNullClassMapWithClassMap:wrappedError:");
 late final _sel_echoClassWrapperWithWrapper_wrappedError_ = objc.registerName(
   "echoClassWrapperWithWrapper:wrappedError:",
 );
@@ -2666,6 +2741,29 @@ late final _sel_sendMultipleNullableTypesWithANullableBool_aNullableInt_aNullabl
     objc.registerName(
       "sendMultipleNullableTypesWithANullableBool:aNullableInt:aNullableString:wrappedError:",
     );
+final _objc_msgSend_s92gih = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Pointer<objc.ObjCObject> Function(
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCObject>,
+        )
+      >
+    >()
+    .asFunction<
+      ffi.Pointer<objc.ObjCObject> Function(
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCObject>,
+      )
+    >();
 late final _sel_sendMultipleNullableTypesWithoutRecursionWithANullableBool_aNullableInt_aNullableString_wrappedError_ =
     objc.registerName(
       "sendMultipleNullableTypesWithoutRecursionWithANullableBool:aNullableInt:aNullableString:wrappedError:",
@@ -2688,6 +2786,8 @@ late final _sel_echoNullableClassListWithClassList_wrappedError_ = objc
     .registerName("echoNullableClassListWithClassList:wrappedError:");
 late final _sel_echoNullableNonNullEnumListWithEnumList_wrappedError_ = objc
     .registerName("echoNullableNonNullEnumListWithEnumList:wrappedError:");
+late final _sel_echoNullableNonNullClassListWithClassList_wrappedError_ = objc
+    .registerName("echoNullableNonNullClassListWithClassList:wrappedError:");
 late final _sel_echoNullableMapWithMap_wrappedError_ = objc.registerName(
   "echoNullableMapWithMap:wrappedError:",
 );
@@ -2698,12 +2798,16 @@ late final _sel_echoNullableIntMapWithIntMap_wrappedError_ = objc.registerName(
 );
 late final _sel_echoNullableEnumMapWithEnumMap_wrappedError_ = objc
     .registerName("echoNullableEnumMapWithEnumMap:wrappedError:");
+late final _sel_echoNullableClassMapWithClassMap_wrappedError_ = objc
+    .registerName("echoNullableClassMapWithClassMap:wrappedError:");
 late final _sel_echoNullableNonNullStringMapWithStringMap_wrappedError_ = objc
     .registerName("echoNullableNonNullStringMapWithStringMap:wrappedError:");
 late final _sel_echoNullableNonNullIntMapWithIntMap_wrappedError_ = objc
     .registerName("echoNullableNonNullIntMapWithIntMap:wrappedError:");
 late final _sel_echoNullableNonNullEnumMapWithEnumMap_wrappedError_ = objc
     .registerName("echoNullableNonNullEnumMapWithEnumMap:wrappedError:");
+late final _sel_echoNullableNonNullClassMapWithClassMap_wrappedError_ = objc
+    .registerName("echoNullableNonNullClassMapWithClassMap:wrappedError:");
 late final _sel_echoNullableEnumWithAnEnum_wrappedError_ = objc.registerName(
   "echoNullableEnumWithAnEnum:wrappedError:",
 );
@@ -3300,6 +3404,30 @@ extension NIHostIntegrationCoreApiSetup$Methods
   ///
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
+  objc.NSDictionary? echoClassMapWithClassMap(
+    objc.NSDictionary classMap, {
+    required NiTestsError wrappedError,
+  }) {
+    objc.checkOsVersionInternal(
+      'NIHostIntegrationCoreApiSetup.echoClassMapWithClassMap:wrappedError:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    final _ret = _objc_msgSend_15qeuct(
+      this.ref.pointer,
+      _sel_echoClassMapWithClassMap_wrappedError_,
+      classMap.ref.pointer,
+      wrappedError.ref.pointer,
+    );
+    return _ret.address == 0
+        ? null
+        : objc.NSDictionary.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// Returns the passed map, to test serialization and deserialization.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
   objc.NSDictionary? echoNonNullStringMapWithStringMap(
     objc.NSDictionary stringMap, {
     required NiTestsError wrappedError,
@@ -3361,6 +3489,30 @@ extension NIHostIntegrationCoreApiSetup$Methods
       this.ref.pointer,
       _sel_echoNonNullEnumMapWithEnumMap_wrappedError_,
       enumMap.ref.pointer,
+      wrappedError.ref.pointer,
+    );
+    return _ret.address == 0
+        ? null
+        : objc.NSDictionary.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// Returns the passed map, to test serialization and deserialization.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  objc.NSDictionary? echoNonNullClassMapWithClassMap(
+    objc.NSDictionary classMap, {
+    required NiTestsError wrappedError,
+  }) {
+    objc.checkOsVersionInternal(
+      'NIHostIntegrationCoreApiSetup.echoNonNullClassMapWithClassMap:wrappedError:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    final _ret = _objc_msgSend_15qeuct(
+      this.ref.pointer,
+      _sel_echoNonNullClassMapWithClassMap_wrappedError_,
+      classMap.ref.pointer,
       wrappedError.ref.pointer,
     );
     return _ret.address == 0
@@ -3810,6 +3962,30 @@ extension NIHostIntegrationCoreApiSetup$Methods
         : objc.NSArray.castFromPointer(_ret, retain: true, release: true);
   }
 
+  /// Returns the passed list, to test serialization and deserialization.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  objc.NSArray? echoNullableNonNullClassListWithClassList(
+    objc.NSArray? classList, {
+    required NiTestsError wrappedError,
+  }) {
+    objc.checkOsVersionInternal(
+      'NIHostIntegrationCoreApiSetup.echoNullableNonNullClassListWithClassList:wrappedError:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    final _ret = _objc_msgSend_15qeuct(
+      this.ref.pointer,
+      _sel_echoNullableNonNullClassListWithClassList_wrappedError_,
+      classList?.ref.pointer ?? ffi.nullptr,
+      wrappedError.ref.pointer,
+    );
+    return _ret.address == 0
+        ? null
+        : objc.NSArray.castFromPointer(_ret, retain: true, release: true);
+  }
+
   /// Returns the passed map, to test serialization and deserialization.
   ///
   /// iOS: introduced 13.0.0
@@ -3910,6 +4086,30 @@ extension NIHostIntegrationCoreApiSetup$Methods
   ///
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
+  objc.NSDictionary? echoNullableClassMapWithClassMap(
+    objc.NSDictionary? classMap, {
+    required NiTestsError wrappedError,
+  }) {
+    objc.checkOsVersionInternal(
+      'NIHostIntegrationCoreApiSetup.echoNullableClassMapWithClassMap:wrappedError:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    final _ret = _objc_msgSend_15qeuct(
+      this.ref.pointer,
+      _sel_echoNullableClassMapWithClassMap_wrappedError_,
+      classMap?.ref.pointer ?? ffi.nullptr,
+      wrappedError.ref.pointer,
+    );
+    return _ret.address == 0
+        ? null
+        : objc.NSDictionary.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// Returns the passed map, to test serialization and deserialization.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
   objc.NSDictionary? echoNullableNonNullStringMapWithStringMap(
     objc.NSDictionary? stringMap, {
     required NiTestsError wrappedError,
@@ -3971,6 +4171,30 @@ extension NIHostIntegrationCoreApiSetup$Methods
       this.ref.pointer,
       _sel_echoNullableNonNullEnumMapWithEnumMap_wrappedError_,
       enumMap?.ref.pointer ?? ffi.nullptr,
+      wrappedError.ref.pointer,
+    );
+    return _ret.address == 0
+        ? null
+        : objc.NSDictionary.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// Returns the passed map, to test serialization and deserialization.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  objc.NSDictionary? echoNullableNonNullClassMapWithClassMap(
+    objc.NSDictionary? classMap, {
+    required NiTestsError wrappedError,
+  }) {
+    objc.checkOsVersionInternal(
+      'NIHostIntegrationCoreApiSetup.echoNullableNonNullClassMapWithClassMap:wrappedError:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    final _ret = _objc_msgSend_15qeuct(
+      this.ref.pointer,
+      _sel_echoNullableNonNullClassMapWithClassMap_wrappedError_,
+      classMap?.ref.pointer ?? ffi.nullptr,
       wrappedError.ref.pointer,
     );
     return _ret.address == 0

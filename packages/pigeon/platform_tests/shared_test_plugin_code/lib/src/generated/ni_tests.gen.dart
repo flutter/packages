@@ -282,6 +282,20 @@ class _PigeonJniCodec {
         res.add(writeValue(value[i]));
       }
       return res as T;
+    } else if (value is Map<int, NIAllNullableTypesWithoutRecursion> &&
+        isTypeOrNullableType<
+          JMap<JLong, jni_bridge.NIAllNullableTypesWithoutRecursion>
+        >(T)) {
+      final JMap<JLong, jni_bridge.NIAllNullableTypesWithoutRecursion> res =
+          JMap<JLong, jni_bridge.NIAllNullableTypesWithoutRecursion>.hash(
+            JLong.type,
+            jni_bridge.NIAllNullableTypesWithoutRecursion.type,
+          );
+      for (final MapEntry<int, NIAllNullableTypesWithoutRecursion> entry
+          in value.entries) {
+        res[writeValue(entry.key)] = writeValue(entry.value);
+      }
+      return res as T;
     } else if (value is Map<NIAnEnum, NIAnEnum> &&
         isTypeOrNullableType<JMap<jni_bridge.NIAnEnum, jni_bridge.NIAnEnum>>(
           T,
@@ -312,6 +326,31 @@ class _PigeonJniCodec {
         JString.type,
       );
       for (final MapEntry<String, String> entry in value.entries) {
+        res[writeValue(entry.key)] = writeValue(entry.value);
+      }
+      return res as T;
+    } else if (value is Map<int?, NIAllTypes?> &&
+        isTypeOrNullableType<JMap<JLong?, jni_bridge.NIAllTypes?>>(T)) {
+      final JMap<JLong?, jni_bridge.NIAllTypes?> res =
+          JMap<JLong?, jni_bridge.NIAllTypes?>.hash(
+            JLong.nullableType,
+            jni_bridge.NIAllTypes.nullableType,
+          );
+      for (final MapEntry<int?, NIAllTypes?> entry in value.entries) {
+        res[writeValue(entry.key)] = writeValue(entry.value);
+      }
+      return res as T;
+    } else if (value is Map<int?, NIAllNullableTypesWithoutRecursion?> &&
+        isTypeOrNullableType<
+          JMap<JLong?, jni_bridge.NIAllNullableTypesWithoutRecursion?>
+        >(T)) {
+      final JMap<JLong?, jni_bridge.NIAllNullableTypesWithoutRecursion?> res =
+          JMap<JLong?, jni_bridge.NIAllNullableTypesWithoutRecursion?>.hash(
+            JLong.nullableType,
+            jni_bridge.NIAllNullableTypesWithoutRecursion.nullableType,
+          );
+      for (final MapEntry<int?, NIAllNullableTypesWithoutRecursion?> entry
+          in value.entries) {
         res[writeValue(entry.key)] = writeValue(entry.value);
       }
       return res as T;
@@ -661,6 +700,14 @@ class _PigeonFfiCodec {
         );
       }
       return res as T;
+    } else if (value is Map<int, NIAllNullableTypesWithoutRecursion> &&
+        isTypeOrNullableType<NSDictionary>(T)) {
+      final NSMutableDictionary res = NSMutableDictionary();
+      for (final MapEntry<int, NIAllNullableTypesWithoutRecursion> entry
+          in value.entries) {
+        res[writeValue(entry.key)] = writeValue(entry.value);
+      }
+      return res as T;
     } else if (value is Map<NIAnEnum, NIAnEnum> &&
         isTypeOrNullableType<NSDictionary>(T)) {
       final NSMutableDictionary res = NSMutableDictionary();
@@ -679,6 +726,21 @@ class _PigeonFfiCodec {
         isTypeOrNullableType<NSDictionary>(T)) {
       final NSMutableDictionary res = NSMutableDictionary();
       for (final MapEntry<String, String> entry in value.entries) {
+        res[writeValue(entry.key)] = writeValue(entry.value);
+      }
+      return res as T;
+    } else if (value is Map<int?, NIAllTypes?> &&
+        isTypeOrNullableType<NSDictionary>(T)) {
+      final NSMutableDictionary res = NSMutableDictionary();
+      for (final MapEntry<int?, NIAllTypes?> entry in value.entries) {
+        res[writeValue(entry.key)] = writeValue(entry.value);
+      }
+      return res as T;
+    } else if (value is Map<int?, NIAllNullableTypesWithoutRecursion?> &&
+        isTypeOrNullableType<NSDictionary>(T)) {
+      final NSMutableDictionary res = NSMutableDictionary();
+      for (final MapEntry<int?, NIAllNullableTypesWithoutRecursion?> entry
+          in value.entries) {
         res[writeValue(entry.key)] = writeValue(entry.value);
       }
       return res as T;
@@ -1307,6 +1369,8 @@ class NIAllClassesWrapper {
     this.allTypes,
     required this.classList,
     this.nullableClassList,
+    required this.classMap,
+    this.nullableClassMap,
   });
 
   NIAllNullableTypesWithoutRecursion? allNullableTypesWithoutRecursion;
@@ -1317,12 +1381,18 @@ class NIAllClassesWrapper {
 
   List<NIAllNullableTypesWithoutRecursion?>? nullableClassList;
 
+  Map<int?, NIAllTypes?> classMap;
+
+  Map<int?, NIAllNullableTypesWithoutRecursion?>? nullableClassMap;
+
   List<Object?> _toList() {
     return <Object?>[
       allNullableTypesWithoutRecursion,
       allTypes,
       classList,
       nullableClassList,
+      classMap,
+      nullableClassMap,
     ];
   }
 
@@ -1336,6 +1406,10 @@ class NIAllClassesWrapper {
           classList: _PigeonFfiCodec.writeValue<NSMutableArray>(classList),
           nullableClassList: _PigeonFfiCodec.writeValue<NSMutableArray?>(
             nullableClassList,
+          ),
+          classMap: _PigeonFfiCodec.writeValue<NSDictionary>(classMap),
+          nullableClassMap: _PigeonFfiCodec.writeValue<NSDictionary?>(
+            nullableClassMap,
           ),
         );
   }
@@ -1363,6 +1437,14 @@ class NIAllClassesWrapper {
                 (_PigeonFfiCodec.readValue(ffiClass.nullableClassList)
                         as List<Object?>?)
                     ?.cast<NIAllNullableTypesWithoutRecursion?>(),
+            classMap:
+                (_PigeonFfiCodec.readValue(ffiClass.classMap)!
+                        as Map<Object?, Object?>)
+                    .cast<int?, NIAllTypes?>(),
+            nullableClassMap:
+                (_PigeonFfiCodec.readValue(ffiClass.nullableClassMap)
+                        as Map<Object?, Object?>?)
+                    ?.cast<int?, NIAllNullableTypesWithoutRecursion?>(),
           );
   }
 
@@ -1375,6 +1457,10 @@ class NIAllClassesWrapper {
       classList: (result[2] as List<Object?>?)!.cast<NIAllTypes?>(),
       nullableClassList: (result[3] as List<Object?>?)
           ?.cast<NIAllNullableTypesWithoutRecursion?>(),
+      classMap: (result[4] as Map<Object?, Object?>?)!
+          .cast<int?, NIAllTypes?>(),
+      nullableClassMap: (result[5] as Map<Object?, Object?>?)
+          ?.cast<int?, NIAllNullableTypesWithoutRecursion?>(),
     );
   }
 
@@ -1391,7 +1477,9 @@ class NIAllClassesWrapper {
             other.allNullableTypesWithoutRecursion &&
         allTypes == other.allTypes &&
         _deepEquals(classList, other.classList) &&
-        _deepEquals(nullableClassList, other.nullableClassList);
+        _deepEquals(nullableClassList, other.nullableClassList) &&
+        _deepEquals(classMap, other.classMap) &&
+        _deepEquals(nullableClassMap, other.nullableClassMap);
   }
 
   @override
@@ -2156,6 +2244,42 @@ class NIHostIntegrationCoreApiForNativeInterop {
     throw Exception("this shouldn't be possible");
   }
 
+  Map<int?, NIAllNullableTypesWithoutRecursion?> echoClassMap(
+    Map<int?, NIAllNullableTypesWithoutRecursion?> classMap,
+  ) {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final NSDictionary? res = _ffiApi.echoClassMapWithClassMap(
+          _PigeonFfiCodec.writeValue<NSDictionary>(classMap),
+          wrappedError: error,
+        );
+        if (error.code != null) {
+          throw PlatformException(
+            code: error.code!.toDartString(),
+            message: error.message?.toDartString(),
+            details: error.details.toString(),
+          );
+        } else {
+          final Map<int?, NIAllNullableTypesWithoutRecursion?> dartTypeRes =
+              (_PigeonFfiCodec.readValue(res)! as Map<Object?, Object?>)
+                  .cast<int?, NIAllNullableTypesWithoutRecursion?>();
+          return dartTypeRes;
+        }
+      }
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    } catch (e) {
+      rethrow;
+    }
+    throw Exception("this shouldn't be possible");
+  }
+
   Map<String, String> echoNonNullStringMap(Map<String, String> stringMap) {
     try {
       if (_jniApi != null) {
@@ -2243,6 +2367,42 @@ class NIHostIntegrationCoreApiForNativeInterop {
           final Map<NIAnEnum, NIAnEnum> dartTypeRes =
               (_PigeonFfiCodec.readValue(res)! as Map<Object?, Object?>)
                   .cast<NIAnEnum, NIAnEnum>();
+          return dartTypeRes;
+        }
+      }
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    } catch (e) {
+      rethrow;
+    }
+    throw Exception("this shouldn't be possible");
+  }
+
+  Map<int, NIAllNullableTypesWithoutRecursion> echoNonNullClassMap(
+    Map<int, NIAllNullableTypesWithoutRecursion> classMap,
+  ) {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final NSDictionary? res = _ffiApi.echoNonNullClassMapWithClassMap(
+          _PigeonFfiCodec.writeValue<NSDictionary>(classMap),
+          wrappedError: error,
+        );
+        if (error.code != null) {
+          throw PlatformException(
+            code: error.code!.toDartString(),
+            message: error.message?.toDartString(),
+            details: error.details.toString(),
+          );
+        } else {
+          final Map<int, NIAllNullableTypesWithoutRecursion> dartTypeRes =
+              (_PigeonFfiCodec.readValue(res)! as Map<Object?, Object?>)
+                  .cast<int, NIAllNullableTypesWithoutRecursion>();
           return dartTypeRes;
         }
       }
@@ -2842,6 +3002,42 @@ class NIHostIntegrationCoreApiForNativeInterop {
     throw Exception("this shouldn't be possible");
   }
 
+  List<NIAllNullableTypesWithoutRecursion>? echoNullableNonNullClassList(
+    List<NIAllNullableTypesWithoutRecursion>? classList,
+  ) {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final NSArray? res = _ffiApi.echoNullableNonNullClassListWithClassList(
+          _PigeonFfiCodec.writeValue<NSMutableArray?>(classList),
+          wrappedError: error,
+        );
+        if (error.code != null) {
+          throw PlatformException(
+            code: error.code!.toDartString(),
+            message: error.message?.toDartString(),
+            details: error.details.toString(),
+          );
+        } else {
+          final List<NIAllNullableTypesWithoutRecursion>? dartTypeRes =
+              (_PigeonFfiCodec.readValue(res) as List<Object?>?)
+                  ?.cast<NIAllNullableTypesWithoutRecursion>();
+          return dartTypeRes;
+        }
+      }
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    } catch (e) {
+      rethrow;
+    }
+    throw Exception("this shouldn't be possible");
+  }
+
   Map<Object?, Object?>? echoNullableMap(Map<Object?, Object?>? map) {
     try {
       if (_jniApi != null) {
@@ -2982,6 +3178,42 @@ class NIHostIntegrationCoreApiForNativeInterop {
     throw Exception("this shouldn't be possible");
   }
 
+  Map<int?, NIAllNullableTypesWithoutRecursion?>? echoNullableClassMap(
+    Map<int?, NIAllNullableTypesWithoutRecursion?>? classMap,
+  ) {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final NSDictionary? res = _ffiApi.echoNullableClassMapWithClassMap(
+          _PigeonFfiCodec.writeValue<NSDictionary?>(classMap),
+          wrappedError: error,
+        );
+        if (error.code != null) {
+          throw PlatformException(
+            code: error.code!.toDartString(),
+            message: error.message?.toDartString(),
+            details: error.details.toString(),
+          );
+        } else {
+          final Map<int?, NIAllNullableTypesWithoutRecursion?>? dartTypeRes =
+              (_PigeonFfiCodec.readValue(res) as Map<Object?, Object?>?)
+                  ?.cast<int?, NIAllNullableTypesWithoutRecursion?>();
+          return dartTypeRes;
+        }
+      }
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    } catch (e) {
+      rethrow;
+    }
+    throw Exception("this shouldn't be possible");
+  }
+
   Map<String, String>? echoNullableNonNullStringMap(
     Map<String, String>? stringMap,
   ) {
@@ -3074,6 +3306,43 @@ class NIHostIntegrationCoreApiForNativeInterop {
           final Map<NIAnEnum, NIAnEnum>? dartTypeRes =
               (_PigeonFfiCodec.readValue(res) as Map<Object?, Object?>?)
                   ?.cast<NIAnEnum, NIAnEnum>();
+          return dartTypeRes;
+        }
+      }
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    } catch (e) {
+      rethrow;
+    }
+    throw Exception("this shouldn't be possible");
+  }
+
+  Map<int, NIAllNullableTypesWithoutRecursion>? echoNullableNonNullClassMap(
+    Map<int, NIAllNullableTypesWithoutRecursion>? classMap,
+  ) {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final NSDictionary? res = _ffiApi
+            .echoNullableNonNullClassMapWithClassMap(
+              _PigeonFfiCodec.writeValue<NSDictionary?>(classMap),
+              wrappedError: error,
+            );
+        if (error.code != null) {
+          throw PlatformException(
+            code: error.code!.toDartString(),
+            message: error.message?.toDartString(),
+            details: error.details.toString(),
+          );
+        } else {
+          final Map<int, NIAllNullableTypesWithoutRecursion>? dartTypeRes =
+              (_PigeonFfiCodec.readValue(res) as Map<Object?, Object?>?)
+                  ?.cast<int, NIAllNullableTypesWithoutRecursion>();
           return dartTypeRes;
         }
       }
@@ -3962,6 +4231,46 @@ class NIHostIntegrationCoreApi {
   }
 
   /// Returns the passed map, to test serialization and deserialization.
+  Future<Map<int?, NIAllNullableTypesWithoutRecursion?>> echoClassMap(
+    Map<int?, NIAllNullableTypesWithoutRecursion?> classMap,
+  ) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoClassMap(classMap);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoClassMap$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[classMap],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as Map<Object?, Object?>?)!
+          .cast<int?, NIAllNullableTypesWithoutRecursion?>();
+    }
+  }
+
+  /// Returns the passed map, to test serialization and deserialization.
   Future<Map<String, String>> echoNonNullStringMap(
     Map<String, String> stringMap,
   ) async {
@@ -4076,6 +4385,46 @@ class NIHostIntegrationCoreApi {
     } else {
       return (pigeonVar_replyList[0] as Map<Object?, Object?>?)!
           .cast<NIAnEnum, NIAnEnum>();
+    }
+  }
+
+  /// Returns the passed map, to test serialization and deserialization.
+  Future<Map<int, NIAllNullableTypesWithoutRecursion>> echoNonNullClassMap(
+    Map<int, NIAllNullableTypesWithoutRecursion> classMap,
+  ) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoNonNullClassMap(classMap);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoNonNullClassMap$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[classMap],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as Map<Object?, Object?>?)!
+          .cast<int, NIAllNullableTypesWithoutRecursion>();
     }
   }
 
@@ -4687,6 +5036,42 @@ class NIHostIntegrationCoreApi {
     }
   }
 
+  /// Returns the passed list, to test serialization and deserialization.
+  Future<List<NIAllNullableTypesWithoutRecursion>?>
+  echoNullableNonNullClassList(
+    List<NIAllNullableTypesWithoutRecursion>? classList,
+  ) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoNullableNonNullClassList(classList);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoNullableNonNullClassList$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[classList],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return (pigeonVar_replyList[0] as List<Object?>?)
+          ?.cast<NIAllNullableTypesWithoutRecursion>();
+    }
+  }
+
   /// Returns the passed map, to test serialization and deserialization.
   Future<Map<Object?, Object?>?> echoNullableMap(
     Map<Object?, Object?>? map,
@@ -4826,6 +5211,41 @@ class NIHostIntegrationCoreApi {
   }
 
   /// Returns the passed map, to test serialization and deserialization.
+  Future<Map<int?, NIAllNullableTypesWithoutRecursion?>?> echoNullableClassMap(
+    Map<int?, NIAllNullableTypesWithoutRecursion?>? classMap,
+  ) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoNullableClassMap(classMap);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoNullableClassMap$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[classMap],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return (pigeonVar_replyList[0] as Map<Object?, Object?>?)
+          ?.cast<int?, NIAllNullableTypesWithoutRecursion?>();
+    }
+  }
+
+  /// Returns the passed map, to test serialization and deserialization.
   Future<Map<String, String>?> echoNullableNonNullStringMap(
     Map<String, String>? stringMap,
   ) async {
@@ -4927,6 +5347,42 @@ class NIHostIntegrationCoreApi {
     } else {
       return (pigeonVar_replyList[0] as Map<Object?, Object?>?)
           ?.cast<NIAnEnum, NIAnEnum>();
+    }
+  }
+
+  /// Returns the passed map, to test serialization and deserialization.
+  Future<Map<int, NIAllNullableTypesWithoutRecursion>?>
+  echoNullableNonNullClassMap(
+    Map<int, NIAllNullableTypesWithoutRecursion>? classMap,
+  ) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoNullableNonNullClassMap(classMap);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoNullableNonNullClassMap$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[classMap],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return (pigeonVar_replyList[0] as Map<Object?, Object?>?)
+          ?.cast<int, NIAllNullableTypesWithoutRecursion>();
     }
   }
 

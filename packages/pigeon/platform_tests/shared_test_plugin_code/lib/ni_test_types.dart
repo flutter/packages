@@ -237,15 +237,14 @@ genericNIAllNullableTypesWithoutRecursion = NIAllNullableTypesWithoutRecursion(
 );
 
 final List<NIAllNullableTypesWithoutRecursion?>
-allNullableTypesWithoutRecursionClassList =
-    <NIAllNullableTypesWithoutRecursion?>[
-      genericNIAllNullableTypesWithoutRecursion,
-      NIAllNullableTypesWithoutRecursion(),
-      null,
-    ];
+allNullableTypesWithoutRecursionList = <NIAllNullableTypesWithoutRecursion?>[
+  genericNIAllNullableTypesWithoutRecursion,
+  NIAllNullableTypesWithoutRecursion(),
+  null,
+];
 
 final Map<int, NIAllNullableTypesWithoutRecursion?>
-allNullableTypesWithoutRecursionClassMap =
+allNullableTypesWithoutRecursionMap =
     <int, NIAllNullableTypesWithoutRecursion?>{
       0: genericNIAllNullableTypesWithoutRecursion,
       1: NIAllNullableTypesWithoutRecursion(),
@@ -289,10 +288,10 @@ final List<NIAllTypes?> allTypesClassList = <NIAllTypes?>[
   null,
 ];
 
-// final Map<int, NIAllTypes?> allTypesClassMap = <int, NIAllTypes?>{
-//   0: genericNIAllTypes,
-//   1: null,
-// };
+final Map<int, NIAllTypes?> allTypesClassMap = <int, NIAllTypes?>{
+  0: genericNIAllTypes,
+  1: null,
+};
 
 // final NIAllNullableTypes genericNIAllNullableTypes = NIAllNullableTypes(
 //   aNullableBool: true,
@@ -356,12 +355,12 @@ nonNullNIAllNullableTypesWithoutRecursionMap =
 //   null,
 // ];
 
-final List<NIAllNullableTypesWithoutRecursion?>
-allNullableTypesWithoutRecursionList = <NIAllNullableTypesWithoutRecursion?>[
-  genericNIAllNullableTypesWithoutRecursion,
-  NIAllNullableTypesWithoutRecursion(),
-  null,
-];
+// final List<NIAllNullableTypes?>
+// allNullableTypesList = <NIAllNullableTypes?>[
+//   genericNIAllNullableTypes,
+//   NIAllNullableTypes(),
+//   null,
+// ];
 
 // final Map<int, NIAllNullableTypes?> allNullableTypesMap =
 //     <int, NIAllNullableTypes?>{
@@ -409,8 +408,8 @@ NIAllClassesWrapper classWrapperMaker() {
     allNullableTypesWithoutRecursion: genericNIAllNullableTypesWithoutRecursion,
     allTypes: genericNIAllTypes,
     classList: allTypesClassList,
-    //     classMap: allTypesClassMap,
-    nullableClassList: allNullableTypesWithoutRecursionClassList,
-    //     nullableClassMap: allNullableTypesWithoutRecursionClassMap,
+    classMap: allTypesClassMap,
+    nullableClassList: allNullableTypesWithoutRecursionList,
+    nullableClassMap: allNullableTypesWithoutRecursionMap,
   );
 }
