@@ -189,10 +189,9 @@ class VideoPlayerValue {
       volume: volume ?? this.volume,
       playbackSpeed: playbackSpeed ?? this.playbackSpeed,
       rotationCorrection: rotationCorrection ?? this.rotationCorrection,
-      errorDescription:
-          errorDescription != _defaultErrorDescription
-              ? errorDescription
-              : this.errorDescription,
+      errorDescription: errorDescription != _defaultErrorDescription
+          ? errorDescription
+          : this.errorDescription,
       isCompleted: isCompleted ?? this.isCompleted,
     );
   }
@@ -902,11 +901,11 @@ class _VideoPlayerState extends State<VideoPlayer> {
     return _playerId == VideoPlayerController.kUninitializedPlayerId
         ? Container()
         : _VideoPlayerWithRotation(
-          rotation: widget.controller.value.rotationCorrection,
-          child: _videoPlayerPlatform.buildViewWithOptions(
-            VideoViewOptions(playerId: _playerId),
-          ),
-        );
+            rotation: widget.controller.value.rotationCorrection,
+            child: _videoPlayerPlatform.buildViewWithOptions(
+              VideoViewOptions(playerId: _playerId),
+            ),
+          );
   }
 }
 
@@ -1114,13 +1113,12 @@ class _VideoProgressIndicatorState extends State<VideoProgressIndicator> {
       final int duration = controller.value.duration.inMilliseconds;
       final int position = controller.value.position.inMilliseconds;
 
-      final double maxBuffering =
-          duration == 0.0
-              ? 0.0
-              : controller.value.buffered
-                      .map((DurationRange range) => range.end.inMilliseconds)
-                      .fold(0, math.max) /
-                  duration;
+      final double maxBuffering = duration == 0.0
+          ? 0.0
+          : controller.value.buffered
+                    .map((DurationRange range) => range.end.inMilliseconds)
+                    .fold(0, math.max) /
+                duration;
       progressIndicator = Stack(
         fit: StackFit.passthrough,
         children: <Widget>[

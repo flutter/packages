@@ -988,8 +988,8 @@ void main() {
       await tester.pumpWidget(
         WebView(
           initialUrl: 'https://youtube.com',
-          navigationDelegate:
-              (NavigationRequest r) => NavigationDecision.navigate,
+          navigationDelegate: (NavigationRequest r) =>
+              NavigationDecision.navigate,
         ),
       );
 
@@ -1272,26 +1272,21 @@ List<dynamic> captureBuildArgs(
   return verify(
     mockWebViewPlatform.build(
       context: context ? captureAnyNamed('context') : anyNamed('context'),
-      creationParams:
-          creationParams
-              ? captureAnyNamed('creationParams')
-              : anyNamed('creationParams'),
-      webViewPlatformCallbacksHandler:
-          webViewPlatformCallbacksHandler
-              ? captureAnyNamed('webViewPlatformCallbacksHandler')
-              : anyNamed('webViewPlatformCallbacksHandler'),
-      javascriptChannelRegistry:
-          javascriptChannelRegistry
-              ? captureAnyNamed('javascriptChannelRegistry')
-              : anyNamed('javascriptChannelRegistry'),
-      onWebViewPlatformCreated:
-          onWebViewPlatformCreated
-              ? captureAnyNamed('onWebViewPlatformCreated')
-              : anyNamed('onWebViewPlatformCreated'),
-      gestureRecognizers:
-          gestureRecognizers
-              ? captureAnyNamed('gestureRecognizers')
-              : anyNamed('gestureRecognizers'),
+      creationParams: creationParams
+          ? captureAnyNamed('creationParams')
+          : anyNamed('creationParams'),
+      webViewPlatformCallbacksHandler: webViewPlatformCallbacksHandler
+          ? captureAnyNamed('webViewPlatformCallbacksHandler')
+          : anyNamed('webViewPlatformCallbacksHandler'),
+      javascriptChannelRegistry: javascriptChannelRegistry
+          ? captureAnyNamed('javascriptChannelRegistry')
+          : anyNamed('javascriptChannelRegistry'),
+      onWebViewPlatformCreated: onWebViewPlatformCreated
+          ? captureAnyNamed('onWebViewPlatformCreated')
+          : anyNamed('onWebViewPlatformCreated'),
+      gestureRecognizers: gestureRecognizers
+          ? captureAnyNamed('gestureRecognizers')
+          : anyNamed('gestureRecognizers'),
     ),
   ).captured;
 }

@@ -227,8 +227,9 @@ class _KeyItem extends StatelessWidget {
         SharedPreferencesStateProvider.selectedKeyOf(context);
     final bool isSelected = selectedKey?.key == keyName;
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
-    final Color? backgroundColor =
-        isSelected ? colorScheme.selectedRowBackgroundColor : null;
+    final Color? backgroundColor = isSelected
+        ? colorScheme.selectedRowBackgroundColor
+        : null;
 
     return InkWell(
       onTap: () {

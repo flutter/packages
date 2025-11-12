@@ -263,21 +263,16 @@ class PersonScreen extends StatelessWidget {
           ListTile(
             title: Text('${entry.key.name} - ${entry.value}'),
             trailing: OutlinedButton(
-              onPressed:
-                  () => PersonDetailsRoute(
-                    family.id,
-                    person.id,
-                    entry.key,
-                    $extra: ++_extraClickCount,
-                  ).go(context),
+              onPressed: () => PersonDetailsRoute(
+                family.id,
+                person.id,
+                entry.key,
+                $extra: ++_extraClickCount,
+              ).go(context),
               child: const Text('With extra...'),
             ),
-            onTap:
-                () => PersonDetailsRoute(
-                  family.id,
-                  person.id,
-                  entry.key,
-                ).go(context),
+            onTap: () =>
+                PersonDetailsRoute(family.id, person.id, entry.key).go(context),
           ),
       ],
     ),

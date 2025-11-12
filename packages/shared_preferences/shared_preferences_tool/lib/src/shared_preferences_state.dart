@@ -42,25 +42,26 @@ class SharedPreferencesState {
     bool editing,
     bool legacyApi,
   })
-  get copyWith => ({
-    Object allKeys = _undefined,
-    Object? selectedKey = _undefined,
-    Object editing = _undefined,
-    Object legacyApi = _undefined,
-  }) {
-    return SharedPreferencesState(
-      allKeys:
-          allKeys == _undefined
+  get copyWith =>
+      ({
+        Object allKeys = _undefined,
+        Object? selectedKey = _undefined,
+        Object editing = _undefined,
+        Object legacyApi = _undefined,
+      }) {
+        return SharedPreferencesState(
+          allKeys: allKeys == _undefined
               ? this.allKeys
               : allKeys as AsyncState<List<String>>,
-      selectedKey:
-          selectedKey == _undefined
+          selectedKey: selectedKey == _undefined
               ? this.selectedKey
               : selectedKey as SelectedSharedPreferencesKey?,
-      editing: editing == _undefined ? this.editing : editing as bool,
-      legacyApi: legacyApi == _undefined ? this.legacyApi : legacyApi as bool,
-    );
-  };
+          editing: editing == _undefined ? this.editing : editing as bool,
+          legacyApi: legacyApi == _undefined
+              ? this.legacyApi
+              : legacyApi as bool,
+        );
+      };
 
   @override
   bool operator ==(Object other) {

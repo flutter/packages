@@ -33,10 +33,12 @@ void main() {
 
   final Map<ResolutionPreset, Size> presetExpectedSizes =
       <ResolutionPreset, Size>{
-        ResolutionPreset.low:
-            Platform.isAndroid ? const Size(240, 320) : const Size(288, 352),
-        ResolutionPreset.medium:
-            Platform.isAndroid ? const Size(480, 720) : const Size(480, 640),
+        ResolutionPreset.low: Platform.isAndroid
+            ? const Size(240, 320)
+            : const Size(288, 352),
+        ResolutionPreset.medium: Platform.isAndroid
+            ? const Size(480, 720)
+            : const Size(480, 640),
         ResolutionPreset.high: const Size(720, 1280),
         ResolutionPreset.veryHigh: const Size(1080, 1920),
         ResolutionPreset.ultraHigh: const Size(2160, 3840),

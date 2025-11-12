@@ -129,8 +129,9 @@ void testValidPackages() {
 
   // Fixes https://github.com/flutter/flutter/issues/31854
   test('Can decode packages with question, answer and additional', () {
-    final List<ResourceRecord> result =
-        decodeMDnsResponse(packetWithQuestionAnArCount)!;
+    final List<ResourceRecord> result = decodeMDnsResponse(
+      packetWithQuestionAnArCount,
+    )!;
     expect(result, isNotNull);
     expect(result.length, 2);
     expect(result, <ResourceRecord>[
@@ -151,8 +152,9 @@ void testValidPackages() {
   test(
     'Can decode packages without question and with answer and additional',
     () {
-      final List<ResourceRecord> result =
-          decodeMDnsResponse(packetWithoutQuestionWithAnArCount)!;
+      final List<ResourceRecord> result = decodeMDnsResponse(
+        packetWithoutQuestionWithAnArCount,
+      )!;
       expect(result, isNotNull);
       expect(result.length, 2);
       expect(result, <ResourceRecord>[

@@ -129,8 +129,9 @@ web.Element _getHtmlElementAt(Offset point) {
   // Probe at the shadow so the browser reports semantics nodes in addition to
   // platform view elements. If probed from `html.document` the browser hides
   // the contents of <flt-glass-name> as an implementation detail.
-  final web.ShadowRoot glassPaneShadow =
-      web.document.querySelector('flt-glass-pane')!.shadowRoot!;
+  final web.ShadowRoot glassPaneShadow = web.document
+      .querySelector('flt-glass-pane')!
+      .shadowRoot!;
   // Use `round` below to ensure clicks always fall *inside* the located
   // element, rather than truncating the decimals.
   // Truncating decimals makes some tests fail when a centered element (in high

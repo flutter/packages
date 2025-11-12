@@ -23,12 +23,11 @@ Future<void> main() async {
     languageVersion: await _packageVersion(),
   );
   final Directory dir = Directory('test_inputs');
-  final List<File> testFiles =
-      dir
-          .listSync()
-          .whereType<File>()
-          .where((File f) => f.path.endsWith('.dart'))
-          .toList();
+  final List<File> testFiles = dir
+      .listSync()
+      .whereType<File>()
+      .where((File f) => f.path.endsWith('.dart'))
+      .toList();
   for (final File file in testFiles) {
     final String fileName = file.path.split('/').last;
     final File expectFile = File(p.join('${file.path}.expect'));

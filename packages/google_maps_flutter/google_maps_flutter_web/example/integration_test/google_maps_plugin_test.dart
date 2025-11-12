@@ -189,8 +189,9 @@ void main() {
 
         await plugin.setMapStyle(mapStyle, mapId: 0);
 
-        final dynamic captured =
-            verify(controller.updateStyles(captureThat(isList))).captured[0];
+        final dynamic captured = verify(
+          controller.updateStyles(captureThat(isList)),
+        ).captured[0];
 
         final List<gmaps.MapTypeStyle> styles =
             captured as List<gmaps.MapTypeStyle>;

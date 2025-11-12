@@ -376,10 +376,9 @@ class BlinkTraceSummary {
       final int tabPid = firstMeasuredFrameEvent.pid;
 
       // Filter out data from unrelated processes
-      events =
-          events
-              .where((BlinkTraceEvent element) => element.pid == tabPid)
-              .toList();
+      events = events
+          .where((BlinkTraceEvent element) => element.pid == tabPid)
+          .toList();
 
       // Extract frame data.
       final List<BlinkFrame> frames = <BlinkFrame>[];

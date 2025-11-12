@@ -34,11 +34,10 @@ void main() async {
     return;
   }
   // Load font.
-  final String effectiveFontFamily =
-      const TextStyle(
-        fontFamily: CupertinoIcons.iconFont,
-        package: CupertinoIcons.iconFontPackage,
-      ).fontFamily!;
+  final String effectiveFontFamily = const TextStyle(
+    fontFamily: CupertinoIcons.iconFont,
+    package: CupertinoIcons.iconFontPackage,
+  ).fontFamily!;
   final FontLoader fontLoader = FontLoader(effectiveFontFamily);
   final String filePath = path.canonicalize('assets/CupertinoIcons.ttf');
   final File file = File(filePath);

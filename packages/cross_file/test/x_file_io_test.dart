@@ -12,8 +12,9 @@ import 'dart:typed_data';
 import 'package:cross_file/cross_file.dart';
 import 'package:test/test.dart';
 
-final String pathPrefix =
-    Directory.current.path.endsWith('test') ? './assets/' : './test/assets/';
+final String pathPrefix = Directory.current.path.endsWith('test')
+    ? './assets/'
+    : './test/assets/';
 final String path = '${pathPrefix}hello.txt';
 const String expectedStringContents = 'Hello, world!';
 final Uint8List bytes = Uint8List.fromList(utf8.encode(expectedStringContents));

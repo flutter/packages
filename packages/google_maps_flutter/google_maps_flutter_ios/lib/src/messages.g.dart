@@ -939,12 +939,12 @@ class PlatformMapViewCreationParams {
       initialPolygons: (result[4] as List<Object?>?)!.cast<PlatformPolygon>(),
       initialPolylines: (result[5] as List<Object?>?)!.cast<PlatformPolyline>(),
       initialHeatmaps: (result[6] as List<Object?>?)!.cast<PlatformHeatmap>(),
-      initialTileOverlays:
-          (result[7] as List<Object?>?)!.cast<PlatformTileOverlay>(),
-      initialClusterManagers:
-          (result[8] as List<Object?>?)!.cast<PlatformClusterManager>(),
-      initialGroundOverlays:
-          (result[9] as List<Object?>?)!.cast<PlatformGroundOverlay>(),
+      initialTileOverlays: (result[7] as List<Object?>?)!
+          .cast<PlatformTileOverlay>(),
+      initialClusterManagers: (result[8] as List<Object?>?)!
+          .cast<PlatformClusterManager>(),
+      initialGroundOverlays: (result[9] as List<Object?>?)!
+          .cast<PlatformGroundOverlay>(),
     );
   }
 }
@@ -1575,8 +1575,9 @@ class MapsApi {
   /// BinaryMessenger will be used which routes to the host platform.
   MapsApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
     : pigeonVar_binaryMessenger = binaryMessenger,
-      pigeonVar_messageChannelSuffix =
-          messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+      pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+          ? '.$messageChannelSuffix'
+          : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -2310,8 +2311,9 @@ abstract class MapsCallbackApi {
     BinaryMessenger? binaryMessenger,
     String messageChannelSuffix = '',
   }) {
-    messageChannelSuffix =
-        messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+    messageChannelSuffix = messageChannelSuffix.isNotEmpty
+        ? '.$messageChannelSuffix'
+        : '';
     {
       final BasicMessageChannel<Object?>
       pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -2880,8 +2882,9 @@ class MapsPlatformViewApi {
     BinaryMessenger? binaryMessenger,
     String messageChannelSuffix = '',
   }) : pigeonVar_binaryMessenger = binaryMessenger,
-       pigeonVar_messageChannelSuffix =
-           messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+           ? '.$messageChannelSuffix'
+           : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -2922,8 +2925,9 @@ class MapsInspectorApi {
     BinaryMessenger? binaryMessenger,
     String messageChannelSuffix = '',
   }) : pigeonVar_binaryMessenger = binaryMessenger,
-       pigeonVar_messageChannelSuffix =
-           messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+           ? '.$messageChannelSuffix'
+           : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();

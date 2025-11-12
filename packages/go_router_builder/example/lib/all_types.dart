@@ -598,24 +598,23 @@ class IterablePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BasePage<String>(
       dataTitle: dataTitle,
-      queryParamWithDefaultValue:
-          <String, Iterable<dynamic>?>{
-            'intIterableField': intIterableField,
-            'intListField': intListField,
-            'intSetField': intSetField,
-            'doubleIterableField': doubleIterableField,
-            'doubleListField': doubleListField,
-            'doubleSetField': doubleSetField,
-            'stringIterableField': stringIterableField,
-            'stringListField': stringListField,
-            'stringSetField': stringSetField,
-            'boolIterableField': boolIterableField,
-            'boolListField': boolListField,
-            'boolSetField': boolSetField,
-            'enumIterableField': enumIterableField,
-            'enumListField': enumListField,
-            'enumSetField': enumSetField,
-          }.toString(),
+      queryParamWithDefaultValue: <String, Iterable<dynamic>?>{
+        'intIterableField': intIterableField,
+        'intListField': intListField,
+        'intSetField': intSetField,
+        'doubleIterableField': doubleIterableField,
+        'doubleListField': doubleListField,
+        'doubleSetField': doubleSetField,
+        'stringIterableField': stringIterableField,
+        'stringListField': stringListField,
+        'stringSetField': stringSetField,
+        'boolIterableField': boolIterableField,
+        'boolListField': boolListField,
+        'boolSetField': boolSetField,
+        'enumIterableField': enumIterableField,
+        'enumListField': enumListField,
+        'enumSetField': enumSetField,
+      }.toString(),
     );
   }
 }

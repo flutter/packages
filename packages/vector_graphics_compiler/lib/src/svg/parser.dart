@@ -211,18 +211,17 @@ class _Elements {
       return;
     }
 
-    final AffineMatrix transform = (parseTransform(
-              parserState.attribute('transform'),
-            ) ??
-            AffineMatrix.identity)
-        .translated(
-          parserState.parseDoubleWithUnits(
-            parserState.attribute('x', def: '0'),
-          )!,
-          parserState.parseDoubleWithUnits(
-            parserState.attribute('y', def: '0'),
-          )!,
-        );
+    final AffineMatrix transform =
+        (parseTransform(parserState.attribute('transform')) ??
+                AffineMatrix.identity)
+            .translated(
+              parserState.parseDoubleWithUnits(
+                parserState.attribute('x', def: '0'),
+              )!,
+              parserState.parseDoubleWithUnits(
+                parserState.attribute('y', def: '0'),
+              )!,
+            );
 
     final ParentNode group = ParentNode(
       // parserState._currentAttributes,
@@ -265,8 +264,10 @@ class _Elements {
         continue;
       }
       if (event is XmlStartElementEvent) {
-        final String rawOpacity =
-            parserState.attribute('stop-opacity', def: '1')!;
+        final String rawOpacity = parserState.attribute(
+          'stop-opacity',
+          def: '1',
+        )!;
         final Color stopColor =
             parserState.parseColor(
               parserState.attribute('stop-color'),
@@ -442,11 +443,10 @@ class _Elements {
       };
       final int semiColonLocation = xlinkHref.indexOf(';') + 1;
       final int commaLocation = xlinkHref.indexOf(',', semiColonLocation) + 1;
-      final String mimeType =
-          xlinkHref
-              .substring(xlinkHref.indexOf('/') + 1, semiColonLocation - 1)
-              .replaceAll(_whitespacePattern, '')
-              .toLowerCase();
+      final String mimeType = xlinkHref
+          .substring(xlinkHref.indexOf('/') + 1, semiColonLocation - 1)
+          .replaceAll(_whitespacePattern, '')
+          .toLowerCase();
 
       final ImageFormat? format = supportedMimeTypes[mimeType];
       if (format == null) {
@@ -487,16 +487,15 @@ class _Elements {
 // ignore: avoid_classes_with_only_static_members
 class _Paths {
   static Path circle(SvgParser parserState) {
-    final double cx =
-        parserState.parseDoubleWithUnits(
-          parserState.attribute('cx', def: '0'),
-        )!;
-    final double cy =
-        parserState.parseDoubleWithUnits(
-          parserState.attribute('cy', def: '0'),
-        )!;
-    final double r =
-        parserState.parseDoubleWithUnits(parserState.attribute('r', def: '0'))!;
+    final double cx = parserState.parseDoubleWithUnits(
+      parserState.attribute('cx', def: '0'),
+    )!;
+    final double cy = parserState.parseDoubleWithUnits(
+      parserState.attribute('cy', def: '0'),
+    )!;
+    final double r = parserState.parseDoubleWithUnits(
+      parserState.attribute('r', def: '0'),
+    )!;
     final Rect oval = Rect.fromCircle(cx, cy, r);
     return PathBuilder(
       parserState._currentAttributes.fillRule,
@@ -509,18 +508,18 @@ class _Paths {
   }
 
   static Path rect(SvgParser parserState) {
-    final double x =
-        parserState.parseDoubleWithUnits(parserState.attribute('x', def: '0'))!;
-    final double y =
-        parserState.parseDoubleWithUnits(parserState.attribute('y', def: '0'))!;
-    final double w =
-        parserState.parseDoubleWithUnits(
-          parserState.attribute('width', def: '0'),
-        )!;
-    final double h =
-        parserState.parseDoubleWithUnits(
-          parserState.attribute('height', def: '0'),
-        )!;
+    final double x = parserState.parseDoubleWithUnits(
+      parserState.attribute('x', def: '0'),
+    )!;
+    final double y = parserState.parseDoubleWithUnits(
+      parserState.attribute('y', def: '0'),
+    )!;
+    final double w = parserState.parseDoubleWithUnits(
+      parserState.attribute('width', def: '0'),
+    )!;
+    final double h = parserState.parseDoubleWithUnits(
+      parserState.attribute('height', def: '0'),
+    )!;
     String? rxRaw = parserState.attribute('rx');
     String? ryRaw = parserState.attribute('ry');
     rxRaw ??= ryRaw;
@@ -558,22 +557,18 @@ class _Paths {
   }
 
   static Path ellipse(SvgParser parserState) {
-    final double cx =
-        parserState.parseDoubleWithUnits(
-          parserState.attribute('cx', def: '0'),
-        )!;
-    final double cy =
-        parserState.parseDoubleWithUnits(
-          parserState.attribute('cy', def: '0'),
-        )!;
-    final double rx =
-        parserState.parseDoubleWithUnits(
-          parserState.attribute('rx', def: '0'),
-        )!;
-    final double ry =
-        parserState.parseDoubleWithUnits(
-          parserState.attribute('ry', def: '0'),
-        )!;
+    final double cx = parserState.parseDoubleWithUnits(
+      parserState.attribute('cx', def: '0'),
+    )!;
+    final double cy = parserState.parseDoubleWithUnits(
+      parserState.attribute('cy', def: '0'),
+    )!;
+    final double rx = parserState.parseDoubleWithUnits(
+      parserState.attribute('rx', def: '0'),
+    )!;
+    final double ry = parserState.parseDoubleWithUnits(
+      parserState.attribute('ry', def: '0'),
+    )!;
 
     final Rect r = Rect.fromLTWH(cx - rx, cy - ry, rx * 2, ry * 2);
     return PathBuilder(
@@ -582,22 +577,18 @@ class _Paths {
   }
 
   static Path line(SvgParser parserState) {
-    final double x1 =
-        parserState.parseDoubleWithUnits(
-          parserState.attribute('x1', def: '0'),
-        )!;
-    final double x2 =
-        parserState.parseDoubleWithUnits(
-          parserState.attribute('x2', def: '0'),
-        )!;
-    final double y1 =
-        parserState.parseDoubleWithUnits(
-          parserState.attribute('y1', def: '0'),
-        )!;
-    final double y2 =
-        parserState.parseDoubleWithUnits(
-          parserState.attribute('y2', def: '0'),
-        )!;
+    final double x1 = parserState.parseDoubleWithUnits(
+      parserState.attribute('x1', def: '0'),
+    )!;
+    final double x2 = parserState.parseDoubleWithUnits(
+      parserState.attribute('x2', def: '0'),
+    )!;
+    final double y1 = parserState.parseDoubleWithUnits(
+      parserState.attribute('y1', def: '0'),
+    )!;
+    final double y2 = parserState.parseDoubleWithUnits(
+      parserState.attribute('y2', def: '0'),
+    )!;
 
     return PathBuilder(
       parserState._currentAttributes.fillRule,
@@ -1379,53 +1370,49 @@ class SvgParser {
 
       if (colorString.length == 7 || colorString.length == 9) {
         final int color = int.parse(colorString.substring(1, 7), radix: 16);
-        final int alpha =
-            colorString.length == 9
-                ? int.parse(colorString.substring(7, 9), radix: 16)
-                : 255;
+        final int alpha = colorString.length == 9
+            ? int.parse(colorString.substring(7, 9), radix: 16)
+            : 255;
         return Color(color | alpha << 24);
       }
     }
 
     // handle rgba() colors e.g. rgba(255, 255, 255, 1.0)
     if (colorString.toLowerCase().startsWith('rgba')) {
-      final List<String> rawColorElements =
-          colorString
-              .substring(colorString.indexOf('(') + 1, colorString.indexOf(')'))
-              .split(',')
-              .map((String rawColor) => rawColor.trim())
-              .toList();
+      final List<String> rawColorElements = colorString
+          .substring(colorString.indexOf('(') + 1, colorString.indexOf(')'))
+          .split(',')
+          .map((String rawColor) => rawColor.trim())
+          .toList();
 
       final double opacity = parseDouble(rawColorElements.removeLast())!;
 
-      final List<int> rgb =
-          rawColorElements
-              .map((String rawColor) => int.parse(rawColor))
-              .toList();
+      final List<int> rgb = rawColorElements
+          .map((String rawColor) => int.parse(rawColor))
+          .toList();
 
       return Color.fromRGBO(rgb[0], rgb[1], rgb[2], opacity);
     }
 
     // Conversion code from: https://github.com/MichaelFenwick/Color, thanks :)
     if (colorString.toLowerCase().startsWith('hsl')) {
-      final List<int> values =
-          colorString
-              .substring(colorString.indexOf('(') + 1, colorString.indexOf(')'))
-              .split(',')
-              .map((String rawColor) {
-                rawColor = rawColor.trim();
+      final List<int> values = colorString
+          .substring(colorString.indexOf('(') + 1, colorString.indexOf(')'))
+          .split(',')
+          .map((String rawColor) {
+            rawColor = rawColor.trim();
 
-                if (rawColor.endsWith('%')) {
-                  rawColor = rawColor.substring(0, rawColor.length - 1);
-                }
+            if (rawColor.endsWith('%')) {
+              rawColor = rawColor.substring(0, rawColor.length - 1);
+            }
 
-                if (rawColor.contains('.')) {
-                  return (parseDouble(rawColor)! * 2.55).round();
-                }
+            if (rawColor.contains('.')) {
+              return (parseDouble(rawColor)! * 2.55).round();
+            }
 
-                return int.parse(rawColor);
-              })
-              .toList();
+            return int.parse(rawColor);
+          })
+          .toList();
       final double hue = values[0] / 360 % 1;
       final double saturation = values[1] / 100;
       final double luminance = values[2] / 100;
@@ -1452,18 +1439,16 @@ class SvgParser {
         rgb[2] = 6 - hue * 6;
       }
 
-      rgb =
-          rgb
-              .map((double val) => val + (1 - saturation) * (0.5 - val))
-              .toList();
+      rgb = rgb
+          .map((double val) => val + (1 - saturation) * (0.5 - val))
+          .toList();
 
       if (luminance < 0.5) {
         rgb = rgb.map((double val) => luminance * 2 * val).toList();
       } else {
-        rgb =
-            rgb
-                .map((double val) => luminance * 2 * (1 - val) + 2 * val - 1)
-                .toList();
+        rgb = rgb
+            .map((double val) => luminance * 2 * (1 - val) + 2 * val - 1)
+            .toList();
       }
 
       rgb = rgb.map((double val) => val * 255).toList();
@@ -1478,19 +1463,18 @@ class SvgParser {
 
     // handle rgb() colors e.g. rgb(255, 255, 255)
     if (colorString.toLowerCase().startsWith('rgb')) {
-      final List<int> rgb =
-          colorString
-              .substring(colorString.indexOf('(') + 1, colorString.indexOf(')'))
-              .split(',')
-              .map((String rawColor) {
-                rawColor = rawColor.trim();
-                if (rawColor.endsWith('%')) {
-                  rawColor = rawColor.substring(0, rawColor.length - 1);
-                  return (parseDouble(rawColor)! * 2.55).round();
-                }
-                return int.parse(rawColor);
-              })
-              .toList();
+      final List<int> rgb = colorString
+          .substring(colorString.indexOf('(') + 1, colorString.indexOf(')'))
+          .split(',')
+          .map((String rawColor) {
+            rawColor = rawColor.trim();
+            if (rawColor.endsWith('%')) {
+              rawColor = rawColor.substring(0, rawColor.length - 1);
+              return (parseDouble(rawColor)! * 2.55).round();
+            }
+            return int.parse(rawColor);
+          })
+          .toList();
 
       // rgba() isn't really in the spec, but Firefox supported it at one point so why not.
       final int a = rgb.length > 3 ? rgb[3] : 255;
@@ -1593,10 +1577,9 @@ class SvgParser {
     return SvgStrokeAttributes._(
       _definitions,
       shaderId: shaderId,
-      color:
-          rawStroke == 'none'
-              ? const ColorOrNone.none()
-              : ColorOrNone.color(color),
+      color: rawStroke == 'none'
+          ? const ColorOrNone.none()
+          : ColorOrNone.color(color),
       cap: _parseCap(rawStrokeCap, null),
       join: _parseJoin(rawLineJoin, null),
       miterLimit: parseDouble(rawMiterLimit),
@@ -1651,10 +1634,9 @@ class SvgParser {
 
     return SvgFillAttributes._(
       _definitions,
-      color:
-          rawFill == 'none'
-              ? const ColorOrNone.none()
-              : ColorOrNone.color(fillColor),
+      color: rawFill == 'none'
+          ? const ColorOrNone.none()
+          : ColorOrNone.color(fillColor),
       opacity: opacity,
     );
   }
@@ -1690,10 +1672,9 @@ class SvgParser {
       dx: DoubleOrPercentage.fromString(rawDx),
       dy: DoubleOrPercentage.fromString(rawDy),
       href: attributeMap['href'],
-      color:
-          attributeMap['color']?.toLowerCase() == 'none'
-              ? const ColorOrNone.none()
-              : ColorOrNone.color(color),
+      color: attributeMap['color']?.toLowerCase() == 'none'
+          ? const ColorOrNone.none()
+          : ColorOrNone.color(color),
       stroke: _parseStrokeAttributes(attributeMap, opacity, color, id),
       fill: _parseFillAttributes(attributeMap, opacity, color, id),
       fillRule: parseRawFillRule(attributeMap['fill-rule']),

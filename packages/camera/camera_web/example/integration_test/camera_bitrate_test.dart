@@ -66,11 +66,10 @@ void main() {
       mockWindow.navigator = navigator;
       mockNavigator.mediaDevices = mediaDevices;
 
-      final HTMLCanvasElement canvasElement =
-          HTMLCanvasElement()
-            ..width = videoSize.width.toInt()
-            ..height = videoSize.height.toInt()
-            ..context2D.clearRect(0, 0, videoSize.width, videoSize.height);
+      final HTMLCanvasElement canvasElement = HTMLCanvasElement()
+        ..width = videoSize.width.toInt()
+        ..height = videoSize.height.toInt()
+        ..context2D.clearRect(0, 0, videoSize.width, videoSize.height);
 
       final HTMLVideoElement videoElement = HTMLVideoElement();
 

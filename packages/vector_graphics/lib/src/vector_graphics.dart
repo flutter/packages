@@ -499,10 +499,9 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
         final TextDirection direction = Directionality.of(context);
         if (direction == TextDirection.rtl) {
           child = Transform(
-            transform:
-                Matrix4.identity()
-                  ..translate(pictureInfo.size.width)
-                  ..scale(-1.0, 1.0),
+            transform: Matrix4.identity()
+              ..translate(pictureInfo.size.width)
+              ..scale(-1.0, 1.0),
             child: child,
           );
         }

@@ -302,10 +302,12 @@ void main() {
       );
 
       expect(gradient.toJson(), <String, Object?>{
-        'colors':
-            colors.map((HeatmapGradientColor e) => e.color.value).toList(),
-        'startPoints':
-            colors.map((HeatmapGradientColor e) => e.startPoint).toList(),
+        'colors': colors
+            .map((HeatmapGradientColor e) => e.color.value)
+            .toList(),
+        'startPoints': colors
+            .map((HeatmapGradientColor e) => e.startPoint)
+            .toList(),
         'colorMapSize': colorMapSize,
       });
     });

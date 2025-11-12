@@ -118,61 +118,54 @@ Future<int> generateTestPigeons({
     final bool kotlinErrorClassGenerationTestFiles =
         input == 'core_tests' || input == 'primitive';
 
-    final String kotlinErrorName =
-        kotlinErrorClassGenerationTestFiles
-            ? 'FlutterError'
-            : '${pascalCaseName}Error';
+    final String kotlinErrorName = kotlinErrorClassGenerationTestFiles
+        ? 'FlutterError'
+        : '${pascalCaseName}Error';
 
     final bool swiftErrorUseDefaultErrorName =
         input == 'core_tests' || input == 'primitive';
 
-    final String? swiftErrorClassName =
-        swiftErrorUseDefaultErrorName ? null : '${pascalCaseName}Error';
+    final String? swiftErrorClassName = swiftErrorUseDefaultErrorName
+        ? null
+        : '${pascalCaseName}Error';
 
     // Generate the default language test plugin output.
     int generateCode = await runPigeon(
       input: './pigeons/$input.dart',
       dartOut: '$sharedDartOutputBase/lib/src/generated/$input.gen.dart',
-      dartTestOut:
-          input == 'message'
-              ? '$sharedDartOutputBase/test/test_message.gen.dart'
-              : null,
+      dartTestOut: input == 'message'
+          ? '$sharedDartOutputBase/test/test_message.gen.dart'
+          : null,
       dartPackageName: 'pigeon_integration_tests',
       suppressVersion: true,
       // Android
-      kotlinOut:
-          skipLanguages.contains(GeneratorLanguage.kotlin)
-              ? null
-              : '$outputBase/android/src/main/kotlin/com/example/test_plugin/$pascalCaseName.gen.kt',
+      kotlinOut: skipLanguages.contains(GeneratorLanguage.kotlin)
+          ? null
+          : '$outputBase/android/src/main/kotlin/com/example/test_plugin/$pascalCaseName.gen.kt',
       kotlinPackage: 'com.example.test_plugin',
       kotlinErrorClassName: kotlinErrorName,
       kotlinIncludeErrorClass: input != 'primitive',
       // iOS/macOS
-      swiftOut:
-          skipLanguages.contains(GeneratorLanguage.swift)
-              ? null
-              : '$outputBase/darwin/$testPluginName/Sources/$testPluginName/$pascalCaseName.gen.swift',
+      swiftOut: skipLanguages.contains(GeneratorLanguage.swift)
+          ? null
+          : '$outputBase/darwin/$testPluginName/Sources/$testPluginName/$pascalCaseName.gen.swift',
       swiftErrorClassName: swiftErrorClassName,
       swiftIncludeErrorClass: input != 'primitive',
       // Linux
-      gobjectHeaderOut:
-          skipLanguages.contains(GeneratorLanguage.gobject)
-              ? null
-              : '$outputBase/linux/pigeon/$input.gen.h',
-      gobjectSourceOut:
-          skipLanguages.contains(GeneratorLanguage.gobject)
-              ? null
-              : '$outputBase/linux/pigeon/$input.gen.cc',
+      gobjectHeaderOut: skipLanguages.contains(GeneratorLanguage.gobject)
+          ? null
+          : '$outputBase/linux/pigeon/$input.gen.h',
+      gobjectSourceOut: skipLanguages.contains(GeneratorLanguage.gobject)
+          ? null
+          : '$outputBase/linux/pigeon/$input.gen.cc',
       gobjectModule: '${pascalCaseName}PigeonTest',
       // Windows
-      cppHeaderOut:
-          skipLanguages.contains(GeneratorLanguage.cpp)
-              ? null
-              : '$outputBase/windows/pigeon/$input.gen.h',
-      cppSourceOut:
-          skipLanguages.contains(GeneratorLanguage.cpp)
-              ? null
-              : '$outputBase/windows/pigeon/$input.gen.cpp',
+      cppHeaderOut: skipLanguages.contains(GeneratorLanguage.cpp)
+          ? null
+          : '$outputBase/windows/pigeon/$input.gen.h',
+      cppSourceOut: skipLanguages.contains(GeneratorLanguage.cpp)
+          ? null
+          : '$outputBase/windows/pigeon/$input.gen.cpp',
       cppNamespace: '${input}_pigeontest',
       injectOverflowTypes: includeOverflow && input == 'core_tests',
     );
@@ -190,28 +183,24 @@ Future<int> generateTestPigeons({
       // Android
       // This doesn't use the '.gen' suffix since Java has strict file naming
       // rules.
-      javaOut:
-          skipLanguages.contains(GeneratorLanguage.java)
-              ? null
-              : '$alternateOutputBase/android/src/main/java/com/example/'
-                  'alternate_language_test_plugin/${_javaFilenameForName(input)}.java',
+      javaOut: skipLanguages.contains(GeneratorLanguage.java)
+          ? null
+          : '$alternateOutputBase/android/src/main/java/com/example/'
+                'alternate_language_test_plugin/${_javaFilenameForName(input)}.java',
       javaPackage: 'com.example.alternate_language_test_plugin',
       // iOS/macOS
-      objcHeaderOut:
-          skipLanguages.contains(GeneratorLanguage.objc)
-              ? null
-              : '$objcBase/$objcBaseRelativeHeaderPath',
-      objcSourceOut:
-          skipLanguages.contains(GeneratorLanguage.objc)
-              ? null
-              : '$objcBase/$pascalCaseName.gen.m',
+      objcHeaderOut: skipLanguages.contains(GeneratorLanguage.objc)
+          ? null
+          : '$objcBase/$objcBaseRelativeHeaderPath',
+      objcSourceOut: skipLanguages.contains(GeneratorLanguage.objc)
+          ? null
+          : '$objcBase/$pascalCaseName.gen.m',
       objcHeaderIncludePath: './$objcBaseRelativeHeaderPath',
-      objcPrefix:
-          input == 'core_tests'
-              ? 'FLT'
-              : input == 'enum'
-              ? 'PGN'
-              : '',
+      objcPrefix: input == 'core_tests'
+          ? 'FLT'
+          : input == 'enum'
+          ? 'PGN'
+          : '',
       suppressVersion: true,
       dartPackageName: 'pigeon_integration_tests',
       injectOverflowTypes: includeOverflow && input == 'core_tests',
@@ -295,8 +284,9 @@ Future<int> runPigeon({
       cppOptions: CppOptions(namespace: cppNamespace),
       gobjectHeaderOut: injectOverflowTypes ? null : gobjectHeaderOut,
       gobjectSourceOut: injectOverflowTypes ? null : gobjectSourceOut,
-      gobjectOptions:
-          injectOverflowTypes ? null : GObjectOptions(module: gobjectModule),
+      gobjectOptions: injectOverflowTypes
+          ? null
+          : GObjectOptions(module: gobjectModule),
       javaOut: javaOut,
       javaOptions: JavaOptions(package: javaPackage),
       kotlinOut: kotlinOut,

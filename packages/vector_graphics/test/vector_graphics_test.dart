@@ -675,8 +675,11 @@ void main() {
     await tester.pumpAndSettle();
 
     final Matrix4 matrix = Matrix4.identity();
-    final RenderObject transformObject =
-        find.byType(Transform).evaluate().first.renderObject!;
+    final RenderObject transformObject = find
+        .byType(Transform)
+        .evaluate()
+        .first
+        .renderObject!;
     bool visited = false;
     transformObject.visitChildren((RenderObject child) {
       if (!visited) {
@@ -702,16 +705,13 @@ void main() {
         loader: const ThrowingBytesLoader(),
         width: 100,
         height: 100,
-        errorBuilder: (
-          BuildContext context,
-          Object error,
-          StackTrace stackTrace,
-        ) {
-          return const Directionality(
-            textDirection: TextDirection.ltr,
-            child: Text('Error is handled'),
-          );
-        },
+        errorBuilder:
+            (BuildContext context, Object error, StackTrace stackTrace) {
+              return const Directionality(
+                textDirection: TextDirection.ltr,
+                child: Text('Error is handled'),
+              );
+            },
       ),
     );
     await tester.pumpAndSettle();

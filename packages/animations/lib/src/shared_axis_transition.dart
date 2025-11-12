@@ -233,56 +233,44 @@ class SharedAxisTransition extends StatelessWidget {
     final Color color = fillColor ?? Theme.of(context).canvasColor;
     return DualTransitionBuilder(
       animation: animation,
-      forwardBuilder: (
-        BuildContext context,
-        Animation<double> animation,
-        Widget? child,
-      ) {
-        return _EnterTransition(
-          animation: animation,
-          transitionType: transitionType,
-          child: child,
-        );
-      },
-      reverseBuilder: (
-        BuildContext context,
-        Animation<double> animation,
-        Widget? child,
-      ) {
-        return _ExitTransition(
-          animation: animation,
-          transitionType: transitionType,
-          reverse: true,
-          fillColor: color,
-          child: child,
-        );
-      },
+      forwardBuilder:
+          (BuildContext context, Animation<double> animation, Widget? child) {
+            return _EnterTransition(
+              animation: animation,
+              transitionType: transitionType,
+              child: child,
+            );
+          },
+      reverseBuilder:
+          (BuildContext context, Animation<double> animation, Widget? child) {
+            return _ExitTransition(
+              animation: animation,
+              transitionType: transitionType,
+              reverse: true,
+              fillColor: color,
+              child: child,
+            );
+          },
       child: DualTransitionBuilder(
         animation: ReverseAnimation(secondaryAnimation),
-        forwardBuilder: (
-          BuildContext context,
-          Animation<double> animation,
-          Widget? child,
-        ) {
-          return _EnterTransition(
-            animation: animation,
-            transitionType: transitionType,
-            reverse: true,
-            child: child,
-          );
-        },
-        reverseBuilder: (
-          BuildContext context,
-          Animation<double> animation,
-          Widget? child,
-        ) {
-          return _ExitTransition(
-            animation: animation,
-            transitionType: transitionType,
-            fillColor: color,
-            child: child,
-          );
-        },
+        forwardBuilder:
+            (BuildContext context, Animation<double> animation, Widget? child) {
+              return _EnterTransition(
+                animation: animation,
+                transitionType: transitionType,
+                reverse: true,
+                child: child,
+              );
+            },
+        reverseBuilder:
+            (BuildContext context, Animation<double> animation, Widget? child) {
+              return _ExitTransition(
+                animation: animation,
+                transitionType: transitionType,
+                fillColor: color,
+                child: child,
+              );
+            },
         child: child,
       ),
     );

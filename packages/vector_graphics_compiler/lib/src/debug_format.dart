@@ -54,8 +54,9 @@ class _DebugVectorGraphicsListener extends VectorGraphicsCodecListener {
 
   @override
   void onDrawPath(int pathId, int? paintId, int? patternId) {
-    final String patternContext =
-        patternId != null ? ', patternId:$patternId' : '';
+    final String patternContext = patternId != null
+        ? ', patternId:$patternId'
+        : '';
     buffer.writeln('DrawPath: id:$pathId (paintId:$paintId$patternContext)');
   }
 

@@ -954,7 +954,10 @@ void main() {
     final Class objectClass = Class(name: 'Object', fields: <NamedType>[]);
     final Enum anEnum = Enum(
       name: 'enum',
-      members: <EnumMember>[EnumMember(name: 'one'), EnumMember(name: 'two')],
+      members: <EnumMember>[
+        EnumMember(name: 'one'),
+        EnumMember(name: 'two'),
+      ],
     );
     final Root root = Root(
       apis: <Api>[

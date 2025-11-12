@@ -313,8 +313,9 @@ class JavaGenerator extends StructuredGenerator<InternalJavaOptions> {
       field,
       (TypeDeclaration x) => _javaTypeForBuiltinDartType(x),
     );
-    final String nullability =
-        field.type.isNullable ? '@Nullable ' : '@NonNull ';
+    final String nullability = field.type.isNullable
+        ? '@Nullable '
+        : '@NonNull ';
     addDocumentationComments(
       indent,
       field.documentationComments,
@@ -405,10 +406,9 @@ class JavaGenerator extends StructuredGenerator<InternalJavaOptions> {
       final Iterable<String> nonArrayFieldNames = classDefinition.fields
           .where((NamedType field) => !_javaTypeIsArray(field.type))
           .map((NamedType field) => field.name);
-      final String nonArrayHashValue =
-          nonArrayFieldNames.isNotEmpty
-              ? 'Objects.hash(${nonArrayFieldNames.join(', ')})'
-              : '0';
+      final String nonArrayHashValue = nonArrayFieldNames.isNotEmpty
+          ? 'Objects.hash(${nonArrayFieldNames.join(', ')})'
+          : '0';
 
       if (arrayFieldNames.isEmpty) {
         // Return directly if there are no array variables, to avoid redundant
@@ -444,8 +444,9 @@ class JavaGenerator extends StructuredGenerator<InternalJavaOptions> {
           field,
           (TypeDeclaration x) => _javaTypeForBuiltinDartType(x),
         );
-        final String nullability =
-            field.type.isNullable ? '@Nullable' : '@NonNull';
+        final String nullability = field.type.isNullable
+            ? '@Nullable'
+            : '@NonNull';
         indent.newln();
         indent.writeln(
           'private @Nullable ${hostDatatype.datatype} ${field.name};',
@@ -543,24 +544,24 @@ class JavaGenerator extends StructuredGenerator<InternalJavaOptions> {
     Indent indent, {
     required String dartPackageName,
   }) {
-    final List<EnumeratedType> enumeratedTypes =
-        getEnumeratedTypes(root, excludeSealedClasses: true).toList();
+    final List<EnumeratedType> enumeratedTypes = getEnumeratedTypes(
+      root,
+      excludeSealedClasses: true,
+    ).toList();
 
     void writeEncodeLogic(EnumeratedType customType) {
-      final String encodeString =
-          customType.type == CustomTypes.customClass ? 'toList()' : 'index';
-      final String nullCheck =
-          customType.type == CustomTypes.customEnum
-              ? 'value == null ? null : '
-              : '';
-      final String valueString =
-          customType.enumeration < maximumCodecFieldKey
-              ? '$nullCheck((${customType.name}) value).$encodeString'
-              : 'wrap.toList()';
-      final int enumeration =
-          customType.enumeration < maximumCodecFieldKey
-              ? customType.enumeration
-              : maximumCodecFieldKey;
+      final String encodeString = customType.type == CustomTypes.customClass
+          ? 'toList()'
+          : 'index';
+      final String nullCheck = customType.type == CustomTypes.customEnum
+          ? 'value == null ? null : '
+          : '';
+      final String valueString = customType.enumeration < maximumCodecFieldKey
+          ? '$nullCheck((${customType.name}) value).$encodeString'
+          : 'wrap.toList()';
+      final int enumeration = customType.enumeration < maximumCodecFieldKey
+          ? customType.enumeration
+          : maximumCodecFieldKey;
 
       indent.add('if (value instanceof ${customType.name}) ');
       indent.addScoped('{', '} else ', () {
@@ -800,10 +801,9 @@ if (wrapped == null) {
 
       for (final Method func in api.methods) {
         final String resultType = _getResultType(func.returnType);
-        final String returnType =
-            func.returnType.isVoid
-                ? 'Void'
-                : _javaTypeForDartType(func.returnType);
+        final String returnType = func.returnType.isVoid
+            ? 'Void'
+            : _javaTypeForDartType(func.returnType);
         String sendArgument;
         addDocumentationComments(
           indent,
@@ -1008,8 +1008,8 @@ if (wrapped == null) {
             dartPackageName: dartPackageName,
             serialBackgroundQueue:
                 method.taskQueueType == TaskQueueType.serialBackgroundThread
-                    ? serialBackgroundQueue
-                    : null,
+                ? serialBackgroundQueue
+                : null,
           );
         }
       });
@@ -1027,14 +1027,12 @@ if (wrapped == null) {
     final Method method,
   ) {
     final String resultType = _getResultType(method.returnType);
-    final String nullableType =
-        method.isAsynchronous
-            ? ''
-            : _nullabilityAnnotationFromType(method.returnType);
-    final String returnType =
-        method.isAsynchronous
-            ? 'void'
-            : _javaTypeForDartType(method.returnType);
+    final String nullableType = method.isAsynchronous
+        ? ''
+        : _nullabilityAnnotationFromType(method.returnType);
+    final String returnType = method.isAsynchronous
+        ? 'void'
+        : _javaTypeForDartType(method.returnType);
     final List<String> argSignature = <String>[];
     if (method.parameters.isNotEmpty) {
       final Iterable<String> argTypes = method.parameters.map(
@@ -1100,10 +1098,9 @@ if (wrapped == null) {
         indent.nest(2, () {
           indent.write('(message, reply) -> ');
           indent.addScoped('{', '});', () {
-            final String returnType =
-                method.returnType.isVoid
-                    ? 'Void'
-                    : _javaTypeForDartType(method.returnType);
+            final String returnType = method.returnType.isVoid
+                ? 'Void'
+                : _javaTypeForDartType(method.returnType);
             indent.writeln('ArrayList<Object> wrapped = new ArrayList<>();');
             final List<String> methodArgument = <String>[];
             if (method.parameters.isNotEmpty) {
@@ -1123,13 +1120,16 @@ if (wrapped == null) {
               });
             }
             if (method.isAsynchronous) {
-              final String resultValue =
-                  method.returnType.isVoid ? 'null' : 'result';
+              final String resultValue = method.returnType.isVoid
+                  ? 'null'
+                  : 'result';
               final String resultType = _getResultType(method.returnType);
-              final String resultParam =
-                  method.returnType.isVoid ? '' : '$returnType result';
-              final String addResultArg =
-                  method.returnType.isVoid ? 'null' : resultValue;
+              final String resultParam = method.returnType.isVoid
+                  ? ''
+                  : '$returnType result';
+              final String addResultArg = method.returnType.isVoid
+                  ? 'null'
+                  : resultValue;
               const String resultName = 'resultCallback';
               indent.format('''
 $resultType $resultName =

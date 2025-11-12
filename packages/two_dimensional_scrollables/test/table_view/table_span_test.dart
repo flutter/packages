@@ -925,8 +925,9 @@ void main() {
           }
           return TableSpan(
             extent: const FixedTableSpanExtent(100.0),
-            backgroundDecoration:
-                color == null ? null : TableSpanDecoration(color: color),
+            backgroundDecoration: color == null
+                ? null
+                : TableSpanDecoration(color: color),
           );
         },
       );
@@ -987,8 +988,9 @@ void main() {
           }
           return TableSpan(
             extent: const FixedTableSpanExtent(100.0),
-            backgroundDecoration:
-                color == null ? null : TableSpanDecoration(color: color),
+            backgroundDecoration: color == null
+                ? null
+                : TableSpanDecoration(color: color),
           );
         },
       );
@@ -1064,8 +1066,9 @@ void main() {
           }
           return TableSpan(
             extent: const FixedTableSpanExtent(100.0),
-            backgroundDecoration:
-                color == null ? null : TableSpanDecoration(color: color),
+            backgroundDecoration: color == null
+                ? null
+                : TableSpanDecoration(color: color),
           );
         },
         columnBuilder: (int index) {
@@ -1077,8 +1080,9 @@ void main() {
           }
           return TableSpan(
             extent: const FixedTableSpanExtent(100.0),
-            backgroundDecoration:
-                color == null ? null : TableSpanDecoration(color: color),
+            backgroundDecoration: color == null
+                ? null
+                : TableSpanDecoration(color: color),
           );
         },
       );
@@ -1628,8 +1632,8 @@ void main() {
               child: Text('M(0,0)'),
             );
           },
-          columnBuilder:
-              (_) => const TableSpan(extent: FixedTableSpanExtent(100.0)),
+          columnBuilder: (_) =>
+              const TableSpan(extent: FixedTableSpanExtent(100.0)),
           rowBuilder: (_) {
             return const TableSpan(
               extent: FixedTableSpanExtent(100.0),
@@ -1657,8 +1661,8 @@ void main() {
               child: Text('M(0,0)'),
             );
           },
-          rowBuilder:
-              (_) => const TableSpan(extent: FixedTableSpanExtent(100.0)),
+          rowBuilder: (_) =>
+              const TableSpan(extent: FixedTableSpanExtent(100.0)),
           columnBuilder: (_) {
             return const TableSpan(
               extent: FixedTableSpanExtent(100.0),

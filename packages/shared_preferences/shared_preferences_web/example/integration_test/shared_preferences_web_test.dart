@@ -171,15 +171,15 @@ void main() {
         const String key = 'flutter.String';
         await preferences.remove(key);
         final Map<String, Object> values =
-        // ignore: deprecated_member_use
-        await preferences.getAllWithPrefix('');
+            // ignore: deprecated_member_use
+            await preferences.getAllWithPrefix('');
         expect(values[key], isNull);
       });
 
       testWidgets('get all with prefix', (WidgetTester _) async {
         final Map<String, Object> values =
-        // ignore: deprecated_member_use
-        await preferences.getAllWithPrefix('prefix.');
+            // ignore: deprecated_member_use
+            await preferences.getAllWithPrefix('prefix.');
         expect(values['prefix.String'], allTestValues['prefix.String']);
         expect(values['prefix.Bool'], allTestValues['prefix.Bool']);
         expect(values['prefix.Int'], allTestValues['prefix.Int']);
@@ -189,8 +189,8 @@ void main() {
 
       testWidgets('getAllWithNoPrefix', (WidgetTester _) async {
         final Map<String, Object> values =
-        // ignore: deprecated_member_use
-        await preferences.getAllWithPrefix('');
+            // ignore: deprecated_member_use
+            await preferences.getAllWithPrefix('');
         expect(values['String'], allTestValues['String']);
         expect(values['Bool'], allTestValues['Bool']);
         expect(values['Int'], allTestValues['Int']);
@@ -210,8 +210,8 @@ void main() {
         // ignore: deprecated_member_use
         await preferences.clearWithPrefix('prefix.');
         Map<String, Object> values =
-        // ignore: deprecated_member_use
-        await preferences.getAllWithPrefix('prefix.');
+            // ignore: deprecated_member_use
+            await preferences.getAllWithPrefix('prefix.');
         expect(values['prefix.String'], null);
         expect(values['prefix.Bool'], null);
         expect(values['prefix.Int'], null);
@@ -233,8 +233,8 @@ void main() {
         // ignore: deprecated_member_use
         await preferences.clearWithPrefix('');
         final Map<String, Object> values =
-        // ignore: deprecated_member_use
-        await preferences.getAllWithPrefix('');
+            // ignore: deprecated_member_use
+            await preferences.getAllWithPrefix('');
         expect(values['String'], null);
         expect(values['Bool'], null);
         expect(values['Int'], null);

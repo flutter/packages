@@ -34,8 +34,9 @@ class MethodChannelQuickActions extends QuickActionsPlatform {
 
   @override
   Future<void> setShortcutItems(List<ShortcutItem> items) async {
-    final List<Map<String, String?>> itemsList =
-        items.map(_serializeItem).toList();
+    final List<Map<String, String?>> itemsList = items
+        .map(_serializeItem)
+        .toList();
     await channel.invokeMethod<void>('setShortcutItems', itemsList);
   }
 

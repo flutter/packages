@@ -472,8 +472,9 @@ abstract class NestorApi {
     final ParseResults results = parseSource(code);
     expect(results.errors.length, 0);
     expect(results.root.apis.length, 1);
-    final List<String> classNames =
-        results.root.classes.map((Class x) => x.name).toList();
+    final List<String> classNames = results.root.classes
+        .map((Class x) => x.name)
+        .toList();
     expect(classNames.length, 2);
     expect(classNames.contains('Nestor'), true);
     expect(classNames.contains('OnlyVisibleFromNesting'), true);

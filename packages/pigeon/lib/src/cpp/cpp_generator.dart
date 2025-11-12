@@ -465,10 +465,9 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
         _writeFunctionDeclaration(
           indent,
           'FromEncodableList',
-          returnType:
-              isOverflowClass
-                  ? 'flutter::EncodableValue'
-                  : classDefinition.name,
+          returnType: isOverflowClass
+              ? 'flutter::EncodableValue'
+              : classDefinition.name,
           parameters: <String>['const flutter::EncodableList& list'],
           isStatic: true,
         );
@@ -814,14 +813,13 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
     Iterable<NamedType> params,
     String docComment,
   ) {
-    final List<String> paramStrings =
-        params.map((NamedType param) {
-          final HostDatatype hostDatatype = getFieldHostDatatype(
-            param,
-            _baseCppTypeForBuiltinDartType,
-          );
-          return '${_hostApiArgumentType(hostDatatype)} ${_makeVariableName(param)}';
-        }).toList();
+    final List<String> paramStrings = params.map((NamedType param) {
+      final HostDatatype hostDatatype = getFieldHostDatatype(
+        param,
+        _baseCppTypeForBuiltinDartType,
+      );
+      return '${_hostApiArgumentType(hostDatatype)} ${_makeVariableName(param)}';
+    }).toList();
     indent.writeln('$_commentPrefix $docComment');
     _writeFunctionDeclaration(
       indent,
@@ -1270,8 +1268,10 @@ EncodableValue $_overflowClassName::FromEncodableList(
     Indent indent, {
     required String dartPackageName,
   }) {
-    final List<EnumeratedType> enumeratedTypes =
-        getEnumeratedTypes(root, excludeSealedClasses: true).toList();
+    final List<EnumeratedType> enumeratedTypes = getEnumeratedTypes(
+      root,
+      excludeSealedClasses: true,
+    ).toList();
     indent.newln();
     if (root.requiresOverflowClass) {
       _writeCodecOverflowUtilities(
@@ -1342,16 +1342,16 @@ EncodableValue $_overflowClassName::FromEncodableList(
             for (final EnumeratedType customType in enumeratedTypes) {
               final String encodeString =
                   customType.type == CustomTypes.customClass
-                      ? 'std::any_cast<${customType.name}>(*custom_value).ToEncodableList()'
-                      : 'static_cast<int>(std::any_cast<${customType.name}>(*custom_value))';
+                  ? 'std::any_cast<${customType.name}>(*custom_value).ToEncodableList()'
+                  : 'static_cast<int>(std::any_cast<${customType.name}>(*custom_value))';
               final String valueString =
                   customType.enumeration < maximumCodecFieldKey
-                      ? encodeString
-                      : 'wrap.ToEncodableList()';
+                  ? encodeString
+                  : 'wrap.ToEncodableList()';
               final int enumeration =
                   customType.enumeration < maximumCodecFieldKey
-                      ? customType.enumeration
-                      : maximumCodecFieldKey;
+                  ? customType.enumeration
+                  : maximumCodecFieldKey;
               indent.write(
                 'if (custom_value->type() == typeid(${customType.name})) ',
               );
@@ -1643,8 +1643,8 @@ EncodableValue $_overflowClassName::FromEncodableList(
                       );
                       final String unwrapEnum =
                           arg.type.isEnum && arg.type.isNullable
-                              ? ' ? &(*$argName) : nullptr'
-                              : '';
+                          ? ' ? &(*$argName) : nullptr'
+                          : '';
                       methodArgument.add('$argName$unwrapEnum');
                     });
                   }
@@ -1740,20 +1740,18 @@ return EncodableValue(EncodableList{
       );
     });
 
-    final List<String> paramStrings =
-        hostParams
-            .map(
-              (_HostNamedType param) =>
-                  '${_hostApiArgumentType(param.hostType)} ${param.name}',
-            )
-            .toList();
-    final List<String> initializerStrings =
-        hostParams
-            .map(
-              (_HostNamedType param) =>
-                  '${param.name}_(${_fieldValueExpression(param.hostType, param.name)})',
-            )
-            .toList();
+    final List<String> paramStrings = hostParams
+        .map(
+          (_HostNamedType param) =>
+              '${_hostApiArgumentType(param.hostType)} ${param.name}',
+        )
+        .toList();
+    final List<String> initializerStrings = hostParams
+        .map(
+          (_HostNamedType param) =>
+              '${param.name}_(${_fieldValueExpression(param.hostType, param.name)})',
+        )
+        .toList();
     _writeFunctionDefinition(
       indent,
       classDefinition.name,
@@ -1769,15 +1767,14 @@ return EncodableValue(EncodableList{
     Class classDefinition,
     Iterable<NamedType> fields,
   ) {
-    final List<String> initializerStrings =
-        fields.map((NamedType param) {
-          final String fieldName = _makeInstanceVariableName(param);
-          final HostDatatype hostType = getFieldHostDatatype(
-            param,
-            _shortBaseCppTypeForBuiltinDartType,
-          );
-          return '$fieldName(${_fieldValueExpression(hostType, 'other.$fieldName', sourceIsField: true)})';
-        }).toList();
+    final List<String> initializerStrings = fields.map((NamedType param) {
+      final String fieldName = _makeInstanceVariableName(param);
+      final HostDatatype hostType = getFieldHostDatatype(
+        param,
+        _shortBaseCppTypeForBuiltinDartType,
+      );
+      return '$fieldName(${_fieldValueExpression(hostType, 'other.$fieldName', sourceIsField: true)})';
+    }).toList();
     _writeFunctionDefinition(
       indent,
       classDefinition.name,
@@ -1812,10 +1809,9 @@ return EncodableValue(EncodableList{
           if (_isPointerField(hostDatatype)) {
             final String constructor =
                 'std::make_unique<${hostDatatype.datatype}>(*$otherIvar)';
-            valueExpression =
-                hostDatatype.isNullable
-                    ? '$otherIvar ? $constructor : nullptr'
-                    : constructor;
+            valueExpression = hostDatatype.isNullable
+                ? '$otherIvar ? $constructor : nullptr'
+                : constructor;
           } else {
             valueExpression = otherIvar;
           }
@@ -1842,10 +1838,9 @@ return EncodableValue(EncodableList{
     final String returnExpression;
     if (_isPointerField(hostDatatype)) {
       // Convert std::unique_ptr<T> to either T* or const T&.
-      returnExpression =
-          hostDatatype.isNullable
-              ? '$instanceVariableName.get()'
-              : '*$instanceVariableName';
+      returnExpression = hostDatatype.isNullable
+          ? '$instanceVariableName.get()'
+          : '*$instanceVariableName';
     } else if (hostDatatype.isNullable) {
       // Convert std::optional<T> to T*.
       returnExpression =
@@ -1940,12 +1935,14 @@ return EncodableValue(EncodableList{
       );
 
       const String extractedValue = 'std::move(output).TakeValue()';
-      final String wrapperType =
-          hostType.isBuiltin ? 'EncodableValue' : 'CustomEncodableValue';
+      final String wrapperType = hostType.isBuiltin
+          ? 'EncodableValue'
+          : 'CustomEncodableValue';
       if (returnType.isNullable) {
         // The value is a std::optional, so needs an extra layer of
         // handling.
-        nonErrorPath = '''
+        nonErrorPath =
+            '''
 ${prefix}auto output_optional = $extractedValue;
 ${prefix}if (output_optional) {
 $prefix\twrapped.push_back($wrapperType(std::move(output_optional).value()));
@@ -1998,8 +1995,8 @@ ${prefix}reply(EncodableValue(std::move(wrapped)));''';
     if (!hostType.isBuiltin) {
       final String nonNullValue =
           hostType.isNullable || (!hostType.isEnum && isNestedClass)
-              ? '*$variableName'
-              : variableName;
+          ? '*$variableName'
+          : variableName;
       encodableValue = 'CustomEncodableValue($nonNullValue)';
     } else if (dartType.baseName == 'Object') {
       final String operator = hostType.isNullable ? '*' : '';

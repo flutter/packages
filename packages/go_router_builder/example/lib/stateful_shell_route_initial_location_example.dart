@@ -163,7 +163,9 @@ class NotificationsPageView extends StatelessWidget {
               Tab(
                 child: Text('Latest', style: TextStyle(color: Colors.black87)),
               ),
-              Tab(child: Text('Old', style: TextStyle(color: Colors.black87))),
+              Tab(
+                child: Text('Old', style: TextStyle(color: Colors.black87)),
+              ),
               Tab(
                 child: Text('Archive', style: TextStyle(color: Colors.black87)),
               ),

@@ -137,10 +137,9 @@ final class PercentileMetricComputation extends BenchmarkMetricComputation {
       ];
 
   /// The percentile values as doubles computed for each benchmark metric.
-  static List<double> percentilesAsDoubles =
-      PercentileMetricComputation.values
-          .map((PercentileMetricComputation value) => value.percentile)
-          .toList();
+  static List<double> percentilesAsDoubles = PercentileMetricComputation.values
+      .map((PercentileMetricComputation value) => value.percentile)
+      .toList();
 }
 
 /// The list of expected benchmark metrics for the current compilation mode, as
