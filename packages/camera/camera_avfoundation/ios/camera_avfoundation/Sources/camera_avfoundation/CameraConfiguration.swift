@@ -43,7 +43,7 @@ class CameraConfiguration {
   var assetWriterFactory: AssetWriterFactory
   var inputPixelBufferAdaptorFactory: InputPixelBufferAdaptorFactory
   var videoDimensionsConverter: VideoDimensionsConverter
-  var deviceOrientationProvider: FLTDeviceOrientationProviding
+  var deviceOrientationProvider: DeviceOrientationProvider
   let initialCameraName: String
   var orientation: UIDeviceOrientation
 
@@ -67,7 +67,7 @@ class CameraConfiguration {
     self.captureDeviceInputFactory = captureDeviceInputFactory
     self.initialCameraName = initialCameraName
     self.orientation = UIDevice.current.orientation
-    self.deviceOrientationProvider = FLTDefaultDeviceOrientationProvider()
+    self.deviceOrientationProvider = DefaultDeviceOrientationProvider()
 
     self.videoDimensionsConverter = { format in
       return CMVideoFormatDescriptionGetDimensions(format.formatDescription)

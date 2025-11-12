@@ -34,6 +34,9 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
   /// Packages with entries in CODEOWNERS.
   final List<String> _ownedPackages = <String>[];
 
+  /// Packages with entries in labeler.yml.
+  final List<String> _autoLabeledPackages = <String>[];
+
   @override
   final String name = 'repo-package-info-check';
 
@@ -42,7 +45,7 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
 
   @override
   final String description =
-      'Checks that all packages are listed correctly in the repo README.';
+      'Checks that all packages are listed correctly in repo metadata.';
 
   @override
   final bool hasLongOutput = false;
@@ -98,6 +101,23 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
       }
       _ownedPackages.add(name);
     }
+
+    // Extract all of the lebeler.yml package entries.
+    // Validate the match rules rather than the label itself, as the labels
+    // don't always correspond 1:1 to packages and package names.
+    final RegExp packageGlobPattern =
+        RegExp(r'^\s*-\s*(?:third_party/)?packages/([^*]*)/');
+    for (final String line in _repoRoot
+        .childDirectory('.github')
+        .childFile('labeler.yml')
+        .readAsLinesSync()) {
+      final RegExpMatch? match = packageGlobPattern.firstMatch(line);
+      if (match == null) {
+        continue;
+      }
+      final String name = match.group(1)!;
+      _autoLabeledPackages.add(name);
+    }
   }
 
   @override
@@ -115,92 +135,110 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
       errors.add('Missing CODEOWNERS entry');
     }
 
+    // All packages should have an auto-applied label. For plugins, only the
+    // group needs a rule, so check the app-facing package.
+    if (!(package.isFederated && !package.isAppFacing) &&
+        !_autoLabeledPackages.contains(packageName)) {
+      printError('${indentation}Missing a rule in .github/labeler.yml.');
+      errors.add('Missing auto-labeler entry');
+    }
+
     // The content of ci_config.yaml must be valid if there is one.
     if (package.ciConfigFile.existsSync()) {
       errors.addAll(
           _validateCiConfig(package.ciConfigFile, mainPackage: package));
     }
 
-    // Any published package should be in the README table.
-    // For federated plugins, only the app-facing package is listed.
-    if (package.isPublishable() &&
-        (!package.isFederated || package.isAppFacing)) {
-      final List<String>? cells = _readmeTableEntries[packageName];
-
-      if (cells == null) {
-        printError('${indentation}Missing repo root README.md table entry');
-        errors.add('Missing repo root README.md table entry');
-      } else {
-        // Extract the two parts of a "[label](link)" .md link.
-        final RegExp mdLinkPattern = RegExp(r'^\[(.*)\]\((.*)\)$');
-        // Possible link targets.
-        for (final String cell in cells) {
-          final RegExpMatch? match = mdLinkPattern.firstMatch(cell);
-          if (match == null) {
-            printError(
-                '${indentation}Invalid repo root README.md table entry: "$cell"');
-            errors.add('Invalid root README.md table entry');
-          } else {
-            final String encodedIssueTag =
-                Uri.encodeComponent(_issueTagForPackage(packageName));
-            final String encodedPRTag =
-                Uri.encodeComponent(_prTagForPackage(packageName));
-            final String anchor = match.group(1)!;
-            final String target = match.group(2)!;
-
-            // The anchor should be one of:
-            // - The package name (optionally with any underscores escaped)
-            // - An image with a name-based link
-            // - An image with a tag-based link
-            final RegExp packageLink =
-                RegExp(r'^!\[.*\]\(https://img.shields.io/pub/.*/'
-                    '$packageName'
-                    r'(?:\.svg)?\)$');
-            final RegExp issueTagLink = RegExp(
-                r'^!\[.*\]\(https://img.shields.io/github/issues/flutter/flutter/'
-                '$encodedIssueTag'
-                r'\?label=\)$');
-            final RegExp prTagLink = RegExp(
-                r'^!\[.*\]\(https://img.shields.io/github/issues-pr/flutter/packages/'
-                '$encodedPRTag'
-                r'\?label=\)$');
-            if (!(anchor == packageName ||
-                anchor == packageName.replaceAll('_', r'\_') ||
-                packageLink.hasMatch(anchor) ||
-                issueTagLink.hasMatch(anchor) ||
-                prTagLink.hasMatch(anchor))) {
-              printError(
-                  '${indentation}Incorrect anchor in root README.md table: "$anchor"');
-              errors.add('Incorrect anchor in root README.md table');
-            }
-
-            // The link should be one of:
-            // - a relative link to the in-repo package
-            // - a pub.dev link to the package
-            // - a github label link to the package's label
-            final RegExp pubDevLink =
-                RegExp('^https://pub.dev/packages/$packageName(?:/score)?\$');
-            final RegExp gitHubIssueLink = RegExp(
-                '^https://github.com/flutter/flutter/labels/$encodedIssueTag\$');
-            final RegExp gitHubPRLink = RegExp(
-                '^https://github.com/flutter/packages/labels/$encodedPRTag\$');
-            if (!(target == './packages/$packageName/' ||
-                target == './third_party/packages/$packageName/' ||
-                pubDevLink.hasMatch(target) ||
-                gitHubIssueLink.hasMatch(target) ||
-                gitHubPRLink.hasMatch(target))) {
-              printError(
-                  '${indentation}Incorrect link in root README.md table: "$target"');
-              errors.add('Incorrect link in root README.md table');
-            }
-          }
-        }
-      }
+    // All published packages should have a README.md entry.
+    if (package.isPublishable()) {
+      errors.addAll(_validateRootReadme(package));
     }
 
     return errors.isEmpty
         ? PackageResult.success()
         : PackageResult.fail(errors);
+  }
+
+  List<String> _validateRootReadme(RepositoryPackage package) {
+    final List<String> errors = <String>[];
+
+    // For federated plugins, only the app-facing package is listed.
+    if (package.isFederated && !package.isAppFacing) {
+      return errors;
+    }
+
+    final String packageName = package.directory.basename;
+    final List<String>? cells = _readmeTableEntries[packageName];
+    if (cells == null) {
+      printError('${indentation}Missing repo root README.md table entry');
+      errors.add('Missing repo root README.md table entry');
+    } else {
+      // Extract the two parts of a "[label](link)" .md link.
+      final RegExp mdLinkPattern = RegExp(r'^\[(.*)\]\((.*)\)$');
+      // Possible link targets.
+      for (final String cell in cells) {
+        final RegExpMatch? match = mdLinkPattern.firstMatch(cell);
+        if (match == null) {
+          printError(
+              '${indentation}Invalid repo root README.md table entry: "$cell"');
+          errors.add('Invalid root README.md table entry');
+        } else {
+          final String encodedIssueTag =
+              Uri.encodeComponent(_issueTagForPackage(packageName));
+          final String encodedPRTag =
+              Uri.encodeComponent(_prTagForPackage(packageName));
+          final String anchor = match.group(1)!;
+          final String target = match.group(2)!;
+
+          // The anchor should be one of:
+          // - The package name (optionally with any underscores escaped)
+          // - An image with a name-based link
+          // - An image with a tag-based link
+          final RegExp packageLink =
+              RegExp(r'^!\[.*\]\(https://img.shields.io/pub/.*/'
+                  '$packageName'
+                  r'(?:\.svg)?\)$');
+          final RegExp issueTagLink = RegExp(
+              r'^!\[.*\]\(https://img.shields.io/github/issues/flutter/flutter/'
+              '$encodedIssueTag'
+              r'\?label=\)$');
+          final RegExp prTagLink = RegExp(
+              r'^!\[.*\]\(https://img.shields.io/github/issues-pr/flutter/packages/'
+              '$encodedPRTag'
+              r'\?label=\)$');
+          if (!(anchor == packageName ||
+              anchor == packageName.replaceAll('_', r'\_') ||
+              packageLink.hasMatch(anchor) ||
+              issueTagLink.hasMatch(anchor) ||
+              prTagLink.hasMatch(anchor))) {
+            printError(
+                '${indentation}Incorrect anchor in root README.md table: "$anchor"');
+            errors.add('Incorrect anchor in root README.md table');
+          }
+
+          // The link should be one of:
+          // - a relative link to the in-repo package
+          // - a pub.dev link to the package
+          // - a github label link to the package's label
+          final RegExp pubDevLink =
+              RegExp('^https://pub.dev/packages/$packageName(?:/score)?\$');
+          final RegExp gitHubIssueLink = RegExp(
+              '^https://github.com/flutter/flutter/labels/$encodedIssueTag\$');
+          final RegExp gitHubPRLink = RegExp(
+              '^https://github.com/flutter/packages/labels/$encodedPRTag\$');
+          if (!(target == './packages/$packageName/' ||
+              target == './third_party/packages/$packageName/' ||
+              pubDevLink.hasMatch(target) ||
+              gitHubIssueLink.hasMatch(target) ||
+              gitHubPRLink.hasMatch(target))) {
+            printError(
+                '${indentation}Incorrect link in root README.md table: "$target"');
+            errors.add('Incorrect link in root README.md table');
+          }
+        }
+      }
+    }
+    return errors;
   }
 
   List<String> _validateCiConfig(File ciConfig,

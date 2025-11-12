@@ -73,8 +73,8 @@ void main() {
     });
 
     test('getApplicationSupportPath', () async {
-      final String? path =
-          await methodChannelPathProvider.getApplicationSupportPath();
+      final String? path = await methodChannelPathProvider
+          .getApplicationSupportPath();
       expect(log, <Matcher>[
         isMethodCall('getApplicationSupportDirectory', arguments: null),
       ]);
@@ -115,8 +115,8 @@ void main() {
     });
 
     test('getApplicationDocumentsPath', () async {
-      final String? path =
-          await methodChannelPathProvider.getApplicationDocumentsPath();
+      final String? path = await methodChannelPathProvider
+          .getApplicationDocumentsPath();
       expect(log, <Matcher>[
         isMethodCall('getApplicationDocumentsDirectory', arguments: null),
       ]);
@@ -124,8 +124,8 @@ void main() {
     });
 
     test('getApplicationCachePath succeeds', () async {
-      final String? result =
-          await methodChannelPathProvider.getApplicationCachePath();
+      final String? result = await methodChannelPathProvider
+          .getApplicationCachePath();
       expect(log, <Matcher>[
         isMethodCall('getApplicationCacheDirectory', arguments: null),
       ]);
@@ -133,8 +133,8 @@ void main() {
     });
 
     test('getExternalCachePaths android succeeds', () async {
-      final List<String>? result =
-          await methodChannelPathProvider.getExternalCachePaths();
+      final List<String>? result = await methodChannelPathProvider
+          .getExternalCachePaths();
       expect(log, <Matcher>[
         isMethodCall('getExternalCacheDirectories', arguments: null),
       ]);

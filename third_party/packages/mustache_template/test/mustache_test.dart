@@ -33,22 +33,20 @@ void main() {
   });
   group('Section', () {
     test('Map', () {
-      final String output = parse(
-        '{{#section}}_{{var}}_{{/section}}',
-      ).renderString(<String, Map<String, String>>{
-        'section': <String, String>{'var': 'bob'},
-      });
+      final String output = parse('{{#section}}_{{var}}_{{/section}}')
+          .renderString(<String, Map<String, String>>{
+            'section': <String, String>{'var': 'bob'},
+          });
       expect(output, equals('_bob_'));
     });
     test('List', () {
-      final String output = parse(
-        '{{#section}}_{{var}}_{{/section}}',
-      ).renderString(<String, List<Map<String, String>>>{
-        'section': <Map<String, String>>[
-          <String, String>{'var': 'bob'},
-          <String, String>{'var': 'jim'},
-        ],
-      });
+      final String output = parse('{{#section}}_{{var}}_{{/section}}')
+          .renderString(<String, List<Map<String, String>>>{
+            'section': <Map<String, String>>[
+              <String, String>{'var': 'bob'},
+              <String, String>{'var': 'jim'},
+            ],
+          });
       expect(output, equals('_bob__jim_'));
     });
     test('Empty List', () {
@@ -90,17 +88,18 @@ void main() {
     });
 
     test('Nested', () {
-      final String output = parse(
-        '{{#section}}.{{var}}.{{#nested}}_{{nestedvar}}_{{/nested}}.{{/section}}',
-      ).renderString(<String, Map<String, Object>>{
-        'section': <String, Object>{
-          'var': 'bob',
-          'nested': <Map<String, String>>[
-            <String, String>{'nestedvar': 'jim'},
-            <String, String>{'nestedvar': 'sally'},
-          ],
-        },
-      });
+      final String output =
+          parse(
+            '{{#section}}.{{var}}.{{#nested}}_{{nestedvar}}_{{/nested}}.{{/section}}',
+          ).renderString(<String, Map<String, Object>>{
+            'section': <String, Object>{
+              'var': 'bob',
+              'nested': <Map<String, String>>[
+                <String, String>{'nestedvar': 'jim'},
+                <String, String>{'nestedvar': 'sally'},
+              ],
+            },
+          });
       expect(output, equals('.bob._jim__sally_.'));
     });
 
@@ -281,22 +280,20 @@ void main() {
 
   group('Inverse Section', () {
     test('Map', () {
-      final String output = parse(
-        '{{^section}}_{{var}}_{{/section}}',
-      ).renderString(<String, Map<String, String>>{
-        'section': <String, String>{'var': 'bob'},
-      });
+      final String output = parse('{{^section}}_{{var}}_{{/section}}')
+          .renderString(<String, Map<String, String>>{
+            'section': <String, String>{'var': 'bob'},
+          });
       expect(output, equals(''));
     });
     test('List', () {
-      final String output = parse(
-        '{{^section}}_{{var}}_{{/section}}',
-      ).renderString(<String, List<Map<String, String>>>{
-        'section': <Map<String, String>>[
-          <String, String>{'var': 'bob'},
-          <String, String>{'var': 'jim'},
-        ],
-      });
+      final String output = parse('{{^section}}_{{var}}_{{/section}}')
+          .renderString(<String, List<Map<String, String>>>{
+            'section': <Map<String, String>>[
+              <String, String>{'var': 'bob'},
+              <String, String>{'var': 'jim'},
+            ],
+          });
       expect(output, equals(''));
     });
     test('Empty List', () {
@@ -464,32 +461,35 @@ void main() {
 
   group('Lenient', () {
     test('Odd section name', () {
-      final String output = parse(
-        r'{{#section$%$^%}}_{{var}}_{{/section$%$^%}}',
-        lenient: true,
-      ).renderString(<String, Map<String, String>>{
-        r'section$%$^%': <String, String>{'var': 'bob'},
-      });
+      final String output =
+          parse(
+            r'{{#section$%$^%}}_{{var}}_{{/section$%$^%}}',
+            lenient: true,
+          ).renderString(<String, Map<String, String>>{
+            r'section$%$^%': <String, String>{'var': 'bob'},
+          });
       expect(output, equals('_bob_'));
     });
 
     test('Odd variable name', () {
-      final String output = parse(
-        r'{{#section}}_{{var$%$^%}}_{{/section}}',
-        lenient: true,
-      ).renderString(<String, Map<String, String>>{
-        'section': <String, String>{r'var$%$^%': 'bob'},
-      });
+      final String output =
+          parse(
+            r'{{#section}}_{{var$%$^%}}_{{/section}}',
+            lenient: true,
+          ).renderString(<String, Map<String, String>>{
+            'section': <String, String>{r'var$%$^%': 'bob'},
+          });
       expect(output, equals('_bob_'));
     });
 
     test('Null variable', () {
-      final String output = parse(
-        r'{{#section}}_{{var}}_{{/section}}',
-        lenient: true,
-      ).renderString(<String, Map<String, void>>{
-        'section': <String, void>{'var': null},
-      });
+      final String output =
+          parse(
+            r'{{#section}}_{{var}}_{{/section}}',
+            lenient: true,
+          ).renderString(<String, Map<String, void>>{
+            'section': <String, void>{'var': null},
+          });
       expect(output, equals('__'));
     });
 
@@ -717,8 +717,8 @@ void main() {
       //function() { return "|planet| => {{planet}}" }
       final Map<String, Object> values = <String, Object>{
         'planet': 'world',
-        'lambda':
-            (LambdaContext ctx) => ctx.renderSource('|planet| => {{planet}}'),
+        'lambda': (LambdaContext ctx) =>
+            ctx.renderSource('|planet| => {{planet}}'),
       };
 
       const String output = 'Hello, (|planet| => world)!';

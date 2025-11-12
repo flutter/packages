@@ -55,8 +55,8 @@ void main() {
         });
 
     localAuthentication = DefaultLocalAuthPlatform();
-    final bool supportsBiometrics =
-        await localAuthentication.deviceSupportsBiometrics();
+    final bool supportsBiometrics = await localAuthentication
+        .deviceSupportsBiometrics();
     expect(supportsBiometrics, true);
     expect(log, <Matcher>[
       isMethodCall('getAvailableBiometrics', arguments: null),

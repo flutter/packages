@@ -11,8 +11,6 @@
 
 static void *timeRangeContext = &timeRangeContext;
 static void *statusContext = &statusContext;
-static void *presentationSizeContext = &presentationSizeContext;
-static void *durationContext = &durationContext;
 static void *playbackLikelyToKeepUpContext = &playbackLikelyToKeepUpContext;
 static void *rateContext = &rateContext;
 
@@ -64,8 +62,6 @@ static NSDictionary<NSString *, NSValue *> *FVPGetPlayerItemObservations(void) {
   return @{
     @"loadedTimeRanges" : [NSValue valueWithPointer:timeRangeContext],
     @"status" : [NSValue valueWithPointer:statusContext],
-    @"presentationSize" : [NSValue valueWithPointer:presentationSizeContext],
-    @"duration" : [NSValue valueWithPointer:durationContext],
     @"playbackLikelyToKeepUp" : [NSValue valueWithPointer:playbackLikelyToKeepUpContext],
   };
 }
@@ -264,14 +260,6 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   } else if (context == statusContext) {
     AVPlayerItem *item = (AVPlayerItem *)object;
     [self reportStatusForPlayerItem:item];
-  } else if (context == presentationSizeContext || context == durationContext) {
-    AVPlayerItem *item = (AVPlayerItem *)object;
-    if (item.status == AVPlayerItemStatusReadyToPlay) {
-      // Due to an apparent bug, when the player item is ready, it still may not have determined
-      // its presentation size or duration. When these properties are finally set, re-check if
-      // all required properties and instantiate the event sink if it is not already set up.
-      [self reportInitializedIfReadyToPlay];
-    }
   } else if (context == playbackLikelyToKeepUpContext) {
     [self updatePlayingState];
     if ([[_player currentItem] isPlaybackLikelyToKeepUp]) {
@@ -288,6 +276,8 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (void)reportStatusForPlayerItem:(AVPlayerItem *)item {
+  NSAssert(self.eventListener,
+           @"reportStatusForPlayerItem was called when the event listener was not set.");
   switch (item.status) {
     case AVPlayerItemStatusFailed:
       [self sendFailedToLoadVideoEvent];
@@ -295,8 +285,11 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
     case AVPlayerItemStatusUnknown:
       break;
     case AVPlayerItemStatusReadyToPlay:
-      [item addOutput:_videoOutput];
-      [self reportInitializedIfReadyToPlay];
+      if (!_isInitialized) {
+        [item addOutput:_videoOutput];
+        [self reportInitialized];
+        [self updatePlayingState];
+      }
       break;
   }
 }
@@ -369,53 +362,15 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   [self.eventListener videoPlayerDidErrorWithMessage:message];
 }
 
-- (void)reportInitializedIfReadyToPlay {
-  if (!_isInitialized) {
-    AVPlayerItem *currentItem = self.player.currentItem;
-    CGSize size = currentItem.presentationSize;
-    CGFloat width = size.width;
-    CGFloat height = size.height;
+- (void)reportInitialized {
+  AVPlayerItem *currentItem = self.player.currentItem;
+  NSAssert(currentItem.status == AVPlayerItemStatusReadyToPlay,
+           @"reportInitializedIfReadyToPlay was called when the item wasn't ready to play.");
+  NSAssert(!_isInitialized, @"reportInitializedIfReadyToPlay should only be called once.");
 
-    // Wait until tracks are loaded to check duration or if there are any videos.
-    AVAsset *asset = currentItem.asset;
-    if ([asset statusOfValueForKey:@"tracks" error:nil] != AVKeyValueStatusLoaded) {
-      void (^trackCompletionHandler)(void) = ^{
-        if ([asset statusOfValueForKey:@"tracks" error:nil] != AVKeyValueStatusLoaded) {
-          // Cancelled, or something failed.
-          return;
-        }
-        // This completion block will run on an AVFoundation background queue.
-        // Hop back to the main thread to set up event sink.
-        [self performSelector:_cmd onThread:NSThread.mainThread withObject:self waitUntilDone:NO];
-      };
-      [asset loadValuesAsynchronouslyForKeys:@[ @"tracks" ]
-                           completionHandler:trackCompletionHandler];
-      return;
-    }
-
-    BOOL hasVideoTracks = [asset tracksWithMediaType:AVMediaTypeVideo].count != 0;
-    // Audio-only HLS files have no size, so `currentItem.tracks.count` must be used to check for
-    // track presence, as AVAsset does not always provide track information in HLS streams.
-    BOOL hasNoTracks = currentItem.tracks.count == 0 && asset.tracks.count == 0;
-
-    // The player has not yet initialized when it has no size, unless it is an audio-only track.
-    // HLS m3u8 video files never load any tracks, and are also not yet initialized until they have
-    // a size.
-    if ((hasVideoTracks || hasNoTracks) && height == CGSizeZero.height &&
-        width == CGSizeZero.width) {
-      return;
-    }
-    // The player may be initialized but still needs to determine the duration.
-    int64_t duration = [self duration];
-    if (duration == 0) {
-      return;
-    }
-
-    _isInitialized = YES;
-    [self updatePlayingState];
-
-    [self.eventListener videoPlayerDidInitializeWithDuration:duration size:size];
-  }
+  _isInitialized = YES;
+  [self.eventListener videoPlayerDidInitializeWithDuration:self.duration
+                                                      size:currentItem.presentationSize];
 }
 
 #pragma mark - FVPVideoPlayerInstanceApi

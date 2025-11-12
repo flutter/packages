@@ -226,7 +226,9 @@ Future<void> pumpAdWidget(
   CallbackTracker tracker,
 ) async {
   await tester.pumpWidget(
-    MaterialApp(home: Scaffold(body: Center(child: adUnit))),
+    MaterialApp(
+      home: Scaffold(body: Center(child: adUnit)),
+    ),
   );
 
   final Stopwatch timer = Stopwatch()..start();
