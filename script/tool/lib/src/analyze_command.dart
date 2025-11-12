@@ -262,12 +262,12 @@ class AnalyzeCommand extends PackageLoopingCommand {
 
     // Analysis runs over the package and all subpackages (unless only lib/ is
     // being analyzed), so all of them need `flutter pub get` run before
-    // analyzing. `example` packages can be skipped since 'flutter packages get'
+    // analyzing. `example` packages can be skipped since 'flutter pub get'
     // automatically runs `pub get` in examples as part of handling the parent
     // directory.
     final List<RepositoryPackage> packagesToGet = <RepositoryPackage>[
       package,
-      if (!libOnly) ...await getSubpackages(package).toList(),
+      if (!libOnly) ...package.getSubpackages(),
     ];
     for (final RepositoryPackage packageToGet in packagesToGet) {
       if (packageToGet.directory.basename != 'example' ||

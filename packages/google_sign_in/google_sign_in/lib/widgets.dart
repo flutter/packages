@@ -79,13 +79,10 @@ class GoogleUserCircleAvatar extends StatelessWidget {
       identity.email,
       '-',
     ];
-    final String placeholderChar =
-        placeholderCharSources
-            .firstWhere(
-              (String? str) => str != null && str.trimLeft().isNotEmpty,
-            )!
-            .trimLeft()[0]
-            .toUpperCase();
+    final String placeholderChar = placeholderCharSources
+        .firstWhere((String? str) => str != null && str.trimLeft().isNotEmpty)!
+        .trimLeft()[0]
+        .toUpperCase();
     final Widget placeholder = Center(
       child: Text(placeholderChar, textAlign: TextAlign.center),
     );

@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 import 'dart:async';
 
+import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
 
 import 'src/messages.g.dart';
@@ -43,7 +44,11 @@ SourceCamera _convertCamera(CameraDevice camera) {
 
 /// An implementation of [ImagePickerPlatform] for iOS.
 class ImagePickerIOS extends ImagePickerPlatform {
-  final ImagePickerApi _hostApi = ImagePickerApi();
+  /// Creates a new plugin implementation instance.
+  ImagePickerIOS({@visibleForTesting ImagePickerApi? api})
+    : _hostApi = api ?? ImagePickerApi();
+
+  final ImagePickerApi _hostApi;
 
   /// Registers this class as the default platform implementation.
   static void registerWith() {

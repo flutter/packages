@@ -91,10 +91,9 @@ void main() {
       expect(json, <String, Object>{
         'testObjectsToAdd': serializeMapsObjectSet(updates.objectsToAdd),
         'testObjectsToChange': serializeMapsObjectSet(updates.objectsToChange),
-        'testObjectIdsToRemove':
-            updates.objectIdsToRemove
-                .map<String>((MapsObjectId<TestMapsObject> m) => m.value)
-                .toList(),
+        'testObjectIdsToRemove': updates.objectIdsToRemove
+            .map<String>((MapsObjectId<TestMapsObject> m) => m.value)
+            .toList(),
       });
     });
 
