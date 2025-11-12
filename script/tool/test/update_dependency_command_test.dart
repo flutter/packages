@@ -994,7 +994,7 @@ plugins {
 
         expect(
             updatedGradleSettingsContents,
-            contains(r'id "com.android.application" version '
+            contains(r'    id "com.android.application" version '
                 '"$newAgpVersion" apply false'));
       });
 
@@ -1037,7 +1037,7 @@ plugins {
 
         expect(
             updatedGradleSettingsContents,
-            contains(r'id "com.android.application" version '
+            contains(r'    id "com.android.application" version '
                 '"$newAgpVersion" apply false'));
       });
     });

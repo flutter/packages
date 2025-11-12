@@ -334,7 +334,7 @@ A version with a valid format (maximum 2-3 numbers separated by 1-2 periods) mus
             r'^\s*id\s+"com\.android\.application"\s+version\s+"(\d{1,2}\.\d{1,2}(?:\.\d)?)"\s+apply\s+false\s*$',
             multiLine: true);
         newDependencyVersionEntry =
-            'id "com.android.application" version "$_targetVersion" apply false';
+            '    id "com.android.application" version "$_targetVersion" apply false';
       } else {
         printError(
             'Target Android dependency $_targetAndroidDependency is unrecognized.');
