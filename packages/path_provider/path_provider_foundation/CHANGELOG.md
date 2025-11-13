@@ -1,3 +1,8 @@
+## 2.5.0
+
+* Replaces Flutter-plugin-based implementation with direct FFI calls to
+  Foundation.
+
 ## 2.4.3
 
 * Updates minimum supported version to iOS 13 and macOS 10.15.
