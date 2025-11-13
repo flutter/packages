@@ -87,8 +87,8 @@ class PlatformFileChooserOptions {
   static PlatformFileChooserOptions decode(Object result) {
     result as List<Object?>;
     return PlatformFileChooserOptions(
-      allowedFileTypes:
-          (result[0] as List<Object?>?)?.cast<PlatformTypeGroup>(),
+      allowedFileTypes: (result[0] as List<Object?>?)
+          ?.cast<PlatformTypeGroup>(),
       currentFolderPath: result[1] as String?,
       currentName: result[2] as String?,
       acceptButtonLabel: result[3] as String?,
@@ -144,8 +144,9 @@ class FileSelectorApi {
     BinaryMessenger? binaryMessenger,
     String messageChannelSuffix = '',
   }) : pigeonVar_binaryMessenger = binaryMessenger,
-       pigeonVar_messageChannelSuffix =
-           messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+           ? '.$messageChannelSuffix'
+           : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();

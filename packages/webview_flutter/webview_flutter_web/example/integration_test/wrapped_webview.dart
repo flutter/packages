@@ -12,10 +12,9 @@ import 'package:webview_flutter_web_example/legacy/web_view.dart';
 Widget wrappedWebView(WebWebViewController controller) {
   return _wrapped(
     Builder(
-      builder:
-          (BuildContext ctx) => PlatformWebViewWidget(
-            PlatformWebViewWidgetCreationParams(controller: controller),
-          ).build(ctx),
+      builder: (BuildContext ctx) => PlatformWebViewWidget(
+        PlatformWebViewWidgetCreationParams(controller: controller),
+      ).build(ctx),
     ),
   );
 }

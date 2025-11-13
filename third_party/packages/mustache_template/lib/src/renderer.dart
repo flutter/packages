@@ -131,10 +131,9 @@ class Renderer extends Visitor {
       }
     } else {
       final String valueString = (value == null) ? '' : value.toString();
-      final String output =
-          !node.escape || !htmlEscapeValues
-              ? valueString
-              : _htmlEscape(valueString);
+      final String output = !node.escape || !htmlEscapeValues
+          ? valueString
+          : _htmlEscape(valueString);
       write(output);
     }
   }
@@ -227,10 +226,9 @@ class Renderer extends Visitor {
   @override
   void visitPartial(PartialNode node) {
     final String partialName = node.name;
-    final Template? template =
-        partialResolver == null
-            ? null
-            : (partialResolver!(partialName) as Template?);
+    final Template? template = partialResolver == null
+        ? null
+        : (partialResolver!(partialName) as Template?);
     if (template != null) {
       final Renderer renderer = Renderer.partial(this, template, node.indent);
       final List<Node> nodes = getTemplateNodes(template);
