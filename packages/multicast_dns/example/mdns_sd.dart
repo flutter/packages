@@ -41,8 +41,8 @@ For example:
             .lookup<TxtResourceRecord>(ResourceRecordQuery.text(ptr.domainName))
             .forEach(print);
       }
-      await for (final IPAddressResourceRecord ip in client
-          .lookup<IPAddressResourceRecord>(
+      await for (final IPAddressResourceRecord ip
+          in client.lookup<IPAddressResourceRecord>(
             ResourceRecordQuery.addressIPv4(srv.target),
           )) {
         if (verbose) {
@@ -53,8 +53,8 @@ For example:
           '${srv.target}:${srv.port} with ${ip.address}.',
         );
       }
-      await for (final IPAddressResourceRecord ip in client
-          .lookup<IPAddressResourceRecord>(
+      await for (final IPAddressResourceRecord ip
+          in client.lookup<IPAddressResourceRecord>(
             ResourceRecordQuery.addressIPv6(srv.target),
           )) {
         if (verbose) {

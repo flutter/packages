@@ -87,8 +87,8 @@ void main() {
             delegate: TreeRowBuilderDelegate(
               rowCount: 0,
               nodeBuilder: (_, __) => const SizedBox(),
-              rowBuilder:
-                  (_) => const TreeRow(extent: FixedTreeRowExtent(40.0)),
+              rowBuilder: (_) =>
+                  const TreeRow(extent: FixedTreeRowExtent(40.0)),
             ),
             activeAnimations: const <UniqueKey, TreeViewNodesAnimation>{},
             rowDepths: const <int, int>{},
@@ -114,8 +114,8 @@ void main() {
             delegate: TreeRowBuilderDelegate(
               rowCount: 0,
               nodeBuilder: (_, __) => const SizedBox(),
-              rowBuilder:
-                  (_) => const TreeRow(extent: FixedTreeRowExtent(40.0)),
+              rowBuilder: (_) =>
+                  const TreeRow(extent: FixedTreeRowExtent(40.0)),
             ),
             activeAnimations: const <UniqueKey, TreeViewNodesAnimation>{},
             rowDepths: const <int, int>{},
@@ -721,14 +721,12 @@ void main() {
           tree: treeNodes,
           treeRowBuilder: (TreeViewNode<String> node) {
             return row.copyWith(
-              backgroundDecoration:
-                  node.depth! == 0
-                      ? rootBackgroundDecoration
-                      : backgroundDecoration,
-              foregroundDecoration:
-                  node.depth! == 0
-                      ? rootForegroundDecoration
-                      : foregroundDecoration,
+              backgroundDecoration: node.depth! == 0
+                  ? rootBackgroundDecoration
+                  : backgroundDecoration,
+              foregroundDecoration: node.depth! == 0
+                  ? rootForegroundDecoration
+                  : foregroundDecoration,
             );
           },
         );

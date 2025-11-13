@@ -5,7 +5,7 @@ issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+
 version: 26.1.0 # This must match the version in lib/src/generator_tools.dart
 
 environment:
-  sdk: ^3.7.0
+  sdk: ^3.8.0
 
 dependencies:
   analyzer: ">=6.0.0 <9.0.0"

@@ -20,9 +20,9 @@ final html.File textFile = html.File(
   'hello.txt',
 );
 final String textFileUrl =
-// TODO(kevmoo): drop ignore when pkg:web constraint excludes v0.3
-// ignore: unnecessary_cast
-html.URL.createObjectURL(textFile as JSObject);
+    // TODO(kevmoo): drop ignore when pkg:web constraint excludes v0.3
+    // ignore: unnecessary_cast
+    html.URL.createObjectURL(textFile as JSObject);
 
 void main() {
   group('Create with an objectUrl', () {
@@ -88,8 +88,9 @@ void main() {
 
     test('Stores data as a Blob', () async {
       // Read the blob from its path 'natively'
-      final html.Response response =
-          await html.window.fetch(file.path.toJS).toDart;
+      final html.Response response = await html.window
+          .fetch(file.path.toJS)
+          .toDart;
 
       final JSAny arrayBuffer = await response.arrayBuffer().toDart;
       final ByteBuffer data = (arrayBuffer as JSArrayBuffer).toDart;
@@ -126,8 +127,9 @@ void main() {
 
         await file.saveTo('path');
 
-        final html.Element container =
-            html.document.querySelector('#$crossFileDomElementId')!;
+        final html.Element container = html.document.querySelector(
+          '#$crossFileDomElementId',
+        )!;
 
         late html.HTMLAnchorElement element;
         for (int i = 0; i < container.childNodes.length; i++) {

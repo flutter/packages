@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
+
 ## 26.1.0
 
 * Deprecates `dartHostTestHandler` and `dartTestOut`.

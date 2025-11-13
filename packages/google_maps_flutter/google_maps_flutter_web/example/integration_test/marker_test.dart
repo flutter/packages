@@ -103,10 +103,9 @@ void main() {
 
     testWidgets('update', (WidgetTester tester) async {
       final MarkerController controller = MarkerController(marker: marker);
-      final gmaps.MarkerOptions options =
-          gmaps.MarkerOptions()
-            ..draggable = true
-            ..position = gmaps.LatLng(42, 54);
+      final gmaps.MarkerOptions options = gmaps.MarkerOptions()
+        ..draggable = true
+        ..position = gmaps.LatLng(42, 54);
 
       expect(marker.isDraggableDefined(), isFalse);
 
@@ -176,8 +175,8 @@ void main() {
       testWidgets('cannot call update after remove', (
         WidgetTester tester,
       ) async {
-        final gmaps.MarkerOptions options =
-            gmaps.MarkerOptions()..draggable = true;
+        final gmaps.MarkerOptions options = gmaps.MarkerOptions()
+          ..draggable = true;
 
         controller.remove();
 

@@ -1,3 +1,7 @@
+## 7.2.4
+
+* Improves README and fixes minor typos.
+
 ## 7.2.3
 
 * Removed mockito-inline and updated to mockito-core 5.17.0.
