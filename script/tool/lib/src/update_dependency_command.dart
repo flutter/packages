@@ -361,7 +361,7 @@ A version with a valid format (3 numbers separated by 2 periods) must be provide
             r'^\s*id\s+"org\.jetbrains\.kotlin\.android"\s+version\s+"(\d\.\d\.\d{1,2})"\s+apply\s+false\s*$',
             multiLine: true);
         newDependencyVersionEntry =
-            'id "org.jetbrains.kotlin.android" version "$_targetVersion" apply false';
+            '    id "org.jetbrains.kotlin.android" version "$_targetVersion" apply false';
       } else {
         printError(
             'Target Android dependency $_targetAndroidDependency is unrecognized.');

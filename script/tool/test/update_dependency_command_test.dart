@@ -1139,7 +1139,7 @@ plugins {
 
         expect(
             updatedGradleSettingsContents,
-            contains(r'id "org.jetbrains.kotlin.android" version '
+            contains(r'    id "org.jetbrains.kotlin.android" version '
                 '"$newKgpVersion" apply false'));
       });
 
@@ -1183,7 +1183,7 @@ plugins {
 
         expect(
             updatedGradleSettingsContents,
-            contains(r'id "org.jetbrains.kotlin.android" version '
+            contains(r'    id "org.jetbrains.kotlin.android" version '
                 '"$newKgpVersion" apply false'));
       });
     });
