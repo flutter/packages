@@ -65,12 +65,13 @@
 
   // If marker belongs the cluster manager, visibility need to be controlled with the opacity
   // as the cluster manager controls when marker is on the map and when not.
+  BOOL useOpacityForVisibility = self.clusterManagerIdentifier != nil;
   [FLTGoogleMapMarkerController updateMarker:self.marker
                           fromPlatformMarker:platformMarker
                                  withMapView:self.mapView
                                    registrar:registrar
                                  screenScale:screenScale
-                   usingOpacityForVisibility:self.clusterManagerIdentifier];
+                   usingOpacityForVisibility:useOpacityForVisibility];
 }
 
 + (void)updateMarker:(GMSMarker *)marker
@@ -94,8 +95,7 @@
     marker.snippet = infoWindow.snippet;
   }
 
-  // Ensure setVisible is called last as it adds the marker to the map,
-  // and must be done after all other parameters are set.
+  // This must be done last, to avoid visual flickers of default property values.
   if (useOpacityForVisibility) {
     marker.opacity = platformMarker.visible ? platformMarker.alpha : 0.0f;
   } else {
