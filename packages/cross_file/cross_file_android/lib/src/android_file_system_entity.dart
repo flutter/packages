@@ -5,7 +5,7 @@ import 'package:file/file.dart';
 
 import 'android_file_system.dart';
 
-mixin AndroidFileSystemEntity implements FileSystemEntity {
+mixin AndroidFileSystemEntity on FileSystemEntity {
   DocumentFile get nativeFile;
 
   /// Returns the file system responsible for this entity.

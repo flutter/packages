@@ -1,33 +1,4 @@
-// Platform Interface
-
-import 'dart:convert';
-import 'dart:typed_data';
-
-abstract base class XFilePlatform {
-  static XFilePlatform? instance;
-
-  PlatformXFile createPlatformXFile(String path);
-}
-
-abstract base class PlatformXFile {
-  PlatformXFile(this.path);
-
-  final String path;
-
-  PlatformXFileExtension? get extension => null;
-
-  Future<DateTime> lastModified();
-
-  /// Reads the entire file contents as a list of bytes.
-  Future<Uint8List> readAsBytes();
-
-  /// Reads the entire file contents as a string using the given Encoding.
-  Future<String> readAsString({Encoding encoding = utf8});
-
-  /// The length of the file.
-  Future<int> length();
-
-  Stream<List<int>> openRead([int? start, int? end]);
-}
-
-mixin PlatformXFileExtension {}
+export 'src/cross_file_platform.dart';
+export 'src/platform_cross_directory.dart';
+export 'src/platform_cross_file.dart';
+export 'src/shared_storage/platform_shared_storage_cross_file.dart';

@@ -290,3 +290,125 @@ base class AndroidFile extends PlatformXFile
     // TODO: implement writeAsStringSync
   }
 }
+
+class AFile with ForwardingFile {
+  @override
+  // TODO: implement absolute
+  File get absolute => throw UnimplementedError();
+
+  @override
+  // TODO: implement basename
+  String get basename => throw UnimplementedError();
+
+  @override
+  // TODO: implement delegate
+  io.File get delegate => throw UnimplementedError();
+
+  @override
+  Future<File> delete({bool recursive = false}) {
+    // TODO: implement delete
+    throw UnimplementedError();
+  }
+
+  @override
+  void deleteSync({bool recursive = false}) {
+    // TODO: implement deleteSync
+  }
+
+  @override
+  // TODO: implement dirname
+  String get dirname => throw UnimplementedError();
+
+  @override
+  Future<bool> exists() {
+    // TODO: implement exists
+    throw UnimplementedError();
+  }
+
+  @override
+  bool existsSync() {
+    // TODO: implement existsSync
+    throw UnimplementedError();
+  }
+
+  @override
+  // TODO: implement fileSystem
+  FileSystem get fileSystem => throw UnimplementedError();
+
+  @override
+  // TODO: implement isAbsolute
+  bool get isAbsolute => throw UnimplementedError();
+
+  @override
+  // TODO: implement parent
+  Directory get parent => throw UnimplementedError();
+
+  @override
+  // TODO: implement path
+  String get path => throw UnimplementedError();
+
+  @override
+  Future<File> rename(String newPath) {
+    // TODO: implement rename
+    throw UnimplementedError();
+  }
+
+  @override
+  File renameSync(String newPath) {
+    // TODO: implement renameSync
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String> resolveSymbolicLinks() {
+    // TODO: implement resolveSymbolicLinks
+    throw UnimplementedError();
+  }
+
+  @override
+  String resolveSymbolicLinksSync() {
+    // TODO: implement resolveSymbolicLinksSync
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<io.FileStat> stat() {
+    // TODO: implement stat
+    throw UnimplementedError();
+  }
+
+  @override
+  io.FileStat statSync() {
+    // TODO: implement statSync
+    throw UnimplementedError();
+  }
+
+  @override
+  // TODO: implement uri
+  Uri get uri => throw UnimplementedError();
+
+  @override
+  Stream<io.FileSystemEvent> watch({int events = FileSystemEvent.all, bool recursive = false}) {
+    // TODO: implement watch
+    throw UnimplementedError();
+  }
+
+  @override
+  Directory wrapDirectory(io.Directory delegate) {
+    // TODO: implement wrapDirectory
+    throw UnimplementedError();
+  }
+
+  @override
+  File wrapFile(io.File delegate) {
+    // TODO: implement wrapFile
+    throw UnimplementedError();
+  }
+
+  @override
+  Link wrapLink(io.Link delegate) {
+    // TODO: implement wrapLink
+    throw UnimplementedError();
+  }
+  
+}
