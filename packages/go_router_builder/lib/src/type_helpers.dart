@@ -193,8 +193,8 @@ T? getNodeDeclaration<T extends AstNode>(InterfaceElement2 element) {
       session.getParsedLibraryByElement2(element.library2)
           as ParsedLibraryResult;
   final FragmentDeclarationResult? declaration = parsedLibrary
-  // ignore: experimental_member_use
-  .getFragmentDeclaration(element.firstFragment);
+      // ignore: experimental_member_use
+      .getFragmentDeclaration(element.firstFragment);
   final AstNode? node = declaration?.node;
 
   return node is T ? node : null;
@@ -240,8 +240,9 @@ String _stateValueAccess(
   }
 
   late String access;
-  final String suffix =
-      !element.type.isNullableType && !element.hasDefaultValue ? '!' : '';
+  final String suffix = !element.type.isNullableType && !element.hasDefaultValue
+      ? '!'
+      : '';
   if (pathParameters.contains(element.displayName)) {
     access = 'pathParameters[${escapeDartString(element.displayName)}]$suffix';
   } else {
@@ -738,10 +739,9 @@ class _TypeHelperJson extends _TypeHelperWithHelper {
 
   String _helperNameN(DartType paramType, int index) {
     final String mainType = index == 0 ? 'String' : 'Object?';
-    final String mainDecoder =
-        index == 0
-            ? 'jsonDecode(json$index) as Map<String, dynamic>'
-            : 'json$index as Map<String, dynamic>';
+    final String mainDecoder = index == 0
+        ? 'jsonDecode(json$index) as Map<String, dynamic>'
+        : 'json$index as Map<String, dynamic>';
     if (_isNestedTemplate(paramType as InterfaceType)) {
       return '''
 ($mainType json$index) {
@@ -836,9 +836,9 @@ abstract class _TypeHelperWithHelper extends _TypeHelper {
     }
     final String nullableSuffix =
         paramType.isNullableType ||
-                (paramType.isEnum && !paramType.isNullableType)
-            ? '!'
-            : '';
+            (paramType.isEnum && !paramType.isNullableType)
+        ? '!'
+        : '';
 
     final String decode = _fieldWithEncoder(
       'state.${_stateValueAccess(parameterElement, pathParameters)} ${!parameterElement.isRequired ? " ?? '' " : ''}',

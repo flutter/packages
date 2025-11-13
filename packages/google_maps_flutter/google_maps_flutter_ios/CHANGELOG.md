@@ -2,7 +2,7 @@
 
 * Fixes potential flickers of default property values when adding objects to
   the map.
-* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+* Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
 
 ## 2.15.5
 

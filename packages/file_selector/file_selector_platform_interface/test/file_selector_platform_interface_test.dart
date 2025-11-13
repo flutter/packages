@@ -20,6 +20,30 @@ void main() {
     });
   });
 
+  group('getDirectoryPath', () {
+    test('Should throw unimplemented exception', () async {
+      final FileSelectorPlatform fileSelector = ExtendsFileSelectorPlatform();
+
+      await expectLater(() async {
+        return fileSelector.getDirectoryPath();
+      }, throwsA(isA<UnimplementedError>()));
+    });
+  });
+
+  group('getDirectoryPathWithOptions', () {
+    test('Should fall back to getDirectoryPath by default', () async {
+      final FileSelectorPlatform fileSelector =
+          OldFileSelectorPlatformImplementation();
+
+      final String? result = await fileSelector.getDirectoryPathWithOptions(
+        const FileDialogOptions(),
+      );
+
+      // Should call the old method and return its result
+      expect(result, OldFileSelectorPlatformImplementation.directoryPath);
+    });
+  });
+
   group('getDirectoryPaths', () {
     test('Should throw unimplemented exception', () async {
       final FileSelectorPlatform fileSelector = ExtendsFileSelectorPlatform();
@@ -27,6 +51,21 @@ void main() {
       await expectLater(() async {
         return fileSelector.getDirectoryPaths();
       }, throwsA(isA<UnimplementedError>()));
+    });
+  });
+
+  group('getDirectoryPathsWithOptions', () {
+    test('Should fall back to getDirectoryPaths by default', () async {
+      final FileSelectorPlatform fileSelector =
+          OldFileSelectorPlatformImplementation();
+
+      final List<String> result = await fileSelector
+          .getDirectoryPathsWithOptions(const FileDialogOptions());
+
+      // Should call the old method and return its result
+      expect(result, <String>[
+        OldFileSelectorPlatformImplementation.directoryPath,
+      ]);
     });
   });
 
@@ -45,7 +84,8 @@ class ExtendsFileSelectorPlatform extends FileSelectorPlatform {}
 
 class OldFileSelectorPlatformImplementation extends FileSelectorPlatform {
   static const String savePath = '/a/path';
-  // Only implement the deprecated getSavePath.
+  static const String directoryPath = '/a/directory';
+
   @override
   Future<String?> getSavePath({
     List<XTypeGroup>? acceptedTypeGroups,
@@ -54,5 +94,21 @@ class OldFileSelectorPlatformImplementation extends FileSelectorPlatform {
     String? confirmButtonText,
   }) async {
     return savePath;
+  }
+
+  @override
+  Future<String?> getDirectoryPath({
+    String? initialDirectory,
+    String? confirmButtonText,
+  }) async {
+    return directoryPath;
+  }
+
+  @override
+  Future<List<String>> getDirectoryPaths({
+    String? initialDirectory,
+    String? confirmButtonText,
+  }) async {
+    return <String>[directoryPath];
   }
 }

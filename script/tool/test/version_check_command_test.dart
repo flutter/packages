@@ -150,7 +150,7 @@ void main() {
           gitProcessRunner.recordedCalls,
           containsAllInOrder(const <ProcessCall>[
             ProcessCall('git-merge-base',
-                <String>['--fork-point', 'FETCH_HEAD', 'HEAD'], null),
+                <String>['--fork-point', 'main', 'HEAD'], null),
             ProcessCall('git-show',
                 <String>['abc123:packages/plugin/pubspec.yaml'], null),
           ]));

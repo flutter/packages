@@ -219,8 +219,8 @@ class TreeViewController {
   /// add a [Builder] widget, which provides a new scope with a
   /// [BuildContext] that is "under" the [TreeView].
   static TreeViewController of(BuildContext context) {
-    final _TreeViewState<Object?>? result =
-        context.findAncestorStateOfType<_TreeViewState<Object?>>();
+    final _TreeViewState<Object?>? result = context
+        .findAncestorStateOfType<_TreeViewState<Object?>>();
     if (result != null) {
       return result.controller;
     }
@@ -579,17 +579,16 @@ class TreeView<T> extends StatefulWidget {
             node: node,
             child: SizedBox.square(
               dimension: 30.0,
-              child:
-                  node.children.isNotEmpty
-                      ? AnimatedRotation(
-                        key: ValueKey<int>(index),
-                        turns: node.isExpanded ? 0.25 : 0.0,
-                        duration: animationDuration,
-                        curve: animationCurve,
-                        // Renders a unicode right-facing arrow. >
-                        child: const Icon(IconData(0x25BA), size: 14),
-                      )
-                      : null,
+              child: node.children.isNotEmpty
+                  ? AnimatedRotation(
+                      key: ValueKey<int>(index),
+                      turns: node.isExpanded ? 0.25 : 0.0,
+                      duration: animationDuration,
+                      curve: animationCurve,
+                      // Renders a unicode right-facing arrow. >
+                      child: const Icon(IconData(0x25BA), size: 14),
+                    )
+                  : null,
             ),
           ),
           // Spacer
@@ -606,12 +605,11 @@ class TreeView<T> extends StatefulWidget {
 }
 
 // Used in TreeViewState for code simplicity.
-typedef _AnimationRecord =
-    ({
-      AnimationController controller,
-      CurvedAnimation animation,
-      UniqueKey key,
-    });
+typedef _AnimationRecord = ({
+  AnimationController controller,
+  CurvedAnimation animation,
+  UniqueKey key,
+});
 
 class _TreeViewState<T> extends State<TreeView<T>>
     with TickerProviderStateMixin, TreeViewStateMixin<T> {

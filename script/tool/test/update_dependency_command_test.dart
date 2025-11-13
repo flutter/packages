@@ -607,28 +607,41 @@ dev_dependencies:
   });
 
   group('Android dependencies', () {
-    group('gradle', () {
-      test('throws if version format is invalid', () async {
-        Error? commandError;
-        final List<String> output = await runCapturingPrint(runner, <String>[
-          'update-dependency',
-          '--android-dependency',
-          'gradle',
-          '--version',
-          '83',
-        ], errorHandler: (Error e) {
-          commandError = e;
-        });
+    final List<String> invalidGradleAgpVersionsFormat = <String>[
+      '81',
+      '811.1',
+      '8.123',
+      '8.12.12'
+    ];
 
-        expect(commandError, isA<ToolExit>());
-        expect(
-          output,
-          containsAllInOrder(<Matcher>[
-            contains(
-                'A version with a valid format (maximum 2-3 numbers separated by period) must be provided.'),
-          ]),
-        );
-      });
+    group('gradle', () {
+      for (final String gradleVersion in invalidGradleAgpVersionsFormat) {
+        test('throws because gradleVersion: $gradleVersion is invalid',
+            () async {
+          Error? commandError;
+          final List<String> output = await runCapturingPrint(runner, <String>[
+            'update-dependency',
+            '--android-dependency',
+            'gradle',
+            '--version',
+            gradleVersion,
+          ], errorHandler: (Error e) {
+            commandError = e;
+          });
+
+          expect(commandError, isA<ToolExit>());
+          expect(
+            output,
+            containsAllInOrder(<Matcher>[
+              contains('''
+A version with a valid format (maximum 2-3 numbers separated by 1-2 periods) must be provided.
+            1. The first number must have one or two digits
+            2. The second number must have one or two digits
+            3. If present, the third number must have a single digit'''),
+            ]),
+          );
+        });
+      }
 
       test('skips if example app does not run on Android', () async {
         final RepositoryPackage package =
@@ -892,6 +905,140 @@ distributionUrl=https\://services.gradle.org/distributions/gradle-7.6.1-all.zip
             contains(
                 r'distributionUrl=https\://services.gradle.org/distributions/'
                 'gradle-$newGradleVersion-all.zip'));
+      });
+    });
+    group('agp', () {
+      for (final String agpVersion in invalidGradleAgpVersionsFormat) {
+        test('throws because agpVersion: $agpVersion is invalid', () async {
+          Error? commandError;
+          final List<String> output = await runCapturingPrint(runner, <String>[
+            'update-dependency',
+            '--android-dependency',
+            'androidGradlePlugin',
+            '--version',
+            agpVersion,
+          ], errorHandler: (Error e) {
+            commandError = e;
+          });
+
+          expect(commandError, isA<ToolExit>());
+          expect(
+            output,
+            containsAllInOrder(<Matcher>[
+              contains('''
+A version with a valid format (maximum 2-3 numbers separated by 1-2 periods) must be provided.
+            1. The first number must have one or two digits
+            2. The second number must have one or two digits
+            3. If present, the third number must have a single digit'''),
+            ]),
+          );
+        });
+      }
+
+      test('skips if example app does not run on Android', () async {
+        final RepositoryPackage package =
+            createFakePlugin('fake_plugin', packagesDir);
+
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'update-dependency',
+          '--packages',
+          package.displayName,
+          '--android-dependency',
+          'androidGradlePlugin',
+          '--version',
+          '8.11.1',
+        ]);
+
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('SKIPPING: No example apps run on Android.'),
+          ]),
+        );
+      });
+
+      test('succeeds if example app has android/settings.gradle structure',
+          () async {
+        final RepositoryPackage package = createFakePlugin(
+            'fake_plugin', packagesDir,
+            extraFiles: <String>['example/android/settings.gradle']);
+        const String newAgpVersion = '9.9';
+
+        final File gradleSettingsFile = package.directory
+            .childDirectory('example')
+            .childDirectory('android')
+            .childFile('settings.gradle');
+
+        gradleSettingsFile.writeAsStringSync(r'''
+...
+plugins {
+    id "dev.flutter.flutter-plugin-loader" version "1.0.0"
+    id "com.android.application" version "8.11.1" apply false
+...
+}
+...
+''');
+
+        await runCapturingPrint(runner, <String>[
+          'update-dependency',
+          '--packages',
+          package.displayName,
+          '--android-dependency',
+          'androidGradlePlugin',
+          '--version',
+          newAgpVersion,
+        ]);
+
+        final String updatedGradleSettingsContents =
+            gradleSettingsFile.readAsStringSync();
+
+        expect(
+            updatedGradleSettingsContents,
+            contains(r'    id "com.android.application" version '
+                '"$newAgpVersion" apply false'));
+      });
+
+      test('succeeds if one example app runs on Android and another does not',
+          () async {
+        final RepositoryPackage package = createFakePlugin(
+            'fake_plugin', packagesDir,
+            examples: <String>['example_1', 'example_2'],
+            extraFiles: <String>['example/example_2/android/settings.gradle']);
+        const String newAgpVersion = '9.9';
+
+        final File gradleSettingsFile = package.directory
+            .childDirectory('example')
+            .childDirectory('example_2')
+            .childDirectory('android')
+            .childFile('settings.gradle');
+
+        gradleSettingsFile.writeAsStringSync(r'''
+...
+plugins {
+    id "dev.flutter.flutter-plugin-loader" version "1.0.0"
+    id "com.android.application" version "8.11.1" apply false
+...
+}
+...
+''');
+
+        await runCapturingPrint(runner, <String>[
+          'update-dependency',
+          '--packages',
+          package.displayName,
+          '--android-dependency',
+          'androidGradlePlugin',
+          '--version',
+          newAgpVersion,
+        ]);
+
+        final String updatedGradleSettingsContents =
+            gradleSettingsFile.readAsStringSync();
+
+        expect(
+            updatedGradleSettingsContents,
+            contains(r'    id "com.android.application" version '
+                '"$newAgpVersion" apply false'));
       });
     });
 

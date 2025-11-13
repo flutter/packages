@@ -424,12 +424,11 @@ class FakeFileSelector extends Fake
     return path == null
         ? null
         : FileSaveLocation(
-          path,
-          activeFilter:
-              activeFilterIndex == null
-                  ? null
-                  : acceptedTypeGroups?[activeFilterIndex],
-        );
+            path,
+            activeFilter: activeFilterIndex == null
+                ? null
+                : acceptedTypeGroups?[activeFilterIndex],
+          );
   }
 
   @override

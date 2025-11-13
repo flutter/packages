@@ -8,9 +8,10 @@ import 'package:webview_flutter_platform_interface/src/webview_flutter_platform_
 void main() {
   final List<String> validChars =
       'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_'.split('');
-  final List<String> commonInvalidChars = r'`~!@#$%^&*()-=+[]{}\|"'
-          ':;/?<>,. '
-      .split('');
+  final List<String> commonInvalidChars =
+      r'`~!@#$%^&*()-=+[]{}\|"'
+              ':;/?<>,. '
+          .split('');
   final List<int> digits = List<int>.generate(10, (int index) => index++);
 
   test(

@@ -30,8 +30,9 @@ class UrlLauncherApi {
     BinaryMessenger? binaryMessenger,
     String messageChannelSuffix = '',
   }) : __pigeon_binaryMessenger = binaryMessenger,
-       __pigeon_messageChannelSuffix =
-           messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+       __pigeon_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+           ? '.$messageChannelSuffix'
+           : '';
   final BinaryMessenger? __pigeon_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();

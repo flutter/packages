@@ -118,14 +118,13 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           routes: <String, WidgetBuilder>{
-            '/':
-                (BuildContext context) => Link(
-                  uri: uri,
-                  builder: (BuildContext context, FollowLink? followLink2) {
-                    followLink = followLink2;
-                    return Container();
-                  },
-                ),
+            '/': (BuildContext context) => Link(
+              uri: uri,
+              builder: (BuildContext context, FollowLink? followLink2) {
+                followLink = followLink2;
+                return Container();
+              },
+            ),
             '/foo/bar': (BuildContext context) => Container(),
           },
         ),
