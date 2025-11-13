@@ -1,14 +1,15 @@
 // Platform Implementation for Android
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
 
-final class XFileAndroid extends XFilePlatform {
+import '../cross_file_android.dart';
+
+final class CrossFileAndroid extends CrossFilePlatform {
   static void registerWith() {
-    XFilePlatform.instance = XFileAndroid();
+    CrossFilePlatform.instance = CrossFileAndroid();
   }
 
   @override
-  PlatformXFile createPlatformXFile(String path) {
-    // TODO: implement createPlatformXFile
-    throw UnimplementedError();
+  AndroidXFile createPlatformXFile(PlatformXFileCreationParams params) {
+    return AndroidXFile(params);
   }
 }

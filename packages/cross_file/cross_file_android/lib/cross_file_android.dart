@@ -3,15 +3,9 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
-import 'package:file/file.dart';
 
-base class AndroidXFile extends PlatformXFile with AndroidXFileExtension {
-  AndroidXFile(super.path);
-
-  @override
-  PlatformXFileExtension? get extension {
-    return this;
-  }
+base class AndroidXFile extends PlatformXFile {
+  AndroidXFile(super.path) : super.implementation();
 
   @override
   Future<DateTime> lastModified() {
@@ -40,6 +34,18 @@ base class AndroidXFile extends PlatformXFile with AndroidXFileExtension {
   @override
   Future<String> readAsString({Encoding encoding = utf8}) {
     // TODO: implement readAsString
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool> canRead() {
+    // TODO: implement canRead
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool> exists() {
+    // TODO: implement exists
     throw UnimplementedError();
   }
 }

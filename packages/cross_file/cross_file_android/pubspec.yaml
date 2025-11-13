@@ -19,12 +19,10 @@ flutter:
         dartPluginClass: XFileAndroid
 
 dependencies:
-  file: ^7.0.1
   flutter:
     sdk: flutter
   cross_file_platform_interface:
     path: ../cross_file_platform_interface
-  path: ^1.9.1
 
 dev_dependencies:
   flutter_test:
