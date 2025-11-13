@@ -268,7 +268,7 @@ class _ReleaseInfo {
 }
 
 /// The type of version change for a release.
-/// 
+///
 /// The order of the enum values is important as it is used to determine which version
 /// take priority when multiple version changes are specified. The top most value
 /// (the samller the index) has the highest priority.
