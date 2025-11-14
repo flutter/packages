@@ -4,6 +4,7 @@
 
 package io.flutter.plugins.webviewflutter;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -13,6 +14,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Message;
 import android.view.View;
@@ -213,5 +215,18 @@ public class WebChromeClientTest {
 
     verify(mockApi)
         .onJsPrompt(eq(instance), eq(webView), eq(url), eq(message), eq(defaultValue), any());
+  }
+
+  @Test
+  public void getDefaultVideoPosterSetsEmptyBitmap() {
+    final WebChromeClientProxyApi mockApi = mock(WebChromeClientProxyApi.class);
+    when(mockApi.getPigeonRegistrar()).thenReturn(new TestProxyApiRegistrar());
+
+    final WebChromeClientImpl instance = new WebChromeClientImpl(mockApi);
+    final Bitmap poster = instance.getDefaultVideoPoster();
+
+    assertNotNull(instance.getDefaultVideoPoster());
+    assertEquals(1, poster.getWidth());
+    assertEquals(1, poster.getHeight());
   }
 }

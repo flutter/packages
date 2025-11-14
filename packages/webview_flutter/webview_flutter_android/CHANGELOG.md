@@ -1,3 +1,7 @@
+## 4.10.6
+
+* Changes default image shown when a video is not playing.
+
 ## 4.10.5
 
 * Resolves Gradle 9 deprecations.
