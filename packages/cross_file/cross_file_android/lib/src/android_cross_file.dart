@@ -25,28 +25,36 @@ base class AndroidXFile extends PlatformXFile {
 
   @override
   Stream<Uint8List> openRead([int? start, int? end]) async* {
-    final InputStream inputStream = await _contentResolver.openInputStream(
+    final InputStream? inputStream = await _contentResolver.openInputStream(
       params.path,
     );
-    InputStreamReadBytesResponse response = await inputStream.readBytes(1024);
-    while(response.returnValue != -1) {
-      yield response.bytes;
-      response = await inputStream.readBytes(1024);
+    // TODO: add support for start and end.
+    if (inputStream case InputStream inputStream) {
+      InputStreamReadBytesResponse response = await inputStream.readBytes(1024);
+      while (response.returnValue != -1) {
+        yield response.bytes;
+        response = await inputStream.readBytes(1024);
+      }
     }
+
+    throw _createNullInputStreamError();
   }
 
   @override
   Future<Uint8List> readAsBytes() async {
-    final InputStream inputStream = await _contentResolver.openInputStream(
+    final InputStream? inputStream = await _contentResolver.openInputStream(
       params.path,
     );
-    return inputStream.readAllBytes();
+    if (inputStream case InputStream inputStream) {
+      return inputStream.readAllBytes();
+    }
+
+    throw _createNullInputStreamError();
   }
 
   @override
   Future<String> readAsString({Encoding encoding = utf8}) {
-    // TODO: implement readAsString
-    throw UnimplementedError();
+    return utf8.decodeStream(openRead());
   }
 
   @override
@@ -54,4 +62,11 @@ base class AndroidXFile extends PlatformXFile {
 
   @override
   Future<bool> exists() => _documentFile.exists();
+
+  UnsupportedError _createNullInputStreamError() {
+    return UnsupportedError(
+      'Failed to get native InputStream from file with path: ${params.path}. '
+      'App may not have permissions to access file.',
+    );
+  }
 }

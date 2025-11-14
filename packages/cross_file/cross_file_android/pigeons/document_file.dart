@@ -40,7 +40,7 @@ abstract class ContentResolver {
   @static
   late final ContentResolver instance;
 
-  InputStream openInputStream(String uri);
+  InputStream? openInputStream(String uri);
 }
 
 @ProxyApi(
@@ -62,4 +62,6 @@ abstract class InputStream {
   InputStreamReadBytesResponse readBytes(int len);
 
   Uint8List readAllBytes();
+
+  int skip(int n);
 }

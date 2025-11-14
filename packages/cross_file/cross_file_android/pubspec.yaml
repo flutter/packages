@@ -16,7 +16,7 @@ flutter:
       android:
         package: dev.flutter.packages.cross_file_android
         pluginClass: CrossFileAndroidPlugin
-        dartPluginClass: XFileAndroid
+        dartPluginClass: CrossFileAndroid
 
 dependencies:
   flutter:
@@ -27,7 +27,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  pigeon: ^26.0.5
+  pigeon: ^26.1.0
 
 topics:
   - file

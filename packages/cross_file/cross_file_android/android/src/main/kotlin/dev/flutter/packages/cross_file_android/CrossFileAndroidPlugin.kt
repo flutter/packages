@@ -8,31 +8,19 @@ import io.flutter.plugin.common.MethodChannel.Result
 
 /** CrossFileAndroidPlugin */
 class CrossFileAndroidPlugin :
-    FlutterPlugin,
-    MethodCallHandler {
-    // The MethodChannel that will the communication between Flutter and native Android
-    //
-    // This local reference serves to register the plugin with the Flutter Engine and unregister it
-    // when the Flutter Engine is detached from the Activity
-    private lateinit var channel: MethodChannel
+    FlutterPlugin {
 
-    override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-        channel = MethodChannel(flutterPluginBinding.binaryMessenger, "cross_file_android")
-        channel.setMethodCallHandler(this)
-    }
+    private lateinit var registrar: ProxyApiRegistrar
 
-    override fun onMethodCall(
-        call: MethodCall,
-        result: Result
-    ) {
-        if (call.method == "getPlatformVersion") {
-            result.success("Android ${android.os.Build.VERSION.RELEASE}")
-        } else {
-            result.notImplemented()
-        }
+    override fun onAttachedToEngine(pluginBinding: FlutterPlugin.FlutterPluginBinding) {
+        registrar =
+            ProxyApiRegistrar(pluginBinding.binaryMessenger, context = pluginBinding.applicationContext)
+        registrar.setUp()
     }
 
     override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
-        channel.setMethodCallHandler(null)
+        registrar.ignoreCallsToDart = true
+        registrar.tearDown()
+        registrar.instanceManager.clear()
     }
 }
