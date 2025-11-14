@@ -100,8 +100,8 @@ void main() {
 
         final GoogleMapController controller = await controllerCompleter.future;
 
-        final LatLngBounds firstVisibleRegion =
-            await controller.getVisibleRegion();
+        final LatLngBounds firstVisibleRegion = await controller
+            .getVisibleRegion();
 
         expect(firstVisibleRegion, isNotNull);
         expect(firstVisibleRegion.southwest, isNotNull);
@@ -115,8 +115,8 @@ void main() {
         );
         await tester.pumpAndSettle(const Duration(seconds: 3));
 
-        final LatLngBounds secondVisibleRegion =
-            await controller.getVisibleRegion();
+        final LatLngBounds secondVisibleRegion = await controller
+            .getVisibleRegion();
 
         expect(secondVisibleRegion, isNotNull);
         expect(secondVisibleRegion, isNot(zeroLatLngBounds));

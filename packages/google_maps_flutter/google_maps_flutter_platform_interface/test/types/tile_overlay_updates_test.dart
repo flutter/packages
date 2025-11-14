@@ -61,10 +61,9 @@ void main() {
         'tileOverlaysToChange': serializeTileOverlaySet(
           updates.tileOverlaysToChange,
         ),
-        'tileOverlayIdsToRemove':
-            updates.tileOverlayIdsToRemove
-                .map<String>((TileOverlayId m) => m.value)
-                .toList(),
+        'tileOverlayIdsToRemove': updates.tileOverlayIdsToRemove
+            .map<String>((TileOverlayId m) => m.value)
+            .toList(),
       });
     });
 

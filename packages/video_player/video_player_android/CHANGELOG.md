@@ -1,3 +1,7 @@
+## 2.8.18
+
+* Removed mockito-inline and updated to mockito-core 5.17.0.
+
 ## 2.8.17
 
 * Moves video event processing logic to Dart, and fixes an issue where buffer

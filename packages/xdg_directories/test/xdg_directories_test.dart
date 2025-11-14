@@ -67,8 +67,9 @@ XDG_VIDEOS_DIR="$HOME/Videos"
     xdg.xdgEnvironmentOverride = null;
   });
   void expectDirList(List<Directory> values, List<String> expected) {
-    final List<String> valueStr =
-        values.map<String>((Directory directory) => directory.path).toList();
+    final List<String> valueStr = values
+        .map<String>((Directory directory) => directory.path)
+        .toList();
     expect(valueStr, orderedEquals(expected));
   }
 

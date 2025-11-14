@@ -208,10 +208,9 @@ class MockCreationParams extends _i1.Mock implements _i5.CreationParams {
   _i5.AutoMediaPlaybackPolicy get autoMediaPlaybackPolicy =>
       (super.noSuchMethod(
             Invocation.getter(#autoMediaPlaybackPolicy),
-            returnValue:
-                _i5
-                    .AutoMediaPlaybackPolicy
-                    .require_user_action_for_all_media_types,
+            returnValue: _i5
+                .AutoMediaPlaybackPolicy
+                .require_user_action_for_all_media_types,
           )
           as _i5.AutoMediaPlaybackPolicy);
 
