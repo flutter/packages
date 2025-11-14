@@ -30,8 +30,8 @@ protocol ViewPresenterProvider {
   var viewPresenter: ViewPresenter? { get }
 }
 
-/// Non-test implementation of ViewControllerProvider that forwards to the plugin registrar.
-class DefaultViewPresenterProvider: ViewPresenterProvider {
+/// Non-test implementation of ViewPresenterProvider that forwards to the plugin registrar.
+final class DefaultViewPresenterProvider: ViewPresenterProvider {
   private let registrar: FlutterPluginRegistrar
 
   init(registrar: FlutterPluginRegistrar) {

@@ -1,7 +1,7 @@
 ## 0.5.3+4
 
 * Improves compatibility with `UIScene`.
-* Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 0.5.3+3
 
