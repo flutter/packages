@@ -7,6 +7,8 @@ environment:
   flutter: ">=3.32.0"
 
 dependencies:
+  cross_file_android:
+    path: ../../../cross_file/cross_file_android
   file_selector_android:
     # When depending on this package from a real application you should use:
     #   file_selector_android: ^x.y.z

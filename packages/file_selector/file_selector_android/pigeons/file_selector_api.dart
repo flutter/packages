@@ -51,6 +51,9 @@ abstract class FileSelectorApi {
   @async
   FileResponse? openFile(String? initialDirectory, FileTypes allowedTypes);
 
+  @async
+  String? openFile2(String? initialDirectory, FileTypes allowedTypes);
+
   /// Opens a file dialog for loading files and returns a list of file responses
   /// chosen by the user.
   @async

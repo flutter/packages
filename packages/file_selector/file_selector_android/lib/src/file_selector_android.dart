@@ -4,6 +4,7 @@
 
 // ignore_for_file: public_member_api_docs
 
+import 'package:cross_file_android/cross_file_android.dart';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -33,6 +34,23 @@ class FileSelectorAndroid extends FileSelectorPlatform {
       _fileTypesFromTypeGroups(acceptedTypeGroups),
     );
     return file == null ? null : _xFileFromFileResponse(file);
+  }
+
+  Future<AndroidXFile?> openFile2({
+    List<XTypeGroup>? acceptedTypeGroups,
+    String? initialDirectory,
+    String? confirmButtonText,
+  }) async {
+    final String? path = await _api.openFile2(
+      initialDirectory,
+      _fileTypesFromTypeGroups(acceptedTypeGroups),
+    );
+
+    if (path case final String path) {
+      return AndroidXFile(PlatformXFileCreationParams(path: path));
+    }
+
+    return null;
   }
 
   @override

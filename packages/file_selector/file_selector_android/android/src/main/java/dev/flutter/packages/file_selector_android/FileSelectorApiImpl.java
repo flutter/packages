@@ -132,6 +132,42 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
   }
 
   @Override
+  public void openFile2(@Nullable String initialDirectory, @NonNull GeneratedFileSelectorApi.FileTypes allowedTypes, @NonNull GeneratedFileSelectorApi.NullableResult<String> result) {
+    final Intent intent = objectFactory.newIntent(Intent.ACTION_OPEN_DOCUMENT);
+    intent.addCategory(Intent.CATEGORY_OPENABLE);
+
+    setMimeTypes(intent, allowedTypes);
+    trySetInitialDirectory(intent, initialDirectory);
+
+    try {
+      startActivityForResult(
+          intent,
+          OPEN_FILE,
+          new OnResultListener() {
+            @Override
+            public void onResult(int resultCode, @Nullable Intent data) {
+              if (resultCode == Activity.RESULT_OK && data != null) {
+                final Uri uri = data.getData();
+                if (uri == null) {
+                  // No data retrieved from opening file.
+                  result.error(new Exception("Failed to retrieve data from opening file."));
+                  return;
+                }
+
+                result.success(uri.toString());
+                Log.d(TAG, "File path: " + uri);
+              } else {
+                result.success(null);
+              }
+            }
+          });
+    } catch (Exception exception) {
+      result.error(exception);
+    }
+  }
+
+
+  @Override
   public void openFiles(
       @Nullable String initialDirectory,
       @NonNull GeneratedFileSelectorApi.FileTypes allowedTypes,

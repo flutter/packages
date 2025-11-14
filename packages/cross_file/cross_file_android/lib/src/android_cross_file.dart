@@ -35,9 +35,9 @@ base class AndroidXFile extends PlatformXFile {
         yield response.bytes;
         response = await inputStream.readBytes(1024);
       }
+    } else {
+      throw _createNullInputStreamError();
     }
-
-    throw _createNullInputStreamError();
   }
 
   @override

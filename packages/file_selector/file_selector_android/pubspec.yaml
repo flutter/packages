@@ -18,6 +18,8 @@ flutter:
         pluginClass: FileSelectorAndroidPlugin
 
 dependencies:
+  cross_file_android:
+    path: ../../cross_file/cross_file_android
   file_selector_platform_interface: ^2.5.0
   flutter:
     sdk: flutter
