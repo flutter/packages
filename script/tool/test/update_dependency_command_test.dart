@@ -614,6 +614,18 @@ dev_dependencies:
       '8.12.12'
     ];
 
+    const String invalidGradleAgpVersionError = '''
+A version with a valid format (maximum 2-3 numbers separated by 1-2 periods) must be provided.
+            1. The first number must have one or two digits
+            2. The second number must have one or two digits
+            3. If present, the third number must have a single digit''';
+
+    const String invalidKgpVersionError = '''
+A version with a valid format (3 numbers separated by 2 periods) must be provided.
+            1. The first number must have one digit
+            2. The second number must have one digit
+            3. The third number must have one or two digits''';
+
     group('gradle', () {
       for (final String gradleVersion in invalidGradleAgpVersionsFormat) {
         test('throws because gradleVersion: $gradleVersion is invalid',
@@ -633,11 +645,7 @@ dev_dependencies:
           expect(
             output,
             containsAllInOrder(<Matcher>[
-              contains('''
-A version with a valid format (maximum 2-3 numbers separated by 1-2 periods) must be provided.
-            1. The first number must have one or two digits
-            2. The second number must have one or two digits
-            3. If present, the third number must have a single digit'''),
+              contains(invalidGradleAgpVersionError),
             ]),
           );
         });
@@ -925,11 +933,7 @@ distributionUrl=https\://services.gradle.org/distributions/gradle-7.6.1-all.zip
           expect(
             output,
             containsAllInOrder(<Matcher>[
-              contains('''
-A version with a valid format (maximum 2-3 numbers separated by 1-2 periods) must be provided.
-            1. The first number must have one or two digits
-            2. The second number must have one or two digits
-            3. If present, the third number must have a single digit'''),
+              contains(invalidGradleAgpVersionError),
             ]),
           );
         });
@@ -1067,11 +1071,7 @@ plugins {
           expect(
             output,
             containsAllInOrder(<Matcher>[
-              contains('''
-A version with a valid format (3 numbers separated by 2 periods) must be provided.
-            1. The first number must have one digit
-            2. The second number must have one digit
-            3. The third number must have one or two digits'''),
+              contains(invalidKgpVersionError),
             ]),
           );
         });
