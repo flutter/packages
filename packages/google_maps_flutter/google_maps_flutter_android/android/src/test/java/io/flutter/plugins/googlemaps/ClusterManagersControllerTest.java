@@ -6,6 +6,7 @@ package io.flutter.plugins.googlemaps;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
@@ -21,10 +22,15 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.Cluster;
+import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.algo.StaticCluster;
 import com.google.maps.android.collections.MarkerManager;
 import io.flutter.plugin.common.BinaryMessenger;
+import io.flutter.plugins.googlemaps.ClusterManagersController.AdvancedMarkerClusterRenderer;
+import io.flutter.plugins.googlemaps.ClusterManagersController.MarkerClusterRenderer;
 import io.flutter.plugins.googlemaps.Messages.MapsCallbackApi;
+import io.flutter.plugins.googlemaps.Messages.PlatformMarkerCollisionBehavior;
+import io.flutter.plugins.googlemaps.Messages.PlatformMarkerType;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -61,7 +67,7 @@ public class ClusterManagersControllerTest {
     context = ApplicationProvider.getApplicationContext();
     assetManager = context.getAssets();
     flutterApi = spy(new MapsCallbackApi(mock(BinaryMessenger.class)));
-    controller = spy(new ClusterManagersController(flutterApi, context));
+    controller = spy(new ClusterManagersController(flutterApi, context, PlatformMarkerType.MARKER));
     googleMap = mock(GoogleMap.class);
     markerManager = new MarkerManager(googleMap);
     controller.init(googleMap, markerManager);
@@ -97,8 +103,10 @@ public class ClusterManagersControllerTest {
     clusterManagersToAdd.add(initialClusterManager);
     controller.addClusterManagers(clusterManagersToAdd);
 
-    MarkerBuilder markerBuilder1 = new MarkerBuilder(markerId1, clusterManagerId);
-    MarkerBuilder markerBuilder2 = new MarkerBuilder(markerId2, clusterManagerId);
+    MarkerBuilder markerBuilder1 =
+        new MarkerBuilder(markerId1, clusterManagerId, PlatformMarkerType.MARKER);
+    MarkerBuilder markerBuilder2 =
+        new MarkerBuilder(markerId2, clusterManagerId, PlatformMarkerType.MARKER);
 
     final Messages.PlatformMarker markerData1 =
         createPlatformMarker(markerId1, location1, clusterManagerId);
@@ -129,6 +137,56 @@ public class ClusterManagersControllerTest {
   }
 
   @Test
+  public void SelectClusterRenderer() {
+    final String clusterManagerId1 = "cm_1";
+    final String clusterManagerId2 = "cm_2";
+    final String markerId1 = "mid_1";
+    final String markerId2 = "mid_2";
+
+    when(googleMap.getCameraPosition())
+        .thenReturn(CameraPosition.builder().target(new LatLng(0, 0)).build());
+
+    ClusterManagersController controller1 =
+        spy(new ClusterManagersController(flutterApi, context, PlatformMarkerType.MARKER));
+    controller1.init(googleMap, markerManager);
+    ClusterManagersController controller2 =
+        spy(new ClusterManagersController(flutterApi, context, PlatformMarkerType.ADVANCED_MARKER));
+    controller2.init(googleMap, markerManager);
+
+    Messages.PlatformClusterManager initialClusterManager1 =
+        new Messages.PlatformClusterManager.Builder().setIdentifier(clusterManagerId1).build();
+    List<Messages.PlatformClusterManager> clusterManagersToAdd1 = new ArrayList<>();
+    clusterManagersToAdd1.add(initialClusterManager1);
+    controller1.addClusterManagers(clusterManagersToAdd1);
+
+    Messages.PlatformClusterManager initialClusterManager2 =
+        new Messages.PlatformClusterManager.Builder().setIdentifier(clusterManagerId2).build();
+    List<Messages.PlatformClusterManager> clusterManagersToAdd2 = new ArrayList<>();
+    clusterManagersToAdd2.add(initialClusterManager2);
+    controller2.addClusterManagers(clusterManagersToAdd2);
+
+    MarkerBuilder markerBuilder1 =
+        new MarkerBuilder(markerId1, clusterManagerId1, PlatformMarkerType.MARKER);
+    markerBuilder1.setPosition(new LatLng(10.0, 20.0));
+    controller1.addItem(markerBuilder1);
+
+    MarkerBuilder markerBuilder2 =
+        new MarkerBuilder(markerId2, clusterManagerId2, PlatformMarkerType.ADVANCED_MARKER);
+    markerBuilder2.setPosition(new LatLng(20.0, 10.0));
+    controller2.addItem(markerBuilder2);
+
+    ClusterManager<?> clusterManager1 =
+        controller1.clusterManagerIdToManager.get(clusterManagerId1);
+    assertNotNull(clusterManager1);
+    assertSame(clusterManager1.getRenderer().getClass(), MarkerClusterRenderer.class);
+
+    ClusterManager<?> clusterManager2 =
+        controller2.clusterManagerIdToManager.get(clusterManagerId2);
+    assertNotNull(clusterManager2);
+    assertSame(clusterManager2.getRenderer().getClass(), AdvancedMarkerClusterRenderer.class);
+  }
+
+  @Test
   public void OnClusterClickCallsMethodChannel() {
     String clusterManagerId = "cm_1";
     LatLng clusterPosition = new LatLng(43.00, -87.90);
@@ -137,11 +195,11 @@ public class ClusterManagersControllerTest {
 
     StaticCluster<MarkerBuilder> cluster = new StaticCluster<>(clusterPosition);
 
-    MarkerBuilder marker1 = new MarkerBuilder("m_1", clusterManagerId);
+    MarkerBuilder marker1 = new MarkerBuilder("m_1", clusterManagerId, PlatformMarkerType.MARKER);
     marker1.setPosition(markerPosition1);
     cluster.add(marker1);
 
-    MarkerBuilder marker2 = new MarkerBuilder("m_2", clusterManagerId);
+    MarkerBuilder marker2 = new MarkerBuilder("m_2", clusterManagerId, PlatformMarkerType.MARKER);
     marker2.setPosition(markerPosition2);
     cluster.add(marker2);
 
@@ -208,6 +266,7 @@ public class ClusterManagersControllerTest {
         .setClusterManagerId(clusterManagerId)
         .setAnchor(anchor)
         .setInfoWindow(new Messages.PlatformInfoWindow.Builder().setAnchor(anchor).build())
+        .setCollisionBehavior(PlatformMarkerCollisionBehavior.REQUIRED_DISPLAY)
         .build();
   }
 }
