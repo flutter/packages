@@ -58,7 +58,7 @@ class UpdateDependencyCommand extends PackageLoopingCommand {
               'Updates KGP version used in plugin example apps.',
           _AndroidDependencyType.compileSdk:
               'Updates compileSdk version used to compile plugins.',
-          _AndroidDepdencyType.compileSdkForExamples:
+          _AndroidDependencyType.compileSdkForExamples:
               'Updates compileSdk version used to compile plugin examples.',
         });
     argParser.addOption(
@@ -174,7 +174,7 @@ A version with a valid format (3 numbers separated by 2 periods) must be provide
       } else if (_targetAndroidDependency ==
               _AndroidDependencyType.compileSdk ||
           _targetAndroidDependency ==
-              _AndroidDepdencyType.compileSdkForExamples) {
+              _AndroidDependencyType.compileSdkForExamples) {
         final RegExp validSdkVersion = RegExp(r'^\d{1,2}$');
         final bool isValidSdkVersion =
             validSdkVersion.stringMatch(version) == version;
