@@ -326,8 +326,8 @@ class MethodChannelImagePicker extends ImagePickerPlatform {
 
     final String? path = result['path'] as String?;
 
-    final List<String>? pathList =
-        (result['pathList'] as List<dynamic>?)?.cast<String>();
+    final List<String>? pathList = (result['pathList'] as List<dynamic>?)
+        ?.cast<String>();
     if (pathList != null) {
       pickedFileList = <XFile>[];
       for (final String path in pathList) {
