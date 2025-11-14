@@ -1,5 +1,6 @@
-## NEXT
+## 0.3.6
 
+* Remove README mentions of `dart:html` with `package:web`.
 * Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
 
 ## 0.3.5

@@ -267,7 +267,7 @@ class Camera {
         ..scale(-1, 1);
     }
 
-    canvas.context2D.drawImageScaled(
+    canvas.context2D.drawImage(
       videoElement,
       0,
       0,

@@ -83,7 +83,7 @@ class ImageResizer {
     if (maxHeight == null && maxWidth == null) {
       context.drawImage(source, 0, 0);
     } else {
-      context.drawImageScaled(
+      context.drawImage(
         source,
         0,
         0,
