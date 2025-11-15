@@ -1,0 +1,5 @@
+# This file is for test purposes only.
+# TODO(chuntai): remove this file before publishing.
+changelog: |
+  - Adds some other features
+version: minor
