@@ -13,11 +13,11 @@ import UIKit
 
 /// Factory block returning an FLTCaptureDevice.
 /// Used in tests to inject a video capture device into DefaultCamera.
-typealias VideoCaptureDeviceFactory = (_ cameraName: String) -> FLTCaptureDevice
+typealias VideoCaptureDeviceFactory = (_ cameraName: String) -> CaptureDevice
 
-typealias AudioCaptureDeviceFactory = () -> FLTCaptureDevice
+typealias AudioCaptureDeviceFactory = () -> CaptureDevice
 
-typealias CaptureSessionFactory = () -> FLTCaptureSession
+typealias CaptureSessionFactory = () -> CaptureSession
 
 typealias AssetWriterFactory = (_ assetUrl: URL, _ fileType: AVFileType) throws -> FLTAssetWriter
 
@@ -26,20 +26,16 @@ typealias InputPixelBufferAdaptorFactory = (
 ) ->
   FLTAssetWriterInputPixelBufferAdaptor
 
-/// Determines the video dimensions (width and height) for a given capture device format.
-/// Used in tests to mock CMVideoFormatDescriptionGetDimensions.
-typealias VideoDimensionsConverter = (FLTCaptureDeviceFormat) -> CMVideoDimensions
-
 /// A configuration object that centralizes dependencies for `DefaultCamera`.
 class CameraConfiguration {
   var mediaSettings: FCPPlatformMediaSettings
   var mediaSettingsWrapper: FLTCamMediaSettingsAVWrapper
   var captureSessionQueue: DispatchQueue
-  var videoCaptureSession: FLTCaptureSession
-  var audioCaptureSession: FLTCaptureSession
+  var videoCaptureSession: CaptureSession
+  var audioCaptureSession: CaptureSession
   var videoCaptureDeviceFactory: VideoCaptureDeviceFactory
   let audioCaptureDeviceFactory: AudioCaptureDeviceFactory
-  let captureDeviceInputFactory: FLTCaptureDeviceInputFactory
+  let captureDeviceInputFactory: CaptureDeviceInputFactory
   var assetWriterFactory: AssetWriterFactory
   var inputPixelBufferAdaptorFactory: InputPixelBufferAdaptorFactory
   var videoDimensionsConverter: VideoDimensionsConverter
@@ -54,7 +50,7 @@ class CameraConfiguration {
     audioCaptureDeviceFactory: @escaping AudioCaptureDeviceFactory,
     captureSessionFactory: @escaping CaptureSessionFactory,
     captureSessionQueue: DispatchQueue,
-    captureDeviceInputFactory: FLTCaptureDeviceInputFactory,
+    captureDeviceInputFactory: CaptureDeviceInputFactory,
     initialCameraName: String
   ) {
     self.mediaSettings = mediaSettings

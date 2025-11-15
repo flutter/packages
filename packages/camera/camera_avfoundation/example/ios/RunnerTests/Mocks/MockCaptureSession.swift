@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import camera_avfoundation
+@testable import camera_avfoundation
 
 // Import Objective-C part of the implementation when SwiftPM is used.
 #if canImport(camera_avfoundation_objc)
@@ -11,7 +11,7 @@ import camera_avfoundation
 
 /// Mock implementation of `FLTCaptureSession` protocol which allows injecting a custom
 /// implementation.
-final class MockCaptureSession: NSObject, FLTCaptureSession {
+final class MockCaptureSession: NSObject, CaptureSession {
   var setSessionPresetStub: ((AVCaptureSession.Preset) -> Void)?
   var beginConfigurationStub: (() -> Void)?
   var commitConfigurationStub: (() -> Void)?
@@ -56,13 +56,13 @@ final class MockCaptureSession: NSObject, FLTCaptureSession {
     return canSetSessionPresetStub?(preset) ?? true
   }
 
-  func addInputWithNoConnections(_ input: FLTCaptureInput) {}
+  func addInputWithNoConnections(_ input: CaptureInput) {}
 
   func addOutputWithNoConnections(_ output: AVCaptureOutput) {}
 
   func addConnection(_: AVCaptureConnection) {}
 
-  func addInput(_: FLTCaptureInput) {}
+  func addInput(_: CaptureInput) {}
 
   func addOutput(_ output: AVCaptureOutput) {
 
@@ -71,11 +71,11 @@ final class MockCaptureSession: NSObject, FLTCaptureSession {
     }
   }
 
-  func removeInput(_: FLTCaptureInput) {}
+  func removeInput(_: CaptureInput) {}
 
   func removeOutput(_: AVCaptureOutput) {}
 
-  func canAddInput(_: FLTCaptureInput) -> Bool {
+  func canAddInput(_: CaptureInput) -> Bool {
     return true
   }
 
