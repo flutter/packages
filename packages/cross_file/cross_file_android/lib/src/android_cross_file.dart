@@ -4,7 +4,7 @@ import 'dart:typed_data';
 import 'package:cross_file_android/src/document_file.g.dart';
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
 
-base class AndroidXFile extends PlatformXFile {
+base class AndroidXFile extends PlatformSharedStorageXFile {
   AndroidXFile(super.params) : super.implementation();
 
   late final DocumentFile _documentFile = DocumentFile.fromSingleUri(
@@ -71,5 +71,11 @@ base class AndroidXFile extends PlatformXFile {
       'Failed to get native InputStream from file with path: ${params.path}. '
       'App may not have permissions to access file.',
     );
+  }
+
+  @override
+  Future<void> delete() {
+    // TODO: implement delete
+    throw UnimplementedError();
   }
 }

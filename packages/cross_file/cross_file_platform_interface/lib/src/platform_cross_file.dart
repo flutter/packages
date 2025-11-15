@@ -46,17 +46,11 @@ abstract base class PlatformXFile {
 
   Future<bool> canRead();
 
-  Stream<List<int>> openRead([int? start, int? end]) {
-    throw UnimplementedError();
-  }
+  Stream<List<int>> openRead([int? start, int? end]);
 
   /// Reads the entire file contents as a list of bytes.
-  Future<Uint8List> readAsBytes() {
-    throw UnimplementedError();
-  }
+  Future<Uint8List> readAsBytes();
 
   /// Reads the entire file contents as a string using the given Encoding.
-  Future<String> readAsString({Encoding encoding = utf8}) {
-    throw UnimplementedError();
-  }
+  Future<String> readAsString({Encoding encoding = utf8});
 }

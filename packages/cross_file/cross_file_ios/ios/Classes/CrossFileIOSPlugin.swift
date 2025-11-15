@@ -2,18 +2,22 @@ import Flutter
 import UIKit
 
 public class CrossFileIOSPlugin: NSObject, FlutterPlugin {
-  public static func register(with registrar: FlutterPluginRegistrar) {
-    let channel = FlutterMethodChannel(name: "cross_file_ios", binaryMessenger: registrar.messenger())
-    let instance = CrossFileIOSPlugin()
-    registrar.addMethodCallDelegate(instance, channel: channel)
-  }
+  var proxyApiRegistrar: FoundationPigeonProxyApiRegistrar?
 
-  public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-    switch call.method {
-    case "getPlatformVersion":
-      result("iOS " + UIDevice.current.systemVersion)
-    default:
-      result(FlutterMethodNotImplemented)
+    init(binaryMessenger: FlutterBinaryMessenger) {
+      proxyApiRegistrar = FoundationPigeonProxyApiRegistrar(
+        binaryMessenger: binaryMessenger, apiDelegate: ProxyApiDelegate())
+      proxyApiRegistrar?.setUp()
     }
-  }
+
+    public static func register(with registrar: FlutterPluginRegistrar) {
+      let plugin = CrossFileIOSPlugin(binaryMessenger: registrar.messenger())
+      registrar.publish(plugin)
+    }
+
+    public func detachFromEngine(for registrar: FlutterPluginRegistrar) {
+      proxyApiRegistrar!.ignoreCallsToDart = true
+      proxyApiRegistrar!.tearDown()
+      proxyApiRegistrar = nil
+    }
 }
