@@ -1,6 +1,7 @@
-## NEXT
+## 0.3.5+1
 
 * Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
+* Fixes camera initialization failure on Firefox Android by using `{video: true}` instead of `{video: {}}` when no video constraints are specified.
 
 ## 0.3.5
 
