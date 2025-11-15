@@ -4,7 +4,7 @@ import UIKit
 public class CrossFileIOSPlugin: NSObject, FlutterPlugin {
   public static func register(with registrar: FlutterPluginRegistrar) {
     let channel = FlutterMethodChannel(name: "cross_file_ios", binaryMessenger: registrar.messenger())
-    let instance = CrossFileIosPlugin()
+    let instance = CrossFileIOSPlugin()
     registrar.addMethodCallDelegate(instance, channel: channel)
   }
 
