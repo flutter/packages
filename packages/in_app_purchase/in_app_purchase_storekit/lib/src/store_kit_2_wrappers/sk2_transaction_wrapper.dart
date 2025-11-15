@@ -76,9 +76,20 @@ class SK2Transaction {
 
   /// A wrapper around [Transaction.all]
   /// https://developer.apple.com/documentation/storekit/transaction/3851203-all
-  /// A sequence that emits all the customer’s transactions for your app.
+  /// A sequence that emits all the customer's transactions for your app.
   static Future<List<SK2Transaction>> transactions() async {
     final List<SK2TransactionMessage> msgs = await hostApi2.transactions();
+    final List<SK2Transaction> transactions = msgs
+        .map((SK2TransactionMessage e) => e.convertFromPigeon())
+        .toList();
+    return transactions;
+  }
+
+  /// A wrapper around [Transaction.unfinished]
+  /// https://developer.apple.com/documentation/storekit/transaction/unfinished
+  /// A sequence that emits unfinished transactions for the customer.
+  static Future<List<SK2Transaction>> unfinishedTransactions() async {
+    final List<SK2TransactionMessage> msgs = await hostApi2.unfinishedTransactions();
     final List<SK2Transaction> transactions = msgs
         .map((SK2TransactionMessage e) => e.convertFromPigeon())
         .toList();
@@ -135,6 +146,7 @@ extension on SK2TransactionMessage {
       // Any failed transaction will simply not be returned.
       status: restoring ? PurchaseStatus.restored : PurchaseStatus.purchased,
       purchaseID: id.toString(),
+      appAccountToken: appAccountToken,
     );
   }
 }

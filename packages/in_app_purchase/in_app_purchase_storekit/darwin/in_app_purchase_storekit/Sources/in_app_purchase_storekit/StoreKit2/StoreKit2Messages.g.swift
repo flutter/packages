@@ -73,7 +73,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
   return value as! T?
 }
 
-func deepEqualsStoreKit2Messages(_ lhs: Any?, _ rhs: Any?) -> Bool {
+func deepEqualssk2_pigeon(_ lhs: Any?, _ rhs: Any?) -> Bool {
   let cleanLhs = nilOrValue(lhs) as Any?
   let cleanRhs = nilOrValue(rhs) as Any?
   switch (cleanLhs, cleanRhs) {
@@ -114,7 +114,7 @@ func deepEqualsStoreKit2Messages(_ lhs: Any?, _ rhs: Any?) -> Bool {
   }
 }
 
-func deepHashStoreKit2Messages(value: Any?, hasher: inout Hasher) {
+func deepHashsk2_pigeon(value: Any?, hasher: inout Hasher) {
   if let valueList = value as? [AnyHashable] {
     for item in valueList { deepHashStoreKit2Messages(value: item, hasher: &hasher) }
     return
@@ -727,6 +727,8 @@ protocol InAppPurchase2API {
   func isIntroductoryOfferEligible(
     productId: String, completion: @escaping (Result<Bool, Error>) -> Void)
   func transactions(completion: @escaping (Result<[SK2TransactionMessage], Error>) -> Void)
+  func unfinishedTransactions(
+    completion: @escaping (Result<[SK2TransactionMessage], Error>) -> Void)
   func finish(id: Int64, completion: @escaping (Result<Void, Error>) -> Void)
   func startListeningToTransactions() throws
   func stopListeningToTransactions() throws
@@ -859,6 +861,24 @@ class InAppPurchase2APISetup {
       }
     } else {
       transactionsChannel.setMessageHandler(nil)
+    }
+    let unfinishedTransactionsChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.unfinishedTransactions\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      unfinishedTransactionsChannel.setMessageHandler { _, reply in
+        api.unfinishedTransactions { result in
+          switch result {
+          case .success(let res):
+            reply(wrapResult(res))
+          case .failure(let error):
+            reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      unfinishedTransactionsChannel.setMessageHandler(nil)
     }
     let finishChannel = FlutterBasicMessageChannel(
       name: "dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.finish\(channelSuffix)",

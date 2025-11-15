@@ -230,6 +230,22 @@ extension InAppPurchasePlugin: InAppPurchase2API {
     }
   }
 
+  /// Wrapper method around StoreKit2's Transaction.unfinished
+  /// https://developer.apple.com/documentation/storekit/transaction/unfinished
+  func unfinishedTransactions(
+    completion: @escaping (Result<[SK2TransactionMessage], Error>) -> Void
+  ) {
+    Task {
+      @MainActor in
+      do {
+        let transactionsMsgs = await rawUnfinishedTransactions().map {
+          $0.convertToPigeon(receipt: nil)
+        }
+        completion(.success(transactionsMsgs))
+      }
+    }
+  }
+
   func restorePurchases(completion: @escaping (Result<Void, Error>) -> Void) {
     Task { [weak self] in
       guard let self = self else { return }
@@ -352,6 +368,20 @@ extension InAppPurchasePlugin: InAppPurchase2API {
   func rawTransactions() async -> [Transaction] {
     var transactions: [Transaction] = []
     for await verificationResult in Transaction.all {
+      switch verificationResult {
+      case .verified(let transaction):
+        transactions.append(transaction)
+      case .unverified:
+        break
+      }
+    }
+    return transactions
+  }
+
+  /// Helper function that fetches and unwraps all verified unfinished transactions
+  func rawUnfinishedTransactions() async -> [Transaction] {
+    var transactions: [Transaction] = []
+    for await verificationResult in Transaction.unfinished {
       switch verificationResult {
       case .verified(let transaction):
         transactions.append(transaction)
