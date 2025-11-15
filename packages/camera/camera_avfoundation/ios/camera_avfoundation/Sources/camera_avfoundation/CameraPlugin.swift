@@ -517,6 +517,28 @@ extension CameraPlugin: FCPCameraApi {
     }
   }
 
+  public func setVideoStabilizationMode(
+    _ mode: FCPPlatformVideoStabilizationMode, completion: @escaping (FlutterError?) -> Void
+  ) {
+    captureSessionQueue.async { [weak self] in
+      self?.camera?.setVideoStabilizationMode(mode, withCompletion: completion)
+    }
+  }
+
+  public func isVideoStabilizationModeSupported(
+    _ mode: FCPPlatformVideoStabilizationMode,
+    completion: @escaping (NSNumber?, FlutterError?) -> Void
+  ) {
+    captureSessionQueue.async { [weak self] in
+
+      if let isSupported = self?.camera?.isVideoStabilizationModeSupported(mode) {
+        completion(NSNumber(value: isSupported), nil)
+      } else {
+        completion(nil, nil)
+      }
+    }
+  }
+
   public func pausePreview(completion: @escaping (FlutterError?) -> Void) {
     captureSessionQueue.async { [weak self] in
       self?.camera?.pausePreview()

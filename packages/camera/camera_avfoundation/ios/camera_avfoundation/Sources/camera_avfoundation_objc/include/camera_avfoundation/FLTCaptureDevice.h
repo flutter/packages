@@ -60,6 +60,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, readonly) CGFloat minAvailableVideoZoomFactor;
 @property(nonatomic) CGFloat videoZoomFactor;
 
+// Video Stabilization
+- (BOOL)isVideoStabilizationModeSupported:(AVCaptureVideoStabilizationMode)videoStabilizationMode;
+
 // Camera Properties
 - (float)lensAperture;
 - (CMTime)exposureDuration;

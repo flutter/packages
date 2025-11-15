@@ -1,3 +1,7 @@
+## 0.10.0
+
+* Adds video stabilization.
+
 ## 0.9.22+4
 
 * Migrates `FLTCameraDeviceDiscovering` and `FLTDeviceOrientationProviding` classes to Swift.

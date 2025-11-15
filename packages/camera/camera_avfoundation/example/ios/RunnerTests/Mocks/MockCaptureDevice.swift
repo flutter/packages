@@ -114,6 +114,12 @@ class MockCaptureDevice: NSObject, FLTCaptureDevice {
     return 0
   }
 
+  func isVideoStabilizationModeSupported(_ videoStabilizationMode: AVCaptureVideoStabilizationMode)
+    -> Bool
+  {
+    return false
+  }
+
   func lockForConfiguration() throws {
     try lockForConfigurationStub?()
   }

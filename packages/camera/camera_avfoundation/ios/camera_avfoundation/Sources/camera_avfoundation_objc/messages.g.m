@@ -130,6 +130,16 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 }
 @end
 
+@implementation FCPPlatformVideoStabilizationModeBox
+- (instancetype)initWithValue:(FCPPlatformVideoStabilizationMode)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
 @interface FCPPlatformCameraDescription ()
 + (FCPPlatformCameraDescription *)fromList:(NSArray<id> *)list;
 + (nullable FCPPlatformCameraDescription *)nullableFromList:(NSArray<id> *)list;
@@ -377,15 +387,21 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
                                  : [[FCPPlatformResolutionPresetBox alloc]
                                        initWithValue:[enumAsNumber integerValue]];
     }
-    case 138:
-      return [FCPPlatformCameraDescription fromList:[self readValue]];
+    case 138: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FCPPlatformVideoStabilizationModeBox alloc]
+                                       initWithValue:[enumAsNumber integerValue]];
+    }
     case 139:
-      return [FCPPlatformCameraState fromList:[self readValue]];
+      return [FCPPlatformCameraDescription fromList:[self readValue]];
     case 140:
-      return [FCPPlatformMediaSettings fromList:[self readValue]];
+      return [FCPPlatformCameraState fromList:[self readValue]];
     case 141:
-      return [FCPPlatformPoint fromList:[self readValue]];
+      return [FCPPlatformMediaSettings fromList:[self readValue]];
     case 142:
+      return [FCPPlatformPoint fromList:[self readValue]];
+    case 143:
       return [FCPPlatformSize fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
@@ -433,20 +449,24 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
     FCPPlatformResolutionPresetBox *box = (FCPPlatformResolutionPresetBox *)value;
     [self writeByte:137];
     [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
-  } else if ([value isKindOfClass:[FCPPlatformCameraDescription class]]) {
+  } else if ([value isKindOfClass:[FCPPlatformVideoStabilizationModeBox class]]) {
+    FCPPlatformVideoStabilizationModeBox *box = (FCPPlatformVideoStabilizationModeBox *)value;
     [self writeByte:138];
-    [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FCPPlatformCameraState class]]) {
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FCPPlatformCameraDescription class]]) {
     [self writeByte:139];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FCPPlatformMediaSettings class]]) {
+  } else if ([value isKindOfClass:[FCPPlatformCameraState class]]) {
     [self writeByte:140];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FCPPlatformPoint class]]) {
+  } else if ([value isKindOfClass:[FCPPlatformMediaSettings class]]) {
     [self writeByte:141];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FCPPlatformSize class]]) {
+  } else if ([value isKindOfClass:[FCPPlatformPoint class]]) {
     [self writeByte:142];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FCPPlatformSize class]]) {
+    [self writeByte:143];
     [self writeValue:[value toList]];
   } else {
     [super writeValue:value];
@@ -1136,6 +1156,63 @@ void SetUpFCPCameraApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
                completion:^(FlutterError *_Nullable error) {
                  callback(wrapResult(nil, error));
                }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  /// Sets the video stabilization mode.
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString stringWithFormat:@"%@%@",
+                                                   @"dev.flutter.pigeon.camera_avfoundation."
+                                                   @"CameraApi.setVideoStabilizationMode",
+                                                   messageChannelSuffix]
+        binaryMessenger:binaryMessenger
+                  codec:FCPGetMessagesCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(setVideoStabilizationMode:completion:)],
+                @"FCPCameraApi api (%@) doesn't respond to "
+                @"@selector(setVideoStabilizationMode:completion:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray<id> *args = message;
+        FCPPlatformVideoStabilizationModeBox *boxedFCPPlatformVideoStabilizationMode =
+            GetNullableObjectAtIndex(args, 0);
+        FCPPlatformVideoStabilizationMode arg_mode = boxedFCPPlatformVideoStabilizationMode.value;
+        [api setVideoStabilizationMode:arg_mode
+                            completion:^(FlutterError *_Nullable error) {
+                              callback(wrapResult(nil, error));
+                            }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  /// Sets the video stabilization mode.
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString stringWithFormat:@"%@%@",
+                                                   @"dev.flutter.pigeon.camera_avfoundation."
+                                                   @"CameraApi.isVideoStabilizationModeSupported",
+                                                   messageChannelSuffix]
+        binaryMessenger:binaryMessenger
+                  codec:FCPGetMessagesCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(isVideoStabilizationModeSupported:completion:)],
+                @"FCPCameraApi api (%@) doesn't respond to "
+                @"@selector(isVideoStabilizationModeSupported:completion:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray<id> *args = message;
+        FCPPlatformVideoStabilizationModeBox *boxedFCPPlatformVideoStabilizationMode =
+            GetNullableObjectAtIndex(args, 0);
+        FCPPlatformVideoStabilizationMode arg_mode = boxedFCPPlatformVideoStabilizationMode.value;
+        [api isVideoStabilizationModeSupported:arg_mode
+                                    completion:^(NSNumber *_Nullable output,
+                                                 FlutterError *_Nullable error) {
+                                      callback(wrapResult(output, error));
+                                    }];
       }];
     } else {
       [channel setMessageHandler:nil];
