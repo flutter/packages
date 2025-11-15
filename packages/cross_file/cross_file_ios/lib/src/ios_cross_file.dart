@@ -1,11 +1,10 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:cross_file_android/src/document_file.g.dart';
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
 
-base class AndroidXFile extends PlatformXFile {
-  AndroidXFile(super.params) : super.implementation();
+base class IOSXFile extends PlatformXFile {
+  IOSXFile(super.params) : super.implementation();
 
   late final DocumentFile _documentFile = DocumentFile.fromSingleUri(
     path: params.path,
@@ -33,7 +32,7 @@ base class AndroidXFile extends PlatformXFile {
       InputStreamReadBytesResponse response = await inputStream.readBytes(1024);
       while (response.returnValue != -1) {
         yield response.bytes;
-        response = await inputStream.readBytes(4 * 1024);
+        response = await inputStream.readBytes(1024);
       }
     } else {
       throw _createNullInputStreamError();
@@ -61,15 +60,12 @@ base class AndroidXFile extends PlatformXFile {
   Future<bool> canRead() => _documentFile.canRead();
 
   @override
-  Future<bool> exists() {
-    // TODO: shoulc also call _documentFile.isFile
-    return _documentFile.exists();
-  }
+  Future<bool> exists() => _documentFile.exists();
 
   UnsupportedError _createNullInputStreamError() {
     return UnsupportedError(
       'Failed to get native InputStream from file with path: ${params.path}. '
-      'App may not have permissions to access file.',
+          'App may not have permissions to access file.',
     );
   }
 }

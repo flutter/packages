@@ -1,8 +1,4 @@
-
-import 'cross_file_ios_platform_interface.dart';
-
-class CrossFileIos {
-  Future<String?> getPlatformVersion() {
-    return CrossFileIosPlatform.instance.getPlatformVersion();
-  }
-}
+export 'src/ios_cross_file.dart';
+export 'src/cross_file_ios.dart';
+export 'package:cross_file_platform_interface/cross_file_platform_interface.dart'
+    show PlatformXFileCreationParams;

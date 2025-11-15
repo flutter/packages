@@ -1,7 +1,7 @@
 // Platform Implementation for Android
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
 
-import '../cross_file_android.dart';
+import 'android_cross_file.dart';
 
 final class CrossFileAndroid extends CrossFilePlatform {
   static void registerWith() {
