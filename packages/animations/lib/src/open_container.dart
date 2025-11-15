@@ -190,7 +190,8 @@ class OpenContainer<T extends Object?> extends StatefulWidget {
   ///  * [Material.shape], which is used to implement this property.
   final ShapeBorder openShape;
 
-  /// Called when the container was popped and has returned to the closed state.
+  /// Called when the container is popped. This is called at the start of the
+  /// closing transition.
   ///
   /// The return value from the popped screen is passed to this function as an
   /// argument.

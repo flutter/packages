@@ -1,5 +1,6 @@
-## NEXT
+## 2.1.1
 
+* Updated the documentation for `OpenContainer.onClosed` to clarify that it is called at the start of the closing transition, not at the end.
 * Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
 
 ## 2.1.0
