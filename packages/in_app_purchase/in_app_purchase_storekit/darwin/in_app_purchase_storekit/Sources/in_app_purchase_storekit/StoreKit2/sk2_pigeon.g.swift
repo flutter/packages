@@ -73,7 +73,6 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
   return value as! T?
 }
 
-// swift-format-ignore: AlwaysUseLowerCamelCase
 func deepEqualssk2_pigeon(_ lhs: Any?, _ rhs: Any?) -> Bool {
   let cleanLhs = nilOrValue(lhs) as Any?
   let cleanRhs = nilOrValue(rhs) as Any?
@@ -115,7 +114,6 @@ func deepEqualssk2_pigeon(_ lhs: Any?, _ rhs: Any?) -> Bool {
   }
 }
 
-// swift-format-ignore: AlwaysUseLowerCamelCase
 func deepHashsk2_pigeon(value: Any?, hasher: inout Hasher) {
   if let valueList = value as? [AnyHashable] {
     for item in valueList { deepHashsk2_pigeon(value: item, hasher: &hasher) }
@@ -211,6 +209,9 @@ struct SK2SubscriptionOfferMessage: Hashable {
       paymentMode,
     ]
   }
+  static func == (lhs: SK2SubscriptionOfferMessage, rhs: SK2SubscriptionOfferMessage) -> Bool {
+    return deepEqualssk2_pigeon(lhs.toList(), rhs.toList())
+  }
   func hash(into hasher: inout Hasher) {
     deepHashsk2_pigeon(value: toList(), hasher: &hasher)
   }
@@ -238,6 +239,9 @@ struct SK2SubscriptionPeriodMessage: Hashable {
       value,
       unit,
     ]
+  }
+  static func == (lhs: SK2SubscriptionPeriodMessage, rhs: SK2SubscriptionPeriodMessage) -> Bool {
+    return deepEqualssk2_pigeon(lhs.toList(), rhs.toList())
   }
   func hash(into hasher: inout Hasher) {
     deepHashsk2_pigeon(value: toList(), hasher: &hasher)
@@ -271,6 +275,9 @@ struct SK2SubscriptionInfoMessage: Hashable {
       subscriptionGroupID,
       subscriptionPeriod,
     ]
+  }
+  static func == (lhs: SK2SubscriptionInfoMessage, rhs: SK2SubscriptionInfoMessage) -> Bool {
+    return deepEqualssk2_pigeon(lhs.toList(), rhs.toList())
   }
   func hash(into hasher: inout Hasher) {
     deepHashsk2_pigeon(value: toList(), hasher: &hasher)
@@ -333,6 +340,9 @@ struct SK2ProductMessage: Hashable {
       priceLocale,
     ]
   }
+  static func == (lhs: SK2ProductMessage, rhs: SK2ProductMessage) -> Bool {
+    return deepEqualssk2_pigeon(lhs.toList(), rhs.toList())
+  }
   func hash(into hasher: inout Hasher) {
     deepHashsk2_pigeon(value: toList(), hasher: &hasher)
   }
@@ -358,6 +368,9 @@ struct SK2PriceLocaleMessage: Hashable {
       currencyCode,
       currencySymbol,
     ]
+  }
+  static func == (lhs: SK2PriceLocaleMessage, rhs: SK2PriceLocaleMessage) -> Bool {
+    return deepEqualssk2_pigeon(lhs.toList(), rhs.toList())
   }
   func hash(into hasher: inout Hasher) {
     deepHashsk2_pigeon(value: toList(), hasher: &hasher)
@@ -396,6 +409,11 @@ struct SK2SubscriptionOfferSignatureMessage: Hashable {
       signature,
     ]
   }
+  static func == (
+    lhs: SK2SubscriptionOfferSignatureMessage, rhs: SK2SubscriptionOfferSignatureMessage
+  ) -> Bool {
+    return deepEqualssk2_pigeon(lhs.toList(), rhs.toList())
+  }
   func hash(into hasher: inout Hasher) {
     deepHashsk2_pigeon(value: toList(), hasher: &hasher)
   }
@@ -421,6 +439,11 @@ struct SK2SubscriptionOfferPurchaseMessage: Hashable {
       promotionalOfferId,
       promotionalOfferSignature,
     ]
+  }
+  static func == (
+    lhs: SK2SubscriptionOfferPurchaseMessage, rhs: SK2SubscriptionOfferPurchaseMessage
+  ) -> Bool {
+    return deepEqualssk2_pigeon(lhs.toList(), rhs.toList())
   }
   func hash(into hasher: inout Hasher) {
     deepHashsk2_pigeon(value: toList(), hasher: &hasher)
@@ -455,6 +478,11 @@ struct SK2ProductPurchaseOptionsMessage: Hashable {
       promotionalOffer,
       winBackOfferId,
     ]
+  }
+  static func == (lhs: SK2ProductPurchaseOptionsMessage, rhs: SK2ProductPurchaseOptionsMessage)
+    -> Bool
+  {
+    return deepEqualssk2_pigeon(lhs.toList(), rhs.toList())
   }
   func hash(into hasher: inout Hasher) {
     deepHashsk2_pigeon(value: toList(), hasher: &hasher)
@@ -517,6 +545,9 @@ struct SK2TransactionMessage: Hashable {
       error,
       jsonRepresentation,
     ]
+  }
+  static func == (lhs: SK2TransactionMessage, rhs: SK2TransactionMessage) -> Bool {
+    return deepEqualssk2_pigeon(lhs.toList(), rhs.toList())
   }
   func hash(into hasher: inout Hasher) {
     deepHashsk2_pigeon(value: toList(), hasher: &hasher)
@@ -695,6 +726,8 @@ protocol InAppPurchase2API {
   func isIntroductoryOfferEligible(
     productId: String, completion: @escaping (Result<Bool, Error>) -> Void)
   func transactions(completion: @escaping (Result<[SK2TransactionMessage], Error>) -> Void)
+  func unfinishedTransactions(
+    completion: @escaping (Result<[SK2TransactionMessage], Error>) -> Void)
   func finish(id: Int64, completion: @escaping (Result<Void, Error>) -> Void)
   func startListeningToTransactions() throws
   func stopListeningToTransactions() throws
@@ -827,6 +860,24 @@ class InAppPurchase2APISetup {
       }
     } else {
       transactionsChannel.setMessageHandler(nil)
+    }
+    let unfinishedTransactionsChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.unfinishedTransactions\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      unfinishedTransactionsChannel.setMessageHandler { _, reply in
+        api.unfinishedTransactions { result in
+          switch result {
+          case .success(let res):
+            reply(wrapResult(res))
+          case .failure(let error):
+            reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      unfinishedTransactionsChannel.setMessageHandler(nil)
     }
     let finishChannel = FlutterBasicMessageChannel(
       name: "dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.finish\(channelSuffix)",
