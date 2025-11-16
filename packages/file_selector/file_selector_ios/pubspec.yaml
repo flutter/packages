@@ -17,6 +17,8 @@ flutter:
         pluginClass: FileSelectorPlugin
 
 dependencies:
+  cross_file_ios:
+    path: ../../cross_file/cross_file_ios
   file_selector_platform_interface: ^2.3.0
   flutter:
     sdk: flutter

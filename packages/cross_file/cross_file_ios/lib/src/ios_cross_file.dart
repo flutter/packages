@@ -7,17 +7,22 @@ import 'package:cross_file_platform_interface/cross_file_platform_interface.dart
 base class IOSXFile extends PlatformSharedStorageXFile {
   IOSXFile(super.params) : super.implementation();
 
-  final FileManager _fileManager = FileManager.defaultManager;
-
   @override
-  Future<bool> canRead() {
-    // TODO: implement canRead
-    throw UnimplementedError();
+  Future<bool> canRead() async {
+    final URL? url = await URL.fileURLWithPath(params.path);
+
+    if (url case URL url) {
+      final bool canRead = await url.startAccessingSecurityScopedResource();
+      await url.stopAccessingSecurityScopedResource();
+      return canRead;
+    }
+
+    return false;
   }
 
   @override
   Future<bool> exists() {
-    return _fileManager.fileExists(params.path);
+    return canRead();
   }
 
   @override
@@ -46,22 +51,30 @@ base class IOSXFile extends PlatformSharedStorageXFile {
 
   @override
   Future<Uint8List> readAsBytes() async {
-    final bool canRead = await URL.startAccessingSecurityScopedResource(params.path);
-    if (canRead) {
-      final Uint8List? bytes = await _fileManager.contents(params.path);
-      URL.stopAccessingSecurityScopedResource(params.path);
+    final URL? url = await URL.fileURLWithPath(params.path);
 
-      if (bytes case Uint8List bytes) {
-        return bytes;
+    if (url case URL url) {
+      final bool canRead = await url.startAccessingSecurityScopedResource();
+      if (canRead) {
+        final FileHandle fileHandle = FileHandle.forReadingFromUrl(url: url);
+        try {
+          final Uint8List? bytes = await fileHandle.readToEnd();
+          await url.stopAccessingSecurityScopedResource();
+
+          if (bytes case Uint8List bytes) {
+            return bytes;
+          }
+        } finally {
+          fileHandle.close();
+        }
       }
     }
 
-    throw UnsupportedError('Can access bytes to file: ${params.path}');
+    throw UnsupportedError('Cant access bytes to file: ${params.path}');
   }
 
   @override
-  Future<String> readAsString({Encoding encoding = utf8}) {
-    // TODO: implement readAsString
-    throw UnimplementedError();
+  Future<String> readAsString({Encoding encoding = utf8}) async {
+    return encoding.decode(await readAsBytes());
   }
 }

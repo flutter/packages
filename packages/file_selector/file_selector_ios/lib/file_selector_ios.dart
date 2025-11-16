@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:cross_file_ios/cross_file_ios.dart';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/foundation.dart' show visibleForTesting;
 
@@ -32,6 +33,21 @@ class FileSelectorIOS extends FileSelectorPlatform {
       ),
     );
     return path.isEmpty ? null : XFile(path.first);
+  }
+
+  Future<IOSXFile?> openFile2({
+    List<XTypeGroup>? acceptedTypeGroups,
+    String? initialDirectory,
+    String? confirmButtonText,
+  }) async {
+    final List<String> paths = await _hostApi.openFile2(
+      FileSelectorConfig(
+        utis: _allowedUtiListFromTypeGroups(acceptedTypeGroups),
+      ),
+    );
+    return paths.isEmpty
+        ? null
+        : IOSXFile(PlatformSharedStorageXFileCreationParams(path: paths.first));
   }
 
   @override

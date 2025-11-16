@@ -2,6 +2,9 @@ import 'package:flutter/foundation.dart';
 
 import '../../cross_file_platform_interface.dart';
 
+// TODO: difference between path and tostring
+// TODO: Absolute string definition: "Returns true if this URI is absolute, i.e. if it contains an explicit scheme."
+// TODO: it is relative if not
 @immutable
 base class PlatformSharedStorageXFileCreationParams
     extends PlatformXFileCreationParams {
@@ -28,8 +31,8 @@ abstract base class PlatformSharedStorageXFile extends PlatformXFile {
   }
 
   @protected
-  PlatformSharedStorageXFile.implementation(super.params)
-    : super.implementation();
+  PlatformSharedStorageXFile.implementation(PlatformSharedStorageXFileCreationParams params)
+    : super.implementation(params);
 
   @override
   PlatformSharedStorageXFileCreationParams get params =>
@@ -40,4 +43,8 @@ abstract base class PlatformSharedStorageXFile extends PlatformXFile {
       super.extension as SharedStoragePlatformXFileExtension?;
 
   Future<void> delete();
+
+  Future<String> absoluteString() {
+    throw UnimplementedError();
+  }
 }

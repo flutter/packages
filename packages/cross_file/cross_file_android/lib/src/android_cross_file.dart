@@ -53,8 +53,8 @@ base class AndroidXFile extends PlatformSharedStorageXFile {
   }
 
   @override
-  Future<String> readAsString({Encoding encoding = utf8}) {
-    return utf8.decodeStream(openRead());
+  Future<String> readAsString({Encoding encoding = utf8}) async {
+    return utf8.decode(await readAsBytes());
   }
 
   @override

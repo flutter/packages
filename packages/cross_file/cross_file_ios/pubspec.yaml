@@ -20,12 +20,12 @@ dependencies:
     sdk: flutter
   cross_file_platform_interface:
     path: ../cross_file_platform_interface
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
   pigeon:
     git:
       url: git@github.com:bparrishMines/packages.git
       ref: pigeon_helper
       path: packages/pigeon
-
-dev_dependencies:
-  flutter_test:
-    sdk: flutter

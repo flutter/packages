@@ -75,5 +75,26 @@ public class FileSelectorPlugin: NSObject, FlutterPlugin, FileSelectorApi {
       )
     }
   }
+  
+  func openFile2(config: FileSelectorConfig, completion: @escaping (Result<[String], any Error>) -> Void) {
+    let completionBridge = PickerCompletionBridge(completion: completion, owner: self)
+    let documentPicker =
+      documentPickerViewControllerOverride
+      ?? UIDocumentPickerViewController(
+        documentTypes: config.utis,
+        in: .open)
+    documentPicker.allowsMultipleSelection = config.allowMultiSelection
+    documentPicker.delegate = completionBridge
 
+    let presenter =
+      self.viewPresenterOverride ?? UIApplication.shared.delegate?.window??.rootViewController
+    if let presenter = presenter {
+      pendingCompletions.insert(completionBridge)
+      presenter.present(documentPicker, animated: true, completion: nil)
+    } else {
+      completion(
+        .failure(PigeonError(code: "error", message: "Missing root view controller.", details: nil))
+      )
+    }
+  }
 }

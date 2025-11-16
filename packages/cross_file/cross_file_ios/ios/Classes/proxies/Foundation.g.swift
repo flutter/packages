@@ -366,9 +366,9 @@ protocol FoundationPigeonProxyApiDelegate {
   /// An implementation of [PigeonApiURL] used to add a new Dart instance of
   /// `URL` to the Dart `InstanceManager` and make calls to Dart.
   func pigeonApiURL(_ registrar: FoundationPigeonProxyApiRegistrar) -> PigeonApiURL
-  /// An implementation of [PigeonApiFileManager] used to add a new Dart instance of
-  /// `FileManager` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiFileManager(_ registrar: FoundationPigeonProxyApiRegistrar) -> PigeonApiFileManager
+  /// An implementation of [PigeonApiFileHandle] used to add a new Dart instance of
+  /// `FileHandle` to the Dart `InstanceManager` and make calls to Dart.
+  func pigeonApiFileHandle(_ registrar: FoundationPigeonProxyApiRegistrar) -> PigeonApiFileHandle
 }
 
 open class FoundationPigeonProxyApiRegistrar {
@@ -411,12 +411,12 @@ open class FoundationPigeonProxyApiRegistrar {
   func setUp() {
     FoundationPigeonInstanceManagerApi.setUpMessageHandlers(binaryMessenger: binaryMessenger, instanceManager: instanceManager)
     PigeonApiURL.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiURL(self))
-    PigeonApiFileManager.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiFileManager(self))
+    PigeonApiFileHandle.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiFileHandle(self))
   }
   func tearDown() {
     FoundationPigeonInstanceManagerApi.setUpMessageHandlers(binaryMessenger: binaryMessenger, instanceManager: nil)
     PigeonApiURL.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
-    PigeonApiFileManager.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
+    PigeonApiFileHandle.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
   }
 }
 private class FoundationPigeonInternalProxyApiCodecReaderWriter: FlutterStandardReaderWriter {
@@ -472,8 +472,8 @@ private class FoundationPigeonInternalProxyApiCodecReaderWriter: FlutterStandard
       }
 
 
-      if let instance = value as? FileManager {
-        pigeonRegistrar.apiDelegate.pigeonApiFileManager(pigeonRegistrar).pigeonNewInstance(
+      if let instance = value as? FileHandle {
+        pigeonRegistrar.apiDelegate.pigeonApiFileHandle(pigeonRegistrar).pigeonNewInstance(
           pigeonInstance: instance
         ) { _ in }
         super.writeByte(128)
@@ -530,8 +530,9 @@ class FoundationPigeonCodec: FlutterStandardMessageCodec, @unchecked Sendable {
 }
 
 protocol PigeonApiDelegateURL {
-  func startAccessingSecurityScopedResource(pigeonApi: PigeonApiURL, url: String) throws -> Bool
-  func stopAccessingSecurityScopedResource(pigeonApi: PigeonApiURL, url: String) throws
+  func fileURLWithPath(pigeonApi: PigeonApiURL, path: String) throws -> URL?
+  func startAccessingSecurityScopedResource(pigeonApi: PigeonApiURL, pigeonInstance: URL) throws -> Bool
+  func stopAccessingSecurityScopedResource(pigeonApi: PigeonApiURL, pigeonInstance: URL) throws
 }
 
 protocol PigeonApiProtocolURL {
@@ -550,13 +551,28 @@ final class PigeonApiURL: PigeonApiProtocolURL  {
       ? FlutterStandardMessageCodec(
         readerWriter: FoundationPigeonInternalProxyApiCodecReaderWriter(pigeonRegistrar: api!.pigeonRegistrar))
       : FlutterStandardMessageCodec.sharedInstance()
+    let fileURLWithPathChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.cross_file_ios.URL.fileURLWithPath", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      fileURLWithPathChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let pathArg = args[0] as! String
+        do {
+          let result = try api.pigeonDelegate.fileURLWithPath(pigeonApi: api, path: pathArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      fileURLWithPathChannel.setMessageHandler(nil)
+    }
     let startAccessingSecurityScopedResourceChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.cross_file_ios.URL.startAccessingSecurityScopedResource", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       startAccessingSecurityScopedResourceChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
-        let urlArg = args[0] as! String
+        let pigeonInstanceArg = args[0] as! URL
         do {
-          let result = try api.pigeonDelegate.startAccessingSecurityScopedResource(pigeonApi: api, url: urlArg)
+          let result = try api.pigeonDelegate.startAccessingSecurityScopedResource(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
           reply(wrapResult(result))
         } catch {
           reply(wrapError(error))
@@ -569,9 +585,9 @@ final class PigeonApiURL: PigeonApiProtocolURL  {
     if let api = api {
       stopAccessingSecurityScopedResourceChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
-        let urlArg = args[0] as! String
+        let pigeonInstanceArg = args[0] as! URL
         do {
-          try api.pigeonDelegate.stopAccessingSecurityScopedResource(pigeonApi: api, url: urlArg)
+          try api.pigeonDelegate.stopAccessingSecurityScopedResource(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
@@ -630,12 +646,16 @@ import Foundation
 /// This class may handle instantiating native object instances that are attached to a Dart instance
 /// or handle method calls on the associated native class or an instance of that class.
 class URLProxyAPIDelegate : PigeonApiDelegateURL {
-  func startAccessingSecurityScopedResource(pigeonApi: PigeonApiURL, url: String) throws -> Bool {
-    return URL.startAccessingSecurityScopedResource(url: url)
+  func fileURLWithPath(pigeonApi: PigeonApiURL, path: String) throws -> URL? {
+    return URL.fileURLWithPath(path: path)
   }
 
-  func stopAccessingSecurityScopedResource(pigeonApi: PigeonApiURL, url: String) throws {
-    URL.stopAccessingSecurityScopedResource(url: url)
+  func startAccessingSecurityScopedResource(pigeonApi: PigeonApiURL, pigeonInstance: URL) throws -> Bool {
+    return pigeonInstance.startAccessingSecurityScopedResource()
+  }
+
+  func stopAccessingSecurityScopedResource(pigeonApi: PigeonApiURL, pigeonInstance: URL) throws {
+    pigeonInstance.stopAccessingSecurityScopedResource()
   }
 
 }
@@ -653,99 +673,116 @@ import XCTest
 @testable import cross_file_ios
 
 class URLTests: XCTestCase {
+  func testStartAccessingSecurityScopedResource() {
+    let registrar = TestProxyApiRegistrar()
+    let api = registrar.apiDelegate.pigeonApiURL(registrar)
+
+    let instance = TestURL()
+    let value = try? api.pigeonDelegate.startAccessingSecurityScopedResource(pigeonApi: api, pigeonInstance: instance )
+
+    XCTAssertTrue(instance.startAccessingSecurityScopedResourceCalled)
+    XCTAssertEqual(value, instance.startAccessingSecurityScopedResource())
+  }
+
+  func testStopAccessingSecurityScopedResource() {
+    let registrar = TestProxyApiRegistrar()
+    let api = registrar.apiDelegate.pigeonApiURL(registrar)
+
+    let instance = TestURL()
+    try? api.pigeonDelegate.stopAccessingSecurityScopedResource(pigeonApi: api, pigeonInstance: instance )
+
+    XCTAssertTrue(instance.stopAccessingSecurityScopedResourceCalled)
+  }
+
+}
+class TestURL: URL {
+  var startAccessingSecurityScopedResourceCalled = false
+  var stopAccessingSecurityScopedResourceCalled = false
+
+
+  override func startAccessingSecurityScopedResource() {
+    startAccessingSecurityScopedResourceCalled = true
+  }
+  override func stopAccessingSecurityScopedResource() {
+    stopAccessingSecurityScopedResourceCalled = true
+  }
 }
 */
 
-protocol PigeonApiDelegateFileManager {
-  func defaultManager(pigeonApi: PigeonApiFileManager) throws -> FileManager
-  func fileExists(pigeonApi: PigeonApiFileManager, pigeonInstance: FileManager, atPath: String) throws -> Bool
-  func isReadableFile(pigeonApi: PigeonApiFileManager, pigeonInstance: FileManager, atPath: String) throws -> Bool
-  func contents(pigeonApi: PigeonApiFileManager, pigeonInstance: FileManager, atPath: String) throws -> FlutterStandardTypedData?
+protocol PigeonApiDelegateFileHandle {
+  func forReadingFromUrl(pigeonApi: PigeonApiFileHandle, url: URL) throws -> FileHandle
+  func readToEnd(pigeonApi: PigeonApiFileHandle, pigeonInstance: FileHandle) throws -> FlutterStandardTypedData?
+  func close(pigeonApi: PigeonApiFileHandle, pigeonInstance: FileHandle) throws
 }
 
-protocol PigeonApiProtocolFileManager {
+protocol PigeonApiProtocolFileHandle {
 }
 
-final class PigeonApiFileManager: PigeonApiProtocolFileManager  {
+final class PigeonApiFileHandle: PigeonApiProtocolFileHandle  {
   unowned let pigeonRegistrar: FoundationPigeonProxyApiRegistrar
-  let pigeonDelegate: PigeonApiDelegateFileManager
-  init(pigeonRegistrar: FoundationPigeonProxyApiRegistrar, delegate: PigeonApiDelegateFileManager) {
+  let pigeonDelegate: PigeonApiDelegateFileHandle
+  init(pigeonRegistrar: FoundationPigeonProxyApiRegistrar, delegate: PigeonApiDelegateFileHandle) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
-  static func setUpMessageHandlers(binaryMessenger: FlutterBinaryMessenger, api: PigeonApiFileManager?) {
+  static func setUpMessageHandlers(binaryMessenger: FlutterBinaryMessenger, api: PigeonApiFileHandle?) {
     let codec: FlutterStandardMessageCodec =
       api != nil
       ? FlutterStandardMessageCodec(
         readerWriter: FoundationPigeonInternalProxyApiCodecReaderWriter(pigeonRegistrar: api!.pigeonRegistrar))
       : FlutterStandardMessageCodec.sharedInstance()
-    let defaultManagerChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.cross_file_ios.FileManager.defaultManager", binaryMessenger: binaryMessenger, codec: codec)
+    let forReadingFromUrlChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.cross_file_ios.FileHandle.forReadingFromUrl", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      defaultManagerChannel.setMessageHandler { message, reply in
+      forReadingFromUrlChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonIdentifierArg = args[0] as! Int64
+        let urlArg = args[1] as! URL
         do {
-          api.pigeonRegistrar.instanceManager.addDartCreatedInstance(try api.pigeonDelegate.defaultManager(pigeonApi: api), withIdentifier: pigeonIdentifierArg)
+          api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
+try api.pigeonDelegate.forReadingFromUrl(pigeonApi: api, url: urlArg),
+withIdentifier: pigeonIdentifierArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
         }
       }
     } else {
-      defaultManagerChannel.setMessageHandler(nil)
+      forReadingFromUrlChannel.setMessageHandler(nil)
     }
-    let fileExistsChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.cross_file_ios.FileManager.fileExists", binaryMessenger: binaryMessenger, codec: codec)
+    let readToEndChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.cross_file_ios.FileHandle.readToEnd", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      fileExistsChannel.setMessageHandler { message, reply in
+      readToEndChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! FileManager
-        let atPathArg = args[1] as! String
+        let pigeonInstanceArg = args[0] as! FileHandle
         do {
-          let result = try api.pigeonDelegate.fileExists(pigeonApi: api, pigeonInstance: pigeonInstanceArg, atPath: atPathArg)
+          let result = try api.pigeonDelegate.readToEnd(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
           reply(wrapResult(result))
         } catch {
           reply(wrapError(error))
         }
       }
     } else {
-      fileExistsChannel.setMessageHandler(nil)
+      readToEndChannel.setMessageHandler(nil)
     }
-    let isReadableFileChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.cross_file_ios.FileManager.isReadableFile", binaryMessenger: binaryMessenger, codec: codec)
+    let closeChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.cross_file_ios.FileHandle.close", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      isReadableFileChannel.setMessageHandler { message, reply in
+      closeChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! FileManager
-        let atPathArg = args[1] as! String
+        let pigeonInstanceArg = args[0] as! FileHandle
         do {
-          let result = try api.pigeonDelegate.isReadableFile(pigeonApi: api, pigeonInstance: pigeonInstanceArg, atPath: atPathArg)
-          reply(wrapResult(result))
+          try api.pigeonDelegate.close(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
+          reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
         }
       }
     } else {
-      isReadableFileChannel.setMessageHandler(nil)
-    }
-    let contentsChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.cross_file_ios.FileManager.contents", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      contentsChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! FileManager
-        let atPathArg = args[1] as! String
-        do {
-          let result = try api.pigeonDelegate.contents(pigeonApi: api, pigeonInstance: pigeonInstanceArg, atPath: atPathArg)
-          reply(wrapResult(result))
-        } catch {
-          reply(wrapError(error))
-        }
-      }
-    } else {
-      contentsChannel.setMessageHandler(nil)
+      closeChannel.setMessageHandler(nil)
     }
   }
 
-  ///Creates a Dart instance of FileManager and attaches it to [pigeonInstance].
-  func pigeonNewInstance(pigeonInstance: FileManager, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+  ///Creates a Dart instance of FileHandle and attaches it to [pigeonInstance].
+  func pigeonNewInstance(pigeonInstance: FileHandle, completion: @escaping (Result<Void, PigeonError>) -> Void) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
@@ -758,7 +795,7 @@ final class PigeonApiFileManager: PigeonApiProtocolFileManager  {
       let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)
       let binaryMessenger = pigeonRegistrar.binaryMessenger
       let codec = pigeonRegistrar.codec
-      let channelName: String = "dev.flutter.pigeon.cross_file_ios.FileManager.pigeon_newInstance"
+      let channelName: String = "dev.flutter.pigeon.cross_file_ios.FileHandle.pigeon_newInstance"
       let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
         guard let listResponse = response as? [Any?] else {
@@ -787,25 +824,21 @@ import Foundation
 
 
 
-/// ProxyApi implementation for `FileManager`.
+/// ProxyApi implementation for `FileHandle`.
 ///
 /// This class may handle instantiating native object instances that are attached to a Dart instance
 /// or handle method calls on the associated native class or an instance of that class.
-class FileManagerProxyAPIDelegate : PigeonApiDelegateFileManager {
-  func defaultManager(pigeonApi: PigeonApiFileManager): FileManager {
-    return FileManager.defaultManager
+class FileHandleProxyAPIDelegate : PigeonApiDelegateFileHandle {
+  func forReadingFromUrl(pigeonApi: PigeonApiFileHandle, url: URL) throws -> FileHandle {
+    return FileHandle(,url: url)
   }
 
-  func fileExists(pigeonApi: PigeonApiFileManager, pigeonInstance: FileManager, atPath: String) throws -> Bool {
-    return pigeonInstance.fileExists(atPath: atPath)
+  func readToEnd(pigeonApi: PigeonApiFileHandle, pigeonInstance: FileHandle) throws -> FlutterStandardTypedData? {
+    return pigeonInstance.readToEnd()
   }
 
-  func isReadableFile(pigeonApi: PigeonApiFileManager, pigeonInstance: FileManager, atPath: String) throws -> Bool {
-    return pigeonInstance.isReadableFile(atPath: atPath)
-  }
-
-  func contents(pigeonApi: PigeonApiFileManager, pigeonInstance: FileManager, atPath: String) throws -> FlutterStandardTypedData? {
-    return pigeonInstance.contents(atPath: atPath)
+  func close(pigeonApi: PigeonApiFileHandle, pigeonInstance: FileHandle) throws {
+    pigeonInstance.close()
   }
 
 }
@@ -822,61 +855,47 @@ import XCTest
 
 @testable import cross_file_ios
 
-class FileManagerTests: XCTestCase {
-  func testFileExists() {
+class FileHandleTests: XCTestCase {
+  func testForReadingFromUrl() {
     let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiFileManager(registrar)
+    let api = registrar.apiDelegate.pigeonApiFileHandle(registrar)
 
-    let instance = TestFileManager()
-    let atPath = "myString"
-    let value = try? api.pigeonDelegate.fileExists(pigeonApi: api, pigeonInstance: instance, atPath: atPath)
-
-    XCTAssertEqual(instance.fileExistsArgs, [atPath])
-    XCTAssertEqual(value, instance.fileExists(atPath: atPath))
+    let instance = try? api.pigeonDelegate.forReadingFromUrl(pigeonApi: api, url: TestURL)
+    XCTAssertNotNil(instance)
   }
 
-  func testIsReadableFile() {
+  func testReadToEnd() {
     let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiFileManager(registrar)
+    let api = registrar.apiDelegate.pigeonApiFileHandle(registrar)
 
-    let instance = TestFileManager()
-    let atPath = "myString"
-    let value = try? api.pigeonDelegate.isReadableFile(pigeonApi: api, pigeonInstance: instance, atPath: atPath)
+    let instance = TestFileHandle()
+    let value = try? api.pigeonDelegate.readToEnd(pigeonApi: api, pigeonInstance: instance )
 
-    XCTAssertEqual(instance.isReadableFileArgs, [atPath])
-    XCTAssertEqual(value, instance.isReadableFile(atPath: atPath))
+    XCTAssertTrue(instance.readToEndCalled)
+    XCTAssertEqual(value, instance.readToEnd())
   }
 
-  func testContents() {
+  func testClose() {
     let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiFileManager(registrar)
+    let api = registrar.apiDelegate.pigeonApiFileHandle(registrar)
 
-    let instance = TestFileManager()
-    let atPath = "myString"
-    let value = try? api.pigeonDelegate.contents(pigeonApi: api, pigeonInstance: instance, atPath: atPath)
+    let instance = TestFileHandle()
+    try? api.pigeonDelegate.close(pigeonApi: api, pigeonInstance: instance )
 
-    XCTAssertEqual(instance.contentsArgs, [atPath])
-    XCTAssertEqual(value, instance.contents(atPath: atPath))
+    XCTAssertTrue(instance.closeCalled)
   }
 
 }
-class TestFileManager: FileManager {
-  var fileExistsArgs: [AnyHashable?]? = nil
-  var isReadableFileArgs: [AnyHashable?]? = nil
-  var contentsArgs: [AnyHashable?]? = nil
+class TestFileHandle: FileHandle {
+  var readToEndCalled = false
+  var closeCalled = false
 
 
-  override func fileExists() {
-    fileExistsArgs = [atPath]
-    return true
+  override func readToEnd() {
+    readToEndCalled = true
   }
-  override func isReadableFile() {
-    isReadableFileArgs = [atPath]
-    return true
-  }
-  override func contents() {
-    contentsArgs = [atPath]
-    return byteArrayOf(0xA1.toByte())
+  override func close() {
+    closeCalled = true
   }
 }
 */

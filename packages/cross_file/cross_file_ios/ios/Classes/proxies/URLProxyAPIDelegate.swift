@@ -9,12 +9,16 @@ import Foundation
 /// This class may handle instantiating native object instances that are attached to a Dart instance
 /// or handle method calls on the associated native class or an instance of that class.
 class URLProxyAPIDelegate : PigeonApiDelegateURL {
-  func startAccessingSecurityScopedResource(pigeonApi: PigeonApiURL, url: String) throws -> Bool {
-    return URL(string: url)!.startAccessingSecurityScopedResource()
+  func fileURLWithPath(pigeonApi: PigeonApiURL, path: String) throws -> URL? {
+    return URL(fileURLWithPath: path)
   }
-
-  func stopAccessingSecurityScopedResource(pigeonApi: PigeonApiURL, url: String) throws {
-    URL(string: url)!.stopAccessingSecurityScopedResource()
+  
+  func startAccessingSecurityScopedResource(pigeonApi: PigeonApiURL, pigeonInstance: URL) throws -> Bool {
+    pigeonInstance.startAccessingSecurityScopedResource()
+  }
+  
+  func stopAccessingSecurityScopedResource(pigeonApi: PigeonApiURL, pigeonInstance: URL) throws {
+    pigeonInstance.stopAccessingSecurityScopedResource()
   }
 
 }

@@ -10,6 +10,15 @@ final class CrossFileAndroid extends CrossFilePlatform {
 
   @override
   AndroidXFile createPlatformXFile(PlatformXFileCreationParams params) {
+    return createPlatformSharedStorageXFile(
+      PlatformSharedStorageXFileCreationParams(path: params.path),
+    );
+  }
+
+  @override
+  AndroidXFile createPlatformSharedStorageXFile(
+    PlatformSharedStorageXFileCreationParams params,
+  ) {
     return AndroidXFile(params);
   }
 }

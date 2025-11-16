@@ -10,6 +10,15 @@ final class CrossFileIOS extends CrossFilePlatform {
 
   @override
   IOSXFile createPlatformXFile(PlatformXFileCreationParams params) {
+    return IOSXFile(
+      PlatformSharedStorageXFileCreationParams(path: params.path),
+    );
+  }
+
+  @override
+  PlatformSharedStorageXFile createPlatformSharedStorageXFile(
+    PlatformSharedStorageXFileCreationParams params,
+  ) {
     return IOSXFile(params);
   }
 }

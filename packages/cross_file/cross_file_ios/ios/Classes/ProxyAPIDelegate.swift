@@ -15,8 +15,8 @@ open class ProxyApiDelegate: FoundationPigeonProxyApiDelegate {
     return PigeonApiURL(pigeonRegistrar: registrar, delegate: URLProxyAPIDelegate())
   }
   
-  func pigeonApiFileManager(_ registrar: FoundationPigeonProxyApiRegistrar) -> PigeonApiFileManager {
-    return PigeonApiFileManager(pigeonRegistrar: registrar, delegate: FileManagerProxyAPIDelegate())
+  func pigeonApiFileHandle(_ registrar: FoundationPigeonProxyApiRegistrar) -> PigeonApiFileHandle {
+    return PigeonApiFileHandle(pigeonRegistrar: registrar, delegate: FileHandleProxyAPIDelegate())
   }
 }
 

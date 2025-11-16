@@ -110,12 +110,12 @@ func deepEqualsmessages(_ lhs: Any?, _ rhs: Any?) -> Bool {
 
 func deepHashmessages(value: Any?, hasher: inout Hasher) {
   if let valueList = value as? [AnyHashable] {
-    for item in valueList { deepHashmessages(value: item, hasher: &hasher) }
-    return
+     for item in valueList { deepHashmessages(value: item, hasher: &hasher) }
+     return
   }
 
   if let valueDict = value as? [AnyHashable: AnyHashable] {
-    for key in valueDict.keys {
+    for key in valueDict.keys { 
       hasher.combine(key)
       deepHashmessages(value: valueDict[key]!, hasher: &hasher)
     }
@@ -129,10 +129,13 @@ func deepHashmessages(value: Any?, hasher: inout Hasher) {
   return hasher.combine(String(describing: value))
 }
 
+    
+
 /// Generated class from Pigeon that represents data sent in messages.
 struct FileSelectorConfig: Hashable {
   var utis: [String]
   var allowMultiSelection: Bool
+
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> FileSelectorConfig? {
@@ -151,8 +154,7 @@ struct FileSelectorConfig: Hashable {
     ]
   }
   static func == (lhs: FileSelectorConfig, rhs: FileSelectorConfig) -> Bool {
-    return deepEqualsmessages(lhs.toList(), rhs.toList())
-  }
+    return deepEqualsmessages(lhs.toList(), rhs.toList())  }
   func hash(into hasher: inout Hasher) {
     deepHashmessages(value: toList(), hasher: &hasher)
   }
@@ -194,23 +196,20 @@ class MessagesPigeonCodec: FlutterStandardMessageCodec, @unchecked Sendable {
   static let shared = MessagesPigeonCodec(readerWriter: MessagesPigeonCodecReaderWriter())
 }
 
+
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
 protocol FileSelectorApi {
   func openFile(config: FileSelectorConfig, completion: @escaping (Result<[String], Error>) -> Void)
+  func openFile2(config: FileSelectorConfig, completion: @escaping (Result<[String], Error>) -> Void)
 }
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
 class FileSelectorApiSetup {
   static var codec: FlutterStandardMessageCodec { MessagesPigeonCodec.shared }
   /// Sets up an instance of `FileSelectorApi` to handle messages through the `binaryMessenger`.
-  static func setUp(
-    binaryMessenger: FlutterBinaryMessenger, api: FileSelectorApi?,
-    messageChannelSuffix: String = ""
-  ) {
+  static func setUp(binaryMessenger: FlutterBinaryMessenger, api: FileSelectorApi?, messageChannelSuffix: String = "") {
     let channelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""
-    let openFileChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.file_selector_ios.FileSelectorApi.openFile\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let openFileChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.file_selector_ios.FileSelectorApi.openFile\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       openFileChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -226,6 +225,23 @@ class FileSelectorApiSetup {
       }
     } else {
       openFileChannel.setMessageHandler(nil)
+    }
+    let openFile2Channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.file_selector_ios.FileSelectorApi.openFile2\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      openFile2Channel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let configArg = args[0] as! FileSelectorConfig
+        api.openFile2(config: configArg) { result in
+          switch result {
+          case .success(let res):
+            reply(wrapResult(res))
+          case .failure(let error):
+            reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      openFile2Channel.setMessageHandler(nil)
     }
   }
 }

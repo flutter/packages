@@ -11,20 +11,18 @@ import 'package:pigeon/pigeon.dart';
 @ProxyApi()
 abstract class URL {
   @static
-  bool startAccessingSecurityScopedResource(String url);
+  URL? fileURLWithPath(String path);
 
-  @static
-  void stopAccessingSecurityScopedResource(String url);
+  bool startAccessingSecurityScopedResource();
+
+  void stopAccessingSecurityScopedResource();
 }
 
 @ProxyApi()
-abstract class FileManager {
-  @static
-  late final FileManager defaultManager;
+abstract class FileHandle {
+  FileHandle.forReadingFromUrl(URL url);
 
-  bool fileExists(String atPath);
+  Uint8List? readToEnd();
 
-  bool isReadableFile(String atPath);
-
-  Uint8List? contents(String atPath);
+  void close();
 }
