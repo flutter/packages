@@ -64,31 +64,29 @@ class FLTCamMediaSettingsAVWrapper {
   /// Creates a new input of the audio media type to receive sample buffers for writing to
   /// the output file.
   /// - Parameter outputSettings: The settings used for encoding the audio appended to the output.
-  /// - Returns: An instance of `FLTAssetWriterInput`.
+  /// - Returns: An instance of `AssetWriterInput`.
   func assetWriterAudioInput(withOutputSettings outputSettings: [String: Any]?)
-    -> FLTAssetWriterInput
+    -> AssetWriterInput
   {
-    let input = AVAssetWriterInput(mediaType: .audio, outputSettings: outputSettings)
-    return FLTDefaultAssetWriterInput(input: input)
+    return AVAssetWriterInput(mediaType: .audio, outputSettings: outputSettings)
   }
 
   /// Creates a new input of the video media type to receive sample buffers for writing to
   /// the output file.
   /// - Parameter outputSettings: The settings used for encoding the video appended to the output.
-  /// - Returns: An instance of `FLTAssetWriterInput`.
+  /// - Returns: An instance of `AssetWriterInput`.
   func assetWriterVideoInput(withOutputSettings outputSettings: [String: Any]?)
-    -> FLTAssetWriterInput
+    -> AssetWriterInput
   {
-    let input = AVAssetWriterInput(mediaType: .video, outputSettings: outputSettings)
-    return FLTDefaultAssetWriterInput(input: input)
+    return AVAssetWriterInput(mediaType: .video, outputSettings: outputSettings)
   }
 
   /// Adds an input to the asset writer.
   /// - Parameters:
-  ///   - writerInput: The `FLTAssetWriterInput` object to be added.
-  ///   - writer: The `FLTAssetWriter` object.
-  func addInput(_ writerInput: FLTAssetWriterInput, to writer: FLTAssetWriter) {
-    writer.add(writerInput.input)
+  ///   - writerInput: The `AssetWriterInput` object to be added.
+  ///   - writer: The `AssetWriter` object.
+  func addInput(_ writerInput: AssetWriterInput, to writer: AssetWriter) {
+    writer.add(writerInput.avInput)
   }
 
   /// Specifies the recommended video settings for `FLTCaptureVideoDataOutput`.
