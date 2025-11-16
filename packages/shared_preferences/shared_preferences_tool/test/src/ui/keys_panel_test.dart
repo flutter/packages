@@ -109,10 +109,9 @@ void main() {
       final ColorScheme colorScheme = Theme.of(selectedKeyElement).colorScheme;
 
       Color? bgColorFor(String key) {
-        final Container? container =
-            tester
-                .element(find.text(key))
-                .findAncestorWidgetOfExactType<Container>();
+        final Container? container = tester
+            .element(find.text(key))
+            .findAncestorWidgetOfExactType<Container>();
         return container?.color;
       }
 

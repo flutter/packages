@@ -22,8 +22,9 @@ Future<void> main(List<String> args) async {
     exit(0);
   }
 
-  final Directory packageDir =
-      Directory(p.dirname(Platform.script.path)).parent;
+  final Directory packageDir = Directory(
+    p.dirname(Platform.script.path),
+  ).parent;
   final String testingAppDirPath = p.join(
     packageDir.path,
     'testing',

@@ -1,6 +1,11 @@
 ## 0.5.3
 
 * Adds `getDirectoryPathWithOptions` and `getDirectoryPathsWithOptions` implementations.
+* Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
+
+## 0.5.2+2
+
+* Removed mockito-inline and updated to mockito-core 5.17.0.
 
 ## 0.5.2+1
 

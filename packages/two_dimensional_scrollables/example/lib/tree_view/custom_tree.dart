@@ -120,10 +120,9 @@ class CustomTreeExampleState extends State<CustomTreeExample> {
         SizedBox(width: 10.0 * node.depth! + 8.0),
         DecoratedBox(
           decoration: BoxDecoration(
-            border:
-                node.parent != null
-                    ? Border(left: border, bottom: border)
-                    : null,
+            border: node.parent != null
+                ? Border(left: border, bottom: border)
+                : null,
           ),
           child: const SizedBox(height: 50.0, width: 20.0),
         ),
@@ -148,12 +147,10 @@ class CustomTreeExampleState extends State<CustomTreeExample> {
     TreeViewNode<String> node,
   ) {
     return <Type, GestureRecognizerFactory>{
-      TapGestureRecognizer: GestureRecognizerFactoryWithHandlers<
-        TapGestureRecognizer
-      >(
-        () => TapGestureRecognizer(),
-        (TapGestureRecognizer t) =>
-            t.onTap = () {
+      TapGestureRecognizer:
+          GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>(
+            () => TapGestureRecognizer(),
+            (TapGestureRecognizer t) => t.onTap = () {
               setState(() {
                 // Toggling the node here instead means any tap on the row can
                 // toggle parent nodes opened and closed.
@@ -161,7 +158,7 @@ class CustomTreeExampleState extends State<CustomTreeExample> {
                 _selectedNode = node;
               });
             },
-      ),
+          ),
     };
   }
 
