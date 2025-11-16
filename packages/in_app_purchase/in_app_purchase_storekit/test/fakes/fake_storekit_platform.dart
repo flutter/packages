@@ -458,6 +458,7 @@ class FakeStoreKit2Platform implements InAppPurchase2API {
         originalId: 123,
         productId: 'product_id',
         purchaseDate: '12-12',
+        receiptData: 'fake_jws_representation',
       ),
     ]);
   }

@@ -27,6 +27,7 @@ class SK2Transaction {
     this.subscriptionGroupID,
     this.price,
     this.error,
+    this.receiptData,
     this.jsonRepresentation,
   });
 
@@ -63,7 +64,11 @@ class SK2Transaction {
   /// Any error returned from StoreKit
   final SKError? error;
 
-  /// The json representation of a transaction
+  /// The JWS (JSON Web Signature) representation of the transaction.
+  /// This is the jwsRepresentation from StoreKit used for server-side verification.
+  final String? receiptData;
+
+  /// The json representation of a transaction.
   final String? jsonRepresentation;
 
   /// Wrapper around [Transaction.finish]
@@ -122,6 +127,7 @@ extension on SK2TransactionMessage {
       purchaseDate: purchaseDate,
       expirationDate: expirationDate,
       appAccountToken: appAccountToken,
+      receiptData: receiptData,
       jsonRepresentation: jsonRepresentation,
     );
   }
