@@ -238,8 +238,16 @@ extension InAppPurchasePlugin: InAppPurchase2API {
     Task {
       @MainActor in
       do {
-        let transactionsMsgs = await rawUnfinishedTransactions().map {
-          $0.convertToPigeon(receipt: nil)
+        var transactionsMsgs: [SK2TransactionMessage] = []
+        for await verificationResult in Transaction.unfinished {
+          switch verificationResult {
+          case .verified(let transaction):
+            transactionsMsgs.append(
+              transaction.convertToPigeon(receipt: verificationResult.jwsRepresentation)
+            )
+          case .unverified:
+            break
+          }
         }
         completion(.success(transactionsMsgs))
       }
@@ -368,20 +376,6 @@ extension InAppPurchasePlugin: InAppPurchase2API {
   func rawTransactions() async -> [Transaction] {
     var transactions: [Transaction] = []
     for await verificationResult in Transaction.all {
-      switch verificationResult {
-      case .verified(let transaction):
-        transactions.append(transaction)
-      case .unverified:
-        break
-      }
-    }
-    return transactions
-  }
-
-  /// Helper function that fetches and unwraps all verified unfinished transactions
-  func rawUnfinishedTransactions() async -> [Transaction] {
-    var transactions: [Transaction] = []
-    for await verificationResult in Transaction.unfinished {
       switch verificationResult {
       case .verified(let transaction):
         transactions.append(transaction)

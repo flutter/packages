@@ -668,6 +668,15 @@ void main() {
       expect(transactions.first.id, '123');
       expect(transactions.first.productId, 'product_id');
     });
+
+    test('should expose receiptData (JWS) in unfinished transactions', () async {
+      final List<SK2Transaction> transactions =
+          await SK2Transaction.unfinishedTransactions();
+
+      expect(transactions, isNotEmpty);
+      expect(transactions.first.receiptData, isNotNull);
+      expect(transactions.first.receiptData, 'fake_jws_representation');
+    });
   });
 
   group('appAccountToken exposure', () {
@@ -700,7 +709,6 @@ void main() {
         ),
         transactionDate: '2025-11-15',
         status: PurchaseStatus.purchased,
-        appAccountToken: null,
       );
 
       expect(details.appAccountToken, isNull);
