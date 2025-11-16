@@ -67,11 +67,11 @@ final class DefaultCamera: NSObject, Camera {
   var capturePhotoOutput: CapturePhotoOutput
   private var captureVideoInput: CaptureInput
 
-  private var videoWriter: FLTAssetWriter?
-  private var videoWriterInput: FLTAssetWriterInput?
-  private var audioWriterInput: FLTAssetWriterInput?
-  private var assetWriterPixelBufferAdaptor: FLTAssetWriterInputPixelBufferAdaptor?
-  private var videoAdaptor: FLTAssetWriterInputPixelBufferAdaptor?
+  private var videoWriter: AssetWriter?
+  private var videoWriterInput: AssetWriterInput?
+  private var audioWriterInput: AssetWriterInput?
+  private var assetWriterPixelBufferAdaptor: AssetWriterInputPixelBufferAdaptor?
+  private var videoAdaptor: AssetWriterInputPixelBufferAdaptor?
 
   /// A dictionary to retain all in-progress FLTSavePhotoDelegates. The key of the dictionary is the
   /// AVCapturePhotoSettings's uniqueID for each photo capture operation, and the value is the
@@ -524,7 +524,7 @@ final class DefaultCamera: NSObject, Camera {
   private func setupWriter(forPath path: String) -> Bool {
     setUpCaptureSessionForAudioIfNeeded()
 
-    let videoWriter: FLTAssetWriter
+    let videoWriter: AssetWriter
 
     do {
       videoWriter = try assetWriterFactory(URL(fileURLWithPath: path), .mp4)
@@ -1218,7 +1218,7 @@ final class DefaultCamera: NSObject, Camera {
         let nextSampleTime = CMTimeSubtract(lastVideoSampleTime, videoTimeOffset)
         // do not append sample buffer when readyForMoreMediaData is NO to avoid crash
         // https://github.com/flutter/flutter/issues/132073
-        if videoWriterInput?.readyForMoreMediaData ?? false {
+        if videoWriterInput?.isReadyForMoreMediaData ?? false {
           videoAdaptor?.append(nextBuffer!, withPresentationTime: nextSampleTime)
         }
       } else {
@@ -1368,7 +1368,7 @@ final class DefaultCamera: NSObject, Camera {
       }
       return
     }
-    if audioWriterInput?.readyForMoreMediaData ?? false {
+    if audioWriterInput?.isReadyForMoreMediaData ?? false {
       if !(audioWriterInput?.append(sampleBuffer) ?? false) {
         reportErrorMessage("Unable to write to audio input")
       }
