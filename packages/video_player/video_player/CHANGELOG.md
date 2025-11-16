@@ -4,7 +4,7 @@
 
 ## 2.10.2
 
-* Updates platform dependency versions (`video_player_android`, `video_player_avfoundation`, `video_player_web`, and `video_player_platform_interface`) to their latest stable releases to improve stability and fix a `MediaCodecVideoRenderer` crash on some Android devices.
+* Fixes a `MediaCodecVideoRenderer` crash on some Android devices by updating platform dependencies to their latest stable versions.
 
 ## 2.10.1
 
