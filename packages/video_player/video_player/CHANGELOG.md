@@ -2,6 +2,10 @@
 
 * Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
 
+## 2.10.2
+
+* Updates platform dependency versions (`video_player_android`, `video_player_avfoundation`, `video_player_web`, and `video_player_platform_interface`) to their latest stable releases to improve stability and fix a `MediaCodecVideoRenderer` crash on some Android devices.
+
 ## 2.10.1
 
 * Fixes a bug where the `VideoPlayer` widget and `VideoProgressIndicator` widget would stop updating after GlobalKey reparenting.
