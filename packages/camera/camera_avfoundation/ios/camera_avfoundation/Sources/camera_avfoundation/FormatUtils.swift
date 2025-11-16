@@ -11,17 +11,17 @@ import AVFoundation
 
 /// Determines the video dimensions (width and height) for a given capture device format.
 /// Used in tests to mock CMVideoFormatDescriptionGetDimensions.
-typealias VideoDimensionsConverter = (FLTCaptureDeviceFormat) -> CMVideoDimensions
+typealias VideoDimensionsConverter = (CaptureDeviceFormat) -> CMVideoDimensions
 
 enum FormatUtils {
   /// Returns frame rate supported by format closest to targetFrameRate.
-  static private func bestFrameRate(for format: FLTCaptureDeviceFormat, targetFrameRate: Double)
+  static private func bestFrameRate(for format: CaptureDeviceFormat, targetFrameRate: Double)
     -> Double
   {
     var bestFrameRate: Double = 0
     var minDistance: Double = Double.greatestFiniteMagnitude
 
-    for range in format.videoSupportedFrameRateRanges {
+    for range in format.flutterVideoSupportedFrameRateRanges {
       let frameRate = min(
         max(targetFrameRate, Double(range.minFrameRate)), Double(range.maxFrameRate))
       let distance = abs(frameRate - targetFrameRate)

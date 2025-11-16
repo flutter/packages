@@ -12,8 +12,8 @@
 /// A mock implementation of `FLTCaptureDevice` that allows mocking the class
 /// properties.
 class MockCaptureDevice: NSObject, CaptureDevice {
-  var activeFormatStub: (() -> FLTCaptureDeviceFormat)?
-  var setActiveFormatStub: ((FLTCaptureDeviceFormat) -> Void)?
+  var activeFormatStub: (() -> CaptureDeviceFormat)?
+  var setActiveFormatStub: ((CaptureDeviceFormat) -> Void)?
   var getTorchModeStub: (() -> AVCaptureDevice.TorchMode)?
   var setTorchModeStub: ((AVCaptureDevice.TorchMode) -> Void)?
   var isFocusModeSupportedStub: ((AVCaptureDevice.FocusMode) -> Bool)?
@@ -34,7 +34,7 @@ class MockCaptureDevice: NSObject, CaptureDevice {
   var position = AVCaptureDevice.Position.unspecified
   var deviceType = AVCaptureDevice.DeviceType.builtInWideAngleCamera
 
-  var flutterActiveFormat: FLTCaptureDeviceFormat {
+  var flutterActiveFormat: CaptureDeviceFormat {
     get {
       activeFormatStub?() ?? MockCaptureDeviceFormat()
     }
@@ -43,7 +43,7 @@ class MockCaptureDevice: NSObject, CaptureDevice {
     }
   }
 
-  var flutterFormats: [FLTCaptureDeviceFormat] = []
+  var flutterFormats: [CaptureDeviceFormat] = []
   var hasFlash = false
   var hasTorch = false
   var isTorchAvailable = false

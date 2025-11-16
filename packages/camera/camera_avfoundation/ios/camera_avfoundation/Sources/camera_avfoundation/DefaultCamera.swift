@@ -309,11 +309,11 @@ final class DefaultCamera: NSObject, Camera {
   /// Finds the highest available resolution in terms of pixel count for the given device.
   /// Preferred are formats with the same subtype as current activeFormat.
   private func highestResolutionFormat(forCaptureDevice captureDevice: CaptureDevice)
-    -> FLTCaptureDeviceFormat?
+    -> CaptureDeviceFormat?
   {
     let preferredSubType = CMFormatDescriptionGetMediaSubType(
       captureDevice.flutterActiveFormat.formatDescription)
-    var bestFormat: FLTCaptureDeviceFormat? = nil
+    var bestFormat: CaptureDeviceFormat? = nil
     var maxPixelCount: UInt = 0
     var isBestSubTypePreferred = false
 

@@ -4,7 +4,6 @@
 
 import AVFoundation
 import CoreMedia
-import Foundation
 
 // Import Objective-C part of the implementation when SwiftPM is used.
 #if canImport(camera_avfoundation_objc)

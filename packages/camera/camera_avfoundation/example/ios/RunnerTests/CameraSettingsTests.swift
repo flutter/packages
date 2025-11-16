@@ -203,7 +203,7 @@ final class CameraSettingsTests: XCTestCase {
     configuration.mediaSettings = settings
     let camera = CameraTestUtils.createTestCamera(configuration)
 
-    let range = camera.captureDevice.flutterActiveFormat.videoSupportedFrameRateRanges[0]
+    let range = camera.captureDevice.flutterActiveFormat.flutterVideoSupportedFrameRateRanges[0]
     XCTAssertLessThanOrEqual(range.minFrameRate, 60)
     XCTAssertGreaterThanOrEqual(range.maxFrameRate, 60)
   }

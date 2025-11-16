@@ -1,6 +1,6 @@
 ## 0.9.22+7
 
-* Migrates `FLTCaptureConnection` class to Swift.
+* Migrates `FLTCaptureConnection` and `FLTCaptureDeviceFormat` classes to Swift.
 
 ## 0.9.22+6
 
