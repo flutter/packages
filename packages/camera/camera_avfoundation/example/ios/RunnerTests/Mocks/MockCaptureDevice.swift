@@ -34,7 +34,7 @@ class MockCaptureDevice: NSObject, CaptureDevice {
   var position = AVCaptureDevice.Position.unspecified
   var deviceType = AVCaptureDevice.DeviceType.builtInWideAngleCamera
 
-  var fltActiveFormat: FLTCaptureDeviceFormat {
+  var flutterActiveFormat: FLTCaptureDeviceFormat {
     get {
       activeFormatStub?() ?? MockCaptureDeviceFormat()
     }
@@ -43,7 +43,7 @@ class MockCaptureDevice: NSObject, CaptureDevice {
     }
   }
 
-  var fltFormats: [FLTCaptureDeviceFormat] = []
+  var flutterFormats: [FLTCaptureDeviceFormat] = []
   var hasFlash = false
   var hasTorch = false
   var isTorchAvailable = false

@@ -44,17 +44,17 @@ enum FormatUtils {
     mediaSettings: FCPPlatformMediaSettings,
     videoDimensionsConverter: VideoDimensionsConverter
   ) {
-    let targetResolution = videoDimensionsConverter(captureDevice.fltActiveFormat)
+    let targetResolution = videoDimensionsConverter(captureDevice.flutterActiveFormat)
     let targetFrameRate = mediaSettings.framesPerSecond?.doubleValue ?? 0
     let preferredSubType = CMFormatDescriptionGetMediaSubType(
-      captureDevice.fltActiveFormat.formatDescription)
+      captureDevice.flutterActiveFormat.formatDescription)
 
-    var bestFormat = captureDevice.fltActiveFormat
+    var bestFormat = captureDevice.flutterActiveFormat
     var resolvedBastFrameRate = bestFrameRate(for: bestFormat, targetFrameRate: targetFrameRate)
     var minDistance = abs(resolvedBastFrameRate - targetFrameRate)
     var isBestSubTypePreferred = true
 
-    for format in captureDevice.fltFormats {
+    for format in captureDevice.flutterFormats {
       let resolution = videoDimensionsConverter(format)
       if resolution.width != targetResolution.width || resolution.height != targetResolution.height
       {
@@ -76,7 +76,7 @@ enum FormatUtils {
       }
     }
 
-    captureDevice.fltActiveFormat = bestFormat
+    captureDevice.flutterActiveFormat = bestFormat
     mediaSettings.framesPerSecond = NSNumber(value: resolvedBastFrameRate)
   }
 }

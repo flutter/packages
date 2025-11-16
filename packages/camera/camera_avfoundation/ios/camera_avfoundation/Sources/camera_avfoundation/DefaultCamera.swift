@@ -248,7 +248,7 @@ final class DefaultCamera: NSObject, Camera {
         do {
           try captureDevice.lockForConfiguration()
           // Set the best device format found and finish the device configuration.
-          captureDevice.fltActiveFormat = bestFormat
+          captureDevice.flutterActiveFormat = bestFormat
           captureDevice.unlockForConfiguration()
           break
         }
@@ -301,7 +301,7 @@ final class DefaultCamera: NSObject, Camera {
       }
     }
 
-    let size = videoDimensionsConverter(captureDevice.fltActiveFormat)
+    let size = videoDimensionsConverter(captureDevice.flutterActiveFormat)
     previewSize = CGSize(width: CGFloat(size.width), height: CGFloat(size.height))
     audioCaptureSession.sessionPreset = videoCaptureSession.sessionPreset
   }
@@ -312,12 +312,12 @@ final class DefaultCamera: NSObject, Camera {
     -> FLTCaptureDeviceFormat?
   {
     let preferredSubType = CMFormatDescriptionGetMediaSubType(
-      captureDevice.fltActiveFormat.formatDescription)
+      captureDevice.flutterActiveFormat.formatDescription)
     var bestFormat: FLTCaptureDeviceFormat? = nil
     var maxPixelCount: UInt = 0
     var isBestSubTypePreferred = false
 
-    for format in captureDevice.fltFormats {
+    for format in captureDevice.flutterFormats {
       let resolution = videoDimensionsConverter(format)
       let height = UInt(resolution.height)
       let width = UInt(resolution.width)

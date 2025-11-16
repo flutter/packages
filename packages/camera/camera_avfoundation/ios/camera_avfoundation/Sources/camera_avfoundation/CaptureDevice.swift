@@ -27,8 +27,8 @@ protocol CaptureDevice: NSObjectProtocol {
   var deviceType: AVCaptureDevice.DeviceType { get }
 
   // Format/Configuration
-  var fltActiveFormat: FLTCaptureDeviceFormat { get set }
-  var fltFormats: [FLTCaptureDeviceFormat] { get }
+  var flutterActiveFormat: FLTCaptureDeviceFormat { get set }
+  var flutterFormats: [FLTCaptureDeviceFormat] { get }
 
   // Flash/Torch
   var hasFlash: Bool { get }
@@ -91,12 +91,12 @@ protocol CaptureDeviceInputFactory: NSObjectProtocol {
 extension AVCaptureDevice: CaptureDevice {
   var avDevice: AVCaptureDevice { self }
 
-  var fltActiveFormat: FLTCaptureDeviceFormat {
+  var flutterActiveFormat: FLTCaptureDeviceFormat {
     get { FLTDefaultCaptureDeviceFormat.init(format: activeFormat) }
     set { activeFormat = newValue.format }
   }
 
-  var fltFormats: [FLTCaptureDeviceFormat] {
+  var flutterFormats: [FLTCaptureDeviceFormat] {
     return self.formats.map { FLTDefaultCaptureDeviceFormat.init(format: $0) }
   }
 }
