@@ -1,3 +1,7 @@
+## 0.9.22+7
+
+* Migrates `FLTCaptureConnection` class to Swift.
+
 ## 0.9.22+6
 
 * Updates to Pigeon 26.
