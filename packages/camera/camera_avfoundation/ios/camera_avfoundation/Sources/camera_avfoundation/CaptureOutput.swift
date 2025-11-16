@@ -40,7 +40,7 @@ extension AVCaptureVideoDataOutput: CaptureVideoDataOutput {
     return self
   }
 
-  func connection(with mediaType: AVMediaType) -> (any CaptureConnection)? {
+  func connection(with mediaType: AVMediaType) -> CaptureConnection? {
     let connection: AVCaptureConnection? = connection(with: mediaType)
     return connection
   }
