@@ -28,10 +28,9 @@ class OpenTextPage extends StatelessWidget {
     }
     //final String fileName = file.name;
     print(file.params.path);
-    print(await file.canRead());
-    print(await file.exists());
-    print(await file.readAsBytes());
-    final String fileContent = 'hello'; // = await file.readAsString();
+    //print(await file.canRead());
+    //print(await file.exists());
+    final String fileContent = await file.readAsString();
 
     if (context.mounted) {
       await showDialog<void>(

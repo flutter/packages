@@ -59,13 +59,13 @@ base class IOSXFile extends PlatformSharedStorageXFile {
         final FileHandle fileHandle = FileHandle.forReadingFromUrl(url: url);
         try {
           final Uint8List? bytes = await fileHandle.readToEnd();
-          await url.stopAccessingSecurityScopedResource();
 
           if (bytes case Uint8List bytes) {
             return bytes;
           }
         } finally {
-          fileHandle.close();
+          await url.stopAccessingSecurityScopedResource();
+          await fileHandle.close();
         }
       }
     }
