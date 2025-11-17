@@ -20,7 +20,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "sync release branch to main"
-          title: "Sync release branch to main""
+          title: "Sync release branch to main"
           body: "This automated PR syncs the changes from the release branch back to the main branch."
           branch: release
           base: main
