@@ -77,11 +77,11 @@ class _SignInDemoState extends State<SignInDemo> {
   ) async {
     // #docregion CheckAuthorization
     final GoogleSignInAccount? user = // ...
-    // #enddocregion CheckAuthorization
-    switch (event) {
-      GoogleSignInAuthenticationEventSignIn() => event.user,
-      GoogleSignInAuthenticationEventSignOut() => null,
-    };
+        // #enddocregion CheckAuthorization
+        switch (event) {
+          GoogleSignInAuthenticationEventSignIn() => event.user,
+          GoogleSignInAuthenticationEventSignOut() => null,
+        };
 
     // Check for existing authorization.
     // #docregion CheckAuthorization
@@ -107,10 +107,9 @@ class _SignInDemoState extends State<SignInDemo> {
     setState(() {
       _currentUser = null;
       _isAuthorized = false;
-      _errorMessage =
-          e is GoogleSignInException
-              ? _errorMessageFromSignInException(e)
-              : 'Unknown error: $e';
+      _errorMessage = e is GoogleSignInException
+          ? _errorMessageFromSignInException(e)
+          : 'Unknown error: $e';
     });
   }
 

@@ -128,18 +128,19 @@ void main() {
           home: TreeView<String>(
             tree: simpleNodeSet,
             controller: controller,
-            treeNodeBuilder: (
-              BuildContext context,
-              TreeViewNode<String> node,
-              AnimationStyle toggleAnimationStyle,
-            ) {
-              returnedController ??= TreeViewController.of(context);
-              return TreeView.defaultTreeNodeBuilder(
-                context,
-                node,
-                toggleAnimationStyle,
-              );
-            },
+            treeNodeBuilder:
+                (
+                  BuildContext context,
+                  TreeViewNode<String> node,
+                  AnimationStyle toggleAnimationStyle,
+                ) {
+                  returnedController ??= TreeViewController.of(context);
+                  return TreeView.defaultTreeNodeBuilder(
+                    context,
+                    node,
+                    toggleAnimationStyle,
+                  );
+                },
           ),
         ),
       );
@@ -154,18 +155,19 @@ void main() {
         MaterialApp(
           home: TreeView<String>(
             tree: simpleNodeSet,
-            treeNodeBuilder: (
-              BuildContext context,
-              TreeViewNode<String> node,
-              AnimationStyle toggleAnimationStyle,
-            ) {
-              returnedController ??= TreeViewController.maybeOf(context);
-              return TreeView.defaultTreeNodeBuilder(
-                context,
-                node,
-                toggleAnimationStyle,
-              );
-            },
+            treeNodeBuilder:
+                (
+                  BuildContext context,
+                  TreeViewNode<String> node,
+                  AnimationStyle toggleAnimationStyle,
+                ) {
+                  returnedController ??= TreeViewController.maybeOf(context);
+                  return TreeView.defaultTreeNodeBuilder(
+                    context,
+                    node,
+                    toggleAnimationStyle,
+                  );
+                },
           ),
         ),
       );
@@ -411,45 +413,49 @@ void main() {
               toggled = true;
               toggledNode = node;
             },
-            treeNodeBuilder: (
-              BuildContext context,
-              TreeViewNode<String> node,
-              AnimationStyle toggleAnimationStyle,
-            ) {
-              final Duration animationDuration =
-                  toggleAnimationStyle.duration ??
-                  TreeView.defaultAnimationDuration;
-              final Curve animationCurve =
-                  toggleAnimationStyle.curve ?? TreeView.defaultAnimationCurve;
-              // This makes the whole row trigger toggling.
-              return TreeView.wrapChildToToggleNode(
-                node: node,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: <Widget>[
-                      // Icon for parent nodes
-                      SizedBox.square(
-                        dimension: 30.0,
-                        child:
-                            node.children.isNotEmpty
+            treeNodeBuilder:
+                (
+                  BuildContext context,
+                  TreeViewNode<String> node,
+                  AnimationStyle toggleAnimationStyle,
+                ) {
+                  final Duration animationDuration =
+                      toggleAnimationStyle.duration ??
+                      TreeView.defaultAnimationDuration;
+                  final Curve animationCurve =
+                      toggleAnimationStyle.curve ??
+                      TreeView.defaultAnimationCurve;
+                  // This makes the whole row trigger toggling.
+                  return TreeView.wrapChildToToggleNode(
+                    node: node,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        children: <Widget>[
+                          // Icon for parent nodes
+                          SizedBox.square(
+                            dimension: 30.0,
+                            child: node.children.isNotEmpty
                                 ? AnimatedRotation(
-                                  turns: node.isExpanded ? 0.25 : 0.0,
-                                  duration: animationDuration,
-                                  curve: animationCurve,
-                                  child: const Icon(IconData(0x25BA), size: 14),
-                                )
+                                    turns: node.isExpanded ? 0.25 : 0.0,
+                                    duration: animationDuration,
+                                    curve: animationCurve,
+                                    child: const Icon(
+                                      IconData(0x25BA),
+                                      size: 14,
+                                    ),
+                                  )
                                 : null,
+                          ),
+                          // Spacer
+                          const SizedBox(width: 8.0),
+                          // Content
+                          Text(node.content),
+                        ],
                       ),
-                      // Spacer
-                      const SizedBox(width: 8.0),
-                      // Content
-                      Text(node.content),
-                    ],
-                  ),
-                ),
-              );
-            },
+                    ),
+                  );
+                },
           ),
         ),
       );
@@ -471,14 +477,15 @@ void main() {
         MaterialApp(
           home: TreeView<String>(
             tree: simpleNodeSet,
-            treeNodeBuilder: (
-              BuildContext context,
-              TreeViewNode<String> node,
-              AnimationStyle toggleAnimationStyle,
-            ) {
-              style ??= toggleAnimationStyle;
-              return Text(node.content);
-            },
+            treeNodeBuilder:
+                (
+                  BuildContext context,
+                  TreeViewNode<String> node,
+                  AnimationStyle toggleAnimationStyle,
+                ) {
+                  style ??= toggleAnimationStyle;
+                  return Text(node.content);
+                },
           ),
         ),
       );
@@ -497,14 +504,15 @@ void main() {
           home: TreeView<String>(
             tree: simpleNodeSet,
             toggleAnimationStyle: AnimationStyle.noAnimation,
-            treeNodeBuilder: (
-              BuildContext context,
-              TreeViewNode<String> node,
-              AnimationStyle toggleAnimationStyle,
-            ) {
-              style = toggleAnimationStyle;
-              return Text(node.content);
-            },
+            treeNodeBuilder:
+                (
+                  BuildContext context,
+                  TreeViewNode<String> node,
+                  AnimationStyle toggleAnimationStyle,
+                ) {
+                  style = toggleAnimationStyle;
+                  return Text(node.content);
+                },
           ),
         ),
       );
@@ -522,14 +530,15 @@ void main() {
               curve: Curves.easeIn,
               duration: const Duration(milliseconds: 200),
             ),
-            treeNodeBuilder: (
-              BuildContext context,
-              TreeViewNode<String> node,
-              AnimationStyle toggleAnimationStyle,
-            ) {
-              style ??= toggleAnimationStyle;
-              return Text(node.content);
-            },
+            treeNodeBuilder:
+                (
+                  BuildContext context,
+                  TreeViewNode<String> node,
+                  AnimationStyle toggleAnimationStyle,
+                ) {
+                  style ??= toggleAnimationStyle;
+                  return Text(node.content);
+                },
           ),
         ),
       );
@@ -648,13 +657,18 @@ void main() {
     test('should use the generic type for callbacks and builders', () {
       final TreeView<String> treeView = TreeView<String>(
         tree: simpleNodeSet,
-        treeNodeBuilder: (
-          BuildContext context,
-          TreeViewNode<String> node,
-          AnimationStyle animationStyle,
-        ) {
-          return TreeView.defaultTreeNodeBuilder(context, node, animationStyle);
-        },
+        treeNodeBuilder:
+            (
+              BuildContext context,
+              TreeViewNode<String> node,
+              AnimationStyle animationStyle,
+            ) {
+              return TreeView.defaultTreeNodeBuilder(
+                context,
+                node,
+                animationStyle,
+              );
+            },
         treeRowBuilder: (TreeViewNode<String> node) {
           return TreeView.defaultTreeRowBuilder(node);
         },
@@ -710,23 +724,24 @@ void main() {
                 curve: Curves.easeInOut,
                 duration: Duration.zero,
               ),
-              treeNodeBuilder: (
-                BuildContext context,
-                TreeViewNode<Object?> node,
-                AnimationStyle animationStyle,
-              ) {
-                final Widget child = GestureDetector(
-                  behavior: HitTestBehavior.translucent,
-                  onTap: () => controller.toggleNode(node),
-                  child: TreeView.defaultTreeNodeBuilder(
-                    context,
-                    node,
-                    animationStyle,
-                  ),
-                );
+              treeNodeBuilder:
+                  (
+                    BuildContext context,
+                    TreeViewNode<Object?> node,
+                    AnimationStyle animationStyle,
+                  ) {
+                    final Widget child = GestureDetector(
+                      behavior: HitTestBehavior.translucent,
+                      onTap: () => controller.toggleNode(node),
+                      child: TreeView.defaultTreeNodeBuilder(
+                        context,
+                        node,
+                        animationStyle,
+                      ),
+                    );
 
-                return child;
-              },
+                    return child;
+                  },
             ),
           ),
         );
@@ -800,23 +815,24 @@ void main() {
                 curve: Curves.easeInOut,
                 duration: const Duration(milliseconds: 200),
               ),
-              treeNodeBuilder: (
-                BuildContext context,
-                TreeViewNode<Object?> node,
-                AnimationStyle animationStyle,
-              ) {
-                final Widget child = GestureDetector(
-                  behavior: HitTestBehavior.translucent,
-                  onTap: () => controller.toggleNode(node),
-                  child: TreeView.defaultTreeNodeBuilder(
-                    context,
-                    node,
-                    animationStyle,
-                  ),
-                );
+              treeNodeBuilder:
+                  (
+                    BuildContext context,
+                    TreeViewNode<Object?> node,
+                    AnimationStyle animationStyle,
+                  ) {
+                    final Widget child = GestureDetector(
+                      behavior: HitTestBehavior.translucent,
+                      onTap: () => controller.toggleNode(node),
+                      child: TreeView.defaultTreeNodeBuilder(
+                        context,
+                        node,
+                        animationStyle,
+                      ),
+                    );
 
-                return child;
-              },
+                    return child;
+                  },
             ),
           ),
         );
@@ -945,8 +961,8 @@ void main() {
             delegate: TreeRowBuilderDelegate(
               rowCount: 0,
               nodeBuilder: (_, __) => const SizedBox(),
-              rowBuilder:
-                  (_) => const TreeRow(extent: FixedTreeRowExtent(40.0)),
+              rowBuilder: (_) =>
+                  const TreeRow(extent: FixedTreeRowExtent(40.0)),
             ),
             activeAnimations: const <UniqueKey, TreeViewNodesAnimation>{},
             rowDepths: const <int, int>{},
@@ -971,8 +987,8 @@ void main() {
             delegate: TreeRowBuilderDelegate(
               rowCount: 0,
               nodeBuilder: (_, __) => const SizedBox(),
-              rowBuilder:
-                  (_) => const TreeRow(extent: FixedTreeRowExtent(40.0)),
+              rowBuilder: (_) =>
+                  const TreeRow(extent: FixedTreeRowExtent(40.0)),
             ),
             activeAnimations: const <UniqueKey, TreeViewNodesAnimation>{},
             rowDepths: const <int, int>{},

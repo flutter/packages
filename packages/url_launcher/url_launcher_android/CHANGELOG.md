@@ -1,3 +1,7 @@
+## 6.3.25
+
+* Updates to Pigeon 26.
+
 ## 6.3.24
 
 * Resolves Gradle 9 deprecations. 

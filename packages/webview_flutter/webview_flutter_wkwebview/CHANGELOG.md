@@ -1,3 +1,7 @@
+## 3.23.3
+
+* Updates to Pigeon 26.
+
 ## 3.23.2
 
 * Removes specialization of 'map' to fix a Swift warning.

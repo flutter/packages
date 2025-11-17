@@ -51,8 +51,8 @@ void main() {
       loader: const AssetBytesLoader('test'),
     );
     final ui.Image image = info.picture.toImageSync(15, 15);
-    final Uint32List imageBytes =
-        (await image.toByteData())!.buffer.asUint32List();
+    final Uint32List imageBytes = (await image.toByteData())!.buffer
+        .asUint32List();
     expect(imageBytes.first, 0xFF000000);
     expect(imageBytes.last, 0x00000000);
   }, skip: kIsWeb);
@@ -66,8 +66,8 @@ void main() {
       loader: const AssetBytesLoader('test'),
     );
     final ui.Image image = info.picture.toImageSync(15, 15);
-    final Uint32List imageBytes =
-        (await image.toByteData())!.buffer.asUint32List();
+    final Uint32List imageBytes = (await image.toByteData())!.buffer
+        .asUint32List();
     expect(imageBytes.first, 0xFF000000);
     expect(imageBytes.last, 0xFF000000);
   }, skip: kIsWeb);

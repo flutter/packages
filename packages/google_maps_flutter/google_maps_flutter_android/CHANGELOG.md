@@ -1,6 +1,10 @@
-## 2.18.5
+## 2.18.6
 
 * Bumps com.google.maps.android:android-maps-utils from 3.6.0 to 3.19.1.
+
+## 2.18.5
+
+* Updates to Pigeon 26.
 
 ## 2.18.4
 

@@ -68,14 +68,13 @@ Future<void> runBenchmarks(
   final Uri currentUri = Uri.parse(window.location.href);
   // Create a new URI with the parsed value of [benchmarkPath] to ensure the
   // benchmark app is reloaded with the proper configuration.
-  final String newUri =
-      Uri.parse(benchmarkPath)
-          .replace(
-            scheme: currentUri.scheme,
-            host: currentUri.host,
-            port: currentUri.port,
-          )
-          .toString();
+  final String newUri = Uri.parse(benchmarkPath)
+      .replace(
+        scheme: currentUri.scheme,
+        host: currentUri.host,
+        port: currentUri.port,
+      )
+      .toString();
 
   // Reloading the window will trigger the next benchmark to run.
   await _client.printToConsole(
@@ -95,15 +94,14 @@ Future<void> _runBenchmark(String? benchmarkName) async {
   await runZoned<Future<void>>(
     () async {
       final Recorder recorder = recorderFactory();
-      final Runner runner =
-          recorder.isTracingEnabled && !_client.isInManualMode
-              ? Runner(
-                recorder: recorder,
-                setUpAllDidRun:
-                    () => _client.startPerformanceTracing(benchmarkName),
-                tearDownAllWillRun: _client.stopPerformanceTracing,
-              )
-              : Runner(recorder: recorder);
+      final Runner runner = recorder.isTracingEnabled && !_client.isInManualMode
+          ? Runner(
+              recorder: recorder,
+              setUpAllDidRun: () =>
+                  _client.startPerformanceTracing(benchmarkName),
+              tearDownAllWillRun: _client.stopPerformanceTracing,
+            )
+          : Runner(recorder: recorder);
 
       final Profile profile = await runner.run();
       if (!_client.isInManualMode) {
@@ -121,20 +119,21 @@ Future<void> _runBenchmark(String? benchmarkName) async {
           await _client.printToConsole(line);
         }
       },
-      handleUncaughtError: (
-        Zone self,
-        ZoneDelegate parent,
-        Zone zone,
-        Object error,
-        StackTrace stackTrace,
-      ) async {
-        if (_client.isInManualMode) {
-          parent.print(zone, '[$benchmarkName] $error, $stackTrace');
-          parent.handleUncaughtError(zone, error, stackTrace);
-        } else {
-          await _client.reportError(error, stackTrace);
-        }
-      },
+      handleUncaughtError:
+          (
+            Zone self,
+            ZoneDelegate parent,
+            Zone zone,
+            Object error,
+            StackTrace stackTrace,
+          ) async {
+            if (_client.isInManualMode) {
+              parent.print(zone, '[$benchmarkName] $error, $stackTrace');
+              parent.handleUncaughtError(zone, error, stackTrace);
+            } else {
+              await _client.reportError(error, stackTrace);
+            }
+          },
     ),
   );
 }
