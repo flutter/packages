@@ -1,3 +1,7 @@
+## 0.4.0+7
+
+Bump com.android.billingclient:billing from 7.1.1 to 8.1.0
+
 ## 0.4.0+6
 
 * Updates Java compatibility version to 17 and minimum supported SDK version to Flutter 3.35/Dart 3.9.
