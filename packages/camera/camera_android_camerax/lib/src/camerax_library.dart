@@ -160,18 +160,22 @@ class LiveData<T> extends camerax.LiveData {
 /// See https://developer.android.com/reference/androidx/lifecycle/Observer.
 class Observer<T> extends camerax.Observer {
   /// Constructs an [Observer].
-  Observer({
+  factory Observer({
     required void Function(Observer<T> instance, T value) onChanged,
     // ignore: non_constant_identifier_names
-    super.pigeon_binaryMessenger,
+    BinaryMessenger? pigeon_binaryMessenger,
     // ignore: non_constant_identifier_names
-    super.pigeon_instanceManager,
-  }) : _genericOnChanged = onChanged,
-       super(
-         onChanged: (camerax.Observer instance, Object value) {
-           onChanged(instance as Observer<T>, value as T);
-         },
-       );
+    camerax.PigeonInstanceManager? pigeon_instanceManager,
+  }) {
+    return camerax.Observer(
+          pigeon_binaryMessenger: pigeon_binaryMessenger,
+          pigeon_instanceManager: pigeon_instanceManager,
+          onChanged: (camerax.Observer instance, Object value) {
+            onChanged(instance as Observer<T>, value as T);
+          },
+        )
+        as Observer<T>;
+  }
 
   /// Constructs [Observer] without creating the associated native object.
   ///
@@ -183,20 +187,17 @@ class Observer<T> extends camerax.Observer {
     super.pigeon_binaryMessenger,
     // ignore: non_constant_identifier_names
     super.pigeon_instanceManager,
-  }) : _genericOnChanged = onChanged,
-       super.pigeon_detached(
+  }) : super.pigeon_detached(
          onChanged: (camerax.Observer instance, Object value) {
            onChanged(instance as Observer<T>, value as T);
          },
        );
 
-  final void Function(Observer<T> instance, T value) _genericOnChanged;
-
   @override
   // ignore: non_constant_identifier_names
   Observer<T> pigeon_copy() {
     return Observer<T>.detached(
-      onChanged: _genericOnChanged,
+      onChanged: onChanged as void Function(Observer<T>, T),
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,
     );
