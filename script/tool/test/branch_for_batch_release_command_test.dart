@@ -61,9 +61,11 @@ version: 1.0.0
   const List<ProcessCall> expectedGitCallsForABFiles = <ProcessCall>[
     ProcessCall('git-checkout', <String>['-b', 'release-branch'], null),
     ProcessCall('git-rm',
-        <String>['/packages/a_package/pending_changelogs/a.yaml'], null),
-    ProcessCall('git-rm',
-        <String>['/packages/a_package/pending_changelogs/b.yaml'], null),
+        <String>[
+          '/packages/a_package/pending_changelogs/a.yaml',
+          '/packages/a_package/pending_changelogs/b.yaml'
+        ],
+        null),
     ProcessCall(
         'git-add',
         <String>[
@@ -339,15 +341,11 @@ version: patch
                 'git-checkout', <String>['-b', 'release-branch'], null),
             const ProcessCall(
                 'git-rm',
-                <String>['/packages/a_package/pending_changelogs/a.yaml'],
-                null),
-            const ProcessCall(
-                'git-rm',
-                <String>['/packages/a_package/pending_changelogs/b.yaml'],
-                null),
-            const ProcessCall(
-                'git-rm',
-                <String>['/packages/a_package/pending_changelogs/c.yaml'],
+                <String>[
+                  '/packages/a_package/pending_changelogs/a.yaml',
+                  '/packages/a_package/pending_changelogs/b.yaml',
+                  '/packages/a_package/pending_changelogs/c.yaml'
+                ],
                 null),
             const ProcessCall(
                 'git-add',
@@ -472,6 +470,41 @@ version: skip
           package.pubspecFile.readAsStringSync(), contains('version: 1.0.0'));
       expect(package.changelogFile.readAsStringSync(), startsWith('## 1.0.0'));
       expect(gitProcessRunner.recordedCalls, orderedEquals(<ProcessCall>[]));
+    });
+
+    test('replaces ## NEXT with new version', () async {
+      final RepositoryPackage package = createTestPackage();
+      addTearDown(() {
+        package.directory.deleteSync(recursive: true);
+      });
+      // Overwrite changelog to have ## NEXT
+      package.changelogFile.writeAsStringSync('''
+## NEXT
+
+- Existing unreleased change
+''');
+
+      createPendingChangelogFile(package, 'a.yaml', '''
+changelog: A new feature
+version: minor
+''');
+
+      final List<String> output = await runBatchCommand();
+
+      expect(
+          output,
+          containsAllInOrder(<String>[
+            'Parsing package "a_package"...',
+            '  Creating new branch "release-branch"...',
+          ]));
+
+      final String changelogContent = package.changelogFile.readAsStringSync();
+      expect(changelogContent, '''
+## 1.1.0
+
+A new feature
+- Existing unreleased change
+''');
     });
   });
 
@@ -622,7 +655,7 @@ version: minor
       expect(
           output.last,
           contains(
-              'This script only supports packages with version >= 1.0.0. Current version: 0.5.0. Package: a_package.'));
+              'This script only supports packages with version >= 1.0.0. Current version: 0.5.0.'));
     });
   });
 }

@@ -15,6 +15,9 @@ jobs:
       - name: Set up tools
         run: dart pub get
         working-directory: ${{ github.workspace }}/script/tool
+      # This step is to create a branch for batch release
+      # A branch may not be created if there is nothing to release.
+      # In that case, the workflow will exit and complete successfully.
       - name: create batch release PR
         run: |
           git config --global user.name ${{ secrets.USER_NAME }}

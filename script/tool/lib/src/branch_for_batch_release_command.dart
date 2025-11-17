@@ -80,7 +80,7 @@ class BranchForBatchReleaseCommand extends PackageCommand {
         Pubspec.parse(package.pubspecFile.readAsStringSync());
     if (pubspec.version == null || pubspec.version!.major < 1) {
       printError(
-          'This script only supports packages with version >= 1.0.0. Current version: ${pubspec.version}. Package: ${package.displayName}.');
+          'This script only supports packages with version >= 1.0.0. Current version: ${pubspec.version}.');
       throw ToolExit(_kExitPackageMalformed);
     }
     final _ReleaseInfo releaseInfo =
@@ -102,6 +102,12 @@ class BranchForBatchReleaseCommand extends PackageCommand {
     );
   }
 
+  /// Returns the parsed changelog entries for the given package.
+  ///
+  /// This method read through the files in the pending_changelogs folder
+  /// and parsed each file as a changelog entry.
+  ///
+  /// Throws a [ToolExit] if the package does not have a pending_changelogs folder.
   Future<_PendingChangelogs> _getPendingChangelogs(
       RepositoryPackage package) async {
     final Directory pendingChangelogsDir =
@@ -129,6 +135,10 @@ class BranchForBatchReleaseCommand extends PackageCommand {
     }
   }
 
+  /// Returns the release info for the given package.
+  ///
+  /// This method read through the parsed changelog entries decide the new version
+  /// by following the version change rules. See [_VersionChange] for more details.
   _ReleaseInfo _getReleaseInfo(
       List<_PendingChangelogEntry> pendingChangelogEntries,
       Version oldVersion) {
@@ -152,6 +162,12 @@ class BranchForBatchReleaseCommand extends PackageCommand {
     return _ReleaseInfo(newVersion, changelogs);
   }
 
+  /// Creates a branch with a commit contains the changes for the release.
+  ///
+  /// This method will create a new branch, update the pubspec.yaml, update the changelog,
+  /// remove the pending changelog files, stage the changes, and commit them.
+  ///
+  /// Throws a [ToolExit] if any of the steps fail.
   Future<void> _generateCommitAndBranch({
     required GitDir git,
     required RepositoryPackage package,
@@ -187,27 +203,39 @@ class BranchForBatchReleaseCommand extends PackageCommand {
     final String newHeader = '## ${releaseInfo.newVersion}';
     final List<String> newEntries = releaseInfo.changelogs;
 
-    final String oldChangelogContent = package.changelogFile.readAsStringSync();
+    String oldChangelogContent = package.changelogFile.readAsStringSync();
     final StringBuffer newChangelog = StringBuffer();
 
-    newChangelog.writeln(newHeader);
-    newChangelog.writeln();
-    newChangelog.writeln(newEntries.join('\n'));
-    newChangelog.writeln();
-    newChangelog.write(oldChangelogContent);
+    // If the changelog starts with ## NEXT, replace it with the new version
+    // and append the new entries.
+    final RegExp nextSection = RegExp(r'^\s*## NEXT[ \t]*(\r?\n)*');
+    final Match? match = nextSection.firstMatch(oldChangelogContent);
+    if (match != null) {
+      final String replacement = '$newHeader\n\n${newEntries.join('\n')}\n';
+      oldChangelogContent =
+          oldChangelogContent.replaceRange(match.start, match.end, replacement);
+      newChangelog.write(oldChangelogContent);
+    } else {
+      newChangelog.writeln(newHeader);
+      newChangelog.writeln();
+      newChangelog.writeln(newEntries.join('\n'));
+      newChangelog.writeln();
+      newChangelog.write(oldChangelogContent);
+    }
 
     package.changelogFile.writeAsStringSync(newChangelog.toString());
   }
 
   Future<void> _removePendingChangelogs(
       GitDir git, List<File> pendingChangelogFiles) async {
-    for (final File file in pendingChangelogFiles) {
-      final io.ProcessResult rmResult =
-          await git.runCommand(<String>['rm', file.path]);
-      if (rmResult.exitCode != 0) {
-        printError('Failed to rm ${file.path}: ${rmResult.stderr}');
-        throw ToolExit(_kGitFailedToPush);
-      }
+    final List<String> args = <String>['rm'];
+    final List<String> paths =
+        pendingChangelogFiles.map((File f) => f.path).toList();
+    args.addAll(paths);
+    final io.ProcessResult rmResult = await git.runCommand(args);
+    if (rmResult.exitCode != 0) {
+      printError('Failed to rm ${paths.join(' ')}: ${rmResult.stderr}');
+      throw ToolExit(_kGitFailedToPush);
     }
   }
 
@@ -223,7 +251,7 @@ class BranchForBatchReleaseCommand extends PackageCommand {
     final io.ProcessResult commitResult = await git.runCommand(<String>[
       'commit',
       '-m',
-      '[${package.displayName}] Prepares for batch release'
+      '[${package.displayName}] Prepare for batch release'
     ]);
     if (commitResult.exitCode != 0) {
       printError('Failed to commit: ${commitResult.stderr}');
