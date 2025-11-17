@@ -1,6 +1,6 @@
 ## 0.4.0+7
 
-Bump com.android.billingclient:billing from 7.1.1 to 8.1.0
+* Bumps com.android.billingclient:billing from 7.1.1 to 8.1.0.
 
 ## 0.4.0+6
 
