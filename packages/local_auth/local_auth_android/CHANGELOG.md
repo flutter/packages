@@ -1,3 +1,7 @@
+## 2.0.2
+
+* Updates to Pigeon 26.
+
 ## 2.0.1
 
 * Removed mockito-inline and updated to mockito-core 5.17.0.
