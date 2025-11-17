@@ -60,7 +60,8 @@ version: 1.0.0
 
   const List<ProcessCall> expectedGitCallsForABFiles = <ProcessCall>[
     ProcessCall('git-checkout', <String>['-b', 'release-branch'], null),
-    ProcessCall('git-rm',
+    ProcessCall(
+        'git-rm',
         <String>[
           '/packages/a_package/pending_changelogs/a.yaml',
           '/packages/a_package/pending_changelogs/b.yaml'
