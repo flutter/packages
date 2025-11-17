@@ -1,3 +1,7 @@
+## 6.3.25
+
+* Bumps androidx.browser:browser from 1.8.0 to 1.9.0.
+
 ## 6.3.24
 
 * Resolves Gradle 9 deprecations. 
