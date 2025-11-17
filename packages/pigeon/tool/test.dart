@@ -26,42 +26,37 @@ const String _format = 'format';
 const String _overflow = 'overflow';
 
 Future<void> main(List<String> args) async {
-  final ArgParser parser =
-      ArgParser()
-        ..addMultiOption(
-          _testFlag,
-          abbr: 't',
-          help: 'Only run specified tests.',
-        )
-        ..addFlag(
-          _noGen,
-          abbr: 'g',
-          help: 'Skips the generation step.',
-          negatable: false,
-        )
-        ..addFlag(
-          _format,
-          abbr: 'f',
-          help: 'Formats generated test files before running tests.',
-        )
-        ..addFlag(
-          _overflow,
-          help:
-              'Generates overflow files for integration tests, runs tests with and without overflow files.',
-          abbr: 'o',
-        )
-        ..addFlag(
-          _listFlag,
-          negatable: false,
-          abbr: 'l',
-          help: 'List available tests.',
-        )
-        ..addFlag(
-          'help',
-          negatable: false,
-          abbr: 'h',
-          help: 'Print this reference.',
-        );
+  final ArgParser parser = ArgParser()
+    ..addMultiOption(_testFlag, abbr: 't', help: 'Only run specified tests.')
+    ..addFlag(
+      _noGen,
+      abbr: 'g',
+      help: 'Skips the generation step.',
+      negatable: false,
+    )
+    ..addFlag(
+      _format,
+      abbr: 'f',
+      help: 'Formats generated test files before running tests.',
+    )
+    ..addFlag(
+      _overflow,
+      help:
+          'Generates overflow files for integration tests, runs tests with and without overflow files.',
+      abbr: 'o',
+    )
+    ..addFlag(
+      _listFlag,
+      negatable: false,
+      abbr: 'l',
+      help: 'List available tests.',
+    )
+    ..addFlag(
+      'help',
+      negatable: false,
+      abbr: 'h',
+      help: 'Print this reference.',
+    );
 
   final ArgResults argResults = parser.parse(args);
   List<String> testsToRun = <String>[];

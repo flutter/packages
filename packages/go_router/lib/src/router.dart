@@ -235,7 +235,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
     String? initialLocation,
     this.overridePlatformDefaultLocation = false,
     Object? initialExtra,
-    List<NavigatorObserver>? observers,
+    this.observers,
     bool debugLogDiagnostics = false,
     GlobalKey<NavigatorState>? navigatorKey,
     String? restorationScopeId,
@@ -272,18 +272,16 @@ class GoRouter implements RouterConfig<RouteMatchList> {
 
     final ParserExceptionHandler? parserExceptionHandler;
     if (onException != null) {
-      parserExceptionHandler = (
-        BuildContext context,
-        RouteMatchList routeMatchList,
-      ) {
-        onException(
-          context,
-          configuration.buildTopLevelGoRouterState(routeMatchList),
-          this,
-        );
-        // Avoid updating GoRouterDelegate if onException is provided.
-        return routerDelegate.currentConfiguration;
-      };
+      parserExceptionHandler =
+          (BuildContext context, RouteMatchList routeMatchList) {
+            onException(
+              context,
+              configuration.buildTopLevelGoRouterState(routeMatchList),
+              this,
+            );
+            // Avoid updating GoRouterDelegate if onException is provided.
+            return routerDelegate.currentConfiguration;
+          };
     } else {
       parserExceptionHandler = null;
     }
@@ -311,9 +309,8 @@ class GoRouter implements RouterConfig<RouteMatchList> {
       requestFocus: requestFocus,
       // wrap the returned Navigator to enable GoRouter.of(context).go() et al,
       // allowing the caller to wrap the navigator themselves
-      builderWithNav:
-          (BuildContext context, Widget child) =>
-              InheritedGoRouter(goRouter: this, child: child),
+      builderWithNav: (BuildContext context, Widget child) =>
+          InheritedGoRouter(goRouter: this, child: child),
     );
 
     assert(() {
@@ -368,6 +365,9 @@ class GoRouter implements RouterConfig<RouteMatchList> {
   /// The route information parser used by [GoRouter].
   @override
   late final GoRouteInformationParser routeInformationParser;
+
+  /// The navigator observers used by [GoRouter].
+  final List<NavigatorObserver>? observers;
 
   void _handleRoutingConfigChanged() {
     // Reparse is needed to update its builder
@@ -436,16 +436,16 @@ class GoRouter implements RouterConfig<RouteMatchList> {
     Object? extra,
     String? fragment,
   }) =>
-  // Construct location with optional fragment
-  go(
-    namedLocation(
-      name,
-      pathParameters: pathParameters,
-      queryParameters: queryParameters,
-      fragment: fragment,
-    ),
-    extra: extra,
-  );
+      // Construct location with optional fragment
+      go(
+        namedLocation(
+          name,
+          pathParameters: pathParameters,
+          queryParameters: queryParameters,
+          fragment: fragment,
+        ),
+        extra: extra,
+      );
 
   /// Push a URI location onto the page stack w/ optional query parameters, e.g.
   /// `/family/f2/person/p1?color=blue`.

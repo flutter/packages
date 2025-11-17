@@ -1,3 +1,8 @@
+## 1.0.26
+
+* Updates to Pigeon 26.
+* Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
+
 ## 1.0.25
 
 * Resolves Gradle 9 deprecations.

@@ -258,8 +258,9 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
       }
 
       if (indexOfFirstDiff < currentGoRouteMatches.length) {
-        final List<RouteMatch> exitingMatches =
-            currentGoRouteMatches.sublist(indexOfFirstDiff).toList();
+        final List<RouteMatch> exitingMatches = currentGoRouteMatches
+            .sublist(indexOfFirstDiff)
+            .toList();
         return _callOnExitStartsAt(
           exitingMatches.length - 1,
           context: navigatorContext,

@@ -159,9 +159,8 @@ class TableCellBuilderDelegate extends TwoDimensionalChildBuilderDelegate
        _pinnedColumnCount = pinnedColumnCount,
        _pinnedRowCount = pinnedRowCount,
        super(
-         builder:
-             (BuildContext context, ChildVicinity vicinity) =>
-                 cellBuilder(context, vicinity as TableVicinity),
+         builder: (BuildContext context, ChildVicinity vicinity) =>
+             cellBuilder(context, vicinity as TableVicinity),
          maxXIndex: columnCount == null ? columnCount : columnCount - 1,
          maxYIndex: rowCount == null ? rowCount : rowCount - 1,
          // repaintBoundaries handled by TableViewCell

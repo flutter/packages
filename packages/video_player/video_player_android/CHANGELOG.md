@@ -1,6 +1,14 @@
-## 2.8.17+1
+## 2.8.20
 
 * Bumps `exoplayer_version` from 1.5.1 to 1.8.0.
+
+## 2.8.19
+
+* Updates to Pigeon 26.
+
+## 2.8.18
+
+* Removed mockito-inline and updated to mockito-core 5.17.0.
 
 ## 2.8.17
 

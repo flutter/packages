@@ -90,10 +90,9 @@ void main() async {
     testWidgets('Skips initialization if script is already present.', (
       WidgetTester _,
     ) async {
-      final web.HTMLScriptElement script =
-          web.HTMLScriptElement()
-            ..id = 'previously-injected'
-            ..src = testScriptUrl;
+      final web.HTMLScriptElement script = web.HTMLScriptElement()
+        ..id = 'previously-injected'
+        ..src = testScriptUrl;
       final web.HTMLElement target = web.HTMLDivElement()..appendChild(script);
 
       await adSense.initialize(testClient, jsLoaderTarget: target);

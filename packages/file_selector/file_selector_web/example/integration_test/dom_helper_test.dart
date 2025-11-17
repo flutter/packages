@@ -41,8 +41,8 @@ void main() {
 
     setUp(() {
       domHelper = DomHelper();
-      input =
-          (document.createElement('input') as HTMLInputElement)..type = 'file';
+      input = (document.createElement('input') as HTMLInputElement)
+        ..type = 'file';
     });
 
     group('getFiles', () {

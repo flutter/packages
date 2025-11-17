@@ -1,3 +1,12 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
+
+## 0.11.3
+
+* Adds support to configure persistent recording on Android. See `CameraController.startVideoRecording(enablePersistentRecording)`.
+* Updates minimum supported SDK version to Flutter 3.35.0/Dart 3.9.
+
 ## 0.11.2+1
 
 * Updates examples to use the new RadioGroup API instead of deprecated Radio parameters.
