@@ -1,6 +1,10 @@
-## 0.4.0+7
+## 0.4.0+8
 
 * Bumps com.android.billingclient:billing from 7.1.1 to 8.1.0.
+
+## 0.4.0+7
+
+* Updates to Pigeon 26.
 
 ## 0.4.0+6
 

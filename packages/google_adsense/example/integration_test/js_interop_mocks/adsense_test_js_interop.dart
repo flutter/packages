@@ -24,8 +24,9 @@ PushFn mockAd({Size size = Size.zero, String adStatus = AdStatus.FILLED}) {
 /// Returns a function that handles a bunch of ad units at once. Can be used with [mockAdsByGoogle].
 PushFn mockAds(List<MockAdConfig> adConfigs) {
   return (JSAny? _) {
-    final List<web.HTMLElement> foundTargets =
-        web.document.querySelectorAll('div[id^=adUnit] ins').toList;
+    final List<web.HTMLElement> foundTargets = web.document
+        .querySelectorAll('div[id^=adUnit] ins')
+        .toList;
 
     for (int i = 0; i < foundTargets.length; i++) {
       final web.HTMLElement adTarget = foundTargets[i];
@@ -35,11 +36,10 @@ PushFn mockAds(List<MockAdConfig> adConfigs) {
 
       final (:Size size, :String adStatus) = adConfigs[i];
 
-      final web.HTMLElement fakeAd =
-          web.HTMLDivElement()
-            ..style.width = '${size.width}px'
-            ..style.height = '${size.height}px'
-            ..style.background = '#fabada';
+      final web.HTMLElement fakeAd = web.HTMLDivElement()
+        ..style.width = '${size.width}px'
+        ..style.height = '${size.height}px'
+        ..style.background = '#fabada';
 
       // AdSense seems to be setting the width/height on the `ins` of the injected ad too.
       adTarget

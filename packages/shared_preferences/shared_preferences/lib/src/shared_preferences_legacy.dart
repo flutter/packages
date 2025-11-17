@@ -281,8 +281,8 @@ Either update the implementation to support setPrefix, or do not call setPrefix.
       }
       return MapEntry<String, Object>(newKey, value);
     });
-    SharedPreferencesStorePlatform
-        .instance = InMemorySharedPreferencesStore.withData(newValues);
+    SharedPreferencesStorePlatform.instance =
+        InMemorySharedPreferencesStore.withData(newValues);
     _completer = null;
   }
 }

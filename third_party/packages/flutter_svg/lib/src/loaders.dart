@@ -162,10 +162,9 @@ abstract class SvgLoader<T> extends BytesLoader {
               .encodeSvg(
                 xml: provideSvg(message),
                 theme: theme.toVgTheme(),
-                colorMapper:
-                    colorMapper == null
-                        ? null
-                        : _DelegateVgColorMapper(colorMapper!),
+                colorMapper: colorMapper == null
+                    ? null
+                    : _DelegateVgColorMapper(colorMapper!),
                 debugName: 'Svg loader',
                 enableClippingOptimizer: false,
                 enableMaskingOptimizer: false,
