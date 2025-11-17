@@ -1,3 +1,7 @@
+## 2.2.21
+
+* Updates Pigeon to ^26.1.0.
+
 ## 2.2.20
 
 * Updates Java compatibility version to 17 and minimum supported SDK version to Flutter 3.35/Dart 3.9.

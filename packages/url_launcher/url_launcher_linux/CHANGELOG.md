@@ -1,6 +1,7 @@
-## NEXT
+## 3.2.2
 
 * Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
+* Updates Pigeon to ^26.1.0.
 
 ## 3.2.1
 

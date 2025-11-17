@@ -1,3 +1,7 @@
+## 0.4.6+2
+
+* Updates Pigeon to ^26.1.0.
+
 ## 0.4.6+1
 
 * Refactors internals for improved testability.

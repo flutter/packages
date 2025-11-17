@@ -1,3 +1,7 @@
+## 3.2.5
+
+* Updates Pigeon to ^26.1.0.
+
 ## 3.2.4
 
 * Updates minimum supported version to macOS 10.15.

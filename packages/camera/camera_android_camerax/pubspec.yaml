@@ -31,7 +31,7 @@ dev_dependencies:
     sdk: flutter
   leak_tracker_flutter_testing: any
   mockito: ^5.4.4
-  pigeon: ^25.3.2
+  pigeon: ^26.1.0
 
 topics:
   - camera
