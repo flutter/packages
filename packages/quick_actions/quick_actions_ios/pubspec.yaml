@@ -24,7 +24,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  pigeon: ^25.5.0
+  pigeon: ^26.1.0
   plugin_platform_interface: ^2.1.7
 
 topics:
