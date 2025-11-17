@@ -15,12 +15,12 @@ jobs:
           # Fetch all history for all branches
           fetch-depth: 0
 
-      - name: Create Sync Pull Request
-        run: |
-          gh pr create \
-            --base main \
-            --head release \
-            --title "Sync release branch to main" \
-            --body "This automated PR syncs the changes from the release branch back to the main branch."
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+     - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "sync release branch to main"
+          title: "Sync release branch to main""
+          body: "This automated PR syncs the changes from the release branch back to the main branch."
+          branch: release
+          base: main
