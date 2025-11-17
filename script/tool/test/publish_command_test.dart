@@ -1284,6 +1284,226 @@ void main() {
       );
     });
 
+    group('--batch-release flag', () {
+      test(
+        'filters packages based on the existence of ci_config.yaml',
+        () async {
+          // Mock pub.dev responses.
+          mockHttpResponses['plugin1'] = <String, dynamic>{
+            'name': 'plugin1',
+            'versions': <String>['0.0.1'],
+          };
+          mockHttpResponses['plugin2'] = <String, dynamic>{
+            'name': 'plugin2',
+            'versions': <String>['0.0.1'],
+          };
+
+          // Mock packages.
+          final RepositoryPackage plugin1 = createFakePlugin(
+            'plugin1',
+            packagesDir,
+            version: '0.0.2',
+            batchRelease: true,
+          );
+
+          final RepositoryPackage plugin2 = createFakePlugin(
+            'plugin2',
+            packagesDir,
+            version: '0.0.2',
+          );
+
+          expect(plugin1.ciConfigFile.existsSync(), true);
+          expect(plugin2.ciConfigFile.existsSync(), false);
+
+          // Mock git diff to show both packages have changed.
+          processRunner
+              .mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+            FakeProcessInfo(
+              MockProcess(
+                stdout:
+                    '${plugin1.pubspecFile.path}\n${plugin2.pubspecFile.path}',
+              ),
+            ),
+          ];
+
+          mockStdin.readLineOutput = 'y';
+
+          final List<String> output = await runCapturingPrint(
+            commandRunner,
+            <String>[
+              'publish',
+              '--all-changed',
+              '--base-sha=HEAD~',
+              '--batch-release',
+            ],
+          );
+          // Package1 is published in batch realease, pacakge2 is not.
+          expect(
+            output,
+            containsAllInOrder(<Matcher>[
+              contains('Running `pub publish ` in ${plugin1.path}...'),
+              contains('Published plugin1 successfully!'),
+            ]),
+          );
+
+          expect(
+            output,
+            isNot(
+              contains(
+                contains('Running `pub publish ` in ${plugin2.path}...!'),
+              ),
+            ),
+          );
+          expect(
+            output,
+            isNot(contains(contains('Published plugin2 successfully!'))),
+          );
+        },
+      );
+
+      test(
+        'filters packages based on the batch release flag value in ci_config.yaml',
+        () async {
+          // Mock pub.dev responses.
+          mockHttpResponses['plugin1'] = <String, dynamic>{
+            'name': 'plugin1',
+            'versions': <String>['0.0.1'],
+          };
+          mockHttpResponses['plugin2'] = <String, dynamic>{
+            'name': 'plugin2',
+            'versions': <String>['0.0.1'],
+          };
+
+          // Mock packages.
+          final RepositoryPackage plugin1 = createFakePlugin(
+            'plugin1',
+            packagesDir,
+            version: '0.0.2',
+            batchRelease: true,
+          );
+
+          final RepositoryPackage plugin2 = createFakePlugin(
+            'plugin2',
+            packagesDir,
+            version: '0.0.2',
+            batchRelease: false,
+          );
+
+          // Mock git diff to show both packages have changed.
+          processRunner
+              .mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+            FakeProcessInfo(
+              MockProcess(
+                stdout:
+                    '${plugin1.pubspecFile.path}\n${plugin2.pubspecFile.path}',
+              ),
+            ),
+          ];
+
+          mockStdin.readLineOutput = 'y';
+
+          final List<String> output = await runCapturingPrint(
+            commandRunner,
+            <String>[
+              'publish',
+              '--all-changed',
+              '--base-sha=HEAD~',
+              '--batch-release',
+            ],
+          );
+          // Package1 is published in batch realease, pacakge2 is not.
+          expect(
+            output,
+            containsAllInOrder(<Matcher>[
+              contains('Running `pub publish ` in ${plugin1.path}...'),
+              contains('Published plugin1 successfully!'),
+            ]),
+          );
+
+          expect(
+            output,
+            isNot(
+              contains(
+                contains('Running `pub publish ` in ${plugin2.path}...!'),
+              ),
+            ),
+          );
+          expect(
+            output,
+            isNot(contains(contains('Published plugin2 successfully!'))),
+          );
+        },
+      );
+
+      test(
+        'when --batch-release flag value is false, batch release packages are filtered out',
+        () async {
+          // Mock pub.dev responses.
+          mockHttpResponses['plugin1'] = <String, dynamic>{
+            'name': 'plugin1',
+            'versions': <String>['0.0.1'],
+          };
+          mockHttpResponses['plugin2'] = <String, dynamic>{
+            'name': 'plugin2',
+            'versions': <String>['0.0.1'],
+          };
+
+          // Mock packages.
+          final RepositoryPackage plugin1 = createFakePlugin(
+            'plugin1',
+            packagesDir,
+            version: '0.0.2',
+          );
+
+          final RepositoryPackage plugin2 = createFakePlugin(
+            'plugin2',
+            packagesDir,
+            version: '0.0.2',
+            batchRelease: true,
+          );
+
+          // Mock git diff to show both packages have changed.
+          processRunner
+              .mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+            FakeProcessInfo(
+              MockProcess(
+                stdout:
+                    '${plugin1.pubspecFile.path}\n${plugin2.pubspecFile.path}',
+              ),
+            ),
+          ];
+
+          mockStdin.readLineOutput = 'y';
+
+          final List<String> output = await runCapturingPrint(
+            commandRunner,
+            <String>['publish', '--all-changed', '--base-sha=HEAD~'],
+          );
+          // Package1 is published in batch realease, pacakge2 is not.
+          expect(
+            output,
+            containsAllInOrder(<Matcher>[
+              contains('Running `pub publish ` in ${plugin1.path}...'),
+              contains('Published plugin1 successfully!'),
+            ]),
+          );
+
+          expect(
+            output,
+            isNot(
+              contains(
+                contains('Running `pub publish ` in ${plugin2.path}...!'),
+              ),
+            ),
+          );
+          expect(
+            output,
+            isNot(contains(contains('Published plugin2 successfully!'))),
+          );
+        },
+      );
+    });
+
     test('Do not release flutter_plugin_tools', () async {
       mockHttpResponses['plugin1'] = <String, dynamic>{
         'name': 'flutter_plugin_tools',

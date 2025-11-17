@@ -1,12 +1,18 @@
-name: release
+name: Reusable Release
 on:
-  push:
-    branches:
-      - main
-
+  workflow_call:
+    inputs:
+      publish-args:
+        required: true
+        type: string
+      workflow-name:
+        required: true
+        type: string
+      branch-name:
+        required: true
+        type: string
 # Declare default permissions as read only.
 permissions: read-all
-
 jobs:
   release:
     if: github.repository_owner == 'flutter'
@@ -21,6 +27,7 @@ jobs:
       uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
       with:
         fetch-depth: 0 # Fetch all history so the tool can get all the tags to determine version.
+        ref: ${{ inputs.branch-name }}
     - name: "Install Flutter"
       uses: ./.github/workflows/internals/install_flutter
     - name: Set up tools
@@ -66,5 +73,5 @@ jobs:
       run: |
         git config --global user.name ${{ secrets.USER_NAME }}
         git config --global user.email ${{ secrets.USER_EMAIL }}
-        dart ./script/tool/lib/src/main.dart publish --all-changed --base-sha=HEAD~ --skip-confirmation --remote=origin
+        dart ./script/tool/lib/src/main.dart publish ${{ inputs.publish-args }}
       env: {PUB_CREDENTIALS: "${{ secrets.PUB_CREDENTIALS }}"}
