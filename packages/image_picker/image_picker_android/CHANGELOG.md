@@ -1,3 +1,7 @@
+## 0.8.13+6
+
+* Bumps androidx.activity:activity from 1.10.1 to 1.11.0.
+
 ## 0.8.13+5
 
 * Updates Java compatibility version to 17 and minimum supported SDK version to Flutter 3.35/Dart 3.9.
