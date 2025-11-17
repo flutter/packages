@@ -1,6 +1,18 @@
-## 0.8.13+6
+## 0.8.13+9
 
 * Bumps androidx.activity:activity from 1.10.1 to 1.11.0.
+
+## 0.8.13+8
+
+* Updates to Pigeon 26.
+
+## 0.8.13+7
+
+* Removes reference to internal `isSystemPickerAvailable$activity_release()` method.
+
+## 0.8.13+6
+
+* Fixes typo in limit parameter validation error message.
 
 ## 0.8.13+5
 

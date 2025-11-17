@@ -27,6 +27,8 @@ class GradleCheckCommand extends PackageLoopingCommand {
     super.gitDir,
   });
 
+  static const int _minimumJavaVersion = 17;
+
   @override
   final String name = 'gradle-check';
 
@@ -128,6 +130,12 @@ class GradleCheckCommand extends PackageLoopingCommand {
       succeeded = false;
     }
     if (!_validateCompatibilityVersions(lines)) {
+      succeeded = false;
+    }
+    if (!_validateKotlinJvmCompatibility(lines)) {
+      succeeded = false;
+    }
+    if (!_validateJavaKotlinCompileOptionsAlignment(lines)) {
       succeeded = false;
     }
     if (!_validateGradleDrivenLintConfig(package, lines)) {
@@ -356,12 +364,10 @@ build.gradle "namespace" must match the "package" attribute in AndroidManifest.x
   /// than using whatever the client's local toolchaing defaults to (which can
   /// lead to compile errors that show up for clients, but not in CI).
   bool _validateCompatibilityVersions(List<String> gradleLines) {
-    const String requiredJavaVersion = '17';
     final bool hasLanguageVersion = gradleLines.any((String line) =>
         line.contains('languageVersion') && !_isCommented(line));
     final bool hasCompabilityVersions = gradleLines.any((String line) =>
-            line.contains(
-                'sourceCompatibility = JavaVersion.VERSION_$requiredJavaVersion') &&
+            line.contains('sourceCompatibility = JavaVersion.VERSION_') &&
             !_isCommented(line)) &&
         // Newer toolchains default targetCompatibility to the same value as
         // sourceCompatibility, but older toolchains require it to be set
@@ -369,8 +375,7 @@ build.gradle "namespace" must match the "package" attribute in AndroidManifest.x
         // toolchain; likely AGP) is unknown; for context see
         // https://github.com/flutter/flutter/issues/125482
         gradleLines.any((String line) =>
-            line.contains(
-                'targetCompatibility = JavaVersion.VERSION_$requiredJavaVersion') &&
+            line.contains('targetCompatibility = JavaVersion.VERSION_') &&
             !_isCommented(line));
     if (!hasLanguageVersion && !hasCompabilityVersions) {
       const String javaErrorMessage = '''
@@ -379,15 +384,15 @@ build.gradle(.kts) must set an explicit Java compatibility version.
 This can be done either via "sourceCompatibility"/"targetCompatibility":
     android {
         compileOptions {
-            sourceCompatibility = JavaVersion.VERSION_$requiredJavaVersion
-            targetCompatibility = JavaVersion.VERSION_$requiredJavaVersion
+            sourceCompatibility = JavaVersion.VERSION_$_minimumJavaVersion
+            targetCompatibility = JavaVersion.VERSION_$_minimumJavaVersion
         }
     }
 
 or "toolchain":
     java {
         toolchain {
-            languageVersion = JavaLanguageVersion.of($requiredJavaVersion)
+            languageVersion = JavaLanguageVersion.of($_minimumJavaVersion)
         }
     }
 
@@ -399,11 +404,16 @@ for more details.''';
           '$indentation${javaErrorMessage.split('\n').join('\n$indentation')}');
       return false;
     }
+
+    return true;
+  }
+
+  bool _validateKotlinJvmCompatibility(List<String> gradleLines) {
     bool isKotlinOptions(String line) =>
         line.contains('kotlinOptions') && !_isCommented(line);
     final bool hasKotlinOptions = gradleLines.any(isKotlinOptions);
     final bool kotlinOptionsUsesJavaVersion = gradleLines.any((String line) =>
-        line.contains('jvmTarget = JavaVersion.VERSION_$requiredJavaVersion') &&
+        line.contains('jvmTarget = JavaVersion.VERSION_') &&
         !_isCommented(line));
     // Either does not set kotlinOptions or does and uses non-string based syntax.
     if (hasKotlinOptions && !kotlinOptionsUsesJavaVersion) {
@@ -421,7 +431,7 @@ If build.gradle(.kts) sets jvmTarget then it must use JavaVersion syntax.
   Good:
     android {
       kotlinOptions {
-          jvmTarget = JavaVersion.VERSION_$requiredJavaVersion.toString()
+          jvmTarget = JavaVersion.VERSION_$_minimumJavaVersion.toString()
       }
     }
   BAD:
@@ -430,6 +440,46 @@ If build.gradle(.kts) sets jvmTarget then it must use JavaVersion syntax.
       printError(
           '$indentation${kotlinErrorMessage.split('\n').join('\n$indentation')}');
       return false;
+    }
+    // No error condition.
+    return true;
+  }
+
+  bool _validateJavaKotlinCompileOptionsAlignment(List<String> gradleLines) {
+    final List<String> javaVersions = <String>[];
+    // Some java versions have the format VERSION_1_8 but we dont need to handle those
+    // because they are below the minimum.
+    final RegExp javaVersionMatcher =
+        RegExp(r'JavaVersion.VERSION_(?<javaVersion>\d+)');
+    for (final String line in gradleLines) {
+      final RegExpMatch? match = javaVersionMatcher.firstMatch(line);
+      if (!_isCommented(line) && match != null) {
+        final String? foundVersion = match.namedGroup('javaVersion');
+        if (foundVersion != null) {
+          javaVersions.add(foundVersion);
+        }
+      }
+    }
+    if (javaVersions.isNotEmpty) {
+      final int version = int.parse(javaVersions.first);
+      if (!javaVersions.every((String element) => element == '$version')) {
+        const String javaVersionAlignmentError = '''
+If build.gradle(.kts) uses JavaVersion.* versions must be the same.
+''';
+        printError(
+            '$indentation${javaVersionAlignmentError.split('\n').join('\n$indentation')}');
+        return false;
+      }
+
+      if (version < _minimumJavaVersion) {
+        final String minimumJavaVersionError = '''
+build.gradle(.kts) uses "JavaVersion.VERSION_$version".
+Which is below the minimum required. Use at least "JavaVersion.VERSION_$_minimumJavaVersion".
+''';
+        printError(
+            '$indentation${minimumJavaVersionError.split('\n').join('\n$indentation')}');
+        return false;
+      }
     }
 
     return true;

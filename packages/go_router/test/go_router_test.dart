@@ -45,8 +45,8 @@ void main() {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder:
-              (BuildContext context, GoRouterState state) => const HomeScreen(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
         ),
       ];
 
@@ -126,9 +126,8 @@ void main() {
       final GoRouter router = await createRouter(
         routes,
         tester,
-        errorBuilder:
-            (BuildContext context, GoRouterState state) =>
-                TestErrorScreen(state.error!),
+        errorBuilder: (BuildContext context, GoRouterState state) =>
+            TestErrorScreen(state.error!),
       );
       router.go('/foo');
       await tester.pumpAndSettle();
@@ -142,14 +141,13 @@ void main() {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder:
-              (BuildContext context, GoRouterState state) => const HomeScreen(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
         ),
         GoRoute(
           path: '/login',
-          builder:
-              (BuildContext context, GoRouterState state) =>
-                  const LoginScreen(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const LoginScreen(),
         ),
       ];
 
@@ -169,22 +167,20 @@ void main() {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder:
-              (BuildContext context, GoRouterState state) => const HomeScreen(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
           routes: <GoRoute>[
             GoRoute(
               path: 'page1',
-              builder:
-                  (BuildContext context, GoRouterState state) =>
-                      const Page1Screen(),
+              builder: (BuildContext context, GoRouterState state) =>
+                  const Page1Screen(),
             ),
           ],
         ),
         GoRoute(
           path: '/login',
-          builder:
-              (BuildContext context, GoRouterState state) =>
-                  const LoginScreen(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const LoginScreen(),
         ),
       ];
 
@@ -204,14 +200,13 @@ void main() {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder:
-              (BuildContext context, GoRouterState state) => const HomeScreen(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
         ),
         GoRoute(
           path: '/login',
-          builder:
-              (BuildContext context, GoRouterState state) =>
-                  const LoginScreen(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const LoginScreen(),
         ),
       ];
 
@@ -275,9 +270,8 @@ void main() {
         final List<GoRoute> routes = <GoRoute>[
           GoRoute(
             path: '/',
-            builder:
-                (BuildContext context, GoRouterState state) =>
-                    const HomeScreen(),
+            builder: (BuildContext context, GoRouterState state) =>
+                const HomeScreen(),
           ),
         ];
 
@@ -298,15 +292,13 @@ void main() {
         final List<GoRoute> routes = <GoRoute>[
           GoRoute(
             path: '/',
-            builder:
-                (BuildContext context, GoRouterState state) =>
-                    const HomeScreen(),
+            builder: (BuildContext context, GoRouterState state) =>
+                const HomeScreen(),
           ),
           GoRoute(
             path: '/login',
-            builder:
-                (BuildContext context, GoRouterState state) =>
-                    const LoginScreen(),
+            builder: (BuildContext context, GoRouterState state) =>
+                const LoginScreen(),
           ),
         ];
 
@@ -376,7 +368,10 @@ void main() {
       final UniqueKey dialog = UniqueKey();
       final GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
       final List<GoRoute> routes = <GoRoute>[
-        GoRoute(path: '/', builder: (_, __) => DummyScreen(key: home)),
+        GoRoute(
+          path: '/',
+          builder: (_, __) => DummyScreen(key: home),
+        ),
         GoRoute(
           path: '/settings',
           builder: (_, __) => DummyScreen(key: settings),
@@ -429,13 +424,12 @@ void main() {
           builder: (_, __) => const Text('home'),
           routes: <RouteBase>[
             ShellRoute(
-              builder: (
-                BuildContext context,
-                GoRouterState state,
-                Widget child,
-              ) {
-                return Column(children: <Widget>[const Text('shell'), child]);
-              },
+              builder:
+                  (BuildContext context, GoRouterState state, Widget child) {
+                    return Column(
+                      children: <Widget>[const Text('shell'), child],
+                    );
+                  },
               routes: <GoRoute>[
                 GoRoute(
                   path: 'page',
@@ -490,18 +484,18 @@ void main() {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          pageBuilder:
-              (_, __) => const MaterialPage<Object>(child: HomeScreen()),
+          pageBuilder: (_, __) =>
+              const MaterialPage<Object>(child: HomeScreen()),
         ),
         GoRoute(
           path: '/page1',
-          pageBuilder:
-              (_, __) => const MaterialPage<Object>(child: Page1Screen()),
+          pageBuilder: (_, __) =>
+              const MaterialPage<Object>(child: Page1Screen()),
         ),
         GoRoute(
           path: '/page2',
-          pageBuilder:
-              (_, __) => const MaterialPage<Object>(child: Page2Screen()),
+          pageBuilder: (_, __) =>
+              const MaterialPage<Object>(child: Page2Screen()),
         ),
       ];
       final GoRouter router = await createRouter(
@@ -536,14 +530,13 @@ void main() {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder:
-              (BuildContext context, GoRouterState state) => const HomeScreen(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
           routes: <GoRoute>[
             GoRoute(
               path: 'login',
-              builder:
-                  (BuildContext context, GoRouterState state) =>
-                      const LoginScreen(),
+              builder: (BuildContext context, GoRouterState state) =>
+                  const LoginScreen(),
             ),
           ],
         ),
@@ -565,28 +558,25 @@ void main() {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder:
-              (BuildContext context, GoRouterState state) => const HomeScreen(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
           routes: <GoRoute>[
             GoRoute(
               path: 'family/:fid',
-              builder:
-                  (BuildContext context, GoRouterState state) =>
-                      const FamilyScreen('dummy'),
+              builder: (BuildContext context, GoRouterState state) =>
+                  const FamilyScreen('dummy'),
               routes: <GoRoute>[
                 GoRoute(
                   path: 'person/:pid',
-                  builder:
-                      (BuildContext context, GoRouterState state) =>
-                          const PersonScreen('dummy', 'dummy'),
+                  builder: (BuildContext context, GoRouterState state) =>
+                      const PersonScreen('dummy', 'dummy'),
                 ),
               ],
             ),
             GoRoute(
               path: 'login',
-              builder:
-                  (BuildContext context, GoRouterState state) =>
-                      const LoginScreen(),
+              builder: (BuildContext context, GoRouterState state) =>
+                  const LoginScreen(),
             ),
           ],
         ),
@@ -646,32 +636,28 @@ void main() {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder:
-              (BuildContext context, GoRouterState state) => const HomeScreen(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
           routes: <GoRoute>[
             GoRoute(
               path: 'foo/bar',
-              builder:
-                  (BuildContext context, GoRouterState state) =>
-                      const FamilyScreen(''),
+              builder: (BuildContext context, GoRouterState state) =>
+                  const FamilyScreen(''),
             ),
             GoRoute(
               path: 'bar',
-              builder:
-                  (BuildContext context, GoRouterState state) =>
-                      const Page1Screen(),
+              builder: (BuildContext context, GoRouterState state) =>
+                  const Page1Screen(),
             ),
             GoRoute(
               path: 'foo',
-              builder:
-                  (BuildContext context, GoRouterState state) =>
-                      const Page2Screen(),
+              builder: (BuildContext context, GoRouterState state) =>
+                  const Page2Screen(),
               routes: <GoRoute>[
                 GoRoute(
                   path: 'bar',
-                  builder:
-                      (BuildContext context, GoRouterState state) =>
-                          const LoginScreen(),
+                  builder: (BuildContext context, GoRouterState state) =>
+                      const LoginScreen(),
                 ),
               ],
             ),
@@ -794,15 +780,14 @@ void main() {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder:
-              (BuildContext context, GoRouterState state) => const HomeScreen(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
         ),
         GoRoute(
           path: '/family/:fid',
           caseSensitive: false,
-          builder:
-              (BuildContext context, GoRouterState state) =>
-                  FamilyScreen(state.pathParameters['fid']!),
+          builder: (BuildContext context, GoRouterState state) =>
+              FamilyScreen(state.pathParameters['fid']!),
         ),
       ];
 
@@ -829,14 +814,13 @@ void main() {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder:
-              (BuildContext context, GoRouterState state) => const HomeScreen(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
         ),
         GoRoute(
           path: '/family/:fid',
-          builder:
-              (BuildContext context, GoRouterState state) =>
-                  FamilyScreen(state.pathParameters['fid']!),
+          builder: (BuildContext context, GoRouterState state) =>
+              FamilyScreen(state.pathParameters['fid']!),
         ),
       ];
 
@@ -867,20 +851,18 @@ void main() {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder:
-              (BuildContext context, GoRouterState state) => const HomeScreen(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
         ),
         GoRoute(
           path: '/abc',
-          builder:
-              (BuildContext context, GoRouterState state) =>
-                  const SizedBox(key: Key('abc')),
+          builder: (BuildContext context, GoRouterState state) =>
+              const SizedBox(key: Key('abc')),
         ),
         GoRoute(
           path: '/ABC',
-          builder:
-              (BuildContext context, GoRouterState state) =>
-                  const SizedBox(key: Key('ABC')),
+          builder: (BuildContext context, GoRouterState state) =>
+              const SizedBox(key: Key('ABC')),
         ),
       ];
 
@@ -1150,11 +1132,10 @@ void main() {
       GoRoute(
         path: '/',
         pageBuilder: (BuildContext context, GoRouterState state) {
-          final String value =
-              context
-                  .dependOnInheritedWidgetOfExactType<TestInheritedNotifier>()!
-                  .notifier!
-                  .value;
+          final String value = context
+              .dependOnInheritedWidgetOfExactType<TestInheritedNotifier>()!
+              .notifier!
+              .value;
           return MaterialPage<void>(key: state.pageKey, child: Text(value));
         },
       ),
@@ -1219,16 +1200,17 @@ void main() {
               routes: <RouteBase>[
                 ShellRoute(
                   navigatorKey: shellNavigatorKeyB,
-                  builder: (
-                    BuildContext context,
-                    GoRouterState state,
-                    Widget child,
-                  ) {
-                    return Scaffold(
-                      appBar: AppBar(title: const Text('Shell')),
-                      body: child,
-                    );
-                  },
+                  builder:
+                      (
+                        BuildContext context,
+                        GoRouterState state,
+                        Widget child,
+                      ) {
+                        return Scaffold(
+                          appBar: AppBar(title: const Text('Shell')),
+                          body: child,
+                        );
+                      },
                   routes: <RouteBase>[
                     GoRoute(
                       path: 'b',
@@ -1297,9 +1279,8 @@ void main() {
         final List<RouteBase> routes = <RouteBase>[
           GoRoute(
             path: '/',
-            builder:
-                (BuildContext context, GoRouterState state) =>
-                    const DummyScreen(),
+            builder: (BuildContext context, GoRouterState state) =>
+                const DummyScreen(),
             routes: <RouteBase>[
               ShellRoute(
                 builder:
@@ -1308,9 +1289,8 @@ void main() {
                 routes: <RouteBase>[
                   GoRoute(
                     path: 'c',
-                    builder:
-                        (BuildContext context, GoRouterState state) =>
-                            const DummyScreen(),
+                    builder: (BuildContext context, GoRouterState state) =>
+                        const DummyScreen(),
                   ),
                 ],
               ),
@@ -1547,13 +1527,10 @@ void main() {
           },
           routes: <RouteBase>[
             ShellRoute(
-              builder: (
-                BuildContext context,
-                GoRouterState state,
-                Widget child,
-              ) {
-                return Scaffold(appBar: AppBar(), body: child);
-              },
+              builder:
+                  (BuildContext context, GoRouterState state, Widget child) {
+                    return Scaffold(appBar: AppBar(), body: child);
+                  },
               routes: <RouteBase>[
                 GoRoute(
                   path: 'b',
@@ -1619,10 +1596,8 @@ void main() {
           routes: <RouteBase>[
             GoRoute(
               path: 'settings',
-              builder:
-                  (_, GoRouterState state) => DummyScreen(
-                    key: ValueKey<String>('settings-${state.extra}'),
-                  ),
+              builder: (_, GoRouterState state) =>
+                  DummyScreen(key: ValueKey<String>('settings-${state.extra}')),
             ),
           ],
         ),
@@ -1675,7 +1650,10 @@ void main() {
       final UniqueKey login = UniqueKey();
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(path: '/', builder: (_, __) => const DummyScreen()),
-        GoRoute(path: '/login', builder: (_, __) => DummyScreen(key: login)),
+        GoRoute(
+          path: '/login',
+          builder: (_, __) => DummyScreen(key: login),
+        ),
       ];
       final Completer<void> completer = Completer<void>();
       final GoRouter router = await createRouter(
@@ -1716,8 +1694,8 @@ void main() {
         GoRoute(
           name: 'home',
           path: '/',
-          builder:
-              (BuildContext context, GoRouterState state) => const HomeScreen(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
         ),
       ];
 
@@ -1757,15 +1735,14 @@ void main() {
         GoRoute(
           name: 'home',
           path: '/',
-          builder:
-              (BuildContext context, GoRouterState state) => const HomeScreen(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
         ),
         GoRoute(
           name: 'login',
           path: '/login',
-          builder:
-              (BuildContext context, GoRouterState state) =>
-                  const LoginScreen(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const LoginScreen(),
         ),
       ];
 
@@ -1778,15 +1755,14 @@ void main() {
         GoRoute(
           name: 'home',
           path: '/',
-          builder:
-              (BuildContext context, GoRouterState state) => const HomeScreen(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
           routes: <GoRoute>[
             GoRoute(
               name: 'login',
               path: 'login',
-              builder:
-                  (BuildContext context, GoRouterState state) =>
-                      const LoginScreen(),
+              builder: (BuildContext context, GoRouterState state) =>
+                  const LoginScreen(),
             ),
           ],
         ),
@@ -1801,15 +1777,14 @@ void main() {
         GoRoute(
           name: 'home',
           path: '/',
-          builder:
-              (BuildContext context, GoRouterState state) => const HomeScreen(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
           routes: <GoRoute>[
             GoRoute(
               name: 'family',
               path: 'family/:fid',
-              builder:
-                  (BuildContext context, GoRouterState state) =>
-                      const FamilyScreen('dummy'),
+              builder: (BuildContext context, GoRouterState state) =>
+                  const FamilyScreen('dummy'),
               routes: <GoRoute>[
                 GoRoute(
                   name: 'person',
@@ -1840,22 +1815,20 @@ void main() {
         GoRoute(
           name: 'home',
           path: '/',
-          builder:
-              (BuildContext context, GoRouterState state) => const HomeScreen(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
           routes: <GoRoute>[
             GoRoute(
               name: 'family',
               path: 'family/:fid',
-              builder:
-                  (BuildContext context, GoRouterState state) =>
-                      const FamilyScreen('dummy'),
+              builder: (BuildContext context, GoRouterState state) =>
+                  const FamilyScreen('dummy'),
               routes: <GoRoute>[
                 GoRoute(
                   name: 'person',
                   path: 'person/:pid',
-                  builder:
-                      (BuildContext context, GoRouterState state) =>
-                          const PersonScreen('dummy', 'dummy'),
+                  builder: (BuildContext context, GoRouterState state) =>
+                      const PersonScreen('dummy', 'dummy'),
                 ),
               ],
             ),
@@ -1874,15 +1847,14 @@ void main() {
         GoRoute(
           name: 'home',
           path: '/',
-          builder:
-              (BuildContext context, GoRouterState state) => const HomeScreen(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
           routes: <GoRoute>[
             GoRoute(
               name: 'family',
               path: 'family/:fid',
-              builder:
-                  (BuildContext context, GoRouterState state) =>
-                      const FamilyScreen('dummy'),
+              builder: (BuildContext context, GoRouterState state) =>
+                  const FamilyScreen('dummy'),
               routes: <GoRoute>[
                 GoRoute(
                   name: 'PeRsOn',
@@ -1915,9 +1887,8 @@ void main() {
         GoRoute(
           name: 'family',
           path: '/family/:fid',
-          builder:
-              (BuildContext context, GoRouterState state) =>
-                  const FamilyScreen('dummy'),
+          builder: (BuildContext context, GoRouterState state) =>
+              const FamilyScreen('dummy'),
         ),
       ];
       await expectLater(() async {
@@ -1931,9 +1902,8 @@ void main() {
         GoRoute(
           name: 'family',
           path: '/family/:fid',
-          builder:
-              (BuildContext context, GoRouterState state) =>
-                  const FamilyScreen('dummy'),
+          builder: (BuildContext context, GoRouterState state) =>
+              const FamilyScreen('dummy'),
         ),
       ];
       await expectLater(() async {
@@ -1950,15 +1920,14 @@ void main() {
         GoRoute(path: '/', builder: dummy, redirect: (_, __) => '/family/f2'),
         GoRoute(
           path: '/family/:fid',
-          builder:
-              (BuildContext context, GoRouterState state) =>
-                  FamilyScreen(state.pathParameters['fid']!),
+          builder: (BuildContext context, GoRouterState state) =>
+              FamilyScreen(state.pathParameters['fid']!),
           routes: <GoRoute>[
             GoRoute(
               name: 'person',
               path: 'person:pid',
-              builder:
-                  (BuildContext context, GoRouterState state) => PersonScreen(
+              builder: (BuildContext context, GoRouterState state) =>
+                  PersonScreen(
                     state.pathParameters['fid']!,
                     state.pathParameters['pid']!,
                   ),
@@ -2037,14 +2006,13 @@ void main() {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder:
-              (BuildContext context, GoRouterState state) => const HomeScreen(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
           routes: <GoRoute>[
             GoRoute(
               path: 'login',
-              builder:
-                  (BuildContext context, GoRouterState state) =>
-                      const LoginScreen(),
+              builder: (BuildContext context, GoRouterState state) =>
+                  const LoginScreen(),
             ),
           ],
         ),
@@ -2060,14 +2028,13 @@ void main() {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/home',
-          builder:
-              (BuildContext context, GoRouterState state) => const HomeScreen(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
           routes: <GoRoute>[
             GoRoute(
               path: 'login',
-              builder:
-                  (BuildContext context, GoRouterState state) =>
-                      const LoginScreen(),
+              builder: (BuildContext context, GoRouterState state) =>
+                  const LoginScreen(),
             ),
           ],
         ),
@@ -2087,14 +2054,13 @@ void main() {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/home',
-          builder:
-              (BuildContext context, GoRouterState state) => const HomeScreen(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
           routes: <GoRoute>[
             GoRoute(
               path: 'family/:fid',
-              builder:
-                  (BuildContext context, GoRouterState state) =>
-                      const FamilyScreen('dummy'),
+              builder: (BuildContext context, GoRouterState state) =>
+                  const FamilyScreen('dummy'),
               routes: <GoRoute>[
                 GoRoute(
                   name: 'person',
@@ -2135,14 +2101,13 @@ void main() {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/home',
-          builder:
-              (BuildContext context, GoRouterState state) => const HomeScreen(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
           routes: <GoRoute>[
             GoRoute(
               path: 'family',
-              builder:
-                  (BuildContext context, GoRouterState state) =>
-                      const FamilyScreen('dummy'),
+              builder: (BuildContext context, GoRouterState state) =>
+                  const FamilyScreen('dummy'),
               routes: <GoRoute>[
                 GoRoute(
                   path: 'person',
@@ -2180,20 +2145,18 @@ void main() {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/home',
-          builder:
-              (BuildContext context, GoRouterState state) => const HomeScreen(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
           routes: <GoRoute>[
             GoRoute(
               path: 'family/:fid',
-              builder:
-                  (BuildContext context, GoRouterState state) =>
-                      const FamilyScreen('dummy'),
+              builder: (BuildContext context, GoRouterState state) =>
+                  const FamilyScreen('dummy'),
               routes: <GoRoute>[
                 GoRoute(
                   path: 'person/:pid',
-                  builder:
-                      (BuildContext context, GoRouterState state) =>
-                          const PersonScreen('dummy', 'dummy'),
+                  builder: (BuildContext context, GoRouterState state) =>
+                      const PersonScreen('dummy', 'dummy'),
                 ),
               ],
             ),
@@ -2205,9 +2168,8 @@ void main() {
         routes,
         tester,
         initialLocation: '/home',
-        errorBuilder:
-            (BuildContext context, GoRouterState state) =>
-                TestErrorScreen(state.error!),
+        errorBuilder: (BuildContext context, GoRouterState state) =>
+            TestErrorScreen(state.error!),
       );
       router.go('./family/person/$pid');
       await tester.pumpAndSettle();
@@ -2222,20 +2184,18 @@ void main() {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/home',
-          builder:
-              (BuildContext context, GoRouterState state) => const HomeScreen(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
           routes: <GoRoute>[
             GoRoute(
               path: 'family',
-              builder:
-                  (BuildContext context, GoRouterState state) =>
-                      const FamilyScreen('dummy'),
+              builder: (BuildContext context, GoRouterState state) =>
+                  const FamilyScreen('dummy'),
               routes: <GoRoute>[
                 GoRoute(
                   path: 'person',
-                  builder:
-                      (BuildContext context, GoRouterState state) =>
-                          const PersonScreen('dummy', 'dummy'),
+                  builder: (BuildContext context, GoRouterState state) =>
+                      const PersonScreen('dummy', 'dummy'),
                 ),
               ],
             ),
@@ -2247,9 +2207,8 @@ void main() {
         routes,
         tester,
         initialLocation: '/home',
-        errorBuilder:
-            (BuildContext context, GoRouterState state) =>
-                TestErrorScreen(state.error!),
+        errorBuilder: (BuildContext context, GoRouterState state) =>
+            TestErrorScreen(state.error!),
       );
       router.go('person');
 
@@ -2322,11 +2281,10 @@ void main() {
         initialLocation: '/home',
       );
 
-      final String loc =
-          Uri(
-            path: 'page1',
-            queryParameters: <String, dynamic>{'param1': param1},
-          ).toString();
+      final String loc = Uri(
+        path: 'page1',
+        queryParameters: <String, dynamic>{'param1': param1},
+      ).toString();
       router.go('./$loc');
 
       await tester.pumpAndSettle();
@@ -2342,20 +2300,18 @@ void main() {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder:
-              (BuildContext context, GoRouterState state) => const HomeScreen(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
           routes: <GoRoute>[
             GoRoute(
               path: 'dummy',
-              builder:
-                  (BuildContext context, GoRouterState state) =>
-                      const DummyScreen(),
+              builder: (BuildContext context, GoRouterState state) =>
+                  const DummyScreen(),
             ),
             GoRoute(
               path: 'login',
-              builder:
-                  (BuildContext context, GoRouterState state) =>
-                      const LoginScreen(),
+              builder: (BuildContext context, GoRouterState state) =>
+                  const LoginScreen(),
             ),
           ],
         ),
@@ -2389,22 +2345,103 @@ void main() {
       expect(redirected, isTrue);
     });
 
+    testWidgets('error thrown during redirect can be caught by onException', (
+      WidgetTester tester,
+    ) async {
+      bool exceptionCaught = false;
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+          path: '/',
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
+        ),
+        GoRoute(
+          path: '/login',
+          builder: (BuildContext context, GoRouterState state) =>
+              const LoginScreen(),
+        ),
+        GoRoute(
+          path: '/trigger-error',
+          builder: (BuildContext context, GoRouterState state) =>
+              const Text('should not reach here'),
+        ),
+      ];
+
+      final GoRouter router = await createRouter(
+        routes,
+        tester,
+        redirect: (BuildContext context, GoRouterState state) {
+          if (state.matchedLocation == '/trigger-error') {
+            throw Exception('Redirect error');
+          }
+          return null;
+        },
+        onException:
+            (BuildContext context, GoRouterState state, GoRouter router) {
+              exceptionCaught = true;
+            },
+      );
+
+      expect(find.byType(HomeScreen), findsOneWidget);
+      expect(exceptionCaught, isFalse);
+
+      // Navigate to a route that will trigger an error in the redirect callback
+      router.go('/trigger-error');
+      await tester.pumpAndSettle();
+
+      // Verify the exception was caught
+      expect(exceptionCaught, isTrue);
+      // Should stay on the home screen since onException didn't navigate anywhere
+      expect(find.byType(HomeScreen), findsOneWidget);
+      expect(find.text('should not reach here'), findsNothing);
+    });
+
+    testWidgets('context extension methods work in redirects', (
+      WidgetTester tester,
+    ) async {
+      String? capturedNamedLocation;
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+          path: '/',
+          name: 'home',
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
+        ),
+        GoRoute(
+          path: '/login',
+          name: 'login',
+          builder: (BuildContext context, GoRouterState state) =>
+              const LoginScreen(),
+        ),
+      ];
+
+      await createRouter(
+        routes,
+        tester,
+        redirect: (BuildContext context, GoRouterState state) {
+          capturedNamedLocation = context.namedLocation('login');
+          return state.matchedLocation == '/login' ? null : '/login';
+        },
+      );
+
+      expect(capturedNamedLocation, '/login');
+    });
+
     testWidgets('redirect can redirect to same path', (
       WidgetTester tester,
     ) async {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder:
-              (BuildContext context, GoRouterState state) => const HomeScreen(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
           routes: <GoRoute>[
             GoRoute(
               path: 'dummy',
               // Return same location.
               redirect: (_, GoRouterState state) => state.uri.toString(),
-              builder:
-                  (BuildContext context, GoRouterState state) =>
-                      const DummyScreen(),
+              builder: (BuildContext context, GoRouterState state) =>
+                  const DummyScreen(),
             ),
           ],
         ),
@@ -2436,22 +2473,20 @@ void main() {
         GoRoute(
           name: 'home',
           path: '/',
-          builder:
-              (BuildContext context, GoRouterState state) => const HomeScreen(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
           routes: <GoRoute>[
             GoRoute(
               name: 'dummy',
               path: 'dummy',
-              builder:
-                  (BuildContext context, GoRouterState state) =>
-                      const DummyScreen(),
+              builder: (BuildContext context, GoRouterState state) =>
+                  const DummyScreen(),
             ),
             GoRoute(
               name: 'login',
               path: 'login',
-              builder:
-                  (BuildContext context, GoRouterState state) =>
-                      const LoginScreen(),
+              builder: (BuildContext context, GoRouterState state) =>
+                  const LoginScreen(),
             ),
           ],
         ),
@@ -2460,11 +2495,10 @@ void main() {
       final GoRouter router = await createRouter(
         routes,
         tester,
-        redirect:
-            (BuildContext context, GoRouterState state) =>
-                state.matchedLocation == '/login'
-                    ? null
-                    : state.namedLocation('login'),
+        redirect: (BuildContext context, GoRouterState state) =>
+            state.matchedLocation == '/login'
+            ? null
+            : state.namedLocation('login'),
       );
       expect(
         router.routerDelegate.currentConfiguration.uri.toString(),
@@ -2476,21 +2510,19 @@ void main() {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder:
-              (BuildContext context, GoRouterState state) => const HomeScreen(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
           routes: <GoRoute>[
             GoRoute(
               path: 'dummy',
-              builder:
-                  (BuildContext context, GoRouterState state) =>
-                      const DummyScreen(),
+              builder: (BuildContext context, GoRouterState state) =>
+                  const DummyScreen(),
               redirect: (BuildContext context, GoRouterState state) => '/login',
             ),
             GoRoute(
               path: 'login',
-              builder:
-                  (BuildContext context, GoRouterState state) =>
-                      const LoginScreen(),
+              builder: (BuildContext context, GoRouterState state) =>
+                  const LoginScreen(),
             ),
           ],
         ),
@@ -2511,14 +2543,13 @@ void main() {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder:
-              (BuildContext context, GoRouterState state) => const HomeScreen(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
           routes: <GoRoute>[
             GoRoute(
               path: 'dummy',
-              builder:
-                  (BuildContext context, GoRouterState state) =>
-                      const DummyScreen(),
+              builder: (BuildContext context, GoRouterState state) =>
+                  const DummyScreen(),
               redirect: (BuildContext context, GoRouterState state) {
                 // should never be reached.
                 assert(false);
@@ -2527,15 +2558,13 @@ void main() {
             ),
             GoRoute(
               path: 'dummy2',
-              builder:
-                  (BuildContext context, GoRouterState state) =>
-                      const DummyScreen(),
+              builder: (BuildContext context, GoRouterState state) =>
+                  const DummyScreen(),
             ),
             GoRoute(
               path: 'login',
-              builder:
-                  (BuildContext context, GoRouterState state) =>
-                      const LoginScreen(),
+              builder: (BuildContext context, GoRouterState state) =>
+                  const LoginScreen(),
             ),
           ],
         ),
@@ -2568,25 +2597,22 @@ void main() {
         GoRoute(
           name: 'home',
           path: '/',
-          builder:
-              (BuildContext context, GoRouterState state) => const HomeScreen(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
           routes: <GoRoute>[
             GoRoute(
               name: 'dummy',
               path: 'dummy',
-              builder:
-                  (BuildContext context, GoRouterState state) =>
-                      const DummyScreen(),
-              redirect:
-                  (BuildContext context, GoRouterState state) =>
-                      state.namedLocation('login'),
+              builder: (BuildContext context, GoRouterState state) =>
+                  const DummyScreen(),
+              redirect: (BuildContext context, GoRouterState state) =>
+                  state.namedLocation('login'),
             ),
             GoRoute(
               name: 'login',
               path: 'login',
-              builder:
-                  (BuildContext context, GoRouterState state) =>
-                      const LoginScreen(),
+              builder: (BuildContext context, GoRouterState state) =>
+                  const LoginScreen(),
             ),
           ],
         ),
@@ -2605,20 +2631,18 @@ void main() {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder:
-              (BuildContext context, GoRouterState state) => const HomeScreen(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
           routes: <GoRoute>[
             GoRoute(
               path: 'dummy1',
-              builder:
-                  (BuildContext context, GoRouterState state) =>
-                      const DummyScreen(),
+              builder: (BuildContext context, GoRouterState state) =>
+                  const DummyScreen(),
             ),
             GoRoute(
               path: 'dummy2',
-              builder:
-                  (BuildContext context, GoRouterState state) =>
-                      const DummyScreen(),
+              builder: (BuildContext context, GoRouterState state) =>
+                  const DummyScreen(),
               redirect: (BuildContext context, GoRouterState state) => '/',
             ),
           ],
@@ -2628,9 +2652,8 @@ void main() {
       final GoRouter router = await createRouter(
         routes,
         tester,
-        redirect:
-            (BuildContext context, GoRouterState state) =>
-                state.matchedLocation == '/dummy1' ? '/dummy2' : null,
+        redirect: (BuildContext context, GoRouterState state) =>
+            state.matchedLocation == '/dummy1' ? '/dummy2' : null,
       );
       router.go('/dummy1');
       await tester.pump();
@@ -2641,16 +2664,14 @@ void main() {
       final GoRouter router = await createRouter(
         <GoRoute>[],
         tester,
-        redirect:
-            (BuildContext context, GoRouterState state) =>
-                state.matchedLocation == '/'
-                    ? '/login'
-                    : state.matchedLocation == '/login'
-                    ? '/'
-                    : null,
-        errorBuilder:
-            (BuildContext context, GoRouterState state) =>
-                TestErrorScreen(state.error!),
+        redirect: (BuildContext context, GoRouterState state) =>
+            state.matchedLocation == '/'
+            ? '/login'
+            : state.matchedLocation == '/login'
+            ? '/'
+            : null,
+        errorBuilder: (BuildContext context, GoRouterState state) =>
+            TestErrorScreen(state.error!),
       );
       final List<RouteMatchBase> matches =
           router.routerDelegate.currentConfiguration.matches;
@@ -2677,9 +2698,8 @@ void main() {
           ),
         ],
         tester,
-        errorBuilder:
-            (BuildContext context, GoRouterState state) =>
-                TestErrorScreen(state.error!),
+        errorBuilder: (BuildContext context, GoRouterState state) =>
+            TestErrorScreen(state.error!),
       );
 
       final List<RouteMatchBase> matches =
@@ -2702,12 +2722,10 @@ void main() {
           ),
         ],
         tester,
-        redirect:
-            (BuildContext context, GoRouterState state) =>
-                state.matchedLocation == '/' ? '/login' : null,
-        errorBuilder:
-            (BuildContext context, GoRouterState state) =>
-                TestErrorScreen(state.error!),
+        redirect: (BuildContext context, GoRouterState state) =>
+            state.matchedLocation == '/' ? '/login' : null,
+        errorBuilder: (BuildContext context, GoRouterState state) =>
+            TestErrorScreen(state.error!),
       );
 
       final List<RouteMatchBase> matches =
@@ -2726,16 +2744,14 @@ void main() {
       final GoRouter router = await createRouter(
         <GoRoute>[],
         tester,
-        redirect:
-            (BuildContext context, GoRouterState state) =>
-                state.matchedLocation == '/'
-                    ? '/login?from=${state.uri}'
-                    : state.matchedLocation == '/login'
-                    ? '/'
-                    : null,
-        errorBuilder:
-            (BuildContext context, GoRouterState state) =>
-                TestErrorScreen(state.error!),
+        redirect: (BuildContext context, GoRouterState state) =>
+            state.matchedLocation == '/'
+            ? '/login?from=${state.uri}'
+            : state.matchedLocation == '/login'
+            ? '/'
+            : null,
+        errorBuilder: (BuildContext context, GoRouterState state) =>
+            TestErrorScreen(state.error!),
       );
 
       final List<RouteMatchBase> matches =
@@ -2754,8 +2770,8 @@ void main() {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder:
-              (BuildContext context, GoRouterState state) => const HomeScreen(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
         ),
         GoRoute(
           path: '/dummy',
@@ -2776,14 +2792,13 @@ void main() {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder:
-              (BuildContext context, GoRouterState state) => const HomeScreen(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
         ),
         GoRoute(
           path: '/login',
-          builder:
-              (BuildContext context, GoRouterState state) =>
-                  const LoginScreen(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const LoginScreen(),
         ),
       ];
 
@@ -2815,15 +2830,13 @@ void main() {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder:
-              (BuildContext context, GoRouterState state) =>
-                  const DummyScreen(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const DummyScreen(),
           routes: <RouteBase>[
             GoRoute(
               path: ':id',
-              builder:
-                  (BuildContext context, GoRouterState state) =>
-                      const DummyScreen(),
+              builder: (BuildContext context, GoRouterState state) =>
+                  const DummyScreen(),
             ),
           ],
         ),
@@ -2887,9 +2900,8 @@ void main() {
           routes: <GoRoute>[
             GoRoute(
               path: 'family/:fid',
-              builder:
-                  (BuildContext c, GoRouterState s) =>
-                      FamilyScreen(s.pathParameters['fid']!),
+              builder: (BuildContext c, GoRouterState s) =>
+                  FamilyScreen(s.pathParameters['fid']!),
               routes: <GoRoute>[
                 GoRoute(
                   path: 'person/:pid',
@@ -2898,11 +2910,10 @@ void main() {
                     expect(s.pathParameters['pid'], 'p1');
                     return null;
                   },
-                  builder:
-                      (BuildContext c, GoRouterState s) => PersonScreen(
-                        s.pathParameters['fid']!,
-                        s.pathParameters['pid']!,
-                      ),
+                  builder: (BuildContext c, GoRouterState s) => PersonScreen(
+                    s.pathParameters['fid']!,
+                    s.pathParameters['pid']!,
+                  ),
                 ),
               ],
             ),
@@ -2932,11 +2943,10 @@ void main() {
       final GoRouter router = await createRouter(
         <GoRoute>[],
         tester,
-        redirect:
-            (BuildContext context, GoRouterState state) => '/${state.uri}+',
-        errorBuilder:
-            (BuildContext context, GoRouterState state) =>
-                TestErrorScreen(state.error!),
+        redirect: (BuildContext context, GoRouterState state) =>
+            '/${state.uri}+',
+        errorBuilder: (BuildContext context, GoRouterState state) =>
+            TestErrorScreen(state.error!),
         redirectLimit: 10,
       );
 
@@ -2997,8 +3007,8 @@ void main() {
         GoRoute(
           name: 'home',
           path: '/',
-          builder:
-              (BuildContext context, GoRouterState state) => const HomeScreen(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
           routes: <GoRoute>[
             GoRoute(
               name: 'login',
@@ -3043,21 +3053,19 @@ void main() {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder:
-              (BuildContext context, GoRouterState state) => const HomeScreen(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
           routes: <GoRoute>[
             GoRoute(
               path: 'dummy',
-              builder:
-                  (BuildContext context, GoRouterState state) =>
-                      const DummyScreen(),
+              builder: (BuildContext context, GoRouterState state) =>
+                  const DummyScreen(),
               redirect: (BuildContext context, GoRouterState state) => '/other',
               routes: <GoRoute>[
                 GoRoute(
                   path: 'dummy2',
-                  builder:
-                      (BuildContext context, GoRouterState state) =>
-                          const DummyScreen(),
+                  builder: (BuildContext context, GoRouterState state) =>
+                      const DummyScreen(),
                   redirect: (BuildContext context, GoRouterState state) {
                     assert(false);
                     return '/other2';
@@ -3067,15 +3075,13 @@ void main() {
             ),
             GoRoute(
               path: 'other',
-              builder:
-                  (BuildContext context, GoRouterState state) =>
-                      const DummyScreen(),
+              builder: (BuildContext context, GoRouterState state) =>
+                  const DummyScreen(),
             ),
             GoRoute(
               path: 'other2',
-              builder:
-                  (BuildContext context, GoRouterState state) =>
-                      const DummyScreen(),
+              builder: (BuildContext context, GoRouterState state) =>
+                  const DummyScreen(),
             ),
           ],
         ),
@@ -3099,29 +3105,25 @@ void main() {
       final List<RouteBase> routes = <RouteBase>[
         ShellRoute(
           redirect: (BuildContext context, GoRouterState state) => '/dummy',
-          builder:
-              (BuildContext context, GoRouterState state, Widget child) =>
-                  Scaffold(appBar: AppBar(), body: child),
+          builder: (BuildContext context, GoRouterState state, Widget child) =>
+              Scaffold(appBar: AppBar(), body: child),
           routes: <RouteBase>[
             GoRoute(
               path: '/other',
-              builder:
-                  (BuildContext context, GoRouterState state) =>
-                      const DummyScreen(),
+              builder: (BuildContext context, GoRouterState state) =>
+                  const DummyScreen(),
             ),
             GoRoute(
               path: '/other2',
-              builder:
-                  (BuildContext context, GoRouterState state) =>
-                      const DummyScreen(),
+              builder: (BuildContext context, GoRouterState state) =>
+                  const DummyScreen(),
             ),
           ],
         ),
         GoRoute(
           path: '/dummy',
-          builder:
-              (BuildContext context, GoRouterState state) =>
-                  const DummyScreen(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const DummyScreen(),
         ),
       ];
 
@@ -3143,21 +3145,21 @@ void main() {
       final List<RouteBase> routes = <RouteBase>[
         StatefulShellRoute.indexedStack(
           redirect: (BuildContext context, GoRouterState state) => '/dummy',
-          builder: (
-            BuildContext context,
-            GoRouterState state,
-            StatefulNavigationShell navigationShell,
-          ) {
-            return navigationShell;
-          },
+          builder:
+              (
+                BuildContext context,
+                GoRouterState state,
+                StatefulNavigationShell navigationShell,
+              ) {
+                return navigationShell;
+              },
           branches: <StatefulShellBranch>[
             StatefulShellBranch(
               routes: <RouteBase>[
                 GoRoute(
                   path: '/other',
-                  builder:
-                      (BuildContext context, GoRouterState state) =>
-                          const DummyScreen(),
+                  builder: (BuildContext context, GoRouterState state) =>
+                      const DummyScreen(),
                 ),
               ],
             ),
@@ -3165,9 +3167,8 @@ void main() {
               routes: <RouteBase>[
                 GoRoute(
                   path: '/other2',
-                  builder:
-                      (BuildContext context, GoRouterState state) =>
-                          const DummyScreen(),
+                  builder: (BuildContext context, GoRouterState state) =>
+                      const DummyScreen(),
                 ),
               ],
             ),
@@ -3175,9 +3176,8 @@ void main() {
         ),
         GoRoute(
           path: '/dummy',
-          builder:
-              (BuildContext context, GoRouterState state) =>
-                  const DummyScreen(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const DummyScreen(),
         ),
       ];
 
@@ -3199,14 +3199,13 @@ void main() {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder:
-              (BuildContext context, GoRouterState state) => const HomeScreen(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
           routes: <GoRoute>[
             GoRoute(
               path: 'dummy',
-              builder:
-                  (BuildContext context, GoRouterState state) =>
-                      const DummyScreen(),
+              builder: (BuildContext context, GoRouterState state) =>
+                  const DummyScreen(),
             ),
           ],
         ),
@@ -3227,8 +3226,8 @@ void main() {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder:
-              (BuildContext context, GoRouterState state) => const HomeScreen(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
           routes: <GoRoute>[
             GoRoute(
               path: 'dummy',
@@ -3257,8 +3256,8 @@ void main() {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder:
-              (BuildContext context, GoRouterState state) => const HomeScreen(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
         ),
         GoRoute(
           path: '/dummy',
@@ -3279,22 +3278,21 @@ void main() {
       'does not take precedence over platformDispatcher.defaultRouteName',
       (WidgetTester tester) async {
         TestWidgetsFlutterBinding
-            .instance
-            .platformDispatcher
-            .defaultRouteNameTestValue = '/dummy';
+                .instance
+                .platformDispatcher
+                .defaultRouteNameTestValue =
+            '/dummy';
 
         final List<GoRoute> routes = <GoRoute>[
           GoRoute(
             path: '/',
-            builder:
-                (BuildContext context, GoRouterState state) =>
-                    const HomeScreen(),
+            builder: (BuildContext context, GoRouterState state) =>
+                const HomeScreen(),
             routes: <GoRoute>[
               GoRoute(
                 path: 'dummy',
-                builder:
-                    (BuildContext context, GoRouterState state) =>
-                        const DummyScreen(),
+                builder: (BuildContext context, GoRouterState state) =>
+                    const DummyScreen(),
               ),
             ],
           ),
@@ -3325,8 +3323,8 @@ void main() {
     final List<GoRoute> routes = <GoRoute>[
       GoRoute(
         path: '/',
-        builder:
-            (BuildContext context, GoRouterState state) => const HomeScreen(),
+        builder: (BuildContext context, GoRouterState state) =>
+            const HomeScreen(),
       ),
     ];
 
@@ -3335,9 +3333,10 @@ void main() {
       'scheme, authority, no path',
       (WidgetTester tester) async {
         TestWidgetsFlutterBinding
-            .instance
-            .platformDispatcher
-            .defaultRouteNameTestValue = 'https://domain.com';
+                .instance
+                .platformDispatcher
+                .defaultRouteNameTestValue =
+            'https://domain.com';
         final GoRouter router = await createRouter(routes, tester);
         expect(router.routeInformationProvider.value.uri.path, '/');
         TestWidgetsFlutterBinding.instance.platformDispatcher
@@ -3350,9 +3349,10 @@ void main() {
       'scheme, authority, no path, but trailing slash',
       (WidgetTester tester) async {
         TestWidgetsFlutterBinding
-            .instance
-            .platformDispatcher
-            .defaultRouteNameTestValue = 'https://domain.com/';
+                .instance
+                .platformDispatcher
+                .defaultRouteNameTestValue =
+            'https://domain.com/';
         final GoRouter router = await createRouter(routes, tester);
         expect(router.routeInformationProvider.value.uri.path, '/');
         TestWidgetsFlutterBinding.instance.platformDispatcher
@@ -3365,9 +3365,10 @@ void main() {
       'scheme, authority, no path, and query parameters',
       (WidgetTester tester) async {
         TestWidgetsFlutterBinding
-            .instance
-            .platformDispatcher
-            .defaultRouteNameTestValue = 'https://domain.com?param=1';
+                .instance
+                .platformDispatcher
+                .defaultRouteNameTestValue =
+            'https://domain.com?param=1';
         final GoRouter router = await createRouter(routes, tester);
         expect(
           router.routeInformationProvider.value.uri.toString(),
@@ -3384,14 +3385,13 @@ void main() {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder:
-              (BuildContext context, GoRouterState state) => const HomeScreen(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
         ),
         GoRoute(
           path: '/family/:fid',
-          builder:
-              (BuildContext context, GoRouterState state) =>
-                  FamilyScreen(state.pathParameters['fid']!),
+          builder: (BuildContext context, GoRouterState state) =>
+              FamilyScreen(state.pathParameters['fid']!),
         ),
       ];
 
@@ -3414,14 +3414,13 @@ void main() {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder:
-              (BuildContext context, GoRouterState state) => const HomeScreen(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
         ),
         GoRoute(
           path: '/family',
-          builder:
-              (BuildContext context, GoRouterState state) =>
-                  FamilyScreen(state.uri.queryParameters['fid']!),
+          builder: (BuildContext context, GoRouterState state) =>
+              FamilyScreen(state.uri.queryParameters['fid']!),
         ),
       ];
 
@@ -3502,9 +3501,8 @@ void main() {
           routes: <GoRoute>[
             GoRoute(path: '/:id/:blah/:bam/:id/:blah', builder: dummy),
           ],
-          errorBuilder:
-              (BuildContext context, GoRouterState state) =>
-                  TestErrorScreen(state.error!),
+          errorBuilder: (BuildContext context, GoRouterState state) =>
+              TestErrorScreen(state.error!),
           initialLocation: '/0/1/2/0/1',
         );
         expect(false, true);
@@ -3561,17 +3559,15 @@ void main() {
         GoRoute(path: '/', builder: dummy),
         GoRoute(
           path: '/family',
-          builder:
-              (BuildContext context, GoRouterState state) =>
-                  FamilyScreen(state.uri.queryParameters['fid']!),
+          builder: (BuildContext context, GoRouterState state) =>
+              FamilyScreen(state.uri.queryParameters['fid']!),
         ),
         GoRoute(
           path: '/person',
-          builder:
-              (BuildContext context, GoRouterState state) => PersonScreen(
-                state.uri.queryParameters['fid']!,
-                state.uri.queryParameters['pid']!,
-              ),
+          builder: (BuildContext context, GoRouterState state) => PersonScreen(
+            state.uri.queryParameters['fid']!,
+            state.uri.queryParameters['pid']!,
+          ),
         ),
       ], tester);
 
@@ -3596,17 +3592,15 @@ void main() {
         GoRoute(path: '/', builder: dummy),
         GoRoute(
           path: '/family',
-          builder:
-              (BuildContext context, GoRouterState state) =>
-                  FamilyScreen((state.extra! as Map<String, String>)['fid']!),
+          builder: (BuildContext context, GoRouterState state) =>
+              FamilyScreen((state.extra! as Map<String, String>)['fid']!),
         ),
         GoRoute(
           path: '/person',
-          builder:
-              (BuildContext context, GoRouterState state) => PersonScreen(
-                (state.extra! as Map<String, String>)['fid']!,
-                (state.extra! as Map<String, String>)['pid']!,
-              ),
+          builder: (BuildContext context, GoRouterState state) => PersonScreen(
+            (state.extra! as Map<String, String>)['fid']!,
+            (state.extra! as Map<String, String>)['pid']!,
+          ),
         ),
       ], tester);
 
@@ -3630,14 +3624,13 @@ void main() {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder:
-              (BuildContext context, GoRouterState state) => const HomeScreen(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
         ),
         GoRoute(
           path: '/family/:fid',
-          builder:
-              (BuildContext context, GoRouterState state) =>
-                  FamilyScreen(state.pathParameters['fid']!),
+          builder: (BuildContext context, GoRouterState state) =>
+              FamilyScreen(state.pathParameters['fid']!),
           routes: <GoRoute>[
             GoRoute(
               path: 'person/:pid',
@@ -3676,22 +3669,22 @@ void main() {
       StatefulNavigationShell? routeState;
       final List<RouteBase> routes = <RouteBase>[
         StatefulShellRoute.indexedStack(
-          builder: (
-            BuildContext context,
-            GoRouterState state,
-            StatefulNavigationShell navigationShell,
-          ) {
-            routeState = navigationShell;
-            return navigationShell;
-          },
+          builder:
+              (
+                BuildContext context,
+                GoRouterState state,
+                StatefulNavigationShell navigationShell,
+              ) {
+                routeState = navigationShell;
+                return navigationShell;
+              },
           branches: <StatefulShellBranch>[
             StatefulShellBranch(
               routes: <RouteBase>[
                 GoRoute(
                   path: '/a',
-                  builder:
-                      (BuildContext context, GoRouterState state) =>
-                          const Text('Screen A'),
+                  builder: (BuildContext context, GoRouterState state) =>
+                      const Text('Screen A'),
                 ),
               ],
             ),
@@ -3699,15 +3692,13 @@ void main() {
               routes: <RouteBase>[
                 GoRoute(
                   path: '/family',
-                  builder:
-                      (BuildContext context, GoRouterState state) =>
-                          const Text('Families'),
+                  builder: (BuildContext context, GoRouterState state) =>
+                      const Text('Families'),
                   routes: <RouteBase>[
                     GoRoute(
                       path: ':fid',
-                      builder:
-                          (BuildContext context, GoRouterState state) =>
-                              FamilyScreen(state.pathParameters['fid']!),
+                      builder: (BuildContext context, GoRouterState state) =>
+                          FamilyScreen(state.pathParameters['fid']!),
                       routes: <GoRoute>[
                         GoRoute(
                           path: 'person/:pid',
@@ -3771,22 +3762,22 @@ void main() {
       Object? latestExtra;
       final List<RouteBase> routes = <RouteBase>[
         StatefulShellRoute.indexedStack(
-          builder: (
-            BuildContext context,
-            GoRouterState state,
-            StatefulNavigationShell navigationShell,
-          ) {
-            routeState = navigationShell;
-            return navigationShell;
-          },
+          builder:
+              (
+                BuildContext context,
+                GoRouterState state,
+                StatefulNavigationShell navigationShell,
+              ) {
+                routeState = navigationShell;
+                return navigationShell;
+              },
           branches: <StatefulShellBranch>[
             StatefulShellBranch(
               routes: <RouteBase>[
                 GoRoute(
                   path: '/a',
-                  builder:
-                      (BuildContext context, GoRouterState state) =>
-                          const Text('Screen A'),
+                  builder: (BuildContext context, GoRouterState state) =>
+                      const Text('Screen A'),
                 ),
               ],
             ),
@@ -3836,8 +3827,8 @@ void main() {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder:
-              (BuildContext context, GoRouterState state) => const HomeScreen(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
         ),
         GoRoute(
           name: 'page',
@@ -3896,8 +3887,8 @@ void main() {
     final List<GoRoute> routes = <GoRoute>[
       GoRoute(
         path: '/',
-        builder:
-            (BuildContext context, GoRouterState state) => const HomeScreen(),
+        builder: (BuildContext context, GoRouterState state) =>
+            const HomeScreen(),
       ),
       GoRoute(
         name: 'page',
@@ -3947,8 +3938,8 @@ void main() {
     final List<GoRoute> routes = <GoRoute>[
       GoRoute(
         path: '/',
-        builder:
-            (BuildContext context, GoRouterState state) => const HomeScreen(),
+        builder: (BuildContext context, GoRouterState state) =>
+            const HomeScreen(),
       ),
       GoRoute(
         name: 'page',
@@ -3989,15 +3980,14 @@ void main() {
       GoRoute(
         path: '/',
         name: 'home',
-        builder:
-            (BuildContext context, GoRouterState state) =>
-                DummyStatefulWidget(key: key),
+        builder: (BuildContext context, GoRouterState state) =>
+            DummyStatefulWidget(key: key),
       ),
       GoRoute(
         path: '/page1',
         name: 'page1',
-        builder:
-            (BuildContext context, GoRouterState state) => const Page1Screen(),
+        builder: (BuildContext context, GoRouterState state) =>
+            const Page1Screen(),
       ),
     ];
 
@@ -4359,9 +4349,8 @@ void main() {
               routes: <GoRoute>[
                 GoRoute(
                   path: '/a',
-                  builder:
-                      (BuildContext context, GoRouterState state) =>
-                          const Text('Screen A'),
+                  builder: (BuildContext context, GoRouterState state) =>
+                      const Text('Screen A'),
                 ),
               ],
             ),
@@ -4369,9 +4358,8 @@ void main() {
               routes: <GoRoute>[
                 GoRoute(
                   path: '/b',
-                  builder:
-                      (BuildContext context, GoRouterState state) =>
-                          const Text('Screen B'),
+                  builder: (BuildContext context, GoRouterState state) =>
+                      const Text('Screen B'),
                 ),
               ],
             ),
@@ -4403,8 +4391,8 @@ void main() {
       final List<RouteBase> routes = <RouteBase>[
         GoRoute(
           path: '/root',
-          builder:
-              (BuildContext context, GoRouterState state) => const Text('Root'),
+          builder: (BuildContext context, GoRouterState state) =>
+              const Text('Root'),
           routes: <RouteBase>[
             StatefulShellRoute.indexedStack(
               builder:
@@ -4418,9 +4406,8 @@ void main() {
                   routes: <GoRoute>[
                     GoRoute(
                       path: 'a',
-                      builder:
-                          (BuildContext context, GoRouterState state) =>
-                              const Text('Screen A'),
+                      builder: (BuildContext context, GoRouterState state) =>
+                          const Text('Screen A'),
                     ),
                   ],
                 ),
@@ -4428,9 +4415,8 @@ void main() {
                   routes: <GoRoute>[
                     GoRoute(
                       path: 'b',
-                      builder:
-                          (BuildContext context, GoRouterState state) =>
-                              const Text('Screen B'),
+                      builder: (BuildContext context, GoRouterState state) =>
+                          const Text('Screen B'),
                     ),
                   ],
                 ),
@@ -4466,22 +4452,22 @@ void main() {
 
         final List<RouteBase> routes = <RouteBase>[
           StatefulShellRoute.indexedStack(
-            builder: (
-              BuildContext context,
-              GoRouterState state,
-              StatefulNavigationShell navigationShell,
-            ) {
-              routeState = navigationShell;
-              return navigationShell;
-            },
+            builder:
+                (
+                  BuildContext context,
+                  GoRouterState state,
+                  StatefulNavigationShell navigationShell,
+                ) {
+                  routeState = navigationShell;
+                  return navigationShell;
+                },
             branches: <StatefulShellBranch>[
               StatefulShellBranch(
                 routes: <RouteBase>[
                   GoRoute(
                     path: '/a',
-                    builder:
-                        (BuildContext context, GoRouterState state) =>
-                            const Text('Screen A'),
+                    builder: (BuildContext context, GoRouterState state) =>
+                        const Text('Screen A'),
                   ),
                 ],
               ),
@@ -4489,9 +4475,8 @@ void main() {
                 routes: <RouteBase>[
                   GoRoute(
                     path: '/b',
-                    builder:
-                        (BuildContext context, GoRouterState state) =>
-                            const Text('Screen B'),
+                    builder: (BuildContext context, GoRouterState state) =>
+                        const Text('Screen B'),
                   ),
                 ],
               ),
@@ -4499,9 +4484,8 @@ void main() {
                 routes: <RouteBase>[
                   GoRoute(
                     path: '/c',
-                    builder:
-                        (BuildContext context, GoRouterState state) =>
-                            const Text('Screen C'),
+                    builder: (BuildContext context, GoRouterState state) =>
+                        const Text('Screen C'),
                   ),
                 ],
               ),
@@ -4509,9 +4493,8 @@ void main() {
                 routes: <RouteBase>[
                   GoRoute(
                     path: '/d',
-                    builder:
-                        (BuildContext context, GoRouterState state) =>
-                            const Text('Screen D'),
+                    builder: (BuildContext context, GoRouterState state) =>
+                        const Text('Screen D'),
                   ),
                 ],
               ),
@@ -4571,33 +4554,32 @@ void main() {
 
         final List<RouteBase> routes = <RouteBase>[
           StatefulShellRoute.indexedStack(
-            builder: (
-              BuildContext context,
-              GoRouterState state,
-              StatefulNavigationShell navigationShell,
-            ) {
-              routeState = navigationShell;
-              return navigationShell;
-            },
+            builder:
+                (
+                  BuildContext context,
+                  GoRouterState state,
+                  StatefulNavigationShell navigationShell,
+                ) {
+                  routeState = navigationShell;
+                  return navigationShell;
+                },
             branches: <StatefulShellBranch>[
               StatefulShellBranch(
                 routes: <GoRoute>[
                   GoRoute(
                     path: '/a',
-                    builder:
-                        (BuildContext context, GoRouterState state) =>
-                            const Text('Screen A'),
+                    builder: (BuildContext context, GoRouterState state) =>
+                        const Text('Screen A'),
                     routes: <RouteBase>[
                       GoRoute(
                         path: 'detailA',
-                        builder:
-                            (BuildContext context, GoRouterState state) =>
-                                Column(
-                                  children: <Widget>[
-                                    const Text('Screen A Detail'),
-                                    DummyStatefulWidget(key: statefulWidgetKey),
-                                  ],
-                                ),
+                        builder: (BuildContext context, GoRouterState state) =>
+                            Column(
+                              children: <Widget>[
+                                const Text('Screen A Detail'),
+                                DummyStatefulWidget(key: statefulWidgetKey),
+                              ],
+                            ),
                       ),
                     ],
                   ),
@@ -4607,9 +4589,8 @@ void main() {
                 routes: <GoRoute>[
                   GoRoute(
                     path: '/b',
-                    builder:
-                        (BuildContext context, GoRouterState state) =>
-                            const Text('Screen B'),
+                    builder: (BuildContext context, GoRouterState state) =>
+                        const Text('Screen B'),
                   ),
                 ],
               ),
@@ -4660,22 +4641,22 @@ void main() {
             builder: (_, __) => const Placeholder(),
             routes: <RouteBase>[
               StatefulShellRoute.indexedStack(
-                builder: (
-                  BuildContext context,
-                  GoRouterState state,
-                  StatefulNavigationShell navigationShell,
-                ) {
-                  routeState = navigationShell;
-                  return navigationShell;
-                },
+                builder:
+                    (
+                      BuildContext context,
+                      GoRouterState state,
+                      StatefulNavigationShell navigationShell,
+                    ) {
+                      routeState = navigationShell;
+                      return navigationShell;
+                    },
                 branches: <StatefulShellBranch>[
                   StatefulShellBranch(
                     routes: <GoRoute>[
                       GoRoute(
                         path: 'a',
-                        builder:
-                            (BuildContext context, GoRouterState state) =>
-                                Text('a id is ${state.pathParameters['id']}'),
+                        builder: (BuildContext context, GoRouterState state) =>
+                            Text('a id is ${state.pathParameters['id']}'),
                       ),
                     ],
                   ),
@@ -4683,9 +4664,8 @@ void main() {
                     routes: <GoRoute>[
                       GoRoute(
                         path: 'b',
-                        builder:
-                            (BuildContext context, GoRouterState state) =>
-                                Text('b id is ${state.pathParameters['id']}'),
+                        builder: (BuildContext context, GoRouterState state) =>
+                            Text('b id is ${state.pathParameters['id']}'),
                       ),
                     ],
                   ),
@@ -4716,26 +4696,28 @@ void main() {
 
       final List<RouteBase> routes = <RouteBase>[
         StatefulShellRoute.indexedStack(
-          builder: (
-            BuildContext context,
-            GoRouterState state,
-            StatefulNavigationShell navigationShell,
-          ) {
-            routeState1 = navigationShell;
-            return navigationShell;
-          },
+          builder:
+              (
+                BuildContext context,
+                GoRouterState state,
+                StatefulNavigationShell navigationShell,
+              ) {
+                routeState1 = navigationShell;
+                return navigationShell;
+              },
           branches: <StatefulShellBranch>[
             StatefulShellBranch(
               routes: <RouteBase>[
                 StatefulShellRoute.indexedStack(
-                  builder: (
-                    BuildContext context,
-                    GoRouterState state,
-                    StatefulNavigationShell navigationShell,
-                  ) {
-                    routeState2 = navigationShell;
-                    return navigationShell;
-                  },
+                  builder:
+                      (
+                        BuildContext context,
+                        GoRouterState state,
+                        StatefulNavigationShell navigationShell,
+                      ) {
+                        routeState2 = navigationShell;
+                        return navigationShell;
+                      },
                   branches: <StatefulShellBranch>[
                     StatefulShellBranch(
                       routes: <RouteBase>[
@@ -4790,9 +4772,8 @@ void main() {
               routes: <GoRoute>[
                 GoRoute(
                   path: '/d',
-                  builder:
-                      (BuildContext context, GoRouterState state) =>
-                          const Text('Screen D'),
+                  builder: (BuildContext context, GoRouterState state) =>
+                      const Text('Screen D'),
                 ),
               ],
             ),
@@ -4844,29 +4825,28 @@ void main() {
 
         final List<RouteBase> routes = <RouteBase>[
           StatefulShellRoute.indexedStack(
-            builder: (
-              BuildContext context,
-              GoRouterState state,
-              StatefulNavigationShell navigationShell,
-            ) {
-              routeState = navigationShell;
-              return navigationShell;
-            },
+            builder:
+                (
+                  BuildContext context,
+                  GoRouterState state,
+                  StatefulNavigationShell navigationShell,
+                ) {
+                  routeState = navigationShell;
+                  return navigationShell;
+                },
             branches: <StatefulShellBranch>[
               StatefulShellBranch(
                 navigatorKey: sectionANavigatorKey,
                 routes: <GoRoute>[
                   GoRoute(
                     path: '/a',
-                    builder:
-                        (BuildContext context, GoRouterState state) =>
-                            const Text('Screen A'),
+                    builder: (BuildContext context, GoRouterState state) =>
+                        const Text('Screen A'),
                     routes: <RouteBase>[
                       GoRoute(
                         path: 'detailA',
-                        builder:
-                            (BuildContext context, GoRouterState state) =>
-                                const Text('Screen A Detail'),
+                        builder: (BuildContext context, GoRouterState state) =>
+                            const Text('Screen A Detail'),
                       ),
                     ],
                   ),
@@ -4877,15 +4857,13 @@ void main() {
                 routes: <GoRoute>[
                   GoRoute(
                     path: '/b',
-                    builder:
-                        (BuildContext context, GoRouterState state) =>
-                            const Text('Screen B'),
+                    builder: (BuildContext context, GoRouterState state) =>
+                        const Text('Screen B'),
                     routes: <RouteBase>[
                       GoRoute(
                         path: 'detailB',
-                        builder:
-                            (BuildContext context, GoRouterState state) =>
-                                const Text('Screen B Detail'),
+                        builder: (BuildContext context, GoRouterState state) =>
+                            const Text('Screen B Detail'),
                       ),
                     ],
                   ),
@@ -4942,22 +4920,22 @@ void main() {
 
       final List<RouteBase> routes = <RouteBase>[
         StatefulShellRoute.indexedStack(
-          builder: (
-            BuildContext context,
-            GoRouterState state,
-            StatefulNavigationShell navigationShell,
-          ) {
-            routeState = navigationShell;
-            return navigationShell;
-          },
+          builder:
+              (
+                BuildContext context,
+                GoRouterState state,
+                StatefulNavigationShell navigationShell,
+              ) {
+                routeState = navigationShell;
+                return navigationShell;
+              },
           branches: <StatefulShellBranch>[
             StatefulShellBranch(
               routes: <GoRoute>[
                 GoRoute(
                   path: '/a',
-                  builder:
-                      (BuildContext context, GoRouterState state) =>
-                          const Text('Screen A'),
+                  builder: (BuildContext context, GoRouterState state) =>
+                      const Text('Screen A'),
                 ),
               ],
             ),
@@ -4965,9 +4943,8 @@ void main() {
               routes: <GoRoute>[
                 GoRoute(
                   path: '/b',
-                  builder:
-                      (BuildContext context, GoRouterState state) =>
-                          Text('Screen B - ${state.extra}'),
+                  builder: (BuildContext context, GoRouterState state) =>
+                      Text('Screen B - ${state.extra}'),
                 ),
               ],
             ),
@@ -5010,27 +4987,26 @@ void main() {
       final List<RouteBase> routes = <RouteBase>[
         GoRoute(
           path: '/common',
-          builder:
-              (BuildContext context, GoRouterState state) =>
-                  Text('Common - ${state.extra}'),
+          builder: (BuildContext context, GoRouterState state) =>
+              Text('Common - ${state.extra}'),
         ),
         StatefulShellRoute.indexedStack(
-          builder: (
-            BuildContext context,
-            GoRouterState state,
-            StatefulNavigationShell navigationShell,
-          ) {
-            routeState = navigationShell;
-            return navigationShell;
-          },
+          builder:
+              (
+                BuildContext context,
+                GoRouterState state,
+                StatefulNavigationShell navigationShell,
+              ) {
+                routeState = navigationShell;
+                return navigationShell;
+              },
           branches: <StatefulShellBranch>[
             StatefulShellBranch(
               routes: <GoRoute>[
                 GoRoute(
                   path: '/a',
-                  builder:
-                      (BuildContext context, GoRouterState state) =>
-                          const Text('Screen A'),
+                  builder: (BuildContext context, GoRouterState state) =>
+                      const Text('Screen A'),
                 ),
               ],
             ),
@@ -5038,9 +5014,8 @@ void main() {
               routes: <GoRoute>[
                 GoRoute(
                   path: '/b',
-                  builder:
-                      (BuildContext context, GoRouterState state) =>
-                          const Text('Screen B'),
+                  builder: (BuildContext context, GoRouterState state) =>
+                      const Text('Screen B'),
                 ),
               ],
             ),
@@ -5102,9 +5077,8 @@ void main() {
               routes: <RouteBase>[
                 GoRoute(
                   path: '/a',
-                  builder:
-                      (BuildContext context, GoRouterState state) =>
-                          DummyStatefulWidget(key: statefulWidgetKeyA),
+                  builder: (BuildContext context, GoRouterState state) =>
+                      DummyStatefulWidget(key: statefulWidgetKeyA),
                 ),
               ],
             ),
@@ -5112,9 +5086,8 @@ void main() {
               routes: <RouteBase>[
                 GoRoute(
                   path: '/b',
-                  builder:
-                      (BuildContext context, GoRouterState state) =>
-                          DummyStatefulWidget(key: statefulWidgetKeyB),
+                  builder: (BuildContext context, GoRouterState state) =>
+                      DummyStatefulWidget(key: statefulWidgetKeyB),
                 ),
               ],
             ),
@@ -5128,9 +5101,8 @@ void main() {
               routes: <RouteBase>[
                 GoRoute(
                   path: '/c',
-                  builder:
-                      (BuildContext context, GoRouterState state) =>
-                          DummyStatefulWidget(key: statefulWidgetKeyC),
+                  builder: (BuildContext context, GoRouterState state) =>
+                      DummyStatefulWidget(key: statefulWidgetKeyC),
                 ),
               ],
             ),
@@ -5139,9 +5111,8 @@ void main() {
               routes: <RouteBase>[
                 GoRoute(
                   path: '/d',
-                  builder:
-                      (BuildContext context, GoRouterState state) =>
-                          DummyStatefulWidget(key: statefulWidgetKeyD),
+                  builder: (BuildContext context, GoRouterState state) =>
+                      DummyStatefulWidget(key: statefulWidgetKeyD),
                 ),
               ],
             ),
@@ -5151,15 +5122,13 @@ void main() {
               routes: <RouteBase>[
                 GoRoute(
                   path: '/e',
-                  builder:
-                      (BuildContext context, GoRouterState state) =>
-                          const Text('E'),
+                  builder: (BuildContext context, GoRouterState state) =>
+                      const Text('E'),
                   routes: <RouteBase>[
                     GoRoute(
                       path: 'details',
-                      builder:
-                          (BuildContext context, GoRouterState state) =>
-                              DummyStatefulWidget(key: statefulWidgetKeyE),
+                      builder: (BuildContext context, GoRouterState state) =>
+                          DummyStatefulWidget(key: statefulWidgetKeyE),
                     ),
                   ],
                 ),
@@ -5242,9 +5211,8 @@ void main() {
               routes: <RouteBase>[
                 GoRoute(
                   path: '/c',
-                  builder:
-                      (BuildContext context, GoRouterState state) =>
-                          DummyStatefulWidget(key: statefulWidgetKeyC),
+                  builder: (BuildContext context, GoRouterState state) =>
+                      DummyStatefulWidget(key: statefulWidgetKeyC),
                 ),
               ],
             ),
@@ -5252,9 +5220,8 @@ void main() {
               routes: <RouteBase>[
                 GoRoute(
                   path: '/d',
-                  builder:
-                      (BuildContext context, GoRouterState state) =>
-                          DummyStatefulWidget(key: statefulWidgetKeyD),
+                  builder: (BuildContext context, GoRouterState state) =>
+                      DummyStatefulWidget(key: statefulWidgetKeyD),
                 ),
               ],
             ),
@@ -5282,22 +5249,22 @@ void main() {
 
       final List<RouteBase> routes = <RouteBase>[
         StatefulShellRoute.indexedStack(
-          builder: (
-            BuildContext context,
-            GoRouterState state,
-            StatefulNavigationShell navigationShell,
-          ) {
-            routeState = navigationShell;
-            return navigationShell;
-          },
+          builder:
+              (
+                BuildContext context,
+                GoRouterState state,
+                StatefulNavigationShell navigationShell,
+              ) {
+                routeState = navigationShell;
+                return navigationShell;
+              },
           branches: <StatefulShellBranch>[
             StatefulShellBranch(
               routes: <GoRoute>[
                 GoRoute(
                   path: '/a',
-                  builder:
-                      (BuildContext context, GoRouterState state) =>
-                          const Text('Screen A'),
+                  builder: (BuildContext context, GoRouterState state) =>
+                      const Text('Screen A'),
                 ),
               ],
             ),
@@ -5305,21 +5272,18 @@ void main() {
               routes: <GoRoute>[
                 GoRoute(
                   path: '/b',
-                  builder:
-                      (BuildContext context, GoRouterState state) =>
-                          const Text('Screen B'),
+                  builder: (BuildContext context, GoRouterState state) =>
+                      const Text('Screen B'),
                   routes: <RouteBase>[
                     GoRoute(
                       path: 'details1',
-                      builder:
-                          (BuildContext context, GoRouterState state) =>
-                              const Text('Screen B Detail1'),
+                      builder: (BuildContext context, GoRouterState state) =>
+                          const Text('Screen B Detail1'),
                     ),
                     GoRoute(
                       path: 'details2',
-                      builder:
-                          (BuildContext context, GoRouterState state) =>
-                              const Text('Screen B Detail2'),
+                      builder: (BuildContext context, GoRouterState state) =>
+                          const Text('Screen B Detail2'),
                     ),
                   ],
                 ),
@@ -5330,15 +5294,13 @@ void main() {
                 GoRoute(path: '/c', redirect: (_, __) => '/c/main2'),
                 GoRoute(
                   path: '/c/main1',
-                  builder:
-                      (BuildContext context, GoRouterState state) =>
-                          const Text('Screen C1'),
+                  builder: (BuildContext context, GoRouterState state) =>
+                      const Text('Screen C1'),
                 ),
                 GoRoute(
                   path: '/c/main2',
-                  builder:
-                      (BuildContext context, GoRouterState state) =>
-                          const Text('Screen C2'),
+                  builder: (BuildContext context, GoRouterState state) =>
+                      const Text('Screen C2'),
                 ),
               ],
             ),
@@ -5393,22 +5355,22 @@ void main() {
         final List<RouteBase> routes = <RouteBase>[
           // First level shell
           StatefulShellRoute.indexedStack(
-            builder: (
-              BuildContext context,
-              GoRouterState state,
-              StatefulNavigationShell navigationShell,
-            ) {
-              routeState = navigationShell;
-              return navigationShell;
-            },
+            builder:
+                (
+                  BuildContext context,
+                  GoRouterState state,
+                  StatefulNavigationShell navigationShell,
+                ) {
+                  routeState = navigationShell;
+                  return navigationShell;
+                },
             branches: <StatefulShellBranch>[
               StatefulShellBranch(
                 routes: <GoRoute>[
                   GoRoute(
                     path: '/a',
-                    builder:
-                        (BuildContext context, GoRouterState state) =>
-                            const Text('Screen A'),
+                    builder: (BuildContext context, GoRouterState state) =>
+                        const Text('Screen A'),
                   ),
                 ],
               ),
@@ -5464,9 +5426,8 @@ void main() {
           GoRoute(
             path: '/top-modal',
             parentNavigatorKey: rootNavigatorKey,
-            builder:
-                (BuildContext context, GoRouterState state) =>
-                    const Text('Top Modal'),
+            builder: (BuildContext context, GoRouterState state) =>
+                const Text('Top Modal'),
           ),
         ];
 
@@ -5532,9 +5493,8 @@ void main() {
           routes: <GoRoute>[
             GoRoute(
               path: '/$name',
-              builder:
-                  (BuildContext context, GoRouterState state) =>
-                      Text('Screen $name'),
+              builder: (BuildContext context, GoRouterState state) =>
+                  Text('Screen $name'),
             ),
           ],
         );
@@ -5542,14 +5502,15 @@ void main() {
         List<RouteBase> createRoutes(bool includeCRoute) => <RouteBase>[
           StatefulShellRoute.indexedStack(
             key: statefulShellKey,
-            builder: (
-              BuildContext context,
-              GoRouterState state,
-              StatefulNavigationShell navigationShell,
-            ) {
-              routeState = navigationShell;
-              return navigationShell;
-            },
+            builder:
+                (
+                  BuildContext context,
+                  GoRouterState state,
+                  StatefulNavigationShell navigationShell,
+                ) {
+                  routeState = navigationShell;
+                  return navigationShell;
+                },
             branches: <StatefulShellBranch>[
               makeBranch('a'),
               makeBranch('b'),
@@ -5658,16 +5619,13 @@ void main() {
           routes: <RouteBase>[
             ShellRoute(
               navigatorKey: shellNavigatorKey,
-              builder: (
-                BuildContext context,
-                GoRouterState state,
-                Widget child,
-              ) {
-                return Scaffold(
-                  appBar: AppBar(title: const Text('Shell')),
-                  body: child,
-                );
-              },
+              builder:
+                  (BuildContext context, GoRouterState state, Widget child) {
+                    return Scaffold(
+                      appBar: AppBar(title: const Text('Shell')),
+                      body: child,
+                    );
+                  },
               routes: <GoRoute>[
                 GoRoute(
                   path: '/a',
@@ -5803,22 +5761,19 @@ void main() {
           routes: <RouteBase>[
             ShellRoute(
               navigatorKey: shell,
-              builder: (
-                BuildContext context,
-                GoRouterState state,
-                Widget child,
-              ) {
-                return Scaffold(
-                  body: Center(
-                    child: Column(
-                      children: <Widget>[
-                        const Text('Shell'),
-                        Expanded(child: child),
-                      ],
-                    ),
-                  ),
-                );
-              },
+              builder:
+                  (BuildContext context, GoRouterState state, Widget child) {
+                    return Scaffold(
+                      body: Center(
+                        child: Column(
+                          children: <Widget>[
+                            const Text('Shell'),
+                            Expanded(child: child),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
               routes: <RouteBase>[
                 GoRoute(path: '/', builder: (_, __) => const Text('A Screen')),
               ],
@@ -5865,22 +5820,23 @@ void main() {
                 routes: <RouteBase>[
                   ShellRoute(
                     navigatorKey: shell,
-                    builder: (
-                      BuildContext context,
-                      GoRouterState state,
-                      Widget child,
-                    ) {
-                      return Scaffold(
-                        body: Center(
-                          child: Column(
-                            children: <Widget>[
-                              const Text('Shell'),
-                              Expanded(child: child),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
+                    builder:
+                        (
+                          BuildContext context,
+                          GoRouterState state,
+                          Widget child,
+                        ) {
+                          return Scaffold(
+                            body: Center(
+                              child: Column(
+                                children: <Widget>[
+                                  const Text('Shell'),
+                                  Expanded(child: child),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
                     routes: <RouteBase>[
                       GoRoute(
                         path: 'a',
@@ -5948,22 +5904,23 @@ void main() {
               routes: <RouteBase>[
                 ShellRoute(
                   navigatorKey: shell,
-                  builder: (
-                    BuildContext context,
-                    GoRouterState state,
-                    Widget child,
-                  ) {
-                    return Scaffold(
-                      body: Center(
-                        child: Column(
-                          children: <Widget>[
-                            const Text('Shell'),
-                            Expanded(child: child),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
+                  builder:
+                      (
+                        BuildContext context,
+                        GoRouterState state,
+                        Widget child,
+                      ) {
+                        return Scaffold(
+                          body: Center(
+                            child: Column(
+                              children: <Widget>[
+                                const Text('Shell'),
+                                Expanded(child: child),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
                   routes: <RouteBase>[
                     GoRoute(
                       path: 'a',
@@ -6061,7 +6018,10 @@ void main() {
     ) async {
       const Key key = Key('key');
       final List<RouteBase> routes = <RouteBase>[
-        GoRoute(path: '/', builder: (_, __) => const SizedBox(key: key)),
+        GoRoute(
+          path: '/',
+          builder: (_, __) => const SizedBox(key: key),
+        ),
       ];
 
       final GoRouter router = await createRouter(routes, tester);
@@ -6087,7 +6047,10 @@ void main() {
     ) async {
       const Key key = Key('key');
       final List<RouteBase> routes = <RouteBase>[
-        GoRoute(path: '/', builder: (_, __) => const SizedBox(key: key)),
+        GoRoute(
+          path: '/',
+          builder: (_, __) => const SizedBox(key: key),
+        ),
       ];
 
       final GoRouter router = await createRouter(routes, tester);
@@ -6174,17 +6137,18 @@ void main() {
       final List<RouteBase> routes = <RouteBase>[
         StatefulShellRoute.indexedStack(
           restorationScopeId: 'shell',
-          pageBuilder: (
-            BuildContext context,
-            GoRouterState state,
-            StatefulNavigationShell navigationShell,
-          ) {
-            routeState = navigationShell;
-            return MaterialPage<dynamic>(
-              restorationId: 'shellWidget',
-              child: navigationShell,
-            );
-          },
+          pageBuilder:
+              (
+                BuildContext context,
+                GoRouterState state,
+                StatefulNavigationShell navigationShell,
+              ) {
+                routeState = navigationShell;
+                return MaterialPage<dynamic>(
+                  restorationId: 'shellWidget',
+                  child: navigationShell,
+                );
+              },
           branches: <StatefulShellBranch>[
             StatefulShellBranch(
               restorationScopeId: 'branchA',
@@ -6334,17 +6298,18 @@ void main() {
         final List<RouteBase> routes = <RouteBase>[
           StatefulShellRoute.indexedStack(
             restorationScopeId: 'shell',
-            pageBuilder: (
-              BuildContext context,
-              GoRouterState state,
-              StatefulNavigationShell navigationShell,
-            ) {
-              routeStateRoot = navigationShell;
-              return MaterialPage<dynamic>(
-                restorationId: 'shellWidget',
-                child: navigationShell,
-              );
-            },
+            pageBuilder:
+                (
+                  BuildContext context,
+                  GoRouterState state,
+                  StatefulNavigationShell navigationShell,
+                ) {
+                  routeStateRoot = navigationShell;
+                  return MaterialPage<dynamic>(
+                    restorationId: 'shellWidget',
+                    child: navigationShell,
+                  );
+                },
             branches: <StatefulShellBranch>[
               StatefulShellBranch(
                 restorationScopeId: 'branchA',
@@ -6380,17 +6345,18 @@ void main() {
                 routes: <RouteBase>[
                   StatefulShellRoute.indexedStack(
                     restorationScopeId: 'branchB-nested-shell',
-                    pageBuilder: (
-                      BuildContext context,
-                      GoRouterState state,
-                      StatefulNavigationShell navigationShell,
-                    ) {
-                      routeStateNested = navigationShell;
-                      return MaterialPage<dynamic>(
-                        restorationId: 'shellWidget-nested',
-                        child: navigationShell,
-                      );
-                    },
+                    pageBuilder:
+                        (
+                          BuildContext context,
+                          GoRouterState state,
+                          StatefulNavigationShell navigationShell,
+                        ) {
+                          routeStateNested = navigationShell;
+                          return MaterialPage<dynamic>(
+                            restorationId: 'shellWidget-nested',
+                            child: navigationShell,
+                          );
+                        },
                     branches: <StatefulShellBranch>[
                       StatefulShellBranch(
                         restorationScopeId: 'branchB-nested',
@@ -6501,15 +6467,13 @@ void main() {
           routes: <RouteBase>[
             GoRoute(
               path: '/a',
-              builder:
-                  (BuildContext context, GoRouterState state) =>
-                      const Placeholder(),
+              builder: (BuildContext context, GoRouterState state) =>
+                  const Placeholder(),
             ),
             GoRoute(
               path: '/b',
-              builder:
-                  (BuildContext context, GoRouterState state) =>
-                      const Placeholder(),
+              builder: (BuildContext context, GoRouterState state) =>
+                  const Placeholder(),
             ),
           ],
         ),
@@ -6529,15 +6493,13 @@ void main() {
       final List<RouteBase> routes = <RouteBase>[
         GoRoute(
           path: '/abc',
-          builder:
-              (BuildContext context, GoRouterState state) =>
-                  const Placeholder(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const Placeholder(),
         ),
         GoRoute(
           path: '/bcd',
-          builder:
-              (BuildContext context, GoRouterState state) =>
-                  const Placeholder(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const Placeholder(),
         ),
       ];
 
@@ -6595,34 +6557,30 @@ void main() {
         GoRoute(
           name: 'home',
           path: '/',
-          builder:
-              (BuildContext context, GoRouterState state) => const HomeScreen(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
         ),
         GoRoute(
           name: 'books',
           path: '/books',
-          builder:
-              (BuildContext context, GoRouterState state) =>
-                  const Text('books'),
+          builder: (BuildContext context, GoRouterState state) =>
+              const Text('books'),
         ),
         GoRoute(
           name: 'boats',
           path: '/boats',
-          builder:
-              (BuildContext context, GoRouterState state) =>
-                  const Text('boats'),
+          builder: (BuildContext context, GoRouterState state) =>
+              const Text('boats'),
         ),
         ShellRoute(
-          builder:
-              (BuildContext context, GoRouterState state, Widget child) =>
-                  child,
+          builder: (BuildContext context, GoRouterState state, Widget child) =>
+              child,
           routes: <RouteBase>[
             GoRoute(
               name: 'tulips',
               path: '/tulips',
-              builder:
-                  (BuildContext context, GoRouterState state) =>
-                      const Text('tulips'),
+              builder: (BuildContext context, GoRouterState state) =>
+                  const Text('tulips'),
             ),
           ],
         ),
@@ -6674,26 +6632,23 @@ void main() {
     final List<GoRoute> routes = <GoRoute>[
       GoRoute(
         path: '/', // root cannot be empty (existing assert)
-        builder:
-            (BuildContext context, GoRouterState state) => const HomeScreen(),
+        builder: (BuildContext context, GoRouterState state) =>
+            const HomeScreen(),
         routes: <RouteBase>[
           GoRoute(
             path: 'child-route',
-            builder:
-                (BuildContext context, GoRouterState state) =>
-                    const Text('/child-route'),
+            builder: (BuildContext context, GoRouterState state) =>
+                const Text('/child-route'),
             routes: <RouteBase>[
               GoRoute(
                 path: 'grand-child-route',
-                builder:
-                    (BuildContext context, GoRouterState state) =>
-                        const Text('/grand-child-route'),
+                builder: (BuildContext context, GoRouterState state) =>
+                    const Text('/grand-child-route'),
               ),
               GoRoute(
                 path: 'redirected-grand-child-route',
-                redirect:
-                    (BuildContext context, GoRouterState state) =>
-                        '/child-route',
+                redirect: (BuildContext context, GoRouterState state) =>
+                    '/child-route',
               ),
             ],
           ),
@@ -6725,26 +6680,23 @@ void main() {
     final List<GoRoute> routes = <GoRoute>[
       GoRoute(
         path: '/',
-        builder:
-            (BuildContext context, GoRouterState state) => const HomeScreen(),
+        builder: (BuildContext context, GoRouterState state) =>
+            const HomeScreen(),
         routes: <RouteBase>[
           GoRoute(
             path: '/child-route',
-            builder:
-                (BuildContext context, GoRouterState state) =>
-                    const Text('/child-route'),
+            builder: (BuildContext context, GoRouterState state) =>
+                const Text('/child-route'),
             routes: <RouteBase>[
               GoRoute(
                 path: '/grand-child-route',
-                builder:
-                    (BuildContext context, GoRouterState state) =>
-                        const Text('/grand-child-route'),
+                builder: (BuildContext context, GoRouterState state) =>
+                    const Text('/grand-child-route'),
               ),
               GoRoute(
                 path: '/redirected-grand-child-route',
-                redirect:
-                    (BuildContext context, GoRouterState state) =>
-                        '/child-route',
+                redirect: (BuildContext context, GoRouterState state) =>
+                    '/child-route',
               ),
             ],
           ),

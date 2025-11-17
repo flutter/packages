@@ -1,3 +1,11 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
+
+## 2.0.2
+
+* Adds emoji support.
+
 ## 2.0.1
 
 * Transfers the package source from https://github.com/jonahwilliams/mustache

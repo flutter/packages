@@ -271,18 +271,17 @@ void main() {
       });
 
       testWidgets('listens to map events', (WidgetTester tester) async {
-        controller =
-            createController()
-              ..debugSetOverrides(
-                createMap: (_, __) => map,
-                circles: circles,
-                heatmaps: heatmaps,
-                markers: markers,
-                polygons: polygons,
-                polylines: polylines,
-                groundOverlays: groundOverlays,
-              )
-              ..init();
+        controller = createController()
+          ..debugSetOverrides(
+            createMap: (_, __) => map,
+            circles: circles,
+            heatmaps: heatmaps,
+            markers: markers,
+            polygons: polygons,
+            polylines: polylines,
+            groundOverlays: groundOverlays,
+          )
+          ..init();
 
         // Trigger events on the map, and verify they've been broadcast to the stream
         final Stream<MapEvent<Object?>> capturedEvents = stream.stream.take(5);
@@ -313,18 +312,17 @@ void main() {
       testWidgets('stops listening to map events once disposed', (
         WidgetTester tester,
       ) async {
-        controller =
-            createController()
-              ..debugSetOverrides(
-                createMap: (_, __) => map,
-                circles: circles,
-                heatmaps: heatmaps,
-                markers: markers,
-                polygons: polygons,
-                polylines: polylines,
-                groundOverlays: groundOverlays,
-              )
-              ..init();
+        controller = createController()
+          ..debugSetOverrides(
+            createMap: (_, __) => map,
+            circles: circles,
+            heatmaps: heatmaps,
+            markers: markers,
+            polygons: polygons,
+            polylines: polylines,
+            groundOverlays: groundOverlays,
+          )
+          ..init();
 
         controller.dispose();
 
@@ -353,19 +351,18 @@ void main() {
       testWidgets("binds geometry controllers to map's", (
         WidgetTester tester,
       ) async {
-        controller =
-            createController()
-              ..debugSetOverrides(
-                createMap: (_, __) => map,
-                circles: circles,
-                heatmaps: heatmaps,
-                markers: markers,
-                polygons: polygons,
-                polylines: polylines,
-                tileOverlays: tileOverlays,
-                groundOverlays: groundOverlays,
-              )
-              ..init();
+        controller = createController()
+          ..debugSetOverrides(
+            createMap: (_, __) => map,
+            circles: circles,
+            heatmaps: heatmaps,
+            markers: markers,
+            polygons: polygons,
+            polylines: polylines,
+            tileOverlays: tileOverlays,
+            groundOverlays: groundOverlays,
+          )
+          ..init();
 
         verify(circles.bindToMap(mapId, map));
         verify(heatmaps.bindToMap(mapId, map));
@@ -462,18 +459,17 @@ void main() {
           },
         );
 
-        controller =
-            createController(mapObjects: mapObjects)
-              ..debugSetOverrides(
-                circles: circles,
-                heatmaps: heatmaps,
-                markers: markers,
-                polygons: polygons,
-                polylines: polylines,
-                tileOverlays: tileOverlays,
-                groundOverlays: groundOverlays,
-              )
-              ..init();
+        controller = createController(mapObjects: mapObjects)
+          ..debugSetOverrides(
+            circles: circles,
+            heatmaps: heatmaps,
+            markers: markers,
+            polygons: polygons,
+            polylines: polylines,
+            tileOverlays: tileOverlays,
+            groundOverlays: groundOverlays,
+          )
+          ..init();
 
         verify(circles.addCircles(mapObjects.circles));
         verify(heatmaps.addHeatmaps(mapObjects.heatmaps));
@@ -491,7 +487,7 @@ void main() {
             mapConfiguration: const MapConfiguration(
               mapType: MapType.satellite,
               zoomControlsEnabled: true,
-              cloudMapId: _kCloudMapId,
+              mapId: _kCloudMapId,
               fortyFiveDegreeImageryEnabled: false,
             ),
           );
@@ -793,10 +789,9 @@ void main() {
             ..zoom = 10
             ..center = gmaps.LatLng(0, 0),
         );
-        controller =
-            createController()
-              ..debugSetOverrides(createMap: (_, __) => map)
-              ..init();
+        controller = createController()
+          ..debugSetOverrides(createMap: (_, __) => map)
+          ..init();
       });
 
       group('updateMapConfiguration', () {
@@ -1127,8 +1122,8 @@ void main() {
       testWidgets('updateGroundOverlays', (WidgetTester tester) async {
         final MockGroundOverlaysController mock =
             MockGroundOverlaysController();
-        controller =
-            createController()..debugSetOverrides(groundOverlays: mock);
+        controller = createController()
+          ..debugSetOverrides(groundOverlays: mock);
 
         final LatLngBounds bounds = LatLngBounds(
           northeast: const LatLng(100, 0),

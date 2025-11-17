@@ -26,13 +26,13 @@ class App extends StatelessWidget {
     routes: <GoRoute>[
       GoRoute(
         path: '/',
-        builder:
-            (BuildContext context, GoRouterState state) => const Page1Screen(),
+        builder: (BuildContext context, GoRouterState state) =>
+            const Page1Screen(),
       ),
       GoRoute(
         path: '/page2',
-        builder:
-            (BuildContext context, GoRouterState state) => const Page2Screen(),
+        builder: (BuildContext context, GoRouterState state) =>
+            const Page2Screen(),
       ),
     ],
   );
@@ -59,8 +59,8 @@ class Page1Screen extends StatelessWidget {
             // turn off history tracking in the browser for this navigation;
             // note that this isn't necessary when you've set routerNeglect
             // but it does illustrate the technique
-            onPressed:
-                () => Router.neglect(context, () => context.push('/page2')),
+            onPressed: () =>
+                Router.neglect(context, () => context.push('/page2')),
             child: const Text('Push page 2'),
           ),
         ],

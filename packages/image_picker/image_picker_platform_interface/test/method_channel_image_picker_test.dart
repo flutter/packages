@@ -1073,7 +1073,7 @@ void main() {
         );
       });
 
-      test('does not accept a invalid imageQuality argument', () {
+      test('does not accept an invalid imageQuality argument', () {
         returnValue = <String>['0', '1'];
         expect(
           () => picker.getMedia(
@@ -1096,8 +1096,18 @@ void main() {
         );
       });
 
-      test('does not accept a invalid limit argument', () {
+      test('does not accept an invalid limit argument', () {
         returnValue = <String>['0', '1'];
+        final Matcher throwsLimitArgumentError = throwsA(
+          isA<ArgumentError>()
+              .having((ArgumentError error) => error.name, 'name', 'limit')
+              .having(
+                (ArgumentError error) => error.message,
+                'message',
+                'cannot be lower than 2',
+              ),
+        );
+
         expect(
           () => picker.getMedia(
             options: MediaOptions.createAndValidate(
@@ -1105,7 +1115,7 @@ void main() {
               limit: -1,
             ),
           ),
-          throwsArgumentError,
+          throwsLimitArgumentError,
         );
 
         expect(
@@ -1115,7 +1125,17 @@ void main() {
               limit: 0,
             ),
           ),
-          throwsArgumentError,
+          throwsLimitArgumentError,
+        );
+
+        expect(
+          () => picker.getMedia(
+            options: MediaOptions.createAndValidate(
+              allowMultiple: true,
+              limit: 1,
+            ),
+          ),
+          throwsLimitArgumentError,
         );
       });
 
@@ -1816,25 +1836,35 @@ void main() {
 
       test('does not accept an invalid limit argument', () {
         returnValue = <dynamic>['0', '1'];
+        final Matcher throwsLimitArgumentError = throwsA(
+          isA<ArgumentError>()
+              .having((ArgumentError error) => error.name, 'name', 'limit')
+              .having(
+                (ArgumentError error) => error.message,
+                'message',
+                'cannot be lower than 2',
+              ),
+        );
+
         expect(
           () => picker.getMultiImageWithOptions(
             options: MultiImagePickerOptions.createAndValidate(limit: -1),
           ),
-          throwsArgumentError,
+          throwsLimitArgumentError,
         );
 
         expect(
           () => picker.getMultiImageWithOptions(
             options: MultiImagePickerOptions.createAndValidate(limit: 0),
           ),
-          throwsArgumentError,
+          throwsLimitArgumentError,
         );
 
         expect(
           () => picker.getMultiImageWithOptions(
             options: MultiImagePickerOptions.createAndValidate(limit: 1),
           ),
-          throwsArgumentError,
+          throwsLimitArgumentError,
         );
       });
 

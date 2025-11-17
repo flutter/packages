@@ -44,18 +44,19 @@ class _SharedAxisTransitionDemoState extends State<SharedAxisTransitionDemo> {
             Expanded(
               child: PageTransitionSwitcher(
                 reverse: !_isLoggedIn,
-                transitionBuilder: (
-                  Widget child,
-                  Animation<double> animation,
-                  Animation<double> secondaryAnimation,
-                ) {
-                  return SharedAxisTransition(
-                    animation: animation,
-                    secondaryAnimation: secondaryAnimation,
-                    transitionType: _transitionType!,
-                    child: child,
-                  );
-                },
+                transitionBuilder:
+                    (
+                      Widget child,
+                      Animation<double> animation,
+                      Animation<double> secondaryAnimation,
+                    ) {
+                      return SharedAxisTransition(
+                        animation: animation,
+                        secondaryAnimation: secondaryAnimation,
+                        transitionType: _transitionType!,
+                        child: child,
+                      );
+                    },
                 child: _isLoggedIn ? _CoursePage() : _SignInPage(),
               ),
             ),
@@ -76,34 +77,28 @@ class _SharedAxisTransitionDemoState extends State<SharedAxisTransitionDemo> {
               ),
             ),
             const Divider(thickness: 2.0),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Radio<SharedAxisTransitionType>(
-                  value: SharedAxisTransitionType.horizontal,
-                  groupValue: _transitionType,
-                  onChanged: (SharedAxisTransitionType? newValue) {
-                    _updateTransitionType(newValue);
-                  },
-                ),
-                const Text('X'),
-                Radio<SharedAxisTransitionType>(
-                  value: SharedAxisTransitionType.vertical,
-                  groupValue: _transitionType,
-                  onChanged: (SharedAxisTransitionType? newValue) {
-                    _updateTransitionType(newValue);
-                  },
-                ),
-                const Text('Y'),
-                Radio<SharedAxisTransitionType>(
-                  value: SharedAxisTransitionType.scaled,
-                  groupValue: _transitionType,
-                  onChanged: (SharedAxisTransitionType? newValue) {
-                    _updateTransitionType(newValue);
-                  },
-                ),
-                const Text('Z'),
-              ],
+            RadioGroup<SharedAxisTransitionType>(
+              groupValue: _transitionType,
+              onChanged: (SharedAxisTransitionType? newValue) {
+                _updateTransitionType(newValue);
+              },
+              child: const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Radio<SharedAxisTransitionType>(
+                    value: SharedAxisTransitionType.horizontal,
+                  ),
+                  Text('X'),
+                  Radio<SharedAxisTransitionType>(
+                    value: SharedAxisTransitionType.vertical,
+                  ),
+                  Text('Y'),
+                  Radio<SharedAxisTransitionType>(
+                    value: SharedAxisTransitionType.scaled,
+                  ),
+                  Text('Z'),
+                ],
+              ),
             ),
           ],
         ),

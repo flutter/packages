@@ -10,7 +10,7 @@ import PackageDescription
 let package = Package(
   name: "url_launcher_macos",
   platforms: [
-    .macOS("10.14")
+    .macOS("10.15")
   ],
   products: [
     .library(name: "url-launcher-macos", targets: ["url_launcher_macos"])

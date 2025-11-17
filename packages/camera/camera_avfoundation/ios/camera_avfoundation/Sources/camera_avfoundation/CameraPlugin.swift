@@ -14,11 +14,11 @@ public final class CameraPlugin: NSObject, FlutterPlugin {
   private let registry: FlutterTextureRegistry
   private let messenger: FlutterBinaryMessenger
   private let globalEventAPI: FCPCameraGlobalEventApi
-  private let deviceDiscoverer: FLTCameraDeviceDiscovering
+  private let deviceDiscoverer: CameraDeviceDiscoverer
   private let permissionManager: FLTCameraPermissionManager
-  private let captureDeviceFactory: CaptureDeviceFactory
+  private let captureDeviceFactory: VideoCaptureDeviceFactory
   private let captureSessionFactory: CaptureSessionFactory
-  private let captureDeviceInputFactory: FLTCaptureDeviceInputFactory
+  private let captureDeviceInputFactory: CaptureDeviceInputFactory
 
   /// All FLTCam's state access and capture session related operations should be on run on this queue.
   private let captureSessionQueue: DispatchQueue
@@ -31,15 +31,15 @@ public final class CameraPlugin: NSObject, FlutterPlugin {
       registry: registrar.textures(),
       messenger: registrar.messenger(),
       globalAPI: FCPCameraGlobalEventApi(binaryMessenger: registrar.messenger()),
-      deviceDiscoverer: FLTDefaultCameraDeviceDiscoverer(),
+      deviceDiscoverer: DefaultCameraDeviceDiscoverer(),
       permissionManager: FLTCameraPermissionManager(
         permissionService: FLTDefaultPermissionService()),
       deviceFactory: { name in
         // TODO(RobertOdrowaz) Implement better error handling and remove non-null assertion
-        FLTDefaultCaptureDevice(device: AVCaptureDevice(uniqueID: name)!)
+        AVCaptureDevice(uniqueID: name)!
       },
-      captureSessionFactory: { FLTDefaultCaptureSession(captureSession: AVCaptureSession()) },
-      captureDeviceInputFactory: FLTDefaultCaptureDeviceInputFactory(),
+      captureSessionFactory: { AVCaptureSession() },
+      captureDeviceInputFactory: DefaultCaptureDeviceInputFactory(),
       captureSessionQueue: DispatchQueue(label: "io.flutter.camera.captureSessionQueue")
     )
 
@@ -50,11 +50,11 @@ public final class CameraPlugin: NSObject, FlutterPlugin {
     registry: FlutterTextureRegistry,
     messenger: FlutterBinaryMessenger,
     globalAPI: FCPCameraGlobalEventApi,
-    deviceDiscoverer: FLTCameraDeviceDiscovering,
+    deviceDiscoverer: CameraDeviceDiscoverer,
     permissionManager: FLTCameraPermissionManager,
-    deviceFactory: @escaping CaptureDeviceFactory,
+    deviceFactory: @escaping VideoCaptureDeviceFactory,
     captureSessionFactory: @escaping CaptureSessionFactory,
-    captureDeviceInputFactory: FLTCaptureDeviceInputFactory,
+    captureDeviceInputFactory: CaptureDeviceInputFactory,
     captureSessionQueue: DispatchQueue
   ) {
     self.registry = registry
@@ -159,8 +159,7 @@ extension CameraPlugin: FCPCameraApi {
     }
   }
 
-  private func platformLensDirection(for device: FLTCaptureDevice) -> FCPPlatformCameraLensDirection
-  {
+  private func platformLensDirection(for device: CaptureDevice) -> FCPPlatformCameraLensDirection {
     switch device.position {
     case .back:
       return .back
@@ -173,7 +172,7 @@ extension CameraPlugin: FCPCameraApi {
     }
   }
 
-  private func platformLensType(for device: FLTCaptureDevice) -> FCPPlatformCameraLensType {
+  private func platformLensType(for device: CaptureDevice) -> FCPPlatformCameraLensType {
     switch device.deviceType {
     case .builtInWideAngleCamera:
       return .wide
@@ -251,13 +250,11 @@ extension CameraPlugin: FCPCameraApi {
   ) {
     let mediaSettingsAVWrapper = FLTCamMediaSettingsAVWrapper()
 
-    let camConfiguration = FLTCamConfiguration(
+    let camConfiguration = CameraConfiguration(
       mediaSettings: settings,
       mediaSettingsWrapper: mediaSettingsAVWrapper,
       captureDeviceFactory: captureDeviceFactory,
-      audioCaptureDeviceFactory: {
-        FLTDefaultCaptureDevice(device: AVCaptureDevice.default(for: .audio)!)
-      },
+      audioCaptureDeviceFactory: { AVCaptureDevice.default(for: .audio)! },
       captureSessionFactory: captureSessionFactory,
       captureSessionQueue: captureSessionQueue,
       captureDeviceInputFactory: captureDeviceInputFactory,

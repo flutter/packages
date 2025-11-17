@@ -92,11 +92,21 @@ class _MyAppState extends State<MyApp> {
       setState(() {
         _isAuthenticating = false;
       });
+    } on LocalAuthException catch (e) {
+      print(e);
+      setState(() {
+        _isAuthenticating = false;
+        if (e.code != LocalAuthExceptionCode.userCanceled &&
+            e.code != LocalAuthExceptionCode.systemCanceled) {
+          _authorized = 'Error - ${e.code.name}: ${e.description}';
+        }
+      });
+      return;
     } on PlatformException catch (e) {
       print(e);
       setState(() {
         _isAuthenticating = false;
-        _authorized = 'Error - ${e.message}';
+        _authorized = 'Unexpected Error - ${e.message}';
       });
       return;
     }
@@ -129,11 +139,21 @@ class _MyAppState extends State<MyApp> {
         _isAuthenticating = false;
         _authorized = 'Authenticating';
       });
+    } on LocalAuthException catch (e) {
+      print(e);
+      setState(() {
+        _isAuthenticating = false;
+        if (e.code != LocalAuthExceptionCode.userCanceled &&
+            e.code != LocalAuthExceptionCode.systemCanceled) {
+          _authorized = 'Error - ${e.code.name}: ${e.description}';
+        }
+      });
+      return;
     } on PlatformException catch (e) {
       print(e);
       setState(() {
         _isAuthenticating = false;
-        _authorized = 'Error - ${e.message}';
+        _authorized = 'Unexpected Error - ${e.message}';
       });
       return;
     }

@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import camera_avfoundation
+@testable import camera_avfoundation
 
 // Import Objective-C part of the implementation when SwiftPM is used.
 #if canImport(camera_avfoundation_objc)
@@ -11,11 +11,11 @@ import camera_avfoundation
 
 /// Mock implementation of `FLTCapturePhotoOutput` protocol which allows injecting a custom
 /// implementation.
-final class MockCapturePhotoOutput: NSObject, FLTCapturePhotoOutput {
+final class MockCapturePhotoOutput: NSObject, CapturePhotoOutput {
   var avOutput = AVCapturePhotoOutput()
   var availablePhotoCodecTypes: [AVVideoCodecType] = []
-  var highResolutionCaptureEnabled = false
-  var supportedFlashModes: [NSNumber] = []
+  var isHighResolutionCaptureEnabled = false
+  var supportedFlashModes: [AVCaptureDevice.FlashMode] = []
 
   // Stub that is called when the corresponding public method is called.
   var capturePhotoWithSettingsStub:
@@ -29,7 +29,7 @@ final class MockCapturePhotoOutput: NSObject, FLTCapturePhotoOutput {
     capturePhotoWithSettingsStub?(settings, delegate)
   }
 
-  func connection(withMediaType mediaType: AVMediaType) -> FLTCaptureConnection? {
+  func connection(with mediaType: AVMediaType) -> FLTCaptureConnection? {
     return connectionWithMediaTypeStub?(mediaType)
   }
 }

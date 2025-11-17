@@ -346,22 +346,22 @@ mixin _GoRouteMixin on RouteBaseConfig {
     return buffer.toString();
   }
 
-  late final List<FormalParameterElement> _ctorParams =
-      _ctor.formalParameters.where((FormalParameterElement element) {
+  late final List<FormalParameterElement> _ctorParams = _ctor.formalParameters
+      .where((FormalParameterElement element) {
         if (_pathParams.contains(element.displayName)) {
           return true;
         }
         return false;
-      }).toList();
+      })
+      .toList();
 
-  late final List<FormalParameterElement> _ctorQueryParams =
-      _ctor.formalParameters
-          .where(
-            (FormalParameterElement element) =>
-                !_pathParams.contains(element.displayName) &&
-                !element.isExtraField,
-          )
-          .toList();
+  late final List<FormalParameterElement> _ctorQueryParams = _ctor
+      .formalParameters
+      .where(
+        (FormalParameterElement element) =>
+            !_pathParams.contains(element.displayName) && !element.isExtraField,
+      )
+      .toList();
 
   ConstructorElement2 get _ctor {
     final ConstructorElement2? ctor = routeDataClass.unnamedConstructor2;
@@ -623,7 +623,7 @@ abstract class RouteBaseConfig {
   }) {
     assert(!reader.isNull, 'reader should not be null');
     final InterfaceType type = reader.objectValue.type! as InterfaceType;
-    final String typeName = type.element.name;
+    final String typeName = type.element.displayName;
 
     if (isAncestorRelative && typeName == 'TypedGoRoute') {
       throw InvalidGenerationSourceError(
@@ -800,44 +800,42 @@ abstract class RouteBaseConfig {
     InterfaceElement2 classElement, {
     required String parameterName,
   }) {
-    final String? fieldDisplayName =
-        classElement.fields2
-            .where((FieldElement2 element) {
-              if (!element.isStatic || element.displayName != parameterName) {
-                return false;
-              }
-              if (parameterName.toLowerCase().contains(
-                RegExp('navigatorKey | observers'),
-              )) {
-                final DartType type = element.type;
-                if (type is! ParameterizedType) {
-                  return false;
-                }
-                final List<DartType> typeArguments = type.typeArguments;
-                if (typeArguments.length != 1) {
-                  return false;
-                }
-                final DartType typeArgument = typeArguments.single;
-                if (withoutNullability(typeArgument.getDisplayString()) !=
-                    'NavigatorState') {
-                  return false;
-                }
-              }
-              return true;
-            })
-            .map<String>((FieldElement2 e) => e.displayName)
-            .firstOrNull;
+    final String? fieldDisplayName = classElement.fields2
+        .where((FieldElement2 element) {
+          if (!element.isStatic || element.displayName != parameterName) {
+            return false;
+          }
+          if (parameterName.toLowerCase().contains(
+            RegExp('navigatorKey | observers'),
+          )) {
+            final DartType type = element.type;
+            if (type is! ParameterizedType) {
+              return false;
+            }
+            final List<DartType> typeArguments = type.typeArguments;
+            if (typeArguments.length != 1) {
+              return false;
+            }
+            final DartType typeArgument = typeArguments.single;
+            if (withoutNullability(typeArgument.getDisplayString()) !=
+                'NavigatorState') {
+              return false;
+            }
+          }
+          return true;
+        })
+        .map<String>((FieldElement2 e) => e.displayName)
+        .firstOrNull;
 
     if (fieldDisplayName != null) {
       return '${classElement.displayName}.$fieldDisplayName';
     }
-    final String? methodDisplayName =
-        classElement.methods2
-            .where((MethodElement2 element) {
-              return element.isStatic && element.displayName == parameterName;
-            })
-            .map<String>((MethodElement2 e) => e.displayName)
-            .firstOrNull;
+    final String? methodDisplayName = classElement.methods2
+        .where((MethodElement2 element) {
+          return element.isStatic && element.displayName == parameterName;
+        })
+        .map<String>((MethodElement2 e) => e.displayName)
+        .firstOrNull;
 
     if (methodDisplayName != null) {
       return '${classElement.displayName}.$methodDisplayName';
@@ -883,7 +881,8 @@ abstract class RouteBaseConfig {
       r'$' + _className.substring(0, 1).toLowerCase() + _className.substring(1);
 
   /// Returns the `GoRoute` code for the annotated class.
-  String _rootDefinition() => '''
+  String _rootDefinition() =>
+      '''
 RouteBase get $_routeGetterName => ${_invokesRouteConstructor()};
 ''';
 
@@ -894,10 +893,9 @@ RouteBase get $_routeGetterName => ${_invokesRouteConstructor()};
   String get _extensionName => '\$${_className}Extension';
 
   String _invokesRouteConstructor() {
-    final String routesBit =
-        _children.isEmpty
-            ? ''
-            : '''
+    final String routesBit = _children.isEmpty
+        ? ''
+        : '''
 ${_generateChildrenGetterName(routeDataClassName)}: [${_children.map((RouteBaseConfig e) => '${e._invokesRouteConstructor()},').join()}],
 ''';
 
@@ -910,13 +908,10 @@ $routeDataClassName.$dataConvertionFunctionName(
   PropertyAccessorElement2? _field(String name) =>
       routeDataClass.getGetter2(name);
 
-  List<ElementAnnotation>? _fieldMetadata(String name) =>
-      routeDataClass.fields2
-          .firstWhereOrNull(
-            (FieldElement2 element) => element.displayName == name,
-          )
-          ?.metadata2
-          .annotations;
+  List<ElementAnnotation>? _fieldMetadata(String name) => routeDataClass.fields2
+      .firstWhereOrNull((FieldElement2 element) => element.displayName == name)
+      ?.metadata2
+      .annotations;
 
   /// The name of `RouteData` subclass this configuration represents.
   @protected
@@ -942,7 +937,7 @@ $routeDataClassName.$dataConvertionFunctionName(
 String _enumMapConst(InterfaceType type) {
   assert(type.isEnum);
 
-  final String enumName = type.element.name;
+  final String enumName = type.element.displayName;
 
   final StringBuffer buffer = StringBuffer('const ${enumMapName(type)} = {');
 
@@ -968,7 +963,8 @@ const Map<String, String> helperNames = <String, String>{
   iterablesEqualHelperName: _iterableEqualsHelper,
 };
 
-const String _convertMapValueHelper = '''
+const String _convertMapValueHelper =
+    '''
 T? $convertMapValueHelperName<T>(
   String key,
   Map<String, String> map,
@@ -979,7 +975,8 @@ T? $convertMapValueHelperName<T>(
 }
 ''';
 
-const String _boolConverterHelper = '''
+const String _boolConverterHelper =
+    '''
 bool $boolConverterHelperName(String value) {
   switch (value) {
     case 'true':
@@ -992,13 +989,15 @@ bool $boolConverterHelperName(String value) {
 }
 ''';
 
-const String _enumConverterHelper = '''
+const String _enumConverterHelper =
+    '''
 extension<T extends Enum> on Map<T, String> {
   T? $enumExtensionHelperName(String? value) =>
       entries.where((element) => element.value == value).firstOrNull?.key;
 }''';
 
-const String _iterableEqualsHelper = '''
+const String _iterableEqualsHelper =
+    '''
 bool $iterablesEqualHelperName<T>(Iterable<T>? iterable1, Iterable<T>? iterable2) {
   if (identical(iterable1, iterable2)) return true;
   if (iterable1 == null || iterable2 == null) return false;

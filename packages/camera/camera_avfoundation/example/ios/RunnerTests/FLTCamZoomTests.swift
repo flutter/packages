@@ -17,7 +17,7 @@ final class FLTCamZoomTests: XCTestCase {
     let mockDevice = MockCaptureDevice()
 
     let configuration = CameraTestUtils.createTestCameraConfiguration()
-    configuration.captureDeviceFactory = { _ in mockDevice }
+    configuration.videoCaptureDeviceFactory = { _ in mockDevice }
     let camera = CameraTestUtils.createTestCamera(configuration)
 
     return (camera, mockDevice)

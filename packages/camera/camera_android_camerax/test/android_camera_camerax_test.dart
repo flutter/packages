@@ -3311,7 +3311,7 @@ void main() {
         camera.captureOrientationLocked = true;
 
         // Tell plugin to create detached Observer when camera info updated.
-        const String outputPath = '/temp/REC123.temp';
+        const String outputPath = '/temp/REC123.mp4';
         camera.proxy = CameraXProxy(
           newObserver:
               <T>({
@@ -3350,7 +3350,7 @@ void main() {
                 when(
                   mockSystemServicesManager.getTempFilePath(
                     camera.videoPrefix,
-                    '.temp',
+                    '.mp4',
                   ),
                 ).thenAnswer((_) async => outputPath);
                 return mockSystemServicesManager;
@@ -3480,7 +3480,7 @@ void main() {
         camera.captureOrientationLocked = true;
 
         // Tell plugin to create detached Observer when camera info updated.
-        const String outputPath = '/temp/REC123.temp';
+        const String outputPath = '/temp/REC123.mp4';
         camera.proxy = CameraXProxy(
           newObserver:
               <T>({
@@ -3519,7 +3519,7 @@ void main() {
                 when(
                   mockSystemServicesManager.getTempFilePath(
                     camera.videoPrefix,
-                    '.temp',
+                    '.mp4',
                   ),
                 ).thenAnswer((_) async => outputPath);
                 return mockSystemServicesManager;
@@ -3607,7 +3607,7 @@ void main() {
         verify(
           camera.systemServicesManager.getTempFilePath(
             camera.videoPrefix,
-            '.temp',
+            '.mp4',
           ),
         ).called(1);
         verifyNoMoreInteractions(camera.systemServicesManager);
@@ -3650,7 +3650,7 @@ void main() {
         camera.captureOrientationLocked = true;
 
         // Tell plugin to create detached Analyzer for testing.
-        const String outputPath = '/temp/REC123.temp';
+        const String outputPath = '/temp/REC123.mp4';
         camera.proxy = CameraXProxy(
           newObserver:
               <T>({
@@ -3689,7 +3689,7 @@ void main() {
                 when(
                   mockSystemServicesManager.getTempFilePath(
                     camera.videoPrefix,
-                    '.temp',
+                    '.mp4',
                   ),
                 ).thenAnswer((_) async => outputPath);
                 return mockSystemServicesManager;
@@ -3807,7 +3807,7 @@ void main() {
         camera.enableRecordingAudio = false;
 
         // Tell plugin to mock call to get current video orientation and mock Camera2CameraInfo retrieval.
-        const String outputPath = '/temp/REC123.temp';
+        const String outputPath = '/temp/REC123.mp4';
         camera.proxy = CameraXProxy(
           newObserver:
               <T>({
@@ -3848,7 +3848,7 @@ void main() {
                 when(
                   mockSystemServicesManager.getTempFilePath(
                     camera.videoPrefix,
-                    '.temp',
+                    '.mp4',
                   ),
                 ).thenAnswer((_) async => outputPath);
                 return mockSystemServicesManager;
@@ -4354,7 +4354,7 @@ void main() {
               when(
                 mockSystemServicesManager.getTempFilePath(
                   camera.videoPrefix,
-                  '.temp',
+                  '.mp4',
                 ),
               ).thenAnswer((_) async => outputPath);
               return mockSystemServicesManager;
@@ -4696,7 +4696,7 @@ void main() {
               when(
                 mockSystemServicesManager.getTempFilePath(
                   camera.videoPrefix,
-                  '.temp',
+                  '.mp4',
                 ),
               ).thenAnswer((_) async => outputPath);
               return mockSystemServicesManager;
@@ -7600,7 +7600,7 @@ void main() {
       camera.captureOrientationLocked = true;
 
       // Tell plugin to create detached Observer when camera info updated.
-      const String outputPath = '/temp/REC123.temp';
+      const String outputPath = '/temp/REC123.mp4';
       camera.proxy = CameraXProxy(
         newObserver:
             <T>({
@@ -7639,7 +7639,7 @@ void main() {
               when(
                 mockSystemServicesManager.getTempFilePath(
                   camera.videoPrefix,
-                  '.temp',
+                  '.mp4',
                 ),
               ).thenAnswer((_) async => outputPath);
               return mockSystemServicesManager;
@@ -7744,7 +7744,7 @@ void main() {
       camera.captureOrientationLocked = true;
 
       // Tell plugin to create detached Observer when camera info updated.
-      const String outputPath = '/temp/REC123.temp';
+      const String outputPath = '/temp/REC123.mp4';
       camera.proxy = CameraXProxy(
         newObserver:
             <T>({
@@ -7783,7 +7783,7 @@ void main() {
               when(
                 mockSystemServicesManager.getTempFilePath(
                   camera.videoPrefix,
-                  '.temp',
+                  '.mp4',
                 ),
               ).thenAnswer((_) async => outputPath);
               return mockSystemServicesManager;
@@ -7888,7 +7888,7 @@ void main() {
       camera.captureOrientationLocked = true;
 
       // Tell plugin to create detached Observer when camera info updated.
-      const String outputPath = '/temp/REC123.temp';
+      const String outputPath = '/temp/REC123.mp4';
       camera.proxy = CameraXProxy(
         newObserver:
             <T>({
@@ -7927,7 +7927,7 @@ void main() {
               when(
                 mockSystemServicesManager.getTempFilePath(
                   camera.videoPrefix,
-                  '.temp',
+                  '.mp4',
                 ),
               ).thenAnswer((_) async => outputPath);
               return mockSystemServicesManager;
@@ -8037,7 +8037,7 @@ void main() {
       camera.captureOrientationLocked = true;
 
       // Tell plugin to create detached Observer when camera info updated.
-      const String outputPath = '/temp/REC123.temp';
+      const String outputPath = '/temp/REC123.mp4';
       camera.proxy = CameraXProxy(
         newAnalyzer:
             ({
@@ -8091,7 +8091,7 @@ void main() {
               when(
                 mockSystemServicesManager.getTempFilePath(
                   camera.videoPrefix,
-                  '.temp',
+                  '.mp4',
                 ),
               ).thenAnswer((_) async => outputPath);
               return mockSystemServicesManager;
@@ -8205,7 +8205,7 @@ void main() {
       camera.captureOrientationLocked = true;
 
       // Tell plugin to create detached Observer when camera info updated.
-      const String outputPath = '/temp/REC123.temp';
+      const String outputPath = '/temp/REC123.mp4';
       camera.proxy = CameraXProxy(
         newAnalyzer:
             ({
@@ -8259,7 +8259,7 @@ void main() {
               when(
                 mockSystemServicesManager.getTempFilePath(
                   camera.videoPrefix,
-                  '.temp',
+                  '.mp4',
                 ),
               ).thenAnswer((_) async => outputPath);
               return mockSystemServicesManager;
@@ -8365,7 +8365,7 @@ void main() {
       camera.captureOrientationLocked = true;
 
       // Tell plugin to create detached Observer when camera info updated.
-      const String outputPath = '/temp/REC123.temp';
+      const String outputPath = '/temp/REC123.mp4';
       camera.proxy = CameraXProxy(
         newAnalyzer:
             ({
@@ -8419,7 +8419,7 @@ void main() {
               when(
                 mockSystemServicesManager.getTempFilePath(
                   camera.videoPrefix,
-                  '.temp',
+                  '.mp4',
                 ),
               ).thenAnswer((_) async => outputPath);
               return mockSystemServicesManager;

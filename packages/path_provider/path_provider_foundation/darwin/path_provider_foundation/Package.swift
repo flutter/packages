@@ -9,8 +9,8 @@ import PackageDescription
 let package = Package(
   name: "path_provider_foundation",
   platforms: [
-    .iOS("12.0"),
-    .macOS("10.14"),
+    .iOS("13.0"),
+    .macOS("10.15"),
   ],
   products: [
     .library(name: "path-provider-foundation", targets: ["path_provider_foundation"])

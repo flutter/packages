@@ -1,3 +1,18 @@
+## 2.0.2
+
+* Updates to Pigeon 26.
+
+## 2.0.1
+
+* Removed mockito-inline and updated to mockito-core 5.17.0.
+
+## 2.0.0
+
+* **BREAKING CHANGES:**
+  * Switches to `LocalAuthException` for error reporting.
+  * Removes support for `useErrorDialogs`.
+  * Renames `biometricHint` to `signInHint` to reflect its usage.
+
 ## 1.0.56
 
 * Updates Java compatibility version to 17 and minimum supported SDK version to Flutter 3.35/Dart 3.9.
