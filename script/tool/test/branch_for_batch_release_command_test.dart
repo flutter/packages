@@ -74,7 +74,7 @@ version: 1.0.0
         ],
         null),
     ProcessCall('git-commit',
-        <String>['-m', '[a_package] Prepares for batch release'], null),
+        <String>['-m', '[a_package] Prepare for batch release'], null),
     ProcessCall('git-push', <String>['origin', 'release-branch'], null),
   ];
   const List<ProcessCall> expectedGitCallsForAFiles = <ProcessCall>[
@@ -89,7 +89,7 @@ version: 1.0.0
         ],
         null),
     ProcessCall('git-commit',
-        <String>['-m', '[a_package] Prepares for batch release'], null),
+        <String>['-m', '[a_package] Prepare for batch release'], null),
     ProcessCall('git-push', <String>['origin', 'release-branch'], null),
   ];
 
@@ -355,7 +355,7 @@ version: patch
                 ],
                 null),
             const ProcessCall('git-commit',
-                <String>['-m', '[a_package] Prepares for batch release'], null),
+                <String>['-m', '[a_package] Prepare for batch release'], null),
             const ProcessCall(
                 'git-push', <String>['origin', 'release-branch'], null),
           ]));
