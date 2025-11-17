@@ -1,6 +1,10 @@
-## 6.3.25
+## 6.3.26
 
 * Bumps androidx.browser:browser from 1.8.0 to 1.9.0.
+
+## 6.3.25
+
+* Updates to Pigeon 26.
 
 ## 6.3.24
 

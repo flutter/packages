@@ -236,8 +236,8 @@ class RenderVectorGraphic extends RenderBox {
   // is sufficiently different. Returns `null` if rasterData has been
   // updated immediately.
   void _maybeUpdateRaster() {
-    final int scaledWidth =
-        (pictureInfo.size.width * devicePixelRatio / scale).round();
+    final int scaledWidth = (pictureInfo.size.width * devicePixelRatio / scale)
+        .round();
     final int scaledHeight =
         (pictureInfo.size.height * devicePixelRatio / scale).round();
     final RasterKey key = RasterKey(assetKey, scaledWidth, scaledHeight);

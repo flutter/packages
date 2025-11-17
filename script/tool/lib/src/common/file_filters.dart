@@ -22,6 +22,7 @@ bool isRepoLevelNonCodeImpactingFile(String path) {
         '.github/dependabot.yml',
         '.github/labeler.yml',
         '.github/post_merge_labeler.yml',
+        '.github/workflows/release.yml',
         '.github/workflows/pull_request_label.yml',
       ].contains(path) ||
       // This directory only affects automated code reviews, so cannot affect

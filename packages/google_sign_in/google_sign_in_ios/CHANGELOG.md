@@ -1,3 +1,11 @@
+## 6.2.4
+
+* Updates to Pigeon 26.
+
+## 6.2.3
+
+* Internal restructuring to improve testability.
+
 ## 6.2.2
 
 * Updates minimum supported version to iOS 13.

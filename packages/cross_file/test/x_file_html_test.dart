@@ -20,9 +20,9 @@ final html.File textFile = html.File(
   'hello.txt',
 );
 final String textFileUrl =
-// TODO(kevmoo): drop ignore when pkg:web constraint excludes v0.3
-// ignore: unnecessary_cast
-html.URL.createObjectURL(textFile as JSObject);
+    // TODO(kevmoo): drop ignore when pkg:web constraint excludes v0.3
+    // ignore: unnecessary_cast
+    html.URL.createObjectURL(textFile as JSObject);
 
 void main() {
   group('Create with an objectUrl', () {
@@ -63,6 +63,24 @@ void main() {
     test('Stream can be sliced', () async {
       expect(await file.openRead(2, 5).first, equals(bytes.sublist(2, 5)));
     });
+
+    test('Prefers local bytes over path if both are provided', () async {
+      const String text = 'Hello World';
+      const String path = 'test/x_file_html_test.dart';
+
+      final XFile file = XFile.fromData(
+        utf8.encode(text),
+        path: path,
+        name: 'x_file_html_test.dart',
+        length: text.length,
+        mimeType: 'text/plain',
+        lastModified: DateTime.now(),
+      );
+
+      expect(file.path, isNot(equals(path)));
+      expect(file.path.startsWith('blob:'), isTrue);
+      expect(await file.readAsString(), equals(text));
+    });
   });
 
   group('Blob backend', () {
@@ -70,8 +88,9 @@ void main() {
 
     test('Stores data as a Blob', () async {
       // Read the blob from its path 'natively'
-      final html.Response response =
-          await html.window.fetch(file.path.toJS).toDart;
+      final html.Response response = await html.window
+          .fetch(file.path.toJS)
+          .toDart;
 
       final JSAny arrayBuffer = await response.arrayBuffer().toDart;
       final ByteBuffer data = (arrayBuffer as JSArrayBuffer).toDart;
@@ -108,8 +127,9 @@ void main() {
 
         await file.saveTo('path');
 
-        final html.Element container =
-            html.document.querySelector('#$crossFileDomElementId')!;
+        final html.Element container = html.document.querySelector(
+          '#$crossFileDomElementId',
+        )!;
 
         late html.HTMLAnchorElement element;
         for (int i = 0; i < container.childNodes.length; i++) {
