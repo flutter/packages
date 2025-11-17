@@ -180,8 +180,8 @@ void main() {
         ),
       ]);
       final Map<String, Object> values =
-      // ignore: deprecated_member_use
-      await preferences.getAllWithPrefix('prefix.');
+          // ignore: deprecated_member_use
+          await preferences.getAllWithPrefix('prefix.');
       expect(values['prefix.String'], allTestValues['prefix.String']);
       expect(values['prefix.Bool'], allTestValues['prefix.Bool']);
       expect(values['prefix.Int'], allTestValues['prefix.Int']);
@@ -246,8 +246,8 @@ void main() {
         // ignore: deprecated_member_use
         await preferences.clearWithPrefix('prefix.');
         Map<String, Object> values =
-        // ignore: deprecated_member_use
-        await preferences.getAllWithPrefix('prefix.');
+            // ignore: deprecated_member_use
+            await preferences.getAllWithPrefix('prefix.');
         expect(values['prefix.String'], null);
         expect(values['prefix.Bool'], null);
         expect(values['prefix.Int'], null);
@@ -303,8 +303,8 @@ void main() {
           ),
         ]);
         final Map<String, Object> values =
-        // ignore: deprecated_member_use
-        await preferences.getAllWithPrefix('');
+            // ignore: deprecated_member_use
+            await preferences.getAllWithPrefix('');
         expect(values['String'], allTestValues['String']);
         expect(values['Bool'], allTestValues['Bool']);
         expect(values['Int'], allTestValues['Int']);
@@ -360,8 +360,8 @@ void main() {
         // ignore: deprecated_member_use
         await preferences.clearWithPrefix('');
         final Map<String, Object> values =
-        // ignore: deprecated_member_use
-        await preferences.getAllWithPrefix('');
+            // ignore: deprecated_member_use
+            await preferences.getAllWithPrefix('');
         expect(values['String'], null);
         expect(values['Bool'], null);
         expect(values['Int'], null);
@@ -694,14 +694,12 @@ void main() {
     String? fileName,
   }) {
     return SharedPreferencesAsyncAndroidOptions(
-      backend:
-          useDataStore
-              ? SharedPreferencesAndroidBackendLibrary.DataStore
-              : SharedPreferencesAndroidBackendLibrary.SharedPreferences,
-      originalSharedPreferencesOptions:
-          fileName == null
-              ? null
-              : AndroidSharedPreferencesStoreOptions(fileName: fileName),
+      backend: useDataStore
+          ? SharedPreferencesAndroidBackendLibrary.DataStore
+          : SharedPreferencesAndroidBackendLibrary.SharedPreferences,
+      originalSharedPreferencesOptions: fileName == null
+          ? null
+          : AndroidSharedPreferencesStoreOptions(fileName: fileName),
     );
   }
 

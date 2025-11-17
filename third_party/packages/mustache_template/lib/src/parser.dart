@@ -252,8 +252,9 @@ class Parser {
         TokenType.whitespace,
         eofOk: true,
       );
-      final String indent =
-          precedingWhitespace == null ? '' : precedingWhitespace.value;
+      final String indent = precedingWhitespace == null
+          ? ''
+          : precedingWhitespace.value;
       final Tag? tag = _readTag();
       final Node? tagNode = _createNodeFromTag(tag, partialIndent: indent);
       final Token? followingWhitespace = _readIf(

@@ -464,8 +464,9 @@ void main() {
 
     // Expect the last route pushed to the navigator to contain RouteSettings
     // equal to the RouteSettings passed to showModal
-    final ModalRoute<dynamic> modalRoute =
-        ModalRoute.of(tester.element(find.byType(_FlutterLogoModal)))!;
+    final ModalRoute<dynamic> modalRoute = ModalRoute.of(
+      tester.element(find.byType(_FlutterLogoModal)),
+    )!;
     expect(modalRoute.settings, routeSettings);
   });
 

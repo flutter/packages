@@ -8,6 +8,7 @@ import 'common/gradle.dart';
 import 'common/output_utils.dart';
 import 'common/package_looping_command.dart';
 import 'common/plugin_utils.dart';
+import 'common/pub_utils.dart';
 import 'common/repository_package.dart';
 
 const int _exitPrecacheFailed = 3;
@@ -229,11 +230,16 @@ class FetchDepsCommand extends PackageLoopingCommand {
   }
 
   Future<bool> _fetchDartPackages(RepositoryPackage package) async {
-    final String command = package.requiresFlutter() ? flutterCommand : 'dart';
-    final int exitCode = await processRunner.runAndStream(
-        command, <String>['pub', 'get'],
-        workingDir: package.directory);
-    return exitCode == 0;
+    final List<RepositoryPackage> packagesToGet = <RepositoryPackage>[
+      package,
+      ...package.getSubpackages(includeExamples: false)
+    ];
+    for (final RepositoryPackage p in packagesToGet) {
+      if (!await runPubGet(p, processRunner, platform)) {
+        return false;
+      }
+    }
+    return true;
   }
 
   bool _hasExampleSupportingRequestedPlatform(RepositoryPackage package) {

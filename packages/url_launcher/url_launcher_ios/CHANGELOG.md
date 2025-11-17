@@ -1,3 +1,7 @@
+## 6.3.6
+
+* Updates to Pigeon 26.
+
 ## 6.3.5
 
 * Updates minimum supported version to iOS 13.

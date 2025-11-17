@@ -118,16 +118,18 @@ void main() {
 
     final GoRouter router = GoRouter(
       routes: <GoRoute>[
-        GoRoute(path: '/', builder: (_, __) => const HomeScreen(key: homeKey)),
+        GoRoute(
+          path: '/',
+          builder: (_, __) => const HomeScreen(key: homeKey),
+        ),
         GoRoute(
           path: '/dismissible-modal',
-          pageBuilder:
-              (_, GoRouterState state) => CustomTransitionPage<void>(
-                key: state.pageKey,
-                barrierDismissible: true,
-                transitionsBuilder: (_, __, ___, Widget child) => child,
-                child: const DismissibleModal(key: dismissibleModalKey),
-              ),
+          pageBuilder: (_, GoRouterState state) => CustomTransitionPage<void>(
+            key: state.pageKey,
+            barrierDismissible: true,
+            transitionsBuilder: (_, __, ___, Widget child) => child,
+            child: const DismissibleModal(key: dismissibleModalKey),
+          ),
         ),
       ],
     );
@@ -152,19 +154,21 @@ void main() {
 
     final GoRouter router = GoRouter(
       routes: <GoRoute>[
-        GoRoute(path: '/', builder: (_, __) => const HomeScreen(key: homeKey)),
+        GoRoute(
+          path: '/',
+          builder: (_, __) => const HomeScreen(key: homeKey),
+        ),
         GoRoute(
           path: '/login',
-          pageBuilder:
-              (_, GoRouterState state) => CustomTransitionPage<void>(
-                key: state.pageKey,
-                transitionDuration: transitionDuration,
-                reverseTransitionDuration: reverseTransitionDuration,
-                transitionsBuilder:
-                    (_, Animation<double> animation, ___, Widget child) =>
-                        FadeTransition(opacity: animation, child: child),
-                child: const LoginScreen(key: loginKey),
-              ),
+          pageBuilder: (_, GoRouterState state) => CustomTransitionPage<void>(
+            key: state.pageKey,
+            transitionDuration: transitionDuration,
+            reverseTransitionDuration: reverseTransitionDuration,
+            transitionsBuilder:
+                (_, Animation<double> animation, ___, Widget child) =>
+                    FadeTransition(opacity: animation, child: child),
+            child: const LoginScreen(key: loginKey),
+          ),
         ),
       ],
     );

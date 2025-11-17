@@ -100,21 +100,19 @@ Future<GoRouter> createGoRouterWithStatefulShellRouteAndPopScopes(
             routes: <RouteBase>[
               GoRoute(
                 path: '/c',
-                builder:
-                    (_, __) => PopScope(
-                      onPopInvokedWithResult: onPopBranch,
-                      canPop: canPopBranch,
-                      child: const Text('Home'),
-                    ),
+                builder: (_, __) => PopScope(
+                  onPopInvokedWithResult: onPopBranch,
+                  canPop: canPopBranch,
+                  child: const Text('Home'),
+                ),
                 routes: <RouteBase>[
                   GoRoute(
                     path: 'c1',
-                    builder:
-                        (_, __) => PopScope(
-                          onPopInvokedWithResult: onPopBranchSubRoute,
-                          canPop: canPopBranchSubRoute,
-                          child: const Text('SubRoute'),
-                        ),
+                    builder: (_, __) => PopScope(
+                      onPopInvokedWithResult: onPopBranchSubRoute,
+                      canPop: canPopBranchSubRoute,
+                      child: const Text('SubRoute'),
+                    ),
                   ),
                 ],
               ),
@@ -197,14 +195,13 @@ void main() {
         routes: <GoRoute>[
           GoRoute(
             path: '/',
-            builder:
-                (_, __) => PopScope(
-                  onPopInvokedWithResult: (bool result, _) {
-                    didPop = true;
-                  },
-                  canPop: false,
-                  child: const Text('Home'),
-                ),
+            builder: (_, __) => PopScope(
+              onPopInvokedWithResult: (bool result, _) {
+                didPop = true;
+              },
+              canPop: false,
+              child: const Text('Home'),
+            ),
           ),
         ],
       );
