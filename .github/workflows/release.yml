@@ -1,8 +1,14 @@
-name: release
+name: Reusable Release
+
 on:
-  push:
-    branches:
-      - main
+  workflow_call:
+    inputs:
+      publish-args:
+        required: true
+        type: string
+      workflow-name:
+        required: true
+        type: string
 
 # Declare default permissions as read only.
 permissions: read-all
@@ -82,5 +88,5 @@ jobs:
       run: |
         git config --global user.name ${{ secrets.USER_NAME }}
         git config --global user.email ${{ secrets.USER_EMAIL }}
-        dart ./script/tool/lib/src/main.dart publish --all-changed --base-sha=HEAD~ --skip-confirmation --remote=origin
+        dart ./script/tool/lib/src/main.dart publish ${{ inputs.publish-args }}
       env: {PUB_CREDENTIALS: "${{ secrets.PUB_CREDENTIALS }}"}
