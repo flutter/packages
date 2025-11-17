@@ -21,11 +21,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 /** Generated class from Pigeon. */
@@ -41,8 +37,7 @@ public class Messages {
     /** The error details. Must be a datatype supported by the api codec. */
     public final Object details;
 
-    public FlutterError(@NonNull String code, @Nullable String message, @Nullable Object details) 
-    {
+    public FlutterError(@NonNull String code, @Nullable String message, @Nullable Object details) {
       super(message);
       this.code = code;
       this.details = details;
@@ -61,7 +56,7 @@ public class Messages {
       errorList.add(exception.toString());
       errorList.add(exception.getClass().getSimpleName());
       errorList.add(
-        "Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
+          "Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
     }
     return errorList;
   }
@@ -74,15 +69,12 @@ public class Messages {
   public enum AuthResultCode {
     /** The user authenticated successfully. */
     SUCCESS(0),
-    /**
-     * The user pressed the negative button, which corresponds to
-     * [AuthStrings.cancelButton].
-     */
+    /** The user pressed the negative button, which corresponds to [AuthStrings.cancelButton]. */
     NEGATIVE_BUTTON(1),
     /**
      * The user canceled authentication without pressing the negative button.
      *
-     * This may be triggered by a swipe or a back button, for example.
+     * <p>This may be triggered by a swipe or a back button, for example.
      */
     USER_CANCELED(2),
     /** Authentication was caneceled by the system. */
@@ -105,10 +97,7 @@ public class Messages {
     NOT_ENROLLED(11),
     /** The user is locked out temporarily due to too many failed attempts. */
     LOCKED_OUT_TEMPORARILY(12),
-    /**
-     * The user is locked out until they log in another way due to too many
-     * failed attempts.
-     */
+    /** The user is locked out until they log in another way due to too many failed attempts. */
     LOCKED_OUT_PERMANENTLY(13),
     /** The device does not have enough storage to complete authentication. */
     NO_SPACE(14),
@@ -139,9 +128,9 @@ public class Messages {
   /**
    * Pigeon version of AndroidAuthStrings, plus the authorization reason.
    *
-   * See auth_messages_android.dart for details.
+   * <p>See auth_messages_android.dart for details.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class AuthStrings {
     private @NonNull String reason;
@@ -201,10 +190,17 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       AuthStrings that = (AuthStrings) o;
-      return reason.equals(that.reason) && signInHint.equals(that.signInHint) && cancelButton.equals(that.cancelButton) && signInTitle.equals(that.signInTitle);
+      return reason.equals(that.reason)
+          && signInHint.equals(that.signInHint)
+          && cancelButton.equals(that.cancelButton)
+          && signInTitle.equals(that.signInTitle);
     }
 
     @Override
@@ -283,7 +279,7 @@ public class Messages {
   /**
    * The results of an authentication request.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class AuthResult {
     /** The specific result returned from the SDK. */
@@ -316,8 +312,12 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       AuthResult that = (AuthResult) o;
       return code.equals(that.code) && Objects.equals(errorMessage, that.errorMessage);
     }
@@ -417,10 +417,16 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       AuthOptions that = (AuthOptions) o;
-      return biometricOnly.equals(that.biometricOnly) && sensitiveTransaction.equals(that.sensitiveTransaction) && sticky.equals(that.sticky);
+      return biometricOnly.equals(that.biometricOnly)
+          && sensitiveTransaction.equals(that.sensitiveTransaction)
+          && sticky.equals(that.sticky);
     }
 
     @Override
@@ -492,14 +498,16 @@ public class Messages {
     @Override
     protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {
       switch (type) {
-        case (byte) 129: {
-          Object value = readValue(buffer);
-          return value == null ? null : AuthResultCode.values()[((Long) value).intValue()];
-        }
-        case (byte) 130: {
-          Object value = readValue(buffer);
-          return value == null ? null : AuthClassification.values()[((Long) value).intValue()];
-        }
+        case (byte) 129:
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AuthResultCode.values()[((Long) value).intValue()];
+          }
+        case (byte) 130:
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AuthClassification.values()[((Long) value).intValue()];
+          }
         case (byte) 131:
           return AuthStrings.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 132:
@@ -534,7 +542,6 @@ public class Messages {
     }
   }
 
-
   /** Asynchronous error handling return type for non-nullable API method returns. */
   public interface Result<T> {
     /** Success case callback method for handling returns. */
@@ -562,51 +569,59 @@ public class Messages {
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface LocalAuthApi {
     /** Returns true if this device supports authentication. */
-    @NonNull 
+    @NonNull
     Boolean isDeviceSupported();
     /**
-     * Returns true if this device can support biometric authentication, whether
-     * any biometrics are enrolled or not.
+     * Returns true if this device can support biometric authentication, whether any biometrics are
+     * enrolled or not.
      */
-    @NonNull 
+    @NonNull
     Boolean deviceCanSupportBiometrics();
     /**
      * Cancels any in-progress authentication.
      *
-     * Returns true only if authentication was in progress, and was successfully
-     * cancelled.
+     * <p>Returns true only if authentication was in progress, and was successfully cancelled.
      */
-    @NonNull 
+    @NonNull
     Boolean stopAuthentication();
     /**
-     * Returns the biometric types that are enrolled, and can thus be used
-     * without additional setup.
+     * Returns the biometric types that are enrolled, and can thus be used without additional setup.
      *
-     * Returns null if there is no activity, in which case the enrolled
-     * biometrics can't be determined.
+     * <p>Returns null if there is no activity, in which case the enrolled biometrics can't be
+     * determined.
      */
-    @Nullable 
+    @Nullable
     List<AuthClassification> getEnrolledBiometrics();
     /**
-     * Attempts to authenticate the user with the provided [options], and using
-     * [strings] for any UI.
+     * Attempts to authenticate the user with the provided [options], and using [strings] for any
+     * UI.
      */
-    void authenticate(@NonNull AuthOptions options, @NonNull AuthStrings strings, @NonNull Result<AuthResult> result);
+    void authenticate(
+        @NonNull AuthOptions options,
+        @NonNull AuthStrings strings,
+        @NonNull Result<AuthResult> result);
 
     /** The codec used by LocalAuthApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return PigeonCodec.INSTANCE;
     }
-    /**Sets up an instance of `LocalAuthApi` to handle messages through the `binaryMessenger`. */
+    /** Sets up an instance of `LocalAuthApi` to handle messages through the `binaryMessenger`. */
     static void setUp(@NonNull BinaryMessenger binaryMessenger, @Nullable LocalAuthApi api) {
       setUp(binaryMessenger, "", api);
     }
-    static void setUp(@NonNull BinaryMessenger binaryMessenger, @NonNull String messageChannelSuffix, @Nullable LocalAuthApi api) {
+
+    static void setUp(
+        @NonNull BinaryMessenger binaryMessenger,
+        @NonNull String messageChannelSuffix,
+        @Nullable LocalAuthApi api) {
       messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.local_auth_android.LocalAuthApi.isDeviceSupported" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.local_auth_android.LocalAuthApi.isDeviceSupported"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -614,8 +629,7 @@ public class Messages {
                 try {
                   Boolean output = api.isDeviceSupported();
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
@@ -627,7 +641,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.local_auth_android.LocalAuthApi.deviceCanSupportBiometrics" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.local_auth_android.LocalAuthApi.deviceCanSupportBiometrics"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -635,8 +652,7 @@ public class Messages {
                 try {
                   Boolean output = api.deviceCanSupportBiometrics();
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
@@ -648,7 +664,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.local_auth_android.LocalAuthApi.stopAuthentication" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.local_auth_android.LocalAuthApi.stopAuthentication"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -656,8 +675,7 @@ public class Messages {
                 try {
                   Boolean output = api.stopAuthentication();
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
@@ -669,7 +687,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.local_auth_android.LocalAuthApi.getEnrolledBiometrics" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.local_auth_android.LocalAuthApi.getEnrolledBiometrics"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -677,8 +698,7 @@ public class Messages {
                 try {
                   List<AuthClassification> output = api.getEnrolledBiometrics();
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
@@ -690,7 +710,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.local_auth_android.LocalAuthApi.authenticate" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.local_auth_android.LocalAuthApi.authenticate"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {

@@ -17,20 +17,24 @@ PlatformException _createConnectionError(String channelName) {
     message: 'Unable to establish connection on channel: "$channelName".',
   );
 }
+
 bool _deepEquals(Object? a, Object? b) {
   if (a is List && b is List) {
     return a.length == b.length &&
-        a.indexed
-        .every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
+        a.indexed.every(
+          ((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]),
+        );
   }
   if (a is Map && b is Map) {
-    return a.length == b.length && a.entries.every((MapEntry<Object?, Object?> entry) =>
-        (b as Map<Object?, Object?>).containsKey(entry.key) &&
-        _deepEquals(entry.value, b[entry.key]));
+    return a.length == b.length &&
+        a.entries.every(
+          (MapEntry<Object?, Object?> entry) =>
+              (b as Map<Object?, Object?>).containsKey(entry.key) &&
+              _deepEquals(entry.value, b[entry.key]),
+        );
   }
   return a == b;
 }
-
 
 class FileSelectorConfig {
   FileSelectorConfig({
@@ -43,14 +47,12 @@ class FileSelectorConfig {
   bool allowMultiSelection;
 
   List<Object?> _toList() {
-    return <Object?>[
-      utis,
-      allowMultiSelection,
-    ];
+    return <Object?>[utis, allowMultiSelection];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static FileSelectorConfig decode(Object result) {
     result as List<Object?>;
@@ -74,10 +76,8 @@ class FileSelectorConfig {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
-
 
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
@@ -86,7 +86,7 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
-    }    else if (value is FileSelectorConfig) {
+    } else if (value is FileSelectorConfig) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
     } else {
@@ -97,7 +97,7 @@ class _PigeonCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 129: 
+      case 129:
         return FileSelectorConfig.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -109,9 +109,13 @@ class FileSelectorApi {
   /// Constructor for [FileSelectorApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  FileSelectorApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
-      : pigeonVar_binaryMessenger = binaryMessenger,
-        pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+  FileSelectorApi({
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) : pigeonVar_binaryMessenger = binaryMessenger,
+       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+           ? '.$messageChannelSuffix'
+           : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -119,13 +123,17 @@ class FileSelectorApi {
   final String pigeonVar_messageChannelSuffix;
 
   Future<List<String>> openFile(FileSelectorConfig config) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.file_selector_ios.FileSelectorApi.openFile$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.file_selector_ios.FileSelectorApi.openFile$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[config],
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[config]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {

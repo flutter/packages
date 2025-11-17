@@ -21,11 +21,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 /** Generated class from Pigeon. */
@@ -41,8 +38,7 @@ public class Messages {
     /** The error details. Must be a datatype supported by the api codec. */
     public final Object details;
 
-    public FlutterError(@NonNull String code, @Nullable String message, @Nullable Object details) 
-    {
+    public FlutterError(@NonNull String code, @Nullable String message, @Nullable Object details) {
       super(message);
       this.code = code;
       this.details = details;
@@ -61,14 +57,15 @@ public class Messages {
       errorList.add(exception.toString());
       errorList.add(exception.getClass().getSimpleName());
       errorList.add(
-        "Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
+          "Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
     }
     return errorList;
   }
 
   @NonNull
   protected static FlutterError createConnectionError(@NonNull String channelName) {
-    return new FlutterError("channel-error",  "Unable to establish connection on channel: " + channelName + ".", "");
+    return new FlutterError(
+        "channel-error", "Unable to establish connection on channel: " + channelName + ".", "");
   }
 
   @Target(METHOD)
@@ -78,7 +75,7 @@ public class Messages {
   /**
    * Home screen quick-action shortcut item.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class ShortcutItemMessage {
     /** The identifier of this item; should be unique within the app. */
@@ -125,10 +122,16 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       ShortcutItemMessage that = (ShortcutItemMessage) o;
-      return type.equals(that.type) && localizedTitle.equals(that.localizedTitle) && Objects.equals(icon, that.icon);
+      return type.equals(that.type)
+          && localizedTitle.equals(that.localizedTitle)
+          && Objects.equals(icon, that.icon);
     }
 
     @Override
@@ -218,7 +221,6 @@ public class Messages {
     }
   }
 
-
   /** Asynchronous error handling return type for non-nullable API method returns. */
   public interface Result<T> {
     /** Success case callback method for handling returns. */
@@ -246,7 +248,7 @@ public class Messages {
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface AndroidQuickActionsApi {
     /** Checks for, and returns the action that launched the app. */
-    @Nullable 
+    @Nullable
     String getLaunchAction();
     /** Sets the dynamic shortcuts for the app. */
     void setShortcutItems(@NonNull List<ShortcutItemMessage> itemsList, @NonNull VoidResult result);
@@ -257,16 +259,27 @@ public class Messages {
     static @NonNull MessageCodec<Object> getCodec() {
       return PigeonCodec.INSTANCE;
     }
-    /**Sets up an instance of `AndroidQuickActionsApi` to handle messages through the `binaryMessenger`. */
-    static void setUp(@NonNull BinaryMessenger binaryMessenger, @Nullable AndroidQuickActionsApi api) {
+    /**
+     * Sets up an instance of `AndroidQuickActionsApi` to handle messages through the
+     * `binaryMessenger`.
+     */
+    static void setUp(
+        @NonNull BinaryMessenger binaryMessenger, @Nullable AndroidQuickActionsApi api) {
       setUp(binaryMessenger, "", api);
     }
-    static void setUp(@NonNull BinaryMessenger binaryMessenger, @NonNull String messageChannelSuffix, @Nullable AndroidQuickActionsApi api) {
+
+    static void setUp(
+        @NonNull BinaryMessenger binaryMessenger,
+        @NonNull String messageChannelSuffix,
+        @Nullable AndroidQuickActionsApi api) {
       messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.quick_actions_android.AndroidQuickActionsApi.getLaunchAction" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.quick_actions_android.AndroidQuickActionsApi.getLaunchAction"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -274,8 +287,7 @@ public class Messages {
                 try {
                   String output = api.getLaunchAction();
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
@@ -287,7 +299,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.quick_actions_android.AndroidQuickActionsApi.setShortcutItems" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.quick_actions_android.AndroidQuickActionsApi.setShortcutItems"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -316,7 +331,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.quick_actions_android.AndroidQuickActionsApi.clearShortcutItems" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.quick_actions_android.AndroidQuickActionsApi.clearShortcutItems"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -324,8 +342,7 @@ public class Messages {
                 try {
                   api.clearShortcutItems();
                   wrapped.add(0, null);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
@@ -344,37 +361,39 @@ public class Messages {
     public AndroidQuickActionsFlutterApi(@NonNull BinaryMessenger argBinaryMessenger) {
       this(argBinaryMessenger, "");
     }
-    public AndroidQuickActionsFlutterApi(@NonNull BinaryMessenger argBinaryMessenger, @NonNull String messageChannelSuffix) {
+
+    public AndroidQuickActionsFlutterApi(
+        @NonNull BinaryMessenger argBinaryMessenger, @NonNull String messageChannelSuffix) {
       this.binaryMessenger = argBinaryMessenger;
       this.messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
     }
 
-    /**
-     * Public interface for sending reply.
-     * The codec used by AndroidQuickActionsFlutterApi.
-     */
+    /** Public interface for sending reply. The codec used by AndroidQuickActionsFlutterApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return PigeonCodec.INSTANCE;
     }
     /** Sends a string representing a shortcut from the native platform to the app. */
     public void launchAction(@NonNull String actionArg, @NonNull VoidResult result) {
-      final String channelName = "dev.flutter.pigeon.quick_actions_android.AndroidQuickActionsFlutterApi.launchAction" + messageChannelSuffix;
+      final String channelName =
+          "dev.flutter.pigeon.quick_actions_android.AndroidQuickActionsFlutterApi.launchAction"
+              + messageChannelSuffix;
       BasicMessageChannel<Object> channel =
-          new BasicMessageChannel<>(
-              binaryMessenger, channelName, getCodec());
+          new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
       channel.send(
           new ArrayList<>(Collections.singletonList(actionArg)),
           channelReply -> {
             if (channelReply instanceof List) {
               List<Object> listReply = (List<Object>) channelReply;
               if (listReply.size() > 1) {
-                result.error(new FlutterError((String) listReply.get(0), (String) listReply.get(1), listReply.get(2)));
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0), (String) listReply.get(1), listReply.get(2)));
               } else {
                 result.success();
               }
-            }  else {
+            } else {
               result.error(createConnectionError(channelName));
-            } 
+            }
           });
     }
   }

@@ -17,17 +17,16 @@
 
 namespace local_auth_windows {
 
-
 // Generated class from Pigeon.
 
 class FlutterError {
  public:
-  explicit FlutterError(const std::string& code)
-    : code_(code) {}
+  explicit FlutterError(const std::string& code) : code_(code) {}
   explicit FlutterError(const std::string& code, const std::string& message)
-    : code_(code), message_(message) {}
-  explicit FlutterError(const std::string& code, const std::string& message, const flutter::EncodableValue& details)
-    : code_(code), message_(message), details_(details) {}
+      : code_(code), message_(message) {}
+  explicit FlutterError(const std::string& code, const std::string& message,
+                        const flutter::EncodableValue& details)
+      : code_(code), message_(message), details_(details) {}
 
   const std::string& code() const { return code_; }
   const std::string& message() const { return message_; }
@@ -39,7 +38,8 @@ class FlutterError {
   flutter::EncodableValue details_;
 };
 
-template<class T> class ErrorOr {
+template <class T>
+class ErrorOr {
  public:
   ErrorOr(const T& rhs) : v_(rhs) {}
   ErrorOr(const T&& rhs) : v_(std::move(rhs)) {}
@@ -57,7 +57,6 @@ template<class T> class ErrorOr {
 
   std::variant<T, FlutterError> v_;
 };
-
 
 // Possible outcomes of an authentication attempt.
 enum class AuthResult {
@@ -77,7 +76,6 @@ enum class AuthResult {
   kUnavailable = 6
 };
 
-
 class PigeonInternalCodecSerializer : public flutter::StandardCodecSerializer {
  public:
   PigeonInternalCodecSerializer();
@@ -86,41 +84,42 @@ class PigeonInternalCodecSerializer : public flutter::StandardCodecSerializer {
     return sInstance;
   }
 
-  void WriteValue(
-    const flutter::EncodableValue& value,
-    flutter::ByteStreamWriter* stream) const override;
+  void WriteValue(const flutter::EncodableValue& value,
+                  flutter::ByteStreamWriter* stream) const override;
+
  protected:
   flutter::EncodableValue ReadValueOfType(
-    uint8_t type,
-    flutter::ByteStreamReader* stream) const override;
+      uint8_t type, flutter::ByteStreamReader* stream) const override;
 };
 
-// Generated interface from Pigeon that represents a handler of messages from Flutter.
+// Generated interface from Pigeon that represents a handler of messages from
+// Flutter.
 class LocalAuthApi {
  public:
   LocalAuthApi(const LocalAuthApi&) = delete;
   LocalAuthApi& operator=(const LocalAuthApi&) = delete;
   virtual ~LocalAuthApi() {}
   // Returns true if this device supports authentication.
-  virtual void IsDeviceSupported(std::function<void(ErrorOr<bool> reply)> result) = 0;
+  virtual void IsDeviceSupported(
+      std::function<void(ErrorOr<bool> reply)> result) = 0;
   // Attempts to authenticate the user with the provided [localizedReason] as
   // the user-facing explanation for the authorization request.
   virtual void Authenticate(
-    const std::string& localized_reason,
-    std::function<void(ErrorOr<AuthResult> reply)> result) = 0;
+      const std::string& localized_reason,
+      std::function<void(ErrorOr<AuthResult> reply)> result) = 0;
 
   // The codec used by LocalAuthApi.
   static const flutter::StandardMessageCodec& GetCodec();
-  // Sets up an instance of `LocalAuthApi` to handle messages through the `binary_messenger`.
-  static void SetUp(
-    flutter::BinaryMessenger* binary_messenger,
-    LocalAuthApi* api);
-  static void SetUp(
-    flutter::BinaryMessenger* binary_messenger,
-    LocalAuthApi* api,
-    const std::string& message_channel_suffix);
+  // Sets up an instance of `LocalAuthApi` to handle messages through the
+  // `binary_messenger`.
+  static void SetUp(flutter::BinaryMessenger* binary_messenger,
+                    LocalAuthApi* api);
+  static void SetUp(flutter::BinaryMessenger* binary_messenger,
+                    LocalAuthApi* api,
+                    const std::string& message_channel_suffix);
   static flutter::EncodableValue WrapError(std::string_view error_message);
   static flutter::EncodableValue WrapError(const FlutterError& error);
+
  protected:
   LocalAuthApi() = default;
 };

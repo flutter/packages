@@ -67,7 +67,6 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
   return value as! T?
 }
 
-
 enum DirectoryType: Int {
   case applicationDocuments = 0
   case applicationSupport = 1
@@ -127,9 +126,15 @@ protocol PathProviderApi {
 class PathProviderApiSetup {
   static var codec: FlutterStandardMessageCodec { MessagesPigeonCodec.shared }
   /// Sets up an instance of `PathProviderApi` to handle messages through the `binaryMessenger`.
-  static func setUp(binaryMessenger: FlutterBinaryMessenger, api: PathProviderApi?, messageChannelSuffix: String = "") {
+  static func setUp(
+    binaryMessenger: FlutterBinaryMessenger, api: PathProviderApi?,
+    messageChannelSuffix: String = ""
+  ) {
     let channelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""
-    let getDirectoryPathChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.path_provider_foundation.PathProviderApi.getDirectoryPath\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    let getDirectoryPathChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.path_provider_foundation.PathProviderApi.getDirectoryPath\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       getDirectoryPathChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -144,7 +149,10 @@ class PathProviderApiSetup {
     } else {
       getDirectoryPathChannel.setMessageHandler(nil)
     }
-    let getContainerPathChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.path_provider_foundation.PathProviderApi.getContainerPath\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    let getContainerPathChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.path_provider_foundation.PathProviderApi.getContainerPath\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       getContainerPathChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]

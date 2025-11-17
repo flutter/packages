@@ -10,12 +10,11 @@ package io.flutter.plugins.sharedpreferences
 import android.util.Log
 import io.flutter.plugin.common.BasicMessageChannel
 import io.flutter.plugin.common.BinaryMessenger
-import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MessageCodec
-import io.flutter.plugin.common.StandardMethodCodec
 import io.flutter.plugin.common.StandardMessageCodec
 import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
+
 private object MessagesAsyncPigeonUtils {
 
   fun wrapResult(result: Any?): List<Any?> {
@@ -24,61 +23,53 @@ private object MessagesAsyncPigeonUtils {
 
   fun wrapError(exception: Throwable): List<Any?> {
     return if (exception is SharedPreferencesError) {
-      listOf(
-        exception.code,
-        exception.message,
-        exception.details
-      )
+      listOf(exception.code, exception.message, exception.details)
     } else {
       listOf(
-        exception.javaClass.simpleName,
-        exception.toString(),
-        "Cause: " + exception.cause + ", Stacktrace: " + Log.getStackTraceString(exception)
-      )
+          exception.javaClass.simpleName,
+          exception.toString(),
+          "Cause: " + exception.cause + ", Stacktrace: " + Log.getStackTraceString(exception))
     }
   }
+
   fun deepEquals(a: Any?, b: Any?): Boolean {
     if (a is ByteArray && b is ByteArray) {
-        return a.contentEquals(b)
+      return a.contentEquals(b)
     }
     if (a is IntArray && b is IntArray) {
-        return a.contentEquals(b)
+      return a.contentEquals(b)
     }
     if (a is LongArray && b is LongArray) {
-        return a.contentEquals(b)
+      return a.contentEquals(b)
     }
     if (a is DoubleArray && b is DoubleArray) {
-        return a.contentEquals(b)
+      return a.contentEquals(b)
     }
     if (a is Array<*> && b is Array<*>) {
-      return a.size == b.size &&
-          a.indices.all{ deepEquals(a[it], b[it]) }
+      return a.size == b.size && a.indices.all { deepEquals(a[it], b[it]) }
     }
     if (a is List<*> && b is List<*>) {
-      return a.size == b.size &&
-          a.indices.all{ deepEquals(a[it], b[it]) }
+      return a.size == b.size && a.indices.all { deepEquals(a[it], b[it]) }
     }
     if (a is Map<*, *> && b is Map<*, *>) {
-      return a.size == b.size && a.all {
-          (b as Map<Any?, Any?>).contains(it.key) &&
-          deepEquals(it.value, b[it.key])
-      }
+      return a.size == b.size &&
+          a.all { (b as Map<Any?, Any?>).contains(it.key) && deepEquals(it.value, b[it.key]) }
     }
     return a == b
   }
-      
 }
 
 /**
  * Error class for passing custom error details to Flutter via a thrown PlatformException.
+ *
  * @property code The error code.
  * @property message The error message.
  * @property details The error details. Must be a datatype supported by the api codec.
  */
-class SharedPreferencesError (
-  val code: String,
-  override val message: String? = null,
-  val details: Any? = null
+class SharedPreferencesError(
+    val code: String,
+    override val message: String? = null,
+    val details: Any? = null
 ) : Throwable()
 
 /** Possible types found during a getStringList call. */
@@ -98,11 +89,7 @@ enum class StringListLookupResultType(val raw: Int) {
 }
 
 /** Generated class from Pigeon that represents data sent in messages. */
-data class SharedPreferencesPigeonOptions (
-  val fileName: String? = null,
-  val useDataStore: Boolean
-)
- {
+data class SharedPreferencesPigeonOptions(val fileName: String? = null, val useDataStore: Boolean) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): SharedPreferencesPigeonOptions {
       val fileName = pigeonVar_list[0] as String?
@@ -110,12 +97,14 @@ data class SharedPreferencesPigeonOptions (
       return SharedPreferencesPigeonOptions(fileName, useDataStore)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      fileName,
-      useDataStore,
+        fileName,
+        useDataStore,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other !is SharedPreferencesPigeonOptions) {
       return false
@@ -123,19 +112,19 @@ data class SharedPreferencesPigeonOptions (
     if (this === other) {
       return true
     }
-    return MessagesAsyncPigeonUtils.deepEquals(toList(), other.toList())  }
+    return MessagesAsyncPigeonUtils.deepEquals(toList(), other.toList())
+  }
 
   override fun hashCode(): Int = toList().hashCode()
 }
 
 /** Generated class from Pigeon that represents data sent in messages. */
-data class StringListResult (
-  /** The JSON-encoded stored value, or null if something else was found. */
-  val jsonEncodedValue: String? = null,
-  /** The type of value found. */
-  val type: StringListLookupResultType
-)
- {
+data class StringListResult(
+    /** The JSON-encoded stored value, or null if something else was found. */
+    val jsonEncodedValue: String? = null,
+    /** The type of value found. */
+    val type: StringListLookupResultType
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): StringListResult {
       val jsonEncodedValue = pigeonVar_list[0] as String?
@@ -143,12 +132,14 @@ data class StringListResult (
       return StringListResult(jsonEncodedValue, type)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      jsonEncodedValue,
-      type,
+        jsonEncodedValue,
+        type,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other !is StringListResult) {
       return false
@@ -156,17 +147,17 @@ data class StringListResult (
     if (this === other) {
       return true
     }
-    return MessagesAsyncPigeonUtils.deepEquals(toList(), other.toList())  }
+    return MessagesAsyncPigeonUtils.deepEquals(toList(), other.toList())
+  }
 
   override fun hashCode(): Int = toList().hashCode()
 }
+
 private open class MessagesAsyncPigeonCodec : StandardMessageCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
     return when (type) {
       129.toByte() -> {
-        return (readValue(buffer) as Long?)?.let {
-          StringListLookupResultType.ofRaw(it.toInt())
-        }
+        return (readValue(buffer) as Long?)?.let { StringListLookupResultType.ofRaw(it.toInt()) }
       }
       130.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
@@ -174,14 +165,13 @@ private open class MessagesAsyncPigeonCodec : StandardMessageCodec() {
         }
       }
       131.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          StringListResult.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { StringListResult.fromList(it) }
       }
       else -> super.readValueOfType(type, buffer)
     }
   }
-  override fun writeValue(stream: ByteArrayOutputStream, value: Any?)   {
+
+  override fun writeValue(stream: ByteArrayOutputStream, value: Any?) {
     when (value) {
       is StringListLookupResultType -> {
         stream.write(129)
@@ -217,17 +207,24 @@ interface SharedPreferencesAsyncApi {
    *
    * Deprecated, this is only here for testing purposes.
    */
-  fun setDeprecatedStringList(key: String, value: List<String>, options: SharedPreferencesPigeonOptions)
+  fun setDeprecatedStringList(
+      key: String,
+      value: List<String>,
+      options: SharedPreferencesPigeonOptions
+  )
   /** Gets individual String value stored with [key], if any. */
   fun getString(key: String, options: SharedPreferencesPigeonOptions): String?
-  /** Gets individual  void value stored with [key], if any. */
+  /** Gets individual void value stored with [key], if any. */
   fun getBool(key: String, options: SharedPreferencesPigeonOptions): Boolean?
   /** Gets individual double value stored with [key], if any. */
   fun getDouble(key: String, options: SharedPreferencesPigeonOptions): Double?
   /** Gets individual int value stored with [key], if any. */
   fun getInt(key: String, options: SharedPreferencesPigeonOptions): Long?
   /** Gets individual List<String> value stored with [key], if any. */
-  fun getPlatformEncodedStringList(key: String, options: SharedPreferencesPigeonOptions): List<String>?
+  fun getPlatformEncodedStringList(
+      key: String,
+      options: SharedPreferencesPigeonOptions
+  ): List<String>?
   /** Gets the JSON-encoded List<String> value stored with [key], if any. */
   fun getStringList(key: String, options: SharedPreferencesPigeonOptions): StringListResult?
   /** Removes all properties from shared preferences data set with matching prefix. */
@@ -239,28 +236,40 @@ interface SharedPreferencesAsyncApi {
 
   companion object {
     /** The codec used by SharedPreferencesAsyncApi. */
-    val codec: MessageCodec<Any?> by lazy {
-      MessagesAsyncPigeonCodec()
-    }
-    /** Sets up an instance of `SharedPreferencesAsyncApi` to handle messages through the `binaryMessenger`. */
+    val codec: MessageCodec<Any?> by lazy { MessagesAsyncPigeonCodec() }
+    /**
+     * Sets up an instance of `SharedPreferencesAsyncApi` to handle messages through the
+     * `binaryMessenger`.
+     */
     @JvmOverloads
-    fun setUp(binaryMessenger: BinaryMessenger, api: SharedPreferencesAsyncApi?, messageChannelSuffix: String = "") {
-      val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    fun setUp(
+        binaryMessenger: BinaryMessenger,
+        api: SharedPreferencesAsyncApi?,
+        messageChannelSuffix: String = ""
+    ) {
+      val separatedMessageChannelSuffix =
+          if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
       val taskQueue = binaryMessenger.makeBackgroundTaskQueue()
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.setBool$separatedMessageChannelSuffix", codec, taskQueue)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.setBool$separatedMessageChannelSuffix",
+                codec,
+                taskQueue)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val keyArg = args[0] as String
             val valueArg = args[1] as Boolean
             val optionsArg = args[2] as SharedPreferencesPigeonOptions
-            val wrapped: List<Any?> = try {
-              api.setBool(keyArg, valueArg, optionsArg)
-              listOf(null)
-            } catch (exception: Throwable) {
-              MessagesAsyncPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  api.setBool(keyArg, valueArg, optionsArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  MessagesAsyncPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -268,19 +277,25 @@ interface SharedPreferencesAsyncApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.setString$separatedMessageChannelSuffix", codec, taskQueue)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.setString$separatedMessageChannelSuffix",
+                codec,
+                taskQueue)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val keyArg = args[0] as String
             val valueArg = args[1] as String
             val optionsArg = args[2] as SharedPreferencesPigeonOptions
-            val wrapped: List<Any?> = try {
-              api.setString(keyArg, valueArg, optionsArg)
-              listOf(null)
-            } catch (exception: Throwable) {
-              MessagesAsyncPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  api.setString(keyArg, valueArg, optionsArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  MessagesAsyncPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -288,19 +303,25 @@ interface SharedPreferencesAsyncApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.setInt$separatedMessageChannelSuffix", codec, taskQueue)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.setInt$separatedMessageChannelSuffix",
+                codec,
+                taskQueue)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val keyArg = args[0] as String
             val valueArg = args[1] as Long
             val optionsArg = args[2] as SharedPreferencesPigeonOptions
-            val wrapped: List<Any?> = try {
-              api.setInt(keyArg, valueArg, optionsArg)
-              listOf(null)
-            } catch (exception: Throwable) {
-              MessagesAsyncPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  api.setInt(keyArg, valueArg, optionsArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  MessagesAsyncPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -308,19 +329,25 @@ interface SharedPreferencesAsyncApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.setDouble$separatedMessageChannelSuffix", codec, taskQueue)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.setDouble$separatedMessageChannelSuffix",
+                codec,
+                taskQueue)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val keyArg = args[0] as String
             val valueArg = args[1] as Double
             val optionsArg = args[2] as SharedPreferencesPigeonOptions
-            val wrapped: List<Any?> = try {
-              api.setDouble(keyArg, valueArg, optionsArg)
-              listOf(null)
-            } catch (exception: Throwable) {
-              MessagesAsyncPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  api.setDouble(keyArg, valueArg, optionsArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  MessagesAsyncPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -328,19 +355,25 @@ interface SharedPreferencesAsyncApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.setEncodedStringList$separatedMessageChannelSuffix", codec, taskQueue)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.setEncodedStringList$separatedMessageChannelSuffix",
+                codec,
+                taskQueue)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val keyArg = args[0] as String
             val valueArg = args[1] as String
             val optionsArg = args[2] as SharedPreferencesPigeonOptions
-            val wrapped: List<Any?> = try {
-              api.setEncodedStringList(keyArg, valueArg, optionsArg)
-              listOf(null)
-            } catch (exception: Throwable) {
-              MessagesAsyncPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  api.setEncodedStringList(keyArg, valueArg, optionsArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  MessagesAsyncPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -348,19 +381,25 @@ interface SharedPreferencesAsyncApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.setDeprecatedStringList$separatedMessageChannelSuffix", codec, taskQueue)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.setDeprecatedStringList$separatedMessageChannelSuffix",
+                codec,
+                taskQueue)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val keyArg = args[0] as String
             val valueArg = args[1] as List<String>
             val optionsArg = args[2] as SharedPreferencesPigeonOptions
-            val wrapped: List<Any?> = try {
-              api.setDeprecatedStringList(keyArg, valueArg, optionsArg)
-              listOf(null)
-            } catch (exception: Throwable) {
-              MessagesAsyncPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  api.setDeprecatedStringList(keyArg, valueArg, optionsArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  MessagesAsyncPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -368,17 +407,23 @@ interface SharedPreferencesAsyncApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.getString$separatedMessageChannelSuffix", codec, taskQueue)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.getString$separatedMessageChannelSuffix",
+                codec,
+                taskQueue)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val keyArg = args[0] as String
             val optionsArg = args[1] as SharedPreferencesPigeonOptions
-            val wrapped: List<Any?> = try {
-              listOf(api.getString(keyArg, optionsArg))
-            } catch (exception: Throwable) {
-              MessagesAsyncPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.getString(keyArg, optionsArg))
+                } catch (exception: Throwable) {
+                  MessagesAsyncPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -386,17 +431,23 @@ interface SharedPreferencesAsyncApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.getBool$separatedMessageChannelSuffix", codec, taskQueue)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.getBool$separatedMessageChannelSuffix",
+                codec,
+                taskQueue)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val keyArg = args[0] as String
             val optionsArg = args[1] as SharedPreferencesPigeonOptions
-            val wrapped: List<Any?> = try {
-              listOf(api.getBool(keyArg, optionsArg))
-            } catch (exception: Throwable) {
-              MessagesAsyncPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.getBool(keyArg, optionsArg))
+                } catch (exception: Throwable) {
+                  MessagesAsyncPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -404,17 +455,23 @@ interface SharedPreferencesAsyncApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.getDouble$separatedMessageChannelSuffix", codec, taskQueue)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.getDouble$separatedMessageChannelSuffix",
+                codec,
+                taskQueue)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val keyArg = args[0] as String
             val optionsArg = args[1] as SharedPreferencesPigeonOptions
-            val wrapped: List<Any?> = try {
-              listOf(api.getDouble(keyArg, optionsArg))
-            } catch (exception: Throwable) {
-              MessagesAsyncPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.getDouble(keyArg, optionsArg))
+                } catch (exception: Throwable) {
+                  MessagesAsyncPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -422,17 +479,23 @@ interface SharedPreferencesAsyncApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.getInt$separatedMessageChannelSuffix", codec, taskQueue)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.getInt$separatedMessageChannelSuffix",
+                codec,
+                taskQueue)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val keyArg = args[0] as String
             val optionsArg = args[1] as SharedPreferencesPigeonOptions
-            val wrapped: List<Any?> = try {
-              listOf(api.getInt(keyArg, optionsArg))
-            } catch (exception: Throwable) {
-              MessagesAsyncPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.getInt(keyArg, optionsArg))
+                } catch (exception: Throwable) {
+                  MessagesAsyncPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -440,17 +503,23 @@ interface SharedPreferencesAsyncApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.getPlatformEncodedStringList$separatedMessageChannelSuffix", codec, taskQueue)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.getPlatformEncodedStringList$separatedMessageChannelSuffix",
+                codec,
+                taskQueue)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val keyArg = args[0] as String
             val optionsArg = args[1] as SharedPreferencesPigeonOptions
-            val wrapped: List<Any?> = try {
-              listOf(api.getPlatformEncodedStringList(keyArg, optionsArg))
-            } catch (exception: Throwable) {
-              MessagesAsyncPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.getPlatformEncodedStringList(keyArg, optionsArg))
+                } catch (exception: Throwable) {
+                  MessagesAsyncPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -458,17 +527,23 @@ interface SharedPreferencesAsyncApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.getStringList$separatedMessageChannelSuffix", codec, taskQueue)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.getStringList$separatedMessageChannelSuffix",
+                codec,
+                taskQueue)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val keyArg = args[0] as String
             val optionsArg = args[1] as SharedPreferencesPigeonOptions
-            val wrapped: List<Any?> = try {
-              listOf(api.getStringList(keyArg, optionsArg))
-            } catch (exception: Throwable) {
-              MessagesAsyncPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.getStringList(keyArg, optionsArg))
+                } catch (exception: Throwable) {
+                  MessagesAsyncPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -476,18 +551,24 @@ interface SharedPreferencesAsyncApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.clear$separatedMessageChannelSuffix", codec, taskQueue)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.clear$separatedMessageChannelSuffix",
+                codec,
+                taskQueue)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val allowListArg = args[0] as List<String>?
             val optionsArg = args[1] as SharedPreferencesPigeonOptions
-            val wrapped: List<Any?> = try {
-              api.clear(allowListArg, optionsArg)
-              listOf(null)
-            } catch (exception: Throwable) {
-              MessagesAsyncPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  api.clear(allowListArg, optionsArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  MessagesAsyncPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -495,17 +576,23 @@ interface SharedPreferencesAsyncApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.getAll$separatedMessageChannelSuffix", codec, taskQueue)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.getAll$separatedMessageChannelSuffix",
+                codec,
+                taskQueue)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val allowListArg = args[0] as List<String>?
             val optionsArg = args[1] as SharedPreferencesPigeonOptions
-            val wrapped: List<Any?> = try {
-              listOf(api.getAll(allowListArg, optionsArg))
-            } catch (exception: Throwable) {
-              MessagesAsyncPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.getAll(allowListArg, optionsArg))
+                } catch (exception: Throwable) {
+                  MessagesAsyncPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -513,17 +600,23 @@ interface SharedPreferencesAsyncApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.getKeys$separatedMessageChannelSuffix", codec, taskQueue)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.getKeys$separatedMessageChannelSuffix",
+                codec,
+                taskQueue)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val allowListArg = args[0] as List<String>?
             val optionsArg = args[1] as SharedPreferencesPigeonOptions
-            val wrapped: List<Any?> = try {
-              listOf(api.getKeys(allowListArg, optionsArg))
-            } catch (exception: Throwable) {
-              MessagesAsyncPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.getKeys(allowListArg, optionsArg))
+                } catch (exception: Throwable) {
+                  MessagesAsyncPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {

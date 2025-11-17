@@ -17,20 +17,24 @@ PlatformException _createConnectionError(String channelName) {
     message: 'Unable to establish connection on channel: "$channelName".',
   );
 }
+
 bool _deepEquals(Object? a, Object? b) {
   if (a is List && b is List) {
     return a.length == b.length &&
-        a.indexed
-        .every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
+        a.indexed.every(
+          ((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]),
+        );
   }
   if (a is Map && b is Map) {
-    return a.length == b.length && a.entries.every((MapEntry<Object?, Object?> entry) =>
-        (b as Map<Object?, Object?>).containsKey(entry.key) &&
-        _deepEquals(entry.value, b[entry.key]));
+    return a.length == b.length &&
+        a.entries.every(
+          (MapEntry<Object?, Object?> entry) =>
+              (b as Map<Object?, Object?>).containsKey(entry.key) &&
+              _deepEquals(entry.value, b[entry.key]),
+        );
   }
   return a == b;
 }
-
 
 /// A Pigeon representation of the macOS portion of an `XTypeGroup`.
 class AllowedTypes {
@@ -47,15 +51,12 @@ class AllowedTypes {
   List<String> utis;
 
   List<Object?> _toList() {
-    return <Object?>[
-      extensions,
-      mimeTypes,
-      utis,
-    ];
+    return <Object?>[extensions, mimeTypes, utis];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static AllowedTypes decode(Object result) {
     result as List<Object?>;
@@ -80,8 +81,7 @@ class AllowedTypes {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Options for save panels.
@@ -114,7 +114,8 @@ class SavePanelOptions {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static SavePanelOptions decode(Object result) {
     result as List<Object?>;
@@ -140,8 +141,7 @@ class SavePanelOptions {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Options for open panels.
@@ -173,7 +173,8 @@ class OpenPanelOptions {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static OpenPanelOptions decode(Object result) {
     result as List<Object?>;
@@ -199,10 +200,8 @@ class OpenPanelOptions {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
-
 
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
@@ -211,13 +210,13 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
-    }    else if (value is AllowedTypes) {
+    } else if (value is AllowedTypes) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
-    }    else if (value is SavePanelOptions) {
+    } else if (value is SavePanelOptions) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    }    else if (value is OpenPanelOptions) {
+    } else if (value is OpenPanelOptions) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
     } else {
@@ -228,11 +227,11 @@ class _PigeonCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 129: 
+      case 129:
         return AllowedTypes.decode(readValue(buffer)!);
-      case 130: 
+      case 130:
         return SavePanelOptions.decode(readValue(buffer)!);
-      case 131: 
+      case 131:
         return OpenPanelOptions.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -244,9 +243,13 @@ class FileSelectorApi {
   /// Constructor for [FileSelectorApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  FileSelectorApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
-      : pigeonVar_binaryMessenger = binaryMessenger,
-        pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+  FileSelectorApi({
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) : pigeonVar_binaryMessenger = binaryMessenger,
+       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+           ? '.$messageChannelSuffix'
+           : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -258,13 +261,17 @@ class FileSelectorApi {
   ///
   /// An empty list corresponds to a cancelled selection.
   Future<List<String>> displayOpenPanel(OpenPanelOptions options) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.file_selector_macos.FileSelectorApi.displayOpenPanel$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.file_selector_macos.FileSelectorApi.displayOpenPanel$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[options],
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[options]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -289,13 +296,17 @@ class FileSelectorApi {
   ///
   /// A null return corresponds to a cancelled save.
   Future<String?> displaySavePanel(SavePanelOptions options) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.file_selector_macos.FileSelectorApi.displaySavePanel$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.file_selector_macos.FileSelectorApi.displaySavePanel$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[options],
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[options]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {

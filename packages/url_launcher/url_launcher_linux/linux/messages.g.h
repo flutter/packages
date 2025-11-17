@@ -11,11 +11,15 @@
 
 G_BEGIN_DECLS
 
-G_DECLARE_FINAL_TYPE(FulMessageCodec, ful_message_codec, FUL, MESSAGE_CODEC, FlStandardMessageCodec)
+G_DECLARE_FINAL_TYPE(FulMessageCodec, ful_message_codec, FUL, MESSAGE_CODEC,
+                     FlStandardMessageCodec)
 
-G_DECLARE_FINAL_TYPE(FulUrlLauncherApi, ful_url_launcher_api, FUL, URL_LAUNCHER_API, GObject)
+G_DECLARE_FINAL_TYPE(FulUrlLauncherApi, ful_url_launcher_api, FUL,
+                     URL_LAUNCHER_API, GObject)
 
-G_DECLARE_FINAL_TYPE(FulUrlLauncherApiCanLaunchUrlResponse, ful_url_launcher_api_can_launch_url_response, FUL, URL_LAUNCHER_API_CAN_LAUNCH_URL_RESPONSE, GObject)
+G_DECLARE_FINAL_TYPE(FulUrlLauncherApiCanLaunchUrlResponse,
+                     ful_url_launcher_api_can_launch_url_response, FUL,
+                     URL_LAUNCHER_API_CAN_LAUNCH_URL_RESPONSE, GObject)
 
 /**
  * ful_url_launcher_api_can_launch_url_response_new:
@@ -24,7 +28,8 @@ G_DECLARE_FINAL_TYPE(FulUrlLauncherApiCanLaunchUrlResponse, ful_url_launcher_api
  *
  * Returns: a new #FulUrlLauncherApiCanLaunchUrlResponse
  */
-FulUrlLauncherApiCanLaunchUrlResponse* ful_url_launcher_api_can_launch_url_response_new(gboolean return_value);
+FulUrlLauncherApiCanLaunchUrlResponse*
+ful_url_launcher_api_can_launch_url_response_new(gboolean return_value);
 
 /**
  * ful_url_launcher_api_can_launch_url_response_new_error:
@@ -36,9 +41,14 @@ FulUrlLauncherApiCanLaunchUrlResponse* ful_url_launcher_api_can_launch_url_respo
  *
  * Returns: a new #FulUrlLauncherApiCanLaunchUrlResponse
  */
-FulUrlLauncherApiCanLaunchUrlResponse* ful_url_launcher_api_can_launch_url_response_new_error(const gchar* code, const gchar* message, FlValue* details);
+FulUrlLauncherApiCanLaunchUrlResponse*
+ful_url_launcher_api_can_launch_url_response_new_error(const gchar* code,
+                                                       const gchar* message,
+                                                       FlValue* details);
 
-G_DECLARE_FINAL_TYPE(FulUrlLauncherApiLaunchUrlResponse, ful_url_launcher_api_launch_url_response, FUL, URL_LAUNCHER_API_LAUNCH_URL_RESPONSE, GObject)
+G_DECLARE_FINAL_TYPE(FulUrlLauncherApiLaunchUrlResponse,
+                     ful_url_launcher_api_launch_url_response, FUL,
+                     URL_LAUNCHER_API_LAUNCH_URL_RESPONSE, GObject)
 
 /**
  * ful_url_launcher_api_launch_url_response_new:
@@ -47,7 +57,8 @@ G_DECLARE_FINAL_TYPE(FulUrlLauncherApiLaunchUrlResponse, ful_url_launcher_api_la
  *
  * Returns: a new #FulUrlLauncherApiLaunchUrlResponse
  */
-FulUrlLauncherApiLaunchUrlResponse* ful_url_launcher_api_launch_url_response_new(const gchar* return_value);
+FulUrlLauncherApiLaunchUrlResponse*
+ful_url_launcher_api_launch_url_response_new(const gchar* return_value);
 
 /**
  * ful_url_launcher_api_launch_url_response_new_error:
@@ -59,16 +70,22 @@ FulUrlLauncherApiLaunchUrlResponse* ful_url_launcher_api_launch_url_response_new
  *
  * Returns: a new #FulUrlLauncherApiLaunchUrlResponse
  */
-FulUrlLauncherApiLaunchUrlResponse* ful_url_launcher_api_launch_url_response_new_error(const gchar* code, const gchar* message, FlValue* details);
+FulUrlLauncherApiLaunchUrlResponse*
+ful_url_launcher_api_launch_url_response_new_error(const gchar* code,
+                                                   const gchar* message,
+                                                   FlValue* details);
 
 /**
  * FulUrlLauncherApiVTable:
  *
- * Table of functions exposed by UrlLauncherApi to be implemented by the API provider.
+ * Table of functions exposed by UrlLauncherApi to be implemented by the API
+ * provider.
  */
 typedef struct {
-  FulUrlLauncherApiCanLaunchUrlResponse* (*can_launch_url)(const gchar* url, gpointer user_data);
-  FulUrlLauncherApiLaunchUrlResponse* (*launch_url)(const gchar* url, gpointer user_data);
+  FulUrlLauncherApiCanLaunchUrlResponse* (*can_launch_url)(const gchar* url,
+                                                           gpointer user_data);
+  FulUrlLauncherApiLaunchUrlResponse* (*launch_url)(const gchar* url,
+                                                    gpointer user_data);
 } FulUrlLauncherApiVTable;
 
 /**
@@ -78,11 +95,15 @@ typedef struct {
  * @suffix: (allow-none): a suffix to add to the API or %NULL for none.
  * @vtable: implementations of the methods in this API.
  * @user_data: (closure): user data to pass to the functions in @vtable.
- * @user_data_free_func: (allow-none): a function which gets called to free @user_data, or %NULL.
+ * @user_data_free_func: (allow-none): a function which gets called to free
+ * @user_data, or %NULL.
  *
  * Connects the method handlers in the UrlLauncherApi API.
  */
-void ful_url_launcher_api_set_method_handlers(FlBinaryMessenger* messenger, const gchar* suffix, const FulUrlLauncherApiVTable* vtable, gpointer user_data, GDestroyNotify user_data_free_func);
+void ful_url_launcher_api_set_method_handlers(
+    FlBinaryMessenger* messenger, const gchar* suffix,
+    const FulUrlLauncherApiVTable* vtable, gpointer user_data,
+    GDestroyNotify user_data_free_func);
 
 /**
  * ful_url_launcher_api_clear_method_handlers:
@@ -92,7 +113,8 @@ void ful_url_launcher_api_set_method_handlers(FlBinaryMessenger* messenger, cons
  *
  * Clears the method handlers in the UrlLauncherApi API.
  */
-void ful_url_launcher_api_clear_method_handlers(FlBinaryMessenger* messenger, const gchar* suffix);
+void ful_url_launcher_api_clear_method_handlers(FlBinaryMessenger* messenger,
+                                                const gchar* suffix);
 
 G_END_DECLS
 

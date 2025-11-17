@@ -21,10 +21,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -41,8 +37,7 @@ public class Messages {
     /** The error details. Must be a datatype supported by the api codec. */
     public final Object details;
 
-    public FlutterError(@NonNull String code, @Nullable String message, @Nullable Object details) 
-    {
+    public FlutterError(@NonNull String code, @Nullable String message, @Nullable Object details) {
       super(message);
       this.code = code;
       this.details = details;
@@ -61,7 +56,7 @@ public class Messages {
       errorList.add(exception.toString());
       errorList.add(exception.getClass().getSimpleName());
       errorList.add(
-        "Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
+          "Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
     }
     return errorList;
   }
@@ -73,7 +68,7 @@ public class Messages {
   /**
    * Configuration options for an in-app WebView.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class WebViewOptions {
     private @NonNull Boolean enableJavaScript;
@@ -120,10 +115,16 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       WebViewOptions that = (WebViewOptions) o;
-      return enableJavaScript.equals(that.enableJavaScript) && enableDomStorage.equals(that.enableDomStorage) && headers.equals(that.headers);
+      return enableJavaScript.equals(that.enableJavaScript)
+          && enableDomStorage.equals(that.enableDomStorage)
+          && headers.equals(that.headers);
     }
 
     @Override
@@ -190,7 +191,7 @@ public class Messages {
   /**
    * Configuration options for in-app browser views.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class BrowserOptions {
     /** Whether or not to show the webpage title. */
@@ -212,8 +213,12 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       BrowserOptions that = (BrowserOptions) o;
       return showTitle.equals(that.showTitle);
     }
@@ -289,19 +294,25 @@ public class Messages {
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface UrlLauncherApi {
     /** Returns true if the URL can definitely be launched. */
-    @NonNull 
+    @NonNull
     Boolean canLaunchUrl(@NonNull String url);
     /** Opens the URL externally, returning true if successful. */
-    @NonNull 
-    Boolean launchUrl(@NonNull String url, @NonNull Map<String, String> headers, @NonNull Boolean requireNonBrowser);
+    @NonNull
+    Boolean launchUrl(
+        @NonNull String url,
+        @NonNull Map<String, String> headers,
+        @NonNull Boolean requireNonBrowser);
     /**
-     * Opens the URL in an in-app Custom Tab or WebView, returning true if it
-     * opens successfully.
+     * Opens the URL in an in-app Custom Tab or WebView, returning true if it opens successfully.
      */
-    @NonNull 
-    Boolean openUrlInApp(@NonNull String url, @NonNull Boolean allowCustomTab, @NonNull WebViewOptions webViewOptions, @NonNull BrowserOptions browserOptions);
+    @NonNull
+    Boolean openUrlInApp(
+        @NonNull String url,
+        @NonNull Boolean allowCustomTab,
+        @NonNull WebViewOptions webViewOptions,
+        @NonNull BrowserOptions browserOptions);
 
-    @NonNull 
+    @NonNull
     Boolean supportsCustomTabs();
     /** Closes the view opened by [openUrlInSafariViewController]. */
     void closeWebView();
@@ -310,16 +321,23 @@ public class Messages {
     static @NonNull MessageCodec<Object> getCodec() {
       return PigeonCodec.INSTANCE;
     }
-    /**Sets up an instance of `UrlLauncherApi` to handle messages through the `binaryMessenger`. */
+    /** Sets up an instance of `UrlLauncherApi` to handle messages through the `binaryMessenger`. */
     static void setUp(@NonNull BinaryMessenger binaryMessenger, @Nullable UrlLauncherApi api) {
       setUp(binaryMessenger, "", api);
     }
-    static void setUp(@NonNull BinaryMessenger binaryMessenger, @NonNull String messageChannelSuffix, @Nullable UrlLauncherApi api) {
+
+    static void setUp(
+        @NonNull BinaryMessenger binaryMessenger,
+        @NonNull String messageChannelSuffix,
+        @Nullable UrlLauncherApi api) {
       messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.url_launcher_android.UrlLauncherApi.canLaunchUrl" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.url_launcher_android.UrlLauncherApi.canLaunchUrl"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -329,8 +347,7 @@ public class Messages {
                 try {
                   Boolean output = api.canLaunchUrl(urlArg);
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
@@ -342,7 +359,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.url_launcher_android.UrlLauncherApi.launchUrl" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.url_launcher_android.UrlLauncherApi.launchUrl"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -354,8 +374,7 @@ public class Messages {
                 try {
                   Boolean output = api.launchUrl(urlArg, headersArg, requireNonBrowserArg);
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
@@ -367,7 +386,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.url_launcher_android.UrlLauncherApi.openUrlInApp" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.url_launcher_android.UrlLauncherApi.openUrlInApp"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -378,10 +400,11 @@ public class Messages {
                 WebViewOptions webViewOptionsArg = (WebViewOptions) args.get(2);
                 BrowserOptions browserOptionsArg = (BrowserOptions) args.get(3);
                 try {
-                  Boolean output = api.openUrlInApp(urlArg, allowCustomTabArg, webViewOptionsArg, browserOptionsArg);
+                  Boolean output =
+                      api.openUrlInApp(
+                          urlArg, allowCustomTabArg, webViewOptionsArg, browserOptionsArg);
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
@@ -393,7 +416,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.url_launcher_android.UrlLauncherApi.supportsCustomTabs" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.url_launcher_android.UrlLauncherApi.supportsCustomTabs"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -401,8 +427,7 @@ public class Messages {
                 try {
                   Boolean output = api.supportsCustomTabs();
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
@@ -414,7 +439,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.url_launcher_android.UrlLauncherApi.closeWebView" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.url_launcher_android.UrlLauncherApi.closeWebView"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -422,8 +450,7 @@ public class Messages {
                 try {
                   api.closeWebView();
                   wrapped.add(0, null);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);

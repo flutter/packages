@@ -67,7 +67,6 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
   return value as! T?
 }
 
-
 /// Possible outcomes of launching a URL.
 enum LaunchResult: Int {
   /// The URL was successfully launched (or could be, for `canLaunchUrl`).
@@ -139,16 +138,18 @@ class MessagesPigeonCodec: FlutterStandardMessageCodec, @unchecked Sendable {
   static let shared = MessagesPigeonCodec(readerWriter: MessagesPigeonCodecReaderWriter())
 }
 
-
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
 protocol UrlLauncherApi {
   /// Checks whether a URL can be loaded.
   func canLaunchUrl(url: String) throws -> LaunchResult
   /// Opens the URL externally, returning the status of launching it.
-  func launchUrl(url: String, universalLinksOnly: Bool, completion: @escaping (Result<LaunchResult, Error>) -> Void)
+  func launchUrl(
+    url: String, universalLinksOnly: Bool,
+    completion: @escaping (Result<LaunchResult, Error>) -> Void)
   /// Opens the URL in an in-app SFSafariViewController, returning the results
   /// of loading it.
-  func openUrlInSafariViewController(url: String, completion: @escaping (Result<InAppLoadResult, Error>) -> Void)
+  func openUrlInSafariViewController(
+    url: String, completion: @escaping (Result<InAppLoadResult, Error>) -> Void)
   /// Closes the view controller opened by [openUrlInSafariViewController].
   func closeSafariViewController() throws
 }
@@ -157,10 +158,14 @@ protocol UrlLauncherApi {
 class UrlLauncherApiSetup {
   static var codec: FlutterStandardMessageCodec { MessagesPigeonCodec.shared }
   /// Sets up an instance of `UrlLauncherApi` to handle messages through the `binaryMessenger`.
-  static func setUp(binaryMessenger: FlutterBinaryMessenger, api: UrlLauncherApi?, messageChannelSuffix: String = "") {
+  static func setUp(
+    binaryMessenger: FlutterBinaryMessenger, api: UrlLauncherApi?, messageChannelSuffix: String = ""
+  ) {
     let channelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""
     /// Checks whether a URL can be loaded.
-    let canLaunchUrlChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.url_launcher_ios.UrlLauncherApi.canLaunchUrl\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    let canLaunchUrlChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.url_launcher_ios.UrlLauncherApi.canLaunchUrl\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       canLaunchUrlChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -176,7 +181,9 @@ class UrlLauncherApiSetup {
       canLaunchUrlChannel.setMessageHandler(nil)
     }
     /// Opens the URL externally, returning the status of launching it.
-    let launchUrlChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.url_launcher_ios.UrlLauncherApi.launchUrl\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    let launchUrlChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.url_launcher_ios.UrlLauncherApi.launchUrl\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       launchUrlChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -196,7 +203,10 @@ class UrlLauncherApiSetup {
     }
     /// Opens the URL in an in-app SFSafariViewController, returning the results
     /// of loading it.
-    let openUrlInSafariViewControllerChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.url_launcher_ios.UrlLauncherApi.openUrlInSafariViewController\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    let openUrlInSafariViewControllerChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.url_launcher_ios.UrlLauncherApi.openUrlInSafariViewController\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       openUrlInSafariViewControllerChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -214,7 +224,10 @@ class UrlLauncherApiSetup {
       openUrlInSafariViewControllerChannel.setMessageHandler(nil)
     }
     /// Closes the view controller opened by [openUrlInSafariViewController].
-    let closeSafariViewControllerChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.url_launcher_ios.UrlLauncherApi.closeSafariViewController\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    let closeSafariViewControllerChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.url_launcher_ios.UrlLauncherApi.closeSafariViewController\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       closeSafariViewControllerChannel.setMessageHandler { _, reply in
         do {

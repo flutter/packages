@@ -5,70 +5,61 @@
 // See also: https://pub.dev/packages/pigeon
 @file:Suppress("UNCHECKED_CAST", "ArrayInDataClass")
 
-
-import android.util.Log
-import io.flutter.plugin.common.BasicMessageChannel
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.EventChannel
-import io.flutter.plugin.common.MessageCodec
-import io.flutter.plugin.common.StandardMethodCodec
 import io.flutter.plugin.common.StandardMessageCodec
+import io.flutter.plugin.common.StandardMethodCodec
 import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
+
 private object EventChannelMessagesPigeonUtils {
   fun deepEquals(a: Any?, b: Any?): Boolean {
     if (a is ByteArray && b is ByteArray) {
-        return a.contentEquals(b)
+      return a.contentEquals(b)
     }
     if (a is IntArray && b is IntArray) {
-        return a.contentEquals(b)
+      return a.contentEquals(b)
     }
     if (a is LongArray && b is LongArray) {
-        return a.contentEquals(b)
+      return a.contentEquals(b)
     }
     if (a is DoubleArray && b is DoubleArray) {
-        return a.contentEquals(b)
+      return a.contentEquals(b)
     }
     if (a is Array<*> && b is Array<*>) {
-      return a.size == b.size &&
-          a.indices.all{ deepEquals(a[it], b[it]) }
+      return a.size == b.size && a.indices.all { deepEquals(a[it], b[it]) }
     }
     if (a is List<*> && b is List<*>) {
-      return a.size == b.size &&
-          a.indices.all{ deepEquals(a[it], b[it]) }
+      return a.size == b.size && a.indices.all { deepEquals(a[it], b[it]) }
     }
     if (a is Map<*, *> && b is Map<*, *>) {
-      return a.size == b.size && a.all {
-          (b as Map<Any?, Any?>).contains(it.key) &&
-          deepEquals(it.value, b[it.key])
-      }
+      return a.size == b.size &&
+          a.all { (b as Map<Any?, Any?>).contains(it.key) && deepEquals(it.value, b[it.key]) }
     }
     return a == b
   }
-      
 }
 
 /**
- * Generated class from Pigeon that represents data sent in messages.
- * This class should not be extended by any user class outside of the generated file.
+ * Generated class from Pigeon that represents data sent in messages. This class should not be
+ * extended by any user class outside of the generated file.
  */
-sealed class PlatformEvent 
+sealed class PlatformEvent
 /** Generated class from Pigeon that represents data sent in messages. */
-data class IntEvent (
-  val data: Long
-) : PlatformEvent()
- {
+data class IntEvent(val data: Long) : PlatformEvent() {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): IntEvent {
       val data = pigeonVar_list[0] as Long
       return IntEvent(data)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      data,
+        data,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other !is IntEvent) {
       return false
@@ -76,27 +67,27 @@ data class IntEvent (
     if (this === other) {
       return true
     }
-    return EventChannelMessagesPigeonUtils.deepEquals(toList(), other.toList())  }
+    return EventChannelMessagesPigeonUtils.deepEquals(toList(), other.toList())
+  }
 
   override fun hashCode(): Int = toList().hashCode()
 }
 
 /** Generated class from Pigeon that represents data sent in messages. */
-data class StringEvent (
-  val data: String
-) : PlatformEvent()
- {
+data class StringEvent(val data: String) : PlatformEvent() {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): StringEvent {
       val data = pigeonVar_list[0] as String
       return StringEvent(data)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      data,
+        data,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other !is StringEvent) {
       return false
@@ -104,27 +95,26 @@ data class StringEvent (
     if (this === other) {
       return true
     }
-    return EventChannelMessagesPigeonUtils.deepEquals(toList(), other.toList())  }
+    return EventChannelMessagesPigeonUtils.deepEquals(toList(), other.toList())
+  }
 
   override fun hashCode(): Int = toList().hashCode()
 }
+
 private open class EventChannelMessagesPigeonCodec : StandardMessageCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
     return when (type) {
       129.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          IntEvent.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { IntEvent.fromList(it) }
       }
       130.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          StringEvent.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { StringEvent.fromList(it) }
       }
       else -> super.readValueOfType(type, buffer)
     }
   }
-  override fun writeValue(stream: ByteArrayOutputStream, value: Any?)   {
+
+  override fun writeValue(stream: ByteArrayOutputStream, value: Any?) {
     when (value) {
       is IntEvent -> {
         stream.write(129)
@@ -140,7 +130,6 @@ private open class EventChannelMessagesPigeonCodec : StandardMessageCodec() {
 }
 
 val EventChannelMessagesPigeonMethodCodec = StandardMethodCodec(EventChannelMessagesPigeonCodec())
-
 
 private class EventChannelMessagesPigeonStreamHandler<T>(
     val wrapper: EventChannelMessagesPigeonEventChannelWrapper<T>
@@ -177,17 +166,24 @@ class PigeonEventSink<T>(private val sink: EventChannel.EventSink) {
     sink.endOfStream()
   }
 }
-      
-abstract class StreamEventsStreamHandler : EventChannelMessagesPigeonEventChannelWrapper<PlatformEvent> {
+
+abstract class StreamEventsStreamHandler :
+    EventChannelMessagesPigeonEventChannelWrapper<PlatformEvent> {
   companion object {
-    fun register(messenger: BinaryMessenger, streamHandler: StreamEventsStreamHandler, instanceName: String = "") {
-      var channelName: String = "dev.flutter.pigeon.pigeon_example_package.EventChannelMethods.streamEvents"
+    fun register(
+        messenger: BinaryMessenger,
+        streamHandler: StreamEventsStreamHandler,
+        instanceName: String = ""
+    ) {
+      var channelName: String =
+          "dev.flutter.pigeon.pigeon_example_package.EventChannelMethods.streamEvents"
       if (instanceName.isNotEmpty()) {
         channelName += ".$instanceName"
       }
-      val internalStreamHandler = EventChannelMessagesPigeonStreamHandler<PlatformEvent>(streamHandler)
-      EventChannel(messenger, channelName, EventChannelMessagesPigeonMethodCodec).setStreamHandler(internalStreamHandler)
+      val internalStreamHandler =
+          EventChannelMessagesPigeonStreamHandler<PlatformEvent>(streamHandler)
+      EventChannel(messenger, channelName, EventChannelMessagesPigeonMethodCodec)
+          .setStreamHandler(internalStreamHandler)
     }
   }
 }
-      

@@ -17,57 +17,47 @@ PlatformException _createConnectionError(String channelName) {
     message: 'Unable to establish connection on channel: "$channelName".',
   );
 }
+
 bool _deepEquals(Object? a, Object? b) {
   if (a is List && b is List) {
     return a.length == b.length &&
-        a.indexed
-        .every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
+        a.indexed.every(
+          ((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]),
+        );
   }
   if (a is Map && b is Map) {
-    return a.length == b.length && a.entries.every((MapEntry<Object?, Object?> entry) =>
-        (b as Map<Object?, Object?>).containsKey(entry.key) &&
-        _deepEquals(entry.value, b[entry.key]));
+    return a.length == b.length &&
+        a.entries.every(
+          (MapEntry<Object?, Object?> entry) =>
+              (b as Map<Object?, Object?>).containsKey(entry.key) &&
+              _deepEquals(entry.value, b[entry.key]),
+        );
   }
   return a == b;
 }
 
+enum SourceCamera { rear, front }
 
-enum SourceCamera {
-  rear,
-  front,
-}
-
-enum SourceType {
-  camera,
-  gallery,
-}
+enum SourceType { camera, gallery }
 
 class MaxSize {
-  MaxSize({
-    this.width,
-    this.height,
-  });
+  MaxSize({this.width, this.height});
 
   double? width;
 
   double? height;
 
   List<Object?> _toList() {
-    return <Object?>[
-      width,
-      height,
-    ];
+    return <Object?>[width, height];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static MaxSize decode(Object result) {
     result as List<Object?>;
-    return MaxSize(
-      width: result[0] as double?,
-      height: result[1] as double?,
-    );
+    return MaxSize(width: result[0] as double?, height: result[1] as double?);
   }
 
   @override
@@ -84,8 +74,7 @@ class MaxSize {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class MediaSelectionOptions {
@@ -118,7 +107,8 @@ class MediaSelectionOptions {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static MediaSelectionOptions decode(Object result) {
     result as List<Object?>;
@@ -145,29 +135,23 @@ class MediaSelectionOptions {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class SourceSpecification {
-  SourceSpecification({
-    required this.type,
-    required this.camera,
-  });
+  SourceSpecification({required this.type, required this.camera});
 
   SourceType type;
 
   SourceCamera camera;
 
   List<Object?> _toList() {
-    return <Object?>[
-      type,
-      camera,
-    ];
+    return <Object?>[type, camera];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static SourceSpecification decode(Object result) {
     result as List<Object?>;
@@ -191,10 +175,8 @@ class SourceSpecification {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
-
 
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
@@ -203,19 +185,19 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
-    }    else if (value is SourceCamera) {
+    } else if (value is SourceCamera) {
       buffer.putUint8(129);
       writeValue(buffer, value.index);
-    }    else if (value is SourceType) {
+    } else if (value is SourceType) {
       buffer.putUint8(130);
       writeValue(buffer, value.index);
-    }    else if (value is MaxSize) {
+    } else if (value is MaxSize) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
-    }    else if (value is MediaSelectionOptions) {
+    } else if (value is MediaSelectionOptions) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
-    }    else if (value is SourceSpecification) {
+    } else if (value is SourceSpecification) {
       buffer.putUint8(133);
       writeValue(buffer, value.encode());
     } else {
@@ -226,17 +208,17 @@ class _PigeonCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 129: 
+      case 129:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : SourceCamera.values[value];
-      case 130: 
+      case 130:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : SourceType.values[value];
-      case 131: 
+      case 131:
         return MaxSize.decode(readValue(buffer)!);
-      case 132: 
+      case 132:
         return MediaSelectionOptions.decode(readValue(buffer)!);
-      case 133: 
+      case 133:
         return SourceSpecification.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -248,23 +230,36 @@ class ImagePickerApi {
   /// Constructor for [ImagePickerApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  ImagePickerApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
-      : pigeonVar_binaryMessenger = binaryMessenger,
-        pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+  ImagePickerApi({
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) : pigeonVar_binaryMessenger = binaryMessenger,
+       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+           ? '.$messageChannelSuffix'
+           : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
 
   final String pigeonVar_messageChannelSuffix;
 
-  Future<String?> pickImage(SourceSpecification source, MaxSize maxSize, int? imageQuality, bool requestFullMetadata) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.image_picker_ios.ImagePickerApi.pickImage$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+  Future<String?> pickImage(
+    SourceSpecification source,
+    MaxSize maxSize,
+    int? imageQuality,
+    bool requestFullMetadata,
+  ) async {
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.image_picker_ios.ImagePickerApi.pickImage$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[source, maxSize, imageQuality, requestFullMetadata],
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[source, maxSize, imageQuality, requestFullMetadata]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -280,14 +275,23 @@ class ImagePickerApi {
     }
   }
 
-  Future<List<String>> pickMultiImage(MaxSize maxSize, int? imageQuality, bool requestFullMetadata, int? limit) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.image_picker_ios.ImagePickerApi.pickMultiImage$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+  Future<List<String>> pickMultiImage(
+    MaxSize maxSize,
+    int? imageQuality,
+    bool requestFullMetadata,
+    int? limit,
+  ) async {
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.image_picker_ios.ImagePickerApi.pickMultiImage$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[maxSize, imageQuality, requestFullMetadata, limit],
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[maxSize, imageQuality, requestFullMetadata, limit]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -308,14 +312,21 @@ class ImagePickerApi {
     }
   }
 
-  Future<String?> pickVideo(SourceSpecification source, int? maxDurationSeconds) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.image_picker_ios.ImagePickerApi.pickVideo$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+  Future<String?> pickVideo(
+    SourceSpecification source,
+    int? maxDurationSeconds,
+  ) async {
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.image_picker_ios.ImagePickerApi.pickVideo$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[source, maxDurationSeconds],
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[source, maxDurationSeconds]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -331,14 +342,21 @@ class ImagePickerApi {
     }
   }
 
-  Future<List<String>> pickMultiVideo(int? maxDurationSeconds, int? limit) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.image_picker_ios.ImagePickerApi.pickMultiVideo$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+  Future<List<String>> pickMultiVideo(
+    int? maxDurationSeconds,
+    int? limit,
+  ) async {
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.image_picker_ios.ImagePickerApi.pickMultiVideo$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[maxDurationSeconds, limit],
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[maxDurationSeconds, limit]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -360,14 +378,20 @@ class ImagePickerApi {
   }
 
   /// Selects images and videos and returns their paths.
-  Future<List<String>> pickMedia(MediaSelectionOptions mediaSelectionOptions) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.image_picker_ios.ImagePickerApi.pickMedia$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+  Future<List<String>> pickMedia(
+    MediaSelectionOptions mediaSelectionOptions,
+  ) async {
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.image_picker_ios.ImagePickerApi.pickMedia$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[mediaSelectionOptions],
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[mediaSelectionOptions]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {

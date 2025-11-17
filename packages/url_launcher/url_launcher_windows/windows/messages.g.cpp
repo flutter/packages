@@ -31,90 +31,102 @@ FlutterError CreateConnectionError(const std::string channel_name) {
       EncodableValue(""));
 }
 
-
 PigeonInternalCodecSerializer::PigeonInternalCodecSerializer() {}
 
 EncodableValue PigeonInternalCodecSerializer::ReadValueOfType(
-  uint8_t type,
-  flutter::ByteStreamReader* stream) const {
+    uint8_t type, flutter::ByteStreamReader* stream) const {
   return flutter::StandardCodecSerializer::ReadValueOfType(type, stream);
 }
 
 void PigeonInternalCodecSerializer::WriteValue(
-  const EncodableValue& value,
-  flutter::ByteStreamWriter* stream) const {
+    const EncodableValue& value, flutter::ByteStreamWriter* stream) const {
   flutter::StandardCodecSerializer::WriteValue(value, stream);
 }
 
 /// The codec used by UrlLauncherApi.
 const flutter::StandardMessageCodec& UrlLauncherApi::GetCodec() {
-  return flutter::StandardMessageCodec::GetInstance(&PigeonInternalCodecSerializer::GetInstance());
+  return flutter::StandardMessageCodec::GetInstance(
+      &PigeonInternalCodecSerializer::GetInstance());
 }
 
-// Sets up an instance of `UrlLauncherApi` to handle messages through the `binary_messenger`.
-void UrlLauncherApi::SetUp(
-  flutter::BinaryMessenger* binary_messenger,
-  UrlLauncherApi* api) {
+// Sets up an instance of `UrlLauncherApi` to handle messages through the
+// `binary_messenger`.
+void UrlLauncherApi::SetUp(flutter::BinaryMessenger* binary_messenger,
+                           UrlLauncherApi* api) {
   UrlLauncherApi::SetUp(binary_messenger, api, "");
 }
 
-void UrlLauncherApi::SetUp(
-  flutter::BinaryMessenger* binary_messenger,
-  UrlLauncherApi* api,
-  const std::string& message_channel_suffix) {
-  const std::string prepended_suffix = message_channel_suffix.length() > 0 ? std::string(".") + message_channel_suffix : "";
+void UrlLauncherApi::SetUp(flutter::BinaryMessenger* binary_messenger,
+                           UrlLauncherApi* api,
+                           const std::string& message_channel_suffix) {
+  const std::string prepended_suffix =
+      message_channel_suffix.length() > 0
+          ? std::string(".") + message_channel_suffix
+          : "";
   {
-    BasicMessageChannel<> channel(binary_messenger, "dev.flutter.pigeon.url_launcher_windows.UrlLauncherApi.canLaunchUrl" + prepended_suffix, &GetCodec());
+    BasicMessageChannel<> channel(
+        binary_messenger,
+        "dev.flutter.pigeon.url_launcher_windows.UrlLauncherApi.canLaunchUrl" +
+            prepended_suffix,
+        &GetCodec());
     if (api != nullptr) {
-      channel.SetMessageHandler([api](const EncodableValue& message, const flutter::MessageReply<EncodableValue>& reply) {
-        try {
-          const auto& args = std::get<EncodableList>(message);
-          const auto& encodable_url_arg = args.at(0);
-          if (encodable_url_arg.IsNull()) {
-            reply(WrapError("url_arg unexpectedly null."));
-            return;
-          }
-          const auto& url_arg = std::get<std::string>(encodable_url_arg);
-          ErrorOr<bool> output = api->CanLaunchUrl(url_arg);
-          if (output.has_error()) {
-            reply(WrapError(output.error()));
-            return;
-          }
-          EncodableList wrapped;
-          wrapped.push_back(EncodableValue(std::move(output).TakeValue()));
-          reply(EncodableValue(std::move(wrapped)));
-        } catch (const std::exception& exception) {
-          reply(WrapError(exception.what()));
-        }
-      });
+      channel.SetMessageHandler(
+          [api](const EncodableValue& message,
+                const flutter::MessageReply<EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<EncodableList>(message);
+              const auto& encodable_url_arg = args.at(0);
+              if (encodable_url_arg.IsNull()) {
+                reply(WrapError("url_arg unexpectedly null."));
+                return;
+              }
+              const auto& url_arg = std::get<std::string>(encodable_url_arg);
+              ErrorOr<bool> output = api->CanLaunchUrl(url_arg);
+              if (output.has_error()) {
+                reply(WrapError(output.error()));
+                return;
+              }
+              EncodableList wrapped;
+              wrapped.push_back(EncodableValue(std::move(output).TakeValue()));
+              reply(EncodableValue(std::move(wrapped)));
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
     } else {
       channel.SetMessageHandler(nullptr);
     }
   }
   {
-    BasicMessageChannel<> channel(binary_messenger, "dev.flutter.pigeon.url_launcher_windows.UrlLauncherApi.launchUrl" + prepended_suffix, &GetCodec());
+    BasicMessageChannel<> channel(
+        binary_messenger,
+        "dev.flutter.pigeon.url_launcher_windows.UrlLauncherApi.launchUrl" +
+            prepended_suffix,
+        &GetCodec());
     if (api != nullptr) {
-      channel.SetMessageHandler([api](const EncodableValue& message, const flutter::MessageReply<EncodableValue>& reply) {
-        try {
-          const auto& args = std::get<EncodableList>(message);
-          const auto& encodable_url_arg = args.at(0);
-          if (encodable_url_arg.IsNull()) {
-            reply(WrapError("url_arg unexpectedly null."));
-            return;
-          }
-          const auto& url_arg = std::get<std::string>(encodable_url_arg);
-          ErrorOr<bool> output = api->LaunchUrl(url_arg);
-          if (output.has_error()) {
-            reply(WrapError(output.error()));
-            return;
-          }
-          EncodableList wrapped;
-          wrapped.push_back(EncodableValue(std::move(output).TakeValue()));
-          reply(EncodableValue(std::move(wrapped)));
-        } catch (const std::exception& exception) {
-          reply(WrapError(exception.what()));
-        }
-      });
+      channel.SetMessageHandler(
+          [api](const EncodableValue& message,
+                const flutter::MessageReply<EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<EncodableList>(message);
+              const auto& encodable_url_arg = args.at(0);
+              if (encodable_url_arg.IsNull()) {
+                reply(WrapError("url_arg unexpectedly null."));
+                return;
+              }
+              const auto& url_arg = std::get<std::string>(encodable_url_arg);
+              ErrorOr<bool> output = api->LaunchUrl(url_arg);
+              if (output.has_error()) {
+                reply(WrapError(output.error()));
+                return;
+              }
+              EncodableList wrapped;
+              wrapped.push_back(EncodableValue(std::move(output).TakeValue()));
+              reply(EncodableValue(std::move(wrapped)));
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
     } else {
       channel.SetMessageHandler(nullptr);
     }
@@ -122,19 +134,15 @@ void UrlLauncherApi::SetUp(
 }
 
 EncodableValue UrlLauncherApi::WrapError(std::string_view error_message) {
-  return EncodableValue(EncodableList{
-    EncodableValue(std::string(error_message)),
-    EncodableValue("Error"),
-    EncodableValue()
-  });
+  return EncodableValue(
+      EncodableList{EncodableValue(std::string(error_message)),
+                    EncodableValue("Error"), EncodableValue()});
 }
 
 EncodableValue UrlLauncherApi::WrapError(const FlutterError& error) {
-  return EncodableValue(EncodableList{
-    EncodableValue(error.code()),
-    EncodableValue(error.message()),
-    error.details()
-  });
+  return EncodableValue(EncodableList{EncodableValue(error.code()),
+                                      EncodableValue(error.message()),
+                                      error.details()});
 }
 
 }  // namespace url_launcher_windows

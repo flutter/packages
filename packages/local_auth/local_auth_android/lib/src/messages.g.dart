@@ -17,68 +17,85 @@ PlatformException _createConnectionError(String channelName) {
     message: 'Unable to establish connection on channel: "$channelName".',
   );
 }
+
 bool _deepEquals(Object? a, Object? b) {
   if (a is List && b is List) {
     return a.length == b.length &&
-        a.indexed
-        .every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
+        a.indexed.every(
+          ((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]),
+        );
   }
   if (a is Map && b is Map) {
-    return a.length == b.length && a.entries.every((MapEntry<Object?, Object?> entry) =>
-        (b as Map<Object?, Object?>).containsKey(entry.key) &&
-        _deepEquals(entry.value, b[entry.key]));
+    return a.length == b.length &&
+        a.entries.every(
+          (MapEntry<Object?, Object?> entry) =>
+              (b as Map<Object?, Object?>).containsKey(entry.key) &&
+              _deepEquals(entry.value, b[entry.key]),
+        );
   }
   return a == b;
 }
-
 
 /// Possible outcomes of an authentication attempt.
 enum AuthResultCode {
   /// The user authenticated successfully.
   success,
+
   /// The user pressed the negative button, which corresponds to
   /// [AuthStrings.cancelButton].
   negativeButton,
+
   /// The user canceled authentication without pressing the negative button.
   ///
   /// This may be triggered by a swipe or a back button, for example.
   userCanceled,
+
   /// Authentication was caneceled by the system.
   systemCanceled,
+
   /// Authentication timed out.
   timeout,
+
   /// An authentication was already in progress.
   alreadyInProgress,
+
   /// There is no foreground activity.
   noActivity,
+
   /// The foreground activity is not a FragmentActivity.
   notFragmentActivity,
+
   /// The device does not have any credentials available.
   noCredentials,
+
   /// No biometric hardware is present.
   noHardware,
+
   /// The biometric is temporarily unavailable.
   hardwareUnavailable,
+
   /// No biometrics are enrolled.
   notEnrolled,
+
   /// The user is locked out temporarily due to too many failed attempts.
   lockedOutTemporarily,
+
   /// The user is locked out until they log in another way due to too many
   /// failed attempts.
   lockedOutPermanently,
+
   /// The device does not have enough storage to complete authentication.
   noSpace,
+
   /// The hardware is unavailable until a security update is performed.
   securityUpdateRequired,
+
   /// Some unrecognized error case was encountered
   unknownError,
 }
 
 /// Pigeon equivalent of the subset of BiometricType used by Android.
-enum AuthClassification {
-  weak,
-  strong,
-}
+enum AuthClassification { weak, strong }
 
 /// Pigeon version of AndroidAuthStrings, plus the authorization reason.
 ///
@@ -100,16 +117,12 @@ class AuthStrings {
   String signInTitle;
 
   List<Object?> _toList() {
-    return <Object?>[
-      reason,
-      signInHint,
-      cancelButton,
-      signInTitle,
-    ];
+    return <Object?>[reason, signInHint, cancelButton, signInTitle];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static AuthStrings decode(Object result) {
     result as List<Object?>;
@@ -135,16 +148,12 @@ class AuthStrings {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// The results of an authentication request.
 class AuthResult {
-  AuthResult({
-    required this.code,
-    this.errorMessage,
-  });
+  AuthResult({required this.code, this.errorMessage});
 
   /// The specific result returned from the SDK.
   AuthResultCode code;
@@ -153,14 +162,12 @@ class AuthResult {
   String? errorMessage;
 
   List<Object?> _toList() {
-    return <Object?>[
-      code,
-      errorMessage,
-    ];
+    return <Object?>[code, errorMessage];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static AuthResult decode(Object result) {
     result as List<Object?>;
@@ -184,8 +191,7 @@ class AuthResult {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class AuthOptions {
@@ -202,15 +208,12 @@ class AuthOptions {
   bool sticky;
 
   List<Object?> _toList() {
-    return <Object?>[
-      biometricOnly,
-      sensitiveTransaction,
-      sticky,
-    ];
+    return <Object?>[biometricOnly, sensitiveTransaction, sticky];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static AuthOptions decode(Object result) {
     result as List<Object?>;
@@ -235,10 +238,8 @@ class AuthOptions {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
-
 
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
@@ -247,19 +248,19 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
-    }    else if (value is AuthResultCode) {
+    } else if (value is AuthResultCode) {
       buffer.putUint8(129);
       writeValue(buffer, value.index);
-    }    else if (value is AuthClassification) {
+    } else if (value is AuthClassification) {
       buffer.putUint8(130);
       writeValue(buffer, value.index);
-    }    else if (value is AuthStrings) {
+    } else if (value is AuthStrings) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
-    }    else if (value is AuthResult) {
+    } else if (value is AuthResult) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
-    }    else if (value is AuthOptions) {
+    } else if (value is AuthOptions) {
       buffer.putUint8(133);
       writeValue(buffer, value.encode());
     } else {
@@ -270,17 +271,17 @@ class _PigeonCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 129: 
+      case 129:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : AuthResultCode.values[value];
-      case 130: 
+      case 130:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : AuthClassification.values[value];
-      case 131: 
+      case 131:
         return AuthStrings.decode(readValue(buffer)!);
-      case 132: 
+      case 132:
         return AuthResult.decode(readValue(buffer)!);
-      case 133: 
+      case 133:
         return AuthOptions.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -292,9 +293,13 @@ class LocalAuthApi {
   /// Constructor for [LocalAuthApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  LocalAuthApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
-      : pigeonVar_binaryMessenger = binaryMessenger,
-        pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+  LocalAuthApi({
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) : pigeonVar_binaryMessenger = binaryMessenger,
+       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+           ? '.$messageChannelSuffix'
+           : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -303,12 +308,14 @@ class LocalAuthApi {
 
   /// Returns true if this device supports authentication.
   Future<bool> isDeviceSupported() async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.local_auth_android.LocalAuthApi.isDeviceSupported$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.local_auth_android.LocalAuthApi.isDeviceSupported$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
@@ -333,12 +340,14 @@ class LocalAuthApi {
   /// Returns true if this device can support biometric authentication, whether
   /// any biometrics are enrolled or not.
   Future<bool> deviceCanSupportBiometrics() async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.local_auth_android.LocalAuthApi.deviceCanSupportBiometrics$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.local_auth_android.LocalAuthApi.deviceCanSupportBiometrics$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
@@ -365,12 +374,14 @@ class LocalAuthApi {
   /// Returns true only if authentication was in progress, and was successfully
   /// cancelled.
   Future<bool> stopAuthentication() async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.local_auth_android.LocalAuthApi.stopAuthentication$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.local_auth_android.LocalAuthApi.stopAuthentication$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
@@ -398,12 +409,14 @@ class LocalAuthApi {
   /// Returns null if there is no activity, in which case the enrolled
   /// biometrics can't be determined.
   Future<List<AuthClassification>?> getEnrolledBiometrics() async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.local_auth_android.LocalAuthApi.getEnrolledBiometrics$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.local_auth_android.LocalAuthApi.getEnrolledBiometrics$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
@@ -416,20 +429,28 @@ class LocalAuthApi {
         details: pigeonVar_replyList[2],
       );
     } else {
-      return (pigeonVar_replyList[0] as List<Object?>?)?.cast<AuthClassification>();
+      return (pigeonVar_replyList[0] as List<Object?>?)
+          ?.cast<AuthClassification>();
     }
   }
 
   /// Attempts to authenticate the user with the provided [options], and using
   /// [strings] for any UI.
-  Future<AuthResult> authenticate(AuthOptions options, AuthStrings strings) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.local_auth_android.LocalAuthApi.authenticate$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+  Future<AuthResult> authenticate(
+    AuthOptions options,
+    AuthStrings strings,
+  ) async {
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.local_auth_android.LocalAuthApi.authenticate$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[options, strings],
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[options, strings]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {

@@ -110,12 +110,12 @@ func deepEqualsmessages(_ lhs: Any?, _ rhs: Any?) -> Bool {
 
 func deepHashmessages(value: Any?, hasher: inout Hasher) {
   if let valueList = value as? [AnyHashable] {
-     for item in valueList { deepHashmessages(value: item, hasher: &hasher) }
-     return
+    for item in valueList { deepHashmessages(value: item, hasher: &hasher) }
+    return
   }
 
   if let valueDict = value as? [AnyHashable: AnyHashable] {
-    for key in valueDict.keys { 
+    for key in valueDict.keys {
       hasher.combine(key)
       deepHashmessages(value: valueDict[key]!, hasher: &hasher)
     }
@@ -129,12 +129,9 @@ func deepHashmessages(value: Any?, hasher: inout Hasher) {
   return hasher.combine(String(describing: value))
 }
 
-    
-
 /// Generated class from Pigeon that represents data sent in messages.
 struct SharedPreferencesPigeonOptions: Hashable {
   var suiteName: String? = nil
-
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> SharedPreferencesPigeonOptions? {
@@ -149,8 +146,10 @@ struct SharedPreferencesPigeonOptions: Hashable {
       suiteName
     ]
   }
-  static func == (lhs: SharedPreferencesPigeonOptions, rhs: SharedPreferencesPigeonOptions) -> Bool {
-    return deepEqualsmessages(lhs.toList(), rhs.toList())  }
+  static func == (lhs: SharedPreferencesPigeonOptions, rhs: SharedPreferencesPigeonOptions) -> Bool
+  {
+    return deepEqualsmessages(lhs.toList(), rhs.toList())
+  }
   func hash(into hasher: inout Hasher) {
     deepHashmessages(value: toList(), hasher: &hasher)
   }
@@ -206,9 +205,15 @@ protocol LegacyUserDefaultsApi {
 class LegacyUserDefaultsApiSetup {
   static var codec: FlutterStandardMessageCodec { MessagesPigeonCodec.shared }
   /// Sets up an instance of `LegacyUserDefaultsApi` to handle messages through the `binaryMessenger`.
-  static func setUp(binaryMessenger: FlutterBinaryMessenger, api: LegacyUserDefaultsApi?, messageChannelSuffix: String = "") {
+  static func setUp(
+    binaryMessenger: FlutterBinaryMessenger, api: LegacyUserDefaultsApi?,
+    messageChannelSuffix: String = ""
+  ) {
     let channelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""
-    let removeChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.shared_preferences_foundation.LegacyUserDefaultsApi.remove\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    let removeChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.shared_preferences_foundation.LegacyUserDefaultsApi.remove\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       removeChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -223,7 +228,10 @@ class LegacyUserDefaultsApiSetup {
     } else {
       removeChannel.setMessageHandler(nil)
     }
-    let setBoolChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.shared_preferences_foundation.LegacyUserDefaultsApi.setBool\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    let setBoolChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.shared_preferences_foundation.LegacyUserDefaultsApi.setBool\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       setBoolChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -239,7 +247,10 @@ class LegacyUserDefaultsApiSetup {
     } else {
       setBoolChannel.setMessageHandler(nil)
     }
-    let setDoubleChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.shared_preferences_foundation.LegacyUserDefaultsApi.setDouble\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    let setDoubleChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.shared_preferences_foundation.LegacyUserDefaultsApi.setDouble\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       setDoubleChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -255,7 +266,10 @@ class LegacyUserDefaultsApiSetup {
     } else {
       setDoubleChannel.setMessageHandler(nil)
     }
-    let setValueChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.shared_preferences_foundation.LegacyUserDefaultsApi.setValue\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    let setValueChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.shared_preferences_foundation.LegacyUserDefaultsApi.setValue\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       setValueChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -271,7 +285,10 @@ class LegacyUserDefaultsApiSetup {
     } else {
       setValueChannel.setMessageHandler(nil)
     }
-    let getAllChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.shared_preferences_foundation.LegacyUserDefaultsApi.getAll\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    let getAllChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.shared_preferences_foundation.LegacyUserDefaultsApi.getAll\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       getAllChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -287,7 +304,10 @@ class LegacyUserDefaultsApiSetup {
     } else {
       getAllChannel.setMessageHandler(nil)
     }
-    let clearChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.shared_preferences_foundation.LegacyUserDefaultsApi.clear\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    let clearChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.shared_preferences_foundation.LegacyUserDefaultsApi.clear\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       clearChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -323,10 +343,15 @@ protocol UserDefaultsApi {
 class UserDefaultsApiSetup {
   static var codec: FlutterStandardMessageCodec { MessagesPigeonCodec.shared }
   /// Sets up an instance of `UserDefaultsApi` to handle messages through the `binaryMessenger`.
-  static func setUp(binaryMessenger: FlutterBinaryMessenger, api: UserDefaultsApi?, messageChannelSuffix: String = "") {
+  static func setUp(
+    binaryMessenger: FlutterBinaryMessenger, api: UserDefaultsApi?,
+    messageChannelSuffix: String = ""
+  ) {
     let channelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""
     /// Adds property to shared preferences data set of type String.
-    let setChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.set\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    let setChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.set\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       setChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -344,7 +369,10 @@ class UserDefaultsApiSetup {
       setChannel.setMessageHandler(nil)
     }
     /// Removes all properties from shared preferences data set with matching prefix.
-    let clearChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.clear\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    let clearChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.clear\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       clearChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -361,7 +389,10 @@ class UserDefaultsApiSetup {
       clearChannel.setMessageHandler(nil)
     }
     /// Gets all properties from shared preferences data set with matching prefix.
-    let getAllChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.getAll\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    let getAllChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.getAll\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       getAllChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -378,7 +409,10 @@ class UserDefaultsApiSetup {
       getAllChannel.setMessageHandler(nil)
     }
     /// Gets individual value stored with [key], if any.
-    let getValueChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.getValue\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    let getValueChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.getValue\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       getValueChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -395,7 +429,10 @@ class UserDefaultsApiSetup {
       getValueChannel.setMessageHandler(nil)
     }
     /// Gets all properties from shared preferences data set with matching prefix.
-    let getKeysChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.getKeys\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    let getKeysChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.getKeys\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       getKeysChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]

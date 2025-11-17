@@ -16,12 +16,7 @@ import io.flutter.plugin.common.StandardMessageCodec;
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 /** Generated class from Pigeon. */
 @SuppressWarnings({"unused", "unchecked", "CodeBlock2Expr", "RedundantSuppression", "serial"})
@@ -36,8 +31,7 @@ public class Messages {
     /** The error details. Must be a datatype supported by the api codec. */
     public final Object details;
 
-    public FlutterError(@NonNull String code, @Nullable String message, @Nullable Object details) 
-    {
+    public FlutterError(@NonNull String code, @Nullable String message, @Nullable Object details) {
       super(message);
       this.code = code;
       this.details = details;
@@ -56,7 +50,7 @@ public class Messages {
       errorList.add(exception.toString());
       errorList.add(exception.getClass().getSimpleName());
       errorList.add(
-        "Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
+          "Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
     }
     return errorList;
   }
@@ -89,10 +83,11 @@ public class Messages {
     @Override
     protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {
       switch (type) {
-        case (byte) 129: {
-          Object value = readValue(buffer);
-          return value == null ? null : StorageDirectory.values()[((Long) value).intValue()];
-        }
+        case (byte) 129:
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : StorageDirectory.values()[((Long) value).intValue()];
+          }
         default:
           return super.readValueOfType(type, buffer);
       }
@@ -112,42 +107,52 @@ public class Messages {
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface PathProviderApi {
 
-    @Nullable 
+    @Nullable
     String getTemporaryPath();
 
-    @Nullable 
+    @Nullable
     String getApplicationSupportPath();
 
-    @Nullable 
+    @Nullable
     String getApplicationDocumentsPath();
 
-    @Nullable 
+    @Nullable
     String getApplicationCachePath();
 
-    @Nullable 
+    @Nullable
     String getExternalStoragePath();
 
-    @NonNull 
+    @NonNull
     List<String> getExternalCachePaths();
 
-    @NonNull 
+    @NonNull
     List<String> getExternalStoragePaths(@NonNull StorageDirectory directory);
 
     /** The codec used by PathProviderApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return PigeonCodec.INSTANCE;
     }
-    /**Sets up an instance of `PathProviderApi` to handle messages through the `binaryMessenger`. */
+    /**
+     * Sets up an instance of `PathProviderApi` to handle messages through the `binaryMessenger`.
+     */
     static void setUp(@NonNull BinaryMessenger binaryMessenger, @Nullable PathProviderApi api) {
       setUp(binaryMessenger, "", api);
     }
-    static void setUp(@NonNull BinaryMessenger binaryMessenger, @NonNull String messageChannelSuffix, @Nullable PathProviderApi api) {
+
+    static void setUp(
+        @NonNull BinaryMessenger binaryMessenger,
+        @NonNull String messageChannelSuffix,
+        @Nullable PathProviderApi api) {
       messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
       BinaryMessenger.TaskQueue taskQueue = binaryMessenger.makeBackgroundTaskQueue();
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.path_provider_android.PathProviderApi.getTemporaryPath" + messageChannelSuffix, getCodec(), taskQueue);
+                binaryMessenger,
+                "dev.flutter.pigeon.path_provider_android.PathProviderApi.getTemporaryPath"
+                    + messageChannelSuffix,
+                getCodec(),
+                taskQueue);
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -155,8 +160,7 @@ public class Messages {
                 try {
                   String output = api.getTemporaryPath();
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
@@ -168,7 +172,11 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.path_provider_android.PathProviderApi.getApplicationSupportPath" + messageChannelSuffix, getCodec(), taskQueue);
+                binaryMessenger,
+                "dev.flutter.pigeon.path_provider_android.PathProviderApi.getApplicationSupportPath"
+                    + messageChannelSuffix,
+                getCodec(),
+                taskQueue);
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -176,8 +184,7 @@ public class Messages {
                 try {
                   String output = api.getApplicationSupportPath();
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
@@ -189,7 +196,11 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.path_provider_android.PathProviderApi.getApplicationDocumentsPath" + messageChannelSuffix, getCodec(), taskQueue);
+                binaryMessenger,
+                "dev.flutter.pigeon.path_provider_android.PathProviderApi.getApplicationDocumentsPath"
+                    + messageChannelSuffix,
+                getCodec(),
+                taskQueue);
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -197,8 +208,7 @@ public class Messages {
                 try {
                   String output = api.getApplicationDocumentsPath();
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
@@ -210,7 +220,11 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.path_provider_android.PathProviderApi.getApplicationCachePath" + messageChannelSuffix, getCodec(), taskQueue);
+                binaryMessenger,
+                "dev.flutter.pigeon.path_provider_android.PathProviderApi.getApplicationCachePath"
+                    + messageChannelSuffix,
+                getCodec(),
+                taskQueue);
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -218,8 +232,7 @@ public class Messages {
                 try {
                   String output = api.getApplicationCachePath();
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
@@ -231,7 +244,11 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.path_provider_android.PathProviderApi.getExternalStoragePath" + messageChannelSuffix, getCodec(), taskQueue);
+                binaryMessenger,
+                "dev.flutter.pigeon.path_provider_android.PathProviderApi.getExternalStoragePath"
+                    + messageChannelSuffix,
+                getCodec(),
+                taskQueue);
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -239,8 +256,7 @@ public class Messages {
                 try {
                   String output = api.getExternalStoragePath();
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
@@ -252,7 +268,11 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.path_provider_android.PathProviderApi.getExternalCachePaths" + messageChannelSuffix, getCodec(), taskQueue);
+                binaryMessenger,
+                "dev.flutter.pigeon.path_provider_android.PathProviderApi.getExternalCachePaths"
+                    + messageChannelSuffix,
+                getCodec(),
+                taskQueue);
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -260,8 +280,7 @@ public class Messages {
                 try {
                   List<String> output = api.getExternalCachePaths();
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
@@ -273,7 +292,11 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.path_provider_android.PathProviderApi.getExternalStoragePaths" + messageChannelSuffix, getCodec(), taskQueue);
+                binaryMessenger,
+                "dev.flutter.pigeon.path_provider_android.PathProviderApi.getExternalStoragePaths"
+                    + messageChannelSuffix,
+                getCodec(),
+                taskQueue);
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -283,8 +306,7 @@ public class Messages {
                 try {
                   List<String> output = api.getExternalStoragePaths(directoryArg);
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);

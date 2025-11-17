@@ -17,20 +17,24 @@ PlatformException _createConnectionError(String channelName) {
     message: 'Unable to establish connection on channel: "$channelName".',
   );
 }
+
 bool _deepEquals(Object? a, Object? b) {
   if (a is List && b is List) {
     return a.length == b.length &&
-        a.indexed
-        .every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
+        a.indexed.every(
+          ((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]),
+        );
   }
   if (a is Map && b is Map) {
-    return a.length == b.length && a.entries.every((MapEntry<Object?, Object?> entry) =>
-        (b as Map<Object?, Object?>).containsKey(entry.key) &&
-        _deepEquals(entry.value, b[entry.key]));
+    return a.length == b.length &&
+        a.entries.every(
+          (MapEntry<Object?, Object?> entry) =>
+              (b as Map<Object?, Object?>).containsKey(entry.key) &&
+              _deepEquals(entry.value, b[entry.key]),
+        );
   }
   return a == b;
 }
-
 
 /// Possible error conditions for [UrlLauncherApi] calls.
 enum UrlLauncherError {
@@ -40,24 +44,19 @@ enum UrlLauncherError {
 
 /// Possible results for a [UrlLauncherApi] call with a boolean outcome.
 class UrlLauncherBoolResult {
-  UrlLauncherBoolResult({
-    required this.value,
-    this.error,
-  });
+  UrlLauncherBoolResult({required this.value, this.error});
 
   bool value;
 
   UrlLauncherError? error;
 
   List<Object?> _toList() {
-    return <Object?>[
-      value,
-      error,
-    ];
+    return <Object?>[value, error];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static UrlLauncherBoolResult decode(Object result) {
     result as List<Object?>;
@@ -81,10 +80,8 @@ class UrlLauncherBoolResult {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
-
 
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
@@ -93,10 +90,10 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
-    }    else if (value is UrlLauncherError) {
+    } else if (value is UrlLauncherError) {
       buffer.putUint8(129);
       writeValue(buffer, value.index);
-    }    else if (value is UrlLauncherBoolResult) {
+    } else if (value is UrlLauncherBoolResult) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
     } else {
@@ -107,10 +104,10 @@ class _PigeonCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 129: 
+      case 129:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : UrlLauncherError.values[value];
-      case 130: 
+      case 130:
         return UrlLauncherBoolResult.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -122,9 +119,13 @@ class UrlLauncherApi {
   /// Constructor for [UrlLauncherApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  UrlLauncherApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
-      : pigeonVar_binaryMessenger = binaryMessenger,
-        pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+  UrlLauncherApi({
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) : pigeonVar_binaryMessenger = binaryMessenger,
+       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+           ? '.$messageChannelSuffix'
+           : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -133,13 +134,17 @@ class UrlLauncherApi {
 
   /// Returns a true result if the URL can definitely be launched.
   Future<UrlLauncherBoolResult> canLaunchUrl(String url) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.url_launcher_macos.UrlLauncherApi.canLaunchUrl$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.url_launcher_macos.UrlLauncherApi.canLaunchUrl$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[url],
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[url]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -162,13 +167,17 @@ class UrlLauncherApi {
 
   /// Opens the URL externally, returning a true result if successful.
   Future<UrlLauncherBoolResult> launchUrl(String url) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.url_launcher_macos.UrlLauncherApi.launchUrl$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.url_launcher_macos.UrlLauncherApi.launchUrl$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[url],
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[url]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {

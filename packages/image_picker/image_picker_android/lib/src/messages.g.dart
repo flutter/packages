@@ -17,35 +17,30 @@ PlatformException _createConnectionError(String channelName) {
     message: 'Unable to establish connection on channel: "$channelName".',
   );
 }
+
 bool _deepEquals(Object? a, Object? b) {
   if (a is List && b is List) {
     return a.length == b.length &&
-        a.indexed
-        .every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
+        a.indexed.every(
+          ((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]),
+        );
   }
   if (a is Map && b is Map) {
-    return a.length == b.length && a.entries.every((MapEntry<Object?, Object?> entry) =>
-        (b as Map<Object?, Object?>).containsKey(entry.key) &&
-        _deepEquals(entry.value, b[entry.key]));
+    return a.length == b.length &&
+        a.entries.every(
+          (MapEntry<Object?, Object?> entry) =>
+              (b as Map<Object?, Object?>).containsKey(entry.key) &&
+              _deepEquals(entry.value, b[entry.key]),
+        );
   }
   return a == b;
 }
 
+enum SourceCamera { rear, front }
 
-enum SourceCamera {
-  rear,
-  front,
-}
+enum SourceType { camera, gallery }
 
-enum SourceType {
-  camera,
-  gallery,
-}
-
-enum CacheRetrievalType {
-  image,
-  video,
-}
+enum CacheRetrievalType { image, video }
 
 class GeneralOptions {
   GeneralOptions({
@@ -61,15 +56,12 @@ class GeneralOptions {
   int? limit;
 
   List<Object?> _toList() {
-    return <Object?>[
-      allowMultiple,
-      usePhotoPicker,
-      limit,
-    ];
+    return <Object?>[allowMultiple, usePhotoPicker, limit];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static GeneralOptions decode(Object result) {
     result as List<Object?>;
@@ -94,17 +86,12 @@ class GeneralOptions {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Options for image selection and output.
 class ImageSelectionOptions {
-  ImageSelectionOptions({
-    this.maxWidth,
-    this.maxHeight,
-    required this.quality,
-  });
+  ImageSelectionOptions({this.maxWidth, this.maxHeight, required this.quality});
 
   /// If set, the max width that the image should be resized to fit in.
   double? maxWidth;
@@ -118,15 +105,12 @@ class ImageSelectionOptions {
   int quality;
 
   List<Object?> _toList() {
-    return <Object?>[
-      maxWidth,
-      maxHeight,
-      quality,
-    ];
+    return <Object?>[maxWidth, maxHeight, quality];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static ImageSelectionOptions decode(Object result) {
     result as List<Object?>;
@@ -151,25 +135,21 @@ class ImageSelectionOptions {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class MediaSelectionOptions {
-  MediaSelectionOptions({
-    required this.imageSelectionOptions,
-  });
+  MediaSelectionOptions({required this.imageSelectionOptions});
 
   ImageSelectionOptions imageSelectionOptions;
 
   List<Object?> _toList() {
-    return <Object?>[
-      imageSelectionOptions,
-    ];
+    return <Object?>[imageSelectionOptions];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static MediaSelectionOptions decode(Object result) {
     result as List<Object?>;
@@ -192,33 +172,27 @@ class MediaSelectionOptions {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Options for image selection and output.
 class VideoSelectionOptions {
-  VideoSelectionOptions({
-    this.maxDurationSeconds,
-  });
+  VideoSelectionOptions({this.maxDurationSeconds});
 
   /// The maximum desired length for the video, in seconds.
   int? maxDurationSeconds;
 
   List<Object?> _toList() {
-    return <Object?>[
-      maxDurationSeconds,
-    ];
+    return <Object?>[maxDurationSeconds];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static VideoSelectionOptions decode(Object result) {
     result as List<Object?>;
-    return VideoSelectionOptions(
-      maxDurationSeconds: result[0] as int?,
-    );
+    return VideoSelectionOptions(maxDurationSeconds: result[0] as int?);
   }
 
   @override
@@ -235,30 +209,24 @@ class VideoSelectionOptions {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Specification for the source of an image or video selection.
 class SourceSpecification {
-  SourceSpecification({
-    required this.type,
-    this.camera,
-  });
+  SourceSpecification({required this.type, this.camera});
 
   SourceType type;
 
   SourceCamera? camera;
 
   List<Object?> _toList() {
-    return <Object?>[
-      type,
-      camera,
-    ];
+    return <Object?>[type, camera];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static SourceSpecification decode(Object result) {
     result as List<Object?>;
@@ -282,32 +250,26 @@ class SourceSpecification {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// An error that occurred during lost result retrieval.
 ///
 /// The data here maps to the `PlatformException` that will be created from it.
 class CacheRetrievalError {
-  CacheRetrievalError({
-    required this.code,
-    this.message,
-  });
+  CacheRetrievalError({required this.code, this.message});
 
   String code;
 
   String? message;
 
   List<Object?> _toList() {
-    return <Object?>[
-      code,
-      message,
-    ];
+    return <Object?>[code, message];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static CacheRetrievalError decode(Object result) {
     result as List<Object?>;
@@ -331,8 +293,7 @@ class CacheRetrievalError {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// The result of retrieving cached results from a previous run.
@@ -353,15 +314,12 @@ class CacheRetrievalResult {
   List<String> paths;
 
   List<Object?> _toList() {
-    return <Object?>[
-      type,
-      error,
-      paths,
-    ];
+    return <Object?>[type, error, paths];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static CacheRetrievalResult decode(Object result) {
     result as List<Object?>;
@@ -386,10 +344,8 @@ class CacheRetrievalResult {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
-
 
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
@@ -398,34 +354,34 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
-    }    else if (value is SourceCamera) {
+    } else if (value is SourceCamera) {
       buffer.putUint8(129);
       writeValue(buffer, value.index);
-    }    else if (value is SourceType) {
+    } else if (value is SourceType) {
       buffer.putUint8(130);
       writeValue(buffer, value.index);
-    }    else if (value is CacheRetrievalType) {
+    } else if (value is CacheRetrievalType) {
       buffer.putUint8(131);
       writeValue(buffer, value.index);
-    }    else if (value is GeneralOptions) {
+    } else if (value is GeneralOptions) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
-    }    else if (value is ImageSelectionOptions) {
+    } else if (value is ImageSelectionOptions) {
       buffer.putUint8(133);
       writeValue(buffer, value.encode());
-    }    else if (value is MediaSelectionOptions) {
+    } else if (value is MediaSelectionOptions) {
       buffer.putUint8(134);
       writeValue(buffer, value.encode());
-    }    else if (value is VideoSelectionOptions) {
+    } else if (value is VideoSelectionOptions) {
       buffer.putUint8(135);
       writeValue(buffer, value.encode());
-    }    else if (value is SourceSpecification) {
+    } else if (value is SourceSpecification) {
       buffer.putUint8(136);
       writeValue(buffer, value.encode());
-    }    else if (value is CacheRetrievalError) {
+    } else if (value is CacheRetrievalError) {
       buffer.putUint8(137);
       writeValue(buffer, value.encode());
-    }    else if (value is CacheRetrievalResult) {
+    } else if (value is CacheRetrievalResult) {
       buffer.putUint8(138);
       writeValue(buffer, value.encode());
     } else {
@@ -436,28 +392,28 @@ class _PigeonCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 129: 
+      case 129:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : SourceCamera.values[value];
-      case 130: 
+      case 130:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : SourceType.values[value];
-      case 131: 
+      case 131:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : CacheRetrievalType.values[value];
-      case 132: 
+      case 132:
         return GeneralOptions.decode(readValue(buffer)!);
-      case 133: 
+      case 133:
         return ImageSelectionOptions.decode(readValue(buffer)!);
-      case 134: 
+      case 134:
         return MediaSelectionOptions.decode(readValue(buffer)!);
-      case 135: 
+      case 135:
         return VideoSelectionOptions.decode(readValue(buffer)!);
-      case 136: 
+      case 136:
         return SourceSpecification.decode(readValue(buffer)!);
-      case 137: 
+      case 137:
         return CacheRetrievalError.decode(readValue(buffer)!);
-      case 138: 
+      case 138:
         return CacheRetrievalResult.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -469,9 +425,13 @@ class ImagePickerApi {
   /// Constructor for [ImagePickerApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  ImagePickerApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
-      : pigeonVar_binaryMessenger = binaryMessenger,
-        pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+  ImagePickerApi({
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) : pigeonVar_binaryMessenger = binaryMessenger,
+       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+           ? '.$messageChannelSuffix'
+           : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -479,14 +439,22 @@ class ImagePickerApi {
   final String pigeonVar_messageChannelSuffix;
 
   /// Selects images and returns their paths.
-  Future<List<String>> pickImages(SourceSpecification source, ImageSelectionOptions options, GeneralOptions generalOptions) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.image_picker_android.ImagePickerApi.pickImages$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+  Future<List<String>> pickImages(
+    SourceSpecification source,
+    ImageSelectionOptions options,
+    GeneralOptions generalOptions,
+  ) async {
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.image_picker_android.ImagePickerApi.pickImages$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[source, options, generalOptions],
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[source, options, generalOptions]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -508,14 +476,22 @@ class ImagePickerApi {
   }
 
   /// Selects video and returns their paths.
-  Future<List<String>> pickVideos(SourceSpecification source, VideoSelectionOptions options, GeneralOptions generalOptions) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.image_picker_android.ImagePickerApi.pickVideos$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+  Future<List<String>> pickVideos(
+    SourceSpecification source,
+    VideoSelectionOptions options,
+    GeneralOptions generalOptions,
+  ) async {
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.image_picker_android.ImagePickerApi.pickVideos$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[source, options, generalOptions],
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[source, options, generalOptions]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -537,14 +513,21 @@ class ImagePickerApi {
   }
 
   /// Selects images and videos and returns their paths.
-  Future<List<String>> pickMedia(MediaSelectionOptions mediaSelectionOptions, GeneralOptions generalOptions) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.image_picker_android.ImagePickerApi.pickMedia$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+  Future<List<String>> pickMedia(
+    MediaSelectionOptions mediaSelectionOptions,
+    GeneralOptions generalOptions,
+  ) async {
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.image_picker_android.ImagePickerApi.pickMedia$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[mediaSelectionOptions, generalOptions],
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[mediaSelectionOptions, generalOptions]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -567,12 +550,14 @@ class ImagePickerApi {
 
   /// Returns results from a previous app session, if any.
   Future<CacheRetrievalResult?> retrieveLostResults() async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.image_picker_android.ImagePickerApi.retrieveLostResults$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.image_picker_android.ImagePickerApi.retrieveLostResults$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;

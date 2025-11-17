@@ -17,20 +17,24 @@ PlatformException _createConnectionError(String channelName) {
     message: 'Unable to establish connection on channel: "$channelName".',
   );
 }
+
 bool _deepEquals(Object? a, Object? b) {
   if (a is List && b is List) {
     return a.length == b.length &&
-        a.indexed
-        .every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
+        a.indexed.every(
+          ((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]),
+        );
   }
   if (a is Map && b is Map) {
-    return a.length == b.length && a.entries.every((MapEntry<Object?, Object?> entry) =>
-        (b as Map<Object?, Object?>).containsKey(entry.key) &&
-        _deepEquals(entry.value, b[entry.key]));
+    return a.length == b.length &&
+        a.entries.every(
+          (MapEntry<Object?, Object?> entry) =>
+              (b as Map<Object?, Object?>).containsKey(entry.key) &&
+              _deepEquals(entry.value, b[entry.key]),
+        );
   }
   return a == b;
 }
-
 
 /// Configuration options for an in-app WebView.
 class WebViewOptions {
@@ -47,15 +51,12 @@ class WebViewOptions {
   Map<String, String> headers;
 
   List<Object?> _toList() {
-    return <Object?>[
-      enableJavaScript,
-      enableDomStorage,
-      headers,
-    ];
+    return <Object?>[enableJavaScript, enableDomStorage, headers];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static WebViewOptions decode(Object result) {
     result as List<Object?>;
@@ -80,33 +81,27 @@ class WebViewOptions {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Configuration options for in-app browser views.
 class BrowserOptions {
-  BrowserOptions({
-    required this.showTitle,
-  });
+  BrowserOptions({required this.showTitle});
 
   /// Whether or not to show the webpage title.
   bool showTitle;
 
   List<Object?> _toList() {
-    return <Object?>[
-      showTitle,
-    ];
+    return <Object?>[showTitle];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static BrowserOptions decode(Object result) {
     result as List<Object?>;
-    return BrowserOptions(
-      showTitle: result[0]! as bool,
-    );
+    return BrowserOptions(showTitle: result[0]! as bool);
   }
 
   @override
@@ -123,10 +118,8 @@ class BrowserOptions {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
-
 
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
@@ -135,10 +128,10 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
-    }    else if (value is WebViewOptions) {
+    } else if (value is WebViewOptions) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
-    }    else if (value is BrowserOptions) {
+    } else if (value is BrowserOptions) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
     } else {
@@ -149,9 +142,9 @@ class _PigeonCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 129: 
+      case 129:
         return WebViewOptions.decode(readValue(buffer)!);
-      case 130: 
+      case 130:
         return BrowserOptions.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -163,9 +156,13 @@ class UrlLauncherApi {
   /// Constructor for [UrlLauncherApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  UrlLauncherApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
-      : pigeonVar_binaryMessenger = binaryMessenger,
-        pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+  UrlLauncherApi({
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) : pigeonVar_binaryMessenger = binaryMessenger,
+       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+           ? '.$messageChannelSuffix'
+           : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -174,13 +171,17 @@ class UrlLauncherApi {
 
   /// Returns true if the URL can definitely be launched.
   Future<bool> canLaunchUrl(String url) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.url_launcher_android.UrlLauncherApi.canLaunchUrl$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.url_launcher_android.UrlLauncherApi.canLaunchUrl$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[url],
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[url]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -202,14 +203,22 @@ class UrlLauncherApi {
   }
 
   /// Opens the URL externally, returning true if successful.
-  Future<bool> launchUrl(String url, Map<String, String> headers, bool requireNonBrowser) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.url_launcher_android.UrlLauncherApi.launchUrl$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+  Future<bool> launchUrl(
+    String url,
+    Map<String, String> headers,
+    bool requireNonBrowser,
+  ) async {
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.url_launcher_android.UrlLauncherApi.launchUrl$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[url, headers, requireNonBrowser],
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[url, headers, requireNonBrowser]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -232,14 +241,23 @@ class UrlLauncherApi {
 
   /// Opens the URL in an in-app Custom Tab or WebView, returning true if it
   /// opens successfully.
-  Future<bool> openUrlInApp(String url, bool allowCustomTab, WebViewOptions webViewOptions, BrowserOptions browserOptions) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.url_launcher_android.UrlLauncherApi.openUrlInApp$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+  Future<bool> openUrlInApp(
+    String url,
+    bool allowCustomTab,
+    WebViewOptions webViewOptions,
+    BrowserOptions browserOptions,
+  ) async {
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.url_launcher_android.UrlLauncherApi.openUrlInApp$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[url, allowCustomTab, webViewOptions, browserOptions],
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[url, allowCustomTab, webViewOptions, browserOptions]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -261,12 +279,14 @@ class UrlLauncherApi {
   }
 
   Future<bool> supportsCustomTabs() async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.url_launcher_android.UrlLauncherApi.supportsCustomTabs$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.url_launcher_android.UrlLauncherApi.supportsCustomTabs$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
@@ -290,12 +310,14 @@ class UrlLauncherApi {
 
   /// Closes the view opened by [openUrlInSafariViewController].
   Future<void> closeWebView() async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.url_launcher_android.UrlLauncherApi.closeWebView$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.url_launcher_android.UrlLauncherApi.closeWebView$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;

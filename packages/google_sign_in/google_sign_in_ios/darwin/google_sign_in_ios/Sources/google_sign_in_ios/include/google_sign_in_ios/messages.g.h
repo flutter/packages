@@ -52,11 +52,11 @@ typedef NS_ENUM(NSUInteger, FSIGoogleSignInErrorCode) {
 
 @interface FSIPlatformConfigurationParams : NSObject
 + (instancetype)makeWithClientId:(nullable NSString *)clientId
-    serverClientId:(nullable NSString *)serverClientId
-    hostedDomain:(nullable NSString *)hostedDomain;
-@property(nonatomic, copy, nullable) NSString * clientId;
-@property(nonatomic, copy, nullable) NSString * serverClientId;
-@property(nonatomic, copy, nullable) NSString * hostedDomain;
+                  serverClientId:(nullable NSString *)serverClientId
+                    hostedDomain:(nullable NSString *)hostedDomain;
+@property(nonatomic, copy, nullable) NSString *clientId;
+@property(nonatomic, copy, nullable) NSString *serverClientId;
+@property(nonatomic, copy, nullable) NSString *hostedDomain;
 @end
 
 /// Pigeon version of GoogleSignInUserData + AuthenticationTokenData.
@@ -66,29 +66,29 @@ typedef NS_ENUM(NSUInteger, FSIGoogleSignInErrorCode) {
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithDisplayName:(nullable NSString *)displayName
-    email:(NSString *)email
-    userId:(NSString *)userId
-    photoUrl:(nullable NSString *)photoUrl
-    idToken:(nullable NSString *)idToken;
-@property(nonatomic, copy, nullable) NSString * displayName;
-@property(nonatomic, copy) NSString * email;
-@property(nonatomic, copy) NSString * userId;
-@property(nonatomic, copy, nullable) NSString * photoUrl;
-@property(nonatomic, copy, nullable) NSString * idToken;
+                              email:(NSString *)email
+                             userId:(NSString *)userId
+                           photoUrl:(nullable NSString *)photoUrl
+                            idToken:(nullable NSString *)idToken;
+@property(nonatomic, copy, nullable) NSString *displayName;
+@property(nonatomic, copy) NSString *email;
+@property(nonatomic, copy) NSString *userId;
+@property(nonatomic, copy, nullable) NSString *photoUrl;
+@property(nonatomic, copy, nullable) NSString *idToken;
 @end
 
 /// The response from an auth call.
 @interface FSISignInResult : NSObject
 + (instancetype)makeWithSuccess:(nullable FSISignInSuccess *)success
-    error:(nullable FSISignInFailure *)error;
+                          error:(nullable FSISignInFailure *)error;
 /// The success result, if any.
 ///
 /// Exactly one of success and error will be non-nil.
-@property(nonatomic, strong, nullable) FSISignInSuccess * success;
+@property(nonatomic, strong, nullable) FSISignInSuccess *success;
 /// The error result, if any.
 ///
 /// Exactly one of success and error will be non-nil.
-@property(nonatomic, strong, nullable) FSISignInFailure * error;
+@property(nonatomic, strong, nullable) FSISignInFailure *error;
 @end
 
 /// An sign in failure.
@@ -96,14 +96,14 @@ typedef NS_ENUM(NSUInteger, FSIGoogleSignInErrorCode) {
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithType:(FSIGoogleSignInErrorCode)type
-    message:(nullable NSString *)message
-    details:(nullable id )details;
+                     message:(nullable NSString *)message
+                     details:(nullable id)details;
 /// The type of failure.
 @property(nonatomic, assign) FSIGoogleSignInErrorCode type;
 /// The message associated with the failure, if any.
-@property(nonatomic, copy, nullable) NSString * message;
+@property(nonatomic, copy, nullable) NSString *message;
 /// Extra details about the failure, if any.
-@property(nonatomic, strong, nullable) id  details;
+@property(nonatomic, strong, nullable) id details;
 @end
 
 /// A successful auth result.
@@ -116,13 +116,13 @@ typedef NS_ENUM(NSUInteger, FSIGoogleSignInErrorCode) {
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithUser:(FSIUserData *)user
-    accessToken:(NSString *)accessToken
-    grantedScopes:(NSArray<NSString *> *)grantedScopes
-    serverAuthCode:(nullable NSString *)serverAuthCode;
-@property(nonatomic, strong) FSIUserData * user;
-@property(nonatomic, copy) NSString * accessToken;
-@property(nonatomic, copy) NSArray<NSString *> * grantedScopes;
-@property(nonatomic, copy, nullable) NSString * serverAuthCode;
+                 accessToken:(NSString *)accessToken
+               grantedScopes:(NSArray<NSString *> *)grantedScopes
+              serverAuthCode:(nullable NSString *)serverAuthCode;
+@property(nonatomic, strong) FSIUserData *user;
+@property(nonatomic, copy) NSString *accessToken;
+@property(nonatomic, copy) NSArray<NSString *> *grantedScopes;
+@property(nonatomic, copy, nullable) NSString *serverAuthCode;
 @end
 
 /// The codec used by all APIs.
@@ -130,24 +130,36 @@ NSObject<FlutterMessageCodec> *FSIGetMessagesCodec(void);
 
 @protocol FSIGoogleSignInApi
 /// Configures the sign in object with application-level parameters.
-- (void)configureWithParameters:(FSIPlatformConfigurationParams *)params error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)configureWithParameters:(FSIPlatformConfigurationParams *)params
+                          error:(FlutterError *_Nullable *_Nonnull)error;
 /// Attempts to restore an existing sign-in, if any, with minimal user
 /// interaction.
-- (void)restorePreviousSignInWithCompletion:(void (^)(FSISignInResult *_Nullable, FlutterError *_Nullable))completion;
+- (void)restorePreviousSignInWithCompletion:(void (^)(FSISignInResult *_Nullable,
+                                                      FlutterError *_Nullable))completion;
 /// Starts a sign in with user interaction.
-- (void)signInWithScopeHint:(NSArray<NSString *> *)scopeHint nonce:(nullable NSString *)nonce completion:(void (^)(FSISignInResult *_Nullable, FlutterError *_Nullable))completion;
+- (void)signInWithScopeHint:(NSArray<NSString *> *)scopeHint
+                      nonce:(nullable NSString *)nonce
+                 completion:
+                     (void (^)(FSISignInResult *_Nullable, FlutterError *_Nullable))completion;
 /// Requests the access token for the current sign in.
-- (void)refreshedAuthorizationTokensForUser:(NSString *)userId completion:(void (^)(FSISignInResult *_Nullable, FlutterError *_Nullable))completion;
+- (void)refreshedAuthorizationTokensForUser:(NSString *)userId
+                                 completion:(void (^)(FSISignInResult *_Nullable,
+                                                      FlutterError *_Nullable))completion;
 /// Requests authorization of the given additional scopes.
-- (void)addScopes:(NSArray<NSString *> *)scopes forUser:(NSString *)userId completion:(void (^)(FSISignInResult *_Nullable, FlutterError *_Nullable))completion;
+- (void)addScopes:(NSArray<NSString *> *)scopes
+          forUser:(NSString *)userId
+       completion:(void (^)(FSISignInResult *_Nullable, FlutterError *_Nullable))completion;
 /// Signs out the current user.
 - (void)signOutWithError:(FlutterError *_Nullable *_Nonnull)error;
 /// Revokes scope grants to the application.
 - (void)disconnectWithCompletion:(void (^)(FlutterError *_Nullable))completion;
 @end
 
-extern void SetUpFSIGoogleSignInApi(id<FlutterBinaryMessenger> binaryMessenger, NSObject<FSIGoogleSignInApi> *_Nullable api);
+extern void SetUpFSIGoogleSignInApi(id<FlutterBinaryMessenger> binaryMessenger,
+                                    NSObject<FSIGoogleSignInApi> *_Nullable api);
 
-extern void SetUpFSIGoogleSignInApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger, NSObject<FSIGoogleSignInApi> *_Nullable api, NSString *messageChannelSuffix);
+extern void SetUpFSIGoogleSignInApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
+                                              NSObject<FSIGoogleSignInApi> *_Nullable api,
+                                              NSString *messageChannelSuffix);
 
 NS_ASSUME_NONNULL_END

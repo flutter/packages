@@ -5,20 +5,20 @@
 // See also: https://pub.dev/packages/pigeon
 @file:Suppress("UNCHECKED_CAST", "ArrayInDataClass")
 
-
 import android.util.Log
 import io.flutter.plugin.common.BasicMessageChannel
 import io.flutter.plugin.common.BinaryMessenger
-import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MessageCodec
-import io.flutter.plugin.common.StandardMethodCodec
 import io.flutter.plugin.common.StandardMessageCodec
 import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
+
 private object MessagesPigeonUtils {
 
   fun createConnectionError(channelName: String): FlutterError {
-    return FlutterError("channel-error",  "Unable to establish connection on channel: '$channelName'.", "")  }
+    return FlutterError(
+        "channel-error", "Unable to establish connection on channel: '$channelName'.", "")
+  }
 
   fun wrapResult(result: Any?): List<Any?> {
     return listOf(result)
@@ -26,61 +26,53 @@ private object MessagesPigeonUtils {
 
   fun wrapError(exception: Throwable): List<Any?> {
     return if (exception is FlutterError) {
-      listOf(
-        exception.code,
-        exception.message,
-        exception.details
-      )
+      listOf(exception.code, exception.message, exception.details)
     } else {
       listOf(
-        exception.javaClass.simpleName,
-        exception.toString(),
-        "Cause: " + exception.cause + ", Stacktrace: " + Log.getStackTraceString(exception)
-      )
+          exception.javaClass.simpleName,
+          exception.toString(),
+          "Cause: " + exception.cause + ", Stacktrace: " + Log.getStackTraceString(exception))
     }
   }
+
   fun deepEquals(a: Any?, b: Any?): Boolean {
     if (a is ByteArray && b is ByteArray) {
-        return a.contentEquals(b)
+      return a.contentEquals(b)
     }
     if (a is IntArray && b is IntArray) {
-        return a.contentEquals(b)
+      return a.contentEquals(b)
     }
     if (a is LongArray && b is LongArray) {
-        return a.contentEquals(b)
+      return a.contentEquals(b)
     }
     if (a is DoubleArray && b is DoubleArray) {
-        return a.contentEquals(b)
+      return a.contentEquals(b)
     }
     if (a is Array<*> && b is Array<*>) {
-      return a.size == b.size &&
-          a.indices.all{ deepEquals(a[it], b[it]) }
+      return a.size == b.size && a.indices.all { deepEquals(a[it], b[it]) }
     }
     if (a is List<*> && b is List<*>) {
-      return a.size == b.size &&
-          a.indices.all{ deepEquals(a[it], b[it]) }
+      return a.size == b.size && a.indices.all { deepEquals(a[it], b[it]) }
     }
     if (a is Map<*, *> && b is Map<*, *>) {
-      return a.size == b.size && a.all {
-          (b as Map<Any?, Any?>).contains(it.key) &&
-          deepEquals(it.value, b[it.key])
-      }
+      return a.size == b.size &&
+          a.all { (b as Map<Any?, Any?>).contains(it.key) && deepEquals(it.value, b[it.key]) }
     }
     return a == b
   }
-      
 }
 
 /**
  * Error class for passing custom error details to Flutter via a thrown PlatformException.
+ *
  * @property code The error code.
  * @property message The error message.
  * @property details The error details. Must be a datatype supported by the api codec.
  */
-class FlutterError (
-  val code: String,
-  override val message: String? = null,
-  val details: Any? = null
+class FlutterError(
+    val code: String,
+    override val message: String? = null,
+    val details: Any? = null
 ) : Throwable()
 
 enum class Code(val raw: Int) {
@@ -95,13 +87,12 @@ enum class Code(val raw: Int) {
 }
 
 /** Generated class from Pigeon that represents data sent in messages. */
-data class MessageData (
-  val name: String? = null,
-  val description: String? = null,
-  val code: Code,
-  val data: Map<String, String>
-)
- {
+data class MessageData(
+    val name: String? = null,
+    val description: String? = null,
+    val code: Code,
+    val data: Map<String, String>
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): MessageData {
       val name = pigeonVar_list[0] as String?
@@ -111,14 +102,16 @@ data class MessageData (
       return MessageData(name, description, code, data)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      name,
-      description,
-      code,
-      data,
+        name,
+        description,
+        code,
+        data,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other !is MessageData) {
       return false
@@ -126,27 +119,26 @@ data class MessageData (
     if (this === other) {
       return true
     }
-    return MessagesPigeonUtils.deepEquals(toList(), other.toList())  }
+    return MessagesPigeonUtils.deepEquals(toList(), other.toList())
+  }
 
   override fun hashCode(): Int = toList().hashCode()
 }
+
 private open class MessagesPigeonCodec : StandardMessageCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
     return when (type) {
       129.toByte() -> {
-        return (readValue(buffer) as Long?)?.let {
-          Code.ofRaw(it.toInt())
-        }
+        return (readValue(buffer) as Long?)?.let { Code.ofRaw(it.toInt()) }
       }
       130.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          MessageData.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { MessageData.fromList(it) }
       }
       else -> super.readValueOfType(type, buffer)
     }
   }
-  override fun writeValue(stream: ByteArrayOutputStream, value: Any?)   {
+
+  override fun writeValue(stream: ByteArrayOutputStream, value: Any?) {
     when (value) {
       is Code -> {
         stream.write(129)
@@ -161,31 +153,40 @@ private open class MessagesPigeonCodec : StandardMessageCodec() {
   }
 }
 
-
 /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
 interface ExampleHostApi {
   fun getHostLanguage(): String
+
   fun add(a: Long, b: Long): Long
+
   fun sendMessage(message: MessageData, callback: (Result<Boolean>) -> Unit)
 
   companion object {
     /** The codec used by ExampleHostApi. */
-    val codec: MessageCodec<Any?> by lazy {
-      MessagesPigeonCodec()
-    }
+    val codec: MessageCodec<Any?> by lazy { MessagesPigeonCodec() }
     /** Sets up an instance of `ExampleHostApi` to handle messages through the `binaryMessenger`. */
     @JvmOverloads
-    fun setUp(binaryMessenger: BinaryMessenger, api: ExampleHostApi?, messageChannelSuffix: String = "") {
-      val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    fun setUp(
+        binaryMessenger: BinaryMessenger,
+        api: ExampleHostApi?,
+        messageChannelSuffix: String = ""
+    ) {
+      val separatedMessageChannelSuffix =
+          if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.getHostLanguage$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.getHostLanguage$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            val wrapped: List<Any?> = try {
-              listOf(api.getHostLanguage())
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.getHostLanguage())
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -193,17 +194,22 @@ interface ExampleHostApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.add$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.add$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val aArg = args[0] as Long
             val bArg = args[1] as Long
-            val wrapped: List<Any?> = try {
-              listOf(api.add(aArg, bArg))
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.add(aArg, bArg))
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -211,7 +217,11 @@ interface ExampleHostApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.sendMessage$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.sendMessage$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -234,31 +244,39 @@ interface ExampleHostApi {
   }
 }
 /** Generated class from Pigeon that represents Flutter messages that can be called from Kotlin. */
-class MessageFlutterApi(private val binaryMessenger: BinaryMessenger, private val messageChannelSuffix: String = "") {
+class MessageFlutterApi(
+    private val binaryMessenger: BinaryMessenger,
+    private val messageChannelSuffix: String = ""
+) {
   companion object {
     /** The codec used by MessageFlutterApi. */
-    val codec: MessageCodec<Any?> by lazy {
-      MessagesPigeonCodec()
-    }
+    val codec: MessageCodec<Any?> by lazy { MessagesPigeonCodec() }
   }
-  fun flutterMethod(aStringArg: String?, callback: (Result<String>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod$separatedMessageChannelSuffix"
+
+  fun flutterMethod(aStringArg: String?, callback: (Result<String>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(aStringArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
         } else if (it[0] == null) {
-          callback(Result.failure(FlutterError("null-error", "Flutter api returned null value for non-null return value.", "")))
+          callback(
+              Result.failure(
+                  FlutterError(
+                      "null-error",
+                      "Flutter api returned null value for non-null return value.",
+                      "")))
         } else {
           val output = it[0] as String
           callback(Result.success(output))
         }
       } else {
         callback(Result.failure(MessagesPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
 }
