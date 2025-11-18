@@ -73,6 +73,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
   return value as! T?
 }
 
+// swift-format-ignore: AlwaysUseLowerCamelCase
 func deepEqualssk2_pigeon(_ lhs: Any?, _ rhs: Any?) -> Bool {
   let cleanLhs = nilOrValue(lhs) as Any?
   let cleanRhs = nilOrValue(rhs) as Any?
@@ -114,6 +115,7 @@ func deepEqualssk2_pigeon(_ lhs: Any?, _ rhs: Any?) -> Bool {
   }
 }
 
+// swift-format-ignore: AlwaysUseLowerCamelCase
 func deepHashsk2_pigeon(value: Any?, hasher: inout Hasher) {
   if let valueList = value as? [AnyHashable] {
     for item in valueList { deepHashStoreKit2Messages(value: item, hasher: &hasher) }
