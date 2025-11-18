@@ -187,8 +187,7 @@ class BranchForBatchReleaseCommand extends PackageCommand {
 
     _updatePubspec(package, releaseInfo.newVersion!);
     _updateChangelog(package, releaseInfo);
-    await _removePendingChangelogs(git, pendingChangelogFiles);
-    await _stageAndCommitChanges(git, package);
+    await _stageAndCommitChanges(git, package, pendingChangelogFiles);
     await _pushBranch(git, remoteName, branchName);
   }
 
@@ -226,21 +225,17 @@ class BranchForBatchReleaseCommand extends PackageCommand {
     package.changelogFile.writeAsStringSync(newChangelog.toString());
   }
 
-  Future<void> _removePendingChangelogs(
-      GitDir git, List<File> pendingChangelogFiles) async {
-    final List<String> args = <String>['rm'];
+  Future<void> _stageAndCommitChanges(GitDir git, RepositoryPackage package,
+      List<File> pendingChangelogFiles) async {
     final List<String> paths =
         pendingChangelogFiles.map((File f) => f.path).toList();
-    args.addAll(paths);
-    final io.ProcessResult rmResult = await git.runCommand(args);
+    final io.ProcessResult rmResult =
+        await git.runCommand(<String>['rm', ...paths]);
     if (rmResult.exitCode != 0) {
       printError('Failed to rm ${paths.join(' ')}: ${rmResult.stderr}');
       throw ToolExit(_kGitFailedToPush);
     }
-  }
 
-  Future<void> _stageAndCommitChanges(
-      GitDir git, RepositoryPackage package) async {
     final io.ProcessResult addResult = await git.runCommand(
         <String>['add', package.pubspecFile.path, package.changelogFile.path]);
     if (addResult.exitCode != 0) {
