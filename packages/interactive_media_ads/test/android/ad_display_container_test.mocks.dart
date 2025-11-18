@@ -1111,6 +1111,17 @@ class MockVideoView extends _i1.Mock implements _i2.VideoView {
           as _i5.Future<int>);
 
   @override
+  _i5.Future<void> setAudioFocusRequest(
+    _i2.AudioManagerAudioFocus? focusGain,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#setAudioFocusRequest, [focusGain]),
+            returnValue: _i5.Future<void>.value(),
+            returnValueForMissingStub: _i5.Future<void>.value(),
+          )
+          as _i5.Future<void>);
+
+  @override
   _i2.VideoView pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
@@ -1162,12 +1173,10 @@ class MockSurfaceAndroidViewController extends _i1.Mock
   _i4.PointTransformer get pointTransformer =>
       (super.noSuchMethod(
             Invocation.getter(#pointTransformer),
-            returnValue:
-                (_i3.Offset position) =>
-                    _FakeOffset_17(this, Invocation.getter(#pointTransformer)),
-            returnValueForMissingStub:
-                (_i3.Offset position) =>
-                    _FakeOffset_17(this, Invocation.getter(#pointTransformer)),
+            returnValue: (_i3.Offset position) =>
+                _FakeOffset_17(this, Invocation.getter(#pointTransformer)),
+            returnValueForMissingStub: (_i3.Offset position) =>
+                _FakeOffset_17(this, Invocation.getter(#pointTransformer)),
           )
           as _i4.PointTransformer);
 

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -20,11 +20,10 @@ class BookList extends StatelessWidget {
   @override
   Widget build(BuildContext context) => ListView.builder(
     itemCount: books.length,
-    itemBuilder:
-        (BuildContext context, int index) => ListTile(
-          title: Text(books[index].title),
-          subtitle: Text(books[index].author.name),
-          onTap: onTap != null ? () => onTap!(books[index]) : null,
-        ),
+    itemBuilder: (BuildContext context, int index) => ListTile(
+      title: Text(books[index].title),
+      subtitle: Text(books[index].author.name),
+      onTap: onTap != null ? () => onTap!(books[index]) : null,
+    ),
   );
 }

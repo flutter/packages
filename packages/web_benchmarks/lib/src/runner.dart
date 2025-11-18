@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -113,10 +113,9 @@ class BenchmarkServer {
   /// The default value is [defaultInitialPath].
   final String benchmarkPath;
 
-  String get _benchmarkAppUrl =>
-      Uri.parse(benchmarkPath)
-          .replace(scheme: 'http', host: 'localhost', port: benchmarkServerPort)
-          .toString();
+  String get _benchmarkAppUrl => Uri.parse(benchmarkPath)
+      .replace(scheme: 'http', host: 'localhost', port: benchmarkServerPort)
+      .toString();
 
   /// Builds and serves the benchmark app, and collects benchmark results.
   Future<BenchmarkResults> run() async {
@@ -143,12 +142,11 @@ class BenchmarkServer {
       entryPoint,
     ], workingDirectory: benchmarkAppDirectory.path);
 
-    final int buildTime =
-        Duration(
-          milliseconds:
-              DateTime.now().millisecondsSinceEpoch -
-              startTime.millisecondsSinceEpoch,
-        ).inSeconds;
+    final int buildTime = Duration(
+      milliseconds:
+          DateTime.now().millisecondsSinceEpoch -
+          startTime.millisecondsSinceEpoch,
+    ).inSeconds;
     print('Build took ${buildTime}s to complete.');
 
     if (buildResult.exitCode != 0) {
@@ -322,10 +320,9 @@ class BenchmarkServer {
         benchmarkAppDirectory.path,
         '.dart_tool',
       );
-      final String userDataDir =
-          io.Directory(
-            dartToolDirectory,
-          ).createTempSync('chrome_user_data_').path;
+      final String userDataDir = io.Directory(
+        dartToolDirectory,
+      ).createTempSync('chrome_user_data_').path;
 
       final ChromeOptions options = ChromeOptions(
         url: _benchmarkAppUrl,

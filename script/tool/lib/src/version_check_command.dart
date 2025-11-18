@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -547,11 +547,14 @@ ${indentation}The first version listed in CHANGELOG.md is $fromChangeLog.
       return null;
     }
 
+    bool missingVersionChange = false;
+    bool missingChangelogChange = false;
     if (state.needsVersionChange) {
       if (_prLabels.contains(_missingVersionChangeOverrideLabel)) {
         logWarning('Ignoring lack of version change due to the '
             '"$_missingVersionChangeOverrideLabel" label.');
       } else {
+        missingVersionChange = true;
         printError(
             'No version change found, but the change to this package could '
             'not be verified to be exempt\n'
@@ -559,8 +562,7 @@ ${indentation}The first version listed in CHANGELOG.md is $fromChangeLog.
             'If this is a false positive, please comment in '
             'the PR to explain why the PR\n'
             'is exempt, and add (or ask your reviewer to add) the '
-            '"$_missingVersionChangeOverrideLabel" label.');
-        return 'Missing version change';
+            '"$_missingVersionChangeOverrideLabel" label.\n');
       }
     }
 
@@ -569,6 +571,7 @@ ${indentation}The first version listed in CHANGELOG.md is $fromChangeLog.
         logWarning('Ignoring lack of CHANGELOG update due to the '
             '"$_missingChangelogChangeOverrideLabel" label.');
       } else {
+        missingChangelogChange = true;
         printError('No CHANGELOG change found.\n'
             'If this PR needs an exemption from the standard policy of listing '
             'all changes in the CHANGELOG,\n'
@@ -576,9 +579,22 @@ ${indentation}The first version listed in CHANGELOG.md is $fromChangeLog.
             'ask your reviewer to add) the\n'
             '"$_missingChangelogChangeOverrideLabel" label.\n'
             'Otherwise, please add a NEXT entry in the CHANGELOG as described in '
-            'the contributing guide.');
-        return 'Missing CHANGELOG change';
+            'the contributing guide.\n');
       }
+    }
+
+    if (missingVersionChange && missingChangelogChange) {
+      printError('If this PR is not exempt, you can update version and '
+          'CHANGELOG with the "update-release-info" command.\\\n'
+          'See here for an example: '
+          'https://github.com/flutter/packages/blob/main/script/tool/README.md#update-changelog-and-version\\\n'
+          'For more details on versioning, check the contributing guide.');
+    }
+    if (missingVersionChange) {
+      return 'Missing version change';
+    }
+    if (missingChangelogChange) {
+      return 'Missing CHANGELOG change';
     }
 
     return null;

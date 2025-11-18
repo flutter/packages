@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -193,8 +193,8 @@ class _StatefulShellRouteDataPageBuilder extends StatefulShellRouteData {
 
 final StatefulShellRoute _statefulShellRouteDataPageBuilder =
     StatefulShellRouteData.$route(
-      factory:
-          (GoRouterState state) => const _StatefulShellRouteDataPageBuilder(),
+      factory: (GoRouterState state) =>
+          const _StatefulShellRouteDataPageBuilder(),
       branches: <StatefulShellBranch>[
         StatefulShellBranchData.$branch(
           routes: <RouteBase>[
@@ -318,8 +318,8 @@ void main() {
     ) async {
       final List<FlutterErrorDetails> errors = <FlutterErrorDetails>[];
 
-      FlutterError.onError =
-          (FlutterErrorDetails details) => errors.add(details);
+      FlutterError.onError = (FlutterErrorDetails details) =>
+          errors.add(details);
 
       const String errorText = 'Should be generated';
 
@@ -329,11 +329,10 @@ void main() {
         await tester.pumpWidget(
           MaterialApp(
             home: Builder(
-              builder:
-                  (BuildContext context) => GestureDetector(
-                    child: const Text('Tap'),
-                    onTap: () => onTap(context),
-                  ),
+              builder: (BuildContext context) => GestureDetector(
+                child: const Text('Tap'),
+                onTap: () => onTap(context),
+              ),
             ),
           ),
         );
@@ -403,8 +402,8 @@ void main() {
         final GoRoute routeWithDefaultCaseSensitivity =
             RelativeGoRouteData.$route(
               path: 'path',
-              factory:
-                  (GoRouterState state) => const _RelativeGoRouteDataBuild(),
+              factory: (GoRouterState state) =>
+                  const _RelativeGoRouteDataBuild(),
             );
 
         expect(routeWithDefaultCaseSensitivity.caseSensitive, true);
@@ -418,8 +417,8 @@ void main() {
             RelativeGoRouteData.$route(
               path: 'path',
               caseSensitive: false,
-              factory:
-                  (GoRouterState state) => const _RelativeGoRouteDataBuild(),
+              factory: (GoRouterState state) =>
+                  const _RelativeGoRouteDataBuild(),
             );
 
         expect(routeWithDefaultCaseSensitivity.caseSensitive, false);
@@ -431,8 +430,8 @@ void main() {
     ) async {
       final List<FlutterErrorDetails> errors = <FlutterErrorDetails>[];
 
-      FlutterError.onError =
-          (FlutterErrorDetails details) => errors.add(details);
+      FlutterError.onError = (FlutterErrorDetails details) =>
+          errors.add(details);
 
       const String errorText = 'Should be generated';
 
@@ -442,11 +441,10 @@ void main() {
         await tester.pumpWidget(
           MaterialApp(
             home: Builder(
-              builder:
-                  (BuildContext context) => GestureDetector(
-                    child: const Text('Tap'),
-                    onTap: () => onTap(context),
-                  ),
+              builder: (BuildContext context) => GestureDetector(
+                child: const Text('Tap'),
+                onTap: () => onTap(context),
+              ),
             ),
           ),
         );
@@ -510,29 +508,25 @@ void main() {
         initialLocation: '/child/test',
         routes: <RouteBase>[
           ShellRouteData.$route(
-            factory:
-                (GoRouterState state) =>
-                    const _ShellRouteDataWithKey(Key('under-shell')),
+            factory: (GoRouterState state) =>
+                const _ShellRouteDataWithKey(Key('under-shell')),
             routes: <RouteBase>[
               GoRouteData.$route(
                 path: '/child',
-                factory:
-                    (GoRouterState state) =>
-                        const _GoRouteDataBuildWithKey(Key('under')),
+                factory: (GoRouterState state) =>
+                    const _GoRouteDataBuildWithKey(Key('under')),
                 routes: <RouteBase>[
                   ShellRouteData.$route(
-                    factory:
-                        (GoRouterState state) =>
-                            const _ShellRouteDataWithKey(Key('above-shell')),
+                    factory: (GoRouterState state) =>
+                        const _ShellRouteDataWithKey(Key('above-shell')),
                     navigatorKey: inner,
                     parentNavigatorKey: root,
                     routes: <RouteBase>[
                       GoRouteData.$route(
                         parentNavigatorKey: inner,
                         path: 'test',
-                        factory:
-                            (GoRouterState state) =>
-                                const _GoRouteDataBuildWithKey(Key('above')),
+                        factory: (GoRouterState state) =>
+                            const _GoRouteDataBuildWithKey(Key('above')),
                       ),
                     ],
                   ),
@@ -620,8 +614,8 @@ void main() {
       final GlobalKey<NavigatorState> key = GlobalKey<NavigatorState>();
       final StatefulShellRoute route = StatefulShellRouteData.$route(
         parentNavigatorKey: key,
-        factory:
-            (GoRouterState state) => const _StatefulShellRouteDataPageBuilder(),
+        factory: (GoRouterState state) =>
+            const _StatefulShellRouteDataPageBuilder(),
         branches: <StatefulShellBranch>[
           StatefulShellBranchData.$branch(
             routes: <RouteBase>[
@@ -673,9 +667,8 @@ void main() {
         routes: <RouteBase>[
           _goRouteDataBuildPage,
           StatefulShellRouteData.$route(
-            factory:
-                (GoRouterState state) =>
-                    const _StatefulShellRouteDataRedirectPage(),
+            factory: (GoRouterState state) =>
+                const _StatefulShellRouteDataRedirectPage(),
             branches: <StatefulShellBranch>[
               StatefulShellBranchData.$branch(
                 routes: <GoRoute>[

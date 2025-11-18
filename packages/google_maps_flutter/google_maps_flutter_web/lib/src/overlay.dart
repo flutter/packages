@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -25,10 +25,9 @@ class TileOverlayController {
   /// [TileOverlay].
   void update(TileOverlay tileOverlay) {
     _tileOverlay = tileOverlay;
-    _gmMapType =
-        gmaps.MapType()
-          ..tileSize = gmaps.Size(logicalTileSize, logicalTileSize)
-          ..getTile = _getTile;
+    _gmMapType = gmaps.MapType()
+      ..tileSize = gmaps.Size(logicalTileSize, logicalTileSize)
+      ..getTile = _getTile;
   }
 
   /// Renders a Tile for gmaps; delegating to the configured [TileProvider].
@@ -58,11 +57,10 @@ class TileOverlayController {
             Blob(<JSUint8Array>[tile.data!.toJS].toJS) as JSObject,
           );
           img.src = src;
-          img.onload =
-              (JSAny? _) {
-                img.hidden = false.toJS;
-                URL.revokeObjectURL(src);
-              }.toJS;
+          img.onload = (JSAny? _) {
+            img.hidden = false.toJS;
+            URL.revokeObjectURL(src);
+          }.toJS;
         });
 
     return img;

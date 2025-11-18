@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -109,10 +109,9 @@ void main() {
       final ColorScheme colorScheme = Theme.of(selectedKeyElement).colorScheme;
 
       Color? bgColorFor(String key) {
-        final Container? container =
-            tester
-                .element(find.text(key))
-                .findAncestorWidgetOfExactType<Container>();
+        final Container? container = tester
+            .element(find.text(key))
+            .findAncestorWidgetOfExactType<Container>();
         return container?.color;
       }
 

@@ -162,10 +162,9 @@ abstract class SvgLoader<T> extends BytesLoader {
               .encodeSvg(
                 xml: provideSvg(message),
                 theme: theme.toVgTheme(),
-                colorMapper:
-                    colorMapper == null
-                        ? null
-                        : _DelegateVgColorMapper(colorMapper!),
+                colorMapper: colorMapper == null
+                    ? null
+                    : _DelegateVgColorMapper(colorMapper!),
                 debugName: 'Svg loader',
                 enableClippingOptimizer: false,
                 enableMaskingOptimizer: false,
@@ -379,7 +378,7 @@ class SvgAssetLoader extends SvgLoader<ByteData> {
 
   @override
   String provideSvg(ByteData? message) =>
-      utf8.decode(message!.buffer.asUint8List(), allowMalformed: true);
+      utf8.decode(Uint8List.sublistView(message!), allowMalformed: true);
 
   @override
   SvgCacheKey cacheKey(BuildContext? context) {

@@ -1,13 +1,13 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import 'package:go_router/go_router.dart';
 
-mixin _$Route1 {}
-mixin _$Route2 {}
-mixin _$RelativeRoute {}
-mixin _$InnerRelativeRoute {}
+mixin $Route1 {}
+mixin $Route2 {}
+mixin $RelativeRoute {}
+mixin $InnerRelativeRoute {}
 
 const TypedRelativeGoRoute<RelativeRoute> relativeRoute =
     TypedRelativeGoRoute<RelativeRoute>(
@@ -21,7 +21,7 @@ const TypedRelativeGoRoute<RelativeRoute> relativeRoute =
   path: 'route-1',
   routes: <TypedRoute<RouteData>>[relativeRoute],
 )
-class Route1 extends GoRouteData with _$Route1 {
+class Route1 extends GoRouteData with $Route1 {
   const Route1();
 }
 
@@ -29,14 +29,14 @@ class Route1 extends GoRouteData with _$Route1 {
   path: 'route-2',
   routes: <TypedRoute<RouteData>>[relativeRoute],
 )
-class Route2 extends GoRouteData with _$Route2 {
+class Route2 extends GoRouteData with $Route2 {
   const Route2();
 }
 
-class RelativeRoute extends RelativeGoRouteData with _$RelativeRoute {
+class RelativeRoute extends RelativeGoRouteData with $RelativeRoute {
   const RelativeRoute();
 }
 
-class InnerRelativeRoute extends RelativeGoRouteData with _$InnerRelativeRoute {
+class InnerRelativeRoute extends RelativeGoRouteData with $InnerRelativeRoute {
   const InnerRelativeRoute();
 }

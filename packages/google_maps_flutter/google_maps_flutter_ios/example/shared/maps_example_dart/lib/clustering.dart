@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -125,10 +125,9 @@ class ClusteringBodyState extends State<ClusteringBody> {
 
     final ClusterManager clusterManager = ClusterManager(
       clusterManagerId: clusterManagerId,
-      onClusterTap:
-          (Cluster cluster) => setState(() {
-            lastCluster = cluster;
-          }),
+      onClusterTap: (Cluster cluster) => setState(() {
+        lastCluster = cluster;
+      }),
     );
 
     setState(() {
@@ -197,10 +196,9 @@ class ClusteringBodyState extends State<ClusteringBody> {
       final Marker marker = markers[markerId]!;
       final double current = marker.alpha;
       markers[markerId] = marker.copyWith(
-        alphaParam:
-            current == _fullyVisibleAlpha
-                ? _halfVisibleAlpha
-                : _fullyVisibleAlpha,
+        alphaParam: current == _fullyVisibleAlpha
+            ? _halfVisibleAlpha
+            : _fullyVisibleAlpha,
       );
     }
     setState(() {});
@@ -230,19 +228,16 @@ class ClusteringBodyState extends State<ClusteringBody> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
                 TextButton(
-                  onPressed:
-                      clusterManagers.length >= _clusterManagerMaxCount
-                          ? null
-                          : () => _addClusterManager(),
+                  onPressed: clusterManagers.length >= _clusterManagerMaxCount
+                      ? null
+                      : () => _addClusterManager(),
                   child: const Text('Add cluster manager'),
                 ),
                 TextButton(
-                  onPressed:
-                      clusterManagers.isEmpty
-                          ? null
-                          : () => _removeClusterManager(
-                            clusterManagers.values.last,
-                          ),
+                  onPressed: clusterManagers.isEmpty
+                      ? null
+                      : () =>
+                            _removeClusterManager(clusterManagers.values.last),
                   child: const Text('Remove cluster manager'),
                 ),
               ],
@@ -263,20 +258,20 @@ class ClusteringBodyState extends State<ClusteringBody> {
               alignment: WrapAlignment.spaceEvenly,
               children: <Widget>[
                 TextButton(
-                  onPressed:
-                      selectedId == null
-                          ? null
-                          : () {
-                            _remove(selectedId);
-                            setState(() {
-                              selectedMarker = null;
-                            });
-                          },
+                  onPressed: selectedId == null
+                      ? null
+                      : () {
+                          _remove(selectedId);
+                          setState(() {
+                            selectedMarker = null;
+                          });
+                        },
                   child: const Text('Remove selected marker'),
                 ),
                 TextButton(
-                  onPressed:
-                      markers.isEmpty ? null : () => _changeMarkersAlpha(),
+                  onPressed: markers.isEmpty
+                      ? null
+                      : () => _changeMarkersAlpha(),
                   child: const Text('Change all markers alpha'),
                 ),
               ],

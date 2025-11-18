@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -42,21 +42,21 @@ const TypedRelativeGoRoute<DetailsRoute> detailRoute =
     detailRoute,
   ],
 )
-class HomeRoute extends GoRouteData with _$HomeRoute {
+class HomeRoute extends GoRouteData with $HomeRoute {
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return const HomeScreen();
   }
 }
 
-class DashboardRoute extends GoRouteData with _$DashboardRoute {
+class DashboardRoute extends GoRouteData with $DashboardRoute {
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return const DashboardScreen();
   }
 }
 
-class DetailsRoute extends RelativeGoRouteData with _$DetailsRoute {
+class DetailsRoute extends RelativeGoRouteData with $DetailsRoute {
   const DetailsRoute({required this.detailId});
   final String detailId;
 
@@ -66,7 +66,7 @@ class DetailsRoute extends RelativeGoRouteData with _$DetailsRoute {
   }
 }
 
-class SettingsRoute extends RelativeGoRouteData with _$SettingsRoute {
+class SettingsRoute extends RelativeGoRouteData with $SettingsRoute {
   const SettingsRoute({required this.settingId});
   final String settingId;
 
@@ -152,10 +152,9 @@ class DetailsScreen extends StatelessWidget {
               child: const Text('Go back'),
             ),
             ElevatedButton(
-              onPressed:
-                  () => const SettingsRoute(
-                    settingId: 'SettingsId',
-                  ).goRelative(context),
+              onPressed: () => const SettingsRoute(
+                settingId: 'SettingsId',
+              ).goRelative(context),
               child: const Text('Go to the Settings screen'),
             ),
           ],

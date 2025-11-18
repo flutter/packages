@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -67,8 +67,9 @@ XDG_VIDEOS_DIR="$HOME/Videos"
     xdg.xdgEnvironmentOverride = null;
   });
   void expectDirList(List<Directory> values, List<String> expected) {
-    final List<String> valueStr =
-        values.map<String>((Directory directory) => directory.path).toList();
+    final List<String> valueStr = values
+        .map<String>((Directory directory) => directory.path)
+        .toList();
     expect(valueStr, orderedEquals(expected));
   }
 

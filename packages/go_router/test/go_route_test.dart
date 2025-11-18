@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -51,20 +51,17 @@ void main() {
             routes: <RouteBase>[
               ShellRoute(
                 parentNavigatorKey: rootNavigatorKey,
-                builder: (
-                  BuildContext context,
-                  GoRouterState state,
-                  Widget child,
-                ) {
-                  return Scaffold(
-                    body: Column(
-                      children: <Widget>[
-                        const Text('Screen D'),
-                        Expanded(child: child),
-                      ],
-                    ),
-                  );
-                },
+                builder:
+                    (BuildContext context, GoRouterState state, Widget child) {
+                      return Scaffold(
+                        body: Column(
+                          children: <Widget>[
+                            const Text('Screen D'),
+                            Expanded(child: child),
+                          ],
+                        ),
+                      );
+                    },
                 routes: <RouteBase>[
                   GoRoute(
                     path: 'c',
@@ -261,9 +258,8 @@ void main() {
               routes: <RouteBase>[
                 GoRoute(
                   path: '1',
-                  builder:
-                      (_, __) =>
-                          const Text('/route/1'), // Renders "/route/1" text
+                  builder: (_, __) =>
+                      const Text('/route/1'), // Renders "/route/1" text
                 ),
               ],
             ),

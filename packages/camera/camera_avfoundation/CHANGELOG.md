@@ -1,5 +1,46 @@
-## NEXT
+## 0.9.22+6
 
+* Updates to Pigeon 26.
+
+## 0.9.22+5
+
+* Migrates `FLTCaptureDevice`, `FLTCaptureSession`, and `FLTFormatUtils` classes to Swift.
+
+## 0.9.22+4
+
+* Migrates `FLTCameraDeviceDiscovering` and `FLTDeviceOrientationProviding` classes to Swift.
+
+## 0.9.22+3
+
+* Updates examples to use the new RadioGroup API instead of deprecated Radio parameters.
+
+## 0.9.22+2
+
+* Migrates `FLTCamConfiguration`, `FLTCamMediaSettingsAVWrapper` classes to Swift.
+* Migrates `FLTCaptureOutput`, `FLTCapturePhotoOutput`, `FLTCaptureVideoDataOutput` protocols to Swift.
+
+## 0.9.22+1
+
+* Fixes crash on iOS when `enableAudio` is false.
+
+## 0.9.22
+
+* Adds lensType in the PlatformCameraDescription
+
+## 0.9.21+4
+
+* Migrates `updateOrientation` and `setCaptureSessionPreset` methods to Swift.
+* Removes `FLTCam` class.
+
+## 0.9.21+3
+
+* Removes code for versions of iOS older than 13.0.
+* Updates minimum supported SDK version to Flutter 3.35.
+
+## 0.9.21+2
+
+* Migrates `DefaultCamera` initialization to Swift.
+* Removes unused `textureId` field of `FLTCam` class.
 * Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
 
 ## 0.9.21+1

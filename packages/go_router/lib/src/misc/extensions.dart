@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -10,8 +10,6 @@ import '../router.dart';
 /// context.go('/');
 extension GoRouterHelper on BuildContext {
   /// Get a location from route name and parameters.
-  ///
-  /// This method can't be called during redirects.
   String namedLocation(
     String name, {
     Map<String, String> pathParameters = const <String, String>{},

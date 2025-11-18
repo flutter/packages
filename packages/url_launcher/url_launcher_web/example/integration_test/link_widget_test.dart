@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -184,16 +184,14 @@ void main() {
             data: const MediaQueryData(),
             child: ListView.builder(
               itemCount: itemCount,
-              itemBuilder:
-                  (_, int index) => WebLinkDelegate(
-                    TestLinkInfo(
-                      uri: uri,
-                      target: LinkTarget.defaultTarget,
-                      builder:
-                          (BuildContext context, FollowLink? followLink) =>
-                              Text('#$index', textAlign: TextAlign.center),
-                    ),
-                  ),
+              itemBuilder: (_, int index) => WebLinkDelegate(
+                TestLinkInfo(
+                  uri: uri,
+                  target: LinkTarget.defaultTarget,
+                  builder: (BuildContext context, FollowLink? followLink) =>
+                      Text('#$index', textAlign: TextAlign.center),
+                ),
+              ),
             ),
           ),
         ),
@@ -396,10 +394,10 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           routes: <String, WidgetBuilder>{
-            '/foobar1':
-                (BuildContext context) => const Text('Internal route 1'),
-            '/foobar2':
-                (BuildContext context) => const Text('Internal route 2'),
+            '/foobar1': (BuildContext context) =>
+                const Text('Internal route 1'),
+            '/foobar2': (BuildContext context) =>
+                const Text('Internal route 2'),
           },
           home: Column(
             children: <Widget>[
@@ -992,11 +990,10 @@ void main() {
         'flt-semantics-host',
       );
       html.document.body!.append(semanticsHost);
-      final html.Element semanticsAnchor =
-          html.document.createElement('a')
-            ..setAttribute('id', 'flt-semantic-node-99')
-            ..setAttribute('flt-semantics-identifier', 'test-link-27')
-            ..setAttribute('href', '/foobar');
+      final html.Element semanticsAnchor = html.document.createElement('a')
+        ..setAttribute('id', 'flt-semantic-node-99')
+        ..setAttribute('flt-semantics-identifier', 'test-link-27')
+        ..setAttribute('href', '/foobar');
       semanticsHost.append(semanticsAnchor);
       final html.Element semanticsContainer = html.document.createElement(
         'flt-semantics-container',
@@ -1064,12 +1061,11 @@ void main() {
         'flt-semantics-host',
       );
       html.document.body!.append(semanticsHost);
-      final html.Element semanticsAnchor =
-          html.document.createElement('a')
-            ..setAttribute('id', 'flt-semantic-node-99')
-            ..setAttribute('flt-semantics-identifier', 'test-link-71')
-            ..setAttribute('href', '/foobar')
-            ..textContent = 'My Text Link';
+      final html.Element semanticsAnchor = html.document.createElement('a')
+        ..setAttribute('id', 'flt-semantic-node-99')
+        ..setAttribute('flt-semantics-identifier', 'test-link-71')
+        ..setAttribute('href', '/foobar')
+        ..textContent = 'My Text Link';
       semanticsHost.append(semanticsAnchor);
 
       expect(pushedRouteNames, isEmpty);
@@ -1115,12 +1111,11 @@ void main() {
         'flt-semantics-host',
       );
       html.document.body!.append(semanticsHost);
-      final html.Element semanticsAnchor =
-          html.document.createElement('a')
-            ..setAttribute('id', 'flt-semantic-node-99')
-            ..setAttribute('flt-semantics-identifier', 'test-link-71')
-            ..setAttribute('href', uri.toString())
-            ..textContent = 'My Text Link';
+      final html.Element semanticsAnchor = html.document.createElement('a')
+        ..setAttribute('id', 'flt-semantic-node-99')
+        ..setAttribute('flt-semantics-identifier', 'test-link-71')
+        ..setAttribute('href', uri.toString())
+        ..textContent = 'My Text Link';
       semanticsHost.append(semanticsAnchor);
 
       expect(pushedRouteNames, isEmpty);
@@ -1172,12 +1167,11 @@ void main() {
         'flt-semantics-host',
       );
       html.document.body!.append(semanticsHost);
-      final html.Element semanticsAnchor =
-          html.document.createElement('a')
-            ..setAttribute('id', 'flt-semantic-node-99')
-            ..setAttribute('flt-semantics-identifier', 'test-link-71')
-            ..setAttribute('href', uri.toString())
-            ..textContent = 'My Text Link';
+      final html.Element semanticsAnchor = html.document.createElement('a')
+        ..setAttribute('id', 'flt-semantic-node-99')
+        ..setAttribute('flt-semantics-identifier', 'test-link-71')
+        ..setAttribute('href', uri.toString())
+        ..textContent = 'My Text Link';
       semanticsHost.append(semanticsAnchor);
 
       expect(pushedRouteNames, isEmpty);
@@ -1229,10 +1223,9 @@ void main() {
         'flt-semantics-host',
       );
       html.document.body!.append(semanticsHost);
-      final html.Element semanticsAnchor =
-          html.document.createElement('a')
-            ..setAttribute('id', 'flt-semantic-node-99')
-            ..setAttribute('href', '#');
+      final html.Element semanticsAnchor = html.document.createElement('a')
+        ..setAttribute('id', 'flt-semantic-node-99')
+        ..setAttribute('href', '#');
       semanticsHost.append(semanticsAnchor);
       final html.Element semanticsContainer = html.document.createElement(
         'flt-semantics-container',
@@ -1293,11 +1286,10 @@ void main() {
         'flt-semantics-host',
       );
       html.document.body!.append(semanticsHost);
-      final html.Element semanticsAnchor =
-          html.document.createElement('a')
-            ..setAttribute('id', 'flt-semantic-node-99')
-            ..setAttribute('href', '#')
-            ..textContent = 'My Text Link';
+      final html.Element semanticsAnchor = html.document.createElement('a')
+        ..setAttribute('id', 'flt-semantic-node-99')
+        ..setAttribute('href', '#')
+        ..textContent = 'My Text Link';
       semanticsHost.append(semanticsAnchor);
 
       expect(pushedRouteNames, isEmpty);

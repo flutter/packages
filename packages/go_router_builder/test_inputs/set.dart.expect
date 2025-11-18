@@ -1,9 +1,9 @@
 RouteBase get $setRoute => GoRouteData.$route(
       path: '/set-route',
-      factory: _$SetRoute._fromState,
+      factory: $SetRoute._fromState,
     );
 
-mixin _$SetRoute on GoRouteData {
+mixin $SetRoute on GoRouteData {
   static SetRoute _fromState(GoRouterState state) => SetRoute(
         ids: state.uri.queryParametersAll['ids']
                 ?.map(int.parse)

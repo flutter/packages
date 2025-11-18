@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -313,13 +313,12 @@ class VideoPlayer {
       _videoElement.duration,
     );
 
-    final Size? size =
-        _videoElement.videoHeight.isFinite
-            ? Size(
-              _videoElement.videoWidth.toDouble(),
-              _videoElement.videoHeight.toDouble(),
-            )
-            : null;
+    final Size? size = _videoElement.videoHeight.isFinite
+        ? Size(
+            _videoElement.videoWidth.toDouble(),
+            _videoElement.videoHeight.toDouble(),
+          )
+        : null;
 
     _eventController.add(
       VideoEvent(
@@ -340,10 +339,9 @@ class VideoPlayer {
       _isBuffering = buffering;
       _eventController.add(
         VideoEvent(
-          eventType:
-              _isBuffering
-                  ? VideoEventType.bufferingStart
-                  : VideoEventType.bufferingEnd,
+          eventType: _isBuffering
+              ? VideoEventType.bufferingStart
+              : VideoEventType.bufferingEnd,
         ),
       );
     }

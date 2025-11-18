@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -93,8 +93,14 @@ void main() {
     expect(pathNodesOld.length, pathNodesNew.length);
 
     expect(instructions.paints, const <Paint>[
-      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0xffff0000))),
-      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0xff0000ff))),
+      Paint(
+        blendMode: BlendMode.srcOver,
+        fill: Fill(color: Color(0xffff0000)),
+      ),
+      Paint(
+        blendMode: BlendMode.srcOver,
+        fill: Fill(color: Color(0xff0000ff)),
+      ),
     ]);
 
     expect(instructions.paths, <Path>[
@@ -141,9 +147,18 @@ void main() {
     expect(pathNodesNew.length, 3);
 
     expect(instructions.paints, const <Paint>[
-      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0x7fff0000))),
-      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0x4c0000ff))),
-      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0xa58a0075))),
+      Paint(
+        blendMode: BlendMode.srcOver,
+        fill: Fill(color: Color(0x7fff0000)),
+      ),
+      Paint(
+        blendMode: BlendMode.srcOver,
+        fill: Fill(color: Color(0x4c0000ff)),
+      ),
+      Paint(
+        blendMode: BlendMode.srcOver,
+        fill: Fill(color: Color(0xa58a0075)),
+      ),
     ]);
 
     expect(instructions.paths, <Path>[
@@ -208,8 +223,14 @@ void main() {
     expect(pathNodesNew.length, 2);
 
     expect(instructions.paints, const <Paint>[
-      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0x7fff0000))),
-      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0xff0000ff))),
+      Paint(
+        blendMode: BlendMode.srcOver,
+        fill: Fill(color: Color(0x7fff0000)),
+      ),
+      Paint(
+        blendMode: BlendMode.srcOver,
+        fill: Fill(color: Color(0xff0000ff)),
+      ),
     ]);
 
     expect(instructions.paths, <Path>[
@@ -256,9 +277,18 @@ void main() {
     expect(pathNodesNew.length, 3);
 
     expect(instructions.paints, const <Paint>[
-      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0xffff0000))),
-      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0x7f0000ff))),
-      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0xff80007f))),
+      Paint(
+        blendMode: BlendMode.srcOver,
+        fill: Fill(color: Color(0xffff0000)),
+      ),
+      Paint(
+        blendMode: BlendMode.srcOver,
+        fill: Fill(color: Color(0x7f0000ff)),
+      ),
+      Paint(
+        blendMode: BlendMode.srcOver,
+        fill: Fill(color: Color(0xff80007f)),
+      ),
     ]);
 
     expect(instructions.paths, <Path>[
@@ -345,19 +375,58 @@ void main() {
     expect(pathNodesNew.length, 22);
 
     expect(instructions.paints, const <Paint>[
-      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0xff0000ff))),
-      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0xffff0000))),
-      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0xccff0000))),
-      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0x99ff0000))),
-      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0x66ff0000))),
-      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0x33ff0000))),
-      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0xff008000))),
-      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0xbfff0000))),
-      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0xbf008000))),
-      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0x7fff0000))),
-      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0x7f008000))),
-      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0x3fff0000))),
-      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0x3f008000))),
+      Paint(
+        blendMode: BlendMode.srcOver,
+        fill: Fill(color: Color(0xff0000ff)),
+      ),
+      Paint(
+        blendMode: BlendMode.srcOver,
+        fill: Fill(color: Color(0xffff0000)),
+      ),
+      Paint(
+        blendMode: BlendMode.srcOver,
+        fill: Fill(color: Color(0xccff0000)),
+      ),
+      Paint(
+        blendMode: BlendMode.srcOver,
+        fill: Fill(color: Color(0x99ff0000)),
+      ),
+      Paint(
+        blendMode: BlendMode.srcOver,
+        fill: Fill(color: Color(0x66ff0000)),
+      ),
+      Paint(
+        blendMode: BlendMode.srcOver,
+        fill: Fill(color: Color(0x33ff0000)),
+      ),
+      Paint(
+        blendMode: BlendMode.srcOver,
+        fill: Fill(color: Color(0xff008000)),
+      ),
+      Paint(
+        blendMode: BlendMode.srcOver,
+        fill: Fill(color: Color(0xbfff0000)),
+      ),
+      Paint(
+        blendMode: BlendMode.srcOver,
+        fill: Fill(color: Color(0xbf008000)),
+      ),
+      Paint(
+        blendMode: BlendMode.srcOver,
+        fill: Fill(color: Color(0x7fff0000)),
+      ),
+      Paint(
+        blendMode: BlendMode.srcOver,
+        fill: Fill(color: Color(0x7f008000)),
+      ),
+      Paint(
+        blendMode: BlendMode.srcOver,
+        fill: Fill(color: Color(0x3fff0000)),
+      ),
+      Paint(
+        blendMode: BlendMode.srcOver,
+        fill: Fill(color: Color(0x3f008000)),
+      ),
     ]);
 
     expect(instructions.paths, <Path>[

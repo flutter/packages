@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -326,13 +326,12 @@ void main() {
           ),
         );
 
-        final List<dynamic> javaScriptChannels =
-            verify(
-              mocks.userContentController.addScriptMessageHandler(
-                captureAny,
-                captureAny,
-              ),
-            ).captured;
+        final List<dynamic> javaScriptChannels = verify(
+          mocks.userContentController.addScriptMessageHandler(
+            captureAny,
+            captureAny,
+          ),
+        ).captured;
         expect(javaScriptChannels[0], isA<WKScriptMessageHandler>());
         expect(javaScriptChannels[1], 'a');
         expect(javaScriptChannels[2], isA<WKScriptMessageHandler>());
@@ -406,17 +405,14 @@ void main() {
             ),
           );
 
-          final List<dynamic> javaScriptChannels =
-              verifyInOrder(<Object>[
-                mocks.userContentController.removeAllUserScripts(),
-                mocks.userContentController.removeScriptMessageHandler(
-                  'myChannel',
-                ),
-                mocks.userContentController.addScriptMessageHandler(
-                  captureAny,
-                  captureAny,
-                ),
-              ]).captured[2];
+          final List<dynamic> javaScriptChannels = verifyInOrder(<Object>[
+            mocks.userContentController.removeAllUserScripts(),
+            mocks.userContentController.removeScriptMessageHandler('myChannel'),
+            mocks.userContentController.addScriptMessageHandler(
+              captureAny,
+              captureAny,
+            ),
+          ]).captured[2];
 
           expect(javaScriptChannels[0], isA<WKScriptMessageHandler>());
           expect(javaScriptChannels[1], 'myChannel');
@@ -1056,22 +1052,20 @@ void main() {
             await buildWidget(tester, mocks);
 
         await testController.addJavascriptChannels(<String>{'c', 'd'});
-        final List<dynamic> javaScriptChannels =
-            verify(
-              mocks.userContentController.addScriptMessageHandler(
-                captureAny,
-                captureAny,
-              ),
-            ).captured;
+        final List<dynamic> javaScriptChannels = verify(
+          mocks.userContentController.addScriptMessageHandler(
+            captureAny,
+            captureAny,
+          ),
+        ).captured;
         expect(javaScriptChannels[0], isA<WKScriptMessageHandler>());
         expect(javaScriptChannels[1], 'c');
         expect(javaScriptChannels[2], isA<WKScriptMessageHandler>());
         expect(javaScriptChannels[3], 'd');
 
-        final List<WKUserScript> userScripts =
-            verify(
-              mocks.userContentController.addUserScript(captureAny),
-            ).captured.cast<WKUserScript>();
+        final List<WKUserScript> userScripts = verify(
+          mocks.userContentController.addUserScript(captureAny),
+        ).captured.cast<WKUserScript>();
         expect(userScripts[0].source, 'window.c = webkit.messageHandlers.c;');
         expect(
           userScripts[0].injectionTime,
@@ -1106,20 +1100,18 @@ void main() {
         verify(mocks.userContentController.removeScriptMessageHandler('c'));
         verify(mocks.userContentController.removeScriptMessageHandler('d'));
 
-        final List<dynamic> javaScriptChannels =
-            verify(
-              mocks.userContentController.addScriptMessageHandler(
-                captureAny,
-                captureAny,
-              ),
-            ).captured;
+        final List<dynamic> javaScriptChannels = verify(
+          mocks.userContentController.addScriptMessageHandler(
+            captureAny,
+            captureAny,
+          ),
+        ).captured;
         expect(javaScriptChannels[0], isA<WKScriptMessageHandler>());
         expect(javaScriptChannels[1], 'd');
 
-        final List<WKUserScript> userScripts =
-            verify(
-              mocks.userContentController.addUserScript(captureAny),
-            ).captured.cast<WKUserScript>();
+        final List<WKUserScript> userScripts = verify(
+          mocks.userContentController.addUserScript(captureAny),
+        ).captured.cast<WKUserScript>();
         expect(userScripts[0].source, 'window.d = webkit.messageHandlers.d;');
         expect(
           userScripts[0].injectionTime,

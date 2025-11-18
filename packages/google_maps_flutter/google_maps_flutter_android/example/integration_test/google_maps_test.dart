@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -667,8 +667,8 @@ void main() {
     );
     await tester.pumpAndSettle(const Duration(seconds: 3));
 
-    final LatLngBounds secondVisibleRegion =
-        await mapController.getVisibleRegion();
+    final LatLngBounds secondVisibleRegion = await mapController
+        .getVisibleRegion();
 
     expect(secondVisibleRegion, isNot(zeroLatLngBounds));
 
@@ -1219,16 +1219,14 @@ void main() {
     final GoogleMapsInspectorPlatform inspector =
         GoogleMapsInspectorPlatform.instance!;
 
-    final TileOverlay tileOverlayInfo1 =
-        (await inspector.getTileOverlayInfo(
-          tileOverlay1.mapsId,
-          mapId: mapId,
-        ))!;
-    final TileOverlay tileOverlayInfo2 =
-        (await inspector.getTileOverlayInfo(
-          tileOverlay2.mapsId,
-          mapId: mapId,
-        ))!;
+    final TileOverlay tileOverlayInfo1 = (await inspector.getTileOverlayInfo(
+      tileOverlay1.mapsId,
+      mapId: mapId,
+    ))!;
+    final TileOverlay tileOverlayInfo2 = (await inspector.getTileOverlayInfo(
+      tileOverlay2.mapsId,
+      mapId: mapId,
+    ))!;
 
     expect(tileOverlayInfo1.visible, isTrue);
     expect(tileOverlayInfo1.fadeIn, isTrue);
@@ -1306,11 +1304,10 @@ void main() {
 
     await tester.pumpAndSettle(const Duration(seconds: 3));
 
-    final TileOverlay tileOverlayInfo1 =
-        (await inspector.getTileOverlayInfo(
-          tileOverlay1.mapsId,
-          mapId: mapId,
-        ))!;
+    final TileOverlay tileOverlayInfo1 = (await inspector.getTileOverlayInfo(
+      tileOverlay1.mapsId,
+      mapId: mapId,
+    ))!;
     final TileOverlay? tileOverlayInfo2 = await inspector.getTileOverlayInfo(
       tileOverlay2.mapsId,
       mapId: mapId,
@@ -1780,18 +1777,12 @@ void main() {
           GoogleMapsInspectorPlatform.instance!;
 
       if (inspector.supportsGettingGroundOverlayInfo()) {
-        final GroundOverlay groundOverlayBoundsInfo1 =
-            (await inspector.getGroundOverlayInfo(
-              groundOverlayBounds1.mapsId,
-              mapId: mapId,
-            ))!;
-        final GroundOverlay groundOverlayBoundsInfo2 =
-            (await inspector.getGroundOverlayInfo(
-              groundOverlayBounds2.mapsId,
-              mapId: mapId,
-            ))!;
-        final GroundOverlay groundOverlayPositionInfo1 =
-            (await inspector.getGroundOverlayInfo(
+        final GroundOverlay groundOverlayBoundsInfo1 = (await inspector
+            .getGroundOverlayInfo(groundOverlayBounds1.mapsId, mapId: mapId))!;
+        final GroundOverlay groundOverlayBoundsInfo2 = (await inspector
+            .getGroundOverlayInfo(groundOverlayBounds2.mapsId, mapId: mapId))!;
+        final GroundOverlay groundOverlayPositionInfo1 = (await inspector
+            .getGroundOverlayInfo(
               groundOverlayPosition1.mapsId,
               mapId: mapId,
             ))!;
@@ -1876,13 +1867,10 @@ void main() {
       await tester.pumpAndSettle(const Duration(seconds: 3));
 
       if (inspector.supportsGettingGroundOverlayInfo()) {
-        final GroundOverlay groundOverlayBounds1Info =
-            (await inspector.getGroundOverlayInfo(
-              groundOverlayBounds1.mapsId,
-              mapId: mapId,
-            ))!;
-        final GroundOverlay groundOverlayPosition1Info =
-            (await inspector.getGroundOverlayInfo(
+        final GroundOverlay groundOverlayBounds1Info = (await inspector
+            .getGroundOverlayInfo(groundOverlayBounds1.mapsId, mapId: mapId))!;
+        final GroundOverlay groundOverlayPosition1Info = (await inspector
+            .getGroundOverlayInfo(
               groundOverlayPosition1.mapsId,
               mapId: mapId,
             ))!;

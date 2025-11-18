@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -33,10 +33,12 @@ void main() {
 
   final Map<ResolutionPreset, Size> presetExpectedSizes =
       <ResolutionPreset, Size>{
-        ResolutionPreset.low:
-            Platform.isAndroid ? const Size(240, 320) : const Size(288, 352),
-        ResolutionPreset.medium:
-            Platform.isAndroid ? const Size(480, 720) : const Size(480, 640),
+        ResolutionPreset.low: Platform.isAndroid
+            ? const Size(240, 320)
+            : const Size(288, 352),
+        ResolutionPreset.medium: Platform.isAndroid
+            ? const Size(480, 720)
+            : const Size(480, 640),
         ResolutionPreset.high: const Size(720, 1280),
         ResolutionPreset.veryHigh: const Size(1080, 1920),
         ResolutionPreset.ultraHigh: const Size(2160, 3840),
@@ -260,7 +262,9 @@ void main() {
     return completer.future;
   }
 
-  testWidgets('Set description while recording', (WidgetTester tester) async {
+  testWidgets('Set description while recording captures full video', (
+    WidgetTester tester,
+  ) async {
     final List<CameraDescription> cameras = await availableCameras();
     if (cameras.length < 2) {
       return;
@@ -269,7 +273,6 @@ void main() {
     final CameraController controller = CameraController(
       cameras[0],
       ResolutionPreset.low,
-      enableAudio: false,
     );
 
     await controller.initialize();
@@ -278,7 +281,27 @@ void main() {
     await controller.startVideoRecording();
     await controller.setDescription(cameras[1]);
 
-    expect(controller.description, cameras[1]);
+    await tester.pumpAndSettle(const Duration(seconds: 4));
+
+    await controller.setDescription(cameras[0]);
+
+    await tester.pumpAndSettle(const Duration(seconds: 1));
+
+    final XFile file = await controller.stopVideoRecording();
+
+    final File videoFile = File(file.path);
+    final VideoPlayerController videoController = VideoPlayerController.file(
+      videoFile,
+    );
+    await videoController.initialize();
+    final int duration = videoController.value.duration.inMilliseconds;
+    await videoController.dispose();
+
+    expect(
+      duration,
+      greaterThanOrEqualTo(const Duration(seconds: 4).inMilliseconds),
+    );
+    await controller.dispose();
   });
 
   testWidgets('Set description', (WidgetTester tester) async {

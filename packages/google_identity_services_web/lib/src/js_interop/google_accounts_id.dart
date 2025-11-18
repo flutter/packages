@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -310,8 +310,10 @@ extension type IdConfiguration._(JSObject _) implements JSObject {
       context: context?.toString().toJS,
       state_cookie_domain: state_cookie_domain?.toJS,
       ux_mode: ux_mode?.toString().toJS,
-      allowed_parent_origin:
-          allowed_parent_origin?.map((String s) => s.toJS).toList().toJS,
+      allowed_parent_origin: allowed_parent_origin
+          ?.map((String s) => s.toJS)
+          .toList()
+          .toJS,
       intermediate_iframe_close_callback:
           intermediate_iframe_close_callback?.toJS,
       itp_support: itp_support?.toJS,

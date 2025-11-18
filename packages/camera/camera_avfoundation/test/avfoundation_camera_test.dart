@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -342,8 +342,8 @@ void main() {
 
     test('Should receive device orientation change events', () async {
       // Act
-      final Stream<DeviceOrientationChangedEvent> eventStream =
-          camera.onDeviceOrientationChanged();
+      final Stream<DeviceOrientationChangedEvent> eventStream = camera
+          .onDeviceOrientationChanged();
       final StreamQueue<DeviceOrientationChangedEvent> streamQueue =
           StreamQueue<DeviceOrientationChangedEvent>(eventStream);
 
@@ -407,10 +407,12 @@ void main() {
               PlatformCameraDescription(
                 name: 'Test 1',
                 lensDirection: PlatformCameraLensDirection.front,
+                lensType: PlatformCameraLensType.ultraWide,
               ),
               PlatformCameraDescription(
                 name: 'Test 2',
                 lensDirection: PlatformCameraLensDirection.back,
+                lensType: PlatformCameraLensType.telephoto,
               ),
             ];
         when(mockApi.getAvailableCameras()).thenAnswer((_) async => returnData);
@@ -423,6 +425,10 @@ void main() {
           expect(
             cameras[i].lensDirection,
             cameraLensDirectionFromPlatform(returnData[i].lensDirection),
+          );
+          expect(
+            cameras[i].lensType,
+            cameraLensTypeFromPlatform(returnData[i].lensType),
           );
           // This value isn't provided by the platform, so is hard-coded to 90.
           expect(cameras[i].sensorOrientation, 90);

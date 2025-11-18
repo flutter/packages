@@ -15,7 +15,7 @@ RouteBase get $mainShellRouteData => StatefulShellRouteData.$route(
   branches: [
     StatefulShellBranchData.$branch(
       routes: [
-        GoRouteData.$route(path: '/home', factory: _$HomeRouteData._fromState),
+        GoRouteData.$route(path: '/home', factory: $HomeRouteData._fromState),
       ],
     ),
     StatefulShellBranchData.$branch(
@@ -23,7 +23,7 @@ RouteBase get $mainShellRouteData => StatefulShellRouteData.$route(
       routes: [
         GoRouteData.$route(
           path: '/notifications/:section',
-          factory: _$NotificationsRouteData._fromState,
+          factory: $NotificationsRouteData._fromState,
         ),
       ],
     ),
@@ -31,7 +31,7 @@ RouteBase get $mainShellRouteData => StatefulShellRouteData.$route(
       routes: [
         GoRouteData.$route(
           path: '/orders',
-          factory: _$OrdersRouteData._fromState,
+          factory: $OrdersRouteData._fromState,
         ),
       ],
     ),
@@ -43,7 +43,7 @@ extension $MainShellRouteDataExtension on MainShellRouteData {
       const MainShellRouteData();
 }
 
-mixin _$HomeRouteData on GoRouteData {
+mixin $HomeRouteData on GoRouteData {
   static HomeRouteData _fromState(GoRouterState state) => const HomeRouteData();
 
   @override
@@ -63,13 +63,12 @@ mixin _$HomeRouteData on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-mixin _$NotificationsRouteData on GoRouteData {
+mixin $NotificationsRouteData on GoRouteData {
   static NotificationsRouteData _fromState(GoRouterState state) =>
       NotificationsRouteData(
-        section:
-            _$NotificationsPageSectionEnumMap._$fromName(
-              state.pathParameters['section']!,
-            )!,
+        section: _$NotificationsPageSectionEnumMap._$fromName(
+          state.pathParameters['section']!,
+        )!,
       );
 
   NotificationsRouteData get _self => this as NotificationsRouteData;
@@ -99,7 +98,7 @@ const _$NotificationsPageSectionEnumMap = {
   NotificationsPageSection.archive: 'archive',
 };
 
-mixin _$OrdersRouteData on GoRouteData {
+mixin $OrdersRouteData on GoRouteData {
   static OrdersRouteData _fromState(GoRouterState state) =>
       const OrdersRouteData();
 

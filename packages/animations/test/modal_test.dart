@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -464,8 +464,9 @@ void main() {
 
     // Expect the last route pushed to the navigator to contain RouteSettings
     // equal to the RouteSettings passed to showModal
-    final ModalRoute<dynamic> modalRoute =
-        ModalRoute.of(tester.element(find.byType(_FlutterLogoModal)))!;
+    final ModalRoute<dynamic> modalRoute = ModalRoute.of(
+      tester.element(find.byType(_FlutterLogoModal)),
+    )!;
     expect(modalRoute.settings, routeSettings);
   });
 

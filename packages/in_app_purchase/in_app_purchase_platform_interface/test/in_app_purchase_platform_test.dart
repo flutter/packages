@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -162,9 +162,8 @@ void main() {
 
     test('Can not be a `InAppPurchasePlatform`', () {
       expect(
-        () =>
-            InAppPurchasePlatformAddition.instance =
-                ExtendsInAppPurchasePlatformAdditionIsPlatformInterface(),
+        () => InAppPurchasePlatformAddition.instance =
+            ExtendsInAppPurchasePlatformAdditionIsPlatformInterface(),
         throwsAssertionError,
       );
     });
@@ -173,16 +172,16 @@ void main() {
       ImplementsInAppPurchasePlatformAdditionProvider.register();
       final ImplementsInAppPurchasePlatformAdditionProvider provider =
           ImplementsInAppPurchasePlatformAdditionProvider();
-      final InAppPurchasePlatformAddition? addition =
-          provider.getPlatformAddition();
+      final InAppPurchasePlatformAddition? addition = provider
+          .getPlatformAddition();
       expect(addition.runtimeType, ExtendsInAppPurchasePlatformAddition);
     });
 
     test('Provider can provide `null`', () {
       final ImplementsInAppPurchasePlatformAdditionProvider provider =
           ImplementsInAppPurchasePlatformAdditionProvider();
-      final InAppPurchasePlatformAddition? addition =
-          provider.getPlatformAddition();
+      final InAppPurchasePlatformAddition? addition = provider
+          .getPlatformAddition();
       expect(addition, isNull);
     });
   });

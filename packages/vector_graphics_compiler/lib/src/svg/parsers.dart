@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -66,8 +66,10 @@ AffineMatrix? parseTransform(String? transform) {
   if (!_transformValidator.hasMatch(transform)) {
     throw StateError('illegal or unsupported transform: $transform');
   }
-  final Iterable<Match> matches =
-      _transformCommand.allMatches(transform).toList().reversed;
+  final Iterable<Match> matches = _transformCommand
+      .allMatches(transform)
+      .toList()
+      .reversed;
   AffineMatrix result = AffineMatrix.identity;
   for (final Match m in matches) {
     final String command = m.group(1)!.trim();

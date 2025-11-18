@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -323,12 +323,9 @@ void main() {
           videoElement = getVideoElementWithBlankStream(const Size(100, 100))
             ..muted = true;
 
-          mockVideoTrack.getCapabilities =
-              () {
-                return MediaTrackCapabilities(
-                  torch: <JSBoolean>[true.toJS].toJS,
-                );
-              }.toJS;
+          mockVideoTrack.getCapabilities = () {
+            return MediaTrackCapabilities(torch: <JSBoolean>[true.toJS].toJS);
+          }.toJS;
         });
 
         testWidgets('if the flash mode is auto', (WidgetTester tester) async {
@@ -445,22 +442,19 @@ void main() {
               return Future<JSAny?>.value().toJS;
             }.toJS;
 
-        mockVideoTrack.getCapabilities =
-            () {
-              return MediaTrackCapabilities();
-            }.toJS;
+        mockVideoTrack.getCapabilities = () {
+          return MediaTrackCapabilities();
+        }.toJS;
       });
 
       testWidgets('sets the camera flash mode', (WidgetTester tester) async {
-        mockMediaDevices.getSupportedConstraints =
-            () {
-              return MediaTrackSupportedConstraints(torch: true);
-            }.toJS;
+        mockMediaDevices.getSupportedConstraints = () {
+          return MediaTrackSupportedConstraints(torch: true);
+        }.toJS;
 
-        mockVideoTrack.getCapabilities =
-            () {
-              return MediaTrackCapabilities(torch: <JSBoolean>[true.toJS].toJS);
-            }.toJS;
+        mockVideoTrack.getCapabilities = () {
+          return MediaTrackCapabilities(torch: <JSBoolean>[true.toJS].toJS);
+        }.toJS;
 
         final Camera camera =
             Camera(textureId: textureId, cameraService: cameraService)
@@ -476,15 +470,13 @@ void main() {
 
       testWidgets('enables the torch mode '
           'if the flash mode is torch', (WidgetTester tester) async {
-        mockMediaDevices.getSupportedConstraints =
-            () {
-              return MediaTrackSupportedConstraints(torch: true);
-            }.toJS;
+        mockMediaDevices.getSupportedConstraints = () {
+          return MediaTrackSupportedConstraints(torch: true);
+        }.toJS;
 
-        mockVideoTrack.getCapabilities =
-            () {
-              return MediaTrackCapabilities(torch: <JSBoolean>[true.toJS].toJS);
-            }.toJS;
+        mockVideoTrack.getCapabilities = () {
+          return MediaTrackCapabilities(torch: <JSBoolean>[true.toJS].toJS);
+        }.toJS;
 
         final Camera camera =
             Camera(textureId: textureId, cameraService: cameraService)
@@ -509,15 +501,13 @@ void main() {
 
       testWidgets('disables the torch mode '
           'if the flash mode is not torch', (WidgetTester tester) async {
-        mockMediaDevices.getSupportedConstraints =
-            () {
-              return MediaTrackSupportedConstraints(torch: true);
-            }.toJS;
+        mockMediaDevices.getSupportedConstraints = () {
+          return MediaTrackSupportedConstraints(torch: true);
+        }.toJS;
 
-        mockVideoTrack.getCapabilities =
-            () {
-              return MediaTrackCapabilities(torch: <JSBoolean>[true.toJS].toJS);
-            }.toJS;
+        mockVideoTrack.getCapabilities = () {
+          return MediaTrackCapabilities(torch: <JSBoolean>[true.toJS].toJS);
+        }.toJS;
 
         final Camera camera =
             Camera(textureId: textureId, cameraService: cameraService)
@@ -544,17 +534,13 @@ void main() {
         testWidgets('with torchModeNotSupported error '
             'when the torch mode is not supported '
             'in the browser', (WidgetTester tester) async {
-          mockMediaDevices.getSupportedConstraints =
-              () {
-                return MediaTrackSupportedConstraints(torch: false);
-              }.toJS;
+          mockMediaDevices.getSupportedConstraints = () {
+            return MediaTrackSupportedConstraints(torch: false);
+          }.toJS;
 
-          mockVideoTrack.getCapabilities =
-              () {
-                return MediaTrackCapabilities(
-                  torch: <JSBoolean>[true.toJS].toJS,
-                );
-              }.toJS;
+          mockVideoTrack.getCapabilities = () {
+            return MediaTrackCapabilities(torch: <JSBoolean>[true.toJS].toJS);
+          }.toJS;
 
           final Camera camera =
               Camera(textureId: textureId, cameraService: cameraService)
@@ -582,17 +568,13 @@ void main() {
         testWidgets('with torchModeNotSupported error '
             'when the torch mode is not supported '
             'by the camera', (WidgetTester tester) async {
-          mockMediaDevices.getSupportedConstraints =
-              () {
-                return MediaTrackSupportedConstraints(torch: true);
-              }.toJS;
+          mockMediaDevices.getSupportedConstraints = () {
+            return MediaTrackSupportedConstraints(torch: true);
+          }.toJS;
 
-          mockVideoTrack.getCapabilities =
-              () {
-                return MediaTrackCapabilities(
-                  torch: <JSBoolean>[false.toJS].toJS,
-                );
-              }.toJS;
+          mockVideoTrack.getCapabilities = () {
+            return MediaTrackCapabilities(torch: <JSBoolean>[false.toJS].toJS);
+          }.toJS;
 
           final Camera camera =
               Camera(textureId: textureId, cameraService: cameraService)
@@ -621,17 +603,13 @@ void main() {
             'when the camera stream has not been initialized', (
           WidgetTester tester,
         ) async {
-          mockMediaDevices.getSupportedConstraints =
-              () {
-                return MediaTrackSupportedConstraints(torch: true);
-              }.toJS;
+          mockMediaDevices.getSupportedConstraints = () {
+            return MediaTrackSupportedConstraints(torch: true);
+          }.toJS;
 
-          mockVideoTrack.getCapabilities =
-              () {
-                return MediaTrackCapabilities(
-                  torch: <JSBoolean>[true.toJS].toJS,
-                );
-              }.toJS;
+          mockVideoTrack.getCapabilities = () {
+            return MediaTrackCapabilities(torch: <JSBoolean>[true.toJS].toJS);
+          }.toJS;
 
           final Camera camera = Camera(
             textureId: textureId,
@@ -873,10 +851,9 @@ void main() {
                 )
                 as MediaStream;
 
-        firstVideoTrack.getSettings =
-            () {
-              return MediaTrackSettings(facingMode: 'environment');
-            }.toJS;
+        firstVideoTrack.getSettings = () {
+          return MediaTrackSettings(facingMode: 'environment');
+        }.toJS;
 
         when(
           cameraService.mapFacingModeToLensDirection('environment'),
@@ -910,10 +887,9 @@ void main() {
                 )
                 as MediaStream;
 
-        firstVideoTrack.getSettings =
-            () {
-              return MediaTrackSettings();
-            }.toJS;
+        firstVideoTrack.getSettings = () {
+          return MediaTrackSettings();
+        }.toJS;
 
         expect(camera.getLensDirection(), isNull);
       });
@@ -1042,10 +1018,9 @@ void main() {
           await camera.play();
 
           final List<int?> capturedStarts = <int?>[];
-          mockMediaRecorder.start =
-              ([int? timeslice]) {
-                capturedStarts.add(timeslice);
-              }.toJS;
+          mockMediaRecorder.start = ([int? timeslice]) {
+            capturedStarts.add(timeslice);
+          }.toJS;
 
           await camera.startVideoRecording();
 
@@ -1091,10 +1066,9 @@ void main() {
           )..mediaRecorder = mediaRecorder;
 
           int pauses = 0;
-          mockMediaRecorder.pause =
-              () {
-                pauses++;
-              }.toJS;
+          mockMediaRecorder.pause = () {
+            pauses++;
+          }.toJS;
 
           await camera.pauseVideoRecording();
 
@@ -1138,10 +1112,9 @@ void main() {
           )..mediaRecorder = mediaRecorder;
 
           int resumes = 0;
-          mockMediaRecorder.resume =
-              () {
-                resumes++;
-              }.toJS;
+          mockMediaRecorder.resume = () {
+            resumes++;
+          }.toJS;
 
           await camera.resumeVideoRecording();
 
@@ -1212,10 +1185,9 @@ void main() {
           await camera.startVideoRecording();
 
           int stops = 0;
-          mockMediaRecorder.stop =
-              () {
-                stops++;
-              }.toJS;
+          mockMediaRecorder.stop = () {
+            stops++;
+          }.toJS;
 
           final Future<XFile> videoFileFuture = camera.stopVideoRecording();
 
@@ -1528,8 +1500,9 @@ void main() {
 
           await camera.initialize();
 
-          final List<MediaStreamTrack> videoTracks =
-              camera.stream!.getVideoTracks().toDart;
+          final List<MediaStreamTrack> videoTracks = camera.stream!
+              .getVideoTracks()
+              .toDart;
           final MediaStreamTrack defaultVideoTrack = videoTracks.first;
 
           defaultVideoTrack.dispatchEvent(Event('ended'));
@@ -1551,8 +1524,9 @@ void main() {
 
           await camera.initialize();
 
-          final List<MediaStreamTrack> videoTracks =
-              camera.stream!.getVideoTracks().toDart;
+          final List<MediaStreamTrack> videoTracks = camera.stream!
+              .getVideoTracks()
+              .toDart;
           final MediaStreamTrack defaultVideoTrack = videoTracks.first;
 
           camera.stop();

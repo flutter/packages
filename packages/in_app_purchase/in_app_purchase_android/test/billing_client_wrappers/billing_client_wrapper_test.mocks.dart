@@ -362,28 +362,30 @@ class MockInAppPurchaseApi extends _i1.Mock implements _i2.InAppPurchaseApi {
               #createAlternativeBillingOnlyReportingDetailsAsync,
               [],
             ),
-            returnValue: _i4.Future<
-              _i2.PlatformAlternativeBillingOnlyReportingDetailsResponse
-            >.value(
-              _FakePlatformAlternativeBillingOnlyReportingDetailsResponse_5(
-                this,
-                Invocation.method(
-                  #createAlternativeBillingOnlyReportingDetailsAsync,
-                  [],
+            returnValue:
+                _i4.Future<
+                  _i2.PlatformAlternativeBillingOnlyReportingDetailsResponse
+                >.value(
+                  _FakePlatformAlternativeBillingOnlyReportingDetailsResponse_5(
+                    this,
+                    Invocation.method(
+                      #createAlternativeBillingOnlyReportingDetailsAsync,
+                      [],
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            returnValueForMissingStub: _i4.Future<
-              _i2.PlatformAlternativeBillingOnlyReportingDetailsResponse
-            >.value(
-              _FakePlatformAlternativeBillingOnlyReportingDetailsResponse_5(
-                this,
-                Invocation.method(
-                  #createAlternativeBillingOnlyReportingDetailsAsync,
-                  [],
+            returnValueForMissingStub:
+                _i4.Future<
+                  _i2.PlatformAlternativeBillingOnlyReportingDetailsResponse
+                >.value(
+                  _FakePlatformAlternativeBillingOnlyReportingDetailsResponse_5(
+                    this,
+                    Invocation.method(
+                      #createAlternativeBillingOnlyReportingDetailsAsync,
+                      [],
+                    ),
+                  ),
                 ),
-              ),
-            ),
           )
           as _i4.Future<
             _i2.PlatformAlternativeBillingOnlyReportingDetailsResponse

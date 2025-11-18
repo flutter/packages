@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -7,6 +7,7 @@ import 'dart:math' show Point;
 
 import 'package:async/async.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
+import 'package:flutter/foundation.dart' show Uint8List;
 import 'package:flutter/services.dart'
     show DeviceOrientation, PlatformException;
 import 'package:flutter/widgets.dart' show Texture, Widget, visibleForTesting;
@@ -290,6 +291,9 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// The ID of the surface texture that the camera preview is drawn to.
   late int _flutterSurfaceTextureId;
 
+  /// The configured format of outputted images from image streaming.
+  int? _imageAnalysisOutputImageFormat;
+
   /// Returns list of all available cameras and their descriptions.
   @override
   Future<List<CameraDescription>> availableCameras() async {
@@ -472,11 +476,11 @@ class AndroidCameraCameraX extends CameraPlatform {
     }
     // Configure ImageAnalysis instance.
     // Defaults to YUV_420_888 image format.
+    _imageAnalysisOutputImageFormat =
+        _imageAnalysisOutputFormatFromImageFormatGroup(imageFormatGroup);
     imageAnalysis = proxy.newImageAnalysis(
       resolutionSelector: _presetResolutionSelector,
-      outputImageFormat: _imageAnalysisOutputFormatFromImageFormatGroup(
-        imageFormatGroup,
-      ),
+      outputImageFormat: _imageAnalysisOutputImageFormat,
       /* use CameraX default target rotation */ targetRotation: null,
     );
 
@@ -927,11 +931,52 @@ class AndroidCameraCameraX extends CameraPlatform {
 
   /// Sets the active camera while recording.
   ///
-  /// Currently unsupported, so is a no-op.
+  /// To avoid cancelling any active recording when this method is called,
+  /// you must start the recording with [startVideoCapturing]
+  /// with `enablePersistentRecording` set to `true`.
   @override
-  Future<void> setDescriptionWhileRecording(CameraDescription description) {
-    // TODO(camsim99): Implement this feature, see https://github.com/flutter/flutter/issues/148013.
-    return Future<void>.value();
+  Future<void> setDescriptionWhileRecording(
+    CameraDescription description,
+  ) async {
+    if (recording == null) {
+      cameraErrorStreamController.add(
+        'Camera description not set. No active video recording.',
+      );
+      return;
+    }
+    final CameraInfo? chosenCameraInfo = _savedCameras[description.name];
+
+    // Save CameraSelector that matches cameraDescription.
+    final LensFacing cameraSelectorLensDirection =
+        _getCameraSelectorLensDirection(description.lensDirection);
+    cameraIsFrontFacing = cameraSelectorLensDirection == LensFacing.front;
+    cameraSelector = proxy.newCameraSelector(
+      cameraInfoForFilter: chosenCameraInfo,
+    );
+
+    // Unbind all use cases and rebind to new CameraSelector
+    final List<UseCase> useCases = <UseCase>[videoCapture!];
+    if (!_previewIsPaused) {
+      useCases.add(preview!);
+    }
+    if (imageCapture != null &&
+        await processCameraProvider!.isBound(imageCapture!)) {
+      useCases.add(imageCapture!);
+    }
+    if (imageAnalysis != null &&
+        await processCameraProvider!.isBound(imageAnalysis!)) {
+      useCases.add(imageAnalysis!);
+    }
+    await processCameraProvider?.unbindAll();
+    camera = await processCameraProvider?.bindToLifecycle(
+      cameraSelector!,
+      useCases,
+    );
+
+    // Retrieve info required for correcting the rotation of the camera preview
+    sensorOrientationDegrees = description.sensorOrientation.toDouble();
+
+    await _updateCameraInfoAndLiveCameraState(_flutterSurfaceTextureId);
   }
 
   /// Resume the paused preview for the selected camera.
@@ -1136,9 +1181,13 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     videoOutputPath = await systemServicesManager.getTempFilePath(
       videoPrefix,
-      '.temp',
+      '.mp4',
     );
     pendingRecording = await recorder!.prepareRecording(videoOutputPath!);
+
+    if (options.enablePersistentRecording) {
+      pendingRecording = await pendingRecording?.asPersistentRecording();
+    }
 
     // Enable/disable recording audio as requested. If enabling audio is requested
     // and permission was not granted when the camera was created, then recording
@@ -1293,22 +1342,60 @@ class AndroidCameraCameraX extends CameraPlatform {
     Future<void> analyze(ImageProxy imageProxy) async {
       final List<PlaneProxy> planes = await imageProxy.getPlanes();
       final List<CameraImagePlane> cameraImagePlanes = <CameraImagePlane>[];
-      for (final PlaneProxy plane in planes) {
+
+      // Determine image planes.
+      if (_imageAnalysisOutputImageFormat ==
+          imageAnalysisOutputImageFormatNv21) {
+        // Convert three generically YUV_420_888 formatted image planes into one singular
+        // NV21 formatted image plane if NV21 was requested for image streaming. The conversion
+        // should be null safe.
+        final Uint8List? bytes = await proxy.getNv21BufferImageProxyUtils(
+          imageProxy.width,
+          imageProxy.height,
+          planes,
+        );
+
         cameraImagePlanes.add(
           CameraImagePlane(
-            bytes: plane.buffer,
-            bytesPerRow: plane.rowStride,
-            bytesPerPixel: plane.pixelStride,
+            bytes: bytes!,
+            bytesPerRow: imageProxy.width,
+            // NV21 has 1.5 bytes per pixel (Y plane has width * height; VU plane has width * height / 2),
+            // but this is rounded up because an int is expected. camera_android reports the same.
+            bytesPerPixel: 1,
           ),
+        );
+      } else {
+        for (final PlaneProxy plane in planes) {
+          cameraImagePlanes.add(
+            CameraImagePlane(
+              bytes: plane.buffer,
+              bytesPerRow: plane.rowStride,
+              bytesPerPixel: plane.pixelStride,
+            ),
+          );
+        }
+      }
+
+      // Determine image format.
+      CameraImageFormat? cameraImageFormat;
+
+      if (_imageAnalysisOutputImageFormat ==
+          imageAnalysisOutputImageFormatNv21) {
+        // Manually override ImageFormat to NV21 if set for image streaming as CameraX
+        // still reports YUV_420_888 if the underlying format is NV21.
+        cameraImageFormat = const CameraImageFormat(
+          ImageFormatGroup.nv21,
+          raw: imageProxyFormatNv21,
+        );
+      } else {
+        final int imageRawFormat = imageProxy.format;
+        cameraImageFormat = CameraImageFormat(
+          _imageFormatGroupFromPlatformData(imageRawFormat),
+          raw: imageRawFormat,
         );
       }
 
-      final int format = imageProxy.format;
-      final CameraImageFormat cameraImageFormat = CameraImageFormat(
-        _imageFormatGroupFromPlatformData(format),
-        raw: format,
-      );
-
+      // Send out CameraImageData.
       final CameraImageData cameraImageData = CameraImageData(
         format: cameraImageFormat,
         planes: cameraImagePlanes,

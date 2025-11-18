@@ -1,6 +1,15 @@
-## NEXT
+## 3.23.3
 
-* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+* Updates to Pigeon 26.
+
+## 3.23.2
+
+* Removes specialization of 'map' to fix a Swift warning.
+
+## 3.23.1
+
+* Removes code for versions of iOS older than 13.0.
+* Updates minimum supported SDK version to Flutter 3.35.
 
 ## 3.23.0
 

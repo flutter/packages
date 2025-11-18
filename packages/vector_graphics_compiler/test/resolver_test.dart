@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -51,8 +51,9 @@ void main() {
     final List<ResolvedPathNode> nodes = queryChildren<ResolvedPathNode>(
       resolvedNode,
     );
-    final SaveLayerNode saveLayerNode =
-        queryChildren<SaveLayerNode>(resolvedNode).single;
+    final SaveLayerNode saveLayerNode = queryChildren<SaveLayerNode>(
+      resolvedNode,
+    ).single;
 
     expect(saveLayerNode.paint.fill!.color, const Color(0x7FFF0000));
 
@@ -172,8 +173,9 @@ void main() {
       ResolvingVisitor(),
       AffineMatrix.identity,
     );
-    final ResolvedImageNode imageNode =
-        queryChildren<ResolvedImageNode>(resolvedNode).single;
+    final ResolvedImageNode imageNode = queryChildren<ResolvedImageNode>(
+      resolvedNode,
+    ).single;
     expect(
       imageNode.transform,
       const AffineMatrix(1.0, 0.0, 0.0, -1.0, 50.0, 50.0),

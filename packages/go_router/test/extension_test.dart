@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -52,12 +52,11 @@ class _MyWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed:
-          () => context.replaceNamed(
-            'page-0',
-            pathParameters: <String, String>{'tab': 'settings'},
-            queryParameters: <String, String>{'search': 'notification'},
-          ),
+      onPressed: () => context.replaceNamed(
+        'page-0',
+        pathParameters: <String, String>{'tab': 'settings'},
+        queryParameters: <String, String>{'search': 'notification'},
+      ),
       child: const Text('Settings'),
     );
   }

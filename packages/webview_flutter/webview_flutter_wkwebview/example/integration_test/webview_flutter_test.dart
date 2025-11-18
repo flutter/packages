@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -107,25 +107,28 @@ Future<void> main() async {
                 controller: PlatformWebViewController(
                   WebKitWebViewControllerCreationParams(
                     webKitProxy: WebKitProxy(
-                      newPlatformWebView: ({
-                        required WKWebViewConfiguration initialConfiguration,
-                        void Function(
-                          NSObject,
-                          String?,
-                          NSObject?,
-                          Map<KeyValueChangeKey, Object?>?,
-                        )?
-                        observeValue,
-                      }) {
-                        final PlatformWebView platformWebView = PlatformWebView(
-                          initialConfiguration: initialConfiguration,
-                        );
-                        finalizer.attach(
-                          platformWebView.nativeWebView,
-                          webViewToken,
-                        );
-                        return platformWebView;
-                      },
+                      newPlatformWebView:
+                          ({
+                            required WKWebViewConfiguration
+                            initialConfiguration,
+                            void Function(
+                              NSObject,
+                              String?,
+                              NSObject?,
+                              Map<KeyValueChangeKey, Object?>?,
+                            )?
+                            observeValue,
+                          }) {
+                            final PlatformWebView platformWebView =
+                                PlatformWebView(
+                                  initialConfiguration: initialConfiguration,
+                                );
+                            finalizer.attach(
+                              platformWebView.nativeWebView,
+                              webViewToken,
+                            );
+                            return platformWebView;
+                          },
                     ),
                   ),
                 ),
@@ -660,7 +663,8 @@ Future<void> main() async {
         final String base64AudioData = base64Encode(
           Uint8List.view(audioData.buffer),
         );
-        final String audioTest = '''
+        final String audioTest =
+            '''
         <!DOCTYPE html><html>
         <head><title>Audio auto play</title>
           <script type="text/javascript">
@@ -1903,7 +1907,8 @@ class ClassWithCallbackClass {
 Future<String> getTestVideoBase64() async {
   final ByteData videoData = await rootBundle.load('assets/sample_video.mp4');
   final String base64VideoData = base64Encode(Uint8List.view(videoData.buffer));
-  final String videoTest = '''
+  final String videoTest =
+      '''
         <!DOCTYPE html><html>
         <head><title>Video auto play</title>
           <script type="text/javascript">

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 import 'package:pigeon/pigeon.dart';
@@ -9,7 +9,6 @@ import 'package:pigeon/pigeon.dart';
     swiftOut:
         'macos/file_selector_macos/Sources/file_selector_macos/messages.g.swift',
     dartOut: 'lib/src/messages.g.dart',
-    dartTestOut: 'test/messages_test.g.dart',
     copyrightHeader: 'pigeons/copyright.txt',
   ),
 )
@@ -63,7 +62,7 @@ class OpenPanelOptions {
   final SavePanelOptions baseOptions;
 }
 
-@HostApi(dartHostTestHandler: 'TestFileSelectorApi')
+@HostApi()
 abstract class FileSelectorApi {
   /// Shows an open panel with the given [options], returning the list of
   /// selected paths.

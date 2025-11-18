@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -27,10 +27,9 @@ void main() {
   const LibraryName testName = LibraryName(<String>['test']);
 
   Runtime setupRuntime() {
-    final Runtime runtime =
-        Runtime()
-          ..update(coreName, createCoreWidgets())
-          ..update(materialName, createMaterialWidgets());
+    final Runtime runtime = Runtime()
+      ..update(coreName, createCoreWidgets())
+      ..update(materialName, createMaterialWidgets());
     addTearDown(runtime.dispose);
     return runtime;
   }

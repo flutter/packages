@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -90,12 +90,11 @@ class VideoPlayerPlugin extends VideoPlayerPlatform {
         );
     }
 
-    final web.HTMLVideoElement videoElement =
-        web.HTMLVideoElement()
-          ..id = 'videoElement-$playerId'
-          ..style.border = 'none'
-          ..style.height = '100%'
-          ..style.width = '100%';
+    final web.HTMLVideoElement videoElement = web.HTMLVideoElement()
+      ..id = 'videoElement-$playerId'
+      ..style.border = 'none'
+      ..style.height = '100%'
+      ..style.width = '100%';
 
     // TODO(hterkelsen): Use initialization parameters once they are available
     ui_web.platformViewRegistry.registerViewFactory(

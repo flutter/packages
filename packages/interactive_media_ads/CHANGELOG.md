@@ -1,3 +1,50 @@
+## 0.3.0+5
+
+* Updates to Pigeon 26.
+
+## 0.3.0+4
+
+* Sets a maximum version on the `GoogleInteractiveMediaAds` dependency to avoid
+  breaking iOS 13-14 support.
+
+## 0.3.0+3
+
+* Bumps `com.google.ads.interactivemedia.v3:interactivemedia` from 3.37.0 to 3.38.0.
+
+## 0.3.0+2
+
+* Updates minimum supported version to iOS 13.
+* Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
+
+## 0.3.0+1
+
+* Updates Java compatibility version to 17 and minimum supported SDK version to Flutter 3.35/Dart 3.9.
+
+## 0.3.0
+
+* Bumps `com.google.ads.interactivemedia.v3:interactivemedia` from 3.36.0 to 3.37.0.
+* **Breaking Change** Adds app desugaring as a requirement for Android apps. Apps without desugaring
+  enabled won't build with the current or future IMA versions. To enable app desugaring, see
+  `README.md`.
+* **Breaking Change** Updates `AdsRequest.adTagUrl` to return `null` when an ad tag is not set.
+
+## 0.2.8+1
+
+* Resolves Gradle 9 deprecations.
+
+## 0.2.8
+
+* Adds support for accessing data for an ad. See `AdEvent.ad`.
+
+## 0.2.7
+
+* Adds support to retrieve content time offsets at which ad breaks are scheduled. See
+  `AdsManager.adCuePoints`
+
+## 0.2.6+7
+
+* Updates Android `PlatformAdDisplayContainer` implementation to support preloading ads.
+
 ## 0.2.6+6
 
 * Bumps com.android.tools.build:gradle to 8.12.1 and kotlin_version to 2.2.10.

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -193,8 +193,9 @@ class _MyAppState extends State<_MyApp> {
     final Widget storeHeader = ListTile(
       leading: Icon(
         _isAvailable ? Icons.check : Icons.block,
-        color:
-            _isAvailable ? Colors.green : ThemeData.light().colorScheme.error,
+        color: _isAvailable
+            ? Colors.green
+            : ThemeData.light().colorScheme.error,
       ),
       title: Text(
         'The store is ${_isAvailable ? 'available' : 'unavailable'}.',
@@ -268,58 +269,56 @@ class _MyAppState extends State<_MyApp> {
         return ListTile(
           title: Text(productDetails.title),
           subtitle: Text(productDetails.description),
-          trailing:
-              previousPurchase != null && Platform.isIOS
-                  ? IconButton(
-                    onPressed: () => confirmPriceChange(context),
-                    icon: const Icon(Icons.upgrade),
-                  )
-                  : TextButton(
-                    style: TextButton.styleFrom(
-                      backgroundColor: Colors.green[800],
-                      foregroundColor: Colors.white,
-                    ),
-                    onPressed: () {
-                      late PurchaseParam purchaseParam;
-
-                      if (Platform.isAndroid) {
-                        // NOTE: If you are making a subscription purchase/upgrade/downgrade, we recommend you to
-                        // verify the latest status of you your subscription by using server side receipt validation
-                        // and update the UI accordingly. The subscription purchase status shown
-                        // inside the app may not be accurate.
-                        final GooglePlayPurchaseDetails? oldSubscription =
-                            _getOldSubscription(productDetails, purchases);
-
-                        purchaseParam = GooglePlayPurchaseParam(
-                          productDetails: productDetails,
-                          changeSubscriptionParam:
-                              (oldSubscription != null)
-                                  ? ChangeSubscriptionParam(
-                                    oldPurchaseDetails: oldSubscription,
-                                    replacementMode:
-                                        ReplacementMode.withTimeProration,
-                                  )
-                                  : null,
-                        );
-                      } else {
-                        purchaseParam = PurchaseParam(
-                          productDetails: productDetails,
-                        );
-                      }
-
-                      if (productDetails.id == _kConsumableId) {
-                        _inAppPurchase.buyConsumable(
-                          purchaseParam: purchaseParam,
-                          autoConsume: _kAutoConsume,
-                        );
-                      } else {
-                        _inAppPurchase.buyNonConsumable(
-                          purchaseParam: purchaseParam,
-                        );
-                      }
-                    },
-                    child: Text(productDetails.price),
+          trailing: previousPurchase != null && Platform.isIOS
+              ? IconButton(
+                  onPressed: () => confirmPriceChange(context),
+                  icon: const Icon(Icons.upgrade),
+                )
+              : TextButton(
+                  style: TextButton.styleFrom(
+                    backgroundColor: Colors.green[800],
+                    foregroundColor: Colors.white,
                   ),
+                  onPressed: () {
+                    late PurchaseParam purchaseParam;
+
+                    if (Platform.isAndroid) {
+                      // NOTE: If you are making a subscription purchase/upgrade/downgrade, we recommend you to
+                      // verify the latest status of you your subscription by using server side receipt validation
+                      // and update the UI accordingly. The subscription purchase status shown
+                      // inside the app may not be accurate.
+                      final GooglePlayPurchaseDetails? oldSubscription =
+                          _getOldSubscription(productDetails, purchases);
+
+                      purchaseParam = GooglePlayPurchaseParam(
+                        productDetails: productDetails,
+                        changeSubscriptionParam: (oldSubscription != null)
+                            ? ChangeSubscriptionParam(
+                                oldPurchaseDetails: oldSubscription,
+                                replacementMode:
+                                    ReplacementMode.withTimeProration,
+                              )
+                            : null,
+                      );
+                    } else {
+                      purchaseParam = PurchaseParam(
+                        productDetails: productDetails,
+                      );
+                    }
+
+                    if (productDetails.id == _kConsumableId) {
+                      _inAppPurchase.buyConsumable(
+                        purchaseParam: purchaseParam,
+                        autoConsume: _kAutoConsume,
+                      );
+                    } else {
+                      _inAppPurchase.buyNonConsumable(
+                        purchaseParam: purchaseParam,
+                      );
+                    }
+                  },
+                  child: Text(productDetails.price),
+                ),
         );
       }),
     );
@@ -346,16 +345,15 @@ class _MyAppState extends State<_MyApp> {
     const ListTile consumableHeader = ListTile(
       title: Text('Purchased consumables'),
     );
-    final List<Widget> tokens =
-        _consumables.map((String id) {
-          return GridTile(
-            child: IconButton(
-              icon: const Icon(Icons.stars, size: 42.0, color: Colors.orange),
-              splashColor: Colors.yellowAccent,
-              onPressed: () => consume(id),
-            ),
-          );
-        }).toList();
+    final List<Widget> tokens = _consumables.map((String id) {
+      return GridTile(
+        child: IconButton(
+          icon: const Icon(Icons.stars, size: 42.0, color: Colors.orange),
+          splashColor: Colors.yellowAccent,
+          onPressed: () => consume(id),
+        ),
+      );
+    }).toList();
     return Card(
       child: Column(
         children: <Widget>[
@@ -463,11 +461,9 @@ class _MyAppState extends State<_MyApp> {
         }
         if (Platform.isAndroid) {
           if (!_kAutoConsume && purchaseDetails.productID == _kConsumableId) {
-            final InAppPurchaseAndroidPlatformAddition androidAddition =
-                _inAppPurchase
-                    .getPlatformAddition<
-                      InAppPurchaseAndroidPlatformAddition
-                    >();
+            final InAppPurchaseAndroidPlatformAddition
+            androidAddition = _inAppPurchase
+                .getPlatformAddition<InAppPurchaseAndroidPlatformAddition>();
             await androidAddition.consumePurchase(purchaseDetails);
           }
         }

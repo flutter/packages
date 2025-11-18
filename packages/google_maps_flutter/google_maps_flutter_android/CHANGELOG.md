@@ -1,3 +1,15 @@
+## 2.18.5
+
+* Updates to Pigeon 26.
+
+## 2.18.4
+
+* Updates Java compatibility version to 17 and minimum supported SDK version to Flutter 3.35/Dart 3.9.
+
+## 2.18.3
+
+* Resolves Gradle 9 deprecations.
+
 ## 2.18.2
 
 * Bumps com.android.tools.build:gradle to 8.12.1.

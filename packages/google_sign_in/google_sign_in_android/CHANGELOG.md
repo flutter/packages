@@ -1,3 +1,35 @@
+## 7.2.5
+
+* Updates to Pigeon 26.
+
+## 7.2.4
+
+* Improves README and fixes minor typos.
+
+## 7.2.3
+
+* Removed mockito-inline and updated to mockito-core 5.17.0.
+
+## 7.2.2
+
+* Updates Java compatibility version to 17 and minimum supported SDK version to Flutter 3.35/Dart 3.9.
+
+## 7.2.1
+
+* Resolves Gradle 9 deprecations.
+
+## 7.2.0
+
+* Adds support for `disconnect`.
+
+## 7.1.0
+
+* Adds support for the `clearAuthorizationToken` method.
+
+## 7.0.5
+
+* Adds support for `hostedDomain` when authenticating.
+
 ## 7.0.4
 
 * Bumps com.android.tools.build:gradle to 8.12.1 and kotlin_version to 2.2.10.
@@ -6,10 +38,7 @@
 ## 7.0.3
 
 * Updates kotlin version to 2.2.0 to enable gradle 8.11 support.
-
-## 7.0.3
-
-* Add more details and troubleshooting for `serverClientId` configuration
+* Adds more details and troubleshooting for `serverClientId` configuration
   via Firebase.
 
 ## 7.0.2

@@ -1,13 +1,13 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:in_app_purchase_storekit/src/in_app_purchase_apis.dart';
 import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
 
 import '../fakes/fake_storekit_platform.dart';
-import '../test_api.g.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -15,7 +15,7 @@ void main() {
   final FakeStoreKitPlatform fakeStoreKitPlatform = FakeStoreKitPlatform();
 
   setUpAll(() {
-    TestInAppPurchaseApi.setUp(fakeStoreKitPlatform);
+    setInAppPurchaseHostApis(api: fakeStoreKitPlatform);
   });
 
   test(

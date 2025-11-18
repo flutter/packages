@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -499,10 +499,9 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
         final TextDirection direction = Directionality.of(context);
         if (direction == TextDirection.rtl) {
           child = Transform(
-            transform:
-                Matrix4.identity()
-                  ..translate(pictureInfo.size.width)
-                  ..scale(-1.0, 1.0),
+            transform: Matrix4.identity()
+              ..translate(pictureInfo.size.width)
+              ..scale(-1.0, 1.0),
             child: child,
           );
         }

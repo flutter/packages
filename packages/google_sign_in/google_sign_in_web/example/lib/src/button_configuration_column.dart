@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -99,9 +99,8 @@ Widget renderWebButtonConfiguration(
       child: ListView.builder(
         controller: scrollController,
         itemCount: _cards.length,
-        itemBuilder:
-            (BuildContext _, int index) =>
-                _cards[index](currentConfig, onChange),
+        itemBuilder: (BuildContext _, int index) =>
+            _cards[index](currentConfig, onChange),
       ),
     ),
   );
@@ -119,15 +118,14 @@ Widget _renderLocaleCard({
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: DropdownButton<String>(
-          items:
-              locales
-                  .map(
-                    (String locale) => DropdownMenuItem<String>(
-                      value: locale,
-                      child: Text(locale),
-                    ),
-                  )
-                  .toList(),
+          items: locales
+              .map(
+                (String locale) => DropdownMenuItem<String>(
+                  value: locale,
+                  child: Text(locale),
+                ),
+              )
+              .toList(),
           value: value,
           onChanged: onChanged,
           isExpanded: true,
@@ -171,19 +169,26 @@ Widget _renderRadioListTileCard<T extends Enum>({
 }) {
   return _renderConfigCard(
     title: title,
-    children:
-        values
-            .map(
-              (T value) => RadioListTile<T>(
-                value: value,
-                groupValue: selected,
-                onChanged: onChanged,
-                selected: value == selected,
-                title: Text(value.name),
-                dense: true,
-              ),
-            )
-            .toList(),
+    children: <Widget>[
+      RadioGroup<T>(
+        groupValue: selected,
+        onChanged: onChanged ?? (_) {},
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: values
+              .map(
+                (T value) => RadioListTile<T>(
+                  value: value,
+                  selected: value == selected,
+                  title: Text(value.name),
+                  enabled: onChanged != null,
+                  dense: true,
+                ),
+              )
+              .toList(),
+        ),
+      ),
+    ],
   );
 }
 
@@ -216,8 +221,9 @@ GSIButtonConfiguration _copyConfigWith<T>(
 ) {
   return GSIButtonConfiguration(
     locale: value is String ? value : old?.locale,
-    minimumWidth:
-        value is double ? (value == 0 ? null : value) : old?.minimumWidth,
+    minimumWidth: value is double
+        ? (value == 0 ? null : value)
+        : old?.minimumWidth,
     type: value is GSIButtonType ? value : old?.type,
     theme: value is GSIButtonTheme ? value : old?.theme,
     size: value is GSIButtonSize ? value : old?.size,

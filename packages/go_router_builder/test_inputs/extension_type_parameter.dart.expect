@@ -1,55 +1,55 @@
 RouteBase get $extensionTypeParam => GoRouteData.$route(
       path: '/',
-      factory: _$ExtensionTypeParam._fromState,
+      factory: $ExtensionTypeParam._fromState,
       routes: [
         GoRouteData.$route(
           path: 'string/:s',
-          factory: _$ExtensionTypeStringParam._fromState,
+          factory: $ExtensionTypeStringParam._fromState,
         ),
         GoRouteData.$route(
           path: 'string_default/:s',
-          factory: _$ExtensionTypeStringDefaultParam._fromState,
+          factory: $ExtensionTypeStringDefaultParam._fromState,
         ),
         GoRouteData.$route(
           path: 'int/:x',
-          factory: _$ExtensionTypeIntParam._fromState,
+          factory: $ExtensionTypeIntParam._fromState,
         ),
         GoRouteData.$route(
           path: 'int_default/:x',
-          factory: _$ExtensionTypeIntDefaultParam._fromState,
+          factory: $ExtensionTypeIntDefaultParam._fromState,
         ),
         GoRouteData.$route(
           path: 'double/:d',
-          factory: _$ExtensionTypeDoubleParam._fromState,
+          factory: $ExtensionTypeDoubleParam._fromState,
         ),
         GoRouteData.$route(
           path: 'num/:n',
-          factory: _$ExtensionTypeNumParam._fromState,
+          factory: $ExtensionTypeNumParam._fromState,
         ),
         GoRouteData.$route(
           path: 'bool/:b',
-          factory: _$ExtensionTypeBoolParam._fromState,
+          factory: $ExtensionTypeBoolParam._fromState,
         ),
         GoRouteData.$route(
           path: 'enum/:value',
-          factory: _$ExtensionTypeEnumType._fromState,
+          factory: $ExtensionTypeEnumType._fromState,
         ),
         GoRouteData.$route(
           path: 'bigint/:bi',
-          factory: _$ExtensionTypeBigIntParam._fromState,
+          factory: $ExtensionTypeBigIntParam._fromState,
         ),
         GoRouteData.$route(
           path: 'datetime/:dt',
-          factory: _$ExtensionTypeDateTimeParam._fromState,
+          factory: $ExtensionTypeDateTimeParam._fromState,
         ),
         GoRouteData.$route(
           path: 'uri/:uri',
-          factory: _$ExtensionTypeUriType._fromState,
+          factory: $ExtensionTypeUriType._fromState,
         ),
       ],
     );
 
-mixin _$ExtensionTypeParam on GoRouteData {
+mixin $ExtensionTypeParam on GoRouteData {
   static ExtensionTypeParam _fromState(GoRouterState state) =>
       ExtensionTypeParam();
 
@@ -72,7 +72,7 @@ mixin _$ExtensionTypeParam on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-mixin _$ExtensionTypeStringParam on GoRouteData {
+mixin $ExtensionTypeStringParam on GoRouteData {
   static ExtensionTypeStringParam _fromState(GoRouterState state) =>
       ExtensionTypeStringParam(
         s: state.pathParameters['s']! as StringExtensionType,
@@ -115,7 +115,7 @@ mixin _$ExtensionTypeStringParam on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-mixin _$ExtensionTypeStringDefaultParam on GoRouteData {
+mixin $ExtensionTypeStringDefaultParam on GoRouteData {
   static ExtensionTypeStringDefaultParam _fromState(GoRouterState state) =>
       ExtensionTypeStringDefaultParam(
         s: state.pathParameters['s'] as StringExtensionType? ??
@@ -144,7 +144,7 @@ mixin _$ExtensionTypeStringDefaultParam on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-mixin _$ExtensionTypeIntParam on GoRouteData {
+mixin $ExtensionTypeIntParam on GoRouteData {
   static ExtensionTypeIntParam _fromState(GoRouterState state) =>
       ExtensionTypeIntParam(
         x: int.parse(state.pathParameters['x']!) as IntExtensionType,
@@ -187,7 +187,7 @@ mixin _$ExtensionTypeIntParam on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-mixin _$ExtensionTypeIntDefaultParam on GoRouteData {
+mixin $ExtensionTypeIntDefaultParam on GoRouteData {
   static ExtensionTypeIntDefaultParam _fromState(GoRouterState state) =>
       ExtensionTypeIntDefaultParam(
         x: int.tryParse(state.pathParameters['x'] ?? '') as IntExtensionType? ??
@@ -216,7 +216,7 @@ mixin _$ExtensionTypeIntDefaultParam on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-mixin _$ExtensionTypeDoubleParam on GoRouteData {
+mixin $ExtensionTypeDoubleParam on GoRouteData {
   static ExtensionTypeDoubleParam _fromState(GoRouterState state) =>
       ExtensionTypeDoubleParam(
         d: double.parse(state.pathParameters['d']!) as DoubleExtensionType,
@@ -260,7 +260,7 @@ mixin _$ExtensionTypeDoubleParam on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-mixin _$ExtensionTypeNumParam on GoRouteData {
+mixin $ExtensionTypeNumParam on GoRouteData {
   static ExtensionTypeNumParam _fromState(GoRouterState state) =>
       ExtensionTypeNumParam(
         n: num.parse(state.pathParameters['n']!) as NumExtensionType,
@@ -303,7 +303,7 @@ mixin _$ExtensionTypeNumParam on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-mixin _$ExtensionTypeBoolParam on GoRouteData {
+mixin $ExtensionTypeBoolParam on GoRouteData {
   static ExtensionTypeBoolParam _fromState(GoRouterState state) =>
       ExtensionTypeBoolParam(
         b: bool.parse(state.pathParameters['b']!) as BoolExtensionType,
@@ -346,7 +346,7 @@ mixin _$ExtensionTypeBoolParam on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-mixin _$ExtensionTypeEnumType on GoRouteData {
+mixin $ExtensionTypeEnumType on GoRouteData {
   static ExtensionTypeEnumType _fromState(GoRouterState state) =>
       ExtensionTypeEnumType(
         value: _$MyEnumEnumMap._$fromName(state.pathParameters['value']!)
@@ -399,7 +399,7 @@ const _$MyEnumEnumMap = {
   MyEnum.value3: 'value3',
 };
 
-mixin _$ExtensionTypeBigIntParam on GoRouteData {
+mixin $ExtensionTypeBigIntParam on GoRouteData {
   static ExtensionTypeBigIntParam _fromState(GoRouterState state) =>
       ExtensionTypeBigIntParam(
         bi: BigInt.parse(state.pathParameters['bi']!) as BigIntExtensionType,
@@ -442,7 +442,7 @@ mixin _$ExtensionTypeBigIntParam on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-mixin _$ExtensionTypeDateTimeParam on GoRouteData {
+mixin $ExtensionTypeDateTimeParam on GoRouteData {
   static ExtensionTypeDateTimeParam _fromState(GoRouterState state) =>
       ExtensionTypeDateTimeParam(
         dt: DateTime.parse(state.pathParameters['dt']!)
@@ -481,7 +481,7 @@ mixin _$ExtensionTypeDateTimeParam on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-mixin _$ExtensionTypeUriType on GoRouteData {
+mixin $ExtensionTypeUriType on GoRouteData {
   static ExtensionTypeUriType _fromState(GoRouterState state) =>
       ExtensionTypeUriType(
         uri: Uri.parse(state.pathParameters['uri']!) as UriExtensionType,

@@ -1,3 +1,32 @@
+## 0.8.13+8
+
+* Updates to Pigeon 26.
+
+## 0.8.13+7
+
+* Removes reference to internal `isSystemPickerAvailable$activity_release()` method.
+
+## 0.8.13+6
+
+* Fixes typo in limit parameter validation error message.
+
+## 0.8.13+5
+
+* Updates Java compatibility version to 17 and minimum supported SDK version to Flutter 3.35/Dart 3.9.
+
+## 0.8.13+4
+
+* Resolves Gradle 9 deprecations.
+
+## 0.8.13+3
+
+* Bumps androidx.exifinterface:exifinterface from 1.3.7 to 1.4.1.
+
+## 0.8.13+2
+
+* Updates minimum supported SDK version to Flutter 3.35.
+* Removes obsolete code related to supporting SDK <24.
+
 ## 0.8.13+1
 
 * Bumps com.android.tools.build:gradle to 8.12.1.

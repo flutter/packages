@@ -1,18 +1,18 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import 'package:go_router/go_router.dart';
 
-mixin _$HomeRoute {}
-mixin _$RelativeRoute {}
-mixin _$NonRelativeRoute {}
+mixin $HomeRoute {}
+mixin $RelativeRoute {}
+mixin $NonRelativeRoute {}
 
 @TypedGoRoute<HomeRoute>(
   path: '/',
   routes: <TypedRoute<RouteData>>[relativeRoute],
 )
-class HomeRoute extends GoRouteData with _$HomeRoute {
+class HomeRoute extends GoRouteData with $HomeRoute {
   const HomeRoute();
 }
 
@@ -24,10 +24,10 @@ const TypedRelativeGoRoute<RelativeRoute> relativeRoute =
       ],
     );
 
-class RelativeRoute extends RelativeGoRouteData with _$RelativeRoute {
+class RelativeRoute extends RelativeGoRouteData with $RelativeRoute {
   const RelativeRoute();
 }
 
-class NonRelativeRoute extends GoRouteData with _$NonRelativeRoute {
+class NonRelativeRoute extends GoRouteData with $NonRelativeRoute {
   const NonRelativeRoute();
 }

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -129,8 +129,8 @@ TextStyle googleFontsTextStyle({
 /// the [fontUrl] and stored on device. In all cases, the returned future
 /// completes once the font is loaded into the [FontLoader].
 Future<void> loadFontIfNecessary(GoogleFontsDescriptor descriptor) async {
-  final String familyWithVariantString =
-      descriptor.familyWithVariant.toString();
+  final String familyWithVariantString = descriptor.familyWithVariant
+      .toString();
   final String fontName = descriptor.familyWithVariant.toApiFilenamePrefix();
   final String fileHash = descriptor.file.expectedFileHash;
   // If this font has already already loaded or is loading, then there is no

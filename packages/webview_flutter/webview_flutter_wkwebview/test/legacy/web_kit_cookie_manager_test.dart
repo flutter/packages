@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -34,14 +34,13 @@ void main() {
       cookieManager = WKWebViewCookieManager(
         websiteDataStore: mockWebsiteDataStore,
         webKitProxy: WebKitProxy(
-          newHTTPCookie: ({
-            required Map<HttpCookiePropertyKey, Object> properties,
-          }) {
-            cookieProperties = properties;
-            return cookie = HTTPCookie.pigeon_detached(
-              pigeon_instanceManager: TestInstanceManager(),
-            );
-          },
+          newHTTPCookie:
+              ({required Map<HttpCookiePropertyKey, Object> properties}) {
+                cookieProperties = properties;
+                return cookie = HTTPCookie.pigeon_detached(
+                  pigeon_instanceManager: TestInstanceManager(),
+                );
+              },
         ),
       );
     });

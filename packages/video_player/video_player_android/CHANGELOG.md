@@ -1,3 +1,34 @@
+## 2.8.20
+
+* Bumps `exoplayer_version` from 1.5.1 to 1.8.0.
+
+## 2.8.19
+
+* Updates to Pigeon 26.
+
+## 2.8.18
+
+* Removed mockito-inline and updated to mockito-core 5.17.0.
+
+## 2.8.17
+
+* Moves video event processing logic to Dart, and fixes an issue where buffer
+  range would not be updated for a paused video.
+* Switches to Kotlin for Pigeon-generated code.
+* Adopts type-safe event channels for internal communication.
+
+## 2.8.16
+
+* Updates Java compatibility version to 17 and minimum supported SDK version to Flutter 3.35/Dart 3.9.
+
+## 2.8.15
+
+* Resolves Gradle 9 deprecations.
+
+## 2.8.14
+
+* Restructures internal logic for player creation and tracking.
+
 ## 2.8.13
 
 * Bumps com.android.tools.build:gradle to 8.12.1.

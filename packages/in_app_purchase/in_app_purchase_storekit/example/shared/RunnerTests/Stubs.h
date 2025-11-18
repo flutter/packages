@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -160,6 +160,7 @@ API_AVAILABLE(ios(13.0), macos(10.15))
 @interface FlutterPluginRegistrarStub : NSObject <FlutterPluginRegistrar>
 
 // Stubs
+@property(nonatomic, weak, nullable) UIViewController *viewController;
 @property(nonatomic, copy, nullable) void (^addApplicationDelegateStub)(NSObject<FlutterPlugin> *);
 @property(nonatomic, copy, nullable) void (^addMethodCallDelegateStub)
     (NSObject<FlutterPlugin> *, FlutterMethodChannel *);

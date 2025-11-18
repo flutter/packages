@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -16,13 +16,11 @@ void main() {
     final TestContentProgressProvider platformProvider =
         TestContentProgressProvider(
           const PlatformContentProgressProviderCreationParams(),
-          onSetProgress: ({
-            required Duration progress,
-            required Duration duration,
-          }) async {
-            callbackProgress = progress;
-            callbackDuration = duration;
-          },
+          onSetProgress:
+              ({required Duration progress, required Duration duration}) async {
+                callbackProgress = progress;
+                callbackDuration = duration;
+              },
         );
 
     final ContentProgressProvider provider =

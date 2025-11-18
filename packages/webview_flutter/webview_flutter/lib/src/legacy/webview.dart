@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -438,10 +438,9 @@ WebSettings _clearUnchangedWebSettings(
 }
 
 Set<String> _extractChannelNames(Set<JavascriptChannel>? channels) {
-  final Set<String> channelNames =
-      channels == null
-          ? <String>{}
-          : channels.map((JavascriptChannel channel) => channel.name).toSet();
+  final Set<String> channelNames = channels == null
+      ? <String>{}
+      : channels.map((JavascriptChannel channel) => channel.name).toSet();
   return channelNames;
 }
 
@@ -642,8 +641,8 @@ class WebViewController {
   Future<void> _updateJavascriptChannels(
     Set<JavascriptChannel>? newChannels,
   ) async {
-    final Set<String> currentChannels =
-        _javascriptChannelRegistry.channels.keys.toSet();
+    final Set<String> currentChannels = _javascriptChannelRegistry.channels.keys
+        .toSet();
     final Set<String> newChannelNames = _extractChannelNames(newChannels);
     final Set<String> channelsToAdd = newChannelNames.difference(
       currentChannels,

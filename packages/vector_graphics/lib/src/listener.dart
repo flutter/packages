@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -114,32 +114,30 @@ Future<PictureInfo> decodeVectorGraphics(
     return Zone.current
         .fork(
           specification: ZoneSpecification(
-            scheduleMicrotask: (
-              Zone self,
-              ZoneDelegate parent,
-              Zone zone,
-              void Function() f,
-            ) {
-              Zone.root.scheduleMicrotask(f);
-            },
-            createTimer: (
-              Zone self,
-              ZoneDelegate parent,
-              Zone zone,
-              Duration duration,
-              void Function() f,
-            ) {
-              return Zone.root.createTimer(duration, f);
-            },
-            createPeriodicTimer: (
-              Zone self,
-              ZoneDelegate parent,
-              Zone zone,
-              Duration period,
-              void Function(Timer timer) f,
-            ) {
-              return Zone.root.createPeriodicTimer(period, f);
-            },
+            scheduleMicrotask:
+                (Zone self, ZoneDelegate parent, Zone zone, void Function() f) {
+                  Zone.root.scheduleMicrotask(f);
+                },
+            createTimer:
+                (
+                  Zone self,
+                  ZoneDelegate parent,
+                  Zone zone,
+                  Duration duration,
+                  void Function() f,
+                ) {
+                  return Zone.root.createTimer(duration, f);
+                },
+            createPeriodicTimer:
+                (
+                  Zone self,
+                  ZoneDelegate parent,
+                  Zone zone,
+                  Duration period,
+                  void Function(Timer timer) f,
+                ) {
+                  return Zone.root.createPeriodicTimer(period, f);
+                },
           ),
         )
         .run<Future<PictureInfo>>(process);
@@ -280,17 +278,16 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
   _PatternConfig? _currentPattern;
 
   static final Paint _emptyPaint = Paint();
-  static final Paint _grayscaleDstInPaint =
-      Paint()
-        ..blendMode = BlendMode.dstIn
-        ..colorFilter = const ColorFilter.matrix(
-          <double>[
-            0, 0, 0, 0, 0, //
-            0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0,
-            0.2126, 0.7152, 0.0722, 0, 0,
-          ],
-        ); //convert to grayscale (https://www.w3.org/Graphics/Color/sRGB) and use them as transparency
+  static final Paint _grayscaleDstInPaint = Paint()
+    ..blendMode = BlendMode.dstIn
+    ..colorFilter = const ColorFilter.matrix(
+      <double>[
+        0, 0, 0, 0, 0, //
+        0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0,
+        0.2126, 0.7152, 0.0722, 0, 0,
+      ],
+    ); //convert to grayscale (https://www.w3.org/Graphics/Color/sRGB) and use them as transparency
 
   /// Convert the vector graphics asset this listener decoded into a [Picture].
   ///
@@ -487,10 +484,9 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
     final PictureRecorder recorder = _pictureFactory.createPictureRecorder();
     final Canvas newCanvas = _pictureFactory.createCanvas(recorder);
     newCanvas.clipRect(Offset(x, y) & Size(width, height));
-    _patterns[patternId] =
-        _PatternState()
-          ..recorder = recorder
-          ..canvas = newCanvas;
+    _patterns[patternId] = _PatternState()
+      ..recorder = recorder
+      ..canvas = newCanvas;
   }
 
   /// Creates ImageShader for active pattern.

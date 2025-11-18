@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -80,7 +80,7 @@ class App extends StatelessWidget {
     TypedGoRoute<FamilyCountRoute>(path: 'family-count/:count'),
   ],
 )
-class HomeRoute extends GoRouteData with _$HomeRoute {
+class HomeRoute extends GoRouteData with $HomeRoute {
   const HomeRoute();
 
   @override
@@ -88,7 +88,7 @@ class HomeRoute extends GoRouteData with _$HomeRoute {
 }
 
 @TypedGoRoute<LoginRoute>(path: '/login')
-class LoginRoute extends GoRouteData with _$LoginRoute {
+class LoginRoute extends GoRouteData with $LoginRoute {
   const LoginRoute({this.fromPage});
 
   final String? fromPage;
@@ -98,7 +98,7 @@ class LoginRoute extends GoRouteData with _$LoginRoute {
       LoginScreen(from: fromPage);
 }
 
-class FamilyRoute extends GoRouteData with _$FamilyRoute {
+class FamilyRoute extends GoRouteData with $FamilyRoute {
   const FamilyRoute(this.fid);
 
   final String fid;
@@ -108,7 +108,7 @@ class FamilyRoute extends GoRouteData with _$FamilyRoute {
       FamilyScreen(family: familyById(fid));
 }
 
-class PersonRoute extends GoRouteData with _$PersonRoute {
+class PersonRoute extends GoRouteData with $PersonRoute {
   const PersonRoute(this.fid, this.pid);
 
   final String fid;
@@ -122,7 +122,7 @@ class PersonRoute extends GoRouteData with _$PersonRoute {
   }
 }
 
-class PersonDetailsRoute extends GoRouteData with _$PersonDetailsRoute {
+class PersonDetailsRoute extends GoRouteData with $PersonDetailsRoute {
   const PersonDetailsRoute(this.fid, this.pid, this.details, {this.$extra});
 
   final String fid;
@@ -148,7 +148,7 @@ class PersonDetailsRoute extends GoRouteData with _$PersonDetailsRoute {
   }
 }
 
-class FamilyCountRoute extends GoRouteData with _$FamilyCountRoute {
+class FamilyCountRoute extends GoRouteData with $FamilyCountRoute {
   const FamilyCountRoute(this.count);
 
   final int count;
@@ -263,21 +263,16 @@ class PersonScreen extends StatelessWidget {
           ListTile(
             title: Text('${entry.key.name} - ${entry.value}'),
             trailing: OutlinedButton(
-              onPressed:
-                  () => PersonDetailsRoute(
-                    family.id,
-                    person.id,
-                    entry.key,
-                    $extra: ++_extraClickCount,
-                  ).go(context),
+              onPressed: () => PersonDetailsRoute(
+                family.id,
+                person.id,
+                entry.key,
+                $extra: ++_extraClickCount,
+              ).go(context),
               child: const Text('With extra...'),
             ),
-            onTap:
-                () => PersonDetailsRoute(
-                  family.id,
-                  person.id,
-                  entry.key,
-                ).go(context),
+            onTap: () =>
+                PersonDetailsRoute(family.id, person.id, entry.key).go(context),
           ),
       ],
     ),

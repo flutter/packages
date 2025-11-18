@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -128,10 +128,12 @@ abstract class BitmapDescriptor {
         assert(jsonMap['imagePixelRatio'] is double);
         assert(!jsonMap.containsKey('width') || jsonMap['width'] is double);
         assert(!jsonMap.containsKey('height') || jsonMap['height'] is double);
-        final double? width =
-            jsonMap.containsKey('width') ? jsonMap['width'] as double : null;
-        final double? height =
-            jsonMap.containsKey('height') ? jsonMap['height'] as double : null;
+        final double? width = jsonMap.containsKey('width')
+            ? jsonMap['width'] as double
+            : null;
+        final double? height = jsonMap.containsKey('height')
+            ? jsonMap['height'] as double
+            : null;
         return AssetMapBitmap(
           jsonMap['assetName'] as String,
           bitmapScaling: mapBitmapScalingFromString(
@@ -154,10 +156,12 @@ abstract class BitmapDescriptor {
         assert(jsonMap['imagePixelRatio'] is double);
         assert(!jsonMap.containsKey('width') || jsonMap['width'] is double);
         assert(!jsonMap.containsKey('height') || jsonMap['height'] is double);
-        final double? width =
-            jsonMap.containsKey('width') ? jsonMap['width'] as double : null;
-        final double? height =
-            jsonMap.containsKey('height') ? jsonMap['height'] as double : null;
+        final double? width = jsonMap.containsKey('width')
+            ? jsonMap['width'] as double
+            : null;
+        final double? height = jsonMap.containsKey('height')
+            ? jsonMap['height'] as double
+            : null;
         return BytesMapBitmap(
           jsonMap['byteData'] as Uint8List,
           bitmapScaling: mapBitmapScalingFromString(
@@ -391,10 +395,9 @@ class DefaultMarker extends BitmapDescriptor {
   final num? hue;
 
   @override
-  Object toJson() =>
-      (hue == null)
-          ? const <Object>[BitmapDescriptor._defaultMarker]
-          : <Object>[BitmapDescriptor._defaultMarker, hue!];
+  Object toJson() => (hue == null)
+      ? const <Object>[BitmapDescriptor._defaultMarker]
+      : <Object>[BitmapDescriptor._defaultMarker, hue!];
 }
 
 /// A BitmapDescriptor using an array of bytes that must be encoded

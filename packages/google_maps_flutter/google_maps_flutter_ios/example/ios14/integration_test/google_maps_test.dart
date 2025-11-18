@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -440,8 +440,8 @@ void main() {
       final ExampleGoogleMapController mapController =
           await mapControllerCompleter.future;
 
-      final LatLngBounds firstVisibleRegion =
-          await mapController.getVisibleRegion();
+      final LatLngBounds firstVisibleRegion = await mapController
+          .getVisibleRegion();
 
       expect(firstVisibleRegion, isNotNull);
       expect(firstVisibleRegion.southwest, isNotNull);
@@ -480,8 +480,8 @@ void main() {
       );
       await tester.pumpAndSettle(const Duration(seconds: 3));
 
-      final LatLngBounds secondVisibleRegion =
-          await mapController.getVisibleRegion();
+      final LatLngBounds secondVisibleRegion = await mapController
+          .getVisibleRegion();
 
       expect(secondVisibleRegion, isNotNull);
       expect(secondVisibleRegion.southwest, isNotNull);
@@ -1090,16 +1090,14 @@ void main() {
     final GoogleMapsInspectorPlatform inspector =
         GoogleMapsInspectorPlatform.instance!;
 
-    final TileOverlay tileOverlayInfo1 =
-        (await inspector.getTileOverlayInfo(
-          tileOverlay1.mapsId,
-          mapId: mapId,
-        ))!;
-    final TileOverlay tileOverlayInfo2 =
-        (await inspector.getTileOverlayInfo(
-          tileOverlay2.mapsId,
-          mapId: mapId,
-        ))!;
+    final TileOverlay tileOverlayInfo1 = (await inspector.getTileOverlayInfo(
+      tileOverlay1.mapsId,
+      mapId: mapId,
+    ))!;
+    final TileOverlay tileOverlayInfo2 = (await inspector.getTileOverlayInfo(
+      tileOverlay2.mapsId,
+      mapId: mapId,
+    ))!;
 
     expect(tileOverlayInfo1.visible, isTrue);
     expect(tileOverlayInfo1.fadeIn, isTrue);
@@ -1177,11 +1175,10 @@ void main() {
 
     await tester.pumpAndSettle(const Duration(seconds: 3));
 
-    final TileOverlay tileOverlayInfo1 =
-        (await inspector.getTileOverlayInfo(
-          tileOverlay1.mapsId,
-          mapId: mapId,
-        ))!;
+    final TileOverlay tileOverlayInfo1 = (await inspector.getTileOverlayInfo(
+      tileOverlay1.mapsId,
+      mapId: mapId,
+    ))!;
     final TileOverlay? tileOverlayInfo2 = await inspector.getTileOverlayInfo(
       tileOverlay2.mapsId,
       mapId: mapId,
@@ -1318,14 +1315,13 @@ void main() {
     }
 
     // Move marker from the first cluster manager to the last.
-    final MarkerId markerIdToMove =
-        markers.entries
-            .firstWhere(
-              (MapEntry<MarkerId, Marker> entry) =>
-                  entry.value.clusterManagerId ==
-                  clusterManagers.first.clusterManagerId,
-            )
-            .key;
+    final MarkerId markerIdToMove = markers.entries
+        .firstWhere(
+          (MapEntry<MarkerId, Marker> entry) =>
+              entry.value.clusterManagerId ==
+              clusterManagers.first.clusterManagerId,
+        )
+        .key;
     markers[markerIdToMove] = _copyMarkerWithClusterManagerId(
       markers[markerIdToMove]!,
       clusterManagers.last.clusterManagerId,
@@ -1564,9 +1560,8 @@ void main() {
             target: LatLng(10.0, 15.0),
           ),
           markers: markers,
-          onMapCreated:
-              (ExampleGoogleMapController controller) =>
-                  controllerCompleter.complete(controller),
+          onMapCreated: (ExampleGoogleMapController controller) =>
+              controllerCompleter.complete(controller),
         ),
       ),
     );
@@ -1594,9 +1589,8 @@ void main() {
             target: LatLng(10.0, 15.0),
           ),
           markers: markers,
-          onMapCreated:
-              (ExampleGoogleMapController controller) =>
-                  controllerCompleter.complete(controller),
+          onMapCreated: (ExampleGoogleMapController controller) =>
+              controllerCompleter.complete(controller),
         ),
       ),
     );
@@ -1701,18 +1695,12 @@ void main() {
           GoogleMapsInspectorPlatform.instance!;
 
       if (inspector.supportsGettingGroundOverlayInfo()) {
-        final GroundOverlay groundOverlayBoundsInfo1 =
-            (await inspector.getGroundOverlayInfo(
-              groundOverlayBounds1.mapsId,
-              mapId: mapId,
-            ))!;
-        final GroundOverlay groundOverlayBoundsInfo2 =
-            (await inspector.getGroundOverlayInfo(
-              groundOverlayBounds2.mapsId,
-              mapId: mapId,
-            ))!;
-        final GroundOverlay groundOverlayPositionInfo1 =
-            (await inspector.getGroundOverlayInfo(
+        final GroundOverlay groundOverlayBoundsInfo1 = (await inspector
+            .getGroundOverlayInfo(groundOverlayBounds1.mapsId, mapId: mapId))!;
+        final GroundOverlay groundOverlayBoundsInfo2 = (await inspector
+            .getGroundOverlayInfo(groundOverlayBounds2.mapsId, mapId: mapId))!;
+        final GroundOverlay groundOverlayPositionInfo1 = (await inspector
+            .getGroundOverlayInfo(
               groundOverlayPosition1.mapsId,
               mapId: mapId,
             ))!;
@@ -1797,13 +1785,10 @@ void main() {
       await tester.pumpAndSettle(const Duration(seconds: 3));
 
       if (inspector.supportsGettingGroundOverlayInfo()) {
-        final GroundOverlay groundOverlayBounds1Info =
-            (await inspector.getGroundOverlayInfo(
-              groundOverlayBounds1.mapsId,
-              mapId: mapId,
-            ))!;
-        final GroundOverlay groundOverlayPosition1Info =
-            (await inspector.getGroundOverlayInfo(
+        final GroundOverlay groundOverlayBounds1Info = (await inspector
+            .getGroundOverlayInfo(groundOverlayBounds1.mapsId, mapId: mapId))!;
+        final GroundOverlay groundOverlayPosition1Info = (await inspector
+            .getGroundOverlayInfo(
               groundOverlayPosition1.mapsId,
               mapId: mapId,
             ))!;

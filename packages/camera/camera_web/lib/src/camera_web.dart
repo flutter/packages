@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -134,8 +134,9 @@ class CameraPlugin extends CameraPlatform {
 
         // Get all video tracks in the video stream
         // to later extract the lens direction from the first track.
-        final List<web.MediaStreamTrack> videoTracks =
-            videoStream.getVideoTracks().toDart;
+        final List<web.MediaStreamTrack> videoTracks = videoStream
+            .getVideoTracks()
+            .toDart;
 
         if (videoTracks.isNotEmpty) {
           // Get the facing mode from the first available video track.
@@ -146,10 +147,9 @@ class CameraPlugin extends CameraPlatform {
           // Get the lens direction based on the facing mode.
           // Fallback to the external lens direction
           // if the facing mode is not available.
-          final CameraLensDirection lensDirection =
-              facingMode != null
-                  ? _cameraService.mapFacingModeToLensDirection(facingMode)
-                  : CameraLensDirection.external;
+          final CameraLensDirection lensDirection = facingMode != null
+              ? _cameraService.mapFacingModeToLensDirection(facingMode)
+              : CameraLensDirection.external;
 
           // Create a camera description.
           //
@@ -224,12 +224,9 @@ class CameraPlugin extends CameraPlatform {
 
       final CameraMetadata cameraMetadata = camerasMetadata[cameraDescription]!;
 
-      final CameraType? cameraType =
-          cameraMetadata.facingMode != null
-              ? _cameraService.mapFacingModeToCameraType(
-                cameraMetadata.facingMode!,
-              )
-              : null;
+      final CameraType? cameraType = cameraMetadata.facingMode != null
+          ? _cameraService.mapFacingModeToCameraType(cameraMetadata.facingMode!)
+          : null;
 
       // Use the highest resolution possible
       // if the resolution preset is not specified.
@@ -245,8 +242,9 @@ class CameraPlugin extends CameraPlatform {
         options: CameraOptions(
           audio: AudioConstraints(enabled: mediaSettings?.enableAudio ?? true),
           video: VideoConstraints(
-            facingMode:
-                cameraType != null ? FacingModeConstraint(cameraType) : null,
+            facingMode: cameraType != null
+                ? FacingModeConstraint(cameraType)
+                : null,
             width: VideoSizeConstraint(ideal: videoSize.width.toInt()),
             height: VideoSizeConstraint(ideal: videoSize.height.toInt()),
             deviceId: cameraMetadata.deviceId,
@@ -289,8 +287,9 @@ class CameraPlugin extends CameraPlatform {
             final CameraErrorCode errorCode = CameraErrorCode.fromMediaError(
               error,
             );
-            final String errorMessage =
-                error.message != '' ? error.message : _kDefaultErrorMessage;
+            final String errorMessage = error.message != ''
+                ? error.message
+                : _kDefaultErrorMessage;
 
             cameraEventStreamController.add(
               CameraErrorEvent(
@@ -503,8 +502,9 @@ class CameraPlugin extends CameraPlatform {
   @override
   Future<XFile> stopVideoRecording(int cameraId) async {
     try {
-      final XFile videoRecording =
-          await getCamera(cameraId).stopVideoRecording();
+      final XFile videoRecording = await getCamera(
+        cameraId,
+      ).stopVideoRecording();
       await _cameraVideoRecordingErrorSubscriptions[cameraId]?.cancel();
       return videoRecording;
     } on web.DOMException catch (e) {

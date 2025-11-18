@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -34,11 +34,10 @@ void main() async {
     return;
   }
   // Load font.
-  final String effectiveFontFamily =
-      const TextStyle(
-        fontFamily: CupertinoIcons.iconFont,
-        package: CupertinoIcons.iconFontPackage,
-      ).fontFamily!;
+  final String effectiveFontFamily = const TextStyle(
+    fontFamily: CupertinoIcons.iconFont,
+    package: CupertinoIcons.iconFontPackage,
+  ).fontFamily!;
   final FontLoader fontLoader = FontLoader(effectiveFontFamily);
   final String filePath = path.canonicalize('assets/CupertinoIcons.ttf');
   final File file = File(filePath);

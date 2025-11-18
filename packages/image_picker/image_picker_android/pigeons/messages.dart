@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -7,7 +7,6 @@ import 'package:pigeon/pigeon.dart';
 @ConfigurePigeon(
   PigeonOptions(
     dartOut: 'lib/src/messages.g.dart',
-    dartTestOut: 'test/test_api.g.dart',
     javaOut:
         'android/src/main/java/io/flutter/plugins/imagepicker/Messages.java',
     javaOptions: JavaOptions(package: 'io.flutter.plugins.imagepicker'),
@@ -94,7 +93,7 @@ class CacheRetrievalResult {
   final List<String> paths;
 }
 
-@HostApi(dartHostTestHandler: 'TestHostImagePickerApi')
+@HostApi()
 abstract class ImagePickerApi {
   /// Selects images and returns their paths.
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)

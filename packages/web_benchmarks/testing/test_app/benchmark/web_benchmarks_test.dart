@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -84,10 +84,9 @@ Future<BenchmarkResults> _runBenchmarks({
     compilationOptions: compilationOptions,
   );
 
-  final List<String> expectedMetrics =
-      expectedBenchmarkMetrics(
-        useWasm: compilationOptions.useWasm,
-      ).map((BenchmarkMetric metric) => metric.label).toList();
+  final List<String> expectedMetrics = expectedBenchmarkMetrics()
+      .map((BenchmarkMetric metric) => metric.label)
+      .toList();
 
   for (final String benchmarkName in benchmarkNames) {
     for (final String metricName in expectedMetrics) {

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -118,14 +118,13 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           routes: <String, WidgetBuilder>{
-            '/':
-                (BuildContext context) => Link(
-                  uri: uri,
-                  builder: (BuildContext context, FollowLink? followLink2) {
-                    followLink = followLink2;
-                    return Container();
-                  },
-                ),
+            '/': (BuildContext context) => Link(
+              uri: uri,
+              builder: (BuildContext context, FollowLink? followLink2) {
+                followLink = followLink2;
+                return Container();
+              },
+            ),
             '/foo/bar': (BuildContext context) => Container(),
           },
         ),

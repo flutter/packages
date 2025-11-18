@@ -6,15 +6,15 @@
 
 packages/animations/**                                   @hannah-hyj
 packages/camera/**                                       @bparrishMines
-packages/cross_file/**                                   @ditman
-packages/extension_google_sign_in_as_googleapis_auth/**  @ditman
+packages/cross_file/**                                   @stuartmorgan-g
+packages/extension_google_sign_in_as_googleapis_auth/**  @stuartmorgan-g
 packages/file_selector/**                                @stuartmorgan-g
 packages/flutter_lints/**                                @chunhtai
 packages/flutter_template_images/**                      @stuartmorgan-g
 packages/go_router/**                                    @chunhtai
 packages/go_router_builder/**                            @chunhtai
 packages/google_adsense/**                               @sokoloff06 @ditman
-packages/google_identity_services_web/**                 @ditman
+packages/google_identity_services_web/**                 @mdebbar
 packages/google_fonts/**                                 @Piinks
 packages/google_maps_flutter/**                          @stuartmorgan-g
 packages/google_sign_in/**                               @stuartmorgan-g
@@ -46,22 +46,23 @@ third_party/packages/cupertino_icons/**                  @MitchellGoodwin
 third_party/packages/cupertino_icons/test/goldens/**     @LongCatIsLooong
 third_party/packages/flutter_svg/**                      @domesticmouse
 third_party/packages/flutter_svg_test/**                 @domesticmouse
+third_party/packages/mustache_template/**                @bkonyi @parlough
 third_party/packages/path_parsing/**                     @domesticmouse
 
 # Plugin platform implementation rules. These should stay last, since the last
 # matching entry takes precedence.
 
 # - Web
-packages/camera/camera_web/**                                 @ditman
-packages/file_selector/file_selector_web/**                   @ditman
-packages/google_maps_flutter/google_maps_flutter_web/**       @ditman
-packages/google_sign_in/google_sign_in_web/**                 @ditman
-packages/image_picker/image_picker_for_web/**                 @ditman
-packages/pointer_interceptor/pointer_interceptor_web/**       @ditman
-packages/shared_preferences/shared_preferences_web/**         @ditman
-packages/url_launcher/url_launcher_web/**                     @ditman
-packages/video_player/video_player_web/**                     @ditman
-packages/webview_flutter/webview_flutter_web/**               @ditman
+packages/camera/camera_web/**                                 @mdebbar
+packages/file_selector/file_selector_web/**                   @mdebbar
+packages/google_maps_flutter/google_maps_flutter_web/**       @mdebbar
+packages/google_sign_in/google_sign_in_web/**                 @mdebbar
+packages/image_picker/image_picker_for_web/**                 @mdebbar
+packages/pointer_interceptor/pointer_interceptor_web/**       @mdebbar
+packages/shared_preferences/shared_preferences_web/**         @mdebbar
+packages/url_launcher/url_launcher_web/**                     @mdebbar
+packages/video_player/video_player_web/**                     @mdebbar
+packages/webview_flutter/webview_flutter_web/**               @mdebbar
 
 # - Android
 packages/camera/camera_android/**                             @camsim99
@@ -70,15 +71,15 @@ packages/espresso/**                                          @jesswrd
 packages/file_selector/file_selector_android/**               @mboetger
 packages/flutter_plugin_android_lifecycle/**                  @reidbaker
 packages/google_maps_flutter/google_maps_flutter_android/**   @reidbaker
-packages/google_sign_in/google_sign_in_android/**             @ash2moon
+packages/google_sign_in/google_sign_in_android/**             @reidbaker
 packages/image_picker/image_picker_android/**                 @gmackall
 packages/in_app_purchase/in_app_purchase_android/**           @gmackall
 packages/local_auth/local_auth_android/**                     @mboetger
 packages/path_provider/path_provider_android/**               @camsim99
-packages/quick_actions/quick_actions_android/**               @ash2moon
+packages/quick_actions/quick_actions_android/**               @reidbaker
 packages/shared_preferences/shared_preferences_android/**     @jesswrd
 packages/url_launcher/url_launcher_android/**                 @gmackall
-packages/video_player/video_player_android/**                 @ash2moon
+packages/video_player/video_player_android/**                 @reidbaker
 # Owned by ecosystem team for now during the wrapper evaluation.
 packages/webview_flutter/webview_flutter_android/**           @bparrishMines
 
@@ -91,7 +92,7 @@ packages/google_sign_in/google_sign_in_ios/**                 @LongCatIsLooong
 packages/image_picker/image_picker_ios/**                     @vashworth @louisehsu
 packages/image_picker/image_picker_macos/**                   @vashworth @louisehsu
 packages/in_app_purchase/in_app_purchase_storekit/**          @louisehsu @LongCatIsLooong
-packages/local_auth/local_auth_darwin/**                      @vashworth
+packages/local_auth/local_auth_darwin/**                      @vashworth @okorohelijah
 packages/path_provider/path_provider_foundation/**            @vashworth
 packages/pointer_interceptor/pointer_interceptor_ios/**       @louisehsu @hellohuanlin
 packages/quick_actions/quick_actions_ios/**                   @LongCatIsLooong @hellohuanlin
@@ -102,11 +103,11 @@ packages/video_player/video_player_avfoundation/**            @LongCatIsLooong @
 packages/webview_flutter/webview_flutter_wkwebview/**         @louisehsu
 
 # - Linux
-packages/file_selector/file_selector_linux/**                 @stuartmorgan-g
-packages/image_picker/image_picker_linux/**                   @stuartmorgan-g
-packages/path_provider/path_provider_linux/**                 @stuartmorgan-g
-packages/shared_preferences/shared_preferences_linux/**       @stuartmorgan-g
-packages/url_launcher/url_launcher_linux/**                   @stuartmorgan-g
+packages/file_selector/file_selector_linux/**                 @robert-ancell @stuartmorgan-g
+packages/image_picker/image_picker_linux/**                   @robert-ancell @stuartmorgan-g
+packages/path_provider/path_provider_linux/**                 @robert-ancell @stuartmorgan-g
+packages/shared_preferences/shared_preferences_linux/**       @robert-ancell @stuartmorgan-g
+packages/url_launcher/url_launcher_linux/**                   @robert-ancell @stuartmorgan-g
 
 # - Windows
 packages/camera/camera_windows/**                             @stuartmorgan-g

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -50,8 +50,9 @@ List<int> encodeMDnsQuery(
   assert(ResourceRecordType.debugAssertValid(type));
 
   final List<String> nameParts = processDnsNameParts(name);
-  final List<List<int>> rawNameParts =
-      nameParts.map<List<int>>((String part) => utf8.encode(part)).toList();
+  final List<List<int>> rawNameParts = nameParts
+      .map<List<int>>((String part) => utf8.encode(part))
+      .toList();
 
   // Calculate the size of the packet.
   int size = _kHeaderSize;
@@ -115,8 +116,9 @@ class _FQDNReadResult {
 
 /// Reads a FQDN from raw packet data.
 String readFQDN(List<int> packet, [int offset = 0]) {
-  final Uint8List data =
-      packet is Uint8List ? packet : Uint8List.fromList(packet);
+  final Uint8List data = packet is Uint8List
+      ? packet
+      : Uint8List.fromList(packet);
   final ByteData byteData = ByteData.view(data.buffer);
 
   return _readFQDN(data, byteData, offset, data.length).fqdn;
@@ -205,8 +207,9 @@ List<ResourceRecord>? decodeMDnsResponse(List<int> packet) {
     return null;
   }
 
-  final Uint8List data =
-      packet is Uint8List ? packet : Uint8List.fromList(packet);
+  final Uint8List data = packet is Uint8List
+      ? packet
+      : Uint8List.fromList(packet);
   final ByteData packetBytes = ByteData.view(data.buffer);
 
   final int answerCount = packetBytes.getUint16(_kAncountOffset);

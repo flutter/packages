@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -329,10 +329,9 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
   }) {
     final Map<TileOverlayId, TileOverlay>? currentTileOverlays =
         _tileOverlays[mapId];
-    final Set<TileOverlay> previousSet =
-        currentTileOverlays != null
-            ? currentTileOverlays.values.toSet()
-            : <TileOverlay>{};
+    final Set<TileOverlay> previousSet = currentTileOverlays != null
+        ? currentTileOverlays.values.toSet()
+        : <TileOverlay>{};
     final _TileOverlayUpdates updates = _TileOverlayUpdates.from(
       previousSet,
       newTileOverlays,
@@ -572,44 +571,44 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
             widgetConfiguration.initialCameraPosition,
           ),
           mapConfiguration: mapConfiguration,
-          initialMarkers:
-              mapObjects.markers.map(_platformMarkerFromMarker).toList(),
-          initialPolygons:
-              mapObjects.polygons.map(_platformPolygonFromPolygon).toList(),
-          initialPolylines:
-              mapObjects.polylines.map(_platformPolylineFromPolyline).toList(),
-          initialCircles:
-              mapObjects.circles.map(_platformCircleFromCircle).toList(),
-          initialHeatmaps:
-              mapObjects.heatmaps.map(_platformHeatmapFromHeatmap).toList(),
-          initialTileOverlays:
-              mapObjects.tileOverlays
-                  .map(_platformTileOverlayFromTileOverlay)
-                  .toList(),
-          initialClusterManagers:
-              mapObjects.clusterManagers
-                  .map(_platformClusterManagerFromClusterManager)
-                  .toList(),
-          initialGroundOverlays:
-              mapObjects.groundOverlays
-                  .map(_platformGroundOverlayFromGroundOverlay)
-                  .toList(),
+          initialMarkers: mapObjects.markers
+              .map(_platformMarkerFromMarker)
+              .toList(),
+          initialPolygons: mapObjects.polygons
+              .map(_platformPolygonFromPolygon)
+              .toList(),
+          initialPolylines: mapObjects.polylines
+              .map(_platformPolylineFromPolyline)
+              .toList(),
+          initialCircles: mapObjects.circles
+              .map(_platformCircleFromCircle)
+              .toList(),
+          initialHeatmaps: mapObjects.heatmaps
+              .map(_platformHeatmapFromHeatmap)
+              .toList(),
+          initialTileOverlays: mapObjects.tileOverlays
+              .map(_platformTileOverlayFromTileOverlay)
+              .toList(),
+          initialClusterManagers: mapObjects.clusterManagers
+              .map(_platformClusterManagerFromClusterManager)
+              .toList(),
+          initialGroundOverlays: mapObjects.groundOverlays
+              .map(_platformGroundOverlayFromGroundOverlay)
+              .toList(),
         );
 
     const String viewType = 'plugins.flutter.dev/google_maps_android';
     if (useAndroidViewSurface) {
       return PlatformViewLink(
         viewType: viewType,
-        surfaceFactory: (
-          BuildContext context,
-          PlatformViewController controller,
-        ) {
-          return AndroidViewSurface(
-            controller: controller as AndroidViewController,
-            gestureRecognizers: widgetConfiguration.gestureRecognizers,
-            hitTestBehavior: PlatformViewHitTestBehavior.opaque,
-          );
-        },
+        surfaceFactory:
+            (BuildContext context, PlatformViewController controller) {
+              return AndroidViewSurface(
+                controller: controller as AndroidViewController,
+                gestureRecognizers: widgetConfiguration.gestureRecognizers,
+                hitTestBehavior: PlatformViewHitTestBehavior.opaque,
+              );
+            },
         onCreatePlatformView: (PlatformViewCreationParams params) {
           final AndroidViewController controller =
               PlatformViewsService.initExpensiveAndroidView(
@@ -834,15 +833,13 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
   ) {
     return PlatformGroundOverlay(
       groundOverlayId: groundOverlay.groundOverlayId.value,
-      anchor:
-          groundOverlay.anchor != null
-              ? _platformPairFromOffset(groundOverlay.anchor!)
-              : null,
+      anchor: groundOverlay.anchor != null
+          ? _platformPairFromOffset(groundOverlay.anchor!)
+          : null,
       image: platformBitmapFromBitmapDescriptor(groundOverlay.image),
-      position:
-          groundOverlay.position != null
-              ? _platformLatLngFromLatLng(groundOverlay.position!)
-              : null,
+      position: groundOverlay.position != null
+          ? _platformLatLngFromLatLng(groundOverlay.position!)
+          : null,
       bounds: _platformLatLngBoundsFromLatLngBounds(groundOverlay.bounds),
       visible: groundOverlay.visible,
       zIndex: groundOverlay.zIndex,
@@ -855,12 +852,14 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
   }
 
   static PlatformPolygon _platformPolygonFromPolygon(Polygon polygon) {
-    final List<PlatformLatLng> points =
-        polygon.points.map(_platformLatLngFromLatLng).toList();
-    final List<List<PlatformLatLng>> holes =
-        polygon.holes.map((List<LatLng> hole) {
-          return hole.map(_platformLatLngFromLatLng).toList();
-        }).toList();
+    final List<PlatformLatLng> points = polygon.points
+        .map(_platformLatLngFromLatLng)
+        .toList();
+    final List<List<PlatformLatLng>> holes = polygon.holes.map((
+      List<LatLng> hole,
+    ) {
+      return hole.map(_platformLatLngFromLatLng).toList();
+    }).toList();
     return PlatformPolygon(
       polygonId: polygon.polygonId.value,
       fillColor: polygon.fillColor.value,
@@ -876,10 +875,12 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
   }
 
   static PlatformPolyline _platformPolylineFromPolyline(Polyline polyline) {
-    final List<PlatformLatLng> points =
-        polyline.points.map(_platformLatLngFromLatLng).toList();
-    final List<PlatformPatternItem> pattern =
-        polyline.patterns.map(platformPatternItemFromPatternItem).toList();
+    final List<PlatformLatLng> points = polyline.points
+        .map(_platformLatLngFromLatLng)
+        .toList();
+    final List<PlatformPatternItem> pattern = polyline.patterns
+        .map(platformPatternItemFromPatternItem)
+        .toList();
     return PlatformPolyline(
       polylineId: polyline.polylineId.value,
       consumesTapEvents: polyline.consumeTapEvents,
@@ -955,10 +956,9 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
         return PlatformCameraUpdate(
           cameraUpdate: PlatformCameraUpdateZoomBy(
             amount: update.amount,
-            focus:
-                update.focus == null
-                    ? null
-                    : _platformPairFromOffset(update.focus!),
+            focus: update.focus == null
+                ? null
+                : _platformPairFromOffset(update.focus!),
           ),
         );
       case CameraUpdateType.zoomIn:
@@ -1019,10 +1019,9 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
         return PlatformBitmap(
           bitmap: PlatformBitmapBytes(
             byteData: bytes.byteData,
-            size:
-                (bytes.size == null)
-                    ? null
-                    : _platformPairFromSize(bytes.size!),
+            size: (bytes.size == null)
+                ? null
+                : _platformPairFromSize(bytes.size!),
           ),
         );
       case final AssetBitmap asset:
@@ -1036,10 +1035,9 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
           bitmap: PlatformBitmapAssetImage(
             name: asset.name,
             scale: asset.scale,
-            size:
-                (asset.size == null)
-                    ? null
-                    : _platformPairFromSize(asset.size!),
+            size: (asset.size == null)
+                ? null
+                : _platformPairFromSize(asset.size!),
           ),
         );
       case final AssetMapBitmap asset:
@@ -1135,10 +1133,9 @@ class HostMapMessageHandler implements MapsCallbackApi {
       TileOverlayId(tileOverlayId),
     );
     final TileProvider? tileProvider = tileOverlay?.tileProvider;
-    final Tile tile =
-        tileProvider == null
-            ? TileProvider.noTile
-            : await tileProvider.getTile(location.x, location.y, zoom);
+    final Tile tile = tileProvider == null
+        ? TileProvider.noTile
+        : await tileProvider.getTile(location.x, location.y, zoom);
     return _platformTileFromTile(tile);
   }
 
@@ -1302,8 +1299,8 @@ PlatformCameraTargetBounds? _platformCameraTargetBoundsFromCameraTargetBounds(
   return bounds == null
       ? null
       : PlatformCameraTargetBounds(
-        bounds: _platformLatLngBoundsFromLatLngBounds(bounds.bounds),
-      );
+          bounds: _platformLatLngBoundsFromLatLngBounds(bounds.bounds),
+        );
 }
 
 PlatformMapType? _platformMapTypeFromMapType(MapType? type) {
@@ -1342,11 +1339,11 @@ PlatformEdgeInsets? _platformEdgeInsetsFromEdgeInsets(EdgeInsets? insets) {
   return insets == null
       ? null
       : PlatformEdgeInsets(
-        top: insets.top,
-        bottom: insets.bottom,
-        left: insets.left,
-        right: insets.right,
-      );
+          top: insets.top,
+          bottom: insets.bottom,
+          left: insets.left,
+          right: insets.right,
+        );
 }
 
 PlatformMapConfiguration _platformMapConfigurationFromMapConfiguration(
@@ -1387,8 +1384,8 @@ PlatformMapConfiguration _platformMapConfigurationFromOptionsJson(
   // All of these hard-coded values and structures come from
   // google_maps_flutter_platform_interface/lib/src/types/utils/map_configuration_serialization.dart
   // to support this legacy API that relied on cross-package magic strings.
-  final List<double>? padding =
-      (options['padding'] as List<Object?>?)?.cast<double>();
+  final List<double>? padding = (options['padding'] as List<Object?>?)
+      ?.cast<double>();
   final int? mapType = options['mapType'] as int?;
   return PlatformMapConfiguration(
     compassEnabled: options['compassEnabled'] as bool?,
@@ -1408,15 +1405,14 @@ PlatformMapConfiguration _platformMapConfigurationFromOptionsJson(
     zoomGesturesEnabled: options['zoomGesturesEnabled'] as bool?,
     myLocationEnabled: options['myLocationEnabled'] as bool?,
     myLocationButtonEnabled: options['myLocationButtonEnabled'] as bool?,
-    padding:
-        padding == null
-            ? null
-            : PlatformEdgeInsets(
-              top: padding[0],
-              left: padding[1],
-              bottom: padding[2],
-              right: padding[3],
-            ),
+    padding: padding == null
+        ? null
+        : PlatformEdgeInsets(
+            top: padding[0],
+            left: padding[1],
+            bottom: padding[2],
+            right: padding[3],
+          ),
     indoorViewEnabled: options['indoorEnabled'] as bool?,
     trafficEnabled: options['trafficEnabled'] as bool?,
     buildingsEnabled: options['buildingsEnabled'] as bool?,
@@ -1490,8 +1486,8 @@ PlatformZoomRange? _platformZoomRangeFromMinMaxZoomPreferenceJson(
     return null;
   }
   // See `MinMaxZoomPreference.toJson`.
-  final List<double?> minMaxZoom =
-      (zoomPrefsJson as List<Object?>).cast<double?>();
+  final List<double?> minMaxZoom = (zoomPrefsJson as List<Object?>)
+      .cast<double?>();
   return PlatformZoomRange(min: minMaxZoom[0], max: minMaxZoom[1]);
 }
 

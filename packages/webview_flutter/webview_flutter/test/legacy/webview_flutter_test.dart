@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -988,8 +988,8 @@ void main() {
       await tester.pumpWidget(
         WebView(
           initialUrl: 'https://youtube.com',
-          navigationDelegate:
-              (NavigationRequest r) => NavigationDecision.navigate,
+          navigationDelegate: (NavigationRequest r) =>
+              NavigationDecision.navigate,
         ),
       );
 
@@ -1272,26 +1272,21 @@ List<dynamic> captureBuildArgs(
   return verify(
     mockWebViewPlatform.build(
       context: context ? captureAnyNamed('context') : anyNamed('context'),
-      creationParams:
-          creationParams
-              ? captureAnyNamed('creationParams')
-              : anyNamed('creationParams'),
-      webViewPlatformCallbacksHandler:
-          webViewPlatformCallbacksHandler
-              ? captureAnyNamed('webViewPlatformCallbacksHandler')
-              : anyNamed('webViewPlatformCallbacksHandler'),
-      javascriptChannelRegistry:
-          javascriptChannelRegistry
-              ? captureAnyNamed('javascriptChannelRegistry')
-              : anyNamed('javascriptChannelRegistry'),
-      onWebViewPlatformCreated:
-          onWebViewPlatformCreated
-              ? captureAnyNamed('onWebViewPlatformCreated')
-              : anyNamed('onWebViewPlatformCreated'),
-      gestureRecognizers:
-          gestureRecognizers
-              ? captureAnyNamed('gestureRecognizers')
-              : anyNamed('gestureRecognizers'),
+      creationParams: creationParams
+          ? captureAnyNamed('creationParams')
+          : anyNamed('creationParams'),
+      webViewPlatformCallbacksHandler: webViewPlatformCallbacksHandler
+          ? captureAnyNamed('webViewPlatformCallbacksHandler')
+          : anyNamed('webViewPlatformCallbacksHandler'),
+      javascriptChannelRegistry: javascriptChannelRegistry
+          ? captureAnyNamed('javascriptChannelRegistry')
+          : anyNamed('javascriptChannelRegistry'),
+      onWebViewPlatformCreated: onWebViewPlatformCreated
+          ? captureAnyNamed('onWebViewPlatformCreated')
+          : anyNamed('onWebViewPlatformCreated'),
+      gestureRecognizers: gestureRecognizers
+          ? captureAnyNamed('gestureRecognizers')
+          : anyNamed('gestureRecognizers'),
     ),
   ).captured;
 }

@@ -13,16 +13,16 @@ List<RouteBase> get $appRoutes => [$homeRoute];
 RouteBase get $homeRoute => GoRouteData.$route(
   path: '/',
   name: 'Home',
-  factory: _$HomeRoute._fromState,
+  factory: $HomeRoute._fromState,
   routes: [
     GoRouteData.$route(
       path: 'family/:familyId',
-      factory: _$FamilyRoute._fromState,
+      factory: $FamilyRoute._fromState,
     ),
   ],
 );
 
-mixin _$HomeRoute on GoRouteData {
+mixin $HomeRoute on GoRouteData {
   static HomeRoute _fromState(GoRouterState state) => const HomeRoute();
 
   @override
@@ -42,7 +42,7 @@ mixin _$HomeRoute on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-mixin _$FamilyRoute on GoRouteData {
+mixin $FamilyRoute on GoRouteData {
   static FamilyRoute _fromState(GoRouterState state) =>
       FamilyRoute(state.pathParameters['familyId']!);
 

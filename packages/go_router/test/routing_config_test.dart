@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -129,8 +129,8 @@ void main() {
         routes: <RouteBase>[
           GoRoute(
             path: '/',
-            builder:
-                (_, __) => StatefulTest(key: key, child: const Text('home')),
+            builder: (_, __) =>
+                StatefulTest(key: key, child: const Text('home')),
           ),
         ],
       ),
@@ -179,9 +179,8 @@ void main() {
               routes: <RouteBase>[
                 GoRoute(path: '/', builder: (_, __) => const Text('home')),
               ],
-              builder:
-                  (_, __, Widget widget) =>
-                      StatefulTest(key: key, child: widget),
+              builder: (_, __, Widget widget) =>
+                  StatefulTest(key: key, child: widget),
             ),
           ],
         ),
@@ -204,8 +203,8 @@ void main() {
               GoRoute(path: '/', builder: (_, __) => const Text('home')),
               GoRoute(path: '/abc', builder: (_, __) => const Text('/abc')),
             ],
-            builder:
-                (_, __, Widget widget) => StatefulTest(key: key, child: widget),
+            builder: (_, __, Widget widget) =>
+                StatefulTest(key: key, child: widget),
           ),
         ],
       );

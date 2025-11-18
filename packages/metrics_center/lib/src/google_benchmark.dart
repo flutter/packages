@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -82,8 +82,9 @@ void _parseAnItem(
         rethrow;
       }
 
-      final double? value =
-          rawValue is int ? rawValue.toDouble() : rawValue as double?;
+      final double? value = rawValue is int
+          ? rawValue.toDouble()
+          : rawValue as double?;
       points.add(
         MetricPoint(
           value,

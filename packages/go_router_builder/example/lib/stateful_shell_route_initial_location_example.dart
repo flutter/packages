@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -6,6 +6,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+
+import 'separate_file_route.dart';
 
 part 'stateful_shell_route_initial_location_example.g.dart';
 
@@ -78,7 +80,7 @@ class OrdersShellBranchData extends StatefulShellBranchData {
   const OrdersShellBranchData();
 }
 
-class HomeRouteData extends GoRouteData with _$HomeRouteData {
+class HomeRouteData extends GoRouteData with $HomeRouteData {
   const HomeRouteData();
 
   @override
@@ -89,7 +91,7 @@ class HomeRouteData extends GoRouteData with _$HomeRouteData {
 
 enum NotificationsPageSection { latest, old, archive }
 
-class NotificationsRouteData extends GoRouteData with _$NotificationsRouteData {
+class NotificationsRouteData extends GoRouteData with $NotificationsRouteData {
   const NotificationsRouteData({required this.section});
 
   final NotificationsPageSection section;
@@ -97,15 +99,6 @@ class NotificationsRouteData extends GoRouteData with _$NotificationsRouteData {
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return NotificationsPageView(section: section);
-  }
-}
-
-class OrdersRouteData extends GoRouteData with _$OrdersRouteData {
-  const OrdersRouteData();
-
-  @override
-  Widget build(BuildContext context, GoRouterState state) {
-    return const OrdersPageView(label: 'Orders page');
   }
 }
 
@@ -170,7 +163,9 @@ class NotificationsPageView extends StatelessWidget {
               Tab(
                 child: Text('Latest', style: TextStyle(color: Colors.black87)),
               ),
-              Tab(child: Text('Old', style: TextStyle(color: Colors.black87))),
+              Tab(
+                child: Text('Old', style: TextStyle(color: Colors.black87)),
+              ),
               Tab(
                 child: Text('Archive', style: TextStyle(color: Colors.black87)),
               ),
@@ -193,17 +188,6 @@ class NotificationsPageView extends StatelessWidget {
 
 class NotificationsSubPageView extends StatelessWidget {
   const NotificationsSubPageView({required this.label, super.key});
-
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: Text(label));
-  }
-}
-
-class OrdersPageView extends StatelessWidget {
-  const OrdersPageView({required this.label, super.key});
 
   final String label;
 

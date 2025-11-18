@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -405,8 +405,10 @@ abstract class WidgetRecorder extends Recorder implements FrameRecorder {
   @override
   Future<Profile> run() async {
     _runCompleter = Completer<void>();
-    final Profile localProfile =
-        profile = Profile(name: name, useCustomWarmUp: useCustomWarmUp);
+    final Profile localProfile = profile = Profile(
+      name: name,
+      useCustomWarmUp: useCustomWarmUp,
+    );
     final _RecordingWidgetsBinding binding =
         _RecordingWidgetsBinding.ensureInitialized();
     final Widget widget = createWidget();

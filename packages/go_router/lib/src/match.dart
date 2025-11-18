@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -127,8 +127,9 @@ abstract class RouteMatchBase with Diagnosticable {
     // Grab the route matches for the scope navigator key and put it into the
     // matches for `null`.
     if (result.containsKey(scopedNavigatorKey)) {
-      final List<RouteMatchBase> matchesForScopedNavigator =
-          result.remove(scopedNavigatorKey)!;
+      final List<RouteMatchBase> matchesForScopedNavigator = result.remove(
+        scopedNavigatorKey,
+      )!;
       assert(matchesForScopedNavigator.isNotEmpty);
       result
           .putIfAbsent(null, () => <RouteMatchBase>[])
@@ -149,8 +150,8 @@ abstract class RouteMatchBase with Diagnosticable {
   }) {
     final GlobalKey<NavigatorState>? parentKey =
         route.parentNavigatorKey == scopedNavigatorKey
-            ? null
-            : route.parentNavigatorKey;
+        ? null
+        : route.parentNavigatorKey;
     Map<GlobalKey<NavigatorState>?, List<RouteMatchBase>>? subRouteMatches;
     late GlobalKey<NavigatorState> navigatorKeyUsed;
     for (final RouteBase subRoute in route.routes) {
@@ -202,8 +203,8 @@ abstract class RouteMatchBase with Diagnosticable {
   }) {
     final GlobalKey<NavigatorState>? parentKey =
         route.parentNavigatorKey == scopedNavigatorKey
-            ? null
-            : route.parentNavigatorKey;
+        ? null
+        : route.parentNavigatorKey;
 
     final RegExpMatch? regExpMatch = route.matchPatternAsPrefix(
       remainingLocation,

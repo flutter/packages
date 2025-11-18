@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -198,7 +198,8 @@ class AffineMatrix {
   }
 
   @override
-  String toString() => '''
+  String toString() =>
+      '''
 [ $a, $c, $e ]
 [ $b, $d, $f ]
 [ 0.0, 0.0, 1.0 ] // _m4_10 = $_m4_10

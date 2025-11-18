@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -189,8 +189,9 @@ void main() {
 
         await plugin.setMapStyle(mapStyle, mapId: 0);
 
-        final dynamic captured =
-            verify(controller.updateStyles(captureThat(isList))).captured[0];
+        final dynamic captured = verify(
+          controller.updateStyles(captureThat(isList)),
+        ).captured[0];
 
         final List<gmaps.MapTypeStyle> styles =
             captured as List<gmaps.MapTypeStyle>;

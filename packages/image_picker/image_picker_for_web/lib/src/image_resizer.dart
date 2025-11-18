@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -76,15 +76,14 @@ class ImageResizer {
       maxWidth,
       maxHeight,
     );
-    final web.HTMLCanvasElement canvas =
-        web.HTMLCanvasElement()
-          ..width = newImageSize.width.toInt()
-          ..height = newImageSize.height.toInt();
+    final web.HTMLCanvasElement canvas = web.HTMLCanvasElement()
+      ..width = newImageSize.width.toInt()
+      ..height = newImageSize.height.toInt();
     final web.CanvasRenderingContext2D context = canvas.context2D;
     if (maxHeight == null && maxWidth == null) {
       context.drawImage(source, 0, 0);
     } else {
-      context.drawImageScaled(
+      context.drawImage(
         source,
         0,
         0,
@@ -106,18 +105,17 @@ class ImageResizer {
     final double calculatedImageQuality =
         (min(imageQuality ?? 100, 100)) / 100.0;
     final Completer<XFile> completer = Completer<XFile>();
-    final web.BlobCallback blobCallback =
-        (web.Blob blob) {
-          completer.complete(
-            XFile(
-              web.URL.createObjectURL(blob),
-              mimeType: originalFile.mimeType,
-              name: 'scaled_${originalFile.name}',
-              lastModified: DateTime.now(),
-              length: blob.size,
-            ),
-          );
-        }.toJS;
+    final web.BlobCallback blobCallback = (web.Blob blob) {
+      completer.complete(
+        XFile(
+          web.URL.createObjectURL(blob),
+          mimeType: originalFile.mimeType,
+          name: 'scaled_${originalFile.name}',
+          lastModified: DateTime.now(),
+          length: blob.size,
+        ),
+      );
+    }.toJS;
     canvas.toBlob(
       blobCallback,
       originalFile.mimeType ?? '',

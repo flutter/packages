@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -355,7 +355,8 @@ Future<void> main() async {
         final String base64AudioData = base64Encode(
           Uint8List.view(audioData.buffer),
         );
-        final String audioTest = '''
+        final String audioTest =
+            '''
         <!DOCTYPE html><html>
         <head><title>Audio auto play</title>
           <script type="text/javascript">
@@ -852,8 +853,8 @@ Future<void> main() async {
 
       await controller.setNavigationDelegate(
         NavigationDelegate(
-          onHttpAuthRequest:
-              (HttpAuthRequest request) => authRequested.complete(),
+          onHttpAuthRequest: (HttpAuthRequest request) =>
+              authRequested.complete(),
         ),
       );
 
@@ -872,10 +873,9 @@ Future<void> main() async {
 
       await controller.setNavigationDelegate(
         NavigationDelegate(
-          onHttpAuthRequest:
-              (HttpAuthRequest request) => request.onProceed(
-                const WebViewCredential(user: 'user', password: 'password'),
-              ),
+          onHttpAuthRequest: (HttpAuthRequest request) => request.onProceed(
+            const WebViewCredential(user: 'user', password: 'password'),
+          ),
           onPageFinished: (_) => pageFinished.complete(),
           onWebResourceError: (_) => fail('Authentication failed'),
         ),
@@ -1022,23 +1022,22 @@ class ResizableWebView extends StatefulWidget {
 }
 
 class ResizableWebViewState extends State<ResizableWebView> {
-  late final WebViewController controller =
-      WebViewController()
-        ..setJavaScriptMode(JavaScriptMode.unrestricted)
-        ..setNavigationDelegate(
-          NavigationDelegate(onPageFinished: (_) => widget.onPageFinished()),
-        )
-        ..addJavaScriptChannel(
-          'Resize',
-          onMessageReceived: (_) {
-            widget.onResize();
-          },
-        )
-        ..loadRequest(
-          Uri.parse(
-            'data:text/html;charset=utf-8;base64,${base64Encode(const Utf8Encoder().convert(resizePage))}',
-          ),
-        );
+  late final WebViewController controller = WebViewController()
+    ..setJavaScriptMode(JavaScriptMode.unrestricted)
+    ..setNavigationDelegate(
+      NavigationDelegate(onPageFinished: (_) => widget.onPageFinished()),
+    )
+    ..addJavaScriptChannel(
+      'Resize',
+      onMessageReceived: (_) {
+        widget.onResize();
+      },
+    )
+    ..loadRequest(
+      Uri.parse(
+        'data:text/html;charset=utf-8;base64,${base64Encode(const Utf8Encoder().convert(resizePage))}',
+      ),
+    );
 
   double webViewWidth = 200;
   double webViewHeight = 200;
@@ -1090,7 +1089,8 @@ class ResizableWebViewState extends State<ResizableWebView> {
 Future<String> getTestVideoBase64() async {
   final ByteData videoData = await rootBundle.load('assets/sample_video.mp4');
   final String base64VideoData = base64Encode(Uint8List.view(videoData.buffer));
-  final String videoTest = '''
+  final String videoTest =
+      '''
         <!DOCTYPE html><html>
         <head><title>Video auto play</title>
           <script type="text/javascript">

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -62,16 +62,14 @@ void runTests() {
 
       final int mapId = await mapIdCompleter.future;
 
-      final TileOverlay tileOverlayInfo1 =
-          (await inspector.getTileOverlayInfo(
-            tileOverlay1.mapsId,
-            mapId: mapId,
-          ))!;
-      final TileOverlay tileOverlayInfo2 =
-          (await inspector.getTileOverlayInfo(
-            tileOverlay2.mapsId,
-            mapId: mapId,
-          ))!;
+      final TileOverlay tileOverlayInfo1 = (await inspector.getTileOverlayInfo(
+        tileOverlay1.mapsId,
+        mapId: mapId,
+      ))!;
+      final TileOverlay tileOverlayInfo2 = (await inspector.getTileOverlayInfo(
+        tileOverlay2.mapsId,
+        mapId: mapId,
+      ))!;
 
       expect(tileOverlayInfo1.visible, isTrue);
       expect(tileOverlayInfo1.fadeIn, isTrue);
@@ -147,11 +145,10 @@ void runTests() {
 
       await tester.pumpAndSettle(const Duration(seconds: 3));
 
-      final TileOverlay tileOverlayInfo1 =
-          (await inspector.getTileOverlayInfo(
-            tileOverlay1.mapsId,
-            mapId: mapId,
-          ))!;
+      final TileOverlay tileOverlayInfo1 = (await inspector.getTileOverlayInfo(
+        tileOverlay1.mapsId,
+        mapId: mapId,
+      ))!;
       final TileOverlay? tileOverlayInfo2 = await inspector.getTileOverlayInfo(
         tileOverlay2.mapsId,
         mapId: mapId,
@@ -357,10 +354,14 @@ void runTests() {
           GoogleMapsInspectorPlatform.instance!;
 
       if (inspector.supportsGettingHeatmapInfo()) {
-        final Heatmap heatmapInfo1 =
-            (await inspector.getHeatmapInfo(heatmap1.mapsId, mapId: mapId))!;
-        final Heatmap heatmapInfo2 =
-            (await inspector.getHeatmapInfo(heatmap2.mapsId, mapId: mapId))!;
+        final Heatmap heatmapInfo1 = (await inspector.getHeatmapInfo(
+          heatmap1.mapsId,
+          mapId: mapId,
+        ))!;
+        final Heatmap heatmapInfo2 = (await inspector.getHeatmapInfo(
+          heatmap2.mapsId,
+          mapId: mapId,
+        ))!;
 
         expectHeatmapEquals(heatmap1, heatmapInfo1);
         expectHeatmapEquals(heatmap2, heatmapInfo2);
@@ -418,8 +419,10 @@ void runTests() {
       await tester.pumpAndSettle(const Duration(seconds: 3));
 
       if (inspector.supportsGettingHeatmapInfo()) {
-        final Heatmap heatmapInfo1 =
-            (await inspector.getHeatmapInfo(heatmap1.mapsId, mapId: mapId))!;
+        final Heatmap heatmapInfo1 = (await inspector.getHeatmapInfo(
+          heatmap1.mapsId,
+          mapId: mapId,
+        ))!;
 
         expectHeatmapEquals(heatmap1New, heatmapInfo1);
       }
@@ -601,16 +604,10 @@ void runTests() {
           GoogleMapsInspectorPlatform.instance!;
 
       if (inspector.supportsGettingGroundOverlayInfo()) {
-        final GroundOverlay groundOverlayBoundsInfo1 =
-            (await inspector.getGroundOverlayInfo(
-              groundOverlayBounds1.mapsId,
-              mapId: mapId,
-            ))!;
-        final GroundOverlay groundOverlayBoundsInfo2 =
-            (await inspector.getGroundOverlayInfo(
-              groundOverlayBounds2.mapsId,
-              mapId: mapId,
-            ))!;
+        final GroundOverlay groundOverlayBoundsInfo1 = (await inspector
+            .getGroundOverlayInfo(groundOverlayBounds1.mapsId, mapId: mapId))!;
+        final GroundOverlay groundOverlayBoundsInfo2 = (await inspector
+            .getGroundOverlayInfo(groundOverlayBounds2.mapsId, mapId: mapId))!;
 
         expectGroundOverlayEquals(
           groundOverlayBounds1,
@@ -623,8 +620,8 @@ void runTests() {
 
         // Web does not support position-based ground overlays.
         if (!isWeb) {
-          final GroundOverlay groundOverlayPositionInfo1 =
-              (await inspector.getGroundOverlayInfo(
+          final GroundOverlay groundOverlayPositionInfo1 = (await inspector
+              .getGroundOverlayInfo(
                 groundOverlayPosition1.mapsId,
                 mapId: mapId,
               ))!;
@@ -704,11 +701,8 @@ void runTests() {
       await tester.pumpAndSettle(const Duration(seconds: 3));
 
       if (inspector.supportsGettingGroundOverlayInfo()) {
-        final GroundOverlay groundOverlayBounds1Info =
-            (await inspector.getGroundOverlayInfo(
-              groundOverlayBounds1.mapsId,
-              mapId: mapId,
-            ))!;
+        final GroundOverlay groundOverlayBounds1Info = (await inspector
+            .getGroundOverlayInfo(groundOverlayBounds1.mapsId, mapId: mapId))!;
 
         expectGroundOverlayEquals(
           groundOverlayBounds1New,
@@ -717,8 +711,8 @@ void runTests() {
 
         // Web does not support position-based ground overlays.
         if (!isWeb) {
-          final GroundOverlay groundOverlayPosition1Info =
-              (await inspector.getGroundOverlayInfo(
+          final GroundOverlay groundOverlayPosition1Info = (await inspector
+              .getGroundOverlayInfo(
                 groundOverlayPosition1.mapsId,
                 mapId: mapId,
               ))!;

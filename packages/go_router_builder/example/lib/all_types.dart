@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -34,7 +34,7 @@ part 'all_types.g.dart';
   ],
 )
 @immutable
-class AllTypesBaseRoute extends GoRouteData with _$AllTypesBaseRoute {
+class AllTypesBaseRoute extends GoRouteData with $AllTypesBaseRoute {
   const AllTypesBaseRoute();
 
   @override
@@ -42,7 +42,7 @@ class AllTypesBaseRoute extends GoRouteData with _$AllTypesBaseRoute {
       const BasePage<void>(dataTitle: 'Root');
 }
 
-class BigIntRoute extends GoRouteData with _$BigIntRoute {
+class BigIntRoute extends GoRouteData with $BigIntRoute {
   BigIntRoute({required this.requiredBigIntField, this.bigIntField});
 
   final BigInt requiredBigIntField;
@@ -62,7 +62,7 @@ class BigIntRoute extends GoRouteData with _$BigIntRoute {
   );
 }
 
-class BoolRoute extends GoRouteData with _$BoolRoute {
+class BoolRoute extends GoRouteData with $BoolRoute {
   BoolRoute({
     required this.requiredBoolField,
     this.boolField,
@@ -88,7 +88,7 @@ class BoolRoute extends GoRouteData with _$BoolRoute {
   );
 }
 
-class DateTimeRoute extends GoRouteData with _$DateTimeRoute {
+class DateTimeRoute extends GoRouteData with $DateTimeRoute {
   DateTimeRoute({required this.requiredDateTimeField, this.dateTimeField});
 
   final DateTime requiredDateTimeField;
@@ -108,7 +108,7 @@ class DateTimeRoute extends GoRouteData with _$DateTimeRoute {
   );
 }
 
-class DoubleRoute extends GoRouteData with _$DoubleRoute {
+class DoubleRoute extends GoRouteData with $DoubleRoute {
   DoubleRoute({
     required this.requiredDoubleField,
     this.doubleField,
@@ -134,7 +134,7 @@ class DoubleRoute extends GoRouteData with _$DoubleRoute {
   );
 }
 
-class IntRoute extends GoRouteData with _$IntRoute {
+class IntRoute extends GoRouteData with $IntRoute {
   IntRoute({
     required this.requiredIntField,
     this.intField,
@@ -160,7 +160,7 @@ class IntRoute extends GoRouteData with _$IntRoute {
   );
 }
 
-class NumRoute extends GoRouteData with _$NumRoute {
+class NumRoute extends GoRouteData with $NumRoute {
   NumRoute({
     required this.requiredNumField,
     this.numField,
@@ -186,7 +186,7 @@ class NumRoute extends GoRouteData with _$NumRoute {
   );
 }
 
-class EnumRoute extends GoRouteData with _$EnumRoute {
+class EnumRoute extends GoRouteData with $EnumRoute {
   EnumRoute({
     required this.requiredEnumField,
     this.enumField,
@@ -213,7 +213,7 @@ class EnumRoute extends GoRouteData with _$EnumRoute {
   );
 }
 
-class EnhancedEnumRoute extends GoRouteData with _$EnhancedEnumRoute {
+class EnhancedEnumRoute extends GoRouteData with $EnhancedEnumRoute {
   EnhancedEnumRoute({
     required this.requiredEnumField,
     this.enumField,
@@ -240,7 +240,7 @@ class EnhancedEnumRoute extends GoRouteData with _$EnhancedEnumRoute {
   );
 }
 
-class StringRoute extends GoRouteData with _$StringRoute {
+class StringRoute extends GoRouteData with $StringRoute {
   StringRoute({
     required this.requiredStringField,
     this.stringField,
@@ -266,7 +266,7 @@ class StringRoute extends GoRouteData with _$StringRoute {
   );
 }
 
-class UriRoute extends GoRouteData with _$UriRoute {
+class UriRoute extends GoRouteData with $UriRoute {
   UriRoute({required this.requiredUriField, this.uriField});
 
   final Uri requiredUriField;
@@ -286,7 +286,7 @@ class UriRoute extends GoRouteData with _$UriRoute {
   );
 }
 
-class IterableRoute extends GoRouteData with _$IterableRoute {
+class IterableRoute extends GoRouteData with $IterableRoute {
   IterableRoute({
     this.intIterableField,
     this.doubleIterableField,
@@ -360,7 +360,7 @@ class IterableRoute extends GoRouteData with _$IterableRoute {
 }
 
 class IterableRouteWithDefaultValues extends GoRouteData
-    with _$IterableRouteWithDefaultValues {
+    with $IterableRouteWithDefaultValues {
   const IterableRouteWithDefaultValues({
     this.intIterableField = const <int>[0],
     this.doubleIterableField = const <double>[0, 1, 2],
@@ -598,24 +598,23 @@ class IterablePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BasePage<String>(
       dataTitle: dataTitle,
-      queryParamWithDefaultValue:
-          <String, Iterable<dynamic>?>{
-            'intIterableField': intIterableField,
-            'intListField': intListField,
-            'intSetField': intSetField,
-            'doubleIterableField': doubleIterableField,
-            'doubleListField': doubleListField,
-            'doubleSetField': doubleSetField,
-            'stringIterableField': stringIterableField,
-            'stringListField': stringListField,
-            'stringSetField': stringSetField,
-            'boolIterableField': boolIterableField,
-            'boolListField': boolListField,
-            'boolSetField': boolSetField,
-            'enumIterableField': enumIterableField,
-            'enumListField': enumListField,
-            'enumSetField': enumSetField,
-          }.toString(),
+      queryParamWithDefaultValue: <String, Iterable<dynamic>?>{
+        'intIterableField': intIterableField,
+        'intListField': intListField,
+        'intSetField': intSetField,
+        'doubleIterableField': doubleIterableField,
+        'doubleListField': doubleListField,
+        'doubleSetField': doubleSetField,
+        'stringIterableField': stringIterableField,
+        'stringListField': stringListField,
+        'stringSetField': stringSetField,
+        'boolIterableField': boolIterableField,
+        'boolListField': boolListField,
+        'boolSetField': boolSetField,
+        'enumIterableField': enumIterableField,
+        'enumListField': enumListField,
+        'enumSetField': enumSetField,
+      }.toString(),
     );
   }
 }

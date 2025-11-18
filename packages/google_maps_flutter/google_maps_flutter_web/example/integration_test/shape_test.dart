@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -52,8 +52,8 @@ void main() {
 
     testWidgets('update', (WidgetTester tester) async {
       final CircleController controller = CircleController(circle: circle);
-      final gmaps.CircleOptions options =
-          gmaps.CircleOptions()..draggable = true;
+      final gmaps.CircleOptions options = gmaps.CircleOptions()
+        ..draggable = true;
 
       expect(circle.isDraggableDefined(), isFalse);
 
@@ -78,8 +78,8 @@ void main() {
       testWidgets('cannot call update after remove', (
         WidgetTester tester,
       ) async {
-        final gmaps.CircleOptions options =
-            gmaps.CircleOptions()..draggable = true;
+        final gmaps.CircleOptions options = gmaps.CircleOptions()
+          ..draggable = true;
 
         controller.remove();
 
@@ -109,8 +109,8 @@ void main() {
 
     testWidgets('update', (WidgetTester tester) async {
       final PolygonController controller = PolygonController(polygon: polygon);
-      final gmaps.PolygonOptions options =
-          gmaps.PolygonOptions()..draggable = true;
+      final gmaps.PolygonOptions options = gmaps.PolygonOptions()
+        ..draggable = true;
 
       expect(polygon.isDraggableDefined(), isFalse);
 
@@ -135,8 +135,8 @@ void main() {
       testWidgets('cannot call update after remove', (
         WidgetTester tester,
       ) async {
-        final gmaps.PolygonOptions options =
-            gmaps.PolygonOptions()..draggable = true;
+        final gmaps.PolygonOptions options = gmaps.PolygonOptions()
+          ..draggable = true;
 
         controller.remove();
 
@@ -172,8 +172,8 @@ void main() {
       final PolylineController controller = PolylineController(
         polyline: polyline,
       );
-      final gmaps.PolylineOptions options =
-          gmaps.PolylineOptions()..draggable = true;
+      final gmaps.PolylineOptions options = gmaps.PolylineOptions()
+        ..draggable = true;
 
       expect(polyline.isDraggableDefined(), isFalse);
 
@@ -198,8 +198,8 @@ void main() {
       testWidgets('cannot call update after remove', (
         WidgetTester tester,
       ) async {
-        final gmaps.PolylineOptions options =
-            gmaps.PolylineOptions()..draggable = true;
+        final gmaps.PolylineOptions options = gmaps.PolylineOptions()
+          ..draggable = true;
 
         controller.remove();
 

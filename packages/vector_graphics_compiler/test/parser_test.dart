@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -212,8 +212,14 @@ void main() {
     final VectorInstructions instructions = parseWithoutOptimizers(svg);
     // Should _not_ contain a paint with an opaque black fill for the rect with class "frame-background".
     expect(instructions.paints, const <Paint>[
-      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0xff22c55e))),
-      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0xfff59e0b))),
+      Paint(
+        blendMode: BlendMode.srcOver,
+        fill: Fill(color: Color(0xff22c55e)),
+      ),
+      Paint(
+        blendMode: BlendMode.srcOver,
+        fill: Fill(color: Color(0xfff59e0b)),
+      ),
     ]);
   });
 
@@ -433,12 +439,21 @@ void main() {
 ''');
 
     expect(instructions.paints, const <Paint>[
-      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0x06202124))),
+      Paint(
+        blendMode: BlendMode.srcOver,
+        fill: Fill(color: Color(0x06202124)),
+      ),
       // The paint for the saveLayer.
-      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0x0a000000))),
+      Paint(
+        blendMode: BlendMode.srcOver,
+        fill: Fill(color: Color(0x0a000000)),
+      ),
       // The paint for the path drawn in the saveLayer - must not be the same as
       // the saveLayer otherwise the path will be drawn almost completely transparent.
-      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color.opaqueBlack)),
+      Paint(
+        blendMode: BlendMode.srcOver,
+        fill: Fill(color: Color.opaqueBlack),
+      ),
     ]);
     expect(instructions.commands, const <DrawCommand>[
       DrawCommand(DrawCommandType.path, objectId: 0, paintId: 0),
@@ -1107,8 +1122,14 @@ void main() {
     final VectorInstructions instructions = parseWithoutOptimizers(svg);
     expect(instructions.paints, const <Paint>[
       Paint(fill: Fill(color: Color(0xffff0000))),
-      Paint(blendMode: BlendMode.screen, fill: Fill(color: Color.opaqueBlack)),
-      Paint(blendMode: BlendMode.screen, fill: Fill(color: Color(0xff008000))),
+      Paint(
+        blendMode: BlendMode.screen,
+        fill: Fill(color: Color.opaqueBlack),
+      ),
+      Paint(
+        blendMode: BlendMode.screen,
+        fill: Fill(color: Color(0xff008000)),
+      ),
     ]);
     expect(instructions.commands, const <DrawCommand>[
       DrawCommand(DrawCommandType.path, objectId: 0, paintId: 0),

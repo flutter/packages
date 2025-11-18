@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -12,6 +12,8 @@ void main() {
   group('diffs', () {
     // A options instance with every field set, to test diffs against.
     final MapConfiguration diffBase = MapConfiguration(
+      webCameraControlPosition: WebCameraControlPosition.topRight,
+      webCameraControlEnabled: false,
       webGestureHandling: WebGestureHandling.auto,
       compassEnabled: false,
       mapToolbarEnabled: false,
@@ -62,6 +64,8 @@ void main() {
       expect(updated.liteModeEnabled, isNot(null));
       expect(updated.padding, isNot(null));
       expect(updated.trafficEnabled, isNot(null));
+      expect(updated.cloudMapId, null);
+      expect(updated.webCameraControlPosition, isNot(null));
       expect(updated.mapId, null);
     });
 
@@ -79,6 +83,45 @@ void main() {
       expect(diff.diffFrom(empty), diff);
       // A diff applied to non-empty options should update that field.
       expect(updated.webGestureHandling, WebGestureHandling.none);
+      // The hash code should change.
+      expect(empty.hashCode, isNot(diff.hashCode));
+    });
+
+    test('handle webCameraControlPosition', () async {
+      const MapConfiguration diff = MapConfiguration(
+        webCameraControlPosition: WebCameraControlPosition.blockEndInlineEnd,
+      );
+
+      const MapConfiguration empty = MapConfiguration();
+      final MapConfiguration updated = diffBase.applyDiff(diff);
+
+      // A diff applied to empty options should be the diff itself.
+      expect(empty.applyDiff(diff), diff);
+      // The diff from empty options should be the diff itself.
+      expect(diff.diffFrom(empty), diff);
+      // A diff applied to non-empty options should update that field.
+      expect(
+        updated.webCameraControlPosition,
+        WebCameraControlPosition.blockEndInlineEnd,
+      );
+      // The hash code should change.
+      expect(empty.hashCode, isNot(diff.hashCode));
+    });
+
+    test('handle webCameraControlEnabled', () async {
+      const MapConfiguration diff = MapConfiguration(
+        webCameraControlEnabled: true,
+      );
+
+      const MapConfiguration empty = MapConfiguration();
+      final MapConfiguration updated = diffBase.applyDiff(diff);
+
+      // A diff applied to empty options should be the diff itself.
+      expect(empty.applyDiff(diff), diff);
+      // The diff from empty options should be the diff itself.
+      expect(diff.diffFrom(empty), diff);
+      // A diff applied to non-empty options should update that field.
+      expect(updated.webCameraControlEnabled, true);
       // The hash code should change.
       expect(empty.hashCode, isNot(diff.hashCode));
     });
@@ -468,6 +511,22 @@ void main() {
       const MapConfiguration nullOptions = MapConfiguration();
 
       expect(nullOptions.isEmpty, true);
+    });
+
+    test('is false with webCameraControlEnabled', () async {
+      const MapConfiguration diff = MapConfiguration(
+        webCameraControlEnabled: true,
+      );
+
+      expect(diff.isEmpty, false);
+    });
+
+    test('is false with webCameraControlPosition', () async {
+      const MapConfiguration diff = MapConfiguration(
+        webCameraControlPosition: WebCameraControlPosition.blockEndInlineCenter,
+      );
+
+      expect(diff.isEmpty, false);
     });
 
     test('is false with compassEnabled', () async {

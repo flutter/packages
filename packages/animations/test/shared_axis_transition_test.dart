@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -517,13 +517,12 @@ void main() {
       );
 
       expect(find.text(bottomRoute), findsOneWidget);
-      Finder fillContainerFinder =
-          find
-              .ancestor(
-                matching: find.byType(ColoredBox),
-                of: find.byKey(const ValueKey<String?>('/')),
-              )
-              .last;
+      Finder fillContainerFinder = find
+          .ancestor(
+            matching: find.byType(ColoredBox),
+            of: find.byKey(const ValueKey<String?>('/')),
+          )
+          .last;
       expect(fillContainerFinder, findsOneWidget);
       expect(
         tester.widget<ColoredBox>(fillContainerFinder).color,
@@ -534,13 +533,12 @@ void main() {
       await tester.pump();
       await tester.pumpAndSettle();
 
-      fillContainerFinder =
-          find
-              .ancestor(
-                matching: find.byType(ColoredBox),
-                of: find.byKey(const ValueKey<String?>('/a')),
-              )
-              .last;
+      fillContainerFinder = find
+          .ancestor(
+            matching: find.byType(ColoredBox),
+            of: find.byKey(const ValueKey<String?>('/a')),
+          )
+          .last;
       expect(fillContainerFinder, findsOneWidget);
       expect(
         tester.widget<ColoredBox>(fillContainerFinder).color,
@@ -562,13 +560,12 @@ void main() {
       );
 
       expect(find.text(bottomRoute), findsOneWidget);
-      Finder fillContainerFinder =
-          find
-              .ancestor(
-                matching: find.byType(ColoredBox),
-                of: find.byKey(const ValueKey<String?>('/')),
-              )
-              .last;
+      Finder fillContainerFinder = find
+          .ancestor(
+            matching: find.byType(ColoredBox),
+            of: find.byKey(const ValueKey<String?>('/')),
+          )
+          .last;
       expect(fillContainerFinder, findsOneWidget);
       expect(
         tester.widget<ColoredBox>(fillContainerFinder).color,
@@ -579,13 +576,12 @@ void main() {
       await tester.pump();
       await tester.pumpAndSettle();
 
-      fillContainerFinder =
-          find
-              .ancestor(
-                matching: find.byType(ColoredBox),
-                of: find.byKey(const ValueKey<String?>('/a')),
-              )
-              .last;
+      fillContainerFinder = find
+          .ancestor(
+            matching: find.byType(ColoredBox),
+            of: find.byKey(const ValueKey<String?>('/a')),
+          )
+          .last;
       expect(fillContainerFinder, findsOneWidget);
       expect(
         tester.widget<ColoredBox>(fillContainerFinder).color,
@@ -1171,13 +1167,12 @@ void main() {
       );
 
       expect(find.text(bottomRoute), findsOneWidget);
-      Finder fillContainerFinder =
-          find
-              .ancestor(
-                matching: find.byType(ColoredBox),
-                of: find.byKey(const ValueKey<String?>('/')),
-              )
-              .last;
+      Finder fillContainerFinder = find
+          .ancestor(
+            matching: find.byType(ColoredBox),
+            of: find.byKey(const ValueKey<String?>('/')),
+          )
+          .last;
       expect(fillContainerFinder, findsOneWidget);
       expect(
         tester.widget<ColoredBox>(fillContainerFinder).color,
@@ -1188,13 +1183,12 @@ void main() {
       await tester.pump();
       await tester.pumpAndSettle();
 
-      fillContainerFinder =
-          find
-              .ancestor(
-                matching: find.byType(ColoredBox),
-                of: find.byKey(const ValueKey<String?>('/a')),
-              )
-              .last;
+      fillContainerFinder = find
+          .ancestor(
+            matching: find.byType(ColoredBox),
+            of: find.byKey(const ValueKey<String?>('/a')),
+          )
+          .last;
       expect(fillContainerFinder, findsOneWidget);
       expect(
         tester.widget<ColoredBox>(fillContainerFinder).color,
@@ -1216,13 +1210,12 @@ void main() {
       );
 
       expect(find.text(bottomRoute), findsOneWidget);
-      Finder fillContainerFinder =
-          find
-              .ancestor(
-                matching: find.byType(ColoredBox),
-                of: find.byKey(const ValueKey<String?>('/')),
-              )
-              .last;
+      Finder fillContainerFinder = find
+          .ancestor(
+            matching: find.byType(ColoredBox),
+            of: find.byKey(const ValueKey<String?>('/')),
+          )
+          .last;
       expect(fillContainerFinder, findsOneWidget);
       expect(
         tester.widget<ColoredBox>(fillContainerFinder).color,
@@ -1233,13 +1226,12 @@ void main() {
       await tester.pump();
       await tester.pumpAndSettle();
 
-      fillContainerFinder =
-          find
-              .ancestor(
-                matching: find.byType(ColoredBox),
-                of: find.byKey(const ValueKey<String?>('/a')),
-              )
-              .last;
+      fillContainerFinder = find
+          .ancestor(
+            matching: find.byType(ColoredBox),
+            of: find.byKey(const ValueKey<String?>('/a')),
+          )
+          .last;
       expect(fillContainerFinder, findsOneWidget);
       expect(
         tester.widget<ColoredBox>(fillContainerFinder).color,
@@ -1715,13 +1707,12 @@ void main() {
       );
 
       expect(find.text(bottomRoute), findsOneWidget);
-      Finder fillContainerFinder =
-          find
-              .ancestor(
-                matching: find.byType(ColoredBox),
-                of: find.byKey(const ValueKey<String?>('/')),
-              )
-              .last;
+      Finder fillContainerFinder = find
+          .ancestor(
+            matching: find.byType(ColoredBox),
+            of: find.byKey(const ValueKey<String?>('/')),
+          )
+          .last;
       expect(fillContainerFinder, findsOneWidget);
       expect(
         tester.widget<ColoredBox>(fillContainerFinder).color,
@@ -1732,13 +1723,12 @@ void main() {
       await tester.pump();
       await tester.pumpAndSettle();
 
-      fillContainerFinder =
-          find
-              .ancestor(
-                matching: find.byType(ColoredBox),
-                of: find.byKey(const ValueKey<String?>('/a')),
-              )
-              .last;
+      fillContainerFinder = find
+          .ancestor(
+            matching: find.byType(ColoredBox),
+            of: find.byKey(const ValueKey<String?>('/a')),
+          )
+          .last;
       expect(fillContainerFinder, findsOneWidget);
       expect(
         tester.widget<ColoredBox>(fillContainerFinder).color,
@@ -1760,13 +1750,12 @@ void main() {
       );
 
       expect(find.text(bottomRoute), findsOneWidget);
-      Finder fillContainerFinder =
-          find
-              .ancestor(
-                matching: find.byType(ColoredBox),
-                of: find.byKey(const ValueKey<String?>('/')),
-              )
-              .last;
+      Finder fillContainerFinder = find
+          .ancestor(
+            matching: find.byType(ColoredBox),
+            of: find.byKey(const ValueKey<String?>('/')),
+          )
+          .last;
       expect(fillContainerFinder, findsOneWidget);
       expect(
         tester.widget<ColoredBox>(fillContainerFinder).color,
@@ -1777,13 +1766,12 @@ void main() {
       await tester.pump();
       await tester.pumpAndSettle();
 
-      fillContainerFinder =
-          find
-              .ancestor(
-                matching: find.byType(ColoredBox),
-                of: find.byKey(const ValueKey<String?>('/a')),
-              )
-              .last;
+      fillContainerFinder = find
+          .ancestor(
+            matching: find.byType(ColoredBox),
+            of: find.byKey(const ValueKey<String?>('/a')),
+          )
+          .last;
       expect(fillContainerFinder, findsOneWidget);
       expect(
         tester.widget<ColoredBox>(fillContainerFinder).color,
@@ -1956,9 +1944,9 @@ class _TestWidget extends StatelessWidget {
             return contentBuilder != null
                 ? contentBuilder!(settings)
                 : Center(
-                  key: ValueKey<String?>(settings.name),
-                  child: Text(settings.name!),
-                );
+                    key: ValueKey<String?>(settings.name),
+                    child: Text(settings.name!),
+                  );
           },
         );
       },

@@ -1,3 +1,26 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
+
+## 4.1.1
+
+- Allow `analyzer: '>=7.4.0 <9.0.0'`.
+- Allow `build: '>=3.0.0 <5.0.0'`.
+- Allow `source_gen: '>=3.1.0 <5.0.0'`.
+
+## 4.1.0
+
+- Adds support for classes that support fromJson/toJson. [#117261](https://github.com/flutter/flutter/issues/117261)
+- Adds annotation that enable custom string encoder/decoder [#110781](https://github.com/flutter/flutter/issues/110781)
+
+## 4.0.1
+
+- Fixes unnecessary whitespace in generated `RelativeGoRouteData`.
+
+## 4.0.0
+
+- Make Route mixins public.
+
 ## 3.3.1
 
 - Fixes warnings in generated code of iterable parameters.

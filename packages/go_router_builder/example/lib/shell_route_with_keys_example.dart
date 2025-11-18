@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -99,7 +99,7 @@ class MyShellRouteScreen extends StatelessWidget {
   }
 }
 
-class HomeRouteData extends GoRouteData with _$HomeRouteData {
+class HomeRouteData extends GoRouteData with $HomeRouteData {
   const HomeRouteData();
 
   @override
@@ -108,7 +108,7 @@ class HomeRouteData extends GoRouteData with _$HomeRouteData {
   }
 }
 
-class UsersRouteData extends GoRouteData with _$UsersRouteData {
+class UsersRouteData extends GoRouteData with $UsersRouteData {
   const UsersRouteData();
 
   @override
@@ -142,7 +142,7 @@ class DialogPage extends Page<void> {
   }
 }
 
-class UserRouteData extends GoRouteData with _$UserRouteData {
+class UserRouteData extends GoRouteData with $UserRouteData {
   const UserRouteData({required this.id});
 
   // Without this static key, the dialog will not cover the navigation rail.

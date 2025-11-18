@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -424,12 +424,11 @@ class FakeFileSelector extends Fake
     return path == null
         ? null
         : FileSaveLocation(
-          path,
-          activeFilter:
-              activeFilterIndex == null
-                  ? null
-                  : acceptedTypeGroups?[activeFilterIndex],
-        );
+            path,
+            activeFilter: activeFilterIndex == null
+                ? null
+                : acceptedTypeGroups?[activeFilterIndex],
+          );
   }
 
   @override

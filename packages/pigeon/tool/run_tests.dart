@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -114,11 +114,10 @@ Future<void> _validateGeneratedFiles(
     repositoryRoot: repositoryRoot,
     relativePigeonPath: relativePigeonPath,
   );
-  final Set<String> extensions =
-      languagesToValidate
-          .map((GeneratorLanguage lang) => _extensionsForLanguage(lang))
-          .flattened
-          .toSet();
+  final Set<String> extensions = languagesToValidate
+      .map((GeneratorLanguage lang) => _extensionsForLanguage(lang))
+      .flattened
+      .toSet();
   final Iterable<String> filteredFiles = modifiedFiles.where(
     (String path) =>
         extensions.contains(p.extension(path).replaceFirst('.', '')),

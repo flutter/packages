@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -15,7 +15,7 @@ class GitVersionFinder {
       : assert(baseSha == null || baseBranch == null,
             'At most one of baseSha and baseBranch can be provided'),
         _baseSha = baseSha,
-        _baseBranch = baseBranch ?? 'FETCH_HEAD';
+        _baseBranch = baseBranch ?? 'main';
 
   /// The top level directory of the git repo.
   ///

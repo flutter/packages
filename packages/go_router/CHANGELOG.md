@@ -1,3 +1,38 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
+
+## 17.0.0
+
+- **BREAKING CHANGE**
+  - `ShellRoute`'s navigating changes notify `GoRouter`'s observers by default.
+  - Adds `notifyRootObserver` to `ShellRouteBase`, `ShellRoute`, `StatefulShellRoute`, `ShellRouteData.$route`, `TypedShellRoute`, `TypedStatefulShellRoute`.
+
+## 16.3.0
+
+- Adds a top-level `onEnter` callback with access to current and next route states.
+
+## 16.2.5
+
+- Fixes `GoRouter.of(context)` access inside redirect callbacks by providing router access through Zone-based context tracking.
+- Adds support for using context extension methods (e.g., `context.namedLocation()`, `context.go()`) within redirect callbacks.
+
+## 16.2.4
+
+- Fix Android Cold Start deep link with empty path losing scheme and authority.
+
+## 16.2.3
+
+- Fixes an issue where iOS back gesture pops entire ShellRoute instead of the active sub-route.
+
+## 16.2.2
+
+- Fixes broken links in readme.
+
+## 16.2.1
+
+- Adds state restoration topic to documentation.
+
 ## 16.2.0
 
 - Adds `RelativeGoRouteData` and `TypedRelativeGoRoute`.

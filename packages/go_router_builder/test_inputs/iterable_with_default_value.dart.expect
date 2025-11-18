@@ -1,9 +1,9 @@
 RouteBase get $iterableDefaultValueRoute => GoRouteData.$route(
       path: '/iterable-default-value-route',
-      factory: _$IterableDefaultValueRoute._fromState,
+      factory: $IterableDefaultValueRoute._fromState,
     );
 
-mixin _$IterableDefaultValueRoute on GoRouteData {
+mixin $IterableDefaultValueRoute on GoRouteData {
   static IterableDefaultValueRoute _fromState(GoRouterState state) =>
       IterableDefaultValueRoute(
         param:

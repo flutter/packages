@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -55,8 +55,8 @@ void main() {
         });
 
     localAuthentication = DefaultLocalAuthPlatform();
-    final bool supportsBiometrics =
-        await localAuthentication.deviceSupportsBiometrics();
+    final bool supportsBiometrics = await localAuthentication
+        .deviceSupportsBiometrics();
     expect(supportsBiometrics, true);
     expect(log, <Matcher>[
       isMethodCall('getAvailableBiometrics', arguments: null),
@@ -114,7 +114,6 @@ void main() {
           localizedReason: 'Insecure',
           options: const AuthenticationOptions(
             sensitiveTransaction: false,
-            useErrorDialogs: false,
             biometricOnly: true,
           ),
         );
@@ -123,7 +122,7 @@ void main() {
             'authenticate',
             arguments: <String, dynamic>{
               'localizedReason': 'Insecure',
-              'useErrorDialogs': false,
+              'useErrorDialogs': true,
               'stickyAuth': false,
               'sensitiveTransaction': false,
               'biometricOnly': true,
@@ -157,17 +156,14 @@ void main() {
         await localAuthentication.authenticate(
           authMessages: <AuthMessages>[],
           localizedReason: 'Insecure',
-          options: const AuthenticationOptions(
-            sensitiveTransaction: false,
-            useErrorDialogs: false,
-          ),
+          options: const AuthenticationOptions(sensitiveTransaction: false),
         );
         expect(log, <Matcher>[
           isMethodCall(
             'authenticate',
             arguments: <String, dynamic>{
               'localizedReason': 'Insecure',
-              'useErrorDialogs': false,
+              'useErrorDialogs': true,
               'stickyAuth': false,
               'sensitiveTransaction': false,
               'biometricOnly': false,
@@ -175,6 +171,29 @@ void main() {
           ),
         ]);
       });
+
+      test(
+        'legacy useErrorDialogs is passed for backward compatibility.',
+        () async {
+          await localAuthentication.authenticate(
+            authMessages: <AuthMessages>[],
+            localizedReason: 'Insecure',
+            options: const AuthenticationOptions(useErrorDialogs: false),
+          );
+          expect(log, <Matcher>[
+            isMethodCall(
+              'authenticate',
+              arguments: <String, dynamic>{
+                'localizedReason': 'Insecure',
+                'useErrorDialogs': false,
+                'stickyAuth': false,
+                'sensitiveTransaction': true,
+                'biometricOnly': false,
+              },
+            ),
+          ]);
+        },
+      );
     });
   });
 }

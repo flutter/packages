@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -18,8 +18,9 @@ void main() {
     'can substitute one controller by another without crashing',
     (WidgetTester tester) async {
       // Use WebM for web to allow CI to use Chromium.
-      const String videoAssetKey =
-          kIsWeb ? 'assets/Butterfly-209.webm' : 'assets/Butterfly-209.mp4';
+      const String videoAssetKey = kIsWeb
+          ? 'assets/Butterfly-209.webm'
+          : 'assets/Butterfly-209.mp4';
 
       final VideoPlayerController controller = VideoPlayerController.asset(
         videoAssetKey,

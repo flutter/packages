@@ -1,6 +1,17 @@
-## NEXT
+## 2.0.1
 
-* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+* Updates to Pigeon 26.
+
+## 2.0.0
+
+* **BREAKING CHANGES:**
+  * Switches to `LocalAuthException` for error reporting.
+  * Removes support for `useErrorDialogs`.
+
+## 1.6.1
+
+* Removes code for versions of iOS older than 13.0.
+* Updates minimum supported SDK version to Flutter 3.35.
 
 ## 1.6.0
 

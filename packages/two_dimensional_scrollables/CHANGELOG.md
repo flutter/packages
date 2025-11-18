@@ -1,6 +1,7 @@
 ## NEXT
 
-* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+* Updates examples to use the new RadioGroup API instead of deprecated Radio parameters.
+* Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
 
 ## 0.3.7
 

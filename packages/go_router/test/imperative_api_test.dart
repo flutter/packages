@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -22,8 +22,14 @@ void main() {
           );
         },
         routes: <RouteBase>[
-          GoRoute(path: '/a', builder: (_, __) => DummyScreen(key: a)),
-          GoRoute(path: '/b', builder: (_, __) => DummyScreen(key: b)),
+          GoRoute(
+            path: '/a',
+            builder: (_, __) => DummyScreen(key: a),
+          ),
+          GoRoute(
+            path: '/b',
+            builder: (_, __) => DummyScreen(key: b),
+          ),
         ],
       ),
     ];
@@ -48,7 +54,10 @@ void main() {
     final UniqueKey a = UniqueKey();
     final UniqueKey b = UniqueKey();
     final List<RouteBase> routes = <RouteBase>[
-      GoRoute(path: '/a', builder: (_, __) => DummyScreen(key: a)),
+      GoRoute(
+        path: '/a',
+        builder: (_, __) => DummyScreen(key: a),
+      ),
       ShellRoute(
         builder: (_, __, Widget child) {
           return Scaffold(
@@ -57,7 +66,10 @@ void main() {
           );
         },
         routes: <RouteBase>[
-          GoRoute(path: '/b', builder: (_, __) => DummyScreen(key: b)),
+          GoRoute(
+            path: '/b',
+            builder: (_, __) => DummyScreen(key: b),
+          ),
         ],
       ),
     ];
@@ -96,7 +108,10 @@ void main() {
             path: '/',
             builder: (_, __) => DummyScreen(key: home),
             routes: <RouteBase>[
-              GoRoute(path: 'a', builder: (_, __) => DummyScreen(key: a)),
+              GoRoute(
+                path: 'a',
+                builder: (_, __) => DummyScreen(key: a),
+              ),
             ],
           ),
         ],
@@ -139,7 +154,10 @@ void main() {
           );
         },
         routes: <RouteBase>[
-          GoRoute(path: '/a', builder: (_, __) => DummyScreen(key: a)),
+          GoRoute(
+            path: '/a',
+            builder: (_, __) => DummyScreen(key: a),
+          ),
         ],
       ),
       ShellRoute(
@@ -150,7 +168,10 @@ void main() {
           );
         },
         routes: <RouteBase>[
-          GoRoute(path: '/b', builder: (_, __) => DummyScreen(key: b)),
+          GoRoute(
+            path: '/b',
+            builder: (_, __) => DummyScreen(key: b),
+          ),
         ],
       ),
     ];
@@ -186,10 +207,16 @@ void main() {
           );
         },
         routes: <RouteBase>[
-          GoRoute(path: '/in', builder: (_, __) => DummyScreen(key: inside)),
+          GoRoute(
+            path: '/in',
+            builder: (_, __) => DummyScreen(key: inside),
+          ),
         ],
       ),
-      GoRoute(path: '/out', builder: (_, __) => DummyScreen(key: outside)),
+      GoRoute(
+        path: '/out',
+        builder: (_, __) => DummyScreen(key: outside),
+      ),
     ];
     final GoRouter router = await createRouter(
       routes,
@@ -229,18 +256,30 @@ void main() {
           );
         },
         routes: <RouteBase>[
-          GoRoute(path: '/a', builder: (_, __) => DummyScreen(key: a)),
-          GoRoute(path: '/c', builder: (_, __) => DummyScreen(key: c)),
+          GoRoute(
+            path: '/a',
+            builder: (_, __) => DummyScreen(key: a),
+          ),
+          GoRoute(
+            path: '/c',
+            builder: (_, __) => DummyScreen(key: c),
+          ),
         ],
       ),
       GoRoute(
         path: '/d',
         builder: (_, __) => DummyScreen(key: d),
         routes: <RouteBase>[
-          GoRoute(path: 'e', builder: (_, __) => DummyScreen(key: e)),
+          GoRoute(
+            path: 'e',
+            builder: (_, __) => DummyScreen(key: e),
+          ),
         ],
       ),
-      GoRoute(path: '/b', builder: (_, __) => DummyScreen(key: b)),
+      GoRoute(
+        path: '/b',
+        builder: (_, __) => DummyScreen(key: b),
+      ),
     ];
     final GoRouter router = await createRouter(
       routes,

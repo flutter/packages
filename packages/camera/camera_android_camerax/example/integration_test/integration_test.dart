@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -48,8 +48,9 @@ void main() {
   testWidgets('availableCameras only supports valid back or front cameras', (
     WidgetTester tester,
   ) async {
-    final List<CameraDescription> availableCameras =
-        await CameraPlatform.instance.availableCameras();
+    final List<CameraDescription> availableCameras = await CameraPlatform
+        .instance
+        .availableCameras();
 
     for (final CameraDescription cameraDescription in availableCameras) {
       expect(
@@ -63,8 +64,8 @@ void main() {
   testWidgets('Preview takes expected resolution from preset', (
     WidgetTester tester,
   ) async {
-    final List<CameraDescription> cameras =
-        await CameraPlatform.instance.availableCameras();
+    final List<CameraDescription> cameras = await CameraPlatform.instance
+        .availableCameras();
     if (cameras.isEmpty) {
       return;
     }
@@ -104,8 +105,8 @@ void main() {
   testWidgets('Images from streaming have expected resolution from preset', (
     WidgetTester tester,
   ) async {
-    final List<CameraDescription> cameras =
-        await CameraPlatform.instance.availableCameras();
+    final List<CameraDescription> cameras = await CameraPlatform.instance
+        .availableCameras();
     if (cameras.isEmpty) {
       return;
     }
@@ -226,4 +227,49 @@ void main() {
 
     expect(duration, lessThan(recordingTime - timePaused));
   }, skip: skipFor157181);
+
+  testWidgets('Set description while recording captures full video', (
+    WidgetTester tester,
+  ) async {
+    final List<CameraDescription> cameras = await availableCameras();
+    if (cameras.length < 2) {
+      return;
+    }
+
+    final CameraController controller = CameraController(
+      cameras[0],
+      mediaSettings: const MediaSettings(
+        resolutionPreset: ResolutionPreset.medium,
+        enableAudio: true,
+      ),
+    );
+    await controller.initialize();
+    await controller.prepareForVideoRecording();
+
+    await controller.startVideoRecording();
+
+    await controller.setDescription(cameras[1]);
+
+    await tester.pumpAndSettle(const Duration(seconds: 4));
+
+    await controller.setDescription(cameras[0]);
+
+    await tester.pumpAndSettle(const Duration(seconds: 1));
+
+    final XFile file = await controller.stopVideoRecording();
+
+    final File videoFile = File(file.path);
+    final VideoPlayerController videoController = VideoPlayerController.file(
+      videoFile,
+    );
+    await videoController.initialize();
+    final int duration = videoController.value.duration.inMilliseconds;
+    await videoController.dispose();
+
+    expect(
+      duration,
+      greaterThanOrEqualTo(const Duration(seconds: 4).inMilliseconds),
+    );
+    await controller.dispose();
+  });
 }

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -55,10 +55,9 @@ Future<void> loadWebSdk({
     }
   }
 
-  final web.HTMLScriptElement script =
-      web.HTMLScriptElement()
-        ..async = true
-        ..defer = true;
+  final web.HTMLScriptElement script = web.HTMLScriptElement()
+    ..async = true
+    ..defer = true;
   if (trustedUrl != null) {
     script.trustedSrc = trustedUrl;
   } else {

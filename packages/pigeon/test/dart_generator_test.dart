@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -63,7 +63,10 @@ void main() {
   test('gen one enum', () {
     final Enum anEnum = Enum(
       name: 'Foobar',
-      members: <EnumMember>[EnumMember(name: 'one'), EnumMember(name: 'two')],
+      members: <EnumMember>[
+        EnumMember(name: 'one'),
+        EnumMember(name: 'two'),
+      ],
     );
     final Root root = Root(
       apis: <Api>[],

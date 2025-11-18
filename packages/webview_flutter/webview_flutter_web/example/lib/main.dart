@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -57,13 +57,12 @@ class _SampleMenu extends StatelessWidget {
             _onDoPostRequest(controller);
         }
       },
-      itemBuilder:
-          (BuildContext context) => <PopupMenuItem<_MenuOptions>>[
-            const PopupMenuItem<_MenuOptions>(
-              value: _MenuOptions.doPostRequest,
-              child: Text('Post Request'),
-            ),
-          ],
+      itemBuilder: (BuildContext context) => <PopupMenuItem<_MenuOptions>>[
+        const PopupMenuItem<_MenuOptions>(
+          value: _MenuOptions.doPostRequest,
+          child: Text('Post Request'),
+        ),
+      ],
     );
   }
 

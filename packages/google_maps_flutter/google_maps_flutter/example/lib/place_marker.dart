@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -286,8 +286,9 @@ class PlaceMarkerBodyState extends State<PlaceMarkerBody> {
               children: <Widget>[
                 TextButton(onPressed: _add, child: const Text('Add')),
                 TextButton(
-                  onPressed:
-                      selectedId == null ? null : () => _remove(selectedId),
+                  onPressed: selectedId == null
+                      ? null
+                      : () => _remove(selectedId),
                   child: const Text('Remove'),
                 ),
               ],
@@ -296,82 +297,73 @@ class PlaceMarkerBodyState extends State<PlaceMarkerBody> {
               alignment: WrapAlignment.spaceEvenly,
               children: <Widget>[
                 TextButton(
-                  onPressed:
-                      selectedId == null ? null : () => _changeInfo(selectedId),
+                  onPressed: selectedId == null
+                      ? null
+                      : () => _changeInfo(selectedId),
                   child: const Text('change info'),
                 ),
                 TextButton(
-                  onPressed:
-                      selectedId == null
-                          ? null
-                          : () => _changeInfoAnchor(selectedId),
+                  onPressed: selectedId == null
+                      ? null
+                      : () => _changeInfoAnchor(selectedId),
                   child: const Text('change info anchor'),
                 ),
                 TextButton(
-                  onPressed:
-                      selectedId == null
-                          ? null
-                          : () => _changeAlpha(selectedId),
+                  onPressed: selectedId == null
+                      ? null
+                      : () => _changeAlpha(selectedId),
                   child: const Text('change alpha'),
                 ),
                 TextButton(
-                  onPressed:
-                      selectedId == null
-                          ? null
-                          : () => _changeAnchor(selectedId),
+                  onPressed: selectedId == null
+                      ? null
+                      : () => _changeAnchor(selectedId),
                   child: const Text('change anchor'),
                 ),
                 TextButton(
-                  onPressed:
-                      selectedId == null
-                          ? null
-                          : () => _toggleDraggable(selectedId),
+                  onPressed: selectedId == null
+                      ? null
+                      : () => _toggleDraggable(selectedId),
                   child: const Text('toggle draggable'),
                 ),
                 TextButton(
-                  onPressed:
-                      selectedId == null ? null : () => _toggleFlat(selectedId),
+                  onPressed: selectedId == null
+                      ? null
+                      : () => _toggleFlat(selectedId),
                   child: const Text('toggle flat'),
                 ),
                 TextButton(
-                  onPressed:
-                      selectedId == null
-                          ? null
-                          : () => _changePosition(selectedId),
+                  onPressed: selectedId == null
+                      ? null
+                      : () => _changePosition(selectedId),
                   child: const Text('change position'),
                 ),
                 TextButton(
-                  onPressed:
-                      selectedId == null
-                          ? null
-                          : () => _changeRotation(selectedId),
+                  onPressed: selectedId == null
+                      ? null
+                      : () => _changeRotation(selectedId),
                   child: const Text('change rotation'),
                 ),
                 TextButton(
-                  onPressed:
-                      selectedId == null
-                          ? null
-                          : () => _toggleVisible(selectedId),
+                  onPressed: selectedId == null
+                      ? null
+                      : () => _toggleVisible(selectedId),
                   child: const Text('toggle visible'),
                 ),
                 TextButton(
-                  onPressed:
-                      selectedId == null
-                          ? null
-                          : () => _changeZIndex(selectedId),
+                  onPressed: selectedId == null
+                      ? null
+                      : () => _changeZIndex(selectedId),
                   child: const Text('change zIndex'),
                 ),
                 TextButton(
-                  onPressed:
-                      selectedId == null
-                          ? null
-                          : () {
-                            _getMarkerIcon(context).then((
-                              BitmapDescriptor icon,
-                            ) {
-                              _setMarkerIcon(selectedId, icon);
-                            });
-                          },
+                  onPressed: selectedId == null
+                      ? null
+                      : () {
+                          _getMarkerIcon(context).then((BitmapDescriptor icon) {
+                            _setMarkerIcon(selectedId, icon);
+                          });
+                        },
                   child: const Text('set marker icon'),
                 ),
               ],

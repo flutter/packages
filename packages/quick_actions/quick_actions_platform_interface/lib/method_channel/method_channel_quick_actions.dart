@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -34,8 +34,9 @@ class MethodChannelQuickActions extends QuickActionsPlatform {
 
   @override
   Future<void> setShortcutItems(List<ShortcutItem> items) async {
-    final List<Map<String, String?>> itemsList =
-        items.map(_serializeItem).toList();
+    final List<Map<String, String?>> itemsList = items
+        .map(_serializeItem)
+        .toList();
     await channel.invokeMethod<void>('setShortcutItems', itemsList);
   }
 

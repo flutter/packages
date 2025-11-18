@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -20,10 +20,8 @@ void main() {
         any,
       ),
     ).thenAnswer((Invocation realInvocation) async {
-      final Object input =
-          MultipleArityHostApi.pigeonChannelCodec.decodeMessage(
-            realInvocation.positionalArguments[1] as ByteData?,
-          )!;
+      final Object input = MultipleArityHostApi.pigeonChannelCodec
+          .decodeMessage(realInvocation.positionalArguments[1] as ByteData?)!;
       final List<Object?> args = input as List<Object?>;
       final int x = (args[0] as int?)!;
       final int y = (args[1] as int?)!;

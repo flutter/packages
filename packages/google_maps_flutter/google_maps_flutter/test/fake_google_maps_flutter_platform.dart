@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -37,8 +37,11 @@ class FakeGoogleMapsFlutterPlatform extends GoogleMapsFlutterPlatform {
   final StreamController<MapEvent<dynamic>> mapEventStreamController =
       StreamController<MapEvent<dynamic>>.broadcast();
 
+  // Overrides completion of the init.
+  Completer<void>? initCompleter;
+
   @override
-  Future<void> init(int mapId) async {}
+  Future<void> init(int mapId) async => initCompleter?.future;
 
   @override
   Future<void> updateMapConfiguration(
@@ -132,11 +135,11 @@ class FakeGoogleMapsFlutterPlatform extends GoogleMapsFlutterPlatform {
     CameraUpdate cameraUpdate, {
     required int mapId,
   }) async {
-    mapInstances[mapId]
-        ?.animateCameraConfiguration = CameraUpdateWithConfiguration(
-      cameraUpdate: cameraUpdate,
-      configuration: null,
-    );
+    mapInstances[mapId]?.animateCameraConfiguration =
+        CameraUpdateWithConfiguration(
+          cameraUpdate: cameraUpdate,
+          configuration: null,
+        );
     await _fakeDelay();
   }
 
@@ -146,11 +149,11 @@ class FakeGoogleMapsFlutterPlatform extends GoogleMapsFlutterPlatform {
     CameraUpdateAnimationConfiguration configuration, {
     required int mapId,
   }) async {
-    mapInstances[mapId]
-        ?.animateCameraConfiguration = CameraUpdateWithConfiguration(
-      cameraUpdate: cameraUpdate,
-      configuration: configuration,
-    );
+    mapInstances[mapId]?.animateCameraConfiguration =
+        CameraUpdateWithConfiguration(
+          cameraUpdate: cameraUpdate,
+          configuration: configuration,
+        );
     await _fakeDelay();
   }
 

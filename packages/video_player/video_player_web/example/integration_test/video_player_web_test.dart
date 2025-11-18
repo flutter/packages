@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -122,8 +122,8 @@ void main() {
     testWidgets('throws PlatformException when playing bad media', (
       WidgetTester tester,
     ) async {
-      final int videoPlayerId =
-          (await VideoPlayerPlatform.instance.createWithOptions(
+      final int videoPlayerId = (await VideoPlayerPlatform.instance
+          .createWithOptions(
             VideoCreationOptions(
               dataSource: DataSource(
                 sourceType: DataSourceType.network,
@@ -210,15 +210,14 @@ void main() {
         final Stream<VideoEvent> eventStream = VideoPlayerPlatform.instance
             .videoEventsFor(videoPlayerId);
 
-        final Future<List<VideoEvent>> stream =
-            eventStream
-                .timeout(
-                  const Duration(seconds: 2),
-                  onTimeout: (EventSink<VideoEvent> sink) {
-                    sink.close();
-                  },
-                )
-                .toList();
+        final Future<List<VideoEvent>> stream = eventStream
+            .timeout(
+              const Duration(seconds: 2),
+              onTimeout: (EventSink<VideoEvent> sink) {
+                sink.close();
+              },
+            )
+            .toList();
 
         await VideoPlayerPlatform.instance.setVolume(videoPlayerId, 0);
         await VideoPlayerPlatform.instance.play(videoPlayerId);
@@ -253,15 +252,14 @@ void main() {
         final Stream<VideoEvent> eventStream = VideoPlayerPlatform.instance
             .videoEventsFor(videoPlayerId);
 
-        final Future<List<VideoEvent>> stream =
-            eventStream
-                .timeout(
-                  const Duration(seconds: 2),
-                  onTimeout: (EventSink<VideoEvent> sink) {
-                    sink.close();
-                  },
-                )
-                .toList();
+        final Future<List<VideoEvent>> stream = eventStream
+            .timeout(
+              const Duration(seconds: 2),
+              onTimeout: (EventSink<VideoEvent> sink) {
+                sink.close();
+              },
+            )
+            .toList();
 
         await VideoPlayerPlatform.instance.setVolume(videoPlayerId, 0);
         await VideoPlayerPlatform.instance.play(videoPlayerId);

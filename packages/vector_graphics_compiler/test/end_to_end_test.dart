@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -270,7 +270,8 @@ void main() {
   });
 
   test('Encodes image elids trivial translation transform', () async {
-    const String svg = '''
+    const String svg =
+        '''
 <svg viewBox="0 0 1000 300" xmlns="http://www.w3.org/2000/svg" version="1.1">
   <g transform="translate(3, 3)">
     <image id="image0" width="50" height="50" xlink:href="data:image/png;base64,$kBase64ImageContents"/>
@@ -299,7 +300,8 @@ void main() {
   });
 
   test('Encodes image elids trivial scale transform', () async {
-    const String svg = '''
+    const String svg =
+        '''
 <svg viewBox="0 0 1000 300" xmlns="http://www.w3.org/2000/svg" version="1.1">
   <g transform="scale(2, 2)">
     <image id="image0" width="50" height="50" xlink:href="data:image/png;base64,$kBase64ImageContents"/>
@@ -328,7 +330,8 @@ void main() {
   });
 
   test('Encodes image does not elide non-trivial transform', () async {
-    const String svg = '''
+    const String svg =
+        '''
 <svg viewBox="0 0 1000 300" xmlns="http://www.w3.org/2000/svg" version="1.1">
   <g transform="matrix(3 1 -1 3 30 40)">
     <image id="image0" width="50" height="50" xlink:href="data:image/png;base64,$kBase64ImageContents"/>

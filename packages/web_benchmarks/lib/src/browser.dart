@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -376,10 +376,9 @@ class BlinkTraceSummary {
       final int tabPid = firstMeasuredFrameEvent.pid;
 
       // Filter out data from unrelated processes
-      events =
-          events
-              .where((BlinkTraceEvent element) => element.pid == tabPid)
-              .toList();
+      events = events
+          .where((BlinkTraceEvent element) => element.pid == tabPid)
+          .toList();
 
       // Extract frame data.
       final List<BlinkFrame> frames = <BlinkFrame>[];

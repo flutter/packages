@@ -1,21 +1,21 @@
 RouteBase get $route1 => GoRouteData.$route(
       path: 'route-1',
-      factory: _$Route1._fromState,
+      factory: $Route1._fromState,
       routes: [
         RelativeGoRouteData.$route(
           path: 'relative-route',
-          factory: _$RelativeRoute._fromState,
+          factory: $RelativeRoute._fromState,
           routes: [
             RelativeGoRouteData.$route(
               path: 'inner-relative-route',
-              factory: _$InnerRelativeRoute._fromState,
+              factory: $InnerRelativeRoute._fromState,
             ),
           ],
         ),
       ],
     );
 
-mixin _$Route1 on GoRouteData {
+mixin $Route1 on GoRouteData {
   static Route1 _fromState(GoRouterState state) => const Route1();
 
   @override
@@ -37,7 +37,7 @@ mixin _$Route1 on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-mixin _$RelativeRoute on RelativeGoRouteData {
+mixin $RelativeRoute on RelativeGoRouteData {
   static RelativeRoute _fromState(GoRouterState state) => const RelativeRoute();
 
   @override
@@ -64,7 +64,7 @@ mixin _$RelativeRoute on RelativeGoRouteData {
       context.replace(relativeLocation);
 }
 
-mixin _$InnerRelativeRoute on RelativeGoRouteData {
+mixin $InnerRelativeRoute on RelativeGoRouteData {
   static InnerRelativeRoute _fromState(GoRouterState state) =>
       const InnerRelativeRoute();
 
@@ -94,22 +94,22 @@ mixin _$InnerRelativeRoute on RelativeGoRouteData {
 
 RouteBase get $route2 => GoRouteData.$route(
       path: 'route-2',
-      factory: _$Route2._fromState,
+      factory: $Route2._fromState,
       routes: [
         RelativeGoRouteData.$route(
           path: 'relative-route',
-          factory: _$RelativeRoute._fromState,
+          factory: $RelativeRoute._fromState,
           routes: [
             RelativeGoRouteData.$route(
               path: 'inner-relative-route',
-              factory: _$InnerRelativeRoute._fromState,
+              factory: $InnerRelativeRoute._fromState,
             ),
           ],
         ),
       ],
     );
 
-mixin _$Route2 on GoRouteData {
+mixin $Route2 on GoRouteData {
   static Route2 _fromState(GoRouterState state) => const Route2();
 
   @override

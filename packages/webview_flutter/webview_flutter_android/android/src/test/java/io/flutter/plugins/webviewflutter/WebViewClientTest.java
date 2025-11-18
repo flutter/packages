@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -17,6 +17,7 @@ import android.os.Message;
 import android.webkit.ClientCertRequest;
 import android.webkit.HttpAuthHandler;
 import android.webkit.SslErrorHandler;
+import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import io.flutter.plugins.webviewflutter.WebViewClientProxyApi.WebViewClientImpl;
@@ -43,14 +44,12 @@ public class WebViewClientTest {
 
     final WebViewClientImpl instance = new WebViewClientImpl(mockApi);
     final android.webkit.WebView webView = mock(WebView.class);
-    final Long errorCode = 0L;
-    final String description = "myString";
-    final String failingUrl = "myString1";
-    instance.onReceivedError(webView, errorCode.intValue(), description, failingUrl);
+    final android.webkit.WebResourceRequest request = mock(WebResourceRequest.class);
+    final android.webkit.WebResourceError error = mock(WebResourceError.class);
+    instance.onReceivedError(webView, request, error);
 
     verify(mockApi)
-        .onReceivedError(
-            eq(instance), eq(webView), eq(errorCode), eq(description), eq(failingUrl), any());
+        .onReceivedRequestError(eq(instance), eq(webView), eq(request), eq(error), any());
   }
 
   @Test
@@ -60,10 +59,10 @@ public class WebViewClientTest {
 
     final WebViewClientImpl instance = new WebViewClientImpl(mockApi);
     final android.webkit.WebView webView = mock(WebView.class);
-    final String url = "myString";
-    instance.shouldOverrideUrlLoading(webView, url);
+    final android.webkit.WebResourceRequest request = mock(WebResourceRequest.class);
+    instance.shouldOverrideUrlLoading(webView, request);
 
-    verify(mockApi).urlLoading(eq(instance), eq(webView), eq(url), any());
+    verify(mockApi).requestLoading(eq(instance), eq(webView), eq(request), any());
   }
 
   @Test
@@ -74,10 +73,11 @@ public class WebViewClientTest {
     final WebViewClientImpl instance = new WebViewClientImpl(mockApi);
     instance.setReturnValueForShouldOverrideUrlLoading(false);
     final android.webkit.WebView webView = mock(WebView.class);
-    final String url = "myString";
-    instance.shouldOverrideUrlLoading(webView, url);
+    final android.webkit.WebResourceRequest request = mock(WebResourceRequest.class);
+    when(request.isForMainFrame()).thenReturn(true);
+    instance.shouldOverrideUrlLoading(webView, request);
 
-    verify(mockApi).urlLoading(eq(instance), eq(webView), eq(url), any());
+    verify(mockApi).requestLoading(eq(instance), eq(webView), eq(request), any());
   }
 
   @Test
@@ -88,10 +88,11 @@ public class WebViewClientTest {
     final WebViewClientImpl instance = new WebViewClientImpl(mockApi);
     instance.setReturnValueForShouldOverrideUrlLoading(true);
     final android.webkit.WebView webView = mock(WebView.class);
-    final String url = "myString";
+    final android.webkit.WebResourceRequest request = mock(WebResourceRequest.class);
+    when(request.isForMainFrame()).thenReturn(true);
 
-    assertTrue(instance.shouldOverrideUrlLoading(webView, url));
-    verify(mockApi).urlLoading(eq(instance), eq(webView), eq(url), any());
+    assertTrue(instance.shouldOverrideUrlLoading(webView, request));
+    verify(mockApi).requestLoading(eq(instance), eq(webView), eq(request), any());
   }
 
   @Test

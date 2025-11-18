@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 import 'package:flutter/foundation.dart' show immutable;
@@ -70,8 +70,7 @@ class XTypeGroup {
   @Deprecated('Use uniformTypeIdentifiers instead')
   List<String>? get macUTIs => uniformTypeIdentifiers;
 
-  static List<String>? _removeLeadingDots(List<String>? exts) =>
-      exts
-          ?.map((String ext) => ext.startsWith('.') ? ext.substring(1) : ext)
-          .toList();
+  static List<String>? _removeLeadingDots(List<String>? exts) => exts
+      ?.map((String ext) => ext.startsWith('.') ? ext.substring(1) : ext)
+      .toList();
 }

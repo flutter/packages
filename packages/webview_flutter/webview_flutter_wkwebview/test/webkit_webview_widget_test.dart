@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -188,38 +188,42 @@ WebKitWebViewController createTestWebViewController(
   return WebKitWebViewController(
     WebKitWebViewControllerCreationParams(
       webKitProxy: WebKitProxy(
-        newPlatformWebView: ({
-          required WKWebViewConfiguration initialConfiguration,
-          void Function(
-            NSObject,
-            String?,
-            NSObject?,
-            Map<KeyValueChangeKey, Object>?,
-          )?
-          observeValue,
-        }) {
-          final UIViewWKWebView webView = UIViewWKWebView.pigeon_detached(
-            pigeon_instanceManager: testInstanceManager,
-          );
-          testInstanceManager.addDartCreatedInstance(webView);
-          return PlatformWebView.fromNativeWebView(webView);
-        },
+        newPlatformWebView:
+            ({
+              required WKWebViewConfiguration initialConfiguration,
+              void Function(
+                NSObject,
+                String?,
+                NSObject?,
+                Map<KeyValueChangeKey, Object>?,
+              )?
+              observeValue,
+            }) {
+              final UIViewWKWebView webView = UIViewWKWebView.pigeon_detached(
+                pigeon_instanceManager: testInstanceManager,
+              );
+              testInstanceManager.addDartCreatedInstance(webView);
+              return PlatformWebView.fromNativeWebView(webView);
+            },
         newWKWebViewConfiguration: () {
           return MockWKWebViewConfiguration();
         },
-        newWKUIDelegate: ({
-          dynamic onCreateWebView,
-          dynamic requestMediaCapturePermission,
-          dynamic runJavaScriptAlertPanel,
-          dynamic runJavaScriptConfirmPanel,
-          dynamic runJavaScriptTextInputPanel,
-        }) {
-          final MockWKUIDelegate mockWKUIDelegate = MockWKUIDelegate();
-          when(mockWKUIDelegate.pigeon_copy()).thenReturn(MockWKUIDelegate());
+        newWKUIDelegate:
+            ({
+              dynamic onCreateWebView,
+              dynamic requestMediaCapturePermission,
+              dynamic runJavaScriptAlertPanel,
+              dynamic runJavaScriptConfirmPanel,
+              dynamic runJavaScriptTextInputPanel,
+            }) {
+              final MockWKUIDelegate mockWKUIDelegate = MockWKUIDelegate();
+              when(
+                mockWKUIDelegate.pigeon_copy(),
+              ).thenReturn(MockWKUIDelegate());
 
-          testInstanceManager.addDartCreatedInstance(mockWKUIDelegate);
-          return mockWKUIDelegate;
-        },
+              testInstanceManager.addDartCreatedInstance(mockWKUIDelegate);
+              return mockWKUIDelegate;
+            },
         newUIScrollViewDelegate: ({dynamic scrollViewDidScroll}) {
           final MockUIScrollViewDelegate mockScrollViewDelegate =
               MockUIScrollViewDelegate();

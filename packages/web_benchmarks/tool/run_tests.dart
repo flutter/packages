@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -22,8 +22,9 @@ Future<void> main(List<String> args) async {
     exit(0);
   }
 
-  final Directory packageDir =
-      Directory(p.dirname(Platform.script.path)).parent;
+  final Directory packageDir = Directory(
+    p.dirname(Platform.script.path),
+  ).parent;
   final String testingAppDirPath = p.join(
     packageDir.path,
     'testing',

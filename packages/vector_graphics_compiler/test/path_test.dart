@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -55,8 +55,8 @@ void main() {
   });
 
   test('addRect', () {
-    final PathBuilder builder =
-        PathBuilder()..addRect(const Rect.fromLTRB(10, 10, 20, 20));
+    final PathBuilder builder = PathBuilder()
+      ..addRect(const Rect.fromLTRB(10, 10, 20, 20));
 
     expect(
       builder.toPath().toFlutterString(),
@@ -70,10 +70,9 @@ void main() {
   });
 
   test('addOval', () {
-    final PathBuilder builder =
-        PathBuilder()
-          ..addOval(const Rect.fromLTRB(10, 10, 20, 20))
-          ..addOval(const Rect.fromLTRB(50, 50, 80, 70));
+    final PathBuilder builder = PathBuilder()
+      ..addOval(const Rect.fromLTRB(10, 10, 20, 20))
+      ..addOval(const Rect.fromLTRB(50, 50, 80, 70));
     expect(
       builder.toPath().toFlutterString(),
       'Path()\n'
@@ -93,8 +92,8 @@ void main() {
   });
 
   test('addRRect', () {
-    final PathBuilder builder =
-        PathBuilder()..addRRect(const Rect.fromLTRB(20, 20, 60, 60), 5, 5);
+    final PathBuilder builder = PathBuilder()
+      ..addRRect(const Rect.fromLTRB(20, 20, 60, 60), 5, 5);
     expect(
       builder.toPath().toFlutterString(),
       'Path()\n'
@@ -210,34 +209,31 @@ void main() {
   });
 
   test('Compute path bounds with rect', () {
-    final PathBuilder builder =
-        PathBuilder()
-          ..addRect(const Rect.fromLTWH(5, 5, 95, 95))
-          ..close();
+    final PathBuilder builder = PathBuilder()
+      ..addRect(const Rect.fromLTWH(5, 5, 95, 95))
+      ..close();
     final Path path = builder.toPath();
 
     expect(path.bounds(), const Rect.fromLTWH(5, 5, 95, 95));
   });
 
   test('Compute path bounds with lines', () {
-    final PathBuilder builder =
-        PathBuilder()
-          ..moveTo(0, 0)
-          ..lineTo(25, 0)
-          ..lineTo(25, 25)
-          ..lineTo(0, 25)
-          ..close();
+    final PathBuilder builder = PathBuilder()
+      ..moveTo(0, 0)
+      ..lineTo(25, 0)
+      ..lineTo(25, 25)
+      ..lineTo(0, 25)
+      ..close();
     final Path path = builder.toPath();
 
     expect(path.bounds(), const Rect.fromLTWH(0, 0, 25, 25));
   });
 
   test('Compute path bounds with cubics', () {
-    final PathBuilder builder =
-        PathBuilder()
-          ..moveTo(0, 0)
-          ..cubicTo(10, 10, 20, 20, -10, -10)
-          ..close();
+    final PathBuilder builder = PathBuilder()
+      ..moveTo(0, 0)
+      ..cubicTo(10, 10, 20, 20, -10, -10)
+      ..close();
     final Path path = builder.toPath();
 
     expect(path.bounds(), const Rect.fromLTRB(-10.0, -10.0, 20.0, 20.0));

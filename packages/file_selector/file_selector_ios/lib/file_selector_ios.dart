@@ -1,14 +1,19 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
+import 'package:flutter/foundation.dart' show visibleForTesting;
 
 import 'src/messages.g.dart';
 
 /// An implementation of [FileSelectorPlatform] for iOS.
 class FileSelectorIOS extends FileSelectorPlatform {
-  final FileSelectorApi _hostApi = FileSelectorApi();
+  /// Creates a new plugin implementation instance.
+  FileSelectorIOS({@visibleForTesting FileSelectorApi? api})
+    : _hostApi = api ?? FileSelectorApi();
+
+  final FileSelectorApi _hostApi;
 
   /// Registers the iOS implementation.
   static void registerWith() {

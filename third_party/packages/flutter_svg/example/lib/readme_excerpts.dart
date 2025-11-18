@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -58,11 +58,10 @@ Widget loadNetworkAssetWithPlaceholder() {
   final Widget networkSvg = SvgPicture.network(
     'https://site-that-takes-a-while.com/image.svg',
     semanticsLabel: 'A shark?!',
-    placeholderBuilder:
-        (BuildContext context) => Container(
-          padding: const EdgeInsets.all(30.0),
-          child: const CircularProgressIndicator(),
-        ),
+    placeholderBuilder: (BuildContext context) => Container(
+      padding: const EdgeInsets.all(30.0),
+      child: const CircularProgressIndicator(),
+    ),
   );
   // #enddocregion AssetWithPlaceholder
   return networkSvg;

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -111,8 +111,10 @@ void main() {
 
   test('concatenateUris', () {
     void verify(String pathA, String pathB, String expected) {
-      final String result =
-          concatenateUris(Uri.parse(pathA), Uri.parse(pathB)).toString();
+      final String result = concatenateUris(
+        Uri.parse(pathA),
+        Uri.parse(pathB),
+      ).toString();
       expect(result, expected);
     }
 

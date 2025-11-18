@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -954,7 +954,10 @@ void main() {
     final Class objectClass = Class(name: 'Object', fields: <NamedType>[]);
     final Enum anEnum = Enum(
       name: 'enum',
-      members: <EnumMember>[EnumMember(name: 'one'), EnumMember(name: 'two')],
+      members: <EnumMember>[
+        EnumMember(name: 'one'),
+        EnumMember(name: 'two'),
+      ],
     );
     final Root root = Root(
       apis: <Api>[

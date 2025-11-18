@@ -1,34 +1,22 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import 'package:file_selector_macos/file_selector_macos.dart';
 import 'package:file_selector_macos/src/messages.g.dart';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
 
-import 'file_selector_macos_test.mocks.dart';
-import 'messages_test.g.dart';
-
-@GenerateMocks(<Type>[TestFileSelectorApi])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
+  late FakeFileSelectorApi api;
   late FileSelectorMacOS plugin;
-  late MockTestFileSelectorApi mockApi;
 
   setUp(() {
-    plugin = FileSelectorMacOS();
-    mockApi = MockTestFileSelectorApi();
-    TestFileSelectorApi.setUp(mockApi);
-
-    // Set default stubs for tests that don't expect a specific return value,
-    // so calls don't throw. Tests that `expect` return values should override
-    // these locally.
-    when(mockApi.displayOpenPanel(any)).thenAnswer((_) async => <String>[]);
-    when(mockApi.displaySavePanel(any)).thenAnswer((_) async => null);
+    api = FakeFileSelectorApi();
+    plugin = FileSelectorMacOS(api: api);
   });
 
   test('registered instance', () {
@@ -38,17 +26,12 @@ void main() {
 
   group('openFile', () {
     test('works as expected with no arguments', () async {
-      when(
-        mockApi.displayOpenPanel(any),
-      ).thenAnswer((_) async => <String>['foo']);
+      api.result = <String>['foo'];
 
       final XFile? file = await plugin.openFile();
 
       expect(file!.path, 'foo');
-      final VerificationResult result = verify(
-        mockApi.displayOpenPanel(captureAny),
-      );
-      final OpenPanelOptions options = result.captured[0] as OpenPanelOptions;
+      final OpenPanelOptions options = api.passedOpenPanelOptions!;
       expect(options.allowsMultipleSelection, false);
       expect(options.canChooseFiles, true);
       expect(options.canChooseDirectories, false);
@@ -59,7 +42,7 @@ void main() {
     });
 
     test('handles cancel', () async {
-      when(mockApi.displayOpenPanel(any)).thenAnswer((_) async => <String>[]);
+      api.result = <String>[];
 
       final XFile? file = await plugin.openFile();
 
@@ -84,10 +67,7 @@ void main() {
 
       await plugin.openFile(acceptedTypeGroups: <XTypeGroup>[group, groupTwo]);
 
-      final VerificationResult result = verify(
-        mockApi.displayOpenPanel(captureAny),
-      );
-      final OpenPanelOptions options = result.captured[0] as OpenPanelOptions;
+      final OpenPanelOptions options = api.passedOpenPanelOptions!;
       expect(options.baseOptions.allowedFileTypes!.extensions, <String>[
         'txt',
         'jpg',
@@ -105,20 +85,14 @@ void main() {
     test('passes initialDirectory correctly', () async {
       await plugin.openFile(initialDirectory: '/example/directory');
 
-      final VerificationResult result = verify(
-        mockApi.displayOpenPanel(captureAny),
-      );
-      final OpenPanelOptions options = result.captured[0] as OpenPanelOptions;
+      final OpenPanelOptions options = api.passedOpenPanelOptions!;
       expect(options.baseOptions.directoryPath, '/example/directory');
     });
 
     test('passes confirmButtonText correctly', () async {
       await plugin.openFile(confirmButtonText: 'Open File');
 
-      final VerificationResult result = verify(
-        mockApi.displayOpenPanel(captureAny),
-      );
-      final OpenPanelOptions options = result.captured[0] as OpenPanelOptions;
+      final OpenPanelOptions options = api.passedOpenPanelOptions!;
       expect(options.baseOptions.prompt, 'Open File');
     });
 
@@ -146,18 +120,13 @@ void main() {
 
   group('openFiles', () {
     test('works as expected with no arguments', () async {
-      when(
-        mockApi.displayOpenPanel(any),
-      ).thenAnswer((_) async => <String>['foo', 'bar']);
+      api.result = <String>['foo', 'bar'];
 
       final List<XFile> files = await plugin.openFiles();
 
       expect(files[0].path, 'foo');
       expect(files[1].path, 'bar');
-      final VerificationResult result = verify(
-        mockApi.displayOpenPanel(captureAny),
-      );
-      final OpenPanelOptions options = result.captured[0] as OpenPanelOptions;
+      final OpenPanelOptions options = api.passedOpenPanelOptions!;
       expect(options.allowsMultipleSelection, true);
       expect(options.canChooseFiles, true);
       expect(options.canChooseDirectories, false);
@@ -168,7 +137,7 @@ void main() {
     });
 
     test('handles cancel', () async {
-      when(mockApi.displayOpenPanel(any)).thenAnswer((_) async => <String>[]);
+      api.result = <String>[];
 
       final List<XFile> files = await plugin.openFiles();
 
@@ -193,10 +162,7 @@ void main() {
 
       await plugin.openFiles(acceptedTypeGroups: <XTypeGroup>[group, groupTwo]);
 
-      final VerificationResult result = verify(
-        mockApi.displayOpenPanel(captureAny),
-      );
-      final OpenPanelOptions options = result.captured[0] as OpenPanelOptions;
+      final OpenPanelOptions options = api.passedOpenPanelOptions!;
       expect(options.baseOptions.allowedFileTypes!.extensions, <String>[
         'txt',
         'jpg',
@@ -214,20 +180,14 @@ void main() {
     test('passes initialDirectory correctly', () async {
       await plugin.openFiles(initialDirectory: '/example/directory');
 
-      final VerificationResult result = verify(
-        mockApi.displayOpenPanel(captureAny),
-      );
-      final OpenPanelOptions options = result.captured[0] as OpenPanelOptions;
+      final OpenPanelOptions options = api.passedOpenPanelOptions!;
       expect(options.baseOptions.directoryPath, '/example/directory');
     });
 
     test('passes confirmButtonText correctly', () async {
       await plugin.openFiles(confirmButtonText: 'Open File');
 
-      final VerificationResult result = verify(
-        mockApi.displayOpenPanel(captureAny),
-      );
-      final OpenPanelOptions options = result.captured[0] as OpenPanelOptions;
+      final OpenPanelOptions options = api.passedOpenPanelOptions!;
       expect(options.baseOptions.prompt, 'Open File');
     });
 
@@ -255,15 +215,12 @@ void main() {
 
   group('getSavePath (deprecated)', () {
     test('works as expected with no arguments', () async {
-      when(mockApi.displaySavePanel(any)).thenAnswer((_) async => 'foo');
+      api.result = <String>['foo'];
 
       final String? path = await plugin.getSavePath();
 
       expect(path, 'foo');
-      final VerificationResult result = verify(
-        mockApi.displaySavePanel(captureAny),
-      );
-      final SavePanelOptions options = result.captured[0] as SavePanelOptions;
+      final SavePanelOptions options = api.passedSavePanelOptions!;
       expect(options.allowedFileTypes, null);
       expect(options.directoryPath, null);
       expect(options.nameFieldStringValue, null);
@@ -271,7 +228,7 @@ void main() {
     });
 
     test('handles cancel', () async {
-      when(mockApi.displaySavePanel(any)).thenAnswer((_) async => null);
+      api.result = <String>[];
 
       final String? path = await plugin.getSavePath();
 
@@ -298,10 +255,7 @@ void main() {
         acceptedTypeGroups: <XTypeGroup>[group, groupTwo],
       );
 
-      final VerificationResult result = verify(
-        mockApi.displaySavePanel(captureAny),
-      );
-      final SavePanelOptions options = result.captured[0] as SavePanelOptions;
+      final SavePanelOptions options = api.passedSavePanelOptions!;
       expect(options.allowedFileTypes!.extensions, <String>['txt', 'jpg']);
       expect(options.allowedFileTypes!.mimeTypes, <String>[
         'text/plain',
@@ -316,20 +270,14 @@ void main() {
     test('passes initialDirectory correctly', () async {
       await plugin.getSavePath(initialDirectory: '/example/directory');
 
-      final VerificationResult result = verify(
-        mockApi.displaySavePanel(captureAny),
-      );
-      final SavePanelOptions options = result.captured[0] as SavePanelOptions;
+      final SavePanelOptions options = api.passedSavePanelOptions!;
       expect(options.directoryPath, '/example/directory');
     });
 
     test('passes confirmButtonText correctly', () async {
       await plugin.getSavePath(confirmButtonText: 'Open File');
 
-      final VerificationResult result = verify(
-        mockApi.displaySavePanel(captureAny),
-      );
-      final SavePanelOptions options = result.captured[0] as SavePanelOptions;
+      final SavePanelOptions options = api.passedSavePanelOptions!;
       expect(options.prompt, 'Open File');
     });
 
@@ -373,25 +321,19 @@ void main() {
         ],
       );
 
-      final VerificationResult result = verify(
-        mockApi.displaySavePanel(captureAny),
-      );
-      final SavePanelOptions options = result.captured[0] as SavePanelOptions;
+      final SavePanelOptions options = api.passedSavePanelOptions!;
       expect(options.allowedFileTypes, null);
     });
   });
 
   group('getSaveLocation', () {
     test('works as expected with no arguments', () async {
-      when(mockApi.displaySavePanel(any)).thenAnswer((_) async => 'foo');
+      api.result = <String>['foo'];
 
       final FileSaveLocation? location = await plugin.getSaveLocation();
 
       expect(location?.path, 'foo');
-      final VerificationResult result = verify(
-        mockApi.displaySavePanel(captureAny),
-      );
-      final SavePanelOptions options = result.captured[0] as SavePanelOptions;
+      final SavePanelOptions options = api.passedSavePanelOptions!;
       expect(options.allowedFileTypes, null);
       expect(options.directoryPath, null);
       expect(options.nameFieldStringValue, null);
@@ -399,7 +341,7 @@ void main() {
     });
 
     test('handles cancel', () async {
-      when(mockApi.displaySavePanel(any)).thenAnswer((_) async => null);
+      api.result = <String>[];
 
       final FileSaveLocation? location = await plugin.getSaveLocation();
 
@@ -426,10 +368,7 @@ void main() {
         acceptedTypeGroups: <XTypeGroup>[group, groupTwo],
       );
 
-      final VerificationResult result = verify(
-        mockApi.displaySavePanel(captureAny),
-      );
-      final SavePanelOptions options = result.captured[0] as SavePanelOptions;
+      final SavePanelOptions options = api.passedSavePanelOptions!;
       expect(options.allowedFileTypes!.extensions, <String>['txt', 'jpg']);
       expect(options.allowedFileTypes!.mimeTypes, <String>[
         'text/plain',
@@ -448,10 +387,7 @@ void main() {
         ),
       );
 
-      final VerificationResult result = verify(
-        mockApi.displaySavePanel(captureAny),
-      );
-      final SavePanelOptions options = result.captured[0] as SavePanelOptions;
+      final SavePanelOptions options = api.passedSavePanelOptions!;
       expect(options.directoryPath, '/example/directory');
     });
 
@@ -460,10 +396,7 @@ void main() {
         options: const SaveDialogOptions(confirmButtonText: 'Open File'),
       );
 
-      final VerificationResult result = verify(
-        mockApi.displaySavePanel(captureAny),
-      );
-      final SavePanelOptions options = result.captured[0] as SavePanelOptions;
+      final SavePanelOptions options = api.passedSavePanelOptions!;
       expect(options.prompt, 'Open File');
     });
 
@@ -507,27 +440,19 @@ void main() {
         ],
       );
 
-      final VerificationResult result = verify(
-        mockApi.displaySavePanel(captureAny),
-      );
-      final SavePanelOptions options = result.captured[0] as SavePanelOptions;
+      final SavePanelOptions options = api.passedSavePanelOptions!;
       expect(options.allowedFileTypes, null);
     });
   });
 
   group('getDirectoryPath', () {
     test('works as expected with no arguments', () async {
-      when(
-        mockApi.displayOpenPanel(any),
-      ).thenAnswer((_) async => <String>['foo']);
+      api.result = <String>['foo'];
 
       final String? path = await plugin.getDirectoryPath();
 
       expect(path, 'foo');
-      final VerificationResult result = verify(
-        mockApi.displayOpenPanel(captureAny),
-      );
-      final OpenPanelOptions options = result.captured[0] as OpenPanelOptions;
+      final OpenPanelOptions options = api.passedOpenPanelOptions!;
       expect(options.allowsMultipleSelection, false);
       expect(options.canChooseFiles, false);
       expect(options.canChooseDirectories, true);
@@ -538,7 +463,7 @@ void main() {
     });
 
     test('handles cancel', () async {
-      when(mockApi.displayOpenPanel(any)).thenAnswer((_) async => <String>[]);
+      api.result = <String>[];
 
       final String? path = await plugin.getDirectoryPath();
 
@@ -548,33 +473,25 @@ void main() {
     test('passes initialDirectory correctly', () async {
       await plugin.getDirectoryPath(initialDirectory: '/example/directory');
 
-      final VerificationResult result = verify(
-        mockApi.displayOpenPanel(captureAny),
-      );
-      final OpenPanelOptions options = result.captured[0] as OpenPanelOptions;
+      final OpenPanelOptions options = api.passedOpenPanelOptions!;
       expect(options.baseOptions.directoryPath, '/example/directory');
     });
 
     test('passes confirmButtonText correctly', () async {
       await plugin.getDirectoryPath(confirmButtonText: 'Open File');
 
-      final VerificationResult result = verify(
-        mockApi.displayOpenPanel(captureAny),
-      );
-      final OpenPanelOptions options = result.captured[0] as OpenPanelOptions;
+      final OpenPanelOptions options = api.passedOpenPanelOptions!;
       expect(options.baseOptions.prompt, 'Open File');
     });
   });
 
   group('getDirectoryPaths', () {
     test('works as expected with no arguments', () async {
-      when(mockApi.displayOpenPanel(any)).thenAnswer(
-        (_) async => <String>[
-          'firstDirectory',
-          'secondDirectory',
-          'thirdDirectory',
-        ],
-      );
+      api.result = <String>[
+        'firstDirectory',
+        'secondDirectory',
+        'thirdDirectory',
+      ];
 
       final List<String> path = await plugin.getDirectoryPaths();
 
@@ -583,10 +500,7 @@ void main() {
         'secondDirectory',
         'thirdDirectory',
       ]);
-      final VerificationResult result = verify(
-        mockApi.displayOpenPanel(captureAny),
-      );
-      final OpenPanelOptions options = result.captured[0] as OpenPanelOptions;
+      final OpenPanelOptions options = api.passedOpenPanelOptions!;
       expect(options.allowsMultipleSelection, true);
       expect(options.canChooseFiles, false);
       expect(options.canChooseDirectories, true);
@@ -597,7 +511,7 @@ void main() {
     });
 
     test('handles cancel', () async {
-      when(mockApi.displayOpenPanel(any)).thenAnswer((_) async => <String>[]);
+      api.result = <String>[];
 
       final List<String> paths = await plugin.getDirectoryPaths();
 
@@ -607,21 +521,42 @@ void main() {
     test('passes confirmButtonText correctly', () async {
       await plugin.getDirectoryPaths(confirmButtonText: 'Select directories');
 
-      final VerificationResult result = verify(
-        mockApi.displayOpenPanel(captureAny),
-      );
-      final OpenPanelOptions options = result.captured[0] as OpenPanelOptions;
+      final OpenPanelOptions options = api.passedOpenPanelOptions!;
       expect(options.baseOptions.prompt, 'Select directories');
     });
 
     test('passes initialDirectory correctly', () async {
       await plugin.getDirectoryPaths(initialDirectory: '/example/directory');
 
-      final VerificationResult result = verify(
-        mockApi.displayOpenPanel(captureAny),
-      );
-      final OpenPanelOptions options = result.captured[0] as OpenPanelOptions;
+      final OpenPanelOptions options = api.passedOpenPanelOptions!;
       expect(options.baseOptions.directoryPath, '/example/directory');
     });
   });
+}
+
+/// Fake implementation that stores arguments and provides a canned response.
+class FakeFileSelectorApi implements FileSelectorApi {
+  OpenPanelOptions? passedOpenPanelOptions;
+  SavePanelOptions? passedSavePanelOptions;
+  List<String> result = <String>[];
+
+  @override
+  Future<List<String>> displayOpenPanel(OpenPanelOptions options) async {
+    passedOpenPanelOptions = options;
+    return result;
+  }
+
+  @override
+  Future<String?> displaySavePanel(SavePanelOptions options) async {
+    passedSavePanelOptions = options;
+    return result.firstOrNull;
+  }
+
+  @override
+  // ignore: non_constant_identifier_names
+  BinaryMessenger? get pigeonVar_binaryMessenger => null;
+
+  @override
+  // ignore: non_constant_identifier_names
+  String get pigeonVar_messageChannelSuffix => '';
 }

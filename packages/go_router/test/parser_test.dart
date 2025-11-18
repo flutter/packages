@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -263,8 +263,9 @@ void main() {
       expect(matchList.uri.toString(), '/abc');
       expect(matchList.matches.length, 3);
 
-      final RouteInformation restoredRouteInformation =
-          router.routeInformationParser.restoreRouteInformation(matchList)!;
+      final RouteInformation restoredRouteInformation = router
+          .routeInformationParser
+          .restoreRouteInformation(matchList)!;
       expect(restoredRouteInformation.uri.path, '/');
 
       // Can restore back to original RouteMatchList.
@@ -597,9 +598,8 @@ void main() {
         GoRoute(
           path: '/abc',
           builder: (_, __) => const Placeholder(),
-          redirect:
-              (BuildContext context, GoRouterState state) =>
-                  state.uri.toString(),
+          redirect: (BuildContext context, GoRouterState state) =>
+              state.uri.toString(),
         ),
       ];
       final GoRouteInformationParser parser = await createParser(

@@ -1,3 +1,52 @@
+## 0.6.24+2
+
+* Updates to Pigeon 26.
+
+## 0.6.24+1
+
+* Fixes crash in `DeviceOrientationManager` caused by `UnsupportedOperationException` when `getDisplay()` is called on a null or destroyed Activity during rotation.
+
+## 0.6.24
+
+* Change plugin to assume mp4 format for capture videos.
+
+## 0.6.23+5
+
+* Fixes `IllegalArgumentException` that could occur during image streaming when using NV21.
+
+## 0.6.23+4
+
+* Updates examples to use the new RadioGroup API instead of deprecated Radio parameters.
+
+## 0.6.23+3
+
+* Bumps camerax_version from 1.5.0 to 1.5.1.
+
+## 0.6.23+2
+
+* Updates Java compatibility version to 17 and minimum supported SDK version to Flutter 3.35/Dart 3.9.
+
+## 0.6.23+1
+
+* Resolves Gradle 9 deprecations.
+
+## 0.6.23
+
+* Converts NV21-compatible streamed images to NV21 when requested. In doing so,
+this plugin should now be compatible with [google_ml_kit_flutter](https://github.com/flutter-ml/google_ml_kit_flutter/tree/master).
+
+## 0.6.22
+
+* Implements `setDescriptionWhileRecording`.
+
+## 0.6.21+2
+
+* Bumps com.google.guava:guava from 33.4.8-android to 33.5.0-android.
+
+## 0.6.21+1
+
+* Updates to stable version of `androidx.camera` 1.5.
+
 ## 0.6.21
 
 * Implements NV21 support for image streaming.

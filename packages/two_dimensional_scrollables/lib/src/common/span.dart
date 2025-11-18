@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -383,10 +383,9 @@ class SpanDecoration {
   /// cells.
   void paint(SpanDecorationPaintDetails details) {
     if (color != null) {
-      final Paint paint =
-          Paint()
-            ..color = color!
-            ..isAntiAlias = borderRadius != null;
+      final Paint paint = Paint()
+        ..color = color!
+        ..isAntiAlias = borderRadius != null;
       if (borderRadius == null || borderRadius == BorderRadius.zero) {
         details.canvas.drawRect(details.rect, paint);
       } else {

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -84,12 +84,12 @@ base class IOSCompanionAdSlot extends PlatformCompanionAdSlot {
 
   IMACompanionAdSlot _initCompanionAdSlot() {
     final IMACompanionAdSlot adSlot = switch (params.size) {
-      final CompanionAdSlotSizeFixed size => _iosParams._proxy
-          .sizeIMACompanionAdSlot(
-            view: _view,
-            width: size.width,
-            height: size.height,
-          ),
+      final CompanionAdSlotSizeFixed size =>
+        _iosParams._proxy.sizeIMACompanionAdSlot(
+          view: _view,
+          width: size.width,
+          height: size.height,
+        ),
       CompanionAdSlotSizeFluid() => _iosParams._proxy.newIMACompanionAdSlot(
         view: _view,
       ),

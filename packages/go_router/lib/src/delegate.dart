@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -258,8 +258,9 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
       }
 
       if (indexOfFirstDiff < currentGoRouteMatches.length) {
-        final List<RouteMatch> exitingMatches =
-            currentGoRouteMatches.sublist(indexOfFirstDiff).toList();
+        final List<RouteMatch> exitingMatches = currentGoRouteMatches
+            .sublist(indexOfFirstDiff)
+            .toList();
         return _callOnExitStartsAt(
           exitingMatches.length - 1,
           context: navigatorContext,

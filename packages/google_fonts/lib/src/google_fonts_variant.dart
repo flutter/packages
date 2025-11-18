@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -48,8 +48,9 @@ class GoogleFontsVariant {
                   variantString == _italic
               ? 3
               : (int.parse(variantString.replaceAll(_italic, '')) ~/ 100) - 1],
-      fontStyle =
-          variantString.contains(_italic) ? FontStyle.italic : FontStyle.normal;
+      fontStyle = variantString.contains(_italic)
+          ? FontStyle.italic
+          : FontStyle.normal;
 
   final FontWeight fontWeight;
   final FontStyle fontStyle;
@@ -133,8 +134,9 @@ class GoogleFontsVariant {
   /// See [GoogleFontsVariant.toString] for the inverse function.
   @override
   String toString() {
-    final Object fontWeightString =
-        fontWeight.index == 3 ? '' : (fontWeight.index + 1) * 100;
+    final Object fontWeightString = fontWeight.index == 3
+        ? ''
+        : (fontWeight.index + 1) * 100;
     final String fontStyleString = fontStyle
         .toString()
         .replaceAll('FontStyle.', '')
@@ -171,7 +173,7 @@ const String _italic = 'italic';
 
 /// Mapping from font weight types to the 'weight' part of the Google Fonts API
 /// specific filename.
-const Map<FontWeight, String> _fontWeightToFilenameWeightParts =
+final Map<FontWeight, String> _fontWeightToFilenameWeightParts =
     <FontWeight, String>{
       FontWeight.w100: 'Thin',
       FontWeight.w200: 'ExtraLight',

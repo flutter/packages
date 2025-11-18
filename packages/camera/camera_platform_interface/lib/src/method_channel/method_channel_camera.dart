@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -106,12 +106,9 @@ class MethodChannelCamera extends CameraPlatform {
       final Map<String, dynamic>? reply = await _channel
           .invokeMapMethod<String, dynamic>('create', <String, dynamic>{
             'cameraName': cameraDescription.name,
-            'resolutionPreset':
-                resolutionPreset != null
-                    ? _serializeResolutionPreset(
-                      mediaSettings.resolutionPreset!,
-                    )
-                    : null,
+            'resolutionPreset': resolutionPreset != null
+                ? _serializeResolutionPreset(mediaSettings.resolutionPreset!)
+                : null,
             'fps': mediaSettings.fps,
             'videoBitrate': mediaSettings.videoBitrate,
             'audioBitrate': mediaSettings.audioBitrate,

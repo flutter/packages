@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -27,34 +27,33 @@ class App extends StatelessWidget {
     TypedGoRoute<SubRoute>(path: 'sub-route'),
   ],
 )
-class HomeRoute extends GoRouteData with _$HomeRoute {
+class HomeRoute extends GoRouteData with $HomeRoute {
   const HomeRoute();
 
   @override
   Widget build(BuildContext context, GoRouterState state) => const HomeScreen();
 }
 
-class SubRoute extends GoRouteData with _$SubRoute {
+class SubRoute extends GoRouteData with $SubRoute {
   const SubRoute();
 
   @override
   Future<bool> onExit(BuildContext context, GoRouterState state) async {
     final bool? confirmed = await showDialog<bool>(
       context: context,
-      builder:
-          (_) => AlertDialog(
-            content: const Text('Are you sure to leave this page?'),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: const Text('Cancel'),
-              ),
-              ElevatedButton(
-                onPressed: () => Navigator.of(context).pop(true),
-                child: const Text('Confirm'),
-              ),
-            ],
+      builder: (_) => AlertDialog(
+        content: const Text('Are you sure to leave this page?'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancel'),
           ),
+          ElevatedButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Confirm'),
+          ),
+        ],
+      ),
     );
     return confirmed ?? false;
   }

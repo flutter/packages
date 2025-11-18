@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -116,8 +116,8 @@ void main() {
       );
 
       final InteractiveMediaAdsProxy proxy = InteractiveMediaAdsProxy(
-        newContentProgressProvider:
-            () => ima.ContentProgressProvider.pigeon_detached(),
+        newContentProgressProvider: () =>
+            ima.ContentProgressProvider.pigeon_detached(),
       );
 
       final AndroidAdsLoader adsLoader = AndroidAdsLoader(
@@ -182,8 +182,8 @@ void main() {
       );
 
       final InteractiveMediaAdsProxy proxy = InteractiveMediaAdsProxy(
-        newContentProgressProvider:
-            () => ima.ContentProgressProvider.pigeon_detached(),
+        newContentProgressProvider: () =>
+            ima.ContentProgressProvider.pigeon_detached(),
       );
 
       final AndroidAdsLoader adsLoader = AndroidAdsLoader(
@@ -251,16 +251,17 @@ void main() {
       onAdsManagerLoadedCallback;
 
       final InteractiveMediaAdsProxy proxy = InteractiveMediaAdsProxy(
-        newAdsLoadedListener: ({
-          required void Function(
-            ima.AdsLoadedListener,
-            ima.AdsManagerLoadedEvent,
-          )
-          onAdsManagerLoaded,
-        }) {
-          onAdsManagerLoadedCallback = onAdsManagerLoaded;
-          return MockAdsLoadedListener();
-        },
+        newAdsLoadedListener:
+            ({
+              required void Function(
+                ima.AdsLoadedListener,
+                ima.AdsManagerLoadedEvent,
+              )
+              onAdsManagerLoaded,
+            }) {
+              onAdsManagerLoadedCallback = onAdsManagerLoaded;
+              return MockAdsLoadedListener();
+            },
         newAdErrorListener: ({required dynamic onAdError}) {
           return MockAdErrorListener();
         },
@@ -306,13 +307,14 @@ void main() {
         newAdsLoadedListener: ({required dynamic onAdsManagerLoaded}) {
           return MockAdsLoadedListener();
         },
-        newAdErrorListener: ({
-          required void Function(ima.AdErrorListener, ima.AdErrorEvent)
-          onAdError,
-        }) {
-          onAdErrorCallback = onAdError;
-          return MockAdErrorListener();
-        },
+        newAdErrorListener:
+            ({
+              required void Function(ima.AdErrorListener, ima.AdErrorEvent)
+              onAdError,
+            }) {
+              onAdErrorCallback = onAdError;
+              return MockAdErrorListener();
+            },
       );
 
       AndroidAdsLoader(
@@ -377,21 +379,22 @@ Future<AndroidAdDisplayContainer> _pumpAdDisplayContainer(
     createAdDisplayContainerImaSdkFactory: (_, __) async {
       return MockAdDisplayContainer();
     },
-    newVideoAdPlayer: ({
-      required void Function(ima.VideoAdPlayer, ima.VideoAdPlayerCallback)
-      addCallback,
-      required dynamic loadAd,
-      required dynamic pauseAd,
-      required dynamic playAd,
-      required dynamic release,
-      required dynamic removeCallback,
-      required dynamic stopAd,
-    }) {
-      if (mockAdPlayerCallback != null) {
-        addCallback(MockVideoAdPlayer(), mockAdPlayerCallback);
-      }
-      return MockVideoAdPlayer();
-    },
+    newVideoAdPlayer:
+        ({
+          required void Function(ima.VideoAdPlayer, ima.VideoAdPlayerCallback)
+          addCallback,
+          required dynamic loadAd,
+          required dynamic pauseAd,
+          required dynamic playAd,
+          required dynamic release,
+          required dynamic removeCallback,
+          required dynamic stopAd,
+        }) {
+          if (mockAdPlayerCallback != null) {
+            addCallback(MockVideoAdPlayer(), mockAdPlayerCallback);
+          }
+          return MockVideoAdPlayer();
+        },
   );
 
   final MockPlatformViewsServiceProxy mockPlatformViewsProxy =

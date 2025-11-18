@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -184,8 +184,9 @@ class _MyAppState extends State<_MyApp> {
     final Widget storeHeader = ListTile(
       leading: Icon(
         _isAvailable ? Icons.check : Icons.block,
-        color:
-            _isAvailable ? Colors.green : ThemeData.light().colorScheme.error,
+        color: _isAvailable
+            ? Colors.green
+            : ThemeData.light().colorScheme.error,
       ),
       title: Text(
         'The store is ${_isAvailable ? 'available' : 'unavailable'}.',
@@ -270,35 +271,34 @@ class _MyAppState extends State<_MyApp> {
         return ListTile(
           title: Text(productDetails.title),
           subtitle: Text(productDetails.description),
-          trailing:
-              previousPurchase != null
-                  ? IconButton(
-                    onPressed: () {
-                      _iapStoreKitPlatformAddition.showPriceConsentIfNeeded();
-                    },
-                    icon: const Icon(Icons.upgrade),
-                  )
-                  : TextButton(
-                    style: TextButton.styleFrom(
-                      backgroundColor: Colors.green[800],
-                      foregroundColor: Colors.white,
-                    ),
-                    onPressed: () {
-                      final PurchaseParam purchaseParam = PurchaseParam(
-                        productDetails: productDetails,
-                      );
-                      if (productDetails.id == _kConsumableId) {
-                        _iapStoreKitPlatform.buyConsumable(
-                          purchaseParam: purchaseParam,
-                        );
-                      } else {
-                        _iapStoreKitPlatform.buyNonConsumable(
-                          purchaseParam: purchaseParam,
-                        );
-                      }
-                    },
-                    child: Text(productDetails.price),
+          trailing: previousPurchase != null
+              ? IconButton(
+                  onPressed: () {
+                    _iapStoreKitPlatformAddition.showPriceConsentIfNeeded();
+                  },
+                  icon: const Icon(Icons.upgrade),
+                )
+              : TextButton(
+                  style: TextButton.styleFrom(
+                    backgroundColor: Colors.green[800],
+                    foregroundColor: Colors.white,
                   ),
+                  onPressed: () {
+                    final PurchaseParam purchaseParam = PurchaseParam(
+                      productDetails: productDetails,
+                    );
+                    if (productDetails.id == _kConsumableId) {
+                      _iapStoreKitPlatform.buyConsumable(
+                        purchaseParam: purchaseParam,
+                      );
+                    } else {
+                      _iapStoreKitPlatform.buyNonConsumable(
+                        purchaseParam: purchaseParam,
+                      );
+                    }
+                  },
+                  child: Text(productDetails.price),
+                ),
         );
       }),
     );
@@ -317,18 +317,19 @@ class _MyAppState extends State<_MyApp> {
               const Divider(),
               FutureBuilder<List<ListTile>>(
                 future: _buildPromoList(),
-                builder: (
-                  BuildContext context,
-                  AsyncSnapshot<List<ListTile>> snapshot,
-                ) {
-                  final List<ListTile>? data = snapshot.data;
+                builder:
+                    (
+                      BuildContext context,
+                      AsyncSnapshot<List<ListTile>> snapshot,
+                    ) {
+                      final List<ListTile>? data = snapshot.data;
 
-                  if (data != null) {
-                    return Column(children: data);
-                  }
+                      if (data != null) {
+                        return Column(children: data);
+                      }
 
-                  return const SizedBox.shrink();
-                },
+                      return const SizedBox.shrink();
+                    },
               ),
             ],
           ),
@@ -409,16 +410,15 @@ class _MyAppState extends State<_MyApp> {
     const ListTile consumableHeader = ListTile(
       title: Text('Purchased consumables'),
     );
-    final List<Widget> tokens =
-        _consumables.map((String id) {
-          return GridTile(
-            child: IconButton(
-              icon: const Icon(Icons.stars, size: 42.0, color: Colors.orange),
-              splashColor: Colors.yellowAccent,
-              onPressed: () => consume(id),
-            ),
-          );
-        }).toList();
+    final List<Widget> tokens = _consumables.map((String id) {
+      return GridTile(
+        child: IconButton(
+          icon: const Icon(Icons.stars, size: 42.0, color: Colors.orange),
+          splashColor: Colors.yellowAccent,
+          onPressed: () => consume(id),
+        ),
+      );
+    }).toList();
     return Card(
       child: Column(
         children: <Widget>[

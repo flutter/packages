@@ -1,6 +1,8 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+
+import 'dart:async';
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -597,5 +599,64 @@ void main() {
     );
 
     expect(map.mapConfiguration.style, '');
+  });
+
+  testWidgets('Update state from widget only when mounted', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      const Directionality(
+        textDirection: TextDirection.ltr,
+        child: GoogleMap(
+          initialCameraPosition: CameraPosition(target: LatLng(10.0, 15.0)),
+        ),
+      ),
+    );
+
+    final State<StatefulWidget> googleMapState = tester.state(
+      find.byType(GoogleMap),
+    );
+
+    await tester.pumpWidget(Container());
+
+    // This is done to force the update path while the widget is not mounted.
+    // ignore:invalid_use_of_protected_member
+    googleMapState.didUpdateWidget(
+      GoogleMap(
+        initialCameraPosition: const CameraPosition(target: LatLng(10.0, 15.0)),
+        circles: <Circle>{const Circle(circleId: CircleId('circle'))},
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    final PlatformMapStateRecorder map = platform.lastCreatedMap;
+
+    expect(map.circleUpdates.length, 1);
+  });
+
+  testWidgets('Update state after map is initialized only when mounted', (
+    WidgetTester tester,
+  ) async {
+    platform.initCompleter = Completer<void>();
+
+    await tester.pumpWidget(
+      const Directionality(
+        textDirection: TextDirection.ltr,
+        child: GoogleMap(
+          initialCameraPosition: CameraPosition(target: LatLng(10.0, 15.0)),
+        ),
+      ),
+    );
+
+    await tester.pumpWidget(Container());
+
+    platform.initCompleter!.complete();
+
+    await tester.pumpAndSettle();
+
+    final PlatformMapStateRecorder map = platform.lastCreatedMap;
+
+    expect(map.tileOverlaySets.length, 1);
   });
 }

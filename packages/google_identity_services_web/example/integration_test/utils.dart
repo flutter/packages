@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -30,10 +30,9 @@ ExpectConfigValueFn createExpectConfigValue(JSObject config) {
     } else if (matcher is List) {
       final List<Object?> old = matcher;
       matcher = isA<JSAny?>().having(
-        (JSAny? p0) =>
-            (p0 as JSArray<JSAny>?)?.toDart
-                .map((JSAny? e) => e.dartify())
-                .toList(),
+        (JSAny? p0) => (p0 as JSArray<JSAny>?)?.toDart
+            .map((JSAny? e) => e.dartify())
+            .toList(),
         'Array with matching values',
         old,
       );

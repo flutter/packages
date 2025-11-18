@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -77,8 +77,8 @@ void main() {
   testWidgets('Capture specific image resolutions', (
     WidgetTester tester,
   ) async {
-    final List<CameraDescription> cameras =
-        await CameraPlatform.instance.availableCameras();
+    final List<CameraDescription> cameras = await CameraPlatform.instance
+        .availableCameras();
     if (cameras.isEmpty) {
       return;
     }
@@ -138,8 +138,8 @@ void main() {
   testWidgets('Capture specific video resolutions', (
     WidgetTester tester,
   ) async {
-    final List<CameraDescription> cameras =
-        await CameraPlatform.instance.availableCameras();
+    final List<CameraDescription> cameras = await CameraPlatform.instance
+        .availableCameras();
     if (cameras.isEmpty) {
       return;
     }
@@ -168,8 +168,8 @@ void main() {
   });
 
   testWidgets('Pause and resume video recording', (WidgetTester tester) async {
-    final List<CameraDescription> cameras =
-        await CameraPlatform.instance.availableCameras();
+    final List<CameraDescription> cameras = await CameraPlatform.instance
+        .availableCameras();
     if (cameras.isEmpty) {
       return;
     }
@@ -222,8 +222,8 @@ void main() {
   });
 
   testWidgets('Set description while recording', (WidgetTester tester) async {
-    final List<CameraDescription> cameras =
-        await CameraPlatform.instance.availableCameras();
+    final List<CameraDescription> cameras = await CameraPlatform.instance
+        .availableCameras();
     if (cameras.length < 2) {
       return;
     }
@@ -244,8 +244,8 @@ void main() {
   });
 
   testWidgets('Set description', (WidgetTester tester) async {
-    final List<CameraDescription> cameras =
-        await CameraPlatform.instance.availableCameras();
+    final List<CameraDescription> cameras = await CameraPlatform.instance
+        .availableCameras();
     if (cameras.length < 2) {
       return;
     }
@@ -293,8 +293,8 @@ void main() {
   testWidgets('image streaming with imageFormatGroup', (
     WidgetTester tester,
   ) async {
-    final List<CameraDescription> cameras =
-        await CameraPlatform.instance.availableCameras();
+    final List<CameraDescription> cameras = await CameraPlatform.instance
+        .availableCameras();
     if (cameras.isEmpty) {
       return;
     }
@@ -316,8 +316,8 @@ void main() {
   });
 
   testWidgets('Recording with video streaming', (WidgetTester tester) async {
-    final List<CameraDescription> cameras =
-        await CameraPlatform.instance.availableCameras();
+    final List<CameraDescription> cameras = await CameraPlatform.instance
+        .availableCameras();
     if (cameras.isEmpty) {
       return;
     }
@@ -349,8 +349,8 @@ void main() {
   testWidgets('Capture specific image output formats', (
     WidgetTester tester,
   ) async {
-    final List<CameraDescription> cameras =
-        await CameraPlatform.instance.availableCameras();
+    final List<CameraDescription> cameras = await CameraPlatform.instance
+        .availableCameras();
     if (cameras.isEmpty) {
       return;
     }
@@ -371,8 +371,8 @@ void main() {
 
   group('Camera settings', () {
     testWidgets('Control FPS', (WidgetTester tester) async {
-      final List<CameraDescription> cameras =
-          await CameraPlatform.instance.availableCameras();
+      final List<CameraDescription> cameras = await CameraPlatform.instance
+          .availableCameras();
       if (cameras.isEmpty) {
         return;
       }
@@ -412,8 +412,8 @@ void main() {
     });
 
     testWidgets('Control video bitrate', (WidgetTester tester) async {
-      final List<CameraDescription> cameras =
-          await CameraPlatform.instance.availableCameras();
+      final List<CameraDescription> cameras = await CameraPlatform.instance
+          .availableCameras();
       if (cameras.isEmpty) {
         return;
       }
@@ -454,8 +454,8 @@ void main() {
     });
 
     testWidgets('Control audio bitrate', (WidgetTester tester) async {
-      final List<CameraDescription> cameras =
-          await CameraPlatform.instance.availableCameras();
+      final List<CameraDescription> cameras = await CameraPlatform.instance
+          .availableCameras();
       if (cameras.isEmpty) {
         return;
       }

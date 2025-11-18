@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -2388,11 +2388,8 @@ void main() {
         rowCount: 50,
         columnCount: 50,
         columnBuilder: (_) => span,
-        rowBuilder:
-            (int index) =>
-                index.isEven
-                    ? getTappableSpan(index, () => tapCounter++)
-                    : span,
+        rowBuilder: (int index) =>
+            index.isEven ? getTappableSpan(index, () => tapCounter++) : span,
         cellBuilder: (_, TableVicinity vicinity) {
           return TableViewCell(
             child: SizedBox.square(
@@ -2433,11 +2430,8 @@ void main() {
         rowCount: 50,
         columnCount: 50,
         rowBuilder: (_) => span,
-        columnBuilder:
-            (int index) =>
-                index.isEven
-                    ? getTappableSpan(index, () => tapCounter++)
-                    : span,
+        columnBuilder: (int index) =>
+            index.isEven ? getTappableSpan(index, () => tapCounter++) : span,
         cellBuilder: (_, TableVicinity vicinity) {
           return TableViewCell(
             child: SizedBox.square(
@@ -2478,16 +2472,11 @@ void main() {
       tableView = TableView.builder(
         rowCount: 50,
         columnCount: 50,
-        rowBuilder:
-            (int index) =>
-                index.isEven
-                    ? getTappableSpan(index, () => rowTapCounter++)
-                    : span,
-        columnBuilder:
-            (int index) =>
-                index.isEven
-                    ? getTappableSpan(index, () => columnTapCounter++)
-                    : span,
+        rowBuilder: (int index) =>
+            index.isEven ? getTappableSpan(index, () => rowTapCounter++) : span,
+        columnBuilder: (int index) => index.isEven
+            ? getTappableSpan(index, () => columnTapCounter++)
+            : span,
         cellBuilder: (_, TableVicinity vicinity) {
           return TableViewCell(
             child: SizedBox.square(
@@ -2535,16 +2524,11 @@ void main() {
         mainAxis: Axis.horizontal,
         rowCount: 50,
         columnCount: 50,
-        rowBuilder:
-            (int index) =>
-                index.isEven
-                    ? getTappableSpan(index, () => rowTapCounter++)
-                    : span,
-        columnBuilder:
-            (int index) =>
-                index.isEven
-                    ? getTappableSpan(index, () => columnTapCounter++)
-                    : span,
+        rowBuilder: (int index) =>
+            index.isEven ? getTappableSpan(index, () => rowTapCounter++) : span,
+        columnBuilder: (int index) => index.isEven
+            ? getTappableSpan(index, () => columnTapCounter++)
+            : span,
         cellBuilder: (_, TableVicinity vicinity) {
           return TableViewCell(
             child: SizedBox.square(
@@ -2631,12 +2615,11 @@ void main() {
       TableView tableView = TableView.builder(
         rowCount: 50,
         columnCount: 50,
-        columnBuilder:
-            (_) => const TableSpan(
-              extent: FixedTableSpanExtent(100),
-              // This padding is so high, only the first column should be laid out.
-              padding: TableSpanPadding(leading: 2000),
-            ),
+        columnBuilder: (_) => const TableSpan(
+          extent: FixedTableSpanExtent(100),
+          // This padding is so high, only the first column should be laid out.
+          padding: TableSpanPadding(leading: 2000),
+        ),
         rowBuilder: (_) => span,
         cellBuilder: (_, TableVicinity vicinity) {
           return TableViewCell(
@@ -2666,11 +2649,10 @@ void main() {
         rowCount: 50,
         columnCount: 50,
         // This padding is so high, no children should be laid out.
-        rowBuilder:
-            (_) => const TableSpan(
-              extent: FixedTableSpanExtent(100),
-              padding: TableSpanPadding(leading: 2000),
-            ),
+        rowBuilder: (_) => const TableSpan(
+          extent: FixedTableSpanExtent(100),
+          padding: TableSpanPadding(leading: 2000),
+        ),
         columnBuilder: (_) => span,
         cellBuilder: (_, TableVicinity vicinity) {
           return TableViewCell(
@@ -2704,8 +2686,8 @@ void main() {
       TableView tableView = TableView.builder(
         rowCount: 50,
         columnCount: 50,
-        columnBuilder:
-            (_) => const TableSpan(extent: FixedTableSpanExtent(200)),
+        columnBuilder: (_) =>
+            const TableSpan(extent: FixedTableSpanExtent(200)),
         rowBuilder: (_) => span,
         cellBuilder: (_, TableVicinity vicinity) {
           return TableViewCell(
@@ -2732,11 +2714,10 @@ void main() {
       tableView = TableView.builder(
         rowCount: 50,
         columnCount: 50,
-        columnBuilder:
-            (_) => const TableSpan(
-              extent: FixedTableSpanExtent(200),
-              padding: TableSpanPadding(trailing: 200),
-            ),
+        columnBuilder: (_) => const TableSpan(
+          extent: FixedTableSpanExtent(200),
+          padding: TableSpanPadding(trailing: 200),
+        ),
         rowBuilder: (_) => span,
         cellBuilder: (_, TableVicinity vicinity) {
           return TableViewCell(
@@ -2790,11 +2771,10 @@ void main() {
       tableView = TableView.builder(
         rowCount: 50,
         columnCount: 50,
-        rowBuilder:
-            (_) => const TableSpan(
-              extent: FixedTableSpanExtent(200),
-              padding: TableSpanPadding(trailing: 200),
-            ),
+        rowBuilder: (_) => const TableSpan(
+          extent: FixedTableSpanExtent(200),
+          padding: TableSpanPadding(trailing: 200),
+        ),
         columnBuilder: (_) => span,
         cellBuilder: (_, TableVicinity vicinity) {
           return TableViewCell(
@@ -3216,40 +3196,38 @@ void main() {
       TableView tableView = TableView.builder(
         rowCount: 2,
         columnCount: 2,
-        columnBuilder:
-            (int index) => TableSpan(
-              extent: const FixedTableSpanExtent(200.0),
-              padding: index == 0 ? const TableSpanPadding(trailing: 10) : null,
-              foregroundDecoration: TableSpanDecoration(
-                consumeSpanPadding: false,
-                borderRadius: BorderRadius.circular(10.0),
-                border: const TableSpanBorder(
-                  trailing: BorderSide(color: Colors.orange, width: 3),
-                ),
-              ),
-              backgroundDecoration: TableSpanDecoration(
-                // consumePadding true by default
-                color: index.isEven ? Colors.red : null,
-                borderRadius: BorderRadius.circular(30.0),
-              ),
+        columnBuilder: (int index) => TableSpan(
+          extent: const FixedTableSpanExtent(200.0),
+          padding: index == 0 ? const TableSpanPadding(trailing: 10) : null,
+          foregroundDecoration: TableSpanDecoration(
+            consumeSpanPadding: false,
+            borderRadius: BorderRadius.circular(10.0),
+            border: const TableSpanBorder(
+              trailing: BorderSide(color: Colors.orange, width: 3),
             ),
-        rowBuilder:
-            (int index) => TableSpan(
-              extent: const FixedTableSpanExtent(200.0),
-              padding: index == 1 ? const TableSpanPadding(leading: 10) : null,
-              foregroundDecoration: TableSpanDecoration(
-                // consumePadding true by default
-                borderRadius: BorderRadius.circular(30.0),
-                border: const TableSpanBorder(
-                  leading: BorderSide(color: Colors.green, width: 3),
-                ),
-              ),
-              backgroundDecoration: TableSpanDecoration(
-                color: index.isOdd ? Colors.blue : null,
-                borderRadius: BorderRadius.circular(30.0),
-                consumeSpanPadding: false,
-              ),
+          ),
+          backgroundDecoration: TableSpanDecoration(
+            // consumePadding true by default
+            color: index.isEven ? Colors.red : null,
+            borderRadius: BorderRadius.circular(30.0),
+          ),
+        ),
+        rowBuilder: (int index) => TableSpan(
+          extent: const FixedTableSpanExtent(200.0),
+          padding: index == 1 ? const TableSpanPadding(leading: 10) : null,
+          foregroundDecoration: TableSpanDecoration(
+            // consumePadding true by default
+            borderRadius: BorderRadius.circular(30.0),
+            border: const TableSpanBorder(
+              leading: BorderSide(color: Colors.green, width: 3),
             ),
+          ),
+          backgroundDecoration: TableSpanDecoration(
+            color: index.isOdd ? Colors.blue : null,
+            borderRadius: BorderRadius.circular(30.0),
+            consumeSpanPadding: false,
+          ),
+        ),
         cellBuilder: (_, TableVicinity vicinity) {
           return TableViewCell(
             child: Container(
@@ -3381,30 +3359,28 @@ void main() {
         mainAxis: Axis.horizontal,
         rowCount: 2,
         columnCount: 2,
-        columnBuilder:
-            (int index) => TableSpan(
-              extent: const FixedTableSpanExtent(200.0),
-              foregroundDecoration: const TableSpanDecoration(
-                border: TableSpanBorder(
-                  trailing: BorderSide(color: Colors.orange, width: 3),
-                ),
-              ),
-              backgroundDecoration: TableSpanDecoration(
-                color: index.isEven ? Colors.red : null,
-              ),
+        columnBuilder: (int index) => TableSpan(
+          extent: const FixedTableSpanExtent(200.0),
+          foregroundDecoration: const TableSpanDecoration(
+            border: TableSpanBorder(
+              trailing: BorderSide(color: Colors.orange, width: 3),
             ),
-        rowBuilder:
-            (int index) => TableSpan(
-              extent: const FixedTableSpanExtent(200.0),
-              foregroundDecoration: const TableSpanDecoration(
-                border: TableSpanBorder(
-                  leading: BorderSide(color: Colors.green, width: 3),
-                ),
-              ),
-              backgroundDecoration: TableSpanDecoration(
-                color: index.isOdd ? Colors.blue : null,
-              ),
+          ),
+          backgroundDecoration: TableSpanDecoration(
+            color: index.isEven ? Colors.red : null,
+          ),
+        ),
+        rowBuilder: (int index) => TableSpan(
+          extent: const FixedTableSpanExtent(200.0),
+          foregroundDecoration: const TableSpanDecoration(
+            border: TableSpanBorder(
+              leading: BorderSide(color: Colors.green, width: 3),
             ),
+          ),
+          backgroundDecoration: TableSpanDecoration(
+            color: index.isOdd ? Colors.blue : null,
+          ),
+        ),
         cellBuilder: (_, TableVicinity vicinity) {
           return TableViewCell(
             child: Container(
@@ -3501,10 +3477,10 @@ void main() {
         pinnedRowCount: 1,
         columnCount: 2,
         pinnedColumnCount: 1,
-        columnBuilder:
-            (int index) => const TableSpan(extent: FixedTableSpanExtent(200.0)),
-        rowBuilder:
-            (int index) => const TableSpan(extent: FixedTableSpanExtent(200.0)),
+        columnBuilder: (int index) =>
+            const TableSpan(extent: FixedTableSpanExtent(200.0)),
+        rowBuilder: (int index) =>
+            const TableSpan(extent: FixedTableSpanExtent(200.0)),
         cellBuilder: (_, TableVicinity vicinity) {
           return TableViewCell(
             child: Container(
@@ -3547,10 +3523,10 @@ void main() {
         pinnedRowCount: 1,
         columnCount: 2,
         pinnedColumnCount: 1,
-        columnBuilder:
-            (int index) => const TableSpan(extent: FixedTableSpanExtent(200.0)),
-        rowBuilder:
-            (int index) => const TableSpan(extent: FixedTableSpanExtent(200.0)),
+        columnBuilder: (int index) =>
+            const TableSpan(extent: FixedTableSpanExtent(200.0)),
+        rowBuilder: (int index) =>
+            const TableSpan(extent: FixedTableSpanExtent(200.0)),
         cellBuilder: (_, TableVicinity vicinity) {
           return TableViewCell(
             child: Container(
@@ -3593,15 +3569,13 @@ void main() {
         rowCount: 50,
         columnCount: 50,
         columnBuilder: (_) => span,
-        rowBuilder:
-            (int index) =>
-                index.isEven
-                    ? getMouseTrackingSpan(
-                      index,
-                      onEnter: (_) => enterCounter++,
-                      onExit: (_) => exitCounter++,
-                    )
-                    : span,
+        rowBuilder: (int index) => index.isEven
+            ? getMouseTrackingSpan(
+                index,
+                onEnter: (_) => enterCounter++,
+                onExit: (_) => exitCounter++,
+              )
+            : span,
         cellBuilder: (_, TableVicinity vicinity) {
           return TableViewCell(
             child: SizedBox.square(
@@ -4136,8 +4110,8 @@ void main() {
       final TableView tableView = TableView.builder(
         columnCount: 10,
         rowCount: 10,
-        columnBuilder:
-            (_) => const TableSpan(extent: FixedTableSpanExtent(100)),
+        columnBuilder: (_) =>
+            const TableSpan(extent: FixedTableSpanExtent(100)),
         rowBuilder: (_) => const TableSpan(extent: FixedTableSpanExtent(100)),
         cellBuilder: (BuildContext context, TableVicinity vicinity) {
           if (mergedCell.contains(vicinity)) {

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -229,10 +229,9 @@ Map<String, dynamic> buildProductMap(SKProductWrapper product) {
 Map<String, dynamic> buildProductResponseMap(
   SkProductResponseWrapper response,
 ) {
-  final List<dynamic> productsMap =
-      response.products
-          .map((SKProductWrapper product) => buildProductMap(product))
-          .toList();
+  final List<dynamic> productsMap = response.products
+      .map((SKProductWrapper product) => buildProductMap(product))
+      .toList();
   return <String, dynamic>{
     'products': productsMap,
     'invalidProductIdentifiers': response.invalidProductIdentifiers,
@@ -255,10 +254,9 @@ Map<String, dynamic> buildTransactionMap(
       SKPaymentTransactionStateWrapper.purchased,
     ),
     'payment': transaction.payment.toMap(),
-    'originalTransaction':
-        transaction.originalTransaction == null
-            ? null
-            : buildTransactionMap(transaction.originalTransaction!),
+    'originalTransaction': transaction.originalTransaction == null
+        ? null
+        : buildTransactionMap(transaction.originalTransaction!),
     'transactionTimeStamp': transaction.transactionTimeStamp,
     'transactionIdentifier': transaction.transactionIdentifier,
     'error': buildErrorMap(transaction.error!),
@@ -274,10 +272,9 @@ Map<String, dynamic> buildTransactionMessage(
       SKPaymentTransactionStateWrapper.purchased,
     ),
     'payment': transaction.payment.toMap(),
-    'originalTransaction':
-        transaction.originalTransaction == null
-            ? null
-            : buildTransactionMap(transaction.originalTransaction!),
+    'originalTransaction': transaction.originalTransaction == null
+        ? null
+        : buildTransactionMap(transaction.originalTransaction!),
     'transactionTimeStamp': transaction.transactionTimeStamp,
     'transactionIdentifier': transaction.transactionIdentifier,
     'error': buildErrorMap(transaction.error!),

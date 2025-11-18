@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -50,13 +50,9 @@ void main() {
         SharedPreferencesState(
           allKeys: const AsyncState<List<String>>.data(<String>[selectedKey]),
           editing: editing,
-          selectedKey:
-              state == null
-                  ? null
-                  : SelectedSharedPreferencesKey(
-                    key: selectedKey,
-                    value: state,
-                  ),
+          selectedKey: state == null
+              ? null
+              : SelectedSharedPreferencesKey(key: selectedKey, value: state),
         ),
       );
     }

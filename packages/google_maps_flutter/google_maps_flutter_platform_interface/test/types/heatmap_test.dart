@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -302,10 +302,12 @@ void main() {
       );
 
       expect(gradient.toJson(), <String, Object?>{
-        'colors':
-            colors.map((HeatmapGradientColor e) => e.color.value).toList(),
-        'startPoints':
-            colors.map((HeatmapGradientColor e) => e.startPoint).toList(),
+        'colors': colors
+            .map((HeatmapGradientColor e) => e.color.value)
+            .toList(),
+        'startPoints': colors
+            .map((HeatmapGradientColor e) => e.startPoint)
+            .toList(),
         'colorMapSize': colorMapSize,
       });
     });

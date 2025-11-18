@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -422,9 +422,8 @@ void main() {
                 },
                 didReceiveAuthenticationChallenge: (_, __, ___) async {
                   return AuthenticationChallengeResponse.pigeon_detached(
-                    disposition:
-                        UrlSessionAuthChallengeDisposition
-                            .performDefaultHandling,
+                    disposition: UrlSessionAuthChallengeDisposition
+                        .performDefaultHandling,
                     pigeon_instanceManager: TestInstanceManager(),
                   );
                 },
@@ -457,17 +456,17 @@ void main() {
             WebKitNavigationDelegateCreationParams(
               webKitProxy: WebKitProxy(
                 newWKNavigationDelegate: CapturingNavigationDelegate.new,
-                createAsyncAuthenticationChallengeResponse: (
-                  UrlSessionAuthChallengeDisposition disposition,
-                  URLCredential? credential,
-                ) async {
-                  return AuthenticationChallengeResponse.pigeon_detached(
-                    disposition:
-                        UrlSessionAuthChallengeDisposition
+                createAsyncAuthenticationChallengeResponse:
+                    (
+                      UrlSessionAuthChallengeDisposition disposition,
+                      URLCredential? credential,
+                    ) async {
+                      return AuthenticationChallengeResponse.pigeon_detached(
+                        disposition: UrlSessionAuthChallengeDisposition
                             .performDefaultHandling,
-                    pigeon_instanceManager: TestInstanceManager(),
-                  );
-                },
+                        pigeon_instanceManager: TestInstanceManager(),
+                      );
+                    },
               ),
             ),
           );
@@ -539,28 +538,30 @@ void main() {
             WebKitNavigationDelegateCreationParams(
               webKitProxy: WebKitProxy(
                 newWKNavigationDelegate: CapturingNavigationDelegate.new,
-                createAsyncAuthenticationChallengeResponse: (
-                  UrlSessionAuthChallengeDisposition disposition,
-                  URLCredential? credential,
-                ) async {
-                  return AuthenticationChallengeResponse.pigeon_detached(
-                    disposition: disposition,
-                    credential: credential,
-                    pigeon_instanceManager: TestInstanceManager(),
-                  );
-                },
-                withUserAsyncURLCredential: (
-                  String user,
-                  String password,
-                  UrlCredentialPersistence persistence,
-                ) async {
-                  expect(user, expectedUser);
-                  expect(password, expectedPassword);
-                  expect(persistence, expectedPersistence);
-                  return URLCredential.pigeon_detached(
-                    pigeon_instanceManager: TestInstanceManager(),
-                  );
-                },
+                createAsyncAuthenticationChallengeResponse:
+                    (
+                      UrlSessionAuthChallengeDisposition disposition,
+                      URLCredential? credential,
+                    ) async {
+                      return AuthenticationChallengeResponse.pigeon_detached(
+                        disposition: disposition,
+                        credential: credential,
+                        pigeon_instanceManager: TestInstanceManager(),
+                      );
+                    },
+                withUserAsyncURLCredential:
+                    (
+                      String user,
+                      String password,
+                      UrlCredentialPersistence persistence,
+                    ) async {
+                      expect(user, expectedUser);
+                      expect(password, expectedPassword);
+                      expect(persistence, expectedPersistence);
+                      return URLCredential.pigeon_detached(
+                        pigeon_instanceManager: TestInstanceManager(),
+                      );
+                    },
               ),
             ),
           );
@@ -613,9 +614,8 @@ void main() {
                   },
                   didReceiveAuthenticationChallenge: (_, __, ___) async {
                     return AuthenticationChallengeResponse.pigeon_detached(
-                      disposition:
-                          UrlSessionAuthChallengeDisposition
-                              .performDefaultHandling,
+                      disposition: UrlSessionAuthChallengeDisposition
+                          .performDefaultHandling,
                       pigeon_instanceManager: TestInstanceManager(),
                     );
                   },
@@ -649,16 +649,17 @@ void main() {
             WebKitNavigationDelegateCreationParams(
               webKitProxy: WebKitProxy(
                 newWKNavigationDelegate: CapturingNavigationDelegate.new,
-                createAsyncAuthenticationChallengeResponse: (
-                  UrlSessionAuthChallengeDisposition disposition,
-                  URLCredential? credential,
-                ) async {
-                  return AuthenticationChallengeResponse.pigeon_detached(
-                    disposition: disposition,
-                    credential: credential,
-                    pigeon_instanceManager: TestInstanceManager(),
-                  );
-                },
+                createAsyncAuthenticationChallengeResponse:
+                    (
+                      UrlSessionAuthChallengeDisposition disposition,
+                      URLCredential? credential,
+                    ) async {
+                      return AuthenticationChallengeResponse.pigeon_detached(
+                        disposition: disposition,
+                        credential: credential,
+                        pigeon_instanceManager: TestInstanceManager(),
+                      );
+                    },
                 serverTrustAsyncURLCredential: (_) async {
                   return URLCredential.pigeon_detached(
                     pigeon_instanceManager: TestInstanceManager(),
@@ -794,16 +795,17 @@ void main() {
           WebKitNavigationDelegateCreationParams(
             webKitProxy: WebKitProxy(
               newWKNavigationDelegate: CapturingNavigationDelegate.new,
-              createAsyncAuthenticationChallengeResponse: (
-                UrlSessionAuthChallengeDisposition disposition,
-                URLCredential? credential,
-              ) async {
-                return AuthenticationChallengeResponse.pigeon_detached(
-                  disposition: disposition,
-                  credential: credential,
-                  pigeon_instanceManager: TestInstanceManager(),
-                );
-              },
+              createAsyncAuthenticationChallengeResponse:
+                  (
+                    UrlSessionAuthChallengeDisposition disposition,
+                    URLCredential? credential,
+                  ) async {
+                    return AuthenticationChallengeResponse.pigeon_detached(
+                      disposition: disposition,
+                      credential: credential,
+                      pigeon_instanceManager: TestInstanceManager(),
+                    );
+                  },
             ),
           ),
         );

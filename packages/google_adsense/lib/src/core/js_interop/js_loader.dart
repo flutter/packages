@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -33,10 +33,9 @@ Future<void> loadJsSdk(
 
   final String scriptUrl = '$_URL?client=ca-pub-$adClient';
 
-  final web.HTMLScriptElement script =
-      web.HTMLScriptElement()
-        ..async = true
-        ..crossOrigin = 'anonymous';
+  final web.HTMLScriptElement script = web.HTMLScriptElement()
+    ..async = true
+    ..crossOrigin = 'anonymous';
 
   if (web.window.nullableTrustedTypes != null) {
     final String trustedTypePolicyName = 'adsense-dart-$adClient';

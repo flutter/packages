@@ -1,3 +1,24 @@
+## 4.10.6
+
+* Updates to Pigeon 26.
+
+## 4.10.5
+
+* Resolves Gradle 9 deprecations.
+
+## 4.10.4
+
+* Adds a README section about enabling geolocation.
+
+## 4.10.3
+
+* Updates Java compatibility version to 17.
+
+## 4.10.2
+
+* Updates minimum supported SDK version to Flutter 3.35.
+* Removes obsolete code related to supporting SDK <24.
+
 ## 4.10.1
 
 * Bumps com.android.tools.build:gradle to 8.12.1 and kotlin_version to 2.2.10.

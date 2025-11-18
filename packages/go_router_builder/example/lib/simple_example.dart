@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -30,14 +30,14 @@ class App extends StatelessWidget {
     TypedGoRoute<FamilyRoute>(path: 'family/:familyId'),
   ],
 )
-class HomeRoute extends GoRouteData with _$HomeRoute {
+class HomeRoute extends GoRouteData with $HomeRoute {
   const HomeRoute();
 
   @override
   Widget build(BuildContext context, GoRouterState state) => const HomeScreen();
 }
 
-class FamilyRoute extends GoRouteData with _$FamilyRoute {
+class FamilyRoute extends GoRouteData with $FamilyRoute {
   const FamilyRoute(this.familyId);
 
   final String familyId;

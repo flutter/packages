@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -159,6 +159,65 @@ void main() {
 
       expect(result, null);
     });
+
+    test('calls with and without filterToAuthorized', () async {
+      when(mockApi.getCredential(any)).thenAnswer(
+        (_) async =>
+            GetCredentialFailure(type: GetCredentialFailureType.noCredential),
+      );
+
+      await googleSignIn.init(const InitParameters(serverClientId: 'id'));
+      await googleSignIn.attemptLightweightAuthentication(
+        const AttemptLightweightAuthenticationParameters(),
+      );
+
+      final List<VerificationResult> verifications = verifyInOrder(
+        <Future<GetCredentialResult>>[
+          mockApi.getCredential(captureAny),
+          mockApi.getCredential(captureAny),
+        ],
+      );
+      final GetCredentialRequestParams firstParams =
+          verifications[0].captured[0] as GetCredentialRequestParams;
+      final GetCredentialRequestParams secondParams =
+          verifications[1].captured[0] as GetCredentialRequestParams;
+      expect(firstParams.useButtonFlow, isFalse);
+      expect(firstParams.googleIdOptionParams.filterToAuthorized, isTrue);
+      expect(firstParams.googleIdOptionParams.autoSelectEnabled, isTrue);
+      expect(secondParams.useButtonFlow, isFalse);
+      expect(secondParams.googleIdOptionParams.filterToAuthorized, isFalse);
+      expect(secondParams.googleIdOptionParams.autoSelectEnabled, isFalse);
+    });
+
+    test(
+      'only calls with filterToAuthorized if hosted domain is set',
+      () async {
+        when(mockApi.getCredential(any)).thenAnswer(
+          (_) async =>
+              GetCredentialFailure(type: GetCredentialFailureType.noCredential),
+        );
+
+        await googleSignIn.init(
+          const InitParameters(
+            serverClientId: 'id',
+            hostedDomain: 'example.com',
+          ),
+        );
+        await googleSignIn.attemptLightweightAuthentication(
+          const AttemptLightweightAuthenticationParameters(),
+        );
+
+        final VerificationResult verification = verify(
+          mockApi.getCredential(captureAny),
+        );
+        expect(verification.callCount, 1);
+        final GetCredentialRequestParams params =
+            verification.captured[0] as GetCredentialRequestParams;
+        expect(params.useButtonFlow, isFalse);
+        expect(params.googleIdOptionParams.filterToAuthorized, isTrue);
+        expect(params.googleIdOptionParams.autoSelectEnabled, isTrue);
+      },
+    );
   });
 
   group('authenticate', () {
@@ -197,6 +256,20 @@ void main() {
       final GetCredentialRequestParams hostParams =
           verification.captured[0] as GetCredentialRequestParams;
       expect(hostParams.serverClientId, serverClientId);
+    });
+
+    test('passes hosted domain if provided', () async {
+      const String hostedDomain = 'example.com';
+
+      await googleSignIn.init(const InitParameters(hostedDomain: hostedDomain));
+      await googleSignIn.authenticate(const AuthenticateParameters());
+
+      final VerificationResult verification = verify(
+        mockApi.getCredential(captureAny),
+      );
+      final GetCredentialRequestParams hostParams =
+          verification.captured[0] as GetCredentialRequestParams;
+      expect(hostParams.hostedDomain, hostedDomain);
     });
 
     test('passes nonce if provided', () async {
@@ -886,10 +959,109 @@ void main() {
     verify(mockApi.clearCredentialState());
   });
 
-  test('disconnect also signs out', () async {
-    await googleSignIn.disconnect(const DisconnectParams());
+  group('disconnect', () {
+    test('calls through with previously authorized accounts', () async {
+      // Populate the cache of users.
+      const String userEmail = 'user@example.com';
+      const String aScope = 'grantedScope';
+      when(mockApi.authorize(any, promptIfUnauthorized: false)).thenAnswer(
+        (_) async => PlatformAuthorizationResult(
+          grantedScopes: <String>[aScope],
+          accessToken: 'token',
+        ),
+      );
+      await googleSignIn.init(const InitParameters(serverClientId: 'id'));
+      await googleSignIn.clientAuthorizationTokensForScopes(
+        const ClientAuthorizationTokensForScopesParameters(
+          request: AuthorizationRequestDetails(
+            scopes: <String>[aScope],
+            userId: null,
+            email: userEmail,
+            promptIfUnauthorized: false,
+          ),
+        ),
+      );
 
-    verify(mockApi.clearCredentialState());
+      await googleSignIn.disconnect(const DisconnectParams());
+
+      final VerificationResult verification = verify(
+        mockApi.revokeAccess(captureAny),
+      );
+      final PlatformRevokeAccessRequest hostParams =
+          verification.captured[0] as PlatformRevokeAccessRequest;
+      expect(hostParams.accountEmail, userEmail);
+      expect(hostParams.scopes.first, aScope);
+    });
+
+    test(
+      'calls through with non-authorized accounts, using "openid"',
+      () async {
+        // Populate the cache of users.
+        when(mockApi.getCredential(any)).thenAnswer(
+          (_) async => GetCredentialSuccess(
+            credential: PlatformGoogleIdTokenCredential(
+              displayName: _testUser.displayName,
+              profilePictureUri: _testUser.photoUrl,
+              id: _testUser.email,
+              idToken: _testAuthnToken.idToken!,
+            ),
+          ),
+        );
+        await googleSignIn.init(const InitParameters(serverClientId: 'id'));
+        await googleSignIn.authenticate(const AuthenticateParameters());
+
+        await googleSignIn.disconnect(const DisconnectParams());
+
+        final VerificationResult verification = verify(
+          mockApi.revokeAccess(captureAny),
+        );
+        final PlatformRevokeAccessRequest hostParams =
+            verification.captured[0] as PlatformRevokeAccessRequest;
+        expect(hostParams.accountEmail, _testUser.email);
+        expect(hostParams.scopes.first, 'openid');
+      },
+    );
+
+    test('does not re-revoke for repeated disconnect', () async {
+      // Populate the cache of users.
+      const String userEmail = 'user@example.com';
+      const String aScope = 'grantedScope';
+      when(mockApi.authorize(any, promptIfUnauthorized: false)).thenAnswer(
+        (_) async => PlatformAuthorizationResult(
+          grantedScopes: <String>[aScope],
+          accessToken: 'token',
+        ),
+      );
+      await googleSignIn.init(const InitParameters(serverClientId: 'id'));
+      await googleSignIn.clientAuthorizationTokensForScopes(
+        const ClientAuthorizationTokensForScopesParameters(
+          request: AuthorizationRequestDetails(
+            scopes: <String>[aScope],
+            userId: null,
+            email: userEmail,
+            promptIfUnauthorized: false,
+          ),
+        ),
+      );
+
+      await googleSignIn.disconnect(const DisconnectParams());
+
+      verify(mockApi.revokeAccess(any));
+
+      reset(mockApi);
+
+      // Since no accounts have authorized since the last disconnect, this
+      // should not attempt to revoke anything.
+      await googleSignIn.disconnect(const DisconnectParams());
+
+      verifyNever(mockApi.revokeAccess(any));
+    });
+
+    test('also signs out', () async {
+      await googleSignIn.disconnect(const DisconnectParams());
+
+      verify(mockApi.clearCredentialState());
+    });
   });
 
   // Returning null triggers the app-facing package to create stream events,
