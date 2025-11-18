@@ -78,11 +78,9 @@ class PublishCommand extends PackageLoopingCommand {
           'Release all packages that contains pubspec changes at the current commit compares to the base-sha.\n'
           'The --packages option is ignored if this is on.',
     );
-    argParser.addFlag(
-      _batchReleaseFlag,
-      help:
-          'only release the packages that opt-in for batch release option.'
-    )
+    argParser.addFlag(_batchReleaseFlag,
+        help:
+            'only release the packages that opt-in for batch release option.');
     argParser.addFlag(
       _dryRunFlag,
       help:
@@ -213,7 +211,8 @@ class PublishCommand extends PackageLoopingCommand {
         // Skip the package if batch release flag is not set to match the ci_config.yaml
         if (getBoolArg(_batchReleaseFlag) != isBatchReleasePackage) {
           continue;
-  
+        }
+
         // git outputs a relativa, Posix-style path.
         final File pubspecFile = childFileWithSubcomponents(
             packagesDir.fileSystem.directory((await gitDir).path),
