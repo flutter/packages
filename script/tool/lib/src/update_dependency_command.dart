@@ -45,6 +45,7 @@ class UpdateDependencyCommand extends PackageLoopingCommand {
         allowed: <String>[
           _AndroidDependencyType.gradle,
           _AndroidDependencyType.androidGradlePlugin,
+          _AndroidDependencyType.kotlinGradlePlugin,
           _AndroidDependencyType.compileSdk,
           _AndroidDependencyType.compileSdkForExamples,
         ],
@@ -53,6 +54,8 @@ class UpdateDependencyCommand extends PackageLoopingCommand {
               'Updates Gradle version used in plugin example apps.',
           _AndroidDependencyType.androidGradlePlugin:
               'Updates AGP version used in plugin example apps.',
+          _AndroidDependencyType.kotlinGradlePlugin:
+              'Updates KGP version used in plugin example apps.',
           _AndroidDependencyType.compileSdk:
               'Updates compileSdk version used to compile plugins.',
           _AndroidDependencyType.compileSdkForExamples:
@@ -153,6 +156,19 @@ A version with a valid format (maximum 2-3 numbers separated by 1-2 periods) mus
             1. The first number must have one or two digits
             2. The second number must have one or two digits
             3. If present, the third number must have a single digit''');
+          throw ToolExit(_exitInvalidTargetVersion);
+        }
+      } else if (_targetAndroidDependency ==
+          _AndroidDependencyType.kotlinGradlePlugin) {
+        final RegExp validKgpVersionPattern = RegExp(r'^\d\.\d\.\d{1,2}$');
+        final bool isValidKgpVersion =
+            validKgpVersionPattern.stringMatch(version) == version;
+        if (!isValidKgpVersion) {
+          printError('''
+A version with a valid format (3 numbers separated by 2 periods) must be provided.
+            1. The first number must have one digit
+            2. The second number must have one digit
+            3. The third number must have one or two digits''');
           throw ToolExit(_exitInvalidTargetVersion);
         }
       } else if (_targetAndroidDependency ==
@@ -266,7 +282,8 @@ A version with a valid format (maximum 2-3 numbers separated by 1-2 periods) mus
         _targetAndroidDependency ==
             _AndroidDependencyType.compileSdkForExamples ||
         _targetAndroidDependency ==
-            _AndroidDependencyType.androidGradlePlugin) {
+            _AndroidDependencyType.androidGradlePlugin ||
+        _targetAndroidDependency == _AndroidDependencyType.kotlinGradlePlugin) {
       return _runForAndroidDependencyOnExamples(package);
     }
 
@@ -334,7 +351,17 @@ A version with a valid format (maximum 2-3 numbers separated by 1-2 periods) mus
             r'^\s*id\s+"com\.android\.application"\s+version\s+"(\d{1,2}\.\d{1,2}(?:\.\d)?)"\s+apply\s+false\s*$',
             multiLine: true);
         newDependencyVersionEntry =
-            '    id "com.android.application" version "$_targetVersion" apply false';
+            'id "com.android.application" version "$_targetVersion" apply false';
+      } else if (_targetAndroidDependency ==
+          _AndroidDependencyType.kotlinGradlePlugin) {
+        if (androidDirectory.childFile('settings.gradle').existsSync()) {
+          filesToUpdate.add(androidDirectory.childFile('settings.gradle'));
+        }
+        dependencyVersionPattern = RegExp(
+            r'^\s*id\s+"org\.jetbrains\.kotlin\.android"\s+version\s+"(\d\.\d\.\d{1,2})"\s+apply\s+false\s*$',
+            multiLine: true);
+        newDependencyVersionEntry =
+            '    id "org.jetbrains.kotlin.android" version "$_targetVersion" apply false';
       } else {
         printError(
             'Target Android dependency $_targetAndroidDependency is unrecognized.');
@@ -525,6 +552,7 @@ enum _PubDependencyType { normal, dev }
 class _AndroidDependencyType {
   static const String gradle = 'gradle';
   static const String androidGradlePlugin = 'androidGradlePlugin';
+  static const String kotlinGradlePlugin = 'kotlinGradlePlugin';
   static const String compileSdk = 'compileSdk';
   static const String compileSdkForExamples = 'compileSdkForExamples';
 }
