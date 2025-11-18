@@ -16,7 +16,7 @@ typedef ConfigurationProvider = MapConfiguration Function(int mapId);
 
 /// Function that gets the [ClusterManagersController] for a given `mapId`.
 typedef ClusterManagersControllerProvider =
-    ClusterManagersController<dynamic>? Function(int mapId);
+    ClusterManagersController<Object?>? Function(int mapId);
 
 /// Function that gets the [GroundOverlaysController] for a given `mapId`.
 typedef GroundOverlaysControllerProvider =

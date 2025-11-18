@@ -11,9 +11,15 @@ part of '../google_maps_flutter_web.dart';
 /// * [AdvancedMarkersController] implements the [MarkersController] for the
 /// advanced [gmaps.AdvancedMarkerElement] class.
 ///
+/// Type parameters:
+/// * [T] - The marker type (e.g., [gmaps.Marker] or [gmaps.AdvancedMarkerElement])
+/// * [O] - The options type used to configure the marker
+///   (e.g., [gmaps.MarkerOptions] or [gmaps.AdvancedMarkerElementOptions])
+/// 
 /// [T] must extend [JSObject]. It's not specified in code because our mocking
 /// framework does not support mocking JSObjects.
-abstract class MarkersController<T, O> extends GeometryController {
+abstract class MarkersController<T extends Object, O>
+    extends GeometryController {
   /// Initialize the cache. The [StreamController] comes from the [GoogleMapController], and is shared with other controllers.
   MarkersController({
     required StreamController<MapEvent<Object?>> stream,

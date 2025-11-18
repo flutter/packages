@@ -7,6 +7,11 @@ part of '../google_maps_flutter_web.dart';
 /// The `MarkerController` class wraps a [gmaps.AdvancedMarkerElement]
 /// or [gmaps.Marker], how it handles events, and its associated (optional)
 /// [gmaps.InfoWindow] widget.
+///
+/// Type parameters:
+/// * [T] - The marker type (e.g., [gmaps.Marker] or [gmaps.AdvancedMarkerElement])
+/// * [O] - The options type used to configure the marker
+///   (e.g., [gmaps.MarkerOptions] or [gmaps.AdvancedMarkerElementOptions])
 abstract class MarkerController<T, O> {
   /// Creates a `MarkerController`, which wraps a [gmaps.AdvancedMarkerElement]
   /// or [gmaps.Marker] object, its `onTap`/`onDrag` behavior, and its
@@ -176,7 +181,10 @@ class LegacyMarkerController
 
   @override
   void showInfoWindow() {
-    assert(_marker != null, 'Cannot `showInfoWindow` on a `remove`d Marker.');
+    if (_marker == null) {
+      throw StateError('Cannot `showInfoWindow` on a `remove`d Marker.');
+    }
+    
     if (_infoWindow != null) {
       _infoWindow.open(_marker!.map, _marker);
       _infoWindowShown = true;
@@ -287,7 +295,9 @@ class AdvancedMarkerController
 
   @override
   void showInfoWindow() {
-    assert(_marker != null, 'Cannot `showInfoWindow` on a `remove`d Marker.');
+    if (_marker == null) {
+      throw StateError('Cannot `showInfoWindow` on a `remove`d Marker.');
+    }
 
     if (_infoWindow != null) {
       _infoWindow.open(_marker!.map, _marker);

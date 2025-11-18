@@ -20,7 +20,7 @@ import 'types.dart';
 ///
 /// [T] must extend [JSObject]. It's not specified in code because our mocking
 /// framework does not support mocking JSObjects.
-class ClusterManagersController<T> extends GeometryController {
+class ClusterManagersController<T extends Object> extends GeometryController {
   /// Creates a new [ClusterManagersController] instance.
   ///
   /// The [stream] parameter is a required [StreamController] used for
