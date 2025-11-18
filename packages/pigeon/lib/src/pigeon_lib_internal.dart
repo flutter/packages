@@ -1656,7 +1656,7 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           );
         } else if (node.extendsClause != null) {
           superClass = TypeDeclaration(
-            baseName: node.extendsClause!.superclass.name2.lexeme,
+            baseName: node.extendsClause!.superclass.name.lexeme,
             isNullable: false,
           );
         }
@@ -1666,7 +1666,7 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           for (final dart_ast.NamedType type
               in node.implementsClause!.interfaces) {
             interfaces.add(
-              TypeDeclaration(baseName: type.name2.lexeme, isNullable: false),
+              TypeDeclaration(baseName: type.name.lexeme, isNullable: false),
             );
           }
         }
@@ -1777,8 +1777,8 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         name: node.name.lexeme,
         fields: <NamedType>[],
         superClassName:
-            node.implementsClause?.interfaces.first.name2.toString() ??
-            node.extendsClause?.superclass.name2.toString(),
+            node.implementsClause?.interfaces.first.name.toString() ??
+            node.extendsClause?.superclass.name.toString(),
         isSealed: node.sealedKeyword != null,
         isSwiftClass: _hasMetadata(node.metadata, 'SwiftClass'),
         documentationComments: _documentationCommentsParser(
@@ -2137,9 +2137,9 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
   static String _getNamedTypeQualifiedName(dart_ast.NamedType node) {
     final dart_ast.ImportPrefixReference? importPrefix = node.importPrefix;
     if (importPrefix != null) {
-      return '${importPrefix.name.lexeme}.${node.name2.lexeme}';
+      return '${importPrefix.name.lexeme}.${node.name.lexeme}';
     }
-    return node.name2.lexeme;
+    return node.name.lexeme;
   }
 
   void _addProxyApiField(
