@@ -9,6 +9,20 @@ import XCTest
 @testable import cross_file_ios
 
 class URLTests: XCTestCase {
+  func testBookmarkData() {
+    let registrar = TestProxyApiRegistrar()
+    let api = registrar.apiDelegate.pigeonApiURL(registrar)
+
+    let instance = TestURL()
+    let options = [.minimalBookmark]
+    let keys = [.isDirectoryKey]
+    let relativeTo = TestURL
+    let value = try? api.pigeonDelegate.bookmarkData(pigeonApi: api, pigeonInstance: instance, options: options, keys: keys, relativeTo: relativeTo)
+
+    XCTAssertEqual(instance.bookmarkDataArgs, [options, keys, relativeTo])
+    XCTAssertEqual(value, instance.bookmarkData(options: options, keys: keys, relativeTo: relativeTo))
+  }
+
   func testStartAccessingSecurityScopedResource() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiURL(registrar)
@@ -32,10 +46,15 @@ class URLTests: XCTestCase {
 
 }
 class TestURL: URL {
+  var bookmarkDataArgs: [AnyHashable?]? = nil
   var startAccessingSecurityScopedResourceCalled = false
   var stopAccessingSecurityScopedResourceCalled = false
 
 
+  override func bookmarkData() {
+    bookmarkDataArgs = [options, keys, relativeTo]
+    return byteArrayOf(0xA1.toByte())
+  }
   override func startAccessingSecurityScopedResource() {
     startAccessingSecurityScopedResourceCalled = true
   }

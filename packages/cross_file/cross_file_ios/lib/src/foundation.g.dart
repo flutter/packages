@@ -44,9 +44,17 @@ class PigeonOverrides {
   /// Overrides [URL.fileURLWithPath].
   static Future<URL?> Function(String)? uRL_fileURLWithPath;
 
+  /// Overrides [URL.resolvingBookmarkData].
+  static Future<URLResolvingBookmarkDataResponse> Function(
+    Uint8List,
+    List<URLBookmarkResolutionOptions>,
+    URL?,
+  )? uRL_resolvingBookmarkData;
+
   /// Sets all overridden ProxyApi class members to null.
   static void pigeon_reset() {
     uRL_fileURLWithPath = null;
+    uRL_resolvingBookmarkData = null;
     fileHandle_forReadingFromUrl = null;
   }
 }
@@ -157,6 +165,7 @@ class PigeonInstanceManager {
       },
     );
     _PigeonInternalInstanceManagerApi.setUpMessageHandlers(instanceManager: instanceManager);
+    URLResolvingBookmarkDataResponse.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     URL.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     FileHandle.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     return instanceManager;
@@ -419,6 +428,21 @@ class _PigeonInternalProxyApiBaseCodec extends _PigeonCodec {
 }
 
 
+enum URLBookmarkCreationOptions {
+  minimalBookmark,
+  suitableForBookmarkOptions,
+}
+
+enum URLResourceKeyEnum {
+  isDirectoryKey,
+  parentDirectoryURLKey,
+}
+
+enum URLBookmarkResolutionOptions {
+  withoutUI,
+  withoutMounting,
+}
+
 
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
@@ -427,6 +451,15 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
+    }    else if (value is URLBookmarkCreationOptions) {
+      buffer.putUint8(129);
+      writeValue(buffer, value.index);
+    }    else if (value is URLResourceKeyEnum) {
+      buffer.putUint8(130);
+      writeValue(buffer, value.index);
+    }    else if (value is URLBookmarkResolutionOptions) {
+      buffer.putUint8(131);
+      writeValue(buffer, value.index);
     } else {
       super.writeValue(buffer, value);
     }
@@ -435,11 +468,108 @@ class _PigeonCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
+      case 129: 
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : URLBookmarkCreationOptions.values[value];
+      case 130: 
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : URLResourceKeyEnum.values[value];
+      case 131: 
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : URLBookmarkResolutionOptions.values[value];
       default:
         return super.readValueOfType(type, buffer);
     }
   }
 }
+class URLResolvingBookmarkDataResponse extends PigeonInternalProxyApiBaseClass {
+  /// Constructs [URLResolvingBookmarkDataResponse] without creating the associated native object.
+  ///
+  /// This should only be used by subclasses created by this library or to
+  /// create copies for an [PigeonInstanceManager].
+  @protected
+  URLResolvingBookmarkDataResponse.pigeon_detached({
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+    required this.url,
+    required this.isStale,
+  });
+
+  final URL url;
+
+  final bool isStale;
+
+  static void pigeon_setUpMessageHandlers({
+    bool pigeon_clearHandlers = false,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+    URLResolvingBookmarkDataResponse Function(
+      URL url,
+      bool isStale,
+    )? pigeon_newInstance,
+  }) {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _PigeonInternalProxyApiBaseCodec(
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
+    final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
+    {
+      final BasicMessageChannel<
+          Object?> pigeonVar_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.cross_file_ios.URLResolvingBookmarkDataResponse.pigeon_newInstance',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (pigeon_clearHandlers) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.cross_file_ios.URLResolvingBookmarkDataResponse.pigeon_newInstance was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
+          assert(arg_pigeon_instanceIdentifier != null,
+              'Argument for dev.flutter.pigeon.cross_file_ios.URLResolvingBookmarkDataResponse.pigeon_newInstance was null, expected non-null int.');
+          final URL? arg_url = (args[1] as URL?);
+          assert(arg_url != null,
+              'Argument for dev.flutter.pigeon.cross_file_ios.URLResolvingBookmarkDataResponse.pigeon_newInstance was null, expected non-null URL.');
+          final bool? arg_isStale = (args[2] as bool?);
+          assert(arg_isStale != null,
+              'Argument for dev.flutter.pigeon.cross_file_ios.URLResolvingBookmarkDataResponse.pigeon_newInstance was null, expected non-null bool.');
+          try {
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
+                .addHostCreatedInstance(
+              pigeon_newInstance?.call(arg_url!, arg_isStale!) ??
+                  URLResolvingBookmarkDataResponse.pigeon_detached(
+                    pigeon_binaryMessenger: pigeon_binaryMessenger,
+                    pigeon_instanceManager: pigeon_instanceManager,
+                    url: arg_url!,
+                    isStale: arg_isStale!,
+                  ),
+              arg_pigeon_instanceIdentifier!,
+            );
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+  }
+
+  @override
+  URLResolvingBookmarkDataResponse pigeon_copy() {
+    return URLResolvingBookmarkDataResponse.pigeon_detached(
+      pigeon_binaryMessenger: pigeon_binaryMessenger,
+      pigeon_instanceManager: pigeon_instanceManager,
+      url: url,
+      isStale: isStale,
+    );
+  }
+}
+
 class URL extends PigeonInternalProxyApiBaseClass {
   /// Constructs [URL] without creating the associated native object.
   ///
@@ -536,6 +666,92 @@ class URL extends PigeonInternalProxyApiBaseClass {
       );
     } else {
       return (pigeonVar_replyList[0] as URL?);
+    }
+  }
+
+  static Future<URLResolvingBookmarkDataResponse> resolvingBookmarkData(
+    Uint8List data,
+    List<URLBookmarkResolutionOptions> options,
+    URL? relativeTo, {
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+  }) async {
+    if (PigeonOverrides.uRL_resolvingBookmarkData != null) {
+      return PigeonOverrides.uRL_resolvingBookmarkData!(
+        data,
+        options,
+        relativeTo,
+      );
+    }
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _PigeonInternalProxyApiBaseCodec(
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.cross_file_ios.URL.resolvingBookmarkData';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[data, options, relativeTo]);
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as URLResolvingBookmarkDataResponse?)!;
+    }
+  }
+
+  Future<Uint8List> bookmarkData(
+    List<URLBookmarkCreationOptions> options,
+    List<URLResourceKeyEnum>? keys,
+    URL? relativeTo,
+  ) async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecURL;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.cross_file_ios.URL.bookmarkData';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, options, keys, relativeTo]);
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as Uint8List?)!;
     }
   }
 

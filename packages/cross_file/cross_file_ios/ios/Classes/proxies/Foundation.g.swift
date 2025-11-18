@@ -363,6 +363,9 @@ private class FoundationPigeonInstanceManagerApi {
   }
 }
 protocol FoundationPigeonProxyApiDelegate {
+  /// An implementation of [PigeonApiURLResolvingBookmarkDataResponse] used to add a new Dart instance of
+  /// `URLResolvingBookmarkDataResponse` to the Dart `InstanceManager` and make calls to Dart.
+  func pigeonApiURLResolvingBookmarkDataResponse(_ registrar: FoundationPigeonProxyApiRegistrar) -> PigeonApiURLResolvingBookmarkDataResponse
   /// An implementation of [PigeonApiURL] used to add a new Dart instance of
   /// `URL` to the Dart `InstanceManager` and make calls to Dart.
   func pigeonApiURL(_ registrar: FoundationPigeonProxyApiRegistrar) -> PigeonApiURL
@@ -455,8 +458,19 @@ private class FoundationPigeonInternalProxyApiCodecReaderWriter: FlutterStandard
     }
 
     override func writeValue(_ value: Any) {
-      if value is [Any] || value is Bool || value is Data || value is [AnyHashable: Any] || value is Double || value is FlutterStandardTypedData || value is Int64 || value is String {
+      if value is [Any] || value is Bool || value is Data || value is [AnyHashable: Any] || value is Double || value is FlutterStandardTypedData || value is Int64 || value is String || value is URLBookmarkCreationOptions || value is URLResourceKeyEnum || value is URLBookmarkResolutionOptions {
         super.writeValue(value)
+        return
+      }
+
+
+      if let instance = value as? URLResolvingBookmarkDataResponse {
+        pigeonRegistrar.apiDelegate.pigeonApiURLResolvingBookmarkDataResponse(pigeonRegistrar).pigeonNewInstance(
+          pigeonInstance: instance
+        ) { _ in }
+        super.writeByte(128)
+        super.writeValue(
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance as AnyObject)!)
         return
       }
 
@@ -509,10 +523,63 @@ private class FoundationPigeonInternalProxyApiCodecReaderWriter: FlutterStandard
   }
 }
 
+enum URLBookmarkCreationOptions: Int {
+  case minimalBookmark = 0
+  case suitableForBookmarkOptions = 1
+}
+
+enum URLResourceKeyEnum: Int {
+  case isDirectoryKey = 0
+  case parentDirectoryURLKey = 1
+}
+
+enum URLBookmarkResolutionOptions: Int {
+  case withoutUI = 0
+  case withoutMounting = 1
+}
+
 private class FoundationPigeonCodecReader: FlutterStandardReader {
+  override func readValue(ofType type: UInt8) -> Any? {
+    switch type {
+    case 129:
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as! Int?)
+      if let enumResultAsInt = enumResultAsInt {
+        return URLBookmarkCreationOptions(rawValue: enumResultAsInt)
+      }
+      return nil
+    case 130:
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as! Int?)
+      if let enumResultAsInt = enumResultAsInt {
+        return URLResourceKeyEnum(rawValue: enumResultAsInt)
+      }
+      return nil
+    case 131:
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as! Int?)
+      if let enumResultAsInt = enumResultAsInt {
+        return URLBookmarkResolutionOptions(rawValue: enumResultAsInt)
+      }
+      return nil
+    default:
+      return super.readValue(ofType: type)
+    }
+  }
 }
 
 private class FoundationPigeonCodecWriter: FlutterStandardWriter {
+  override func writeValue(_ value: Any) {
+    if let value = value as? URLBookmarkCreationOptions {
+      super.writeByte(129)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? URLResourceKeyEnum {
+      super.writeByte(130)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? URLBookmarkResolutionOptions {
+      super.writeByte(131)
+      super.writeValue(value.rawValue)
+    } else {
+      super.writeValue(value)
+    }
+  }
 }
 
 private class FoundationPigeonCodecReaderWriter: FlutterStandardReaderWriter {
@@ -529,8 +596,121 @@ class FoundationPigeonCodec: FlutterStandardMessageCodec, @unchecked Sendable {
   static let shared = FoundationPigeonCodec(readerWriter: FoundationPigeonCodecReaderWriter())
 }
 
+protocol PigeonApiDelegateURLResolvingBookmarkDataResponse {
+  func url(pigeonApi: PigeonApiURLResolvingBookmarkDataResponse, pigeonInstance: URLResolvingBookmarkDataResponse) throws -> URL
+  func isStale(pigeonApi: PigeonApiURLResolvingBookmarkDataResponse, pigeonInstance: URLResolvingBookmarkDataResponse) throws -> Bool
+}
+
+protocol PigeonApiProtocolURLResolvingBookmarkDataResponse {
+}
+
+final class PigeonApiURLResolvingBookmarkDataResponse: PigeonApiProtocolURLResolvingBookmarkDataResponse  {
+  unowned let pigeonRegistrar: FoundationPigeonProxyApiRegistrar
+  let pigeonDelegate: PigeonApiDelegateURLResolvingBookmarkDataResponse
+  init(pigeonRegistrar: FoundationPigeonProxyApiRegistrar, delegate: PigeonApiDelegateURLResolvingBookmarkDataResponse) {
+    self.pigeonRegistrar = pigeonRegistrar
+    self.pigeonDelegate = delegate
+  }
+  ///Creates a Dart instance of URLResolvingBookmarkDataResponse and attaches it to [pigeonInstance].
+  func pigeonNewInstance(pigeonInstance: URLResolvingBookmarkDataResponse, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          PigeonError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+    }     else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
+      completion(.success(()))
+    }     else {
+      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)
+      let urlArg = try! pigeonDelegate.url(pigeonApi: self, pigeonInstance: pigeonInstance)
+      let isStaleArg = try! pigeonDelegate.isStale(pigeonApi: self, pigeonInstance: pigeonInstance)
+      let binaryMessenger = pigeonRegistrar.binaryMessenger
+      let codec = pigeonRegistrar.codec
+      let channelName: String = "dev.flutter.pigeon.cross_file_ios.URLResolvingBookmarkDataResponse.pigeon_newInstance"
+      let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+      channel.sendMessage([pigeonIdentifierArg, urlArg, isStaleArg] as [Any?]) { response in
+        guard let listResponse = response as? [Any?] else {
+          completion(.failure(createConnectionError(withChannelName: channelName)))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          completion(.failure(PigeonError(code: code, message: message, details: details)))
+        } else {
+          completion(.success(()))
+        }
+      }
+    }
+  }
+}
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+import Foundation
+
+
+
+/// ProxyApi implementation for `URLResolvingBookmarkDataResponse`.
+///
+/// This class may handle instantiating native object instances that are attached to a Dart instance
+/// or handle method calls on the associated native class or an instance of that class.
+class URLResolvingBookmarkDataResponseProxyAPIDelegate : PigeonApiDelegateURLResolvingBookmarkDataResponse {
+  func url(pigeonApi: PigeonApiURLResolvingBookmarkDataResponse, pigeonInstance: URLResolvingBookmarkDataResponse) throws -> URL {
+    return pigeonInstance.url
+  }
+
+  func isStale(pigeonApi: PigeonApiURLResolvingBookmarkDataResponse, pigeonInstance: URLResolvingBookmarkDataResponse) throws -> Bool {
+    return pigeonInstance.isStale
+  }
+
+}
+*/
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+
+import Flutter
+import XCTest
+
+@testable import cross_file_ios
+
+class URLResolvingBookmarkDataResponseTests: XCTestCase {
+  func testUrl() {
+    let registrar = TestProxyApiRegistrar()
+    let api = registrar.apiDelegate.pigeonApiURLResolvingBookmarkDataResponse(registrar)
+
+    let instance = TestURLResolvingBookmarkDataResponse()
+    let value = try? api.pigeonDelegate.url(pigeonApi: api, pigeonInstance: instance)
+
+    XCTAssertEqual(value, instance.url)
+  }
+
+  func testIsStale() {
+    let registrar = TestProxyApiRegistrar()
+    let api = registrar.apiDelegate.pigeonApiURLResolvingBookmarkDataResponse(registrar)
+
+    let instance = TestURLResolvingBookmarkDataResponse()
+    let value = try? api.pigeonDelegate.isStale(pigeonApi: api, pigeonInstance: instance)
+
+    XCTAssertEqual(value, instance.isStale)
+  }
+
+}
+*/
+
 protocol PigeonApiDelegateURL {
   func fileURLWithPath(pigeonApi: PigeonApiURL, path: String) throws -> URL?
+  func resolvingBookmarkData(pigeonApi: PigeonApiURL, data: FlutterStandardTypedData, options: [URLBookmarkResolutionOptions], relativeTo: URL?) throws -> URLResolvingBookmarkDataResponse
+  func bookmarkData(pigeonApi: PigeonApiURL, pigeonInstance: URL, options: [URLBookmarkCreationOptions], keys: [URLResourceKeyEnum]?, relativeTo: URL?) throws -> FlutterStandardTypedData
   func startAccessingSecurityScopedResource(pigeonApi: PigeonApiURL, pigeonInstance: URL) throws -> Bool
   func stopAccessingSecurityScopedResource(pigeonApi: PigeonApiURL, pigeonInstance: URL) throws
 }
@@ -565,6 +745,41 @@ final class PigeonApiURL: PigeonApiProtocolURL  {
       }
     } else {
       fileURLWithPathChannel.setMessageHandler(nil)
+    }
+    let resolvingBookmarkDataChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.cross_file_ios.URL.resolvingBookmarkData", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      resolvingBookmarkDataChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let dataArg = args[0] as! FlutterStandardTypedData
+        let optionsArg = args[1] as! [URLBookmarkResolutionOptions]
+        let relativeToArg: URL? = nilOrValue(args[2])
+        do {
+          let result = try api.pigeonDelegate.resolvingBookmarkData(pigeonApi: api, data: dataArg, options: optionsArg, relativeTo: relativeToArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      resolvingBookmarkDataChannel.setMessageHandler(nil)
+    }
+    let bookmarkDataChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.cross_file_ios.URL.bookmarkData", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      bookmarkDataChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let pigeonInstanceArg = args[0] as! URL
+        let optionsArg = args[1] as! [URLBookmarkCreationOptions]
+        let keysArg: [URLResourceKeyEnum]? = nilOrValue(args[2])
+        let relativeToArg: URL? = nilOrValue(args[3])
+        do {
+          let result = try api.pigeonDelegate.bookmarkData(pigeonApi: api, pigeonInstance: pigeonInstanceArg, options: optionsArg, keys: keysArg, relativeTo: relativeToArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      bookmarkDataChannel.setMessageHandler(nil)
     }
     let startAccessingSecurityScopedResourceChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.cross_file_ios.URL.startAccessingSecurityScopedResource", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
@@ -650,6 +865,14 @@ class URLProxyAPIDelegate : PigeonApiDelegateURL {
     return URL.fileURLWithPath(path: path)
   }
 
+  func resolvingBookmarkData(pigeonApi: PigeonApiURL, data: FlutterStandardTypedData, options: [URLBookmarkResolutionOptions], relativeTo: URL?) throws -> URLResolvingBookmarkDataResponse {
+    return URL.resolvingBookmarkData(data: data, options: options, relativeTo: relativeTo)
+  }
+
+  func bookmarkData(pigeonApi: PigeonApiURL, pigeonInstance: URL, options: [URLBookmarkCreationOptions], keys: [URLResourceKeyEnum]?, relativeTo: URL?) throws -> FlutterStandardTypedData {
+    return pigeonInstance.bookmarkData(options: options, keys: keys, relativeTo: relativeTo)
+  }
+
   func startAccessingSecurityScopedResource(pigeonApi: PigeonApiURL, pigeonInstance: URL) throws -> Bool {
     return pigeonInstance.startAccessingSecurityScopedResource()
   }
@@ -673,6 +896,20 @@ import XCTest
 @testable import cross_file_ios
 
 class URLTests: XCTestCase {
+  func testBookmarkData() {
+    let registrar = TestProxyApiRegistrar()
+    let api = registrar.apiDelegate.pigeonApiURL(registrar)
+
+    let instance = TestURL()
+    let options = [.minimalBookmark]
+    let keys = [.isDirectoryKey]
+    let relativeTo = TestURL
+    let value = try? api.pigeonDelegate.bookmarkData(pigeonApi: api, pigeonInstance: instance, options: options, keys: keys, relativeTo: relativeTo)
+
+    XCTAssertEqual(instance.bookmarkDataArgs, [options, keys, relativeTo])
+    XCTAssertEqual(value, instance.bookmarkData(options: options, keys: keys, relativeTo: relativeTo))
+  }
+
   func testStartAccessingSecurityScopedResource() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiURL(registrar)
@@ -696,10 +933,15 @@ class URLTests: XCTestCase {
 
 }
 class TestURL: URL {
+  var bookmarkDataArgs: [AnyHashable?]? = nil
   var startAccessingSecurityScopedResourceCalled = false
   var stopAccessingSecurityScopedResourceCalled = false
 
 
+  override func bookmarkData() {
+    bookmarkDataArgs = [options, keys, relativeTo]
+    return byteArrayOf(0xA1.toByte())
+  }
   override func startAccessingSecurityScopedResource() {
     startAccessingSecurityScopedResourceCalled = true
   }

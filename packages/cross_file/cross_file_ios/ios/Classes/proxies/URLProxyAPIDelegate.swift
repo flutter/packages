@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import Flutter
 import Foundation
 
 /// ProxyApi implementation for `URL`.
@@ -13,8 +14,27 @@ class URLProxyAPIDelegate : PigeonApiDelegateURL {
     return URL(fileURLWithPath: path)
   }
   
+  func resolvingBookmarkData(pigeonApi: PigeonApiURL, data: FlutterStandardTypedData, options: [URLBookmarkResolutionOptions], relativeTo: URL?) throws -> URLResolvingBookmarkDataResponse {
+    var isStale: Bool = true
+    let url: URL = try URL(resolvingBookmarkData: data.data, bookmarkDataIsStale: &isStale)
+    let attr = try FileManager.default.attributesOfItem(atPath: url.path)
+    print(attr[FileAttributeKey.modificationDate] as? Date as Any)
+    print(FileManager.default.fileExists(atPath: url.path))
+    return URLResolvingBookmarkDataResponse(url: url, isStale: isStale)
+  }
+  
+  func bookmarkData(pigeonApi: PigeonApiURL, pigeonInstance: URL, options: [URLBookmarkCreationOptions], keys: [URLResourceKeyEnum]?, relativeTo: URL?) throws -> FlutterStandardTypedData {
+    let data = try pigeonInstance.bookmarkData(
+      options: [],
+      includingResourceValuesForKeys: nil,
+      relativeTo: relativeTo
+    )
+    
+    return FlutterStandardTypedData(bytes: data)
+  }
+  
   func startAccessingSecurityScopedResource(pigeonApi: PigeonApiURL, pigeonInstance: URL) throws -> Bool {
-    pigeonInstance.startAccessingSecurityScopedResource()
+    return pigeonInstance.startAccessingSecurityScopedResource()
   }
   
   func stopAccessingSecurityScopedResource(pigeonApi: PigeonApiURL, pigeonInstance: URL) throws {
