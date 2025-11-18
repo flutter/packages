@@ -22,5 +22,9 @@ open class ProxyApiDelegate: FoundationPigeonProxyApiDelegate {
   func pigeonApiURLResolvingBookmarkDataResponse(_ registrar: FoundationPigeonProxyApiRegistrar) -> PigeonApiURLResolvingBookmarkDataResponse {
     return PigeonApiURLResolvingBookmarkDataResponse(pigeonRegistrar: registrar, delegate: URLResolvingBookmarkDataResponseProxyAPIDelegate())
   }
+  
+  func pigeonApiFileManager(_ registrar: FoundationPigeonProxyApiRegistrar) -> PigeonApiFileManager {
+    return PigeonApiFileManager(pigeonRegistrar: registrar, delegate: FileManagerProxyAPIDelegate())
+  }
 }
 

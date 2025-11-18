@@ -30,6 +30,8 @@ class OpenTextPage extends StatelessWidget {
     print(file.params.path);
     print(await file.canRead());
     print(await file.exists());
+    print(await file.lastModified());
+    print(await file.length());
     final String fileContent = await file.readAsString();
 
     if (context.mounted) {

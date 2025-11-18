@@ -1,10 +1,11 @@
 import 'dart:convert';
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:cross_file_ios/src/foundation.g.dart';
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
 
+// Note for me: Will probs need a `static Future<IOSXFile> method(Uint8List bookmarkData` method
+// instead to create persistent file.
 base class IOSXFile extends PlatformSharedStorageXFile {
   IOSXFile(super.params) : super.implementation();
 
@@ -21,7 +22,6 @@ base class IOSXFile extends PlatformSharedStorageXFile {
             final URLResolvingBookmarkDataResponse response = await URL
                 .resolvingBookmarkData(bookmarkData, [], null);
             if (response.isStale) {
-              // TODO: create new bookmark
               print('STALE');
               return null;
             }
@@ -39,24 +39,50 @@ base class IOSXFile extends PlatformSharedStorageXFile {
   @override
   Future<bool> canRead() async {
     final URL? bookmarkUrl = await _bookmarkUrl;
-    return bookmarkUrl != null;
+    if (bookmarkUrl case URL bookmarkUrl) {
+      return FileManager.defaultManager.isReadableFile(await bookmarkUrl.path());
+    }
+
+    return false;
   }
 
   @override
-  Future<bool> exists() {
-    return canRead();
+  Future<bool> exists() async {
+    final URL? bookmarkUrl = await _bookmarkUrl;
+    if (bookmarkUrl case URL bookmarkUrl) {
+      return FileManager.defaultManager.fileExists(await bookmarkUrl.path());
+    }
+
+    return false;
   }
 
   @override
-  Future<DateTime> lastModified() {
-    // TODO: implement lastModified
-    throw UnimplementedError();
+  Future<DateTime> lastModified() async {
+    final URL? bookmarkUrl = await _bookmarkUrl;
+    if (bookmarkUrl case URL bookmarkUrl) {
+      final int? lastModifiedSinceEpoch = await FileManager.defaultManager
+          .fileModificationDate(await bookmarkUrl.path());
+      if (lastModifiedSinceEpoch case int lastModifiedSinceEpoch) {
+        return DateTime.fromMillisecondsSinceEpoch(lastModifiedSinceEpoch);
+      }
+    }
+
+    throw UnsupportedError('cant read: ${params.path}');
   }
 
   @override
-  Future<int> length() {
-    // TODO: implement length
-    throw UnimplementedError();
+  Future<int> length() async {
+    final URL? bookmarkUrl = await _bookmarkUrl;
+    if (bookmarkUrl case URL bookmarkUrl) {
+      final int? fileSize = await FileManager.defaultManager.fileSize(
+        await bookmarkUrl.path(),
+      );
+      if (fileSize case int fileSize) {
+        return fileSize;
+      }
+    }
+
+    throw UnsupportedError('cant read: ${params.path}');
   }
 
   @override

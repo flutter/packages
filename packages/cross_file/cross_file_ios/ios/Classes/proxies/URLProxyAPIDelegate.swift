@@ -17,10 +17,11 @@ class URLProxyAPIDelegate : PigeonApiDelegateURL {
   func resolvingBookmarkData(pigeonApi: PigeonApiURL, data: FlutterStandardTypedData, options: [URLBookmarkResolutionOptions], relativeTo: URL?) throws -> URLResolvingBookmarkDataResponse {
     var isStale: Bool = true
     let url: URL = try URL(resolvingBookmarkData: data.data, bookmarkDataIsStale: &isStale)
-    let attr = try FileManager.default.attributesOfItem(atPath: url.path)
-    print(attr[FileAttributeKey.modificationDate] as? Date as Any)
-    print(FileManager.default.fileExists(atPath: url.path))
     return URLResolvingBookmarkDataResponse(url: url, isStale: isStale)
+  }
+  
+  func path(pigeonApi: PigeonApiURL, pigeonInstance: URL) throws -> String {
+    return pigeonInstance.path
   }
   
   func bookmarkData(pigeonApi: PigeonApiURL, pigeonInstance: URL, options: [URLBookmarkCreationOptions], keys: [URLResourceKeyEnum]?, relativeTo: URL?) throws -> FlutterStandardTypedData {

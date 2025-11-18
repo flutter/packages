@@ -372,6 +372,9 @@ protocol FoundationPigeonProxyApiDelegate {
   /// An implementation of [PigeonApiFileHandle] used to add a new Dart instance of
   /// `FileHandle` to the Dart `InstanceManager` and make calls to Dart.
   func pigeonApiFileHandle(_ registrar: FoundationPigeonProxyApiRegistrar) -> PigeonApiFileHandle
+  /// An implementation of [PigeonApiFileManager] used to add a new Dart instance of
+  /// `FileManager` to the Dart `InstanceManager` and make calls to Dart.
+  func pigeonApiFileManager(_ registrar: FoundationPigeonProxyApiRegistrar) -> PigeonApiFileManager
 }
 
 open class FoundationPigeonProxyApiRegistrar {
@@ -415,11 +418,13 @@ open class FoundationPigeonProxyApiRegistrar {
     FoundationPigeonInstanceManagerApi.setUpMessageHandlers(binaryMessenger: binaryMessenger, instanceManager: instanceManager)
     PigeonApiURL.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiURL(self))
     PigeonApiFileHandle.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiFileHandle(self))
+    PigeonApiFileManager.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiFileManager(self))
   }
   func tearDown() {
     FoundationPigeonInstanceManagerApi.setUpMessageHandlers(binaryMessenger: binaryMessenger, instanceManager: nil)
     PigeonApiURL.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
     PigeonApiFileHandle.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
+    PigeonApiFileManager.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
   }
 }
 private class FoundationPigeonInternalProxyApiCodecReaderWriter: FlutterStandardReaderWriter {
@@ -488,6 +493,17 @@ private class FoundationPigeonInternalProxyApiCodecReaderWriter: FlutterStandard
 
       if let instance = value as? FileHandle {
         pigeonRegistrar.apiDelegate.pigeonApiFileHandle(pigeonRegistrar).pigeonNewInstance(
+          pigeonInstance: instance
+        ) { _ in }
+        super.writeByte(128)
+        super.writeValue(
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance as AnyObject)!)
+        return
+      }
+
+
+      if let instance = value as? FileManager {
+        pigeonRegistrar.apiDelegate.pigeonApiFileManager(pigeonRegistrar).pigeonNewInstance(
           pigeonInstance: instance
         ) { _ in }
         super.writeByte(128)
@@ -710,6 +726,7 @@ class URLResolvingBookmarkDataResponseTests: XCTestCase {
 protocol PigeonApiDelegateURL {
   func fileURLWithPath(pigeonApi: PigeonApiURL, path: String) throws -> URL?
   func resolvingBookmarkData(pigeonApi: PigeonApiURL, data: FlutterStandardTypedData, options: [URLBookmarkResolutionOptions], relativeTo: URL?) throws -> URLResolvingBookmarkDataResponse
+  func path(pigeonApi: PigeonApiURL, pigeonInstance: URL) throws -> String
   func bookmarkData(pigeonApi: PigeonApiURL, pigeonInstance: URL, options: [URLBookmarkCreationOptions], keys: [URLResourceKeyEnum]?, relativeTo: URL?) throws -> FlutterStandardTypedData
   func startAccessingSecurityScopedResource(pigeonApi: PigeonApiURL, pigeonInstance: URL) throws -> Bool
   func stopAccessingSecurityScopedResource(pigeonApi: PigeonApiURL, pigeonInstance: URL) throws
@@ -762,6 +779,21 @@ final class PigeonApiURL: PigeonApiProtocolURL  {
       }
     } else {
       resolvingBookmarkDataChannel.setMessageHandler(nil)
+    }
+    let pathChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.cross_file_ios.URL.path", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      pathChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let pigeonInstanceArg = args[0] as! URL
+        do {
+          let result = try api.pigeonDelegate.path(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      pathChannel.setMessageHandler(nil)
     }
     let bookmarkDataChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.cross_file_ios.URL.bookmarkData", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
@@ -869,6 +901,10 @@ class URLProxyAPIDelegate : PigeonApiDelegateURL {
     return URL.resolvingBookmarkData(data: data, options: options, relativeTo: relativeTo)
   }
 
+  func path(pigeonApi: PigeonApiURL, pigeonInstance: URL) throws -> String {
+    return pigeonInstance.path()
+  }
+
   func bookmarkData(pigeonApi: PigeonApiURL, pigeonInstance: URL, options: [URLBookmarkCreationOptions], keys: [URLResourceKeyEnum]?, relativeTo: URL?) throws -> FlutterStandardTypedData {
     return pigeonInstance.bookmarkData(options: options, keys: keys, relativeTo: relativeTo)
   }
@@ -896,6 +932,17 @@ import XCTest
 @testable import cross_file_ios
 
 class URLTests: XCTestCase {
+  func testPath() {
+    let registrar = TestProxyApiRegistrar()
+    let api = registrar.apiDelegate.pigeonApiURL(registrar)
+
+    let instance = TestURL()
+    let value = try? api.pigeonDelegate.path(pigeonApi: api, pigeonInstance: instance )
+
+    XCTAssertTrue(instance.pathCalled)
+    XCTAssertEqual(value, instance.path())
+  }
+
   func testBookmarkData() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiURL(registrar)
@@ -933,11 +980,15 @@ class URLTests: XCTestCase {
 
 }
 class TestURL: URL {
+  var pathCalled = false
   var bookmarkDataArgs: [AnyHashable?]? = nil
   var startAccessingSecurityScopedResourceCalled = false
   var stopAccessingSecurityScopedResourceCalled = false
 
 
+  override func path() {
+    pathCalled = true
+  }
   override func bookmarkData() {
     bookmarkDataArgs = [options, keys, relativeTo]
     return byteArrayOf(0xA1.toByte())
@@ -1138,6 +1189,269 @@ class TestFileHandle: FileHandle {
   }
   override func close() {
     closeCalled = true
+  }
+}
+*/
+
+protocol PigeonApiDelegateFileManager {
+  func defaultManager(pigeonApi: PigeonApiFileManager) throws -> FileManager
+  func fileExists(pigeonApi: PigeonApiFileManager, pigeonInstance: FileManager, atPath: String) throws -> Bool
+  func isReadableFile(pigeonApi: PigeonApiFileManager, pigeonInstance: FileManager, atPath: String) throws -> Bool
+  func fileModificationDate(pigeonApi: PigeonApiFileManager, pigeonInstance: FileManager, atPath: String) throws -> Int64?
+  func fileSize(pigeonApi: PigeonApiFileManager, pigeonInstance: FileManager, atPath: String) throws -> Int64?
+}
+
+protocol PigeonApiProtocolFileManager {
+}
+
+final class PigeonApiFileManager: PigeonApiProtocolFileManager  {
+  unowned let pigeonRegistrar: FoundationPigeonProxyApiRegistrar
+  let pigeonDelegate: PigeonApiDelegateFileManager
+  init(pigeonRegistrar: FoundationPigeonProxyApiRegistrar, delegate: PigeonApiDelegateFileManager) {
+    self.pigeonRegistrar = pigeonRegistrar
+    self.pigeonDelegate = delegate
+  }
+  static func setUpMessageHandlers(binaryMessenger: FlutterBinaryMessenger, api: PigeonApiFileManager?) {
+    let codec: FlutterStandardMessageCodec =
+      api != nil
+      ? FlutterStandardMessageCodec(
+        readerWriter: FoundationPigeonInternalProxyApiCodecReaderWriter(pigeonRegistrar: api!.pigeonRegistrar))
+      : FlutterStandardMessageCodec.sharedInstance()
+    let defaultManagerChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.cross_file_ios.FileManager.defaultManager", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      defaultManagerChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let pigeonIdentifierArg = args[0] as! Int64
+        do {
+          api.pigeonRegistrar.instanceManager.addDartCreatedInstance(try api.pigeonDelegate.defaultManager(pigeonApi: api), withIdentifier: pigeonIdentifierArg)
+          reply(wrapResult(nil))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      defaultManagerChannel.setMessageHandler(nil)
+    }
+    let fileExistsChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.cross_file_ios.FileManager.fileExists", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      fileExistsChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let pigeonInstanceArg = args[0] as! FileManager
+        let atPathArg = args[1] as! String
+        do {
+          let result = try api.pigeonDelegate.fileExists(pigeonApi: api, pigeonInstance: pigeonInstanceArg, atPath: atPathArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      fileExistsChannel.setMessageHandler(nil)
+    }
+    let isReadableFileChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.cross_file_ios.FileManager.isReadableFile", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      isReadableFileChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let pigeonInstanceArg = args[0] as! FileManager
+        let atPathArg = args[1] as! String
+        do {
+          let result = try api.pigeonDelegate.isReadableFile(pigeonApi: api, pigeonInstance: pigeonInstanceArg, atPath: atPathArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      isReadableFileChannel.setMessageHandler(nil)
+    }
+    let fileModificationDateChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.cross_file_ios.FileManager.fileModificationDate", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      fileModificationDateChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let pigeonInstanceArg = args[0] as! FileManager
+        let atPathArg = args[1] as! String
+        do {
+          let result = try api.pigeonDelegate.fileModificationDate(pigeonApi: api, pigeonInstance: pigeonInstanceArg, atPath: atPathArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      fileModificationDateChannel.setMessageHandler(nil)
+    }
+    let fileSizeChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.cross_file_ios.FileManager.fileSize", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      fileSizeChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let pigeonInstanceArg = args[0] as! FileManager
+        let atPathArg = args[1] as! String
+        do {
+          let result = try api.pigeonDelegate.fileSize(pigeonApi: api, pigeonInstance: pigeonInstanceArg, atPath: atPathArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      fileSizeChannel.setMessageHandler(nil)
+    }
+  }
+
+  ///Creates a Dart instance of FileManager and attaches it to [pigeonInstance].
+  func pigeonNewInstance(pigeonInstance: FileManager, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          PigeonError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+    }     else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
+      completion(.success(()))
+    }     else {
+      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)
+      let binaryMessenger = pigeonRegistrar.binaryMessenger
+      let codec = pigeonRegistrar.codec
+      let channelName: String = "dev.flutter.pigeon.cross_file_ios.FileManager.pigeon_newInstance"
+      let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+      channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
+        guard let listResponse = response as? [Any?] else {
+          completion(.failure(createConnectionError(withChannelName: channelName)))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          completion(.failure(PigeonError(code: code, message: message, details: details)))
+        } else {
+          completion(.success(()))
+        }
+      }
+    }
+  }
+}
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+import Foundation
+
+
+
+/// ProxyApi implementation for `FileManager`.
+///
+/// This class may handle instantiating native object instances that are attached to a Dart instance
+/// or handle method calls on the associated native class or an instance of that class.
+class FileManagerProxyAPIDelegate : PigeonApiDelegateFileManager {
+  func defaultManager(pigeonApi: PigeonApiFileManager): FileManager {
+    return FileManager.defaultManager
+  }
+
+  func fileExists(pigeonApi: PigeonApiFileManager, pigeonInstance: FileManager, atPath: String) throws -> Bool {
+    return pigeonInstance.fileExists(atPath: atPath)
+  }
+
+  func isReadableFile(pigeonApi: PigeonApiFileManager, pigeonInstance: FileManager, atPath: String) throws -> Bool {
+    return pigeonInstance.isReadableFile(atPath: atPath)
+  }
+
+  func fileModificationDate(pigeonApi: PigeonApiFileManager, pigeonInstance: FileManager, atPath: String) throws -> Int64? {
+    return pigeonInstance.fileModificationDate(atPath: atPath)
+  }
+
+  func fileSize(pigeonApi: PigeonApiFileManager, pigeonInstance: FileManager, atPath: String) throws -> Int64? {
+    return pigeonInstance.fileSize(atPath: atPath)
+  }
+
+}
+*/
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+
+import Flutter
+import XCTest
+
+@testable import cross_file_ios
+
+class FileManagerTests: XCTestCase {
+  func testFileExists() {
+    let registrar = TestProxyApiRegistrar()
+    let api = registrar.apiDelegate.pigeonApiFileManager(registrar)
+
+    let instance = TestFileManager()
+    let atPath = "myString"
+    let value = try? api.pigeonDelegate.fileExists(pigeonApi: api, pigeonInstance: instance, atPath: atPath)
+
+    XCTAssertEqual(instance.fileExistsArgs, [atPath])
+    XCTAssertEqual(value, instance.fileExists(atPath: atPath))
+  }
+
+  func testIsReadableFile() {
+    let registrar = TestProxyApiRegistrar()
+    let api = registrar.apiDelegate.pigeonApiFileManager(registrar)
+
+    let instance = TestFileManager()
+    let atPath = "myString"
+    let value = try? api.pigeonDelegate.isReadableFile(pigeonApi: api, pigeonInstance: instance, atPath: atPath)
+
+    XCTAssertEqual(instance.isReadableFileArgs, [atPath])
+    XCTAssertEqual(value, instance.isReadableFile(atPath: atPath))
+  }
+
+  func testFileModificationDate() {
+    let registrar = TestProxyApiRegistrar()
+    let api = registrar.apiDelegate.pigeonApiFileManager(registrar)
+
+    let instance = TestFileManager()
+    let atPath = "myString"
+    let value = try? api.pigeonDelegate.fileModificationDate(pigeonApi: api, pigeonInstance: instance, atPath: atPath)
+
+    XCTAssertEqual(instance.fileModificationDateArgs, [atPath])
+    XCTAssertEqual(value, instance.fileModificationDate(atPath: atPath))
+  }
+
+  func testFileSize() {
+    let registrar = TestProxyApiRegistrar()
+    let api = registrar.apiDelegate.pigeonApiFileManager(registrar)
+
+    let instance = TestFileManager()
+    let atPath = "myString"
+    let value = try? api.pigeonDelegate.fileSize(pigeonApi: api, pigeonInstance: instance, atPath: atPath)
+
+    XCTAssertEqual(instance.fileSizeArgs, [atPath])
+    XCTAssertEqual(value, instance.fileSize(atPath: atPath))
+  }
+
+}
+class TestFileManager: FileManager {
+  var fileExistsArgs: [AnyHashable?]? = nil
+  var isReadableFileArgs: [AnyHashable?]? = nil
+  var fileModificationDateArgs: [AnyHashable?]? = nil
+  var fileSizeArgs: [AnyHashable?]? = nil
+
+
+  override func fileExists() {
+    fileExistsArgs = [atPath]
+    return true
+  }
+  override func isReadableFile() {
+    isReadableFileArgs = [atPath]
+    return true
+  }
+  override func fileModificationDate() {
+    fileModificationDateArgs = [atPath]
+    return 0
+  }
+  override func fileSize() {
+    fileSizeArgs = [atPath]
+    return 0
   }
 }
 */

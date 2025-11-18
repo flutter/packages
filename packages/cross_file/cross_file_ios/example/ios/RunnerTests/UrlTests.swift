@@ -9,6 +9,17 @@ import XCTest
 @testable import cross_file_ios
 
 class URLTests: XCTestCase {
+  func testPath() {
+    let registrar = TestProxyApiRegistrar()
+    let api = registrar.apiDelegate.pigeonApiURL(registrar)
+
+    let instance = TestURL()
+    let value = try? api.pigeonDelegate.path(pigeonApi: api, pigeonInstance: instance )
+
+    XCTAssertTrue(instance.pathCalled)
+    XCTAssertEqual(value, instance.path())
+  }
+
   func testBookmarkData() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiURL(registrar)
@@ -46,11 +57,15 @@ class URLTests: XCTestCase {
 
 }
 class TestURL: URL {
+  var pathCalled = false
   var bookmarkDataArgs: [AnyHashable?]? = nil
   var startAccessingSecurityScopedResourceCalled = false
   var stopAccessingSecurityScopedResourceCalled = false
 
 
+  override func path() {
+    pathCalled = true
+  }
   override func bookmarkData() {
     bookmarkDataArgs = [options, keys, relativeTo]
     return byteArrayOf(0xA1.toByte())

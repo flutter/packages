@@ -31,6 +31,8 @@ abstract class URL {
     URL? relativeTo,
   );
 
+  String path();
+
   Uint8List bookmarkData(
     List<URLBookmarkCreationOptions> options,
     List<URLResourceKeyEnum>? keys,
@@ -49,4 +51,18 @@ abstract class FileHandle {
   Uint8List? readToEnd();
 
   void close();
+}
+
+@ProxyApi()
+abstract class FileManager {
+  @static
+  late final FileManager defaultManager;
+
+  bool fileExists(String atPath);
+
+  bool isReadableFile(String atPath);
+
+  int? fileModificationDate(String atPath);
+
+  int? fileSize(String atPath);
 }
