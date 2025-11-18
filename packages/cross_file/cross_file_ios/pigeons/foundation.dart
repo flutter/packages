@@ -48,6 +48,8 @@ abstract class URL {
 abstract class FileHandle {
   FileHandle.forReadingFromUrl(URL url);
 
+  Uint8List? readUpToCount(int count);
+
   Uint8List? readToEnd();
 
   void close();

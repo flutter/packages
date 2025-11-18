@@ -30,7 +30,9 @@ base class AndroidXFile extends PlatformSharedStorageXFile {
     );
     // TODO: add support for start and end.
     if (inputStream case InputStream inputStream) {
-      InputStreamReadBytesResponse response = await inputStream.readBytes(1024);
+      InputStreamReadBytesResponse response = await inputStream.readBytes(
+        4 * 1024,
+      );
       while (response.returnValue != -1) {
         yield response.bytes;
         response = await inputStream.readBytes(4 * 1024);

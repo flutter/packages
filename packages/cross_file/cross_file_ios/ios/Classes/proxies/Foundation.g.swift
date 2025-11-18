@@ -1004,6 +1004,7 @@ class TestURL: URL {
 
 protocol PigeonApiDelegateFileHandle {
   func forReadingFromUrl(pigeonApi: PigeonApiFileHandle, url: URL) throws -> FileHandle
+  func readUpToCount(pigeonApi: PigeonApiFileHandle, pigeonInstance: FileHandle, count: Int64) throws -> FlutterStandardTypedData?
   func readToEnd(pigeonApi: PigeonApiFileHandle, pigeonInstance: FileHandle) throws -> FlutterStandardTypedData?
   func close(pigeonApi: PigeonApiFileHandle, pigeonInstance: FileHandle) throws
 }
@@ -1041,6 +1042,22 @@ withIdentifier: pigeonIdentifierArg)
       }
     } else {
       forReadingFromUrlChannel.setMessageHandler(nil)
+    }
+    let readUpToCountChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.cross_file_ios.FileHandle.readUpToCount", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      readUpToCountChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let pigeonInstanceArg = args[0] as! FileHandle
+        let countArg = args[1] as! Int64
+        do {
+          let result = try api.pigeonDelegate.readUpToCount(pigeonApi: api, pigeonInstance: pigeonInstanceArg, count: countArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      readUpToCountChannel.setMessageHandler(nil)
     }
     let readToEndChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.cross_file_ios.FileHandle.readToEnd", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
@@ -1126,6 +1143,10 @@ class FileHandleProxyAPIDelegate : PigeonApiDelegateFileHandle {
     return FileHandle(,url: url)
   }
 
+  func readUpToCount(pigeonApi: PigeonApiFileHandle, pigeonInstance: FileHandle, count: Int64) throws -> FlutterStandardTypedData? {
+    return pigeonInstance.readUpToCount(count: count)
+  }
+
   func readToEnd(pigeonApi: PigeonApiFileHandle, pigeonInstance: FileHandle) throws -> FlutterStandardTypedData? {
     return pigeonInstance.readToEnd()
   }
@@ -1157,6 +1178,18 @@ class FileHandleTests: XCTestCase {
     XCTAssertNotNil(instance)
   }
 
+  func testReadUpToCount() {
+    let registrar = TestProxyApiRegistrar()
+    let api = registrar.apiDelegate.pigeonApiFileHandle(registrar)
+
+    let instance = TestFileHandle()
+    let count = 0
+    let value = try? api.pigeonDelegate.readUpToCount(pigeonApi: api, pigeonInstance: instance, count: count)
+
+    XCTAssertEqual(instance.readUpToCountArgs, [count])
+    XCTAssertEqual(value, instance.readUpToCount(count: count))
+  }
+
   func testReadToEnd() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiFileHandle(registrar)
@@ -1180,10 +1213,15 @@ class FileHandleTests: XCTestCase {
 
 }
 class TestFileHandle: FileHandle {
+  var readUpToCountArgs: [AnyHashable?]? = nil
   var readToEndCalled = false
   var closeCalled = false
 
 
+  override func readUpToCount() {
+    readUpToCountArgs = [count]
+    return byteArrayOf(0xA1.toByte())
+  }
   override func readToEnd() {
     readToEndCalled = true
   }

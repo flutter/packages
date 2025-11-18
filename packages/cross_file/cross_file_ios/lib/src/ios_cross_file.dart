@@ -40,7 +40,9 @@ base class IOSXFile extends PlatformSharedStorageXFile {
   Future<bool> canRead() async {
     final URL? bookmarkUrl = await _bookmarkUrl;
     if (bookmarkUrl case URL bookmarkUrl) {
-      return FileManager.defaultManager.isReadableFile(await bookmarkUrl.path());
+      return FileManager.defaultManager.isReadableFile(
+        await bookmarkUrl.path(),
+      );
     }
 
     return false;
@@ -92,9 +94,22 @@ base class IOSXFile extends PlatformSharedStorageXFile {
   }
 
   @override
-  Stream<List<int>> openRead([int? start, int? end]) {
-    // TODO: implement openRead
-    throw UnimplementedError();
+  Stream<List<int>> openRead([int? start, int? end]) async* {
+    if (await _bookmarkUrl case URL url) {
+      final FileHandle fileHandle = FileHandle.forReadingFromUrl(url: url);
+      try {
+        Uint8List? bytes = await fileHandle.readUpToCount(4 * 1024);
+        while (bytes != null && bytes.isNotEmpty) {
+          yield bytes;
+          // TODO: this is only supported on ios 13.4
+          bytes = await fileHandle.readUpToCount(4 * 1024);
+        }
+      } finally {
+        await fileHandle.close();
+      }
+    } else {
+      throw UnsupportedError('Cant access bytes to file: ${params.path}');
+    }
   }
 
   @override

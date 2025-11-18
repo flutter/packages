@@ -32,4 +32,15 @@ class FileHandleProxyAPIDelegate : PigeonApiDelegateFileHandle {
   func close(pigeonApi: PigeonApiFileHandle, pigeonInstance: FileHandle) throws {
     try pigeonInstance.close()
   }
+  
+  func readUpToCount(pigeonApi: PigeonApiFileHandle, pigeonInstance: FileHandle, count: Int64) throws -> FlutterStandardTypedData? {
+    if #available(iOS 13.4, *) {
+      let data = try pigeonInstance.read(upToCount: Int(count))
+      if let data = data {
+        return FlutterStandardTypedData(bytes: data)
+      }
+    }
+    
+    return nil
+  }
 }
