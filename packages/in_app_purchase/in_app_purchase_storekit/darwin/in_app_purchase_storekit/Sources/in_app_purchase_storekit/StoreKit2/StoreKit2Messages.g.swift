@@ -73,8 +73,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
   return value as! T?
 }
 
-// swift-format-ignore: AlwaysUseLowerCamelCase
-func deepEqualssk2_pigeon(_ lhs: Any?, _ rhs: Any?) -> Bool {
+func deepEqualsStoreKit2Messages(_ lhs: Any?, _ rhs: Any?) -> Bool {
   let cleanLhs = nilOrValue(lhs) as Any?
   let cleanRhs = nilOrValue(rhs) as Any?
   switch (cleanLhs, cleanRhs) {
@@ -93,7 +92,7 @@ func deepEqualssk2_pigeon(_ lhs: Any?, _ rhs: Any?) -> Bool {
   case let (cleanLhsArray, cleanRhsArray) as ([Any?], [Any?]):
     guard cleanLhsArray.count == cleanRhsArray.count else { return false }
     for (index, element) in cleanLhsArray.enumerated() {
-      if !deepEqualssk2_pigeon(element, cleanRhsArray[index]) {
+      if !deepEqualsStoreKit2Messages(element, cleanRhsArray[index]) {
         return false
       }
     }
@@ -103,7 +102,7 @@ func deepEqualssk2_pigeon(_ lhs: Any?, _ rhs: Any?) -> Bool {
     guard cleanLhsDictionary.count == cleanRhsDictionary.count else { return false }
     for (key, cleanLhsValue) in cleanLhsDictionary {
       guard cleanRhsDictionary.index(forKey: key) != nil else { return false }
-      if !deepEqualssk2_pigeon(cleanLhsValue, cleanRhsDictionary[key]!) {
+      if !deepEqualsStoreKit2Messages(cleanLhsValue, cleanRhsDictionary[key]!) {
         return false
       }
     }
@@ -115,17 +114,16 @@ func deepEqualssk2_pigeon(_ lhs: Any?, _ rhs: Any?) -> Bool {
   }
 }
 
-// swift-format-ignore: AlwaysUseLowerCamelCase
-func deepHashsk2_pigeon(value: Any?, hasher: inout Hasher) {
+func deepHashStoreKit2Messages(value: Any?, hasher: inout Hasher) {
   if let valueList = value as? [AnyHashable] {
-    for item in valueList { deepHashsk2_pigeon(value: item, hasher: &hasher) }
+    for item in valueList { deepHashStoreKit2Messages(value: item, hasher: &hasher) }
     return
   }
 
   if let valueDict = value as? [AnyHashable: AnyHashable] {
     for key in valueDict.keys {
       hasher.combine(key)
-      deepHashsk2_pigeon(value: valueDict[key]!, hasher: &hasher)
+      deepHashStoreKit2Messages(value: valueDict[key]!, hasher: &hasher)
     }
     return
   }
@@ -212,10 +210,10 @@ struct SK2SubscriptionOfferMessage: Hashable {
     ]
   }
   static func == (lhs: SK2SubscriptionOfferMessage, rhs: SK2SubscriptionOfferMessage) -> Bool {
-    return deepEqualssk2_pigeon(lhs.toList(), rhs.toList())
+    return deepEqualsStoreKit2Messages(lhs.toList(), rhs.toList())
   }
   func hash(into hasher: inout Hasher) {
-    deepHashsk2_pigeon(value: toList(), hasher: &hasher)
+    deepHashStoreKit2Messages(value: toList(), hasher: &hasher)
   }
 }
 
@@ -243,10 +241,10 @@ struct SK2SubscriptionPeriodMessage: Hashable {
     ]
   }
   static func == (lhs: SK2SubscriptionPeriodMessage, rhs: SK2SubscriptionPeriodMessage) -> Bool {
-    return deepEqualssk2_pigeon(lhs.toList(), rhs.toList())
+    return deepEqualsStoreKit2Messages(lhs.toList(), rhs.toList())
   }
   func hash(into hasher: inout Hasher) {
-    deepHashsk2_pigeon(value: toList(), hasher: &hasher)
+    deepHashStoreKit2Messages(value: toList(), hasher: &hasher)
   }
 }
 
@@ -279,10 +277,10 @@ struct SK2SubscriptionInfoMessage: Hashable {
     ]
   }
   static func == (lhs: SK2SubscriptionInfoMessage, rhs: SK2SubscriptionInfoMessage) -> Bool {
-    return deepEqualssk2_pigeon(lhs.toList(), rhs.toList())
+    return deepEqualsStoreKit2Messages(lhs.toList(), rhs.toList())
   }
   func hash(into hasher: inout Hasher) {
-    deepHashsk2_pigeon(value: toList(), hasher: &hasher)
+    deepHashStoreKit2Messages(value: toList(), hasher: &hasher)
   }
 }
 
@@ -343,10 +341,10 @@ struct SK2ProductMessage: Hashable {
     ]
   }
   static func == (lhs: SK2ProductMessage, rhs: SK2ProductMessage) -> Bool {
-    return deepEqualssk2_pigeon(lhs.toList(), rhs.toList())
+    return deepEqualsStoreKit2Messages(lhs.toList(), rhs.toList())
   }
   func hash(into hasher: inout Hasher) {
-    deepHashsk2_pigeon(value: toList(), hasher: &hasher)
+    deepHashStoreKit2Messages(value: toList(), hasher: &hasher)
   }
 }
 
@@ -372,10 +370,10 @@ struct SK2PriceLocaleMessage: Hashable {
     ]
   }
   static func == (lhs: SK2PriceLocaleMessage, rhs: SK2PriceLocaleMessage) -> Bool {
-    return deepEqualssk2_pigeon(lhs.toList(), rhs.toList())
+    return deepEqualsStoreKit2Messages(lhs.toList(), rhs.toList())
   }
   func hash(into hasher: inout Hasher) {
-    deepHashsk2_pigeon(value: toList(), hasher: &hasher)
+    deepHashStoreKit2Messages(value: toList(), hasher: &hasher)
   }
 }
 
@@ -414,10 +412,10 @@ struct SK2SubscriptionOfferSignatureMessage: Hashable {
   static func == (
     lhs: SK2SubscriptionOfferSignatureMessage, rhs: SK2SubscriptionOfferSignatureMessage
   ) -> Bool {
-    return deepEqualssk2_pigeon(lhs.toList(), rhs.toList())
+    return deepEqualsStoreKit2Messages(lhs.toList(), rhs.toList())
   }
   func hash(into hasher: inout Hasher) {
-    deepHashsk2_pigeon(value: toList(), hasher: &hasher)
+    deepHashStoreKit2Messages(value: toList(), hasher: &hasher)
   }
 }
 
@@ -445,10 +443,10 @@ struct SK2SubscriptionOfferPurchaseMessage: Hashable {
   static func == (
     lhs: SK2SubscriptionOfferPurchaseMessage, rhs: SK2SubscriptionOfferPurchaseMessage
   ) -> Bool {
-    return deepEqualssk2_pigeon(lhs.toList(), rhs.toList())
+    return deepEqualsStoreKit2Messages(lhs.toList(), rhs.toList())
   }
   func hash(into hasher: inout Hasher) {
-    deepHashsk2_pigeon(value: toList(), hasher: &hasher)
+    deepHashStoreKit2Messages(value: toList(), hasher: &hasher)
   }
 }
 
@@ -484,10 +482,10 @@ struct SK2ProductPurchaseOptionsMessage: Hashable {
   static func == (lhs: SK2ProductPurchaseOptionsMessage, rhs: SK2ProductPurchaseOptionsMessage)
     -> Bool
   {
-    return deepEqualssk2_pigeon(lhs.toList(), rhs.toList())
+    return deepEqualsStoreKit2Messages(lhs.toList(), rhs.toList())
   }
   func hash(into hasher: inout Hasher) {
-    deepHashsk2_pigeon(value: toList(), hasher: &hasher)
+    deepHashStoreKit2Messages(value: toList(), hasher: &hasher)
   }
 }
 
@@ -549,10 +547,10 @@ struct SK2TransactionMessage: Hashable {
     ]
   }
   static func == (lhs: SK2TransactionMessage, rhs: SK2TransactionMessage) -> Bool {
-    return deepEqualssk2_pigeon(lhs.toList(), rhs.toList())
+    return deepEqualsStoreKit2Messages(lhs.toList(), rhs.toList())
   }
   func hash(into hasher: inout Hasher) {
-    deepHashsk2_pigeon(value: toList(), hasher: &hasher)
+    deepHashStoreKit2Messages(value: toList(), hasher: &hasher)
   }
 }
 
@@ -582,14 +580,14 @@ struct SK2ErrorMessage: Hashable {
     ]
   }
   static func == (lhs: SK2ErrorMessage, rhs: SK2ErrorMessage) -> Bool {
-    return deepEqualssk2_pigeon(lhs.toList(), rhs.toList())
+    return deepEqualsStoreKit2Messages(lhs.toList(), rhs.toList())
   }
   func hash(into hasher: inout Hasher) {
-    deepHashsk2_pigeon(value: toList(), hasher: &hasher)
+    deepHashStoreKit2Messages(value: toList(), hasher: &hasher)
   }
 }
 
-private class Sk2PigeonPigeonCodecReader: FlutterStandardReader {
+private class StoreKit2MessagesPigeonCodecReader: FlutterStandardReader {
   override func readValue(ofType type: UInt8) -> Any? {
     switch type {
     case 129:
@@ -648,7 +646,7 @@ private class Sk2PigeonPigeonCodecReader: FlutterStandardReader {
   }
 }
 
-private class Sk2PigeonPigeonCodecWriter: FlutterStandardWriter {
+private class StoreKit2MessagesPigeonCodecWriter: FlutterStandardWriter {
   override func writeValue(_ value: Any) {
     if let value = value as? SK2ProductTypeMessage {
       super.writeByte(129)
@@ -701,18 +699,19 @@ private class Sk2PigeonPigeonCodecWriter: FlutterStandardWriter {
   }
 }
 
-private class Sk2PigeonPigeonCodecReaderWriter: FlutterStandardReaderWriter {
+private class StoreKit2MessagesPigeonCodecReaderWriter: FlutterStandardReaderWriter {
   override func reader(with data: Data) -> FlutterStandardReader {
-    return Sk2PigeonPigeonCodecReader(data: data)
+    return StoreKit2MessagesPigeonCodecReader(data: data)
   }
 
   override func writer(with data: NSMutableData) -> FlutterStandardWriter {
-    return Sk2PigeonPigeonCodecWriter(data: data)
+    return StoreKit2MessagesPigeonCodecWriter(data: data)
   }
 }
 
-class Sk2PigeonPigeonCodec: FlutterStandardMessageCodec, @unchecked Sendable {
-  static let shared = Sk2PigeonPigeonCodec(readerWriter: Sk2PigeonPigeonCodecReaderWriter())
+class StoreKit2MessagesPigeonCodec: FlutterStandardMessageCodec, @unchecked Sendable {
+  static let shared = StoreKit2MessagesPigeonCodec(
+    readerWriter: StoreKit2MessagesPigeonCodecReaderWriter())
 }
 
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
@@ -738,7 +737,7 @@ protocol InAppPurchase2API {
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
 class InAppPurchase2APISetup {
-  static var codec: FlutterStandardMessageCodec { Sk2PigeonPigeonCodec.shared }
+  static var codec: FlutterStandardMessageCodec { StoreKit2MessagesPigeonCodec.shared }
   /// Sets up an instance of `InAppPurchase2API` to handle messages through the `binaryMessenger`.
   static func setUp(
     binaryMessenger: FlutterBinaryMessenger, api: InAppPurchase2API?,
@@ -980,8 +979,8 @@ class InAppPurchase2CallbackAPI: InAppPurchase2CallbackAPIProtocol {
     self.binaryMessenger = binaryMessenger
     self.messageChannelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""
   }
-  var codec: Sk2PigeonPigeonCodec {
-    return Sk2PigeonPigeonCodec.shared
+  var codec: StoreKit2MessagesPigeonCodec {
+    return StoreKit2MessagesPigeonCodec.shared
   }
   func onTransactionsUpdated(
     newTransactions newTransactionsArg: [SK2TransactionMessage],
